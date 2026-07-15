@@ -1,0 +1,292 @@
+/*
+ * TIER 2 — SEMANTIC
+ *
+ * Purpose, not appearance. Every colour references a RAMP POSITION (accent-600), never a
+ * hue, so brand can swap tier 1 underneath. Colour tokens carry their light + dark values
+ * in a single light-dark() call: the browser serves the right one based on the used
+ * color-scheme, so flipping color-scheme on <html> re-themes with no extra CSS.
+ *
+ * Three constraints show up as structure here:
+ *   • light-dark() takes exactly TWO colours, so high contrast is NOT a third slot — it
+ *     lives in modes/hc.css and re-declares these tokens. And only COLOUR can be
+ *     mode-aware, which is why a shadow's colour is its own token and elevation.* is a
+ *     composite that references it.
+ *   • Density is a runtime multiplier (--ds-density), not a second spacing scale.
+ *   • Interactive sizes floor at the WCAG target via max(), so density cannot shrink a
+ *     control below the minimum hit size no matter what --ds-density is set to.
+ */
+
+/* --ds-density registered so the browser type-checks it as a number and gives it a real
+ * initial value; a junk value like `--ds-density: red` is now rejected, not inherited. */
+@property --ds-density {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@layer semantic {
+  :root {
+    /* Opts the page into native dark form controls + scrollbars, and arms light-dark(). */
+    color-scheme: light dark;
+    /* Density multiplier. 1 = comfortable. Set 0.8 (compact) or 0.6 (dense) on any subtree. */
+    --ds-density: 1;
+
+    /* ── bg: surfaces. Light elevates with SHADOW over constant white; dark elevates by
+     *    LIGHTENING the surface (shadows vanish on dark). Not a palette invert. ── */
+    --color-bg-canvas: light-dark(var(--ramp-neutral-50), var(--ramp-neutral-950));
+    --color-bg-surface: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-900));
+    --color-bg-surface-raised: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-800));
+    --color-bg-surface-sunken: light-dark(var(--ramp-neutral-100), var(--ramp-neutral-1000));
+    --color-bg-inverse: light-dark(var(--ramp-neutral-900), var(--ramp-neutral-100));
+    --color-bg-accent-subtle: light-dark(var(--ramp-accent-50), var(--ramp-accent-950));
+    --color-bg-danger-subtle: light-dark(var(--ramp-danger-50), var(--ramp-danger-950));
+    --color-bg-success-subtle: light-dark(var(--ramp-success-50), var(--ramp-success-950));
+    --color-bg-warning-subtle: light-dark(var(--ramp-warning-50), var(--ramp-warning-950));
+
+    /* ── text: every token here is a contrast partner of some bg — see contrast-pairs.json ── */
+    --color-text-primary: light-dark(var(--ramp-neutral-900), var(--ramp-neutral-100));
+    --color-text-secondary: light-dark(var(--ramp-neutral-700), var(--ramp-neutral-300));
+    --color-text-tertiary: light-dark(var(--ramp-neutral-600), var(--ramp-neutral-400));
+    --color-text-disabled: light-dark(var(--ramp-neutral-400), var(--ramp-neutral-600));
+    --color-text-inverse: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-950));
+    /* on-accent: text ON action.primary, NOT on canvas. In dark, primary is a light blue,
+     * so this flips to near-black. The #1 source of unreadable dark-mode buttons. */
+    --color-text-on-accent: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-950));
+    /* accent text sits a rung darker than the accent FILL: coloured text needs 4.5:1,
+     * a fill needs only 3:1. */
+    --color-text-accent: light-dark(var(--ramp-accent-700), var(--ramp-accent-300));
+    --color-text-danger: light-dark(var(--ramp-danger-700), var(--ramp-danger-300));
+    --color-text-success: light-dark(var(--ramp-success-700), var(--ramp-success-300));
+    --color-text-warning: light-dark(var(--ramp-warning-800), var(--ramp-warning-300));
+
+    /* ── border ── */
+    --color-border-subtle: light-dark(var(--ramp-neutral-200), var(--ramp-neutral-800));
+    /* default sits at 500, not the prettier 300: input outlines carry meaning (1.4.11 → 3:1),
+     * and 300 measured 1.44:1 on canvas. The floor wins over the aesthetic instinct. */
+    --color-border-default: light-dark(var(--ramp-neutral-500), var(--ramp-neutral-500));
+    --color-border-strong: light-dark(var(--ramp-neutral-600), var(--ramp-neutral-400));
+    --color-border-accent: light-dark(var(--ramp-accent-600), var(--ramp-accent-500));
+    --color-border-danger: light-dark(var(--ramp-danger-600), var(--ramp-danger-500));
+    /* focus ring: its own token, never an alias of border-accent — it must survive a brand
+     * swap that makes accent low-contrast, and can never be tuned away for aesthetics. */
+    --color-border-focus: light-dark(var(--ramp-accent-600), var(--ramp-accent-400));
+
+    /* ── action: interactive FILLS. hover/active move OPPOSITE per mode — light darkens
+     *    (600→700→800), dark lightens (500→400→300). Both raise contrast vs their own bg. ── */
+    --color-action-primary: light-dark(var(--ramp-accent-600), var(--ramp-accent-500));
+    --color-action-primary-hover: light-dark(var(--ramp-accent-700), var(--ramp-accent-400));
+    --color-action-primary-active: light-dark(var(--ramp-accent-800), var(--ramp-accent-300));
+    --color-action-neutral: light-dark(var(--ramp-neutral-100), var(--ramp-neutral-800));
+    --color-action-neutral-hover: light-dark(var(--ramp-neutral-200), var(--ramp-neutral-700));
+    --color-action-neutral-active: light-dark(var(--ramp-neutral-300), var(--ramp-neutral-600));
+    --color-action-danger: light-dark(var(--ramp-danger-600), var(--ramp-danger-500));
+    --color-action-danger-hover: light-dark(var(--ramp-danger-700), var(--ramp-danger-400));
+    --color-action-danger-active: light-dark(var(--ramp-danger-800), var(--ramp-danger-300));
+    --color-action-disabled: light-dark(var(--ramp-neutral-200), var(--ramp-neutral-800));
+
+    /* ── shadow colour is mode-aware (a shadow can't sit inside light-dark(), only its
+     *    colour can). Alphas explode in dark because black-on-near-black is invisible. ── */
+    --shadow-sm: light-dark(oklch(0% 0 0 / 0.08), oklch(0% 0 0 / 0.5));
+    --shadow-md: light-dark(oklch(0% 0 0 / 0.1), oklch(0% 0 0 / 0.6));
+    --shadow-lg: light-dark(oklch(0% 0 0 / 0.14), oklch(0% 0 0 / 0.7));
+
+    /* ── elevation: composites that reference the shadow-colour tokens above ── */
+    --elevation-flat: none;
+    --elevation-raised: 0 1px 2px 0 var(--shadow-sm), 0 1px 3px 0 var(--shadow-sm);
+    --elevation-overlay: 0 4px 6px -2px var(--shadow-md), 0 10px 15px -3px var(--shadow-md);
+    --elevation-modal: 0 8px 10px -6px var(--shadow-lg), 0 20px 25px -5px var(--shadow-lg);
+
+    /* ── space: density-scaled via round(calc(...), 2px). round() snaps compact values back
+     *    onto a sub-grid so they don't shimmer; a no-op at density 1. ── */
+    --space-inset-xs: round(calc(var(--scale-space-1) * var(--ds-density)), 2px);
+    --space-inset-sm: round(calc(var(--scale-space-2) * var(--ds-density)), 2px);
+    --space-inset-md: round(calc(var(--scale-space-4) * var(--ds-density)), 2px);
+    --space-inset-lg: round(calc(var(--scale-space-6) * var(--ds-density)), 2px);
+    --space-inset-xl: round(calc(var(--scale-space-8) * var(--ds-density)), 2px);
+    --space-inline-xs: round(calc(var(--scale-space-1) * var(--ds-density)), 2px);
+    --space-inline-sm: round(calc(var(--scale-space-2) * var(--ds-density)), 2px);
+    --space-inline-md: round(calc(var(--scale-space-3) * var(--ds-density)), 2px);
+    --space-inline-lg: round(calc(var(--scale-space-4) * var(--ds-density)), 2px);
+    --space-stack-xs: round(calc(var(--scale-space-2) * var(--ds-density)), 2px);
+    --space-stack-sm: round(calc(var(--scale-space-3) * var(--ds-density)), 2px);
+    --space-stack-md: round(calc(var(--scale-space-4) * var(--ds-density)), 2px);
+    --space-stack-lg: round(calc(var(--scale-space-6) * var(--ds-density)), 2px);
+    --space-stack-xl: round(calc(var(--scale-space-10) * var(--ds-density)), 2px);
+    /* section gap is density-INVARIANT: compacting a table row helps, compacting the gap
+     * between page regions just makes the page feel broken. */
+    --space-section: var(--scale-space-16);
+
+    /* ── size: controls floor at the WCAG target via max(); the floor is INSIDE the token
+     *    so no consumer can multiply past it. ── */
+    --size-control-sm: max(round(calc(var(--scale-size-control-sm) * var(--ds-density)), 2px), var(--scale-fixed-target-min));
+    --size-control-md: max(round(calc(var(--scale-size-control-md) * var(--ds-density)), 2px), var(--scale-fixed-target-min));
+    --size-control-lg: max(round(calc(var(--scale-size-control-lg) * var(--ds-density)), 2px), var(--scale-fixed-target-min));
+    --size-touch-target: var(--scale-fixed-touch-target);
+    --size-focus-ring: var(--scale-fixed-ring-width);
+    --size-focus-offset: var(--scale-fixed-ring-offset);
+
+    /* ── radius: density-invariant (corner radius is a brand property, not a spatial one) ── */
+    --radius-control: var(--scale-radius-md);
+    --radius-surface: var(--scale-radius-lg);
+    --radius-pill: var(--scale-radius-full);
+
+    /* ── type: density- and brand-invariant except family ── */
+    --font-family-body: var(--scale-font-family-sans);
+    --font-family-code: var(--scale-font-family-mono);
+    --font-size-caption: var(--scale-font-size-xs);
+    --font-size-body-sm: var(--scale-font-size-sm);
+    --font-size-body: var(--scale-font-size-md);
+    --font-size-body-lg: var(--scale-font-size-lg);
+    --font-size-heading-sm: var(--scale-font-size-xl);
+    --font-size-heading-md: var(--scale-font-size-2xl);
+    --font-size-heading-lg: var(--scale-font-size-3xl);
+    --font-size-display: var(--scale-font-size-4xl);
+    --font-line-height-caption: var(--scale-line-height-normal);
+    --font-line-height-body: var(--scale-line-height-normal);
+    --font-line-height-body-relaxed: var(--scale-line-height-relaxed);
+    --font-line-height-heading: var(--scale-line-height-snug);
+    --font-line-height-display: var(--scale-line-height-tight);
+    --font-weight-body: var(--scale-font-weight-regular);
+    --font-weight-emphasis: var(--scale-font-weight-medium);
+    --font-weight-label: var(--scale-font-weight-medium);
+    --font-weight-heading: var(--scale-font-weight-semibold);
+
+    /* ── MOTION — INTENT TOKENS ────────────────────────────────────────────────
+     * Components consume intent (motion-enter-*), never a raw duration. Because the
+     * scale-* durations/easings are tier-1 primitives, the validator's tier-skip rule
+     * already forbids a component from reaching a raw duration — intent is enforced.
+     * Retuning a primitive (e.g. fast 120→100ms) restyles the system without any
+     * component or intent-token edit. Reduced motion is handled below as a MODE. */
+
+    /* distance scale — the START offset a translate animates from, mapped to hierarchy:
+     * larger distance = deeper/further move. Panels that travel their full size use 100%. */
+    --motion-distance-none: 0px;
+    --motion-distance-sm: 4px;   /* inline reveals: tooltip, menu, exit */
+    --motion-distance-md: 8px;   /* things that enter: popover, toast */
+    --motion-distance-lg: 16px;  /* navigation / drill-down direction */
+
+    /* feedback — hover / press / toggle / state layer: fast + discreet, never blocks flow */
+    --motion-feedback-duration: var(--scale-duration-fast);
+    --motion-feedback-easing: var(--scale-easing-standard);
+
+    /* state-change — checkbox / switch / inline validation flips */
+    --motion-state-change-duration: var(--scale-duration-fast);
+    --motion-state-change-easing: var(--scale-easing-standard);
+
+    /* enter — element appears: decelerates into place */
+    --motion-enter-duration: var(--scale-duration-moderate);
+    --motion-enter-easing: var(--scale-easing-enter);
+    --motion-enter-distance: var(--motion-distance-md);
+
+    /* exit — element leaves: accelerates away; SHORTER than enter (it's already decided) */
+    --motion-exit-duration: var(--scale-duration-fast);
+    --motion-exit-easing: var(--scale-easing-exit);
+    --motion-exit-distance: var(--motion-distance-sm);
+
+    /* reveal / dismiss — inline transient content (tooltip, popover) */
+    --motion-reveal-duration: var(--scale-duration-fast);
+    --motion-reveal-easing: var(--scale-easing-enter);
+    --motion-reveal-distance: var(--motion-distance-sm);
+    --motion-dismiss-duration: var(--scale-duration-fast);
+    --motion-dismiss-easing: var(--scale-easing-exit);
+    --motion-dismiss-distance: var(--motion-distance-sm);
+
+    /* expand / collapse — height changes (accordion, disclosure). No translate distance. */
+    --motion-expand-duration: var(--scale-duration-moderate);
+    --motion-expand-easing: var(--scale-easing-standard);
+    --motion-collapse-duration: var(--scale-duration-fast);
+    --motion-collapse-easing: var(--scale-easing-standard);
+
+    /* reorder — FLIP position moves (drag list, table rows). Position only. */
+    --motion-reorder-duration: var(--scale-duration-moderate);
+    --motion-reorder-easing: var(--scale-easing-standard);
+
+    /* navigate — page / tab / drill-down: larger spatial move carries direction & depth */
+    --motion-navigate-duration: var(--scale-duration-moderate);
+    --motion-navigate-easing: var(--scale-easing-standard);
+    --motion-navigate-distance: var(--motion-distance-lg);
+
+    /* emphasize — attention on a real change. Use sparingly; not decorative. */
+    --motion-emphasize-duration: var(--scale-duration-moderate);
+    --motion-emphasize-easing: var(--scale-easing-emphasized);
+
+    /* loading — continuous, linear, no ease (a loop with ease looks like it's breathing) */
+    --motion-loading-duration: var(--scale-duration-slow);
+    --motion-loading-easing: var(--scale-easing-linear);
+
+    /* drag — pickup / drop feedback (the follow-pointer part is not tokenised) */
+    --motion-drag-duration: var(--scale-duration-fast);
+    --motion-drag-easing: var(--scale-easing-standard);
+
+    /* reduced-mode primitives — the values the @media block swaps intents to */
+    --motion-reduced-duration: var(--scale-duration-fast);
+    --motion-reduced-distance: var(--motion-distance-none);
+    --motion-reduced-easing: var(--scale-easing-standard);
+
+    /* ── interaction / STATE LAYER ────────────────────────────────────────────
+     * A single semi-transparent overlay communicates hover / focus / pressed /
+     * selected / dragged. Its colour is currentColor — the component's OWN content
+     * colour — so one model covers every case with zero per-component colour tokens:
+     *   • neutral surface → dark/light text → dark/light layer (subsumes black/white);
+     *   • saturated fill (primary/danger/…) → the on-* text colour → correct tint
+     *     (a black overlay on a blue button looks muddy; the white content colour
+     *      does not).
+     * Opacities are plain numbers and MODE-INVARIANT on purpose: a number cannot live
+     * inside light-dark(). High contrast bumps them via [data-contrast] in modes/hc.css,
+     * which IS attribute-driven. Priority ladder + single-active-layer rules live in the
+     * opt-in patterns/state-layer.css. */
+    --interaction-layer-color: currentColor;
+    --interaction-hover-opacity: 0.07;    /* target 6–8%   */
+    --interaction-focus-opacity: 0.1;     /* target 8–10%  */
+    --interaction-pressed-opacity: 0.12;  /* target 10–12% */
+    --interaction-selected-opacity: 0.08; /* target 8–12%, kept subtle — it is the base rung */
+    --interaction-dragged-opacity: 0.16;  /* target 14–16% */
+    --interaction-disabled-opacity: 0;    /* disabled shows NO reactive layer */
+    /* the focus ring is the INDEPENDENT focus indicator — never the state layer alone */
+    --interaction-focus-ring-color: var(--color-border-focus);
+    --interaction-focus-ring-width: var(--size-focus-ring);
+    --interaction-focus-ring-offset: var(--size-focus-offset);
+  }
+
+  /* ── REDUCED MOTION as a FUNCTIONAL VARIANT, not a blanket kill ─────────────
+   * Classified by role rather than zeroing everything:
+   *   Essential  (state-change, expand/collapse) — keep the change, drop the travel:
+   *              short duration, distance 0. The user still perceives what changed.
+   *   Helpful    (enter/exit/reveal/dismiss/navigate) — replace spatial movement with a
+   *              quick fade: distance 0, keep a short duration on opacity only.
+   *   Decorative (emphasize) — remove entirely (duration 0).
+   *   Continuous (loading) — components must swap to a non-spatial variant (opacity pulse
+   *              or a determinate/static indicator); the slower duration here is the fallback
+   *              if a spinner is kept. See the loading component note in the proposal.
+   * Because these are the SAME tokens components already consume, no component code changes. */
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      /* Helpful: spatial → fade (distance 0, keep a brief fade) */
+      --motion-enter-distance: var(--motion-reduced-distance);
+      --motion-exit-distance: var(--motion-reduced-distance);
+      --motion-reveal-distance: var(--motion-reduced-distance);
+      --motion-dismiss-distance: var(--motion-reduced-distance);
+      --motion-navigate-distance: var(--motion-reduced-distance);
+      --motion-enter-duration: var(--motion-reduced-duration);
+      --motion-exit-duration: var(--motion-reduced-duration);
+      --motion-navigate-duration: var(--motion-reduced-duration);
+      --motion-enter-easing: var(--motion-reduced-easing);
+      --motion-exit-easing: var(--motion-reduced-easing);
+
+      /* Essential: keep a short, legible change */
+      --motion-state-change-duration: var(--motion-reduced-duration);
+      --motion-expand-duration: var(--motion-reduced-duration);
+      --motion-collapse-duration: var(--motion-reduced-duration);
+      --motion-feedback-duration: var(--scale-duration-instant);
+
+      /* Reorder: jump straight to the new position, no travel */
+      --motion-reorder-duration: var(--scale-duration-instant);
+
+      /* Decorative: off */
+      --motion-emphasize-duration: var(--scale-duration-instant);
+
+      /* Continuous: gentler if a component keeps it; prefer a static swap in the component */
+      --motion-loading-duration: var(--scale-duration-slow);
+    }
+  }
+}

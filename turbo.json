@@ -1,0 +1,18 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "lint": {
+      "inputs": ["css/**", "contrast-pairs.json", "scripts/**"],
+      "outputs": []
+    },
+    "check": {
+      "dependsOn": ["^lint"],
+      "inputs": ["css/**", "contrast-pairs.json", "scripts/**"],
+      "outputs": []
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

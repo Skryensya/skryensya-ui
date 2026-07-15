@@ -1,0 +1,713 @@
+<title>State layers — design system proposal</title>
+<style>
+  /* ============================================================= TOKENS
+     Inlined from the real design system so every specimen below is driven
+     by the actual tokens, not a mock. light-dark() picks the mode; the
+     control bar flips color-scheme / data-contrast / data-brand. */
+  :root {
+    color-scheme: light dark;
+    --ds-density: 1;
+
+    /* scale */
+    --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px;
+    --sp-6: 24px; --sp-8: 32px; --sp-10: 40px; --sp-12: 48px; --sp-16: 64px;
+    --r-sm: 4px; --r-md: 8px; --r-lg: 12px; --r-full: 9999px;
+    --fs-xs: 12px; --fs-sm: 14px; --fs-md: 16px; --fs-lg: 18px; --fs-xl: 22px; --fs-2xl: 30px; --fs-3xl: 42px;
+
+    /* ramps — neutral (h255), accent (h255), danger (h27), success (h150), warning (h75) */
+    --ramp-neutral-0: oklch(100% 0 255); --ramp-neutral-50: oklch(98.4% .002 255);
+    --ramp-neutral-100: oklch(96.2% .004 255); --ramp-neutral-200: oklch(92% .006 255);
+    --ramp-neutral-300: oklch(86.4% .008 255); --ramp-neutral-400: oklch(71.8% .011 255);
+    --ramp-neutral-500: oklch(60.2% .013 255); --ramp-neutral-600: oklch(50.4% .013 255);
+    --ramp-neutral-700: oklch(42% .011 255); --ramp-neutral-800: oklch(33.2% .009 255);
+    --ramp-neutral-900: oklch(25% .007 255); --ramp-neutral-950: oklch(17.4% .005 255);
+    --ramp-neutral-1000: oklch(0% 0 255);
+    --ramp-accent-100: oklch(93.6% .032 255); --ramp-accent-200: oklch(88% .062 255);
+    --ramp-accent-300: oklch(80.2% .104 255); --ramp-accent-400: oklch(72% .148 255);
+    --ramp-accent-500: oklch(64% .186 255); --ramp-accent-600: oklch(56.2% .202 255);
+    --ramp-accent-700: oklch(48% .178 255); --ramp-accent-800: oklch(40.2% .146 255);
+    --ramp-danger-300: oklch(80.6% .11 27); --ramp-danger-500: oklch(63.4% .198 27);
+    --ramp-danger-600: oklch(56% .208 27); --ramp-danger-700: oklch(47.8% .182 27);
+    --ramp-success-500: oklch(64% .148 150); --ramp-success-700: oklch(47.6% .12 150);
+    --ramp-warning-500: oklch(67% .146 75);
+
+    /* semantic — colour (light-dark) */
+    --color-bg-canvas: light-dark(var(--ramp-neutral-50), var(--ramp-neutral-950));
+    --color-bg-surface: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-900));
+    --color-bg-raised: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-800));
+    --color-bg-sunken: light-dark(var(--ramp-neutral-100), var(--ramp-neutral-1000));
+    --color-bg-accent-subtle: light-dark(var(--ramp-accent-100), oklch(24.2% .072 255));
+    --color-text-primary: light-dark(var(--ramp-neutral-900), var(--ramp-neutral-100));
+    --color-text-secondary: light-dark(var(--ramp-neutral-700), var(--ramp-neutral-300));
+    --color-text-tertiary: light-dark(var(--ramp-neutral-600), var(--ramp-neutral-400));
+    --color-text-disabled: light-dark(var(--ramp-neutral-400), var(--ramp-neutral-600));
+    --color-text-on-accent: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-950));
+    --color-text-accent: light-dark(var(--ramp-accent-700), var(--ramp-accent-300));
+    --color-border-subtle: light-dark(var(--ramp-neutral-200), var(--ramp-neutral-800));
+    --color-border-default: light-dark(var(--ramp-neutral-500), var(--ramp-neutral-500));
+    --color-border-strong: light-dark(var(--ramp-neutral-600), var(--ramp-neutral-400));
+    --color-border-focus: light-dark(var(--ramp-accent-600), var(--ramp-accent-400));
+    --color-action-primary: light-dark(var(--ramp-accent-600), var(--ramp-accent-500));
+    --color-action-neutral: light-dark(var(--ramp-neutral-100), var(--ramp-neutral-800));
+    --color-action-danger: light-dark(var(--ramp-danger-600), var(--ramp-danger-500));
+    --color-success: light-dark(var(--ramp-success-700), var(--ramp-success-500));
+
+    /* semantic — INTERACTION / state layer */
+    --interaction-layer-color: currentColor;
+    --interaction-hover-opacity: .07;
+    --interaction-focus-opacity: .10;
+    --interaction-pressed-opacity: .12;
+    --interaction-selected-opacity: .08;
+    --interaction-dragged-opacity: .16;
+    --interaction-disabled-opacity: 0;
+    --interaction-focus-ring-color: var(--color-border-focus);
+    --interaction-focus-ring-width: 2px;
+    --interaction-focus-ring-offset: 2px;
+
+    /* motion */
+    --dur-hover: 120ms; --ease: cubic-bezier(.2,0,0,1);
+
+    /* doc chrome neutral — the system's own cool grey, deliberately hue-biased */
+    --ink: var(--color-text-primary);
+    --muted: var(--color-text-secondary);
+    --line: var(--color-border-subtle);
+    --paper: var(--color-bg-canvas);
+    --card: var(--color-bg-surface);
+    --accent: var(--color-text-accent);
+  }
+  :root[data-theme="dark"] { color-scheme: dark; }
+  :root[data-theme="light"] { color-scheme: light; }
+
+  /* high contrast — bumped colours + interaction opacities */
+  [data-contrast="high"] {
+    --color-bg-canvas: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
+    --color-bg-surface: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
+    --color-text-primary: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
+    --color-text-secondary: light-dark(var(--ramp-neutral-800), var(--ramp-neutral-200));
+    --color-border-subtle: light-dark(var(--ramp-neutral-400), var(--ramp-neutral-600));
+    --color-border-default: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
+    --color-border-focus: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
+    --color-action-primary: light-dark(var(--ramp-accent-800), var(--ramp-accent-300));
+    --interaction-hover-opacity: .12; --interaction-focus-opacity: .16;
+    --interaction-pressed-opacity: .20; --interaction-selected-opacity: .16;
+    --interaction-dragged-opacity: .24; --interaction-focus-ring-width: 3px;
+  }
+  /* brand: dusk — violet accent, warm neutral */
+  [data-brand="dusk"] {
+    --ramp-neutral-0: oklch(100% 0 70); --ramp-neutral-50: oklch(98.4% .003 70);
+    --ramp-neutral-100: oklch(96.2% .005 70); --ramp-neutral-200: oklch(92% .008 70);
+    --ramp-neutral-300: oklch(86.4% .01 70); --ramp-neutral-800: oklch(33.2% .011 70);
+    --ramp-neutral-900: oklch(25% .009 70); --ramp-neutral-950: oklch(17.4% .007 70);
+    --ramp-neutral-1000: oklch(0% 0 70);
+    --ramp-accent-100: oklch(93.6% .036 300); --ramp-accent-300: oklch(80.2% .116 300);
+    --ramp-accent-400: oklch(72% .164 300); --ramp-accent-500: oklch(64% .204 300);
+    --ramp-accent-600: oklch(56.2% .216 300); --ramp-accent-700: oklch(48% .19 300);
+    --ramp-accent-800: oklch(40.2% .156 300);
+  }
+
+  /* ============================================================= PAGE CHROME */
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: var(--fs-md); line-height: 1.6; letter-spacing: -0.003em;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", monospace; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px); }
+  .measure { max-width: 68ch; }
+
+  h1, h2, h3 { text-wrap: balance; letter-spacing: -0.02em; line-height: 1.12; margin: 0; font-weight: 680; }
+  h1 { font-size: clamp(2.2rem, 6vw, var(--fs-3xl)); }
+  h2 { font-size: var(--fs-2xl); }
+  h3 { font-size: var(--fs-lg); letter-spacing: -0.01em; }
+  p { margin: 0 0 1rem; color: var(--muted); }
+  p strong, li strong { color: var(--ink); font-weight: 620; }
+  a { color: var(--accent); }
+  code { font-family: ui-monospace, "SF Mono", monospace; font-size: .875em;
+    background: var(--color-bg-sunken); padding: .1em .35em; border-radius: 4px; }
+
+  .eyebrow { font-family: ui-monospace, monospace; font-size: var(--fs-xs); letter-spacing: .14em;
+    text-transform: uppercase; color: var(--color-text-tertiary); font-weight: 600; }
+
+  section { border-top: 1px solid var(--line); padding: clamp(40px, 6vw, 72px) 0; }
+  section:first-of-type { border-top: 0; }
+  .sec-head { display: flex; gap: 16px; align-items: baseline; margin-bottom: 28px; }
+  .sec-num { font-family: ui-monospace, monospace; font-size: var(--fs-sm); font-weight: 640;
+    color: var(--accent); font-variant-numeric: tabular-nums; padding-top: .2em; }
+
+  /* control bar */
+  .bar { position: sticky; top: 0; z-index: 50; background: color-mix(in oklab, var(--card) 88%, transparent);
+    backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .bar-inner { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; padding: 12px 0; }
+  .bar strong { font-family: ui-monospace, monospace; font-size: var(--fs-xs); letter-spacing: .12em;
+    text-transform: uppercase; color: var(--ink); margin-right: auto; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+  .seg button { font: inherit; font-size: var(--fs-sm); border: 0; background: transparent; color: var(--muted);
+    padding: 5px 12px; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--color-action-primary); color: var(--color-text-on-accent); }
+  .seg-label { font-size: var(--fs-xs); color: var(--color-text-tertiary); margin-right: 6px; }
+  .ctl { display: inline-flex; align-items: center; }
+
+  .lead { font-size: var(--fs-xl); line-height: 1.4; color: var(--ink); letter-spacing: -0.015em; font-weight: 480; }
+  .cols { display: grid; gap: 28px; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { .cols-2 { grid-template-columns: 1fr 1fr; } }
+  .cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .note { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 20px 22px; }
+  .note-accent { border-left: 3px solid var(--color-text-accent); background: var(--color-bg-accent-subtle); }
+  .rec { display: inline-flex; gap: 8px; align-items: center; font-family: ui-monospace, monospace;
+    font-size: var(--fs-xs); font-weight: 640; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--color-success); }
+  ul.tight { margin: 0; padding-left: 1.15em; }
+  ul.tight li { margin: .3em 0; color: var(--muted); }
+
+  /* tables */
+  .tbl-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-lg); }
+  table { border-collapse: collapse; width: 100%; font-size: var(--fs-sm); }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  thead th { font-family: ui-monospace, monospace; font-size: var(--fs-xs); letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-text-tertiary); font-weight: 600; background: var(--color-bg-sunken); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.mono, th.mono { font-family: ui-monospace, monospace; }
+  .num { font-variant-numeric: tabular-nums; text-align: right; }
+  .tag { display: inline-block; font-family: ui-monospace, monospace; font-size: 11px; padding: 1px 7px;
+    border-radius: var(--r-full); border: 1px solid var(--line); color: var(--muted); }
+
+  /* code blocks */
+  pre { margin: 0; overflow-x: auto; background: var(--color-bg-sunken); border: 1px solid var(--line);
+    border-radius: var(--r-lg); padding: 18px 20px; font-size: var(--fs-sm); line-height: 1.55; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .tok-c { color: var(--color-text-tertiary); }
+  .tok-p { color: var(--color-text-accent); }
+  .tok-v { color: var(--color-success); }
+
+  /* composition diagram */
+  .stack { display: grid; gap: 8px; }
+  .stack .layer { border: 1px solid var(--line); border-radius: var(--r-md); padding: 12px 16px;
+    display: flex; align-items: center; gap: 12px; background: var(--card); }
+  .stack .layer .n { font-family: ui-monospace, monospace; font-size: var(--fs-xs); color: var(--accent);
+    width: 1.5em; }
+  .stack .layer small { color: var(--muted); }
+  .stack .l-layer { background: color-mix(in oklab, var(--color-text-primary) 8%, var(--card)); border-style: dashed; }
+
+  /* ============================================================= SPECIMENS
+     Real components, structural CSS only — the state layer comes from .ds-interactive. */
+  .ds-interactive { position: relative; isolation: isolate; --interaction-layer-opacity: 0; }
+  .ds-interactive::before { content: ""; position: absolute; inset: 0; z-index: -1;
+    border-radius: inherit; background: var(--interaction-layer-color);
+    opacity: var(--interaction-layer-opacity); pointer-events: none;
+    transition: opacity var(--dur-hover) var(--ease); }
+  .ds-interactive[aria-selected="true"], .ds-interactive[data-selected="true"], .ds-interactive:has(:checked)
+    { --interaction-layer-opacity: var(--interaction-selected-opacity); }
+  .ds-interactive:hover, .ds-interactive:has(:hover) { --interaction-layer-opacity: var(--interaction-hover-opacity); }
+  .ds-interactive:focus-visible, .ds-interactive:has(:focus-visible) { --interaction-layer-opacity: var(--interaction-focus-opacity); }
+  .ds-interactive:active, .ds-interactive:has(:active) { --interaction-layer-opacity: var(--interaction-pressed-opacity); }
+  .ds-interactive[data-dragging="true"] { --interaction-layer-opacity: var(--interaction-dragged-opacity); }
+  .ds-interactive:disabled, .ds-interactive[aria-disabled="true"], .ds-interactive:has(:disabled)
+    { --interaction-layer-opacity: var(--interaction-disabled-opacity); }
+  .ds-interactive:focus-visible, .ds-interactive:has(:focus-visible) {
+    outline: var(--interaction-focus-ring-width) solid var(--interaction-focus-ring-color);
+    outline-offset: var(--interaction-focus-ring-offset); }
+  .ds-interactive[aria-disabled="true"] { outline: none; }
+  @media (prefers-reduced-motion: reduce) { .ds-interactive::before { transition: none; } }
+
+  /* forced-state helpers for the static matrix — set the SAME token the live rules use */
+  .is-hover { --interaction-layer-opacity: var(--interaction-hover-opacity) !important; }
+  .is-focus { --interaction-layer-opacity: var(--interaction-focus-opacity) !important;
+    outline: var(--interaction-focus-ring-width) solid var(--interaction-focus-ring-color); outline-offset: var(--interaction-focus-ring-offset); }
+  .is-pressed { --interaction-layer-opacity: var(--interaction-pressed-opacity) !important; }
+  .is-selected { --interaction-layer-opacity: var(--interaction-selected-opacity) !important; }
+  .is-disabled { --interaction-layer-opacity: 0 !important; }
+
+  .c-btn { font: inherit; font-size: var(--fs-sm); font-weight: 540; border: 1px solid transparent;
+    border-radius: var(--r-md); min-height: 40px; padding: 0 18px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px; }
+  .c-btn.primary { background: var(--color-action-primary); color: var(--color-text-on-accent); }
+  .c-btn.neutral { background: var(--color-action-neutral); color: var(--color-text-primary); }
+  .c-btn.danger { background: var(--color-action-danger); color: var(--color-text-on-accent); }
+  .c-btn.ghost { background: transparent; color: var(--color-text-accent); }
+  .c-btn[aria-disabled="true"], .c-icon[aria-disabled="true"] { color: var(--color-text-disabled);
+    background: var(--color-action-neutral); cursor: not-allowed; }
+
+  .c-icon { width: 40px; height: 40px; border: 0; background: transparent; color: var(--color-text-primary);
+    border-radius: var(--r-full); cursor: pointer; display: inline-grid; place-items: center; font-size: 18px; }
+
+  .c-nav { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 14px;
+    border-radius: var(--r-md); color: var(--color-text-primary); text-decoration: none; font-size: var(--fs-sm); }
+  .c-nav[aria-selected="true"] { color: var(--color-text-accent); font-weight: 560; }
+  .c-nav .rail { position: absolute; left: 4px; top: 50%; translate: 0 -50%; width: 3px; height: 18px;
+    border-radius: var(--r-full); background: var(--color-text-accent); }
+
+  .c-list { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 16px;
+    color: var(--color-text-primary); font-size: var(--fs-sm); border-radius: var(--r-md); }
+  .c-list .meta { margin-left: auto; color: var(--color-text-tertiary); font-size: var(--fs-xs); }
+
+  .c-card { display: block; padding: 16px; border: 1px solid var(--line); border-radius: var(--r-lg);
+    background: var(--card); color: var(--color-text-primary); text-decoration: none; min-width: 160px; }
+  .c-card b { display: block; font-size: var(--fs-sm); }
+  .c-card span { color: var(--muted); font-size: var(--fs-xs); }
+
+  .c-check, .c-radio, .c-switch { display: inline-flex; align-items: center; gap: 10px; min-height: 40px;
+    padding: 0 10px; border-radius: var(--r-md); color: var(--color-text-primary); font-size: var(--fs-sm); cursor: pointer; }
+  .c-check .box { width: 18px; height: 18px; border-radius: var(--r-sm); border: 2px solid var(--color-border-strong);
+    display: grid; place-items: center; }
+  .c-check[data-selected="true"] .box { background: var(--color-action-primary); border-color: var(--color-action-primary); }
+  .c-check[data-selected="true"] .box::after { content: "✓"; color: var(--color-text-on-accent); font-size: 12px; }
+  .c-radio .dot { width: 18px; height: 18px; border-radius: var(--r-full); border: 2px solid var(--color-border-strong);
+    display: grid; place-items: center; }
+  .c-radio[data-selected="true"] .dot { border-color: var(--color-action-primary); }
+  .c-radio[data-selected="true"] .dot::after { content: ""; width: 8px; height: 8px; border-radius: var(--r-full);
+    background: var(--color-action-primary); }
+  .c-switch .track { width: 36px; height: 20px; border-radius: var(--r-full); background: var(--color-border-strong);
+    padding: 2px; display: flex; }
+  .c-switch[data-selected="true"] .track { background: var(--color-action-primary); justify-content: flex-end; }
+  .c-switch .track .knob { width: 16px; height: 16px; border-radius: var(--r-full); background: var(--ramp-neutral-0); }
+  .c-check[aria-disabled="true"], .c-radio[aria-disabled="true"], .c-switch[aria-disabled="true"] { color: var(--color-text-disabled); }
+
+  .c-tab { border: 0; background: transparent; font: inherit; font-size: var(--fs-sm); color: var(--color-text-secondary);
+    min-height: 40px; padding: 0 14px; cursor: pointer; position: relative; border-radius: var(--r-md) var(--r-md) 0 0; }
+  .c-tab[aria-selected="true"] { color: var(--color-text-accent); font-weight: 560; }
+  .c-tab[aria-selected="true"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px;
+    background: var(--color-text-accent); border-radius: var(--r-full); }
+
+  .c-menu { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 0 12px;
+    color: var(--color-text-primary); font-size: var(--fs-sm); border-radius: var(--r-sm); }
+  .c-menu .k { margin-left: auto; color: var(--color-text-tertiary); font-size: var(--fs-xs); }
+
+  /* matrix */
+  .matrix { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-lg); }
+  .matrix table { min-width: 720px; }
+  .matrix th, .matrix td { border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); padding: 14px 16px; vertical-align: middle; }
+  .matrix th:last-child, .matrix td:last-child { border-right: 0; }
+  .matrix tbody tr:last-child td { border-bottom: 0; }
+  .matrix td.comp-name { font-weight: 560; font-size: var(--fs-sm); white-space: nowrap; }
+  .matrix td.comp-name small { display: block; color: var(--color-text-tertiary); font-weight: 400; font-family: ui-monospace, monospace; font-size: 11px; }
+  .na { color: var(--color-text-tertiary); font-family: ui-monospace, monospace; font-size: var(--fs-xs); }
+  .live-hint { font-size: var(--fs-xs); color: var(--color-text-tertiary); margin-top: 10px; }
+
+  footer { border-top: 1px solid var(--line); padding: 40px 0 64px; color: var(--color-text-tertiary); font-size: var(--fs-sm); }
+  :focus-visible { outline-offset: 2px; }
+</style>
+
+<div class="bar">
+  <div class="wrap bar-inner">
+    <strong>State layers</strong>
+    <span class="ctl"><span class="seg-label">Theme</span>
+      <span class="seg" id="seg-theme">
+        <button data-v="light" aria-pressed="true">Light</button>
+        <button data-v="dark" aria-pressed="false">Dark</button>
+      </span></span>
+    <span class="ctl"><span class="seg-label">Contrast</span>
+      <span class="seg" id="seg-contrast">
+        <button data-v="" aria-pressed="true">Normal</button>
+        <button data-v="high" aria-pressed="false">High</button>
+      </span></span>
+    <span class="ctl"><span class="seg-label">Brand</span>
+      <span class="seg" id="seg-brand">
+        <button data-v="default" aria-pressed="true">Blue</button>
+        <button data-v="dusk" aria-pressed="false">Violet</button>
+      </span></span>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section>
+    <p class="eyebrow">Design system · interaction states</p>
+    <h1>One overlay for every interactive state.</h1>
+    <p class="lead measure" style="margin-top:18px">
+      A <strong>state layer</strong> is a single solid-colour-with-transparency fill, drawn over a
+      component's background to signal hover, focus, pressed, selected and dragged — without inventing
+      a new colour per component, variant, or semantic hue.
+    </p>
+    <div class="cards" style="margin-top:32px">
+      <a class="c-card ds-interactive" href="#c1"><b>Recommendation</b><span>Tint = the content colour (<code>currentColor</code>), not black/white.</span></a>
+      <a class="c-card ds-interactive" href="#c5"><b>One active layer</b><span>Highest-priority state wins. Opacities are never summed.</span></a>
+      <a class="c-card ds-interactive" href="#c10"><b>Never the only cue</b><span>Focus, selection and disabled each carry an independent indicator.</span></a>
+    </div>
+    <p class="live-hint mono" style="margin-top:20px">Hover, focus (Tab) or press anything on this page — it is running the real tokens. Use the bar above to test across grounds.</p>
+    <p class="measure" style="margin-top:22px; font-size:var(--fs-sm)">
+      <span class="tag">Primary name</span> <strong>state layer</strong> &nbsp;·&nbsp;
+      documented synonyms: <strong>interaction layer</strong>, <strong>interaction overlay</strong>.
+      Use <em>state layer</em> in tokens, code and Figma; the others only in prose.
+    </p>
+  </section>
+
+  <!-- 1 · COLOUR STRATEGY -->
+  <section id="c1">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Colour strategy</h2></div>
+    <p class="measure">Two candidates were evaluated. The recommendation is the <strong>content colour</strong>,
+      expressed in CSS as <code>currentColor</code>.</p>
+    <div class="cols cols-2">
+      <div class="note">
+        <p class="eyebrow">Option A — black / white by surface</p>
+        <p style="margin-bottom:10px">Black at low opacity on light surfaces, white on dark.</p>
+        <ul class="tight">
+          <li>Works on neutral surfaces.</li>
+          <li><strong>Breaks on saturated fills:</strong> black over a blue <em>primary</em> button reads muddy; you actually want white.</li>
+          <li>Needs a light/dark branch to pick black vs white.</li>
+        </ul>
+      </div>
+      <div class="note note-accent">
+        <p class="rec">✓ Recommended — Option B</p>
+        <p class="eyebrow" style="margin-top:8px">Content / foreground colour</p>
+        <p style="margin-bottom:10px">The layer inherits the component's own text colour via <code>currentColor</code>.</p>
+        <ul class="tight">
+          <li><strong>Subsumes A:</strong> neutral surfaces have dark/light text → dark/light layer.</li>
+          <li><strong>Correct on semantic fills:</strong> a primary button's text is <code>on-accent</code> (white) → white layer over blue.</li>
+          <li>Zero per-component colour tokens; no light/dark branch for the tint.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="measure" style="margin-top:20px; font-size:var(--fs-sm)">
+      Trade-off accepted: because the tint follows content colour, the layer <em>opacity</em> is a plain
+      number and can't sit inside <code>light-dark()</code>, so opacities are mode-invariant. High contrast
+      raises them through <code>[data-contrast]</code>. Toggle <strong>Violet</strong> and <strong>Dark</strong>
+      above — the overlay tracks each context with no new tokens.
+    </p>
+  </section>
+
+  <!-- 2 · COMPOSITION -->
+  <section id="c2">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Composition model</h2></div>
+    <p class="measure">Every interactive component stacks four layers, bottom to top. The state layer sits
+      between the background and the content, blocks no events, and touches no text.</p>
+    <div class="stack" style="max-width:640px">
+      <div class="layer"><span class="n">4</span><div><strong>Focus ring</strong> &nbsp;<small>outline, when focused — independent of the layer</small></div></div>
+      <div class="layer"><span class="n">3</span><div><strong>Content</strong> &nbsp;<small>text, icons — never dimmed or covered by the layer</small></div></div>
+      <div class="layer l-layer"><span class="n">2</span><div><strong>State layer</strong> &nbsp;<small><code>currentColor</code> @ per-state opacity · <code>pointer-events:none</code> · <code>z-index:-1</code></small></div></div>
+      <div class="layer"><span class="n">1</span><div><strong>Container background</strong> &nbsp;<small>the component's own fill or surface</small></div></div>
+    </div>
+    <p class="measure" style="margin-top:18px; font-size:var(--fs-sm)">Implemented as a <code>::before</code> pseudo-element
+      with <code>isolation:isolate</code> on the host, so <code>z-index:-1</code> lands the layer above the
+      background but below content — no changes to the content markup.</p>
+  </section>
+
+  <!-- 3 · TOKEN ARCHITECTURE -->
+  <section id="c3">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Token architecture</h2></div>
+    <p class="measure">Semantic tokens only — no component-scoped names. One set drives every component.</p>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Semantic token</th><th>CSS custom property</th><th>Figma variable</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">interaction.layer.color</td><td class="mono tok-p">--interaction-layer-color</td><td class="mono">interaction/layer/color</td><td class="mono">currentColor</td></tr>
+          <tr><td class="mono">interaction.layer.hover.opacity</td><td class="mono tok-p">--interaction-hover-opacity</td><td class="mono">interaction/hover/opacity</td><td class="num">0.07</td></tr>
+          <tr><td class="mono">interaction.layer.focus.opacity</td><td class="mono tok-p">--interaction-focus-opacity</td><td class="mono">interaction/focus/opacity</td><td class="num">0.10</td></tr>
+          <tr><td class="mono">interaction.layer.pressed.opacity</td><td class="mono tok-p">--interaction-pressed-opacity</td><td class="mono">interaction/pressed/opacity</td><td class="num">0.12</td></tr>
+          <tr><td class="mono">interaction.layer.selected.opacity</td><td class="mono tok-p">--interaction-selected-opacity</td><td class="mono">interaction/selected/opacity</td><td class="num">0.08</td></tr>
+          <tr><td class="mono">interaction.layer.dragged.opacity</td><td class="mono tok-p">--interaction-dragged-opacity</td><td class="mono">interaction/dragged/opacity</td><td class="num">0.16</td></tr>
+          <tr><td class="mono">interaction.layer.disabled.opacity</td><td class="mono tok-p">--interaction-disabled-opacity</td><td class="mono">interaction/disabled/opacity</td><td class="num">0</td></tr>
+          <tr><td class="mono">interaction.focus-ring.color</td><td class="mono tok-p">--interaction-focus-ring-color</td><td class="mono">interaction/focus-ring/color</td><td class="mono">→ border.focus</td></tr>
+          <tr><td class="mono">interaction.focus-ring.width</td><td class="mono tok-p">--interaction-focus-ring-width</td><td class="mono">interaction/focus-ring/width</td><td class="num">2px</td></tr>
+          <tr><td class="mono">interaction.focus-ring.offset</td><td class="mono tok-p">--interaction-focus-ring-offset</td><td class="mono">interaction/focus-ring/offset</td><td class="num">2px</td></tr>
+          <tr><td class="mono">— (runtime slot)</td><td class="mono tok-v">--interaction-layer-opacity</td><td class="na">n/a</td><td class="mono">set by state rules</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="live-hint">Figma can't express <code>currentColor</code> or an alpha-only overlay natively — model the tint as a mode-aware colour variable (<code>on-surface</code> / <code>on-primary</code>) and the opacities as number variables, then bind them on a "State layer" component's fill + opacity. See §09.</p>
+  </section>
+
+  <!-- 4 · STATES & OPACITIES -->
+  <section id="c4">
+    <div class="sec-head"><span class="sec-num">04</span><h2>States &amp; opacities</h2></div>
+    <p class="measure">Initial values, inside the requested ranges. Light and dark share the same numbers
+      (see §05); high contrast roughly doubles them.</p>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>State</th><th>Trigger</th><th class="num">Base</th><th class="num">High-contrast</th><th class="num">Target range</th></tr></thead>
+        <tbody>
+          <tr><td>Hover</td><td class="mono">:hover</td><td class="num">0.07</td><td class="num">0.12</td><td class="num">6–8%</td></tr>
+          <tr><td>Focus</td><td class="mono">:focus-visible</td><td class="num">0.10</td><td class="num">0.16</td><td class="num">8–10%</td></tr>
+          <tr><td>Pressed</td><td class="mono">:active</td><td class="num">0.12</td><td class="num">0.20</td><td class="num">10–12%</td></tr>
+          <tr><td>Selected</td><td class="mono">[aria-selected] / :checked</td><td class="num">0.08</td><td class="num">0.16</td><td class="num">8–12%</td></tr>
+          <tr><td>Dragged</td><td class="mono">[data-dragging]</td><td class="num">0.16</td><td class="num">0.24</td><td class="num">14–16%</td></tr>
+          <tr><td>Disabled</td><td class="mono">:disabled / [aria-disabled]</td><td class="num">0</td><td class="num">0</td><td class="num">no layer</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 5 · LIGHT & DARK -->
+  <section id="c5">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Light &amp; dark rules</h2></div>
+    <div class="cols cols-2">
+      <div>
+        <p><strong>Tint direction is automatic.</strong> In light mode content is dark, so the layer darkens
+          the surface; in dark mode content is light, so it lightens. Both increase separation from the
+          ground — no per-mode colour token, because <code>currentColor</code> already flips.</p>
+        <p><strong>Opacities stay constant across light and dark.</strong> A 7% light-on-dark and 7%
+          dark-on-light read close enough perceptually, and a number can't live in <code>light-dark()</code>.
+          If a team wants a per-mode nudge, override the opacity token under a theme selector.</p>
+      </div>
+      <div>
+        <p><strong>Saturated grounds.</strong> On a primary/danger fill the content colour is <code>on-accent</code>
+          (near-white), so the layer is a white wash on both modes — the correct, expected behaviour for a
+          filled control. Toggle <strong>Violet</strong> above to confirm it holds when the accent hue changes.</p>
+        <p><strong>High contrast</strong> is handled as an override, not a third value: <code>[data-contrast="high"]</code>
+          raises every opacity and thickens the focus ring, composing with light/dark.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · PRIORITY -->
+  <section id="c6">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Priority &amp; combined states</h2></div>
+    <p class="measure"><strong>Exactly one layer is ever active</strong> — the highest-priority state. Opacities
+      from different states are never added.</p>
+    <p class="mono measure" style="background:var(--color-bg-sunken); border:1px solid var(--line); border-radius:var(--r-md); padding:12px 16px; font-size:var(--fs-sm)">
+      disabled &gt; dragged &gt; pressed &gt; focus &gt; hover &gt; selected &gt; default
+    </p>
+    <div class="tbl-scroll" style="margin-top:18px">
+      <table>
+        <thead><tr><th>When these coincide</th><th>Layer shown</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Hover + focus</td><td><strong>Focus</strong> (0.10)</td><td>focus outranks hover</td></tr>
+          <tr><td>Focus + pressed</td><td><strong>Pressed</strong> (0.12)</td><td>pressed outranks focus; focus ring stays visible</td></tr>
+          <tr><td>Selected + hover</td><td><strong>Hover</strong> (0.07)</td><td>hover replaces the selected tint; selection shown by its own indicator</td></tr>
+          <tr><td>Selected + pressed</td><td><strong>Pressed</strong> (0.12)</td><td>pressed wins; selection indicator persists</td></tr>
+          <tr><td>Disabled + anything</td><td><strong>None</strong> (0)</td><td>disabled forces the layer off entirely</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" style="margin-top:20px">
+      <p class="eyebrow">Is selected a persistent base?</p>
+      <p style="margin-bottom:0">Reviewed and <strong>declined for v1</strong>. Making selected an additive base under
+        hover/pressed means two overlapping layers — effectively summed opacity, which the spec forbids. Instead
+        <strong>selected is the lowest rung</strong> and hover/pressed replace it; selection never disappears
+        because it always carries an <em>independent</em> indicator (check, filled control, rail, weight). This
+        keeps a single active layer and keeps selection accessible. Teams that truly need a stronger
+        selected+hover can define a dedicated combined opacity token — not a runtime sum.</p>
+    </div>
+  </section>
+
+  <!-- 7 · MATRIX -->
+  <section id="c7">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Component matrix</h2></div>
+    <p class="measure">Ten components × six states, all driven by the same tokens. States here are
+      <em>forced</em> for side-by-side comparison; every specimen is also live — hover or Tab into it.</p>
+    <div class="matrix" id="matrix">
+      <table>
+        <thead><tr>
+          <th>Component</th><th>Default</th><th>Hover</th><th>Focus</th><th>Pressed</th><th>Selected</th><th>Disabled</th>
+        </tr></thead>
+        <tbody id="matrix-body"></tbody>
+      </table>
+    </div>
+    <p class="live-hint">Selected column shows the independent indicator (check / dot / rail / underline) together with the persistent tint. Components without a selected state show <span class="na">—</span>.</p>
+  </section>
+
+  <!-- 8 · CSS -->
+  <section id="c8">
+    <div class="sec-head"><span class="sec-num">08</span><h2>CSS implementation</h2></div>
+    <p class="measure">The whole pattern is one opt-in class. Components add <code>ds-interactive</code>; nothing
+      is hardcoded — colour, opacity, ring and transition all read tokens.</p>
+    <pre><code><span class="tok-c">/* patterns/state-layer.css — applies to any .ds-interactive element */</span>
+.ds-interactive { position: relative; isolation: isolate; <span class="tok-p">--interaction-layer-opacity</span>: 0; }
+
+.ds-interactive::before {
+  content: ""; position: absolute; inset: 0; <span class="tok-p">z-index</span>: -1;   <span class="tok-c">/* above bg, below content */</span>
+  border-radius: inherit;
+  background: <span class="tok-v">var(--interaction-layer-color)</span>;               <span class="tok-c">/* = currentColor */</span>
+  opacity: <span class="tok-v">var(--interaction-layer-opacity)</span>;
+  pointer-events: none;                                    <span class="tok-c">/* never blocks events */</span>
+  transition: opacity <span class="tok-v">var(--dur-hover) var(--ease)</span>;
+}
+
+<span class="tok-c">/* priority ladder — ascending; equal specificity, later rule wins */</span>
+.ds-interactive[aria-selected="true"],
+.ds-interactive:has(:checked)      { <span class="tok-p">--interaction-layer-opacity</span>: <span class="tok-v">var(--interaction-selected-opacity)</span>; }
+.ds-interactive:hover              { <span class="tok-p">--interaction-layer-opacity</span>: <span class="tok-v">var(--interaction-hover-opacity)</span>; }
+.ds-interactive:focus-visible      { <span class="tok-p">--interaction-layer-opacity</span>: <span class="tok-v">var(--interaction-focus-opacity)</span>; }
+.ds-interactive:active             { <span class="tok-p">--interaction-layer-opacity</span>: <span class="tok-v">var(--interaction-pressed-opacity)</span>; }
+.ds-interactive[data-dragging]     { <span class="tok-p">--interaction-layer-opacity</span>: <span class="tok-v">var(--interaction-dragged-opacity)</span>; }
+.ds-interactive:disabled,
+.ds-interactive[aria-disabled]     { <span class="tok-p">--interaction-layer-opacity</span>: <span class="tok-v">var(--interaction-disabled-opacity)</span>; }
+
+<span class="tok-c">/* independent focus indicator */</span>
+.ds-interactive:focus-visible {
+  outline: <span class="tok-v">var(--interaction-focus-ring-width)</span> solid <span class="tok-v">var(--interaction-focus-ring-color)</span>;
+  outline-offset: <span class="tok-v">var(--interaction-focus-ring-offset)</span>;
+}
+@media (prefers-reduced-motion: reduce) { .ds-interactive::before { transition: none; } }</code></pre>
+  </section>
+
+  <!-- 9 · REACT -->
+  <section id="c9">
+    <div class="sec-head"><span class="sec-num">09</span><h2>React component</h2></div>
+    <p class="measure">No state colours in the component — it only sets structural classes and forwards ARIA.
+      The layer is entirely CSS-driven, so it needs no JS for hover/focus/press.</p>
+    <pre><code><span class="tok-c">// Button.tsx — a headless-ish button that opts into the state layer</span>
+<span class="tok-p">type</span> Props = React.ButtonHTMLAttributes&lt;HTMLButtonElement&gt; &amp; {
+  variant?: <span class="tok-v">"primary" | "neutral" | "danger" | "ghost"</span>;
+  selected?: boolean;
+};
+
+<span class="tok-p">export function</span> Button({ variant = "neutral", selected, disabled, children, ...rest }: Props) {
+  <span class="tok-p">return</span> (
+    &lt;button
+      className={`ds-button ds-interactive ${variant}`}   <span class="tok-c">// no colour logic here</span>
+      data-variant={variant}
+      aria-selected={selected || undefined}               <span class="tok-c">// drives the selected layer</span>
+      aria-disabled={disabled || undefined}
+      disabled={disabled}
+      {...rest}
+    &gt;
+      {children}
+    &lt;/button&gt;
+  );
+}
+
+<span class="tok-c">// Dragged state (e.g. from a DnD lib): toggle the data attribute, not a style.</span>
+&lt;li className="ds-list ds-interactive" data-dragging={isDragging || undefined} /&gt;</code></pre>
+  </section>
+
+  <!-- 10 · FIGMA -->
+  <section id="c10-figma">
+    <div class="sec-head"><span class="sec-num">10</span><h2>Figma recommendations</h2></div>
+    <ul class="tight measure">
+      <li><strong>Variables collection "interaction".</strong> Number variables for each opacity
+        (<code>hover 0.07</code>…), a colour variable for the tint, and dimension variables for the ring.</li>
+      <li><strong>Tint = the mode-aware "on" colour.</strong> Figma has no <code>currentColor</code>, so bind the
+        state-layer fill to <code>on-surface</code> for neutral components and <code>on-primary</code> for filled
+        ones. Two modes (Light/Dark) on the collection cover the tint flip.</li>
+      <li><strong>One "State layer" component.</strong> A frame set to <code>Fill container</code>, fill = tint
+        variable, layer opacity = the state's number variable. Drop it as the top layer of each interactive
+        component and switch its opacity variable per variant.</li>
+      <li><strong>Component states as variants,</strong> not detached copies: a <code>State</code> property with
+        Default / Hover / Focus / Pressed / Selected / Disabled, each binding a different opacity variable.</li>
+      <li><strong>Focus ring is a separate effect/stroke</strong> bound to the ring variables — never faked with
+        the state layer, mirroring the code.</li>
+    </ul>
+  </section>
+
+  <!-- 11 · A11Y -->
+  <section id="c10">
+    <div class="sec-head"><span class="sec-num">11</span><h2>Accessibility criteria</h2></div>
+    <p class="measure"><strong>The state layer is never the only signal.</strong> Each of these carries an
+      independent indicator that survives when the layer is replaced or removed:</p>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Meaning</th><th>Independent indicator (not the layer)</th></tr></thead>
+        <tbody>
+          <tr><td>Keyboard focus</td><td>Visible focus ring (<code>outline</code>), ≥3:1 vs adjacent, offset for clarity</td></tr>
+          <tr><td>Selected</td><td>Check / filled control / active rail / underline / weight</td></tr>
+          <tr><td>Error</td><td>Border colour + icon + message — semantic <code>danger</code>, not a red wash</td></tr>
+          <tr><td>Disabled</td><td>Dimmed content tokens + <code>aria-disabled</code>; layer forced to 0</td></tr>
+          <tr><td>Critical state change</td><td>Text/icon change + announced update, not opacity alone</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="tight measure" style="margin-top:18px">
+      <li><strong>Contrast:</strong> the layer only shifts luminance slightly; text keeps its own token contrast (≥4.5:1). The focus ring is checked at ≥3:1 across every brand by the validator.</li>
+      <li><strong>High contrast:</strong> opacities and ring width bump under <code>[data-contrast]</code> and <code>prefers-contrast: more</code>.</li>
+      <li><strong>Keyboard:</strong> focus uses <code>:focus-visible</code>, so a mouse click never leaves a lingering focus layer; Tab order is untouched by the <code>pointer-events:none</code> layer.</li>
+      <li><strong>Reduced motion:</strong> under <code>prefers-reduced-motion: reduce</code> the opacity fade is removed — the state still appears, just instantly.</li>
+    </ul>
+  </section>
+
+  <!-- 12 · EDGE CASES -->
+  <section id="c12">
+    <div class="sec-head"><span class="sec-num">12</span><h2>Edge cases &amp; risks</h2></div>
+    <div class="cards">
+      <div class="note"><p class="eyebrow">Native inputs</p><p style="margin:0; font-size:var(--fs-sm)">
+        <code>::before</code> won't render on <code>&lt;input&gt;</code>. Put <code>ds-interactive</code> on the
+        <em>label wrapper</em>; drive selected/focus via <code>:has(:checked)</code> / <code>:has(:focus-visible)</code>.</p></div>
+      <div class="note"><p class="eyebrow">currentColor surprises</p><p style="margin:0; font-size:var(--fs-sm)">
+        If a component sets an unusual text colour, the layer follows it. Override <code>--interaction-layer-color</code>
+        locally when the tint shouldn't equal the text.</p></div>
+      <div class="note"><p class="eyebrow">Rounded corners</p><p style="margin:0; font-size:var(--fs-sm)">
+        Layer uses <code>border-radius: inherit</code>. A component with a differently-clipped background needs
+        <code>overflow:hidden</code> or a matching radius on the layer.</p></div>
+      <div class="note"><p class="eyebrow">z-index / stacking</p><p style="margin:0; font-size:var(--fs-sm)">
+        Relies on <code>isolation:isolate</code> + <code>z-index:-1</code>. A host that sets its own low z-index
+        children can collide — keep the layer's host free of negative-z content.</p></div>
+      <div class="note"><p class="eyebrow">Transparent hosts</p><p style="margin:0; font-size:var(--fs-sm)">
+        On a ghost/transparent component the layer tints whatever shows through. Usually fine; verify over busy
+        backgrounds.</p></div>
+      <div class="note"><p class="eyebrow">Specificity override</p><p style="margin:0; font-size:var(--fs-sm)">
+        The priority ladder relies on equal specificity + source order. A consumer selector more specific than
+        <code>.ds-interactive:state</code> can break the order — document it.</p></div>
+    </div>
+  </section>
+
+  <!-- 13 · ADOPTION -->
+  <section id="c13">
+    <div class="sec-head"><span class="sec-num">13</span><h2>Progressive adoption</h2></div>
+    <ol class="tight measure" style="padding-left:1.4em">
+      <li><strong>Land the tokens.</strong> Add the <code>interaction.*</code> semantic tokens to the system; ship
+        no behaviour yet. Non-breaking.</li>
+      <li><strong>Ship the pattern as opt-in.</strong> Add <code>patterns/state-layer.css</code>. Existing
+        components are untouched until they add <code>ds-interactive</code>.</li>
+      <li><strong>Migrate one archetype per PR.</strong> Start with list/nav/menu items (no existing hover colour to
+        unwind), then filled controls (buttons) where the layer <em>replaces</em> per-state background tokens.</li>
+      <li><strong>Retire the old hover/pressed colour tokens</strong> per component as it migrates; the validator's
+        tier + contrast checks keep each step honest.</li>
+      <li><strong>Update Figma in lockstep</strong> (§10) so design and code read the same token names.</li>
+      <li><strong>Enforce.</strong> The CSS-native validator already covers refs, tier direction, mode completeness
+        and contrast across brands — no state layer can reach a raw ramp or skip a mode.</li>
+    </ol>
+  </section>
+
+  <footer class="mono">
+    Proposal built with the live design system · state layer = interaction layer = interaction overlay ·
+    tokens validated across light / dark / high-contrast / blue / violet.
+  </footer>
+</main>
+
+<script>
+  // control bar → root attributes (mirrors the system's own switches)
+  const root = document.documentElement;
+  function wire(id, apply) {
+    const seg = document.getElementById(id);
+    seg.addEventListener("click", (e) => {
+      const b = e.target.closest("button"); if (!b) return;
+      [...seg.children].forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      apply(b.dataset.v);
+    });
+  }
+  wire("seg-theme", (v) => { root.setAttribute("data-theme", v); });
+  wire("seg-contrast", (v) => { v ? root.setAttribute("data-contrast", v) : root.removeAttribute("data-contrast"); });
+  wire("seg-brand", (v) => { root.setAttribute("data-brand", v); });
+
+  // ---- component matrix ----
+  const STATES = ["default", "hover", "focus", "pressed", "selected", "disabled"];
+  const cls = { default: "", hover: "is-hover", focus: "is-focus", pressed: "is-pressed", selected: "is-selected", disabled: "is-disabled" };
+
+  // render(state) → innerHTML for one specimen. `sel` true only in the selected column.
+  const COMPONENTS = [
+    { name: "Button", tag: "button", sel: true,
+      r: (s) => `<button class="c-btn primary ds-interactive ${cls[s]}" ${s==='disabled'?'aria-disabled="true"':''} ${s==='selected'?'aria-selected="true"':''}>Save</button>` },
+    { name: "Icon button", tag: "icon", sel: false,
+      r: (s) => `<button class="c-icon ds-interactive ${cls[s]}" aria-label="Star" ${s==='disabled'?'aria-disabled="true"':''}>★</button>` },
+    { name: "Nav item", tag: "a", sel: true,
+      r: (s) => `<a href="#" class="c-nav ds-interactive ${cls[s]}" ${s==='selected'?'aria-selected="true"':''} ${s==='disabled'?'aria-disabled="true"':''}>${s==='selected'?'<span class="rail"></span>':''}Dashboard</a>` },
+    { name: "List item", tag: "div", sel: true,
+      r: (s) => `<div class="c-list ds-interactive ${cls[s]}" ${s==='selected'?'aria-selected="true"':''} ${s==='disabled'?'aria-disabled="true"':''} tabindex="0">Item · <span class="meta">2m</span></div>` },
+    { name: "Card", tag: "a", sel: false,
+      r: (s) => `<a href="#" class="c-card ds-interactive ${cls[s]}" ${s==='disabled'?'aria-disabled="true"':''}><b>Project</b><span>12 open</span></a>` },
+    { name: "Checkbox", tag: "label", sel: true,
+      r: (s) => `<span class="c-check ds-interactive ${cls[s]}" ${s==='selected'?'data-selected="true"':''} ${s==='disabled'?'aria-disabled="true"':''} tabindex="0"><span class="box"></span>Notify</span>` },
+    { name: "Radio", tag: "label", sel: true,
+      r: (s) => `<span class="c-radio ds-interactive ${cls[s]}" ${s==='selected'?'data-selected="true"':''} ${s==='disabled'?'aria-disabled="true"':''} tabindex="0"><span class="dot"></span>Weekly</span>` },
+    { name: "Switch", tag: "label", sel: true,
+      r: (s) => `<span class="c-switch ds-interactive ${cls[s]}" ${s==='selected'?'data-selected="true"':''} ${s==='disabled'?'aria-disabled="true"':''} tabindex="0"><span class="track"><span class="knob"></span></span>Auto</span>` },
+    { name: "Tab", tag: "button", sel: true,
+      r: (s) => `<button class="c-tab ds-interactive ${cls[s]}" ${s==='selected'?'aria-selected="true"':''} ${s==='disabled'?'aria-disabled="true"':''}>Overview</button>` },
+    { name: "Menu item", tag: "div", sel: false,
+      r: (s) => `<div class="c-menu ds-interactive ${cls[s]}" ${s==='disabled'?'aria-disabled="true"':''} tabindex="0">Rename<span class="k">⌘R</span></div>` },
+  ];
+
+  const body = document.getElementById("matrix-body");
+  for (const c of COMPONENTS) {
+    const tr = document.createElement("tr");
+    let html = `<td class="comp-name">${c.name}<small>${c.tag}</small></td>`;
+    for (const s of STATES) {
+      if (s === "selected" && !c.sel) { html += `<td><span class="na">—</span></td>`; continue; }
+      html += `<td>${c.r(s)}</td>`;
+    }
+    tr.innerHTML = html;
+    body.appendChild(tr);
+  }
+</script>

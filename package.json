@@ -1,0 +1,14 @@
+{
+  "name": "allison-design-system",
+  "private": true,
+  "packageManager": "pnpm@10.18.2",
+  "description": "Turborepo for the @allison design system. Base styles live in packages/tokens.",
+  "scripts": {
+    "lint": "turbo run lint",
+    "check": "turbo run check",
+    "dev": "turbo run dev"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3"
+  }
+}

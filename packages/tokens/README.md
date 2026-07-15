@@ -1,28 +1,31 @@
 # @allison/tokens
 
 A three-tier design token system in **pure, hand-authored CSS**. No build step, no JSON, zero
-dependencies. This repo is about the *engineering* of tokens — how the tiers reference each other,
-how four theming dimensions compose, and how the rules are enforced by a validator instead of by
-hope — not about the specific colours.
+runtime dependencies. This package is the base-styles package of the
+[allison-design-system](../../README.md) Turborepo; it's about the *engineering* of tokens — how the
+tiers reference each other, how the theming dimensions compose, and how the rules are enforced by a
+validator instead of by hope — not about the specific colours.
 
 ```
-css/                the design system — hand-authored, this IS the source
-  tokens.css        core bundle: declares @layer order, @imports primitives + semantic
-  primitives.css    tier 1 — scale (brand-agnostic) + default ramps (OKLCH)
-  semantic.css      tier 2 — purpose tokens (light-dark, density), @property --ds-density
-  brands/dusk.css   opt-in brand: overrides ONLY tier-1 ramps
-  modes/hc.css      opt-in high-contrast: overrides tier-2 colour
-  components/button.css  opt-in tier-3 hooks, scoped to .ds-button
-  patterns/state-layer.css  opt-in state layer (hover/focus/pressed/selected/dragged)
-contrast-pairs.json the contrast contract the validator checks
-scripts/lint.mjs    the CSS-native validator (zero deps)
-demo/index.html     all four dimensions live on one component
-docs/decisions.md   ADRs — WHY the system is shaped this way (ADR-12 records the pure-CSS pivot)
+packages/tokens/            ← this package (the base styles)
+  css/                      the design system — hand-authored, this IS the source
+    tokens.css              core bundle: declares @layer order, @imports primitives + semantic
+    primitives.css          tier 1 — scale (brand-agnostic) + default ramps (OKLCH)
+    semantic.css            tier 2 — purpose tokens (light-dark, density, motion, interaction)
+    brands/dusk.css         opt-in brand: overrides ONLY tier-1 ramps
+    modes/hc.css            opt-in high-contrast: overrides tier-2 colour
+    components/button.css   opt-in tier-3 hooks, scoped to .ds-button
+    patterns/state-layer.css  opt-in state layer (hover/focus/pressed/selected/dragged)
+  contrast-pairs.json       the contrast contract the validator checks
+  scripts/lint.mjs          the CSS-native validator (zero deps)
+../../apps/demo/            live demo + design proposals (consumes this package)
+../../docs/decisions.md     ADRs — WHY the system is shaped this way
 ```
 
 ```bash
-npm run lint          # parse the CSS, enforce the five rules. No build — the CSS ships as-is.
-open demo/index.html
+pnpm lint             # from repo root: turbo runs this package's validator (five rules, no build)
+pnpm --filter @allison/tokens lint   # just this package
+pnpm --filter @allison/demo dev      # serve the live demo, consuming this package via node_modules
 ```
 
 There is nothing to build. `css/` is the artifact.
@@ -103,7 +106,7 @@ tint is `currentColor` (the component's own content colour), so a single token w
 surfaces *and* saturated fills, in both modes and every brand, with zero per-component colour tokens.
 Exactly one layer is active at a time, by the priority `disabled > dragged > pressed > focus > hover >
 selected`; opacities are never summed. The layer is never the only cue — focus, selection and disabled
-each carry an independent indicator. See [docs/decisions.md](docs/decisions.md) ADR-13, and the
+each carry an independent indicator. See [docs/decisions.md](../../docs/decisions.md) ADR-13, and the
 "State layers" section of the demo.
 
 ## Motion (intent-based tokens)
@@ -116,7 +119,7 @@ tier-skip rule already forbids a component from hardcoding a duration — it mus
 token, so retuning a primitive restyles the whole system. **Reduced motion is a functional variant**:
 a `@media (prefers-reduced-motion: reduce)` block in `semantic.css` redefines the intent tokens by role
 (Essential / Helpful / Decorative / Continuous) rather than zeroing them, so essential changes stay
-legible. See [docs/decisions.md](docs/decisions.md) ADR-14.
+legible. See [docs/decisions.md](../../docs/decisions.md) ADR-14.
 
 ## Consuming
 
@@ -127,7 +130,7 @@ legible. See [docs/decisions.md](docs/decisions.md) ADR-14.
 @import "@allison/tokens/components/button.css";   /* optional: only if you ship buttons          */
 ```
 
-You write the component's structural CSS and consume the hooks (see `demo/index.html`); the system
+You write the component's structural CSS and consume the hooks (see the demo in `../../apps/demo`); the system
 ships only the hooks. Override any instance from outside without a new token.
 
 Set the colour mode before first paint to avoid a flash — read `localStorage` synchronously in a
@@ -135,6 +138,6 @@ Set the colour mode before first paint to avoid a flash — read `localStorage` 
 
 ## Migration note
 
-This was a Style Dictionary + JSON pipeline until v0.2. See [docs/decisions.md](docs/decisions.md)
+This was a Style Dictionary + JSON pipeline until v0.2. See [docs/decisions.md](../../docs/decisions.md)
 ADR-12 for why it became pure CSS — the short version: SD was reimplementing the browser's runtime at
 build time for a web-only system, so deleting the build layer removed complexity instead of moving it.

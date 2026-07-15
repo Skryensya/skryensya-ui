@@ -1,0 +1,12 @@
+{
+  "name": "@allison/demo",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Live demo + design proposals. Consumes @allison/tokens as a workspace package.",
+  "scripts": {
+    "dev": "node serve.mjs"
+  },
+  "dependencies": {
+    "@allison/tokens": "workspace:*"
+  }
+}

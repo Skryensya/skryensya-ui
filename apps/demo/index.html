@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en" data-brand="default">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Token system — four orthogonal dimensions</title>
+
+  <!-- FOUC guard: set the colour-mode override BEFORE first paint, synchronously,
+       from localStorage. Without this the page flashes the OS default then snaps
+       to the saved theme. It reads/writes the SAME attributes the <select>s below do. -->
+  <script>
+    (function () {
+      var d = document.documentElement;
+      var s = JSON.parse(localStorage.getItem('ds') || '{}');
+      if (s.brand) d.setAttribute('data-brand', s.brand);
+      if (s.scheme) d.style.colorScheme = s.scheme;      // light | dark  (overrides `light dark`)
+      if (s.contrast) d.setAttribute('data-contrast', s.contrast);
+      if (s.density) d.style.setProperty('--ds-density', s.density);
+    })();
+  </script>
+
+  <!-- The one import every consumer needs: primitives (default brand) + semantic.
+       Hand-authored CSS — no build step. @layer inside makes import order irrelevant. -->
+  <link rel="stylesheet" href="node_modules/@allison/tokens/css/tokens.css" />
+  <!-- Opt-in extras. Order no longer matters — the overrides layer always wins. -->
+  <link rel="stylesheet" href="node_modules/@allison/tokens/css/brands/dusk.css" />
+  <link rel="stylesheet" href="node_modules/@allison/tokens/css/modes/hc.css" />
+  <!-- Opt-in component hooks. A consumer that ships no buttons never loads this. -->
+  <link rel="stylesheet" href="node_modules/@allison/tokens/css/components/button.css" />
+  <!-- Opt-in pattern: the shared state layer (hover/focus/pressed/selected/disabled). -->
+  <link rel="stylesheet" href="node_modules/@allison/tokens/css/patterns/state-layer.css" />
+
+  <style>
+    /* ── The consuming app writes THIS. The design system ships only the hooks above;
+         wiring them onto real properties is the app's job. This is the whole "solo
+         tokens, sin componentes" contract in ~20 lines. ── */
+    .ds-button {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: var(--ds-button-gap);
+      min-height: var(--ds-button-height);
+      padding-inline: var(--ds-button-padding-x);
+      border: var(--ds-button-border-width) solid var(--ds-button-border-color);
+      border-radius: var(--ds-button-radius);
+      background: var(--ds-button-bg);
+      color: var(--ds-button-fg);
+      font: var(--ds-button-font-weight) var(--ds-button-font-size)/1 var(--font-family-body);
+      box-shadow: var(--ds-button-shadow);
+      cursor: pointer;
+      transition: background var(--ds-button-transition-duration) linear;
+    }
+    .ds-button:hover  { background: var(--ds-button-bg-hover); }
+    .ds-button:active { background: var(--ds-button-bg-active); }
+    .ds-button:focus-visible {
+      outline: var(--ds-button-ring-width) solid var(--ds-button-ring-color);
+      outline-offset: var(--ds-button-ring-offset);
+    }
+    .ds-button[aria-disabled="true"] { cursor: not-allowed; }
+
+    /* Page chrome, itself built entirely from semantic tokens. */
+    body {
+      margin: 0; background: var(--color-bg-canvas); color: var(--color-text-primary);
+      font-family: var(--font-family-body); font-size: var(--font-size-body);
+      line-height: var(--font-line-height-body);
+    }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; flex-wrap: wrap; gap: var(--space-inline-lg); align-items: end;
+      padding: var(--space-inset-md) var(--space-inset-lg);
+      background: var(--color-bg-surface); border-bottom: 1px solid var(--color-border-subtle);
+      box-shadow: var(--elevation-raised);
+    }
+    header label { display: flex; flex-direction: column; gap: var(--space-inline-xs);
+      font-size: var(--font-size-body-sm); color: var(--color-text-secondary); }
+    header select {
+      min-height: var(--size-control-sm); padding-inline: var(--space-inset-sm);
+      border: 1px solid var(--color-border-default); border-radius: var(--radius-control);
+      background: var(--color-bg-surface-sunken); color: var(--color-text-primary);
+      font: inherit;
+    }
+    main { padding: var(--space-inset-xl); max-width: 60rem; margin-inline: auto; }
+    h1 { font-size: var(--font-size-heading-md); line-height: var(--font-line-height-heading); }
+    .muted { color: var(--color-text-secondary); }
+    section {
+      margin-top: var(--space-stack-lg); padding: var(--space-inset-lg);
+      background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-surface);
+    }
+    .row { display: flex; flex-wrap: wrap; gap: var(--space-inline-md); align-items: center;
+      margin-top: var(--space-stack-sm); }
+    code { font-family: var(--font-family-code); background: var(--color-bg-surface-sunken);
+      padding: 0 var(--space-inset-xs); border-radius: var(--scale-radius-sm); font-size: var(--font-size-body-sm); }
+    .callout { margin-top: var(--space-stack-md); padding: var(--space-inset-md);
+      background: var(--color-bg-accent-subtle); color: var(--color-text-primary);
+      border-left: 3px solid var(--color-border-accent); border-radius: var(--scale-radius-sm); }
+
+    /* Consumer-authored structural CSS for the state-layer demo — all tokens, no hardcoded
+       colours/opacities. The .ds-interactive class (from patterns/state-layer.css) supplies
+       the overlay + focus ring; these rules only lay out the components. */
+    .sl-list { margin-top: var(--space-stack-sm); border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-surface); overflow: hidden; }
+    .sl-item { display: flex; align-items: center; gap: var(--space-inline-sm);
+      min-height: var(--size-control-md); padding: 0 var(--space-inset-md);
+      color: var(--color-text-primary); text-decoration: none;
+      border-bottom: 1px solid var(--color-border-subtle); }
+    .sl-item:last-child { border-bottom: 0; }
+    .sl-item[aria-selected="true"] { color: var(--color-text-accent); font-weight: var(--font-weight-label); }
+    .sl-item[aria-disabled="true"] { color: var(--color-text-disabled); pointer-events: none; }
+    /* independent selected indicator — NOT the state layer */
+    .sl-dot { width: 8px; height: 8px; margin-left: auto; border-radius: var(--radius-pill);
+      background: var(--color-border-accent); }
+
+    .sl-check { display: inline-flex; align-items: center; gap: var(--space-inline-sm);
+      min-height: var(--size-control-md); padding: 0 var(--space-inset-sm);
+      border-radius: var(--radius-control); color: var(--color-text-primary); cursor: pointer; }
+    .sl-check[aria-disabled="true"] { color: var(--color-text-disabled); cursor: not-allowed; }
+    .sl-check input { position: absolute; opacity: 0; width: 0; height: 0; }
+    /* independent selected indicator — the box fills + shows a check */
+    .sl-box { width: 18px; height: 18px; border-radius: var(--scale-radius-sm);
+      border: 2px solid var(--color-border-strong); display: grid; place-items: center; }
+    .sl-check input:checked + .sl-box { background: var(--color-action-primary);
+      border-color: var(--color-action-primary); }
+    .sl-check input:checked + .sl-box::after { content: "✓"; color: var(--color-text-on-accent);
+      font-size: var(--font-size-body-sm); line-height: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong style="align-self:center;margin-right:auto">token system · live</strong>
+    <label>brand (tier 1)
+      <select id="brand">
+        <option value="default">default · blue</option>
+        <option value="dusk">dusk · violet</option>
+      </select>
+    </label>
+    <label>colour mode
+      <select id="scheme">
+        <option value="light">light</option>
+        <option value="dark">dark</option>
+      </select>
+    </label>
+    <label>contrast
+      <select id="contrast">
+        <option value="">normal</option>
+        <option value="high">high</option>
+      </select>
+    </label>
+    <label>density (tier 2)
+      <select id="density">
+        <option value="1">comfortable ×1</option>
+        <option value="0.8">compact ×0.8</option>
+        <option value="0.6">dense ×0.6</option>
+      </select>
+    </label>
+  </header>
+
+  <main>
+    <h1>Four dimensions, one component, zero re-authoring</h1>
+    <p class="muted">
+      Every control below is the same <code>.ds-button</code>. The four selectors above each
+      touch a <em>different layer</em> of the token graph — brand swaps tier-1 ramps, mode flips
+      <code>color-scheme</code> to pick the <code>light-dark()</code> slot, contrast overrides the
+      semantic colour block, density rescales tier-2 spacing. Because each dimension owns a
+      different layer, they <strong>compose</strong> instead of multiplying: there is no
+      <code>dark × dusk × compact</code> stylesheet anywhere — that combination is computed live.
+    </p>
+
+    <section>
+      <strong>Variants</strong> — the group segment is dropped from the hook name; specificity picks the winner.
+      <div class="row">
+        <button class="ds-button" data-variant="primary">Primary</button>
+        <button class="ds-button">Neutral</button>
+        <button class="ds-button" data-variant="danger">Danger</button>
+        <button class="ds-button" data-variant="ghost">Ghost</button>
+        <button class="ds-button" data-variant="primary" aria-disabled="true">Disabled</button>
+      </div>
+    </section>
+
+    <section>
+      <strong>Sizes</strong> — heights carry the WCAG floor. Drag density to <code>×0.6</code>:
+      the small button stops shrinking at 24px while padding keeps compacting.
+      <div class="row">
+        <button class="ds-button" data-variant="primary" data-size="sm">Small</button>
+        <button class="ds-button" data-variant="primary">Medium</button>
+        <button class="ds-button" data-variant="primary" data-size="lg">Large</button>
+      </div>
+    </section>
+
+    <section>
+      <strong>External override</strong> — the consumer reaches in and reskins one instance,
+      no new token required: <code>.override { --ds-button-bg: rebeccapurple }</code>.
+      <div class="row">
+        <button class="ds-button" data-variant="primary" style="--ds-button-bg: rebeccapurple; --ds-button-bg-hover:#5b21b6; --ds-button-fg:#fff">Overridden</button>
+      </div>
+      <div class="callout">
+        Switch to <strong>dark</strong> and watch the primary button's <em>text</em> flip from
+        white to near-black. That is <code>color.text.on-accent</code> doing its one job —
+        the single token most systems get wrong, and the reason a naive palette invert breaks.
+      </div>
+    </section>
+
+    <section>
+      <strong>State layers</strong> — hover / focus / press these. Every row is
+      <code>.ds-interactive</code>: one <code>currentColor</code> overlay at a per-state opacity,
+      a single active layer (never summed), plus an independent focus ring. Try dark, dusk, and
+      high-contrast — the same overlay tracks the content colour of each context.
+      <nav class="sl-list" aria-label="demo navigation">
+        <a class="sl-item ds-interactive" href="#" aria-selected="true">Selected item <span class="sl-dot" aria-hidden="true"></span></a>
+        <a class="sl-item ds-interactive" href="#">Hover, focus or press me</a>
+        <a class="sl-item ds-interactive" href="#">Another item</a>
+        <a class="sl-item ds-interactive" href="#" aria-disabled="true" tabindex="-1">Disabled item</a>
+      </nav>
+      <div class="row" style="margin-top: var(--space-stack-md)">
+        <label class="sl-check ds-interactive">
+          <input type="checkbox" checked /> <span class="sl-box" aria-hidden="true"></span> Checked
+        </label>
+        <label class="sl-check ds-interactive">
+          <input type="checkbox" /> <span class="sl-box" aria-hidden="true"></span> Unchecked
+        </label>
+        <label class="sl-check ds-interactive" aria-disabled="true">
+          <input type="checkbox" disabled /> <span class="sl-box" aria-hidden="true"></span> Disabled
+        </label>
+      </div>
+      <div class="callout">
+        Selection is carried by the check mark and the persistent tint together — so when hover
+        <em>replaces</em> the selected layer, the item still reads as selected. That is the a11y
+        rule in action: the state layer is never the only signal.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    var d = document.documentElement;
+    var save = function (patch) {
+      var s = JSON.parse(localStorage.getItem('ds') || '{}');
+      Object.assign(s, patch); localStorage.setItem('ds', JSON.stringify(s));
+    };
+    var s = JSON.parse(localStorage.getItem('ds') || '{}');
+    // Reflect persisted state into the controls.
+    brand.value = s.brand || 'default';
+    scheme.value = s.scheme || 'light';
+    contrast.value = s.contrast || '';
+    density.value = s.density || '1';
+
+    brand.onchange = function () { d.setAttribute('data-brand', this.value); save({ brand: this.value }); };
+    scheme.onchange = function () { d.style.colorScheme = this.value; save({ scheme: this.value }); };
+    contrast.onchange = function () {
+      this.value ? d.setAttribute('data-contrast', this.value) : d.removeAttribute('data-contrast');
+      save({ contrast: this.value });
+    };
+    density.onchange = function () { d.style.setProperty('--ds-density', this.value); save({ density: this.value }); };
+  </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+/*
+ * MODE: high contrast — the third colour mode.
+ *
+ * light-dark() holds only two colours, so high contrast cannot be a third argument. It is
+ * an override block that RE-DECLARES the mode-aware semantic tokens with the hc-* ramp
+ * positions — still inside light-dark(), so it composes with the light/dark axis (you get
+ * hc-light AND hc-dark for free).
+ *
+ * Two triggers, same declarations:
+ *   [data-contrast="high"]        explicit opt-in
+ *   @media (prefers-contrast: more) honours the OS, but only when the user hasn't set the
+ *                                   attribute (:root:not([data-contrast])).
+ *
+ * CSS has no macro, so the two selectors carry identical bodies. The validator checks that
+ * this set matches the base semantic mode-aware tokens exactly (mode completeness), which is
+ * what stops the two copies from silently drifting.
+ */
+@layer overrides {
+  [data-contrast="high"] {
+    --color-bg-canvas: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
+    --color-bg-surface: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
+    --color-bg-surface-raised: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-950));
+    --color-bg-surface-sunken: light-dark(var(--ramp-neutral-100), var(--ramp-neutral-1000));
+    --color-bg-inverse: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
+    --color-bg-accent-subtle: light-dark(var(--ramp-accent-100), var(--ramp-accent-950));
+    --color-bg-danger-subtle: light-dark(var(--ramp-danger-100), var(--ramp-danger-950));
+    --color-bg-success-subtle: light-dark(var(--ramp-success-100), var(--ramp-success-950));
+    --color-bg-warning-subtle: light-dark(var(--ramp-warning-100), var(--ramp-warning-950));
+    --color-text-primary: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
+    --color-text-secondary: light-dark(var(--ramp-neutral-800), var(--ramp-neutral-200));
+    --color-text-tertiary: light-dark(var(--ramp-neutral-700), var(--ramp-neutral-300));
+    --color-text-disabled: light-dark(var(--ramp-neutral-500), var(--ramp-neutral-500));
+    --color-text-inverse: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
+    --color-text-on-accent: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
+    --color-text-accent: light-dark(var(--ramp-accent-900), var(--ramp-accent-200));
+    --color-text-danger: light-dark(var(--ramp-danger-900), var(--ramp-danger-200));
+    --color-text-success: light-dark(var(--ramp-success-900), var(--ramp-success-200));
+    --color-text-warning: light-dark(var(--ramp-warning-900), var(--ramp-warning-200));
+    --color-border-subtle: light-dark(var(--ramp-neutral-400), var(--ramp-neutral-600));
+    --color-border-default: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
+    --color-border-strong: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
+    --color-border-accent: light-dark(var(--ramp-accent-800), var(--ramp-accent-300));
+    --color-border-danger: light-dark(var(--ramp-danger-800), var(--ramp-danger-300));
+    --color-border-focus: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
+    --color-action-primary: light-dark(var(--ramp-accent-800), var(--ramp-accent-300));
+    --color-action-primary-hover: light-dark(var(--ramp-accent-900), var(--ramp-accent-200));
+    --color-action-primary-active: light-dark(var(--ramp-accent-950), var(--ramp-accent-100));
+    --color-action-neutral: light-dark(var(--ramp-neutral-200), var(--ramp-neutral-800));
+    --color-action-neutral-hover: light-dark(var(--ramp-neutral-300), var(--ramp-neutral-700));
+    --color-action-neutral-active: light-dark(var(--ramp-neutral-400), var(--ramp-neutral-600));
+    --color-action-danger: light-dark(var(--ramp-danger-800), var(--ramp-danger-300));
+    --color-action-danger-hover: light-dark(var(--ramp-danger-900), var(--ramp-danger-200));
+    --color-action-danger-active: light-dark(var(--ramp-danger-950), var(--ramp-danger-100));
+    --color-action-disabled: light-dark(var(--ramp-neutral-200), var(--ramp-neutral-800));
+    --shadow-sm: light-dark(oklch(0% 0 0 / 0.24), oklch(0% 0 0 / 0.8));
+    --shadow-md: light-dark(oklch(0% 0 0 / 0.3), oklch(0% 0 0 / 0.88));
+    --shadow-lg: light-dark(oklch(0% 0 0 / 0.38), oklch(0% 0 0 / 0.92));
+    /* state layers must read clearly in high contrast — roughly double the opacities and
+     * thicken the focus ring. These override the base numbers from semantic.css. */
+    --interaction-hover-opacity: 0.12;
+    --interaction-focus-opacity: 0.16;
+    --interaction-pressed-opacity: 0.2;
+    --interaction-selected-opacity: 0.16;
+    --interaction-dragged-opacity: 0.24;
+    --interaction-focus-ring-width: 3px;
+  }
+
+  @media (prefers-contrast: more) {
+    :root:not([data-contrast]) {
+      --color-bg-canvas: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
+      --color-bg-surface: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
+      --color-bg-surface-raised: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-950));
+      --color-bg-surface-sunken: light-dark(var(--ramp-neutral-100), var(--ramp-neutral-1000));
+      --color-bg-inverse: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
+      --color-bg-accent-subtle: light-dark(var(--ramp-accent-100), var(--ramp-accent-950));
+      --color-bg-danger-subtle: light-dark(var(--ramp-danger-100), var(--ramp-danger-950));
+      --color-bg-success-subtle: light-dark(var(--ramp-success-100), var(--ramp-success-950));
+      --color-bg-warning-subtle: light-dark(var(--ramp-warning-100), var(--ramp-warning-950));
+      --color-text-primary: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
+      --color-text-secondary: light-dark(var(--ramp-neutral-800), var(--ramp-neutral-200));
+      --color-text-tertiary: light-dark(var(--ramp-neutral-700), var(--ramp-neutral-300));
+      --color-text-disabled: light-dark(var(--ramp-neutral-500), var(--ramp-neutral-500));
+      --color-text-inverse: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
+      --color-text-on-accent: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
+      --color-text-accent: light-dark(var(--ramp-accent-900), var(--ramp-accent-200));
+      --color-text-danger: light-dark(var(--ramp-danger-900), var(--ramp-danger-200));
+      --color-text-success: light-dark(var(--ramp-success-900), var(--ramp-success-200));
+      --color-text-warning: light-dark(var(--ramp-warning-900), var(--ramp-warning-200));
+      --color-border-subtle: light-dark(var(--ramp-neutral-400), var(--ramp-neutral-600));
+      --color-border-default: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
+      --color-border-strong: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
+      --color-border-accent: light-dark(var(--ramp-accent-800), var(--ramp-accent-300));
+      --color-border-danger: light-dark(var(--ramp-danger-800), var(--ramp-danger-300));
+      --color-border-focus: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
+      --color-action-primary: light-dark(var(--ramp-accent-800), var(--ramp-accent-300));
+      --color-action-primary-hover: light-dark(var(--ramp-accent-900), var(--ramp-accent-200));
+      --color-action-primary-active: light-dark(var(--ramp-accent-950), var(--ramp-accent-100));
+      --color-action-neutral: light-dark(var(--ramp-neutral-200), var(--ramp-neutral-800));
+      --color-action-neutral-hover: light-dark(var(--ramp-neutral-300), var(--ramp-neutral-700));
+      --color-action-neutral-active: light-dark(var(--ramp-neutral-400), var(--ramp-neutral-600));
+      --color-action-danger: light-dark(var(--ramp-danger-800), var(--ramp-danger-300));
+      --color-action-danger-hover: light-dark(var(--ramp-danger-900), var(--ramp-danger-200));
+      --color-action-danger-active: light-dark(var(--ramp-danger-950), var(--ramp-danger-100));
+      --color-action-disabled: light-dark(var(--ramp-neutral-200), var(--ramp-neutral-800));
+      --shadow-sm: light-dark(oklch(0% 0 0 / 0.24), oklch(0% 0 0 / 0.8));
+      --shadow-md: light-dark(oklch(0% 0 0 / 0.3), oklch(0% 0 0 / 0.88));
+      --shadow-lg: light-dark(oklch(0% 0 0 / 0.38), oklch(0% 0 0 / 0.92));
+      --interaction-hover-opacity: 0.12;
+      --interaction-focus-opacity: 0.16;
+      --interaction-pressed-opacity: 0.2;
+      --interaction-selected-opacity: 0.16;
+      --interaction-dragged-opacity: 0.24;
+      --interaction-focus-ring-width: 3px;
+    }
+  }
+}

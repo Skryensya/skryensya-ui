@@ -25,6 +25,7 @@ Status legend: **Accepted** (in effect) · **Superseded by ADR-NN** · **Revisit
 | 12 | Author the tiers in pure CSS; drop Style Dictionary | Accepted |
 | 13 | State layers use `currentColor` + a single-active-layer priority ladder | Accepted |
 | 14 | Motion is intent-token-driven; reduced motion is a mode, not a kill switch | Accepted |
+| 15 | Turborepo + pnpm workspaces; base styles are their own package | Accepted |
 
 ---
 
@@ -495,3 +496,47 @@ consume, no component code changes — the reduction is systemic, not per-compon
 system enforces intent usage without a new rule; reduced motion is complete and legible by default.
 Component motion aliases (`dialog.motion.enter`) are allowed but must consume intent tokens, never
 primitives — the same tier-skip rule keeps them honest.
+
+## ADR-15 — Turborepo + pnpm workspaces; base styles are their own package
+
+**Status:** Accepted
+
+**Context.** The project had grown from a token package into a token package *plus* a live demo *plus*
+two design proposals. Keeping them in one flat folder blurred two different things: `@allison/tokens`
+is meant to be a clean, independently-publishable, zero-runtime-dependency artifact, while the demo and
+proposals are consumers that should prove the package works *as a package*. A flat repo let the demo
+reach the CSS via `../css/…` relative paths — which is exactly the shortcut a real consumer can't take,
+so it proved nothing.
+
+**Decision.** Restructure as a Turborepo with pnpm workspaces:
+- `packages/tokens` — the base styles. Stays zero-runtime-dependency and publishable; the `css/` folder
+  is the artifact, `scripts/lint.mjs` the validator. Unchanged in substance, just relocated.
+- `apps/demo` — the live demo + proposals. Declares `"@allison/tokens": "workspace:*"`, so pnpm
+  symlinks the package into `apps/demo/node_modules/@allison/tokens`, and the demo references
+  `node_modules/@allison/tokens/css/…` — real package resolution, not a repo-relative path.
+- `turbo.json` — a `lint`/`check`/`dev` pipeline. `lint` is cached on the token source, so unchanged
+  runs replay in milliseconds.
+
+**Why pnpm.** It's the Turborepo default, and workspace deps get a *direct* symlink (not a store
+indirection), which is what lets the static demo resolve the package over `file://` and `http://`
+without a bundler. npm workspaces would also work; pnpm is idiomatic and the symlink semantics are
+cleaner for a build-free static consumer.
+
+**Why the tokens package keeps zero runtime deps.** The monorepo *tooling* (turbo, pnpm) lives at the
+root and in devDependencies; it never enters `packages/tokens`, whose `dependencies` stay empty. The
+publish story is unchanged: `npm publish` from `packages/tokens` ships only `css/`.
+
+**Alternatives considered.**
+- *Stay flat.* Rejected: can't demonstrate real package consumption, and mixes the publishable artifact
+  with its consumers.
+- *npm/yarn workspaces.* Viable; rejected only for pnpm's cleaner workspace symlinks and Turborepo
+  defaults.
+- *Add a Vite app for the demo.* Rejected: a bundler would pull the demo away from the "pure CSS,
+  consumed directly" story and add dependencies. A ~20-line zero-dep static server (`apps/demo/serve.mjs`)
+  serves it and follows the workspace symlink, keeping the ethos intact.
+
+**Consequences.** The base styles are a standalone package with a validated, cached CI task; the demo
+proves consumption through `node_modules`; `docs/` stays at the root as repo-wide documentation. The
+cost is the usual monorepo overhead — a `pnpm install` is now required before the demo can resolve the
+package, where the flat repo needed nothing. For a package whose whole point is being consumed cleanly,
+that trade is right.

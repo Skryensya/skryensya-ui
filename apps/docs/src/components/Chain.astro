@@ -1,0 +1,55 @@
+---
+/*
+ * One token's alias chain, drawn as a tree, with every rung's used value live.
+ *
+ * This is the clearest thing the site can show: the chain IS the architecture. A reader who sees
+ * --ds-button-bg → --color-action-primary → --ramp-accent-600 understands the three tiers at a
+ * glance, and can watch the bottom rung swap hue when they change brand while the names above it
+ * never move. That is ADR-3's orthogonality, demonstrated rather than claimed.
+ *
+ * It branches at every mode-aware token, because light-dark() has two parents and picking one
+ * would draw the light path while the reader might be in dark mode.
+ */
+import { chainOf } from "../lib/tokens";
+import ChainRung from "./ChainRung.astro";
+
+interface Props {
+  token: string;
+  caption?: string;
+}
+
+const { token, caption } = Astro.props;
+const root = chainOf(token);
+
+if (!root) throw new Error(`Chain: ${token} no existe en el CSS del sistema`);
+---
+
+<div class="chain">
+  {caption && <p class="chain__caption">{caption}</p>}
+  <ul class="chain__list">
+    <ChainRung node={root} />
+  </ul>
+</div>
+
+<style>
+  .chain {
+    margin-block: var(--space-stack-md);
+    padding: var(--space-inset-md);
+    background: var(--color-bg-surface-sunken);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-surface);
+  }
+
+  .chain__caption {
+    margin: 0 0 var(--space-stack-sm);
+    font-size: var(--font-size-body-sm);
+    color: var(--color-text-secondary);
+    max-width: none;
+  }
+
+  .chain__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

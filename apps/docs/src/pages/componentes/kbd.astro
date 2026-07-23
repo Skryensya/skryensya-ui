@@ -1,0 +1,101 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+
+/* The skin is already global (Base.astro imports it for the ⌘K badge), so this page needs no import. */
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<kbd class="ds-kbd">⌘</kbd>
+<kbd class="ds-kbd">K</kbd>
+<kbd class="ds-kbd">Esc</kbd>
+<kbd class="ds-kbd">↵</kbd>`;
+
+const react = `import { Kbd } from "@skryensya/react/kbd";
+
+<Kbd>⌘</Kbd>
+<Kbd>K</Kbd>
+<Kbd>Esc</Kbd>
+<Kbd>↵</Kbd>;`;
+---
+
+<Base title="Kbd" description="Kbd: una tecla dibujada, el <kbd> nativo con styling hooks y wrapper React.">
+  <h1>Kbd</h1>
+  <p class="lede">
+    Kbd es una <strong>tecla dibujada</strong>: el <code>&lt;kbd&gt;</code> nativo con el aspecto de una
+    tecla física. La usas para mostrar un atajo, el ⌘K del buscador de arriba, el Esc en el pie de una
+    paleta. Es estática, como Badge: sin estado, sin máquina, sin enhancer vanilla. La semántica del
+    <code>&lt;kbd&gt;</code> es de la plataforma; el componente solo aporta la pinta.
+  </p>
+
+  <h2>Demo</h2>
+  <Showcase html={html} react={react} label="Kbd" />
+
+  <h2>Un glifo se lee cuadrado</h2>
+  <p>
+    Una sola tecla (<kbd class="ds-kbd">K</kbd>, <kbd class="ds-kbd">⌘</kbd>,
+    <kbd class="ds-kbd">↑</kbd>) toma un mínimo cuadrado en vez de quedar como una astilla; una etiqueta
+    más larga (<kbd class="ds-kbd">Esc</kbd>, <kbd class="ds-kbd">Enter</kbd>) crece con su texto. El
+    mínimo es <code>--ds-kbd-min-size</code>, relativo a la propia tipografía de la tecla, así que se
+    mantiene cuadrada a cualquier tamaño.
+  </p>
+
+  <h2>El estado apretado</h2>
+  <p>
+    Kbd no es un control, no se clickea, así que su único estado <strong>refleja</strong> un evento
+    externo: <code>data-pressed</code>, que lo prende mientras su tecla física está apretada, igual que
+    un componente refleja el <code>data-state</code> de una máquina. Lo escribe quien mira el teclado,
+    no el kbd. Prendida, la tecla se pone en acento, se hunde un pixel y pierde su sombra, como una
+    tecla real que baja. La transición usa la intención <code>feedback</code>
+    (<a href="/motion">motion</a>).
+  </p>
+  <p>
+    Pruébalo: aprieta cualquiera de estas y se prende sola; mantén <kbd class="ds-kbd" data-key="meta"
+    >⌘</kbd> y suma otra para ver la combinación.
+  </p>
+  <div class="key-echo" role="group" aria-label="Teclas que reaccionan al teclado">
+    <kbd class="ds-kbd" data-key="meta">⌘</kbd>
+    <kbd class="ds-kbd" data-key="control">Ctrl</kbd>
+    <kbd class="ds-kbd" data-key="shift">⇧</kbd>
+    <kbd class="ds-kbd" data-key="k">K</kbd>
+    <kbd class="ds-kbd" data-key="escape">Esc</kbd>
+    <kbd class="ds-kbd" data-key="enter">↵</kbd>
+    <kbd class="ds-kbd" data-key="arrowup">↑</kbd>
+    <kbd class="ds-kbd" data-key="arrowdown">↓</kbd>
+    <kbd class="ds-kbd" data-key="/">/</kbd>
+  </div>
+  <p>
+    Un acorde entero también, como una unidad, aprieta <kbd class="ds-kbd" data-hotkey="mod+enter"
+    >⌘ ↵</kbd> y se prende cuando la combinación completa está abajo:
+  </p>
+  <p>
+    Lo pone un script chico de la doc mientras la tecla física está apretada; para el acorde usa el
+    <code>matchesHotkey</code> del <a href="/hotkey">primitivo de hotkey</a>, el mismo matcher que el
+    atajo. El badge ⌘K del buscador de arriba nace de esa pareja: <code>formatHotkey</code> da el texto
+    por plataforma, Kbd le pone la caja.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <StylingHooks groups={[{ file: "components/kbd.css", probe: "ds-kbd" }]} />
+</Base>
+
+<style>
+  .key-echo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-sm);
+    align-items: center;
+    margin-block: var(--space-stack-md);
+  }
+</style>
+
+<script>
+  import { initKeyEcho } from "../../scripts/key-echo";
+  initKeyEcho();
+</script>

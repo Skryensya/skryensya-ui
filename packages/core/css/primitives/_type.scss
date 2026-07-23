@@ -1,0 +1,26 @@
+@mixin tokens {
+  /* ── scale: type ──────────────────────────────────────────────── */
+  --scale-font-size-xs: 12px;
+  --scale-font-size-sm: 14px;
+  --scale-font-size-md: 16px;
+  --scale-font-size-lg: 18px;
+  --scale-font-size-xl: 20px;
+  --scale-font-size-2xl: 24px;
+  --scale-font-size-3xl: 30px;
+  --scale-font-size-4xl: 36px;
+  --scale-font-size-5xl: 48px;
+  --scale-font-size-6xl: 60px;
+  /* Line-height tightens as text grows: a 60px display wants far less relative leading than 14px
+   * body. Five rungs, so every size role can pair with the one that fits it. */
+  --scale-line-height-tighter: 1.1; /* display */
+  --scale-line-height-tight: 1.2; /* large headings */
+  --scale-line-height-snug: 1.35; /* small/medium headings */
+  --scale-line-height-normal: 1.5; /* body */
+  --scale-line-height-relaxed: 1.7; /* long-form reading */
+  --scale-font-weight-regular: 400;
+  --scale-font-weight-medium: 500;
+  --scale-font-weight-semibold: 600;
+  --scale-font-weight-bold: 700;
+  --scale-font-family-sans: Inter, system-ui, sans-serif;
+  --scale-font-family-mono: "JetBrains Mono", ui-monospace, monospace;
+}

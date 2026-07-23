@@ -1,0 +1,26 @@
+/*
+ * TIER 3, NAVBAR (opt-in styling hooks)
+ *
+ * No machine: a navbar is `<nav>`, a list and links, all of which the platform already ships
+ * (decision 8).
+ *
+ * The bar only. The links inside are the `nav-list` pattern in its horizontal variant, the same
+ * structure the sidebar hosts, shipped once instead of twice (decision 17). Nothing below names a
+ * link, so nothing below can drift from the sidebar's.
+ */
+@layer components {
+  .ds-navbar {
+    --ds-navbar-bg: var(--color-bg-surface);
+    --ds-navbar-fg: var(--color-text-primary);
+    --ds-navbar-border-color: var(--color-border-subtle);
+    --ds-navbar-min-height: var(--size-control-lg);
+    --ds-navbar-padding-x: var(--space-inset-lg);
+    --ds-navbar-padding-y: var(--space-inset-sm);
+    --ds-navbar-gap: var(--space-inline-lg);
+    --ds-navbar-elevation: var(--elevation-raised);
+    --ds-navbar-brand-fg: var(--color-text-primary);
+    --ds-navbar-brand-font-size: var(--font-size-body-lg);
+    --ds-navbar-brand-font-weight: var(--font-weight-heading);
+    --ds-navbar-actions-gap: var(--space-inline-sm);
+  }
+}

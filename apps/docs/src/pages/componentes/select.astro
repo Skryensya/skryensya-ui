@@ -1,0 +1,270 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const styles = `@import "@skryensya/core/components/select.css";`;
+
+const nativeInstall = `pnpm add @skryensya/core`;
+
+const selectHtml = `<div
+  class="ds-select"
+  data-ds-select
+  id="plan"
+  data-value="starter"
+>
+  <label class="ds-select__label" data-ds-select-label>
+    Plan
+  </label>
+
+  <button
+    class="ds-select__trigger ds-interactive"
+    data-ds-select-trigger
+    type="button"
+  >
+    <span class="ds-select__value" data-ds-select-value>
+      Starter
+    </span>
+    <span
+      class="ds-select__indicator"
+      data-ds-select-indicator
+      aria-hidden="true"
+    >
+      <span data-state="closed">
+        <span data-ds-icon="chevron-down"></span>
+      </span>
+      <span data-state="open">
+        <span data-ds-icon="chevron-up"></span>
+      </span>
+    </span>
+  </button>
+
+  <div
+    class="ds-select__positioner"
+    data-ds-select-positioner
+  >
+    <ul class="ds-select__content" data-ds-select-content>
+      <li
+        class="ds-select__item ds-interactive"
+        data-ds-select-item
+        data-value="starter"
+      >
+        <span
+          class="ds-select__item-text"
+          data-ds-select-item-text
+        >
+          Starter
+        </span>
+        <span
+          class="ds-select__item-indicator"
+          data-ds-select-item-indicator
+          aria-hidden="true"
+        >
+          <span data-ds-icon="check"></span>
+        </span>
+      </li>
+      <li
+        class="ds-select__item ds-interactive"
+        data-ds-select-item
+        data-value="pro"
+      >
+        <span
+          class="ds-select__item-text"
+          data-ds-select-item-text
+        >
+          Pro
+        </span>
+        <span
+          class="ds-select__item-indicator"
+          data-ds-select-item-indicator
+          aria-hidden="true"
+        >
+          <span data-ds-icon="check"></span>
+        </span>
+      </li>
+      <li
+        class="ds-select__item ds-interactive"
+        data-ds-select-item
+        data-value="enterprise"
+      >
+        <span
+          class="ds-select__item-text"
+          data-ds-select-item-text
+        >
+          Enterprise
+        </span>
+        <span
+          class="ds-select__item-indicator"
+          data-ds-select-item-indicator
+          aria-hidden="true"
+        >
+          <span data-ds-icon="check"></span>
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>`;
+
+const js = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// Los iconos se autoran como placeholders <span data-ds-icon>;
+// mountIcons los reemplaza por el <svg> del set enlazado.
+mountIcons(document, lucideIcons);
+
+initComponents();`;
+
+const listen = `document
+  .getElementById("plan")
+  .addEventListener("ds-value-change", (event) => {
+    console.log(event.detail.value); // ["pro"]
+  });`;
+
+const forms = `<div
+  class="ds-select"
+  data-ds-select
+  id="plan"
+>
+  <!-- Opcional: hace que el Select se envíe en un form, y es lo
+       que queda sin JS. Sus <option> tienen que coincidir con
+       los items, o el enhancer tira. -->
+  <select data-ds-select-hidden name="plan">
+    <option value="starter">Starter</option>
+    <option value="pro">Pro</option>
+  </select>
+  …
+</div>`;
+
+const reactSelect = `import { Icon } from "@skryensya/react/icon";
+import { Select } from "@skryensya/react/select";
+
+<Select
+  label="Plan"
+  name="plan"
+  defaultValue={["starter"]}
+  indicator={<Icon name="chevron-down" />}
+  openIndicator={<Icon name="chevron-up" />}
+  itemIndicator={<Icon name="check" />}
+  options={[
+    { value: "starter", label: "Starter" },
+    { value: "pro", label: "Pro" },
+    { value: "enterprise", label: "Enterprise" },
+  ]}
+/>;`;
+
+const nativeSelectHtml = `<div class="ds-stack" data-gap="xs">
+  <label for="native-plan">Plan</label>
+  <select class="ds-select-native" id="native-plan" name="plan">
+    <option value="starter">Starter</option>
+    <option value="pro">Pro</option>
+    <option value="enterprise">Enterprise</option>
+  </select>
+</div>`;
+
+const nativeReactSelect = `import { NativeSelect } from "@skryensya/react/select-native";
+
+<NativeSelect
+  aria-label="Plan"
+  name="plan"
+  options={[
+    { value: "starter", label: "Starter" },
+    { value: "pro", label: "Pro" },
+  ]}
+/>;`;
+---
+
+<Base
+  title="Select"
+  description="Select: un listbox enhanced con máquina, para Vanilla y React."
+>
+  <h1>Select</h1>
+  <p class="lede">
+    El selector principal cuando la interacción necesita typeahead, highlight, popup controlado y
+    posicionamiento. <code>Select</code> comparte su contrato de parts en
+    <code>@skryensya/vanilla</code> y <code>@skryensya/react</code>; la máquina de cada binding es un
+    detalle interno.
+  </p>
+
+  <p>
+    Para una elección estándar de formulario, usa el
+    <a href="#select-nativo">Select nativo</a> documentado al final: no carga un enhancer, conserva
+    el comportamiento de plataforma y estiliza su picker mediante mejora progresiva.
+  </p>
+
+  <h2>Demo</h2>
+  <Showcase html={selectHtml} react={reactSelect} label="Select enhanced" />
+  <p>
+    La densidad compacta el espacio alrededor del selector, no sus objetivos táctiles: el trigger y
+    cada opción conservan un mínimo de <code>44px</code> de alto.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+  <CodeBlock code={styles} label="tu CSS" lang="css" />
+
+  <h2>HTML autorado</h2>
+  <p>
+    Los items <strong>son</strong> la colección: el enhancer los lee del DOM, igual que tabs lee sus
+    triggers. Cada <code>data-ds-select-item</code> necesita un <code>data-value</code>. El markup
+    completo está en la pestaña <strong>Vanilla</strong> de la demo.
+  </p>
+
+  <h2>Inicializar Vanilla</h2>
+  <CodeBlock code={js} label="tu JavaScript" />
+
+  <h2>Escuchar el cambio</h2>
+  <CodeBlock code={listen} label="tu JavaScript" />
+
+  <h2>Formularios y fallback sin JavaScript</h2>
+  <CodeBlock code={forms} label="tu HTML" />
+
+  <h2>Contrato enhanced</h2>
+  <ul>
+    <li>La raíz lleva <code>data-ds-select</code> y la anatomía de parts documentada.</li>
+    <li>El enhancer no renderiza markup ni inventa clases; sólo conecta los nodos autorados.</li>
+    <li>El texto del valor lo posee la máquina; placeholder, opciones e ids siguen siendo del consumidor.</li>
+    <li>React renderiza el mismo contrato y no hidrata el markup Vanilla.</li>
+  </ul>
+
+  <StylingHooks groups={[{ file: "components/select.css", probe: "ds-select" }]} />
+
+  <h2>Select nativo</h2>
+  <p class="lede">
+    Es un <code>&lt;select&gt;</code> real: la selección, el teclado, el envío de formularios y la
+    accesibilidad siguen perteneciendo al navegador. Allison aplica
+    <code>ds-select-native</code>; no hay <code>data-ds-*</code>, máquina ni paquete
+    <code>@skryensya/vanilla</code>.
+  </p>
+  <p>
+    Úsalo para una elección estándar. Elige el Select enhanced sólo cuando necesites su colección
+    controlada, markup de items, posicionamiento o evento <code>ds-value-change</code>; la apariencia
+    ya no es motivo para reemplazar el control nativo.
+  </p>
+  <Showcase html={nativeSelectHtml} react={nativeReactSelect} label="Select nativo" />
+
+  <h3>Mejora progresiva</h3>
+  <p>
+    Si el navegador soporta <code>appearance: base-select</code> y
+    <code>::picker(select)</code>, Core aplica al campo, al picker y a sus opciones la misma
+    superficie, espaciado, estados e iconos que usa Select. Los demás navegadores ignoran ese bloque
+    y conservan el popup clásico del sistema operativo. El HTML y el comportamiento no cambian.
+  </p>
+
+  <h3>Instalar sólo el Select nativo</h3>
+  <CodeBlock code={nativeInstall} label="terminal" />
+  <CodeBlock code={styles} label="tu CSS" lang="css" />
+
+  <h3>Contrato nativo</h3>
+  <ul>
+    <li>Usa un <code>&lt;label&gt;</code> asociado o un nombre accesible equivalente.</li>
+    <li>La selección, el teclado y la serialización del <code>form</code> pertenecen al navegador.</li>
+    <li><code>disabled</code> es el atributo nativo; no se sustituye por estado JavaScript.</li>
+    <li>Customizable select uniforma el picker; el popup clásico sigue siendo el fallback.</li>
+  </ul>
+
+  <StylingHooks groups={[{ file: "components/select.css", probe: "ds-select-native" }]} />
+</Base>

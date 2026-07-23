@@ -1,0 +1,10 @@
+@mixin tokens {
+  /* ── scale: radius ────────────────────────────────────────────── */
+  --scale-radius-none: 0px;
+  --scale-radius-sm: 4px;
+  --scale-radius-md: 8px;
+  --scale-radius-lg: 12px;
+  --scale-radius-xl: 16px;
+  --scale-radius-2xl: 20px;
+  --scale-radius-full: 9999px;
+}

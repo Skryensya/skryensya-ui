@@ -1,0 +1,46 @@
+/*
+ * TIER 3, CHECKBOX (opt-in styling hooks)
+ *
+ * The control box is icon-sized; the label carries the hit area. Selected / disabled recolour the
+ * control via these hooks, TileCheckbox reads the same variables so both surfaces stay one recipe.
+ */
+@layer components {
+  .ds-checkbox,
+  .ds-tile:has(> input[type="checkbox"]) {
+    --ds-checkbox-control-size: var(--size-icon-md);
+    --ds-checkbox-gap: var(--space-inline-sm);
+    --ds-checkbox-bg: var(--color-bg-surface-raised);
+    --ds-checkbox-fg: var(--color-text-primary);
+    --ds-checkbox-border-color: var(--color-border-default);
+    --ds-checkbox-border-width: 1px;
+    --ds-checkbox-radius: var(--radius-control);
+    --ds-checkbox-selected-bg: var(--color-action-primary);
+    --ds-checkbox-selected-fg: var(--color-text-on-accent);
+    --ds-checkbox-selected-border-color: var(--color-action-primary);
+    --ds-checkbox-disabled-bg: var(--color-action-disabled);
+    --ds-checkbox-disabled-fg: var(--color-text-disabled);
+    --ds-checkbox-disabled-border-color: var(--color-border-subtle);
+    /* Label text is independent of the control fill, selected must not bleach the words. */
+    --ds-checkbox-label-fg: var(--color-text-primary);
+  }
+
+  .ds-checkbox:has(.ds-checkbox__input:checked),
+  .ds-checkbox:has(.ds-checkbox__input:indeterminate),
+  .ds-tile:has(> input[type="checkbox"]:checked),
+  .ds-tile:has(> input[type="checkbox"]:indeterminate),
+  .ds-tile[data-state="checked"],
+  .ds-tile[data-state="indeterminate"] {
+    --ds-checkbox-bg: var(--ds-checkbox-selected-bg);
+    --ds-checkbox-fg: var(--ds-checkbox-selected-fg);
+    --ds-checkbox-border-color: var(--ds-checkbox-selected-border-color);
+  }
+
+  .ds-checkbox:has(.ds-checkbox__input:disabled),
+  .ds-tile:has(> input[type="checkbox"]:disabled),
+  .ds-tile[data-disabled] {
+    --ds-checkbox-bg: var(--ds-checkbox-disabled-bg);
+    --ds-checkbox-fg: var(--ds-checkbox-disabled-fg);
+    --ds-checkbox-border-color: var(--ds-checkbox-disabled-border-color);
+    --ds-checkbox-label-fg: var(--color-text-disabled);
+  }
+}

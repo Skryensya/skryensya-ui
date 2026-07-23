@@ -1,0 +1,118 @@
+/*
+ * TIER 3, ALERT
+ *
+ * A persistent message in the document flow. Tone selects colour (or none): `neutral` is a plain
+ * panel; info/success/warning/danger paint status. Presentation selects the amount of visual weight
+ * without changing its live-region contract. The root owns layout, while content and optional actions
+ * remain explicit parts so the same anatomy works for a brief status, a recovery path and a
+ * dismissible banner.
+ */
+@layer components {
+  .ds-alert {
+    /* THREE HOOKS drive the whole colour story, background, foreground (text + icon via currentColor)
+     * and accent (the border, or the rail). A tone re-declares just these three; nothing below the
+     * hooks knows which tone it is. Neutral is the default recipe: a plain panel with no semantic
+     * colour until a status tone opts in. */
+    --ds-alert-bg: var(--color-bg-surface);
+    --ds-alert-fg: var(--color-text-primary);
+    --ds-alert-accent: var(--color-border-subtle);
+
+    /* LAYOUT: a grid of [content | actions]. `minmax(0, 1fr)` lets the content column shrink below its
+     * intrinsic width (long words wrap instead of pushing the actions off-screen); `auto` sizes the
+     * actions to their content. `align-items: start` tops-aligns the columns on the FIRST line, which is
+     * what the icon and dismiss rules below lean on to sit level with the title. */
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-inline-sm);
+    align-items: start;
+    /* The panel itself: inset padding, a hairline in the accent colour, the surface radius, and the two
+     * colour hooks painting fill and text. */
+    padding: var(--space-inset-md);
+    border: 1px solid var(--ds-alert-accent);
+    border-radius: var(--radius-surface);
+    background: var(--ds-alert-bg);
+    color: var(--ds-alert-fg);
+  }
+
+  /* With a leading icon present, a THIRD column opens at the start for it: [icon | content | actions].
+   * `:has()` means the markup declares the icon and the grid reshapes itself, no variant class. */
+  .ds-alert:has(.ds-alert__icon) {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  /* THE TONES, each swaps the three hooks to its own subtle recipe: a low-chroma fill, matching text,
+   * and a matching border. Everything else (layout, parts) is tone-agnostic and inherits from the base. */
+  .ds-alert[data-tone="neutral"] {
+    --ds-alert-bg: var(--color-bg-surface);
+    --ds-alert-fg: var(--color-text-primary);
+    --ds-alert-accent: var(--color-border-subtle);
+  }
+  .ds-alert[data-tone="info"] {
+    --ds-alert-bg: var(--color-bg-accent-subtle);
+    --ds-alert-fg: var(--color-text-accent);
+    --ds-alert-accent: var(--color-border-accent);
+  }
+  .ds-alert[data-tone="success"] {
+    --ds-alert-bg: var(--color-bg-success-subtle);
+    --ds-alert-fg: var(--color-text-success);
+    --ds-alert-accent: var(--color-border-success);
+  }
+  .ds-alert[data-tone="warning"] {
+    --ds-alert-bg: var(--color-bg-warning-subtle);
+    --ds-alert-fg: var(--color-text-warning);
+    --ds-alert-accent: var(--color-border-warning);
+  }
+  .ds-alert[data-tone="danger"] {
+    --ds-alert-bg: var(--color-bg-danger-subtle);
+    --ds-alert-fg: var(--color-text-danger);
+    --ds-alert-accent: var(--color-border-danger);
+  }
+
+  /* A rail speaks loudly without creating a second colour recipe. */
+  .ds-alert[data-presentation="accent"] {
+    border: 0;
+    border-inline-start: 4px solid var(--ds-alert-accent);
+    border-radius: 0;
+  }
+
+  /* A status embedded in already-structured content needs no second panel. It is a single line with no
+   * title, so its parts centre on that line rather than top-aligning like the multi-line banner does. */
+  .ds-alert[data-presentation="inline"] {
+    padding: var(--space-inset-xs) 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    align-items: center;
+  }
+
+  /* The icon is a glyph, so give it a one-line box and centre the glyph inside it. With the alert's
+   * `align-items: start`, that box top-aligns with the content, i.e. with the FIRST line (the title, or
+   * the lone description), so the glyph sits optically centred on that line instead of riding high or
+   * low as bare inline-flex left it, which is what made ▲/✓/ⓘ each land at a different height. */
+  .ds-alert__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    block-size: 1lh;
+    line-height: var(--font-line-height-body);
+  }
+  /* CONTENT is the middle column: an optional title stacked over the description. `min-inline-size: 0`
+   * is the load-bearing bit, a grid item defaults to its min-content width, so without it a long
+   * unbroken word would refuse to shrink and blow out the column instead of wrapping. Its own grid +
+   * `stack-xs` gap sets the title↔description rhythm. */
+  .ds-alert__content { min-inline-size: 0; display: grid; gap: var(--space-stack-xs); }
+  /* TITLE, body size at label weight: emphasised without becoming a heading (it is a status line, not a
+   * document landmark). It inherits the tone colour from the alert. */
+  .ds-alert__title { margin: 0; font-size: var(--font-size-body); font-weight: var(--font-weight-label); line-height: var(--font-line-height-body); }
+  /* DESCRIPTION, the supporting line: a step smaller and always secondary text, so it stays quiet under
+   * the tone-coloured title regardless of tone. */
+  .ds-alert__description { margin: 0; font-size: var(--font-size-body-sm); color: var(--color-text-secondary); line-height: var(--font-line-height-body); }
+  /* ACTIONS is the trailing column: a link and/or the dismiss, wrapped if narrow, pushed to the end and
+   * centred on the line. It holds whatever recovery/close controls the consumer supplies. */
+  .ds-alert__actions { display: inline-flex; flex-wrap: wrap; gap: var(--space-inline-xs); align-items: center; justify-content: end; }
+  /* A one-line square so the ✕ centres on the FIRST line, level with the icon and title, instead of a
+   * taller control box that dropped it a few pixels below them. 1lh ≈ the line's own height, which is
+   * the 24px WCAG target floor, so it stays a legitimate hit area while sitting exactly on the line. */
+  .ds-alert__dismiss { display: inline-flex; align-items: center; justify-content: center; inline-size: 1lh; block-size: 1lh; min-inline-size: 0; min-block-size: 0; border: 0; border-radius: var(--radius-control); background: transparent; color: inherit; font: inherit; line-height: var(--font-line-height-body); cursor: pointer; }
+  .ds-alert__dismiss:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+}

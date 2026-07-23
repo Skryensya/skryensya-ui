@@ -1,0 +1,36 @@
+/* TIER 3, SWITCH (opt-in styling hooks) */
+@layer components {
+  .ds-switch {
+    /* The track sits in the icon-size family (like the radio control), not the control-size family:
+     * the whole label is the hit area, so the visual toggle needn't carry the WCAG target itself. */
+    --ds-switch-block-size: var(--size-icon-lg);
+    --ds-switch-inline-size: calc(var(--size-icon-lg) * 1.75);
+    --ds-switch-padding: var(--space-inset-xs);
+    --ds-switch-gap: var(--space-inline-xs);
+    --ds-switch-bg: var(--color-bg-surface-sunken);
+    --ds-switch-fg: var(--color-text-primary);
+    --ds-switch-border-color: var(--color-border-default);
+    --ds-switch-border-width: 1px;
+    --ds-switch-thumb-bg: var(--color-bg-surface-raised);
+    --ds-switch-selected-bg: var(--color-action-primary);
+    --ds-switch-selected-border-color: var(--color-action-primary);
+    --ds-switch-selected-thumb-bg: var(--color-text-on-accent);
+    --ds-switch-disabled-bg: var(--color-action-disabled);
+    --ds-switch-disabled-fg: var(--color-text-disabled);
+    --ds-switch-disabled-border-color: var(--color-border-subtle);
+  }
+
+  /* Selected recolours the track and thumb only, never `--ds-switch-fg`, which is the LABEL text.
+   * Tinting the label with `on-accent` turned it dark-on-dark in dark themes. */
+  .ds-switch:has(.ds-switch__input:checked) {
+    --ds-switch-bg: var(--ds-switch-selected-bg);
+    --ds-switch-border-color: var(--ds-switch-selected-border-color);
+    --ds-switch-thumb-bg: var(--ds-switch-selected-thumb-bg);
+  }
+
+  .ds-switch:has(.ds-switch__input:disabled) {
+    --ds-switch-bg: var(--ds-switch-disabled-bg);
+    --ds-switch-fg: var(--ds-switch-disabled-fg);
+    --ds-switch-border-color: var(--ds-switch-disabled-border-color);
+  }
+}

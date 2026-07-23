@@ -1,0 +1,31 @@
+---
+import Base from "../layouts/Base.astro";
+import TokenTable from "../components/TokenTable.astro";
+---
+
+<Base
+  title="Referencia de tokens"
+  description="Todos los tokens del sistema: forma autoral leída del CSS en build, valor resuelto leído del navegador en vivo."
+>
+  <h1>Referencia de tokens</h1>
+  <p class="lede">
+    Cada token en sus dos formas: la que se escribió y la que resuelve ahora mismo, en las
+    dimensiones seleccionadas arriba.
+  </p>
+
+  <TokenTable />
+
+  <h2>Cómo leer los tiers</h2>
+  <p>
+    Las referencias apuntan <strong>hacia abajo o de costado, nunca hacia arriba</strong>, y tier 3
+    no puede saltar a tier 1. Eso no es convención: el validador lo hace cumplir. Un
+    <code>--ramp-*</code> dentro del CSS de un componente es la señal visible de que alguien se
+    saltó la capa semántica y rompió el modo oscuro para ese componente solo.
+  </p>
+  <p>
+    Los tokens <span class="ds-badge" data-tone="success">component</span> viven en el elemento, no
+    en <code>:root</code>, por eso se resuelven contra un elemento de prueba que lleva la clase. Si
+    aparece <em>no resuelto en este contexto</em>, no es un bug: es el scoping de tier 3 mostrándose. Ese
+    token no existe hasta que un elemento opta por él.
+  </p>
+</Base>

@@ -1,0 +1,242 @@
+{
+  "name": "@skryensya/react",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "React components that render @skryensya's shared markup contracts.",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./accordion": {
+      "types": "./src/components/accordion.tsx",
+      "default": "./src/components/accordion.tsx"
+    },
+    "./badge": {
+      "types": "./src/components/badge.tsx",
+      "default": "./src/components/badge.tsx"
+    },
+    "./alert": {
+      "types": "./src/components/alert.tsx",
+      "default": "./src/components/alert.tsx"
+    },
+    "./avatar": {
+      "types": "./src/components/avatar.tsx",
+      "default": "./src/components/avatar.tsx"
+    },
+    "./tag": {
+      "types": "./src/components/tag.tsx",
+      "default": "./src/components/tag.tsx"
+    },
+    "./progress": {
+      "types": "./src/components/progress.tsx",
+      "default": "./src/components/progress.tsx"
+    },
+    "./slider": {
+      "types": "./src/components/slider.tsx",
+      "default": "./src/components/slider.tsx"
+    },
+    "./segmented": {
+      "types": "./src/components/segmented.tsx",
+      "default": "./src/components/segmented.tsx"
+    },
+    "./steps": {
+      "types": "./src/components/steps.tsx",
+      "default": "./src/components/steps.tsx"
+    },
+    "./pagination": {
+      "types": "./src/components/pagination.tsx",
+      "default": "./src/components/pagination.tsx"
+    },
+    "./stat": {
+      "types": "./src/components/stat.tsx",
+      "default": "./src/components/stat.tsx"
+    },
+    "./button": {
+      "types": "./src/components/button.tsx",
+      "default": "./src/components/button.tsx"
+    },
+    "./field": {
+      "types": "./src/components/input.tsx",
+      "default": "./src/components/input.tsx"
+    },
+    "./layout": {
+      "types": "./src/components/layout.tsx",
+      "default": "./src/components/layout.tsx"
+    },
+    "./box": {
+      "types": "./src/components/layout.tsx",
+      "default": "./src/components/layout.tsx"
+    },
+    "./stack": {
+      "types": "./src/components/layout.tsx",
+      "default": "./src/components/layout.tsx"
+    },
+    "./inline": {
+      "types": "./src/components/layout.tsx",
+      "default": "./src/components/layout.tsx"
+    },
+    "./grid": {
+      "types": "./src/components/layout.tsx",
+      "default": "./src/components/layout.tsx"
+    },
+    "./wrapper": {
+      "types": "./src/components/layout.tsx",
+      "default": "./src/components/layout.tsx"
+    },
+    "./input": {
+      "types": "./src/components/input.tsx",
+      "default": "./src/components/input.tsx"
+    },
+    "./nav-list": {
+      "types": "./src/components/nav-list.tsx",
+      "default": "./src/components/nav-list.tsx"
+    },
+    "./navbar": {
+      "types": "./src/components/navbar.tsx",
+      "default": "./src/components/navbar.tsx"
+    },
+    "./icon": {
+      "types": "./src/components/icon.tsx",
+      "default": "./src/components/icon.tsx"
+    },
+    "./hotkey": {
+      "types": "./src/components/hotkey.ts",
+      "default": "./src/components/hotkey.ts"
+    },
+    "./kbd": {
+      "types": "./src/components/kbd.tsx",
+      "default": "./src/components/kbd.tsx"
+    },
+    "./select": {
+      "types": "./src/components/select.tsx",
+      "default": "./src/components/select.tsx"
+    },
+    "./select-native": {
+      "types": "./src/components/select-native.tsx",
+      "default": "./src/components/select-native.tsx"
+    },
+    "./selection": {
+      "types": "./src/components/selection.tsx",
+      "default": "./src/components/selection.tsx"
+    },
+    "./checkbox": {
+      "types": "./src/components/selection.tsx",
+      "default": "./src/components/selection.tsx"
+    },
+    "./radio-group": {
+      "types": "./src/components/selection.tsx",
+      "default": "./src/components/selection.tsx"
+    },
+    "./switch": {
+      "types": "./src/components/selection.tsx",
+      "default": "./src/components/selection.tsx"
+    },
+    "./sidebar": {
+      "types": "./src/components/sidebar.tsx",
+      "default": "./src/components/sidebar.tsx"
+    },
+    "./tabs": {
+      "types": "./src/components/tabs.tsx",
+      "default": "./src/components/tabs.tsx"
+    },
+    "./table": {
+      "types": "./src/components/table.tsx",
+      "default": "./src/components/table.tsx"
+    },
+    "./tile": {
+      "types": "./src/components/tile.tsx",
+      "default": "./src/components/tile.tsx"
+    },
+    "./tile-link": {
+      "types": "./src/components/tile.tsx",
+      "default": "./src/components/tile.tsx"
+    },
+    "./tile-button": {
+      "types": "./src/components/tile.tsx",
+      "default": "./src/components/tile.tsx"
+    },
+    "./tile-checkbox": {
+      "types": "./src/components/tile.tsx",
+      "default": "./src/components/tile.tsx"
+    },
+    "./tile-radio-group": {
+      "types": "./src/components/tile.tsx",
+      "default": "./src/components/tile.tsx"
+    },
+    "./expandable-tile": {
+      "types": "./src/components/tile.tsx",
+      "default": "./src/components/tile.tsx"
+    },
+    "./typography": {
+      "types": "./src/components/typography.tsx",
+      "default": "./src/components/typography.tsx"
+    },
+    "./text": {
+      "types": "./src/components/typography.tsx",
+      "default": "./src/components/typography.tsx"
+    },
+    "./heading": {
+      "types": "./src/components/typography.tsx",
+      "default": "./src/components/typography.tsx"
+    },
+    "./link": {
+      "types": "./src/components/typography.tsx",
+      "default": "./src/components/typography.tsx"
+    },
+    "./content": {
+      "types": "./src/components/content.tsx",
+      "default": "./src/components/content.tsx"
+    },
+    "./toast": {
+      "types": "./src/components/content.tsx",
+      "default": "./src/components/content.tsx"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit && vitest run",
+    "lint": "tsc -p tsconfig.json --noEmit && vitest run"
+  },
+  "dependencies": {
+    "@skryensya/core": "workspace:*",
+    "@skryensya/icons-phosphor": "workspace:*",
+    "@zag-js/checkbox": "^1.42.0",
+    "@zag-js/collapsible": "^1.42.0",
+    "@zag-js/radio-group": "^1.42.0",
+    "@zag-js/react": "^1.42.0",
+    "@zag-js/select": "^1.42.0",
+    "@zag-js/tabs": "^1.42.0"
+  },
+  "peerDependencies": {
+    "@skryensya/icons-lucide": "workspace:*",
+    "@skryensya/icons-material": "workspace:*",
+    "react": ">=19"
+  },
+  "peerDependenciesMeta": {
+    "@skryensya/icons-lucide": {
+      "optional": true
+    },
+    "@skryensya/icons-material": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@skryensya/icons-lucide": "workspace:*",
+    "@skryensya/icons-material": "workspace:*",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "axe-core": "^4.12.1",
+    "jsdom": "^29.1.1",
+    "react-dom": "^19.2.7",
+    "sass": "^1.101.0",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
+  }
+}

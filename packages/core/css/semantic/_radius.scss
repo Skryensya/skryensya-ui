@@ -1,0 +1,15 @@
+@mixin tokens {
+    /* ── radius: the baseline of the radius dimension (ADR-18), equal to data-radius="md".
+     *    Density-invariant, corner radius is a roundness concern, not a spatial one.
+     *
+     *    The dimension is a MULTIPLIER, not a step remap: `--radius-multiplier` scales a small
+     *    scale of role radii, so the roles keep their own places on that scale (control rounder
+     *    than nothing, surface always 1.5× control) and one knob moves all of them together.
+     *    dimensions/radius.scss re-declares only the multiplier; the roles compute from it here.
+     *    pill is the dimension's invariant, a shape, not a roundness, so it never multiplies. ── */
+    --radius-multiplier: 1;
+
+    --radius-control: calc(var(--scale-radius-md) * var(--radius-multiplier));
+    --radius-surface: calc(var(--scale-radius-lg) * var(--radius-multiplier));
+    --radius-pill: var(--scale-radius-full);
+}

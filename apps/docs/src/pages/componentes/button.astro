@@ -1,0 +1,182 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+import AnatomyDiagram from "../../components/AnatomyDiagram.astro";
+
+import "../../examples/button.css";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const html = `<button
+  class="ds-button ds-interactive"
+  data-ds-button
+  data-variant="primary"
+>
+  Guardar
+</button>
+<button
+  class="ds-button ds-interactive"
+  data-ds-button
+  data-variant="neutral"
+>
+  Cancelar
+</button>
+<button
+  class="ds-button ds-interactive"
+  data-ds-button
+  data-variant="danger"
+>
+  Borrar
+</button>`;
+
+/* Icon + text: no extra hook. The button is already an inline-flex row with a gap, so an authored
+   <svg class="ds-icon"> and the label lay themselves out. The icon is DECORATIVE, the label already
+   names the action, so it stays aria-hidden. */
+const iconHtml = `<button
+  class="ds-button ds-interactive"
+  data-ds-button
+  data-variant="primary"
+>
+  <span data-ds-icon="download"></span>
+  Descargar
+</button>`;
+
+/* Icon-only: data-icon-only makes the box a square, and the name, with no text to carry it, MUST
+   be authored as aria-label. The icon stays decorative. */
+const iconOnlyHtml = `<button
+  class="ds-button ds-interactive"
+  data-ds-button
+  data-icon-only
+  aria-label="Configuración"
+>
+  <span data-ds-icon="settings"></span>
+</button>
+<button
+  class="ds-button ds-interactive"
+  data-ds-button
+  data-icon-only
+  data-variant="ghost"
+  aria-label="Editar"
+>
+  <span data-ds-icon="edit"></span>
+</button>`;
+
+const js = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// Los iconos se autoran como placeholders <span data-ds-icon>;
+// mountIcons los reemplaza por el <svg> del set enlazado.
+mountIcons(document, lucideIcons);
+
+initComponents();`;
+
+const react = `import { Button } from "@skryensya/react/button";
+
+<Button variant="primary">Guardar</Button>
+<Button variant="neutral">Cancelar</Button>
+<Button variant="danger">Borrar</Button>;`;
+
+const iconReact = `import { Button } from "@skryensya/react/button";
+import { Icon } from "@skryensya/react/icon";
+
+<Button variant="primary">
+  <Icon name="download" />
+  Descargar
+</Button>;`;
+
+const iconOnlyReact = `import { Button } from "@skryensya/react/button";
+import { Icon } from "@skryensya/react/icon";
+
+// sin texto visible, el nombre es obligatorio: aria-label
+<Button iconOnly aria-label="Configuración">
+  <Icon name="settings" />
+</Button>;`;
+
+const tileButtonHtml = `<button
+  class="ds-tile ds-tile--interactive ds-interactive"
+  type="button"
+>
+  <span class="ds-tile__content">
+    <span class="ds-tile__title">Run deployment</span>
+    <span class="ds-tile__description">
+      Start the production deployment now.
+    </span>
+  </span>
+</button>`;
+
+const tileButtonVanilla = `import { createTileButton } from "@skryensya/vanilla/tile-button";
+
+const button = createTileButton();
+button.textContent = "Run deployment";
+button.addEventListener("click", runDeployment);`;
+
+const tileButtonReact = `import { TileButton } from "@skryensya/react/tile-button";
+
+<TileButton onClick={runDeployment}>
+  <span className="ds-tile__content">
+    <span className="ds-tile__title">Run deployment</span>
+    <span className="ds-tile__description">
+      Start the production deployment now.
+    </span>
+  </span>
+</TileButton>;`;
+---
+
+<Base title="Button" description="Button: hooks de estilo, enhancer vanilla mínimo y componente React.">
+  <h1>Button</h1>
+  <p class="lede">
+    Button es un componente estático: la plataforma ya trae el comportamiento de <code>&lt;button&gt;</code>.
+    El sistema aporta styling hooks, un enhancer vanilla que normaliza atributos y un wrapper React.
+  </p>
+
+  <h2>Anatomía</h2>
+  <AnatomyDiagram
+    src="/anatomies/button.svg"
+    alt="Diagrama del Button primario real con icono Lucide de descarga y etiqueta. Sus colores, radio, padding, gap, tipografía, sombra, ancho y alto replican el Button documentado; ancho y alto tienen cotas independientes."
+    caption="La anatomía muestra el Button primario con icono y texto tal como se documenta. Cada tarjeta contiene hooks reales y su flecha termina sobre la propiedad que controlan."
+  />
+
+  <h2>Demo</h2>
+  <Showcase html={html} react={react} label="Button" />
+  <p>La densidad compacta el layout, no el objetivo táctil: todo Button conserva un mínimo de <code>44px</code> de alto, incluso con <code>data-size="sm"</code>.</p>
+
+  <h2>Botón de superficie: TileButton</h2>
+  <p>
+    Cuando toda la superficie ejecuta una única acción, usa <code>TileButton</code>. Renderiza un
+    <code>&lt;button type="button"&gt;</code>; Enter, Space y <code>disabled</code> siguen siendo nativos.
+  </p>
+  <Showcase html={tileButtonHtml} react={tileButtonReact} label="TileButton" />
+  <p>El HTML autorado funciona sin inicialización. <code>createTileButton</code> construye el botón cuando el árbol se genera desde JavaScript.</p>
+  <CodeBlock code={tileButtonVanilla} label="tu JavaScript" />
+
+  <h2>Con icono</h2>
+  <p>
+    Un icono adentro no necesita ningún hook nuevo: el botón ya es una fila <code>inline-flex</code> con
+    un gap, así que un <code>&lt;svg class="ds-icon"&gt;</code> y el texto se acomodan solos. El icono es
+    <strong>decorativo</strong>, el texto ya nombra la acción, así que va <code>aria-hidden</code> y
+    el nombre accesible sigue siendo el del botón.
+  </p>
+  <Showcase html={iconHtml} react={iconReact} label="Button con icono" />
+
+  <h2>Botón icono</h2>
+  <p>
+    <code>data-icon-only</code> es una <strong>forma</strong>, un tercer eje ortogonal a variante y
+    tamaño: un cuadrado del alto del control que sostiene un solo glifo. Como no hay texto donde vivir, el
+    nombre accesible <strong>tiene</strong> que ir en <code>aria-label</code> (o <code>aria-labelledby</code>):
+    el enhancer vanilla y el wrapper React rechazan un botón icono sin nombre, igual que el enhancer
+    rechaza la clase faltante. El icono adentro queda decorativo, el nombre es del botón, no del svg.
+  </p>
+  <Showcase html={iconOnlyHtml} react={iconOnlyReact} label="Botón icono" />
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+
+  <h2>Inicializar vanilla</h2>
+  <CodeBlock code={js} label="tu JS" />
+
+  <StylingHooks groups={[{"file":"components/button.css","probe":"ds-button"}]} />
+</Base>

@@ -1,0 +1,187 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import Showcase from "../components/Showcase.astro";
+import StylingHooks from "../components/StylingHooks.astro";
+
+const import_ = `@import "@skryensya/core/patterns/scrollbar.css";`;
+
+const always = `<div
+  class="ds-scrollbar demo-scroll"
+  tabindex="0"
+>
+  <p>
+    Región con scroll nativo y chrome del sistema: track y thumb
+    siempre visibles. La rueda, el momentum y el toque siguen
+    siendo de la plataforma; el pattern solo pinta la superficie
+    que el navegador expone.
+  </p>
+  <p>
+    Añade <code>ds-scrollbar</code> a cualquier contenedor con
+    <code>overflow: auto</code> (o <code>scroll</code>). Sin la
+    clase, el SO pinta su scrollbar nativa.
+  </p>
+  <p>
+    Tercer párrafo para forzar el desbordamiento y ver el
+    thumb. Cambia modo o contraste arriba: los hooks siguen
+    a los tokens semánticos.
+  </p>
+  <p>
+    Cuarto párrafo. El tamaño del thumb lo decide el navegador
+    según cuánto contenido hay; el sistema solo fija el ancho
+    del rail y los colores.
+  </p>
+</div>`;
+
+const reveal = `<div
+  class="ds-scrollbar ds-scrollbar--reveal demo-scroll"
+  tabindex="0"
+>
+  <p>
+    Misma región, variante <code>ds-scrollbar--reveal</code>:
+    el gutter queda reservado (<code>scrollbar-gutter: stable</code>)
+    pero el thumb está transparente hasta que pasas el mouse o
+    el foco de teclado entra en la región.
+  </p>
+  <p>
+    Al revelar no aparece un track relleno: solo el thumb,
+    donde estás. Un rail pintado leería como un borde que el
+    layout no pidió.
+  </p>
+  <p>
+    Pasa el mouse por aquí, o tabula hasta esta caja, para
+    ver el thumb. Al salir, vuelve a callarse sin mover el
+    layout.
+  </p>
+  <p>
+    Ideal en sidebars y rails densos, donde una scrollbar
+    siempre encendida compite con el contenido.
+  </p>
+</div>`;
+---
+
+<Base
+  title="Scrollbar"
+  description="Pattern opt-in que pinta la scrollbar nativa del navegador: siempre visible, o silenciosa hasta hover/foco."
+>
+  <h1>Scrollbar</h1>
+  <p class="lede">
+    No reemplaza el scroll nativo. Colorea la superficie que el navegador ya expone
+    (<code>scrollbar-color</code>, <code>scrollbar-width</code> y los pseudo-elementos
+    <code>::-webkit-scrollbar*</code>). La rueda, el momentum, el pan táctil y las
+    preferencias del SO siguen siendo de la plataforma.
+  </p>
+
+  <h2>Por qué es un pattern</h2>
+  <p>
+    Varios hosts comparten el mismo rail: el sidebar de docs, el drawer, el canvas de
+    personalizar. Enviar la pintura una vez evita que cada superficie reinventen un thumb.
+    Es <strong>opt-in</strong>, como nav-list: una app puede quedarse con la scrollbar del SO.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={import_} label="tu CSS" />
+  <p>
+    Luego marca la región que ya hace scroll (<code>overflow: auto</code> o
+    <code>scroll</code>, con un tamaño acotado). El pattern no define el overflow: solo pinta
+    la scrollbar que el navegador expone.
+  </p>
+  <CodeBlock
+    code={`<!-- tu contenedor con overflow: auto -->
+<div class="ds-scrollbar">…</div>
+
+<!-- o la variante silenciosa hasta hover/foco -->
+<div class="ds-scrollbar ds-scrollbar--reveal">…</div>`}
+    label="tu HTML"
+  />
+
+  <h2>Siempre visible</h2>
+  <p>
+    <code>ds-scrollbar</code> deja track y thumb a la vista. Úsalo cuando el scroll es parte
+    del mapa de la UI (un panel de código, una tabla ancha).
+  </p>
+  <Showcase html={always} label="ds-scrollbar" />
+
+  <h2>Reveal al hover (y al foco)</h2>
+  <p>
+    <code>ds-scrollbar ds-scrollbar--reveal</code> reserva el gutter para no mover el layout, y
+    deja el thumb transparente hasta <code>:hover</code> o <code>:focus-within</code>. Al
+    revelar solo aparece el thumb, no un track relleno.
+  </p>
+  <Showcase html={reveal} label="ds-scrollbar--reveal" note="hover o tab para revelar" />
+  <p>
+    El rail del sidebar de esta documentación usa exactamente esta variante: quieto en reposo,
+    legible cuando lo tocas.
+  </p>
+
+  <h2>Cuál elegir</h2>
+  <ul>
+    <li>
+      <strong>Siempre visible</strong> cuando el lector necesita saber de entrada que hay más
+      contenido (listas largas, logs, editores).
+    </li>
+    <li>
+      <strong>Reveal</strong> cuando el chrome compite con el contenido (navegación, toc,
+      paneles estrechos). El gutter estable evita CLS al aparecer el thumb.
+    </li>
+  </ul>
+  <p>
+    Congelar el scroll del <em>documento</em> detrás de un modal es otro pattern:
+    <a class="ds-link ds-interactive" href="/scroll-lock">scroll lock</a>. No se pisan: uno pinta
+    regiones, el otro congela <code>html</code>.
+  </p>
+
+  <StylingHooks
+    groups={[{ file: "patterns/scrollbar.css", probe: "ds-scrollbar" }]}
+  />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>
+      Opt-in: importa <code>patterns/scrollbar.css</code> y marca la región con
+      <code>ds-scrollbar</code>.
+    </li>
+    <li>
+      La región debe poder hacer scroll (<code>overflow: auto|scroll</code> y un tamaño
+      acotado). El pattern no define el overflow.
+    </li>
+    <li>
+      <code>ds-scrollbar--reveal</code> exige también <code>ds-scrollbar</code> (la variante
+      solo re-declara hooks; la base aporta el resto).
+    </li>
+    <li>
+      No inventa un thumb en JS ni oculta el scroll nativo con un div falso. Si el SO usa
+      scrollbar overlay, el gutter de reveal es un no-op y no molesta.
+    </li>
+    <li>
+      Los hooks <code>--ds-scrollbar-*</code> se pisan desde tu CSS sobre
+      <code>.ds-scrollbar</code>, igual que cualquier otro styling hook.
+    </li>
+  </ul>
+</Base>
+
+<style>
+  /* Demo rails: enough height to overflow, so the thumb is real and not a theoretical claim. */
+  :global(.demo-scroll) {
+    box-sizing: border-box;
+    block-size: 11rem;
+    overflow: auto;
+    padding: var(--space-inset-md);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-surface);
+    background: var(--color-bg-surface);
+    color: var(--color-text-secondary);
+  }
+
+  :global(.demo-scroll) p {
+    margin: 0;
+  }
+
+  :global(.demo-scroll) p + p {
+    margin-block-start: var(--space-stack-sm);
+  }
+
+  :global(.demo-scroll) code {
+    font-size: 0.92em;
+  }
+</style>

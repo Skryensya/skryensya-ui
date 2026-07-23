@@ -1,0 +1,84 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
+
+const html = `<div
+  class="ds-segmented"
+  data-ds-segmented
+  data-value="day"
+  role="radiogroup"
+  aria-label="Rango"
+>
+  <span class="ds-segmented__indicator" aria-hidden="true"></span>
+  <button
+    class="ds-segmented__option ds-interactive"
+    data-ds-segmented-option
+    data-value="day"
+    type="button"
+    role="radio"
+  >
+    Día
+  </button>
+  <button
+    class="ds-segmented__option ds-interactive"
+    data-ds-segmented-option
+    data-value="week"
+    type="button"
+    role="radio"
+  >
+    Semana
+  </button>
+  <button
+    class="ds-segmented__option ds-interactive"
+    data-ds-segmented-option
+    data-value="month"
+    type="button"
+    role="radio"
+  >
+    Mes
+  </button>
+</div>`;
+
+const react = `import { SegmentedControl } from "@skryensya/react/segmented";
+
+<SegmentedControl
+  aria-label="Rango"
+  defaultValue="day"
+  onValueChange={setRange}
+  options={[
+    { value: "day", label: "Día" },
+    { value: "week", label: "Semana" },
+    { value: "month", label: "Mes" },
+  ]}
+/>;`;
+
+const js = `import { initComponents } from "@skryensya/vanilla/auto";
+
+initComponents();`;
+---
+
+<Base title="SegmentedControl" description="SegmentedControl: elección única y visible sobre un grupo pequeño, con semántica radiogroup.">
+  <h1>SegmentedControl</h1>
+  <p class="lede">
+    SegmentedControl es una elección única de un conjunto pequeño y fijo, mostrado de una vez: un
+    radiogroup con ropa de barra de botones. Para navegar entre paneles usa
+    <a href="/componentes/tabs">Tabs</a>; para muchas opciones o texto libre,
+    <a href="/componentes/select">Select</a>.
+  </p>
+
+  <h2>Demo</h2>
+  <Showcase html={html} react={react} label="SegmentedControl" />
+  <p>El enhancer vanilla selecciona con click y con flechas; <code>Home</code> y <code>End</code> saltan al primer y último segmento. La opción elegida queda en <code>data-value</code> y se anuncia con <code>aria-checked</code>. Cada segmento conserva un objetivo táctil mínimo de <code>44px</code>.</p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>Inicializar vanilla</h2>
+  <CodeBlock code={js} label="tu JS" />
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de la demo. Es controlado (<code>value</code>) o no controlado (<code>defaultValue</code>); al cambiar, el indicador se alinea y viaja hasta la opción nueva con el token de motion de cambio de estado.</p>
+</Base>

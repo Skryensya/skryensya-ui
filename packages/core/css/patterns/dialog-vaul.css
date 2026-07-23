@@ -1,0 +1,128 @@
+/*
+ * PATTERN, DIALOG VAUL
+ *
+ * An explicit responsive composition: the same native dialog remains centred at ordinary widths and
+ * becomes a block-end Vaul on compact screens. It is not a second Dialog variant and it is not a Vaul
+ * component; content opts into this composition when a centred box would not serve the mobile task.
+ */
+@layer components {
+  @media (max-width: 52rem) {
+    .ds-dialog[data-ds-dialog-vaul] {
+      --ds-vaul-bg: var(--ds-dialog-bg);
+      --ds-vaul-fg: var(--ds-dialog-fg);
+      --ds-vaul-border-color: var(--ds-dialog-border-color);
+      --ds-vaul-border-width: var(--ds-dialog-border-width);
+      --ds-vaul-elevation: var(--ds-dialog-elevation);
+      --ds-vaul-backdrop-bg: var(--ds-dialog-backdrop-bg);
+      --ds-vaul-radius: var(--ds-dialog-radius) var(--ds-dialog-radius) 0 0;
+      --ds-vaul-enter-duration: var(--motion-enter-duration);
+      --ds-vaul-enter-easing: var(--motion-enter-easing);
+      --ds-vaul-exit-duration: var(--motion-exit-duration);
+      --ds-vaul-exit-easing: var(--motion-exit-easing);
+      --ds-vaul-release-duration: var(--motion-release-duration);
+      --ds-vaul-release-easing: var(--motion-release-easing);
+      --ds-vaul-drag-offset: 0px;
+      --ds-vaul-drag-progress: 0;
+      --ds-vaul-overpull: 12px;
+
+      /* Compact Dialog Vaul is spatial: it slides from the edge without also inheriting the centred
+       * dialog's scale/fade entrance. */
+      opacity: 1;
+      scale: 1;
+      position: fixed;
+      inset: auto 0 0;
+      box-sizing: border-box;
+      inline-size: 100%;
+      max-inline-size: none;
+      max-block-size: min(90dvh, var(--ds-vaul-block-size, 44rem));
+      margin: 0;
+      border: 0;
+      border-block-start: var(--ds-vaul-border-width) solid var(--ds-vaul-border-color);
+      border-radius: var(--ds-vaul-radius);
+      background: var(--ds-vaul-bg);
+      color: var(--ds-vaul-fg);
+      box-shadow: var(--ds-vaul-elevation), 0 var(--ds-vaul-overpull) 0 0 var(--ds-vaul-bg);
+      overflow: hidden;
+      translate: 0 100%;
+      transition:
+        translate var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing),
+        overlay var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing) allow-discrete,
+        display var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing) allow-discrete;
+    }
+
+    .ds-dialog[data-ds-dialog-vaul][open] {
+      translate: 0 var(--ds-vaul-drag-offset);
+      transition:
+        translate var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing),
+        overlay var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing) allow-discrete,
+        display var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing) allow-discrete;
+    }
+
+    .ds-dialog[data-ds-dialog-vaul][data-releasing] {
+      transition:
+        translate var(--ds-vaul-release-duration) var(--ds-vaul-release-easing),
+        overlay var(--ds-vaul-release-duration) var(--ds-vaul-release-easing) allow-discrete,
+        display var(--ds-vaul-release-duration) var(--ds-vaul-release-easing) allow-discrete;
+    }
+
+    .ds-dialog[data-ds-dialog-vaul][data-dragging] {
+      transition: none;
+      user-select: none;
+    }
+
+    @starting-style {
+      .ds-dialog[data-ds-dialog-vaul][open] {
+        translate: 0 100%;
+      }
+    }
+
+    .ds-dialog[data-ds-dialog-vaul] [data-part="handle"] {
+      display: flex;
+      flex: none;
+      align-items: center;
+      justify-content: center;
+      padding-block: var(--space-inset-xs);
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .ds-dialog[data-ds-dialog-vaul][data-dragging] [data-part="handle"] {
+      cursor: grabbing;
+    }
+
+    .ds-dialog[data-ds-dialog-vaul] [data-part="handle"]::before {
+      inline-size: 2.25rem;
+      block-size: 0.25rem;
+      border-radius: var(--radius-pill);
+      background: var(--color-border-strong);
+      content: "";
+    }
+
+    .ds-dialog[data-ds-dialog-vaul]::backdrop {
+      background: var(--ds-vaul-backdrop-bg);
+      opacity: 0;
+      transition: opacity var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing);
+    }
+
+    .ds-dialog[data-ds-dialog-vaul][open]::backdrop {
+      opacity: calc(1 - var(--ds-vaul-drag-progress));
+      transition: opacity var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing);
+    }
+
+    .ds-dialog[data-ds-dialog-vaul][data-releasing]::backdrop {
+      transition: opacity var(--ds-vaul-release-duration) var(--ds-vaul-release-easing);
+    }
+  }
+
+  @media (min-width: 52rem) {
+    .ds-dialog[data-ds-dialog-vaul] [data-part="handle"] {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-dialog[data-ds-dialog-vaul] {
+      translate: 0;
+    }
+  }
+}

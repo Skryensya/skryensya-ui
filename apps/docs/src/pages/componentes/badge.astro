@@ -1,0 +1,122 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+
+import "../../examples/badge.css";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<span class="ds-badge" data-tone="neutral">Neutral</span>
+<span class="ds-badge" data-tone="accent">Accent</span>
+<span class="ds-badge" data-tone="success">Success</span>
+<span class="ds-badge" data-tone="warning">Warning</span>
+<span class="ds-badge" data-tone="danger">Danger</span>`;
+
+const react = `import { Badge } from "@skryensya/react/badge";
+
+<Badge>Neutral</Badge>
+<Badge tone="accent">Accent</Badge>
+<Badge tone="success">Success</Badge>
+<Badge tone="warning">Warning</Badge>
+<Badge tone="danger">Danger</Badge>;`;
+
+/* The dot: a badge with no text, only colour and position. Standalone it is a status light; anchored in
+ * a holder it is a notification/presence indicator on the top-right corner of another element. */
+const dotHtml = `<span class="ds-badge" data-dot data-tone="success"></span>
+<span class="ds-badge" data-dot data-tone="warning"></span>
+<span class="ds-badge" data-dot data-tone="danger"></span>
+<span class="ds-badge" data-dot data-tone="accent"></span>
+<span class="ds-badge" data-dot></span>`;
+
+const holderHtml = `<!-- an unread indicator on an icon button -->
+<span class="ds-badge-holder">
+  <button
+    class="ds-button ds-interactive"
+    data-variant="ghost"
+    data-icon-only
+    type="button"
+    aria-label="Ajustes"
+  >
+    <span data-ds-icon="settings"></span>
+  </button>
+  <span
+    class="ds-badge"
+    data-dot
+    data-tone="danger"
+    role="status"
+    aria-label="Novedades sin leer"
+  ></span>
+</span>
+
+<!-- a presence indicator on an avatar -->
+<span class="ds-badge-holder">
+  <span class="ds-avatar" role="img" aria-label="Ada Lovelace">
+    <span class="ds-avatar__fallback" aria-hidden="true">AL</span>
+  </span>
+  <span
+    class="ds-badge"
+    data-dot
+    data-tone="success"
+    role="status"
+    aria-label="En línea"
+  ></span>
+</span>`;
+
+const holderReact = `import { Badge } from "@skryensya/react/badge";
+
+<span className="ds-badge-holder">
+  <button
+    className="ds-button ds-interactive"
+    data-variant="ghost"
+    data-icon-only
+    aria-label="Ajustes"
+  >
+    {/* icon */}
+  </button>
+  <Badge
+    dot
+    tone="danger"
+    role="status"
+    aria-label="Novedades sin leer"
+  />
+</span>`;
+---
+
+<Base title="Badge" description="Badge: etiqueta estática con tonos semánticos, styling hooks y componente React.">
+  <h1>Badge</h1>
+  <p class="lede">
+    Badge es una etiqueta visual estática para estados, categorías o metadatos cortos. No comunica
+    selección, contador ni navegación por sí sola; esa semántica pertenece al contenido o al contenedor.
+  </p>
+
+  <h2>Etiqueta</h2>
+  <p>La forma con texto: un estado, una categoría o un metadato corto. Cada tono lleva un borde de su
+    propio color, así el neutral, cuyo fondo es el lienzo, no queda como un rectángulo invisible.</p>
+  <Showcase html={html} react={react} label="Badge" />
+
+  <h2>Dot</h2>
+  <p>
+    Un badge que es <strong>sólo un punto</strong>: sin texto, comunica por color y posición. Suelto es
+    una luz de estado; su relleno es un tono saturado para que se lea a unos pocos píxeles.
+  </p>
+  <Showcase html={dotHtml} label="Badge dot" />
+
+  <h3>En la esquina de un elemento</h3>
+  <p>
+    Envuelve el elemento en <code>ds-badge-holder</code> y el dot se ancla arriba a la derecha, un
+    indicador de novedades sobre un botón, de presencia sobre un avatar. Un anillo del color de la
+    superficie lo despega del contenido de abajo. El punto lleva su propio <code>aria-label</code>
+    porque significa algo; el elemento anfitrión no cambia.
+  </p>
+  <Showcase html={holderHtml} react={holderReact} label="Badge dot en la esquina" />
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <StylingHooks groups={[{"file":"components/badge.css","probe":"ds-badge"}]} />
+</Base>

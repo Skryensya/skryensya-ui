@@ -1,0 +1,16 @@
+@mixin tokens {
+  /* ── scale: z-index (stacking ladder) ──────────────────────────
+   * A raw, brand-agnostic ladder of stacking positions. Widely spaced on purpose: a new layer
+   * slots BETWEEN two existing ones without renumbering anything below it. Unitless integers, 
+   * z-index is not a length, so it never scales with density and carries no px.
+   *
+   * These are values, not roles. Nothing outside semantic/_z.scss should reference them: a
+   * component that reaches for `--scale-z-200` is naming a number, the same tier-skip the
+   * validator forbids for colour. Name the LAYER (`--z-popover`), never the rung. */
+  --scale-z-behind: -1;
+  --scale-z-0: 0;
+  --scale-z-100: 100;
+  --scale-z-200: 200;
+  --scale-z-300: 300;
+  --scale-z-400: 400;
+}

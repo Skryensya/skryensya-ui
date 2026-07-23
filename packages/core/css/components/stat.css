@@ -1,0 +1,29 @@
+/*
+ * TIER 3, STAT
+ *
+ * A headline metric block: quiet label, large tabular value, and an optional change chip. The trend
+ * colours the change, up is not hard-wired to success, because the caller decides which direction is
+ * good (revenue up, churn down).
+ */
+@layer components {
+  .ds-stat { display: grid; gap: var(--space-stack-xs); align-content: start; }
+  .ds-stat__label { font-size: var(--font-size-body-sm); color: var(--color-text-tertiary); }
+  .ds-stat__value { font-size: var(--font-size-heading-md, var(--font-size-heading-sm)); font-weight: var(--font-weight-heading); line-height: var(--font-line-height-heading); color: var(--color-text-primary); font-variant-numeric: tabular-nums; }
+
+  .ds-stat__change {
+    --ds-stat-change-fg: var(--color-text-secondary);
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-inline-xs);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+    color: var(--ds-stat-change-fg);
+  }
+  .ds-stat__change[data-trend="up"] { --ds-stat-change-fg: var(--color-text-success); }
+  .ds-stat__change[data-trend="down"] { --ds-stat-change-fg: var(--color-text-danger); }
+
+  /* A trend glyph in the change chip is an inline icon from the caller's set (arrow-up / arrow-down),
+   * not a text triangle, size it to the caption text it sits beside; colour follows currentColor. */
+  .ds-stat__change .ds-icon { --ds-icon-size: 1.1em; }
+}

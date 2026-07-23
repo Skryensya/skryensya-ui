@@ -1,0 +1,245 @@
+{
+  "name": "@skryensya/core",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "@skryensya's framework-agnostic contract: design tokens, component parts and shared option types.",
+  "files": [
+    "css",
+    "dist",
+    "scripts",
+    "src",
+    "contrast-pairs.json"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./accordion": {
+      "types": "./src/accordion.ts",
+      "default": "./src/accordion.ts"
+    },
+    "./badge": {
+      "types": "./src/badge.ts",
+      "default": "./src/badge.ts"
+    },
+    "./alert": {
+      "types": "./src/alert.ts",
+      "default": "./src/alert.ts"
+    },
+    "./avatar": {
+      "types": "./src/avatar.ts",
+      "default": "./src/avatar.ts"
+    },
+    "./tag": {
+      "types": "./src/tag.ts",
+      "default": "./src/tag.ts"
+    },
+    "./progress": {
+      "types": "./src/progress.ts",
+      "default": "./src/progress.ts"
+    },
+    "./slider": {
+      "types": "./src/slider.ts",
+      "default": "./src/slider.ts"
+    },
+    "./segmented": {
+      "types": "./src/segmented.ts",
+      "default": "./src/segmented.ts"
+    },
+    "./steps": {
+      "types": "./src/steps.ts",
+      "default": "./src/steps.ts"
+    },
+    "./pagination": {
+      "types": "./src/pagination.ts",
+      "default": "./src/pagination.ts"
+    },
+    "./stat": {
+      "types": "./src/stat.ts",
+      "default": "./src/stat.ts"
+    },
+    "./button": {
+      "types": "./src/button.ts",
+      "default": "./src/button.ts"
+    },
+    "./icon": {
+      "types": "./src/icon.ts",
+      "default": "./src/icon.ts"
+    },
+    "./machines": {
+      "types": "./src/machines.ts",
+      "default": "./src/machines.ts"
+    },
+    "./field": {
+      "types": "./src/field.ts",
+      "default": "./src/field.ts"
+    },
+    "./input": {
+      "types": "./src/input.ts",
+      "default": "./src/input.ts"
+    },
+    "./layout": {
+      "types": "./src/layout.ts",
+      "default": "./src/layout.ts"
+    },
+    "./box": {
+      "types": "./src/layout.ts",
+      "default": "./src/layout.ts"
+    },
+    "./stack": {
+      "types": "./src/layout.ts",
+      "default": "./src/layout.ts"
+    },
+    "./inline": {
+      "types": "./src/layout.ts",
+      "default": "./src/layout.ts"
+    },
+    "./grid": {
+      "types": "./src/layout.ts",
+      "default": "./src/layout.ts"
+    },
+    "./wrapper": {
+      "types": "./src/layout.ts",
+      "default": "./src/layout.ts"
+    },
+    "./nav-list": {
+      "types": "./src/nav-list.ts",
+      "default": "./src/nav-list.ts"
+    },
+    "./navbar": {
+      "types": "./src/navbar.ts",
+      "default": "./src/navbar.ts"
+    },
+    "./select": {
+      "types": "./src/select.ts",
+      "default": "./src/select.ts"
+    },
+    "./selection": {
+      "types": "./src/selection.ts",
+      "default": "./src/selection.ts"
+    },
+    "./checkbox": {
+      "types": "./src/selection.ts",
+      "default": "./src/selection.ts"
+    },
+    "./radio-group": {
+      "types": "./src/selection.ts",
+      "default": "./src/selection.ts"
+    },
+    "./switch": {
+      "types": "./src/selection.ts",
+      "default": "./src/selection.ts"
+    },
+    "./sidebar": {
+      "types": "./src/sidebar.ts",
+      "default": "./src/sidebar.ts"
+    },
+    "./tabs": {
+      "types": "./src/tabs.ts",
+      "default": "./src/tabs.ts"
+    },
+    "./table": {
+      "types": "./src/table.ts",
+      "default": "./src/table.ts"
+    },
+    "./tile": {
+      "types": "./src/tile.ts",
+      "default": "./src/tile.ts"
+    },
+    "./tile-link": {
+      "types": "./src/tile.ts",
+      "default": "./src/tile.ts"
+    },
+    "./tile-button": {
+      "types": "./src/tile.ts",
+      "default": "./src/tile.ts"
+    },
+    "./tile-checkbox": {
+      "types": "./src/tile.ts",
+      "default": "./src/tile.ts"
+    },
+    "./tile-radio-group": {
+      "types": "./src/tile.ts",
+      "default": "./src/tile.ts"
+    },
+    "./expandable-tile": {
+      "types": "./src/tile.ts",
+      "default": "./src/tile.ts"
+    },
+    "./tile-contracts": {
+      "types": "./src/tile-contracts.ts",
+      "default": "./src/tile-contracts.ts"
+    },
+    "./typography": {
+      "types": "./src/typography.ts",
+      "default": "./src/typography.ts"
+    },
+    "./text": {
+      "types": "./src/typography.ts",
+      "default": "./src/typography.ts"
+    },
+    "./heading": {
+      "types": "./src/typography.ts",
+      "default": "./src/typography.ts"
+    },
+    "./link": {
+      "types": "./src/typography.ts",
+      "default": "./src/typography.ts"
+    },
+    "./content": {
+      "types": "./src/content.ts",
+      "default": "./src/content.ts"
+    },
+    "./dialog": {
+      "types": "./src/dialog.ts",
+      "default": "./src/dialog.ts"
+    },
+    "./toast": {
+      "types": "./src/content.ts",
+      "default": "./src/content.ts"
+    },
+    "./parse": "./scripts/parse.mjs",
+    "./emit-icon-set": "./scripts/emit-icon-set.mjs",
+    "./skryensya.css": "./dist/skryensya.css",
+    "./tokens.scss": "./css/tokens.scss",
+    "./primitives.scss": "./css/primitives.scss",
+    "./semantic.scss": "./css/semantic.scss",
+    "./breakpoints": "./css/semantic/_breakpoints.scss",
+    "./modes/*": "./css/modes/*",
+    "./dimensions/*": "./css/dimensions/*",
+    "./components/*": "./css/components/*",
+    "./patterns/*": "./css/patterns/*",
+    "./vaul": {
+      "types": "./src/vaul.ts",
+      "default": "./src/vaul.ts"
+    },
+    "./hotkey": {
+      "types": "./src/hotkey.ts",
+      "default": "./src/hotkey.ts"
+    },
+    "./kbd": {
+      "types": "./src/kbd.ts",
+      "default": "./src/kbd.ts"
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build-css.mjs && tsc -p tsconfig.json",
+    "build:css": "node scripts/build-css.mjs",
+    "check": "node scripts/lint.mjs && node --test scripts/*.test.mjs && tsc -p tsconfig.json --noEmit",
+    "lint": "node scripts/lint.mjs && node --test scripts/*.test.mjs && tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "sass": "^1.83.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@zag-js/accordion": "^1.42.0",
+    "@zag-js/checkbox": "^1.42.0",
+    "@zag-js/collapsible": "^1.42.0",
+    "@zag-js/core": "^1.42.0",
+    "@zag-js/radio-group": "^1.42.0",
+    "@zag-js/select": "^1.42.0",
+    "@zag-js/tabs": "^1.42.0"
+  }
+}

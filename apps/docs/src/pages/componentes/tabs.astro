@@ -1,0 +1,127 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+
+
+import "../../examples/tabs.css";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const css = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/tabs.css";
+@import "@skryensya/core/patterns/state-layer.css";`;
+
+const html = `<div
+  class="ds-tabs"
+  data-ds-tabs
+  id="account-tabs"
+  data-value="profile"
+>
+  <div class="ds-tabs__list" data-ds-tabs-list>
+    <button
+      class="ds-tabs__trigger ds-interactive"
+      data-ds-tabs-trigger
+      data-value="profile"
+    >
+      Perfil
+    </button>
+    <button
+      class="ds-tabs__trigger ds-interactive"
+      data-ds-tabs-trigger
+      data-value="security"
+    >
+      Seguridad
+    </button>
+    <button
+      class="ds-tabs__trigger ds-interactive"
+      data-ds-tabs-trigger
+      data-value="billing"
+    >
+      Facturación
+    </button>
+  </div>
+
+  <div
+    class="ds-tabs__content"
+    data-ds-tabs-content
+    data-value="profile"
+  >
+    Datos públicos de la cuenta.
+  </div>
+  <div
+    class="ds-tabs__content"
+    data-ds-tabs-content
+    data-value="security"
+  >
+    Sesiones, claves y segundo factor.
+  </div>
+  <div
+    class="ds-tabs__content"
+    data-ds-tabs-content
+    data-value="billing"
+  >
+    Plan, facturas y método de pago.
+  </div>
+</div>`;
+
+const js = `import { initComponents } from "@skryensya/vanilla/auto";
+
+initComponents();`;
+
+const react = `import { Tabs } from "@skryensya/react/tabs";
+
+<Tabs
+  defaultValue="profile"
+  items={[
+    {
+      value: "profile",
+      label: "Perfil",
+      children: "Datos públicos de la cuenta.",
+    },
+    {
+      value: "security",
+      label: "Seguridad",
+      children: "Sesiones, claves y segundo factor.",
+    },
+    {
+      value: "billing",
+      label: "Facturación",
+      children: "Plan, facturas y método de pago.",
+    },
+  ]}
+/>;`;
+---
+
+<Base title="Tabs" description="Tabs: contrato vanilla, styling hooks y binding React.">
+  <h1>Tabs</h1>
+  <p class="lede">
+    Tabs es el primer slice completo de componentes: un descriptor en <code>@skryensya/core</code>, un enhancer
+    vanilla en <code>@skryensya/vanilla</code>, un componente React en <code>@skryensya/react</code> y hooks visuales
+    en <code>@skryensya/core</code>.
+  </p>
+
+  <h2>Demo</h2>
+  <Showcase html={html} react={react} label="Tabs" />
+  <p>
+    El enhancer busca <code>[data-ds-tabs]</code>, parchea ARIA/estado sobre estos nodos y no escribe clases.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>CSS</h2>
+  <CodeBlock code={css} label="tu CSS" />
+
+
+  <h2>Inicializar vanilla</h2>
+  <CodeBlock code={js} label="tu JS" />
+
+  <h2>React</h2>
+  <p>
+    En React no hay progressive enhancement: el componente renderiza la misma anatomía y consume el mismo
+    descriptor de <code>@skryensya/core</code>. El código está en la pestaña <strong>React</strong> de la demo.
+  </p>
+  <StylingHooks groups={[{"file":"components/tabs.css","probe":"ds-tabs"}]} />
+</Base>

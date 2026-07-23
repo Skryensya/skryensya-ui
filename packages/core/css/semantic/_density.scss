@@ -1,0 +1,25 @@
+@use "space";
+@use "size";
+
+/*
+ * DENSITY SCOPE, re-project the tokens that genuinely depend on density at an opt-in subtree.
+ *
+ * Custom properties resolve where they are declared. The root's inherited --space-* and
+ * --size-control-* values therefore cannot react to a descendant changing --ds-density by itself.
+ * This scope is the semantic seam: it owns the effective multiplier and re-declares exactly the
+ * density-sensitive tokens. Component hooks keep resolving against those tokens; no component
+ * needs a density-specific variant.
+ *
+ * --ds-density-factor is relative to the captured system density. A consumer may instead set
+ * --ds-density directly on this element for an absolute local value. Values are continuous;
+ * preset names belong to product UI, not this CSS contract.
+ */
+@mixin tokens {
+  :where([data-ds-density-scope]) {
+    --ds-density-factor: 1;
+    --ds-density: calc(var(--ds-density-system) * var(--ds-density-factor));
+
+    @include space.density-tokens;
+    @include size.density-tokens;
+  }
+}

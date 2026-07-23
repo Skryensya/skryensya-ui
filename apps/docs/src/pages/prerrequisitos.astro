@@ -1,0 +1,318 @@
+---
+import Base from "../layouts/Base.astro";
+
+type Ref = {
+  label: string;
+  href: string;
+  note: string;
+};
+
+type Concept = {
+  id: string;
+  title: string;
+  why: string;
+  refs: readonly Ref[];
+  here?: string;
+};
+
+const concepts: readonly Concept[] = [
+  {
+    id: "custom-properties",
+    title: "Custom properties (variables CSS)",
+    why: "Son el runtime de los tokens: cada valor del sistema es una custom property que se lee en el navegador.",
+    refs: [
+      {
+        label: "MDN, Using CSS custom properties",
+        href: "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_cascading_variables/Using_CSS_custom_properties",
+        note: "Declaración, var(), herencia y fallbacks.",
+      },
+      {
+        label: "MDN, var()",
+        href: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/var",
+        note: "Sintaxis de referencia y cascada.",
+      },
+    ],
+    here: "Tiers, styling hooks y la referencia en vivo.",
+  },
+  {
+    id: "cascade-layers",
+    title: "Cascade layers",
+    why: "El borde entre tiers no depende del orden de los @import: vive en @layer.",
+    refs: [
+      {
+        label: "MDN, @layer",
+        href: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@layer",
+        note: "Precedencia entre layers y CSS sin layer.",
+      },
+      {
+        label: "MDN, Cascade, specificity, and inheritance",
+        href: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Cascade_layers",
+        note: "Cómo encajan layers en la cascada.",
+      },
+    ],
+    here: "primitives → semantic → components → overrides.",
+  },
+  {
+    id: "light-dark",
+    title: "light-dark()",
+    why: "El modo claro/oscuro es un eje de color con dos slots; no hay un tercer argumento para alto contraste.",
+    refs: [
+      {
+        label: "MDN, light-dark()",
+        href: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/light-dark",
+        note: "Función nativa y color-scheme.",
+      },
+    ],
+    here: "Dimensiones y tokens semánticos de color.",
+  },
+  {
+    id: "oklch",
+    title: "OKLCH y color-mix()",
+    why: "Los primitivos de color se escriben en oklch(); mezclas y estados usan el espacio perceptual del CSS Color Module.",
+    refs: [
+      {
+        label: "MDN, oklch()",
+        href: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/oklch",
+        note: "Luminosidad, chroma y hue.",
+      },
+      {
+        label: "MDN, color-mix()",
+        href: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_mix",
+        note: "Mezcla en oklab/oklch y otros espacios.",
+      },
+      {
+        label: "W3C, CSS Color Module Level 4",
+        href: "https://www.w3.org/TR/css-color-4/",
+        note: "Spec del modelo de color en CSS.",
+      },
+    ],
+    here: "Ramps, marca por seeds y contraste.",
+  },
+  {
+    id: "media-queries",
+    title: "Preferencias del usuario (media queries)",
+    why: "Contraste y motion reaccionan al sistema operativo además de a los controles del sitio.",
+    refs: [
+      {
+        label: "MDN, prefers-contrast",
+        href: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-contrast",
+        note: "Alto contraste preferido por el SO.",
+      },
+      {
+        label: "MDN, prefers-reduced-motion",
+        href: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion",
+        note: "Reducir movimiento no es “poner todo en cero”.",
+      },
+    ],
+    here: "Dimensiones, motion por intención.",
+  },
+  {
+    id: "dialog",
+    title: "Dialog",
+    why: "Modalidad, ESC, foco e inert page son de la plataforma; el sistema no reimplementa un dialog en un div.",
+    refs: [
+      {
+        label: "MDN, <dialog>",
+        href: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog",
+        note: "Elemento, showModal() y ::backdrop.",
+      },
+      {
+        label: "HTML Living Standard, dialog",
+        href: "https://html.spec.whatwg.org/multipage/interactive-elements.html#the-dialog-element",
+        note: "Comportamiento normativo.",
+      },
+    ],
+    here: "Dialog (y la opción Dialog Vaul).",
+  },
+  {
+    id: "tables",
+    title: "Tablas HTML y caption",
+    why: "Las tablas de datos conservan semántica nativa; el caption nombra la tabla de forma programática.",
+    refs: [
+      {
+        label: "MDN, <caption>",
+        href: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/caption",
+        note: "Primer hijo de table; nombre accesible.",
+      },
+      {
+        label: "web.dev, Tables",
+        href: "https://web.dev/learn/html/tables",
+        note: "Caption, headers y accesibilidad.",
+      },
+      {
+        label: "W3C WAI, Captions & summaries",
+        href: "https://www.w3.org/WAI/tutorials/tables/caption-summary/",
+        note: "Cuándo caption vs resumen.",
+      },
+    ],
+    here: "Componente Table.",
+  },
+  {
+    id: "wcag",
+    title: "Contraste WCAG",
+    why: "El validador mide pares de color; el piso táctil de densidad también sale de WCAG.",
+    refs: [
+      {
+        label: "WCAG 2.2, Contrast (Minimum)",
+        href: "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+        note: "1.4.3 texto.",
+      },
+      {
+        label: "WCAG 2.2, Non-text Contrast",
+        href: "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html",
+        note: "1.4.11 UI y gráficos.",
+      },
+      {
+        label: "WCAG 2.2, Target Size (Minimum)",
+        href: "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+        note: "2.5.8 tamaño de objetivo.",
+      },
+    ],
+    here: "Validador, densidad, alto contraste.",
+  },
+  {
+    id: "design-tokens",
+    title: "Design tokens (concepto)",
+    why: "El sistema habla de primitivos, semánticos y hooks: es la idea de tokens en capas, aplicada en CSS puro.",
+    refs: [
+      {
+        label: "W3C Design Tokens Community Group",
+        href: "https://www.w3.org/community/design-tokens/",
+        note: "Vocabulario y formato en estandarización.",
+      },
+      {
+        label: "Design Tokens Format Module (borrador)",
+        href: "https://design-tokens.github.io/community-group/format/",
+        note: "Cómo se describen tokens de forma intercambiable.",
+      },
+    ],
+    here: "Tiers y styling hooks (nuestro corte es CSS, no JSON).",
+  },
+  {
+    id: "bem",
+    title: "BEM",
+    why: "Las parts de un componente con anatomía fija se nombran en BEM y son permanentes aunque cambie la máquina debajo.",
+    refs: [
+      {
+        label: "getbem.com",
+        href: "https://getbem.com/",
+        note: "Block, Element, Modifier.",
+      },
+      {
+        label: "BEM, Naming",
+        href: "https://en.bem.info/methodology/naming-convention/",
+        note: "Convención de nombres.",
+      },
+    ],
+    here: "Markup contract y parts (ds-tabs__list, …).",
+  },
+  {
+    id: "progressive-enhancement",
+    title: "Progressive enhancement",
+    why: "Vanilla hidrata HTML autorado; sin JS, lo que la plataforma ya resuelve sigue funcionando.",
+    refs: [
+      {
+        label: "MDN, Progressive enhancement",
+        href: "https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement",
+        note: "Definición y enfoque.",
+      },
+      {
+        label: "GOV.UK, Progressive enhancement",
+        href: "https://www.gov.uk/service-manual/technology/using-progressive-enhancement",
+        note: "Práctica en productos reales.",
+      },
+    ],
+    here: "Capa vanilla e initComponents().",
+  },
+  {
+    id: "sass",
+    title: "Sass (solo para tokens fuente)",
+    why: "Los entrypoints de tokens usan Sass donde CSS no tiene macro; el consumidor sigue importando CSS/custom properties.",
+    refs: [
+      {
+        label: "Sass, @use",
+        href: "https://sass-lang.com/documentation/at-rules/use/",
+        note: "Módulos y API pública.",
+      },
+      {
+        label: "Sass documentation",
+        href: "https://sass-lang.com/documentation/",
+        note: "Referencia del lenguaje.",
+      },
+    ],
+    here: "Ramps, alto contraste y el entrypoint tokens.scss.",
+  },
+];
+---
+
+<Base
+  title="Prerrequisitos"
+  description="Conceptos de plataforma y estándares que este design system da por conocidos, con referencias externas."
+>
+  <h1>Prerrequisitos</h1>
+  <p class="lede">
+    Esta página no explica el sistema: apunta a material externo que conviene dominar antes. Cada
+    concepto lista <strong>por qué aparece aquí</strong> y enlaces a la fuente (MDN, W3C, specs). El
+    “cómo lo aplicamos nosotros” está en las páginas del sistema; el <em>porqué</em> de cada corte
+    vive en <code>docs/decisiones/</code> del repositorio.
+  </p>
+
+  {
+    concepts.map((concept) => (
+      <section class="docs-prereq" aria-labelledby={`prereq-${concept.id}`}>
+        <h2 id={`prereq-${concept.id}`}>{concept.title}</h2>
+        <p>{concept.why}</p>
+        <ul class="docs-prereq__refs">
+          {concept.refs.map((ref) => (
+            <li>
+              <a href={ref.href} rel="noopener noreferrer" target="_blank">
+                {ref.label}
+              </a>
+              <span class="docs-prereq__note">, {ref.note}</span>
+            </li>
+          ))}
+        </ul>
+        {concept.here && (
+          <p class="docs-prereq__here">
+            En este sitio: <em>{concept.here}</em>
+          </p>
+        )}
+      </section>
+    ))
+  }
+
+  <h2>Después de esto</h2>
+  <p>
+    Con esas piezas de plataforma, sigue
+    <a href="/">instalación</a>,
+    <a href="/primer-componente">tu primer componente</a> y los fundamentos:
+    <a href="/tiers">tiers</a>,
+    <a href="/dimensiones">dimensiones</a>,
+    <a href="/styling-hooks">styling hooks</a>.
+  </p>
+</Base>
+
+<style>
+  .docs-prereq + .docs-prereq {
+    margin-block-start: var(--space-stack-xl);
+  }
+
+  .docs-prereq__refs {
+    margin: 0;
+    padding-inline-start: 1.25rem;
+  }
+
+  .docs-prereq__refs li + li {
+    margin-block-start: var(--space-stack-xs);
+  }
+
+  .docs-prereq__note {
+    color: var(--color-text-secondary);
+  }
+
+  .docs-prereq__here {
+    margin-block-start: var(--space-stack-sm);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+  }
+</style>

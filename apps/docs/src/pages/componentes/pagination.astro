@@ -1,0 +1,107 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<nav class="ds-pagination" aria-label="Paginación">
+  <button
+    class="ds-pagination__previous ds-interactive"
+    type="button"
+    aria-label="Página anterior"
+  >
+    <span data-ds-icon="chevron-left" data-ds-icon-size="sm"></span>
+  </button>
+  <button
+    class="ds-pagination__item ds-interactive"
+    type="button"
+    aria-label="Página 1"
+  >
+    1
+  </button>
+  <span class="ds-pagination__ellipsis" aria-hidden="true">…</span>
+  <button
+    class="ds-pagination__item ds-interactive"
+    type="button"
+    aria-label="Página 4"
+  >
+    4
+  </button>
+  <button
+    class="ds-pagination__item ds-interactive"
+    type="button"
+    aria-current="page"
+    aria-label="Página 5"
+  >
+    5
+  </button>
+  <button
+    class="ds-pagination__item ds-interactive"
+    type="button"
+    aria-label="Página 6"
+  >
+    6
+  </button>
+  <span class="ds-pagination__ellipsis" aria-hidden="true">…</span>
+  <button
+    class="ds-pagination__item ds-interactive"
+    type="button"
+    aria-label="Página 12"
+  >
+    12
+  </button>
+  <button
+    class="ds-pagination__next ds-interactive"
+    type="button"
+    aria-label="Página siguiente"
+  >
+    <span data-ds-icon="chevron-right" data-ds-icon-size="sm"></span>
+  </button>
+</nav>`;
+
+const react = `import { Pagination } from "@skryensya/react/pagination";
+
+<Pagination
+  page={page}
+  total={12}
+  onPageChange={setPage}
+  label="Paginación"
+  previousLabel="Página anterior"
+  nextLabel="Página siguiente"
+/>;`;
+
+const rangeExample = `import { paginationRange } from "@skryensya/core/pagination";
+
+paginationRange(5, 20);
+// → [1, "ellipsis", 4, 5, 6, "ellipsis", 20]`;
+---
+
+<Base title="Pagination" description="Pagination: ventana de páginas como función pura del core, con primera, última y elipsis.">
+  <h1>Pagination</h1>
+  <p class="lede">
+    Pagination recorre un conjunto paginado, una página a la vez. La ventana visible es la parte
+    interesante, y vive como función pura en el core: primera y última siempre presentes, la actual
+    con un hermano a cada lado, y las corridas ocultas colapsan en una elipsis.
+  </p>
+
+  <h2>Demo</h2>
+  <Showcase html={html} react={react} label="Pagination" />
+  <p>
+    Prev/next usan los roles <code>chevron-left</code> y <code>chevron-right</code> del set.
+    La página actual lleva <code>aria-current="page"</code>; prev/next se deshabilitan en los bordes.
+    La elipsis es texto inerte, no un objetivo. Los targets llevan <code>ds-interactive</code>.
+  </p>
+
+  <h2>La ventana, en el core</h2>
+  <p>El renderizado y los handlers son del binding; el cálculo es del core y es testeable en aislamiento:</p>
+  <CodeBlock code={rangeExample} lang="ts" label="@skryensya/core/pagination" />
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de la demo. React dibuja los chevrons del set enlazado.</p>
+  <StylingHooks groups={[{ file: "components/pagination.css", probe: "ds-pagination" }]} />
+</Base>

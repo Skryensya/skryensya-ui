@@ -1,0 +1,48 @@
+# Tile system
+
+## Invariant
+
+Every Tile has exactly one interactive intent. A Tile is never a static surface.
+
+Choose by behavior:
+
+- Static content or multiple independent controls: `Box`.
+- Navigation: `TileLink` with an `a`.
+- One action: `TileButton` with a `button type="button"`.
+- Independent selection: `TileCheckbox` with a real checkbox input.
+- Exclusive selection: `TileRadioGroup` with real radio inputs.
+- Disclosure: `ExpandableTile` with a button trigger; `Accordion` coordinates one or more disclosures in `single` or `multiple` mode.
+
+`Box` y `Tile` comparten superficie, borde, radio y la misma escala de padding. Box inicia sin inset; Tile inicia en `md`. Usa `data-padding="none"`, o `padding="none"` en React, cuando un hijo sea dueño de su inset y deba llegar al borde. La diferencia entre ambos módulos es la interacción: Box no tiene ninguna; Tile tiene exactamente una.
+
+## Authored HTML and bindings
+
+Start with native HTML. `TileLink` and `TileButton` require no enhancer. Their Vanilla factories only create authored native elements when JavaScript builds the tree.
+
+The Vanilla enhancers improve authored stateful markup; they do not replace its semantics:
+
+- `connectTileCheckbox` requires an `input[type="checkbox"]`, with `data-part="input"` recommended, inside a `data-part="root"` label.
+- `connectTileRadioGroup` requires real radio inputs and `data-part="item"` on each item. The group root is `data-part="root"`.
+- `connectExpandableTile` requires `data-part="trigger"` on its button and `data-part="content"` on its associated content. `initComponents()` recognizes an authored root with `ds-tile ds-tile--expandable`, `data-scope="tile"`, and `data-part="root"`; `connectAccordion` mounts a `data-ds-accordion` root and coordinates direct `data-part="item"` Tile children.
+
+React bindings render the same native contracts and coordinate selection or disclosure state. They do not mount the Vanilla enhancer.
+
+## Interactive nesting
+
+Invalid:
+
+```html
+<a class="ds-tile ds-tile--interactive ds-interactive" href="/details">
+  <button type="button">Delete</button>
+</a>
+```
+
+An interactive control cannot contain another interactive control. Use a non-interactive `Box` and place independent controls inside as siblings.
+
+## Choice guide
+
+Do not infer behavior from a surface style or combine conflicting interaction flags. First classify the user intent, then use exactly one Tile variant where there is exactly one interaction. When the content is static or needs multiple independent controls, use `Box` instead.
+
+## Bundle and publishing
+
+`@skryensya/core/components/tile.css` is opt-in. Individual React and Vanilla Tile entrypoints are tree-shakeable.

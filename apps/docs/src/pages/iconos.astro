@@ -1,0 +1,286 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import Used from "../components/Used.astro";
+import { stableIconNames } from "@skryensya/core/icon";
+import { allSets, iconMarkup } from "../icons";
+
+/* Los roles que se muestran lado a lado. Un puñado alcanza para ver que el dibujo cambia y el nombre
+ * no; los 32 están abajo. */
+const compared = ["search", "delete", "settings", "user", "warning", "external-link"] as const;
+
+const vanilla = `<!-- El markup contract: lo escribes tú. El
+     sistema no envía un <ds-icon>. -->
+<svg
+  class="ds-icon"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d="M6 9l6 6 6-6" />
+</svg>`;
+
+const vanillaHydrate = `
+<!-- Escribes el nombre del rol, no el <svg>. -->
+<span data-ds-icon="chevron-down"></span>
+<span data-ds-icon="close" data-ds-icon-label="Cerrar"></span>`;
+
+const vanillaBind = `
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// reemplaza cada [data-ds-icon] por el <svg> del set. El
+// set es explícito.
+mountIcons(document, lucideIcons);`;
+
+const bind = `# nada: Phosphor viene por defecto con @skryensya/react
+# ¿otro set? lo instalas, y solo entonces se empaqueta:
+pnpm add @skryensya/icons-lucide     # o @skryensya/icons-material`;
+
+const react = `import { Icon } from "@skryensya/react/icon";
+
+// sin configuración: dibuja con Phosphor, el set por defecto
+<Icon name="chevron-down" />
+{/* un rol del sistema */}
+<Icon name="close" label="Cerrar" />
+{/* significa algo solo → role="img" */}
+<Icon data={sparkle} />
+{/* fuera del set, lo único opt-in */}`;
+
+const provider = `
+import { IconSetProvider, Icon } from "@skryensya/react/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// ¿otro set? lo enlazas una vez, en la raíz, igual que
+// eliges una marca
+<IconSetProvider set={lucideIcons}>
+  <App />
+</IconSetProvider>;`;
+
+const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
++ import { phosphorIcons } from "@skryensya/icons-phosphor";
+
+- <IconSetProvider set={lucideIcons}>
++ <IconSetProvider set={phosphorIcons}>
+
+  // y nada más. Ni un <Icon name="…"> se mueve.`;
+
+const sizes = `
+<Icon name="check" size="sm" /> {/* --size-icon-sm, 16px */}
+<Icon name="check" /> {/* --size-icon-md, 20px, el default */}
+<Icon name="check" size="lg" /> {/* --size-icon-lg, 24px */}
+
+/* ¿otro tamaño? se redeclara el hook, como todo valor
+   arbitrario del sistema */
+.hero .ds-icon { --ds-icon-size: 2rem; }`;
+---
+
+<Base
+  title="Icono"
+  description="El pattern de SVG inline: el sistema publica el vocabulario, el CSS y el renderer; la geometría la enlazas tú, igual que una marca."
+>
+  <h1>Icono</h1>
+  <p class="lede">
+    Un pattern, no un componente: cada componente que muestra un icono envuelve el mismo
+    <code>&lt;svg&gt;</code>, así que la estructura se envía una vez. El sistema nombra 32 roles; el
+    dibujo lo pone un set, Lucide, Phosphor o Material, y cambiarlo no mueve un solo call site. Lo
+    opt-in es <strong>salirse</strong> del set.
+  </p>
+
+  <div class="example">
+    <div class="example__stage" style="display:block">
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(6rem, 1fr)); gap:var(--space-stack-md)">
+        {
+          stableIconNames.map((name) => (
+            <span style="display:flex; flex-direction:column; align-items:center; gap:var(--space-stack-xs); min-inline-size:0">
+              <Fragment set:html={iconMarkup(name, { size: "lg" })} />
+              <code style="font-size: var(--font-size-caption)">{name}</code>
+            </span>
+          ))
+        }
+      </div>
+      <p class="count" style="margin-top: var(--space-stack-sm)">
+        Cambia marca, modo o contraste arriba: los iconos siguen, y no declaran un solo token de
+        color. Heredan <code>currentColor</code>.
+      </p>
+    </div>
+  </div>
+
+  <h2>No hay nada que importar</h2>
+  <p>
+    Como el <a href="/state-layer">state layer</a>, el pattern viene en <code>tokens.scss</code>. Un
+    icono no es un extra al que un componente opta: apenas algo muestra un chevron, un close o un
+    glifo de estado necesita esta misma caja, y un componente que dimensiona su propio icono está
+    reinventándola. Las reglas son inertes hasta que un elemento lleva <code>ds-icon</code>, así que
+    no pesan en una página sin iconos.
+  </p>
+
+  <h2>El vocabulario estable</h2>
+  <p>
+    Treinta y dos roles, que cubren los casos más usados de una app y no solo lo que consumen los
+    componentes del sistema. La razón es la portabilidad: si el vocabulario llegara hasta
+    <code>chevron-down</code> y nada más, cada proyecto declararía <code>search</code> o
+    <code>delete</code> por su cuenta, y el rol más común del sistema se llamaría distinto en cada
+    app, que es exactamente lo que un vocabulario estable existe para impedir.
+  </p>
+  <p>
+    Cada nombre es un <strong>rol</strong>, nunca un dibujo: <code>delete</code> y no
+    <code>trash</code>, <code>edit</code> y no <code>pencil</code>, <code>search</code> y no
+    <code>magnifying-glass</code>, <code>visibility</code> y no <code>eye</code>. El nombre tiene que
+    seguir siendo verdad cuando otro set dibuje el rol distinto. Y es <code>danger</code>, no
+    <code>error</code>, porque el sistema ya dice <code>danger</code> en
+    <Used token="--color-text-danger" /> y en <code>BadgeTone</code>, una palabra no coexiste con su
+    sinónimo.
+  </p>
+  <p>
+    El límite no se movió: un concepto de <strong>producto</strong> (<code>invoice</code>,
+    <code>warehouse</code>, <code>airplane-tilt</code>) no entra por más usado que sea en tu app. Sale
+    como geometría tuya. Y cada nombre aquí es una obligación para quien dibuje un set, porque un set
+    es completo.
+  </p>
+
+  <h2>Elegir un set</h2>
+  <p>
+    Un set de iconos <strong>es una marca</strong>. <code>@skryensya/core</code> nombra la posición
+    (<code>chevron-down</code>) y el set dice qué dibujo la ocupa, igual que una marca dice qué hue
+    ocupa <code>--ramp-accent-600</code>. Hay tres publicados; <strong>Phosphor es el default</strong>
+    (viaja con React) y los otros dos son intercambiables, opt-in:
+  </p>
+  <table class="ds-table">
+    <thead>
+      <tr><th>Paquete</th><th>Librería</th><th>Trazo</th><th>viewBox</th><th>Licencia</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>@skryensya/icons-lucide</code></td><td>Lucide</td><td>contorno, 2px</td><td><code>0 0 24 24</code></td><td>ISC</td></tr>
+      <tr><td><code>@skryensya/icons-phosphor</code></td><td>Phosphor, peso regular</td><td>relleno</td><td><code>0 0 256 256</code></td><td>MIT</td></tr>
+      <tr><td><code>@skryensya/icons-material</code></td><td>Material Symbols, outlined 400</td><td>relleno</td><td><code>0 -960 960 960</code></td><td>Apache-2.0</td></tr>
+    </tbody>
+  </table>
+  <p>
+    Ninguno vive en <code>@skryensya/core</code>, por dos razones que ya estaban decididas: core no
+    nombra inquilinos, Lucide es uno, y <code>providers/lucide</code> dejaría de ser verdad el día que
+    cambies de set, y sus <code>dependencies</code> están vacías. Son paquetes aparte.
+  </p>
+  <CodeBlock code={bind} label="instalar" note="Phosphor por defecto; los otros, opt-in" />
+
+  <h2>El mismo nombre, tres dibujos</h2>
+  <p>
+    Esto es la portabilidad, ejecutada. Cada fila es <strong>un</strong> rol; cada columna, un set.
+    El nombre que escribes es el de la izquierda, <code>search</code>, no
+    <code>magnifying-glass</code> ni <code>Search</code> ni el codepoint de una fuente.
+  </p>
+  <div class="example">
+    <div class="example__stage" style="display:block">
+      <table class="ds-table">
+        <thead>
+          <tr>
+            <th>rol</th>
+            {allSets.map((s) => <th>{s.label}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {
+            compared.map((role) => (
+              <tr>
+                <td><code>{role}</code></td>
+                {allSets.map((s) => (
+                  <td><Fragment set:html={iconMarkup(role, { size: "lg", set: s.set })} /></td>
+                ))}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+      <p class="count" style="margin-top: var(--space-stack-sm)">
+        Tres librerías, tres viewBox distintos, cero tokens de color: los tres heredan
+        <code>currentColor</code>. Cambia marca, modo o contraste arriba y los tres siguen.
+      </p>
+    </div>
+  </div>
+  <p>Cambiar de set es esto, y nada más:</p>
+  <CodeBlock code={swap} label="cambiar de set" note="ningún call site se mueve" />
+
+  <h2>React</h2>
+  <p>
+    <code>Icon</code> toma <code>name</code> <strong>o</strong> <code>data</code>, nunca los dos.
+    <code>name</code> es un rol portable que sobrevive un cambio de set; <code>data</code> es
+    geometría tuya, acoplada a propósito y visible en el call site. No hay un <code>SetIcon</code>:
+    sería el sistema tipando tu vocabulario.
+  </p>
+  <CodeBlock code={react} label="tu app" note="React renderiza (decisión 14)" />
+  <p>
+    <code>&lt;Icon name="…"&gt;</code> dibuja sin configuración: Phosphor es el set por defecto y viaja
+    con <code>@skryensya/react</code>, igual que <code>brands/default.scss</code> viaja en core. Para
+    usar otro set lo instalas y envuelves la app una vez, Lucide y Material no se empaquetan hasta ese
+    import. Antes el sistema no traía ningún dibujo; ahora trae uno.
+  </p>
+  <CodeBlock code={provider} label="cambiar el set por defecto" note="Lucide/Material son opt-in" />
+
+  <h2>Vanilla: hidratar por nombre, o escribir el markup</h2>
+  <p>
+    Para un rol del vocabulario estable, <code>@skryensya/vanilla/icon</code> trae
+    <code>mountIcons(root, set)</code>: escribes un placeholder con el <strong>nombre</strong> del rol y
+    el enlazador lo reemplaza por el mismo <code>&lt;svg class="ds-icon"&gt;</code> que escribirías a
+    mano, la paridad con el <code>&lt;Icon name&gt;</code> de React, sin pegar la geometría del set en tu
+    HTML. El set es siempre explícito; para dos sets en una página, hidratas cada subárbol con el suyo.
+  </p>
+  <CodeBlock code={vanillaHydrate} label="tu HTML" note="escribes el nombre, no el <svg>" />
+  <CodeBlock code={vanillaBind} label="una vez, al arrancar" note="mountIcons no lo llama initComponents()" />
+  <p>
+    No es un renderer: no compone estructura que difiera por consumidor, el icono es <em>el</em> pattern
+    cuya caja es idéntica en todos lados, sino un <strong>enlazador de marca</strong>, que inyecta la
+    geometría del set igual que <code>&lt;Icon&gt;</code> en React. Un <code>data-ds-icon</code> que el
+    set no cubre se deja intacto y se avisa: la geometría del <strong>proyecto</strong> no es un rol, y
+    se escribe como <code>&lt;svg&gt;</code> propio, el único opt-in que queda.
+  </p>
+  <CodeBlock code={vanilla} label="geometría propia, a mano" note="para un dibujo que ningún set tiene" />
+
+  <h2>Accesibilidad</h2>
+  <ul>
+    <li>
+      <strong>Sin <code>label</code> el icono es decorativo</strong>, lleva
+      <code>aria-hidden="true"</code>. Es el caso normal: en un botón con texto, el texto ya nombra la
+      acción.
+    </li>
+    <li>
+      <strong>En un botón de solo icono, el nombre accesible es del botón</strong>
+      (<code>aria-label="Cerrar diálogo"</code>), no del <code>&lt;svg&gt;</code>. El icono adentro
+      sigue decorativo.
+    </li>
+    <li>
+      <strong>Con <code>label</code> el icono es contenido</strong>, <code>role="img"</code> más
+      <code>aria-label</code>. Solo cuando el icono se para solo y significa algo por sí mismo.
+    </li>
+    <li>
+      <code>focusable="false"</code> siempre: un <code>&lt;svg&gt;</code> no es un tab stop.
+    </li>
+  </ul>
+
+  <h2>Tamaño</h2>
+  <p>
+    Tres valores de <strong>un</strong> hook. <code>--ds-icon-size</code> es invariante a densidad: la
+    densidad es una preocupación de espaciado, y un icono es contenido que se para al lado de un
+    glifo, si el texto no encoge, el icono tampoco.
+  </p>
+  <CodeBlock code={sizes} label="tamaños" note="no hay prop numérica" />
+
+  <h2>El CSS no toca <code>fill</code> ni <code>stroke</code></h2>
+  <p>
+    Un set de contorno dibuja con <code>fill="none" stroke="currentColor"</code> en el
+    <code>&lt;svg&gt;</code> raíz, y una declaración CSS <strong>le gana a un atributo de
+    presentación</strong>. Un <code>fill: currentColor</code> en el pattern volvería sólido todo set de
+    contorno, en silencio. Así que la intención de la geometría vive en <code>attrs</code>, del set, y
+    el pattern solo pone caja y tamaño.
+  </p>
+  <p>
+    Eso deja al icono <strong>sin color propio</strong>, y sale gratis: hereda
+    <code>currentColor</code>, así que es correcto en las ocho marcas y los dos modos sin un token, no
+    necesita override en <code>modes/hc.scss</code>, no entra en <code>contrast-pairs.json</code>, y en
+    contraste forzado el navegador fuerza el <code>color</code> del contenedor y
+    <code>currentColor</code> lo sigue solo.
+  </p>
+
+</Base>

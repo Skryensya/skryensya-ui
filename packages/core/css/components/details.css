@@ -1,0 +1,208 @@
+/*
+ * TIER 3, DETAILS (opt-in styling hooks)
+ *
+ * The platform owns disclosure: <details> carries open state and <summary> is its one trigger.
+ * This is deliberately not Accordion. Equal `name` values may form a native exclusive group, but
+ * there is no machine, controlled value or emitted component event here; choose Accordion when
+ * that coordination is the requirement.
+ */
+@layer components {
+  .ds-details {
+    --ds-details-border-color: var(--color-border-subtle);
+    --ds-details-bg: var(--color-bg-surface);
+    --ds-details-fg: var(--color-text-primary);
+    --ds-details-content-bg: var(--color-bg-surface-sunken);
+    --ds-details-content-fg: var(--color-text-secondary);
+    --ds-details-padding: var(--space-inset-md);
+    --ds-details-gap: var(--space-inline-md);
+    --ds-details-heading-gap: var(--space-stack-xs);
+    --ds-details-title-font-size: var(--font-size-heading-sm);
+    --ds-details-description-font-size: var(--font-size-body-sm);
+    --ds-details-indicator-fg: var(--color-text-secondary);
+
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-inline-size: 0;
+    overflow: clip;
+    border: 1px solid var(--ds-details-border-color);
+    border-radius: var(--radius-surface);
+    background: var(--ds-details-bg);
+    color: var(--ds-details-fg);
+  }
+
+  .ds-details,
+  .ds-details *,
+  .ds-details *::before,
+  .ds-details *::after {
+    box-sizing: border-box;
+  }
+
+  .ds-details__summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--ds-details-gap);
+    align-items: center;
+    min-block-size: var(--size-control-lg);
+    padding: var(--ds-details-padding);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .ds-details__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ds-details__summary::marker {
+    content: "";
+  }
+
+  .ds-details__heading {
+    display: grid;
+    gap: var(--ds-details-heading-gap);
+    min-inline-size: 0;
+  }
+
+  .ds-details__title {
+    min-inline-size: 0;
+    color: var(--ds-details-fg);
+    font-size: var(--ds-details-title-font-size);
+    font-weight: var(--font-weight-heading);
+    line-height: var(--line-height-heading);
+  }
+
+  .ds-details__description {
+    min-inline-size: 0;
+    color: var(--ds-details-content-fg);
+    font-size: var(--ds-details-description-font-size);
+    line-height: var(--line-height-body);
+  }
+
+  .ds-details__indicator {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--size-icon-sm);
+    block-size: var(--size-icon-sm);
+    color: var(--ds-details-indicator-fg);
+  }
+
+  .ds-details__indicator > [data-state] {
+    display: none;
+  }
+
+  .ds-details__indicator > [data-state="closed"] {
+    display: inline-grid;
+  }
+
+  .ds-details[open] .ds-details__indicator > [data-state="closed"] {
+    display: none;
+  }
+
+  .ds-details[open] .ds-details__indicator > [data-state="open"] {
+    display: inline-grid;
+  }
+
+  .ds-details[open] .ds-details__indicator {
+    color: var(--ds-details-fg);
+  }
+
+  .ds-details__content {
+    display: grid;
+    gap: var(--ds-details-heading-gap);
+    min-inline-size: 0;
+    padding: var(--ds-details-padding);
+    border-block-start: 1px solid var(--ds-details-border-color);
+    background: var(--ds-details-content-bg);
+    color: var(--ds-details-content-fg);
+    line-height: var(--line-height-body);
+    overflow-wrap: anywhere;
+  }
+
+  .ds-details__content > :first-child {
+    margin-block-start: 0;
+  }
+
+  .ds-details__content > :last-child {
+    margin-block-end: 0;
+  }
+
+  /* Modern browsers expose the native disclosure body as a pseudo-element. Animate that clipping
+   * region, not a replacement wrapper: the platform still owns `open`, `name` exclusivity and the
+   * accessibility tree. Browsers without `interpolate-size` keep the same static anatomy. */
+  @supports (interpolate-size: allow-keywords) {
+    .ds-details::details-content {
+      block-size: 0;
+      overflow: clip;
+      content-visibility: hidden;
+      interpolate-size: allow-keywords;
+      transition:
+        block-size var(--motion-collapse-duration) var(--motion-collapse-easing),
+        content-visibility var(--motion-collapse-duration) var(--motion-collapse-easing) allow-discrete;
+    }
+
+    .ds-details[open]::details-content {
+      block-size: auto;
+      content-visibility: visible;
+      transition:
+        block-size var(--motion-expand-duration) var(--motion-expand-easing),
+        content-visibility var(--motion-expand-duration) var(--motion-expand-easing) allow-discrete;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-details::details-content {
+      transition-duration: 1ms;
+    }
+  }
+
+  /* A group is visual structure only. The shared native `name` below is what makes disclosures
+   * exclusive; omitting it leaves the same styled items independent. */
+  .ds-details-group {
+    display: grid;
+    inline-size: 100%;
+    overflow: clip;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-surface);
+    background: var(--color-bg-surface);
+  }
+
+  .ds-details-group > .ds-details {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .ds-details-group > .ds-details + .ds-details {
+    border-block-start: 1px solid var(--color-border-subtle);
+  }
+
+  .ds-details-group > .ds-details:first-child {
+    border-start-start-radius: inherit;
+    border-start-end-radius: inherit;
+  }
+
+  .ds-details-group > .ds-details:last-child {
+    border-end-start-radius: inherit;
+    border-end-end-radius: inherit;
+  }
+
+  @media (forced-colors: active) {
+    .ds-details {
+      border-color: CanvasText;
+      background: Canvas;
+      color: CanvasText;
+      forced-color-adjust: none;
+    }
+
+    .ds-details-group {
+      border-color: CanvasText;
+      background: Canvas;
+      forced-color-adjust: none;
+    }
+
+    .ds-details__content {
+      border-block-start-color: CanvasText;
+      background: Canvas;
+      color: CanvasText;
+    }
+  }
+}

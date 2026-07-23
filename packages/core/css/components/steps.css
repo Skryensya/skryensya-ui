@@ -1,0 +1,149 @@
+/*
+ * TIER 3, STEPS
+ *
+ * A progress rail: markers carry the sequence, labels explain it, and the connector says how much
+ * work is already behind the reader. Wide layouts keep the journey horizontal; narrow viewports turn
+ * it into a left-hand rail so no label gets clipped, abbreviated, or forced into a tiny column.
+ */
+@layer components {
+  .ds-steps {
+    --ds-steps-marker-size: var(--size-control-sm);
+    --ds-steps-connector-size: 2px;
+
+    display: flex;
+    inline-size: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ds-steps__item {
+    position: relative;
+    z-index: 0;
+    flex: 1 1 0;
+    display: grid;
+    grid-template-rows: var(--ds-steps-marker-size) auto;
+    justify-items: center;
+    gap: var(--space-stack-xs);
+    min-inline-size: 0;
+    padding: var(--space-inset-xs);
+    border-radius: var(--radius-surface);
+    text-align: center;
+  }
+
+  /* The outgoing connector belongs to the completed stage: it says which work is behind us. */
+  .ds-steps__item:not(:last-child)::after {
+    position: absolute;
+    z-index: 0;
+    inset-block-start: calc(var(--ds-steps-marker-size) / 2 - var(--ds-steps-connector-size) / 2);
+    inset-inline-start: 50%;
+    inline-size: 100%;
+    block-size: var(--ds-steps-connector-size);
+    background: var(--color-border-default);
+    content: "";
+  }
+
+  .ds-steps__marker {
+    position: relative;
+    z-index: 1;
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--ds-steps-marker-size);
+    block-size: var(--ds-steps-marker-size);
+    border: 2px solid var(--color-border-default);
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-surface);
+    box-shadow: 0 0 0 3px var(--color-bg-surface);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+    line-height: 1;
+  }
+
+  .ds-steps__item > :not(.ds-steps__marker) {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 2px;
+    min-inline-size: 0;
+  }
+
+  .ds-steps__label {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+    line-height: var(--font-line-height-body);
+    text-wrap: balance;
+  }
+
+  .ds-steps__description {
+    margin: 0;
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-body);
+    text-wrap: pretty;
+  }
+
+  .ds-steps__item[data-status="complete"]::after {
+    background: var(--color-action-primary);
+  }
+
+  .ds-steps__item[data-status="complete"] .ds-steps__marker {
+    border-color: transparent;
+    background: var(--color-action-primary);
+    color: var(--color-text-on-accent);
+  }
+
+  .ds-steps__item[data-status="complete"] .ds-steps__label {
+    color: var(--color-text-primary);
+  }
+
+  /* Current is marked at the MARKER, not by filling the whole step with a card background. The marker
+   * keeps its accent fill and gains a halo: an opaque surface gap that masks the connector behind it,
+   * then a soft accent ring that reads as "you are here", the radio-selected look, without boxing the
+   * step in. The label goes accent to tie the eye to the marker and separate current from the done
+   * steps (which are primary) and the upcoming ones (which are muted). */
+  .ds-steps__item[data-status="current"] .ds-steps__marker {
+    border-color: var(--color-action-primary);
+    background: var(--color-action-primary);
+    color: var(--color-text-on-accent);
+    box-shadow:
+      0 0 0 3px var(--color-bg-surface),
+      0 0 0 5px color-mix(in oklab, var(--color-action-primary) 30%, transparent);
+  }
+
+  .ds-steps__item[data-status="current"] .ds-steps__label {
+    color: var(--color-text-accent);
+    font-weight: var(--font-weight-emphasis);
+  }
+
+  @media (max-width: 40rem) {
+    .ds-steps {
+      flex-direction: column;
+    }
+
+    .ds-steps__item {
+      grid-template-columns: var(--ds-steps-marker-size) minmax(0, 1fr);
+      grid-template-rows: auto;
+      justify-items: start;
+      align-items: start;
+      padding-block-end: var(--space-stack-md);
+      text-align: start;
+    }
+
+    .ds-steps__item > :not(.ds-steps__marker) {
+      padding-block-start: 2px;
+    }
+
+    .ds-steps__item:not(:last-child)::after {
+      inset-block-start: var(--ds-steps-marker-size);
+      inset-inline-start: calc(var(--ds-steps-marker-size) / 2 - var(--ds-steps-connector-size) / 2);
+      inline-size: var(--ds-steps-connector-size);
+      block-size: calc(100% - var(--ds-steps-marker-size));
+    }
+
+    .ds-steps__item:last-child {
+      padding-block-end: var(--space-inset-xs);
+    }
+  }
+}

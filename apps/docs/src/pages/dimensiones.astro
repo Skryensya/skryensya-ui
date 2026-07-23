@@ -1,0 +1,211 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import Used from "../components/Used.astro";
+import { tokens } from "../lib/tokens";
+
+const modeAware = tokens.filter((t) => t.modeAware).length;
+
+const rootRamps = `/* tokens.scss ya declara las ramps. Personaliza solo los seeds. */
+:root {
+  --seed-accent: oklch(52% 0.19 20);
+  --seed-neutral: oklch(58% 0.01 30);
+}`;
+
+const densityUse = `/* Un multiplicador, no una segunda escala. */
+html { --ds-density: 0.8; }`;
+
+const radiusUse = `<!-- Un preset del multiplicador… -->
+<html data-radius="xl">
+
+<!-- …o un valor continuo fuera de la escalera. -->
+<html style="--radius-multiplier: 1.25">`;
+---
+
+<Base
+  title="Cuatro dimensiones"
+  description="Modo de color, alto contraste, densidad y radio: cuatro ejes que componen en la cascada. Las ramps se configuran una vez desde :root."
+>
+  <h1>Cuatro dimensiones</h1>
+  <p class="lede">
+    Modo de color, alto contraste, densidad y radio. Cuatro ejes independientes que
+    <strong>componen</strong> en la cascada, no se enumeran en disco.
+  </p>
+
+  <p>
+    Las ramps tier-1 forman una sola base configurable: cambias sus seeds en <code>:root</code> y los
+    tokens semánticos conservan su significado. No hay catálogo de marcas, selector ni atributo que mantener.
+  </p>
+
+  <h2>Cada dimensión posee una capa distinta</h2>
+  <p>Esa es toda la razón por la que componen en vez de multiplicarse.</p>
+
+  <div class="ds-table-scroll">
+    <table class="ds-table">
+      <thead>
+        <tr>
+          <th>Dimensión</th>
+          <th>Posee</th>
+          <th>Mecanismo</th>
+          <th>Se activa con</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Modo de color</strong></td>
+          <td>color tier-2</td>
+          <td><code>light-dark()</code> elige slot</td>
+          <td class="mono">color-scheme</td>
+        </tr>
+        <tr>
+          <td><strong>Alto contraste</strong></td>
+          <td>color tier-2</td>
+          <td>re-declara los mismos tokens</td>
+          <td class="mono">data-contrast</td>
+        </tr>
+        <tr>
+          <td><strong>Densidad</strong></td>
+          <td>espaciado tier-2</td>
+          <td>multiplicador en runtime</td>
+          <td class="mono">--ds-density</td>
+        </tr>
+        <tr>
+          <td><strong>Radio</strong></td>
+          <td>redondez tier-2</td>
+          <td>un multiplicador en runtime</td>
+          <td class="mono">data-radius / --radius-multiplier</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ds-alert" data-tone="info" data-presentation="accent">
+    <div class="ds-alert__content">
+    <p>
+      <strong>La separación sigue siendo estructural:</strong> las ramps son tier 1 y los tokens
+      semánticos solo referencian posiciones como <code>accent-600</code>. Configurar un seed nunca pisa
+      un token semántico, así que modo, contraste, densidad y radio siguen siendo independientes.
+    </p>
+    </div>
+  </div>
+
+  <h2>Ramps, una base configurable</h2>
+  <p>
+    <code>tokens.scss</code> incluye el ramp completo. Los seeds de acento y neutral ajustan la identidad;
+    danger, success y warning tienen defaults sobrios y también se pueden sobrescribir. Los stops se
+    derivan en runtime y <code>accent-600</code> conserva el mismo rol para los tokens semánticos.
+  </p>
+  <CodeBlock code={rootRamps} label="tu CSS" />
+
+  <h2>Modo de color, dos slots, y solo dos</h2>
+  <p>
+    <code>light-dark()</code> toma <strong>exactamente dos argumentos</strong> y solo vale donde vale
+    un <code>&lt;color&gt;</code>. Esas dos restricciones no se pelean: se aceptan, y moldean el resto
+    del modelo.
+  </p>
+  <ul>
+    <li>
+      <strong>Tres modos no entran en dos slots</strong>, así que alto contraste no es un tercer
+      argumento: es un bloque de override aparte que re-declara los mismos tokens, todavía dentro de
+      <code>light-dark()</code>, así que compone con el eje claro/oscuro.
+    </li>
+    <li>
+      <strong>Lo que no es color no puede ser mode-aware.</strong> Una sombra, un largo, una familia
+      tipográfica jamás pueden vivir dentro de <code>light-dark()</code>.
+    </li>
+  </ul>
+  <p>
+    Por eso <strong>todo token mode-aware del sistema es, necesariamente, un token de color</strong>, 
+    hay {modeAware}, y por eso la elevación se modela como color-más-composite en vez de una sombra
+    por modo. Es una propiedad de la plataforma, no una decisión estética.
+  </p>
+
+  <h2>Densidad, un multiplicador con el piso adentro</h2>
+  <p>
+    Un solo número, <code>--ds-density</code> (1 = cómoda). No hay una segunda escala de espaciado que
+    pueda derivar de la primera. Es continuo, cualquier valor sirve, y las <strong>Opciones</strong>
+    de arriba ofrecen cinco presets como atajo, de <em>espaciosa</em> (1.2) a <em>condensada</em> (0.5).
+  </p>
+  <CodeBlock code={densityUse} label="tu CSS" />
+
+  <p>
+    Para variar solo un contenedor, añade <code>data-ds-density-scope</code>. Su
+    <code>--ds-density-factor</code> multiplica la densidad del sistema; un <code>--ds-density</code>
+    escrito directamente en el scope fija un valor absoluto. Los presets son solo nombres de ayuda:
+    cualquier número válido sigue funcionando.
+  </p>
+
+  <p>
+    <a href="/densidad">La guía de densidad de componente</a> muestra el scope local con un componente
+    real y explica cuándo elegir un factor relativo o un valor absoluto.
+  </p>
+
+  <p>
+    Pon la densidad en <em>densa</em> arriba y mira estos dos:
+  </p>
+  <div class="ds-box" data-surface="surface" data-border="subtle" data-padding="lg">
+    <p>
+      <code>--space-inset-md</code> → <Used token="--space-inset-md" /><br />
+      <code>--size-control-md</code> → <Used token="--size-control-md" />
+    </p>
+  </div>
+
+  <div class="ds-alert" data-tone="info" data-presentation="accent">
+    <div class="ds-alert__content">
+    <p>
+      <strong>El piso de accesibilidad está dentro del token, no en la documentación.</strong> Los
+      tamaños interactivos emiten <code>max(round(calc(base × densidad), 2px), 24px)</code>. Ese
+      <code>max()</code> es el mínimo de WCAG 2.2 SC 2.5.8: ningún equipo puede multiplicar por debajo
+      de 24px, sin importar lo que asignen a <code>--ds-density</code>. Es inalcanzable por construcción,
+      no por revisión de código.
+    </p>
+    </div>
+  </div>
+
+  <p>
+    El <code>round(…, 2px)</code> tampoco es capricho: <code>calc(4px * 0.6)</code> = 2.4px se sale de
+    la grilla, y varios de esos juntos hacen temblar una UI compacta. Es un no-op a densidad 1.
+  </p>
+
+  <h3>Qué es deliberadamente invariante a la densidad</h3>
+  <p>
+    Tipografía (escalar font-size sin corregir line-height se lee peor, la densidad es un problema de
+    espaciado, no de tipo), radio de esquina (es su propia dimensión, una preocupación de redondez, no
+    de espacio), ancho del anillo de foco (un anillo que se encoge desaparece) y el área táctil (se
+    puede pintar pequeño y responder grande).
+  </p>
+
+  <h2>Radio, la redondez como eje, no como valor de marca</h2>
+  <p>
+    Un <strong>multiplicador</strong>, no un valor plano igual para todo: <code>--radius-multiplier</code>
+    escala una escala de radios donde cada rol conserva su lugar, <code>control</code> y
+    <code>surface</code> siguen siendo distintos a cualquier nivel. Usa el mecanismo de la densidad, no
+    el del alto contraste. Cinco presets bajo <code>data-radius</code>, <code>none 0 · sm .5 · md 1 ·
+    lg 1.5 · xl 2</code>, con <code>md</code> como base, setean solo ese multiplicador, y un producto
+    puede marcar un valor continuo (p. ej. <code>1.25</code>) fuera de esa escalera. Es ortogonal a la
+    marca: la misma marca se ve viva o suave sin tocar su paleta.
+  </p>
+  <CodeBlock code={radiusUse} label="tu HTML" />
+
+  <p>
+    Cambia el radio arriba y mira los dos roles que se mueven:
+  </p>
+  <div class="ds-box" data-surface="surface" data-border="subtle" data-padding="lg">
+    <p>
+      <code>--radius-control</code> → <Used token="--radius-control" /><br />
+      <code>--radius-surface</code> → <Used token="--radius-surface" />
+    </p>
+  </div>
+
+  <div class="ds-alert" data-tone="info" data-presentation="accent">
+    <div class="ds-alert__content">
+    <p>
+      <strong>El invariante de la dimensión: <code>--radius-pill</code> no se mueve.</strong> El eje toca
+      los dos roles de redondez, control y surface, y deja quieta la forma: un pill es una lozenge
+      completamente redonda, no un ajuste de redondez, y volverlo un rectángulo en <code>none</code> borraría su
+      identidad. Cada dimensión lleva su invariante adentro: la densidad tiene el piso de WCAG, el radio
+      tiene el pill.
+    </p>
+    </div>
+  </div>
+</Base>

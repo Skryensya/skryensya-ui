@@ -1,0 +1,26 @@
+{
+  "name": "@skryensya/docs",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Documentation site for @skryensya/core. Consumes the package through its exports map, the same path it documents.",
+  "scripts": {
+    "dev": "astro dev stop && astro dev --port 4173",
+    "generate:anatomies": "node scripts/generate-anatomies.mjs",
+    "build": "node scripts/generate-anatomies.mjs && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@skryensya/core": "workspace:*",
+    "@skryensya/icons-lucide": "workspace:*",
+    "@skryensya/icons-material": "workspace:*",
+    "@skryensya/icons-phosphor": "workspace:*",
+    "@skryensya/vanilla": "workspace:*"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.2.0",
+    "astro": "^7.1.0",
+    "sass": "^1.83.0",
+    "svelte": "^5.56.7"
+  }
+}

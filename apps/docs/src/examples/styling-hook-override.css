@@ -1,0 +1,9 @@
+/* Una línea reestiliza TODAS las variantes dentro de .promo, 
+   porque todas leen el mismo styling hook. Sin peleas de
+   especificidad: cualquier regla sin layer le gana a todas las
+   layers. */
+.promo .ds-button {
+  --ds-button-bg: oklch(62% 0.19 25);
+  --ds-button-fg: white;
+  --ds-button-radius: var(--radius-pill);
+}

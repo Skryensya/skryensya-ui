@@ -1,0 +1,139 @@
+---
+import Base from "../../layouts/Base.astro";
+import Showcase from "../../components/Showcase.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+
+
+import "../../examples/navbar.css";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const css = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/navbar.css";
+@import "@skryensya/core/patterns/nav-list.css";`;
+
+const html = `<header class="ds-navbar">
+  <div class="ds-navbar__brand">Atlas</div>
+
+  <nav
+    class="ds-nav-list"
+    data-orientation="horizontal"
+    aria-label="Principal"
+  >
+    <ul class="ds-nav-list__list">
+      <li class="ds-nav-list__item">
+        <a
+          class="ds-nav-list__link ds-interactive"
+          href="/"
+          aria-current="page"
+        >
+          <span class="ds-nav-list__label">Inicio</span>
+        </a>
+      </li>
+      <li class="ds-nav-list__item">
+        <a class="ds-nav-list__link ds-interactive" href="/proyectos">
+          <span class="ds-nav-list__label">Proyectos</span>
+        </a>
+      </li>
+      <li class="ds-nav-list__item">
+        <a class="ds-nav-list__link ds-interactive" href="/reportes">
+          <span class="ds-nav-list__label">Reportes</span>
+        </a>
+      </li>
+      <li class="ds-nav-list__item">
+        <a class="ds-nav-list__link ds-interactive" href="/equipo">
+          <span class="ds-nav-list__label">Equipo</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="ds-navbar__actions">
+    <button
+      class="ds-button ds-interactive"
+      type="button"
+      data-variant="ghost"
+    >
+      Invitar
+    </button>
+    <button
+      class="ds-button ds-interactive"
+      type="button"
+      data-variant="primary"
+    >
+      Nuevo proyecto
+    </button>
+  </div>
+</header>`;
+
+const react = `import { Button } from "@skryensya/react/button";
+import {
+  NavList,
+  NavListGroup,
+  NavListLink,
+} from "@skryensya/react/nav-list";
+import {
+  Navbar,
+  NavbarActions,
+  NavbarBrand,
+} from "@skryensya/react/navbar";
+
+<Navbar>
+  <NavbarBrand>Atlas</NavbarBrand>
+
+  <NavList orientation="horizontal" aria-label="Principal">
+    <NavListGroup>
+      <NavListLink href="/" current>
+        Inicio
+      </NavListLink>
+      <NavListLink href="/proyectos">Proyectos</NavListLink>
+      <NavListLink href="/reportes">Reportes</NavListLink>
+      <NavListLink href="/equipo">Equipo</NavListLink>
+    </NavListGroup>
+  </NavList>
+
+  <NavbarActions>
+    <Button variant="ghost">Invitar</Button>
+    <Button variant="primary">Nuevo proyecto</Button>
+  </NavbarActions>
+</Navbar>;`;
+---
+
+<Base title="Navbar" description="Navbar: la barra, con la lista de navegación como pattern horizontal.">
+  <h1>Navbar</h1>
+  <p class="lede">
+    Navbar es la <strong>barra</strong>: superficie, marca y un lugar para acciones. No tiene máquina y
+    no la necesita, es un <code>&lt;header&gt;</code> con links, y todo eso lo envía la plataforma.
+  </p>
+
+  <h2>Los links no son del navbar</h2>
+  <p>
+    Son el pattern <a href="/nav-list"><code>nav-list</code></a> en horizontal, la misma estructura que
+    hospeda el sidebar en vertical. Que dos componentes necesiten esta estructura exacta es lo que la
+    vuelve un pattern y no un componente: antes
+    el navbar y el sidebar tenían cada uno su lista, con las mismas reglas escritas dos veces y libres
+    de divergir.
+  </p>
+
+  <h2>Demo</h2>
+  <Showcase html={html} react={react} label="Navbar" flush />
+
+  <h2>La página actual es de la plataforma</h2>
+  <p>
+    El link actual se marca con <code>aria-current="page"</code>, que el consumidor ya tiene que escribir
+    para los lectores de pantalla. Los styling hooks lo siguen en vez de pedir una clase modificadora, y
+    un <code>state</code> lo escribe una máquina; aquí no hay ninguna.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>CSS</h2>
+  <CodeBlock code={css} label="tu CSS" />
+
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <StylingHooks groups={[{"file":"components/navbar.css","probe":"ds-navbar"}]} />
+</Base>

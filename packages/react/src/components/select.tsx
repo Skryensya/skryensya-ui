@@ -1,0 +1,97 @@
+import { selectParts, type SelectOption, type SelectOptions } from "@skryensya/core/select";
+import { select } from "@skryensya/core/machines";
+import { normalizeProps, Portal, useMachine } from "@zag-js/react";
+import { useMemo, useId, type ReactNode } from "react";
+
+export type SelectProps = Omit<SelectOptions, "options"> & {
+  label?: ReactNode;
+  /** Decorative closed-state geometry supplied by the consumer's bound icon set. */
+  indicator?: ReactNode;
+  /** Decorative open-state geometry supplied by the consumer's bound icon set. */
+  openIndicator?: ReactNode;
+  /** Decorative checked-state geometry supplied by the consumer's bound icon set. */
+  itemIndicator?: ReactNode;
+  options: readonly SelectOption[];
+};
+
+export function Select({
+  id,
+  name,
+  label,
+  indicator,
+  openIndicator,
+  itemIndicator,
+  disabled,
+  required,
+  value,
+  defaultValue,
+  placeholder = "Select option",
+  options,
+  onValueChange,
+}: SelectProps) {
+  const generatedId = useId();
+  const collection = useMemo(
+    () =>
+      select.collection<SelectOption>({
+        items: [...options],
+        itemToString: (item) => item.label,
+        itemToValue: (item) => item.value,
+        isItemDisabled: (item) => Boolean(item.disabled),
+      }),
+    [options],
+  );
+  const service = useMachine(select.machine, {
+    id: id ?? generatedId,
+    collection,
+    name,
+    disabled,
+    required,
+    value,
+    defaultValue,
+    onValueChange,
+    positioning: { sameWidth: false },
+  });
+  const api = select.connect(service, normalizeProps);
+
+  return (
+    <div {...api.getRootProps()} className={selectParts.root}>
+      <select {...api.getHiddenSelectProps()}>
+        {options.map((option) => (
+          <option disabled={option.disabled} key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <div {...api.getControlProps()} className={selectParts.control}>
+        {label ? (
+          <label {...api.getLabelProps()} className={selectParts.label}>
+            {label}
+          </label>
+        ) : null}
+        <button {...api.getTriggerProps()} className={`${selectParts.trigger} ds-interactive`} type="button">
+          <span className={selectParts.value}>{api.valueAsString || placeholder}</span>
+          <span aria-hidden="true" className={selectParts.indicator}>
+            <span data-state="closed">{indicator}</span>
+            <span data-state="open">{openIndicator}</span>
+          </span>
+        </button>
+      </div>
+      <Portal>
+        <div {...api.getPositionerProps()} className={selectParts.positioner}>
+          <ul {...api.getContentProps()} className={selectParts.content}>
+            {options.map((option) => (
+              <li {...api.getItemProps({ item: option })} className={`${selectParts.item} ds-interactive`} key={option.value}>
+                <span {...api.getItemTextProps({ item: option })} className={selectParts.itemText}>
+                  {option.label}
+                </span>
+                <span {...api.getItemIndicatorProps({ item: option })} className={selectParts.itemIndicator}>
+                  {itemIndicator}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Portal>
+    </div>
+  );
+}

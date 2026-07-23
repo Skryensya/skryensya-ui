@@ -1,0 +1,42 @@
+/*
+ * TIER 3, PAGINATION (opt-in styling hooks)
+ *
+ * A row of page controls. Appearance only, hover / press / focus come from `ds-interactive` and
+ * the state layer. The ellipsis is inert text, not a target. Consumer CSS connects these hooks.
+ */
+@layer components {
+  .ds-pagination {
+    --ds-pagination-gap: var(--space-inline-xs);
+    --ds-pagination-item-size: max(var(--size-control-md), var(--size-touch-target));
+    --ds-pagination-item-bg: transparent;
+    --ds-pagination-item-fg: var(--color-text-secondary);
+    --ds-pagination-item-border-color: transparent;
+    --ds-pagination-item-border-width: 1px;
+    --ds-pagination-item-radius: var(--radius-control);
+    --ds-pagination-item-font-size: var(--font-size-body-sm);
+    --ds-pagination-item-font-weight: var(--font-weight-body);
+    --ds-pagination-current-bg: var(--color-action-primary);
+    --ds-pagination-current-fg: var(--color-text-on-accent);
+    --ds-pagination-current-border-color: var(--color-action-primary);
+    --ds-pagination-current-font-weight: var(--font-weight-label);
+    --ds-pagination-disabled-bg: transparent;
+    --ds-pagination-disabled-fg: var(--color-text-disabled);
+    --ds-pagination-disabled-border-color: transparent;
+    --ds-pagination-ellipsis-fg: var(--color-text-tertiary);
+  }
+
+  .ds-pagination__item[aria-current="page"] {
+    --ds-pagination-item-bg: var(--ds-pagination-current-bg);
+    --ds-pagination-item-fg: var(--ds-pagination-current-fg);
+    --ds-pagination-item-border-color: var(--ds-pagination-current-border-color);
+    --ds-pagination-item-font-weight: var(--ds-pagination-current-font-weight);
+  }
+
+  .ds-pagination__item:disabled,
+  .ds-pagination__previous:disabled,
+  .ds-pagination__next:disabled {
+    --ds-pagination-item-bg: var(--ds-pagination-disabled-bg);
+    --ds-pagination-item-fg: var(--ds-pagination-disabled-fg);
+    --ds-pagination-item-border-color: var(--ds-pagination-disabled-border-color);
+  }
+}

@@ -1,0 +1,106 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+
+const vanilla = `import { bindHotkey } from "@skryensya/vanilla/hotkey";
+
+// 'mod' es ⌘ en Mac y Ctrl en el resto, un solo spec, las
+// dos plataformas.
+const off = bindHotkey("mod+k", () => palette.showModal());
+
+// devuelve su propia limpieza, como todo enhancer
+off();`;
+
+const react = `import { useHotkey } from "@skryensya/react/hotkey";
+
+function Palette() {
+  const [open, setOpen] = useState(false);
+  useHotkey("mod+k", () => setOpen((v) => !v));
+  // …
+}`;
+
+const specs = `"mod+k"        // ⌘K en Mac, Ctrl+K en el resto
+"mod+shift+p"  // combinación exacta: NO dispara con "mod+p"
+"shift+/"      // "?" para ayuda
+"escape"       // una sola tecla, sin modificador`;
+
+const format = `import { formatHotkey } from "@skryensya/core/hotkey";
+
+formatHotkey("mod+k", true);   // "⌘K"   (Mac)
+formatHotkey("mod+k", false);  // "Ctrl+K"
+// el badge junto al buscador de arriba se llena así`;
+---
+
+<Base title="Hotkey" description="El primitivo de atajos de teclado: un matcher framework-agnostic, un bindHotkey imperativo y un useHotkey de React.">
+  <h1>Hotkey</h1>
+  <p class="lede">
+    Un atajo de teclado es comportamiento sin equivalente en la plataforma, <code>accesskey</code>
+    existe pero el navegador lo esconde detrás de sus propios acordes y nunca da un gatillo tipo ⌘K. Así
+    que el sistema lo envía, partido igual que todo comportamiento: el matcher puro en
+    <code>@skryensya/core</code>, el binding imperativo en <code>@skryensya/vanilla</code>, el hook
+    declarativo en <code>@skryensya/react</code>.
+  </p>
+  <p>
+    Pruébalo ahora: aprieta <kbd class="ds-kbd" data-cmdk-hint>⌘K</kbd>, el buscador de esta documentación
+    es el único consumidor de este primitivo. El <a href="/componentes/kbd"><code>Kbd</code></a> tiene
+    además un estado que reacciona al teclado con este mismo <code>matchesHotkey</code>; se ve en su
+    página.
+  </p>
+
+  <h2>Por qué <code>mod</code> lo vale</h2>
+  <p>
+    Es la razón de que esto merezca un primitivo y no un <code>event.metaKey</code> suelto:
+    <code>mod</code> es ⌘ en una Mac y Ctrl en todo lo demás, así que un solo spec, 
+    <code>"mod+k"</code>, es el acorde correcto en ambos sin que quien lo escribe ramifique nunca por
+    plataforma. El core toma ese dato como un booleano en vez de olfatear <code>navigator</code>, así
+    que queda puro y testeable; los bindings lo detectan y se lo pasan.
+  </p>
+
+  <h2>Vanilla</h2>
+  <p>
+    <code>bindHotkey(spec, handler)</code> engancha un listener de <code>keydown</code> y devuelve su
+    propia limpieza, la misma forma que devuelve todo enhancer del sistema.
+  </p>
+  <CodeBlock code={vanilla} label="tu JavaScript" />
+
+  <h2>React</h2>
+  <p>
+    <code>useHotkey(spec, handler)</code> es lo mismo como hook: consume el mismo matcher del core
+    (nunca el paquete vanilla, los dos bindings son hermanos sobre el core), pasa el handler por un ref
+    para no re-enganchar en cada render, y la limpieza del efecto quita el listener.
+  </p>
+  <CodeBlock code={react} label="tu React" />
+
+  <h2>El spec</h2>
+  <p>
+    Modificadores y una tecla, separados por <code>+</code>, en cualquier orden. El acorde es
+    <strong>exacto</strong>: <code>"mod+k"</code> no dispara con <code>mod+shift+k</code>, para que un
+    atajo no se trague en silencio un superconjunto que la app quería para otra cosa.
+  </p>
+  <CodeBlock code={specs} label="specs" lang="ts" />
+
+  <h2>Mostrarlo</h2>
+  <p>
+    Un atajo solo se descubre si se ve. <code>formatHotkey</code> lo escribe como lo escribe el sistema
+    operativo, glifos en Mac, palabras en el resto, para el badge junto a un buscador o en un menú.
+  </p>
+  <CodeBlock code={format} label="tu JavaScript" />
+
+  <h2>Lo que hace por ti, y lo que no</h2>
+  <ul>
+    <li>
+      <strong>No dispara una letra suelta mientras escribes.</strong> Un <code>"/"</code> dentro de un
+      input es texto, no un comando, se suprime. Pero un acorde con modificador (⌘K) <em>siempre</em>
+      dispara, porque tiene que llegarte desde adentro del buscador que abre. Se puede forzar con
+      <code>enableWhileTyping</code>.
+    </li>
+    <li>
+      <strong>Frena el default del navegador.</strong> Un ⌘S que además guarda la página es un bug, así
+      que llama <code>preventDefault()</code> por defecto.
+    </li>
+    <li>
+      <strong>No maneja secuencias</strong> (tipo <code>g</code> después de <code>g</code>) ni scopes por
+      widget: es un acorde y un handler. Lo demás lo arma quien lo consume, como el buscador de arriba.
+    </li>
+  </ul>
+</Base>

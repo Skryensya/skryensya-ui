@@ -1,0 +1,33 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import CopyButton from "../../components/CopyButton.astro";
+
+const markup = `<code id="install-command">
+  pnpm add @skryensya/core
+</code>
+<CopyButton target="install-command" />`;
+---
+
+<Base title="CopyButton" description="CopyButton: copia el texto de un elemento por id y confirma brevemente el resultado.">
+  <h1>CopyButton</h1>
+  <p class="lede">
+    CopyButton copia el texto del elemento indicado y cambia brevemente de icono para confirmar el resultado.
+  </p>
+
+  <h2>Demo</h2>
+  <div class="example__stage">
+    <code class="mono" id="copy-button-demo-source">pnpm add @skryensya/core</code>
+    <CopyButton target="copy-button-demo-source" />
+  </div>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li><code>target</code> es el id del elemento cuyo texto se copia.</li>
+    <li>El botón usa Clipboard API y recurre a <code>execCommand(&quot;copy&quot;)</code> cuando hace falta.</li>
+    <li>El estado <code>copied</code> dura brevemente y se anuncia como <strong>Copiado</strong>.</li>
+  </ul>
+
+  <h2>HTML</h2>
+  <CodeBlock code={markup} label="HTML" />
+</Base>

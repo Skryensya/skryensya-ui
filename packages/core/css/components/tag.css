@@ -1,0 +1,91 @@
+/*
+ * TIER 3, TAG
+ *
+ * A keyword chip. Squarer than Badge (control radius, not pill) to read as actionable rather than a
+ * status label. When removable, the label and the remove button are separate targets inside one
+ * bordered shell; the remove control gets the focus ring and its own hover.
+ *
+ * The edge is tinted from the tag's OWN text colour (`currentColor`), so neutral gets a soft grey
+ * hairline and every tone a soft hairline of its own hue, one recipe, no per-tone border token to keep
+ * in sync, which is what lifts the chip off the page instead of leaving it a flat fill.
+ */
+@layer components {
+  .ds-tag {
+    --ds-tag-bg: var(--color-bg-surface-sunken);
+    --ds-tag-fg: var(--color-text-secondary);
+    --ds-tag-border: color-mix(in oklab, currentColor 22%, transparent);
+    /* the remove control's hover/press wash, the tone's own colour, so it never introduces a second hue */
+    --ds-tag-remove-hover-bg: color-mix(in oklab, currentColor 14%, transparent);
+    --ds-tag-remove-active-bg: color-mix(in oklab, currentColor 22%, transparent);
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-inline-xs);
+    padding-block: var(--space-inset-xs);
+    padding-inline: var(--space-inset-sm);
+    border: 1px solid var(--ds-tag-border);
+    border-radius: var(--radius-control);
+    background: var(--ds-tag-bg);
+    color: var(--ds-tag-fg);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+    line-height: var(--font-line-height-caption);
+    white-space: nowrap;
+  }
+
+  .ds-tag[data-tone="accent"] { --ds-tag-bg: var(--color-bg-accent-subtle); --ds-tag-fg: var(--color-text-accent); }
+  .ds-tag[data-tone="success"] { --ds-tag-bg: var(--color-bg-success-subtle); --ds-tag-fg: var(--color-text-success); }
+  .ds-tag[data-tone="warning"] { --ds-tag-bg: var(--color-bg-warning-subtle); --ds-tag-fg: var(--color-text-warning); }
+  .ds-tag[data-tone="danger"] { --ds-tag-bg: var(--color-bg-danger-subtle); --ds-tag-fg: var(--color-text-danger); }
+
+  .ds-tag__label { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; }
+
+  /* The remove control reads as its own thing: a round hit area that lights up on hover with a wash in
+   * the tag's colour, so it feels pressable without a second border or a colour the tag doesn't already
+   * use. The icon is sized down to sit inside the chip's cap height. */
+  .ds-tag__remove {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    margin-inline-start: calc(var(--space-inset-xs) * -1);
+    margin-inline-end: calc(var(--space-inset-sm) * -0.5);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background-color var(--motion-state-change-duration) var(--motion-state-change-easing),
+      color var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  .ds-tag__remove .ds-icon {
+    --ds-icon-size: 0.85rem;
+  }
+
+  .ds-tag__remove:hover {
+    background: var(--ds-tag-remove-hover-bg);
+    color: var(--ds-tag-fg);
+  }
+
+  .ds-tag__remove:active {
+    background: var(--ds-tag-remove-active-bg);
+  }
+
+  .ds-tag__remove:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /* Forced-colors drops author colours, so the `color-mix` hairline would vanish and the chip would lose
+   * its outline. Pin the edge to a system colour there, the chip stays a defined box. */
+  @media (forced-colors: active) {
+    .ds-tag {
+      border-color: CanvasText;
+    }
+  }
+}

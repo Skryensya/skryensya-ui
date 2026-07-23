@@ -1,0 +1,135 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<p>
+  Un párrafo con un
+  <a class="ds-link ds-interactive" href="/componentes/link">
+    enlace del color del texto
+  </a>
+  y otro
+  <a
+    class="ds-link ds-interactive"
+    href="/componentes/link"
+    data-tone="primary"
+  >
+    de color primary
+  </a>,
+  los dos con subrayado permanente.
+</p>`;
+
+const react = `import { Link } from "@skryensya/react/link";
+
+<Link href="/componentes/link">Enlace del color del texto</Link>
+<Link href="/componentes/link" tone="primary">De color primary</Link>;`;
+
+const tileLinkHtml = `<a
+  class="ds-tile ds-tile--interactive ds-interactive"
+  href="/usage"
+>
+  <span class="ds-tile__content">
+    <span class="ds-tile__title">Usage details</span>
+    <span class="ds-tile__description">
+      Open the account usage report.
+    </span>
+  </span>
+</a>`;
+
+const tileLinkVanilla = `import { createTileLink } from "@skryensya/vanilla/tile-link";
+
+const link = createTileLink({ href: "/usage" });
+link.textContent = "Usage details";`;
+
+const tileLinkReact = `import { TileLink } from "@skryensya/react/tile-link";
+
+<TileLink href="/usage">
+  <span className="ds-tile__content">
+    <span className="ds-tile__title">Usage details</span>
+    <span className="ds-tile__description">
+      Open the account usage report.
+    </span>
+  </span>
+</TileLink>;`;
+---
+
+<Base title="Link" description="Link: un enlace de texto, siempre subrayado, el único tratamiento que WCAG 1.4.1 permite.">
+  <h1>Link</h1>
+  <p class="lede">
+    Link conserva la semántica nativa de <code>&lt;a&gt;</code>: úsalo para navegar y proporciona un
+    <code>href</code> válido. Es un <strong>enlace de texto</strong> con subrayado permanente, el único
+    tratamiento que WCAG 1.4.1 permite en prosa. El hover usa el state layer (<code>ds-interactive</code>),
+    no un color inventado por el componente.
+  </p>
+
+  <h2>Demo</h2>
+  <Showcase html={html} react={react} label="Link" />
+
+  <h2>Link de superficie: TileLink</h2>
+  <p>
+    Cuando toda una superficie es un único destino, usa <code>TileLink</code>. También renderiza un
+    <code>&lt;a&gt;</code>, pero no es <code>ds-link</code>: conserva la geometría Tile y su state layer
+    porque el contexto, no un subrayado en prosa, comunica que la superficie es navegable.
+  </p>
+  <Showcase html={tileLinkHtml} react={tileLinkReact} label="TileLink" />
+  <p>El HTML autorado funciona sin inicialización. <code>createTileLink</code> solo crea el ancla cuando el árbol se genera desde JavaScript.</p>
+  <CodeBlock code={tileLinkVanilla} label="tu JavaScript" />
+
+  <h2>Por qué un solo tipo, y no tres</h2>
+  <p>
+    Un enlace dentro de un bloque de texto <strong>no se puede distinguir por color solo</strong>: es
+    <a class="ds-link ds-interactive" href="https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html">WCAG 1.4.1
+    (Use of Color)</a>, nivel A. Solo hay dos formas de cumplir: un indicador que no sea color
+    <em>en reposo</em>, un subrayado permanente, o un contraste de ≥3:1 entre el color del enlace y el
+    del texto <em>más</em> una señal no-color en hover <em>y</em> foco.
+  </p>
+  <p>
+    La segunda vía es frágil: hay que re-medir ese 3:1 en cada marca y cada modo, y quien lee la página
+    quieta, o no puede hacer hover, no recibe ninguna señal hasta tocar el enlace. Un subrayado que
+    aparece solo en hover deja el texto en reposo sin pista, y sin subrayado se falla el criterio de
+    plano. Así que <code>ds-link</code> tiene <strong>una</strong> forma, subrayado siempre, y no un hook
+    para apagarlo: ofrecer <code>hover</code> o <code>none</code> sería ofrecer una manera de fallar 1.4.1.
+  </p>
+  <div class="ds-alert" data-tone="info" data-presentation="accent">
+    <div class="ds-alert__content">
+    <p>
+      <strong>¿Y los enlaces que no van subrayados?</strong> Un ítem de navegación, un breadcrumb, el
+      prev/next del pie, esos se distinguen por <em>ubicación</em>, no por color, así que 1.4.1 no les
+      pide subrayado. Pero no son <code>ds-link</code>: usan el pattern <code>nav-list</code> o un botón
+      <code>ghost</code>. <code>ds-link</code> es, por definición, el enlace <em>dentro del texto</em>.
+    </p>
+    </div>
+  </div>
+
+  <h2>El tono no cambia la regla</h2>
+  <p>
+    Por defecto el enlace toma el <strong>mismo color que el texto</strong> y se apoya enteramente en el
+    subrayado. <code>data-tone="primary"</code> lo pinta del color primary de marca. En ambos casos el
+    subrayado es obligatorio: sin él, el tono primary solo se distinguiría por color (falla WCAG 1.4.1),
+    y el default no se distinguiría de la prosa.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>Renderiza un ancla nativa: <code>href</code> define el destino.</li>
+    <li><code>data-tone</code> es opcional: sin él, el color del texto; <code>primary</code> usa el color primary de marca.</li>
+    <li>
+      <strong>El subrayado no es configurable</strong>: siempre está, porque un enlace de texto sin señal
+      no-color permanente falla WCAG 1.4.1.
+    </li>
+    <li>No establece <code>target</code>, <code>rel</code> ni ningún comportamiento para enlaces externos.</li>
+    <li>
+      Lleva <code>ds-interactive</code>: hover, press y foco vienen del state layer. El
+      <code>::before</code> se abre un poco más que la tinta para que el wash no se lea como una
+      mancha sobre los glifos; el subrayado permanente sigue siendo la señal en reposo.
+    </li>
+  </ul>
+</Base>

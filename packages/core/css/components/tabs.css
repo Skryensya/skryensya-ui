@@ -1,0 +1,23 @@
+/*
+ * TIER 3, TABS (opt-in styling hooks)
+ *
+ * The package ships static appearance hooks only. The markup contract comes from @skryensya/core and the
+ * behavior from a binding package; consumer CSS still maps hooks to layout and paint.
+ */
+@layer components {
+  .ds-tabs {
+    --ds-tabs-gap: var(--space-stack-md);
+    --ds-tabs-list-gap: var(--space-inline-xs);
+    --ds-tabs-list-border-color: var(--color-border-subtle);
+    --ds-tabs-trigger-height: var(--size-control-md);
+    --ds-tabs-trigger-padding-x: var(--space-inset-md);
+    --ds-tabs-trigger-radius: var(--radius-control);
+    --ds-tabs-trigger-fg: var(--color-text-secondary);
+    --ds-tabs-trigger-selected-fg: var(--color-text-accent);
+    --ds-tabs-trigger-disabled-fg: var(--color-text-disabled);
+    --ds-tabs-indicator-bg: var(--color-border-accent);
+    --ds-tabs-indicator-size: 2px;
+    --ds-tabs-panel-padding-block: var(--space-inset-md);
+    --ds-tabs-panel-fg: var(--color-text-primary);
+  }
+}

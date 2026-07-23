@@ -1,0 +1,36 @@
+/*
+ * TIER 3, DRAWER (opt-in)
+ *
+ * A drawer IS a Vaul on the inline edge, running the full height. That sentence is the whole
+ * component: the edge, the slide, the backdrop, the drag and the top layer all belong to
+ * `patterns/vaul.css`, and this file only says WHICH Vaul a drawer is and what it looks like.
+ *
+ * Which is why it ships hooks and no structure (decision 8): every line of structure a drawer could
+ * have is structure a bottom sheet needs identically, and that shared structure is the pattern. A
+ * drawer that re-implemented the panel would be a second Vaul with a different name.
+ *
+ * Requires patterns/vaul.css, and the root must carry `ds-vaul ds-drawer` plus the native
+ * <dialog> the Vaul demands.
+ */
+@layer components {
+  .ds-drawer {
+    --ds-drawer-inline-size: min(20rem, 85vw);
+    --ds-drawer-bg: var(--color-bg-surface);
+    --ds-drawer-fg: var(--color-text-primary);
+    --ds-drawer-border-color: var(--color-border-subtle);
+    --ds-drawer-border-width: 1px;
+    --ds-drawer-elevation: var(--elevation-modal);
+
+    /* The drawer's hooks ARE Vaul's, re-declared. A consumer tunes `--ds-drawer-*` and never
+     * learns that Vaul is underneath; the pattern stays an implementation detail rather than a
+     * second public surface to keep in sync. */
+    --ds-vaul-size: var(--ds-drawer-inline-size);
+    --ds-vaul-bg: var(--ds-drawer-bg);
+    --ds-vaul-fg: var(--ds-drawer-fg);
+    --ds-vaul-border-color: var(--ds-drawer-border-color);
+    --ds-vaul-border-width: var(--ds-drawer-border-width);
+    --ds-vaul-elevation: var(--ds-drawer-elevation);
+    /* square: a drawer meets three viewport edges, and a radius against them reads as a mistake */
+    --ds-vaul-radius: 0;
+  }
+}

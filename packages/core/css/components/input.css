@@ -1,0 +1,71 @@
+/*
+ * TIER 3, INPUT (opt-in styling hooks)
+ *
+ * The native text control stays native (decision 8): there is no machine here, and no wrapper
+ * div faking a border. `ds-input` styles `<input>` and `<textarea>` alike, one control, one set
+ * of hooks, and the platform keeps validation, autofill, IME and form association.
+ *
+ * `invalid` follows `aria-invalid`, which the consumer already has to author for screen readers;
+ * a separate data attribute would let the two disagree, and colour is never the only error cue, 
+ * the field's error message is (see field.css).
+ */
+@layer components {
+  .ds-input {
+    /* Fields are raised controls, not sunken wells: in dark mode this matches Select and preserves
+     * the elevation model (lighter surfaces sit above the canvas). */
+    --ds-input-bg: var(--color-bg-surface-raised);
+    --ds-input-fg: var(--color-text-primary);
+    --ds-input-placeholder-fg: var(--color-text-tertiary);
+    --ds-input-border-color: var(--color-border-default);
+    --ds-input-border-width: 1px;
+    --ds-input-radius: var(--radius-control);
+    /* Density can tighten the layout around a field, never its native touch target. */
+    --ds-input-height: max(var(--size-control-md), var(--size-touch-target));
+    --ds-input-padding-x: var(--space-inset-sm);
+    --ds-input-padding-y: var(--space-inset-xs);
+    --ds-input-gap: var(--space-inline-sm);
+    --ds-input-font-size: var(--font-size-body);
+    --ds-input-line-height: var(--font-line-height-body);
+
+    --ds-input-invalid-border-color: var(--color-border-danger);
+    --ds-input-invalid-fg: var(--color-text-primary);
+
+    --ds-input-disabled-bg: var(--color-action-disabled);
+    --ds-input-disabled-fg: var(--color-text-disabled);
+    --ds-input-disabled-border-color: var(--color-border-subtle);
+
+    --ds-input-readonly-bg: var(--color-bg-surface);
+    --ds-input-readonly-border-color: var(--color-border-subtle);
+  }
+
+  /* size variants re-declare the hooks they change */
+  .ds-input[data-size="sm"] {
+    --ds-input-height: max(var(--size-control-sm), var(--size-touch-target));
+    --ds-input-font-size: var(--font-size-body-sm);
+    --ds-input-padding-x: var(--space-inset-xs);
+  }
+
+  .ds-input[data-size="lg"] {
+    --ds-input-height: max(var(--size-control-lg), var(--size-touch-target));
+    --ds-input-font-size: var(--font-size-body-lg);
+    --ds-input-padding-x: var(--space-inset-md);
+  }
+
+  .ds-input[aria-invalid="true"] {
+    --ds-input-border-color: var(--ds-input-invalid-border-color);
+    --ds-input-fg: var(--ds-input-invalid-fg);
+  }
+
+  .ds-input:read-only:not([aria-invalid="true"]) {
+    --ds-input-bg: var(--ds-input-readonly-bg);
+    --ds-input-border-color: var(--ds-input-readonly-border-color);
+  }
+
+  /* disabled wins over every variant above, so it is written last */
+  .ds-input:disabled,
+  .ds-input[aria-disabled="true"] {
+    --ds-input-bg: var(--ds-input-disabled-bg);
+    --ds-input-fg: var(--ds-input-disabled-fg);
+    --ds-input-border-color: var(--ds-input-disabled-border-color);
+  }
+}

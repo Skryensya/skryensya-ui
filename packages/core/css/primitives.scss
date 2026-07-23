@@ -1,0 +1,24 @@
+/*
+ * TIER 1, PRIMITIVE SCALE
+ *
+ * Raw tier-1 values: the foundational ramp set plus space, radius, size, type and motion. The
+ * ramps live on `:root` and are configured through seed custom properties; no brand file or selector is needed.
+ */
+@use "primitives/space";
+@use "primitives/radius";
+@use "primitives/size";
+@use "primitives/type";
+@use "primitives/motion";
+@use "primitives/ramps";
+@use "primitives/z";
+
+@layer primitives {
+  :root {
+    @include space.tokens;
+    @include radius.tokens;
+    @include size.tokens;
+    @include type.tokens;
+    @include motion.tokens;
+    @include z.tokens;
+  }
+}

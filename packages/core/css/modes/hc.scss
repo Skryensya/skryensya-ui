@@ -1,0 +1,30 @@
+/*
+ * MODE: high contrast, the third colour mode.
+ *
+ * light-dark() holds only two colours, so high contrast cannot be a third argument. It is
+ * an override block that RE-DECLARES the mode-aware semantic tokens with the hc-* ramp
+ * positions, still inside light-dark(), so it composes with the light/dark axis (you get
+ * hc-light AND hc-dark for free).
+ *
+ * Two triggers, same declarations:
+ *   [data-contrast="high"]        explicit opt-in
+ *   @media (prefers-contrast: more) honours the OS, but only when the user hasn't set the
+ *                                   attribute (:root:not([data-contrast])).
+ *
+ * The bodies used to be two hand-copied blocks, "CSS has no macro". This is the macro:
+ * the hc-tokens mixin (css/_mixins.scss) is included in both selectors, so they cannot
+ * drift. The validator's mode-complete "the two blocks agree" check now guards the compiler.
+ */
+@use "../mixins" as *;
+
+@layer overrides {
+  [data-contrast="high"] {
+    @include hc-tokens;
+  }
+
+  @media (prefers-contrast: more) {
+    :root:not([data-contrast]) {
+      @include hc-tokens;
+    }
+  }
+}

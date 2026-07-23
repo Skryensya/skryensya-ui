@@ -1,0 +1,68 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<div
+  class="ds-progress"
+  role="progressbar"
+  aria-label="Subida"
+  aria-valuenow="68"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  style="--ds-progress-fill: 68%"
+>
+  <div class="ds-progress__bar"></div>
+</div>
+<div
+  class="ds-progress"
+  data-tone="success"
+  role="progressbar"
+  aria-label="Completado"
+  aria-valuenow="100"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  style="--ds-progress-fill: 100%"
+>
+  <div class="ds-progress__bar"></div>
+</div>
+<div
+  class="ds-progress"
+  data-tone="danger"
+  role="progressbar"
+  aria-label="Cuota"
+  aria-valuenow="24"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  style="--ds-progress-fill: 24%"
+>
+  <div class="ds-progress__bar"></div>
+</div>`;
+
+const react = `import { Progress } from "@skryensya/react/progress";
+
+<Progress label="Subida" value={68} />
+<Progress label="Completado" value={100} tone="success" />
+<Progress label="Cuota" value={24} tone="danger" />;`;
+---
+
+<Base title="Progress" description="Progress: barra determinada con fracción recortada en el core, tonos y componente React.">
+  <h1>Progress</h1>
+  <p class="lede">
+    Progress es una barra <strong>determinada</strong>: el consumidor conoce el valor. La fracción se
+    recorta a <code>[0, max]</code> en el core (<code>progressFraction</code>), de modo que el ancho
+    pintado y <code>aria-valuenow</code> nunca pueden divergir.
+  </p>
+
+  <h2>Demo HTML</h2>
+  <Showcase html={html} react={react} label="Progress" />
+  <p>Para un spinner indeterminado usa otro componente: la semántica es distinta.</p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+</Base>

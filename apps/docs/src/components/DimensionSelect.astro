@@ -1,0 +1,68 @@
+---
+/*
+ * The site authoring the Select markup contract, once, and then four times over.
+ *
+ * This is the consumer's job, not the package's: the anatomy is documented and never shipped
+ * (decisión 8), so the site writes it exactly as the docs tell you to. That it collapses into an
+ * Astro component here is the site's convenience, not part of the contract.
+ *
+ * No `data-value`: the persisted dimension is stamped on before `initComponents()` runs, by the
+ * script in Base.astro. The enhancer reads it there.
+ */
+interface Props {
+  id: string;
+  label: string;
+  options: { value: string; label: string }[];
+  /** Preselect this value (its label shows in the trigger, and the enhancer reads it as the default). */
+  value?: string;
+  /** Extra data-attribute so a page script can find this menu (e.g. which token it drives). */
+  prop?: string;
+  /** Shown when the current value matches no option (e.g. an externally-set custom value). */
+  placeholder?: string;
+}
+
+const { id, label, options, value, prop, placeholder } = Astro.props;
+import { iconMarkup } from "../icons";
+
+const chevronDown = iconMarkup("chevron-down");
+const chevronUp = iconMarkup("chevron-up");
+const check = iconMarkup("check");
+
+const current = options.find((o) => o.value === value) ?? options[0];
+---
+
+<div
+  class="ds-select"
+  data-ds-select
+  id={id}
+  data-value={value}
+  data-prop={prop}
+  data-placeholder={placeholder}
+>
+  <label class="ds-select__label" data-ds-select-label>{label}</label>
+
+  <button class="ds-select__trigger ds-interactive" data-ds-select-trigger type="button">
+    <span class="ds-select__value" data-ds-select-value>{current?.label ?? placeholder}</span>
+    <span class="ds-select__indicator" data-ds-select-indicator aria-hidden="true">
+      <span data-state="closed"><Fragment set:html={chevronDown} /></span>
+      <span data-state="open"><Fragment set:html={chevronUp} /></span>
+    </span>
+  </button>
+
+  <div class="ds-select__positioner" data-ds-select-positioner>
+    <ul class="ds-select__content" data-ds-select-content>
+      {
+        options.map((option) => (
+          <li class="ds-select__item ds-interactive" data-ds-select-item data-value={option.value}>
+            <span class="ds-select__item-text" data-ds-select-item-text>
+              {option.label}
+            </span>
+            <span class="ds-select__item-indicator" data-ds-select-item-indicator aria-hidden="true">
+              <Fragment set:html={check} />
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</div>

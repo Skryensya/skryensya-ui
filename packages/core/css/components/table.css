@@ -1,0 +1,38 @@
+/*
+ * TIER 3, TABLE (opt-in styling hooks)
+ *
+ * Native table semantics stay native. This file only exports the stable part classes and
+ * appearance hooks; consumers keep control of markup density and overflow wrappers.
+ *
+ * The frame (border + radius) belongs on `.ds-table`, not the scroll wrapper: CSS puts
+ * `<caption>` outside the table box, so a caption stays in the DOM as the table's first child
+ * while sitting visually above the bordered surface (CSS2 table model / caption-side).
+ *
+ * Header fill is a mix of text-on-surface, not `--color-bg-surface-sunken`: in high-contrast dark
+ * sunken collapses onto the same ramp stop as surface, so a sunken header would vanish. A mix of
+ * `--color-text-primary` into the table surface stays visible in every mode (light, dark, both HC).
+ * The header rule uses `--color-border-default` for the same reason, subtle borders wash out when
+ * contrast is the point.
+ */
+@layer components {
+  .ds-table {
+    --ds-table-container-border-color: var(--color-border-default);
+    --ds-table-container-border-width: 1px;
+    --ds-table-container-radius: var(--radius-surface);
+    --ds-table-bg: var(--color-bg-surface);
+    --ds-table-fg: var(--color-text-primary);
+    --ds-table-border-color: var(--color-border-subtle);
+    /* Slight lift over the body, readable when sunken == surface (HC dark). */
+    --ds-table-header-bg: color-mix(in oklab, var(--color-text-primary) 5%, var(--color-bg-surface));
+    --ds-table-header-fg: var(--color-text-primary);
+    --ds-table-header-border-color: var(--color-border-default);
+    --ds-table-header-font-weight: var(--font-weight-label);
+    --ds-table-caption-fg: var(--color-text-secondary);
+    --ds-table-caption-gap: var(--space-stack-sm);
+    --ds-table-footer-bg: color-mix(in oklab, var(--color-text-primary) 3%, var(--color-bg-surface));
+    --ds-table-footer-fg: var(--color-text-secondary);
+    --ds-table-cell-padding-x: var(--space-inset-md);
+    --ds-table-cell-padding-y: var(--space-inset-sm);
+    --ds-table-font-size: var(--font-size-body-sm);
+  }
+}

@@ -1,0 +1,54 @@
+/*
+ * BOX, reusable surface, border and padding structure.
+ *
+ * Box is the non-interactive surface primitive. The class owns physical box properties while its
+ * caller owns semantics, content structure, and any independent controls.
+ */
+@layer components {
+  .ds-box {
+    --ds-box-bg: transparent;
+    --ds-box-border-color: transparent;
+    --ds-box-border-width: 0;
+    --ds-box-padding: 0;
+    --ds-box-radius: var(--radius-surface);
+    --ds-box-shadow: var(--elevation-flat);
+
+    box-sizing: border-box;
+    min-inline-size: 0;
+    padding: var(--ds-box-padding);
+    border: var(--ds-box-border-width) solid var(--ds-box-border-color);
+    border-radius: var(--ds-box-radius);
+    overflow: hidden;
+    background: var(--ds-box-bg);
+    box-shadow: var(--ds-box-shadow);
+  }
+
+  .ds-box[data-surface="sunken"] {
+    --ds-box-bg: var(--color-bg-surface-sunken);
+  }
+
+  .ds-box[data-surface="surface"] {
+    --ds-box-bg: var(--color-bg-surface);
+  }
+
+  .ds-box[data-surface="raised"] {
+    --ds-box-bg: var(--color-bg-surface-raised);
+    --ds-box-shadow: var(--elevation-raised);
+  }
+
+  .ds-box[data-border="subtle"] {
+    --ds-box-border-width: 1px;
+    --ds-box-border-color: var(--color-border-subtle);
+  }
+
+  .ds-box[data-border="default"] {
+    --ds-box-border-width: 1px;
+    --ds-box-border-color: var(--color-border-default);
+  }
+
+  .ds-box[data-padding="xs"] { --ds-box-padding: var(--space-inset-xs); }
+  .ds-box[data-padding="sm"] { --ds-box-padding: var(--space-inset-sm); }
+  .ds-box[data-padding="md"] { --ds-box-padding: var(--space-inset-md); }
+  .ds-box[data-padding="lg"] { --ds-box-padding: var(--space-inset-lg); }
+  .ds-box[data-padding="xl"] { --ds-box-padding: var(--space-inset-xl); }
+}

@@ -1,0 +1,137 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import Showcase from "../components/Showcase.astro";
+import { tokens } from "../lib/tokens";
+
+import "../examples/styling-hook-override.css";
+import overrideSource from "../examples/styling-hook-override.css?raw";
+
+const buttonHooks = tokens.filter((t) => t.file === "components/button.css");
+
+const naive = `/* Lo que NO hacemos: un styling hook por variante. */
+--ds-button-primary-bg
+--ds-button-danger-bg
+--ds-button-ghost-bg
+--ds-button-primary-bg-hover
+--ds-button-danger-bg-hover
+/* …y tu CSS tiene que ramificar entre ellos. */`;
+
+const actual = `/* Lo que hacemos: un styling hook, re-declarado por especificidad. */
+.ds-button {
+  --ds-button-bg: var(--color-action-neutral);
+}
+.ds-button[data-variant="primary"] {
+  --ds-button-bg: var(--color-action-primary);
+}
+.ds-button[data-variant="danger"] {
+  --ds-button-bg: var(--color-action-danger);
+}`;
+
+const consumer = `/* Tu CSS lo lee una vez y nunca ramifica. */
+.ds-button { background: var(--ds-button-bg); }`;
+---
+
+<Base
+  title="El contrato de styling hooks"
+  description="El sistema envía styling hooks, no componentes: qué significa eso, cómo se nombran y cómo pisarlos."
+>
+  <h1>El contrato de styling hooks</h1>
+  <p class="lede">
+    Importar <code>components/button.css</code> no te da un botón. Te da
+    {buttonHooks.length} styling hooks. La estructura la escribes tú. Ese es el contrato.
+  </p>
+
+  <div class="ds-alert" data-tone="info" data-presentation="accent">
+    <div class="ds-alert__content">
+    <p>
+      El malentendido más común: el design system no envía componentes. Envía
+      <em>styling hooks</em>. No hay un <code>&lt;Button&gt;</code> ni una clase que puedas pegar y
+      listo. Hay custom properties, y tú escribes el CSS que las conecta a propiedades reales.
+    </p>
+    </div>
+  </div>
+
+  <h2>Por qué</h2>
+  <p>
+    Porque el markup y el layout de cada consumidor son distintos, y un componente que impone
+    estructura impone las dos cosas. Un styling hook no: es una custom property, y a una custom property no
+    le importa qué elemento la lleva. Además, lo que no importas <strong>no pesa</strong>. Un
+    consumidor que no envía botones no descarga ni un byte de <code>button.css</code>.
+  </p>
+
+  <h2>Los styling hooks pierden el segmento del grupo</h2>
+  <p>
+    La codificación ingenua le da a cada variante su propia variable, y termina en una explosión que
+    tu CSS tiene que desambiguar con condicionales:
+  </p>
+  <CodeBlock code={naive} label="lo que no hacemos" />
+
+  <p>
+    En vez de eso, la base y cada variante declaran <strong>el mismo</strong> styling hook. La variante
+    simplemente lo re-declara en un selector más específico y <strong>gana por especificidad</strong>:
+  </p>
+  <CodeBlock code={actual} label="components/button.css" />
+  <CodeBlock code={consumer} label="tu CSS" note="una línea, cero ramas" />
+
+  <h2>Por eso pisar un styling hook es trivial y total</h2>
+  <p>
+    Como todas las variantes leen el mismo styling hook, una línea las reestiliza a todas dentro de un scope.
+    Y no hay pelea de especificidad porque cualquier regla sin layer le gana a todas las layers.
+  </p>
+
+  <Showcase code={overrideSource} lang="css" label="src/examples/styling-hook-override.css" note="el override que pinta la demo">
+    {/* `.promo` is the override's scope (`.promo .ds-button`); display:contents keeps the scope while
+        letting the buttons lay out in the Showcase stage's own flow. */}
+    <div class="promo" style="display: contents">
+      <button class="ds-button ds-interactive" data-ds-button data-variant="primary">Guardar</button>
+      <button class="ds-button ds-interactive" data-ds-button data-variant="neutral">Cancelar</button>
+      <button class="ds-button ds-interactive" data-ds-button data-variant="danger">Borrar</button>
+    </div>
+  </Showcase>
+
+  <p>
+    Los tres botones de arriba son las mismas variantes de la home. Tres líneas los reestilizaron a
+    todos, sin tocar el design system y sin inventar un token nuevo.
+  </p>
+
+  <h2>El riesgo de la especificidad</h2>
+  <p>
+    Las variantes se ganan por especificidad de selector. Un consumidor que escribe un selector más
+    específico puede pisar una variante sin querer. Aceptamos ese riesgo para mantener pocos styling
+    hooks, sin anidarlos por variante.
+  </p>
+
+  <h2>Todos los styling hooks de button</h2>
+  <p>
+    Estos son los {buttonHooks.length} que envía <code>components/button.css</code>. Viven en
+    <code>.ds-button</code>, nunca en <code>:root</code>, no existen hasta que un elemento opta por
+    ellos.
+  </p>
+
+  <div class="ds-table-scroll">
+    <table class="ds-table">
+      <thead>
+        <tr>
+          <th>Hook</th>
+          <th>Apunta a</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          buttonHooks.map((t) => (
+            <tr>
+              <td class="mono">{t.name}</td>
+              <td class="mono">{t.value}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    Nótese que ninguno apunta a un <code>--ramp-*</code>. No es disciplina: es
+    <a href="/tiers">la regla de tier-skip</a>, y rompe el build.
+  </p>
+</Base>

@@ -1,0 +1,77 @@
+---
+/* One rung of an alias chain, plus its children. Recursive, a chain is a tree, not a line. */
+import type { ChainNode } from "../lib/tokens";
+import Used from "./Used.astro";
+
+interface Props {
+  node: ChainNode;
+}
+
+const { node } = Astro.props;
+const toneByTier = {
+  primitive: "warning",
+  semantic: "accent",
+  component: "success",
+} as const;
+
+---
+
+<li class="rung">
+  <div class="rung__head">
+    <span class="ds-badge" data-tone={toneByTier[node.token.tier]}>{node.token.tier}</span>
+    <code class="rung__name">{node.token.name}</code>
+    {node.slot && <span class="rung__slot">slot {node.slot}</span>}
+  </div>
+  <div class="rung__value"><Used token={node.token.name} /></div>
+
+  {
+    node.children.length > 0 && (
+      <ul class="rung__children">
+        {node.children.map((child) => <Astro.self node={child} />)}
+      </ul>
+    )
+  }
+</li>
+
+<style>
+  .rung {
+    position: relative;
+  }
+
+  .rung__head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-sm);
+    align-items: center;
+  }
+
+  .rung__name {
+    font-family: var(--font-family-code);
+    font-size: var(--font-size-body-sm);
+    color: var(--color-text-primary);
+  }
+
+  .rung__slot {
+    font-size: var(--font-size-caption);
+    color: var(--color-text-tertiary);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    padding: 0 var(--space-inset-xs);
+  }
+
+  .rung__value {
+    font-size: var(--font-size-caption);
+    color: var(--color-text-secondary);
+    margin-block: var(--space-stack-xs);
+  }
+
+  .rung__children {
+    margin: 0 0 0 var(--space-inset-sm);
+    padding: 0 0 0 var(--space-inset-md);
+    list-style: none;
+    border-left: 1px solid var(--color-border-default);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-xs);
+  }
+</style>

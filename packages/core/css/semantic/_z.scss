@@ -1,0 +1,16 @@
+@mixin tokens {
+  /* ── z: the stacking order, named by LAYER, never by component ──────────────────────────
+   * The whole point of a scale is that stacking becomes predictable: a later layer always wins,
+   * and two things in the SAME layer never fight because only one is ever raised at a time. A
+   * component references the layer its part belongs to (`--z-popover`), so no component invents a
+   * magic 999 that some other magic 1000 then has to beat.
+   *
+   * Native <dialog> uses the browser's TOP LAYER (ADR-11), which sits above every z-index here by
+   * definition, so a modal needs no token, and these layers are all "within the page". */
+  --z-below: var(--scale-z-behind); /* decorative, under content, the state layer's ::before */
+  --z-base: var(--scale-z-0); /* normal flow */
+  --z-sticky: var(--scale-z-100); /* pinned chrome that content scrolls under: navbar, sticky header */
+  --z-popover: var(--scale-z-200); /* an anchored popup: the select listbox, a menu, a tooltip */
+  --z-overlay: var(--scale-z-300); /* a scrim behind a NON-native overlay (a native dialog uses ::backdrop) */
+  --z-toast: var(--scale-z-400); /* transient, self-dismissing notifications, above everything on the page */
+}

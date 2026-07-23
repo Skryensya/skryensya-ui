@@ -1,0 +1,32 @@
+/*
+ * TIER 3, FIELD (opt-in styling hooks)
+ *
+ * The chrome around a control: label, hint, error. Independent of input.css on purpose, a field
+ * wraps a select or a checkbox group just as readily, and the association between label, hint and
+ * control is the platform's (`<label for>`, `aria-describedby`), authored by the consumer.
+ *
+ * The error is text, not a colour: `--ds-field-error-fg` tints a message that must exist anyway,
+ * which is what keeps the error legible when colour is unavailable (WCAG 1.4.1).
+ */
+@layer components {
+  .ds-field {
+    --ds-field-gap: var(--space-stack-xs);
+    --ds-field-label-fg: var(--color-text-primary);
+    --ds-field-label-font-size: var(--font-size-body-sm);
+    --ds-field-label-font-weight: var(--font-weight-label);
+    --ds-field-hint-fg: var(--color-text-secondary);
+    --ds-field-hint-font-size: var(--font-size-caption);
+    --ds-field-hint-line-height: var(--font-line-height-caption);
+    --ds-field-error-fg: var(--color-text-danger);
+    --ds-field-error-font-size: var(--font-size-caption);
+    --ds-field-error-line-height: var(--font-line-height-caption);
+    --ds-field-error-gap: var(--space-inline-xs);
+    --ds-field-required-fg: var(--color-text-danger);
+    --ds-field-disabled-fg: var(--color-text-disabled);
+  }
+
+  .ds-field[data-disabled] {
+    --ds-field-label-fg: var(--ds-field-disabled-fg);
+    --ds-field-hint-fg: var(--ds-field-disabled-fg);
+  }
+}

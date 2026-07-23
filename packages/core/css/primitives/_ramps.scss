@@ -1,0 +1,19 @@
+/*
+ * ROOT RAMPS
+ *
+ * The system ships one tier-1 ramp set on `:root`. Consumers configure identity by redefining the seed
+ * custom properties in their own unlayered `:root` rule; the derived ramp declarations read those values
+ * at computed-value time. There is no brand selector or second token import.
+ */
+@use "ramp-recipe" as recipe;
+
+@layer primitives {
+  :root {
+    --seed-accent: oklch(50.4% 0.169 259.6);
+    --seed-neutral: oklch(58.8% 0.018 260);
+    --seed-danger: oklch(56% 0.208 27);
+    --seed-success: oklch(55.8% 0.14 150);
+    --seed-warning: oklch(58.4% 0.132 75);
+    @include recipe.derive;
+  }
+}

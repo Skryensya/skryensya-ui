@@ -1,0 +1,98 @@
+---
+/*
+ * A demo and its source, as one titled card.
+ *
+ * The demo renders INLINE, in the page. `initComponents()` hydrates only authored `data-ds-*` roots;
+ * platform-native examples have no matching root and stay platform-only. No iframe and no framework
+ * island: enhanced demos prove the Vanilla path by taking it (see astro.config.mjs).
+ *
+ * The source below may carry a Vanilla / React tab. Only the authored HTML source RENDERS above, React
+ * is documented as a consumer binding, never executed here, which is exactly the boundary the site draws.
+ */
+import CodeBlock from "./CodeBlock.astro";
+
+type CodeLanguage = "bash" | "css" | "html" | "ts" | "tsx";
+
+interface Props {
+  /** The authored markup. Renders inline above, and is the source on the Vanilla tab. */
+  html?: string;
+  /** The React source. Shown on the React tab; never rendered. Omit and the tabs disappear. */
+  react?: string;
+  /** Explicit code for the vanilla tab, when the demo's markup isn't the source worth teaching. */
+  code?: string;
+  label?: string;
+  note?: string;
+  lang?: CodeLanguage;
+  /** Give the stage no padding: some components ARE a layout and must reach the edges. */
+  flush?: boolean;
+}
+
+const { html, react, code, label = "tu HTML", note, lang = "html", flush = false } = Astro.props;
+const vanillaCode = code ?? html;
+const hasTabs = Boolean(vanillaCode && react);
+---
+
+<div class="ds-stack docs-showcase" data-gap="none" data-showcase>
+  <header class="docs-showcase__header">
+    <span class="docs-showcase__title">{label}</span>
+    {note && <span class="docs-showcase__note">{note}</span>}
+    {
+      hasTabs && (
+        <div class="ds-segmented docs-showcase__tabs" data-ds-segmented data-value="vanilla" role="radiogroup" aria-label="Binding">
+          <span class="ds-segmented__indicator" aria-hidden="true" />
+          <button class="ds-segmented__option ds-interactive" data-ds-segmented-option data-value="vanilla" type="button" role="radio">
+            Vanilla
+          </button>
+          <button class="ds-segmented__option ds-interactive" data-ds-segmented-option data-value="react" type="button" role="radio">
+            React
+          </button>
+        </div>
+      )
+    }
+  </header>
+
+  {/* The stage. A slot wins when given, some demos need scaffolding the source shouldn't teach. */}
+  <div
+    class:list={["ds-box", "ds-inline", "docs-showcase__stage", { "docs-showcase__stage--flush": flush }]}
+    data-surface="surface"
+    data-padding={flush ? "none" : "lg"}
+  >
+    <slot><Fragment set:html={html} /></slot>
+  </div>
+
+  {
+    vanillaCode && (
+      <div class="docs-showcase__code" data-showcase-code="vanilla">
+        <CodeBlock code={vanillaCode} lang={lang} />
+      </div>
+    )
+  }
+  {
+    react && (
+      <div class="docs-showcase__code" data-showcase-code="react" hidden>
+        <CodeBlock code={react} lang="tsx" />
+      </div>
+    )
+  }
+</div>
+
+{
+  hasTabs && (
+    <script>
+      // The Vanilla/React switch is a ds-segmented control (auto-mounted via data-ds-segmented). The
+      // segmented enhancer owns the selection; this listener only reacts to its `ds-value-change` to
+      // swap which SOURCE is shown. The demo above never changes, it is the vanilla one, always,
+      // because that is the only path this site runs.
+      document.querySelectorAll<HTMLElement>("[data-showcase]").forEach((card) => {
+        const segmented = card.querySelector<HTMLElement>("[data-ds-segmented]");
+        if (!segmented) return;
+        segmented.addEventListener("ds-value-change", (event) => {
+          const binding = (event as CustomEvent<{ value: string }>).detail.value;
+          card
+            .querySelectorAll<HTMLElement>("[data-showcase-code]")
+            .forEach((panel) => (panel.hidden = panel.dataset.showcaseCode !== binding));
+        });
+      });
+    </script>
+  )
+}

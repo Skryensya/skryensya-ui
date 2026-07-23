@@ -1,14 +1,16 @@
 {
-  "name": "allison-design-system",
+  "name": "skryensya-design-system",
   "private": true,
   "packageManager": "pnpm@10.18.2",
-  "description": "Turborepo for the @allison design system. Base styles live in packages/tokens.",
+  "description": "Turborepo for the @skryensya design system. Core contains tokens and the framework-agnostic component contract.",
   "scripts": {
     "lint": "turbo run lint",
     "check": "turbo run check",
+    "build": "turbo run build",
     "dev": "turbo run dev"
   },
   "devDependencies": {
+    "tslib": "^2.8.1",
     "turbo": "^2.3.3"
   }
 }

@@ -1,0 +1,113 @@
+{
+  "name": "@skryensya/vanilla",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Vanilla enhancers for authored @skryensya markup.",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./auto": {
+      "types": "./src/auto.ts",
+      "default": "./src/auto.ts"
+    },
+    "./hotkey": {
+      "types": "./src/hotkey.ts",
+      "default": "./src/hotkey.ts"
+    },
+    "./icon": {
+      "types": "./src/icon.ts",
+      "default": "./src/icon.ts"
+    },
+    "./button": {
+      "types": "./src/components/button.ts",
+      "default": "./src/components/button.ts"
+    },
+    "./accordion": {
+      "types": "./src/components/accordion.ts",
+      "default": "./src/components/accordion.ts"
+    },
+    "./select": {
+      "types": "./src/components/select.ts",
+      "default": "./src/components/select.ts"
+    },
+    "./segmented": {
+      "types": "./src/components/segmented.ts",
+      "default": "./src/components/segmented.ts"
+    },
+    "./sidebar": {
+      "types": "./src/components/sidebar.ts",
+      "default": "./src/components/sidebar.ts"
+    },
+    "./slider": {
+      "types": "./src/components/slider.ts",
+      "default": "./src/components/slider.ts"
+    },
+    "./tabs": {
+      "types": "./src/components/tabs.ts",
+      "default": "./src/components/tabs.ts"
+    },
+    "./toast": {
+      "types": "./src/components/toast.ts",
+      "default": "./src/components/toast.ts"
+    },
+    "./tile": {
+      "types": "./src/components/tile.ts",
+      "default": "./src/components/tile.ts"
+    },
+    "./tile-link": {
+      "types": "./src/components/tile-link.ts",
+      "default": "./src/components/tile-link.ts"
+    },
+    "./tile-button": {
+      "types": "./src/components/tile-button.ts",
+      "default": "./src/components/tile-button.ts"
+    },
+    "./expandable-tile": {
+      "types": "./src/components/expandable-tile.ts",
+      "default": "./src/components/expandable-tile.ts"
+    },
+    "./tile-checkbox": {
+      "types": "./src/components/tile-checkbox.ts",
+      "default": "./src/components/tile-checkbox.ts"
+    },
+    "./tile-radio-group": {
+      "types": "./src/components/tile-radio-group.ts",
+      "default": "./src/components/tile-radio-group.ts"
+    },
+    "./vaul": {
+      "types": "./src/components/vaul.ts",
+      "default": "./src/components/vaul.ts"
+    }
+  },
+  "scripts": {
+    "build": "svelte-check --tsconfig ./tsconfig.json",
+    "check": "svelte-check --tsconfig ./tsconfig.json && vitest run",
+    "lint": "svelte-check --tsconfig ./tsconfig.json && vitest run"
+  },
+  "dependencies": {
+    "@skryensya/core": "workspace:*",
+    "@zag-js/checkbox": "^1.42.0",
+    "@zag-js/collapsible": "^1.42.0",
+    "@zag-js/core": "^1.42.0",
+    "@zag-js/radio-group": "^1.42.0",
+    "@zag-js/select": "^1.42.0",
+    "@zag-js/svelte": "^1.42.0",
+    "@zag-js/tabs": "^1.42.0",
+    "@zag-js/vanilla": "^1.42.0",
+    "svelte": "^5.56.7"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.2.0",
+    "@testing-library/dom": "^10.4.1",
+    "jsdom": "^29.1.1",
+    "svelte-check": "^4.7.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
+  }
+}

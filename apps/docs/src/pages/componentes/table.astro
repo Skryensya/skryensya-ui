@@ -1,0 +1,623 @@
+---
+import Base from "../../layouts/Base.astro";
+import Showcase from "../../components/Showcase.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+import DimensionSelect from "../../components/DimensionSelect.astro";
+import { iconMarkup } from "../../icons";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const chevronLeft = iconMarkup("chevron-left", { size: "sm" });
+const chevronRight = iconMarkup("chevron-right", { size: "sm" });
+
+const services = ["API", "Worker", "Gateway", "Billing", "Auth", "Search"] as const;
+const envs = ["prod", "staging", "dev"] as const;
+const statuses = ["Exitoso", "En curso", "Fallido"] as const;
+
+const pagerRows = Array.from({ length: 25 }, (_, index) => {
+  const n = index + 1;
+  return {
+    id: `dep-${1040 + n}`,
+    service: services[index % services.length],
+    env: envs[index % envs.length],
+    status: statuses[index % statuses.length],
+    when: n === 1 ? "Hace 2 min" : n < 10 ? `Hace ${n * 3} min` : `Hace ${n} h`,
+  };
+});
+
+const html = `<div class="ds-table-scroll">
+  <table class="ds-table">
+    <caption class="ds-table__caption">Planes disponibles</caption>
+    <thead class="ds-table__head">
+      <tr class="ds-table__row">
+        <th class="ds-table__header" scope="col">Plan</th>
+        <th class="ds-table__header" scope="col">Uso</th>
+        <th class="ds-table__header" scope="col">Estado</th>
+      </tr>
+    </thead>
+    <tbody class="ds-table__body">
+      <tr class="ds-table__row">
+        <th class="ds-table__header" scope="row">Starter</th>
+        <td class="ds-table__cell">Equipos pequeños</td>
+        <td class="ds-table__cell">Activo</td>
+      </tr>
+    </tbody>
+    <tfoot class="ds-table__foot">
+      <tr class="ds-table__row">
+        <td class="ds-table__cell" colspan="3">
+          Los precios no incluyen impuestos.
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>`;
+
+const boxHtml = `<section
+  class="ds-box"
+  data-surface="surface"
+  data-border="subtle"
+  data-padding="md"
+>
+  <div class="ds-table-scroll">
+    <table class="ds-table">
+      <caption class="ds-table__caption">Planes disponibles</caption>
+      <thead class="ds-table__head">
+        <tr class="ds-table__row">
+          <th class="ds-table__header" scope="col">Plan</th>
+          <th class="ds-table__header" scope="col">Uso</th>
+          <th class="ds-table__header" scope="col">Estado</th>
+        </tr>
+      </thead>
+      <tbody class="ds-table__body">
+        <tr class="ds-table__row">
+          <th class="ds-table__header" scope="row">Starter</th>
+          <td class="ds-table__cell">Equipos pequeños</td>
+          <td class="ds-table__cell">Activo</td>
+        </tr>
+        <tr class="ds-table__row">
+          <th class="ds-table__header" scope="row">Pro</th>
+          <td class="ds-table__cell">Equipos en crecimiento</td>
+          <td class="ds-table__cell">Activo</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>`;
+
+const densityTable = (factor: string) => `<div
+  data-ds-density-scope
+  style="--ds-density-factor: ${factor}"
+>
+  <div class="ds-table-scroll">
+    <table class="ds-table">
+      <caption class="ds-table__caption">
+        Actividad de servicios
+      </caption>
+      <thead class="ds-table__head">
+        <tr class="ds-table__row">
+          <th class="ds-table__header" scope="col">Servicio</th>
+          <th class="ds-table__header" scope="col">Estado</th>
+          <th class="ds-table__header" scope="col">
+            Última actividad
+          </th>
+        </tr>
+      </thead>
+      <tbody class="ds-table__body">
+        <tr class="ds-table__row">
+          <th class="ds-table__header" scope="row">API</th>
+          <td class="ds-table__cell">Estable</td>
+          <td class="ds-table__cell">Hace 2 min</td>
+        </tr>
+        <tr class="ds-table__row">
+          <th class="ds-table__header" scope="row">Worker</th>
+          <td class="ds-table__cell">Estable</td>
+          <td class="ds-table__cell">Hace 8 min</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>`;
+
+const spaciousDensityHtml = densityTable("1.2");
+const compactDensityHtml = densityTable("0.6");
+
+const react = `import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableScroll,
+} from "@skryensya/react/table";
+
+<TableScroll>
+  <Table>
+    <TableCaption>Planes disponibles</TableCaption>
+    <TableHead>
+      <TableRow>
+        <TableHeader>Plan</TableHeader>
+        <TableHeader>Uso</TableHeader>
+        <TableHeader>Estado</TableHeader>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      <TableRow>
+        <TableHeader scope="row">Starter</TableHeader>
+        <TableCell>Equipos pequeños</TableCell>
+        <TableCell>Activo</TableCell>
+      </TableRow>
+    </TableBody>
+    <TableFooter>
+      <TableRow>
+        <TableCell colSpan={3}>
+          Los precios no incluyen impuestos.
+        </TableCell>
+      </TableRow>
+    </TableFooter>
+  </Table>
+</TableScroll>;`;
+
+const pagedCode = `<div class="docs-table-pager">
+  <div class="ds-table-scroll">
+    <table class="ds-table">
+      <caption class="ds-table__caption">Despliegues recientes</caption>
+      <thead class="ds-table__head">…</thead>
+      <tbody class="ds-table__body">…</tbody>
+    </table>
+  </div>
+
+  <div class="docs-table-pager__bar">
+    <div class="ds-select" data-ds-select data-value="5">
+      <label class="ds-select__label" data-ds-select-label>
+        Filas por página
+      </label>
+      <button
+        class="ds-select__trigger ds-interactive"
+        data-ds-select-trigger
+        type="button"
+      >
+        <span class="ds-select__value" data-ds-select-value>
+          5
+        </span>
+        <span
+          class="ds-select__indicator"
+          data-ds-select-indicator
+          aria-hidden="true"
+        >
+          <span data-state="closed">
+            <span data-ds-icon="chevron-down"></span>
+          </span>
+          <span data-state="open">
+            <span data-ds-icon="chevron-up"></span>
+          </span>
+        </span>
+      </button>
+      <div
+        class="ds-select__positioner"
+        data-ds-select-positioner
+      >
+        <ul class="ds-select__content" data-ds-select-content>
+          <li
+            class="ds-select__item ds-interactive"
+            data-ds-select-item
+            data-value="5"
+          >…</li>
+          <li
+            class="ds-select__item ds-interactive"
+            data-ds-select-item
+            data-value="10"
+          >…</li>
+          <li
+            class="ds-select__item ds-interactive"
+            data-ds-select-item
+            data-value="25"
+          >…</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="docs-table-pager__status">1–5 de 25</p>
+
+    <nav class="ds-pagination" aria-label="Paginación">
+      <button
+        class="ds-pagination__previous ds-interactive"
+        type="button"
+        aria-label="Página anterior"
+        disabled
+      >
+        <span
+          data-ds-icon="chevron-left"
+          data-ds-icon-size="sm"
+        ></span>
+      </button>
+      <!-- páginas + elipsis vía paginationRange() -->
+      <button
+        class="ds-pagination__next ds-interactive"
+        type="button"
+        aria-label="Página siguiente"
+      >
+        <span
+          data-ds-icon="chevron-right"
+          data-ds-icon-size="sm"
+        ></span>
+      </button>
+    </nav>
+  </div>
+</div>`;
+
+const pagedReact = `import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Icon } from "@skryensya/react/icon";
+import { Pagination } from "@skryensya/react/pagination";
+import { Select } from "@skryensya/react/select";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableScroll,
+} from "@skryensya/react/table";
+
+const PAGE_SIZES = ["5", "10", "25"] as const;
+
+function DeploymentsTable({ rows }: { rows: Deployment[] }) {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] =
+    useState<(typeof PAGE_SIZES)[number]>("5");
+  const frameRef = useRef<HTMLDivElement>(null);
+  const [frameMinBlockSize, setFrameMinBlockSize] = useState<number>();
+
+  const size = Number(pageSize);
+  const pageCount = Math.max(1, Math.ceil(rows.length / size));
+  const current = Math.min(page, pageCount);
+  const slice = useMemo(() => {
+    const start = (current - 1) * size;
+    return rows.slice(start, start + size);
+  }, [current, rows, size]);
+
+  useLayoutEffect(() => {
+    const frame = frameRef.current;
+    if (!frame || slice.length < size) return;
+    frame.style.minBlockSize = "";
+    setFrameMinBlockSize(Math.ceil(frame.getBoundingClientRect().height));
+  }, [slice, size]);
+
+  const start = (current - 1) * size + 1;
+  const end = Math.min(current * size, rows.length);
+
+  return (
+    <div className="docs-table-pager">
+      <TableScroll
+        ref={frameRef}
+        style={
+          frameMinBlockSize
+            ? { minBlockSize: frameMinBlockSize }
+            : undefined
+        }
+      >
+        <Table>
+          <TableCaption>Despliegues recientes</TableCaption>
+          <TableHead>
+            <TableRow>
+              <TableHeader>ID</TableHeader>
+              <TableHeader>Servicio</TableHeader>
+              <TableHeader>Entorno</TableHeader>
+              <TableHeader>Estado</TableHeader>
+              <TableHeader>Cuándo</TableHeader>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {slice.map((row) => (
+              <TableRow key={row.id}>
+                <TableHeader scope="row">{row.id}</TableHeader>
+                <TableCell>{row.service}</TableCell>
+                <TableCell>{row.env}</TableCell>
+                <TableCell>{row.status}</TableCell>
+                <TableCell>{row.when}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableScroll>
+
+      <div className="docs-table-pager__bar">
+        <Select
+          label="Filas por página"
+          defaultValue={["5"]}
+          indicator={<Icon name="chevron-down" />}
+          openIndicator={<Icon name="chevron-up" />}
+          itemIndicator={<Icon name="check" />}
+          options={PAGE_SIZES.map((n) => ({ value: n, label: n }))}
+          onValueChange={(details) => {
+            const next = details.value[0];
+            if (next === "5" || next === "10" || next === "25") {
+              setPageSize(next);
+              setPage(1);
+              setFrameMinBlockSize(undefined);
+            }
+          }}
+        />
+        <p className="docs-table-pager__status">
+          {start}–{end} de {rows.length}
+        </p>
+        <Pagination
+          page={current}
+          total={pageCount}
+          onPageChange={setPage}
+          label="Paginación"
+          previousLabel="Página anterior"
+          nextLabel="Página siguiente"
+        />
+      </div>
+    </div>
+  );
+}`;---
+
+<Base title="Table" description="Table: tabla semántica nativa con wrapper de overflow, styling hooks y componentes React.">
+  <h1>Table</h1>
+  <p class="lede">
+    Table mantiene la semántica nativa de <code>&lt;table&gt;</code>. El sistema aporta parts estables,
+    hooks de superficie, borde y encabezado, y un wrapper opcional para overflow horizontal. El
+    <code>&lt;caption&gt;</code> sigue siendo el primer hijo de la tabla en el DOM; el marco vive en
+    <code>.ds-table</code>, así que el título queda visualmente fuera del borde (modelo CSS de tablas).
+  </p>
+
+  <h2>Demo HTML</h2>
+  <Showcase html={html} react={react} label="Table" />
+
+  <h2>Con paginación</h2>
+  <p>
+    La tabla no conoce la paginación: es un composition. Abajo, un
+    <a href="/componentes/select"><code>Select</code></a> elige las filas por página y
+    <a href="/componentes/pagination"><code>Pagination</code></a> recorre el resto. La ventana de
+    páginas sale de <code>paginationRange</code> en el core. El marco de la tabla fija su
+    <code>min-block-size</code> a una página completa para que la última (más corta) no mueva el
+    layout.
+  </p>
+  <Showcase code={pagedCode} react={pagedReact} label="Table + Pagination" lang="html">
+    <div class="docs-table-pager" data-docs-table-pager>
+      <span hidden data-docs-table-pager-icon="prev" set:html={chevronLeft} />
+      <span hidden data-docs-table-pager-icon="next" set:html={chevronRight} />
+
+      <div class="ds-table-scroll" data-docs-table-pager-frame>
+        <table class="ds-table">
+          <caption class="ds-table__caption">Despliegues recientes</caption>
+          <thead class="ds-table__head">
+            <tr class="ds-table__row">
+              <th class="ds-table__header" scope="col">ID</th>
+              <th class="ds-table__header" scope="col">Servicio</th>
+              <th class="ds-table__header" scope="col">Entorno</th>
+              <th class="ds-table__header" scope="col">Estado</th>
+              <th class="ds-table__header" scope="col">Cuándo</th>
+            </tr>
+          </thead>
+          <tbody class="ds-table__body">
+            {
+              pagerRows.map((row, index) => (
+                <tr
+                  class="ds-table__row"
+                  data-docs-table-pager-row
+                  hidden={index >= 5 || undefined}
+                >
+                  <th class="ds-table__header" scope="row">{row.id}</th>
+                  <td class="ds-table__cell">{row.service}</td>
+                  <td class="ds-table__cell">{row.env}</td>
+                  <td class="ds-table__cell">{row.status}</td>
+                  <td class="ds-table__cell">{row.when}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="docs-table-pager__bar">
+        <div class="docs-table-pager__size">
+          <DimensionSelect
+            id="table-page-size"
+            label="Filas por página"
+            value="5"
+            options={[
+              { value: "5", label: "5" },
+              { value: "10", label: "10" },
+              { value: "25", label: "25" },
+            ]}
+          />
+        </div>
+        <p class="docs-table-pager__status" data-docs-table-pager-status>1–5 de 25</p>
+        <nav class="ds-pagination" aria-label="Paginación" data-docs-table-pager-nav></nav>
+      </div>
+    </div>
+  </Showcase>
+
+  <h2>Dentro de un Box</h2>
+  <p>
+    Dentro del <code>padding</code> de un <code>.ds-box</code>, la <code>.ds-table</code> redondea con el
+    radio de elemento anidado (<code>--radius-control</code>) en vez del de superficie: Box aporta la
+    superficie y la tabla es un elemento dentro de ella. Así el radio queda más ajustado, nunca colapsa
+    a una caja cuadrada, y sigue acompañando al eje <code>data-radius</code>.
+  </p>
+  <Showcase html={boxHtml} label="Table en Box" />
+
+  <h2>Densidad local</h2>
+  <p>
+    El contrato del scope es solo <code>data-ds-density-scope</code> y un valor de densidad. Aquí
+    <code>--ds-density-factor</code> es relativo al sistema; escribe <code>--ds-density</code> en el
+    mismo nodo si necesitas un valor absoluto. Los números siguen siendo continuos.
+  </p>
+  <Showcase html={spaciousDensityHtml} label="Table amplia · 1.2× del sistema" />
+  <Showcase html={compactDensityHtml} label="Table compacta · 0.6× del sistema" />
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de cada demo.</p>
+  <StylingHooks groups={[{ file: "components/table.css", probe: "ds-table" }]} />
+</Base>
+
+<script>
+  import { paginationRange } from "@skryensya/core/pagination";
+
+  function iconHtml(root: HTMLElement, name: "prev" | "next") {
+    const node = root.querySelector(`[data-docs-table-pager-icon="${name}"]`);
+    return node?.innerHTML.trim() ?? "";
+  }
+
+  function bindPager(root: HTMLElement) {
+    const rows = [...root.querySelectorAll<HTMLTableRowElement>("[data-docs-table-pager-row]")];
+    const status = root.querySelector<HTMLElement>("[data-docs-table-pager-status]");
+    const nav = root.querySelector<HTMLElement>("[data-docs-table-pager-nav]");
+    const frame = root.querySelector<HTMLElement>("[data-docs-table-pager-frame]");
+    const sizeMenu = root.querySelector<HTMLElement>("[data-ds-select]");
+    if (!status || !nav || rows.length === 0) return;
+
+    const prevIcon = iconHtml(root, "prev");
+    const nextIcon = iconHtml(root, "next");
+    let page = 1;
+    let pageSize = Number(sizeMenu?.dataset.value ?? "5") || 5;
+    /** Locked block size of a full page; keeps the last (short) page from collapsing the layout. */
+    let settledBlockSize = 0;
+
+    const lockFrameSize = (visibleCount: number) => {
+      if (!frame) return;
+      if (visibleCount === pageSize) {
+        frame.style.minBlockSize = "";
+        settledBlockSize = Math.ceil(frame.getBoundingClientRect().height);
+      }
+      if (settledBlockSize > 0) {
+        frame.style.minBlockSize = `${settledBlockSize}px`;
+      }
+    };
+
+    const resetFrameSize = () => {
+      settledBlockSize = 0;
+      if (frame) frame.style.minBlockSize = "";
+    };
+
+    const render = () => {
+      const pageCount = Math.max(1, Math.ceil(rows.length / pageSize));
+      page = Math.min(Math.max(page, 1), pageCount);
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = Math.min(startIndex + pageSize, rows.length);
+
+      rows.forEach((row, index) => {
+        row.hidden = index < startIndex || index >= endIndex;
+      });
+
+      status.textContent = `${startIndex + 1}–${endIndex} de ${rows.length}`;
+      lockFrameSize(endIndex - startIndex);
+
+      const slots = paginationRange(page, pageCount);
+      nav.replaceChildren();
+
+      const previous = document.createElement("button");
+      previous.type = "button";
+      previous.className = "ds-pagination__previous ds-interactive";
+      previous.setAttribute("aria-label", "Página anterior");
+      previous.disabled = page <= 1;
+      previous.innerHTML = prevIcon;
+      previous.addEventListener("click", () => {
+        page -= 1;
+        render();
+      });
+      nav.append(previous);
+
+      for (const [index, slot] of slots.entries()) {
+        if (slot === "ellipsis") {
+          const ellipsis = document.createElement("span");
+          ellipsis.className = "ds-pagination__ellipsis";
+          ellipsis.setAttribute("aria-hidden", "true");
+          ellipsis.textContent = "…";
+          ellipsis.dataset.gap = String(index);
+          nav.append(ellipsis);
+          continue;
+        }
+
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = "ds-pagination__item ds-interactive";
+        item.setAttribute("aria-label", `Página ${slot}`);
+        if (slot === page) item.setAttribute("aria-current", "page");
+        item.textContent = String(slot);
+        item.addEventListener("click", () => {
+          page = slot;
+          render();
+        });
+        nav.append(item);
+      }
+
+      const next = document.createElement("button");
+      next.type = "button";
+      next.className = "ds-pagination__next ds-interactive";
+      next.setAttribute("aria-label", "Página siguiente");
+      next.disabled = page >= pageCount;
+      next.innerHTML = nextIcon;
+      next.addEventListener("click", () => {
+        page += 1;
+        render();
+      });
+      nav.append(next);
+    };
+
+    sizeMenu?.addEventListener("ds-value-change", ((event: CustomEvent<{ value: string[] }>) => {
+      const next = Number(event.detail.value[0]);
+      if (!Number.isFinite(next) || next <= 0) return;
+      pageSize = next;
+      page = 1;
+      resetFrameSize();
+      render();
+    }) as EventListener);
+
+    render();
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-docs-table-pager]").forEach(bindPager);
+</script>
+
+<style>
+  .docs-table-pager {
+    display: grid;
+    gap: var(--space-stack-md);
+    inline-size: 100%;
+    min-inline-size: 0;
+  }
+
+  .docs-table-pager__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-inline-md) var(--space-inline-lg);
+  }
+
+  .docs-table-pager__size {
+    min-inline-size: 8rem;
+  }
+
+  .docs-table-pager__size :global(.ds-select) {
+    min-inline-size: 8rem;
+  }
+
+  .docs-table-pager__status {
+    margin: 0;
+    margin-inline-start: auto;
+    min-inline-size: 12ch;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--size-control-md);
+    text-align: end;
+  }
+
+  .docs-table-pager__bar :global(.ds-pagination) {
+    flex: none;
+    min-inline-size: 14rem;
+    justify-content: end;
+  }
+</style>

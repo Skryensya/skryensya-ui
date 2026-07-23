@@ -1,0 +1,29 @@
+/*
+ * SCROLL LOCK — opt-in root pattern (decision 11).
+ *
+ * Consent IS the import. This is the first system rule that styles the document root from an
+ * opt-in file: everything else scopes to its own element. Apps that already run their own scroll
+ * lock must not import this, or they double-lock.
+ *
+ * Two jobs, one file:
+ *   1. Freeze the page behind any native modal (`dialog:modal` = opened with showModal()).
+ *   2. Reserve the classic scrollbar's width so freezing it does not widen the page (~15px CLS).
+ *
+ * `scrollbar-gutter: stable` lives on `html` always (not only while locked). Applying the gutter
+ * at the same instant as `overflow: hidden` is a race the browser can lose; reserving it up front
+ * makes the layout width identical before and after the lock. Overlay scrollbars (macOS default)
+ * already take no layout space: the gutter is a no-op there and harmless.
+ *
+ * Nested `overflow: auto` rails (a sticky sidebar, a toc) are NOT covered. showModal() makes the
+ * page inert for pointer and keyboard, but those gutters can still wheel. Lock them in the app
+ * if they exist, the same way this file locks the document.
+ */
+@layer components {
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  html:has(dialog:modal) {
+    overflow: hidden;
+  }
+}

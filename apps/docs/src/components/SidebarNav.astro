@@ -1,0 +1,81 @@
+---
+/*
+ * The index of the site, as markup. Rendered TWICE, once in the sticky rail, once inside the mobile
+ * drawer, so it lives here rather than being copied: two copies of a nav are two navs that disagree
+ * the first time someone adds a page.
+ *
+ * The nav-list is a guest wherever it is put (decision 17): it knows nothing about the rail or the
+ * drawer hosting it.
+ */
+
+type NavigationItem = {
+  href: string;
+  label: string;
+  aliases?: readonly string[];
+  todo?: boolean;
+};
+
+type NavigationGroup = {
+  group: string;
+  secondary?: boolean;
+  items: readonly NavigationItem[];
+};
+
+type NavigationSection = {
+  section: string;
+  href?: string;
+  blurb: string;
+  groups: readonly NavigationGroup[];
+};
+
+interface Props {
+  nav: readonly NavigationSection[];
+  path: string;
+  /* Ids must stay unique across BOTH renders, the drawer's copy would otherwise collide with the
+   * rail's, and every group label would point at the wrong list. */
+  idPrefix: string;
+}
+
+const { nav, path, idPrefix } = Astro.props;
+---
+
+{
+  nav.map((section, sectionIndex) => (
+    <section class="docs-nav-section" aria-label={section.section}>
+      <header class="docs-nav-section__header">
+        {
+          section.href ? (
+            <a class="docs-nav-section__title" href={section.href}>{section.section}</a>
+          ) : (
+            <h2 class="docs-nav-section__title">{section.section}</h2>
+          )
+        }
+        <p class="docs-nav-section__blurb">{section.blurb}</p>
+      </header>
+      <nav class="ds-nav-list" aria-label={section.section}>
+        {section.groups.map((group, groupIndex) => (
+          <div class="ds-nav-list__group" data-secondary={group.secondary ? "" : undefined}>
+            <div class="ds-nav-list__group-label" id={`${idPrefix}-${sectionIndex}-${groupIndex}`}>
+              {group.group}
+            </div>
+            <ul class="ds-nav-list__list" aria-labelledby={`${idPrefix}-${sectionIndex}-${groupIndex}`}>
+              {group.items.map((item) => (
+                <li class="ds-nav-list__item" data-todo={item.todo ? "" : undefined}>
+                  <a
+                    class="ds-nav-list__link ds-interactive"
+                    href={item.href}
+                    aria-current={path === item.href ? "page" : undefined}
+                    aria-disabled={item.todo ? "true" : undefined}
+                    title={item.todo ? "Todavía no escrita" : undefined}
+                  >
+                    <span class="ds-nav-list__label">{item.label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </nav>
+    </section>
+  ))
+}

@@ -1,0 +1,187 @@
+/*
+ * TIER 3, TYPOGRAPHY
+ *
+ * Text, Heading and Link expose stable roles rather than arbitrary font values. The component
+ * classes carry the complete readable default; consumers override the hooks when a local context
+ * needs a deliberate exception.
+ */
+@layer components {
+  .ds-text {
+    --ds-text-fg: var(--color-text-primary);
+    --ds-text-font-size: var(--font-size-body);
+    --ds-text-line-height: var(--font-line-height-body);
+    --ds-text-font-weight: var(--font-weight-body);
+
+    margin: 0;
+    color: var(--ds-text-fg);
+    font-size: var(--ds-text-font-size);
+    font-weight: var(--ds-text-font-weight);
+    line-height: var(--ds-text-line-height);
+    overflow-wrap: anywhere;
+  }
+
+  .ds-text[data-tone="secondary"] { --ds-text-fg: var(--color-text-secondary); }
+  .ds-text[data-tone="tertiary"] { --ds-text-fg: var(--color-text-tertiary); }
+  .ds-text[data-tone="danger"] { --ds-text-fg: var(--color-text-danger); }
+  .ds-text[data-size="caption"] {
+    --ds-text-font-size: var(--font-size-caption);
+    --ds-text-line-height: var(--font-line-height-caption);
+  }
+  .ds-text[data-size="sm"] { --ds-text-font-size: var(--font-size-body-sm); }
+  .ds-text[data-size="lg"] { --ds-text-font-size: var(--font-size-body-lg); }
+  .ds-text[data-weight="emphasis"] { --ds-text-font-weight: var(--font-weight-emphasis); }
+  .ds-text[data-weight="label"] { --ds-text-font-weight: var(--font-weight-label); }
+
+  /*
+   * ROLES, presets that bundle several axes for a recurring job in a title block, so a consumer writes
+   * the intent once instead of re-deriving size + weight + tone (+ tracking/casing) every time. `size`,
+   * `tone` and `weight` above stay the free axes; a role is the composed default, and any hook it sets
+   * can still be overridden. The two together let a heading, its kicker and its deck read as one unit:
+   *
+   *   <header class="ds-stack" data-gap="none">
+   *     <p class="ds-text" data-role="eyebrow">Integración</p>
+   *     <h2 class="ds-heading">Exportar configuración</h2>
+   *     <p class="ds-text" data-role="subtitle">Copia el CSS y pégalo en tu proyecto.</p>
+   *   </header>
+   *
+   * Spacing between roles is owned by the LOWER sibling (heading / subtitle padding-block-start), not
+   * by the eyebrow's line box, so a title stack uses gap="none" and lets the roles place themselves.
+   */
+
+  /* SUBTITLE, the supporting line UNDER a heading: larger than body, quieter, a relaxed measure so a
+   * two-line deck breathes. The system's own page lede is exactly this role. */
+  .ds-text[data-role="subtitle"] {
+    --ds-text-font-size: var(--font-size-body-lg);
+    --ds-text-line-height: var(--font-line-height-body-relaxed);
+    --ds-text-fg: var(--color-text-secondary);
+  }
+
+  /* EYEBROW, the small kicker ABOVE a title (an overline). It was re-declared bespoke on every surface
+   * that wanted one, dialog headers, sidebar section titles, stat labels, as the same four
+   * properties. One role now. The tracking and the upper-casing are the letterform of the role itself,
+   * not layout, so they are direct values like the link's underline-offset, not tokens being sidestepped.
+   * Line-height is the tight display measure: caption's body 1.5 left a dead band under the glyphs that
+   * read as padding-bottom on the eyebrow; the intentional gap lives on the heading below. */
+  .ds-text[data-role="eyebrow"] {
+    --ds-text-font-size: var(--font-size-caption);
+    --ds-text-line-height: var(--font-line-height-display);
+    --ds-text-font-weight: var(--font-weight-emphasis);
+    --ds-text-fg: var(--color-text-tertiary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* The title owns the air after its kicker; the deck owns the air after the title. */
+  .ds-text[data-role="eyebrow"] + .ds-heading {
+    padding-block-start: var(--space-stack-xs);
+  }
+
+  .ds-heading + .ds-text[data-role="subtitle"] {
+    padding-block-start: var(--space-stack-xs);
+  }
+
+  /*
+   * Semantic inline emphasis Just Works inside Text. A native <strong>/<b> takes the emphasis WEIGHT
+   * TOKEN, not the browser's heavier default bold (700), and <em>/<i> stay italic. So reading text is
+   * authored with the meaning tag (<strong>Pro</strong>), which is what a screen reader announces and
+   * what belongs in the markup, and it still lands on the system's weight instead of drifting off it.
+   * The `data-weight` axis stays for setting a whole Text element's weight with no added importance;
+   * this is for emphasis WITHIN a phrase. `:where()` keeps it zero-specificity, trivially overridable.
+   */
+  .ds-text :where(strong, b) { font-weight: var(--font-weight-emphasis); }
+  .ds-text :where(em, i) { font-style: italic; }
+
+  .ds-heading {
+    --ds-heading-fg: var(--color-text-primary);
+    --ds-heading-font-size: var(--font-size-heading-h2);
+    --ds-heading-line-height: var(--font-line-height-heading-h2);
+    --ds-heading-font-weight: var(--font-weight-heading);
+
+    margin: 0;
+    color: var(--ds-heading-fg);
+    font-size: var(--ds-heading-font-size);
+    font-weight: var(--ds-heading-font-weight);
+    line-height: var(--ds-heading-line-height);
+    text-wrap: balance;
+  }
+
+  /* FLUSH, explicit opt-in: no block-start air. Use when the heading is the first thing in its
+   * container (a dialog title, a card header) and inherited / sibling spacing would push it down.
+   * Not automatic on :first-child, the author names the intent. Beats the eyebrow adjacency rule. */
+  .ds-heading[data-flush],
+  .ds-text[data-role="eyebrow"] + .ds-heading[data-flush] {
+    margin-block-start: 0;
+    padding-block-start: 0;
+  }
+
+  .ds-heading[data-size="h1"],
+  .ds-heading[data-size="lg"] {
+    --ds-heading-font-size: var(--font-size-heading-h1);
+    --ds-heading-line-height: var(--font-line-height-heading-h1);
+  }
+  .ds-heading[data-size="h2"],
+  .ds-heading[data-size="md"] {
+    --ds-heading-font-size: var(--font-size-heading-h2);
+    --ds-heading-line-height: var(--font-line-height-heading-h2);
+  }
+  .ds-heading[data-size="h3"],
+  .ds-heading[data-size="sm"] {
+    --ds-heading-font-size: var(--font-size-heading-h3);
+    --ds-heading-line-height: var(--font-line-height-heading-h3);
+  }
+  /* Floor: h4 / h5 / h6 share one pair so the scale does not shrink past a readable section title. */
+  .ds-heading[data-size="h4"],
+  .ds-heading[data-size="h5"],
+  .ds-heading[data-size="h6"] {
+    --ds-heading-font-size: var(--font-size-heading-h4);
+    --ds-heading-line-height: var(--font-line-height-heading-h4);
+  }
+
+  .ds-heading[data-size="display-sm"],
+  .ds-heading[data-size="display"] {
+    --ds-heading-font-size: var(--font-size-display-sm);
+    --ds-heading-line-height: var(--font-line-height-display-sm);
+  }
+  .ds-heading[data-size="display-md"] {
+    --ds-heading-font-size: var(--font-size-display-md);
+    --ds-heading-line-height: var(--font-line-height-display-md);
+  }
+  .ds-heading[data-size="display-lg"] {
+    --ds-heading-font-size: var(--font-size-display-lg);
+    --ds-heading-line-height: var(--font-line-height-display-lg);
+  }
+
+  /*
+   * ONE link, always underlined, the only treatment WCAG 1.4.1 (Use of Color) lets a text link use
+   * safely. A link in running text cannot be told apart by colour alone; the underline is the non-colour
+   * cue, and it is PERMANENT because the alternatives fail a real reader: an underline that appears only
+   * on hover leaves the resting text with no cue (and no cue at all for anyone who can't hover), and no
+   * underline fails the criterion outright. There is deliberately no `data-underline` hook, offering
+   * "hover" or "none" would be offering a way to fail 1.4.1, and this component IS the in-text link.
+   * (Standalone links, nav, breadcrumb, prev/next, are told apart by location, so they use the
+   * nav-list pattern or a ghost button, not this.)
+   *
+   * Hover / press / focus come from `ds-interactive` + the state layer (decision 9), same mechanism as
+   * every other control. A bare `inset: 0` wash on inline glyphs reads as a smear, so the link loosens
+   * the ::before a hair past the ink; the permanent underline still carries the resting affordance.
+   */
+  .ds-link {
+    /* Default matches surrounding prose, the permanent underline is the resting affordance. */
+    --ds-link-fg: var(--color-text-primary);
+
+    color: var(--ds-link-fg);
+    text-decoration-line: underline;
+    text-decoration-color: currentColor;
+    text-decoration-thickness: from-font;
+    text-underline-offset: 0.15em;
+    border-radius: var(--radius-control);
+  }
+
+  /* Brand / primary paint, the coloured call-out in a paragraph. */
+  .ds-link[data-tone="primary"] { --ds-link-fg: var(--color-text-accent); }
+
+  .ds-link.ds-interactive::before {
+    inset-block: -0.12em;
+    inset-inline: -0.28em;
+  }
+}

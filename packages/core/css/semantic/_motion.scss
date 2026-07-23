@@ -1,0 +1,86 @@
+@mixin tokens {
+    /* ── MOTION, INTENT TOKENS ────────────────────────────────────────────────
+     * Components consume intent (motion-enter-*), never a raw duration. Because the
+     * scale-* durations/easings are tier-1 primitives, the validator's tier-skip rule
+     * already forbids a component from reaching a raw duration, intent is enforced.
+     * Retuning a primitive (e.g. fast 120→100ms) restyles the system without any
+     * component or intent-token edit. Reduced motion is handled below as a MODE. */
+
+    /* distance scale, the START offset a translate animates from, mapped to hierarchy:
+     * larger distance = deeper/further move. Panels that travel their full size use 100%. */
+    --motion-distance-none: 0px;
+    --motion-distance-sm: 4px;   /* inline reveals: tooltip, menu, exit */
+    --motion-distance-md: 8px;   /* things that enter: popover, toast */
+    --motion-distance-lg: 16px;  /* navigation / drill-down direction */
+
+    /* feedback, hover / press / toggle / state layer: fast + discreet, never blocks flow */
+    --motion-feedback-duration: var(--scale-duration-fast);
+    --motion-feedback-easing: var(--scale-easing-standard);
+
+    /* state-change, checkbox / switch / inline validation flips */
+    --motion-state-change-duration: var(--scale-duration-fast);
+    --motion-state-change-easing: var(--scale-easing-standard);
+
+    /* enter, element appears: decelerates into place */
+    --motion-enter-duration: var(--scale-duration-moderate);
+    --motion-enter-easing: var(--scale-easing-enter);
+    --motion-enter-distance: var(--motion-distance-md);
+
+    /* exit, element leaves: accelerates away; SHORTER than enter (it's already decided) */
+    --motion-exit-duration: var(--scale-duration-fast);
+    --motion-exit-easing: var(--scale-easing-exit);
+    --motion-exit-distance: var(--motion-distance-sm);
+
+    /* reveal / dismiss, inline transient content (tooltip, popover) */
+    --motion-reveal-duration: var(--scale-duration-fast);
+    --motion-reveal-easing: var(--scale-easing-enter);
+    --motion-reveal-distance: var(--motion-distance-sm);
+    --motion-dismiss-duration: var(--scale-duration-fast);
+    --motion-dismiss-easing: var(--scale-easing-exit);
+    --motion-dismiss-distance: var(--motion-distance-sm);
+
+    /* expand / collapse, height changes (accordion, disclosure). No translate distance. A panel is a
+     * larger surface than a toggle, so it earns the slow tempo (moderate felt rushed). Collapse MATCHES
+     * expand on purpose: in a single-select accordion one item closes while another opens, and if the two
+     * ran at different speeds the shared frame's height would dip or overshoot mid-swap and jolt whatever
+     * sits below it. Same duration + easing keeps that height monotonic, a swap reads as one motion. */
+    --motion-expand-duration: var(--scale-duration-slow);
+    --motion-expand-easing: var(--scale-easing-standard);
+    --motion-collapse-duration: var(--scale-duration-slow);
+    --motion-collapse-easing: var(--scale-easing-standard);
+
+    /* reorder, FLIP position moves (drag list, table rows). Position only. */
+    --motion-reorder-duration: var(--scale-duration-moderate);
+    --motion-reorder-easing: var(--scale-easing-standard);
+
+    /* navigate, page / tab / drill-down: larger spatial move carries direction & depth */
+    --motion-navigate-duration: var(--scale-duration-moderate);
+    --motion-navigate-easing: var(--scale-easing-standard);
+    --motion-navigate-distance: var(--motion-distance-lg);
+
+    /* emphasize, attention on a real change. Use sparingly; not decorative. */
+    --motion-emphasize-duration: var(--scale-duration-moderate);
+    --motion-emphasize-easing: var(--scale-easing-emphasized);
+
+    /* loading, continuous, linear, no ease (a loop with ease looks like it's breathing) */
+    --motion-loading-duration: var(--scale-duration-slow);
+    --motion-loading-easing: var(--scale-easing-linear);
+
+    /* drag, pickup / drop feedback (the follow-pointer part is not tokenised) */
+    --motion-drag-duration: var(--scale-duration-fast);
+    --motion-drag-easing: var(--scale-easing-standard);
+
+    /* release, a dragged thing let go: it carries the finger's momentum home, or the rest of the way
+     * out. NOT enter and NOT exit: those are the system moving something on its own account, and both
+     * are short because nobody is waiting on them. A release is the continuation of a gesture the hand
+     * already started, so it is the one intent that is allowed to be slow, cut it short and the panel
+     * stops dead under the finger instead of coasting. Same intent for both outcomes: springing back
+     * and being thrown out are one throw with two destinations. */
+    --motion-release-duration: var(--scale-duration-slow);
+    --motion-release-easing: var(--scale-easing-glide);
+
+    /* reduced-mode primitives, the values the @media block swaps intents to */
+    --motion-reduced-duration: var(--scale-duration-fast);
+    --motion-reduced-distance: var(--motion-distance-none);
+    --motion-reduced-easing: var(--scale-easing-standard);
+}

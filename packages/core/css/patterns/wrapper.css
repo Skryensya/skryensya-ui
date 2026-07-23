@@ -1,0 +1,41 @@
+/*
+ * WRAPPER, centred page column with a max measure named by use.
+ *
+ * A PATTERN: every app page, docs shell and marketing strip needs the same shape, a column that
+ * stops growing past a readable (or shell) width, centred, with horizontal inset. Duplicating
+ * `max-width` + `margin-inline: auto` + padding per surface is what this exists to prevent.
+ *
+ * Named by PURPOSE (`prose`, `content`, `shell`, `full`), never by sm/md/lg: the size is which job
+ * the column is doing, and a "large wrapper" would lie the moment a second use needed the same
+ * width. The measures themselves are tier-2 `--size-wrapper-*` tokens so the header and the body
+ * can share one number without hand-copying rem values.
+ */
+@layer components {
+  .ds-wrapper {
+    --ds-wrapper-max: var(--size-wrapper-content);
+    --ds-wrapper-padding-inline: var(--space-inset-lg);
+
+    box-sizing: border-box;
+    inline-size: min(100%, var(--ds-wrapper-max));
+    margin-inline: auto;
+    padding-inline: var(--ds-wrapper-padding-inline);
+  }
+
+  .ds-wrapper[data-size="prose"] {
+    --ds-wrapper-max: var(--size-wrapper-prose);
+  }
+
+  .ds-wrapper[data-size="content"] {
+    --ds-wrapper-max: var(--size-wrapper-content);
+  }
+
+  .ds-wrapper[data-size="shell"] {
+    --ds-wrapper-max: var(--size-wrapper-shell);
+  }
+
+  /* No ceiling: still centres via the same padding, but the column is the viewport. */
+  .ds-wrapper[data-size="full"] {
+    --ds-wrapper-max: none;
+    inline-size: 100%;
+  }
+}

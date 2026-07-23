@@ -1,0 +1,345 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import Showcase from "../components/Showcase.astro";
+import StylingHooks from "../components/StylingHooks.astro";
+
+const import_ = `@import "@skryensya/core/patterns/vaul.css";
+@import "@skryensya/core/patterns/scroll-lock.css";`;
+
+const html = `<button
+  class="ds-button ds-interactive"
+  data-ds-button
+  data-ds-vaul-open="demo-vaul"
+>
+  Abrir Vaul
+</button>
+
+<dialog
+  class="ds-vaul demo-vaul"
+  id="demo-vaul"
+  data-ds-vaul
+  data-edge="block-end"
+  aria-label="Vaul de ejemplo"
+>
+  <div
+    class="ds-vaul__handle"
+    data-part="handle"
+    aria-hidden="true"
+  ></div>
+  <div class="demo-vaul__inner">
+    <header class="demo-vaul__header">
+      <div class="demo-vaul__heading">
+        <h2 class="demo-vaul__title">Compartir documento</h2>
+        <p class="demo-vaul__subtitle">
+          Elige quién puede abrir este Vaul.
+        </p>
+      </div>
+      <button
+        class="ds-button ds-interactive"
+        data-ds-button
+        data-variant="ghost"
+        data-ds-vaul-close
+        aria-label="Cerrar"
+      >
+        Cerrar
+      </button>
+    </header>
+
+    <ul class="demo-vaul__list">
+      <li class="demo-vaul__row">
+        <span class="demo-vaul__avatar" aria-hidden="true">AK</span>
+        <span class="demo-vaul__row-text">
+          <span class="demo-vaul__row-title">Ada Kovač</span>
+          <span class="demo-vaul__row-meta">Puede editar</span>
+        </span>
+      </li>
+      <li class="demo-vaul__row">
+        <span class="demo-vaul__avatar" aria-hidden="true">RM</span>
+        <span class="demo-vaul__row-text">
+          <span class="demo-vaul__row-title">Renzo Molina</span>
+          <span class="demo-vaul__row-meta">Puede comentar</span>
+        </span>
+      </li>
+      <li class="demo-vaul__row">
+        <span class="demo-vaul__avatar" aria-hidden="true">+4</span>
+        <span class="demo-vaul__row-text">
+          <span class="demo-vaul__row-title">Equipo de diseño</span>
+          <span class="demo-vaul__row-meta">Solo lectura</span>
+        </span>
+      </li>
+    </ul>
+
+    <footer class="demo-vaul__actions">
+      <button
+        class="ds-button ds-interactive"
+        data-ds-button
+        data-variant="ghost"
+        data-ds-vaul-close
+      >
+        Cancelar
+      </button>
+      <button
+        class="ds-button ds-interactive"
+        data-ds-button
+        data-ds-vaul-close
+      >
+        Compartir
+      </button>
+    </footer>
+  </div>
+</dialog>`;
+
+const edges = `
+<dialog class="ds-vaul" data-edge="inline-start">…</dialog>
+<dialog class="ds-vaul" data-edge="inline-end">…</dialog>
+<dialog class="ds-vaul" data-edge="block-end">…</dialog>`;
+
+const vanilla = `import { connectVaul } from "@skryensya/vanilla/vaul";
+
+// Sólo el drag. Abrir es showModal() y cerrar es close():
+// la modalidad es de la plataforma.
+const cleanup = connectVaul(document.querySelector("#demo-vaul"), {
+  // fracción del panel que hay que arrastrar
+  dismissThreshold: 0.4,
+  // px/ms: un flick cierra sin cruzar la distancia
+  dismissVelocity: 0.5,
+  onOpenChange(details) {
+    console.log(details.open);
+  },
+});`;
+
+const noDrag = `<dialog
+  class="ds-vaul"
+  data-ds-vaul
+  data-draggable="false"
+  data-edge="block-end"
+>
+  <!-- sin handle y sin drag: Vaul sigue completo -->
+</dialog>`;
+---
+
+<Base title="Vaul" description="Un pattern: panel modal anclado a un borde del viewport, con drag-to-dismiss opcional.">
+  <h1>Vaul</h1>
+  <p class="lede">
+    Un panel modal anclado a un <strong>borde</strong> del viewport: llega desde ese borde, deja la
+    página inerte detrás de un backdrop, y se va por donde vino. El borde es la idea entera, un Vaul
+    se nombra por de dónde viene, nunca por la forma que hace al llegar.
+  </p>
+
+  <h2>Demo</h2>
+  <Showcase html={html} label="tu HTML" />
+
+  <h2>Por qué es un pattern y no un componente</h2>
+  <p>
+    La regla es una sola pregunta:
+    <em>¿podría un segundo componente necesitar esta estructura exacta?</em> Aquí la respuesta no es una
+    predicción, ya pasa, hoy, en este repo: <a href="/componentes/drawer">Drawer</a> <strong>es</strong>
+    un Vaul en el borde inline. La opción <a href="/componentes/dialog">Dialog Vaul</a> reutiliza la misma
+    interacción block-end en móvil sin convertir Dialog en un componente Vaul.
+  </p>
+  <p>
+    Así que Vaul envía <strong>hooks y estructura</strong>. Un drawer que reimplementara el panel sería
+    un segundo Vaul con otro nombre.
+  </p>
+
+  <h2>El borde es un dato, no un componente</h2>
+  <p>
+    Tres bordes, un pattern. <code>data-edge</code> elige; nada más cambia. Los bordes inline son
+    lógicos, así que se dan vuelta solos en RTL en vez de clavarse del lado equivocado de la pantalla.
+  </p>
+  <CodeBlock code={edges} label="tu HTML" />
+
+  <h2>Exige el <code>&lt;dialog&gt;</code> nativo</h2>
+  <p>
+    El focus trap, ESC, el fondo inerte, la restauración del foco, el top layer y un
+    <code>::backdrop</code> real son comportamientos que la plataforma ya tiene. Un Vaul sobre un div
+    los reimplementa en JavaScript que habría que enviar, y el top layer y <code>:modal</code> no están
+    disponibles para un div a ningún precio.
+  </p>
+
+  <h2>Zag no se usa aquí, y ese es el hallazgo</h2>
+  <p>
+    La regla es que Zag entra sólo cuando la coordinación de estado vale su costo. Se revisó el registro antes de
+    escribir una línea: <strong>no existe una máquina de Vaul</strong>. Y lo que Zag sí podría cubrir es
+    exactamente lo que la plataforma ya hace mejor, <code>@zag-js/dialog</code> reimplementaría la
+    modalidad que el <code>&lt;dialog&gt;</code> regala, y <code>@zag-js/presence</code> es redundante
+    contra <code>@starting-style</code>. Que la respuesta sea "ninguna" es la regla funcionando, no una
+    excepción.
+  </p>
+
+  <h2>El drag es lo único que cuesta JS</h2>
+  <p>
+    Queda <strong>un</strong> comportamiento sin equivalente en la plataforma y sin máquina en Zag:
+    arrastrar el panel hacia su borde para cerrarlo. Ése, y sólo ése, es el enhancer.
+    <strong>Vaul está completo sin él</strong>: sin JS hay panel, slide, backdrop, ESC y click afuera.
+  </p>
+  <CodeBlock code={vanilla} label="tu JavaScript" />
+  <p>
+    Se cierra por distancia <strong>o</strong> por velocidad: un flick es una intención, y esperar a que
+    cruce un umbral de distancia es exactamente lo que hace que una hoja se sienta trabada. La velocidad
+    se mide sobre los <strong>últimos milímetros</strong> del gesto, no sobre el promedio: si arrastras
+    despacio, dudas, y solo entonces tiras, el tirón es real, promediado desde que apoyaste el dedo se
+    diluye hasta parecer que no te moviste. Y un flick <em>de vuelta</em> le gana a la distancia: la
+    última palabra de la mano es su palabra.
+  </p>
+  <CodeBlock code={noDrag} label="sin drag" />
+
+  <h2>Para el otro lado, resiste</h2>
+  <p>
+    Tirar del panel hacia adentro no lo despega de su borde, pero tampoco lo deja clavado: cede
+    arrancando 1∶1 bajo la yema y se curva hasta un tope de unos 12px. Que el dedo se mueva y la cosa de
+    abajo no es el único momento en que una superficie de manipulación directa se delata como un dibujo
+    de una superficie. La asimetría <em>es</em> el mensaje: para ese lado no hay camino.
+  </p>
+  <p>
+    El backdrop va con eso: su opacidad sigue al drag. Un backdrop a full con el panel a medio salir
+    estaría mintiendo sobre qué es modal.
+  </p>
+
+  <h2>El handle sigue al borde</h2>
+  <p>
+    No es cosmético: una hoja se tira hacia abajo desde una barra que cruza su techo, y un panel lateral
+    se tira de costado desde una barra por su borde interior. Una píldora horizontal en un drawer anuncia
+    el gesto equivocado, y un affordance que miente es peor que no tener ninguno.
+  </p>
+
+  <h2>En desktop no se arrastra</h2>
+  <p>
+    El handle es un affordance <strong>táctil</strong>: una barra que se tira con el pulgar. En un puntero
+    no hay nada que tirar que un click afuera o un ESC no hagan mejor, así que arriba del breakpoint del
+    sistema (<code>52rem</code>, el mismo ancho donde el sidebar se vuelve drawer y el dialog se vuelve
+    hoja) el handle se oculta y el enhancer no cablea el drag. El CSS y el JS hacen el mismo corte, con el
+    mismo <code>matchMedia</code>, así que nunca hay un handle colgando en un ancho donde no arrastra.
+  </p>
+
+  <h2>Motion: llegar, salir y soltar son tres intenciones</h2>
+  <p>
+    Cada una con sus tokens, nunca una duración promediada: entrar se anuncia, salir ya está decidido. Con
+    <code>prefers-reduced-motion</code> el panel <strong>sigue llegando</strong>, se cae el viaje, no el
+    Vaul, y el fade del backdrop es lo que dice que la página quedó inerte. El drag no se toca: es
+    manipulación directa, no motion que el sistema te reproduce.
+  </p>
+  <p>
+    <strong>Soltar</strong> es la tercera, y es propia: un panel soltado no está saliendo, está terminando
+    el impulso que la mano ya le dio. Por eso no consume <code>enter</code> ni <code>exit</code>, los dos
+    son cortos porque nadie los espera, sino el intent <code>release</code>, con una duración larga a
+    propósito: cortarla es lo que hace que el panel se frene en seco debajo del dedo en vez de seguir de
+    largo. Un mismo intent para los dos destinos: volver a casa y irse del todo son el mismo tiro con
+    distinto final. Es el único intent que bajo <code>prefers-reduced-motion</code> no puede soltar su
+    viaje, el panel está donde lo dejó el dedo y tiene que llegar a algún lado, así que suelta el lujo y
+    aterriza corto.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={import_} label="tu CSS" />
+
+  <StylingHooks groups={[{ file: "patterns/vaul.css", probe: "ds-vaul" }]} />
+</Base>
+
+<style is:global>
+  /* La piel del demo es del consumidor, como siempre: el pattern trae hooks y estructura, no pintura.
+     El ancho lo decide el clamp del pattern; el alto lo da el contenido hasta el techo del sheet.
+     `is:global`: el markup del demo se inyecta con set:html (Showcase), así que no lleva el atributo
+     de scope de Astro, un `<style>` scopeado no lo alcanzaría. */
+  .demo-vaul {
+    --ds-vaul-radius: var(--radius-surface) var(--radius-surface) 0 0;
+    /* claim a real slice of the screen rather than hugging three rows at the bottom edge */
+    min-block-size: min(64dvh, 32rem);
+  }
+
+  .demo-vaul[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .demo-vaul__inner {
+    display: flex;
+    flex: 1;
+    min-block-size: 0;
+    flex-direction: column;
+    gap: var(--space-stack-lg);
+    /* algo más de aire que un inset normal: un sheet que ocupa pantalla no quiere el contenido pegado */
+    padding: var(--space-inset-lg) var(--space-inset-xl) var(--space-inset-xl);
+  }
+
+  .demo-vaul__header {
+    display: flex;
+    gap: var(--space-inline-md);
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .demo-vaul__heading {
+    display: grid;
+    gap: var(--space-stack-xs);
+  }
+
+  .demo-vaul__title {
+    margin: 0;
+    font-size: var(--font-size-heading-sm);
+    line-height: var(--font-line-height-heading);
+    font-weight: var(--font-weight-heading);
+  }
+
+  .demo-vaul__subtitle {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+  }
+
+  .demo-vaul__list {
+    display: grid;
+    gap: var(--space-stack-xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    /* the middle scrolls if the guest list grows past the sheet; header and actions stay put */
+    flex: 1;
+    min-block-size: 0;
+    overflow-y: auto;
+  }
+
+  .demo-vaul__row {
+    display: flex;
+    gap: var(--space-inline-md);
+    align-items: center;
+    padding: var(--space-inset-sm);
+    border-radius: var(--radius-surface);
+    background: var(--color-bg-surface-sunken);
+  }
+
+  .demo-vaul__avatar {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--size-control-md);
+    block-size: var(--size-control-md);
+    flex: none;
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-accent-subtle);
+    color: var(--color-text-accent);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-emphasis);
+  }
+
+  .demo-vaul__row-text {
+    display: grid;
+    gap: 2px;
+    min-inline-size: 0;
+  }
+
+  .demo-vaul__row-title {
+    font-weight: var(--font-weight-label);
+  }
+
+  .demo-vaul__row-meta {
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-caption);
+  }
+
+  .demo-vaul__actions {
+    display: flex;
+    gap: var(--space-inline-sm);
+    justify-content: flex-end;
+  }
+</style>

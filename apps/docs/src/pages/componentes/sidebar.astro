@@ -1,0 +1,211 @@
+---
+import Base from "../../layouts/Base.astro";
+import Showcase from "../../components/Showcase.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+
+
+import "../../examples/sidebar.css";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const css = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/sidebar.css";
+@import "@skryensya/core/patterns/nav-list.css";
+@import "@skryensya/core/patterns/icon.css";
+@import "@skryensya/core/patterns/state-layer.css";`;
+
+const html = `<aside
+  class="ds-sidebar"
+  data-ds-sidebar
+  id="app-sidebar"
+>
+  <div class="ds-sidebar__header">
+    <button
+      class="ds-sidebar__trigger ds-interactive"
+      data-ds-sidebar-trigger
+      type="button"
+      aria-label="Contraer navegación"
+    >
+      <span data-ds-icon="menu"></span>
+    </button>
+  </div>
+
+  <div class="ds-sidebar__content" data-ds-sidebar-content>
+    <!-- El sidebar es el shell; la lista es un pattern,
+         invitada aquí -->
+    <nav class="ds-nav-list" aria-label="Principal">
+      <div class="ds-nav-list__group">
+        <div class="ds-nav-list__group-label" id="app-workspace">
+          Espacio
+        </div>
+        <ul class="ds-nav-list__list" aria-labelledby="app-workspace">
+          <li class="ds-nav-list__item">
+            <a
+              class="ds-nav-list__link ds-interactive"
+              href="/"
+              aria-current="page"
+            >
+              <span data-ds-icon="info"></span>
+              <span class="ds-nav-list__label">Inicio</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+  <hr class="ds-sidebar__separator" />
+  <div class="ds-sidebar__footer">v0.3.0</div>
+</aside>`;
+
+const js = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// Los iconos se autoran como placeholders <span data-ds-icon>;
+// mountIcons los reemplaza por el <svg> del set enlazado.
+mountIcons(document, lucideIcons);
+
+initComponents();`;
+
+const react = `import { Icon } from "@skryensya/react/icon";
+import {
+  NavList,
+  NavListGroup,
+  NavListLink,
+} from "@skryensya/react/nav-list";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarTrigger,
+} from "@skryensya/react/sidebar";
+
+<Sidebar
+  defaultCollapsed={false}
+  onCollapsedChange={({ collapsed }) => persist(collapsed)}
+>
+  <SidebarHeader>
+    <SidebarTrigger
+      label="Contraer navegación"
+      icon={<Icon name="menu" />}
+    />
+  </SidebarHeader>
+
+  <SidebarContent>
+    <NavList aria-label="Principal">
+      <NavListGroup label="Espacio">
+        <NavListLink href="/" icon={<Icon name="info" />} current>
+          Inicio
+        </NavListLink>
+        <NavListLink
+          href="/reportes"
+          icon={<Icon name="calendar" />}
+          trailing="12"
+        >
+          Reportes
+        </NavListLink>
+      </NavListGroup>
+    </NavList>
+  </SidebarContent>
+
+  <SidebarFooter>v0.3.0</SidebarFooter>
+</Sidebar>;`;
+
+---
+
+<Base title="Sidebar" description="Sidebar: el shell que se contrae a un riel, con la lista de navegación como pattern invitado.">
+  <h1>Sidebar</h1>
+  <p class="lede">
+    Sidebar es el <strong>shell</strong>: un header, un medio que scrollea, un footer, y el colapso.
+    Se contrae a un <strong>riel</strong>, se angosta, nunca se esconde.
+  </p>
+
+  <h2>Una cosa es el sidebar; otra, su contenido</h2>
+  <p>
+    Lo que va adentro no es asunto del sidebar. La lista de destinos es el pattern
+    <a href="/nav-list"><code>nav-list</code></a>, invitada aquí y con la misma estructura que usa el
+    navbar en horizontal. Por eso no hay un <code>ds-sidebar__link</code>: esa lista nunca fue del
+    sidebar, y nombrarla así sería nombrar a un inquilino.
+  </p>
+
+  <h2>Demo vanilla</h2>
+  <p>Contrae el sidebar con el botón: la lista se vuelve un riel de iconos, y sigue toda ahí.</p>
+  {/* The slot, not the `html` prop: a sidebar is only legible next to the thing it sits beside, and
+      that surrounding shell is the site playing consumer, not part of the markup being taught. */}
+  <Showcase code={html} react={react} label="Sidebar" flush>
+    <div class="app-shell">
+      <Fragment set:html={html} />
+      <div class="app-shell__main">
+        <p>El contenido de la app va aquí.</p>
+      </div>
+    </div>
+  </Showcase>
+
+  <h2>Por qué no es un <code>&lt;details&gt;</code></h2>
+  <p>
+    Un disclosure lo envía la
+    plataforma: <code>&lt;details&gt;</code> / <code>&lt;summary&gt;</code>, sin máquina. Un sidebar
+    colapsable <em>no</em> es un disclosure. Un <code>&lt;details&gt;</code> cerrado esconde su contenido;
+    un sidebar contraído lo sigue mostrando, sólo que como iconos. Como la plataforma no envía nada para
+    eso, un enhancer chico se gana su lugar, y no reimplementa nada que ya exista.
+  </p>
+  <p>
+    Por eso los labels se desvanecen pero <strong>no</strong> se quitan del DOM: contraído, el label es lo
+    único que le pone nombre al icono para un lector de pantalla. Un grupo anidado que <em>sí</em> esconde
+    sus items sigue siendo un disclosure, y va en <code>&lt;details&gt;</code>.
+  </p>
+
+  <h2>Un ancho, dos estados</h2>
+  <p>
+    Los dos anchos son dos valores de <strong>un</strong> styling hook. El consumidor escribe
+    <code>inline-size: var(--ds-sidebar-inline-size)</code> una vez; contraer re-declara ese hook
+no agrega uno nuevo, que es la regla de los styling hooks. El <code>state</code> lo escribe la
+    máquina como <code>data-state</code> en la raíz, nunca a mano.
+  </p>
+  <p>
+    El riel mide exactamente un control, y contraído el sidebar le pasa a la lista el padding que
+    <em>centra</em> el icono en ese cuadrado, calculado, no adivinado, así queda centrado en las tres
+    densidades. Es el shell re-declarando un hook del pattern: nunca toca su markup.
+  </p>
+  <p>
+    Tampoco hay bloque de <code>prefers-reduced-motion</code>: la duración sale de los tokens de intención
+    de expand/collapse, que ya se achican solos.
+    El sidebar le presta esa intención a la lista, así los labels se desvanecen en el mismo tiempo en que
+    se mueve el ancho.
+  </p>
+
+  <h2>El trigger no lleva label visible</h2>
+  <p>
+    Mide un icono de ancho, así que su nombre accesible va en un <code>aria-label</code> (o en texto
+    visualmente oculto): un label visible adentro sería texto adentro de un cuadrado del ancho de un
+    icono. El enhancer parchea atributos, nunca contenido, el nombre es tuyo.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>CSS</h2>
+  <CodeBlock code={css} label="tu CSS" />
+
+  <h2>HTML autorado</h2>
+  <p>
+    El enhancer busca <code>[data-ds-sidebar]</code>, exige un <code>[data-ds-sidebar-trigger]</code> y
+    parchea <code>aria-expanded</code>, <code>aria-controls</code> y <code>data-state</code>. No escribe
+    markup ni clases. El markup completo está en la pestaña <strong>Vanilla</strong> de la demo.
+  </p>
+
+  <h2>Inicializar vanilla</h2>
+  <CodeBlock code={js} label="tu JS" />
+
+  <h2>React</h2>
+  <p>
+    Controlado (<code>collapsed</code>) o no controlado (<code>defaultCollapsed</code>), con
+    <code>onCollapsedChange</code> para persistir la preferencia. El evento equivalente en vanilla es
+    <code>ds-collapsed-change</code>. Persistir es del consumidor: con qué clave y por usuario o por
+    dispositivo no lo decide un design system. El código está en la pestaña <strong>React</strong> de la demo.
+  </p>
+  <StylingHooks groups={[{"file":"components/sidebar.css","probe":"ds-sidebar"}]} />
+</Base>

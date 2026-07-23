@@ -1,0 +1,114 @@
+/*
+ * TIER 3, BUTTON (opt-in styling hooks)
+ *
+ * Import only if you ship a button. Scoped to .ds-button, never :root, so unused components
+ * cost zero bytes. Lives in the `components` layer, below `overrides` and below any unlayered
+ * consumer rule, so an app reskins one instance with no specificity fight:
+ *   .hero .ds-button { --ds-button-bg: rebeccapurple; }
+ *
+ * THE INVARIANT: every hook resolves to a TIER-2 token, never a ramp, never a raw colour. A
+ * hook reaching into --ramp-* directly bypasses the mode layer and breaks dark mode for this
+ * component alone. scripts/lint.mjs fails on it.
+ *
+ * NAMING: the group segment (primary/danger/sm) is DROPPED from the hook name. Base and every
+ * variant all declare --ds-button-bg; the more specific selector wins. That is what makes these
+ * hooks instead of a combinatorial explosion of variables.
+ *
+ * THESE HOOKS ARE STATIC APPEARANCE ONLY. Interaction, hover, press, focus, is NOT here.
+ * It comes from the state layer pattern (decision 9), the single mechanism shared by button,
+ * tile, menu-item and tab. Per-component hover/active colours would be exactly the "one colour
+ * per combination" the state layer exists to delete. To make a button interactive, add
+ * `ds-interactive` and import patterns/state-layer.css: the layer tints with currentColor over
+ * whatever --ds-button-bg is, so it is correct on neutral surfaces and saturated fills alike,
+ * and the focus ring comes from the pattern's --focus-ring-* family.
+ *
+ * The consuming app writes the structural CSS and reads the hooks:
+ *   .ds-button {
+ *     min-height: var(--ds-button-height);
+ *     padding-inline: var(--ds-button-padding-x);
+ *     background: var(--ds-button-bg);
+ *     color: var(--ds-button-fg);
+ *   }
+ */
+@layer components {
+  .ds-button {
+    --ds-button-bg: var(--color-action-neutral);
+    --ds-button-fg: var(--color-text-primary);
+    --ds-button-border-color: var(--color-border-default);
+    --ds-button-border-width: 1px;
+    --ds-button-radius: var(--radius-control);
+    /* Buttons stay comfortably tappable even when density contracts the surrounding layout. */
+    --ds-button-height: max(var(--size-control-md), var(--size-touch-target));
+    /* Width is auto by default, the button is as wide as its label, and collapses to its own height
+     * only for the icon-only shape below. A hook rather than a fixed rule so the icon button is a
+     * re-declaration of the same variable, not a second component. */
+    --ds-button-width: auto;
+    --ds-button-padding-x: var(--space-inset-md);
+    --ds-button-gap: var(--space-inline-xs);
+    --ds-button-font-size: var(--font-size-body);
+    --ds-button-font-weight: var(--font-weight-label);
+    --ds-button-shadow: var(--elevation-flat);
+  }
+
+  .ds-button[data-variant="primary"] {
+    --ds-button-bg: var(--color-action-primary);
+    /* on-accent, NOT text-primary: in dark, action-primary is a light blue and text-primary
+     * is near-white, aliasing them makes a white-on-light-blue button. */
+    --ds-button-fg: var(--color-text-on-accent);
+    --ds-button-border-color: transparent;
+    --ds-button-shadow: var(--elevation-raised);
+  }
+
+  .ds-button[data-variant="danger"] {
+    --ds-button-bg: var(--color-action-danger);
+    --ds-button-fg: var(--color-text-on-accent);
+    --ds-button-border-color: transparent;
+    --ds-button-shadow: var(--elevation-raised);
+  }
+
+  .ds-button[data-variant="ghost"] {
+    --ds-button-bg: transparent;
+    /* text-accent, not action-primary: this is coloured TEXT on canvas (4.5:1), not a fill (3:1). */
+    --ds-button-fg: var(--color-text-accent);
+    --ds-button-border-color: transparent;
+  }
+
+  /* Icon-only is a SHAPE, a third axis orthogonal to variant and size, a primary button can be
+   * icon-only, and so can a small one. The box collapses to a square that fits one icon: the width
+   * follows the height and the inline padding goes to zero, so a single centred glyph sits in a
+   * control-sized square.
+   *
+   * There is no room for a visible label, so the accessible name has to come from `aria-label` (or
+   * `aria-labelledby`). The icon inside stays decorative, the name is the button's, not the svg's
+   * (the icon pattern already makes the glyph inert to the pointer). The vanilla enhancer and the
+   * React wrapper both refuse an icon-only button with no accessible name, the same way the enhancer
+   * refuses a missing class: loudly, with the fix in the message. */
+  .ds-button[data-icon-only] {
+    --ds-button-width: var(--ds-button-height);
+    --ds-button-padding-x: 0;
+  }
+
+  /* Sizes key off data-size, an ORTHOGONAL axis to data-variant, so a primary button can also
+   * be small. (The old build collapsed these onto data-variant, which silently broke sizing.) */
+  .ds-button[data-size="sm"] {
+    --ds-button-height: max(var(--size-control-sm), var(--size-touch-target));
+    --ds-button-padding-x: var(--space-inset-sm);
+    --ds-button-font-size: var(--font-size-body-sm);
+  }
+
+  .ds-button[data-size="lg"] {
+    --ds-button-height: max(var(--size-control-lg), var(--size-touch-target));
+    --ds-button-padding-x: var(--space-inset-lg);
+    --ds-button-font-size: var(--font-size-body-lg);
+  }
+
+  /* Real disabled state, keys off the actual pseudo-class and ARIA, not a variant name. The
+   * disabled LOOK is these tokens; the state layer separately forces its own opacity to 0. */
+  .ds-button:disabled,
+  .ds-button[aria-disabled="true"] {
+    --ds-button-bg: var(--color-action-disabled);
+    --ds-button-fg: var(--color-text-disabled);
+    --ds-button-border-color: var(--color-border-subtle);
+    --ds-button-shadow: var(--elevation-flat);
+  }
+}

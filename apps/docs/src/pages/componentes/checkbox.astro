@@ -1,0 +1,141 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+
+import "../../examples/checkbox.css";
+
+const indicators = `<span
+      class="ds-checkbox__indicator"
+      data-state="checked"
+    ><span data-ds-icon="check" data-ds-icon-size="sm"></span></span>
+    <span
+      class="ds-checkbox__indicator"
+      data-state="indeterminate"
+    ><span data-ds-icon="remove" data-ds-icon-size="sm"></span></span>`;
+
+const html = `<label class="ds-checkbox">
+  <input
+    class="ds-checkbox__input"
+    type="checkbox"
+    name="alerts"
+    value="email"
+  />
+  <span class="ds-checkbox__control ds-interactive" aria-hidden="true">
+    ${indicators}
+  </span>
+  <span class="ds-checkbox__label">Alertas por email</span>
+</label>`;
+
+const react = `import { Checkbox } from "@skryensya/react/checkbox";
+
+<Checkbox
+  name="alerts"
+  value="email"
+  defaultChecked="indeterminate"
+  onCheckedChange={(details) => {
+    console.log(details.checked); // true | false | "indeterminate"
+  }}
+>
+  Alertas por email
+</Checkbox>;`;
+
+const tileCheckboxHtml = `<label
+  class="ds-tile ds-tile--interactive ds-interactive"
+  data-scope="tile"
+  data-part="root"
+  data-ds-tile-checkbox
+  data-name="alerts"
+  data-value="email"
+>
+  <input
+    type="checkbox"
+    data-part="input"
+  />
+  <span class="ds-tile__content" data-part="content">
+    <span class="ds-tile__title">Alertas por email</span>
+    <span class="ds-tile__description">
+      Enviar fallos de despliegue al equipo.
+    </span>
+  </span>
+  <span
+    class="ds-checkbox__control ds-interactive"
+    data-part="indicator"
+    aria-hidden="true"
+  >
+    ${indicators}
+  </span>
+</label>`;
+
+const tileCheckboxVanilla = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// Los indicadores check/remove se autoran como placeholders
+// <span data-ds-icon>; mountIcons los reemplaza por el <svg> del set.
+mountIcons(document, lucideIcons);
+
+// La label se autora con data-ds-tile-checkbox (data-name, data-value,
+// data-default-checked) más el input[data-part=input] y el [data-part=indicator].
+// initComponents la hidrata con la máquina @zag-js/checkbox (la misma que React):
+// el input queda oculto y controlado, el indicador es el control visual.
+initComponents();
+
+const root = document.querySelector("[data-ds-tile-checkbox]");
+root.addEventListener("ds:checkedchange", (event) => {
+  console.log(event.detail.checked);
+});`;
+
+const tileCheckboxReact = `import {
+  TileCheckbox,
+} from "@skryensya/react/tile-checkbox";
+
+<TileCheckbox
+  name="alerts"
+  value="email"
+  defaultChecked={false}
+  onCheck={(details) => console.log(details.checked)}
+>
+  Alertas por email
+</TileCheckbox>;`;
+---
+
+<Base title="Checkbox" description="Checkbox nativo: estado independiente, indeterminado y formulario sin máquina.">
+  <h1>Checkbox</h1>
+  <p class="lede">Una elección independiente. Conserva un <code>input type="checkbox"</code>: submit, reset, teclado y validación pertenecen al browser.</p>
+
+  <h2>Demo</h2>
+  <Showcase html={html} react={react} label="Checkbox" />
+  <p>
+    El control usa los roles <code>check</code> y <code>remove</code> del set de iconos, no un trazo CSS.
+    Importa <code>@skryensya/core/components/checkbox.css</code> y llama <code>initComponents()</code> una vez.
+  </p>
+
+  <h2>Checkbox de superficie: TileCheckbox</h2>
+  <p>
+    Cuando la elección necesita título, descripción y toda la superficie como target, usa
+    <code>TileCheckbox</code>. Es el mismo control (<code>ds-checkbox__control</code> + iconos); solo
+    cambia el contenedor.
+  </p>
+  <Showcase html={tileCheckboxHtml} react={tileCheckboxReact} label="TileCheckbox" />
+  <p>El enhancer <code>tile-checkbox</code> (Svelte + <code>@zag-js/checkbox</code>, la misma máquina que React) hidrata la label <code>data-ds-tile-checkbox</code> con <code>initComponents()</code>: controla el <code>input[data-part="input"]</code> (oculto) y sincroniza <code>data-state</code>; el <code>[data-part="indicator"]</code> es el control visual.</p>
+  <CodeBlock code={tileCheckboxVanilla} label="tu JavaScript" />
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de la demo. React dibuja los iconos del set enlazado.</p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li><code>defaultChecked</code> deja el estado al input; un reset vuelve a ese valor.</li>
+    <li><code>checked</code> controla el valor; <code>onCheckedChange</code> comunica la intención.</li>
+    <li><code>"indeterminate"</code> es visual: no envía un valor hasta que la persona elige checked o unchecked. El glifo es <code>remove</code>.</li>
+    <li>El texto vive dentro del <code>label</code>; si no hay texto, proporciona <code>aria-label</code>.</li>
+    <li>
+      El state layer va en <code>ds-checkbox__control</code>, no en el label: la selección es el
+      relleno del control, y el texto no hereda el color on-accent.
+    </li>
+    <li>TileCheckbox reutiliza <code>ds-checkbox__control</code> y los mismos indicadores; no inventa otro glifo.</li>
+  </ul>
+  <StylingHooks groups={[{ file: "components/checkbox.css", probe: "ds-checkbox" }]} />
+</Base>

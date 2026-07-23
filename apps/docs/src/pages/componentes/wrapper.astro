@@ -1,0 +1,137 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+/* The real markup, shown as the source. The demo above is a to-scale diagram because the sizes only
+ * differ past widths this document column can't show, content (64rem) and shell (90rem) would both
+ * just fill the stage and read as identical, which is exactly what made the old demo confusing. */
+const code = `<div class="ds-wrapper" data-size="prose">…</div>
+<div class="ds-wrapper" data-size="content">…</div>
+<div class="ds-wrapper" data-size="shell">…</div>
+<div class="ds-wrapper" data-size="full">…</div>`;
+
+const react = `import { Wrapper } from "@skryensya/react/wrapper";
+
+<Wrapper size="prose">…</Wrapper>
+<Wrapper size="content">…</Wrapper>
+<Wrapper size="shell">…</Wrapper>
+<Wrapper size="full">…</Wrapper>;`;
+---
+
+<Base title="Wrapper" description="Wrapper: columna de página con un techo de ancho nombrado por uso.">
+  <h1>Wrapper</h1>
+  <p class="lede">
+    Wrapper es la columna de página: un máximo de ancho centrado, con padding inline. Es lo que otros
+    llaman <em>container</em>, pero ese nombre ya es de las <em>container queries</em>, así que aquí el
+    rol se llama <strong>wrapper</strong>. El tamaño se nombra por <strong>uso</strong>
+    (<code>prose</code>, <code>content</code>, <code>shell</code>, <code>full</code>), no por sm/md/lg, 
+    así el header y el cuerpo comparten el mismo techo sin copiar rem a mano, y un "wrapper grande" no
+    empieza a mentir el día que un segundo uso necesita ese ancho.
+  </p>
+
+  <h2>Los cuatro techos, a escala</h2>
+  <p>
+    Cada tamaño es un <strong>techo de ancho</strong> distinto: la columna se centra y deja de crecer
+    al llegar a él. Debajo de su techo, cualquier wrapper es simplemente <code>100%</code>, por eso en
+    una pantalla angosta los cuatro se ven iguales, y sólo se separan cuando hay lugar.
+  </p>
+
+  <Showcase code={code} react={react} label="Wrapper" flush>
+    <figure class="wrapper-scale" aria-label="Anchos de wrapper, a escala">
+      <div class="wrapper-scale__bar" style="--w: 47%">
+        <code>prose</code> · 42rem · lectura larga
+      </div>
+      <div class="wrapper-scale__bar" style="--w: 71%">
+        <code>content</code> · 64rem · página o formulario
+      </div>
+      <div class="wrapper-scale__bar" style="--w: 100%">
+        <code>shell</code> · 90rem · chrome con rieles al lado
+      </div>
+      <div class="wrapper-scale__bar wrapper-scale__bar--full">
+        <code>full</code> · sin techo · el viewport entero
+      </div>
+    </figure>
+  </Showcase>
+
+  <p>
+    Los techos son estables: la densidad cambia el espaciado y los controles, nunca el ancho máximo de
+    la columna. <code>prose</code> y <code>content</code> son para leer y para formularios;
+    <code>shell</code> es para el chrome de una app con rieles; <code>full</code> centra igual pero sin
+    poner techo.
+  </p>
+
+  <h2>En este sitio</h2>
+  <p>
+    Esta documentación se envuelve a sí misma, con dos tamaños. El header y el <code>shell</code> de
+    tres columnas, los rieles al lado del documento, llevan ambos <code>data-size="shell"</code>, así
+    que un solo número mantiene sus bordes alineados. La columna que estás leyendo es el rol
+    <code>content</code>: el <code>&lt;main&gt;</code> lleva <code>data-size="content"</code> y su techo
+    es el token, no un número copiado. Y una herramienta a pantalla completa, como el configurador, 
+    suelta el wrapper del todo.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>En HTML, añade <code>ds-wrapper</code> al elemento que delimita la columna.</li>
+    <li>
+      <code>data-size</code> acepta <code>prose</code> (lectura), <code>content</code> (página),
+      <code>shell</code> (chrome con rieles) o <code>full</code> (sin techo).
+    </li>
+    <li>
+      Los techos son tokens de tier 2: <code>--size-wrapper-prose</code>,
+      <code>--size-wrapper-content</code>, <code>--size-wrapper-shell</code>.
+    </li>
+    <li>
+      El único hook que un consumidor afina es <code>--ds-wrapper-max</code>, para un ancho que el
+      vocabulario todavía no nombra, sin reimplementar el centrado ni el padding.
+    </li>
+  </ul>
+</Base>
+
+<style>
+  /* A to-scale diagram, not the live component: the bars are the max-widths as a fraction of the
+     widest (shell, 90rem), so prose < content < shell reads at a glance even though this column is far
+     too narrow to show 64rem and 90rem apart. Each bar is centred, like the column it stands for. */
+  .wrapper-scale {
+    margin: 0;
+    display: grid;
+    gap: var(--space-stack-sm);
+    padding-block: var(--space-inset-md);
+  }
+
+  .wrapper-scale__bar {
+    justify-self: center;
+    inline-size: var(--w, 100%);
+    box-sizing: border-box;
+    padding: var(--space-inset-sm) var(--space-inset-md);
+    background: var(--color-bg-accent-subtle);
+    border: 1px solid var(--color-border-accent);
+    border-radius: var(--radius-control);
+    color: var(--color-text-accent);
+    font-size: var(--font-size-body-sm);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .wrapper-scale__bar code {
+    font-family: var(--font-family-code);
+    font-weight: var(--font-weight-emphasis);
+  }
+
+  /* full has no ceiling: it fills, and a dashed edge says "no wall here". */
+  .wrapper-scale__bar--full {
+    inline-size: 100%;
+    border-style: dashed;
+  }
+</style>

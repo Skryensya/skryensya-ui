@@ -1,0 +1,58 @@
+---
+import { Code } from "astro:components";
+import CopyButton from "./CopyButton.astro";
+
+type CodeLanguage = "bash" | "css" | "html" | "ts" | "tsx";
+
+interface Props {
+  code: string;
+  label?: string;
+  note?: string;
+  lang?: CodeLanguage;
+}
+
+const { code, label, note, lang } = Astro.props;
+const source = code.trim();
+const sourceId = `code-${crypto.randomUUID()}`;
+
+/* Code samples follow one docs palette with light and dark slots. `light-dark()` selects the slot
+   from the page's colour mode, so syntax highlighting stays in sync without a brand selector. */
+const themes = {
+  "docs-light": "github-light",
+  "docs-dark": "github-dark",
+} as const;
+
+/* Labels describe the consumer-facing artifact, so they are the most stable language signal. The
+   content fallback keeps existing call sites highlighted while new examples can be explicit. */
+const language =
+  lang ??
+  (label === "terminal"
+    ? "bash"
+    : label?.includes("CSS") || label?.endsWith(".css") || label?.endsWith(".scss") || source.startsWith("@import")
+      ? "css"
+      : label?.includes("React") || label === "API declarativa"
+        ? "tsx"
+        : label?.includes("JS") || label === "Progressive enhancement" || source.startsWith("import ") || source.startsWith("const ")
+          ? "ts"
+          : "html");
+---
+
+<div class="code" data-code-block>
+  {
+    (label || note) && (
+      <div class="code__label">
+        <span class="code__meta">
+          {label && <span>{label}</span>}
+          {note && <span>{note}</span>}
+        </span>
+      </div>
+    )
+  }
+  <div class="code__preview">
+    <div id={sourceId}>
+      <Code code={source} lang={language} themes={themes} defaultColor={false} tabindex={-1} />
+    </div>
+    <CopyButton target={sourceId} />
+  </div>
+</div>
+

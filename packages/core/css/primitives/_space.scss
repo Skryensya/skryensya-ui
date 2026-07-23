@@ -1,0 +1,17 @@
+@mixin tokens {
+  /* ── scale: space (4px base grid) ─────────────────────────────── */
+  --scale-space-0: 0px;
+  --scale-space-px: 1px;
+  --scale-space-1: 4px;
+  --scale-space-2: 8px;
+  --scale-space-3: 12px;
+  --scale-space-4: 16px;
+  --scale-space-5: 20px;
+  --scale-space-6: 24px;
+  --scale-space-8: 32px;
+  --scale-space-10: 40px;
+  --scale-space-12: 48px;
+  --scale-space-16: 64px;
+  --scale-space-20: 80px;
+  --scale-space-24: 96px;
+}

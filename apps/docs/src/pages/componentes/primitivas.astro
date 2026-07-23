@@ -1,0 +1,123 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<div class="ds-stack" data-gap="lg">
+  <section
+    class="ds-box"
+    data-surface="raised"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="ds-stack" data-gap="md">
+      <h3 class="ds-heading" data-size="sm">Resumen</h3>
+      <p class="ds-text" data-tone="secondary">
+        Un bloque con espaciado, superficie y jerarquía.
+      </p>
+      <div class="ds-inline" data-gap="sm" data-align="baseline">
+        <a
+          class="ds-link ds-interactive"
+          href="/componentes/primitivas"
+        >
+          Ver detalles
+        </a>
+        <span class="ds-text" data-size="caption">Actualizado hoy</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="ds-grid" data-columns="3" data-gap="md">
+    <div
+      class="ds-box"
+      data-surface="surface"
+      data-border="subtle"
+      data-padding="md"
+    >
+      Uno
+    </div>
+    <div
+      class="ds-box"
+      data-surface="surface"
+      data-border="subtle"
+      data-padding="md"
+    >
+      Dos
+    </div>
+    <div
+      class="ds-box"
+      data-surface="surface"
+      data-border="subtle"
+      data-padding="md"
+    >
+      Tres
+    </div>
+  </div>
+</div>`;
+
+const react = `import { Box, Grid, Inline, Stack } from "@skryensya/react/layout";
+import { Heading, Link, Text } from "@skryensya/react/typography";
+
+<Box as="section" surface="raised" border="subtle" padding="lg">
+  <Stack gap="md">
+    <Heading as="h2" size="sm">
+      Resumen
+    </Heading>
+    <Text tone="secondary">
+      Un bloque con espaciado, superficie y jerarquía.
+    </Text>
+    <Inline gap="sm" align="baseline">
+      <Link href="/detalles">Ver detalles</Link>
+      <Text as="span" size="caption">
+        Actualizado hoy
+      </Text>
+    </Inline>
+  </Stack>
+</Box>
+
+<Grid columns={3} gap="md">
+  <Box surface="surface" padding="md">
+    Uno
+  </Box>
+  <Box surface="surface" padding="md">
+    Dos
+  </Box>
+  <Box surface="surface" padding="md">
+    Tres
+  </Box>
+</Grid>;`;
+---
+
+<Base title="Primitivas" description="Primitivas de layout y tipografía: estructura reutilizable, roles de lectura y adapters React.">
+  <h1>Primitivas</h1>
+  <p class="lede">
+    Box, Wrapper, Stack, Inline y Grid son patterns de layout. Text, Heading y Link expresan el rol de lectura;
+    no reemplazan la semántica: eliges el elemento que corresponde al contenido.
+  </p>
+
+  <h2>Demo</h2>
+  <Showcase html={html} react={react} label="Primitivas" />
+
+  <h2>HTML autorado</h2>
+  <p>
+    Importa <code>patterns/layout.css</code> para Box, Wrapper, Stack, Inline y Grid, y
+    <code>components/typography.css</code> para Text, Heading y Link. No requieren inicialización vanilla.
+  </p>
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+
+  <h2>Contratos</h2>
+  <ul>
+    <li><code>Box</code> controla superficie, borde y padding; el consumidor elige <code>as</code>.</li>
+    <li><code>Wrapper</code> fija el techo de la columna de página por uso (<code>prose</code>, <code>content</code>, <code>shell</code>, <code>full</code>).</li>
+    <li><code>Stack</code>, <code>Inline</code> y <code>Grid</code> tienen gaps nombrados que siguen la dimensión de densidad.</li>
+    <li><code>Heading</code> separa jerarquía (<code>as</code>) de tamaño visual (<code>size</code>).</li>
+    <li><code>Link</code> subraya por defecto: no depende solo del color para reconocerse.</li>
+  </ul>
+</Base>

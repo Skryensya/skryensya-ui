@@ -1,0 +1,297 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+
+const install = `pnpm add @skryensya/core`;
+
+const styles = `@import "@skryensya/core/components/dialog.css";
+@import "@skryensya/core/patterns/scroll-lock.css";`;
+
+const confirmHtml = `<button
+  class="ds-button ds-interactive"
+  data-variant="danger"
+  type="button"
+  data-dialog-open="confirm-borrar"
+>
+  Borrar proyecto
+</button>
+
+<dialog
+  class="ds-dialog"
+  id="confirm-borrar"
+  aria-labelledby="confirm-borrar-title"
+>
+  <header class="ds-dialog__header">
+    <h3
+      class="ds-heading ds-dialog__title"
+      data-size="h3"
+      data-flush
+      id="confirm-borrar-title"
+    >
+      ¿Borrar este proyecto?
+    </h3>
+    <form method="dialog">
+      <button
+        class="ds-button ds-interactive ds-dialog__close"
+        data-variant="ghost"
+        data-icon-only
+        type="submit"
+        value="cancel"
+        aria-label="Cerrar"
+      >
+        <span data-ds-icon="close"></span>
+      </button>
+    </form>
+  </header>
+  <div class="ds-dialog__body">
+    <p>
+      Se elimina el proyecto y todo su historial. Esta acción no se
+      puede deshacer.
+    </p>
+  </div>
+  <form method="dialog" class="ds-dialog__footer">
+    <button
+      class="ds-button ds-interactive"
+      data-variant="ghost"
+      type="submit"
+      value="cancel"
+      autofocus
+    >
+      Cancelar
+    </button>
+    <button
+      class="ds-button ds-interactive"
+      data-variant="danger"
+      type="submit"
+      value="confirm"
+    >
+      Borrar
+    </button>
+  </form>
+</dialog>`;
+
+const confirmJs = `const dialog = document.getElementById("confirm-borrar");
+const trigger = document.querySelector(
+  '[data-dialog-open="confirm-borrar"]',
+);
+
+trigger?.addEventListener("click", () => {
+  if (dialog instanceof HTMLDialogElement) dialog.showModal();
+});
+
+// Opcional: leer qué botón cerró el form.
+dialog?.addEventListener("close", () => {
+  console.log(dialog.returnValue); // "cancel" | "confirm"
+});`;
+
+const vaulInstall = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const vaulStyles = `@import "@skryensya/core/components/dialog.css";
+@import "@skryensya/core/patterns/dialog-vaul.css";
+@import "@skryensya/core/patterns/scroll-lock.css";`;
+
+const vaulJs = `import { initComponents } from "@skryensya/vanilla/auto";
+
+initComponents();`;
+
+const vaulHtml = `<button
+  class="ds-button ds-interactive"
+  data-ds-button
+  data-ds-dialog-vaul-open="demo-dialog"
+  type="button"
+>
+  Abrir dialog
+</button>
+
+<dialog
+  class="ds-dialog"
+  id="demo-dialog"
+  data-ds-dialog-vaul
+  data-edge="block-end"
+  aria-labelledby="demo-dialog-title"
+>
+  <div data-part="handle" aria-hidden="true"></div>
+  <header class="ds-dialog__header">
+    <h3
+      class="ds-heading ds-dialog__title"
+      data-size="h3"
+      data-flush
+      id="demo-dialog-title"
+    >
+      Caja centrada, Vaul en móvil
+    </h3>
+    <form method="dialog">
+      <button
+        class="ds-button ds-interactive ds-dialog__close"
+        data-ds-button
+        data-variant="ghost"
+        data-icon-only
+        data-ds-dialog-vaul-close
+        type="submit"
+        value="cancel"
+        aria-label="Cerrar"
+      >
+        <span data-ds-icon="close"></span>
+      </button>
+    </form>
+  </header>
+  <div class="ds-dialog__body">
+    <p>
+      Angosta la ventana debajo de 52rem y este mismo dialog gana
+      un Vaul block-end. El markup del dialog no cambia.
+    </p>
+  </div>
+</dialog>`;
+---
+
+<Base
+  title="Dialog"
+  description="El dialog centrado de la plataforma. Opcional: Dialog Vaul cuando el contenido pide una superficie desde el borde en móvil."
+>
+  <h1>Dialog</h1>
+  <p class="lede">
+    Un <code>&lt;dialog class="ds-dialog"&gt;</code> centrado. <code>showModal()</code> entrega foco,
+    Escape, página inerte y backdrop; El sistema pinta la superficie. Sin enhancer: el único JavaScript
+    es abrir.
+  </p>
+
+  <h2>Confirm</h2>
+  <p>
+    Anatomía: <code>ds-dialog__header</code> (título con
+    <code>Heading</code> + <code>ds-dialog__title</code>, y cierre),
+    <code>ds-dialog__body</code> y
+    <code>ds-dialog__footer</code> (controles). El cierre y el footer son
+    <code>&lt;form method="dialog"&gt;</code>: cierran sin handler y dejan el
+    <code>value</code> en <code>dialog.returnValue</code>.
+  </p>
+  <Showcase html={confirmHtml} label="Confirm" />
+
+  <h2>Abrirlo</h2>
+  <CodeBlock code={confirmJs} label="tu JavaScript" />
+
+  <h2>Foco y teclado</h2>
+  <p>
+    Con <code>showModal()</code> la plataforma ya hace el trabajo. No reimplementes un focus trap en
+    JavaScript (decisión 11 / técnica WCAG H102).
+  </p>
+  <ul>
+    <li>
+      <strong>Al abrir</strong> el foco entra al dialog. Sin <code>autofocus</code>, aterriza en el
+      primer control enfocable. En un confirm destructivo pon <code>autofocus</code> en
+      <strong>Cancelar</strong> (la opción segura), no en Borrar ni en el cierre.
+    </li>
+    <li>
+      <strong>Orden en el DOM</strong>: el título va <em>antes</em> del botón de cerrar. Si el cierre
+      fuera el primer nodo enfocable y el contenido largo, <code>showModal()</code> podría abrir el
+      panel ya scrolleado hacia ese control.
+    </li>
+    <li>
+      <strong>Tab / Shift+Tab</strong> ciclan entre controles del dialog. La página detrás queda
+      <code>inert</code>: no recibe foco. Sí se puede llegar al chrome del navegador (barra de
+      direcciones); eso es intencional, no un bug.
+    </li>
+    <li>
+      <strong>Escape</strong> cierra el dialog (evento <code>cancel</code>) y restaura el foco al
+      trigger. Equivale a descartar, no a confirmar: mismo <code>returnValue</code> vacío / cancel
+      que el botón de cerrar con <code>value="cancel"</code>.
+    </li>
+    <li>
+      <strong>Al cerrar</strong> el foco vuelve al elemento que abrió el dialog, si sigue en la
+      página. No hace falta guardarlo a mano.
+    </li>
+    <li>
+      El botón de cerrar es un <code>ds-button</code> con <code>data-icon-only</code> y
+      <code>aria-label="Cerrar"</code>. El icono es decorativo
+      (<code>&lt;span data-ds-icon="close"&gt;</code>); el nombre es del botón.
+    </li>
+  </ul>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+  <CodeBlock code={styles} label="tu CSS" lang="css" />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>
+      Abre un <code>&lt;dialog class="ds-dialog"&gt;</code> con <code>showModal()</code>, no un
+      <code>div</code> con roles imitadas.
+    </li>
+    <li>
+      Anatomía: <code>ds-dialog__header</code> (
+      <code>ds-heading ds-dialog__title</code> +
+      <code>ds-dialog__close</code>), <code>ds-dialog__body</code>,
+      <code>ds-dialog__footer</code> (controles, opcional). El título es
+      <a class="ds-link ds-interactive" href="/componentes/heading">Heading</a>
+      (casi siempre con <code>data-flush</code>).
+    </li>
+    <li>
+      Asocia el título con <code>aria-labelledby</code> apuntando al
+      <code>id</code> del Heading (o un nombre accesible equivalente).
+    </li>
+    <li>
+      Cierre y acciones usan <code>&lt;form method="dialog"&gt;</code>;
+      <code>value</code> en cada botón si necesitas saber cuál se eligió.
+    </li>
+    <li>
+      No añadas un focus trap propio: <code>showModal()</code> ya contiene el foco y restaura al
+      cerrar.
+    </li>
+    <li>
+      Importa <a class="ds-link ds-interactive" href="/scroll-lock">scroll lock</a> si quieres
+      congelar la página detrás sin CLS al desaparecer la scrollbar.
+    </li>
+  </ul>
+
+  <h2>Opción: Dialog Vaul</h2>
+  <p>
+    Cuando el contenido pide una superficie desde el borde en móvil, el mismo
+    <code>&lt;dialog&gt;</code> puede optar en <strong>Dialog Vaul</strong>: añade slide,
+    light-dismiss y drag-to-dismiss. La modalidad (foco, Escape, inert) sigue siendo de
+    <code>showModal()</code>.
+  </p>
+  <Showcase html={vaulHtml} label="Dialog Vaul" />
+
+  <h3>Qué añade</h3>
+  <ul>
+    <li>Abre y cierra con triggers y closers autorados (<code>data-ds-dialog-vaul-open</code> /
+      <code>-close</code>).</li>
+    <li>Por debajo de <code>52rem</code>, deja arrastrar el handle hacia <code>block-end</code>.</li>
+    <li>Light-dismiss al pulsar fuera del rectángulo del panel.</li>
+    <li>
+      <code>data-ds-dialog-vaul</code> opta en la mejora;
+      <code>data-edge="block-end"</code> nombra el borde. El handle es opcional.
+    </li>
+  </ul>
+
+  <h3>Instalar Dialog Vaul</h3>
+  <CodeBlock code={vaulInstall} label="terminal" />
+  <CodeBlock code={vaulStyles} label="tu CSS" lang="css" />
+  <CodeBlock code={vaulJs} label="tu JavaScript" />
+
+  <h2>El borde siempre encendido no es estético</h2>
+  <p>
+    En alto contraste el panel y la página resuelven al mismo color: suavizar
+    <code>--ds-dialog-border-width</code> deja el dialog invisible sin que falle un solo test. Por
+    eso llega en <code>1px</code> y no en <code>0</code>.
+  </p>
+
+  <StylingHooks
+    groups={[
+      { file: "components/dialog.css", probe: "ds-dialog", title: "Dialog" },
+      { file: "patterns/dialog-vaul.css", probe: "data-ds-dialog-vaul", title: "Dialog Vaul" },
+    ]}
+  />
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-dialog-open]").forEach((trigger) => {
+    const id = trigger.dataset.dialogOpen;
+    const dialog = id ? document.getElementById(id) : null;
+
+    if (dialog instanceof HTMLDialogElement) {
+      trigger.addEventListener("click", () => dialog.showModal());
+    }
+  });
+</script>

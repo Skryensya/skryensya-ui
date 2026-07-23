@@ -1,0 +1,122 @@
+---
+/*
+ * The token reference, both forms of every token, from the two places that actually know.
+ *
+ * BUILD TIME (this frontmatter): the parser reads the .css and gives the AUTHORED form, 
+ * `round(calc(var(--scale-space-4) * var(--ds-density)), 2px)`, plus the tier. The var() chain
+ * IS the tier architecture; showing only a resolved literal would hide the thing the system is
+ * about. It is the same parser the validator runs, so the reference cannot describe a system
+ * the rules aren't checking.
+ *
+ * RUNTIME (scripts/used-values.ts, via the [data-token] cells): the USED value, in whatever
+ * dimensions the reader has set. It must be the browser, density tokens are round()/calc()/
+ * max() expressions (ADR-6), and light-dark() only picks a slot against a real color-scheme.
+ *
+ * Together: ADR-7's "we need both forms per token", which outlived the build system that
+ * prompted it.
+ */
+import { PROBES, probeProp, tokens } from "../lib/tokens";
+/* The ds-input + ds-field STRUCTURE (field.css/input.css ship only hooks). The select is already
+ * painted in site.css; this is what the search field and the field labels were missing here, which is
+ * why the input rendered as a bare native box next to the styled select. */
+import "../examples/input.css";
+
+const toneByTier = {
+  primitive: "warning",
+  semantic: "accent",
+  component: "success",
+} as const;
+
+const rows = tokens.map((t) => ({
+  ...t,
+  probe: PROBES[t.file] ?? "",
+  prop: probeProp(t.value),
+}));
+
+const counts = {
+  primitive: rows.filter((r) => r.tier === "primitive").length,
+  semantic: rows.filter((r) => r.tier === "semantic").length,
+  component: rows.filter((r) => r.tier === "component").length,
+};
+---
+
+<div class="filters">
+  <div class="ds-field filters__search">
+    <label class="ds-field__label" for="token-filter">Buscar</label>
+    <input
+      class="ds-input"
+      type="search"
+      id="token-filter"
+      placeholder="Nombre o valor…"
+      autocomplete="off"
+    />
+  </div>
+
+  <div class="ds-field filters__tier">
+    <label class="ds-field__label" for="tier-filter">Tier</label>
+    <select class="ds-select-native" id="tier-filter">
+      <option value="">Todos</option>
+      <option value="primitive">primitive · {counts.primitive}</option>
+      <option value="semantic">semantic · {counts.semantic}</option>
+      <option value="component">component · {counts.component}</option>
+    </select>
+  </div>
+
+  <span class="filters__count" id="token-count" aria-live="polite">{rows.length} tokens</span>
+</div>
+
+<div class="ds-table-scroll">
+  <table class="ds-table">
+    <thead>
+      <tr>
+        <th>Token</th>
+        <th>Tier</th>
+        <th>Valor autoral <span class="count">· build</span></th>
+        <th>Valor usado <span class="count">· runtime</span></th>
+      </tr>
+    </thead>
+    <tbody id="token-rows">
+      {
+        rows.map((r) => (
+          <tr data-row-tier={r.tier} data-row-name={r.name}>
+            <td class="mono">{r.name}</td>
+            <td>
+              <span class="ds-badge" data-tone={toneByTier[r.tier]}>
+                {r.tier}
+              </span>
+            </td>
+            <td class="mono">{r.value}</td>
+            <td class="mono" data-token={r.name} data-prop={r.prop} data-probe={r.probe}>
+              …
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<script>
+  const tbody = document.getElementById("token-rows")!;
+  const rows = Array.from(tbody.querySelectorAll("tr"));
+  const search = document.getElementById("token-filter") as HTMLInputElement;
+  const tierSel = document.getElementById("tier-filter") as HTMLSelectElement;
+  const count = document.getElementById("token-count")!;
+
+  function filter() {
+    const q = search.value.trim().toLowerCase();
+    const tier = tierSel.value;
+    let shown = 0;
+    for (const row of rows) {
+      const hay = (row.dataset.rowName! + " " + row.children[2].textContent).toLowerCase();
+      const ok = (!q || hay.includes(q)) && (!tier || row.dataset.rowTier === tier);
+      row.hidden = !ok;
+      if (ok) shown++;
+    }
+    count.textContent = `${shown} token${shown === 1 ? "" : "s"}`;
+  }
+
+  search.addEventListener("input", filter);
+  tierSel.addEventListener("change", filter);
+  filter();
+</script>

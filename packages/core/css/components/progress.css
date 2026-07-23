@@ -1,0 +1,35 @@
+/*
+ * TIER 3, PROGRESS
+ *
+ * A determinate bar. The track is a sunken pill; the fill width comes from --ds-progress-fill, which
+ * the binding sets from the clamped fraction, so the paint and aria-valuenow can never diverge. Tone
+ * recolours the fill only.
+ */
+@layer components {
+  .ds-progress {
+    --ds-progress-fill: 0%;
+    --ds-progress-color: var(--color-action-primary);
+
+    display: block;
+    inline-size: 100%;
+    block-size: var(--space-inset-sm);
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-surface-sunken);
+  }
+  .ds-progress[data-tone="success"] { --ds-progress-color: var(--color-text-success); }
+  .ds-progress[data-tone="warning"] { --ds-progress-color: var(--color-text-warning); }
+  .ds-progress[data-tone="danger"] { --ds-progress-color: var(--color-text-danger); }
+
+  .ds-progress__bar {
+    display: block;
+    block-size: 100%;
+    inline-size: var(--ds-progress-fill);
+    border-radius: inherit;
+    background: var(--ds-progress-color);
+    transition: inline-size var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ds-progress__bar { transition: none; }
+  }
+}

@@ -1,0 +1,187 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const neutralHtml = `<div
+  class="ds-alert"
+  data-presentation="banner"
+  data-tone="neutral"
+  role="status"
+  aria-live="polite"
+>
+  <div class="ds-alert__content">
+    <p class="ds-alert__title">Mantenimiento programado</p>
+    <div class="ds-alert__description">
+      El domingo de 02:00 a 04:00 UTC el panel estará en solo
+      lectura.
+    </div>
+  </div>
+  <div class="ds-alert__actions">
+    <button
+      class="ds-alert__dismiss"
+      type="button"
+      aria-label="Cerrar alerta"
+    >
+      <span data-ds-icon="close"></span>
+    </button>
+  </div>
+</div>`;
+
+const bannerHtml = `<div
+  class="ds-alert"
+  data-presentation="banner"
+  data-tone="info"
+  role="status"
+  aria-live="polite"
+>
+  <span class="ds-alert__icon" aria-hidden="true">
+    <span data-ds-icon="info"></span>
+  </span>
+  <div class="ds-alert__content">
+    <p class="ds-alert__title">Nueva versión</p>
+    <div class="ds-alert__description">
+      Una actualización está disponible.
+    </div>
+  </div>
+</div>`;
+
+const accentHtml = `<div
+  class="ds-alert"
+  data-presentation="accent"
+  data-tone="warning"
+  role="status"
+  aria-live="polite"
+>
+  <span class="ds-alert__icon" aria-hidden="true">
+    <span data-ds-icon="warning"></span>
+  </span>
+  <div class="ds-alert__content">
+    <p class="ds-alert__title">Tu plan expira en 3 días</p>
+    <div class="ds-alert__description">
+      Elige un plan para no interrumpir los despliegues.
+    </div>
+  </div>
+  <div class="ds-alert__actions">
+    <a class="ds-link ds-interactive" href="/billing">Ver planes</a>
+    <button
+      class="ds-alert__dismiss"
+      type="button"
+      aria-label="Cerrar alerta"
+    >
+      <span data-ds-icon="close"></span>
+    </button>
+  </div>
+</div>`;
+
+const inlineHtml = `<div
+  class="ds-alert"
+  data-presentation="inline"
+  data-tone="success"
+  role="status"
+  aria-live="polite"
+>
+  <span class="ds-alert__icon" aria-hidden="true">
+    <span data-ds-icon="success"></span>
+  </span>
+  <div class="ds-alert__content">
+    <div class="ds-alert__description">Tus cambios se guardaron.</div>
+  </div>
+</div>`;
+
+const neutralReact = `import { Alert } from "@skryensya/react/alert";
+
+<Alert
+  tone="neutral"
+  title="Mantenimiento programado"
+  onDismiss={() => hide()}
+>
+  El domingo de 02:00 a 04:00 UTC el panel estará en solo lectura.
+</Alert>;`;
+
+const bannerReact = `import { Alert } from "@skryensya/react/alert";
+
+<Alert tone="info" title="Nueva versión">
+  Una actualización está disponible.
+</Alert>;`;
+
+const accentReact = `import { Alert } from "@skryensya/react/alert";
+
+<Alert
+  onDismiss={() => hide()}
+  actions={
+    <a className="ds-link ds-interactive" href="/billing">
+      Ver planes
+    </a>
+  }
+  presentation="accent"
+  title="Tu plan expira en 3 días"
+  tone="warning"
+>
+  Elige un plan para no interrumpir los despliegues.
+</Alert>;`;
+
+const inlineReact = `import { Alert } from "@skryensya/react/alert";
+
+<Alert presentation="inline" tone="success">
+  Tus cambios se guardaron.
+</Alert>;`;
+---
+
+<Base title="Alert" description="Alert: mensaje inline persistente con tono (incluido neutral), anuncio accesible y componente React.">
+  <h1>Alert</h1>
+  <p class="lede">
+    Alert es un mensaje inline que permanece en el layout mientras dure su condición. A diferencia de
+    Toast, transitorio y montado en una región flotante, Alert vive en el flujo del contenido.
+  </p>
+
+  <h2>Tonos</h2>
+  <p>
+    El tono decide si el panel se pinta con color semántico.
+    <code>info</code>, <code>success</code>, <code>warning</code> y <code>danger</code> colorean el
+    mensaje. Solo <code>danger</code> se anuncia como <code>role="alert"</code> (assertive); el resto
+    usa <code>role="status"</code> (polite).
+  </p>
+
+  <h3>Neutral</h3>
+  <p>
+    El default: superficie y borde, sin pintura semántica. Existe para cuando el color no debería ser
+    la señal prominente, el texto (y, en un
+    <a href="/componentes/toast">Toast</a>, el hecho de flotar y desaparecer) ya cargan el mensaje.
+    Úsalo en avisos ordinarios, confirmaciones breves o cualquier caso donde pintar el panel de
+    “éxito” o “info” añadiría urgencia que el contenido no tiene.
+  </p>
+  <Showcase html={neutralHtml} react={neutralReact} label="Alert neutral" />
+
+  <h2>Presentaciones</h2>
+  <p>La presentación decide el peso visual, no la urgencia.</p>
+
+  <h3>Banner</h3>
+  <p>El panel completo sirve para una condición que necesita título y explicación junto al contenido afectado.</p>
+  <Showcase html={bannerHtml} react={bannerReact} label="Alert banner" />
+
+  <h3>Acento</h3>
+  <p>La barra lateral conserva la señal de tono y deja que una acción de recuperación tenga protagonismo.</p>
+  <Showcase html={accentHtml} react={accentReact} label="Alert acento" />
+
+  <h3>Inline</h3>
+  <p>Sin panel ni borde, una confirmación breve acompaña un bloque que ya tiene estructura propia.</p>
+  <Showcase html={inlineHtml} react={inlineReact} label="Alert inline" />
+
+  <h2>Anatomía</h2>
+  <ul>
+    <li><code>ds-alert__icon</code> es decorativo y solo aparece cuando aporta una señal visual.</li>
+    <li><code>ds-alert__content</code> agrupa título opcional y descripción.</li>
+    <li><code>ds-alert__actions</code> aloja acciones que pertenecen al consumidor; el cierre opcional vive ahí.</li>
+    <li><code>data-tone</code> acepta <code>neutral</code> (default), <code>info</code>, <code>success</code>, <code>warning</code> o <code>danger</code>.</li>
+    <li><code>data-presentation</code> acepta <code>banner</code> (default), <code>accent</code> o <code>inline</code>.</li>
+  </ul>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de cada ejemplo. <code>onDismiss</code> es opcional: sin él, no se dibuja el botón de cierre.</p>
+</Base>

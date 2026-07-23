@@ -1,0 +1,57 @@
+/*
+ * DIMENSION: radius (roundness), the fifth dimension (ADR-18).
+ *
+ * A composable axis over CORNER ROUNDNESS, orthogonal to brand, colour mode, high contrast
+ * and density. Its mechanism is DENSITY's, not high contrast's: a single MULTIPLIER in the
+ * cascade, not a per-level remap of each role. `--radius-multiplier` scales the role radii
+ * declared in semantic/_radius.scss, so the roles keep their own places on the scale, control
+ * and surface stay distinct at every level, and one number moves the whole family at once.
+ * That is the point of a multiplier over a step ladder: not everything gets the same radius,
+ * and a product can dial a continuous value (e.g. 1.25) instead of only the five presets below.
+ *
+ * FIVE preset levels, each just a value of the one multiplier. The baseline (no attribute) is
+ * the semantic default (multiplier 1) and equals data-radius="md":
+ *
+ *   data-radius   --radius-multiplier   → control (8px×m)   surface (12px×m)
+ *   ───────────   ───────────────────     ───────────────    ────────────────
+ *   none          0                        0px               0px
+ *   sm            0.5                      4px               6px
+ *   md  (baseline)1                        8px               12px
+ *   lg            1.5                      12px              18px
+ *   xl            2                        16px              24px
+ *
+ * The multiplier moves the two ROUNDNESS roles and leaves the SHAPE role alone:
+ *   --radius-control   controls (button, input, tab, select)   scales
+ *   --radius-surface   surfaces (box/tile, table, menu)         scales
+ *   --radius-pill      lozenges (badge, pill)     INVARIANT, a pill is a shape, not a
+ *                      roundness setting, so it never enters the multiplication. This is the
+ *                      radius dimension's deliberate invariant, the way the WCAG floor is
+ *                      density's (ADR-4).
+ *
+ * "md" is declared explicitly too, so a subtree can reset to baseline inside a data-radius="xl"
+ * (or "none") ancestor.
+ *
+ * Activated with data-radius on :root or any subtree, or by setting --radius-multiplier
+ * directly for a value off the preset ladder. Opt-in import, like modes/hc.scss.
+ */
+@layer overrides {
+  [data-radius="none"] {
+    --radius-multiplier: 0;
+  }
+
+  [data-radius="sm"] {
+    --radius-multiplier: 0.5;
+  }
+
+  [data-radius="md"] {
+    --radius-multiplier: 1;
+  }
+
+  [data-radius="lg"] {
+    --radius-multiplier: 1.5;
+  }
+
+  [data-radius="xl"] {
+    --radius-multiplier: 2;
+  }
+}

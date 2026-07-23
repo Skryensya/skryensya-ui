@@ -1,0 +1,17 @@
+---
+/*
+ * "En esta página", the right rail, the third column of the docs layout.
+ *
+ * The list is EMPTY here and filled client-side (scripts/toc.ts). These pages are .astro, not
+ * markdown, so Astro has no build-time `headings` collection to read, the headings only exist in the
+ * rendered document. The rail stays hidden until the script marks it ready, so a page with nothing to
+ * index (or a visitor with no JS) sees no empty shell.
+ */
+---
+
+<aside class="docs-toc" data-docs-toc>
+  <nav class="docs-toc__inner" aria-labelledby="docs-toc-title">
+    <h2 class="docs-toc__title" id="docs-toc-title">En esta página</h2>
+    <ul class="docs-toc__list"></ul>
+  </nav>
+</aside>

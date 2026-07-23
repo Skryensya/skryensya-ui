@@ -1,0 +1,209 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
+
+const simpleHtml = `<div class="ds-toast-region" aria-live="polite">
+  <div
+    class="ds-alert"
+    data-ds-toast
+    data-presentation="banner"
+    data-tone="neutral"
+    role="status"
+    aria-live="polite"
+  >
+    <div class="ds-alert__content">
+      <div class="ds-alert__description">
+        Enlace copiado al portapapeles.
+      </div>
+    </div>
+    <div class="ds-alert__actions">
+      <button
+        class="ds-alert__dismiss"
+        type="button"
+        aria-label="Descartar"
+      >
+        <span data-ds-icon="close"></span>
+      </button>
+    </div>
+  </div>
+</div>`;
+
+const statusHtml = `<div class="ds-toast-region" aria-live="polite">
+  <div
+    class="ds-alert"
+    data-ds-toast
+    data-presentation="banner"
+    data-tone="success"
+    role="status"
+    aria-live="polite"
+  >
+    <span class="ds-alert__icon" aria-hidden="true">
+      <span data-ds-icon="success"></span>
+    </span>
+    <div class="ds-alert__content">
+      <p class="ds-alert__title">Despliegue creado</p>
+      <div class="ds-alert__description">
+        La revisión ya está en producción.
+      </div>
+    </div>
+    <div class="ds-alert__actions">
+      <button
+        class="ds-alert__dismiss"
+        type="button"
+        aria-label="Descartar"
+      >
+        <span data-ds-icon="close"></span>
+      </button>
+    </div>
+  </div>
+  <div
+    class="ds-alert"
+    data-ds-toast
+    data-presentation="banner"
+    data-tone="info"
+    role="status"
+    aria-live="polite"
+  >
+    <span class="ds-alert__icon" aria-hidden="true">
+      <span data-ds-icon="info"></span>
+    </span>
+    <div class="ds-alert__content">
+      <p class="ds-alert__title">Sincronizando</p>
+      <div class="ds-alert__description">
+        Esto puede tardar unos segundos.
+      </div>
+    </div>
+  </div>
+  <div
+    class="ds-alert"
+    data-ds-toast
+    data-presentation="banner"
+    data-tone="danger"
+    role="alert"
+    aria-live="assertive"
+  >
+    <span class="ds-alert__icon" aria-hidden="true">
+      <span data-ds-icon="danger"></span>
+    </span>
+    <div class="ds-alert__content">
+      <p class="ds-alert__title">No se pudo conectar</p>
+      <div class="ds-alert__description">
+        Revisa la red e inténtalo de nuevo.
+      </div>
+    </div>
+    <div class="ds-alert__actions">
+      <button
+        class="ds-alert__dismiss"
+        type="button"
+        aria-label="Descartar"
+      >
+        <span data-ds-icon="close"></span>
+      </button>
+    </div>
+  </div>
+</div>`;
+
+const simpleReact = `import {
+  Toast,
+  ToastRegion,
+} from "@skryensya/react/content";
+
+<ToastRegion>
+  <Toast onDismiss={() => remove(id)}>
+    Enlace copiado al portapapeles.
+  </Toast>
+</ToastRegion>;`;
+
+const statusReact = `import {
+  Toast,
+  ToastRegion,
+} from "@skryensya/react/content";
+
+<ToastRegion>
+  <Toast
+    tone="success"
+    title="Despliegue creado"
+    icon={<SuccessIcon />}
+    onDismiss={() => remove(id)}
+  >
+    La revisión ya está en producción.
+  </Toast>
+</ToastRegion>;`;
+
+const vanilla = `import {
+  initComponents,
+} from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// Los iconos se autoran como placeholders <span data-ds-icon>;
+// mountIcons los reemplaza por el <svg> del set enlazado.
+mountIcons(document, lucideIcons);
+
+initComponents();`;
+---
+
+<Base title="Toast" description="Toast: feedback transitorio en una región flotante. Misma anatomía que Alert, con ciclo de vida de la app.">
+  <h1>Toast</h1>
+  <p class="lede">
+    Toast comunica feedback transitorio en una región flotante. El ítem es un
+    <a href="/componentes/alert">Alert</a>, mismo markup, mismos tonos, envuelto en
+    <code>ds-toast-region</code> y en el ciclo de vida del toast (montaje, dismiss, timeout opcional).
+  </p>
+
+  <h2>Con estado</h2>
+  <p>
+    Los tonos de estado colorean el panel. <code>danger</code> se anuncia como
+    <code>role="alert"</code> (assertive); el resto como <code>role="status"</code> (polite).
+  </p>
+  <Showcase html={statusHtml} react={statusReact} label="Toast con estado" />
+
+  <h2>Simple</h2>
+  <p>
+    <code>tone="neutral"</code> (el default). En un toast el color casi nunca debería ser la señal
+    principal: ya flota y se retira. Neutral deja que el texto diga el aviso sin pintar urgencia de
+    más, flota sobre una superficie <strong>raised</strong> (<code>--color-bg-surface-raised</code> +
+    <code>--elevation-raised</code>) para leerse como chrome elevado, no como panel de página. Ver el
+    mismo criterio en <a href="/componentes/alert">Alert</a>.
+  </p>
+  <Showcase html={simpleHtml} react={simpleReact} label="Toast simple" />
+
+  <h2>El ciclo de vida es de la app</h2>
+  <p>
+    Toast no gestiona colas ni persistencia: esos ciclos pertenecen a la aplicación. El componente
+    aporta la región, reutiliza Alert y anuncia el tono.
+  </p>
+  <p>
+    En Vanilla, <code>data-ds-toast</code> sobre un <code>ds-alert</code> registra el dismiss nativo y
+    anuncia el tono. <code>data-timeout</code> es opcional; al vencer emite <code>ds-dismiss</code> para
+    que la aplicación retire el Toast.
+  </p>
+  <CodeBlock code={vanilla} label="tu JS" />
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>
+    El código está en la pestaña <strong>React</strong> de cada demo. La API refleja Alert
+    (<code>title</code>, <code>icon</code>, <code>actions</code>, <code>presentation</code>,
+    <code>tone</code>) más <code>timeout</code> y <code>onDismiss</code> con razón. Sin
+    <code>tone</code>, es neutral.
+  </p>
+</Base>
+
+<style is:global>
+  /* The region is `position: fixed` in real use, it floats at the screen corner. Inside a demo stage
+     that would fling the toast out to the viewport, away from what the reader is looking at. Only on
+     this page, and only inside a showcase stage, pin it back into the flow so the demo stays contained.
+     The real markup is unchanged; this is purely the docs playing host. */
+  .docs-showcase__stage .ds-toast-region {
+    position: static;
+    inset: auto;
+    inline-size: auto;
+    max-inline-size: 24rem;
+  }
+</style>

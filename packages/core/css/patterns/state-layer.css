@@ -1,0 +1,108 @@
+/*
+ * STATE LAYER, the system's interaction mechanism.
+ *
+ * NOT opt-in: this ships in the base bundle (tokens.scss imports it), because interaction
+ * feedback is universal, a component that rolls its own hover/press colours is re-inventing
+ * this. It is the single, canonical way every component expresses state. The ::before is inert
+ * until an element carries `ds-interactive`, so it costs nothing on non-interactive elements.
+ *
+ * Add `ds-interactive` to any interactive element to give it the four-layer composition,
+ * bottom to top:
+ *   1. container background (the element's own `background`)
+ *   2. state layer, this ::before, a SOLID currentColor fill at a per-state opacity
+ *   3. content, text / icons (untouched; the layer sits behind it)
+ *   4. focus ring, the independent focus indicator (outline)
+ *
+ * The layer never blocks events (pointer-events: none) and never touches the content
+ * (z-index: -1 under `isolation: isolate` puts it above the background, below content).
+ *
+ * SINGLE ACTIVE LAYER. Exactly one state's opacity is shown, never a sum of layers.
+ * The priority ladder is
+ *     disabled > dragged > pressed > focus > hover > selected > default
+ * and it is realised WITHOUT combined selectors: every state rule sets the same
+ * `--state-layer-opacity`, every state selector has equal specificity (0,2,0), so
+ * when several match, plain SOURCE ORDER decides, later wins. The rules below are written
+ * in ascending priority, so the highest-priority match is always last.
+ *
+ * :has()/:where() variants let one class cover both a native control (`.ds-interactive` IS
+ * the button) and a wrapper around a hidden input (`.ds-interactive` wraps a checkbox), so
+ * the pattern is identical across Button, List item, Tab, Checkbox, Switch, …
+ */
+@layer components {
+  .ds-interactive {
+    position: relative;
+    isolation: isolate;
+    /* runtime slot; every state rule reassigns it, default = no layer */
+    --state-layer-opacity: 0;
+  }
+
+  .ds-interactive::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-below); /* above the container background, below the content */
+    border-radius: inherit; /* match rounded corners */
+    background: var(--state-layer-color);
+    opacity: var(--state-layer-opacity);
+    pointer-events: none; /* never blocks the component's own events */
+    /* hover/press feedback = the feedback intent; one token, retunable system-wide */
+    transition: opacity var(--motion-feedback-duration) var(--motion-feedback-easing);
+  }
+
+  /* ── priority ladder, ascending; later rule wins at equal specificity ────── */
+
+  /* selected, the base rung. A persistent tint, deliberately LOWEST so hover/press
+   * replace it. Selection is ALSO carried by an independent indicator (check, fill,
+   * border), so replacing its layer on hover never hides the selected state. */
+  .ds-interactive[aria-selected="true"],
+  .ds-interactive[aria-checked="true"],
+  .ds-interactive[data-selected="true"],
+  .ds-interactive:has(:checked) {
+    --state-layer-opacity: var(--state-layer-selected-opacity);
+  }
+
+  .ds-interactive:hover,
+  .ds-interactive:has(:hover) {
+    --state-layer-opacity: var(--state-layer-hover-opacity);
+  }
+
+  .ds-interactive:focus-visible,
+  .ds-interactive:has(:focus-visible) {
+    --state-layer-opacity: var(--state-layer-focus-opacity);
+  }
+
+  .ds-interactive:active,
+  .ds-interactive:has(:active) {
+    --state-layer-opacity: var(--state-layer-pressed-opacity);
+  }
+
+  .ds-interactive[data-dragging="true"] {
+    --state-layer-opacity: var(--state-layer-dragged-opacity);
+  }
+
+  /* disabled, highest. Forces the layer to 0, so no state feedback on a disabled
+   * control. The disabled LOOK (dim bg/fg) comes from the component's own tokens, not
+   * from this layer, the layer must never be the sole disabled cue. */
+  .ds-interactive:disabled,
+  .ds-interactive[aria-disabled="true"],
+  .ds-interactive:has(:disabled) {
+    --state-layer-opacity: var(--state-layer-disabled-opacity);
+  }
+
+  /* ── independent focus indicator (a11y: never rely on the layer alone) ────── */
+  .ds-interactive:focus-visible,
+  .ds-interactive:has(:focus-visible) {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+  .ds-interactive[aria-disabled="true"] {
+    outline: none;
+  }
+
+  /* ── reduced motion: the layer still appears, just without the fade ───────── */
+  @media (prefers-reduced-motion: reduce) {
+    .ds-interactive::before {
+      transition: none;
+    }
+  }
+}

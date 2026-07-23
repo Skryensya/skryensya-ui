@@ -1,0 +1,72 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<nav
+  class="ds-inline"
+  data-gap="sm"
+  data-align="center"
+  data-wrap="true"
+  aria-label="Acciones del documento"
+>
+  <a class="ds-link ds-interactive" href="/componentes/inline">
+    Guardar
+  </a>
+  <a class="ds-link ds-interactive" href="/componentes/inline">
+    Compartir
+  </a>
+  <a class="ds-link ds-interactive" href="/componentes/inline">
+    Ver historial
+  </a>
+</nav>`;
+
+const react = `import { Inline } from "@skryensya/react/inline";
+
+<Inline
+  as="nav"
+  gap="sm"
+  align="center"
+  wrap
+  aria-label="Acciones del documento"
+>
+  <a className="ds-link ds-interactive" href="/guardar">Guardar</a>
+  <a className="ds-link ds-interactive" href="/compartir">Compartir</a>
+  <a className="ds-link ds-interactive" href="/historial">
+    Ver historial
+  </a>
+</Inline>`;
+---
+
+<Base title="Inline" description="Inline, el pattern de layout horizontal y adaptable.">
+  <h1>Inline</h1>
+  <p class="lede">
+    Organiza elementos en horizontal y los devuelve a otra línea cuando el espacio se agota. La semántica
+    pertenece al elemento que eliges, no al layout.
+  </p>
+
+  <h2>Demo</h2>
+  <Showcase html={html} react={react} label="Inline" />
+
+  <h2>HTML autorado</h2>
+  <p>
+    Usa <code>ds-inline</code> en el elemento semántico que corresponda. Los atributos describen el
+    espaciado, la alineación vertical y si la fila puede envolver sus hijos.
+  </p>
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li><code>as</code> elige el elemento raíz; por defecto es <code>div</code>.</li>
+    <li><code>gap</code> acepta <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> o <code>xl</code>; por defecto es <code>md</code>.</li>
+    <li><code>align</code> acepta <code>start</code>, <code>center</code>, <code>end</code> o <code>baseline</code>; por defecto es <code>center</code>.</li>
+    <li><code>wrap</code> permite envolver los hijos; por defecto es <code>true</code>. Usa <code>data-wrap="false"</code> para una sola fila en HTML.</li>
+  </ul>
+</Base>

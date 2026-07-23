@@ -1,0 +1,27 @@
+---
+/*
+ * Header chrome: cycles reading mode system → light → dark. Preference lives in localStorage["ds"]
+ * under `scheme`, the same key the Opciones "Modo" select uses, the script keeps them in sync.
+ *
+ * Markup is the icon-only button contract (one centred .ds-icon in a square). Three glyphs share
+ * that same cell so the active one can cross-fade without a custom-sized wrapper.
+ */
+import { iconDataMarkup, monitor, moon, sun } from "../icons";
+
+const systemIcon = iconDataMarkup("theme-monitor", monitor, { attrs: { "data-scheme-icon": "system" } });
+const lightIcon = iconDataMarkup("theme-sun", sun, { attrs: { "data-scheme-icon": "light" } });
+const darkIcon = iconDataMarkup("theme-moon", moon, { attrs: { "data-scheme-icon": "dark" } });
+---
+
+<button
+  class="ds-button ds-interactive dimensions__theme-toggle"
+  data-variant="ghost"
+  data-icon-only
+  data-docs-theme-toggle
+  type="button"
+  aria-label="Modo: sistema"
+>
+  <Fragment set:html={systemIcon} />
+  <Fragment set:html={lightIcon} />
+  <Fragment set:html={darkIcon} />
+</button>

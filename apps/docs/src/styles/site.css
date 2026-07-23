@@ -1,0 +1,1144 @@
+/*
+ * The docs site's own structural CSS.
+ *
+ * The design system ships styling hooks, not components (ADR-1), so this file is the site doing what
+ * every consumer must do: writing the structure and wiring the styling hooks. It is also the honest
+ * test of the token set, every rule here reaches for a semantic token, and anywhere it can't,
+ * the system has a gap worth knowing about.
+ *
+ * Rule: no raw colours, no raw spacing. If a value isn't a token, it is a bug or a finding.
+ */
+
+/* ── page ─────────────────────────────────────────────────────────────────── */
+body {
+  margin: 0;
+  background: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  line-height: var(--font-line-height-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* The responsive shell (sidebar↔drawer at the desktop breakpoint, toc at wide) lives in shell.scss:
+ * it reads the shared breakpoint source, which a plain `@media` here cannot. */
+
+/* ── Docs chrome ──────────────────────────────────────────────────────────── */
+body {
+  --docs-header-block-size: calc(var(--size-control-md) + var(--space-inset-sm) * 2 + 1px);
+  /* Keep the navigation rail on the viewport edge through ordinary desktop widths. The centred
+     clamp only appears on genuinely wide displays. The document column IS the wrapper `content`
+     role, <main> carries ds-wrapper[data-size="content"], so this cap is the token itself: the
+     grid track and the wrapper agree on one width for prose, tables and examples alike. */
+  --docs-shell-max: 120rem;
+  --docs-document-max: var(--size-wrapper-content);
+}
+
+.dimensions {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  min-block-size: var(--docs-header-block-size);
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border-subtle);
+  box-shadow: var(--elevation-raised);
+}
+
+.dimensions__content {
+  display: flex;
+  gap: var(--space-inline-lg);
+  align-items: center;
+  /* width, margin and inline padding come from ds-wrapper[data-size="shell"], same column as .shell */
+  min-block-size: var(--docs-header-block-size);
+}
+
+/* Header and shell share the broad Docs canvas. The shell alone removes its wrapper inset so its
+   navigation rail meets the viewport edge. */
+.dimensions__content,
+.shell {
+  --ds-wrapper-max: var(--docs-shell-max);
+}
+
+.dimensions__brand {
+  font-weight: var(--font-weight-heading);
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+/* Docs and the playground are peer destinations, not categories in the documentation rail. */
+.dimensions__global {
+  display: flex;
+  gap: var(--space-inline-xs);
+  align-items: center;
+}
+
+.dimensions__global-link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--size-touch-target);
+  padding-inline: var(--space-inset-sm);
+  border-radius: var(--radius-control);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.dimensions__global-link[aria-current="page"] {
+  background: var(--color-bg-surface-sunken);
+  color: var(--color-text-primary);
+}
+
+
+/* The auto margin sits on the FIRST of the trailing group (search), so search + options travel to the
+   trailing edge together; a margin on options alone would strand search next to the brand. The trigger
+   reads as a field, not a button: a wide, quiet target that says "type here", with the shortcut badge
+   tucked at its trailing edge. */
+.dimensions__search-trigger {
+  margin-inline-start: auto;
+  gap: var(--space-inline-sm);
+  min-inline-size: min(18rem, 40vw);
+  justify-content: flex-start;
+  color: var(--color-text-tertiary);
+  /* A hairline so the trigger reads as the field it pretends to be: a ghost button is invisible until
+     hovered, but a search box should look typeable at rest. Subtle, not default, it is a quiet target. */
+  border: 1px solid var(--color-border-subtle);
+}
+
+.dimensions__search-label {
+  margin-inline-end: auto;
+}
+
+/* The mode + contrast icon controls, clustered. A tighter gap than the header's `lg`, because each
+   icon button carries ~one glyph of internal padding on both facing sides while the bordered search
+   field carries none on its edge, so at an equal gap the two icons read as further apart than the
+   field is from the first icon. `xs` (≈ lg − that padding) makes the three visual gaps match. */
+.dimensions__prefs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-inline-xs);
+}
+
+/* Colour-palette toggle: one icon-only button (same square as the theme/contrast toggles, sized by
+   ds-button[data-icon-only]) that cycles the presets. Its dot is the current accent, a plain filled
+   circle, since the whole page already shows the palette, so the dot only has to say "colour lives
+   here". A ring in the surface colour keeps a light dot legible against the ghost button. */
+.dimensions__palette-toggle {
+  display: inline-grid;
+  place-items: center;
+}
+
+.dimensions__palette-dot {
+  inline-size: 1.15rem;
+  block-size: 1.15rem;
+  border-radius: var(--radius-pill);
+  background: var(--swatch, var(--color-action-primary));
+  box-shadow: inset 0 0 0 1px var(--color-border-subtle);
+}
+
+/* Icon-only, the same square as the theme toggle beside it (sizing comes from ds-button[data-icon-only]).
+   Two glyphs stack in one cell and cross-fade on the contrast mode, exactly like the theme toggle: the
+   half fills in place the moment high contrast turns on, so the change reads in the icon itself. */
+.dimensions__contrast-toggle {
+  display: inline-grid;
+  place-items: center;
+  color: var(--color-text-secondary);
+}
+
+.dimensions__contrast-toggle .ds-icon {
+  grid-area: 1 / 1;
+  transition-property: opacity, transform, filter;
+  transition-duration: var(--motion-state-change-duration);
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  opacity: 0;
+  transform: scale(0.25);
+  filter: blur(4px);
+}
+
+/* Normal glyph whenever contrast isn't high (attribute absent or removed), high glyph when it is, the
+   same [data-contrast="high"] the tokens key on, so the icon can never disagree with the mode, and the
+   FOUC script sets it before paint so there is no wrong-glyph flash on load. */
+:root:not([data-contrast="high"]) .dimensions__contrast-toggle [data-contrast-icon="normal"],
+:root[data-contrast="high"] .dimensions__contrast-toggle [data-contrast-icon="high"] {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dimensions__contrast-toggle .ds-icon {
+    transition: none;
+  }
+}
+
+/* The global links move into the drawer on narrow screens; contrast remains available beside mode. */
+@media (max-width: 36rem) {
+  .dimensions__global {
+    display: none;
+  }
+}
+
+
+/* Theme toggle: same icon-only square as any other icon button; the three glyphs stack in the
+   centred cell so the active one cross-fades. Preference is on :root[data-scheme] (FOUC + runtime)
+   so the right glyph is visible before the module paints. */
+.dimensions__theme-toggle {
+  display: inline-grid;
+  place-items: center;
+}
+
+.dimensions__theme-toggle .ds-icon {
+  grid-area: 1 / 1;
+  transition-property: opacity, transform, filter;
+  transition-duration: var(--motion-state-change-duration);
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  opacity: 0;
+  transform: scale(0.25);
+  filter: blur(4px);
+}
+
+:root[data-scheme="system"] .dimensions__theme-toggle [data-scheme-icon="system"],
+:root[data-scheme="light"] .dimensions__theme-toggle [data-scheme-icon="light"],
+:root[data-scheme="dark"] .dimensions__theme-toggle [data-scheme-icon="dark"],
+.dimensions__theme-toggle[data-scheme="system"] [data-scheme-icon="system"],
+.dimensions__theme-toggle[data-scheme="light"] [data-scheme-icon="light"],
+.dimensions__theme-toggle[data-scheme="dark"] [data-scheme-icon="dark"] {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+}
+
+/* Before the module stamps data-scheme on the button, fall back to the root preference, and if
+   neither is set yet, show system so the square is never empty. */
+:root:not([data-scheme]) .dimensions__theme-toggle:not([data-scheme]) [data-scheme-icon="system"] {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dimensions__theme-toggle .ds-icon {
+    transition: none;
+  }
+}
+
+/* The kbd key was the docs-only `.docs-kbd` here; it is now the formalized `.ds-kbd` component, 
+   hooks in core, skin in examples/kbd.css, both loaded globally in Base.astro. */
+
+/* ── command palette ──────────────────────────────────────────────────────────
+   The palette IS a ds-dialog (`class="ds-dialog docs-cmdk"`, dialog.css imported in Base.astro): the
+   border, radius, surface, elevation and the mode-aware ::backdrop all come from the component now, so
+   they are gone from here. What stays is only what a palette adds on top of a dialog, a wider box and
+   the search / list / footer layout. showModal gives the focus trap, ESC and the inert page (decision
+   11); centering is `margin: auto` like every other ds-dialog. */
+.docs-cmdk {
+  /* the component's own width hook, widened: a palette wants a touch more room than a confirm box */
+  --ds-dialog-inline-size: min(36rem, calc(100vw - var(--space-inset-lg) * 2));
+  /* clip the search row, list and footer to the corners the dialog rounds, ds-dialog does not clip */
+  overflow: hidden;
+}
+
+/* Document scroll lock + scrollbar gutter come from patterns/scroll-lock.css (imported in Base).
+   Nested overflow:auto rails can still wheel under an open modal, so freeze those here. */
+html:has(dialog:modal) .docs-sidebar .ds-sidebar__content,
+html:has(dialog:modal) .docs-toc,
+html:has(dialog:modal) .docs-drawer__content {
+  overflow: hidden;
+}
+
+.docs-cmdk__search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-inline-sm);
+  padding-inline: var(--space-inset-md);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.docs-cmdk__search .ds-icon {
+  color: var(--color-text-tertiary);
+}
+
+.docs-cmdk__input {
+  flex: 1;
+  min-inline-size: 0;
+  min-block-size: var(--size-control-lg);
+  border: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body-lg);
+}
+
+.docs-cmdk__input:focus {
+  outline: none;
+}
+
+.docs-cmdk__input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.docs-cmdk__list {
+  margin: 0;
+  padding: var(--space-inset-xs);
+  list-style: none;
+  max-block-size: min(24rem, 60vh);
+  overflow-y: auto;
+  /* Keep wheel/trackpad scroll inside the results, do not chain past the dialog into the page. */
+  overscroll-behavior: contain;
+}
+
+.docs-cmdk__option {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-inline-md);
+  padding: var(--space-inset-sm) var(--space-inset-sm);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+}
+
+/* aria-selected is the highlight, driven by the keyboard, not :hover, so the pointer and the arrow
+   keys never fight over which row is "the one". */
+.docs-cmdk__option[aria-selected="true"] {
+  background: var(--color-bg-surface-sunken);
+}
+
+.docs-cmdk__option-label {
+  color: var(--color-text-primary);
+}
+
+.docs-cmdk__option-context {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-caption);
+  white-space: nowrap;
+}
+
+.docs-cmdk__empty {
+  margin: 0;
+  padding: var(--space-inset-lg);
+  color: var(--color-text-tertiary);
+  text-align: center;
+}
+
+.docs-cmdk__footer {
+  display: flex;
+  gap: var(--space-inline-lg);
+  padding: var(--space-inset-sm) var(--space-inset-md);
+  border-top: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-surface-sunken);
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-caption);
+}
+
+.docs-cmdk__footer span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-inline-xs);
+}
+
+@media (max-width: 40rem) {
+  .dimensions__search-label {
+    display: none;
+  }
+  .dimensions__search-trigger {
+    min-inline-size: 0;
+  }
+}
+
+
+.ds-select-native {
+  box-sizing: border-box;
+  block-size: var(--ds-select-height);
+  padding-inline: var(--ds-select-padding-x);
+  border: var(--ds-select-border-width) solid var(--ds-select-border-color);
+  border-radius: var(--ds-select-radius);
+  background: var(--ds-select-bg);
+  color: var(--ds-select-fg);
+  font: inherit;
+  font-size: var(--ds-select-font-size);
+}
+
+.ds-select-native option {
+  background-color: var(--ds-select-bg);
+  color: var(--ds-select-fg);
+}
+
+.ds-select-native:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* ── layout ───────────────────────────────────────────────────────────────── */
+/* Three columns: the site index (sidebar), a capped document measure, and the document index (toc).
+   The broad Docs canvas keeps the rail edge-aligned at ordinary desktop widths; only very wide
+   displays centre it. `space-between` spends any spare width between columns, never by widening prose. */
+.shell {
+  --ds-wrapper-padding-inline: 0;
+
+  display: grid;
+  grid-template-columns: auto minmax(0, var(--docs-document-max)) auto;
+  justify-content: space-between;
+  gap: var(--space-inline-lg);
+  /* No block padding: the rail has to MEET the header, not float below it. The document and the toc
+     pad themselves instead, so only the columns that want air get it. */
+  padding-block: 0;
+  align-items: start;
+}
+
+/* The docs use the sidebar shell without its optional collapse behavior. The nav-list remains a
+   text-first documentation index, so the auto track simply follows the expanded width hook. */
+.docs-sidebar {
+  display: flex;
+  position: sticky;
+  /* Stick flush under the navbar and fill exactly the viewport below it. Both the offset and the
+     height read the navbar's MEASURED height (`--docs-navbar-h`, written by the script in Base.astro),
+     falling back to the token estimate until that runs, the estimate is a pixel shy of the rendered
+     box and drifts further if density or wrapping change it, so measuring is what makes "viewport minus
+     navbar" exact rather than approximate. */
+  top: var(--docs-navbar-h, var(--docs-header-block-size));
+  flex-direction: column;
+  inline-size: var(--ds-sidebar-inline-size);
+  block-size: calc(100dvh - var(--docs-navbar-h, var(--docs-header-block-size)));
+  /* No top inset here: it would hold a FIXED gap above the scroll area, with the nav sliding under it.
+     The inset lives on the scroll container instead (below) so it scrolls away with the first items. */
+  border-inline-end: var(--ds-sidebar-border-width) solid var(--ds-sidebar-border-color);
+  background: var(--ds-sidebar-bg);
+  color: var(--ds-sidebar-fg);
+  box-shadow: var(--ds-sidebar-elevation);
+  overflow: hidden;
+}
+
+/* The rail surface runs from the header's underside to the bottom of the viewport. Its own top
+   inset separates the navigation from the chrome; the footer owns the document's bottom inset, so
+   the shell ends exactly with it. */
+main {
+  padding-block-start: var(--space-inset-lg);
+}
+
+.docs-sidebar .ds-sidebar__content {
+  flex: 1;
+  min-block-size: 0;
+  padding: var(--ds-sidebar-padding);
+  /* The rail's top inset lives INSIDE the scroll container, so it is part of the scrollable area: the
+     gap shows at rest and scrolls away with the nav, instead of a fixed band the list slides beneath. */
+  padding-block-start: calc(var(--ds-sidebar-padding) + var(--space-inset-lg));
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.docs-sidebar .ds-sidebar__separator {
+  flex: none;
+  block-size: 1px;
+  margin: 0;
+  border: 0;
+  background: var(--ds-sidebar-separator-color);
+}
+
+.docs-sidebar .ds-sidebar__footer {
+  display: flex;
+  flex: none;
+  align-items: center;
+  padding: var(--ds-sidebar-padding);
+  color: var(--ds-sidebar-footer-fg);
+  font-size: var(--ds-sidebar-footer-font-size);
+  white-space: nowrap;
+}
+
+.docs-sidebar .ds-nav-list__link[aria-disabled="true"],
+.docs-drawer .ds-nav-list__link[aria-disabled="true"] {
+  pointer-events: none;
+}
+
+/* ── the drawer, the rail's small-screen form ────────────────────────────── */
+/* The panel, its motion and its backdrop are Vaul's; what is left for the site is
+   what goes inside, exactly like the rail (which writes its own structure over ds-sidebar's hooks). */
+.dimensions__menu-trigger {
+  /* the rail is already on screen, a second door to the same nav is just noise */
+  display: none;
+}
+
+.dimensions__menu-trigger--always {
+  display: inline-flex;
+}
+
+/* Scoped to [open] deliberately: an author `display` would beat the UA's `dialog:not([open])
+   { display: none }` and leave the drawer on screen, closed, forever. */
+.docs-drawer[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.docs-drawer__header {
+  display: flex;
+  flex: none;
+  gap: var(--space-inline-sm);
+  align-items: center;
+  justify-content: space-between;
+  min-block-size: var(--docs-header-block-size);
+  padding-inline: var(--space-inset-md);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.docs-drawer__title {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-emphasis);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.docs-drawer__global {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  flex: none;
+  gap: var(--space-inline-xs);
+  padding: var(--space-inset-sm) var(--space-inset-md);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.docs-drawer__global-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--size-touch-target);
+  padding-inline: var(--space-inset-sm);
+  border-radius: var(--radius-control);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label);
+  text-decoration: none;
+}
+
+.docs-drawer__global-link[aria-current="page"] {
+  background: var(--color-bg-surface-sunken);
+  color: var(--color-text-primary);
+}
+
+
+.docs-drawer__content {
+  flex: 1;
+  min-block-size: 0;
+  padding: var(--ds-sidebar-padding);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* The global `a` colour (accent) is meant for prose links. Unlayered, it also beat the nav-list's
+   own (layered) link colour, so every nav link rendered accent, a wall of colour that shouts, and
+   erased the resting/current distinction the pattern draws. Hand them back to the nav-list's own
+   hook: calm secondary at rest, accent reserved for the current page.
+
+   Scoped to the PATTERN, not to the rail: this was `.docs-sidebar .ds-nav-list__link` and the drawer, 
+   the same nav, rendered somewhere else, came back blue. Wherever a nav-list goes, it takes its own
+   colours with it (decision 17). */
+.ds-nav-list__link {
+  color: var(--ds-nav-list-link-fg);
+}
+
+/* Native alternatives are still full destinations, but the rail makes the ordering explicit:
+ * enhanced contracts solve the task first; platform contracts remain easy to reach when enough. */
+.ds-nav-list__group[data-secondary] {
+  margin-block-start: var(--space-stack-md);
+  padding-block-start: var(--space-stack-md);
+  border-block-start: 1px solid var(--ds-sidebar-separator-color);
+}
+
+.ds-nav-list__group[data-secondary] .ds-nav-list__group-label {
+  color: var(--color-text-tertiary);
+}
+
+.ds-nav-list__group[data-secondary] .ds-nav-list__link {
+  --ds-nav-list-link-fg: var(--color-text-tertiary);
+}
+
+
+/* Each section owns a heading; later sections are fenced off so their task boundaries stay clear. */
+.docs-nav-section + .docs-nav-section {
+  margin-block-start: var(--space-stack-lg);
+  padding-block-start: var(--space-stack-lg);
+  border-block-start: 1px solid var(--ds-sidebar-separator-color);
+}
+
+.docs-nav-section__header {
+  padding-inline: var(--space-inline-sm);
+  margin-block-end: var(--space-stack-sm);
+}
+
+.docs-nav-section__title {
+  margin: 0;
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-emphasis);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ds-sidebar-fg);
+}
+
+.docs-nav-section__title[href] {
+  display: block;
+  text-decoration: none;
+}
+
+.docs-nav-section__blurb {
+  margin: 0;
+  font-size: var(--font-size-caption);
+  color: var(--ds-sidebar-footer-fg);
+}
+
+/* Same palette as the navbar trigger (`data-docs-cmdk-open`), one dialog, many openers. */
+.docs-catalog-search {
+  display: flex;
+  inline-size: min(100%, 28rem);
+  margin-block: var(--space-stack-lg) var(--space-stack-xl);
+  gap: var(--space-inline-sm);
+  justify-content: flex-start;
+  color: var(--color-text-tertiary);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.docs-catalog-search__label {
+  margin-inline-end: auto;
+}
+
+/* The catalog is a direct map of the navigation: short, tappable destinations beat a second
+ * component taxonomy with stale summaries. */
+/* The secondary catalog follows the same hierarchy as the rail: one quiet divider is enough to
+ * explain that these are platform paths, not equally capable variants of the primary components. */
+.docs-catalog-section + .docs-catalog-section {
+  margin-block-start: var(--space-stack-xl);
+}
+
+.docs-catalog-section[data-secondary] {
+  padding-block-start: var(--space-stack-xl);
+  border-block-start: 1px solid var(--color-border-subtle);
+}
+
+
+.docs-catalog {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: var(--space-stack-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-catalog__link {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--size-touch-target);
+  padding-inline: var(--space-inset-md);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-label);
+  text-decoration: none;
+}
+
+.docs-catalog-section[data-secondary] .docs-catalog__link {
+  background: var(--color-bg-surface-sunken);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-body);
+}
+
+/* ── "En esta página", the index of the document ─────────────────────────── */
+/* Built client-side (scripts/toc.ts), because .astro pages have no build-time heading list. It stays
+   hidden until the script marks it ready, so no empty rail shows on a page with nothing to index. */
+.docs-toc {
+  position: sticky;
+  /* Same sticky-under-navbar contract as the sidebar, read the measured navbar height (fallback to
+     the token) so the toc and the sidebar align on the exact same line. */
+  top: var(--docs-navbar-h, var(--docs-header-block-size));
+  inline-size: 14rem;
+  min-inline-size: 0;
+  max-block-size: calc(100dvh - var(--docs-navbar-h, var(--docs-header-block-size)));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.docs-toc:not([data-ready]) {
+  display: none;
+}
+
+.docs-toc__inner {
+  min-inline-size: 0;
+  padding: var(--space-stack-md) var(--space-inset-md);
+  /* the rail is a quiet aid, never a second nav competing with the sidebar */
+  border-inline-start: 1px solid var(--color-border-subtle);
+}
+
+.docs-toc__title {
+  margin: 0 0 var(--space-stack-sm);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-emphasis);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.docs-toc__list {
+  display: grid;
+  min-inline-size: 0;
+  /* Tight between items: this rail is an index scanned at a glance, not a set of primary controls, so
+     a half-step gap keeps the sections reading as one list instead of drifting apart. */
+  gap: var(--space-inset-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-toc__item {
+  min-inline-size: 0;
+}
+
+.docs-toc__item[data-level="h3"] {
+  padding-inline-start: var(--space-inset-sm);
+}
+
+.docs-toc__link {
+  display: flex;
+  align-items: center;
+  min-inline-size: 0;
+  /* Not the 44px touch target: the toc only renders above the `wide` breakpoint, where the pointer is
+     primary, the tall touch row just padded the index with dead vertical space. control-sm still holds
+     the 24px WCAG floor, so single-line entries stay comfortably clickable without inflating the list. */
+  min-block-size: var(--size-control-sm);
+  padding: var(--space-inset-xs) var(--space-inset-sm);
+  border-radius: var(--radius-control);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body-sm);
+  line-height: var(--font-line-height-body);
+  overflow-wrap: anywhere;
+  text-decoration: none;
+  text-wrap: pretty;
+}
+
+/* the section you're reading, the only accent in the rail, same restraint as the sidebar's
+   current page (scroll-spy writes this, so it must not be tuned away) */
+.docs-toc__link[aria-current="true"] {
+  color: var(--color-text-accent);
+  font-weight: var(--font-weight-label);
+}
+
+/* An anchored heading must clear the sticky header instead of hiding under it, measured height so it
+   never stops a pixel short. */
+main > :where(h2, h3) {
+  scroll-margin-top: calc(var(--docs-navbar-h, var(--docs-header-block-size)) + var(--space-stack-md));
+}
+
+/* The width-driven shell switches (toc at `wide`, sidebar↔drawer↔navbar at `desktop`) moved to
+   shell.scss so they can call the shared breakpoint mixins. This lone tweak stays: it is a one-off,
+   not one of the system's shared lines. */
+
+/* ── prose ────────────────────────────────────────────────────────────────── */
+main {
+  min-width: 0;
+}
+
+
+.docs-page-nav {
+  display: flex;
+  gap: var(--space-inline-sm);
+  align-items: center;
+  margin-block-start: var(--space-section);
+  padding-block-start: var(--space-stack-md);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.docs-page-nav__link {
+  text-decoration: none;
+}
+
+.docs-page-nav__link--next {
+  margin-inline-start: auto;
+}
+
+h1 {
+  margin: 0 0 var(--space-stack-sm);
+  font-size: var(--font-size-heading-lg);
+  line-height: var(--font-line-height-heading);
+  font-weight: var(--font-weight-heading);
+}
+
+h2 {
+  margin: var(--space-section) 0 var(--space-stack-sm);
+  font-size: var(--font-size-heading-md);
+  line-height: var(--font-line-height-heading);
+  font-weight: var(--font-weight-heading);
+}
+
+h3 {
+  margin: var(--space-stack-lg) 0 var(--space-stack-xs);
+  font-size: var(--font-size-heading-sm);
+  line-height: var(--font-line-height-heading);
+  font-weight: var(--font-weight-heading);
+}
+
+p {
+  margin: 0 0 var(--space-stack-sm);
+}
+
+
+.lede {
+  font-size: var(--font-size-body-lg);
+  line-height: var(--font-line-height-body-relaxed);
+  color: var(--color-text-secondary);
+}
+
+/* Bare anchors in prose (ADRs, etc.). `.ds-link` owns its own tones, leave it alone or an
+ * unlayered `a { color }` rule paints every link accent and kills the text-coloured default. */
+a:not(.ds-link) {
+  color: var(--color-text-accent);
+}
+
+:is(p, li) > code {
+  font-family: var(--font-family-code);
+  font-size: var(--font-size-body-sm);
+  background: var(--color-bg-surface-sunken);
+  padding: 0 var(--space-inset-xs);
+  border-radius: var(--scale-radius-sm);
+}
+
+/* ── code block ───────────────────────────────────────────────────────────── */
+.code {
+  margin-block: var(--space-stack-sm);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-surface);
+  background: var(--color-bg-surface-sunken);
+  overflow: hidden;
+}
+
+.code__label {
+  display: flex;
+  gap: var(--space-inline-sm);
+  padding: var(--space-inset-xs) var(--space-inset-md);
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--color-text-tertiary);
+  font-family: var(--font-family-code);
+  font-size: var(--font-size-caption);
+}
+
+.code__meta {
+  display: flex;
+  min-inline-size: 0;
+  gap: var(--space-inline-sm);
+}
+
+.code__preview {
+  position: relative;
+}
+
+.code__preview > .ds-copy-button {
+  position: absolute;
+  inset-block-start: var(--space-inset-xs);
+  inset-inline-end: var(--space-inset-xs);
+  z-index: 1;
+}
+
+.ds-copy-button {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--size-touch-target);
+  min-inline-size: var(--size-touch-target);
+  padding-inline: 0;
+}
+
+.ds-copy-button__icon {
+  grid-area: 1 / 1;
+  transition-property: opacity, transform, filter;
+  transition-duration: var(--motion-state-change-duration);
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  opacity: 0;
+  transform: scale(0.25);
+  filter: blur(4px);
+}
+
+.ds-copy-button [data-copy-icon="idle"],
+.ds-copy-button[data-copy-state="copied"] [data-copy-icon="copied"] {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+}
+
+.ds-copy-button[data-copy-state="copied"] [data-copy-icon="idle"] {
+  opacity: 0;
+  transform: scale(0.25);
+  filter: blur(4px);
+}
+
+.ds-copy-button[data-copy-state="error"] {
+  color: var(--color-text-danger);
+}
+
+.ds-copy-button__label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-copy-button__icon {
+    transition: none;
+  }
+}
+
+.code pre {
+  margin: 0;
+  padding: var(--space-inset-md);
+  overflow-x: auto;
+}
+
+/* Astro/Shiki may still paint a UA outline when the pre is programmatically focused; samples are
+ * not interactive, the copy button is. Keep them out of the focus ring story entirely. */
+.code pre:focus,
+.code pre:focus-visible {
+  outline: none;
+}
+
+.code code {
+  font-family: var(--font-family-code);
+  font-size: var(--font-size-body-sm);
+  line-height: var(--font-line-height-body-relaxed);
+  color: var(--color-text-primary);
+  white-space: pre;
+}
+
+
+/* Shiki emits one light and dark palette. `light-dark()` follows the page's colour mode without a
+   selector or documentation-specific colour. */
+.astro-code,
+.astro-code span {
+  color: light-dark(var(--shiki-docs-light), var(--shiki-docs-dark)) !important;
+  background-color: light-dark(var(--shiki-docs-light-bg), var(--shiki-docs-dark-bg)) !important;
+}
+
+/* ── example: a bare demo stage for the custom interactive demos (state-layer list, icon galleries) that
+   are not a component + source pair. Everything that WAS a preview beside its code is a <Showcase> now,
+   so the old `[data-side-by-side]` two-column rule is gone with it. */
+.example {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-inline-md);
+}
+
+/* Title, preview and source read as one titled card. The wrapper owns the border and the rounded
+   corners; each inner section draws only the single 1px divider before the next, so no corner is
+   rounded at a seam and no two borders stack into a heavier rule.
+
+   `min-width: 0` on the rows is load-bearing, not decoration. A grid item defaults to
+   `min-width: auto`, which refuses to shrink below its content, so one long line of code widened the
+   whole card past its own box, and `overflow: hidden` then clipped everything at the trailing edge,
+   the Vanilla/React tabs included. Zeroing it lets the row shrink to the card and hands the scrolling
+   to the <pre>, which is the only part that should ever scroll sideways. */
+.docs-showcase {
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-surface);
+  overflow: hidden;
+}
+
+.docs-showcase > * {
+  min-width: 0;
+}
+
+/* The example's title lives here, as the card's header, not buried as a band between the preview
+   and its source. The tabs sit at the trailing edge and wrap under the title when the card is too
+   narrow to hold both on one line. */
+.docs-showcase__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-inline-sm);
+  padding: var(--space-inset-sm) var(--space-inset-md);
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-surface-sunken);
+}
+
+.docs-showcase__title {
+  font-family: var(--font-family-code);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-emphasis);
+  color: var(--color-text-secondary);
+}
+
+.docs-showcase__note {
+  font-family: var(--font-family-code);
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+}
+
+/* The source switch is a ds-segmented control; this class only parks it at the trailing edge, opposite
+   the title. The track, options and selected fill are the component's. */
+.docs-showcase__tabs {
+  margin-inline-start: auto;
+}
+
+.docs-showcase__stage {
+  border-radius: 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+/* Flex items default to min-size:auto and can refuse to shrink; a wide table then overflows and the
+   card's overflow:hidden crops it (and its caption). Zeroing min-size lets scroll wrappers take over. */
+.docs-showcase__stage > * {
+  max-inline-size: 100%;
+}
+
+.docs-showcase__stage > :not(.ds-select) {
+  min-inline-size: 0;
+}
+
+/* Some components ARE a layout, a sidebar floated in a padded box reads as a column with a rule next
+   to it, which is not what it is. */
+.docs-showcase__stage--flush {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+}
+
+.docs-showcase > .code,
+.docs-showcase__code > .code {
+  margin-block: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.docs-showcase__code[hidden] {
+  display: none;
+}
+
+.example__stage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-inline-md);
+  align-items: center;
+  padding: var(--space-inset-lg);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-surface);
+}
+
+.example__stage[data-layout-demo] {
+  align-items: stretch;
+}
+
+.example__stage[data-layout-demo] > :where(.ds-stack.ds-grid.ds-tile-grid) {
+  inline-size: 100%;
+}
+
+/* A stage the demo fills edge to edge. Some components ARE a layout, a sidebar floated in the
+ * middle of a padded box reads as a column with a rule next to it, which is not what it is. */
+.example__stage--flush {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* The site playing the part of a consuming app: a sidebar is only legible next to the thing it
+ * sits beside. This is layout, so it belongs here and not in the package. */
+.app-shell {
+  display: flex;
+  inline-size: 100%;
+  block-size: 22rem;
+}
+
+.app-shell__main {
+  flex: 1;
+  min-inline-size: 0;
+  padding: var(--space-inset-lg);
+  overflow: auto;
+  background: var(--color-bg-canvas);
+  color: var(--color-text-secondary);
+}
+
+.mono {
+  font-family: var(--font-family-code);
+  font-size: var(--font-size-caption);
+}
+
+/* ── badge ────────────────────────────────────────────────────────────────── */
+.ds-badge {
+  display: inline-block;
+  padding: var(--ds-badge-padding-y) var(--ds-badge-padding-x);
+  border-radius: var(--ds-badge-radius);
+  background: var(--ds-badge-bg);
+  color: var(--ds-badge-fg);
+  font-size: var(--ds-badge-font-size);
+  font-weight: var(--ds-badge-font-weight);
+  line-height: var(--ds-badge-line-height);
+  white-space: nowrap;
+}
+
+/* ── colour swatch, the resolved value, painted ──────────────────────────── */
+.swatch {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  margin-right: var(--space-inline-xs);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--scale-radius-sm);
+}
+
+/* ── filter row ───────────────────────────────────────────────────────────── */
+/* The token filter is two ds-fields (search + tier) and a live count. `align-items: end` lines the
+   controls up along one baseline while their labels sit above, so the two fields read as one row even
+   though each owns its own label. The search grows, the tier holds a comfortable width, the count sits
+   at the trailing edge on the control line. */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-inline-md);
+  margin-block: var(--space-stack-md);
+}
+
+.filters__search {
+  flex: 1 1 16rem;
+}
+
+.filters__tier {
+  flex: 0 1 13rem;
+}
+
+/* The search and tier controls fill their own field column, so the field width drives them rather than
+   an intrinsic content width (a select otherwise shrinks to its longest option). */
+.filters__search .ds-input,
+.filters__tier .ds-select-native {
+  inline-size: 100%;
+}
+
+/* A trailing status, not a field: no label, so it aligns to the control row by matching its height and
+   centring, that keeps it on the same line as the inputs instead of riding up to the labels. */
+.filters__count {
+  margin-inline-start: auto;
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--ds-input-height);
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.count {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.docs-footer {
+  margin-block-start: var(--space-section);
+  padding-block: var(--space-inset-lg);
+  border-top: 1px solid var(--color-border-subtle);
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-body-sm);
+}

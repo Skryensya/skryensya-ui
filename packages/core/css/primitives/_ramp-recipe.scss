@@ -1,0 +1,51 @@
+/* Derives tier-1 ramps from the current seed custom properties. */
+@use "sass:list";
+@use "sass:map";
+
+$_chroma-light: (50: 90, 100: 82, 200: 68, 300: 52, 400: 32, 500: 22);
+$_chroma-dark: (700: 17, 800: 28, 900: 44, 950: 60);
+/* Second value is how much of the neutral SEED is mixed into each grayscale rung, i.e. how strongly
+ * the undertone shows. The seed also carries LIGHTNESS, so pushing this too high pulls every rung
+ * toward mid-grey and eats contrast; the visible-colour lever is mostly the seed's CHROMA (the picker
+ * presets), which tints without moving lightness. These are kept moderate to hold AA. */
+$_neutral: (
+  50: (1.6, 5), 100: (4, 7), 200: (8.6, 9), 300: (14.8, 10), 400: (26, 11),
+  500: (41.2, 12), 600: (53.5, 11), 700: (59.6, 10), 800: (68, 8), 900: (75.8, 7), 950: (83.4, 6)
+);
+$_seed-defaults: (
+  accent: oklch(50.4% 0.169 259.6),
+  neutral: oklch(58.8% 0.018 260),
+  danger: oklch(56% 0.208 27),
+  success: oklch(55.8% 0.14 150),
+  warning: oklch(58.4% 0.132 75)
+);
+
+@mixin _chromatic($role) {
+  $seed: var(--seed-#{$role}, #{map.get($_seed-defaults, $role)});
+  @each $stop, $percent in $_chroma-light {
+    --ramp-#{$role}-#{$stop}: color-mix(in oklab, #{$seed}, white #{$percent}#{"%"});
+  }
+  --ramp-#{$role}-600: #{$seed};
+  @each $stop, $percent in $_chroma-dark {
+    --ramp-#{$role}-#{$stop}: color-mix(in oklab, #{$seed}, black #{$percent}#{"%"});
+  }
+}
+
+@mixin derive {
+  $neutral: var(--seed-neutral, #{map.get($_seed-defaults, neutral)});
+  /* The endpoints are TINTED with the neutral seed, not pure white/black: rung 0 is the light-mode
+   * surface, and a pure-white surface next to seed-tinted canvas/sunken (100/200) reads as off-scale, 
+   * most visibly when the neutral is warm. A 2% mix keeps it "white" while sharing the undertone; 1000
+   * gets the same treatment at the dark end so the whole neutral ramp is one continuous, seeded scale. */
+  --ramp-neutral-0: color-mix(in oklab, white, #{$neutral} 4%);
+  @each $stop, $pair in $_neutral {
+    $black: list.nth($pair, 1);
+    $tint: list.nth($pair, 2);
+    --ramp-neutral-#{$stop}: color-mix(in oklab, color-mix(in oklab, white, black #{$black}#{"%"}), #{$neutral} #{$tint}#{"%"});
+  }
+  --ramp-neutral-1000: color-mix(in oklab, black, #{$neutral} 6%);
+  @include _chromatic(accent);
+  @include _chromatic(danger);
+  @include _chromatic(success);
+  @include _chromatic(warning);
+}

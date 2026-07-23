@@ -1,0 +1,57 @@
+/*
+ * @skryensya/core, Sass core bundle. The one file every Sass-aware consumer imports.
+ *
+ * The runtime contract is still CSS custom properties + cascade layers. Sass is the authoring
+ * surface for token tiers, so consumers compile the source instead of receiving generated token CSS.
+ *
+ * THE TIER BOUNDARY IS A CASCADE LAYER. The @layer order below encodes the three-tier rule natively:
+ * a later layer wins, so `overrides` (high contrast and optional dimensions) beat base `semantic`,
+ * which beats `primitives`, regardless of import or link order. Any unlayered consumer rule still
+ * beats every layer, so an application configures root seeds without specificity fights.
+ *
+ * Layer order (low → high priority):
+ *   primitives  tier 1, ramps + scale
+ *   semantic    tier 2, purpose tokens (light-dark, density)
+ *   components  tier 3, opt-in per-component hooks
+ *   overrides   high contrast and optional dimensions
+ */
+@use "./primitives";
+@use "./semantic";
+@layer primitives, semantic, components, overrides;
+
+
+/* The state layer is the SYSTEM'S interaction mechanism, not an opt-in extra, so it ships in
+ * base, like motion (decision 10), not as a separate import. Interactivity is universal; a
+ * component that expresses hover/press/focus with its own colours would be re-inventing this.
+ * The ::before is inert until an element carries `ds-interactive`, so it costs nothing on
+ * non-interactive elements. (Component-specific patterns, the dialog's top-layer, backdrop,
+ * scroll-lock, stay opt-in below, because only some apps need them.) */
+@import url("./patterns/state-layer.css");
+
+/* The icon pattern ships in base for the same reason: an icon is not an extra a component opts into
+ * the moment anything has a chevron, a close or a status glyph, it needs the identical <svg> box,
+ * and a component that sizes its own icon is re-inventing this. `.ds-icon` costs nothing until an
+ * element carries it, exactly like the state layer's ::before. What IS opt-in is going OUTSIDE the
+ * set (passing your own geometry), not having icons at all. (decision 15) */
+@import url("./patterns/icon.css");
+
+/* `tokens.scss` includes the system's one root ramp set. Configure its identity from your own CSS:
+ *   :root {
+ *     --seed-accent: oklch(52% .19 20);
+ *     --seed-neutral: oklch(58% .01 30);
+ *   }
+ *
+ * Optional signal seeds (`--seed-danger`, `--seed-success`, `--seed-warning`) and individual
+ * `--ramp-*` stops can be overridden the same way. The unlayered consumer rule wins over the
+ * primitive layer, so there is no brand import, selector, or HTML attribute to manage.
+ *
+ * Density scopes ship with semantic tokens: add `data-ds-density-scope` to a container, then set
+ * `--ds-density-factor` for a value relative to the system or `--ds-density` for an absolute value.
+ *
+ * Optional additions:
+ *   @import "@skryensya/core/modes/hc.scss";
+ *   @import "@skryensya/core/dimensions/radius.scss";
+ *   @import "@skryensya/core/components/button.css";
+ *
+ * No toolchain? Link `@skryensya/core/skryensya.css`: tokens plus every component and pattern.
+ */

@@ -1,0 +1,19 @@
+@mixin tokens {
+  /* ── scale: control heights (pre-density) ─────────────────────── */
+  --scale-size-control-sm: 32px;
+  --scale-size-control-md: 40px;
+  --scale-size-control-lg: 48px;
+
+  /* ── scale: icon box. NOT density-scaled, an icon is content that stands next to a glyph,
+   *    and type is density-invariant, so an icon is too. Density brings things closer; it does
+   *    not shrink them. (decision 15) ── */
+  --scale-size-icon-sm: 16px;
+  --scale-size-icon-md: 20px;
+  --scale-size-icon-lg: 24px;
+
+  /* ── scale: fixed accessibility constants (never density-scaled) ─ */
+  --scale-fixed-touch-target: 44px; /* iOS HIG hit area */
+  --scale-fixed-ring-width: 2px;
+  --scale-fixed-ring-offset: 2px;
+  --scale-fixed-target-min: 24px; /* WCAG 2.2 SC 2.5.8 floor */
+}

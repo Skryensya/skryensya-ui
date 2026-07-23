@@ -1,0 +1,56 @@
+/*
+ * TIER 3, ACCORDION
+ *
+ * Coordination lives in the runtime; chrome lives here. Each item is still an expandable Tile, this
+ * file only joins those tiles into one framed stack so a group reads as a single surface, not a pile
+ * of separate cards.
+ */
+@layer components {
+  .ds-accordion {
+    display: grid;
+    gap: 0;
+    /* Fill the parent (or a max-inline-size the consumer sets). Never shrink-wrap to the open item. */
+    inline-size: 100%;
+    min-inline-size: 0;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-surface);
+    background: var(--color-bg-surface);
+    overflow: hidden;
+  }
+
+  /* The root owns the outer frame; items keep Tile anatomy without a second border or radius. */
+  .ds-accordion > .ds-tile--expandable {
+    inline-size: 100%;
+    min-inline-size: 0;
+    border: 0;
+    border-radius: 0;
+    border-block-start: 1px solid var(--color-border-subtle);
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .ds-accordion > .ds-tile--expandable:first-child {
+    border-block-start: 0;
+  }
+
+  /* Open body: equal inset; sunken so it recesses from the trigger in light and dark. Keyed on
+   * `:not([hidden]):not([data-state="closed"])` (not [data-state="open"]) so the inset survives after the
+   * collapsible machine drops data-state at rest, see the OPEN LOOK note in tile.css.
+   * (Raised shares the light fill with surface, elevation is shadow-only there.) */
+  .ds-accordion > .ds-tile--expandable > .ds-tile__expandable-content:not([hidden]):not([data-state="closed"]) {
+    padding-block: var(--ds-tile-padding);
+    background: var(--color-bg-surface-sunken);
+  }
+
+  @media (forced-colors: active) {
+    .ds-accordion {
+      border-color: CanvasText;
+      background: Canvas;
+      forced-color-adjust: none;
+    }
+
+    .ds-accordion > .ds-tile--expandable {
+      border-block-start-color: CanvasText;
+    }
+  }
+}

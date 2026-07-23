@@ -1,0 +1,33 @@
+---
+/*
+ * CopyButton is a self-contained feedback pattern: callers name the source element by id; the
+ * component owns Clipboard API fallback, temporary state and its accessible announcement.
+ */
+import { iconMarkup } from "../icons";
+
+interface Props {
+  target: string;
+}
+
+const { target } = Astro.props;
+const copyIcon = iconMarkup("copy");
+const copiedIcon = iconMarkup("check");
+---
+
+<button
+  class="ds-button ds-interactive ds-copy-button"
+  data-variant="ghost"
+  data-ds-copy-button
+  data-copy-target={target}
+  type="button"
+  aria-label="Copiar código"
+>
+  <span class="ds-copy-button__icon" data-copy-icon="idle" aria-hidden="true"><Fragment set:html={copyIcon} /></span>
+  <span class="ds-copy-button__icon" data-copy-icon="copied" aria-hidden="true"><Fragment set:html={copiedIcon} /></span>
+  <span class="ds-copy-button__label" data-copy-label aria-live="polite">Copiar</span>
+</button>
+
+<script>
+  import { initCopyButtons } from "../scripts/copy-button";
+  initCopyButtons();
+</script>

@@ -1,0 +1,172 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import Used from "../components/Used.astro";
+
+import "../examples/state-layer.css";
+import listSource from "../examples/state-layer.css?raw";
+
+const usage = `
+<!-- Sin imports extra: el state layer viene en tokens.scss.
+     Solo marcas el elemento. -->
+<a class="sl-item ds-interactive" href="#">Bandeja de entrada</a>`;
+
+const ladder = [
+  ["disabled", "--state-layer-disabled-opacity", "fuerza el layer a 0"],
+  ["dragged", "--state-layer-dragged-opacity", ""],
+  ["pressed", "--state-layer-pressed-opacity", ""],
+  ["focus", "--state-layer-focus-opacity", ""],
+  ["hover", "--state-layer-hover-opacity", ""],
+  ["selected", "--state-layer-selected-opacity", "el escalón base"],
+];
+---
+
+<Base
+  title="State layer"
+  description="Una sola capa semitransparente, teñida con currentColor, que expresa hover, focus, pressed, selected y dragged en cualquier componente."
+>
+  <h1>State layer</h1>
+  <p class="lede">
+    Una sola capa semitransparente que señala hover, focus, pressed, selected y dragged, en
+    cualquier componente, variante y marca, sin inventar un color por combinación.
+  </p>
+
+  <h2>Usar</h2>
+  <p>
+    El state layer es el <strong>mecanismo de interacción del sistema</strong>, no un extra opt-in:
+    viene en <code>tokens.scss</code>, siempre presente, como el <a href="/motion">motion</a>. No hay
+    nada que importar aparte. Marcas el elemento con <code>ds-interactive</code> y listo, el
+    <code>::before</code> es inerte hasta que lo lleva, así que no pesa en lo que no es interactivo.
+  </p>
+  <CodeBlock code={usage} label="tu HTML" note="una clase, nada más" />
+
+  <div class="example">
+    <div class="example__stage" style="display:block">
+      <nav class="sl-list">
+        <a class="sl-item ds-interactive" href="#">Bandeja de entrada</a>
+        <a class="sl-item ds-interactive" href="#" aria-selected="true">Enviados</a>
+        <a class="sl-item ds-interactive" href="#">Borradores</a>
+        <a class="sl-item ds-interactive" href="#" aria-disabled="true">Archivados</a>
+      </nav>
+      <p class="count" style="margin-top: var(--space-stack-sm)">
+        Pasa el mouse, tabula, mantén presionado. Cambia marca, modo o contraste arriba: el layer
+        sigue.
+      </p>
+    </div>
+  </div>
+
+  <h2>El tinte es <code>currentColor</code></h2>
+  <p>
+    El color del layer es <Used token="--state-layer-color" />, el color de contenido del propio
+    componente. Un solo token cubre todos los casos:
+  </p>
+  <ul>
+    <li>
+      <strong>Subsume negro-sobre-claro / blanco-sobre-oscuro:</strong> una superficie neutra tiene
+      texto oscuro (claro) o claro (oscuro), así que el layer oscurece o aclara solo, sin una rama por
+      modo.
+    </li>
+    <li>
+      <strong>Y es correcto sobre rellenos saturados</strong>, donde negro/blanco falla: el contenido
+      de un botón primario es <code>on-accent</code> (casi blanco), así que el layer es un velo
+      blanco sobre azul. Un overlay negro ahí se ve turbio.
+    </li>
+    <li><strong>Cero tokens de color por componente.</strong> Uno sirve a todo.</li>
+  </ul>
+
+  <h2>Exactamente un layer activo</h2>
+  <p>
+    Se muestra la opacidad de <strong>un solo</strong> estado. Las opacidades
+    <strong>nunca se suman</strong>. La escalera, de mayor a menor prioridad:
+  </p>
+
+  <div class="ds-table-scroll">
+    <table class="ds-table">
+      <thead>
+        <tr><th>Prioridad</th><th>Estado</th><th>Opacidad usada</th><th></th></tr>
+      </thead>
+      <tbody>
+        {
+          ladder.map(([state, token, note], i) => (
+            <tr>
+              <td class="count">{i + 1}</td>
+              <td class="mono">{state}</td>
+              <td><Used token={token} /></td>
+              <td class="count">{note}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ds-alert" data-tone="info" data-presentation="accent">
+    <div class="ds-alert__content">
+    <p>
+      <strong>La escalera no usa selectores combinados.</strong> Cada regla de estado asigna el
+      <em>mismo</em> <code>--state-layer-opacity</code>, y todos los selectores tienen la misma
+      especificidad (0,2,0), así que cuando varios coinciden, decide el <strong>orden en el
+      archivo</strong>. Las reglas están escritas en prioridad ascendente: la última gana.
+    </p>
+    </div>
+  </div>
+
+  <h2><code>selected</code> es el escalón más bajo, no una base aditiva</h2>
+  <p>
+    Una base persistente debajo de hover significaría dos capas superpuestas, es decir, opacidad
+    sumada, que el modelo prohíbe. Así que selected es el más bajo y hover/pressed lo reemplazan.
+  </p>
+  <p>
+    La selección nunca desaparece porque <strong>siempre lleva un indicador independiente</strong>: un
+    check, un control relleno, un riel, un peso tipográfico. En la lista de arriba, "Enviados" lleva un
+    punto y color de acento, no depende del layer. Si necesitas un selected+hover más fuerte, defines
+    un token de opacidad combinada; nunca una suma en runtime.
+  </p>
+
+  <h2>Accesibilidad, no negociable</h2>
+  <p>El layer <strong>nunca es la única señal</strong>:</p>
+  <ul>
+    <li>
+      El foco lleva un anillo independiente (<Used token="--focus-ring-width" /> de
+      <Used token="--focus-ring-color" />), verificado a ≥3:1 por el validador. Por eso vive en su
+      propia familia <code>--focus-ring-*</code> y no dentro de <code>--state-layer-*</code>: el nombre
+      carga la garantía.
+    </li>
+    <li>La selección lleva un indicador real.</li>
+    <li>
+      <code>disabled</code> atenúa con los tokens del componente y <strong>fuerza el layer a 0</strong>.
+    </li>
+    <li>Se usa <code>:focus-visible</code>, no <code>:focus</code>, así un clic con mouse no deja un layer pegado.</li>
+    <li>El fade respeta <code>prefers-reduced-motion</code>.</li>
+  </ul>
+
+  <h2>Las opacidades son invariantes al modo</h2>
+  <p>
+    Un número no puede vivir dentro de <code>light-dark()</code>, así que hay una sola opacidad para
+    claro y oscuro. No es una limitación: el tinte ya se invierte solo vía
+    <code>currentColor</code>. El alto contraste sí las sube, y también el anillo, a través del
+    override de <code>[data-contrast]</code>, que <em>sí</em> es dirigido por atributo. Pon el contraste
+    en <em>alto</em> arriba y observa cómo cambia la tabla de opacidades.
+  </p>
+
+  <h2>Tu CSS</h2>
+  <p>
+    El patrón envía la estructura del layer y la escalera. Tú escribes el layout y agregas la clase:
+  </p>
+  <CodeBlock code={listSource} label="src/examples/state-layer.css" note="el archivo que pinta la lista de arriba ↞" />
+
+  <p>
+    Cero colores de estado, cero opacidades hardcodeadas. Cualquier componente adopta estados con una
+    clase y reenviando ARIA.
+  </p>
+
+  <div class="ds-alert" data-tone="info" data-presentation="accent">
+    <div class="ds-alert__content">
+    <p>
+      Un consumidor con un selector más específico que <code>.ds-interactive:hover</code> puede romper
+      la escalera. Es una limitación de CSS, la misma que acepta
+      <a href="/styling-hooks">el contrato de styling hooks</a>.
+    </p>
+    </div>
+  </div>
+</Base>

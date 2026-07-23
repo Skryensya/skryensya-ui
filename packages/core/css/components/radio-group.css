@@ -1,0 +1,32 @@
+/* TIER 3, RADIO GROUP (opt-in styling hooks) */
+@layer components {
+  .ds-radio-group {
+    --ds-radio-group-gap: var(--space-stack-xs);
+    --ds-radio-control-size: var(--size-icon-lg);
+    --ds-radio-gap: var(--space-inline-xs);
+    --ds-radio-bg: var(--color-bg-surface-raised);
+    --ds-radio-fg: var(--color-text-primary);
+    --ds-radio-border-color: var(--color-border-default);
+    --ds-radio-border-width: 1px;
+    --ds-radio-selected-bg: var(--color-action-primary);
+    --ds-radio-selected-fg: var(--color-text-on-accent);
+    --ds-radio-selected-border-color: var(--color-action-primary);
+    --ds-radio-disabled-bg: var(--color-action-disabled);
+    --ds-radio-disabled-fg: var(--color-text-disabled);
+    --ds-radio-disabled-border-color: var(--color-border-subtle);
+  }
+
+  /* Selected recolours the control fill and its indicator, never `--ds-radio-fg`, which is the LABEL
+   * text. Tinting the label with `on-accent` turned it dark-on-dark in dark themes. The indicator
+   * reads `--ds-radio-selected-fg` directly (see radio-group skin), so it stays legible on the fill. */
+  .ds-radio:has(.ds-radio__input:checked) {
+    --ds-radio-bg: var(--ds-radio-selected-bg);
+    --ds-radio-border-color: var(--ds-radio-selected-border-color);
+  }
+
+  .ds-radio:has(.ds-radio__input:disabled) {
+    --ds-radio-bg: var(--ds-radio-disabled-bg);
+    --ds-radio-fg: var(--ds-radio-disabled-fg);
+    --ds-radio-border-color: var(--ds-radio-disabled-border-color);
+  }
+}

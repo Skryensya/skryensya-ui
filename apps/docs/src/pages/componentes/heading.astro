@@ -1,0 +1,249 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const displayHtml = `<div class="ds-stack" data-gap="xs">
+  <div class="ds-stack" data-gap="none">
+    <p class="ds-text" data-size="caption" data-tone="tertiary">
+      display-lg · 60
+    </p>
+    <p class="ds-heading" data-size="display-lg">
+      La plataforma está lista
+    </p>
+  </div>
+  <div class="ds-stack" data-gap="none">
+    <p class="ds-text" data-size="caption" data-tone="tertiary">
+      display-md · 48
+    </p>
+    <p class="ds-heading" data-size="display-md">
+      La plataforma está lista
+    </p>
+  </div>
+  <div class="ds-stack" data-gap="none">
+    <p class="ds-text" data-size="caption" data-tone="tertiary">
+      display-sm · 36
+    </p>
+    <p class="ds-heading" data-size="display-sm">
+      La plataforma está lista
+    </p>
+  </div>
+</div>`;
+
+const displayReact = `import { Heading } from "@skryensya/react/heading";
+
+<>
+  <Heading size="display-lg">La plataforma está lista</Heading>
+  <Heading size="display-md">La plataforma está lista</Heading>
+  <Heading size="display-sm">La plataforma está lista</Heading>
+</>;`;
+
+const documentHtml = `<div class="ds-stack" data-gap="xs">
+  <div class="ds-stack" data-gap="none">
+    <p class="ds-text" data-size="caption" data-tone="tertiary">
+      h1 · 30
+    </p>
+    <p class="ds-heading" data-size="h1">La plataforma está lista</p>
+  </div>
+  <div class="ds-stack" data-gap="none">
+    <p class="ds-text" data-size="caption" data-tone="tertiary">
+      h2 · 24
+    </p>
+    <p class="ds-heading" data-size="h2">La plataforma está lista</p>
+  </div>
+  <div class="ds-stack" data-gap="none">
+    <p class="ds-text" data-size="caption" data-tone="tertiary">
+      h3 · 20
+    </p>
+    <p class="ds-heading" data-size="h3">La plataforma está lista</p>
+  </div>
+  <div class="ds-stack" data-gap="none">
+    <p class="ds-text" data-size="caption" data-tone="tertiary">
+      h4 · 18 · piso (también h5 y h6)
+    </p>
+    <p class="ds-heading" data-size="h4">La plataforma está lista</p>
+  </div>
+  <div class="ds-stack" data-gap="none">
+    <p class="ds-text" data-size="caption" data-tone="tertiary">
+      h5 · mismo que h4
+    </p>
+    <p class="ds-heading" data-size="h5">La plataforma está lista</p>
+  </div>
+  <div class="ds-stack" data-gap="none">
+    <p class="ds-text" data-size="caption" data-tone="tertiary">
+      h6 · mismo que h4
+    </p>
+    <p class="ds-heading" data-size="h6">La plataforma está lista</p>
+  </div>
+</div>`;
+
+const documentReact = `import { Heading } from "@skryensya/react/heading";
+
+<>
+  <Heading size="h1">La plataforma está lista</Heading>
+  <Heading size="h2">La plataforma está lista</Heading>
+  <Heading size="h3">La plataforma está lista</Heading>
+  <Heading size="h4">La plataforma está lista</Heading>
+</>;`;
+
+const pageTitleHtml = `<header class="ds-stack" data-gap="sm">
+  <span
+    class="ds-text"
+    data-size="caption"
+    data-tone="tertiary"
+    data-weight="label"
+  >
+    OPERACIONES · MAYO 2026
+  </span>
+  <h1 class="ds-heading" data-size="display-md">
+    La plataforma está lista para el próximo despliegue
+  </h1>
+  <p class="ds-text" data-size="lg" data-tone="secondary">
+    Un título de página comunica el resultado antes de que la
+    persona lea los detalles.
+  </p>
+</header>`;
+
+const pageTitleReact = `import { Heading } from "@skryensya/react/heading";
+import { Text } from "@skryensya/react/text";
+
+<header className="ds-stack" data-gap="sm">
+  <Text as="span" size="caption" tone="tertiary" weight="label">
+    OPERACIONES · MAYO 2026
+  </Text>
+  <Heading as="h1" size="display-md">
+    La plataforma está lista para el próximo despliegue
+  </Heading>
+  <Text size="lg" tone="secondary">
+    Un título de página comunica el resultado antes de que la
+    persona lea los detalles.
+  </Text>
+</header>;`;
+
+const outlineHtml = `<section class="ds-stack" data-gap="lg">
+  <h2 class="ds-heading" data-size="h2">Estado del despliegue</h2>
+  <section class="ds-stack" data-gap="sm">
+    <h3 class="ds-heading" data-size="h3">Regiones listas</h3>
+    <p class="ds-text" data-size="sm" data-tone="secondary">
+      Frankfurt y São Paulo ya reciben tráfico.
+    </p>
+  </section>
+  <section class="ds-stack" data-gap="sm">
+    <h3 class="ds-heading" data-size="h3">Siguiente verificación</h3>
+    <p class="ds-text" data-size="sm" data-tone="secondary">
+      Revisa la latencia después del cambio de tráfico.
+    </p>
+  </section>
+</section>`;
+
+const outlineReact = `import { Heading } from "@skryensya/react/heading";
+import { Text } from "@skryensya/react/text";
+
+<section className="ds-stack" data-gap="lg">
+  <Heading as="h2" size="h2">Estado del despliegue</Heading>
+  <section className="ds-stack" data-gap="sm">
+    <Heading as="h3" size="h3">Regiones listas</Heading>
+    <Text size="sm" tone="secondary">
+      Frankfurt y São Paulo ya reciben tráfico.
+    </Text>
+  </section>
+  <section className="ds-stack" data-gap="sm">
+    <Heading as="h3" size="h3">Siguiente verificación</Heading>
+    <Text size="sm" tone="secondary">
+      Revisa la latencia después del cambio de tráfico.
+    </Text>
+  </section>
+</section>;`;
+
+const compactHtml = `<section class="ds-stack" data-gap="xs">
+  <h2 class="ds-heading" data-size="h4">Uso del almacenamiento</h2>
+  <p class="ds-text" data-size="sm" data-tone="secondary">
+    El nivel semántico sigue siendo h2 aunque el panel necesita
+    el piso visual (h4).
+  </p>
+</section>`;
+
+const compactReact = `import { Heading } from "@skryensya/react/heading";
+import { Text } from "@skryensya/react/text";
+
+<section className="ds-stack" data-gap="xs">
+  <Heading as="h2" size="h4">Uso del almacenamiento</Heading>
+  <Text size="sm" tone="secondary">
+    El nivel semántico sigue siendo h2 aunque el panel necesita
+    el piso visual (h4).
+  </Text>
+</section>;`;
+
+const flushHtml = `<header class="ds-dialog__header" style="max-inline-size: 24rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md)">
+  <h3 class="ds-heading ds-dialog__title" data-size="h3" data-flush>
+    ¿Borrar este proyecto?
+  </h3>
+</header>`;
+
+const flushReact = `import { Heading } from "@skryensya/react/heading";
+
+<header className="ds-dialog__header">
+  <Heading as="h3" size="h3" flush className="ds-dialog__title">
+    ¿Borrar este proyecto?
+  </Heading>
+</header>;`;
+---
+
+<Base title="Heading" description="Heading: jerarquía semántica y tamaño visual independientes.">
+  <h1>Heading</h1>
+  <p class="lede">
+    Heading separa la jerarquía del documento de su apariencia. Elige <code>as</code> según el nivel
+    semántico y <code>size</code> según el tamaño que necesita el contexto visual.
+  </p>
+
+  <h2>Tamaños</h2>
+  <p>
+    Tres displays encima de la escala de documento. En el documento, <code>h1</code>–<code>h4</code> bajan
+    de tamaño; <code>h5</code> y <code>h6</code> comparten el piso de <code>h4</code> (18px).
+  </p>
+
+  <h3>Display</h3>
+  <Showcase html={displayHtml} react={displayReact} label="Escala display" />
+
+  <h3>Documento</h3>
+  <Showcase html={documentHtml} react={documentReact} label="Escala h1–h6" />
+
+  <h2>Título de página</h2>
+  <p>El único <code>h1</code> presenta la página; un display aporta presencia sin inventar otra semántica.</p>
+  <Showcase html={pageTitleHtml} react={pageTitleReact} label="Título de página" />
+
+  <h2>Jerarquía de secciones</h2>
+  <p>La estructura avanza de <code>h2</code> a <code>h3</code>; el tamaño visual puede acompañar el nivel.</p>
+  <Showcase html={outlineHtml} react={outlineReact} label="Jerarquía de contenido" />
+
+  <h2>Jerarquía compacta</h2>
+  <p>Un heading conserva su lugar en el documento aunque el contexto visual use el piso <code>h4</code>.</p>
+  <Showcase html={compactHtml} react={compactReact} label="Heading compacto" />
+
+  <h2>Flush</h2>
+  <p>
+    <code>data-flush</code> (React: <code>flush</code>) quita el aire de block-start. Es opt-in
+    explícito: úsalo cuando el heading es lo primero del contenedor (título de dialog con
+    <code>ds-dialog__title</code>, cabecera de card) y no quieres que el margen o el padding de
+    arriba lo empujen. No se infiere de <code>:first-child</code>.
+  </p>
+  <Showcase html={flushHtml} react={flushReact} label="Heading flush" />
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li><code>data-size</code> acepta <code>display-lg</code>, <code>display-md</code>, <code>display-sm</code>, <code>h1</code>, <code>h2</code>, <code>h3</code>, <code>h4</code>, <code>h5</code> y <code>h6</code>. <code>h5</code>/<code>h6</code> pintan igual que <code>h4</code>.</li>
+    <li>Aliases legados: <code>sm</code>→<code>h3</code>, <code>md</code>→<code>h2</code>, <code>lg</code>→<code>h1</code>, <code>display</code>→<code>display-sm</code>.</li>
+    <li>En HTML, usa <code>h1</code>–<code>h6</code> para la jerarquía del documento; <code>data-size</code> no la modifica.</li>
+    <li>En React, <code>as</code> acepta <code>h1</code>–<code>h6</code> (default <code>h2</code>); <code>size</code> por defecto es <code>h2</code>.</li>
+    <li><code>data-flush</code> / React <code>flush</code>: sin margen ni padding de block-start. Explícito; no automático.</li>
+    <li>No requiere inicialización vanilla.</li>
+  </ul>
+</Base>

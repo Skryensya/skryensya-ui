@@ -1,0 +1,23 @@
+@mixin density-tokens {
+    /* Control sizes floor at WCAG's target inside the token, regardless of local density. */
+    --size-control-sm: max(round(calc(var(--scale-size-control-sm) * var(--ds-density)), 2px), var(--scale-fixed-target-min));
+    --size-control-md: max(round(calc(var(--scale-size-control-md) * var(--ds-density)), 2px), var(--scale-fixed-target-min));
+    --size-control-lg: max(round(calc(var(--scale-size-control-lg) * var(--ds-density)), 2px), var(--scale-fixed-target-min));
+}
+
+@mixin tokens {
+    @include density-tokens;
+    /* Icons pass the scale through: density brings content closer; it never shrinks the glyph. */
+    --size-icon-sm: var(--scale-size-icon-sm);
+    --size-icon-md: var(--scale-size-icon-md);
+    --size-icon-lg: var(--scale-size-icon-lg);
+
+    --size-touch-target: var(--scale-fixed-touch-target);
+    --size-focus-ring: var(--scale-fixed-ring-width);
+    --size-focus-offset: var(--scale-fixed-ring-offset);
+
+    /* Page wrappers stay stable ceilings; density is component/layout spacing, not page geometry. */
+    --size-wrapper-prose: 42rem;
+    --size-wrapper-content: 64rem;
+    --size-wrapper-shell: 90rem;
+}

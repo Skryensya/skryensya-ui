@@ -1,0 +1,52 @@
+@mixin tokens {
+  /* ── REDUCED MOTION as a FUNCTIONAL VARIANT, not a blanket kill ─────────────
+   * Classified by role rather than zeroing everything:
+   *   Essential  (state-change, expand/collapse), keep the change, drop the travel:
+   *              short duration, distance 0. The user still perceives what changed.
+   *   Helpful    (enter/exit/reveal/dismiss/navigate), replace spatial movement with a
+   *              quick fade: distance 0, keep a short duration on opacity only.
+   *   Decorative (emphasize), remove entirely (duration 0).
+   *   Continuous (loading), components must swap to a non-spatial variant (opacity pulse
+   *              or a determinate/static indicator); the slower duration here is the fallback
+   *              if a spinner is kept. See the loading component note in the proposal.
+   * Because these are the SAME tokens components already consume, no component code changes. */
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      /* Helpful: spatial → fade (distance 0, keep a brief fade) */
+      --motion-enter-distance: var(--motion-reduced-distance);
+      --motion-exit-distance: var(--motion-reduced-distance);
+      --motion-reveal-distance: var(--motion-reduced-distance);
+      --motion-dismiss-distance: var(--motion-reduced-distance);
+      --motion-navigate-distance: var(--motion-reduced-distance);
+      --motion-enter-duration: var(--motion-reduced-duration);
+      --motion-exit-duration: var(--motion-reduced-duration);
+      --motion-navigate-duration: var(--motion-reduced-duration);
+      --motion-enter-easing: var(--motion-reduced-easing);
+      --motion-exit-easing: var(--motion-reduced-easing);
+
+      /* Essential: keep a short, legible change */
+      --motion-state-change-duration: var(--motion-reduced-duration);
+      --motion-expand-duration: var(--motion-reduced-duration);
+      --motion-collapse-duration: var(--motion-reduced-duration);
+      --motion-feedback-duration: var(--scale-duration-instant);
+
+      /* Reorder: jump straight to the new position, no travel */
+      --motion-reorder-duration: var(--scale-duration-instant);
+
+      /* Release: ESSENTIAL, and the one intent that cannot drop its travel. The panel is where the
+       * finger left it, so there is no "no travel" version, it has to get somewhere, and cutting to
+       * the destination would tear the thing out of the hand that is still on it. What it drops is the
+       * LUXURY: the long, soft glide is what a reduced-motion setting is asking not to sit through, so
+       * it lands in a short, plain move instead. Dragging itself stays untouched, the user is doing
+       * that, not us. */
+      --motion-release-duration: var(--motion-reduced-duration);
+      --motion-release-easing: var(--motion-reduced-easing);
+
+      /* Decorative: off */
+      --motion-emphasize-duration: var(--scale-duration-instant);
+
+      /* Continuous: gentler if a component keeps it; prefer a static swap in the component */
+      --motion-loading-duration: var(--scale-duration-slow);
+    }
+  }
+}

@@ -1,0 +1,36 @@
+/*
+ * TIER 3, TOAST
+ *
+ * A transient floating stack. Each item is an Alert (same markup, same tone recipe); this file only
+ * owns the region that lifts alerts out of document flow and the elevation that marks them as
+ * floating chrome. Live-region and dismiss behaviour live in the toast runtime, not here.
+ */
+@layer components {
+  /* THE REGION lifts its alerts out of document flow and pins them to a screen corner. `position: fixed`
+   * anchors them to the viewport (not the scrolling page); `z-toast` floats them above ordinary content;
+   * the two `inset-*` values park the stack at the bottom-inline-end with an inset margin, and the width
+   * clamps to a readable 24rem but never wider than the viewport minus that margin on each side. A grid
+   * with `stack-sm` gap stacks multiple toasts with even spacing. */
+  .ds-toast-region {
+    position: fixed;
+    z-index: var(--z-toast);
+    display: grid;
+    gap: var(--space-stack-sm);
+    inset-block-end: var(--space-inset-lg);
+    inset-inline-end: var(--space-inset-lg);
+    inline-size: min(24rem, calc(100vw - (var(--space-inset-lg) * 2)));
+  }
+
+  /* EVERY toast gets the raised shadow so a banner alert reads as overlay chrome floating over the page,
+   * not page furniture sitting in the flow. The status tones keep their own subtle fills underneath it. */
+  .ds-toast-region > .ds-alert {
+    box-shadow: var(--elevation-raised);
+  }
+
+  /* THE NEUTRAL toast has no tone fill to lift it, so on its own it would read as a flat panel. Swap its
+   * surface for the RAISED surface token: paired with the shadow above, the plain toast now reads as
+   * elevated chrome too, matching the toned ones without borrowing a status colour it does not mean. */
+  .ds-toast-region > .ds-alert[data-tone="neutral"] {
+    --ds-alert-bg: var(--color-bg-surface-raised);
+  }
+}

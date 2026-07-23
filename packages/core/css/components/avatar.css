@@ -1,0 +1,39 @@
+/*
+ * TIER 3, AVATAR + AVATAR GROUP
+ *
+ * A circular token sized on the control scale. The image covers the circle; when it is absent the
+ * fallback (initials or a glyph) centres on a sunken surface. A group overlaps its children and
+ * rings each in the surface colour so the stack reads as separate discs on any background.
+ */
+@layer components {
+  .ds-avatar {
+    --ds-avatar-size: var(--size-control-md);
+
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--ds-avatar-size);
+    block-size: var(--ds-avatar-size);
+    flex: none;
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-surface-sunken);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+    line-height: 1;
+    text-transform: uppercase;
+    user-select: none;
+  }
+  .ds-avatar[data-size="sm"] { --ds-avatar-size: var(--size-control-sm); font-size: var(--font-size-caption); }
+  .ds-avatar[data-size="lg"] { --ds-avatar-size: var(--size-control-lg); font-size: var(--font-size-body); }
+
+  .ds-avatar__image { inline-size: 100%; block-size: 100%; object-fit: cover; }
+  .ds-avatar__fallback { display: inline-flex; }
+
+  .ds-avatar-group { display: inline-flex; align-items: center; }
+  .ds-avatar-group > .ds-avatar,
+  .ds-avatar-group > .ds-avatar-group__overflow { box-shadow: 0 0 0 2px var(--color-bg-surface); }
+  .ds-avatar-group > * + * { margin-inline-start: calc(var(--size-control-md) / -3); }
+  .ds-avatar-group__overflow { position: relative; display: inline-grid; place-items: center; inline-size: var(--size-control-md); block-size: var(--size-control-md); flex: none; border-radius: var(--radius-pill); background: var(--color-bg-surface-sunken); color: var(--color-text-secondary); font-size: var(--font-size-caption); font-weight: var(--font-weight-label); }
+}

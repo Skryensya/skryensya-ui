@@ -1,0 +1,400 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+
+const disclosureIcon = `<span
+        class="ds-tile__chevron"
+        data-part="chevron"
+        aria-hidden="true"
+      >
+        <span data-state="closed">
+          <span data-ds-icon="chevron-down"></span>
+        </span>
+        <span data-state="open">
+          <span data-ds-icon="chevron-up"></span>
+        </span>
+      </span>`;
+
+const single = `<div
+  class="ds-accordion"
+  data-ds-accordion
+  data-type="single"
+  data-default-value="environment"
+>
+  <section
+    class="ds-tile ds-tile--expandable ds-interactive"
+    data-part="item"
+    data-value="environment"
+  >
+    <button
+      type="button"
+      class="ds-tile__trigger"
+      data-part="trigger"
+      aria-expanded="true"
+      aria-controls="environment-content"
+    >
+      <span class="ds-tile__content">
+        <span class="ds-tile__title">Entorno</span>
+        <span class="ds-tile__description">
+          Producción · Fráncfort
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="environment-content"
+      class="ds-tile__expandable-content"
+      data-part="content"
+    >
+      <div class="ds-stack" data-gap="sm">
+        <p class="ds-tile__description">
+          Node 22 corre en tres réplicas detrás del balanceador de
+          Fráncfort. El tráfico se reparte por round-robin y una
+          réplica se recicla sola si falla dos health checks
+          seguidos.
+        </p>
+        <p class="ds-tile__description">
+          Los secretos se inyectan en el arranque desde el vault
+          regional, así que ningún valor sensible queda en la
+          imagen ni en el log de build.
+        </p>
+      </div>
+    </div>
+  </section>
+</div>`;
+
+const exclusive = `<div
+  class="ds-accordion"
+  data-ds-accordion
+  data-type="single"
+  data-default-value="runtime"
+>
+  <section
+    class="ds-tile ds-tile--expandable ds-interactive"
+    data-part="item"
+    data-value="runtime"
+  >
+    <button
+      type="button"
+      class="ds-tile__trigger"
+      data-part="trigger"
+      aria-expanded="true"
+      aria-controls="runtime-content"
+    >
+      <span class="ds-tile__content">
+        <span class="ds-tile__title">Runtime</span>
+        <span class="ds-tile__description">
+          Versión y región
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="runtime-content"
+      class="ds-tile__expandable-content"
+      data-part="content"
+    >
+      <div class="ds-stack" data-gap="sm">
+        <p class="ds-tile__description">
+          Node 22 sobre el pool compartido de Fráncfort. Cada
+          despliegue reserva dos vCPU y 512 MB, con autoscaling
+          hasta seis réplicas cuando la cola de peticiones
+          supera el umbral.
+        </p>
+        <p class="ds-tile__description">
+          El healthcheck pega a <code>/status</code> cada diez
+          segundos; tres fallos seguidos sacan la réplica del
+          balanceador sin cortar el tráfico en vuelo.
+        </p>
+      </div>
+    </div>
+  </section>
+  <section
+    class="ds-tile ds-tile--expandable ds-interactive"
+    data-part="item"
+    data-value="rollout"
+  >
+    <button
+      type="button"
+      class="ds-tile__trigger"
+      data-part="trigger"
+      aria-expanded="false"
+      aria-controls="rollout-content"
+    >
+      <span class="ds-tile__content">
+        <span class="ds-tile__title">Rollout</span>
+        <span class="ds-tile__description">
+          Canary por porcentaje
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="rollout-content"
+      class="ds-tile__expandable-content"
+      data-part="content"
+      hidden
+    >
+      <div class="ds-stack" data-gap="sm">
+        <p class="ds-tile__description">
+          El canary sube en tres tramos, 10%, 50% y 100%, y
+          espera a que las métricas de error y latencia se
+          mantengan estables antes de avanzar a cada tramo.
+        </p>
+        <p class="ds-tile__description">
+          Si un tramo degrada, el rollout se detiene solo y
+          avisa al canal de guardia: nada avanza sin luz verde.
+        </p>
+      </div>
+    </div>
+  </section>
+  <section
+    class="ds-tile ds-tile--expandable ds-interactive"
+    data-part="item"
+    data-value="rollback"
+  >
+    <button
+      type="button"
+      class="ds-tile__trigger"
+      data-part="trigger"
+      aria-expanded="false"
+      aria-controls="rollback-content"
+    >
+      <span class="ds-tile__content">
+        <span class="ds-tile__title">Rollback</span>
+        <span class="ds-tile__description">
+          Versión estable anterior
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="rollback-content"
+      class="ds-tile__expandable-content"
+      data-part="content"
+      hidden
+    >
+      <p class="ds-tile__description">
+        Restaura v2.18.4 si el canary falla las comprobaciones.
+      </p>
+    </div>
+  </section>
+</div>`;
+
+/* Same group as exclusive, but multiple can keep several items open
+   and needs unique content ids so both demos can live on one page. */
+const multiple = `<div
+  class="ds-accordion"
+  data-ds-accordion
+  data-type="multiple"
+  data-default-value="runtime,rollout"
+>
+  <section
+    class="ds-tile ds-tile--expandable ds-interactive"
+    data-part="item"
+    data-value="runtime"
+  >
+    <button
+      type="button"
+      class="ds-tile__trigger"
+      data-part="trigger"
+      aria-expanded="true"
+      aria-controls="multiple-runtime-content"
+    >
+      <span class="ds-tile__content">
+        <span class="ds-tile__title">Runtime</span>
+        <span class="ds-tile__description">
+          Versión y región
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="multiple-runtime-content"
+      class="ds-tile__expandable-content"
+      data-part="content"
+    >
+      <div class="ds-stack" data-gap="sm">
+        <p class="ds-tile__description">
+          Node 22 sobre el pool compartido de Fráncfort. Cada
+          despliegue reserva dos vCPU y 512 MB, con autoscaling
+          hasta seis réplicas cuando la cola de peticiones
+          supera el umbral.
+        </p>
+        <p class="ds-tile__description">
+          El healthcheck pega a <code>/status</code> cada diez
+          segundos; tres fallos seguidos sacan la réplica del
+          balanceador sin cortar el tráfico en vuelo.
+        </p>
+      </div>
+    </div>
+  </section>
+  <section
+    class="ds-tile ds-tile--expandable ds-interactive"
+    data-part="item"
+    data-value="rollout"
+  >
+    <button
+      type="button"
+      class="ds-tile__trigger"
+      data-part="trigger"
+      aria-expanded="true"
+      aria-controls="multiple-rollout-content"
+    >
+      <span class="ds-tile__content">
+        <span class="ds-tile__title">Rollout</span>
+        <span class="ds-tile__description">
+          Canary por porcentaje
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="multiple-rollout-content"
+      class="ds-tile__expandable-content"
+      data-part="content"
+    >
+      <div class="ds-stack" data-gap="sm">
+        <p class="ds-tile__description">
+          El canary sube en tres tramos, 10%, 50% y 100%, y
+          espera a que las métricas de error y latencia se
+          mantengan estables antes de avanzar a cada tramo.
+        </p>
+        <p class="ds-tile__description">
+          Si un tramo degrada, el rollout se detiene solo y
+          avisa al canal de guardia: nada avanza sin luz verde.
+        </p>
+      </div>
+    </div>
+  </section>
+  <section
+    class="ds-tile ds-tile--expandable ds-interactive"
+    data-part="item"
+    data-value="rollback"
+  >
+    <button
+      type="button"
+      class="ds-tile__trigger"
+      data-part="trigger"
+      aria-expanded="false"
+      aria-controls="multiple-rollback-content"
+    >
+      <span class="ds-tile__content">
+        <span class="ds-tile__title">Rollback</span>
+        <span class="ds-tile__description">
+          Versión estable anterior
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="multiple-rollback-content"
+      class="ds-tile__expandable-content"
+      data-part="content"
+      hidden
+    >
+      <p class="ds-tile__description">
+        Restaura v2.18.4 si el canary falla las comprobaciones.
+      </p>
+    </div>
+  </section>
+</div>`;
+
+const vanilla = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// Los chevrons se autoran como placeholders <span data-ds-icon="chevron-*">;
+// mountIcons los reemplaza por el <svg> del set enlazado (no lo hace
+// initComponents: el set siempre es explícito).
+mountIcons(document, lucideIcons);
+
+// El accordion se autora en el HTML: la raíz con data-ds-accordion y data-type,
+// cada item con data-part="item" y un data-value único. initComponents hidrata
+// todo el markup [data-ds-*] con su máquina de Zag (la misma que usa React).
+initComponents();
+
+// El estado se escucha por evento sobre la raíz, no por callback.
+const root = document.querySelector("[data-ds-accordion]");
+root.addEventListener("ds:accordionvaluechange", (event) => {
+  console.log(event.detail.value);
+});`;
+
+const react = `import { Accordion } from "@skryensya/react/accordion";
+
+<Accordion type="multiple" defaultValue={["runtime", "rollout"]}>
+  <Accordion.Item value="runtime">
+    <Accordion.Trigger>
+      <span className="ds-tile__content">
+        <span className="ds-tile__title">Runtime</span>
+        <span className="ds-tile__description">Versión y región</span>
+      </span>
+    </Accordion.Trigger>
+    <Accordion.Content>
+      <div className="ds-stack" data-gap="sm">
+        <p className="ds-tile__description">
+          Node 22 sobre el pool compartido de Fráncfort. Cada
+          despliegue reserva dos vCPU y 512 MB, con autoscaling
+          hasta seis réplicas.
+        </p>
+        <p className="ds-tile__description">
+          El healthcheck pega a <code>/status</code> cada diez
+          segundos; tres fallos seguidos sacan la réplica del
+          balanceador.
+        </p>
+      </div>
+    </Accordion.Content>
+  </Accordion.Item>
+</Accordion>`;
+---
+<Base title="Accordion" description="Una o varias divulgaciones Tile coordinadas en un solo marco.">
+  <h1>Accordion</h1>
+  <p class="lede">
+    La raíz coordina Tiles de divulgación y les da un marco compartido. Cada item sigue siendo un
+    <code>ds-tile--expandable</code>: una sola interacción en el trigger. Elige <code>single</code> para
+    una sección abierta o <code>multiple</code> para disclosures independientes.
+  </p>
+
+  <p>
+    Si el estado puede vivir en HTML y basta un grupo exclusivo nativo, usa
+    <a href="/componentes/details">Details nativo</a>. Accordion es la ruta principal cuando necesitas
+    coordinación controlada, <code>multiple</code> o eventos de cambio.
+  </p>
+
+  <h2>Un item</h2>
+  <p>
+    Para una divulgación aislada, usa Accordion con un único item: la raíz aporta el marco y el Tile
+    conserva la superficie y el state layer.
+  </p>
+  <Showcase html={single} label="Accordion de un item" />
+
+  <h2>Grupo exclusivo</h2>
+  <p>
+    <code>data-type="single"</code> en HTML, <code>type="single"</code> en React, mantiene como máximo un
+    item abierto. Con <code>data-collapsible="false"</code> o <code>collapsible={false}</code>, el item
+    abierto no puede cerrarse.
+  </p>
+  <Showcase html={exclusive} label="Accordion single" />
+
+  <h2>Grupo múltiple</h2>
+  <p><code>type="multiple"</code> conserva cada disclosure de forma independiente.</p>
+  <Showcase html={multiple} react={react} label="Accordion multiple" />
+
+  <h2>Vanilla</h2>
+  <p>
+    El enhancer monta la raíz <code>data-ds-accordion</code> y añade <code>ds-accordion</code>. Cada hijo
+    directo declara <code>data-part="item"</code> y un <code>data-value</code> único.
+  </p>
+  <CodeBlock code={vanilla} label="tu JavaScript" />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>La raíz se autora con <code>data-ds-accordion</code> (y opcionalmente <code>class="ds-accordion"</code> en HTML estático). El enhancer escribe <code>data-part="root"</code> y la clase <code>ds-accordion</code>.</li>
+    <li><code>ds-accordion</code> une los items en un solo marco; cada item directo <code>ds-tile ds-tile--expandable</code> conserva anatomía y state layer sin borde propio.</li>
+    <li>Un item directo usa <code>ds-tile ds-tile--expandable</code>, <code>data-part="item"</code> y un <code>data-value</code> único.</li>
+    <li>Trigger y content conservan los parts nativos de Tile: <code>trigger</code> y <code>content</code>.</li>
+    <li>Abrir un item no pinta el borde de selección: eso queda para checkbox y radio.</li>
+    <li>En <code>single</code>, <code>data-collapsible="false"</code> o <code>collapsible={false}</code> deja el item elegido abierto. En <code>multiple</code> esa opción no aplica.</li>
+  </ul>
+</Base>

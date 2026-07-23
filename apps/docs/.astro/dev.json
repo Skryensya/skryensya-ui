@@ -1,0 +1,13 @@
+{
+	"pid": 25866,
+	"port": 4174,
+	"url": "http://localhost:4174",
+	"urls": {
+		"local": [
+			"http://localhost:4174/"
+		],
+		"network": []
+	},
+	"background": false,
+	"startedAt": "2026-07-23T13:50:54.711Z"
+}

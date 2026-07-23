@@ -1,0 +1,210 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+
+const import_ = `/* un drawer ES un Vaul */
+@import "@skryensya/core/patterns/vaul.css";
+@import "@skryensya/core/components/drawer.css";
+@import "@skryensya/core/patterns/scroll-lock.css";`;
+
+const html = `<button
+  class="ds-button ds-interactive"
+  data-ds-button
+  data-ds-vaul-open="demo-drawer"
+>
+  Abrir drawer
+</button>
+
+<dialog
+  class="ds-vaul ds-drawer demo-drawer"
+  id="demo-drawer"
+  data-ds-vaul
+  data-edge="inline-start"
+  aria-label="Drawer de ejemplo"
+>
+  <div
+    class="ds-vaul__handle"
+    data-part="handle"
+    aria-hidden="true"
+  ></div>
+  <div class="demo-drawer__body">
+    <p>Un Vaul en el borde inline, a lo alto de la pantalla.</p>
+    <button
+      class="ds-button ds-interactive"
+      data-ds-button
+      data-variant="ghost"
+      data-ds-vaul-close
+    >
+      Cerrar
+    </button>
+  </div>
+</dialog>`;
+
+const composition = `/* El drawer no declara panel, borde, slide ni
+   backdrop: los re-declara desde sus hooks. */
+.ds-drawer {
+  --ds-vaul-size: var(--ds-drawer-inline-size);
+  --ds-vaul-bg: var(--ds-drawer-bg);
+  /* toca tres bordes del viewport: un radio ahí se lee como
+     un error */
+  --ds-vaul-radius: 0;
+}`;
+
+const tuning = `.mi-drawer {
+  --ds-drawer-inline-size: 24rem;
+  --ds-drawer-bg: var(--color-bg-surface-raised);
+}`;
+
+const nativeHtml = `<button
+  class="ds-button ds-interactive"
+  data-native-drawer-open="native-drawer"
+  type="button"
+>
+  Abrir drawer nativo
+</button>
+
+<dialog
+  class="ds-vaul ds-drawer demo-drawer"
+  id="native-drawer"
+  data-edge="inline-start"
+  aria-label="Drawer nativo de ejemplo"
+>
+  <div class="demo-drawer__body">
+    <strong>Panel nativo</strong>
+    <p>La plataforma posee modalidad, foco, Escape y restauración.</p>
+    <form method="dialog">
+      <button
+        class="ds-button ds-interactive"
+        data-variant="ghost"
+        type="submit"
+      >
+        Cerrar
+      </button>
+    </form>
+  </div>
+</dialog>`;
+
+const nativeJs = `const trigger = document.querySelector(
+  '[data-native-drawer-open="native-drawer"]',
+);
+const drawer = document.getElementById("native-drawer");
+
+trigger?.addEventListener("click", () => {
+  if (drawer instanceof HTMLDialogElement) drawer.showModal();
+});`;
+---
+
+<Base title="Drawer" description="Un Vaul en el borde inline, a lo alto de la pantalla. Envía hooks y nada de estructura.">
+  <h1>Drawer</h1>
+  <p class="lede">
+    Un drawer <strong>es</strong> un <a href="/vaul">Vaul</a> en el borde inline, corriendo a lo alto
+    de la pantalla. Esa frase es el componente entero: el borde, el slide, el backdrop, el drag y el top
+    layer son del pattern, y este archivo sólo dice <em>qué Vaul es un drawer</em> y cómo se ve.
+  </p>
+
+  <h2>Demo</h2>
+  <Showcase html={html} label="tu HTML" />
+
+  <h2>Envía hooks y nada de estructura</h2>
+  <p>
+    Por la regla del sistema: cada línea de
+    estructura que un drawer podría tener es estructura que una hoja inferior necesita idéntica, y esa
+    estructura compartida <strong>es</strong> el pattern. Un drawer que reimplementara el panel sería un
+    segundo Vaul con otro nombre.
+  </p>
+  <CodeBlock code={composition} label="components/drawer.css" lang="css" />
+  <p>
+    Los hooks del drawer <strong>son</strong> los del Vaul, re-declarados. Un consumidor afina
+    <code>--ds-drawer-*</code> y no se entera nunca de que hay un Vaul abajo: el pattern queda como
+    detalle de implementación en vez de una segunda superficie pública que mantener sincronizada.
+  </p>
+  <CodeBlock code={tuning} label="tu CSS" lang="css" />
+
+  <h2>Cuándo es un drawer y cuándo no</h2>
+  <table class="ds-table">
+    <thead><tr><th>Necesitas</th><th>Usa</th></tr></thead>
+    <tbody>
+      <tr><td>Navegación o filtros al costado, a lo alto</td><td><code>ds-drawer</code></td></tr>
+      <tr><td>Una hoja que sube desde abajo en móvil</td><td><a href="/componentes/dialog">Dialog</a> (opción Vaul)</td></tr>
+      <tr><td>Una caja centrada</td><td><a href="/componentes/dialog">Dialog</a></td></tr>
+      <tr><td>Un riel permanente que no tapa la página</td><td><a href="/componentes/sidebar">Sidebar</a></td></tr>
+    </tbody>
+  </table>
+  <p>
+    El sidebar y el drawer no compiten: un <a href="/componentes/sidebar">sidebar</a> es un shell que
+    vive en el layout, y un drawer es modal y tapa la página. Este sitio usa los dos, el riel arriba de
+    52rem, el drawer abajo, con <strong>una sola</strong> nav-list adentro de los dos.
+  </p>
+
+  <h2>Markup contract</h2>
+  <p>
+    El root lleva <code>ds-vaul ds-drawer</code> sobre un <code>&lt;dialog&gt;</code> nativo, Vaul
+    lo exige, más su <code>data-edge</code>. El handle es opcional: sin él no hay drag, y el drawer
+    sigue completo.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={import_} label="tu CSS" />
+
+  <StylingHooks
+    groups={[
+      { file: "components/drawer.css", probe: "ds-drawer", title: "Drawer" },
+      { file: "patterns/vaul.css", probe: "ds-vaul", title: "Heredados de Vaul" },
+    ]}
+  />
+
+  <h2>Drawer nativo</h2>
+  <p class="lede">
+    La misma superficie puede quedarse en la plataforma. Conserva
+    <code>&lt;dialog class="ds-vaul ds-drawer"&gt;</code>, omite
+    <code>data-ds-vaul</code> y ábrelo con <code>showModal()</code>: no carga enhancer, drag ni
+    light-dismiss.
+  </p>
+  <p>
+    <code>&lt;form method="dialog"&gt;</code> cierra sin un listener propio; Escape, foco, página
+    inerte, backdrop y restauración pertenecen al navegador. Los estilos y la transición siguen
+    siendo los mismos porque viven en Core, no en el enhancer.
+  </p>
+  <Showcase html={nativeHtml} label="Drawer nativo" />
+
+  <h3>Abrir</h3>
+  <CodeBlock code={nativeJs} label="tu JavaScript" />
+
+  <h3>Contrato nativo</h3>
+  <ul>
+    <li>La raíz sigue siendo un <code>&lt;dialog&gt;</code> abierto con <code>showModal()</code>.</li>
+    <li>Sin <code>data-ds-vaul</code>, el auto-loader no monta nada.</li>
+    <li>Sin handle no se anuncia una interacción de drag que no existe.</li>
+    <li>El enhancer sólo hace falta para drag-to-dismiss y light-dismiss.</li>
+  </ul>
+</Base>
+
+<style>
+  .demo-drawer[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .demo-drawer__body {
+    display: grid;
+    gap: var(--space-stack-md);
+    justify-items: start;
+    padding: var(--space-inset-lg);
+  }
+
+  .demo-drawer__body p {
+    margin: 0;
+  }
+</style>
+
+<script>
+  document.querySelectorAll("[data-native-drawer-open]").forEach((trigger) => {
+    if (!(trigger instanceof HTMLButtonElement)) return;
+    const id = trigger.dataset.nativeDrawerOpen;
+    const drawer = id ? document.getElementById(id) : null;
+    if (!(drawer instanceof HTMLDialogElement)) return;
+    trigger.addEventListener("click", () => drawer.showModal());
+  });
+</script>

@@ -1,0 +1,52 @@
+/*
+ * The docs shell's responsive behaviour is split out of site.css because it reads the shared
+ * breakpoint source, which plain CSS media queries cannot consume as custom properties.
+ */
+@use "@skryensya/core/breakpoints" as bp;
+
+.docs-canvas {
+  min-block-size: 100dvh;
+  background: var(--color-bg-canvas);
+}
+
+/* ── responsive shell ─────────────────────────────────────────────────────────
+ * Below `wide`, the document's own index (the toc) is the first thing to go: the sidebar is
+ * navigation, the toc a convenience. */
+@include bp.down("wide") {
+  .shell {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .docs-toc {
+    display: none;
+  }
+}
+
+/* Below `desktop`, the rail has no room, so the same nav MOVES into the drawer (never restacks into a
+ * mile of links above the document), and the header grows the button that opens it. This is the one
+ * line the sidebar, the drawer and the navbar trigger all pivot on, the reason the breakpoint is
+ * named once and shared. */
+@include bp.down("desktop") {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .docs-sidebar {
+    display: none;
+  }
+
+
+  .dimensions__menu-trigger {
+    display: inline-flex;
+  }
+
+
+  .docs-page-nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .docs-page-nav__link--next {
+    margin-inline-start: 0;
+  }
+}

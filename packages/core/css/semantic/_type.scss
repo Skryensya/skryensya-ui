@@ -1,0 +1,62 @@
+@mixin tokens {
+    /* ── type: density- and brand-invariant except family ── */
+    --font-family-body: var(--scale-font-family-sans);
+    --font-family-code: var(--scale-font-family-mono);
+
+    /* ── size ↔ line-height PAIRS ───────────────────────────────────────────────
+     * Every size role has a line-height paired to it, and the leading tightens as the size grows, 
+     * that pairing is the type scale, not two independent axes a component recombines by hand. Read
+     * the columns together: `--font-size-heading-h1` always goes with `--font-line-height-heading-h1`.
+     *
+     * Document headings stop shrinking at h4: h5 and h6 reuse the h4 pair (the floor). Displays sit
+     * above the document scale for marketing / hero chrome. */
+    --font-size-caption: var(--scale-font-size-xs);                    /* 12 */
+    --font-line-height-caption: var(--scale-line-height-normal);       /* 1.5 */
+    --font-size-body-sm: var(--scale-font-size-sm);                    /* 14 */
+    --font-line-height-body-sm: var(--scale-line-height-normal);       /* 1.5 */
+    --font-size-body: var(--scale-font-size-md);                       /* 16 */
+    --font-line-height-body: var(--scale-line-height-normal);          /* 1.5 */
+    --font-size-body-lg: var(--scale-font-size-lg);                    /* 18 */
+    --font-line-height-body-lg: var(--scale-line-height-normal);       /* 1.5 */
+
+    --font-size-heading-h4: var(--scale-font-size-lg);                 /* 18, floor for h4/h5/h6 */
+    --font-line-height-heading-h4: var(--scale-line-height-snug);      /* 1.35 */
+    --font-size-heading-h3: var(--scale-font-size-xl);                 /* 20 */
+    --font-line-height-heading-h3: var(--scale-line-height-snug);      /* 1.35 */
+    --font-size-heading-h2: var(--scale-font-size-2xl);                /* 24 */
+    --font-line-height-heading-h2: var(--scale-line-height-snug);      /* 1.35 */
+    --font-size-heading-h1: var(--scale-font-size-3xl);                /* 30 */
+    --font-line-height-heading-h1: var(--scale-line-height-tight);     /* 1.2 */
+
+    --font-size-display-sm: var(--scale-font-size-4xl);                /* 36 */
+    --font-line-height-display-sm: var(--scale-line-height-tighter);   /* 1.1 */
+    --font-size-display-md: var(--scale-font-size-5xl);                /* 48 */
+    --font-line-height-display-md: var(--scale-line-height-tighter);   /* 1.1 */
+    --font-size-display-lg: var(--scale-font-size-6xl);                /* 60 */
+    --font-line-height-display-lg: var(--scale-line-height-tighter);   /* 1.1 */
+
+    /* Legacy aliases, previous sm/md/lg/display map onto the new document / display pairs. */
+    --font-size-heading-sm: var(--font-size-heading-h3);
+    --font-line-height-heading-sm: var(--font-line-height-heading-h3);
+    --font-size-heading-md: var(--font-size-heading-h2);
+    --font-line-height-heading-md: var(--font-line-height-heading-h2);
+    --font-size-heading-lg: var(--font-size-heading-h1);
+    --font-line-height-heading-lg: var(--font-line-height-heading-h1);
+    --font-size-display: var(--font-size-display-sm);
+    --font-line-height-display: var(--font-line-height-display-sm);
+
+    /* Long-form prose opts into more leading than the default body pairing. */
+    --font-line-height-body-relaxed: var(--scale-line-height-relaxed); /* 1.7 */
+    /* Generic heading leading, for chrome that names "a heading" without a size (the docs' own
+     * h1–h3). Matches the h2/h3 pair. */
+    --font-line-height-heading: var(--scale-line-height-snug);         /* 1.35 */
+
+    /* ── weight: one rung per role, no two the same ─────────────────────────────
+     * body 400 · label 500 · emphasis 600 · heading 700. `emphasis` used to equal `label` (both 500),
+     * so <strong> in prose read exactly like a button label; now each weight is a distinct step and
+     * the whole 400→700 ladder is in use. */
+    --font-weight-body: var(--scale-font-weight-regular);     /* 400, reading text */
+    --font-weight-label: var(--scale-font-weight-medium);     /* 500, UI labels, controls */
+    --font-weight-emphasis: var(--scale-font-weight-semibold); /* 600, <strong>, prose emphasis */
+    --font-weight-heading: var(--scale-font-weight-bold);     /* 700, headings */
+}

@@ -1,0 +1,1630 @@
+---
+/*
+ * /personalizar, runtime ramp configuration, full-bleed. Preview-only, saved and shareable.
+ *
+ * The docs theme never changes. Only `.ds-canvas` receives the ramp derivation, so edits stay in the
+ * preview while its semantic `--color-*` tokens re-resolve against the edited ramps. The last edit is
+ * saved to localStorage and encoded in the URL; reset clears both. The output is the `:root` CSS a
+ * consumer copies into its own site, and the WCAG audit runs live.
+ *
+ * Left: color seeds plus density and roundness. Right: a product context to judge the result.
+ */
+import Base from "../layouts/Base.astro";
+import DimensionSelect from "../components/DimensionSelect.astro";
+import { allSets, iconMarkup } from "../icons";
+import { compileString } from "sass";
+import { tokens, CSS_DIR } from "../lib/tokens";
+import "../examples/input.css";
+import "../examples/checkbox.css";
+import "../examples/radio-group.css";
+import "../examples/switch.css";
+
+const checkboxIndicators = `<span
+      class="ds-checkbox__indicator"
+      data-state="checked"
+    >${iconMarkup("check", { size: "sm" })}</span>
+    <span
+      class="ds-checkbox__indicator"
+      data-state="indeterminate"
+    >${iconMarkup("remove", { size: "sm" })}</span>`;
+const paginationPrev = iconMarkup("chevron-left", { size: "sm" });
+const paginationNext = iconMarkup("chevron-right", { size: "sm" });
+
+/*
+ * Curated named presets per role instead of a free colour picker: the values are pre-vetted OKLCH
+ * strings, so there is no hex↔OKLCH round-trip and every choice stays inside the role's lightness /
+ * chroma band. The first preset of each seed is its default (its `def`).
+ */
+const SEEDS = [
+  {
+    name: "--seed-accent", label: "Acento", def: "oklch(50.4% 0.169 259.6)", hint: "el color de marca",
+    /* Every option is verified (light + dark) for text-on-accent, accent-text and focus-ring contrast,
+     * and kept ≥15° in hue from the feedback roles (danger 27 / warning 75 / success 150) so a brand
+     * fill never reads like an error/success/warning state. Pure red, orange-red and grass-green are
+     * absent on purpose, they collide with danger and success. */
+    presets: [
+      { name: "Azul", value: "oklch(50.4% 0.169 259.6)" },
+      { name: "Zafiro", value: "oklch(49% 0.185 270)" },
+      { name: "Índigo", value: "oklch(49.5% 0.185 283)" },
+      { name: "Violeta", value: "oklch(51% 0.185 300)" },
+      { name: "Lila", value: "oklch(52% 0.17 315)" },
+      { name: "Magenta", value: "oklch(52% 0.2 344)" },
+      { name: "Rosa", value: "oklch(56% 0.185 354)" },
+      { name: "Naranja", value: "oklch(52% 0.15 50)" },
+      { name: "Turquesa", value: "oklch(50% 0.1 190)" },
+      { name: "Cian", value: "oklch(50% 0.115 210)" },
+      { name: "Celeste", value: "oklch(54% 0.13 228)" },
+      { name: "Cielo", value: "oklch(53% 0.14 242)" },
+    ],
+  },
+  {
+    name: "--seed-neutral", label: "Neutro", def: "oklch(58.8% 0.018 260)", hint: "el undertone de los grises",
+    presets: [
+      { name: "Gris", value: "oklch(58.8% 0.018 260)" },
+      { name: "Acero", value: "oklch(58% 0.08 248)" },
+      { name: "Pizarra", value: "oklch(56% 0.09 235)" },
+      { name: "Arena", value: "oklch(59% 0.08 80)" },
+      { name: "Piedra", value: "oklch(58% 0.06 55)" },
+      { name: "Topo", value: "oklch(58% 0.09 45)" },
+    ],
+  },
+  {
+    name: "--seed-danger", label: "Peligro", def: "oklch(56% 0.208 27)", hint: "opcional · default sobrio",
+    presets: [
+      { name: "Rojo", value: "oklch(56% 0.208 27)" },
+      { name: "Guinda", value: "oklch(52% 0.18 8)" },
+      { name: "Carmesí", value: "oklch(57% 0.205 20)" },
+      { name: "Ladrillo", value: "oklch(58% 0.165 40)" },
+    ],
+  },
+  {
+    name: "--seed-success", label: "Éxito", def: "oklch(55.8% 0.14 150)", hint: "opcional · default sobrio",
+    presets: [
+      { name: "Verde", value: "oklch(55.8% 0.14 150)" },
+      { name: "Jade", value: "oklch(56% 0.1 175)" },
+      { name: "Lima", value: "oklch(63% 0.15 130)" },
+      { name: "Esmeralda", value: "oklch(55% 0.15 160)" },
+    ],
+  },
+  {
+    name: "--seed-warning", label: "Aviso", def: "oklch(58.4% 0.132 75)", hint: "opcional · default sobrio",
+    presets: [
+      { name: "Ámbar", value: "oklch(58.4% 0.132 75)" },
+      { name: "Naranja", value: "oklch(62% 0.15 55)" },
+      { name: "Oro", value: "oklch(70% 0.13 90)" },
+      { name: "Mostaza", value: "oklch(61% 0.1 88)" },
+    ],
+  },
+];
+
+const PAIRS = [
+  { fg: "--color-text-primary", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-text-secondary", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-text-tertiary", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-text-on-accent", bg: "--color-action-primary", min: 4.5 },
+  { fg: "--color-text-on-accent", bg: "--color-action-danger", min: 4.5 },
+  { fg: "--color-text-accent", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-text-danger", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-text-success", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-text-warning", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-border-default", bg: "--color-bg-canvas", min: 3 },
+  { fg: "--color-border-focus", bg: "--color-bg-canvas", min: 3 },
+];
+
+// Icon family is a preview-only theme variable: the options are the three published sets, and a small
+// gallery in the preview makes the choice visible (swapped in place, scoped to .ds-canvas).
+const ICON_SET_OPTIONS = allSets.map((s) => ({ value: s.id, label: s.label }));
+const PREVIEW_ICONS = [
+  "search", "settings", "user", "calendar",
+  "download", "edit", "copy", "filter",
+  "check", "info", "refresh", "delete",
+] as const;
+
+const clientData = JSON.stringify({ pairs: PAIRS, seeds: SEEDS, iconSets: allSets.map((s) => s.id) });
+
+/*
+ * The preview is self-contained. It compiles the same root-ramp derivation onto `.ds-canvas` and
+ * re-declares semantic tokens there, so edits do not leak into the surrounding docs page.
+ *
+ * Colour tokens must be re-declared so they re-resolve against the edited RAMPS. Space / size / radius
+ * tokens must be re-declared for the same reason the density and radius controls exist: they read
+ * `--ds-density` / `--radius-multiplier`, and those are overridden on `.ds-canvas`. A token declared
+ * only on `:root` keeps `:root`'s value no matter what a subtree sets the multiplier to (var() in a
+ * custom property resolves where the property is DECLARED); re-declaring here is what makes the two
+ * dimension controls actually reach the preview. Component hooks (`--ds-button-radius: var(--radius-
+ * control)`) are element-scoped, so they inherit these and re-resolve for free.
+ */
+const stageRampCss = compileString(
+  `@use "primitives/ramp-recipe" as ramps;\n.ds-canvas { @include ramps.derive; }`,
+  { loadPaths: [CSS_DIR], style: "expanded" },
+).css;
+
+const SCOPED_PREFIXES = ["--color-", "--space-", "--size-", "--radius-"];
+const semScopedCss =
+  ".ds-canvas {\n" +
+  tokens
+    .filter((t) => t.tier === "semantic" && SCOPED_PREFIXES.some((p) => t.name.startsWith(p)))
+    .map((t) => `  ${t.name}: ${t.value};`)
+    .join("\n") +
+  "\n}";
+
+const stageCss = `${stageRampCss}\n${semScopedCss}`;
+---
+
+<Base fullBleed title="Configurar la marca" description="Ajusta los seeds de color, densidad y redondez; revisa el contraste y copia el CSS resultante.">
+  <script type="application/json" id="ds-data" set:html={clientData} is:inline />
+  <style is:global set:html={stageCss}></style>
+
+  <div class="ds-config">
+    <!-- ═══════════ CONTROLS (left) ═══════════ -->
+    <aside class="ds-panel">
+
+      <div class="ds-panel__scroll ds-scrollbar">
+        <section class="ds-sec">
+          <div class="ds-sec__head"><h2>Color</h2></div>
+          <div class="ds-seeds">
+            {
+              SEEDS.map((s) => (
+                <div class="ds-seed" data-row={s.name}>
+                  <DimensionSelect
+                    id={`seed-${s.name.replace("--seed-", "")}`}
+                    prop={s.name}
+                    value={s.def}
+                    placeholder="Personalizado"
+                    label={s.label}
+                    options={s.presets.map((p) => ({ value: p.value, label: p.name }))}
+                  />
+                </div>
+              ))
+            }
+          </div>
+        </section>
+
+        <section class="ds-sec">
+          <div class="ds-sec__head"><h2>Forma, espacio e íconos</h2></div>
+          <div class="ds-dimensions">
+            <div class="ds-dimension">
+              <div class="ds-dimension__copy"><strong>Densidad</strong><span>Espacio y controles</span></div>
+              <DimensionSelect
+                id="ds-dim-density"
+                prop="--ds-density"
+                label="Densidad"
+                value="1"
+                options={[
+                  { value: "0.5", label: "Condensada" },
+                  { value: "0.6", label: "Densa" },
+                  { value: "0.8", label: "Compacta" },
+                  { value: "1", label: "Cómoda" },
+                  { value: "1.2", label: "Amplia" },
+                ]}
+              />
+            </div>
+            <div class="ds-dimension">
+              <div class="ds-dimension__copy"><strong>Redondez</strong><span>Esquinas de controles y superficies</span></div>
+              <DimensionSelect
+                id="ds-dim-radius"
+                prop="--radius-multiplier"
+                label="Redondez"
+                value="1"
+                options={[
+                  { value: "0", label: "Recta" },
+                  { value: "0.5", label: "Sutil" },
+                  { value: "1", label: "Suave" },
+                  { value: "1.5", label: "Marcada" },
+                  { value: "2", label: "Redonda" },
+                ]}
+              />
+            </div>
+            <div class="ds-dimension">
+              <div class="ds-dimension__copy"><strong>Íconos</strong><span>Familia aplicada al preview</span></div>
+              <DimensionSelect
+                id="ds-dim-icons"
+                prop="icon-set"
+                label="Íconos"
+                value="lucide"
+                options={ICON_SET_OPTIONS}
+              />
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <footer class="ds-panel__foot">
+        <button class="ds-button ds-interactive ds-btn ds-btn--primary" data-variant="primary" id="ds-export-open">Exportar</button>
+        <button class="ds-button ds-interactive ds-btn" id="ds-share">Compartir</button>
+        <button class="ds-button ds-interactive ds-contrast-trigger" data-variant="ghost" id="ds-contrast-open" title="Revisar contraste" aria-label="Revisar contraste"><span id="ds-tally">AA</span></button>
+        <button class="ds-button ds-interactive ds-btn ds-btn--ghost" data-variant="ghost" data-icon-only id="ds-reset-all" title="Reiniciar" aria-label="Reiniciar">↺</button>
+      </footer>
+    </aside>
+
+    <section class="ds-preview" aria-label="Showcase de componentes" data-ds-tabs id="ds-views" data-value="showcase">
+      <header class="ds-preview__bar">
+        <div class="ds-preview__identity">
+          <span class="ds-preview__live" aria-hidden="true"></span>
+          <span><strong>Componentes</strong><small>Estados, flujos y componentes en vivo</small></span>
+        </div>
+        <span class="ds-badge" data-tone="neutral">UI lab</span>
+      </header>
+      {/* Each site context is its own tab: the same tokens, judged across different products. */}
+      <div class="ds-views ds-tabs__list ds-scrollbar" data-ds-tabs-list aria-label="Vistas del showcase">
+        <button class="ds-tabs__trigger ds-interactive" data-ds-tabs-trigger data-value="showcase" type="button">Showcase</button>
+        <button class="ds-tabs__trigger ds-interactive" data-ds-tabs-trigger data-value="dashboard" type="button">Dashboard</button>
+        <button class="ds-tabs__trigger ds-interactive" data-ds-tabs-trigger data-value="landing" type="button">Landing</button>
+        <button class="ds-tabs__trigger ds-interactive" data-ds-tabs-trigger data-value="store" type="button">Comercio</button>
+      </div>
+      <div class="ds-canvas ds-scrollbar">
+      <!-- probes resolve the PREVIEW's colours (they live inside the themed region), per scheme -->
+      <span class="ds-probe" style="color-scheme: light"><span id="ds-probe-light"></span></span>
+      <span class="ds-probe" style="color-scheme: dark"><span id="ds-probe-dark"></span></span>
+
+      <div class="ds-tabs__content ds-view" data-ds-tabs-content data-value="showcase">
+      <!-- KPI stats, componente Stat dentro de Box, con un ícono destacado por métrica -->
+      <div class="ds-stats">
+        <div class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><div class="ds-stat-row"><span class="ds-stat-ico" data-tone="accent"><Fragment set:html={iconMarkup("download")} /></span><div class="ds-stat"><span class="ds-stat__label">Ingresos</span><span class="ds-stat__value">$48.2k</span><span class="ds-stat__change" data-trend="up"><Fragment set:html={iconMarkup("arrow-up")} />12.5%</span></div></div></div></div>
+        <div class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><div class="ds-stat-row"><span class="ds-stat-ico" data-tone="accent"><Fragment set:html={iconMarkup("user")} /></span><div class="ds-stat"><span class="ds-stat__label">Usuarios</span><span class="ds-stat__value">3,914</span><span class="ds-stat__change" data-trend="up"><Fragment set:html={iconMarkup("arrow-up")} />4.1%</span></div></div></div></div>
+        <div class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><div class="ds-stat-row"><span class="ds-stat-ico" data-tone="accent"><Fragment set:html={iconMarkup("calendar")} /></span><div class="ds-stat"><span class="ds-stat__label">Órdenes</span><span class="ds-stat__value">1,204</span><span class="ds-stat__change" data-trend="down"><Fragment set:html={iconMarkup("arrow-down")} />2.3%</span></div></div></div></div>
+        <div class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><div class="ds-stat-row"><span class="ds-stat-ico" data-tone="danger"><Fragment set:html={iconMarkup("arrow-down")} /></span><div class="ds-stat"><span class="ds-stat__label">Churn</span><span class="ds-stat__value">0.9%</span><span class="ds-stat__change" data-trend="neutral">estable</span></div></div></div></div>
+      </div>
+
+      <div class="ds-multicol">
+        <!-- derived ramps, the brand tool's own subject (decorative, no component) -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><Fragment set:html={iconMarkup("edit")} /><strong>Ramps derivados</strong></header>
+          <div class="ds-flow">
+            <p class="ds-panel__desc">Salen de tus seeds vía color-mix.</p>
+            {["neutral", "accent", "danger", "success", "warning"].map((role) => (
+              <div class="ds-ramp-row">
+                <span class="ds-ramp-label">{role}</span>
+                <div class="ds-ramp">
+                  {[50, 100, 200, 300, 400, 500, 600, 700, 800, 900].map((s) => (
+                    <i style={`background: var(--ramp-${role}-${s})`} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- surfaces: every bg token, so the neutral undertone is legible directly (not just via the ramp) -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><Fragment set:html={iconMarkup("copy")} /><strong>Superficies</strong></header>
+          <div class="ds-flow">
+            <p class="ds-panel__desc">Todas heredan el undertone del neutro elegido.</p>
+            <div class="ds-surfaces">
+              {[
+                ["Canvas", "--color-bg-canvas"],
+                ["Surface", "--color-bg-surface"],
+                ["Raised", "--color-bg-surface-raised"],
+                ["Sunken", "--color-bg-surface-sunken"],
+                ["Well", "--color-bg-well"],
+              ].map(([label, token]) => (
+                <div class="ds-surf" style={`background: var(${token})`}>
+                  <span>{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- icon family: a preview-only theme variable, swapped in place (scoped to .ds-canvas) -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><Fragment set:html={iconMarkup("settings")} /><strong>Iconografía</strong></header>
+          <div class="ds-flow">
+            <p class="ds-panel__desc">La familia de íconos elegida, aplicada al preview.</p>
+            <div class="ds-icons">
+              {PREVIEW_ICONS.map((name) => (
+                <span class="ds-icon"><Fragment set:html={iconMarkup(name)} /></span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- form: Field + Input + Select + Checkbox + Button -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><Fragment set:html={iconMarkup("user")} /><strong>Crear cuenta</strong></header>
+          <div class="ds-flow">
+            <p class="ds-panel__desc">Empieza con tu correo. Es gratis por 14 días.</p>
+            <div class="ds-field">
+              <label class="ds-field__label" for="cs-name">Nombre</label>
+              <input class="ds-input" id="cs-name" value="Ada Lovelace" />
+            </div>
+            <div class="ds-field">
+              <label class="ds-field__label" for="cs-mail">Correo</label>
+              <input class="ds-input" id="cs-mail" type="email" value="ada@example.com" />
+            </div>
+            {/* An enhanced Select: real behaviour wired by initComponents(), not just painted markup. */}
+            <DimensionSelect
+              id="cs-plan"
+              label="Plan"
+              options={[
+                { value: "starter", label: "Starter" },
+                { value: "pro", label: "Pro" },
+                { value: "enterprise", label: "Enterprise" },
+              ]}
+            />
+            <label class="ds-checkbox">
+              <input class="ds-checkbox__input" type="checkbox" checked />
+              <span class="ds-checkbox__control ds-interactive" aria-hidden="true"><Fragment set:html={checkboxIndicators} /></span>
+              <span class="ds-checkbox__label">Acepto los términos</span>
+            </label>
+            <div class="ds-row ds-row--end">
+              <button class="ds-button ds-interactive" data-variant="ghost" type="button"><Fragment set:html={iconMarkup("close")} />Cancelar</button>
+              <button class="ds-button ds-interactive" data-variant="primary" type="button"><Fragment set:html={iconMarkup("check")} />Crear cuenta</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- validation summary: the detailed form stays in the account panel; this compact surface owns only the recovery overview -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><Fragment set:html={iconMarkup("warning")} /><strong>Revisar datos</strong><span class="ds-badge" data-tone="danger">2 errores</span></header>
+          <div class="ds-flow">
+            <p class="ds-panel__desc">Corrige estos campos antes de guardar los cambios.</p>
+            <ul class="ds-validation-list">
+              <li><Fragment set:html={iconMarkup("warning")} /><span><strong>Correo de facturación</strong><small>Incluye un dominio válido, por ejemplo ada@ejemplo.com.</small></span></li>
+              <li><Fragment set:html={iconMarkup("warning")} /><span><strong>Empresa</strong><small>Indica el nombre legal que debe aparecer en las facturas.</small></span></li>
+            </ul>
+            <div class="ds-row ds-row--end"><button class="ds-button ds-interactive" data-variant="primary" type="button"><Fragment set:html={iconMarkup("check")} />Revisar y guardar</button></div>
+          </div>
+        </section>
+
+        <!-- accordion coordinates its Tile disclosures: one deployment detail stays open at a time -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><Fragment set:html={iconMarkup("upload")} /><strong>Detalles del despliegue</strong></header>
+          <div class="ds-flow">
+            <div data-ds-accordion data-type="single" data-default-value="runtime">
+              <section class="ds-tile ds-tile--expandable ds-interactive" data-part="item" data-value="runtime">
+                <button class="ds-tile__trigger" type="button" data-part="trigger" aria-expanded="true" aria-controls="cs-deploy-runtime">
+                  <span class="ds-tile__content"><span class="ds-tile__title">Runtime y región</span><span class="ds-tile__description">Producción · Frankfurt</span></span><span class="ds-tile__chevron" data-part="chevron" aria-hidden="true"><span data-state="closed"><Fragment set:html={iconMarkup("chevron-down")} /></span><span data-state="open"><Fragment set:html={iconMarkup("chevron-up")} /></span></span>
+                </button>
+                <div class="ds-tile__expandable-content" id="cs-deploy-runtime" data-part="content"><p class="ds-tile__description">Node 22 · 3 réplicas · desplegado hace 8 minutos.</p></div>
+              </section>
+              <section class="ds-tile ds-tile--expandable ds-interactive" data-part="item" data-value="rollout">
+                <button class="ds-tile__trigger" type="button" data-part="trigger" aria-expanded="false" aria-controls="cs-deploy-rollout">
+                  <span class="ds-tile__content"><span class="ds-tile__title">Estrategia de rollout</span><span class="ds-tile__description">Publicación gradual</span></span><span class="ds-tile__chevron" data-part="chevron" aria-hidden="true"><span data-state="closed"><Fragment set:html={iconMarkup("chevron-down")} /></span><span data-state="open"><Fragment set:html={iconMarkup("chevron-up")} /></span></span>
+                </button>
+                <div class="ds-tile__expandable-content" id="cs-deploy-rollout" data-part="content" hidden><p class="ds-tile__description">10% por cinco minutos, luego 50% y verificación de salud antes del 100%.</p></div>
+              </section>
+              <section class="ds-tile ds-tile--expandable ds-interactive" data-part="item" data-value="rollback">
+                <button class="ds-tile__trigger" type="button" data-part="trigger" aria-expanded="false" aria-controls="cs-deploy-rollback">
+                  <span class="ds-tile__content"><span class="ds-tile__title">Plan de reversión</span><span class="ds-tile__description">Última versión estable</span></span><span class="ds-tile__chevron" data-part="chevron" aria-hidden="true"><span data-state="closed"><Fragment set:html={iconMarkup("chevron-down")} /></span><span data-state="open"><Fragment set:html={iconMarkup("chevron-up")} /></span></span>
+                </button>
+                <div class="ds-tile__expandable-content" id="cs-deploy-rollback" data-part="content" hidden><p class="ds-tile__description">v2.18.4 queda disponible para restaurar tráfico con un solo cambio.</p></div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <!-- Button + Badge + SegmentedControl -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><Fragment set:html={iconMarkup("more")} /><strong>Botones y badges</strong></header>
+          <div class="ds-flow">
+            <div class="ds-row ds-wrap">
+              <button class="ds-button ds-interactive" data-variant="primary" type="button"><Fragment set:html={iconMarkup("add")} />Primary</button>
+              <button class="ds-button ds-interactive" type="button"><Fragment set:html={iconMarkup("edit")} />Neutral</button>
+              <button class="ds-button ds-interactive" data-variant="danger" type="button"><Fragment set:html={iconMarkup("delete")} />Danger</button>
+              <button class="ds-button ds-interactive" data-variant="ghost" type="button"><Fragment set:html={iconMarkup("download")} />Ghost</button>
+              <button class="ds-button ds-interactive" data-variant="primary" type="button" disabled><Fragment set:html={iconMarkup("refresh")} />Disabled</button>
+            </div>
+            <div class="ds-row ds-wrap">
+              <span class="ds-badge" data-tone="accent">accent</span>
+              <span class="ds-badge" data-tone="success">success</span>
+              <span class="ds-badge" data-tone="danger">danger</span>
+              <span class="ds-badge" data-tone="warning">warning</span>
+              <span class="ds-badge" data-tone="neutral">neutral</span>
+            </div>
+            <div class="ds-segmented" role="radiogroup" aria-label="Rango">
+              <button class="ds-segmented__option ds-interactive" type="button" role="radio" aria-checked="true">Día</button>
+              <button class="ds-segmented__option ds-interactive" type="button" role="radio" aria-checked="false">Semana</button>
+              <button class="ds-segmented__option ds-interactive" type="button" role="radio" aria-checked="false">Mes</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- activity: Avatar + Badge -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><Fragment set:html={iconMarkup("refresh")} /><strong>Actividad reciente</strong></header>
+          <div class="ds-flow">
+            <ul class="ds-list">
+              <li><span class="ds-avatar" data-size="sm" role="img" aria-label="María J."><span class="ds-avatar__fallback" aria-hidden="true">MJ</span></span><div><strong>María J.</strong> creó un proyecto<span class="ds-time">hace 2 min</span></div><span class="ds-badge" data-tone="accent">nuevo</span></li>
+              <li><span class="ds-avatar" data-size="sm" role="img" aria-label="Tomás L."><span class="ds-avatar__fallback" aria-hidden="true">TL</span></span><div><strong>Tomás L.</strong> cerró un ticket<span class="ds-time">hace 1 h</span></div><span class="ds-badge" data-tone="success">resuelto</span></li>
+              <li><span class="ds-avatar" data-size="sm" role="img" aria-label="Sofía B."><span class="ds-avatar__fallback" aria-hidden="true">SB</span></span><div><strong>Sofía B.</strong> comentó<span class="ds-time">hace 3 h</span></div><span class="ds-badge" data-tone="warning">pendiente</span></li>
+              <li><span class="ds-avatar" data-size="sm" role="img" aria-label="Raúl G."><span class="ds-avatar__fallback" aria-hidden="true">RG</span></span><div><strong>Raúl G.</strong> reportó un bug<span class="ds-time">ayer</span></div><span class="ds-badge" data-tone="danger">urgente</span></li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Alert ×4 -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><Fragment set:html={iconMarkup("info")} /><strong>Notificaciones</strong></header>
+          <div class="ds-flow">
+            <div class="ds-alert" data-tone="info" role="status" aria-live="polite"><span class="ds-alert__icon" aria-hidden="true"><Fragment set:html={iconMarkup("info")} /></span><div class="ds-alert__content"><div class="ds-alert__description"><strong>Info.</strong> Una nueva versión está disponible.</div></div></div>
+            <div class="ds-alert" data-tone="success" role="status" aria-live="polite"><span class="ds-alert__icon" aria-hidden="true"><Fragment set:html={iconMarkup("success")} /></span><div class="ds-alert__content"><div class="ds-alert__description"><strong>Listo.</strong> Tus cambios se guardaron.</div></div></div>
+            <div class="ds-alert" data-tone="warning" role="status" aria-live="polite"><span class="ds-alert__icon" aria-hidden="true"><Fragment set:html={iconMarkup("warning")} /></span><div class="ds-alert__content"><div class="ds-alert__description"><strong>Atención.</strong> Tu plan expira en 3 días.</div></div></div>
+            <div class="ds-alert" data-tone="danger" role="alert" aria-live="assertive"><span class="ds-alert__icon" aria-hidden="true"><Fragment set:html={iconMarkup("danger")} /></span><div class="ds-alert__content"><div class="ds-alert__description"><strong>Error.</strong> No se pudo conectar al servidor.</div></div></div>
+          </div>
+        </section>
+
+        <!-- controls: Checkbox + RadioGroup + Switch + Slider + Progress -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><Fragment set:html={iconMarkup("filter")} /><strong>Controles</strong></header>
+          <div class="ds-flow">
+            <label class="ds-checkbox"><input class="ds-checkbox__input" type="checkbox" checked /><span class="ds-checkbox__control ds-interactive" aria-hidden="true"><Fragment set:html={checkboxIndicators} /></span><span class="ds-checkbox__label">Notificaciones por correo</span></label>
+            <label class="ds-checkbox"><input class="ds-checkbox__input" type="checkbox" /><span class="ds-checkbox__control ds-interactive" aria-hidden="true"><Fragment set:html={checkboxIndicators} /></span><span class="ds-checkbox__label">Modo compacto</span></label>
+            <div class="ds-radio-group" role="radiogroup" aria-label="Facturación" data-orientation="vertical">
+              <label class="ds-radio"><input class="ds-radio__input" type="radio" name="cs-bill" value="m" checked /><span class="ds-radio__control" aria-hidden="true"><span class="ds-radio__indicator" /></span><span class="ds-radio__label">Mensual</span></label>
+              <label class="ds-radio"><input class="ds-radio__input" type="radio" name="cs-bill" value="a" /><span class="ds-radio__control" aria-hidden="true"><span class="ds-radio__indicator" /></span><span class="ds-radio__label">Anual</span></label>
+            </div>
+            <label class="ds-switch"><input class="ds-switch__input" type="checkbox" role="switch" checked /><span class="ds-switch__control" aria-hidden="true"><span class="ds-switch__thumb" /></span><span class="ds-switch__label">Activar 2FA</span></label>
+            <div class="ds-field">
+              <label class="ds-field__label" for="cs-vol">Volumen</label>
+              <input class="ds-slider" id="cs-vol" type="range" min="0" max="100" value="65" data-ds-slider style="--ds-slider-fill: 0.65" />
+            </div>
+            <div class="ds-progress" role="progressbar" aria-label="Uso" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="--ds-progress-fill: 68%"><div class="ds-progress__bar" /></div>
+          </div>
+        </section>
+
+        <!-- Table + Badge -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><Fragment set:html={iconMarkup("user")} /><strong>Equipo</strong></header>
+          <div class="ds-flow">
+            <div class="ds-table-scroll">
+              <table class="ds-table">
+                <thead class="ds-table__head">
+                  <tr class="ds-table__row"><th class="ds-table__header" scope="col">Miembro</th><th class="ds-table__header" scope="col">Rol</th><th class="ds-table__header" scope="col">Estado</th></tr>
+                </thead>
+                <tbody class="ds-table__body">
+                  <tr class="ds-table__row"><th class="ds-table__header" scope="row">Ada Lovelace</th><td class="ds-table__cell"><span class="ds-badge" data-tone="accent">Admin</span></td><td class="ds-table__cell">Activo</td></tr>
+                  <tr class="ds-table__row"><th class="ds-table__header" scope="row">Alan Turing</th><td class="ds-table__cell"><span class="ds-badge" data-tone="neutral">Editor</span></td><td class="ds-table__cell">Activo</td></tr>
+                  <tr class="ds-table__row"><th class="ds-table__header" scope="row">Grace Hopper</th><td class="ds-table__cell"><span class="ds-badge" data-tone="neutral">Viewer</span></td><td class="ds-table__cell">Invitado</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- chart (decorative, no component) -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><Fragment set:html={iconMarkup("calendar")} /><strong>Visitas por día</strong></header>
+          <div class="ds-flow">
+            <div class="ds-chart">
+              <i style="height: 40%"></i><i style="height: 62%"></i><i style="height: 48%"></i>
+              <i style="height: 78%"></i><i style="height: 92%"></i><i style="height: 70%"></i><i style="height: 55%"></i>
+            </div>
+          </div>
+        </section>
+
+        <!-- AvatarGroup + Tag -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><strong>Colaboradores</strong></header>
+          <div class="ds-flow">
+            <div class="ds-avatar-group">
+              <span class="ds-avatar" role="img" aria-label="Ada Lovelace"><span class="ds-avatar__fallback" aria-hidden="true">AL</span></span>
+              <span class="ds-avatar" role="img" aria-label="Alan Turing"><span class="ds-avatar__fallback" aria-hidden="true">AT</span></span>
+              <span class="ds-avatar" role="img" aria-label="Grace Hopper"><span class="ds-avatar__fallback" aria-hidden="true">GH</span></span>
+              <span class="ds-avatar" role="img" aria-label="Raúl G."><span class="ds-avatar__fallback" aria-hidden="true">RG</span></span>
+              <span class="ds-avatar-group__overflow">+8</span>
+            </div>
+            <div class="ds-row ds-wrap">
+              <span class="ds-tag"><span class="ds-tag__label">diseño</span></span>
+              <span class="ds-tag"><span class="ds-tag__label">frontend</span></span>
+              <span class="ds-tag" data-tone="accent"><span class="ds-tag__label">tokens</span></span>
+              <span class="ds-tag"><span class="ds-tag__label">a11y</span></span>
+              <span class="ds-tag"><span class="ds-tag__label">docs</span></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Steps -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><strong>Progreso</strong></header>
+          <div class="ds-flow">
+            <ol class="ds-steps">
+              <li class="ds-steps__item" data-status="complete"><span class="ds-steps__marker">✓</span><span><span class="ds-steps__label">Seeds</span></span></li>
+              <li class="ds-steps__item" data-status="current" aria-current="step"><span class="ds-steps__marker">2</span><span><span class="ds-steps__label">Ramps</span></span></li>
+              <li class="ds-steps__item" data-status="upcoming"><span class="ds-steps__marker">3</span><span><span class="ds-steps__label">Contraste</span></span></li>
+              <li class="ds-steps__item" data-status="upcoming"><span class="ds-steps__marker">4</span><span><span class="ds-steps__label">Export</span></span></li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- Kbd -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><strong>Atajos</strong></header>
+          <div class="ds-flow">
+            <div class="ds-kbd-row"><span>Paleta de comandos</span><span><kbd class="ds-kbd">⌘</kbd><kbd class="ds-kbd">K</kbd></span></div>
+            <div class="ds-kbd-row"><span>Buscar</span><span><kbd class="ds-kbd">/</kbd></span></div>
+            <div class="ds-kbd-row"><span>Guardar</span><span><kbd class="ds-kbd">⌘</kbd><kbd class="ds-kbd">S</kbd></span></div>
+            <div class="ds-kbd-row"><span>Cambiar modo</span><span><kbd class="ds-kbd">⌘</kbd><kbd class="ds-kbd">J</kbd></span></div>
+          </div>
+        </section>
+
+        <!-- NavList -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><strong>Menú</strong></header>
+          <div class="ds-flow">
+            <nav class="ds-nav-list" aria-label="Panel">
+              <ul class="ds-nav-list__list">
+                <li class="ds-nav-list__item"><a class="ds-nav-list__link ds-interactive" href="#" aria-current="page"><span class="ds-nav-list__label">Panel</span></a></li>
+                <li class="ds-nav-list__item"><a class="ds-nav-list__link ds-interactive" href="#"><span class="ds-nav-list__label">Proyectos</span></a></li>
+                <li class="ds-nav-list__item"><a class="ds-nav-list__link ds-interactive" href="#"><span class="ds-nav-list__label">Actividad</span></a></li>
+                <li class="ds-nav-list__item"><a class="ds-nav-list__link ds-interactive" href="#"><span class="ds-nav-list__label">Ajustes</span></a></li>
+              </ul>
+            </nav>
+          </div>
+        </section>
+
+        <!-- pricing: Box + Badge + Button -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><span class="ds-badge" data-tone="accent">Popular</span></header>
+          <div class="ds-flow">
+            <strong class="ds-panel__title">Pro</strong>
+            <p class="ds-price__amt">$29<span>/mes</span></p>
+            <ul class="ds-price__list"><li>✓ Proyectos ilimitados</li><li>✓ Soporte prioritario</li><li>✓ Analíticas avanzadas</li></ul>
+            <button class="ds-button ds-interactive" data-variant="primary" type="button" style="inline-size: 100%">Elegir Pro</button>
+          </div>
+        </section>
+
+        <!-- Pagination -->
+        <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+          <header><strong>Paginación</strong></header>
+          <div class="ds-flow">
+            <nav class="ds-pagination" aria-label="Paginación">
+              <button class="ds-pagination__previous ds-interactive" type="button" aria-label="Página anterior" disabled><Fragment set:html={paginationPrev} /></button>
+              <button class="ds-pagination__item ds-interactive" type="button" aria-current="page" aria-label="Página 1">1</button>
+              <button class="ds-pagination__item ds-interactive" type="button" aria-label="Página 2">2</button>
+              <button class="ds-pagination__item ds-interactive" type="button" aria-label="Página 3">3</button>
+              <span class="ds-pagination__ellipsis" aria-hidden="true">…</span>
+              <button class="ds-pagination__item ds-interactive" type="button" aria-label="Página 12">12</button>
+              <button class="ds-pagination__next ds-interactive" type="button" aria-label="Página siguiente"><Fragment set:html={paginationNext} /></button>
+            </nav>
+          </div>
+        </section>
+      </div>
+      </div>
+
+      <div class="ds-tabs__content ds-view" data-ds-tabs-content data-value="dashboard" hidden>
+        <div class="ds-dash">
+          <header class="ds-dash__bar">
+            <div class="ds-dash__id">
+              <span class="ds-dash__mark" aria-hidden="true">N</span>
+              <div><strong>Panel de Nimbus</strong><small>Operaciones · últimos 30 días</small></div>
+            </div>
+            <div class="ds-dash__actions">
+              <div class="ds-segmented" role="radiogroup" aria-label="Rango de fechas">
+                <button class="ds-segmented__option ds-interactive" type="button" role="radio" aria-checked="false">7d</button>
+                <button class="ds-segmented__option ds-interactive" type="button" role="radio" aria-checked="true">30d</button>
+                <button class="ds-segmented__option ds-interactive" type="button" role="radio" aria-checked="false">90d</button>
+                <button class="ds-segmented__option ds-interactive" type="button" role="radio" aria-checked="false">12m</button>
+              </div>
+              <button class="ds-button ds-interactive" data-variant="ghost" data-size="sm" type="button">Filtrar</button>
+              <button class="ds-button ds-interactive" data-variant="primary" data-size="sm" type="button">Exportar</button>
+            </div>
+          </header>
+
+          <div class="ds-dash__kpis">
+            <div class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><div class="ds-stat"><span class="ds-stat__label">Ingresos recurrentes</span><span class="ds-stat__value">$128.4k</span><span class="ds-stat__change" data-trend="up"><Fragment set:html={iconMarkup("arrow-up")} />8.9% vs. mes anterior</span></div><div class="ds-spark" aria-hidden="true"><i style="height:38%"></i><i style="height:52%"></i><i style="height:46%"></i><i style="height:64%"></i><i style="height:58%"></i><i style="height:72%"></i><i style="height:88%"></i></div></div></div>
+            <div class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><div class="ds-stat"><span class="ds-stat__label">Clientes activos</span><span class="ds-stat__value">6,204</span><span class="ds-stat__change" data-trend="up"><Fragment set:html={iconMarkup("arrow-up")} />312 este mes</span></div><div class="ds-spark" aria-hidden="true"><i style="height:44%"></i><i style="height:50%"></i><i style="height:55%"></i><i style="height:53%"></i><i style="height:66%"></i><i style="height:70%"></i><i style="height:82%"></i></div></div></div>
+            <div class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><div class="ds-stat"><span class="ds-stat__label">Ticket promedio</span><span class="ds-stat__value">$62.10</span><span class="ds-stat__change" data-trend="down"><Fragment set:html={iconMarkup("arrow-down")} />1.4%</span></div><div class="ds-spark" data-trend="down" aria-hidden="true"><i style="height:80%"></i><i style="height:72%"></i><i style="height:74%"></i><i style="height:60%"></i><i style="height:64%"></i><i style="height:55%"></i><i style="height:52%"></i></div></div></div>
+            <div class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><div class="ds-stat"><span class="ds-stat__label">Cancelación</span><span class="ds-stat__value">1.8%</span><span class="ds-stat__change" data-trend="up"><Fragment set:html={iconMarkup("arrow-up")} />mejor que el objetivo</span></div><div class="ds-spark" aria-hidden="true"><i style="height:70%"></i><i style="height:60%"></i><i style="height:58%"></i><i style="height:50%"></i><i style="height:46%"></i><i style="height:40%"></i><i style="height:34%"></i></div></div></div>
+          </div>
+
+          <div class="ds-dash__main">
+            <section class="ds-box ds-dash__span ds-dash__chartbox" data-surface="surface" data-border="subtle" data-padding="none">
+              <header>
+                <div><strong>Ingresos por semana</strong></div>
+                <div class="ds-legend"><span class="ds-legend__dot" data-series="a"></span>2024<span class="ds-legend__dot" data-series="b"></span>2023</div>
+              </header>
+              <div class="ds-flow">
+                <div class="ds-area" role="img" aria-label="Ingresos semanales, tendencia al alza">
+                  {[42, 55, 48, 63, 58, 71, 66, 78, 74, 86, 82, 94].map((h) => (
+                    <div class="ds-area__col"><i class="ds-area__bar" data-series="b" style={`height:${Math.round(h * 0.72)}%`}></i><i class="ds-area__bar" data-series="a" style={`height:${h}%`}></i></div>
+                  ))}
+                </div>
+                <div class="ds-area__axis"><span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span><span>Jul</span><span>Ago</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dic</span></div>
+              </div>
+            </section>
+
+            <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+              <header><strong>Fuentes de adquisición</strong></header>
+              <div class="ds-flow">
+                {[["Búsqueda orgánica", 46], ["Referidos", 27], ["Redes sociales", 18], ["Email", 9]].map(([label, pct]) => (
+                  <div class="ds-meter"><div class="ds-meter__top"><span>{label}</span><strong>{pct}%</strong></div><div class="ds-progress" role="progressbar" aria-label={String(label)} aria-valuenow={Number(pct)} aria-valuemin="0" aria-valuemax="100" style={`--ds-progress-fill: ${pct}%`}><div class="ds-progress__bar"></div></div></div>
+                ))}
+              </div>
+            </section>
+
+            <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+              <header><strong>Objetivo del mes</strong><span class="ds-badge" data-tone="success">en camino</span></header>
+              <div class="ds-flow">
+                <div class="ds-goal"><span class="ds-goal__value">$128k</span><span class="ds-goal__target">de $150k</span></div>
+                <div class="ds-progress" role="progressbar" aria-label="Progreso del objetivo" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style="--ds-progress-fill: 85%"><div class="ds-progress__bar"></div></div>
+                <ol class="ds-steps">
+                  <li class="ds-steps__item" data-status="complete"><span class="ds-steps__marker">✓</span><span><span class="ds-steps__label">Q1</span></span></li>
+                  <li class="ds-steps__item" data-status="complete"><span class="ds-steps__marker">✓</span><span><span class="ds-steps__label">Q2</span></span></li>
+                  <li class="ds-steps__item" data-status="current" aria-current="step"><span class="ds-steps__marker">3</span><span><span class="ds-steps__label">Q3</span></span></li>
+                  <li class="ds-steps__item" data-status="upcoming"><span class="ds-steps__marker">4</span><span><span class="ds-steps__label">Q4</span></span></li>
+                </ol>
+              </div>
+            </section>
+
+            <section class="ds-box ds-dash__span ds-dash__tablebox" data-surface="surface" data-border="subtle" data-padding="none">
+              <header><strong>Transacciones recientes</strong><a class="ds-link ds-interactive" href="#dash-tx">Ver todas</a></header>
+              <div class="ds-flow">
+                <div class="ds-table-scroll">
+                  <table class="ds-table">
+                    <thead class="ds-table__head"><tr class="ds-table__row"><th class="ds-table__header" scope="col">Cliente</th><th class="ds-table__header" scope="col">Plan</th><th class="ds-table__header" scope="col">Monto</th><th class="ds-table__header" scope="col">Estado</th><th class="ds-table__header" scope="col">Fecha</th></tr></thead>
+                    <tbody class="ds-table__body">
+                      <tr class="ds-table__row"><th class="ds-table__header" scope="row"><span class="ds-cell-user"><span class="ds-avatar" data-size="sm" role="img" aria-label="Lucía F."><span class="ds-avatar__fallback" aria-hidden="true">LF</span></span>Lucía Fernández</span></th><td class="ds-table__cell"><span class="ds-badge" data-tone="accent">Pro</span></td><td class="ds-table__cell">$79.00</td><td class="ds-table__cell"><span class="ds-badge" data-tone="success">pagado</span></td><td class="ds-table__cell">Hoy, 09:14</td></tr>
+                      <tr class="ds-table__row"><th class="ds-table__header" scope="row"><span class="ds-cell-user"><span class="ds-avatar" data-size="sm" role="img" aria-label="Diego M."><span class="ds-avatar__fallback" aria-hidden="true">DM</span></span>Diego Morales</span></th><td class="ds-table__cell"><span class="ds-badge" data-tone="neutral">Starter</span></td><td class="ds-table__cell">$19.00</td><td class="ds-table__cell"><span class="ds-badge" data-tone="success">pagado</span></td><td class="ds-table__cell">Hoy, 08:02</td></tr>
+                      <tr class="ds-table__row"><th class="ds-table__header" scope="row"><span class="ds-cell-user"><span class="ds-avatar" data-size="sm" role="img" aria-label="Renata O."><span class="ds-avatar__fallback" aria-hidden="true">RO</span></span>Renata Ortiz</span></th><td class="ds-table__cell"><span class="ds-badge" data-tone="accent">Enterprise</span></td><td class="ds-table__cell">$420.00</td><td class="ds-table__cell"><span class="ds-badge" data-tone="warning">pendiente</span></td><td class="ds-table__cell">Ayer, 21:47</td></tr>
+                      <tr class="ds-table__row"><th class="ds-table__header" scope="row"><span class="ds-cell-user"><span class="ds-avatar" data-size="sm" role="img" aria-label="Bruno S."><span class="ds-avatar__fallback" aria-hidden="true">BS</span></span>Bruno Salas</span></th><td class="ds-table__cell"><span class="ds-badge" data-tone="accent">Pro</span></td><td class="ds-table__cell">$79.00</td><td class="ds-table__cell"><span class="ds-badge" data-tone="danger">fallido</span></td><td class="ds-table__cell">Ayer, 18:20</td></tr>
+                      <tr class="ds-table__row"><th class="ds-table__header" scope="row"><span class="ds-cell-user"><span class="ds-avatar" data-size="sm" role="img" aria-label="Camila R."><span class="ds-avatar__fallback" aria-hidden="true">CR</span></span>Camila Ruiz</span></th><td class="ds-table__cell"><span class="ds-badge" data-tone="neutral">Starter</span></td><td class="ds-table__cell">$19.00</td><td class="ds-table__cell"><span class="ds-badge" data-tone="success">pagado</span></td><td class="ds-table__cell">Ayer, 16:05</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+              <header><strong>Actividad del equipo</strong></header>
+              <div class="ds-flow">
+                <ul class="ds-list">
+                  <li><span class="ds-avatar" data-size="sm" role="img" aria-label="María J."><span class="ds-avatar__fallback" aria-hidden="true">MJ</span></span><div><strong>María J.</strong> aprobó un reembolso<span class="ds-time">hace 8 min</span></div><span class="ds-badge" data-tone="neutral">soporte</span></li>
+                  <li><span class="ds-avatar" data-size="sm" role="img" aria-label="Tomás L."><span class="ds-avatar__fallback" aria-hidden="true">TL</span></span><div><strong>Tomás L.</strong> publicó un plan nuevo<span class="ds-time">hace 1 h</span></div><span class="ds-badge" data-tone="accent">producto</span></li>
+                  <li><span class="ds-avatar" data-size="sm" role="img" aria-label="Sofía B."><span class="ds-avatar__fallback" aria-hidden="true">SB</span></span><div><strong>Sofía B.</strong> cerró 3 tickets<span class="ds-time">hace 2 h</span></div><span class="ds-badge" data-tone="success">resuelto</span></li>
+                  <li><span class="ds-avatar" data-size="sm" role="img" aria-label="Raúl G."><span class="ds-avatar__fallback" aria-hidden="true">RG</span></span><div><strong>Raúl G.</strong> marcó una alerta de fraude<span class="ds-time">hace 5 h</span></div><span class="ds-badge" data-tone="danger">urgente</span></li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="ds-box" data-surface="surface" data-border="subtle" data-padding="none">
+              <header><strong>Suscripciones por plan</strong></header>
+              <div class="ds-flow">
+                {[["Starter", 3120, 60], ["Pro", 2380, 46], ["Enterprise", 704, 22]].map(([plan, count, pct]) => (
+                  <div class="ds-bars"><div class="ds-bars__top"><span>{plan}</span><strong>{Number(count).toLocaleString("es")}</strong></div><div class="ds-bars__track"><i style={`inline-size:${pct}%`}></i></div></div>
+                ))}
+                <div class="ds-avatar-group">
+                  <span class="ds-avatar" data-size="sm" role="img" aria-label="Cliente 1"><span class="ds-avatar__fallback" aria-hidden="true">AL</span></span>
+                  <span class="ds-avatar" data-size="sm" role="img" aria-label="Cliente 2"><span class="ds-avatar__fallback" aria-hidden="true">AT</span></span>
+                  <span class="ds-avatar" data-size="sm" role="img" aria-label="Cliente 3"><span class="ds-avatar__fallback" aria-hidden="true">GH</span></span>
+                  <span class="ds-avatar-group__overflow">+6.2k</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <div class="ds-tabs__content ds-view" data-ds-tabs-content data-value="landing" hidden>
+        <div class="ds-landing">
+          <nav class="ds-sitebar" aria-label="Navegación de Ritual"><strong>ritual</strong><div><a href="#ritual-origen">Origen</a><a href="#ritual-caja">La caja</a><button class="ds-button ds-interactive" data-variant="primary" data-size="sm" type="button">Suscribirme</button></div></nav>
+          <div class="ds-landing__hero">
+            <div><span class="ds-badge" data-tone="accent">tostado esta semana</span><h3>Café que llega cuando todavía está fresco.</h3><p>Elige tu perfil, ajusta la frecuencia y recibe una caja hecha para tu mañana.</p><div class="ds-row"><button class="ds-button ds-interactive" data-variant="primary" type="button">Armar mi caja</button><button class="ds-button ds-interactive" data-variant="ghost" type="button">Ver orígenes</button></div></div>
+            <div class="ds-coffee-box" aria-label="Café Colombia, notas de cacao y cereza"><span>Colombia</span><strong>Cacao · cereza</strong><small>250 g · filtro</small></div>
+          </div>
+          <div class="ds-landing__proof"><span>Entrega flexible</span><span>Origen trazable</span><span>Pausa cuando quieras</span></div>
+
+          <section class="ds-lp-logos"><span>Con la confianza de equipos en</span><div><b>Faro</b><b>Nimbus</b><b>Atlas</b><b>Vértice</b><b>Norte</b></div></section>
+
+          <section class="ds-lp-section">
+            <header class="ds-lp-head"><span class="ds-badge" data-tone="neutral">por qué Ritual</span><h4>Café pensado para tu rutina, no para el depósito.</h4><p>Cada caja se tuesta contra tu pedido y viaja apenas está lista. Sin stock viejo, sin intermediarios.</p></header>
+            <div class="ds-lp-features">
+              <article class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><span class="ds-lp-ico" data-tone="accent">◐</span><strong>Tueste semanal</strong><p>Tostamos los lunes y despachamos el martes. Frescura medida en días, no en meses.</p></div></article>
+              <article class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><span class="ds-lp-ico" data-tone="success">✦</span><strong>Origen trazable</strong><p>Cada bolsa lleva finca, altitud y productor. Sabes exactamente qué estás tomando.</p></div></article>
+              <article class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><span class="ds-lp-ico" data-tone="warning">⟳</span><strong>Frecuencia flexible</strong><p>Semanal, quincenal o mensual. Cambia, pausa o salta una entrega cuando quieras.</p></div></article>
+              <article class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><span class="ds-lp-ico" data-tone="danger">◇</span><strong>Molido a pedido</strong><p>Grano entero o molido para tu método: prensa, filtro, espresso o moka.</p></div></article>
+            </div>
+          </section>
+
+          <section class="ds-lp-section ds-lp-steps-sec">
+            <header class="ds-lp-head"><h4>Tu café en tres pasos</h4></header>
+            <ol class="ds-lp-steps">
+              <li><span class="ds-lp-step__n">1</span><strong>Elige tu perfil</strong><p>Responde tres preguntas y te sugerimos orígenes según tu gusto.</p></li>
+              <li><span class="ds-lp-step__n">2</span><strong>Ajusta la caja</strong><p>Cantidad, molienda y frecuencia. Todo editable desde tu cuenta.</p></li>
+              <li><span class="ds-lp-step__n">3</span><strong>Recibe y disfruta</strong><p>Llega a tu puerta recién tostado, con notas de cata en cada bolsa.</p></li>
+            </ol>
+          </section>
+
+          <section class="ds-lp-section">
+            <header class="ds-lp-head"><h4>Orígenes de esta temporada</h4><p>Rotamos la selección cada pocas semanas.</p></header>
+            <div class="ds-lp-origins">
+              <article class="ds-origin" data-o="a"><div class="ds-origin__img"></div><div class="ds-origin__body"><span class="ds-badge" data-tone="accent">nuevo</span><strong>Colombia · Huila</strong><small>Cacao · cereza · panela</small></div></article>
+              <article class="ds-origin" data-o="b"><div class="ds-origin__img"></div><div class="ds-origin__body"><span class="ds-badge" data-tone="neutral">clásico</span><strong>Etiopía · Yirgacheffe</strong><small>Jazmín · durazno · té negro</small></div></article>
+              <article class="ds-origin" data-o="c"><div class="ds-origin__img"></div><div class="ds-origin__body"><span class="ds-badge" data-tone="warning">últimas bolsas</span><strong>Brasil · Cerrado</strong><small>Chocolate · maní · caramelo</small></div></article>
+            </div>
+          </section>
+
+          <section class="ds-lp-section">
+            <header class="ds-lp-head"><h4>Lo que dicen quienes ya lo toman</h4></header>
+            <div class="ds-lp-quotes">
+              <figure class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><blockquote>"Dejé de comprar café de supermercado. La diferencia en la primera taza es absurda."</blockquote><figcaption><span class="ds-avatar" data-size="sm" role="img" aria-label="Paula V."><span class="ds-avatar__fallback" aria-hidden="true">PV</span></span><span><strong>Paula V.</strong><small>suscripción quincenal</small></span></figcaption></div></figure>
+              <figure class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><blockquote>"Pausar cuando viajo y retomar sin fricción es lo que me hizo quedarme."</blockquote><figcaption><span class="ds-avatar" data-size="sm" role="img" aria-label="Mateo R."><span class="ds-avatar__fallback" aria-hidden="true">MR</span></span><span><strong>Mateo R.</strong><small>suscripción mensual</small></span></figcaption></div></figure>
+              <figure class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><blockquote>"Las notas de cata parecían marketing hasta que las sentí. Ahora las busco."</blockquote><figcaption><span class="ds-avatar" data-size="sm" role="img" aria-label="Inés T."><span class="ds-avatar__fallback" aria-hidden="true">IT</span></span><span><strong>Inés T.</strong><small>suscripción semanal</small></span></figcaption></div></figure>
+            </div>
+          </section>
+
+          <section class="ds-lp-section ds-lp-pricing-sec">
+            <header class="ds-lp-head"><h4>Elige tu ritmo</h4><p>Cambia de plan cuando quieras. Sin permanencia.</p></header>
+            <div class="ds-lp-pricing">
+              <article class="ds-box ds-plan" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><strong class="ds-plan__name">Descubrir</strong><p class="ds-plan__price">$9.900<span>/mes</span></p><p class="ds-plan__desc">250 g mensuales. Ideal para probar.</p><ul class="ds-plan__list"><li>✓ 1 origen por mes</li><li>✓ Notas de cata</li><li>✓ Pausa cuando quieras</li></ul><button class="ds-button ds-interactive" data-variant="ghost" type="button" style="inline-size:100%">Elegir</button></div></article>
+              <article class="ds-box ds-plan ds-plan--featured" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><span class="ds-badge" data-tone="accent">más elegido</span><strong class="ds-plan__name">Ritual</strong><p class="ds-plan__price">$16.900<span>/mes</span></p><p class="ds-plan__desc">500 g quincenales. Para tomar todos los días.</p><ul class="ds-plan__list"><li>✓ 2 orígenes rotativos</li><li>✓ Molienda a pedido</li><li>✓ Envío prioritario</li></ul><button class="ds-button ds-interactive" data-variant="primary" type="button" style="inline-size:100%">Elegir</button></div></article>
+              <article class="ds-box ds-plan" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><strong class="ds-plan__name">Cafetería en casa</strong><p class="ds-plan__price">$28.900<span>/mes</span></p><p class="ds-plan__desc">1 kg semanal. Para los que reciben gente.</p><ul class="ds-plan__list"><li>✓ 3 orígenes a elección</li><li>✓ Acceso a lotes especiales</li><li>✓ Soporte de barista</li></ul><button class="ds-button ds-interactive" data-variant="ghost" type="button" style="inline-size:100%">Elegir</button></div></article>
+            </div>
+          </section>
+
+          <section class="ds-lp-section">
+            <header class="ds-lp-head"><h4>Preguntas frecuentes</h4></header>
+            <div class="ds-lp-faq">
+              <div class="ds-faq"><strong>¿Puedo pausar la suscripción?</strong><p>Sí, desde tu cuenta, las veces que quieras y sin costo.</p></div>
+              <div class="ds-faq"><strong>¿Cómo llega el café?</strong><p>En bolsas con válvula desgasificadora, dentro de 24 h del tueste.</p></div>
+              <div class="ds-faq"><strong>¿Puedo elegir la molienda?</strong><p>Sí: grano entero o molido para prensa, filtro, espresso o moka.</p></div>
+              <div class="ds-faq"><strong>¿Hacen envíos a todo el país?</strong><p>Llegamos a las principales ciudades en 2 a 4 días hábiles.</p></div>
+            </div>
+          </section>
+
+          <section class="ds-lp-cta">
+            <div><h4>Tu próxima taza empieza hoy.</h4><p>Arma tu caja en dos minutos y recíbela esta semana.</p></div>
+            <div class="ds-row"><button class="ds-button ds-interactive" data-variant="primary" type="button">Armar mi caja</button><button class="ds-button ds-interactive" data-variant="ghost" type="button">Ver planes</button></div>
+          </section>
+
+          <footer class="ds-lp-footer">
+            <div class="ds-lp-footer__brand"><strong>ritual</strong><small>Café de especialidad, recién tostado.</small></div>
+            <nav class="ds-lp-footer__cols">
+              <div><span>Producto</span><a href="#">Orígenes</a><a href="#">Planes</a><a href="#">Regalos</a></div>
+              <div><span>Empresa</span><a href="#">Nosotros</a><a href="#">Productores</a><a href="#">Blog</a></div>
+              <div><span>Soporte</span><a href="#">Ayuda</a><a href="#">Envíos</a><a href="#">Contacto</a></div>
+            </nav>
+          </footer>
+        </div>
+      </div>
+
+      <div class="ds-tabs__content ds-view" data-ds-tabs-content data-value="store" hidden>
+        <div class="ds-store">
+          <div class="ds-shop-announce">Envío gratis desde $40.000 · Cambios sin costo dentro de 30 días</div>
+          <header class="ds-sitebar">
+            <strong>mercado norte</strong>
+            <nav class="ds-shop-nav" aria-label="Categorías"><a href="#">Cocina</a><a href="#">Mesa</a><a href="#">Deco</a><a href="#">Baño</a></nav>
+            <div><button class="ds-button ds-interactive" data-variant="ghost" data-size="sm" type="button">Buscar</button><button class="ds-button ds-interactive" data-variant="primary" data-size="sm" type="button">Bolsa · 2</button></div>
+          </header>
+
+          <section class="ds-shop-hero">
+            <div class="ds-shop-hero__copy"><span class="ds-badge" data-tone="accent">nueva temporada</span><h3>Objetos simples para todos los días.</h3><p>Piezas duraderas, pensadas para usar y no para guardar. Diseño honesto a precio justo.</p><div class="ds-row"><button class="ds-button ds-interactive" data-variant="primary" type="button">Ver novedades</button><button class="ds-button ds-interactive" data-variant="ghost" type="button">Explorar catálogo</button></div></div>
+            <div class="ds-shop-hero__art" aria-hidden="true"></div>
+          </section>
+
+          <section class="ds-shop-cats">
+            <a class="ds-shop-cat" href="#" data-c="blue"><span>Cocina</span><small>128 productos</small></a>
+            <a class="ds-shop-cat" href="#" data-c="orange"><span>Mesa</span><small>94 productos</small></a>
+            <a class="ds-shop-cat" href="#" data-c="green"><span>Deco</span><small>76 productos</small></a>
+            <a class="ds-shop-cat" href="#" data-c="purple"><span>Baño</span><small>52 productos</small></a>
+          </section>
+
+          <section class="ds-shop-block">
+            <header class="ds-shop-block__head"><h4>Novedades</h4><a class="ds-link ds-interactive" href="#">Ver todo</a></header>
+            <div class="ds-products ds-products--wide">
+              <article class="ds-box ds-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-product__image" data-product="blue"></div><div class="ds-flow"><span class="ds-badge" data-tone="neutral">nuevo</span><strong>Vaso térmico</strong><span>$32.000</span><button class="ds-button ds-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="ds-box ds-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-product__image" data-product="orange"></div><div class="ds-flow"><span class="ds-badge" data-tone="warning">últimas</span><strong>Plato hondo</strong><span>$18.000</span><button class="ds-button ds-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="ds-box ds-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-product__image" data-product="green"></div><div class="ds-flow"><span class="ds-badge" data-tone="success">en stock</span><strong>Botella de vidrio</strong><span>$24.000</span><button class="ds-button ds-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="ds-box ds-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-product__image" data-product="purple"></div><div class="ds-flow"><span class="ds-badge" data-tone="accent">destacado</span><strong>Tazón de cerámica</strong><span>$21.000</span><button class="ds-button ds-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="ds-box ds-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-product__image" data-product="pink"></div><div class="ds-flow"><span class="ds-badge" data-tone="neutral">nuevo</span><strong>Repasadores (x2)</strong><span>$14.000</span><button class="ds-button ds-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="ds-box ds-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-product__image" data-product="sky"></div><div class="ds-flow"><span class="ds-badge" data-tone="success">en stock</span><strong>Jarra de vidrio</strong><span>$27.000</span><button class="ds-button ds-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+            </div>
+          </section>
+
+          <section class="ds-shop-editorial">
+            <div class="ds-shop-editorial__art" aria-hidden="true"></div>
+            <div class="ds-shop-editorial__copy"><span class="ds-badge" data-tone="neutral">colección</span><h4>Mañanas de cerámica</h4><p>Tazas, platos y jarras hechos a mano por talleres locales. Piezas únicas, con pequeñas diferencias que las hacen tuyas.</p><button class="ds-button ds-interactive" data-variant="ghost" type="button">Ver la colección</button></div>
+          </section>
+
+          <section class="ds-shop-block">
+            <header class="ds-shop-block__head"><h4>Más vendidos</h4><a class="ds-link ds-interactive" href="#">Ver ranking</a></header>
+            <div class="ds-products ds-products--wide">
+              <article class="ds-box ds-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-product__image" data-product="orange"></div><div class="ds-flow"><span class="ds-badge" data-tone="warning">top 1</span><strong>Set de bowls</strong><span>$38.000</span><button class="ds-button ds-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="ds-box ds-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-product__image" data-product="green"></div><div class="ds-flow"><span class="ds-badge" data-tone="success">top 2</span><strong>Tabla de madera</strong><span>$29.000</span><button class="ds-button ds-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="ds-box ds-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-product__image" data-product="blue"></div><div class="ds-flow"><span class="ds-badge" data-tone="accent">top 3</span><strong>Mate de acero</strong><span>$34.000</span><button class="ds-button ds-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="ds-box ds-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-product__image" data-product="purple"></div><div class="ds-flow"><span class="ds-badge" data-tone="neutral">top 4</span><strong>Frasco hermético</strong><span>$12.000</span><button class="ds-button ds-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+            </div>
+          </section>
+
+          <section class="ds-shop-benefits">
+            <div class="ds-shop-benefit"><span aria-hidden="true">🚚</span><div><strong>Envío en 48 h</strong><small>a las principales ciudades</small></div></div>
+            <div class="ds-shop-benefit"><span aria-hidden="true">↺</span><div><strong>Cambios gratis</strong><small>hasta 30 días</small></div></div>
+            <div class="ds-shop-benefit"><span aria-hidden="true">🔒</span><div><strong>Pago seguro</strong><small>con cualquier tarjeta</small></div></div>
+            <div class="ds-shop-benefit"><span aria-hidden="true">✦</span><div><strong>Hecho local</strong><small>talleres del país</small></div></div>
+          </section>
+
+          <section class="ds-shop-block">
+            <header class="ds-shop-block__head"><h4>Lo que dicen</h4></header>
+            <div class="ds-lp-quotes">
+              <figure class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><div class="ds-stars" aria-label="5 de 5">★★★★★</div><blockquote>"Los bowls son hermosos y llegaron en dos días. Ya pedí más."</blockquote><figcaption><span class="ds-avatar" data-size="sm" role="img" aria-label="Clara N."><span class="ds-avatar__fallback" aria-hidden="true">CN</span></span><span><strong>Clara N.</strong><small>compra verificada</small></span></figcaption></div></figure>
+              <figure class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><div class="ds-stars" aria-label="5 de 5">★★★★★</div><blockquote>"Calidad muy por encima del precio. La cerámica se siente premium."</blockquote><figcaption><span class="ds-avatar" data-size="sm" role="img" aria-label="Julián P."><span class="ds-avatar__fallback" aria-hidden="true">JP</span></span><span><strong>Julián P.</strong><small>compra verificada</small></span></figcaption></div></figure>
+              <figure class="ds-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="ds-flow"><div class="ds-stars" aria-label="4 de 5">★★★★☆</div><blockquote>"Todo impecable. Restaría solo que quiero más colores disponibles."</blockquote><figcaption><span class="ds-avatar" data-size="sm" role="img" aria-label="Vera S."><span class="ds-avatar__fallback" aria-hidden="true">VS</span></span><span><strong>Vera S.</strong><small>compra verificada</small></span></figcaption></div></figure>
+            </div>
+          </section>
+
+          <section class="ds-shop-news">
+            <div><h4>Sumate al club</h4><p>10% en tu primera compra y acceso anticipado a lanzamientos.</p></div>
+            <form class="ds-shop-news__form" onsubmit="return false"><input class="ds-input" type="email" aria-label="Tu email" placeholder="tu@email.com" /><button class="ds-button ds-interactive" data-variant="primary" type="submit">Suscribirme</button></form>
+          </section>
+
+          <footer class="ds-lp-footer">
+            <div class="ds-lp-footer__brand"><strong>mercado norte</strong><small>Objetos para todos los días.</small></div>
+            <nav class="ds-lp-footer__cols">
+              <div><span>Tienda</span><a href="#">Cocina</a><a href="#">Mesa</a><a href="#">Deco</a></div>
+              <div><span>Ayuda</span><a href="#">Envíos</a><a href="#">Cambios</a><a href="#">Contacto</a></div>
+              <div><span>Nosotros</span><a href="#">Historia</a><a href="#">Talleres</a><a href="#">Trabaja aquí</a></div>
+            </nav>
+          </footer>
+        </div>
+      </div>
+      </div>
+    </section>
+  </div>
+  <dialog class="ds-dialog" id="ds-export-dialog" aria-labelledby="ds-export-title">
+    <header class="ds-dialog__header">
+      <div class="ds-stack" data-gap="none">
+        <p class="ds-text" data-role="eyebrow">Integración</p>
+        <h2 class="ds-heading ds-dialog__title" data-size="h3" id="ds-export-title">Exportar configuración</h2>
+      </div>
+      <form method="dialog"><button class="ds-button ds-interactive ds-dialog__close" data-variant="ghost" data-icon-only type="submit" aria-label="Cerrar"><span data-ds-icon="close"></span></button></form>
+    </header>
+    <div class="ds-dialog__body">
+      <section class="ds-integration-step">
+        <span>1</span>
+        <div><h3 class="ds-heading" data-size="h4">Importa los tokens una vez</h3><p>El entrypoint ya incluye la base y sus ramps.</p><pre class="ds-code">@import "@skryensya/core/tokens.scss";</pre></div>
+      </section>
+      <section class="ds-integration-step">
+        <span>2</span>
+        <div><h3 class="ds-heading" data-size="h4">Aplica esta configuración en tu CSS</h3><p>Declarala después del import para que la app ajuste solo los seeds y dimensiones elegidos.</p><pre class="ds-code ds-out" id="ds-export-css" aria-live="polite"></pre></div>
+      </section>
+      <p class="ds-dialog__note">No copias ramps ni tokens semánticos: se derivan desde los seeds y conservan sus roles.</p>
+    </div>
+    <footer class="ds-dialog__footer ds-dialog__footer--split">
+      <form method="dialog"><button class="ds-button ds-interactive" data-variant="ghost" type="submit">Cerrar</button></form>
+      <button class="ds-button ds-interactive" data-variant="primary" id="ds-export-copy" type="button">Copiar CSS</button>
+    </footer>
+  </dialog>
+
+  <dialog class="ds-dialog" id="ds-contrast-dialog" aria-labelledby="ds-contrast-title">
+    <header class="ds-dialog__header">
+      <div class="ds-stack" data-gap="none">
+        <p class="ds-text" data-role="eyebrow">WCAG AA</p>
+        <h2 class="ds-heading ds-dialog__title" data-size="h3" id="ds-contrast-title">Revisar contraste</h2>
+      </div>
+      <form method="dialog"><button class="ds-button ds-interactive ds-dialog__close" data-variant="ghost" data-icon-only type="submit" aria-label="Cerrar"><span data-ds-icon="close"></span></button></form>
+    </header>
+    <div class="ds-dialog__body">
+      <div id="ds-audit" class="ds-audit"></div>
+      <p class="ds-dialog__note" id="ds-fix-note" aria-live="polite">Los ratios se miden en claro y oscuro sobre los colores actuales.</p>
+    </div>
+    <footer class="ds-dialog__footer ds-dialog__footer--split">
+      <form method="dialog"><button class="ds-button ds-interactive" data-variant="ghost" type="submit">Cerrar</button></form>
+      <button class="ds-button ds-interactive" data-variant="primary" id="ds-contrast-fix" type="button">Corregir colores</button>
+    </footer>
+  </dialog>
+</Base>
+
+<style>
+  /* The builder is a bounded workbench, not a page-level theme switch. The two surfaces share one
+     grid but each owns its own edge, depth and scroll region. */
+  .ds-config { display: grid; grid-template-columns: minmax(18rem, 20rem) minmax(0, 1fr); gap: clamp(14px, 2vw, 24px); max-inline-size: 96rem; min-block-size: calc(100dvh - var(--docs-header-block-size)); margin-inline: auto; padding: clamp(14px, 2vw, 28px); align-items: start; }
+  .ds-panel,
+  /* `clip` (not `hidden`): a hidden-overflow frame is still programmatically scrollable, so focusing an
+     input inside `.ds-canvas` would scroll the WHOLE frame, pushing the window bar and tabs out of view
+     and clipping them. `clip` clips identically but creates no scroll container, so only `.ds-canvas`
+     (overflow:auto) scrolls to reveal the focused control; the chrome stays put. */
+  .ds-preview { min-inline-size: 0; border: 1px solid var(--color-border-subtle); border-radius: 14px; background: var(--color-bg-surface); box-shadow: var(--elevation-raised); overflow: clip; }
+
+  /* The controls stay available without becoming a full-height left rail. */
+  .ds-panel { position: sticky; top: calc(var(--docs-header-block-size) + 16px); display: flex; flex-direction: column; block-size: min(52rem, calc(100dvh - var(--docs-header-block-size) - 32px)); min-block-size: 0; }
+
+  /* The window bar is an explicit boundary: changing a token only changes the framed preview below. */
+  .ds-preview { position: sticky; top: calc(var(--docs-header-block-size) + 16px); display: flex; flex-direction: column; block-size: min(52rem, calc(100dvh - var(--docs-header-block-size) - 32px)); }
+  .ds-preview__bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-block-size: 3.5rem; padding: 10px 16px; border-block-end: 1px solid var(--color-border-subtle); background: var(--color-bg-surface-raised); }
+  .ds-preview__identity { display: flex; align-items: center; gap: 9px; min-inline-size: 0; }
+  .ds-preview__identity > span:last-child { display: grid; gap: 1px; min-inline-size: 0; }
+  .ds-preview__identity strong { color: var(--color-text-primary); font-size: 12px; }
+  .ds-preview__identity small { overflow: hidden; color: var(--color-text-tertiary); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+  .ds-preview__live { inline-size: 8px; block-size: 8px; border-radius: 999px; flex: none; background: var(--color-action-primary); box-shadow: 0 0 0 3px var(--color-bg-accent-subtle); }
+
+  /* The view switcher is window chrome: it stays fixed while only the framed canvas below scrolls.
+     core/tabs.css ships only styling-hook tokens (no element rules), so this page maps them to paint
+     itself, the consumer's job, exactly as decisión 8 frames it. */
+  .ds-views { flex: none; display: flex; align-items: stretch; gap: 2px; padding-inline: 12px; background: var(--color-bg-surface-raised); border-block-end: 1px solid var(--color-border-subtle); overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  .ds-views::-webkit-scrollbar { display: none; }
+  .ds-views .ds-tabs__trigger {
+    position: relative; flex: none; display: inline-flex; align-items: center; white-space: nowrap;
+    min-block-size: 2.5rem; padding-inline: 14px; margin-block-end: -1px;
+    border: 0; border-radius: 8px 8px 0 0;
+    background: transparent; color: var(--color-text-tertiary);
+    font: inherit; font-size: var(--font-size-body-sm); font-weight: 500;
+    cursor: pointer; transition: color 0.14s ease;
+  }
+  .ds-views .ds-tabs__trigger:hover { color: var(--color-text-secondary); }
+  .ds-views .ds-tabs__trigger[data-selected] { color: var(--color-text-primary); }
+  .ds-views .ds-tabs__trigger[data-selected]::after { content: ""; position: absolute; inset-inline: 12px; inset-block-end: 0; block-size: 2px; border-radius: 2px 2px 0 0; background: var(--color-action-primary); }
+  .ds-views .ds-tabs__trigger:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: calc(-1 * var(--focus-ring-width)); }
+  /* The component shelf needs a gutter; product pages own their full frame. */
+  .ds-view[data-value="showcase"] { padding: clamp(20px, 3vw, 40px); }
+  .ds-canvas .ds-tabs__content { padding-block: 0; }
+  .ds-canvas .ds-tabs__content[hidden] { display: none; }
+
+  @media (max-width: 860px) {
+    .ds-config { grid-template-columns: 1fr; padding: 12px; }
+    .ds-panel.ds-preview { position: static; block-size: auto; }
+    .ds-panel__scroll.ds-canvas { overflow: visible; }
+  }
+  .ds-muted { color: var(--color-text-tertiary); font-size: 12px; font-weight: 400; }
+
+
+  .ds-panel__scroll { flex: 1; min-block-size: 0; overflow-y: auto; padding: 6px 18px 12px; display: flex; flex-direction: column; }
+  .ds-sec { padding-block: 14px; border-block-end: 1px solid var(--color-border-subtle); }
+  .ds-sec:last-child { border-block-end: 0; }
+  .ds-sec__head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .ds-sec__head h2 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin: 0; }
+  .ds-pill { font-size: 10.5px; font-weight: 600; color: var(--color-text-tertiary); background: var(--color-bg-surface-sunken); padding: 1px 7px; border-radius: 999px; }
+  .ds-code { overflow-x: auto; margin: 8px 0 0; padding: 10px 12px; border: 1px solid var(--color-border-subtle); border-radius: 8px; background: var(--color-bg-canvas); color: var(--color-text-primary); font-family: var(--font-family-mono, ui-monospace, monospace); font-size: 11px; line-height: 1.5; white-space: pre; }
+  .ds-out { margin: 8px 0 0; }
+
+  /* Each role is a row: the design system's Select (label + trigger) with the reset beside it.
+     Clear gap between rows; the reset reveals on hover. */
+  .ds-seeds { display: grid; gap: 14px; }
+  .ds-seed { display: grid; align-items: end; }
+  .ds-seed :global(.ds-select) { min-inline-size: 0; }
+  .ds-seed :global(.ds-select__trigger) { inline-size: 100%; }
+
+  .ds-dimensions { display: grid; gap: 16px; }
+  .ds-dimension { display: grid; gap: 8px; }
+  .ds-dimension__copy { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .ds-dimension__copy strong { color: var(--color-text-primary); font-size: 12px; }
+  .ds-dimension__copy span { color: var(--color-text-tertiary); font-size: 11px; text-align: end; }
+  /* The dimension picker is a DS Select: the visible title is the copy block above it, so the
+     select's own label is kept for a11y but visually hidden (:global() to reach the component's
+     class past Astro's scoping). The trigger spans the row. */
+  .ds-dimension :global(.ds-select) { inline-size: 100%; }
+  .ds-dimension :global(.ds-select__label) { position: absolute; inline-size: 1px; block-size: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  .ds-dimension :global(.ds-select__trigger) { inline-size: 100%; }
+
+  /* Audit is compact in the builder and detailed only when asked for. */
+  .ds-tally { display: block; font-variant-numeric: tabular-nums; font-weight: 700; }
+  .ds-tally.ok { color: var(--color-text-success); }
+  .ds-tally.bad { color: var(--color-text-danger); }
+  .ds-audit { display: grid; gap: 1px; }
+  /* Rows are injected by JS, so scope through the static audit container. */
+  #ds-audit :global(.ds-audit-row) { display: grid; grid-template-columns: 1fr 44px 44px; gap: 8px; align-items: center; padding: 4px 0; }
+  #ds-audit :global(.ds-audit-head) { padding-bottom: 6px; }
+  #ds-audit :global(.ds-audit-head span) { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-tertiary); text-align: center; }
+  #ds-audit :global(.ds-audit-row code) { font-size: 11px; color: var(--color-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #ds-audit :global(.ds-badge2) { font-variant-numeric: tabular-nums; font-weight: 600; padding: 3px 0; border-radius: 6px; font-size: 11px; text-align: center; }
+  #ds-audit :global(.ds-badge2.ok) { background: var(--color-bg-success-subtle); color: var(--color-text-success); }
+  #ds-audit :global(.ds-badge2.bad) { background: var(--color-bg-danger-subtle); color: var(--color-text-danger); }
+
+  .ds-panel__foot { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 40px 40px; gap: 6px; padding: 12px 18px; border-block-start: 1px solid var(--color-border-subtle); background: var(--color-bg-surface); }
+  .ds-btn { inline-size: 100%; min-inline-size: 0; display: inline-flex; align-items: center; justify-content: center; min-block-size: var(--ds-button-height); padding-inline: 8px; border: var(--ds-button-border-width) solid var(--ds-button-border-color); border-radius: var(--ds-button-radius); background: var(--ds-button-bg); box-shadow: var(--ds-button-shadow); color: var(--ds-button-fg); font: inherit; font-size: var(--ds-button-font-size); font-weight: var(--ds-button-font-weight); }
+  .ds-btn--primary { min-inline-size: 0; }
+  .ds-btn--ghost.ds-contrast-trigger { inline-size: 40px; min-inline-size: 40px; padding-inline: 0; }
+  .ds-contrast-trigger { display: inline-grid; place-items: center; min-block-size: var(--ds-button-height); border: var(--ds-button-border-width) solid var(--ds-button-border-color); border-radius: var(--ds-button-radius); background: var(--ds-button-bg); color: var(--ds-button-fg); }
+
+  .ds-dialog { --ds-dialog-inline-size: min(42rem, calc(100vw - 2rem)); }
+  .ds-dialog__footer--split { justify-content: space-between; }
+  .ds-dialog__footer--split form { margin: 0; }
+  .ds-integration-step { display: grid; grid-template-columns: 24px 1fr; gap: 10px; }
+  .ds-integration-step > span { display: grid; place-items: center; inline-size: 24px; block-size: 24px; border-radius: 999px; background: var(--color-bg-accent-subtle); color: var(--color-text-accent); font-size: 11px; font-weight: 700; }
+  .ds-integration-step .ds-heading,
+  .ds-integration-step p { margin: 0; }
+  .ds-integration-step p { color: var(--color-text-secondary); font-size: 12px; line-height: 1.5; }
+  .ds-dialog__note { margin: 0; padding: 10px 12px; border-radius: 8px; background: var(--color-bg-surface-sunken); color: var(--color-text-secondary); font-size: 12px; line-height: 1.5; }
+  .ds-probe { position: absolute; inline-size: 0; block-size: 0; overflow: hidden; opacity: 0; pointer-events: none; }
+
+  /* The canvas is the viewport of each product. Only the component shelf is inset. */
+  .ds-canvas { flex: 1; min-block-size: 0; overflow: auto; background: var(--color-bg-canvas); padding: 0; }
+
+  /* Surface shells leave panel anatomy to each sandbox: bodies retain the former md inset. */
+  .ds-stats > .ds-box > .ds-flow,
+  .ds-multicol > .ds-box > .ds-flow,
+  .ds-dash__kpis > .ds-box > .ds-flow,
+  .ds-dash__main > .ds-box > .ds-flow,
+  .ds-lp-features > .ds-box > .ds-flow,
+  .ds-lp-quotes > .ds-box > .ds-flow,
+  .ds-lp-pricing > .ds-box > .ds-flow,
+  .ds-products > .ds-box > .ds-flow { padding: var(--space-inset-md); }
+  /* KPI stats establish the dashboard's reading order before the multi-column card wall. */
+  .ds-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: 14px; margin-bottom: 18px; }
+  .ds-stats .ds-flow { min-block-size: 7.25rem; }
+
+  /* Landing and commerce are complete product pages, so their chrome reaches the preview frame. */
+  .ds-landing.ds-store { min-block-size: 100%; overflow: hidden; background: var(--color-bg-surface); }
+  .ds-sitebar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-block-size: 3.5rem; padding: 10px 16px; border-block-end: 1px solid var(--color-border-subtle); background: var(--color-bg-surface); }
+  .ds-sitebar > strong { color: var(--color-text-primary); font-size: 14px; letter-spacing: -0.03em; }
+  .ds-sitebar > div { display: flex; align-items: center; gap: 10px; }
+  .ds-sitebar a { color: var(--color-text-secondary); font-size: 12px; text-decoration: none; }
+  .ds-landing__hero { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(10rem.65fr); gap: 20px; align-items: center; padding: clamp(24px, 4vw, 48px); }
+  .ds-landing__hero > div:first-child { display: grid; justify-items: start; gap: 12px; }
+  .ds-landing__hero h3 { max-inline-size: 20ch; margin: 0; color: var(--color-text-primary); font-size: clamp(1.5rem, 3vw, 2.4rem); line-height: 1.02; letter-spacing: -0.045em; text-wrap: balance; }
+  .ds-landing__hero p { max-inline-size: 48ch; margin: 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.5; }
+  .ds-coffee-box { display: grid; align-content: end; gap: 4px; aspect-ratio: 4 / 5; padding: 18px; border-radius: calc(var(--radius-surface) - 4px); background: var(--color-action-primary); color: var(--color-text-on-accent); box-shadow: var(--elevation-raised); }
+  .ds-coffee-box span.ds-coffee-box small { font-size: 11px; opacity: .82; }
+  .ds-coffee-box strong { font-size: 18px; }
+  .ds-landing__proof { display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid var(--color-border-subtle); }
+  .ds-landing__proof span { padding: 12px; color: var(--color-text-secondary); font-size: 11px; text-align: center; }
+  .ds-landing__proof span + span { border-inline-start: 1px solid var(--color-border-subtle); }
+
+  /* landing sections */
+  .ds-lp-section { padding: clamp(28px, 5vw, 60px) clamp(20px, 4vw, 48px); border-block-end: 1px solid var(--color-border-subtle); }
+  .ds-lp-head { display: grid; justify-items: center; gap: 8px; margin-bottom: 28px; text-align: center; }
+  .ds-lp-head .ds-badge { justify-self: center; }
+  .ds-lp-head h4 { max-inline-size: 24ch; margin: 0; color: var(--color-text-primary); font-size: clamp(1.25rem, 2.4vw, 1.85rem); line-height: 1.1; letter-spacing: -0.03em; text-wrap: balance; }
+  .ds-lp-head p { max-inline-size: 52ch; margin: 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.5; }
+  .ds-lp-logos { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 28px; padding: 20px; border-block-end: 1px solid var(--color-border-subtle); background: var(--color-bg-surface-sunken); }
+  .ds-lp-logos span { color: var(--color-text-tertiary); font-size: 11px; }
+  .ds-lp-logos b { color: var(--color-text-secondary); font-size: 15px; font-weight: 700; letter-spacing: -0.03em; opacity: .65; }
+  .ds-lp-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 14px; }
+  .ds-lp-features .ds-flow { gap: 8px; }
+  .ds-lp-ico { display: grid; place-items: center; inline-size: 40px; block-size: 40px; border-radius: 11px; font-size: 18px; background: var(--color-bg-accent-subtle); color: var(--color-text-accent); }
+  .ds-lp-ico[data-tone="success"] { background: var(--color-bg-success-subtle); color: var(--color-text-success); }
+  .ds-lp-ico[data-tone="warning"] { background: var(--color-bg-warning-subtle); color: var(--color-text-warning); }
+  .ds-lp-ico[data-tone="danger"] { background: var(--color-bg-danger-subtle); color: var(--color-text-danger); }
+  .ds-lp-features strong { color: var(--color-text-primary); font-size: 14px; }
+  .ds-lp-features p { margin: 0; color: var(--color-text-secondary); font-size: 12.5px; line-height: 1.5; }
+  .ds-lp-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 20px; }
+  .ds-lp-steps li { display: grid; justify-items: start; gap: 8px; }
+  .ds-lp-step__n { display: grid; place-items: center; inline-size: 32px; block-size: 32px; border-radius: 999px; background: var(--color-action-primary); color: var(--color-text-on-accent); font-size: 14px; font-weight: 700; }
+  .ds-lp-steps strong { color: var(--color-text-primary); font-size: 14px; }
+  .ds-lp-steps p { margin: 0; color: var(--color-text-secondary); font-size: 12.5px; line-height: 1.5; }
+  .ds-lp-origins { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 14px; }
+  .ds-origin { overflow: hidden; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-surface); background: var(--color-bg-surface); }
+  .ds-origin__img { aspect-ratio: 16 / 10; background: var(--color-bg-accent-subtle); }
+  .ds-origin[data-o="b"] .ds-origin__img { background: var(--color-bg-warning-subtle); }
+  .ds-origin[data-o="c"] .ds-origin__img { background: var(--color-bg-success-subtle); }
+  .ds-origin__body { display: grid; justify-items: start; gap: 4px; padding: 14px; }
+  .ds-origin__body strong { color: var(--color-text-primary); font-size: 13px; }
+  .ds-origin__body small { color: var(--color-text-tertiary); font-size: 11px; }
+  .ds-lp-quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 14px; }
+  .ds-lp-quotes .ds-flow { gap: 14px; }
+  .ds-lp-quotes blockquote { margin: 0; color: var(--color-text-primary); font-size: 13.5px; line-height: 1.5; }
+  .ds-lp-quotes figcaption { display: flex; align-items: center; gap: 10px; }
+  .ds-lp-quotes figcaption > span:last-child { display: grid; }
+  .ds-lp-quotes figcaption strong { color: var(--color-text-primary); font-size: 12px; }
+  .ds-lp-quotes figcaption small { color: var(--color-text-tertiary); font-size: 11px; }
+  .ds-stars { color: var(--color-text-warning); font-size: 13px; letter-spacing: 2px; }
+  .ds-lp-pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 14px; align-items: start; }
+  .ds-plan .ds-flow { gap: 10px; }
+  .ds-plan--featured { outline: 2px solid var(--color-border-accent); outline-offset: -1px; }
+  .ds-plan__name { color: var(--color-text-primary); font-size: 15px; }
+  .ds-plan__price { margin: 0; color: var(--color-text-primary); font-size: 26px; font-weight: 700; }
+  .ds-plan__price span { color: var(--color-text-tertiary); font-size: 13px; font-weight: 400; }
+  .ds-plan__desc { margin: 0; color: var(--color-text-secondary); font-size: 12px; }
+  .ds-plan__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; color: var(--color-text-secondary); font-size: 12.5px; }
+  .ds-lp-faq { display: grid; gap: 10px; max-inline-size: 46rem; margin-inline: auto; }
+  .ds-faq { padding: 14px 16px; border: 1px solid var(--color-border-subtle); border-radius: 12px; background: var(--color-bg-surface); }
+  .ds-faq strong { display: block; margin-bottom: 4px; color: var(--color-text-primary); font-size: 13px; }
+  .ds-faq p { margin: 0; color: var(--color-text-secondary); font-size: 12.5px; line-height: 1.5; }
+  .ds-lp-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: clamp(28px, 5vw, 52px) clamp(20px, 4vw, 48px); background: var(--color-bg-accent-subtle); border-block-end: 1px solid var(--color-border-subtle); }
+  .ds-lp-cta h4 { margin: 0 0 4px; color: var(--color-text-primary); font-size: clamp(1.25rem, 2.4vw, 1.7rem); letter-spacing: -0.03em; }
+  .ds-lp-cta p { margin: 0; color: var(--color-text-secondary); font-size: 13px; }
+  .ds-lp-footer { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 20px; padding: clamp(24px, 4vw, 40px) clamp(20px, 4vw, 48px); background: var(--color-bg-surface-sunken); }
+  .ds-lp-footer__brand { display: grid; gap: 4px; }
+  .ds-lp-footer__brand strong { color: var(--color-text-primary); font-size: 15px; letter-spacing: -0.03em; }
+  .ds-lp-footer__brand small { color: var(--color-text-tertiary); font-size: 12px; }
+  .ds-lp-footer__cols { display: flex; flex-wrap: wrap; gap: 32px; }
+  .ds-lp-footer__cols > div { display: grid; gap: 6px; }
+  .ds-lp-footer__cols span { color: var(--color-text-primary); font-size: 12px; font-weight: 600; }
+  .ds-lp-footer__cols a { color: var(--color-text-tertiary); font-size: 12px; text-decoration: none; }
+  .ds-lp-footer__cols a:hover { color: var(--color-text-secondary); }
+
+  /* products, shared by comercio blocks */
+  .ds-products { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .ds-products--wide { grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr)); }
+  .ds-product { overflow: hidden; box-shadow: none; border: 1px solid var(--color-border-subtle); }
+  .ds-product__image { aspect-ratio: 1 / .8; background: var(--color-bg-accent-subtle); }
+  .ds-product__image[data-product="orange"] { background: var(--color-bg-warning-subtle); }
+  .ds-product__image[data-product="green"] { background: var(--color-bg-success-subtle); }
+  .ds-product__image[data-product="purple"] { background: color-mix(in srgb, var(--color-action-primary) 24%, var(--color-bg-surface)); }
+  .ds-product__image[data-product="pink"] { background: var(--color-bg-danger-subtle); }
+  .ds-product__image[data-product="sky"] { background: color-mix(in srgb, var(--color-action-primary) 12%, var(--color-bg-surface)); }
+  .ds-product .ds-flow { gap: 8px; }
+  .ds-product .ds-flow > strong { color: var(--color-text-primary); font-size: 13px; }
+  .ds-product .ds-flow > span:not(.ds-badge) { color: var(--color-text-secondary); font-size: 12px; }
+
+  /* comercio sections */
+  .ds-shop-announce { padding: 8px 16px; text-align: center; color: var(--color-text-on-accent); background: var(--color-action-primary); font-size: 12px; }
+  .ds-shop-nav { display: flex; gap: 16px; }
+  .ds-shop-nav a { color: var(--color-text-secondary); font-size: 12.5px; text-decoration: none; }
+  .ds-shop-nav a:hover { color: var(--color-text-primary); }
+  .ds-shop-hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0.9fr); gap: 24px; align-items: center; padding: clamp(24px, 4vw, 48px); border-block-end: 1px solid var(--color-border-subtle); }
+  .ds-shop-hero__copy { display: grid; justify-items: start; gap: 12px; }
+  .ds-shop-hero__copy h3 { max-inline-size: 18ch; margin: 0; color: var(--color-text-primary); font-size: clamp(1.5rem, 3vw, 2.4rem); line-height: 1.03; letter-spacing: -0.045em; text-wrap: balance; }
+  .ds-shop-hero__copy p { max-inline-size: 44ch; margin: 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.5; }
+  .ds-shop-hero__art { aspect-ratio: 4 / 3; border-radius: var(--radius-surface); background: linear-gradient(135deg, var(--color-bg-accent-subtle), var(--color-bg-warning-subtle)); box-shadow: var(--elevation-raised); }
+  .ds-shop-cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 12px; padding: clamp(20px, 3vw, 28px) clamp(20px, 4vw, 48px); border-block-end: 1px solid var(--color-border-subtle); }
+  .ds-shop-cat { display: grid; gap: 2px; padding: 16px; border: 1px solid var(--color-border-subtle); border-radius: 14px; text-decoration: none; background: var(--color-bg-surface); transition: border-color .12s; }
+  .ds-shop-cat:hover { border-color: var(--color-border-accent); }
+  .ds-shop-cat span { color: var(--color-text-primary); font-size: 14px; font-weight: 600; }
+  .ds-shop-cat small { color: var(--color-text-tertiary); font-size: 11px; }
+  .ds-shop-cat[data-c="blue"] { box-shadow: inset 0 3px 0 var(--color-action-primary); }
+  .ds-shop-cat[data-c="orange"] { box-shadow: inset 0 3px 0 var(--color-text-warning); }
+  .ds-shop-cat[data-c="green"] { box-shadow: inset 0 3px 0 var(--color-text-success); }
+  .ds-shop-cat[data-c="purple"] { box-shadow: inset 0 3px 0 var(--color-text-accent); }
+  .ds-shop-block { padding: clamp(24px, 4vw, 44px) clamp(20px, 4vw, 48px); border-block-end: 1px solid var(--color-border-subtle); }
+  .ds-shop-block__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+  .ds-shop-block__head h4 { margin: 0; color: var(--color-text-primary); font-size: clamp(1.15rem, 2vw, 1.5rem); letter-spacing: -0.03em; }
+  .ds-shop-editorial { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-block-end: 1px solid var(--color-border-subtle); }
+  .ds-shop-editorial__art { min-block-size: 220px; background: linear-gradient(135deg, var(--color-bg-success-subtle), var(--color-bg-accent-subtle)); }
+  .ds-shop-editorial__copy { display: grid; justify-items: start; align-content: center; gap: 12px; padding: clamp(24px, 4vw, 44px); }
+  .ds-shop-editorial__copy h4 { margin: 0; color: var(--color-text-primary); font-size: clamp(1.25rem, 2.4vw, 1.75rem); letter-spacing: -0.03em; }
+  .ds-shop-editorial__copy p { max-inline-size: 40ch; margin: 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.5; }
+  .ds-shop-benefits { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 14px; padding: clamp(20px, 3vw, 28px) clamp(20px, 4vw, 48px); border-block-end: 1px solid var(--color-border-subtle); background: var(--color-bg-surface-sunken); }
+  .ds-shop-benefit { display: flex; align-items: center; gap: 10px; }
+  .ds-shop-benefit > span { font-size: 20px; }
+  .ds-shop-benefit strong { display: block; color: var(--color-text-primary); font-size: 13px; }
+  .ds-shop-benefit small { color: var(--color-text-tertiary); font-size: 11px; }
+  .ds-shop-news { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: clamp(24px, 4vw, 44px); background: var(--color-bg-accent-subtle); border-block-end: 1px solid var(--color-border-subtle); }
+  .ds-shop-news h4 { margin: 0 0 4px; color: var(--color-text-primary); font-size: clamp(1.15rem, 2vw, 1.5rem); letter-spacing: -0.03em; }
+  .ds-shop-news p { margin: 0; color: var(--color-text-secondary); font-size: 13px; }
+  .ds-shop-news__form { display: flex; gap: 8px; }
+  .ds-shop-news__form .ds-input { min-inline-size: 12rem; }
+
+  /* ── Dashboard (real product UI) ── */
+  .ds-dash { --ds-dash-gutter: clamp(20px, 3vw, 40px); display: grid; gap: 16px; min-block-size: 100%; padding: 0 var(--ds-dash-gutter) var(--ds-dash-gutter); background: var(--color-bg-surface); }
+  .ds-dash__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-inline: calc(-1 * var(--ds-dash-gutter)); padding: 12px var(--ds-dash-gutter); border-block-end: 1px solid var(--color-border-subtle); background: var(--color-bg-surface-raised); }
+  .ds-dash__id { display: flex; align-items: center; gap: 10px; }
+  .ds-dash__mark { display: grid; place-items: center; inline-size: 36px; block-size: 36px; border-radius: 10px; background: var(--color-action-primary); color: var(--color-text-on-accent); font-weight: 700; }
+  .ds-dash__id strong { display: block; color: var(--color-text-primary); font-size: 15px; letter-spacing: -0.02em; }
+  .ds-dash__id small { color: var(--color-text-tertiary); font-size: 12px; }
+  .ds-dash__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .ds-dash__actions .ds-segmented { inline-size: auto; }
+  .ds-dash__kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 14px; }
+  .ds-dash__kpis > .ds-box { box-shadow: var(--elevation-raised); }
+  .ds-dash__kpis .ds-flow { gap: 10px; }
+  .ds-spark { display: flex; align-items: flex-end; gap: 3px; block-size: 34px; }
+  .ds-spark > i { flex: 1; border-radius: 2px; background: var(--color-action-primary); opacity: .45; }
+  .ds-spark > i:last-child { opacity: 1; }
+  .ds-spark[data-trend="down"] > i { background: var(--color-text-tertiary); }
+  .ds-dash__main { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .ds-dash__main > .ds-box { box-shadow: var(--elevation-raised); }
+  .ds-dash__span { grid-column: 1 / -1; }
+  .ds-dash__main > .ds-box > header { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-block-size: 3.25rem; padding-inline: var(--space-inset-md); background: var(--color-bg-surface-raised); }
+  .ds-dash__main > .ds-box > header strong { color: var(--color-text-primary); font-size: 13px; }
+  .ds-legend { display: flex; align-items: center; gap: 6px; color: var(--color-text-tertiary); font-size: 11px; }
+  .ds-legend__dot { inline-size: 9px; block-size: 9px; border-radius: 3px; background: var(--color-action-primary); }
+  .ds-legend__dot[data-series="b"] { background: var(--color-text-tertiary); opacity: .5; }
+  .ds-area { display: flex; align-items: flex-end; gap: 8px; block-size: 180px; padding-block-start: 8px; }
+  .ds-area__col { flex: 1; display: flex; align-items: flex-end; justify-content: center; gap: 3px; block-size: 100%; }
+  .ds-area__bar { inline-size: 45%; border-radius: 4px 4px 0 0; }
+  .ds-area__bar[data-series="a"] { background: var(--color-action-primary); }
+  .ds-area__bar[data-series="b"] { background: var(--color-bg-accent-subtle); }
+  .ds-area__axis { display: flex; gap: 8px; margin-top: 8px; }
+  .ds-area__axis span { flex: 1; text-align: center; color: var(--color-text-tertiary); font-size: 10px; }
+  .ds-meter { display: grid; gap: 6px; }
+  .ds-meter__top { display: flex; align-items: baseline; justify-content: space-between; color: var(--color-text-secondary); font-size: 12px; }
+  .ds-meter__top strong { color: var(--color-text-primary); }
+  .ds-goal { display: flex; align-items: baseline; gap: 8px; }
+  .ds-goal__value { color: var(--color-text-primary); font-size: 28px; font-weight: 700; }
+  .ds-goal__target { color: var(--color-text-tertiary); font-size: 13px; }
+  .ds-bars { display: grid; gap: 6px; }
+  .ds-bars__top { display: flex; align-items: baseline; justify-content: space-between; color: var(--color-text-secondary); font-size: 12px; }
+  .ds-bars__top strong { color: var(--color-text-primary); }
+  .ds-bars__track { block-size: 8px; border-radius: 999px; background: var(--color-bg-surface-sunken); overflow: hidden; }
+  .ds-bars__track > i { display: block; block-size: 100%; border-radius: 999px; background: var(--color-action-primary); }
+  .ds-cell-user { display: inline-flex; align-items: center; gap: 8px; }
+  .ds-dash__tablebox .ds-table { min-inline-size: 34rem; }
+
+  /* Responsive CSS Multi-column Layout gives the preview its card wall without a measurement pass. */
+  .ds-multicol { column-count: 1; column-gap: var(--space-stack-md); }
+  .ds-multicol > .ds-box { break-inside: avoid; margin-block-end: var(--space-stack-md); box-shadow: var(--elevation-raised); }
+  /* 36rem / 52rem / 72rem mirror semantic/_breakpoints.scss; CSS media queries cannot read its vars. */
+  @media (min-width: 36rem) { .ds-multicol { column-count: 2; } }
+  @media (min-width: 52rem) { .ds-multicol { column-count: 3; } }
+  @media (min-width: 72rem) { .ds-multicol { column-count: 4; } }
+  .ds-multicol > .ds-box > header { display: flex; align-items: center; min-block-size: 3.25rem; padding-inline: var(--space-inset-md); background: var(--color-bg-surface-raised); }
+  .ds-canvas .ds-flow { display: grid; gap: 14px; align-content: start; }
+  .ds-form { display: grid; gap: 12px; }
+  .ds-validation-list { list-style: none; display: grid; gap: 8px; margin: 0; padding: 0; }
+  .ds-validation-list li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px; align-items: start; padding: 10px 12px; border: 1px solid var(--color-border-danger); border-radius: var(--radius-control); background: var(--color-bg-danger-subtle); }
+  .ds-validation-list :global(.ds-icon) { margin-block-start: 2px; color: var(--color-text-danger); --ds-icon-size: 1rem; }
+  .ds-validation-list span { display: grid; gap: 2px; min-inline-size: 0; }
+  .ds-validation-list strong { color: var(--color-text-primary); font-size: 12px; }
+  .ds-validation-list small { color: var(--color-text-secondary); font-size: 11px; line-height: 1.4; overflow-wrap: anywhere; }
+  .ds-form .ds-alert { margin-block-start: 2px; }
+  @media (max-width: 640px) {
+    .ds-canvas { overflow: visible; }
+    .ds-sitebar.ds-sitebar > div { flex-wrap: wrap; }
+    .ds-shop-nav { display: none; }
+    .ds-landing__hero.ds-shop-hero.ds-shop-editorial.ds-dash__main { grid-template-columns: 1fr; }
+    .ds-products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ds-coffee-box { max-inline-size: 14rem; }
+  }
+
+  .ds-panel__title { margin: 0; color: var(--color-text-primary); font-size: var(--font-size-heading-sm); }
+  .ds-panel__desc { margin: 0; color: var(--color-text-secondary); font-size: var(--font-size-body-sm); line-height: var(--font-line-height-body); }
+
+  .ds-row { display: flex; gap: 8px; align-items: center; }
+  .ds-row--end { justify-content: flex-end; }
+  .ds-wrap { flex-wrap: wrap; }
+
+  /* activity feed: ds-avatar + ds-badge in a plain list */
+  .ds-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .ds-list li { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--color-text-primary); }
+  .ds-list li > div { flex: 1; display: flex; flex-direction: column; }
+  .ds-time { font-size: 11px; color: var(--color-text-tertiary); }
+
+  /* kbd rows (the ds-kbd keys are the component) */
+  .ds-kbd-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--color-text-secondary); }
+
+  /* pricing extras (Box + Badge + Button are components; these style the plain content) */
+  .ds-price__amt { font-size: 30px; font-weight: 700; color: var(--color-text-primary); margin: 0; }
+  .ds-price__amt span { font-size: 14px; font-weight: 400; color: var(--color-text-tertiary); }
+  .ds-price__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 13px; color: var(--color-text-secondary); }
+
+  /* decorative ramps, the brand tool's own subject, not a component */
+  .ds-ramp-row { display: grid; grid-template-columns: 58px 1fr; gap: 8px; align-items: center; }
+  .ds-ramp-label { font-size: 11px; color: var(--color-text-tertiary); text-transform: capitalize; }
+  .ds-ramp { display: flex; block-size: 18px; border-radius: 5px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--color-border-subtle); }
+  .ds-ramp > i { flex: 1; }
+
+  /* surface swatches, each is a real bg token, so switching the neutral seed tints them visibly */
+  .ds-surfaces { display: grid; grid-template-columns: repeat(auto-fit, minmax(4.5rem, 1fr)); gap: 8px; }
+  .ds-surf { display: flex; align-items: flex-end; min-block-size: 4rem; padding: 8px; border-radius: 9px; box-shadow: inset 0 0 0 1px var(--color-border-subtle); }
+  .ds-surf > span { color: var(--color-text-tertiary); font-size: 10.5px; font-weight: 600; }
+  .ds-icons { display: grid; grid-template-columns: repeat(auto-fit, minmax(2.75rem, 1fr)); gap: 8px; }
+  .ds-icon { display: grid; place-items: center; min-block-size: 2.75rem; border-radius: 9px; color: var(--color-text-secondary); box-shadow: inset 0 0 0 1px var(--color-border-subtle); }
+  .ds-icon :global(.ds-icon) { --ds-icon-size: 1.25rem; }
+  /* Prominent icons across the showcase, so an icon-family swap is obvious at a glance. */
+  .ds-stat-row { display: flex; align-items: center; gap: 12px; }
+  .ds-stat-ico { display: grid; place-items: center; inline-size: 2.5rem; block-size: 2.5rem; border-radius: 12px; flex: none; --ds-icon-size: 1.375rem; }
+  .ds-stat-ico[data-tone="accent"] { background: var(--color-bg-accent-subtle); color: var(--color-text-accent); }
+  .ds-stat-ico[data-tone="danger"] { background: var(--color-bg-danger-subtle); color: var(--color-text-danger); }
+  .ds-multicol > .ds-box > header { gap: 10px; }
+  .ds-multicol > .ds-box > header :global(.ds-icon) { flex: none; color: var(--color-text-tertiary); --ds-icon-size: 1.125rem; }
+  .ds-flow :global(.ds-button .ds-icon) { --ds-icon-size: 1.125rem; }
+
+  /* decorative chart, illustrative, not a component */
+  .ds-chart { display: flex; gap: 8px; align-items: flex-end; block-size: 120px; }
+  .ds-chart > i { flex: 1; border-radius: 5px 5px 0 0; background: var(--color-action-primary); opacity: 0.55; }
+  .ds-chart > i:nth-child(5) { opacity: 1; }
+</style>
+
+<script is:inline>
+  (function () {
+    // The ONLY themed element is `.ds-canvas` (the preview): the recipe's ramps + re-declared semantics
+    // are compiled onto it, so edits set inline custom props on IT, the rest of the docs is untouched.
+    // State: the last edit is saved to localStorage AND written to the URL HASH (#…) so a theme is a
+    // shareable code. Load priority: URL hash > localStorage > defaults.
+    var stage = document.querySelector(".ds-canvas");
+    var data = JSON.parse(document.getElementById("ds-data").textContent);
+    var probeL = document.getElementById("ds-probe-light");
+    var probeD = document.getElementById("ds-probe-dark");
+    var KEY = "ds-playground";
+
+    // ── fixed-width share code ──
+    // One base36 char per variable, version-prefixed, always the same length:
+    //   [ver][accent][neutral][danger][success][warning][density][radius][icon]
+    // Each colour is an index into that seed's preset list; each dimension an index into its level
+    // ladder; the icon an index into the published sets. Because it is fixed and self-contained, a
+    // theme is a short code you can share on its own, it rides in the URL hash fragment.
+    var CODE_VERSION = "1";
+    var DENSITY_LEVELS = ["0.5", "0.6", "0.8", "1", "1.2"];
+    var RADIUS_LEVELS = ["0", "0.5", "1", "1.5", "2"];
+    var ICON_SETS = data.iconSets; // ["lucide", "phosphor", "material"]
+    var CODE_LENGTH = 1 + data.seeds.length + 3; // ver + 5 seeds + density + radius + icon
+
+    var dimensionDefaults = { "--ds-density": "1", "--radius-multiplier": "1" };
+    var overrides = {};
+    var iconSet = "lucide";
+
+    function b36(n) { return (n > 0 ? n : 0).toString(36); }
+    function fromB36(c) { var n = parseInt(c, 36); return isNaN(n) ? 0 : n; }
+
+    function encodeCode() {
+      var s = CODE_VERSION;
+      data.seeds.forEach(function (seed) {
+        var value = overrides[seed.name] || seed.def, idx = 0;
+        for (var i = 0; i < seed.presets.length; i++) { if (seed.presets[i].value === value) { idx = i; break; } }
+        s += b36(idx);
+      });
+      s += b36(Math.max(0, DENSITY_LEVELS.indexOf(overrides["--ds-density"] || dimensionDefaults["--ds-density"])));
+      s += b36(Math.max(0, RADIUS_LEVELS.indexOf(overrides["--radius-multiplier"] || dimensionDefaults["--radius-multiplier"])));
+      s += b36(Math.max(0, ICON_SETS.indexOf(iconSet)));
+      return s;
+    }
+
+    // Rebuilds state from a code; returns false (leaving state untouched) if it is not a v1 code of the
+    // expected length, so stale/foreign strings fall through to the next source instead of corrupting.
+    function decodeCode(str) {
+      if (!str || str.charAt(0) !== CODE_VERSION || str.length !== CODE_LENGTH) return false;
+      var next = {}, i = 1;
+      data.seeds.forEach(function (seed) {
+        var preset = seed.presets[fromB36(str.charAt(i++))];
+        if (preset && preset.value !== seed.def) next[seed.name] = preset.value;
+      });
+      var dv = DENSITY_LEVELS[fromB36(str.charAt(i++))];
+      if (dv && dv !== dimensionDefaults["--ds-density"]) next["--ds-density"] = dv;
+      var rv = RADIUS_LEVELS[fromB36(str.charAt(i++))];
+      if (rv && rv !== dimensionDefaults["--radius-multiplier"]) next["--radius-multiplier"] = rv;
+      overrides = next;
+      iconSet = ICON_SETS[fromB36(str.charAt(i++))] || "lucide";
+      return true;
+    }
+
+    function isDefaultState() { return Object.keys(overrides).length === 0 && iconSet === "lucide"; }
+
+    // ── load: URL hash (shared) first, else localStorage ──
+    (function initState() {
+      if (decodeCode((location.hash || "").replace(/^#/, ""))) return;
+      try { decodeCode(localStorage.getItem(KEY) || ""); } catch (e) {}
+    })();
+
+    function persist() {
+      var code = encodeCode();
+      localStorage.setItem(KEY, code);
+      var url = new URL(location.href);
+      url.hash = isDefaultState() ? "" : code;
+      history.replaceState(null, "", url.toString());
+    }
+
+    function oklchComponents(rgb) {
+      var r = rgb[0] / 255, g = rgb[1] / 255, b = rgb[2] / 255;
+      var linear = function (channel) { return channel <= 0.04045 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4); };
+      r = linear(r); g = linear(g); b = linear(b);
+      var l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
+      var m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
+      var s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
+      l = Math.cbrt(l); m = Math.cbrt(m); s = Math.cbrt(s);
+      var lightness = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
+      var a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+      var chromaB = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+      var hue = Math.atan2(chromaB, a) * 180 / Math.PI;
+      return { lightness: lightness, chroma: Math.sqrt(a * a + chromaB * chromaB), hue: hue < 0 ? hue + 360 : hue };
+    }
+    function oklchValue(parts) { return "oklch(" + (parts.lightness * 100).toFixed(1) + "% " + parts.chroma.toFixed(3) + " " + parts.hue.toFixed(1) + ")"; }
+    // canvas normalises any colour string (rgb/oklch/color(srgb…)) to sRGB bytes
+    var cv = document.createElement("canvas");
+    var ctx = cv.getContext("2d", { willReadFrequently: true });
+    function toRGB(s) { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = "#000"; ctx.fillStyle = s; ctx.fillRect(0, 0, 1, 1); var d = ctx.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2]]; }
+    function rgbOf(probe, e) { probe.style.color = ""; probe.style.color = e; var c = getComputedStyle(probe).color; return c ? toRGB(c) : null; }
+    function hex(r) { return "#" + r.slice(0, 3).map(function (x) { var h = Math.round(x).toString(16); return h.length < 2 ? "0" + h : h; }).join(""); }
+    function lum(r) { var f = function (x) { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r[0]) + 0.7152 * f(r[1]) + 0.0722 * f(r[2]); }
+    function ratio(a, b) { if (!a || !b) return 0; var la = lum(a), lb = lum(b), hi = Math.max(la, lb), lo = Math.min(la, lb); return (hi + 0.05) / (lo + 0.05); }
+
+    function applyOne(p, v) { if (v === "" || v == null) { delete overrides[p]; stage.style.removeProperty(p); } else { overrides[p] = v; stage.style.setProperty(p, v); } }
+    function edit(p, v) { repairMessage = ""; applyOne(p, v); persist(); refresh(); }
+    function setDimension(p, v) {
+      if (v === dimensionDefaults[p]) delete overrides[p]; else overrides[p] = v;
+      stage.style.setProperty(p, v);
+      repairMessage = "";
+      persist();
+      refresh();
+    }
+    // Icon family is preview-only: swap the icons inside .ds-canvas via the layout's scoped helper,
+    // touching neither the docs chrome nor the global icon preference.
+    function applyIcons(setId) {
+      iconSet = ICON_SETS.indexOf(setId) !== -1 ? setId : "lucide";
+      if (typeof window.__dsApplyIconSetWithin === "function") window.__dsApplyIconSetWithin(stage, iconSet);
+    }
+    function setIconSet(setId) { applyIcons(setId); repairMessage = ""; persist(); refresh(); }
+    function expr(p, fb) { return "var(" + p + (fb ? ", " + fb : "") + ")"; }
+    function seedForPair(fg, bg) {
+      var name = fg + " " + bg;
+      if (name.indexOf("danger") !== -1) return "--seed-danger";
+      if (name.indexOf("success") !== -1) return "--seed-success";
+      if (name.indexOf("warning") !== -1) return "--seed-warning";
+      if (name.indexOf("accent") !== -1 || name.indexOf("action-primary") !== -1 || name.indexOf("focus") !== -1) return "--seed-accent";
+      return "--seed-neutral";
+    }
+    function seedDefault(seed) { return data.seeds.find(function (item) { return item.name === seed; }).def; }
+    var auditFailures = [];
+    var repairMessage = "";
+
+    // ── audit ──
+    function buildAudit() {
+      var head = '<div class="ds-audit-row ds-audit-head"><span></span><span>claro</span><span>oscuro</span></div>';
+      document.getElementById("ds-audit").innerHTML = head + data.pairs.map(function (p) {
+        var name = p.fg.replace("--color-", "") + " / " + p.bg.replace("--color-", "");
+        return '<div class="ds-audit-row" data-fg="' + p.fg + '" data-bg="' + p.bg + '" data-min="' + p.min + '"><code title="' + name + '">' + name + "</code><span class='ds-badge2' data-slot='light'></span><span class='ds-badge2' data-slot='dark'></span></div>";
+      }).join("");
+    }
+    function refreshAudit() {
+      var pass = 0, total = 0;
+      auditFailures = [];
+      document.querySelectorAll("#ds-audit .ds-audit-row[data-fg]").forEach(function (row) {
+        var fg = row.getAttribute("data-fg"), bg = row.getAttribute("data-bg"), min = +row.getAttribute("data-min");
+        [["light", probeL], ["dark", probeD]].forEach(function (pr) {
+          var r = ratio(rgbOf(pr[1], "var(" + fg + ")"), rgbOf(pr[1], "var(" + bg + ")"));
+          var el = row.querySelector("[data-slot=" + pr[0] + "]");
+          var ok = r >= min;
+          el.textContent = r ? r.toFixed(1) : "-";
+          el.className = "ds-badge2 " + (ok ? "ok" : "bad");
+          el.title = pr[0] + " · mín " + min + ":1";
+          if (!ok) auditFailures.push({ fg: fg, bg: bg, min: min, seed: seedForPair(fg, bg) });
+          total++; if (ok) pass++;
+        });
+      });
+      var tally = document.getElementById("ds-tally");
+      tally.textContent = pass + "/" + total;
+      tally.className = "ds-tally " + (pass === total ? "ok" : "bad");
+      var fix = document.getElementById("ds-contrast-fix");
+      fix.disabled = auditFailures.length === 0;
+      document.getElementById("ds-fix-note").textContent = repairMessage || (auditFailures.length ? auditFailures.length + " ratio(s) necesitan ajuste. La corrección mantiene hue y chroma y mueve como máximo 12 puntos de luminosidad." : "Todos los pares cumplen WCAG AA en claro y oscuro.");
+    }
+    function scoreSeed(seed) {
+      var deficit = 0, failures = 0;
+      data.pairs.forEach(function (pair) {
+        if (seedForPair(pair.fg, pair.bg) !== seed) return;
+        [["light", probeL], ["dark", probeD]].forEach(function (mode) {
+          var difference = pair.min - ratio(rgbOf(mode[1], "var(" + pair.fg + ")"), rgbOf(mode[1], "var(" + pair.bg + ")"));
+          if (difference > 0) { deficit += difference * difference; failures++; }
+        });
+      });
+      return { deficit: deficit, failures: failures };
+    }
+    function repairSeed(seed) {
+      var rgb = rgbOf(probeL, expr(seed, seedDefault(seed)));
+      if (!rgb) return false;
+      var base = oklchComponents(rgb);
+      var original = stage.style.getPropertyValue(seed);
+      var best = { value: null, score: scoreSeed(seed).deficit };
+      for (var step = 1; step <= 12; step++) {
+        [-1, 1].forEach(function (direction) {
+          var lightness = Math.max(0, Math.min(1, base.lightness + direction * step / 100));
+          var candidate = oklchValue({ lightness: lightness, chroma: base.chroma, hue: base.hue });
+          stage.style.setProperty(seed, candidate);
+          var score = scoreSeed(seed).deficit;
+          if (score < best.score) best = { value: candidate, score: score };
+        });
+      }
+      if (!best.value) {
+        if (original) stage.style.setProperty(seed, original); else stage.style.removeProperty(seed);
+        return false;
+      }
+      stage.style.setProperty(seed, best.value);
+      overrides[seed] = best.value;
+      return true;
+    }
+    function repairContrast() {
+      var seeds = auditFailures.map(function (failure) { return failure.seed; }).filter(function (seed, index, list) { return list.indexOf(seed) === index; });
+      var repaired = seeds.filter(repairSeed);
+      repairMessage = repaired.length ? "Ajustamos " + repaired.join(", ") + " sin cambiar su hue ni chroma. Revisa los ratios antes de exportar." : "No encontramos una mejora dentro de 12 puntos de luminosidad; ajusta el seed de color de forma manual.";
+      repaired.forEach(function (seed) { remountSeed(seed, overrides[seed]); });
+      persist();
+      refresh();
+    }
+
+    // The colour selects are DS Select instances; the enhancer owns their displayed value, so the page drives
+    // them only on external changes (reset / repair / restore) by re-mounting with a new default value.
+    function remountSeed(prop, value) {
+      if (typeof window.__remountSeed === "function") window.__remountSeed(prop, value || seedDefault(prop));
+    }
+
+    function refresh() {
+      document.querySelectorAll("[data-row]").forEach(function (row) {
+        row.classList.toggle("is-overridden", !!overrides[row.getAttribute("data-row")]);
+      });
+      document.getElementById("ds-export-css").textContent = exportCss();
+      refreshAudit();
+    }
+
+    // The colour dropdowns ARE the design system's Select (data-ds-select), enhanced by
+    // initComponents(). Each emits ds-value-change with the picked OKLCH; picking the default preset
+    // clears the override so the export stays minimal.
+    var seedsContainer = document.querySelector(".ds-seeds");
+    if (seedsContainer) {
+      seedsContainer.addEventListener("ds-value-change", function (e) {
+        var root = e.target.closest("[data-ds-select][data-prop]");
+        if (!root) return;
+        var prop = root.getAttribute("data-prop");
+        var value = (e.detail && e.detail.value && e.detail.value[0]) || "";
+        edit(prop, value === seedDefault(prop) ? "" : value);
+      });
+    }
+    // Density, roundness and icon family are DS Select instances too (same as the colour dropdowns). Each
+    // carries its target in data-prop; picking an item emits ds-value-change with the chosen value.
+    var dimensionsContainer = document.querySelector(".ds-dimensions");
+    if (dimensionsContainer) {
+      dimensionsContainer.addEventListener("ds-value-change", function (e) {
+        var root = e.target.closest("[data-ds-select][data-prop]");
+        if (!root) return;
+        var prop = root.getAttribute("data-prop");
+        var value = (e.detail && e.detail.value && e.detail.value[0]);
+        if (prop === "icon-set") { setIconSet(value || "lucide"); return; }
+        setDimension(prop, value || dimensionDefaults[prop]);
+      });
+    }
+    document.querySelectorAll("[data-reset]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var prop = btn.getAttribute("data-reset");
+        edit(prop, "");
+        remountSeed(prop, seedDefault(prop));
+      });
+    });
+    document.getElementById("ds-reset-all").addEventListener("click", function () {
+      Object.keys(overrides).forEach(function (p) { stage.style.removeProperty(p); });
+      overrides = {};
+      repairMessage = "";
+      Object.keys(dimensionDefaults).forEach(function (p) { stage.style.setProperty(p, dimensionDefaults[p]); });
+      applyIcons("lucide");
+      localStorage.removeItem(KEY);
+      var url = new URL(location.href);
+      url.hash = "";
+      history.replaceState(null, "", url.toString());
+      data.seeds.forEach(function (s) { remountSeed(s.name, s.def); });
+      // The dimension and icon pickers are Select instances too: remount each to its default so the trigger
+      // reflects the reset (the enhancer owns its displayed value).
+      Object.keys(dimensionDefaults).forEach(function (p) { remountSeed(p, dimensionDefaults[p]); });
+      remountSeed("icon-set", "lucide");
+      refresh();
+    });
+
+    function exportCss() {
+      var lines = [":root {"];
+      data.seeds.forEach(function (s) {
+        var required = s.name === "--seed-accent" || s.name === "--seed-neutral";
+        if (required || overrides[s.name]) lines.push("  " + s.name + ": " + (overrides[s.name] || s.def) + ";");
+      });
+      Object.keys(overrides).forEach(function (p) { if (p.indexOf("--seed-") !== 0) lines.push("  " + p + ": " + overrides[p] + ";"); });
+      lines.push("}");
+      // Icon family is a package choice, not a CSS custom property, record it as a note so the export
+      // still carries the full theme.
+      if (iconSet !== "lucide") lines.push("", "/* íconos: @skryensya/icons-" + iconSet + " */");
+      return lines.join("\n");
+    }
+    function flash(btn, label) {
+      var orig = btn.getAttribute("data-label") || btn.textContent;
+      btn.setAttribute("data-label", orig);
+      btn.textContent = label;
+      setTimeout(function () { btn.textContent = orig; }, 1400);
+    }
+    function openDialog(id) {
+      var dialog = document.getElementById(id);
+      if (!dialog.open) dialog.showModal();
+    }
+    document.getElementById("ds-export-open").addEventListener("click", function () { openDialog("ds-export-dialog"); });
+    document.getElementById("ds-contrast-open").addEventListener("click", function () { openDialog("ds-contrast-dialog"); });
+    document.getElementById("ds-contrast-fix").addEventListener("click", repairContrast);
+    document.getElementById("ds-export-copy").addEventListener("click", function () {
+      var btn = this;
+      if (navigator.clipboard) navigator.clipboard.writeText(exportCss()).then(function () { flash(btn, "¡Copiado!"); }, function () { flash(btn, "¡Copiado!"); });
+      else flash(btn, "¡Copiado!");
+    });
+    // Compartir: the URL already carries the fixed code in its hash (kept in sync on every edit), copy
+    // the whole link. The code is self-contained, so the link IS the theme.
+    document.getElementById("ds-share").addEventListener("click", function () {
+      var btn = this;
+      persist(); // ensure the hash reflects the latest state even if nothing was edited yet
+      var link = location.href;
+      if (navigator.clipboard) navigator.clipboard.writeText(link).then(function () { flash(btn, "¡Link copiado!"); }, function () { flash(btn, "¡Link copiado!"); });
+      else flash(btn, "¡Link copiado!");
+    });
+
+    // Stage-only defaults keep this workbench independent from the docs' global density and radius controls.
+    Object.keys(dimensionDefaults).forEach(function (p) { stage.style.setProperty(p, dimensionDefaults[p]); });
+    Object.keys(overrides).forEach(function (p) { stage.style.setProperty(p, overrides[p]); });
+    buildAudit();
+    // rAF runs after the deferred module scripts, so window.__remountSeed / __dsApplyIconSetWithin exist
+    // by now: restore any saved/shared overrides into the Select instances and the preview (authored markup
+    // starts on each seed's default and the docs' global icon set).
+    requestAnimationFrame(function () {
+      refresh();
+      data.seeds.forEach(function (s) { if (overrides[s.name]) remountSeed(s.name, overrides[s.name]); });
+      // Same for the dimension pickers: reflect a saved/shared override in the trigger.
+      Object.keys(dimensionDefaults).forEach(function (p) { if (overrides[p]) remountSeed(p, overrides[p]); });
+      // Icon family: apply the loaded set to the preview, and reflect a non-default choice in its trigger.
+      applyIcons(iconSet);
+      if (iconSet !== "lucide") remountSeed("icon-set", iconSet);
+    });
+  })();
+</script>
+
+<script>
+  // Bridge so the inline playground (which can't import ESM) can re-point a DS Select at a new value:
+  // reset, contrast-repair and shared-link restore all set a value the enhancer didn't pick itself.
+  import { destroyMount, mountSelect } from "@skryensya/vanilla";
+  window.__remountSeed = function (prop, value) {
+    const root = document.querySelector('[data-ds-select][data-prop="' + prop + '"]');
+    if (!root) return;
+    destroyMount(root); // desmonta el enhancer Svelte (corre su cleanup) y libera el marcador ready
+    if (value) root.setAttribute("data-value", value);
+    else root.removeAttribute("data-value");
+    mountSelect(root);
+  };
+</script>

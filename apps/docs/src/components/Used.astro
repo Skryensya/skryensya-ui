@@ -1,0 +1,24 @@
+---
+/*
+ * One token's used value, live. The build half: look the token up in the parsed corpus and work
+ * out which real CSS property will evaluate it (that needs the alias chain, which only the
+ * parser has). The runtime half is scripts/used-values.ts, driven off these data attributes.
+ */
+import { PROBES, byName, probeProp } from "../lib/tokens";
+
+interface Props {
+  token: string;
+}
+
+const { token } = Astro.props;
+const t = byName.get(token);
+
+// A token named here that the parser has never seen is a typo in the docs, and it should be
+// loud: a silent "-" would read as "the system doesn't set this", which is a different claim.
+if (!t) throw new Error(`Used: ${token} no existe en el CSS del sistema`);
+
+const prop = probeProp(t.value);
+const probe = PROBES[t.file] ?? "";
+---
+
+<span class="mono" data-token={token} data-prop={prop} data-probe={probe}>…</span>

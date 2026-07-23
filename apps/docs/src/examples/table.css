@@ -1,0 +1,121 @@
+/*
+ * Scroll is overflow only. The border/radius live on `.ds-table` so `<caption>`, still the first
+ * child of the table in the DOM, renders outside the framed table box (CSS table model).
+ *
+ * Never put overflow:hidden on `.ds-table`: browsers clip <caption> with it, even though the caption
+ * box sits outside the table box in the CSS table model.
+ */
+.ds-table-scroll {
+  overflow-x: auto;
+  /* Flex/grid parents (e.g. docs showcase stage as ds-inline) default min-size:auto and would let a
+     wide table blow the card; zero lets THIS box shrink and own the sideways scroll. */
+  inline-size: 100%;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+/*
+ * Inside a Box, the table rounds to the nested-element radius (--radius-control) instead of the
+ * surface radius. Box provides the surface; a table sitting inside its padding is a nested element.
+ */
+.ds-box .ds-table {
+  --ds-table-container-radius: var(--radius-control);
+}
+
+.ds-table {
+  width: 100%;
+  /* separate + zero spacing: collapse fights border-radius; this keeps a single outer frame. */
+  border-collapse: separate;
+  border-spacing: 0;
+  border: var(--ds-table-container-border-width) solid var(--ds-table-container-border-color);
+  border-radius: var(--ds-table-container-radius);
+  background: var(--ds-table-bg);
+  color: var(--ds-table-fg);
+  font-size: var(--ds-table-font-size);
+  line-height: var(--font-line-height-body);
+}
+
+.ds-table__caption {
+  caption-side: top;
+  /* Outside the frame: space below the title, no hairline that would fake an inner card edge. */
+  padding: 0 0 var(--ds-table-caption-gap);
+  color: var(--ds-table-caption-fg);
+  font-size: var(--font-size-caption);
+  text-align: start;
+  background: transparent;
+}
+
+.ds-table :is(th, td),
+.ds-table__header,
+.ds-table__cell {
+  padding: var(--ds-table-cell-padding-y) var(--ds-table-cell-padding-x);
+  border-bottom: 1px solid var(--ds-table-border-color);
+  text-align: start;
+  vertical-align: top;
+}
+
+/*
+ * Corner radii on the cells that meet the frame, substitutes for overflow:hidden on the table,
+ * which would crop the caption.
+ */
+.ds-table > :is(thead.ds-table__head) > :is(tr.ds-table__row):first-child > :first-child {
+  border-start-start-radius: var(--ds-table-container-radius);
+}
+.ds-table > :is(thead.ds-table__head) > :is(tr.ds-table__row):first-child > :last-child {
+  border-start-end-radius: var(--ds-table-container-radius);
+}
+.ds-table:not(:has(:is(thead.ds-table__head))) > :is(tbody.ds-table__body) > :is(tr.ds-table__row):first-child > :first-child {
+  border-start-start-radius: var(--ds-table-container-radius);
+}
+.ds-table:not(:has(:is(thead.ds-table__head))) > :is(tbody.ds-table__body) > :is(tr.ds-table__row):first-child > :last-child {
+  border-start-end-radius: var(--ds-table-container-radius);
+}
+.ds-table > :is(tbody.ds-table__body):last-child > :is(tr.ds-table__row):last-child > :first-child,
+.ds-table > :is(tfoot.ds-table__foot) > :is(tr.ds-table__row):last-child > :first-child {
+  border-end-start-radius: var(--ds-table-container-radius);
+}
+.ds-table > :is(tbody.ds-table__body):last-child > :is(tr.ds-table__row):last-child > :last-child,
+.ds-table > :is(tfoot.ds-table__foot) > :is(tr.ds-table__row):last-child > :last-child {
+  border-end-end-radius: var(--ds-table-container-radius);
+}
+
+.ds-table thead th,
+.ds-table__head .ds-table__header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--ds-table-header-bg);
+  color: var(--ds-table-header-fg);
+  font-weight: var(--ds-table-header-font-weight);
+  /* Stronger rule under the header, the cue that survives when fills flatten in high contrast. */
+  border-bottom-color: var(--ds-table-header-border-color);
+  border-bottom-width: 2px;
+  white-space: nowrap;
+}
+
+.ds-table tbody th,
+.ds-table__body .ds-table__header {
+  color: var(--ds-table-fg);
+  font-weight: var(--ds-table-header-font-weight);
+}
+
+.ds-table tfoot :is(th, td),
+.ds-table__foot :is(.ds-table__header.ds-table__cell) {
+  background: var(--ds-table-footer-bg);
+  color: var(--ds-table-footer-fg);
+  font-size: var(--font-size-caption);
+  border-bottom: 0;
+  border-top: 1px solid var(--ds-table-header-border-color);
+}
+
+.ds-table tbody tr:last-child :is(th, td),
+.ds-table__body .ds-table__row:last-child :is(.ds-table__header.ds-table__cell) {
+  border-bottom: 0;
+}
+
+/* When a footer follows, keep the last body row's divider so foot and body stay separated. */
+.ds-table:has(tfoot) tbody tr:last-child :is(th, td),
+.ds-table:has(.ds-table__foot) .ds-table__body .ds-table__row:last-child :is(.ds-table__header.ds-table__cell) {
+  border-bottom: 1px solid var(--ds-table-border-color);
+}
+

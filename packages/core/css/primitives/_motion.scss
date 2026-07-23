@@ -1,0 +1,19 @@
+@mixin tokens {
+  /* ── scale: motion, technical values only; intent lives in tier 2.
+   *    Change these to retune the whole system without touching a single
+   *    intent token or component. ── */
+  --scale-duration-instant: 0ms;   /* 0–50ms   */
+  --scale-duration-fast: 120ms;    /* 80–150ms */
+  --scale-duration-moderate: 200ms;/* 160–250ms */
+  --scale-duration-slow: 320ms;    /* 260–400ms */
+  --scale-easing-linear: linear;                          /* continuous motion */
+  --scale-easing-standard: cubic-bezier(0.2, 0, 0, 1);    /* on-screen changes */
+  --scale-easing-enter: cubic-bezier(0, 0, 0, 1);         /* decelerate, settles in */
+  --scale-easing-exit: cubic-bezier(0.3, 0, 1, 1);        /* accelerate, leaves fast */
+  --scale-easing-emphasized: cubic-bezier(0.05, 0.9, 0.1, 1); /* stronger settle for focus moments */
+  --scale-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);   /* gentle overshoot; NOT for critical UI */
+  /* momentum handed back: it leaves at the speed the finger had, then settles long and soft. Unlike
+   * `enter` (which starts at full speed from nothing), this one keeps a trace of acceleration at the
+   * head, which is what reads as "the throw continued" instead of "an animation started". */
+  --scale-easing-glide: cubic-bezier(0.32, 0.72, 0, 1);
+}

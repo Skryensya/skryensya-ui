@@ -1,0 +1,141 @@
+---
+import Base from "../layouts/Base.astro";
+import Chain from "../components/Chain.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import { tokens } from "../lib/tokens";
+
+const counts = {
+  primitive: tokens.filter((t) => t.tier === "primitive").length,
+  semantic: tokens.filter((t) => t.tier === "semantic").length,
+  component: tokens.filter((t) => t.tier === "component").length,
+};
+
+const badExample = `/* Esto falla el build. */
+.ds-button {
+  --ds-button-bg: var(--ramp-accent-600);
+}`;
+
+const linterOutput = `✗ 1 problem(s):
+
+  [tier-skip]
+    --ds-button-bg: component hook reaches past the semantic
+    layer into primitive --ramp-accent-600, bypasses mode
+    switching, breaks dark mode for this component alone`;
+---
+
+<Base
+  title="Tres tiers"
+  description="Primitivos, semánticos y styling hooks: qué puede referenciar cada tier, y por qué la dirección de las referencias es lo que hace que esto sea un sistema."
+>
+  <h1>Tres tiers</h1>
+  <p class="lede">
+    Un tier no se define por la carpeta donde vive, sino por <strong>qué puede referenciar</strong>.
+    Tres carpetas llamadas primitive/semantic/component no hacen un sistema de tres tiers; lo hace
+    la dirección obligada de las referencias.
+  </p>
+
+  <div class="ds-table-scroll">
+    <table class="ds-table">
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Responde</th>
+          <th>Puede referenciar</th>
+          <th>Cuántos hay</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="ds-badge" data-tone="warning">primitive</span></td>
+          <td>qué valores existen</td>
+          <td>nada, es el fondo</td>
+          <td class="mono">{counts.primitive}</td>
+        </tr>
+        <tr>
+          <td><span class="ds-badge" data-tone="accent">semantic</span></td>
+          <td>qué significa un valor</td>
+          <td>primitivos, y otros semánticos</td>
+          <td class="mono">{counts.semantic}</td>
+        </tr>
+        <tr>
+          <td><span class="ds-badge" data-tone="success">component</span></td>
+          <td>dónde se usa un valor</td>
+          <td>solo semánticos, <strong>nunca</strong> primitivos</td>
+          <td class="mono">{counts.component}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>La cadena, en vivo</h2>
+  <p>
+    Cada rung muestra su valor usado ahora mismo. Cambia la <strong>marca</strong> arriba y mira qué
+    se mueve: el literal de abajo cambia de hue, y los nombres de arriba no se enteran. Esa
+    indiferencia es todo el mecanismo.
+  </p>
+  <p>
+    La cadena se abre en dos donde hay un token mode-aware, porque <code>light-dark()</code> tiene
+    dos padres. Cambia el <strong>modo</strong> y vas a ver cuál de los dos slots está usando tu
+    valor de arriba.
+  </p>
+
+  <Chain
+    token="--ds-button-bg"
+    caption="El fondo de un botón, desde el styling hook hasta el literal."
+  />
+
+  <Chain
+    token="--color-action-primary"
+    caption="Un token semántico nombra un propósito y apunta a una posición de rampa, nunca a un hue."
+  />
+
+  <h2>Por qué las referencias solo bajan</h2>
+  <p>
+    Un semántico puede apuntar a un primitivo o de costado a otro semántico. Un styling hook puede apuntar a
+    un semántico. Nada apunta hacia arriba, y <strong>tier 3 no puede saltar a tier 1</strong>.
+  </p>
+  <p>
+    Ese salto es el que parece inofensivo y no lo es. Un styling hook que toma <code>--ramp-accent-600</code>
+    directamente se salta la capa donde vive <code>light-dark()</code>. Ese componente, y solo ese,
+    deja de tener modo oscuro. El defecto no se ve hasta que alguien mira la página en oscuro.
+  </p>
+
+  <CodeBlock code={badExample} label="components/button.css" note="tier 3 → tier 1" />
+  <CodeBlock code={linterOutput} label="pnpm lint" note="el build se cae" />
+
+  <div class="ds-alert" data-tone="info" data-presentation="accent">
+    <div class="ds-alert__content">
+    <p>
+      No es una convención documentada: es una regla ejecutable. El validador corre sobre el CSS antes
+      de cada build, en <em>todas</em> las marcas, porque una regla que solo se cumple en la paleta por
+      defecto no es una regla. La salida de arriba es real: sale de apuntar un styling hook a una rampa
+      a propósito.
+    </p>
+    </div>
+  </div>
+
+  <h2>El prefijo marca el tier</h2>
+  <p>
+    Un primitivo se lee <code>--ramp-accent-600</code>; un semántico, <code>--color-action-primary</code>.
+    El prefijo distinto es intencional: ver un <code>--ramp-*</code> dentro del CSS de un componente
+    es la señal visible, a simple vista, de que alguien se saltó un tier. Aplanar a <code>--accent-600</code>
+    perdería esa señal.
+  </p>
+
+  <h2>El borde del tier es una cascade layer</h2>
+  <p>
+    La precedencia entre tiers no depende del orden de los <code>@import</code>: está en la cascada.
+    Una layer posterior gana, así que las overrides de marca y contraste siempre le ganan a los
+    semánticos base, sin importar el orden de importación.
+  </p>
+  <CodeBlock
+    code={`@layer primitives, semantic, components, overrides;`}
+    label="tokens.scss"
+    note="el orden que decide todo"
+  />
+  <p>
+    Y tiene un beneficio: como <strong>cualquier regla sin layer le gana a todas las layers</strong>,
+    tu app puede pisar un styling hook sin pelear especificidad.
+  </p>
+  <CodeBlock code={`.hero .ds-button { --ds-button-bg: rebeccapurple; }`} label="tu CSS" />
+</Base>

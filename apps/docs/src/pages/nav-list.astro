@@ -1,0 +1,133 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import Showcase from "../components/Showcase.astro";
+import { probeProp, tokens } from "../lib/tokens";
+
+const hooks = tokens
+  .filter((t) => t.file === "patterns/nav-list.css")
+  .map((t) => ({ ...t, prop: probeProp(t.value) }));
+
+const import_ = `@import "@skryensya/core/patterns/nav-list.css";`;
+
+const html = `<nav class="ds-nav-list" aria-label="Principal">
+  <div class="ds-nav-list__group">
+    <div class="ds-nav-list__group-label" id="espacio">Espacio</div>
+    <ul class="ds-nav-list__list" aria-labelledby="espacio">
+      <li class="ds-nav-list__item">
+        <a
+          class="ds-nav-list__link ds-interactive"
+          href="/"
+          aria-current="page"
+        >
+          <span data-ds-icon="info"></span>
+          <span class="ds-nav-list__label">Inicio</span>
+        </a>
+      </li>
+      <li class="ds-nav-list__item">
+        <a class="ds-nav-list__link ds-interactive" href="/reportes">
+          <span data-ds-icon="calendar"></span>
+          <span class="ds-nav-list__label">Reportes</span>
+          <span class="ds-nav-list__trailing">12</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>`;
+
+---
+
+<Base
+  title="Nav list"
+  description="Nav list: el pattern de lista de destinos que comparten el navbar y el sidebar."
+>
+  <h1>Nav list</h1>
+  <p class="lede">
+    La lista de destinos del sistema: un <code>&lt;nav&gt;</code> de <code>&lt;ul&gt;&lt;li&gt;&lt;a&gt;</code>,
+    cada link con un icono, un label y metadata opcional al final. Vertical en un sidebar, horizontal
+    en un navbar.
+  </p>
+
+  <h2>Por qué es un pattern y no un componente</h2>
+  <p>
+    La regla es una sola pregunta:
+    <em>¿muchos componentes comparten esta estructura exacta?</em> Aquí la respuesta no es una
+    predicción, el navbar y el sidebar la comparten hoy, en este repo. Así que envía
+    <strong>styling hooks y estructura</strong>, y <code>ds-nav-list</code> es una clase a la que
+    cualquier contenedor se suma, la misma forma que <code>ds-interactive</code> y <code>ds-icon</code>.
+  </p>
+  <p>
+    Es <strong>opt-in</strong>, como el icono y a diferencia del state layer: una app puede no tener
+    navegación.
+  </p>
+
+  <h2>No es un menu</h2>
+  <p>
+    <code>role="menu"</code> es un menú de aplicación con <code>menuitem</code> adentro. Esto es una
+    lista de links, y el markup se queda en <code>&lt;nav&gt;&lt;ul&gt;&lt;li&gt;&lt;a&gt;</code>, que es
+    lo que un lector de pantalla debería escuchar.
+  </p>
+
+  <h2>Demo</h2>
+  <Showcase code={html} lang="html" label="Nav list">
+    {/* A nav-list is sized by its host, a sidebar rail, a navbar row. The demo pins it to a rail width
+        so it reads as one; the code shows the markup without that host-owned width. */}
+    <div style="inline-size: 14rem">
+      <Fragment set:html={html} />
+    </div>
+  </Showcase>
+
+  <h2>Vertical, más compacta</h2>
+  <p>
+    En vertical, los destinos consecutivos no dejan gap: cada enlace ya conserva su área de toque. La
+    etiqueta de grupo lleva padding superior e inferior propio, para ordenar las secciones sin convertir
+    el espacio entre ítems en aire redundante. La variante horizontal conserva su separación en fila.
+  </p>
+
+  <h2>La página actual no es interacción</h2>
+  <p>
+    El hover, el foco y el press son del <a href="/state-layer">state layer</a>, que es el mecanismo
+    único del sistema, este archivo no los toca. Lo que sí vive aquí es el fondo de la página actual,
+    que no es feedback de interacción: persiste cuando nadie la está tocando, y el state layer pinta
+    encima. Y la marca es <code>aria-current="page"</code>, la que ya escribes; un
+    <code>data-selected</code> propio sería una segunda fuente para el mismo hecho, libre de
+    contradecir a la primera.
+  </p>
+
+  <h2>El host manda su motion</h2>
+  <p>
+    <code>--ds-nav-list-duration</code> y <code>--ds-nav-list-easing</code> arrancan en la intención
+    <em>state-change</em>, y el sidebar los re-declara con su intención de collapse: así los labels se
+    desvanecen en el mismo tiempo en que se mueve el ancho. Re-declarar el hook de un pattern es
+    exactamente para lo que existe un hook, el host nunca toca su markup.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={import_} label="tu CSS" />
+
+  <h2>Todos los styling hooks</h2>
+  <div class="ds-table-scroll">
+    <table class="ds-table">
+      <thead>
+        <tr>
+          <th>Hook</th>
+          <th>Valor autoral <span class="count">· build</span></th>
+          <th>Valor usado <span class="count">· runtime</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          hooks.map((h) => (
+            <tr>
+              <td class="mono">{h.name}</td>
+              <td class="mono">{h.value}</td>
+              <td class="mono" data-token={h.name} data-prop={h.prop} data-probe="ds-nav-list">
+                …
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</Base>

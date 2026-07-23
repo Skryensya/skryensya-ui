@@ -1,0 +1,79 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<span
+  class="ds-avatar"
+  data-size="sm"
+  role="img"
+  aria-label="Ada Lovelace"
+>
+  <span class="ds-avatar__fallback" aria-hidden="true">AL</span>
+</span>
+<span class="ds-avatar" role="img" aria-label="Alan Turing">
+  <span class="ds-avatar__fallback" aria-hidden="true">AT</span>
+</span>
+<span
+  class="ds-avatar"
+  data-size="lg"
+  role="img"
+  aria-label="Grace Hopper"
+>
+  <span class="ds-avatar__fallback" aria-hidden="true">GH</span>
+</span>
+
+<div class="ds-avatar-group">
+  <span class="ds-avatar" role="img" aria-label="Ada Lovelace">
+    <span class="ds-avatar__fallback" aria-hidden="true">AL</span>
+  </span>
+  <span class="ds-avatar" role="img" aria-label="Alan Turing">
+    <span class="ds-avatar__fallback" aria-hidden="true">AT</span>
+  </span>
+  <span class="ds-avatar" role="img" aria-label="Grace Hopper">
+    <span class="ds-avatar__fallback" aria-hidden="true">GH</span>
+  </span>
+  <span class="ds-avatar-group__overflow">+8</span>
+</div>`;
+
+const react = `import {
+  Avatar,
+  AvatarGroup,
+} from "@skryensya/react/avatar";
+
+<Avatar name="Ada Lovelace" size="sm" />
+<Avatar name="Alan Turing" />
+<Avatar name="Grace Hopper" size="lg" />
+
+<AvatarGroup max={3}>
+  <Avatar name="Ada Lovelace" />
+  <Avatar name="Alan Turing" />
+  <Avatar name="Grace Hopper" />
+  <Avatar name="Raúl G" />
+  {/* …8 más → colapsan en +8 */}
+</AvatarGroup>;`;
+---
+
+<Base title="Avatar" description="Avatar: imagen o iniciales, AvatarGroup con colapso +N y componente React.">
+  <h1>Avatar</h1>
+  <p class="lede">
+    Avatar es el token visual de una persona o entidad: una imagen o, como fallback, sus iniciales.
+    <strong>AvatarGroup</strong> apila un conjunto y colapsa el excedente en un contador «+N».
+  </p>
+
+  <h2>Demo HTML</h2>
+  <Showcase html={html} react={react} label="Avatar" />
+  <p>
+    Con imagen, el <code>&lt;img alt&gt;</code> aporta la semántica; sin ella, el contenedor toma
+    <code>role="img"</code> y las iniciales quedan decorativas, un solo nodo accesible en cada caso.
+    En React, las iniciales se derivan de <code>name</code> cuando no pasas hijos.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+</Base>

@@ -1,0 +1,96 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+
+const import_ = `@import "@skryensya/core/patterns/scroll-lock.css";`;
+
+const pattern = `html {
+  scrollbar-gutter: stable;
+}
+
+html:has(dialog:modal) {
+  overflow: hidden;
+}`;
+
+const nested = `/* The pattern freezes the document. If your app has rails with
+   overflow:auto (sidebar, toc), freeze them when there is a modal: */
+html:has(dialog:modal) .mi-sidebar,
+html:has(dialog:modal) .mi-toc {
+  overflow: hidden;
+}`;
+---
+
+<Base
+  title="Scroll lock"
+  description="Pattern opt-in that freezes the page behind a dialog:modal and reserves the scrollbar gutter so that the layout does not jump."
+>
+  <h1>Scroll lock</h1>
+  <p class="lede">
+    When a <code>&lt;dialog&gt;</code> is opened with <code>showModal()</code>, the page behind it has
+    to stop scrolling. Freezing the overflow removes the classic scrollbar and the content becomes wider
+    about ~15px: that is CLS. This pattern does both things at the same time, and only if you import it.
+  </p>
+
+  <h2>Why is it an opt-in pattern?</h2>
+  <p>
+    It is the first system rule that styles the <strong>root of the document</strong> from a
+    opt-in file. Everything else is scoped to its own element. The import <em>is</em> the
+    consent: an app that already runs its own scroll lock should not import it, or it will be applied twice.
+    That is decision 11 (<code>docs/decisiones/0011-el-dialog-exige-el-elemento-nativo.md</code>).
+  </p>
+
+  <h2>Importar</h2>
+  <CodeBlock code={import_} label="CSS" />
+
+  <h2>What does it send</h2>
+  <CodeBlock code={pattern} label="patterns/scroll-lock.css" />
+  <ul>
+    <li>
+      <code>scrollbar-gutter: stable</code> in <code>html</code>, always. Reserve the width of the
+      classic scrollbar <em>before</em> freezing, so that the width of the layout is identical to the
+      open and closed modal. Applying it only at the time of the lock is a race that the browser
+      can lose.
+    </li>
+    <li>
+      <code>overflow: hidden</code> in <code>html:has(dialog:modal)</code>. Freeze the document
+      behind any <code>&lt;dialog&gt;</code> opened with <code>showModal()</code>: dialog,
+      drawer, vaul, command palette. No JS.
+    </li>
+  </ul>
+  <p>
+    On systems with scrollbar overlay (the macOS default) the gutter does not take up layout space: the
+    Reservation is a no-op and does not bother you. In Windows and Linux with a classic scrollbar this is what prevents the jump.
+  </p>
+
+  <h2>try it here</h2>
+  <p>
+    This site imports the pattern. Open the search engine with <kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd> or
+    the navigation drawer in a narrow viewport: the page behind it does not move and the content does not
+    it widens. Close and the gutter is still reserved, the same width as always.
+  </p>
+
+  <h2>What it does not cover</h2>
+  <p>
+    <code>showModal()</code> leaves the page inert for pointer and keyboard, but the rails with
+    <code>overflow: auto</code> (a sticky sidebar, a toc) can still scroll with the wheel.
+    The pattern does not touch them on purpose: it does not know what rails your app has. If they exist, freeze them with
+    the same <code>:has(dialog:modal)</code>:
+  </p>
+  <CodeBlock code={nested} label="CSS" />
+
+  <p>
+    Painting the thumb of a region with scroll is another pattern:
+    <a class="sk-link sk-interactive" href="/en/scrollbar">scrollbar</a>. They do not step on each other: one freezes
+    <code>html</code>, the other one colors rails.
+  </p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>Opt-in: without the import, the system does not touch <code>html</code>.</li>
+    <li>Requires <code>&lt;dialog&gt;</code> + <code>showModal()</code>. A <code>div</code> with
+      <code>role="dialog"</code> does not enter <code>:modal</code> and does not trigger the lock.</li>
+    <li>Does not measure or offset with <code>padding-inline-end</code> in JS. The reservation is
+      <code>scrollbar-gutter</code>, platform property.</li>
+    <li>It does not replace a scroll lock of your own: if you already have one, do not import this one.</li>
+  </ul>
+</Base>

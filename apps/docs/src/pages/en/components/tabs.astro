@@ -1,0 +1,495 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const css = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/tabs.css";
+@import "@skryensya/core/patterns/state-layer.css";
+@import "@skryensya/core/patterns/layout.css";`;
+
+const basicHtml = `<div
+  class="sk-tabs"
+  data-sk-tabs
+  id="project-tabs"
+  data-value="summary"
+>
+  <div
+    class="sk-tabs__list"
+    data-sk-tabs-list
+    aria-label="Proyecto"
+  >
+    <button
+      class="sk-tabs__trigger sk-interactive"
+      data-sk-tabs-trigger
+      data-value="summary"
+      type="button"
+    >
+      Summary
+    </button>
+    <button
+      class="sk-tabs__trigger sk-interactive"
+      data-sk-tabs-trigger
+      data-value="activity"
+      type="button"
+    >
+      Activity
+    </button>
+  </div>
+
+  <div
+    class="sk-tabs__content"
+    data-sk-tabs-content
+    data-value="summary"
+  >
+    Atlas is ready for a July launch.
+  </div>
+  <div
+    class="sk-tabs__content"
+    data-sk-tabs-content
+    data-value="activity"
+  >
+    Three changes approved during the last week.
+  </div>
+</div>`;
+
+const basicReact = `import { Tabs } from "@skryensya/react/tabs";
+
+<Tabs
+  defaultValue="summary"
+  items={[
+    {
+      value: "summary",
+      label: "Summary",
+      children: "Atlas is ready for a July launch.",
+    },
+    {
+      value: "activity",
+      label: "Activity",
+      children: "Three changes approved during the last week.",
+    },
+  ]}
+/>;`;
+
+const statesHtml = `<div
+  class="sk-tabs"
+  data-sk-tabs
+  id="review-tabs"
+  data-value="details"
+>
+  <div
+    class="sk-tabs__list"
+    data-sk-tabs-list
+    aria-label="Review"
+  >
+    <button
+      class="sk-tabs__trigger sk-interactive"
+      data-sk-tabs-trigger
+      data-value="details"
+      type="button"
+    >
+      <span data-sk-icon="info" data-sk-icon-size="sm"></span>
+      Details
+    </button>
+    <button
+      class="sk-tabs__trigger sk-interactive"
+      data-sk-tabs-trigger
+      data-value="validation"
+      type="button"
+    >
+      <span data-sk-icon="check" data-sk-icon-size="sm"></span>
+      Validation
+    </button>
+    <button
+      class="sk-tabs__trigger sk-interactive"
+      data-sk-tabs-trigger
+      data-value="settings"
+      data-disabled
+      type="button"
+    >
+      <span data-sk-icon="settings" data-sk-icon-size="sm"></span>
+      Settings
+    </button>
+  </div>
+
+  <div
+    class="sk-tabs__content"
+    data-sk-tabs-content
+    data-value="details"
+  >
+    <div class="sk-stack" data-gap="xs">
+      <strong>Solicitud #248</strong>
+      <span>Update the Atlas runtime to Node 24.</span>
+    </div>
+  </div>
+  <div
+    class="sk-tabs__content"
+    data-sk-tabs-content
+    data-value="validation"
+  >
+    <div class="sk-stack" data-gap="xs">
+      <strong>12 comprobaciones aprobadas</strong>
+      <span>Bug-free typing, testing, and dependency review.</span>
+    </div>
+  </div>
+  <div
+    class="sk-tabs__content"
+    data-sk-tabs-content
+    data-value="settings"
+  >
+    Adjustments will be available after approving the request.
+  </div>
+</div>`;
+
+const statesReact = `import { Icon } from "@skryensya/react/icon";
+import { Tabs } from "@skryensya/react/tabs";
+
+<Tabs
+  defaultValue="details"
+  items={[
+    {
+      value: "details",
+      label: (
+        <>
+          <Icon name="info" size="sm" />
+          Details
+        </>
+      ),
+      children: (
+        <div className="sk-stack" data-gap="xs">
+          <strong>Solicitud #248</strong>
+          <span>Update the Atlas runtime to Node 24.</span>
+        </div>
+      ),
+    },
+    {
+      value: "validation",
+      label: (
+        <>
+          <Icon name="check" size="sm" />
+          Validation
+        </>
+      ),
+      children: "12 comprobaciones aprobadas.",
+    },
+    {
+      value: "settings",
+      label: (
+        <>
+          <Icon name="settings" size="sm" />
+          Settings
+        </>
+      ),
+      children: "Available after approving application.",
+      disabled: true,
+    },
+  ]}
+/>;`;
+
+const advancedHtml = `<div class="sk-stack" data-gap="sm">
+  <div
+    class="sk-tabs"
+    data-sk-tabs
+    id="workspace-tabs"
+    data-value="general"
+    data-orientation="vertical"
+    data-activation-mode="manual"
+  >
+    <div
+      class="sk-tabs__list"
+      data-sk-tabs-list
+      aria-label="Space settings"
+    >
+      <button
+        class="sk-tabs__trigger sk-interactive"
+        data-sk-tabs-trigger
+        data-value="general"
+        type="button"
+      >
+        <span data-sk-icon="settings" data-sk-icon-size="sm"></span>
+        General
+      </button>
+      <button
+        class="sk-tabs__trigger sk-interactive"
+        data-sk-tabs-trigger
+        data-value="access"
+        type="button"
+      >
+        <span data-sk-icon="user" data-sk-icon-size="sm"></span>
+        Acceso
+      </button>
+      <button
+        class="sk-tabs__trigger sk-interactive"
+        data-sk-tabs-trigger
+        data-value="notifications"
+        type="button"
+      >
+        <span data-sk-icon="info" data-sk-icon-size="sm"></span>
+        Avisos
+      </button>
+    </div>
+
+    <div
+      class="sk-tabs__content"
+      data-sk-tabs-content
+      data-value="general"
+    >
+      <div class="sk-stack" data-gap="xs">
+        <strong>space identity</strong>
+        <span>Atlas · Europe/Madrid · Spanish</span>
+      </div>
+    </div>
+    <div
+      class="sk-tabs__content"
+      data-sk-tabs-content
+      data-value="access"
+    >
+      <div class="sk-stack" data-gap="xs">
+        <strong>Team access</strong>
+        <span>8 miembros · 2 administradores</span>
+      </div>
+    </div>
+    <div
+      class="sk-tabs__content"
+      data-sk-tabs-content
+      data-value="notifications"
+    >
+      <div class="sk-stack" data-gap="xs">
+        <strong>Avisos operativos</strong>
+        <span>Mail and chat for deployments and incidents.</span>
+      </div>
+    </div>
+  </div>
+
+  <p id="workspace-tab-status" aria-live="polite">
+    Active section: General
+  </p>
+</div>`;
+
+const advancedCode = `<div class="sk-stack" data-gap="sm">
+  <div
+    class="sk-tabs"
+    data-sk-tabs
+    id="workspace-tabs"
+    data-value="general"
+    data-orientation="vertical"
+    data-activation-mode="manual"
+  >
+    <div class="sk-tabs__list" data-sk-tabs-list>
+      <!-- Tres triggers: General, Acceso y Avisos. -->
+    </div>
+
+    <div
+      class="sk-tabs__content"
+      data-sk-tabs-content
+      data-value="general"
+    >
+      Space identity.
+    </div>
+    <!-- The other panels repeat the data-value of their trigger. -->
+  </div>
+
+  <p id="workspace-tab-status" aria-live="polite">
+    Active section: General
+  </p>
+</div>`;
+
+const advancedBehavior = `const root = document.querySelector(
+  "#workspace-tabs",
+);
+const status = document.querySelector("#workspace-tab-status");
+const sectionNames = {
+  general: "General",
+  access: "Acceso",
+  notifications: "Avisos",
+};
+
+root?.addEventListener("sk-value-change", (event) => {
+  const name = sectionNames[event.detail.value];
+  if (status && name) status.textContent = "Active section: " + name;
+});`;
+
+const vanillaJs = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+await initComponents();`;
+
+const advancedJs = `${vanillaJs}
+
+${advancedBehavior}`;
+
+const advancedReact = `import { useState } from "react";
+import { Icon } from "@skryensya/react/icon";
+import { Tabs } from "@skryensya/react/tabs";
+
+const sectionNames: Record<string, string> = {
+  general: "General",
+  access: "Acceso",
+  notifications: "Avisos",
+};
+
+const items = [
+  {
+    value: "general",
+    label: (
+      <>
+        <Icon name="settings" size="sm" />
+        General
+      </>
+    ),
+    children: "Atlas · Europe/Madrid · Spanish",
+  },
+  {
+    value: "access",
+    label: (
+      <>
+        <Icon name="user" size="sm" />
+        Acceso
+      </>
+    ),
+    children: "8 miembros · 2 administradores",
+  },
+  {
+    value: "notifications",
+    label: (
+      <>
+        <Icon name="info" size="sm" />
+        Avisos
+      </>
+    ),
+    children: "Mail and chat for deployments and incidents.",
+  },
+];
+
+export function WorkspaceTabs() {
+  const [value, setValue] = useState("general");
+
+  return (
+    <div className="sk-stack" data-gap="sm">
+      <Tabs
+        value={value}
+        orientation="vertical"
+        activationMode="manual"
+        items={items}
+        onValueChange={(details) => setValue(details.value)}
+      />
+      <p aria-live="polite">
+        Active section: {sectionNames[value]}
+      </p>
+    </div>
+  );
+}`;
+---
+
+<Base
+  title="Tabs"
+  description="Three examples of Tabs, from basic anatomy to manual control."
+>
+  <h1>Tabs</h1>
+  <p class="lede">
+    Start with two views, add states and icons, and end with one
+    controlled vertical navigation. Anatomy does not change as we grow:
+    list, triggers and a panel for each value.
+  </p>
+
+  <h2>1. Basic</h2>
+  <p>
+    Two triggers and two panels. <code>data-value</code> links each
+    option with its content; the enhancer completes roles, focus and ARIA.
+  </p>
+  <Showcase
+    html={basicHtml}
+    react={basicReact}
+    label="Basic tabs"
+  />
+
+  <h2>2. Statuses and icons</h2>
+  <p>
+    The same contract supports composite labels and options
+    disabled. The icon accompanies the text; never replaces
+    accessible name of the tab.
+  </p>
+  <Showcase
+    html={statesHtml}
+    react={statesReact}
+    label="Tabs with states"
+  />
+
+  <h2>3. Orientation and status</h2>
+  <p>
+    In vertical orientation, the arrows run along the rail. with
+    manual activation, moving the focus does not change the panel: Enter or
+    Space confirms the selection. Event updates live region
+    below the component.
+  </p>
+  <Showcase
+    html={advancedHtml}
+    code={advancedCode}
+    codeFull={advancedHtml}
+    js={advancedJs}
+    react={advancedReact}
+    previewScript={advancedBehavior}
+    label="Vertical tabs with manual control"
+  />
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>CSS</h2>
+  <CodeBlock code={css} label="CSS" lang="css" />
+
+  <h2>Initialize vanilla</h2>
+  <p>
+    <code>initComponents</code> connects the Tabs. The icons are assembled
+    separately with the set chosen by the application.
+  </p>
+  <CodeBlock code={vanillaJs} label="JavaScript" />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>
+      Root uses <code>data-sk-tabs</code> and keeps the active value
+      in <code>data-value</code>.
+    </li>
+    <li>
+      Each trigger and panel declares the same <code>data-value</code>.
+    </li>
+    <li>
+      <code>data-disabled</code> removes an option from the interaction.
+    </li>
+    <li>
+      <code>data-orientation="vertical"</code> changes the axis
+      navigation and indicator.
+    </li>
+    <li>
+      <code>data-activation-mode="manual"</code> separates focus and
+      selection.
+    </li>
+    <li>
+      Vanilla emite <code>sk-value-change</code>; React expone
+      <code>onValueChange</code>.
+    </li>
+  </ul>
+
+  <h2>React</h2>
+  <p>
+    The component renders the same anatomy from <code>items</code>.
+    Use <code>value</code> and <code>onValueChange</code> when another
+    Application status depends on the active tab.
+  </p>
+
+  <StylingHooks
+    groups={[
+      {
+        file: "components/tabs.css",
+        probe: "sk-tabs",
+        title: "Tabs",
+      },
+    ]}
+  />
+</Base>

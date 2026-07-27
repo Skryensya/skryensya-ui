@@ -1,0 +1,209 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+
+const declare = `import { definePreference, oneOf } from "@skryensya/core/storage";
+
+// The three things travel together: where you live, what you accept,
+// and what is it when it is not there.
+export const colorModePreference = definePreference({
+  slot: "scheme",
+  fallback: "system",
+  parse: oneOf(["system", "light", "dark"]),
+});`;
+
+const vanilla = `import {
+  getPreference,
+  setPreference,
+  clearPreference,
+  subscribePreference,
+} from "@skryensya/vanilla/storage";
+import { colorModePreference } from "@skryensya/core/theme-toggle";
+
+getPreference(colorModePreference);          // "system" si no hay nada
+setPreference(colorModePreference, "dark");
+
+// It is called now, and on each change, including that of another tab.
+const off = subscribePreference(colorModePreference, (mode) => {
+  document.documentElement.dataset.scheme = mode;
+});
+off();
+
+// Forget ≠ save the default (see below).
+clearPreference(colorModePreference);`;
+
+const react = `import { useStoredPreference } from "@skryensya/react/storage";
+import { colorModePreference } from "@skryensya/core/theme-toggle";
+
+function ModeToggle() {
+  const [mode, setMode, clear] = useStoredPreference(colorModePreference);
+
+  return (
+    <SegmentedControl value={mode} onValueChange={setMode}>
+      {/* … */}
+    </SegmentedControl>
+  );
+}`;
+
+const bad = `// ❌ what there was, four times, with four copies of the try/catch
+function load() {
+  try { return JSON.parse(localStorage.getItem("sk") || "{}"); }
+  catch { return {}; }
+}
+function save(patch) {
+  localStorage.setItem("sk", JSON.stringify({ ...load(), ...patch }));
+}
+const value = load().scheme;
+if (value === "light" || value === "dark") { /* … */ }`;
+
+const good = `// ✅ the same, with the slot and the save in the declaration
+import { getPreference } from "@skryensya/vanilla/storage";
+import { colorModePreference } from "./preferences";
+
+const value = getPreference(colorModePreference);`;
+
+const entry = `// A single entry, a single object. Ayes is seen in devtools:
+localStorage["sk"] === JSON.stringify({
+  scheme: "dark",
+  contrast: "high",
+  binding: "react",
+  screen: "mobile",
+  palette: "verde",
+  playground: "1a3f0c…",
+});
+
+// And that is why "reset the site" is one line:
+localStorage.removeItem("sk");`;
+
+const prepaint = `---
+// In the frontmatter: the names come out of the declarations.
+const PREPAINT = {
+  key: STORAGE_KEY,
+  scheme: colorModePreference.slot,
+};
+---
+<script is:inline define:vars={{ PREPAINT }}>
+  var s = {};
+  try { s = JSON.parse(localStorage.getItem(PREPAINT.key) || "{}"); } catch (e) {}
+  if (s[PREPAINT.scheme] === "dark") { /* … */ }
+</script>`;
+---
+
+<Base
+  title="Almacenamiento"
+  description="The only way to save preferences: one entry, declared preferences, and readings that never fail."
+>
+  <h1>Almacenamiento</h1>
+  <p class="lede">
+    A design system stores preferences: color mode, contrast, density, what the product
+    add. It is not a component, it is plumbing that each consumer reinvents — and that this repo had
+    reimagined <strong>four times</strong>, each copy with its own <code>try/catch</code>, its
+    own key and its own handwritten guard. That is why it is sent like all behavior without
+    platform equivalent (<a href="/decisiones">decision 14</a>): the pure codec in
+    <code>@skryensya/core/storage</code>, the imperative binding in <code>@skryensya/vanilla/storage</code>,
+    and the hook in <code>@skryensya/react/storage</code>.
+  </p>
+
+  <h2>Tres reglas</h2>
+  <p>They are the entire design. Everything else comes from here.</p>
+
+  <h3>1. Single entry</h3>
+  <p>
+    Everything lives under <strong>a</strong> key of <code>localStorage</code> that contains
+    <strong>a</strong> JSON object. Not a key by preference: a key namespace
+    <code>sk-*</code> loose is impossible to clean, inspect and version, and it is just in
+    which was becoming <code>sk-playground</code>. An entry means “reset the
+    site” is a <code>removeItem</code>.
+  </p>
+  <CodeBlock code={entry} lang="ts" />
+
+  <h3>2. A preference is declared, it is never ad-hoc</h3>
+  <p>
+    <code>definePreference</code> requests a slot, a fallback and a <strong>parser</strong>, and the parser
+    It is mandatory. The saved is <em>untrusted entry</em>: the reader can edit it, and a
+    version you posted last month may leave a shape this one never saw. Every call site that
+    this replaced already handwriting your <code>isBinding</code> or your <code>isColorMode</code> next to it
+    of reading; Putting the guard into the declaration is what <em>delete</em> the duplication instead of
+    move it from place to place.
+  </p>
+  <CodeBlock code={declare} lang="ts" />
+
+  <h3>3. Leer nunca falla</h3>
+  <p>
+    An unreadable store, an unknown value, a <code>localStorage</code> that <strong> throws
+    exception</strong> because the reader is in private mode: all three return the fallback. Be careful with
+    that second point, which is the one that breaks in production and not in your machine: <code>localStorage</code>
+    does not "return null" when locked, <em> pulls when accessing the </em> property. A
+    <code>localStorage.getItem</code> stripping at the module level drops the entire page for those
+    readers. Here each access is saved, and an unreachable store degrades memory: the preference
+    It stops persisting and nothing else changes.
+  </p>
+
+  <h2>The before and after</h2>
+  <CodeBlock code={bad} lang="ts" />
+  <CodeBlock code={good} lang="ts" />
+
+  <h2>Vanilla</h2>
+  <p>
+    <code>subscribePreference</code> is what justifies the module beyond saving lines: it
+    calls <strong>ya</strong> with the current value, and then on each change—including
+    <strong>other tab</strong>. Nothing written by hand subscribed to the event
+    <code>storage</code>, so two open tabs drifted until you reloaded. That is what
+    makes a preference a preference and not a per-tab variable.
+  </p>
+  <CodeBlock code={vanilla} lang="ts" />
+
+  <h2>React</h2>
+  <p>
+    <code>useStoredPreference</code> is <code>useState</code> that is remembered. How
+    <code>useHotkey</code>, is supported in core and never in the vanilla package: the two bindings are
+    brothers on the same contract, so a React app installs one and a vanilla app the other.
+  </p>
+  <CodeBlock code={react} lang="tsx" />
+  <p>
+    Use <code>useSyncExternalStore</code>, and not <code>useState</code> + <code>useEffect</code>, for two
+    reasons that are not style. <code>localStorage</code> is an external <em>store</em>: read it
+    during render is an effect that <em>rips</em> with concurrent rendering, two components
+    who read the same preference in one pass may disagree. And gives a separate path for SSR:
+    <code>getServerSnapshot</code> returns the fallback, thus the server render and the first painting
+    of the client match instead of hydrating in a mismatch as soon as the saved value differs from the
+    default.
+  </p>
+
+  <h2>Forgetting is not saving the default</h2>
+  <p>
+    <code>clearPreference</code> exists apart from <code>setPreference(pref, fallback)</code> a
+    purpose. Saving the default freezes <em>today's default</em> in the reader's browser: if the
+    product changes that default later, it never reaches that person. Forget the leaves
+    following the system.
+  </p>
+
+  <h2>The only exception: before the first painting</h2>
+  <p>
+    A script that runs <strong>before any </strong> module—the one that prevents theme flash—does not
+    you can import the primitive: import is exactly what exists to happen next. That script
+    plays <code>localStorage</code> direct, and is the only place in the repo that does.
+  </p>
+  <p>
+    What <strong>no</strong> does is rewrite the key or the slot names: it passes them to you
+    the frontmatter from the actual declarations, so renaming a slot cannot leave the script
+    reading a slot that no one writes anymore. What is duplicated there are the value guards,
+    because a parser is a function and functions do not survive serialization. That is the cost
+    known, and the only one, of the exception.
+  </p>
+  <CodeBlock code={prepaint} lang="html" />
+
+  <h2>Where are they declared?</h2>
+  <p>
+    Next to the module that owns the <em>type</em>. <code>colorModePreference</code> lives with
+    ThemeToggle, the two of ComponentPreview with ComponentPreview: the slot name and the save are
+    part of the contract that a second consumer would have to match, and a re-typed slot in two apps
+    It is a slot that will differ in some ways. What is of the product—a palette of docs is a
+    tenant—the app declares it: in this place, all together in
+    <code>src/lib/preferences.ts</code>.
+  </p>
+  <p>
+    That is the rule that makes this verifiable: look for <code>localStorage</code> outside that file and
+    the only output should be the pre-painting script.
+  </p>
+</Base>

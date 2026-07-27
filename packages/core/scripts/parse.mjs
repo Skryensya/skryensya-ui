@@ -16,7 +16,7 @@
  *
  * The regex parser is deliberately minimal and honest about its scope: it handles OUR
  * controlled, known-shape CSS, not arbitrary stylesheets. Comments are stripped first, so
- * prose like `--ds-density: red` inside a comment can't be mistaken for a declaration.
+ * prose like `--sk-density: red` inside a comment can't be mistaken for a declaration.
  */
 
 import { readFileSync, readdirSync } from "node:fs";
@@ -49,8 +49,8 @@ function readStylesheet(path) {
 export function tierOfFile(path) {
   const p = path.replace(/\\/g, "/");
   if (p.includes("/components/") || p.includes("/patterns/")) return "component";
-  if (p.includes("/modes/")) return "semantic"; // colour override
-  if (p.includes("/dimensions/")) return "semantic"; // non-colour semantic override (radius, …)
+  if (p.includes("/modes/")) return "semantic"; // color override
+  if (p.includes("/dimensions/")) return "semantic"; // non-color semantic override (radius, …)
   if (p.endsWith("primitives.scss")) return "primitive";
   if (p.endsWith("semantic.scss")) return "semantic";
   return null;
@@ -70,8 +70,8 @@ export const refsOf = (value) =>
 
 /**
  * Every var() reference in a value, paired with whether that call carries a fallback. A
- * `var(--x, fallback)` resolves even when `--x` is undeclared, valid CSS the recipe relies on
- * for its optional seeds (ADR-22), so the validator must not treat it as a dangling reference.
+ * `var(--x, fallback)` remains valid when `--x` is undeclared, so the validator must not treat
+ * the reference as dangling.
  */
 export function varRefs(value) {
   const out = [];
@@ -118,10 +118,12 @@ export function splitTopLevel(str) {
 export function parseTokens(cssDir = CSS_DIR) {
   const files = sourceFiles(cssDir).map((path) => {
     const css = stripComments(readStylesheet(path));
-    return { path, rel: relative(cssDir, path).replace(/\\/g, "/"), tier: tierOfFile(path), decls: declarationsOf(css) };
+    // `css` is carried, not just `decls`: the component-ships-structure rule has to see the
+    // declarations that are NOT custom properties, which is exactly what declarationsOf() drops.
+    return { path, rel: relative(cssDir, path).replace(/\\/g, "/"), tier: tierOfFile(path), css, decls: declarationsOf(css) };
   });
 
-  // name → tier of the file that declares it. Ramps and scales are primitive; colours and modes are semantic.
+  // name → tier of the file that declares it. Ramps and scales are primitive; colors and modes are semantic.
   const declaredTier = new Map();
   for (const f of files) {
     if (!f.tier) continue;
@@ -141,13 +143,13 @@ export function parseTokens(cssDir = CSS_DIR) {
   }
   /** Tier-1 ramp values compiled into the primitive entrypoint. */
   function rampMap() {
-    return new Map(declsIn("primitives.scss").filter((d) => d.name.startsWith("--ramp-") || d.name.startsWith("--seed-")).map((d) => [d.name, d.value]));
+    return new Map(declsIn("primitives.scss").filter((d) => d.name.startsWith("--ramp-")).map((d) => [d.name, d.value]));
   }
 
   /**
-   * Resolve a semantic colour token to a concrete oklch(), in a colour mode. `ramps` carries the
-   * root tier-1 declarations, seed inputs and derived ramp expressions, so evalColor can chase
-   * `var(--ramp-…)` and `color-mix(in oklab, var(--seed-…), …)` to a real colour.
+   * Resolve a semantic color token to a concrete oklch(), in a color mode. `ramps` carries the
+   * root tier-1 declarations, so evalColor can chase `var(--ramp-…)` and `color-mix()` to a real
+   * color.
    */
   function resolveColor(name, mode, ramps) {
     const isHc = mode.startsWith("hc-");
@@ -190,7 +192,7 @@ export function parseTokens(cssDir = CSS_DIR) {
 export function contrastRatio(a, b) {
   const la = relLuminance(a),
     lb = relLuminance(b);
-  if (la == null || lb == null) return 21; // non-colour → pass
+  if (la == null || lb == null) return 21; // non-color → pass
   const [hi, lo] = la > lb ? [la, lb] : [lb, la];
   return (hi + 0.05) / (lo + 0.05);
 }
@@ -204,7 +206,7 @@ export function relLuminance(color) {
 }
 
 export function parseOklch(str) {
-  if (str && typeof str === "object" && "L" in str) return str; // already an evaluated colour
+  if (str && typeof str === "object" && "L" in str) return str; // already an evaluated color
   const m = String(str).match(/oklch\(\s*([\d.]+)%?\s+([\d.]+)\s+([\d.]+)/i);
   if (!m) return null;
   let L = parseFloat(m[1]);
@@ -212,9 +214,9 @@ export function parseOklch(str) {
   return oklchLit(L, parseFloat(m[2]), parseFloat(m[3]));
 }
 
-// ── colour EXPRESSION evaluator ──────────────────────────────────────────────
-// The contrast maths needs a concrete colour, but a token's authored form can be a var() chain,
-// a named colour, or a color-mix() (how a DERIVED brand, ADR-22, writes every ramp). This
+// ── color EXPRESSION evaluator ──────────────────────────────────────────────
+// The contrast maths needs a concrete color, but a token's authored form can be a var() chain,
+// a named color, or a color-mix() (how a DERIVED brand, ADR-22, writes every ramp). This
 // collapses all of those to an oklch() the same way the browser would, so a recipe brand is
 // measured for real contrast, not waved through at 21:1 the way a var() hue would be (ADR-13).
 
@@ -247,7 +249,7 @@ const balancedParens = (s) => {
 };
 
 /**
- * Split one color-mix argument `COLOR [P%]` into its colour and optional percentage. The percent
+ * Split one color-mix argument `COLOR [P%]` into its color and optional percentage. The percent
  * is a trailing token OUTSIDE any parens, so the `%` inside `oklch(50% …)` is never mistaken for a
  * mix weight (the exact ambiguity that makes a naive last-`%` scan wrong).
  */
@@ -261,7 +263,7 @@ function splitColorPct(arg) {
 }
 
 /**
- * Evaluate a colour expression to a concrete oklch(), or null if it can't be resolved:
+ * Evaluate a color expression to a concrete oklch(), or null if it can't be resolved:
  *   - literal `oklch(…)`
  *   - `white` / `black`
  *   - `var(--x)` and `var(--x, fallback)`  (looked up in `env`, else the fallback)

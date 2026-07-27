@@ -4,8 +4,8 @@
  * A PATTERN, by decision 8's rule: "do many components share this exact structure?" The navbar and
  * the sidebar answer it in the repo, today, both need a list of links, each one an icon, a label
  * and optional trailing metadata. They differ by orientation, which is a variant, not a second
- * structure. So this ships hooks AND structure, and `ds-nav-list` is a class any container opts
- * into, the same shape as `ds-interactive` and `ds-icon`.
+ * structure. So this ships hooks AND structure, and `sk-nav-list` is a class any container opts
+ * into, the same shape as `sk-interactive` and `sk-icon`.
  *
  * OPT-IN, like the icon and unlike the state layer: an app can have no navigation.
  *
@@ -16,180 +16,180 @@
  * for a screen reader, so it is what the hooks follow. A `data-selected` of our own would be a
  * second source of truth for the same fact, free to disagree with the first.
  *
- * Interaction is the state layer's job (`ds-interactive` on the link), never this file's: hover,
+ * Interaction is the state layer's job (`sk-interactive` on the link), never this file's: hover,
  * focus and press are one mechanism system-wide. What lives here is the CURRENT page's own
  * background, which is not interaction feedback, it persists when nothing is hovering it, and the
  * state layer paints on top of it.
  */
 @layer components {
-  .ds-nav-list {
-    --ds-nav-list-gap: var(--space-stack-xs);
-    --ds-nav-list-group-gap: var(--space-inline-xs);
-    --ds-nav-list-item-gap: 0;
+  .sk-nav-list {
+    --sk-nav-list-gap: var(--space-stack-xs);
+    --sk-nav-list-group-gap: var(--space-inline-xs);
+    --sk-nav-list-item-gap: 0;
 
-    --ds-nav-list-group-label-fg: var(--color-text-tertiary);
-    --ds-nav-list-group-label-font-size: var(--font-size-caption);
-    --ds-nav-list-group-label-font-weight: var(--font-weight-label);
-    --ds-nav-list-group-label-padding-x: var(--space-inset-sm);
-    --ds-nav-list-group-label-min-height: 0;
-    --ds-nav-list-group-label-padding-block-start: var(--space-stack-xs);
-    --ds-nav-list-group-label-padding-block-end: var(--space-inline-xs);
-    --ds-nav-list-group-label-opacity: 1;
+    --sk-nav-list-group-label-fg: var(--color-text-tertiary);
+    --sk-nav-list-group-label-font-size: var(--font-size-caption);
+    --sk-nav-list-group-label-font-weight: var(--font-weight-label);
+    --sk-nav-list-group-label-padding-x: var(--space-inset-sm);
+    --sk-nav-list-group-label-min-height: 0;
+    --sk-nav-list-group-label-padding-block-start: var(--space-stack-xs);
+    --sk-nav-list-group-label-padding-block-end: var(--space-inline-xs);
+    --sk-nav-list-group-label-opacity: 1;
 
-    --ds-nav-list-link-height: var(--size-control-sm);
-    --ds-nav-list-link-padding-x: var(--space-inset-sm);
-    --ds-nav-list-link-gap: var(--space-inline-sm);
-    --ds-nav-list-link-radius: var(--radius-control);
-    --ds-nav-list-link-bg: transparent;
-    --ds-nav-list-link-fg: var(--color-text-secondary);
-    --ds-nav-list-link-font-size: var(--font-size-body-sm);
-    --ds-nav-list-link-font-weight: var(--font-weight-body);
+    --sk-nav-list-link-height: var(--size-control-sm);
+    --sk-nav-list-link-padding-x: var(--space-inset-sm);
+    --sk-nav-list-link-gap: var(--space-inline-sm);
+    --sk-nav-list-link-radius: var(--radius-control);
+    --sk-nav-list-link-bg: transparent;
+    --sk-nav-list-link-fg: var(--color-text-secondary);
+    --sk-nav-list-link-font-size: var(--font-size-body-sm);
+    --sk-nav-list-link-font-weight: var(--font-weight-body);
 
-    --ds-nav-list-link-current-bg: var(--color-bg-accent-subtle);
-    --ds-nav-list-link-current-fg: var(--color-text-accent);
-    --ds-nav-list-link-current-font-weight: var(--font-weight-label);
-    --ds-nav-list-link-disabled-fg: var(--color-text-disabled);
+    --sk-nav-list-link-current-bg: var(--color-bg-accent-subtle);
+    --sk-nav-list-link-current-fg: var(--color-text-accent);
+    --sk-nav-list-link-current-font-weight: var(--font-weight-label);
+    --sk-nav-list-link-disabled-fg: var(--color-text-disabled);
 
-    --ds-nav-list-label-opacity: 1;
-    --ds-nav-list-trailing-fg: var(--color-text-tertiary);
+    --sk-nav-list-label-opacity: 1;
+    --sk-nav-list-trailing-fg: var(--color-text-tertiary);
 
     /* The host re-declares these to pull the list into its own motion, the sidebar hands over its
      * collapse intent so the labels fade on exactly the beat the width moves. */
-    --ds-nav-list-duration: var(--motion-state-change-duration);
-    --ds-nav-list-easing: var(--motion-state-change-easing);
+    --sk-nav-list-duration: var(--motion-state-change-duration);
+    --sk-nav-list-easing: var(--motion-state-change-easing);
 
     /* `minmax(0, 1fr)` rather than a bare grid: a grid child's min-width is `auto`, so a nowrap
      * label would refuse to shrink and the whole list would hold a host's rail open at the width of
      * its longest word. This is what lets it be narrowed. */
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--ds-nav-list-gap);
+    gap: var(--sk-nav-list-gap);
   }
 
-  .ds-nav-list__group {
+  .sk-nav-list__group {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--ds-nav-list-group-gap);
+    gap: var(--sk-nav-list-group-gap);
   }
 
-  .ds-nav-list__group-label {
+  .sk-nav-list__group-label {
     display: flex;
     align-items: center;
-    min-block-size: var(--ds-nav-list-group-label-min-height);
-    padding-block-start: var(--ds-nav-list-group-label-padding-block-start);
-    padding-block-end: var(--ds-nav-list-group-label-padding-block-end);
-    padding-inline: var(--ds-nav-list-group-label-padding-x);
-    color: var(--ds-nav-list-group-label-fg);
-    font-size: var(--ds-nav-list-group-label-font-size);
-    font-weight: var(--ds-nav-list-group-label-font-weight);
+    min-block-size: var(--sk-nav-list-group-label-min-height);
+    padding-block-start: var(--sk-nav-list-group-label-padding-block-start);
+    padding-block-end: var(--sk-nav-list-group-label-padding-block-end);
+    padding-inline: var(--sk-nav-list-group-label-padding-x);
+    color: var(--sk-nav-list-group-label-fg);
+    font-size: var(--sk-nav-list-group-label-font-size);
+    font-weight: var(--sk-nav-list-group-label-font-weight);
     white-space: nowrap;
-    opacity: var(--ds-nav-list-group-label-opacity);
-    transition: opacity var(--ds-nav-list-duration) var(--ds-nav-list-easing);
+    opacity: var(--sk-nav-list-group-label-opacity);
+    transition: opacity var(--sk-nav-list-duration) var(--sk-nav-list-easing);
   }
 
-  .ds-nav-list__list {
+  .sk-nav-list__list {
     display: flex;
     flex-direction: column;
-    gap: var(--ds-nav-list-item-gap);
+    gap: var(--sk-nav-list-item-gap);
     min-inline-size: 0;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .ds-nav-list__item {
+  .sk-nav-list__item {
     min-inline-size: 0;
   }
 
-  .ds-nav-list__link {
+  .sk-nav-list__link {
     display: flex;
     align-items: center;
-    gap: var(--ds-nav-list-link-gap);
+    gap: var(--sk-nav-list-link-gap);
     inline-size: 100%;
-    min-block-size: var(--ds-nav-list-link-height);
-    padding-inline: var(--ds-nav-list-link-padding-x);
-    border-radius: var(--ds-nav-list-link-radius);
-    background: var(--ds-nav-list-link-bg);
-    color: var(--ds-nav-list-link-fg);
-    font-size: var(--ds-nav-list-link-font-size);
-    font-weight: var(--ds-nav-list-link-font-weight);
+    min-block-size: var(--sk-nav-list-link-height);
+    padding-inline: var(--sk-nav-list-link-padding-x);
+    border-radius: var(--sk-nav-list-link-radius);
+    background: var(--sk-nav-list-link-bg);
+    color: var(--sk-nav-list-link-fg);
+    font-size: var(--sk-nav-list-link-font-size);
+    font-weight: var(--sk-nav-list-link-font-weight);
     text-decoration: none;
     /* the label is clipped, never unmounted: collapsed, it is what names the icon (decision 16) */
     overflow: hidden;
     /* never `all`: padding moves when a host collapses this to a rail, and the rest must not */
     transition:
-      padding-inline-start var(--ds-nav-list-duration) var(--ds-nav-list-easing),
-      padding-inline-end var(--ds-nav-list-duration) var(--ds-nav-list-easing),
+      padding-inline-start var(--sk-nav-list-duration) var(--sk-nav-list-easing),
+      padding-inline-end var(--sk-nav-list-duration) var(--sk-nav-list-easing),
       background-color var(--motion-feedback-duration) var(--motion-feedback-easing);
   }
 
-  .ds-nav-list__label {
+  .sk-nav-list__label {
     min-inline-size: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    opacity: var(--ds-nav-list-label-opacity);
-    transition: opacity var(--ds-nav-list-duration) var(--ds-nav-list-easing);
+    opacity: var(--sk-nav-list-label-opacity);
+    transition: opacity var(--sk-nav-list-duration) var(--sk-nav-list-easing);
   }
 
-  .ds-nav-list__trailing {
+  .sk-nav-list__trailing {
     /* pinned to the end, and never squashed by a long label */
     flex: none;
     margin-inline-start: auto;
-    color: var(--ds-nav-list-trailing-fg);
-    opacity: var(--ds-nav-list-label-opacity);
+    color: var(--sk-nav-list-trailing-fg);
+    opacity: var(--sk-nav-list-label-opacity);
     font-variant-numeric: tabular-nums;
-    transition: opacity var(--ds-nav-list-duration) var(--ds-nav-list-easing);
+    transition: opacity var(--sk-nav-list-duration) var(--sk-nav-list-easing);
   }
 
   /* ── variants re-declare the hooks they change ───────────────────────────── */
 
-  .ds-nav-list[data-orientation="horizontal"] {
-    --ds-nav-list-gap: var(--space-inline-md);
-    --ds-nav-list-item-gap: var(--space-inline-xs);
-    --ds-nav-list-group-label-min-height: var(--size-control-sm);
-    --ds-nav-list-group-label-padding-block-start: 0;
-    --ds-nav-list-group-label-padding-block-end: 0;
+  .sk-nav-list[data-orientation="horizontal"] {
+    --sk-nav-list-gap: var(--space-inline-md);
+    --sk-nav-list-item-gap: var(--space-inline-xs);
+    --sk-nav-list-group-label-min-height: var(--size-control-sm);
+    --sk-nav-list-group-label-padding-block-start: 0;
+    --sk-nav-list-group-label-padding-block-end: 0;
   }
 
-  .ds-nav-list[data-orientation="horizontal"] .ds-nav-list__list {
+  .sk-nav-list[data-orientation="horizontal"] .sk-nav-list__list {
     flex-direction: row;
     align-items: center;
   }
 
-  .ds-nav-list[data-orientation="horizontal"] .ds-nav-list__link {
+  .sk-nav-list[data-orientation="horizontal"] .sk-nav-list__link {
     inline-size: auto;
     white-space: nowrap;
   }
 
-  .ds-nav-list__link[aria-current="page"] {
-    --ds-nav-list-link-bg: var(--ds-nav-list-link-current-bg);
-    --ds-nav-list-link-fg: var(--ds-nav-list-link-current-fg);
-    --ds-nav-list-link-font-weight: var(--ds-nav-list-link-current-font-weight);
+  .sk-nav-list__link[aria-current="page"] {
+    --sk-nav-list-link-bg: var(--sk-nav-list-link-current-bg);
+    --sk-nav-list-link-fg: var(--sk-nav-list-link-current-fg);
+    --sk-nav-list-link-font-weight: var(--sk-nav-list-link-current-font-weight);
   }
 
-  .ds-nav-list__link[aria-disabled="true"] {
-    --ds-nav-list-link-fg: var(--ds-nav-list-link-disabled-fg);
+  .sk-nav-list__link[aria-disabled="true"] {
+    --sk-nav-list-link-fg: var(--sk-nav-list-link-disabled-fg);
     cursor: not-allowed;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ds-nav-list__link,
-    .ds-nav-list__label,
-    .ds-nav-list__trailing,
-    .ds-nav-list__group-label {
+    .sk-nav-list__link,
+    .sk-nav-list__label,
+    .sk-nav-list__trailing,
+    .sk-nav-list__group-label {
       transition: none;
     }
   }
 
   @media (forced-colors: active) {
-    /* the current page's tint is a background, and backgrounds are dropped in forced colours, 
+    /* the current page's tint is a background, and backgrounds are dropped in forced colors, 
      * so it gets a border, which is not */
-    .ds-nav-list__link[aria-current="page"] {
+    .sk-nav-list__link[aria-current="page"] {
       border: 1px solid CanvasText;
     }
 
-    .ds-nav-list__link[aria-disabled="true"] {
+    .sk-nav-list__link[aria-disabled="true"] {
       color: GrayText;
     }
   }

@@ -1,71 +1,117 @@
 /*
- * TIER 3, INPUT (opt-in styling hooks)
+ * TIER 3, INPUT
  *
  * The native text control stays native (decision 8): there is no machine here, and no wrapper
- * div faking a border. `ds-input` styles `<input>` and `<textarea>` alike, one control, one set
+ * div faking a border. `sk-input` styles `<input>` and `<textarea>` alike, one control, one set
  * of hooks, and the platform keeps validation, autofill, IME and form association.
  *
  * `invalid` follows `aria-invalid`, which the consumer already has to author for screen readers;
- * a separate data attribute would let the two disagree, and colour is never the only error cue, 
+ * a separate data attribute would let the two disagree, and color is never the only error cue, 
  * the field's error message is (see field.css).
  */
 @layer components {
-  .ds-input {
+  .sk-input {
     /* Fields are raised controls, not sunken wells: in dark mode this matches Select and preserves
      * the elevation model (lighter surfaces sit above the canvas). */
-    --ds-input-bg: var(--color-bg-surface-raised);
-    --ds-input-fg: var(--color-text-primary);
-    --ds-input-placeholder-fg: var(--color-text-tertiary);
-    --ds-input-border-color: var(--color-border-default);
-    --ds-input-border-width: 1px;
-    --ds-input-radius: var(--radius-control);
+    --sk-input-bg: var(--color-bg-surface-raised);
+    --sk-input-fg: var(--color-text-primary);
+    --sk-input-placeholder-fg: var(--color-text-tertiary);
+    --sk-input-border-color: var(--color-border-default);
+    --sk-input-border-width: 1px;
+    --sk-input-radius: var(--radius-control);
     /* Density can tighten the layout around a field, never its native touch target. */
-    --ds-input-height: max(var(--size-control-md), var(--size-touch-target));
-    --ds-input-padding-x: var(--space-inset-sm);
-    --ds-input-padding-y: var(--space-inset-xs);
-    --ds-input-gap: var(--space-inline-sm);
-    --ds-input-font-size: var(--font-size-body);
-    --ds-input-line-height: var(--font-line-height-body);
+    --sk-input-height: max(var(--size-control-md), var(--size-touch-target));
+    --sk-input-padding-x: var(--space-inset-sm);
+    --sk-input-padding-y: var(--space-inset-xs);
+    --sk-input-gap: var(--space-inline-sm);
+    --sk-input-font-size: var(--font-size-body);
+    --sk-input-line-height: var(--font-line-height-body);
 
-    --ds-input-invalid-border-color: var(--color-border-danger);
-    --ds-input-invalid-fg: var(--color-text-primary);
+    --sk-input-invalid-border-color: var(--color-border-danger);
+    --sk-input-invalid-fg: var(--color-text-primary);
 
-    --ds-input-disabled-bg: var(--color-action-disabled);
-    --ds-input-disabled-fg: var(--color-text-disabled);
-    --ds-input-disabled-border-color: var(--color-border-subtle);
+    --sk-input-disabled-bg: var(--color-action-disabled);
+    --sk-input-disabled-fg: var(--color-text-disabled);
+    --sk-input-disabled-border-color: var(--color-border-subtle);
 
-    --ds-input-readonly-bg: var(--color-bg-surface);
-    --ds-input-readonly-border-color: var(--color-border-subtle);
+    --sk-input-readonly-bg: var(--color-bg-surface);
+    --sk-input-readonly-border-color: var(--color-border-subtle);
+
+    /* One rule covers <input> and <textarea>: same control, same hooks. */
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: var(--sk-input-height);
+    padding: var(--sk-input-padding-y) var(--sk-input-padding-x);
+    border: var(--sk-input-border-width) solid var(--sk-input-border-color);
+    border-radius: var(--sk-input-radius);
+    background: var(--sk-input-bg);
+    color: var(--sk-input-fg);
+    font: inherit;
+    font-size: var(--sk-input-font-size);
+    line-height: var(--sk-input-line-height);
   }
 
   /* size variants re-declare the hooks they change */
-  .ds-input[data-size="sm"] {
-    --ds-input-height: max(var(--size-control-sm), var(--size-touch-target));
-    --ds-input-font-size: var(--font-size-body-sm);
-    --ds-input-padding-x: var(--space-inset-xs);
+  .sk-input[data-size="sm"] {
+    --sk-input-height: max(var(--size-control-sm), var(--size-touch-target));
+    --sk-input-font-size: var(--font-size-body-sm);
+    --sk-input-padding-x: var(--space-inset-xs);
   }
 
-  .ds-input[data-size="lg"] {
-    --ds-input-height: max(var(--size-control-lg), var(--size-touch-target));
-    --ds-input-font-size: var(--font-size-body-lg);
-    --ds-input-padding-x: var(--space-inset-md);
+  .sk-input[data-size="lg"] {
+    --sk-input-height: max(var(--size-control-lg), var(--size-touch-target));
+    --sk-input-font-size: var(--font-size-body-lg);
+    --sk-input-padding-x: var(--space-inset-md);
   }
 
-  .ds-input[aria-invalid="true"] {
-    --ds-input-border-color: var(--ds-input-invalid-border-color);
-    --ds-input-fg: var(--ds-input-invalid-fg);
+  .sk-input[aria-invalid="true"] {
+    --sk-input-border-color: var(--sk-input-invalid-border-color);
+    --sk-input-fg: var(--sk-input-invalid-fg);
   }
 
-  .ds-input:read-only:not([aria-invalid="true"]) {
-    --ds-input-bg: var(--ds-input-readonly-bg);
-    --ds-input-border-color: var(--ds-input-readonly-border-color);
+  .sk-input:read-only:not([aria-invalid="true"]) {
+    --sk-input-bg: var(--sk-input-readonly-bg);
+    --sk-input-border-color: var(--sk-input-readonly-border-color);
   }
 
   /* disabled wins over every variant above, so it is written last */
-  .ds-input:disabled,
-  .ds-input[aria-disabled="true"] {
-    --ds-input-bg: var(--ds-input-disabled-bg);
-    --ds-input-fg: var(--ds-input-disabled-fg);
-    --ds-input-border-color: var(--ds-input-disabled-border-color);
+  .sk-input:disabled,
+  .sk-input[aria-disabled="true"] {
+    --sk-input-bg: var(--sk-input-disabled-bg);
+    --sk-input-fg: var(--sk-input-disabled-fg);
+    --sk-input-border-color: var(--sk-input-disabled-border-color);
+  }
+
+  .sk-input::placeholder {
+    color: var(--sk-input-placeholder-fg);
+  }
+
+  .sk-input:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .sk-input:disabled {
+    cursor: not-allowed;
+  }
+
+  textarea.sk-input {
+    /* The only field that may grow taller than the shared control height. */
+    block-size: auto;
+    min-block-size: calc(var(--sk-input-height) * 3);
+    resize: vertical;
+  }
+
+  @media (forced-colors: active) {
+    .sk-input {
+      border-color: CanvasText;
+      background: Canvas;
+      color: CanvasText;
+    }
+
+    .sk-input:disabled {
+      border-color: GrayText;
+      color: GrayText;
+    }
   }
 }

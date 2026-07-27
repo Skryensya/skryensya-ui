@@ -1,0 +1,315 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+
+const reflowCss = `.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 18rem), 1fr)
+  );
+  gap: var(--space-inline-md);
+}
+
+.responsive-grid > * {
+  min-inline-size: 0;
+}`;
+
+const mediaCss = `.content {
+  inline-size: min(100%, 70rem);
+}
+
+.content img,
+.content video {
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+/* Avoid fixed heights: enlarged text needs to grow. */
+.card {
+  min-block-size: 12rem;
+  block-size: auto;
+}`;
+
+const localScrollCss = `.table-scroll,
+.code-scroll {
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}`;
+
+const auditTs = `import { expect, test } from "@playwright/test";
+
+const routes = ["/in", "/settings", "/checkout"];
+const widths = [640, 320];
+
+for (const route of routes) {
+  for (const width of widths) {
+    test(\`\${route} reflows at \${width}px\`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(route);
+
+      const hasPageOverflow = await page.evaluate(() => {
+        const root = document.documentElement;
+        return root.scrollWidth > root.clientWidth;
+      });
+
+      expect(hasPageOverflow).toBe(false);
+      await expect(page.locator("main")).toBeVisible();
+    });
+  }
+}`;
+---
+
+<Base
+  title="Zoom y reflow"
+  description="Text at 200% and reflow at 400% without loss of content, controls or functionality."
+>
+  <h1>Zoom y reflow</h1>
+  <p class="lede">
+    Zoom is not a visual preference or media query. It is a transformation of the viewport and the
+    readable size: content should wrap, columns should stack, and all controls
+    They must remain available. The interface changes geometry, not capabilities.
+  </p>
+
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
+      <p>
+        <strong>200% and 400% prove different contracts.</strong> At 200% it is verified that the text
+        can grow without losing content or functionality. At 400% reflow is checked: a viewport of
+        1280px is equivalent to <strong>320 CSS px</strong> and the page must be readable in one
+        direction.
+      </p>
+    </div>
+  </div>
+
+  <h2>Dos pruebas, dos fallos posibles</h2>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>Prueba</th>
+          <th>What does it require?</th>
+          <th>Typical fault</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>200%</strong></td>
+          <td>Readable text and operable controls</td>
+          <td>Labels cut by fixed heights</td>
+        </tr>
+        <tr>
+          <td><strong>400%</strong></td>
+          <td>Reflow a 320 CSS px</td>
+          <td>Columns or toolbars outside the viewport</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>The layout retains capacity</h2>
+  <p>
+    This sample uses the same rule as a real card list. In wide width it has three
+    columns; in the equivalent of 400% it converges into one. No card disappears or changes
+    order.
+  </p>
+
+  <figure class="reflow-specimen">
+    <div class="reflow-specimen__grid">
+      <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="md">
+        <span class="reflow-specimen__index">01</span>
+        <strong>Content</strong>
+        <p>The text wraps and grows its own box.</p>
+      </article>
+      <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="md">
+        <span class="reflow-specimen__index">02</span>
+        <strong>Controles</strong>
+        <p>Actions remain visible and reachable.</p>
+      </article>
+      <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="md">
+        <span class="reflow-specimen__index">03</span>
+        <strong>Orden</strong>
+        <p>The DOM maintains a coherent reading sequence.</p>
+      </article>
+    </div>
+    <figcaption>
+      The grid does not need a breakpoint per device: <code>auto-fit</code> responds to space
+      available and <code>min(100%, 18rem)</code> prevents a column from imposing overflow.
+    </figcaption>
+  </figure>
+
+  <CodeBlock code={reflowCss} label="CSS · grid with reflow" />
+
+  <h2>Implementation rules</h2>
+
+  <h3>Let the text grow and a half</h3>
+  <p>
+    Avoid fixed heights in boxes with contents. Images and video are limited to the available width without
+    deform its proportion.
+  </p>
+  <CodeBlock code={mediaCss} label="CSS · flexible content" />
+
+  <h3>Horizontal scrolling is local, not global</h3>
+  <p>
+    Data tables, code, maps and diagrams may require two dimensions. The scroll belongs
+    to that component; the title, the explanation and the rest of the page continue to reflow.
+  </p>
+  <CodeBlock code={localScrollCss} label="CSS · overflow local" />
+
+  <h2>How to guarantee it in your system</h2>
+
+  <h3>1. Make the container decide</h3>
+  <p>
+    A component should not know the width of the device. Give it a flexible width, allow
+    its children shrink with <code>min-inline-size: 0</code> and let the container change columns,
+    wrapping or distribution according to the real space.
+  </p>
+
+  <h3>2. Define a reflow contract per component</h3>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Minimum contract</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Text, Alert, Tile, Card</td>
+          <td>automatic height; labels and content can wrap.</td>
+        </tr>
+        <tr>
+          <td>Navbar y toolbar</td>
+          <td>Actions wrap, change rows or move to an accessible menu.</td>
+        </tr>
+        <tr>
+          <td>Dialog, Drawer y popover</td>
+          <td>They fit into the viewport; The bodysuit has internal scrolling if necessary.</td>
+        </tr>
+        <tr>
+          <td>Grid y Stack</td>
+          <td>The columns converge without changing the order of the DOM.</td>
+        </tr>
+        <tr>
+          <td>Table, code, map</td>
+          <td>The horizontal overflow is contained in the component.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>3. Audit all routes</h3>
+  <p>
+    Runs an array with each path and the effective widths of 200% and 400%. This test detects
+    global overflow automatically; adds to each flow its essential interactions because a
+    Visible interface may still have lost functionality.
+  </p>
+  <CodeBlock code={auditTs} label="Playwright reflow matrix" lang="ts" />
+
+  <h3>4. End with real zoom</h3>
+  <p>
+    An automated narrow viewport tests the geometry, but is not a substitute for final review:
+    Open the browser at 200% and 400%, scroll through the page with the keyboard and try menus, dialogs,
+    tooltips, validations and states with long content.
+  </p>
+
+  <h2>What breaks with zoom</h2>
+  <ul>
+    <li>Fixed <code>width</code> or <code>min-width</code> greater than the effective viewport.</li>
+    <li><code>height</code> fixed on buttons, cards, alerts or fields with text.</li>
+    <li><code>white-space: nowrap</code> on labels that do not have a responsive output.</li>
+    <li>Toolbars that hide actions instead of wrapping or rearranging them.</li>
+    <li>Content positioned with physical offsets that stops participating in the flow.</li>
+    <li><code>overflow: hidden</code> used to hide the symptom instead of fixing the width.</li>
+  </ul>
+
+  <h2>Documentation Site Contract</h2>
+  <ul>
+    <li>
+      At 200%, the effective 640 px CSS layout does not produce global horizontal scrolling.
+    </li>
+    <li>
+      At 400%, the effective 320 px CSS layout stacks the content in one column.
+    </li>
+    <li>
+      The header goes to two rows: identity on top; search and preferences below.
+    </li>
+    <li>
+      Menu, search, palette, theme and contrast remain visible and operable.
+    </li>
+    <li>
+      Code blocks and tables contain their own overflow when they need it.
+    </li>
+  </ul>
+
+  <h2>Checklist</h2>
+  <ul>
+    <li>Test 200% text, not just a mobile viewport.</li>
+    <li>Try 400% from 1280px or directly to 320 CSS px.</li>
+    <li>Read the entire page using only vertical scrolling.</li>
+    <li>Open menus, dialogs and popovers; visible does not mean operable.</li>
+    <li>Change theme and preferences to detect overlapping controls.</li>
+    <li>Confirm that focus and reading order follow the visual order.</li>
+  </ul>
+
+  <p>
+    Referencias:
+    <a href="https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html">
+      WCAG 1.4.4 Resize Text
+    </a>
+    y
+    <a href="https://www.w3.org/WAI/WCAG22/Understanding/reflow.html">
+      WCAG 1.4.10 Reflow
+    </a>.
+  </p>
+</Base>
+
+<style>
+  .reflow-specimen {
+    display: grid;
+    gap: var(--space-stack-sm);
+    margin: var(--space-stack-md) 0 var(--space-section);
+  }
+
+  .reflow-specimen__grid {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, 12rem), 1fr)
+    );
+    gap: var(--space-inline-md);
+    padding: var(--space-inset-md);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-surface);
+    background: var(--color-bg-surface-sunken);
+  }
+
+  .reflow-specimen__grid article {
+    display: grid;
+    gap: var(--space-stack-xs);
+    min-inline-size: 0;
+    align-content: start;
+  }
+
+  .reflow-specimen__grid p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+
+  .reflow-specimen__index {
+    color: var(--color-text-accent);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-caption);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .reflow-specimen figcaption {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
+    text-wrap: pretty;
+  }
+</style>

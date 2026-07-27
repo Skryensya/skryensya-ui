@@ -86,12 +86,12 @@ const concepts: readonly Concept[] = [
         note: "Spec del modelo de color en CSS.",
       },
     ],
-    here: "Ramps, marca por seeds y contraste.",
+    here: "Rampas explícitas, marca y contraste.",
   },
   {
     id: "media-queries",
     title: "Preferencias del usuario (media queries)",
-    why: "Contraste y motion reaccionan al sistema operativo además de a los controles del sitio.",
+    why: "Contraste, motion y transparencia reaccionan al sistema operativo además de a los controles del sitio. inverted-colors queda fuera: la inversión ocurre después del render y solo la implementa WebKit, así que no hay token que redefinir.",
     refs: [
       {
         label: "MDN, prefers-contrast",
@@ -103,8 +103,13 @@ const concepts: readonly Concept[] = [
         href: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion",
         note: "Reducir movimiento no es “poner todo en cero”.",
       },
+      {
+        label: "MDN, prefers-reduced-transparency",
+        href: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-transparency",
+        note: "Experimental: una superficie opaca debe seguir siendo el fallback.",
+      },
     ],
-    here: "Dimensiones, motion por intención.",
+    here: "Dimensiones, motion por intención y transparencias.",
   },
   {
     id: "dialog",
@@ -204,7 +209,7 @@ const concepts: readonly Concept[] = [
         note: "Convención de nombres.",
       },
     ],
-    here: "Markup contract y parts (ds-tabs__list, …).",
+    here: "Markup contract y parts (sk-tabs__list, …).",
   },
   {
     id: "progressive-enhancement",

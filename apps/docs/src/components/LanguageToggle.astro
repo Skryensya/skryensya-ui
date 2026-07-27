@@ -1,0 +1,54 @@
+---
+/*
+ * Header chrome: switch language, staying on the SAME page.
+ *
+ * It is a plain `<a>`, not a button with a script, because that is what it is: a link to this
+ * document's other translation. `localizePath` maps the current path across route vocabularies
+ * (`/componentes/avatar` ⇄ `/en/components/avatar`), so the reader lands where they were rather
+ * than being dumped on the home page — the single most common failure of a language switcher.
+ *
+ * It renders ONLY where the other translation exists. The site is being translated a page at a time,
+ * and a control that is always present but usually leads to a 404 teaches the reader to distrust it;
+ * `availableLocales` reads the page directory at build, so this appears exactly on the pages that
+ * can honour it. On the rest there is nothing to click, which is the truth.
+ *
+ * `hreflang` and `lang` tell the browser and assistive tech that the destination and the label
+ * itself are in the other language, so a screen reader announces "English" in English.
+ *
+ * NO persistence: language is in the URL, so the URL is the preference. Storing it too would mean a
+ * shared link could open in a language the sender never saw.
+ */
+import {
+  availableLocales,
+  canonicalPath,
+  getLocale,
+  localeNames,
+  localizePath,
+  useTranslations,
+} from "../i18n";
+
+const current = getLocale(Astro.url);
+const t = useTranslations(current);
+const canonical = canonicalPath(Astro.url.pathname);
+/* Two locales, so the control is a direct link to "the other one". A third would make this a menu. */
+const other = availableLocales(canonical).find((locale) => locale !== current);
+const label = other ? `${t("prefs.language")}: ${localeNames[other]}` : "";
+---
+
+{
+  other && (
+    <a
+      class="sk-button sk-interactive dimensions__language-toggle"
+      data-variant="ghost"
+      data-size="sm"
+      href={localizePath(canonical, other)}
+      hreflang={other}
+      lang={other}
+      title={label}
+      aria-label={label}
+    >
+      {/* The code, not a flag: a flag is a country and these are languages. */}
+      <span aria-hidden="true">{other.toUpperCase()}</span>
+    </a>
+  )
+}

@@ -3,48 +3,89 @@ num: 8
 title: Qué envía tier 3, styling hooks, patterns, y la capa vanilla
 short: "Qué envía tier 3"
 summary: >-
-  ¿Qué envía tier 3? La regla: ¿muchos componentes comparten esta estructura exacta? Si es sí, es un
-  pattern y envía estructura; si es no, es un componente y envía solo styling hooks. Invariante no es lo
-  mismo que compartida, la anatomía de un combobox es invariante pero la usa un solo componente, así que
-  no se envía. El comportamiento que la plataforma no da lo aporta una capa vanilla de enhancers,
-  nunca como contrato de framework.
+  Tier 3 envía la CLASE y sus styling hooks: importar button.css te da un botón. La regla vieja
+  ("componente = solo hooks, la app escribe la estructura") se revirtió porque no sobrevivió al uso:
+  22 de 36 hojas ya enviaban estructura, nada lo verificaba, y el único consumidor terminó escribiendo
+  17 skins y duplicando una. La distinción componente/pattern sobrevive, pero ahora decide DE QUIÉN es
+  una estructura, no si se envía. El comportamiento que la plataforma no da lo aporta una capa vanilla
+  de enhancers, nunca como contrato de framework.
 ---
 
-[La primera decisión](/decisiones/0001-tres-tiers-y-la-direccion-de-las-referencias) dice que el sistema
-envía styling hooks, no componentes: la app consumidora escribe el CSS estructural. Pero
-`patterns/state-layer.css` define un `::before`, `pointer-events`, `z-index`, `isolation` y
-`border-radius: inherit`. Eso es estructura. Y los componentes con máquina (un combobox, tabs) tienen
-una anatomía fija que romperla los rompe.
+## La regla vieja, y por qué se cayó
 
-La pregunta "¿qué envía tier 3?" tiene tres respuestas candidatas. Hace falta **una** regla que las
-decida sin excepciones.
+Esta decisión decía:
+
+> ¿Muchos componentes comparten esta estructura exacta? **Sí → pattern**, envía hooks y estructura.
+> **No → componente**, envía solo styling hooks, porque el markup y el layout de cada consumidor
+> difieren.
+
+El argumento era razonable y la predicción era falsable: *"no hay dos apps que maqueten un botón
+igual"*. Se midió, y falló en las tres formas en que una regla puede fallar.
+
+**No se cumplía.** De 36 hojas en `css/components/`, 22 ya enviaban estructura, hasta 163
+declaraciones en `select.css`, 117 en `tile.css`, 85 en `details.css`. Catorce no enviaban ninguna.
+El sistema no tenía una regla con excepciones: tenía dos sistemas, y en qué mitad caía un componente
+dependía de qué día se escribió.
+
+**Nada la verificaba.** [El validador](/decisiones/0007-el-validador) chequeaba direcciones de
+referencia, completitud de modos, contraste y forma de nombres. Ninguna regla miraba si un componente
+enviaba estructura, así que el corpus derivó en silencio, componente por componente, sin que nadie
+tomara la decisión de revertirla.
+
+**La predicción se pudo medir, y salió mal.** El único consumidor que existe, este sitio, tuvo que
+escribir 17 skins en `apps/docs/src/examples/`. Una de ellas, `.sk-badge`, terminó duplicada en
+`site.css` y las dos copias **divergieron**: una perdió el `border`. Eso es una sola app duplicándose
+a sí misma. La premisa era que apps distintas maquetarían distinto; lo que pasó es que la misma app no
+pudo mantener sincronizada una copia consigo misma.
+
+Y el costo real estaba en la puerta de entrada: importar `button.css` no daba un botón, daba
+variables. Un sistema de diseño cuyo primer paso es "ahora escribí vos el CSS" no está enviando un
+botón, está enviando la tarea de hacer uno.
 
 ## La regla
 
-> **¿Muchos componentes comparten esta estructura exacta?**
+> **Un componente envía la clase y sus styling hooks.**
 
-- **Sí → es un pattern.** Envía styling hooks *y* estructura. La estructura compartida es todo el
-  punto; duplicarla por componente es lo que el pattern existe para prevenir.
-- **No → es un componente.** Envía solo styling hooks, porque el markup y el layout de cada consumidor
-  difieren.
+Importar `components/button.css` te da un botón que se ve como un botón. Los hooks siguen siendo el
+contrato público, y siguen siendo cómo lo cambiás: `--sk-button-bg` se re-declara desde fuera sin
+pelear especificidad, porque la estructura vive en `@layer components` y cualquier regla sin layer le
+gana ([decisión 1](/decisiones/0001-tres-tiers-y-la-direccion-de-las-referencias)). Enviar la
+estructura no cierra la puerta que los hooks abrían; la deja abierta con algo adentro.
 
-`state-layer` es un pattern: button, tile, menu-item y tab necesitan todos el `::before` idéntico.
-`button` es un componente: no hay dos apps que lo maqueten igual.
+Esto lo hace cumplir el validador con la regla `component-ships-structure`: una hoja de
+`components/` que declare hooks y ninguna propiedad real falla. La regla nueva es el inverso exacto de
+la vieja, y existe porque la ausencia de una regla fue lo que dejó derivar a la anterior.
+
+## Qué sigue siendo un pattern
+
+La distinción componente/pattern **no desapareció**: cambió de pregunta. Antes decidía *si* se enviaba
+estructura. Ahora decide **de quién es** una estructura.
+
+> **¿Muchos componentes comparten esta estructura exacta?** Si es sí, vive en `patterns/` y la
+> escribe una sola vez.
+
+`state-layer` es un pattern: button, tile, menu-item y tab necesitan todos el `::before` idéntico, con
+su `pointer-events`, su `z-index`, su `isolation` y su `border-radius: inherit`. Escribirlo en cada
+componente es exactamente la duplicación que el pattern existe para prevenir.
+
+Y sigue habiendo un caso en el que un componente no escribe estructura propia: cuando **compone** un
+pattern. `drawer.css` no declara panel, borde, slide ni backdrop; re-declara `--sk-vaul-*` desde
+`--sk-drawer-*` y ya está. No es "no envío nada", es "esto es un Vaul, afinado", y todo lo estructural
+que un drawer podría escribir es estructura que un bottom sheet necesita idéntica. El validador exime
+ese caso, y sólo ese: una hoja que re-declara los hooks de OTRO componente o pattern.
 
 ## Invariante no es lo mismo que compartida
 
-Aquí es donde la regla demuestra su valor, porque hay una generalización tentadora que está mal.
+Esta parte del argumento viejo sobrevive intacta, sólo que ahora justifica dónde vive una estructura,
+no si se envía.
 
 La anatomía de un combobox **es invariante**: la máquina dicta root → control → input + trigger,
-positioner → content → items, y desviarse lo rompe. Es tentador concluir que entonces hay que enviarla.
+positioner → content → items, y desviarse lo rompe. Es tentador concluir que entonces es un pattern.
 
-No. La invarianza es **necesaria pero no suficiente**. Lo que justifica enviar estructura es que esté
-**compartida**, ahí hay duplicación real que prevenir. La anatomía del combobox la usa exactamente un
-componente: el combobox. No hay nada que compartir. Es markup que el consumidor escribe una vez, en su
-propia app, con sus clases y su contenido.
-
-Un pattern se envía porque, si no, diez componentes escriben lo mismo. Un combobox no se envía porque
-lo escribe un solo componente, una sola vez.
+No. La invarianza es **necesaria pero no suficiente** para promover algo a `patterns/`. Lo que
+justifica un pattern es que la estructura esté **compartida**, ahí hay duplicación real que prevenir.
+La anatomía del combobox la usa exactamente un componente: el combobox. No hay nada que compartir, así
+que vive en `components/combobox.css`, que es donde se escribe una sola vez de todos modos.
 
 ## La plataforma decide, componente por componente
 
@@ -70,7 +111,7 @@ distinta.
 ## La capa vanilla
 
 El comportamiento que no envía la plataforma lo aporta una **capa vanilla**: el consumidor escribe el
-HTML, enlaza el CSS, y llama `initComponents()`. **No necesita framework.**
+HTML, enlaza el CSS, y hace `await initComponents()`. **No necesita framework.**
 
 Cada unidad es un **enhancer**: encuentra un root autorado, corre la máquina, y parchea atributos sobre
 elementos que ya existen. **No renderiza markup y nunca escribe una clase**, las dos cosas son del
@@ -81,10 +122,20 @@ existe para hidratar markup autorado: encuentra raíces, corre comportamiento y 
 elementos que ya existen.
 
 El **markup contract**, los parts, en el anidado correcto, se **documenta, nunca se envía**. El
-sistema describe el markup y el consumidor lo escribe. Los **parts** se nombran en BEM
-(`.ds-tabs__list`) y son propios y permanentes: sobreviven si la máquina de abajo se reemplaza. El
-**state** (selected, expanded, disabled) lo escribe la máquina como atributo de data, nunca como
-modificador BEM y nunca a mano. Los parts son propios; el state es de la máquina.
+sistema describe el markup y el consumidor lo escribe. Esa es la distinción que hay que no confundir
+con la regla de arriba: enviar la **clase** es enviar CSS, no HTML. `components/tabs.css` te dice cómo
+se ve un `.sk-tabs__list`; el `<div class="sk-tabs__list">` lo escribís vos.
+
+Los **parts** se nombran en BEM (`.sk-tabs__list`) y son propios y permanentes: sobreviven si la
+máquina de abajo se reemplaza. El **state** (selected, expanded, disabled) lo escribe la máquina como
+atributo de data, nunca como modificador BEM y nunca a mano. Los parts son propios; el state es de la
+máquina.
+
+Un enhancer **parchea atributos sobre markup autorado y nunca escribe una clase**. La excepción es el
+chrome que se deriva del contenido y que el autor por lo tanto no puede escribir: el carrusel dibuja
+sus controles porque cuántos dots hay sale de MEDIR la pista, no de contar slides
+([decisión 24](/decisiones/0024-la-capa-vanilla-usa-svelte-y-las-machines-viven-en-core)). Sigue sin
+inventar contenido; dibuja lo que sólo la máquina sabe.
 
 **Un framework nunca es el contrato.** Vanilla es la superficie que el sistema promete; React es una
 binding documentada, una de varias posibles, no la puerta de entrada
@@ -108,7 +159,13 @@ contraste cross-marca, exento en silencio de cada garantía que el validador exi
 
 ## Ante la duda
 
-El test se responde con **previsión**: "¿muchos componentes comparten esto?" es una predicción, y una
-predicción equivocada envía estructura que nadie reusa, o deja duplicando a todos. Ante duda genuina,
-preferir `component`: promover la estructura de un componente a pattern después es aditivo, mientras que
-degradar un pattern rompe a todos sus consumidores.
+La pregunta que queda ("¿muchos componentes comparten esto?") sigue siendo una **predicción**, y una
+predicción equivocada promueve a `patterns/` una estructura que nadie reusa. Ante duda genuina,
+preferir `component`: promover después es aditivo, mientras que degradar un pattern rompe a todos sus
+consumidores.
+
+Pero la lección más cara de esta decisión no es sobre esa pregunta, es sobre las predicciones en
+general. La regla vieja se apoyaba en una ("no hay dos apps que maqueten un botón igual"), nadie la
+midió durante meses, y el corpus la fue contradiciendo hoja por hoja sin que eso disparara nada. Una
+regla que el validador no puede chequear no es una regla: es una intención, y el código deriva de ella
+en silencio. Por eso la regla nueva llegó junto con su check, y no antes ni después.

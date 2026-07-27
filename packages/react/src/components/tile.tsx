@@ -39,7 +39,7 @@ export type TileLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
 };
 
 export const TileLink = forwardRef<HTMLAnchorElement, TileLinkProps>(function TileLink({ className, children, padding, ...props }, ref) {
-  const classes = tileRootClasses(className, tileParts.interactive, "ds-interactive");
+  const classes = tileRootClasses(className, tileParts.interactive, "sk-interactive");
 
   return (
     <a {...props} className={classes} data-padding={padding} data-part="root" data-scope="tile" ref={ref}>
@@ -57,7 +57,7 @@ export const TileButton = forwardRef<HTMLButtonElement, TileButtonProps>(functio
   { className, children, disabled, padding, type = "button", ...props },
   ref,
 ) {
-  const classes = tileRootClasses(className, tileParts.interactive, "ds-interactive");
+  const classes = tileRootClasses(className, tileParts.interactive, "sk-interactive");
 
   return (
     <button
@@ -100,7 +100,7 @@ export const TileCheckbox = forwardRef<HTMLLabelElement, TileCheckboxProps>(func
     onCheckedChange: onCheck,
   });
   const api = checkbox.connect(service, normalizeProps);
-  const classes = tileRootClasses(className, tileParts.interactive, "ds-interactive");
+  const classes = tileRootClasses(className, tileParts.interactive, "sk-interactive");
 
   return (
     <label {...api.getRootProps()} className={classes} data-padding={padding} data-scope="tile" ref={ref}>
@@ -108,7 +108,7 @@ export const TileCheckbox = forwardRef<HTMLLabelElement, TileCheckboxProps>(func
       <span className={tileParts.content} data-part="content">
         {children}
       </span>
-      <span aria-hidden="true" className={`${selectionParts.checkboxControl} ds-interactive`} data-part="indicator">
+      <span aria-hidden="true" className={`${selectionParts.checkboxControl} sk-interactive`} data-part="indicator">
         <CheckboxIndicators />
       </span>
     </label>
@@ -150,7 +150,7 @@ export const TileRadioGroup = forwardRef<HTMLDivElement, TileRadioGroupProps>(fu
         return (
           <label
             {...api.getItemProps(props)}
-            className={tileRootClasses(undefined, tileParts.interactive, "ds-interactive")}
+            className={tileRootClasses(undefined, tileParts.interactive, "sk-interactive")}
             data-part="item"
             data-padding={padding}
             data-scope="tile"
@@ -190,7 +190,7 @@ const ExpandableTileRoot = forwardRef<HTMLElement, ExpandableTileProps>(function
   const service = useMachine(collapsible.machine, { id: id ?? generatedId, open, defaultOpen, disabled, onOpenChange });
   const api = collapsible.connect(service, normalizeProps);
   const Component = (as ?? "section") as ElementType;
-  const classes = tileRootClasses(className, tileParts.expandable, "ds-interactive");
+  const classes = tileRootClasses(className, tileParts.interactive, tileParts.expandable, "sk-interactive");
 
   return (
     <ExpandableTileContext.Provider value={api}>

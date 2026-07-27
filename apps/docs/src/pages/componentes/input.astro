@@ -5,7 +5,6 @@ import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
 
-import "../../examples/input.css";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -13,17 +12,17 @@ const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/input.css";
 @import "@skryensya/core/components/field.css";`;
 
-const html = `<div class="ds-field">
-  <label class="ds-field__label" for="email">
+const html = `<div class="sk-field">
+  <label class="sk-field__label" for="email">
     Email
-    <span class="ds-field__required" aria-hidden="true">*</span>
+    <span class="sk-field__required" aria-hidden="true">*</span>
   </label>
-  <div class="ds-field__hint" id="email-hint">
+  <div class="sk-field__hint" id="email-hint">
     Sólo la usamos para las boletas.
   </div>
 
   <input
-    class="ds-input"
+    class="sk-input"
     id="email"
     name="email"
     type="email"
@@ -32,7 +31,7 @@ const html = `<div class="ds-field">
     aria-invalid="true"
   />
 
-  <div class="ds-field__error" id="email-error">
+  <div class="sk-field__error" id="email-error">
     Ingresa una dirección laboral.
   </div>
 </div>`;
@@ -60,29 +59,28 @@ const react = `import { Field, Input, Textarea } from "@skryensya/react/input";
     queda con la validación, el autofill, el IME y la asociación al formulario.
   </p>
 
-  <h2>Demo</h2>
   <Showcase html={html} react={react} label="Input" />
   <p>La densidad compacta el espacio alrededor del campo, no su área de interacción: Input conserva un mínimo de <code>44px</code> de alto, incluso con <code>data-size="sm"</code>.</p>
 
   <h2>Una clase para todo control de texto</h2>
   <p>
-    <code>ds-input</code> va en el <code>&lt;input&gt;</code> y en el <code>&lt;textarea&gt;</code>: es el
+    <code>sk-input</code> va en el <code>&lt;input&gt;</code> y en el <code>&lt;textarea&gt;</code>: es el
     mismo control visual, así que es un solo set de hooks. Una segunda clase sería un segundo set que
     mantener sincronizado con el primero.
   </p>
 
   <h2>Field es independiente de Input</h2>
   <p>
-    <code>ds-field</code> es el cromo alrededor de <em>cualquier</em> control, envuelve un select o un
+    <code>sk-field</code> es el cromo alrededor de <em>cualquier</em> control, envuelve un select o un
     grupo de checkboxes igual de bien. Nombrarlo por el control que más veces sostiene lo volvería mentira
     la primera vez que sostenga otro.
   </p>
 
   <h2>El error es texto, no un color</h2>
   <p>
-    <code>--ds-field-error-fg</code> tiñe un mensaje que igual tiene que existir, y
+    <code>--sk-field-error-fg</code> tiñe un mensaje que igual tiene que existir, y
     <code>aria-invalid</code>, que ya escribes para los lectores de pantalla, es lo que sigue el hook
-    <code>--ds-input-border-color</code>. Un <code>data-invalid</code> aparte dejaría que los dos no
+    <code>--sk-input-border-color</code>. Un <code>data-invalid</code> aparte dejaría que los dos no
     coincidan, y el color nunca es la única señal de error (WCAG 1.4.1).
   </p>
 
@@ -90,7 +88,7 @@ const react = `import { Field, Input, Textarea } from "@skryensya/react/input";
   <CodeBlock code={install} label="terminal" />
 
   <h2>CSS</h2>
-  <CodeBlock code={css} label="tu CSS" />
+  <CodeBlock code={css} label="CSS" />
 
 
   <h2>React</h2>
@@ -100,6 +98,6 @@ const react = `import { Field, Input, Textarea } from "@skryensya/react/input";
     <code>disabled</code> al control nativo. La presencia de <code>error</code> es lo que vuelve inválido
     al campo. Un <code>Input</code> fuera de un <code>Field</code> sigue siendo un control válido.
   </p>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
-  <StylingHooks groups={[{"file":"components/input.css","probe":"ds-input","title":"Input"},{"file":"components/field.css","probe":"ds-field","title":"Field"}]} />
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
+  <StylingHooks groups={[{"file":"components/input.css","probe":"sk-input","title":"Input"},{"file":"components/field.css","probe":"sk-field","title":"Field"}]} />
 </Base>

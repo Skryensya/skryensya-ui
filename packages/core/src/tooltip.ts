@@ -1,0 +1,123 @@
+/*
+ * TOOLTIP, el contrato.
+ *
+ * Un tooltip es una DESCRIPCIÓN AUXILIAR, nunca el nombre del control ni el único lugar donde vive
+ * un dato. La máquina cuelga `aria-describedby` del trigger mientras está abierto, no
+ * `aria-labelledby`: el trigger ya tiene que tener nombre accesible por su cuenta (su texto, o un
+ * `aria-label` si es icon-only) y el tooltip lo AMPLÍA.
+ *
+ * Esa restricción no es purismo, es lo que hace que el componente sea honesto en dos escenarios que
+ * no tienen arreglo dentro del componente:
+ *
+ *   1. TOUCH. No hay hover. Zag abre en `pointerenter` y en `focus` (gateado por `isFocusVisible`,
+ *      así que un click con mouse no lo dispara). En un teléfono el tooltip prácticamente no se ve.
+ *   2. SIN JS. El contenido se pinta oculto y sólo la máquina lo abre; sin la capa vanilla montada
+ *      no aparece nunca.
+ *
+ * En los dos casos no se pierde información PORQUE el contrato prohíbe que haya información ahí que
+ * no esté en otro lado. Un tooltip que es la única fuente de algo es un bug de quien lo usa, y no lo
+ * puede detectar el sistema: por eso está escrito acá arriba.
+ *
+ * WCAG 1.4.13 (Content on Hover or Focus) pide tres cosas, y las tres se cumplen POR DEFECTO:
+ *
+ *   - Descartable: Escape cierra, sin mover el puntero ni el foco.
+ *   - Persistente: no se cierra sola por un temporizador.
+ *   - Hoverable: el puntero puede llegar hasta el tooltip sin que desaparezca. Esto es la opción
+ *     `interactive` de la máquina, y acá viene encendida.
+ *
+ * Ese default está medido, no supuesto. Con `interactive` apagado el contenido recibe
+ * `pointer-events: none`, el puntero nunca lo alcanza y el tooltip se cierra en el camino: eso
+ * FALLA el criterio. La tentación es apagarlo razonando "un tooltip descriptivo no tiene nada que
+ * clickear", y es un error de lectura: hoverable no existe para poder operar el tooltip, existe para
+ * poder LEERLO, que es justo lo que necesita alguien con magnificación de pantalla o con temblor.
+ *
+ * Se puede apagar (`data-interactive="false"` / `interactive={false}`). Apagarlo es salirse del
+ * criterio a sabiendas.
+ */
+
+import { anchorPlacements, anchorPlacementToZag, type AnchorPlacement } from "./anchored.js";
+
+export type TooltipOpenChangeDetails = {
+  open: boolean;
+};
+
+/**
+ * De qué lado del trigger sale. El vocabulario es el del pattern Anclaje (ADR-25), no uno propio del
+ * tooltip: son los mismos cuatro lados en ejes lógicos que pide cualquier caja anclada, y tenerlos
+ * dos veces era tener dos que se podían separar. Estos alias se quedan porque son el nombre con el
+ * que el contrato del tooltip ya se documentó.
+ */
+export type TooltipPlacement = AnchorPlacement;
+
+export const tooltipPlacements = anchorPlacements;
+
+export const tooltipPlacementToZag = anchorPlacementToZag;
+
+/**
+ * UN TOOLTIP SALE ARRIBA, y es el único de los anclados que no cae hacia abajo: abajo está lo que el
+ * puntero acaba de tocar y lo que está por tocar.
+ *
+ * Está acá y no sólo en la hoja porque hay tres lugares que tienen que coincidir en el mismo lado: el
+ * `position-area` de la caja, el de la FLECHA (que ya no cuelga de la caja y no puede deducirlo) y la
+ * placement que se le pasa a la machine para el fallback. Cuando el default vivía sólo en el CSS los
+ * tres se separaban en cuanto nadie autoraba `data-sk-placement`: la caja salía arriba, la flecha
+ * abajo y la machine la colocaba abajo. Los bindings resuelven contra esta constante y escriben el
+ * resultado, así que la ausencia de placement deja de ser un cuarto caso.
+ */
+export const tooltipDefaultPlacement: TooltipPlacement = "block-start";
+
+export type TooltipOptions = {
+  id?: string;
+  /** ms antes de abrir en hover. Zag usa 400 por defecto. */
+  openDelay?: number;
+  /** ms antes de cerrar al salir. Zag usa 150 por defecto. */
+  closeDelay?: number;
+  /**
+   * WCAG 1.4.13 "hoverable": el tooltip sigue abierto si el puntero entra en él. Por defecto
+   * `true`; apagarlo hace que el componente falle el criterio.
+   */
+  interactive?: boolean;
+  /** De qué lado sale. Por defecto `block-start`. */
+  placement?: TooltipPlacement;
+  disabled?: boolean;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (details: TooltipOpenChangeDetails) => void;
+};
+
+/*
+ * Las parts espejan la anatomía de `@zag-js/tooltip` (trigger, positioner, content, arrow,
+ * arrowTip), con una diferencia: `arrowTip` no existe acá. Zag parte la flecha en dos, un contenedor
+ * que posiciona y un hijo rotado que pinta; nuestro rombo es UN solo elemento, porque en la ruta del
+ * navegador lo posiciona `position-area` y no hacen falta dos cajas para eso.
+ *
+ * La flecha es OPCIONAL en las dos capas y no tiene part propia: se autora con la clase del pattern
+ * (`sk-anchored-arrow`) adentro del positioner, y de ahí hereda los hooks con los que este componente
+ * la pinta. Que salga del TRIGGER y no del centro de la caja es geometría del pattern, contada ahí.
+ */
+export const tooltipParts = {
+  root: "sk-tooltip",
+  trigger: "sk-tooltip__trigger",
+  positioner: "sk-tooltip__positioner",
+  content: "sk-tooltip__content",
+} as const;
+
+export type TooltipPart = keyof typeof tooltipParts;
+export type TooltipPartClass = (typeof tooltipParts)[TooltipPart];
+
+/** Los ganchos que la capa vanilla escanea sobre el markup autorado. */
+export const tooltipAttrs = {
+  root: "data-sk-anchor",
+  trigger: "data-sk-anchor-trigger",
+  positioner: "data-sk-anchor-positioner",
+  content: "data-sk-anchor-content",
+  /**
+   * La colocación pedida. Se autora en el ROOT y termina en el POSITIONER: en React el positioner se
+   * portalea al body, donde la herencia desde el root ya no llega, así que la hoja lo lee ahí. La
+   * flecha lo lee desde el positioner también, con el combinador de hijo.
+   */
+  placement: "data-sk-placement",
+} as const;
+
+export type TooltipAttr = keyof typeof tooltipAttrs;
+export type TooltipAttrName = (typeof tooltipAttrs)[TooltipAttr];

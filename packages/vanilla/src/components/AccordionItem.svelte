@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { tileParts } from "@skryensya/core/tile";
   import { collapsible } from "@skryensya/core/machines";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
@@ -49,7 +50,7 @@
   $effect(() => {
     applyZagProps(el, api.getRootProps() as DomProps);
     asTile(el, "item");
-    el.classList.add("ds-interactive");
+    el.classList.add(tileParts.root, tileParts.interactive, tileParts.expandable, "sk-interactive");
     el.dataset.value = value;
     if (trigger) {
       applyZagProps(trigger, api.getTriggerProps() as DomProps);

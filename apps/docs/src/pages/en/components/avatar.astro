@@ -1,0 +1,242 @@
+---
+/*
+ * The English Avatar page — and the proof that the i18n setup holds.
+ *
+ * A translated page is a REAL FILE, not a parameterized render of the Spanish one: the demo markup,
+ * the React source and the prose are the content of a documentation page, and content is translated
+ * rather than interpolated. What it does share is everything structural — the layout, the chrome,
+ * the rail, the ComponentPreview — all of which read the locale off the URL on their own.
+ *
+ * Route: `/en/components/avatar`, from the `componentes → components` segment map in `src/i18n`.
+ */
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+/*
+ * Demo photos, as dummyimage.com placeholders painted in the accent fill.
+ *
+ * The hexes are the DEFAULT brand's `--color-action-primary` / `--color-text-on-accent`: a URL is a
+ * string and cannot hold a var(). `previewScript` re-resolves both tokens inside the frame and
+ * rewrites `src`, so the demo follows the reader's mode and brand while the source stays a URL
+ * anyone can paste.
+ */
+const ACCENT_HEX = "1f5fc3";
+const ON_ACCENT_HEX = "ffffff";
+const demoSrc = (initials: string) =>
+  `https://dummyimage.com/160/${ACCENT_HEX}/${ON_ACCENT_HEX}?text=${initials}`;
+
+const html = `<span class="sk-avatar" data-size="sm">
+  <span
+    class="sk-image-frame"
+    data-aspect="1/1"
+    data-fit="cover"
+    data-radius="pill"
+  >
+    <img
+      class="sk-image-frame__media"
+      src="${demoSrc("AL")}"
+      alt="Ada Lovelace"
+    />
+  </span>
+</span>
+<span class="sk-avatar">
+  <span
+    class="sk-image-frame"
+    data-aspect="1/1"
+    data-fit="cover"
+    data-radius="pill"
+  >
+    <img
+      class="sk-image-frame__media"
+      src="${demoSrc("AT")}"
+      alt="Alan Turing"
+    />
+  </span>
+</span>
+<span class="sk-avatar" data-size="lg">
+  <span
+    class="sk-image-frame"
+    data-aspect="1/1"
+    data-fit="cover"
+    data-radius="pill"
+  >
+    <img
+      class="sk-image-frame__media"
+      src="${demoSrc("GH")}"
+      alt="Grace Hopper"
+    />
+  </span>
+</span>
+
+<span
+  class="sk-avatar"
+  data-size="sm"
+  role="img"
+  aria-label="Ada Lovelace"
+>
+  <span class="sk-avatar__fallback" aria-hidden="true">AL</span>
+</span>
+<span class="sk-avatar" role="img" aria-label="Alan Turing">
+  <span class="sk-avatar__fallback" aria-hidden="true">AT</span>
+</span>
+<span
+  class="sk-avatar"
+  data-size="lg"
+  role="img"
+  aria-label="Grace Hopper"
+>
+  <span class="sk-avatar__fallback" aria-hidden="true">GH</span>
+</span>
+
+<div class="sk-avatar-group">
+  <span class="sk-avatar">
+    <span
+      class="sk-image-frame"
+      data-aspect="1/1"
+      data-fit="cover"
+      data-radius="pill"
+    >
+      <img
+        class="sk-image-frame__media"
+        src="${demoSrc("AL")}"
+        alt="Ada Lovelace"
+      />
+    </span>
+  </span>
+  <span class="sk-avatar" role="img" aria-label="Alan Turing">
+    <span class="sk-avatar__fallback" aria-hidden="true">AT</span>
+  </span>
+  <span class="sk-avatar" role="img" aria-label="Grace Hopper">
+    <span class="sk-avatar__fallback" aria-hidden="true">GH</span>
+  </span>
+  <span class="sk-avatar-group__overflow">+8</span>
+</div>`;
+
+const react = `import {
+  Avatar,
+  AvatarGroup,
+} from "@skryensya/react/avatar";
+
+<Avatar
+  name="Ada Lovelace"
+  size="sm"
+  src="${demoSrc("AL")}"
+/>
+<Avatar
+  name="Alan Turing"
+  src="${demoSrc("AT")}"
+/>
+<Avatar
+  name="Grace Hopper"
+  size="lg"
+  src="${demoSrc("GH")}"
+/>
+
+<Avatar name="Ada Lovelace" size="sm" />
+<Avatar name="Alan Turing" />
+<Avatar name="Grace Hopper" size="lg" />
+
+<AvatarGroup max={3}>
+  <Avatar
+    name="Ada Lovelace"
+    src="${demoSrc("AL")}"
+  />
+  <Avatar name="Alan Turing" />
+  <Avatar name="Grace Hopper" />
+  <Avatar name="Raul G" />
+  {/* …8 more → collapse into +8 */}
+</AvatarGroup>;`;
+
+/*
+ * Repaint the placeholders in the accent the reader is actually looking at.
+ *
+ * Never displayed, and nothing the component needs: the src above is a working URL on its own. This
+ * only keeps the demo from claiming to be "the accent" while showing the default blue to someone
+ * who just swapped the brand in /customize or flipped to dark, where the fill drops to
+ * `--ramp-accent-500` and the on-accent text stops being white.
+ *
+ * Two moves the site makes elsewhere, for the same two reasons:
+ *   - the token goes through a PROBE, because getComputedStyle() returns a custom property's
+ *     specified value, light-dark() unresolved, never its used one (see scripts/used-values.ts); and
+ *   - the conversion goes through a CANVAS, because Chrome serialises these tokens as oklab() and
+ *     dummyimage only speaks hex.
+ * The frame runtime mirrors the parent's root attributes and inline style, so observing our own
+ * <html> is enough to catch a mode, contrast or brand change.
+ */
+const previewScript = `
+const probe = document.createElement("span");
+probe.hidden = true;
+document.body.append(probe);
+
+const canvas = document.createElement("canvas");
+canvas.width = 1;
+canvas.height = 1;
+const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+function hexOf(token, fallback) {
+  if (!ctx) return fallback;
+  probe.style.removeProperty("color");
+  probe.style.setProperty("color", "var(" + token + ")");
+  const used = getComputedStyle(probe).color;
+  if (!used) return fallback;
+  ctx.clearRect(0, 0, 1, 1);
+  ctx.fillStyle = "#000";
+  ctx.fillStyle = used;
+  ctx.fillRect(0, 0, 1, 1);
+  const pixel = ctx.getImageData(0, 0, 1, 1).data;
+  if (pixel[3] === 0) return fallback;
+  return [pixel[0], pixel[1], pixel[2]]
+    .map((channel) => channel.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function retint() {
+  const bg = hexOf("--color-action-primary", "${ACCENT_HEX}");
+  const fg = hexOf("--color-text-on-accent", "${ON_ACCENT_HEX}");
+  for (const img of document.querySelectorAll('img[src*="dummyimage.com"]')) {
+    // The authored src is the template; keep it, the first repaint would otherwise consume it.
+    const template = (img.dataset.skTintTemplate ||= img.getAttribute("src"));
+    const url = new URL(template);
+    const segments = url.pathname.split("/");
+    if (segments.length !== 4) continue;
+    segments[2] = bg;
+    segments[3] = fg;
+    url.pathname = segments.join("/");
+    if (img.getAttribute("src") !== url.href) img.setAttribute("src", url.href);
+  }
+}
+
+retint();
+const observer = new MutationObserver(retint);
+observer.observe(document.documentElement, { attributes: true });
+window.addEventListener("pagehide", () => observer.disconnect(), { once: true });
+`;
+---
+
+<Base title="Avatar" description="Avatar: ImageFrame or initials, AvatarGroup with +N collapse, and the React component.">
+  <h1>Avatar</h1>
+  <p class="lede">
+    Avatar is the visual token of a person or entity: a photo cropped with
+    <strong>ImageFrame</strong> (1/1, cover, pill) or, with no image, the first two
+    letters of the name. <strong>AvatarGroup</strong> stacks a set and collapses the
+    remainder into a “+N” counter.
+  </p>
+
+  <Showcase html={html} react={react} previewScript={previewScript} label="Avatar" />
+  <p>
+    With an image, the avatar nests <code>sk-image-frame</code> and the
+    <code>&lt;img alt&gt;</code> carries the semantics. Without one, the container takes
+    <code>role="img"</code> and the initials become decorative. In React,
+    <code>avatarInitials(name)</code> derives the fallback when you pass no children: two
+    words → the first letter of each; a single word → its first two characters.
+  </p>
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>The code is in the <strong>React</strong> tab of the preview.</p>
+</Base>

@@ -4,47 +4,45 @@ import { iconMarkup } from "../../icons";
 import { componentNavigation } from "../../lib/navigation";
 
 const searchIcon = iconMarkup("search");
+const items = componentNavigation.flatMap((group) => group.items);
 ---
 
 <Base
   title="Explorar componentes"
-  description="Piezas del sistema agrupadas por la tarea que resuelven al construir una interfaz."
+  description="Catálogo A–Z de piezas del sistema: componentes, patterns y primitivos de uso."
 >
   <h1>Explorar componentes</h1>
   <p class="lede">
-    Empieza por las rutas enhanced: resuelven la interacción que el navegador no coordina por sí solo.
-    Las alternativas nativas quedan separadas al final para los casos donde el contrato de plataforma
-    es suficiente.
+    Lista A–Z. Incluye piezas de producto, patterns (scrollbar, vaul, nav list) y el uso de
+    <a href="/componentes/icon">Icon</a>. La iconografía —roles, sets, reglas— vive en
+    <a href="/iconos">Fundamentos → Iconografía</a>.
   </p>
 
   <button
-    class="ds-button ds-interactive docs-catalog-search"
+    class="sk-button sk-interactive docs-catalog-search"
     data-variant="ghost"
     type="button"
     aria-controls="docs-cmdk"
     aria-expanded="false"
     aria-keyshortcuts="Meta+K Control+K"
-    data-docs-cmdk-open
+    data-sk-command-palette-open
   >
     <Fragment set:html={searchIcon} />
     <span class="docs-catalog-search__label">Buscar componentes</span>
-    <kbd class="ds-kbd" data-cmdk-hint aria-hidden="true">⌘K</kbd>
+    <kbd class="sk-kbd" data-sk-command-palette-hint aria-hidden="true">⌘K</kbd>
   </button>
 
-  {
-    componentNavigation.map((group) => (
-      <section class="docs-catalog-section" data-secondary={group.secondary ? "" : undefined} aria-labelledby={`catalog-${group.group}`}>
-        <h2 id={`catalog-${group.group}`}>{group.group}</h2>
-        <ul class="docs-catalog">
-          {group.items.map((item) => (
-            <li>
-              <a class="docs-catalog__link ds-interactive" href={item.href}>
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    ))
-  }
+  <section class="docs-catalog-section" aria-label="Componentes">
+    <ul class="docs-catalog">
+      {
+        items.map((item) => (
+          <li>
+            <a class="docs-catalog__link sk-interactive" href={item.href}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
 </Base>

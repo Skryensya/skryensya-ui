@@ -15,7 +15,8 @@ export type ButtonOptions = {
 };
 
 export const buttonParts = {
-  root: "ds-button",
+  root: "sk-button",
+  interactive: "sk-interactive",
 } as const;
 
 export type ButtonPart = keyof typeof buttonParts;

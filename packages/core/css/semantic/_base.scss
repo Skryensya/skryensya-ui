@@ -2,6 +2,6 @@
     /* Opts the page into native dark form controls + scrollbars, and arms light-dark(). */
     color-scheme: light dark;
     /* System source. Scopes capture this value and can apply a local relative factor. */
-    --ds-density: 1;
-    --ds-density-system: var(--ds-density);
+    --sk-density: 1;
+    --sk-density-system: var(--sk-density);
 }

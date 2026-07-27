@@ -1,23 +1,132 @@
 /*
- * TIER 3, TABS (opt-in styling hooks)
+ * TIER 3, TABS
  *
- * The package ships static appearance hooks only. The markup contract comes from @skryensya/core and the
- * behavior from a binding package; consumer CSS still maps hooks to layout and paint.
+ * The sheet ships the class and the appearance hooks; the markup contract comes from
+ * @skryensya/core and the behaviour from a binding package. Interaction state (selected, disabled)
+ * is written by the machine as data attributes, never by hand.
  */
 @layer components {
-  .ds-tabs {
-    --ds-tabs-gap: var(--space-stack-md);
-    --ds-tabs-list-gap: var(--space-inline-xs);
-    --ds-tabs-list-border-color: var(--color-border-subtle);
-    --ds-tabs-trigger-height: var(--size-control-md);
-    --ds-tabs-trigger-padding-x: var(--space-inset-md);
-    --ds-tabs-trigger-radius: var(--radius-control);
-    --ds-tabs-trigger-fg: var(--color-text-secondary);
-    --ds-tabs-trigger-selected-fg: var(--color-text-accent);
-    --ds-tabs-trigger-disabled-fg: var(--color-text-disabled);
-    --ds-tabs-indicator-bg: var(--color-border-accent);
-    --ds-tabs-indicator-size: 2px;
-    --ds-tabs-panel-padding-block: var(--space-inset-md);
-    --ds-tabs-panel-fg: var(--color-text-primary);
+  .sk-tabs {
+    --sk-tabs-gap: var(--space-stack-md);
+    --sk-tabs-list-gap: var(--space-inline-xs);
+    --sk-tabs-list-border-color: var(--color-border-subtle);
+    --sk-tabs-trigger-height: var(--size-control-md);
+    --sk-tabs-trigger-padding-x: var(--space-inset-md);
+    --sk-tabs-trigger-gap: var(--space-inline-xs);
+    --sk-tabs-trigger-radius: var(--radius-control);
+    --sk-tabs-trigger-fg: var(--color-text-secondary);
+    --sk-tabs-trigger-selected-fg: var(--color-text-accent);
+    --sk-tabs-trigger-disabled-fg: var(--color-text-disabled);
+    --sk-tabs-indicator-bg: var(--color-border-accent);
+    --sk-tabs-indicator-size: 2px;
+    --sk-tabs-panel-padding-block: var(--space-inset-md);
+    --sk-tabs-panel-fg: var(--color-text-primary);
+
+    /* Underline tabs: the selection is an accent bar on the baseline, not a filled tab. */
+    display: grid;
+    gap: var(--sk-tabs-gap);
+  }
+
+  .sk-tabs__list {
+    position: relative;
+    display: flex;
+    gap: var(--sk-tabs-list-gap);
+    border-block-end: 1px solid var(--sk-tabs-list-border-color);
+  }
+
+  .sk-tabs__trigger {
+    /* The selection is an underline, so mute the state layer's persistent SELECTED fill, otherwise the
+     * active tab reads as a filled box. Hover, focus and press still tint (they sit above selected). */
+    --state-layer-selected-opacity: 0;
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sk-tabs-trigger-gap);
+    min-height: var(--sk-tabs-trigger-height);
+    padding-inline: var(--sk-tabs-trigger-padding-x);
+    border: 0;
+    border-radius: var(--sk-tabs-trigger-radius) var(--sk-tabs-trigger-radius) 0 0;
+    background: transparent;
+    color: var(--sk-tabs-trigger-fg);
+    font: var(--font-weight-label) var(--font-size-body) / 1 var(--font-family-body);
+    cursor: pointer;
+    transition: color var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  /* The active bar: an accent segment straddling the list's 1px baseline, the full width of the tab. It
+   * fades with the selection, a sliding bar would need JS to measure each tab's width, and the fade reads
+   * clean without pretending to that. Rounded top so it looks drawn, not clipped. */
+  .sk-tabs__trigger::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: -1px;
+    block-size: var(--sk-tabs-indicator-size);
+    border-start-start-radius: var(--radius-pill);
+    border-start-end-radius: var(--radius-pill);
+    background: var(--sk-tabs-indicator-bg);
+    opacity: 0;
+    transition: opacity var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  .sk-tabs__trigger[data-selected] {
+    color: var(--sk-tabs-trigger-selected-fg);
+  }
+
+  .sk-tabs__trigger[data-selected]::after {
+    opacity: 1;
+  }
+
+  .sk-tabs__trigger[aria-disabled="true"] {
+    color: var(--sk-tabs-trigger-disabled-fg);
+    cursor: not-allowed;
+  }
+
+  .sk-tabs__content {
+    padding-block: var(--sk-tabs-panel-padding-block);
+    color: var(--sk-tabs-panel-fg);
+  }
+
+  /* Vertical tabs keep the same parts and indicator recipe. Only the axes change: the list becomes
+   * the leading rail, and the selected bar sits on its inline edge. */
+  .sk-tabs[data-orientation="vertical"] {
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: var(--sk-tabs-gap);
+    row-gap: 0;
+  }
+
+  .sk-tabs[data-orientation="vertical"] .sk-tabs__list {
+    align-self: stretch;
+    flex-direction: column;
+    border-block-end: 0;
+    border-inline-end: 1px solid var(--sk-tabs-list-border-color);
+  }
+
+  .sk-tabs[data-orientation="vertical"] .sk-tabs__trigger {
+    justify-content: flex-start;
+    border-radius: 0;
+    border-start-start-radius: var(--sk-tabs-trigger-radius);
+    border-end-start-radius: var(--sk-tabs-trigger-radius);
+  }
+
+  .sk-tabs[data-orientation="vertical"] .sk-tabs__trigger::after {
+    inset-block: 0;
+    inset-inline: auto -1px;
+    inline-size: var(--sk-tabs-indicator-size);
+    block-size: auto;
+    border-radius: var(--radius-pill);
+  }
+
+  .sk-tabs[data-orientation="vertical"] .sk-tabs__content {
+    min-inline-size: 0;
+    padding-block: 0;
+  }
+
+  @media (forced-colors: active) {
+    .sk-tabs__trigger[data-selected]::after {
+      background: Highlight;
+    }
   }
 }

@@ -6,13 +6,13 @@ import Showcase from "../../components/Showcase.astro";
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
 const html = `<section
-  class="ds-grid"
+  class="sk-grid"
   data-columns="3"
   data-gap="md"
   aria-label="Proyectos recientes"
 >
   <article
-    class="ds-box"
+    class="sk-box"
     data-surface="surface"
     data-border="subtle"
     data-padding="md"
@@ -20,7 +20,7 @@ const html = `<section
     Proyecto Atlas
   </article>
   <article
-    class="ds-box"
+    class="sk-box"
     data-surface="surface"
     data-border="subtle"
     data-padding="md"
@@ -28,7 +28,7 @@ const html = `<section
     Proyecto Brisa
   </article>
   <article
-    class="ds-box"
+    class="sk-box"
     data-surface="surface"
     data-border="subtle"
     data-padding="md"
@@ -51,95 +51,95 @@ const react = `import { Grid } from "@skryensya/react/grid";
 </Grid>`;
 
 const multicolHtml = `<section
-  class="ds-grid"
+  class="sk-grid"
   data-columns="4"
   data-gap="md"
   data-multicol
   aria-label="Notas"
 >
   <article
-    class="ds-box"
+    class="sk-box"
     data-surface="surface"
     data-border="subtle"
     data-padding="md"
   >
     <strong>Atlas</strong>
-    <p class="ds-text" data-size="sm" data-tone="secondary">
+    <p class="sk-text" data-size="sm" data-tone="secondary">
       Una línea.
     </p>
   </article>
   <article
-    class="ds-box"
+    class="sk-box"
     data-surface="surface"
     data-border="subtle"
     data-padding="md"
   >
     <strong>Brisa</strong>
-    <p class="ds-text" data-size="sm" data-tone="secondary">
+    <p class="sk-text" data-size="sm" data-tone="secondary">
       Esta nota es más larga: ocupa varias líneas y por eso su
       tarjeta es más alta que las otras dos.
     </p>
   </article>
   <article
-    class="ds-box"
+    class="sk-box"
     data-surface="surface"
     data-border="subtle"
     data-padding="md"
   >
     <strong>Cauce</strong>
-    <p class="ds-text" data-size="sm" data-tone="secondary">
+    <p class="sk-text" data-size="sm" data-tone="secondary">
       Dos líneas de<br />contenido acá.
     </p>
   </article>
   <article
-    class="ds-box"
+    class="sk-box"
     data-surface="surface"
     data-border="subtle"
     data-padding="md"
   >
     <strong>Delta</strong>
-    <p class="ds-text" data-size="sm" data-tone="secondary">Corta.</p>
+    <p class="sk-text" data-size="sm" data-tone="secondary">Corta.</p>
   </article>
   <article
-    class="ds-box"
+    class="sk-box"
     data-surface="surface"
     data-border="subtle"
     data-padding="md"
   >
     <strong>Eco</strong>
-    <p class="ds-text" data-size="sm" data-tone="secondary">
+    <p class="sk-text" data-size="sm" data-tone="secondary">
       Otra tarjeta con bastante texto para que su altura difiera y
       el empaquetado en carriles se note.
     </p>
   </article>
   <article
-    class="ds-box"
+    class="sk-box"
     data-surface="surface"
     data-border="subtle"
     data-padding="md"
   >
     <strong>Faro</strong>
-    <p class="ds-text" data-size="sm" data-tone="secondary">Media.</p>
+    <p class="sk-text" data-size="sm" data-tone="secondary">Media.</p>
   </article>
   <article
-    class="ds-box"
+    class="sk-box"
     data-surface="surface"
     data-border="subtle"
     data-padding="md"
   >
     <strong>Gala</strong>
-    <p class="ds-text" data-size="sm" data-tone="secondary">
+    <p class="sk-text" data-size="sm" data-tone="secondary">
       Resumen breve, con otro ritmo.
     </p>
   </article>
   <article
-    class="ds-box"
+    class="sk-box"
     data-surface="surface"
     data-border="subtle"
     data-padding="md"
   >
     <strong>Humo</strong>
-    <p class="ds-text" data-size="sm" data-tone="secondary">
+    <p class="sk-text" data-size="sm" data-tone="secondary">
       Una nota adicional para ocupar el cuarto carril en una
       pantalla amplia.
     </p>
@@ -164,33 +164,33 @@ const multicolReact = `import { Grid } from "@skryensya/react/grid";
 
 const multicolCss = `/* data-columns="4": 1 carril → 2 → 3 → 4,
    según el viewport. */
-.ds-grid[data-multicol] {
+.sk-grid[data-multicol] {
   column-count: 1;
-  column-gap: var(--ds-grid-gap);
+  column-gap: var(--sk-grid-gap);
 }
 
-.ds-grid[data-multicol] > * {
+.sk-grid[data-multicol] > * {
   break-inside: avoid;
-  margin-block-end: var(--ds-grid-gap);
+  margin-block-end: var(--sk-grid-gap);
 }
 
 @media (min-width: 36rem) {
-  .ds-grid[data-multicol][data-columns="2"],
-  .ds-grid[data-multicol][data-columns="3"],
-  .ds-grid[data-multicol][data-columns="4"] {
+  .sk-grid[data-multicol][data-columns="2"],
+  .sk-grid[data-multicol][data-columns="3"],
+  .sk-grid[data-multicol][data-columns="4"] {
     column-count: 2;
   }
 }
 
 @media (min-width: 52rem) {
-  .ds-grid[data-multicol][data-columns="3"],
-  .ds-grid[data-multicol][data-columns="4"] {
+  .sk-grid[data-multicol][data-columns="3"],
+  .sk-grid[data-multicol][data-columns="4"] {
     column-count: 3;
   }
 }
 
 @media (min-width: 72rem) {
-  .ds-grid[data-multicol][data-columns="4"] {
+  .sk-grid[data-multicol][data-columns="4"] {
     column-count: 4;
   }
 }`;
@@ -203,7 +203,6 @@ const multicolCss = `/* data-columns="4": 1 carril → 2 → 3 → 4,
     evita que el tamaño mínimo intrínseco ensanche las columnas.
   </p>
 
-  <h2>Demo</h2>
   <Showcase html={html} react={react} label="Grid" />
 
   <h2>CSS Multi-column Layout</h2>
@@ -228,7 +227,7 @@ const multicolCss = `/* data-columns="4": 1 carril → 2 → 3 → 4,
 
   <h2>HTML autorado</h2>
   <p>
-    Elige el elemento semántico, como <code>section</code>, y aplica <code>ds-grid</code>. No requiere inicialización vanilla.
+    Elige el elemento semántico, como <code>section</code>, y aplica <code>sk-grid</code>. No requiere inicialización vanilla.
   </p>
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />
@@ -236,11 +235,11 @@ const multicolCss = `/* data-columns="4": 1 carril → 2 → 3 → 4,
 
   <h2>React</h2>
   <p>La prop <code>as</code> conserva esa elección semántica.</p>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
 
   <h2>Contrato</h2>
   <ul>
-    <li><code>ds-grid</code> crea una grilla de columnas iguales; <code>data-columns</code> admite <code>1</code>, <code>2</code>, <code>3</code> o <code>4</code>.</li>
+    <li><code>sk-grid</code> crea una grilla de columnas iguales; <code>data-columns</code> admite <code>1</code>, <code>2</code>, <code>3</code> o <code>4</code>.</li>
     <li><code>data-gap</code> admite <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> o <code>xl</code>; el valor por defecto es <code>md</code>.</li>
     <li>
       <code>data-multicol</code> activa el muro de tarjetas por columnas. <code>data-columns</code>

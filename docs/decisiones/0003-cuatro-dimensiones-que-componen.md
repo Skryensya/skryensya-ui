@@ -22,7 +22,7 @@ que componen en la cascada en vez de enumerarse.
 | **Marca** | rampas tier-1 | cambia la paleta primitiva | `data-brand` |
 | **Modo de color** | color tier-2 | `light-dark()` elige slot | `color-scheme` |
 | **Alto contraste** | color tier-2 | un bloque de override re-declara los mismos tokens | `data-contrast` |
-| **Densidad** | espaciado tier-2 | un multiplicador en runtime | `--ds-density` |
+| **Densidad** | espaciado tier-2 | un multiplicador en runtime | `--sk-density` |
 
 `oscuro × ember × compacto` no existe en ningún lado del disco: lo computa el navegador desde un archivo
 de marca elegido más los tokens base.

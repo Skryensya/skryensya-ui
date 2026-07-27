@@ -2,7 +2,7 @@
   "name": "@skryensya/vanilla",
   "version": "0.1.0",
   "type": "module",
-  "description": "Vanilla enhancers for authored @skryensya markup.",
+  "description": "Vanilla enhancers for authored skryensya/ui markup.",
   "files": [
     "dist",
     "src"
@@ -16,9 +16,17 @@
       "types": "./src/auto.ts",
       "default": "./src/auto.ts"
     },
+    "./runtime": {
+      "types": "./src/runtime.ts",
+      "default": "./src/runtime.ts"
+    },
     "./hotkey": {
       "types": "./src/hotkey.ts",
       "default": "./src/hotkey.ts"
+    },
+    "./storage": {
+      "types": "./src/storage.ts",
+      "default": "./src/storage.ts"
     },
     "./icon": {
       "types": "./src/icon.ts",
@@ -28,6 +36,22 @@
       "types": "./src/components/button.ts",
       "default": "./src/components/button.ts"
     },
+    "./code-preview": {
+      "types": "./src/components/code-preview.ts",
+      "default": "./src/components/code-preview.ts"
+    },
+    "./component-preview": {
+      "types": "./src/components/component-preview.ts",
+      "default": "./src/components/component-preview.ts"
+    },
+    "./copy-button": {
+      "types": "./src/components/copy-button.ts",
+      "default": "./src/components/copy-button.ts"
+    },
+    "./theme-toggle": {
+      "types": "./src/components/theme-toggle.ts",
+      "default": "./src/components/theme-toggle.ts"
+    },
     "./accordion": {
       "types": "./src/components/accordion.ts",
       "default": "./src/components/accordion.ts"
@@ -36,9 +60,17 @@
       "types": "./src/components/select.ts",
       "default": "./src/components/select.ts"
     },
+    "./flyout": {
+      "types": "./src/components/flyout.ts",
+      "default": "./src/components/flyout.ts"
+    },
     "./segmented": {
       "types": "./src/components/segmented.ts",
       "default": "./src/components/segmented.ts"
+    },
+    "./stat": {
+      "types": "./src/components/stat.ts",
+      "default": "./src/components/stat.ts"
     },
     "./sidebar": {
       "types": "./src/components/sidebar.ts",
@@ -51,6 +83,14 @@
     "./tabs": {
       "types": "./src/components/tabs.ts",
       "default": "./src/components/tabs.ts"
+    },
+    "./carousel": {
+      "types": "./src/components/carousel.ts",
+      "default": "./src/components/carousel.ts"
+    },
+    "./table-pager": {
+      "types": "./src/components/table-pager.ts",
+      "default": "./src/components/table-pager.ts"
     },
     "./toast": {
       "types": "./src/components/toast.ts",
@@ -83,6 +123,46 @@
     "./vaul": {
       "types": "./src/components/vaul.ts",
       "default": "./src/components/vaul.ts"
+    },
+    "./command-palette": {
+      "types": "./src/components/command-palette.ts",
+      "default": "./src/components/command-palette.ts"
+    },
+    "./tooltip": {
+      "types": "./src/components/tooltip.ts",
+      "default": "./src/components/tooltip.ts"
+    },
+    "./combobox": {
+      "types": "./src/components/combobox.ts",
+      "default": "./src/components/combobox.ts"
+    },
+    "./file-upload": {
+      "types": "./src/components/file-upload.ts",
+      "default": "./src/components/file-upload.ts"
+    },
+    "./menu": {
+      "types": "./src/components/menu.ts",
+      "default": "./src/components/menu.ts"
+    },
+    "./number-field": {
+      "types": "./src/components/number-field.ts",
+      "default": "./src/components/number-field.ts"
+    },
+    "./toolbar": {
+      "types": "./src/components/toolbar.ts",
+      "default": "./src/components/toolbar.ts"
+    },
+    "./tree-view": {
+      "types": "./src/components/tree-view.ts",
+      "default": "./src/components/tree-view.ts"
+    },
+    "./date-picker": {
+      "types": "./src/components/date-picker.ts",
+      "default": "./src/components/date-picker.ts"
+    },
+    "./calendar": {
+      "types": "./src/components/calendar.ts",
+      "default": "./src/components/calendar.ts"
     }
   },
   "scripts": {
@@ -99,6 +179,7 @@
     "@zag-js/select": "^1.42.0",
     "@zag-js/svelte": "^1.42.0",
     "@zag-js/tabs": "^1.42.0",
+    "@zag-js/tooltip": "1.42.0",
     "@zag-js/vanilla": "^1.42.0",
     "svelte": "^5.56.7"
   },

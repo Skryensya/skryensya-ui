@@ -67,7 +67,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
         ref={setRef}
         type="checkbox"
       />
-      <span aria-hidden="true" className={classes(selectionParts.checkboxControl, "ds-interactive")}>
+      <span aria-hidden="true" className={classes(selectionParts.checkboxControl, "sk-interactive")}>
         <CheckboxIndicators />
       </span>
       {children ? <span className={selectionParts.checkboxLabel}>{children}</span> : null}

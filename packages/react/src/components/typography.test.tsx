@@ -7,7 +7,7 @@ describe("typography components", () => {
     const ui = render(<Heading as="h1" size="display-md">Quarterly report</Heading>);
     const heading = ui.getByRole("heading", { level: 1, name: "Quarterly report" });
 
-    expect(heading.classList).toContain("ds-heading");
+    expect(heading.classList).toContain("sk-heading");
     expect(heading.getAttribute("data-size")).toBe("display-md");
   });
 
@@ -37,7 +37,7 @@ describe("typography components", () => {
     const text = ui.getByText("Updated now");
 
     expect(text.tagName).toBe("SPAN");
-    expect(text.classList).toContain("ds-text");
+    expect(text.classList).toContain("sk-text");
     expect(text.getAttribute("data-tone")).toBe("secondary");
   });
 
@@ -45,8 +45,8 @@ describe("typography components", () => {
     const ui = render(<Link href="/details">Details</Link>);
     const link = ui.getByRole("link", { name: "Details" });
 
-    expect(link.classList).toContain("ds-link");
-    expect(link.classList).toContain("ds-interactive");
+    expect(link.classList).toContain("sk-link");
+    expect(link.classList).toContain("sk-interactive");
     // The underline is not configurable, it is always on (WCAG 1.4.1), so there is no data-underline.
     expect(link.getAttribute("data-underline")).toBeNull();
   });

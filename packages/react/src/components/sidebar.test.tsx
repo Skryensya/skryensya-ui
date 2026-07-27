@@ -39,7 +39,7 @@ function renderSidebar(props: Omit<SidebarProps, "children"> = {}) {
     ...result,
     screen,
     trigger: () => screen.getByRole("button", { name: "Contraer navegación" }),
-    state: () => result.container.querySelector(".ds-sidebar")?.getAttribute("data-state"),
+    state: () => result.container.querySelector(".sk-sidebar")?.getAttribute("data-state"),
   };
 }
 
@@ -67,7 +67,7 @@ describe("Sidebar React contracts", () => {
 
     expect(ui.trigger().getAttribute("aria-expanded")).toBe("true");
     expect(ui.trigger().getAttribute("aria-controls")).toBe(
-      ui.container.querySelector(".ds-sidebar__content")?.id,
+      ui.container.querySelector(".sk-sidebar__content")?.id,
     );
 
     fireEvent.click(ui.trigger());
@@ -94,9 +94,9 @@ describe("Sidebar React contracts", () => {
     const ui = renderSidebar();
 
     // The list is a guest: nothing inside it carries a sidebar class (decision 17).
-    const list = ui.container.querySelector(".ds-nav-list");
+    const list = ui.container.querySelector(".sk-nav-list");
     expect(list).toBeTruthy();
-    expect(list?.querySelector('[class*="ds-sidebar__"]')).toBeNull();
+    expect(list?.querySelector('[class*="sk-sidebar__"]')).toBeNull();
   });
 
   it("passes axe expanded and collapsed", async () => {

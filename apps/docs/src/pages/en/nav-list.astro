@@ -1,0 +1,132 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import { probeProp, tokens } from "../../lib/tokens";
+
+const hooks = tokens
+  .filter((t) => t.file === "patterns/nav-list.css")
+  .map((t) => ({ ...t, prop: probeProp(t.value) }));
+
+const import_ = `@import "@skryensya/core/patterns/nav-list.css";`;
+
+const html = `<nav class="sk-nav-list" aria-label="Principal">
+  <div class="sk-nav-list__group">
+    <div class="sk-nav-list__group-label" id="espacio">Espacio</div>
+    <ul class="sk-nav-list__list" aria-labelledby="espacio">
+      <li class="sk-nav-list__item">
+        <a
+          class="sk-nav-list__link sk-interactive"
+          href="/in"
+          aria-current="page"
+        >
+          <span data-sk-icon="info"></span>
+          <span class="sk-nav-list__label">Inicio</span>
+        </a>
+      </li>
+      <li class="sk-nav-list__item">
+        <a class="sk-nav-list__link sk-interactive" href="/reportes">
+          <span data-sk-icon="calendar"></span>
+          <span class="sk-nav-list__label">Reportes</span>
+          <span class="sk-nav-list__trailing">12</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>`;
+
+---
+
+<Base
+  title="Nav list"
+  description="Nav list: the destination list pattern shared by the navbar and the sidebar."
+>
+  <h1>Nav list</h1>
+  <p class="lede">
+    The system destination list: a <code>&lt;nav&gt;</code> of <code>&lt;ul&gt;&lt;li&gt;&lt;a&gt;</code>,
+    each link with an icon, a label and optional metadata at the end. Vertical in a sidebar, horizontal
+    in a navbar.
+  </p>
+
+  <h2>Why is it a pattern and not a component?</h2>
+  <p>
+    The rule is a single question:
+    <em>do many components share this exact structure?</em> Here the answer is not a
+    prediction, the navbar and the sidebar share it today, in this repo. so send
+    <strong>styling hooks and </strong> structure, and <code>sk-nav-list</code> is a class to which
+    any container is added, the same way as <code>sk-interactive</code> and <code>sk-icon</code>.
+  </p>
+  <p>
+    It is <strong>opt-in</strong>, like the icon and unlike the state layer: an app may not have
+    navigation.
+  </p>
+
+  <h2>It is not a menu</h2>
+  <p>
+    <code>role="menu"</code> is an application menu with <code>menuitem</code> inside. This is a
+    list of links, and the markup stays at <code>&lt;nav&gt;&lt;ul&gt;&lt;li&gt;&lt;a&gt;</code>, which is
+    what a screen reader should hear.
+  </p>
+
+  <Showcase code={html} lang="html" label="Nav list">
+    {/* A nav-list is sized by its host, a sidebar rail, a navbar row. The demo pins it to a rail width
+        so it reads as one; the code shows the markup without that host-owned width. */}
+    <div style="inline-size: 14rem">
+      <Fragment set:html={html} />
+    </div>
+  </Showcase>
+
+  <h2>Vertical, more compact</h2>
+  <p>
+    Vertically, consecutive destinations leave no gap: each link already retains its touch area. The
+    group label has its own top and bottom padding, to sort the sections without converting
+    the space between items in redundant air. The horizontal variant retains its row separation.
+  </p>
+
+  <h2>Current page is not interaction</h2>
+  <p>
+    The hover, focus and press are from the <a href="/en/state-layer">state layer</a>, which is the mechanism
+    unique to the system, this file does not touch them. What does live here is the background of the current page,
+    which is not interaction feedback: it persists when no one is touching it, and the state layer paints
+    above. And the brand is <code>aria-current="page"</code>, the one you already write; a
+    <code>data-selected</code> itself would be a second source for the same fact, free of
+    contradict the first.
+  </p>
+
+  <h2>The host sends his motion</h2>
+  <p>
+    <code>--sk-nav-list-duration</code> and <code>--sk-nav-list-easing</code> start on intent
+    <em>state-change</em>, and the sidebar re-declares them with its collapse intent: so the labels are
+    they fade at the same time that the width moves. Re-declaring a pattern hook is
+    exactly what a hook exists for, the host never touches its markup.
+  </p>
+
+  <h2>Install</h2>
+  <CodeBlock code={import_} label="CSS" />
+
+  <h2>All styling hooks</h2>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>Hook</th>
+          <th>Valor autoral <span class="count">· build</span></th>
+          <th>Valor usado <span class="count">· runtime</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          hooks.map((h) => (
+            <tr>
+              <td class="mono">{h.name}</td>
+              <td class="mono">{h.value}</td>
+              <td class="mono" data-token={h.name} data-prop={h.prop} data-probe="sk-nav-list">
+                …
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</Base>

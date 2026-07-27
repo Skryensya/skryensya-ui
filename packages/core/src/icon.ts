@@ -28,7 +28,7 @@ export type IconData = {
   body: string;
   /**
    * El viewBox literal en que se dibujó `body`. Nunca un tamaño renderizado, eso lo decide
-   * `--ds-icon-size`.
+   * `--sk-icon-size`.
    *
    * Es un string y no un par width/height porque un viewBox no siempre arranca en `0 0`: Material
    * dibuja en `0 -960 960 960`. Guardar dos números y armar `0 0 w h` era una codificación con
@@ -109,6 +109,23 @@ export const stableIconNames = [
   "user",
   "visibility",
   "visibility-off",
+
+  // modo de color (caras del ThemeToggle)
+  "mode-system",
+  "mode-light",
+  "mode-dark",
+
+  /* clase de pantalla. Es un ROL igual que los demás: nombra el TAMAÑO de pantalla, no el aparato
+   * dibujado. Un set puede dibujar `screen-desktop` como monitor o como laptop y `screen-mobile`
+   * como teléfono o como mano con teléfono, y los tres nombres siguen siendo verdad. Por eso
+   * `screen-desktop` y no `monitor`, que sería el dibujo, exactamente como `delete` y no `trash`.
+   *
+   * `screen-desktop` NO es sinónimo de `mode-system`, aunque Lucide y Phosphor dibujen los dos como
+   * un monitor: uno dice "el modo lo decide el sistema" y el otro "pantalla grande". Dos roles que
+   * hoy comparten dibujo siguen siendo dos roles, y un set puede separarlos mañana. */
+  "screen-desktop",
+  "screen-tablet",
+  "screen-mobile",
 ] as const;
 
 export type StableIconName = (typeof stableIconNames)[number];
@@ -130,7 +147,7 @@ export type IconSet = Readonly<Record<StableIconName, IconData>>;
  * Los tres tamaños del pattern, que el renderer escribe como `data-size`.
  *
  * No hay escotilla numérica: un tamaño arbitrario se pide redeclarando el hook, que es como se piden
- * todos los valores arbitrarios del sistema, `.hero .ds-icon { --ds-icon-size: 2rem; }`. Una prop
+ * todos los valores arbitrarios del sistema, `.hero .sk-icon { --sk-icon-size: 2rem; }`. Una prop
  * numérica que escribiera width/height perdería igual contra el inline-size del CSS.
  */
 export type IconSize = "sm" | "md" | "lg";
@@ -160,10 +177,10 @@ export type RenderIconBoxInput = {
   size?: IconSize;
   /**
    * The accessible name. `undefined`/`null` → decorative (`aria-hidden`). Any string, INCLUDING the
-   * empty string, → content (`role="img"` + `aria-label`), matching an authored `data-ds-icon-label=""`.
+   * empty string, → content (`role="img"` + `aria-label`), matching an authored `data-sk-icon-label=""`.
    */
   label?: string | null;
-  /** Extra classes beyond `ds-icon`, already joined. `ds-icon` is always present and always first. */
+  /** Extra classes beyond `sk-icon`, already joined. `sk-icon` is always present and always first. */
   className?: string;
 };
 
@@ -191,7 +208,7 @@ export function renderIconBox({ icon, dataIcon, size, label, className }: Render
 
   const box: [string, string][] = [];
   if (dataIcon !== undefined) box.push(["data-icon", dataIcon]);
-  box.push(["class", className ? `ds-icon ${className}` : "ds-icon"]);
+  box.push(["class", className ? `sk-icon ${className}` : "sk-icon"]);
   if (size) box.push(["data-size", size]);
   // the viewBox is where the geometry was drawn, taken from the set as-is, never a rendered size, and
   // never `0 0 w h` (Material draws in "0 -960 960 960").

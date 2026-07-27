@@ -1,0 +1,91 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+import "@skryensya/core/components/popover.css";
+
+const install = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/popover.css";`;
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+mountIcons(document, lucideIcons);`;
+const html = `<div class="sk-popover">
+  <button
+    class="sk-button sk-interactive sk-popover__trigger sk-anchor"
+    popovertarget="profile-popover"
+    style="--sk-anchored-name: --profile-anchor"
+    type="button"
+  >
+    Ver perfil
+  </button>
+  <div
+    class="sk-popover__positioner sk-anchored sk-popover__content"
+    id="profile-popover"
+    popover="auto"
+    style="--sk-anchored-name: --profile-anchor; --sk-anchored-box-name: --profile-box"
+  >
+    <!-- The arrow, optional: is authored or does not exist. A popover wants it, a select does not. -->
+    <span class="sk-anchored-arrow" aria-hidden="true"></span>
+    <h2 class="sk-popover__title">Ada Lovelace</h2>
+    <p class="sk-popover__description">Mathematician and writer.</p>
+    <button
+      class="sk-button sk-interactive sk-popover__close"
+      popovertarget="profile-popover"
+      popovertargetaction="hide"
+      type="button"
+    >
+      <span data-sk-icon="close"></span>
+      <span class="sr-only">Cerrar</span>
+    </button>
+  </div>
+</div>`;
+const react = `import { Popover } from "@skryensya/react/popover";
+
+// \`arrow\` is the same as authoring <span className="sk-anchored-arrow" /> inside
+// positioner: optional in both bindings, and off by default.
+<Popover
+  title="Ada Lovelace"
+  description="Mathematician and writer."
+  trigger="Ver perfil"
+  arrow
+>
+  <a href="/personas/ada">Abrir perfil</a>
+</Popover>`;
+---
+
+<Base
+  title="Popover"
+  description="Non-modal content with title, description and explicit closure on native top layer."
+>
+  <h1>Popover</h1>
+  <p class="lede">Non-modal content with title, description and explicit closure on native top layer.</p>
+
+  <h2>Installation</h2>
+  <Showcase
+    html={html}
+    js={js}
+    react={react}
+    label="Popover"
+    viewport="overlay"
+  />
+
+  <h2>Contrato</h2>
+  <p>Popover describes rich auxiliary content. Menu contains actions; Tooltip just a short description.</p>
+
+  <h2>Accesibilidad</h2>
+  <p>The platform has top layer, Escape and light-dismiss through popover=auto.</p>
+
+  <h2>CSS</h2>
+  <pre><code>{install}</code></pre>
+  <StylingHooks
+    groups={[
+      {
+        file: "components/popover.css",
+        probe: "sk-popover",
+        title: "Popover",
+      },
+      { file: "patterns/anchored.css", probe: "sk-anchored", title: "Anchor Inherits" },
+    ]}
+  />
+</Base>

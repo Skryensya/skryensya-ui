@@ -1,0 +1,148 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+
+const html = `<span data-sk-icon="search" data-sk-icon-size="lg"></span>
+<span data-sk-icon="settings" data-sk-icon-size="lg"></span>
+<span data-sk-icon="warning" data-sk-icon-size="lg"></span>
+<span data-sk-icon="check" data-sk-icon-size="lg"></span>
+<span data-sk-icon="close" data-sk-icon-size="lg"></span>`;
+
+const react = `import { Icon } from "@skryensya/react/icon";
+
+<Icon name="search" size="lg" />
+<Icon name="settings" size="lg" />
+<Icon name="warning" size="lg" />
+<Icon name="check" size="lg" />
+<Icon name="close" size="lg" />;`;
+
+const sizeHtml = `<span data-sk-icon="check" data-sk-icon-size="sm"></span>
+<span data-sk-icon="check"></span>
+<span data-sk-icon="check" data-sk-icon-size="lg"></span>`;
+
+const sizeReact = `import { Icon } from "@skryensya/react/icon";
+
+<Icon name="check" size="sm" />
+<Icon name="check" />
+<Icon name="check" size="lg" />;`;
+
+const vanilla = `<!-- Geometry outside the set: you write it. -->
+<svg
+  class="sk-icon"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d="M6 9l6 6 6-6" />
+</svg>`;
+
+const vanillaHydrate = `<!-- You write the name of the role, not the <svg>. -->
+<span data-sk-icon="chevron-down"></span>
+<span data-sk-icon="close" data-sk-icon-label="Cerrar"></span>`;
+
+const vanillaBind = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// replace each [data-sk-icon] with the <svg> of the set. The
+// set is explicit.
+mountIcons(document, lucideIcons);`;
+
+const reactApi = `import { Icon } from "@skryensya/react/icon";
+
+// no settings: draw with Phosphor, the default set
+<Icon name="chevron-down" />
+{/* a system role */}
+<Icon name="close" label="Cerrar" />
+{/* means something alone → role="img" */}
+<Icon data={sparkle} />
+{/* off the set, the only opt-in */}`;
+
+const provider = `import { IconSetProvider, Icon } from "@skryensya/react/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// another set? you bind it once, at the root, just like
+// you choose a brand
+<IconSetProvider set={lucideIcons}>
+  <App />
+</IconSetProvider>;`;
+
+const sizesCss = `/* another size? the hook is redeclared, like any value
+   system arbitrary */
+.hero .sk-icon { --sk-icon-size: 2rem; }`;
+---
+
+<Base
+  title="Icon"
+  description="Icon: the sk-icon pattern in React and vanilla — roles of vocabulary, proper geometry, sizes and a11y in the call site."
+>
+  <h1>Icon</h1>
+  <p class="lede">
+    How do you put an icon on the screen: <code>&lt;Icon&gt;</code> in React,
+    <code>data-sk-icon</code> + <code>mountIcons</code> in vanilla, or the
+    <code>&lt;svg class="sk-icon"&gt;</code> a mano. El vocabulario de roles, los sets como marca y por
+    qué el CSS no toca fill/stroke están en <a href="/en/icons">Iconography</a>.
+  </p>
+
+  <Showcase html={html} react={react} label="Icon" />
+
+  <h2>React</h2>
+  <p>
+    <code>Icon</code> takes <code>name</code> <strong>or</strong> <code>data</code>, never both.
+    <code>name</code> is a portable role that survives a set change; <code>data</code> is
+    your geometry, purposefully coupled and visible on the call site.
+  </p>
+  <CodeBlock code={reactApi} label="React" note="React renders (decision 14)" />
+  <p>
+    <code>&lt;Icon name="…"&gt;</code> draws without configuration: Phosphor travels with
+    <code>@skryensya/react</code>. For another set, you install it and wrap the app once.
+  </p>
+  <CodeBlock code={provider} label="change the default set" note="Lucide/Material child opt-in" />
+
+  <h2>Vanilla: hydrate by name, or write the markup</h2>
+  <p>
+    <code>mountIcons(root, set)</code> replaces a placeholder with the <strong>name</strong> of the role
+    by the same <code>&lt;svg class="sk-icon"&gt;</code> that you would write by hand. The set is always
+    explicit; for two sets on a page, you hydrate each subtree with its own.
+  </p>
+  <CodeBlock code={vanillaHydrate} label="HTML" note="write the name, not the <svg>" />
+  <CodeBlock code={vanillaBind} label="once, at startup" note="mountIcons; initComponents() does not call it" />
+  <p>
+    A <code>data-sk-icon</code> that the set does not cover is left intact and a warning is given: the geometry of the
+    <strong>project</strong> is not a role, and is written as <code>&lt;svg&gt;</code> itself.
+  </p>
+  <CodeBlock code={vanilla} label="own geometry, by hand" note="for a drawing that no set has" />
+
+  <h2>Accesibilidad</h2>
+  <ul>
+    <li>
+      <strong>Without <code>label</code> the icon is decorative</strong>, it has
+      <code>aria-hidden="true"</code>. This is the normal case: in a button with text, the text already names the
+      action.
+    </li>
+    <li>
+      <strong>On an icon-only button, the accessible name is button</strong>
+      (<code>aria-label="Close dialog"</code>), not <code>&lt;svg&gt;</code>. The icon inside
+      remains decorative.
+    </li>
+    <li>
+      <strong>With <code>label</code> the icon is content</strong>, <code>role="img"</code> more
+      <code>aria-label</code>. Only when the icon stands alone and means something on its own.
+    </li>
+    <li>
+      <code>focusable="false"</code> always: a <code>&lt;svg&gt;</code> is not a tab stop.
+    </li>
+  </ul>
+
+  <h2>Size</h2>
+  <p>
+    Three values of <strong>un</strong> hook. <code>--sk-icon-size</code> is density invariant: the
+    density is spacing; an icon is contained next to a glyph — if the text does not shrink, the icon
+    neither.
+  </p>
+  <Showcase html={sizeHtml} react={sizeReact} label="Icon · sm / md / lg" />
+  <CodeBlock code={sizesCss} label="arbitrary size" note="no numeric prop" />
+</Base>

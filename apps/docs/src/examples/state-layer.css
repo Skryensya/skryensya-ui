@@ -1,45 +1,160 @@
-/* El patrón envía la estructura del layer y la escalera de
-   prioridad. Tú escribes el layout, y agregas `ds-interactive`.
-   Cero colores de estado aquí: el layer se tiñe con
-   currentColor. */
-.sl-list {
+/* El patrón envía la estructura del layer y la escalera.
+   Tú escribes el layout y agregas `sk-interactive`.
+   Cero colores de estado: el layer se tiñe con currentColor. */
+
+/* ── Bare: tiles planos, sin componentes del kit ─────────────── */
+.sl-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(5.25rem, 1fr));
+  gap: var(--space-inline-sm);
+  inline-size: 100%;
+  max-inline-size: 100%;
+  /* Hueco para el anillo de foco del peek; si no, el iframe scrollea. */
+  padding: calc(var(--focus-ring-width) + var(--focus-ring-offset));
+  box-sizing: border-box;
+}
+
+.sl-tile {
+  display: grid;
+  place-items: center;
+  min-inline-size: 0;
+  min-block-size: 3.75rem;
+  padding: var(--space-inset-sm);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-surface);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-label);
+  text-align: center;
+  cursor: pointer;
+}
+
+/* Congela un escalón de la escalera para enseñarlo. Sin pointer
+   para que no compita con el tile vivo. */
+.sl-tile[data-peek] {
+  pointer-events: none;
+  cursor: default;
+}
+
+.sl-tile[data-peek="hover"] {
+  --state-layer-opacity: var(--state-layer-hover-opacity);
+}
+
+.sl-tile[data-peek="focus"] {
+  --state-layer-opacity: var(--state-layer-focus-opacity);
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.sl-tile[data-peek="pressed"] {
+  --state-layer-opacity: var(--state-layer-pressed-opacity);
+}
+
+.sl-tile[aria-selected="true"] {
+  color: var(--color-text-accent);
+  box-shadow: inset 0 0 0 1px var(--color-border-accent);
+}
+
+.sl-tile[aria-disabled="true"] {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+/* ── CurrentColor: la escalera completa sobre inverse ───────── */
+.sl-current-tile {
+  border-color: transparent;
+  background: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+}
+
+/* La selección conserva una señal independiente del layer. */
+.sl-current-tile[aria-selected="true"] {
+  color: var(--color-text-inverse);
+  box-shadow: inset 0 0 0 2px currentColor;
+}
+
+.sl-current-tile[aria-disabled="true"] {
+  background: var(--color-action-disabled);
+  color: var(--color-text-disabled);
+}
+
+/* ── Lab: lista + acciones (segundo preview) ─────────────────── */
+.sl-lab {
+  display: grid;
+  gap: var(--space-stack-md);
+  inline-size: min(100%, 22rem);
+}
+
+.sl-lab__caption {
+  margin: 0;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-caption);
+}
+
+.sl-list {
+  display: grid;
   overflow: hidden;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-surface);
+  background: var(--color-bg-surface);
 }
 
 .sl-item {
   display: flex;
   align-items: center;
   gap: var(--space-inline-sm);
-  min-height: var(--size-control-md);
-  padding: 0 var(--space-inset-md);
+  min-block-size: max(var(--size-control-md), var(--size-touch-target));
+  padding-inline: var(--space-inset-md);
+  border: 0;
+  border-block-end: 1px solid var(--color-border-subtle);
+  background: transparent;
   color: var(--color-text-primary);
+  font: inherit;
+  text-align: start;
   text-decoration: none;
-  border-bottom: 1px solid var(--color-border-subtle);
+  cursor: pointer;
 }
 
 .sl-item:last-child {
-  border-bottom: 0;
+  border-block-end: 0;
 }
 
-/* El indicador de selección es INDEPENDIENTE del layer, 
-   nunca la única señal. */
+.sl-item__label {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.sl-item__meta {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-caption);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Indicador de selección INDEPENDIENTE del layer. */
 .sl-item[aria-selected="true"] {
   color: var(--color-text-accent);
   font-weight: var(--font-weight-label);
+  box-shadow: inset 3px 0 0 var(--color-border-accent);
 }
 
-.sl-item[aria-selected="true"]::after {
-  content: "";
-  width: 8px;
-  height: 8px;
-  margin-left: auto;
-  border-radius: var(--radius-pill);
-  background: var(--color-border-accent);
+.sl-item[aria-selected="true"] .sl-item__meta {
+  color: var(--color-text-accent);
 }
 
 .sl-item[aria-disabled="true"] {
   color: var(--color-text-disabled);
+  cursor: not-allowed;
   pointer-events: none;
+}
+
+.sl-item[aria-disabled="true"] .sl-item__meta {
+  color: var(--color-text-disabled);
+}
+
+.sl-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-inline-sm);
 }

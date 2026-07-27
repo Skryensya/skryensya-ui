@@ -8,8 +8,8 @@ describe("Pagination", () => {
     expect(ui.getByRole("button", { current: "page" }).textContent).toBe("1");
     expect((ui.getByLabelText("Previous page") as HTMLButtonElement).disabled).toBe(true);
     expect((ui.getByLabelText("Next page") as HTMLButtonElement).disabled).toBe(false);
-    expect(ui.getByLabelText("Previous page").classList.contains("ds-interactive")).toBe(true);
-    expect(ui.getByLabelText("Previous page").querySelector(".ds-icon")).toBeTruthy();
+    expect(ui.getByLabelText("Previous page").classList.contains("sk-interactive")).toBe(true);
+    expect(ui.getByLabelText("Previous page").querySelector(".sk-icon")).toBeTruthy();
   });
 
   it("collapses far pages behind an ellipsis and reports clicks clamped to range", () => {

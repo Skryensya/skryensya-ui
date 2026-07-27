@@ -1,0 +1,798 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Showcase from "../../../components/Showcase.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+import DimensionSelect from "../../../components/DimensionSelect.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const services = ["API", "Worker", "Gateway", "Billing", "Auth", "Search"] as const;
+const envs = ["prod", "staging", "dev"] as const;
+const statuses = ["Exitoso", "In progress", "Fallido"] as const;
+
+const pagerRows = Array.from({ length: 28 }, (_, index) => {
+  const n = index + 1;
+  return {
+    id: `dep-${1040 + n}`,
+    service: services[index % services.length],
+    env: envs[index % envs.length],
+    status: statuses[index % statuses.length],
+    when: n === 1 ? "2 min ago" : n < 10 ? `${n * 3} min ago` : `${n} h ago`,
+  };
+});
+
+const html = `<div class="sk-table-scroll">
+  <table class="sk-table">
+    <caption class="sk-table__caption">Planes disponibles</caption>
+    <thead class="sk-table__head">
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="col">Plan</th>
+        <th class="sk-table__header" scope="col">Uso</th>
+        <th class="sk-table__header" scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody class="sk-table__body">
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">Starter</th>
+        <td class="sk-table__cell">Small teams</td>
+        <td class="sk-table__cell">Activo</td>
+      </tr>
+    </tbody>
+    <tfoot class="sk-table__foot">
+      <tr class="sk-table__row">
+        <td class="sk-table__cell" colspan="3">
+          Prices do not include taxes.
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>`;
+
+const boxHtml = `<section
+  class="sk-box"
+  data-surface="surface"
+  data-border="subtle"
+  data-padding="md"
+>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <caption class="sk-table__caption">Planes disponibles</caption>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="col">Plan</th>
+          <th class="sk-table__header" scope="col">Uso</th>
+          <th class="sk-table__header" scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="row">Starter</th>
+          <td class="sk-table__cell">Small teams</td>
+          <td class="sk-table__cell">Activo</td>
+        </tr>
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="row">Pro</th>
+          <td class="sk-table__cell">Growing teams</td>
+          <td class="sk-table__cell">Activo</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>`;
+
+const densityTable = (factor: string) => `<div
+  data-sk-density-scope
+  style="--sk-density-factor: ${factor}"
+>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <caption class="sk-table__caption">
+        Service activity
+      </caption>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="col">Servicio</th>
+          <th class="sk-table__header" scope="col">Status</th>
+          <th class="sk-table__header" scope="col">
+            Last activity
+          </th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="row">API</th>
+          <td class="sk-table__cell">Estable</td>
+          <td class="sk-table__cell">2 min ago</td>
+        </tr>
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="row">Worker</th>
+          <td class="sk-table__cell">Estable</td>
+          <td class="sk-table__cell">8 min ago</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>`;
+
+const spaciousDensityHtml = densityTable("1.2");
+const compactDensityHtml = densityTable("0.6");
+
+const react = `import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableScroll,
+} from "@skryensya/react/table";
+
+<TableScroll>
+  <Table>
+    <TableCaption>Planes disponibles</TableCaption>
+    <TableHead>
+      <TableRow>
+        <TableHeader>Plan</TableHeader>
+        <TableHeader>Uso</TableHeader>
+        <TableHeader>Status</TableHeader>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      <TableRow>
+        <TableHeader scope="row">Starter</TableHeader>
+        <TableCell>Small teams</TableCell>
+        <TableCell>Activo</TableCell>
+      </TableRow>
+    </TableBody>
+    <TableFooter>
+      <TableRow>
+        <TableCell colSpan={3}>
+          Prices do not include taxes.
+        </TableCell>
+      </TableRow>
+    </TableFooter>
+  </Table>
+</TableScroll>;`;
+
+const stickyColumnHtml = `<div
+  aria-labelledby="service-metrics"
+  class="sk-table-scroll"
+  data-sticky-column
+  role="region"
+  tabindex="0"
+>
+  <table class="sk-table">
+    <caption
+      class="sk-table__caption"
+      id="service-metrics"
+    >
+      Performance by region
+    </caption>
+    <thead class="sk-table__head">
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="col">
+          Servicio
+        </th>
+        <th class="sk-table__header" scope="col">
+          Region
+        </th>
+        <th class="sk-table__header" scope="col">
+          Latencia p95
+        </th>
+        <th class="sk-table__header" scope="col">
+          Error
+        </th>
+        <th class="sk-table__header" scope="col">
+          Solicitudes
+        </th>
+        <th class="sk-table__header" scope="col">
+          Version
+        </th>
+      </tr>
+    </thead>
+    <tbody class="sk-table__body">
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">
+          API principal
+        </th>
+        <td class="sk-table__cell">Madrid</td>
+        <td class="sk-table__cell">142 ms</td>
+        <td class="sk-table__cell">0,08%</td>
+        <td class="sk-table__cell">8,4 M</td>
+        <td class="sk-table__cell">v3.18.2</td>
+      </tr>
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">
+          Checkout
+        </th>
+        <td class="sk-table__cell">Dublin</td>
+        <td class="sk-table__cell">218 ms</td>
+        <td class="sk-table__cell">0,21%</td>
+        <td class="sk-table__cell">3,1 M</td>
+        <td class="sk-table__cell">v2.9.0</td>
+      </tr>
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">
+          Identidad
+        </th>
+        <td class="sk-table__cell">Frankfurt</td>
+        <td class="sk-table__cell">97 ms</td>
+        <td class="sk-table__cell">0,04%</td>
+        <td class="sk-table__cell">6,9 M</td>
+        <td class="sk-table__cell">v1.44.0</td>
+      </tr>
+    </tbody>
+  </table>
+</div>`;
+
+const stickyColumnReact = `import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableScroll,
+} from "@skryensya/react/table";
+
+const metrics = [
+  ["API principal", "Madrid", "142 ms", "0,08%", "8,4 M", "v3.18.2"],
+  ["Checkout", "Dublin", "218 ms", "0,21%", "3,1 M", "v2.9.0"],
+  ["Identidad", "Frankfurt", "97 ms", "0,04%", "6,9 M", "v1.44.0"],
+] as const;
+
+<TableScroll
+  aria-labelledby="service-metrics"
+  role="region"
+  stickyColumn
+  tabIndex={0}
+>
+  <Table>
+    <TableCaption id="service-metrics">
+      Performance by region
+    </TableCaption>
+    <TableHead>
+      <TableRow>
+        <TableHeader>Servicio</TableHeader>
+        <TableHeader>Region</TableHeader>
+        <TableHeader>Latencia p95</TableHeader>
+        <TableHeader>Error</TableHeader>
+        <TableHeader>Solicitudes</TableHeader>
+        <TableHeader>Version</TableHeader>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {metrics.map(
+        ([service, region, latency, error, requests, version]) => (
+          <TableRow key={service}>
+            <TableHeader scope="row">{service}</TableHeader>
+            <TableCell>{region}</TableCell>
+            <TableCell>{latency}</TableCell>
+            <TableCell>{error}</TableCell>
+            <TableCell>{requests}</TableCell>
+            <TableCell>{version}</TableCell>
+          </TableRow>
+        ),
+      )}
+    </TableBody>
+  </Table>
+</TableScroll>;`;
+
+const stickyHeaderHtml = `<div
+  aria-labelledby="deployment-history"
+  class="sk-table-scroll"
+  data-sticky-header
+  role="region"
+  style="max-block-size: 14rem"
+  tabindex="0"
+>
+  <table class="sk-table">
+    <caption
+      class="sk-table__caption"
+      id="deployment-history"
+    >
+      Deployment history
+    </caption>
+    <thead class="sk-table__head">
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="col">ID</th>
+        <th class="sk-table__header" scope="col">
+          Servicio
+        </th>
+        <th class="sk-table__header" scope="col">
+          Status
+        </th>
+        <th class="sk-table__header" scope="col">
+          Actualizado
+        </th>
+      </tr>
+    </thead>
+    <tbody class="sk-table__body">
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">DEP-1082</th>
+        <td class="sk-table__cell">API</td>
+        <td class="sk-table__cell">Exitoso</td>
+        <td class="sk-table__cell">2 min ago</td>
+      </tr>
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">DEP-1081</th>
+        <td class="sk-table__cell">Worker</td>
+        <td class="sk-table__cell">In progress</td>
+        <td class="sk-table__cell">6 min ago</td>
+      </tr>
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">DEP-1080</th>
+        <td class="sk-table__cell">Gateway</td>
+        <td class="sk-table__cell">Exitoso</td>
+        <td class="sk-table__cell">18 min ago</td>
+      </tr>
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">DEP-1079</th>
+        <td class="sk-table__cell">Billing</td>
+        <td class="sk-table__cell">Fallido</td>
+        <td class="sk-table__cell">31 min ago</td>
+      </tr>
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">DEP-1078</th>
+        <td class="sk-table__cell">Auth</td>
+        <td class="sk-table__cell">Exitoso</td>
+        <td class="sk-table__cell">48 min ago</td>
+      </tr>
+    </tbody>
+  </table>
+</div>`;
+
+const stickyHeaderReact = `import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableScroll,
+} from "@skryensya/react/table";
+
+const deployments = [
+  ["DEP-1082", "API", "Exitoso", "2 min ago"],
+  ["DEP-1081", "Worker", "In progress", "6 min ago"],
+  ["DEP-1080", "Gateway", "Exitoso", "18 min ago"],
+  ["DEP-1079", "Billing", "Fallido", "31 min ago"],
+  ["DEP-1078", "Auth", "Exitoso", "48 min ago"],
+] as const;
+
+<TableScroll
+  aria-labelledby="deployment-history"
+  role="region"
+  stickyHeader
+  style={{ maxBlockSize: "14rem" }}
+  tabIndex={0}
+>
+  <Table>
+    <TableCaption id="deployment-history">
+      Deployment history
+    </TableCaption>
+    <TableHead>
+      <TableRow>
+        <TableHeader>ID</TableHeader>
+        <TableHeader>Servicio</TableHeader>
+        <TableHeader>Status</TableHeader>
+        <TableHeader>Actualizado</TableHeader>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {deployments.map(([id, service, status, updated]) => (
+        <TableRow key={id}>
+          <TableHeader scope="row">{id}</TableHeader>
+          <TableCell>{service}</TableCell>
+          <TableCell>{status}</TableCell>
+          <TableCell>{updated}</TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableScroll>;`;
+
+const pagerRowHtml = (row: (typeof pagerRows)[number]) => `        <tr
+          class="sk-table__row"
+          data-sk-table-pager-row
+        >
+          <th class="sk-table__header" scope="row">${row.id}</th>
+          <td class="sk-table__cell">${row.service}</td>
+          <td class="sk-table__cell">${row.env}</td>
+          <td class="sk-table__cell">${row.status}</td>
+          <td class="sk-table__cell">${row.when}</td>
+        </tr>`;
+
+const pagerShell = (tbody: string) => `<div
+  class="sk-table-pager"
+  data-sk-table-pager
+  data-page-size="5"
+  data-status-template="{start}–{end} of {total}"
+  data-previous-label="Previous page"
+  data-next-label="Next page"
+  data-page-label="Page"
+>
+  <div
+    aria-label="Recent deployments"
+    class="sk-table-scroll"
+    data-sticky-column
+    role="region"
+    tabindex="0"
+  >
+    <table class="sk-table" data-layout="fixed">
+      <caption class="sk-table__caption">
+        Despliegues recientes
+      </caption>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="col">ID</th>
+          <th class="sk-table__header" scope="col">Servicio</th>
+          <th class="sk-table__header" scope="col">Entorno</th>
+          <th class="sk-table__header" scope="col">Status</th>
+          <th class="sk-table__header" scope="col">When</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+${tbody}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sk-table-pager__bar">
+    <div class="sk-table-pager__size">
+      <div class="sk-select" data-sk-select data-value="5">
+        <label class="sk-select__label" data-sk-select-label>
+          Rows per page
+        </label>
+        <button
+          class="sk-select__trigger sk-anchor sk-interactive"
+          data-sk-select-trigger
+          type="button"
+        >
+          <span class="sk-select__value" data-sk-select-value>
+            5
+          </span>
+          <span
+            class="sk-select__indicator"
+            data-sk-select-indicator
+            aria-hidden="true"
+          >
+            <span data-state="closed">
+              <span data-sk-icon="chevron-down"></span>
+            </span>
+            <span data-state="open">
+              <span data-sk-icon="chevron-up"></span>
+            </span>
+          </span>
+        </button>
+        <div
+          class="sk-select__positioner sk-anchored"
+          data-sk-select-positioner
+        >
+          <ul class="sk-select__content" data-sk-select-content>
+            <li
+              class="sk-select__item sk-interactive"
+              data-sk-select-item
+              data-value="5"
+            >
+              5
+            </li>
+            <li
+              class="sk-select__item sk-interactive"
+              data-sk-select-item
+              data-value="10"
+            >
+              10
+            </li>
+            <li
+              class="sk-select__item sk-interactive"
+              data-sk-select-item
+              data-value="25"
+            >
+              25
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="sk-table-pager__end">
+      <div
+        class="sk-table-pager__status"
+        data-sk-table-pager-status
+      ></div>
+
+      <nav
+        class="sk-pagination"
+        aria-label="Pagination"
+        data-sk-table-pager-nav
+      ></nav>
+    </div>
+  </div>
+</div>`;
+
+const pagedCode = pagerShell(
+  [
+    ...pagerRows.slice(0, 2).map(pagerRowHtml),
+    `        <!-- … ${pagerRows.length - 2} more rows with data-sk-table-pager-row -->`,
+  ].join("\n"),
+);
+
+const pagedCodeFull = pagerShell(pagerRows.map(pagerRowHtml).join("\n"));
+
+
+const pagedReact = `import { useMemo, useState } from "react";
+import { Icon } from "@skryensya/react/icon";
+import { Pagination } from "@skryensya/react/pagination";
+import { Select } from "@skryensya/react/select";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableScroll,
+} from "@skryensya/react/table";
+
+const PAGE_SIZES = ["5", "10", "25"] as const;
+
+function DeploymentsTable({ rows }: { rows: Deployment[] }) {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] =
+    useState<(typeof PAGE_SIZES)[number]>("5");
+
+  const size = Number(pageSize);
+  const pageCount = Math.max(1, Math.ceil(rows.length / size));
+  const current = Math.min(page, pageCount);
+  const slice = useMemo(() => {
+    const start = (current - 1) * size;
+    return rows.slice(start, start + size);
+  }, [current, rows, size]);
+
+  const start = (current - 1) * size + 1;
+  const end = Math.min(current * size, rows.length);
+
+  return (
+    <div className="sk-table-pager">
+      <TableScroll
+        aria-label="Recent deployments"
+        role="region"
+        stickyColumn
+        tabIndex={0}
+      >
+        <Table data-layout="fixed">
+          <TableCaption>Despliegues recientes</TableCaption>
+          <TableHead>
+            <TableRow>
+              <TableHeader>ID</TableHeader>
+              <TableHeader>Servicio</TableHeader>
+              <TableHeader>Entorno</TableHeader>
+              <TableHeader>Status</TableHeader>
+              <TableHeader>When</TableHeader>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {slice.map((row) => (
+              <TableRow key={row.id}>
+                <TableHeader scope="row">{row.id}</TableHeader>
+                <TableCell>{row.service}</TableCell>
+                <TableCell>{row.env}</TableCell>
+                <TableCell>{row.status}</TableCell>
+                <TableCell>{row.when}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableScroll>
+
+      <div className="sk-table-pager__bar">
+        <div className="sk-table-pager__size">
+          <Select
+            label="Rows per page"
+            defaultValue={["5"]}
+            indicator={<Icon name="chevron-down" />}
+            openIndicator={<Icon name="chevron-up" />}
+            itemIndicator={<Icon name="check" />}
+            options={PAGE_SIZES.map((n) => ({ value: n, label: n }))}
+            onValueChange={(details) => {
+              const next = details.value[0];
+              if (next === "5" || next === "10" || next === "25") {
+                setPageSize(next);
+                setPage(1);
+              }
+            }}
+          />
+        </div>
+        <div className="sk-table-pager__end">
+          <div className="sk-table-pager__status">
+            {start}–{end} de {rows.length}
+          </div>
+          <Pagination
+            page={current}
+            total={pageCount}
+            onPageChange={setPage}
+            label="Pagination"
+            previousLabel="Previous page"
+            nextLabel="Next page"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}`;---
+
+<Base
+  title="Table"
+  description="Readable native table with horizontal scroll and sticky rows or columns."
+>
+  <h1>Table</h1>
+  <p class="lede">
+    Table maintains the native semantics of
+    <code>&lt;table&gt;</code>. The overflow wrapper preserves a
+    readable width per column and scrolls the table instead of
+    compress it. Header and first sticky column are opt-in and use the
+    same contract on mobile and desktop.
+  </p>
+
+  <Showcase html={html} react={react} label="Table" />
+
+  <h2>Uncompressed horizontal scroll</h2>
+  <p>
+    Within <code>.sk-table-scroll</code>, each cell retains the
+    floor <code>--sk-table-cell-min-inline-size</code>; the headers
+    of row they retain a larger one. a table
+    <code>data-layout="fixed"</code> also uses
+    <code>--sk-table-fixed-min-inline-size</code>. on screens
+    narrow scroll appears, not 56px columns or letter-by-text
+    letter. The wrapper supports focus for keyboard scrolling and
+    paints a compact but visible scrollbar.
+  </p>
+
+  <h2>Primera columna sticky</h2>
+  <p>
+    Use <code>data-sticky-column</code> in HTML or
+    <code>stickyColumn</code> in React. The first cell of each row
+    is frozen and its shadow separates the identifier from the data
+    that pass underneath. It should be a
+    <code>&lt;th scope="row"&gt;</code>. Does not depend on a breakpoint:
+    It works the same with touch, mouse, zoom or a narrow window.
+  </p>
+  <Showcase
+    html={stickyColumnHtml}
+    react={stickyColumnReact}
+    label="Primera columna sticky"
+  />
+
+  <h2>Header row sticky</h2>
+  <p>
+    Use <code>data-sticky-header</code> or
+    <code>stickyHeader</code>. The wrapper gains vertical scroll and a
+    maximum height of <code>20rem</code>, which you can override as
+    in this example. The header is visible on both desktop
+    as in mobile; if you combine both modifiers, the corner cell
+    It remains on the two layers.
+  </p>
+  <Showcase
+    html={stickyHeaderHtml}
+    react={stickyHeaderReact}
+    label="Header row sticky"
+  />
+
+  <h2>With pagination</h2>
+  <p>
+    <code>data-sk-table-pager</code> is the vanilla enhancer;
+    <code>sk-table-pager</code> is the layout pattern (table + bar). You mark the lines, you leave the
+    empty <code>nav</code> and (optional) a status and a
+    <a class="sk-link sk-interactive" href="/en/components/select"><code>Select</code></a>
+    of page size. The size goes to the beginning of the bar; status and
+    <a class="sk-link sk-interactive" href="/en/components/pagination"><code>Pagination</code></a>
+    they go together in <code>sk-table-pager__end</code>. Use <code>data-layout="fixed"</code> so that no
+    the column widths dance.
+  </p>
+  <Showcase
+    code={pagedCode}
+    codeFull={pagedCodeFull}
+    react={pagedReact}
+    label="Table + Pagination"
+    lang="html"
+  >
+    <div
+      class="sk-table-pager"
+      data-sk-table-pager
+      data-page-size="5"
+      data-status-template={"{start}–{end} of {total}"}
+      data-previous-label="Previous page"
+      data-next-label="Next page"
+      data-page-label="Page"
+    >
+      <div
+        aria-label="Recent deployments"
+        class="sk-table-scroll"
+        data-sticky-column
+        role="region"
+        tabindex="0"
+      >
+        <table class="sk-table" data-layout="fixed">
+          <caption class="sk-table__caption">Despliegues recientes</caption>
+          <thead class="sk-table__head">
+            <tr class="sk-table__row">
+              <th class="sk-table__header" scope="col">ID</th>
+              <th class="sk-table__header" scope="col">Servicio</th>
+              <th class="sk-table__header" scope="col">Entorno</th>
+              <th class="sk-table__header" scope="col">Status</th>
+              <th class="sk-table__header" scope="col">When</th>
+            </tr>
+          </thead>
+          <tbody class="sk-table__body">
+            {
+              pagerRows.map((row) => (
+                <tr class="sk-table__row" data-sk-table-pager-row>
+                  <th class="sk-table__header" scope="row">{row.id}</th>
+                  <td class="sk-table__cell">{row.service}</td>
+                  <td class="sk-table__cell">{row.env}</td>
+                  <td class="sk-table__cell">{row.status}</td>
+                  <td class="sk-table__cell">{row.when}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sk-table-pager__bar">
+        <div class="sk-table-pager__size">
+          <DimensionSelect
+            id="table-page-size"
+            label="Rows per page"
+            value="5"
+            options={[
+              { value: "5", label: "5" },
+              { value: "10", label: "10" },
+              { value: "25", label: "25" },
+            ]}
+          />
+        </div>
+        <div class="sk-table-pager__end">
+          <div class="sk-table-pager__status" data-sk-table-pager-status></div>
+          <nav class="sk-pagination" aria-label="Pagination" data-sk-table-pager-nav></nav>
+        </div>
+      </div>
+    </div>
+  </Showcase>
+
+  <h2>Inside a Box</h2>
+  <p>
+    Within the <code>padding</code> of a <code>.sk-box</code>, the <code>.sk-table</code> rounds with the
+    radius of nested element (<code>--radius-control</code>) instead of surface: Box provides the
+    surface and the table is an element within it. This way the radius is tighter, it never collapses
+    to a square box, and continues to accompany the <code>data-radius</code> axis.
+  </p>
+  <Showcase html={boxHtml} label="Table in Box" />
+
+  <h2>Densidad local</h2>
+  <p>
+    The scope contract is just <code>data-sk-density-scope</code> and a density value. here
+    <code>--sk-density-factor</code> is system relative; write <code>--sk-density</code> in the
+    same node if you need an absolute value. The numbers are still continuous.
+  </p>
+  <Showcase html={spaciousDensityHtml} label="System wide table · 1.2×" />
+  <Showcase html={compactDensityHtml} label="Compact table · 0.6× system" />
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>
+    The binding is in <strong>Vanilla | React</strong>. In Vanilla, the HTML is enough
+    <code>data-sk-*</code>; <code>initComponents</code> (and <code>mountIcons</code>) are loaded by the site.
+  </p>
+  <StylingHooks groups={[{ file: "components/table.css", probe: "sk-table" }]} />
+</Base>
+

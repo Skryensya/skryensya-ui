@@ -8,21 +8,21 @@
 //               because "CSS has no macro". This IS the macro. One body, included
 //               twice; the two blocks can no longer drift by construction.
 //
-// Root ramps now live in primitives/_ramps.scss. They derive one configurable ramp set from seed
-// custom properties; the validator checks the shipped defaults, while consumers own their overrides.
+// Root ramps live in primitives/_ramps.scss as an explicit default set. Consumers replace complete
+// ramps in unlayered CSS; the validator checks the defaults shipped by Core.
 //
 // Tier-3 CSS (button.css, state-layer.css) likewise stays hand-authored CSS: its repetition is
 // meaningful variance, not boilerplate, and a mixin would only hide the hand-tuning.
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// The full high-contrast semantic override set, the third colour mode (ADR-8).
+/// The full high-contrast semantic override set, the third color mode (ADR-8).
 ///
 /// Included by BOTH hc triggers (the [data-contrast="high"] opt-in and the
 /// prefers-contrast media query) so they are identical by construction. The validator's
 /// mode-complete "the two hc blocks don't drift" check now guards the compiler rather than
 /// two hand-copied bodies, kept as belt-and-suspenders, it can no longer fire.
 ///
-/// Every colour still sits inside light-dark(): high contrast composes with the light/dark
+/// Every color still sits inside light-dark(): high contrast composes with the light/dark
 /// axis (you get hc-light AND hc-dark), it is not a third light-dark() slot.
 @mixin hc-tokens {
   --color-bg-canvas: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
@@ -37,6 +37,7 @@
   --color-bg-danger-subtle: light-dark(var(--ramp-danger-100), var(--ramp-danger-950));
   --color-bg-success-subtle: light-dark(var(--ramp-success-100), var(--ramp-success-950));
   --color-bg-warning-subtle: light-dark(var(--ramp-warning-100), var(--ramp-warning-950));
+  --color-bg-info-subtle: light-dark(var(--ramp-info-100), var(--ramp-info-950));
   --color-text-primary: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
   --color-text-secondary: light-dark(var(--ramp-neutral-800), var(--ramp-neutral-200));
   --color-text-tertiary: light-dark(var(--ramp-neutral-700), var(--ramp-neutral-300));
@@ -47,6 +48,7 @@
   --color-text-danger: light-dark(var(--ramp-danger-900), var(--ramp-danger-200));
   --color-text-success: light-dark(var(--ramp-success-900), var(--ramp-success-200));
   --color-text-warning: light-dark(var(--ramp-warning-900), var(--ramp-warning-200));
+  --color-text-info: light-dark(var(--ramp-info-900), var(--ramp-info-200));
   --color-border-subtle: light-dark(var(--ramp-neutral-400), var(--ramp-neutral-600));
   --color-border-default: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
   --color-border-strong: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
@@ -54,6 +56,7 @@
   --color-border-danger: light-dark(var(--ramp-danger-800), var(--ramp-danger-300));
   --color-border-success: light-dark(var(--ramp-success-800), var(--ramp-success-300));
   --color-border-warning: light-dark(var(--ramp-warning-800), var(--ramp-warning-300));
+  --color-border-info: light-dark(var(--ramp-info-800), var(--ramp-info-300));
   --color-border-focus: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
   --color-action-primary: light-dark(var(--ramp-accent-800), var(--ramp-accent-300));
   --color-action-neutral: light-dark(var(--ramp-neutral-200), var(--ramp-neutral-800));
@@ -62,12 +65,9 @@
   --shadow-sm: light-dark(oklch(0% 0 0 / 0.24), oklch(0% 0 0 / 0.8));
   --shadow-md: light-dark(oklch(0% 0 0 / 0.3), oklch(0% 0 0 / 0.88));
   --shadow-lg: light-dark(oklch(0% 0 0 / 0.38), oklch(0% 0 0 / 0.92));
-  /* state layers must read clearly in high contrast, roughly double the opacities and
-   * thicken the focus ring. These override the base numbers from semantic.scss. */
-  --state-layer-hover-opacity: 0.12;
-  --state-layer-focus-opacity: 0.16;
-  --state-layer-pressed-opacity: 0.2;
-  --state-layer-selected-opacity: 0.16;
-  --state-layer-dragged-opacity: 0.24;
+  /* More opacity would pull the surface toward currentColor and make it read dimmer.
+   * Keep the semantic ladder stable; add a crisp inset keyline proportional to each
+   * state's opacity, plus the thicker independent focus ring. */
+  --state-layer-keyline-scale: 8px;
   --focus-ring-width: 3px;
 }

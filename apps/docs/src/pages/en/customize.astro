@@ -1,0 +1,1901 @@
+---
+/*
+ * /customize, explicit ramp configuration, full-bleed tool shell.
+ *
+ * Left: DS Sidebar hosts the editor (color ramps, density, roundness, icons) with Flyouts.
+ * Right: a framed product preview. Only `.sk-canvas` receives complete ramp overrides, so edits
+ * stay in the preview while its semantic `--color-*` tokens re-resolve against them. The last edit
+ * is saved to localStorage and encoded in the URL; reset clears both.
+ */
+import Base from "../../layouts/Base.astro";
+import { STORAGE_KEY } from "@skryensya/core/storage";
+import { playgroundPreference } from "../../lib/preferences";
+import DimensionFlyout from "../../components/DimensionFlyout.astro";
+import DimensionSelect from "../../components/DimensionSelect.astro";
+import { allSets, iconMarkup } from "../../icons";
+import { tokens } from "../../lib/tokens";
+import { defaultRampColors, rampRecipe } from "../../lib/ramps";
+
+const checkboxIndicators = `<span
+      class="sk-checkbox__indicator"
+      data-state="checked"
+    >${iconMarkup("check", { size: "sm" })}</span>
+    <span
+      class="sk-checkbox__indicator"
+      data-state="indeterminate"
+    >${iconMarkup("remove", { size: "sm" })}</span>`;
+const paginationPrev = iconMarkup("chevron-left", { size: "sm" });
+const paginationNext = iconMarkup("chevron-right", { size: "sm" });
+
+/*
+ * Curated named colors per role instead of a free picker. A selection is authoring input for this
+ * tool only: the browser receives a complete --ramp-{role}-* override, never a hidden Core token.
+ * The first preset of each role is its default (`def`).
+ */
+const RAMPS = [
+  {
+    role: "accent", label: "Acento", def: defaultRampColors.accent,
+    /* Every option is verified (light + dark) for text-on-accent, accent-text and focus-ring contrast,
+     * and kept ≥15° in hue from danger (27), warning (75) and success (150) so a brand fill never
+     * reads like an error/success/warning state. Pure red, orange-red and grass-green are absent on
+     * purpose, they collide with danger and success.
+     *
+     * Info (233) is the deliberate exception, half this list sits within 15° of it. Colliding with
+     * info costs nothing: a brand that reads "informational" is not a false alarm, while a brand that
+     * reads "error" is. Anyone who wants the two separated can choose another info ramp. */
+    presets: [
+      { name: "Azul", value: "oklch(50.4% 0.169 259.6)" },
+      { name: "Zafiro", value: "oklch(49% 0.185 270)" },
+      { name: "Indigo", value: "oklch(49.5% 0.185 283)" },
+      { name: "Violeta", value: "oklch(51% 0.185 300)" },
+      { name: "Lila", value: "oklch(52% 0.17 315)" },
+      { name: "Magenta", value: "oklch(52% 0.2 344)" },
+      { name: "Rosa", value: "oklch(56% 0.185 354)" },
+      { name: "Naranja", value: "oklch(52% 0.15 50)" },
+      { name: "Turquesa", value: "oklch(50% 0.1 190)" },
+      { name: "Cian", value: "oklch(50% 0.115 210)" },
+      { name: "Celeste", value: "oklch(54% 0.13 228)" },
+      { name: "Cielo", value: "oklch(53% 0.14 242)" },
+    ],
+  },
+  {
+    role: "neutral", label: "Neutro", def: defaultRampColors.neutral,
+    presets: [
+      { name: "Gris", value: "oklch(58.8% 0.018 260)" },
+      { name: "Acero", value: "oklch(58% 0.08 248)" },
+      { name: "Pizarra", value: "oklch(56% 0.09 235)" },
+      { name: "Arena", value: "oklch(59% 0.08 80)" },
+      { name: "Piedra", value: "oklch(58% 0.06 55)" },
+      { name: "Topo", value: "oklch(58% 0.09 45)" },
+    ],
+  },
+  {
+    role: "danger", label: "Peligro", def: defaultRampColors.danger,
+    presets: [
+      { name: "Rojo", value: "oklch(56% 0.208 27)" },
+      { name: "Guinda", value: "oklch(52% 0.18 8)" },
+      { name: "Carmeyes", value: "oklch(57% 0.205 20)" },
+      { name: "Ladrillo", value: "oklch(58% 0.165 40)" },
+    ],
+  },
+  {
+    role: "success", label: "Success", def: defaultRampColors.success,
+    presets: [
+      { name: "Verde", value: defaultRampColors.success },
+      { name: "Jade", value: "oklch(56% 0.1 175)" },
+      { name: "Lima", value: "oklch(63% 0.15 130)" },
+      { name: "Esmeralda", value: "oklch(55% 0.15 160)" },
+    ],
+  },
+  {
+    role: "warning", label: "Aviso", def: defaultRampColors.warning,
+    presets: [
+      { name: "Amber", value: defaultRampColors.warning },
+      { name: "Naranja", value: "oklch(62% 0.15 55)" },
+      { name: "Oro", value: "oklch(70% 0.13 90)" },
+      { name: "Mostaza", value: "oklch(61% 0.1 88)" },
+    ],
+  },
+  {
+    /* Info is the only feedback role that can clash in hue with the accent: they are both blue by
+     * default. That is why the options are open to cyan and teal, to separate the notice
+     * brand information when the brand turns blue. */
+    role: "info", label: "Info", def: defaultRampColors.info,
+    presets: [
+      { name: "Azur", value: "oklch(56% 0.12 233)" },
+      { name: "Cian", value: "oklch(56% 0.11 215)" },
+      { name: "Teal", value: "oklch(56% 0.1 198)" },
+      { name: "Cobalto", value: "oklch(54% 0.14 245)" },
+    ],
+  },
+];
+
+const PAIRS = [
+  { fg: "--color-text-primary", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-text-secondary", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-text-tertiary", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-text-on-accent", bg: "--color-action-primary", min: 4.5 },
+  { fg: "--color-text-on-accent", bg: "--color-action-danger", min: 4.5 },
+  { fg: "--color-text-accent", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-text-danger", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-text-success", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-text-warning", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-text-info", bg: "--color-bg-canvas", min: 4.5 },
+  { fg: "--color-border-default", bg: "--color-bg-canvas", min: 3 },
+  { fg: "--color-border-focus", bg: "--color-bg-canvas", min: 3 },
+];
+
+// Icon family is a preview-only theme variable: the options are the three published sets, and a small
+// gallery in the preview makes the choice visible (swapped in place, scoped to .sk-canvas).
+const ICON_SET_OPTIONS = allSets.map((s) => ({ value: s.id, label: s.label }));
+const PREVIEW_ICONS = [
+  "search", "settings", "user", "calendar",
+  "download", "edit", "copy", "filter",
+  "check", "info", "refresh", "delete",
+] as const;
+
+const clientData = JSON.stringify({
+  pairs: PAIRS,
+  ramps: RAMPS,
+  recipe: rampRecipe,
+  iconSets: allSets.map((s) => s.id),
+});
+
+/*
+ * The preview is self-contained. Color tokens are re-declared so they re-resolve against complete
+ * ramp overrides written on `.sk-canvas`. Space / size / radius tokens are re-declared for the same
+ * reason the density and radius controls exist: they read `--sk-density` /
+ * `--radius-multiplier`, and those are overridden on `.sk-canvas`. A token declared only on `:root`
+ * keeps `:root`'s value no matter what a subtree sets the multiplier to (var() in a custom property
+ * resolves where the property is declared). Component hooks inherit these and re-resolve for free.
+ */
+
+const SCOPED_PREFIXES = ["--color-", "--space-", "--size-", "--radius-"];
+const semScopedCss =
+  ".sk-canvas {\n" +
+  tokens
+    .filter((t) => t.tier === "semantic" && SCOPED_PREFIXES.some((p) => t.name.startsWith(p)))
+    .map((t) => `  ${t.name}: ${t.value};`)
+    .join("\n") +
+  "\n}";
+
+const stageCss = semScopedCss;
+
+/*
+ * The playground's share code is a SLOT in the one shared entry, not a key of its own. The inline
+ * script below cannot import the storage primitive, so the key and the slot travel in from the real
+ * declaration — the same arrangement, and the same reason, as `PREPAINT` in Base.astro.
+ */
+const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
+---
+
+<Base fullBleed title="Set the brand" description="Adjust color, density and roundness ramps; check contrast and share the preset as a shortcode.">
+  <script type="application/json" id="sk-data" set:html={clientData} is:inline />
+  <style is:global set:html={stageCss}></style>
+
+  <div class="sk-config">
+    <!-- Editor: DS Sidebar shell (no collapse). Sidebar pickers are DimensionFlyout → data-sk-flyout. -->
+    <aside
+      class="sk-sidebar sk-config__sidebar"
+      aria-label="Editar marca"
+    >
+      {/* No header: the rail is a list of settings, one line each, and the page owns the title. */}
+      <div class="sk-sidebar__content sk-scrollbar sk-scrollbar--reveal">
+        <section class="sk-sec">
+          <h2>Color</h2>
+          <div class="sk-ramps">
+            {
+              RAMPS.map((ramp) => (
+                <DimensionFlyout
+                  id={`ramp-${ramp.role}`}
+                  prop={ramp.role}
+                  row={ramp.role}
+                  value={ramp.def}
+                  placeholder="Personalizado"
+                  label={ramp.label}
+                  options={ramp.presets.map((preset) => ({ value: preset.value, label: preset.name }))}
+                />
+              ))
+            }
+          </div>
+        </section>
+
+        <section class="sk-sec">
+          <h2>Shape and icons</h2>
+          <div class="sk-dimensions">
+            <DimensionFlyout
+              id="sk-dim-density"
+              prop="--sk-density"
+              label="Densidad"
+              value="1"
+              options={[
+                { value: "0.5", label: "Condensada" },
+                { value: "0.6", label: "Densa" },
+                { value: "0.8", label: "Compacta" },
+                { value: "1", label: "Chest of drawers" },
+                { value: "1.2", label: "Amplia" },
+              ]}
+            />
+            <DimensionFlyout
+              id="sk-dim-radius"
+              prop="--radius-multiplier"
+              label="Redondez"
+              value="1"
+              options={[
+                { value: "0", label: "Recta" },
+                { value: "0.5", label: "Sutil" },
+                { value: "1", label: "Suave" },
+                { value: "1.5", label: "Marcada" },
+                { value: "2", label: "Redonda" },
+              ]}
+            />
+            <DimensionFlyout
+              id="sk-dim-icons"
+              prop="icon-set"
+              label="Icons"
+              value="lucide"
+              options={ICON_SET_OPTIONS}
+            />
+          </div>
+        </section>
+      </div>
+
+      {/* The whole footer is the preset: a ten-character code that IS the theme (it round-trips
+          through the URL hash), so copying it copies the link that reproduces this configuration.
+          The two icon buttons beside it are the audit and the reset — no export, nothing else. */}
+      <div class="sk-sidebar__footer sk-config__footer">
+        <button class="sk-preset sk-interactive" id="sk-preset" type="button" title="Copy preset link" aria-label="Copy preset link">
+          <code class="sk-preset__code" id="sk-preset-code">··········</code>
+          <span class="sk-preset__icon" aria-hidden="true">
+            <span data-state="idle"><Fragment set:html={iconMarkup("copy", { size: "sm" })} /></span>
+            <span data-state="copied"><Fragment set:html={iconMarkup("check", { size: "sm" })} /></span>
+          </span>
+        </button>
+        <button class="sk-mini sk-mini--tally sk-interactive" id="sk-contrast-open" type="button" title="Revisar contraste" aria-label="Revisar contraste"><span id="sk-tally" class="sk-tally">00/00</span></button>
+        <button class="sk-mini sk-interactive" id="sk-reset-all" type="button" title="Reiniciar" aria-label="Reiniciar"><Fragment set:html={iconMarkup("refresh", { size: "sm" })} /></button>
+      </div>
+      <span class="sk-sr" id="sk-copy-live" aria-live="polite"></span>
+    </aside>
+
+    <div class="sk-config__stage">
+    <section class="sk-preview" aria-label="Component Showcase" data-sk-tabs id="sk-views" data-value="showcase">
+      {/* Each site context is its own tab: the same tokens, judged across different products. */}
+      <div class="sk-views sk-tabs__list sk-scrollbar" data-sk-tabs-list aria-label="Showcase views">
+        <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="showcase" type="button">Showcase</button>
+        <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="dashboard" type="button">Dashboard</button>
+        <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="landing" type="button">Landing</button>
+        <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="store" type="button">Comercio</button>
+      </div>
+      {/* The frame is docs chrome and sits OUTSIDE the themed region on purpose: `.sk-canvas` is where
+          every semantic --color-/--space-/--size-/--radius- token is re-declared, so a frame painted
+          there would follow the edits. The card must hold still while its contents change. */}
+      <div class="sk-frame">
+      <div class="sk-canvas sk-scrollbar sk-scrollbar--reveal">
+      <!-- probes resolve the PREVIEW's colors (they live inside the themed region), per scheme -->
+      <span class="sk-probe" style="color-scheme: light"><span id="sk-probe-light"></span></span>
+      <span class="sk-probe" style="color-scheme: dark"><span id="sk-probe-dark"></span></span>
+
+      <div class="sk-tabs__content sk-view" data-sk-tabs-content data-value="showcase">
+      <!-- Bento shelf: one dense grid, asymmetric spans so the theme reads as a composition. -->
+      <div class="sk-bento">
+        <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="kpi"><div class="sk-flow"><div class="sk-stat-row"><span class="sk-stat-ico" data-tone="accent"><Fragment set:html={iconMarkup("download")} /></span><div class="sk-stat"><span class="sk-stat__label">Ingresos</span><span class="sk-stat__value">$48.2k</span><span class="sk-stat__change" data-trend="up"><Fragment set:html={iconMarkup("arrow-up")} />12.5%</span></div></div></div></div>
+        <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="cell"><div class="sk-flow"><div class="sk-stat-row"><span class="sk-stat-ico" data-tone="accent"><Fragment set:html={iconMarkup("user")} /></span><div class="sk-stat"><span class="sk-stat__label">Usuarios</span><span class="sk-stat__value">3,914</span><span class="sk-stat__change" data-trend="up"><Fragment set:html={iconMarkup("arrow-up")} />4.1%</span></div></div></div></div>
+        <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="cell"><div class="sk-flow"><div class="sk-stat-row"><span class="sk-stat-ico" data-tone="accent"><Fragment set:html={iconMarkup("calendar")} /></span><div class="sk-stat"><span class="sk-stat__label">Orders</span><span class="sk-stat__value">1,204</span><span class="sk-stat__change" data-trend="down"><Fragment set:html={iconMarkup("arrow-down")} />2.3%</span></div></div></div></div>
+        <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="kpi"><div class="sk-flow"><div class="sk-stat-row"><span class="sk-stat-ico" data-tone="danger"><Fragment set:html={iconMarkup("arrow-down")} /></span><div class="sk-stat"><span class="sk-stat__label">Churn</span><span class="sk-stat__value">0.9%</span><span class="sk-stat__change" data-trend="neutral">estable</span></div></div></div></div>
+
+        <!-- derived ramps, the brand tool's own subject (decorative, no component) -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><Fragment set:html={iconMarkup("edit")} /><strong>Explicit ramps</strong></header>
+          <div class="sk-flow">
+            <p class="sk-panel__desc">They are explicit ramps; each position arrives as a tier 1 token.</p>
+            {["neutral", "accent", "danger", "success", "warning", "info"].map((role) => (
+              <div class="sk-ramp-row">
+                <span class="sk-ramp-label">{role}</span>
+                <div class="sk-ramp">
+                  {[50, 100, 200, 300, 400, 500, 600, 700, 800, 900].map((s) => (
+                    <i style={`background: var(--ramp-${role}-${s})`} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- chart (decorative) — tall companion to the ramps hero -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><Fragment set:html={iconMarkup("calendar")} /><strong>Visits per day</strong></header>
+          <div class="sk-flow sk-flow--fill">
+            <div class="sk-chart sk-chart--tall">
+              <i style="height: 40%"></i><i style="height: 62%"></i><i style="height: 48%"></i>
+              <i style="height: 78%"></i><i style="height: 92%"></i><i style="height: 70%"></i><i style="height: 55%"></i>
+            </div>
+          </div>
+        </section>
+
+        <!-- surfaces: every bg token, so the neutral undertone is legible directly -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><Fragment set:html={iconMarkup("copy")} /><strong>Superficies</strong></header>
+          <div class="sk-flow">
+            <p class="sk-panel__desc">They all inherit the undertone of the chosen neutral.</p>
+            <div class="sk-surfaces">
+              {[
+                ["Canvas", "--color-bg-canvas"],
+                ["Surface", "--color-bg-surface"],
+                ["Raised", "--color-bg-surface-raised"],
+                ["Sunken", "--color-bg-surface-sunken"],
+                ["Well", "--color-bg-well"],
+              ].map(([label, token]) => (
+                <div class="sk-surf" style={`background: var(${token})`}>
+                  <span>{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- icon family: preview-only theme variable -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><Fragment set:html={iconMarkup("settings")} /><strong>Iconography</strong></header>
+          <div class="sk-flow">
+            <p class="sk-panel__desc">The chosen icon family, applied to the preview.</p>
+            <div class="sk-icons">
+              {PREVIEW_ICONS.map((name) => (
+                <span class="sk-icon"><Fragment set:html={iconMarkup(name)} /></span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- form: Field + Input + Select + Checkbox + Button -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><Fragment set:html={iconMarkup("user")} /><strong>Crear cuenta</strong></header>
+          <div class="sk-flow">
+            <p class="sk-panel__desc">Start with your email. It is free for 14 days.</p>
+            <div class="sk-field">
+              <label class="sk-field__label" for="cs-name">Name</label>
+              <input class="sk-input" id="cs-name" value="Ada Lovelace" />
+            </div>
+            <div class="sk-field">
+              <label class="sk-field__label" for="cs-mail">Mail</label>
+              <input class="sk-input" id="cs-mail" type="email" value="ada@example.com" />
+            </div>
+            <DimensionSelect
+              id="cs-plan"
+              label="Plan"
+              options={[
+                { value: "starter", label: "Starter" },
+                { value: "pro", label: "Pro" },
+                { value: "enterprise", label: "Enterprise" },
+              ]}
+            />
+            <label class="sk-checkbox">
+              <input class="sk-checkbox__input" type="checkbox" checked />
+              <span class="sk-checkbox__control sk-interactive" aria-hidden="true"><Fragment set:html={checkboxIndicators} /></span>
+              <span class="sk-checkbox__label">I accept the terms</span>
+            </label>
+            <div class="sk-row sk-row--end">
+              <button class="sk-button sk-interactive" data-variant="ghost" type="button"><Fragment set:html={iconMarkup("close")} />Cancel</button>
+              <button class="sk-button sk-interactive" data-variant="primary" type="button"><Fragment set:html={iconMarkup("check")} />Crear cuenta</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- validation summary -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><Fragment set:html={iconMarkup("warning")} /><strong>Revisar datos</strong><span class="sk-badge" data-tone="danger">2 errores</span></header>
+          <div class="sk-flow">
+            <p class="sk-panel__desc">Correct these fields before saving your changes.</p>
+            <ul class="sk-validation-list">
+              <li><Fragment set:html={iconMarkup("warning")} /><span><strong>Billing email</strong><small>Include a valid domain, for example ada@ejemplo.com.</small></span></li>
+              <li><Fragment set:html={iconMarkup("warning")} /><span><strong>Empresa</strong><small>Indicates the legal name that must appear on invoices.</small></span></li>
+            </ul>
+            <div class="sk-row sk-row--end"><button class="sk-button sk-interactive" data-variant="primary" type="button"><Fragment set:html={iconMarkup("check")} />Review and save</button></div>
+          </div>
+        </section>
+
+        <!-- accordion -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><Fragment set:html={iconMarkup("upload")} /><strong>Deployment details</strong></header>
+          <div class="sk-flow">
+            <div data-sk-accordion data-type="single" data-default-value="runtime">
+              <section class="sk-tile sk-tile--expandable sk-interactive" data-part="item" data-value="runtime">
+                <button class="sk-tile__trigger" type="button" data-part="trigger" aria-expanded="true" aria-controls="cs-deploy-runtime">
+                  <span class="sk-tile__content"><span class="sk-tile__title">Runtime and region</span><span class="sk-tile__description">Production Frankfurt</span></span><span class="sk-tile__chevron" data-part="chevron" aria-hidden="true"><span data-state="closed"><Fragment set:html={iconMarkup("chevron-down")} /></span><span data-state="open"><Fragment set:html={iconMarkup("chevron-up")} /></span></span>
+                </button>
+                <div class="sk-tile__expandable-content" id="cs-deploy-runtime" data-part="content"><p class="sk-tile__description">Node 22 · 3 replicas · deployed 8 minutes ago.</p></div>
+              </section>
+              <section class="sk-tile sk-tile--expandable sk-interactive" data-part="item" data-value="rollout">
+                <button class="sk-tile__trigger" type="button" data-part="trigger" aria-expanded="false" aria-controls="cs-deploy-rollout">
+                  <span class="sk-tile__content"><span class="sk-tile__title">Rollout strategy</span><span class="sk-tile__description">Gradual release</span></span><span class="sk-tile__chevron" data-part="chevron" aria-hidden="true"><span data-state="closed"><Fragment set:html={iconMarkup("chevron-down")} /></span><span data-state="open"><Fragment set:html={iconMarkup("chevron-up")} /></span></span>
+                </button>
+                <div class="sk-tile__expandable-content" id="cs-deploy-rollout" data-part="content" hidden><p class="sk-tile__description">10% for five minutes, then 50% and health check before 100%.</p></div>
+              </section>
+              <section class="sk-tile sk-tile--expandable sk-interactive" data-part="item" data-value="rollback">
+                <button class="sk-tile__trigger" type="button" data-part="trigger" aria-expanded="false" aria-controls="cs-deploy-rollback">
+                  <span class="sk-tile__content"><span class="sk-tile__title">Reversal plan</span><span class="sk-tile__description">Latest stable version</span></span><span class="sk-tile__chevron" data-part="chevron" aria-hidden="true"><span data-state="closed"><Fragment set:html={iconMarkup("chevron-down")} /></span><span data-state="open"><Fragment set:html={iconMarkup("chevron-up")} /></span></span>
+                </button>
+                <div class="sk-tile__expandable-content" id="cs-deploy-rollback" data-part="content" hidden><p class="sk-tile__description">v2.18.4 is available to restore traffic with a single change.</p></div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <!-- Button + Badge + SegmentedControl -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><Fragment set:html={iconMarkup("more")} /><strong>Botones y badges</strong></header>
+          <div class="sk-flow">
+            <div class="sk-row sk-wrap">
+              <button class="sk-button sk-interactive" data-variant="primary" type="button"><Fragment set:html={iconMarkup("add")} />Primary</button>
+              <button class="sk-button sk-interactive" type="button"><Fragment set:html={iconMarkup("edit")} />Neutral</button>
+              <button class="sk-button sk-interactive" data-variant="danger" type="button"><Fragment set:html={iconMarkup("delete")} />Danger</button>
+              <button class="sk-button sk-interactive" data-variant="ghost" type="button"><Fragment set:html={iconMarkup("download")} />Ghost</button>
+              <button class="sk-button sk-interactive" data-variant="primary" type="button" disabled><Fragment set:html={iconMarkup("refresh")} />Disabled</button>
+            </div>
+            <div class="sk-row sk-wrap">
+              <span class="sk-badge" data-tone="accent">accent</span>
+              <span class="sk-badge" data-tone="success">success</span>
+              <span class="sk-badge" data-tone="danger">danger</span>
+              <span class="sk-badge" data-tone="warning">warning</span>
+              <span class="sk-badge" data-tone="neutral">neutral</span>
+            </div>
+            <div class="sk-segmented" role="radiogroup" aria-label="Rango">
+              <button class="sk-segmented__option sk-interactive" type="button" role="radio" aria-checked="true">Día</button>
+              <button class="sk-segmented__option sk-interactive" type="button" role="radio" aria-checked="false">Week</button>
+              <button class="sk-segmented__option sk-interactive" type="button" role="radio" aria-checked="false">Mes</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- activity: Avatar + Badge -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><Fragment set:html={iconMarkup("refresh")} /><strong>Recent activity</strong></header>
+          <div class="sk-flow">
+            <ul class="sk-list">
+              <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Maria J."><span class="sk-avatar__fallback" aria-hidden="true">MJ</span></span><div><strong>Maria J.</strong> created a project<span class="sk-time">2 min ago</span></div><span class="sk-badge" data-tone="accent">nuevo</span></li>
+              <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Tomas L."><span class="sk-avatar__fallback" aria-hidden="true">TL</span></span><div><strong>Tomas L.</strong> closed a ticket<span class="sk-time">1 hour ago</span></div><span class="sk-badge" data-tone="success">resuelto</span></li>
+              <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Sofia B."><span class="sk-avatar__fallback" aria-hidden="true">SB</span></span><div><strong>Sofia B.</strong> commented<span class="sk-time">3 hours ago</span></div><span class="sk-badge" data-tone="warning">pendiente</span></li>
+              <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Raul G."><span class="sk-avatar__fallback" aria-hidden="true">RG</span></span><div><strong>Raul G.</strong> reported a bug<span class="sk-time">ayer</span></div><span class="sk-badge" data-tone="danger">urgente</span></li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Alert ×4 -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><Fragment set:html={iconMarkup("info")} /><strong>Notificaciones</strong></header>
+          <div class="sk-flow">
+            <div class="sk-alert" data-tone="info" role="status" aria-live="polite"><span class="sk-alert__icon" aria-hidden="true"><Fragment set:html={iconMarkup("info")} /></span><div class="sk-alert__content"><div class="sk-alert__description"><strong>Info.</strong> A new version is available.</div></div></div>
+            <div class="sk-alert" data-tone="success" role="status" aria-live="polite"><span class="sk-alert__icon" aria-hidden="true"><Fragment set:html={iconMarkup("success")} /></span><div class="sk-alert__content"><div class="sk-alert__description"><strong>Ready.</strong> Your changes have been saved.</div></div></div>
+            <div class="sk-alert" data-tone="warning" role="status" aria-live="polite"><span class="sk-alert__icon" aria-hidden="true"><Fragment set:html={iconMarkup("warning")} /></span><div class="sk-alert__content"><div class="sk-alert__description"><strong>Attention.</strong> Your plan expires in 3 days.</div></div></div>
+            <div class="sk-alert" data-tone="danger" role="alert" aria-live="assertive"><span class="sk-alert__icon" aria-hidden="true"><Fragment set:html={iconMarkup("danger")} /></span><div class="sk-alert__content"><div class="sk-alert__description"><strong>Error.</strong> Could not connect to the server.</div></div></div>
+          </div>
+        </section>
+
+        <!-- controls -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><Fragment set:html={iconMarkup("filter")} /><strong>Controles</strong></header>
+          <div class="sk-flow">
+            <label class="sk-checkbox"><input class="sk-checkbox__input" type="checkbox" checked /><span class="sk-checkbox__control sk-interactive" aria-hidden="true"><Fragment set:html={checkboxIndicators} /></span><span class="sk-checkbox__label">Email notifications</span></label>
+            <label class="sk-checkbox"><input class="sk-checkbox__input" type="checkbox" /><span class="sk-checkbox__control sk-interactive" aria-hidden="true"><Fragment set:html={checkboxIndicators} /></span><span class="sk-checkbox__label">Modo compacto</span></label>
+            <div class="sk-radio-group" role="radiogroup" aria-label="Billing" data-orientation="vertical">
+              <label class="sk-radio"><input class="sk-radio__input" type="radio" name="cs-bill" value="m" checked /><span class="sk-radio__control" aria-hidden="true"><span class="sk-radio__indicator" /></span><span class="sk-radio__label">Mensual</span></label>
+              <label class="sk-radio"><input class="sk-radio__input" type="radio" name="cs-bill" value="a" /><span class="sk-radio__control" aria-hidden="true"><span class="sk-radio__indicator" /></span><span class="sk-radio__label">Anual</span></label>
+            </div>
+            <label class="sk-switch"><input class="sk-switch__input" type="checkbox" role="switch" checked /><span class="sk-switch__control" aria-hidden="true"><span class="sk-switch__thumb" /></span><span class="sk-switch__label">Activar 2FA</span></label>
+            <div class="sk-field">
+              <label class="sk-field__label" for="cs-vol">Volumen</label>
+              <input class="sk-slider" id="cs-vol" type="range" min="0" max="100" value="65" data-sk-slider style="--sk-slider-fill: 0.65" />
+            </div>
+            <div class="sk-progress" role="progressbar" aria-label="Uso" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="--sk-progress-fill: 68%"><div class="sk-progress__bar" /></div>
+          </div>
+        </section>
+
+        <!-- Table + Badge -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><Fragment set:html={iconMarkup("user")} /><strong>Equipo</strong></header>
+          <div class="sk-flow">
+            <div class="sk-table-scroll">
+              <table class="sk-table">
+                <thead class="sk-table__head">
+                  <tr class="sk-table__row"><th class="sk-table__header" scope="col">Miembro</th><th class="sk-table__header" scope="col">Rol</th><th class="sk-table__header" scope="col">Status</th></tr>
+                </thead>
+                <tbody class="sk-table__body">
+                  <tr class="sk-table__row"><th class="sk-table__header" scope="row">Ada Lovelace</th><td class="sk-table__cell"><span class="sk-badge" data-tone="accent">Admin</span></td><td class="sk-table__cell">Activo</td></tr>
+                  <tr class="sk-table__row"><th class="sk-table__header" scope="row">Alan Turing</th><td class="sk-table__cell"><span class="sk-badge" data-tone="neutral">Editor</span></td><td class="sk-table__cell">Activo</td></tr>
+                  <tr class="sk-table__row"><th class="sk-table__header" scope="row">Grace Hopper</th><td class="sk-table__cell"><span class="sk-badge" data-tone="neutral">Viewer</span></td><td class="sk-table__cell">Invitado</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- pricing -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="trio">
+          <header><span class="sk-badge" data-tone="accent">Popular</span></header>
+          <div class="sk-flow">
+            <strong class="sk-panel__title">Pro</strong>
+            <p class="sk-price__amt">$29<span>/mes</span></p>
+            <ul class="sk-price__list"><li>✓ Proyectos ilimitados</li><li>✓ Soporte prioritario</li><li>✓ Advanced analytics</li></ul>
+            <button class="sk-button sk-interactive" data-variant="primary" type="button" style="inline-size: 100%">Elegir Pro</button>
+          </div>
+        </section>
+
+        <!-- AvatarGroup + Tag -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="trio">
+          <header><strong>Colaboradores</strong></header>
+          <div class="sk-flow">
+            <div class="sk-avatar-group">
+              <span class="sk-avatar" role="img" aria-label="Ada Lovelace"><span class="sk-avatar__fallback" aria-hidden="true">AL</span></span>
+              <span class="sk-avatar" role="img" aria-label="Alan Turing"><span class="sk-avatar__fallback" aria-hidden="true">AT</span></span>
+              <span class="sk-avatar" role="img" aria-label="Grace Hopper"><span class="sk-avatar__fallback" aria-hidden="true">GH</span></span>
+              <span class="sk-avatar" role="img" aria-label="Raul G."><span class="sk-avatar__fallback" aria-hidden="true">RG</span></span>
+              <span class="sk-avatar-group__overflow">+8</span>
+            </div>
+            <div class="sk-row sk-wrap">
+              <span class="sk-tag"><span class="sk-tag__label">design</span></span>
+              <span class="sk-tag"><span class="sk-tag__label">frontend</span></span>
+              <span class="sk-tag" data-tone="accent"><span class="sk-tag__label">tokens</span></span>
+              <span class="sk-tag"><span class="sk-tag__label">a11y</span></span>
+              <span class="sk-tag"><span class="sk-tag__label">docs</span></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Steps -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="cell">
+          <header><strong>Progreso</strong></header>
+          <div class="sk-flow">
+            <ol class="sk-steps">
+              <li class="sk-steps__item" data-status="complete"><span class="sk-steps__marker">✓</span><span><span class="sk-steps__label">Marca</span></span></li>
+              <li class="sk-steps__item" data-status="current" aria-current="step"><span class="sk-steps__marker">2</span><span><span class="sk-steps__label">Rampas</span></span></li>
+              <li class="sk-steps__item" data-status="upcoming"><span class="sk-steps__marker">3</span><span><span class="sk-steps__label">Contraste</span></span></li>
+              <li class="sk-steps__item" data-status="upcoming"><span class="sk-steps__marker">4</span><span><span class="sk-steps__label">Compartir</span></span></li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- NavList -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="cell">
+          <header><strong>Menu</strong></header>
+          <div class="sk-flow">
+            <nav class="sk-nav-list" aria-label="Panel">
+              <ul class="sk-nav-list__list">
+                <li class="sk-nav-list__item"><a class="sk-nav-list__link sk-interactive" href="#" aria-current="page"><span class="sk-nav-list__label">Panel</span></a></li>
+                <li class="sk-nav-list__item"><a class="sk-nav-list__link sk-interactive" href="#"><span class="sk-nav-list__label">Proyectos</span></a></li>
+                <li class="sk-nav-list__item"><a class="sk-nav-list__link sk-interactive" href="#"><span class="sk-nav-list__label">Activity</span></a></li>
+                <li class="sk-nav-list__item"><a class="sk-nav-list__link sk-interactive" href="#"><span class="sk-nav-list__label">Settings</span></a></li>
+              </ul>
+            </nav>
+          </div>
+        </section>
+
+        <!-- Kbd -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><strong>Atajos</strong></header>
+          <div class="sk-flow">
+            <div class="sk-kbd-row"><span>Command Palette</span><span><kbd class="sk-kbd">⌘</kbd><kbd class="sk-kbd">K</kbd></span></div>
+            <div class="sk-kbd-row"><span>Search</span><span><kbd class="sk-kbd">/</kbd></span></div>
+            <div class="sk-kbd-row"><span>Save</span><span><kbd class="sk-kbd">⌘</kbd><kbd class="sk-kbd">S</kbd></span></div>
+            <div class="sk-kbd-row"><span>Cambiar modo</span><span><kbd class="sk-kbd">⌘</kbd><kbd class="sk-kbd">J</kbd></span></div>
+          </div>
+        </section>
+
+        <!-- Pagination -->
+        <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
+          <header><strong>Pagination</strong></header>
+          <div class="sk-flow">
+            <nav class="sk-pagination" aria-label="Pagination">
+              <button class="sk-pagination__previous sk-interactive" type="button" aria-label="Previous page" disabled><Fragment set:html={paginationPrev} /></button>
+              <button class="sk-pagination__item sk-interactive" type="button" aria-current="page" aria-label="Page 1">1</button>
+              <button class="sk-pagination__item sk-interactive" type="button" aria-label="Page 2">2</button>
+              <button class="sk-pagination__item sk-interactive" type="button" aria-label="Page 3">3</button>
+              <span class="sk-pagination__ellipsis" aria-hidden="true">…</span>
+              <button class="sk-pagination__item sk-interactive" type="button" aria-label="Page 12">12</button>
+              <button class="sk-pagination__next sk-interactive" type="button" aria-label="Next page"><Fragment set:html={paginationNext} /></button>
+            </nav>
+          </div>
+        </section>
+      </div>
+      </div>
+
+      <div class="sk-tabs__content sk-view" data-sk-tabs-content data-value="dashboard" hidden>
+        <div class="sk-dash">
+          <header class="sk-dash__bar">
+            <div class="sk-dash__id">
+              <span class="sk-dash__mark" aria-hidden="true">N</span>
+              <div><strong>Nimbus Dashboard</strong><small>Operations · last 30 days</small></div>
+            </div>
+            <div class="sk-dash__actions">
+              <div class="sk-segmented" role="radiogroup" aria-label="Date range">
+                <button class="sk-segmented__option sk-interactive" type="button" role="radio" aria-checked="false">7d</button>
+                <button class="sk-segmented__option sk-interactive" type="button" role="radio" aria-checked="true">30d</button>
+                <button class="sk-segmented__option sk-interactive" type="button" role="radio" aria-checked="false">90d</button>
+                <button class="sk-segmented__option sk-interactive" type="button" role="radio" aria-checked="false">12m</button>
+              </div>
+              <button class="sk-button sk-interactive" data-variant="ghost" data-size="sm" type="button">Filtrar</button>
+              <button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Exportar</button>
+            </div>
+          </header>
+
+          <div class="sk-dash__kpis">
+            <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><div class="sk-stat"><span class="sk-stat__label">Ingresos recurrentes</span><span class="sk-stat__value">$128.4k</span><span class="sk-stat__change" data-trend="up"><Fragment set:html={iconMarkup("arrow-up")} />8.9% vs. previous month</span></div><div class="sk-spark" aria-hidden="true"><i style="height:38%"></i><i style="height:52%"></i><i style="height:46%"></i><i style="height:64%"></i><i style="height:58%"></i><i style="height:72%"></i><i style="height:88%"></i></div></div></div>
+            <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><div class="sk-stat"><span class="sk-stat__label">Clientes activos</span><span class="sk-stat__value">6,204</span><span class="sk-stat__change" data-trend="up"><Fragment set:html={iconMarkup("arrow-up")} />312 this month</span></div><div class="sk-spark" aria-hidden="true"><i style="height:44%"></i><i style="height:50%"></i><i style="height:55%"></i><i style="height:53%"></i><i style="height:66%"></i><i style="height:70%"></i><i style="height:82%"></i></div></div></div>
+            <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><div class="sk-stat"><span class="sk-stat__label">Ticket promedio</span><span class="sk-stat__value">$62.10</span><span class="sk-stat__change" data-trend="down"><Fragment set:html={iconMarkup("arrow-down")} />1.4%</span></div><div class="sk-spark" data-trend="down" aria-hidden="true"><i style="height:80%"></i><i style="height:72%"></i><i style="height:74%"></i><i style="height:60%"></i><i style="height:64%"></i><i style="height:55%"></i><i style="height:52%"></i></div></div></div>
+            <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><div class="sk-stat"><span class="sk-stat__label">Cancellation</span><span class="sk-stat__value">1.8%</span><span class="sk-stat__change" data-trend="up"><Fragment set:html={iconMarkup("arrow-up")} />better than the target</span></div><div class="sk-spark" aria-hidden="true"><i style="height:70%"></i><i style="height:60%"></i><i style="height:58%"></i><i style="height:50%"></i><i style="height:46%"></i><i style="height:40%"></i><i style="height:34%"></i></div></div></div>
+          </div>
+
+          <div class="sk-dash__main">
+            <section class="sk-box sk-dash__span sk-dash__chartbox" data-surface="surface" data-border="subtle" data-padding="none">
+              <header>
+                <div><strong>Income per week</strong></div>
+                <div class="sk-legend"><span class="sk-legend__dot" data-series="a"></span>2024<span class="sk-legend__dot" data-series="b"></span>2023</div>
+              </header>
+              <div class="sk-flow">
+                <div class="sk-area" role="img" aria-label="Weekly income, upward trend">
+                  {[42, 55, 48, 63, 58, 71, 66, 78, 74, 86, 82, 94].map((h) => (
+                    <div class="sk-area__col"><i class="sk-area__bar" data-series="b" style={`height:${Math.round(h * 0.72)}%`}></i><i class="sk-area__bar" data-series="a" style={`height:${h}%`}></i></div>
+                  ))}
+                </div>
+                <div class="sk-area__axis"><span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span><span>Jul</span><span>Ago</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dic</span></div>
+              </div>
+            </section>
+
+            <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none">
+              <header><strong>Acquisition sources</strong></header>
+              <div class="sk-flow">
+                {[["Organic Search", 46], ["Referidos", 27], ["Redes sociales", 18], ["Email", 9]].map(([label, pct]) => (
+                  <div class="sk-meter"><div class="sk-meter__top"><span>{label}</span><strong>{pct}%</strong></div><div class="sk-progress" role="progressbar" aria-label={String(label)} aria-valuenow={Number(pct)} aria-valuemin="0" aria-valuemax="100" style={`--sk-progress-fill: ${pct}%`}><div class="sk-progress__bar"></div></div></div>
+                ))}
+              </div>
+            </section>
+
+            <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none">
+              <header><strong>Goal of the month</strong><span class="sk-badge" data-tone="success">on the way</span></header>
+              <div class="sk-flow">
+                <div class="sk-goal"><span class="sk-goal__value">$128k</span><span class="sk-goal__target">from $150k</span></div>
+                <div class="sk-progress" role="progressbar" aria-label="Goal progress" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style="--sk-progress-fill: 85%"><div class="sk-progress__bar"></div></div>
+                <ol class="sk-steps">
+                  <li class="sk-steps__item" data-status="complete"><span class="sk-steps__marker">✓</span><span><span class="sk-steps__label">Q1</span></span></li>
+                  <li class="sk-steps__item" data-status="complete"><span class="sk-steps__marker">✓</span><span><span class="sk-steps__label">Q2</span></span></li>
+                  <li class="sk-steps__item" data-status="current" aria-current="step"><span class="sk-steps__marker">3</span><span><span class="sk-steps__label">Q3</span></span></li>
+                  <li class="sk-steps__item" data-status="upcoming"><span class="sk-steps__marker">4</span><span><span class="sk-steps__label">Q4</span></span></li>
+                </ol>
+              </div>
+            </section>
+
+            <section class="sk-box sk-dash__span sk-dash__tablebox" data-surface="surface" data-border="subtle" data-padding="none">
+              <header><strong>Transacciones recientes</strong><a class="sk-link sk-interactive" href="#dash-tx">Ver todas</a></header>
+              <div class="sk-flow">
+                <div class="sk-table-scroll">
+                  <table class="sk-table">
+                    <thead class="sk-table__head"><tr class="sk-table__row"><th class="sk-table__header" scope="col">Cliente</th><th class="sk-table__header" scope="col">Plan</th><th class="sk-table__header" scope="col">Monto</th><th class="sk-table__header" scope="col">Status</th><th class="sk-table__header" scope="col">Date</th></tr></thead>
+                    <tbody class="sk-table__body">
+                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Lucia F."><span class="sk-avatar__fallback" aria-hidden="true">LF</span></span>Lucia Fernandez</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="accent">Pro</span></td><td class="sk-table__cell">$79.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="success">pagado</span></td><td class="sk-table__cell">Hoy, 09:14</td></tr>
+                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Diego M."><span class="sk-avatar__fallback" aria-hidden="true">DM</span></span>Diego Morales</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="neutral">Starter</span></td><td class="sk-table__cell">$19.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="success">pagado</span></td><td class="sk-table__cell">Hoy, 08:02</td></tr>
+                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Renata O."><span class="sk-avatar__fallback" aria-hidden="true">RO</span></span>Renata Ortiz</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="accent">Enterprise</span></td><td class="sk-table__cell">$420.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="warning">pendiente</span></td><td class="sk-table__cell">Ayer, 21:47</td></tr>
+                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Bruno S."><span class="sk-avatar__fallback" aria-hidden="true">BS</span></span>Bruno Salas</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="accent">Pro</span></td><td class="sk-table__cell">$79.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="danger">fallido</span></td><td class="sk-table__cell">Ayer, 18:20</td></tr>
+                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Camila R."><span class="sk-avatar__fallback" aria-hidden="true">CR</span></span>Camila Ruiz</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="neutral">Starter</span></td><td class="sk-table__cell">$19.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="success">pagado</span></td><td class="sk-table__cell">Ayer, 16:05</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none">
+              <header><strong>Team activity</strong></header>
+              <div class="sk-flow">
+                <ul class="sk-list">
+                  <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Maria J."><span class="sk-avatar__fallback" aria-hidden="true">MJ</span></span><div><strong>Maria J.</strong> approved a refund<span class="sk-time">8 min ago</span></div><span class="sk-badge" data-tone="neutral">soporte</span></li>
+                  <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Tomas L."><span class="sk-avatar__fallback" aria-hidden="true">TL</span></span><div><strong>Tomas L.</strong> published a new plan<span class="sk-time">1 hour ago</span></div><span class="sk-badge" data-tone="accent">producto</span></li>
+                  <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Sofia B."><span class="sk-avatar__fallback" aria-hidden="true">SB</span></span><div><strong>Sofia B.</strong> closed 3 tickets<span class="sk-time">2 hours ago</span></div><span class="sk-badge" data-tone="success">resuelto</span></li>
+                  <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Raul G."><span class="sk-avatar__fallback" aria-hidden="true">RG</span></span><div><strong>Raul G.</strong> flagged a fraud alert<span class="sk-time">5 hours ago</span></div><span class="sk-badge" data-tone="danger">urgente</span></li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none">
+              <header><strong>Subscriptions by plan</strong></header>
+              <div class="sk-flow">
+                {[["Starter", 3120, 60], ["Pro", 2380, 46], ["Enterprise", 704, 22]].map(([plan, count, pct]) => (
+                  <div class="sk-bars"><div class="sk-bars__top"><span>{plan}</span><strong>{Number(count).toLocaleString("es")}</strong></div><div class="sk-bars__track"><i style={`inline-size:${pct}%`}></i></div></div>
+                ))}
+                <div class="sk-avatar-group">
+                  <span class="sk-avatar" data-size="sm" role="img" aria-label="Cliente 1"><span class="sk-avatar__fallback" aria-hidden="true">AL</span></span>
+                  <span class="sk-avatar" data-size="sm" role="img" aria-label="Cliente 2"><span class="sk-avatar__fallback" aria-hidden="true">AT</span></span>
+                  <span class="sk-avatar" data-size="sm" role="img" aria-label="Cliente 3"><span class="sk-avatar__fallback" aria-hidden="true">GH</span></span>
+                  <span class="sk-avatar-group__overflow">+6.2k</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <div class="sk-tabs__content sk-view" data-sk-tabs-content data-value="landing" hidden>
+        <div class="sk-landing">
+          <nav class="sk-sitebar" aria-label="Ritual Navigation"><strong>ritual</strong><div><a href="#ritual-origen">Origen</a><a href="#ritual-caja">The box</a><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Suscribirme</button></div></nav>
+          <div class="sk-landing__hero">
+            <div><span class="sk-badge" data-tone="accent">roasted this week</span><h3>Coffee that arrives when it is still fresh.</h3><p>Choose your profile, adjust the frequency and receive a box made for your morning.</p><div class="sk-row"><button class="sk-button sk-interactive" data-variant="primary" type="button">Armar mi caja</button><button class="sk-button sk-interactive" data-variant="ghost" type="button">See origins</button></div></div>
+            <div class="sk-coffee-box" aria-label="Colombia Coffee, notes of cocoa and cherry"><span>Colombia</span><strong>Cacao · cereza</strong><small>250 g · filtro</small></div>
+          </div>
+          <div class="sk-landing__proof"><span>Entrega flexible</span><span>Origen trazable</span><span>Pause whenever you want</span></div>
+
+          <section class="sk-lp-logos"><span>With the trust of teams in</span><div><b>Faro</b><b>Nimbus</b><b>Atlas</b><b>Vertex</b><b>Norte</b></div></section>
+
+          <section class="sk-lp-section">
+            <header class="sk-lp-head"><span class="sk-badge" data-tone="neutral">why Ritual</span><h4>Coffee designed for your routine, not for the warehouse.</h4><p>Each box is roasted against your order and travels as soon as it is ready. No old stock, no intermediaries.</p></header>
+            <div class="sk-lp-features">
+              <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-lp-ico" data-tone="accent">◐</span><strong>Tueste semanal</strong><p>We roast on Mondays and ship on Tuesday. Freshness measured in days, not months.</p></div></article>
+              <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-lp-ico" data-tone="success">✦</span><strong>Origen trazable</strong><p>Each bag has a farm, altitude and producer. You know exactly what you are taking.</p></div></article>
+              <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-lp-ico" data-tone="warning">⟳</span><strong>Frecuencia flexible</strong><p>Weekly, biweekly or monthly. Change, pause or skip a delivery whenever you want.</p></div></article>
+              <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-lp-ico" data-tone="danger">◇</span><strong>Molido a pedido</strong><p>Whole or ground bean for your method: press, filter, espresso or mocha.</p></div></article>
+            </div>
+          </section>
+
+          <section class="sk-lp-section sk-lp-steps-sec">
+            <header class="sk-lp-head"><h4>Your coffee in three steps</h4></header>
+            <ol class="sk-lp-steps">
+              <li><span class="sk-lp-step__n">1</span><strong>Choose your profile</strong><p>Answer three questions and we will suggest origins according to your taste.</p></li>
+              <li><span class="sk-lp-step__n">2</span><strong>Adjust the box</strong><p>Quantity, grinding and frequency. All editable from your account.</p></li>
+              <li><span class="sk-lp-step__n">3</span><strong>Recibe y disfruta</strong><p>It arrives at your door freshly roasted, with tasting notes in each bag.</p></li>
+            </ol>
+          </section>
+
+          <section class="sk-lp-section">
+            <header class="sk-lp-head"><h4>Origins of this season</h4><p>We rotate the selection every few weeks.</p></header>
+            <div class="sk-lp-origins">
+              <article class="sk-origin" data-o="a"><div class="sk-origin__img"></div><div class="sk-origin__body"><span class="sk-badge" data-tone="accent">nuevo</span><strong>Colombia · Huila</strong><small>Cacao · cereza · panela</small></div></article>
+              <article class="sk-origin" data-o="b"><div class="sk-origin__img"></div><div class="sk-origin__body"><span class="sk-badge" data-tone="neutral">classic</span><strong>Ethiopia Yirgacheffe</strong><small>Jasmine · peach · black tea</small></div></article>
+              <article class="sk-origin" data-o="c"><div class="sk-origin__img"></div><div class="sk-origin__body"><span class="sk-badge" data-tone="warning">latest bags</span><strong>Brasil · Cerrado</strong><small>Chocolate · peanut · candy</small></div></article>
+            </div>
+          </section>
+
+          <section class="sk-lp-section">
+            <header class="sk-lp-head"><h4>What those who already take it say</h4></header>
+            <div class="sk-lp-quotes">
+              <figure class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><blockquote>"I stopped buying supermarket coffee. The difference in the first cup is absurd."</blockquote><figcaption><span class="sk-avatar" data-size="sm" role="img" aria-label="Paula V."><span class="sk-avatar__fallback" aria-hidden="true">PV</span></span><span><strong>Paula V.</strong><small>biweekly subscription</small></span></figcaption></div></figure>
+              <figure class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><blockquote>"Pausing when traveling and resuming without friction is what made me stay."</blockquote><figcaption><span class="sk-avatar" data-size="sm" role="img" aria-label="Mateo R."><span class="sk-avatar__fallback" aria-hidden="true">MR</span></span><span><strong>Mateo R.</strong><small>monthly subscription</small></span></figcaption></div></figure>
+              <figure class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><blockquote>"The tasting notes seemed like marketing until I felt them. Now I'm looking for them."</blockquote><figcaption><span class="sk-avatar" data-size="sm" role="img" aria-label="Ines T."><span class="sk-avatar__fallback" aria-hidden="true">IT</span></span><span><strong>Ines T.</strong><small>weekly subscription</small></span></figcaption></div></figure>
+            </div>
+          </section>
+
+          <section class="sk-lp-section sk-lp-pricing-sec">
+            <header class="sk-lp-head"><h4>Choose your rhythm</h4><p>Change plans whenever you want. Without permanence.</p></header>
+            <div class="sk-lp-pricing">
+              <article class="sk-box sk-plan" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><strong class="sk-plan__name">Descubrir</strong><p class="sk-plan__price">$9.900<span>/mes</span></p><p class="sk-plan__desc">250 g monthly. Ideal to try.</p><ul class="sk-plan__list"><li>✓ 1 origin per month</li><li>✓ Tasting notes</li><li>✓ Pause whenever you want</li></ul><button class="sk-button sk-interactive" data-variant="ghost" type="button" style="inline-size:100%">Elegir</button></div></article>
+              <article class="sk-box sk-plan sk-plan--featured" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-badge" data-tone="accent">most chosen</span><strong class="sk-plan__name">Ritual</strong><p class="sk-plan__price">$16.900<span>/mes</span></p><p class="sk-plan__desc">500 g biweekly. To take every day.</p><ul class="sk-plan__list"><li>✓ 2 rotating origins</li><li>✓ Molienda a pedido</li><li>✓ Priority shipping</li></ul><button class="sk-button sk-interactive" data-variant="primary" type="button" style="inline-size:100%">Elegir</button></div></article>
+              <article class="sk-box sk-plan" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><strong class="sk-plan__name">home coffee shop</strong><p class="sk-plan__price">$28.900<span>/mes</span></p><p class="sk-plan__desc">1 kg weekly. For those who receive people.</p><ul class="sk-plan__list"><li>✓ 3 origins of your choice</li><li>✓ Acceso a lotes especiales</li><li>✓ Barista support</li></ul><button class="sk-button sk-interactive" data-variant="ghost" type="button" style="inline-size:100%">Elegir</button></div></article>
+            </div>
+          </section>
+
+          <section class="sk-lp-section">
+            <header class="sk-lp-head"><h4>Preguntas frecuentes</h4></header>
+            <div class="sk-lp-faq">
+              <div class="sk-faq"><strong>Can I pause the subscription?</strong><p>Yes, from your account, as many times as you want and at no cost.</p></div>
+              <div class="sk-faq"><strong>How does the coffee arrive?</strong><p>In bags with a degassing valve, within 24 hours of roasting.</p></div>
+              <div class="sk-faq"><strong>Can I choose the grind?</strong><p>Yes: whole bean or ground for press, filter, espresso or mocha.</p></div>
+              <div class="sk-faq"><strong>Do you ship nationwide?</strong><p>We arrive in major cities in 2 to 4 business days.</p></div>
+            </div>
+          </section>
+
+          <section class="sk-lp-cta">
+            <div><h4>Your next cup starts today.</h4><p>Assemble your box in two minutes and receive it this week.</p></div>
+            <div class="sk-row"><button class="sk-button sk-interactive" data-variant="primary" type="button">Armar mi caja</button><button class="sk-button sk-interactive" data-variant="ghost" type="button">Ver planes</button></div>
+          </section>
+
+          <footer class="sk-lp-footer">
+            <div class="sk-lp-footer__brand"><strong>ritual</strong><small>Specialty coffee, freshly roasted.</small></div>
+            <nav class="sk-lp-footer__cols">
+              <div><span>Producto</span><a href="#">Origins</a><a href="#">Planes</a><a href="#">Regalos</a></div>
+              <div><span>Empresa</span><a href="#">Nosotros</a><a href="#">Productores</a><a href="#">Blog</a></div>
+              <div><span>Soporte</span><a href="#">Ayuda</a><a href="#">Shipping</a><a href="#">Contacto</a></div>
+            </nav>
+          </footer>
+        </div>
+      </div>
+
+      <div class="sk-tabs__content sk-view" data-sk-tabs-content data-value="store" hidden>
+        <div class="sk-store">
+          <div class="sk-shop-announce">Free shipping from $40,000 · Free exchanges within 30 days</div>
+          <header class="sk-sitebar">
+            <strong>mercado norte</strong>
+            <nav class="sk-shop-nav" aria-label="Categories"><a href="#">Cocina</a><a href="#">Mesa</a><a href="#">Deco</a><a href="#">Bathroom</a></nav>
+            <div><button class="sk-button sk-interactive" data-variant="ghost" data-size="sm" type="button">Search</button><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Bolsa · 2</button></div>
+          </header>
+
+          <section class="sk-shop-hero">
+            <div class="sk-shop-hero__copy"><span class="sk-badge" data-tone="accent">nueva temporada</span><h3>Simple objects for every day.</h3><p>Durable pieces, designed to use and not to store. Honest design at a fair price.</p><div class="sk-row"><button class="sk-button sk-interactive" data-variant="primary" type="button">Ver novedades</button><button class="sk-button sk-interactive" data-variant="ghost" type="button">Explore catalog</button></div></div>
+            <div class="sk-shop-hero__art" aria-hidden="true"></div>
+          </section>
+
+          <section class="sk-shop-cats">
+            <a class="sk-shop-cat" href="#" data-c="blue"><span>Cocina</span><small>128 productos</small></a>
+            <a class="sk-shop-cat" href="#" data-c="orange"><span>Mesa</span><small>94 productos</small></a>
+            <a class="sk-shop-cat" href="#" data-c="green"><span>Deco</span><small>76 productos</small></a>
+            <a class="sk-shop-cat" href="#" data-c="purple"><span>Bathroom</span><small>52 productos</small></a>
+          </section>
+
+          <section class="sk-shop-block">
+            <header class="sk-shop-block__head"><h4>Novedades</h4><a class="sk-link sk-interactive" href="#">Ver todo</a></header>
+            <div class="sk-products sk-products--wide">
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="blue"></div><div class="sk-flow"><span class="sk-badge" data-tone="neutral">nuevo</span><strong>thermal glass</strong><span>$32.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="orange"></div><div class="sk-flow"><span class="sk-badge" data-tone="warning">latest</span><strong>Plato hondo</strong><span>$18.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="green"></div><div class="sk-flow"><span class="sk-badge" data-tone="success">in stock</span><strong>glass bottle</strong><span>$24.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="purple"></div><div class="sk-flow"><span class="sk-badge" data-tone="accent">destacado</span><strong>ceramic bowl</strong><span>$21.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="pink"></div><div class="sk-flow"><span class="sk-badge" data-tone="neutral">nuevo</span><strong>Repasadores (x2)</strong><span>$14.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="sky"></div><div class="sk-flow"><span class="sk-badge" data-tone="success">in stock</span><strong>glass jug</strong><span>$27.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+            </div>
+          </section>
+
+          <section class="sk-shop-editorial">
+            <div class="sk-shop-editorial__art" aria-hidden="true"></div>
+            <div class="sk-shop-editorial__copy"><span class="sk-badge" data-tone="neutral">collection</span><h4>Ceramic mornings</h4><p>Cups, plates and jugs handmade by local workshops. Unique pieces, with small differences that make them yours.</p><button class="sk-button sk-interactive" data-variant="ghost" type="button">See the collection</button></div>
+          </section>
+
+          <section class="sk-shop-block">
+            <header class="sk-shop-block__head"><h4>best sellers</h4><a class="sk-link sk-interactive" href="#">Ver ranking</a></header>
+            <div class="sk-products sk-products--wide">
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="orange"></div><div class="sk-flow"><span class="sk-badge" data-tone="warning">top 1</span><strong>Bowl set</strong><span>$38.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="green"></div><div class="sk-flow"><span class="sk-badge" data-tone="success">top 2</span><strong>wooden board</strong><span>$29.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="blue"></div><div class="sk-flow"><span class="sk-badge" data-tone="accent">top 3</span><strong>steel mate</strong><span>$34.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="purple"></div><div class="sk-flow"><span class="sk-badge" data-tone="neutral">top 4</span><strong>airtight jar</strong><span>$12.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+            </div>
+          </section>
+
+          <section class="sk-shop-benefits">
+            <div class="sk-shop-benefit"><span aria-hidden="true">🚚</span><div><strong>Shipping in 48 hours</strong><small>to the main cities</small></div></div>
+            <div class="sk-shop-benefit"><span aria-hidden="true">↺</span><div><strong>Cambios gratis</strong><small>up to 30 days</small></div></div>
+            <div class="sk-shop-benefit"><span aria-hidden="true">🔒</span><div><strong>Pago seguro</strong><small>with any card</small></div></div>
+            <div class="sk-shop-benefit"><span aria-hidden="true">✦</span><div><strong>Hecho local</strong><small>country workshops</small></div></div>
+          </section>
+
+          <section class="sk-shop-block">
+            <header class="sk-shop-block__head"><h4>What they say</h4></header>
+            <div class="sk-lp-quotes">
+              <figure class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><div class="sk-stars" aria-label="5 out of 5">★★★★★</div><blockquote>"The bowls are beautiful and arrived in two days. I already ordered more."</blockquote><figcaption><span class="sk-avatar" data-size="sm" role="img" aria-label="Clara N."><span class="sk-avatar__fallback" aria-hidden="true">CN</span></span><span><strong>Clara N.</strong><small>compra verificada</small></span></figcaption></div></figure>
+              <figure class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><div class="sk-stars" aria-label="5 out of 5">★★★★★</div><blockquote>"Quality well above the price. The ceramic feels premium."</blockquote><figcaption><span class="sk-avatar" data-size="sm" role="img" aria-label="Julian P."><span class="sk-avatar__fallback" aria-hidden="true">JP</span></span><span><strong>Julian P.</strong><small>compra verificada</small></span></figcaption></div></figure>
+              <figure class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><div class="sk-stars" aria-label="4 out of 5">★★★★☆</div><blockquote>"Everything impeccable. All that remains is that I want more colors available."</blockquote><figcaption><span class="sk-avatar" data-size="sm" role="img" aria-label="Vera S."><span class="sk-avatar__fallback" aria-hidden="true">VS</span></span><span><strong>Vera S.</strong><small>compra verificada</small></span></figcaption></div></figure>
+            </div>
+          </section>
+
+          <section class="sk-shop-news">
+            <div><h4>Join the club</h4><p>10% on your first purchase and early access to releases.</p></div>
+            <form class="sk-shop-news__form" onsubmit="return false"><input class="sk-input" type="email" aria-label="Your email" placeholder="tu@email.com" /><button class="sk-button sk-interactive" data-variant="primary" type="submit">Suscribirme</button></form>
+          </section>
+
+          <footer class="sk-lp-footer">
+            <div class="sk-lp-footer__brand"><strong>mercado norte</strong><small>Objects for every day.</small></div>
+            <nav class="sk-lp-footer__cols">
+              <div><span>Tienda</span><a href="#">Cocina</a><a href="#">Mesa</a><a href="#">Deco</a></div>
+              <div><span>Ayuda</span><a href="#">Shipping</a><a href="#">Cambios</a><a href="#">Contacto</a></div>
+              <div><span>Nosotros</span><a href="#">Historia</a><a href="#">Talleres</a><a href="#">work here</a></div>
+            </nav>
+          </footer>
+        </div>
+      </div>
+      </div>
+      </div>
+    </section>
+    </div>
+  </div>
+  <dialog class="sk-dialog" id="sk-contrast-dialog" aria-labelledby="sk-contrast-title">
+    <header class="sk-dialog__header">
+      <div class="sk-stack" data-gap="none">
+        <p class="sk-text" data-role="eyebrow">WCAG AA</p>
+        <h2 class="sk-heading sk-dialog__title" data-size="h3" id="sk-contrast-title">Revisar contraste</h2>
+      </div>
+      <form method="dialog"><button class="sk-button sk-interactive sk-dialog__close" data-variant="ghost" data-icon-only type="submit" aria-label="Cerrar"><span data-sk-icon="close"></span></button></form>
+    </header>
+    <div class="sk-dialog__body">
+      <div id="sk-audit" class="sk-audit"></div>
+      <p class="sk-dialog__note" id="sk-fix-note" aria-live="polite">The ratios are measured in light and dark on the current colors.</p>
+    </div>
+    <footer class="sk-dialog__footer sk-dialog__footer--split">
+      <form method="dialog"><button class="sk-button sk-interactive" data-variant="ghost" type="submit">Cerrar</button></form>
+      <button class="sk-button sk-interactive" data-variant="primary" id="sk-contrast-fix" type="button">Corregir colores</button>
+    </footer>
+  </dialog>
+</Base>
+
+<style>
+  /* Full-bleed tool shell: starts at `main.sk-main` and grows past it. The DOCUMENT scrolls, so the
+     rail sticks under the navbar instead of being a fixed-height column, and nothing here clips. */
+  .sk-config {
+    display: flex;
+    /* `start`, not `stretch`: a stretched child fills the row and sticky has nothing left to do. */
+    align-items: flex-start;
+    max-inline-size: none;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+  }
+
+  .sk-config__sidebar {
+    flex: none;
+    /* Same sticky-under-navbar contract as the docs sidebar and toc (site.css): both the offset and
+       the height read the navbar's MEASURED height, so the rail sits flush and fills exactly the
+       viewport below it while the preview scrolls past. */
+    position: sticky;
+    top: var(--docs-navbar-h, var(--docs-header-block-size));
+    /* Sticky creates a stacking context, so the rail's Flyout panels — `position: fixed` at
+       `--z-popover` — are trapped inside it and can only rise as high as the rail itself. At
+       `auto` the rail sits at 0 with the stage's positioned tab triggers, which come LATER in the
+       DOM and win the tie, so an open panel had the view switcher printed through it. Same token
+       as the navbar (`.dimensions`, site.css): this is pinned chrome that content scrolls under. */
+    z-index: var(--z-sticky);
+    block-size: calc(100dvh - var(--docs-navbar-h, var(--docs-header-block-size)));
+    /* Clip the rail; `.sk-sidebar__content` owns the scroll inside it. */
+    overflow: hidden;
+  }
+
+  .sk-config__sidebar .sk-sidebar__content {
+    display: flex;
+    flex-direction: column;
+    /* Keep overflow:auto always. The enhanced Select positioner is `position: fixed` (CSS anchors),
+       so open menus escape this scrollport without lifting it. Toggling overflow:visible on open
+       dropped the scrollbar gutter and widened the form ~11px (CLS). */
+  }
+
+  /* One row: the preset code takes what is left, the two icon buttons are fixed lanes.
+     minmax(0, …) on the code lane so a long-ish code can't push the buttons out (CLS). */
+  .sk-config__footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 4px;
+    align-items: center;
+    inline-size: 100%;
+  }
+
+  .sk-config__stage {
+    flex: 1;
+    min-inline-size: 0;
+    display: flex;
+    padding: clamp(12px, 2vw, 24px);
+  }
+
+  /* Not a framed window any more: the tabs sit ABOVE the card and `.sk-canvas` IS the card. This is
+     only the column that stacks them, so it clips nothing and opens no scrollport — the document
+     scrolls. (`overflow: clip` + `contain: paint` used to live here precisely to keep the tall canvas
+     out of the document's scrollable overflow; that is now exactly what we want it to do.) */
+  .sk-preview {
+    flex: 1;
+    min-inline-size: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* The view switcher is a bare strip above the card, no window chrome behind it. core/tabs.css ships
+     only styling-hook tokens (no element rules), so this page maps them to paint itself, the
+     consumer's job, exactly as decisión 8 frames it. */
+  .sk-views {
+    flex: none;
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    /* Match the showcase shelf gutter so the first tab lines up with the card content,
+       clear of the frame's top-start curve. */
+    padding-inline-start: clamp(20px, 3vw, 40px);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+  .sk-views::-webkit-scrollbar { display: none; }
+  .sk-views .sk-tabs__trigger {
+    position: relative; flex: none; display: inline-flex; align-items: center; white-space: nowrap;
+    /* -1px so the selected trigger's underline paints OVER the frame's top border instead of
+       stacking a second line above it: the tab and the card read as one piece. The trigger is
+       positioned, the frame is not, so the underline wins the paint order without a z-index. */
+    /* Height comes from padding, not a floor — otherwise pt/pb never show. */
+    min-block-size: 0;
+    padding-block: 14px;
+    padding-inline: 8px;
+    margin-block-end: -1px;
+    border: 0; border-radius: 8px 8px 0 0;
+    background: transparent; color: var(--color-text-tertiary);
+    font: inherit; font-size: var(--font-size-body-sm); font-weight: 500;
+    cursor: pointer; transition: color 0.14s ease;
+  }
+  .sk-views .sk-tabs__trigger:hover { color: var(--color-text-secondary); }
+  .sk-views .sk-tabs__trigger[data-selected] { color: var(--color-text-primary); }
+  .sk-views .sk-tabs__trigger[data-selected]::after { content: ""; position: absolute; inset-inline: 6px; inset-block-end: 0; block-size: 2px; border-radius: 2px 2px 0 0; background: var(--color-action-primary); }
+  .sk-views .sk-tabs__trigger:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: calc(-1 * var(--focus-ring-width)); }
+  /* Product pages (dashboard, landing, store) own the full frame — no block gutter.
+     Showcase is a component shelf: it needs equal inset on every side, so it must win
+     after the tabs content reset. */
+  .sk-canvas .sk-tabs__content { padding-block: 0; }
+  .sk-canvas .sk-tabs__content[hidden] { display: none; }
+  .sk-canvas .sk-tabs__content.sk-view[data-value="showcase"] {
+    padding: clamp(20px, 3vw, 40px);
+  }
+
+  /* Stacked editor over preview: the rail is a full-width band at the top of the document, so it
+     stops sticking (a sticky band would eat half the viewport on the way down). */
+  @media (max-width: 860px) {
+    .sk-config {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .sk-config__sidebar {
+      position: static;
+      inline-size: 100%;
+      block-size: auto;
+      border-inline-end: 0;
+      border-block-end: 1px solid var(--color-border-subtle);
+    }
+    .sk-config__sidebar .sk-sidebar__content {
+      max-block-size: min(28rem, 50dvh);
+    }
+    .sk-config__stage {
+      padding: 12px;
+    }
+  }
+  /* Two quiet groups, one hairline between them. No section chrome beyond the caption. */
+  .sk-sec { padding-block: 12px; border-block-end: 1px solid var(--color-border-subtle); }
+  .sk-sec:first-child { padding-block-start: 0; }
+  .sk-sec:last-child { border-block-end: 0; padding-block-end: 0; }
+  .sk-sec h2 {
+    margin: 0 0 6px;
+    padding-inline: 8px;
+    color: var(--color-text-tertiary);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Both lists are the same thing: one Field per row, each wrapping a Flyout. Each row STACKS the
+     label over the trigger (the Flyout's own default): a caption on its own line, then the
+     value-carrying button below it. Stacked, not side-by-side, so the Material set's wider glyph
+     never meets the label. The trigger keeps its box — it is always a visible, bordered button. */
+  .sk-ramps,
+  .sk-dimensions { display: grid; gap: var(--space-stack-lg); }
+
+  /* Small gap between caption and button, so each pair groups tightly while the larger stack gap
+     above pushes it clear of the row before. */
+  .sk-config__sidebar :global(.sk-flyout) { gap: 4px; }
+  /* Caption over the value: the label is a quiet header for the control beneath it. */
+  .sk-config__sidebar :global(.sk-flyout__label) {
+    padding-inline-start: 2px;
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-caption);
+    white-space: nowrap;
+  }
+  .sk-config__sidebar :global(.sk-flyout__trigger) {
+    /* control-md already carries the minimum-target floor, so dropping the touch-target max
+       shortens the button without taking the hit area below it. */
+    --sk-flyout-height: var(--size-control-md);
+    --sk-flyout-font-size: var(--font-size-body-sm);
+  }
+
+  /* refresh() marks the rows carrying an override. The row's VALUE is the text that says what
+     changed ("Azul" → "Violeta"); the accent tint is a redundant cue on top of it, so nothing is
+     carried by color alone (WCAG 1.4.1). */
+  .sk-config__sidebar :global(.is-overridden .sk-flyout__value) { color: var(--color-text-accent); }
+
+  /* Audit is compact in the builder and detailed only when asked for. */
+  /* Same digit shape as the live audit ("22/22") so the footer track width is correct before JS runs. */
+  .sk-tally { display: block; font-size: 11px; font-variant-numeric: tabular-nums; font-weight: 600; text-align: center; }
+  .sk-tally.ok { color: var(--color-text-success); }
+  .sk-tally.bad { color: var(--color-text-danger); }
+  .sk-audit { display: grid; gap: 1px; }
+  /* Rows are injected by JS, so scope through the static audit container. */
+  #sk-audit :global(.sk-audit-row) { display: grid; grid-template-columns: 1fr 44px 44px; gap: 8px; align-items: center; padding: 4px 0; }
+  #sk-audit :global(.sk-audit-head) { padding-bottom: 6px; }
+  #sk-audit :global(.sk-audit-head span) { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-tertiary); text-align: center; }
+  #sk-audit :global(.sk-audit-row code) { font-size: 11px; color: var(--color-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #sk-audit :global(.sk-badge2) { font-variant-numeric: tabular-nums; font-weight: 600; padding: 3px 0; border-radius: 6px; font-size: 11px; text-align: center; }
+  #sk-audit :global(.sk-badge2.ok) { background: var(--color-bg-success-subtle); color: var(--color-text-success); }
+  #sk-audit :global(.sk-badge2.bad) { background: var(--color-bg-danger-subtle); color: var(--color-text-danger); }
+
+  /* The preset chip: the code reads as data, so it is monospace on a sunken well, and the copy
+     glyph is the only affordance. `is-copied` swaps the glyph for a check — no label swap, so the
+     lane never resizes. */
+  .sk-preset {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px;
+    align-items: center;
+    min-inline-size: 0;
+    min-block-size: var(--size-control-sm);
+    padding-inline: 8px;
+    border: 0;
+    border-radius: var(--radius-control);
+    background: var(--color-bg-surface-sunken);
+    color: var(--color-text-secondary);
+    font: inherit;
+    cursor: pointer;
+  }
+  .sk-preset__code {
+    overflow: hidden;
+    font-family: var(--font-family-mono, ui-monospace, monospace);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sk-preset__icon { display: inline-grid; color: var(--color-text-tertiary); }
+  .sk-preset__icon > span { grid-area: 1 / 1; }
+  .sk-preset__icon > [data-state="copied"],
+  .sk-preset.is-copied .sk-preset__icon > [data-state="idle"] { display: none; }
+  .sk-preset.is-copied .sk-preset__icon > [data-state="copied"] { display: block; color: var(--color-text-success); }
+
+  /* Same visually-hidden recipe the DS uses for CopyButton's label (copy-button.css). */
+  .sk-sr { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+
+  /* Audit tally and reset: two bare glyph-sized lanes, no button chrome. */
+  .sk-mini {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--size-control-sm);
+    block-size: var(--size-control-sm);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-control);
+    background: none;
+    color: var(--color-text-tertiary);
+    font: inherit;
+    cursor: pointer;
+  }
+  /* "22/22" needs more than a square; the lane grows with the digits instead of clipping them. */
+  .sk-mini--tally { inline-size: auto; min-inline-size: var(--size-control-sm); padding-inline: 6px; }
+
+  .sk-dialog { --sk-dialog-inline-size: min(42rem, calc(100vw - 2rem)); }
+  .sk-dialog__footer--split { justify-content: space-between; }
+  .sk-dialog__footer--split form { margin: 0; }
+  .sk-dialog__note { margin: 0; padding: 10px 12px; border-radius: 8px; background: var(--color-bg-surface-sunken); color: var(--color-text-secondary); font-size: 12px; line-height: 1.5; }
+  .sk-probe { position: absolute; inline-size: 0; block-size: 0; overflow: hidden; opacity: 0; pointer-events: none; }
+
+  /* The canvas is the viewport of each product. Only the component shelf is inset.
+     Only the preview owns local ramp, density and radius overrides. This frame reads the docs
+     tokens and therefore holds still while its contents change. `clip` (not `hidden`) lets the
+     themed content respect the corners without creating a scroll container. */
+  .sk-frame {
+    flex: 1;
+    overflow: clip;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-surface);
+    box-shadow: var(--elevation-raised);
+  }
+
+  /* Inside the frame: the themed surface. Sizes to its content — no scrollport, the document scrolls. */
+  .sk-canvas {
+    background: var(--color-bg-canvas);
+    padding: 0;
+  }
+
+  /* Surface shells leave panel anatomy to each sandbox: bodies retain the former md inset. */
+  .sk-bento > .sk-box > .sk-flow,
+  .sk-dash__kpis > .sk-box > .sk-flow,
+  .sk-dash__main > .sk-box > .sk-flow,
+  .sk-lp-features > .sk-box > .sk-flow,
+  .sk-lp-quotes > .sk-box > .sk-flow,
+  .sk-lp-pricing > .sk-box > .sk-flow,
+  .sk-products > .sk-box > .sk-flow { padding: var(--space-inset-md); }
+
+  /* Showcase bento: 6-col dense grid. Spans are 1/2/3 only so every band can fill without holes.
+     Items size to content; dense packing climbs into leftover pockets under shorter neighbors. */
+  .sk-bento {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-stack-md);
+    grid-auto-flow: dense;
+    grid-auto-rows: minmax(0, auto);
+    align-items: start;
+  }
+  .sk-bento > .sk-box {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    inline-size: 100%;
+    box-shadow: var(--elevation-raised);
+  }
+  .sk-bento > .sk-box > .sk-flow { flex: 1; min-block-size: 0; }
+  .sk-bento > .sk-box > header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-block-size: 3.25rem;
+    padding-inline: var(--space-inset-md);
+    background: var(--color-bg-surface-raised);
+  }
+  .sk-bento > .sk-box > header :global(.sk-icon) {
+    flex: none;
+    color: var(--color-text-tertiary);
+    --sk-icon-size: 1.125rem;
+  }
+  .sk-flow--fill { display: grid; align-content: stretch; }
+  .sk-chart--tall { block-size: 100%; min-block-size: 10rem; }
+  /* 36rem / 52rem mirror semantic/_breakpoints.scss */
+  @media (min-width: 36rem) {
+    .sk-bento { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .sk-bento > [data-bento="cell"] { grid-column: span 1; }
+    .sk-bento > [data-bento="kpi"],
+    .sk-bento > [data-bento="trio"],
+    .sk-bento > [data-bento="slim"],
+    .sk-bento > [data-bento="tall"] { grid-column: span 1; }
+    .sk-bento > [data-bento="wide"],
+    .sk-bento > [data-bento="feature"],
+    .sk-bento > [data-bento="hero"],
+    .sk-bento > [data-bento="quad"] { grid-column: span 2; }
+  }
+  @media (min-width: 52rem) {
+    .sk-bento {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: var(--space-stack-md);
+    }
+    /* 1 · 2 · 3 — never 4+. Combinations always tile: 3+3, 2+2+2, 2+2+1+1, 3+2+1. */
+    .sk-bento > [data-bento="cell"] { grid-column: span 1; }
+    .sk-bento > [data-bento="kpi"],
+    .sk-bento > [data-bento="trio"],
+    .sk-bento > [data-bento="slim"],
+    .sk-bento > [data-bento="tall"] { grid-column: span 2; }
+    .sk-bento > [data-bento="wide"],
+    .sk-bento > [data-bento="feature"],
+    .sk-bento > [data-bento="hero"],
+    .sk-bento > [data-bento="quad"] { grid-column: span 3; }
+  }
+
+  /* Landing and commerce are complete product pages, so their chrome reaches the preview frame. */
+  .sk-landing.sk-store { min-block-size: 100%; overflow: hidden; background: var(--color-bg-surface); }
+  .sk-sitebar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-block-size: 3.5rem; padding: 10px 16px; border-block-end: 1px solid var(--color-border-subtle); background: var(--color-bg-surface); }
+  .sk-sitebar > strong { color: var(--color-text-primary); font-size: 14px; letter-spacing: -0.03em; }
+  .sk-sitebar > div { display: flex; align-items: center; gap: 10px; }
+  .sk-sitebar a { color: var(--color-text-secondary); font-size: 12px; text-decoration: none; }
+  .sk-landing__hero { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(10rem.65fr); gap: 20px; align-items: center; padding: clamp(24px, 4vw, 48px); }
+  .sk-landing__hero > div:first-child { display: grid; justify-items: start; gap: 12px; }
+  .sk-landing__hero h3 { max-inline-size: 20ch; margin: 0; color: var(--color-text-primary); font-size: clamp(1.5rem, 3vw, 2.4rem); line-height: 1.02; letter-spacing: -0.045em; text-wrap: balance; }
+  .sk-landing__hero p { max-inline-size: 48ch; margin: 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.5; }
+  .sk-coffee-box { display: grid; align-content: end; gap: 4px; aspect-ratio: 4 / 5; padding: 18px; border-radius: calc(var(--radius-surface) - 4px); background: var(--color-action-primary); color: var(--color-text-on-accent); box-shadow: var(--elevation-raised); }
+  .sk-coffee-box span.sk-coffee-box small { font-size: 11px; opacity: .82; }
+  .sk-coffee-box strong { font-size: 18px; }
+  .sk-landing__proof { display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid var(--color-border-subtle); }
+  .sk-landing__proof span { padding: 12px; color: var(--color-text-secondary); font-size: 11px; text-align: center; }
+  .sk-landing__proof span + span { border-inline-start: 1px solid var(--color-border-subtle); }
+
+  /* landing sections */
+  .sk-lp-section { padding: clamp(28px, 5vw, 60px) clamp(20px, 4vw, 48px); border-block-end: 1px solid var(--color-border-subtle); }
+  .sk-lp-head { display: grid; justify-items: center; gap: 8px; margin-bottom: 28px; text-align: center; }
+  .sk-lp-head .sk-badge { justify-self: center; }
+  .sk-lp-head h4 { max-inline-size: 24ch; margin: 0; color: var(--color-text-primary); font-size: clamp(1.25rem, 2.4vw, 1.85rem); line-height: 1.1; letter-spacing: -0.03em; text-wrap: balance; }
+  .sk-lp-head p { max-inline-size: 52ch; margin: 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.5; }
+  .sk-lp-logos { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 28px; padding: 20px; border-block-end: 1px solid var(--color-border-subtle); background: var(--color-bg-surface-sunken); }
+  .sk-lp-logos span { color: var(--color-text-tertiary); font-size: 11px; }
+  .sk-lp-logos b { color: var(--color-text-secondary); font-size: 15px; font-weight: 700; letter-spacing: -0.03em; opacity: .65; }
+  .sk-lp-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 14px; }
+  .sk-lp-features .sk-flow { gap: 8px; }
+  .sk-lp-ico { display: grid; place-items: center; inline-size: 40px; block-size: 40px; border-radius: 11px; font-size: 18px; background: var(--color-bg-accent-subtle); color: var(--color-text-accent); }
+  .sk-lp-ico[data-tone="success"] { background: var(--color-bg-success-subtle); color: var(--color-text-success); }
+  .sk-lp-ico[data-tone="warning"] { background: var(--color-bg-warning-subtle); color: var(--color-text-warning); }
+  .sk-lp-ico[data-tone="danger"] { background: var(--color-bg-danger-subtle); color: var(--color-text-danger); }
+  .sk-lp-features strong { color: var(--color-text-primary); font-size: 14px; }
+  .sk-lp-features p { margin: 0; color: var(--color-text-secondary); font-size: 12.5px; line-height: 1.5; }
+  .sk-lp-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 20px; }
+  .sk-lp-steps li { display: grid; justify-items: start; gap: 8px; }
+  .sk-lp-step__n { display: grid; place-items: center; inline-size: 32px; block-size: 32px; border-radius: 999px; background: var(--color-action-primary); color: var(--color-text-on-accent); font-size: 14px; font-weight: 700; }
+  .sk-lp-steps strong { color: var(--color-text-primary); font-size: 14px; }
+  .sk-lp-steps p { margin: 0; color: var(--color-text-secondary); font-size: 12.5px; line-height: 1.5; }
+  .sk-lp-origins { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 14px; }
+  .sk-origin { overflow: hidden; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-surface); background: var(--color-bg-surface); }
+  .sk-origin__img { aspect-ratio: 16 / 10; background: var(--color-bg-accent-subtle); }
+  .sk-origin[data-o="b"] .sk-origin__img { background: var(--color-bg-warning-subtle); }
+  .sk-origin[data-o="c"] .sk-origin__img { background: var(--color-bg-success-subtle); }
+  .sk-origin__body { display: grid; justify-items: start; gap: 4px; padding: 14px; }
+  .sk-origin__body strong { color: var(--color-text-primary); font-size: 13px; }
+  .sk-origin__body small { color: var(--color-text-tertiary); font-size: 11px; }
+  .sk-lp-quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 14px; }
+  .sk-lp-quotes .sk-flow { gap: 14px; }
+  .sk-lp-quotes blockquote { margin: 0; color: var(--color-text-primary); font-size: 13.5px; line-height: 1.5; }
+  .sk-lp-quotes figcaption { display: flex; align-items: center; gap: 10px; }
+  .sk-lp-quotes figcaption > span:last-child { display: grid; }
+  .sk-lp-quotes figcaption strong { color: var(--color-text-primary); font-size: 12px; }
+  .sk-lp-quotes figcaption small { color: var(--color-text-tertiary); font-size: 11px; }
+  .sk-stars { color: var(--color-text-warning); font-size: 13px; letter-spacing: 2px; }
+  .sk-lp-pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 14px; align-items: start; }
+  .sk-plan .sk-flow { gap: 10px; }
+  .sk-plan--featured { outline: 2px solid var(--color-border-accent); outline-offset: -1px; }
+  .sk-plan__name { color: var(--color-text-primary); font-size: 15px; }
+  .sk-plan__price { margin: 0; color: var(--color-text-primary); font-size: 26px; font-weight: 700; }
+  .sk-plan__price span { color: var(--color-text-tertiary); font-size: 13px; font-weight: 400; }
+  .sk-plan__desc { margin: 0; color: var(--color-text-secondary); font-size: 12px; }
+  .sk-plan__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; color: var(--color-text-secondary); font-size: 12.5px; }
+  .sk-lp-faq { display: grid; gap: 10px; max-inline-size: 46rem; margin-inline: auto; }
+  .sk-faq { padding: 14px 16px; border: 1px solid var(--color-border-subtle); border-radius: 12px; background: var(--color-bg-surface); }
+  .sk-faq strong { display: block; margin-bottom: 4px; color: var(--color-text-primary); font-size: 13px; }
+  .sk-faq p { margin: 0; color: var(--color-text-secondary); font-size: 12.5px; line-height: 1.5; }
+  .sk-lp-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: clamp(28px, 5vw, 52px) clamp(20px, 4vw, 48px); background: var(--color-bg-accent-subtle); border-block-end: 1px solid var(--color-border-subtle); }
+  .sk-lp-cta h4 { margin: 0 0 4px; color: var(--color-text-primary); font-size: clamp(1.25rem, 2.4vw, 1.7rem); letter-spacing: -0.03em; }
+  .sk-lp-cta p { margin: 0; color: var(--color-text-secondary); font-size: 13px; }
+  .sk-lp-footer { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 20px; padding: clamp(24px, 4vw, 40px) clamp(20px, 4vw, 48px); background: var(--color-bg-surface-sunken); }
+  .sk-lp-footer__brand { display: grid; gap: 4px; }
+  .sk-lp-footer__brand strong { color: var(--color-text-primary); font-size: 15px; letter-spacing: -0.03em; }
+  .sk-lp-footer__brand small { color: var(--color-text-tertiary); font-size: 12px; }
+  .sk-lp-footer__cols { display: flex; flex-wrap: wrap; gap: 32px; }
+  .sk-lp-footer__cols > div { display: grid; gap: 6px; }
+  .sk-lp-footer__cols span { color: var(--color-text-primary); font-size: 12px; font-weight: 600; }
+  .sk-lp-footer__cols a { color: var(--color-text-tertiary); font-size: 12px; text-decoration: none; }
+  .sk-lp-footer__cols a:hover { color: var(--color-text-secondary); }
+
+  /* products, shared by comercio blocks */
+  .sk-products { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .sk-products--wide { grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr)); }
+  .sk-product { overflow: hidden; box-shadow: none; border: 1px solid var(--color-border-subtle); }
+  .sk-product__image { aspect-ratio: 1 / .8; background: var(--color-bg-accent-subtle); }
+  .sk-product__image[data-product="orange"] { background: var(--color-bg-warning-subtle); }
+  .sk-product__image[data-product="green"] { background: var(--color-bg-success-subtle); }
+  .sk-product__image[data-product="purple"] { background: color-mix(in srgb, var(--color-action-primary) 24%, var(--color-bg-surface)); }
+  .sk-product__image[data-product="pink"] { background: var(--color-bg-danger-subtle); }
+  .sk-product__image[data-product="sky"] { background: color-mix(in srgb, var(--color-action-primary) 12%, var(--color-bg-surface)); }
+  .sk-product .sk-flow { gap: 8px; }
+  .sk-product .sk-flow > strong { color: var(--color-text-primary); font-size: 13px; }
+  .sk-product .sk-flow > span:not(.sk-badge) { color: var(--color-text-secondary); font-size: 12px; }
+
+  /* comercio sections */
+  .sk-shop-announce { padding: 8px 16px; text-align: center; color: var(--color-text-on-accent); background: var(--color-action-primary); font-size: 12px; }
+  .sk-shop-nav { display: flex; gap: 16px; }
+  .sk-shop-nav a { color: var(--color-text-secondary); font-size: 12.5px; text-decoration: none; }
+  .sk-shop-nav a:hover { color: var(--color-text-primary); }
+  .sk-shop-hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0.9fr); gap: 24px; align-items: center; padding: clamp(24px, 4vw, 48px); border-block-end: 1px solid var(--color-border-subtle); }
+  .sk-shop-hero__copy { display: grid; justify-items: start; gap: 12px; }
+  .sk-shop-hero__copy h3 { max-inline-size: 18ch; margin: 0; color: var(--color-text-primary); font-size: clamp(1.5rem, 3vw, 2.4rem); line-height: 1.03; letter-spacing: -0.045em; text-wrap: balance; }
+  .sk-shop-hero__copy p { max-inline-size: 44ch; margin: 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.5; }
+  .sk-shop-hero__art { aspect-ratio: 4 / 3; border-radius: var(--radius-surface); background: linear-gradient(135deg, var(--color-bg-accent-subtle), var(--color-bg-warning-subtle)); box-shadow: var(--elevation-raised); }
+  .sk-shop-cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 12px; padding: clamp(20px, 3vw, 28px) clamp(20px, 4vw, 48px); border-block-end: 1px solid var(--color-border-subtle); }
+  .sk-shop-cat { display: grid; gap: 2px; padding: 16px; border: 1px solid var(--color-border-subtle); border-radius: 14px; text-decoration: none; background: var(--color-bg-surface); transition: border-color .12s; }
+  .sk-shop-cat:hover { border-color: var(--color-border-accent); }
+  .sk-shop-cat span { color: var(--color-text-primary); font-size: 14px; font-weight: 600; }
+  .sk-shop-cat small { color: var(--color-text-tertiary); font-size: 11px; }
+  .sk-shop-cat[data-c="blue"] { box-shadow: inset 0 3px 0 var(--color-action-primary); }
+  .sk-shop-cat[data-c="orange"] { box-shadow: inset 0 3px 0 var(--color-text-warning); }
+  .sk-shop-cat[data-c="green"] { box-shadow: inset 0 3px 0 var(--color-text-success); }
+  .sk-shop-cat[data-c="purple"] { box-shadow: inset 0 3px 0 var(--color-text-accent); }
+  .sk-shop-block { padding: clamp(24px, 4vw, 44px) clamp(20px, 4vw, 48px); border-block-end: 1px solid var(--color-border-subtle); }
+  .sk-shop-block__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+  .sk-shop-block__head h4 { margin: 0; color: var(--color-text-primary); font-size: clamp(1.15rem, 2vw, 1.5rem); letter-spacing: -0.03em; }
+  .sk-shop-editorial { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-block-end: 1px solid var(--color-border-subtle); }
+  .sk-shop-editorial__art { min-block-size: 220px; background: linear-gradient(135deg, var(--color-bg-success-subtle), var(--color-bg-accent-subtle)); }
+  .sk-shop-editorial__copy { display: grid; justify-items: start; align-content: center; gap: 12px; padding: clamp(24px, 4vw, 44px); }
+  .sk-shop-editorial__copy h4 { margin: 0; color: var(--color-text-primary); font-size: clamp(1.25rem, 2.4vw, 1.75rem); letter-spacing: -0.03em; }
+  .sk-shop-editorial__copy p { max-inline-size: 40ch; margin: 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.5; }
+  .sk-shop-benefits { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 14px; padding: clamp(20px, 3vw, 28px) clamp(20px, 4vw, 48px); border-block-end: 1px solid var(--color-border-subtle); background: var(--color-bg-surface-sunken); }
+  .sk-shop-benefit { display: flex; align-items: center; gap: 10px; }
+  .sk-shop-benefit > span { font-size: 20px; }
+  .sk-shop-benefit strong { display: block; color: var(--color-text-primary); font-size: 13px; }
+  .sk-shop-benefit small { color: var(--color-text-tertiary); font-size: 11px; }
+  .sk-shop-news { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: clamp(24px, 4vw, 44px); background: var(--color-bg-accent-subtle); border-block-end: 1px solid var(--color-border-subtle); }
+  .sk-shop-news h4 { margin: 0 0 4px; color: var(--color-text-primary); font-size: clamp(1.15rem, 2vw, 1.5rem); letter-spacing: -0.03em; }
+  .sk-shop-news p { margin: 0; color: var(--color-text-secondary); font-size: 13px; }
+  .sk-shop-news__form { display: flex; gap: 8px; }
+  .sk-shop-news__form .sk-input { min-inline-size: 12rem; }
+
+  /* ── Dashboard (real product UI) ── */
+  .sk-dash { --sk-dash-gutter: clamp(20px, 3vw, 40px); display: grid; gap: 16px; min-block-size: 100%; padding: 0 var(--sk-dash-gutter) var(--sk-dash-gutter); background: var(--color-bg-surface); }
+  .sk-dash__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-inline: calc(-1 * var(--sk-dash-gutter)); padding: 12px var(--sk-dash-gutter); border-block-end: 1px solid var(--color-border-subtle); background: var(--color-bg-surface-raised); }
+  .sk-dash__id { display: flex; align-items: center; gap: 10px; }
+  .sk-dash__mark { display: grid; place-items: center; inline-size: 36px; block-size: 36px; border-radius: 10px; background: var(--color-action-primary); color: var(--color-text-on-accent); font-weight: 700; }
+  .sk-dash__id strong { display: block; color: var(--color-text-primary); font-size: 15px; letter-spacing: -0.02em; }
+  .sk-dash__id small { color: var(--color-text-tertiary); font-size: 12px; }
+  .sk-dash__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .sk-dash__actions .sk-segmented { inline-size: auto; }
+  .sk-dash__kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 14px; }
+  .sk-dash__kpis > .sk-box { box-shadow: var(--elevation-raised); }
+  .sk-dash__kpis .sk-flow { gap: 10px; }
+  .sk-spark { display: flex; align-items: flex-end; gap: 3px; block-size: 34px; }
+  .sk-spark > i { flex: 1; border-radius: 2px; background: var(--color-action-primary); opacity: .45; }
+  .sk-spark > i:last-child { opacity: 1; }
+  .sk-spark[data-trend="down"] > i { background: var(--color-text-tertiary); }
+  .sk-dash__main { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .sk-dash__main > .sk-box { box-shadow: var(--elevation-raised); }
+  .sk-dash__span { grid-column: 1 / -1; }
+  .sk-dash__main > .sk-box > header { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-block-size: 3.25rem; padding-inline: var(--space-inset-md); background: var(--color-bg-surface-raised); }
+  .sk-dash__main > .sk-box > header strong { color: var(--color-text-primary); font-size: 13px; }
+  .sk-legend { display: flex; align-items: center; gap: 6px; color: var(--color-text-tertiary); font-size: 11px; }
+  .sk-legend__dot { inline-size: 9px; block-size: 9px; border-radius: 3px; background: var(--color-action-primary); }
+  .sk-legend__dot[data-series="b"] { background: var(--color-text-tertiary); opacity: .5; }
+  .sk-area { display: flex; align-items: flex-end; gap: 8px; block-size: 180px; padding-block-start: 8px; }
+  .sk-area__col { flex: 1; display: flex; align-items: flex-end; justify-content: center; gap: 3px; block-size: 100%; }
+  .sk-area__bar { inline-size: 45%; border-radius: 4px 4px 0 0; }
+  .sk-area__bar[data-series="a"] { background: var(--color-action-primary); }
+  .sk-area__bar[data-series="b"] { background: var(--color-bg-accent-subtle); }
+  .sk-area__axis { display: flex; gap: 8px; margin-top: 8px; }
+  .sk-area__axis span { flex: 1; text-align: center; color: var(--color-text-tertiary); font-size: 10px; }
+  .sk-meter { display: grid; gap: 6px; }
+  .sk-meter__top { display: flex; align-items: baseline; justify-content: space-between; color: var(--color-text-secondary); font-size: 12px; }
+  .sk-meter__top strong { color: var(--color-text-primary); }
+  .sk-goal { display: flex; align-items: baseline; gap: 8px; }
+  .sk-goal__value { color: var(--color-text-primary); font-size: 28px; font-weight: 700; }
+  .sk-goal__target { color: var(--color-text-tertiary); font-size: 13px; }
+  .sk-bars { display: grid; gap: 6px; }
+  .sk-bars__top { display: flex; align-items: baseline; justify-content: space-between; color: var(--color-text-secondary); font-size: 12px; }
+  .sk-bars__top strong { color: var(--color-text-primary); }
+  .sk-bars__track { block-size: 8px; border-radius: 999px; background: var(--color-bg-surface-sunken); overflow: hidden; }
+  .sk-bars__track > i { display: block; block-size: 100%; border-radius: 999px; background: var(--color-action-primary); }
+  .sk-cell-user { display: inline-flex; align-items: center; gap: 8px; }
+  .sk-dash__tablebox .sk-table { min-inline-size: 34rem; }
+
+  /* Responsive CSS Multi-column Layout gives product sandboxes a card wall without a measurement pass. */
+  .sk-multicol { column-count: 1; column-gap: var(--space-stack-md); }
+  .sk-multicol > .sk-box { break-inside: avoid; margin-block-end: var(--space-stack-md); box-shadow: var(--elevation-raised); }
+  /* 36rem / 52rem / 72rem mirror semantic/_breakpoints.scss; CSS media queries cannot read its vars. */
+  @media (min-width: 36rem) { .sk-multicol { column-count: 2; } }
+  @media (min-width: 52rem) { .sk-multicol { column-count: 3; } }
+  @media (min-width: 72rem) { .sk-multicol { column-count: 4; } }
+  .sk-multicol > .sk-box > header { display: flex; align-items: center; min-block-size: 3.25rem; padding-inline: var(--space-inset-md); background: var(--color-bg-surface-raised); }
+  .sk-canvas .sk-flow { display: grid; gap: 14px; align-content: start; }
+  .sk-form { display: grid; gap: 12px; }
+  .sk-validation-list { list-style: none; display: grid; gap: 8px; margin: 0; padding: 0; }
+  .sk-validation-list li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px; align-items: start; padding: 10px 12px; border: 1px solid var(--color-border-danger); border-radius: var(--radius-control); background: var(--color-bg-danger-subtle); }
+  .sk-validation-list :global(.sk-icon) { margin-block-start: 2px; color: var(--color-text-danger); --sk-icon-size: 1rem; }
+  .sk-validation-list span { display: grid; gap: 2px; min-inline-size: 0; }
+  .sk-validation-list strong { color: var(--color-text-primary); font-size: 12px; }
+  .sk-validation-list small { color: var(--color-text-secondary); font-size: 11px; line-height: 1.4; overflow-wrap: anywhere; }
+  .sk-form .sk-alert { margin-block-start: 2px; }
+  @media (max-width: 640px) {
+    .sk-sitebar.sk-sitebar > div { flex-wrap: wrap; }
+    .sk-shop-nav { display: none; }
+    .sk-landing__hero.sk-shop-hero.sk-shop-editorial.sk-dash__main { grid-template-columns: 1fr; }
+    .sk-products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .sk-coffee-box { max-inline-size: 14rem; }
+  }
+
+  .sk-panel__title { margin: 0; color: var(--color-text-primary); font-size: var(--font-size-heading-sm); }
+  .sk-panel__desc { margin: 0; color: var(--color-text-secondary); font-size: var(--font-size-body-sm); line-height: var(--font-line-height-body); }
+
+  .sk-row { display: flex; gap: 8px; align-items: center; }
+  .sk-row--end { justify-content: flex-end; }
+  .sk-wrap { flex-wrap: wrap; }
+
+  /* activity feed: sk-avatar + sk-badge in a plain list */
+  .sk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .sk-list li { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--color-text-primary); }
+  .sk-list li > div { flex: 1; display: flex; flex-direction: column; }
+  .sk-time { font-size: 11px; color: var(--color-text-tertiary); }
+
+  /* kbd rows (the sk-kbd keys are the component) */
+  .sk-kbd-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--color-text-secondary); }
+
+  /* pricing extras (Box + Badge + Button are components; these style the plain content) */
+  .sk-price__amt { font-size: 30px; font-weight: 700; color: var(--color-text-primary); margin: 0; }
+  .sk-price__amt span { font-size: 14px; font-weight: 400; color: var(--color-text-tertiary); }
+  .sk-price__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 13px; color: var(--color-text-secondary); }
+
+  /* decorative ramps, the brand tool's own subject, not a component */
+  .sk-ramp-row { display: grid; grid-template-columns: 58px 1fr; gap: 8px; align-items: center; }
+  .sk-ramp-label { font-size: 11px; color: var(--color-text-tertiary); text-transform: capitalize; }
+  .sk-ramp { display: flex; block-size: 18px; border-radius: 5px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--color-border-subtle); }
+  .sk-ramp > i { flex: 1; }
+
+  /* surface swatches use real bg tokens, so replacing the neutral ramp tints them visibly */
+  .sk-surfaces { display: grid; grid-template-columns: repeat(auto-fit, minmax(4.5rem, 1fr)); gap: 8px; }
+  .sk-surf { display: flex; align-items: flex-end; min-block-size: 4rem; padding: 8px; border-radius: 9px; box-shadow: inset 0 0 0 1px var(--color-border-subtle); }
+  .sk-surf > span { color: var(--color-text-tertiary); font-size: 10.5px; font-weight: 600; }
+  .sk-icons { display: grid; grid-template-columns: repeat(auto-fit, minmax(2.75rem, 1fr)); gap: 8px; }
+  .sk-icon { display: grid; place-items: center; min-block-size: 2.75rem; border-radius: 9px; color: var(--color-text-secondary); box-shadow: inset 0 0 0 1px var(--color-border-subtle); }
+  .sk-icon :global(.sk-icon) { --sk-icon-size: 1.25rem; }
+  /* Prominent icons across the showcase, so an icon-family swap is obvious at a glance. */
+  .sk-stat-row { display: flex; align-items: center; gap: 12px; }
+  .sk-stat-ico { display: grid; place-items: center; inline-size: 2.5rem; block-size: 2.5rem; border-radius: 12px; flex: none; --sk-icon-size: 1.375rem; }
+  .sk-stat-ico[data-tone="accent"] { background: var(--color-bg-accent-subtle); color: var(--color-text-accent); }
+  .sk-stat-ico[data-tone="danger"] { background: var(--color-bg-danger-subtle); color: var(--color-text-danger); }
+  .sk-flow :global(.sk-button .sk-icon) { --sk-icon-size: 1.125rem; }
+
+  /* decorative chart, illustrative, not a component */
+  .sk-chart { display: flex; gap: 8px; align-items: flex-end; block-size: 120px; }
+  .sk-chart > i { flex: 1; border-radius: 5px 5px 0 0; background: var(--color-action-primary); opacity: 0.55; }
+  .sk-chart > i:nth-child(5) { opacity: 1; }
+</style>
+
+<script is:inline define:vars={{ STORAGE }}>
+  (function () {
+    // The ONLY themed element is `.sk-canvas`: complete ramp declarations and re-declared
+    // semantics live there, so edits never leak into the surrounding docs.
+    // State: the last edit is saved to localStorage AND written to the URL HASH (#…) so a theme is a
+    // shareable code. Load priority: URL hash > localStorage > defaults.
+    var stage = document.querySelector(".sk-canvas");
+    var data = JSON.parse(document.getElementById("sk-data").textContent);
+    var probeL = document.getElementById("sk-probe-light");
+    var probeD = document.getElementById("sk-probe-dark");
+
+    /*
+     * Storage. This script is `is:inline` and so cannot import the storage primitive — the same
+     * exception, and for the same reason, as the pre-paint script in Base.astro. What it must not do
+     * is keep its own top-level key: this used to be `localStorage["sk-playground"]`, a second entry
+     * to find, clear and forget. It is now a slot inside the one shared entry, so "reset the site" is
+     * still a single removeItem. Key and slot come in from the declarations via `define:vars`.
+     */
+    function loadStore() {
+      try {
+        var parsed = JSON.parse(localStorage.getItem(STORAGE.key) || "{}");
+        return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+      } catch (e) {
+        return {};
+      }
+    }
+    function readCode() {
+      var value = loadStore()[STORAGE.slot];
+      return typeof value === "string" ? value : "";
+    }
+    function writeCode(code) {
+      var store = loadStore();
+      if (code === null) delete store[STORAGE.slot];
+      else store[STORAGE.slot] = code;
+      try {
+        localStorage.setItem(STORAGE.key, JSON.stringify(store));
+      } catch (e) {}
+    }
+
+    // ── fixed-width share code ──
+    // One base36 char per variable, version-prefixed, always the same length:
+    //   [ver][accent][neutral][danger][success][warning][info][density][radius][icon]
+    // Each color is an index into that role's preset list; each dimension an index into its level
+    // ladder; the icon an index into the published sets. Because it is fixed and self-contained, a
+    // theme is a short code you can share on its own, it rides in the URL hash fragment.
+    // v2 includes the info role. Older one-character-shorter codes are rejected rather than shifted.
+    var CODE_VERSION = "2";
+    var DENSITY_LEVELS = ["0.5", "0.6", "0.8", "1", "1.2"];
+    var RADIUS_LEVELS = ["0", "0.5", "1", "1.5", "2"];
+    var ICON_SETS = data.iconSets; // ["lucide", "phosphor", "material"]
+    var CODE_LENGTH = 1 + data.ramps.length + 3; // ver + 6 ramps + density + radius + icon
+
+    var dimensionDefaults = { "--sk-density": "1", "--radius-multiplier": "1" };
+    var overrides = {};
+    var iconSet = "lucide";
+
+    function b36(n) { return (n > 0 ? n : 0).toString(36); }
+    function fromB36(c) { var n = parseInt(c, 36); return isNaN(n) ? 0 : n; }
+
+    function encodeCode() {
+      var s = CODE_VERSION;
+      data.ramps.forEach(function (ramp) {
+        var value = overrides[ramp.role] || ramp.def, idx = 0;
+        for (var i = 0; i < ramp.presets.length; i++) { if (ramp.presets[i].value === value) { idx = i; break; } }
+        s += b36(idx);
+      });
+      s += b36(Math.max(0, DENSITY_LEVELS.indexOf(overrides["--sk-density"] || dimensionDefaults["--sk-density"])));
+      s += b36(Math.max(0, RADIUS_LEVELS.indexOf(overrides["--radius-multiplier"] || dimensionDefaults["--radius-multiplier"])));
+      s += b36(Math.max(0, ICON_SETS.indexOf(iconSet)));
+      return s;
+    }
+
+    // Rebuilds state from a code; returns false (leaving state untouched) if it is not a current-version code of the
+    // expected length, so stale/foreign strings fall through to the next source instead of corrupting.
+    function decodeCode(str) {
+      if (!str || str.charAt(0) !== CODE_VERSION || str.length !== CODE_LENGTH) return false;
+      var next = {}, i = 1;
+      data.ramps.forEach(function (ramp) {
+        var preset = ramp.presets[fromB36(str.charAt(i++))];
+        if (preset && preset.value !== ramp.def) next[ramp.role] = preset.value;
+      });
+      var dv = DENSITY_LEVELS[fromB36(str.charAt(i++))];
+      if (dv && dv !== dimensionDefaults["--sk-density"]) next["--sk-density"] = dv;
+      var rv = RADIUS_LEVELS[fromB36(str.charAt(i++))];
+      if (rv && rv !== dimensionDefaults["--radius-multiplier"]) next["--radius-multiplier"] = rv;
+      overrides = next;
+      iconSet = ICON_SETS[fromB36(str.charAt(i++))] || "lucide";
+      return true;
+    }
+
+    function isDefaultState() { return Object.keys(overrides).length === 0 && iconSet === "lucide"; }
+
+    // ── load: URL hash (shared) first, else localStorage ──
+    (function initState() {
+      if (decodeCode((location.hash || "").replace(/^#/, ""))) return;
+      decodeCode(readCode());
+    })();
+
+    function persist() {
+      var code = encodeCode();
+      writeCode(code);
+      var url = new URL(location.href);
+      url.hash = isDefaultState() ? "" : code;
+      history.replaceState(null, "", url.toString());
+    }
+
+    function oklchComponents(rgb) {
+      var r = rgb[0] / 255, g = rgb[1] / 255, b = rgb[2] / 255;
+      var linear = function (channel) { return channel <= 0.04045 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4); };
+      r = linear(r); g = linear(g); b = linear(b);
+      var l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
+      var m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
+      var s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
+      l = Math.cbrt(l); m = Math.cbrt(m); s = Math.cbrt(s);
+      var lightness = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
+      var a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+      var chromaB = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+      var hue = Math.atan2(chromaB, a) * 180 / Math.PI;
+      return { lightness: lightness, chroma: Math.sqrt(a * a + chromaB * chromaB), hue: hue < 0 ? hue + 360 : hue };
+    }
+    function oklchValue(parts) { return "oklch(" + (parts.lightness * 100).toFixed(1) + "% " + parts.chroma.toFixed(3) + " " + parts.hue.toFixed(1) + ")"; }
+    // canvas normalises any color string (rgb/oklch/color(srgb…)) to sRGB bytes
+    var cv = document.createElement("canvas");
+    var ctx = cv.getContext("2d", { willReadFrequently: true });
+    function toRGB(s) { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = "#000"; ctx.fillStyle = s; ctx.fillRect(0, 0, 1, 1); var d = ctx.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2]]; }
+    function rgbOf(probe, e) { probe.style.color = ""; probe.style.color = e; var c = getComputedStyle(probe).color; return c ? toRGB(c) : null; }
+    function hex(r) { return "#" + r.slice(0, 3).map(function (x) { var h = Math.round(x).toString(16); return h.length < 2 ? "0" + h : h; }).join(""); }
+    function lum(r) { var f = function (x) { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r[0]) + 0.7152 * f(r[1]) + 0.0722 * f(r[2]); }
+    function ratio(a, b) { if (!a || !b) return 0; var la = lum(a), lb = lum(b), hi = Math.max(la, lb), lo = Math.min(la, lb); return (hi + 0.05) / (lo + 0.05); }
+
+    function eachRampValue(role, color, visit) {
+      var stop;
+      if (role === "neutral") {
+        visit("--ramp-neutral-0", "oklch(100% 0 0)");
+        for (stop in data.recipe.neutral) {
+          var neutral = data.recipe.neutral[stop];
+          visit(
+            "--ramp-neutral-" + stop,
+            "color-mix(in oklab, color-mix(in oklab, black " + neutral[0] +
+              "%, white) " + (100 - neutral[1]) + "%, " + color + ")",
+          );
+        }
+        visit("--ramp-neutral-1000", "oklch(0% 0 0)");
+        return;
+      }
+      for (stop in data.recipe.chromaticLight) {
+        visit(
+          "--ramp-" + role + "-" + stop,
+          "color-mix(in oklab, " + color + " " +
+            (100 - data.recipe.chromaticLight[stop]) + "%, white)",
+        );
+      }
+      visit("--ramp-" + role + "-600", color);
+      for (stop in data.recipe.chromaticDark) {
+        visit(
+          "--ramp-" + role + "-" + stop,
+          "color-mix(in oklab, " + color + " " +
+            (100 - data.recipe.chromaticDark[stop]) + "%, black)",
+        );
+      }
+    }
+    function applyRamp(role, color) {
+      eachRampValue(role, color, function (property, value) {
+        stage.style.setProperty(property, value);
+      });
+    }
+    function rampDefault(role) {
+      return data.ramps.find(function (item) { return item.role === role; }).def;
+    }
+    function editRamp(role, color) {
+      if (color === rampDefault(role)) delete overrides[role];
+      else overrides[role] = color;
+      applyRamp(role, color);
+      repairMessage = "";
+      persist();
+      refresh();
+    }
+    function setDimension(p, v) {
+      if (v === dimensionDefaults[p]) delete overrides[p]; else overrides[p] = v;
+      stage.style.setProperty(p, v);
+      repairMessage = "";
+      persist();
+      refresh();
+    }
+    // Icon family is preview-only: swap the icons inside .sk-canvas via the layout's scoped helper,
+    // touching neither the docs chrome nor the global icon preference.
+    function applyIcons(setId) {
+      iconSet = ICON_SETS.indexOf(setId) !== -1 ? setId : "lucide";
+      if (typeof window.__dsApplyIconSetWithin === "function") window.__dsApplyIconSetWithin(stage, iconSet);
+    }
+    function setIconSet(setId) { applyIcons(setId); repairMessage = ""; persist(); refresh(); }
+    function roleForPair(fg, bg) {
+      var name = fg + " " + bg;
+      if (name.indexOf("danger") !== -1) return "danger";
+      if (name.indexOf("success") !== -1) return "success";
+      if (name.indexOf("warning") !== -1) return "warning";
+      if (name.indexOf("info") !== -1) return "info";
+      if (name.indexOf("accent") !== -1 || name.indexOf("action-primary") !== -1 || name.indexOf("focus") !== -1) return "accent";
+      return "neutral";
+    }
+    var auditFailures = [];
+    var repairMessage = "";
+
+    // ── audit ──
+    function buildAudit() {
+      var head = '<div class="sk-audit-row sk-audit-head"><span></span><span>clear</span><span>dark</span></div>';
+      document.getElementById("sk-audit").innerHTML = head + data.pairs.map(function (p) {
+        var name = p.fg.replace("--color-", "") + " / " + p.bg.replace("--color-", "");
+        return '<div class="sk-audit-row" data-fg="' + p.fg + '" data-bg="' + p.bg + '" data-min="' + p.min + '"><code title="' + name + '">' + name + "</code><span class='sk-badge2' data-slot='light'></span><span class='sk-badge2' data-slot='dark'></span></div>";
+      }).join("");
+    }
+    function refreshAudit() {
+      var pass = 0, total = 0;
+      auditFailures = [];
+      document.querySelectorAll("#sk-audit .sk-audit-row[data-fg]").forEach(function (row) {
+        var fg = row.getAttribute("data-fg"), bg = row.getAttribute("data-bg"), min = +row.getAttribute("data-min");
+        [["light", probeL], ["dark", probeD]].forEach(function (pr) {
+          var r = ratio(rgbOf(pr[1], "var(" + fg + ")"), rgbOf(pr[1], "var(" + bg + ")"));
+          var el = row.querySelector("[data-slot=" + pr[0] + "]");
+          var ok = r >= min;
+          el.textContent = r ? r.toFixed(1) : "-";
+          el.className = "sk-badge2 " + (ok ? "ok" : "bad");
+          el.title = pr[0] + " · min " + min + ":1";
+          if (!ok) auditFailures.push({ fg: fg, bg: bg, min: min, role: roleForPair(fg, bg) });
+          total++; if (ok) pass++;
+        });
+      });
+      var tally = document.getElementById("sk-tally");
+      tally.textContent = pass + "/" + total;
+      tally.className = "sk-tally " + (pass === total ? "ok" : "bad");
+      var fix = document.getElementById("sk-contrast-fix");
+      fix.disabled = auditFailures.length === 0;
+      document.getElementById("sk-fix-note").textContent = repairMessage || (auditFailures.length ? auditFailures.length + " ratio(s) need adjustment. The correction maintains hue and chroma and moves a maximum of 12 brightness points." : "All pairs are WCAG AA compliant in light and dark.");
+    }
+    function scoreRamp(role) {
+      var deficit = 0, failures = 0;
+      data.pairs.forEach(function (pair) {
+        if (roleForPair(pair.fg, pair.bg) !== role) return;
+        [["light", probeL], ["dark", probeD]].forEach(function (mode) {
+          var difference = pair.min - ratio(rgbOf(mode[1], "var(" + pair.fg + ")"), rgbOf(mode[1], "var(" + pair.bg + ")"));
+          if (difference > 0) { deficit += difference * difference; failures++; }
+        });
+      });
+      return { deficit: deficit, failures: failures };
+    }
+    function repairRamp(role) {
+      var original = overrides[role] || rampDefault(role);
+      var rgb = rgbOf(probeL, original);
+      if (!rgb) return false;
+      var base = oklchComponents(rgb);
+      var best = { value: null, score: scoreRamp(role).deficit };
+      for (var step = 1; step <= 12; step++) {
+        [-1, 1].forEach(function (direction) {
+          var lightness = Math.max(0, Math.min(1, base.lightness + direction * step / 100));
+          var candidate = oklchValue({ lightness: lightness, chroma: base.chroma, hue: base.hue });
+          applyRamp(role, candidate);
+          var score = scoreRamp(role).deficit;
+          if (score < best.score) best = { value: candidate, score: score };
+        });
+      }
+      if (!best.value) {
+        applyRamp(role, original);
+        return false;
+      }
+      applyRamp(role, best.value);
+      overrides[role] = best.value;
+      return true;
+    }
+    function repairContrast() {
+      var roles = auditFailures.map(function (failure) { return failure.role; }).filter(function (role, index, list) { return list.indexOf(role) === index; });
+      var repaired = roles.filter(repairRamp);
+      repairMessage = repaired.length ? "Ajustamos " + repaired.join(", ") + " without changing its hue or chroma. Review the ratios before sharing." :"We did not find an improvement within 12 brightness points; choose another color for the ramp.";
+      repaired.forEach(function (role) { remountControl(role, overrides[role]); });
+      persist();
+      refresh();
+    }
+
+    // Flyout enhancers own the displayed value; external changes remount with a new default.
+    function remountControl(prop, value) {
+      if (typeof window.__remountControl === "function") window.__remountControl(prop, value);
+    }
+
+    function refresh() {
+      document.querySelectorAll("[data-row]").forEach(function (row) {
+        row.classList.toggle("is-overridden", !!overrides[row.getAttribute("data-row")]);
+      });
+      // The footer shows the live code: it IS the state, so it re-reads on every edit.
+      document.getElementById("sk-preset-code").textContent = encodeCode();
+      refreshAudit();
+    }
+
+    // Color / dimension pickers are Flyout instances (data-sk-flyout). Each emits sk-value-change;
+    // choosing the default color keeps the complete default ramp but clears the stored override.
+    var rampsContainer = document.querySelector(".sk-ramps");
+    if (rampsContainer) {
+      rampsContainer.addEventListener("sk-value-change", function (e) {
+        var root = e.target.closest("[data-sk-flyout][data-prop]");
+        if (!root) return;
+        var role = root.getAttribute("data-prop");
+        var value = (e.detail && e.detail.value && e.detail.value[0]) || rampDefault(role);
+        editRamp(role, value);
+      });
+    }
+    var dimensionsContainer = document.querySelector(".sk-dimensions");
+    if (dimensionsContainer) {
+      dimensionsContainer.addEventListener("sk-value-change", function (e) {
+        var root = e.target.closest("[data-sk-flyout][data-prop]");
+        if (!root) return;
+        var prop = root.getAttribute("data-prop");
+        var value = (e.detail && e.detail.value && e.detail.value[0]);
+        if (prop === "icon-set") { setIconSet(value || "lucide"); return; }
+        setDimension(prop, value || dimensionDefaults[prop]);
+      });
+    }
+    document.getElementById("sk-reset-all").addEventListener("click", function () {
+      overrides = {};
+      repairMessage = "";
+      data.ramps.forEach(function (ramp) {
+        applyRamp(ramp.role, ramp.def);
+        remountControl(ramp.role, ramp.def);
+      });
+      Object.keys(dimensionDefaults).forEach(function (p) {
+        stage.style.setProperty(p, dimensionDefaults[p]);
+        remountControl(p, dimensionDefaults[p]);
+      });
+      applyIcons("lucide");
+      remountControl("icon-set", "lucide");
+      writeCode(null);
+      var url = new URL(location.href);
+      url.hash = "";
+      history.replaceState(null, "", url.toString());
+      refresh();
+    });
+
+    function openDialog(id) {
+      var dialog = document.getElementById(id);
+      if (!dialog.open) dialog.showModal();
+    }
+    document.getElementById("sk-contrast-open").addEventListener("click", function () { openDialog("sk-contrast-dialog"); });
+    document.getElementById("sk-contrast-fix").addEventListener("click", repairContrast);
+
+    // The preset IS the code: the URL already carries it in its hash (kept in sync on every edit), so
+    // copying the link copies a self-contained theme. The glyph swaps to a check for a beat, and the
+    // live region says it out loud for anyone who cannot see the swap.
+    var presetBtn = document.getElementById("sk-preset");
+    var copyLive = document.getElementById("sk-copy-live");
+    var copiedTimer;
+    presetBtn.addEventListener("click", function () {
+      persist(); // ensure the hash reflects the latest state even if nothing was edited yet
+      var link = location.href;
+      var done = function () {
+        presetBtn.classList.add("is-copied");
+        copyLive.textContent = "Link of the copied preset";
+        clearTimeout(copiedTimer);
+        copiedTimer = setTimeout(function () {
+          presetBtn.classList.remove("is-copied");
+          copyLive.textContent = "";
+        }, 1600);
+      };
+      if (navigator.clipboard) navigator.clipboard.writeText(link).then(done, done);
+      else done();
+    });
+
+    // Stage-only defaults keep this workbench independent from the docs' global color and dimensions.
+    data.ramps.forEach(function (ramp) {
+      applyRamp(ramp.role, overrides[ramp.role] || ramp.def);
+    });
+    Object.keys(dimensionDefaults).forEach(function (p) {
+      stage.style.setProperty(p, overrides[p] || dimensionDefaults[p]);
+    });
+    buildAudit();
+    // Deferred module scripts do not have a guaranteed relationship with the first animation frame.
+    // Restore controls when the bridge announces readiness; rAF covers an already-loaded bridge.
+    var didRestoreControls = false;
+    function restoreControlState() {
+      if (didRestoreControls || typeof window.__remountControl !== "function") return;
+      didRestoreControls = true;
+      refresh();
+      data.ramps.forEach(function (ramp) {
+        if (overrides[ramp.role]) remountControl(ramp.role, overrides[ramp.role]);
+      });
+      Object.keys(dimensionDefaults).forEach(function (p) {
+        if (overrides[p]) remountControl(p, overrides[p]);
+      });
+      applyIcons(iconSet);
+      if (iconSet !== "lucide") remountControl("icon-set", iconSet);
+    }
+    window.addEventListener("sk-playground-controls-ready", restoreControlState, { once: true });
+    requestAnimationFrame(restoreControlState);
+  })();
+</script>
+
+<script>
+  // Bridge so the inline playground can re-point a Flyout at a new value (reset / repair / share restore).
+  import { mountFlyout } from "@skryensya/vanilla/flyout";
+  import { destroyMount } from "@skryensya/vanilla/runtime";
+
+  // The consumer is an `is:inline` script, which has no import graph to share a type through, so the
+  // bridge is declared on Window: that IS the interface between the two scripts.
+  declare global {
+    interface Window {
+      __remountControl?: (prop: string, value: string | null) => void;
+    }
+  }
+
+  window.__remountControl = function (prop: string, value: string | null) {
+    const root = document.querySelector<HTMLElement>('[data-sk-flyout][data-prop="' + prop + '"]');
+    if (!root) return;
+    destroyMount(root);
+    if (value) root.setAttribute("data-value", value);
+    else root.removeAttribute("data-value");
+    mountFlyout(root);
+  };
+  window.dispatchEvent(new Event("sk-playground-controls-ready"));
+</script>

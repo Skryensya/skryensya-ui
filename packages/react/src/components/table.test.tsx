@@ -29,16 +29,16 @@ describe("Table React contracts", () => {
       </TableScroll>,
     );
 
-    expect(ui.getByRole("table", { name: "Available plans" }).className).toBe("ds-table plans");
-    expect(ui.container.querySelector("div")?.className).toBe("ds-table-scroll overflow");
+    expect(ui.getByRole("table", { name: "Available plans" }).className).toBe("sk-table plans");
+    expect(ui.container.querySelector("div")?.className).toBe("sk-table-scroll overflow");
     expect(ui.container.querySelector("div")?.getAttribute("aria-label")).toBe("Available plans");
-    expect(ui.container.querySelector("caption")?.className).toBe("ds-table__caption");
-    expect(ui.container.querySelector("thead")?.className).toBe("ds-table__head");
-    expect(ui.container.querySelector("tbody")?.className).toBe("ds-table__body");
-    expect(ui.container.querySelector("tfoot")?.className).toBe("ds-table__foot");
-    expect(ui.container.querySelectorAll("tr.ds-table__row")).toHaveLength(3);
-    expect(ui.container.querySelectorAll("th.ds-table__header")).toHaveLength(3);
-    expect(ui.container.querySelectorAll("td.ds-table__cell")).toHaveLength(2);
+    expect(ui.container.querySelector("caption")?.className).toBe("sk-table__caption");
+    expect(ui.container.querySelector("thead")?.className).toBe("sk-table__head");
+    expect(ui.container.querySelector("tbody")?.className).toBe("sk-table__body");
+    expect(ui.container.querySelector("tfoot")?.className).toBe("sk-table__foot");
+    expect(ui.container.querySelectorAll("tr.sk-table__row")).toHaveLength(3);
+    expect(ui.container.querySelectorAll("th.sk-table__header")).toHaveLength(3);
+    expect(ui.container.querySelectorAll("td.sk-table__cell")).toHaveLength(2);
   });
 
   it("defaults headers to columns while preserving explicit row scope", () => {

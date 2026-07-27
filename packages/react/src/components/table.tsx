@@ -12,7 +12,10 @@ type WithChildren<T> = T & { children: ReactNode };
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
-export type TableScrollProps = WithChildren<HTMLAttributes<HTMLDivElement>>;
+export type TableScrollProps = WithChildren<HTMLAttributes<HTMLDivElement>> & {
+  stickyColumn?: boolean;
+  stickyHeader?: boolean;
+};
 export type TableProps = WithChildren<TableHTMLAttributes<HTMLTableElement>>;
 export type TableCaptionProps = WithChildren<HTMLAttributes<HTMLTableCaptionElement>>;
 export type TableHeadProps = WithChildren<HTMLAttributes<HTMLTableSectionElement>>;
@@ -22,12 +25,27 @@ export type TableRowProps = WithChildren<HTMLAttributes<HTMLTableRowElement>>;
 export type TableHeaderProps = WithChildren<ThHTMLAttributes<HTMLTableCellElement>>;
 export type TableCellProps = WithChildren<TdHTMLAttributes<HTMLTableCellElement>>;
 
-export const TableScroll = forwardRef<HTMLDivElement, TableScrollProps>(function TableScroll(
-  { children, className, ...props },
+export const TableScroll = forwardRef<
+  HTMLDivElement,
+  TableScrollProps
+>(function TableScroll(
+  {
+    children,
+    className,
+    stickyColumn = false,
+    stickyHeader = false,
+    ...props
+  },
   ref,
 ) {
   return (
-    <div {...props} ref={ref} className={cx(tableParts.scroll, className)}>
+    <div
+      data-sticky-column={stickyColumn ? "" : undefined}
+      data-sticky-header={stickyHeader ? "" : undefined}
+      {...props}
+      ref={ref}
+      className={cx(tableParts.scroll, className)}
+    >
       {children}
     </div>
   );

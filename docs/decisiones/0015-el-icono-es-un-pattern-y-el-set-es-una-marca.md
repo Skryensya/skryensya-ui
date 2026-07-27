@@ -6,7 +6,7 @@ summary: >-
   La propuesta de iconos traía tres piezas grandes: custom elements compilados desde Svelte, un
   contrato de provider con `hasIcon`/`getIcon` en runtime, y un generador de manifiesto con
   allowlist. Las tres caen por decisiones que ya existen, sin que haga falta criterio nuevo. Lo que
-  queda es chico: `.ds-icon` es un pattern (ADR-8), porque la estructura `<svg>` la comparte cada
+  queda es chico: `.sk-icon` es un pattern (ADR-8), porque la estructura `<svg>` la comparte cada
   componente que muestra un icono; core nombra los roles y nunca a un proveedor (ADR-2), así que un
   set de iconos se enlaza igual que se enlaza una marca, y el sistema trae uno por defecto, como
   trae `brands/default.scss`; y no hay codegen, porque el allowlist reimplementa el tree-shaking del
@@ -21,9 +21,9 @@ tipográfico: no escala con nada, no hereda `currentColor` de forma predecible y
 fuente resuelva el navegador. El pattern de icono lo reemplaza por roles del set:
 
 ```html
-<span class="ds-tile__chevron" data-part="chevron" aria-hidden="true">
-  <span data-state="closed"><svg class="ds-icon" data-icon="chevron-down"></svg></span>
-  <span data-state="open"><svg class="ds-icon" data-icon="chevron-up"></svg></span>
+<span class="sk-tile__chevron" data-part="chevron" aria-hidden="true">
+  <span data-state="closed"><svg class="sk-icon" data-icon="chevron-down"></svg></span>
+  <span data-state="open"><svg class="sk-icon" data-icon="chevron-up"></svg></span>
 </span>
 ```
 
@@ -39,12 +39,12 @@ Para el icono la respuesta no admite matiz. Este envoltorio es idéntico en el c
 indicador del select, en el toggle del sidebar y en el tono del badge:
 
 ```html
-<svg class="ds-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<svg class="sk-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
 ```
 
 Sí → es un **pattern**. Envía styling hooks *y* estructura, exactamente por la razón que enuncia
 ADR-8: la estructura compartida es todo el punto, y duplicarla por componente es lo que el pattern
-existe para prevenir. `.ds-icon` es a los iconos lo que `ds-interactive` es a la interacción, una
+existe para prevenir. `.sk-icon` es a los iconos lo que `sk-interactive` es a la interacción, una
 clase a la que cualquier elemento opta.
 
 No es un componente. Un componente envía solo hooks porque el markup de cada consumidor difiere; aquí
@@ -53,7 +53,7 @@ el markup **no** difiere. Ese es el corte que ADR-8 pide hacer, cayendo del otro
 Y viaja en base, como el state layer. Un icono no es un extra al que un componente opta: apenas algo
 muestra un chevron, un close o un glifo de estado necesita esta misma caja, y un componente que
 dimensiona su propio icono está reinventándola, que es el mismo argumento por el que el state layer
-no es opt-in. Las reglas son inertes hasta que un elemento lleva `ds-icon`, así que una página sin
+no es opt-in. Las reglas son inertes hasta que un elemento lleva `sk-icon`, así que una página sin
 iconos no paga nada.
 
 **Lo opt-in es salirse del set**, no tener iconos.
@@ -174,19 +174,19 @@ existe y antes no.
 
 ## Vanilla no envía iconos
 
-La propuesta compila componentes de Svelte a custom elements: `<ds-icon name="search">`. Cae por dos
+La propuesta compila componentes de Svelte a custom elements: `<sk-icon name="search">`. Cae por dos
 caminos independientes.
 
 **Uno.** [ADR-14](/decisiones/0014-core-vanilla-y-react) y ADR-8 definen la capa vanilla: los
-enhancers **no renderizan markup y nunca escriben una clase**. `<ds-icon>` renderiza el `<svg>` entero
-y escribe `class="ds-icon"`. Es la definición exacta de lo que la capa vanilla no es. `mountButton`
+enhancers **no renderizan markup y nunca escriben una clase**. `<sk-icon>` renderiza el `<svg>` entero
+y escribe `class="sk-icon"`. Es la definición exacta de lo que la capa vanilla no es. `mountButton`
 ni siquiera crea un botón: parchea `aria-disabled` sobre uno que el consumidor escribió, y *lanza* si
 la clase no está.
 
 **Dos.** El test de borrado. Bórrese Svelte y el registro de custom elements. El consumidor escribe:
 
 ```html
-<svg class="ds-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">…</svg>
+<svg class="sk-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">…</svg>
 ```
 
 No reaparece complejidad. Es markup. La capa no hacía nada, salvo traer un lenguaje de autoría nuevo
@@ -194,8 +194,8 @@ y un paso de compilación para el único componente del sistema que no tiene est
 este repo son Zag, y un icono no tiene máquina.
 
 Hay un tercer costo que conviene decir aunque los dos anteriores ya alcanzan: los custom elements
-traen shadow DOM, y el shadow DOM corta la cascada. Todo el modelo de tier 3, `.hero .ds-button {
---ds-button-bg: … }`, sin pelea de especificidad, que es la razón de ser de los styling hooks, vive
+traen shadow DOM, y el shadow DOM corta la cascada. Todo el modelo de tier 3, `.hero .sk-button {
+--sk-button-bg: … }`, sin pelea de especificidad, que es la razón de ser de los styling hooks, vive
 de que el CSS del consumidor alcance al elemento. Un shadow root lo impide.
 
 Entonces **la capa vanilla no envía nada para iconos**, y no es una omisión: es la regla cayendo. La
@@ -283,7 +283,7 @@ para quien dibuja, y sacarlo rompe a todos. Ante duda, no entra.
 Un detalle chico con una razón que no es chica. La propuesta escribe:
 
 ```css
-.ds-icon { fill: currentColor; }
+.sk-icon { fill: currentColor; }
 ```
 
 Un set de contorno (Lucide, Tabler) dibuja con `fill="none" stroke="currentColor"` en el `<svg>` raíz.
@@ -291,13 +291,13 @@ Y una declaración CSS **le gana a un atributo de presentación**. Esa regla vol
 set de contorno, en silencio.
 
 Es el mismo defecto que la propuesta tiene en el tamaño: pone `width="32"` cuando `size` es un número,
-mientras el CSS declara `inline-size: var(--ds-icon-size, 1.25rem)`, y el CSS gana, así que la
+mientras el CSS declara `inline-size: var(--sk-icon-size, 1.25rem)`, y el CSS gana, así que la
 escotilla numérica no funciona. Aquí se cierra borrándola: `size` es `sm | md | lg` y nada más. Un
 tamaño arbitrario se pide donde se piden todos los valores arbitrarios del sistema, redeclarando el
 hook:
 
 ```css
-.hero .ds-icon { --ds-icon-size: 2rem; }
+.hero .sk-icon { --sk-icon-size: 2rem; }
 ```
 
 Entonces **`fill` y `stroke` son del set**, que es donde vive la intención de la geometría, y el CSS
@@ -316,7 +316,7 @@ nada que romper.
 
 ## El tamaño es invariante a densidad
 
-`--size-icon-*` referencia una escala tier 1 propia y no se multiplica por `--ds-density`.
+`--size-icon-*` referencia una escala tier 1 propia y no se multiplica por `--sk-density`.
 [ADR-4](/decisiones/0004-la-densidad-es-un-multiplicador-con-el-piso-adentro) y el glosario acotan la
 densidad a espaciado: tipografía, radios, anillos de foco y áreas de toque quedan afuera. Un icono es
 contenido que se para al lado de un glifo, si el texto no encoge, el icono tampoco. La densidad
@@ -386,7 +386,7 @@ enhancer no renderiza markup ni escribe una clase, y un icono no tiene comportam
 que dejaba en la mano del consumidor de vanilla era escribir el `<svg>` entero:
 
 ```html
-<svg class="ds-icon" data-icon="arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+<svg class="sk-icon" data-icon="arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor"
      stroke-width="2" aria-hidden="true" focusable="false"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
 ```
 
@@ -398,10 +398,10 @@ romper, y el mismo que en React resuelve `<Icon name="arrow-up" />` en vez de un
 asimetría de ADR-14 dejaba a vanilla sin la contraparte.
 
 Se revisó. `@skryensya/vanilla/icon` ahora envía **`mountIcons(root, set)`**: el autor escribe un
-placeholder con el nombre del rol y el enlazador lo reemplaza por el mismo `<svg class="ds-icon">`.
+placeholder con el nombre del rol y el enlazador lo reemplaza por el mismo `<svg class="sk-icon">`.
 
 ```html
-<span data-ds-icon="arrow-up"></span>
+<span data-sk-icon="arrow-up"></span>
 ```
 ```ts
 import { mountIcons } from "@skryensya/vanilla/icon";
@@ -411,7 +411,7 @@ mountIcons(document, lucideIcons);
 
 **Por qué no contradice el corazón de la decisión.** De los tres argumentos que sostenían "vanilla no
 envía nada", el más fuerte, los custom elements traen shadow DOM y el shadow DOM corta la cascada, se
-conserva entero: `mountIcons` produce `<svg>` en light DOM, así que `.hero .ds-icon { --ds-icon-size:
+conserva entero: `mountIcons` produce `<svg>` en light DOM, así que `.hero .sk-icon { --sk-icon-size:
 … }` sigue alcanzando. Y no es un renderer de UI: no compone estructura que difiera por consumidor, el
 icono es *el* pattern cuya caja es idéntica en todos lados (ADR-8), así que no hay markup autorado que
 "preservar", sino un **enlazador de marca**, que inyecta la geometría del set igual que el `<Icon>`
@@ -419,7 +419,7 @@ de React inyecta `icon.body`. Un set de iconos es una marca; ocupar su rol en un
 enlazarla, no renderizar.
 
 **Lo que sí se acepta como excepción acotada:** para el icono, y sólo para él, un enhancer escribe la
-clase `ds-icon` y el `body` del set. Es lo que cuesta la paridad con React, y cae del mismo lado que
+clase `sk-icon` y el `body` del set. Es lo que cuesta la paridad con React, y cae del mismo lado que
 `<Icon>`: geometría confiable por contrato de `IconData`, nunca de un usuario ni de una API.
 
 **Lo que no cambió:**
@@ -431,5 +431,5 @@ clase `ds-icon` y el `body` del set. Es lo que cuesta la paridad con React, y ca
 - **`initComponents()` no toca iconos.** Enlazar un set es una decisión de marca, no un enhancer de
   comportamiento; vive en su propia llamada, como `applyIconSet` en el sitio.
 - **La geometría del proyecto se sigue escribiendo a mano.** `mountIcons` sólo cubre roles del
-  vocabulario estable; un `data-ds-icon` que el set no tiene se deja intacto y se avisa. Un icono de
+  vocabulario estable; un `data-sk-icon` que el set no tiene se deja intacto y se avisa. Un icono de
   producto se escribe como `<svg>` propio, que es el único opt-in que sigue habiendo.

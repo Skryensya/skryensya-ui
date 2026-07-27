@@ -54,6 +54,14 @@ const MAP = {
   user: "person",
   visibility: "visibility",
   "visibility-off": "visibility_off",
+  "mode-system": "monitor",
+  "mode-light": "light_mode",
+  "mode-dark": "dark_mode",
+  "screen-desktop": "monitor",
+  /* `tablet` / `mobile`, no `tablet_mac` / `phone_iphone`: Material ofrece los dos, y el que nombra
+   * un vendor es el que envejece mal cuando el set cambie de estilo. */
+  "screen-tablet": "tablet",
+  "screen-mobile": "mobile",
 };
 
 /* Los assets de Material NO declaran fill: sus `<path>` heredarían el default del navegador, que es

@@ -4,6 +4,7 @@ import {
   type BoxSurface,
   type GridColumns,
   type InlineAlign,
+  type InlineJustify,
   type LayoutAlign,
   type Space,
   type WrapperSize,
@@ -49,7 +50,7 @@ export function Stack<Element extends ElementType = "div">({ as, align, classNam
 
 export type InlineProps<Element extends ElementType = "div"> = PolymorphicProps<
   Element,
-  LayoutChildren & { align?: InlineAlign; gap?: Space; wrap?: boolean }
+  LayoutChildren & { align?: InlineAlign; gap?: Space; justify?: InlineJustify; wrap?: boolean }
 >;
 
 export function Inline<Element extends ElementType = "div">({
@@ -57,11 +58,12 @@ export function Inline<Element extends ElementType = "div">({
   align = "center",
   className,
   gap = "md",
+  justify = "start",
   wrap = true,
   ...props
 }: InlineProps<Element>) {
   const Component = as ?? "div";
-  return <Component {...props} className={classes(layoutParts.inline, className)} data-align={align} data-gap={gap} data-wrap={wrap} />;
+  return <Component {...props} className={classes(layoutParts.inline, className)} data-align={align} data-gap={gap} data-justify={justify} data-wrap={wrap} />;
 }
 
 export type GridProps<Element extends ElementType = "div"> = PolymorphicProps<
@@ -82,7 +84,7 @@ export type WrapperProps<Element extends ElementType = "div"> = PolymorphicProps
 export function Wrapper<Element extends ElementType = "div">({
   as,
   className,
-  size = "content",
+  size = "md",
   ...props
 }: WrapperProps<Element>) {
   const Component = as ?? "div";

@@ -1,42 +1,45 @@
 ---
+import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/accordion.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
 
 const disclosureIcon = `<span
-        class="ds-tile__chevron"
+        class="sk-tile__chevron"
         data-part="chevron"
         aria-hidden="true"
       >
         <span data-state="closed">
-          <span data-ds-icon="chevron-down"></span>
+          <span data-sk-icon="chevron-down"></span>
         </span>
         <span data-state="open">
-          <span data-ds-icon="chevron-up"></span>
+          <span data-sk-icon="chevron-up"></span>
         </span>
       </span>`;
 
 const single = `<div
-  class="ds-accordion"
-  data-ds-accordion
+  class="sk-accordion"
+  data-sk-accordion
   data-type="single"
   data-default-value="environment"
 >
   <section
-    class="ds-tile ds-tile--expandable ds-interactive"
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
     data-part="item"
     data-value="environment"
   >
     <button
       type="button"
-      class="ds-tile__trigger"
+      class="sk-tile__trigger"
       data-part="trigger"
       aria-expanded="true"
       aria-controls="environment-content"
     >
-      <span class="ds-tile__content">
-        <span class="ds-tile__title">Entorno</span>
-        <span class="ds-tile__description">
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Entorno</span>
+        <span class="sk-tile__description">
           Producción · Fráncfort
         </span>
       </span>
@@ -44,17 +47,17 @@ const single = `<div
     </button>
     <div
       id="environment-content"
-      class="ds-tile__expandable-content"
+      class="sk-tile__expandable-content"
       data-part="content"
     >
-      <div class="ds-stack" data-gap="sm">
-        <p class="ds-tile__description">
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
           Node 22 corre en tres réplicas detrás del balanceador de
           Fráncfort. El tráfico se reparte por round-robin y una
           réplica se recicla sola si falla dos health checks
           seguidos.
         </p>
-        <p class="ds-tile__description">
+        <p class="sk-tile__description">
           Los secretos se inyectan en el arranque desde el vault
           regional, así que ningún valor sensible queda en la
           imagen ni en el log de build.
@@ -65,26 +68,26 @@ const single = `<div
 </div>`;
 
 const exclusive = `<div
-  class="ds-accordion"
-  data-ds-accordion
+  class="sk-accordion"
+  data-sk-accordion
   data-type="single"
   data-default-value="runtime"
 >
   <section
-    class="ds-tile ds-tile--expandable ds-interactive"
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
     data-part="item"
     data-value="runtime"
   >
     <button
       type="button"
-      class="ds-tile__trigger"
+      class="sk-tile__trigger"
       data-part="trigger"
       aria-expanded="true"
       aria-controls="runtime-content"
     >
-      <span class="ds-tile__content">
-        <span class="ds-tile__title">Runtime</span>
-        <span class="ds-tile__description">
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Runtime</span>
+        <span class="sk-tile__description">
           Versión y región
         </span>
       </span>
@@ -92,17 +95,17 @@ const exclusive = `<div
     </button>
     <div
       id="runtime-content"
-      class="ds-tile__expandable-content"
+      class="sk-tile__expandable-content"
       data-part="content"
     >
-      <div class="ds-stack" data-gap="sm">
-        <p class="ds-tile__description">
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
           Node 22 sobre el pool compartido de Fráncfort. Cada
           despliegue reserva dos vCPU y 512 MB, con autoscaling
           hasta seis réplicas cuando la cola de peticiones
           supera el umbral.
         </p>
-        <p class="ds-tile__description">
+        <p class="sk-tile__description">
           El healthcheck pega a <code>/status</code> cada diez
           segundos; tres fallos seguidos sacan la réplica del
           balanceador sin cortar el tráfico en vuelo.
@@ -111,20 +114,20 @@ const exclusive = `<div
     </div>
   </section>
   <section
-    class="ds-tile ds-tile--expandable ds-interactive"
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
     data-part="item"
     data-value="rollout"
   >
     <button
       type="button"
-      class="ds-tile__trigger"
+      class="sk-tile__trigger"
       data-part="trigger"
       aria-expanded="false"
       aria-controls="rollout-content"
     >
-      <span class="ds-tile__content">
-        <span class="ds-tile__title">Rollout</span>
-        <span class="ds-tile__description">
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Rollout</span>
+        <span class="sk-tile__description">
           Canary por porcentaje
         </span>
       </span>
@@ -132,17 +135,17 @@ const exclusive = `<div
     </button>
     <div
       id="rollout-content"
-      class="ds-tile__expandable-content"
+      class="sk-tile__expandable-content"
       data-part="content"
       hidden
     >
-      <div class="ds-stack" data-gap="sm">
-        <p class="ds-tile__description">
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
           El canary sube en tres tramos, 10%, 50% y 100%, y
           espera a que las métricas de error y latencia se
           mantengan estables antes de avanzar a cada tramo.
         </p>
-        <p class="ds-tile__description">
+        <p class="sk-tile__description">
           Si un tramo degrada, el rollout se detiene solo y
           avisa al canal de guardia: nada avanza sin luz verde.
         </p>
@@ -150,20 +153,20 @@ const exclusive = `<div
     </div>
   </section>
   <section
-    class="ds-tile ds-tile--expandable ds-interactive"
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
     data-part="item"
     data-value="rollback"
   >
     <button
       type="button"
-      class="ds-tile__trigger"
+      class="sk-tile__trigger"
       data-part="trigger"
       aria-expanded="false"
       aria-controls="rollback-content"
     >
-      <span class="ds-tile__content">
-        <span class="ds-tile__title">Rollback</span>
-        <span class="ds-tile__description">
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Rollback</span>
+        <span class="sk-tile__description">
           Versión estable anterior
         </span>
       </span>
@@ -171,11 +174,11 @@ const exclusive = `<div
     </button>
     <div
       id="rollback-content"
-      class="ds-tile__expandable-content"
+      class="sk-tile__expandable-content"
       data-part="content"
       hidden
     >
-      <p class="ds-tile__description">
+      <p class="sk-tile__description">
         Restaura v2.18.4 si el canary falla las comprobaciones.
       </p>
     </div>
@@ -185,26 +188,26 @@ const exclusive = `<div
 /* Same group as exclusive, but multiple can keep several items open
    and needs unique content ids so both demos can live on one page. */
 const multiple = `<div
-  class="ds-accordion"
-  data-ds-accordion
+  class="sk-accordion"
+  data-sk-accordion
   data-type="multiple"
   data-default-value="runtime,rollout"
 >
   <section
-    class="ds-tile ds-tile--expandable ds-interactive"
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
     data-part="item"
     data-value="runtime"
   >
     <button
       type="button"
-      class="ds-tile__trigger"
+      class="sk-tile__trigger"
       data-part="trigger"
       aria-expanded="true"
       aria-controls="multiple-runtime-content"
     >
-      <span class="ds-tile__content">
-        <span class="ds-tile__title">Runtime</span>
-        <span class="ds-tile__description">
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Runtime</span>
+        <span class="sk-tile__description">
           Versión y región
         </span>
       </span>
@@ -212,17 +215,17 @@ const multiple = `<div
     </button>
     <div
       id="multiple-runtime-content"
-      class="ds-tile__expandable-content"
+      class="sk-tile__expandable-content"
       data-part="content"
     >
-      <div class="ds-stack" data-gap="sm">
-        <p class="ds-tile__description">
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
           Node 22 sobre el pool compartido de Fráncfort. Cada
           despliegue reserva dos vCPU y 512 MB, con autoscaling
           hasta seis réplicas cuando la cola de peticiones
           supera el umbral.
         </p>
-        <p class="ds-tile__description">
+        <p class="sk-tile__description">
           El healthcheck pega a <code>/status</code> cada diez
           segundos; tres fallos seguidos sacan la réplica del
           balanceador sin cortar el tráfico en vuelo.
@@ -231,20 +234,20 @@ const multiple = `<div
     </div>
   </section>
   <section
-    class="ds-tile ds-tile--expandable ds-interactive"
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
     data-part="item"
     data-value="rollout"
   >
     <button
       type="button"
-      class="ds-tile__trigger"
+      class="sk-tile__trigger"
       data-part="trigger"
       aria-expanded="true"
       aria-controls="multiple-rollout-content"
     >
-      <span class="ds-tile__content">
-        <span class="ds-tile__title">Rollout</span>
-        <span class="ds-tile__description">
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Rollout</span>
+        <span class="sk-tile__description">
           Canary por porcentaje
         </span>
       </span>
@@ -252,16 +255,16 @@ const multiple = `<div
     </button>
     <div
       id="multiple-rollout-content"
-      class="ds-tile__expandable-content"
+      class="sk-tile__expandable-content"
       data-part="content"
     >
-      <div class="ds-stack" data-gap="sm">
-        <p class="ds-tile__description">
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
           El canary sube en tres tramos, 10%, 50% y 100%, y
           espera a que las métricas de error y latencia se
           mantengan estables antes de avanzar a cada tramo.
         </p>
-        <p class="ds-tile__description">
+        <p class="sk-tile__description">
           Si un tramo degrada, el rollout se detiene solo y
           avisa al canal de guardia: nada avanza sin luz verde.
         </p>
@@ -269,20 +272,20 @@ const multiple = `<div
     </div>
   </section>
   <section
-    class="ds-tile ds-tile--expandable ds-interactive"
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
     data-part="item"
     data-value="rollback"
   >
     <button
       type="button"
-      class="ds-tile__trigger"
+      class="sk-tile__trigger"
       data-part="trigger"
       aria-expanded="false"
       aria-controls="multiple-rollback-content"
     >
-      <span class="ds-tile__content">
-        <span class="ds-tile__title">Rollback</span>
-        <span class="ds-tile__description">
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Rollback</span>
+        <span class="sk-tile__description">
           Versión estable anterior
         </span>
       </span>
@@ -290,11 +293,11 @@ const multiple = `<div
     </button>
     <div
       id="multiple-rollback-content"
-      class="ds-tile__expandable-content"
+      class="sk-tile__expandable-content"
       data-part="content"
       hidden
     >
-      <p class="ds-tile__description">
+      <p class="sk-tile__description">
         Restaura v2.18.4 si el canary falla las comprobaciones.
       </p>
     </div>
@@ -305,40 +308,51 @@ const vanilla = `import { initComponents } from "@skryensya/vanilla/auto";
 import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 
-// Los chevrons se autoran como placeholders <span data-ds-icon="chevron-*">;
+// Los chevrons se autoran como placeholders <span data-sk-icon="chevron-*">;
 // mountIcons los reemplaza por el <svg> del set enlazado (no lo hace
 // initComponents: el set siempre es explícito).
 mountIcons(document, lucideIcons);
 
-// El accordion se autora en el HTML: la raíz con data-ds-accordion y data-type,
+// El accordion se autora en el HTML: la raíz con data-sk-accordion y data-type,
 // cada item con data-part="item" y un data-value único. initComponents hidrata
-// todo el markup [data-ds-*] con su máquina de Zag (la misma que usa React).
-initComponents();
+// todo el markup [data-sk-*] con su máquina de Zag (la misma que usa React).
+await initComponents();
 
 // El estado se escucha por evento sobre la raíz, no por callback.
-const root = document.querySelector("[data-ds-accordion]");
-root.addEventListener("ds:accordionvaluechange", (event) => {
+const root = document.querySelector("[data-sk-accordion]");
+root.addEventListener("sk:accordionvaluechange", (event) => {
   console.log(event.detail.value);
 });`;
 
 const react = `import { Accordion } from "@skryensya/react/accordion";
+import { Icon } from "@skryensya/react/icon";
 
 <Accordion type="multiple" defaultValue={["runtime", "rollout"]}>
   <Accordion.Item value="runtime">
     <Accordion.Trigger>
-      <span className="ds-tile__content">
-        <span className="ds-tile__title">Runtime</span>
-        <span className="ds-tile__description">Versión y región</span>
+      <span className="sk-tile__content">
+        <span className="sk-tile__title">Runtime</span>
+        <span className="sk-tile__description">
+          Versión y región
+        </span>
+      </span>
+      <span className="sk-tile__chevron" aria-hidden="true">
+        <span data-state="closed">
+          <Icon name="chevron-down" />
+        </span>
+        <span data-state="open">
+          <Icon name="chevron-up" />
+        </span>
       </span>
     </Accordion.Trigger>
     <Accordion.Content>
-      <div className="ds-stack" data-gap="sm">
-        <p className="ds-tile__description">
+      <div className="sk-stack" data-gap="sm">
+        <p className="sk-tile__description">
           Node 22 sobre el pool compartido de Fráncfort. Cada
           despliegue reserva dos vCPU y 512 MB, con autoscaling
           hasta seis réplicas.
         </p>
-        <p className="ds-tile__description">
+        <p className="sk-tile__description">
           El healthcheck pega a <code>/status</code> cada diez
           segundos; tres fallos seguidos sacan la réplica del
           balanceador.
@@ -347,25 +361,105 @@ const react = `import { Accordion } from "@skryensya/react/accordion";
     </Accordion.Content>
   </Accordion.Item>
 </Accordion>`;
+
+const nativeInstall = `pnpm add @skryensya/core`;
+
+const nativeStyles = `@import "@skryensya/core/components/details.css";`;
+
+/* Same exclusive group as Accordion single, but platform <details name>. Tile anatomy
+   (content / title / description / chevron) keeps the chrome identical to Accordion. */
+const nativeDetails = `<section
+  class="sk-details-group"
+  aria-label="Configuración de despliegue"
+>
+  <details class="sk-details" name="deployment" open>
+    <summary class="sk-details__summary sk-interactive">
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Runtime</span>
+        <span class="sk-tile__description">
+          Versión y región
+        </span>
+      </span>
+      ${disclosureIcon}
+    </summary>
+    <div class="sk-details__content">
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
+          Node 22 sobre el pool compartido de Fráncfort. Cada
+          despliegue reserva dos vCPU y 512 MB, con autoscaling
+          hasta seis réplicas cuando la cola de peticiones
+          supera el umbral.
+        </p>
+        <p class="sk-tile__description">
+          El healthcheck pega a <code>/status</code> cada diez
+          segundos; tres fallos seguidos sacan la réplica del
+          balanceador sin cortar el tráfico en vuelo.
+        </p>
+      </div>
+    </div>
+  </details>
+
+  <details class="sk-details" name="deployment">
+    <summary class="sk-details__summary sk-interactive">
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Rollout</span>
+        <span class="sk-tile__description">
+          Canary por porcentaje
+        </span>
+      </span>
+      ${disclosureIcon}
+    </summary>
+    <div class="sk-details__content">
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
+          El canary sube en tres tramos, 10%, 50% y 100%, y
+          espera a que las métricas de error y latencia se
+          mantengan estables antes de avanzar a cada tramo.
+        </p>
+        <p class="sk-tile__description">
+          Si un tramo degrada, el rollout se detiene solo y
+          avisa al canal de guardia: nada avanza sin luz verde.
+        </p>
+      </div>
+    </div>
+  </details>
+
+  <details class="sk-details" name="deployment">
+    <summary class="sk-details__summary sk-interactive">
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Rollback</span>
+        <span class="sk-tile__description">
+          Versión estable anterior
+        </span>
+      </span>
+      ${disclosureIcon}
+    </summary>
+    <div class="sk-details__content">
+      <p class="sk-tile__description">
+        Restaura v2.18.4 si el canary falla las comprobaciones.
+      </p>
+    </div>
+  </details>
+</section>`;
 ---
 <Base title="Accordion" description="Una o varias divulgaciones Tile coordinadas en un solo marco.">
   <h1>Accordion</h1>
   <p class="lede">
     La raíz coordina Tiles de divulgación y les da un marco compartido. Cada item sigue siendo un
-    <code>ds-tile--expandable</code>: una sola interacción en el trigger. Elige <code>single</code> para
+    <code>sk-tile--expandable</code>: una sola interacción en el trigger. Elige <code>single</code> para
     una sección abierta o <code>multiple</code> para disclosures independientes.
   </p>
 
   <p>
-    Si el estado puede vivir en HTML y basta un grupo exclusivo nativo, usa
-    <a href="/componentes/details">Details nativo</a>. Accordion es la ruta principal cuando necesitas
-    coordinación controlada, <code>multiple</code> o eventos de cambio.
+    Si el estado puede vivir en HTML y basta un grupo exclusivo nativo, mira
+    <a href="#details-nativo">Details nativo</a> al final. Accordion es la ruta principal cuando
+    necesitas coordinación controlada, <code>multiple</code> o eventos de cambio.
   </p>
 
   <h2>Un item</h2>
   <p>
-    Para una divulgación aislada, usa Accordion con un único item: la raíz aporta el marco y el Tile
-    conserva la superficie y el state layer.
+    Para una divulgación aislada (antes “ExpandableTile”), usa Accordion con un único item: la raíz
+    aporta el marco y el Tile conserva la superficie y el state layer.
   </p>
   <Showcase html={single} label="Accordion de un item" />
 
@@ -383,18 +477,45 @@ const react = `import { Accordion } from "@skryensya/react/accordion";
 
   <h2>Vanilla</h2>
   <p>
-    El enhancer monta la raíz <code>data-ds-accordion</code> y añade <code>ds-accordion</code>. Cada hijo
+    El enhancer monta la raíz <code>data-sk-accordion</code> y añade <code>sk-accordion</code>. Cada hijo
     directo declara <code>data-part="item"</code> y un <code>data-value</code> único.
   </p>
-  <CodeBlock code={vanilla} label="tu JavaScript" />
+  <CodeBlock code={vanilla} label="JavaScript" />
 
   <h2>Contrato</h2>
   <ul>
-    <li>La raíz se autora con <code>data-ds-accordion</code> (y opcionalmente <code>class="ds-accordion"</code> en HTML estático). El enhancer escribe <code>data-part="root"</code> y la clase <code>ds-accordion</code>.</li>
-    <li><code>ds-accordion</code> une los items en un solo marco; cada item directo <code>ds-tile ds-tile--expandable</code> conserva anatomía y state layer sin borde propio.</li>
-    <li>Un item directo usa <code>ds-tile ds-tile--expandable</code>, <code>data-part="item"</code> y un <code>data-value</code> único.</li>
+    <li>La raíz se autora con <code>data-sk-accordion</code> (y opcionalmente <code>class="sk-accordion"</code> en HTML estático). El enhancer escribe <code>data-part="root"</code> y la clase <code>sk-accordion</code>.</li>
+    <li><code>sk-accordion</code> une los items en un solo marco; cada item directo <code>sk-tile sk-tile--interactive sk-tile--expandable</code> conserva anatomía y state layer sin borde propio.</li>
+    <li>Un item directo usa <code>sk-tile sk-tile--interactive sk-tile--expandable</code>, <code>data-part="item"</code> y un <code>data-value</code> único.</li>
     <li>Trigger y content conservan los parts nativos de Tile: <code>trigger</code> y <code>content</code>.</li>
     <li>Abrir un item no pinta el borde de selección: eso queda para checkbox y radio.</li>
     <li>En <code>single</code>, <code>data-collapsible="false"</code> o <code>collapsible={false}</code> deja el item elegido abierto. En <code>multiple</code> esa opción no aplica.</li>
   </ul>
+
+  <h2 id="details-nativo">Details nativo</h2>
+  <p class="lede">
+    <code>&lt;details&gt;</code> y <code>&lt;summary&gt;</code> ya son una divulgación accesible de la
+    plataforma. Comparte un atributo <code>name</code> entre siblings para que el navegador mantenga
+    un único item abierto: un accordion nativo, sin máquina ni <code>@skryensya/vanilla</code>.
+  </p>
+  <p>
+    Úsalo cuando el estado puede vivir en el documento. Elige Accordion enhanced cuando necesites
+    valor controlado, <code>multiple</code>, callbacks de cambio o la composición con eventos del
+    sistema. La anatomía Tile (título, descripción, chevron) es la misma, así el grupo se ve igual.
+  </p>
+  <Showcase html={nativeDetails} label="Details con name compartido" />
+
+  <h3>Instalar sólo Details</h3>
+  <CodeBlock code={nativeInstall} label="terminal" />
+  <CodeBlock code={nativeStyles} label="CSS" lang="css" />
+
+  <h3>Contrato nativo</h3>
+  <ul>
+    <li>El primer hijo interactivo de cada <code>&lt;details&gt;</code> es su <code>&lt;summary&gt;</code>.</li>
+    <li>El atributo <code>open</code> declara el estado inicial en HTML.</li>
+    <li>El mismo <code>name</code> entre siblings hace exclusivo el grupo; sin <code>name</code>, cada disclosure es independiente.</li>
+    <li>El navegador cambia <code>open</code>; no hay un valor controlado ni evento del sistema que escuchar.</li>
+  </ul>
+
+  <StylingHooks groups={[{ file: "components/details.css", probe: "sk-details" }]} />
 </Base>

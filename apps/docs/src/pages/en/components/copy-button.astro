@@ -1,0 +1,132 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const html = `<div class="sk-inline" data-gap="md" data-align="center">
+  <code id="install-command">pnpm add @skryensya/core</code>
+  <button
+    class="sk-button sk-interactive sk-copy-button"
+    data-sk-copy-button
+    data-sk-copy-button-target="install-command"
+    data-variant="ghost"
+    data-icon-only
+    type="button"
+    aria-label="Copy code"
+  >
+    <span
+      class="sk-copy-button__icon"
+      data-sk-copy-button-icon="idle"
+      aria-hidden="true"
+    >
+      <span data-sk-icon="copy"></span>
+    </span>
+    <span
+      class="sk-copy-button__icon"
+      data-sk-copy-button-icon="copied"
+      aria-hidden="true"
+    >
+      <span data-sk-icon="check"></span>
+    </span>
+    <span
+      class="sk-copy-button__label"
+      data-sk-copy-button-label
+      aria-live="polite"
+    >Copy</span>
+  </button>
+  <button
+    class="sk-button sk-interactive sk-copy-button"
+    data-sk-copy-button
+    data-sk-copy-button-target="install-command"
+    data-variant="ghost"
+    data-size="sm"
+    data-icon-only
+    type="button"
+    aria-label="Copy code"
+  >
+    <span
+      class="sk-copy-button__icon"
+      data-sk-copy-button-icon="idle"
+      aria-hidden="true"
+    >
+      <span data-sk-icon="copy"></span>
+    </span>
+    <span
+      class="sk-copy-button__icon"
+      data-sk-copy-button-icon="copied"
+      aria-hidden="true"
+    >
+      <span data-sk-icon="check"></span>
+    </span>
+    <span
+      class="sk-copy-button__label"
+      data-sk-copy-button-label
+      aria-live="polite"
+    >Copy</span>
+  </button>
+</div>`;
+
+const css = `@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/copy-button.css";`;
+
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+// Icons are authored as <span data-sk-icon> placeholders;
+// mountIcons replaces them with the <svg> of the linked set.
+mountIcons(document, lucideIcons);
+await initComponents();`;
+---
+
+<Base
+  title="CopyButton"
+  description="CopyButton: Copy the text of an element by id and briefly confirm the result."
+>
+  <h1>CopyButton</h1>
+  <p class="lede">
+    CopyButton copies the text of the indicated element and briefly changes the icon to confirm the
+    result. It is a Button ghost icon-only with its own anatomy: the enhancer only links the
+    clipboard and feedback; you write the markup. The size is that of the Button:
+    <strong>md</strong> (default) or <code>data-size="sm"</code> (face at 32px, hit at 44px via
+    <code>::after</code>).
+  </p>
+
+  <Showcase
+    html={html}
+    js={js}
+    label="CopyButton"
+    note="md · sm"
+  />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>
+      <code>data-sk-copy-button-target</code> is the id of the element whose text is copied.
+    </li>
+    <li>
+      Uses Clipboard API and falls back to <code>execCommand(&quot;copy&quot;)</code> when necessary.
+    </li>
+    <li>
+      The <code>copied</code> state lasts briefly and is announced as <strong>Copied</strong>
+      (or the label you authorize in <code>data-sk-copy-button-success-label</code>).
+    </li>
+    <li>
+      The icons are placeholders <code>data-sk-icon</code>; the set links it
+      <code>mountIcons</code> (ADR-15).
+    </li>
+  </ul>
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>CSS</h2>
+  <CodeBlock code={css} label="CSS" lang="css" />
+
+  <StylingHooks
+    groups={[{ file: "components/copy-button.css", probe: "sk-copy-button" }]}
+  />
+</Base>

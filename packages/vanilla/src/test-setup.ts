@@ -7,6 +7,23 @@ class ResizeObserverStub {
 
 globalThis.ResizeObserver = globalThis.ResizeObserver ?? (ResizeObserverStub as unknown as typeof ResizeObserver);
 if (globalThis.window) globalThis.window.ResizeObserver = globalThis.ResizeObserver;
+
+/* Same story for the carousel machine, which watches its slides to know which ones are in view. */
+class IntersectionObserverStub {
+  root = null;
+  rootMargin = "";
+  thresholds: number[] = [];
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+  takeRecords() {
+    return [];
+  }
+}
+
+globalThis.IntersectionObserver =
+  globalThis.IntersectionObserver ?? (IntersectionObserverStub as unknown as typeof IntersectionObserver);
+if (globalThis.window) globalThis.window.IntersectionObserver = globalThis.IntersectionObserver;
 Element.prototype.scrollTo = Element.prototype.scrollTo ?? function scrollTo() {};
 Element.prototype.scrollIntoView = Element.prototype.scrollIntoView ?? function scrollIntoView() {};
 

@@ -7,14 +7,14 @@ describe("Kbd", () => {
     const ui = render(<Kbd>⌘K</Kbd>);
     const el = ui.container.querySelector("kbd");
     expect(el).not.toBeNull();
-    expect(el?.classList.contains("ds-kbd")).toBe(true);
+    expect(el?.classList.contains("sk-kbd")).toBe(true);
     expect(el?.textContent).toBe("⌘K");
   });
 
   it("keeps a consumer className alongside the part", () => {
     const ui = render(<Kbd className="mine">Esc</Kbd>);
     const el = ui.container.querySelector("kbd")!;
-    expect(el.classList.contains("ds-kbd")).toBe(true);
+    expect(el.classList.contains("sk-kbd")).toBe(true);
     expect(el.classList.contains("mine")).toBe(true);
   });
 

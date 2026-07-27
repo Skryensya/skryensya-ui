@@ -1,0 +1,185 @@
+/*
+ * TIER 3, LOADER
+ *
+ * Indeterminate work, distinct from Progress: there is no value to report. The mark follows
+ * currentColor so it works inside controls and status surfaces without a tone matrix. Variants are
+ * motion designs on one empty root (pseudos only). Speed redeclares the duration styling hook from
+ * motion-loading intents. Reduced motion keeps every pending shape but freezes continuous motion.
+ */
+@layer components {
+  .sk-loader {
+    --sk-loader-size: var(--size-icon-md);
+    --sk-loader-stroke-width: var(--size-focus-ring);
+    --sk-loader-track-color: color-mix(in oklab, currentColor 22%, transparent);
+    --sk-loader-duration: var(--motion-loading-duration);
+    --sk-loader-easing: var(--motion-loading-easing);
+    --sk-loader-oscillation-easing: var(--motion-loading-oscillation-easing);
+
+    position: relative;
+    display: inline-block;
+    flex: 0 0 auto;
+    inline-size: var(--sk-loader-size);
+    block-size: var(--sk-loader-size);
+    vertical-align: middle;
+  }
+
+  .sk-loader[data-size="sm"] { --sk-loader-size: var(--size-icon-sm); }
+  .sk-loader[data-size="md"] { --sk-loader-size: var(--size-icon-md); }
+  .sk-loader[data-size="lg"] { --sk-loader-size: var(--size-icon-lg); }
+
+  .sk-loader[data-speed="fast"] {
+    --sk-loader-duration: var(--motion-loading-duration-fast);
+  }
+
+  .sk-loader[data-speed="normal"] {
+    --sk-loader-duration: var(--motion-loading-duration);
+  }
+
+  .sk-loader[data-speed="slow"] {
+    --sk-loader-duration: var(--motion-loading-duration-slow);
+  }
+
+  .sk-loader::before,
+  .sk-loader::after {
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .sk-loader::before {
+    content: "";
+    display: block;
+    border: var(--sk-loader-stroke-width) solid var(--sk-loader-track-color);
+    border-block-start-color: currentColor;
+    border-radius: 50%;
+    animation: sk-loader-spin var(--sk-loader-duration) var(--sk-loader-easing) infinite;
+  }
+
+  /* bars: two alternating pairs scale on the block axis; nothing rotates. */
+  .sk-loader[data-variant="bars"]::before,
+  .sk-loader[data-variant="bars"]::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 14%;
+    inline-size: 12%;
+    block-size: 72%;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: currentColor;
+    box-shadow: calc(var(--sk-loader-size) * 0.5) 0 0 currentColor;
+    transform-origin: center;
+  }
+
+  .sk-loader[data-variant="bars"]::before {
+    inset-inline-start: 7%;
+    animation: sk-loader-bars-up var(--sk-loader-duration) var(--sk-loader-oscillation-easing) infinite;
+  }
+
+  .sk-loader[data-variant="bars"]::after {
+    inset-inline-start: 32%;
+    animation: sk-loader-bars-down var(--sk-loader-duration) var(--sk-loader-oscillation-easing) infinite;
+  }
+
+  /* dots: a single active dot steps across a static three-dot track; no circular path. */
+  .sk-loader[data-variant="dots"]::before,
+  .sk-loader[data-variant="dots"]::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 41%;
+    inset-inline-start: 9%;
+    inline-size: 18%;
+    block-size: 18%;
+    border: 0;
+    border-radius: 50%;
+  }
+
+  .sk-loader[data-variant="dots"]::before {
+    background: var(--sk-loader-track-color);
+    box-shadow:
+      calc(var(--sk-loader-size) * 0.32) 0 0 var(--sk-loader-track-color),
+      calc(var(--sk-loader-size) * 0.64) 0 0 var(--sk-loader-track-color);
+    animation: none;
+  }
+
+  .sk-loader[data-variant="dots"]::after {
+    background: currentColor;
+    animation: sk-loader-dots var(--sk-loader-duration) steps(1, end) infinite;
+  }
+
+  /* sweep: soft conic fan behind a doughnut mask. */
+  .sk-loader[data-variant="sweep"]::before {
+    border: 0;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0 35%,
+      var(--sk-loader-track-color) 55%,
+      currentColor 100%
+    );
+    border-radius: 50%;
+    mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - var(--sk-loader-stroke-width) - 0.5px),
+      #000 calc(100% - var(--sk-loader-stroke-width) + 0.5px)
+    );
+  }
+
+  @keyframes sk-loader-spin {
+    to { transform: rotate(1turn); }
+  }
+
+  @keyframes sk-loader-bars-up {
+    0%, 100% { opacity: 0.45; transform: scaleY(0.35); }
+    50% { opacity: 1; transform: scaleY(1); }
+  }
+
+  @keyframes sk-loader-bars-down {
+    0%, 100% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.45; transform: scaleY(0.35); }
+  }
+
+  @keyframes sk-loader-dots {
+    0%, 32%, 100% { transform: translateX(0); }
+    33%, 65% { transform: translateX(calc(var(--sk-loader-size) * 0.32)); }
+    66%, 99% { transform: translateX(calc(var(--sk-loader-size) * 0.64)); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-loader::before,
+    .sk-loader::after,
+    .sk-loader[data-variant]::before,
+    .sk-loader[data-variant]::after {
+      animation: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .sk-loader::before {
+      border-color: GrayText;
+      border-block-start-color: CanvasText;
+    }
+
+    .sk-loader[data-variant="bars"]::before,
+    .sk-loader[data-variant="bars"]::after {
+      forced-color-adjust: none;
+      background: CanvasText;
+      box-shadow: calc(var(--sk-loader-size) * 0.5) 0 0 CanvasText;
+    }
+
+    .sk-loader[data-variant="dots"]::before {
+      forced-color-adjust: none;
+      background: GrayText;
+      box-shadow:
+        calc(var(--sk-loader-size) * 0.32) 0 0 GrayText,
+        calc(var(--sk-loader-size) * 0.64) 0 0 GrayText;
+    }
+
+    .sk-loader[data-variant="dots"]::after {
+      forced-color-adjust: none;
+      background: CanvasText;
+    }
+
+    .sk-loader[data-variant="sweep"]::before {
+      background: conic-gradient(from 0deg, transparent 0 40%, CanvasText 100%);
+    }
+  }
+}

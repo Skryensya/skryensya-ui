@@ -1,0 +1,121 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<span class="sk-badge" data-tone="neutral">Neutral</span>
+<span class="sk-badge" data-tone="accent">Accent</span>
+<span class="sk-badge" data-tone="success">Success</span>
+<span class="sk-badge" data-tone="warning">Warning</span>
+<span class="sk-badge" data-tone="danger">Danger</span>`;
+
+const react = `import { Badge } from "@skryensya/react/badge";
+
+<Badge>Neutral</Badge>
+<Badge tone="accent">Accent</Badge>
+<Badge tone="success">Success</Badge>
+<Badge tone="warning">Warning</Badge>
+<Badge tone="danger">Danger</Badge>;`;
+
+/* The dot: a badge with no text, only color and position. Standalone it is a status light; anchored in
+ * a holder it is a notification/presence indicator on the top-right corner of another element. */
+const dotHtml = `<span class="sk-badge" data-dot data-tone="success"></span>
+<span class="sk-badge" data-dot data-tone="warning"></span>
+<span class="sk-badge" data-dot data-tone="danger"></span>
+<span class="sk-badge" data-dot data-tone="accent"></span>
+<span class="sk-badge" data-dot></span>`;
+
+const holderHtml = `<!-- an unread indicator on an icon button -->
+<span class="sk-badge-holder">
+  <button
+    class="sk-button sk-interactive"
+    data-variant="ghost"
+    data-icon-only
+    type="button"
+    aria-label="Settings"
+  >
+    <span data-sk-icon="settings"></span>
+  </button>
+  <span
+    class="sk-badge"
+    data-dot
+    data-tone="danger"
+    role="status"
+    aria-label="Unread news"
+  ></span>
+</span>
+
+<!-- a presence indicator on an avatar -->
+<span class="sk-badge-holder">
+  <span class="sk-avatar" role="img" aria-label="Ada Lovelace">
+    <span class="sk-avatar__fallback" aria-hidden="true">AL</span>
+  </span>
+  <span
+    class="sk-badge"
+    data-dot
+    data-tone="success"
+    role="status"
+    aria-label="online"
+  ></span>
+</span>`;
+
+const holderReact = `import { Badge } from "@skryensya/react/badge";
+
+<span className="sk-badge-holder">
+  <button
+    className="sk-button sk-interactive"
+    data-variant="ghost"
+    data-icon-only
+    aria-label="Settings"
+  >
+    {/* icon */}
+  </button>
+  <Badge
+    dot
+    tone="danger"
+    role="status"
+    aria-label="Unread news"
+  />
+</span>`;
+---
+
+<Base title="Badge" description="Badge: Static tag with semantic tones, styling hooks and React component.">
+  <h1>Badge</h1>
+  <p class="lede">
+    Badge is a static visual label for statuses, categories or short metadata. Does not communicate
+    selection, counter or navigation alone; those semantics belong to the content or the container.
+  </p>
+
+  <h2>Etiqueta</h2>
+  <p>The form with text: a status, a category or a short metadata. Each tone carries an edge of its
+    own color, so the neutral, whose background is the canvas, does not remain as an invisible rectangle.</p>
+  <Showcase html={html} react={react} label="Badge" />
+
+  <h2>Dot</h2>
+  <p>
+    A badge that is <strong>just a dot</strong>: no text, communicates by color and position. Loose is
+    a status light; its fill is a saturated tone so that it is read at a few pixels.
+  </p>
+  <Showcase html={dotHtml} label="Badge dot" />
+
+  <h3>In the corner of an element</h3>
+  <p>
+    Wraps the element in <code>sk-badge-holder</code> and the dot is anchored to the top right, a
+    indicator of news on a button, of presence on an avatar. A ring the color of
+    surface separates it from the content below. The point carries its own <code>aria-label</code>
+    because it means something; the host element does not change.
+  </p>
+  <Showcase html={holderHtml} react={holderReact} label="Badge dot in the corner" />
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+
+  <h2>React</h2>
+  <p>The code is in the <strong>React</strong> tab of the preview.</p>
+  <StylingHooks groups={[{"file":"components/badge.css","probe":"sk-badge"}]} />
+</Base>

@@ -6,6 +6,12 @@
   --scale-duration-fast: 120ms;    /* 80–150ms */
   --scale-duration-moderate: 200ms;/* 160–250ms */
   --scale-duration-slow: 320ms;    /* 260–400ms */
+  /* One-shot content that must stay readable while it moves (stat count-up). */
+  --scale-duration-deliberate: 1600ms;
+  /* Continuous loops (loaders): one full cycle, not a one-shot transition. */
+  --scale-duration-cycle-fast: 640ms;
+  --scale-duration-cycle: 960ms;
+  --scale-duration-cycle-slow: 1440ms;
   --scale-easing-linear: linear;                          /* continuous motion */
   --scale-easing-standard: cubic-bezier(0.2, 0, 0, 1);    /* on-screen changes */
   --scale-easing-enter: cubic-bezier(0, 0, 0, 1);         /* decelerate, settles in */

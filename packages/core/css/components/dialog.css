@@ -9,31 +9,31 @@
  * into the separate Dialog Vaul pattern; it remains a dialog and its base contract stays here.
  */
 @layer components {
-  .ds-dialog {
-    --ds-dialog-inline-size: min(32rem, calc(100vw - var(--space-inset-lg) * 2));
-    --ds-dialog-bg: var(--color-bg-surface);
-    --ds-dialog-fg: var(--color-text-primary);
-    --ds-dialog-border-color: var(--color-border-default);
+  .sk-dialog {
+    --sk-dialog-inline-size: min(32rem, calc(100vw - var(--space-inset-lg) * 2));
+    --sk-dialog-bg: var(--color-bg-surface);
+    --sk-dialog-fg: var(--color-text-primary);
+    --sk-dialog-border-color: var(--color-border-default);
     /* Always on, and not a matter of taste: in high contrast the panel and the page resolve to the
-     * same colour, and softening this makes the dialog invisible without a single test failing. */
-    --ds-dialog-border-width: 1px;
-    --ds-dialog-radius: var(--radius-surface);
-    --ds-dialog-elevation: var(--elevation-modal);
-    --ds-dialog-padding: var(--space-inset-md);
-    --ds-dialog-backdrop-bg: light-dark(
+     * same color, and softening this makes the dialog invisible without a single test failing. */
+    --sk-dialog-border-width: 1px;
+    --sk-dialog-radius: var(--radius-surface);
+    --sk-dialog-elevation: var(--elevation-modal);
+    --sk-dialog-padding: var(--space-inset-md);
+    --sk-dialog-backdrop-bg: light-dark(
       color-mix(in oklch, var(--color-text-primary) 40%, transparent),
       color-mix(in oklch, var(--color-bg-canvas) 80%, transparent)
     );
 
-    inline-size: var(--ds-dialog-inline-size);
+    inline-size: var(--sk-dialog-inline-size);
     max-inline-size: none;
     margin: auto;
     padding: 0;
-    border: var(--ds-dialog-border-width) solid var(--ds-dialog-border-color);
-    border-radius: var(--ds-dialog-radius);
-    background: var(--ds-dialog-bg);
-    color: var(--ds-dialog-fg);
-    box-shadow: var(--ds-dialog-elevation);
+    border: var(--sk-dialog-border-width) solid var(--sk-dialog-border-color);
+    border-radius: var(--sk-dialog-radius);
+    background: var(--sk-dialog-bg);
+    color: var(--sk-dialog-fg);
+    box-shadow: var(--sk-dialog-elevation);
     opacity: 0;
     scale: 0.98;
     transition:
@@ -43,7 +43,7 @@
       display var(--motion-exit-duration) var(--motion-exit-easing) allow-discrete;
   }
 
-  .ds-dialog[open] {
+  .sk-dialog[open] {
     opacity: 1;
     scale: 1;
     transition:
@@ -54,19 +54,19 @@
   }
 
   @starting-style {
-    .ds-dialog[open] {
+    .sk-dialog[open] {
       opacity: 0;
       scale: 0.98;
     }
   }
 
-  .ds-dialog::backdrop {
-    background: var(--ds-dialog-backdrop-bg);
+  .sk-dialog::backdrop {
+    background: var(--sk-dialog-backdrop-bg);
     opacity: 0;
     transition: opacity var(--motion-exit-duration) var(--motion-exit-easing);
   }
 
-  .ds-dialog[open]::backdrop {
+  .sk-dialog[open]::backdrop {
     opacity: 1;
     transition: opacity var(--motion-enter-duration) var(--motion-enter-easing);
   }
@@ -79,78 +79,105 @@
    *   body    reading pane
    *   footer  demarcated control strip (Cancel / Confirm, etc.)
    *
-   * Header and footer share `--ds-dialog-padding` with the body so the inset stays concentric. */
-  .ds-dialog__header {
-    --ds-dialog-header-border-color: var(--color-border-subtle);
+   * Header and footer share `--sk-dialog-padding` with the body so the inset stays concentric. */
+  .sk-dialog__header {
+    --sk-dialog-header-border-color: var(--color-border-subtle);
 
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-inline-sm);
-    padding: var(--ds-dialog-padding);
-    border-block-end: 1px solid var(--ds-dialog-header-border-color);
+    padding: var(--sk-dialog-padding);
+    border-block-end: 1px solid var(--sk-dialog-header-border-color);
   }
 
-  /* Title slot: a Heading (`ds-heading`), usually with `data-flush` when it is the first thing
+  /* Title slot: a Heading (`sk-heading`), usually with `data-flush` when it is the first thing
    * in the header. The class marks the accessible name target; paint comes from Heading. */
-  .ds-dialog__title {
+  .sk-dialog__title {
     min-inline-size: 0;
     margin: 0;
   }
 
   /* First content cluster (title alone, or eyebrow + title) fills; the close form stays end-aligned. */
-  .ds-dialog__header > :not(form):first-child {
+  .sk-dialog__header > :not(form):first-child {
     min-inline-size: 0;
     flex: 1;
   }
 
-  /* The close is a real ds-button[data-icon-only]; this class only pins it in the header flex.
+  /* The close is a real sk-button[data-icon-only]; this class only pins it in the header flex.
    * Accessible name is authored on the button (aria-label), never on the icon. */
-  .ds-dialog__header > form:has(.ds-dialog__close) {
+  .sk-dialog__header > form:has(.sk-dialog__close) {
     flex: none;
     margin: 0;
   }
 
-  .ds-dialog__close {
+  .sk-dialog__close {
     flex: none;
   }
 
-  .ds-dialog__body {
+  .sk-dialog__body {
     display: grid;
     gap: var(--space-stack-md);
     justify-items: start;
-    padding: var(--ds-dialog-padding);
+    padding: var(--sk-dialog-padding);
   }
 
-  .ds-dialog__body > :where(h1, h2, h3, p) {
+  .sk-dialog__body > :where(h1, h2, h3, p) {
     margin: 0;
   }
 
-  .ds-dialog__footer {
-    --ds-dialog-footer-border-color: var(--color-border-subtle);
-    --ds-dialog-footer-gap: var(--space-inline-sm);
+  .sk-dialog__footer {
+    --sk-dialog-footer-border-color: var(--color-border-subtle);
+    --sk-dialog-footer-gap: var(--space-inline-sm);
 
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: end;
-    gap: var(--ds-dialog-footer-gap);
+    gap: var(--sk-dialog-footer-gap);
     margin: 0;
-    padding: var(--ds-dialog-padding);
-    border-block-start: 1px solid var(--ds-dialog-footer-border-color);
+    padding: var(--sk-dialog-padding);
+    border-block-start: 1px solid var(--sk-dialog-footer-border-color);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ds-dialog,
-    .ds-dialog[open] {
+    .sk-dialog,
+    .sk-dialog[open] {
       scale: 1;
     }
 
     @starting-style {
-      .ds-dialog[open] {
+      .sk-dialog[open] {
         opacity: 0;
         scale: 1;
       }
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .sk-dialog {
+      --sk-dialog-backdrop-bg: light-dark(
+        var(--color-text-primary),
+        var(--color-bg-canvas)
+      );
+    }
+  }
+
+  @media (forced-colors: active) {
+    .sk-dialog {
+      --sk-dialog-border-color: CanvasText;
+      --sk-dialog-header-border-color: CanvasText;
+      background: Canvas;
+      color: CanvasText;
+      box-shadow: none;
+    }
+
+    .sk-dialog__header {
+      --sk-dialog-header-border-color: CanvasText;
+    }
+
+    .sk-dialog__footer {
+      --sk-dialog-footer-border-color: CanvasText;
     }
   }
 }

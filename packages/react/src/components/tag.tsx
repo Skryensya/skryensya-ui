@@ -1,5 +1,7 @@
 import { tagParts, type TagTone } from "@skryensya/core/tag";
 import { type HTMLAttributes, type ReactNode } from "react";
+import { Button } from "./button.js";
+import { Icon } from "./icon.js";
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -16,10 +18,19 @@ export function Tag({ children, className, onRemove, removeLabel = "Remove", ton
   return (
     <span {...props} className={cx(tagParts.root, className)} data-tone={tone}>
       <span className={tagParts.label}>{children}</span>
+      {/* A real Button, not a chip-shaped lookalike: the state layer, the focus ring and the 44px hit
+          target come with it. `close` is the system's icon for dismissing, never a literal "×". */}
       {onRemove ? (
-        <button aria-label={removeLabel} className={tagParts.remove} onClick={onRemove} type="button">
-          ×
-        </button>
+        <Button
+          aria-label={removeLabel}
+          className={tagParts.remove}
+          iconOnly
+          onClick={onRemove}
+          size="sm"
+          variant="ghost"
+        >
+          <Icon name="close" />
+        </Button>
       ) : null}
     </span>
   );

@@ -1,4 +1,5 @@
 ---
+import "@skryensya/core/components/list.css";
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import Showcase from "../components/Showcase.astro";
@@ -8,92 +9,170 @@ const import_ = `@import "@skryensya/core/patterns/vaul.css";
 @import "@skryensya/core/patterns/scroll-lock.css";`;
 
 const html = `<button
-  class="ds-button ds-interactive"
-  data-ds-button
-  data-ds-vaul-open="demo-vaul"
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-sk-vaul-open="demo-vaul"
+  type="button"
 >
-  Abrir Vaul
+  Compartir archivo
 </button>
 
 <dialog
-  class="ds-vaul demo-vaul"
+  class="sk-vaul demo-vaul"
   id="demo-vaul"
-  data-ds-vaul
+  data-sk-vaul
   data-edge="block-end"
-  aria-label="Vaul de ejemplo"
+  aria-labelledby="demo-vaul-title"
 >
   <div
-    class="ds-vaul__handle"
+    class="sk-vaul__handle"
     data-part="handle"
     aria-hidden="true"
   ></div>
-  <div class="demo-vaul__inner">
-    <header class="demo-vaul__header">
-      <div class="demo-vaul__heading">
-        <h2 class="demo-vaul__title">Compartir documento</h2>
-        <p class="demo-vaul__subtitle">
-          Elige quién puede abrir este Vaul.
-        </p>
-      </div>
-      <button
-        class="ds-button ds-interactive"
-        data-ds-button
-        data-variant="ghost"
-        data-ds-vaul-close
-        aria-label="Cerrar"
-      >
-        Cerrar
-      </button>
-    </header>
 
-    <ul class="demo-vaul__list">
-      <li class="demo-vaul__row">
-        <span class="demo-vaul__avatar" aria-hidden="true">AK</span>
-        <span class="demo-vaul__row-text">
-          <span class="demo-vaul__row-title">Ada Kovač</span>
-          <span class="demo-vaul__row-meta">Puede editar</span>
-        </span>
-      </li>
-      <li class="demo-vaul__row">
-        <span class="demo-vaul__avatar" aria-hidden="true">RM</span>
-        <span class="demo-vaul__row-text">
-          <span class="demo-vaul__row-title">Renzo Molina</span>
-          <span class="demo-vaul__row-meta">Puede comentar</span>
-        </span>
-      </li>
-      <li class="demo-vaul__row">
-        <span class="demo-vaul__avatar" aria-hidden="true">+4</span>
-        <span class="demo-vaul__row-text">
-          <span class="demo-vaul__row-title">Equipo de diseño</span>
-          <span class="demo-vaul__row-meta">Solo lectura</span>
-        </span>
-      </li>
-    </ul>
+  <header class="demo-vaul__header">
+    <span class="demo-vaul__heading">
+      <h2 class="demo-vaul__title" id="demo-vaul-title" data-flush>
+        Propuesta comercial Q3
+      </h2>
+      <span class="demo-vaul__meta">
+        PDF · 2,4 MB · editado hace 2 h
+      </span>
+    </span>
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="ghost"
+      data-icon-only
+      data-sk-vaul-close
+      type="button"
+      aria-label="Cerrar"
+    >
+      <span data-sk-icon="close"></span>
+    </button>
+  </header>
 
-    <footer class="demo-vaul__actions">
-      <button
-        class="ds-button ds-interactive"
-        data-ds-button
-        data-variant="ghost"
-        data-ds-vaul-close
-      >
-        Cancelar
-      </button>
-      <button
-        class="ds-button ds-interactive"
-        data-ds-button
-        data-ds-vaul-close
-      >
-        Compartir
-      </button>
-    </footer>
-  </div>
+  <label class="sk-switch demo-vaul__link">
+    <input
+      class="sk-switch__input"
+      type="checkbox"
+      role="switch"
+      checked
+    />
+    <span class="sk-switch__control" aria-hidden="true">
+      <span class="sk-switch__thumb"></span>
+    </span>
+    <span class="sk-switch__label">
+      Cualquiera con el enlace puede ver
+    </span>
+  </label>
+
+  <ul
+    class="sk-list demo-vaul__people"
+    data-density="compact"
+    aria-label="Personas con acceso"
+  >
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">AK</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Ada Kovač</span>
+        <span class="sk-list__description">ada@estudio.cl</span>
+      </span>
+      <span class="sk-list__trailing">
+        <span class="sk-badge">Dueña</span>
+      </span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">RM</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Renzo Molina</span>
+        <span class="sk-list__description">renzo@estudio.cl</span>
+      </span>
+      <span class="sk-list__trailing">Puede editar</span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">NS</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Nadia Sepúlveda</span>
+        <span class="sk-list__description">nadia@estudio.cl</span>
+      </span>
+      <span class="sk-list__trailing">Puede comentar</span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">TB</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Tomás Bahamondes</span>
+        <span class="sk-list__description">tomas@estudio.cl</span>
+      </span>
+      <span class="sk-list__trailing">Puede comentar</span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">+6</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Equipo de diseño</span>
+        <span class="sk-list__description">6 personas</span>
+      </span>
+      <span class="sk-list__trailing">Solo lectura</span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">LV</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Lucía Vergara</span>
+        <span class="sk-list__description">lucia@cliente.cl</span>
+      </span>
+      <span class="sk-list__trailing">Invitación enviada</span>
+    </li>
+  </ul>
+
+  <footer class="demo-vaul__actions">
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="ghost"
+      data-sk-vaul-close
+      type="button"
+    >
+      Cancelar
+    </button>
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-sk-vaul-close
+      type="button"
+    >
+      Compartir
+    </button>
+  </footer>
 </dialog>`;
 
 const edges = `
-<dialog class="ds-vaul" data-edge="inline-start">…</dialog>
-<dialog class="ds-vaul" data-edge="inline-end">…</dialog>
-<dialog class="ds-vaul" data-edge="block-end">…</dialog>`;
+<dialog class="sk-vaul" data-edge="inline-start">…</dialog>
+<dialog class="sk-vaul" data-edge="inline-end">…</dialog>
+<dialog class="sk-vaul" data-edge="block-end">…</dialog>`;
 
 const vanilla = `import { connectVaul } from "@skryensya/vanilla/vaul";
 
@@ -110,8 +189,8 @@ const cleanup = connectVaul(document.querySelector("#demo-vaul"), {
 });`;
 
 const noDrag = `<dialog
-  class="ds-vaul"
-  data-ds-vaul
+  class="sk-vaul"
+  data-sk-vaul
   data-draggable="false"
   data-edge="block-end"
 >
@@ -127,8 +206,7 @@ const noDrag = `<dialog
     se nombra por de dónde viene, nunca por la forma que hace al llegar.
   </p>
 
-  <h2>Demo</h2>
-  <Showcase html={html} label="tu HTML" />
+  <Showcase html={html} label="HTML" viewport="overlay" />
 
   <h2>Por qué es un pattern y no un componente</h2>
   <p>
@@ -148,7 +226,7 @@ const noDrag = `<dialog
     Tres bordes, un pattern. <code>data-edge</code> elige; nada más cambia. Los bordes inline son
     lógicos, así que se dan vuelta solos en RTL en vez de clavarse del lado equivocado de la pantalla.
   </p>
-  <CodeBlock code={edges} label="tu HTML" />
+  <CodeBlock code={edges} label="HTML" />
 
   <h2>Exige el <code>&lt;dialog&gt;</code> nativo</h2>
   <p>
@@ -174,7 +252,7 @@ const noDrag = `<dialog
     arrastrar el panel hacia su borde para cerrarlo. Ése, y sólo ése, es el enhancer.
     <strong>Vaul está completo sin él</strong>: sin JS hay panel, slide, backdrop, ESC y click afuera.
   </p>
-  <CodeBlock code={vanilla} label="tu JavaScript" />
+  <CodeBlock code={vanilla} label="JavaScript" />
   <p>
     Se cierra por distancia <strong>o</strong> por velocidad: un flick es una intención, y esperar a que
     cruce un umbral de distancia es exactamente lo que hace que una hoja se sienta trabada. La velocidad
@@ -191,6 +269,16 @@ const noDrag = `<dialog
     arrancando 1∶1 bajo la yema y se curva hasta un tope de unos 12px. Que el dedo se mueva y la cosa de
     abajo no es el único momento en que una superficie de manipulación directa se delata como un dibujo
     de una superficie. La asimetría <em>es</em> el mensaje: para ese lado no hay camino.
+  </p>
+  <p>
+    Y lo que aparece en ese hueco es <strong>más panel</strong>: el material sigue de largo pasado el
+    borde, así que levantar una hoja revela hoja y no una franja de backdrop. Son dos números
+    distintos a propósito, cuánto cede (<code>--sk-vaul-overpull</code>) y hasta dónde llega el
+    material (<code>--sk-vaul-material</code>), y el segundo se declara como un piso sobre el primero
+    para que ceder no pueda ganarle nunca. El material se pinta <em>encima</em> de la elevación: al
+    revés, la sombra del panel teñía justo la franja que se acaba de descubrir, y una hoja levantada
+    mostraba una banda oscura donde debería estar su propia superficie, que es exactamente el agujero
+    que esto existe para no tener.
   </p>
   <p>
     El backdrop va con eso: su opacidad sigue al drag. Un backdrop a full con el panel a medio salir
@@ -221,6 +309,10 @@ const noDrag = `<dialog
     manipulación directa, no motion que el sistema te reproduce.
   </p>
   <p>
+    <a href="/transparencias"><code>prefers-reduced-transparency</code></a> no elimina el backdrop:
+    lo vuelve opaco. La modalidad y la respuesta directa al drag permanecen.
+  </p>
+  <p>
     <strong>Soltar</strong> es la tercera, y es propia: un panel soltado no está saliendo, está terminando
     el impulso que la mano ya le dio. Por eso no consume <code>enter</code> ni <code>exit</code>, los dos
     son cortos porque nadie los espera, sino el intent <code>release</code>, con una duración larga a
@@ -232,47 +324,53 @@ const noDrag = `<dialog
   </p>
 
   <h2>Instalar</h2>
-  <CodeBlock code={import_} label="tu CSS" />
+  <CodeBlock code={import_} label="CSS" />
 
-  <StylingHooks groups={[{ file: "patterns/vaul.css", probe: "ds-vaul" }]} />
+  <StylingHooks groups={[{ file: "patterns/vaul.css", probe: "sk-vaul" }]} />
 </Base>
 
 <style is:global>
   /* La piel del demo es del consumidor, como siempre: el pattern trae hooks y estructura, no pintura.
      El ancho lo decide el clamp del pattern; el alto lo da el contenido hasta el techo del sheet.
-     `is:global`: el markup del demo se inyecta con set:html (Showcase), así que no lleva el atributo
-     de scope de Astro, un `<style>` scopeado no lo alcanzaría. */
+     `is:global`: el HTML autorado vive dentro del srcdoc y no lleva el atributo de scope de Astro;
+     el adapter copia esta regla global al frame, una regla scopeada no podría alcanzarlo. */
   .demo-vaul {
-    --ds-vaul-radius: var(--radius-surface) var(--radius-surface) 0 0;
+    --sk-vaul-radius: var(--radius-surface) var(--radius-surface) 0 0;
     /* claim a real slice of the screen rather than hugging three rows at the bottom edge */
     min-block-size: min(64dvh, 32rem);
+
+    /* El inset lateral de la hoja, en UN solo lugar: la cabecera, la fila del enlace, las filas de la
+       lista y las acciones tienen que caer sobre la misma vertical, y son cuatro reglas distintas.
+       Un pelo por encima de `md` y no `lg`: en una hoja angosta el salto a `lg` se nota como ancho
+       perdido, mientras que estos 4px sólo despegan el texto del borde. */
+    --demo-vaul-inset: calc(var(--space-inset-md) + var(--space-inset-xs));
   }
 
+  /* El sheet ES la columna: header, fila de enlace, lista y acciones son sus hijos directos. Un
+     wrapper interno sólo existiría para volver a declarar el mismo flex y para poner un padding que
+     las filas ya traen. */
   .demo-vaul[open] {
     display: flex;
     flex-direction: column;
   }
 
-  .demo-vaul__inner {
-    display: flex;
-    flex: 1;
-    min-block-size: 0;
-    flex-direction: column;
-    gap: var(--space-stack-lg);
-    /* algo más de aire que un inset normal: un sheet que ocupa pantalla no quiere el contenido pegado */
-    padding: var(--space-inset-lg) var(--space-inset-xl) var(--space-inset-xl);
-  }
-
+  /* Un sheet se sostiene con una mano: cada fila de padding es una fila de contenido que no entró.
+     Por eso el inset es corto y no `xl`, y por eso las bandas se separan con una línea en vez de con
+     un `gap` grande, una línea cuesta 1px y dice lo mismo.
+     Arriba sí se paga: el handle es una barra de 12px sin aire propio, y con la cabecera pegada a
+     ella el título parecía colgar del borde en vez de empezar la hoja. */
   .demo-vaul__header {
     display: flex;
     gap: var(--space-inline-md);
     align-items: flex-start;
     justify-content: space-between;
+    padding: var(--space-inset-sm) var(--demo-vaul-inset);
   }
 
   .demo-vaul__heading {
     display: grid;
-    gap: var(--space-stack-xs);
+    gap: 2px;
+    min-inline-size: 0;
   }
 
   .demo-vaul__title {
@@ -282,64 +380,36 @@ const noDrag = `<dialog
     font-weight: var(--font-weight-heading);
   }
 
-  .demo-vaul__subtitle {
-    margin: 0;
+  .demo-vaul__meta {
     color: var(--color-text-secondary);
-    font-size: var(--font-size-body-sm);
+    font-size: var(--font-size-caption);
   }
 
-  .demo-vaul__list {
-    display: grid;
-    gap: var(--space-stack-xs);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    /* the middle scrolls if the guest list grows past the sheet; header and actions stay put */
+  .demo-vaul__link {
+    flex: none;
+    padding: var(--space-inset-sm) var(--demo-vaul-inset);
+    border-block: 1px solid var(--color-border-subtle);
+  }
+
+  /* La lista se lleva el alto sobrante y scrollea sola: header, enlace y acciones se quedan quietos
+     mientras el dedo recorre las personas.
+     El inset lateral NO se pone acá: las filas ya traen el suyo, así que se les pasa el de la hoja
+     por su hook y siguen corriendo de borde a borde. Un padding en la lista las metería hacia adentro
+     y dejaría el divisor corto. */
+  .demo-vaul__people {
+    --sk-list-row-padding-x: var(--demo-vaul-inset);
+
     flex: 1;
     min-block-size: 0;
     overflow-y: auto;
-  }
-
-  .demo-vaul__row {
-    display: flex;
-    gap: var(--space-inline-md);
-    align-items: center;
-    padding: var(--space-inset-sm);
-    border-radius: var(--radius-surface);
-    background: var(--color-bg-surface-sunken);
-  }
-
-  .demo-vaul__avatar {
-    display: inline-grid;
-    place-items: center;
-    inline-size: var(--size-control-md);
-    block-size: var(--size-control-md);
-    flex: none;
-    border-radius: var(--radius-pill);
-    background: var(--color-bg-accent-subtle);
-    color: var(--color-text-accent);
-    font-size: var(--font-size-caption);
-    font-weight: var(--font-weight-emphasis);
-  }
-
-  .demo-vaul__row-text {
-    display: grid;
-    gap: 2px;
-    min-inline-size: 0;
-  }
-
-  .demo-vaul__row-title {
-    font-weight: var(--font-weight-label);
-  }
-
-  .demo-vaul__row-meta {
-    color: var(--color-text-tertiary);
-    font-size: var(--font-size-caption);
+    overscroll-behavior: contain;
   }
 
   .demo-vaul__actions {
     display: flex;
     gap: var(--space-inline-sm);
     justify-content: flex-end;
+    padding: var(--space-inset-sm) var(--demo-vaul-inset);
+    border-block-start: 1px solid var(--color-border-subtle);
   }
 </style>

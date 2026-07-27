@@ -1,0 +1,476 @@
+---
+import "@skryensya/core/components/dialog.css";
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import StylingHooks from "../components/StylingHooks.astro";
+import "@skryensya/core/patterns/transparency.css";
+
+const install = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/patterns/box.css";
+@import "@skryensya/core/patterns/transparency.css";`;
+
+const basicHtml = `<article
+  class="sk-box sk-translucent"
+  data-strength="md"
+  data-border="subtle"
+  data-padding="lg"
+  data-surface="surface"
+>
+  <h2>Resumen semanal</h2>
+  <p>El contenido siempre vive sobre un fallback opaco.</p>
+</article>`;
+
+const navbarReact = `import {
+  Navbar,
+  NavbarActions,
+  NavbarBrand,
+} from "@skryensya/react/navbar";
+import { Button } from "@skryensya/react/button";
+
+<Navbar className="sk-translucent" data-strength="sm">
+  <NavbarBrand>Atlas</NavbarBrand>
+  <NavbarActions>
+    <Button variant="ghost">Buscar</Button>
+    <Button variant="primary">Crear</Button>
+  </NavbarActions>
+</Navbar>;`;
+
+const boxReact = `import { Box } from "@skryensya/react/box";
+
+<Box
+  as="article"
+  className="sk-translucent"
+  data-strength="md"
+  surface="surface"
+  border="subtle"
+  padding="lg"
+>
+  <h2>Actividad</h2>
+  <p>12 cambios desde tu última visita.</p>
+</Box>;`;
+
+const dialogHtml = `<dialog
+  class="sk-dialog sk-translucent"
+  data-strength="sm"
+  aria-labelledby="invite-title"
+>
+  <header class="sk-dialog__header">
+    <h2 id="invite-title" class="sk-dialog__title">
+      Invitar al equipo
+    </h2>
+  </header>
+  <div class="sk-dialog__body">
+    <p>El backdrop y la superficie se reducen por separado.</p>
+  </div>
+</dialog>`;
+
+const customize = `.hero-glass {
+  /* El fallback opaco contra el que se valida contraste. */
+  --sk-translucent-surface: var(--color-bg-surface-raised);
+
+  /* Solo se usan cuando la transparencia está permitida. */
+  --sk-translucent-opacity: 76%;
+  --sk-translucent-blur: 20px;
+  --sk-translucent-saturation: 120%;
+}`;
+
+const manualReduction = `.legacy-glass {
+  background: rgb(255 255 255 / 72%);
+  backdrop-filter: blur(16px);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .legacy-glass {
+    background: var(--color-bg-surface);
+    backdrop-filter: none;
+  }
+}`;
+---
+
+<Base
+  title="Transparencias"
+  description="Superficies translúcidas reutilizables, con blur progresivo, fallback opaco y reducción automática."
+>
+  <h1>Transparencias</h1>
+  <p class="lede">
+    Una superficie translúcida deja ver el contexto sin entregarle el contraste. La clase
+    <code>sk-translucent</code> compone alpha y backdrop blur sobre componentes conocidos, pero
+    siempre parte de una superficie opaca. Si el navegador no entiende la preferencia —o la persona
+    pide reducir transparencia— el contenido conserva exactamente la misma caja y lectura.
+  </p>
+
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
+      <p>
+        <strong><code>prefers-reduced-transparency</code> sigue siendo experimental.</strong> Por eso
+        el sistema no depende de la rama <code>reduce</code> para ser seguro: transparencia y blur
+        solo se activan bajo <code>no-preference</code>. Sin soporte, queda el fallback opaco.
+      </p>
+    </div>
+  </div>
+
+  <h2>Qué está pasando</h2>
+  <p>
+    Hay tres capas. El <strong>backdrop</strong> es lo que ya estaba detrás; la
+    <strong>superficie</strong> mezcla su color opaco con alpha y desenfoca ese backdrop; el
+    <strong>contenido</strong> permanece arriba, al 100% de opacidad. Nunca se aplica
+    <code>opacity</code> al contenedor entero porque también degradaría texto, iconos y bordes.
+  </p>
+
+  <figure class="transparency-lab">
+    <div class="transparency-lab__stage">
+      <div class="transparency-lab__backdrop" aria-hidden="true">
+        <span>ALPHA</span>
+        <span>BLUR</span>
+        <span>CONTRASTE</span>
+      </div>
+
+      <div class="transparency-lab__status">
+        <span class="transparency-lab__status-fallback">Fallback opaco</span>
+        <span class="transparency-lab__status-allowed">Transparencia permitida</span>
+        <span class="transparency-lab__status-reduced">Transparencia reducida</span>
+      </div>
+
+      <div class="transparency-lab__samples">
+        <article
+          class="sk-box sk-translucent transparency-lab__panel"
+          data-strength="sm"
+          data-border="subtle"
+        >
+          <code>sm</code>
+          <strong>Discreta</strong>
+          <span>92% superficie · blur 8px</span>
+        </article>
+        <article
+          class="sk-box sk-translucent transparency-lab__panel"
+          data-strength="md"
+          data-border="subtle"
+        >
+          <code>md</code>
+          <strong>Estándar</strong>
+          <span>82% superficie · blur 16px</span>
+        </article>
+        <article
+          class="sk-box sk-translucent transparency-lab__panel"
+          data-strength="lg"
+          data-border="subtle"
+        >
+          <code>lg</code>
+          <strong>Expresiva</strong>
+          <span>70% superficie · blur 24px</span>
+        </article>
+      </div>
+    </div>
+    <figcaption>
+      El fondo de calibración combina bordes finos, cambios de color y tipografía para que alpha y
+      blur sean visibles. Con reducción, las tres muestras convergen en la misma superficie opaca.
+    </figcaption>
+  </figure>
+
+  <h2>Instalar</h2>
+  <p>
+    El patrón es opt-in. Importa primero los tokens y los estilos del componente que quieras pintar;
+    <code>transparency.css</code> aporta la clase composable y su política accesible.
+  </p>
+  <CodeBlock code={install} label="CSS" />
+
+  <h2>Una clase, tres intensidades</h2>
+  <p>
+    Añade <code>sk-translucent</code> al mismo nodo que ya pinta la superficie. Sin
+    <code>data-strength</code>, el valor es <code>md</code>. La intensidad describe cuánto se percibe
+    el efecto: <code>lg</code> deja ver más backdrop y lo desenfoca más.
+  </p>
+  <CodeBlock code={basicHtml} label="HTML" lang="html" />
+
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>Strength</th>
+          <th>Superficie</th>
+          <th>Blur</th>
+          <th>Uso recomendado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>sm</code></td>
+          <td>92%</td>
+          <td>8px</td>
+          <td>Navbar, Sidebar, Dialog</td>
+        </tr>
+        <tr>
+          <td><code>md</code></td>
+          <td>82%</td>
+          <td>16px</td>
+          <td>Box, cards y paneles flotantes</td>
+        </tr>
+        <tr>
+          <td><code>lg</code></td>
+          <td>70%</td>
+          <td>24px</td>
+          <td>Hero o pieza editorial; nunca UI densa</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Componentes conocidos</h2>
+  <p>
+    La clase ya enlaza los hooks de superficie de <strong>Box, Navbar, Dialog, Sidebar, Vaul y
+    Drawer</strong>. No cambia su anatomía ni crea una variante paralela: el mismo componente gana
+    una pintura opcional.
+  </p>
+
+  <h3>Navbar: persistente y discreta</h3>
+  <p>
+    Usa <code>sm</code>: la navegación permanece estable mientras el contenido pasa por detrás.
+  </p>
+  <CodeBlock code={navbarReact} label="React · Navbar" lang="tsx" />
+
+  <h3>Box: una card sobre media</h3>
+  <p>
+    <code>md</code> funciona cuando la card flota sobre una imagen o un fondo editorial. Sobre un
+    canvas plano, una Box opaca es más simple y no necesita este patrón.
+  </p>
+  <CodeBlock code={boxReact} label="React · Box" lang="tsx" />
+
+  <h3>Dialog: el panel y el backdrop son cosas distintas</h3>
+  <p>
+    La clase pinta el panel. El <code>::backdrop</code> sigue perteneciendo a Dialog y se vuelve
+    opaco con transparencia reducida. Para un modal conserva <code>sm</code>: la tarea debe dominar,
+    no el fondo.
+  </p>
+  <CodeBlock code={dialogHtml} label="HTML · Dialog" lang="html" />
+
+  <h2>Personalizar sin romper el fallback</h2>
+  <p>
+    <code>--sk-translucent-surface</code> es la superficie opaca real. Los otros tres hooks solo
+    afectan la mejora transparente. Cambiar el alpha nunca debe ser la forma de arreglar contraste:
+    primero elige una superficie opaca correcta y valida texto y bordes contra ella.
+  </p>
+  <CodeBlock code={customize} label="CSS · hooks" />
+
+  <h2>Cuándo no usarla</h2>
+  <ul>
+    <li>Sobre un canvas plano: no hay contexto útil que revelar.</li>
+    <li>En tablas, formularios largos o UI densa: el backdrop compite con la lectura.</li>
+    <li>Como única separación entre dos regiones: conserva borde, espacio o elevación.</li>
+    <li>Aplicando <code>opacity</code> al contenedor: también vuelve translúcido el contenido.</li>
+    <li>En State layer: esa alpha comunica interacción y no es una superficie de glassmorphism.</li>
+  </ul>
+
+  <h2>Superficies heredadas</h2>
+  <p>
+    Si no puedes adoptar <code>sk-translucent</code>, añade una reducción explícita. Esta forma sirve
+    para código anterior, pero el baseline sigue siendo transparente en navegadores sin soporte;
+    para código nuevo, la clase del sistema es más segura.
+  </p>
+  <CodeBlock code={manualReduction} label="CSS legado" />
+
+  <h2>Contrato del sistema</h2>
+  <ul>
+    <li>
+      <strong>Dialog y Vaul.</strong> Sus backdrops pasan de una mezcla con
+      <code>transparent</code> a un fondo opaco. Modalidad y drag permanecen.
+    </li>
+    <li>
+      <strong>Media gradient.</strong> El wash se convierte en el color base opaco dentro de la caja
+      del caption; no cubre toda la imagen.
+    </li>
+    <li>
+      <strong>State layer.</strong> Se conserva porque es feedback esencial; selección y foco tienen
+      indicadores independientes.
+    </li>
+    <li>
+      <strong>Blur de transición.</strong> Pertenece a
+      <a href="/motion"><code>prefers-reduced-motion</code></a>, no a esta política de superficies.
+    </li>
+  </ul>
+
+  <h2>Checklist</h2>
+  <ul>
+    <li>El fallback opaco funciona antes de cualquier media query.</li>
+    <li>La clase vive en el mismo nodo que pinta la superficie.</li>
+    <li>Texto e iconos permanecen al 100% de opacidad.</li>
+    <li>El borde o la elevación siguen separando la caja del fondo.</li>
+    <li>La UI funciona si el navegador ignora por completo la preferencia.</li>
+  </ul>
+
+  <StylingHooks
+    groups={[
+      {
+        file: "patterns/transparency.css",
+        probe: "sk-translucent",
+        title: "Transparencia",
+      },
+    ]}
+  />
+
+  <p>
+    Referencia de plataforma:
+    <a
+      href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-transparency"
+    >
+      MDN, <code>prefers-reduced-transparency</code>
+    </a>.
+  </p>
+</Base>
+
+<style>
+  .transparency-lab {
+    display: grid;
+    gap: var(--space-stack-sm);
+    margin: var(--space-stack-md) 0 var(--space-section);
+  }
+
+  .transparency-lab__stage {
+    position: relative;
+    min-block-size: 30rem;
+    padding: clamp(var(--space-inset-md), 5vw, var(--space-inset-xl));
+    overflow: clip;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-surface);
+    background:
+      repeating-linear-gradient(
+        0deg,
+        color-mix(in oklab, var(--color-text-primary) 18%, transparent) 0 1px,
+        transparent 1px 24px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--color-text-primary) 18%, transparent) 0 1px,
+        transparent 1px 24px
+      ),
+      linear-gradient(
+        135deg,
+        var(--color-bg-accent-subtle) 0 32%,
+        var(--color-action-primary) 32% 42%,
+        var(--color-bg-warning-subtle) 42% 72%,
+        var(--color-bg-success-subtle) 72% 100%
+      );
+    isolation: isolate;
+  }
+
+  .transparency-lab__backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    display: grid;
+    align-content: space-between;
+    padding: var(--space-inset-md);
+    color: color-mix(in oklab, var(--color-text-primary) 72%, transparent);
+    font-family: var(--font-family-mono);
+    font-size: clamp(2.5rem, 10vw, 7rem);
+    font-weight: var(--font-weight-heading);
+    letter-spacing: -0.08em;
+    line-height: 0.72;
+    overflow: hidden;
+  }
+
+  .transparency-lab__backdrop span:nth-child(2) {
+    justify-self: center;
+  }
+
+  .transparency-lab__backdrop span:last-child {
+    justify-self: end;
+  }
+
+  .transparency-lab__status {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    justify-self: start;
+    margin-block-end: var(--space-stack-lg);
+    padding: var(--space-inset-xs) var(--space-inset-sm);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-surface);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+  }
+
+  .transparency-lab__status-allowed,
+  .transparency-lab__status-reduced {
+    display: none;
+  }
+
+  .transparency-lab__samples {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-inline-md);
+    align-items: end;
+  }
+
+  .transparency-lab__panel {
+    display: grid;
+    gap: var(--space-stack-xs);
+    min-block-size: 13rem;
+    padding: var(--space-inset-md);
+    align-content: end;
+    border-color: color-mix(
+      in oklab,
+      var(--color-border-strong) 72%,
+      transparent
+    );
+    border-radius: var(--radius-surface);
+    box-shadow: var(--elevation-raised);
+  }
+
+  .transparency-lab__panel code {
+    justify-self: start;
+    padding: 0.15em 0.45em;
+    border-radius: var(--radius-control);
+    background: var(--color-bg-surface-sunken);
+    color: var(--color-text-accent);
+  }
+
+  .transparency-lab__panel strong {
+    font-size: var(--font-size-heading-sm);
+  }
+
+  .transparency-lab__panel span {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+  }
+
+  .transparency-lab figcaption {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
+    text-wrap: pretty;
+  }
+
+  @media (prefers-reduced-transparency: no-preference) {
+    .transparency-lab__status-fallback {
+      display: none;
+    }
+
+    .transparency-lab__status-allowed {
+      display: inline;
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .transparency-lab__status-fallback {
+      display: none;
+    }
+
+    .transparency-lab__status-reduced {
+      display: inline;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .transparency-lab__samples {
+      grid-template-columns: 1fr;
+    }
+
+    .transparency-lab__panel {
+      min-block-size: 8rem;
+    }
+  }
+</style>

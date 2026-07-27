@@ -6,31 +6,31 @@ import StylingHooks from "../../components/StylingHooks.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<nav class="ds-pagination" aria-label="Paginación">
+const html = `<nav class="sk-pagination" aria-label="Paginación">
   <button
-    class="ds-pagination__previous ds-interactive"
+    class="sk-pagination__previous sk-interactive"
     type="button"
     aria-label="Página anterior"
   >
-    <span data-ds-icon="chevron-left" data-ds-icon-size="sm"></span>
+    <span data-sk-icon="chevron-left" data-sk-icon-size="sm"></span>
   </button>
   <button
-    class="ds-pagination__item ds-interactive"
+    class="sk-pagination__item sk-interactive"
     type="button"
     aria-label="Página 1"
   >
     1
   </button>
-  <span class="ds-pagination__ellipsis" aria-hidden="true">…</span>
+  <span class="sk-pagination__ellipsis" aria-hidden="true">…</span>
   <button
-    class="ds-pagination__item ds-interactive"
+    class="sk-pagination__item sk-interactive"
     type="button"
     aria-label="Página 4"
   >
     4
   </button>
   <button
-    class="ds-pagination__item ds-interactive"
+    class="sk-pagination__item sk-interactive"
     type="button"
     aria-current="page"
     aria-label="Página 5"
@@ -38,26 +38,26 @@ const html = `<nav class="ds-pagination" aria-label="Paginación">
     5
   </button>
   <button
-    class="ds-pagination__item ds-interactive"
+    class="sk-pagination__item sk-interactive"
     type="button"
     aria-label="Página 6"
   >
     6
   </button>
-  <span class="ds-pagination__ellipsis" aria-hidden="true">…</span>
+  <span class="sk-pagination__ellipsis" aria-hidden="true">…</span>
   <button
-    class="ds-pagination__item ds-interactive"
+    class="sk-pagination__item sk-interactive"
     type="button"
     aria-label="Página 12"
   >
     12
   </button>
   <button
-    class="ds-pagination__next ds-interactive"
+    class="sk-pagination__next sk-interactive"
     type="button"
     aria-label="Página siguiente"
   >
-    <span data-ds-icon="chevron-right" data-ds-icon-size="sm"></span>
+    <span data-sk-icon="chevron-right" data-sk-icon-size="sm"></span>
   </button>
 </nav>`;
 
@@ -86,12 +86,11 @@ paginationRange(5, 20);
     con un hermano a cada lado, y las corridas ocultas colapsan en una elipsis.
   </p>
 
-  <h2>Demo</h2>
   <Showcase html={html} react={react} label="Pagination" />
   <p>
     Prev/next usan los roles <code>chevron-left</code> y <code>chevron-right</code> del set.
     La página actual lleva <code>aria-current="page"</code>; prev/next se deshabilitan en los bordes.
-    La elipsis es texto inerte, no un objetivo. Los targets llevan <code>ds-interactive</code>.
+    La elipsis es texto inerte, no un objetivo. Los targets llevan <code>sk-interactive</code>.
   </p>
 
   <h2>La ventana, en el core</h2>
@@ -102,6 +101,6 @@ paginationRange(5, 20);
   <CodeBlock code={install} label="terminal" />
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo. React dibuja los chevrons del set enlazado.</p>
-  <StylingHooks groups={[{ file: "components/pagination.css", probe: "ds-pagination" }]} />
+  <p>El código está en la pestaña <strong>React</strong> del preview. React dibuja los chevrons del set enlazado.</p>
+  <StylingHooks groups={[{ file: "components/pagination.css", probe: "sk-pagination" }]} />
 </Base>

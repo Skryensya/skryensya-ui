@@ -10,25 +10,25 @@ const hooks = tokens
 
 const import_ = `@import "@skryensya/core/patterns/nav-list.css";`;
 
-const html = `<nav class="ds-nav-list" aria-label="Principal">
-  <div class="ds-nav-list__group">
-    <div class="ds-nav-list__group-label" id="espacio">Espacio</div>
-    <ul class="ds-nav-list__list" aria-labelledby="espacio">
-      <li class="ds-nav-list__item">
+const html = `<nav class="sk-nav-list" aria-label="Principal">
+  <div class="sk-nav-list__group">
+    <div class="sk-nav-list__group-label" id="espacio">Espacio</div>
+    <ul class="sk-nav-list__list" aria-labelledby="espacio">
+      <li class="sk-nav-list__item">
         <a
-          class="ds-nav-list__link ds-interactive"
+          class="sk-nav-list__link sk-interactive"
           href="/"
           aria-current="page"
         >
-          <span data-ds-icon="info"></span>
-          <span class="ds-nav-list__label">Inicio</span>
+          <span data-sk-icon="info"></span>
+          <span class="sk-nav-list__label">Inicio</span>
         </a>
       </li>
-      <li class="ds-nav-list__item">
-        <a class="ds-nav-list__link ds-interactive" href="/reportes">
-          <span data-ds-icon="calendar"></span>
-          <span class="ds-nav-list__label">Reportes</span>
-          <span class="ds-nav-list__trailing">12</span>
+      <li class="sk-nav-list__item">
+        <a class="sk-nav-list__link sk-interactive" href="/reportes">
+          <span data-sk-icon="calendar"></span>
+          <span class="sk-nav-list__label">Reportes</span>
+          <span class="sk-nav-list__trailing">12</span>
         </a>
       </li>
     </ul>
@@ -53,8 +53,8 @@ const html = `<nav class="ds-nav-list" aria-label="Principal">
     La regla es una sola pregunta:
     <em>¿muchos componentes comparten esta estructura exacta?</em> Aquí la respuesta no es una
     predicción, el navbar y el sidebar la comparten hoy, en este repo. Así que envía
-    <strong>styling hooks y estructura</strong>, y <code>ds-nav-list</code> es una clase a la que
-    cualquier contenedor se suma, la misma forma que <code>ds-interactive</code> y <code>ds-icon</code>.
+    <strong>styling hooks y estructura</strong>, y <code>sk-nav-list</code> es una clase a la que
+    cualquier contenedor se suma, la misma forma que <code>sk-interactive</code> y <code>sk-icon</code>.
   </p>
   <p>
     Es <strong>opt-in</strong>, como el icono y a diferencia del state layer: una app puede no tener
@@ -68,7 +68,6 @@ const html = `<nav class="ds-nav-list" aria-label="Principal">
     lo que un lector de pantalla debería escuchar.
   </p>
 
-  <h2>Demo</h2>
   <Showcase code={html} lang="html" label="Nav list">
     {/* A nav-list is sized by its host, a sidebar rail, a navbar row. The demo pins it to a rail width
         so it reads as one; the code shows the markup without that host-owned width. */}
@@ -96,18 +95,18 @@ const html = `<nav class="ds-nav-list" aria-label="Principal">
 
   <h2>El host manda su motion</h2>
   <p>
-    <code>--ds-nav-list-duration</code> y <code>--ds-nav-list-easing</code> arrancan en la intención
+    <code>--sk-nav-list-duration</code> y <code>--sk-nav-list-easing</code> arrancan en la intención
     <em>state-change</em>, y el sidebar los re-declara con su intención de collapse: así los labels se
     desvanecen en el mismo tiempo en que se mueve el ancho. Re-declarar el hook de un pattern es
     exactamente para lo que existe un hook, el host nunca toca su markup.
   </p>
 
   <h2>Instalar</h2>
-  <CodeBlock code={import_} label="tu CSS" />
+  <CodeBlock code={import_} label="CSS" />
 
   <h2>Todos los styling hooks</h2>
-  <div class="ds-table-scroll">
-    <table class="ds-table">
+  <div class="sk-table-scroll">
+    <table class="sk-table">
       <thead>
         <tr>
           <th>Hook</th>
@@ -121,7 +120,7 @@ const html = `<nav class="ds-nav-list" aria-label="Principal">
             <tr>
               <td class="mono">{h.name}</td>
               <td class="mono">{h.value}</td>
-              <td class="mono" data-token={h.name} data-prop={h.prop} data-probe="ds-nav-list">
+              <td class="mono" data-token={h.name} data-prop={h.prop} data-probe="sk-nav-list">
                 …
               </td>
             </tr>

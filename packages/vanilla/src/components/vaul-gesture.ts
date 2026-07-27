@@ -40,7 +40,7 @@ export function axisOf(edge: VaulEdge, rtl: boolean) {
  * It must give SOMETHING, or it reads as broken: the finger keeps moving and the thing under it does
  * not. So: resistance, capped. The curve leaves at 1∶1 under the fingertip (f'(0) = 1, no dead zone)
  * and bends asymptotically to the cap, so pulling harder yields less and less and never more than a few
- * pixels. `cap` is the CSS's `--ds-vaul-overpull`, read rather than restated, so the two agree.
+ * pixels. `cap` is the CSS's `--sk-vaul-overpull`, read rather than restated, so the two agree.
  */
 export const resist = (distance: number, cap: number) => cap * (1 - Math.exp(-distance / cap));
 

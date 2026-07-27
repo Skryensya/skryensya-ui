@@ -1,13 +1,13 @@
 export const tableParts = {
-  scroll: "ds-table-scroll",
-  root: "ds-table",
-  caption: "ds-table__caption",
-  head: "ds-table__head",
-  foot: "ds-table__foot",
-  body: "ds-table__body",
-  row: "ds-table__row",
-  header: "ds-table__header",
-  cell: "ds-table__cell",
+  scroll: "sk-table-scroll",
+  root: "sk-table",
+  caption: "sk-table__caption",
+  head: "sk-table__head",
+  foot: "sk-table__foot",
+  body: "sk-table__body",
+  row: "sk-table__row",
+  header: "sk-table__header",
+  cell: "sk-table__cell",
 } as const;
 
 export type TablePart = keyof typeof tableParts;

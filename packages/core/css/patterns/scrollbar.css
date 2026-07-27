@@ -1,43 +1,43 @@
 /*
  * SCROLLBAR, two opt-in treatments for native scrolling regions.
  *
- * `ds-scrollbar` keeps the track and thumb visible. Add `ds-scrollbar--reveal` where the scroll
+ * `sk-scrollbar` keeps the track and thumb visible. Add `sk-scrollbar--reveal` where the scroll
  * region must reserve its own gutter but keep visual chrome quiet until the reader hovers or moves
  * keyboard focus into it. Native scrolling, wheel momentum, touch panning, and OS preferences stay
  * owned by the platform; this pattern only colors the browser's exposed scrollbar surface.
  */
 @layer components {
-  .ds-scrollbar {
-    --ds-scrollbar-size: var(--space-inset-xs);
-    --ds-scrollbar-track-bg: var(--color-bg-surface-sunken);
-    --ds-scrollbar-thumb-bg: var(--color-border-strong);
-    --ds-scrollbar-thumb-hover-bg: var(--color-text-tertiary);
+  .sk-scrollbar {
+    --sk-scrollbar-size: var(--space-inset-xs);
+    --sk-scrollbar-track-bg: var(--color-bg-surface-sunken);
+    --sk-scrollbar-thumb-bg: var(--color-border-strong);
+    --sk-scrollbar-thumb-hover-bg: var(--color-text-tertiary);
 
-    scrollbar-color: var(--ds-scrollbar-thumb-bg) var(--ds-scrollbar-track-bg);
+    scrollbar-color: var(--sk-scrollbar-thumb-bg) var(--sk-scrollbar-track-bg);
     scrollbar-width: thin;
   }
 
-  .ds-scrollbar::-webkit-scrollbar {
-    inline-size: var(--ds-scrollbar-size);
-    block-size: var(--ds-scrollbar-size);
+  .sk-scrollbar::-webkit-scrollbar {
+    inline-size: var(--sk-scrollbar-size);
+    block-size: var(--sk-scrollbar-size);
   }
 
-  .ds-scrollbar::-webkit-scrollbar-track {
-    background: var(--ds-scrollbar-track-bg);
+  .sk-scrollbar::-webkit-scrollbar-track {
+    background: var(--sk-scrollbar-track-bg);
   }
 
-  .ds-scrollbar::-webkit-scrollbar-thumb {
+  .sk-scrollbar::-webkit-scrollbar-thumb {
     border-radius: var(--radius-control);
-    background: var(--ds-scrollbar-thumb-bg);
+    background: var(--sk-scrollbar-thumb-bg);
   }
 
-  .ds-scrollbar:hover::-webkit-scrollbar-thumb {
-    background-color: var(--ds-scrollbar-thumb-hover-bg);
+  .sk-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: var(--sk-scrollbar-thumb-hover-bg);
   }
 
   /* A stable gutter avoids a layout shift when the scrollbar is revealed. The inactive thumb is
    * transparent rather than removed, so native scrolling keeps its expected geometry. */
-  .ds-scrollbar--reveal {
+  .sk-scrollbar--reveal {
     /* This variant re-declares the two hooks it changes, and the base rules above do the rest.
      *
      * The TRACK IS GONE, not just quiet: revealing a filled rail down the edge draws a border the
@@ -46,24 +46,24 @@
      *
      * The thumb sits at border-default rather than border-strong: this is a hint you reach for, not
      * a line demanding to be read. */
-    --ds-scrollbar-track-bg: transparent;
-    --ds-scrollbar-thumb-bg: var(--color-border-default);
+    --sk-scrollbar-track-bg: transparent;
+    --sk-scrollbar-thumb-bg: var(--color-border-default);
 
     scrollbar-color: transparent transparent;
     scrollbar-gutter: stable;
   }
 
-  .ds-scrollbar--reveal::-webkit-scrollbar-thumb {
+  .sk-scrollbar--reveal::-webkit-scrollbar-thumb {
     background-color: transparent;
   }
 
-  .ds-scrollbar--reveal:hover,
-  .ds-scrollbar--reveal:focus-within {
-    scrollbar-color: var(--ds-scrollbar-thumb-bg) transparent;
+  .sk-scrollbar--reveal:hover,
+  .sk-scrollbar--reveal:focus-within {
+    scrollbar-color: var(--sk-scrollbar-thumb-bg) transparent;
   }
 
-  .ds-scrollbar--reveal:hover::-webkit-scrollbar-thumb,
-  .ds-scrollbar--reveal:focus-within::-webkit-scrollbar-thumb {
-    background-color: var(--ds-scrollbar-thumb-bg);
+  .sk-scrollbar--reveal:hover::-webkit-scrollbar-thumb,
+  .sk-scrollbar--reveal:focus-within::-webkit-scrollbar-thumb {
+    background-color: var(--sk-scrollbar-thumb-bg);
   }
 }

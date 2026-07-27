@@ -1,68 +1,249 @@
 ---
+import "@skryensya/core/components/stat.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<div class="ds-stat">
-  <span class="ds-stat__label">Ingresos</span>
-  <span class="ds-stat__value">$48.2k</span>
-  <span
-    class="ds-stat__change"
-    data-trend="up"
+const html = `<section
+  class="sk-grid"
+  data-columns="3"
+  data-gap="md"
+  data-multicol
+  aria-label="Resumen del negocio"
+>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
   >
-    <span data-ds-icon="arrow-up"></span> 12.5%
-  </span>
-</div>
-<div class="ds-stat">
-  <span class="ds-stat__label">Órdenes</span>
-  <span class="ds-stat__value">1,204</span>
-  <span
-    class="ds-stat__change"
-    data-trend="down"
+    <div class="sk-stat">
+      <span class="sk-stat__label">Ingresos</span>
+      <span class="sk-stat__value">48.200 €</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-up"></span> 12,5%
+      </span>
+    </div>
+  </article>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
   >
-    <span data-ds-icon="arrow-down"></span> 2.3%
-  </span>
-</div>
-<div class="ds-stat">
-  <span class="ds-stat__label">Churn</span>
-  <span class="ds-stat__value">0.9%</span>
-  <span class="ds-stat__change" data-trend="neutral">estable</span>
-</div>`;
+    <div class="sk-stat">
+      <span class="sk-stat__label">Pedidos</span>
+      <span class="sk-stat__value">1.204</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-up"></span> 8,2%
+      </span>
+    </div>
+  </article>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="sk-stat">
+      <span class="sk-stat__label">Cancelaciones</span>
+      <span class="sk-stat__value">0,9%</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-down"></span> 0,3 puntos
+      </span>
+    </div>
+  </article>
+</section>`;
 
-const react = `import { Stat } from "@skryensya/react/stat";
-import { Icon } from "@skryensya/react/icon";
+const react = `import { Icon } from "@skryensya/react/icon";
+import { Box, Grid } from "@skryensya/react/layout";
+import { Stat } from "@skryensya/react/stat";
 
-<Stat
-  label="Ingresos"
-  value="$48.2k"
-  trend="up"
-  change={<><Icon name="arrow-up" size="sm" /> 12.5%</>}
-/>
-<Stat
-  label="Órdenes"
-  value="1,204"
-  trend="down"
-  change={<><Icon name="arrow-down" size="sm" /> 2.3%</>}
-/>
-<Stat label="Churn" value="0.9%" change="estable" trend="neutral" />;`;
+<Grid
+  aria-label="Resumen del negocio"
+  columns={3}
+  data-multicol=""
+  gap="md"
+>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      label="Ingresos"
+      value="48.200 €"
+      trend="up"
+      change={<><Icon name="arrow-up" /> 12,5%</>}
+    />
+  </Box>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      label="Pedidos"
+      value="1.204"
+      trend="up"
+      change={<><Icon name="arrow-up" /> 8,2%</>}
+    />
+  </Box>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      label="Cancelaciones"
+      value="0,9%"
+      trend="up"
+      change={<><Icon name="arrow-down" /> 0,3 puntos</>}
+    />
+  </Box>
+</Grid>`;
+
+const htmlAnimate = `<section
+  class="sk-grid"
+  data-columns="3"
+  data-gap="md"
+  data-multicol
+  aria-label="Resumen del negocio"
+>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="sk-stat" data-sk-stat data-animate>
+      <span class="sk-stat__label">Ingresos</span>
+      <span
+        class="sk-stat__value"
+        data-count="48200"
+        data-locale="es-ES"
+        data-suffix=" €"
+      >48.200 €</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-up"></span> 12,5%
+      </span>
+    </div>
+  </article>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="sk-stat" data-sk-stat data-animate>
+      <span class="sk-stat__label">Pedidos</span>
+      <span
+        class="sk-stat__value"
+        data-count="1204"
+        data-locale="es-ES"
+      >1.204</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-up"></span> 8,2%
+      </span>
+    </div>
+  </article>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="sk-stat" data-sk-stat data-animate>
+      <span class="sk-stat__label">Cancelaciones</span>
+      <span
+        class="sk-stat__value"
+        data-count="0.9"
+        data-locale="es-ES"
+        data-suffix="%"
+        data-fraction-digits="1"
+      >0,9%</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-down"></span> 0,3 puntos
+      </span>
+    </div>
+  </article>
+</section>`;
+
+const reactAnimate = `import { Icon } from "@skryensya/react/icon";
+import { Box, Grid } from "@skryensya/react/layout";
+import { Stat } from "@skryensya/react/stat";
+
+const es = (n: number, opts?: Intl.NumberFormatOptions) =>
+  n.toLocaleString("es-ES", opts);
+
+<Grid
+  aria-label="Resumen del negocio"
+  columns={3}
+  data-multicol=""
+  gap="md"
+>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      animate
+      format={(n) => \`\${es(n)} €\`}
+      label="Ingresos"
+      value={48200}
+      trend="up"
+      change={<><Icon name="arrow-up" /> 12,5%</>}
+    />
+  </Box>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      animate
+      format={es}
+      label="Pedidos"
+      value={1204}
+      trend="up"
+      change={<><Icon name="arrow-up" /> 8,2%</>}
+    />
+  </Box>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      animate
+      format={(n) =>
+        \`\${es(n, {
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 1,
+        })}%\`
+      }
+      label="Cancelaciones"
+      value={0.9}
+      trend="up"
+      change={<><Icon name="arrow-down" /> 0,3 puntos</>}
+    />
+  </Box>
+</Grid>`;
 ---
 
 <Base title="Stat" description="Stat: métrica de titular con label, valor tabular y cambio coloreado por tendencia.">
   <h1>Stat</h1>
   <p class="lede">
-    Stat es una métrica de titular: label tenue, valor grande y tabular, y un cambio opcional. La
-    <strong>tendencia</strong> colorea el cambio con independencia de su signo, «bajar» es bueno para
-    churn y «subir» es bueno para ingresos, así que el consumidor decide qué dirección es positiva.
+    Stat es una métrica de titular: label tenue, valor grande en mono tabular, y un cambio
+    opcional. La <strong>tendencia</strong> colorea el cambio con independencia de su signo,
+    «bajar» es bueno para churn y «subir» es bueno para ingresos, así que el consumidor decide qué
+    dirección es positiva.
   </p>
 
-  <h2>Demo HTML</h2>
-  <Showcase html={html} react={react} label="Stat" />
+  <h2>Stat Card</h2>
+  <p>
+    <a href="/componentes/card#stat-card">Card</a> no añade otra variante a Stat:
+    <a href="/componentes/box">Box</a> aporta la superficie y Grid organiza la colección. La flecha
+    baja en cancelaciones, pero <code>trend="up"</code> comunica que ese cambio es favorable.
+  </p>
+  <Showcase html={html} react={react} label="Stat Cards" note="Grid + Box + Stat + Icon" />
+
+  <h2 id="animar">Animar el valor</h2>
+  <p>
+    El count-up es <strong>opt-in</strong>: el mismo Stat Card, con
+    <code>animate</code> / <code>data-animate</code> y un valor numérico. Sin él el markup sigue
+    estático. La duración sale de <code>--motion-count-duration</code>; con
+    <code>prefers-reduced-motion</code> salta al final.
+  </p>
+  <Showcase
+    html={htmlAnimate}
+    react={reactAnimate}
+    label="Stat Cards animadas"
+    note="Mismo card · animate + format / data-count"
+  />
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
 </Base>

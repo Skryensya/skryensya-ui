@@ -1,23 +1,24 @@
 @mixin tokens {
     /* ── STATE LAYER ──────────────────────────────────────────────────────────
      * A single semi-transparent overlay communicates hover / focus / pressed /
-     * selected / dragged. Its colour is currentColor, the component's OWN content
-     * colour, so one model covers every case with zero per-component colour tokens:
+     * selected / dragged. Its color is currentColor, the component's OWN content
+     * color, so one model covers every case with zero per-component color tokens:
      *   • neutral surface → dark/light text → dark/light layer (subsumes black/white);
-     *   • saturated fill (primary/danger/…) → the on-* text colour → correct tint
-     *     (a black overlay on a blue button looks muddy; the white content colour
+     *   • saturated fill (primary/danger/…) → the on-* text color → correct tint
+     *     (a black overlay on a blue button looks muddy; the white content color
      *      does not).
-     * Opacities are plain numbers and MODE-INVARIANT on purpose: a number cannot live
-     * inside light-dark(). High contrast bumps them via [data-contrast] in modes/hc.scss,
-     * which IS attribute-driven. Priority ladder + single-active-layer rules live in the
-     * opt-in patterns/state-layer.css. */
+     * Opacities are MODE-INVARIANT and intentionally separated by visible steps.
+     * High contrast keeps the wash stable instead of darkening it further; it adds an
+     * inset keyline whose width grows with the active opacity. Priority ladder +
+     * single-active-layer rules live in patterns/state-layer.css. */
     --state-layer-color: currentColor;
-    --state-layer-hover-opacity: 0.07;    /* target 6–8%   */
-    --state-layer-focus-opacity: 0.1;     /* target 8–10%  */
-    --state-layer-pressed-opacity: 0.12;  /* target 10–12% */
-    --state-layer-selected-opacity: 0.08; /* target 8–12%, kept subtle, it is the base rung */
-    --state-layer-dragged-opacity: 0.16;  /* target 14–16% */
+    --state-layer-selected-opacity: 0.08; /* persistent base rung */
+    --state-layer-hover-opacity: 0.12;
+    --state-layer-focus-opacity: 0.16;
+    --state-layer-pressed-opacity: 0.2;
+    --state-layer-dragged-opacity: 0.28;
     --state-layer-disabled-opacity: 0;    /* disabled shows NO reactive layer */
+    --state-layer-keyline-scale: 0px;     /* high contrast opt-in; opacity scales its width */
     /* FOCUS RING, a separate family on purpose. The ring is the independent focus
      * indicator, not part of the layer: the layer is never a state's sole signal. The
      * naming carries that guarantee, so folding these under --state-layer-* would say

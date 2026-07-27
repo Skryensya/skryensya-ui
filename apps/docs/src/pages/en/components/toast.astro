@@ -1,0 +1,640 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
+
+/* THE MAIN EXAMPLE: a toast is not authored "already visible", it appears because something happened. The markup
+   stable is the trigger, the empty region and the <template> of the item; the rest is done by the app. */
+const emitHtml = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="primary"
+  data-emit-toast
+  type="button"
+>
+  Archivar documento
+</button>
+
+<div class="sk-toast-region" aria-live="polite"></div>
+
+<template data-toast-template>
+  <div
+    class="sk-alert"
+    data-sk-toast
+    data-presentation="banner"
+    data-tone="neutral"
+    data-timeout="4000"
+    role="status"
+    aria-live="polite"
+  >
+    <div class="sk-alert__content">
+      <div class="sk-alert__description">
+        Documento archivado.
+      </div>
+    </div>
+    <div class="sk-alert__actions">
+      <button
+        class="sk-alert__dismiss sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-icon-only
+        data-variant="ghost"
+        type="button"
+        aria-label="Descartar"
+      >
+        <span data-sk-icon="close"></span>
+      </button>
+    </div>
+  </div>
+</template>`;
+
+const emitJs = `import { initComponents } from "@skryensya/vanilla/auto";
+
+const region = document.querySelector(".sk-toast-region");
+const template = document.querySelector("[data-toast-template]");
+
+document
+  .querySelector("[data-emit-toast]")
+  .addEventListener("click", async () => {
+    region.append(template.content.cloneNode(true));
+    // initComponents is idempotent: it mounts only what was recently
+    // inserted, and with that the toast gains ✕ and timeout.
+    await initComponents(region);
+  });
+
+// The toast NEVER withdraws on its own: ask permission with sk-dismiss
+// (detail.reason: "timeout" | "dismiss") and the app decides.
+region.addEventListener("sk-dismiss", (event) => {
+  event.target.remove();
+});`;
+
+const emitScript = `const region = document.querySelector(".sk-toast-region");
+const template = document.querySelector("[data-toast-template]");
+
+document.querySelector("[data-emit-toast]").addEventListener("click", async () => {
+  region.append(template.content.cloneNode(true));
+  await window.skMount(region);
+});
+
+region.addEventListener("sk-dismiss", (event) => {
+  event.target.remove();
+});`;
+
+const emitReact = `import { useState } from "react";
+import { Button } from "@skryensya/react/button";
+import {
+  Toast,
+  ToastRegion,
+} from "@skryensya/react/content";
+
+const [toasts, setToasts] = useState([]);
+const remove = (id) =>
+  setToasts((all) => all.filter((toast) => toast.id !== id));
+
+<Button
+  variant="primary"
+  onClick={() => setToasts((all) => [...all, { id: crypto.randomUUID() }])}
+>
+  Archivar documento
+</Button>
+
+<ToastRegion>
+  {toasts.map((toast) => (
+    <Toast
+      key={toast.id}
+      timeout={4000}
+      onDismiss={() => remove(toast.id)}
+    >
+      Documento archivado.
+    </Toast>
+  ))}
+</ToastRegion>;`;
+
+const simpleHtml = `<div class="sk-toast-region" aria-live="polite">
+  <div
+    class="sk-alert"
+    data-sk-toast
+    data-presentation="banner"
+    data-tone="neutral"
+    role="status"
+    aria-live="polite"
+  >
+    <div class="sk-alert__content">
+      <div class="sk-alert__description">
+        Link copied to clipboard.
+      </div>
+    </div>
+    <div class="sk-alert__actions">
+      <button
+        class="sk-alert__dismiss sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-icon-only
+        data-variant="ghost"
+        type="button"
+        aria-label="Descartar"
+      >
+        <span data-sk-icon="close"></span>
+      </button>
+    </div>
+  </div>
+</div>`;
+
+const statusHtml = `<div class="sk-toast-region" data-stack="off" aria-live="polite">
+  <div
+    class="sk-alert"
+    data-sk-toast
+    data-presentation="banner"
+    data-tone="info"
+    data-timeout="6000"
+    role="status"
+    aria-live="polite"
+  >
+    <span class="sk-alert__icon" aria-hidden="true">
+      <span data-sk-icon="info"></span>
+    </span>
+    <div class="sk-alert__content">
+      <p class="sk-alert__title">Sincronizando</p>
+      <div class="sk-alert__description">
+        This may take a few seconds.
+      </div>
+    </div>
+  </div>
+  <div
+    class="sk-alert"
+    data-sk-toast
+    data-presentation="banner"
+    data-tone="success"
+    role="status"
+    aria-live="polite"
+  >
+    <span class="sk-alert__icon" aria-hidden="true">
+      <span data-sk-icon="success"></span>
+    </span>
+    <div class="sk-alert__content">
+      <p class="sk-alert__title">Despliegue creado</p>
+      <div class="sk-alert__description">
+        The revision is now in production.
+      </div>
+    </div>
+    <div class="sk-alert__actions">
+      <button
+        class="sk-alert__dismiss sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-icon-only
+        data-variant="ghost"
+        type="button"
+        aria-label="Descartar"
+      >
+        <span data-sk-icon="close"></span>
+      </button>
+    </div>
+  </div>
+  <div
+    class="sk-alert"
+    data-sk-toast
+    data-presentation="banner"
+    data-tone="danger"
+    role="alert"
+    aria-live="assertive"
+  >
+    <span class="sk-alert__icon" aria-hidden="true">
+      <span data-sk-icon="danger"></span>
+    </span>
+    <div class="sk-alert__content">
+      <p class="sk-alert__title">Could not connect</p>
+      <div class="sk-alert__description">
+        Check the network and try again.
+      </div>
+    </div>
+    <div class="sk-alert__actions">
+      <button
+        class="sk-alert__dismiss sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-icon-only
+        data-variant="ghost"
+        type="button"
+        aria-label="Descartar"
+      >
+        <span data-sk-icon="close"></span>
+      </button>
+    </div>
+  </div>
+</div>`;
+
+/* Action + closure in the same column. No timeout on purpose: a toast with action should not
+   evaporate before it can be used. */
+const actionHtml = `<div class="sk-toast-region" aria-live="polite">
+  <div
+    class="sk-alert"
+    data-sk-toast
+    data-presentation="banner"
+    data-tone="neutral"
+    role="status"
+    aria-live="polite"
+  >
+    <div class="sk-alert__content">
+      <p class="sk-alert__title">Documento archivado</p>
+      <div class="sk-alert__description">
+        Moved to Archived.
+      </div>
+    </div>
+    <div class="sk-alert__actions">
+      <button
+        class="sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-variant="neutral"
+        type="button"
+      >
+        Deshacer
+      </button>
+      <button
+        class="sk-alert__dismiss sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-icon-only
+        data-variant="ghost"
+        type="button"
+        aria-label="Descartar"
+      >
+        <span data-sk-icon="close"></span>
+      </button>
+    </div>
+  </div>
+</div>`;
+
+/* The stack: EXACTLY the same markup as the first example. Stacking is the default. */
+const stackHtml = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="primary"
+  data-emit-toast
+  type="button"
+>
+  Archivar otro
+</button>
+
+<div class="sk-toast-region" aria-live="polite"></div>
+
+<template data-toast-template>
+  <div
+    class="sk-alert"
+    data-sk-toast
+    data-presentation="banner"
+    data-tone="neutral"
+    role="status"
+    aria-live="polite"
+  >
+    <div class="sk-alert__content">
+      <div class="sk-alert__description">
+        Documento archivado.
+      </div>
+    </div>
+    <div class="sk-alert__actions">
+      <button
+        class="sk-alert__dismiss sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-icon-only
+        data-variant="ghost"
+        type="button"
+        aria-label="Descartar"
+      >
+        <span data-sk-icon="close"></span>
+      </button>
+    </div>
+  </div>
+</template>`;
+
+const stackScript = `const region = document.querySelector(".sk-toast-region");
+const template = document.querySelector("[data-toast-template]");
+let count = 0;
+
+document.querySelector("[data-emit-toast]").addEventListener("click", async () => {
+  count += 1;
+  const toast = template.content.firstElementChild.cloneNode(true);
+  const description = toast.querySelector(".sk-alert__description");
+  description.textContent = "Documento " + count + " archivado.";
+  // One of each two with title: different heights, so that it can be seen that the stack
+  // collapsed grouped on the box of the newest and not on each one.
+  if (count % 2 === 0) {
+    const title = document.createElement("p");
+    title.className = "sk-alert__title";
+    title.textContent = "Movido a Archivados";
+    description.before(title);
+  }
+  region.append(toast);
+  await window.skMount(region);
+});
+
+region.addEventListener("sk-dismiss", (event) => {
+  event.target.remove();
+});
+
+document.querySelector("[data-emit-toast]").click();
+document.querySelector("[data-emit-toast]").click();
+document.querySelector("[data-emit-toast]").click();`;
+
+const stackCss = `/* Ya viene en components/toast.css: está acá porque
+   es la única parte del componente que lee el DOM
+   desde CSS, y conviene saber de dónde sale. */
+
+/* Only the newest remains in flux, so the region
+   takes the newest toast’s size. Those in the back come out of flow
+   stretched to that same box: that is why the stack is read
+   as an object and not as out-of-square cards. */
+.sk-toast-region:not([data-stack="off"]) > .sk-alert:not(:last-child) {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+}
+
+.sk-toast-region:not([data-stack="off"]) > .sk-alert {
+  /* 0 for newest (last child), +1 for
+     each one left behind. No counters in JS. */
+  --sk-toast-depth: calc(sibling-count() - sibling-index());
+
+  transform-origin: bottom center;
+  translate: 0 calc(
+    var(--sk-toast-depth) * var(--sk-toast-peek) * -1
+  );
+  scale: calc(1 - (var(--sk-toast-depth) * var(--sk-toast-shrink)));
+  opacity: calc(3 - var(--sk-toast-depth));
+
+  /* The depth again, now in time: that of
+     The front comes out first, each one behind follows him. */
+  transition-delay: calc(
+    var(--sk-toast-depth) * var(--sk-toast-cascade)
+  );
+}
+
+.sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within)
+  > .sk-alert {
+  position: static;
+  overflow: visible;
+  translate: none;
+  scale: none;
+  opacity: 1;
+}
+
+/* The layout does not transition: when it stops being absolute, it
+   They are in their row. Instead of encouraging the jump, it is covered
+   with an arrival. The newest one does not participate: it did not move. */
+.sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within)
+  > .sk-alert:not(:last-child) {
+  animation: sk-toast-fan var(--motion-expand-duration)
+    var(--motion-expand-easing)
+    calc(var(--sk-toast-depth) * var(--sk-toast-cascade))
+    backwards;
+}
+
+@keyframes sk-toast-fan {
+  from {
+    opacity: 0;
+    translate: 0 var(--sk-toast-peek);
+  }
+}`;
+
+const simpleReact = `import {
+  Toast,
+  ToastRegion,
+} from "@skryensya/react/content";
+
+<ToastRegion>
+  <Toast onDismiss={() => remove(id)}>
+    Link copied to clipboard.
+  </Toast>
+</ToastRegion>;`;
+
+const statusReact = `import {
+  Toast,
+  ToastRegion,
+} from "@skryensya/react/content";
+
+<ToastRegion>
+  {/* without onDismiss there is no ✕: the timeout removes it */}
+  <Toast
+    tone="info"
+    title="Sincronizando"
+    icon={<InfoIcon />}
+    timeout={6000}
+  >
+    This may take a few seconds.
+  </Toast>
+  <Toast
+    tone="success"
+    title="Despliegue creado"
+    icon={<SuccessIcon />}
+    onDismiss={() => remove(id)}
+  >
+    The revision is now in production.
+  </Toast>
+</ToastRegion>;`;
+
+const actionReact = `import { Button } from "@skryensya/react/button";
+import {
+  Toast,
+  ToastRegion,
+} from "@skryensya/react/content";
+
+<ToastRegion>
+  <Toast
+    title="Documento archivado"
+    actions={
+      <Button size="sm" variant="neutral" onClick={undo}>
+        Deshacer
+      </Button>
+    }
+    onDismiss={() => remove(id)}
+  >
+    Moved to Archived.
+  </Toast>
+</ToastRegion>;`;
+
+const stackReact = `import {
+  Toast,
+  ToastRegion,
+} from "@skryensya/react/content";
+
+// Stacking is the region's default; no Toast knows that
+// It is in a pile. The order of the array is that of the stack.
+// To NOT stack: <ToastRegion data-stack="off">
+<ToastRegion>
+  {toasts.map((toast) => (
+    <Toast key={toast.id} onDismiss={() => remove(toast.id)}>
+      {toast.message}
+    </Toast>
+  ))}
+</ToastRegion>;`;
+
+const vanilla = `import {
+  initComponents,
+} from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// Icons are authored as <span data-sk-icon> placeholders;
+// mountIcons replaces them with the <svg> of the linked set.
+mountIcons(document, lucideIcons);
+
+await initComponents();`;
+---
+
+<Base title="Toast" description="Toast: transient feedback in a floating region. Same anatomy as Alert, with app life cycle.">
+  <h1>Toast</h1>
+  <p class="lede">
+    Toast communicates transient feedback in a floating region. The item is a
+    <a href="/en/components/alert">Alert</a>, same markup, same tones, wrapped in
+    <code>sk-toast-region</code> and in the toast life cycle (mount, dismiss, optional timeout).
+  </p>
+
+  <h2>after an action</h2>
+  <p>
+    This is the real case: a toast is no longer visible, it appears because something happened. What is stable
+    In HTML there are three pieces: the control that triggers the action, a
+    <code>sk-toast-region</code> <strong>empty</strong>, and a <code>&lt;template&gt;</code> with the
+    item. The app clones, inserts and remounts; <code>initComponents</code> is idempotent, so
+    which only touches what was recently inserted.
+  </p>
+  <Showcase
+    html={emitHtml}
+    js={emitJs}
+    previewScript={emitScript}
+    react={emitReact}
+    label="Toast after an action"
+    note="press the button"
+    viewport="menu"
+  />
+
+  <h2>Simple</h2>
+  <p>
+    <code>tone="neutral"</code> (the default). In a toast, color should almost never be the signal
+    main: it already floats and retires. Neutral lets the text say the warning without painting the urgency of
+    more, and floats on a surface <strong>raised</strong>
+    (<code>--color-bg-surface-raised</code> + <code>--elevation-raised</code>) to be read as
+    elevated chrome, not as page panel. See the same criteria in
+    <a href="/en/components/alert">Alert</a>.
+  </p>
+  <Showcase html={simpleHtml} react={simpleReact} label="Toast simple" viewport="menu" />
+
+  <h2>With state</h2>
+  <p>
+    Status tones color the panel. <code>danger</code> is advertised as
+    <code>role="alert"</code> (assertive); the rest as <code>role="status"</code> (polite).
+  </p>
+  <p>
+    The first one does not have ✕: it has <code>data-timeout</code>, so it leaves alone. The other two
+    They ask for something from the person, a display to confirm and an error to read, and that is why they stay
+    until they close. The rule of thumb: <strong>if the toast can close itself, it does not need ✕;
+    if you cannot, the ✕ is required</strong>.
+  </p>
+  <Showcase html={statusHtml} react={statusReact} label="Toast with status" viewport="overlay" />
+
+  <h2>with action</h2>
+  <p>
+    <code>sk-alert__actions</code> is a single column: recovery action and close live
+    there, in that order. A toast with action does not take <code>data-timeout</code>, disappear before
+    That someone manages to press “Undo” turns the action into a decoration.
+  </p>
+  <Showcase html={actionHtml} react={actionReact} label="Toast with action" viewport="menu" />
+
+  <h2>Apilado</h2>
+  <p>
+    It is the <strong>default behavior</strong>, not an option that is turned on: four toasts
+    loose they eat up a quarter of the screen, and nobody asks for that on purpose, a region with several
+    toasts is the normal output of an app telling what it did. The toasts overlap
+    imprint of <strong>one</strong>, the newest one in front and the previous ones peeking out from behind; on hover (or keyboard focus) the stack pops and becomes the list normal again.
+  </p>
+  <p>
+    The output is <code>data-stack="off"</code>, for the rare region whose target <em>is</em> show
+    several messages at the same time. The example of tones above uses it: there are three toasts that must be
+    see together, not a stack.
+  </p>
+  <p>
+    Groups on the box of the newest <strong></strong>: it is the only one left in flow, so the
+    The region measures what it measures, and those behind it flow out stretched to that same box. That is why the
+    stack is read as an object and not as out-of-square cards: if everyone measured their own content,
+    a toast of two lines behind one of one would overhang and no edge of the stack
+    would fit with the next one.
+  </p>
+  <p>
+    The only number of the effect is the <strong>depth</strong>, and it leaves the DOM:
+    <code>sibling-count() - sibling-index()</code> gives 0 for the newest and one more for each
+    behind. The app adds and removes nodes, it never keeps an index. The opacity turns off by itself in the
+    fourth (<code>calc(3 - depth)</code> is clamped), and where the browser does not support reading the index in CSS the region stays like the normal list above, which is the honest degradation.
+  </p>
+  <p>
+    That same depth is the <strong>delay</strong> of each step when opening
+    (<code>--sk-toast-cascade</code>): the one in front comes out first and each one behind him is followed by a beat
+    Then the stack unfolds instead of inflating all together. Returning to flow is a change of
+    <em>layout</em>, and the layout does not transition, the moment they are no longer absolute
+    They are several rows higher; that cannot be interpolated, so instead of animating the jump it
+    it covers it: each toast enters with a fade and a few pixels rising to the place it has just taken,
+    in the same waterfall. The newest one does not participate, has never moved and should not blink.
+  </p>
+  <Showcase
+    html={stackHtml}
+    previewScript={stackScript}
+    react={stackReact}
+    label="Pile of toasts"
+    note="Hover to open it"
+    viewport="overlay"
+  />
+  <p>
+    The JavaScript is the same as the first example, and the HTML too: clone, insert, mount and
+    remove in <code>sk-dismiss</code>. There is nothing to add to stack. The hooks are from the
+    region: <code>--sk-toast-peek</code> (how much each one appears),
+    <code>--sk-toast-shrink</code> (how much each step back shrinks) and
+    <code>--sk-toast-cascade</code> (how far apart they are in time when opening). No toast knows that
+    It is in a pile.
+  </p>
+  <CodeBlock code={stackCss} lang="css" label="components/toast.css" />
+
+  <h2>The closure is a Button</h2>
+  <p>
+    The ✕ is authored as <a href="/en/components/button">Button</a> icon-only in size
+    <code>sm</code> (<code>data-size="sm" data-icon-only data-variant="ghost"</code>), not as a
+    ad hoc control of the Alert. With that, it inherits what Button already solves: the 32px face, the hit
+    target of 44px that <code>::after</code> expands beyond that face, the hover state layer and
+    pressure, and focus. With no visible text, <code>aria-label</code> is required.
+  </p>
+  <p>
+    It also preserves the part class <code>sk-alert__dismiss</code>: it is the hook that the
+    enhancer to wire the dismiss, which makes the glyph read the tone color
+    (<code>currentColor</code>) instead of the accent that a normal ghost would paint, and the one that corrects the
+    <strong>optical position</strong>. An icon-only ghost is almost all air: 16px glyph in a box
+    of 32px, plus the panel inset, leave the ✕ floating in a gap. The part throws it back
+    half an inset unit, so the <em>glyph</em> falls where the padding says the edge of the
+    content, without the click area losing a pixel.
+  </p>
+
+  <h2>The life cycle is of the app</h2>
+  <p>
+    Toast does not manage queues or persistence: those cycles belong to the application. The component
+    provides the region, reuses Alert, announces the tone and tells you when you want to leave.
+  </p>
+  <p>
+    In Vanilla, <code>data-sk-toast</code> on a <code>sk-alert</code> registers the native dismiss and
+    announces the tone. <code>data-timeout</code> is optional; upon expiration it issues <code>sk-dismiss</code>
+    (same as ✕) with <code>detail.reason</code>, <code>"timeout"</code> or
+    <code>"dismiss"</code>, in case the app distinguishes “he left alone” from “they closed him.” The component
+    The node is never removed: that is done by whoever put it in.
+  </p>
+  <CodeBlock code={vanilla} label="JavaScript" />
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>
+    The code is in the <strong>React</strong> tab of each preview. API reflects Alert
+    (<code>title</code>, <code>icon</code>, <code>actions</code>, <code>presentation</code>,
+    <code>tone</code>) plus <code>timeout</code> and <code>onDismiss</code> rightly so. Without
+    <code>tone</code>, is neutral.
+  </p>
+</Base>

@@ -3,7 +3,7 @@ num: 4
 title: La densidad es un multiplicador con el piso de WCAG adentro
 short: "La densidad"
 summary: >-
-  La densidad es un multiplicador en runtime (--ds-density), no un segundo set de valores que pueda
+  La densidad es un multiplicador en runtime (--sk-density), no un segundo set de valores que pueda
   derivar de los base. Los tamaños interactivos llevan el piso de 24px de WCAG dentro del propio token,
   así que ningún equipo puede multiplicar por debajo del mínimo accesible, pongan lo que pongan. Tipografía,
   radio y anillo de foco quedan deliberadamente invariantes a la densidad.
@@ -19,20 +19,20 @@ ninguna revisión de código detecta de forma confiable.
 
 ## Un solo número
 
-`--ds-density` (1 = cómoda). Los tokens de espaciado emiten:
+`--sk-density` (1 = cómoda). Los tokens de espaciado emiten:
 
 ```css
-round(calc(<base> * var(--ds-density)), 2px)
+round(calc(<base> * var(--sk-density)), 2px)
 ```
 
 Los tamaños interactivos además le ponen piso al resultado:
 
 ```css
-max(round(calc(<base> * var(--ds-density)), 2px), 24px)
+max(round(calc(<base> * var(--sk-density)), 2px), 24px)
 ```
 
 **El piso está dentro del token.** Ningún equipo de producto puede multiplicar por debajo, sin importar
-lo que asignen a `--ds-density`. Es inalcanzable por construcción, no por documentación.
+lo que asignen a `--sk-density`. Es inalcanzable por construcción, no por documentación.
 
 ## Por qué `round(…, 2px)`
 

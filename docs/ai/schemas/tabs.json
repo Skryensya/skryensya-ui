@@ -1,0 +1,45 @@
+{
+  "$schema": "./_meta.json",
+  "id": "tabs",
+  "consume": {
+    "css": [
+      "@skryensya/core/components/tabs.css",
+      "@skryensya/core/patterns/state-layer.css"
+    ],
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-tabs"],
+      "attributes": ["data-sk-tabs"],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "Tabs": {
+      "use": "tabbed content",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/tabs",
+        "name": "Tabs"
+      },
+      "requires": ["items"],
+      "props": {
+        "orientation": [null, "horizontal", "vertical"],
+        "activationMode": [null, "automatic", "manual"]
+      }
+    }
+  },
+  "rules": {
+    "items": "Give every item a stable unique value, label and panel children.",
+    "selection": "Use defaultValue for uncontrolled tabs or value with onValueChange for controlled tabs.",
+    "activationMode": "Use manual when arrow-key focus must not immediately activate expensive content."
+  },
+  "examples": {
+    "Tabs": {
+      "basic": "<Tabs defaultValue=\"summary\" items={tabs} />",
+      "vertical": "<Tabs activationMode=\"manual\" defaultValue=\"summary\" items={tabs} orientation=\"vertical\" />"
+    }
+  }
+}

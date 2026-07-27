@@ -1,0 +1,47 @@
+/* TIER 3, TOOLBAR — one tab stop followed by roving keyboard focus. */
+@layer components {
+  .sk-toolbar {
+    --sk-toolbar-gap: var(--space-inline-xs);
+    --sk-toolbar-padding: var(--space-inset-xs);
+    --sk-toolbar-border-color: var(--color-border-subtle);
+    --sk-toolbar-border-width: 1px;
+    --sk-toolbar-radius: var(--radius-surface);
+    --sk-toolbar-bg: var(--color-bg-surface);
+    --sk-toolbar-separator-color: var(--color-border-subtle);
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sk-toolbar-gap);
+    align-items: center;
+    padding: var(--sk-toolbar-padding);
+    border: var(--sk-toolbar-border-width) solid var(--sk-toolbar-border-color);
+    border-radius: var(--sk-toolbar-radius);
+    background: var(--sk-toolbar-bg);
+  }
+  .sk-toolbar[aria-orientation="vertical"] {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .sk-toolbar__group {
+    display: flex;
+    gap: 1px;
+    align-items: center;
+  }
+  .sk-toolbar[aria-orientation="vertical"] .sk-toolbar__group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .sk-toolbar__separator {
+    align-self: stretch;
+    inline-size: 1px;
+    min-block-size: var(--size-control-sm);
+    margin: 0 var(--space-inline-xs);
+    background: var(--sk-toolbar-separator-color);
+  }
+  .sk-toolbar[aria-orientation="vertical"] .sk-toolbar__separator {
+    inline-size: auto;
+    block-size: 1px;
+    min-block-size: 0;
+    margin: var(--space-stack-xs) 0;
+  }
+}

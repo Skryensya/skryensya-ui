@@ -1,0 +1,211 @@
+{
+  "$comment": "The CATALOG. System-wide rules that hold for every tier-3 schema, stated once. A component schema references these by id instead of restating them; restating is what lets them drift. Each entry says which gate proves it, so an invariant with no gate is visibly unenforced rather than quietly aspirational.",
+  "version": 1,
+
+  "gates": {
+    "0": "schema is internally valid (this file + _meta.json)",
+    "1": "declared artefacts exist and are importable",
+    "2": "static CSS contracts (packages/core/scripts/lint.mjs)",
+    "3": "cross-layer coherence (CSS × core TS × bindings × docs)",
+    "4": "behaviour (vitest, per binding)",
+    "5": "visual, across the four dimensions + forced-colors (CDP)"
+  },
+
+  "invariants": [
+    {
+      "id": "css.tier2-only",
+      "statement": "Every color-valued hook resolves to a tier-2 semantic token: never a --ramp-*, never a literal color.",
+      "why": "A hook reaching into a ramp bypasses the mode layer and breaks dark mode for that component alone.",
+      "scope": "css",
+      "gate": [0, 2],
+      "appliesTo": { "kind": ["component", "pattern"] },
+      "provenAt": "checks.mjs :: tier-skip"
+    },
+    {
+      "id": "css.no-new-hooks-per-group",
+      "statement": "A variant, size or state rule never introduces a hook name absent from the base set.",
+      "why": "Both hook idioms satisfy this and it is the rule that keeps them from multiplying. A `redeclare` group reassigns a base hook (--sk-button-bg per variant); a `read` group assigns a property that reads a base hook (--sk-tabs-trigger-selected-fg under [data-selected]). Either way the base declares every name, which is what stops one hook per combination.",
+      "scope": "css",
+      "gate": [0, 3],
+      "appliesTo": { "kind": ["component", "pattern"] }
+    },
+    {
+      "id": "css.layered",
+      "statement": "Every rule sits inside @layer components; nothing targets :root.",
+      "why": "An unlayered rule beats any layered one regardless of specificity, so it removes the consumer's override surface.",
+      "scope": "css",
+      "gate": [3],
+      "appliesTo": { "kind": ["component", "pattern"] }
+    },
+    {
+      "id": "css.no-interaction-paint",
+      "statement": "No hover, press, focus or selected color is declared here. Interaction paint is the state-layer pattern's, always.",
+      "why": "Per-component interaction colors are exactly the one-color-per-combination explosion the state layer exists to delete (ADR-9).",
+      "scope": "css",
+      "gate": [3],
+      "appliesTo": { "kind": ["component"], "except": ["state-layer"] }
+    },
+    {
+      "id": "css.axes-orthogonal",
+      "statement": "A selector keys off exactly one axis unless its exact selector is listed in couplings.",
+      "why": "Axes compose in the cascade; listing the rare coupling keeps combinations explicit and reviewable.",
+      "scope": "css",
+      "gate": [3],
+      "appliesTo": { "kind": ["component", "pattern"], "requires": "axes" }
+    },
+    {
+      "id": "css.default-is-base",
+      "statement": "The first value of each axis is the base default and carries no selector; every later value carries exactly one.",
+      "why": "A default with its own rule is a value that can disagree with the base. A non-default without one is a value that silently does nothing.",
+      "scope": "css",
+      "gate": [3],
+      "appliesTo": { "kind": ["component", "pattern"], "requires": "axes" }
+    },
+    {
+      "id": "css.forced-colors-complete",
+      "statement": "Every base or group color that needs a forced-colors override has one inside @media (forced-colors: active).",
+      "why": "In forced colors the system repaints backgrounds and borders; a variant left out becomes an invisible or unreadable control.",
+      "scope": "css",
+      "gate": [3],
+      "appliesTo": { "kind": ["component", "pattern"] }
+    },
+    {
+      "id": "css.ships-structure",
+      "statement": "A components/ sheet paints structure on import, or composes another component's hooks.",
+      "scope": "css",
+      "gate": [2],
+      "appliesTo": { "kind": ["component"] },
+      "provenAt": "checks.mjs :: component-ships-structure"
+    },
+    {
+      "id": "css.ships-hooks",
+      "statement": "A components/ sheet declares at least one --sk-* hook, so it has a public restyle surface.",
+      "scope": "css",
+      "gate": [2],
+      "appliesTo": { "kind": ["component"] },
+      "provenAt": "checks.mjs :: component-ships-hooks"
+    },
+    {
+      "id": "css.name-shape",
+      "statement": "Declared custom-property names are lowercase kebab.",
+      "scope": "css",
+      "gate": [2],
+      "appliesTo": { "kind": ["component", "pattern"] },
+      "provenAt": "checks.mjs :: name-shape"
+    },
+
+    {
+      "id": "xlayer.axis-parity",
+      "statement": "Every axis value exists in all declared surfaces: the CSS rule, the core TS union, every binding, and a docs example.",
+      "why": "This is the failure mode a generator produces most: a value added to the CSS and not to the type, or to the type and not to the docs.",
+      "scope": "cross-layer",
+      "gate": [3],
+      "appliesTo": { "kind": ["component", "pattern"], "requires": "axes" }
+    },
+    {
+      "id": "xlayer.parts-parity",
+      "statement": "Every declared part exists as a class in the CSS and as a key in the core parts object.",
+      "scope": "cross-layer",
+      "gate": [3],
+      "appliesTo": { "kind": ["component", "pattern"] }
+    },
+    {
+      "id": "xlayer.host-parity",
+      "statement": "Every host element has a binding, behaviour tests and a docs example of its own.",
+      "why": "A second host is a second public surface. Undocumented hosts are how <a class=\"sk-button\"> got used three times with no contract.",
+      "scope": "cross-layer",
+      "gate": [1, 3],
+      "appliesTo": { "kind": ["component"] }
+    },
+    {
+      "id": "xlayer.companion-enforced",
+      "statement": "Every class listed in requires is verified at runtime by the binding that owns the markup contract.",
+      "why": "A required companion that nothing checks is a silent dependency; it fails as a subtle layout bug far from its cause.",
+      "scope": "cross-layer",
+      "gate": [4],
+      "appliesTo": { "kind": ["component", "pattern"] }
+    },
+    {
+      "id": "xlayer.exports-map",
+      "statement": "Every binding derived from id is reachable by bare specifier through its package's exports map.",
+      "why": "The docs teach bare specifiers; a file not in the map does not exist for a consumer.",
+      "scope": "cross-layer",
+      "gate": [1],
+      "appliesTo": { "kind": ["component", "pattern"] }
+    },
+
+    {
+      "id": "vanilla.patches-only",
+      "statement": "The enhancer patches attributes on elements that already exist. It renders no markup and writes no class.",
+      "scope": "vanilla",
+      "gate": [4],
+      "appliesTo": { "kind": ["component", "pattern"], "requires": "bindings.vanilla" }
+    },
+    {
+      "id": "vanilla.idempotent",
+      "statement": "Mounting twice enhances zero elements the second time.",
+      "scope": "vanilla",
+      "gate": [4],
+      "appliesTo": { "kind": ["component", "pattern"], "requires": "bindings.vanilla" }
+    },
+    {
+      "id": "vanilla.refuses-invalid-markup",
+      "statement": "When the markup contract is broken the enhancer fails loudly, with the fix in the message.",
+      "scope": "vanilla",
+      "gate": [4],
+      "appliesTo": { "kind": ["component", "pattern"], "requires": "bindings.vanilla" }
+    },
+
+    {
+      "id": "a11y.name-required",
+      "statement": "A control with no visible text carries an authored accessible name, and the binding refuses one without it.",
+      "scope": "a11y",
+      "gate": [4],
+      "appliesTo": { "kind": ["component"] }
+    },
+    {
+      "id": "a11y.decorative-icons",
+      "statement": "Glyphs are aria-hidden and never contribute to the accessible name.",
+      "scope": "a11y",
+      "gate": [4],
+      "appliesTo": { "kind": ["component"] }
+    },
+    {
+      "id": "a11y.state-is-conveyed",
+      "statement": "Component state is exposed to assistive technology, not only painted.",
+      "scope": "a11y",
+      "gate": [4],
+      "appliesTo": { "kind": ["component"], "requires": "states" }
+    },
+    {
+      "id": "a11y.touch-target",
+      "statement": "The interactive area measures at least --size-touch-target on both axes, whatever size the face paints.",
+      "scope": "a11y",
+      "gate": [5],
+      "appliesTo": { "kind": ["component"] }
+    },
+    {
+      "id": "a11y.forced-colors-legible",
+      "statement": "The component stays legible and its states stay distinguishable under forced-colors.",
+      "scope": "a11y",
+      "gate": [5],
+      "appliesTo": { "kind": ["component", "pattern"] }
+    },
+
+    {
+      "id": "machine.owns-state",
+      "statement": "State is written by the machine as a data attribute, never as a BEM modifier and never toggled by hand.",
+      "scope": "machine",
+      "gate": [3, 4],
+      "appliesTo": { "kind": ["component"], "requires": "machine" }
+    },
+    {
+      "id": "machine.parts-are-ours",
+      "statement": "Part class names are ours and permanent: they survive replacing the machine underneath.",
+      "why": "Which is why parts are named in BEM rather than in the machine's vocabulary.",
+      "scope": "machine",
+      "gate": [3],
+      "appliesTo": { "kind": ["component"], "requires": "machine" }
+    }
+  ]
+}

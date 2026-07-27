@@ -52,17 +52,17 @@ export type ExpandableTileOptions = TileSurfaceOptions & {
 };
 
 export const tileParts = {
-  root: "ds-tile",
-  interactive: "ds-tile--interactive",
-  expandable: "ds-tile--expandable",
-  content: "ds-tile__content",
-  title: "ds-tile__title",
-  description: "ds-tile__description",
-  selectionIndicator: "ds-tile__selection-indicator",
-  trigger: "ds-tile__trigger",
-  chevron: "ds-tile__chevron",
-  expandableContent: "ds-tile__expandable-content",
-  grid: "ds-tile-grid",
+  root: "sk-tile",
+  interactive: "sk-tile--interactive",
+  expandable: "sk-tile--expandable",
+  content: "sk-tile__content",
+  title: "sk-tile__title",
+  description: "sk-tile__description",
+  selectionIndicator: "sk-tile__selection-indicator",
+  trigger: "sk-tile__trigger",
+  chevron: "sk-tile__chevron",
+  expandableContent: "sk-tile__expandable-content",
+  grid: "sk-tile-grid",
 } as const;
 
 export type TilePart = keyof typeof tileParts;
@@ -83,7 +83,7 @@ export const tileDataParts = {
 } as const;
 
 export const tileEvents = {
-  checkedChange: "ds:checkedchange",
-  valueChange: "ds:valuechange",
-  openChange: "ds:openchange",
+  checkedChange: "sk:checkedchange",
+  valueChange: "sk:valuechange",
+  openChange: "sk:openchange",
 } as const;

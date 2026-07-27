@@ -2,9 +2,9 @@ import { sidebarEvents, type SidebarCollapsedChangeDetails, type SidebarOptions 
 import { applyAttrs, bindEvents } from "../runtime/apply.js";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
-const rootSelector = "[data-ds-sidebar]";
-const triggerSelector = "[data-ds-sidebar-trigger]";
-const contentSelector = "[data-ds-sidebar-content]";
+const rootSelector = "[data-sk-sidebar]";
+const triggerSelector = "[data-sk-sidebar-trigger]";
+const contentSelector = "[data-sk-sidebar-content]";
 
 type Cleanup = () => void;
 
@@ -20,9 +20,9 @@ type Cleanup = () => void;
 export function connectSidebar(root: HTMLElement, options: SidebarOptions = {}): Cleanup {
   const trigger = root.querySelector<HTMLButtonElement>(triggerSelector);
   const content = root.querySelector<HTMLElement>(contentSelector);
-  if (!trigger) throw new Error("Sidebar requires a [data-ds-sidebar-trigger] element.");
+  if (!trigger) throw new Error("Sidebar requires a [data-sk-sidebar-trigger] element.");
 
-  const id = options.id ?? (root.id || `ds-sidebar-${Math.random().toString(36).slice(2)}`);
+  const id = options.id ?? (root.id || `sk-sidebar-${Math.random().toString(36).slice(2)}`);
   const isControlled = options.collapsed !== undefined;
   let collapsed = options.collapsed ?? options.defaultCollapsed ?? false;
 

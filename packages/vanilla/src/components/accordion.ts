@@ -4,6 +4,6 @@ import { createSvelteMount } from "../runtime/svelte-hydrate.js";
 /** Mounts only authored Accordion roots; it never scans or imports another enhancer. */
 export const mountAccordion = createSvelteMount({
   key: "accordion",
-  rootSelector: "[data-ds-accordion]",
+  rootSelector: "[data-sk-accordion]",
   Component: Accordion,
 });

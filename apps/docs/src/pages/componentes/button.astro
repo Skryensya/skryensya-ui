@@ -1,83 +1,199 @@
 ---
+import "@skryensya/core/components/tile.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import AnatomyDiagram from "../../components/AnatomyDiagram.astro";
 
-import "../../examples/button.css";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
 const html = `<button
-  class="ds-button ds-interactive"
-  data-ds-button
+  class="sk-button sk-interactive"
+  data-sk-button
   data-variant="primary"
 >
   Guardar
 </button>
 <button
-  class="ds-button ds-interactive"
-  data-ds-button
+  class="sk-button sk-interactive"
+  data-sk-button
   data-variant="neutral"
 >
   Cancelar
 </button>
 <button
-  class="ds-button ds-interactive"
-  data-ds-button
+  class="sk-button sk-interactive"
+  data-sk-button
   data-variant="danger"
 >
   Borrar
 </button>`;
 
 /* Icon + text: no extra hook. The button is already an inline-flex row with a gap, so an authored
-   <svg class="ds-icon"> and the label lay themselves out. The icon is DECORATIVE, the label already
+   <svg class="sk-icon"> and the label lay themselves out. The icon is DECORATIVE, the label already
    names the action, so it stays aria-hidden. */
 const iconHtml = `<button
-  class="ds-button ds-interactive"
-  data-ds-button
+  class="sk-button sk-interactive"
+  data-sk-button
   data-variant="primary"
 >
-  <span data-ds-icon="download"></span>
+  <span data-sk-icon="download"></span>
   Descargar
 </button>`;
 
 /* Icon-only: data-icon-only makes the box a square, and the name, with no text to carry it, MUST
-   be authored as aria-label. The icon stays decorative. */
+   be authored as aria-label. The icon stays decorative. Default size matches the control (md). */
 const iconOnlyHtml = `<button
-  class="ds-button ds-interactive"
-  data-ds-button
+  class="sk-button sk-interactive"
+  data-sk-button
   data-icon-only
   aria-label="Configuración"
 >
-  <span data-ds-icon="settings"></span>
+  <span data-sk-icon="settings"></span>
 </button>
 <button
-  class="ds-button ds-interactive"
-  data-ds-button
+  class="sk-button sk-interactive"
+  data-sk-button
   data-icon-only
   data-variant="ghost"
   aria-label="Editar"
 >
-  <span data-ds-icon="edit"></span>
+  <span data-sk-icon="edit"></span>
+</button>`;
+
+/* Same shape at sm: face paints at control-sm; ::after keeps the 44px hit. */
+const iconOnlySmHtml = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="sm"
+  data-icon-only
+  aria-label="Configuración"
+>
+  <span data-sk-icon="settings"></span>
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="sm"
+  data-icon-only
+  data-variant="ghost"
+  aria-label="Editar"
+>
+  <span data-sk-icon="edit"></span>
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="sm"
+  data-icon-only
+  data-variant="primary"
+  aria-label="Añadir"
+>
+  <span data-sk-icon="add"></span>
 </button>`;
 
 const js = `import { initComponents } from "@skryensya/vanilla/auto";
 import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 
-// Los iconos se autoran como placeholders <span data-ds-icon>;
+// Los iconos se autoran como placeholders <span data-sk-icon>;
 // mountIcons los reemplaza por el <svg> del set enlazado.
 mountIcons(document, lucideIcons);
 
-initComponents();`;
+await initComponents();`;
 
 const react = `import { Button } from "@skryensya/react/button";
 
 <Button variant="primary">Guardar</Button>
 <Button variant="neutral">Cancelar</Button>
 <Button variant="danger">Borrar</Button>;`;
+
+const sizeHtml = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="sm"
+  data-variant="primary"
+>
+  Guardar
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="md"
+  data-variant="primary"
+>
+  Guardar
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="lg"
+  data-variant="primary"
+>
+  Guardar
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="sm"
+  data-icon-only
+  data-variant="ghost"
+  aria-label="Más acciones"
+>
+  <span data-sk-icon="more"></span>
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="md"
+  data-icon-only
+  data-variant="ghost"
+  aria-label="Más acciones"
+>
+  <span data-sk-icon="more"></span>
+</button>`;
+
+const sizeReact = `import { Button } from "@skryensya/react/button";
+import { Icon } from "@skryensya/react/icon";
+
+<Button size="sm" variant="primary">Guardar</Button>
+<Button variant="primary">Guardar</Button>
+{/* md es el default: omitir size o size="md" */}
+<Button size="lg" variant="primary">Guardar</Button>
+<Button
+  size="sm"
+  iconOnly
+  variant="ghost"
+  aria-label="Más acciones"
+>
+  <Icon name="more" />
+</Button>
+<Button iconOnly variant="ghost" aria-label="Más acciones">
+  <Icon name="more" />
+</Button>;`;
+
+const sizeHit = `/* Ya viene en components/button.css. No hay que
+   escribirlo: está acá porque es la parte del componente
+   que más sorprende, y conviene saber que existe.
+
+   El positioning NO se declara acá a propósito: lo pone
+   .sk-interactive (state layer). Un position propio haría
+   de cualquier botón el bloque contenedor de lo que tenga
+   dentro en absoluto. */
+.sk-button::after {
+  content: "";
+  position: absolute;
+  inset-block: min(
+    0px,
+    calc((100% - var(--size-touch-target)) / 2)
+  );
+  inset-inline: min(
+    0px,
+    calc((100% - var(--size-touch-target)) / 2)
+  );
+}`;
 
 const iconReact = `import { Button } from "@skryensya/react/button";
 import { Icon } from "@skryensya/react/icon";
@@ -87,21 +203,49 @@ import { Icon } from "@skryensya/react/icon";
   Descargar
 </Button>;`;
 
+
 const iconOnlyReact = `import { Button } from "@skryensya/react/button";
 import { Icon } from "@skryensya/react/icon";
 
 // sin texto visible, el nombre es obligatorio: aria-label
 <Button iconOnly aria-label="Configuración">
   <Icon name="settings" />
+</Button>
+<Button iconOnly variant="ghost" aria-label="Editar">
+  <Icon name="edit" />
+</Button>;`;
+
+const iconOnlySmReact = `import { Button } from "@skryensya/react/button";
+import { Icon } from "@skryensya/react/icon";
+
+// Face sm (32px) + hit 44px via ::after. aria-label is required.
+<Button size="sm" iconOnly aria-label="Configuración">
+  <Icon name="settings" />
+</Button>
+<Button
+  size="sm"
+  iconOnly
+  variant="ghost"
+  aria-label="Editar"
+>
+  <Icon name="edit" />
+</Button>
+<Button
+  size="sm"
+  iconOnly
+  variant="primary"
+  aria-label="Añadir"
+>
+  <Icon name="add" />
 </Button>;`;
 
 const tileButtonHtml = `<button
-  class="ds-tile ds-tile--interactive ds-interactive"
+  class="sk-tile sk-tile--interactive sk-interactive"
   type="button"
 >
-  <span class="ds-tile__content">
-    <span class="ds-tile__title">Run deployment</span>
-    <span class="ds-tile__description">
+  <span class="sk-tile__content">
+    <span class="sk-tile__title">Run deployment</span>
+    <span class="sk-tile__description">
       Start the production deployment now.
     </span>
   </span>
@@ -116,13 +260,31 @@ button.addEventListener("click", runDeployment);`;
 const tileButtonReact = `import { TileButton } from "@skryensya/react/tile-button";
 
 <TileButton onClick={runDeployment}>
-  <span className="ds-tile__content">
-    <span className="ds-tile__title">Run deployment</span>
-    <span className="ds-tile__description">
+  <span className="sk-tile__content">
+    <span className="sk-tile__title">Run deployment</span>
+    <span className="sk-tile__description">
       Start the production deployment now.
     </span>
   </span>
 </TileButton>;`;
+const linkHtml = `<a
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="primary"
+  href="/primer-componente"
+>
+  Ir a primer componente
+</a>`;
+
+const linkReact = `import { ButtonLink } from "@skryensya/react/button";
+
+<ButtonLink
+  variant="primary"
+  href="/primer-componente"
+>
+  Ir a primer componente
+</ButtonLink>;`;
+
 ---
 
 <Base title="Button" description="Button: hooks de estilo, enhancer vanilla mínimo y componente React.">
@@ -139,9 +301,112 @@ const tileButtonReact = `import { TileButton } from "@skryensya/react/tile-butto
     caption="La anatomía muestra el Button primario con icono y texto tal como se documenta. Cada tarjeta contiene hooks reales y su flecha termina sobre la propiedad que controlan."
   />
 
-  <h2>Demo</h2>
   <Showcase html={html} react={react} label="Button" />
-  <p>La densidad compacta el layout, no el objetivo táctil: todo Button conserva un mínimo de <code>44px</code> de alto, incluso con <code>data-size="sm"</code>.</p>
+
+  <h2>ButtonLink: apariencia de Button, semántica de enlace</h2>
+  <p>
+    Si activa una acción, usa <code>Button</code>. Si navega a un
+    <code>href</code>, usa <code>ButtonLink</code>: renderiza un
+    <code>&lt;a&gt;</code> y conserva la misma variante, tamaño y forma
+    icon-only. No usa <code>as="a"</code> ni una variante <code>link</code>.
+  </p>
+  <Showcase
+    html={linkHtml}
+    react={linkReact}
+    label="ButtonLink"
+    note="navegación con apariencia de Button"
+  />
+  <p>
+    Un <code>ButtonLink</code> exige <code>href</code> y no acepta
+    <code>disabled</code>. Si el destino no está disponible, renderiza
+    contenido no enlazado: <code>aria-disabled</code> solo no detiene la
+    navegación.
+  </p>
+
+  <h2>Tamaños</h2>
+  <p>
+    El tamaño es un eje <strong>ortogonal</strong> a la variante: un primary puede ser
+    <code>sm</code>, <code>md</code> o <code>lg</code>. Se escribe con <code>data-size</code>
+    (vanilla) o <code>size</code> (React). El HTML sin atributo conserva el fallback
+    <code>md</code>; React serializa ese default como <code>data-size="md"</code>.
+  </p>
+  <Showcase
+    html={sizeHtml}
+    react={sizeReact}
+    label="Button · sm / md / lg"
+    note="texto + icon-only sm y md"
+  />
+
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th scope="col">Tamaño</th>
+          <th scope="col">Pintura</th>
+          <th scope="col">Hit</th>
+          <th scope="col">Cuándo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>sm</code></td>
+          <td>
+            <code>--size-control-sm</code> (32px a densidad 1)
+          </td>
+          <td>
+            <code>44px</code> vía <code>::after</code>
+          </td>
+          <td>
+            Toolbars, tablas densas, acciones secundarias junto a un control
+            <code>md</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>md</code> (default)</td>
+          <td>
+            <code>max(control-md, 44px)</code> → 44px
+          </td>
+          <td>La propia caja</td>
+          <td>Acciones principales de formulario y páginas</td>
+        </tr>
+        <tr>
+          <td><code>lg</code></td>
+          <td>
+            <code>max(control-lg, 44px)</code> → 48px
+          </td>
+          <td>La propia caja</td>
+          <td>Héroes, CTAs de marketing, pantallas con poco ruido</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Button <code>sm</code>: pintar chico, tocar grande</h3>
+  <p>
+    <code>data-size="sm"</code> es el único tamaño que <strong>pinta por debajo</strong> del
+    objetivo táctil de 44px (iOS HIG / <code>--size-touch-target</code>). El piso duro de WCAG
+    (24px) vive dentro de <code>--size-control-sm</code>; el HIG se cumple expandiendo el hit, no
+    la pintura (<a href="/densidad">densidad</a>, ADR-4).
+  </p>
+  <ul>
+    <li>
+      Layout, border-box y anillo de foco siguen <code>--sk-button-height</code> (32px).
+    </li>
+    <li>
+      El área clicable llega a 44px con un <code>::after</code> absoluto que trae el propio
+      <code>button.css</code> (el state layer ya usa <code>::before</code>). No hay nada que hacer.
+    </li>
+    <li>
+      Combina con cualquier variante y con <code>data-icon-only</code>: un ghost icon-only
+      <code>sm</code> es el patrón típico de “más acciones” en una fila.
+    </li>
+  </ul>
+  <CodeBlock
+    code={sizeHit}
+    label="components/button.css"
+    lang="css"
+    note="ya incluido; el hit nunca cae a 32px"
+  />
 
   <h2>Botón de superficie: TileButton</h2>
   <p>
@@ -150,12 +415,12 @@ const tileButtonReact = `import { TileButton } from "@skryensya/react/tile-butto
   </p>
   <Showcase html={tileButtonHtml} react={tileButtonReact} label="TileButton" />
   <p>El HTML autorado funciona sin inicialización. <code>createTileButton</code> construye el botón cuando el árbol se genera desde JavaScript.</p>
-  <CodeBlock code={tileButtonVanilla} label="tu JavaScript" />
+  <CodeBlock code={tileButtonVanilla} label="JavaScript" />
 
   <h2>Con icono</h2>
   <p>
     Un icono adentro no necesita ningún hook nuevo: el botón ya es una fila <code>inline-flex</code> con
-    un gap, así que un <code>&lt;svg class="ds-icon"&gt;</code> y el texto se acomodan solos. El icono es
+    un gap, así que un <code>&lt;svg class="sk-icon"&gt;</code> y el texto se acomodan solos. El icono es
     <strong>decorativo</strong>, el texto ya nombra la acción, así que va <code>aria-hidden</code> y
     el nombre accesible sigue siendo el del botón.
   </p>
@@ -164,19 +429,37 @@ const tileButtonReact = `import { TileButton } from "@skryensya/react/tile-butto
   <h2>Botón icono</h2>
   <p>
     <code>data-icon-only</code> es una <strong>forma</strong>, un tercer eje ortogonal a variante y
-    tamaño: un cuadrado del alto del control que sostiene un solo glifo. Como no hay texto donde vivir, el
-    nombre accesible <strong>tiene</strong> que ir en <code>aria-label</code> (o <code>aria-labelledby</code>):
-    el enhancer vanilla y el wrapper React rechazan un botón icono sin nombre, igual que el enhancer
-    rechaza la clase faltante. El icono adentro queda decorativo, el nombre es del botón, no del svg.
+    tamaño: un cuadrado del alto del control que sostiene un solo glifo. Como no hay texto donde
+    vivir, el nombre accesible <strong>tiene</strong> que ir en <code>aria-label</code> (o
+    <code>aria-labelledby</code>): el enhancer vanilla y el wrapper React rechazan un botón icono
+    sin nombre, igual que el enhancer rechaza la clase faltante. El icono adentro queda decorativo,
+    el nombre es del botón, no del svg.
   </p>
   <Showcase html={iconOnlyHtml} react={iconOnlyReact} label="Botón icono" />
+
+  <h3>Icono <code>sm</code>: pintar chico, tocar grande</h3>
+  <p>
+    Con <code>data-size="sm"</code> la cara pinta a <code>--size-control-sm</code> (32px) y el
+    <code>::after</code> del button sigue ampliando el área clicable a
+    <code>--size-touch-target</code> (44px): se ve compacto, se toca grande.
+  </p>
+  <Showcase
+    html={iconOnlySmHtml}
+    react={iconOnlySmReact}
+    label="Botón icono sm"
+    note="pinta 32px · hit 44px"
+  />
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />
 
 
   <h2>Inicializar vanilla</h2>
-  <CodeBlock code={js} label="tu JS" />
+  <p>
+    La raíz autorada necesita <code>sk-button</code> para la cara y <code>sk-interactive</code>
+    para el state layer y el área táctil. El enhancer rechaza cualquiera de las dos si falta.
+  </p>
+  <CodeBlock code={js} label="JavaScript" />
 
-  <StylingHooks groups={[{"file":"components/button.css","probe":"ds-button"}]} />
+  <StylingHooks groups={[{"file":"components/button.css","probe":"sk-button"}]} />
 </Base>

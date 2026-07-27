@@ -2,11 +2,11 @@ import { fireEvent } from "@testing-library/dom";
 import { describe, expect, it, vi } from "vitest";
 import { mountSegmented } from "./segmented.js";
 
-const markup = `<div class="ds-segmented" data-ds-segmented data-value="day" aria-label="Range">
-  <span class="ds-segmented__indicator" aria-hidden="true"></span>
-  <button class="ds-segmented__option" data-ds-segmented-option data-value="day">Day</button>
-  <button class="ds-segmented__option" data-ds-segmented-option data-value="week">Week</button>
-  <button class="ds-segmented__option" data-ds-segmented-option data-value="month" disabled>Month</button>
+const markup = `<div class="sk-segmented" data-sk-segmented data-value="day" aria-label="Range">
+  <span class="sk-segmented__indicator" aria-hidden="true"></span>
+  <button class="sk-segmented__option" data-sk-segmented-option data-value="day">Day</button>
+  <button class="sk-segmented__option" data-sk-segmented-option data-value="week">Week</button>
+  <button class="sk-segmented__option" data-sk-segmented-option data-value="month" disabled>Month</button>
 </div>`;
 
 function mount(html: string): HTMLElement {
@@ -38,7 +38,7 @@ describe("SegmentedControl Vanilla contracts", () => {
   it("selects on click and arrow navigation, skipping disabled options", () => {
     const root = mount(markup);
     const handler = vi.fn();
-    root.addEventListener("ds-value-change", handler);
+    root.addEventListener("sk-value-change", handler);
     mountSegmented(root);
 
     const day = root.querySelector<HTMLButtonElement>('[data-value="day"]');

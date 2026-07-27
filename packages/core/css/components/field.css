@@ -1,32 +1,62 @@
 /*
- * TIER 3, FIELD (opt-in styling hooks)
+ * TIER 3, FIELD
  *
  * The chrome around a control: label, hint, error. Independent of input.css on purpose, a field
  * wraps a select or a checkbox group just as readily, and the association between label, hint and
  * control is the platform's (`<label for>`, `aria-describedby`), authored by the consumer.
  *
- * The error is text, not a colour: `--ds-field-error-fg` tints a message that must exist anyway,
- * which is what keeps the error legible when colour is unavailable (WCAG 1.4.1).
+ * The error is text, not a color: `--sk-field-error-fg` tints a message that must exist anyway,
+ * which is what keeps the error legible when color is unavailable (WCAG 1.4.1).
  */
 @layer components {
-  .ds-field {
-    --ds-field-gap: var(--space-stack-xs);
-    --ds-field-label-fg: var(--color-text-primary);
-    --ds-field-label-font-size: var(--font-size-body-sm);
-    --ds-field-label-font-weight: var(--font-weight-label);
-    --ds-field-hint-fg: var(--color-text-secondary);
-    --ds-field-hint-font-size: var(--font-size-caption);
-    --ds-field-hint-line-height: var(--font-line-height-caption);
-    --ds-field-error-fg: var(--color-text-danger);
-    --ds-field-error-font-size: var(--font-size-caption);
-    --ds-field-error-line-height: var(--font-line-height-caption);
-    --ds-field-error-gap: var(--space-inline-xs);
-    --ds-field-required-fg: var(--color-text-danger);
-    --ds-field-disabled-fg: var(--color-text-disabled);
+  .sk-field {
+    --sk-field-gap: var(--space-stack-xs);
+    --sk-field-label-fg: var(--color-text-primary);
+    --sk-field-label-font-size: var(--font-size-body-sm);
+    --sk-field-label-font-weight: var(--font-weight-label);
+    --sk-field-hint-fg: var(--color-text-secondary);
+    --sk-field-hint-font-size: var(--font-size-caption);
+    --sk-field-hint-line-height: var(--font-line-height-caption);
+    --sk-field-error-fg: var(--color-text-danger);
+    --sk-field-error-font-size: var(--font-size-caption);
+    --sk-field-error-line-height: var(--font-line-height-caption);
+    --sk-field-error-gap: var(--space-inline-xs);
+    --sk-field-required-fg: var(--color-text-danger);
+    --sk-field-disabled-fg: var(--color-text-disabled);
+
+    /* A stack: label, control, then hint or error. Nothing here positions the control, a field wraps
+     * whatever it is given, which is why the gap is the only geometry it owns. */
+    display: grid;
+    gap: var(--sk-field-gap);
   }
 
-  .ds-field[data-disabled] {
-    --ds-field-label-fg: var(--ds-field-disabled-fg);
-    --ds-field-hint-fg: var(--ds-field-disabled-fg);
+  .sk-field__label {
+    color: var(--sk-field-label-fg);
+    font-size: var(--sk-field-label-font-size);
+    font-weight: var(--sk-field-label-font-weight);
+  }
+
+  /* The required mark rides after the label text, not in place of it: "required" has to survive
+   * being read aloud, so the asterisk is decoration over an accessible name the consumer authors. */
+  .sk-field__required {
+    margin-inline-start: var(--sk-field-error-gap);
+    color: var(--sk-field-required-fg);
+  }
+
+  .sk-field__hint {
+    color: var(--sk-field-hint-fg);
+    font-size: var(--sk-field-hint-font-size);
+    line-height: var(--sk-field-hint-line-height);
+  }
+
+  .sk-field__error {
+    color: var(--sk-field-error-fg);
+    font-size: var(--sk-field-error-font-size);
+    line-height: var(--sk-field-error-line-height);
+  }
+
+  .sk-field[data-disabled] {
+    --sk-field-label-fg: var(--sk-field-disabled-fg);
+    --sk-field-hint-fg: var(--sk-field-disabled-fg);
   }
 }

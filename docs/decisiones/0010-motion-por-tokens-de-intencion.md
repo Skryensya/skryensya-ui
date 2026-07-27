@@ -37,10 +37,10 @@ componentes. Ese es todo el punto de una API semántica.
 
 ```css
 /* Falla el build: un componente no llega a un primitivo. */
-.ds-dialog { transition: opacity var(--scale-duration-fast); }
+.sk-dialog { transition: opacity var(--scale-duration-fast); }
 
 /* Así se consume. */
-.ds-dialog {
+.sk-dialog {
   transition: opacity var(--motion-enter-duration) var(--motion-enter-easing);
   translate: 0 var(--motion-enter-distance);
 }

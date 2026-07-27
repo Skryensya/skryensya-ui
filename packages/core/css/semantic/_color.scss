@@ -23,6 +23,10 @@
     --color-bg-danger-subtle: light-dark(var(--ramp-danger-50), var(--ramp-danger-950));
     --color-bg-success-subtle: light-dark(var(--ramp-success-50), var(--ramp-success-950));
     --color-bg-warning-subtle: light-dark(var(--ramp-warning-50), var(--ramp-warning-950));
+    /* info sits with the feedback roles, not with accent, even though both are blue by default.
+     * The tone an Alert or a Toast means by "info" must survive a brand swap: routed through accent,
+     * a magenta brand turned every informational notice magenta. */
+    --color-bg-info-subtle: light-dark(var(--ramp-info-50), var(--ramp-info-950));
 
     /* ── text: every token here is a contrast partner of some bg, see contrast-pairs.json ── */
     --color-text-primary: light-dark(var(--ramp-neutral-900), var(--ramp-neutral-100));
@@ -33,12 +37,21 @@
     /* on-accent: text ON action.primary, NOT on canvas. In dark, primary is a light blue,
      * so this flips to near-black. The #1 source of unreadable dark-mode buttons. */
     --color-text-on-accent: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-950));
-    /* accent text sits a rung darker than the accent FILL: coloured text needs 4.5:1,
+    /* on-media: text ON a scrim over photography. The ONLY text token here that is deliberately
+     * NOT mode-aware, and the reason is that its background is not the page: the media gradient
+     * washes toward black in light and dark alike, so a light-dark() here would flip the caption
+     * to near-black over a dark wash in dark mode, which is the exact unreadability the rest of
+     * this block exists to prevent. It has no entry in contrast-pairs.json either, for the same
+     * reason: its partner is a photograph, not a token, so the wash is what guarantees the ratio.
+     * If you find yourself wanting a second one of these, the thing you want is probably a scrim. */
+    --color-text-on-media: var(--ramp-neutral-0);
+    /* accent text sits a rung darker than the accent FILL: colored text needs 4.5:1,
      * a fill needs only 3:1. */
     --color-text-accent: light-dark(var(--ramp-accent-700), var(--ramp-accent-300));
     --color-text-danger: light-dark(var(--ramp-danger-700), var(--ramp-danger-300));
     --color-text-success: light-dark(var(--ramp-success-700), var(--ramp-success-300));
     --color-text-warning: light-dark(var(--ramp-warning-800), var(--ramp-warning-300));
+    --color-text-info: light-dark(var(--ramp-info-700), var(--ramp-info-300));
 
     /* ── border ── */
     /* subtle at 300, not 200: decorative edges still have to *exist* on white surfaces. 200 washes
@@ -51,14 +64,15 @@
     --color-border-accent: light-dark(var(--ramp-accent-600), var(--ramp-accent-500));
     --color-border-danger: light-dark(var(--ramp-danger-600), var(--ramp-danger-500));
     /* status borders mirror danger's rungs (600 light / 500 dark) so a toned edge, Toast, Alert, 
-     * has a real token per role instead of borrowing the saturated text colour. */
+     * has a real token per role instead of borrowing the saturated text color. */
     --color-border-success: light-dark(var(--ramp-success-600), var(--ramp-success-500));
     --color-border-warning: light-dark(var(--ramp-warning-600), var(--ramp-warning-500));
+    --color-border-info: light-dark(var(--ramp-info-600), var(--ramp-info-500));
     /* focus ring: its own token, never an alias of border-accent, it must survive a brand
      * swap that makes accent low-contrast, and can never be tuned away for aesthetics. */
     --color-border-focus: light-dark(var(--ramp-accent-600), var(--ramp-accent-400));
 
-    /* ── action: interactive FILLS. hover/press feedback is NOT a colour here, it comes from
+    /* ── action: interactive FILLS. hover/press feedback is NOT a color here, it comes from
      *    the state layer (decision 9), a currentColor overlay shared by every component. ── */
     --color-action-primary: light-dark(var(--ramp-accent-600), var(--ramp-accent-500));
     /* Neutral buttons sit one rung from the light canvas; their default outline, not a grey fill,
@@ -67,14 +81,14 @@
     --color-action-danger: light-dark(var(--ramp-danger-600), var(--ramp-danger-500));
     --color-action-disabled: light-dark(var(--ramp-neutral-300), var(--ramp-neutral-800));
 
-    /* ── shadow colour is mode-aware (a shadow can't sit inside light-dark(), only its
-     *    colour can). Light alphas are a notch stronger so raised surfaces read without a
+    /* ── shadow color is mode-aware (a shadow can't sit inside light-dark(), only its
+     *    color can). Light alphas are a notch stronger so raised surfaces read without a
      *    border; dark stays heavy because black-on-near-black is invisible at low alpha. ── */
     --shadow-sm: light-dark(oklch(0% 0 0 / 0.12), oklch(0% 0 0 / 0.5));
     --shadow-md: light-dark(oklch(0% 0 0 / 0.16), oklch(0% 0 0 / 0.6));
     --shadow-lg: light-dark(oklch(0% 0 0 / 0.22), oklch(0% 0 0 / 0.7));
 
-    /* ── elevation: composites that reference the shadow-colour tokens above ── */
+    /* ── elevation: composites that reference the shadow-color tokens above ── */
     --elevation-flat: none;
     --elevation-raised: 0 1px 2px 0 var(--shadow-sm), 0 1px 3px 0 var(--shadow-sm);
     --elevation-overlay: 0 4px 6px -2px var(--shadow-md), 0 10px 15px -3px var(--shadow-md);

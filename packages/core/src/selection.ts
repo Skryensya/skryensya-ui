@@ -11,22 +11,22 @@ export type RadioValueChangeDetails = {
 export type RadioGroupOrientation = "horizontal" | "vertical";
 
 export const selectionParts = {
-  checkbox: "ds-checkbox",
-  checkboxInput: "ds-checkbox__input",
-  checkboxControl: "ds-checkbox__control",
-  checkboxIndicator: "ds-checkbox__indicator",
-  checkboxLabel: "ds-checkbox__label",
-  radioGroup: "ds-radio-group",
-  radio: "ds-radio",
-  radioInput: "ds-radio__input",
-  radioControl: "ds-radio__control",
-  radioIndicator: "ds-radio__indicator",
-  radioLabel: "ds-radio__label",
-  switch: "ds-switch",
-  switchInput: "ds-switch__input",
-  switchControl: "ds-switch__control",
-  switchThumb: "ds-switch__thumb",
-  switchLabel: "ds-switch__label",
+  checkbox: "sk-checkbox",
+  checkboxInput: "sk-checkbox__input",
+  checkboxControl: "sk-checkbox__control",
+  checkboxIndicator: "sk-checkbox__indicator",
+  checkboxLabel: "sk-checkbox__label",
+  radioGroup: "sk-radio-group",
+  radio: "sk-radio",
+  radioInput: "sk-radio__input",
+  radioControl: "sk-radio__control",
+  radioIndicator: "sk-radio__indicator",
+  radioLabel: "sk-radio__label",
+  switch: "sk-switch",
+  switchInput: "sk-switch__input",
+  switchControl: "sk-switch__control",
+  switchThumb: "sk-switch__thumb",
+  switchLabel: "sk-switch__label",
 } as const;
 
 export type SelectionPart = keyof typeof selectionParts;

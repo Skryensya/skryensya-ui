@@ -1,7 +1,7 @@
 /*
- * MODE: high contrast, the third colour mode.
+ * MODE: high contrast, the third color mode.
  *
- * light-dark() holds only two colours, so high contrast cannot be a third argument. It is
+ * light-dark() holds only two colors, so high contrast cannot be a third argument. It is
  * an override block that RE-DECLARES the mode-aware semantic tokens with the hc-* ramp
  * positions, still inside light-dark(), so it composes with the light/dark axis (you get
  * hc-light AND hc-dark for free).

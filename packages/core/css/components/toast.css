@@ -11,7 +11,7 @@
    * the two `inset-*` values park the stack at the bottom-inline-end with an inset margin, and the width
    * clamps to a readable 24rem but never wider than the viewport minus that margin on each side. A grid
    * with `stack-sm` gap stacks multiple toasts with even spacing. */
-  .ds-toast-region {
+  .sk-toast-region {
     position: fixed;
     z-index: var(--z-toast);
     display: grid;
@@ -22,15 +22,149 @@
   }
 
   /* EVERY toast gets the raised shadow so a banner alert reads as overlay chrome floating over the page,
-   * not page furniture sitting in the flow. The status tones keep their own subtle fills underneath it. */
-  .ds-toast-region > .ds-alert {
+   * not page furniture sitting in the flow. The status tones keep their own subtle fills underneath it.
+   *
+   * It also sits TIGHTER than the same alert in the page. An alert's inset is sized for a panel the
+   * reader chooses to read at their own pace, inside a column of content that sets the rhythm around
+   * it. A toast is chrome that arrives uninvited over the work: it should take the least screen it can
+   * while staying legible, and its own elevation already separates it from what is underneath, so it
+   * does not need the extra air a panel uses to hold itself apart. One step down on the same scale. */
+  .sk-toast-region > .sk-alert {
+    --sk-alert-padding: var(--space-inset-sm);
+    /* The two lines close up with the panel. At the alert's inset the `stack-xs` gap reads as rhythm;
+     * inside the tighter toast the same gap is wider than the padding around it, which makes the
+     * title and its description look like two separate messages. The line boxes' own leading is
+     * enough separation at this size. */
+    --sk-alert-content-gap: 0;
+
     box-shadow: var(--elevation-raised);
+    /* EVERY toast arrives, none of them just appears. A panel that pops in fully formed over the work
+     * reads as a glitch: the eye has to go find out what changed. Rising the ENTER distance into place
+     * while fading up says where it came from, and the region is at the block-end edge, so "from
+     * further down" is literally from off-screen. The `enter` intent is the same one the dialog and
+     * the drawer use, and it already collapses to a plain fade under `prefers-reduced-motion`.
+     *
+     * No fill mode ON PURPOSE. `both`/`forwards` would freeze the resolved end values on the element,
+     * and the stack below changes `translate`, `scale` and `opacity` per depth after the fact — a
+     * filled animation would outrank all of it and nail every toast to how it looked when it landed. */
+    animation: sk-toast-enter var(--motion-enter-duration) var(--motion-enter-easing);
+  }
+
+  @keyframes sk-toast-enter {
+    from {
+      opacity: 0;
+      translate: 0 var(--motion-enter-distance);
+    }
   }
 
   /* THE NEUTRAL toast has no tone fill to lift it, so on its own it would read as a flat panel. Swap its
    * surface for the RAISED surface token: paired with the shadow above, the plain toast now reads as
-   * elevated chrome too, matching the toned ones without borrowing a status colour it does not mean. */
-  .ds-toast-region > .ds-alert[data-tone="neutral"] {
-    --ds-alert-bg: var(--color-bg-surface-raised);
+   * elevated chrome too, matching the toned ones without borrowing a status color it does not mean. */
+  .sk-toast-region > .sk-alert[data-tone="neutral"] {
+    --sk-alert-bg: var(--color-bg-surface-raised);
+  }
+
+  /* THE COLLAPSED STACK, and it is the DEFAULT, not a feature to turn on. Four toasts in a plain
+   * region are four full panels eating a quarter of the screen, and nobody asks for that on purpose:
+   * a region that ends up with several toasts is the normal outcome of an app that reports what it
+   * did. So the pile is what a region does, and `data-stack="off"` is the way out — for the rare
+   * region whose whole point is showing several messages at once (a docs example of the tones, a
+   * page that lists statuses rather than announcing them).
+   *
+   * Collapsed, they pile onto ONE panel's footprint with the newest on top and the older ones peeking
+   * out behind it, and pointer or keyboard focus fans them back out. The region owns all of it: no
+   * toast knows it is in a stack.
+   *
+   * DEPTH is the only number the effect needs, 0 for the newest (the last child) and one more for
+   * each toast above it. `sibling-count() - sibling-index()` reads it straight off the DOM, so the
+   * app appends and removes nodes and never maintains an index. Everything else is that one value:
+   * how far up the toast slides, how much it shrinks, when it fades out, and when it starts moving. */
+  .sk-toast-region:not([data-stack="off"]) {
+    /* THE HOOKS: how much of each older toast peeks out, how much smaller each step behind is, and
+     * how far apart in time each step moves when the pile opens. */
+    --sk-toast-peek: var(--space-stack-sm);
+    --sk-toast-shrink: 0.04;
+    --sk-toast-cascade: 40ms;
+  }
+
+  /* Gated on support because the whole collapse depends on reading the sibling index in CSS. Where
+   * that fails the region is simply the plain stack above: every toast readable, nothing overlapping,
+   * which is the honest fallback rather than a pile with no offsets. */
+  @supports (translate: 0 calc(sibling-index() * 1px)) {
+    /* ONLY THE NEWEST toast stays in flow, and it alone sizes the region: a collapsed stack is exactly
+     * as big as the message you are meant to read. Everything behind it comes OUT of flow and is
+     * stretched to that same box (`inset: 0`), which is what makes the pile read as one grouped object
+     * instead of a fan of mismatched cards. Sizing each older toast to its own content was the bug: a
+     * two-line toast behind a one-line one stuck out over the top, and every edge in the pile landed
+     * at a different width, so the peeking edges never lined up. Their own content is irrelevant now
+     * (it is hidden behind the front panel), so `overflow: clip` keeps it from spilling out of a box
+     * that is no longer the size it asked for. */
+    .sk-toast-region:not([data-stack="off"]) > .sk-alert:not(:last-child) {
+      position: absolute;
+      inset: 0;
+      overflow: clip;
+      /* Load-bearing: the entrance belongs to the toast that just arrived, and only to it. An
+       * animation restarts whenever `animation-name` changes, so leaving a toast named
+       * `sk-toast-enter` here would replay the whole arrival every time the pile closed and the fan
+       * below handed the name back. Parked at `none`, the name only ever changes on the way INTO the
+       * fan, which is the one moment something should move. */
+      animation: none;
+    }
+
+    .sk-toast-region:not([data-stack="off"]) > .sk-alert {
+      --sk-toast-depth: calc(sibling-count() - sibling-index());
+
+      /* The stack grows UP from the newest toast, so it is the bottom edge that stays put. */
+      transform-origin: bottom center;
+      translate: 0 calc(var(--sk-toast-depth) * var(--sk-toast-peek) * -1);
+      scale: calc(1 - (var(--sk-toast-depth) * var(--sk-toast-shrink)));
+      /* Three deep is where a peeking edge stops being legible. `3 - depth` clamps itself: depth 0-2
+       * land at or above 1, depth 3 lands at 0, so the fourth toast back fades out with no counter
+       * and no `:nth-last-child` ladder. */
+      opacity: calc(3 - var(--sk-toast-depth));
+      /* The EXPAND intent, the same tokens the accordion and the details use: fanning the pile out is
+       * a reveal of what is already there. Reduced motion needs no rule here, those tokens already
+       * shorten themselves under the media query in the semantic layer.
+       *
+       * The DELAY is the depth again, and it is what turns a pile of panels moving in lockstep into
+       * one gesture: the front toast leaves first and each one behind follows a beat later, so the
+       * stack unfolds instead of inflating. One frame apart is enough to be read as sequence and
+       * short enough that the whole fan still lands inside the expand duration. */
+      transition:
+        translate var(--motion-expand-duration) var(--motion-expand-easing),
+        scale var(--motion-expand-duration) var(--motion-expand-easing),
+        opacity var(--motion-expand-duration) var(--motion-expand-easing);
+      transition-delay: calc(var(--sk-toast-depth) * var(--sk-toast-cascade));
+    }
+
+    /* EXPANDED on hover or focus: every toast returns to flow and the region is the plain stack again,
+     * each one back to its own height. Reading one of a pile should not cost a click, and
+     * `:focus-within` means the same fan-out happens on the way in with the keyboard, where hover
+     * never fires. */
+    .sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within) > .sk-alert {
+      position: static;
+      overflow: visible;
+      translate: none;
+      scale: none;
+      opacity: 1;
+    }
+
+    /* Going back into flow is a LAYOUT change, and layout does not transition: at the instant the
+     * older toasts stop being absolute they are already at their new place, several rows up. Nothing
+     * can tween that, so the fix is not to animate the jump but to cover it — each toast fades and
+     * rises the last few pixels into the spot it just took, on the same depth cascade, and the eye
+     * reads arrival rather than teleporting. Only the ones that actually moved: the newest was in
+     * flow the whole time and must not blink. */
+    .sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within) > .sk-alert:not(:last-child) {
+      animation: sk-toast-fan var(--motion-expand-duration) var(--motion-expand-easing)
+        calc(var(--sk-toast-depth) * var(--sk-toast-cascade)) backwards;
+    }
+  }
+
+  @keyframes sk-toast-fan {
+    from {
+      opacity: 0;
+      translate: 0 var(--sk-toast-peek);
+    }
   }
 }

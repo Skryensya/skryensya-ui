@@ -1,0 +1,64 @@
+/* TIER 3, BREADCRUMB — hierarchical navigation. */
+@layer components {
+  /* The hooks live on the root and inherit to every part; the markup wraps the list in
+   * `.sk-breadcrumb`, so re-declaring one of these on that element re-themes the whole trail. */
+  .sk-breadcrumb {
+    --sk-breadcrumb-gap: var(--space-inline-xs);
+    --sk-breadcrumb-link-color: var(--color-text-secondary);
+    --sk-breadcrumb-current-color: var(--color-text-primary);
+    --sk-breadcrumb-current-weight: var(--font-weight-label);
+    --sk-breadcrumb-separator-color: var(--color-text-tertiary);
+    /* Caps an intermediate crumb's rendered width before it ellipsizes; the current page's title
+     * is exempt, it wraps in full instead (below), because it is the one label the trail exists
+     * to answer "where am I", the ancestors only exist to say "how did I get here". */
+    --sk-breadcrumb-link-max: 16ch;
+  }
+  .sk-breadcrumb__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sk-breadcrumb-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sk-breadcrumb__item {
+    display: inline-flex;
+    align-items: center;
+    min-inline-size: 0;
+    gap: var(--sk-breadcrumb-gap);
+  }
+  .sk-breadcrumb__link {
+    display: inline-block;
+    max-inline-size: var(--sk-breadcrumb-link-max);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+    color: var(--sk-breadcrumb-link-color);
+    text-decoration: none;
+  }
+  .sk-breadcrumb__link:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .sk-breadcrumb__current {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+    color: var(--sk-breadcrumb-current-color);
+    font-weight: var(--sk-breadcrumb-current-weight);
+  }
+  .sk-breadcrumb__separator {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    color: var(--sk-breadcrumb-separator-color);
+    user-select: none;
+  }
+  /* An icon separator (e.g. chevron-right) sits in a flex box, not on the text baseline, so it
+   * wants the smaller size and no baseline offset rather than the default optical centring. */
+  .sk-breadcrumb__separator .sk-icon {
+    --sk-icon-size: var(--size-icon-sm);
+    vertical-align: 0;
+  }
+}

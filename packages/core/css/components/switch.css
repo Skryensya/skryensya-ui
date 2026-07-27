@@ -1,36 +1,97 @@
-/* TIER 3, SWITCH (opt-in styling hooks) */
+/* TIER 3, SWITCH */
 @layer components {
-  .ds-switch {
+  .sk-switch {
     /* The track sits in the icon-size family (like the radio control), not the control-size family:
      * the whole label is the hit area, so the visual toggle needn't carry the WCAG target itself. */
-    --ds-switch-block-size: var(--size-icon-lg);
-    --ds-switch-inline-size: calc(var(--size-icon-lg) * 1.75);
-    --ds-switch-padding: var(--space-inset-xs);
-    --ds-switch-gap: var(--space-inline-xs);
-    --ds-switch-bg: var(--color-bg-surface-sunken);
-    --ds-switch-fg: var(--color-text-primary);
-    --ds-switch-border-color: var(--color-border-default);
-    --ds-switch-border-width: 1px;
-    --ds-switch-thumb-bg: var(--color-bg-surface-raised);
-    --ds-switch-selected-bg: var(--color-action-primary);
-    --ds-switch-selected-border-color: var(--color-action-primary);
-    --ds-switch-selected-thumb-bg: var(--color-text-on-accent);
-    --ds-switch-disabled-bg: var(--color-action-disabled);
-    --ds-switch-disabled-fg: var(--color-text-disabled);
-    --ds-switch-disabled-border-color: var(--color-border-subtle);
+    --sk-switch-block-size: var(--size-icon-lg);
+    --sk-switch-inline-size: calc(var(--size-icon-lg) * 1.75);
+    --sk-switch-padding: var(--space-inset-xs);
+    --sk-switch-gap: var(--space-inline-sm);
+    --sk-switch-bg: var(--color-bg-surface-sunken);
+    --sk-switch-fg: var(--color-text-primary);
+    --sk-switch-border-color: var(--color-border-default);
+    --sk-switch-border-width: 1px;
+    --sk-switch-thumb-bg: var(--color-bg-surface-raised);
+    --sk-switch-selected-bg: var(--color-action-primary);
+    --sk-switch-selected-border-color: var(--color-action-primary);
+    --sk-switch-selected-thumb-bg: var(--color-text-on-accent);
+    --sk-switch-disabled-bg: var(--color-action-disabled);
+    --sk-switch-disabled-fg: var(--color-text-disabled);
+    --sk-switch-disabled-border-color: var(--color-border-subtle);
+
+    display: inline-flex;
+    gap: var(--sk-switch-gap);
+    align-items: center;
+    color: var(--sk-switch-fg);
+    cursor: pointer;
   }
 
-  /* Selected recolours the track and thumb only, never `--ds-switch-fg`, which is the LABEL text.
+  /* Selected recolors the track and thumb only, never `--sk-switch-fg`, which is the LABEL text.
    * Tinting the label with `on-accent` turned it dark-on-dark in dark themes. */
-  .ds-switch:has(.ds-switch__input:checked) {
-    --ds-switch-bg: var(--ds-switch-selected-bg);
-    --ds-switch-border-color: var(--ds-switch-selected-border-color);
-    --ds-switch-thumb-bg: var(--ds-switch-selected-thumb-bg);
+  .sk-switch:has(.sk-switch__input:checked) {
+    --sk-switch-bg: var(--sk-switch-selected-bg);
+    --sk-switch-border-color: var(--sk-switch-selected-border-color);
+    --sk-switch-thumb-bg: var(--sk-switch-selected-thumb-bg);
   }
 
-  .ds-switch:has(.ds-switch__input:disabled) {
-    --ds-switch-bg: var(--ds-switch-disabled-bg);
-    --ds-switch-fg: var(--ds-switch-disabled-fg);
-    --ds-switch-border-color: var(--ds-switch-disabled-border-color);
+  .sk-switch:has(.sk-switch__input:disabled) {
+    --sk-switch-bg: var(--sk-switch-disabled-bg);
+    --sk-switch-fg: var(--sk-switch-disabled-fg);
+    --sk-switch-border-color: var(--sk-switch-disabled-border-color);
+
+    cursor: not-allowed;
+  }
+
+  .sk-switch__input {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    clip-path: inset(50%);
+  }
+
+  .sk-switch__control {
+    display: flex;
+    inline-size: var(--sk-switch-inline-size);
+    block-size: var(--sk-switch-block-size);
+    padding: var(--sk-switch-padding);
+    border: var(--sk-switch-border-width) solid var(--sk-switch-border-color);
+    border-radius: var(--radius-pill);
+    background: var(--sk-switch-bg);
+  }
+
+  .sk-switch__thumb {
+    inline-size: calc(var(--sk-switch-block-size) - (var(--sk-switch-padding) * 2) - (var(--sk-switch-border-width) * 2));
+    block-size: calc(var(--sk-switch-block-size) - (var(--sk-switch-padding) * 2) - (var(--sk-switch-border-width) * 2));
+    border-radius: inherit;
+    background: var(--sk-switch-thumb-bg);
+    transition: transform var(--motion-feedback-duration) var(--motion-feedback-easing);
+  }
+
+  .sk-switch__input:checked + .sk-switch__control .sk-switch__thumb {
+    transform: translateX(calc(var(--sk-switch-inline-size) - var(--sk-switch-block-size)));
+  }
+
+  .sk-switch__input:focus-visible + .sk-switch__control {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-switch__thumb {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .sk-switch__control {
+      border-color: CanvasText;
+      background: Canvas;
+    }
+
+    .sk-switch__input:checked + .sk-switch__control {
+      border-color: Highlight;
+      background: Highlight;
+    }
   }
 }

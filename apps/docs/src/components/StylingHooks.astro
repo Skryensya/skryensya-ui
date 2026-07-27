@@ -1,5 +1,6 @@
 ---
 import { probeProp, tokens } from "../lib/tokens";
+import { getLocale, useTranslations } from "../i18n";
 
 type HookGroup = {
   /** CSS file path as emitted by @skryensya/core. */
@@ -16,6 +17,7 @@ interface Props {
 }
 
 const { groups, heading = "Styling hooks" } = Astro.props;
+const t = useTranslations(getLocale(Astro.url));
 const resolvedGroups = groups.map((group) => ({
   ...group,
   hooks: tokens.filter((token) => token.file === group.file).map((token) => ({ ...token, prop: probeProp(token.value) })),
@@ -24,24 +26,23 @@ const resolvedGroups = groups.map((group) => ({
 
 <h2>{heading}</h2>
 <p>
-  Los valores autorales salen del CSS publicado. Los valores usados se resuelven en vivo contra el
-  elemento real del componente y cambian con las dimensiones elegidas arriba.
+  {t("hooks.intro")}
 </p>
 
 {
   resolvedGroups.map((group) => (
     <>
       {resolvedGroups.length > 1 && <h3>{group.title ?? group.probe}</h3>}
-      <div class="ds-table-scroll">
-        <table class="ds-table">
+      <div class="sk-table-scroll">
+        <table class="sk-table">
           <thead>
             <tr>
               <th>Hook</th>
               <th>
-                Valor autoral <span class="count">· build</span>
+                {t("hooks.authored")} <span class="count">· build</span>
               </th>
               <th>
-                Valor usado <span class="count">· runtime</span>
+                {t("hooks.used")} <span class="count">· runtime</span>
               </th>
             </tr>
           </thead>

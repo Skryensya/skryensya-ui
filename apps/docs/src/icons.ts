@@ -5,14 +5,24 @@
  * es la elección del sitio, no la del sistema: core no nombra inquilinos (decisión 2), así que no hay
  * un set "oficial", hay tres publicados y tú eliges.
  *
- * Cambiar de set es cambiar la línea de abajo. Ningún call site se mueve, y eso es exactamente lo que
- * el vocabulario estable compra.
+ * Cambiar de set es cambiar las dos líneas de abajo. Ningún call site se mueve, y eso es exactamente
+ * lo que el vocabulario estable compra.
  */
 import { renderIconBox, type IconData, type IconSet, type IconSize, type StableIconName } from "@skryensya/core/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 import { materialIcons } from "@skryensya/icons-material";
 import { phosphorIcons } from "@skryensya/icons-phosphor";
 
+/*
+ * EL SET Y SU ID SON EL MISMO HECHO, y por eso salen del mismo lugar.
+ *
+ * `siteIcons` es la geometría que el sitio serializa en build (`iconMarkup`); `siteIconSet` es el id
+ * que el guard de Base re-pinta sobre `svg[data-icon]` antes del primer paint. Mientras los dos
+ * dijeron cosas distintas —la geometría era Lucide, el guard pintaba Phosphor— cada icono del chrome
+ * se escribía dos veces: salía Lucide en el HTML y el guard lo reemplazaba. Se veía como un icono que
+ * CAMBIA al cargar, porque eso era. Con los dos alineados el guard queda idempotente.
+ */
+export const siteIconSet = "lucide";
 export const siteIcons = lucideIcons;
 
 /** Los tres sets publicados, para que la página los muestre lado a lado en vez de afirmar que existen. */
@@ -93,27 +103,11 @@ export const sparkle: IconData = {
   body: `<path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z" />`,
 };
 
-/* Lucide Sun / Moon / Monitor, docs chrome for the theme toggle, not stable roles. */
-export const sun: IconData = {
-  viewBox: "0 0 24 24",
-  attrs: strokeAttrs,
-  body: `<circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />`,
-};
+/* Lucide Sun / Moon / Monitor lived here for the docs theme toggle; they are now the stable
+ * roles mode-light / mode-dark / mode-system in the published sets. */
 
-export const moon: IconData = {
-  viewBox: "0 0 24 24",
-  attrs: strokeAttrs,
-  body: `<path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />`,
-};
-
-export const monitor: IconData = {
-  viewBox: "0 0 24 24",
-  attrs: strokeAttrs,
-  body: `<rect width="20" height="14" x="2" y="3" rx="2" /><line x1="8" x2="16" y1="21" y2="21" /><line x1="12" x2="12" y1="17" y2="21" />`,
-};
-
-/* Contrast toggle glyphs, a two-state pair that cross-fades in place, like the theme toggle's
- * sun/moon: an empty ring for normal, and the same ring with its inner half filled for high, so the
+/* Contrast toggle glyphs, a two-state pair that cross-fades in place:
+ * an empty ring for normal, and the same ring with its inner half filled for high, so the
  * fill visibly appears the moment contrast turns on. The filled half uses currentColor while the ring
  * stays stroked. */
 export const contrastNormal: IconData = {
@@ -126,4 +120,20 @@ export const contrastHigh: IconData = {
   viewBox: "0 0 24 24",
   attrs: strokeAttrs,
   body: `<circle cx="12" cy="12" r="10" /><path d="M12 6a6 6 0 0 1 0 12z" fill="currentColor" stroke="none" />`,
+};
+
+/* Transporte de reproducción para las muestras de /motion, otro par de dos estados que se
+ * cruzan en el mismo hueco. No son roles estables: play/pause es vocabulario de un reproductor,
+ * no del sistema, así que entra como geometría propia de la página (decisión 15) en vez de
+ * obligar a los tres sets publicados a dibujarlo. */
+export const play: IconData = {
+  viewBox: "0 0 24 24",
+  attrs: strokeAttrs,
+  body: `<polygon points="6 3 20 12 6 21 6 3" />`,
+};
+
+export const pause: IconData = {
+  viewBox: "0 0 24 24",
+  attrs: strokeAttrs,
+  body: `<rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" />`,
 };

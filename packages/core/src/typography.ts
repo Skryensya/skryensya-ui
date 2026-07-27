@@ -21,13 +21,13 @@ export type HeadingSize =
   | "display";
 export type LinkTone = "primary";
 /* A text link is always underlined, the only WCAG 1.4.1-safe treatment, so there is no underline
- * option to choose. Default paint matches surrounding prose; `primary` is the brand-coloured call-out.
- * Standalone links that don't need an underline aren't `ds-link` (see typography.css). */
+ * option to choose. Default paint matches surrounding prose; `primary` is the brand-colored call-out.
+ * Standalone links that don't need an underline aren't `sk-link` (see typography.css). */
 
 export const typographyParts = {
-  text: "ds-text",
-  heading: "ds-heading",
-  link: "ds-link",
+  text: "sk-text",
+  heading: "sk-heading",
+  link: "sk-link",
 } as const;
 
 export type TypographyPart = keyof typeof typographyParts;

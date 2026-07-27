@@ -1,4 +1,4 @@
-# skryensya-design-system
+# skryensya/ui
 
 The ubiquitous language of the design system. This is a **glossary, not a spec**, it defines what
 the words mean, never how anything is built. `docs/decisiones/` records *why* the system is shaped
@@ -34,13 +34,14 @@ _Avoid_: hook (unqualified), component token, styling variable, custom property
 ## Tier 3 comes in two shapes
 
 **Component**:
-One named UI thing. Ships **hooks only**, never structure, because each consumer's markup and
-layout differ. The test: no second component could reuse its structure.
+One named UI thing that owns its structure because no second component is known to need it unchanged.
+Ships its class, structural CSS and styling hooks; the consumer still authors the documented markup.
+When reuse is uncertain, this is the default because promoting shared structure later is additive.
 
 **Pattern**:
-A behaviour applied *across* many components, which any element opts into. Ships **hooks and
-structure**, because the shared structure is the entire point, duplicating it per component is what
-the pattern exists to prevent. The test: a second component could need this exact structure.
+Structure already shared unchanged by multiple components. Ships that structure and its styling hooks
+once so its consumers compose it instead of duplicating it. Reuse is observed, never predicted from
+an invariant anatomy.
 
 ## Navigation
 
@@ -61,20 +62,45 @@ The sidebar, collapsed: narrowed to one control wide, showing icons. It is not a
 nothing is removed, so a rail is never a disclosure.
 _Avoid_: mini sidebar, icon sidebar, collapsed drawer
 
+## Ordered sequences
+
+**Process list**:
+A static ordered sequence of instructions whose content is primary. Its numbers and connectors
+express order, never progress; it has no complete, current, or upcoming state.
+_Avoid_: stepper, steps, progress list, ordered List
+
+**Steps**:
+A progress indicator across ordered stages. Stage status is primary; it summarizes progress rather
+than containing the instructions for each stage.
+_Avoid_: process list, instructions, how-to
+
 ## Anatomy
 
 **Part**:
-A named element inside a component's anatomy, written as a BEM element, `.ds-tabs__list`. Parts are
+A named element inside a component's anatomy, written as a BEM element, `.sk-tabs__list`. Parts are
 **ours and permanent**: they stay the same if the machine underneath is replaced. Only components with
 an invariant anatomy have parts at all.
 _Avoid_: slot, section, region, element
 
 **Wrapper**:
-A layout pattern. A centred page column with a max inline measure named by **use** (`prose`,
-`content`, `shell`, `full`), never by sm/md/lg. The measure is a tier-2 `--size-wrapper-*` token, so
-a header and a body share one number. Distinct from the vanilla layer's forbidden sense of "wrapper"
-(an enhancer is never called that).
+A layout pattern. A centred page column with a max inline measure from a **size scale**
+(`sm`, `md`, `lg`, `full`), never by use-name (`prose`, `content`, `shell`). The measure is a
+tier-2 `--size-wrapper-*` token, so a header and a body share one number. Distinct from the vanilla
+layer's forbidden sense of "wrapper" (an enhancer is never called that).
 _Avoid_: container, max-width utility, page container
+
+**Image frame**:
+A layout pattern. A clipped box that holds authored media (`img`, `video`, `picture`) to an
+**aspect** ratio and decides how the media fills it (`object-fit` / `object-position`). Named with
+CSS vocabulary (`16/9`, `cover`, `top`), never by use (`hero`, `thumbnail`). Distinct from Avatar,
+which is a fixed circular identity token, not a general media frame.
+_Avoid_: image component, media box, thumbnail
+
+**Media gradient**:
+A pattern. A wash nested in a media caption so type stays readable over a photo. Sized to the
+caption (as tall or as wide as the text), tinted with the brand accent, never by use (`hero`,
+`card`). Distinct from Backdrop (modal page scrim) and State layer (interaction paint).
+_Avoid_: scrim, overlay, veil, shade, vignette (as the product name), ink, paper, light wash
 
 **State**:
 What a component currently *is*, selected, expanded, disabled. Owned by the machine and written by
@@ -105,7 +131,8 @@ _Avoid_: custom widget, JavaScript-first component
 
 **Vanilla layer**:
 The package that hydrates authored markup with interactive behaviour, so a consumer needs no framework:
-they write HTML, link the CSS, and call `initComponents()`.
+they write HTML, link the CSS, and `await initComponents()`. The selector manifest dynamically imports
+only enhancer types present below the chosen root.
 _Avoid_: framework adapter, framework package, component library
 
 **Enhancer**:
@@ -119,7 +146,7 @@ The finite state machine behind a component with no platform equivalent. Interna
 which is why parts are named in BEM rather than in the machine's vocabulary.
 _Avoid_: controller, behaviour, logic, store
 
-## Colour
+## Color
 
 **Ramp**:
 A tier-1 ordered sequence of tones for one role, from lightest to darkest. Named by **role**
@@ -130,6 +157,13 @@ _Avoid_: palette, shades, scale, tones
 **Ramp position**:
 A step within a ramp. What semantic tokens reference, they name a position, never a hue, which is
 the entire mechanism that makes a brand a tier-1 swap.
+
+**Feedback role**:
+A ramp whose name is a *state the system reports*: `danger`, `success`, `warning`, `info`. Fixed by
+meaning, so a component that means one of them reads that role and never `accent` — accent is the
+tenant's identity and moves when the brand does, which is the whole difference (ADR-26). A feedback
+role remains independently swappable through its complete ramp; it never moves merely because the brand did.
+_Avoid_: status color, state color, semantic color (that is tier 2), intent
 
 ## Icons
 
@@ -168,21 +202,21 @@ _Avoid_: shadow, depth, z-level, overlay/modal as elevation names
 
 **Dimension**:
 An independent axis of theming. Each dimension owns exactly one layer of the token graph, so dimensions
-compose in the cascade instead of multiplying into authored combinations. There are four: colour mode,
+compose in the cascade instead of multiplying into authored combinations. There are four: color mode,
 high contrast, density, and radius.
 
 **Brand**:
-The system's one root tier-1 ramp configuration. `tokens.scss` ships it automatically; a consumer adjusts
-its identity by redefining seed custom properties in an unlayered `:root` rule. It is not a selectable
-dimension, a package entrypoint, or an HTML attribute.
+The system's one root tier-1 ramp configuration. `tokens.scss` ships the default; a consumer replaces
+complete role ramps from an unlayered stylesheet generated by its brand tooling. Core exposes no color
+generation input. Brand is not a selectable dimension, package entrypoint, or HTML attribute.
 
-**Colour mode**:
-A dimension. Light or dark. Only *colour* can be mode-aware; a mode-varying non-colour value is a
+**Color mode**:
+A dimension. Light or dark. Only *color* can be mode-aware; a mode-varying non-color value is a
 contradiction the platform won't express.
 _Avoid_: theme, appearance, scheme
 
 **High contrast**:
-A dimension, and a third colour mode that cannot be a third slot, so it re-declares semantic
+A dimension, and a third color mode that cannot be a third slot, so it re-declares semantic
 tokens rather than extending the light/dark axis.
 _Avoid_: a11y mode, contrast theme
 
@@ -203,10 +237,18 @@ _Avoid_: corner style, shape mode, roundness theme
 ## Interaction and motion
 
 **State layer**:
-A pattern. One semi-transparent overlay, tinted with the component's own content colour, that
+A pattern. One semi-transparent overlay, tinted with the component's own content color, that
 signals hover, focus, pressed, selected or dragged. Exactly one state shows at a time; opacities
 are never summed.
 _Avoid_: interaction layer, interaction overlay, ripple
+
+**Virtual focus**:
+The focus ring on an option that DOM focus never reached: focus stays in a text input and
+`aria-activedescendant` points at the option, so the ring is the only thing on screen that says
+where the arrow keys have landed. Keyboard-driven only, a ring following the pointer reads as broken
+focus. While an option holds it, the input's own control gives its ring up, so the ring *moves*
+rather than nesting. Combobox and the command palette are the two that have it.
+_Avoid_: active descendant (that is the attribute), highlight (that is the tint), fake focus
 
 **Intent token**:
 A tier-2 motion token naming what a transition *means* (enter, feedback, expand), never how long it
@@ -254,6 +296,42 @@ Pulling a Vaul back toward its edge to close it. The one Vaul behaviour with no 
 and none in Zag either, so it is the only JavaScript a Vaul costs, and it is opt-in: a Vaul is
 complete without it. Not "swipe": a swipe is a flick with no position, and this tracks the finger.
 _Avoid_: swipe, swipe-to-close, snap points
+
+## Anchored placement
+
+**Anchored**:
+A pattern. A box placed relative to an element rather than to the page: it sits on a chosen side of
+that element, moves to another side when it would overflow, and hides when the element scrolls away.
+Contrast with Vaul, which is anchored to an *edge of the viewport*; this is anchored to *another
+element*. Nine components need the identical structure, which is what makes it a pattern.
+_Avoid_: floating, popper, positioning engine, overlay
+
+**Anchor**:
+The element a positioner is placed against, and the one that carries `anchor-name`. Usually the
+trigger, never automatically so: an anchor is a geometric role and a trigger is an interactive one,
+and a component may anchor to a wrapper while the trigger inside it stays the control.
+_Avoid_: reference, target, source
+
+**Positioner**:
+The part that holds the placement and nothing else. It never paints and never intercepts the
+pointer, so that the box it reserves cannot block what is under it; its child, the content, is what
+is visible and clickable. Splitting the two is what lets placement be a pattern while paint stays
+the component's.
+_Avoid_: wrapper, floating element, container
+
+**Placement**:
+Which side of the anchor a positioner asks for, in logical axes, one of `block-start`, `block-end`,
+`inline-start`, `inline-end`. A request and not a guarantee: the browser may flip it to the opposite
+side of the *same* axis when it does not fit, because someone asking for `inline-end` wants the box
+beside the anchor, and landing above it would be disobedience rather than adaptation.
+_Avoid_: side, position, direction, align
+
+**Arrow**:
+The optional notch poking out of an anchored box toward its anchor. Authored or absent, never
+inferred: it belongs to floating chrome that must say *which* control it describes (a tooltip, a
+popover), not to a box whose shared edge already says it (a menu, a select). Always decorative, so
+always `aria-hidden` — it repeats what the placement already shows.
+_Avoid_: caret, tail, pointer, beak, nub
 
 ## Enforcement
 

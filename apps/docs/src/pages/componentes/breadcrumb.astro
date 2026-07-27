@@ -1,0 +1,191 @@
+---
+import Base from "../../layouts/Base.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+import "@skryensya/core/components/breadcrumb.css";
+
+const install = `@import "@skryensya/core/components/breadcrumb.css";`;
+
+const simpleHtml = `<nav class="sk-breadcrumb" aria-label="Migas de pan">
+  <ol class="sk-breadcrumb__list">
+    <li class="sk-breadcrumb__item">
+      <a class="sk-breadcrumb__link" href="/">Inicio</a>
+      <span class="sk-breadcrumb__separator" aria-hidden="true">/</span>
+    </li>
+    <li class="sk-breadcrumb__item" aria-current="page">
+      Proyectos
+    </li>
+  </ol>
+</nav>`;
+const simpleReact = `import { Breadcrumb } from "@skryensya/react/breadcrumb";
+
+<Breadcrumb
+  items={[
+    { href: "/", label: "Inicio" },
+    { label: "Proyectos", current: true },
+  ]}
+/>`;
+
+const multiHtml = `<nav class="sk-breadcrumb" aria-label="Migas de pan">
+  <ol class="sk-breadcrumb__list">
+    <li class="sk-breadcrumb__item">
+      <a class="sk-breadcrumb__link" href="/">Inicio</a>
+      <span class="sk-breadcrumb__separator" aria-hidden="true">/</span>
+    </li>
+    <li class="sk-breadcrumb__item">
+      <a class="sk-breadcrumb__link" href="/proyectos">Proyectos</a>
+      <span class="sk-breadcrumb__separator" aria-hidden="true">/</span>
+    </li>
+    <li class="sk-breadcrumb__item">
+      <a class="sk-breadcrumb__link" href="/proyectos/kit-digital">Kit Digital</a>
+      <span class="sk-breadcrumb__separator" aria-hidden="true">/</span>
+    </li>
+    <li class="sk-breadcrumb__item" aria-current="page">
+      Configuración
+    </li>
+  </ol>
+</nav>`;
+const multiReact = `import { Breadcrumb } from "@skryensya/react/breadcrumb";
+
+<Breadcrumb
+  items={[
+    { href: "/", label: "Inicio" },
+    { href: "/proyectos", label: "Proyectos" },
+    { href: "/proyectos/kit-digital", label: "Kit Digital" },
+    { label: "Configuración", current: true },
+  ]}
+/>`;
+
+const iconHtml = `<nav class="sk-breadcrumb" aria-label="Migas de pan">
+  <ol class="sk-breadcrumb__list">
+    <li class="sk-breadcrumb__item">
+      <a class="sk-breadcrumb__link" href="/">Inicio</a>
+      <span class="sk-breadcrumb__separator" aria-hidden="true">
+        <span data-sk-icon="chevron-right"></span>
+      </span>
+    </li>
+    <li class="sk-breadcrumb__item">
+      <a class="sk-breadcrumb__link" href="/proyectos">Proyectos</a>
+      <span class="sk-breadcrumb__separator" aria-hidden="true">
+        <span data-sk-icon="chevron-right"></span>
+      </span>
+    </li>
+    <li class="sk-breadcrumb__item" aria-current="page">
+      Kit Digital
+    </li>
+  </ol>
+</nav>`;
+const iconReact = `import { Breadcrumb } from "@skryensya/react/breadcrumb";
+
+<Breadcrumb
+  separator={<span data-sk-icon="chevron-right" />}
+  items={[
+    { href: "/", label: "Inicio" },
+    { href: "/proyectos", label: "Proyectos" },
+    { label: "Kit Digital", current: true },
+  ]}
+/>`;
+
+const longHtml = `<nav class="sk-breadcrumb" aria-label="Migas de pan">
+  <ol class="sk-breadcrumb__list">
+    <li class="sk-breadcrumb__item">
+      <a class="sk-breadcrumb__link" href="/">Inicio</a>
+      <span class="sk-breadcrumb__separator" aria-hidden="true">/</span>
+    </li>
+    <li class="sk-breadcrumb__item">
+      <a
+        class="sk-breadcrumb__link"
+        href="/proyectos"
+        title="Migración del layer vanilla a componentes Svelte"
+      >
+        Migración del layer vanilla a componentes Svelte
+      </a>
+      <span class="sk-breadcrumb__separator" aria-hidden="true">/</span>
+    </li>
+    <li class="sk-breadcrumb__item" aria-current="page">
+      <span class="sk-breadcrumb__current">
+        Máquinas Zag compartidas entre el layer vanilla y los componentes Svelte
+      </span>
+    </li>
+  </ol>
+</nav>`;
+const longReact = `import { Breadcrumb } from "@skryensya/react/breadcrumb";
+
+<Breadcrumb
+  items={[
+    { href: "/", label: "Inicio" },
+    {
+      href: "/proyectos",
+      label: "Migración del layer vanilla a componentes Svelte",
+    },
+    {
+      label:
+        "Máquinas Zag compartidas entre el layer vanilla y los componentes Svelte",
+      current: true,
+    },
+  ]}
+/>`;
+---
+
+<Base
+  title="Breadcrumb"
+  description="Ubicación jerárquica con enlaces reales y página actual explícita."
+>
+  <h1>Breadcrumb</h1>
+  <p class="lede">Ubicación jerárquica con enlaces reales y página actual explícita.</p>
+
+  <h2>Ejemplos</h2>
+
+  <h3>Dos niveles</h3>
+  <p>El caso mínimo: un enlace al nivel anterior y la página actual, sin enlace ni separador final.</p>
+  <Showcase html={simpleHtml} react={simpleReact} label="Breadcrumb de dos niveles" viewport="auto" />
+
+  <h3>Varios niveles</h3>
+  <p>Cada nivel intermedio es un enlace real seguido de su separador; solo el último elemento pierde ambos.</p>
+  <Showcase html={multiHtml} react={multiReact} label="Breadcrumb de varios niveles" viewport="auto" />
+
+  <h3>Separador con ícono</h3>
+  <p>
+    El separador es una ranura libre: por default es texto (<code>/</code>), pero acepta cualquier
+    marcado decorativo, como un <code>chevron-right</code>.
+  </p>
+  <Showcase html={iconHtml} react={iconReact} label="Breadcrumb con separador de ícono" viewport="auto" />
+
+  <h3>Etiquetas largas</h3>
+  <p>
+    Un nivel intermedio largo no debería empujar el resto del trail fuera de la columna, y la
+    página actual no debería truncarse: es justo la etiqueta que el breadcrumb existe para mostrar
+    completa. Cada parte resuelve el exceso de forma distinta.
+  </p>
+  <ul>
+    <li>
+      <code>sk-breadcrumb__link</code> corta con elipsis a <code>--sk-breadcrumb-link-max</code>
+      (16ch por default) y expone el texto completo en <code>title</code>; un ancestro largo se
+      lee como referencia, no como el foco de la página.
+    </li>
+    <li>
+      <code>sk-breadcrumb__current</code> nunca trunca: envuelve en varias líneas
+      (<code>overflow-wrap: anywhere</code>) para que el título completo siga siendo legible aunque
+      no quepa en una sola línea.
+    </li>
+  </ul>
+  <Showcase html={longHtml} react={longReact} label="Breadcrumb con etiquetas largas" viewport="auto" />
+
+  <h2>Contrato</h2>
+  <p>Usa nav + ol; el último elemento lleva aria-current=page y no es un enlace.</p>
+
+  <h2>Accesibilidad</h2>
+  <p>El label distingue estas migas de otras navegaciones de la página.</p>
+
+  <h2>CSS</h2>
+  <pre><code>{install}</code></pre>
+  <StylingHooks
+    groups={[
+      {
+        file: "components/breadcrumb.css",
+        probe: "sk-breadcrumb",
+        title: "Breadcrumb",
+      },
+    ]}
+  />
+</Base>

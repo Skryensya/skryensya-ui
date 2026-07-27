@@ -28,7 +28,7 @@ componente que se inventa sus propios colores de hover/pressed está reimplement
 que pasó con el botón antes de corregirlo. Hacerlo base es lo que convierte al state layer en **la** forma
 de expresar estados, no una de dos.
 
-El `::before` es **inerte hasta que un elemento lleva la clase `ds-interactive`**, así que enviarlo en
+El `::before` es **inerte hasta que un elemento lleva la clase `sk-interactive`**, así que enviarlo en
 base no cuesta nada sobre lo que no es interactivo. La clase es la API del mecanismo, marca qué
 elementos son interactivos, no un opt-in de bundle: no hay nada que importar.
 
@@ -70,10 +70,10 @@ opacidad combinada dedicado, nunca una suma en runtime.
 ## Las opacidades son invariantes al modo
 
 Un número no puede vivir dentro de `light-dark()`
-([por qué](/decisiones/0003-cuatro-dimensiones-que-componen)), así que hay una sola opacidad para claro
-y oscuro. No es una limitación: el tinte ya se invierte solo vía `currentColor`. El alto contraste sube
-las opacidades, y el anillo, a través del override de `[data-contrast]`, que *sí* es dirigido por
-atributo.
+([por qué](/decisiones/0003-cuatro-dimensiones-que-componen)), así que la escalera no cambia entre
+claro y oscuro. Tampoco se duplica en alto contraste: más `currentColor` acercaría el fondo al texto
+y haría que la superficie se leyera apagada. `[data-contrast="high"]` conserva el wash y añade un
+keyline inset cuyo ancho crece con la opacidad del estado; el anillo de foco independiente pasa a 3px.
 
 ## Accesibilidad, no negociable
 
@@ -94,6 +94,6 @@ Un `::before` con `pointer-events: none` y `z-index: -1` bajo `isolation: isolat
 `border-radius: inherit`. Las variantes con `:has()` dejan que la misma clase cubra controles nativos e
 inputs envueltos en label, `::before` no renderiza en un `<input>`.
 
-Un consumidor con un selector más específico que `.ds-interactive:hover` puede romper la escalera. Es
+Un consumidor con un selector más específico que `.sk-interactive:hover` puede romper la escalera. Es
 una limitación de CSS, la misma que acepta la especificidad de las variantes en
 [los tres tiers](/decisiones/0001-tres-tiers-y-la-direccion-de-las-referencias).

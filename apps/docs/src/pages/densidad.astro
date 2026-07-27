@@ -1,14 +1,15 @@
 ---
+import "@skryensya/core/components/slider.css";
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import Showcase from "../components/Showcase.astro";
 
 /* The site remains an honest consumer: input/field needs its authored paint rules. */
-import "../examples/input.css";
 
 const componentMarkup = `<section
-  class="order-summary ds-box ds-stack"
-  data-ds-density-scope
+  class="sk-box sk-stack"
+  data-sk-density-scope
+  style="--sk-density-factor: 0.72"
   data-surface="surface"
   data-border="subtle"
   data-padding="lg"
@@ -18,14 +19,14 @@ const componentMarkup = `<section
     <strong>Resumen del pedido</strong>
   </header>
 
-  <div class="ds-field">
-    <label class="ds-field__label" for="delivery-email">Email</label>
-    <input class="ds-input" id="delivery-email" type="email" />
+  <div class="sk-field">
+    <label class="sk-field__label" for="delivery-email">Email</label>
+    <input class="sk-input" id="delivery-email" type="email" />
   </div>
 
   <button
-    class="ds-button ds-interactive"
-    data-ds-button
+    class="sk-button sk-interactive"
+    data-sk-button
     data-variant="primary"
     type="button"
   >
@@ -33,28 +34,64 @@ const componentMarkup = `<section
   </button>
 </section>`;
 
-const relativeDensity = `/* \`.order-summary\` es tu selector de componente. */
-.order-summary {
-  --ds-density-factor: 0.72;
-}`;
-
-const absoluteDensity = `/* Usa esto solo si el componente debe
-   ignorar la densidad del sistema. */
-.order-summary {
-  --ds-density: 0.72;
-}`;
+const absoluteDensity = `<section
+  data-sk-density-scope
+  style="--sk-density: 0.72"
+>
+  <!-- contenido normal del componente -->
+</section>`;
 
 const labMarkup = `<section
-  class="ds-box ds-stack"
-  data-ds-density-scope
+  class="sk-box sk-stack"
+  data-sk-density-scope
   data-surface="surface"
   data-border="subtle"
   data-padding="lg"
   data-gap="sm"
-  style="--ds-density-factor: 0.72"
+  style="--sk-density-factor: 0.72"
 >
   <!-- contenido normal del componente -->
 </section>`;
+const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEach((lab) => {
+  const slider = lab.querySelector("[data-density-slider]");
+  const target = lab.querySelector("[data-density-target]");
+  const factorOutput = lab.querySelector("[data-density-factor-output]");
+  const effectiveOutput = lab.querySelector("[data-density-effective-output]");
+  const paddingOutput = lab.querySelector("[data-density-padding-output]");
+  const buttonOutput = lab.querySelector("[data-density-button-output]");
+  const button = target?.querySelector(".sk-button");
+
+  if (
+    !(slider instanceof HTMLInputElement)
+    || !(target instanceof HTMLElement)
+    || !(factorOutput instanceof HTMLOutputElement)
+    || !(effectiveOutput instanceof HTMLOutputElement)
+    || !(paddingOutput instanceof HTMLOutputElement)
+    || !(buttonOutput instanceof HTMLOutputElement)
+    || !(button instanceof HTMLButtonElement)
+  ) return;
+
+  const render = () => {
+    const value = Number(slider.value);
+    const min = Number(slider.min);
+    const max = Number(slider.max);
+    const factor = value / 100;
+
+    target.style.setProperty("--sk-density-factor", String(factor));
+    slider.style.setProperty("--sk-slider-fill", String((value - min) / (max - min)));
+    slider.setAttribute("aria-valuetext", \`\${factor.toFixed(2)} veces la densidad del sistema\`);
+    factorOutput.textContent = \`\${factor.toFixed(2)}×\`;
+
+    const density = Number.parseFloat(getComputedStyle(target).getPropertyValue("--sk-density"));
+    effectiveOutput.textContent = \`\${density.toFixed(2)}×\`;
+    paddingOutput.textContent = getComputedStyle(target).paddingInlineStart;
+    buttonOutput.textContent = \`\${Math.round(button.getBoundingClientRect().height)}px\`;
+  };
+
+  slider.addEventListener("input", render);
+  render();
+});`;
+
 ---
 
 <Base
@@ -68,52 +105,52 @@ const labMarkup = `<section
     elegida para la aplicación.
   </p>
 
-  <div class="ds-alert" data-tone="info" data-presentation="accent">
-    <div class="ds-alert__content">
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
       <p>
-        <strong>El contrato tiene dos piezas:</strong> <code>data-ds-density-scope</code> activa la
-        reproyección local; <code>--ds-density-factor</code> o <code>--ds-density</code> decide su valor.
-        No hay clases <em>compact</em>, presets obligatorios ni un prop de densidad para cada componente.
+        <strong>Todo el contrato vive en el mismo nodo:</strong> <code>data-sk-density-scope</code>
+        activa la reproyección local; <code>--sk-density-factor</code> o <code>--sk-density</code>,
+        escritos en <code>style</code>, deciden su valor. Este scope no añade clases, selectores,
+        presets obligatorios ni un prop a cada componente.
       </p>
     </div>
   </div>
 
-  <h2>El scope va en el límite que ya tienes</h2>
+  <h2>Configúralo en el límite que ya tienes</h2>
   <p>
-    Pon el atributo una vez, en la raíz del componente que quieres compactar. Sus descendientes siguen
-    leyendo los mismos tokens semánticos; la diferencia es que esos tokens se resuelven allí con la
-    densidad local. No marques cada botón, campo o fila por separado.
+    Pon el atributo una vez, en la raíz del componente que quieres compactar, y escribe allí el valor
+    como estilo inline. Sus descendientes siguen leyendo los mismos tokens semánticos; no necesitas
+    crear una clase para el scope ni marcar cada botón, campo o fila por separado.
   </p>
   <CodeBlock code={componentMarkup} label="HTML del componente" />
 
-  <h2>Elige relativo por defecto</h2>
+  <h2>Usa un factor relativo por defecto</h2>
   <p>
-    En un producto configurable, el valor relativo conserva la intención del usuario. Si la aplicación
-    está en <code>0.8</code> y el componente usa <code>0.72</code>, su densidad efectiva es
-    <code>0.576</code>. El factor no depende de un catálogo de nombres: cualquier número válido funciona.
+    <code>--sk-density-factor</code> conserva la intención del usuario. Si la aplicación está en
+    <code>0.8</code> y el componente usa <code>0.72</code>, su densidad efectiva es
+    <code>0.576</code>. El valor puede ser cualquier número válido, sin depender de presets.
   </p>
-  <CodeBlock code={relativeDensity} label="CSS del componente" />
 
   <p>
     Usa un valor absoluto solo cuando el componente necesita una medida independiente de la aplicación.
     El valor absoluto gana sobre el factor; elige uno u otro, no los dos.
   </p>
-  <CodeBlock code={absoluteDensity} label="CSS con valor absoluto" />
+  <CodeBlock code={absoluteDensity} label="HTML con valor absoluto" />
 
   <h2>Prueba un componente aislado</h2>
   <p>
     El control queda fuera del scope. Arrástralo: cambian el padding, los gaps y los tamaños semánticos
     dentro del resumen; el resto de la página no se mueve.
   </p>
-  <Showcase code={labMarkup} label="Scope local en acción" note="el único contrato del scope es data-ds-density-scope">
-    <div class="ds-stack" data-gap="lg" data-density-lab style="inline-size: 100%">
-      <div class="ds-stack" data-gap="xs">
-        <div class="ds-inline" data-gap="sm" data-align="baseline">
+  <Showcase code={labMarkup} previewScript={densityLabScript} label="Scope local en acción" note="scope y valor viven inline en el mismo nodo">
+    <div class="sk-stack" data-gap="lg" data-density-lab style="inline-size: 100%">
+      <div class="sk-stack" data-gap="xs">
+        <div class="sk-inline" data-gap="sm" data-align="baseline">
           <label for="density-factor-control"><strong>Factor local</strong></label>
           <output class="mono" data-density-factor-output>1.00×</output>
         </div>
         <input
-          class="ds-slider"
+          class="sk-slider"
           data-density-slider
           id="density-factor-control"
           type="range"
@@ -122,9 +159,9 @@ const labMarkup = `<section
           step="1"
           value="100"
           aria-valuetext="1.00 veces la densidad del sistema"
-          style="--ds-slider-fill: 0.5"
+          style="--sk-slider-fill: 0.5"
         />
-        <div class="ds-inline" data-gap="lg" data-align="baseline" aria-live="polite">
+        <div class="sk-inline" data-gap="lg" data-align="baseline" aria-live="polite">
           <span>Densidad efectiva: <output class="mono" data-density-effective-output>1.00×</output></span>
           <span>Padding inline: <output class="mono" data-density-padding-output>…</output></span>
           <span>Botón: <output class="mono" data-density-button-output>…</output></span>
@@ -132,35 +169,35 @@ const labMarkup = `<section
       </div>
 
       <section
-        class="ds-box ds-stack"
-        data-ds-density-scope
+        class="sk-box sk-stack"
+        data-sk-density-scope
         data-density-target
         data-surface="surface"
         data-border="subtle"
         data-padding="lg"
         data-gap="sm"
-        style="--ds-density-factor: 1"
+        style="--sk-density-factor: 1"
         aria-labelledby="density-component-title"
       >
-        <header class="ds-inline" data-gap="sm" data-align="baseline">
+        <header class="sk-inline" data-gap="sm" data-align="baseline">
           <strong id="density-component-title">Resumen del pedido</strong>
           <span>3 artículos</span>
         </header>
-        <div class="ds-field">
-          <label class="ds-field__label" for="density-email">Email de entrega</label>
-          <input class="ds-input" id="density-email" name="density-email" type="email" placeholder="nombre@equipo.com" />
+        <div class="sk-field">
+          <label class="sk-field__label" for="density-email">Email de entrega</label>
+          <input class="sk-input" id="density-email" name="density-email" type="email" placeholder="nombre@equipo.com" />
         </div>
-        <div class="ds-inline" data-gap="sm">
-          <button class="ds-button ds-interactive" data-ds-button data-variant="primary" type="button">Guardar cambios</button>
-          <button class="ds-button ds-interactive" data-ds-button data-variant="ghost" type="button">Cancelar</button>
+        <div class="sk-inline" data-gap="sm">
+          <button class="sk-button sk-interactive" data-sk-button data-variant="primary" type="button">Guardar cambios</button>
+          <button class="sk-button sk-interactive" data-sk-button data-variant="ghost" type="button">Cancelar</button>
         </div>
       </section>
     </div>
   </Showcase>
 
   <h2>Qué cambia, y qué no</h2>
-  <div class="ds-table-scroll">
-    <table class="ds-table">
+  <div class="sk-table-scroll">
+    <table class="sk-table">
       <thead>
         <tr><th>Dentro del scope</th><th>Comportamiento</th></tr>
       </thead>
@@ -168,7 +205,7 @@ const labMarkup = `<section
         <tr><td><code>--space-*</code></td><td>Padding, gaps e insets se recalculan con la densidad efectiva.</td></tr>
         <tr><td><code>--size-control-*</code></td><td>Se recalculan, con el piso de tamaño mínimo incorporado.</td></tr>
         <tr><td>Tipografía, iconos y radio</td><td>Permanecen invariantes: densidad acerca contenido, no cambia la escala visual.</td></tr>
-        <tr><td>Focus ring y área táctil</td><td>Permanecen protegidos; un botón del laboratorio no baja de <code>44px</code>.</td></tr>
+        <tr><td>Focus ring y área táctil</td><td>Permanecen protegidos. Un Button default no baja de <code>44px</code> de pintura; <code>data-size="sm"</code> puede pintar a 32px y el hit sigue en <code>44px</code>.</td></tr>
         <tr><td>Wrappers y <code>--space-section</code></td><td>No se compactan: la geometría de página no pertenece al componente.</td></tr>
       </tbody>
     </table>
@@ -188,36 +225,3 @@ const labMarkup = `<section
   </p>
 </Base>
 
-<script>
-  document.querySelectorAll<HTMLElement>("[data-density-lab]").forEach((lab) => {
-    const slider = lab.querySelector<HTMLInputElement>("[data-density-slider]");
-    const target = lab.querySelector<HTMLElement>("[data-density-target]");
-    const factorOutput = lab.querySelector<HTMLOutputElement>("[data-density-factor-output]");
-    const effectiveOutput = lab.querySelector<HTMLOutputElement>("[data-density-effective-output]");
-    const paddingOutput = lab.querySelector<HTMLOutputElement>("[data-density-padding-output]");
-    const buttonOutput = lab.querySelector<HTMLOutputElement>("[data-density-button-output]");
-    const button = target?.querySelector<HTMLButtonElement>(".ds-button");
-
-    if (!slider || !target || !factorOutput || !effectiveOutput || !paddingOutput || !buttonOutput || !button) return;
-
-    const render = () => {
-      const value = Number(slider.value);
-      const min = Number(slider.min);
-      const max = Number(slider.max);
-      const factor = value / 100;
-
-      target.style.setProperty("--ds-density-factor", String(factor));
-      slider.style.setProperty("--ds-slider-fill", String((value - min) / (max - min)));
-      slider.setAttribute("aria-valuetext", `${factor.toFixed(2)} veces la densidad del sistema`);
-      factorOutput.textContent = `${factor.toFixed(2)}×`;
-
-      const density = Number.parseFloat(getComputedStyle(target).getPropertyValue("--ds-density"));
-      effectiveOutput.textContent = `${density.toFixed(2)}×`;
-      paddingOutput.textContent = getComputedStyle(target).paddingInlineStart;
-      buttonOutput.textContent = `${Math.round(button.getBoundingClientRect().height)}px`;
-    };
-
-    slider.addEventListener("input", render);
-    render();
-  });
-</script>

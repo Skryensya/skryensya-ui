@@ -1,43 +1,50 @@
 ---
+import "@skryensya/core/components/tag.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<span class="ds-tag">
-  <span class="ds-tag__label">diseño</span>
+const html = `<span class="sk-tag">
+  <span class="sk-tag__label">diseño</span>
 </span>
-<span class="ds-tag" data-tone="accent">
-  <span class="ds-tag__label">tokens</span>
+<span class="sk-tag" data-tone="accent">
+  <span class="sk-tag__label">tokens</span>
 </span>
-<span class="ds-tag" data-tone="success">
-  <span class="ds-tag__label">activo</span>
+<span class="sk-tag" data-tone="success">
+  <span class="sk-tag__label">activo</span>
 </span>
-<span class="ds-tag" data-tone="warning">
-  <span class="ds-tag__label">beta</span>
+<span class="sk-tag" data-tone="warning">
+  <span class="sk-tag__label">beta</span>
 </span>
-<span class="ds-tag" data-tone="danger">
-  <span class="ds-tag__label">deprecado</span>
+<span class="sk-tag" data-tone="danger">
+  <span class="sk-tag__label">deprecado</span>
 </span>
-<span class="ds-tag" data-tone="accent">
-  <span class="ds-tag__label">react</span>
+<span class="sk-tag" data-tone="accent">
+  <span class="sk-tag__label">react</span>
   <button
-    class="ds-tag__remove"
+    class="sk-button sk-interactive sk-tag__remove"
     type="button"
+    data-variant="ghost"
+    data-size="sm"
+    data-icon-only
     aria-label="Quitar react"
   >
-    <span data-ds-icon="close"></span>
+    <span data-sk-icon="close"></span>
   </button>
 </span>
-<span class="ds-tag">
-  <span class="ds-tag__label">frontend</span>
+<span class="sk-tag">
+  <span class="sk-tag__label">frontend</span>
   <button
-    class="ds-tag__remove"
+    class="sk-button sk-interactive sk-tag__remove"
     type="button"
+    data-variant="ghost"
+    data-size="sm"
+    data-icon-only
     aria-label="Quitar frontend"
   >
-    <span data-ds-icon="close"></span>
+    <span data-sk-icon="close"></span>
   </button>
 </span>`;
 
@@ -68,16 +75,34 @@ const react = `import { Tag } from "@skryensya/react/tag";
     cuadrado (radio de control, no píldora) para leerse como accionable, y puede llevar un botón de quitar.
   </p>
 
-  <h2>Demo HTML</h2>
   <Showcase html={html} react={react} label="Tag" />
   <p>
     Cuando es removible, la etiqueta y el botón de quitar son dos objetivos distintos: el nombre
     accesible del control nombra el tag que remueve.
   </p>
 
+  <h2>La X es un Button, no un dibujo de uno</h2>
+  <p>
+    El control de quitar es un <a href="/componentes/button">Button</a> real —
+    <code>sk-button sk-interactive</code> con <code>data-size="sm"</code>,
+    <code>data-icon-only</code> y <code>data-variant="ghost"</code>— y
+    <code>sk-tag__remove</code> es sólo el modificador que lo encoge al alto de la cápsula. Tag no
+    envía interacción propia.
+  </p>
+  <p>
+    Lo que se gana es lo que ya no hay que mantener acá: el hover y el press vienen del
+    <a href="/state-layer">state layer</a>, el anillo de foco es el mismo de todos los controles, y
+    el área de toque llega a <strong>44px</strong> por el <code>::after</code> del botón aunque la
+    cara pinte 20px. Antes eran 20px de cara y 20px de blanco útil.
+  </p>
+  <p>
+    El color sigue siendo <code>currentColor</code>, así que cada tono trae su X en su propio color
+    sin una regla por tono.
+  </p>
+
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo. <code>onRemove</code> es opcional.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview. <code>onRemove</code> es opcional.</p>
 </Base>

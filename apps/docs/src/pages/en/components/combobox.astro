@@ -1,0 +1,238 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+import "@skryensya/core/components/combobox.css";
+import "@skryensya/core/components/field.css";
+import "@skryensya/core/patterns/scrollbar.css";
+
+/*
+ * The full roster of countries, in Spanish, alphabetical. `value` is derived from the name so the
+ * data stays a plain list: accents stripped, spaced/punctuated runs collapsed to single hyphens.
+ * The combobox filters this whole set client-side, so "all countries" costs no more markup logic
+ * than the four it used to ship — only more rows.
+ */
+const slug = (name: string) =>
+  name
+    .normalize("NFD")
+    .replace(/\p{M}+/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+const countries = [
+  "Afghanistan", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda",
+  "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria",
+  "Azerbaijan", "Bahamas", "Bangladesh", "Barbados", "Bahrain", "Belgium", "Belice",
+  "Benin", "Bielorrusia", "Birmania", "Bolivia", "Bosnia y Herzegovina", "Botsuana",
+  "Brasil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Bhutan", "Cabo Verde",
+  "Camboya", "Cameroon", "Canada", "Catar", "Chad", "Chile", "China", "Chipre",
+  "Vatican City", "Colombia", "Comoras", "North Korea", "South Korea",
+  "Ivory Coast", "Costa Rica", "Croacia", "Cuba", "Dinamarca", "Dominica",
+  "Ecuador", "Egipto", "El Salvador", "United Arab Emirates", "Eritrea",
+  "Eslovaquia", "Eslovenia", "Spain", "Statuss Unidos", "Estonia", "Esuatini",
+  "Ethiopia", "Filipinas", "Finlandia", "Fiyi", "Francia", "Gabon", "Gambia",
+  "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guyana", "Guinea",
+  "Guinea-Bissau", "Guinea Ecuatorial", "Haiti", "Honduras", "Hungary", "India",
+  "Indonesia", "Irak", "Iran", "Irlanda", "Islandia", "Islas Marshall",
+  "Solomon Islands", "Israel", "Italia", "Jamaica", "Japan", "Jordania",
+  "Kazakhstan", "Kenia", "Kyrgyzstan", "Kiribati", "Kuwait", "Laos", "Lesoto",
+  "Letonia", "Lebanon", "Liberia", "Libia", "Liechtenstein", "Lituania",
+  "Luxemburgo", "North Macedonia", "Madagascar", "Msoia", "Malaui",
+  "Maldivas", "Mali", "Malta", "Marruecos", "Mauricio", "Mauritania", "Mexico",
+  "Micronesia", "Moldavia", "Monaco", "Mongolia", "Montenegro", "Mozambique",
+  "Namibia", "Nauru", "Nepal", "Nicaragua", "Niger", "Nigeria", "Noruega",
+  "Nueva Zelanda", "Oman", "Netherlands", "Pakistan", "Palaos", "Panama",
+  "Papua New Guinea", "Paraguay", "Peru", "Polonia", "Portugal", "Reino Unido",
+  "Central African Republic", "Czech Republic", "Republic of the Congo",
+  "Democratic Republic of the Congo", "Dominican Republic", "Ruanda", "Romania",
+  "Rusia", "Samoa", "Saint Kitts and Nevis", "San Marino",
+  "Saint Vincent and the Grenadines", "Saint Lucia", "Sao Tome and Principe",
+  "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria",
+  "Somalia", "Sri Lanka", "South Africa", "Sudan", "South Sudan", "Suecia",
+  "Suiza", "Surinam", "Tailandia", "Tanzania", "Tajikistan", "Timor Oriental",
+  "Togo", "Tonga", "Trinidad y Tobago", "Tunisia", "Turkmenistan", "Türkiye",
+  "Tuvalu", "Ucrania", "Uganda", "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela",
+  "Vietnam", "Yemen", "Yibuti", "Zambia", "Zimbabue",
+];
+
+const countryItems = countries
+  .map(
+    (name) => `      <div
+        class="sk-combobox__item sk-interactive"
+        data-sk-combobox-item
+        data-value="${slug(name)}"
+        data-value-text="${name}"
+      >
+        <span
+          class="sk-combobox__item-label"
+          data-sk-combobox-item-text
+        >
+          ${name}
+        </span>
+        <span
+          class="sk-combobox__item-indicator"
+          data-sk-combobox-item-indicator
+        >
+          <span data-sk-icon="check"></span>
+        </span>
+      </div>`,
+  )
+  .join("\n");
+
+const install = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/field.css";
+@import "@skryensya/core/components/combobox.css";
+/* The list scrolls: the rail is painted by the pattern, marked with sk-scrollbar. */
+@import "@skryensya/core/patterns/scrollbar.css";`;
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+initComponents();`;
+const html = `<div class="sk-field sk-combobox" data-sk-combobox>
+  <label
+    class="sk-field__label sk-combobox__label"
+    data-sk-combobox-label
+  >
+    Country
+  </label>
+  <div class="sk-field__hint" data-sk-combobox-hint>
+    Write to filter. Use the arrows to scroll.
+  </div>
+  <div class="sk-combobox__control sk-anchor" data-sk-combobox-control>
+    <div class="sk-combobox__value" data-sk-combobox-value>
+      <input
+        class="sk-combobox__input"
+        data-sk-combobox-input
+        placeholder="Search country"
+      />
+    </div>
+    <button
+      class="sk-combobox__clear sk-button sk-interactive"
+      data-sk-button
+      data-sk-combobox-clear
+      data-icon-only
+      data-size="sm"
+      data-variant="ghost"
+      aria-label="Clear selection"
+      type="button"
+      hidden
+    >
+      <span data-sk-icon="close"></span>
+    </button>
+    <button
+      class="sk-combobox__trigger sk-button sk-interactive"
+      data-sk-button
+      data-sk-combobox-trigger
+      data-icon-only
+      data-size="sm"
+      data-variant="ghost"
+      aria-label="Show options"
+      type="button"
+    >
+      <span data-sk-icon="chevron-down"></span>
+    </button>
+  </div>
+  <div
+    class="sk-combobox__status sr-only"
+    data-sk-combobox-status
+    role="status"
+    aria-atomic="true"
+  ></div>
+  <div
+    class="sk-combobox__positioner sk-anchored"
+    data-sk-combobox-positioner
+  >
+    <div
+      class="sk-combobox__content sk-scrollbar"
+      data-sk-combobox-content
+    >
+${countryItems}
+      <div
+        class="sk-combobox__empty"
+        data-sk-combobox-empty
+        hidden
+      >
+        No results
+      </div>
+    </div>
+  </div>
+</div>`;
+const react = `import { Combobox } from "@skryensya/react/combobox";
+import { Icon } from "@skryensya/react/icon";
+import { countries } from "./countries";
+// countries: { label: string; value: string }[] with the complete list of countries
+
+<Combobox
+  label="Country"
+  hint="Write to filter. Use the arrows to scroll."
+  placeholder="Search country"
+  items={countries}
+  clearIndicator={<Icon name="close" />}
+  itemIndicator={<Icon name="check" />}
+  triggerIndicator={<Icon name="chevron-down" />}
+/>`;
+---
+
+<Base
+  title="Combobox"
+  description="Editable tips with clear statuses, contextual help, and full keyboard navigation."
+>
+  <h1>Combobox</h1>
+  <p class="lede">Editable suggestions with context, clear statuses, and full keyboard navigation.</p>
+
+  <h2>Installation</h2>
+  <Showcase
+    html={html}
+    js={js}
+    react={react}
+    label="Combobox"
+    viewport="menu"
+  />
+
+  <h2>Contrato</h2>
+  <p>
+    Combobox filters an authored collection without overriding its options. Select
+    keeps a closed list and Input does not show suggestions.
+  </p>
+  <p>
+    What is written is the user's job: leave the field without choosing anything
+    —blur, click away, Escape—closes the list but <strong
+      >does not clear the search</strong
+    >. Just choosing an option rewrites the input (with the chosen label), and
+    only the ✕ empties it. Upon reopening, the filter returns to the full list: what
+    what you see is the selection, not the last typed text.
+  </p>
+
+  <h2>Accesibilidad</h2>
+  <p>
+    Focus remains on the input while <code>aria-activedescendant</code>
+    indicates the active option. Down and up arrow cycle through results, Enter
+    select and Escape closes. <code>hint</code> and <code>error</code> are
+    bind via <code>aria-describedby</code>; changes in the quantity
+    Results are announced with a state region.
+  </p>
+  <p>
+    Scrolling with the keyboard moves the focus ring to the highlighted item (focus
+    virtual) and the control gives up its own: there is a single ring on the screen and it travels
+    to the list and back. No ring appears with the pointer—a ring
+    Following the cursor reads as broken focus—only the state layer.
+  </p>
+
+  <h2>CSS</h2>
+  <pre><code>{install}</code></pre>
+  <StylingHooks
+    groups={[
+      {
+        file: "components/combobox.css",
+        probe: "sk-combobox",
+        title: "Combobox",
+      },
+      { file: "patterns/anchored.css", probe: "sk-anchored", title: "Anchor Inherits" },
+      { file: "components/button.css", probe: "sk-button", title: "Inherited from Button" },
+    ]}
+  />
+</Base>

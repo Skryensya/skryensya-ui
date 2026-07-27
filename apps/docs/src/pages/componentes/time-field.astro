@@ -1,0 +1,97 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+import "@skryensya/core/components/time-field.css";
+
+const install = `pnpm add @skryensya/core`;
+
+const styles = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/time-field.css";`;
+
+const html = `<div class="sk-time-field">
+  <label class="sk-time-field__label" for="start">
+    Inicio
+  </label>
+  <div class="sk-time-field__control">
+    <input
+      class="sk-time-field__input"
+      id="start"
+      name="start"
+      type="time"
+      value="09:30"
+    />
+  </div>
+</div>`;
+
+const react = `import { TimeField } from "@skryensya/react/time-field";
+
+<TimeField
+  defaultValue="09:30"
+  label="Inicio"
+  name="start"
+/>`;
+---
+
+<Base
+  title="TimeField"
+  description="Hora local en un único input nativo con picker de la plataforma."
+>
+  <h1>TimeField</h1>
+  <p class="lede">
+    Un único <code>&lt;input type="time"&gt;</code> para introducir
+    una hora local. La plataforma aporta edición, validación y el
+    icono que abre el selector de horas.
+  </p>
+
+  <h2>Un input, un valor</h2>
+  <p>
+    El campo completo es un solo control. El icono del extremo abre
+    el picker nativo; no añade un segundo input ni duplica el foco.
+    El chrome exterior mide <code>12rem × 44px</code>.
+  </p>
+  <Showcase
+    html={html}
+    react={react}
+    label="TimeField con selector de hora"
+  />
+
+  <h2>Comportamiento nativo</h2>
+  <p>
+    El navegador conserva su formato horario, teclado móvil,
+    validación y selector. El indicador puede adaptar su dibujo a la
+    plataforma sin cambiar el contrato del componente.
+  </p>
+
+  <h2>Formulario y valor</h2>
+  <p>
+    TimeField representa hora local, sin fecha ni zona horaria.
+    Publica el valor nativo <code>HH:mm</code> y respeta
+    <code>name</code>, <code>required</code>, <code>disabled</code>,
+    <code>step</code> y el reset del formulario.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>CSS</h2>
+  <CodeBlock code={styles} label="CSS" lang="css" />
+
+  <h2>Accesibilidad</h2>
+  <p>
+    El label nombra directamente el input. La semántica, el teclado
+    y el picker pertenecen a la plataforma, y la superficie conserva
+    un objetivo táctil de <code>44px</code>.
+  </p>
+
+  <StylingHooks
+    groups={[
+      {
+        file: "components/time-field.css",
+        probe: "sk-time-field",
+        title: "TimeField",
+      },
+    ]}
+  />
+</Base>

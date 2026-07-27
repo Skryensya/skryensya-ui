@@ -1,0 +1,82 @@
+---
+import Base from "../../layouts/Base.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+import "@skryensya/core/components/toolbar.css";
+
+const install = `@import "@skryensya/core/components/toolbar.css";`;
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+initComponents();`;
+const html = `<div
+  class="sk-toolbar"
+  data-sk-toolbar
+  data-loop-focus
+  aria-label="Formato de texto"
+>
+  <div class="sk-toolbar__group" role="group">
+    <button class="sk-button sk-interactive" type="button">
+      Negrita
+    </button>
+    <button class="sk-button sk-interactive" type="button">
+      Cursiva
+    </button>
+  </div>
+  <span class="sk-toolbar__separator" aria-hidden="true"></span>
+  <button class="sk-button sk-interactive" type="button">
+    Enlace
+  </button>
+</div>`;
+const react = `import {
+  Toolbar,
+  ToolbarGroup,
+  ToolbarSeparator,
+} from "@skryensya/react/toolbar";
+
+<Toolbar label="Formato de texto">
+  <ToolbarGroup>
+    <button type="button">Negrita</button>
+    <button type="button">Cursiva</button>
+  </ToolbarGroup>
+  <ToolbarSeparator />
+  <button type="button">Enlace</button>
+</Toolbar>`;
+---
+
+<Base
+  title="Toolbar"
+  description="Agrupa controles relacionados y permite recorrerlos con flechas."
+>
+  <h1>Toolbar</h1>
+  <p class="lede">Agrupa controles relacionados y permite recorrerlos con flechas.</p>
+
+  <h2>Instalación</h2>
+  <Showcase
+    html={html}
+    js={js}
+    react={react}
+    label="Toolbar"
+    viewport="auto"
+  />
+
+  <h2>Contrato</h2>
+  <p>Toolbar agrupa controles; no reemplaza Navbar ni Menu. Los grupos internos usan role=group.</p>
+
+  <h2>Accesibilidad</h2>
+  <p>Flechas recorren controles; Home y End saltan a los extremos. Tab entra y sale de la barra.</p>
+
+  <h2>CSS</h2>
+  <pre><code>{install}</code></pre>
+  <StylingHooks
+    groups={[
+      {
+        file: "components/toolbar.css",
+        probe: "sk-toolbar",
+        title: "Toolbar",
+      },
+    ]}
+  />
+</Base>

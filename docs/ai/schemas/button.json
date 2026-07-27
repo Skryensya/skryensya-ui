@@ -1,0 +1,73 @@
+{
+  "$schema": "./_meta.json",
+  "id": "button",
+  "consume": {
+    "css": "@skryensya/core/components/button.css",
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-button", "sk-interactive"],
+      "attributes": ["data-sk-button"],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "Button": {
+      "use": "action",
+      "element": "button",
+      "react": {
+        "from": "@skryensya/react/button",
+        "name": "Button"
+      },
+      "forbids": ["href"]
+    },
+    "ButtonLink": {
+      "use": "navigation",
+      "element": "a",
+      "react": {
+        "from": "@skryensya/react/button",
+        "name": "ButtonLink"
+      },
+      "requires": ["href"],
+      "forbids": ["disabled"]
+    }
+  },
+  "props": {
+    "variant": ["neutral", "primary", "danger", "ghost"],
+    "size": ["md", "sm", "lg"],
+    "iconOnly": [false, true]
+  },
+  "meanings": {
+    "variant": {
+      "neutral": "secondary emphasis",
+      "primary": "primary emphasis",
+      "danger": "destructive emphasis",
+      "ghost": "low emphasis"
+    }
+  },
+  "children": ["text", "Icon"],
+  "composes": {
+    "Icon": {
+      "from": "@skryensya/react/icon",
+      "name": "Icon"
+    }
+  },
+  "rules": {
+    "Button.href": "Use ButtonLink for navigation.",
+    "ButtonLink.disabled": "Render non-link content when the destination is unavailable.",
+    "iconOnly": "Set aria-label or aria-labelledby on the chosen surface.",
+    "Icon": "Omit Icon.label; the Button surface owns the accessible name."
+  },
+  "examples": {
+    "Button": {
+      "primary": "<Button variant=\"primary\" onClick={save}>Guardar</Button>",
+      "danger": "<Button variant=\"danger\" onClick={remove}>Eliminar</Button>"
+    },
+    "ButtonLink": {
+      "primary": "<ButtonLink variant=\"primary\" href=\"/docs\">Documentación</ButtonLink>",
+      "iconOnly": "<ButtonLink iconOnly aria-label=\"Documentación\" href=\"/docs\"><Icon name=\"arrow-right\" /></ButtonLink>"
+    }
+  }
+}

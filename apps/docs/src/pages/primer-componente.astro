@@ -10,22 +10,36 @@ const step2 = `@import "@skryensya/core/tokens.scss";`;
 const step3 = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/button.css";`;
 
-const step4 = `.ds-button {
-  background: var(--ds-button-bg);
-  color: var(--ds-button-fg);
-  min-height: var(--ds-button-height);
-  padding-inline: var(--ds-button-padding-x);
-  border-radius: var(--ds-button-radius);
+const step4 = `/* Un hook, no un selector nuevo: todas las variantes
+   leen la misma variable, así que esto las reestiliza
+   todas dentro de .hero. */
+.hero .sk-button {
+  --sk-button-bg: rebeccapurple;
+  --sk-button-radius: var(--radius-pill);
 }`;
 
-const step5 = `<button class="ds-button" data-ds-button>Guardar</button>
-<button class="ds-button" data-ds-button data-variant="primary">
+const step5 = `<button class="sk-button sk-interactive" data-sk-button>Guardar</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="primary"
+>
   Guardar
 </button>
-<button class="ds-button" data-ds-button data-variant="danger">
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="danger"
+>
   Borrar
 </button>
-<button class="ds-button" data-ds-button data-size="sm">Pequeño</button>`;
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="sm"
+>
+  Pequeño
+</button>`;
 
 const step5React = `import { Button } from "@skryensya/react/button";
 
@@ -35,16 +49,20 @@ const step5React = `import { Button } from "@skryensya/react/button";
 <Button size="sm">Pequeño</Button>;`;
 
 const step6html = `<button
-  class="ds-button ds-interactive"
-  data-ds-button
+  class="sk-button sk-interactive"
+  data-sk-button
   data-variant="primary"
 >
   Guardar
 </button>`;
 
+/* El único lugar donde se toca localStorage a mano, porque corre antes que cualquier módulo y no
+   puede importar. La clave y el slot igual salen de la declaración; ver /almacenamiento. */
 const fouc = `<script>
-  // Antes del primer paint, sincrónico.
-  var s = JSON.parse(localStorage.getItem('ds') || '{}');
+  // Antes del primer paint, sincrónico: no puede importar,
+  // y es la única excepción del sistema (ver Almacenamiento).
+  var s = {};
+  try { s = JSON.parse(localStorage.getItem('sk') || '{}'); } catch (e) {}
   if (s.scheme) document.documentElement.style.colorScheme = s.scheme;
 </script>`;
 ---
@@ -66,34 +84,37 @@ const fouc = `<script>
     Es lo único que todo consumidor necesita: primitivos + semánticos. Con esto ya tienes las cuatro
     dimensiones y el lenguaje de motion.
   </p>
-  <CodeBlock code={step2} label="tu CSS" />
+  <CodeBlock code={step2} label="CSS" />
   <p>
     Los especificadores desnudos se resuelven por el <code>exports</code> map, así que necesitas un
     bundler (Vite, webpack, Parcel).
   </p>
 
-  <h2>3. Importar los styling hooks que vas a usar</h2>
+  <h2>3. Importar el componente que vas a usar</h2>
   <p>Solo lo que envías. Un consumidor sin botones nunca baja este archivo.</p>
-  <CodeBlock code={step3} label="tu CSS" />
+  <CodeBlock code={step3} label="CSS" />
   <p>
-    El orden no importa: las <a href="/tiers">cascade layers</a> deciden la precedencia, no tus
-    imports.
+    Con eso ya tienes un botón. <code>button.css</code> trae la clase <em>y</em> sus
+    <a href="/styling-hooks">styling hooks</a>: no hay un paso donde tengas que escribir tú el CSS
+    estructural para que algo se vea. El orden de los imports no importa, las
+    <a href="/tiers">cascade layers</a> deciden la precedencia.
   </p>
 
-  <h2>4. Escribir la estructura</h2>
-  <p>
-    Aquí está el paso que sorprende. Importar <code>button.css</code>
-    <strong>no te dio un botón</strong>: te dio variables. Nada las conecta a propiedades reales
-    hasta que tú lo haces.
-  </p>
-  <CodeBlock code={step4} label="tu CSS" note="el mínimo viable" />
-
-  <h2>5. Usarlo</h2>
+  <h2>4. Usarlo</h2>
   <p>
     Las variantes y los tamaños son atributos. No necesitas clases nuevas ni ramificar en tu CSS:
     todas las variantes re-declaran <a href="/styling-hooks">el mismo styling hook</a>.
   </p>
   <Showcase html={step5} react={step5React} label="Button" />
+
+  <h2>5. Cambiarlo</h2>
+  <p>
+    Enviar la estructura no te deja afuera de ella: para eso están los hooks. La estructura vive en
+    <code>@layer components</code> y <strong>cualquier regla sin capa le gana a cualquier capa</strong>,
+    así que re-declaras un hook desde tu CSS y ganas, sin inventar un selector más específico ni pelear
+    con <code>!important</code>.
+  </p>
+  <CodeBlock code={step4} label="CSS" note="opcional" />
 
   <h2>6. Estados interactivos</h2>
   <p>
@@ -101,9 +122,9 @@ const fouc = `<script>
     <a href="/state-layer">state layer</a>, un overlay de <code>currentColor</code> compartido por
     todo componente interactivo. Es el mecanismo de interacción del sistema y viene en
     <code>tokens.scss</code>, no hay nada que importar aparte. Solo agrega
-    <code>ds-interactive</code>: cero colores de estado en tu CSS, y el anillo de foco viene incluido.
+    <code>sk-interactive</code>: cero colores de estado en tu CSS, y el anillo de foco viene incluido.
   </p>
-  <CodeBlock code={step6html} label="tu HTML" note="una clase más" />
+  <CodeBlock code={step6html} label="HTML" note="una clase más" />
 
   <h2>Lo que falta: el guard de FOUC</h2>
   <p>
@@ -111,14 +132,15 @@ const fouc = `<script>
     sincrónico, en el <code>&lt;head&gt;</code>. Sin esto la página pinta sin la marca/modo elegidos y
     después salta.
   </p>
-  <CodeBlock code={fouc} label="tu HTML, en el head" />
+  <CodeBlock code={fouc} label="HTML, en el head" />
 
-  <div class="ds-alert" data-tone="info" data-presentation="accent">
-    <div class="ds-alert__content">
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
     <p>
-      <strong>Y eso es todo el contrato.</strong> Escribiste ~6 líneas de CSS estructural y tienes un
-      botón que responde a dos marcas, claro/oscuro, alto contraste y tres densidades, con el mínimo
-      táctil de WCAG garantizado dentro del token. Nada de eso está en tu código.
+      <strong>Y eso es todo el contrato.</strong> Dos imports y una clase, y tienes un botón que
+      responde a dos marcas, claro/oscuro, alto contraste y tres densidades, con el mínimo táctil de
+      WCAG garantizado dentro del token. Nada de eso está en tu código, y ninguna línea de CSS
+      estructural tampoco.
     </p>
     </div>
   </div>

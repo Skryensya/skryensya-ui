@@ -44,9 +44,12 @@
 
       /* Decorative: off */
       --motion-emphasize-duration: var(--scale-duration-instant);
+      --motion-count-duration: var(--scale-duration-instant);
 
       /* Continuous: gentler if a component keeps it; prefer a static swap in the component */
-      --motion-loading-duration: var(--scale-duration-slow);
+      --motion-loading-duration: var(--scale-duration-cycle-slow);
+      --motion-loading-duration-fast: var(--scale-duration-cycle-slow);
+      --motion-loading-duration-slow: var(--scale-duration-cycle-slow);
     }
   }
 }

@@ -8,6 +8,8 @@
  * drawer hosting it.
  */
 
+import { getLocale, useTranslations } from "../i18n";
+
 type NavigationItem = {
   href: string;
   label: string;
@@ -22,6 +24,7 @@ type NavigationGroup = {
 };
 
 type NavigationSection = {
+  id?: string;
   section: string;
   href?: string;
   blurb: string;
@@ -37,6 +40,7 @@ interface Props {
 }
 
 const { nav, path, idPrefix } = Astro.props;
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 {
@@ -47,28 +51,35 @@ const { nav, path, idPrefix } = Astro.props;
           section.href ? (
             <a class="docs-nav-section__title" href={section.href}>{section.section}</a>
           ) : (
-            <h2 class="docs-nav-section__title">{section.section}</h2>
+            <h2 class="docs-nav-section__title" data-flush>{section.section}</h2>
           )
         }
         <p class="docs-nav-section__blurb">{section.blurb}</p>
       </header>
-      <nav class="ds-nav-list" aria-label={section.section}>
+      <nav class="sk-nav-list" aria-label={section.section}>
         {section.groups.map((group, groupIndex) => (
-          <div class="ds-nav-list__group" data-secondary={group.secondary ? "" : undefined}>
-            <div class="ds-nav-list__group-label" id={`${idPrefix}-${sectionIndex}-${groupIndex}`}>
-              {group.group}
-            </div>
-            <ul class="ds-nav-list__list" aria-labelledby={`${idPrefix}-${sectionIndex}-${groupIndex}`}>
+          <div class="sk-nav-list__group" data-secondary={group.secondary ? "" : undefined}>
+            {
+              group.group ? (
+                <div class="sk-nav-list__group-label" id={`${idPrefix}-${sectionIndex}-${groupIndex}`}>
+                  {group.group}
+                </div>
+              ) : null
+            }
+            <ul
+              class="sk-nav-list__list"
+              aria-labelledby={group.group ? `${idPrefix}-${sectionIndex}-${groupIndex}` : undefined}
+            >
               {group.items.map((item) => (
-                <li class="ds-nav-list__item" data-todo={item.todo ? "" : undefined}>
+                <li class="sk-nav-list__item" data-todo={item.todo ? "" : undefined}>
                   <a
-                    class="ds-nav-list__link ds-interactive"
+                    class="sk-nav-list__link sk-interactive"
                     href={item.href}
                     aria-current={path === item.href ? "page" : undefined}
                     aria-disabled={item.todo ? "true" : undefined}
-                    title={item.todo ? "Todavía no escrita" : undefined}
+                    title={item.todo ? t("nav.notWritten") : undefined}
                   >
-                    <span class="ds-nav-list__label">{item.label}</span>
+                    <span class="sk-nav-list__label">{item.label}</span>
                   </a>
                 </li>
               ))}

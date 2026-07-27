@@ -1,76 +1,114 @@
 /*
- * TIER 3, BUTTON (opt-in styling hooks)
+ * TIER 3, BUTTON
  *
- * Import only if you ship a button. Scoped to .ds-button, never :root, so unused components
+ * Import only if you ship a button. Scoped to .sk-button, never :root, so unused components
  * cost zero bytes. Lives in the `components` layer, below `overrides` and below any unlayered
  * consumer rule, so an app reskins one instance with no specificity fight:
- *   .hero .ds-button { --ds-button-bg: rebeccapurple; }
+ *   .hero .sk-button { --sk-button-bg: rebeccapurple; }
  *
- * THE INVARIANT: every hook resolves to a TIER-2 token, never a ramp, never a raw colour. A
+ * SHIPS THE CLASS, not just the hooks (ADR-1, ADR-8). Importing this file gives you a working
+ * button: the structure below is the same structure every consumer was writing by hand, and the
+ * hooks above it are how you change it without touching a selector.
+ *
+ * THE INVARIANT: every hook resolves to a TIER-2 token, never a ramp, never a raw color. A
  * hook reaching into --ramp-* directly bypasses the mode layer and breaks dark mode for this
  * component alone. scripts/lint.mjs fails on it.
  *
  * NAMING: the group segment (primary/danger/sm) is DROPPED from the hook name. Base and every
- * variant all declare --ds-button-bg; the more specific selector wins. That is what makes these
+ * variant all declare --sk-button-bg; the more specific selector wins. That is what makes these
  * hooks instead of a combinatorial explosion of variables.
  *
- * THESE HOOKS ARE STATIC APPEARANCE ONLY. Interaction, hover, press, focus, is NOT here.
+ * THE HOOKS ARE STATIC APPEARANCE ONLY. Interaction, hover, press, focus, is NOT here.
  * It comes from the state layer pattern (decision 9), the single mechanism shared by button,
- * tile, menu-item and tab. Per-component hover/active colours would be exactly the "one colour
+ * tile, menu-item and tab. Per-component hover/active colors would be exactly the "one color
  * per combination" the state layer exists to delete. To make a button interactive, add
- * `ds-interactive` and import patterns/state-layer.css: the layer tints with currentColor over
- * whatever --ds-button-bg is, so it is correct on neutral surfaces and saturated fills alike,
+ * `sk-interactive` and import patterns/state-layer.css: the layer tints with currentColor over
+ * whatever --sk-button-bg is, so it is correct on neutral surfaces and saturated fills alike,
  * and the focus ring comes from the pattern's --focus-ring-* family.
- *
- * The consuming app writes the structural CSS and reads the hooks:
- *   .ds-button {
- *     min-height: var(--ds-button-height);
- *     padding-inline: var(--ds-button-padding-x);
- *     background: var(--ds-button-bg);
- *     color: var(--ds-button-fg);
- *   }
  */
 @layer components {
-  .ds-button {
-    --ds-button-bg: var(--color-action-neutral);
-    --ds-button-fg: var(--color-text-primary);
-    --ds-button-border-color: var(--color-border-default);
-    --ds-button-border-width: 1px;
-    --ds-button-radius: var(--radius-control);
+  .sk-button {
+    --sk-button-bg: var(--color-action-neutral);
+    --sk-button-fg: var(--color-text-primary);
+    --sk-button-border-color: var(--color-border-default);
+    --sk-button-border-width: 1px;
+    --sk-button-radius: var(--radius-control);
     /* Buttons stay comfortably tappable even when density contracts the surrounding layout. */
-    --ds-button-height: max(var(--size-control-md), var(--size-touch-target));
+    --sk-button-height: max(var(--size-control-md), var(--size-touch-target));
     /* Width is auto by default, the button is as wide as its label, and collapses to its own height
      * only for the icon-only shape below. A hook rather than a fixed rule so the icon button is a
      * re-declaration of the same variable, not a second component. */
-    --ds-button-width: auto;
-    --ds-button-padding-x: var(--space-inset-md);
-    --ds-button-gap: var(--space-inline-xs);
-    --ds-button-font-size: var(--font-size-body);
-    --ds-button-font-weight: var(--font-weight-label);
-    --ds-button-shadow: var(--elevation-flat);
+    --sk-button-width: auto;
+    --sk-button-padding-x: var(--space-inset-md);
+    --sk-button-gap: var(--space-inline-xs);
+    --sk-button-font-size: var(--font-size-body);
+    --sk-button-font-weight: var(--font-weight-label);
+    --sk-button-shadow: var(--elevation-flat);
+
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sk-button-gap);
+    /* A button label is a single line, never two. Wrapping a control to two lines breaks its height
+     * and reads as a layout bug; the label stays on one line and the button sizes to it (a tight
+     * container wraps whole buttons, not their text). */
+    white-space: nowrap;
+    min-block-size: var(--sk-button-height);
+    /* auto for a normal button, a square's side for the icon-only shape, one hook, two shapes. */
+    inline-size: var(--sk-button-width);
+    padding-block: 0;
+    padding-inline: var(--sk-button-padding-x);
+    border: var(--sk-button-border-width) solid var(--sk-button-border-color);
+    border-radius: var(--sk-button-radius);
+    background: var(--sk-button-bg);
+    color: var(--sk-button-fg);
+    font:
+      var(--sk-button-font-weight) var(--sk-button-font-size) / 1
+      var(--font-family-body);
+    box-shadow: var(--sk-button-shadow);
+    text-decoration: none;
+    cursor: pointer;
   }
 
-  .ds-button[data-variant="primary"] {
-    --ds-button-bg: var(--color-action-primary);
+  /* ButtonLink is an anchor semantically, but visited state must not replace the chosen variant. */
+  a.sk-button:visited {
+    color: var(--sk-button-fg);
+  }
+
+  /* Expand the hit area to --size-touch-target when the paint is smaller (sm). On `::after`,
+   * because the state layer owns `::before`. The POSITIONING is deliberately not set here: it
+   * comes from `.sk-interactive`, which already establishes the containing block. A `position`
+   * of our own would make a non-interactive button a containing block for anything absolutely
+   * positioned inside it (CodePreview's copy button is the case that caught this). */
+  .sk-button::after {
+    content: "";
+    position: absolute;
+    inset-block: min(0px, calc((100% - var(--size-touch-target)) / 2));
+    inset-inline: min(0px, calc((100% - var(--size-touch-target)) / 2));
+  }
+
+  .sk-button[data-variant="primary"] {
+    --sk-button-bg: var(--color-action-primary);
     /* on-accent, NOT text-primary: in dark, action-primary is a light blue and text-primary
      * is near-white, aliasing them makes a white-on-light-blue button. */
-    --ds-button-fg: var(--color-text-on-accent);
-    --ds-button-border-color: transparent;
-    --ds-button-shadow: var(--elevation-raised);
+    --sk-button-fg: var(--color-text-on-accent);
+    --sk-button-border-color: transparent;
+    --sk-button-shadow: var(--elevation-raised);
   }
 
-  .ds-button[data-variant="danger"] {
-    --ds-button-bg: var(--color-action-danger);
-    --ds-button-fg: var(--color-text-on-accent);
-    --ds-button-border-color: transparent;
-    --ds-button-shadow: var(--elevation-raised);
+  .sk-button[data-variant="danger"] {
+    --sk-button-bg: var(--color-action-danger);
+    --sk-button-fg: var(--color-text-on-accent);
+    --sk-button-border-color: transparent;
+    --sk-button-shadow: var(--elevation-raised);
   }
 
-  .ds-button[data-variant="ghost"] {
-    --ds-button-bg: transparent;
-    /* text-accent, not action-primary: this is coloured TEXT on canvas (4.5:1), not a fill (3:1). */
-    --ds-button-fg: var(--color-text-accent);
-    --ds-button-border-color: transparent;
+  .sk-button[data-variant="ghost"] {
+    --sk-button-bg: transparent;
+    /* text-accent, not action-primary: this is colored TEXT on canvas (4.5:1), not a fill (3:1). */
+    --sk-button-fg: var(--color-text-accent);
+    --sk-button-border-color: transparent;
   }
 
   /* Icon-only is a SHAPE, a third axis orthogonal to variant and size, a primary button can be
@@ -83,32 +121,88 @@
    * (the icon pattern already makes the glyph inert to the pointer). The vanilla enhancer and the
    * React wrapper both refuse an icon-only button with no accessible name, the same way the enhancer
    * refuses a missing class: loudly, with the fix in the message. */
-  .ds-button[data-icon-only] {
-    --ds-button-width: var(--ds-button-height);
-    --ds-button-padding-x: 0;
+  .sk-button[data-icon-only] {
+    --sk-button-width: var(--sk-button-height);
+    --sk-button-padding-x: 0;
+
+    /* The width already equals the height via the hook; locking the block axis too stops UA padding
+     * or the line box from stretching the square into a tall pill. */
+    block-size: var(--sk-button-height);
+    flex: none;
   }
 
   /* Sizes key off data-size, an ORTHOGONAL axis to data-variant, so a primary button can also
    * be small. (The old build collapsed these onto data-variant, which silently broke sizing.) */
-  .ds-button[data-size="sm"] {
-    --ds-button-height: max(var(--size-control-sm), var(--size-touch-target));
-    --ds-button-padding-x: var(--space-inset-sm);
-    --ds-button-font-size: var(--font-size-body-sm);
+  /* React serializes its md default explicitly. Keep this rule explicit too; the base declarations
+   * above remain the resilient fallback for authored HTML that omits data-size. */
+  .sk-button[data-size="md"] {
+    --sk-button-height: max(var(--size-control-md), var(--size-touch-target));
+    --sk-button-padding-x: var(--space-inset-md);
+    --sk-button-font-size: var(--font-size-body);
   }
 
-  .ds-button[data-size="lg"] {
-    --ds-button-height: max(var(--size-control-lg), var(--size-touch-target));
-    --ds-button-padding-x: var(--space-inset-lg);
-    --ds-button-font-size: var(--font-size-body-lg);
+  .sk-button[data-size="sm"] {
+    /* Paint at control-sm; the HIG hit target stays --size-touch-target via the ::after above. */
+    --sk-button-height: var(--size-control-sm);
+    --sk-button-padding-x: var(--space-inset-sm);
+    --sk-button-font-size: var(--font-size-body-sm);
+  }
+
+  /* Icon-only sm: the square paints at control-sm; ::after still expands the hit to 44px. The glyph
+   * follows the smaller control so it does not crowd the 32px face. */
+  .sk-button[data-size="sm"][data-icon-only] .sk-icon {
+    --sk-icon-size: var(--size-icon-sm);
+  }
+
+  .sk-button[data-size="lg"] {
+    --sk-button-height: max(var(--size-control-lg), var(--size-touch-target));
+    --sk-button-padding-x: var(--space-inset-lg);
+    --sk-button-font-size: var(--font-size-body-lg);
   }
 
   /* Real disabled state, keys off the actual pseudo-class and ARIA, not a variant name. The
    * disabled LOOK is these tokens; the state layer separately forces its own opacity to 0. */
-  .ds-button:disabled,
-  .ds-button[aria-disabled="true"] {
-    --ds-button-bg: var(--color-action-disabled);
-    --ds-button-fg: var(--color-text-disabled);
-    --ds-button-border-color: var(--color-border-subtle);
-    --ds-button-shadow: var(--elevation-flat);
+  .sk-button:disabled,
+  .sk-button[aria-disabled="true"] {
+    --sk-button-bg: var(--color-action-disabled);
+    --sk-button-fg: var(--color-text-disabled);
+    --sk-button-border-color: var(--color-border-subtle);
+    --sk-button-shadow: var(--elevation-flat);
+
+    cursor: not-allowed;
+  }
+
+  @media (forced-colors: active) {
+    .sk-button {
+      --sk-button-border-color: CanvasText;
+      --sk-button-shadow: none;
+      border-color: CanvasText;
+    }
+
+    .sk-button[data-variant="primary"],
+    .sk-button[data-variant="danger"] {
+      --sk-button-bg: Highlight;
+      --sk-button-fg: HighlightText;
+      --sk-button-border-color: CanvasText;
+      background: Highlight;
+      color: HighlightText;
+    }
+
+    .sk-button[data-variant="ghost"] {
+      --sk-button-bg: Canvas;
+      --sk-button-fg: CanvasText;
+      --sk-button-border-color: CanvasText;
+      background: Canvas;
+      color: CanvasText;
+    }
+
+    .sk-button:disabled,
+    .sk-button[aria-disabled="true"] {
+      --sk-button-bg: Canvas;
+      --sk-button-fg: GrayText;
+      --sk-button-border-color: GrayText;
+      background: Canvas;
+      color: GrayText;
+    }
   }
 }

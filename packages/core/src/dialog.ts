@@ -3,12 +3,12 @@
  * these parts are the authored anatomy the CSS contracts against.
  */
 export const dialogParts = {
-  root: "ds-dialog",
-  header: "ds-dialog__header",
-  title: "ds-dialog__title",
-  close: "ds-dialog__close",
-  body: "ds-dialog__body",
-  footer: "ds-dialog__footer",
+  root: "sk-dialog",
+  header: "sk-dialog__header",
+  title: "sk-dialog__title",
+  close: "sk-dialog__close",
+  body: "sk-dialog__body",
+  footer: "sk-dialog__footer",
 } as const;
 
 export type DialogPart = keyof typeof dialogParts;

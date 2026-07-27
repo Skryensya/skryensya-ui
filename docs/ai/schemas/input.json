@@ -1,0 +1,55 @@
+{
+  "$schema": "./_meta.json",
+  "id": "input",
+  "consume": {
+    "css": [
+      "@skryensya/core/components/field.css",
+      "@skryensya/core/components/input.css"
+    ],
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-input"]
+    }
+  },
+  "surfaces": {
+    "Input": {
+      "use": "single-line text entry",
+      "element": "input",
+      "react": {
+        "from": "@skryensya/react/input",
+        "name": "Input"
+      }
+    },
+    "Textarea": {
+      "use": "multiline text entry",
+      "element": "textarea",
+      "react": {
+        "from": "@skryensya/react/input",
+        "name": "Textarea"
+      }
+    }
+  },
+  "props": {
+    "controlSize": [null, "sm", "md", "lg"]
+  },
+  "composes": {
+    "Field": {
+      "from": "@skryensya/react/field",
+      "name": "Field"
+    }
+  },
+  "rules": {
+    "accessibleName": "Wrap the control in Field or provide aria-label or aria-labelledby.",
+    "Field.error": "Pass error to Field; it wires aria-invalid and aria-describedby.",
+    "size": "Use controlSize for visual height; native Input.size keeps its HTML meaning."
+  },
+  "examples": {
+    "Input": {
+      "field": "<Field label=\"Email\"><Input name=\"email\" type=\"email\" /></Field>",
+      "standalone": "<Input aria-label=\"Buscar\" name=\"query\" type=\"search\" />"
+    },
+    "Textarea": {
+      "field": "<Field label=\"Notas\"><Textarea name=\"notes\" /></Field>"
+    }
+  }
+}

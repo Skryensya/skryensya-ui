@@ -1,0 +1,365 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+
+
+const indicators = `<span
+      class="sk-checkbox__indicator"
+      data-state="checked"
+    ><span data-sk-icon="check" data-sk-icon-size="sm"></span></span>
+    <span
+      class="sk-checkbox__indicator"
+      data-state="indeterminate"
+    ><span data-sk-icon="remove" data-sk-icon-size="sm"></span></span>`;
+
+const html = `<label class="sk-checkbox">
+  <input
+    class="sk-checkbox__input"
+    type="checkbox"
+    name="alerts"
+    value="email"
+  />
+  <span class="sk-checkbox__control sk-interactive" aria-hidden="true">
+    ${indicators}
+  </span>
+  <span class="sk-checkbox__label">Email alerts</span>
+</label>`;
+
+const react = `import { Checkbox } from "@skryensya/react/checkbox";
+
+<Checkbox
+  name="alerts"
+  value="email"
+  defaultChecked="indeterminate"
+  onCheckedChange={(details) => {
+    console.log(details.checked); // true | false | "indeterminate"
+  }}
+>
+  Email alerts
+</Checkbox>;`;
+
+/* The children indent to where the PARENT'S LABEL starts, not to an arbitrary step: same two
+ * tokens the control composes its own row from, so the nesting survives a density change. */
+const groupIndent = "padding-inline-start: calc(var(--size-icon-md) + var(--space-inline-sm))";
+
+const child = (value: string, label: string, checked = false) => `<label class="sk-checkbox" data-group-child>
+      <input class="sk-checkbox__input" type="checkbox" name="permisos" value="${value}"${checked ? " checked" : ""} />
+      <span class="sk-checkbox__control sk-interactive" aria-hidden="true">
+        ${indicators}
+      </span>
+      <span class="sk-checkbox__label">${label}</span>
+    </label>`;
+
+const groupHtml = `<div class="sk-stack" data-gap="sm" data-group>
+  <label class="sk-checkbox" data-group-parent>
+    <input class="sk-checkbox__input" type="checkbox" />
+    <span class="sk-checkbox__control sk-interactive" aria-hidden="true">
+      ${indicators}
+    </span>
+    <span class="sk-checkbox__label">Repository permissions</span>
+  </label>
+
+  <div
+    class="sk-stack"
+    data-gap="xs"
+    role="group"
+    aria-label="Repository permissions"
+    style="${groupIndent}"
+  >
+    ${child("read", "Leer", true)}
+    ${child("write", "Escribir")}
+    ${child("admin", "Administrar")}
+  </div>
+</div>`;
+
+const groupJs = `const group = document.querySelector("[data-group]");
+const parent = group.querySelector("[data-group-parent] input");
+const children = [...group.querySelectorAll("[data-group-child] input")];
+
+// Three states from two booleans. \`indeterminate\` is a living PROPERTY
+// of the input, not an attribute: you have to explicitly turn it off when it stops applying,
+// or the parent stays in script with all the children marked.
+const sync = () => {
+  const marcados = children.filter((child) => child.checked).length;
+  parent.checked = marcados === children.length;
+  parent.indeterminate = marcados > 0 && marcados < children.length;
+};
+
+// The parent does not have his own value to offer: by clicking on it he decides for everyone.
+// Since indeterminate the browser changes it to checked, yes a click marks the group
+// whole; It never lets the user choose the script.
+parent.addEventListener("change", () => {
+  for (const child of children) child.checked = parent.checked;
+  sync();
+});
+
+for (const child of children) child.addEventListener("change", sync);
+
+sync();`;
+
+const groupReact = `import { useState } from "react";
+import { Checkbox } from "@skryensya/react/checkbox";
+
+const PERMISOS = [
+  { value: "read", label: "Leer" },
+  { value: "write", label: "Escribir" },
+  { value: "admin", label: "Administrar" },
+];
+
+export function PermisosDelRepositorio() {
+  const [marcados, setMarcados] = useState(["read"]);
+
+  // The same calculation as in vanilla, only here it is a derived value
+  // instead of two flags that have to be kept synchronized by hand.
+  const todos = marcados.length === PERMISOS.length;
+  const estado = todos ? true : marcados.length > 0 ? "indeterminate" : false;
+
+  return (
+    <div className="sk-stack" data-gap="sm">
+      <Checkbox
+        checked={estado}
+        onCheckedChange={({ checked }) =>
+          setMarcados(checked === true ? PERMISOS.map((p) => p.value) : [])
+        }
+      >
+        Repository permissions
+      </Checkbox>
+
+      <div
+        className="sk-stack"
+        data-gap="xs"
+        role="group"
+        aria-label="Repository permissions"
+        style={{ paddingInlineStart: "calc(var(--size-icon-md) + var(--space-inline-sm))" }}
+      >
+        {PERMISOS.map((permiso) => (
+          <Checkbox
+            key={permiso.value}
+            checked={marcados.includes(permiso.value)}
+            name="permisos"
+            value={permiso.value}
+            onCheckedChange={({ checked }) =>
+              setMarcados((previos) =>
+                checked === true
+                  ? [...previos, permiso.value]
+                  : previos.filter((valor) => valor !== permiso.value),
+              )
+            }
+          >
+            {permiso.label}
+          </Checkbox>
+        ))}
+      </div>
+    </div>
+  );
+}`;
+
+const tileCheckboxHtml = `<div
+  class="sk-inline"
+  style="align-items: stretch"
+>
+  <label
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-scope="tile"
+    data-part="root"
+    data-sk-tile-checkbox
+    data-name="alerts"
+    data-value="email"
+    data-default-checked="true"
+    style="flex: 1"
+  >
+    <input type="checkbox" checked data-part="input" />
+    <span class="sk-tile__content" data-part="content">
+      <span class="sk-tile__title">Email Alerts</span>
+      <span class="sk-tile__description">
+        Send deployment failures to the team.
+      </span>
+    </span>
+    <span
+      class="sk-checkbox__control sk-interactive"
+      data-part="indicator"
+      aria-hidden="true"
+    >
+      ${indicators}
+    </span>
+  </label>
+
+  <label
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-scope="tile"
+    data-part="root"
+    data-sk-tile-checkbox
+    data-name="alerts"
+    data-value="push"
+    style="flex: 1"
+  >
+    <input type="checkbox" data-part="input" />
+    <span class="sk-tile__content" data-part="content">
+      <span class="sk-tile__title">Push notifications</span>
+      <span class="sk-tile__description">
+        Notify urgent incidents on mobile.
+      </span>
+    </span>
+    <span
+      class="sk-checkbox__control sk-interactive"
+      data-part="indicator"
+      aria-hidden="true"
+    >
+      ${indicators}
+    </span>
+  </label>
+
+  <label
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-scope="tile"
+    data-part="root"
+    data-sk-tile-checkbox
+    data-name="alerts"
+    data-value="digest"
+    style="flex: 1"
+  >
+    <input type="checkbox" data-part="input" />
+    <span class="sk-tile__content" data-part="content">
+      <span class="sk-tile__title">Weekly summary</span>
+      <span class="sk-tile__description">
+        Receive activity and metrics every Friday.
+      </span>
+    </span>
+    <span
+      class="sk-checkbox__control sk-interactive"
+      data-part="indicator"
+      aria-hidden="true"
+    >
+      ${indicators}
+    </span>
+  </label>
+</div>`;
+
+const tileCheckboxVanilla = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// Los indicadores check/remove se autoran como placeholders
+// <span data-sk-icon>; mountIcons replaces them with the <svg> from the set.
+mountIcons(document, lucideIcons);
+
+// Each label is authored with data-sk-tile-checkbox (data-name, data-value,
+// data-default-checked) más su input y su indicador.
+// initComponents las hidrata con la máquina @zag-js/checkbox.
+await initComponents();
+
+for (const root of document.querySelectorAll(
+  "[data-sk-tile-checkbox]",
+)) {
+  root.addEventListener("sk:checkedchange", (event) => {
+    console.log(root.dataset.value, event.detail.checked);
+  });
+}`;
+
+const tileCheckboxReact = `import {
+  TileCheckbox,
+} from "@skryensya/react/tile-checkbox";
+
+const alertas = [
+  {
+    value: "email",
+    title: "Email alerts",
+    description: "Send deployment failures to the team.",
+  },
+  {
+    value: "push",
+    title: "Notificaciones push",
+    description: "Notify urgent incidents on mobile.",
+  },
+  {
+    value: "digest",
+    title: "weekly summary",
+    description: "Receive activity and metrics every Friday.",
+  },
+];
+
+<div className="sk-inline" style={{ alignItems: "stretch" }}>
+  {alertas.map((alerta, index) => (
+    <TileCheckbox
+      key={alerta.value}
+      name="alerts"
+      value={alerta.value}
+      defaultChecked={index === 0}
+      onCheck={(details) => {
+        console.log(alerta.value, details.checked);
+      }}
+      style={{ flex: 1 }}
+    >
+      <span className="sk-tile__title">{alerta.title}</span>
+      <span className="sk-tile__description">
+        {alerta.description}
+      </span>
+    </TileCheckbox>
+  ))}
+</div>;`;
+---
+
+<Base title="Checkbox" description="Native checkbox: independent, indeterminate state and machine-less form.">
+  <h1>Checkbox</h1>
+  <p class="lede">An independent election. Keep a <code>input type="checkbox"</code>: submit, reset, keyboard and validation belong to the browser.</p>
+
+  <Showcase html={html} react={react} label="Checkbox" />
+  <p>
+    The control uses the <code>check</code> and <code>remove</code> icon set roles, not a CSS stroke.
+    Import <code>@skryensya/core/components/checkbox.css</code> and call <code>initComponents()</code> once.
+  </p>
+
+  <h2>A checkbox that groups others</h2>
+  <p>
+    <code>indeterminate</code> is not a third value that someone can choose: it is what a parent
+    says when <strong>his children do not agree</strong>. That is why the glyph is
+    <code>remove</code> and not a half-hearted check, and that is why the parent does not send anything to the form,
+    those with <code>name</code> and <code>value</code> are the children.
+  </p>
+  <Showcase
+    html={groupHtml}
+    js={groupJs}
+    previewScript={groupJs}
+    react={groupReact}
+    label="Seleccionar todo"
+    note="three states from two booleans"
+  />
+  <p>
+    Parent status is <strong>derived</strong>, never authored: recalculated from children in every change. By contrast, a parent with its own state begins to lie as soon as someone checks a child. There are fifteen lines without a new machine or component, so the system does not cover it: grouping is a rule of the form, not the control.
+  </p>
+
+  <h2>Surface Checkbox: TileCheckbox</h2>
+  <p>
+    When the choice needs title, description and the entire surface as a target, use
+    <code>TileCheckbox</code>. It is the same control (<code>sk-checkbox__control</code> + icons); alone
+    change the container.
+  </p>
+  <Showcase html={tileCheckboxHtml} react={tileCheckboxReact} label="TileCheckbox" />
+  <p>The <code>tile-checkbox</code> enhancer (Svelte + <code>@zag-js/checkbox</code>, same machine as React) hydrates each <code>data-sk-tile-checkbox</code> label with <code>initComponents()</code>: controls its <code>input[data-part="input"]</code> (hidden) and syncs <code>data-state</code>; the <code>[data-part="indicator"]</code> is the visual control.</p>
+  <CodeBlock code={tileCheckboxVanilla} label="JavaScript" />
+
+  <h2>React</h2>
+  <p>The code is in the <strong>React</strong> tab of the preview. React draws the icons from the linked set.</p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li><code>defaultChecked</code> leaves the state to the input; a reset returns to that value.</li>
+    <li><code>checked</code> controls the value; <code>onCheckedChange</code> communicates the intent.</li>
+    <li><code>"indeterminate"</code> is visual: it does not send a value until the person chooses checked or unchecked. The glyph is <code>remove</code>.</li>
+    <li>
+      A parent that groups children <strong>derives</strong> its state from them, it never saves it:
+      <code>checked</code> when they are all there, <code>indeterminate</code> when they do not match. The
+      two are flags independent of the input, so turn off <code>indeterminate</code> when exiting
+      that state or the script is stuck.
+    </li>
+    <li>The text lives inside the <code>label</code>; if there is no text, provide <code>aria-label</code>.</li>
+    <li>
+      The state layer goes in <code>sk-checkbox__control</code>, not in the label: the selection is the
+      padding of the control, and the text does not inherit the on-accent color.
+    </li>
+    <li>TileCheckbox reuses <code>sk-checkbox__control</code> and the same flags; does not invent another glyph.</li>
+  </ul>
+  <StylingHooks groups={[{ file: "components/checkbox.css", probe: "sk-checkbox" }]} />
+</Base>

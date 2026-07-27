@@ -1,0 +1,120 @@
+/* TIER 3, MENU — application commands, never navigation links. */
+@layer components {
+  .sk-menu {
+    --sk-menu-bg: var(--color-bg-surface-raised);
+    --sk-menu-fg: var(--color-text-primary);
+    --sk-menu-border-color: var(--color-border-subtle);
+    --sk-menu-radius: var(--radius-surface);
+    display: inline-flex;
+  }
+
+  /* La colocación es del pattern Anclaje (ADR-25): el trigger lleva además `sk-anchor` y el
+   * positioner además `sk-anchored`. El default del pattern, debajo y centrado, es el de un menú, así
+   * que acá no hay nada que re-declarar. */
+
+  /* Un SUBMENÚ sale al costado y alineado por arriba con el item del que cuelga, que no es ninguna
+   * de las cuatro colocaciones públicas. Se pide por el hook de escape en vez de agregar una quinta
+   * al vocabulario: dejar que una excepción escriba el contrato es cómo un juego de cuatro se
+   * convierte en un juego de nueve. `span-block-end` arranca la región en el borde superior del item
+   * y `align-self: start` pega el panel ahí. */
+  .sk-menu__positioner[data-sk-submenu] {
+    --sk-anchored-position-area: inline-end span-block-end;
+    --sk-anchored-justify: auto;
+    --sk-anchored-align: start;
+    --sk-anchored-position-try: flip-inline;
+    --sk-anchored-offset: 0 var(--space-inline-xs);
+  }
+
+  .sk-menu__content {
+    display: none;
+    box-sizing: border-box;
+    min-inline-size: 12rem;
+    max-inline-size: min(22rem, calc(100vi - 2 * var(--space-inset-md)));
+    max-block-size: min(24rem, calc(100vb - 2 * var(--space-inset-md)));
+    padding: var(--space-inset-xs);
+    overflow: auto;
+    border: 1px solid var(--sk-menu-border-color);
+    border-radius: var(--sk-menu-radius);
+    background: var(--sk-menu-bg);
+    color: var(--sk-menu-fg);
+    box-shadow: var(--elevation-raised);
+    outline: none;
+  }
+
+  .sk-menu__content[data-state="open"] {
+    display: grid;
+    gap: 1px;
+  }
+
+  .sk-menu__item {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-inline-sm);
+    align-items: center;
+    min-block-size: var(--size-touch-target);
+    padding: var(--space-inset-xs) var(--space-inset-sm);
+    border-radius: var(--radius-control);
+    color: var(--sk-menu-fg);
+    cursor: pointer;
+    outline: none;
+  }
+
+  .sk-menu__item::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-below);
+    border-radius: inherit;
+    background: var(--state-layer-color);
+    opacity: 0;
+  }
+
+  .sk-menu__item[data-highlighted]::before {
+    opacity: var(--state-layer-hover-opacity);
+  }
+  .sk-menu__item[data-disabled] {
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+  }
+  .sk-menu__item[data-disabled]::before {
+    opacity: var(--state-layer-disabled-opacity);
+  }
+  .sk-menu__item-label {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+  .sk-menu__item-indicator {
+    color: var(--color-text-accent);
+  }
+  .sk-menu__separator {
+    block-size: 1px;
+    margin: var(--space-stack-xs) 0;
+    background: var(--color-border-subtle);
+  }
+  .sk-menu__group-label {
+    padding: var(--space-inset-xs) var(--space-inset-sm);
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .sk-menu__content[data-state="open"] {
+      animation: sk-menu-in var(--motion-feedback-duration)
+        var(--motion-feedback-easing);
+    }
+  }
+  @keyframes sk-menu-in {
+    from {
+      opacity: 0;
+      translate: 0 -2px;
+    }
+  }
+  @media (forced-colors: active) {
+    .sk-menu__content {
+      border-color: CanvasText;
+    }
+  }
+}

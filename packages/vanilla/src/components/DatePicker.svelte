@@ -104,16 +104,10 @@
   // con sus handlers ya cableados por Svelte, así que sólo el control autorado necesita bindZagEvents.
   const cleanups: Array<() => void> = [];
   onMount(() => {
-    cleanups.push(
-      bindZagEvents(input, () => datePicker.connect(service, normalizeProps).getInputProps({ index: 0 }) as DomProps),
-    );
-    cleanups.push(
-      bindZagEvents(trigger, () => datePicker.connect(service, normalizeProps).getTriggerProps() as DomProps),
-    );
+    cleanups.push(bindZagEvents(input, () => api.getInputProps({ index: 0 }) as DomProps));
+    cleanups.push(bindZagEvents(trigger, () => api.getTriggerProps() as DomProps));
     if (clear) {
-      cleanups.push(
-        bindZagEvents(clear, () => datePicker.connect(service, normalizeProps).getClearTriggerProps() as DomProps),
-      );
+      cleanups.push(bindZagEvents(clear, () => api.getClearTriggerProps() as DomProps));
     }
     // El cableado ancla↔popup, después del primer render: el positioner sale del template de abajo.
     if (anchored) unbindAnchor = bindAnchor(control, positioner, anchorNameFor(root.id));

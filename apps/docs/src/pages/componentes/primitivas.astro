@@ -5,33 +5,33 @@ import Showcase from "../../components/Showcase.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<div class="ds-stack" data-gap="lg">
+const html = `<div class="sk-stack" data-gap="lg">
   <section
-    class="ds-box"
+    class="sk-box"
     data-surface="raised"
     data-border="subtle"
     data-padding="lg"
   >
-    <div class="ds-stack" data-gap="md">
-      <h3 class="ds-heading" data-size="sm">Resumen</h3>
-      <p class="ds-text" data-tone="secondary">
+    <div class="sk-stack" data-gap="md">
+      <h3 class="sk-heading" data-size="sm">Resumen</h3>
+      <p class="sk-text" data-tone="secondary">
         Un bloque con espaciado, superficie y jerarquía.
       </p>
-      <div class="ds-inline" data-gap="sm" data-align="baseline">
+      <div class="sk-inline" data-gap="sm" data-align="baseline">
         <a
-          class="ds-link ds-interactive"
+          class="sk-link sk-interactive"
           href="/componentes/primitivas"
         >
           Ver detalles
         </a>
-        <span class="ds-text" data-size="caption">Actualizado hoy</span>
+        <span class="sk-text" data-size="caption">Actualizado hoy</span>
       </div>
     </div>
   </section>
 
-  <div class="ds-grid" data-columns="3" data-gap="md">
+  <div class="sk-grid" data-columns="3" data-gap="md">
     <div
-      class="ds-box"
+      class="sk-box"
       data-surface="surface"
       data-border="subtle"
       data-padding="md"
@@ -39,7 +39,7 @@ const html = `<div class="ds-stack" data-gap="lg">
       Uno
     </div>
     <div
-      class="ds-box"
+      class="sk-box"
       data-surface="surface"
       data-border="subtle"
       data-padding="md"
@@ -47,7 +47,7 @@ const html = `<div class="ds-stack" data-gap="lg">
       Dos
     </div>
     <div
-      class="ds-box"
+      class="sk-box"
       data-surface="surface"
       data-border="subtle"
       data-padding="md"
@@ -93,16 +93,15 @@ import { Heading, Link, Text } from "@skryensya/react/typography";
 <Base title="Primitivas" description="Primitivas de layout y tipografía: estructura reutilizable, roles de lectura y adapters React.">
   <h1>Primitivas</h1>
   <p class="lede">
-    Box, Wrapper, Stack, Inline y Grid son patterns de layout. Text, Heading y Link expresan el rol de lectura;
+    Box, Wrapper, ImageFrame, Stack, Inline y Grid son patterns de layout. Text, Heading y Link expresan el rol de lectura;
     no reemplazan la semántica: eliges el elemento que corresponde al contenido.
   </p>
 
-  <h2>Demo</h2>
   <Showcase html={html} react={react} label="Primitivas" />
 
   <h2>HTML autorado</h2>
   <p>
-    Importa <code>patterns/layout.css</code> para Box, Wrapper, Stack, Inline y Grid, y
+    Importa <code>patterns/layout.css</code> para Box, Wrapper, ImageFrame, Stack, Inline y Grid, y
     <code>components/typography.css</code> para Text, Heading y Link. No requieren inicialización vanilla.
   </p>
   <h2>Instalar</h2>
@@ -110,12 +109,13 @@ import { Heading, Link, Text } from "@skryensya/react/typography";
 
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
 
   <h2>Contratos</h2>
   <ul>
     <li><code>Box</code> controla superficie, borde y padding; el consumidor elige <code>as</code>.</li>
-    <li><code>Wrapper</code> fija el techo de la columna de página por uso (<code>prose</code>, <code>content</code>, <code>shell</code>, <code>full</code>).</li>
+    <li><code>Wrapper</code> fija el techo de la columna de página en una escala (<code>sm</code>, <code>md</code>, <code>lg</code>, <code>full</code>).</li>
+    <li><code>ImageFrame</code> recorta media a un aspect ratio y controla <code>object-fit</code> / posición.</li>
     <li><code>Stack</code>, <code>Inline</code> y <code>Grid</code> tienen gaps nombrados que siguen la dimensión de densidad.</li>
     <li><code>Heading</code> separa jerarquía (<code>as</code>) de tamaño visual (<code>size</code>).</li>
     <li><code>Link</code> subraya por defecto: no depende solo del color para reconocerse.</li>

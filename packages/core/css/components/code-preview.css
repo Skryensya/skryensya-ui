@@ -1,0 +1,180 @@
+/*
+ * TIER 3, CODE PREVIEW (opt-in Shiki surface)
+ *
+ * Shiki renders highlighted HTML at build/SSR time. This stylesheet owns the stable surface and
+ * anatomy; @skryensya/vanilla/code-preview adds only density/disclosure behaviour. Configure Shiki's
+ * dual themes with the keys `light` and `dark` so it emits --shiki-light/--shiki-dark variables.
+ */
+@layer components {
+  .sk-code-preview {
+    --sk-code-preview-bg: var(--color-bg-surface-sunken);
+    --sk-code-preview-fg: var(--color-text-primary);
+    --sk-code-preview-border-color: var(--color-border-subtle);
+    --sk-code-preview-label-fg: var(--color-text-tertiary);
+    --sk-code-preview-label-active-fg: var(--color-text-secondary);
+    --sk-code-preview-footer-bg: var(--color-bg-surface);
+    --sk-code-preview-count-fg: var(--color-text-tertiary);
+    --sk-code-preview-font-size: var(--font-size-body-sm);
+
+    margin-block: var(--space-stack-sm);
+    overflow: hidden;
+    border: 1px solid var(--sk-code-preview-border-color);
+    border-radius: var(--radius-surface);
+    background: var(--sk-code-preview-bg);
+    color: var(--sk-code-preview-fg);
+  }
+
+  .sk-code-preview,
+  .sk-code-preview *,
+  .sk-code-preview *::before,
+  .sk-code-preview *::after {
+    box-sizing: border-box;
+  }
+
+  .sk-code-preview__label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-inline-sm);
+    padding: var(--space-inset-xs) var(--space-inset-md);
+    border-block-end: 1px solid var(--sk-code-preview-border-color);
+    color: var(--sk-code-preview-label-fg);
+    font-family: var(--font-family-code);
+    font-size: var(--font-size-caption);
+  }
+
+  .sk-code-preview__meta {
+    display: flex;
+    min-inline-size: 0;
+    gap: var(--space-inline-sm);
+  }
+
+  .sk-code-preview__density {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-start: auto;
+    gap: var(--space-inline-sm);
+    color: var(--sk-code-preview-label-fg);
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-caption);
+  }
+
+  .sk-code-preview__density .sk-switch {
+    gap: 0;
+  }
+
+  .sk-code-preview__density-edge {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sk-code-preview[data-sk-code-preview-density="condensed"]
+    .sk-code-preview__density-edge[data-density="condensed"],
+  .sk-code-preview[data-sk-code-preview-density="full"]
+    .sk-code-preview__density-edge[data-density="full"] {
+    color: var(--sk-code-preview-label-active-fg);
+    font-weight: var(--font-weight-label);
+  }
+
+  .sk-code-preview__preview {
+    position: relative;
+  }
+
+  .sk-code-preview__preview > .sk-copy-button {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: var(--space-inset-xs);
+    inset-inline-end: var(--space-inset-xs);
+  }
+
+  .sk-code-preview__more {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-inset-xs);
+    border-block-start: 1px solid var(--sk-code-preview-border-color);
+    background: var(--sk-code-preview-footer-bg);
+  }
+
+  .sk-code-preview__toggle {
+    min-inline-size: 0;
+    gap: var(--space-inline-xs);
+  }
+
+  .sk-code-preview__toggle-count {
+    color: var(--sk-code-preview-count-fg);
+    font-size: var(--font-size-caption);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sk-code-preview__toggle-icon {
+    display: inline-grid;
+    transition: transform var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  .sk-code-preview[data-sk-code-preview-expanded="true"] .sk-code-preview__toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .sk-code-preview pre {
+    margin: 0;
+    padding: var(--space-inset-md);
+    overflow-x: auto;
+    font-size: var(--sk-code-preview-font-size);
+    line-height: var(--font-line-height-body-relaxed);
+  }
+
+  .sk-code-preview[data-sk-code-preview-density="condensed"]
+    [data-sk-code-preview-density-panel="full"],
+  .sk-code-preview[data-sk-code-preview-density="full"]
+    [data-sk-code-preview-density-panel="condensed"] {
+    display: none;
+  }
+
+  /* The authored adapter opts in only above its threshold. Fifteen `lh` units are exactly fifteen
+   * rendered lines; padding stays outside the content-box ceiling.
+   * Condensed can also be long (a shell with ellipsis rows still teaches structure): clip it when
+   * `[data-sk-code-preview-condensed-collapsible]` is set, same disclosure as Full. */
+  .sk-code-preview[data-sk-code-preview-collapsible][data-sk-code-preview-expanded="false"]
+    [data-sk-code-preview-density-panel="full"] pre,
+  .sk-code-preview[data-sk-code-preview-condensed-collapsible][data-sk-code-preview-expanded="false"]
+    [data-sk-code-preview-density-panel="condensed"] pre,
+  .sk-code-preview[data-sk-code-preview-collapsible][data-sk-code-preview-expanded="false"]:not(
+      [data-sk-code-preview-density]
+    )
+    pre {
+    max-block-size: 15lh;
+    overflow-y: hidden;
+  }
+
+  .sk-code-preview pre:focus,
+  .sk-code-preview pre:focus-visible {
+    outline: none;
+  }
+
+  .sk-code-preview code {
+    color: var(--sk-code-preview-fg);
+    font-family: var(--font-family-code);
+    font-size: var(--sk-code-preview-font-size);
+    line-height: var(--font-line-height-body-relaxed);
+    white-space: pre;
+  }
+
+  /* Shiki dual-theme output. Fallbacks keep a plain pre/code readable before or without highlighting. */
+  .sk-code-preview :is(.shiki, .astro-code),
+  .sk-code-preview :is(.shiki, .astro-code) span {
+    color: light-dark(
+      var(--shiki-light, var(--color-text-primary)),
+      var(--shiki-dark, var(--color-text-primary))
+    ) !important;
+    background-color: light-dark(
+      var(--shiki-light-bg, var(--color-bg-surface-sunken)),
+      var(--shiki-dark-bg, var(--color-bg-surface-sunken))
+    ) !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-code-preview__toggle-icon {
+      transition: none;
+    }
+  }
+}

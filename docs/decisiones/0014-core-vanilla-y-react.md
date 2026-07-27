@@ -20,7 +20,7 @@ capas duplicarían tokens, parts y tipos. (Con un solo framework no hacía falta
 `@skryensya/core` tiene una responsabilidad angosta:
 
 - publica los tokens CSS y los styling hooks validados;
-- publica los parts BEM permanentes que forman el markup contract (`ds-tabs`, `ds-tabs__list`, etc.);
+- publica los parts BEM permanentes que forman el markup contract (`sk-tabs`, `sk-tabs__list`, etc.);
 - comparte tipos de opciones y helpers que no pertenecen a ningún framework.
 
 No es un runtime común, no renderiza DOM y no transforma clases. Tampoco reexporta máquinas de Zag: cada
@@ -30,13 +30,19 @@ binding importa y adapta su máquina.
 
 `@skryensya/vanilla` es la implementación de progressive enhancement de ADR-8:
 
-- `runtime/hydrate.ts` monta enhancers sobre raíces `[data-ds-*]` de forma idempotente;
+- `runtime/svelte-hydrate.ts` monta enhancers sobre raíces `[data-sk-*]` de forma idempotente;
 - `runtime/apply.ts` parchea atributos y eventos sobre HTML existente;
-- `runtime/registry.ts` registra componentes;
-- `auto.ts` exporta `initComponents()`.
+- `runtime/registry.ts` relaciona cada selector con un `import()` dinámico;
+- `auto.ts` exporta `initComponents()`, que escanea primero y sólo descarga los tipos presentes.
 
 Los enhancers no renderizan markup y nunca escriben clases. El consumidor autoriza HTML, importa CSS y
-llama `initComponents()`.
+hace `await initComponents()`. CodePreview y ComponentPreview quedan fuera del registry: son superficies
+de documentación opt-in montadas desde sus subpaths explícitos. Shiki resuelve el resaltado de
+CodePreview en build/SSR; ninguno de los dos introduce ese trabajo en el runtime del navegador.
+
+En las docs, cada demo se ejecuta en un `iframe srcdoc` estático: no exige una ruta de preview, pero
+sí crea un `Document`, viewport y top layer propios. El entry del frame corre `initComponents()` dentro
+de ese realm; CSS, dimensiones e icon set siguen siendo decisiones explícitas del consumidor.
 
 ## React no hidrata: renderiza
 

@@ -4,124 +4,492 @@ import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
-
-import "../../examples/tabs.css";
-
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
 const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/tabs.css";
-@import "@skryensya/core/patterns/state-layer.css";`;
+@import "@skryensya/core/patterns/state-layer.css";
+@import "@skryensya/core/patterns/layout.css";`;
 
-const html = `<div
-  class="ds-tabs"
-  data-ds-tabs
-  id="account-tabs"
-  data-value="profile"
+const basicHtml = `<div
+  class="sk-tabs"
+  data-sk-tabs
+  id="project-tabs"
+  data-value="summary"
 >
-  <div class="ds-tabs__list" data-ds-tabs-list>
+  <div
+    class="sk-tabs__list"
+    data-sk-tabs-list
+    aria-label="Proyecto"
+  >
     <button
-      class="ds-tabs__trigger ds-interactive"
-      data-ds-tabs-trigger
-      data-value="profile"
+      class="sk-tabs__trigger sk-interactive"
+      data-sk-tabs-trigger
+      data-value="summary"
+      type="button"
     >
-      Perfil
+      Resumen
     </button>
     <button
-      class="ds-tabs__trigger ds-interactive"
-      data-ds-tabs-trigger
-      data-value="security"
+      class="sk-tabs__trigger sk-interactive"
+      data-sk-tabs-trigger
+      data-value="activity"
+      type="button"
     >
-      Seguridad
-    </button>
-    <button
-      class="ds-tabs__trigger ds-interactive"
-      data-ds-tabs-trigger
-      data-value="billing"
-    >
-      Facturación
+      Actividad
     </button>
   </div>
 
   <div
-    class="ds-tabs__content"
-    data-ds-tabs-content
-    data-value="profile"
+    class="sk-tabs__content"
+    data-sk-tabs-content
+    data-value="summary"
   >
-    Datos públicos de la cuenta.
+    Atlas está listo para el lanzamiento de julio.
   </div>
   <div
-    class="ds-tabs__content"
-    data-ds-tabs-content
-    data-value="security"
+    class="sk-tabs__content"
+    data-sk-tabs-content
+    data-value="activity"
   >
-    Sesiones, claves y segundo factor.
-  </div>
-  <div
-    class="ds-tabs__content"
-    data-ds-tabs-content
-    data-value="billing"
-  >
-    Plan, facturas y método de pago.
+    Tres cambios aprobados durante la última semana.
   </div>
 </div>`;
 
-const js = `import { initComponents } from "@skryensya/vanilla/auto";
-
-initComponents();`;
-
-const react = `import { Tabs } from "@skryensya/react/tabs";
+const basicReact = `import { Tabs } from "@skryensya/react/tabs";
 
 <Tabs
-  defaultValue="profile"
+  defaultValue="summary"
   items={[
     {
-      value: "profile",
-      label: "Perfil",
-      children: "Datos públicos de la cuenta.",
+      value: "summary",
+      label: "Resumen",
+      children: "Atlas está listo para el lanzamiento de julio.",
     },
     {
-      value: "security",
-      label: "Seguridad",
-      children: "Sesiones, claves y segundo factor.",
-    },
-    {
-      value: "billing",
-      label: "Facturación",
-      children: "Plan, facturas y método de pago.",
+      value: "activity",
+      label: "Actividad",
+      children: "Tres cambios aprobados durante la última semana.",
     },
   ]}
 />;`;
+
+const statesHtml = `<div
+  class="sk-tabs"
+  data-sk-tabs
+  id="review-tabs"
+  data-value="details"
+>
+  <div
+    class="sk-tabs__list"
+    data-sk-tabs-list
+    aria-label="Revisión"
+  >
+    <button
+      class="sk-tabs__trigger sk-interactive"
+      data-sk-tabs-trigger
+      data-value="details"
+      type="button"
+    >
+      <span data-sk-icon="info" data-sk-icon-size="sm"></span>
+      Detalles
+    </button>
+    <button
+      class="sk-tabs__trigger sk-interactive"
+      data-sk-tabs-trigger
+      data-value="validation"
+      type="button"
+    >
+      <span data-sk-icon="check" data-sk-icon-size="sm"></span>
+      Validación
+    </button>
+    <button
+      class="sk-tabs__trigger sk-interactive"
+      data-sk-tabs-trigger
+      data-value="settings"
+      data-disabled
+      type="button"
+    >
+      <span data-sk-icon="settings" data-sk-icon-size="sm"></span>
+      Ajustes
+    </button>
+  </div>
+
+  <div
+    class="sk-tabs__content"
+    data-sk-tabs-content
+    data-value="details"
+  >
+    <div class="sk-stack" data-gap="xs">
+      <strong>Solicitud #248</strong>
+      <span>Actualiza el runtime de Atlas a Node 24.</span>
+    </div>
+  </div>
+  <div
+    class="sk-tabs__content"
+    data-sk-tabs-content
+    data-value="validation"
+  >
+    <div class="sk-stack" data-gap="xs">
+      <strong>12 comprobaciones aprobadas</strong>
+      <span>Tipos, pruebas y revisión de dependencias sin fallos.</span>
+    </div>
+  </div>
+  <div
+    class="sk-tabs__content"
+    data-sk-tabs-content
+    data-value="settings"
+  >
+    Los ajustes estarán disponibles después de aprobar la solicitud.
+  </div>
+</div>`;
+
+const statesReact = `import { Icon } from "@skryensya/react/icon";
+import { Tabs } from "@skryensya/react/tabs";
+
+<Tabs
+  defaultValue="details"
+  items={[
+    {
+      value: "details",
+      label: (
+        <>
+          <Icon name="info" size="sm" />
+          Detalles
+        </>
+      ),
+      children: (
+        <div className="sk-stack" data-gap="xs">
+          <strong>Solicitud #248</strong>
+          <span>Actualiza el runtime de Atlas a Node 24.</span>
+        </div>
+      ),
+    },
+    {
+      value: "validation",
+      label: (
+        <>
+          <Icon name="check" size="sm" />
+          Validación
+        </>
+      ),
+      children: "12 comprobaciones aprobadas.",
+    },
+    {
+      value: "settings",
+      label: (
+        <>
+          <Icon name="settings" size="sm" />
+          Ajustes
+        </>
+      ),
+      children: "Disponible después de aprobar la solicitud.",
+      disabled: true,
+    },
+  ]}
+/>;`;
+
+const advancedHtml = `<div class="sk-stack" data-gap="sm">
+  <div
+    class="sk-tabs"
+    data-sk-tabs
+    id="workspace-tabs"
+    data-value="general"
+    data-orientation="vertical"
+    data-activation-mode="manual"
+  >
+    <div
+      class="sk-tabs__list"
+      data-sk-tabs-list
+      aria-label="Ajustes del espacio"
+    >
+      <button
+        class="sk-tabs__trigger sk-interactive"
+        data-sk-tabs-trigger
+        data-value="general"
+        type="button"
+      >
+        <span data-sk-icon="settings" data-sk-icon-size="sm"></span>
+        General
+      </button>
+      <button
+        class="sk-tabs__trigger sk-interactive"
+        data-sk-tabs-trigger
+        data-value="access"
+        type="button"
+      >
+        <span data-sk-icon="user" data-sk-icon-size="sm"></span>
+        Acceso
+      </button>
+      <button
+        class="sk-tabs__trigger sk-interactive"
+        data-sk-tabs-trigger
+        data-value="notifications"
+        type="button"
+      >
+        <span data-sk-icon="info" data-sk-icon-size="sm"></span>
+        Avisos
+      </button>
+    </div>
+
+    <div
+      class="sk-tabs__content"
+      data-sk-tabs-content
+      data-value="general"
+    >
+      <div class="sk-stack" data-gap="xs">
+        <strong>Identidad del espacio</strong>
+        <span>Atlas · Europe/Madrid · Español</span>
+      </div>
+    </div>
+    <div
+      class="sk-tabs__content"
+      data-sk-tabs-content
+      data-value="access"
+    >
+      <div class="sk-stack" data-gap="xs">
+        <strong>Acceso de equipo</strong>
+        <span>8 miembros · 2 administradores</span>
+      </div>
+    </div>
+    <div
+      class="sk-tabs__content"
+      data-sk-tabs-content
+      data-value="notifications"
+    >
+      <div class="sk-stack" data-gap="xs">
+        <strong>Avisos operativos</strong>
+        <span>Correo y chat para despliegues e incidentes.</span>
+      </div>
+    </div>
+  </div>
+
+  <p id="workspace-tab-status" aria-live="polite">
+    Sección activa: General
+  </p>
+</div>`;
+
+const advancedCode = `<div class="sk-stack" data-gap="sm">
+  <div
+    class="sk-tabs"
+    data-sk-tabs
+    id="workspace-tabs"
+    data-value="general"
+    data-orientation="vertical"
+    data-activation-mode="manual"
+  >
+    <div class="sk-tabs__list" data-sk-tabs-list>
+      <!-- Tres triggers: General, Acceso y Avisos. -->
+    </div>
+
+    <div
+      class="sk-tabs__content"
+      data-sk-tabs-content
+      data-value="general"
+    >
+      Identidad del espacio.
+    </div>
+    <!-- Los otros paneles repiten el data-value de su trigger. -->
+  </div>
+
+  <p id="workspace-tab-status" aria-live="polite">
+    Sección activa: General
+  </p>
+</div>`;
+
+const advancedBehavior = `const root = document.querySelector(
+  "#workspace-tabs",
+);
+const status = document.querySelector("#workspace-tab-status");
+const sectionNames = {
+  general: "General",
+  access: "Acceso",
+  notifications: "Avisos",
+};
+
+root?.addEventListener("sk-value-change", (event) => {
+  const name = sectionNames[event.detail.value];
+  if (status && name) status.textContent = "Sección activa: " + name;
+});`;
+
+const vanillaJs = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+await initComponents();`;
+
+const advancedJs = `${vanillaJs}
+
+${advancedBehavior}`;
+
+const advancedReact = `import { useState } from "react";
+import { Icon } from "@skryensya/react/icon";
+import { Tabs } from "@skryensya/react/tabs";
+
+const sectionNames: Record<string, string> = {
+  general: "General",
+  access: "Acceso",
+  notifications: "Avisos",
+};
+
+const items = [
+  {
+    value: "general",
+    label: (
+      <>
+        <Icon name="settings" size="sm" />
+        General
+      </>
+    ),
+    children: "Atlas · Europe/Madrid · Español",
+  },
+  {
+    value: "access",
+    label: (
+      <>
+        <Icon name="user" size="sm" />
+        Acceso
+      </>
+    ),
+    children: "8 miembros · 2 administradores",
+  },
+  {
+    value: "notifications",
+    label: (
+      <>
+        <Icon name="info" size="sm" />
+        Avisos
+      </>
+    ),
+    children: "Correo y chat para despliegues e incidentes.",
+  },
+];
+
+export function WorkspaceTabs() {
+  const [value, setValue] = useState("general");
+
+  return (
+    <div className="sk-stack" data-gap="sm">
+      <Tabs
+        value={value}
+        orientation="vertical"
+        activationMode="manual"
+        items={items}
+        onValueChange={(details) => setValue(details.value)}
+      />
+      <p aria-live="polite">
+        Sección activa: {sectionNames[value]}
+      </p>
+    </div>
+  );
+}`;
 ---
 
-<Base title="Tabs" description="Tabs: contrato vanilla, styling hooks y binding React.">
+<Base
+  title="Tabs"
+  description="Tres ejemplos de Tabs, de la anatomía básica al control manual."
+>
   <h1>Tabs</h1>
   <p class="lede">
-    Tabs es el primer slice completo de componentes: un descriptor en <code>@skryensya/core</code>, un enhancer
-    vanilla en <code>@skryensya/vanilla</code>, un componente React en <code>@skryensya/react</code> y hooks visuales
-    en <code>@skryensya/core</code>.
+    Empieza con dos vistas, añade estados e iconos y termina con una
+    navegación vertical controlada. La anatomía no cambia al crecer:
+    lista, triggers y un panel por cada valor.
   </p>
 
-  <h2>Demo</h2>
-  <Showcase html={html} react={react} label="Tabs" />
+  <h2>1. Básico</h2>
   <p>
-    El enhancer busca <code>[data-ds-tabs]</code>, parchea ARIA/estado sobre estos nodos y no escribe clases.
+    Dos triggers y dos paneles. <code>data-value</code> enlaza cada
+    opción con su contenido; el enhancer completa roles, foco y ARIA.
   </p>
+  <Showcase
+    html={basicHtml}
+    react={basicReact}
+    label="Tabs básicos"
+  />
+
+  <h2>2. Estados e iconos</h2>
+  <p>
+    El mismo contrato admite labels compuestos y opciones
+    deshabilitadas. El icono acompaña al texto; nunca reemplaza el
+    nombre accesible del tab.
+  </p>
+  <Showcase
+    html={statesHtml}
+    react={statesReact}
+    label="Tabs con estados"
+  />
+
+  <h2>3. Orientación y estado</h2>
+  <p>
+    En orientación vertical, las flechas recorren el rail. Con
+    activación manual, mover el foco no cambia el panel: Enter o
+    Espacio confirma la selección. El evento actualiza la región viva
+    debajo del componente.
+  </p>
+  <Showcase
+    html={advancedHtml}
+    code={advancedCode}
+    codeFull={advancedHtml}
+    js={advancedJs}
+    react={advancedReact}
+    previewScript={advancedBehavior}
+    label="Tabs verticales con control manual"
+  />
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />
 
   <h2>CSS</h2>
-  <CodeBlock code={css} label="tu CSS" />
-
+  <CodeBlock code={css} label="CSS" lang="css" />
 
   <h2>Inicializar vanilla</h2>
-  <CodeBlock code={js} label="tu JS" />
+  <p>
+    <code>initComponents</code> conecta los Tabs. Los iconos se montan
+    por separado con el set elegido por la aplicación.
+  </p>
+  <CodeBlock code={vanillaJs} label="JavaScript" />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>
+      La raíz usa <code>data-sk-tabs</code> y conserva el valor activo
+      en <code>data-value</code>.
+    </li>
+    <li>
+      Cada trigger y panel declara el mismo <code>data-value</code>.
+    </li>
+    <li>
+      <code>data-disabled</code> retira una opción de la interacción.
+    </li>
+    <li>
+      <code>data-orientation="vertical"</code> cambia el eje de
+      navegación y del indicador.
+    </li>
+    <li>
+      <code>data-activation-mode="manual"</code> separa foco y
+      selección.
+    </li>
+    <li>
+      Vanilla emite <code>sk-value-change</code>; React expone
+      <code>onValueChange</code>.
+    </li>
+  </ul>
 
   <h2>React</h2>
   <p>
-    En React no hay progressive enhancement: el componente renderiza la misma anatomía y consume el mismo
-    descriptor de <code>@skryensya/core</code>. El código está en la pestaña <strong>React</strong> de la demo.
+    El componente renderiza la misma anatomía desde <code>items</code>.
+    Usa <code>value</code> y <code>onValueChange</code> cuando otro
+    estado de la aplicación dependa de la pestaña activa.
   </p>
-  <StylingHooks groups={[{"file":"components/tabs.css","probe":"ds-tabs"}]} />
+
+  <StylingHooks
+    groups={[
+      {
+        file: "components/tabs.css",
+        probe: "sk-tabs",
+        title: "Tabs",
+      },
+    ]}
+  />
 </Base>

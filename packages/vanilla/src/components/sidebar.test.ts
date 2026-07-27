@@ -9,13 +9,13 @@ function mount(html: string) {
   return root;
 }
 
-const markup = `<aside class="ds-sidebar" data-ds-sidebar>
-  <div class="ds-sidebar__header">
-    <button type="button" class="ds-sidebar__trigger" data-ds-sidebar-trigger aria-label="Collapse"></button>
+const markup = `<aside class="sk-sidebar" data-sk-sidebar>
+  <div class="sk-sidebar__header">
+    <button type="button" class="sk-sidebar__trigger" data-sk-sidebar-trigger aria-label="Collapse"></button>
   </div>
-  <div class="ds-sidebar__content" data-ds-sidebar-content>
-    <nav class="ds-nav-list">
-      <ul class="ds-nav-list__list"><li class="ds-nav-list__item"><a class="ds-nav-list__link" href="/">Home</a></li></ul>
+  <div class="sk-sidebar__content" data-sk-sidebar-content>
+    <nav class="sk-nav-list">
+      <ul class="sk-nav-list__list"><li class="sk-nav-list__item"><a class="sk-nav-list__link" href="/">Home</a></li></ul>
     </nav>
   </div>
 </aside>`;
@@ -24,7 +24,7 @@ describe("Sidebar Vanilla contracts", () => {
   it("writes collapsed state, emits the change, and cleanup removes listeners", () => {
     const root = mount(markup);
     const handler = vi.fn();
-    root.addEventListener("ds-collapsed-change", handler);
+    root.addEventListener("sk-collapsed-change", handler);
     const cleanup = connectSidebar(root);
 
     expect(root.dataset.state).toBe("expanded");
@@ -44,7 +44,7 @@ describe("Sidebar Vanilla contracts", () => {
     const trigger = getByRole(root, "button");
 
     expect(trigger.getAttribute("aria-controls")).toBe("main-content");
-    expect(root.querySelector(".ds-sidebar__content")?.id).toBe("main-content");
+    expect(root.querySelector(".sk-sidebar__content")?.id).toBe("main-content");
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
 
     fireEvent.click(trigger);
@@ -60,10 +60,10 @@ describe("Sidebar Vanilla contracts", () => {
   });
 
   it("mounts from authored data attributes, and mounting twice is idempotent", () => {
-    document.body.innerHTML = markup.replace("data-ds-sidebar>", "data-ds-sidebar data-default-collapsed>");
+    document.body.innerHTML = markup.replace("data-sk-sidebar>", "data-sk-sidebar data-default-collapsed>");
 
     expect(mountSidebar(document)).toBe(1);
     expect(mountSidebar(document)).toBe(0);
-    expect(document.querySelector(".ds-sidebar")?.getAttribute("data-state")).toBe("collapsed");
+    expect(document.querySelector(".sk-sidebar")?.getAttribute("data-state")).toBe("collapsed");
   });
 });

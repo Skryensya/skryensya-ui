@@ -63,7 +63,7 @@ for (const f of files) {
 
 // ── demand: every var() reference in the component/pattern CSS the app actually ships ─────────
 // We read the raw component text (not just its declarations), a rule body `background: var(--x)`
-// is demand just as much as a `--ds-hook: var(--x)` declaration is.
+// is demand just as much as a `--sk-hook: var(--x)` declaration is.
 const wantComponent = (f) => {
   if (!usedComponents) return true;
   const base = f.rel.split("/").at(-1).replace(/\.css$/, "");
@@ -82,7 +82,7 @@ const reachable = new Set();
 const queue = [...demandRoots];
 while (queue.length) {
   const name = queue.pop();
-  if (reachable.has(name) || !supplyNames.has(name)) continue; // ignore --ds-* hooks (not token-tier)
+  if (reachable.has(name) || !supplyNames.has(name)) continue; // ignore --sk-* hooks (not token-tier)
   reachable.add(name);
   for (const r of refsByName.get(name) ?? []) if (!reachable.has(r)) queue.push(r);
 }

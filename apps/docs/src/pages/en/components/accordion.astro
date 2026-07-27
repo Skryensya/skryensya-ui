@@ -1,0 +1,519 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+
+const disclosureIcon = `<span
+        class="sk-tile__chevron"
+        data-part="chevron"
+        aria-hidden="true"
+      >
+        <span data-state="closed">
+          <span data-sk-icon="chevron-down"></span>
+        </span>
+        <span data-state="open">
+          <span data-sk-icon="chevron-up"></span>
+        </span>
+      </span>`;
+
+const single = `<div
+  class="sk-accordion"
+  data-sk-accordion
+  data-type="single"
+  data-default-value="environment"
+>
+  <section
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
+    data-part="item"
+    data-value="environment"
+  >
+    <button
+      type="button"
+      class="sk-tile__trigger"
+      data-part="trigger"
+      aria-expanded="true"
+      aria-controls="environment-content"
+    >
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Environment</span>
+        <span class="sk-tile__description">
+          Production · Frankfurt
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="environment-content"
+      class="sk-tile__expandable-content"
+      data-part="content"
+    >
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
+          Node 22 runs in three replicas behind the balancer
+          Frankfurt. Traffic is distributed by round-robin and a
+          replica recycles itself if it fails two health checks
+          followed.
+        </p>
+        <p class="sk-tile__description">
+          Secrets are injected at boot from the vault
+          regional, so no sensible value remains in the
+          image or in the build log.
+        </p>
+      </div>
+    </div>
+  </section>
+</div>`;
+
+const exclusive = `<div
+  class="sk-accordion"
+  data-sk-accordion
+  data-type="single"
+  data-default-value="runtime"
+>
+  <section
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
+    data-part="item"
+    data-value="runtime"
+  >
+    <button
+      type="button"
+      class="sk-tile__trigger"
+      data-part="trigger"
+      aria-expanded="true"
+      aria-controls="runtime-content"
+    >
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Runtime</span>
+        <span class="sk-tile__description">
+          Version and region
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="runtime-content"
+      class="sk-tile__expandable-content"
+      data-part="content"
+    >
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
+          Node 22 on the Frankfurt shared pool. Each
+          Deployment reserves two vCPUs and 512 MB, with autoscaling
+          up to six replicas when request queue
+          exceeds the threshold.
+        </p>
+        <p class="sk-tile__description">
+          The healthcheck hits <code>/status</code> every ten
+          seconds; three failures in a row take the replica out of the
+          balancer without cutting off traffic in flight.
+        </p>
+      </div>
+    </div>
+  </section>
+  <section
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
+    data-part="item"
+    data-value="rollout"
+  >
+    <button
+      type="button"
+      class="sk-tile__trigger"
+      data-part="trigger"
+      aria-expanded="false"
+      aria-controls="rollout-content"
+    >
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Rollout</span>
+        <span class="sk-tile__description">
+          Canary by percentage
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="rollout-content"
+      class="sk-tile__expandable-content"
+      data-part="content"
+      hidden
+    >
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
+          The canary rises in three sections, 10%, 50% and 100%, and
+          wait for the error and latency metrics to
+          remain stable before advancing to each section.
+        </p>
+        <p class="sk-tile__description">
+          If a section degrades, the rollout stops on its own and
+          notify the guard channel: nothing moves forward without a green light.
+        </p>
+      </div>
+    </div>
+  </section>
+  <section
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
+    data-part="item"
+    data-value="rollback"
+  >
+    <button
+      type="button"
+      class="sk-tile__trigger"
+      data-part="trigger"
+      aria-expanded="false"
+      aria-controls="rollback-content"
+    >
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Rollback</span>
+        <span class="sk-tile__description">
+          Previous stable version
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="rollback-content"
+      class="sk-tile__expandable-content"
+      data-part="content"
+      hidden
+    >
+      <p class="sk-tile__description">
+        Restore v2.18.4 if the canary fails checks.
+      </p>
+    </div>
+  </section>
+</div>`;
+
+/* Same group as exclusive, but multiple can keep several items open
+   and needs unique content ids so both demos can live on one page. */
+const multiple = `<div
+  class="sk-accordion"
+  data-sk-accordion
+  data-type="multiple"
+  data-default-value="runtime,rollout"
+>
+  <section
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
+    data-part="item"
+    data-value="runtime"
+  >
+    <button
+      type="button"
+      class="sk-tile__trigger"
+      data-part="trigger"
+      aria-expanded="true"
+      aria-controls="multiple-runtime-content"
+    >
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Runtime</span>
+        <span class="sk-tile__description">
+          Version and region
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="multiple-runtime-content"
+      class="sk-tile__expandable-content"
+      data-part="content"
+    >
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
+          Node 22 on the Frankfurt shared pool. Each
+          Deployment reserves two vCPUs and 512 MB, with autoscaling
+          up to six replicas when request queue
+          exceeds the threshold.
+        </p>
+        <p class="sk-tile__description">
+          The healthcheck hits <code>/status</code> every ten
+          seconds; three failures in a row take the replica out of the
+          balancer without cutting off traffic in flight.
+        </p>
+      </div>
+    </div>
+  </section>
+  <section
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
+    data-part="item"
+    data-value="rollout"
+  >
+    <button
+      type="button"
+      class="sk-tile__trigger"
+      data-part="trigger"
+      aria-expanded="true"
+      aria-controls="multiple-rollout-content"
+    >
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Rollout</span>
+        <span class="sk-tile__description">
+          Canary by percentage
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="multiple-rollout-content"
+      class="sk-tile__expandable-content"
+      data-part="content"
+    >
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
+          The canary rises in three sections, 10%, 50% and 100%, and
+          wait for the error and latency metrics to
+          remain stable before advancing to each section.
+        </p>
+        <p class="sk-tile__description">
+          If a section degrades, the rollout stops on its own and
+          notify the guard channel: nothing moves forward without a green light.
+        </p>
+      </div>
+    </div>
+  </section>
+  <section
+    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
+    data-part="item"
+    data-value="rollback"
+  >
+    <button
+      type="button"
+      class="sk-tile__trigger"
+      data-part="trigger"
+      aria-expanded="false"
+      aria-controls="multiple-rollback-content"
+    >
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Rollback</span>
+        <span class="sk-tile__description">
+          Previous stable version
+        </span>
+      </span>
+      ${disclosureIcon}
+    </button>
+    <div
+      id="multiple-rollback-content"
+      class="sk-tile__expandable-content"
+      data-part="content"
+      hidden
+    >
+      <p class="sk-tile__description">
+        Restore v2.18.4 if the canary fails checks.
+      </p>
+    </div>
+  </section>
+</div>`;
+
+const vanilla = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// Chevrons are authored as <span data-sk-icon="chevron-*"> placeholders;
+// mountIcons replaces them with the <svg> of the linked set (it does not
+// initComponents: set is always explicit).
+mountIcons(document, lucideIcons);
+
+// The accordion is authored in the HTML: the root with data-sk-accordion and data-type,
+// each item with data-part="item" and a unique data-value. initComponents hydrate
+// all markup [data-sk-*] with your Zag machine (the same one that React uses).
+await initComponents();
+
+// The status is heard by event on the root, not by callback.
+const root = document.querySelector("[data-sk-accordion]");
+root.addEventListener("sk:accordionvaluechange", (event) => {
+  console.log(event.detail.value);
+});`;
+
+const react = `import { Accordion } from "@skryensya/react/accordion";
+import { Icon } from "@skryensya/react/icon";
+
+<Accordion type="multiple" defaultValue={["runtime", "rollout"]}>
+  <Accordion.Item value="runtime">
+    <Accordion.Trigger>
+      <span className="sk-tile__content">
+        <span className="sk-tile__title">Runtime</span>
+        <span className="sk-tile__description">
+          Version and region
+        </span>
+      </span>
+      <span className="sk-tile__chevron" aria-hidden="true">
+        <span data-state="closed">
+          <Icon name="chevron-down" />
+        </span>
+        <span data-state="open">
+          <Icon name="chevron-up" />
+        </span>
+      </span>
+    </Accordion.Trigger>
+    <Accordion.Content>
+      <div className="sk-stack" data-gap="sm">
+        <p className="sk-tile__description">
+          Node 22 on the Frankfurt shared pool. Each
+          Deployment reserves two vCPUs and 512 MB, with autoscaling
+          up to six replicas.
+        </p>
+        <p className="sk-tile__description">
+          The healthcheck hits <code>/status</code> every ten
+          seconds; three failures in a row take the replica out of the
+          balancer.
+        </p>
+      </div>
+    </Accordion.Content>
+  </Accordion.Item>
+</Accordion>`;
+
+const nativeInstall = `pnpm add @skryensya/core`;
+
+const nativeStyles = `@import "@skryensya/core/components/details.css";`;
+
+/* Same exclusive group as Accordion single, but platform <details name>. Tile anatomy
+   (content / title / description / chevron) keeps the chrome identical to Accordion. */
+const nativeDetails = `<section
+  class="sk-details-group"
+  aria-label="Deployment configuration"
+>
+  <details class="sk-details" name="deployment" open>
+    <summary class="sk-details__summary sk-interactive">
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Runtime</span>
+        <span class="sk-tile__description">
+          Version and region
+        </span>
+      </span>
+      ${disclosureIcon}
+    </summary>
+    <div class="sk-details__content">
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
+          Node 22 on the Frankfurt shared pool. Each
+          Deployment reserves two vCPUs and 512 MB, with autoscaling
+          up to six replicas when request queue
+          exceeds the threshold.
+        </p>
+        <p class="sk-tile__description">
+          The healthcheck hits <code>/status</code> every ten
+          seconds; three failures in a row take the replica out of the
+          balancer without cutting off traffic in flight.
+        </p>
+      </div>
+    </div>
+  </details>
+
+  <details class="sk-details" name="deployment">
+    <summary class="sk-details__summary sk-interactive">
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Rollout</span>
+        <span class="sk-tile__description">
+          Canary by percentage
+        </span>
+      </span>
+      ${disclosureIcon}
+    </summary>
+    <div class="sk-details__content">
+      <div class="sk-stack" data-gap="sm">
+        <p class="sk-tile__description">
+          The canary rises in three sections, 10%, 50% and 100%, and
+          wait for the error and latency metrics to
+          remain stable before advancing to each section.
+        </p>
+        <p class="sk-tile__description">
+          If a section degrades, the rollout stops on its own and
+          notify the guard channel: nothing moves forward without a green light.
+        </p>
+      </div>
+    </div>
+  </details>
+
+  <details class="sk-details" name="deployment">
+    <summary class="sk-details__summary sk-interactive">
+      <span class="sk-tile__content">
+        <span class="sk-tile__title">Rollback</span>
+        <span class="sk-tile__description">
+          Previous stable version
+        </span>
+      </span>
+      ${disclosureIcon}
+    </summary>
+    <div class="sk-details__content">
+      <p class="sk-tile__description">
+        Restore v2.18.4 if the canary fails checks.
+      </p>
+    </div>
+  </details>
+</section>`;
+---
+<Base title="Accordion" description="One or more Tile disclosures coordinated into a single framework.">
+  <h1>Accordion</h1>
+  <p class="lede">
+    The root coordinates disclosure Tiles and gives them a shared framework. Each item remains a
+    <code>sk-tile--expandable</code>: a single interaction in the trigger. Choose <code>single</code> to
+    an open section or <code>multiple</code> for independent disclosures.
+  </p>
+
+  <p>
+    If the state can live in HTML and a native exclusive group is enough, look
+    <a href="#details-nativo">Details native</a> at the end. Accordion is the main route when
+    you need controlled coordination, <code>multiple</code> or change events.
+  </p>
+
+  <h2>an item</h2>
+  <p>
+    For an isolated disclosure (formerly “ExpandableTile”), use Accordion with a single item: the root
+    provides the frame and the Tile preserves the surface and the state layer.
+  </p>
+  <Showcase html={single} label="Accordion of an item" />
+
+  <h2>Grupo exclusivo</h2>
+  <p>
+    <code>data-type="single"</code> in HTML, <code>type="single"</code> in React, maintains at most one
+    open item. With <code>data-collapsible="false"</code> or <code>collapsible={false}</code>, the item
+    open cannot be closed.
+  </p>
+  <Showcase html={exclusive} label="Accordion single" />
+
+  <h2>Multiple group</h2>
+  <p><code>type="multiple"</code> preserves each disclosure independently.</p>
+  <Showcase html={multiple} react={react} label="Accordion multiple" />
+
+  <h2>Vanilla</h2>
+  <p>
+    The enhancer mounts the root <code>data-sk-accordion</code> and adds <code>sk-accordion</code>. each child
+    direct declares <code>data-part="item"</code> and a single <code>data-value</code>.
+  </p>
+  <CodeBlock code={vanilla} label="JavaScript" />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>The root is authored with <code>data-sk-accordion</code> (and optionally <code>class="sk-accordion"</code> in static HTML). The enhancer writes <code>data-part="root"</code> and the class <code>sk-accordion</code>.</li>
+    <li><code>sk-accordion</code> joins the items into a single frame; each direct item <code>sk-tile sk-tile--interactive sk-tile--expandable</code> preserves anatomy and state layer without its own border.</li>
+    <li>A direct item uses <code>sk-tile sk-tile--interactive sk-tile--expandable</code>, <code>data-part="item"</code> and a single <code>data-value</code>.</li>
+    <li>Trigger and content retain the native Tile parts: <code>trigger</code> and <code>content</code>.</li>
+    <li>Opening an item does not paint the selection border: that is left for checkbox and radio.</li>
+    <li>In <code>single</code>, <code>data-collapsible="false"</code> or <code>collapsible={false}</code> leave the chosen item open. In <code>multiple</code> that option does not apply.</li>
+  </ul>
+
+  <h2 id="details-nativo">Details nativo</h2>
+  <p class="lede">
+    <code>&lt;details&gt;</code> and <code>&lt;summary&gt;</code> are already an accessible disclosure of the
+    platform. Share a <code>name</code> attribute between siblings so that the browser keeps
+    a single open item: a native accordion, without machine or <code>@skryensya/vanilla</code>.
+  </p>
+  <p>
+    Use it when the state can live in the document. Choose Accordion enhanced when you need
+    controlled value, <code>multiple</code>, change callbacks or composition with events of the
+    system. The Tile anatomy (title, description, chevron) is the same, so the group looks the same.
+  </p>
+  <Showcase html={nativeDetails} label="Details with shared name" />
+
+  <h3>Install only Details</h3>
+  <CodeBlock code={nativeInstall} label="terminal" />
+  <CodeBlock code={nativeStyles} label="CSS" lang="css" />
+
+  <h3>Contrato nativo</h3>
+  <ul>
+    <li>The first interactive child of each <code>&lt;details&gt;</code> is its <code>&lt;summary&gt;</code>.</li>
+    <li>The <code>open</code> attribute declares the initial state in HTML.</li>
+    <li>The same <code>name</code> between siblings makes the group exclusive; without <code>name</code>, each disclosure is independent.</li>
+    <li>The browser changes <code>open</code>; there is no controlled value or system event to listen to.</li>
+  </ul>
+
+  <StylingHooks groups={[{ file: "components/details.css", probe: "sk-details" }]} />
+</Base>

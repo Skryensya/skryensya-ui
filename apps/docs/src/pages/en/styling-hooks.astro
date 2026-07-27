@@ -1,0 +1,140 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import { tokens } from "../../lib/tokens";
+
+import "../../examples/styling-hook-override.css";
+import overrideSource from "../../examples/styling-hook-override.css?raw";
+
+const buttonHooks = tokens.filter((t) => t.file === "components/button.css");
+
+const naive = `/* What we DON'T do: one styling hook per variant. */
+--sk-button-primary-bg
+--sk-button-danger-bg
+--sk-button-ghost-bg
+--sk-button-primary-bg-hover
+--sk-button-danger-bg-hover
+/* …and your CSS has to branch between them. */`;
+
+const actual = `/* What we do: a styling hook, re-declared for specificity. */
+.sk-button {
+  --sk-button-bg: var(--color-action-neutral);
+}
+.sk-button[data-variant="primary"] {
+  --sk-button-bg: var(--color-action-primary);
+}
+.sk-button[data-variant="danger"] {
+  --sk-button-bg: var(--color-action-danger);
+}`;
+
+const consumer = `/* Your CSS reads it once and never branches. */
+.sk-button { background: var(--sk-button-bg); }`;
+---
+
+<Base
+  title="The styling hooks contract"
+  description="A styling hook is the public knob for a component: what it means, how they are named, and how to step on them."
+>
+  <h1>The styling hooks contract</h1>
+  <p class="lede">
+    Importing <code>components/button.css</code> gives you a button <em>and</em>
+    {buttonHooks.length} styling hooks. Class is what you see; hooks are how you change it without
+    touch a selector. That is the contract.
+  </p>
+
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
+    <p>
+      This <strong>changed</strong>. For a long time the system sent the hooks and nothing else: the
+      structure was written by each consumer. It was reversed, because it did not hold,
+      <a href="/decisiones/0008-que-envia-tier-3">decision 8</a> tells what was measured. What not
+      What changed is why a hook exists: it is not a replacement for the missing structure, it is the knob.
+    </p>
+    </div>
+  </div>
+
+  <h2>Why hooks and not one class per variant</h2>
+  <p>
+    Because a component has a base look, variants and sizes, and those combinations multiply.
+    A styling hook collapses them: it is a custom property, and a custom property does not care what
+    element carries it nor how many selectors re-declare it. Also, what you do not care about
+    <strong>no weight</strong>: a consumer that does not send buttons does not download a single byte of
+    <code>button.css</code>.
+  </p>
+
+  <h2>Styling hooks lose group segment</h2>
+  <p>
+    Naive coding gives each variant its own variable, and ends in an explosion that
+    your CSS has to disambiguate with conditionals:
+  </p>
+  <CodeBlock code={naive} label="what we do not do" />
+
+  <p>
+    Instead, the base and each variant declare <strong>the same</strong> styling hook. The variant
+    you just re-declare it in a more specific selector and <strong>wins for specificity</strong>:
+  </p>
+  <CodeBlock code={actual} label="components/button.css" />
+  <CodeBlock code={consumer} label="CSS" note="one line, zero branches" />
+
+  <h2>That is why stepping on a styling hook is trivial and total</h2>
+  <p>
+    Since all variants read the same styling hook, one line restyles them all within a scope.
+    And there is no specificity fight because any rule without a layer beats all layers.
+  </p>
+
+  <Showcase code={overrideSource} lang="css" label="src/examples/styling-hook-override.css" note="the override that paints the demo">
+    {/* `.promo` is the override's scope (`.promo .sk-button`); display:contents keeps the scope while
+        letting the buttons lay out in the Showcase stage's own flow. */}
+    <div class="promo" style="display: contents">
+      <button class="sk-button sk-interactive" data-sk-button data-variant="primary">Save</button>
+      <button class="sk-button sk-interactive" data-sk-button data-variant="neutral">Cancel</button>
+      <button class="sk-button sk-interactive" data-sk-button data-variant="danger">Delete</button>
+    </div>
+  </Showcase>
+
+  <p>
+    The three buttons above are the same variants of the home button. Three lines restyled them to
+    all, without touching the design system and without inventing a new token.
+  </p>
+
+  <h2>The risk of specificity</h2>
+  <p>
+    Variants are gained by selector specificity. A consumer writing one more selector
+    specific can step on a variant inadvertently. We accept that risk to maintain few styling
+    hooks, without nesting them by variant.
+  </p>
+
+  <h2>All button styling hooks</h2>
+  <p>
+    These are the {buttonHooks.length} sent by <code>components/button.css</code>. They live in
+    <code>.sk-button</code>, never in <code>:root</code>, do not exist until an element chooses
+    them.
+  </p>
+
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>Hook</th>
+          <th>Apunta a</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          buttonHooks.map((t) => (
+            <tr>
+              <td class="mono">{t.name}</td>
+              <td class="mono">{t.value}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    Note that none point to a <code>--ramp-*</code>. It is not discipline: it is
+    <a href="/en/tiers">the tier-skip rule</a>, and breaks the build.
+  </p>
+</Base>

@@ -4,7 +4,7 @@ import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 
 const html = `<section
-  class="ds-box"
+  class="sk-box"
   data-surface="raised"
   data-border="subtle"
   data-padding="lg"
@@ -29,16 +29,17 @@ const react = `import { Box } from "@skryensya/react/box";
   <h2>Cuándo usarlo</h2>
   <p>Usa Box para contenido estático o para una superficie con varios controles independientes. Si toda la superficie representa exactamente una interacción, elige el componente semántico correspondiente: <a href="/componentes/link">Link</a>, <a href="/componentes/button">Button</a>, <a href="/componentes/checkbox">Checkbox</a>, <a href="/componentes/radio-group">RadioGroup</a> o <a href="/componentes/accordion">Accordion</a>.</p>
   <p>Box y Tile comparten superficie, borde, radio y el vocabulario de <code>padding</code>. Usa <code>data-padding="none"</code> en HTML o <code>padding="none"</code> en React cuando el header o la imagen del contenido deban tocar el borde; ese hijo es quien declara su propio inset. La diferencia entre ambos es exclusivamente la interacción que Tile sí posee.</p>
+  <p>La guía <a href="/componentes/card">Card</a> aplica esta decisión a cards de contenido, noticia, producto, enlace, acción, selección y métricas.</p>
 
   <h2>HTML autorado</h2>
   <Showcase html={html} react={react} label="Box" />
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
 
   <h2>Contrato</h2>
   <ul>
-    <li>En HTML, elige el elemento semántico y añade la clase <code>ds-box</code>.</li>
+    <li>En HTML, elige el elemento semántico y añade la clase <code>sk-box</code>.</li>
     <li><code>data-surface</code> acepta <code>none</code>, <code>sunken</code>, <code>surface</code> o <code>raised</code>.</li>
     <li><code>data-border</code> acepta <code>none</code>, <code>subtle</code> o <code>default</code>.</li>
     <li><code>data-padding</code> acepta <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> o <code>xl</code>.</li>

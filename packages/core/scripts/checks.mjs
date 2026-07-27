@@ -14,7 +14,7 @@
  *   1. refs-resolve     every var(--x) points at a declared custom property
  *   2. tier-direction   references point down or sideways; component never skips to a ramp
  *   3. mode-complete    base light-dark() token set == hc override set; every light-dark()
- *                       has exactly two colours; the two hc blocks don't drift
+ *                       has exactly two colors; the two hc blocks don't drift
  *   4. contrast         every contrast pair clears its WCAG ratio, per brand
  *   5. name-shape       declared names are lowercase kebab
  */
@@ -65,11 +65,11 @@ export function runChecks({ files, declaredTier, baseSemantic, hcByName, rampMap
 
   // ── 3: mode completeness ────────────────────────────────────────────────────
 
-  // every light-dark() must have exactly two colour args
+  // every light-dark() must have exactly two color args
   for (const [name, value] of baseSemantic) {
     const ld = value.match(/light-dark\((.*)\)/);
     if (ld && splitTopLevel(ld[1]).length !== 2) {
-      fail("mode-complete", name, `light-dark() must take exactly two colours, got: ${value}`);
+      fail("mode-complete", name, `light-dark() must take exactly two colors, got: ${value}`);
     }
   }
 
@@ -89,7 +89,7 @@ export function runChecks({ files, declaredTier, baseSemantic, hcByName, rampMap
   for (const name of hcColorSet) {
     if (!baseModeAware.has(name)) fail("mode-complete", name, `high-contrast overrides ${name}, which is not a mode-aware base token`);
   }
-  // non-colour hc overrides (e.g. state-layer opacity / focus-ring bumps) are allowed, but must
+  // non-color hc overrides (e.g. state-layer opacity / focus-ring bumps) are allowed, but must
   // target a token that actually exists in the base, you can't bump what isn't declared.
   for (const name of hcByName.keys()) {
     if (!hcColorSet.has(name) && !baseSemantic.has(name)) {
@@ -105,7 +105,7 @@ export function runChecks({ files, declaredTier, baseSemantic, hcByName, rampMap
         const fg = resolveColor(pair.fg, mode, ramps);
         const bg = resolveColor(pair.bg, mode, ramps);
         if (!fg || !bg) {
-          fail("contrast", `${pair.fg} on ${pair.bg}`, `[${mode}] could not resolve to a colour`);
+          fail("contrast", `${pair.fg} on ${pair.bg}`, `[${mode}] could not resolve to a color`);
           continue;
         }
         const ratio = contrastRatio(fg, bg);
@@ -123,6 +123,52 @@ export function runChecks({ files, declaredTier, baseSemantic, hcByName, rampMap
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(bare)) {
       fail("name-shape", name, `must be lowercase kebab (got "${bare}")`);
     }
+  }
+
+  // ── 6: component sheets ship the class, not just the hooks ──────────────────
+  //
+  // A components/ sheet has to produce a working component on import. This rule exists because its
+  // absence is what let the corpus drift: the system's written rule was "components ship hooks only,
+  // the consumer writes the structure", nothing checked it, and 22 of 36 sheets quietly shipped
+  // structure anyway while 14 did not. Half a system either way is worse than either whole one.
+  //
+  // The exemption is COMPOSITION, not size. A sheet that re-declares another component's or
+  // pattern's hooks (drawer.css assigning --sk-vaul-* from --sk-drawer-*) is saying "I am that
+  // thing, tuned"; its structure belongs to what it composes, and re-implementing it there would be
+  // the duplication the pattern exists to prevent. That is a different claim from "I ship nothing".
+  for (const f of files) {
+    if (!f.rel?.startsWith("components/")) continue;
+
+    const structural = [...(f.css ?? "").matchAll(/(^|[;{])\s*([a-z-]+)\s*:/g)].filter(
+      (m) => !m[2].startsWith("--"),
+    ).length;
+    if (structural > 0) continue;
+
+    const own = `--sk-${f.rel.slice("components/".length).replace(/\.css$/, "")}-`;
+    const composes = f.decls.some((d) => d.name.startsWith("--sk-") && !d.name.startsWith(own));
+    if (composes) continue;
+
+    fail("component-ships-structure", f.rel,
+      "component sheet declares hooks but no structure, so importing it paints nothing; ship the class too, or compose another component's hooks the way drawer.css composes vaul's");
+  }
+
+  // ── 7: every component exposes styling hooks ────────────────────────────────
+  //
+  // The inverse of rule 6, and the other half of "ship the class AND its hooks" (ADR-8). A sheet
+  // that paints structure but declares NO `--sk-*` custom property has no public restyle surface:
+  // the only way to change it from outside is to out-specify its rules, which is exactly what the
+  // hook layer exists to avoid. It also shows up as an empty table on the component's docs page.
+  //
+  // Same COMPOSITION exemption as rule 6, by the same test: a sheet that re-declares another
+  // component's hooks (theme-toggle onto --sk-button-*, toast onto --sk-alert-*) exposes ITS hooks,
+  // tuned, so it counts. "At least one --sk-* declaration" is what both halves turn on.
+  for (const f of files) {
+    if (!f.rel?.startsWith("components/")) continue;
+    const declaresHook = f.decls.some((d) => d.name.startsWith("--sk-"));
+    if (declaresHook) continue;
+
+    fail("component-ships-hooks", f.rel,
+      "component sheet paints structure but declares no --sk-* hook, so it has no public restyle surface (and its docs styling-hooks table is empty); lift its themeable values to --sk-<name>-* hooks");
   }
 
   return problems;

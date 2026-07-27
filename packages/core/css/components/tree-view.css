@@ -1,0 +1,113 @@
+/* TIER 3, TREE VIEW — hierarchical disclosure and selection. */
+@layer components {
+  .sk-tree-view {
+    /* Indent per level, measured from the row's own inline start. */
+    --sk-tree-indent: var(--space-inset-lg);
+    /* The vertical rule that ties a branch to its children. Set it to `transparent`
+     * to turn the guides off without touching the indent. */
+    --sk-tree-guide-color: var(--color-border-subtle);
+    --sk-tree-guide-width: 1px;
+    /* Column reserved for the branch chevron. Leaves keep it EMPTY instead of
+     * collapsing it, so every label on a level starts at the same x. */
+    --sk-tree-indicator-size: var(--size-icon-sm);
+    color: var(--color-text-primary);
+  }
+
+  .sk-tree-view__tree,
+  .sk-tree-view__branch-content {
+    display: grid;
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* The guide hangs from the centre of the parent's chevron, so the rule points back at
+   * the control the children descend from; the rest of the indent is their padding. */
+  .sk-tree-view__branch-content {
+    margin-inline-start: calc(
+      var(--space-inset-sm) + var(--sk-tree-indicator-size) / 2
+    );
+    padding-inline-start: calc(
+      var(--sk-tree-indent) - var(--space-inset-sm) - var(
+          --sk-tree-indicator-size
+        ) / 2
+    );
+    border-inline-start: var(--sk-tree-guide-width) solid
+      var(--sk-tree-guide-color);
+  }
+
+  /* A row. `sk-interactive` (patterns/state-layer.css) owns hover / focus / pressed /
+   * selected and the focus ring; this only lays the row out. */
+  .sk-tree-view__item,
+  .sk-tree-view__branch-control {
+    display: grid;
+    grid-template-columns: var(--sk-tree-indicator-size) minmax(0, 1fr);
+    gap: var(--space-inline-xs);
+    align-items: center;
+    min-block-size: var(--size-touch-target);
+    padding: var(--space-inset-xs) var(--space-inset-sm);
+    border: 0;
+    border-radius: var(--radius-control);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+
+  .sk-tree-view__item-text,
+  .sk-tree-view__branch-text {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* ── state layer bridge ────────────────────────────────────────────────────
+   * Zag marks rows with a bare `data-selected` / `data-highlighted`, which the
+   * pattern's `[data-selected="true"]` rung does not match. These two rules feed the
+   * same `--state-layer-opacity` slot at specificity (0,1,0) — deliberately BELOW the
+   * pattern's own (0,2,0) hover / focus / pressed rules, so the ladder keeps its order
+   * even though this file loads later. Highlighted after selected: moving the keyboard
+   * over a selected row has to read as hover, not as selection. */
+  :where(.sk-tree-view__item, .sk-tree-view__branch-control)[data-selected] {
+    --state-layer-opacity: var(--state-layer-selected-opacity);
+  }
+  :where(.sk-tree-view__item, .sk-tree-view__branch-control)[data-highlighted] {
+    --state-layer-opacity: var(--state-layer-hover-opacity);
+  }
+  /* Disabled is the top rung, so it needs (0,2,0) to outrank the pattern's hover. */
+  .sk-tree-view__item[data-disabled],
+  .sk-tree-view__branch-control[data-disabled] {
+    --state-layer-opacity: var(--state-layer-disabled-opacity);
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+  }
+
+  .sk-tree-view__branch-indicator {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--sk-tree-indicator-size);
+    transition: rotate var(--motion-state-change-duration)
+      var(--motion-state-change-easing);
+  }
+  .sk-tree-view__branch-control[data-state="open"]
+    .sk-tree-view__branch-indicator {
+    rotate: 90deg;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-tree-view__branch-indicator {
+      transition: none;
+    }
+  }
+
+  /* Forced colors drop the state layer, so selection needs a real outline to survive. */
+  @media (forced-colors: active) {
+    .sk-tree-view__branch-content {
+      border-inline-start-color: CanvasText;
+    }
+    :is(.sk-tree-view__item, .sk-tree-view__branch-control)[data-selected] {
+      outline: 1px solid Highlight;
+    }
+  }
+}

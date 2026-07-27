@@ -1,0 +1,66 @@
+/*
+ * TIER 3, THEME TOGGLE
+ *
+ * Icon-only Button that cycles color mode. Three faces stack in one cell (same cross-fade as
+ * CopyButton); `:root[data-scheme]` / the button's own `data-scheme` pick the visible glyph so
+ * FOUC and runtime stay aligned.
+ *
+ * Compose onto `.sk-button` (ghost + icon-only). This file only owns the stacked faces.
+ */
+@layer components {
+  .sk-theme-toggle {
+    /* This file owns only the cross-fade of the stacked faces; that is its theming surface. The
+     * button chrome (bg, border, radius) comes from the composed `.sk-button` and its hooks. */
+    --sk-theme-toggle-transition-duration: var(--motion-state-change-duration);
+    --sk-theme-toggle-transition-easing: var(--motion-state-change-easing);
+    --sk-theme-toggle-rest-scale: 0.25;
+    --sk-theme-toggle-rest-blur: 4px;
+
+    display: inline-grid;
+    place-items: center;
+    padding-inline: 0;
+  }
+
+  .sk-theme-toggle .sk-icon,
+  .sk-theme-toggle [data-sk-theme-toggle-icon] {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: scale(var(--sk-theme-toggle-rest-scale));
+    filter: blur(var(--sk-theme-toggle-rest-blur));
+    transition-property: opacity, transform, filter;
+    transition-duration: var(--sk-theme-toggle-transition-duration);
+    transition-timing-function: var(--sk-theme-toggle-transition-easing);
+  }
+
+  :root[data-scheme="system"] .sk-theme-toggle [data-sk-theme-toggle-icon="system"],
+  :root[data-scheme="light"] .sk-theme-toggle [data-sk-theme-toggle-icon="light"],
+  :root[data-scheme="dark"] .sk-theme-toggle [data-sk-theme-toggle-icon="dark"],
+  .sk-theme-toggle[data-scheme="system"] [data-sk-theme-toggle-icon="system"],
+  .sk-theme-toggle[data-scheme="light"] [data-sk-theme-toggle-icon="light"],
+  .sk-theme-toggle[data-scheme="dark"] [data-sk-theme-toggle-icon="dark"] {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+
+  /* Empty square before FOUC stamps data-scheme: show system. */
+  :root:not([data-scheme]) .sk-theme-toggle:not([data-scheme]) [data-sk-theme-toggle-icon="system"] {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-theme-toggle .sk-icon,
+    .sk-theme-toggle [data-sk-theme-toggle-icon] {
+      transition: none;
+    }
+  }
+}
+
+/* Consumer button skins set `display: inline-flex` unlayered; re-assert grid so faces stack. */
+.sk-button.sk-theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  padding-inline: 0;
+}

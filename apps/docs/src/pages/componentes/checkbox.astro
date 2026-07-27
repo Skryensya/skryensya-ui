@@ -1,31 +1,32 @@
 ---
+import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/checkbox.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
-import "../../examples/checkbox.css";
 
 const indicators = `<span
-      class="ds-checkbox__indicator"
+      class="sk-checkbox__indicator"
       data-state="checked"
-    ><span data-ds-icon="check" data-ds-icon-size="sm"></span></span>
+    ><span data-sk-icon="check" data-sk-icon-size="sm"></span></span>
     <span
-      class="ds-checkbox__indicator"
+      class="sk-checkbox__indicator"
       data-state="indeterminate"
-    ><span data-ds-icon="remove" data-ds-icon-size="sm"></span></span>`;
+    ><span data-sk-icon="remove" data-sk-icon-size="sm"></span></span>`;
 
-const html = `<label class="ds-checkbox">
+const html = `<label class="sk-checkbox">
   <input
-    class="ds-checkbox__input"
+    class="sk-checkbox__input"
     type="checkbox"
     name="alerts"
     value="email"
   />
-  <span class="ds-checkbox__control ds-interactive" aria-hidden="true">
+  <span class="sk-checkbox__control sk-interactive" aria-hidden="true">
     ${indicators}
   </span>
-  <span class="ds-checkbox__label">Alertas por email</span>
+  <span class="sk-checkbox__label">Alertas por email</span>
 </label>`;
 
 const react = `import { Checkbox } from "@skryensya/react/checkbox";
@@ -41,101 +42,329 @@ const react = `import { Checkbox } from "@skryensya/react/checkbox";
   Alertas por email
 </Checkbox>;`;
 
-const tileCheckboxHtml = `<label
-  class="ds-tile ds-tile--interactive ds-interactive"
-  data-scope="tile"
-  data-part="root"
-  data-ds-tile-checkbox
-  data-name="alerts"
-  data-value="email"
->
-  <input
-    type="checkbox"
-    data-part="input"
-  />
-  <span class="ds-tile__content" data-part="content">
-    <span class="ds-tile__title">Alertas por email</span>
-    <span class="ds-tile__description">
-      Enviar fallos de despliegue al equipo.
+/* The children indent to where the PARENT'S LABEL starts, not to an arbitrary step: same two
+ * tokens the control composes its own row from, so the nesting survives a density change. */
+const groupIndent = "padding-inline-start: calc(var(--size-icon-md) + var(--space-inline-sm))";
+
+const child = (value: string, label: string, checked = false) => `<label class="sk-checkbox" data-group-child>
+      <input class="sk-checkbox__input" type="checkbox" name="permisos" value="${value}"${checked ? " checked" : ""} />
+      <span class="sk-checkbox__control sk-interactive" aria-hidden="true">
+        ${indicators}
+      </span>
+      <span class="sk-checkbox__label">${label}</span>
+    </label>`;
+
+const groupHtml = `<div class="sk-stack" data-gap="sm" data-group>
+  <label class="sk-checkbox" data-group-parent>
+    <input class="sk-checkbox__input" type="checkbox" />
+    <span class="sk-checkbox__control sk-interactive" aria-hidden="true">
+      ${indicators}
     </span>
-  </span>
-  <span
-    class="ds-checkbox__control ds-interactive"
-    data-part="indicator"
-    aria-hidden="true"
+    <span class="sk-checkbox__label">Permisos del repositorio</span>
+  </label>
+
+  <div
+    class="sk-stack"
+    data-gap="xs"
+    role="group"
+    aria-label="Permisos del repositorio"
+    style="${groupIndent}"
   >
-    ${indicators}
-  </span>
-</label>`;
+    ${child("read", "Leer", true)}
+    ${child("write", "Escribir")}
+    ${child("admin", "Administrar")}
+  </div>
+</div>`;
+
+const groupJs = `const group = document.querySelector("[data-group]");
+const parent = group.querySelector("[data-group-parent] input");
+const children = [...group.querySelectorAll("[data-group-child] input")];
+
+// Tres estados a partir de dos booleanos. \`indeterminate\` es una PROPIEDAD viva
+// del input, no un atributo: hay que apagarla explícitamente cuando deja de aplicar,
+// o el padre se queda en guion con todos los hijos marcados.
+const sync = () => {
+  const marcados = children.filter((child) => child.checked).length;
+  parent.checked = marcados === children.length;
+  parent.indeterminate = marcados > 0 && marcados < children.length;
+};
+
+// El padre no tiene un valor propio que ofrecer: al pulsarlo decide por todos.
+// Desde indeterminate el browser lo pasa a checked, así que un clic marca el grupo
+// entero; nunca deja al usuario elegir el guion.
+parent.addEventListener("change", () => {
+  for (const child of children) child.checked = parent.checked;
+  sync();
+});
+
+for (const child of children) child.addEventListener("change", sync);
+
+sync();`;
+
+const groupReact = `import { useState } from "react";
+import { Checkbox } from "@skryensya/react/checkbox";
+
+const PERMISOS = [
+  { value: "read", label: "Leer" },
+  { value: "write", label: "Escribir" },
+  { value: "admin", label: "Administrar" },
+];
+
+export function PermisosDelRepositorio() {
+  const [marcados, setMarcados] = useState(["read"]);
+
+  // El mismo cálculo que en vanilla, sólo que aquí es un valor derivado
+  // en vez de dos flags que hay que mantener sincronizadas a mano.
+  const todos = marcados.length === PERMISOS.length;
+  const estado = todos ? true : marcados.length > 0 ? "indeterminate" : false;
+
+  return (
+    <div className="sk-stack" data-gap="sm">
+      <Checkbox
+        checked={estado}
+        onCheckedChange={({ checked }) =>
+          setMarcados(checked === true ? PERMISOS.map((p) => p.value) : [])
+        }
+      >
+        Permisos del repositorio
+      </Checkbox>
+
+      <div
+        className="sk-stack"
+        data-gap="xs"
+        role="group"
+        aria-label="Permisos del repositorio"
+        style={{ paddingInlineStart: "calc(var(--size-icon-md) + var(--space-inline-sm))" }}
+      >
+        {PERMISOS.map((permiso) => (
+          <Checkbox
+            key={permiso.value}
+            checked={marcados.includes(permiso.value)}
+            name="permisos"
+            value={permiso.value}
+            onCheckedChange={({ checked }) =>
+              setMarcados((previos) =>
+                checked === true
+                  ? [...previos, permiso.value]
+                  : previos.filter((valor) => valor !== permiso.value),
+              )
+            }
+          >
+            {permiso.label}
+          </Checkbox>
+        ))}
+      </div>
+    </div>
+  );
+}`;
+
+const tileCheckboxHtml = `<div
+  class="sk-inline"
+  style="align-items: stretch"
+>
+  <label
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-scope="tile"
+    data-part="root"
+    data-sk-tile-checkbox
+    data-name="alerts"
+    data-value="email"
+    data-default-checked="true"
+    style="flex: 1"
+  >
+    <input type="checkbox" checked data-part="input" />
+    <span class="sk-tile__content" data-part="content">
+      <span class="sk-tile__title">Alertas por email</span>
+      <span class="sk-tile__description">
+        Enviar fallos de despliegue al equipo.
+      </span>
+    </span>
+    <span
+      class="sk-checkbox__control sk-interactive"
+      data-part="indicator"
+      aria-hidden="true"
+    >
+      ${indicators}
+    </span>
+  </label>
+
+  <label
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-scope="tile"
+    data-part="root"
+    data-sk-tile-checkbox
+    data-name="alerts"
+    data-value="push"
+    style="flex: 1"
+  >
+    <input type="checkbox" data-part="input" />
+    <span class="sk-tile__content" data-part="content">
+      <span class="sk-tile__title">Notificaciones push</span>
+      <span class="sk-tile__description">
+        Avisar de incidentes urgentes en el móvil.
+      </span>
+    </span>
+    <span
+      class="sk-checkbox__control sk-interactive"
+      data-part="indicator"
+      aria-hidden="true"
+    >
+      ${indicators}
+    </span>
+  </label>
+
+  <label
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-scope="tile"
+    data-part="root"
+    data-sk-tile-checkbox
+    data-name="alerts"
+    data-value="digest"
+    style="flex: 1"
+  >
+    <input type="checkbox" data-part="input" />
+    <span class="sk-tile__content" data-part="content">
+      <span class="sk-tile__title">Resumen semanal</span>
+      <span class="sk-tile__description">
+        Recibir actividad y métricas cada viernes.
+      </span>
+    </span>
+    <span
+      class="sk-checkbox__control sk-interactive"
+      data-part="indicator"
+      aria-hidden="true"
+    >
+      ${indicators}
+    </span>
+  </label>
+</div>`;
 
 const tileCheckboxVanilla = `import { initComponents } from "@skryensya/vanilla/auto";
 import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 
 // Los indicadores check/remove se autoran como placeholders
-// <span data-ds-icon>; mountIcons los reemplaza por el <svg> del set.
+// <span data-sk-icon>; mountIcons los reemplaza por el <svg> del set.
 mountIcons(document, lucideIcons);
 
-// La label se autora con data-ds-tile-checkbox (data-name, data-value,
-// data-default-checked) más el input[data-part=input] y el [data-part=indicator].
-// initComponents la hidrata con la máquina @zag-js/checkbox (la misma que React):
-// el input queda oculto y controlado, el indicador es el control visual.
-initComponents();
+// Cada label se autora con data-sk-tile-checkbox (data-name, data-value,
+// data-default-checked) más su input y su indicador.
+// initComponents las hidrata con la máquina @zag-js/checkbox.
+await initComponents();
 
-const root = document.querySelector("[data-ds-tile-checkbox]");
-root.addEventListener("ds:checkedchange", (event) => {
-  console.log(event.detail.checked);
-});`;
+for (const root of document.querySelectorAll(
+  "[data-sk-tile-checkbox]",
+)) {
+  root.addEventListener("sk:checkedchange", (event) => {
+    console.log(root.dataset.value, event.detail.checked);
+  });
+}`;
 
 const tileCheckboxReact = `import {
   TileCheckbox,
 } from "@skryensya/react/tile-checkbox";
 
-<TileCheckbox
-  name="alerts"
-  value="email"
-  defaultChecked={false}
-  onCheck={(details) => console.log(details.checked)}
->
-  Alertas por email
-</TileCheckbox>;`;
+const alertas = [
+  {
+    value: "email",
+    title: "Alertas por email",
+    description: "Enviar fallos de despliegue al equipo.",
+  },
+  {
+    value: "push",
+    title: "Notificaciones push",
+    description: "Avisar de incidentes urgentes en el móvil.",
+  },
+  {
+    value: "digest",
+    title: "Resumen semanal",
+    description: "Recibir actividad y métricas cada viernes.",
+  },
+];
+
+<div className="sk-inline" style={{ alignItems: "stretch" }}>
+  {alertas.map((alerta, index) => (
+    <TileCheckbox
+      key={alerta.value}
+      name="alerts"
+      value={alerta.value}
+      defaultChecked={index === 0}
+      onCheck={(details) => {
+        console.log(alerta.value, details.checked);
+      }}
+      style={{ flex: 1 }}
+    >
+      <span className="sk-tile__title">{alerta.title}</span>
+      <span className="sk-tile__description">
+        {alerta.description}
+      </span>
+    </TileCheckbox>
+  ))}
+</div>;`;
 ---
 
 <Base title="Checkbox" description="Checkbox nativo: estado independiente, indeterminado y formulario sin máquina.">
   <h1>Checkbox</h1>
   <p class="lede">Una elección independiente. Conserva un <code>input type="checkbox"</code>: submit, reset, teclado y validación pertenecen al browser.</p>
 
-  <h2>Demo</h2>
   <Showcase html={html} react={react} label="Checkbox" />
   <p>
     El control usa los roles <code>check</code> y <code>remove</code> del set de iconos, no un trazo CSS.
     Importa <code>@skryensya/core/components/checkbox.css</code> y llama <code>initComponents()</code> una vez.
   </p>
 
+  <h2>Un checkbox que agrupa a otros</h2>
+  <p>
+    <code>indeterminate</code> no es un tercer valor que alguien pueda elegir: es lo que un padre
+    dice cuando <strong>sus hijos no se ponen de acuerdo</strong>. Por eso el glifo es
+    <code>remove</code> y no un check a medias, y por eso el padre no envía nada al formulario,
+    los que tienen <code>name</code> y <code>value</code> son los hijos.
+  </p>
+  <Showcase
+    html={groupHtml}
+    js={groupJs}
+    previewScript={groupJs}
+    react={groupReact}
+    label="Seleccionar todo"
+    note="tres estados a partir de dos booleanos"
+  />
+  <p>
+    El estado del padre es <strong>derivado</strong>, nunca autorado: se recalcula desde los hijos
+    en cada cambio. Al revés, un padre con estado propio empieza a mentir en cuanto alguien marca
+    un hijo. Son quince líneas sin máquina ni componente nuevo, así que el sistema no lo envuelve:
+    la agrupación es una regla del formulario, no del control.
+  </p>
+
   <h2>Checkbox de superficie: TileCheckbox</h2>
   <p>
     Cuando la elección necesita título, descripción y toda la superficie como target, usa
-    <code>TileCheckbox</code>. Es el mismo control (<code>ds-checkbox__control</code> + iconos); solo
+    <code>TileCheckbox</code>. Es el mismo control (<code>sk-checkbox__control</code> + iconos); solo
     cambia el contenedor.
   </p>
   <Showcase html={tileCheckboxHtml} react={tileCheckboxReact} label="TileCheckbox" />
-  <p>El enhancer <code>tile-checkbox</code> (Svelte + <code>@zag-js/checkbox</code>, la misma máquina que React) hidrata la label <code>data-ds-tile-checkbox</code> con <code>initComponents()</code>: controla el <code>input[data-part="input"]</code> (oculto) y sincroniza <code>data-state</code>; el <code>[data-part="indicator"]</code> es el control visual.</p>
-  <CodeBlock code={tileCheckboxVanilla} label="tu JavaScript" />
+  <p>El enhancer <code>tile-checkbox</code> (Svelte + <code>@zag-js/checkbox</code>, la misma máquina que React) hidrata cada label <code>data-sk-tile-checkbox</code> con <code>initComponents()</code>: controla su <code>input[data-part="input"]</code> (oculto) y sincroniza <code>data-state</code>; el <code>[data-part="indicator"]</code> es el control visual.</p>
+  <CodeBlock code={tileCheckboxVanilla} label="JavaScript" />
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo. React dibuja los iconos del set enlazado.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview. React dibuja los iconos del set enlazado.</p>
 
   <h2>Contrato</h2>
   <ul>
     <li><code>defaultChecked</code> deja el estado al input; un reset vuelve a ese valor.</li>
     <li><code>checked</code> controla el valor; <code>onCheckedChange</code> comunica la intención.</li>
     <li><code>"indeterminate"</code> es visual: no envía un valor hasta que la persona elige checked o unchecked. El glifo es <code>remove</code>.</li>
+    <li>
+      Un padre que agrupa hijos <strong>deriva</strong> su estado de ellos, nunca lo guarda:
+      <code>checked</code> cuando están todos, <code>indeterminate</code> cuando no coinciden. Los
+      dos son flags independientes del input, así que apaga <code>indeterminate</code> al salir de
+      ese estado o el guion se queda pegado.
+    </li>
     <li>El texto vive dentro del <code>label</code>; si no hay texto, proporciona <code>aria-label</code>.</li>
     <li>
-      El state layer va en <code>ds-checkbox__control</code>, no en el label: la selección es el
+      El state layer va en <code>sk-checkbox__control</code>, no en el label: la selección es el
       relleno del control, y el texto no hereda el color on-accent.
     </li>
-    <li>TileCheckbox reutiliza <code>ds-checkbox__control</code> y los mismos indicadores; no inventa otro glifo.</li>
+    <li>TileCheckbox reutiliza <code>sk-checkbox__control</code> y los mismos indicadores; no inventa otro glifo.</li>
   </ul>
-  <StylingHooks groups={[{ file: "components/checkbox.css", probe: "ds-checkbox" }]} />
+  <StylingHooks groups={[{ file: "components/checkbox.css", probe: "sk-checkbox" }]} />
 </Base>

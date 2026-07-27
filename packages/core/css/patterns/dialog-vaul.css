@@ -7,23 +7,24 @@
  */
 @layer components {
   @media (max-width: 52rem) {
-    .ds-dialog[data-ds-dialog-vaul] {
-      --ds-vaul-bg: var(--ds-dialog-bg);
-      --ds-vaul-fg: var(--ds-dialog-fg);
-      --ds-vaul-border-color: var(--ds-dialog-border-color);
-      --ds-vaul-border-width: var(--ds-dialog-border-width);
-      --ds-vaul-elevation: var(--ds-dialog-elevation);
-      --ds-vaul-backdrop-bg: var(--ds-dialog-backdrop-bg);
-      --ds-vaul-radius: var(--ds-dialog-radius) var(--ds-dialog-radius) 0 0;
-      --ds-vaul-enter-duration: var(--motion-enter-duration);
-      --ds-vaul-enter-easing: var(--motion-enter-easing);
-      --ds-vaul-exit-duration: var(--motion-exit-duration);
-      --ds-vaul-exit-easing: var(--motion-exit-easing);
-      --ds-vaul-release-duration: var(--motion-release-duration);
-      --ds-vaul-release-easing: var(--motion-release-easing);
-      --ds-vaul-drag-offset: 0px;
-      --ds-vaul-drag-progress: 0;
-      --ds-vaul-overpull: 12px;
+    .sk-dialog[data-sk-dialog-vaul] {
+      --sk-vaul-bg: var(--sk-dialog-bg);
+      --sk-vaul-fg: var(--sk-dialog-fg);
+      --sk-vaul-border-color: var(--sk-dialog-border-color);
+      --sk-vaul-border-width: var(--sk-dialog-border-width);
+      --sk-vaul-elevation: var(--sk-dialog-elevation);
+      --sk-vaul-backdrop-bg: var(--sk-dialog-backdrop-bg);
+      --sk-vaul-radius: var(--sk-dialog-radius) var(--sk-dialog-radius) 0 0;
+      --sk-vaul-enter-duration: var(--motion-enter-duration);
+      --sk-vaul-enter-easing: var(--motion-enter-easing);
+      --sk-vaul-exit-duration: var(--motion-exit-duration);
+      --sk-vaul-exit-easing: var(--motion-exit-easing);
+      --sk-vaul-release-duration: var(--motion-release-duration);
+      --sk-vaul-release-easing: var(--motion-release-easing);
+      --sk-vaul-drag-offset: 0px;
+      --sk-vaul-drag-progress: 0;
+      --sk-vaul-overpull: 12px;
+      --sk-vaul-material: max(2rem, calc(var(--sk-vaul-overpull) * 2));
 
       /* Compact Dialog Vaul is spatial: it slides from the edge without also inheriting the centred
        * dialog's scale/fade entrance. */
@@ -34,49 +35,75 @@
       box-sizing: border-box;
       inline-size: 100%;
       max-inline-size: none;
-      max-block-size: min(90dvh, var(--ds-vaul-block-size, 44rem));
+      max-block-size: min(90dvh, var(--sk-vaul-block-size, 44rem));
       margin: 0;
       border: 0;
-      border-block-start: var(--ds-vaul-border-width) solid var(--ds-vaul-border-color);
-      border-radius: var(--ds-vaul-radius);
-      background: var(--ds-vaul-bg);
-      color: var(--ds-vaul-fg);
-      box-shadow: var(--ds-vaul-elevation), 0 var(--ds-vaul-overpull) 0 0 var(--ds-vaul-bg);
+      border-block-start: var(--sk-vaul-border-width) solid var(--sk-vaul-border-color);
+      border-radius: var(--sk-vaul-radius);
+      background: var(--sk-vaul-bg);
+      color: var(--sk-vaul-fg);
+      /* Material first, elevation second, for the reason patterns/vaul.css states at length: the
+       * elevation painted over the revealed strip is what turns a lifted sheet into a hole. */
+      box-shadow: 0 var(--sk-vaul-material) 0 0 var(--sk-vaul-bg), var(--sk-vaul-elevation);
       overflow: hidden;
       translate: 0 100%;
       transition:
-        translate var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing),
-        overlay var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing) allow-discrete,
-        display var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing) allow-discrete;
+        translate var(--sk-vaul-exit-duration) var(--sk-vaul-exit-easing),
+        overlay var(--sk-vaul-exit-duration) var(--sk-vaul-exit-easing) allow-discrete,
+        display var(--sk-vaul-exit-duration) var(--sk-vaul-exit-easing) allow-discrete;
     }
 
-    .ds-dialog[data-ds-dialog-vaul][open] {
-      translate: 0 var(--ds-vaul-drag-offset);
+    .sk-dialog[data-sk-dialog-vaul][open] {
+      /* A COLUMN, because a sheet has a ceiling and the centred dialog does not.
+       *
+       * `max-block-size` above plus `overflow: hidden` means anything past 90dvh is not scrolled to,
+       * it is cut off, and the piece that gets cut is always the LAST one: the footer, i.e. the
+       * dialog's controls. The dialog kept its own anatomy on desktop and silently lost Confirm on
+       * mobile, which is the failure mode a responsive composition exists to prevent.
+       *
+       * So the sheet lays its three bands out itself: header and footer hold their size, the body is
+       * the only thing that gives, and the ceiling is spent on the reading pane. */
+      display: flex;
+      flex-direction: column;
+      translate: 0 var(--sk-vaul-drag-offset);
       transition:
-        translate var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing),
-        overlay var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing) allow-discrete,
-        display var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing) allow-discrete;
+        translate var(--sk-vaul-enter-duration) var(--sk-vaul-enter-easing),
+        overlay var(--sk-vaul-enter-duration) var(--sk-vaul-enter-easing) allow-discrete,
+        display var(--sk-vaul-enter-duration) var(--sk-vaul-enter-easing) allow-discrete;
     }
 
-    .ds-dialog[data-ds-dialog-vaul][data-releasing] {
+    .sk-dialog[data-sk-dialog-vaul] > :where([data-part="handle"], .sk-dialog__header, .sk-dialog__footer) {
+      flex: none;
+    }
+
+    /* `min-block-size: 0` is not optional here: a flex item's automatic minimum size is its content,
+     * so without it the body refuses to shrink and the footer is pushed out exactly as before. */
+    .sk-dialog[data-sk-dialog-vaul] > .sk-dialog__body {
+      flex: 1;
+      min-block-size: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .sk-dialog[data-sk-dialog-vaul][data-releasing] {
       transition:
-        translate var(--ds-vaul-release-duration) var(--ds-vaul-release-easing),
-        overlay var(--ds-vaul-release-duration) var(--ds-vaul-release-easing) allow-discrete,
-        display var(--ds-vaul-release-duration) var(--ds-vaul-release-easing) allow-discrete;
+        translate var(--sk-vaul-release-duration) var(--sk-vaul-release-easing),
+        overlay var(--sk-vaul-release-duration) var(--sk-vaul-release-easing) allow-discrete,
+        display var(--sk-vaul-release-duration) var(--sk-vaul-release-easing) allow-discrete;
     }
 
-    .ds-dialog[data-ds-dialog-vaul][data-dragging] {
+    .sk-dialog[data-sk-dialog-vaul][data-dragging] {
       transition: none;
       user-select: none;
     }
 
     @starting-style {
-      .ds-dialog[data-ds-dialog-vaul][open] {
+      .sk-dialog[data-sk-dialog-vaul][open] {
         translate: 0 100%;
       }
     }
 
-    .ds-dialog[data-ds-dialog-vaul] [data-part="handle"] {
+    .sk-dialog[data-sk-dialog-vaul] [data-part="handle"] {
       display: flex;
       flex: none;
       align-items: center;
@@ -86,11 +113,11 @@
       touch-action: none;
     }
 
-    .ds-dialog[data-ds-dialog-vaul][data-dragging] [data-part="handle"] {
+    .sk-dialog[data-sk-dialog-vaul][data-dragging] [data-part="handle"] {
       cursor: grabbing;
     }
 
-    .ds-dialog[data-ds-dialog-vaul] [data-part="handle"]::before {
+    .sk-dialog[data-sk-dialog-vaul] [data-part="handle"]::before {
       inline-size: 2.25rem;
       block-size: 0.25rem;
       border-radius: var(--radius-pill);
@@ -98,30 +125,30 @@
       content: "";
     }
 
-    .ds-dialog[data-ds-dialog-vaul]::backdrop {
-      background: var(--ds-vaul-backdrop-bg);
+    .sk-dialog[data-sk-dialog-vaul]::backdrop {
+      background: var(--sk-vaul-backdrop-bg);
       opacity: 0;
-      transition: opacity var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing);
+      transition: opacity var(--sk-vaul-exit-duration) var(--sk-vaul-exit-easing);
     }
 
-    .ds-dialog[data-ds-dialog-vaul][open]::backdrop {
-      opacity: calc(1 - var(--ds-vaul-drag-progress));
-      transition: opacity var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing);
+    .sk-dialog[data-sk-dialog-vaul][open]::backdrop {
+      opacity: calc(1 - var(--sk-vaul-drag-progress));
+      transition: opacity var(--sk-vaul-enter-duration) var(--sk-vaul-enter-easing);
     }
 
-    .ds-dialog[data-ds-dialog-vaul][data-releasing]::backdrop {
-      transition: opacity var(--ds-vaul-release-duration) var(--ds-vaul-release-easing);
+    .sk-dialog[data-sk-dialog-vaul][data-releasing]::backdrop {
+      transition: opacity var(--sk-vaul-release-duration) var(--sk-vaul-release-easing);
     }
   }
 
   @media (min-width: 52rem) {
-    .ds-dialog[data-ds-dialog-vaul] [data-part="handle"] {
+    .sk-dialog[data-sk-dialog-vaul] [data-part="handle"] {
       display: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ds-dialog[data-ds-dialog-vaul] {
+    .sk-dialog[data-sk-dialog-vaul] {
       translate: 0;
     }
   }

@@ -21,22 +21,22 @@ export type SelectOptions = {
 };
 
 export const selectEvents = {
-  valueChange: "ds-value-change",
+  valueChange: "sk-value-change",
 } as const;
 
 export const selectParts = {
-  native: "ds-select-native",
-  root: "ds-select",
-  control: "ds-select__control",
-  label: "ds-select__label",
-  trigger: "ds-select__trigger",
-  value: "ds-select__value",
-  indicator: "ds-select__indicator",
-  positioner: "ds-select__positioner",
-  content: "ds-select__content",
-  item: "ds-select__item",
-  itemText: "ds-select__item-text",
-  itemIndicator: "ds-select__item-indicator",
+  native: "sk-select-native",
+  root: "sk-select",
+  control: "sk-select__control",
+  label: "sk-select__label",
+  trigger: "sk-select__trigger",
+  value: "sk-select__value",
+  indicator: "sk-select__indicator",
+  positioner: "sk-select__positioner",
+  content: "sk-select__content",
+  item: "sk-select__item",
+  itemText: "sk-select__item-text",
+  itemIndicator: "sk-select__item-indicator",
 } as const;
 
 export type SelectPart = keyof typeof selectParts;

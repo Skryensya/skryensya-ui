@@ -1,5 +1,5 @@
 /*
- * GENERADO por scripts/generate.mjs — no editar a mano.
+ * GENERADO por scripts/generate.mjs, no editar a mano.
  *
  * Geometría de Lucide (ISC), redistribuida bajo su licencia. Ver LICENSE-lucide.
  */
@@ -40,4 +40,10 @@ export const generated = {
   "user": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\" /><circle cx=\"12\" cy=\"7\" r=\"4\" />" },
   "visibility": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\" /><circle cx=\"12\" cy=\"12\" r=\"3\" />" },
   "visibility-off": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49\" /><path d=\"M14.084 14.158a3 3 0 0 1-4.242-4.242\" /><path d=\"M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143\" /><path d=\"m2 2 20 20\" />" },
+  "mode-system": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<rect width=\"20\" height=\"14\" x=\"2\" y=\"3\" rx=\"2\" /><line x1=\"8\" x2=\"16\" y1=\"21\" y2=\"21\" /><line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"21\" />" },
+  "mode-light": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<circle cx=\"12\" cy=\"12\" r=\"4\" /><path d=\"M12 2v2\" /><path d=\"M12 20v2\" /><path d=\"m4.93 4.93 1.41 1.41\" /><path d=\"m17.66 17.66 1.41 1.41\" /><path d=\"M2 12h2\" /><path d=\"M20 12h2\" /><path d=\"m6.34 17.66-1.41 1.41\" /><path d=\"m19.07 4.93-1.41 1.41\" />" },
+  "mode-dark": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\" />" },
+  "screen-desktop": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<rect width=\"20\" height=\"14\" x=\"2\" y=\"3\" rx=\"2\" /><line x1=\"8\" x2=\"16\" y1=\"21\" y2=\"21\" /><line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"21\" />" },
+  "screen-tablet": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<rect width=\"16\" height=\"20\" x=\"4\" y=\"2\" rx=\"2\" ry=\"2\" /><line x1=\"12\" x2=\"12.01\" y1=\"18\" y2=\"18\" />" },
+  "screen-mobile": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\" /><path d=\"M12 18h.01\" />" },
 } satisfies Record<string, IconData>;

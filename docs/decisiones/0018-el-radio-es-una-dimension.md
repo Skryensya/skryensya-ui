@@ -31,7 +31,7 @@ escribe **un bloque de override** que re-declara tokens semánticos y compone en
 | **Marca** | rampas tier-1 | cambia la paleta primitiva | `data-brand` |
 | **Modo de color** | color tier-2 | `light-dark()` elige slot | `color-scheme` |
 | **Alto contraste** | color tier-2 | un bloque de override re-declara los mismos tokens | `data-contrast` |
-| **Densidad** | espaciado tier-2 | un multiplicador en runtime | `--ds-density` |
+| **Densidad** | espaciado tier-2 | un multiplicador en runtime | `--sk-density` |
 | **Radio** | redondez tier-2 | un multiplicador en runtime | `data-radius` / `--radius-multiplier` |
 
 El mecanismo es el de la **densidad**: un **multiplicador**, no un remapeo por nivel de cada rol. La

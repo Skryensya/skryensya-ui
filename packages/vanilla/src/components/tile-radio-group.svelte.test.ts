@@ -3,9 +3,9 @@ import { flushSync } from "svelte";
 import { describe, expect, it, vi } from "vitest";
 import { mountTileRadioGroup } from "./tile-radio-group.js";
 
-const markup = `<div data-ds-tile-radio-group data-part="root" data-name="plan" data-default-value="basic">
-  <label class="ds-tile ds-tile--interactive" data-part="item"><input type="radio" value="basic" /><span data-part="content">Basic</span><span data-part="indicator"></span></label>
-  <label class="ds-tile ds-tile--interactive" data-part="item"><input type="radio" value="pro" /><span data-part="content">Pro</span><span data-part="indicator"></span></label>
+const markup = `<div data-sk-tile-radio-group data-part="root" data-name="plan" data-default-value="basic">
+  <label class="sk-tile sk-tile--interactive" data-part="item"><input type="radio" value="basic" /><span data-part="content">Basic</span><span data-part="indicator"></span></label>
+  <label class="sk-tile sk-tile--interactive" data-part="item"><input type="radio" value="pro" /><span data-part="content">Pro</span><span data-part="indicator"></span></label>
 </div>`;
 
 function mount(): HTMLElement {
@@ -18,7 +18,7 @@ describe("TileRadioGroup (@zag-js/radio-group) contracts", () => {
   it("is a radiogroup, honours the default, and keeps values mutually exclusive + emits", () => {
     const root = mount();
     const handler = vi.fn();
-    root.addEventListener("ds:valuechange", handler);
+    root.addEventListener("sk:valuechange", handler);
     const radios = root.querySelectorAll<HTMLInputElement>('input[type="radio"]');
 
     expect(root.getAttribute("role")).toBe("radiogroup");

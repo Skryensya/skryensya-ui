@@ -1,0 +1,50 @@
+/* TIER 3, EMPTY STATE — absence plus a concrete next action. */
+@layer components {
+  .sk-empty-state {
+    --sk-empty-state-gap: var(--space-stack-sm);
+    --sk-empty-state-padding: var(--space-inset-xl);
+    --sk-empty-state-max-inline-size: 34rem;
+    --sk-empty-state-fg: var(--color-text-primary);
+    --sk-empty-state-icon-size: calc(var(--size-icon-lg) * 2);
+    --sk-empty-state-icon-radius: var(--radius-pill);
+    --sk-empty-state-icon-bg: var(--color-bg-surface-sunken);
+    --sk-empty-state-icon-fg: var(--color-text-secondary);
+    --sk-empty-state-title-size: var(--font-size-heading-sm);
+    --sk-empty-state-description-color: var(--color-text-secondary);
+    --sk-empty-state-actions-gap: var(--space-inline-sm);
+
+    display: grid;
+    justify-items: center;
+    gap: var(--sk-empty-state-gap);
+    max-inline-size: var(--sk-empty-state-max-inline-size);
+    padding: var(--sk-empty-state-padding);
+    color: var(--sk-empty-state-fg);
+    text-align: center;
+  }
+  .sk-empty-state__icon {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--sk-empty-state-icon-size);
+    block-size: var(--sk-empty-state-icon-size);
+    border-radius: var(--sk-empty-state-icon-radius);
+    background: var(--sk-empty-state-icon-bg);
+    color: var(--sk-empty-state-icon-fg);
+  }
+  .sk-empty-state__title {
+    margin: 0;
+    font-size: var(--sk-empty-state-title-size);
+    line-height: var(--font-line-height-heading);
+    text-wrap: balance;
+  }
+  .sk-empty-state__description {
+    margin: 0;
+    color: var(--sk-empty-state-description-color);
+    text-wrap: pretty;
+  }
+  .sk-empty-state__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--sk-empty-state-actions-gap);
+  }
+}

@@ -43,6 +43,12 @@
     { "fg": "--color-text-warning",   "bg": "--color-bg-surface-sunken", "min": 4.5, "modes": ["light", "dark"] },
     { "fg": "--color-text-warning",   "bg": "--color-bg-warning-subtle", "min": 4.5, "modes": ["light", "dark"] },
 
+    { "fg": "--color-text-info",      "bg": "--color-bg-canvas",         "min": 4.5, "modes": ["light", "dark"] },
+    { "fg": "--color-text-info",      "bg": "--color-bg-surface",        "min": 4.5, "modes": ["light", "dark"] },
+    { "fg": "--color-text-info",      "bg": "--color-bg-surface-raised", "min": 4.5, "modes": ["light", "dark"] },
+    { "fg": "--color-text-info",      "bg": "--color-bg-surface-sunken", "min": 4.5, "modes": ["light", "dark"] },
+    { "fg": "--color-text-info",      "bg": "--color-bg-info-subtle",    "min": 4.5, "modes": ["light", "dark"] },
+
     { "fg": "--color-border-default", "bg": "--color-bg-canvas",         "min": 3, "modes": ["light", "dark"] },
     { "fg": "--color-border-default", "bg": "--color-bg-surface",        "min": 3, "modes": ["light", "dark"] },
     { "fg": "--color-border-focus",   "bg": "--color-bg-canvas",         "min": 3, "modes": ["light", "dark", "hc-light", "hc-dark"] }

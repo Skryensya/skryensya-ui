@@ -1,7 +1,7 @@
 /*
  * DIMENSION: radius (roundness), the fifth dimension (ADR-18).
  *
- * A composable axis over CORNER ROUNDNESS, orthogonal to brand, colour mode, high contrast
+ * A composable axis over CORNER ROUNDNESS, orthogonal to brand, color mode, high contrast
  * and density. Its mechanism is DENSITY's, not high contrast's: a single MULTIPLIER in the
  * cascade, not a per-level remap of each role. `--radius-multiplier` scales the role radii
  * declared in semantic/_radius.scss, so the roles keep their own places on the scale, control

@@ -5,7 +5,7 @@ import { connectSlider, mountSlider } from "./slider.js";
 
 function mount(html: string) {
   document.body.innerHTML = html;
-  const root = document.querySelector<HTMLInputElement>("[data-ds-slider]");
+  const root = document.querySelector<HTMLInputElement>("[data-sk-slider]");
   if (!root) throw new Error("Expected slider root.");
   return root;
 }
@@ -14,7 +14,7 @@ const fill = (el: HTMLElement) => el.style.getPropertyValue(sliderFillProperty);
 
 describe("Slider Vanilla contracts", () => {
   it("paints the initial fill from value within [min, max] on mount", () => {
-    const root = mount(`<input class="ds-slider" type="range" min="0" max="100" value="65" data-ds-slider />`);
+    const root = mount(`<input class="sk-slider" type="range" min="0" max="100" value="65" data-sk-slider />`);
     const cleanup = connectSlider(root);
 
     expect(fill(root)).toBe("0.65");
@@ -22,7 +22,7 @@ describe("Slider Vanilla contracts", () => {
   });
 
   it("tracks the value on input, and honours a non-zero min", () => {
-    const root = mount(`<input class="ds-slider" type="range" min="20" max="70" value="20" data-ds-slider />`);
+    const root = mount(`<input class="sk-slider" type="range" min="20" max="70" value="20" data-sk-slider />`);
     const cleanup = connectSlider(root);
     expect(fill(root)).toBe("0"); // at min
 
@@ -34,7 +34,7 @@ describe("Slider Vanilla contracts", () => {
   });
 
   it("falls back to the platform default range (0–100) when min/max are unset", () => {
-    const root = mount(`<input class="ds-slider" type="range" value="25" data-ds-slider />`);
+    const root = mount(`<input class="sk-slider" type="range" value="25" data-sk-slider />`);
     const cleanup = connectSlider(root);
 
     expect(fill(root)).toBe("0.25");
@@ -42,7 +42,7 @@ describe("Slider Vanilla contracts", () => {
   });
 
   it("stops updating after cleanup", () => {
-    const root = mount(`<input class="ds-slider" type="range" min="0" max="100" value="10" data-ds-slider />`);
+    const root = mount(`<input class="sk-slider" type="range" min="0" max="100" value="10" data-sk-slider />`);
     const cleanup = connectSlider(root);
     expect(fill(root)).toBe("0.1");
 
@@ -53,12 +53,12 @@ describe("Slider Vanilla contracts", () => {
   });
 
   it("auto-mounts via the enhancer and refuses a non-range root", () => {
-    const root = mount(`<input class="ds-slider" type="range" min="0" max="100" value="50" data-ds-slider />`);
+    const root = mount(`<input class="sk-slider" type="range" min="0" max="100" value="50" data-sk-slider />`);
     expect(mountSlider(document)).toBe(1);
     expect(fill(root)).toBe("0.5");
 
-    document.body.innerHTML = `<input class="ds-slider" type="text" data-ds-slider />`;
-    const wrong = document.querySelector<HTMLElement>("[data-ds-slider]")!;
+    document.body.innerHTML = `<input class="sk-slider" type="text" data-sk-slider />`;
+    const wrong = document.querySelector<HTMLElement>("[data-sk-slider]")!;
     expect(() => connectSlider(wrong)).toThrow(/range/);
   });
 });

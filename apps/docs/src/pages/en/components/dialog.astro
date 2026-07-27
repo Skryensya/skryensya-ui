@@ -1,0 +1,339 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+
+const install = `pnpm add @skryensya/core`;
+
+const styles = `@import "@skryensya/core/components/dialog.css";
+@import "@skryensya/core/patterns/scroll-lock.css";`;
+
+const confirmHtml = `<button
+  class="sk-button sk-interactive"
+  data-variant="danger"
+  type="button"
+  data-dialog-open="confirm-delete"
+>
+  Delete project
+</button>
+
+<dialog
+  class="sk-dialog"
+  id="confirm-delete"
+  aria-labelledby="confirm-delete-title"
+>
+  <header class="sk-dialog__header">
+    <h3
+      class="sk-heading sk-dialog__title"
+      data-size="h3"
+      data-flush
+      id="confirm-delete-title"
+    >
+      Delete this project?
+    </h3>
+    <form method="dialog">
+      <button
+        class="sk-button sk-interactive sk-dialog__close"
+        data-variant="ghost"
+        data-icon-only
+        type="submit"
+        value="cancel"
+        aria-label="Cerrar"
+      >
+        <span data-sk-icon="close"></span>
+      </button>
+    </form>
+  </header>
+  <div class="sk-dialog__body">
+    <p>
+      The project and all its history are deleted. This action is not
+      can undo.
+    </p>
+  </div>
+  <form method="dialog" class="sk-dialog__footer">
+    <button
+      class="sk-button sk-interactive"
+      data-variant="ghost"
+      type="submit"
+      value="cancel"
+      autofocus
+    >
+      Cancel
+    </button>
+    <button
+      class="sk-button sk-interactive"
+      data-variant="danger"
+      type="submit"
+      value="confirm"
+    >
+      Delete
+    </button>
+  </form>
+</dialog>`;
+
+const confirmJs = `const dialog = document.getElementById("confirm-delete");
+const trigger = document.querySelector(
+  '[data-dialog-open="confirm-delete"]',
+);
+
+trigger?.addEventListener("click", () => {
+  if (dialog instanceof HTMLDialogElement) dialog.showModal();
+});
+
+// Optional: read which button closed the form.
+dialog?.addEventListener("close", () => {
+  console.log(dialog.returnValue); // "cancel" | "confirm"
+});`;
+
+const vaulInstall = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const vaulStyles = `@import "@skryensya/core/components/dialog.css";
+@import "@skryensya/core/patterns/dialog-vaul.css";
+@import "@skryensya/core/patterns/scroll-lock.css";`;
+
+const vaulJs = `import { initComponents } from "@skryensya/vanilla/auto";
+
+await initComponents();`;
+
+const vaulHtml = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-sk-dialog-vaul-open="demo-dialog"
+  type="button"
+>
+  Abrir dialog
+</button>
+
+<dialog
+  class="sk-dialog"
+  id="demo-dialog"
+  data-sk-dialog-vaul
+  data-edge="block-end"
+  aria-labelledby="demo-dialog-title"
+>
+  <div data-part="handle" aria-hidden="true"></div>
+  <header class="sk-dialog__header">
+    <h3
+      class="sk-heading sk-dialog__title"
+      data-size="h3"
+      data-flush
+      id="demo-dialog-title"
+    >
+      Centered box, Vaul on mobile
+    </h3>
+    <form method="dialog">
+      <button
+        class="sk-button sk-interactive sk-dialog__close"
+        data-sk-button
+        data-variant="ghost"
+        data-icon-only
+        data-sk-dialog-vaul-close
+        type="submit"
+        value="cancel"
+        aria-label="Cerrar"
+      >
+        <span data-sk-icon="close"></span>
+      </button>
+    </form>
+  </header>
+  <div class="sk-dialog__body">
+    <p>
+      Narrow the window below 52rem and this same dialog wins
+      a Vaul block-end. The dialog markup does not change.
+    </p>
+    <ul class="sk-list" data-density="compact" aria-label="What changes">
+      <li class="sk-list__item">
+        <span class="sk-list__leading" data-sk-icon="check"></span>
+        <span class="sk-list__content">
+          <span class="sk-list__title">Arrives from the edge</span>
+          <span class="sk-list__description">
+            Slide block-end instead of centered scale.
+          </span>
+        </span>
+      </li>
+      <li class="sk-list__item">
+        <span class="sk-list__leading" data-sk-icon="check"></span>
+        <span class="sk-list__content">
+          <span class="sk-list__title">Drag to close</span>
+          <span class="sk-list__description">
+            With handle, and only below the breakpoint.
+          </span>
+        </span>
+      </li>
+      <li class="sk-list__item">
+        <span class="sk-list__leading" data-sk-icon="check"></span>
+        <span class="sk-list__content">
+          <span class="sk-list__title">It is still the dialog</span>
+          <span class="sk-list__description">
+            Focus, Escape and inert page are from the platform.
+          </span>
+        </span>
+      </li>
+    </ul>
+  </div>
+  <footer class="sk-dialog__footer">
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="ghost"
+      data-sk-dialog-vaul-close
+      type="button"
+    >
+      Ahora no
+    </button>
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-sk-dialog-vaul-close
+      type="button"
+    >
+      Entendido
+    </button>
+  </footer>
+</dialog>`;
+---
+
+<Base
+  title="Dialog"
+  description="The centered dialogue of the platform. Optional: Dialog Vaul when content requests a surface from the edge on mobile."
+>
+  <h1>Dialog</h1>
+  <p class="lede">
+    A centered <code>&lt;dialog class="sk-dialog"&gt;</code>. <code>showModal()</code> delivers focus,
+    Escape, inert page and backdrop; The system paints the surface. Without enhancer: the only JavaScript
+    is open.
+  </p>
+
+  <h2>Confirm</h2>
+  <p>
+    Anatomy: <code>sk-dialog__header</code> (title with
+    <code>Heading</code> + <code>sk-dialog__title</code>, and close),
+    <code>sk-dialog__body</code> and
+    <code>sk-dialog__footer</code> (controls). The closure and footer are
+    <code>&lt;form method="dialog"&gt;</code>: they close without a handler and leave the
+    <code>value</code> in <code>dialog.returnValue</code>.
+  </p>
+  <Showcase html={confirmHtml} previewScript={confirmJs} label="Confirm" viewport="overlay" />
+
+  <h2>Abrirlo</h2>
+  <CodeBlock code={confirmJs} label="JavaScript" />
+
+  <h2>Foco y teclado</h2>
+  <p>
+    Con <code>showModal()</code> la plataforma ya hace el trabajo. No reimplementes un focus trap en
+    JavaScript (decisión 11 / técnica WCAG H102).
+  </p>
+  <ul>
+    <li>
+      <strong>When opening</strong> the focus enters the dialog. Without <code>autofocus</code>, land on the
+      first focusable control. In a destructive commit put <code>autofocus</code> in
+      <strong>Cancel</strong> (the safe option), not Delete or Closing.
+    </li>
+    <li>
+      <strong>Order in the DOM</strong>: the title goes <em>before</em> of the close button. If the closure
+      was the first focusable node and the content was long, <code>showModal()</code> could open the
+      panel already scrolled towards that control.
+    </li>
+    <li>
+      <strong>Tab / Shift+Tab</strong> cycle between dialog controls. The page behind is
+      <code>inert</code>: does not receive focus. Yes, you can access the chrome browser (bar
+      addresses); That is intentional, not a bug.
+    </li>
+    <li>
+      <strong>Escape</strong> closes the dialog (event <code>cancel</code>) and restores focus to the trigger. It is equivalent to discarding, not confirming: same <code>returnValue</code> vacío / cancel
+      que el botón de cerrar con <code>value="cancel"</code>.
+    </li>
+    <li>
+      <strong>When closing</strong> the focus returns to the element that opened the dialog, if it is still in the
+      page. There is no need to keep it on hand.
+    </li>
+    <li>
+      The close button is a <code>sk-button</code> with <code>data-icon-only</code> and
+      <code>aria-label="Cerrar"</code>. The icon is decorative
+      (<code>&lt;span data-sk-icon="close"&gt;</code>); the name is from the button.
+    </li>
+  </ul>
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+  <CodeBlock code={styles} label="CSS" lang="css" />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>
+      Open a <code>&lt;dialog class="sk-dialog"&gt;</code> with <code>showModal()</code>, not a
+      <code>div</code> with imitated roles.
+    </li>
+    <li>
+      Anatomy: <code>sk-dialog__header</code> (
+      <code>sk-heading sk-dialog__title</code> +
+      <code>sk-dialog__close</code>), <code>sk-dialog__body</code>,
+      <code>sk-dialog__footer</code> (controls, optional). The title is
+      <a class="sk-link sk-interactive" href="/en/components/heading">Heading</a>
+      (almost always with <code>data-flush</code>).
+    </li>
+    <li>
+      Associate the title with <code>aria-labelledby</code> pointing to the
+      Heading <code>id</code> (or an equivalent accessible name).
+    </li>
+    <li>
+      Closure and actions use <code>&lt;form method="dialog"&gt;</code>;
+      <code>value</code> on each button if you need to know which one was chosen.
+    </li>
+    <li>
+      Do not add your own focus trap: <code>showModal()</code> already contains the focus and restores the
+      close.
+    </li>
+    <li>
+      Import <a class="sk-link sk-interactive" href="/en/scroll-lock">scroll lock</a> if you want
+      freeze the page behind without CLS when the scrollbar disappears.
+    </li>
+    <li>
+      With <a class="sk-link sk-interactive" href="/en/transparency">
+      <code>prefers-reduced-transparency</code></a>, the backdrop leaves the mixture translucent and passes
+      to an opaque background; The modality does not change.
+    </li>
+  </ul>
+
+  <h2>Option: Dialog Vaul</h2>
+  <p>
+    When the content requests a surface from the edge on mobile, the same
+    <code>&lt;dialog&gt;</code> can opt into <strong>Dialog Vaul</strong>: add slide,
+    light-dismiss and drag-to-dismiss. The mode (focus, Escape, inert) remains
+    <code>showModal()</code>.
+  </p>
+  <Showcase html={vaulHtml} label="Dialog Vaul" viewport="overlay" />
+
+  <h3>What does it add</h3>
+  <ul>
+    <li>Open and close with authorized triggers and closers (<code>data-sk-dialog-vaul-open</code> /
+      <code>-close</code>).</li>
+    <li>Below <code>52rem</code>, drag the handle towards <code>block-end</code>.</li>
+    <li>Light-dismiss when pressing outside the panel rectangle.</li>
+    <li>
+      <code>data-sk-dialog-vaul</code> opts for improvement;
+      <code>data-edge="block-end"</code> names the edge. The handle is optional.
+    </li>
+  </ul>
+
+  <h3>Install Dialog Vaul</h3>
+  <CodeBlock code={vaulInstall} label="terminal" />
+  <CodeBlock code={vaulStyles} label="CSS" lang="css" />
+  <CodeBlock code={vaulJs} label="JavaScript" />
+
+  <h2>The always on border is not aesthetic</h2>
+  <p>
+    In high contrast the panel and the page resolve to the same color: soften
+    <code>--sk-dialog-border-width</code> leaves the dialog invisible without failing a single test. By
+    that arrives in <code>1px</code> and not in <code>0</code>.
+  </p>
+
+  <StylingHooks
+    groups={[
+      { file: "components/dialog.css", probe: "sk-dialog", title: "Dialog" },
+      { file: "patterns/dialog-vaul.css", probe: "data-sk-dialog-vaul", title: "Dialog Vaul" },
+    ]}
+  />
+</Base>
+

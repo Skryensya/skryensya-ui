@@ -9,9 +9,9 @@ describe("selection controls", () => {
     const checkbox = ui.getByRole("checkbox", { name: "Archive" }) as HTMLInputElement;
 
     expect(checkbox.indeterminate).toBe(true);
-    expect(ui.container.querySelector(".ds-checkbox__control")?.classList.contains("ds-interactive")).toBe(true);
-    expect(ui.container.querySelector(".ds-checkbox")?.classList.contains("ds-interactive")).toBe(false);
-    expect(ui.container.querySelectorAll(".ds-checkbox__indicator .ds-icon")).toHaveLength(2);
+    expect(ui.container.querySelector(".sk-checkbox__control")?.classList.contains("sk-interactive")).toBe(true);
+    expect(ui.container.querySelector(".sk-checkbox")?.classList.contains("sk-interactive")).toBe(false);
+    expect(ui.container.querySelectorAll(".sk-checkbox__indicator .sk-icon")).toHaveLength(2);
     fireEvent.click(checkbox);
     expect(onCheckedChange).toHaveBeenCalledWith({ checked: true });
   });

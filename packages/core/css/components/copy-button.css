@@ -1,0 +1,69 @@
+/* TIER 3, COPY BUTTON — declarative clipboard action with transient feedback.
+ *
+ * Compose onto `.sk-button` (typically ghost + icon-only). Face size comes from the button
+ * (`data-size="sm"` paints at control-sm); the button's ::after expands the hit to the touch floor.
+ * This file only owns the stacked idle/copied icons and the live label.
+ */
+@layer components {
+  .sk-copy-button {
+    --sk-copy-button-error-fg: var(--color-text-danger);
+
+    display: inline-grid;
+    place-items: center;
+    padding-inline: 0;
+  }
+
+  .sk-copy-button__icon {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: scale(0.25);
+    filter: blur(4px);
+    transition-property: opacity, transform, filter;
+    transition-duration: var(--motion-state-change-duration);
+    transition-timing-function: var(--motion-state-change-easing);
+  }
+
+  .sk-copy-button [data-sk-copy-button-icon="idle"],
+  .sk-copy-button[data-sk-copy-button-state="copied"] [data-sk-copy-button-icon="copied"] {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+
+  .sk-copy-button[data-sk-copy-button-state="copied"] [data-sk-copy-button-icon="idle"] {
+    opacity: 0;
+    transform: scale(0.25);
+    filter: blur(4px);
+  }
+
+  .sk-copy-button[data-sk-copy-button-state="error"] {
+    color: var(--sk-copy-button-error-fg);
+  }
+
+  .sk-copy-button__label {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-copy-button__icon {
+      transition: none;
+    }
+  }
+}
+
+/*
+ * Consumer button skins set `display: inline-flex` unlayered. That beats the layered
+ * `inline-grid` above and lays the idle/copied icons in a row — the hidden one still
+ * eats width. Re-assert grid outside the layer so the icons stack in one cell.
+ */
+.sk-button.sk-copy-button {
+  display: inline-grid;
+  place-items: center;
+  padding-inline: 0;
+}

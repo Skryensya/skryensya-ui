@@ -1,0 +1,172 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+// El preview clona las hojas del <head> de la página, así que lo que use el demo tiene que estar
+// importado acá: `.sk-truncate` es del demo, no del paquete.
+import "../../examples/tooltip.css";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
+
+/*
+ * Tres triggers y nada más: los tres casos donde un tooltip se gana su lugar, sin el dashboard que
+ * antes los rodeaba. Entre uno y otro cambia sólo la forma del trigger y la colocación; el resto del
+ * markup es idéntico, que es justo lo que hay que poder leer.
+ *
+ * Sin contenedor de layout: `.sk-tooltip` es `inline-flex`, así que los tres fluyen en línea donde
+ * sea que se peguen. Un wrapper acá sería markup que no es tooltip.
+ */
+const html = `<!-- 1. Un control icon-only. El nombre vive en aria-label; el tooltip lo amplía. -->
+<span class="sk-tooltip" data-sk-anchor data-sk-placement="block-end">
+  <button
+    class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
+    type="button"
+    data-variant="ghost"
+    data-icon-only
+    aria-label="Exportar"
+    data-sk-anchor-trigger
+  ><span data-sk-icon="download"></span></button>
+  <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+    <!-- La flecha, opcional: se autora o no existe. Sale del trigger, no del centro de la caja. -->
+    <span class="sk-anchored-arrow" aria-hidden="true"></span>
+    <span class="sk-tooltip__content" data-sk-anchor-content>Descarga el periodo visible en CSV</span>
+  </span>
+</span>
+
+<!-- 2. Explicar un dato que ya está en pantalla: el número se ve siempre, el tooltip dice cómo se calcula. -->
+<span class="sk-inline" data-gap="xs">
+  Ingresos $48.2k
+  <span class="sk-tooltip" data-sk-anchor>
+    <button
+      class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
+      type="button"
+      data-variant="ghost"
+      data-icon-only
+      data-size="sm"
+      aria-label="Cómo se calcula Ingresos"
+      data-sk-anchor-trigger
+    ><span data-sk-icon="info"></span></button>
+    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+      <span class="sk-anchored-arrow" aria-hidden="true"></span>
+      <span class="sk-tooltip__content" data-sk-anchor-content>Suma facturada del periodo, sin impuestos ni reembolsos</span>
+    </span>
+  </span>
+</span>
+
+<!-- 3. Devolver lo que el ancho tuvo que cortar. El trigger es el propio texto truncado. -->
+<span class="sk-tooltip" data-sk-anchor data-sk-placement="inline-end">
+  <span
+    class="sk-truncate sk-tooltip__trigger sk-anchor"
+    tabindex="0"
+    data-sk-anchor-trigger
+  >Migración del pipeline de facturación</span>
+  <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+    <span class="sk-anchored-arrow" aria-hidden="true"></span>
+    <span class="sk-tooltip__content" data-sk-anchor-content>Migración del pipeline de facturación</span>
+  </span>
+</span>`;
+
+const react = `import { Tooltip } from "@skryensya/react/tooltip";
+
+// 1. Un control icon-only. El nombre vive en aria-label, el tooltip lo amplía.
+//    \`arrow\` es lo mismo que autorar <span className="sk-anchored-arrow" />
+//    dentro del positioner en el HTML: opcional en los dos bindings, y off
+//    por defecto.
+<Tooltip content="Descarga el periodo visible en CSV" placement="block-end" arrow>
+  <button aria-label="Exportar" type="button">
+    <DownloadIcon />
+  </button>
+</Tooltip>
+
+// 2. Explicar un dato que ya está en pantalla; esto cuenta cómo se calcula.
+<Tooltip content="Suma facturada del periodo, sin impuestos ni reembolsos" arrow>
+  <button aria-label="Cómo se calcula Ingresos" type="button">
+    <InfoIcon />
+  </button>
+</Tooltip>
+
+// 3. Devolver lo que el ancho cortó. tabIndex hace que el texto truncado
+//    sea alcanzable: sin foco, el tooltip sería sólo para mouse.
+<Tooltip content={row.title} placement="inline-end" arrow>
+  <span className="sk-truncate" tabIndex={0}>{row.title}</span>
+</Tooltip>;`;
+---
+
+<Base
+  title="Tooltip"
+  description="Tooltip: una descripción auxiliar anclada al trigger, con aria-describedby, Escape y CSS anchor positioning."
+>
+  <h1>Tooltip</h1>
+  <p class="lede">
+    Tooltip es una <strong>descripción auxiliar</strong>, nunca el nombre de un control ni el único
+    lugar donde vive un dato. La máquina cuelga <code>aria-describedby</code> del trigger mientras
+    está abierto, no <code>aria-labelledby</code>: el control ya tiene que tener nombre accesible por
+    su cuenta, y el tooltip lo amplía.
+  </p>
+
+  {/* `menu`: el tooltip pinta fuera del flujo, y en un stage al alto del contenido no tendría a
+      dónde ir, así que la colocación real nunca se vería. */}
+  <Showcase html={html} react={react} label="Tooltip" viewport="menu" />
+
+  <h2>La regla que no puede verificar el sistema</h2>
+  <p>
+    Hay dos situaciones sin arreglo posible dentro del componente. En <strong>touch</strong> no hay
+    hover: la máquina abre en <code>pointerenter</code> y en <code>focus</code>, así que en un
+    teléfono el tooltip prácticamente no aparece. <strong>Sin JavaScript</strong> el contenido se
+    pinta oculto y solo la máquina lo abre, así que tampoco aparece.
+  </p>
+  <p>
+    En los dos casos no se pierde información <em>porque</em> el contrato prohíbe que haya
+    información ahí que no esté en otro lado. Un tooltip que es la única fuente de algo es un bug de
+    quien lo usa, y el validador no lo puede detectar: por eso está escrito acá y en el contrato de
+    <code>@skryensya/core/tooltip</code>.
+  </p>
+
+  <h2>WCAG 1.4.13</h2>
+  <p>
+    El criterio <em>Content on Hover or Focus</em> pide tres cosas, y las tres se cumplen por
+    defecto. <strong>Descartable</strong>: <kbd class="sk-kbd">Esc</kbd> cierra sin mover el puntero
+    ni el foco. <strong>Persistente</strong>: no se cierra sola por un temporizador.
+    <strong>Hoverable</strong>: el puntero puede llegar hasta el tooltip sin que desaparezca.
+  </p>
+  <p>
+    Ese último es la opción <code>interactive</code> de la máquina, y viene <strong>encendida</strong>.
+    Con ella apagada el contenido recibe <code>pointer-events: none</code>, el puntero nunca lo
+    alcanza y el tooltip se cierra en el camino: eso falla el criterio. La tentación es apagarla
+    razonando que un tooltip descriptivo no tiene nada que clickear, y es un error de lectura:
+    <em>hoverable</em> no existe para poder operar el tooltip, existe para poder <strong>leerlo</strong>,
+    que es justo lo que necesita alguien con magnificación de pantalla o con temblor. Se puede
+    apagar con <code>data-interactive="false"</code>, y apagarlo es salirse del criterio a sabiendas.
+  </p>
+
+  <h2>Colocación</h2>
+  <p>
+    <code>data-sk-placement</code> acepta cuatro valores en ejes lógicos:
+    <code>block-start</code> (el defecto), <code>block-end</code>, <code>inline-start</code> y
+    <code>inline-end</code>. Son una <em>preferencia</em>, no una garantía: si no entra, voltea al
+    lado opuesto del mismo eje, porque quien pide <code>inline-end</code> quiere el tooltip al
+    costado y caer arriba sería desobedecer, no adaptarse.
+  </p>
+
+  <h2>Posicionamiento</h2>
+  <p>
+    Donde hay <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning" rel="noopener noreferrer" target="_blank">CSS anchor positioning</a>,
+    el navegador coloca el tooltip: sin bucle de layout y sin medir en cada scroll. El enhancer
+    estampa un <code>anchor-name</code> único y deja de pasarle a Zag los estilos inline, para que no
+    haya dos motores de posicionamiento peleando. Los navegadores sin la API se quedan con el
+    posicionamiento JS de Zag, que es el fallback, no un camino inferior.
+  </p>
+  <p>
+    La <strong>flecha</strong> sigue el mismo reparto: sale del <em>trigger</em> y no del centro de la
+    caja, así que sigue apuntando al control aunque la caja se haya corrido para no salirse de
+    pantalla, y voltea junto con ella. Vive adentro del positioner y aun así se ancla al trigger,
+    porque es <code>fixed</code>: un fijo lo contiene el viewport, no su padre. En el fallback la
+    coloca la máquina. Está contado en <a href="/anclaje">Anclaje</a>.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
+</Base>

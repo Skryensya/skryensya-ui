@@ -1,0 +1,73 @@
+---
+import Base from "../../layouts/Base.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+import "@skryensya/core/components/popover.css";
+
+const install = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/popover.css";`;
+const html = `<div class="sk-popover">
+  <button
+    class="sk-button sk-interactive sk-popover__trigger sk-anchor"
+    popovertarget="filters-popup"
+    style="--sk-anchored-name: --filters-anchor"
+    type="button"
+  >
+    Filtros
+  </button>
+  <div
+    class="sk-popover__positioner sk-anchored sk-popover__content"
+    id="filters-popup"
+    popover="auto"
+    style="--sk-anchored-name: --filters-anchor; --sk-anchored-box-name: --filters-box"
+  >
+    <!-- La flecha, opcional: se autora o no existe. Un popup la quiere, un select no. -->
+    <span class="sk-anchored-arrow" aria-hidden="true"></span>
+    <label><input type="checkbox" /> Solo activos</label>
+  </div>
+</div>`;
+const react = `import { Popup } from "@skryensya/react/popup";
+
+// \`arrow\` es lo mismo que autorar <span className="sk-anchored-arrow" /> dentro
+// del positioner: opcional en los dos bindings, y off por defecto.
+<Popup trigger="Filtros" arrow>
+  <label>
+    <input type="checkbox" /> Solo activos
+  </label>
+</Popup>`;
+---
+
+<Base
+  title="Popup"
+  description="Superficie flotante mínima para composiciones que no necesitan chrome de Popover."
+>
+  <h1>Popup</h1>
+  <p class="lede">Superficie flotante mínima para composiciones que no necesitan chrome de Popover.</p>
+
+  <h2>Instalación</h2>
+  <Showcase
+    html={html}
+    react={react}
+    label="Popup"
+    viewport="menu"
+  />
+
+  <h2>Contrato</h2>
+  <p>Popup aporta ancla y superficie, no semántica interna. Si el patrón tiene título y acciones de cierre, usa Popover.</p>
+
+  <h2>Accesibilidad</h2>
+  <p>El contenido debe aportar su propia semántica; Popup no inventa roles dialog o menu.</p>
+
+  <h2>CSS</h2>
+  <pre><code>{install}</code></pre>
+  <StylingHooks
+    groups={[
+      {
+        file: "components/popover.css",
+        probe: "sk-popover",
+        title: "Popup",
+      },
+      { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+    ]}
+  />
+</Base>

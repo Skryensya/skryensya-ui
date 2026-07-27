@@ -62,9 +62,18 @@
     --motion-emphasize-duration: var(--scale-duration-moderate);
     --motion-emphasize-easing: var(--scale-easing-emphasized);
 
-    /* loading, continuous, linear, no ease (a loop with ease looks like it's breathing) */
-    --motion-loading-duration: var(--scale-duration-slow);
+    /* count, a numeric value settling into place (stat count-up). Enter easing, deliberate
+     * tempo so the digits stay readable; decorative under reduced motion (jumps to the end). */
+    --motion-count-duration: var(--scale-duration-deliberate);
+    --motion-count-easing: var(--scale-easing-enter);
+
+    /* loading, continuous: rotating / stepping marks stay linear, while oscillating marks use a
+     * reversible curve so bars can change direction without snapping at either extreme. */
+    --motion-loading-duration: var(--scale-duration-cycle);
+    --motion-loading-duration-fast: var(--scale-duration-cycle-fast);
+    --motion-loading-duration-slow: var(--scale-duration-cycle-slow);
     --motion-loading-easing: var(--scale-easing-linear);
+    --motion-loading-oscillation-easing: var(--scale-easing-standard);
 
     /* drag, pickup / drop feedback (the follow-pointer part is not tokenised) */
     --motion-drag-duration: var(--scale-duration-fast);

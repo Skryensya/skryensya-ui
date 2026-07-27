@@ -1,8 +1,8 @@
 @mixin density-tokens {
     /* Control sizes floor at WCAG's target inside the token, regardless of local density. */
-    --size-control-sm: max(round(calc(var(--scale-size-control-sm) * var(--ds-density)), 2px), var(--scale-fixed-target-min));
-    --size-control-md: max(round(calc(var(--scale-size-control-md) * var(--ds-density)), 2px), var(--scale-fixed-target-min));
-    --size-control-lg: max(round(calc(var(--scale-size-control-lg) * var(--ds-density)), 2px), var(--scale-fixed-target-min));
+    --size-control-sm: max(round(calc(var(--scale-size-control-sm) * var(--sk-density)), 2px), var(--scale-fixed-target-min));
+    --size-control-md: max(round(calc(var(--scale-size-control-md) * var(--sk-density)), 2px), var(--scale-fixed-target-min));
+    --size-control-lg: max(round(calc(var(--scale-size-control-lg) * var(--sk-density)), 2px), var(--scale-fixed-target-min));
 }
 
 @mixin tokens {
@@ -17,7 +17,7 @@
     --size-focus-offset: var(--scale-fixed-ring-offset);
 
     /* Page wrappers stay stable ceilings; density is component/layout spacing, not page geometry. */
-    --size-wrapper-prose: 42rem;
-    --size-wrapper-content: 64rem;
-    --size-wrapper-shell: 90rem;
+    --size-wrapper-sm: 42rem;
+    --size-wrapper-md: 64rem;
+    --size-wrapper-lg: 90rem;
 }

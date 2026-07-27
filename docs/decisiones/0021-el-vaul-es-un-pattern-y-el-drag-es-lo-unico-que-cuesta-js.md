@@ -18,14 +18,14 @@ nombra por *de dónde viene*, nunca por la forma que hace al llegar. Evitamos `v
 ## Por qué es un pattern y no un componente
 
 La regla de la [decisión 8](/decisiones/0008-que-envia-tier-3) pregunta: *¿podría un segundo
-componente necesitar esta estructura exacta?* Sí: **Drawer** (`ds-drawer`) es un Vaul en el borde
+componente necesitar esta estructura exacta?* Sí: **Drawer** (`sk-drawer`) es un Vaul en el borde
 inline, a lo alto de la pantalla. Por eso `components/drawer.css` sólo reasigna los hooks
-`--ds-vaul-*` desde `--ds-drawer-*`; no vuelve a implementar panel, borde, slide ni backdrop.
+`--sk-vaul-*` desde `--sk-drawer-*`; no vuelve a implementar panel, borde, slide ni backdrop.
 
 **Dialog no es un Vaul.** Es una caja centrada nativa a cualquier ancho. Cuando una tarea necesita una
-hoja block-end en móvil, opta por el pattern **Dialog Vaul** con `data-ds-dialog-vaul`; esa
-composición conserva el contrato `ds-dialog` y sólo le entrega geometría, motion y drag de Vaul en el
-breakpoint compacto. No hay una variante implícita de Dialog ni una clase `ds-vaul` sobre él.
+hoja block-end en móvil, opta por el pattern **Dialog Vaul** con `data-sk-dialog-vaul`; esa
+composición conserva el contrato `sk-dialog` y sólo le entrega geometría, motion y drag de Vaul en el
+breakpoint compacto. No hay una variante implícita de Dialog ni una clase `sk-vaul` sobre él.
 
 ## Exige el `<dialog>` nativo
 
@@ -44,12 +44,12 @@ coordinación de estado que justifique su runtime.
 
 ## El drag es lo único que cuesta JS, y es opt-in
 
-`@skryensya/vanilla/vaul` mejora el markup ya escrito. Usa `data-ds-vaul` para un Vaul y
-`data-ds-dialog-vaul` para la composición Dialog Vaul; abre con el atributo homónimo `-open` y cierra
+`@skryensya/vanilla/vaul` mejora el markup ya escrito. Usa `data-sk-vaul` para un Vaul y
+`data-sk-dialog-vaul` para la composición Dialog Vaul; abre con el atributo homónimo `-open` y cierra
 con `-close`. No renderiza markup ni escribe clases.
 
 Sin enhancer, Vaul sigue teniendo panel, slide, backdrop, ESC y click afuera. Con enhancer, debajo de
-`52rem`, suma drag-to-dismiss. El CSS mantiene `--ds-vaul-drag-offset` y cada borde decide su dirección;
+`52rem`, suma drag-to-dismiss. El CSS mantiene `--sk-vaul-drag-offset` y cada borde decide su dirección;
 el enhancer sólo lee geometría y escribe offset/progreso. Se cierra por distancia o velocidad; un flick
 hacia atrás gana a la distancia.
 
@@ -59,7 +59,7 @@ Un panel soltado no está *saliendo*: termina el impulso de la mano. Por eso con
 `enter` ni `exit`. La curva y duración de release cubren tanto volver a casa como salir por completo.
 
 Tirar para el lado incorrecto resiste con un tope de ~12px en vez de trabarse. El backdrop sigue
-`--ds-vaul-drag-progress`, de modo que la página vuelve a medida que el panel sale.
+`--sk-vaul-drag-progress`, de modo que la página vuelve a medida que el panel sale.
 
 ## En desktop no se arrastra
 

@@ -1,5 +1,5 @@
 /*
- * TIER 3, SIDEBAR (opt-in styling hooks)
+ * TIER 3, SIDEBAR
  *
  * The SHELL, and only the shell: a header, a scrolling middle, a footer, and the collapse. What
  * goes inside is not its business, the list of destinations is the `nav-list` pattern, a guest
@@ -7,61 +7,86 @@
  *
  * Collapsed is a STATE, written by the machine as `data-state` on the root, never a BEM modifier
  * and never toggled by hand. The two widths are two values of ONE hook: collapsing re-declares
- * `--ds-sidebar-inline-size`, so a consumer writes `inline-size: var(--ds-sidebar-inline-size)`
+ * `--sk-sidebar-inline-size`, so a consumer writes `inline-size: var(--sk-sidebar-inline-size)`
  * once and the state does the rest.
  *
  * Expanding and collapsing are opposite intents with their own tokens (decision 10), so the motion
  * hooks are re-declared per state rather than averaged into one.
  */
 @layer components {
-  .ds-sidebar {
-    --ds-sidebar-bg: var(--color-bg-surface);
-    --ds-sidebar-fg: var(--color-text-primary);
-    --ds-sidebar-border-color: var(--color-border-subtle);
+  .sk-sidebar {
+    --sk-sidebar-bg: var(--color-bg-surface);
+    --sk-sidebar-fg: var(--color-text-primary);
+    --sk-sidebar-border-color: var(--color-border-subtle);
     /* A hook and not a literal because the rail's arithmetic has to account for it: under
      * `border-box` the consumer's border eats into the width, and an unknown 1px is exactly enough
      * to leave every icon in the rail a pixel off-centre. A sidebar with no border sets it to 0. */
-    --ds-sidebar-border-width: 1px;
-    --ds-sidebar-elevation: var(--elevation-flat);
+    --sk-sidebar-border-width: 1px;
+    --sk-sidebar-elevation: var(--elevation-flat);
 
     /* ONE gutter, on every region rather than on the root. The rail's arithmetic depends on it:
      * a control, plus this either side. Two paddings nested inside each other would make the rail
      * wider than the thing it is sized to hold, and the icons would sit off-centre by the
      * difference. */
-    --ds-sidebar-padding: var(--space-inset-sm);
+    --sk-sidebar-padding: var(--space-inset-sm);
 
     /* Block padding is its own hook so the regions can breathe top-and-bottom without touching the
      * inline gutter above, that one is load-bearing for the rail's arithmetic, this one is free to
      * be larger. Split, not shared, for exactly that reason. */
-    --ds-sidebar-padding-block: var(--space-inset-md);
+    --sk-sidebar-padding-block: var(--space-inset-md);
 
     /* the one width hook, plus the two widths the state chooses between */
-    --ds-sidebar-inline-size: var(--ds-sidebar-expanded-inline-size);
-    --ds-sidebar-expanded-inline-size: 16rem;
-    --ds-sidebar-collapsed-inline-size: calc(
-      var(--size-control-sm) + var(--ds-sidebar-padding) * 2 + var(--ds-sidebar-border-width)
+    --sk-sidebar-inline-size: var(--sk-sidebar-expanded-inline-size);
+    --sk-sidebar-expanded-inline-size: 13.5rem;
+    --sk-sidebar-collapsed-inline-size: calc(
+      var(--size-control-sm) + var(--sk-sidebar-padding) * 2 + var(--sk-sidebar-border-width)
     );
 
-    --ds-sidebar-duration: var(--motion-expand-duration);
-    --ds-sidebar-easing: var(--motion-expand-easing);
+    --sk-sidebar-duration: var(--motion-expand-duration);
+    --sk-sidebar-easing: var(--motion-expand-easing);
 
-    --ds-sidebar-header-gap: var(--space-inline-sm);
-    --ds-sidebar-header-min-height: var(--size-control-lg);
+    --sk-sidebar-header-gap: var(--space-inline-sm);
+    --sk-sidebar-header-min-height: var(--size-control-lg);
 
-    --ds-sidebar-trigger-size: var(--size-control-sm);
-    --ds-sidebar-trigger-fg: var(--color-text-secondary);
-    --ds-sidebar-trigger-radius: var(--radius-control);
+    --sk-sidebar-trigger-size: var(--size-control-sm);
+    --sk-sidebar-trigger-fg: var(--color-text-secondary);
+    --sk-sidebar-trigger-radius: var(--radius-control);
 
-    --ds-sidebar-footer-fg: var(--color-text-tertiary);
-    --ds-sidebar-footer-font-size: var(--font-size-caption);
+    --sk-sidebar-footer-fg: var(--color-text-tertiary);
+    --sk-sidebar-footer-font-size: var(--font-size-caption);
 
-    --ds-sidebar-separator-color: var(--color-border-subtle);
+    --sk-sidebar-separator-color: var(--color-border-subtle);
+
+    /*
+     * The shell, and nothing about the list inside it, that structure ships with the `nav-list`
+     * pattern, so there is no rule here for a link, an item or a group. The sidebar only has to be a
+     * column that changes width.
+     *
+     * One width property, two states: the consumer reads `--sk-sidebar-inline-size` once, and
+     * collapsing re-declares it. No second rule to keep in sync.
+     *
+     * No `prefers-reduced-motion` block either: the duration comes from the expand/collapse intent
+     * tokens, which already shrink themselves under reduced motion.
+     */
+    /* The gutter goes on each region, never on the root: the rail is sized to hold one control plus
+     * that gutter, and a second padding around it would push the icons off-centre by the difference. */
+    display: flex;
+    flex-direction: column;
+    inline-size: var(--sk-sidebar-inline-size);
+    block-size: 100%;
+    border-inline-end: var(--sk-sidebar-border-width) solid var(--sk-sidebar-border-color);
+    background: var(--sk-sidebar-bg);
+    color: var(--sk-sidebar-fg);
+    box-shadow: var(--sk-sidebar-elevation);
+    /* the rail clips the labels it no longer has room for */
+    overflow: hidden;
+    transition: inline-size var(--sk-sidebar-duration) var(--sk-sidebar-easing);
   }
 
-  .ds-sidebar[data-state="collapsed"] {
-    --ds-sidebar-inline-size: var(--ds-sidebar-collapsed-inline-size);
-    --ds-sidebar-duration: var(--motion-collapse-duration);
-    --ds-sidebar-easing: var(--motion-collapse-easing);
+  .sk-sidebar[data-state="collapsed"] {
+    --sk-sidebar-inline-size: var(--sk-sidebar-collapsed-inline-size);
+    --sk-sidebar-duration: var(--motion-collapse-duration);
+    --sk-sidebar-easing: var(--motion-collapse-easing);
   }
 
   /*
@@ -69,7 +94,7 @@
    *
    * These are set ON the list, not on the shell, and the reason is worth an afternoon of anyone's
    * time: a custom property resolves from the NEAREST ancestor that declares it, and the pattern
-   * declares its own defaults on `.ds-nav-list`, closer to the label than `.ds-sidebar` is. Set
+   * declares its own defaults on `.sk-nav-list`, closer to the label than `.sk-sidebar` is. Set
    * from up here they would be shadowed by those defaults and quietly do nothing at all.
    *
    * This is the documented override surface (tokens.scss): a hook is overridden by targeting the
@@ -77,17 +102,68 @@
    * pattern never knows the shell, which is the direction that matters (decision 17). A sidebar
    * holding anything else matches nothing here and pays nothing.
    */
-  .ds-sidebar .ds-nav-list {
-    --ds-nav-list-duration: var(--ds-sidebar-duration);
-    --ds-nav-list-easing: var(--ds-sidebar-easing);
+  .sk-sidebar .sk-nav-list {
+    --sk-nav-list-duration: var(--sk-sidebar-duration);
+    --sk-nav-list-easing: var(--sk-sidebar-easing);
   }
 
-  .ds-sidebar[data-state="collapsed"] .ds-nav-list {
+  .sk-sidebar[data-state="collapsed"] .sk-nav-list {
     /* The rail holds one control, so the link's padding shrinks to whatever centres an icon in that
      * square. Computed rather than guessed: it stays centred at every density, and through a brand
      * that swaps the icon scale. */
-    --ds-nav-list-link-padding-x: calc((var(--size-control-sm) - var(--size-icon-md)) / 2);
-    --ds-nav-list-label-opacity: 0;
-    --ds-nav-list-group-label-opacity: 0;
+    --sk-nav-list-link-padding-x: calc((var(--size-control-sm) - var(--size-icon-md)) / 2);
+    --sk-nav-list-label-opacity: 0;
+    --sk-nav-list-group-label-opacity: 0;
+  }
+
+  .sk-sidebar__header {
+    display: flex;
+    flex: none;
+    gap: var(--sk-sidebar-header-gap);
+    align-items: center;
+    min-block-size: var(--sk-sidebar-header-min-height);
+    padding: var(--sk-sidebar-padding-block) var(--sk-sidebar-padding);
+  }
+
+  /* The scrolling middle: header and footer stay put, only this moves. `min-block-size: 0` is what
+   * lets a flex child actually shrink enough to scroll instead of pushing the footer out. */
+  .sk-sidebar__content {
+    flex: 1;
+    min-block-size: 0;
+    padding: var(--sk-sidebar-padding-block) var(--sk-sidebar-padding);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .sk-sidebar__separator {
+    flex: none;
+    block-size: 1px;
+    margin: 0;
+    border: 0;
+    background: var(--sk-sidebar-separator-color);
+  }
+
+  .sk-sidebar__footer {
+    display: flex;
+    flex: none;
+    align-items: center;
+    padding: var(--sk-sidebar-padding-block) var(--sk-sidebar-padding);
+    color: var(--sk-sidebar-footer-fg);
+    font-size: var(--sk-sidebar-footer-font-size);
+    white-space: nowrap;
+  }
+
+  .sk-sidebar__trigger {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--sk-sidebar-trigger-size);
+    block-size: var(--sk-sidebar-trigger-size);
+    padding: 0;
+    border: 0;
+    border-radius: var(--sk-sidebar-trigger-radius);
+    background: transparent;
+    color: var(--sk-sidebar-trigger-fg);
+    cursor: pointer;
   }
 }

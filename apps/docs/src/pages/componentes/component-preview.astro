@@ -1,0 +1,562 @@
+---
+import "@skryensya/core/components/tile.css";
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import { buildPreviewFrameDocument } from "../../lib/preview-frame";
+
+const install = `pnpm add shiki @skryensya/core @skryensya/vanilla`;
+
+const styles = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/patterns/state-layer.css";
+@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/segmented.css";
+@import "@skryensya/core/components/copy-button.css";
+@import "@skryensya/core/components/code-preview.css";
+@import "@skryensya/core/components/component-preview.css";`;
+
+const demoHtml = `<button class="sk-button sk-interactive" data-sk-button type="button">
+  Guardar cambios
+</button>`;
+
+const demoJs = `const button = document.querySelector("[data-sk-button]");
+button?.addEventListener("click", saveChanges);`;
+
+/* Multicol, because its lanes are keyed to the system's OWN named breakpoints: one lane below
+   compact (36rem), two at compact, three at desktop (52rem). Each preset therefore lands in a
+   different band — mobile 1, tablet 2, libre 3 — which is the claim the prose makes, shown instead
+   of asserted. The media queries resolve against the FRAME's viewport, which is the preset width;
+   that is what the iframe buys over a container query on a plain div. */
+const screensHtml = `<div class="sk-grid" data-multicol data-columns="3">
+  <a class="sk-tile sk-tile--interactive sk-interactive" href="#">
+    <span class="sk-tile__content">
+      <span class="sk-tile__title">Facturación</span>
+      <span class="sk-tile__description">Planes, pagos y recibos.</span>
+    </span>
+  </a>
+  <a class="sk-tile sk-tile--interactive sk-interactive" href="#">
+    <span class="sk-tile__content">
+      <span class="sk-tile__title">Equipo</span>
+      <span class="sk-tile__description">Personas, roles y permisos.</span>
+    </span>
+  </a>
+  <a class="sk-tile sk-tile--interactive sk-interactive" href="#">
+    <span class="sk-tile__content">
+      <span class="sk-tile__title">Dominios</span>
+      <span class="sk-tile__description">DNS y certificados.</span>
+    </span>
+  </a>
+  <a class="sk-tile sk-tile--interactive sk-interactive" href="#">
+    <span class="sk-tile__content">
+      <span class="sk-tile__title">Registros</span>
+      <span class="sk-tile__description">Actividad y auditoría.</span>
+    </span>
+  </a>
+  <a class="sk-tile sk-tile--interactive sk-interactive" href="#">
+    <span class="sk-tile__content">
+      <span class="sk-tile__title">Integraciones</span>
+      <span class="sk-tile__description">Webhooks y llaves de API.</span>
+    </span>
+  </a>
+  <a class="sk-tile sk-tile--interactive sk-interactive" href="#">
+    <span class="sk-tile__content">
+      <span class="sk-tile__title">Notificaciones</span>
+      <span class="sk-tile__description">Correo y alertas.</span>
+    </span>
+  </a>
+</div>`;
+
+const screensReact = `import { Grid } from "@skryensya/react/grid";
+import { TileLink } from "@skryensya/react/tile-link";
+
+// Grid aún no tiene prop \`multicol\`; el atributo pasa derecho por las props.
+<Grid columns={3} data-multicol>
+  <TileLink href="/facturacion">
+    <span className="sk-tile__content">
+      <span className="sk-tile__title">Facturación</span>
+      <span className="sk-tile__description">Planes, pagos y recibos.</span>
+    </span>
+  </TileLink>
+  {/* … */}
+</Grid>;`;
+
+const demoReact = `import { Button } from "@skryensya/react/button";
+
+export function SaveAction() {
+  return <Button onClick={saveChanges}>Guardar cambios</Button>;
+}`;
+
+const anatomy = `<div class="sk-component-preview" data-sk-component-preview>
+  <header class="sk-component-preview__header">
+    <span class="sk-component-preview__title">Button</span>
+    <div class="sk-component-preview__actions">
+      <button
+        class="sk-button sk-interactive sk-component-preview__reload"
+        data-sk-component-preview-reload
+        data-variant="ghost"
+        data-size="sm"
+        data-icon-only
+        type="button"
+        aria-label="Recargar preview: Button"
+        title="Recargar"
+      >
+        <span data-sk-icon="refresh"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- El srcdoc es estático: no existe una segunda ruta. Lo arma la pestaña JS. -->
+  <iframe
+    class="sk-component-preview__stage"
+    title="Preview renderizado: Button"
+    allow="clipboard-write"
+    aria-busy="true"
+  ></iframe>
+
+  <!-- Arrastra el borde inferior del stage para darle más o menos alto. -->
+  <div
+    class="sk-component-preview__resizer"
+    data-sk-component-preview-resizer
+    role="separator"
+    aria-orientation="horizontal"
+    aria-label="Ajustar el alto del preview: Button"
+    tabindex="0"
+  ></div>
+
+  <!-- Se oculta solo cuando el frame avisa que ya pintó. -->
+  <div class="sk-component-preview__loading">
+    <span class="sk-loader" data-size="lg" role="status" aria-label="Cargando preview: Button"></span>
+  </div>
+</div>`;
+
+const anatomyFull = `<div class="sk-component-preview" data-sk-component-preview>
+  <header class="sk-component-preview__header">
+    <span class="sk-component-preview__title">Button</span>
+    <span class="sk-component-preview__note">primario</span>
+    <div class="sk-component-preview__actions">
+      <button
+        class="sk-button sk-interactive sk-component-preview__reload"
+        data-sk-component-preview-reload
+        data-variant="ghost"
+        data-size="sm"
+        data-icon-only
+        type="button"
+        aria-label="Recargar preview: Button"
+      >
+        <span data-sk-icon="refresh"></span>
+      </button>
+
+      <!-- Los tabs de binding son un SegmentedControl normal. -->
+      <div
+        class="sk-segmented sk-component-preview__binding-tabs"
+        data-sk-segmented
+        data-sk-component-preview-binding-tabs
+        data-value="vanilla"
+        role="radiogroup"
+        aria-label="Binding"
+      >
+        <span class="sk-segmented__indicator" aria-hidden="true"></span>
+        <button class="sk-segmented__option sk-interactive" data-sk-segmented-option data-value="vanilla" type="button" role="radio">
+          Vanilla
+        </button>
+        <button class="sk-segmented__option sk-interactive" data-sk-segmented-option data-value="react" type="button" role="radio">
+          React
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mismo stage que el ejemplo mínimo: el srcdoc lo arma la pestaña JS. -->
+  <iframe
+    class="sk-component-preview__stage"
+    title="Preview renderizado: Button"
+    allow="clipboard-write"
+    aria-busy="true"
+  ></iframe>
+
+  <div
+    class="sk-component-preview__resizer"
+    data-sk-component-preview-resizer
+    role="separator"
+    aria-orientation="horizontal"
+    aria-label="Ajustar el alto del preview: Button"
+    tabindex="0"
+  ></div>
+
+  <div class="sk-component-preview__loading">
+    <span class="sk-loader" data-size="lg" role="status" aria-label="Cargando preview: Button"></span>
+  </div>
+
+  <!-- Un panel por binding. CodePreview es dueño de cada superficie de código. -->
+  <section class="sk-component-preview__binding" data-sk-component-preview-binding="vanilla">
+    <div class="sk-component-preview__code" data-sk-component-preview-source="html">
+      <div class="sk-code-preview" data-sk-code-preview>
+        <!-- HTML resaltado por Shiki + CopyButton -->
+      </div>
+    </div>
+  </section>
+
+  <section class="sk-component-preview__binding" data-sk-component-preview-binding="react" hidden>
+    <div class="sk-component-preview__code">
+      <div class="sk-code-preview" data-sk-code-preview>
+        <!-- TSX resaltado por Shiki + CopyButton -->
+      </div>
+    </div>
+  </section>
+</div>`;
+
+/*
+ * La otra mitad del ejemplo: sin el documento del stage y sin el montaje, el HTML de arriba es un
+ * marco vacío. Es el mismo código que corre esta página, no una versión de folleto.
+ */
+const anatomyJs = `import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
+import { mountCodePreview } from "@skryensya/vanilla/code-preview";
+// El entry point del frame (el de "runtime dentro del srcdoc", más abajo) como URL.
+import frameRuntimeUrl from "./component-preview-frame.ts?worker&url";
+
+/* El stage es un documento aparte: su <head> carga el runtime, que clona los estilos del padre,
+   sincroniza modo/contraste/radio/densidad, monta Vanilla adentro y ajusta el alto del iframe. */
+const frameDocument = \`<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <base target="_top">
+    <script type="module" src="\${frameRuntimeUrl}"><\\/script>
+  </head>
+  <body class="sk-component-preview__frame-body">
+    ${demoHtml.replace(/\n/g, "\n    ")}
+  </body>
+</html>\`;
+
+const stage = document.querySelector(".sk-component-preview__stage");
+stage.srcdoc = frameDocument;
+
+// Las superficies de documentación son opt-in: tabs, recarga y resizer del preview…
+mountComponentPreview();
+// …y copiar, densidad y disclosure de cada bloque de código, si el preview trae paneles.
+mountCodePreview();`;
+
+/*
+ * El stage de los dos ejemplos de abajo es un ComponentPreview: el mismo documento srcdoc que usa
+ * Showcase, montado un nivel más adentro. El runtime del frame monta las superficies de
+ * documentación, así el preview anidado tiene sus propios tabs, recarga, resizer y disclosure.
+ */
+const nestedFrame = buildPreviewFrameDocument({ body: demoHtml });
+
+const mount = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountCodePreview } from "@skryensya/vanilla/code-preview";
+import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
+
+// Button, SegmentedControl y CopyButton se descubren por selector.
+await initComponents();
+
+// Las superficies de documentación son opt-in.
+mountCodePreview();
+mountComponentPreview();`;
+
+const frameMount = `// Entry point cargado por el srcdoc; se ejecuta en el realm del iframe.
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+
+mountIcons(document, lucideIcons);
+await initComponents(document);`;
+---
+
+<Base
+  title="ComponentPreview"
+  description="Render de un componente y su código en una superficie documentada, con bindings y fuentes opcionales."
+>
+  <h1>ComponentPreview</h1>
+  <p class="lede">
+    Une el <strong>render real del componente</strong> y su implementación en una sola superficie.
+    El stage es un <code>iframe srcdoc</code> estático: no crea una ruta, pero sí su propio DOM,
+    viewport y top layer. Debajo, CodePreview muestra el código.
+  </p>
+
+  <Showcase html={demoHtml} js={demoJs} react={demoReact} label="Button" />
+
+  <h2>Responsabilidades</h2>
+  <ul>
+    <li>
+      <strong>ComponentPreview</strong> posee el marco, la cabecera, el stage renderizado y los paneles
+      de binding o fuente.
+    </li>
+    <li>
+      <strong>CodePreview</strong> posee cada superficie de código: Shiki, copiar, densidad y
+      expansión de bloques largos.
+    </li>
+    <li>
+      El frame queda en <code>about:srcdoc</code>. Toast, Dialog, Drawer, estilos fixed y queries de
+      viewport se resuelven contra el ejemplo, no contra el chrome de documentación.
+    </li>
+  </ul>
+  <p>
+    CSS y JavaScript no atraviesan el límite del documento automáticamente. El adapter de este sitio
+    copia sus stylesheets, sincroniza modo, contraste, radio y densidad, y ejecuta el mismo bootstrap
+    Vanilla dentro del realm del frame. El contenido es autorado y de confianza; no se usa para HTML
+    arbitrario de terceros.
+  </p>
+
+  <h2>Anatomía mínima</h2>
+  <p>
+    El stage de este ejemplo es otro ComponentPreview: el mismo <code>srcdoc</code>, un nivel más
+    adentro. El frame anidado clona los estilos de su padre y monta su propio runtime, así que
+    recargar, arrastrar el borde o cambiar el modo de color funcionan en los dos niveles a la vez.
+  </p>
+  <Showcase
+    label="ComponentPreview"
+    note="dentro de un ComponentPreview"
+    code={anatomy}
+    js={anatomyJs}
+    lang="html"
+  >
+    {/*
+     * El stage acomoda sus hijos como flex items, así que un specimen se encoge a su contenido.
+     * Éste es una superficie: ocupa todo el ancho disponible, dentro del inset del stage.
+     */}
+    <div class="sk-component-preview" data-sk-component-preview style="inline-size: 100%">
+      <header class="sk-component-preview__header">
+        <span class="sk-component-preview__title">Button</span>
+        <div class="sk-component-preview__actions">
+          <button
+            class="sk-button sk-interactive sk-component-preview__reload"
+            data-sk-component-preview-reload
+            data-variant="ghost"
+            data-size="sm"
+            data-icon-only
+            type="button"
+            aria-label="Recargar preview: Button"
+            title="Recargar"
+          >
+            <span data-sk-icon="refresh"></span>
+          </button>
+        </div>
+      </header>
+
+      <iframe
+        class="sk-component-preview__stage"
+        srcdoc={nestedFrame}
+        title="Preview renderizado: Button"
+        allow="clipboard-write"
+        aria-busy="true"></iframe>
+
+      <div
+        class="sk-component-preview__resizer"
+        data-sk-component-preview-resizer
+        role="separator"
+        aria-orientation="horizontal"
+        aria-label="Ajustar el alto del preview: Button"
+        title="Arrastra para ajustar el alto · doble clic para restablecer"
+        tabindex="0"
+      >
+      </div>
+
+      <div class="sk-component-preview__loading">
+        <span
+          class="sk-loader"
+          data-size="lg"
+          role="status"
+          aria-label="Cargando preview: Button"></span>
+      </div>
+    </div>
+  </Showcase>
+  <p>
+    Añade <code>data-sk-component-preview-flush</code> al iframe y a su body cuando el componente sea
+    un layout.     Usa <code>data-sk-component-preview-viewport="menu"</code> para listboxes y popovers, u
+    <code>overlay</code> para dialogs, drawers y toasts. El botón de recarga remonta el
+    <code>srcdoc</code> (útil para count-ups y loaders). Los tabs son
+    <code>SegmentedControl</code> normales.
+  </p>
+  <p>
+    El <code>resizer</code> es el borde inferior del stage, al estilo del asa de un
+    <code>textarea</code>: arrastrarlo (o <kbd class="sk-kbd">↑</kbd> / <kbd class="sk-kbd">↓</kbd>
+    con el foco puesto) fija el alto en <code>data-sk-component-preview-resized</code>. Desde ahí el
+    alto es del lector: el runtime del frame deja de auto-ajustarlo y pasa su documento a
+    <code>overflow: auto</code>, así achicarlo muestra scroll en vez de recortar el ejemplo. Doble
+    clic (o <kbd class="sk-kbd">Home</kbd>) devuelve el alto al contenido.
+  </p>
+
+  <h2>Tamaño de pantalla</h2>
+  <p>
+    <code>screens</code> agrega al header un segmented <strong>Libre · Tablet · Móvil</strong>.
+    <em>Libre</em> es el stage de siempre: ancho completo y alto ajustado al contenido. Los dos
+    presets fijan <strong>ancho y alto</strong>, porque un dispositivo es las dos cosas: un preset de
+    sólo ancho muestra el reflow pero nunca lo que queda bajo la línea de flotación, que es la mitad
+    de lo que una pantalla chica le hace a un layout.
+  </p>
+  <p>
+    Las medidas caen a propósito a cada lado de los breakpoints del sistema
+    (<code>compact</code> 36rem, <code>desktop</code> 52rem): móvil 390×844 queda debajo de los dos,
+    tablet 768×1024 queda en medio. Así los dos presets ejercitan las bandas donde el layout
+    realmente cambia, en vez de ser dos anchos arbitrarios. Van en <code>px</code> y no en
+    <code>rem</code> porque el viewport de un dispositivo es una medida física: quien sube el tamaño
+    de fuente raíz quiere ver <em>ese</em> reflow en una pantalla de teléfono, no un teléfono que
+    creció.
+  </p>
+  <p>
+    El ejemplo de abajo es un <code>Grid</code> multicol, cuyos carriles están atados justamente a
+    esos breakpoints: uno debajo de <code>compact</code>, dos a partir de ahí, tres desde
+    <code>desktop</code>. Cada preset cae en una banda distinta, así que los tres se ven diferentes.
+    Las media queries resuelven contra el viewport <strong>del frame</strong>, que es el ancho del
+    preset: eso es lo que compra el <code>iframe</code> y no compraría una container query sobre un
+    <code>div</code>.
+  </p>
+  <p>
+    Con un preset activo el stage es un dispositivo: el runtime deja de auto-ajustar y el documento
+    scrollea adentro, igual que en el aparato real. El resizer se esconde —el preset ya es dueño del
+    alto, y dos dueños del mismo alto es el bug—; volver a <em>Libre</em> devuelve el arrastre. El
+    alto se topa en <code>80svh</code> para que el código de abajo siga alcanzable: el frame
+    scrollea, así que lo único que se pierde es la fidelidad de las unidades <code>vh</code> del
+    propio ejemplo.
+  </p>
+  <Showcase
+    label="Grid multicol"
+    note="3 carriles libre · 2 en tablet · 1 en móvil"
+    html={screensHtml}
+    react={screensReact}
+  />
+  <p>
+    Viene <strong>encendido en todos los previews</strong> del sitio. «¿Esto aguanta en un teléfono?»
+    es una pregunta que se le puede hacer a cualquier componente, no sólo a los que son
+    evidentemente un layout: la etiqueta de un botón envuelve, una tabla se desborda, un dialog no
+    entra. Dejarlo a criterio de quien escribe cada página significaría tener la respuesta
+    justamente en las demos que alguien ya pensó, que son las que ya estaban bien.
+  </p>
+  <p>
+    La elección es <strong>del documento, no del preview</strong>, y se comparte igual que la
+    preferencia Vanilla | React: cambiarla en un ejemplo la cambia en todos, vive en
+    <code>&lt;html data-sk-component-preview-screen-pref&gt;</code> y se guarda en
+    <code>localStorage["sk"].screen</code>, así que sobrevive a recargas y a navegar entre páginas.
+    Es la misma razón que en el binding: el lector le está haciendo la pregunta <em>a la página</em>,
+    no a una demo suelta, y elegir de nuevo en cada ejemplo que pasa sería el trabajo que la
+    preferencia compartida existe para evitar. <em>Libre</em> es la ausencia del atributo, no un
+    tercer valor.
+  </p>
+  <p>
+    Los tres controles son iconos del vocabulario estable —<code>screen-desktop</code>,
+    <code>screen-tablet</code> y <code>screen-mobile</code>—, así que los tres sets homologados los
+    dibujan. Sin texto visible, cada opción lleva su nombre en <code>aria-label</code> y en
+    <code>title</code>: el glifo es decorativo, exactamente como en un Button icon-only.
+  </p>
+  <p>
+    Se apaga por preview con <code>screens={false}</code>, para los casos donde el preset engaña más
+    de lo que informa.
+  </p>
+
+  <h2>El ejemplo completo</h2>
+  <p>
+    La superficie entera, también anidada: cabecera con nota, recarga y tabs de binding, stage,
+    resizer y un CodePreview por binding. Los tabs de adentro son independientes de los de afuera —
+    la preferencia Vanilla | React se comparte por documento, y el frame es su propio documento.
+  </p>
+  <Showcase
+    label="ComponentPreview"
+    note="la superficie completa"
+    code={anatomyFull}
+    js={anatomyJs}
+    lang="html"
+  >
+    <div class="sk-component-preview" data-sk-component-preview style="inline-size: 100%">
+      <header class="sk-component-preview__header">
+        <span class="sk-component-preview__title">Button</span>
+        <span class="sk-component-preview__note">primario</span>
+        <div class="sk-component-preview__actions">
+          <button
+            class="sk-button sk-interactive sk-component-preview__reload"
+            data-sk-component-preview-reload
+            data-variant="ghost"
+            data-size="sm"
+            data-icon-only
+            type="button"
+            aria-label="Recargar preview: Button"
+            title="Recargar"
+          >
+            <span data-sk-icon="refresh"></span>
+          </button>
+          <div
+            class="sk-segmented sk-component-preview__binding-tabs"
+            data-sk-segmented
+            data-sk-component-preview-binding-tabs
+            data-value="vanilla"
+            role="radiogroup"
+            aria-label="Binding"
+          >
+            <span class="sk-segmented__indicator" aria-hidden="true"></span>
+            <button
+              class="sk-segmented__option sk-interactive"
+              data-sk-segmented-option
+              data-value="vanilla"
+              type="button"
+              role="radio"
+            >
+              Vanilla
+            </button>
+            <button
+              class="sk-segmented__option sk-interactive"
+              data-sk-segmented-option
+              data-value="react"
+              type="button"
+              role="radio"
+            >
+              React
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <iframe
+        class="sk-component-preview__stage"
+        srcdoc={nestedFrame}
+        title="Preview renderizado: Button"
+        allow="clipboard-write"
+        aria-busy="true"></iframe>
+
+      <div
+        class="sk-component-preview__resizer"
+        data-sk-component-preview-resizer
+        role="separator"
+        aria-orientation="horizontal"
+        aria-label="Ajustar el alto del preview: Button"
+        title="Arrastra para ajustar el alto · doble clic para restablecer"
+        tabindex="0"
+      >
+      </div>
+
+      <div class="sk-component-preview__loading">
+        <span
+          class="sk-loader"
+          data-size="lg"
+          role="status"
+          aria-label="Cargando preview: Button"></span>
+      </div>
+
+      <div class="sk-component-preview__binding" data-sk-component-preview-binding="vanilla">
+        <div class="sk-component-preview__code" data-sk-component-preview-source="html">
+          <CodeBlock code={demoHtml} lang="html" />
+        </div>
+      </div>
+
+      <div class="sk-component-preview__binding" data-sk-component-preview-binding="react" hidden>
+        <div class="sk-component-preview__code">
+          <CodeBlock code={demoReact} lang="tsx" />
+        </div>
+      </div>
+    </div>
+  </Showcase>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+  <CodeBlock code={styles} label="CSS" lang="css" />
+
+  <h2>Montar explícitamente</h2>
+  <p>
+    ComponentPreview y CodePreview quedan fuera de <code>initComponents()</code>: una aplicación no
+    descarga superficies de documentación por accidente. Ese montaje controla la superficie host;
+    el contenido del <code>srcdoc</code> ejecuta su propio entry point.
+  </p>
+  <CodeBlock code={mount} label="TypeScript" lang="ts" />
+  <CodeBlock code={frameMount} label="runtime dentro del srcdoc" lang="ts" />
+</Base>

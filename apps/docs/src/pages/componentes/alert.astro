@@ -6,88 +6,88 @@ import Showcase from "../../components/Showcase.astro";
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
 const neutralHtml = `<div
-  class="ds-alert"
+  class="sk-alert"
   data-presentation="banner"
   data-tone="neutral"
   role="status"
   aria-live="polite"
 >
-  <div class="ds-alert__content">
-    <p class="ds-alert__title">Mantenimiento programado</p>
-    <div class="ds-alert__description">
+  <div class="sk-alert__content">
+    <p class="sk-alert__title">Mantenimiento programado</p>
+    <div class="sk-alert__description">
       El domingo de 02:00 a 04:00 UTC el panel estará en solo
       lectura.
     </div>
   </div>
-  <div class="ds-alert__actions">
+  <div class="sk-alert__actions">
     <button
-      class="ds-alert__dismiss"
+      class="sk-alert__dismiss"
       type="button"
       aria-label="Cerrar alerta"
     >
-      <span data-ds-icon="close"></span>
+      <span data-sk-icon="close"></span>
     </button>
   </div>
 </div>`;
 
 const bannerHtml = `<div
-  class="ds-alert"
+  class="sk-alert"
   data-presentation="banner"
   data-tone="info"
   role="status"
   aria-live="polite"
 >
-  <span class="ds-alert__icon" aria-hidden="true">
-    <span data-ds-icon="info"></span>
+  <span class="sk-alert__icon" aria-hidden="true">
+    <span data-sk-icon="info"></span>
   </span>
-  <div class="ds-alert__content">
-    <p class="ds-alert__title">Nueva versión</p>
-    <div class="ds-alert__description">
+  <div class="sk-alert__content">
+    <p class="sk-alert__title">Nueva versión</p>
+    <div class="sk-alert__description">
       Una actualización está disponible.
     </div>
   </div>
 </div>`;
 
 const accentHtml = `<div
-  class="ds-alert"
+  class="sk-alert"
   data-presentation="accent"
   data-tone="warning"
   role="status"
   aria-live="polite"
 >
-  <span class="ds-alert__icon" aria-hidden="true">
-    <span data-ds-icon="warning"></span>
+  <span class="sk-alert__icon" aria-hidden="true">
+    <span data-sk-icon="warning"></span>
   </span>
-  <div class="ds-alert__content">
-    <p class="ds-alert__title">Tu plan expira en 3 días</p>
-    <div class="ds-alert__description">
+  <div class="sk-alert__content">
+    <p class="sk-alert__title">Tu plan expira en 3 días</p>
+    <div class="sk-alert__description">
       Elige un plan para no interrumpir los despliegues.
     </div>
   </div>
-  <div class="ds-alert__actions">
-    <a class="ds-link ds-interactive" href="/billing">Ver planes</a>
+  <div class="sk-alert__actions">
+    <a class="sk-link sk-interactive" href="/billing">Ver planes</a>
     <button
-      class="ds-alert__dismiss"
+      class="sk-alert__dismiss"
       type="button"
       aria-label="Cerrar alerta"
     >
-      <span data-ds-icon="close"></span>
+      <span data-sk-icon="close"></span>
     </button>
   </div>
 </div>`;
 
 const inlineHtml = `<div
-  class="ds-alert"
+  class="sk-alert"
   data-presentation="inline"
   data-tone="success"
   role="status"
   aria-live="polite"
 >
-  <span class="ds-alert__icon" aria-hidden="true">
-    <span data-ds-icon="success"></span>
+  <span class="sk-alert__icon" aria-hidden="true">
+    <span data-sk-icon="success"></span>
   </span>
-  <div class="ds-alert__content">
-    <div class="ds-alert__description">Tus cambios se guardaron.</div>
+  <div class="sk-alert__content">
+    <div class="sk-alert__description">Tus cambios se guardaron.</div>
   </div>
 </div>`;
 
@@ -112,7 +112,7 @@ const accentReact = `import { Alert } from "@skryensya/react/alert";
 <Alert
   onDismiss={() => hide()}
   actions={
-    <a className="ds-link ds-interactive" href="/billing">
+    <a className="sk-link sk-interactive" href="/billing">
       Ver planes
     </a>
   }
@@ -144,6 +144,12 @@ const inlineReact = `import { Alert } from "@skryensya/react/alert";
     mensaje. Solo <code>danger</code> se anuncia como <code>role="alert"</code> (assertive); el resto
     usa <code>role="status"</code> (polite).
   </p>
+  <p>
+    Los cuatro leen un <strong>rol de feedback</strong>, nunca el acento: el tono dice qué pasó, así
+    que no puede cambiar cuando cambia la marca. <code>info</code> tuvo su propia rampa recién en la
+    decisión 26 (<code>docs/decisiones/0026-info-es-un-rol-de-feedback-no-el-acento.md</code>); antes
+    leía <code>accent</code>, y una marca magenta pintaba de magenta cada aviso informativo.
+  </p>
 
   <h3>Neutral</h3>
   <p>
@@ -172,9 +178,9 @@ const inlineReact = `import { Alert } from "@skryensya/react/alert";
 
   <h2>Anatomía</h2>
   <ul>
-    <li><code>ds-alert__icon</code> es decorativo y solo aparece cuando aporta una señal visual.</li>
-    <li><code>ds-alert__content</code> agrupa título opcional y descripción.</li>
-    <li><code>ds-alert__actions</code> aloja acciones que pertenecen al consumidor; el cierre opcional vive ahí.</li>
+    <li><code>sk-alert__icon</code> es decorativo y solo aparece cuando aporta una señal visual.</li>
+    <li><code>sk-alert__content</code> agrupa título opcional y descripción.</li>
+    <li><code>sk-alert__actions</code> aloja acciones que pertenecen al consumidor; el cierre opcional vive ahí.</li>
     <li><code>data-tone</code> acepta <code>neutral</code> (default), <code>info</code>, <code>success</code>, <code>warning</code> o <code>danger</code>.</li>
     <li><code>data-presentation</code> acepta <code>banner</code> (default), <code>accent</code> o <code>inline</code>.</li>
   </ul>

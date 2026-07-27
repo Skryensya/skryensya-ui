@@ -1,0 +1,96 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+import "@skryensya/core/components/split-button.css";
+import "@skryensya/core/components/menu.css";
+
+const install = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/split-button.css";
+@import "@skryensya/core/components/menu.css";`;
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+initComponents();`;
+const html = `<div class="sk-split-button">
+  <button
+    class="sk-button sk-interactive sk-split-button__primary"
+    data-variant="primary"
+    type="button"
+  >
+    Save
+  </button>
+  <div class="sk-menu" data-sk-menu aria-label="More options">
+    <button
+      class="
+        sk-button sk-interactive
+        sk-menu__trigger sk-anchor sk-split-button__trigger
+      "
+      data-sk-menu-trigger
+      type="button"
+    >
+      <span data-sk-icon="chevron-down"></span>
+    </button>
+    <div class="sk-menu__positioner sk-anchored" data-sk-menu-positioner>
+      <div class="sk-menu__content" data-sk-menu-content>
+        <div
+          class="sk-menu__item sk-interactive"
+          data-sk-menu-item
+          data-value="save-copy"
+        >Save a copy</div>
+      </div>
+    </div>
+  </div>
+</div>`;
+const react = `import { Icon } from "@skryensya/react/icon";
+import { SplitButton } from "@skryensya/react/split-button";
+
+<SplitButton
+  menuLabel="More options"
+  menuIndicator={<Icon name="chevron-down" />}
+  menuItems={[
+    { label: "Save a copy", value: "save-copy" },
+  ]}
+  onClick={save}
+>
+  Save
+</SplitButton>`;
+---
+
+<Base
+  title="SplitButton"
+  description="Stable main action and adjacent menu with alternative actions."
+>
+  <h1>SplitButton</h1>
+  <p class="lede">Stable main action and adjacent menu with alternative actions.</p>
+
+  <h2>Installation</h2>
+  <Showcase
+    html={html}
+    js={js}
+    react={react}
+    label="SplitButton"
+    viewport="menu"
+  />
+
+  <h2>Contrato</h2>
+  <p>The main action does not change silently when choosing the menu. If there is no dominant action, use Menu.</p>
+
+  <h2>Accesibilidad</h2>
+  <p>They are two independent buttons: one executes and the other announces and opens the alternatives.</p>
+
+  <h2>CSS</h2>
+  <pre><code>{install}</code></pre>
+  <StylingHooks
+    groups={[
+      {
+        file: "components/split-button.css",
+        probe: "sk-split-button",
+        title: "SplitButton",
+      },
+      { file: "patterns/anchored.css", probe: "sk-anchored", title: "Anchor Inherits" },
+    ]}
+  />
+</Base>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { collapsible } from "@skryensya/core/machines";
-  import { tileEvents } from "@skryensya/core/tile";
+  import { tileEvents, tileParts } from "@skryensya/core/tile";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
   import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
@@ -17,7 +17,7 @@
   const content = root.querySelector<HTMLElement>('[data-part="content"], [data-part="expandable-content"]');
   if (!trigger || !content) throw new Error("ExpandableTile requires trigger and content parts.");
 
-  if (!root.id) root.id = uniqueId("ds-tile");
+  if (!root.id) root.id = uniqueId("sk-tile");
   const disabled = root.hasAttribute("data-disabled");
   const defaultOpen = root.hasAttribute("data-default-open") || root.hasAttribute("data-open");
 
@@ -32,8 +32,8 @@
   const api = $derived(collapsible.connect(service, normalizeProps));
 
   // El scope del CSS del tile es "tile"; Zag pondría "collapsible". Lo devolvemos después de parchear,
-  // igual que hace React. Las clases `ds-tile*` las autora el consumidor (applyZagProps nunca toca
-  // class); garantizamos `ds-interactive` como hacía el enhancer viejo.
+  // igual que hace React. Las clases `sk-tile*` las autora el consumidor (applyZagProps nunca toca
+  // class); garantizamos `sk-interactive` como hacía el enhancer viejo.
   const scopeTile = (el: HTMLElement) => el.setAttribute("data-scope", "tile");
 
   $effect(() => {
@@ -43,7 +43,7 @@
     scopeTile(root);
     scopeTile(trigger);
     scopeTile(content);
-    root.classList.add("ds-interactive");
+    root.classList.add(tileParts.root, tileParts.interactive, tileParts.expandable, "sk-interactive");
   });
 
   const cleanups: Array<() => void> = [];

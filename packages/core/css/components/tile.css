@@ -7,83 +7,94 @@
  * state coordination is worth the cost.
  */
 @layer components {
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable) {
-    --ds-tile-border-color: var(--color-border-subtle);
-    --ds-color-border-subtle: var(--color-border-subtle);
-    --ds-color-border-strong: var(--color-border-strong);
-    --ds-color-border-selected: var(--color-border-accent);
-    --ds-color-focus: var(--color-border-focus);
-    --ds-color-text-primary: var(--color-text-primary);
-    --ds-color-text-secondary: var(--color-text-secondary);
-    --ds-color-text-disabled: var(--color-text-disabled);
-    --ds-space-2: var(--space-inset-sm);
-    --ds-space-3: var(--space-inline-md);
-    --ds-space-4: var(--space-inset-md);
-    --ds-tile-padding: var(--space-inset-md);
-    --ds-font-heading-sm: var(--font-size-heading-sm);
-    --ds-font-body-sm: var(--font-size-body-sm);
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable) {
+    --sk-tile-border-color: var(--color-border-subtle);
+    --sk-color-border-subtle: var(--color-border-subtle);
+    --sk-color-border-strong: var(--color-border-strong);
+    --sk-color-border-selected: var(--color-border-accent);
+    --sk-color-selection-selected: var(--color-action-primary);
+    --sk-color-focus: var(--color-border-focus);
+    --sk-color-text-primary: var(--color-text-primary);
+    --sk-color-text-secondary: var(--color-text-secondary);
+    --sk-color-text-disabled: var(--color-text-disabled);
+    --sk-space-2: var(--space-inset-sm);
+    --sk-space-3: var(--space-inline-md);
+    --sk-space-4: var(--space-inset-md);
+    --sk-tile-padding: var(--space-inset-md);
+    --sk-font-heading-sm: var(--font-size-heading-sm);
+    --sk-font-body-sm: var(--font-size-body-sm);
 
     box-sizing: border-box;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--ds-space-3);
+    gap: var(--sk-space-3);
     min-inline-size: 0;
     min-block-size: var(--size-control-lg);
-    padding: var(--ds-tile-padding);
-    border: 1px solid var(--ds-tile-border-color);
+    padding: var(--sk-tile-padding);
+    border: 1px solid var(--sk-tile-border-color);
     border-radius: var(--radius-surface);
     background: var(--color-bg-surface);
     box-shadow: var(--elevation-flat);
-    color: var(--ds-color-text-primary);
-    font-size: var(--ds-font-body-sm);
+    color: var(--sk-color-text-primary);
+    font-size: var(--sk-font-body-sm);
     overflow-wrap: anywhere;
     overflow: hidden;
 
   }
 
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable)[data-padding="none"] { --ds-tile-padding: 0; }
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable)[data-padding="xs"] { --ds-tile-padding: var(--space-inset-xs); }
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable)[data-padding="sm"] { --ds-tile-padding: var(--space-inset-sm); }
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable)[data-padding="md"] { --ds-tile-padding: var(--space-inset-md); }
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable)[data-padding="lg"] { --ds-tile-padding: var(--space-inset-lg); }
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable)[data-padding="xl"] { --ds-tile-padding: var(--space-inset-xl); }
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable)[data-padding="none"] { --sk-tile-padding: 0; }
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable)[data-padding="xs"] { --sk-tile-padding: var(--space-inset-xs); }
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable)[data-padding="sm"] { --sk-tile-padding: var(--space-inset-sm); }
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable)[data-padding="md"] { --sk-tile-padding: var(--space-inset-md); }
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable)[data-padding="lg"] { --sk-tile-padding: var(--space-inset-lg); }
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable)[data-padding="xl"] { --sk-tile-padding: var(--space-inset-xl); }
 
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable),
-  .ds-tile *,
-  .ds-tile *::before,
-  .ds-tile *::after {
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable),
+  .sk-tile *,
+  .sk-tile *::before,
+  .sk-tile *::after {
     box-sizing: border-box;
   }
 
-  .ds-tile__content {
+  .sk-tile__content {
     display: grid;
-    gap: var(--ds-space-2);
+    gap: var(--sk-space-2);
     min-inline-size: 0;
   }
 
-  .ds-tile__title {
+  .sk-tile__title {
     min-inline-size: 0;
     margin: 0;
-    color: var(--ds-color-text-primary);
-    font-size: var(--ds-font-heading-sm);
+    color: var(--sk-color-text-primary);
+    font-size: var(--sk-font-heading-sm);
     font-weight: var(--font-weight-heading);
     line-height: var(--line-height-heading);
   }
 
-  .ds-tile__description {
+  .sk-tile__description {
     min-inline-size: 0;
     margin: 0;
-    color: var(--ds-color-text-secondary);
+    color: var(--sk-color-text-secondary);
     line-height: var(--line-height-body);
   }
 
-  .ds-tile--interactive {
+  .sk-tile--interactive {
     cursor: pointer;
     user-select: none;
     text-decoration: none;
   }
 
-  .ds-tile--interactive:where(a, button, label) {
+  .sk-tile--interactive:has(> input[type="checkbox"]),
+  .sk-tile--interactive:has(> input[type="radio"]) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .sk-tile--interactive > :is(.sk-checkbox__control, .sk-tile__selection-indicator) {
+    place-self: start end;
+  }
+
+  .sk-tile--interactive:where(a, button, label) {
     inline-size: 100%;
     appearance: none;
     font: inherit;
@@ -93,26 +104,26 @@
 
 
   /* Selection paints the border; disclosure open does not, open is a reveal, not a choice. */
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable):where([data-state="checked"], [data-state="selected"]),
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable):has(> input:checked),
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable):has(> input:indeterminate) {
-    --ds-tile-border-color: var(--ds-color-border-selected);
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):where([data-state="checked"], [data-state="selected"]),
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):has(> input:checked),
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):has(> input:indeterminate) {
+    --sk-tile-border-color: var(--sk-color-border-selected);
   }
 
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable):where([data-disabled]:disabled),
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable):has(> input:disabled) {
-    --ds-tile-border-color: var(--ds-color-border-subtle);
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):where([data-disabled]:disabled),
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):has(> input:disabled) {
+    --sk-tile-border-color: var(--sk-color-border-subtle);
     cursor: not-allowed;
-    color: var(--ds-color-text-disabled);
+    color: var(--sk-color-text-disabled);
   }
 
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable):where([data-disabled]:disabled) .ds-tile__description,
-  .ds-tile:where(.ds-tile--interactive.ds-tile--expandable):has(> input:disabled) .ds-tile__description {
-    color: var(--ds-color-text-disabled);
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):where([data-disabled]:disabled) .sk-tile__description,
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):has(> input:disabled) .sk-tile__description {
+    color: var(--sk-color-text-disabled);
   }
 
-  .ds-tile--interactive > input[type="checkbox"],
-  .ds-tile--interactive > input[type="radio"] {
+  .sk-tile--interactive > input[type="checkbox"],
+  .sk-tile--interactive > input[type="radio"] {
     position: absolute;
     inline-size: 1px;
     block-size: 1px;
@@ -126,24 +137,30 @@
   }
 
 
-  .ds-tile__selection-indicator {
+  .sk-tile__selection-indicator {
     display: inline-grid;
     place-items: center;
     inline-size: 1.25rem;
     block-size: 1.25rem;
-    border: 1px solid var(--ds-color-border-strong);
+    border: 1px solid var(--sk-color-border-strong);
     border-radius: 999px;
-    color: var(--ds-color-text-primary);
+    color: var(--sk-color-text-primary);
     flex: none;
   }
 
-  /* Checkbox tiles reuse `.ds-checkbox__control` (same box + set icons). Drop the radio-style chrome. */
-  .ds-tile:has(> input[type="checkbox"]) > .ds-checkbox__control {
-    border-radius: var(--ds-checkbox-radius);
+  /* Checkbox tiles reuse `.sk-checkbox__control` (same box + set icons). Drop the radio-style chrome. */
+  .sk-tile:has(> input[type="checkbox"]) > .sk-checkbox__control {
+    border-radius: var(--sk-checkbox-radius);
   }
 
-  .ds-tile--interactive[data-state="checked"] > .ds-tile__selection-indicator::before,
-  .ds-tile--interactive:has(> input[type="radio"]:checked) > .ds-tile__selection-indicator::before {
+  .sk-tile--interactive[data-state="checked"] > .sk-tile__selection-indicator,
+  .sk-tile--interactive:has(> input[type="radio"]:checked) > .sk-tile__selection-indicator {
+    border-color: var(--sk-color-border-selected);
+    color: var(--sk-color-selection-selected);
+  }
+
+  .sk-tile--interactive[data-state="checked"] > .sk-tile__selection-indicator::before,
+  .sk-tile--interactive:has(> input[type="radio"]:checked) > .sk-tile__selection-indicator::before {
     content: "";
     inline-size: 0.625rem;
     block-size: 0.625rem;
@@ -152,28 +169,28 @@
   }
 
   /* Indeterminate bar is radio/legacy selection-indicator only, checkbox tiles use the `remove` icon. */
-  .ds-tile--interactive[data-state="indeterminate"] > .ds-tile__selection-indicator::before {
+  .sk-tile--interactive[data-state="indeterminate"] > .sk-tile__selection-indicator::before {
     content: "";
     inline-size: 0.75rem;
     block-size: 2px;
     background: currentColor;
   }
 
-  .ds-tile--expandable {
+  .sk-tile--expandable {
     gap: 0;
     padding: 0;
   }
 
-  .ds-tile__trigger {
+  .sk-tile__trigger {
     box-sizing: border-box;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: var(--ds-space-3);
+    gap: var(--sk-space-3);
     align-items: center;
     inline-size: 100%;
     min-inline-size: 0;
     margin: 0;
-    padding: var(--ds-tile-padding);
+    padding: var(--sk-tile-padding);
     border: 0;
     background: transparent;
     color: inherit;
@@ -184,39 +201,39 @@
   }
 
 
-  .ds-tile__trigger:disabled,
-  .ds-tile__trigger[data-disabled] {
+  .sk-tile__trigger:disabled,
+  .sk-tile__trigger[data-disabled] {
     cursor: not-allowed;
-    color: var(--ds-color-text-disabled);
+    color: var(--sk-color-text-disabled);
   }
 
   /* A disclosure changes between two named icon roles. It never rotates a typographic glyph: the
    * set supplies chevron-down and chevron-up, and the trigger state chooses the visible icon. */
-  .ds-tile__chevron {
+  .sk-tile__chevron {
     display: inline-grid;
     place-items: center;
     flex: none;
     inline-size: 1rem;
     block-size: 1rem;
-    color: var(--ds-color-text-secondary);
+    color: var(--sk-color-text-secondary);
   }
 
-  .ds-tile__chevron > [data-state] { display: none; }
-  .ds-tile__chevron > [data-state="closed"] { display: inline-grid; }
-  .ds-tile__trigger[data-state="open"] .ds-tile__chevron > [data-state="closed"] { display: none; }
-  .ds-tile__trigger[data-state="open"] .ds-tile__chevron > [data-state="open"] { display: inline-grid; }
+  .sk-tile__chevron > [data-state] { display: none; }
+  .sk-tile__chevron > [data-state="closed"] { display: inline-grid; }
+  .sk-tile__trigger[data-state="open"] .sk-tile__chevron > [data-state="closed"] { display: none; }
+  .sk-tile__trigger[data-state="open"] .sk-tile__chevron > [data-state="open"] { display: inline-grid; }
 
-  .ds-tile__trigger[data-state="open"] .ds-tile__chevron {
-    color: var(--ds-color-text-primary);
+  .sk-tile__trigger[data-state="open"] .sk-tile__chevron {
+    color: var(--sk-color-text-primary);
   }
 
-  .ds-tile__expandable-content {
+  .sk-tile__expandable-content {
     /* border-box so `--height` (the collapsible runtime's measured offsetHeight: content + padding +
      * border) maps 1:1 to the animated block-size, no end-of-open overshoot that has to snap back. */
     box-sizing: border-box;
     min-inline-size: 0;
     overflow: hidden;
-    color: var(--ds-color-text-secondary);
+    color: var(--sk-color-text-secondary);
   }
 
   /* OPEN LOOK, the chrome a revealed panel wears (opening, settled open, OR collapsing). Deliberately
@@ -225,92 +242,92 @@
    * padding + surface the instant the open animation ends. `[hidden]` is the honest "fully closed" signal, 
    * collapsible only sets it after the exit animation finishes, so keying on `:not([hidden])` keeps the
    * surface painted through the whole collapse and gone only once the panel is truly closed. */
-  .ds-tile__expandable-content:not([hidden]) {
-    padding-inline: var(--ds-tile-padding);
-    border-block-start: 1px solid var(--ds-color-border-subtle);
+  .sk-tile__expandable-content:not([hidden]) {
+    padding-inline: var(--sk-tile-padding);
+    border-block-start: 1px solid var(--sk-color-border-subtle);
     background: var(--color-bg-surface-sunken);
   }
 
   /* Resting block padding for a revealed, not-collapsing panel. While either keyframe runs, its
    * from/to padding-block overrides this, so the panel still grows and shrinks from a true zero. */
-  .ds-tile__expandable-content:not([hidden]):not([data-state="closed"]) {
-    padding-block: var(--ds-tile-padding);
+  .sk-tile__expandable-content:not([hidden]):not([data-state="closed"]) {
+    padding-block: var(--sk-tile-padding);
   }
 
   /* EXPAND, only while the enter animation is live (data-state="open"). block-size AND padding-block grow
    * together from 0 (see keyframes) so the panel opens from a true zero instead of popping to twice the
    * padding on frame one. Default-open first paint has no data-state (skip), so it just appears, no flash. */
-  .ds-tile__expandable-content[data-state="open"] {
-    animation: ds-tile-expand var(--motion-expand-duration) var(--motion-expand-easing) forwards;
+  .sk-tile__expandable-content[data-state="open"] {
+    animation: sk-tile-expand var(--motion-expand-duration) var(--motion-expand-easing) forwards;
   }
 
   /* Only the CONTENT fades + rises, the sunken surface is opaque from frame one, so the panel reveals
    * its text instead of dissolving the whole box (an earlier full-box fade read as a dissolve). */
-  .ds-tile__expandable-content[data-state="open"] > * {
-    animation: ds-tile-content-in var(--motion-expand-duration) var(--motion-enter-easing) forwards;
+  .sk-tile__expandable-content[data-state="open"] > * {
+    animation: sk-tile-content-in var(--motion-expand-duration) var(--motion-enter-easing) forwards;
   }
 
   /* COLLAPSE, collapsible keeps the panel visible (NOT [hidden]) for the whole exit animation, so this
    * runs symmetric to expand instead of the body vanishing on frame one. [hidden] arrives on animation end. */
-  .ds-tile__expandable-content[data-state="closed"]:not([hidden]) {
-    animation: ds-tile-collapse var(--motion-collapse-duration) var(--motion-collapse-easing) forwards;
+  .sk-tile__expandable-content[data-state="closed"]:not([hidden]) {
+    animation: sk-tile-collapse var(--motion-collapse-duration) var(--motion-collapse-easing) forwards;
   }
 
-  .ds-tile-grid {
+  .sk-tile-grid {
     box-sizing: border-box;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-    gap: var(--ds-space-4);
+    gap: var(--sk-space-4);
     min-inline-size: 0;
   }
 
-  .ds-tile--interactive[data-loading] {
+  .sk-tile--interactive[data-loading] {
     cursor: progress;
   }
 
   /* Height + padding grow from zero together so the box eases open from nothing (border-box keeps the
    * measured --height honest, no overshoot to snap back). The content fade is a separate, inner-only
    * animation so the surface stays solid while its text arrives. */
-  @keyframes ds-tile-expand {
+  @keyframes sk-tile-expand {
     from { block-size: 0; padding-block: 0; }
-    to { block-size: var(--height); padding-block: var(--ds-tile-padding); }
+    to { block-size: var(--height); padding-block: var(--sk-tile-padding); }
   }
 
-  @keyframes ds-tile-collapse {
-    from { block-size: var(--height); padding-block: var(--ds-tile-padding); }
+  @keyframes sk-tile-collapse {
+    from { block-size: var(--height); padding-block: var(--sk-tile-padding); }
     to { block-size: 0; padding-block: 0; }
   }
 
-  @keyframes ds-tile-content-in {
+  @keyframes sk-tile-content-in {
     from { opacity: 0; transform: translateY(var(--motion-reveal-distance)); }
     to { opacity: 1; transform: translateY(0); }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ds-tile__expandable-content,
-    .ds-tile__expandable-content > * {
+    .sk-tile__expandable-content,
+    .sk-tile__expandable-content > * {
       transition-duration: 1ms;
       animation-duration: 1ms;
     }
   }
 
   @media (forced-colors: active) {
-    .ds-tile:where(.ds-tile--interactive.ds-tile--expandable) {
-      --ds-tile-border-color: CanvasText;
+    .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable) {
+      --sk-tile-border-color: CanvasText;
       background: Canvas;
       color: CanvasText;
       forced-color-adjust: none;
     }
 
-    .ds-tile:where(.ds-tile--interactive.ds-tile--expandable):where([data-state="checked"], [data-state="selected"]),
-    .ds-tile:where(.ds-tile--interactive.ds-tile--expandable):has(> input:checked),
-    .ds-tile:where(.ds-tile--interactive.ds-tile--expandable):has(> input:indeterminate) {
-      --ds-tile-border-color: Highlight;
+    .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):where([data-state="checked"], [data-state="selected"]),
+    .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):has(> input:checked),
+    .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):has(> input:indeterminate) {
+      --sk-tile-border-color: Highlight;
     }
 
-    .ds-tile:where(.ds-tile--interactive.ds-tile--expandable):where([data-disabled]:disabled),
-    .ds-tile:where(.ds-tile--interactive.ds-tile--expandable):has(> input:disabled) {
-      --ds-tile-border-color: GrayText;
+    .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):where([data-disabled]:disabled),
+    .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):has(> input:disabled) {
+      --sk-tile-border-color: GrayText;
       color: GrayText;
     }
   }

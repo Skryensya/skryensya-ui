@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
+import Showcase from "../components/Showcase.astro";
 import Used from "../components/Used.astro";
 
 import "../examples/state-layer.css";
@@ -9,7 +10,195 @@ import listSource from "../examples/state-layer.css?raw";
 const usage = `
 <!-- Sin imports extra: el state layer viene en tokens.scss.
      Solo marcas el elemento. -->
-<a class="sl-item ds-interactive" href="#">Bandeja de entrada</a>`;
+<button class="sl-tile sk-interactive" type="button">
+  Interactivo
+</button>`;
+
+const projectedUsage = `<!-- DOM resultante; lo escribe el adapter. -->
+<div
+  class="sk-combobox__item sk-interactive"
+  data-sk-combobox-item
+  data-highlighted
+  role="option"
+>
+  Argentina
+</div>`;
+
+const bareHtml = `<div class="sl-tiles">
+  <button class="sl-tile sk-interactive" type="button">
+    Interactivo
+  </button>
+  <button
+    class="sl-tile sk-interactive"
+    type="button"
+    data-peek="hover"
+    tabindex="-1"
+  >
+    Hover
+  </button>
+  <button
+    class="sl-tile sk-interactive"
+    type="button"
+    data-peek="focus"
+    tabindex="-1"
+  >
+    Focus
+  </button>
+  <button
+    class="sl-tile sk-interactive"
+    type="button"
+    data-peek="pressed"
+    tabindex="-1"
+  >
+    Pressed
+  </button>
+  <button
+    class="sl-tile sk-interactive"
+    type="button"
+    aria-selected="true"
+    tabindex="-1"
+  >
+    Selected
+  </button>
+  <button
+    class="sl-tile sk-interactive"
+    type="button"
+    data-dragging="true"
+    tabindex="-1"
+  >
+    Dragged
+  </button>
+  <button
+    class="sl-tile sk-interactive"
+    type="button"
+    aria-disabled="true"
+    disabled
+  >
+    Disabled
+  </button>
+</div>`;
+
+const currentColorHtml = `<div class="sl-tiles">
+  <button
+    class="sl-tile sl-current-tile sk-interactive"
+    type="button"
+  >
+    Interactivo
+  </button>
+  <button
+    class="sl-tile sl-current-tile sk-interactive"
+    type="button"
+    data-peek="hover"
+    tabindex="-1"
+  >
+    Hover
+  </button>
+  <button
+    class="sl-tile sl-current-tile sk-interactive"
+    type="button"
+    data-peek="focus"
+    tabindex="-1"
+  >
+    Focus
+  </button>
+  <button
+    class="sl-tile sl-current-tile sk-interactive"
+    type="button"
+    data-peek="pressed"
+    tabindex="-1"
+  >
+    Pressed
+  </button>
+  <button
+    class="sl-tile sl-current-tile sk-interactive"
+    type="button"
+    aria-selected="true"
+    tabindex="-1"
+  >
+    Selected
+  </button>
+  <button
+    class="sl-tile sl-current-tile sk-interactive"
+    type="button"
+    data-dragging="true"
+    tabindex="-1"
+  >
+    Dragged
+  </button>
+  <button
+    class="sl-tile sl-current-tile sk-interactive"
+    type="button"
+    aria-disabled="true"
+    disabled
+  >
+    Disabled
+  </button>
+</div>`;
+
+const labHtml = `<div class="sl-lab">
+  <p class="sl-lab__caption">
+    Superficie neutra · hover, foco, press, selected, disabled
+  </p>
+  <nav class="sl-list" aria-label="Carpetas">
+    <a class="sl-item sk-interactive" href="#">
+      <span data-sk-icon="info"></span>
+      <span class="sl-item__label">Bandeja de entrada</span>
+      <span class="sl-item__meta">128</span>
+    </a>
+    <a
+      class="sl-item sk-interactive"
+      href="#"
+      aria-selected="true"
+    >
+      <span data-sk-icon="check"></span>
+      <span class="sl-item__label">Enviados</span>
+      <span class="sl-item__meta">12</span>
+    </a>
+    <a class="sl-item sk-interactive" href="#">
+      <span data-sk-icon="edit"></span>
+      <span class="sl-item__label">Borradores</span>
+      <span class="sl-item__meta">3</span>
+    </a>
+    <a
+      class="sl-item sk-interactive"
+      href="#"
+      aria-disabled="true"
+    >
+      <span data-sk-icon="settings"></span>
+      <span class="sl-item__label">Archivados</span>
+    </a>
+  </nav>
+
+  <p class="sl-lab__caption">
+    Relleno saturado · el layer es currentColor (on-accent)
+  </p>
+  <div class="sl-actions">
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="primary"
+      type="button"
+    >
+      Publicar
+    </button>
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      type="button"
+    >
+      Cancelar
+    </button>
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="ghost"
+      type="button"
+      disabled
+    >
+      Deshacer
+    </button>
+  </div>
+</div>`;
 
 const ladder = [
   ["disabled", "--state-layer-disabled-opacity", "fuerza el layer a 0"],
@@ -23,37 +212,99 @@ const ladder = [
 
 <Base
   title="State layer"
-  description="Una sola capa semitransparente, teñida con currentColor, que expresa hover, focus, pressed, selected y dragged en cualquier componente."
+  description="Dos formas de conectar el mismo feedback: estados DOM directos y estados proyectados por una máquina."
 >
   <h1>State layer</h1>
   <p class="lede">
-    Una sola capa semitransparente que señala hover, focus, pressed, selected y dragged, en
-    cualquier componente, variante y marca, sin inventar un color por combinación.
+    Un mismo overlay semitransparente expresa hover, focus, pressed, selected y dragged. El sistema
+    tiene dos formas de conectarlo: desde el estado real del DOM o desde el estado lógico de una máquina.
+    Comparten pintura y tokens; no son dos variantes visuales ni dos capas superpuestas.
   </p>
 
-  <h2>Usar</h2>
+  <h2>Dos tipos de conexión, una sola capa</h2>
   <p>
-    El state layer es el <strong>mecanismo de interacción del sistema</strong>, no un extra opt-in:
-    viene en <code>tokens.scss</code>, siempre presente, como el <a href="/motion">motion</a>. No hay
-    nada que importar aparte. Marcas el elemento con <code>ds-interactive</code> y listo, el
-    <code>::before</code> es inerte hasta que lo lleva, así que no pesa en lo que no es interactivo.
+    El tipo describe <strong>quién conoce el estado</strong>. Si el propio elemento recibe hover,
+    foco y press, la conexión es directa. Si el foco DOM permanece en otro nodo y una máquina sabe
+    qué item está activo, el adapter proyecta ese estado al DOM.
   </p>
-  <CodeBlock code={usage} label="tu HTML" note="una clase, nada más" />
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr><th>Tipo</th><th>Fuente de verdad</th><th>Úsalo cuando</th><th>Quién lo conecta</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Directo</strong></td>
+          <td><code>:hover</code>, <code>:focus-visible</code>, <code>:active</code>, ARIA y <code>:has()</code></td>
+          <td>El mismo button, link, tile o wrapper posee la interacción.</td>
+          <td>El consumidor añade <code>sk-interactive</code> una vez.</td>
+        </tr>
+        <tr>
+          <td><strong>Proyectado</strong></td>
+          <td><code>data-highlighted</code>, <code>data-selected</code>, <code>data-disabled</code> y otros estados de máquina.</td>
+          <td>Un widget compuesto conserva el foco en su input o raíz, pero activa un item interno.</td>
+          <td>El adapter y el CSS del componente; el consumidor no recrea el mapping.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-  <div class="example">
-    <div class="example__stage" style="display:block">
-      <nav class="sl-list">
-        <a class="sl-item ds-interactive" href="#">Bandeja de entrada</a>
-        <a class="sl-item ds-interactive" href="#" aria-selected="true">Enviados</a>
-        <a class="sl-item ds-interactive" href="#">Borradores</a>
-        <a class="sl-item ds-interactive" href="#" aria-disabled="true">Archivados</a>
-      </nav>
-      <p class="count" style="margin-top: var(--space-stack-sm)">
-        Pasa el mouse, tabula, mantén presionado. Cambia marca, modo o contraste arriba: el layer
-        sigue.
+  <h2>1. Directo: el elemento posee el estado</h2>
+  <p>
+    Button, link y tile reciben los estados del navegador en el mismo nodo que se pinta. El patrón
+    viene en <code>tokens.scss</code>: el consumidor solo añade <code>sk-interactive</code>. Sus
+    selectores también leen ARIA y usan <code>:has()</code> cuando un wrapper contiene el input nativo.
+    El <code>::before</code> permanece inerte en todo lo demás.
+  </p>
+  <CodeBlock code={usage} label="HTML · conexión directa" note="marca el target una vez" />
+
+  <h3>Todos los estados, dos superficies</h3>
+  <p>
+    Los dos previews congelan la misma escalera completa para compararla sin mover el puntero.
+    El primero usa una superficie neutra; el segundo, una superficie inversa cuyo layer hereda
+    <code>currentColor</code>. En ambos, el primer tile sigue siendo interactivo.
+  </p>
+  <Showcase html={bareHtml} label="Superficie neutra · todos los estados" />
+  <Showcase
+    html={currentColorHtml}
+    label="currentColor · todos los estados"
+  />
+  <p>
+    Selected, hover, focus, pressed y dragged avanzan ahora en pasos visibles. En alto contraste
+    el wash no aumenta: hacerlo acercaría el fondo al texto y apagaría la superficie. En su lugar,
+    aparece un keyline inset cuyo grosor crece con cada estado.
+  </p>
+
+  <h2>2. Proyectado: la máquina posee el estado</h2>
+  <p>
+    En Combobox, Menu, DatePicker y TreeView el foco puede permanecer en el input o en la raíz mientras
+    las flechas activan otro item. Ese item no coincide necesariamente con
+    <code>:focus-visible</code>. El adapter escribe <code>data-highlighted</code>,
+    <code>data-selected</code> o <code>data-disabled</code>, y el CSS del componente traduce ese
+    estado lógico a los mismos tokens de opacidad.
+  </p>
+  <CodeBlock
+    code={projectedUsage}
+    label="DOM resultante · conexión proyectada"
+    note="lo escribe el adapter; no se copia"
+  />
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
+      <p>
+        <strong>El consumidor no elige entre dos clases.</strong> Usa <code>sk-interactive</code>
+        para un target DOM propio. Al consumir un widget compuesto, su adapter y su stylesheet ya
+        poseen la conexión proyectada.
       </p>
     </div>
   </div>
+
+  <h2>Mismo layer, superficies distintas</h2>
+  <p>
+    Superficie neutra y relleno saturado no son tipos adicionales: solo cambian el
+    <code>currentColor</code> que tiñe el mismo layer. La lista usa el color de texto; en el botón
+    primario el velo es <code>on-accent</code>. Cambia marca, modo o contraste: el contrato se mantiene.
+  </p>
+  <Showcase html={labHtml} label="Lista + acciones" />
 
   <h2>El tinte es <code>currentColor</code></h2>
   <p>
@@ -67,21 +318,22 @@ const ladder = [
       modo.
     </li>
     <li>
-      <strong>Y es correcto sobre rellenos saturados</strong>, donde negro/blanco falla: el contenido
-      de un botón primario es <code>on-accent</code> (casi blanco), así que el layer es un velo
-      blanco sobre azul. Un overlay negro ahí se ve turbio.
+      <strong>Y es correcto sobre rellenos saturados</strong>, donde fijar negro o blanco falla: el
+      contenido de un botón primario usa <code>on-accent</code>, que se resuelve según el relleno.
+      El layer hereda ese tono exacto en vez de asumir uno.
     </li>
     <li><strong>Cero tokens de color por componente.</strong> Uno sirve a todo.</li>
   </ul>
 
+
   <h2>Exactamente un layer activo</h2>
   <p>
-    Se muestra la opacidad de <strong>un solo</strong> estado. Las opacidades
-    <strong>nunca se suman</strong>. La escalera, de mayor a menor prioridad:
+    Las dos conexiones escriben una sola opacidad sobre un solo pseudo-elemento; nunca apilan overlays.
+    En la conexión directa, el patrón compartido resuelve coincidencias simultáneas con esta escalera,
+    de mayor a menor prioridad:
   </p>
-
-  <div class="ds-table-scroll">
-    <table class="ds-table">
+  <div class="sk-table-scroll">
+    <table class="sk-table">
       <thead>
         <tr><th>Prioridad</th><th>Estado</th><th>Opacidad usada</th><th></th></tr>
       </thead>
@@ -100,8 +352,8 @@ const ladder = [
     </table>
   </div>
 
-  <div class="ds-alert" data-tone="info" data-presentation="accent">
-    <div class="ds-alert__content">
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
     <p>
       <strong>La escalera no usa selectores combinados.</strong> Cada regla de estado asigna el
       <em>mismo</em> <code>--state-layer-opacity</code>, y todos los selectores tienen la misma
@@ -111,7 +363,7 @@ const ladder = [
     </div>
   </div>
 
-  <h2><code>selected</code> es el escalón más bajo, no una base aditiva</h2>
+  <h2>En la conexión directa, <code>selected</code> es el escalón más bajo</h2>
   <p>
     Una base persistente debajo de hover significaría dos capas superpuestas, es decir, opacidad
     sumada, que el modelo prohíbe. Así que selected es el más bajo y hover/pressed lo reemplazan.
@@ -119,8 +371,8 @@ const ladder = [
   <p>
     La selección nunca desaparece porque <strong>siempre lleva un indicador independiente</strong>: un
     check, un control relleno, un riel, un peso tipográfico. En la lista de arriba, "Enviados" lleva un
-    punto y color de acento, no depende del layer. Si necesitas un selected+hover más fuerte, defines
-    un token de opacidad combinada; nunca una suma en runtime.
+    riel de acento y tipografía enfatizada, no depende del layer. Si necesitas un selected+hover más
+    fuerte, defines un token de opacidad combinada; nunca una suma en runtime.
   </p>
 
   <h2>Accesibilidad, no negociable</h2>
@@ -140,30 +392,32 @@ const ladder = [
     <li>El fade respeta <code>prefers-reduced-motion</code>.</li>
   </ul>
 
-  <h2>Las opacidades son invariantes al modo</h2>
+  <h2>Alto contraste añade un keyline, no más wash</h2>
   <p>
-    Un número no puede vivir dentro de <code>light-dark()</code>, así que hay una sola opacidad para
-    claro y oscuro. No es una limitación: el tinte ya se invierte solo vía
-    <code>currentColor</code>. El alto contraste sí las sube, y también el anillo, a través del
-    override de <code>[data-contrast]</code>, que <em>sí</em> es dirigido por atributo. Pon el contraste
-    en <em>alto</em> arriba y observa cómo cambia la tabla de opacidades.
+    Claro y oscuro comparten la misma escalera: <code>currentColor</code> ya cambia con el modo.
+    Alto contraste tampoco duplica las opacidades. Eso acercaría el fondo al color del texto y haría
+    que el control se leyera apagado. <code>[data-contrast="high"]</code> conserva el wash, añade un
+    keyline inset proporcional al estado y aumenta el anillo de foco a <code>3px</code>. Activa
+    contraste alto arriba y compara ambas galerías.
   </p>
 
   <h2>Tu CSS</h2>
   <p>
-    El patrón envía la estructura del layer y la escalera. Tú escribes el layout y agregas la clase:
+    Para un target DOM propio, el patrón envía la estructura del layer y la escalera; tú escribes el
+    layout y agregas la clase. Los widgets compuestos ya envían su mapping proyectado en el CSS del
+    componente:
   </p>
-  <CodeBlock code={listSource} label="src/examples/state-layer.css" note="el archivo que pinta la lista de arriba ↞" />
+  <CodeBlock code={listSource} label="src/examples/state-layer.css" note="el CSS de los previews ↞" />
 
   <p>
-    Cero colores de estado, cero opacidades hardcodeadas. Cualquier componente adopta estados con una
-    clase y reenviando ARIA.
+    Cero colores de estado y cero opacidades hardcodeadas. Usa la conexión directa en controles propios;
+    para estados de máquina, consume el componente en lugar de duplicar sus selectores internos.
   </p>
 
-  <div class="ds-alert" data-tone="info" data-presentation="accent">
-    <div class="ds-alert__content">
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
     <p>
-      Un consumidor con un selector más específico que <code>.ds-interactive:hover</code> puede romper
+      Un consumidor con un selector más específico que <code>.sk-interactive:hover</code> puede romper
       la escalera. Es una limitación de CSS, la misma que acepta
       <a href="/styling-hooks">el contrato de styling hooks</a>.
     </p>

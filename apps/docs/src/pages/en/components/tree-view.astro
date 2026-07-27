@@ -1,0 +1,550 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+import "@skryensya/core/components/tree-view.css";
+
+/* The examples go from less to more: each one adds ONE thing over the previous one, so the
+   difference between two blocks of code is exactly the feature that the section introduces. */
+
+const chevron = `<span
+          class="sk-tree-view__branch-indicator"
+          data-sk-tree-view-branch-indicator
+          data-sk-icon="chevron-right"
+          aria-hidden="true"
+        ></span>`;
+
+const minimal = `<div class="sk-tree-view" data-sk-tree-view aria-label="Proyecto">
+  <ul class="sk-tree-view__tree" data-sk-tree-view-tree>
+    <li
+      class="sk-tree-view__branch"
+      data-sk-tree-view-branch
+      data-value="src"
+    >
+      <div
+        class="sk-tree-view__branch-control sk-interactive"
+        data-sk-tree-view-branch-control
+      >
+        ${chevron}
+        <span
+          class="sk-tree-view__branch-text"
+          data-sk-tree-view-branch-text
+        >src</span>
+      </div>
+      <ul
+        class="sk-tree-view__branch-content"
+        data-sk-tree-view-branch-content
+      >
+        <li
+          class="sk-tree-view__item sk-interactive"
+          data-sk-tree-view-item
+          data-value="index.ts"
+        >
+          <span aria-hidden="true"></span>
+          <span
+            class="sk-tree-view__item-text"
+            data-sk-tree-view-item-text
+          >index.ts</span>
+        </li>
+        <li
+          class="sk-tree-view__item sk-interactive"
+          data-sk-tree-view-item
+          data-value="app.ts"
+        >
+          <span aria-hidden="true"></span>
+          <span
+            class="sk-tree-view__item-text"
+            data-sk-tree-view-item-text
+          >app.ts</span>
+        </li>
+      </ul>
+    </li>
+    <li
+      class="sk-tree-view__item sk-interactive"
+      data-sk-tree-view-item
+      data-value="README.md"
+    >
+      <span aria-hidden="true"></span>
+      <span
+        class="sk-tree-view__item-text"
+        data-sk-tree-view-item-text
+      >README.md</span>
+    </li>
+  </ul>
+</div>`;
+
+const initialState = `<div
+  class="sk-tree-view"
+  data-sk-tree-view
+  data-expanded-value="src"
+  data-selected-value="app.ts"
+  aria-label="Proyecto"
+>
+  <ul class="sk-tree-view__tree" data-sk-tree-view-tree>
+    <li
+      class="sk-tree-view__branch"
+      data-sk-tree-view-branch
+      data-value="src"
+    >
+      <div
+        class="sk-tree-view__branch-control sk-interactive"
+        data-sk-tree-view-branch-control
+      >
+        ${chevron}
+        <span
+          class="sk-tree-view__branch-text"
+          data-sk-tree-view-branch-text
+        >src</span>
+      </div>
+      <ul
+        class="sk-tree-view__branch-content"
+        data-sk-tree-view-branch-content
+      >
+        <li
+          class="sk-tree-view__item sk-interactive"
+          data-sk-tree-view-item
+          data-value="index.ts"
+        >
+          <span aria-hidden="true"></span>
+          <span
+            class="sk-tree-view__item-text"
+            data-sk-tree-view-item-text
+          >index.ts</span>
+        </li>
+        <li
+          class="sk-tree-view__item sk-interactive"
+          data-sk-tree-view-item
+          data-value="app.ts"
+        >
+          <span aria-hidden="true"></span>
+          <span
+            class="sk-tree-view__item-text"
+            data-sk-tree-view-item-text
+          >app.ts</span>
+        </li>
+      </ul>
+    </li>
+    <li
+      class="sk-tree-view__item sk-interactive"
+      data-sk-tree-view-item
+      data-value="README.md"
+    >
+      <span aria-hidden="true"></span>
+      <span
+        class="sk-tree-view__item-text"
+        data-sk-tree-view-item-text
+      >README.md</span>
+    </li>
+  </ul>
+</div>`;
+
+const multiple = `<div
+  class="sk-tree-view"
+  data-sk-tree-view
+  data-selection-mode="multiple"
+  data-expanded-value="src, src/ui"
+  data-selected-value="index.ts button.ts"
+  aria-label="Archivos a publicar"
+>
+  <ul class="sk-tree-view__tree" data-sk-tree-view-tree>
+    <li
+      class="sk-tree-view__branch"
+      data-sk-tree-view-branch
+      data-value="src"
+    >
+      <div
+        class="sk-tree-view__branch-control sk-interactive"
+        data-sk-tree-view-branch-control
+      >
+        ${chevron}
+        <span
+          class="sk-tree-view__branch-text"
+          data-sk-tree-view-branch-text
+        >src</span>
+      </div>
+      <ul
+        class="sk-tree-view__branch-content"
+        data-sk-tree-view-branch-content
+      >
+        <li
+          class="sk-tree-view__item sk-interactive"
+          data-sk-tree-view-item
+          data-value="index.ts"
+        >
+          <span aria-hidden="true"></span>
+          <span
+            class="sk-tree-view__item-text"
+            data-sk-tree-view-item-text
+          >index.ts</span>
+        </li>
+        <li
+          class="sk-tree-view__branch"
+          data-sk-tree-view-branch
+          data-value="src/ui"
+        >
+          <div
+            class="sk-tree-view__branch-control sk-interactive"
+            data-sk-tree-view-branch-control
+          >
+            ${chevron}
+            <span
+              class="sk-tree-view__branch-text"
+              data-sk-tree-view-branch-text
+            >ui</span>
+          </div>
+          <ul
+            class="sk-tree-view__branch-content"
+            data-sk-tree-view-branch-content
+          >
+            <li
+              class="sk-tree-view__item sk-interactive"
+              data-sk-tree-view-item
+              data-value="button.ts"
+            >
+              <span aria-hidden="true"></span>
+              <span
+                class="sk-tree-view__item-text"
+                data-sk-tree-view-item-text
+              >button.ts</span>
+            </li>
+            <li
+              class="sk-tree-view__item sk-interactive"
+              data-sk-tree-view-item
+              data-value="dialog.ts"
+            >
+              <span aria-hidden="true"></span>
+              <span
+                class="sk-tree-view__item-text"
+                data-sk-tree-view-item-text
+              >dialog.ts</span>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>`;
+
+const disabled = `<div
+  class="sk-tree-view"
+  data-sk-tree-view
+  data-expanded-value="dist"
+  aria-label="build output"
+>
+  <ul class="sk-tree-view__tree" data-sk-tree-view-tree>
+    <li
+      class="sk-tree-view__branch"
+      data-sk-tree-view-branch
+      data-value="dist"
+    >
+      <div
+        class="sk-tree-view__branch-control sk-interactive"
+        data-sk-tree-view-branch-control
+      >
+        ${chevron}
+        <span
+          class="sk-tree-view__branch-text"
+          data-sk-tree-view-branch-text
+        >dist</span>
+      </div>
+      <ul
+        class="sk-tree-view__branch-content"
+        data-sk-tree-view-branch-content
+      >
+        <li
+          class="sk-tree-view__item sk-interactive"
+          data-sk-tree-view-item
+          data-value="bundle.js"
+          disabled
+        >
+          <span aria-hidden="true"></span>
+          <span
+            class="sk-tree-view__item-text"
+            data-sk-tree-view-item-text
+          >bundle.js</span>
+        </li>
+        <li
+          class="sk-tree-view__item sk-interactive"
+          data-sk-tree-view-item
+          data-value="bundle.js.map"
+        >
+          <span aria-hidden="true"></span>
+          <span
+            class="sk-tree-view__item-text"
+            data-sk-tree-view-item-text
+          >bundle.js.map</span>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>`;
+
+const events = `<div class="sk-stack" data-gap="md">
+  <div
+    class="sk-tree-view"
+    data-sk-tree-view
+    data-expanded-value="cuenta"
+    aria-label="Settings"
+  >
+    <ul class="sk-tree-view__tree" data-sk-tree-view-tree>
+      <li
+        class="sk-tree-view__branch"
+        data-sk-tree-view-branch
+        data-value="cuenta"
+      >
+        <div
+          class="sk-tree-view__branch-control sk-interactive"
+          data-sk-tree-view-branch-control
+        >
+          <span
+            class="sk-tree-view__branch-indicator"
+            data-sk-tree-view-branch-indicator
+            data-sk-icon="chevron-right"
+            aria-hidden="true"
+          ></span>
+          <span
+            class="sk-tree-view__branch-text"
+            data-sk-tree-view-branch-text
+          >Cuenta</span>
+        </div>
+        <ul
+          class="sk-tree-view__branch-content"
+          data-sk-tree-view-branch-content
+        >
+          <li
+            class="sk-tree-view__item sk-interactive"
+            data-sk-tree-view-item
+            data-value="perfil"
+          >
+            <span data-sk-icon="user" aria-hidden="true"></span>
+            <span
+              class="sk-tree-view__item-text"
+              data-sk-tree-view-item-text
+            >Perfil</span>
+          </li>
+          <li
+            class="sk-tree-view__item sk-interactive"
+            data-sk-tree-view-item
+            data-value="preferencias"
+          >
+            <span data-sk-icon="settings" aria-hidden="true"></span>
+            <span
+              class="sk-tree-view__item-text"
+              data-sk-tree-view-item-text
+            >Preferencias</span>
+          </li>
+          <li
+            class="sk-tree-view__item sk-interactive"
+            data-sk-tree-view-item
+            data-value="exportar"
+          >
+            <span aria-hidden="true"></span>
+            <span
+              class="sk-tree-view__item-text"
+              data-sk-tree-view-item-text
+            >Exportar datos</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <output data-sk-tree-log>No selection</output>
+</div>`;
+
+const eventsJs = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// The placeholders <span data-sk-icon="…"> replaces mountIcons with the <svg> of the
+// boundset; the set is always explicit, initComponents does not choose it.
+mountIcons(document, lucideIcons);
+await initComponents();
+
+// The state is read by event on the root, not by callback: the same Zag machine
+// that uses React, exposed as a CustomEvent.
+const root = document.querySelector("[data-sk-tree-view]");
+const log = document.querySelector("[data-sk-tree-log]");
+
+root.addEventListener("sk-selection-change", (event) => {
+  const [value] = event.detail.selectedValue;
+  log.textContent = value ? \`Seleccionado: \${value}\` : "No selection";
+});
+
+root.addEventListener("sk-expanded-change", (event) => {
+  console.log(event.detail.expandedValue);
+});`;
+
+const previewScript = `const root = document.querySelector("[data-sk-tree-view]");
+const log = document.querySelector("[data-sk-tree-log]");
+root.addEventListener("sk-selection-change", (event) => {
+  const [value] = event.detail.selectedValue;
+  log.textContent = value ? "Seleccionado: " + value : "No selection";
+});`;
+
+const react = `import { Icon } from "@skryensya/react/icon";
+import { TreeView } from "@skryensya/react/tree-view";
+
+const nodes = [
+  {
+    id: "cuenta",
+    label: "Cuenta",
+    children: [
+      { id: "perfil", label: "Perfil" },
+      {
+        id: "seguridad",
+        label: "Seguridad",
+        children: [
+          { id: "sesiones", label: "Sesiones" },
+          { id: "claves", label: "Claves", disabled: true },
+        ],
+      },
+    ],
+  },
+  { id: "facturacion", label: "Billing" },
+];
+
+// branchIndicator and leafIndicator are ONE for the entire tree; one icon per node
+// It is authored in the markup (vanilla) or put on the label.
+<TreeView
+  label="Settings"
+  nodes={nodes}
+  selectionMode="multiple"
+  defaultExpandedValue={["cuenta", "seguridad"]}
+  defaultSelectedValue={["perfil"]}
+  branchIndicator={<Icon name="chevron-right" />}
+  onSelectionChange={({ selectedValue }) => {
+    console.log(selectedValue);
+  }}
+/>`;
+
+const install = `@import "@skryensya/core/components/tree-view.css";`;
+
+const indentHook = `.sk-tree-view {
+  /* A wider level, and without the vertical guides. */
+  --sk-tree-indent: var(--space-inset-xl);
+  --sk-tree-guide-color: transparent;
+}`;
+---
+
+<Base
+  title="TreeView"
+  description="Expandable hierarchies with single or multiple selection."
+>
+  <h1>TreeView</h1>
+  <p class="lede">
+    A hierarchy that is navigated with the keyboard: branches open and close, nodes are
+    they select. Use TreeView when the parent-child relationship <em>is</em> the content: files,
+    categories, an organization. For non-hierarchical sister disclosures use
+    <a href="/en/components/accordion">Accordion</a>; to navigate by sections,
+    <a href="/en/components/sidebar">Sidebar</a>.
+  </p>
+
+  <h2>Minimal tree</h2>
+  <p>
+    The minimum is the complete anatomy and nothing more: a root, the list, and for each node a branch
+    (<code>branch</code> + <code>branch-control</code> + <code>branch-content</code>) or a sheet
+    (<code>item</code>). Without state attributes, everything starts closed and without selection.
+  </p>
+  <Showcase html={minimal} label="Minimal TreeView" />
+
+  <h2>Initial state</h2>
+  <p>
+    <code>data-expanded-value</code> and <code>data-selected-value</code> list the
+    <code>data-value</code> that boot open and selected. They accept spaces or commas as
+    separator, and they are only the state <em>initial</em>: from there the machine commands.
+  </p>
+  <Showcase html={initialState} label="Open and selected input" />
+
+  <h2>Multiple selection</h2>
+  <p>
+    <code>data-selection-mode="multiple"</code> lets mark several nodes with
+    <kbd class="sk-kbd">Ctrl</kbd>/<kbd class="sk-kbd">⌘</kbd> and extend the range with
+    <kbd class="sk-kbd">Shift</kbd>. Las ramas anidan sin límite: una rama es un nodo con
+    <code>branch-content</code>, no matter how deep it is, and the vertical guide marks who each level hangs from.
+  </p>
+  <Showcase html={multiple} label="Multiple selection y tres niveles" />
+
+  <h2>Nodos deshabilitados</h2>
+  <p>
+    A node with <code>disabled</code> is not selected or given focus, but is still read. one
+    disabled branch does not open either, so do not use it to hide content: for that, do not
+    authors.
+  </p>
+  <Showcase html={disabled} label="Disabled node" />
+
+  <h2>Iconos y eventos</h2>
+  <p>
+    The leaf reserves the same column as the branch chevron, so one level labels
+    They are aligned even if not all sheets have an icon. That gap is the
+    empty <code>&lt;span aria-hidden="true"&gt;</code> from the previous examples; here he has a
+    icon. The selection and opening are heard as events above the root.
+  </p>
+  <Showcase
+    html={events}
+    js={eventsJs}
+    react={react}
+    previewScript={previewScript}
+    label="Settings with icons"
+  />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>
+      The root is authored with <code>data-sk-tree-view</code> and <code>class="sk-tree-view"</code>; your
+      <code>aria-label</code> names the tree.
+    </li>
+    <li>
+      The list has <code>data-sk-tree-view-tree</code>. Each direct child is a branch
+      (<code>data-sk-tree-view-branch</code>) or a sheet (<code>data-sk-tree-view-item</code>).
+    </li>
+    <li>
+      A branch contains its control (<code>data-sk-tree-view-branch-control</code>, with flag and
+      text) and its content (<code>data-sk-tree-view-branch-content</code>), which is another list of
+      branches and leaves.
+    </li>
+    <li>
+      <code>data-value</code> identifies the node: it is what appears in the events and in
+      <code>data-expanded-value</code> / <code>data-selected-value</code>. It is unique in all the
+      tree; without it, the enhancer derives an id from the position, which is broken when reordering the markup.
+    </li>
+    <li>
+      Each clickable row has <code>sk-interactive</code>: from there come hover, focus, pressed,
+      selection and focus ring. The component does not paint states on its own.
+    </li>
+    <li>
+      Events about root: <code>sk-selection-change</code> with
+      <code>detail.selectedValue</code> and <code>sk-expanded-change</code> with
+      <code>detail.expandedValue</code>, both arrays of <code>data-value</code>.
+    </li>
+  </ul>
+
+  <h2>Accesibilidad</h2>
+  <p>
+    The public machine <code>role="tree"</code>/<code>treeitem</code> with the level and position of each node, and manages the keyboard: arrows to move,
+    <kbd class="sk-kbd">→</kbd>/<kbd class="sk-kbd">←</kbd> to open and close branches,
+    <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> and typeahead by letter. The focus is roving: the entire tree is a single tab stop, not one per node.
+  </p>
+
+  <h2>CSS</h2>
+  <CodeBlock code={install} label="CSS" lang="css" />
+  <p>
+    Indentation and vertical guide are hooks: change the indentation pitch or turn off the guide without
+    touch the rest.
+  </p>
+  <CodeBlock code={indentHook} label="CSS" lang="css" />
+  <StylingHooks
+    groups={[
+      {
+        file: "components/tree-view.css",
+        probe: "sk-tree-view",
+        title: "TreeView",
+      },
+      {
+        file: "patterns/state-layer.css",
+        probe: "sk-interactive",
+        title: "Inherited from State layer",
+      },
+    ]}
+  />
+</Base>

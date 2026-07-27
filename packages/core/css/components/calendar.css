@@ -1,0 +1,155 @@
+/* TIER 3, CALENDAR — month/day grid with month, year and decade views.
+ *
+ * Stands on its own (no input, no popover): DatePicker imports this file and nests `.sk-calendar`
+ * inside its positioner, but a page can also mount `data-sk-calendar` directly wherever an inline
+ * date grid is the whole UI (a booking page, a dashboard filter).
+ *
+ * EVERY BUTTON IN HERE IS A REAL sm Button (ADR-1/8): previous, next, the view-trigger and every
+ * day/month/year cell carry `sk-button sk-interactive data-size="sm"`, never a bespoke box that
+ * re-derives padding, height or state-layer feedback the button pattern already gives for free.
+ * This file only re-declares the handful of `--sk-button-*` hooks each shape needs (icon-only
+ * square for prev/next, full-width pill for a cell), the same mechanism a themed instance uses. */
+@import url("./button.css");
+
+@layer components {
+  .sk-calendar {
+    --sk-calendar-fg: var(--color-text-primary);
+    --sk-calendar-affordance-color: var(--color-text-secondary);
+    --sk-calendar-inline-size: 18rem;
+    --sk-calendar-gap: var(--space-stack-xs);
+    --sk-calendar-header-gap: var(--space-inline-xs);
+    /* Day cells are a dense grid target, so they paint at control-sm (32px, above the 24px WCAG
+     * 2.5.8 floor) instead of the 44px used for standalone controls. */
+    --sk-calendar-cell-size: var(--size-control-sm);
+    --sk-calendar-cell-radius: var(--radius-pill);
+    /* One row unit: a day cell's rendered height (button + its own padding). Month/year bodies
+     * are sized in multiples of THIS, not a fixed pixel, so they track density/token changes. */
+    --sk-calendar-row-size: calc(var(--sk-calendar-cell-size) + var(--space-inset-xs));
+    --sk-calendar-selected-bg: var(--color-action-primary);
+    --sk-calendar-selected-fg: var(--color-text-on-accent);
+
+    box-sizing: border-box;
+    display: grid;
+    gap: var(--sk-calendar-gap);
+    inline-size: min(var(--sk-calendar-inline-size), 100%);
+  }
+  .sk-calendar__label {
+    color: var(--sk-calendar-affordance-color);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+  }
+  .sk-calendar__header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--sk-calendar-header-gap);
+  }
+  /* The heading IS the view switch: click steps day → month → year (and a month/year cell click
+   * steps back down). It is a plain ghost sm Button with a trailing `chevron-down`: a bare piece
+   * of text reads as a caption, the caret is what says "this opens something", the same cue
+   * Select's trigger gives for the same reason. `--sk-button-width: 100%` fills the header's
+   * middle grid column instead of collapsing to the label's own width. */
+  .sk-calendar__view-trigger.sk-button {
+    --sk-button-width: 100%;
+    --sk-button-bg: transparent;
+    --sk-button-border-color: transparent;
+    --sk-button-shadow: none;
+    --sk-button-fg: var(--sk-calendar-fg);
+  }
+  .sk-calendar__view-trigger .sk-icon {
+    color: var(--sk-calendar-affordance-color);
+  }
+  /* Prev/next are icon-only sm buttons: the shape (square, centred glyph) is `data-icon-only`'s
+   * job in button.css, this file only points the icon color at the calendar's own affordance hook. */
+  .sk-calendar__previous.sk-button,
+  .sk-calendar__next.sk-button {
+    --sk-button-bg: transparent;
+    --sk-button-border-color: transparent;
+    --sk-button-shadow: none;
+    --sk-button-fg: var(--sk-calendar-affordance-color);
+  }
+  .sk-calendar__table-header th {
+    padding: calc(var(--space-inset-xs) * 0.5) 0;
+    font-weight: var(--font-weight-label);
+  }
+  .sk-calendar__table-header abbr {
+    text-decoration: none;
+  }
+  .sk-calendar__table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  .sk-calendar__table-header {
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-caption);
+  }
+  /* Same padding on every view (day, month, year): the row height a cell occupies must not
+   * change when the grid does, only the button inside it does. */
+  .sk-calendar__cell {
+    padding: calc(var(--space-inset-xs) * 0.5);
+    text-align: center;
+  }
+  /* A day cell is a ghost sm Button, SQUARE (width pinned to the same cell-size as its height)
+   * rather than stretched to the width of its `<td>`: seven columns of small circular "bubbles"
+   * is the shape every calendar UI trains people to expect. Month/year cells are the opposite —
+   * only 4 wide, `<td>`s with much more room to give — and stretch to fill that room instead
+   * (below), so escalating a view doesn't strand a 32px square in a much bigger box. Hover/press/
+   * focus feedback is still `sk-interactive`'s state layer (ADR-8), never a hand-rolled `::before`. */
+  .sk-calendar__cell-trigger.sk-button {
+    --sk-button-width: var(--sk-calendar-cell-size);
+    --sk-button-radius: var(--sk-calendar-cell-radius);
+    --sk-button-height: var(--sk-calendar-cell-size);
+    --sk-button-padding-x: 0;
+    --sk-button-bg: transparent;
+    --sk-button-border-color: transparent;
+    --sk-button-shadow: none;
+    --sk-button-fg: var(--sk-calendar-fg);
+
+    font-variant-numeric: tabular-nums;
+  }
+  /* Month/year tables have no weekday header row and only 3 rows of cells (12 months ÷ 4 cols,
+   * or a decade ÷ 4 cols), so at the day-cell row height they'd render as a short, wide strip —
+   * measured 288×148 (ratio 0.51) against day view's 288×278 (ratio 0.97). Pinning the table to
+   * SEVEN row-units (the day grid's weekday row + 6 week rows) makes every view occupy roughly
+   * the same square footprint, and lets each cell's own trigger stretch into the extra room
+   * (below) instead of floating a tiny square inside it. Standard table row distribution spreads
+   * the extra block-size evenly across the 3 actual `<tr>`s. */
+  .sk-calendar__month-grid,
+  .sk-calendar__year-grid {
+    min-block-size: calc(var(--sk-calendar-row-size) * 7);
+  }
+  .sk-calendar__month-grid .sk-calendar__cell-trigger.sk-button,
+  .sk-calendar__year-grid .sk-calendar__cell-trigger.sk-button {
+    --sk-button-width: 100%;
+    --sk-button-height: 100%;
+    /* A pill radius on a wide, tall rectangle reads as a capsule/badge, not a button; the plain
+     * control radius is what every other normal-sized Button in the system uses. */
+    --sk-button-radius: var(--radius-control);
+  }
+  /* ── state layer bridge ────────────────────────────────────────────────────
+   * Zag marks a selected cell with a BARE `data-selected` (no `="true"`), which the pattern's
+   * `[data-selected="true"]` rung does not match (see Tree View for the same gap). Feed the same
+   * `--state-layer-opacity` slot at specificity (0,1,0), deliberately below the pattern's own
+   * (0,2,0) hover/focus/pressed rules, so hovering a selected day still reads as hover. */
+  :where(.sk-calendar__cell-trigger)[data-selected] {
+    --state-layer-opacity: var(--state-layer-selected-opacity);
+  }
+  .sk-calendar__cell-trigger[data-selected] {
+    --sk-button-bg: var(--sk-calendar-selected-bg);
+    --sk-button-fg: var(--sk-calendar-selected-fg);
+  }
+  .sk-calendar__cell-trigger[data-today] {
+    outline: 1px solid var(--color-border-accent);
+    outline-offset: -2px;
+  }
+  .sk-calendar__cell-trigger[data-outside-range] {
+    --sk-button-fg: var(--color-text-tertiary);
+  }
+  @media (forced-colors: active) {
+    .sk-calendar__cell-trigger[data-selected] {
+      --sk-button-bg: Highlight;
+      --sk-button-fg: HighlightText;
+    }
+  }
+}

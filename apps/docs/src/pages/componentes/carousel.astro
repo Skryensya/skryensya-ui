@@ -1,0 +1,458 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+import "../../examples/carousel.css";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla \\
+  @skryensya/icons-lucide`;
+
+const styles = `@import "@skryensya/core/components/carousel.css";
+@import "@skryensya/icons-lucide/carousel.css";
+@import "@skryensya/core/patterns/image-frame.css";
+@import "@skryensya/core/patterns/media-gradient.css";`;
+
+const bootstrap = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+mountIcons(document, lucideIcons);
+await initComponents(); // corre la máquina en cada [data-sk-carousel]`;
+
+const demoSrc = "/demos/media-gradient.svg";
+
+const featureSlide = (opts: {
+  eyebrow: string;
+  title: string;
+  body: string;
+  position?: string;
+}) => {
+  const position = opts.position
+    ? `\n        data-position="${opts.position}"`
+    : "";
+  return `  <li class="sk-carousel__slide">
+    <article
+      class="sk-box carousel-card"
+      data-surface="surface"
+      data-border="subtle"
+      data-padding="none"
+    >
+      <div
+        class="sk-image-frame"
+        data-aspect="16/9"
+        data-radius="top"${position}
+      >
+        <img
+          class="sk-image-frame__media"
+          src="${demoSrc}"
+          alt=""
+        />
+        <div class="sk-media-caption" data-edge="bottom">
+          <div
+            class="sk-media-gradient"
+            data-strength="md"
+            aria-hidden="true"
+          ></div>
+          <h3
+            class="sk-heading"
+            data-size="h4"
+            data-flush
+          >
+            ${opts.title}
+          </h3>
+        </div>
+      </div>
+      <div class="carousel-card__body">
+        <p class="sk-text" data-role="eyebrow">
+          ${opts.eyebrow}
+        </p>
+        <p
+          class="sk-text"
+          data-tone="secondary"
+          data-size="sm"
+        >
+          ${opts.body}
+        </p>
+      </div>
+    </article>
+  </li>`;
+};
+
+const slides = [
+  featureSlide({
+    eyebrow: "Productividad",
+    title: "Búsqueda",
+    body: "Encuentra cualquier proyecto al instante, con atajos y filtros vivos.",
+    position: "top",
+  }),
+  featureSlide({
+    eyebrow: "Contexto",
+    title: "Actividad",
+    body: "Seis meses de cambios en una línea de tiempo que no pierde el hilo.",
+    position: "center",
+  }),
+  featureSlide({
+    eyebrow: "Analítica",
+    title: "Informes",
+    body: "Cohortes, exportación programada y métricas que caben en una card.",
+    position: "bottom",
+  }),
+  featureSlide({
+    eyebrow: "Colaboración",
+    title: "Equipo",
+    body: "Invita, asigna roles y comparte espacios sin salir del flujo.",
+    position: "left",
+  }),
+].join("\n");
+
+/* El carrusel enhanceado: la máquina de Zag mide los snap points reales de la pista, deriva las
+   páginas de ahí y sigue la posición de scroll nativa. Los controles los dibuja el enhancer. */
+const cardsHtml = `<section
+  class="sk-carousel"
+  data-sk-carousel
+  aria-label="Novedades"
+  style="--sk-carousel-slide-size: min(85%, 22rem)"
+>
+  <ul class="sk-carousel__track">
+${slides}
+  </ul>
+</section>`;
+
+const cardsReact = `import { Box } from "@skryensya/react/layout";
+import {
+  Carousel,
+  CarouselSlide,
+} from "@skryensya/react/carousel";
+import { Heading } from "@skryensya/react/heading";
+import { ImageFrame } from "@skryensya/react/image-frame";
+import {
+  MediaCaption,
+} from "@skryensya/react/media-gradient";
+import { Text } from "@skryensya/react/text";
+
+const features = [
+  {
+    eyebrow: "Productividad",
+    title: "Búsqueda",
+    body: "Encuentra cualquier proyecto al instante.",
+    position: "top",
+  },
+  // …
+] as const;
+
+<Carousel
+  aria-label="Novedades"
+  style={{ "--sk-carousel-slide-size": "min(85%, 22rem)" }}
+>
+  {features.map((f) => (
+    <CarouselSlide key={f.title}>
+      <Box
+        as="article"
+        className="carousel-card"
+        surface="surface"
+        border="subtle"
+        padding="none"
+      >
+        <ImageFrame
+          aspect="16/9"
+          radius="top"
+          position={f.position}
+        >
+          <img
+            className="sk-image-frame__media"
+            src="${demoSrc}"
+            alt=""
+          />
+          <MediaCaption edge="bottom" strength="md">
+            <Heading as="h3" size="h4" flush>
+              {f.title}
+            </Heading>
+          </MediaCaption>
+        </ImageFrame>
+        <div className="carousel-card__body">
+          <Text data-role="eyebrow">{f.eyebrow}</Text>
+          <Text tone="secondary" size="sm">
+            {f.body}
+          </Text>
+        </div>
+      </Box>
+    </CarouselSlide>
+  ))}
+</Carousel>;`;
+
+/* La base sin JS: el MISMO markup sin data-sk-carousel, así el enhancer no lo toca y los
+   pseudo-elementos nativos dibujan los controles con cero JavaScript. */
+const nativeHtml = `<section
+  class="sk-carousel"
+  aria-label="Novedades (sin JS)"
+  style="--sk-carousel-slide-size: min(85%, 22rem)"
+>
+  <ul class="sk-carousel__track">
+${slides}
+  </ul>
+</section>`;
+
+const nativeCss = `@import "@skryensya/icons-lucide/carousel.css";
+
+/* cero JS: la plataforma dibuja los controles */
+.sk-carousel__track { scroll-marker-group: after; }
+.sk-carousel__track::scroll-button(inline-start) {
+  content: var(--sk-carousel-native-previous-icon) / "Anterior";
+  grid-column: 1;
+}
+.sk-carousel__track::scroll-button(inline-end) {
+  content: var(--sk-carousel-native-next-icon) / "Siguiente";
+  grid-column: 3;
+}
+.sk-carousel__track::scroll-marker-group {
+  grid-column: 2; /* la fila de dots */
+}
+.sk-carousel__slide::scroll-marker { content: ""; }
+.sk-carousel__slide::scroll-marker:target-current { /* activo */ }
+
+/* Las cajas de ::scroll-button se maquetan después del scroller, en el
+   flujo del padre. El grid de 3 columnas les reserva los extremos. */`;
+
+const person = (name: string, initials: string, role: string) => `    <li class="sk-carousel__slide">
+      <article
+        class="sk-box carousel-person"
+        data-surface="surface"
+        data-border="subtle"
+        data-padding="lg"
+      >
+        <span
+          class="sk-avatar"
+          data-size="lg"
+          role="img"
+          aria-label="${name}"
+        >
+          <span
+            class="sk-avatar__fallback"
+            aria-hidden="true"
+          >${initials}</span>
+        </span>
+        <div class="carousel-person__meta">
+          <p class="sk-text" data-weight="label">
+            ${name}
+          </p>
+          <p
+            class="sk-text"
+            data-tone="secondary"
+            data-size="sm"
+          >
+            ${role}
+          </p>
+        </div>
+      </article>
+    </li>`;
+
+/* Multi-up + loop + autoplay: los slides son más angostos, así que entran varios por página, y la
+   máquina las cuenta midiendo, no dividiendo. */
+const autoHtml = `<section
+  class="sk-carousel"
+  data-sk-carousel
+  data-loop
+  data-autoplay="3500"
+  aria-label="Equipo"
+  style="--sk-carousel-slide-size: min(42%, 14rem)"
+>
+  <ul class="sk-carousel__track">
+${[
+  person("Ada Lovelace", "AL", "Plataforma"),
+  person("Grace Hopper", "GH", "Compiladores"),
+  person("Radia Perlman", "RP", "Redes"),
+  person("Barbara McClintock", "BM", "Genética"),
+  person("Karen Spärck Jones", "KS", "Recuperación"),
+].join("\n")}
+  </ul>
+</section>`;
+
+/* Sin controles: la misma pista, sin botones ni dots en ninguna de las dos capas. Se arrastra o se
+   desliza, y el peek del siguiente slide es lo único que lo anuncia. */
+const bareHtml = `<section
+  class="sk-carousel"
+  data-sk-carousel
+  data-controls="none"
+  aria-label="Equipo"
+  style="--sk-carousel-slide-size: min(42%, 14rem)"
+>
+  <ul class="sk-carousel__track">
+${[
+  person("Ada Lovelace", "AL", "Plataforma"),
+  person("Grace Hopper", "GH", "Compiladores"),
+  person("Radia Perlman", "RP", "Redes"),
+  person("Barbara McClintock", "BM", "Genética"),
+  person("Karen Spärck Jones", "KS", "Recuperación"),
+].join("\n")}
+  </ul>
+</section>`;
+
+const api = `const carousel = document.querySelector("[data-sk-carousel]");
+
+// anclar a una página (0-based) — el mismo comando que envía snapTo() del ref de React
+carousel.dispatchEvent(new CustomEvent("sk-carousel-goto", { detail: { index: 2 } }));
+
+// leer la página activa cada vez que cambia (swipe, rueda, botón, tecla, arrastre o goto)
+carousel.addEventListener("sk-carousel-change", (event) => {
+  console.log(event.detail); // { index, count }  ← count son PÁGINAS medidas, no slides
+});`;
+---
+
+<Base
+  title="Carousel"
+  description="Carousel: región scroll-snap nativa de slides con controles machine-backed (Zag), snap-to-index y una base sin JS."
+>
+  <h1>Carousel</h1>
+  <p class="lede">
+    Secciones desplazables <strong>nativas</strong>: la pista es un <code>&lt;ul&gt;</code> con
+    <code>scroll-snap-type</code>, así que el desplazamiento, el momentum táctil y los puntos de anclaje
+    son de la plataforma, no de un script. Encima van dos capas de control sobre ese mismo sustrato: una
+    base <strong>sin JS</strong> con los pseudo-elementos nativos de carrusel, y un enhancer
+    <strong>machine-backed</strong> sobre <code>@zag-js/carousel</code> que mide la pista, deriva las
+    páginas y dibuja botones y dots. Cada slide es cualquier contenido —una card, una imagen, un stat.
+  </p>
+
+  <h2>Carrusel de tarjetas</h2>
+  <p>
+    Con <code>data-sk-carousel</code> el enhancer corre la máquina: prev/next (se deshabilitan en los
+    extremos), un dot por <strong>página</strong>, teclado, arrastre y re-medición al cambiar de tamaño.
+    Aquí cada slide es una card con <a href="/componentes/image-frame">ImageFrame</a>,
+    <a href="/gradientes">media gradient</a> y cuerpo tipográfico —composición, no un
+    <code>sk-card</code>. <code>--sk-carousel-slide-size</code> deja asomar la siguiente.
+  </p>
+  <Showcase
+    html={cardsHtml}
+    react={cardsReact}
+    js={bootstrap}
+    label="Carrusel de tarjetas"
+    note="ImageFrame + media gradient · scroll-snap + Zag"
+  />
+
+  <h2>Un dot por página, no por slide</h2>
+  <p>
+    Es la razón concreta por la que acá hay una máquina y no un contador. Las posiciones de anclaje
+    <strong>alcanzables</strong> no son una por slide: cuando un slide asoma, los últimos se recortan
+    todos contra el scroll máximo y colapsan en la misma posición. Un carrusel hecho a mano dibuja ahí
+    un dot por slide y termina con dots que <em>nunca</em> se pueden activar y un botón «siguiente» que
+    nunca se deshabilita. La máquina deriva las páginas de <code>getScrollSnapPositions</code> —medidas,
+    recortadas y deduplicadas—, así que los dots y el scroll coinciden por construcción. Se ve
+    achicando la ventana sobre cualquiera de los ejemplos: cambian los slides que entran, cambia la
+    cantidad de dots, y el último siempre se puede alcanzar.
+  </p>
+
+  <h2>Multi-up, loop y autoplay</h2>
+  <p>
+    Slides más angostos entran de a varios por página, y la máquina las cuenta midiendo. Con
+    <code>data-loop</code> el carrusel da la vuelta, con <code>data-autoplay</code> avanza solo (vacío
+    para los 4000 ms por defecto, o un retardo en ms). El autoplay se pausa solo cuando la pestaña deja
+    de estar visible.
+  </p>
+  <p>
+    Con <code>data-autoplay</code> aparece además un <strong>botón de pausa</strong>: algo que se mueve
+    solo tiene que poder detenerse (WCAG 2.2.2), así que la opción y el control son una sola cosa. Y a
+    quien declara <code>prefers-reduced-motion</code> no se le arranca: el carrusel queda quieto y el
+    botón ofrece reproducir.
+  </p>
+  <Showcase html={autoHtml} label="Multi-up + autoplay" note="Avatar + meta · data-loop · data-autoplay" />
+
+  <h2>Sin controles</h2>
+  <p>
+    <code>data-controls="none"</code> apaga las <strong>dos</strong> capas: ni botones y dots del
+    enhancer, ni <code>::scroll-button</code> y <code>::scroll-marker</code> nativos. Queda la pista
+    desnuda, que sigue siendo un scroller con snap: cada slide es una parada
+    (<code>scroll-snap-stop: always</code>), así que deslizar nunca se saltea una card.
+  </p>
+  <p>
+    Lo que no cambia es el comportamiento: los controles eran el chrome. El teclado sigue andando con
+    el foco en la pista, y <code>sk-carousel-goto</code> / <code>sk-carousel-change</code> siguen
+    siendo el mismo par de eventos.
+  </p>
+  <p>
+    Y acá se ve por qué el <strong>arrastre con mouse viene prendido</strong>: una rueda vertical
+    scrollea la <em>página</em>, no la pista horizontal que tienes debajo del cursor. Sin arrastre, un
+    puntero de escritorio no tendría ninguna forma de recorrer esto. El cursor
+    <code>grab</code> es todo el aviso, y sólo aparece donde el arrastre de verdad funciona. Desactívalo
+    con <code>data-mouse-drag="off"</code> cuando el texto de los slides esté para seleccionarse: el
+    arrastre suprime la selección.
+  </p>
+  <Showcase html={bareHtml} label="Sin controles" note='data-controls="none" · arrastra y desliza' />
+
+  <h2>Sin JS: controles nativos</h2>
+  <p>
+    El <strong>mismo markup</strong> sin <code>data-sk-carousel</code>: el enhancer no lo toca y los
+    pseudo-elementos nativos (<code>::scroll-button</code> y <code>::scroll-marker</code>) dibujan los
+    controles con <strong>cero JavaScript</strong>. El adapter CSS del set elegido les da los SVG de
+    <code>chevron-left</code> y <code>chevron-right</code>, sin sustituirlos por glifos tipográficos.
+    Hoy funciona en Chrome/Edge; en el resto degrada a un scroller con snap nativo (sin flechas ni
+    dots, pero se desliza igual). Cuando el enhancer monta, esta capa se apaga para no duplicar.
+  </p>
+  <Showcase html={nativeHtml} label="Sin JS (CSS nativo)" note="iconos del set + scroll buttons nativos" />
+  <CodeBlock code={nativeCss} label="la base sin JS" lang="css" />
+
+  <h2>Snap-to-index y eventos</h2>
+  <p>
+    El control programático es un par de eventos en la raíz: envía <code>sk-carousel-goto</code> para
+    anclar a una página y escucha <code>sk-carousel-change</code> para saber cuál está activa. En React,
+    el <code>ref</code> del <code>&lt;Carousel&gt;</code> expone <code>snapTo(index)</code>, que envía
+    ese mismo evento.
+  </p>
+  <CodeBlock code={api} label="JS" lang="ts" />
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+  <CodeBlock code={styles} label="CSS" />
+  <CodeBlock code={bootstrap} label="JavaScript" lang="ts" />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>
+      Raíz: <code>&lt;section class="sk-carousel" data-sk-carousel&gt;</code> con una pista
+      <code>&lt;ul class="sk-carousel__track"&gt;</code> de <code>&lt;li class="sk-carousel__slide"&gt;</code>.
+    </li>
+    <li>
+      Slides: cualquier contenido. <code>--sk-carousel-slide-size</code> fija el ancho (peek o multi-up)
+      y es la <strong>única</strong> perilla de tamaño: vale igual con y sin JS, porque la máquina mide
+      la pista en vez de imponerle anchos.
+    </li>
+    <li>
+      Opciones en la raíz: <code>data-controls="none"</code>, <code>data-loop</code>,
+      <code>data-autoplay</code> (vacío o ms), <code>data-orientation="vertical"</code>.
+    </li>
+    <li>
+      Arrastre con mouse: <strong>prendido</strong>. <code>data-mouse-drag="off"</code> lo apaga,
+      para slides cuyo texto se tenga que poder seleccionar.
+    </li>
+    <li>
+      Snap: cada slide es una parada, con <code>scroll-snap-stop: always</code>, así que deslizar
+      nunca salta una. Las paradas <em>alcanzables</em> se recortan contra el fin del scroll, por eso
+      los últimos slides pueden compartir la última.
+    </li>
+    <li>
+      Controles: el enhancer los dibuja, uno por página medida; en un extremo el botón se deshabilita.
+      Prev/next respetan el floor táctil. Los dots se ven compactos; el área clicable crece en
+      bloque sin ensanchar el layout ni solaparse. Sin JS, los pseudo-elementos nativos hacen de
+      baseline (Chrome/Edge) y el adapter <code>@skryensya/icons-*/carousel.css</code> les suministra
+      los mismos roles estables de chevron que usa el enhancer.
+    </li>
+    <li>
+      Teclado: con el foco en la pista, <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> mueven
+      una página y <kbd class="sk-kbd">Inicio</kbd>/<kbd class="sk-kbd">Fin</kbd> saltan a los extremos;
+      las mismas teclas funcionan con el foco en los dots.
+    </li>
+    <li>
+      API: <code>sk-carousel-goto</code> (comando) y <code>sk-carousel-change</code> (salida, con
+      <code>{"{ index, count }"}</code>); en React, <code>ref.snapTo(index)</code>.
+    </li>
+    <li>Movimiento reducido: el desplazamiento suave se apaga con <code>prefers-reduced-motion</code>.</li>
+  </ul>
+
+  <StylingHooks
+    groups={[
+      {
+        file: "components/carousel.css",
+        probe: "sk-carousel",
+      },
+    ]}
+  />
+</Base>

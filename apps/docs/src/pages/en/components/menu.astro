@@ -1,0 +1,135 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+import "@skryensya/core/components/menu.css";
+
+const install = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/menu.css";`;
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+initComponents();`;
+const html = `<div class="sk-menu" data-sk-menu aria-label="File Actions">
+  <button
+    class="sk-button sk-interactive sk-menu__trigger sk-anchor"
+    data-sk-menu-trigger
+    type="button"
+  >
+    Acciones
+    <span data-sk-icon="chevron-down"></span>
+  </button>
+  <div class="sk-menu__positioner sk-anchored" data-sk-menu-positioner>
+    <div class="sk-menu__content" data-sk-menu-content>
+      <div
+        class="sk-menu__item sk-interactive"
+        data-sk-menu-item
+        data-value="rename"
+      >
+        <span class="sk-menu__item-label">Renombrar</span>
+      </div>
+      <div
+        class="sk-menu__item sk-interactive"
+        data-sk-menu-item
+        data-type="checkbox"
+        data-value="favorite"
+      >
+        <span class="sk-menu__item-label">Favorito</span>
+        <span
+          class="sk-menu__item-indicator"
+          data-sk-icon="check"
+        ></span>
+      </div>
+      <div class="sk-menu" data-sk-menu aria-label="Exportar">
+        <button
+          class="sk-menu__item sk-interactive sk-anchor"
+          data-sk-menu-trigger
+          type="button"
+        >
+          <span class="sk-menu__item-label">Exportar</span>
+          <span data-sk-icon="chevron-right"></span>
+        </button>
+        <div
+          class="sk-menu__positioner sk-anchored"
+          data-sk-menu-positioner
+          data-sk-submenu
+        >
+          <div class="sk-menu__content" data-sk-menu-content>
+            <div
+              class="sk-menu__item sk-interactive"
+              data-sk-menu-item
+              data-value="export-pdf"
+            >PDF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;
+const react = `import { Icon } from "@skryensya/react/icon";
+import { Menu } from "@skryensya/react/menu";
+
+<Menu
+  label="File Actions"
+  trigger="Acciones"
+  indicator={<Icon name="chevron-down" />}
+  itemIndicator={<Icon name="check" />}
+  submenuIndicator={<Icon name="chevron-right" />}
+  items={[
+    { label: "Renombrar", value: "rename" },
+    {
+      kind: "checkbox",
+      label: "Favorito",
+      value: "favorite",
+    },
+    {
+      label: "Exportar",
+      value: "export",
+      children: [{ label: "PDF", value: "export-pdf" }],
+    },
+  ]}
+/>`;
+---
+
+<Base
+  title="Menu"
+  description="Actions, checkboxes and radios with keyboard navigation and typeahead."
+>
+  <h1>Menu</h1>
+  <p class="lede">Actions, checkboxes and radios with keyboard navigation and typeahead.</p>
+
+  <h2>Installation</h2>
+  <Showcase
+    js={js}
+    html={html}
+    react={react}
+    label="Menu"
+    viewport="menu"
+  />
+
+  <h2>Contrato</h2>
+  <p>
+    Menu executes actions, also as a context menu using
+    <code>contextTarget</code> or <code>data-sk-menu-context-trigger</code>.
+    An item with <code>children</code> creates a submenu. To choose a value
+    from form uses Select; for editable suggestions, Combobox.
+  </p>
+
+  <h2>Accesibilidad</h2>
+  <p>The machine manages arrows, Home, End, Escape, typeahead and focus return.</p>
+
+  <h2>CSS</h2>
+  <pre><code>{install}</code></pre>
+  <StylingHooks
+    groups={[
+      {
+        file: "components/menu.css",
+        probe: "sk-menu",
+        title: "Menu",
+      },
+      { file: "patterns/anchored.css", probe: "sk-anchored", title: "Anchor Inherits" },
+    ]}
+  />
+</Base>

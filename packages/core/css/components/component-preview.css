@@ -1,0 +1,432 @@
+/*
+ * TIER 3, COMPONENT PREVIEW (opt-in documentation surface)
+ *
+ * A rendered component and its source form one titled surface. The stage always precedes the source;
+ * binding tabs switch implementation code, while source tabs (HTML | JS) stay within the Vanilla
+ * binding as a low-density Tabs list. The Vanilla | React preference is shared across every preview
+ * on the page via `data-sk-component-preview-pref` on the document element.
+ * @skryensya/vanilla/component-preview binds those authored controls.
+ */
+@layer components {
+  .sk-component-preview {
+    --sk-component-preview-bg: var(--color-bg-surface);
+    --sk-component-preview-header-bg: var(--color-bg-surface-sunken);
+    --sk-component-preview-border-color: var(--color-border-subtle);
+    --sk-component-preview-title-fg: var(--color-text-secondary);
+    --sk-component-preview-note-fg: var(--color-text-tertiary);
+    --sk-component-preview-loader-fg: var(--color-text-accent);
+    --sk-component-preview-stage-min-block-size: 12rem;
+    --sk-component-preview-mat-bg: var(--color-bg-surface-sunken);
+    /* The halftone. The dots are the accent, heavily diluted: the mat has to be recognisable as
+     * the system's own chrome without competing with the specimen sitting on it. Dot, gap and
+     * color are hooks — set the color to `transparent` for a flat mat. */
+    --sk-component-preview-mat-dot-color: color-mix(
+      in oklab,
+      var(--color-border-accent) 55%,
+      transparent
+    );
+    --sk-component-preview-mat-dot-size: 1.5px;
+    --sk-component-preview-mat-dot-gap: 1.25rem;
+    /* The falloff, painted in the mat's own color ON TOP of the dots: it dims them toward the
+     * frame without ever clearing them, and the base stays solid because the veil IS the base
+     * color. Lower the percentage for a fainter ramp, `transparent` for an even grid. */
+    --sk-component-preview-mat-veil: color-mix(
+      in oklab,
+      var(--sk-component-preview-mat-bg) 55%,
+      transparent
+    );
+    /* How far out the veil reaches before it is fully clear. */
+    --sk-component-preview-mat-veil-reach: 85%;
+    --sk-component-preview-resizer-size: 0.75rem;
+    --sk-component-preview-resizer-inline-size: 6rem;
+    --sk-component-preview-grip-inline-size: 2rem;
+    --sk-component-preview-grip-block-size: 0.1875rem;
+    --sk-component-preview-grip-fg: var(--color-border-default);
+    --sk-component-preview-grip-active-fg: var(--color-border-accent);
+
+    display: grid;
+    min-inline-size: 0;
+    overflow: hidden;
+    border: 1px solid var(--sk-component-preview-border-color);
+    border-radius: var(--radius-surface);
+    background: var(--sk-component-preview-bg);
+  }
+
+  /*
+   * FOUC: prefer React panels before the enhancer mounts when the document already carries the
+   * shared preference (docs FOUC script / prior navigation).
+   */
+  :root[data-sk-component-preview-pref="react"]
+    .sk-component-preview:has([data-sk-component-preview-binding-tabs])
+    > [data-sk-component-preview-binding="vanilla"] {
+    display: none !important;
+  }
+
+  :root[data-sk-component-preview-pref="react"]
+    .sk-component-preview:has([data-sk-component-preview-binding-tabs])
+    > [data-sk-component-preview-binding="react"] {
+    display: block !important;
+  }
+
+  .sk-component-preview,
+  .sk-component-preview *,
+  .sk-component-preview *::before,
+  .sk-component-preview *::after {
+    box-sizing: border-box;
+  }
+
+  .sk-component-preview > * {
+    min-inline-size: 0;
+  }
+
+  .sk-component-preview__header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-inline-sm);
+    padding: var(--space-inset-sm) var(--space-inset-md);
+    border-block-end: 1px solid var(--sk-component-preview-border-color);
+    background: var(--sk-component-preview-header-bg);
+  }
+
+  .sk-component-preview__title,
+  .sk-component-preview__note {
+    font-family: var(--font-family-code);
+    font-size: var(--font-size-caption);
+  }
+
+  .sk-component-preview__title {
+    color: var(--sk-component-preview-title-fg);
+    font-weight: var(--font-weight-emphasis);
+  }
+
+  .sk-component-preview__note {
+    color: var(--sk-component-preview-note-fg);
+  }
+
+  .sk-component-preview__actions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-inline-xs);
+    margin-inline-start: auto;
+  }
+
+  .sk-component-preview__stage,
+  .sk-component-preview__resizer,
+  .sk-component-preview__loading {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .sk-component-preview__stage {
+    /* The screen preset is TWO hooks re-declared per preset, never one pair of hooks per device:
+     * same reason a button variant re-declares --sk-button-bg instead of adding
+     * --sk-button-primary-bg. `auto` block-size is what hands the height back to fitFrame. */
+    --sk-component-preview-screen-inline-size: 100%;
+    --sk-component-preview-screen-block-size: auto;
+    /* A phone is 844px tall and the source panel below it would be off-screen. The frame scrolls,
+     * so the cap costs nothing but fidelity of the demo's own `vh` units, which is the cheaper
+     * half of the trade. */
+    --sk-component-preview-screen-max-block-size: 80svh;
+
+    display: block;
+    visibility: hidden;
+    /* min() so a preset wider than the docs column degrades to the column instead of overflowing. */
+    inline-size: min(var(--sk-component-preview-screen-inline-size), 100%);
+    min-inline-size: 0;
+    min-block-size: var(--sk-component-preview-stage-min-block-size);
+    overflow: hidden;
+    border: 0;
+    border-block-end: 1px solid var(--sk-component-preview-border-color);
+    background: var(--sk-component-preview-bg);
+  }
+
+  /*
+   * A device is a width AND a height: a width-only preset shows reflow but never what falls below
+   * the fold, which is half of what a small screen does to a layout. Both presets therefore set
+   * both axes, and the frame runtime stops auto-fitting and scrolls, the way the real device would.
+   *
+   * The sizes are px, not rem: a device viewport is a physical measure, and a reader who bumps the
+   * root font size wants to see THAT reflow on a phone-sized screen, not a phone that grew.
+   */
+  .sk-component-preview__stage[data-sk-component-preview-screen="tablet"] {
+    /* Between `compact` (36rem) and `desktop` (52rem): the band nothing else makes easy to see. */
+    --sk-component-preview-screen-inline-size: 768px;
+    --sk-component-preview-screen-block-size: 1024px;
+  }
+
+  .sk-component-preview__stage[data-sk-component-preview-screen="mobile"] {
+    /* Below `compact`, so the stacked side of every layout switch shows. */
+    --sk-component-preview-screen-inline-size: 390px;
+    --sk-component-preview-screen-block-size: 844px;
+  }
+
+  .sk-component-preview__stage[data-sk-component-preview-screen] {
+    justify-self: center;
+    block-size: min(
+      var(--sk-component-preview-screen-block-size),
+      var(--sk-component-preview-screen-max-block-size)
+    );
+    /* The reserved-viewport floors below would fight a preset that is deliberately shorter. */
+    min-block-size: 0;
+    border-inline: 1px solid var(--sk-component-preview-border-color);
+    overflow: auto;
+  }
+
+  /*
+   * The mat behind a screened stage, so the letterboxing reads as chrome rather than as a broken
+   * full-bleed. A grid-placed ::before instead of a wrapper element: the stage, the resizer and the
+   * loader already share this cell, and the consumer authors none of them.
+   *
+   * It is a HALFTONE, not a flat fill: at a preset the frame no longer fills the card, and a flat
+   * mat in a near-surface tone reads as more demo rather than as the wall behind it. A sparse dot
+   * grid in the accent is unmistakably chrome — no component in the system paints one — and points
+   * stay quiet at any width: nothing lines up with the demo's own edges, and there is no diagonal
+   * for the renderer to alias into ropes.
+   *
+   * The grid is even; the TONE ramps. A mask was the obvious way to do that and the wrong one: it
+   * cannot tell a dot from a fill, so it punched a hole in the mat itself and the frame ended up
+   * sitting in a void. Veiling with the mat's own color ramps only what is drawn on the wall, and
+   * never all the way to nothing — the grid stays legible under the frame, just quieter.
+   */
+  .sk-component-preview:has(
+    > .sk-component-preview__stage[data-sk-component-preview-screen]
+  )::before {
+    content: "";
+    grid-column: 1;
+    grid-row: 2;
+    border-block-end: 1px solid var(--sk-component-preview-border-color);
+    background-color: var(--sk-component-preview-mat-bg);
+    background-image:
+      radial-gradient(
+        110% 100% at 50% 50%,
+        var(--sk-component-preview-mat-veil) 0%,
+        transparent var(--sk-component-preview-mat-veil-reach)
+      ),
+      radial-gradient(
+        circle at center,
+        var(--sk-component-preview-mat-dot-color)
+          var(--sk-component-preview-mat-dot-size),
+        transparent var(--sk-component-preview-mat-dot-size)
+      );
+    background-repeat: no-repeat, repeat;
+    background-size:
+      100% 100%,
+      var(--sk-component-preview-mat-dot-gap)
+        var(--sk-component-preview-mat-dot-gap);
+  }
+
+  .sk-component-preview__stage[data-sk-component-preview-scroll] {
+    overflow: auto;
+  }
+
+  .sk-component-preview__stage[data-sk-component-preview-viewport="menu"],
+  .sk-component-preview__stage[data-sk-component-preview-viewport="menu"] ~ .sk-component-preview__loading {
+    /* Tall enough for an open listbox under the trigger without a dialog-sized empty stage. */
+    --sk-component-preview-stage-min-block-size: 18rem;
+  }
+
+  .sk-component-preview__stage[data-sk-component-preview-viewport="overlay"],
+  .sk-component-preview__stage[data-sk-component-preview-viewport="overlay"] ~ .sk-component-preview__loading {
+    --sk-component-preview-stage-min-block-size: 24rem;
+  }
+
+  .sk-component-preview__loading {
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    min-block-size: var(--sk-component-preview-stage-min-block-size);
+    border-block-end: 1px solid var(--sk-component-preview-border-color);
+    background: var(--sk-component-preview-bg);
+    color: var(--sk-component-preview-loader-fg);
+    pointer-events: none;
+  }
+
+  .sk-component-preview__stage:is(
+    [data-sk-component-preview-frame-ready],
+    [data-sk-component-preview-frame-error]
+  ) {
+    visibility: visible;
+    /* After fitFrame writes an explicit height, drop the loading floor. */
+    min-block-size: 0;
+  }
+
+  /*
+   * Reserved viewports still need a floor after fitFrame writes an explicit content height —
+   * except once the height stops being the content's: a reader drag or a screen preset both own
+   * both axes, and the floor would fight either. These selectors are the most specific in the file,
+   * so a preset that is deliberately shorter than the reserve needs the exclusion here, not a
+   * higher-specificity rule of its own.
+   */
+  .sk-component-preview__stage[data-sk-component-preview-viewport="menu"]:is(
+    [data-sk-component-preview-frame-ready],
+    [data-sk-component-preview-frame-error]
+  ):not([data-sk-component-preview-resized], [data-sk-component-preview-screen]),
+  .sk-component-preview__stage[data-sk-component-preview-viewport="overlay"]:is(
+    [data-sk-component-preview-frame-ready],
+    [data-sk-component-preview-frame-error]
+  ):not([data-sk-component-preview-resized], [data-sk-component-preview-screen]) {
+    min-block-size: var(--sk-component-preview-stage-min-block-size);
+  }
+
+  .sk-component-preview__stage:is(
+    [data-sk-component-preview-frame-ready],
+    [data-sk-component-preview-frame-error]
+  ) ~ .sk-component-preview__loading {
+    display: none;
+  }
+
+  /*
+   * The stage's bottom edge is the handle, textarea-style: it straddles the border instead of
+   * adding a rail, so a short demo card stays short. Hidden until the frame paints — during
+   * loading there is nothing to size, and the grip would float over the spinner.
+   */
+  .sk-component-preview__resizer {
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    align-self: end;
+    justify-self: center;
+    /* A centred grip, not a full-width rail: a flush demo keeps its own bottom edge clickable. */
+    inline-size: var(--sk-component-preview-resizer-inline-size);
+    block-size: var(--sk-component-preview-resizer-size);
+    touch-action: none;
+    cursor: ns-resize;
+  }
+
+  .sk-component-preview:not(
+    :has(.sk-component-preview__stage:is(
+      [data-sk-component-preview-frame-ready],
+      [data-sk-component-preview-frame-error]
+    ))
+  ) .sk-component-preview__resizer,
+  /* A preset owns the height, so the grip would be a second, contradicting owner. Pick `free` to
+   * get the drag back — which is also what makes the preset legible as a mode rather than a nudge. */
+  .sk-component-preview:has(
+    > .sk-component-preview__stage[data-sk-component-preview-screen]
+  ) .sk-component-preview__resizer {
+    display: none;
+  }
+
+  .sk-component-preview__resizer::before {
+    content: "";
+    inline-size: var(--sk-component-preview-grip-inline-size);
+    block-size: var(--sk-component-preview-grip-block-size);
+    border-radius: var(--radius-pill);
+    background: var(--sk-component-preview-grip-fg);
+    transition:
+      background-color var(--motion-state-change-duration) var(--motion-state-change-easing),
+      inline-size var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  .sk-component-preview__resizer:hover::before,
+  .sk-component-preview__resizer:focus-visible::before,
+  .sk-component-preview[data-sk-component-preview-resizing] .sk-component-preview__resizer::before {
+    inline-size: calc(var(--sk-component-preview-grip-inline-size) * 1.5);
+    background: var(--sk-component-preview-grip-active-fg);
+  }
+
+  .sk-component-preview__resizer:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: var(--radius-pill);
+  }
+
+  @media (forced-colors: active) {
+    .sk-component-preview__resizer::before {
+      background: ButtonText;
+    }
+    /* Forced colors flatten the palette the texture depends on; the stage's own border already
+     * separates frame from mat there, so drop the grid instead of shipping a muddy one. */
+    .sk-component-preview:has(
+      > .sk-component-preview__stage[data-sk-component-preview-screen]
+    )::before {
+      --sk-component-preview-mat-dot-color: transparent;
+    }
+  }
+
+  /* A drag that crosses the stage must not be eaten by the frame's own document. */
+  .sk-component-preview[data-sk-component-preview-resizing] {
+    cursor: ns-resize;
+    user-select: none;
+  }
+
+  .sk-component-preview[data-sk-component-preview-resizing] .sk-component-preview__stage {
+    pointer-events: none;
+  }
+
+  .sk-component-preview__frame-body {
+    /* One inset on every side — axis-asymmetric padding makes the specimen look top-heavy. */
+    --sk-component-preview-stage-padding: var(--space-inset-lg);
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: flex-start;
+    gap: var(--space-inline-md);
+    box-sizing: border-box;
+    min-inline-size: 0;
+    /* Content-sized: never a viewport floor (that forced scrollbars). */
+    min-block-size: 0;
+    margin: 0;
+    padding: var(--sk-component-preview-stage-padding);
+    background: var(--sk-component-preview-bg);
+    color: var(--color-text-primary);
+  }
+
+  /* Preview documents must not inherit the host's scroll-lock gutter or a page-tall body.
+   * Default overflow is locked by the frame chrome stylesheet; opt in with scroll. */
+  :where(html):has(> .sk-component-preview__frame-body) {
+    scrollbar-gutter: auto;
+    block-size: auto;
+    min-block-size: 0;
+  }
+
+  .sk-component-preview__frame-body > * {
+    max-inline-size: 100%;
+  }
+
+  .sk-component-preview__frame-body > :not(.sk-select) {
+    min-inline-size: 0;
+  }
+
+  .sk-component-preview__frame-body[data-sk-component-preview-flush] {
+    display: block;
+    padding: 0;
+  }
+
+  /* HTML | JS: Tabs at local low density. The list is the chrome; panels sit flush under it. */
+  .sk-component-preview__source-tabs {
+    --sk-tabs-gap: 0;
+    --sk-tabs-panel-padding-block: 0;
+    --sk-tabs-list-border-color: var(--sk-component-preview-border-color);
+    grid-template-columns: minmax(0, 1fr);
+    min-inline-size: 0;
+
+    background: var(--sk-component-preview-header-bg);
+  }
+
+  .sk-component-preview__source-tabs .sk-tabs__list {
+    padding-inline: var(--space-inset-md);
+  }
+
+  .sk-component-preview__source-tabs > *,
+  .sk-component-preview__binding,
+  .sk-component-preview__code {
+    min-inline-size: 0;
+  }
+
+  .sk-component-preview__binding[hidden],
+  .sk-component-preview__code[hidden] {
+    display: none;
+  }
+
+  .sk-component-preview > .sk-code-preview,
+  .sk-component-preview__code > .sk-code-preview {
+    margin-block: 0;
+    border: 0;
+    border-radius: 0;
+  }
+}

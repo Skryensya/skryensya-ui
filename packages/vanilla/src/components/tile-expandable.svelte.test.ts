@@ -10,7 +10,7 @@ function mount(html: string): HTMLElement {
   return root;
 }
 
-const markup = `<section class="ds-tile ds-tile--expandable" data-ds-expandable-tile data-part="root">
+const markup = `<section class="sk-tile sk-tile--expandable" data-sk-expandable-tile data-part="root">
   <button type="button" data-part="trigger">Summary</button>
   <div data-part="content">Details</div>
 </section>`;
@@ -27,10 +27,10 @@ describe("ExpandableTile (collapsible) contracts", () => {
     expect(root.getAttribute("data-scope")).toBe("tile");
   });
 
-  it("opens on click, toggling state and emitting ds:openchange", () => {
+  it("opens on click, toggling state and emitting sk:openchange", () => {
     const root = mount(markup);
     const handler = vi.fn();
-    root.addEventListener("ds:openchange", handler);
+    root.addEventListener("sk:openchange", handler);
     const trigger = getByRole(root, "button", { name: "Summary" });
     const content = root.querySelector<HTMLElement>("[data-part=content]")!;
 

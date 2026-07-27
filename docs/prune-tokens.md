@@ -47,7 +47,7 @@ node scripts/prune-tokens.mjs --used button --safelist --color-accent-500,--z-st
 ### La demanda son las referencias reales
 
 La demanda es todo `var(--x)` que aparece en el CSS que la app envía: los componentes que importa, tanto
-en las declaraciones de hooks `--ds-*` como en los cuerpos de reglas (`background: var(--x)`), más el CSS
+en las declaraciones de hooks `--sk-*` como en los cuerpos de reglas (`background: var(--x)`), más el CSS
 propio de la app, más el safelist.
 
 ### El closure es transitivo sobre los valores

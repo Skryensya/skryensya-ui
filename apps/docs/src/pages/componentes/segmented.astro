@@ -6,16 +6,16 @@ import Showcase from "../../components/Showcase.astro";
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
 const html = `<div
-  class="ds-segmented"
-  data-ds-segmented
+  class="sk-segmented"
+  data-sk-segmented
   data-value="day"
   role="radiogroup"
   aria-label="Rango"
 >
-  <span class="ds-segmented__indicator" aria-hidden="true"></span>
+  <span class="sk-segmented__indicator" aria-hidden="true"></span>
   <button
-    class="ds-segmented__option ds-interactive"
-    data-ds-segmented-option
+    class="sk-segmented__option sk-interactive"
+    data-sk-segmented-option
     data-value="day"
     type="button"
     role="radio"
@@ -23,8 +23,8 @@ const html = `<div
     Día
   </button>
   <button
-    class="ds-segmented__option ds-interactive"
-    data-ds-segmented-option
+    class="sk-segmented__option sk-interactive"
+    data-sk-segmented-option
     data-value="week"
     type="button"
     role="radio"
@@ -32,8 +32,8 @@ const html = `<div
     Semana
   </button>
   <button
-    class="ds-segmented__option ds-interactive"
-    data-ds-segmented-option
+    class="sk-segmented__option sk-interactive"
+    data-sk-segmented-option
     data-value="month"
     type="button"
     role="radio"
@@ -57,7 +57,7 @@ const react = `import { SegmentedControl } from "@skryensya/react/segmented";
 
 const js = `import { initComponents } from "@skryensya/vanilla/auto";
 
-initComponents();`;
+await initComponents();`;
 ---
 
 <Base title="SegmentedControl" description="SegmentedControl: elección única y visible sobre un grupo pequeño, con semántica radiogroup.">
@@ -69,16 +69,20 @@ initComponents();`;
     <a href="/componentes/select">Select</a>.
   </p>
 
-  <h2>Demo</h2>
   <Showcase html={html} react={react} label="SegmentedControl" />
-  <p>El enhancer vanilla selecciona con click y con flechas; <code>Home</code> y <code>End</code> saltan al primer y último segmento. La opción elegida queda en <code>data-value</code> y se anuncia con <code>aria-checked</code>. Cada segmento conserva un objetivo táctil mínimo de <code>44px</code>.</p>
+  <p>
+    El enhancer vanilla selecciona con click y con flechas; <code>Home</code> y <code>End</code> saltan
+    al primer y último segmento. La opción elegida queda en <code>data-value</code> y se anuncia con
+    <code>aria-checked</code>. Cada segmento pinta a <code>--size-control-sm</code> y conserva un hit
+    de <code>44px</code> vía <code>::after</code> (el indicador sigue la caja pintada).
+  </p>
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />
 
   <h2>Inicializar vanilla</h2>
-  <CodeBlock code={js} label="tu JS" />
+  <CodeBlock code={js} label="JavaScript" />
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo. Es controlado (<code>value</code>) o no controlado (<code>defaultValue</code>); al cambiar, el indicador se alinea y viaja hasta la opción nueva con el token de motion de cambio de estado.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview. Es controlado (<code>value</code>) o no controlado (<code>defaultValue</code>); al cambiar, el indicador se alinea y viaja hasta la opción nueva con el token de motion de cambio de estado.</p>
 </Base>

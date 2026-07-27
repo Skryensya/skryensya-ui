@@ -2,11 +2,12 @@
 /*
  * One installation contract for every enhanced docs page.
  *
- * The caller makes exactly one scope choice: `initComponents()` for the whole document, or a named
- * mount for one enhancer. A named mount may receive one authored root, so it does not scan a page
- * merely because the consumer imports its implementation.
+ * `initComponents()` is the async selector manifest: it imports only enhancer types found below the
+ * chosen root. A named mount remains the smallest seam when the caller already knows the one module
+ * it ships.
  */
 import CodeBlock from "./CodeBlock.astro";
+import { getLocale, useTranslations } from "../i18n";
 
 interface Props {
   name: string;
@@ -16,17 +17,18 @@ interface Props {
 }
 
 const { name, entrypoint, mount, selector } = Astro.props;
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
 const auto = `import { initComponents } from "@skryensya/vanilla/auto";
 
-// Monta todos los enhancers del sistema presentes en el documento.
-initComponents();`;
+// ${t("vanilla.autoComment")}
+await initComponents();`;
 
 const component = `import { ${mount} } from "${entrypoint}";
 
-// Monta sólo ${name}; no carga ni recorre otros enhancers.
+// ${t("vanilla.componentComment", { name })}
 ${mount}();`;
 
 const instance = `import { ${mount} } from "${entrypoint}";
@@ -35,24 +37,15 @@ const root = document.querySelector<HTMLElement>("${selector}");
 if (root) ${mount}(root);`;
 ---
 
-<h2>Vanilla: instalar y montar</h2>
-<p>
-  Esta ruta no necesita React. Instala Core para los estilos y Vanilla para el enhancer; después elige
-  <strong>una</strong> estrategia de montaje para cada raíz. Ambas son idempotentes.
-</p>
+<h2>{t("vanilla.title")}</h2>
+<p>{t("vanilla.intro")}</p>
 <CodeBlock code={install} label="terminal" />
 
-<h3>Auto, todos los enhancers</h3>
-<p>
-  Úsalo cuando la página contiene varios componentes del sistema. Busca los roots <code>data-ds-*</code>
-  presentes y monta cada tipo soportado una vez.
-</p>
-<CodeBlock code={auto} label="tu JavaScript" />
+<h3>{t("vanilla.autoTitle")}</h3>
+<p>{t("vanilla.autoBody")}</p>
+<CodeBlock code={auto} label="JavaScript" />
 
-<h3>Sólo {name}</h3>
-<p>
-  Este entry point importa sólo el enhancer de {name}. Sin argumento monta sus instancias en el
-  documento; al pasar una raíz, monta exclusivamente esa instancia.
-</p>
-<CodeBlock code={component} label="tu JavaScript" />
-<CodeBlock code={instance} label="una instancia" />
+<h3>{t("vanilla.onlyTitle", { name })}</h3>
+<p>{t("vanilla.onlyBody", { name })}</p>
+<CodeBlock code={component} label="JavaScript" />
+<CodeBlock code={instance} label={t("vanilla.instance")} />

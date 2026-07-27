@@ -1,0 +1,414 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+
+const import_ = `@import "@skryensya/core/patterns/vaul.css";
+@import "@skryensya/core/patterns/scroll-lock.css";`;
+
+const html = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-sk-vaul-open="demo-vaul"
+  type="button"
+>
+  Share file
+</button>
+
+<dialog
+  class="sk-vaul demo-vaul"
+  id="demo-vaul"
+  data-sk-vaul
+  data-edge="block-end"
+  aria-labelledby="demo-vaul-title"
+>
+  <div
+    class="sk-vaul__handle"
+    data-part="handle"
+    aria-hidden="true"
+  ></div>
+
+  <header class="demo-vaul__header">
+    <span class="demo-vaul__heading">
+      <h2 class="demo-vaul__title" id="demo-vaul-title" data-flush>
+        Propuesta comercial Q3
+      </h2>
+      <span class="demo-vaul__meta">
+        PDF · 2.4 MB · edited 2 hours ago
+      </span>
+    </span>
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="ghost"
+      data-icon-only
+      data-sk-vaul-close
+      type="button"
+      aria-label="Cerrar"
+    >
+      <span data-sk-icon="close"></span>
+    </button>
+  </header>
+
+  <label class="sk-switch demo-vaul__link">
+    <input
+      class="sk-switch__input"
+      type="checkbox"
+      role="switch"
+      checked
+    />
+    <span class="sk-switch__control" aria-hidden="true">
+      <span class="sk-switch__thumb"></span>
+    </span>
+    <span class="sk-switch__label">
+      Anyone with the link can see
+    </span>
+  </label>
+
+  <ul
+    class="sk-list demo-vaul__people"
+    data-density="compact"
+    aria-label="People with access"
+  >
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">AK</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Ada Kovač</span>
+        <span class="sk-list__description">ada@estudio.cl</span>
+      </span>
+      <span class="sk-list__trailing">
+        <span class="sk-badge">Owner</span>
+      </span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">RM</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Renzo Molina</span>
+        <span class="sk-list__description">renzo@estudio.cl</span>
+      </span>
+      <span class="sk-list__trailing">Can edit</span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">NS</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Nadia Sepulveda</span>
+        <span class="sk-list__description">nadia@estudio.cl</span>
+      </span>
+      <span class="sk-list__trailing">You can comment</span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">TB</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Tomas Bahamondes</span>
+        <span class="sk-list__description">tomas@estudio.cl</span>
+      </span>
+      <span class="sk-list__trailing">You can comment</span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">+6</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Design team</span>
+        <span class="sk-list__description">6 people</span>
+      </span>
+      <span class="sk-list__trailing">Read-only</span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">LV</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Lucia Vergara</span>
+        <span class="sk-list__description">lucia@cliente.cl</span>
+      </span>
+      <span class="sk-list__trailing">Invitation sent</span>
+    </li>
+  </ul>
+
+  <footer class="demo-vaul__actions">
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="ghost"
+      data-sk-vaul-close
+      type="button"
+    >
+      Cancel
+    </button>
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-sk-vaul-close
+      type="button"
+    >
+      Compartir
+    </button>
+  </footer>
+</dialog>`;
+
+const edges = `
+<dialog class="sk-vaul" data-edge="inline-start">…</dialog>
+<dialog class="sk-vaul" data-edge="inline-end">…</dialog>
+<dialog class="sk-vaul" data-edge="block-end">…</dialog>`;
+
+const vanilla = `import { connectVaul } from "@skryensya/vanilla/vaul";
+
+// Just the drag. Open is showModal() and close is close():
+// The modality is from the platform.
+const cleanup = connectVaul(document.querySelector("#demo-vaul"), {
+  // fraction of the panel to drag
+  dismissThreshold: 0.4,
+  // px/ms: a flick closes without crossing the distance
+  dismissVelocity: 0.5,
+  onOpenChange(details) {
+    console.log(details.open);
+  },
+});`;
+
+const noDrag = `<dialog
+  class="sk-vaul"
+  data-sk-vaul
+  data-draggable="false"
+  data-edge="block-end"
+>
+  <!-- without handle and no drag: Vaul is still complete -->
+</dialog>`;
+---
+
+<Base title="Vaul" description="A pattern: modal panel anchored to a viewport edge, with optional drag-to-dismiss.">
+  <h1>Vaul</h1>
+  <p class="lede">
+    A modal panel anchored to a <strong>edge</strong> of the viewport: arrives from that edge, leaves the
+    inert page behind a backdrop, and goes where it came from. The edge is the whole idea, a Vaul
+    It is named by where it comes from, never by the shape it makes when it arrives.
+  </p>
+
+  <Showcase html={html} label="HTML" viewport="overlay" />
+
+  <h2>Why is it a pattern and not a component?</h2>
+  <p>
+    The rule is a single question:
+    <em>could a second component need this exact structure?</em> Here the answer is not a
+    prediction, it happens, today, in this repo: <a href="/en/components/drawer">Drawer</a> <strong>es</strong>
+    a Vaul on the inline edge. The <a href="/en/components/dialog">Dialog Vaul</a> option reuses the same
+    Block-end interaction on mobile without converting Dialog into a Vaul component.
+  </p>
+  <p>
+    So Vaul sends <strong>hooks and structure</strong>. A drawer that reimplemented the panel would be
+    a second Vaul with another name.
+  </p>
+
+  <h2>The edge is a data, not a component</h2>
+  <p>
+    Three edges, one pattern. <code>data-edge</code> choose; nothing else changes. The inline edges are
+    logical, so they turn around on their own in RTL instead of sticking to the wrong side of the screen.
+  </p>
+  <CodeBlock code={edges} label="HTML" />
+
+  <h2>Requires native <code>&lt;dialog&gt;</code></h2>
+  <p>
+    The focus trap, ESC, the inert background, the focus restoration, the top layer and a
+    Real <code>::backdrop</code> are behaviors that the platform already has. A Vaul over a div
+    it reimplements them in JavaScript that would have to be sent, and the top layer and <code>:modal</code> are not
+    available for a div at no price.
+  </p>
+
+  <h2>Zag is not used here, and that is the finding</h2>
+  <p>
+    The rule is that Zag enters only when the state coordination is worth its cost. The record was reviewed before
+    write a line: <strong>no Vaul machine</strong> exists. And what Zag could cover is
+    exactly what the platform already does best, <code>@zag-js/dialog</code> would reimplement the
+    modality that <code>&lt;dialog&gt;</code> provides, and <code>@zag-js/presence</code> is redundant
+    against <code>@starting-style</code>. That the answer is "none" is the working rule, not a
+    exception.
+  </p>
+
+  <h2>Drag is the only thing that costs JS</h2>
+  <p>
+    There remains <strong>un</strong> behavior without an equivalent on the platform and without a machine in Zag:
+    Drag the panel toward its edge to close it. That, and only that, is the enhancer.
+    <strong>Vaul is complete without it</strong>: without JS there is panel, slide, backdrop, ESC and click outside.
+  </p>
+  <CodeBlock code={vanilla} label="JavaScript" />
+  <p>
+    It closes by distance <strong>or</strong> by speed: a flick is an intention, and waiting for
+    crossing a distance threshold is exactly what makes a blade feel stuck. The speed
+    is measured on the <strong>last millimeters</strong> of the gesture, not on the average: if you drag
+    Slowly, you hesitate, and only then do you pull, the pull is real, averaged from when you put your finger down.
+    dilute until it seems like you did not move. And a flick <em>back</em> beats him from distance: the
+    last word of the hand is your word.
+  </p>
+  <CodeBlock code={noDrag} label="no drag" />
+
+  <h2>For the other side, resist</h2>
+  <p>
+    Pulling the panel inwards does not detach it from its edge, but it does not leave it stuck either: it gives way
+    starting 1∶1 under the bud and curves to a stop of about 12px. Let the finger move and the thing
+    below is not the only moment in which a surface of direct manipulation reveals itself as a drawing
+    of a surface. The asymmetry <em>is</em> the message: there is no path to that side.
+  </p>
+  <p>
+    And what appears in that gap is <strong>plus panel</strong>: the material continues past the
+    edge, so lifting a leaf reveals a leaf and not a strip of backdrop. They are two numbers
+    different on purpose, how much it gives (<code>--sk-vaul-overpull</code>) and how far the
+    material (<code>--sk-vaul-material</code>), and the second is declared as a floor above the first
+    so that giving in can never win. Material is painted <em>above</em> elevation: at
+    On the other hand, the shadow of the panel dyed just the strip that had just been revealed, and a raised leaf
+    showed a dark band where its own surface should be, which is exactly the hole
+    that this exists to not have.
+  </p>
+  <p>
+    The backdrop goes with that: its opacity follows the drag. A full backdrop with the panel half out
+    I would be lying about what modal is.
+  </p>
+
+  <h2>The handle is still on the edge</h2>
+  <p>
+    It is not cosmetic: a sash pulls down from a bar that crosses its roof, and a side panel
+    It is pulled sideways from a bar along its inside edge. A horizontal pill in a drawer advertises
+    the wrong gesture, and an affordance that lies is worse than having none.
+  </p>
+
+  <h2>On desktop it does not drag</h2>
+  <p>
+    The handle is a <strong>tactile</strong> affordance: a bar that is pulled with the thumb. in a pointer
+    There is nothing to pull that a click away or an ESC will not do better, so above the breakpoint of the
+    system (<code>52rem</code>, the same width where the sidebar becomes a drawer and the dialog becomes
+    sheet) the handle is hidden and the enhancer does not wire the drag. CSS and JS make the same cut, with the
+    same <code>matchMedia</code>, so there is never a handle dangling at a width where it does not drag.
+  </p>
+
+  <h2>Motion: arriving, leaving and releasing are three intentions</h2>
+  <p>
+    Each one with its tokens, never an average duration: entering is announced, leaving is already decided. with
+    <code>prefers-reduced-motion</code> the panel <strong>continues to arrive</strong>, the trip is dropped, not the
+    Vaul, and the fade of the backdrop is what says that the page was inert. Drag is not touched: it is
+    direct manipulation, no motion that the system reproduces for you.
+  </p>
+  <p>
+    <a href="/en/transparency"><code>prefers-reduced-transparency</code></a> does not remove the backdrop:
+    makes it opaque. The modality and direct response to drag remain.
+  </p>
+  <p>
+    <strong>Drop</strong> is the third, and it is its own: a dropped panel is not exiting, it is ending
+    the impulse that the hand already gave him. That is why it does not consume <code>enter</code> or <code>exit</code>, both
+    are short because no one expects them, but the <code>release</code> intent, with a long duration
+    purpose: cutting it is what causes the panel to stop dead under your finger instead of continuing
+    long. The same attempt for both destinations: returning home and leaving completely are the same shot with
+    different ending. It is the only intent that under <code>prefers-reduced-motion</code> cannot release its
+    trip, the panel is where your finger left it and it has to get somewhere, so let go of the luxury and
+    lands short.
+  </p>
+
+  <h2>Install</h2>
+  <CodeBlock code={import_} label="CSS" />
+
+  <StylingHooks groups={[{ file: "patterns/vaul.css", probe: "sk-vaul" }]} />
+</Base>
+
+<style is:global>
+  /* La piel del demo es del consumidor, como siempre: el pattern trae hooks y estructura, no pintura.
+     El ancho lo decide el clamp del pattern; el alto lo da el contenido hasta el techo del sheet.
+     `is:global`: el HTML autorado vive dentro del srcdoc y no lleva el atributo de scope de Astro;
+     el adapter copia esta regla global al frame, una regla scopeada no podría alcanzarlo. */
+  .demo-vaul {
+    --sk-vaul-radius: var(--radius-surface) var(--radius-surface) 0 0;
+    /* claim a real slice of the screen rather than hugging three rows at the bottom edge */
+    min-block-size: min(64dvh, 32rem);
+
+    /* El inset lateral de la hoja, en UN solo lugar: la cabecera, la fila del enlace, las filas de la
+       lista y las acciones tienen que caer sobre la misma vertical, y son cuatro reglas distintas.
+       Un pelo por encima de `md` y no `lg`: en una hoja angosta el salto a `lg` se nota como ancho
+       perdido, mientras que estos 4px sólo despegan el texto del borde. */
+    --demo-vaul-inset: calc(var(--space-inset-md) + var(--space-inset-xs));
+  }
+
+  /* El sheet ES la columna: header, fila de enlace, lista y acciones son sus hijos directos. Un
+     wrapper interno sólo existiría para volver a declarar el mismo flex y para poner un padding que
+     las filas ya traen. */
+  .demo-vaul[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Un sheet se sostiene con una mano: cada fila de padding es una fila de contenido que no entró.
+     Por eso el inset es corto y no `xl`, y por eso las bandas se separan con una línea en vez de con
+     un `gap` grande, una línea cuesta 1px y dice lo mismo.
+     Arriba sí se paga: el handle es una barra de 12px sin aire propio, y con la cabecera pegada a
+     ella el título parecía colgar del borde en vez de empezar la hoja. */
+  .demo-vaul__header {
+    display: flex;
+    gap: var(--space-inline-md);
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: var(--space-inset-sm) var(--demo-vaul-inset);
+  }
+
+  .demo-vaul__heading {
+    display: grid;
+    gap: 2px;
+    min-inline-size: 0;
+  }
+
+  .demo-vaul__title {
+    margin: 0;
+    font-size: var(--font-size-heading-sm);
+    line-height: var(--font-line-height-heading);
+    font-weight: var(--font-weight-heading);
+  }
+
+  .demo-vaul__meta {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+  }
+
+  .demo-vaul__link {
+    flex: none;
+    padding: var(--space-inset-sm) var(--demo-vaul-inset);
+    border-block: 1px solid var(--color-border-subtle);
+  }
+
+  /* La lista se lleva el alto sobrante y scrollea sola: header, enlace y acciones se quedan quietos
+     mientras el dedo recorre las personas.
+     El inset lateral NO se pone acá: las filas ya traen el suyo, así que se les pasa el de la hoja
+     por su hook y siguen corriendo de borde a borde. Un padding en la lista las metería hacia adentro
+     y dejaría el divisor corto. */
+  .demo-vaul__people {
+    --sk-list-row-padding-x: var(--demo-vaul-inset);
+
+    flex: 1;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .demo-vaul__actions {
+    display: flex;
+    gap: var(--space-inline-sm);
+    justify-content: flex-end;
+    padding: var(--space-inset-sm) var(--demo-vaul-inset);
+    border-block-start: 1px solid var(--color-border-subtle);
+  }
+</style>

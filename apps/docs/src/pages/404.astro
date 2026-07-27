@@ -20,20 +20,20 @@ const searchIcon = iconMarkup("search");
       </p>
     </div>
 
-    <div class="ds-inline docs-not-found__actions" data-gap="sm">
-      <a class="ds-button ds-interactive" data-variant="primary" href="/">Ir a la documentación</a>
+    <div class="sk-inline docs-not-found__actions" data-gap="sm">
+      <a class="sk-button sk-interactive" data-variant="primary" href="/">Ir a la documentación</a>
       <button
-        class="ds-button ds-interactive"
+        class="sk-button sk-interactive"
         data-variant="ghost"
         type="button"
         aria-controls="docs-cmdk"
         aria-expanded="false"
         aria-keyshortcuts="Meta+K Control+K"
-        data-docs-cmdk-open
+        data-sk-command-palette-open
       >
         <Fragment set:html={searchIcon} />
         Buscar en Docs
-        <kbd class="ds-kbd" data-cmdk-hint aria-hidden="true">⌘K</kbd>
+        <kbd class="sk-kbd" data-sk-command-palette-hint aria-hidden="true">⌘K</kbd>
       </button>
     </div>
 

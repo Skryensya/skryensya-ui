@@ -2,12 +2,12 @@ import { sliderFill, sliderFillProperty, sliderParts } from "@skryensya/core/sli
 import { bindEvents } from "../runtime/apply.js";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
-const rootSelector = "[data-ds-slider]";
+const rootSelector = "[data-sk-slider]";
 
 type Cleanup = () => void;
 
 /*
- * SLIDER, keeps `--ds-slider-fill` in sync with a native range's value.
+ * SLIDER, keeps `--sk-slider-fill` in sync with a native range's value.
  *
  * The track paints its filled portion against that custom property (see components/slider.css), and
  * CSS alone can read the initial `value` but cannot follow the thumb as it moves, a range input

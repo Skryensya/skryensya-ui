@@ -1,0 +1,175 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+
+
+
+const html = `<div
+  class="sk-radio-group"
+  role="radiogroup"
+  aria-label="Plan"
+  data-orientation="vertical"
+>
+  <label class="sk-radio">
+    <input
+      class="sk-radio__input"
+      type="radio"
+      name="plan"
+      value="basic"
+      checked
+    />
+    <span class="sk-radio__control" aria-hidden="true">
+      <span class="sk-radio__indicator"></span>
+    </span>
+    <span class="sk-radio__label">Basic</span>
+  </label>
+  <label class="sk-radio">
+    <input
+      class="sk-radio__input"
+      type="radio"
+      name="plan"
+      value="pro"
+    />
+    <span class="sk-radio__control" aria-hidden="true">
+      <span class="sk-radio__indicator"></span>
+    </span>
+    <span class="sk-radio__label">Professional</span>
+  </label>
+  <label class="sk-radio">
+    <input
+      class="sk-radio__input"
+      type="radio"
+      name="plan"
+      value="enterprise"
+    />
+    <span class="sk-radio__control" aria-hidden="true">
+      <span class="sk-radio__indicator"></span>
+    </span>
+    <span class="sk-radio__label">Enterprise</span>
+  </label>
+</div>`;
+
+const react = `import { RadioGroup } from "@skryensya/react/radio-group";
+
+<RadioGroup
+  name="plan"
+  defaultValue="pro"
+  items={[
+    { value: "basic", label: "Basic" },
+    { value: "pro", label: "Professional" },
+  ]}
+  onValueChange={(details) => console.log(details.value)}
+/>;`;
+
+const tileRadioGroupHtml = `<div
+  class="sk-inline"
+  role="radiogroup"
+  aria-label="Plan"
+  data-scope="tile"
+  data-part="root"
+  data-sk-tile-radio-group
+  data-name="plan"
+  data-default-value="pro"
+  style="align-items: stretch"
+>
+  <label
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-part="item"
+    style="flex: 1"
+  >
+    <input type="radio" name="plan" value="basic" data-part="input" />
+    <span class="sk-tile__content" data-part="content">
+      <span class="sk-tile__title">Basic</span>
+      <span class="sk-tile__description">For personal projects.</span>
+    </span>
+    <span
+      class="sk-tile__selection-indicator"
+      data-part="indicator"
+      aria-hidden="true"
+    ></span>
+  </label>
+  <label
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-part="item"
+    style="flex: 1"
+  >
+    <input
+      type="radio"
+      name="plan"
+      value="pro"
+      checked
+      data-part="input"
+    />
+    <span class="sk-tile__content" data-part="content">
+      <span class="sk-tile__title">Professional</span>
+      <span class="sk-tile__description">
+        For production workloads.
+      </span>
+    </span>
+    <span
+      class="sk-tile__selection-indicator"
+      data-part="indicator"
+      aria-hidden="true"
+    ></span>
+  </label>
+</div>`;
+
+const tileRadioGroupVanilla = `import { initComponents } from "@skryensya/vanilla/auto";
+
+// The root is authored with data-sk-tile-radio-group (data-name, data-default-value),
+// and each option with data-part="item" + an input[type=radio] with its value.
+// initComponents hydrates it with the @zag-js/radio-group machine, the same one React uses.
+await initComponents();
+
+const root = document.querySelector("[data-sk-tile-radio-group]");
+root.addEventListener("sk:valuechange", (event) => {
+  console.log(event.detail.value);
+});`;
+
+const tileRadioGroupReact = `import { TileRadioGroup } from "@skryensya/react/tile-radio-group";
+
+<TileRadioGroup
+  className="plan-tiles"
+  orientation="horizontal"
+  name="plan"
+  defaultValue="pro"
+  items={[
+    { value: "basic", children: "Basic" },
+    { value: "pro", children: "Professional" },
+  ]}
+  onValueChange={(details) => console.log(details.value)}
+/>;`;
+---
+
+<Base title="RadioGroup" description="RadioGroup: an exclusive option with native inputs and real form.">
+  <h1>RadioGroup</h1>
+  <p class="lede">An exclusive choice between related alternatives. Each option is a native radius; the shared name imposes exclusion.</p>
+
+  <Showcase html={html} react={react} label="RadioGroup" />
+
+  <h2>Surface Options: TileRadioGroup</h2>
+  <p>
+    When each alternative needs a title, description, and a complete surface, use
+    <code>TileRadioGroup</code>. Each item retains a native radius; The group does not impose a disposition.
+  </p>
+  <Showcase html={tileRadioGroupHtml} react={tileRadioGroupReact} label="TileRadioGroup" />
+  <p>In this preview the options are in a row with <a href="/en/components/inline"><code>sk-inline</code></a> and each Tile takes <code>flex: 1</code>. In a column, omits <code>sk-inline</code>.</p>
+  <p>The <code>tile-radio-group</code> enhancer (Svelte + <code>@zag-js/radio-group</code>, same machine as React) hydrates the root <code>data-sk-tile-radio-group</code> with <code>initComponents()</code>: it guarantees mutual exclusion and synchronizes the state of each <code>[data-part="item"]</code> with its real radius.</p>
+  <CodeBlock code={tileRadioGroupVanilla} label="JavaScript" />
+  <p>Import <code>@skryensya/core/components/radio-group.css</code> and call <code>initComponents()</code> once.</p>
+
+
+  <h2>React</h2>
+  <p>The code is in the <strong>React</strong> tab of the preview.</p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li><code>name</code> is required and shared by all options.</li>
+    <li><code>defaultValue</code> preserves the native state and respects form resets.</li>
+    <li><code>value</code> controls the selected option; <code>onValueChange</code> reports changes.</li>
+    <li>The group needs an accessible name: <code>aria-label</code>, <code>aria-labelledby</code> or a <code>fieldset</code> with <code>legend</code>.</li>
+  </ul>
+  <StylingHooks groups={[{ file: "components/radio-group.css", probe: "sk-radio-group" }]} />
+</Base>

@@ -37,13 +37,13 @@ describe("Tile factories", () => {
     const defaultLink = createTileLink({ href: "/default" });
 
     expect(link.href).toContain("/usage");
-    expect(link.classList.contains("ds-tile")).toBe(true);
-    expect(link.classList.contains("ds-tile--interactive")).toBe(true);
-    expect(link.classList.contains("ds-box")).toBe(false);
+    expect(link.classList.contains("sk-tile")).toBe(true);
+    expect(link.classList.contains("sk-tile--interactive")).toBe(true);
+    expect(link.classList.contains("sk-box")).toBe(false);
     expect(button.type).toBe("button");
-    expect(button.classList.contains("ds-tile")).toBe(true);
-    expect(button.classList.contains("ds-tile--interactive")).toBe(true);
-    expect(button.classList.contains("ds-box")).toBe(false);
+    expect(button.classList.contains("sk-tile")).toBe(true);
+    expect(button.classList.contains("sk-tile--interactive")).toBe(true);
+    expect(button.classList.contains("sk-box")).toBe(false);
     expect(link.dataset.padding).toBe("none");
     expect(button.dataset.padding).toBe("xl");
     expect(defaultLink.dataset.padding).toBeUndefined();

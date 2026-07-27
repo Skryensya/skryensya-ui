@@ -50,7 +50,7 @@ La verificación de contraste rechazó `border-default` a 1.44:1 y `text-tertiar
 valores que un diseñador elegiría primero, los dos incorrectos según los requisitos que los propios
 tokens declaran. Los valores corregidos llevan una nota diciendo que la decisión la tomó el validador.
 
-Un test negativo deliberado, apuntar `--ds-button-bg` directo a `--ramp-accent-600`, confirma que la
+Un test negativo deliberado, apuntar `--sk-button-bg` directo a `--ramp-accent-600`, confirma que la
 regla de tier-skip rompe el build.
 
 ## La brecha conocida

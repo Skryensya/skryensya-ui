@@ -2,97 +2,414 @@
 /*
  * A demo and its source, as one titled card.
  *
- * The demo renders INLINE, in the page. `initComponents()` hydrates only authored `data-ds-*` roots;
- * platform-native examples have no matching root and stay platform-only. No iframe and no framework
- * island: enhanced demos prove the Vanilla path by taking it (see astro.config.mjs).
+ * The demo renders in an inline `srcdoc` iframe: no route or external document, but its own DOM,
+ * viewport and top layer. The frame runtime copies the page styles, mounts authored `data-sk-*`
+ * roots inside that realm and keeps the parent theme dimensions in sync.
  *
- * The source below may carry a Vanilla / React tab. Only the authored HTML source RENDERS above, React
- * is documented as a consumer binding, never executed here, which is exactly the boundary the site draws.
+ * Binding tabs (header): Vanilla | React via segmented. Preference is shared across every
+ * preview on the page (`data-sk-component-preview-pref` on `<html>`, persisted in docs).
+ * React is documented, never executed.
+ * Source tabs (below the stage, under Vanilla only): HTML | JS as Tabs at local density 0.72
+ * when the demo needs app composition beyond `data-sk-*` enhancers. Those sit under Vanilla,
+ * never beside React.
  */
 import CodeBlock from "./CodeBlock.astro";
+import { iconMarkup } from "../icons";
+import "@skryensya/core/components/component-preview.css";
+import "@skryensya/core/components/loader.css";
+import "@skryensya/core/components/segmented.css";
+import "@skryensya/core/components/tabs.css";
+import "@skryensya/core/patterns/anchored.css";
+import "@skryensya/core/components/tooltip.css";
+import { buildPreviewFrameDocument } from "../lib/preview-frame";
+import { getLocale, useTranslations } from "../i18n";
 
 type CodeLanguage = "bash" | "css" | "html" | "ts" | "tsx";
 
 interface Props {
-  /** The authored markup. Renders inline above, and is the source on the Vanilla tab. */
+  /** The authored markup. Renders inside the srcdoc frame and is the HTML/Vanilla source. */
   html?: string;
-  /** The React source. Shown on the React tab; never rendered. Omit and the tabs disappear. */
+  /**
+   * App JavaScript beyond `data-sk-*` enhancers (composition, paging, etc.).
+   * Shown as a JS tab under Vanilla, next to HTML, never as a peer of React.
+   */
+  js?: string;
+  /** The React source. Shown on the React binding tab; never rendered. */
   react?: string;
-  /** Explicit code for the vanilla tab, when the demo's markup isn't the source worth teaching. */
+  /** Explicit Vanilla/HTML source when the live markup isn't what you want to teach. */
   code?: string;
+  /**
+   * Complete Vanilla/HTML source. With `code` as the condensed view, CodeBlock toggles
+   * Condensed | Full. Copy always uses this string.
+   */
+  codeFull?: string;
+  /** App-only JavaScript executed inside the frame after Vanilla enhancers mount; never displayed. */
+  previewScript?: string;
   label?: string;
   note?: string;
   lang?: CodeLanguage;
+  /**
+   * Reserve stage height when the demo paints outside flow (menus, dialogs, drawers, toasts).
+   * - `menu`: open listboxes / popovers (~18rem)
+   * - `overlay`: dialogs, drawers, toasts (~24rem)
+   */
+  viewport?: "auto" | "menu" | "overlay";
   /** Give the stage no padding: some components ARE a layout and must reach the edges. */
   flush?: boolean;
+  /**
+   * Allow scrolling inside the stage. Default is off: the iframe grows to the content height so the
+   * demo is fully visible without an inner scrollbar.
+   */
+  scroll?: boolean;
+  /**
+   * Offer the screen presets (Libre | Tablet | Móvil) in the header.
+   *
+   * ON by default, on every preview: "does this hold up on a phone" is a question a reader can ask
+   * of any component, not only of the ones whose layout is obviously the subject — a button's label
+   * can wrap, a table can overflow, a dialog can outgrow the viewport. Leaving it to the author of
+   * each page to remember would mean the answer is available on the demos someone already thought
+   * about, which are exactly the ones that were already fine.
+   *
+   * Pass `screens={false}` where the presets would mislead rather than inform.
+   */
+  screens?: boolean;
 }
 
-const { html, react, code, label = "tu HTML", note, lang = "html", flush = false } = Astro.props;
+const {
+  html,
+  js,
+  react,
+  code,
+  codeFull,
+  previewScript,
+  label = "HTML",
+  note,
+  lang = "html",
+  flush = false,
+  viewport = "auto",
+  scroll = false,
+  screens = true,
+} = Astro.props;
+const t = useTranslations(getLocale(Astro.url));
 const vanillaCode = code ?? html;
-const hasTabs = Boolean(vanillaCode && react);
+const hasJs = Boolean(js);
+const hasReact = Boolean(react);
+const hasBindingTabs = Boolean(vanillaCode && react);
+const hasSourceTabs = Boolean(vanillaCode && js);
+const slotHtml = Astro.slots.has("default") ? await Astro.slots.render("default") : undefined;
+const previewHtml = slotHtml ?? html ?? "";
+const encodedPreviewScript = previewScript ? encodeURIComponent(previewScript) : "";
+/** Unique id so the FOUC inline script can target this preview (Astro may dedupe identical scripts). */
+const previewId = `sk-cp-${Math.random().toString(36).slice(2, 10)}`;
+const frameDocument = buildPreviewFrameDocument({
+  body: previewHtml,
+  flush,
+  scroll,
+  encodedScript: encodedPreviewScript,
+});
+
+/*
+ * The header's glyphs, serialised at BUILD time instead of authored as `data-sk-icon` placeholders.
+ * A placeholder is an empty box until `mountIcons` runs on the host document, and this chrome sits
+ * above the fold on every component page: the controls appeared blank, then popped. `iconMarkup`
+ * writes the same `<svg data-icon="…">` the runtime would, so the icon-set switch still finds and
+ * swaps them — the site keeps the swap, and loses the wait.
+ */
+const reloadIcon = iconMarkup("refresh");
+/*
+ * Screen presets. The name is a stable ROLE, not a device drawing, which is why the tooltips spell
+ * out the actual viewport: `screen-tablet` tells you the class of screen, `768 × 1024` tells you
+ * what you are about to see. Both are needed — the glyph alone cannot say which of two tablets.
+ */
+const screenOptions = [
+  {
+    value: "free",
+    icon: iconMarkup("screen-desktop"),
+    label: t("preview.screenFree"),
+    hint: t("preview.screenFreeHint"),
+  },
+  {
+    value: "tablet",
+    icon: iconMarkup("screen-tablet"),
+    label: t("preview.screenTablet"),
+    hint: t("preview.screenTabletHint"),
+  },
+  {
+    value: "mobile",
+    icon: iconMarkup("screen-mobile"),
+    label: t("preview.screenMobile"),
+    hint: t("preview.screenMobileHint"),
+  },
+] as const;
 ---
 
-<div class="ds-stack docs-showcase" data-gap="none" data-showcase>
-  <header class="docs-showcase__header">
-    <span class="docs-showcase__title">{label}</span>
-    {note && <span class="docs-showcase__note">{note}</span>}
-    {
-      hasTabs && (
-        <div class="ds-segmented docs-showcase__tabs" data-ds-segmented data-value="vanilla" role="radiogroup" aria-label="Binding">
-          <span class="ds-segmented__indicator" aria-hidden="true" />
-          <button class="ds-segmented__option ds-interactive" data-ds-segmented-option data-value="vanilla" type="button" role="radio">
-            Vanilla
-          </button>
-          <button class="ds-segmented__option ds-interactive" data-ds-segmented-option data-value="react" type="button" role="radio">
-            React
-          </button>
-        </div>
-      )
-    }
+<div class="sk-component-preview" data-sk-component-preview id={previewId}>
+  <header class="sk-component-preview__header">
+    <span class="sk-component-preview__title">{label}</span>
+    {note && <span class="sk-component-preview__note">{note}</span>}
+    <div class="sk-component-preview__actions">
+      <span class="sk-tooltip" data-sk-anchor>
+        <button
+          class="sk-button sk-interactive sk-component-preview__reload sk-tooltip__trigger sk-anchor"
+          data-sk-component-preview-reload
+          data-sk-anchor-trigger
+          data-variant="ghost"
+          data-size="sm"
+          data-icon-only
+          type="button"
+          aria-label={t("preview.reload", { name: label })}
+        >
+          <Fragment set:html={reloadIcon} />
+        </button>
+        <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+          <span class="sk-anchored-arrow" aria-hidden="true" />
+          <span class="sk-tooltip__content" data-sk-anchor-content>
+            {t("preview.reloadHint")}
+          </span>
+        </span>
+      </span>
+      {/*
+        * Icons, from the stable vocabulary: `screen-desktop` / `screen-tablet` / `screen-mobile`.
+        * The glyph is decorative, so each option carries its own name in `aria-label` — the rule an
+        * icon-only Button follows. What the name cannot carry is the SIZE the preset switches to,
+        * and with no visible text there is nowhere on the control to write it: that is the Tooltip's
+        * job here, not a native `title`, which cannot be styled, cannot be reached by keyboard and
+        * waits a second before it appears.
+        *
+        * Each option is wrapped rather than made the anchor itself: the Tooltip root has to be a real
+        * element to anchor against. The wrapper is `inline-flex` and unpositioned, so the segmented
+        * row still lays out the options and the sliding indicator still measures them against the
+        * track (it reads `offsetLeft`, and the wrapper is not an `offsetParent`).
+        */}
+      {
+        screens && (
+          <div
+            class="sk-segmented sk-component-preview__screen-tabs"
+            data-sk-segmented
+            data-sk-component-preview-screen-tabs
+            data-value="free"
+            role="radiogroup"
+            aria-label={t("preview.screenGroup", { name: label })}
+          >
+            <span class="sk-segmented__indicator" aria-hidden="true" />
+            {screenOptions.map((option) => (
+              <span class="sk-tooltip" data-sk-anchor>
+                <button
+                  class="sk-segmented__option sk-interactive sk-tooltip__trigger sk-anchor"
+                  data-sk-segmented-option
+                  data-sk-anchor-trigger
+                  data-value={option.value}
+                  type="button"
+                  role="radio"
+                  aria-label={option.label}
+                >
+                  <Fragment set:html={option.icon} />
+                </button>
+                <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+                  <span class="sk-anchored-arrow" aria-hidden="true" />
+                  <span class="sk-tooltip__content" data-sk-anchor-content>
+                    {option.hint}
+                  </span>
+                </span>
+              </span>
+            ))}
+          </div>
+        )
+      }
+      {
+        hasBindingTabs && (
+          <div
+            class="sk-segmented sk-component-preview__binding-tabs"
+            data-sk-segmented
+            data-sk-component-preview-binding-tabs
+            data-value="vanilla"
+            role="radiogroup"
+            aria-label="Binding"
+          >
+            <span class="sk-segmented__indicator" aria-hidden="true" />
+            <button
+              class="sk-segmented__option sk-interactive"
+              data-sk-segmented-option
+              data-value="vanilla"
+              type="button"
+              role="radio"
+            >
+              Vanilla
+            </button>
+            <button
+              class="sk-segmented__option sk-interactive"
+              data-sk-segmented-option
+              data-value="react"
+              type="button"
+              role="radio"
+            >
+              React
+            </button>
+          </div>
+        )
+      }
+    </div>
   </header>
 
-  {/* The stage. A slot wins when given, some demos need scaffolding the source shouldn't teach. */}
+  {/*
+   * Inline srcdoc: an isolated document without a second page or URL.
+   * No `scrolling` attribute: the legacy `no` wins over content CSS in Blink, and a stage the
+   * reader shrank has to scroll. The frame runtime owns html/body overflow instead.
+   */}
+  <iframe
+    class="sk-component-preview__stage"
+    data-sk-component-preview-flush={flush ? "" : undefined}
+    data-sk-component-preview-viewport={viewport === "auto" ? undefined : viewport}
+    data-sk-component-preview-scroll={scroll ? "" : undefined}
+    aria-busy="true"
+    srcdoc={frameDocument}
+    title={`Preview renderizado: ${label}`}
+    loading="lazy"
+    allow="clipboard-write"
+  />
+  {/* Drag the stage's bottom edge for more or less height; doble clic vuelve al alto del contenido. */}
   <div
-    class:list={["ds-box", "ds-inline", "docs-showcase__stage", { "docs-showcase__stage--flush": flush }]}
-    data-surface="surface"
-    data-padding={flush ? "none" : "lg"}
-  >
-    <slot><Fragment set:html={html} /></slot>
+    class="sk-component-preview__resizer"
+    data-sk-component-preview-resizer
+    role="separator"
+    aria-orientation="horizontal"
+    aria-label={`Ajustar el alto del preview: ${label}`}
+    title="Arrastra para ajustar el alto · doble clic para restablecer"
+    tabindex="0"
+  />
+  <div class="sk-component-preview__loading">
+    <span
+      class="sk-loader"
+      data-size="lg"
+      role="status"
+      aria-label={`Cargando preview: ${label}`}
+    />
   </div>
 
   {
     vanillaCode && (
-      <div class="docs-showcase__code" data-showcase-code="vanilla">
-        <CodeBlock code={vanillaCode} lang={lang} />
+      <div class="sk-component-preview__binding" data-sk-component-preview-binding="vanilla">
+        {
+          hasSourceTabs ? (
+            <div
+              class="sk-tabs sk-component-preview__source-tabs"
+              data-sk-tabs
+              data-sk-component-preview-source-tabs
+              data-sk-density-scope
+              data-value="html"
+              style="--sk-density-factor: 0.72"
+            >
+              <div class="sk-tabs__list" data-sk-tabs-list aria-label="Fuente vanilla">
+                <button
+                  class="sk-tabs__trigger sk-interactive"
+                  data-sk-tabs-trigger
+                  data-value="html"
+                  type="button"
+                >
+                  HTML
+                </button>
+                <button
+                  class="sk-tabs__trigger sk-interactive"
+                  data-sk-tabs-trigger
+                  data-value="js"
+                  type="button"
+                >
+                  JS
+                </button>
+              </div>
+              <div
+                class="sk-tabs__content sk-component-preview__code"
+                data-sk-tabs-content
+                data-value="html"
+                data-sk-component-preview-source="html"
+              >
+                <CodeBlock code={vanillaCode} full={codeFull} lang={lang} />
+              </div>
+              <div
+                class="sk-tabs__content sk-component-preview__code"
+                data-sk-tabs-content
+                data-value="js"
+                data-sk-component-preview-source="js"
+              >
+                <CodeBlock code={js ?? ""} lang="ts" />
+              </div>
+            </div>
+          ) : (
+            <div class="sk-component-preview__code" data-sk-component-preview-source="html">
+              <CodeBlock code={vanillaCode} full={codeFull} lang={lang} />
+            </div>
+          )
+        }
       </div>
     )
   }
+
   {
     react && (
-      <div class="docs-showcase__code" data-showcase-code="react" hidden>
-        <CodeBlock code={react} lang="tsx" />
+      <div
+        class="sk-component-preview__binding"
+        data-sk-component-preview-binding="react"
+        hidden={hasBindingTabs ? true : undefined}
+      >
+        <div class="sk-component-preview__code">
+          <CodeBlock code={react} lang="tsx" />
+        </div>
       </div>
     )
   }
 </div>
-
 {
-  hasTabs && (
-    <script>
-      // The Vanilla/React switch is a ds-segmented control (auto-mounted via data-ds-segmented). The
-      // segmented enhancer owns the selection; this listener only reacts to its `ds-value-change` to
-      // swap which SOURCE is shown. The demo above never changes, it is the vanilla one, always,
-      // because that is the only path this site runs.
-      document.querySelectorAll<HTMLElement>("[data-showcase]").forEach((card) => {
-        const segmented = card.querySelector<HTMLElement>("[data-ds-segmented]");
-        if (!segmented) return;
-        segmented.addEventListener("ds-value-change", (event) => {
-          const binding = (event as CustomEvent<{ value: string }>).detail.value;
-          card
-            .querySelectorAll<HTMLElement>("[data-showcase-code]")
-            .forEach((panel) => (panel.hidden = panel.dataset.showcaseCode !== binding));
-        });
-      });
+  /*
+   * Sync tabs, panels and the screen preset to the document prefs before deferred enhancers mount.
+   * Head FOUC already wrote both attributes on <html>; this keeps Segmented from sliding
+   * Vanilla → React on load, and stops a persisted preset from painting full-width first and
+   * snapping to phone size once the enhancer arrives.
+   */
+  (hasBindingTabs || screens) && (
+    <script is:inline define:vars={{ previewId, hasBindingTabs, screens }}>
+      (function () {
+        var d = document.documentElement;
+        var root = document.getElementById(previewId);
+        if (!root) return;
+
+        if (hasBindingTabs) {
+          var pref = d.getAttribute("data-sk-component-preview-pref") || "vanilla";
+          var tabs = root.querySelector("[data-sk-component-preview-binding-tabs]");
+          if (tabs) tabs.setAttribute("data-value", pref);
+          root.querySelectorAll("[data-sk-component-preview-binding]").forEach(function (panel) {
+            var name = panel.getAttribute("data-sk-component-preview-binding");
+            if (name === "vanilla" || name === "react") panel.hidden = name !== pref;
+          });
+        }
+
+        if (screens) {
+          var screen = d.getAttribute("data-sk-component-preview-screen-pref");
+          if (screen !== "tablet" && screen !== "mobile") screen = "free";
+          var screenTabs = root.querySelector("[data-sk-component-preview-screen-tabs]");
+          if (screenTabs) screenTabs.setAttribute("data-value", screen);
+          var stage = root.querySelector(".sk-component-preview__stage");
+          // `free` is the absence of the attribute, so nothing is written for it.
+          if (stage && screen !== "free") {
+            stage.setAttribute("data-sk-component-preview-screen", screen);
+          }
+        }
+      })();
     </script>
   )
 }
+
+<script>
+  import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
+  import frameRuntimeUrl from "../scripts/component-preview-frame.ts?worker&url";
+
+  if (!document.head.querySelector("[data-sk-component-preview-runtime-preload]")) {
+    const preload = document.createElement("link");
+    preload.rel = "modulepreload";
+    preload.href = frameRuntimeUrl;
+    preload.fetchPriority = "high";
+    preload.setAttribute("data-sk-component-preview-runtime-preload", "");
+    document.head.append(preload);
+  }
+
+  mountComponentPreview();
+</script>

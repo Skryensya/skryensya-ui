@@ -11,7 +11,7 @@ describe("layout primitives", () => {
     );
 
     const box = ui.getByRole("region", { name: "Summary" });
-    expect(box.classList).toContain("ds-box");
+    expect(box.classList).toContain("sk-box");
     expect(box.getAttribute("data-surface")).toBe("raised");
     expect(box.getAttribute("data-border")).toBe("subtle");
     expect(box.getAttribute("data-padding")).toBe("lg");
@@ -21,25 +21,26 @@ describe("layout primitives", () => {
     const ui = render(
       <>
         <Stack as="ul" align="stretch" gap="lg"><li>One</li></Stack>
-        <Inline align="baseline" gap="sm" wrap={false}>Inline</Inline>
+        <Inline align="baseline" gap="sm" justify="between" wrap={false}>Inline</Inline>
         <Grid columns={3} gap="xs" data-multicol="">Grid</Grid>
       </>,
     );
 
-    expect(ui.container.querySelector("ul.ds-stack")?.getAttribute("data-gap")).toBe("lg");
-    expect(ui.container.querySelector(".ds-inline")?.getAttribute("data-wrap")).toBe("false");
-    expect(ui.container.querySelector(".ds-grid")?.getAttribute("data-columns")).toBe("3");
-    expect(ui.container.querySelector(".ds-grid")?.hasAttribute("data-multicol")).toBe(true);
+    expect(ui.container.querySelector("ul.sk-stack")?.getAttribute("data-gap")).toBe("lg");
+    expect(ui.container.querySelector(".sk-inline")?.getAttribute("data-wrap")).toBe("false");
+    expect(ui.container.querySelector(".sk-inline")?.getAttribute("data-justify")).toBe("between");
+    expect(ui.container.querySelector(".sk-grid")?.getAttribute("data-columns")).toBe("3");
+    expect(ui.container.querySelector(".sk-grid")?.hasAttribute("data-multicol")).toBe(true);
   });
 
-  it("renders Wrapper as a page column named by use", () => {
+  it("renders Wrapper as a page column on the size scale", () => {
     const ui = render(
-      <Wrapper as="main" size="shell">
+      <Wrapper as="main" size="lg">
         Document
       </Wrapper>,
     );
 
-    const wrapper = ui.container.querySelector("main.ds-wrapper");
-    expect(wrapper?.getAttribute("data-size")).toBe("shell");
+    const wrapper = ui.container.querySelector("main.sk-wrapper");
+    expect(wrapper?.getAttribute("data-size")).toBe("lg");
   });
 });

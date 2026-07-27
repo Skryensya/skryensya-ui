@@ -1,0 +1,31 @@
+/* TIER 3, SPLIT BUTTON — primary action plus a Menu trigger. */
+@layer components {
+  .sk-split-button {
+    --sk-split-button-radius: var(--radius-control);
+    --sk-split-button-trigger-inline-size: var(--size-touch-target);
+    /* The hairline between the two halves: a tint of the button's own foreground, so it reads on
+     * every variant fill without naming a color. */
+    --sk-split-button-divider-color: color-mix(in srgb, currentColor 24%, transparent);
+
+    display: inline-flex;
+    align-items: stretch;
+  }
+  .sk-split-button__primary {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+  .sk-split-button__trigger {
+    min-inline-size: var(--sk-split-button-trigger-inline-size);
+    padding-inline: var(--space-inset-sm);
+    border-inline-start-color: var(--sk-split-button-divider-color);
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+  [dir="rtl"] .sk-split-button__primary {
+    border-radius: 0 var(--sk-split-button-radius) var(--sk-split-button-radius) 0;
+  }
+  [dir="rtl"] .sk-split-button__trigger {
+    border-radius: var(--sk-split-button-radius) 0 0 var(--sk-split-button-radius);
+    border-inline-start-color: var(--sk-split-button-divider-color);
+  }
+}

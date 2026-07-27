@@ -1,0 +1,122 @@
+import { definePreference, oneOf } from "./storage.js";
+
+export type ComponentPreviewBinding = "vanilla" | "react";
+export type ComponentPreviewSource = "html" | "js";
+export type ComponentPreviewViewport = "auto" | "menu" | "overlay";
+
+/**
+ * How big the stage pretends to be.
+ *
+ * `free` is the stage as it has always been: full width, height fitted to the content. The two
+ * presets give the frame a fixed inline AND block size, because a device is both — a width-only
+ * preset shows reflow but never what falls below the fold, which is half of what a small screen
+ * does to a layout.
+ *
+ * Distinct from {@link ComponentPreviewViewport}, which reserves stage headroom for things painted
+ * out of flow (menus, dialogs). That one answers "how much room does this demo need"; this one
+ * answers "what screen is the reader pretending to hold".
+ *
+ * The presets sit deliberately on either side of the system's own breakpoints (`compact` 36rem,
+ * `desktop` 52rem): mobile is below both, tablet is between them, so the two settings actually
+ * exercise the bands the layout switches on rather than two arbitrary widths.
+ */
+export type ComponentPreviewScreen = "free" | "tablet" | "mobile";
+
+/**
+ * Stable anatomy for a rendered component demo followed by its implementation source.
+ *
+ * Core owns the surface and authored DOM contract. The stage may be an iframe with an inline
+ * `srcdoc`; the opt-in Vanilla enhancer only switches authored binding and source panels.
+ *
+ * Binding preference is shared across every preview on the page: one Vanilla | React choice.
+ */
+export const componentPreviewParts = {
+  root: "sk-component-preview",
+  header: "sk-component-preview__header",
+  title: "sk-component-preview__title",
+  note: "sk-component-preview__note",
+  actions: "sk-component-preview__actions",
+  reload: "sk-component-preview__reload",
+  bindingTabs: "sk-component-preview__binding-tabs",
+  screenTabs: "sk-component-preview__screen-tabs",
+  stage: "sk-component-preview__stage",
+  resizer: "sk-component-preview__resizer",
+  loading: "sk-component-preview__loading",
+  frameBody: "sk-component-preview__frame-body",
+  binding: "sk-component-preview__binding",
+  sourceTabs: "sk-component-preview__source-tabs",
+  code: "sk-component-preview__code",
+} as const;
+
+export type ComponentPreviewPart = keyof typeof componentPreviewParts;
+export type ComponentPreviewPartClass = (typeof componentPreviewParts)[ComponentPreviewPart];
+
+/** Data attributes consumed by the opt-in Vanilla enhancer. */
+export const componentPreviewAttrs = {
+  root: "data-sk-component-preview",
+  bindingTabs: "data-sk-component-preview-binding-tabs",
+  binding: "data-sk-component-preview-binding",
+  /** Document-level shared Vanilla | React preference (`<html>`). */
+  documentBinding: "data-sk-component-preview-pref",
+  /**
+   * Document-level shared screen preset (`<html>`), the same shape as `documentBinding`.
+   *
+   * Shared for the same reason the binding is: the reader is asking one question of the PAGE
+   * ("how does this hold up on a phone"), not of one demo, and answering it per preview would mean
+   * setting it again on every example they scroll past. Absent means `free`.
+   */
+  documentScreen: "data-sk-component-preview-screen-pref",
+  sourceTabs: "data-sk-component-preview-source-tabs",
+  source: "data-sk-component-preview-source",
+  flush: "data-sk-component-preview-flush",
+  frameReady: "data-sk-component-preview-frame-ready",
+  frameError: "data-sk-component-preview-frame-error",
+  viewport: "data-sk-component-preview-viewport",
+  scroll: "data-sk-component-preview-scroll",
+  reload: "data-sk-component-preview-reload",
+  screenTabs: "data-sk-component-preview-screen-tabs",
+  /**
+   * On the stage, and only for a preset: `free` is the absence of the attribute, not a value, so
+   * every rule that reserves, fits or scrolls keeps working unchanged when no preset is chosen.
+   * A preset owns both axes, so the frame runtime stops auto-fitting and scrolls its own document
+   * exactly as it does for a reader-dragged height.
+   */
+  screen: "data-sk-component-preview-screen",
+  /** The drag handle on the stage's bottom edge. */
+  resizer: "data-sk-component-preview-resizer",
+  /**
+   * On the stage: its height is the reader's, not the content's. The frame runtime stops
+   * auto-fitting and starts scrolling; removing it restores the content fit.
+   */
+  resized: "data-sk-component-preview-resized",
+  /** On the root while a drag is in flight, so the stage stops swallowing the pointer. */
+  resizing: "data-sk-component-preview-resizing",
+} as const;
+
+export type ComponentPreviewAttr = keyof typeof componentPreviewAttrs;
+export type ComponentPreviewAttrName = (typeof componentPreviewAttrs)[ComponentPreviewAttr];
+
+/** Bubbles on `document` when the shared binding preference changes. */
+export const componentPreviewBindingChangeEvent = "sk-component-preview-binding-change";
+
+/** Bubbles on `document` when the shared screen preset changes. */
+export const componentPreviewScreenChangeEvent = "sk-component-preview-screen-change";
+
+/**
+ * The two shared preferences, declared where their types live.
+ *
+ * Both are DOCUMENTATION-surface preferences, and they still belong in core rather than in a docs
+ * app: the slot name and the guard are part of the contract a second consumer of ComponentPreview
+ * would have to match, and a slot name re-typed in two apps is a slot name that will differ in one.
+ */
+export const componentPreviewBindingPreference = definePreference<ComponentPreviewBinding>({
+  slot: "binding",
+  fallback: "vanilla",
+  parse: oneOf(["vanilla", "react"]),
+});
+
+export const componentPreviewScreenPreference = definePreference<ComponentPreviewScreen>({
+  slot: "screen",
+  fallback: "free",
+  parse: oneOf(["free", "tablet", "mobile"]),
+});

@@ -53,6 +53,12 @@ const MAP = {
   user: "user",
   visibility: "eye",
   "visibility-off": "eye-slash",
+  "mode-system": "monitor",
+  "mode-light": "sun",
+  "mode-dark": "moon",
+  "screen-desktop": "monitor",
+  "screen-tablet": "device-tablet",
+  "screen-mobile": "device-mobile",
 };
 
 /* Phosphor dibuja formas RELLENAS, no trazos, hasta el peso `regular`, que parece de contorno pero

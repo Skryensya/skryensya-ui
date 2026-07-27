@@ -1,0 +1,388 @@
+/* TIER 3, COMBOBOX — editable input plus filtered listbox. */
+@layer components {
+  .sk-combobox {
+    --sk-combobox-bg: var(--color-bg-surface-raised);
+    --sk-combobox-fg: var(--color-text-primary);
+    --sk-combobox-border-color: var(--color-border-default);
+    --sk-combobox-invalid-border-color: var(--color-border-danger);
+    --sk-combobox-disabled-bg: var(--color-action-disabled);
+    --sk-combobox-disabled-fg: var(--color-text-disabled);
+    --sk-combobox-readonly-bg: var(--color-bg-surface);
+    --sk-combobox-content-bg: var(--color-bg-surface-raised);
+    --sk-combobox-content-border-color: var(--color-border-subtle);
+    --sk-combobox-content-max-block-size: 18rem;
+    --sk-combobox-radius: var(--radius-control);
+    --sk-combobox-content-radius: var(--radius-surface);
+    --sk-combobox-padding-x: var(--space-inset-sm);
+    --sk-combobox-item-padding: var(--space-inset-xs) var(--space-inset-sm);
+
+    display: grid;
+    gap: var(--space-stack-xs);
+    min-inline-size: 12rem;
+    max-inline-size: 100%;
+  }
+
+  .sk-combobox__label {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+  }
+
+  .sk-combobox__control {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: stretch;
+    min-block-size: var(--size-touch-target);
+    overflow: clip;
+    border: 1px solid var(--sk-combobox-border-color);
+    border-radius: var(--sk-combobox-radius);
+    background: var(--sk-combobox-bg);
+    color: var(--sk-combobox-fg);
+  }
+
+  .sk-combobox__control[data-invalid] {
+    --sk-combobox-border-color: var(--sk-combobox-invalid-border-color);
+  }
+
+  .sk-combobox__control[data-disabled] {
+    --sk-combobox-bg: var(--sk-combobox-disabled-bg);
+    --sk-combobox-fg: var(--sk-combobox-disabled-fg);
+  }
+
+  .sk-combobox__control[data-readonly] {
+    --sk-combobox-bg: var(--sk-combobox-readonly-bg);
+  }
+
+  /* The control shows the focus ring only when the INPUT itself holds focus. A plain `:focus-within`
+     also fired when a child icon button (clear / trigger) was focused, and that button carries its
+     own `sk-interactive` ring — so the two nested and read as a box-in-a-box. Scoping to the input
+     leaves exactly one ring on screen at a time, always on the element that actually has focus:
+     the whole control for the text field, the pill for a focused icon button. */
+  .sk-combobox__control:has(.sk-combobox__input:focus) {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /* …and it gives that ring up while the arrow keys are walking the list. `data-virtual-focus` says
+     an option is holding the focus ring instead (see the item rule below), and two rings on screen —
+     one round the field, one round the row — read as two focused things. The ring MOVES into the
+     list and comes back when the walk ends; DOM focus never went anywhere. */
+  .sk-combobox[data-virtual-focus]
+    .sk-combobox__control:has(.sk-combobox__input:focus) {
+    outline: none;
+  }
+
+  .sk-combobox__value {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-xs);
+    align-items: center;
+    min-inline-size: 0;
+    padding-inline-start: var(--sk-combobox-padding-x);
+  }
+
+  .sk-combobox__selected-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-xs);
+    align-items: center;
+    min-inline-size: 0;
+    padding-block: 2px;
+  }
+
+  .sk-combobox__selected-item {
+    display: inline-flex;
+    align-items: center;
+    min-inline-size: 0;
+    min-block-size: calc(var(--size-touch-target) - 4px);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-body-sm);
+  }
+
+  .sk-combobox__selected-item-label {
+    min-inline-size: 0;
+    padding-inline: var(--space-inset-sm) var(--space-inset-xs);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Every action inside the field composes Button's icon-only sm contract. Component CSS only
+     supplies the quiet field recipe; Button owns the square, focus ring and expanded hit target. */
+  :is(
+      .sk-combobox__remove-trigger,
+      .sk-combobox__clear,
+      .sk-combobox__trigger
+    ).sk-button {
+    --sk-button-bg: transparent;
+    --sk-button-fg: var(--color-text-secondary);
+    --sk-button-border-color: transparent;
+    --sk-button-border-width: 0;
+    --sk-button-shadow: none;
+    --sk-button-radius: var(--sk-combobox-radius);
+  }
+
+  .sk-combobox__remove-trigger.sk-button {
+    margin-inline: calc((var(--size-touch-target) - var(--size-control-sm)) * 0.5);
+  }
+
+  .sk-combobox__input {
+    flex: 1 1 8rem;
+    box-sizing: border-box;
+    min-inline-size: 6rem;
+    min-block-size: calc(var(--size-touch-target) - 2px);
+    padding: 0 var(--sk-combobox-padding-x) 0 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+
+  .sk-combobox__input::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  .sk-combobox__input:disabled {
+    cursor: not-allowed;
+  }
+
+  /* Trigger and clear paint at control-sm. The margin reserves exactly the difference between that
+     face and Button's fixed touch target, so adjacent field actions never have overlapping hits. */
+  :is(.sk-combobox__trigger, .sk-combobox__clear).sk-button {
+    align-self: center;
+    margin-inline: calc((var(--size-touch-target) - var(--size-control-sm)) * 0.5);
+  }
+
+  .sk-combobox__trigger > [aria-hidden="true"] {
+    transition: rotate var(--motion-feedback-duration)
+      var(--motion-feedback-easing);
+  }
+
+  .sk-combobox__trigger[data-state="open"] > [aria-hidden="true"] {
+    rotate: 180deg;
+  }
+
+  :is(.sk-combobox__trigger, .sk-combobox__clear).sk-button:is(
+      :disabled,
+      [aria-disabled="true"]
+    ) {
+    --sk-button-fg: var(--color-text-disabled);
+  }
+
+  /* La colocación es del pattern Anclaje (ADR-25): el control lleva además `sk-anchor` y el
+   * positioner además `sk-anchored`. El ancla es el CONTROL entero y no el botón del chevron, porque
+   * la lista se alinea con el campo que se está escribiendo.
+   *
+   * Debajo y con los bordes de inicio alineados, como el select: la lista de resultados es la
+   * continuación del campo, no una caja que flota cerca. */
+  .sk-combobox__positioner {
+    --sk-anchored-position-area: block-end span-inline-end;
+    --sk-anchored-justify: start;
+    --sk-anchored-align: auto;
+    --sk-anchored-offset: var(--space-stack-xs) 0;
+    --sk-anchored-position-try: flip-block;
+  }
+
+  @supports (anchor-name: --a) {
+    .sk-combobox__positioner {
+      /* Tan ancho como el campo. Adentro del @supports porque `anchor-size()` sin ancla resuelta es
+       * inválido, y el pattern lee este hook también en la ruta del fallback. */
+      --sk-anchored-size: anchor-size(width);
+    }
+  }
+
+  .sk-combobox__content {
+    display: none;
+    box-sizing: border-box;
+    inline-size: var(--reference-width);
+    min-inline-size: 12rem;
+    max-inline-size: min(26rem, calc(100vi - 2 * var(--space-inset-md)));
+    max-block-size: min(
+      var(--sk-combobox-content-max-block-size),
+      var(--available-height, calc(100vb - 2 * var(--space-inset-md)))
+    );
+    padding: var(--space-inset-xs);
+    /* The list scrolls, and two things follow from that:
+       — `overscroll-behavior: contain` keeps the wheel inside the popup. Hitting the last option
+         used to hand the scroll on to the page, which slides the field out from under its own
+         open list.
+       — `scroll-padding` matches the padding, so the option the arrow keys scroll into view lands
+         inside the box instead of flush against its edge, where it reads as the last one.
+       No `scrollbar-gutter: stable`, deliberately: reserving the rail on a list that is usually
+       short leaves every row ending 13px early on the right and 4px on the left, and the focus
+       ring makes that gap impossible to unsee. Not reserving it costs a right edge that moves when
+       filtering crosses the max height — labels are start-aligned, so nothing you are reading
+       moves. The rail's color is the `sk-scrollbar` pattern, authored on this element (same opt-in
+       as the command palette's list); this file never repaints a scrollbar itself. */
+    overflow: auto;
+    overscroll-behavior: contain;
+    scroll-padding: var(--space-inset-xs);
+    border: 1px solid var(--sk-combobox-content-border-color);
+    border-radius: var(--sk-combobox-content-radius);
+    background: var(--sk-combobox-content-bg);
+    color: var(--sk-combobox-fg);
+    box-shadow: var(--elevation-raised);
+    outline: none;
+  }
+
+  .sk-combobox__content[data-state="open"] {
+    display: grid;
+    gap: 1px;
+  }
+  /* `[hidden]` must win over the `display` these parts set in this layer, otherwise the UA
+     `[hidden] { display: none }` (a lower, unlayered origin) loses and the element the machine
+     hides — the clear ✕ with nothing typed, an empty selected-items row — stays painted. */
+  .sk-combobox__item[hidden],
+  .sk-combobox__empty[hidden],
+  .sk-combobox__selected-items[hidden],
+  .sk-combobox__selected-item[hidden],
+  .sk-combobox__remove-trigger[hidden],
+  .sk-combobox__clear[hidden],
+  .sk-combobox__trigger[hidden],
+  .sk-combobox__item-indicator[hidden] {
+    display: none;
+  }
+
+  .sk-combobox__item {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-inline-sm);
+    align-items: center;
+    min-block-size: var(--size-touch-target);
+    padding: var(--sk-combobox-item-padding);
+    border-radius: var(--radius-control);
+    color: var(--sk-combobox-fg);
+    cursor: pointer;
+    outline: none;
+  }
+
+  .sk-combobox__item::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-below);
+    border-radius: inherit;
+    background: var(--state-layer-color);
+    opacity: 0;
+  }
+
+  .sk-combobox__item[data-highlighted]::before {
+    opacity: var(--state-layer-hover-opacity);
+  }
+
+  /* The highlighted option IS the focus: DOM focus stays in the input and `aria-activedescendant`
+     points here, so nothing else on screen says where the arrow keys have landed. Same ring as any
+     focusable control, and the same treatment the command palette gives its virtual focus.
+     `data-highlight-source` gates it to keyboard navigation — the machine also highlights on
+     `pointermove`, and a focus ring under the cursor reads as broken focus, so hovering keeps the
+     tint alone. Offset is INSET: the content scrolls, and an outward ring would be clipped at the
+     top and bottom edges and collide with the neighbouring row. */
+  .sk-combobox__content[data-highlight-source="keyboard"]
+    .sk-combobox__item[data-highlighted] {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(var(--focus-ring-offset) * -1);
+  }
+
+  .sk-combobox__item[data-state="checked"]::before {
+    opacity: var(--state-layer-selected-opacity);
+  }
+
+  .sk-combobox__item[data-disabled] {
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+  }
+
+  .sk-combobox__item[data-disabled]::before {
+    opacity: var(--state-layer-disabled-opacity);
+  }
+
+  .sk-combobox__item-copy {
+    display: grid;
+    gap: 2px;
+    min-inline-size: 0;
+  }
+
+  .sk-combobox__item-label {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .sk-combobox__item-description {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
+  }
+
+  .sk-combobox__item[data-disabled] .sk-combobox__item-description {
+    color: inherit;
+  }
+
+  .sk-combobox__item-indicator {
+    color: var(--color-text-accent);
+  }
+
+  /* The result-count live region is for assistive tech only: it announces "N resultados
+     disponibles" as the filter changes. It ships with the authored markup carrying an `sr-only`
+     class, but the component must not depend on a global utility that may be absent — so it owns
+     its own visually-hidden recipe here (same one CopyButton uses). Kept in the accessibility tree
+     (not `display: none`), just off-screen. */
+  .sk-combobox__status {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .sk-combobox__empty {
+    padding: var(--space-inset-lg) var(--space-inset-md);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+    text-align: center;
+    text-wrap: pretty;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .sk-combobox__content[data-state="open"] {
+      animation: sk-combobox-in var(--motion-feedback-duration)
+        var(--motion-feedback-easing);
+    }
+  }
+
+  @keyframes sk-combobox-in {
+    from {
+      opacity: 0;
+      translate: 0 -2px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-combobox__trigger > [aria-hidden="true"] {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .sk-combobox__control,
+    .sk-combobox__content,
+    .sk-combobox__selected-item {
+      border-color: CanvasText;
+    }
+
+    .sk-combobox__control[data-invalid] {
+      border-color: Mark;
+    }
+
+    .sk-combobox__item[data-highlighted] {
+      outline: 1px solid Highlight;
+    }
+  }
+}

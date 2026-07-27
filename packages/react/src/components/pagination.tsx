@@ -33,7 +33,7 @@ export function Pagination({
     <nav {...props} aria-label={label} className={cx(paginationParts.root, className)}>
       <button
         aria-label={previousLabel}
-        className={cx(paginationParts.previous, "ds-interactive")}
+        className={cx(paginationParts.previous, "sk-interactive")}
         disabled={page <= 1}
         onClick={() => go(page - 1)}
         type="button"
@@ -49,7 +49,7 @@ export function Pagination({
           <button
             aria-current={slot === page ? "page" : undefined}
             aria-label={`Page ${slot}`}
-            className={cx(paginationParts.item, "ds-interactive")}
+            className={cx(paginationParts.item, "sk-interactive")}
             key={slot}
             onClick={() => go(slot)}
             type="button"
@@ -60,7 +60,7 @@ export function Pagination({
       )}
       <button
         aria-label={nextLabel}
-        className={cx(paginationParts.next, "ds-interactive")}
+        className={cx(paginationParts.next, "sk-interactive")}
         disabled={page >= total}
         onClick={() => go(page + 1)}
         type="button"

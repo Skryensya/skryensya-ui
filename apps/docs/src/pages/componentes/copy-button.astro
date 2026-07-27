@@ -1,33 +1,132 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import CopyButton from "../../components/CopyButton.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
 
-const markup = `<code id="install-command">
-  pnpm add @skryensya/core
-</code>
-<CopyButton target="install-command" />`;
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const html = `<div class="sk-inline" data-gap="md" data-align="center">
+  <code id="install-command">pnpm add @skryensya/core</code>
+  <button
+    class="sk-button sk-interactive sk-copy-button"
+    data-sk-copy-button
+    data-sk-copy-button-target="install-command"
+    data-variant="ghost"
+    data-icon-only
+    type="button"
+    aria-label="Copiar código"
+  >
+    <span
+      class="sk-copy-button__icon"
+      data-sk-copy-button-icon="idle"
+      aria-hidden="true"
+    >
+      <span data-sk-icon="copy"></span>
+    </span>
+    <span
+      class="sk-copy-button__icon"
+      data-sk-copy-button-icon="copied"
+      aria-hidden="true"
+    >
+      <span data-sk-icon="check"></span>
+    </span>
+    <span
+      class="sk-copy-button__label"
+      data-sk-copy-button-label
+      aria-live="polite"
+    >Copiar</span>
+  </button>
+  <button
+    class="sk-button sk-interactive sk-copy-button"
+    data-sk-copy-button
+    data-sk-copy-button-target="install-command"
+    data-variant="ghost"
+    data-size="sm"
+    data-icon-only
+    type="button"
+    aria-label="Copiar código"
+  >
+    <span
+      class="sk-copy-button__icon"
+      data-sk-copy-button-icon="idle"
+      aria-hidden="true"
+    >
+      <span data-sk-icon="copy"></span>
+    </span>
+    <span
+      class="sk-copy-button__icon"
+      data-sk-copy-button-icon="copied"
+      aria-hidden="true"
+    >
+      <span data-sk-icon="check"></span>
+    </span>
+    <span
+      class="sk-copy-button__label"
+      data-sk-copy-button-label
+      aria-live="polite"
+    >Copiar</span>
+  </button>
+</div>`;
+
+const css = `@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/copy-button.css";`;
+
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+// Los iconos se autoran como placeholders <span data-sk-icon>;
+// mountIcons los reemplaza por el <svg> del set enlazado.
+mountIcons(document, lucideIcons);
+await initComponents();`;
 ---
 
-<Base title="CopyButton" description="CopyButton: copia el texto de un elemento por id y confirma brevemente el resultado.">
+<Base
+  title="CopyButton"
+  description="CopyButton: copia el texto de un elemento por id y confirma brevemente el resultado."
+>
   <h1>CopyButton</h1>
   <p class="lede">
-    CopyButton copia el texto del elemento indicado y cambia brevemente de icono para confirmar el resultado.
+    CopyButton copia el texto del elemento indicado y cambia brevemente de icono para confirmar el
+    resultado. Es un Button ghost icon-only con anatomía propia: el enhancer solo enlaza el
+    clipboard y el feedback; tú escribes el markup. El tamaño es el del Button:
+    <strong>md</strong> (por defecto) o <code>data-size="sm"</code> (cara a 32px, hit a 44px vía
+    <code>::after</code>).
   </p>
 
-  <h2>Demo</h2>
-  <div class="example__stage">
-    <code class="mono" id="copy-button-demo-source">pnpm add @skryensya/core</code>
-    <CopyButton target="copy-button-demo-source" />
-  </div>
+  <Showcase
+    html={html}
+    js={js}
+    label="CopyButton"
+    note="md · sm"
+  />
 
   <h2>Contrato</h2>
   <ul>
-    <li><code>target</code> es el id del elemento cuyo texto se copia.</li>
-    <li>El botón usa Clipboard API y recurre a <code>execCommand(&quot;copy&quot;)</code> cuando hace falta.</li>
-    <li>El estado <code>copied</code> dura brevemente y se anuncia como <strong>Copiado</strong>.</li>
+    <li>
+      <code>data-sk-copy-button-target</code> es el id del elemento cuyo texto se copia.
+    </li>
+    <li>
+      Usa Clipboard API y recurre a <code>execCommand(&quot;copy&quot;)</code> cuando hace falta.
+    </li>
+    <li>
+      El estado <code>copied</code> dura brevemente y se anuncia como <strong>Copied</strong>
+      (o el label que autorices en <code>data-sk-copy-button-success-label</code>).
+    </li>
+    <li>
+      Los iconos son placeholders <code>data-sk-icon</code>; el set lo enlaza
+      <code>mountIcons</code> (ADR-15).
+    </li>
   </ul>
 
-  <h2>HTML</h2>
-  <CodeBlock code={markup} label="HTML" />
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>CSS</h2>
+  <CodeBlock code={css} label="CSS" lang="css" />
+
+  <StylingHooks
+    groups={[{ file: "components/copy-button.css", probe: "sk-copy-button" }]}
+  />
 </Base>

@@ -1,0 +1,106 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<nav class="sk-pagination" aria-label="Pagination">
+  <button
+    class="sk-pagination__previous sk-interactive"
+    type="button"
+    aria-label="Previous page"
+  >
+    <span data-sk-icon="chevron-left" data-sk-icon-size="sm"></span>
+  </button>
+  <button
+    class="sk-pagination__item sk-interactive"
+    type="button"
+    aria-label="Page 1"
+  >
+    1
+  </button>
+  <span class="sk-pagination__ellipsis" aria-hidden="true">…</span>
+  <button
+    class="sk-pagination__item sk-interactive"
+    type="button"
+    aria-label="Page 4"
+  >
+    4
+  </button>
+  <button
+    class="sk-pagination__item sk-interactive"
+    type="button"
+    aria-current="page"
+    aria-label="Page 5"
+  >
+    5
+  </button>
+  <button
+    class="sk-pagination__item sk-interactive"
+    type="button"
+    aria-label="Page 6"
+  >
+    6
+  </button>
+  <span class="sk-pagination__ellipsis" aria-hidden="true">…</span>
+  <button
+    class="sk-pagination__item sk-interactive"
+    type="button"
+    aria-label="Page 12"
+  >
+    12
+  </button>
+  <button
+    class="sk-pagination__next sk-interactive"
+    type="button"
+    aria-label="Next page"
+  >
+    <span data-sk-icon="chevron-right" data-sk-icon-size="sm"></span>
+  </button>
+</nav>`;
+
+const react = `import { Pagination } from "@skryensya/react/pagination";
+
+<Pagination
+  page={page}
+  total={12}
+  onPageChange={setPage}
+  label="Pagination"
+  previousLabel="Previous page"
+  nextLabel="Next page"
+/>;`;
+
+const rangeExample = `import { paginationRange } from "@skryensya/core/pagination";
+
+paginationRange(5, 20);
+// → [1, "ellipsis", 4, 5, 6, "ellipsis", 20]`;
+---
+
+<Base title="Pagination" description="Pagination: page window as a pure function of the core, with first, last and ellipsis.">
+  <h1>Pagination</h1>
+  <p class="lede">
+    Pagination cycles through a paginated set, one page at a time. The visible window is the part
+    interesting, and lives as a pure function in the core: first and last always present, the current
+    with a brother on each side, and the hidden runs collapse into an ellipsis.
+  </p>
+
+  <Showcase html={html} react={react} label="Pagination" />
+  <p>
+    Prev/next use the set roles <code>chevron-left</code> and <code>chevron-right</code>.
+    The current page has <code>aria-current="page"</code>; prev/next are disabled on borders.
+    The ellipsis is inert text, not an objective. Targets have <code>sk-interactive</code>.
+  </p>
+
+  <h2>The window, in the core</h2>
+  <p>The rendering and handlers are from the binding; The calculation is from the core and can be tested in isolation:</p>
+  <CodeBlock code={rangeExample} lang="ts" label="@skryensya/core/pagination" />
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>The code is in the <strong>React</strong> tab of the preview. React draws the chevrons of the linked set.</p>
+  <StylingHooks groups={[{ file: "components/pagination.css", probe: "sk-pagination" }]} />
+</Base>

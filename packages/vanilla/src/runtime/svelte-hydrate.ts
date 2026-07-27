@@ -8,12 +8,12 @@ import Imperative from "../components/Imperative.svelte";
  * que hacían los FSM viejos, duplicando lo que React ya tenía de Zag), lo monta un componente `.svelte`
  * que consume la MISMA máquina desde `@skryensya/core/machines` vía `@zag-js/svelte`. Svelte es
  * implementación interna, nunca contrato del consumidor: el `.svelte` se monta en LIGHT DOM sobre la
- * raíz `[data-ds-*]` que el consumidor ya escribió, nada de custom elements ni shadow DOM, así que
- * `.hero .ds-tabs { … }` sigue alcanzando el elemento y el modelo de styling hooks queda intacto.
+ * raíz `[data-sk-*]` que el consumidor ya escribió, nada de custom elements ni shadow DOM, así que
+ * `.hero .sk-tabs { … }` sigue alcanzando el elemento y el modelo de styling hooks queda intacto.
  *
  * El componente lee su raíz por CONTEXTO (`getRoot()`), la escanea, corre la máquina y parchea los
  * atributos sobre el markup existente con `applyZagProps`, no renderiza estructura propia. El contrato
- * de ciclo de vida (`data-ds-<key>-mounting`/`-ready`) hace el montaje idempotente, igual que el
+ * de ciclo de vida (`data-sk-<key>-mounting`/`-ready`) hace el montaje idempotente, igual que el
  * `createEnhancer` de attr-patch que siguen usando los enhancers sin máquina.
  */
 
@@ -23,7 +23,7 @@ export const uniqueId = (prefix: string): string => `${prefix}-${(counter += 1)}
 // La raíz se pasa por CONTEXT y no por props: `getContext` devuelve un valor no reactivo, así el
 // componente lo lee en una línea con `getRoot()`, sin el aviso `state_referenced_locally` ni el
 // boilerplate de `$props()`.
-const ROOT_CONTEXT = Symbol("ds-root");
+const ROOT_CONTEXT = Symbol("sk-root");
 
 export const getRoot = (): HTMLElement => {
   const root = getContext<HTMLElement | undefined>(ROOT_CONTEXT);
@@ -35,7 +35,7 @@ export const getRoot = (): HTMLElement => {
 
 /** La función imperativa que corre un enhancer sin máquina, pasada por contexto a Imperative.svelte. */
 export type Connect = (root: HTMLElement) => () => void;
-const CONNECT_CONTEXT = Symbol("ds-connect");
+const CONNECT_CONTEXT = Symbol("sk-connect");
 
 // Raíz → cómo desmontarla. Lo llena `createConnectMount` al montar; `destroyMount` lo consume. Conserva
 // el nombre público del runtime viejo, para el único caso que lo necesita: re-montar un enhancer con otro
@@ -80,8 +80,8 @@ export type Mount = (target?: Document | Element) => number;
 
 export function createSvelteEnhancer(options: SvelteEnhancerOptions): Enhancer {
   const { key, rootSelector, Component } = options;
-  const readyAttr = `data-ds-${key}-ready`;
-  const mountingAttr = `data-ds-${key}-mounting`;
+  const readyAttr = `data-sk-${key}-ready`;
+  const mountingAttr = `data-sk-${key}-mounting`;
   const pendingSelector = `${rootSelector}:not([${readyAttr}]):not([${mountingAttr}])`;
 
   const create = (target: Element): EnhancerController | null => {
@@ -137,12 +137,12 @@ export function createSvelteMount(options: SvelteEnhancerOptions): Mount {
  */
 export function createConnectMount(options: { key: string; rootSelector: string; connect: Connect }): Mount {
   const { rootSelector, connect } = options;
-  // Los enhancers imperativos comparten el marcador de ciclo de vida `data-ds-ready`/`-mounting` (como
+  // Los enhancers imperativos comparten el marcador de ciclo de vida `data-sk-ready`/`-mounting` (como
   // el viejo createEnhancer), no uno por-key: sus selectores son disjuntos, así que una raíz la enhancea
   // exactamente un enhancer. El montaje sigue siendo Svelte (Imperative.svelte), no createEnhancer.
-  const readyAttr = "data-ds-ready";
-  const mountingAttr = "data-ds-mounting";
-  // Comma-safe: the guard has to attach to EACH selector (Vaul is `[data-ds-vaul], [data-ds-dialog-vaul]`).
+  const readyAttr = "data-sk-ready";
+  const mountingAttr = "data-sk-mounting";
+  // Comma-safe: the guard has to attach to EACH selector (Vaul is `[data-sk-vaul], [data-sk-dialog-vaul]`).
   const pendingSelector = rootSelector
     .split(",")
     .map((part) => `${part.trim()}:not([${readyAttr}]):not([${mountingAttr}])`)

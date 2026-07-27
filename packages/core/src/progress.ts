@@ -8,8 +8,8 @@
 export type ProgressTone = "accent" | "success" | "warning" | "danger";
 
 export const progressParts = {
-  root: "ds-progress",
-  bar: "ds-progress__bar",
+  root: "sk-progress",
+  bar: "sk-progress__bar",
 } as const;
 
 export type ProgressPart = keyof typeof progressParts;

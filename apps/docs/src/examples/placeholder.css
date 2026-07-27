@@ -1,0 +1,92 @@
+/* Demo chrome only: width of the stage and Placeholder size hooks.
+ * Structure and loaded UI come from kit primitives (Box, Stack, ImageFrame, …). */
+
+.placeholder-example {
+  inline-size: min(100%, 28rem);
+  margin-inline: auto;
+}
+
+.placeholder-example [hidden] {
+  display: none;
+}
+
+.placeholder-example__swap {
+  display: grid;
+}
+
+.placeholder-example__swap > * {
+  grid-area: 1 / 1;
+  transition: opacity 180ms cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.placeholder-example__swap [data-placeholder-loading] {
+  opacity: 1;
+}
+
+.placeholder-example__swap [data-placeholder-content] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.placeholder-example__swap[data-state="loaded"] [data-placeholder-loading] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.placeholder-example__swap[data-state="loaded"] [data-placeholder-content] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.placeholder-example__media {
+  --sk-placeholder-block-size: 100%;
+
+  border-radius: inherit;
+}
+
+.placeholder-example__line--eyebrow {
+  --sk-placeholder-inline-size: 40%;
+  --sk-placeholder-block-size: var(--size-control-sm);
+}
+
+.placeholder-example__line--title {
+  --sk-placeholder-block-size: 1.5rem;
+}
+
+.placeholder-example__line--title-short {
+  --sk-placeholder-inline-size: 72%;
+  --sk-placeholder-block-size: 1.5rem;
+}
+
+.placeholder-example__line--body,
+.placeholder-example__line--body-short {
+  --sk-placeholder-block-size: 1.25rem;
+}
+
+.placeholder-example__line--body-short {
+  --sk-placeholder-inline-size: 88%;
+}
+
+.placeholder-example__avatar {
+  --sk-placeholder-size: var(--size-control-md);
+}
+
+.placeholder-example__byline-copy {
+  flex: 1 1 auto;
+  max-inline-size: 12rem;
+}
+
+.placeholder-example__byline-copy .sk-placeholder:last-child {
+  --sk-placeholder-inline-size: 70%;
+  --sk-placeholder-block-size: 1rem;
+}
+
+.placeholder-example__byline-copy .sk-placeholder:first-child {
+  --sk-placeholder-block-size: 1.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .placeholder-example__swap > * {
+    transition: none;
+  }
+}

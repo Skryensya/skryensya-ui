@@ -8,10 +8,10 @@ import StylingHooks from "../../components/StylingHooks.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<kbd class="ds-kbd">⌘</kbd>
-<kbd class="ds-kbd">K</kbd>
-<kbd class="ds-kbd">Esc</kbd>
-<kbd class="ds-kbd">↵</kbd>`;
+const html = `<kbd class="sk-kbd">⌘</kbd>
+<kbd class="sk-kbd">K</kbd>
+<kbd class="sk-kbd">Esc</kbd>
+<kbd class="sk-kbd">↵</kbd>`;
 
 const react = `import { Kbd } from "@skryensya/react/kbd";
 
@@ -26,19 +26,18 @@ const react = `import { Kbd } from "@skryensya/react/kbd";
   <p class="lede">
     Kbd es una <strong>tecla dibujada</strong>: el <code>&lt;kbd&gt;</code> nativo con el aspecto de una
     tecla física. La usas para mostrar un atajo, el ⌘K del buscador de arriba, el Esc en el pie de una
-    paleta. Es estática, como Badge: sin estado, sin máquina, sin enhancer vanilla. La semántica del
+    <a href="/componentes/command-palette">CommandPalette</a>. Es estática, como Badge: sin estado, sin máquina, sin enhancer vanilla. La semántica del
     <code>&lt;kbd&gt;</code> es de la plataforma; el componente solo aporta la pinta.
   </p>
 
-  <h2>Demo</h2>
   <Showcase html={html} react={react} label="Kbd" />
 
   <h2>Un glifo se lee cuadrado</h2>
   <p>
-    Una sola tecla (<kbd class="ds-kbd">K</kbd>, <kbd class="ds-kbd">⌘</kbd>,
-    <kbd class="ds-kbd">↑</kbd>) toma un mínimo cuadrado en vez de quedar como una astilla; una etiqueta
-    más larga (<kbd class="ds-kbd">Esc</kbd>, <kbd class="ds-kbd">Enter</kbd>) crece con su texto. El
-    mínimo es <code>--ds-kbd-min-size</code>, relativo a la propia tipografía de la tecla, así que se
+    Una sola tecla (<kbd class="sk-kbd">K</kbd>, <kbd class="sk-kbd">⌘</kbd>,
+    <kbd class="sk-kbd">↑</kbd>) toma un mínimo cuadrado en vez de quedar como una astilla; una etiqueta
+    más larga (<kbd class="sk-kbd">Esc</kbd>, <kbd class="sk-kbd">Enter</kbd>) crece con su texto. El
+    mínimo es <code>--sk-kbd-min-size</code>, relativo a la propia tipografía de la tecla, así que se
     mantiene cuadrada a cualquier tamaño.
   </p>
 
@@ -52,22 +51,22 @@ const react = `import { Kbd } from "@skryensya/react/kbd";
     (<a href="/motion">motion</a>).
   </p>
   <p>
-    Pruébalo: aprieta cualquiera de estas y se prende sola; mantén <kbd class="ds-kbd" data-key="meta"
+    Pruébalo: aprieta cualquiera de estas y se prende sola; mantén <kbd class="sk-kbd" data-key="meta"
     >⌘</kbd> y suma otra para ver la combinación.
   </p>
   <div class="key-echo" role="group" aria-label="Teclas que reaccionan al teclado">
-    <kbd class="ds-kbd" data-key="meta">⌘</kbd>
-    <kbd class="ds-kbd" data-key="control">Ctrl</kbd>
-    <kbd class="ds-kbd" data-key="shift">⇧</kbd>
-    <kbd class="ds-kbd" data-key="k">K</kbd>
-    <kbd class="ds-kbd" data-key="escape">Esc</kbd>
-    <kbd class="ds-kbd" data-key="enter">↵</kbd>
-    <kbd class="ds-kbd" data-key="arrowup">↑</kbd>
-    <kbd class="ds-kbd" data-key="arrowdown">↓</kbd>
-    <kbd class="ds-kbd" data-key="/">/</kbd>
+    <kbd class="sk-kbd" data-key="meta">⌘</kbd>
+    <kbd class="sk-kbd" data-key="control">Ctrl</kbd>
+    <kbd class="sk-kbd" data-key="shift">⇧</kbd>
+    <kbd class="sk-kbd" data-key="k">K</kbd>
+    <kbd class="sk-kbd" data-key="escape">Esc</kbd>
+    <kbd class="sk-kbd" data-key="enter">↵</kbd>
+    <kbd class="sk-kbd" data-key="arrowup">↑</kbd>
+    <kbd class="sk-kbd" data-key="arrowdown">↓</kbd>
+    <kbd class="sk-kbd" data-key="/">/</kbd>
   </div>
   <p>
-    Un acorde entero también, como una unidad, aprieta <kbd class="ds-kbd" data-hotkey="mod+enter"
+    Un acorde entero también, como una unidad, aprieta <kbd class="sk-kbd" data-hotkey="mod+enter"
     >⌘ ↵</kbd> y se prende cuando la combinación completa está abajo:
   </p>
   <p>
@@ -81,8 +80,8 @@ const react = `import { Kbd } from "@skryensya/react/kbd";
   <CodeBlock code={install} label="terminal" />
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
-  <StylingHooks groups={[{ file: "components/kbd.css", probe: "ds-kbd" }]} />
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
+  <StylingHooks groups={[{ file: "components/kbd.css", probe: "sk-kbd" }]} />
 </Base>
 
 <style>

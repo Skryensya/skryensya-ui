@@ -1,6 +1,6 @@
-# skryensya-design-system
+# skryensya/ui
 
-A Turborepo for the `@skryensya` design system. `@skryensya/core` owns the Sass token source and the
+A Turborepo for the `skryensya/ui` design system. `@skryensya/core` owns the Sass token source and the
 framework-agnostic component contract; React and vanilla bindings consume it.
 
 ```
@@ -18,13 +18,17 @@ framework-agnostic component contract; React and vanilla bindings consume it.
 └── pnpm-workspace.yaml  workspaces: packages/* + apps/*
 ```
 
-## The previews are inline
+## The previews use inline srcdoc
 
-Every component page renders its demo **in the page**: authored markup with `data-ds-*`, hydrated by
-the single `initComponents()` call the layout makes. The source below each demo carries a **Vanilla /
-React** tab, React is documented as a consumer binding, never executed by the site, so there is no
-framework integration in `astro.config.mjs` and no island on any page. The site takes the path it
-teaches.
+Every component page embeds its authored demo in a static `iframe srcdoc`: there is no preview route
+or external document to maintain, but the demo gets its own DOM, viewport and top layer. The frame
+entry copies the page styles, synchronizes theme dimensions, then runs the same `mountIcons()` and
+`initComponents()` bootstrap inside that realm. Fixed Toast regions, native dialogs and drawers are
+therefore contained by the example instead of escaping into the docs chrome.
+
+ComponentPreview owns that stage and its binding/source panels; CodePreview owns the Shiki-rendered
+code surface beneath it. Both documentation enhancers stay out of the auto-loader and use explicit
+subpath mounts. React is documented as a consumer binding, never executed by the site.
 
 ## Quick start
 

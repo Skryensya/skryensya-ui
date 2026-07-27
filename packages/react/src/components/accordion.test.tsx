@@ -46,10 +46,11 @@ describe("Accordion React contracts", () => {
     );
     const trigger = ui.getByRole("button", { name: "Details" });
     const root = ui.container.firstElementChild;
-    const item = trigger.closest(".ds-tile");
+    const item = trigger.closest(".sk-tile");
 
-    expect(root?.classList).toContain("ds-accordion");
-    expect(item?.classList).toContain("ds-tile--expandable");
+    expect(root?.classList).toContain("sk-accordion");
+    expect(item?.classList).toContain("sk-tile--expandable");
+    expect(item?.classList).toContain("sk-tile--interactive");
 
 
     expect(trigger.getAttribute("aria-expanded")).toBe("true");

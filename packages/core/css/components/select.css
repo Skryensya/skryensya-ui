@@ -1,98 +1,100 @@
 /*
- * TIER 3, SELECT (opt-in styling hooks)
+ * TIER 3, SELECT
  *
  * Native select keeps platform semantics and progressively styles its customizable picker.
  * Non-native Select uses Zag and the shared state layer for its additional interaction contract.
  */
 @layer components {
-  .ds-select-native,
-  .ds-select {
+  .sk-select-native,
+  .sk-select {
     /* A trigger is an interactive control that reads as RAISED against the surface it sits on. In
      * dark mode `sunken` resolves to neutral-1000, darker than any surface, so the control looked
      * like a hole punched in the dialog; `raised` (neutral-800) lifts it instead, matching the
      * dark elevation model (lighter = higher). In light it is white with a border, the usual field. */
-    --ds-select-bg: var(--color-bg-surface-raised);
-    --ds-select-fg: var(--color-text-primary);
-    --ds-select-border-color: var(--color-border-default);
-    --ds-select-border-width: 1px;
-    --ds-select-radius: var(--radius-control);
+    --sk-select-bg: var(--color-bg-surface-raised);
+    --sk-select-fg: var(--color-text-primary);
+    --sk-select-border-color: var(--color-border-default);
+    --sk-select-border-width: 1px;
+    --sk-select-radius: var(--radius-control);
     /* Density can tighten the layout around a select, never its native touch target. */
-    --ds-select-height: max(var(--size-control-md), var(--size-touch-target));
-    --ds-select-padding-x: var(--space-inset-sm);
-    --ds-select-font-size: var(--font-size-body);
-    --ds-select-disabled-bg: var(--color-action-disabled);
-    --ds-select-disabled-fg: var(--color-text-disabled);
-    --ds-select-disabled-border-color: var(--color-border-subtle);
-    --ds-select-content-bg: var(--color-bg-surface-raised);
-    --ds-select-content-border-color: var(--color-border-subtle);
-    --ds-select-content-max-block-size: 18rem;
-    --ds-select-content-padding: var(--space-inset-xs);
-    --ds-select-item-fg: var(--color-text-primary);
-    --ds-select-item-disabled-fg: var(--color-text-disabled);
-    --ds-select-item-padding: var(--space-inset-xs) var(--space-inset-sm);
-    --ds-select-item-radius: var(--radius-control);
+    --sk-select-height: max(var(--size-control-md), var(--size-touch-target));
+    --sk-select-padding-x: var(--space-inset-sm);
+    --sk-select-font-size: var(--font-size-body);
+    --sk-select-disabled-bg: var(--color-action-disabled);
+    --sk-select-disabled-fg: var(--color-text-disabled);
+    --sk-select-disabled-border-color: var(--color-border-subtle);
+    --sk-select-content-bg: var(--color-bg-surface-raised);
+    --sk-select-content-border-color: var(--color-border-subtle);
+    --sk-select-content-max-block-size: 18rem;
+    --sk-select-content-padding: var(--space-inset-xs);
+    --sk-select-item-fg: var(--color-text-primary);
+    --sk-select-item-disabled-fg: var(--color-text-disabled);
+    --sk-select-item-padding: var(--space-inset-xs) var(--space-inset-sm);
+    --sk-select-item-radius: var(--radius-control);
 
     min-inline-size: 12rem;
   }
 
   /* Field geometry is one recipe. The native element and the enhanced trigger only differ in
    * anatomy: the former lets the platform lay out its value and picker icon; the latter owns a grid. */
-  .ds-select-native,
-  .ds-select__trigger {
+  .sk-select-native,
+  .sk-select__trigger {
     box-sizing: border-box;
-    block-size: var(--ds-select-height);
-    padding: 0 var(--ds-select-padding-x);
-    border: var(--ds-select-border-width) solid var(--ds-select-border-color);
-    border-radius: var(--ds-select-radius);
-    background: var(--ds-select-bg);
-    color: var(--ds-select-fg);
+    block-size: var(--sk-select-height);
+    padding: 0 var(--sk-select-padding-x);
+    border: var(--sk-select-border-width) solid var(--sk-select-border-color);
+    border-radius: var(--sk-select-radius);
+    background: var(--sk-select-bg);
+    color: var(--sk-select-fg);
     font: inherit;
-    font-size: var(--ds-select-font-size);
+    font-size: var(--sk-select-font-size);
     text-align: start;
     cursor: pointer;
   }
 
-  .ds-select-native {
-    --ds-select-state-opacity: 0;
+  .sk-select-native {
+    --sk-select-state-opacity: 0;
 
     background: color-mix(
       in srgb,
-      currentColor calc(var(--ds-select-state-opacity) * 100%),
-      var(--ds-select-bg)
+      currentColor calc(var(--sk-select-state-opacity) * 100%),
+      var(--sk-select-bg)
     );
   }
 
-  .ds-select-native:not(:disabled, [aria-disabled="true"]):hover {
-    --ds-select-state-opacity: var(--state-layer-hover-opacity);
+  @media (any-hover: hover) {
+    .sk-select-native:not(:disabled, [aria-disabled="true"]):hover {
+      --sk-select-state-opacity: var(--state-layer-hover-opacity);
+    }
   }
 
-  .ds-select-native:not(:disabled, [aria-disabled="true"]):focus-visible {
-    --ds-select-state-opacity: var(--state-layer-focus-opacity);
+  .sk-select-native:not(:disabled, [aria-disabled="true"]):focus-visible {
+    --sk-select-state-opacity: var(--state-layer-focus-opacity);
   }
 
-  .ds-select-native:not(:disabled, [aria-disabled="true"]):active {
-    --ds-select-state-opacity: var(--state-layer-pressed-opacity);
+  .sk-select-native:not(:disabled, [aria-disabled="true"]):active {
+    --sk-select-state-opacity: var(--state-layer-pressed-opacity);
   }
 
   /* Classic selects keep the conservative field styling above and the platform-owned popup.
    * Supporting browsers opt the same HTML into customizable select: CSS can then apply the
    * enhanced component's surface, item, state and icon recipes without adding JS or ARIA. */
-  .ds-select-native option {
-    background-color: var(--ds-select-bg);
-    color: var(--ds-select-fg);
+  .sk-select-native option {
+    background-color: var(--sk-select-bg);
+    color: var(--sk-select-fg);
   }
 
   @supports (appearance: base-select) and selector(select::picker(select)) {
-    .ds-select-native,
-    .ds-select-native::picker(select) {
+    .sk-select-native,
+    .sk-select-native::picker(select) {
       appearance: base-select;
     }
 
-    .ds-select-native {
+    .sk-select-native {
       align-items: center;
     }
 
-    .ds-select-native::picker-icon {
+    .sk-select-native::picker-icon {
       content: "";
       flex: 0 0 auto;
       inline-size: var(--size-icon-sm);
@@ -109,7 +111,7 @@
       );
     }
 
-    .ds-select-native:open::picker-icon {
+    .sk-select-native:open::picker-icon {
       clip-path: polygon(
         16.67% 62.5%,
         50% 29.17%,
@@ -120,23 +122,23 @@
       );
     }
 
-    .ds-select-native::picker(select) {
+    .sk-select-native::picker(select) {
       box-sizing: border-box;
       inline-size: anchor-size(width);
       min-inline-size: 0;
       max-inline-size: none;
-      max-block-size: var(--ds-select-content-max-block-size);
+      max-block-size: var(--sk-select-content-max-block-size);
       margin: var(--space-stack-xs) 0;
-      padding: var(--ds-select-content-padding);
+      padding: var(--sk-select-content-padding);
       overflow: auto;
-      border: 1px solid var(--ds-select-content-border-color);
-      border-radius: var(--ds-select-radius);
-      background: var(--ds-select-content-bg);
-      color: var(--ds-select-fg);
+      border: 1px solid var(--sk-select-content-border-color);
+      border-radius: var(--sk-select-radius);
+      background: var(--sk-select-content-bg);
+      color: var(--sk-select-fg);
       box-shadow: var(--elevation-raised);
     }
 
-    .ds-select-native option {
+    .sk-select-native option {
       --state-layer-opacity: 0;
 
       position: relative;
@@ -148,12 +150,12 @@
       inline-size: 100%;
       min-inline-size: 0;
       min-block-size: var(--size-touch-target);
-      padding: var(--ds-select-item-padding);
+      padding: var(--sk-select-item-padding);
       overflow: hidden;
       border: 0;
-      border-radius: var(--ds-select-item-radius);
-      background: var(--ds-select-content-bg);
-      color: var(--ds-select-item-fg);
+      border-radius: var(--sk-select-item-radius);
+      background: var(--sk-select-content-bg);
+      color: var(--sk-select-item-fg);
       font: inherit;
       text-align: start;
       text-overflow: ellipsis;
@@ -161,7 +163,7 @@
       cursor: pointer;
     }
 
-    .ds-select-native option::after {
+    .sk-select-native option::after {
       content: "";
       position: absolute;
       inset: 0;
@@ -173,30 +175,32 @@
       transition: opacity var(--motion-feedback-duration) var(--motion-feedback-easing);
     }
 
-    .ds-select-native option:checked {
+    .sk-select-native option:checked {
       --state-layer-opacity: var(--state-layer-selected-opacity);
     }
 
-    .ds-select-native option:hover {
-      --state-layer-opacity: var(--state-layer-hover-opacity);
+    @media (any-hover: hover) {
+      .sk-select-native option:hover {
+        --state-layer-opacity: var(--state-layer-hover-opacity);
+      }
     }
 
-    .ds-select-native option:focus {
+    .sk-select-native option:focus {
       --state-layer-opacity: var(--state-layer-focus-opacity);
     }
 
-    .ds-select-native option:active {
+    .sk-select-native option:active {
       --state-layer-opacity: var(--state-layer-pressed-opacity);
     }
 
-    .ds-select-native option:disabled {
+    .sk-select-native option:disabled {
       --state-layer-opacity: var(--state-layer-disabled-opacity);
-      background: var(--ds-select-content-bg);
-      color: var(--ds-select-item-disabled-fg);
+      background: var(--sk-select-content-bg);
+      color: var(--sk-select-item-disabled-fg);
       cursor: not-allowed;
     }
 
-    .ds-select-native option::checkmark {
+    .sk-select-native option::checkmark {
       content: "";
       order: 1;
       flex: 0 0 auto;
@@ -215,40 +219,40 @@
     }
 
     @media (forced-colors: active) {
-      .ds-select-native::picker(select) {
+      .sk-select-native::picker(select) {
         border-color: CanvasText;
         background: Canvas;
         color: CanvasText;
       }
 
-      .ds-select-native option {
+      .sk-select-native option {
         background: Canvas;
         color: CanvasText;
       }
 
-      .ds-select-native option:disabled {
+      .sk-select-native option:disabled {
         color: GrayText;
       }
     }
   }
 
-  .ds-select-native:disabled {
+  .sk-select-native:disabled {
     cursor: not-allowed;
   }
 
-  .ds-select-native:focus-visible {
+  .sk-select-native:focus-visible {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: var(--focus-ring-offset);
   }
 
-  .ds-select-native:disabled,
-  .ds-select-native[aria-disabled="true"] {
-    --ds-select-bg: var(--ds-select-disabled-bg);
-    --ds-select-fg: var(--ds-select-disabled-fg);
-    --ds-select-border-color: var(--ds-select-disabled-border-color);
+  .sk-select-native:disabled,
+  .sk-select-native[aria-disabled="true"] {
+    --sk-select-bg: var(--sk-select-disabled-bg);
+    --sk-select-fg: var(--sk-select-disabled-fg);
+    --sk-select-border-color: var(--sk-select-disabled-border-color);
   }
 
-  .ds-select {
+  .sk-select {
     display: grid;
     gap: var(--space-stack-xs);
   }
@@ -263,18 +267,18 @@
    * `:has([data-state="open"])` would match every menu and lift them all equally, back to square one.
    * Only ONE menu is open at a time, so every open listbox shares the `--z-popover` layer without
    * fighting: the closed siblings stay at the base layer beneath it. */
-  .ds-select:has(.ds-select__trigger[data-state="open"]) {
+  .sk-select:has(.sk-select__trigger[data-state="open"]) {
     position: relative;
     z-index: var(--z-popover);
   }
 
-  .ds-select__label {
+  .sk-select__label {
     color: var(--color-text-secondary);
     font-size: var(--font-size-caption);
     line-height: var(--font-line-height-caption);
   }
 
-  .ds-select__trigger {
+  .sk-select__trigger {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: var(--space-inline-sm);
@@ -283,14 +287,14 @@
     min-inline-size: 0;
   }
 
-  .ds-select__trigger[data-disabled] {
-    --ds-select-bg: var(--ds-select-disabled-bg);
-    --ds-select-fg: var(--ds-select-disabled-fg);
-    --ds-select-border-color: var(--ds-select-disabled-border-color);
+  .sk-select__trigger[data-disabled] {
+    --sk-select-bg: var(--sk-select-disabled-bg);
+    --sk-select-fg: var(--sk-select-disabled-fg);
+    --sk-select-border-color: var(--sk-select-disabled-border-color);
     cursor: not-allowed;
   }
 
-  .ds-select__value {
+  .sk-select__value {
     min-inline-size: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -299,105 +303,99 @@
 
   /* A medium field uses body-sized text. Keep the chevron and item check at the text's 16px optical
    * line rather than the md icon's 20px box; the grid cells already centre them vertically. */
-  .ds-select__trigger .ds-icon,
-  .ds-select__item .ds-icon {
-    --ds-icon-size: var(--size-icon-sm);
+  .sk-select__trigger .sk-icon,
+  .sk-select__item .sk-icon {
+    --sk-icon-size: var(--size-icon-sm);
   }
 
-  .ds-select__indicator {
+  .sk-select__indicator {
     display: inline-grid;
     align-items: center;
     transition: none;
   }
 
-  .ds-select__indicator [data-state] {
+  .sk-select__indicator [data-state] {
     grid-area: 1 / 1;
   }
 
-  .ds-select__indicator [data-state="open"],
-  .ds-select__trigger[data-state="open"] .ds-select__indicator [data-state="closed"] {
+  .sk-select__indicator [data-state="open"],
+  .sk-select__trigger[data-state="open"] .sk-select__indicator [data-state="closed"] {
     display: none;
   }
 
-  .ds-select__trigger[data-state="open"] .ds-select__indicator [data-state="open"] {
+  .sk-select__trigger[data-state="open"] .sk-select__indicator [data-state="open"] {
     display: block;
   }
 
-  .ds-select__positioner {
-    --ds-select-fg: var(--color-text-primary);
-    --ds-select-radius: var(--radius-control);
-    --ds-select-content-bg: var(--color-bg-surface-raised);
-    --ds-select-content-border-color: var(--color-border-subtle);
-    --ds-select-item-fg: var(--color-text-primary);
-    --ds-select-item-disabled-fg: var(--color-text-disabled);
-    /* Base layer for the popup. Zag overwrites this with an inline `z-index: var(--z-index)` when
-     * JS positioning runs, so the OPEN-root lift above is what actually wins in the dialog; this
-     * stays as the honest declared layer for the no-JS / SSR case. */
-    z-index: var(--z-popover);
+  .sk-select__positioner {
+    --sk-select-fg: var(--color-text-primary);
+    --sk-select-radius: var(--radius-control);
+    --sk-select-content-bg: var(--color-bg-surface-raised);
+    --sk-select-content-border-color: var(--color-border-subtle);
+    --sk-select-item-fg: var(--color-text-primary);
+    --sk-select-item-disabled-fg: var(--color-text-disabled);
+
+    /* ── La colocación es del pattern Anclaje (ADR-25) ─────────────────────────
+     * El positioner lleva además `sk-anchored` y el trigger `sk-anchor`. El z-index, el `fixed`, el
+     * volteo y el `position-visibility` los pone el pattern; acá quedan sólo las decisiones que son
+     * DE UN SELECT y de ninguna otra caja anclada.
+     *
+     * Debajo del trigger y con los bordes de inicio ALINEADOS, no centrado: el listbox es la
+     * continuación del control, no una caja aparte que flota cerca. `span-inline-end` arranca la
+     * región en el borde de inicio del ancla y `justify-self: start` pega la caja ahí; el
+     * `anchor-center` que usa el pattern la centraría. */
+    --sk-anchored-position-area: block-end span-inline-end;
+    --sk-anchored-justify: start;
+    --sk-anchored-align: auto;
+    /* Hueco sólo en el eje de bloque: uno inline correría la caja 8px y rompería la alineación de
+     * bordes que se acaba de pedir. En los DOS lados del bloque, para que sobreviva a un flip. */
+    --sk-anchored-offset: var(--space-stack-xs) 0;
+    /* Volteo completo, incluida la esquina opuesta: un select vive en un form largo y cerca de un
+     * borde, así que las tres alternativas se usan de verdad. */
+    --sk-anchored-position-try: flip-block, flip-inline, flip-block flip-inline;
   }
 
-  .ds-select__content {
+  .sk-select__content {
     display: grid;
     inline-size: max-content;
     min-inline-size: var(--reference-width);
     max-inline-size: var(--available-width);
-    max-block-size: min(var(--ds-select-content-max-block-size), var(--available-height));
+    max-block-size: min(var(--sk-select-content-max-block-size), var(--available-height));
     margin: 0;
-    padding: var(--ds-select-content-padding);
+    padding: var(--sk-select-content-padding);
     overflow: auto;
-    border: 1px solid var(--ds-select-content-border-color);
-    border-radius: var(--ds-select-radius);
-    background: var(--ds-select-content-bg);
-    color: var(--ds-select-fg);
+    border: 1px solid var(--sk-select-content-border-color);
+    border-radius: var(--sk-select-radius);
+    background: var(--sk-select-content-bg);
+    color: var(--sk-select-fg);
     box-shadow: var(--elevation-raised);
     list-style: none;
   }
 
-  .ds-select__content[data-state="closed"] {
+  .sk-select__content[data-state="closed"] {
     display: none;
   }
 
-  /* ── PROGRESSIVE ENHANCEMENT: CSS anchor positioning ──────────────────────────────────────
-   * When the browser has the CSS Anchor Positioning API, the BROWSER places the popup, no JS
-   * layout loop, no measuring on every scroll. The enhancer stamps a unique `anchor-name` on the
-   * trigger and the matching `position-anchor` on the positioner (select.ts); everything
-   * about WHERE it lands is declared here.
-   *
-   * Zag's machine still runs (it owns open/close, focus, typeahead), but on this path it must NOT
-   * position: select.ts drops the inline `style` from the positioner props so the browser is
-   * the only positioning engine. That is what lets these declarations stay `!important`-free, and
-   * `position-try` can only flip declarations that AREN'T `!important`, so this is load-bearing, not
-   * tidiness. Browsers without the API never enter this block and keep Zag's JS positioning, the
-   * fallback, not a lesser path.
-   *
-   * Placement: below the trigger by default, left edges aligned. `position-try-fallbacks` flips to
-   * the top, then the sides, whenever the default would overflow, so it lands on the side with room.
-   * `fixed` makes the viewport the containing block, so that overflow is measured against the screen
-   * (the open-root lift sets `position: relative` on the menu; an `absolute` popup would measure
-   * against that 32px box and never flip). `position-visibility` hides it if the trigger scrolls off. */
   @supports (anchor-name: --a) {
-    .ds-select__positioner {
-      position: fixed;
-      top: anchor(bottom);
-      left: anchor(left);
-      inline-size: anchor-size(width); /* sameWidth, from the anchor, Zag's --reference-width is gone here */
-      z-index: var(--z-popover);
-      margin-block: var(--space-stack-xs); /* gutter on both block sides so it survives a block-flip */
-      position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
-      position-visibility: anchors-visible;
+    .sk-select__positioner {
+      /* `sameWidth`, tomado del ancla en vez de la `--reference-width` que Zag ya no escribe en esta
+       * ruta. Va ACÁ ADENTRO y no arriba con los otros hooks porque `anchor-size()` sin un
+       * `position-anchor` resuelto es inválido, y el pattern lee este hook también fuera del
+       * `@supports`: declararlo afuera dejaría el positioner sin ancho en el fallback. */
+      --sk-anchored-size: anchor-size(width);
     }
 
     /* Fill the anchored positioner; Zag's --available-* vars are gone on this path, so cap height
      * outright and let the list scroll inside. Items still ellipsis via their own min-inline-size:0. */
-    .ds-select__content {
+    .sk-select__content {
       inline-size: 100%;
       min-inline-size: 0;
       max-inline-size: none;
-      max-block-size: var(--ds-select-content-max-block-size);
+      max-block-size: var(--sk-select-content-max-block-size);
     }
   }
 
-  .ds-select__item {
+  .sk-select__item {
     box-sizing: border-box;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -405,44 +403,44 @@
     align-items: center;
     min-inline-size: 0;
     min-block-size: var(--size-touch-target);
-    padding: var(--ds-select-item-padding);
-    border-radius: var(--ds-select-item-radius);
-    color: var(--ds-select-item-fg);
+    padding: var(--sk-select-item-padding);
+    border-radius: var(--sk-select-item-radius);
+    color: var(--sk-select-item-fg);
     cursor: pointer;
   }
 
-  .ds-select__item[data-disabled] {
-    color: var(--ds-select-item-disabled-fg);
+  .sk-select__item[data-disabled] {
+    color: var(--sk-select-item-disabled-fg);
     cursor: not-allowed;
   }
 
-  .ds-select__item-text {
+  .sk-select__item-text {
     min-inline-size: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .ds-select__item-indicator {
+  .sk-select__item-indicator {
     visibility: hidden;
   }
 
-  .ds-select__item[data-state="checked"] .ds-select__item-indicator {
+  .sk-select__item[data-state="checked"] .sk-select__item-indicator {
     visibility: visible;
   }
 
   @media (forced-colors: active) {
-    .ds-select-native,
-    .ds-select__trigger,
-    .ds-select__content {
+    .sk-select-native,
+    .sk-select__trigger,
+    .sk-select__content {
       border-color: CanvasText;
       background: Canvas;
       color: CanvasText;
     }
 
-    .ds-select-native:disabled,
-    .ds-select__trigger[data-disabled],
-    .ds-select__item[data-disabled] {
+    .sk-select-native:disabled,
+    .sk-select__trigger[data-disabled],
+    .sk-select__item[data-disabled] {
       color: GrayText;
       border-color: GrayText;
     }

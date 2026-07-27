@@ -21,11 +21,11 @@ export type TabsOptions = {
 
 
 export const tabsParts = {
-  root: "ds-tabs",
-  list: "ds-tabs__list",
-  trigger: "ds-tabs__trigger",
-  content: "ds-tabs__content",
-  indicator: "ds-tabs__indicator",
+  root: "sk-tabs",
+  list: "sk-tabs__list",
+  trigger: "sk-tabs__trigger",
+  content: "sk-tabs__content",
+  indicator: "sk-tabs__indicator",
 } as const;
 
 export type TabsPart = keyof typeof tabsParts;

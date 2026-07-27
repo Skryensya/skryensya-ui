@@ -1,0 +1,134 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+/* The real markup, shown as the source. The demo above is a to-scale diagram because the sizes only
+ * differ past widths this document column cannot show, md (64rem) and lg (90rem) would both
+ * just fill the stage and read as identical, which is exactly what made the old demo confusing. */
+const code = `<div class="sk-wrapper" data-size="sm">…</div>
+<div class="sk-wrapper" data-size="md">…</div>
+<div class="sk-wrapper" data-size="lg">…</div>
+<div class="sk-wrapper" data-size="full">…</div>`;
+
+const react = `import { Wrapper } from "@skryensya/react/wrapper";
+
+<Wrapper size="sm">…</Wrapper>
+<Wrapper size="md">…</Wrapper>
+<Wrapper size="lg">…</Wrapper>
+<Wrapper size="full">…</Wrapper>;`;
+---
+
+<Base title="Wrapper" description="Wrapper: Page column with a ceiling width of one scale.">
+  <h1>Wrapper</h1>
+  <p class="lede">
+    Wrapper is the page column: maximum centered width, with inline padding. It is what others
+    they call <em>container</em>, but that name is already from the <em>container queries</em>, so here the
+    role is called <strong>wrapper</strong>. The size is a <strong>scale</strong>
+    (<code>sm</code>, <code>md</code>, <code>lg</code>, <code>full</code>), not a usage name: the
+    ceiling tells how wide the column can grow; the work it does is decided by whoever writes it.
+  </p>
+
+  <h2>The four roofs, to scale</h2>
+  <p>
+    Each size is a different <strong>ceiling width</strong>: the column centers and stops growing
+    upon reaching him. Under your roof, any wrapper is simply <code>100%</code>, so in
+    a narrow screen all four look the same, and they only separate when there is room.
+  </p>
+
+  <Showcase code={code} react={react} label="Wrapper" flush>
+    <figure class="wrapper-scale" aria-label="Wrapper widths, to scale">
+      <div class="wrapper-scale__bar" style="--w: 47%">
+        <code>sm</code> · 42rem
+      </div>
+      <div class="wrapper-scale__bar" style="--w: 71%">
+        <code>md</code> · 64rem · default
+      </div>
+      <div class="wrapper-scale__bar" style="--w: 100%">
+        <code>lg</code> · 90rem
+      </div>
+      <div class="wrapper-scale__bar wrapper-scale__bar--full">
+        <code>full</code> · no roof · the entire viewport
+      </div>
+    </figure>
+  </Showcase>
+
+  <p>
+    Ceilings are stable: density changes spacing and controls, never the maximum width of
+    the column. <code>full</code> centers the same but without putting a roof.
+  </p>
+
+  <h2>on this site</h2>
+  <p>
+    This documentation wraps itself, with two steps. The header and the three-column shell
+    they both carry <code>data-size="lg"</code> (and the site tunes the ceiling to an eigenvalue), so a
+    single number keeps its edges aligned. The column you are reading is
+    <code>md</code>: the <code>&lt;main&gt;</code> carries <code>data-size="md"</code> and its roof is the
+    token, not a copied number. And a full screen tool, like the configurator, releases
+    the wrapper of everything.
+  </p>
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>The code is in the <strong>React</strong> tab of the preview.</p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>In HTML, add <code>sk-wrapper</code> to the element that delimits the column.</li>
+    <li>
+      <code>data-size</code> accepts <code>sm</code>, <code>md</code> (default), <code>lg</code> or
+      <code>full</code> (no roof).
+    </li>
+    <li>
+      The ceilings are tier 2 tokens: <code>--size-wrapper-sm</code>,
+      <code>--size-wrapper-md</code>, <code>--size-wrapper-lg</code>.
+    </li>
+    <li>
+      The only hook that a consumer tunes is <code>--sk-wrapper-max</code>, to a width that the
+      scale still does not name, without reimplementing centering or padding.
+    </li>
+  </ul>
+</Base>
+
+<style>
+  /* A to-scale diagram, not the live component: the bars are the max-widths as a fraction of the
+     widest (lg, 90rem), so sm < md < lg reads at a glance even though this column is far
+     too narrow to show 64rem and 90rem apart. Each bar is centred, like the column it stands for. */
+  .wrapper-scale {
+    margin: 0;
+    display: grid;
+    gap: var(--space-stack-sm);
+    padding-block: var(--space-inset-md);
+  }
+
+  .wrapper-scale__bar {
+    justify-self: center;
+    inline-size: var(--w, 100%);
+    box-sizing: border-box;
+    padding: var(--space-inset-sm) var(--space-inset-md);
+    background: var(--color-bg-accent-subtle);
+    border: 1px solid var(--color-border-accent);
+    border-radius: var(--radius-control);
+    color: var(--color-text-accent);
+    font-size: var(--font-size-body-sm);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .wrapper-scale__bar code {
+    font-family: var(--font-family-code);
+    font-weight: var(--font-weight-emphasis);
+  }
+
+  /* full has no ceiling: it fills, and a dashed edge says "no wall here". */
+  .wrapper-scale__bar--full {
+    inline-size: 100%;
+    border-style: dashed;
+  }
+</style>

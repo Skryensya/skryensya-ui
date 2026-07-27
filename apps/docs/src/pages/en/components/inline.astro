@@ -1,0 +1,108 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<section
+  class="sk-box"
+  data-surface="raised"
+  data-border="subtle"
+  data-padding="lg"
+  aria-labelledby="project-title"
+>
+  <div
+    class="sk-inline"
+    data-gap="md"
+    data-align="center"
+    data-justify="between"
+  >
+    <div class="sk-stack" data-gap="none">
+      <h2 class="sk-heading" data-size="h4" id="project-title">
+        Proyecto Atlas
+      </h2>
+      <p class="sk-text" data-size="sm" data-tone="secondary">
+        3 unpublished changes
+      </p>
+    </div>
+
+    <div class="sk-inline" data-gap="sm" data-wrap="false">
+      <button
+        class="sk-button sk-interactive"
+        data-sk-button
+        data-variant="ghost"
+        type="button"
+      >
+        Vista previa
+      </button>
+      <button
+        class="sk-button sk-interactive"
+        data-sk-button
+        data-variant="primary"
+        type="button"
+      >
+        Publicar
+      </button>
+    </div>
+  </div>
+</section>`;
+
+const react = `import { Button } from "@skryensya/react/button";
+import { Heading } from "@skryensya/react/heading";
+import { Box, Inline, Stack } from "@skryensya/react/layout";
+import { Text } from "@skryensya/react/text";
+
+<Box
+  as="section"
+  aria-labelledby="project-title"
+  border="subtle"
+  padding="lg"
+  surface="raised"
+>
+  <Inline gap="md" justify="between">
+    <Stack gap="none">
+      <Heading as="h2" id="project-title" size="h4">
+        Proyecto Atlas
+      </Heading>
+      <Text size="sm" tone="secondary">3 unpublished changes</Text>
+    </Stack>
+
+    <Inline gap="sm" wrap={false}>
+      <Button variant="ghost">Vista previa</Button>
+      <Button variant="primary">Publicar</Button>
+    </Inline>
+  </Inline>
+</Box>`;
+---
+
+<Base title="Inline" description="Inline, the horizontal and adaptable layout pattern.">
+  <h1>Inline</h1>
+  <p class="lede">
+    Arranges items horizontally and returns them to another line when space runs out. use it
+    for stock bars and label–control pairs; the semantics belong to the element you choose.
+  </p>
+
+  <Showcase html={html} react={react} label="Action bar" note="Box + Stack + Inline + Button" />
+
+  <h2>HTML autorado</h2>
+  <p>
+    Use <code>sk-inline</code> in the appropriate semantic element. The attributes describe the
+    spacing, vertical alignment, horizontal layout and whether the row can wrap its children.
+  </p>
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+
+  <h2>React</h2>
+  <p>The code is in the <strong>React</strong> tab of the preview.</p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li><code>as</code> chooses the root element; The default is <code>div</code>.</li>
+    <li><code>gap</code> accepts <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> or <code>xl</code>; The default is <code>md</code>.</li>
+    <li><code>align</code> accepts <code>start</code>, <code>center</code>, <code>end</code> or <code>baseline</code>; The default is <code>center</code>.</li>
+    <li><code>justify</code> accepts <code>start</code>, <code>center</code>, <code>end</code> or <code>between</code>; in HTML it is written with <code>data-justify</code>.</li>
+    <li><code>wrap</code> allows wrapping children; The default is <code>true</code>. Use <code>data-wrap="false"</code> for a single row in HTML.</li>
+  </ul>
+</Base>

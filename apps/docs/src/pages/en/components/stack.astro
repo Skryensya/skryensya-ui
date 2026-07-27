@@ -1,0 +1,70 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<section
+  class="sk-stack"
+  data-gap="md"
+  data-align="start"
+  aria-labelledby="stack-demo-title"
+>
+  <h3 class="sk-heading" data-size="h3" id="stack-demo-title">
+    Summary
+  </h3>
+  <p>The application is ready to review.</p>
+  <a class="sk-link sk-interactive" href="/en/components/stack">
+    See details
+  </a>
+</section>`;
+
+const react = `import { Stack } from "@skryensya/react/stack";
+import { Heading } from "@skryensya/react/heading";
+
+<Stack
+  as="section"
+  gap="md"
+  align="start"
+  aria-labelledby="summary-title"
+>
+  <Heading as="h2" size="h2" id="summary-title">
+    Summary
+  </Heading>
+  <p>The application is ready to review.</p>
+  <a href="/detalles">See details</a>
+</Stack>;`;
+---
+
+<Base title="Stack" description="Stack: vertical layout primitive with separation and transversal alignment.">
+  <h1>Stack</h1>
+  <p class="lede">
+    Stack stacks content on the vertical axis. It is a structural pattern: the element that carries it preserves
+    the semantics of the content, and the gap expresses the separation between its children.
+  </p>
+
+  <Showcase html={html} react={react} label="Stack" />
+
+  <h2>HTML autorado</h2>
+  <p>
+    Directly choose the semantic element; Stack does not require vanilla initialization.
+  </p>
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+
+  <h2>React</h2>
+  <p>
+    Use <code>as</code> to choose the element that the adapter renders without losing the layout contract.
+  </p>
+  <p>The code is in the <strong>React</strong> tab of the preview.</p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li><code>sk-stack</code> creates a one-column grid and stacks its children vertically.</li>
+    <li><code>data-gap</code> accepts <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> or <code>xl</code>; omitting it uses <code>md</code>.</li>
+    <li><code>data-align</code> aligns on the cross axis: <code>start</code>, <code>center</code>, <code>end</code> or <code>stretch</code>. By omitting it, the grid stretches the children.</li>
+    <li>In React, <code>as</code> is optional and renders <code>div</code> if not specified.</li>
+  </ul>
+</Base>

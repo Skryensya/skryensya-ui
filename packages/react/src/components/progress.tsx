@@ -14,7 +14,7 @@ export type ProgressProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 export function Progress({ className, label, max = 100, tone = "accent", value, ...props }: ProgressProps) {
   const fraction = progressFraction(value, max);
   const clamped = Math.round(fraction * max * 100) / 100;
-  const style = { ...props.style, "--ds-progress-fill": `${fraction * 100}%` } as CSSProperties;
+  const style = { ...props.style, "--sk-progress-fill": `${fraction * 100}%` } as CSSProperties;
 
   return (
     <div

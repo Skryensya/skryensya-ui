@@ -5,7 +5,7 @@
  * Alert stays in the layout as long as its condition holds. Both share the tone → live-region mapping
  * so a screen reader announces danger assertively and everything else politely.
  */
-/** `neutral` is the plain message, no semantic colour. The rest paint status. */
+/** `neutral` is the plain message, no semantic color. The rest paint status. */
 export type AlertTone = "neutral" | "info" | "success" | "warning" | "danger";
 export type AlertPresentation = "banner" | "accent" | "inline";
 
@@ -22,13 +22,13 @@ export function getAlertLiveRegion(tone: AlertTone): AlertLiveRegion {
 }
 
 export const alertParts = {
-  root: "ds-alert",
-  icon: "ds-alert__icon",
-  content: "ds-alert__content",
-  title: "ds-alert__title",
-  description: "ds-alert__description",
-  actions: "ds-alert__actions",
-  dismiss: "ds-alert__dismiss",
+  root: "sk-alert",
+  icon: "sk-alert__icon",
+  content: "sk-alert__content",
+  title: "sk-alert__title",
+  description: "sk-alert__description",
+  actions: "sk-alert__actions",
+  dismiss: "sk-alert__dismiss",
 } as const;
 
 export type AlertPart = keyof typeof alertParts;

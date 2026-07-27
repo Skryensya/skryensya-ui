@@ -1,21 +1,19 @@
 ---
+import "@skryensya/core/components/flyout.css";
+import "@skryensya/core/components/select.css";
 import Base from "../../layouts/Base.astro";
 import Showcase from "../../components/Showcase.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import DimensionSelect from "../../components/DimensionSelect.astro";
-import { iconMarkup } from "../../icons";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
-
-const chevronLeft = iconMarkup("chevron-left", { size: "sm" });
-const chevronRight = iconMarkup("chevron-right", { size: "sm" });
 
 const services = ["API", "Worker", "Gateway", "Billing", "Auth", "Search"] as const;
 const envs = ["prod", "staging", "dev"] as const;
 const statuses = ["Exitoso", "En curso", "Fallido"] as const;
 
-const pagerRows = Array.from({ length: 25 }, (_, index) => {
+const pagerRows = Array.from({ length: 28 }, (_, index) => {
   const n = index + 1;
   return {
     id: `dep-${1040 + n}`,
@@ -26,26 +24,26 @@ const pagerRows = Array.from({ length: 25 }, (_, index) => {
   };
 });
 
-const html = `<div class="ds-table-scroll">
-  <table class="ds-table">
-    <caption class="ds-table__caption">Planes disponibles</caption>
-    <thead class="ds-table__head">
-      <tr class="ds-table__row">
-        <th class="ds-table__header" scope="col">Plan</th>
-        <th class="ds-table__header" scope="col">Uso</th>
-        <th class="ds-table__header" scope="col">Estado</th>
+const html = `<div class="sk-table-scroll">
+  <table class="sk-table">
+    <caption class="sk-table__caption">Planes disponibles</caption>
+    <thead class="sk-table__head">
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="col">Plan</th>
+        <th class="sk-table__header" scope="col">Uso</th>
+        <th class="sk-table__header" scope="col">Estado</th>
       </tr>
     </thead>
-    <tbody class="ds-table__body">
-      <tr class="ds-table__row">
-        <th class="ds-table__header" scope="row">Starter</th>
-        <td class="ds-table__cell">Equipos pequeños</td>
-        <td class="ds-table__cell">Activo</td>
+    <tbody class="sk-table__body">
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">Starter</th>
+        <td class="sk-table__cell">Equipos pequeños</td>
+        <td class="sk-table__cell">Activo</td>
       </tr>
     </tbody>
-    <tfoot class="ds-table__foot">
-      <tr class="ds-table__row">
-        <td class="ds-table__cell" colspan="3">
+    <tfoot class="sk-table__foot">
+      <tr class="sk-table__row">
+        <td class="sk-table__cell" colspan="3">
           Los precios no incluyen impuestos.
         </td>
       </tr>
@@ -54,31 +52,31 @@ const html = `<div class="ds-table-scroll">
 </div>`;
 
 const boxHtml = `<section
-  class="ds-box"
+  class="sk-box"
   data-surface="surface"
   data-border="subtle"
   data-padding="md"
 >
-  <div class="ds-table-scroll">
-    <table class="ds-table">
-      <caption class="ds-table__caption">Planes disponibles</caption>
-      <thead class="ds-table__head">
-        <tr class="ds-table__row">
-          <th class="ds-table__header" scope="col">Plan</th>
-          <th class="ds-table__header" scope="col">Uso</th>
-          <th class="ds-table__header" scope="col">Estado</th>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <caption class="sk-table__caption">Planes disponibles</caption>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="col">Plan</th>
+          <th class="sk-table__header" scope="col">Uso</th>
+          <th class="sk-table__header" scope="col">Estado</th>
         </tr>
       </thead>
-      <tbody class="ds-table__body">
-        <tr class="ds-table__row">
-          <th class="ds-table__header" scope="row">Starter</th>
-          <td class="ds-table__cell">Equipos pequeños</td>
-          <td class="ds-table__cell">Activo</td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="row">Starter</th>
+          <td class="sk-table__cell">Equipos pequeños</td>
+          <td class="sk-table__cell">Activo</td>
         </tr>
-        <tr class="ds-table__row">
-          <th class="ds-table__header" scope="row">Pro</th>
-          <td class="ds-table__cell">Equipos en crecimiento</td>
-          <td class="ds-table__cell">Activo</td>
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="row">Pro</th>
+          <td class="sk-table__cell">Equipos en crecimiento</td>
+          <td class="sk-table__cell">Activo</td>
         </tr>
       </tbody>
     </table>
@@ -86,33 +84,33 @@ const boxHtml = `<section
 </section>`;
 
 const densityTable = (factor: string) => `<div
-  data-ds-density-scope
-  style="--ds-density-factor: ${factor}"
+  data-sk-density-scope
+  style="--sk-density-factor: ${factor}"
 >
-  <div class="ds-table-scroll">
-    <table class="ds-table">
-      <caption class="ds-table__caption">
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <caption class="sk-table__caption">
         Actividad de servicios
       </caption>
-      <thead class="ds-table__head">
-        <tr class="ds-table__row">
-          <th class="ds-table__header" scope="col">Servicio</th>
-          <th class="ds-table__header" scope="col">Estado</th>
-          <th class="ds-table__header" scope="col">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="col">Servicio</th>
+          <th class="sk-table__header" scope="col">Estado</th>
+          <th class="sk-table__header" scope="col">
             Última actividad
           </th>
         </tr>
       </thead>
-      <tbody class="ds-table__body">
-        <tr class="ds-table__row">
-          <th class="ds-table__header" scope="row">API</th>
-          <td class="ds-table__cell">Estable</td>
-          <td class="ds-table__cell">Hace 2 min</td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="row">API</th>
+          <td class="sk-table__cell">Estable</td>
+          <td class="sk-table__cell">Hace 2 min</td>
         </tr>
-        <tr class="ds-table__row">
-          <th class="ds-table__header" scope="row">Worker</th>
-          <td class="ds-table__cell">Estable</td>
-          <td class="ds-table__cell">Hace 8 min</td>
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="row">Worker</th>
+          <td class="sk-table__cell">Estable</td>
+          <td class="sk-table__cell">Hace 8 min</td>
         </tr>
       </tbody>
     </table>
@@ -161,95 +159,376 @@ const react = `import {
   </Table>
 </TableScroll>;`;
 
-const pagedCode = `<div class="docs-table-pager">
-  <div class="ds-table-scroll">
-    <table class="ds-table">
-      <caption class="ds-table__caption">Despliegues recientes</caption>
-      <thead class="ds-table__head">…</thead>
-      <tbody class="ds-table__body">…</tbody>
+const stickyColumnHtml = `<div
+  aria-labelledby="service-metrics"
+  class="sk-table-scroll"
+  data-sticky-column
+  role="region"
+  tabindex="0"
+>
+  <table class="sk-table">
+    <caption
+      class="sk-table__caption"
+      id="service-metrics"
+    >
+      Rendimiento por región
+    </caption>
+    <thead class="sk-table__head">
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="col">
+          Servicio
+        </th>
+        <th class="sk-table__header" scope="col">
+          Región
+        </th>
+        <th class="sk-table__header" scope="col">
+          Latencia p95
+        </th>
+        <th class="sk-table__header" scope="col">
+          Error
+        </th>
+        <th class="sk-table__header" scope="col">
+          Solicitudes
+        </th>
+        <th class="sk-table__header" scope="col">
+          Versión
+        </th>
+      </tr>
+    </thead>
+    <tbody class="sk-table__body">
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">
+          API principal
+        </th>
+        <td class="sk-table__cell">Madrid</td>
+        <td class="sk-table__cell">142 ms</td>
+        <td class="sk-table__cell">0,08%</td>
+        <td class="sk-table__cell">8,4 M</td>
+        <td class="sk-table__cell">v3.18.2</td>
+      </tr>
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">
+          Checkout
+        </th>
+        <td class="sk-table__cell">Dublín</td>
+        <td class="sk-table__cell">218 ms</td>
+        <td class="sk-table__cell">0,21%</td>
+        <td class="sk-table__cell">3,1 M</td>
+        <td class="sk-table__cell">v2.9.0</td>
+      </tr>
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">
+          Identidad
+        </th>
+        <td class="sk-table__cell">Fráncfort</td>
+        <td class="sk-table__cell">97 ms</td>
+        <td class="sk-table__cell">0,04%</td>
+        <td class="sk-table__cell">6,9 M</td>
+        <td class="sk-table__cell">v1.44.0</td>
+      </tr>
+    </tbody>
+  </table>
+</div>`;
+
+const stickyColumnReact = `import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableScroll,
+} from "@skryensya/react/table";
+
+const metrics = [
+  ["API principal", "Madrid", "142 ms", "0,08%", "8,4 M", "v3.18.2"],
+  ["Checkout", "Dublín", "218 ms", "0,21%", "3,1 M", "v2.9.0"],
+  ["Identidad", "Fráncfort", "97 ms", "0,04%", "6,9 M", "v1.44.0"],
+] as const;
+
+<TableScroll
+  aria-labelledby="service-metrics"
+  role="region"
+  stickyColumn
+  tabIndex={0}
+>
+  <Table>
+    <TableCaption id="service-metrics">
+      Rendimiento por región
+    </TableCaption>
+    <TableHead>
+      <TableRow>
+        <TableHeader>Servicio</TableHeader>
+        <TableHeader>Región</TableHeader>
+        <TableHeader>Latencia p95</TableHeader>
+        <TableHeader>Error</TableHeader>
+        <TableHeader>Solicitudes</TableHeader>
+        <TableHeader>Versión</TableHeader>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {metrics.map(
+        ([service, region, latency, error, requests, version]) => (
+          <TableRow key={service}>
+            <TableHeader scope="row">{service}</TableHeader>
+            <TableCell>{region}</TableCell>
+            <TableCell>{latency}</TableCell>
+            <TableCell>{error}</TableCell>
+            <TableCell>{requests}</TableCell>
+            <TableCell>{version}</TableCell>
+          </TableRow>
+        ),
+      )}
+    </TableBody>
+  </Table>
+</TableScroll>;`;
+
+const stickyHeaderHtml = `<div
+  aria-labelledby="deployment-history"
+  class="sk-table-scroll"
+  data-sticky-header
+  role="region"
+  style="max-block-size: 14rem"
+  tabindex="0"
+>
+  <table class="sk-table">
+    <caption
+      class="sk-table__caption"
+      id="deployment-history"
+    >
+      Historial de despliegues
+    </caption>
+    <thead class="sk-table__head">
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="col">ID</th>
+        <th class="sk-table__header" scope="col">
+          Servicio
+        </th>
+        <th class="sk-table__header" scope="col">
+          Estado
+        </th>
+        <th class="sk-table__header" scope="col">
+          Actualizado
+        </th>
+      </tr>
+    </thead>
+    <tbody class="sk-table__body">
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">DEP-1082</th>
+        <td class="sk-table__cell">API</td>
+        <td class="sk-table__cell">Exitoso</td>
+        <td class="sk-table__cell">Hace 2 min</td>
+      </tr>
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">DEP-1081</th>
+        <td class="sk-table__cell">Worker</td>
+        <td class="sk-table__cell">En curso</td>
+        <td class="sk-table__cell">Hace 6 min</td>
+      </tr>
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">DEP-1080</th>
+        <td class="sk-table__cell">Gateway</td>
+        <td class="sk-table__cell">Exitoso</td>
+        <td class="sk-table__cell">Hace 18 min</td>
+      </tr>
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">DEP-1079</th>
+        <td class="sk-table__cell">Billing</td>
+        <td class="sk-table__cell">Fallido</td>
+        <td class="sk-table__cell">Hace 31 min</td>
+      </tr>
+      <tr class="sk-table__row">
+        <th class="sk-table__header" scope="row">DEP-1078</th>
+        <td class="sk-table__cell">Auth</td>
+        <td class="sk-table__cell">Exitoso</td>
+        <td class="sk-table__cell">Hace 48 min</td>
+      </tr>
+    </tbody>
+  </table>
+</div>`;
+
+const stickyHeaderReact = `import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableScroll,
+} from "@skryensya/react/table";
+
+const deployments = [
+  ["DEP-1082", "API", "Exitoso", "Hace 2 min"],
+  ["DEP-1081", "Worker", "En curso", "Hace 6 min"],
+  ["DEP-1080", "Gateway", "Exitoso", "Hace 18 min"],
+  ["DEP-1079", "Billing", "Fallido", "Hace 31 min"],
+  ["DEP-1078", "Auth", "Exitoso", "Hace 48 min"],
+] as const;
+
+<TableScroll
+  aria-labelledby="deployment-history"
+  role="region"
+  stickyHeader
+  style={{ maxBlockSize: "14rem" }}
+  tabIndex={0}
+>
+  <Table>
+    <TableCaption id="deployment-history">
+      Historial de despliegues
+    </TableCaption>
+    <TableHead>
+      <TableRow>
+        <TableHeader>ID</TableHeader>
+        <TableHeader>Servicio</TableHeader>
+        <TableHeader>Estado</TableHeader>
+        <TableHeader>Actualizado</TableHeader>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {deployments.map(([id, service, status, updated]) => (
+        <TableRow key={id}>
+          <TableHeader scope="row">{id}</TableHeader>
+          <TableCell>{service}</TableCell>
+          <TableCell>{status}</TableCell>
+          <TableCell>{updated}</TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableScroll>;`;
+
+const pagerRowHtml = (row: (typeof pagerRows)[number]) => `        <tr
+          class="sk-table__row"
+          data-sk-table-pager-row
+        >
+          <th class="sk-table__header" scope="row">${row.id}</th>
+          <td class="sk-table__cell">${row.service}</td>
+          <td class="sk-table__cell">${row.env}</td>
+          <td class="sk-table__cell">${row.status}</td>
+          <td class="sk-table__cell">${row.when}</td>
+        </tr>`;
+
+const pagerShell = (tbody: string) => `<div
+  class="sk-table-pager"
+  data-sk-table-pager
+  data-page-size="5"
+  data-status-template="{start}–{end} de {total}"
+  data-previous-label="Página anterior"
+  data-next-label="Página siguiente"
+  data-page-label="Página"
+>
+  <div
+    aria-label="Despliegues recientes"
+    class="sk-table-scroll"
+    data-sticky-column
+    role="region"
+    tabindex="0"
+  >
+    <table class="sk-table" data-layout="fixed">
+      <caption class="sk-table__caption">
+        Despliegues recientes
+      </caption>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header" scope="col">ID</th>
+          <th class="sk-table__header" scope="col">Servicio</th>
+          <th class="sk-table__header" scope="col">Entorno</th>
+          <th class="sk-table__header" scope="col">Estado</th>
+          <th class="sk-table__header" scope="col">Cuándo</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+${tbody}
+      </tbody>
     </table>
   </div>
 
-  <div class="docs-table-pager__bar">
-    <div class="ds-select" data-ds-select data-value="5">
-      <label class="ds-select__label" data-ds-select-label>
-        Filas por página
-      </label>
-      <button
-        class="ds-select__trigger ds-interactive"
-        data-ds-select-trigger
-        type="button"
-      >
-        <span class="ds-select__value" data-ds-select-value>
-          5
-        </span>
-        <span
-          class="ds-select__indicator"
-          data-ds-select-indicator
-          aria-hidden="true"
+  <div class="sk-table-pager__bar">
+    <div class="sk-table-pager__size">
+      <div class="sk-select" data-sk-select data-value="5">
+        <label class="sk-select__label" data-sk-select-label>
+          Filas por página
+        </label>
+        <button
+          class="sk-select__trigger sk-anchor sk-interactive"
+          data-sk-select-trigger
+          type="button"
         >
-          <span data-state="closed">
-            <span data-ds-icon="chevron-down"></span>
+          <span class="sk-select__value" data-sk-select-value>
+            5
           </span>
-          <span data-state="open">
-            <span data-ds-icon="chevron-up"></span>
+          <span
+            class="sk-select__indicator"
+            data-sk-select-indicator
+            aria-hidden="true"
+          >
+            <span data-state="closed">
+              <span data-sk-icon="chevron-down"></span>
+            </span>
+            <span data-state="open">
+              <span data-sk-icon="chevron-up"></span>
+            </span>
           </span>
-        </span>
-      </button>
-      <div
-        class="ds-select__positioner"
-        data-ds-select-positioner
-      >
-        <ul class="ds-select__content" data-ds-select-content>
-          <li
-            class="ds-select__item ds-interactive"
-            data-ds-select-item
-            data-value="5"
-          >…</li>
-          <li
-            class="ds-select__item ds-interactive"
-            data-ds-select-item
-            data-value="10"
-          >…</li>
-          <li
-            class="ds-select__item ds-interactive"
-            data-ds-select-item
-            data-value="25"
-          >…</li>
-        </ul>
+        </button>
+        <div
+          class="sk-select__positioner sk-anchored"
+          data-sk-select-positioner
+        >
+          <ul class="sk-select__content" data-sk-select-content>
+            <li
+              class="sk-select__item sk-interactive"
+              data-sk-select-item
+              data-value="5"
+            >
+              5
+            </li>
+            <li
+              class="sk-select__item sk-interactive"
+              data-sk-select-item
+              data-value="10"
+            >
+              10
+            </li>
+            <li
+              class="sk-select__item sk-interactive"
+              data-sk-select-item
+              data-value="25"
+            >
+              25
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
 
-    <p class="docs-table-pager__status">1–5 de 25</p>
+    <div class="sk-table-pager__end">
+      <div
+        class="sk-table-pager__status"
+        data-sk-table-pager-status
+      ></div>
 
-    <nav class="ds-pagination" aria-label="Paginación">
-      <button
-        class="ds-pagination__previous ds-interactive"
-        type="button"
-        aria-label="Página anterior"
-        disabled
-      >
-        <span
-          data-ds-icon="chevron-left"
-          data-ds-icon-size="sm"
-        ></span>
-      </button>
-      <!-- páginas + elipsis vía paginationRange() -->
-      <button
-        class="ds-pagination__next ds-interactive"
-        type="button"
-        aria-label="Página siguiente"
-      >
-        <span
-          data-ds-icon="chevron-right"
-          data-ds-icon-size="sm"
-        ></span>
-      </button>
-    </nav>
+      <nav
+        class="sk-pagination"
+        aria-label="Paginación"
+        data-sk-table-pager-nav
+      ></nav>
+    </div>
   </div>
 </div>`;
 
-const pagedReact = `import { useLayoutEffect, useMemo, useRef, useState } from "react";
+const pagedCode = pagerShell(
+  [
+    ...pagerRows.slice(0, 2).map(pagerRowHtml),
+    `        <!-- … ${pagerRows.length - 2} filas más con data-sk-table-pager-row -->`,
+  ].join("\n"),
+);
+
+const pagedCodeFull = pagerShell(pagerRows.map(pagerRowHtml).join("\n"));
+
+
+const pagedReact = `import { useMemo, useState } from "react";
 import { Icon } from "@skryensya/react/icon";
 import { Pagination } from "@skryensya/react/pagination";
 import { Select } from "@skryensya/react/select";
@@ -270,8 +549,6 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] =
     useState<(typeof PAGE_SIZES)[number]>("5");
-  const frameRef = useRef<HTMLDivElement>(null);
-  const [frameMinBlockSize, setFrameMinBlockSize] = useState<number>();
 
   const size = Number(pageSize);
   const pageCount = Math.max(1, Math.ceil(rows.length / size));
@@ -281,27 +558,18 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     return rows.slice(start, start + size);
   }, [current, rows, size]);
 
-  useLayoutEffect(() => {
-    const frame = frameRef.current;
-    if (!frame || slice.length < size) return;
-    frame.style.minBlockSize = "";
-    setFrameMinBlockSize(Math.ceil(frame.getBoundingClientRect().height));
-  }, [slice, size]);
-
   const start = (current - 1) * size + 1;
   const end = Math.min(current * size, rows.length);
 
   return (
-    <div className="docs-table-pager">
+    <div className="sk-table-pager">
       <TableScroll
-        ref={frameRef}
-        style={
-          frameMinBlockSize
-            ? { minBlockSize: frameMinBlockSize }
-            : undefined
-        }
+        aria-label="Despliegues recientes"
+        role="region"
+        stickyColumn
+        tabIndex={0}
       >
-        <Table>
+        <Table data-layout="fixed">
           <TableCaption>Despliegues recientes</TableCaption>
           <TableHead>
             <TableRow>
@@ -326,90 +594,153 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
         </Table>
       </TableScroll>
 
-      <div className="docs-table-pager__bar">
-        <Select
-          label="Filas por página"
-          defaultValue={["5"]}
-          indicator={<Icon name="chevron-down" />}
-          openIndicator={<Icon name="chevron-up" />}
-          itemIndicator={<Icon name="check" />}
-          options={PAGE_SIZES.map((n) => ({ value: n, label: n }))}
-          onValueChange={(details) => {
-            const next = details.value[0];
-            if (next === "5" || next === "10" || next === "25") {
-              setPageSize(next);
-              setPage(1);
-              setFrameMinBlockSize(undefined);
-            }
-          }}
-        />
-        <p className="docs-table-pager__status">
-          {start}–{end} de {rows.length}
-        </p>
-        <Pagination
-          page={current}
-          total={pageCount}
-          onPageChange={setPage}
-          label="Paginación"
-          previousLabel="Página anterior"
-          nextLabel="Página siguiente"
-        />
+      <div className="sk-table-pager__bar">
+        <div className="sk-table-pager__size">
+          <Select
+            label="Filas por página"
+            defaultValue={["5"]}
+            indicator={<Icon name="chevron-down" />}
+            openIndicator={<Icon name="chevron-up" />}
+            itemIndicator={<Icon name="check" />}
+            options={PAGE_SIZES.map((n) => ({ value: n, label: n }))}
+            onValueChange={(details) => {
+              const next = details.value[0];
+              if (next === "5" || next === "10" || next === "25") {
+                setPageSize(next);
+                setPage(1);
+              }
+            }}
+          />
+        </div>
+        <div className="sk-table-pager__end">
+          <div className="sk-table-pager__status">
+            {start}–{end} de {rows.length}
+          </div>
+          <Pagination
+            page={current}
+            total={pageCount}
+            onPageChange={setPage}
+            label="Paginación"
+            previousLabel="Página anterior"
+            nextLabel="Página siguiente"
+          />
+        </div>
       </div>
     </div>
   );
 }`;---
 
-<Base title="Table" description="Table: tabla semántica nativa con wrapper de overflow, styling hooks y componentes React.">
+<Base
+  title="Table"
+  description="Tabla nativa legible con scroll horizontal y filas o columnas sticky."
+>
   <h1>Table</h1>
   <p class="lede">
-    Table mantiene la semántica nativa de <code>&lt;table&gt;</code>. El sistema aporta parts estables,
-    hooks de superficie, borde y encabezado, y un wrapper opcional para overflow horizontal. El
-    <code>&lt;caption&gt;</code> sigue siendo el primer hijo de la tabla en el DOM; el marco vive en
-    <code>.ds-table</code>, así que el título queda visualmente fuera del borde (modelo CSS de tablas).
+    Table mantiene la semántica nativa de
+    <code>&lt;table&gt;</code>. El wrapper de overflow preserva un
+    ancho legible por columna y desplaza la tabla en vez de
+    comprimirla. Header y primera columna sticky son opt-in y usan el
+    mismo contrato en móvil y desktop.
   </p>
 
-  <h2>Demo HTML</h2>
   <Showcase html={html} react={react} label="Table" />
+
+  <h2>Scroll horizontal sin comprimir</h2>
+  <p>
+    Dentro de <code>.sk-table-scroll</code>, cada celda conserva el
+    piso <code>--sk-table-cell-min-inline-size</code>; los encabezados
+    de fila conservan uno mayor. Una tabla
+    <code>data-layout="fixed"</code> usa además
+    <code>--sk-table-fixed-min-inline-size</code>. En pantallas
+    estrechas aparece scroll, no columnas de 56px ni texto letra por
+    letra. El wrapper admite foco para desplazamiento por teclado y
+    pinta un scrollbar compacto pero visible.
+  </p>
+
+  <h2>Primera columna sticky</h2>
+  <p>
+    Usa <code>data-sticky-column</code> en HTML o
+    <code>stickyColumn</code> en React. La primera celda de cada fila
+    queda congelada y su sombra separa el identificador de los datos
+    que pasan por debajo. Conviene que sea un
+    <code>&lt;th scope="row"&gt;</code>. No depende de un breakpoint:
+    funciona igual con touch, mouse, zoom o una ventana angosta.
+  </p>
+  <Showcase
+    html={stickyColumnHtml}
+    react={stickyColumnReact}
+    label="Primera columna sticky"
+  />
+
+  <h2>Header row sticky</h2>
+  <p>
+    Usa <code>data-sticky-header</code> o
+    <code>stickyHeader</code>. El wrapper gana scroll vertical y un
+    alto máximo de <code>20rem</code>, que puedes sobrescribir como
+    en este ejemplo. El encabezado queda visible tanto en desktop
+    como en móvil; si combinas ambos modifiers, la celda de la esquina
+    queda sobre las dos capas.
+  </p>
+  <Showcase
+    html={stickyHeaderHtml}
+    react={stickyHeaderReact}
+    label="Header row sticky"
+  />
 
   <h2>Con paginación</h2>
   <p>
-    La tabla no conoce la paginación: es un composition. Abajo, un
-    <a href="/componentes/select"><code>Select</code></a> elige las filas por página y
-    <a href="/componentes/pagination"><code>Pagination</code></a> recorre el resto. La ventana de
-    páginas sale de <code>paginationRange</code> en el core. El marco de la tabla fija su
-    <code>min-block-size</code> a una página completa para que la última (más corta) no mueva el
-    layout.
+    <code>data-sk-table-pager</code> es el enhancer vanilla;
+    <code>sk-table-pager</code> es el pattern de layout (tabla + barra). Marcas las filas, dejas el
+    <code>nav</code> vacío y (opcional) un status y un
+    <a class="sk-link sk-interactive" href="/componentes/select"><code>Select</code></a>
+    de tamaño de página. El tamaño va al inicio de la barra; status y
+    <a class="sk-link sk-interactive" href="/componentes/pagination"><code>Pagination</code></a>
+    van juntos en <code>sk-table-pager__end</code>. Usa <code>data-layout="fixed"</code> para que no
+    bailen los anchos de columna.
   </p>
-  <Showcase code={pagedCode} react={pagedReact} label="Table + Pagination" lang="html">
-    <div class="docs-table-pager" data-docs-table-pager>
-      <span hidden data-docs-table-pager-icon="prev" set:html={chevronLeft} />
-      <span hidden data-docs-table-pager-icon="next" set:html={chevronRight} />
-
-      <div class="ds-table-scroll" data-docs-table-pager-frame>
-        <table class="ds-table">
-          <caption class="ds-table__caption">Despliegues recientes</caption>
-          <thead class="ds-table__head">
-            <tr class="ds-table__row">
-              <th class="ds-table__header" scope="col">ID</th>
-              <th class="ds-table__header" scope="col">Servicio</th>
-              <th class="ds-table__header" scope="col">Entorno</th>
-              <th class="ds-table__header" scope="col">Estado</th>
-              <th class="ds-table__header" scope="col">Cuándo</th>
+  <Showcase
+    code={pagedCode}
+    codeFull={pagedCodeFull}
+    react={pagedReact}
+    label="Table + Pagination"
+    lang="html"
+  >
+    <div
+      class="sk-table-pager"
+      data-sk-table-pager
+      data-page-size="5"
+      data-status-template={"{start}–{end} de {total}"}
+      data-previous-label="Página anterior"
+      data-next-label="Página siguiente"
+      data-page-label="Página"
+    >
+      <div
+        aria-label="Despliegues recientes"
+        class="sk-table-scroll"
+        data-sticky-column
+        role="region"
+        tabindex="0"
+      >
+        <table class="sk-table" data-layout="fixed">
+          <caption class="sk-table__caption">Despliegues recientes</caption>
+          <thead class="sk-table__head">
+            <tr class="sk-table__row">
+              <th class="sk-table__header" scope="col">ID</th>
+              <th class="sk-table__header" scope="col">Servicio</th>
+              <th class="sk-table__header" scope="col">Entorno</th>
+              <th class="sk-table__header" scope="col">Estado</th>
+              <th class="sk-table__header" scope="col">Cuándo</th>
             </tr>
           </thead>
-          <tbody class="ds-table__body">
+          <tbody class="sk-table__body">
             {
-              pagerRows.map((row, index) => (
-                <tr
-                  class="ds-table__row"
-                  data-docs-table-pager-row
-                  hidden={index >= 5 || undefined}
-                >
-                  <th class="ds-table__header" scope="row">{row.id}</th>
-                  <td class="ds-table__cell">{row.service}</td>
-                  <td class="ds-table__cell">{row.env}</td>
-                  <td class="ds-table__cell">{row.status}</td>
-                  <td class="ds-table__cell">{row.when}</td>
+              pagerRows.map((row) => (
+                <tr class="sk-table__row" data-sk-table-pager-row>
+                  <th class="sk-table__header" scope="row">{row.id}</th>
+                  <td class="sk-table__cell">{row.service}</td>
+                  <td class="sk-table__cell">{row.env}</td>
+                  <td class="sk-table__cell">{row.status}</td>
+                  <td class="sk-table__cell">{row.when}</td>
                 </tr>
               ))
             }
@@ -417,8 +748,8 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
         </table>
       </div>
 
-      <div class="docs-table-pager__bar">
-        <div class="docs-table-pager__size">
+      <div class="sk-table-pager__bar">
+        <div class="sk-table-pager__size">
           <DimensionSelect
             id="table-page-size"
             label="Filas por página"
@@ -430,15 +761,17 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
             ]}
           />
         </div>
-        <p class="docs-table-pager__status" data-docs-table-pager-status>1–5 de 25</p>
-        <nav class="ds-pagination" aria-label="Paginación" data-docs-table-pager-nav></nav>
+        <div class="sk-table-pager__end">
+          <div class="sk-table-pager__status" data-sk-table-pager-status></div>
+          <nav class="sk-pagination" aria-label="Paginación" data-sk-table-pager-nav></nav>
+        </div>
       </div>
     </div>
   </Showcase>
 
   <h2>Dentro de un Box</h2>
   <p>
-    Dentro del <code>padding</code> de un <code>.ds-box</code>, la <code>.ds-table</code> redondea con el
+    Dentro del <code>padding</code> de un <code>.sk-box</code>, la <code>.sk-table</code> redondea con el
     radio de elemento anidado (<code>--radius-control</code>) en vez del de superficie: Box aporta la
     superficie y la tabla es un elemento dentro de ella. Así el radio queda más ajustado, nunca colapsa
     a una caja cuadrada, y sigue acompañando al eje <code>data-radius</code>.
@@ -447,8 +780,8 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
 
   <h2>Densidad local</h2>
   <p>
-    El contrato del scope es solo <code>data-ds-density-scope</code> y un valor de densidad. Aquí
-    <code>--ds-density-factor</code> es relativo al sistema; escribe <code>--ds-density</code> en el
+    El contrato del scope es solo <code>data-sk-density-scope</code> y un valor de densidad. Aquí
+    <code>--sk-density-factor</code> es relativo al sistema; escribe <code>--sk-density</code> en el
     mismo nodo si necesitas un valor absoluto. Los números siguen siendo continuos.
   </p>
   <Showcase html={spaciousDensityHtml} label="Table amplia · 1.2× del sistema" />
@@ -458,166 +791,10 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
   <CodeBlock code={install} label="terminal" />
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de cada demo.</p>
-  <StylingHooks groups={[{ file: "components/table.css", probe: "ds-table" }]} />
+  <p>
+    El binding está en <strong>Vanilla | React</strong>. En Vanilla basta el HTML con
+    <code>data-sk-*</code>; <code>initComponents</code> (y <code>mountIcons</code>) los carga el sitio.
+  </p>
+  <StylingHooks groups={[{ file: "components/table.css", probe: "sk-table" }]} />
 </Base>
 
-<script>
-  import { paginationRange } from "@skryensya/core/pagination";
-
-  function iconHtml(root: HTMLElement, name: "prev" | "next") {
-    const node = root.querySelector(`[data-docs-table-pager-icon="${name}"]`);
-    return node?.innerHTML.trim() ?? "";
-  }
-
-  function bindPager(root: HTMLElement) {
-    const rows = [...root.querySelectorAll<HTMLTableRowElement>("[data-docs-table-pager-row]")];
-    const status = root.querySelector<HTMLElement>("[data-docs-table-pager-status]");
-    const nav = root.querySelector<HTMLElement>("[data-docs-table-pager-nav]");
-    const frame = root.querySelector<HTMLElement>("[data-docs-table-pager-frame]");
-    const sizeMenu = root.querySelector<HTMLElement>("[data-ds-select]");
-    if (!status || !nav || rows.length === 0) return;
-
-    const prevIcon = iconHtml(root, "prev");
-    const nextIcon = iconHtml(root, "next");
-    let page = 1;
-    let pageSize = Number(sizeMenu?.dataset.value ?? "5") || 5;
-    /** Locked block size of a full page; keeps the last (short) page from collapsing the layout. */
-    let settledBlockSize = 0;
-
-    const lockFrameSize = (visibleCount: number) => {
-      if (!frame) return;
-      if (visibleCount === pageSize) {
-        frame.style.minBlockSize = "";
-        settledBlockSize = Math.ceil(frame.getBoundingClientRect().height);
-      }
-      if (settledBlockSize > 0) {
-        frame.style.minBlockSize = `${settledBlockSize}px`;
-      }
-    };
-
-    const resetFrameSize = () => {
-      settledBlockSize = 0;
-      if (frame) frame.style.minBlockSize = "";
-    };
-
-    const render = () => {
-      const pageCount = Math.max(1, Math.ceil(rows.length / pageSize));
-      page = Math.min(Math.max(page, 1), pageCount);
-      const startIndex = (page - 1) * pageSize;
-      const endIndex = Math.min(startIndex + pageSize, rows.length);
-
-      rows.forEach((row, index) => {
-        row.hidden = index < startIndex || index >= endIndex;
-      });
-
-      status.textContent = `${startIndex + 1}–${endIndex} de ${rows.length}`;
-      lockFrameSize(endIndex - startIndex);
-
-      const slots = paginationRange(page, pageCount);
-      nav.replaceChildren();
-
-      const previous = document.createElement("button");
-      previous.type = "button";
-      previous.className = "ds-pagination__previous ds-interactive";
-      previous.setAttribute("aria-label", "Página anterior");
-      previous.disabled = page <= 1;
-      previous.innerHTML = prevIcon;
-      previous.addEventListener("click", () => {
-        page -= 1;
-        render();
-      });
-      nav.append(previous);
-
-      for (const [index, slot] of slots.entries()) {
-        if (slot === "ellipsis") {
-          const ellipsis = document.createElement("span");
-          ellipsis.className = "ds-pagination__ellipsis";
-          ellipsis.setAttribute("aria-hidden", "true");
-          ellipsis.textContent = "…";
-          ellipsis.dataset.gap = String(index);
-          nav.append(ellipsis);
-          continue;
-        }
-
-        const item = document.createElement("button");
-        item.type = "button";
-        item.className = "ds-pagination__item ds-interactive";
-        item.setAttribute("aria-label", `Página ${slot}`);
-        if (slot === page) item.setAttribute("aria-current", "page");
-        item.textContent = String(slot);
-        item.addEventListener("click", () => {
-          page = slot;
-          render();
-        });
-        nav.append(item);
-      }
-
-      const next = document.createElement("button");
-      next.type = "button";
-      next.className = "ds-pagination__next ds-interactive";
-      next.setAttribute("aria-label", "Página siguiente");
-      next.disabled = page >= pageCount;
-      next.innerHTML = nextIcon;
-      next.addEventListener("click", () => {
-        page += 1;
-        render();
-      });
-      nav.append(next);
-    };
-
-    sizeMenu?.addEventListener("ds-value-change", ((event: CustomEvent<{ value: string[] }>) => {
-      const next = Number(event.detail.value[0]);
-      if (!Number.isFinite(next) || next <= 0) return;
-      pageSize = next;
-      page = 1;
-      resetFrameSize();
-      render();
-    }) as EventListener);
-
-    render();
-  }
-
-  document.querySelectorAll<HTMLElement>("[data-docs-table-pager]").forEach(bindPager);
-</script>
-
-<style>
-  .docs-table-pager {
-    display: grid;
-    gap: var(--space-stack-md);
-    inline-size: 100%;
-    min-inline-size: 0;
-  }
-
-  .docs-table-pager__bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: var(--space-inline-md) var(--space-inline-lg);
-  }
-
-  .docs-table-pager__size {
-    min-inline-size: 8rem;
-  }
-
-  .docs-table-pager__size :global(.ds-select) {
-    min-inline-size: 8rem;
-  }
-
-  .docs-table-pager__status {
-    margin: 0;
-    margin-inline-start: auto;
-    min-inline-size: 12ch;
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-body-sm);
-    font-variant-numeric: tabular-nums;
-    line-height: var(--size-control-md);
-    text-align: end;
-  }
-
-  .docs-table-pager__bar :global(.ds-pagination) {
-    flex: none;
-    min-inline-size: 14rem;
-    justify-content: end;
-  }
-</style>

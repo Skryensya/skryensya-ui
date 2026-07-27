@@ -2,13 +2,14 @@
   "name": "@skryensya/icons-material",
   "version": "0.1.0",
   "type": "module",
-  "description": "Material Symbols bound to @skryensya's stable icon vocabulary. Generated from the library; ships data, not a runtime.",
+  "description": "Material Symbols bound to skryensya/ui's stable icon vocabulary. Generated from the library; ships data, not a runtime.",
   "files": ["dist", "src", "LICENSE-material"],
   "exports": {
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
-    }
+    },
+    "./carousel.css": "./src/carousel.css"
   },
   "scripts": {
     "generate": "node scripts/generate.mjs",

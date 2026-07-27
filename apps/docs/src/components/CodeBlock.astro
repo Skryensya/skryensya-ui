@@ -1,58 +1,171 @@
 ---
 import { Code } from "astro:components";
+import "@skryensya/core/components/code-preview.css";
 import CopyButton from "./CopyButton.astro";
+import { iconMarkup } from "../icons";
+import { getLocale, useTranslations } from "../i18n";
 
 type CodeLanguage = "bash" | "css" | "html" | "ts" | "tsx";
 
 interface Props {
+  /** Visible source. When `full` is set, this is the condensed view. */
   code: string;
+  /**
+   * Complete source for the Full toggle. Copy always uses this when present,
+   * even while Condensed is on screen.
+   */
+  full?: string;
   label?: string;
   note?: string;
   lang?: CodeLanguage;
 }
 
-const { code, label, note, lang } = Astro.props;
-const source = code.trim();
-const sourceId = `code-${crypto.randomUUID()}`;
+const { code, full, label, note, lang } = Astro.props;
+const t = useTranslations(getLocale(Astro.url));
+const condensed = code.trim();
+const complete = full?.trim();
+const hasDensity = Boolean(complete);
+const condensedId = `code-${crypto.randomUUID()}`;
+const fullId = `code-${crypto.randomUUID()}`;
+const copyTargetId = complete ? fullId : condensedId;
+const condensedLines = condensed ? condensed.split(/\r\n|\r|\n/).length : 0;
+const fullLines = complete ? complete.split(/\r\n|\r|\n/).length : 0;
+const previewLineCount = 15;
+const lineThreshold = 20;
+/* Condensed can still be long (shell + a few rows). Disclose it the same way as Full. */
+const condensedCollapsible = hasDensity && condensedLines > lineThreshold;
+const fullCollapsible = complete ? fullLines > lineThreshold : condensedLines > lineThreshold;
+const isCollapsible = condensedCollapsible || fullCollapsible;
+const collapsibleLineCount = hasDensity
+  ? condensedCollapsible
+    ? condensedLines
+    : fullLines
+  : condensedLines;
+const collapsibleTargetId = hasDensity && condensedCollapsible ? condensedId : complete ? fullId : condensedId;
 
-/* Code samples follow one docs palette with light and dark slots. `light-dark()` selects the slot
-   from the page's colour mode, so syntax highlighting stays in sync without a brand selector. */
+/* The shared CodePreview CSS consumes Shiki's conventional `light`/`dark` variable names.
+   `light-dark()` then follows the page color mode without a brand or docs-only selector. */
 const themes = {
-  "docs-light": "github-light",
-  "docs-dark": "github-dark",
+  light: "github-light",
+  dark: "github-dark",
 } as const;
 
-/* Labels describe the consumer-facing artifact, so they are the most stable language signal. The
+/* Labels describe the consumer-facing artifact, so they are the most stable language signal. Neither
+   "JavaScript" nor "TypeScript" contains "JS" as a substring, so both are matched explicitly; the
    content fallback keeps existing call sites highlighted while new examples can be explicit. */
 const language =
   lang ??
   (label === "terminal"
     ? "bash"
-    : label?.includes("CSS") || label?.endsWith(".css") || label?.endsWith(".scss") || source.startsWith("@import")
+    : label?.includes("CSS") || label?.endsWith(".css") || label?.endsWith(".scss") || condensed.startsWith("@import")
       ? "css"
       : label?.includes("React") || label === "API declarativa"
         ? "tsx"
-        : label?.includes("JS") || label === "Progressive enhancement" || source.startsWith("import ") || source.startsWith("const ")
+        : label?.includes("JavaScript") || label?.includes("TypeScript") || label?.includes("JS") || label === "Progressive enhancement" || condensed.startsWith("import ") || condensed.startsWith("const ")
           ? "ts"
           : "html");
+const toggleIcon = iconMarkup("chevron-down", { size: "sm" });
 ---
 
-<div class="code" data-code-block>
+<div
+  class="sk-code-preview"
+  data-sk-code-preview
+  data-sk-code-preview-density={hasDensity ? "condensed" : undefined}
+  data-sk-code-preview-collapsible={isCollapsible ? "" : undefined}
+  data-sk-code-preview-condensed-collapsible={condensedCollapsible ? "" : undefined}
+  data-sk-code-preview-expanded={isCollapsible ? "false" : undefined}
+  data-sk-code-preview-lines={isCollapsible ? (complete ? fullLines : condensedLines) : undefined}
+  data-sk-code-preview-condensed-lines={condensedCollapsible ? condensedLines : undefined}
+  data-sk-code-preview-preview-lines={isCollapsible ? previewLineCount : undefined}
+>
   {
-    (label || note) && (
-      <div class="code__label">
-        <span class="code__meta">
+    (label || note || hasDensity) && (
+      <div class="sk-code-preview__label">
+        <span class="sk-code-preview__meta">
           {label && <span>{label}</span>}
           {note && <span>{note}</span>}
         </span>
+        {
+          hasDensity && (
+            <div class="sk-code-preview__density">
+              <span class="sk-code-preview__density-edge" data-density="condensed">
+                {t("code.condensed")}
+              </span>
+              <label class="sk-switch">
+                <input
+                  class="sk-switch__input"
+                  type="checkbox"
+                  role="switch"
+                  data-sk-code-preview-density-input
+                  aria-label={t("code.showFull")}
+                />
+                <span class="sk-switch__control" aria-hidden="true">
+                  <span class="sk-switch__thumb"></span>
+                </span>
+              </label>
+              <span class="sk-code-preview__density-edge" data-density="full">
+                {t("code.full")}
+              </span>
+            </div>
+          )
+        }
       </div>
     )
   }
-  <div class="code__preview">
-    <div id={sourceId}>
-      <Code code={source} lang={language} themes={themes} defaultColor={false} tabindex={-1} />
+  <div class="sk-code-preview__preview">
+    <div
+      class="sk-code-preview__viewport"
+      id={condensedId}
+      data-sk-code-preview-density-panel="condensed"
+    >
+      <Code code={condensed} lang={language} themes={themes} defaultColor={false} tabindex={-1} />
     </div>
-    <CopyButton target={sourceId} />
+    {
+      complete && (
+        <div
+          class="sk-code-preview__viewport"
+          id={fullId}
+          data-sk-code-preview-density-panel="full"
+        >
+          <Code code={complete} lang={language} themes={themes} defaultColor={false} tabindex={-1} />
+        </div>
+      )
+    }
+    {/* Copy always reads the full source when one exists. */}
+    <CopyButton target={copyTargetId} />
   </div>
+  {
+    isCollapsible && (
+      <div
+        class="sk-code-preview__more"
+        data-sk-code-preview-more
+        hidden={hasDensity && !condensedCollapsible ? true : undefined}
+      >
+        <button
+          class="sk-button sk-interactive sk-code-preview__toggle"
+          data-sk-code-preview-toggle
+          data-variant="ghost"
+          data-size="sm"
+          type="button"
+          aria-controls={collapsibleTargetId}
+          aria-expanded="false"
+          aria-label={t("code.showLines", { count: String(collapsibleLineCount) })}
+          data-sk-code-preview-expanded-label={t("code.showLess")}
+          data-sk-code-preview-expanded-aria-label={t("code.showFirstLines", { count: String(previewLineCount) })}
+        >
+          <span data-sk-code-preview-toggle-label>{t("code.showMore")}</span>
+          <span class="sk-code-preview__toggle-count" aria-hidden="true">{t("code.lines", { count: String(collapsibleLineCount) })}</span>
+          <span class="sk-code-preview__toggle-icon" aria-hidden="true">
+            <Fragment set:html={toggleIcon} />
+          </span>
+        </button>
+      </div>
+    )
+  }
 </div>
 
+<script>
+  import { mountCodePreview } from "@skryensya/vanilla/code-preview";
+
+  mountCodePreview();
+</script>

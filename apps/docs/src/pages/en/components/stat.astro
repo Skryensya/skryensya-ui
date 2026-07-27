@@ -1,0 +1,248 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<section
+  class="sk-grid"
+  data-columns="3"
+  data-gap="md"
+  data-multicol
+  aria-label="Business Summary"
+>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="sk-stat">
+      <span class="sk-stat__label">Ingresos</span>
+      <span class="sk-stat__value">48.200 €</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-up"></span> 12,5%
+      </span>
+    </div>
+  </article>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="sk-stat">
+      <span class="sk-stat__label">Pedidos</span>
+      <span class="sk-stat__value">1.204</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-up"></span> 8,2%
+      </span>
+    </div>
+  </article>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="sk-stat">
+      <span class="sk-stat__label">Cancelaciones</span>
+      <span class="sk-stat__value">0,9%</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-down"></span> 0,3 puntos
+      </span>
+    </div>
+  </article>
+</section>`;
+
+const react = `import { Icon } from "@skryensya/react/icon";
+import { Box, Grid } from "@skryensya/react/layout";
+import { Stat } from "@skryensya/react/stat";
+
+<Grid
+  aria-label="Business Summary"
+  columns={3}
+  data-multicol=""
+  gap="md"
+>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      label="Ingresos"
+      value="48.200 €"
+      trend="up"
+      change={<><Icon name="arrow-up" /> 12,5%</>}
+    />
+  </Box>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      label="Pedidos"
+      value="1.204"
+      trend="up"
+      change={<><Icon name="arrow-up" /> 8,2%</>}
+    />
+  </Box>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      label="Cancelaciones"
+      value="0,9%"
+      trend="up"
+      change={<><Icon name="arrow-down" /> 0,3 puntos</>}
+    />
+  </Box>
+</Grid>`;
+
+const htmlAnimate = `<section
+  class="sk-grid"
+  data-columns="3"
+  data-gap="md"
+  data-multicol
+  aria-label="Business Summary"
+>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="sk-stat" data-sk-stat data-animate>
+      <span class="sk-stat__label">Ingresos</span>
+      <span
+        class="sk-stat__value"
+        data-count="48200"
+        data-locale="en-US"
+        data-suffix=" €"
+      >48.200 €</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-up"></span> 12,5%
+      </span>
+    </div>
+  </article>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="sk-stat" data-sk-stat data-animate>
+      <span class="sk-stat__label">Pedidos</span>
+      <span
+        class="sk-stat__value"
+        data-count="1204"
+        data-locale="en-US"
+      >1.204</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-up"></span> 8,2%
+      </span>
+    </div>
+  </article>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="sk-stat" data-sk-stat data-animate>
+      <span class="sk-stat__label">Cancelaciones</span>
+      <span
+        class="sk-stat__value"
+        data-count="0.9"
+        data-locale="en-US"
+        data-suffix="%"
+        data-fraction-digits="1"
+      >0,9%</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-down"></span> 0,3 puntos
+      </span>
+    </div>
+  </article>
+</section>`;
+
+const reactAnimate = `import { Icon } from "@skryensya/react/icon";
+import { Box, Grid } from "@skryensya/react/layout";
+import { Stat } from "@skryensya/react/stat";
+
+const es = (n: number, opts?: Intl.NumberFormatOptions) =>
+  n.toLocaleString("en-US", opts);
+
+<Grid
+  aria-label="Business Summary"
+  columns={3}
+  data-multicol=""
+  gap="md"
+>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      animate
+      format={(n) => \`\${es(n)} €\`}
+      label="Ingresos"
+      value={48200}
+      trend="up"
+      change={<><Icon name="arrow-up" /> 12,5%</>}
+    />
+  </Box>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      animate
+      format={es}
+      label="Pedidos"
+      value={1204}
+      trend="up"
+      change={<><Icon name="arrow-up" /> 8,2%</>}
+    />
+  </Box>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      animate
+      format={(n) =>
+        \`\${es(n, {
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 1,
+        })}%\`
+      }
+      label="Cancelaciones"
+      value={0.9}
+      trend="up"
+      change={<><Icon name="arrow-down" /> 0,3 puntos</>}
+    />
+  </Box>
+</Grid>`;
+---
+
+<Base title="Stat" description="Stat: Headline metric with label, tabular value and colored change by trend.">
+  <h1>Stat</h1>
+  <p class="lede">
+    Stat is a headline metric: weak label, large value in mono tabular, and a change
+    optional. The <strong>trend</strong> colors the change regardless of its sign,
+    "Down" is good for churn and "Up" is good for revenue, so the consumer decides what
+    direction is positive.
+  </p>
+
+  <h2>Stat Card</h2>
+  <p>
+    <a href="/en/components/card#stat-card">Card</a> does not add another variant to Stat:
+    <a href="/en/components/box">Box</a> provides the surface and Grid organizes the collection. The arrow
+    decrease in cancellations, but <code>trend="up"</code> communicates that this change is favorable.
+  </p>
+  <Showcase html={html} react={react} label="Stat Cards" note="Grid + Box + Stat + Icon" />
+
+  <h2 id="animar">Animate value</h2>
+  <p>
+    The count-up is <strong>opt-in</strong>: the same Stat Card, with
+    <code>animate</code> / <code>data-animate</code> and a numeric value. Without it the markup continues
+    static. The duration comes from <code>--motion-count-duration</code>; with
+    <code>prefers-reduced-motion</code> skips to the end.
+  </p>
+  <Showcase
+    html={htmlAnimate}
+    react={reactAnimate}
+    label="Stat Cards animadas"
+    note="Mismo card · animate + format / data-count"
+  />
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>The code is in the <strong>React</strong> tab of the preview.</p>
+</Base>

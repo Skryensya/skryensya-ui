@@ -70,54 +70,54 @@
     <g class="hook-card-group" data-hook-card="Border radius">
       <rect x="995" y="60" width="149" height="55" rx="10" class="hook-card" />
       <text x="1009" y="81" class="card-title">Border radius</text>
-      <text x="1009" y="101" class="hook">--ds-button-radius</text>
+      <text x="1009" y="101" class="hook">--sk-button-radius</text>
     </g>
   
 
     <g class="hook-card-group" data-hook-card="Border">
       <rect x="48" y="256" width="189" height="72" rx="10" class="hook-card" />
       <text x="62" y="277" class="card-title">Border</text>
-      <text x="62" y="297" class="hook">--ds-button-border-width</text>
-<text x="62" y="314" class="hook">--ds-button-border-color</text>
+      <text x="62" y="297" class="hook">--sk-button-border-width</text>
+<text x="62" y="314" class="hook">--sk-button-border-color</text>
     </g>
   
 
     <g class="hook-card-group" data-hook-card="Height">
       <rect x="995" y="246" width="149" height="55" rx="10" class="hook-card" />
       <text x="1009" y="267" class="card-title">Height</text>
-      <text x="1009" y="287" class="hook">--ds-button-height</text>
+      <text x="1009" y="287" class="hook">--sk-button-height</text>
     </g>
   
 
     <g class="hook-card-group" data-hook-card="Width">
       <rect x="529" y="438" width="142" height="55" rx="10" class="hook-card" />
       <text x="543" y="459" class="card-title">Width</text>
-      <text x="543" y="479" class="hook">--ds-button-width</text>
+      <text x="543" y="479" class="hook">--sk-button-width</text>
     </g>
   
 
     <g class="hook-card-group" data-hook-card="Content inset">
       <rect x="74" y="472" width="169" height="72" rx="10" class="hook-card" />
       <text x="88" y="493" class="card-title">Content inset</text>
-      <text x="88" y="513" class="hook">--ds-button-padding-x</text>
-<text x="88" y="530" class="hook">--ds-button-gap</text>
+      <text x="88" y="513" class="hook">--sk-button-padding-x</text>
+<text x="88" y="530" class="hook">--sk-button-gap</text>
     </g>
   
 
     <g class="hook-card-group" data-hook-card="Label">
       <rect x="961" y="452" width="183" height="89" rx="10" class="hook-card" />
       <text x="975" y="473" class="card-title">Label</text>
-      <text x="975" y="493" class="hook">--ds-button-fg</text>
-<text x="975" y="510" class="hook">--ds-button-font-size</text>
-<text x="975" y="527" class="hook">--ds-button-font-weight</text>
+      <text x="975" y="493" class="hook">--sk-button-fg</text>
+<text x="975" y="510" class="hook">--sk-button-font-size</text>
+<text x="975" y="527" class="hook">--sk-button-font-weight</text>
     </g>
   
 
     <g class="hook-card-group" data-hook-card="Surface">
       <rect x="705.5" y="540" width="149" height="72" rx="10" class="hook-card" />
       <text x="719.5" y="561" class="card-title">Surface</text>
-      <text x="719.5" y="581" class="hook">--ds-button-bg</text>
-<text x="719.5" y="598" class="hook">--ds-button-shadow</text>
+      <text x="719.5" y="581" class="hook">--sk-button-bg</text>
+<text x="719.5" y="598" class="hook">--sk-button-shadow</text>
     </g>
   
 </svg>

@@ -1,0 +1,98 @@
+/*
+ * TIER 3, TIME FIELD
+ *
+ * Time entry is one native input. The platform owns editing, validation and the picker indicator;
+ * this component owns the shared field surface around it.
+ */
+@layer components {
+  .sk-time-field {
+    --sk-time-field-gap: var(--space-stack-xs);
+    --sk-time-field-inline-size: 12rem;
+    --sk-time-field-label-color: var(--color-text-secondary);
+    --sk-time-field-border-color: var(--color-border-default);
+    --sk-time-field-invalid-border-color: var(--color-border-danger);
+    --sk-time-field-border-width: 1px;
+    --sk-time-field-radius: var(--radius-control);
+    --sk-time-field-bg: var(--color-bg-surface-raised);
+    --sk-time-field-fg: var(--color-text-primary);
+    --sk-time-field-hint-color: var(--color-text-secondary);
+
+    display: grid;
+    gap: var(--sk-time-field-gap);
+    inline-size: var(--sk-time-field-inline-size);
+    max-inline-size: 100%;
+  }
+
+  .sk-time-field__label {
+    color: var(--sk-time-field-label-color);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+  }
+
+  .sk-time-field__control {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    min-block-size: var(--size-touch-target);
+    border: var(--sk-time-field-border-width) solid
+      var(--sk-time-field-border-color);
+    border-radius: var(--sk-time-field-radius);
+    background: var(--sk-time-field-bg);
+    color: var(--sk-time-field-fg);
+  }
+
+  .sk-time-field__control:focus-within {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .sk-time-field__input {
+    box-sizing: border-box;
+    align-self: stretch;
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: calc(
+      var(--size-touch-target) - 2 * var(--sk-time-field-border-width)
+    );
+    padding: 0 var(--space-inset-sm);
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sk-time-field__input::-webkit-date-and-time-value {
+    text-align: start;
+  }
+
+  .sk-time-field__input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
+
+  .sk-time-field__hint {
+    color: var(--sk-time-field-hint-color);
+    font-size: var(--font-size-body-sm);
+  }
+
+  .sk-time-field[data-invalid] .sk-time-field__control,
+  .sk-time-field__control:has(.sk-time-field__input[aria-invalid="true"]) {
+    border-color: var(--sk-time-field-invalid-border-color);
+  }
+
+  .sk-time-field[data-disabled] .sk-time-field__control,
+  .sk-time-field__control:has(.sk-time-field__input:disabled) {
+    border-color: var(--color-border-subtle);
+    background: var(--color-action-disabled);
+    color: var(--color-text-disabled);
+  }
+
+
+  @media (forced-colors: active) {
+    .sk-time-field__control {
+      border-color: CanvasText;
+    }
+
+  }
+}

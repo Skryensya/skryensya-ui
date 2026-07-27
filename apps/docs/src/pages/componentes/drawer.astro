@@ -10,55 +10,129 @@ const import_ = `/* un drawer ES un Vaul */
 @import "@skryensya/core/patterns/scroll-lock.css";`;
 
 const html = `<button
-  class="ds-button ds-interactive"
-  data-ds-button
-  data-ds-vaul-open="demo-drawer"
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-sk-vaul-open="demo-drawer"
+  type="button"
 >
-  Abrir drawer
+  Abrir navegación
 </button>
 
 <dialog
-  class="ds-vaul ds-drawer demo-drawer"
+  class="sk-vaul sk-drawer demo-drawer"
   id="demo-drawer"
-  data-ds-vaul
+  data-sk-vaul
   data-edge="inline-start"
-  aria-label="Drawer de ejemplo"
+  aria-label="Navegación"
 >
   <div
-    class="ds-vaul__handle"
+    class="sk-vaul__handle"
     data-part="handle"
     aria-hidden="true"
   ></div>
-  <div class="demo-drawer__body">
-    <p>Un Vaul en el borde inline, a lo alto de la pantalla.</p>
+
+  <header class="demo-drawer__header">
+    <span class="demo-drawer__brand">Estudio</span>
     <button
-      class="ds-button ds-interactive"
-      data-ds-button
+      class="sk-button sk-interactive"
+      data-sk-button
       data-variant="ghost"
-      data-ds-vaul-close
+      data-icon-only
+      data-sk-vaul-close
+      type="button"
+      aria-label="Cerrar"
     >
-      Cerrar
+      <span data-sk-icon="close"></span>
     </button>
-  </div>
+  </header>
+
+  <nav class="sk-nav-list demo-drawer__nav" aria-label="Principal">
+    <div class="sk-nav-list__group">
+      <div class="sk-nav-list__group-label" id="demo-drawer-trabajo">
+        Trabajo
+      </div>
+      <ul
+        class="sk-nav-list__list"
+        aria-labelledby="demo-drawer-trabajo"
+      >
+        <li class="sk-nav-list__item">
+          <a
+            class="sk-nav-list__link sk-interactive"
+            href="#resumen"
+            aria-current="page"
+          >
+            <span data-sk-icon="info"></span>
+            <span class="sk-nav-list__label">Resumen</span>
+          </a>
+        </li>
+        <li class="sk-nav-list__item">
+          <a class="sk-nav-list__link sk-interactive" href="#agenda">
+            <span data-sk-icon="calendar"></span>
+            <span class="sk-nav-list__label">Agenda</span>
+            <span class="sk-nav-list__trailing">3</span>
+          </a>
+        </li>
+        <li class="sk-nav-list__item">
+          <a class="sk-nav-list__link sk-interactive" href="#archivos">
+            <span data-sk-icon="download"></span>
+            <span class="sk-nav-list__label">Archivos</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sk-nav-list__group">
+      <div class="sk-nav-list__group-label" id="demo-drawer-cuenta">
+        Cuenta
+      </div>
+      <ul
+        class="sk-nav-list__list"
+        aria-labelledby="demo-drawer-cuenta"
+      >
+        <li class="sk-nav-list__item">
+          <a class="sk-nav-list__link sk-interactive" href="#equipo">
+            <span data-sk-icon="user"></span>
+            <span class="sk-nav-list__label">Equipo</span>
+          </a>
+        </li>
+        <li class="sk-nav-list__item">
+          <a class="sk-nav-list__link sk-interactive" href="#ajustes">
+            <span data-sk-icon="settings"></span>
+            <span class="sk-nav-list__label">Ajustes</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <footer class="demo-drawer__footer">
+    <span class="sk-avatar" data-size="sm" aria-hidden="true">
+      <span class="sk-avatar__fallback">AK</span>
+    </span>
+    <span class="demo-drawer__user">
+      <span class="demo-drawer__user-name">Ada Kovač</span>
+      <span class="demo-drawer__user-meta">ada@estudio.cl</span>
+    </span>
+  </footer>
 </dialog>`;
 
 const composition = `/* El drawer no declara panel, borde, slide ni
    backdrop: los re-declara desde sus hooks. */
-.ds-drawer {
-  --ds-vaul-size: var(--ds-drawer-inline-size);
-  --ds-vaul-bg: var(--ds-drawer-bg);
+.sk-drawer {
+  --sk-vaul-size: var(--sk-drawer-inline-size);
+  --sk-vaul-bg: var(--sk-drawer-bg);
   /* toca tres bordes del viewport: un radio ahí se lee como
      un error */
-  --ds-vaul-radius: 0;
+  --sk-vaul-radius: 0;
 }`;
 
 const tuning = `.mi-drawer {
-  --ds-drawer-inline-size: 24rem;
-  --ds-drawer-bg: var(--color-bg-surface-raised);
+  --sk-drawer-inline-size: 24rem;
+  --sk-drawer-bg: var(--color-bg-surface-raised);
 }`;
 
 const nativeHtml = `<button
-  class="ds-button ds-interactive"
+  class="sk-button sk-interactive"
   data-native-drawer-open="native-drawer"
   type="button"
 >
@@ -66,7 +140,7 @@ const nativeHtml = `<button
 </button>
 
 <dialog
-  class="ds-vaul ds-drawer demo-drawer"
+  class="sk-vaul sk-drawer demo-drawer"
   id="native-drawer"
   data-edge="inline-start"
   aria-label="Drawer nativo de ejemplo"
@@ -76,7 +150,7 @@ const nativeHtml = `<button
     <p>La plataforma posee modalidad, foco, Escape y restauración.</p>
     <form method="dialog">
       <button
-        class="ds-button ds-interactive"
+        class="sk-button sk-interactive"
         data-variant="ghost"
         type="submit"
       >
@@ -104,8 +178,7 @@ trigger?.addEventListener("click", () => {
     layer son del pattern, y este archivo sólo dice <em>qué Vaul es un drawer</em> y cómo se ve.
   </p>
 
-  <h2>Demo</h2>
-  <Showcase html={html} label="tu HTML" />
+  <Showcase html={html} label="HTML" viewport="overlay" />
 
   <h2>Envía hooks y nada de estructura</h2>
   <p>
@@ -117,16 +190,16 @@ trigger?.addEventListener("click", () => {
   <CodeBlock code={composition} label="components/drawer.css" lang="css" />
   <p>
     Los hooks del drawer <strong>son</strong> los del Vaul, re-declarados. Un consumidor afina
-    <code>--ds-drawer-*</code> y no se entera nunca de que hay un Vaul abajo: el pattern queda como
+    <code>--sk-drawer-*</code> y no se entera nunca de que hay un Vaul abajo: el pattern queda como
     detalle de implementación en vez de una segunda superficie pública que mantener sincronizada.
   </p>
-  <CodeBlock code={tuning} label="tu CSS" lang="css" />
+  <CodeBlock code={tuning} label="CSS" lang="css" />
 
   <h2>Cuándo es un drawer y cuándo no</h2>
-  <table class="ds-table">
+  <table class="sk-table">
     <thead><tr><th>Necesitas</th><th>Usa</th></tr></thead>
     <tbody>
-      <tr><td>Navegación o filtros al costado, a lo alto</td><td><code>ds-drawer</code></td></tr>
+      <tr><td>Navegación o filtros al costado, a lo alto</td><td><code>sk-drawer</code></td></tr>
       <tr><td>Una hoja que sube desde abajo en móvil</td><td><a href="/componentes/dialog">Dialog</a> (opción Vaul)</td></tr>
       <tr><td>Una caja centrada</td><td><a href="/componentes/dialog">Dialog</a></td></tr>
       <tr><td>Un riel permanente que no tapa la página</td><td><a href="/componentes/sidebar">Sidebar</a></td></tr>
@@ -140,26 +213,26 @@ trigger?.addEventListener("click", () => {
 
   <h2>Markup contract</h2>
   <p>
-    El root lleva <code>ds-vaul ds-drawer</code> sobre un <code>&lt;dialog&gt;</code> nativo, Vaul
+    El root lleva <code>sk-vaul sk-drawer</code> sobre un <code>&lt;dialog&gt;</code> nativo, Vaul
     lo exige, más su <code>data-edge</code>. El handle es opcional: sin él no hay drag, y el drawer
     sigue completo.
   </p>
 
   <h2>Instalar</h2>
-  <CodeBlock code={import_} label="tu CSS" />
+  <CodeBlock code={import_} label="CSS" />
 
   <StylingHooks
     groups={[
-      { file: "components/drawer.css", probe: "ds-drawer", title: "Drawer" },
-      { file: "patterns/vaul.css", probe: "ds-vaul", title: "Heredados de Vaul" },
+      { file: "components/drawer.css", probe: "sk-drawer", title: "Drawer" },
+      { file: "patterns/vaul.css", probe: "sk-vaul", title: "Heredados de Vaul" },
     ]}
   />
 
   <h2>Drawer nativo</h2>
   <p class="lede">
     La misma superficie puede quedarse en la plataforma. Conserva
-    <code>&lt;dialog class="ds-vaul ds-drawer"&gt;</code>, omite
-    <code>data-ds-vaul</code> y ábrelo con <code>showModal()</code>: no carga enhancer, drag ni
+    <code>&lt;dialog class="sk-vaul sk-drawer"&gt;</code>, omite
+    <code>data-sk-vaul</code> y ábrelo con <code>showModal()</code>: no carga enhancer, drag ni
     light-dismiss.
   </p>
   <p>
@@ -167,31 +240,82 @@ trigger?.addEventListener("click", () => {
     inerte, backdrop y restauración pertenecen al navegador. Los estilos y la transición siguen
     siendo los mismos porque viven en Core, no en el enhancer.
   </p>
-  <Showcase html={nativeHtml} label="Drawer nativo" />
+  <Showcase html={nativeHtml} previewScript={nativeJs} label="Drawer nativo" viewport="overlay" />
 
   <h3>Abrir</h3>
-  <CodeBlock code={nativeJs} label="tu JavaScript" />
+  <CodeBlock code={nativeJs} label="JavaScript" />
 
   <h3>Contrato nativo</h3>
   <ul>
     <li>La raíz sigue siendo un <code>&lt;dialog&gt;</code> abierto con <code>showModal()</code>.</li>
-    <li>Sin <code>data-ds-vaul</code>, el auto-loader no monta nada.</li>
+    <li>Sin <code>data-sk-vaul</code>, el auto-loader no monta nada.</li>
     <li>Sin handle no se anuncia una interacción de drag que no existe.</li>
     <li>El enhancer sólo hace falta para drag-to-dismiss y light-dismiss.</li>
   </ul>
 </Base>
 
-<style>
+<style is:global>
+  /* El drawer ES la columna: cabecera fija, navegación que scrollea, cuenta abajo. Es la misma
+     anatomía que el riel de este sitio, que es el punto del componente. */
   .demo-drawer[open] {
     display: flex;
     flex-direction: column;
   }
 
+  /* Inset `md`, no `lg`: un drawer es angosto por definición, y el padding que se lleva es ancho que
+     los rótulos no tienen. Las bandas se separan con una línea, que cuesta 1px. */
+  .demo-drawer__header {
+    display: flex;
+    gap: var(--space-inline-md);
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-inset-sm) var(--space-inset-md);
+    border-block-end: 1px solid var(--color-border-subtle);
+  }
+
+  .demo-drawer__brand {
+    font-weight: var(--font-weight-heading);
+  }
+
+  .demo-drawer__nav {
+    flex: 1;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: var(--space-inset-sm);
+  }
+
+  .demo-drawer__footer {
+    display: flex;
+    gap: var(--space-inline-sm);
+    align-items: center;
+    padding: var(--space-inset-sm) var(--space-inset-md);
+    border-block-start: 1px solid var(--color-border-subtle);
+  }
+
+  .demo-drawer__user {
+    display: grid;
+    gap: 2px;
+    min-inline-size: 0;
+  }
+
+  .demo-drawer__user-name {
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+  }
+
+  .demo-drawer__user-meta {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+  }
+
+  /* El demo nativo de más abajo es deliberadamente mínimo: enseña que sin enhancer el drawer sigue
+     completo, así que no le sobra contenido que distraiga de eso. */
   .demo-drawer__body {
     display: grid;
     gap: var(--space-stack-md);
     justify-items: start;
-    padding: var(--space-inset-lg);
+    padding: var(--space-inset-md);
   }
 
   .demo-drawer__body p {
@@ -199,12 +323,3 @@ trigger?.addEventListener("click", () => {
   }
 </style>
 
-<script>
-  document.querySelectorAll("[data-native-drawer-open]").forEach((trigger) => {
-    if (!(trigger instanceof HTMLButtonElement)) return;
-    const id = trigger.dataset.nativeDrawerOpen;
-    const drawer = id ? document.getElementById(id) : null;
-    if (!(drawer instanceof HTMLDialogElement)) return;
-    trigger.addEventListener("click", () => drawer.showModal());
-  });
-</script>

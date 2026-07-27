@@ -1,54 +1,55 @@
 ---
+import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/radio-group.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
 
-import "../../examples/radio-group.css";
 
 const html = `<div
-  class="ds-radio-group"
+  class="sk-radio-group"
   role="radiogroup"
   aria-label="Plan"
   data-orientation="vertical"
 >
-  <label class="ds-radio">
+  <label class="sk-radio">
     <input
-      class="ds-radio__input"
+      class="sk-radio__input"
       type="radio"
       name="plan"
       value="basic"
       checked
     />
-    <span class="ds-radio__control" aria-hidden="true">
-      <span class="ds-radio__indicator"></span>
+    <span class="sk-radio__control" aria-hidden="true">
+      <span class="sk-radio__indicator"></span>
     </span>
-    <span class="ds-radio__label">Basic</span>
+    <span class="sk-radio__label">Basic</span>
   </label>
-  <label class="ds-radio">
+  <label class="sk-radio">
     <input
-      class="ds-radio__input"
+      class="sk-radio__input"
       type="radio"
       name="plan"
       value="pro"
     />
-    <span class="ds-radio__control" aria-hidden="true">
-      <span class="ds-radio__indicator"></span>
+    <span class="sk-radio__control" aria-hidden="true">
+      <span class="sk-radio__indicator"></span>
     </span>
-    <span class="ds-radio__label">Professional</span>
+    <span class="sk-radio__label">Professional</span>
   </label>
-  <label class="ds-radio">
+  <label class="sk-radio">
     <input
-      class="ds-radio__input"
+      class="sk-radio__input"
       type="radio"
       name="plan"
       value="enterprise"
     />
-    <span class="ds-radio__control" aria-hidden="true">
-      <span class="ds-radio__indicator"></span>
+    <span class="sk-radio__control" aria-hidden="true">
+      <span class="sk-radio__indicator"></span>
     </span>
-    <span class="ds-radio__label">Enterprise</span>
+    <span class="sk-radio__label">Enterprise</span>
   </label>
 </div>`;
 
@@ -65,34 +66,34 @@ const react = `import { RadioGroup } from "@skryensya/react/radio-group";
 />;`;
 
 const tileRadioGroupHtml = `<div
-  class="ds-inline"
+  class="sk-inline"
   role="radiogroup"
   aria-label="Plan"
   data-scope="tile"
   data-part="root"
-  data-ds-tile-radio-group
+  data-sk-tile-radio-group
   data-name="plan"
   data-default-value="pro"
   style="align-items: stretch"
 >
   <label
-    class="ds-tile ds-tile--interactive ds-interactive"
+    class="sk-tile sk-tile--interactive sk-interactive"
     data-part="item"
     style="flex: 1"
   >
     <input type="radio" name="plan" value="basic" data-part="input" />
-    <span class="ds-tile__content" data-part="content">
-      <span class="ds-tile__title">Basic</span>
-      <span class="ds-tile__description">For personal projects.</span>
+    <span class="sk-tile__content" data-part="content">
+      <span class="sk-tile__title">Basic</span>
+      <span class="sk-tile__description">For personal projects.</span>
     </span>
     <span
-      class="ds-tile__selection-indicator"
+      class="sk-tile__selection-indicator"
       data-part="indicator"
       aria-hidden="true"
     ></span>
   </label>
   <label
-    class="ds-tile ds-tile--interactive ds-interactive"
+    class="sk-tile sk-tile--interactive sk-interactive"
     data-part="item"
     style="flex: 1"
   >
@@ -103,14 +104,14 @@ const tileRadioGroupHtml = `<div
       checked
       data-part="input"
     />
-    <span class="ds-tile__content" data-part="content">
-      <span class="ds-tile__title">Professional</span>
-      <span class="ds-tile__description">
+    <span class="sk-tile__content" data-part="content">
+      <span class="sk-tile__title">Professional</span>
+      <span class="sk-tile__description">
         For production workloads.
       </span>
     </span>
     <span
-      class="ds-tile__selection-indicator"
+      class="sk-tile__selection-indicator"
       data-part="indicator"
       aria-hidden="true"
     ></span>
@@ -119,13 +120,13 @@ const tileRadioGroupHtml = `<div
 
 const tileRadioGroupVanilla = `import { initComponents } from "@skryensya/vanilla/auto";
 
-// La raíz se autora con data-ds-tile-radio-group (data-name, data-default-value),
+// La raíz se autora con data-sk-tile-radio-group (data-name, data-default-value),
 // y cada opción con data-part="item" + un input[type=radio] con su value.
 // initComponents la hidrata con la máquina @zag-js/radio-group (la misma que React).
-initComponents();
+await initComponents();
 
-const root = document.querySelector("[data-ds-tile-radio-group]");
-root.addEventListener("ds:valuechange", (event) => {
+const root = document.querySelector("[data-sk-tile-radio-group]");
+root.addEventListener("sk:valuechange", (event) => {
   console.log(event.detail.value);
 });`;
 
@@ -148,7 +149,6 @@ const tileRadioGroupReact = `import { TileRadioGroup } from "@skryensya/react/ti
   <h1>RadioGroup</h1>
   <p class="lede">Una elección exclusiva entre alternativas relacionadas. Cada opción es un radio nativo; el nombre compartido impone la exclusión.</p>
 
-  <h2>Demo</h2>
   <Showcase html={html} react={react} label="RadioGroup" />
 
   <h2>Opciones de superficie: TileRadioGroup</h2>
@@ -157,14 +157,14 @@ const tileRadioGroupReact = `import { TileRadioGroup } from "@skryensya/react/ti
     <code>TileRadioGroup</code>. Cada item conserva un radio nativo; el grupo no impone disposición.
   </p>
   <Showcase html={tileRadioGroupHtml} react={tileRadioGroupReact} label="TileRadioGroup" />
-  <p>En esta demo las opciones van en fila con <a href="/componentes/inline"><code>ds-inline</code></a> y cada Tile toma <code>flex: 1</code>. En una columna, omite <code>ds-inline</code>.</p>
-  <p>El enhancer <code>tile-radio-group</code> (Svelte + <code>@zag-js/radio-group</code>, la misma máquina que React) hidrata la raíz <code>data-ds-tile-radio-group</code> con <code>initComponents()</code>: garantiza la exclusión mutua y sincroniza el estado de cada <code>[data-part="item"]</code> con su radio real.</p>
-  <CodeBlock code={tileRadioGroupVanilla} label="tu JavaScript" />
+  <p>En este preview las opciones van en fila con <a href="/componentes/inline"><code>sk-inline</code></a> y cada Tile toma <code>flex: 1</code>. En una columna, omite <code>sk-inline</code>.</p>
+  <p>El enhancer <code>tile-radio-group</code> (Svelte + <code>@zag-js/radio-group</code>, la misma máquina que React) hidrata la raíz <code>data-sk-tile-radio-group</code> con <code>initComponents()</code>: garantiza la exclusión mutua y sincroniza el estado de cada <code>[data-part="item"]</code> con su radio real.</p>
+  <CodeBlock code={tileRadioGroupVanilla} label="JavaScript" />
   <p>Importa <code>@skryensya/core/components/radio-group.css</code> y llama <code>initComponents()</code> una vez.</p>
 
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
 
   <h2>Contrato</h2>
   <ul>
@@ -173,5 +173,5 @@ const tileRadioGroupReact = `import { TileRadioGroup } from "@skryensya/react/ti
     <li><code>value</code> controla la opción seleccionada; <code>onValueChange</code> reporta cambios.</li>
     <li>El grupo necesita un nombre accesible: <code>aria-label</code>, <code>aria-labelledby</code> o un <code>fieldset</code> con <code>legend</code>.</li>
   </ul>
-  <StylingHooks groups={[{ file: "components/radio-group.css", probe: "ds-radio-group" }]} />
+  <StylingHooks groups={[{ file: "components/radio-group.css", probe: "sk-radio-group" }]} />
 </Base>

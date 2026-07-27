@@ -1,5 +1,5 @@
 import { svelte } from "@sveltejs/vite-plugin-svelte";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 
 export default defineConfig({
   // El plugin compila los `.svelte` (los enhancers machine-backed) en los tests, igual que lo hará
@@ -10,6 +10,7 @@ export default defineConfig({
   // resto de la resolución.
   resolve: process.env.VITEST ? { conditions: ["browser"] } : undefined,
   test: {
+    exclude: [...configDefaults.exclude, "dist/**"],
     environment: "jsdom",
     setupFiles: ["./src/test-setup.ts"],
   },

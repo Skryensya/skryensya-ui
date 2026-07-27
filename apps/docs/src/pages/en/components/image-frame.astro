@@ -1,0 +1,279 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const styles = `@import "@skryensya/core/patterns/image-frame.css";
+/* or patterns/layout.css, which already includes it */`;
+
+/* Offline demo asset: asymmetric so crop + object-position read clearly. */
+const demoSrc = "/demos/image-frame.svg";
+
+const basicHtml = `<figure
+  class="sk-image-frame"
+  data-aspect="16/9"
+  data-fit="cover"
+  data-position="center"
+  data-radius="surface"
+  data-border="subtle"
+>
+  <img
+    class="sk-image-frame__media"
+    src="${demoSrc}"
+    alt="Demonstration landscape"
+  />
+</figure>`;
+
+const basicReact = `import { ImageFrame } from "@skryensya/react/image-frame";
+
+<ImageFrame
+  as="figure"
+  aspect="16/9"
+  fit="cover"
+  position="center"
+  radius="surface"
+  border="subtle"
+  src="${demoSrc}"
+  alt="Demonstration landscape"
+/>;`;
+
+const aspectHtml = `<div class="demo-grid">
+  <figure class="demo-shot">
+    <div class="sk-image-frame" data-aspect="1/1" data-fit="cover">
+      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    </div>
+    <figcaption><code>1/1</code></figcaption>
+  </figure>
+  <figure class="demo-shot">
+    <div class="sk-image-frame" data-aspect="4/3" data-fit="cover">
+      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    </div>
+    <figcaption><code>4/3</code></figcaption>
+  </figure>
+  <figure class="demo-shot">
+    <div class="sk-image-frame" data-aspect="16/9" data-fit="cover">
+      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    </div>
+    <figcaption><code>16/9</code></figcaption>
+  </figure>
+  <figure class="demo-shot">
+    <div
+      class="sk-image-frame"
+      data-aspect="9/16"
+      data-fit="cover"
+    >
+      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    </div>
+    <figcaption><code>9/16</code></figcaption>
+  </figure>
+</div>`;
+
+const fitHtml = `<div class="demo-grid demo-grid--fit">
+  <figure class="demo-shot">
+    <div
+      class="sk-image-frame"
+      data-aspect="1/1"
+      data-fit="cover"
+      data-border="subtle"
+    >
+      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    </div>
+    <figcaption><code>cover</code></figcaption>
+  </figure>
+  <figure class="demo-shot">
+    <div
+      class="sk-image-frame"
+      data-aspect="1/1"
+      data-fit="contain"
+      data-border="subtle"
+    >
+      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    </div>
+    <figcaption><code>contain</code></figcaption>
+  </figure>
+  <figure class="demo-shot">
+    <div
+      class="sk-image-frame"
+      data-aspect="1/1"
+      data-fit="fill"
+      data-border="subtle"
+    >
+      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    </div>
+    <figcaption><code>fill</code></figcaption>
+  </figure>
+</div>`;
+
+const positionHtml = `<div class="demo-grid">
+  <figure class="demo-shot">
+    <div
+      class="sk-image-frame"
+      data-aspect="1/1"
+      data-fit="cover"
+      data-position="top-left"
+    >
+      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    </div>
+    <figcaption><code>top-left</code></figcaption>
+  </figure>
+  <figure class="demo-shot">
+    <div
+      class="sk-image-frame"
+      data-aspect="1/1"
+      data-fit="cover"
+      data-position="center"
+    >
+      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    </div>
+    <figcaption><code>center</code></figcaption>
+  </figure>
+  <figure class="demo-shot">
+    <div
+      class="sk-image-frame"
+      data-aspect="1/1"
+      data-fit="cover"
+      data-position="bottom-right"
+    >
+      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    </div>
+    <figcaption><code>bottom-right</code></figcaption>
+  </figure>
+</div>`;
+
+const positionReact = `import { ImageFrame } from "@skryensya/react/image-frame";
+
+<ImageFrame
+  aspect="1/1"
+  fit="cover"
+  position="top-left"
+  src="/foto.jpg"
+  alt=""
+/>;`;
+---
+
+<Base
+  title="ImageFrame"
+  description="ImageFrame - Frame that crops and positions media with aspect-ratio, object-fit and object-position."
+>
+  <h1>ImageFrame</h1>
+  <p class="lede">
+    ImageFrame is the <strong>media frame</strong>: una caja que fija un aspect ratio, recorta con
+    radio/borde y decide cómo llena la image (<code>object-fit</code>) and from where (<code>object-position</code>). It is not an image component with CDN nor an Avatar: it is the pattern that Card, Tile and galleries reuse instead of copying
+    <code>aspect-ratio</code> by hand. To type on the photo, compose with
+    <a href="/en/gradients">Gradients</a> (<code>sk-media-gradient</code>).
+  </p>
+
+  <Showcase html={basicHtml} react={basicReact} label="ImageFrame" />
+
+  <h2>Aspect</h2>
+  <p>
+    <code>data-aspect</code> is the box, not the file. With <code>cover</code> (default) the average
+    fills and trims; with <code>auto</code> the frame follows the intrinsic measurement of the media.
+  </p>
+  <Showcase html={aspectHtml} label="Aspect" />
+
+  <h2>Fit</h2>
+  <p>
+    Same box <code>1/1</code>, different <code>data-fit</code>: <code>cover</code> cuts,
+    <code>contain</code> letterboxa (the background of the frame is visible), <code>fill</code> stretches.
+  </p>
+  <Showcase html={fitHtml} label="Fit" />
+
+  <h2>Position</h2>
+  <p>
+    With <code>cover</code>, <code>data-position</code> chooses the clipping anchor. The demo concentrates
+    a disk at the top-left and a block at the bottom-right so that the anchor is noticeable.
+  </p>
+  <Showcase html={positionHtml} react={positionReact} label="Position" />
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+  <CodeBlock code={styles} label="CSS" />
+
+  <h2>React</h2>
+  <p>
+    <code>src</code> / <code>alt</code> they paint a <code>img</code> with the middle class. For
+    <code>picture</code> o <code>video</code>, spend children with
+    <code>className="sk-image-frame__media"</code> (or leave the <code>img</code>/<code>video</code>
+    as a direct child: CSS also reaches them).
+  </p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>
+      Root: <code>sk-image-frame</code>. Media: <code>sk-image-frame__media</code>, o
+      <code>img</code>/<code>video</code>/<code>picture &gt; img</code> hijo directo.
+    </li>
+    <li>
+      <code>data-aspect</code>: <code>auto</code>, <code>1/1</code>, <code>4/3</code>,
+      <code>3/2</code>, <code>16/9</code>, <code>3/4</code>, <code>2/3</code>, <code>9/16</code>.
+    </li>
+    <li>
+      <code>data-fit</code>: <code>cover</code> (default), <code>contain</code>, <code>fill</code>,
+      <code>none</code>, <code>scale-down</code>.
+    </li>
+    <li>
+      <code>data-position</code>: <code>center</code> (default), <code>top</code>,
+      <code>bottom</code>, <code>left</code>, <code>right</code>, and the four corners
+      (<code>top-left</code>, …).
+    </li>
+    <li>
+      <code>data-radius</code>: <code>none</code>, <code>top</code>, <code>control</code>,
+      <code>surface</code>, <code>pill</code>
+      (default), <code>pill</code>.
+    </li>
+    <li>
+      <code>data-border</code>: <code>none</code> (default), <code>subtle</code>,
+      <code>default</code>.
+    </li>
+    <li>
+      Hooks: <code>--sk-image-frame-aspect</code>, <code>--sk-image-frame-fit</code>,
+      <code>--sk-image-frame-position</code>, <code>--sk-image-frame-radius</code>,
+      <code>--sk-image-frame-border-*</code>, <code>--sk-image-frame-bg</code>.
+    </li>
+  </ul>
+
+  <StylingHooks
+    groups={[
+      {
+        file: "patterns/image-frame.css",
+        probe: "sk-image-frame",
+      },
+    ]}
+  />
+</Base>
+
+<style is:global>
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: var(--space-stack-md);
+    align-items: start;
+  }
+
+  .demo-shot {
+    margin: 0;
+    display: grid;
+    gap: var(--space-stack-xs);
+  }
+
+  .demo-grid--fit .demo-shot {
+    max-inline-size: 12rem;
+    margin-inline: auto;
+  }
+
+  .demo-shot figcaption {
+    text-align: center;
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-caption);
+  }
+
+  /* Tall ratio needs a narrower column so 9/16 doesn't dominate the stage. */
+  .demo-shot:has([data-aspect="9/16"]) {
+    max-inline-size: 7rem;
+    margin-inline: auto;
+  }
+</style>

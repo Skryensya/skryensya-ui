@@ -2,7 +2,7 @@
   "name": "@skryensya/core",
   "version": "0.1.0",
   "type": "module",
-  "description": "@skryensya's framework-agnostic contract: design tokens, component parts and shared option types.",
+  "description": "Framework-agnostic contract for skryensya/ui: design tokens, component parts and shared option types.",
   "files": [
     "css",
     "dist",
@@ -18,6 +18,10 @@
     "./accordion": {
       "types": "./src/accordion.ts",
       "default": "./src/accordion.ts"
+    },
+    "./anchored": {
+      "types": "./src/anchored.ts",
+      "default": "./src/anchored.ts"
     },
     "./badge": {
       "types": "./src/badge.ts",
@@ -39,6 +43,14 @@
       "types": "./src/progress.ts",
       "default": "./src/progress.ts"
     },
+    "./loader": {
+      "types": "./src/loader.ts",
+      "default": "./src/loader.ts"
+    },
+    "./placeholder": {
+      "types": "./src/placeholder.ts",
+      "default": "./src/placeholder.ts"
+    },
     "./slider": {
       "types": "./src/slider.ts",
       "default": "./src/slider.ts"
@@ -51,6 +63,10 @@
       "types": "./src/steps.ts",
       "default": "./src/steps.ts"
     },
+    "./process-list": {
+      "types": "./src/process-list.ts",
+      "default": "./src/process-list.ts"
+    },
     "./pagination": {
       "types": "./src/pagination.ts",
       "default": "./src/pagination.ts"
@@ -59,9 +75,37 @@
       "types": "./src/stat.ts",
       "default": "./src/stat.ts"
     },
+    "./list": {
+      "types": "./src/list.ts",
+      "default": "./src/list.ts"
+    },
+    "./carousel": {
+      "types": "./src/carousel.ts",
+      "default": "./src/carousel.ts"
+    },
     "./button": {
       "types": "./src/button.ts",
       "default": "./src/button.ts"
+    },
+    "./code-preview": {
+      "types": "./src/code-preview.ts",
+      "import": "./src/code-preview.ts",
+      "default": "./src/code-preview.ts"
+    },
+    "./component-preview": {
+      "types": "./src/component-preview.ts",
+      "import": "./src/component-preview.ts",
+      "default": "./src/component-preview.ts"
+    },
+    "./copy-button": {
+      "types": "./src/copy-button.ts",
+      "import": "./src/copy-button.ts",
+      "default": "./src/copy-button.ts"
+    },
+    "./theme-toggle": {
+      "types": "./src/theme-toggle.ts",
+      "import": "./src/theme-toggle.ts",
+      "default": "./src/theme-toggle.ts"
     },
     "./icon": {
       "types": "./src/icon.ts",
@@ -103,6 +147,14 @@
       "types": "./src/layout.ts",
       "default": "./src/layout.ts"
     },
+    "./image-frame": {
+      "types": "./src/image-frame.ts",
+      "default": "./src/image-frame.ts"
+    },
+    "./media-gradient": {
+      "types": "./src/media-gradient.ts",
+      "default": "./src/media-gradient.ts"
+    },
     "./nav-list": {
       "types": "./src/nav-list.ts",
       "default": "./src/nav-list.ts"
@@ -114,6 +166,10 @@
     "./select": {
       "types": "./src/select.ts",
       "default": "./src/select.ts"
+    },
+    "./flyout": {
+      "types": "./src/flyout.ts",
+      "default": "./src/flyout.ts"
     },
     "./selection": {
       "types": "./src/selection.ts",
@@ -138,6 +194,10 @@
     "./tabs": {
       "types": "./src/tabs.ts",
       "default": "./src/tabs.ts"
+    },
+    "./tooltip": {
+      "types": "./src/tooltip.ts",
+      "default": "./src/tooltip.ts"
     },
     "./table": {
       "types": "./src/table.ts",
@@ -195,9 +255,65 @@
       "types": "./src/dialog.ts",
       "default": "./src/dialog.ts"
     },
+    "./command-palette": {
+      "types": "./src/command-palette.ts",
+      "default": "./src/command-palette.ts"
+    },
     "./toast": {
       "types": "./src/content.ts",
       "default": "./src/content.ts"
+    },
+    "./breadcrumb": {
+      "types": "./src/breadcrumb.ts",
+      "default": "./src/breadcrumb.ts"
+    },
+    "./combobox": {
+      "types": "./src/combobox.ts",
+      "default": "./src/combobox.ts"
+    },
+    "./date-picker": {
+      "types": "./src/date-picker.ts",
+      "default": "./src/date-picker.ts"
+    },
+    "./calendar": {
+      "types": "./src/calendar.ts",
+      "default": "./src/calendar.ts"
+    },
+    "./empty-state": {
+      "types": "./src/empty-state.ts",
+      "default": "./src/empty-state.ts"
+    },
+    "./file-upload": {
+      "types": "./src/file-upload.ts",
+      "default": "./src/file-upload.ts"
+    },
+    "./menu": {
+      "types": "./src/menu.ts",
+      "default": "./src/menu.ts"
+    },
+    "./number-field": {
+      "types": "./src/number-field.ts",
+      "default": "./src/number-field.ts"
+    },
+    "./popover": {
+      "types": "./src/popover.ts",
+      "default": "./src/popover.ts"
+    },
+    "./split-button": {
+      "types": "./src/split-button.ts",
+      "default": "./src/split-button.ts"
+    },
+    "./time-field": {
+      "types": "./src/time-field.ts",
+      "default": "./src/time-field.ts"
+    },
+    "./toolbar": {
+      "types": "./src/toolbar.ts",
+      "default": "./src/toolbar.ts"
+    },
+    "./tree-view": {
+      "types": "./src/tree-view.ts",
+      "default": "./src/tree-view.ts"
     },
     "./parse": "./scripts/parse.mjs",
     "./emit-icon-set": "./scripts/emit-icon-set.mjs",
@@ -218,6 +334,10 @@
       "types": "./src/hotkey.ts",
       "default": "./src/hotkey.ts"
     },
+    "./storage": {
+      "types": "./src/storage.ts",
+      "default": "./src/storage.ts"
+    },
     "./kbd": {
       "types": "./src/kbd.ts",
       "default": "./src/kbd.ts"
@@ -235,11 +355,19 @@
   },
   "dependencies": {
     "@zag-js/accordion": "^1.42.0",
+    "@zag-js/carousel": "1.42.0",
     "@zag-js/checkbox": "^1.42.0",
     "@zag-js/collapsible": "^1.42.0",
+    "@zag-js/combobox": "^1.42.0",
     "@zag-js/core": "^1.42.0",
+    "@zag-js/date-picker": "^1.42.0",
+    "@zag-js/file-upload": "^1.42.0",
+    "@zag-js/menu": "^1.42.0",
+    "@zag-js/number-input": "^1.42.0",
     "@zag-js/radio-group": "^1.42.0",
     "@zag-js/select": "^1.42.0",
-    "@zag-js/tabs": "^1.42.0"
+    "@zag-js/tabs": "^1.42.0",
+    "@zag-js/tooltip": "1.42.0",
+    "@zag-js/tree-view": "^1.42.0"
   }
 }

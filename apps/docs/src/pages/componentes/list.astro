@@ -1,0 +1,579 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const styles = `@import "@skryensya/core/components/list.css";`;
+
+/* THE LADDER. Six examples that add exactly one slot each, so the page reads as anatomy being
+   assembled rather than six finished screens. Step 1 is a bare `<li>`, step 6 is the full row. */
+
+/* 1 — The floor: a real `<ul>` with rows and dividers, and nothing else. No slots at all. */
+const plainHtml = `<ul class="sk-list" aria-label="Integraciones">
+  <li class="sk-list__item">Slack</li>
+  <li class="sk-list__item">Notion</li>
+  <li class="sk-list__item">Figma</li>
+  <li class="sk-list__item">GitHub</li>
+  <li class="sk-list__item">Linear</li>
+</ul>`;
+
+const plainReact = `import { List, ListItem } from "@skryensya/react/list";
+
+<List aria-label="Integraciones">
+  <ListItem>Slack</ListItem>
+  <ListItem>Notion</ListItem>
+  <ListItem>Figma</ListItem>
+  <ListItem>GitHub</ListItem>
+  <ListItem>Linear</ListItem>
+</List>;`;
+
+/* 2 — The content column. Title and description stack; still no icons, no trailing. */
+const titledHtml = `<ul class="sk-list" aria-label="Preferencias">
+  <li class="sk-list__item">
+    <span class="sk-list__content">
+      <span class="sk-list__title">Notificaciones</span>
+      <span class="sk-list__description">Resumen semanal cada viernes.</span>
+    </span>
+  </li>
+  <li class="sk-list__item">
+    <span class="sk-list__content">
+      <span class="sk-list__title">Zona horaria</span>
+      <span class="sk-list__description">Se usa para programar envíos.</span>
+    </span>
+  </li>
+  <li class="sk-list__item">
+    <span class="sk-list__content">
+      <span class="sk-list__title">Idioma</span>
+      <span class="sk-list__description">Interfaz y correos.</span>
+    </span>
+  </li>
+  <li class="sk-list__item">
+    <span class="sk-list__content">
+      <span class="sk-list__title">Formato de fecha</span>
+      <span class="sk-list__description">Cómo se escriben días y meses.</span>
+    </span>
+  </li>
+  <li class="sk-list__item">
+    <span class="sk-list__content">
+      <span class="sk-list__title">Página de inicio</span>
+      <span class="sk-list__description">Dónde caes al entrar.</span>
+    </span>
+  </li>
+</ul>`;
+
+const titledReact = `import { List, ListItem } from "@skryensya/react/list";
+
+<List aria-label="Preferencias">
+  <ListItem title="Notificaciones" description="Resumen semanal cada viernes." />
+  <ListItem title="Zona horaria" description="Se usa para programar envíos." />
+  <ListItem title="Idioma" description="Interfaz y correos." />
+  <ListItem title="Formato de fecha" description="Cómo se escriben días y meses." />
+  <ListItem title="Página de inicio" description="Dónde caes al entrar." />
+</List>;`;
+
+/* 3 — Leading media. Same rows as step 2 plus an icon; decorative, so it names nothing. */
+const leadingHtml = `<ul class="sk-list" aria-label="Preferencias">
+  <li class="sk-list__item">
+    <span class="sk-list__leading" data-sk-icon="info"></span>
+    <span class="sk-list__content">
+      <span class="sk-list__title">Notificaciones</span>
+      <span class="sk-list__description">Resumen semanal cada viernes.</span>
+    </span>
+  </li>
+  <li class="sk-list__item">
+    <span class="sk-list__leading" data-sk-icon="calendar"></span>
+    <span class="sk-list__content">
+      <span class="sk-list__title">Zona horaria</span>
+      <span class="sk-list__description">Se usa para programar envíos.</span>
+    </span>
+  </li>
+  <li class="sk-list__item">
+    <span class="sk-list__leading" data-sk-icon="settings"></span>
+    <span class="sk-list__content">
+      <span class="sk-list__title">Idioma</span>
+      <span class="sk-list__description">Interfaz y correos.</span>
+    </span>
+  </li>
+  <li class="sk-list__item">
+    <span class="sk-list__leading" data-sk-icon="calendar"></span>
+    <span class="sk-list__content">
+      <span class="sk-list__title">Formato de fecha</span>
+      <span class="sk-list__description">Cómo se escriben días y meses.</span>
+    </span>
+  </li>
+  <li class="sk-list__item">
+    <span class="sk-list__leading" data-sk-icon="visibility"></span>
+    <span class="sk-list__content">
+      <span class="sk-list__title">Página de inicio</span>
+      <span class="sk-list__description">Dónde caes al entrar.</span>
+    </span>
+  </li>
+</ul>`;
+
+const leadingReact = `import { Icon } from "@skryensya/react/icon";
+import { List, ListItem } from "@skryensya/react/list";
+
+<List aria-label="Preferencias">
+  <ListItem
+    leading={<Icon name="info" />}
+    title="Notificaciones"
+    description="Resumen semanal cada viernes."
+  />
+  <ListItem
+    leading={<Icon name="calendar" />}
+    title="Zona horaria"
+    description="Se usa para programar envíos."
+  />
+  <ListItem
+    leading={<Icon name="settings" />}
+    title="Idioma"
+    description="Interfaz y correos."
+  />
+  <ListItem
+    leading={<Icon name="calendar" />}
+    title="Formato de fecha"
+    description="Cómo se escriben días y meses."
+  />
+  <ListItem
+    leading={<Icon name="visibility" />}
+    title="Página de inicio"
+    description="Dónde caes al entrar."
+  />
+</List>;`;
+
+/* 4 — The row is complete: leading + content + trailing. Still static, still no interaction. */
+const trailingHtml = `<ul class="sk-list" aria-label="Preferencias">
+  <li class="sk-list__item">
+    <span class="sk-list__leading" data-sk-icon="info"></span>
+    <span class="sk-list__content">
+      <span class="sk-list__title">Notificaciones</span>
+      <span class="sk-list__description">Resumen semanal cada viernes.</span>
+    </span>
+    <span class="sk-list__trailing">
+      <span class="sk-badge" data-tone="success">Activo</span>
+    </span>
+  </li>
+  <li class="sk-list__item">
+    <span class="sk-list__leading" data-sk-icon="calendar"></span>
+    <span class="sk-list__content">
+      <span class="sk-list__title">Zona horaria</span>
+      <span class="sk-list__description">Se usa para programar envíos.</span>
+    </span>
+    <span class="sk-list__trailing">GMT−3</span>
+  </li>
+  <li class="sk-list__item">
+    <span class="sk-list__leading" data-sk-icon="settings"></span>
+    <span class="sk-list__content">
+      <span class="sk-list__title">Idioma</span>
+      <span class="sk-list__description">Interfaz y correos.</span>
+    </span>
+    <span class="sk-list__trailing">Español</span>
+  </li>
+  <li class="sk-list__item">
+    <span class="sk-list__leading" data-sk-icon="calendar"></span>
+    <span class="sk-list__content">
+      <span class="sk-list__title">Formato de fecha</span>
+      <span class="sk-list__description">Cómo se escriben días y meses.</span>
+    </span>
+    <span class="sk-list__trailing">31/12/2026</span>
+  </li>
+  <li class="sk-list__item">
+    <span class="sk-list__leading" data-sk-icon="visibility"></span>
+    <span class="sk-list__content">
+      <span class="sk-list__title">Página de inicio</span>
+      <span class="sk-list__description">Dónde caes al entrar.</span>
+    </span>
+    <span class="sk-list__trailing">Resumen</span>
+  </li>
+</ul>`;
+
+const trailingReact = `import { Badge } from "@skryensya/react/badge";
+import { Icon } from "@skryensya/react/icon";
+import { List, ListItem } from "@skryensya/react/list";
+
+<List aria-label="Preferencias">
+  <ListItem
+    leading={<Icon name="info" />}
+    title="Notificaciones"
+    description="Resumen semanal cada viernes."
+    trailing={<Badge tone="success">Activo</Badge>}
+  />
+  <ListItem
+    leading={<Icon name="calendar" />}
+    title="Zona horaria"
+    description="Se usa para programar envíos."
+    trailing="GMT−3"
+  />
+  <ListItem
+    leading={<Icon name="settings" />}
+    title="Idioma"
+    description="Interfaz y correos."
+    trailing="Español"
+  />
+  <ListItem
+    leading={<Icon name="calendar" />}
+    title="Formato de fecha"
+    description="Cómo se escriben días y meses."
+    trailing="31/12/2026"
+  />
+  <ListItem
+    leading={<Icon name="visibility" />}
+    title="Página de inicio"
+    description="Dónde caes al entrar."
+    trailing="Resumen"
+  />
+</List>;`;
+
+/* 5 — The row starts acting. Same anatomy, wrapped in a real anchor: focus, keyboard and state
+   layer come free, and List still owns no navigation state. */
+const linksHtml = `<ul class="sk-list" aria-label="Recursos del proyecto">
+  <li class="sk-list__item">
+    <a class="sk-list__action sk-interactive" href="/prerrequisitos">
+      <span class="sk-list__leading" data-sk-icon="info"></span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Prerrequisitos</span>
+        <span class="sk-list__description">Qué necesitas antes de instalar.</span>
+      </span>
+      <span class="sk-list__trailing" data-sk-icon="arrow-right"></span>
+    </a>
+  </li>
+  <li class="sk-list__item">
+    <a class="sk-list__action sk-interactive" href="/primer-componente">
+      <span class="sk-list__leading" data-sk-icon="info"></span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Guía de inicio</span>
+        <span class="sk-list__description">Instala y configura tu primer proyecto.</span>
+      </span>
+      <span class="sk-list__trailing" data-sk-icon="arrow-right"></span>
+    </a>
+  </li>
+  <li class="sk-list__item">
+    <a class="sk-list__action sk-interactive" href="/personalizar">
+      <span class="sk-list__leading" data-sk-icon="settings"></span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Personalización</span>
+        <span class="sk-list__description">Ajusta color, densidad, radio e iconografía.</span>
+      </span>
+      <span class="sk-list__trailing" data-sk-icon="arrow-right"></span>
+    </a>
+  </li>
+  <li class="sk-list__item">
+    <a class="sk-list__action sk-interactive" href="/referencia">
+      <span class="sk-list__leading" data-sk-icon="copy"></span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Referencia de tokens</span>
+        <span class="sk-list__description">Consulta roles, escalas y cadenas de decisión.</span>
+      </span>
+      <span class="sk-list__trailing" data-sk-icon="arrow-right"></span>
+    </a>
+  </li>
+  <li class="sk-list__item">
+    <a class="sk-list__action sk-interactive" href="/tiers">
+      <span class="sk-list__leading" data-sk-icon="copy"></span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Tiers</span>
+        <span class="sk-list__description">Qué capa resuelve cada decisión.</span>
+      </span>
+      <span class="sk-list__trailing" data-sk-icon="arrow-right"></span>
+    </a>
+  </li>
+</ul>`;
+
+const linksReact = `import { Icon } from "@skryensya/react/icon";
+import { List, ListItemLink } from "@skryensya/react/list";
+
+<List aria-label="Recursos del proyecto">
+  <ListItemLink
+    href="/prerrequisitos"
+    leading={<Icon name="info" />}
+    title="Prerrequisitos"
+    description="Qué necesitas antes de instalar."
+    trailing={<Icon name="arrow-right" />}
+  />
+  <ListItemLink
+    href="/primer-componente"
+    leading={<Icon name="info" />}
+    title="Guía de inicio"
+    description="Instala y configura tu primer proyecto."
+    trailing={<Icon name="arrow-right" />}
+  />
+  <ListItemLink
+    href="/personalizar"
+    leading={<Icon name="settings" />}
+    title="Personalización"
+    description="Ajusta color, densidad, radio e iconografía."
+    trailing={<Icon name="arrow-right" />}
+  />
+  <ListItemLink
+    href="/referencia"
+    leading={<Icon name="copy" />}
+    title="Referencia de tokens"
+    description="Consulta roles, escalas y cadenas de decisión."
+    trailing={<Icon name="arrow-right" />}
+  />
+  <ListItemLink
+    href="/tiers"
+    leading={<Icon name="copy" />}
+    title="Tiers"
+    description="Qué capa resuelve cada decisión."
+    trailing={<Icon name="arrow-right" />}
+  />
+</List>;`;
+
+/* 6 — The top of the ladder: interactive rows, a component in each end slot, and compact density. */
+const fullHtml = `<ul class="sk-list" data-density="compact" aria-label="Equipo">
+  <li class="sk-list__item">
+    <a class="sk-list__action sk-interactive" href="/equipo/allison">
+      <span class="sk-list__leading" data-sk-icon="user"></span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Allison Peña</span>
+        <span class="sk-list__description">Sistema de diseño y experiencia.</span>
+      </span>
+      <span class="sk-list__trailing">
+        <span class="sk-badge">Diseño</span>
+        <span data-sk-icon="arrow-right"></span>
+      </span>
+    </a>
+  </li>
+  <li class="sk-list__item">
+    <a class="sk-list__action sk-interactive" href="/equipo/mateo">
+      <span class="sk-list__leading" data-sk-icon="user"></span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Mateo Ruiz</span>
+        <span class="sk-list__description">Componentes e infraestructura.</span>
+      </span>
+      <span class="sk-list__trailing">
+        <span class="sk-badge">Ingeniería</span>
+        <span data-sk-icon="arrow-right"></span>
+      </span>
+    </a>
+  </li>
+  <li class="sk-list__item">
+    <a class="sk-list__action sk-interactive" href="/equipo/elena">
+      <span class="sk-list__leading" data-sk-icon="user"></span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Elena Torres</span>
+        <span class="sk-list__description">Estrategia y descubrimiento.</span>
+      </span>
+      <span class="sk-list__trailing">
+        <span class="sk-badge">Producto</span>
+        <span data-sk-icon="arrow-right"></span>
+      </span>
+    </a>
+  </li>
+  <li class="sk-list__item">
+    <a class="sk-list__action sk-interactive" href="/equipo/nadia">
+      <span class="sk-list__leading" data-sk-icon="user"></span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Nadia Sepúlveda</span>
+        <span class="sk-list__description">Investigación y contenido.</span>
+      </span>
+      <span class="sk-list__trailing">
+        <span class="sk-badge">Producto</span>
+        <span data-sk-icon="arrow-right"></span>
+      </span>
+    </a>
+  </li>
+  <li class="sk-list__item" data-disabled>
+    <a
+      class="sk-list__action sk-interactive"
+      href="/equipo/tomas"
+      aria-disabled="true"
+    >
+      <span class="sk-list__leading" data-sk-icon="user"></span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Tomás Vidal</span>
+        <span class="sk-list__description">De licencia hasta septiembre.</span>
+      </span>
+      <span class="sk-list__trailing">
+        <span class="sk-badge">Ingeniería</span>
+      </span>
+    </a>
+  </li>
+</ul>`;
+
+const fullReact = `import { Badge } from "@skryensya/react/badge";
+import { Icon } from "@skryensya/react/icon";
+import { List, ListItemLink } from "@skryensya/react/list";
+
+<List aria-label="Equipo" density="compact">
+  <ListItemLink
+    href="/equipo/allison"
+    leading={<Icon name="user" />}
+    title="Allison Peña"
+    description="Sistema de diseño y experiencia."
+    trailing={<><Badge>Diseño</Badge><Icon name="arrow-right" /></>}
+  />
+  <ListItemLink
+    href="/equipo/mateo"
+    leading={<Icon name="user" />}
+    title="Mateo Ruiz"
+    description="Componentes e infraestructura."
+    trailing={<><Badge>Ingeniería</Badge><Icon name="arrow-right" /></>}
+  />
+  <ListItemLink
+    href="/equipo/elena"
+    leading={<Icon name="user" />}
+    title="Elena Torres"
+    description="Estrategia y descubrimiento."
+    trailing={<><Badge>Producto</Badge><Icon name="arrow-right" /></>}
+  />
+  <ListItemLink
+    href="/equipo/nadia"
+    leading={<Icon name="user" />}
+    title="Nadia Sepúlveda"
+    description="Investigación y contenido."
+    trailing={<><Badge>Producto</Badge><Icon name="arrow-right" /></>}
+  />
+  <ListItemLink
+    href="/equipo/tomas"
+    aria-disabled="true"
+    leading={<Icon name="user" />}
+    title="Tomás Vidal"
+    description="De licencia hasta septiembre."
+    trailing={<Badge>Ingeniería</Badge>}
+  />
+</List>;`;
+
+---
+
+<Base
+  title="List"
+  description="List: colección semántica de filas (ul/ol) con anatomía real —leading, contenido, trailing— divisores, filas interactivas y orden."
+>
+  <h1>List</h1>
+  <p class="lede">
+    Una <strong>lista con UI</strong>, no un <code>&lt;li&gt;</code> con tipografía. Por debajo es un
+    <code>&lt;ul&gt;</code> o <code>&lt;ol&gt;</code> real —el lector oye una lista de N ítems—, y
+    encima aporta la anatomía de fila: <strong>leading</strong> (icono, avatar, número),
+    <strong>contenido</strong> (título y descripción) y <strong>trailing</strong> (meta, badge,
+    acción), con divisores. Es composable por partes y funcional: una fila que actúa es un
+    <code>&lt;a&gt;</code>/<code>&lt;button&gt;</code> real, nunca un <code>onClick</code> en el
+    <code>&lt;li&gt;</code>.
+  </p>
+
+  <h2>La fila, un slot a la vez</h2>
+  <p>
+    Los seis ejemplos que siguen son <strong>la misma lista</strong>, y cada uno agrega exactamente
+    una pieza sobre el anterior. Se leen en orden: lo que aparece de nuevo en cada paso es lo único
+    que cambió en el markup.
+  </p>
+
+  <h3>1 · Sólo la lista</h3>
+  <p>
+    El piso: un <code>&lt;ul&gt;</code> real con filas y divisores, sin un solo slot. Ya hay altura
+    de fila, inset y hairlines, y el lector oye <em>lista de 5 ítems</em>. Muchas listas no necesitan
+    nada más que esto.
+  </p>
+  <Showcase code={plainHtml} react={plainReact} lang="html" label="1 · Sólo la lista" note="ul + item">
+    <div class="sk-list-demo"><Fragment set:html={plainHtml} /></div>
+  </Showcase>
+
+  <h3>2 · Título y descripción</h3>
+  <p>
+    Entra <code>sk-list__content</code>, la columna que flexiona. El título y la descripción se
+    apilan, y es la única parte de la fila que se encoge: por eso un título largo corta ahí y no
+    empuja la fila más ancha que su contenedor.
+  </p>
+  <Showcase code={titledHtml} react={titledReact} lang="html" label="2 · Título y descripción" note="+ content">
+    <div class="sk-list-demo"><Fragment set:html={titledHtml} /></div>
+  </Showcase>
+
+  <h3>3 · Media al inicio</h3>
+  <p>
+    Entra <code>sk-list__leading</code>: un icono, un avatar o un número. Es
+    <strong>decorativo</strong>, no nombra la fila — quien la nombra es el título. Un slot vacío no
+    existe para el layout, así que las filas sin icono no arrastran padding fantasma.
+  </p>
+  <Showcase code={leadingHtml} react={leadingReact} lang="html" label="3 · Media al inicio" note="+ leading (Icon)">
+    <div class="sk-list-demo"><Fragment set:html={leadingHtml} /></div>
+  </Showcase>
+
+  <h3>4 · Meta al final</h3>
+  <p>
+    Entra <code>sk-list__trailing</code> y la fila queda completa. Se ancla al final con
+    <code>margin-inline-start: auto</code> y trae <code>tabular-nums</code>, así que las cifras de
+    filas distintas se alinean en columna. Acepta texto o un componente, como un Badge.
+  </p>
+  <Showcase code={trailingHtml} react={trailingReact} lang="html" label="4 · Meta al final" note="+ trailing + Badge">
+    <div class="sk-list-demo"><Fragment set:html={trailingHtml} /></div>
+  </Showcase>
+
+  <h3>5 · La fila actúa</h3>
+  <p>
+    Misma anatomía, ahora envuelta en un <code>a[href]</code> real con
+    <code>sk-list__action sk-interactive</code>. El foco y el teclado son nativos, y el hover, foco y
+    press vienen del <a href="/state-layer">state layer</a>. El <code>&lt;li&gt;</code> pasa a ser
+    sólo el que lleva el divisor.
+  </p>
+  <Showcase code={linksHtml} react={linksReact} lang="html" label="5 · La fila actúa" note="+ a[href] + state layer">
+    <div class="sk-list-demo"><Fragment set:html={linksHtml} /></div>
+  </Showcase>
+
+  <h3>6 · Todo junto</h3>
+  <p>
+    El techo de la escalera: filas interactivas, dos piezas en el trailing, densidad
+    <code>compact</code> y una fila deshabilitada. Nada nuevo del componente, sólo lo anterior
+    combinado.
+  </p>
+  <Showcase code={fullHtml} react={fullReact} lang="html" label="6 · Todo junto" note="+ density + fila deshabilitada">
+    <div class="sk-list-demo"><Fragment set:html={fullHtml} /></div>
+  </Showcase>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+  <CodeBlock code={styles} label="CSS" />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>
+      Raíz: <code>&lt;ul class="sk-list"&gt;</code> o <code>&lt;ol&gt;</code>. Cada fila es un
+      <code>&lt;li class="sk-list__item"&gt;</code>.
+    </li>
+    <li>
+      Anatomía de fila: <code>sk-list__leading</code>, <code>sk-list__content</code> (con
+      <code>sk-list__title</code> y <code>sk-list__description</code>) y
+      <code>sk-list__trailing</code>. Todas opcionales; compón las que uses.
+    </li>
+    <li>
+      Secuencias de instrucciones: usa <a href="/componentes/process-list">ProcessList</a>, que
+      conserva un <code>&lt;ol&gt;</code> y posee los marcadores, conectores y contenido de cada paso.
+    </li>
+    <li>
+      Fila funcional: un <code>&lt;a&gt;</code>/<code>&lt;button&gt;</code> con
+      <code>sk-list__action sk-interactive</code> dentro del <code>&lt;li&gt;</code>. Llena la fila y
+      hereda foco, teclado y state layer.
+    </li>
+    <li>
+      Estado persistente: ninguno. List no modela selección ni destino actual; para navegación
+      activa usa <a href="/nav-list">Nav list</a>.
+    </li>
+    <li>
+      Variantes: <code>data-density="compact"</code> y <code>data-dividers="none"</code>.
+    </li>
+    <li>Sin inicialización: el comportamiento es del <code>&lt;a&gt;</code>/<code>&lt;button&gt;</code> nativo.</li>
+  </ul>
+
+  <StylingHooks
+    groups={[
+      {
+        file: "components/list.css",
+        probe: "sk-list",
+      },
+    ]}
+  />
+</Base>
+
+<style is:global>
+  /* Una lista la dimensiona su host: sin ancho, el stage es flex y cada `<ul>` se encoge al ancho de
+     su fila más larga, así que los seis ejemplos salían de anchos distintos y el paso 1 quedaba en
+     77px. El demo le presta el ancho que tendría una columna real; el código enseña el markup sin
+     ese ancho, que es del consumidor.
+     `is:global`: el HTML autorado vive dentro del srcdoc y no lleva el atributo de scope de Astro. */
+  .sk-list-demo {
+    inline-size: min(100%, 34rem);
+  }
+</style>

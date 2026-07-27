@@ -134,7 +134,7 @@ export const SidebarTrigger = forwardRef<HTMLButtonElement, SidebarTriggerProps>
       aria-controls={contentId}
       aria-expanded={!collapsed}
       aria-label={label}
-      className={cx(`${sidebarParts.trigger} ds-interactive`, className)}
+      className={cx(`${sidebarParts.trigger} sk-interactive`, className)}
       onClick={(event) => {
         onClick?.(event);
         if (!event.defaultPrevented) toggle();

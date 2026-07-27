@@ -1,40 +1,75 @@
 import { buttonParts, type ButtonSize, type ButtonVariant } from "@skryensya/core/button";
-import { type ButtonHTMLAttributes, type ReactNode } from "react";
+import { type AnchorHTMLAttributes, type ButtonHTMLAttributes, type ReactNode } from "react";
 
-export type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> & {
+type ButtonAppearanceProps = {
   children: ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
   /**
-   * The icon-only shape: a square holding one glyph. The child is the icon (decorative, the name is
-   * the button's). An icon-only button has no visible text, so it MUST be given an `aria-label` or
-   * `aria-labelledby`; without one it renders an unnamed control, which this refuses in development.
+   * The icon-only shape: a square holding one decorative glyph. With no visible text, the host
+   * MUST carry `aria-label` or `aria-labelledby`.
    */
   iconOnly?: boolean;
 };
 
-export function Button({ children, className, disabled, iconOnly, type = "button", variant = "neutral", size, ...props }: ButtonProps) {
-  const classes = className ? `${buttonParts.root} ds-interactive ${className}` : `${buttonParts.root} ds-interactive`;
+export type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> &
+  ButtonAppearanceProps;
 
-  // import.meta.env is a bundler global (Vite/vitest); typed via cast so tsc's NodeNext build accepts
-  // it and it is simply undefined, falsy, no warning, anywhere that does not define it.
-  const dev = (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV;
-  if (dev && iconOnly && !props["aria-label"] && !props["aria-labelledby"]) {
-    // Same failure shape as the enhancer's missing-class throw: loud, and with the fix in the message.
-    // A warning rather than a throw because a missing label degrades, the button still works, it is
-    // just unnamed, where a missing class means nothing renders at all.
-    console.error(
-      "<Button iconOnly> has no accessible name. A square button shows no text, so give it " +
-        'aria-label="…" (or aria-labelledby). The icon child is decorative, the name is the button\'s.',
-    );
-  }
+export type ButtonLinkProps = Omit<
+  AnchorHTMLAttributes<HTMLAnchorElement>,
+  "children" | "href"
+> &
+  ButtonAppearanceProps & {
+    href: string;
+  };
+
+type BundlerImportMeta = ImportMeta & { env?: { DEV?: boolean } };
+
+// Vite supplies import.meta.env; plain Node leaves it absent.
+const moduleMeta = import.meta as BundlerImportMeta;
+const dev = moduleMeta.env?.DEV;
+
+function buttonClasses(className?: string): string {
+  const base = `${buttonParts.root} ${buttonParts.interactive}`;
+  return className ? `${base} ${className}` : base;
+}
+
+function warnMissingAccessibleName(
+  component: "Button" | "ButtonLink",
+  iconOnly: boolean | undefined,
+  label: string | undefined,
+  labelledBy: string | undefined,
+): void {
+  if (!dev || !iconOnly || label || labelledBy) return;
+  console.error(
+    `<${component} iconOnly> has no accessible name. A square control shows no text, so give it ` +
+      'aria-label="…" (or aria-labelledby). The icon child is decorative; the host owns the name.',
+  );
+}
+
+export function Button({
+  children,
+  className,
+  disabled,
+  iconOnly,
+  type = "button",
+  variant = "neutral",
+  size = "md",
+  ...props
+}: ButtonProps) {
+  warnMissingAccessibleName(
+    "Button",
+    iconOnly,
+    props["aria-label"],
+    props["aria-labelledby"],
+  );
 
   return (
     <button
       {...props}
       aria-disabled={disabled ? "true" : props["aria-disabled"]}
-      className={classes}
-      data-ds-button=""
+      className={buttonClasses(className)}
+      data-sk-button=""
       data-icon-only={iconOnly ? "" : undefined}
       data-size={size}
       data-variant={variant}
@@ -43,5 +78,36 @@ export function Button({ children, className, disabled, iconOnly, type = "button
     >
       {children}
     </button>
+  );
+}
+
+export function ButtonLink({
+  children,
+  className,
+  href,
+  iconOnly,
+  variant = "neutral",
+  size = "md",
+  ...props
+}: ButtonLinkProps) {
+  warnMissingAccessibleName(
+    "ButtonLink",
+    iconOnly,
+    props["aria-label"],
+    props["aria-labelledby"],
+  );
+
+  return (
+    <a
+      {...props}
+      className={buttonClasses(className)}
+      data-sk-button=""
+      data-icon-only={iconOnly ? "" : undefined}
+      data-size={size}
+      data-variant={variant}
+      href={href}
+    >
+      {children}
+    </a>
   );
 }

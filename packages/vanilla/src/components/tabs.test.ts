@@ -10,13 +10,13 @@ function mount(html: string): HTMLElement {
   return root;
 }
 
-const markup = `<section class="ds-tabs" data-ds-tabs id="preferences" data-value="general">
-  <div class="ds-tabs__list" data-ds-tabs-list>
-    <button class="ds-tabs__trigger" data-ds-tabs-trigger data-value="general">General</button>
-    <button class="ds-tabs__trigger" data-ds-tabs-trigger data-value="security">Security</button>
+const markup = `<section class="sk-tabs" data-sk-tabs id="preferences" data-value="general">
+  <div class="sk-tabs__list" data-sk-tabs-list>
+    <button class="sk-tabs__trigger" data-sk-tabs-trigger data-value="general">General</button>
+    <button class="sk-tabs__trigger" data-sk-tabs-trigger data-value="security">Security</button>
   </div>
-  <section class="ds-tabs__content" data-ds-tabs-content data-value="general">General panel</section>
-  <section class="ds-tabs__content" data-ds-tabs-content data-value="security">Security panel</section>
+  <section class="sk-tabs__content" data-sk-tabs-content data-value="general">General panel</section>
+  <section class="sk-tabs__content" data-sk-tabs-content data-value="security">Security panel</section>
 </section>`;
 
 describe("Tabs Vanilla contracts", () => {
@@ -27,10 +27,10 @@ describe("Tabs Vanilla contracts", () => {
     // A second direct mount does not remount this authored root.
     expect(mountTabs(document)).toBe(0);
 
-    const general = root.querySelector('[data-ds-tabs-trigger][data-value="general"]') as HTMLButtonElement;
-    const security = root.querySelector('[data-ds-tabs-trigger][data-value="security"]') as HTMLButtonElement;
-    const generalPanel = root.querySelector('[data-ds-tabs-content][data-value="general"]') as HTMLElement;
-    const securityPanel = root.querySelector('[data-ds-tabs-content][data-value="security"]') as HTMLElement;
+    const general = root.querySelector('[data-sk-tabs-trigger][data-value="general"]') as HTMLButtonElement;
+    const security = root.querySelector('[data-sk-tabs-trigger][data-value="security"]') as HTMLButtonElement;
+    const generalPanel = root.querySelector('[data-sk-tabs-content][data-value="general"]') as HTMLElement;
+    const securityPanel = root.querySelector('[data-sk-tabs-content][data-value="security"]') as HTMLElement;
 
     expect(general.getAttribute("role")).toBe("tab");
     expect(general.getAttribute("aria-selected")).toBe("true");
@@ -43,11 +43,11 @@ describe("Tabs Vanilla contracts", () => {
   it("selects a tab on click, toggling panels and emitting the value", () => {
     const root = mount(markup);
     const handler = vi.fn();
-    root.addEventListener("ds-value-change", handler);
+    root.addEventListener("sk-value-change", handler);
     mountTabs(root);
-    const security = root.querySelector('[data-ds-tabs-trigger][data-value="security"]') as HTMLButtonElement;
-    const generalPanel = root.querySelector('[data-ds-tabs-content][data-value="general"]') as HTMLElement;
-    const securityPanel = root.querySelector('[data-ds-tabs-content][data-value="security"]') as HTMLElement;
+    const security = root.querySelector('[data-sk-tabs-trigger][data-value="security"]') as HTMLButtonElement;
+    const generalPanel = root.querySelector('[data-sk-tabs-content][data-value="general"]') as HTMLElement;
+    const securityPanel = root.querySelector('[data-sk-tabs-content][data-value="security"]') as HTMLElement;
 
     fireEvent.click(security);
     flushSync();
@@ -62,8 +62,8 @@ describe("Tabs Vanilla contracts", () => {
   it("moves focus across triggers with ArrowRight (roving tabindex)", async () => {
     const root = mount(markup);
     mountTabs(root);
-    const general = root.querySelector('[data-ds-tabs-trigger][data-value="general"]') as HTMLButtonElement;
-    const security = root.querySelector('[data-ds-tabs-trigger][data-value="security"]') as HTMLButtonElement;
+    const general = root.querySelector('[data-sk-tabs-trigger][data-value="general"]') as HTMLButtonElement;
+    const security = root.querySelector('[data-sk-tabs-trigger][data-value="security"]') as HTMLButtonElement;
 
     general.focus();
     fireEvent.keyDown(general, { key: "ArrowRight" });

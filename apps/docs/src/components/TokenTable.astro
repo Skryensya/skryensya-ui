@@ -3,7 +3,7 @@
  * The token reference, both forms of every token, from the two places that actually know.
  *
  * BUILD TIME (this frontmatter): the parser reads the .css and gives the AUTHORED form, 
- * `round(calc(var(--scale-space-4) * var(--ds-density)), 2px)`, plus the tier. The var() chain
+ * `round(calc(var(--scale-space-4) * var(--sk-density)), 2px)`, plus the tier. The var() chain
  * IS the tier architecture; showing only a resolved literal would hide the thing the system is
  * about. It is the same parser the validator runs, so the reference cannot describe a system
  * the rules aren't checking.
@@ -15,11 +15,13 @@
  * Together: ADR-7's "we need both forms per token", which outlived the build system that
  * prompted it.
  */
-import { PROBES, probeProp, tokens } from "../lib/tokens";
-/* The ds-input + ds-field STRUCTURE (field.css/input.css ship only hooks). The select is already
+import { groupedTokens, PROBES, probeProp, tokens } from "../lib/tokens";
+import { getLocale, useTranslations } from "../i18n";
+/* The sk-input + sk-field STRUCTURE (field.css/input.css ship only hooks). The select is already
  * painted in site.css; this is what the search field and the field labels were missing here, which is
  * why the input rendered as a bare native box next to the styled select. */
-import "../examples/input.css";
+
+const tr = useTranslations(getLocale(Astro.url));
 
 const toneByTier = {
   primitive: "warning",
@@ -27,96 +29,245 @@ const toneByTier = {
   component: "success",
 } as const;
 
-const rows = tokens.map((t) => ({
-  ...t,
-  probe: PROBES[t.file] ?? "",
-  prop: probeProp(t.value),
+const tierLabel = {
+  primitive: tr("tokens.primitive"),
+  semantic: tr("tokens.semantic"),
+  component: tr("tokens.component"),
+} as const;
+
+/*
+ * The corpus, shelved by family (lib/tokens.ts). One Table per family rather than one table with
+ * invented section rows: a family is then a real, self-contained table — captioned, with its own
+ * column headers — built from the component's documented anatomy and nothing else.
+ */
+const sections = groupedTokens.map(({ group, tokens: groupTokens }) => ({
+  group,
+  rows: groupTokens.map((t) => ({
+    ...t,
+    probe: PROBES[t.file] ?? "",
+    prop: probeProp(t.value),
+  })),
+}));
+
+/** The group picker is itself grouped: families under the tier that owns them. */
+const tiers = (["primitive", "semantic", "component"] as const).map((tier) => ({
+  tier,
+  label: tierLabel[tier],
+  groups: sections.filter((s) => s.group.tier === tier),
+  count: tokens.filter((t) => t.tier === tier).length,
 }));
 
 const counts = {
-  primitive: rows.filter((r) => r.tier === "primitive").length,
-  semantic: rows.filter((r) => r.tier === "semantic").length,
-  component: rows.filter((r) => r.tier === "component").length,
+  primitive: tiers[0].count,
+  semantic: tiers[1].count,
+  component: tiers[2].count,
 };
 ---
 
 <div class="filters">
-  <div class="ds-field filters__search">
-    <label class="ds-field__label" for="token-filter">Buscar</label>
+  <div class="sk-field filters__search">
+    <label class="sk-field__label" for="token-filter">{tr("tokens.search")}</label>
     <input
-      class="ds-input"
+      class="sk-input"
       type="search"
       id="token-filter"
-      placeholder="Nombre o valor…"
+      placeholder={tr("tokens.searchPlaceholder")}
       autocomplete="off"
     />
   </div>
 
-  <div class="ds-field filters__tier">
-    <label class="ds-field__label" for="tier-filter">Tier</label>
-    <select class="ds-select-native" id="tier-filter">
-      <option value="">Todos</option>
+  <div class="sk-field filters__tier">
+    <label class="sk-field__label" for="tier-filter">Tier</label>
+    <select class="sk-select-native" id="tier-filter">
+      <option value="">{tr("tokens.all")}</option>
       <option value="primitive">primitive · {counts.primitive}</option>
       <option value="semantic">semantic · {counts.semantic}</option>
       <option value="component">component · {counts.component}</option>
     </select>
   </div>
 
-  <span class="filters__count" id="token-count" aria-live="polite">{rows.length} tokens</span>
-</div>
-
-<div class="ds-table-scroll">
-  <table class="ds-table">
-    <thead>
-      <tr>
-        <th>Token</th>
-        <th>Tier</th>
-        <th>Valor autoral <span class="count">· build</span></th>
-        <th>Valor usado <span class="count">· runtime</span></th>
-      </tr>
-    </thead>
-    <tbody id="token-rows">
+  <div class="sk-field filters__group">
+    <label class="sk-field__label" for="group-filter">{tr("tokens.group")}</label>
+    <select class="sk-select-native" id="group-filter">
+      <option value="">{tr("tokens.all")}</option>
       {
-        rows.map((r) => (
-          <tr data-row-tier={r.tier} data-row-name={r.name}>
-            <td class="mono">{r.name}</td>
-            <td>
-              <span class="ds-badge" data-tone={toneByTier[r.tier]}>
-                {r.tier}
-              </span>
-            </td>
-            <td class="mono">{r.value}</td>
-            <td class="mono" data-token={r.name} data-prop={r.prop} data-probe={r.probe}>
-              …
-            </td>
-          </tr>
+        tiers.map((t) => (
+          <optgroup label={`${t.label} · ${t.count}`}>
+            {t.groups.map((s) => (
+              <option value={s.group.id}>
+                {s.group.label} · {s.rows.length}
+              </option>
+            ))}
+          </optgroup>
         ))
       }
-    </tbody>
-  </table>
+    </select>
+  </div>
+
+  <span
+    class="filters__count"
+    id="token-count"
+    aria-live="polite"
+    data-group-one={tr("tokens.groupCount", { count: "{count}" })}
+    data-group-many={tr("tokens.groups", { count: "{count}" })}
+  >{tokens.length} tokens</span>
 </div>
 
+{/*
+ * One family, one Table — the documented anatomy, nothing invented: caption, head, body, row,
+ * header, cell, plus `data-layout="fixed"` so 90 separate tables agree on their column tracks.
+ * The family title is the table's own <caption>, which the component already renders outside the
+ * frame; the tier is a real heading in the document, above the tables it owns.
+ */}
+{
+  tiers.map((t) => (
+    <section class="token-tier" data-tier-section={t.tier}>
+      <h2 class="token-tier__title" id={`tier-${t.tier}`}>
+        <span class="sk-badge" data-tone={toneByTier[t.tier]}>
+          {t.tier}
+        </span>
+        {t.label}
+        <span class="token-tier__count">
+          {t.count} tokens · {t.groups.length === 1 ? tr("tokens.groupCount", { count: "1" }) : tr("tokens.groups", { count: String(t.groups.length) })}
+        </span>
+      </h2>
+
+      {t.groups.map((s) => (
+        <div
+          class="sk-table-scroll token-group"
+          data-group={s.group.id}
+          data-group-tier={s.group.tier}
+        >
+          <table class="sk-table" data-layout="fixed">
+            <caption class="sk-table__caption">
+              <span class="token-group__label">{s.group.label}</span>
+              <span class="token-group__count">{s.rows.length}</span>
+              <span class="token-group__source mono">{s.group.source}</span>
+            </caption>
+            <thead class="sk-table__head">
+              <tr class="sk-table__row">
+                <th class="sk-table__header" scope="col">
+                  Token
+                </th>
+                <th class="sk-table__header" scope="col">
+                  Tier
+                </th>
+                <th class="sk-table__header" scope="col">
+                  Valor autoral <span class="count">· build</span>
+                </th>
+                <th class="sk-table__header" scope="col">
+                  Valor usado <span class="count">· runtime</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="sk-table__body">
+              {s.rows.map((r) => (
+                <tr class="sk-table__row" data-row-tier={r.tier} data-row-name={r.name}>
+                  {/* The name identifies the row, so it is the row's header, not a cell. */}
+                  <th class="sk-table__header mono" scope="row">
+                    {r.name}
+                  </th>
+                  <td class="sk-table__cell">
+                    <span class="sk-badge" data-tone={toneByTier[r.tier]}>
+                      {r.tier}
+                    </span>
+                  </td>
+                  <td class="sk-table__cell mono" data-authored>
+                    {r.value}
+                  </td>
+                  <td
+                    class="sk-table__cell mono"
+                    data-token={r.name}
+                    data-prop={r.prop}
+                    data-probe={r.probe}
+                  >
+                    …
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+    </section>
+  ))
+}
+
 <script>
-  const tbody = document.getElementById("token-rows")!;
-  const rows = Array.from(tbody.querySelectorAll("tr"));
   const search = document.getElementById("token-filter") as HTMLInputElement;
   const tierSel = document.getElementById("tier-filter") as HTMLSelectElement;
+  const groupSel = document.getElementById("group-filter") as HTMLSelectElement;
   const count = document.getElementById("token-count")!;
+  const groupOne = count.dataset.groupOne ?? "{count} group";
+  const groupMany = count.dataset.groupMany ?? "{count} groups";
+
+  /* One table per family: filtering works block by block, so a family with no matching row hides
+     as a unit — caption and column header included — instead of leaving a title over nothing. */
+  const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-group]")).map(
+    (block) => ({
+      block,
+      rows: Array.from(block.querySelectorAll<HTMLTableRowElement>("tr[data-row-name]")),
+    }),
+  );
+
+  const tierSections = Array.from(document.querySelectorAll<HTMLElement>("[data-tier-section]"));
+
+  /* Name + authored value, read by data attribute rather than column index: a column added or moved
+     turns an index-based lookup into a silent search over the tier badge. */
+  const haystack = (row: HTMLTableRowElement) =>
+    (row.dataset.rowName + " " + (row.querySelector("[data-authored]")?.textContent ?? ""))
+      .toLowerCase();
 
   function filter() {
     const q = search.value.trim().toLowerCase();
     const tier = tierSel.value;
+    const group = groupSel.value;
     let shown = 0;
-    for (const row of rows) {
-      const hay = (row.dataset.rowName! + " " + row.children[2].textContent).toLowerCase();
-      const ok = (!q || hay.includes(q)) && (!tier || row.dataset.rowTier === tier);
-      row.hidden = !ok;
-      if (ok) shown++;
+
+    for (const section of sections) {
+      const groupOk =
+        (!tier || section.block.dataset.groupTier === tier) &&
+        (!group || section.block.dataset.group === group);
+
+      let visibleHere = 0;
+      for (const row of section.rows) {
+        const ok = groupOk && (!q || haystack(row).includes(q));
+        row.hidden = !ok;
+        if (ok) visibleHere++;
+      }
+
+      section.block.hidden = visibleHere === 0;
+      shown += visibleHere;
     }
-    count.textContent = `${shown} token${shown === 1 ? "" : "s"}`;
+
+    // A tier heading with every family below it filtered away is a title over nothing.
+    for (const tierSection of tierSections) {
+      tierSection.hidden = !sections.some(
+        (s) => !s.block.hidden && s.block.dataset.groupTier === tierSection.dataset.tierSection,
+      );
+    }
+
+    const groups = sections.filter((s) => !s.block.hidden).length;
+    const groupLabel = (groups === 1 ? groupOne : groupMany).replace("{count}", String(groups));
+    count.textContent =
+      `${shown} token${shown === 1 ? "" : "s"}` +
+      (shown ? ` · ${groupLabel}` : "");
   }
 
+  /* Picking a family implies its tier: leaving a contradictory tier selected would filter to zero
+     rows and read as a broken table rather than as two filters disagreeing. */
+  groupSel.addEventListener("change", () => {
+    const selected = sections.find((s) => s.block.dataset.group === groupSel.value);
+    if (selected) tierSel.value = selected.block.dataset.groupTier ?? "";
+    filter();
+  });
+
+  tierSel.addEventListener("change", () => {
+    const selected = sections.find((s) => s.block.dataset.group === groupSel.value);
+    if (selected && selected.block.dataset.groupTier !== tierSel.value) groupSel.value = "";
+    filter();
+  });
+
   search.addEventListener("input", filter);
-  tierSel.addEventListener("change", filter);
   filter();
 </script>

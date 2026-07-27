@@ -2,14 +2,14 @@
  * STATE LAYER, the system's interaction mechanism.
  *
  * NOT opt-in: this ships in the base bundle (tokens.scss imports it), because interaction
- * feedback is universal, a component that rolls its own hover/press colours is re-inventing
+ * feedback is universal, a component that rolls its own hover/press colors is re-inventing
  * this. It is the single, canonical way every component expresses state. The ::before is inert
- * until an element carries `ds-interactive`, so it costs nothing on non-interactive elements.
+ * until an element carries `sk-interactive`, so it costs nothing on non-interactive elements.
  *
- * Add `ds-interactive` to any interactive element to give it the four-layer composition,
+ * Add `sk-interactive` to any interactive element to give it the four-layer composition,
  * bottom to top:
  *   1. container background (the element's own `background`)
- *   2. state layer, this ::before, a SOLID currentColor fill at a per-state opacity
+ *   2. state layer, this ::before, currentColor mixed to a per-state alpha
  *   3. content, text / icons (untouched; the layer sits behind it)
  *   4. focus ring, the independent focus indicator (outline)
  *
@@ -24,29 +24,42 @@
  * when several match, plain SOURCE ORDER decides, later wins. The rules below are written
  * in ascending priority, so the highest-priority match is always last.
  *
- * :has()/:where() variants let one class cover both a native control (`.ds-interactive` IS
- * the button) and a wrapper around a hidden input (`.ds-interactive` wraps a checkbox), so
+ * :has()/:where() variants let one class cover both a native control (`.sk-interactive` IS
+ * the button) and a wrapper around a hidden input (`.sk-interactive` wraps a checkbox), so
  * the pattern is identical across Button, List item, Tab, Checkbox, Switch, …
  */
+@property --state-layer-opacity {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
 @layer components {
-  .ds-interactive {
+  .sk-interactive {
     position: relative;
     isolation: isolate;
     /* runtime slot; every state rule reassigns it, default = no layer */
     --state-layer-opacity: 0;
   }
 
-  .ds-interactive::before {
+  .sk-interactive::before {
     content: "";
     position: absolute;
     inset: 0;
     z-index: var(--z-below); /* above the container background, below the content */
     border-radius: inherit; /* match rounded corners */
-    background: var(--state-layer-color);
-    opacity: var(--state-layer-opacity);
+    background: color-mix(
+      in srgb,
+      var(--state-layer-color) calc(var(--state-layer-opacity) * 100%),
+      transparent
+    );
+    box-shadow: inset 0 0 0
+      calc(var(--state-layer-keyline-scale) * var(--state-layer-opacity))
+      var(--state-layer-color);
     pointer-events: none; /* never blocks the component's own events */
-    /* hover/press feedback = the feedback intent; one token, retunable system-wide */
-    transition: opacity var(--motion-feedback-duration) var(--motion-feedback-easing);
+    /* Registering the slot lets the alpha mix and HC keyline animate together. */
+    transition: --state-layer-opacity var(--motion-feedback-duration)
+      var(--motion-feedback-easing);
   }
 
   /* ── priority ladder, ascending; later rule wins at equal specificity ────── */
@@ -54,54 +67,60 @@
   /* selected, the base rung. A persistent tint, deliberately LOWEST so hover/press
    * replace it. Selection is ALSO carried by an independent indicator (check, fill,
    * border), so replacing its layer on hover never hides the selected state. */
-  .ds-interactive[aria-selected="true"],
-  .ds-interactive[aria-checked="true"],
-  .ds-interactive[data-selected="true"],
-  .ds-interactive:has(:checked) {
+  .sk-interactive[aria-selected="true"],
+  .sk-interactive[aria-checked="true"],
+  .sk-interactive[data-selected="true"],
+  .sk-interactive:has(:checked) {
     --state-layer-opacity: var(--state-layer-selected-opacity);
   }
 
-  .ds-interactive:hover,
-  .ds-interactive:has(:hover) {
-    --state-layer-opacity: var(--state-layer-hover-opacity);
+  /* any-hover, no hover: en un híbrido con mouse conectado el feedback se conserva.
+   * Sin el guard, WebKit deja el hover pegado tras un tap y el tinte residual se lee
+   * como "sigue activo" en lo que no navega (checkbox, tile). El @media no cambia
+   * especificidad ni orden: focus-visible y active siguen ganando más abajo. */
+  @media (any-hover: hover) {
+    .sk-interactive:hover,
+    .sk-interactive:has(:hover) {
+      --state-layer-opacity: var(--state-layer-hover-opacity);
+    }
   }
 
-  .ds-interactive:focus-visible,
-  .ds-interactive:has(:focus-visible) {
+  .sk-interactive:focus-visible,
+  .sk-interactive:has(:focus-visible) {
     --state-layer-opacity: var(--state-layer-focus-opacity);
   }
 
-  .ds-interactive:active,
-  .ds-interactive:has(:active) {
+  .sk-interactive:active,
+  .sk-interactive:has(:active) {
     --state-layer-opacity: var(--state-layer-pressed-opacity);
   }
 
-  .ds-interactive[data-dragging="true"] {
+  .sk-interactive[data-dragging="true"] {
     --state-layer-opacity: var(--state-layer-dragged-opacity);
   }
 
   /* disabled, highest. Forces the layer to 0, so no state feedback on a disabled
    * control. The disabled LOOK (dim bg/fg) comes from the component's own tokens, not
    * from this layer, the layer must never be the sole disabled cue. */
-  .ds-interactive:disabled,
-  .ds-interactive[aria-disabled="true"],
-  .ds-interactive:has(:disabled) {
+  .sk-interactive:disabled,
+  .sk-interactive[aria-disabled="true"],
+  .sk-interactive:has(:disabled) {
     --state-layer-opacity: var(--state-layer-disabled-opacity);
   }
 
   /* ── independent focus indicator (a11y: never rely on the layer alone) ────── */
-  .ds-interactive:focus-visible,
-  .ds-interactive:has(:focus-visible) {
+  .sk-interactive:focus-visible,
+  .sk-interactive:has(:focus-visible) {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: var(--focus-ring-offset);
   }
-  .ds-interactive[aria-disabled="true"] {
+  .sk-interactive[aria-disabled="true"] {
     outline: none;
   }
 
   /* ── reduced motion: the layer still appears, just without the fade ───────── */
   @media (prefers-reduced-motion: reduce) {
-    .ds-interactive::before {
+    .sk-interactive::before {
       transition: none;
     }
   }

@@ -13,9 +13,9 @@ describe("Select", () => {
     const onValueChange = vi.fn();
     const ui = render(
       <Select
-        indicator={<svg className="ds-icon" data-testid="chevron-down" />}
-        openIndicator={<svg className="ds-icon" data-testid="chevron-up" />}
-        itemIndicator={<svg className="ds-icon" data-testid="check" />}
+        indicator={<svg className="sk-icon" data-testid="chevron-down" />}
+        openIndicator={<svg className="sk-icon" data-testid="chevron-up" />}
+        itemIndicator={<svg className="sk-icon" data-testid="check" />}
         label="Brand"
         name="brand"
         options={options}
@@ -23,11 +23,11 @@ describe("Select", () => {
       />,
     );
 
-    expect(ui.getByTestId("chevron-down").classList).toContain("ds-icon");
-    expect(ui.getByTestId("chevron-up").classList).toContain("ds-icon");
+    expect(ui.getByTestId("chevron-down").classList).toContain("sk-icon");
+    expect(ui.getByTestId("chevron-up").classList).toContain("sk-icon");
     fireEvent.click(ui.getByRole("combobox", { name: "Brand" }));
     expect(ui.getAllByTestId("check")).toHaveLength(options.length);
-    expect(ui.getAllByTestId("check").every((icon) => icon.classList.contains("ds-icon"))).toBe(true);
+    expect(ui.getAllByTestId("check").every((icon) => icon.classList.contains("sk-icon"))).toBe(true);
     fireEvent.click(await ui.findByRole("option", { name: "Ember" }));
 
     await waitFor(() => expect(onValueChange).toHaveBeenCalledWith(expect.objectContaining({ value: ["ember"] })));

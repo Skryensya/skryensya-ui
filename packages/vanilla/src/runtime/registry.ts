@@ -1,42 +1,171 @@
-import { mountAccordion } from "../components/accordion.js";
-import { mountButton } from "../components/button.js";
-import { mountExpandableTile } from "../components/expandable-tile.js";
-import { mountSelect } from "../components/select.js";
-import { mountSegmented } from "../components/segmented.js";
-import { mountSidebar } from "../components/sidebar.js";
-import { mountSlider } from "../components/slider.js";
-import { mountTabs } from "../components/tabs.js";
-import { mountTileCheckbox } from "../components/tile-checkbox.js";
-import { mountTileRadioGroup } from "../components/tile-radio-group.js";
-import { mountToast } from "../components/toast.js";
-import { mountVaul } from "../components/vaul.js";
+import type { Mount } from "./svelte-hydrate.js";
+
+type Registration = {
+  selector: string;
+  load: () => Promise<Mount>;
+};
 
 /*
- * One auto-loader, the same small `mount(root?) → count` interface for every enhancer.
+ * The auto-loader is a selector → dynamic-import manifest. Importing `@skryensya/vanilla/auto`
+ * loads only this table; an enhancer module (and its machine) crosses the network only when its
+ * authored root is present. Mounting remains deterministic: modules load concurrently, then their
+ * small `mount(root?) → count` interfaces run in registry order.
  *
- * Each mount also has its own entry point. This registry deliberately knows only their public mount
- * functions: adding a component here makes it eligible for `initComponents()`, never a prerequisite
- * for importing that one component by itself.
+ * CodePreview and ComponentPreview are deliberately absent. They are opt-in documentation surfaces
+ * mounted through their explicit subpaths, never part of the default application runtime.
  */
-type Mount = (root?: Document | Element) => number;
-
-const mounts: readonly Mount[] = [
-  mountButton,
-  mountSelect,
-  mountSegmented,
-  mountSidebar,
-  mountSlider,
-  mountToast,
-  mountVaul,
-  mountTabs,
-  mountAccordion,
-  mountExpandableTile,
-  mountTileCheckbox,
-  mountTileRadioGroup,
+// Runtime plugin loading is intentional: static imports would defeat selector gating and ship every enhancer.
+const registrations: readonly Registration[] = [
+  {
+    selector: "[data-sk-button]",
+    load: async () => (await import("../components/button.js")).mountButton,
+  },
+  {
+    selector: "[data-sk-copy-button]",
+    load: async () =>
+      (await import("../components/copy-button.js")).mountCopyButton,
+  },
+  {
+    selector: "[data-sk-theme-toggle]",
+    load: async () =>
+      (await import("../components/theme-toggle.js")).mountThemeToggle,
+  },
+  {
+    selector: "[data-sk-select]",
+    load: async () => (await import("../components/select.js")).mountSelect,
+  },
+  {
+    selector: "[data-sk-flyout]",
+    load: async () => (await import("../components/flyout.js")).mountFlyout,
+  },
+  {
+    selector: "[data-sk-segmented]",
+    load: async () =>
+      (await import("../components/segmented.js")).mountSegmented,
+  },
+  {
+    selector: "[data-sk-stat][data-animate]",
+    load: async () => (await import("../components/stat.js")).mountStat,
+  },
+  {
+    selector: "[data-sk-sidebar]",
+    load: async () => (await import("../components/sidebar.js")).mountSidebar,
+  },
+  {
+    selector: "[data-sk-slider]",
+    load: async () => (await import("../components/slider.js")).mountSlider,
+  },
+  {
+    selector: "[data-sk-toast]",
+    load: async () => (await import("../components/toast.js")).mountToast,
+  },
+  {
+    selector: "[data-sk-vaul], [data-sk-dialog-vaul]",
+    load: async () => (await import("../components/vaul.js")).mountVaul,
+  },
+  {
+    selector: "[data-sk-tabs]",
+    load: async () => (await import("../components/tabs.js")).mountTabs,
+  },
+  {
+    selector: "[data-sk-carousel]",
+    load: async () => (await import("../components/carousel.js")).mountCarousel,
+  },
+  {
+    selector: "[data-sk-accordion]",
+    load: async () =>
+      (await import("../components/accordion.js")).mountAccordion,
+  },
+  {
+    selector: "[data-sk-expandable-tile]",
+    load: async () =>
+      (await import("../components/expandable-tile.js")).mountExpandableTile,
+  },
+  {
+    selector: "[data-sk-tile-checkbox]",
+    load: async () =>
+      (await import("../components/tile-checkbox.js")).mountTileCheckbox,
+  },
+  {
+    selector: "[data-sk-tile-radio-group]",
+    load: async () =>
+      (await import("../components/tile-radio-group.js")).mountTileRadioGroup,
+  },
+  {
+    selector: "[data-sk-table-pager]",
+    load: async () =>
+      (await import("../components/table-pager.js")).mountTablePager,
+  },
+  {
+    selector: "[data-sk-command-palette]",
+    load: async () =>
+      (await import("../components/command-palette.js")).mountCommandPalette,
+  },
+  {
+    selector: "[data-sk-date-picker]",
+    load: async () => (await import("../components/date-picker.js")).mountDatePicker,
+  },
+  {
+    selector: "[data-sk-calendar]",
+    load: async () => (await import("../components/calendar.js")).mountCalendar,
+  },
+  {
+    selector: "[data-sk-anchor]",
+    load: async () => (await import("../components/tooltip.js")).mountTooltip,
+  },
+  {
+    selector: "[data-sk-menu]",
+    load: async () => (await import("../components/menu.js")).mountMenu,
+  },
+  {
+    selector: "[data-sk-combobox]",
+    load: async () => (await import("../components/combobox.js")).mountCombobox,
+  },
+  {
+    selector: "[data-sk-tree-view]",
+    load: async () =>
+      (await import("../components/tree-view.js")).mountTreeView,
+  },
+  {
+    selector: "[data-sk-number-field]",
+    load: async () =>
+      (await import("../components/number-field.js")).mountNumberField,
+  },
+  {
+    selector: "[data-sk-file-upload]",
+    load: async () =>
+      (await import("../components/file-upload.js")).mountFileUpload,
+  },
+  {
+    selector: "[data-sk-toolbar]",
+    load: async () => (await import("../components/toolbar.js")).mountToolbar,
+  },
 ];
 
-/** Mount every supported enhancer below `root`; each mount remains idempotent. */
-export function initComponents(root: Document | Element = document): number {
+function containsSelector(root: Document | Element, selector: string): boolean {
+  const rootMatches =
+    typeof Element !== "undefined" &&
+    root instanceof Element &&
+    root.matches(selector);
+  return rootMatches || root.querySelector(selector) !== null;
+}
+
+/**
+ * Dynamically import and mount only enhancer types whose authored selectors exist below `root`.
+ * Re-run after inserting DOM; individual mounts remain idempotent.
+ */
+export async function initComponents(
+  target?: Document | Element,
+): Promise<number> {
+  const root =
+    target ?? (typeof document === "undefined" ? undefined : document);
+  if (!root) return 0;
+
+  const matching = registrations.filter(({ selector }) =>
+    containsSelector(root, selector),
+  );
+  const mounts = await Promise.all(matching.map(({ load }) => load()));
+
   let count = 0;
   for (const mount of mounts) count += mount(root);
   return count;

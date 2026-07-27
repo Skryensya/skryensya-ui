@@ -14,7 +14,7 @@ describe("SegmentedControl", () => {
     expect(ui.getByRole("radiogroup")).toBeTruthy();
     const selected = ui.getByRole("radio", { checked: true });
     expect(selected.textContent).toBe("Week");
-    expect(selected.classList.contains("ds-interactive")).toBe(true);
+    expect(selected.classList.contains("sk-interactive")).toBe(true);
   });
 
   it("moves its selection indicator to the newly checked option", () => {
@@ -29,12 +29,11 @@ describe("SegmentedControl", () => {
 
     fireEvent.click(month);
 
-    const indicator = ui.container.querySelector<HTMLElement>(".ds-segmented__indicator");
+    const indicator = ui.container.querySelector<HTMLElement>(".sk-segmented__indicator");
     if (!indicator) throw new Error("Segmented control did not render an indicator");
-    expect(indicator.style.getPropertyValue("--ds-segmented-indicator-x")).toBe("104px");
-    expect(indicator.style.getPropertyValue("--ds-segmented-indicator-y")).toBe("4px");
-    expect(indicator.style.getPropertyValue("--ds-segmented-indicator-width")).toBe("76px");
-    expect(indicator.style.getPropertyValue("--ds-segmented-indicator-height")).toBe("32px");
+    expect(indicator.style.transform).toBe("translate3d(104px, 4px, 0)");
+    expect(indicator.style.inlineSize).toBe("76px");
+    expect(indicator.style.blockSize).toBe("32px");
   });
 
   it("reports the selected value when uncontrolled", () => {

@@ -1,0 +1,90 @@
+/*
+ * TRANSPARENCY, a composable surface treatment.
+ *
+ * One class owns the whole contract: an opaque baseline, progressive backdrop blur when both the
+ * feature and the user preference allow it, and an automatic opaque reduction. Components keep
+ * their anatomy; the class only replaces their surface paint.
+ *
+ *   <article class="sk-box sk-translucent" data-strength="md">…</article>
+ *
+ * `strength` names the visual effect, not accessibility or contrast. A larger strength reveals
+ * more of the backdrop and blurs it further. The opaque surface remains identical at every
+ * strength and is the only surface shown in unsupported browsers or reduced-transparency mode.
+ */
+@layer overrides {
+  .sk-translucent {
+    --sk-translucent-surface: var(--color-bg-surface);
+    --sk-translucent-opacity: 82%;
+    --sk-translucent-blur: 16px;
+    --sk-translucent-saturation: 115%;
+    --sk-translucent-bg: var(--sk-translucent-surface);
+
+    background-color: var(--sk-translucent-bg);
+    backdrop-filter: none;
+  }
+
+  .sk-translucent[data-strength="sm"] {
+    --sk-translucent-opacity: 92%;
+    --sk-translucent-blur: 8px;
+    --sk-translucent-saturation: 105%;
+  }
+
+  .sk-translucent[data-strength="md"],
+  .sk-translucent:not([data-strength]) {
+    --sk-translucent-opacity: 82%;
+    --sk-translucent-blur: 16px;
+    --sk-translucent-saturation: 115%;
+  }
+
+  .sk-translucent[data-strength="lg"] {
+    --sk-translucent-opacity: 70%;
+    --sk-translucent-blur: 24px;
+    --sk-translucent-saturation: 125%;
+  }
+
+  /* Map the common surface hooks so component-owned paint, including Vaul's overpull extension,
+   * reads the same resolved color as the generic class. */
+  .sk-box.sk-translucent { --sk-box-bg: var(--sk-translucent-bg); }
+  .sk-navbar.sk-translucent { --sk-navbar-bg: var(--sk-translucent-bg); }
+  .sk-dialog.sk-translucent { --sk-dialog-bg: var(--sk-translucent-bg); }
+  .sk-sidebar.sk-translucent { --sk-sidebar-bg: var(--sk-translucent-bg); }
+  .sk-vaul.sk-translucent { --sk-vaul-bg: var(--sk-translucent-bg); }
+  .sk-drawer.sk-translucent {
+    --sk-drawer-bg: var(--sk-translucent-bg);
+    --sk-vaul-bg: var(--sk-translucent-bg);
+  }
+
+  @supports (backdrop-filter: blur(1px)) {
+    @media (prefers-reduced-transparency: no-preference) {
+      .sk-translucent {
+        --sk-translucent-bg: color-mix(
+          in oklab,
+          var(--sk-translucent-surface) var(--sk-translucent-opacity),
+          transparent
+        );
+
+        backdrop-filter:
+          blur(var(--sk-translucent-blur))
+          saturate(var(--sk-translucent-saturation));
+      }
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .sk-translucent {
+      --sk-translucent-bg: var(--sk-translucent-surface);
+
+      backdrop-filter: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .sk-translucent {
+      --sk-translucent-surface: Canvas;
+      --sk-translucent-bg: Canvas;
+
+      background-color: Canvas;
+      backdrop-filter: none;
+    }
+  }
+}

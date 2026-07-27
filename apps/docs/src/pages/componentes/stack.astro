@@ -6,16 +6,16 @@ import Showcase from "../../components/Showcase.astro";
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
 const html = `<section
-  class="ds-stack"
+  class="sk-stack"
   data-gap="md"
   data-align="start"
   aria-labelledby="stack-demo-title"
 >
-  <h3 class="ds-heading" data-size="h3" id="stack-demo-title">
+  <h3 class="sk-heading" data-size="h3" id="stack-demo-title">
     Resumen
   </h3>
   <p>La solicitud está lista para revisar.</p>
-  <a class="ds-link ds-interactive" href="/componentes/stack">
+  <a class="sk-link sk-interactive" href="/componentes/stack">
     Ver detalles
   </a>
 </section>`;
@@ -44,7 +44,6 @@ import { Heading } from "@skryensya/react/heading";
     la semántica del contenido, y el gap expresa la separación entre sus hijos.
   </p>
 
-  <h2>Demo HTML</h2>
   <Showcase html={html} react={react} label="Stack" />
 
   <h2>HTML autorado</h2>
@@ -59,11 +58,11 @@ import { Heading } from "@skryensya/react/heading";
   <p>
     Usa <code>as</code> para elegir el elemento que renderiza el adapter sin perder el contrato de layout.
   </p>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
 
   <h2>Contrato</h2>
   <ul>
-    <li><code>ds-stack</code> crea una grilla de una columna y apila sus hijos verticalmente.</li>
+    <li><code>sk-stack</code> crea una grilla de una columna y apila sus hijos verticalmente.</li>
     <li><code>data-gap</code> acepta <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> o <code>xl</code>; al omitirlo usa <code>md</code>.</li>
     <li><code>data-align</code> alinea en el eje transversal: <code>start</code>, <code>center</code>, <code>end</code> o <code>stretch</code>. Al omitirlo, la grilla estira los hijos.</li>
     <li>En React, <code>as</code> es opcional y renderiza <code>div</code> si no se indica.</li>

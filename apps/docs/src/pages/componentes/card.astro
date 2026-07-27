@@ -1,0 +1,843 @@
+---
+import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/stat.css";
+import "@skryensya/core/components/checkbox.css";
+import Base from "../../layouts/Base.astro";
+import Showcase from "../../components/Showcase.astro";
+import "../../examples/card.css";
+
+const indicators = `<span
+      class="sk-checkbox__indicator"
+      data-state="checked"
+    ><span data-sk-icon="check" data-sk-icon-size="sm"></span></span>
+    <span
+      class="sk-checkbox__indicator"
+      data-state="indeterminate"
+    ><span data-sk-icon="remove" data-sk-icon-size="sm"></span></span>`;
+
+const contentHtml = `<article
+  class="sk-box"
+  data-surface="surface"
+  data-border="subtle"
+  data-padding="lg"
+  aria-labelledby="release-title"
+>
+  <div class="sk-stack" data-gap="sm">
+    <div class="sk-inline" data-gap="sm">
+      <span class="sk-badge" data-tone="success">Publicado</span>
+      <span class="sk-text" data-size="caption" data-tone="tertiary">
+        18 de julio
+      </span>
+    </div>
+    <div class="sk-stack" data-gap="xs">
+      <h3 class="sk-heading" data-size="h3" id="release-title">
+        Versión 2.4
+      </h3>
+      <p class="sk-text" data-tone="secondary">
+        Mejora la búsqueda, reduce el tiempo de carga y añade
+        historial de actividad por proyecto.
+      </p>
+    </div>
+  </div>
+</article>`;
+
+const contentReact = `import { Badge } from "@skryensya/react/badge";
+import { Heading } from "@skryensya/react/heading";
+import { Box, Inline, Stack } from "@skryensya/react/layout";
+import { Text } from "@skryensya/react/text";
+
+<Box
+  as="article"
+  aria-labelledby="release-title"
+  border="subtle"
+  padding="lg"
+  surface="surface"
+>
+  <Stack gap="sm">
+    <Inline gap="sm">
+      <Badge tone="success">Publicado</Badge>
+      <Text as="span" size="caption" tone="tertiary">
+        18 de julio
+      </Text>
+    </Inline>
+    <Stack gap="xs">
+      <Heading as="h3" id="release-title" size="h3">
+        Versión 2.4
+      </Heading>
+      <Text tone="secondary">
+        Mejora la búsqueda, reduce el tiempo de carga y añade
+        historial de actividad por proyecto.
+      </Text>
+    </Stack>
+  </Stack>
+</Box>`;
+
+const newsHtml = `<a
+  class="sk-tile sk-tile--interactive sk-interactive"
+  data-padding="lg"
+  href="/componentes/card#noticia"
+  aria-labelledby="news-title"
+>
+  <span class="sk-tile__content">
+    <span class="sk-text" data-role="eyebrow">
+      Producto · 6 min
+    </span>
+    <h3 class="sk-tile__title" id="news-title">
+      Cómo diseñamos la nueva vista de actividad
+    </h3>
+    <span class="sk-tile__description">
+      Las decisiones que permiten recorrer seis meses de cambios
+      sin perder el contexto del proyecto.
+    </span>
+    <span class="sk-inline" data-gap="xs">
+      Leer noticia
+      <span data-sk-icon="arrow-right" data-sk-icon-size="sm"></span>
+    </span>
+  </span>
+</a>`;
+
+const newsReact = `import { Icon } from "@skryensya/react/icon";
+import { Inline } from "@skryensya/react/inline";
+import { Text } from "@skryensya/react/text";
+import { TileLink } from "@skryensya/react/tile-link";
+
+<TileLink
+  href="/componentes/card#noticia"
+  aria-labelledby="news-title"
+  padding="lg"
+>
+  <span className="sk-tile__content">
+    <Text as="span" data-role="eyebrow">Producto · 6 min</Text>
+    <h3 className="sk-tile__title" id="news-title">
+      Cómo diseñamos la nueva vista de actividad
+    </h3>
+    <span className="sk-tile__description">
+      Las decisiones que permiten recorrer seis meses de cambios
+      sin perder el contexto del proyecto.
+    </span>
+    <Inline as="span" gap="xs">
+      Leer noticia <Icon name="arrow-right" size="sm" />
+    </Inline>
+  </span>
+</TileLink>`;
+
+const productHtml = `<article
+  class="sk-box"
+  data-surface="surface"
+  data-border="subtle"
+  data-padding="lg"
+  aria-labelledby="product-title"
+>
+  <div class="sk-stack" data-gap="md">
+    <div
+      class="sk-inline"
+      data-gap="sm"
+      data-justify="between"
+      data-align="baseline"
+    >
+      <span class="sk-badge" data-tone="accent">Professional</span>
+      <span class="sk-text" data-weight="label">29 € / mes</span>
+    </div>
+    <div class="sk-stack" data-gap="xs">
+      <h3 class="sk-heading" data-size="h3" id="product-title">
+        Analytics Pro
+      </h3>
+      <p class="sk-text" data-tone="secondary">
+        Informes ilimitados, cohortes y exportación programada.
+      </p>
+    </div>
+    <div class="sk-inline" data-gap="sm">
+      <a
+        class="sk-link sk-interactive"
+        href="/componentes/card#producto"
+      >
+        Ver detalles
+      </a>
+      <button
+        class="sk-button sk-interactive"
+        data-sk-button
+        data-variant="primary"
+        type="button"
+      >
+        Añadir al plan
+      </button>
+    </div>
+  </div>
+</article>`;
+
+const productReact = `import { Badge } from "@skryensya/react/badge";
+import { Button } from "@skryensya/react/button";
+import { Heading } from "@skryensya/react/heading";
+import { Box, Inline, Stack } from "@skryensya/react/layout";
+import { Link, Text } from "@skryensya/react/typography";
+
+<Box
+  as="article"
+  aria-labelledby="product-title"
+  border="subtle"
+  padding="lg"
+  surface="surface"
+>
+  <Stack>
+    <Inline align="baseline" gap="sm" justify="between">
+      <Badge tone="accent">Professional</Badge>
+      <Text as="span" weight="label">29 € / mes</Text>
+    </Inline>
+    <Stack gap="xs">
+      <Heading as="h3" id="product-title" size="h3">
+        Analytics Pro
+      </Heading>
+      <Text tone="secondary">
+        Informes ilimitados, cohortes y exportación programada.
+      </Text>
+    </Stack>
+    <Inline gap="sm">
+      <Link href="/componentes/card#producto">Ver detalles</Link>
+      <Button variant="primary">Añadir al plan</Button>
+    </Inline>
+  </Stack>
+</Box>`;
+
+const mediaSrc = "/demos/media-gradient.svg";
+
+/* Media card, read-only: Box owns the surface and clips (overflow: hidden), so ImageFrame with
+   radius none bleeds edge to edge and inherits the card radius. The card carries no padding; the
+   body class supplies the inset. The card sits in the first cell of a 3-column grid so it keeps a
+   card's width instead of stretching across the stage. */
+const mediaHtml = `<div class="sk-grid" data-columns="3" data-gap="md" data-multicol>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    aria-labelledby="media-title"
+  >
+    <div class="sk-image-frame" data-aspect="16/9" data-radius="top">
+      <img
+        class="sk-image-frame__media"
+        src="${mediaSrc}"
+        alt=""
+      />
+    </div>
+    <div class="sk-card-body">
+      <div class="sk-stack" data-gap="sm">
+        <span class="sk-badge" data-tone="accent">Guía</span>
+        <div class="sk-stack" data-gap="xs">
+          <h3 class="sk-heading" data-size="h3" id="media-title">
+            Ritmo visual en tableros
+          </h3>
+          <p class="sk-text" data-tone="secondary">
+            Cómo la imagen fija la jerarquía antes de que el texto
+            entre a explicar el detalle.
+          </p>
+        </div>
+      </div>
+    </div>
+  </article>
+</div>`;
+
+const mediaReact = `import { Badge } from "@skryensya/react/badge";
+import { Heading } from "@skryensya/react/heading";
+import { ImageFrame } from "@skryensya/react/image-frame";
+import { Box, Grid, Stack } from "@skryensya/react/layout";
+import { Text } from "@skryensya/react/text";
+
+<Grid columns={3} data-multicol="" gap="md">
+  <Box
+    as="article"
+    aria-labelledby="media-title"
+    border="subtle"
+    surface="surface"
+  >
+    <ImageFrame aspect="16/9" radius="top">
+      <img
+        className="sk-image-frame__media"
+        src="${mediaSrc}"
+        alt=""
+      />
+    </ImageFrame>
+    <div className="sk-card-body">
+      <Stack gap="sm">
+        <Badge tone="accent">Guía</Badge>
+        <Stack gap="xs">
+          <Heading as="h3" id="media-title" size="h3">
+            Ritmo visual en tableros
+          </Heading>
+          <Text tone="secondary">
+            Cómo la imagen fija la jerarquía antes de que el texto
+            entre a explicar el detalle.
+          </Text>
+        </Stack>
+      </Stack>
+    </div>
+  </Box>
+</Grid>`;
+
+/* Media card, interactive: the whole surface navigates, so it is a TileLink. data-padding="none"
+   lets the media reach the edges; the body class pads the text. The title names the link, so no
+   stretched-link CSS and no nested anchor. Same 3-column grid keeps it card-width. */
+const mediaLinkHtml = `<div class="sk-grid" data-columns="3" data-gap="md" data-multicol>
+  <a
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-padding="none"
+    href="/componentes/card#imagen"
+    aria-labelledby="media-link-title"
+  >
+    <div class="sk-image-frame" data-aspect="16/9" data-radius="top">
+      <img
+        class="sk-image-frame__media"
+        src="${mediaSrc}"
+        alt=""
+      />
+    </div>
+    <span class="sk-tile__content sk-card-body">
+      <span class="sk-text" data-role="eyebrow">Producto · 4 min</span>
+      <span class="sk-tile__title" id="media-link-title">
+        La nueva galería de plantillas
+      </span>
+      <span class="sk-tile__description">
+        Un recorrido por las plantillas destacadas y cuándo conviene
+        cada una.
+      </span>
+      <span class="sk-inline" data-gap="xs">
+        Ver galería
+        <span data-sk-icon="arrow-right" data-sk-icon-size="sm"></span>
+      </span>
+    </span>
+  </a>
+</div>`;
+
+const mediaLinkReact = `import { Icon } from "@skryensya/react/icon";
+import { ImageFrame } from "@skryensya/react/image-frame";
+import { Grid } from "@skryensya/react/layout";
+import { Inline } from "@skryensya/react/inline";
+import { Text } from "@skryensya/react/text";
+import { TileLink } from "@skryensya/react/tile-link";
+
+<Grid columns={3} data-multicol="" gap="md">
+  <TileLink
+    href="/componentes/card#imagen"
+    aria-labelledby="media-link-title"
+    padding="none"
+  >
+    <ImageFrame aspect="16/9" radius="top">
+      <img
+        className="sk-image-frame__media"
+        src="${mediaSrc}"
+        alt=""
+      />
+    </ImageFrame>
+    <span className="sk-tile__content sk-card-body">
+      <Text as="span" data-role="eyebrow">Producto · 4 min</Text>
+      <span className="sk-tile__title" id="media-link-title">
+        La nueva galería de plantillas
+      </span>
+      <span className="sk-tile__description">
+        Un recorrido por las plantillas destacadas y cuándo conviene
+        cada una.
+      </span>
+      <Inline as="span" gap="xs">
+        Ver galería <Icon name="arrow-right" size="sm" />
+      </Inline>
+    </span>
+  </TileLink>
+</Grid>`;
+
+const linkHtml = `<div class="sk-grid" data-columns="2" data-gap="md" data-multicol>
+  <a
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-padding="lg"
+    href="/componentes/card#enlace"
+    aria-labelledby="help-link-title"
+  >
+    <span
+      class="sk-inline"
+      data-gap="md"
+      data-wrap="false"
+      data-align="start"
+      data-justify="between"
+    >
+      <span
+        class="sk-inline"
+        data-gap="md"
+        data-wrap="false"
+        data-align="start"
+      >
+        <span class="sk-card-link-icon" aria-hidden="true">
+          <span data-sk-icon="info"></span>
+        </span>
+        <span class="sk-tile__content sk-card-link-body">
+          <span class="sk-tile__title" id="help-link-title">
+            Centro de ayuda
+          </span>
+          <span class="sk-tile__description">
+            Guías para configurar y administrar tu espacio.
+          </span>
+        </span>
+      </span>
+      <span
+        class="sk-card-link-chevron"
+        data-sk-icon="chevron-right"
+        aria-hidden="true"
+      ></span>
+    </span>
+  </a>
+
+  <a
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-padding="lg"
+    href="/componentes/card#enlace"
+    aria-labelledby="settings-link-title"
+  >
+    <span
+      class="sk-inline"
+      data-gap="md"
+      data-wrap="false"
+      data-align="start"
+      data-justify="between"
+    >
+      <span
+        class="sk-inline"
+        data-gap="md"
+        data-wrap="false"
+        data-align="start"
+      >
+        <span class="sk-card-link-icon" aria-hidden="true">
+          <span data-sk-icon="settings"></span>
+        </span>
+        <span class="sk-tile__content sk-card-link-body">
+          <span class="sk-tile__title" id="settings-link-title">
+            Preferencias
+          </span>
+          <span class="sk-tile__description">
+            Densidad, radio, tema e iconografía del producto.
+          </span>
+        </span>
+      </span>
+      <span
+        class="sk-card-link-chevron"
+        data-sk-icon="chevron-right"
+        aria-hidden="true"
+      ></span>
+    </span>
+  </a>
+</div>`;
+
+const linkReact = `import { Icon } from "@skryensya/react/icon";
+import { Grid } from "@skryensya/react/layout";
+import { Inline } from "@skryensya/react/inline";
+import { TileLink } from "@skryensya/react/tile-link";
+
+<Grid columns={2} data-multicol="" gap="md">
+  <TileLink
+    href="/componentes/card#enlace"
+    aria-labelledby="help-link-title"
+    padding="lg"
+  >
+    <Inline
+      as="span"
+      align="start"
+      gap="md"
+      justify="between"
+      wrap={false}
+    >
+      <Inline
+        as="span"
+        align="start"
+        gap="md"
+        wrap={false}
+      >
+        <span className="sk-card-link-icon" aria-hidden="true">
+          <Icon name="info" />
+        </span>
+        <span className="sk-tile__content sk-card-link-body">
+          <span
+            className="sk-tile__title"
+            id="help-link-title"
+          >
+            Centro de ayuda
+          </span>
+          <span className="sk-tile__description">
+            Guías para configurar y administrar tu espacio.
+          </span>
+        </span>
+      </Inline>
+      <Icon
+        name="chevron-right"
+        className="sk-card-link-chevron"
+      />
+    </Inline>
+  </TileLink>
+
+  <TileLink
+    href="/componentes/card#enlace"
+    aria-labelledby="settings-link-title"
+    padding="lg"
+  >
+    <Inline
+      as="span"
+      align="start"
+      gap="md"
+      justify="between"
+      wrap={false}
+    >
+      <Inline
+        as="span"
+        align="start"
+        gap="md"
+        wrap={false}
+      >
+        <span className="sk-card-link-icon" aria-hidden="true">
+          <Icon name="settings" />
+        </span>
+        <span className="sk-tile__content sk-card-link-body">
+          <span
+            className="sk-tile__title"
+            id="settings-link-title"
+          >
+            Preferencias
+          </span>
+          <span className="sk-tile__description">
+            Densidad, radio, tema e iconografía del producto.
+          </span>
+        </span>
+      </Inline>
+      <Icon
+        name="chevron-right"
+        className="sk-card-link-chevron"
+      />
+    </Inline>
+  </TileLink>
+</Grid>`;
+
+const actionSelectionHtml = `<div class="sk-tile-grid">
+  <button
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-padding="lg"
+    type="button"
+  >
+    <span class="sk-tile__content">
+      <span class="sk-tile__title">Crear proyecto</span>
+      <span class="sk-tile__description">
+        Empieza con un espacio vacío y añade tu equipo después.
+      </span>
+    </span>
+  </button>
+
+  <label
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-padding="lg"
+    data-sk-tile-checkbox
+    data-scope="tile"
+    data-part="root"
+    data-name="notifications"
+    data-value="weekly"
+  >
+    <input type="checkbox" data-part="input" />
+    <span class="sk-tile__content" data-part="content">
+      <span class="sk-tile__title">Resumen semanal</span>
+      <span class="sk-tile__description">
+        Recibe los cambios importantes cada viernes.
+      </span>
+    </span>
+    <span
+      class="sk-checkbox__control sk-interactive"
+      data-part="indicator"
+      aria-hidden="true"
+    >
+      ${indicators}
+    </span>
+  </label>
+</div>`;
+
+const actionSelectionReact = `import { TileButton } from "@skryensya/react/tile-button";
+import { TileCheckbox } from "@skryensya/react/tile-checkbox";
+
+<div className="sk-tile-grid">
+  <TileButton onClick={createProject} padding="lg">
+    <span className="sk-tile__content">
+      <span className="sk-tile__title">Crear proyecto</span>
+      <span className="sk-tile__description">
+        Empieza con un espacio vacío y añade tu equipo después.
+      </span>
+    </span>
+  </TileButton>
+
+  <TileCheckbox name="notifications" padding="lg" value="weekly">
+    <span className="sk-tile__title">Resumen semanal</span>
+    <span className="sk-tile__description">
+      Recibe los cambios importantes cada viernes.
+    </span>
+  </TileCheckbox>
+</div>`;
+
+const statHtml = `<section
+  class="sk-grid"
+  data-columns="3"
+  data-gap="md"
+  data-multicol
+  aria-label="Resumen del negocio"
+>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="sk-stat">
+      <span class="sk-stat__label">Ingresos</span>
+      <span class="sk-stat__value">48.200 €</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-up"></span> 12,5%
+      </span>
+    </div>
+  </article>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="sk-stat">
+      <span class="sk-stat__label">Pedidos</span>
+      <span class="sk-stat__value">1.204</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-up"></span> 8,2%
+      </span>
+    </div>
+  </article>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+  >
+    <div class="sk-stat">
+      <span class="sk-stat__label">Cancelaciones</span>
+      <span class="sk-stat__value">0,9%</span>
+      <span class="sk-stat__change" data-trend="up">
+        <span data-sk-icon="arrow-down"></span> 0,3 puntos
+      </span>
+    </div>
+  </article>
+</section>`;
+
+const statReact = `import { Icon } from "@skryensya/react/icon";
+import { Box, Grid } from "@skryensya/react/layout";
+import { Stat } from "@skryensya/react/stat";
+
+<Grid
+  aria-label="Resumen del negocio"
+  columns={3}
+  data-multicol=""
+  gap="md"
+>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      label="Ingresos"
+      value="48.200 €"
+      trend="up"
+      change={<><Icon name="arrow-up" /> 12,5%</>}
+    />
+  </Box>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      label="Pedidos"
+      value="1.204"
+      trend="up"
+      change={<><Icon name="arrow-up" /> 8,2%</>}
+    />
+  </Box>
+  <Box as="article" border="subtle" padding="lg" surface="surface">
+    <Stat
+      label="Cancelaciones"
+      value="0,9%"
+      trend="up"
+      change={<><Icon name="arrow-down" /> 0,3 puntos</>}
+    />
+  </Box>
+</Grid>`;
+---
+
+<Base
+  title="Card"
+  description="Card no es un componente: guía para componer tarjetas semánticas con Box, Tile y componentes de contenido."
+>
+  <h1>Card</h1>
+  <p class="lede">
+    Card es un <strong>resultado de composición</strong>, no un componente del sistema. El contenido
+    decide su estructura; la interacción decide si la superficie nace de
+    <a href="/componentes/box">Box</a> o de <a href="/componentes/tile">Tile</a>.
+  </p>
+
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
+      <div class="sk-alert__description">
+        No existen <code>sk-card</code>, <code>@skryensya/react/card</code> ni
+        <code>components/card.css</code>. Importa las piezas que la card realmente usa.
+      </div>
+    </div>
+  </div>
+
+  <h2>Elige por comportamiento</h2>
+  <p>
+    «Card» describe la forma visual, pero no dice qué hace. Empieza por la semántica y la interacción;
+    después compón el contenido con Stack, Inline, Heading, Text, Badge, Stat u otras piezas.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr><th>La superficie…</th><th>Usa</th><th>Elemento real</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>presenta contenido o contiene varios controles</td><td><a href="/componentes/box">Box</a></td><td><code>article</code>, <code>section</code> o <code>div</code></td></tr>
+        <tr><td>navega completa a un destino</td><td><a href="/componentes/link">TileLink</a></td><td><code>a[href]</code></td></tr>
+        <tr><td>ejecuta completa una acción</td><td><a href="/componentes/button">TileButton</a></td><td><code>button</code></td></tr>
+        <tr><td>activa una opción independiente</td><td><a href="/componentes/checkbox">TileCheckbox</a></td><td><code>input[type=checkbox]</code></td></tr>
+        <tr><td>elige una opción exclusiva</td><td><a href="/componentes/radio-group">TileRadioGroup</a></td><td><code>input[type=radio]</code></td></tr>
+        <tr><td>revela contenido</td><td><a href="/componentes/accordion">Accordion</a></td><td><code>button</code> o <code>details</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Box y Tile parten aquí de la misma superficie, borde sutil, radio y padding <code>lg</code>.
+    Tile conserva ese contenido y añade el state layer de <code>sk-interactive</code>; la diferencia
+    visible aparece al hacer hover, foco o press, no en una segunda receta de card.
+  </p>
+
+  <h2>Card de contenido</h2>
+  <p>
+    Información de solo lectura: Box posee la superficie y el <code>article</code> conserva la semántica.
+    Badge, Heading y Text construyen la jerarquía sin inventar una API Card.
+  </p>
+  <Showcase
+    html={contentHtml}
+    react={contentReact}
+    label="Card de contenido"
+    note="Box + Stack + Badge + Heading + Text"
+  />
+
+  <h2 id="noticia">Card de noticia</h2>
+  <p>
+    La noticia completa lleva a un único destino, así que es un TileLink. El título nombra el enlace;
+    no hay un enlace estirado por CSS ni una card con <code>onClick</code> escondido.
+  </p>
+  <Showcase
+    html={newsHtml}
+    react={newsReact}
+    label="Card de noticia"
+    note="TileLink + Text + Icon"
+  />
+
+  <h2 id="producto">Card de producto</h2>
+  <p>
+    Esta card tiene dos decisiones independientes —consultar y añadir—, por eso usa Box. Convertir toda
+    la superficie en enlace anidaría un botón dentro de un enlace y produciría HTML inválido.
+  </p>
+  <Showcase
+    html={productHtml}
+    react={productReact}
+    label="Card de producto"
+    note="Box + Badge + Heading + Link + Button"
+  />
+
+  <h2 id="enlace">Card de enlace</h2>
+  <p>
+    Un atajo de navegación con una sola salida también es TileLink: icono en un pozo sunken, título
+    que nombra el enlace, chevron que marca dirección. Toda la superficie conserva foco de enlace;
+    no hay un segundo <code>&lt;a&gt;</code> dentro ni un <code>onClick</code> en un
+    <code>div</code>.
+  </p>
+  <Showcase
+    html={linkHtml}
+    react={linkReact}
+    label="Card de enlace"
+    note="Grid + TileLink + Inline + Icon"
+  />
+
+  <h2 id="imagen">Card con imagen</h2>
+  <p>
+    La imagen es anatomía de la card, no una API nueva: <a href="/componentes/image-frame"
+    >ImageFrame</a> con <code>data-radius="none"</code> va flush contra el borde y la superficie
+    que lo contiene ya recorta (<code>overflow: hidden</code>), así que hereda el radio. La
+    <strong>lectura</strong> —contenido o navegación— sigue eligiendo la raíz, igual que sin imagen:
+    Box cuando solo se lee, TileLink cuando toda la superficie lleva a un destino.
+  </p>
+  <Showcase
+    html={mediaHtml}
+    react={mediaReact}
+    label="Card con imagen"
+    note="Box + ImageFrame + Badge + Heading + Text"
+  />
+  <p>
+    La misma card, ahora interactiva: toda la superficie navega, así que es un TileLink con
+    <code>data-padding="none"</code> para que la imagen llegue al borde y una clase de cuerpo que
+    repone el inset del texto. El título nombra el enlace; no hay <code>onClick</code> en un
+    <code>div</code> ni enlace estirado por CSS.
+  </p>
+  <Showcase
+    html={mediaLinkHtml}
+    react={mediaLinkReact}
+    label="Card con imagen interactiva"
+    note="TileLink + ImageFrame + Text + Icon"
+  />
+
+  <h2>Cards de acción y selección</h2>
+  <p>
+    La geometría puede coincidir, pero la plataforma no: una acción es un botón y una preferencia es un
+    checkbox. Tile unifica la superficie sin borrar esa diferencia.
+  </p>
+  <Showcase
+    html={actionSelectionHtml}
+    react={actionSelectionReact}
+    label="Acción y selección"
+    note="TileButton + TileCheckbox"
+  />
+
+  <h2 id="stat-card">Stat Card</h2>
+  <p>
+    Stat aporta la métrica; Box aporta la card. La colección usa Grid y se adapta a una columna sin
+    convertir Stat en una superficie ni añadir una variante <code>card</code> a su API.
+  </p>
+  <Showcase
+    html={statHtml}
+    react={statReact}
+    label="Resumen del negocio"
+    note="Grid + Box + Stat + Icon"
+  />
+
+  <h2>Do y don't</h2>
+  <div class="sk-grid" data-columns="2" data-gap="md" data-multicol>
+    <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="lg">
+      <div class="sk-stack" data-gap="sm">
+        <span class="sk-badge" data-tone="success">Do · Haz</span>
+        <h3 class="sk-heading" data-size="h4">Deja que el comportamiento elija la raíz</h3>
+        <ul>
+          <li>Usa Box para contenido y para varios controles independientes.</li>
+          <li>Usa un Tile semántico cuando toda la superficie tiene una sola intención.</li>
+          <li>Conserva headings, listas, precios y estados como componentes de contenido.</li>
+          <li>Haz que el foco visible alcance la superficie interactiva completa.</li>
+          <li>Deja que el contenido determine la altura; agrupa sólo cards comparables.</li>
+        </ul>
+      </div>
+    </section>
+    <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="lg">
+      <div class="sk-stack" data-gap="sm">
+        <span class="sk-badge" data-tone="danger">Don't · Evita</span>
+        <h3 class="sk-heading" data-size="h4">No conviertas la apariencia en una API</h3>
+        <ul>
+          <li>No crees un componente Card con variantes <code>news</code>, <code>product</code> o <code>stat</code>.</li>
+          <li>No pongas <code>onClick</code> ni <code>tabindex</code> en un Box o <code>div</code>.</li>
+          <li>No anides botones, enlaces o inputs dentro de TileLink o TileButton.</li>
+          <li>No dupliques el mismo destino en la superficie y en un enlace interior.</li>
+          <li>No recortes contenido importante sólo para igualar alturas.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <h2>Implementación</h2>
+  <p>
+    No hay un import de Card. Importa Box o el Tile semántico elegido, sus estilos y únicamente las
+    piezas de contenido presentes. Esto mantiene cada dependencia y cada contrato visibles en el call site.
+  </p>
+</Base>

@@ -5,7 +5,6 @@ import CodeBlock from "../../components/CodeBlock.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
 
-import "../../examples/sidebar.css";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -16,38 +15,38 @@ const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/patterns/state-layer.css";`;
 
 const html = `<aside
-  class="ds-sidebar"
-  data-ds-sidebar
+  class="sk-sidebar"
+  data-sk-sidebar
   id="app-sidebar"
 >
-  <div class="ds-sidebar__header">
+  <div class="sk-sidebar__header">
     <button
-      class="ds-sidebar__trigger ds-interactive"
-      data-ds-sidebar-trigger
+      class="sk-sidebar__trigger sk-interactive"
+      data-sk-sidebar-trigger
       type="button"
       aria-label="Contraer navegación"
     >
-      <span data-ds-icon="menu"></span>
+      <span data-sk-icon="menu"></span>
     </button>
   </div>
 
-  <div class="ds-sidebar__content" data-ds-sidebar-content>
+  <div class="sk-sidebar__content" data-sk-sidebar-content>
     <!-- El sidebar es el shell; la lista es un pattern,
          invitada aquí -->
-    <nav class="ds-nav-list" aria-label="Principal">
-      <div class="ds-nav-list__group">
-        <div class="ds-nav-list__group-label" id="app-workspace">
+    <nav class="sk-nav-list" aria-label="Principal">
+      <div class="sk-nav-list__group">
+        <div class="sk-nav-list__group-label" id="app-workspace">
           Espacio
         </div>
-        <ul class="ds-nav-list__list" aria-labelledby="app-workspace">
-          <li class="ds-nav-list__item">
+        <ul class="sk-nav-list__list" aria-labelledby="app-workspace">
+          <li class="sk-nav-list__item">
             <a
-              class="ds-nav-list__link ds-interactive"
+              class="sk-nav-list__link sk-interactive"
               href="/"
               aria-current="page"
             >
-              <span data-ds-icon="info"></span>
-              <span class="ds-nav-list__label">Inicio</span>
+              <span data-sk-icon="info"></span>
+              <span class="sk-nav-list__label">Inicio</span>
             </a>
           </li>
         </ul>
@@ -55,19 +54,19 @@ const html = `<aside
     </nav>
   </div>
 
-  <hr class="ds-sidebar__separator" />
-  <div class="ds-sidebar__footer">v0.3.0</div>
+  <hr class="sk-sidebar__separator" />
+  <div class="sk-sidebar__footer">v0.3.0</div>
 </aside>`;
 
 const js = `import { initComponents } from "@skryensya/vanilla/auto";
 import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 
-// Los iconos se autoran como placeholders <span data-ds-icon>;
+// Los iconos se autoran como placeholders <span data-sk-icon>;
 // mountIcons los reemplaza por el <svg> del set enlazado.
 mountIcons(document, lucideIcons);
 
-initComponents();`;
+await initComponents();`;
 
 const react = `import { Icon } from "@skryensya/react/icon";
 import {
@@ -127,11 +126,10 @@ import {
   <p>
     Lo que va adentro no es asunto del sidebar. La lista de destinos es el pattern
     <a href="/nav-list"><code>nav-list</code></a>, invitada aquí y con la misma estructura que usa el
-    navbar en horizontal. Por eso no hay un <code>ds-sidebar__link</code>: esa lista nunca fue del
+    navbar en horizontal. Por eso no hay un <code>sk-sidebar__link</code>: esa lista nunca fue del
     sidebar, y nombrarla así sería nombrar a un inquilino.
   </p>
 
-  <h2>Demo vanilla</h2>
   <p>Contrae el sidebar con el botón: la lista se vuelve un riel de iconos, y sigue toda ahí.</p>
   {/* The slot, not the `html` prop: a sidebar is only legible next to the thing it sits beside, and
       that surrounding shell is the site playing consumer, not part of the markup being taught. */}
@@ -161,7 +159,7 @@ import {
   <h2>Un ancho, dos estados</h2>
   <p>
     Los dos anchos son dos valores de <strong>un</strong> styling hook. El consumidor escribe
-    <code>inline-size: var(--ds-sidebar-inline-size)</code> una vez; contraer re-declara ese hook
+    <code>inline-size: var(--sk-sidebar-inline-size)</code> una vez; contraer re-declara ese hook
 no agrega uno nuevo, que es la regla de los styling hooks. El <code>state</code> lo escribe la
     máquina como <code>data-state</code> en la raíz, nunca a mano.
   </p>
@@ -188,24 +186,24 @@ no agrega uno nuevo, que es la regla de los styling hooks. El <code>state</code>
   <CodeBlock code={install} label="terminal" />
 
   <h2>CSS</h2>
-  <CodeBlock code={css} label="tu CSS" />
+  <CodeBlock code={css} label="CSS" />
 
   <h2>HTML autorado</h2>
   <p>
-    El enhancer busca <code>[data-ds-sidebar]</code>, exige un <code>[data-ds-sidebar-trigger]</code> y
+    El enhancer busca <code>[data-sk-sidebar]</code>, exige un <code>[data-sk-sidebar-trigger]</code> y
     parchea <code>aria-expanded</code>, <code>aria-controls</code> y <code>data-state</code>. No escribe
-    markup ni clases. El markup completo está en la pestaña <strong>Vanilla</strong> de la demo.
+    markup ni clases. El markup completo está en la pestaña <strong>Vanilla</strong> del preview.
   </p>
 
   <h2>Inicializar vanilla</h2>
-  <CodeBlock code={js} label="tu JS" />
+  <CodeBlock code={js} label="JavaScript" />
 
   <h2>React</h2>
   <p>
     Controlado (<code>collapsed</code>) o no controlado (<code>defaultCollapsed</code>), con
     <code>onCollapsedChange</code> para persistir la preferencia. El evento equivalente en vanilla es
-    <code>ds-collapsed-change</code>. Persistir es del consumidor: con qué clave y por usuario o por
-    dispositivo no lo decide un design system. El código está en la pestaña <strong>React</strong> de la demo.
+    <code>sk-collapsed-change</code>. Persistir es del consumidor: con qué clave y por usuario o por
+    dispositivo no lo decide un design system. El código está en la pestaña <strong>React</strong> del preview.
   </p>
-  <StylingHooks groups={[{"file":"components/sidebar.css","probe":"ds-sidebar"}]} />
+  <StylingHooks groups={[{"file":"components/sidebar.css","probe":"sk-sidebar"}]} />
 </Base>

@@ -28,7 +28,7 @@ re-exporta en **`@skryensya/core/machines`**, y las consumen los dos bindings:
 - **React** las adapta con `@zag-js/react` (`useMachine` + `connect`), como ya lo hacía, sólo cambia de
   dónde importa la máquina: de `@zag-js/tabs` a `@skryensya/core/machines`.
 - **La capa vanilla** las adapta con **`@zag-js/svelte`** dentro de componentes `.svelte`, que se montan
-  sobre el markup `[data-ds-*]` que el consumidor ya escribió y **parchean los atributos** que devuelve
+  sobre el markup `[data-sk-*]` que el consumidor ya escribió y **parchean los atributos** que devuelve
   `connect` sobre ese DOM (`applyZagProps`), sin renderizar estructura propia.
 
 El comportamiento tiene un solo dueño; el contrato de parts se verifica contra la máquina en vez de
@@ -39,9 +39,9 @@ duplicarse en un fixture.
 Esto **revierte ADR-14 y ADR-15**, que decían que la capa vanilla no renderiza y no usa Svelte. Lo que
 NO cambia es lo que esas decisiones protegían: la capa **sigue hidratando markup autorado**, y lo hace
 en **light DOM**, `mount()` sobre la raíz existente, nada de custom elements ni shadow DOM, así que
-`.hero .ds-tabs { … }` sigue alcanzando el elemento y el modelo de styling hooks queda intacto. Svelte
+`.hero .sk-tabs { … }` sigue alcanzando el elemento y el modelo de styling hooks queda intacto. Svelte
 es el motor interno, reemplazable, nunca un contrato para el consumidor: se autora HTML con clases y
-`data-ds-*`, se llama `initComponents()`, y no se escribe una línea de Svelte. El sitio
+`data-sk-*`, se llama `initComponents()`, y no se escribe una línea de Svelte. El sitio
 ([ADR-12](/decisiones/0012-monorepo-y-el-sitio)) compila esos `.svelte` con `@sveltejs/vite-plugin-svelte`
 y no renderiza ni una UI de Svelte.
 

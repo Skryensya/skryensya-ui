@@ -43,7 +43,7 @@ export type FieldProps = {
   children: ReactNode;
   label: ReactNode;
   hint?: ReactNode;
-  /** The error message. Its presence is what makes the field invalid, colour is never the only cue. */
+  /** The error message. Its presence is what makes the field invalid, color is never the only cue. */
   error?: ReactNode;
   required?: boolean;
   disabled?: boolean;

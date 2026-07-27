@@ -4,15 +4,14 @@ import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
-import "../../examples/badge.css";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<span class="ds-badge" data-tone="neutral">Neutral</span>
-<span class="ds-badge" data-tone="accent">Accent</span>
-<span class="ds-badge" data-tone="success">Success</span>
-<span class="ds-badge" data-tone="warning">Warning</span>
-<span class="ds-badge" data-tone="danger">Danger</span>`;
+const html = `<span class="sk-badge" data-tone="neutral">Neutral</span>
+<span class="sk-badge" data-tone="accent">Accent</span>
+<span class="sk-badge" data-tone="success">Success</span>
+<span class="sk-badge" data-tone="warning">Warning</span>
+<span class="sk-badge" data-tone="danger">Danger</span>`;
 
 const react = `import { Badge } from "@skryensya/react/badge";
 
@@ -22,27 +21,27 @@ const react = `import { Badge } from "@skryensya/react/badge";
 <Badge tone="warning">Warning</Badge>
 <Badge tone="danger">Danger</Badge>;`;
 
-/* The dot: a badge with no text, only colour and position. Standalone it is a status light; anchored in
+/* The dot: a badge with no text, only color and position. Standalone it is a status light; anchored in
  * a holder it is a notification/presence indicator on the top-right corner of another element. */
-const dotHtml = `<span class="ds-badge" data-dot data-tone="success"></span>
-<span class="ds-badge" data-dot data-tone="warning"></span>
-<span class="ds-badge" data-dot data-tone="danger"></span>
-<span class="ds-badge" data-dot data-tone="accent"></span>
-<span class="ds-badge" data-dot></span>`;
+const dotHtml = `<span class="sk-badge" data-dot data-tone="success"></span>
+<span class="sk-badge" data-dot data-tone="warning"></span>
+<span class="sk-badge" data-dot data-tone="danger"></span>
+<span class="sk-badge" data-dot data-tone="accent"></span>
+<span class="sk-badge" data-dot></span>`;
 
 const holderHtml = `<!-- an unread indicator on an icon button -->
-<span class="ds-badge-holder">
+<span class="sk-badge-holder">
   <button
-    class="ds-button ds-interactive"
+    class="sk-button sk-interactive"
     data-variant="ghost"
     data-icon-only
     type="button"
     aria-label="Ajustes"
   >
-    <span data-ds-icon="settings"></span>
+    <span data-sk-icon="settings"></span>
   </button>
   <span
-    class="ds-badge"
+    class="sk-badge"
     data-dot
     data-tone="danger"
     role="status"
@@ -51,12 +50,12 @@ const holderHtml = `<!-- an unread indicator on an icon button -->
 </span>
 
 <!-- a presence indicator on an avatar -->
-<span class="ds-badge-holder">
-  <span class="ds-avatar" role="img" aria-label="Ada Lovelace">
-    <span class="ds-avatar__fallback" aria-hidden="true">AL</span>
+<span class="sk-badge-holder">
+  <span class="sk-avatar" role="img" aria-label="Ada Lovelace">
+    <span class="sk-avatar__fallback" aria-hidden="true">AL</span>
   </span>
   <span
-    class="ds-badge"
+    class="sk-badge"
     data-dot
     data-tone="success"
     role="status"
@@ -66,9 +65,9 @@ const holderHtml = `<!-- an unread indicator on an icon button -->
 
 const holderReact = `import { Badge } from "@skryensya/react/badge";
 
-<span className="ds-badge-holder">
+<span className="sk-badge-holder">
   <button
-    className="ds-button ds-interactive"
+    className="sk-button sk-interactive"
     data-variant="ghost"
     data-icon-only
     aria-label="Ajustes"
@@ -105,7 +104,7 @@ const holderReact = `import { Badge } from "@skryensya/react/badge";
 
   <h3>En la esquina de un elemento</h3>
   <p>
-    Envuelve el elemento en <code>ds-badge-holder</code> y el dot se ancla arriba a la derecha, un
+    Envuelve el elemento en <code>sk-badge-holder</code> y el dot se ancla arriba a la derecha, un
     indicador de novedades sobre un botón, de presencia sobre un avatar. Un anillo del color de la
     superficie lo despega del contenido de abajo. El punto lleva su propio <code>aria-label</code>
     porque significa algo; el elemento anfitrión no cambia.
@@ -117,6 +116,6 @@ const holderReact = `import { Badge } from "@skryensya/react/badge";
 
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
-  <StylingHooks groups={[{"file":"components/badge.css","probe":"ds-badge"}]} />
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
+  <StylingHooks groups={[{"file":"components/badge.css","probe":"sk-badge"}]} />
 </Base>

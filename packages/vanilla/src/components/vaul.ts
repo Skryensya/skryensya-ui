@@ -47,20 +47,33 @@ export function connectVaul(root: HTMLElement, options: VaulOptions = {}): Clean
   };
   root.addEventListener("close", announce);
 
-  const handle = root.querySelector<HTMLElement>('[data-part="handle"].ds-vaul__handle');
+  /* Two ways to be THIS panel's handle, because Vaul has two skins and only one of them is `sk-vaul`.
+   *
+   * Dialog Vaul is a composition over `sk-dialog` (patterns/dialog-vaul.css styles a bare
+   * `[data-part="handle"]`), so its handle never carries `sk-vaul__handle`, and requiring the class
+   * meant the enhancer found nothing and returned before wiring anything. The page documented a drag
+   * that did not exist and rendered a grab handle to advertise it: an affordance that lies, which is
+   * the one thing this pattern says a handle must never be.
+   *
+   * The fallback is `:scope >` and not a bare part lookup on purpose. `handle` is a common part name
+   * (a slider inside the panel has one), and a descendant search would hand the gesture to whatever
+   * component happened to be nested. A DIRECT child of the panel can only be the panel's own. */
+  const handle = root.querySelector<HTMLElement>(
+    '[data-part="handle"].sk-vaul__handle, :scope > [data-part="handle"]',
+  );
   if (!draggable || !handle) {
     return () => root.removeEventListener("close", announce);
   }
 
   const setOffset = (px: number, size: number) => {
-    root.style.setProperty("--ds-vaul-drag-offset", `${px}px`);
+    root.style.setProperty("--sk-vaul-drag-offset", `${px}px`);
     /* Unitless on purpose: the backdrop multiplies it, and a length there would be a category error. */
     const progress = size > 0 ? Math.min(1, Math.max(0, px / size)) : 0;
-    root.style.setProperty("--ds-vaul-drag-progress", String(progress));
+    root.style.setProperty("--sk-vaul-drag-progress", String(progress));
   };
   const clearOffset = () => {
-    root.style.removeProperty("--ds-vaul-drag-offset");
-    root.style.removeProperty("--ds-vaul-drag-progress");
+    root.style.removeProperty("--sk-vaul-drag-offset");
+    root.style.removeProperty("--sk-vaul-drag-progress");
   };
 
   const sizeOf = () =>
@@ -68,7 +81,7 @@ export function connectVaul(root: HTMLElement, options: VaulOptions = {}): Clean
 
   /** The overpull cap, in px, as the CSS declares it, see `resist`. */
   const overpull = () => {
-    const raw = getComputedStyle(root).getPropertyValue("--ds-vaul-overpull").trim();
+    const raw = getComputedStyle(root).getPropertyValue("--sk-vaul-overpull").trim();
     const n = Number.parseFloat(raw);
     return Number.isFinite(n) && n > 0 ? n : 12;
   };
@@ -82,7 +95,7 @@ export function connectVaul(root: HTMLElement, options: VaulOptions = {}): Clean
   /* The token owns the duration, so the flag has to ask it rather than restate it, a hard-coded
    * number here would go stale the day someone retunes the release intent, and nothing would say so. */
   const releaseMs = () => {
-    const raw = getComputedStyle(root).getPropertyValue("--ds-vaul-release-duration").trim();
+    const raw = getComputedStyle(root).getPropertyValue("--sk-vaul-release-duration").trim();
     const n = Number.parseFloat(raw);
     if (!Number.isFinite(n)) return 320;
     return raw.endsWith("ms") ? n : n * 1000; // a bare `s` value is seconds, and 0.32 ≠ 320
@@ -98,10 +111,28 @@ export function connectVaul(root: HTMLElement, options: VaulOptions = {}): Clean
     releaseTimer = window.setTimeout(() => delete root.dataset.releasing, releaseMs());
   };
 
+  /* The browser has its OWN gesture that starts the same way ours does, and it wins by default.
+   *
+   * A side panel's handle is a strip laid OVER the content (patterns/vaul.css: it is positioned, not
+   * in flow), so on a drawer full of navigation the pointer goes down on the handle while a link sits
+   * underneath. Chrome resolves the drag source by looking for a link at that point, fires `dragstart`
+   * on it, and a native drag-and-drop cancels every other pointer gesture: we get `pointercancel` one
+   * frame in, the panel springs home, and the drawer reads as "drag is broken here" for no reason the
+   * author can see in their own markup. A sheet full of prose has the same problem with a text
+   * selection drag.
+   *
+   * So the gesture claims the pointer at the source. Cancelling `pointerdown` suppresses the
+   * compatibility mouse events, and native DnD and selection both start from those. `dragstart` is
+   * still cancelled as well, belt and braces, because the drag source is the browser's decision and
+   * not one we can see from here. Neither costs anything: the handle is `aria-hidden`, not focusable
+   * and not clickable, so there is no default behaviour on it worth keeping. */
+  const onDragStart = (event: Event) => event.preventDefault();
+
   const onPointerDown = (event: PointerEvent) => {
     if (pointerId !== null || !event.isPrimary) return;
     /* A drag starts with a button held. Anything else reaching this handler is not a grab. */
     if (event.buttons === 0) return;
+    event.preventDefault();
     const rtl = getComputedStyle(root).direction === "rtl";
     const { axis } = axisOf(edge, rtl);
 
@@ -127,6 +158,7 @@ export function connectVaul(root: HTMLElement, options: VaulOptions = {}): Clean
     window.addEventListener("pointermove", onPointerMove);
     window.addEventListener("pointerup", finish);
     window.addEventListener("pointercancel", finish);
+    window.addEventListener("dragstart", onDragStart);
   };
 
   const onPointerMove = (event: PointerEvent) => {
@@ -154,6 +186,7 @@ export function connectVaul(root: HTMLElement, options: VaulOptions = {}): Clean
     window.removeEventListener("pointermove", onPointerMove);
     window.removeEventListener("pointerup", finish);
     window.removeEventListener("pointercancel", finish);
+    window.removeEventListener("dragstart", onDragStart);
   };
 
   const finish = (event: PointerEvent) => {
@@ -212,7 +245,7 @@ export function connectVaul(root: HTMLElement, options: VaulOptions = {}): Clean
  */
 export const mountVaul = createConnectMount({
   key: "vaul",
-  rootSelector: "[data-ds-vaul], [data-ds-dialog-vaul]",
+  rootSelector: "[data-sk-vaul], [data-sk-dialog-vaul]",
   connect: (root) => {
   const cleanupDrag = connectVaul(root, {
     draggable: root.dataset.draggable !== "false",
@@ -226,7 +259,7 @@ export const mountVaul = createConnectMount({
   const open = () => {
     root.showModal();
   };
-  const attributePrefix = root.matches("[data-ds-dialog-vaul]") ? "data-ds-dialog-vaul" : "data-ds-vaul";
+  const attributePrefix = root.matches("[data-sk-dialog-vaul]") ? "data-sk-dialog-vaul" : "data-sk-vaul";
   const triggers = root.id
     ? [...document.querySelectorAll<HTMLElement>(`[${attributePrefix}-open="${root.id}"]`)]
     : [];

@@ -1,0 +1,146 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+
+const step1 = `pnpm add @skryensya/core`;
+
+const step2 = `@import "@skryensya/core/tokens.scss";`;
+
+const step3 = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/button.css";`;
+
+const step4 = `/* A hook, not a new selector: all variants
+   they read the same variable, oh my, this restyles them
+   all within .hero. */
+.hero .sk-button {
+  --sk-button-bg: rebeccapurple;
+  --sk-button-radius: var(--radius-pill);
+}`;
+
+const step5 = `<button class="sk-button sk-interactive" data-sk-button>Save</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="primary"
+>
+  Save
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="danger"
+>
+  Delete
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="sm"
+>
+  Small
+</button>`;
+
+const step5React = `import { Button } from "@skryensya/react/button";
+
+<Button>Save</Button>
+<Button variant="primary">Save</Button>
+<Button variant="danger">Delete</Button>
+<Button size="sm">Small</Button>;`;
+
+const step6html = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="primary"
+>
+  Save
+</button>`;
+
+/* The only place where you touch localStorage by hand, because it runs before any module and does not
+   can matter. The key and the slot still come out of the declaration; see /storage. */
+const fouc = `<script>
+  // Antes del primer paint, sincrónico: no puede importar,
+  // y es la única excepción del sistema (ver Almacenamiento).
+  var s = {};
+  try { s = JSON.parse(localStorage.getItem('sk') || '{}'); } catch (e) {}
+  if (s.scheme) document.documentElement.style.colorScheme = s.scheme;
+</script>`;
+---
+
+<Base
+  title="Your first component"
+  description="From zero to a button that responds to the four dimensions, step by step."
+>
+  <h1>Your first component</h1>
+  <p class="lede">
+    From zero to a button that responds to mode, contrast, density and radius. Six steps, no magic.
+  </p>
+
+  <h2>1. Install</h2>
+  <CodeBlock code={step1} label="terminal" />
+
+  <h2>2. Import the base bundle</h2>
+  <p>
+    It is the only thing every consumer needs: primitives + semantics. With this you already have four
+    dimensions and the language of motion.
+  </p>
+  <CodeBlock code={step2} label="CSS" />
+  <p>
+    The bare specifiers are resolved by the <code>exports</code> map, so you need a
+    bundler (Vite, webpack, Parcel).
+  </p>
+
+  <h2>3. Import the component you are going to use</h2>
+  <p>Only what you send. A buttonless consumer never downloads this file.</p>
+  <CodeBlock code={step3} label="CSS" />
+  <p>
+    With that you already have a button. <code>button.css</code> brings the class <em>and</em> its
+    <a href="/en/styling-hooks">styling hooks</a>: there is no step where you have to write the CSS yourself
+    structural so that something is seen. The order of the imports does not matter, the
+    <a href="/en/tiers">cascade layers</a> decide the precedence.
+  </p>
+
+  <h2>4. Uselo</h2>
+  <p>
+    Variants and sizes are attributes. You do not need new classes or branching in your CSS:
+    all variants re-declare <a href="/en/styling-hooks">the same styling hook</a>.
+  </p>
+  <Showcase html={step5} react={step5React} label="Button" />
+
+  <h2>5. Cambiarlo</h2>
+  <p>
+    Sending the structure does not leave you outside of it: that is what hooks are for. The structure lives in
+    <code>@layer components</code> and <strong>any rule without layer beats any layer</strong>,
+    so you re-declare a hook from your CSS and win, without inventing a more specific selector or fighting
+    with <code>!important</code>.
+  </p>
+  <CodeBlock code={step4} label="CSS" note="opcional" />
+
+  <h2>6. Interactive states</h2>
+  <p>
+    Hover, focus and pressed are not button colors: they are provided by the
+    <a href="/en/state-layer">state layer</a>, an overlay of <code>currentColor</code> shared by
+    any interactive component. It is the interaction mechanism of the system and comes in
+    <code>tokens.scss</code>, there is nothing to import separately. Just add
+    <code>sk-interactive</code>: Zero state colors in your CSS, and the focus ring is included.
+  </p>
+  <CodeBlock code={step6html} label="HTML" note="one more class" />
+
+  <h2>What's missing: the FOUC guard</h2>
+  <p>
+    If you let the user choose the mode, apply it <strong>before the first paint</strong>, synchronous, in the <code>&lt;head&gt;</code>. Sin esto la página pinta sin la marca/modo elegidos y
+    después salta.
+  </p>
+  <CodeBlock code={fouc} label="HTML, in the head" />
+
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
+    <p>
+      <strong>And that is the entire contract.</strong> Dos imports y una clase, y tienes un botón que
+      responde a dos marcas, clear/dark, alto contraste y tres densidades, con el mínimo táctil de
+      WCAG garantizado inside the token. Nada de eso está en tu código, y ninguna línea de CSS
+      estructural tampoco.
+    </p>
+    </div>
+  </div>
+</Base>

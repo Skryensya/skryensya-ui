@@ -4,18 +4,18 @@ import { connectToast, mountToast } from "./toast.js";
 
 function mount(html: string) {
   document.body.innerHTML = html;
-  const root = document.querySelector<HTMLElement>("[data-ds-toast]");
+  const root = document.querySelector<HTMLElement>("[data-sk-toast]");
   if (!root) throw new Error("Expected toast root.");
   return root;
 }
 
 function markup(timeout?: number) {
-  return `<div class="ds-toast-region"><div class="ds-alert" data-ds-toast data-tone="danger"${timeout ? ` data-timeout="${timeout}"` : ""}>
-    <div class="ds-alert__content">
-      <div class="ds-alert__description">Deployment failed.</div>
+  return `<div class="sk-toast-region"><div class="sk-alert" data-sk-toast data-tone="danger"${timeout ? ` data-timeout="${timeout}"` : ""}>
+    <div class="sk-alert__content">
+      <div class="sk-alert__description">Deployment failed.</div>
     </div>
-    <div class="ds-alert__actions">
-      <button class="ds-alert__dismiss" aria-label="Dismiss notification">×</button>
+    <div class="sk-alert__actions">
+      <button class="sk-alert__dismiss" aria-label="Dismiss notification">×</button>
     </div>
   </div></div>`;
 }
@@ -24,7 +24,7 @@ describe("Toast Vanilla contracts", () => {
   it("applies the shared live-region semantics and reports native button dismissal", () => {
     const root = mount(markup());
     const reasons: string[] = [];
-    root.addEventListener("ds-dismiss", (event) => reasons.push((event as CustomEvent<{ reason: string }>).detail.reason));
+    root.addEventListener("sk-dismiss", (event) => reasons.push((event as CustomEvent<{ reason: string }>).detail.reason));
     const cleanup = connectToast(root);
 
     expect(root.getAttribute("role")).toBe("alert");
@@ -47,8 +47,8 @@ describe("Toast Vanilla contracts", () => {
     const timed = mount(markup(1_000));
     const persistentReasons: string[] = [];
     const timedReasons: string[] = [];
-    persistent.addEventListener("ds-dismiss", (event) => persistentReasons.push((event as CustomEvent<{ reason: string }>).detail.reason));
-    timed.addEventListener("ds-dismiss", (event) => timedReasons.push((event as CustomEvent<{ reason: string }>).detail.reason));
+    persistent.addEventListener("sk-dismiss", (event) => persistentReasons.push((event as CustomEvent<{ reason: string }>).detail.reason));
+    timed.addEventListener("sk-dismiss", (event) => timedReasons.push((event as CustomEvent<{ reason: string }>).detail.reason));
 
     const persistentCleanup = connectToast(persistent);
     expect(mountToast(timed)).toBe(1);
@@ -58,7 +58,7 @@ describe("Toast Vanilla contracts", () => {
 
     const cleaned = mount(markup());
     const cleanedReasons: string[] = [];
-    cleaned.addEventListener("ds-dismiss", (event) => cleanedReasons.push((event as CustomEvent<{ reason: string }>).detail.reason));
+    cleaned.addEventListener("sk-dismiss", (event) => cleanedReasons.push((event as CustomEvent<{ reason: string }>).detail.reason));
     const cleanup = connectToast(cleaned, { timeout: 1_000 });
     cleanup();
     vi.advanceTimersByTime(1_000);

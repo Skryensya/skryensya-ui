@@ -7,7 +7,7 @@ import StylingHooks from "../components/StylingHooks.astro";
 const import_ = `@import "@skryensya/core/patterns/scrollbar.css";`;
 
 const always = `<div
-  class="ds-scrollbar demo-scroll"
+  class="sk-scrollbar demo-scroll"
   tabindex="0"
 >
   <p>
@@ -17,7 +17,7 @@ const always = `<div
     que el navegador expone.
   </p>
   <p>
-    Añade <code>ds-scrollbar</code> a cualquier contenedor con
+    Añade <code>sk-scrollbar</code> a cualquier contenedor con
     <code>overflow: auto</code> (o <code>scroll</code>). Sin la
     clase, el SO pinta su scrollbar nativa.
   </p>
@@ -34,11 +34,11 @@ const always = `<div
 </div>`;
 
 const reveal = `<div
-  class="ds-scrollbar ds-scrollbar--reveal demo-scroll"
+  class="sk-scrollbar sk-scrollbar--reveal demo-scroll"
   tabindex="0"
 >
   <p>
-    Misma región, variante <code>ds-scrollbar--reveal</code>:
+    Misma región, variante <code>sk-scrollbar--reveal</code>:
     el gutter queda reservado (<code>scrollbar-gutter: stable</code>)
     pero el thumb está transparente hasta que pasas el mouse o
     el foco de teclado entra en la región.
@@ -80,7 +80,7 @@ const reveal = `<div
   </p>
 
   <h2>Instalar</h2>
-  <CodeBlock code={import_} label="tu CSS" />
+  <CodeBlock code={import_} label="CSS" />
   <p>
     Luego marca la región que ya hace scroll (<code>overflow: auto</code> o
     <code>scroll</code>, con un tamaño acotado). El pattern no define el overflow: solo pinta
@@ -88,27 +88,27 @@ const reveal = `<div
   </p>
   <CodeBlock
     code={`<!-- tu contenedor con overflow: auto -->
-<div class="ds-scrollbar">…</div>
+<div class="sk-scrollbar">…</div>
 
 <!-- o la variante silenciosa hasta hover/foco -->
-<div class="ds-scrollbar ds-scrollbar--reveal">…</div>`}
-    label="tu HTML"
+<div class="sk-scrollbar sk-scrollbar--reveal">…</div>`}
+    label="HTML"
   />
 
   <h2>Siempre visible</h2>
   <p>
-    <code>ds-scrollbar</code> deja track y thumb a la vista. Úsalo cuando el scroll es parte
+    <code>sk-scrollbar</code> deja track y thumb a la vista. Úsalo cuando el scroll es parte
     del mapa de la UI (un panel de código, una tabla ancha).
   </p>
-  <Showcase html={always} label="ds-scrollbar" />
+  <Showcase html={always} label="sk-scrollbar" />
 
   <h2>Reveal al hover (y al foco)</h2>
   <p>
-    <code>ds-scrollbar ds-scrollbar--reveal</code> reserva el gutter para no mover el layout, y
+    <code>sk-scrollbar sk-scrollbar--reveal</code> reserva el gutter para no mover el layout, y
     deja el thumb transparente hasta <code>:hover</code> o <code>:focus-within</code>. Al
     revelar solo aparece el thumb, no un track relleno.
   </p>
-  <Showcase html={reveal} label="ds-scrollbar--reveal" note="hover o tab para revelar" />
+  <Showcase html={reveal} label="sk-scrollbar--reveal" note="hover o tab para revelar" />
   <p>
     El rail del sidebar de esta documentación usa exactamente esta variante: quieto en reposo,
     legible cuando lo tocas.
@@ -127,26 +127,26 @@ const reveal = `<div
   </ul>
   <p>
     Congelar el scroll del <em>documento</em> detrás de un modal es otro pattern:
-    <a class="ds-link ds-interactive" href="/scroll-lock">scroll lock</a>. No se pisan: uno pinta
+    <a class="sk-link sk-interactive" href="/scroll-lock">scroll lock</a>. No se pisan: uno pinta
     regiones, el otro congela <code>html</code>.
   </p>
 
   <StylingHooks
-    groups={[{ file: "patterns/scrollbar.css", probe: "ds-scrollbar" }]}
+    groups={[{ file: "patterns/scrollbar.css", probe: "sk-scrollbar" }]}
   />
 
   <h2>Contrato</h2>
   <ul>
     <li>
       Opt-in: importa <code>patterns/scrollbar.css</code> y marca la región con
-      <code>ds-scrollbar</code>.
+      <code>sk-scrollbar</code>.
     </li>
     <li>
       La región debe poder hacer scroll (<code>overflow: auto|scroll</code> y un tamaño
       acotado). El pattern no define el overflow.
     </li>
     <li>
-      <code>ds-scrollbar--reveal</code> exige también <code>ds-scrollbar</code> (la variante
+      <code>sk-scrollbar--reveal</code> exige también <code>sk-scrollbar</code> (la variante
       solo re-declara hooks; la base aporta el resto).
     </li>
     <li>
@@ -154,8 +154,8 @@ const reveal = `<div
       scrollbar overlay, el gutter de reveal es un no-op y no molesta.
     </li>
     <li>
-      Los hooks <code>--ds-scrollbar-*</code> se pisan desde tu CSS sobre
-      <code>.ds-scrollbar</code>, igual que cualquier otro styling hook.
+      Los hooks <code>--sk-scrollbar-*</code> se pisan desde tu CSS sobre
+      <code>.sk-scrollbar</code>, igual que cualquier otro styling hook.
     </li>
   </ul>
 </Base>

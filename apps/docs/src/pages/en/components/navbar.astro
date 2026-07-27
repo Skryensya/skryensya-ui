@@ -1,0 +1,137 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Showcase from "../../../components/Showcase.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+
+
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const css = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/navbar.css";
+@import "@skryensya/core/patterns/nav-list.css";`;
+
+const html = `<header class="sk-navbar">
+  <div class="sk-navbar__brand">Atlas</div>
+
+  <nav
+    class="sk-nav-list"
+    data-orientation="horizontal"
+    aria-label="Principal"
+  >
+    <ul class="sk-nav-list__list">
+      <li class="sk-nav-list__item">
+        <a
+          class="sk-nav-list__link sk-interactive"
+          href="/in"
+          aria-current="page"
+        >
+          <span class="sk-nav-list__label">Inicio</span>
+        </a>
+      </li>
+      <li class="sk-nav-list__item">
+        <a class="sk-nav-list__link sk-interactive" href="/proyectos">
+          <span class="sk-nav-list__label">Proyectos</span>
+        </a>
+      </li>
+      <li class="sk-nav-list__item">
+        <a class="sk-nav-list__link sk-interactive" href="/reportes">
+          <span class="sk-nav-list__label">Reportes</span>
+        </a>
+      </li>
+      <li class="sk-nav-list__item">
+        <a class="sk-nav-list__link sk-interactive" href="/equipo">
+          <span class="sk-nav-list__label">Equipo</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sk-navbar__actions">
+    <button
+      class="sk-button sk-interactive"
+      type="button"
+      data-variant="ghost"
+    >
+      Invitar
+    </button>
+    <button
+      class="sk-button sk-interactive"
+      type="button"
+      data-variant="primary"
+    >
+      Nuevo proyecto
+    </button>
+  </div>
+</header>`;
+
+const react = `import { Button } from "@skryensya/react/button";
+import {
+  NavList,
+  NavListGroup,
+  NavListLink,
+} from "@skryensya/react/nav-list";
+import {
+  Navbar,
+  NavbarActions,
+  NavbarBrand,
+} from "@skryensya/react/navbar";
+
+<Navbar>
+  <NavbarBrand>Atlas</NavbarBrand>
+
+  <NavList orientation="horizontal" aria-label="Principal">
+    <NavListGroup>
+      <NavListLink href="/in" current>
+        Inicio
+      </NavListLink>
+      <NavListLink href="/proyectos">Proyectos</NavListLink>
+      <NavListLink href="/reportes">Reportes</NavListLink>
+      <NavListLink href="/equipo">Equipo</NavListLink>
+    </NavListGroup>
+  </NavList>
+
+  <NavbarActions>
+    <Button variant="ghost">Invitar</Button>
+    <Button variant="primary">Nuevo proyecto</Button>
+  </NavbarActions>
+</Navbar>;`;
+---
+
+<Base title="Navbar" description="Navbar: the bar, with the navigation list as a horizontal pattern.">
+  <h1>Navbar</h1>
+  <p class="lede">
+    Navbar is the <strong>bar</strong>: surface, brand and a place for actions. It does not have a machine and
+    You do not need it, it is a <code>&lt;header&gt;</code> with links, and all of that is sent by the platform.
+  </p>
+
+  <h2>The links are not from the navbar</h2>
+  <p>
+    They are the pattern <a href="/en/nav-list"><code>nav-list</code></a> horizontally, the same structure as
+    houses the sidebar vertically. That two components need this exact structure is what the
+    returns a pattern and not a component: before
+    the navbar and the sidebar each had their list, with the same rules written twice and free
+    to diverge.
+  </p>
+
+  <Showcase html={html} react={react} label="Navbar" flush />
+
+  <h2>The current page is from the platform</h2>
+  <p>
+    The current link is marked with <code>aria-current="page"</code>, which the consumer already has to type
+    for screen readers. The styling hooks follow it instead of calling for a modifier class, and
+    a <code>state</code> is written by a machine; there is none here.
+  </p>
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>CSS</h2>
+  <CodeBlock code={css} label="CSS" />
+
+
+  <h2>React</h2>
+  <p>The code is in the <strong>React</strong> tab of the preview.</p>
+  <StylingHooks groups={[{"file":"components/navbar.css","probe":"sk-navbar"}]} />
+</Base>

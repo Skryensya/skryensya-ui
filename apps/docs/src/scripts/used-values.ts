@@ -17,7 +17,12 @@
 const probeFor = (cls: string) =>
   document.querySelector(`[data-probe-for="${cls}"]`) as HTMLElement | null;
 
-const isColour = (v: string) => /^(oklch|rgba?|hsla?|#|color\()/i.test(v.trim());
+/*
+ * Every color in this system arrives through color-mix() or light-dark(), and Chrome serialises
+ * both as `oklab(…)`. Matching only the authored function names left the entire ramp — most of the
+ * corpus — with no swatch at all, which is the bug that made the reference look value-only.
+ */
+const isColor = (v: string) => /^(oklch|oklab|lab|lch|rgba?|hsla?|#|color\()/i.test(v.trim());
 
 /** The used value of `name`, evaluated in `el`'s cascade context. */
 function usedValue(name: string, prop: string, el: HTMLElement): string {
@@ -39,7 +44,7 @@ function paint(target: HTMLElement) {
   }
   const value = usedValue(name, target.dataset.prop ?? "", el);
   target.textContent = "";
-  if (isColour(value)) {
+  if (isColor(value)) {
     const sw = document.createElement("span");
     sw.className = "swatch";
     sw.style.background = value;
@@ -56,6 +61,6 @@ export function initUsedValues() {
 
   // Re-read whenever a dimension moves. That IS the demonstration: nothing on disk changed,
   // the browser recomputed the system from the cascade.
-  document.addEventListener("ds:dimensions-changed", run);
+  document.addEventListener("sk:dimensions-changed", run);
   run();
 }

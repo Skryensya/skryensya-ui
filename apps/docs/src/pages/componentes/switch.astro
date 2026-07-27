@@ -4,19 +4,18 @@ import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
 
-import "../../examples/switch.css";
 
-const html = `<label class="ds-switch">
+const html = `<label class="sk-switch">
   <input
-    class="ds-switch__input"
+    class="sk-switch__input"
     type="checkbox"
     name="deploy-automatically"
     role="switch"
   />
-  <span class="ds-switch__control" aria-hidden="true">
-    <span class="ds-switch__thumb"></span>
+  <span class="sk-switch__control" aria-hidden="true">
+    <span class="sk-switch__thumb"></span>
   </span>
-  <span class="ds-switch__label">Deploy automatically</span>
+  <span class="sk-switch__label">Deploy automatically</span>
 </label>`;
 
 const react = `import { Switch } from "@skryensya/react/switch";
@@ -36,13 +35,12 @@ const react = `import { Switch } from "@skryensya/react/switch";
   <h1>Switch</h1>
   <p class="lede">Un estado binario que toma efecto inmediatamente: encendido o apagado. Para una selección que requiere guardar, usa Checkbox.</p>
 
-  <h2>Demo</h2>
   <Showcase html={html} react={react} label="Switch" />
   <p>No requiere inicialización Vanilla: el checkbox nativo conserva teclado, reset y submit de formularios. React sólo encapsula ese mismo control.</p>
 
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
 
   <h2>Contrato</h2>
   <ul>
@@ -51,5 +49,5 @@ const react = `import { Switch } from "@skryensya/react/switch";
     <li><code>onCheckedChange</code> reporta la intención; no infiere persistencia ni hace requests.</li>
     <li>Úsalo sólo si el cambio toma efecto de inmediato y hay exactamente dos estados.</li>
   </ul>
-  <StylingHooks groups={[{ file: "components/switch.css", probe: "ds-switch" }]} />
+  <StylingHooks groups={[{ file: "components/switch.css", probe: "sk-switch" }]} />
 </Base>

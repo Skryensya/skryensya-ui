@@ -23,7 +23,7 @@
     })
     .filter((item): item is Item => item !== null);
 
-  if (!root.id) root.id = uniqueId("ds-tile-radio");
+  if (!root.id) root.id = uniqueId("sk-tile-radio");
   const orientation: "horizontal" | "vertical" =
     root.getAttribute("data-orientation") === "horizontal" ? "horizontal" : "vertical";
   const defaultValue = root.getAttribute("data-default-value");
@@ -55,7 +55,7 @@
       scopeTile(item.label);
       item.label.setAttribute("data-part", "item");
       item.input.setAttribute("data-part", "input");
-      item.label.classList.add("ds-interactive");
+      item.label.classList.add("sk-interactive");
     }
   });
 

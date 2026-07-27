@@ -1,0 +1,382 @@
+/*
+ * PATTERN, ANCLAJE
+ *
+ * Una caja colocada contra OTRO ELEMENTO, no contra la página: sale de un lado del ancla, se va al
+ * lado opuesto cuando no entra, y desaparece si el ancla se va de pantalla. Es lo que hacen tooltip,
+ * popover, popup, menu y sus submenús, select, combobox, date picker y flyout, cada uno con su
+ * pintura y todos con esta geometría.
+ *
+ * Es un PATTERN y no un componente por la regla de la decisión 8: ¿podría un segundo componente
+ * necesitar esta estructura exacta? Acá no es hipotético, NUEVE ya la necesitan. Así que envía
+ * estructura y hooks, no sólo variables.
+ *
+ * CLASES PLANAS, no un árbol BEM: el ancla no está adentro del positioner, y en React el positioner
+ * se portalea al body, así que anidar una bajo la otra nombraría una contención que no existe. Se
+ * componen con las parts del componente, como `sk-interactive` con `sk-button`:
+ *
+ *   <button class="sk-tooltip__trigger sk-anchor">
+ *   <div class="sk-tooltip__positioner sk-anchored" data-sk-placement="block-start">
+ *     <span class="sk-anchored-arrow" aria-hidden="true">   <!-- opcional -->
+ *
+ * EL QUE COLOCA ES EL NAVEGADOR (decisión 25). Donde está la API de anchor positioning, el volteo lo
+ * resuelve `position-try-fallbacks` y el ancla perdida `position-visibility`, adentro del motor de
+ * layout, que es donde esa información ya vive: sin loop, sin medir en cada scroll. Donde no está, el
+ * bloque `@supports` no se aplica y posiciona la machine de Zag, que es el fallback, no un camino
+ * inferior.
+ *
+ * Los dos motores NO PUEDEN CORRER A LA VEZ. En la ruta del navegador el binding le saca al positioner
+ * el `style` inline que trae la machine (`stripPositioningStyle`), y ésa es la razón por la que estas
+ * declaraciones pueden quedarse sin `!important`. Es carga estructural, no prolijidad: `position-try`
+ * sólo puede voltear declaraciones que NO son `!important`, así que uno acá apagaría el volteo.
+ *
+ * LO QUE ESTE PATTERN NO HACE: `pointer-events`. Un positioner con `span-all` es una caja invisible
+ * más ancha que su contenido, y si captura clicks bloquea lo que hay debajo; pero apagarle los eventos
+ * acá sería apagárselos a un menú entero, y hay componentes que pintan positioner y content en el
+ * MISMO elemento. Es del componente, que es el único que sabe cuál de los dos casos es.
+ */
+@layer components {
+  /* El ancla no se pinta acá. Es un Button, un Link o lo que el consumidor haya autorado; este
+   * pattern sólo lo declara como el punto contra el que se mide. Pintarlo sería que el anclaje
+   * decidiera cómo se ve un botón. */
+  .sk-anchor {
+    anchor-name: var(--sk-anchored-name);
+  }
+
+  /*
+   * LOS DEFAULTS VAN EN `:where()`, o sea con especificidad CERO, y es a propósito.
+   *
+   * Un componente re-declara estos hooks desde su propia part (`.sk-tooltip__positioner`, que sale
+   * block-start y no block-end), y con `.sk-anchored` a secas las dos reglas empatarían en (0,1,0):
+   * ganaría la que se importó última, o sea que el default de un tooltip dependería del ORDEN DE LOS
+   * IMPORTS de quien lo consume. Con especificidad cero cualquier regla del componente gana, y las
+   * reglas de `[data-sk-placement]` de más abajo, que son (0,2,0), siguen ganándole al componente,
+   * que es exactamente el orden que se quiere: pattern < componente < colocación pedida.
+   */
+  :where(.sk-anchored) {
+    /* La distancia al ancla. Un solo hook, porque el volteo cambia el LADO pero no el hueco. */
+    --sk-anchored-offset: var(--space-stack-xs);
+    /* El ancho lo decide el contenido por defecto. Sin `max-content` la caja hereda el ancho de la
+     * región anclada, que cerca del borde de la pantalla es angosta, y una frase de seis palabras
+     * termina partida en tres líneas al lado de un hueco vacío. Select lo pisa con
+     * `anchor-size(width)`, que es su `sameWidth`: el listbox mide lo que mide su trigger. */
+    --sk-anchored-size: max-content;
+    --sk-anchored-z: var(--z-popover);
+
+    /* La colocación por defecto, en ejes lógicos: abajo del ancla, que es de donde salen el menu, el
+     * select, el combobox, el date picker y el popover. El tooltip sale arriba y lo re-declara. */
+    --sk-anchored-position-area: block-end span-all;
+    --sk-anchored-position-try: flip-block;
+    /* Centrar sobre el ancla es una alineación distinta según el eje que quedó libre: con la caja
+     * arriba o abajo, el eje libre es el inline (justify); a los costados, el bloque (align). */
+    --sk-anchored-justify: anchor-center;
+    --sk-anchored-align: auto;
+  }
+
+  /*
+   * LA CLASE SE AUTORA SIEMPRE, tenga el navegador la API o no, y por eso acá sólo puede haber
+   * declaraciones que sean correctas en LAS DOS RUTAS. Si la clase dependiera del soporte habría que
+   * ponerla y sacarla desde JS, y el markup autorado dejaría de ser leíble tal como está escrito.
+   *
+   * `fixed` y no `absolute`: el viewport es el bloque contenedor, así que el desbordamiento se mide
+   * contra la pantalla y no contra el primer ancestro posicionado, que en una tabla o un panel con
+   * scroll sería una caja diminuta contra la que nunca haría flip. En el fallback la machine escribe
+   * su propio `position` inline, que gana, así que esta declaración no le estorba.
+   */
+  .sk-anchored {
+    position: fixed;
+    z-index: var(--sk-anchored-z);
+
+    /* La caja se NOMBRA A SÍ MISMA, y no para colocarse: es la flecha la que necesita MEDIRLA
+     * (`anchor-size`) para tener la misma huella y voltear en el mismo umbral, y no puede leer el
+     * tamaño de su propio padre de ninguna otra forma. Sin `--sk-anchored-box-name` escrito esto es
+     * `none`, que es el default y no molesta a nadie. */
+    anchor-name: var(--sk-anchored-box-name);
+  }
+
+  @supports (anchor-name: --a) {
+    .sk-anchored {
+      /* El ancho va acá adentro y no afuera: en el fallback lo decide la machine (`--reference-width`
+       * y compañía), y un `max-content` fijo le pisaría el `sameWidth`. */
+      inline-size: var(--sk-anchored-size);
+      position-anchor: var(--sk-anchored-name);
+      position-area: var(--sk-anchored-position-area);
+      justify-self: var(--sk-anchored-justify);
+      align-self: var(--sk-anchored-align);
+      margin: var(--sk-anchored-offset);
+      position-try-fallbacks: var(--sk-anchored-position-try);
+      /* Algo anclado cuyo ancla se fue de pantalla miente: flota sobre otra cosa y parece describirla. */
+      position-visibility: anchors-visible;
+    }
+  }
+
+  /* ── La colocación pedida ────────────────────────────────────────────────────
+   * `data-sk-placement` va en el POSITIONER y no en el root, porque en React el positioner se
+   * portalea al body y ahí la herencia desde el root no llega. Un binding que lo deja autorar en el
+   * root lo COPIA acá.
+   *
+   * `span-all` y no `center` en el eje libre de las colocaciones de bloque: `block-start center`
+   * acota la región a la parte SIMÉTRICA respecto del ancla, o sea `2 × min(espacio a la izquierda,
+   * espacio a la derecha)`, así que un ancla cerca del borde deja una región angosta y el texto se
+   * parte al lado de un hueco vacío. `span-all` da toda la franja y `justify-self: anchor-center` es
+   * lo que centra, sin acotar nada.
+   *
+   * El fallback siempre voltea en el MISMO eje que la colocación pedida: quien pide `inline-end`
+   * quiere la caja al costado, y caer arriba sería desobedecer, no adaptarse.
+   *
+   * Los nombres son lógicos, como el resto del sistema, y se dan vuelta solos en RTL. El único lugar
+   * donde eso no se cumple es el fallback JS de Zag, cuyas placements son físicas; ahí el binding
+   * traduce con `anchorPlacementToZag`. */
+  .sk-anchored[data-sk-placement="block-start"] {
+    --sk-anchored-position-area: block-start span-all;
+    --sk-anchored-position-try: flip-block;
+    --sk-anchored-justify: anchor-center;
+    --sk-anchored-align: auto;
+  }
+
+  .sk-anchored[data-sk-placement="block-end"] {
+    --sk-anchored-position-area: block-end span-all;
+    --sk-anchored-position-try: flip-block;
+    --sk-anchored-justify: anchor-center;
+    --sk-anchored-align: auto;
+  }
+
+  /* ── LA FLECHA, OPCIONAL ─────────────────────────────────────────────────────
+   * Un cuadrado rotado 45° que asoma por el borde de la caja hacia el ancla. Se autora, no se
+   * inventa: si el markup no trae `.sk-anchored-arrow`, no hay flecha, y eso es el default. Un
+   * tooltip o un popover la quieren porque son chrome flotante que tiene que decir DE QUÉ control
+   * está hablando; un menú o un select no, porque ahí la relación ya la dice el borde compartido.
+   *
+   * LA FLECHA SALE DEL ANCLA, NO DEL CENTRO DE LA CAJA. La diferencia se ve apenas la caja se corre:
+   * `justify-self: anchor-center` la centra sobre el ancla PERO la mete de vuelta en pantalla si no
+   * entra, así que un trigger cerca del borde deja la caja desplazada y una flecha dibujada a su 50%
+   * termina apuntando a nada. Así que la flecha no se coloca contra la caja: es OTRA CAJA ANCLADA
+   * contra la misma ancla, con el mismo `position-area` y el mismo volteo.
+   *
+   * VA COMO HIJA DEL POSITIONER, y sin embargo se ancla al trigger, que parecería imposible: el spec
+   * sólo deja usar como ancla algo que sea DESCENDIENTE DEL BLOQUE CONTENEDOR del elemento, y el
+   * trigger no cuelga del positioner. Lo que lo resuelve es `position: fixed`: el bloque contenedor
+   * de un fijo es el viewport, donde el trigger sí vive, aunque en el DOM la flecha siga adentro. Con
+   * `absolute` el bloque contenedor sería el positioner y `anchor()` y `anchor-center` quedarían
+   * inválidos EN SILENCIO (se van al fallback sin avisar, y `CSS.supports` sigue diciendo que sí).
+   *
+   * Quedarse adentro no es un detalle de prolijidad, hace falta por tres cosas a la vez:
+   *
+   *   1. EL TOP LAYER. La caja de un Popover se va ahí al abrirse, y ahí sólo entra con sus hijos.
+   *      Una hermana pintaría debajo del panel y su relleno no podría tapar la costura del borde.
+   *   2. LA COSTURA. Como hija posicionada de la caja, la flecha pinta ENCIMA de su fondo y de su
+   *      borde: el relleno del rombo tapa el pedazo de borde por donde entra y sus dos bordes de
+   *      afuera continúan el de la caja, que es lo que hace que la unión desaparezca.
+   *   3. EL FALLBACK. Sin la API coloca la machine, y `@zag-js/popper` busca la flecha ADENTRO del
+   *      elemento flotante (`[data-part=arrow]`). Afuera no la encuentra.
+   *
+   * Y `position-area`, no `anchor()` en los insets: Blink compensa el scroll de lo colocado por
+   * `position-area`, pero no el de un inset con `anchor()`, que se queda atrás un scrollY entero. Por
+   * eso acá no hay un solo `anchor()` de posición; el único uso de anclaje que no es `position-area`
+   * es `anchor-size()`, y un TAMAÑO no envejece con el scroll.
+   *
+   * COSTO, DICHO: al voltear, `position-try` da vuelta los márgenes y el `align-self` (por eso la
+   * flecha acompaña el volteo), pero no el `rotate`, que no es una propiedad que acepte. El rombo es
+   * simétrico a 180°, así que la FORMA sigue igual y sólo cambian cuáles de sus lados llevan el
+   * borde: invisible con `--sk-anchored-arrow-border-color` transparente (tooltip), una línea en el
+   * lado equivocado con un borde pintado (popover). Es lo que queda de un costo que antes era la
+   * flecha entera dibujada en el borde que no era. */
+  /*
+   * LOS DEFAULTS VAN EN EL `var()`, NO EN UNA DECLARACIÓN PROPIA. El componente declara
+   * `--sk-anchored-arrow-bg` sobre el POSITIONER y la flecha lo hereda, que es lo que hace que un
+   * tooltip la pinte de su superficie invertida y un popover de la suya sin que el pattern conozca a
+   * ninguno de los dos. Declarar acá `--sk-anchored-arrow-bg: transparent` como "default" mataría esa
+   * herencia: un valor propio le gana siempre al heredado, y la flecha saldría invisible en todos
+   * lados. El fallback del `var()` hace el mismo trabajo sin romperla.
+   */
+  .sk-anchored-arrow {
+    position: absolute;
+    inline-size: var(--sk-anchored-arrow-size, 8px);
+    block-size: var(--sk-anchored-arrow-size, 8px);
+    rotate: 45deg;
+    background: var(--sk-anchored-arrow-bg, transparent);
+    /* Sólo los dos lados que quedan hacia AFUERA después de rotar; los otros dos caen bajo la caja. */
+    border-block-start: 1px solid var(--sk-anchored-arrow-border-color, transparent);
+    border-inline-start: 1px solid var(--sk-anchored-arrow-border-color, transparent);
+    pointer-events: none;
+
+    /* El puente al hook con el que Zag dimensiona la flecha desde estilos inline sobre ella
+     * (`width: var(--arrow-size)`); sin él esa declaración queda inválida y el rombo colapsa a cero.
+     * Va acá, sin condición: la machine MIDE la flecha para poder colocarla, así que el tamaño tiene
+     * que estar resuelto antes de que exista cualquier atributo que diga que la colocó. En la ruta del
+     * navegador nadie lo lee. */
+    --arrow-size: var(--sk-anchored-arrow-size, 8px);
+    /* CERRADO ES EL DEFAULT, igual que para el contenido. El que se esconde solo al cerrar es el
+     * CONTENIDO; la flecha es su hermana dentro del positioner, y el positioner sigue en el DOM
+     * abierto o cerrado, así que sin esta regla queda un rombo flotando al lado de un trigger cuyo
+     * tooltip no está. Se prueba en POSITIVO, "visible sólo si está abierto", porque la ausencia de
+     * `data-state` (todavía sin montar, o sin JS) también cuenta como cerrado. */
+    visibility: hidden;
+  }
+
+  /* Las tres formas que tiene un anclado de decir "estoy abierto": la machine lo escribe en el
+   * contenido, o en el positioner, o el elemento ES un popover nativo y lo dice la plataforma. */
+  .sk-anchored:has(> [data-state="open"]) > .sk-anchored-arrow,
+  .sk-anchored[data-state="open"] > .sk-anchored-arrow,
+  .sk-anchored:popover-open > .sk-anchored-arrow {
+    visibility: visible;
+  }
+
+  /* ── La ruta del navegador: la flecha es otra caja anclada ───────────────────
+   * Todo esto vive bajo `@supports` porque ES anchor positioning. Sin la API, `position: fixed` y un
+   * `position-area` no colocarían nada, así que la flecha se queda `absolute` (regla de arriba) y la
+   * mueve la machine, que es la ruta del final del archivo. */
+  @supports (anchor-name: --a) {
+    .sk-anchored-arrow {
+      /*
+       * Privados, porque las cuatro colocaciones de abajo son ilegibles sin ellos.
+       *
+       * `near`: del borde de la caja que mira al ancla hasta el CENTRO del rombo. La mitad del rombo
+       * asoma y la otra mitad se mete bajo la caja, así que el centro cae justo sobre el borde: el
+       * hueco menos media flecha.
+       *
+       * `edge`: cuánto se queda la flecha adentro del borde LATERAL de la caja, para que el rombo
+       * nunca aterrice en la esquina redondeada. Es un margen, así que entra en el mismo recorte
+       * contra el viewport que ya se le hace a la caja: cuando la caja toca el borde de la pantalla
+       * las dos quedan recortadas en la misma línea, que es lo que mantiene la flecha adentro.
+       */
+      --sk-anchored-arrow-near: calc(
+        var(--sk-anchored-offset) - var(--sk-anchored-arrow-size, 8px) / 2
+      );
+      --sk-anchored-arrow-edge: calc(
+        var(--sk-anchored-offset) +
+          var(--sk-anchored-arrow-inset, calc(var(--sk-anchored-arrow-size, 8px) * 1.5)) -
+          var(--sk-anchored-arrow-size, 8px) / 2
+      );
+
+      /* `fixed` es lo que le da el viewport como bloque contenedor, y con eso el trigger como ancla
+       * alcanzable. Ver la explicación larga arriba: con `absolute` no hay anclaje posible. */
+      position: fixed;
+      position-anchor: var(--sk-anchored-name);
+      /* Igual que la caja: una flecha cuya ancla se fue de pantalla es un rombo apuntando a nada. */
+      position-visibility: anchors-visible;
+    }
+
+    /*
+     * EL MARGEN LEJANO ES EL ALTO DE LA CAJA, y es lo que hace que las dos VOLTEEN JUNTAS.
+     *
+     * `position-try` prueba el lado opuesto cuando el elemento no entra, y lo decide por elemento:
+     * una flecha de 8px entra arriba del trigger en lugares donde la caja entera no, así que sin
+     * esto la caja se iría abajo y la flecha se quedaría arriba, suelta. Dándole a la flecha el alto
+     * de la caja como margen del lado de afuera, su huella de bloque es la misma que la de la caja y
+     * el umbral de volteo también. Al voltear, `flip-block` da vuelta los dos márgenes, así que el
+     * lejano pasa a ser el cercano y la flecha aparece del otro lado, pegada a la caja.
+     *
+     * `anchor-size()` y no una medición: el tamaño de la caja no depende de dónde esté, así que es
+     * el único dato del otro elemento que se puede leer sin que el scroll lo desactualice.
+     */
+    .sk-anchored[data-sk-placement="block-end"] > .sk-anchored-arrow,
+    .sk-anchored:not([data-sk-placement]) > .sk-anchored-arrow {
+      position-area: block-end span-all;
+      position-try-fallbacks: flip-block;
+      justify-self: anchor-center;
+      align-self: start;
+      margin-block-start: var(--sk-anchored-arrow-near);
+      margin-block-end: calc(
+        anchor-size(var(--sk-anchored-box-name) block) + var(--sk-anchored-arrow-near)
+      );
+      margin-inline: var(--sk-anchored-arrow-edge);
+      rotate: 45deg;
+    }
+
+    .sk-anchored[data-sk-placement="block-start"] > .sk-anchored-arrow {
+      position-area: block-start span-all;
+      position-try-fallbacks: flip-block;
+      justify-self: anchor-center;
+      align-self: end;
+      margin-block-start: calc(
+        anchor-size(var(--sk-anchored-box-name) block) + var(--sk-anchored-arrow-near)
+      );
+      margin-block-end: var(--sk-anchored-arrow-near);
+      margin-inline: var(--sk-anchored-arrow-edge);
+      rotate: 225deg;
+    }
+
+    /* A los costados se dan vuelta los ejes: el libre pasa a ser el de bloque (`align`) y el que
+     * mide la caja, el inline. */
+    .sk-anchored[data-sk-placement="inline-start"] > .sk-anchored-arrow {
+      position-area: inline-start;
+      position-try-fallbacks: flip-inline;
+      align-self: anchor-center;
+      justify-self: end;
+      margin-inline-start: calc(
+        anchor-size(var(--sk-anchored-box-name) inline) + var(--sk-anchored-arrow-near)
+      );
+      margin-inline-end: var(--sk-anchored-arrow-near);
+      margin-block: var(--sk-anchored-arrow-edge);
+      rotate: 135deg;
+    }
+
+    .sk-anchored[data-sk-placement="inline-end"] > .sk-anchored-arrow {
+      position-area: inline-end;
+      position-try-fallbacks: flip-inline;
+      align-self: anchor-center;
+      justify-self: start;
+      margin-inline-start: var(--sk-anchored-arrow-near);
+      margin-inline-end: calc(
+        anchor-size(var(--sk-anchored-box-name) inline) + var(--sk-anchored-arrow-near)
+      );
+      margin-block: var(--sk-anchored-arrow-edge);
+      rotate: -45deg;
+    }
+  }
+
+  /* ── El fallback: la flecha la mueve la machine ──────────────────────────────
+   * `data-side` es el lado RESUELTO, el que la machine acaba de calcular, y sólo aparece en esta
+   * ruta: el binding lo espeja sobre la flecha cuando le pasa las props de Zag. Que exista es la
+   * señal de "ACÁ COLOCA LA MACHINE", y esta regla DESHACE todo lo que el bloque de arriba le puso
+   * para que no queden dos motores opinando sobre el mismo rombo. Zag la centra sobre el trigger él
+   * mismo, escribiendo `left` y un inset del eje principal.
+   *
+   * Se deshace TODO y no sólo los insets, aunque en teoría no haga falta (sin la API el `@supports` no
+   * se aplica y no hay nada que deshacer): los márgenes son lo que más duele si las dos rutas se
+   * pisan, porque Zag no los toca, así que su `left` calculado se corre por el margen que quedó y la
+   * flecha sale desplazada sin que nada se vea roto. Barato, y la regla queda cierta por sí sola.
+   *
+   * La rotación sí la ponemos nosotros y sigue al lado resuelto, que acá es dato firme: en esta ruta
+   * la machine es la única que coloca, así que no hay dos opiniones sobre dónde quedó la caja. */
+  .sk-anchored > .sk-anchored-arrow[data-side] {
+    position: absolute;
+    inset: auto;
+    translate: none;
+    margin: 0;
+    position-area: none;
+    position-visibility: always;
+    align-self: auto;
+    justify-self: auto;
+  }
+
+  .sk-anchored > .sk-anchored-arrow[data-side="top"] {
+    rotate: 225deg;
+  }
+
+  .sk-anchored > .sk-anchored-arrow[data-side="bottom"] {
+    rotate: 45deg;
+  }
+
+  .sk-anchored > .sk-anchored-arrow[data-side="left"] {
+    rotate: 135deg;
+  }
+
+  .sk-anchored > .sk-anchored-arrow[data-side="right"] {
+    rotate: -45deg;
+  }
+
+  .sk-anchored[data-sk-placement="inline-start"] {
+    --sk-anchored-position-area: inline-start;
+    --sk-anchored-position-try: flip-inline;
+    --sk-anchored-justify: auto;
+    --sk-anchored-align: anchor-center;
+  }
+
+  .sk-anchored[data-sk-placement="inline-end"] {
+    --sk-anchored-position-area: inline-end;
+    --sk-anchored-position-try: flip-inline;
+    --sk-anchored-justify: auto;
+    --sk-anchored-align: anchor-center;
+  }
+}

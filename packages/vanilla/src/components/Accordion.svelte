@@ -16,7 +16,7 @@
     if (!el.dataset.value) el.dataset.value = el.id || `item-${i + 1}`;
   });
 
-  if (!root.id) root.id = uniqueId("ds-accordion");
+  if (!root.id) root.id = uniqueId("sk-accordion");
   root.classList.add(accordionParts.root);
   root.setAttribute("data-part", accordionDataParts.root);
   root.setAttribute("data-scope", accordionScope);
@@ -34,7 +34,7 @@
 
   type Item = { id: string; value: string; el: HTMLElement; trigger: HTMLElement | null; content: HTMLElement | null; disabled: boolean };
   const items: Item[] = itemEls.map((el) => {
-    if (!el.id) el.id = uniqueId("ds-accordion-item");
+    if (!el.id) el.id = uniqueId("sk-accordion-item");
     return {
       id: el.id,
       value: el.dataset.value ?? "",

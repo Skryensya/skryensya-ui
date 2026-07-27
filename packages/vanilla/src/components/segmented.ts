@@ -2,8 +2,8 @@ import { segmentedParts } from "@skryensya/core/segmented";
 import { applyAttrs, bindEvents } from "../runtime/apply.js";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
-const rootSelector = "[data-ds-segmented]";
-const optionSelector = "[data-ds-segmented-option]";
+const rootSelector = "[data-sk-segmented]";
+const optionSelector = "[data-sk-segmented-option]";
 
 type Cleanup = () => void;
 
@@ -49,7 +49,7 @@ export function connectSegmented(root: HTMLElement): Cleanup {
 
     value = next;
     render();
-    root.dispatchEvent(new CustomEvent("ds-value-change", { bubbles: true, detail: { value } }));
+    root.dispatchEvent(new CustomEvent("sk-value-change", { bubbles: true, detail: { value } }));
   };
 
   const cleanups = options.map((option) => bindEvents(option, {
@@ -64,7 +64,7 @@ export function connectSegmented(root: HTMLElement): Cleanup {
   return () => {
     for (const cleanup of cleanups) cleanup();
     observer?.disconnect();
-    root.removeAttribute("data-ds-segmented-ready");
+    root.removeAttribute("data-sk-segmented-ready");
   };
 }
 
@@ -74,11 +74,10 @@ function alignIndicator(root: HTMLElement, indicator: HTMLElement | null): void 
   const selected = root.querySelector<HTMLElement>(`${optionSelector}[aria-checked="true"]`);
   if (!selected) return;
 
-  indicator.style.setProperty("--ds-segmented-indicator-x", `${selected.offsetLeft}px`);
-  indicator.style.setProperty("--ds-segmented-indicator-y", `${selected.offsetTop}px`);
-  indicator.style.setProperty("--ds-segmented-indicator-width", `${selected.offsetWidth}px`);
-  indicator.style.setProperty("--ds-segmented-indicator-height", `${selected.offsetHeight}px`);
-  root.setAttribute("data-ds-segmented-ready", "");
+  indicator.style.transform = `translate3d(${selected.offsetLeft}px, ${selected.offsetTop}px, 0)`;
+  indicator.style.inlineSize = `${selected.offsetWidth}px`;
+  indicator.style.blockSize = `${selected.offsetHeight}px`;
+  root.setAttribute("data-sk-segmented-ready", "");
 }
 
 function onOptionKeydown(

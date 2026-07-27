@@ -11,7 +11,7 @@ import {
 import { applyAttrs, bindEvents } from "../runtime/apply.js";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
-const rootSelector = "[data-ds-toast]";
+const rootSelector = "[data-sk-toast]";
 const dismissSelector = `.${contentParts.toastDismiss}`;
 
 type Cleanup = () => void;

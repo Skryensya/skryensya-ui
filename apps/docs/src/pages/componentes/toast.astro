@@ -1,110 +1,405 @@
 ---
+import "@skryensya/core/components/toast.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
-const simpleHtml = `<div class="ds-toast-region" aria-live="polite">
+/* EL EJEMPLO PRINCIPAL: un toast no se autora "ya visible", aparece porque algo pasó. El markup
+   estable es el trigger, la región vacía y el <template> del ítem; el resto lo hace la app. */
+const emitHtml = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="primary"
+  data-emit-toast
+  type="button"
+>
+  Archivar documento
+</button>
+
+<div class="sk-toast-region" aria-live="polite"></div>
+
+<template data-toast-template>
   <div
-    class="ds-alert"
-    data-ds-toast
+    class="sk-alert"
+    data-sk-toast
+    data-presentation="banner"
+    data-tone="neutral"
+    data-timeout="4000"
+    role="status"
+    aria-live="polite"
+  >
+    <div class="sk-alert__content">
+      <div class="sk-alert__description">
+        Documento archivado.
+      </div>
+    </div>
+    <div class="sk-alert__actions">
+      <button
+        class="sk-alert__dismiss sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-icon-only
+        data-variant="ghost"
+        type="button"
+        aria-label="Descartar"
+      >
+        <span data-sk-icon="close"></span>
+      </button>
+    </div>
+  </div>
+</template>`;
+
+const emitJs = `import { initComponents } from "@skryensya/vanilla/auto";
+
+const region = document.querySelector(".sk-toast-region");
+const template = document.querySelector("[data-toast-template]");
+
+document
+  .querySelector("[data-emit-toast]")
+  .addEventListener("click", async () => {
+    region.append(template.content.cloneNode(true));
+    // initComponents es idempotente: monta sólo lo recién
+    // insertado, y con eso el toast gana ✕ y timeout.
+    await initComponents(region);
+  });
+
+// El toast NUNCA se retira solo: pide permiso con sk-dismiss
+// (detail.reason: "timeout" | "dismiss") y la app decide.
+region.addEventListener("sk-dismiss", (event) => {
+  event.target.remove();
+});`;
+
+const emitScript = `const region = document.querySelector(".sk-toast-region");
+const template = document.querySelector("[data-toast-template]");
+
+document.querySelector("[data-emit-toast]").addEventListener("click", async () => {
+  region.append(template.content.cloneNode(true));
+  await window.skMount(region);
+});
+
+region.addEventListener("sk-dismiss", (event) => {
+  event.target.remove();
+});`;
+
+const emitReact = `import { useState } from "react";
+import { Button } from "@skryensya/react/button";
+import {
+  Toast,
+  ToastRegion,
+} from "@skryensya/react/content";
+
+const [toasts, setToasts] = useState([]);
+const remove = (id) =>
+  setToasts((all) => all.filter((toast) => toast.id !== id));
+
+<Button
+  variant="primary"
+  onClick={() => setToasts((all) => [...all, { id: crypto.randomUUID() }])}
+>
+  Archivar documento
+</Button>
+
+<ToastRegion>
+  {toasts.map((toast) => (
+    <Toast
+      key={toast.id}
+      timeout={4000}
+      onDismiss={() => remove(toast.id)}
+    >
+      Documento archivado.
+    </Toast>
+  ))}
+</ToastRegion>;`;
+
+const simpleHtml = `<div class="sk-toast-region" aria-live="polite">
+  <div
+    class="sk-alert"
+    data-sk-toast
     data-presentation="banner"
     data-tone="neutral"
     role="status"
     aria-live="polite"
   >
-    <div class="ds-alert__content">
-      <div class="ds-alert__description">
+    <div class="sk-alert__content">
+      <div class="sk-alert__description">
         Enlace copiado al portapapeles.
       </div>
     </div>
-    <div class="ds-alert__actions">
+    <div class="sk-alert__actions">
       <button
-        class="ds-alert__dismiss"
+        class="sk-alert__dismiss sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-icon-only
+        data-variant="ghost"
         type="button"
         aria-label="Descartar"
       >
-        <span data-ds-icon="close"></span>
+        <span data-sk-icon="close"></span>
       </button>
     </div>
   </div>
 </div>`;
 
-const statusHtml = `<div class="ds-toast-region" aria-live="polite">
+const statusHtml = `<div class="sk-toast-region" data-stack="off" aria-live="polite">
   <div
-    class="ds-alert"
-    data-ds-toast
-    data-presentation="banner"
-    data-tone="success"
-    role="status"
-    aria-live="polite"
-  >
-    <span class="ds-alert__icon" aria-hidden="true">
-      <span data-ds-icon="success"></span>
-    </span>
-    <div class="ds-alert__content">
-      <p class="ds-alert__title">Despliegue creado</p>
-      <div class="ds-alert__description">
-        La revisión ya está en producción.
-      </div>
-    </div>
-    <div class="ds-alert__actions">
-      <button
-        class="ds-alert__dismiss"
-        type="button"
-        aria-label="Descartar"
-      >
-        <span data-ds-icon="close"></span>
-      </button>
-    </div>
-  </div>
-  <div
-    class="ds-alert"
-    data-ds-toast
+    class="sk-alert"
+    data-sk-toast
     data-presentation="banner"
     data-tone="info"
+    data-timeout="6000"
     role="status"
     aria-live="polite"
   >
-    <span class="ds-alert__icon" aria-hidden="true">
-      <span data-ds-icon="info"></span>
+    <span class="sk-alert__icon" aria-hidden="true">
+      <span data-sk-icon="info"></span>
     </span>
-    <div class="ds-alert__content">
-      <p class="ds-alert__title">Sincronizando</p>
-      <div class="ds-alert__description">
+    <div class="sk-alert__content">
+      <p class="sk-alert__title">Sincronizando</p>
+      <div class="sk-alert__description">
         Esto puede tardar unos segundos.
       </div>
     </div>
   </div>
   <div
-    class="ds-alert"
-    data-ds-toast
+    class="sk-alert"
+    data-sk-toast
+    data-presentation="banner"
+    data-tone="success"
+    role="status"
+    aria-live="polite"
+  >
+    <span class="sk-alert__icon" aria-hidden="true">
+      <span data-sk-icon="success"></span>
+    </span>
+    <div class="sk-alert__content">
+      <p class="sk-alert__title">Despliegue creado</p>
+      <div class="sk-alert__description">
+        La revisión ya está en producción.
+      </div>
+    </div>
+    <div class="sk-alert__actions">
+      <button
+        class="sk-alert__dismiss sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-icon-only
+        data-variant="ghost"
+        type="button"
+        aria-label="Descartar"
+      >
+        <span data-sk-icon="close"></span>
+      </button>
+    </div>
+  </div>
+  <div
+    class="sk-alert"
+    data-sk-toast
     data-presentation="banner"
     data-tone="danger"
     role="alert"
     aria-live="assertive"
   >
-    <span class="ds-alert__icon" aria-hidden="true">
-      <span data-ds-icon="danger"></span>
+    <span class="sk-alert__icon" aria-hidden="true">
+      <span data-sk-icon="danger"></span>
     </span>
-    <div class="ds-alert__content">
-      <p class="ds-alert__title">No se pudo conectar</p>
-      <div class="ds-alert__description">
+    <div class="sk-alert__content">
+      <p class="sk-alert__title">No se pudo conectar</p>
+      <div class="sk-alert__description">
         Revisa la red e inténtalo de nuevo.
       </div>
     </div>
-    <div class="ds-alert__actions">
+    <div class="sk-alert__actions">
       <button
-        class="ds-alert__dismiss"
+        class="sk-alert__dismiss sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-icon-only
+        data-variant="ghost"
         type="button"
         aria-label="Descartar"
       >
-        <span data-ds-icon="close"></span>
+        <span data-sk-icon="close"></span>
       </button>
     </div>
   </div>
 </div>`;
+
+/* Acción + cierre en la misma columna. Sin timeout a propósito: un toast con acción no debe
+   evaporarse antes de que se pueda usar. */
+const actionHtml = `<div class="sk-toast-region" aria-live="polite">
+  <div
+    class="sk-alert"
+    data-sk-toast
+    data-presentation="banner"
+    data-tone="neutral"
+    role="status"
+    aria-live="polite"
+  >
+    <div class="sk-alert__content">
+      <p class="sk-alert__title">Documento archivado</p>
+      <div class="sk-alert__description">
+        Se movió a Archivados.
+      </div>
+    </div>
+    <div class="sk-alert__actions">
+      <button
+        class="sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-variant="neutral"
+        type="button"
+      >
+        Deshacer
+      </button>
+      <button
+        class="sk-alert__dismiss sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-icon-only
+        data-variant="ghost"
+        type="button"
+        aria-label="Descartar"
+      >
+        <span data-sk-icon="close"></span>
+      </button>
+    </div>
+  </div>
+</div>`;
+
+/* La pila: EXACTAMENTE el mismo markup del primer ejemplo. Apilar es el default. */
+const stackHtml = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="primary"
+  data-emit-toast
+  type="button"
+>
+  Archivar otro
+</button>
+
+<div class="sk-toast-region" aria-live="polite"></div>
+
+<template data-toast-template>
+  <div
+    class="sk-alert"
+    data-sk-toast
+    data-presentation="banner"
+    data-tone="neutral"
+    role="status"
+    aria-live="polite"
+  >
+    <div class="sk-alert__content">
+      <div class="sk-alert__description">
+        Documento archivado.
+      </div>
+    </div>
+    <div class="sk-alert__actions">
+      <button
+        class="sk-alert__dismiss sk-button sk-interactive"
+        data-sk-button
+        data-size="sm"
+        data-icon-only
+        data-variant="ghost"
+        type="button"
+        aria-label="Descartar"
+      >
+        <span data-sk-icon="close"></span>
+      </button>
+    </div>
+  </div>
+</template>`;
+
+const stackScript = `const region = document.querySelector(".sk-toast-region");
+const template = document.querySelector("[data-toast-template]");
+let count = 0;
+
+document.querySelector("[data-emit-toast]").addEventListener("click", async () => {
+  count += 1;
+  const toast = template.content.firstElementChild.cloneNode(true);
+  const description = toast.querySelector(".sk-alert__description");
+  description.textContent = "Documento " + count + " archivado.";
+  // Uno de cada dos con título: alturas distintas, para que se vea que la pila
+  // colapsada agrupa sobre la caja del más nuevo y no sobre la de cada uno.
+  if (count % 2 === 0) {
+    const title = document.createElement("p");
+    title.className = "sk-alert__title";
+    title.textContent = "Movido a Archivados";
+    description.before(title);
+  }
+  region.append(toast);
+  await window.skMount(region);
+});
+
+region.addEventListener("sk-dismiss", (event) => {
+  event.target.remove();
+});
+
+document.querySelector("[data-emit-toast]").click();
+document.querySelector("[data-emit-toast]").click();
+document.querySelector("[data-emit-toast]").click();`;
+
+const stackCss = `/* Ya viene en components/toast.css: está acá porque
+   es la única parte del componente que lee el DOM
+   desde CSS, y conviene saber de dónde sale. */
+
+/* Sólo el más nuevo queda en flujo, así la región
+   mide lo que mide ÉL. Los de atrás salen de flujo
+   estirados a esa misma caja: por eso la pila se lee
+   como un objeto y no como cartas descuadradas. */
+.sk-toast-region:not([data-stack="off"]) > .sk-alert:not(:last-child) {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+}
+
+.sk-toast-region:not([data-stack="off"]) > .sk-alert {
+  /* 0 para el más nuevo (el último hijo), +1 por
+     cada uno que quedó atrás. Sin contadores en JS. */
+  --sk-toast-depth: calc(sibling-count() - sibling-index());
+
+  transform-origin: bottom center;
+  translate: 0 calc(
+    var(--sk-toast-depth) * var(--sk-toast-peek) * -1
+  );
+  scale: calc(1 - (var(--sk-toast-depth) * var(--sk-toast-shrink)));
+  opacity: calc(3 - var(--sk-toast-depth));
+
+  /* La profundidad otra vez, ahora en el tiempo: el de
+     adelante sale primero, cada uno detrás lo sigue. */
+  transition-delay: calc(
+    var(--sk-toast-depth) * var(--sk-toast-cascade)
+  );
+}
+
+.sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within)
+  > .sk-alert {
+  position: static;
+  overflow: visible;
+  translate: none;
+  scale: none;
+  opacity: 1;
+}
+
+/* El layout no transiciona: al dejar de ser absolutos ya
+   están en su fila. En vez de animar el salto, se lo tapa
+   con una llegada. El más nuevo no participa: no se movió. */
+.sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within)
+  > .sk-alert:not(:last-child) {
+  animation: sk-toast-fan var(--motion-expand-duration)
+    var(--motion-expand-easing)
+    calc(var(--sk-toast-depth) * var(--sk-toast-cascade))
+    backwards;
+}
+
+@keyframes sk-toast-fan {
+  from {
+    opacity: 0;
+    translate: 0 var(--sk-toast-peek);
+  }
+}`;
 
 const simpleReact = `import {
   Toast,
@@ -123,6 +418,15 @@ const statusReact = `import {
 } from "@skryensya/react/content";
 
 <ToastRegion>
+  {/* sin onDismiss no hay ✕: el timeout lo retira */}
+  <Toast
+    tone="info"
+    title="Sincronizando"
+    icon={<InfoIcon />}
+    timeout={6000}
+  >
+    Esto puede tardar unos segundos.
+  </Toast>
   <Toast
     tone="success"
     title="Despliegue creado"
@@ -133,17 +437,53 @@ const statusReact = `import {
   </Toast>
 </ToastRegion>;`;
 
+const actionReact = `import { Button } from "@skryensya/react/button";
+import {
+  Toast,
+  ToastRegion,
+} from "@skryensya/react/content";
+
+<ToastRegion>
+  <Toast
+    title="Documento archivado"
+    actions={
+      <Button size="sm" variant="neutral" onClick={undo}>
+        Deshacer
+      </Button>
+    }
+    onDismiss={() => remove(id)}
+  >
+    Se movió a Archivados.
+  </Toast>
+</ToastRegion>;`;
+
+const stackReact = `import {
+  Toast,
+  ToastRegion,
+} from "@skryensya/react/content";
+
+// Apilar es el default de la región; ningún Toast sabe que
+// está en una pila. El orden del array es el de la pila.
+// Para NO apilar: <ToastRegion data-stack="off">
+<ToastRegion>
+  {toasts.map((toast) => (
+    <Toast key={toast.id} onDismiss={() => remove(toast.id)}>
+      {toast.message}
+    </Toast>
+  ))}
+</ToastRegion>;`;
+
 const vanilla = `import {
   initComponents,
 } from "@skryensya/vanilla/auto";
 import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 
-// Los iconos se autoran como placeholders <span data-ds-icon>;
+// Los iconos se autoran como placeholders <span data-sk-icon>;
 // mountIcons los reemplaza por el <svg> del set enlazado.
 mountIcons(document, lucideIcons);
 
-initComponents();`;
+await initComponents();`;
 ---
 
 <Base title="Toast" description="Toast: feedback transitorio en una región flotante. Misma anatomía que Alert, con ciclo de vida de la app.">
@@ -151,59 +491,154 @@ initComponents();`;
   <p class="lede">
     Toast comunica feedback transitorio en una región flotante. El ítem es un
     <a href="/componentes/alert">Alert</a>, mismo markup, mismos tonos, envuelto en
-    <code>ds-toast-region</code> y en el ciclo de vida del toast (montaje, dismiss, timeout opcional).
+    <code>sk-toast-region</code> y en el ciclo de vida del toast (montaje, dismiss, timeout opcional).
   </p>
+
+  <h2>Después de una acción</h2>
+  <p>
+    Es el caso real: un toast no se autora ya visible, aparece porque algo pasó. Lo que sí es estable
+    en el HTML son tres piezas: el control que dispara la acción, una
+    <code>sk-toast-region</code> <strong>vacía</strong>, y un <code>&lt;template&gt;</code> con el
+    ítem. La app clona, inserta y vuelve a montar; <code>initComponents</code> es idempotente, así
+    que sólo toca lo recién insertado.
+  </p>
+  <Showcase
+    html={emitHtml}
+    js={emitJs}
+    previewScript={emitScript}
+    react={emitReact}
+    label="Toast después de una acción"
+    note="Pulsa el botón"
+    viewport="menu"
+  />
+
+  <h2>Simple</h2>
+  <p>
+    <code>tone="neutral"</code> (el default). En un toast el color casi nunca debería ser la señal
+    principal: ya flota y se retira. Neutral deja que el texto diga el aviso sin pintar urgencia de
+    más, y flota sobre una superficie <strong>raised</strong>
+    (<code>--color-bg-surface-raised</code> + <code>--elevation-raised</code>) para leerse como
+    chrome elevado, no como panel de página. Ver el mismo criterio en
+    <a href="/componentes/alert">Alert</a>.
+  </p>
+  <Showcase html={simpleHtml} react={simpleReact} label="Toast simple" viewport="menu" />
 
   <h2>Con estado</h2>
   <p>
     Los tonos de estado colorean el panel. <code>danger</code> se anuncia como
     <code>role="alert"</code> (assertive); el resto como <code>role="status"</code> (polite).
   </p>
-  <Showcase html={statusHtml} react={statusReact} label="Toast con estado" />
-
-  <h2>Simple</h2>
   <p>
-    <code>tone="neutral"</code> (el default). En un toast el color casi nunca debería ser la señal
-    principal: ya flota y se retira. Neutral deja que el texto diga el aviso sin pintar urgencia de
-    más, flota sobre una superficie <strong>raised</strong> (<code>--color-bg-surface-raised</code> +
-    <code>--elevation-raised</code>) para leerse como chrome elevado, no como panel de página. Ver el
-    mismo criterio en <a href="/componentes/alert">Alert</a>.
+    El primero no lleva ✕: tiene <code>data-timeout</code>, así que se retira solo. Los otros dos
+    piden algo de la persona, un despliegue que confirmar y un error que leer, y por eso se quedan
+    hasta que se cierren. La regla práctica: <strong>si el toast puede cerrarse solo, no necesita ✕;
+    si no puede, el ✕ es obligatorio</strong>.
   </p>
-  <Showcase html={simpleHtml} react={simpleReact} label="Toast simple" />
+  <Showcase html={statusHtml} react={statusReact} label="Toast con estado" viewport="overlay" />
+
+  <h2>Con acción</h2>
+  <p>
+    <code>sk-alert__actions</code> es una sola columna: la acción de recuperación y el cierre viven
+    ahí, en ese orden. Un toast con acción no lleva <code>data-timeout</code>, desaparecer antes de
+    que alguien alcance a pulsar “Deshacer” convierte la acción en decorado.
+  </p>
+  <Showcase html={actionHtml} react={actionReact} label="Toast con acción" viewport="menu" />
+
+  <h2>Apilado</h2>
+  <p>
+    Es el <strong>comportamiento por defecto</strong>, no una opción que se prende: cuatro toasts
+    sueltos se comen un cuarto de la pantalla, y nadie pide eso a propósito, una región con varios
+    toasts es el resultado normal de una app que cuenta lo que hizo. Los toasts se solapan sobre la
+    huella de <strong>uno</strong>, el más nuevo al frente y los anteriores asomando por detrás; al
+    pasar el puntero (o al entrar el foco con el teclado) la pila se abre y vuelve a ser la lista
+    normal.
+  </p>
+  <p>
+    La salida es <code>data-stack="off"</code>, para la región rara cuyo objetivo <em>es</em> mostrar
+    varios mensajes a la vez. El ejemplo de tonos de más arriba lo usa: son tres toasts que hay que
+    ver juntos, no una pila.
+  </p>
+  <p>
+    Agrupa sobre la caja del <strong>más nuevo</strong>: es el único que queda en flujo, así que la
+    región mide lo que mide él, y los de atrás salen de flujo estirados a esa misma caja. Por eso la
+    pila se lee como un objeto y no como cartas descuadradas: si cada uno midiera su propio contenido,
+    un toast de dos líneas detrás de uno de una sobresaldría por arriba y ningún borde de la pila
+    calzaría con el siguiente.
+  </p>
+  <p>
+    El único número del efecto es la <strong>profundidad</strong>, y sale del DOM:
+    <code>sibling-count() - sibling-index()</code> da 0 para el más nuevo y uno más por cada uno
+    detrás. La app apendea y remueve nodos, nunca lleva un índice. La opacidad se apaga sola en el
+    cuarto (<code>calc(3 - depth)</code> se clampea), y donde el navegador no soporta leer el índice
+    en CSS la región queda como la lista normal de arriba, que es la degradación honesta.
+  </p>
+  <p>
+    Esa misma profundidad es el <strong>retardo</strong> de cada paso al abrir
+    (<code>--sk-toast-cascade</code>): el de adelante sale primero y cada uno detrás lo sigue un beat
+    después, así la pila se despliega en vez de inflarse toda junta. Volver al flujo es un cambio de
+    <em>layout</em>, y el layout no transiciona, en el instante en que dejan de estar absolutos ya
+    están varias filas más arriba; eso no se puede interpolar, así que en vez de animar el salto se
+    lo tapa: cada toast entra con un fade y unos pixeles de subida hasta el lugar que acaba de tomar,
+    en la misma cascada. El más nuevo no participa, nunca se movió y no debe parpadear.
+  </p>
+  <Showcase
+    html={stackHtml}
+    previewScript={stackScript}
+    react={stackReact}
+    label="Pila de toasts"
+    note="Pasa el puntero para abrirla"
+    viewport="overlay"
+  />
+  <p>
+    El JavaScript es el mismo del primer ejemplo, y el HTML también: clonar, insertar, montar y
+    remover en <code>sk-dismiss</code>. No hay nada que agregar para apilar. Los hooks son de la
+    región: <code>--sk-toast-peek</code> (cuánto asoma cada uno),
+    <code>--sk-toast-shrink</code> (cuánto encoge cada paso hacia atrás) y
+    <code>--sk-toast-cascade</code> (cuánto se separan en el tiempo al abrir). Ningún toast sabe que
+    está en una pila.
+  </p>
+  <CodeBlock code={stackCss} lang="css" label="components/toast.css" />
+
+  <h2>El cierre es un Button</h2>
+  <p>
+    El ✕ se autora como <a href="/componentes/button">Button</a> icon-only en tamaño
+    <code>sm</code> (<code>data-size="sm" data-icon-only data-variant="ghost"</code>), no como un
+    control ad hoc del Alert. Con eso hereda lo que ya resuelve Button: la cara de 32px, el hit
+    target de 44px que <code>::after</code> expande más allá de esa cara, el state layer de hover y
+    presión, y el foco. Sin texto visible, <code>aria-label</code> es obligatorio.
+  </p>
+  <p>
+    Conserva además la clase de parte <code>sk-alert__dismiss</code>: es el gancho que busca el
+    enhancer para cablear el dismiss, la que hace que el glifo lea el color del tono
+    (<code>currentColor</code>) en vez del acento que pintaría un ghost normal, y la que corrige la
+    <strong>posición óptica</strong>. Un icon-only ghost es casi todo aire: 16px de glifo en una caja
+    de 32px, más el inset del panel, dejan el ✕ flotando en un hueco. La parte lo tira de vuelta
+    media unidad de inset, así el <em>glifo</em> cae donde el padding dice que está el borde del
+    contenido, sin que el área de click pierda un pixel.
+  </p>
 
   <h2>El ciclo de vida es de la app</h2>
   <p>
     Toast no gestiona colas ni persistencia: esos ciclos pertenecen a la aplicación. El componente
-    aporta la región, reutiliza Alert y anuncia el tono.
+    aporta la región, reutiliza Alert, anuncia el tono y avisa cuándo se quiere ir.
   </p>
   <p>
-    En Vanilla, <code>data-ds-toast</code> sobre un <code>ds-alert</code> registra el dismiss nativo y
-    anuncia el tono. <code>data-timeout</code> es opcional; al vencer emite <code>ds-dismiss</code> para
-    que la aplicación retire el Toast.
+    En Vanilla, <code>data-sk-toast</code> sobre un <code>sk-alert</code> registra el dismiss nativo y
+    anuncia el tono. <code>data-timeout</code> es opcional; al vencer emite <code>sk-dismiss</code>
+    (igual que el ✕) con <code>detail.reason</code>, <code>"timeout"</code> o
+    <code>"dismiss"</code>, por si la app distingue “se fue solo” de “lo cerraron”. El componente
+    nunca retira el nodo: eso lo hace quien lo puso.
   </p>
-  <CodeBlock code={vanilla} label="tu JS" />
+  <CodeBlock code={vanilla} label="JavaScript" />
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />
 
   <h2>React</h2>
   <p>
-    El código está en la pestaña <strong>React</strong> de cada demo. La API refleja Alert
+    El código está en la pestaña <strong>React</strong> de cada preview. La API refleja Alert
     (<code>title</code>, <code>icon</code>, <code>actions</code>, <code>presentation</code>,
     <code>tone</code>) más <code>timeout</code> y <code>onDismiss</code> con razón. Sin
     <code>tone</code>, es neutral.
   </p>
 </Base>
-
-<style is:global>
-  /* The region is `position: fixed` in real use, it floats at the screen corner. Inside a demo stage
-     that would fling the toast out to the viewport, away from what the reader is looking at. Only on
-     this page, and only inside a showcase stage, pin it back into the flow so the demo stays contained.
-     The real markup is unchanged; this is purely the docs playing host. */
-  .docs-showcase__stage .ds-toast-region {
-    position: static;
-    inset: auto;
-    inline-size: auto;
-    max-inline-size: 24rem;
-  }
-</style>

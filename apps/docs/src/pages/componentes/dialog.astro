@@ -1,4 +1,5 @@
 ---
+import "@skryensya/core/components/list.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
@@ -10,7 +11,7 @@ const styles = `@import "@skryensya/core/components/dialog.css";
 @import "@skryensya/core/patterns/scroll-lock.css";`;
 
 const confirmHtml = `<button
-  class="ds-button ds-interactive"
+  class="sk-button sk-interactive"
   data-variant="danger"
   type="button"
   data-dialog-open="confirm-borrar"
@@ -19,13 +20,13 @@ const confirmHtml = `<button
 </button>
 
 <dialog
-  class="ds-dialog"
+  class="sk-dialog"
   id="confirm-borrar"
   aria-labelledby="confirm-borrar-title"
 >
-  <header class="ds-dialog__header">
+  <header class="sk-dialog__header">
     <h3
-      class="ds-heading ds-dialog__title"
+      class="sk-heading sk-dialog__title"
       data-size="h3"
       data-flush
       id="confirm-borrar-title"
@@ -34,26 +35,26 @@ const confirmHtml = `<button
     </h3>
     <form method="dialog">
       <button
-        class="ds-button ds-interactive ds-dialog__close"
+        class="sk-button sk-interactive sk-dialog__close"
         data-variant="ghost"
         data-icon-only
         type="submit"
         value="cancel"
         aria-label="Cerrar"
       >
-        <span data-ds-icon="close"></span>
+        <span data-sk-icon="close"></span>
       </button>
     </form>
   </header>
-  <div class="ds-dialog__body">
+  <div class="sk-dialog__body">
     <p>
       Se elimina el proyecto y todo su historial. Esta acción no se
       puede deshacer.
     </p>
   </div>
-  <form method="dialog" class="ds-dialog__footer">
+  <form method="dialog" class="sk-dialog__footer">
     <button
-      class="ds-button ds-interactive"
+      class="sk-button sk-interactive"
       data-variant="ghost"
       type="submit"
       value="cancel"
@@ -62,7 +63,7 @@ const confirmHtml = `<button
       Cancelar
     </button>
     <button
-      class="ds-button ds-interactive"
+      class="sk-button sk-interactive"
       data-variant="danger"
       type="submit"
       value="confirm"
@@ -94,28 +95,28 @@ const vaulStyles = `@import "@skryensya/core/components/dialog.css";
 
 const vaulJs = `import { initComponents } from "@skryensya/vanilla/auto";
 
-initComponents();`;
+await initComponents();`;
 
 const vaulHtml = `<button
-  class="ds-button ds-interactive"
-  data-ds-button
-  data-ds-dialog-vaul-open="demo-dialog"
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-sk-dialog-vaul-open="demo-dialog"
   type="button"
 >
   Abrir dialog
 </button>
 
 <dialog
-  class="ds-dialog"
+  class="sk-dialog"
   id="demo-dialog"
-  data-ds-dialog-vaul
+  data-sk-dialog-vaul
   data-edge="block-end"
   aria-labelledby="demo-dialog-title"
 >
   <div data-part="handle" aria-hidden="true"></div>
-  <header class="ds-dialog__header">
+  <header class="sk-dialog__header">
     <h3
-      class="ds-heading ds-dialog__title"
+      class="sk-heading sk-dialog__title"
       data-size="h3"
       data-flush
       id="demo-dialog-title"
@@ -124,25 +125,73 @@ const vaulHtml = `<button
     </h3>
     <form method="dialog">
       <button
-        class="ds-button ds-interactive ds-dialog__close"
-        data-ds-button
+        class="sk-button sk-interactive sk-dialog__close"
+        data-sk-button
         data-variant="ghost"
         data-icon-only
-        data-ds-dialog-vaul-close
+        data-sk-dialog-vaul-close
         type="submit"
         value="cancel"
         aria-label="Cerrar"
       >
-        <span data-ds-icon="close"></span>
+        <span data-sk-icon="close"></span>
       </button>
     </form>
   </header>
-  <div class="ds-dialog__body">
+  <div class="sk-dialog__body">
     <p>
       Angosta la ventana debajo de 52rem y este mismo dialog gana
       un Vaul block-end. El markup del dialog no cambia.
     </p>
+    <ul class="sk-list" data-density="compact" aria-label="Qué cambia">
+      <li class="sk-list__item">
+        <span class="sk-list__leading" data-sk-icon="check"></span>
+        <span class="sk-list__content">
+          <span class="sk-list__title">Llega desde el borde</span>
+          <span class="sk-list__description">
+            Slide block-end en vez de escala centrada.
+          </span>
+        </span>
+      </li>
+      <li class="sk-list__item">
+        <span class="sk-list__leading" data-sk-icon="check"></span>
+        <span class="sk-list__content">
+          <span class="sk-list__title">Se arrastra para cerrar</span>
+          <span class="sk-list__description">
+            Con handle, y sólo abajo del breakpoint.
+          </span>
+        </span>
+      </li>
+      <li class="sk-list__item">
+        <span class="sk-list__leading" data-sk-icon="check"></span>
+        <span class="sk-list__content">
+          <span class="sk-list__title">Sigue siendo el dialog</span>
+          <span class="sk-list__description">
+            Foco, Escape y página inerte son de la plataforma.
+          </span>
+        </span>
+      </li>
+    </ul>
   </div>
+  <footer class="sk-dialog__footer">
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="ghost"
+      data-sk-dialog-vaul-close
+      type="button"
+    >
+      Ahora no
+    </button>
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-sk-dialog-vaul-close
+      type="button"
+    >
+      Entendido
+    </button>
+  </footer>
 </dialog>`;
 ---
 
@@ -152,24 +201,24 @@ const vaulHtml = `<button
 >
   <h1>Dialog</h1>
   <p class="lede">
-    Un <code>&lt;dialog class="ds-dialog"&gt;</code> centrado. <code>showModal()</code> entrega foco,
+    Un <code>&lt;dialog class="sk-dialog"&gt;</code> centrado. <code>showModal()</code> entrega foco,
     Escape, página inerte y backdrop; El sistema pinta la superficie. Sin enhancer: el único JavaScript
     es abrir.
   </p>
 
   <h2>Confirm</h2>
   <p>
-    Anatomía: <code>ds-dialog__header</code> (título con
-    <code>Heading</code> + <code>ds-dialog__title</code>, y cierre),
-    <code>ds-dialog__body</code> y
-    <code>ds-dialog__footer</code> (controles). El cierre y el footer son
+    Anatomía: <code>sk-dialog__header</code> (título con
+    <code>Heading</code> + <code>sk-dialog__title</code>, y cierre),
+    <code>sk-dialog__body</code> y
+    <code>sk-dialog__footer</code> (controles). El cierre y el footer son
     <code>&lt;form method="dialog"&gt;</code>: cierran sin handler y dejan el
     <code>value</code> en <code>dialog.returnValue</code>.
   </p>
-  <Showcase html={confirmHtml} label="Confirm" />
+  <Showcase html={confirmHtml} previewScript={confirmJs} label="Confirm" viewport="overlay" />
 
   <h2>Abrirlo</h2>
-  <CodeBlock code={confirmJs} label="tu JavaScript" />
+  <CodeBlock code={confirmJs} label="JavaScript" />
 
   <h2>Foco y teclado</h2>
   <p>
@@ -202,28 +251,28 @@ const vaulHtml = `<button
       página. No hace falta guardarlo a mano.
     </li>
     <li>
-      El botón de cerrar es un <code>ds-button</code> con <code>data-icon-only</code> y
+      El botón de cerrar es un <code>sk-button</code> con <code>data-icon-only</code> y
       <code>aria-label="Cerrar"</code>. El icono es decorativo
-      (<code>&lt;span data-ds-icon="close"&gt;</code>); el nombre es del botón.
+      (<code>&lt;span data-sk-icon="close"&gt;</code>); el nombre es del botón.
     </li>
   </ul>
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />
-  <CodeBlock code={styles} label="tu CSS" lang="css" />
+  <CodeBlock code={styles} label="CSS" lang="css" />
 
   <h2>Contrato</h2>
   <ul>
     <li>
-      Abre un <code>&lt;dialog class="ds-dialog"&gt;</code> con <code>showModal()</code>, no un
+      Abre un <code>&lt;dialog class="sk-dialog"&gt;</code> con <code>showModal()</code>, no un
       <code>div</code> con roles imitadas.
     </li>
     <li>
-      Anatomía: <code>ds-dialog__header</code> (
-      <code>ds-heading ds-dialog__title</code> +
-      <code>ds-dialog__close</code>), <code>ds-dialog__body</code>,
-      <code>ds-dialog__footer</code> (controles, opcional). El título es
-      <a class="ds-link ds-interactive" href="/componentes/heading">Heading</a>
+      Anatomía: <code>sk-dialog__header</code> (
+      <code>sk-heading sk-dialog__title</code> +
+      <code>sk-dialog__close</code>), <code>sk-dialog__body</code>,
+      <code>sk-dialog__footer</code> (controles, opcional). El título es
+      <a class="sk-link sk-interactive" href="/componentes/heading">Heading</a>
       (casi siempre con <code>data-flush</code>).
     </li>
     <li>
@@ -239,8 +288,13 @@ const vaulHtml = `<button
       cerrar.
     </li>
     <li>
-      Importa <a class="ds-link ds-interactive" href="/scroll-lock">scroll lock</a> si quieres
+      Importa <a class="sk-link sk-interactive" href="/scroll-lock">scroll lock</a> si quieres
       congelar la página detrás sin CLS al desaparecer la scrollbar.
+    </li>
+    <li>
+      Con <a class="sk-link sk-interactive" href="/transparencias">
+      <code>prefers-reduced-transparency</code></a>, el backdrop deja la mezcla translúcida y pasa
+      a un fondo opaco; la modalidad no cambia.
     </li>
   </ul>
 
@@ -251,47 +305,37 @@ const vaulHtml = `<button
     light-dismiss y drag-to-dismiss. La modalidad (foco, Escape, inert) sigue siendo de
     <code>showModal()</code>.
   </p>
-  <Showcase html={vaulHtml} label="Dialog Vaul" />
+  <Showcase html={vaulHtml} label="Dialog Vaul" viewport="overlay" />
 
   <h3>Qué añade</h3>
   <ul>
-    <li>Abre y cierra con triggers y closers autorados (<code>data-ds-dialog-vaul-open</code> /
+    <li>Abre y cierra con triggers y closers autorados (<code>data-sk-dialog-vaul-open</code> /
       <code>-close</code>).</li>
     <li>Por debajo de <code>52rem</code>, deja arrastrar el handle hacia <code>block-end</code>.</li>
     <li>Light-dismiss al pulsar fuera del rectángulo del panel.</li>
     <li>
-      <code>data-ds-dialog-vaul</code> opta en la mejora;
+      <code>data-sk-dialog-vaul</code> opta en la mejora;
       <code>data-edge="block-end"</code> nombra el borde. El handle es opcional.
     </li>
   </ul>
 
   <h3>Instalar Dialog Vaul</h3>
   <CodeBlock code={vaulInstall} label="terminal" />
-  <CodeBlock code={vaulStyles} label="tu CSS" lang="css" />
-  <CodeBlock code={vaulJs} label="tu JavaScript" />
+  <CodeBlock code={vaulStyles} label="CSS" lang="css" />
+  <CodeBlock code={vaulJs} label="JavaScript" />
 
   <h2>El borde siempre encendido no es estético</h2>
   <p>
     En alto contraste el panel y la página resuelven al mismo color: suavizar
-    <code>--ds-dialog-border-width</code> deja el dialog invisible sin que falle un solo test. Por
+    <code>--sk-dialog-border-width</code> deja el dialog invisible sin que falle un solo test. Por
     eso llega en <code>1px</code> y no en <code>0</code>.
   </p>
 
   <StylingHooks
     groups={[
-      { file: "components/dialog.css", probe: "ds-dialog", title: "Dialog" },
-      { file: "patterns/dialog-vaul.css", probe: "data-ds-dialog-vaul", title: "Dialog Vaul" },
+      { file: "components/dialog.css", probe: "sk-dialog", title: "Dialog" },
+      { file: "patterns/dialog-vaul.css", probe: "data-sk-dialog-vaul", title: "Dialog Vaul" },
     ]}
   />
 </Base>
 
-<script>
-  document.querySelectorAll<HTMLElement>("[data-dialog-open]").forEach((trigger) => {
-    const id = trigger.dataset.dialogOpen;
-    const dialog = id ? document.getElementById(id) : null;
-
-    if (dialog instanceof HTMLDialogElement) {
-      trigger.addEventListener("click", () => dialog.showModal());
-    }
-  });
-</script>

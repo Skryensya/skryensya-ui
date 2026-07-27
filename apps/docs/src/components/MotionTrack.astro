@@ -1,0 +1,95 @@
+---
+/*
+ * A specimen track: one tile crossing a rail under a real duration and a real easing.
+ *
+ * Both arrive as CSS values (`var(--scale-duration-fast)`), never as numbers parsed at build
+ * time, so a retuned primitive, a density change or the reduced-motion block reaches the demo
+ * by the same route it reaches a component. The specimen can't drift from the token.
+ *
+ * The tile rides a carrier sized `100% - tile`, so `translate: 100%` IS the travel: nothing
+ * that triggers layout animates, and a curve that overshoots is free to leave the rail instead
+ * of being clamped by it — which is the whole point of showing a spring.
+ */
+interface Props {
+  /** CSS time, normally `var(--…-duration)`. */
+  duration: string;
+  /** CSS easing, normally `var(--…-easing)`. */
+  easing: string;
+  /**
+   * The token measures a REPEATING cycle (`cycle-*`, loading) rather than a one-shot transition.
+   * A loop that played once and parked at the end would be drawn as the thing it isn't, so it
+   * repeats for as long as the specimen is playing.
+   */
+  loop?: boolean;
+}
+
+const { duration, easing, loop = false } = Astro.props;
+---
+
+<span
+  class="docs-track"
+  style={`--docs-track-duration:${duration};--docs-track-easing:${easing}`}
+  data-loop={loop ? "" : undefined}
+  aria-hidden="true"
+>
+  <span class="docs-track__carrier"><span class="docs-track__tile"></span></span>
+</span>
+
+<style>
+  .docs-track {
+    --docs-track-rail: 1.25rem;
+    --docs-track-tile: 0.875rem;
+    --docs-track-pad: 0.1875rem;
+
+    position: relative;
+    display: block;
+    block-size: var(--docs-track-rail);
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-surface-sunken);
+    /* A shadow, not a border: the rail sits on surfaces of different tone across the page. */
+    box-shadow: inset 0 0 0 1px var(--color-border-subtle);
+  }
+
+  .docs-track__carrier {
+    position: absolute;
+    inset-block: var(--docs-track-pad);
+    inset-inline-start: var(--docs-track-pad);
+    inline-size: calc(100% - var(--docs-track-tile) - var(--docs-track-pad) * 2);
+    translate: 0;
+  }
+
+  .docs-track__tile {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: var(--docs-track-tile);
+    /* Pill inside pill: concentric at any rail height. */
+    border-radius: var(--radius-pill);
+    background: var(--color-action-primary);
+  }
+
+  /* The specimen root lives in whichever component composed this one, so the ancestor half of
+   * the selector has to escape scoping.
+   *
+   * The animation exists only WHILE the specimen plays, which is what makes the paused rail an
+   * honest rest state: the tile is back at the start line, every lane identical, instead of every
+   * lane parked at the finish where nothing can be compared. */
+  :global([data-motion-playing]) .docs-track__carrier {
+    animation: docs-track-run var(--docs-track-duration) var(--docs-track-easing) both;
+  }
+
+  :global([data-motion-playing]) .docs-track[data-loop] .docs-track__carrier {
+    animation-iteration-count: infinite;
+    /* No `both`: a loop has no end pose to hold, it just comes round again. */
+    animation-fill-mode: none;
+  }
+
+  @keyframes docs-track-run {
+    from {
+      translate: 0;
+    }
+    to {
+      translate: 100%;
+    }
+  }
+</style>

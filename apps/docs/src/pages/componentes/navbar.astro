@@ -5,7 +5,6 @@ import CodeBlock from "../../components/CodeBlock.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
 
-import "../../examples/navbar.css";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -13,52 +12,52 @@ const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/navbar.css";
 @import "@skryensya/core/patterns/nav-list.css";`;
 
-const html = `<header class="ds-navbar">
-  <div class="ds-navbar__brand">Atlas</div>
+const html = `<header class="sk-navbar">
+  <div class="sk-navbar__brand">Atlas</div>
 
   <nav
-    class="ds-nav-list"
+    class="sk-nav-list"
     data-orientation="horizontal"
     aria-label="Principal"
   >
-    <ul class="ds-nav-list__list">
-      <li class="ds-nav-list__item">
+    <ul class="sk-nav-list__list">
+      <li class="sk-nav-list__item">
         <a
-          class="ds-nav-list__link ds-interactive"
+          class="sk-nav-list__link sk-interactive"
           href="/"
           aria-current="page"
         >
-          <span class="ds-nav-list__label">Inicio</span>
+          <span class="sk-nav-list__label">Inicio</span>
         </a>
       </li>
-      <li class="ds-nav-list__item">
-        <a class="ds-nav-list__link ds-interactive" href="/proyectos">
-          <span class="ds-nav-list__label">Proyectos</span>
+      <li class="sk-nav-list__item">
+        <a class="sk-nav-list__link sk-interactive" href="/proyectos">
+          <span class="sk-nav-list__label">Proyectos</span>
         </a>
       </li>
-      <li class="ds-nav-list__item">
-        <a class="ds-nav-list__link ds-interactive" href="/reportes">
-          <span class="ds-nav-list__label">Reportes</span>
+      <li class="sk-nav-list__item">
+        <a class="sk-nav-list__link sk-interactive" href="/reportes">
+          <span class="sk-nav-list__label">Reportes</span>
         </a>
       </li>
-      <li class="ds-nav-list__item">
-        <a class="ds-nav-list__link ds-interactive" href="/equipo">
-          <span class="ds-nav-list__label">Equipo</span>
+      <li class="sk-nav-list__item">
+        <a class="sk-nav-list__link sk-interactive" href="/equipo">
+          <span class="sk-nav-list__label">Equipo</span>
         </a>
       </li>
     </ul>
   </nav>
 
-  <div class="ds-navbar__actions">
+  <div class="sk-navbar__actions">
     <button
-      class="ds-button ds-interactive"
+      class="sk-button sk-interactive"
       type="button"
       data-variant="ghost"
     >
       Invitar
     </button>
     <button
-      class="ds-button ds-interactive"
+      class="sk-button sk-interactive"
       type="button"
       data-variant="primary"
     >
@@ -116,7 +115,6 @@ import {
     de divergir.
   </p>
 
-  <h2>Demo</h2>
   <Showcase html={html} react={react} label="Navbar" flush />
 
   <h2>La página actual es de la plataforma</h2>
@@ -130,10 +128,10 @@ import {
   <CodeBlock code={install} label="terminal" />
 
   <h2>CSS</h2>
-  <CodeBlock code={css} label="tu CSS" />
+  <CodeBlock code={css} label="CSS" />
 
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
-  <StylingHooks groups={[{"file":"components/navbar.css","probe":"ds-navbar"}]} />
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
+  <StylingHooks groups={[{"file":"components/navbar.css","probe":"sk-navbar"}]} />
 </Base>

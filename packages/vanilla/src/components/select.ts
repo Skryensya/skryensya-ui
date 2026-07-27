@@ -1,20 +1,26 @@
+import {
+  anchorNameFor,
+  bindAnchor,
+  stripPositioningStyle,
+  supportsAnchorPositioning,
+} from "@skryensya/core/anchored";
 import { selectEvents, type SelectOption, type SelectValueChangeDetails } from "@skryensya/core/select";
 import * as select from "@zag-js/select";
 import { normalizeProps, spreadProps, VanillaMachine } from "@zag-js/vanilla";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
-const rootSelector = "[data-ds-select]";
-const hiddenSelector = "[data-ds-select-hidden]";
-const labelSelector = "[data-ds-select-label]";
-const controlSelector = "[data-ds-select-control]";
-const triggerSelector = "[data-ds-select-trigger]";
-const valueSelector = "[data-ds-select-value]";
-const indicatorSelector = "[data-ds-select-indicator]";
-const positionerSelector = "[data-ds-select-positioner]";
-const contentSelector = "[data-ds-select-content]";
-const itemSelector = "[data-ds-select-item]";
-const itemTextSelector = "[data-ds-select-item-text]";
-const itemIndicatorSelector = "[data-ds-select-item-indicator]";
+const rootSelector = "[data-sk-select]";
+const hiddenSelector = "[data-sk-select-hidden]";
+const labelSelector = "[data-sk-select-label]";
+const controlSelector = "[data-sk-select-control]";
+const triggerSelector = "[data-sk-select-trigger]";
+const valueSelector = "[data-sk-select-value]";
+const indicatorSelector = "[data-sk-select-indicator]";
+const positionerSelector = "[data-sk-select-positioner]";
+const contentSelector = "[data-sk-select-content]";
+const itemSelector = "[data-sk-select-item]";
+const itemTextSelector = "[data-sk-select-item-text]";
+const itemIndicatorSelector = "[data-sk-select-item-indicator]";
 
 type Cleanup = () => void;
 
@@ -47,9 +53,9 @@ export function connectSelect(root: HTMLElement, options: SelectEnhancerOptions 
   const positioner = root.querySelector<HTMLElement>(positionerSelector);
   const itemEls = Array.from(root.querySelectorAll<HTMLElement>(itemSelector));
 
-  if (!trigger) throw new Error("Select requires a [data-ds-select-trigger] element.");
-  if (!content) throw new Error("Select requires a [data-ds-select-content] element.");
-  if (itemEls.length === 0) throw new Error("Select requires at least one [data-ds-select-item].");
+  if (!trigger) throw new Error("Select requires a [data-sk-select-trigger] element.");
+  if (!content) throw new Error("Select requires a [data-sk-select-content] element.");
+  if (itemEls.length === 0) throw new Error("Select requires at least one [data-sk-select-item].");
 
   const items = itemEls.map(readItem);
   const hidden = root.querySelector<HTMLSelectElement>(hiddenSelector);
@@ -63,14 +69,15 @@ export function connectSelect(root: HTMLElement, options: SelectEnhancerOptions 
   });
 
   const placeholder = options.placeholder ?? root.dataset.placeholder ?? "";
-  const selectId = options.id ?? (root.id || `ds-select-${Math.random().toString(36).slice(2)}`);
+  const selectId = options.id ?? (root.id || `sk-select-${Math.random().toString(36).slice(2)}`);
 
   // PROGRESSIVE ENHANCEMENT, when the browser has the CSS Anchor Positioning API, the placement
   // lives in select.css (behind the same @supports gate); all that can't live in shared CSS is the
   // anchor↔popup RELATIONSHIP: a name unique to this instance tying THIS trigger to THIS listbox.
   // Where the API is absent, `anchorName` is null and Zag's JS positioning (configured below) is
   // the sole placement, the fallback, not a lesser path.
-  const anchorName = supportsAnchor() ? `--ds-select-anchor-${cssIdentTail(selectId)}` : null;
+  const anchorName = supportsAnchorPositioning() ? anchorNameFor(selectId) : null;
+  let unbindAnchor: (() => void) | undefined;
 
   const machine = new VanillaMachine(select.machine, {
     id: selectId,
@@ -133,7 +140,7 @@ export function connectSelect(root: HTMLElement, options: SelectEnhancerOptions 
     // entirely, leaving them would fight the browser's positioner and, being inline, would force
     // the CSS to `!important`, which `position-try` can't flip. Everything else (id, dir) stays.
     const positionerProps = api.getPositionerProps();
-    spread(positioner, anchorName ? stripStyle(positionerProps) : positionerProps);
+    spread(positioner, anchorName ? stripPositioningStyle(positionerProps) : positionerProps);
     spread(content, api.getContentProps());
 
     itemEls.forEach((el, index) => {
@@ -149,12 +156,9 @@ export function connectSelect(root: HTMLElement, options: SelectEnhancerOptions 
     if (valueEl) valueEl.textContent = api.valueAsString || placeholder;
 
     /* Re-assert the anchor wiring HERE, not once at mount: `spread(positioner, …)` above rewrites the
-     * positioner's inline style each render, dropping any `position-anchor` we set earlier. Stamping
-     * after the spread keeps it stable across every open/close. Idempotent, so it's free to repeat. */
-    if (anchorName) {
-      trigger.style.setProperty("anchor-name", anchorName);
-      positioner?.style.setProperty("position-anchor", anchorName);
-    }
+     * positioner's inline style each render, dropping the hook we set earlier. Stamping after the
+     * spread keeps it stable across every open/close. Idempotent, so it's free to repeat. */
+    if (anchorName) unbindAnchor = bindAnchor(trigger, positioner, anchorName);
   };
 
   const unsubscribe = machine.subscribe(render);
@@ -165,21 +169,8 @@ export function connectSelect(root: HTMLElement, options: SelectEnhancerOptions 
     unsubscribe();
     machine.stop();
     for (const cleanup of cleanups.values()) cleanup();
-    if (anchorName) {
-      trigger.style.removeProperty("anchor-name");
-      positioner?.style.removeProperty("position-anchor");
-    }
+    unbindAnchor?.();
   };
-}
-
-/** The API is here (Chromium ≥ 125) → let CSS position the popup; else fall back to Zag's JS. */
-function supportsAnchor(): boolean {
-  return typeof CSS !== "undefined" && typeof CSS.supports === "function" && CSS.supports("anchor-name: --a");
-}
-
-/** Fold an authored id into the tail of a dashed-ident: keep [A-Za-z0-9_-], everything else → `-`. */
-function cssIdentTail(raw: string): string {
-  return raw.replace(/[^a-zA-Z0-9_-]/g, "-");
 }
 
 /*
@@ -189,13 +180,6 @@ function cssIdentTail(raw: string): string {
  */
 function stripOwnedByConsumer(props: Record<string, unknown>): Record<string, unknown> {
   const { class: _class, className: _className, children: _children, ...rest } = props;
-  return rest;
-}
-
-/* Drop the `style` object so the machine stops positioning this element, used on the positioner
- * when CSS anchor positioning is driving placement instead. Attributes (id, dir, hidden) are kept. */
-function stripStyle(props: Record<string, unknown>): Record<string, unknown> {
-  const { style: _style, ...rest } = props;
   return rest;
 }
 
@@ -222,7 +206,7 @@ function authoredIds(
 
 function readItem(el: HTMLElement): SelectOption {
   const value = el.dataset.value;
-  if (!value) throw new Error("Every [data-ds-select-item] needs a non-empty data-value.");
+  if (!value) throw new Error("Every [data-sk-select-item] needs a non-empty data-value.");
 
   const text = el.querySelector<HTMLElement>(itemTextSelector) ?? el;
 

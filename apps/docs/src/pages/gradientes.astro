@@ -1,0 +1,226 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import Showcase from "../components/Showcase.astro";
+import StylingHooks from "../components/StylingHooks.astro";
+
+const install = `@import "@skryensya/core/patterns/media-gradient.css";
+@import "@skryensya/core/patterns/image-frame.css";`;
+
+const demoSrc = "/demos/media-gradient.svg";
+
+const cardHtml = `<article
+  class="sk-box"
+  data-surface="surface"
+  data-border="subtle"
+  data-padding="none"
+>
+  <div class="sk-image-frame" data-aspect="16/9" data-radius="top">
+    <img
+      class="sk-image-frame__media"
+      src="${demoSrc}"
+      alt=""
+    />
+    <div class="sk-media-caption" data-edge="bottom">
+      <div
+        class="sk-media-gradient"
+        data-strength="lg"
+        aria-hidden="true"
+      ></div>
+      <h3 class="sk-heading" data-size="h4" data-flush>
+        Horizonte costero
+      </h3>
+      <p>Texto legible sobre la foto.</p>
+    </div>
+  </div>
+  <div class="sk-box" data-padding="md">
+    <p class="sk-text" data-size="sm" data-tone="secondary">
+      Cuerpo de la card debajo del media.
+    </p>
+  </div>
+</article>`;
+
+const cardReact = `import { Box } from "@skryensya/react/box";
+import { ImageFrame } from "@skryensya/react/image-frame";
+import { MediaCaption } from "@skryensya/react/media-gradient";
+
+<Box as="article" surface="surface" border="subtle" padding="none">
+  <ImageFrame aspect="16/9" radius="top">
+    <img
+      className="sk-image-frame__media"
+      src="${demoSrc}"
+      alt=""
+    />
+    <MediaCaption edge="bottom" strength="lg">
+      <h3 className="sk-heading" data-size="h4" data-flush>
+        Horizonte costero
+      </h3>
+      <p>Texto legible sobre la foto.</p>
+    </MediaCaption>
+  </ImageFrame>
+  <Box padding="md">
+    <p className="sk-text" data-size="sm" data-tone="secondary">
+      Cuerpo de la card debajo del media.
+    </p>
+  </Box>
+</Box>;`;
+
+const edgesHtml = `<div class="sk-grid" data-columns="2" data-gap="md">
+  <div class="sk-image-frame" data-aspect="4/3">
+    <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    <div class="sk-media-caption" data-edge="bottom">
+      <div
+        class="sk-media-gradient"
+        data-strength="md"
+        aria-hidden="true"
+      ></div>
+      <strong>bottom</strong>
+    </div>
+  </div>
+  <div class="sk-image-frame" data-aspect="4/3">
+    <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    <div class="sk-media-caption" data-edge="top">
+      <div
+        class="sk-media-gradient"
+        data-strength="md"
+        aria-hidden="true"
+      ></div>
+      <strong>top</strong>
+    </div>
+  </div>
+  <div class="sk-image-frame" data-aspect="4/3">
+    <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    <div class="sk-media-caption" data-edge="start">
+      <div
+        class="sk-media-gradient"
+        data-strength="md"
+        aria-hidden="true"
+      ></div>
+      <strong>start</strong>
+    </div>
+  </div>
+  <div class="sk-image-frame" data-aspect="4/3">
+    <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
+    <div class="sk-media-caption" data-edge="end">
+      <div
+        class="sk-media-gradient"
+        data-strength="md"
+        aria-hidden="true"
+      ></div>
+      <strong>end</strong>
+    </div>
+  </div>
+</div>`;
+
+const vanillaApi = `<!-- El wash vive DENTRO del caption: mide lo que mide el tipo -->
+<div class="sk-image-frame" data-aspect="16/9">
+  <img class="sk-image-frame__media" src="/foto.jpg" alt="…" />
+  <div class="sk-media-caption" data-edge="bottom">
+    <div
+      class="sk-media-gradient"
+      data-strength="md"
+      aria-hidden="true"
+    ></div>
+    <h3 class="sk-heading" data-size="h4" data-flush>Título</h3>
+  </div>
+</div>
+
+<!-- Más opacidad / tinte (no más cobertura de la foto) -->
+<style>
+  .hero-media .sk-media-gradient {
+    --sk-media-gradient-mix: 48%;
+    --sk-media-gradient-opacity: 88%;
+  }
+</style>`;
+
+const reactApi = `import { ImageFrame } from "@skryensya/react/image-frame";
+import { MediaCaption } from "@skryensya/react/media-gradient";
+
+<ImageFrame aspect="16/9">
+  <img className="sk-image-frame__media" src="/foto.jpg" alt="…" />
+  {/* strength inyecta el wash; el box = el caption */}
+  <MediaCaption edge="bottom" strength="md">
+    <h3 className="sk-heading" data-size="h4" data-flush>
+      Título
+    </h3>
+  </MediaCaption>
+</ImageFrame>;`;
+---
+
+<Base
+  title="Gradientes"
+  description="Media gradient: wash del tamaño del texto, con tinte de accent, para contraste sobre fotos."
+>
+  <h1>Gradientes</h1>
+  <p class="lede">
+    Cuando el tipo vive <strong>sobre una foto</strong>, el contraste no lo garantiza el token de
+    texto: lo garantiza un wash. <code>sk-media-gradient</code> vive <strong>dentro</strong> del
+    caption, así que es tan alto (o tan ancho) como el texto que protege — no un velo sobre toda
+    la imagen. Teñido con el accent. No es el Backdrop de un dialog ni el State layer de un
+    control.
+  </p>
+
+  <h2>Card con imagen</h2>
+  <p>
+    ImageFrame recorta; el caption lleva el tipo y el wash a su medida. La card debajo sigue
+    siendo <a href="/componentes/box">Box</a> + composición (no hay <code>sk-card</code>).
+  </p>
+  <Showcase html={cardHtml} react={cardReact} label="Card + media gradient" />
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="CSS" />
+
+  <h2>Desde código</h2>
+  <p>
+    El caption lleva <code>data-edge</code>; el wash (hijo) lleva <code>data-strength</code>
+    (opacidad / tinte). En React, <code>MediaCaption strength</code> inyecta el wash. El tinte
+    viene de <code>--sk-media-gradient-tint</code> (por defecto
+    <code>--color-action-primary</code>).
+  </p>
+  <CodeBlock code={vanillaApi} label="HTML + CSS" />
+  <CodeBlock code={reactApi} label="React" lang="tsx" />
+
+  <h2>Edges</h2>
+  <p>
+    <code>top</code>/<code>bottom</code>: el band es tan alto como el texto (ancho completo).
+    <code>start</code>/<code>end</code>: tan ancho como el texto (alto al contenido).
+  </p>
+  <Showcase html={edgesHtml} label="Edges" />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>
+      Host posicionado: <code>sk-image-frame</code> ya es <code>position: relative</code>.
+    </li>
+    <li>
+      Caption: <code>sk-media-caption</code> con <code>data-edge</code>
+      (<code>top|bottom|start|end</code>). Su caja es la medida del wash.
+    </li>
+    <li>
+      Wash: <code>sk-media-gradient</code> <strong>hijo</strong> del caption, con
+      <code>aria-hidden="true"</code> y <code>data-strength</code> (<code>sm|md|lg</code>).
+    </li>
+    <li>
+      Con <a href="/transparencias"><code>prefers-reduced-transparency</code></a>, el degradado se
+      reemplaza por el color base opaco dentro de la misma caja del caption.
+    </li>
+    <li>
+      Tinte: <code>--sk-media-gradient-tint</code>, <code>--sk-media-gradient-mix</code>,
+      <code>--sk-media-gradient-opacity</code>.
+    </li>
+    <li>
+      React: <code>MediaCaption</code> (con <code>strength</code> opcional) y
+      <code>MediaGradient</code> desde <code>@skryensya/react/media-gradient</code>.
+    </li>
+  </ul>
+
+  <StylingHooks
+    groups={[
+      {
+        file: "patterns/media-gradient.css",
+        probe: "sk-media-gradient",
+        title: "Media gradient",
+      },
+    ]}
+  />
+</Base>

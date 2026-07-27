@@ -1,8 +1,8 @@
 {
-  "name": "skryensya-design-system",
+  "name": "skryensya-ui",
   "private": true,
   "packageManager": "pnpm@10.18.2",
-  "description": "Turborepo for the @skryensya design system. Core contains tokens and the framework-agnostic component contract.",
+  "description": "Turborepo for skryensya/ui. Core contains tokens and the framework-agnostic component contract.",
   "scripts": {
     "lint": "turbo run lint",
     "check": "turbo run check",

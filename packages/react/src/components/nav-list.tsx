@@ -66,7 +66,7 @@ export const NavListLink = forwardRef<HTMLAnchorElement, NavListLinkProps>(funct
       <a
         {...props}
         aria-current={current ? "page" : undefined}
-        className={cx(`${navListParts.link} ds-interactive`, className)}
+        className={cx(`${navListParts.link} sk-interactive`, className)}
         ref={ref}
       >
         {icon}

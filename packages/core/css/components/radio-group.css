@@ -1,32 +1,107 @@
-/* TIER 3, RADIO GROUP (opt-in styling hooks) */
+/* TIER 3, RADIO GROUP */
 @layer components {
-  .ds-radio-group {
-    --ds-radio-group-gap: var(--space-stack-xs);
-    --ds-radio-control-size: var(--size-icon-lg);
-    --ds-radio-gap: var(--space-inline-xs);
-    --ds-radio-bg: var(--color-bg-surface-raised);
-    --ds-radio-fg: var(--color-text-primary);
-    --ds-radio-border-color: var(--color-border-default);
-    --ds-radio-border-width: 1px;
-    --ds-radio-selected-bg: var(--color-action-primary);
-    --ds-radio-selected-fg: var(--color-text-on-accent);
-    --ds-radio-selected-border-color: var(--color-action-primary);
-    --ds-radio-disabled-bg: var(--color-action-disabled);
-    --ds-radio-disabled-fg: var(--color-text-disabled);
-    --ds-radio-disabled-border-color: var(--color-border-subtle);
+  .sk-radio-group {
+    --sk-radio-group-gap: var(--space-stack-xs);
+    /* Keep the control's 24px hit box while painting the radio face one icon step smaller. */
+    --sk-radio-control-size: var(--size-icon-md);
+    --sk-radio-hit-size: var(--size-icon-lg);
+    --sk-radio-gap: var(--space-inline-xs);
+    --sk-radio-bg: transparent;
+    --sk-radio-fg: var(--color-text-primary);
+    --sk-radio-border-color: var(--color-border-strong);
+    --sk-radio-border-width: 1px;
+    --sk-radio-selected-bg: transparent;
+    --sk-radio-selected-fg: var(--color-action-primary);
+    --sk-radio-selected-border-color: var(--color-border-accent);
+    --sk-radio-disabled-bg: transparent;
+    --sk-radio-disabled-fg: var(--color-text-disabled);
+    --sk-radio-disabled-border-color: var(--color-border-subtle);
+
+    display: grid;
+    gap: var(--sk-radio-group-gap);
   }
 
-  /* Selected recolours the control fill and its indicator, never `--ds-radio-fg`, which is the LABEL
-   * text. Tinting the label with `on-accent` turned it dark-on-dark in dark themes. The indicator
-   * reads `--ds-radio-selected-fg` directly (see radio-group skin), so it stays legible on the fill. */
-  .ds-radio:has(.ds-radio__input:checked) {
-    --ds-radio-bg: var(--ds-radio-selected-bg);
-    --ds-radio-border-color: var(--ds-radio-selected-border-color);
+  /* Radio and TileRadio share the same face: a 20px outline with a 10px dot. Selection never fills
+   * the outer circle by default, and these hooks can still customise selected colors independently
+   * without tinting the label. */
+  .sk-radio:has(.sk-radio__input:checked) {
+    --sk-radio-bg: var(--sk-radio-selected-bg);
+    --sk-radio-border-color: var(--sk-radio-selected-border-color);
   }
 
-  .ds-radio:has(.ds-radio__input:disabled) {
-    --ds-radio-bg: var(--ds-radio-disabled-bg);
-    --ds-radio-fg: var(--ds-radio-disabled-fg);
-    --ds-radio-border-color: var(--ds-radio-disabled-border-color);
+  .sk-radio:has(.sk-radio__input:disabled) {
+    --sk-radio-bg: var(--sk-radio-disabled-bg);
+    --sk-radio-fg: var(--sk-radio-disabled-fg);
+    --sk-radio-border-color: var(--sk-radio-disabled-border-color);
+    --sk-radio-selected-fg: var(--sk-radio-disabled-fg);
+
+    cursor: not-allowed;
+  }
+
+  .sk-radio-group[data-orientation="horizontal"] {
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+  }
+
+  .sk-radio {
+    display: inline-flex;
+    gap: var(--sk-radio-gap);
+    align-items: center;
+    color: var(--sk-radio-fg);
+    cursor: pointer;
+  }
+
+  .sk-radio__input {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    clip-path: inset(50%);
+  }
+
+  .sk-radio__control {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--sk-radio-hit-size);
+    block-size: var(--sk-radio-hit-size);
+    flex: none;
+    border-radius: var(--radius-pill);
+  }
+
+  .sk-radio__control::before {
+    content: "";
+    grid-area: 1 / 1;
+    inline-size: var(--sk-radio-control-size);
+    block-size: var(--sk-radio-control-size);
+    border: var(--sk-radio-border-width) solid var(--sk-radio-border-color);
+    border-radius: inherit;
+    background: var(--sk-radio-bg);
+  }
+
+  .sk-radio__input:focus-visible + .sk-radio__control::before {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .sk-radio__indicator {
+    grid-area: 1 / 1;
+  }
+
+  .sk-radio__input:checked + .sk-radio__control .sk-radio__indicator {
+    inline-size: 0.625rem;
+    block-size: 0.625rem;
+    border-radius: inherit;
+    background: var(--sk-radio-selected-fg);
+  }
+
+  @media (forced-colors: active) {
+    .sk-radio__control::before {
+      border-color: CanvasText;
+      background: Canvas;
+    }
+
+    .sk-radio__input:checked + .sk-radio__control .sk-radio__indicator {
+      background: CanvasText;
+    }
   }
 }

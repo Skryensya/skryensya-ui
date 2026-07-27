@@ -72,7 +72,18 @@ export function Toast({
         <div className={contentParts.toastActions}>
           {actions}
           {onDismiss ? (
-            <button aria-label="Dismiss notification" className={contentParts.toastDismiss} onClick={() => dismiss("dismiss")} type="button">
+            /* The dismiss is a real icon-only Button at sm: it inherits the button's 44px hit target
+               and state layer, while the part class keeps the enhancer hook and ties the glyph to the
+               tone color. */
+            <button
+              aria-label="Dismiss notification"
+              className={`${contentParts.toastDismiss} sk-button sk-interactive`}
+              data-icon-only
+              data-size="sm"
+              data-variant="ghost"
+              onClick={() => dismiss("dismiss")}
+              type="button"
+            >
               ×
             </button>
           ) : null}

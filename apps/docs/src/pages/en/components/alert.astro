@@ -1,0 +1,192 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const neutralHtml = `<div
+  class="sk-alert"
+  data-presentation="banner"
+  data-tone="neutral"
+  role="status"
+  aria-live="polite"
+>
+  <div class="sk-alert__content">
+    <p class="sk-alert__title">Mantenimiento programado</p>
+    <div class="sk-alert__description">
+      On Sunday from 02:00 to 04:00 UTC the panel will be read-only.
+    </div>
+  </div>
+  <div class="sk-alert__actions">
+    <button
+      class="sk-alert__dismiss"
+      type="button"
+      aria-label="Cerrar alerta"
+    >
+      <span data-sk-icon="close"></span>
+    </button>
+  </div>
+</div>`;
+
+const bannerHtml = `<div
+  class="sk-alert"
+  data-presentation="banner"
+  data-tone="info"
+  role="status"
+  aria-live="polite"
+>
+  <span class="sk-alert__icon" aria-hidden="true">
+    <span data-sk-icon="info"></span>
+  </span>
+  <div class="sk-alert__content">
+    <p class="sk-alert__title">New version</p>
+    <div class="sk-alert__description">
+      An update is available.
+    </div>
+  </div>
+</div>`;
+
+const accentHtml = `<div
+  class="sk-alert"
+  data-presentation="accent"
+  data-tone="warning"
+  role="status"
+  aria-live="polite"
+>
+  <span class="sk-alert__icon" aria-hidden="true">
+    <span data-sk-icon="warning"></span>
+  </span>
+  <div class="sk-alert__content">
+    <p class="sk-alert__title">Your plan expires in 3 days</p>
+    <div class="sk-alert__description">
+      Choose a plan so as not to interrupt your deployments.
+    </div>
+  </div>
+  <div class="sk-alert__actions">
+    <a class="sk-link sk-interactive" href="/billing">Ver planes</a>
+    <button
+      class="sk-alert__dismiss"
+      type="button"
+      aria-label="Cerrar alerta"
+    >
+      <span data-sk-icon="close"></span>
+    </button>
+  </div>
+</div>`;
+
+const inlineHtml = `<div
+  class="sk-alert"
+  data-presentation="inline"
+  data-tone="success"
+  role="status"
+  aria-live="polite"
+>
+  <span class="sk-alert__icon" aria-hidden="true">
+    <span data-sk-icon="success"></span>
+  </span>
+  <div class="sk-alert__content">
+    <div class="sk-alert__description">Your changes have been saved.</div>
+  </div>
+</div>`;
+
+const neutralReact = `import { Alert } from "@skryensya/react/alert";
+
+<Alert
+  tone="neutral"
+  title="Mantenimiento programado"
+  onDismiss={() => hide()}
+>
+  On Sunday from 02:00 to 04:00 UTC the panel will be read-only.
+</Alert>;`;
+
+const bannerReact = `import { Alert } from "@skryensya/react/alert";
+
+<Alert tone="info" title="New version">
+  An update is available.
+</Alert>;`;
+
+const accentReact = `import { Alert } from "@skryensya/react/alert";
+
+<Alert
+  onDismiss={() => hide()}
+  actions={
+    <a className="sk-link sk-interactive" href="/billing">
+      Ver planes
+    </a>
+  }
+  presentation="accent"
+  title="Your plan expires in 3 days"
+  tone="warning"
+>
+  Choose a plan so as not to interrupt your deployments.
+</Alert>;`;
+
+const inlineReact = `import { Alert } from "@skryensya/react/alert";
+
+<Alert presentation="inline" tone="success">
+  Your changes have been saved.
+</Alert>;`;
+---
+
+<Base title="Alert" description="Alert: Persistent inline message with tone (including neutral), accessible announcement and React component.">
+  <h1>Alert</h1>
+  <p class="lede">
+    Alert is an inline message that remains in the layout for the duration of its condition. Unlike
+    Toast, transient, and mounted in a floating region, Alert lives in the flow of content.
+  </p>
+
+  <h2>Tonos</h2>
+  <p>
+    The tone decides whether the panel is painted with semantic color.
+    <code>info</code>, <code>success</code>, <code>warning</code> and <code>danger</code> color the
+    message. Only <code>danger</code> is advertised as <code>role="alert"</code> (assertive); the rest
+    use <code>role="status"</code> (polite).
+  </p>
+  <p>
+    The four read a <strong>feedback role</strong>, never the accent: the tone says what happened, like this
+    which cannot change when the brand changes. <code>info</code> had its own ramp just in the
+    decision 26 (<code>docs/decisiones/0026-info-es-un-rol-de-feedback-no-el-acento.md</code>); before
+    It read <code>accent</code>, and a magenta mark painted each information notice magenta.
+  </p>
+
+  <h3>Neutral</h3>
+  <p>
+    The default: surface and edge, without semantic painting. It exists for when the color should not be
+    the prominent sign, the text (and, in a
+    <a href="/en/components/toast">Toast</a>, the fact of floating and disappearing) already load the message.
+    Use it in ordinary notices, short confirmations or any case where you paint the dashboard
+    “success” or “info” would add urgency that the content does not have.
+  </p>
+  <Showcase html={neutralHtml} react={neutralReact} label="Alert neutral" />
+
+  <h2>Presentaciones</h2>
+  <p>The presentation decides the visual weight, not the urgency.</p>
+
+  <h3>Banner</h3>
+  <p>The full panel is for a condition that needs a title and explanation along with the affected content.</p>
+  <Showcase html={bannerHtml} react={bannerReact} label="Alert banner" />
+
+  <h3>Acento</h3>
+  <p>The sidebar preserves the tone signal and lets a recovery action take center stage.</p>
+  <Showcase html={accentHtml} react={accentReact} label="Alert acento" />
+
+  <h3>Inline</h3>
+  <p>Without a panel or border, a short confirmation accompanies a block that already has its own structure.</p>
+  <Showcase html={inlineHtml} react={inlineReact} label="Alert inline" />
+
+  <h2>Anatomy</h2>
+  <ul>
+    <li><code>sk-alert__icon</code> is decorative and only appears when it provides a visual signal.</li>
+    <li><code>sk-alert__content</code> groups optional title and description.</li>
+    <li><code>sk-alert__actions</code> hosts actions that belong to the consumer; the optional closure lives there.</li>
+    <li><code>data-tone</code> acepta <code>neutral</code> (default), <code>info</code>, <code>success</code>, <code>warning</code> o <code>danger</code>.</li>
+    <li><code>data-presentation</code> acepta <code>banner</code> (default), <code>accent</code> o <code>inline</code>.</li>
+  </ul>
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>The code is in the <strong>React</strong> tab of each example. <code>onDismiss</code> is optional: without it, the close button is not drawn.</p>
+</Base>

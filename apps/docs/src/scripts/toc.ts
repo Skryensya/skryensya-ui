@@ -1,14 +1,37 @@
 /*
- * "En esta página", the scroll-spy half.
+ * "En esta página": one responsive disclosure controller plus the scroll spy.
  *
- * The LIST is not built here. It is built by a synchronous inline script in the layout, because a
- * module is deferred by definition: whatever it does, the reader has already seen the page without
- * it. Building the rail here meant watching it arrive, the column appearing and the prose
- * reflowing around it, every load. So the DOM work moved to where it can happen before the first
- * paint, and what stays is the part that only matters once you scroll.
- *
- * This reads what the inline script wrote and never touches layout.
+ * The list is still built synchronously in Base.astro so the reserved rail never arrives after
+ * paint. Shape is shared here instead: both the real docs shell and ComponentPreview call the same
+ * controller, so a TOC switches between rail and disclosure at the same breakpoint in every realm.
  */
+
+/** Keeps every authored TOC closed as a disclosure and open as a wide rail. */
+export function initTocDisclosure(root: ParentNode = document): () => void {
+  const disclosures = [
+    ...root.querySelectorAll<HTMLDetailsElement>(
+      "[data-docs-toc-disclosure]",
+    ),
+  ];
+  if (disclosures.length === 0) return () => {};
+
+  const wide =
+    getComputedStyle(document.documentElement)
+      .getPropertyValue("--breakpoint-wide")
+      .trim() || "72rem";
+  const rail = window.matchMedia(`(min-width: ${wide})`);
+  const sync = () => {
+    for (const disclosure of disclosures) {
+      disclosure.open = rail.matches;
+      const summary = disclosure.querySelector<HTMLElement>("summary");
+      if (summary) summary.tabIndex = rail.matches ? -1 : 0;
+    }
+  };
+
+  sync();
+  rail.addEventListener("change", sync);
+  return () => rail.removeEventListener("change", sync);
+}
 
 /** Marks the section you are reading. Idempotent: safe if the inline half never ran. */
 export function initTocSpy() {

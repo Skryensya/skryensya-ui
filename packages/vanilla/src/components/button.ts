@@ -2,12 +2,21 @@ import { buttonParts } from "@skryensya/core/button";
 import { applyAttrs } from "../runtime/apply.js";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
-const rootSelector = "[data-ds-button]";
+const rootSelector = "[data-sk-button]";
 
 export const mountButton = createConnectMount({ key: "button", rootSelector, connect: connectButton });
 
 export function connectButton(root: HTMLElement): () => void {
   const disabled = root.hasAttribute("disabled") || root.getAttribute("aria-disabled") === "true";
+  const isLink = root.tagName === "A";
+  if (isLink && !root.hasAttribute("href")) {
+    throw new Error("ButtonLink expects href. Use Button for actions.");
+  }
+  if (isLink && disabled) {
+    throw new Error(
+      "ButtonLink cannot be disabled while it has navigation semantics. Render non-link content when the destination is unavailable.",
+    );
+  }
 
   if (root.tagName === "BUTTON" && !root.hasAttribute("type")) {
     applyAttrs(root, { type: "button" });
@@ -16,6 +25,11 @@ export function connectButton(root: HTMLElement): () => void {
 
   if (!root.classList.contains(buttonParts.root)) {
     throw new Error(`Button enhancer expects .${buttonParts.root} on the root element.`);
+  }
+  if (!root.classList.contains(buttonParts.interactive)) {
+    throw new Error(
+      `Button enhancer expects .${buttonParts.interactive} on the root element; its state paint and touch target depend on it.`,
+    );
   }
 
   /* An icon-only button is a square with no visible text, so its accessible name has to be authored:

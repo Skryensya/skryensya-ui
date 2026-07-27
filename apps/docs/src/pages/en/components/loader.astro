@@ -1,0 +1,512 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+import "../../../examples/loader.css";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/loader.css";`;
+
+const simulationHtml = `<div
+  class="loader-demo"
+  data-loader-demo
+  aria-busy="true"
+>
+  <div
+    class="loader-demo__status"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="loader-demo__state" data-loader-busy>
+      <span
+        class="sk-loader"
+        data-size="md"
+        data-variant="bars"
+        aria-hidden="true"
+      ></span>
+      <span class="loader-demo__copy">
+        <strong>Analizando mezcla</strong>
+        <span>Buscando resonancias y picos transitorios…</span>
+      </span>
+    </div>
+    <div class="loader-demo__state" data-loader-ready hidden>
+      <span class="loader-demo__ready-dot" aria-hidden="true"></span>
+      <span class="loader-demo__copy">
+        <strong>Updated analysis</strong>
+        <span>The mixture is ready to review.</span>
+      </span>
+    </div>
+  </div>
+
+  <button
+    class="sk-button sk-interactive"
+    data-variant="ghost"
+    data-loader-replay
+    type="button"
+    hidden
+  >
+    Analyze again
+  </button>
+</div>`;
+
+const simulationJs = `const demo = document.querySelector("[data-loader-demo]");
+
+if (demo instanceof HTMLElement) {
+  const replay = demo.querySelector("[data-loader-replay]");
+  const busy = demo.querySelector("[data-loader-busy]");
+  const ready = demo.querySelector("[data-loader-ready]");
+  let timer = 0;
+
+  const setBusy = (active) => {
+    demo.setAttribute("aria-busy", String(active));
+    busy?.toggleAttribute("hidden", !active);
+    ready?.toggleAttribute("hidden", active);
+    replay?.toggleAttribute("hidden", active);
+  };
+
+  const analyze = () => {
+    window.clearTimeout(timer);
+    setBusy(true);
+    timer = window.setTimeout(() => setBusy(false), 2200);
+  };
+
+  replay?.addEventListener("click", analyze);
+  analyze();
+}`;
+
+const simulationReact = `import { useEffect, useState } from "react";
+import { Button } from "@skryensya/react/button";
+import { Loader } from "@skryensya/react/loader";
+
+export function MixAnalysis() {
+  const [analyzing, setAnalyzing] = useState(true);
+  const [run, setRun] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setAnalyzing(false), 2200);
+    return () => window.clearTimeout(timer);
+  }, [run]);
+
+  const analyze = () => {
+    setAnalyzing(true);
+    setRun((current) => current + 1);
+  };
+
+  return (
+    <div className="loader-demo" aria-busy={analyzing}>
+      <div
+        aria-atomic="true"
+        aria-live="polite"
+        className="loader-demo__status"
+        role="status"
+      >
+        {analyzing ? (
+          <div className="loader-demo__state">
+            <Loader size="md" variant="bars" />
+            <span className="loader-demo__copy">
+              <strong>Analizando mezcla</strong>
+              <span>Buscando resonancias y picos transitorios…</span>
+            </span>
+          </div>
+        ) : (
+          <div className="loader-demo__state">
+            <span className="loader-demo__ready-dot" aria-hidden="true" />
+            <span className="loader-demo__copy">
+              <strong>Updated analysis</strong>
+              <span>The mixture is ready to review.</span>
+            </span>
+          </div>
+        )}
+      </div>
+
+      {!analyzing && (
+        <Button onClick={analyze} variant="ghost">
+          Analyze again
+        </Button>
+      )}
+    </div>
+  );
+}`;
+
+const contextsHtml = `<div class="sk-grid" data-columns="3" data-gap="md" data-multicol>
+  <article
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+    aria-labelledby="save-title"
+  >
+    <div class="sk-stack" data-gap="md">
+      <span class="sk-text" data-role="eyebrow">Local action</span>
+      <div class="sk-stack" data-gap="xs">
+        <h3 class="sk-heading" data-size="h4" id="save-title">
+          Save report
+        </h3>
+        <p class="sk-text" data-tone="secondary">
+          The button retains the action and the Loader remains decorative.
+        </p>
+      </div>
+      <button
+        class="sk-button sk-interactive"
+        data-variant="primary"
+        type="button"
+        aria-busy="true"
+        disabled
+      >
+        <span
+          class="sk-loader"
+          data-size="sm"
+          data-variant="ring"
+          aria-hidden="true"
+        ></span>
+        Guardando…
+      </button>
+    </div>
+  </article>
+
+  <section
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+    aria-busy="true"
+    aria-labelledby="orders-title"
+  >
+    <div class="sk-stack" data-gap="md">
+      <div class="sk-inline" data-justify="between" data-wrap="false">
+        <h3 class="sk-heading" data-size="h4" id="orders-title">
+          Pedidos recientes
+        </h3>
+        <span
+          class="sk-loader"
+          data-size="md"
+          data-variant="dots"
+          role="status"
+          aria-label="Actualizando pedidos"
+        ></span>
+      </div>
+      <p class="sk-text" data-tone="secondary">
+        Previous content remains visible while the region is updated.
+      </p>
+      <div class="sk-stack" data-gap="xs">
+        <div class="sk-inline" data-justify="between" data-wrap="false">
+          <span class="sk-text" data-tone="secondary">Procesados</span>
+          <span class="sk-text" data-weight="label">128</span>
+        </div>
+        <div class="sk-inline" data-justify="between" data-wrap="false">
+          <span class="sk-text" data-tone="secondary">Pendientes</span>
+          <span class="sk-text" data-weight="label">24</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section
+    class="sk-box"
+    data-surface="surface"
+    data-border="subtle"
+    data-padding="lg"
+    aria-busy="true"
+    aria-labelledby="analytics-title"
+  >
+    <div class="sk-stack" data-gap="sm">
+      <div class="sk-inline" data-justify="center">
+        <span
+          class="sk-loader"
+          data-size="lg"
+          data-variant="sweep"
+          role="status"
+          aria-label="Loading analytics panel"
+        ></span>
+      </div>
+      <h3 class="sk-heading" data-size="h4" id="analytics-title">
+        Preparing analytics
+      </h3>
+      <p class="sk-text" data-tone="secondary">
+        The initial load maintains a helpful title and explanation.
+      </p>
+    </div>
+  </section>
+</div>`;
+
+const contextsReact = `import { Button } from "@skryensya/react/button";
+import { Heading } from "@skryensya/react/heading";
+import { Loader } from "@skryensya/react/loader";
+import { Box, Grid, Inline, Stack } from "@skryensya/react/layout";
+import { Text } from "@skryensya/react/text";
+
+<Grid columns={3} data-multicol="">
+  <Box
+    as="article"
+    aria-labelledby="save-title"
+    border="subtle"
+    padding="lg"
+    surface="surface"
+  >
+    <Stack>
+      <Text as="span" data-role="eyebrow">Local action</Text>
+      <Stack gap="xs">
+        <Heading as="h3" id="save-title" size="h4">
+          Save report
+        </Heading>
+        <Text tone="secondary">
+          The button retains the action and the Loader remains decorative.
+        </Text>
+      </Stack>
+      <Button aria-busy={true} disabled variant="primary">
+        <Loader size="sm" /> Guardando…
+      </Button>
+    </Stack>
+  </Box>
+
+  <Box
+    as="section"
+    aria-busy={true}
+    aria-labelledby="orders-title"
+    border="subtle"
+    padding="lg"
+    surface="surface"
+  >
+    <Stack>
+      <Inline justify="between" wrap={false}>
+        <Heading as="h3" id="orders-title" size="h4">
+          Pedidos recientes
+        </Heading>
+        <Loader label="Actualizando pedidos" variant="dots" />
+      </Inline>
+      <Text tone="secondary">
+        Previous content remains visible while the region is updated.
+      </Text>
+      <Stack gap="xs">
+        <Inline justify="between" wrap={false}>
+          <Text as="span" tone="secondary">Procesados</Text>
+          <Text as="span" weight="label">128</Text>
+        </Inline>
+        <Inline justify="between" wrap={false}>
+          <Text as="span" tone="secondary">Pendientes</Text>
+          <Text as="span" weight="label">24</Text>
+        </Inline>
+      </Stack>
+    </Stack>
+  </Box>
+
+  <Box
+    as="section"
+    aria-busy={true}
+    aria-labelledby="analytics-title"
+    border="subtle"
+    padding="lg"
+    surface="surface"
+  >
+    <Stack gap="sm">
+      <Inline justify="center">
+        <Loader
+          label="Loading analytics panel"
+          size="lg"
+          variant="sweep"
+        />
+      </Inline>
+      <Heading as="h3" id="analytics-title" size="h4">
+        Preparing analytics
+      </Heading>
+      <Text tone="secondary">
+        The initial load maintains a helpful title and explanation.
+      </Text>
+    </Stack>
+  </Box>
+</Grid>;`;
+
+const sizesHtml = `<div class="loader-specimens" role="group" aria-label="Loader Sizes">
+  <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
+    <div class="sk-stack" data-align="center" data-gap="sm">
+      <span class="sk-loader" data-size="sm" aria-hidden="true"></span>
+      <span class="loader-specimen__name">sm</span>
+      <p class="loader-specimen__description">Within controls</p>
+    </div>
+  </div>
+  <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
+    <div class="sk-stack" data-align="center" data-gap="sm">
+      <span class="sk-loader" data-size="md" aria-hidden="true"></span>
+      <span class="loader-specimen__name">md</span>
+      <p class="loader-specimen__description">inline status</p>
+    </div>
+  </div>
+  <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
+    <div class="sk-stack" data-align="center" data-gap="sm">
+      <span
+        class="sk-loader"
+        data-size="lg"
+        role="status"
+        aria-label="Loading results"
+      ></span>
+      <span class="loader-specimen__name">lg</span>
+      <p class="loader-specimen__description">Region or initial load</p>
+    </div>
+  </div>
+</div>`;
+
+const sizesReact = `import { Loader } from "@skryensya/react/loader";
+
+<Loader size="sm" />
+<Loader />
+<Loader size="lg" label="Loading results" />;`;
+
+const speedHtml = `<div class="loader-specimens" role="group" aria-label="Loader Speeds">
+  <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
+    <div class="sk-stack" data-align="center" data-gap="sm">
+      <span
+        class="sk-loader"
+        data-variant="bars"
+        data-speed="fast"
+        data-size="lg"
+        aria-hidden="true"
+      ></span>
+      <span class="loader-specimen__name">fast</span>
+      <p class="loader-specimen__description">Ciclo corto</p>
+    </div>
+  </div>
+  <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
+    <div class="sk-stack" data-align="center" data-gap="sm">
+      <span
+        class="sk-loader"
+        data-variant="bars"
+        data-speed="normal"
+        data-size="lg"
+        aria-hidden="true"
+      ></span>
+      <span class="loader-specimen__name">normal</span>
+      <p class="loader-specimen__description">Ciclo base</p>
+    </div>
+  </div>
+  <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
+    <div class="sk-stack" data-align="center" data-gap="sm">
+      <span
+        class="sk-loader"
+        data-variant="bars"
+        data-speed="slow"
+        data-size="lg"
+        role="status"
+        aria-label="Syncing in the background"
+      ></span>
+      <span class="loader-specimen__name">slow</span>
+      <p class="loader-specimen__description">Ciclo largo</p>
+    </div>
+  </div>
+</div>`;
+
+const speedReact = `import { Loader } from "@skryensya/react/loader";
+
+<Loader speed="fast" size="lg" variant="bars" />
+<Loader speed="normal" size="lg" variant="bars" />
+<Loader
+  label="Syncing in the background"
+  speed="slow"
+  size="lg"
+  variant="bars"
+/>;`;
+
+const customSpeed = `.sk-loader.mi-loader {
+  --sk-loader-duration: 2s;
+}`;
+---
+
+<Base
+  title="Loader"
+  description="Loader: Simulation of indeterminate load, usage patterns, sizes and speed."
+>
+  <h1>Loader</h1>
+  <p class="lede">
+    Loader reports job <strong>undetermined</strong>: the operation is active, but does not exist
+    an honest fraction to show. The system offers two circular and two linear designs with the
+    same semantic rules to compose actions, regions and initial charges.
+  </p>
+
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
+      <div class="sk-alert__description">
+        The contract contains <code>ring</code>, <code>sweep</code>, <code>bars</code> y
+        <code>dots</code>. child designs visuales del mismo Loader, no componentes distintos.
+      </div>
+    </div>
+  </div>
+
+  <h2>Simulation</h2>
+  <p>
+    A single container changes from busy to ready. You do not need a screen, metrics or a card
+    exterior: only the brand, the text that explains the work and an action to repeat it.
+  </p>
+  <Showcase
+    html={simulationHtml}
+    js={simulationJs}
+    previewScript={simulationJs}
+    react={simulationReact}
+    label="Mixture analysis"
+    note="Busy → ready"
+  />
+  <p>
+    <code>bars</code> provides movement without pretending a percentage. The container keeps
+    <code>aria-busy</code> and the visible state makes the ad accessible.
+  </p>
+
+  <h2>Patrones completos</h2>
+  <p>
+    Loader owns the brand, not the surface or the life cycle. The context decides where you live,
+    who provides the accessible name and what region retains <code>aria-busy="true"</code>.
+  </p>
+  <Showcase
+    html={contextsHtml}
+    react={contextsReact}
+    label="Loader in context"
+    note="Local action · region update · initial load"
+  />
+  <ul>
+    <li>On a button, Loader is decorative: “Saving…” already names the state.</li>
+    <li>In a local update, it preserves the previous content and marks the region as busy.</li>
+    <li>In an initial load, accompany the brand with a title and an explanation; avoid an empty screen.</li>
+  </ul>
+
+  <h2>Size</h2>
+  <p>
+    Use <code>sm</code> inside controls, <code>md</code> next to text, and <code>lg</code> when
+    brand occupies a region of its own. Size does not communicate how much work remains.
+  </p>
+  <Showcase html={sizesHtml} react={sizesReact} label="Loader Sizes" />
+
+  <h2>Velocidad</h2>
+  <p>
+    <code>speed</code> rewrites the <code>--sk-loader-duration</code> styling hook from tokens
+    intent (<code>--motion-loading-duration*</code>), not from raw milliseconds. Choose the
+    cadence by visual presence, not as a promise about the real duration of the operation.
+  </p>
+  <Showcase html={speedHtml} react={speedReact} label="Loader Speeds" />
+  <CodeBlock code={customSpeed} label="override local" lang="css" />
+
+  <h2>Semantics</h2>
+  <ul>
+    <li>With accessible name use <code>role="status"</code>; React writes it by passing <code>label</code>.</li>
+    <li>Without <code>label</code>, React makes it decorative to accompany text without duplicating it.</li>
+    <li>Mark the affected region with <code>aria-busy="true"</code>; Loader does not control the operation.</li>
+    <li>If you know the progress, use <a href="/en/components/progress">Progress</a>, not a different speed.</li>
+  </ul>
+
+  <h2>Movimiento reducido</h2>
+  <p>
+    All four designs retain a recognizable silhouette and stop all movement with
+    <code>prefers-reduced-motion: reduce</code>. Status text remains: reduce motion no
+    can turn a pending trade into an invisible signal.
+  </p>
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+  <CodeBlock code={styles} label="CSS" lang="css" />
+
+  <h2>React</h2>
+  <p>
+    Props: <code>size</code>, <code>variant</code>, <code>speed</code> and <code>label</code>.
+    The default values ​​are <code>md</code>, <code>ring</code> and <code>normal</code>.
+  </p>
+
+  <StylingHooks groups={[{ file: "components/loader.css", probe: "sk-loader" }]} />
+</Base>

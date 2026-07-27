@@ -1,7 +1,7 @@
 export type BadgeTone = "neutral" | "accent" | "success" | "warning" | "danger";
 
 export const badgeParts = {
-  root: "ds-badge",
+  root: "sk-badge",
 } as const;
 
 export type BadgePart = keyof typeof badgeParts;

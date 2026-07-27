@@ -34,11 +34,10 @@ export function SegmentedControl({
       const option = root.querySelector<HTMLButtonElement>('[role="radio"][aria-checked="true"]');
       if (!option) return;
 
-      indicator.style.setProperty("--ds-segmented-indicator-x", `${option.offsetLeft}px`);
-      indicator.style.setProperty("--ds-segmented-indicator-y", `${option.offsetTop}px`);
-      indicator.style.setProperty("--ds-segmented-indicator-width", `${option.offsetWidth}px`);
-      indicator.style.setProperty("--ds-segmented-indicator-height", `${option.offsetHeight}px`);
-      root.setAttribute("data-ds-segmented-ready", "");
+      indicator.style.transform = `translate3d(${option.offsetLeft}px, ${option.offsetTop}px, 0)`;
+      indicator.style.inlineSize = `${option.offsetWidth}px`;
+      indicator.style.blockSize = `${option.offsetHeight}px`;
+      root.setAttribute("data-sk-segmented-ready", "");
     };
 
     alignIndicator();
@@ -85,7 +84,7 @@ export function SegmentedControl({
       {options.map((option) => (
         <button
           aria-checked={option.value === selected}
-          className={`${segmentedParts.option} ds-interactive`}
+          className={`${segmentedParts.option} sk-interactive`}
           data-value={option.value}
           disabled={option.disabled}
           key={option.value}

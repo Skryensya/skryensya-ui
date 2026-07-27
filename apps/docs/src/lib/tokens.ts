@@ -10,7 +10,6 @@
  */
 import { createRequire } from "node:module";
 import { dirname } from "node:path";
-// @ts-expect-error, parse.mjs is plain JS with no types; the shapes are documented below.
 import { parseTokens } from "@skryensya/core/parse";
 
 export interface Token {
@@ -28,46 +27,180 @@ export const CSS_DIR = dirname(require.resolve("@skryensya/core/tokens.scss"));
 
 const corpus = parseTokens(CSS_DIR);
 
-export const tokens: Token[] = corpus.tokens;
+/* parse.mjs is plain JS, so it infers `tier: string`. This is the ONE boundary where the corpus
+ * becomes typed; the validator (scripts/lint.mjs) is what guarantees the tier is one of the three. */
+export const tokens: Token[] = corpus.tokens as Token[];
 export const byName = new Map(tokens.map((t) => [t.name, t] as const));
 
 /** Tier 3 is element-scoped, never on :root (ADR-1): its styling hooks need an element to exist in. */
 export const PROBES: Record<string, string> = {
-  "components/badge.css": "ds-badge",
-  "components/button.css": "ds-button",
-  "components/field.css": "ds-field",
-  "components/input.css": "ds-input",
-  "components/details.css": "ds-details",
-  "components/navbar.css": "ds-navbar",
-  "components/pagination.css": "ds-pagination",
-  "patterns/nav-list.css": "ds-nav-list",
-  "patterns/state-layer.css": "ds-interactive",
-  "patterns/scrollbar.css": "ds-scrollbar",
-  "components/sidebar.css": "ds-sidebar",
-  "components/table.css": "ds-table",
+  "components/badge.css": "sk-badge",
+  "components/button.css": "sk-button",
+  "components/field.css": "sk-field",
+  "components/input.css": "sk-input",
+  "components/details.css": "sk-details",
+  "components/navbar.css": "sk-navbar",
+  "components/pagination.css": "sk-pagination",
+  "patterns/nav-list.css": "sk-nav-list",
+  "patterns/state-layer.css": "sk-interactive",
+  "patterns/scrollbar.css": "sk-scrollbar",
+  "components/sidebar.css": "sk-sidebar",
+  "components/table.css": "sk-table",
 };
 
 /**
  * Follow an alias chain down to the first real literal.
  * A styling hook authored as `var(--color-action-neutral)` says nothing about its own type, the
  * type lives at the bottom of the chain. That indirection is what the tier system is made of, so
- * anything reasoning about a token's type has to walk it.
+ * anything reasoning about a token's type has to walk it. A fallback is itself a valid literal
+ * source when the referenced property is optional.
  */
 export function literalOf(value: string, depth = 0): string {
-  const m = value.trim().match(/^var\(\s*(--[\w-]+)\s*\)$/);
-  const next = m && byName.get(m[1]);
-  return next && depth < 10 ? literalOf(next.value, depth + 1) : value;
+  const trimmed = value.trim();
+  const alias = trimmed.match(/^var\(\s*(--[\w-]+)\s*\)$/);
+  if (alias) {
+    const next = byName.get(alias[1]);
+    return next && depth < 10 ? literalOf(next.value, depth + 1) : trimmed;
+  }
+
+  const withFallback = trimmed.match(/^var\(\s*(--[\w-]+)\s*,([\s\S]+)\)$/);
+  if (withFallback) {
+    const next = byName.get(withFallback[1]);
+    const chosen = next ? next.value : withFallback[2];
+    return depth < 10 ? literalOf(chosen, depth + 1) : chosen.trim();
+  }
+
+  return trimmed;
 }
 
 /** Which real CSS property will evaluate this token, judged from the literal it bottoms out at. */
 export function probeProp(value: string): string {
   const v = literalOf(value).trim();
-  if (/^(oklch|rgb|hsl|#|color-mix|light-dark|currentColor|transparent)/i.test(v)) return "color";
+  if (/^(oklch|oklab|lab|lch|rgb|hsl|#|color-mix|light-dark|currentColor|transparent)/i.test(v))
+    return "color";
   if (/cubic-bezier|^linear$|^ease/i.test(v)) return "transition-timing-function";
   if (/^-?[\d.]+m?s$/i.test(v)) return "transition-duration";
   if (/(px|rem|em|ch|vh|vw|%)|^(calc|round|max|min|clamp)\(/i.test(v)) return "width";
   return ""; // plain numbers, font stacks, keywords, the specified value IS the value
 }
+
+/**
+ * The family a token belongs to, so the reference reads as a system instead of 947 rows.
+ *
+ * Tier answers "which layer owns this", which is the architecture but not the shelf: every spacing
+ * step, every ramp and every duration lands in the same `primitive` bucket. The family is the
+ * shelf. Tiers 1 and 2 take it from the name — the prefix IS the family, and the validator keeps
+ * those prefixes honest. Tier 3 takes it from the FILE, which is stronger than a prefix: a token is
+ * a Button token because it is authored in button.css, and that is also what scopes it.
+ */
+export interface TokenGroup {
+  id: string;
+  label: string;
+  tier: Token["tier"];
+  /** Where the family is authored: shown under the heading, and the source of truth for tier 3. */
+  source: string;
+}
+
+/** `date-picker` → `DatePicker`, the same name the component pages use. */
+const pascal = (stem: string) =>
+  stem
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("");
+
+/* Ordered, most general first: the first match wins, so `--color-bg-*` is tested before `--color-*`
+ * would be, and `--scale-line-height-*` joins typography rather than starting its own shelf. */
+const NAME_GROUPS: { test: RegExp; id: string; label: string }[] = [
+  // Tier 1
+  { test: /^--ramp-neutral-/, id: "ramp-neutral", label: "Rampa neutral" },
+  { test: /^--ramp-accent-/, id: "ramp-accent", label: "Rampa accent" },
+  { test: /^--ramp-danger-/, id: "ramp-danger", label: "Rampa danger" },
+  { test: /^--ramp-success-/, id: "ramp-success", label: "Rampa success" },
+  { test: /^--ramp-warning-/, id: "ramp-warning", label: "Rampa warning" },
+  { test: /^--ramp-info-/, id: "ramp-info", label: "Rampa info" },
+  { test: /^--scale-space-/, id: "scale-space", label: "Escala · espaciado" },
+  { test: /^--scale-(font|line-height)-/, id: "scale-type", label: "Escala · tipografía" },
+  { test: /^--scale-radius-/, id: "scale-radius", label: "Escala · radios" },
+  { test: /^--scale-(size|fixed)-/, id: "scale-size", label: "Escala · tamaños" },
+  { test: /^--scale-(duration|easing)-/, id: "scale-motion", label: "Escala · motion" },
+  { test: /^--scale-z-/, id: "scale-z", label: "Escala · z-index" },
+
+  // Tier 2
+  { test: /^--color-bg-/, id: "color-bg", label: "Color · fondo" },
+  { test: /^--color-text-/, id: "color-text", label: "Color · texto" },
+  { test: /^--color-border-/, id: "color-border", label: "Color · borde" },
+  { test: /^--color-action-/, id: "color-action", label: "Color · acción" },
+  { test: /^--(shadow|elevation)-/, id: "elevation", label: "Elevación" },
+  { test: /^--space-/, id: "space", label: "Espaciado" },
+  { test: /^--size-/, id: "size", label: "Tamaños" },
+  { test: /^--radius-/, id: "radius", label: "Radios" },
+  { test: /^--font-/, id: "font", label: "Tipografía" },
+  { test: /^--motion-/, id: "motion", label: "Motion" },
+  { test: /^--state-layer-/, id: "state-layer", label: "State layer" },
+  { test: /^--focus-/, id: "focus", label: "Foco" },
+  { test: /^--z-/, id: "z", label: "Z-index" },
+  { test: /^--breakpoint-/, id: "breakpoint", label: "Breakpoints" },
+  { test: /^--sk-density/, id: "density", label: "Densidad" },
+];
+
+export function groupOf(token: Token): TokenGroup {
+  if (token.tier === "component") {
+    const stem = (token.file.split("/").pop() ?? "").replace(/\.(css|scss)$/, "");
+    return {
+      id: `file:${token.file}`,
+      label: pascal(stem),
+      tier: token.tier,
+      source: token.file,
+    };
+  }
+
+  const match = NAME_GROUPS.find((g) => g.test.test(token.name));
+  return {
+    id: match?.id ?? `${token.tier}:otros`,
+    // A token that matches nothing is a finding, not a bucket to hide it in: it gets its tier's
+    // "Otros" shelf, where a new family with no home is visible instead of silently sorted.
+    label: match?.label ?? "Otros",
+    tier: token.tier,
+    source: token.file,
+  };
+}
+
+export interface GroupedTokens {
+  group: TokenGroup;
+  tokens: Token[];
+}
+
+const TIER_ORDER: Token["tier"][] = ["primitive", "semantic", "component"];
+
+/**
+ * Every token, shelved. Tier order first, then the authored order of the families within a tier,
+ * then components alphabetically. Inside a group the corpus order is kept: it is the order the
+ * scale was written in (`50 → 950`, `xs → xl`), which is the order a reader wants to compare.
+ */
+export const groupedTokens: GroupedTokens[] = (() => {
+  const byId = new Map<string, GroupedTokens>();
+
+  for (const token of tokens) {
+    const group = groupOf(token);
+    const entry = byId.get(group.id);
+    if (entry) entry.tokens.push(token);
+    else byId.set(group.id, { group, tokens: [token] });
+  }
+
+  /* A family with no rule ("Otros") sorts to the END of its tier rather than to the front, where a
+     -1 from findIndex would put it: it is a leftover, not the headline of the tier. */
+  const rank = (g: TokenGroup) => {
+    const index = NAME_GROUPS.findIndex((n) => n.id === g.id);
+    return index === -1 ? NAME_GROUPS.length : index;
+  };
+
+  return [...byId.values()].sort((a, b) => {
+    const tier = TIER_ORDER.indexOf(a.group.tier) - TIER_ORDER.indexOf(b.group.tier);
+    if (tier !== 0) return tier;
+    if (a.group.tier === "component") return a.group.label.localeCompare(b.group.label);
+    return rank(a.group) - rank(b.group);
+  });
+})();
 
 export interface ChainNode {
   token: Token;
@@ -100,7 +233,7 @@ export function chainOf(name: string, depth = 0, seen = new Set<string>()): Chai
       const child = chainOf(ref, depth + 1, new Set(seen));
       return child && { ...child, slot: slots[i] };
     })
-    .filter((c): c is ChainNode => Boolean(c));
+    .filter((c) => c !== null);
 
   return { token, children };
 }

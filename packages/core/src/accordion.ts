@@ -27,9 +27,9 @@ export const accordionScope = "accordion";
 
 /** Class on the coordinating root, joins expandable Tiles into one framed stack. */
 export const accordionParts = {
-  root: "ds-accordion",
+  root: "sk-accordion",
 } as const;
 
 export const accordionEvents = {
-  valueChange: "ds:accordionvaluechange",
+  valueChange: "sk:accordionvaluechange",
 } as const;

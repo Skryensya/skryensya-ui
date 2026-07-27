@@ -4,71 +4,77 @@
  * Stack, Inline and Grid define exact reusable arrangements while consumers choose the element
  * that carries their semantics. Box lives in its own pattern so consumers can pull in a surface
  * without also importing layout arrangements they do not use. Wrapper is the page-column cousin:
- * a max measure by use, so a header and a body share one width without hand-copied rem values.
+ * a max measure on a size scale. ImageFrame is the media cousin: aspect, object-fit and clip for
+ * authored images and video.
  */
 @import url("./box.css");
 @import url("./wrapper.css");
+@import url("./image-frame.css");
 
 @layer components {
-  .ds-stack,
-  .ds-inline,
-  .ds-grid {
+  .sk-stack,
+  .sk-inline,
+  .sk-grid {
     min-inline-size: 0;
   }
 
-  .ds-stack {
-    --ds-stack-gap: var(--space-stack-md);
+  .sk-stack {
+    --sk-stack-gap: var(--space-stack-md);
 
     display: grid;
-    gap: var(--ds-stack-gap);
+    gap: var(--sk-stack-gap);
   }
 
-  .ds-stack[data-align="start"] { justify-items: start; }
-  .ds-stack[data-align="center"] { justify-items: center; }
-  .ds-stack[data-align="end"] { justify-items: end; }
-  .ds-stack[data-align="stretch"] { justify-items: stretch; }
-  .ds-stack[data-gap="none"] { --ds-stack-gap: 0; }
-  .ds-stack[data-gap="xs"] { --ds-stack-gap: var(--space-stack-xs); }
-  .ds-stack[data-gap="sm"] { --ds-stack-gap: var(--space-stack-sm); }
-  .ds-stack[data-gap="lg"] { --ds-stack-gap: var(--space-stack-lg); }
-  .ds-stack[data-gap="xl"] { --ds-stack-gap: var(--space-stack-xl); }
+  .sk-stack[data-align="start"] { justify-items: start; }
+  .sk-stack[data-align="center"] { justify-items: center; }
+  .sk-stack[data-align="end"] { justify-items: end; }
+  .sk-stack[data-align="stretch"] { justify-items: stretch; }
+  .sk-stack[data-gap="none"] { --sk-stack-gap: 0; }
+  .sk-stack[data-gap="xs"] { --sk-stack-gap: var(--space-stack-xs); }
+  .sk-stack[data-gap="sm"] { --sk-stack-gap: var(--space-stack-sm); }
+  .sk-stack[data-gap="lg"] { --sk-stack-gap: var(--space-stack-lg); }
+  .sk-stack[data-gap="xl"] { --sk-stack-gap: var(--space-stack-xl); }
 
-  .ds-inline {
-    --ds-inline-gap: var(--space-inline-md);
+  .sk-inline {
+    --sk-inline-gap: var(--space-inline-md);
 
     display: flex;
     flex-wrap: wrap;
-    gap: var(--ds-inline-gap);
+    gap: var(--sk-inline-gap);
     align-items: center;
   }
 
-  .ds-inline[data-align="start"] { align-items: flex-start; }
-  .ds-inline[data-align="end"] { align-items: flex-end; }
-  .ds-inline[data-align="baseline"] { align-items: baseline; }
-  .ds-inline[data-wrap="false"] { flex-wrap: nowrap; }
-  .ds-inline[data-gap="none"] { --ds-inline-gap: 0; }
-  .ds-inline[data-gap="xs"] { --ds-inline-gap: var(--space-inline-xs); }
-  .ds-inline[data-gap="sm"] { --ds-inline-gap: var(--space-inline-sm); }
-  .ds-inline[data-gap="lg"] { --ds-inline-gap: var(--space-inline-lg); }
-  .ds-inline[data-gap="xl"] { --ds-inline-gap: var(--space-inset-xl); }
+  .sk-inline[data-align="start"] { align-items: flex-start; }
+  .sk-inline[data-align="end"] { align-items: flex-end; }
+  .sk-inline[data-align="baseline"] { align-items: baseline; }
+  .sk-inline[data-wrap="false"] { flex-wrap: nowrap; }
+  .sk-inline[data-justify="start"] { justify-content: flex-start; }
+  .sk-inline[data-justify="center"] { justify-content: center; }
+  .sk-inline[data-justify="end"] { justify-content: flex-end; }
+  .sk-inline[data-justify="between"] { justify-content: space-between; }
+  .sk-inline[data-gap="none"] { --sk-inline-gap: 0; }
+  .sk-inline[data-gap="xs"] { --sk-inline-gap: var(--space-inline-xs); }
+  .sk-inline[data-gap="sm"] { --sk-inline-gap: var(--space-inline-sm); }
+  .sk-inline[data-gap="lg"] { --sk-inline-gap: var(--space-inline-lg); }
+  .sk-inline[data-gap="xl"] { --sk-inline-gap: var(--space-inset-xl); }
 
-  .ds-grid {
-    --ds-grid-columns: 1;
-    --ds-grid-gap: var(--space-stack-md);
+  .sk-grid {
+    --sk-grid-columns: 1;
+    --sk-grid-gap: var(--space-stack-md);
 
     display: grid;
-    grid-template-columns: repeat(var(--ds-grid-columns), minmax(0, 1fr));
-    gap: var(--ds-grid-gap);
+    grid-template-columns: repeat(var(--sk-grid-columns), minmax(0, 1fr));
+    gap: var(--sk-grid-gap);
   }
 
-  .ds-grid[data-columns="2"] { --ds-grid-columns: 2; }
-  .ds-grid[data-columns="3"] { --ds-grid-columns: 3; }
-  .ds-grid[data-columns="4"] { --ds-grid-columns: 4; }
-  .ds-grid[data-gap="none"] { --ds-grid-gap: 0; }
-  .ds-grid[data-gap="xs"] { --ds-grid-gap: var(--space-stack-xs); }
-  .ds-grid[data-gap="sm"] { --ds-grid-gap: var(--space-stack-sm); }
-  .ds-grid[data-gap="lg"] { --ds-grid-gap: var(--space-stack-lg); }
-  .ds-grid[data-gap="xl"] { --ds-grid-gap: var(--space-stack-xl); }
+  .sk-grid[data-columns="2"] { --sk-grid-columns: 2; }
+  .sk-grid[data-columns="3"] { --sk-grid-columns: 3; }
+  .sk-grid[data-columns="4"] { --sk-grid-columns: 4; }
+  .sk-grid[data-gap="none"] { --sk-grid-gap: 0; }
+  .sk-grid[data-gap="xs"] { --sk-grid-gap: var(--space-stack-xs); }
+  .sk-grid[data-gap="sm"] { --sk-grid-gap: var(--space-stack-sm); }
+  .sk-grid[data-gap="lg"] { --sk-grid-gap: var(--space-stack-lg); }
+  .sk-grid[data-gap="xl"] { --sk-grid-gap: var(--space-stack-xl); }
 
   /*
    * MULTI-COLUMN LAYOUT, CSS Multi-column Layout Module Level 1, shortened to multicol in CSS.
@@ -82,34 +88,34 @@
    * for reading and keyboard navigation; this pattern is for independent cards, not a sequence
    * whose visual left-to-right order carries meaning.
    */
-  .ds-grid[data-multicol] {
+  .sk-grid[data-multicol] {
     display: block;
     column-count: 1;
-    column-gap: var(--ds-grid-gap);
+    column-gap: var(--sk-grid-gap);
   }
 
-  .ds-grid[data-multicol] > * {
+  .sk-grid[data-multicol] > * {
     break-inside: avoid;
-    margin-block-end: var(--ds-grid-gap);
+    margin-block-end: var(--sk-grid-gap);
   }
 
   @media (min-width: 36rem) {
-    .ds-grid[data-multicol][data-columns="2"],
-    .ds-grid[data-multicol][data-columns="3"],
-    .ds-grid[data-multicol][data-columns="4"] {
+    .sk-grid[data-multicol][data-columns="2"],
+    .sk-grid[data-multicol][data-columns="3"],
+    .sk-grid[data-multicol][data-columns="4"] {
       column-count: 2;
     }
   }
 
   @media (min-width: 52rem) {
-    .ds-grid[data-multicol][data-columns="3"],
-    .ds-grid[data-multicol][data-columns="4"] {
+    .sk-grid[data-multicol][data-columns="3"],
+    .sk-grid[data-multicol][data-columns="4"] {
       column-count: 3;
     }
   }
 
   @media (min-width: 72rem) {
-    .ds-grid[data-multicol][data-columns="4"] {
+    .sk-grid[data-multicol][data-columns="4"] {
       column-count: 4;
     }
   }

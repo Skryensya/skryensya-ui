@@ -51,8 +51,8 @@
 
   const cleanups: Array<() => void> = [];
   onMount(() => {
-    cleanups.push(bindZagEvents(root, () => checkbox.connect(service, normalizeProps).getRootProps() as DomProps));
-    cleanups.push(bindZagEvents(input, () => checkbox.connect(service, normalizeProps).getHiddenInputProps() as DomProps));
+    cleanups.push(bindZagEvents(root, () => api.getRootProps() as DomProps));
+    cleanups.push(bindZagEvents(input, () => api.getHiddenInputProps() as DomProps));
   });
   onDestroy(() => {
     for (const cleanup of cleanups) cleanup();

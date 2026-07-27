@@ -66,7 +66,7 @@
   onMount(() => {
     if (trigger) {
       cleanups.push(
-        bindZagEvents(trigger, () => collapsible.connect(service, normalizeProps).getTriggerProps() as DomProps),
+        bindZagEvents(trigger, () => api.getTriggerProps() as DomProps),
       );
     }
   });

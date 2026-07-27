@@ -48,7 +48,7 @@
 
   const cleanups: Array<() => void> = [];
   onMount(() => {
-    cleanups.push(bindZagEvents(trigger, () => collapsible.connect(service, normalizeProps).getTriggerProps() as DomProps));
+    cleanups.push(bindZagEvents(trigger, () => api.getTriggerProps() as DomProps));
   });
   onDestroy(() => {
     for (const cleanup of cleanups) cleanup();

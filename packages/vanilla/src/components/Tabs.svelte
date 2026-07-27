@@ -76,14 +76,14 @@
   const cleanups: Array<() => void> = [];
   onMount(() => {
     if (list) {
-      cleanups.push(bindZagEvents(list, () => tabs.connect(service, normalizeProps).getListProps() as DomProps));
+      cleanups.push(bindZagEvents(list, () => api.getListProps() as DomProps));
     }
     for (const item of items) {
       cleanups.push(
         bindZagEvents(
           item.trigger,
           () =>
-            tabs.connect(service, normalizeProps).getTriggerProps({
+            api.getTriggerProps({
               value: item.value,
               disabled: item.disabled,
             }) as DomProps,

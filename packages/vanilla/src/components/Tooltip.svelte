@@ -143,18 +143,12 @@
   onMount(() => {
     if (trigger) {
       cleanups.push(
-        bindZagEvents(
-          trigger,
-          () => tooltip.connect(service, normalizeProps).getTriggerProps() as DomProps,
-        ),
+        bindZagEvents(trigger, () => api.getTriggerProps() as DomProps),
       );
     }
     if (content) {
       cleanups.push(
-        bindZagEvents(
-          content,
-          () => tooltip.connect(service, normalizeProps).getContentProps() as DomProps,
-        ),
+        bindZagEvents(content, () => api.getContentProps() as DomProps),
       );
     }
   });

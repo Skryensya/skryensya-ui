@@ -63,12 +63,8 @@
   onMount(() => {
     for (const item of items) {
       const props = { value: item.value };
-      cleanups.push(
-        bindZagEvents(item.input, () => radio.connect(service, normalizeProps).getItemHiddenInputProps(props) as DomProps),
-      );
-      cleanups.push(
-        bindZagEvents(item.label, () => radio.connect(service, normalizeProps).getItemProps(props) as DomProps),
-      );
+      cleanups.push(bindZagEvents(item.input, () => api.getItemHiddenInputProps(props) as DomProps));
+      cleanups.push(bindZagEvents(item.label, () => api.getItemProps(props) as DomProps));
     }
   });
   onDestroy(() => {

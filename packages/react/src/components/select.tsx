@@ -2,6 +2,7 @@ import { selectParts, type SelectOption, type SelectOptions } from "@skryensya/c
 import { select } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
 import { useMemo, useId, type ReactNode } from "react";
+import { anchored } from "./anchored.js";
 
 export type SelectProps = Omit<SelectOptions, "options"> & {
   label?: ReactNode;
@@ -53,6 +54,8 @@ export function Select({
   });
   const api = select.connect(service, normalizeProps);
 
+  const anchor = anchored(id ?? generatedId);
+
   return (
     <div {...api.getRootProps()} className={selectParts.root}>
       <select {...api.getHiddenSelectProps()}>
@@ -68,7 +71,11 @@ export function Select({
             {label}
           </label>
         ) : null}
-        <button {...api.getTriggerProps()} className={`${selectParts.trigger} ds-interactive`} type="button">
+        <button
+          {...api.getTriggerProps()}
+          {...anchor.anchor(`${selectParts.trigger} sk-interactive`)}
+          type="button"
+        >
           <span className={selectParts.value}>{api.valueAsString || placeholder}</span>
           <span aria-hidden="true" className={selectParts.indicator}>
             <span data-state="closed">{indicator}</span>
@@ -77,10 +84,10 @@ export function Select({
         </button>
       </div>
       <Portal>
-        <div {...api.getPositionerProps()} className={selectParts.positioner}>
+        <div {...anchor.positioner(api.getPositionerProps(), selectParts.positioner)}>
           <ul {...api.getContentProps()} className={selectParts.content}>
             {options.map((option) => (
-              <li {...api.getItemProps({ item: option })} className={`${selectParts.item} ds-interactive`} key={option.value}>
+              <li {...api.getItemProps({ item: option })} className={`${selectParts.item} sk-interactive`} key={option.value}>
                 <span {...api.getItemTextProps({ item: option })} className={selectParts.itemText}>
                   {option.label}
                 </span>

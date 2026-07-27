@@ -1,0 +1,80 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+import "@skryensya/core/components/calendar.css";
+
+const install = `@import "@skryensya/core/components/calendar.css";`;
+
+const html = `<div class="sk-calendar" data-sk-calendar data-locale="es-DO"></div>`;
+
+const react = `import { Calendar } from "@skryensya/react/calendar";
+
+<Calendar label="Disponibilidad" locale="es-DO" />`;
+---
+
+<Base
+  title="Calendar"
+  description="Grid de fecha independiente: día, mes o año/década, sin campo ni popover, con el mismo botón cambiando de vista."
+>
+  <h1>Calendar</h1>
+  <p class="lede">
+    The date grid itself, separate from the field that opens it. <a href="/en/components/date-picker">DatePicker</a>
+    nests it inside a popover; this page is the same footer component, for when the calendar
+    <em>es</em> the UI (a reservation page, a dashboard filter) and no input is needed behind it.
+  </p>
+
+  <h2>Grid</h2>
+  <p>
+    Behind it still running <code>@zag-js/date-picker</code> (there is no separate calendar machine
+    in this stack), configured <code>inline</code>: the same keyboard navigation, the same grid with
+    six fixed weeks.
+  </p>
+  <Showcase html={html} react={react} label="Calendar" viewport="auto" />
+
+  <h2>Switch view: buttons, not selects</h2>
+  <p>
+    The header does not have two <code>&lt;select&gt;</code> of month and year: it is a single button,
+    <code>sk-calendar__view-trigger</code>, which shows the visible date ("March 2026" in day view,
+    "2026" in month view, "2020–2029" in year view) and clicking <strong>scale</strong> a
+    level — day → month → year — instead of forcing you to scroll month by month to a distant date.
+  </p>
+  <p>
+    Choose a month or year on your grid <strong>down</strong> one level: Tap “Jan” in the view
+    month returns to the day view already stopped in January; Tapping a year in year view returns to year view
+    month of that year. Go back and forth — climb to choose decade, scroll down by tapping cell — replace
+    what two native selects previously did, without losing keyboard navigation of the grid (roles
+    <code>grid</code>/<code>gridcell</code>, focus managed by Zag).
+  </p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>
+      <code>sk-calendar__header</code> groups previous, view button and next; the three read
+      "previous/next <em>of active view</em>" (month in day view, year in month view, decade
+      in year view), Zag adjusts the accessible tag alone.
+    </li>
+    <li>
+      <code>sk-calendar__table</code> is reused in all three views; <code>sk-calendar__month-grid</code> and
+      <code>sk-calendar__year-grid</code> are modifier hooks on the same table, not checked
+      different.
+    </li>
+    <li>
+      <code>sk-calendar__cell-trigger</code> es el mismo botón de celda en día, mes y año: mismo tamaño,
+      mismo estado de selección/hoy/deshabilitado.
+    </li>
+  </ul>
+
+  <h2>Accesibilidad</h2>
+  <p>
+    The grid is <code>role="grid"</code> keyboard navigable in all three views. The location determines
+    months and two-letter abbreviations visible in the day grid; the full name located
+    remains in each <code>&lt;abbr&gt;</code>.
+  </p>
+
+  <h2>CSS</h2>
+  <pre><code>{install}</code></pre>
+  <StylingHooks
+    groups={[{ file: "components/calendar.css", probe: "sk-calendar", title: "Calendar" }]}
+  />
+</Base>

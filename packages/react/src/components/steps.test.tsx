@@ -2,7 +2,7 @@ import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { Steps } from "./steps.js";
 
-const steps = [{ label: "Seeds" }, { label: "Ramps" }, { label: "Contrast" }, { label: "Export" }];
+const steps = [{ label: "Brand" }, { label: "Ramps" }, { label: "Contrast" }, { label: "Export" }];
 
 describe("Steps", () => {
   it("derives complete / current / upcoming from the current index", () => {

@@ -1,41 +1,40 @@
 /*
- * WRAPPER, centred page column with a max measure named by use.
+ * WRAPPER, centred page column with a max measure from a size scale.
  *
  * A PATTERN: every app page, docs shell and marketing strip needs the same shape, a column that
- * stops growing past a readable (or shell) width, centred, with horizontal inset. Duplicating
- * `max-width` + `margin-inline: auto` + padding per surface is what this exists to prevent.
+ * stops growing past a readable width, centred, with horizontal inset. Duplicating `max-width` +
+ * `margin-inline: auto` + padding per surface is what this exists to prevent.
  *
- * Named by PURPOSE (`prose`, `content`, `shell`, `full`), never by sm/md/lg: the size is which job
- * the column is doing, and a "large wrapper" would lie the moment a second use needed the same
- * width. The measures themselves are tier-2 `--size-wrapper-*` tokens so the header and the body
- * can share one number without hand-copying rem values.
+ * Sized on a scale (`sm`, `md`, `lg`, `full`), not by use-name: the ceiling is how wide the column
+ * may grow, and which job it serves is the consumer's call. The measures are tier-2
+ * `--size-wrapper-*` tokens so a header and a body can share one step without hand-copying rem.
  */
 @layer components {
-  .ds-wrapper {
-    --ds-wrapper-max: var(--size-wrapper-content);
-    --ds-wrapper-padding-inline: var(--space-inset-lg);
+  .sk-wrapper {
+    --sk-wrapper-max: var(--size-wrapper-md);
+    --sk-wrapper-padding-inline: var(--space-inset-lg);
 
     box-sizing: border-box;
-    inline-size: min(100%, var(--ds-wrapper-max));
+    inline-size: min(100%, var(--sk-wrapper-max));
     margin-inline: auto;
-    padding-inline: var(--ds-wrapper-padding-inline);
+    padding-inline: var(--sk-wrapper-padding-inline);
   }
 
-  .ds-wrapper[data-size="prose"] {
-    --ds-wrapper-max: var(--size-wrapper-prose);
+  .sk-wrapper[data-size="sm"] {
+    --sk-wrapper-max: var(--size-wrapper-sm);
   }
 
-  .ds-wrapper[data-size="content"] {
-    --ds-wrapper-max: var(--size-wrapper-content);
+  .sk-wrapper[data-size="md"] {
+    --sk-wrapper-max: var(--size-wrapper-md);
   }
 
-  .ds-wrapper[data-size="shell"] {
-    --ds-wrapper-max: var(--size-wrapper-shell);
+  .sk-wrapper[data-size="lg"] {
+    --sk-wrapper-max: var(--size-wrapper-lg);
   }
 
   /* No ceiling: still centres via the same padding, but the column is the viewport. */
-  .ds-wrapper[data-size="full"] {
-    --ds-wrapper-max: none;
+  .sk-wrapper[data-size="full"] {
+    --sk-wrapper-max: none;
     inline-size: 100%;
   }
 }

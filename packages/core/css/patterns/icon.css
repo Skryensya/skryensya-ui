@@ -5,16 +5,16 @@
  * there is no nuance, the tile's chevron, the select's indicator, the sidebar's toggle and the
  * badge's tone all wrap the identical element:
  *
- *   <svg class="ds-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+ *   <svg class="sk-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
  *
- * So it ships hooks AND structure, and `ds-icon` is a class any element opts into, the same shape
- * as `ds-interactive`. It is NOT a component: a component ships hooks only because each consumer's
+ * So it ships hooks AND structure, and `sk-icon` is a class any element opts into, the same shape
+ * as `sk-interactive`. It is NOT a component: a component ships hooks only because each consumer's
  * markup differs, and here it doesn't.
  *
  * NOT OPT-IN: this ships in the base bundle (tokens.scss imports it), like the state layer. An icon
  * is not an extra a component opts into, the moment anything shows a chevron, a close or a status
  * glyph it needs this exact box, and a component that sizes its own icon is re-inventing it. The
- * rules are inert until an element carries `ds-icon`, so it costs nothing on a page with no icons.
+ * rules are inert until an element carries `sk-icon`, so it costs nothing on a page with no icons.
  *
  * What IS opt-in is going OUTSIDE the set, passing your own geometry instead of a stable role.
  *
@@ -24,37 +24,37 @@
  * turn every outline set solid. Geometry intent belongs to the set; this file owns the box.
  *
  * THE ICON HAS NO COLOUR OF ITS OWN. It inherits `currentColor` from whatever contains it, so it is
- * correct in both colour modes with zero tokens, and therefore needs no override in modes/hc.scss or
- * entry in contrast-pairs.json. The UA forces the container's colour and currentColor follows on its own.
+ * correct in both color modes with zero tokens, and therefore needs no override in modes/hc.scss or
+ * entry in contrast-pairs.json. The UA forces the container's color and currentColor follows on its own.
  */
 @layer components {
-  .ds-icon {
+  .sk-icon {
     /* The one size hook. Each size re-declares it rather than adding a second variable, that is
      * what makes it a hook. There is no numeric prop: an arbitrary size is asked for the way every
      * arbitrary value in the system is asked for, by an unlayered consumer rule:
-     *   .hero .ds-icon { --ds-icon-size: 2rem; } */
-    --ds-icon-size: var(--size-icon-md);
+     *   .hero .sk-icon { --sk-icon-size: 2rem; } */
+    --sk-icon-size: var(--size-icon-md);
 
     display: inline-block;
     /* never let a flex parent stretch or squash the box, an icon is not flexible content */
     flex: none;
-    inline-size: var(--ds-icon-size);
-    block-size: var(--ds-icon-size);
+    inline-size: var(--sk-icon-size);
+    block-size: var(--sk-icon-size);
     /* optical centring against the text baseline it sits on */
     vertical-align: -0.125em;
   }
 
-  .ds-icon[data-size="sm"] {
-    --ds-icon-size: var(--size-icon-sm);
+  .sk-icon[data-size="sm"] {
+    --sk-icon-size: var(--size-icon-sm);
   }
 
-  .ds-icon[data-size="lg"] {
-    --ds-icon-size: var(--size-icon-lg);
+  .sk-icon[data-size="lg"] {
+    --sk-icon-size: var(--size-icon-lg);
   }
 
   /* An icon inside an interactive element is never the event target: the click belongs to the
    * button, and a target that is sometimes the svg and sometimes the button is a bug generator. */
-  .ds-interactive .ds-icon {
+  .sk-interactive .sk-icon {
     pointer-events: none;
   }
 }

@@ -1,0 +1,214 @@
+/* TIER 3, DATE PICKER — editable date input with a Calendar popover.
+ *
+ * The calendar chrome itself (header, view switch, day/month/year grids) lives in Calendar, this
+ * file only owns the FIELD: label, control, input, trigger, clear, and the popover shell that docks
+ * a `.sk-calendar` under it. `.sk-date-picker__content` nests `.sk-calendar` directly, so its size
+ * hooks and cell geometry come from calendar.css, not duplicated here. */
+@import url("./calendar.css");
+
+@layer components {
+  .sk-date-picker {
+    --sk-date-picker-gap: var(--space-stack-xs);
+    --sk-date-picker-inline-size: 16.5rem;
+    --sk-date-picker-min-inline-size: 14rem;
+    --sk-date-picker-label-color: var(--color-text-secondary);
+    /* The editable date input, same field chrome as Time Field / Number Field. */
+    --sk-date-picker-border-color: var(--color-border-default);
+    --sk-date-picker-radius: var(--radius-control);
+    --sk-date-picker-bg: var(--color-bg-surface-raised);
+    --sk-date-picker-fg: var(--color-text-primary);
+    --sk-date-picker-affordance-color: var(--color-text-secondary);
+    /* The calendar popover surface. Compact by default: a dense grid does not need the full 22rem, so
+     * the width and the padding are hooks, and the sheet on mobile widens it back to full-bleed. */
+    --sk-date-picker-content-bg: var(--color-bg-surface-raised);
+    --sk-date-picker-content-border-color: var(--color-border-subtle);
+    --sk-date-picker-content-radius: var(--radius-surface);
+    --sk-date-picker-content-inline-size: 18rem;
+    --sk-date-picker-content-padding: var(--space-inset-xs) var(--space-inset-sm);
+
+    box-sizing: border-box;
+    display: grid;
+    gap: var(--sk-date-picker-gap);
+    inline-size: var(--sk-date-picker-inline-size);
+    min-inline-size: min(var(--sk-date-picker-min-inline-size), 100%);
+    max-inline-size: 100%;
+  }
+  .sk-date-picker__label {
+    color: var(--sk-date-picker-label-color);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+  }
+  .sk-date-picker__control {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    border: 1px solid var(--sk-date-picker-border-color);
+    border-radius: var(--sk-date-picker-radius);
+    background: var(--sk-date-picker-bg);
+    /* El control es el ancla, pero QUIEN LO DECLARA es el pattern (`sk-anchor`, ADR-25), no esta hoja.
+     * Acá vivía un `anchor-name: var(--sk-date-picker-anchor)` que nadie escribía nunca: un `var()`
+     * sin fallback es inválido a computed-value time, así que resolvía a `none`, y como esta hoja se
+     * importa DESPUÉS del pattern y las dos reglas empatan en especificidad, ese `none` le ganaba al
+     * pattern y dejaba al calendario sin ancla. */
+  }
+  .sk-date-picker__control:focus-within {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+  .sk-date-picker__input {
+    box-sizing: border-box;
+    min-inline-size: 0;
+    min-block-size: var(--size-touch-target);
+    padding: 0 var(--space-inset-sm);
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--sk-date-picker-fg);
+    font: inherit;
+  }
+  .sk-date-picker__input::placeholder {
+    color: var(--sk-date-picker-fg);
+    opacity: 1;
+  }
+  /* Every action inside the field is the real icon-only sm Button. Its painted square reserves half
+   * the touch-target delta on each side, so the 44px hit areas meet without overlapping. */
+  :is(.sk-date-picker__trigger, .sk-date-picker__clear).sk-button {
+    --sk-button-bg: transparent;
+    --sk-button-border-color: transparent;
+    --sk-button-border-width: 0;
+    --sk-button-shadow: none;
+    --sk-button-radius: var(--sk-date-picker-radius);
+
+    align-self: center;
+    margin-inline: calc((var(--size-touch-target) - var(--size-control-sm)) * 0.5);
+  }
+  .sk-date-picker__trigger.sk-button {
+    --sk-button-fg: var(--sk-date-picker-fg);
+  }
+  .sk-date-picker__clear.sk-button {
+    --sk-button-fg: var(--sk-date-picker-affordance-color);
+  }
+  :is(.sk-date-picker__trigger, .sk-date-picker__clear).sk-button:is(
+      :disabled,
+      [aria-disabled="true"]
+    ) {
+    --sk-button-fg: var(--color-text-disabled);
+  }
+  /* The clear only exists with a value set. Component display rules beat the UA's `[hidden]`, so
+   * restore the platform contract explicitly. */
+  .sk-date-picker__clear[hidden] {
+    display: none;
+  }
+  /* La colocación es del pattern Anclaje (ADR-25): el control lleva además `sk-anchor` y el
+   * positioner además `sk-anchored`. El ancla es el CONTROL, no el botón del calendario: el panel se
+   * alinea con el campo que está editando.
+   *
+   * Debajo del campo y con los bordes de inicio alineados; `flip-block` lo sube cuando no hay lugar.
+   *
+   * Antes esto vivía en un `@supports` propio que leía `--sk-date-picker-anchor`, una custom property
+   * que NADIE escribía: el bloque entero era inerte y el calendario lo colocaba siempre Zag. */
+  .sk-date-picker__positioner {
+    --sk-anchored-position-area: block-end span-inline-end;
+    --sk-anchored-justify: start;
+    --sk-anchored-align: auto;
+    --sk-anchored-offset: var(--space-stack-xs) 0;
+    --sk-anchored-position-try: flip-block;
+  }
+  .sk-date-picker__content {
+    display: none;
+    box-sizing: border-box;
+    inline-size: min(var(--sk-date-picker-content-inline-size), calc(100vi - 2 * var(--space-inset-md)));
+    padding: var(--sk-date-picker-content-padding);
+    border: 1px solid var(--sk-date-picker-content-border-color);
+    border-radius: var(--sk-date-picker-content-radius);
+    background: var(--sk-date-picker-content-bg);
+    box-shadow: var(--elevation-raised);
+    outline: none;
+  }
+  .sk-date-picker__content[data-state="open"] {
+    display: grid;
+  }
+  @media (forced-colors: active) {
+    .sk-date-picker__control,
+    .sk-date-picker__content {
+      border-color: CanvasText;
+    }
+  }
+
+  /* ── VAUL ON MOBILE ──────────────────────────────────────────────────────────
+   * A calendar anchored under a field is a desktop shape: on a phone it lands half-off-screen and the
+   * finger covers what it points at. At phone width (30rem) the popover becomes a bottom sheet — the
+   * positioner fills the viewport as a scrim and the content docks to the block-end edge, full width,
+   * and slides up. The breakpoint is narrower than Dialog Vaul's 52rem on purpose: an 18rem calendar
+   * sits fine under its field on a laptop, so only a genuinely narrow viewport earns the sheet.
+   *
+   * It borrows the Vaul LOOK, not the drag: the panel is a Zag popover, not a native <dialog>, so there
+   * is no focus trap to drag against. Zag still closes it on tap-outside (the scrim) and on Escape. */
+  @media (max-width: 30rem) {
+    .sk-date-picker {
+      --sk-date-picker-backdrop-bg: light-dark(
+        color-mix(in oklch, var(--color-text-primary) 40%, transparent),
+        color-mix(in oklch, var(--color-bg-canvas) 80%, transparent)
+      );
+    }
+
+    .sk-date-picker__positioner {
+      position: fixed;
+      inset: 0;
+      inline-size: auto;
+      justify-self: stretch;
+      align-self: stretch;
+      z-index: var(--z-overlay);
+      display: none;
+      align-items: end;
+      /* Reset the anchor placement from the @supports block above; the sheet ignores the anchor. */
+      position-area: none;
+      margin: 0;
+      background: var(--sk-date-picker-backdrop-bg);
+    }
+    .sk-date-picker__positioner:has(> .sk-date-picker__content[data-state="open"]) {
+      display: grid;
+    }
+
+    .sk-date-picker__content {
+      /* Roomier tap targets on the sheet: there is width to spare, unlike the compact desktop popover. */
+      --sk-calendar-cell-size: var(--size-touch-target);
+
+      inline-size: 100%;
+      max-inline-size: none;
+      max-block-size: 100%;
+      overflow-y: auto;
+      padding: var(--space-inset-md) var(--space-inset-md) var(--space-inset-lg);
+      border-block-start: 1px solid var(--sk-date-picker-content-border-color);
+      border-inline: 0;
+      border-block-end: 0;
+      border-radius: var(--radius-surface) var(--radius-surface) 0 0;
+    }
+    .sk-date-picker__content[data-state="open"] {
+      animation: sk-date-picker-sheet-in var(--motion-enter-duration) var(--motion-enter-easing);
+    }
+    /* The grab-bar affordance of a sheet, drawn on the content rather than a real handle: it signals
+     * "this rose from the bottom" without implying a drag the popover cannot honour. */
+    .sk-date-picker__content::before {
+      content: "";
+      justify-self: center;
+      inline-size: 2.25rem;
+      block-size: 0.25rem;
+      margin-block-end: var(--space-stack-xs);
+      border-radius: var(--radius-pill);
+      background: var(--color-border-strong);
+    }
+  }
+
+  @keyframes sk-date-picker-sheet-in {
+    from {
+      translate: 0 100%;
+    }
+  }
+
+  @media (max-width: 30rem) and (prefers-reduced-motion: reduce) {
+    .sk-date-picker__content[data-state="open"] {
+      animation: none;
+    }
+  }
+}

@@ -3,17 +3,20 @@ import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import Used from "../components/Used.astro";
 import { tokens } from "../lib/tokens";
+import { createRamp } from "../lib/ramps";
 
 const modeAware = tokens.filter((t) => t.modeAware).length;
 
-const rootRamps = `/* tokens.scss ya declara las ramps. Personaliza solo los seeds. */
-:root {
-  --seed-accent: oklch(52% 0.19 20);
-  --seed-neutral: oklch(58% 0.01 30);
-}`;
+const brandAccent = createRamp("accent", "oklch(52% 0.19 20)");
+const rootRamps =
+  `/* brand-ramps.css: reemplaza el rol completo. */\n:root {\n` +
+  Object.entries(brandAccent)
+    .map(([name, value]) => `  ${name}:\n    ${value};`)
+    .join("\n") +
+  "\n}";
 
 const densityUse = `/* Un multiplicador, no una segunda escala. */
-html { --ds-density: 0.8; }`;
+html { --sk-density: 0.8; }`;
 
 const radiusUse = `<!-- Un preset del multiplicador… -->
 <html data-radius="xl">
@@ -24,7 +27,7 @@ const radiusUse = `<!-- Un preset del multiplicador… -->
 
 <Base
   title="Cuatro dimensiones"
-  description="Modo de color, alto contraste, densidad y radio: cuatro ejes que componen en la cascada. Las ramps se configuran una vez desde :root."
+  description="Modo de color, alto contraste, densidad y radio: cuatro ejes que componen en la cascada. Las rampas de marca son tier 1 explícito."
 >
   <h1>Cuatro dimensiones</h1>
   <p class="lede">
@@ -33,15 +36,16 @@ const radiusUse = `<!-- Un preset del multiplicador… -->
   </p>
 
   <p>
-    Las ramps tier-1 forman una sola base configurable: cambias sus seeds en <code>:root</code> y los
-    tokens semánticos conservan su significado. No hay catálogo de marcas, selector ni atributo que mantener.
+    Las rampas tier 1 son la base configurable. Una herramienta de marca exporta sus posiciones y
+    el producto las declara en <code>:root</code>; los tokens semánticos conservan su significado.
+    No hay catálogo de marcas, selector ni atributo que mantener dentro de Core.
   </p>
 
   <h2>Cada dimensión posee una capa distinta</h2>
   <p>Esa es toda la razón por la que componen en vez de multiplicarse.</p>
 
-  <div class="ds-table-scroll">
-    <table class="ds-table">
+  <div class="sk-table-scroll">
+    <table class="sk-table">
       <thead>
         <tr>
           <th>Dimensión</th>
@@ -67,7 +71,7 @@ const radiusUse = `<!-- Un preset del multiplicador… -->
           <td><strong>Densidad</strong></td>
           <td>espaciado tier-2</td>
           <td>multiplicador en runtime</td>
-          <td class="mono">--ds-density</td>
+          <td class="mono">--sk-density</td>
         </tr>
         <tr>
           <td><strong>Radio</strong></td>
@@ -79,23 +83,24 @@ const radiusUse = `<!-- Un preset del multiplicador… -->
     </table>
   </div>
 
-  <div class="ds-alert" data-tone="info" data-presentation="accent">
-    <div class="ds-alert__content">
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
     <p>
-      <strong>La separación sigue siendo estructural:</strong> las ramps son tier 1 y los tokens
-      semánticos solo referencian posiciones como <code>accent-600</code>. Configurar un seed nunca pisa
-      un token semántico, así que modo, contraste, densidad y radio siguen siendo independientes.
+      <strong>La separación sigue siendo estructural:</strong> las rampas son tier 1 y los tokens
+      semánticos solo referencian posiciones como <code>accent-600</code>. Sustituir una rampa nunca
+      pisa un token semántico: modo, contraste, densidad y radio siguen siendo independientes.
     </p>
     </div>
   </div>
 
-  <h2>Ramps, una base configurable</h2>
+  <h2>Rampas, un contrato explícito</h2>
   <p>
-    <code>tokens.scss</code> incluye el ramp completo. Los seeds de acento y neutral ajustan la identidad;
-    danger, success y warning tienen defaults sobrios y también se pueden sobrescribir. Los stops se
-    derivan en runtime y <code>accent-600</code> conserva el mismo rol para los tokens semánticos.
+    <code>tokens.scss</code> incluye las rampas por defecto. Tu herramienta de marca genera un CSS
+    sin layer que reemplaza cada rol completo; Core no recibe un color raíz ni deriva stops en
+    runtime. Este ejemplo muestra todo el rol <code>accent</code>. Neutral y feedback usan el mismo
+    contrato cuando los reemplazas.
   </p>
-  <CodeBlock code={rootRamps} label="tu CSS" />
+  <CodeBlock code={rootRamps} label="brand-ramps.css" />
 
   <h2>Modo de color, dos slots, y solo dos</h2>
   <p>
@@ -122,15 +127,15 @@ const radiusUse = `<!-- Un preset del multiplicador… -->
 
   <h2>Densidad, un multiplicador con el piso adentro</h2>
   <p>
-    Un solo número, <code>--ds-density</code> (1 = cómoda). No hay una segunda escala de espaciado que
+    Un solo número, <code>--sk-density</code> (1 = cómoda). No hay una segunda escala de espaciado que
     pueda derivar de la primera. Es continuo, cualquier valor sirve, y las <strong>Opciones</strong>
     de arriba ofrecen cinco presets como atajo, de <em>espaciosa</em> (1.2) a <em>condensada</em> (0.5).
   </p>
-  <CodeBlock code={densityUse} label="tu CSS" />
+  <CodeBlock code={densityUse} label="CSS" />
 
   <p>
-    Para variar solo un contenedor, añade <code>data-ds-density-scope</code>. Su
-    <code>--ds-density-factor</code> multiplica la densidad del sistema; un <code>--ds-density</code>
+    Para variar solo un contenedor, añade <code>data-sk-density-scope</code>. Su
+    <code>--sk-density-factor</code> multiplica la densidad del sistema; un <code>--sk-density</code>
     escrito directamente en el scope fija un valor absoluto. Los presets son solo nombres de ayuda:
     cualquier número válido sigue funcionando.
   </p>
@@ -143,20 +148,20 @@ const radiusUse = `<!-- Un preset del multiplicador… -->
   <p>
     Pon la densidad en <em>densa</em> arriba y mira estos dos:
   </p>
-  <div class="ds-box" data-surface="surface" data-border="subtle" data-padding="lg">
+  <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="lg">
     <p>
       <code>--space-inset-md</code> → <Used token="--space-inset-md" /><br />
       <code>--size-control-md</code> → <Used token="--size-control-md" />
     </p>
   </div>
 
-  <div class="ds-alert" data-tone="info" data-presentation="accent">
-    <div class="ds-alert__content">
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
     <p>
       <strong>El piso de accesibilidad está dentro del token, no en la documentación.</strong> Los
       tamaños interactivos emiten <code>max(round(calc(base × densidad), 2px), 24px)</code>. Ese
       <code>max()</code> es el mínimo de WCAG 2.2 SC 2.5.8: ningún equipo puede multiplicar por debajo
-      de 24px, sin importar lo que asignen a <code>--ds-density</code>. Es inalcanzable por construcción,
+      de 24px, sin importar lo que asignen a <code>--sk-density</code>. Es inalcanzable por construcción,
       no por revisión de código.
     </p>
     </div>
@@ -185,20 +190,20 @@ const radiusUse = `<!-- Un preset del multiplicador… -->
     puede marcar un valor continuo (p. ej. <code>1.25</code>) fuera de esa escalera. Es ortogonal a la
     marca: la misma marca se ve viva o suave sin tocar su paleta.
   </p>
-  <CodeBlock code={radiusUse} label="tu HTML" />
+  <CodeBlock code={radiusUse} label="HTML" />
 
   <p>
     Cambia el radio arriba y mira los dos roles que se mueven:
   </p>
-  <div class="ds-box" data-surface="surface" data-border="subtle" data-padding="lg">
+  <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="lg">
     <p>
       <code>--radius-control</code> → <Used token="--radius-control" /><br />
       <code>--radius-surface</code> → <Used token="--radius-surface" />
     </p>
   </div>
 
-  <div class="ds-alert" data-tone="info" data-presentation="accent">
-    <div class="ds-alert__content">
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
     <p>
       <strong>El invariante de la dimensión: <code>--radius-pill</code> no se mueve.</strong> El eje toca
       los dos roles de redondez, control y surface, y deja quieta la forma: un pill es una lozenge

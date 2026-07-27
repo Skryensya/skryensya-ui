@@ -1,19 +1,19 @@
 @mixin density-tokens {
     /* Density-scaled via round(calc(...), 2px). The 2px sub-grid keeps compact layouts stable. */
-    --space-inset-xs: round(calc(var(--scale-space-1) * var(--ds-density)), 2px);
-    --space-inset-sm: round(calc(var(--scale-space-2) * var(--ds-density)), 2px);
-    --space-inset-md: round(calc(var(--scale-space-4) * var(--ds-density)), 2px);
-    --space-inset-lg: round(calc(var(--scale-space-6) * var(--ds-density)), 2px);
-    --space-inset-xl: round(calc(var(--scale-space-8) * var(--ds-density)), 2px);
-    --space-inline-xs: round(calc(var(--scale-space-1) * var(--ds-density)), 2px);
-    --space-inline-sm: round(calc(var(--scale-space-2) * var(--ds-density)), 2px);
-    --space-inline-md: round(calc(var(--scale-space-3) * var(--ds-density)), 2px);
-    --space-inline-lg: round(calc(var(--scale-space-4) * var(--ds-density)), 2px);
-    --space-stack-xs: round(calc(var(--scale-space-2) * var(--ds-density)), 2px);
-    --space-stack-sm: round(calc(var(--scale-space-3) * var(--ds-density)), 2px);
-    --space-stack-md: round(calc(var(--scale-space-4) * var(--ds-density)), 2px);
-    --space-stack-lg: round(calc(var(--scale-space-6) * var(--ds-density)), 2px);
-    --space-stack-xl: round(calc(var(--scale-space-10) * var(--ds-density)), 2px);
+    --space-inset-xs: round(calc(var(--scale-space-1) * var(--sk-density)), 2px);
+    --space-inset-sm: round(calc(var(--scale-space-2) * var(--sk-density)), 2px);
+    --space-inset-md: round(calc(var(--scale-space-4) * var(--sk-density)), 2px);
+    --space-inset-lg: round(calc(var(--scale-space-6) * var(--sk-density)), 2px);
+    --space-inset-xl: round(calc(var(--scale-space-8) * var(--sk-density)), 2px);
+    --space-inline-xs: round(calc(var(--scale-space-1) * var(--sk-density)), 2px);
+    --space-inline-sm: round(calc(var(--scale-space-2) * var(--sk-density)), 2px);
+    --space-inline-md: round(calc(var(--scale-space-3) * var(--sk-density)), 2px);
+    --space-inline-lg: round(calc(var(--scale-space-4) * var(--sk-density)), 2px);
+    --space-stack-xs: round(calc(var(--scale-space-2) * var(--sk-density)), 2px);
+    --space-stack-sm: round(calc(var(--scale-space-3) * var(--sk-density)), 2px);
+    --space-stack-md: round(calc(var(--scale-space-4) * var(--sk-density)), 2px);
+    --space-stack-lg: round(calc(var(--scale-space-6) * var(--sk-density)), 2px);
+    --space-stack-xl: round(calc(var(--scale-space-10) * var(--sk-density)), 2px);
 }
 
 @mixin tokens {

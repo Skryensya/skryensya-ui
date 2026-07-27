@@ -20,25 +20,25 @@ export function Tabs({ id, items, ...options }: TabsProps) {
   const api = tabs.connect(service, normalizeProps);
 
   return (
-    <div {...api.getRootProps()} className={tabsParts.root} data-ds-tabs="">
-      <div {...api.getListProps()} className={tabsParts.list} data-ds-tabs-list="">
+    <div {...api.getRootProps()} className={tabsParts.root} data-sk-tabs="">
+      <div {...api.getListProps()} className={tabsParts.list} data-sk-tabs-list="">
         {items.map((item) => (
           <button
             {...api.getTriggerProps({ value: item.value, disabled: item.disabled })}
             className={tabsParts.trigger}
-            data-ds-tabs-trigger=""
+            data-sk-tabs-trigger=""
             key={item.value}
           >
             {item.label}
           </button>
         ))}
-        <div {...api.getIndicatorProps()} className={tabsParts.indicator} data-ds-tabs-indicator="" />
+        <div {...api.getIndicatorProps()} className={tabsParts.indicator} data-sk-tabs-indicator="" />
       </div>
       {items.map((item) => (
         <div
           {...api.getContentProps({ value: item.value })}
           className={tabsParts.content}
-          data-ds-tabs-content=""
+          data-sk-tabs-content=""
           key={item.value}
         >
           {item.children}

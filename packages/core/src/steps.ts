@@ -13,11 +13,11 @@ export type Step = {
 };
 
 export const stepsParts = {
-  root: "ds-steps",
-  item: "ds-steps__item",
-  marker: "ds-steps__marker",
-  label: "ds-steps__label",
-  description: "ds-steps__description",
+  root: "sk-steps",
+  item: "sk-steps__item",
+  marker: "sk-steps__marker",
+  label: "sk-steps__label",
+  description: "sk-steps__description",
 } as const;
 
 export type StepsPart = keyof typeof stepsParts;

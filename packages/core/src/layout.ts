@@ -3,9 +3,10 @@ export type BoxSurface = "none" | "sunken" | "surface" | "raised";
 export type BoxBorder = "none" | "subtle" | "default";
 export type LayoutAlign = "start" | "center" | "end" | "stretch";
 export type InlineAlign = "start" | "center" | "end" | "baseline";
+export type InlineJustify = "start" | "center" | "end" | "between";
 export type GridColumns = 1 | 2 | 3 | 4;
-/** Page-column max measure by use, see patterns/wrapper.css. */
-export type WrapperSize = "prose" | "content" | "shell" | "full";
+/** Page-column max measure on a size scale, see patterns/wrapper.css. */
+export type WrapperSize = "sm" | "md" | "lg" | "full";
 
 /*
  * Layout is a pattern: these exact primitives recur in page sections, controls and component
@@ -13,11 +14,11 @@ export type WrapperSize = "prose" | "content" | "shell" | "full";
  * semantics. React simply renders the same contract.
  */
 export const layoutParts = {
-  box: "ds-box",
-  stack: "ds-stack",
-  inline: "ds-inline",
-  grid: "ds-grid",
-  wrapper: "ds-wrapper",
+  box: "sk-box",
+  stack: "sk-stack",
+  inline: "sk-inline",
+  grid: "sk-grid",
+  wrapper: "sk-wrapper",
 } as const;
 
 export type LayoutPart = keyof typeof layoutParts;

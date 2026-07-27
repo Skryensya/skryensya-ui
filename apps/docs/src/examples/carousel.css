@@ -1,0 +1,35 @@
+/*
+ * Carousel demo skin: feature + people cards on /componentes/carousel.
+ * Consumer CSS — Card is not a component; composition fills the slide.
+ */
+
+.carousel-card {
+  display: grid;
+  block-size: 100%;
+  min-block-size: 100%;
+}
+
+.carousel-card__body {
+  display: grid;
+  gap: var(--space-stack-xs);
+  padding: var(--space-inset-md);
+  align-content: start;
+}
+
+/* Stretch every slide's surface so a peek row reads as one height. */
+.sk-carousel__slide > .carousel-card,
+.sk-carousel__slide > .carousel-person {
+  block-size: 100%;
+}
+
+.carousel-person {
+  display: grid;
+  align-content: start;
+  gap: var(--space-stack-md);
+  min-block-size: 100%;
+}
+
+.carousel-person__meta {
+  display: grid;
+  gap: var(--space-stack-xs);
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "./_meta.json",
+  "id": "link",
+  "consume": {
+    "css": "@skryensya/core/components/typography.css",
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-link", "sk-interactive"]
+    }
+  },
+  "surfaces": {
+    "Link": {
+      "use": "inline navigation",
+      "element": "a",
+      "react": {
+        "from": "@skryensya/react/link",
+        "name": "Link"
+      },
+      "requires": ["href"],
+      "forbids": ["disabled"]
+    }
+  },
+  "props": {
+    "tone": [null, "primary"]
+  },
+  "meanings": {
+    "tone": {
+      "primary": "brand emphasis"
+    }
+  },
+  "children": ["text"],
+  "rules": {
+    "Link.disabled": "Render non-link content when the destination is unavailable.",
+    "underline": "Keep the permanent underline; it is the non-color link cue."
+  },
+  "examples": {
+    "Link": {
+      "inline": "<Link href=\"/docs\">Documentación</Link>",
+      "emphasis": "<Link href=\"/pricing\" tone=\"primary\">Ver precios</Link>"
+    }
+  }
+}

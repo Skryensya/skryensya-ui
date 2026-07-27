@@ -11,14 +11,14 @@ const counts = {
 };
 
 const badExample = `/* Esto falla el build. */
-.ds-button {
-  --ds-button-bg: var(--ramp-accent-600);
+.sk-button {
+  --sk-button-bg: var(--ramp-accent-600);
 }`;
 
 const linterOutput = `✗ 1 problem(s):
 
   [tier-skip]
-    --ds-button-bg: component hook reaches past the semantic
+    --sk-button-bg: component hook reaches past the semantic
     layer into primitive --ramp-accent-600, bypasses mode
     switching, breaks dark mode for this component alone`;
 ---
@@ -34,8 +34,8 @@ const linterOutput = `✗ 1 problem(s):
     la dirección obligada de las referencias.
   </p>
 
-  <div class="ds-table-scroll">
-    <table class="ds-table">
+  <div class="sk-table-scroll">
+    <table class="sk-table">
       <thead>
         <tr>
           <th>Tier</th>
@@ -46,19 +46,19 @@ const linterOutput = `✗ 1 problem(s):
       </thead>
       <tbody>
         <tr>
-          <td><span class="ds-badge" data-tone="warning">primitive</span></td>
+          <td><span class="sk-badge" data-tone="warning">primitive</span></td>
           <td>qué valores existen</td>
           <td>nada, es el fondo</td>
           <td class="mono">{counts.primitive}</td>
         </tr>
         <tr>
-          <td><span class="ds-badge" data-tone="accent">semantic</span></td>
+          <td><span class="sk-badge" data-tone="accent">semantic</span></td>
           <td>qué significa un valor</td>
           <td>primitivos, y otros semánticos</td>
           <td class="mono">{counts.semantic}</td>
         </tr>
         <tr>
-          <td><span class="ds-badge" data-tone="success">component</span></td>
+          <td><span class="sk-badge" data-tone="success">component</span></td>
           <td>dónde se usa un valor</td>
           <td>solo semánticos, <strong>nunca</strong> primitivos</td>
           <td class="mono">{counts.component}</td>
@@ -80,7 +80,7 @@ const linterOutput = `✗ 1 problem(s):
   </p>
 
   <Chain
-    token="--ds-button-bg"
+    token="--sk-button-bg"
     caption="El fondo de un botón, desde el styling hook hasta el literal."
   />
 
@@ -103,8 +103,8 @@ const linterOutput = `✗ 1 problem(s):
   <CodeBlock code={badExample} label="components/button.css" note="tier 3 → tier 1" />
   <CodeBlock code={linterOutput} label="pnpm lint" note="el build se cae" />
 
-  <div class="ds-alert" data-tone="info" data-presentation="accent">
-    <div class="ds-alert__content">
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
     <p>
       No es una convención documentada: es una regla ejecutable. El validador corre sobre el CSS antes
       de cada build, en <em>todas</em> las marcas, porque una regla que solo se cumple en la paleta por
@@ -137,5 +137,5 @@ const linterOutput = `✗ 1 problem(s):
     Y tiene un beneficio: como <strong>cualquier regla sin layer le gana a todas las layers</strong>,
     tu app puede pisar un styling hook sin pelear especificidad.
   </p>
-  <CodeBlock code={`.hero .ds-button { --ds-button-bg: rebeccapurple; }`} label="tu CSS" />
+  <CodeBlock code={`.hero .sk-button { --sk-button-bg: rebeccapurple; }`} label="CSS" />
 </Base>

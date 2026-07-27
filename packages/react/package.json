@@ -2,7 +2,7 @@
   "name": "@skryensya/react",
   "version": "0.1.0",
   "type": "module",
-  "description": "React components that render @skryensya's shared markup contracts.",
+  "description": "React components that render skryensya/ui's shared markup contracts.",
   "files": [
     "dist",
     "src"
@@ -36,6 +36,14 @@
       "types": "./src/components/progress.tsx",
       "default": "./src/components/progress.tsx"
     },
+    "./loader": {
+      "types": "./src/components/loader.tsx",
+      "default": "./src/components/loader.tsx"
+    },
+    "./placeholder": {
+      "types": "./src/components/placeholder.tsx",
+      "default": "./src/components/placeholder.tsx"
+    },
     "./slider": {
       "types": "./src/components/slider.tsx",
       "default": "./src/components/slider.tsx"
@@ -48,6 +56,10 @@
       "types": "./src/components/steps.tsx",
       "default": "./src/components/steps.tsx"
     },
+    "./process-list": {
+      "types": "./src/components/process-list.tsx",
+      "default": "./src/components/process-list.tsx"
+    },
     "./pagination": {
       "types": "./src/components/pagination.tsx",
       "default": "./src/components/pagination.tsx"
@@ -55,6 +67,14 @@
     "./stat": {
       "types": "./src/components/stat.tsx",
       "default": "./src/components/stat.tsx"
+    },
+    "./list": {
+      "types": "./src/components/list.tsx",
+      "default": "./src/components/list.tsx"
+    },
+    "./carousel": {
+      "types": "./src/components/carousel.tsx",
+      "default": "./src/components/carousel.tsx"
     },
     "./button": {
       "types": "./src/components/button.tsx",
@@ -88,6 +108,14 @@
       "types": "./src/components/layout.tsx",
       "default": "./src/components/layout.tsx"
     },
+    "./image-frame": {
+      "types": "./src/components/image-frame.tsx",
+      "default": "./src/components/image-frame.tsx"
+    },
+    "./media-gradient": {
+      "types": "./src/components/media-gradient.tsx",
+      "default": "./src/components/media-gradient.tsx"
+    },
     "./input": {
       "types": "./src/components/input.tsx",
       "default": "./src/components/input.tsx"
@@ -108,6 +136,10 @@
       "types": "./src/components/hotkey.ts",
       "default": "./src/components/hotkey.ts"
     },
+    "./storage": {
+      "types": "./src/components/storage.ts",
+      "default": "./src/components/storage.ts"
+    },
     "./kbd": {
       "types": "./src/components/kbd.tsx",
       "default": "./src/components/kbd.tsx"
@@ -115,6 +147,10 @@
     "./select": {
       "types": "./src/components/select.tsx",
       "default": "./src/components/select.tsx"
+    },
+    "./flyout": {
+      "types": "./src/components/flyout.tsx",
+      "default": "./src/components/flyout.tsx"
     },
     "./select-native": {
       "types": "./src/components/select-native.tsx",
@@ -195,6 +231,70 @@
     "./toast": {
       "types": "./src/components/content.tsx",
       "default": "./src/components/content.tsx"
+    },
+    "./theme-toggle": {
+      "types": "./src/components/theme-toggle.tsx",
+      "default": "./src/components/theme-toggle.tsx"
+    },
+    "./tooltip": {
+      "types": "./src/components/tooltip.tsx",
+      "default": "./src/components/tooltip.tsx"
+    },
+    "./popover": {
+      "types": "./src/components/popover.tsx",
+      "default": "./src/components/popover.tsx"
+    },
+    "./breadcrumb": {
+      "types": "./src/components/breadcrumb.tsx",
+      "default": "./src/components/breadcrumb.tsx"
+    },
+    "./combobox": {
+      "types": "./src/components/combobox.tsx",
+      "default": "./src/components/combobox.tsx"
+    },
+    "./date-picker": {
+      "types": "./src/components/date-picker.tsx",
+      "default": "./src/components/date-picker.tsx"
+    },
+    "./calendar": {
+      "types": "./src/components/date-picker.tsx",
+      "default": "./src/components/date-picker.tsx"
+    },
+    "./empty-state": {
+      "types": "./src/components/empty-state.tsx",
+      "default": "./src/components/empty-state.tsx"
+    },
+    "./file-upload": {
+      "types": "./src/components/file-upload.tsx",
+      "default": "./src/components/file-upload.tsx"
+    },
+    "./menu": {
+      "types": "./src/components/menu.tsx",
+      "default": "./src/components/menu.tsx"
+    },
+    "./number-field": {
+      "types": "./src/components/number-field.tsx",
+      "default": "./src/components/number-field.tsx"
+    },
+    "./popup": {
+      "types": "./src/components/popup.tsx",
+      "default": "./src/components/popup.tsx"
+    },
+    "./split-button": {
+      "types": "./src/components/split-button.tsx",
+      "default": "./src/components/split-button.tsx"
+    },
+    "./time-field": {
+      "types": "./src/components/time-field.tsx",
+      "default": "./src/components/time-field.tsx"
+    },
+    "./toolbar": {
+      "types": "./src/components/toolbar.tsx",
+      "default": "./src/components/toolbar.tsx"
+    },
+    "./tree-view": {
+      "types": "./src/components/tree-view.tsx",
+      "default": "./src/components/tree-view.tsx"
     }
   },
   "scripts": {
@@ -210,7 +310,8 @@
     "@zag-js/radio-group": "^1.42.0",
     "@zag-js/react": "^1.42.0",
     "@zag-js/select": "^1.42.0",
-    "@zag-js/tabs": "^1.42.0"
+    "@zag-js/tabs": "^1.42.0",
+    "@zag-js/tooltip": "1.42.0"
   },
   "peerDependencies": {
     "@skryensya/icons-lucide": "workspace:*",

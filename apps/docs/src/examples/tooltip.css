@@ -1,0 +1,15 @@
+/*
+ * Tooltip demo skin for /componentes/tooltip.
+ *
+ * Consumer CSS, not a package export, and una sola regla: la que CREA el tercer caso del demo. El
+ * texto se corta, así que el tooltip es el único lugar de la pantalla donde el valor completo existe.
+ * El `tabindex` del markup es lo que lo hace alcanzable: un span truncado no es focusable por su
+ * cuenta, y sin foco el tooltip sería sólo para mouse.
+ */
+.sk-truncate {
+  display: block;
+  max-inline-size: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

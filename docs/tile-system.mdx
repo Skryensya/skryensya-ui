@@ -23,7 +23,7 @@ The Vanilla enhancers improve authored stateful markup; they do not replace its 
 
 - `connectTileCheckbox` requires an `input[type="checkbox"]`, with `data-part="input"` recommended, inside a `data-part="root"` label.
 - `connectTileRadioGroup` requires real radio inputs and `data-part="item"` on each item. The group root is `data-part="root"`.
-- `connectExpandableTile` requires `data-part="trigger"` on its button and `data-part="content"` on its associated content. `initComponents()` recognizes an authored root with `ds-tile ds-tile--expandable`, `data-scope="tile"`, and `data-part="root"`; `connectAccordion` mounts a `data-ds-accordion` root and coordinates direct `data-part="item"` Tile children.
+- `connectExpandableTile` requires `data-part="trigger"` on its button and `data-part="content"` on its associated content. `initComponents()` recognizes an authored root with `sk-tile sk-tile--expandable`, `data-scope="tile"`, and `data-part="root"`; `connectAccordion` mounts a `data-sk-accordion` root and coordinates direct `data-part="item"` Tile children.
 
 React bindings render the same native contracts and coordinate selection or disclosure state. They do not mount the Vanilla enhancer.
 
@@ -32,7 +32,7 @@ React bindings render the same native contracts and coordinate selection or disc
 Invalid:
 
 ```html
-<a class="ds-tile ds-tile--interactive ds-interactive" href="/details">
+<a class="sk-tile sk-tile--interactive sk-interactive" href="/details">
   <button type="button">Delete</button>
 </a>
 ```

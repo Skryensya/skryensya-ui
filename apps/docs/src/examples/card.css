@@ -1,0 +1,43 @@
+/*
+ * Card demo skin: the body inset for flush-media cards on /componentes/card.
+ *
+ * Card is not a component, so this is consumer CSS, not a package export. The media bleeds to the
+ * rounded corners because its Box/Tile root already clips (overflow: hidden); ImageFrame with
+ * radius none fills the top edge, and this class restores padding for the text block.
+ */
+
+/* Padded content region for a flush-media card, where the surface root carries no padding of its own
+ * (Box default, or a Tile at data-padding="none"). */
+.sk-card-body {
+  padding: var(--space-inset-lg);
+}
+
+/* A media Tile lays out media then body in its grid; the body owns its inset, so drop the root gap
+ * and let the media sit flush against the top edge. */
+.sk-tile:has(.sk-image-frame) {
+  gap: 0;
+}
+
+/* Resource / shortcut link card: leading icon well + trailing chevron. Consumer anatomy, not a
+ * Tile API — the Tile only owns the interactive surface. */
+.sk-card-link-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  inline-size: var(--size-control-md);
+  block-size: var(--size-control-md);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface-sunken);
+  color: var(--color-text-secondary);
+}
+
+.sk-card-link-body {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.sk-card-link-chevron {
+  flex: none;
+  align-self: center;
+  color: var(--color-text-tertiary);
+}

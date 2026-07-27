@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skryensya.dev/ui/schemas/_meta.json",
+  "title": "AI component composition guide",
+  "type": "object",
+  "required": ["id", "consume", "surfaces", "examples"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "$ref": "#/$defs/name" },
+    "consume": {
+      "type": "object",
+      "required": ["css", "prefer"],
+      "additionalProperties": false,
+      "properties": {
+        "css": {
+          "oneOf": [
+            { "$ref": "#/$defs/cssImport" },
+            {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/cssImport" }
+            }
+          ]
+        },
+        "prefer": { "enum": ["react", "vanilla"] },
+        "vanilla": {
+          "type": "object",
+          "required": ["classes"],
+          "additionalProperties": false,
+          "properties": {
+            "classes": { "$ref": "#/$defs/words" },
+            "attributes": { "$ref": "#/$defs/words" },
+            "init": { "$ref": "#/$defs/import" }
+          }
+        }
+      }
+    },
+    "surfaces": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[A-Z][a-zA-Z0-9]*$": {
+          "type": "object",
+          "required": ["use", "element"],
+          "additionalProperties": false,
+          "properties": {
+            "use": { "type": "string", "minLength": 1 },
+            "element": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+            "react": { "$ref": "#/$defs/import" },
+            "requires": { "$ref": "#/$defs/words" },
+            "forbids": { "$ref": "#/$defs/words" },
+            "props": { "$ref": "#/$defs/propMap" }
+          }
+        }
+      }
+    },
+    "props": { "$ref": "#/$defs/propMap" },
+    "meanings": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z][a-zA-Z0-9]*$": {
+          "type": "object",
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "children": { "$ref": "#/$defs/words" },
+    "composes": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/import" }
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "examples": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[A-Z][a-zA-Z0-9]*$": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "name": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "cssImport": {
+      "type": "string",
+      "pattern": "^@skryensya/core/(components|patterns)/[a-z0-9-]+\\.css$"
+    },
+    "words": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "propMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z][a-zA-Z0-9]*$": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "type": ["string", "boolean", "null"] }
+        }
+      }
+    },
+    "import": {
+      "type": "object",
+      "required": ["from", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "from": { "type": "string", "pattern": "^@skryensya/[a-z0-9-]+(/[a-z0-9-]+)?$" },
+        "name": { "type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9]*$" }
+      }
+    }
+  }
+}

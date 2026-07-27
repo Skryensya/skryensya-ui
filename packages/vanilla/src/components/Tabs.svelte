@@ -8,9 +8,9 @@
   /*
    * TABS, enhancer machine-backed sobre `@zag-js/tabs` (la MISMA máquina que usa React, vía
    * @skryensya/core/machines). No renderiza estructura: escanea su markup autorado
-   * (`[data-ds-tabs-list]` / `[data-ds-tabs-trigger]` / `[data-ds-tabs-content]`, cada uno con
+   * (`[data-sk-tabs-list]` / `[data-sk-tabs-trigger]` / `[data-sk-tabs-content]`, cada uno con
    * `data-value`) y parchea los atributos que devuelve `connect` sobre esos nodos. Preserva el
-   * contrato viejo: espeja `api.value` en `data-value` del root y emite `ds-value-change`.
+   * contrato viejo: espeja `api.value` en `data-value` del root y emite `sk-value-change`.
    */
   const root = getRoot();
 
@@ -20,10 +20,10 @@
   const disabledOf = (el: Element): boolean =>
     el.hasAttribute("data-disabled") || el.getAttribute("aria-disabled") === "true";
 
-  const list = root.querySelector<HTMLElement>("[data-ds-tabs-list]");
-  const contents = Array.from(root.querySelectorAll<HTMLElement>("[data-ds-tabs-content]"));
+  const list = root.querySelector<HTMLElement>("[data-sk-tabs-list]");
+  const contents = Array.from(root.querySelectorAll<HTMLElement>("[data-sk-tabs-content]"));
 
-  const items: Item[] = (list ? Array.from(list.querySelectorAll<HTMLElement>("[data-ds-tabs-trigger]")) : [])
+  const items: Item[] = (list ? Array.from(list.querySelectorAll<HTMLElement>("[data-sk-tabs-trigger]")) : [])
     .map((trigger): Item | null => {
       const value = valueOf(trigger);
       if (!value) return null;
@@ -33,8 +33,8 @@
     })
     .filter((item): item is Item => item !== null);
 
-  if (!root.id) root.id = uniqueId("ds-tabs");
-  if (list && !list.id) list.id = uniqueId("ds-tabs-list");
+  if (!root.id) root.id = uniqueId("sk-tabs");
+  if (list && !list.id) list.id = uniqueId("sk-tabs-list");
 
   const orientation: "horizontal" | "vertical" =
     root.getAttribute("data-orientation") === "vertical" ? "vertical" : "horizontal";
@@ -53,7 +53,7 @@
     activationMode,
     defaultValue,
     onValueChange(details: { value: string }) {
-      root.dispatchEvent(new CustomEvent("ds-value-change", { bubbles: true, detail: { value: details.value } }));
+      root.dispatchEvent(new CustomEvent("sk-value-change", { bubbles: true, detail: { value: details.value } }));
     },
   }));
 

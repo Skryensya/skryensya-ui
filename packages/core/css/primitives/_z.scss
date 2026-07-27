@@ -6,7 +6,7 @@
    *
    * These are values, not roles. Nothing outside semantic/_z.scss should reference them: a
    * component that reaches for `--scale-z-200` is naming a number, the same tier-skip the
-   * validator forbids for colour. Name the LAYER (`--z-popover`), never the rung. */
+   * validator forbids for color. Name the LAYER (`--z-popover`), never the rung. */
   --scale-z-behind: -1;
   --scale-z-0: 0;
   --scale-z-100: 100;

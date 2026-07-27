@@ -1,10 +1,17 @@
 ---
 /*
- * The site authoring the Select markup contract, once, and then four times over.
+ * The site authoring the Select markup contract, once, and then ten times over.
  *
  * This is the consumer's job, not the package's: the anatomy is documented and never shipped
  * (decisión 8), so the site writes it exactly as the docs tell you to. That it collapses into an
  * Astro component here is the site's convenience, not part of the contract.
+ *
+ * The chrome around the control is FIELD, the component the system ships for exactly this. The
+ * Select keeps its OWN label, because the machine wires that label to the trigger (accessible
+ * name, click to open), so Field contributes the hint and the rhythm and nothing else. What this
+ * replaces is a page drawing its own title above a Select and then clipping the component's real
+ * label to 1×1 to get it out of the way, which left the description invisible to a screen reader
+ * and the two halves of one sidebar looking like two different controls.
  *
  * No `data-value`: the persisted dimension is stamped on before `initComponents()` runs, by the
  * script in Base.astro. The enhancer reads it there.
@@ -19,9 +26,13 @@ interface Props {
   prop?: string;
   /** Shown when the current value matches no option (e.g. an externally-set custom value). */
   placeholder?: string;
+  /** One line under the control: what the choice reaches. Field's hint, tied by aria-describedby. */
+  hint?: string;
+  /** Marks the row for a page script that tracks which ones carry an override. */
+  row?: string;
 }
 
-const { id, label, options, value, prop, placeholder } = Astro.props;
+const { id, label, options, value, prop, placeholder, hint, row } = Astro.props;
 import { iconMarkup } from "../icons";
 
 const chevronDown = iconMarkup("chevron-down");
@@ -29,40 +40,52 @@ const chevronUp = iconMarkup("chevron-up");
 const check = iconMarkup("check");
 
 const current = options.find((o) => o.value === value) ?? options[0];
+/* The hint is only useful to the trigger if the trigger points at it; Zag spreads its own props
+ * over this button and never writes `aria-describedby`, so an authored one survives the mount. */
+const hintId = hint ? `${id}-hint` : undefined;
 ---
 
-<div
-  class="ds-select"
-  data-ds-select
-  id={id}
-  data-value={value}
-  data-prop={prop}
-  data-placeholder={placeholder}
->
-  <label class="ds-select__label" data-ds-select-label>{label}</label>
+<div class="sk-field" data-row={row}>
+  <div
+    class="sk-select"
+    data-sk-select
+    id={id}
+    data-value={value}
+    data-prop={prop}
+    data-placeholder={placeholder}
+  >
+    <label class="sk-select__label" data-sk-select-label>{label}</label>
 
-  <button class="ds-select__trigger ds-interactive" data-ds-select-trigger type="button">
-    <span class="ds-select__value" data-ds-select-value>{current?.label ?? placeholder}</span>
-    <span class="ds-select__indicator" data-ds-select-indicator aria-hidden="true">
-      <span data-state="closed"><Fragment set:html={chevronDown} /></span>
-      <span data-state="open"><Fragment set:html={chevronUp} /></span>
-    </span>
-  </button>
+    <button
+      class="sk-select__trigger sk-anchor sk-interactive"
+      data-sk-select-trigger
+      type="button"
+      aria-describedby={hintId}
+    >
+      <span class="sk-select__value" data-sk-select-value>{current?.label ?? placeholder}</span>
+      <span class="sk-select__indicator" data-sk-select-indicator aria-hidden="true">
+        <span data-state="closed"><Fragment set:html={chevronDown} /></span>
+        <span data-state="open"><Fragment set:html={chevronUp} /></span>
+      </span>
+    </button>
 
-  <div class="ds-select__positioner" data-ds-select-positioner>
-    <ul class="ds-select__content" data-ds-select-content>
-      {
-        options.map((option) => (
-          <li class="ds-select__item ds-interactive" data-ds-select-item data-value={option.value}>
-            <span class="ds-select__item-text" data-ds-select-item-text>
-              {option.label}
-            </span>
-            <span class="ds-select__item-indicator" data-ds-select-item-indicator aria-hidden="true">
-              <Fragment set:html={check} />
-            </span>
-          </li>
-        ))
-      }
-    </ul>
+    <div class="sk-select__positioner sk-anchored" data-sk-select-positioner>
+      <ul class="sk-select__content" data-sk-select-content>
+        {
+          options.map((option) => (
+            <li class="sk-select__item sk-interactive" data-sk-select-item data-value={option.value}>
+              <span class="sk-select__item-text" data-sk-select-item-text>
+                {option.label}
+              </span>
+              <span class="sk-select__item-indicator" data-sk-select-item-indicator aria-hidden="true">
+                <Fragment set:html={check} />
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
   </div>
+
+  {hint && <span class="sk-field__hint" id={hintId}>{hint}</span>}
 </div>

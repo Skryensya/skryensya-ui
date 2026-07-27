@@ -17,9 +17,9 @@ describe("Tile React contracts", () => {
       const ui = render(<TileCheckbox defaultChecked={false}>Alerts</TileCheckbox>);
       const input = ui.getByRole("checkbox") as HTMLInputElement;
       const root = input.closest<HTMLElement>("[data-scope=tile]");
-      expect(root?.querySelector(".ds-checkbox__control")?.classList.contains("ds-interactive")).toBe(true);
-      expect(root?.querySelectorAll(".ds-checkbox__indicator .ds-icon")).toHaveLength(2);
-      expect(root?.querySelector(".ds-tile__selection-indicator")).toBeNull();
+      expect(root?.querySelector(".sk-checkbox__control")?.classList.contains("sk-interactive")).toBe(true);
+      expect(root?.querySelectorAll(".sk-checkbox__indicator .sk-icon")).toHaveLength(2);
+      expect(root?.querySelector(".sk-tile__selection-indicator")).toBeNull();
       expect(root?.dataset.state).toBe(tileSharedStateContract.checkbox.initial.dataState);
       expect(input.checked).toBe(tileSharedStateContract.checkbox.initial.checked);
 
@@ -124,9 +124,9 @@ describe("Tile React contracts", () => {
       </>,
     );
 
-    const roots = [...ui.container.querySelectorAll<HTMLElement>(".ds-tile")];
+    const roots = [...ui.container.querySelectorAll<HTMLElement>(".sk-tile")];
     expect(roots).not.toHaveLength(0);
-    expect(roots.every((root) => root.classList.contains("ds-tile--interactive") || root.classList.contains("ds-tile--expandable"))).toBe(true);
+    expect(roots.every((root) => root.classList.contains("sk-tile--interactive") || root.classList.contains("sk-tile--expandable"))).toBe(true);
   });
 
   it("emits requested Tile padding while leaving the default inset implicit", () => {
@@ -143,9 +143,9 @@ describe("Tile React contracts", () => {
 
     expect(ui.getByRole("link").dataset.padding).toBe("none");
     expect(ui.getByRole("button", { name: "Button" }).dataset.padding).toBe("xs");
-    expect(ui.getByRole("checkbox").closest<HTMLElement>(".ds-tile")?.dataset.padding).toBe("sm");
-    expect(ui.getByRole("radio").closest<HTMLElement>(".ds-tile")?.dataset.padding).toBe("lg");
-    expect(ui.getByText("Summary").closest<HTMLElement>(".ds-tile")?.dataset.padding).toBe("xl");
+    expect(ui.getByRole("checkbox").closest<HTMLElement>(".sk-tile")?.dataset.padding).toBe("sm");
+    expect(ui.getByRole("radio").closest<HTMLElement>(".sk-tile")?.dataset.padding).toBe("lg");
+    expect(ui.getByText("Summary").closest<HTMLElement>(".sk-tile")?.dataset.padding).toBe("xl");
     expect(ui.getByRole("button", { name: "Default" }).dataset.padding).toBeUndefined();
   });
 
@@ -189,10 +189,10 @@ describe("Tile React contracts", () => {
       </ExpandableTile>,
     );
     const trigger = ui.getByRole("button", { name: "Summary" });
-    const root = trigger.closest<HTMLElement>(".ds-tile");
+    const root = trigger.closest<HTMLElement>(".sk-tile");
 
-    expect(root?.classList.contains("ds-interactive")).toBe(true);
-    expect(trigger.classList.contains("ds-interactive")).toBe(false);
+    expect(root?.classList.contains("sk-interactive")).toBe(true);
+    expect(trigger.classList.contains("sk-interactive")).toBe(false);
   });
 
   it("SSR hydrates without mounting Vanilla", () => {

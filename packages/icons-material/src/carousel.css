@@ -1,0 +1,13 @@
+/*
+ * GENERADO por scripts/generate.mjs, no editar a mano.
+ *
+ * material enlaza sus chevrones con los scroll buttons nativos de Carousel.
+ */
+@layer overrides {
+  .sk-carousel {
+    --sk-carousel-native-previous-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%20-960%20960%20960%22%20style%3D%22color-scheme%3Alight%20dark%22%20fill%3D%22CanvasText%22%3E%3Cpath%20d%3D%22M561-240%20320-481l241-241%2043%2043-198%20198%20198%20198-43%2043Z%22%2F%3E%3C%2Fsvg%3E");
+    --sk-carousel-native-next-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%20-960%20960%20960%22%20style%3D%22color-scheme%3Alight%20dark%22%20fill%3D%22CanvasText%22%3E%3Cpath%20d%3D%22M530-481%20332-679l43-43%20241%20241-241%20241-43-43%20198-198Z%22%2F%3E%3C%2Fsvg%3E");
+    --sk-carousel-native-previous-disabled-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%20-960%20960%20960%22%20style%3D%22color-scheme%3Alight%20dark%22%20fill%3D%22GrayText%22%3E%3Cpath%20d%3D%22M561-240%20320-481l241-241%2043%2043-198%20198%20198%20198-43%2043Z%22%2F%3E%3C%2Fsvg%3E");
+    --sk-carousel-native-next-disabled-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%20-960%20960%20960%22%20style%3D%22color-scheme%3Alight%20dark%22%20fill%3D%22GrayText%22%3E%3Cpath%20d%3D%22M530-481%20332-679l43-43%20241%20241-241%20241-43-43%20198-198Z%22%2F%3E%3C%2Fsvg%3E");
+  }
+}

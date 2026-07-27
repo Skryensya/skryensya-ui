@@ -1,0 +1,48 @@
+---
+import Base from "../../../layouts/Base.astro";
+import { iconMarkup } from "../../../icons";
+import { componentNavigation } from "../../../lib/navigation";
+
+const searchIcon = iconMarkup("search");
+const items = componentNavigation.flatMap((group) => group.items);
+---
+
+<Base
+  title="Explorar componentes"
+  description="A–Z catalog of system parts: components, patterns and usage primitives."
+>
+  <h1>Explorar componentes</h1>
+  <p class="lede">
+    A–Z list. Includes product parts, patterns (scrollbar, vaul, nav list) and the use of
+    <a href="/en/components/icon">Icon</a>. The iconography—roles, sets, rules—lives in
+    <a href="/en/icons">Fundamentals → Iconography</a>.
+  </p>
+
+  <button
+    class="sk-button sk-interactive docs-catalog-search"
+    data-variant="ghost"
+    type="button"
+    aria-controls="docs-cmdk"
+    aria-expanded="false"
+    aria-keyshortcuts="Meta+K Control+K"
+    data-sk-command-palette-open
+  >
+    <Fragment set:html={searchIcon} />
+    <span class="docs-catalog-search__label">Search components</span>
+    <kbd class="sk-kbd" data-sk-command-palette-hint aria-hidden="true">⌘K</kbd>
+  </button>
+
+  <section class="docs-catalog-section" aria-label="Components">
+    <ul class="docs-catalog">
+      {
+        items.map((item) => (
+          <li>
+            <a class="docs-catalog__link sk-interactive" href={item.href}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>

@@ -5,37 +5,109 @@ import Showcase from "../../components/Showcase.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<span
-  class="ds-avatar"
+/*
+ * Demo photos, as dummyimage.com placeholders painted in the accent fill.
+ *
+ * The landscape SVG this used to point at was the wrong subject: cropped to 1/1 and masked to a
+ * circle it read as a smear of gradient, and the three avatars were the same smear three times —
+ * nothing about the component. An accent disc carrying the person's initials is what a real product
+ * shows while the photo loads or when there is none, so the demo is now the thing it documents.
+ *
+ * The hexes are the DEFAULT brand's `--color-action-primary` / `--color-text-on-accent`: a URL is a
+ * string and cannot hold a var(). `previewScript` re-resolves both tokens inside the frame and
+ * rewrites `src`, so the demo follows the reader's mode and brand while the source stays a URL
+ * anyone can paste.
+ */
+const ACCENT_HEX = "1f5fc3";
+const ON_ACCENT_HEX = "ffffff";
+const demoSrc = (initials: string) =>
+  `https://dummyimage.com/160/${ACCENT_HEX}/${ON_ACCENT_HEX}?text=${initials}`;
+
+const html = `<span class="sk-avatar" data-size="sm">
+  <span
+    class="sk-image-frame"
+    data-aspect="1/1"
+    data-fit="cover"
+    data-radius="pill"
+  >
+    <img
+      class="sk-image-frame__media"
+      src="${demoSrc("AL")}"
+      alt="Ada Lovelace"
+    />
+  </span>
+</span>
+<span class="sk-avatar">
+  <span
+    class="sk-image-frame"
+    data-aspect="1/1"
+    data-fit="cover"
+    data-radius="pill"
+  >
+    <img
+      class="sk-image-frame__media"
+      src="${demoSrc("AT")}"
+      alt="Alan Turing"
+    />
+  </span>
+</span>
+<span class="sk-avatar" data-size="lg">
+  <span
+    class="sk-image-frame"
+    data-aspect="1/1"
+    data-fit="cover"
+    data-radius="pill"
+  >
+    <img
+      class="sk-image-frame__media"
+      src="${demoSrc("GH")}"
+      alt="Grace Hopper"
+    />
+  </span>
+</span>
+
+<span
+  class="sk-avatar"
   data-size="sm"
   role="img"
   aria-label="Ada Lovelace"
 >
-  <span class="ds-avatar__fallback" aria-hidden="true">AL</span>
+  <span class="sk-avatar__fallback" aria-hidden="true">AL</span>
 </span>
-<span class="ds-avatar" role="img" aria-label="Alan Turing">
-  <span class="ds-avatar__fallback" aria-hidden="true">AT</span>
+<span class="sk-avatar" role="img" aria-label="Alan Turing">
+  <span class="sk-avatar__fallback" aria-hidden="true">AT</span>
 </span>
 <span
-  class="ds-avatar"
+  class="sk-avatar"
   data-size="lg"
   role="img"
   aria-label="Grace Hopper"
 >
-  <span class="ds-avatar__fallback" aria-hidden="true">GH</span>
+  <span class="sk-avatar__fallback" aria-hidden="true">GH</span>
 </span>
 
-<div class="ds-avatar-group">
-  <span class="ds-avatar" role="img" aria-label="Ada Lovelace">
-    <span class="ds-avatar__fallback" aria-hidden="true">AL</span>
+<div class="sk-avatar-group">
+  <span class="sk-avatar">
+    <span
+      class="sk-image-frame"
+      data-aspect="1/1"
+      data-fit="cover"
+      data-radius="pill"
+    >
+      <img
+        class="sk-image-frame__media"
+        src="${demoSrc("AL")}"
+        alt="Ada Lovelace"
+      />
+    </span>
   </span>
-  <span class="ds-avatar" role="img" aria-label="Alan Turing">
-    <span class="ds-avatar__fallback" aria-hidden="true">AT</span>
+  <span class="sk-avatar" role="img" aria-label="Alan Turing">
+    <span class="sk-avatar__fallback" aria-hidden="true">AT</span>
   </span>
-  <span class="ds-avatar" role="img" aria-label="Grace Hopper">
-    <span class="ds-avatar__fallback" aria-hidden="true">GH</span>
+  <span class="sk-avatar" role="img" aria-label="Grace Hopper">
+    <span class="sk-avatar__fallback" aria-hidden="true">GH</span>
   </span>
-  <span class="ds-avatar-group__overflow">+8</span>
+  <span class="sk-avatar-group__overflow">+8</span>
 </div>`;
 
 const react = `import {
@@ -43,37 +115,123 @@ const react = `import {
   AvatarGroup,
 } from "@skryensya/react/avatar";
 
+<Avatar
+  name="Ada Lovelace"
+  size="sm"
+  src="${demoSrc("AL")}"
+/>
+<Avatar
+  name="Alan Turing"
+  src="${demoSrc("AT")}"
+/>
+<Avatar
+  name="Grace Hopper"
+  size="lg"
+  src="${demoSrc("GH")}"
+/>
+
 <Avatar name="Ada Lovelace" size="sm" />
 <Avatar name="Alan Turing" />
 <Avatar name="Grace Hopper" size="lg" />
 
 <AvatarGroup max={3}>
-  <Avatar name="Ada Lovelace" />
+  <Avatar
+    name="Ada Lovelace"
+    src="${demoSrc("AL")}"
+  />
   <Avatar name="Alan Turing" />
   <Avatar name="Grace Hopper" />
   <Avatar name="Raúl G" />
   {/* …8 más → colapsan en +8 */}
 </AvatarGroup>;`;
+
+/*
+ * Repaint the placeholders in the accent the reader is actually looking at.
+ *
+ * Never displayed, and nothing the component needs: the src above is a working URL on its own. This
+ * only keeps the demo from claiming to be "the accent" while showing the default blue to someone
+ * who just swapped the brand in /personalizar or flipped to dark, where the fill drops to
+ * `--ramp-accent-500` and the on-accent text stops being white.
+ *
+ * Two moves the site makes elsewhere, for the same two reasons:
+ *   - the token goes through a PROBE, because getComputedStyle() returns a custom property's
+ *     specified value, light-dark() unresolved, never its used one (see scripts/used-values.ts); and
+ *   - the conversion goes through a CANVAS, because Chrome serialises these tokens as oklab() and
+ *     dummyimage only speaks hex.
+ * The frame runtime mirrors the parent's root attributes and inline style, so observing our own
+ * <html> is enough to catch a mode, contrast or brand change.
+ */
+const previewScript = `
+const probe = document.createElement("span");
+probe.hidden = true;
+document.body.append(probe);
+
+const canvas = document.createElement("canvas");
+canvas.width = 1;
+canvas.height = 1;
+const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+function hexOf(token, fallback) {
+  if (!ctx) return fallback;
+  probe.style.removeProperty("color");
+  probe.style.setProperty("color", "var(" + token + ")");
+  const used = getComputedStyle(probe).color;
+  if (!used) return fallback;
+  ctx.clearRect(0, 0, 1, 1);
+  ctx.fillStyle = "#000";
+  ctx.fillStyle = used;
+  ctx.fillRect(0, 0, 1, 1);
+  const pixel = ctx.getImageData(0, 0, 1, 1).data;
+  if (pixel[3] === 0) return fallback;
+  return [pixel[0], pixel[1], pixel[2]]
+    .map((channel) => channel.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function retint() {
+  const bg = hexOf("--color-action-primary", "${ACCENT_HEX}");
+  const fg = hexOf("--color-text-on-accent", "${ON_ACCENT_HEX}");
+  for (const img of document.querySelectorAll('img[src*="dummyimage.com"]')) {
+    // The authored src is the template; keep it, the first repaint would otherwise consume it.
+    const template = (img.dataset.skTintTemplate ||= img.getAttribute("src"));
+    const url = new URL(template);
+    const segments = url.pathname.split("/");
+    if (segments.length !== 4) continue;
+    segments[2] = bg;
+    segments[3] = fg;
+    url.pathname = segments.join("/");
+    if (img.getAttribute("src") !== url.href) img.setAttribute("src", url.href);
+  }
+}
+
+retint();
+const observer = new MutationObserver(retint);
+observer.observe(document.documentElement, { attributes: true });
+window.addEventListener("pagehide", () => observer.disconnect(), { once: true });
+`;
 ---
 
-<Base title="Avatar" description="Avatar: imagen o iniciales, AvatarGroup con colapso +N y componente React.">
+<Base title="Avatar" description="Avatar: ImageFrame o iniciales, AvatarGroup con colapso +N y componente React.">
   <h1>Avatar</h1>
   <p class="lede">
-    Avatar es el token visual de una persona o entidad: una imagen o, como fallback, sus iniciales.
-    <strong>AvatarGroup</strong> apila un conjunto y colapsa el excedente en un contador «+N».
+    Avatar es el token visual de una persona o entidad: una foto recortada con
+    <strong>ImageFrame</strong> (1/1, cover, pill) o, sin imagen, las dos primeras
+    letras del nombre. <strong>AvatarGroup</strong> apila un conjunto y colapsa el
+    excedente en un contador «+N».
   </p>
 
-  <h2>Demo HTML</h2>
-  <Showcase html={html} react={react} label="Avatar" />
+  <Showcase html={html} react={react} previewScript={previewScript} label="Avatar" />
   <p>
-    Con imagen, el <code>&lt;img alt&gt;</code> aporta la semántica; sin ella, el contenedor toma
-    <code>role="img"</code> y las iniciales quedan decorativas, un solo nodo accesible en cada caso.
-    En React, las iniciales se derivan de <code>name</code> cuando no pasas hijos.
+    Con imagen, el avatar anida <code>sk-image-frame</code> y el
+    <code>&lt;img alt&gt;</code> aporta la semántica. Sin ella, el contenedor toma
+    <code>role="img"</code> y las iniciales quedan decorativas. En React,
+    <code>avatarInitials(name)</code> deriva el fallback cuando no pasas hijos: dos
+    palabras → primera letra de cada una; una sola → los dos primeros caracteres.
   </p>
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
 </Base>

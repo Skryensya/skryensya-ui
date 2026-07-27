@@ -25,7 +25,7 @@ comportamiento.
 "Solo nativo vs tolerante a div" parece una elección, y se disuelve en dos, cada una respondida por la
 plataforma:
 
-- **Los styling hooks son agnósticos al elemento gratis.** `--ds-dialog-bg` es una custom property; a
+- **Los styling hooks son agnósticos al elemento gratis.** `--sk-dialog-bg` es una custom property; a
   las custom properties no les importa qué elemento las lleva. `components/dialog.css` funciona sobre un
   `<div role="dialog">` a costo cero.
 - **Los patterns son solo-nativo por naturaleza.** `patterns/top-layer.css` y
@@ -74,7 +74,7 @@ alto contraste, y fatal para un dialog: el panel y la página detrás son **el m
 una.
 
 Por eso el dialog lleva un borde siempre encendido,
-`--ds-dialog-border-color: var(--color-border-default)`, que el alto contraste ya promueve gratis a un
+`--sk-dialog-border-color: var(--color-border-default)`, que el alto contraste ya promueve gratis a un
 borde negro o blanco duro.
 
 **No debe suavizarse a `border-subtle` por estética.** Subtle se queda gris medio en alto contraste, y

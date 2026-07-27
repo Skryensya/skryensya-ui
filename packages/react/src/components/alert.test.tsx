@@ -25,7 +25,7 @@ describe("Alert", () => {
     expect(onDismiss).toHaveBeenCalledOnce();
 
     const plain = render(<Alert>No button</Alert>);
-    expect(plain.container.querySelector(".ds-alert__dismiss")).toBeNull();
+    expect(plain.container.querySelector(".sk-alert__dismiss")).toBeNull();
   });
 
   it("renders presentations and optional actions through explicit parts", () => {
@@ -37,7 +37,7 @@ describe("Alert", () => {
 
     const alert = ui.getByRole("status");
     expect(alert.getAttribute("data-presentation")).toBe("accent");
-    expect(alert.querySelector(".ds-alert__icon")).not.toBeNull();
-    expect(alert.querySelector(".ds-alert__actions")?.textContent).toContain("Review plan");
+    expect(alert.querySelector(".sk-alert__icon")).not.toBeNull();
+    expect(alert.querySelector(".sk-alert__actions")?.textContent).toContain("Review plan");
   });
 });

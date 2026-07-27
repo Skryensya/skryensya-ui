@@ -1,0 +1,105 @@
+---
+import Base from "../../layouts/Base.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+import "@skryensya/core/patterns/state-layer.css";
+import "@skryensya/core/components/button.css";
+import "@skryensya/core/components/number-field.css";
+
+const install = `@import "@skryensya/core/patterns/state-layer.css";
+@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/number-field.css";`;
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+initComponents();`;
+const html = `<div class="sk-number-field" data-sk-number-field>
+  <label
+    class="sk-number-field__label"
+    data-sk-number-field-label
+  >
+    Cantidad
+  </label>
+  <div
+    class="sk-number-field__control"
+    data-sk-number-field-control
+  >
+    <button
+      class="sk-button sk-interactive sk-number-field__decrement"
+      data-sk-number-field-decrement
+      data-icon-only
+      data-size="sm"
+      data-variant="ghost"
+      aria-label="Disminuir"
+      type="button"
+    >
+      <span data-sk-icon="remove" data-sk-icon-size="sm"></span>
+    </button>
+    <input
+      class="sk-number-field__input"
+      data-sk-number-field-input
+      min="0"
+      step="1"
+      value="2"
+    />
+    <button
+      class="sk-button sk-interactive sk-number-field__increment"
+      data-sk-number-field-increment
+      data-icon-only
+      data-size="sm"
+      data-variant="ghost"
+      aria-label="Aumentar"
+      type="button"
+    >
+      <span data-sk-icon="add" data-sk-icon-size="sm"></span>
+    </button>
+  </div>
+</div>`;
+const react = `import { NumberField } from "@skryensya/react/number-field";
+
+// Los steppers ya son icon buttons (roles \`remove\` y \`add\`);
+// decrementIcon/incrementIcon sólo cambian el glifo.
+<NumberField
+  defaultValue="2"
+  label="Cantidad"
+  min={0}
+  step={1}
+/>`;
+---
+
+<Base
+  title="NumberField"
+  description="Entrada numérica localizada con límites, pasos y controles de incremento."
+>
+  <h1>NumberField</h1>
+  <p class="lede">Entrada numérica localizada con límites, pasos y controles de incremento.</p>
+
+  <h2>Instalación</h2>
+  <Showcase
+    html={html}
+    js={js}
+    react={react}
+    label="NumberField"
+    viewport="auto"
+  />
+
+  <h2>Contrato</h2>
+  <p>El valor público conserva string y valueAsNumber. Intl.NumberFormat controla la presentación.</p>
+
+  <h2>Accesibilidad</h2>
+  <p>Los triggers tienen nombres propios y el input anuncia min, max, valor actual y estado inválido.</p>
+
+  <h2>CSS</h2>
+  <pre><code>{install}</code></pre>
+  <StylingHooks
+    groups={[
+      {
+        file: "components/number-field.css",
+        probe: "sk-number-field",
+        title: "NumberField",
+      },
+    ]}
+  />
+</Base>

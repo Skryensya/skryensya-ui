@@ -1,46 +1,213 @@
 /*
- * TIER 3, CHECKBOX (opt-in styling hooks)
+ * TIER 3, CHECKBOX
  *
- * The control box is icon-sized; the label carries the hit area. Selected / disabled recolour the
- * control via these hooks, TileCheckbox reads the same variables so both surfaces stay one recipe.
+ * The control box is icon-sized; the label carries the hit area, and where there is no label the
+ * control grows an invisible pad to the same floor. Selected / disabled recolor the control via
+ * these hooks, TileCheckbox reads the same variables so both surfaces stay one recipe.
  */
 @layer components {
-  .ds-checkbox,
-  .ds-tile:has(> input[type="checkbox"]) {
-    --ds-checkbox-control-size: var(--size-icon-md);
-    --ds-checkbox-gap: var(--space-inline-sm);
-    --ds-checkbox-bg: var(--color-bg-surface-raised);
-    --ds-checkbox-fg: var(--color-text-primary);
-    --ds-checkbox-border-color: var(--color-border-default);
-    --ds-checkbox-border-width: 1px;
-    --ds-checkbox-radius: var(--radius-control);
-    --ds-checkbox-selected-bg: var(--color-action-primary);
-    --ds-checkbox-selected-fg: var(--color-text-on-accent);
-    --ds-checkbox-selected-border-color: var(--color-action-primary);
-    --ds-checkbox-disabled-bg: var(--color-action-disabled);
-    --ds-checkbox-disabled-fg: var(--color-text-disabled);
-    --ds-checkbox-disabled-border-color: var(--color-border-subtle);
+  .sk-checkbox,
+  .sk-tile:has(> input[type="checkbox"]) {
+    --sk-checkbox-control-size: var(--size-icon-md);
+    --sk-checkbox-gap: var(--space-inline-sm);
+    --sk-checkbox-bg: var(--color-bg-surface-raised);
+    --sk-checkbox-fg: var(--color-text-primary);
+    --sk-checkbox-border-color: var(--color-border-default);
+    --sk-checkbox-border-width: 1px;
+    --sk-checkbox-radius: var(--radius-control);
+    --sk-checkbox-selected-bg: var(--color-action-primary);
+    --sk-checkbox-selected-fg: var(--color-text-on-accent);
+    --sk-checkbox-selected-border-color: var(--color-action-primary);
+    --sk-checkbox-disabled-bg: var(--color-action-disabled);
+    --sk-checkbox-disabled-fg: var(--color-text-disabled);
+    --sk-checkbox-disabled-border-color: var(--color-border-subtle);
     /* Label text is independent of the control fill, selected must not bleach the words. */
-    --ds-checkbox-label-fg: var(--color-text-primary);
+    --sk-checkbox-label-fg: var(--color-text-primary);
   }
 
-  .ds-checkbox:has(.ds-checkbox__input:checked),
-  .ds-checkbox:has(.ds-checkbox__input:indeterminate),
-  .ds-tile:has(> input[type="checkbox"]:checked),
-  .ds-tile:has(> input[type="checkbox"]:indeterminate),
-  .ds-tile[data-state="checked"],
-  .ds-tile[data-state="indeterminate"] {
-    --ds-checkbox-bg: var(--ds-checkbox-selected-bg);
-    --ds-checkbox-fg: var(--ds-checkbox-selected-fg);
-    --ds-checkbox-border-color: var(--ds-checkbox-selected-border-color);
+  .sk-checkbox:has(.sk-checkbox__input:checked),
+  .sk-checkbox:has(.sk-checkbox__input:indeterminate),
+  .sk-tile:has(> input[type="checkbox"]:checked),
+  .sk-tile:has(> input[type="checkbox"]:indeterminate),
+  .sk-tile[data-state="checked"],
+  .sk-tile[data-state="indeterminate"] {
+    --sk-checkbox-bg: var(--sk-checkbox-selected-bg);
+    --sk-checkbox-fg: var(--sk-checkbox-selected-fg);
+    --sk-checkbox-border-color: var(--sk-checkbox-selected-border-color);
   }
 
-  .ds-checkbox:has(.ds-checkbox__input:disabled),
-  .ds-tile:has(> input[type="checkbox"]:disabled),
-  .ds-tile[data-disabled] {
-    --ds-checkbox-bg: var(--ds-checkbox-disabled-bg);
-    --ds-checkbox-fg: var(--ds-checkbox-disabled-fg);
-    --ds-checkbox-border-color: var(--ds-checkbox-disabled-border-color);
-    --ds-checkbox-label-fg: var(--color-text-disabled);
+  .sk-checkbox:has(.sk-checkbox__input:disabled),
+  .sk-tile:has(> input[type="checkbox"]:disabled),
+  .sk-tile[data-disabled] {
+    --sk-checkbox-bg: var(--sk-checkbox-disabled-bg);
+    --sk-checkbox-fg: var(--sk-checkbox-disabled-fg);
+    --sk-checkbox-border-color: var(--sk-checkbox-disabled-border-color);
+    --sk-checkbox-label-fg: var(--color-text-disabled);
+  }
+
+  .sk-checkbox {
+    display: inline-flex;
+    gap: var(--sk-checkbox-gap);
+    align-items: center;
+    color: var(--sk-checkbox-label-fg);
+    cursor: pointer;
+  }
+
+  .sk-checkbox__input {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    clip-path: inset(50%);
+  }
+
+  /*
+   * The state layer lives on the CONTROL, not the label: a wash over the words looked wrong, and
+   * when checked the label inherited on-accent (white text on canvas). Selection is the filled box;
+   * hover/press tint only that box. `sk-interactive` on the control gives the ::before; the label
+   * forwards hover/focus/press because the input is a sibling, not a child of the control.
+   */
+  .sk-checkbox__control {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--sk-checkbox-control-size);
+    block-size: var(--sk-checkbox-control-size);
+    flex: none;
+    border: var(--sk-checkbox-border-width) solid var(--sk-checkbox-border-color);
+    border-radius: var(--sk-checkbox-radius);
+    background: var(--sk-checkbox-bg);
+    color: var(--sk-checkbox-fg);
+    /* Named properties, never `all`: the control also carries a state layer and a focus ring, and
+     * neither is a state change to animate. Fill is the SELECTION (state-change intent); the press
+     * squeeze is FEEDBACK, a faster tempo, because it has to land under the finger. */
+    transition:
+      background-color var(--motion-state-change-duration) var(--motion-state-change-easing),
+      border-color var(--motion-state-change-duration) var(--motion-state-change-easing),
+      color var(--motion-state-change-duration) var(--motion-state-change-easing),
+      scale var(--motion-feedback-duration) var(--motion-feedback-easing);
+  }
+
+  /* The whole label is the target, so pressing the words squeezes the box: that is the only part
+   * of the row that can answer, and without it a long label feels dead on press. */
+  .sk-checkbox:active .sk-checkbox__control,
+  .sk-tile:active > .sk-checkbox__control {
+    scale: 0.96;
+  }
+
+  /* A disabled control still matches :active, and a box that squeezes back at a press it is not
+   * going to honour is a lie. :has() carries its argument's specificity, so this outranks the
+   * rule above by position rather than by order. */
+  .sk-checkbox:has(.sk-checkbox__input:disabled):active .sk-checkbox__control,
+  .sk-tile:has(> input[type="checkbox"]:disabled):active > .sk-checkbox__control {
+    scale: 1;
+  }
+
+  /* A checkbox with no label text (the select-all in a table header) IS the control, and the
+   * control paints at icon size, under the floor the size tokens hold everywhere else. Same
+   * invisible pad as Button and Segmented, positioned by `sk-interactive`'s containing block.
+   * Only when there is no label: a labelled row already has a target, and padding those would
+   * put two hit areas on top of each other in a dense list. */
+  .sk-checkbox:not(:has(.sk-checkbox__label)) .sk-checkbox__control::after {
+    content: "";
+    position: absolute;
+    inset-block: min(0px, calc((100% - var(--size-touch-target)) / 2));
+    inset-inline: min(0px, calc((100% - var(--size-touch-target)) / 2));
+  }
+
+  /* El hover cuelga de un ancestro, así que no lo cubre el guard de state-layer.css.
+   * Mismo criterio: sin any-hover, el tinte queda pegado tras el tap. */
+  @media (any-hover: hover) {
+    .sk-checkbox:hover .sk-checkbox__control.sk-interactive,
+    .sk-tile:hover > .sk-checkbox__control.sk-interactive {
+      --state-layer-opacity: var(--state-layer-hover-opacity);
+    }
+  }
+
+  .sk-checkbox:has(.sk-checkbox__input:focus-visible) .sk-checkbox__control.sk-interactive,
+  .sk-tile:has(> input[type="checkbox"]:focus-visible) > .sk-checkbox__control.sk-interactive {
+    --state-layer-opacity: var(--state-layer-focus-opacity);
+  }
+
+  .sk-checkbox:active .sk-checkbox__control.sk-interactive,
+  .sk-tile:active > .sk-checkbox__control.sk-interactive {
+    --state-layer-opacity: var(--state-layer-pressed-opacity);
+  }
+
+  .sk-checkbox:has(.sk-checkbox__input:disabled) .sk-checkbox__control.sk-interactive,
+  .sk-tile:has(> input[type="checkbox"]:disabled) > .sk-checkbox__control.sk-interactive {
+    --state-layer-opacity: var(--state-layer-disabled-opacity);
+  }
+
+  .sk-checkbox__input:focus-visible + .sk-checkbox__control,
+  .sk-tile:has(> input[type="checkbox"]:focus-visible) > .sk-checkbox__control {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /*
+   * Check / remove come from the icon set, never a CSS border glyph.
+   *
+   * BOTH glyphs stay mounted, stacked in the control's single grid cell, and the input decides
+   * which one is visible. They used to be swapped with `display`, which cannot be transitioned:
+   * the box changed state with a hard cut, and indeterminate → checked, which is one box making a
+   * more specific claim, read as two unrelated frames. Opacity, scale and filter are all things
+   * the compositor can do, so the swap is one interruptible transition and a glyph interrupted
+   * halfway animates out from where it actually is.
+   */
+  .sk-checkbox__indicator {
+    grid-area: 1 / 1;
+    display: inline-grid;
+    place-items: center;
+    opacity: 0;
+    scale: 0.25;
+    filter: blur(4px);
+    transition:
+      opacity var(--motion-state-change-duration) var(--motion-state-change-easing),
+      scale var(--motion-state-change-duration) var(--motion-state-change-easing),
+      filter var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  .sk-checkbox__indicator .sk-icon {
+    --sk-icon-size: var(--size-icon-sm);
+    vertical-align: 0;
+  }
+
+  :is(.sk-checkbox, .sk-tile):has(input[type="checkbox"]:checked) .sk-checkbox__indicator[data-state="checked"],
+  :is(.sk-checkbox, .sk-tile)[data-state="checked"] .sk-checkbox__indicator[data-state="checked"],
+  :is(.sk-checkbox, .sk-tile):has(input[type="checkbox"]:indeterminate) .sk-checkbox__indicator[data-state="indeterminate"],
+  :is(.sk-checkbox, .sk-tile)[data-state="indeterminate"] .sk-checkbox__indicator[data-state="indeterminate"] {
+    opacity: 1;
+    scale: 1;
+    filter: blur(0);
+  }
+
+  /* `checked` and `indeterminate` are separate flags on the input, so both can be on at once and
+   * a grouping parent written the obvious way sets exactly that. Indeterminate wins: it is the
+   * weaker claim, and two glyphs in one box is not a state anything means. Equal specificity to
+   * the rule above, so this has to stay after it. */
+  :is(.sk-checkbox, .sk-tile):has(input[type="checkbox"]:indeterminate) .sk-checkbox__indicator[data-state="checked"],
+  :is(.sk-checkbox, .sk-tile)[data-state="indeterminate"] .sk-checkbox__indicator[data-state="checked"] {
+    opacity: 0;
+    scale: 0.25;
+    filter: blur(4px);
+  }
+
+  .sk-checkbox:has(.sk-checkbox__input:disabled),
+  .sk-tile:has(> input[type="checkbox"]:disabled) {
+    cursor: not-allowed;
+  }
+
+  @media (forced-colors: active) {
+    .sk-checkbox__control {
+      border-color: CanvasText;
+      background: Canvas;
+    }
+
+    :is(.sk-checkbox, .sk-tile):has(input[type="checkbox"]:checked) > .sk-checkbox__control,
+    :is(.sk-checkbox, .sk-tile):has(input[type="checkbox"]:indeterminate) > .sk-checkbox__control {
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+    }
   }
 }

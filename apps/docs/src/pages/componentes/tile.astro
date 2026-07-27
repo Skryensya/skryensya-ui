@@ -5,9 +5,11 @@ import Base from "../../layouts/Base.astro";
   <h1>Tile</h1>
   <p class="lede"><strong>Invariante estricta:</strong> cada Tile tiene exactamente una intención interactiva. Un Tile nunca es una superficie estática. Para contenido estático o varios controles independientes, usa <a href="/componentes/box">Box</a>.</p>
   <p>Tile es una receta visual que los componentes semánticos aplican sobre el elemento nativo correcto. Las demos y los contratos de TileLink, TileButton, TileCheckbox y TileRadioGroup viven junto a Link, Button, Checkbox y RadioGroup.</p>
+  <p>La guía <a href="/componentes/card">Card</a> compara estas raíces con Box en cards reales de contenido, noticia, producto, enlace, acción, selección y métricas.</p>
 
   <h2>Elige por comportamiento</h2>
-  <table class="ds-table">
+  <div class="sk-table-scroll">
+  <table class="sk-table">
     <thead><tr><th>Necesidad</th><th>Componente</th><th>Contrato nativo</th></tr></thead>
     <tbody>
       <tr><td>Contenido estático o varios controles</td><td><a href="/componentes/box">Box</a></td><td>El elemento que elija quien lo usa.</td></tr>
@@ -15,17 +17,17 @@ import Base from "../../layouts/Base.astro";
       <tr><td>Ejecutar una acción</td><td><a href="/componentes/button">Button</a></td><td><code>TileButton</code> usa <code>&lt;button type="button"&gt;</code></td></tr>
       <tr><td>Seleccionar independientemente</td><td><a href="/componentes/checkbox">Checkbox</a></td><td><code>TileCheckbox</code> usa <code>&lt;input type="checkbox"&gt;</code></td></tr>
       <tr><td>Elegir una opción exclusiva</td><td><a href="/componentes/radio-group">RadioGroup</a></td><td><code>TileRadioGroup</code> usa <code>&lt;input type="radio"&gt;</code></td></tr>
-      <tr><td>Mostrar u ocultar detalles aislados</td><td><code>ExpandableTile</code></td><td><code>&lt;button&gt;</code> trigger; una divulgación Tile</td></tr>
-      <tr><td>Coordinar una o varias divulgaciones</td><td><a href="/componentes/accordion">Accordion</a></td><td><code>&lt;button&gt;</code> trigger; una o varias divulgaciones Tile</td></tr>
+      <tr><td>Mostrar u ocultar detalles (uno o varios)</td><td><a href="/componentes/accordion">Accordion</a></td><td><code>&lt;button&gt;</code> trigger; una o varias divulgaciones Tile</td></tr>
     </tbody>
   </table>
+  </div>
 
 
 
   <h2>Contratos</h2>
   <ul>
     <li>Link y botón no requieren enhancer: el navegador ya provee su comportamiento.</li>
-    <li>Checkbox, radio group, ExpandableTile y Accordion conservan inputs o botón reales. Sus enhancers Vanilla leen los hooks <code>data-part</code> documentados en los componentes semánticos.</li>
+    <li>Checkbox, radio group y Accordion conservan inputs o botón reales. Sus enhancers Vanilla leen los hooks <code>data-part</code> documentados en los componentes semánticos. Una sola divulgación es Accordion con un item.</li>
     <li>No anides controles interactivos dentro de un Tile. Si hacen falta acciones independientes, usa <a href="/componentes/box">Box</a> y deja los controles como hermanos.</li>
     <li>Los bindings React renderizan el mismo contrato semántico; no montan el enhancer Vanilla.</li>
     <li>Todos los Tile aceptan <code>data-padding</code> con <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> o <code>xl</code>; React expone el mismo valor como <code>padding</code>. El default es <code>md</code>.</li>

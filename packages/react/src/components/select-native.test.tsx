@@ -16,8 +16,8 @@ describe("NativeSelect", () => {
 
     const control = ui.getByRole("combobox", { name: "Plan" });
     expect(control.tagName).toBe("SELECT");
-    expect(control.getAttribute("data-ds-select")).toBeNull();
-    expect(control.classList.contains("ds-select-native")).toBe(true);
+    expect(control.getAttribute("data-sk-select")).toBeNull();
+    expect(control.classList.contains("sk-select-native")).toBe(true);
     expect((control as HTMLSelectElement).value).toBe("starter");
   });
 });

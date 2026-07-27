@@ -1,0 +1,134 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<p>
+  A paragraph with a
+  <a class="sk-link sk-interactive" href="/en/components/link">
+    text color link
+  </a>
+  and another
+  <a
+    class="sk-link sk-interactive"
+    href="/en/components/link"
+    data-tone="primary"
+  >
+    primary color
+  </a>,
+  both with permanent underlining.
+</p>`;
+
+const react = `import { Link } from "@skryensya/react/link";
+
+<Link href="/en/components/link">Link text color</Link>
+<Link href="/en/components/link" tone="primary">primary color</Link>;`;
+
+const tileLinkHtml = `<a
+  class="sk-tile sk-tile--interactive sk-interactive"
+  href="/usage"
+>
+  <span class="sk-tile__content">
+    <span class="sk-tile__title">Usege details</span>
+    <span class="sk-tile__description">
+      Open the account usage report.
+    </span>
+  </span>
+</a>`;
+
+const tileLinkVanilla = `import { createTileLink } from "@skryensya/vanilla/tile-link";
+
+const link = createTileLink({ href: "/usage" });
+link.textContent = "Usege details";`;
+
+const tileLinkReact = `import { TileLink } from "@skryensya/react/tile-link";
+
+<TileLink href="/usage">
+  <span className="sk-tile__content">
+    <span className="sk-tile__title">Usege details</span>
+    <span className="sk-tile__description">
+      Open the account usage report.
+    </span>
+  </span>
+</TileLink>;`;
+---
+
+<Base title="Link" description="Link: a text link, always underlined, the only treatment that WCAG 1.4.1 allows.">
+  <h1>Link</h1>
+  <p class="lede">
+    Link preserves the native semantics of <code>&lt;a&gt;</code>: use it for navigation and provide a
+    <code>href</code> valid. It is a <strong>text link</strong> with permanent underline, the only one
+    treatment that WCAG 1.4.1 allows in prose. The hover uses the state layer (<code>sk-interactive</code>),
+    not a color invented by the component.
+  </p>
+
+  <Showcase html={html} react={react} label="Link" />
+
+  <h2>Surface Link: TileLink</h2>
+  <p>
+    When an entire surface is a single destination, use <code>TileLink</code>. It also renders a
+    <code>&lt;a&gt;</code>, but it is not <code>sk-link</code>: it preserves the Tile geometry and its state layer
+    because context, not prose underlining, communicates that the surface is navigable.
+  </p>
+  <Showcase html={tileLinkHtml} react={tileLinkReact} label="TileLink" />
+  <p>Authored HTML works without initialization. <code>createTileLink</code> only creates the anchor when the tree is generated from JavaScript.</p>
+  <CodeBlock code={tileLinkVanilla} label="JavaScript" />
+
+  <h2>Why just one type, and not three?</h2>
+  <p>
+    A link within a text block <strong>cannot be distinguished by color alone</strong>: is
+    <a class="sk-link sk-interactive" href="https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html">WCAG 1.4.1
+    (Use of Color)</a>, level A. There are only two ways to comply: a non-color indicator
+    <em>at rest</em>, a permanent underline, or a contrast of ≥3:1 between the link color and the
+    of the text <em>plus</em> a non-color signal on hover <em>and</em> focus.
+  </p>
+  <p>
+    The second way is fragile: you have to re-measure that 3:1 in each brand and each mode, and whoever reads the page
+    still, or cannot hover, it does not receive any signal until touching the link. An underlining that
+    appears only on hover, leaves the text at rest without a clue, and without underlining the criterion of
+    flat. So <code>sk-link</code> has <strong>a</strong> form, always underlined, and not a hook
+    to turn it off: offering <code>hover</code> or <code>none</code> would be offering a way to fail 1.4.1.
+  </p>
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
+    <p>
+      <strong>And the links that are not underlined?</strong> A navigation item, a breadcrumb, the
+      prev/next of the footer, those are distinguished by <em>location</em>, not by color, so 1.4.1 does not
+      asks for underlining. But they are not <code>sk-link</code>: they use the <code>nav-list</code> pattern or a button
+      <code>ghost</code>. <code>sk-link</code> is, by definition, the <em> link within the </em> text.
+    </p>
+    </div>
+  </div>
+
+  <h2>The tone does not change the rule</h2>
+  <p>
+    By default the link takes the same <strong> color as the text</strong> and relies entirely on the
+    underlined. <code>data-tone="primary"</code> paints it the primary brand color. In both cases the
+    underlining is mandatory: without it, the primary tone would only be distinguished by color (WCAG 1.4.1 bug),
+    and the default would not be distinguished from the prose.
+  </p>
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>The code is in the <strong>React</strong> tab of the preview.</p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>Renders a native anchor: <code>href</code> defines the target.</li>
+    <li><code>data-tone</code> is optional: without it, the text color; <code>primary</code> uses the primary brand color.</li>
+    <li>
+      <strong>The underline is not configurable</strong>: it is always there, because a text link without a signal
+      permanent non-color fails WCAG 1.4.1.
+    </li>
+    <li>It does not set <code>target</code>, <code>rel</code> or any behavior for external links.</li>
+    <li>
+      It takes <code>sk-interactive</code>: hover, press and focus come from the state layer. The
+      <code>::before</code> opens a little wider than the ink so the wash does not read like a
+      stain on the glyphs; the permanent underline remains the idle signal.
+    </li>
+  </ul>
+</Base>

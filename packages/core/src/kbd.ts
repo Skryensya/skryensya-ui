@@ -5,7 +5,7 @@
  * state and no machine, so there is no vanilla enhancer and nothing here but the part name.
  */
 export const kbdParts = {
-  root: "ds-kbd",
+  root: "sk-kbd",
 } as const;
 
 export type KbdPart = keyof typeof kbdParts;

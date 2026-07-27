@@ -11,6 +11,6 @@ describe("Slider", () => {
 
     fireEvent.change(input, { target: { value: "60" } });
     expect(onValueChange).toHaveBeenCalledWith(60);
-    expect(input.getAttribute("style")).toContain("--ds-slider-fill: 0.6");
+    expect(input.getAttribute("style")).toContain("--sk-slider-fill: 0.6");
   });
 });

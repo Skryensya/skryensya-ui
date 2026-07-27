@@ -5,7 +5,7 @@
  * inert behind a backdrop, and leaves the way it came.
  *
  * It is a PATTERN and not a component by the rule in decision 8, could a second component need this
- * exact structure? It already does: `ds-drawer` is a Vaul on the inline edge. Dialog remains centred;
+ * exact structure? It already does: `sk-drawer` is a Vaul on the inline edge. Dialog remains centred;
  * Dialog Vaul is a separate responsive composition that reuses a block-end Vaul interaction without
  * making the dialog itself a Vaul. Two consumers need the interaction, so shipping it once is the point.
  *
@@ -22,58 +22,65 @@
  * duration: entering announces itself, leaving is already decided.
  */
 @layer components {
-  .ds-vaul {
+  .sk-vaul {
     /* The panel's main extent, inline-size for a side edge, the block-size ceiling for a sheet.
      * A clamp, not a bare `min(20rem, 85vw)`: the old form only ever CAPPED against the viewport, so
      * on a wide screen the panel stayed pinned at its 20rem floor and read as a thin strip. A clamp
      * gives it a real preferred width that grows with the viewport between a firm min and max, so it
      * takes a confident slice of the screen without ever getting narrow or absurdly wide. */
-    --ds-vaul-size: clamp(21rem, 20rem + 14vw, 34rem);
-    --ds-vaul-bg: var(--color-bg-surface);
-    --ds-vaul-fg: var(--color-text-primary);
-    --ds-vaul-border-color: var(--color-border-subtle);
-    --ds-vaul-border-width: 1px;
-    --ds-vaul-elevation: var(--elevation-modal);
-    --ds-vaul-radius: 0;
+    --sk-vaul-size: clamp(21rem, 20rem + 14vw, 34rem);
+    --sk-vaul-bg: var(--color-bg-surface);
+    --sk-vaul-fg: var(--color-text-primary);
+    --sk-vaul-border-color: var(--color-border-subtle);
+    --sk-vaul-border-width: 1px;
+    --sk-vaul-elevation: var(--elevation-modal);
+    --sk-vaul-radius: 0;
 
-    /* The backdrop is composed here because the system has no backdrop-colour token, and cannot
+    /* The backdrop is composed here because the system has no backdrop-color token, and cannot
      * simply reuse a
      * mode-aware one: color-mix() over `--color-text-primary` would darken a light page and LIGHTEN
      * a dark one, which is not a backdrop. Each mode states its own, a text tint over a light page,
      * the canvas itself over an already-dark one. */
-    --ds-vaul-backdrop-bg: light-dark(
+    --sk-vaul-backdrop-bg: light-dark(
       color-mix(in oklch, var(--color-text-primary) 40%, transparent),
       color-mix(in oklch, var(--color-bg-canvas) 80%, transparent)
     );
 
-    --ds-vaul-enter-duration: var(--motion-enter-duration);
-    --ds-vaul-enter-easing: var(--motion-enter-easing);
-    --ds-vaul-exit-duration: var(--motion-exit-duration);
-    --ds-vaul-exit-easing: var(--motion-exit-easing);
+    --sk-vaul-enter-duration: var(--motion-enter-duration);
+    --sk-vaul-enter-easing: var(--motion-enter-easing);
+    --sk-vaul-exit-duration: var(--motion-exit-duration);
+    --sk-vaul-exit-easing: var(--motion-exit-easing);
 
     /* Letting go is its own intent (decision 10): the panel is finishing the throw, not playing an
      * animation the system decided on. Both outcomes share it, springing back and being thrown out
      * are the same gesture with two destinations. */
-    --ds-vaul-release-duration: var(--motion-release-duration);
-    --ds-vaul-release-easing: var(--motion-release-easing);
+    --sk-vaul-release-duration: var(--motion-release-duration);
+    --sk-vaul-release-easing: var(--motion-release-easing);
 
     /* How far the finger has pulled the panel toward its edge. The enhancer writes it; with no
      * enhancer it stays 0 and every rule below still resolves. Normally POSITIVE, each edge decides
      * which way that points, so the enhancer never learns the geometry, but it goes slightly negative
-     * when the pull is resisted (see `--ds-vaul-drag-progress`). */
-    --ds-vaul-drag-offset: 0px;
+     * when the pull is resisted (see `--sk-vaul-drag-progress`). */
+    --sk-vaul-drag-offset: 0px;
 
     /* The same pull as a fraction of the panel: 0 at rest, 1 when it has been dragged its own size
      * away. The backdrop reads it so the page behind comes back as the panel leaves, a backdrop that
      * stayed at full strength while the panel was halfway out would be lying about what is modal. */
-    --ds-vaul-drag-progress: 0;
+    --sk-vaul-drag-progress: 0;
 
-    /* How far the panel gives when pulled AWAY from its edge, and, the same number, how far its own
-     * material runs past that edge. Lifting a sheet has to reveal more sheet: reveal the backdrop
-     * instead and the panel reads as a rectangle that got moved, not a surface that is attached to
-     * something. The enhancer reads this rather than restating it, so the give can never outrun the
-     * material. */
-    --ds-vaul-overpull: 12px;
+    /* How far the panel GIVES when pulled AWAY from its edge. The enhancer reads this rather than
+     * restating it, so the resistance curve and the CSS can never disagree about the cap. */
+    --sk-vaul-overpull: 12px;
+
+    /* How far the panel's own MATERIAL runs past that edge, which is a different question from how
+     * far the panel gives, and used to be the same number. Lifting a sheet has to reveal more sheet:
+     * reveal the backdrop instead and the panel reads as a rectangle that got moved, not a surface
+     * attached to something.
+     *
+     * It is stated as a floor over the give, not as a bare length, because the one thing that must
+     * never happen is the give outrunning the material, and a comment asking the next person to
+     * keep two numbers in step is not a guarantee. Retune the overpull and the material follows. */
+    --sk-vaul-material: max(2rem, calc(var(--sk-vaul-overpull) * 2));
 
     /* <dialog> arrives as a centred box: auto margins, a max-size, a border, padding. A Vaul is an
      * edge, so each of those is reset rather than worked around. */
@@ -84,23 +91,23 @@
     border: 0;
     max-inline-size: none;
     max-block-size: none;
-    border-radius: var(--ds-vaul-radius);
-    background: var(--ds-vaul-bg);
-    color: var(--ds-vaul-fg);
-    box-shadow: var(--ds-vaul-elevation);
+    border-radius: var(--sk-vaul-radius);
+    background: var(--sk-vaul-bg);
+    color: var(--sk-vaul-fg);
+    box-shadow: var(--sk-vaul-elevation);
     overflow: hidden;
 
     /* Closed is the resting state, so [open] is the exception. `display`/`overlay` need
      * allow-discrete or the exit is never seen: the browser drops the panel from the top layer the
      * instant close() runs. */
     transition:
-      translate var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing),
-      overlay var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing) allow-discrete,
-      display var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing) allow-discrete;
+      translate var(--sk-vaul-exit-duration) var(--sk-vaul-exit-easing),
+      overlay var(--sk-vaul-exit-duration) var(--sk-vaul-exit-easing) allow-discrete,
+      display var(--sk-vaul-exit-duration) var(--sk-vaul-exit-easing) allow-discrete;
   }
 
   /* ── the material past the edge ─────────────────────────────────────────────
-   * A solid, blur-less, spread-less shadow in the panel's OWN colour, sitting just past the edge the
+   * A solid, blur-less, spread-less shadow in the panel's OWN color, sitting just past the edge the
    * panel is anchored to. At rest it is off-screen and costs nothing; lift the panel and it is what
    * comes into view, so a pulled sheet reveals more sheet instead of a strip of backdrop.
    *
@@ -108,99 +115,107 @@
    * clipped at exactly the edge this needs to cross, whereas an outer shadow paints outside the border
    * box by definition. It also inherits the panel's corner radius for free.
    *
+   * IT IS LISTED FIRST, ahead of the elevation, and that ordering is the whole point: box shadows
+   * paint back to front, so the elevation used to land ON TOP of the material and tint the revealed
+   * strip nearly black. A lifted sheet then showed a dark band where its own surface should be, which
+   * reads as a hole under the panel, the exact failure this shadow exists to prevent. Material first
+   * means the strip is surface color and the elevation only shows where the material is not, and
+   * where the material IS, that direction is off-screen anyway: past a sheet's bottom edge, past a
+   * drawer's outer edge. Nothing visible is lost by covering it.
+   *
    * Each edge fills the direction its own gap would open, which is the direction it is anchored to;
    * RTL swaps the inline pair, exactly as it swaps their translate. */
-  .ds-vaul[data-edge="block-end"] {
-    box-shadow: var(--ds-vaul-elevation), 0 var(--ds-vaul-overpull) 0 0 var(--ds-vaul-bg);
+  .sk-vaul[data-edge="block-end"] {
+    box-shadow: 0 var(--sk-vaul-material) 0 0 var(--sk-vaul-bg), var(--sk-vaul-elevation);
   }
 
-  .ds-vaul[data-edge="inline-start"] {
-    box-shadow: var(--ds-vaul-elevation), calc(-1 * var(--ds-vaul-overpull)) 0 0 0 var(--ds-vaul-bg);
+  .sk-vaul[data-edge="inline-start"] {
+    box-shadow: calc(-1 * var(--sk-vaul-material)) 0 0 0 var(--sk-vaul-bg), var(--sk-vaul-elevation);
   }
 
-  .ds-vaul[data-edge="inline-start"]:dir(rtl) {
-    box-shadow: var(--ds-vaul-elevation), var(--ds-vaul-overpull) 0 0 0 var(--ds-vaul-bg);
+  .sk-vaul[data-edge="inline-start"]:dir(rtl) {
+    box-shadow: var(--sk-vaul-material) 0 0 0 var(--sk-vaul-bg), var(--sk-vaul-elevation);
   }
 
-  .ds-vaul[data-edge="inline-end"] {
-    box-shadow: var(--ds-vaul-elevation), var(--ds-vaul-overpull) 0 0 0 var(--ds-vaul-bg);
+  .sk-vaul[data-edge="inline-end"] {
+    box-shadow: var(--sk-vaul-material) 0 0 0 var(--sk-vaul-bg), var(--sk-vaul-elevation);
   }
 
-  .ds-vaul[data-edge="inline-end"]:dir(rtl) {
-    box-shadow: var(--ds-vaul-elevation), calc(-1 * var(--ds-vaul-overpull)) 0 0 0 var(--ds-vaul-bg);
+  .sk-vaul[data-edge="inline-end"]:dir(rtl) {
+    box-shadow: calc(-1 * var(--sk-vaul-material)) 0 0 0 var(--sk-vaul-bg), var(--sk-vaul-elevation);
   }
 
   /* ── the edges ──────────────────────────────────────────────────────────────
    * `translate` is physical while the insets are logical, so the two inline edges flip themselves
    * under RTL rather than pinning to the wrong side of the screen. */
-  .ds-vaul[data-edge="inline-start"] {
+  .sk-vaul[data-edge="inline-start"] {
     inset-block: 0;
     inset-inline: 0 auto;
-    inline-size: var(--ds-vaul-size);
+    inline-size: var(--sk-vaul-size);
     block-size: 100dvh;
-    border-inline-end: var(--ds-vaul-border-width) solid var(--ds-vaul-border-color);
+    border-inline-end: var(--sk-vaul-border-width) solid var(--sk-vaul-border-color);
     translate: -100% 0;
   }
 
-  .ds-vaul[data-edge="inline-start"]:dir(rtl) {
+  .sk-vaul[data-edge="inline-start"]:dir(rtl) {
     translate: 100% 0;
   }
 
-  .ds-vaul[data-edge="inline-end"] {
+  .sk-vaul[data-edge="inline-end"] {
     inset-block: 0;
     inset-inline: auto 0;
-    inline-size: var(--ds-vaul-size);
+    inline-size: var(--sk-vaul-size);
     block-size: 100dvh;
-    border-inline-start: var(--ds-vaul-border-width) solid var(--ds-vaul-border-color);
+    border-inline-start: var(--sk-vaul-border-width) solid var(--sk-vaul-border-color);
     translate: 100% 0;
   }
 
-  .ds-vaul[data-edge="inline-end"]:dir(rtl) {
+  .sk-vaul[data-edge="inline-end"]:dir(rtl) {
     translate: -100% 0;
   }
 
   /* The bottom sheet: it spans the viewport and is sized by its content up to a ceiling, because a
    * sheet that always claimed the full height would just be a slow full-screen dialog. */
-  .ds-vaul[data-edge="block-end"] {
+  .sk-vaul[data-edge="block-end"] {
     inset-block: auto 0;
     inset-inline: 0;
     inline-size: 100%;
     /* A sheet is sized by its content up to a ceiling, but a generous one: a short sheet floating at
      * the bottom of a tall screen reads as timid. Its own hook so a sheet can ask for more or less
      * without touching the inline width clamp above; it defaults to most of the viewport height. */
-    max-block-size: min(90dvh, var(--ds-vaul-block-size, 44rem));
+    max-block-size: min(90dvh, var(--sk-vaul-block-size, 44rem));
     block-size: auto;
-    border-block-start: var(--ds-vaul-border-width) solid var(--ds-vaul-border-color);
+    border-block-start: var(--sk-vaul-border-width) solid var(--sk-vaul-border-color);
     translate: 0 100%;
   }
 
   /* ── open ───────────────────────────────────────────────────────────────────
    * Open sits AT the edge, offset only by whatever the finger is holding. */
-  .ds-vaul[data-edge="inline-start"][open] {
-    translate: calc(-1 * var(--ds-vaul-drag-offset)) 0;
+  .sk-vaul[data-edge="inline-start"][open] {
+    translate: calc(-1 * var(--sk-vaul-drag-offset)) 0;
   }
 
-  .ds-vaul[data-edge="inline-start"][open]:dir(rtl) {
-    translate: var(--ds-vaul-drag-offset) 0;
+  .sk-vaul[data-edge="inline-start"][open]:dir(rtl) {
+    translate: var(--sk-vaul-drag-offset) 0;
   }
 
-  .ds-vaul[data-edge="inline-end"][open] {
-    translate: var(--ds-vaul-drag-offset) 0;
+  .sk-vaul[data-edge="inline-end"][open] {
+    translate: var(--sk-vaul-drag-offset) 0;
   }
 
-  .ds-vaul[data-edge="inline-end"][open]:dir(rtl) {
-    translate: calc(-1 * var(--ds-vaul-drag-offset)) 0;
+  .sk-vaul[data-edge="inline-end"][open]:dir(rtl) {
+    translate: calc(-1 * var(--sk-vaul-drag-offset)) 0;
   }
 
-  .ds-vaul[data-edge="block-end"][open] {
-    translate: 0 var(--ds-vaul-drag-offset);
+  .sk-vaul[data-edge="block-end"][open] {
+    translate: 0 var(--sk-vaul-drag-offset);
   }
 
-  .ds-vaul[open] {
+  .sk-vaul[open] {
     transition:
-      translate var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing),
-      overlay var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing) allow-discrete,
-      display var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing) allow-discrete;
+      translate var(--sk-vaul-enter-duration) var(--sk-vaul-enter-easing),
+      overlay var(--sk-vaul-enter-duration) var(--sk-vaul-enter-easing) allow-discrete,
+      display var(--sk-vaul-enter-duration) var(--sk-vaul-enter-easing) allow-discrete;
   }
 
   /* ── letting go ─────────────────────────────────────────────────────────────
@@ -208,15 +223,15 @@
    * it springs home or carries on out. It must beat [open]'s enter and the base exit, equal
    * specificity, so it wins on source order, and must in turn lose to [data-dragging] below, which
    * is why that one stays last. */
-  .ds-vaul[data-releasing] {
+  .sk-vaul[data-releasing] {
     transition:
-      translate var(--ds-vaul-release-duration) var(--ds-vaul-release-easing),
-      overlay var(--ds-vaul-release-duration) var(--ds-vaul-release-easing) allow-discrete,
-      display var(--ds-vaul-release-duration) var(--ds-vaul-release-easing) allow-discrete;
+      translate var(--sk-vaul-release-duration) var(--sk-vaul-release-easing),
+      overlay var(--sk-vaul-release-duration) var(--sk-vaul-release-easing) allow-discrete,
+      display var(--sk-vaul-release-duration) var(--sk-vaul-release-easing) allow-discrete;
   }
 
   /* The panel must not animate away from the finger: while dragging, the offset IS the position. */
-  .ds-vaul[data-dragging] {
+  .sk-vaul[data-dragging] {
     transition: none;
     user-select: none;
   }
@@ -224,23 +239,23 @@
   /* Where it enters FROM. Without this the panel is simply open on the first frame, an element
    * newly rendered into the top layer has no previous value to transition from. */
   @starting-style {
-    .ds-vaul[data-edge="inline-start"][open] {
+    .sk-vaul[data-edge="inline-start"][open] {
       translate: -100% 0;
     }
 
-    .ds-vaul[data-edge="inline-start"][open]:dir(rtl) {
+    .sk-vaul[data-edge="inline-start"][open]:dir(rtl) {
       translate: 100% 0;
     }
 
-    .ds-vaul[data-edge="inline-end"][open] {
+    .sk-vaul[data-edge="inline-end"][open] {
       translate: 100% 0;
     }
 
-    .ds-vaul[data-edge="inline-end"][open]:dir(rtl) {
+    .sk-vaul[data-edge="inline-end"][open]:dir(rtl) {
       translate: -100% 0;
     }
 
-    .ds-vaul[data-edge="block-end"][open] {
+    .sk-vaul[data-edge="block-end"][open] {
       translate: 0 100%;
     }
   }
@@ -249,7 +264,7 @@
    * The handle follows the EDGE, because the gesture does: a sheet is pulled down by a bar across
    * its top, a side panel is pulled sideways by a bar down its inner edge. A horizontal pill on a
    * drawer would advertise the wrong direction. */
-  .ds-vaul__handle {
+  .sk-vaul__handle {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -259,44 +274,44 @@
     touch-action: none;
   }
 
-  .ds-vaul[data-dragging] .ds-vaul__handle {
+  .sk-vaul[data-dragging] .sk-vaul__handle {
     cursor: grabbing;
   }
 
-  .ds-vaul__handle::before {
+  .sk-vaul__handle::before {
     content: "";
     border-radius: var(--radius-pill);
     background: var(--color-border-strong);
   }
 
-  .ds-vaul[data-edge="block-end"] .ds-vaul__handle {
+  .sk-vaul[data-edge="block-end"] .sk-vaul__handle {
     flex: none;
     padding-block: var(--space-inset-xs);
   }
 
-  .ds-vaul[data-edge="block-end"] .ds-vaul__handle::before {
+  .sk-vaul[data-edge="block-end"] .sk-vaul__handle::before {
     inline-size: 2.25rem;
     block-size: 0.25rem;
   }
 
   /* A side panel has no spare row to give a handle, so it takes a strip of the inner edge instead, 
    * over the content rather than beside it, which is why it is positioned rather than in flow. */
-  .ds-vaul:where([data-edge="inline-start"], [data-edge="inline-end"]) .ds-vaul__handle {
+  .sk-vaul:where([data-edge="inline-start"], [data-edge="inline-end"]) .sk-vaul__handle {
     position: absolute;
     inset-block: 0;
     inline-size: var(--space-inset-md);
     cursor: ew-resize;
   }
 
-  .ds-vaul[data-edge="inline-start"] .ds-vaul__handle {
+  .sk-vaul[data-edge="inline-start"] .sk-vaul__handle {
     inset-inline-end: 0;
   }
 
-  .ds-vaul[data-edge="inline-end"] .ds-vaul__handle {
+  .sk-vaul[data-edge="inline-end"] .sk-vaul__handle {
     inset-inline-start: 0;
   }
 
-  .ds-vaul:where([data-edge="inline-start"], [data-edge="inline-end"]) .ds-vaul__handle::before {
+  .sk-vaul:where([data-edge="inline-start"], [data-edge="inline-end"]) .sk-vaul__handle::before {
     inline-size: 0.25rem;
     block-size: 2.25rem;
   }
@@ -312,7 +327,7 @@
    * becomes a drawer and the dialog a sheet. It is a literal here because a CSS `@media` cannot read a
    * custom property, the one place the shared source has to be hand-copied (see the partial). */
   @media (min-width: 52rem) {
-    .ds-vaul__handle {
+    .sk-vaul__handle {
       display: none;
     }
   }
@@ -320,42 +335,42 @@
 
   /* ── the backdrop ───────────────────────────────────────────────────────────
    * It fades with the panel, so the page never sits behind a backdrop with nothing over it. */
-  .ds-vaul::backdrop {
-    background: var(--ds-vaul-backdrop-bg);
+  .sk-vaul::backdrop {
+    background: var(--sk-vaul-backdrop-bg);
     opacity: 0;
     transition:
-      opacity var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing),
-      overlay var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing) allow-discrete,
-      display var(--ds-vaul-exit-duration) var(--ds-vaul-exit-easing) allow-discrete;
+      opacity var(--sk-vaul-exit-duration) var(--sk-vaul-exit-easing),
+      overlay var(--sk-vaul-exit-duration) var(--sk-vaul-exit-easing) allow-discrete,
+      display var(--sk-vaul-exit-duration) var(--sk-vaul-exit-easing) allow-discrete;
   }
 
   /* Open, the backdrop is at full strength, minus whatever the finger has already taken back. The
    * panel and the page behind it are one system: pull the panel a third of the way out and a third of
    * the page has returned. */
-  .ds-vaul[open]::backdrop {
-    opacity: calc(1 - var(--ds-vaul-drag-progress));
+  .sk-vaul[open]::backdrop {
+    opacity: calc(1 - var(--sk-vaul-drag-progress));
     transition:
-      opacity var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing),
-      overlay var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing) allow-discrete,
-      display var(--ds-vaul-enter-duration) var(--ds-vaul-enter-easing) allow-discrete;
+      opacity var(--sk-vaul-enter-duration) var(--sk-vaul-enter-easing),
+      overlay var(--sk-vaul-enter-duration) var(--sk-vaul-enter-easing) allow-discrete,
+      display var(--sk-vaul-enter-duration) var(--sk-vaul-enter-easing) allow-discrete;
   }
 
   /* Paired with the panel, always: the same curve and the same duration, or the backdrop arrives
    * after the thing it belongs to. */
-  .ds-vaul[data-releasing]::backdrop {
+  .sk-vaul[data-releasing]::backdrop {
     transition:
-      opacity var(--ds-vaul-release-duration) var(--ds-vaul-release-easing),
-      overlay var(--ds-vaul-release-duration) var(--ds-vaul-release-easing) allow-discrete,
-      display var(--ds-vaul-release-duration) var(--ds-vaul-release-easing) allow-discrete;
+      opacity var(--sk-vaul-release-duration) var(--sk-vaul-release-easing),
+      overlay var(--sk-vaul-release-duration) var(--sk-vaul-release-easing) allow-discrete,
+      display var(--sk-vaul-release-duration) var(--sk-vaul-release-easing) allow-discrete;
   }
 
   /* Under the finger the backdrop tracks it directly, exactly like the panel. */
-  .ds-vaul[data-dragging]::backdrop {
+  .sk-vaul[data-dragging]::backdrop {
     transition: none;
   }
 
   @starting-style {
-    .ds-vaul[open]::backdrop {
+    .sk-vaul[open]::backdrop {
       opacity: 0;
     }
   }
@@ -364,14 +379,36 @@
    * dropped; the backdrop's fade is what says the page went inert. Dragging is a direct manipulation,
    * not motion the system plays at you, so it is untouched here. */
   @media (prefers-reduced-motion: reduce) {
-    .ds-vaul:where([data-edge="inline-start"], [data-edge="inline-end"], [data-edge="block-end"]) {
+    .sk-vaul:where([data-edge="inline-start"], [data-edge="inline-end"], [data-edge="block-end"]) {
       translate: 0 0;
     }
 
     @starting-style {
-      .ds-vaul:where([data-edge="inline-start"], [data-edge="inline-end"], [data-edge="block-end"])[open] {
+      .sk-vaul:where([data-edge="inline-start"], [data-edge="inline-end"], [data-edge="block-end"])[open] {
         translate: 0 0;
       }
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .sk-vaul {
+      --sk-vaul-backdrop-bg: light-dark(
+        var(--color-text-primary),
+        var(--color-bg-canvas)
+      );
+    }
+  }
+
+  @media (forced-colors: active) {
+    .sk-vaul {
+      --sk-vaul-border-color: CanvasText;
+      --sk-vaul-bg: Canvas;
+      --sk-vaul-fg: CanvasText;
+      box-shadow: none;
+    }
+
+    .sk-vaul__handle::before {
+      background: CanvasText;
     }
   }
 }

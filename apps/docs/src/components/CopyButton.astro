@@ -1,33 +1,38 @@
 ---
 /*
- * CopyButton is a self-contained feedback pattern: callers name the source element by id; the
- * component owns Clipboard API fallback, temporary state and its accessible announcement.
+ * Astro authors the shared CopyButton DOM contract and the selected icon geometry. Behaviour comes
+ * from the regular lazy Vanilla registry; this adapter neither owns nor mounts a private runtime.
  */
 import { iconMarkup } from "../icons";
+import "@skryensya/core/components/copy-button.css";
+import { getLocale, useTranslations } from "../i18n";
 
 interface Props {
   target: string;
 }
 
 const { target } = Astro.props;
+const t = useTranslations(getLocale(Astro.url));
 const copyIcon = iconMarkup("copy");
 const copiedIcon = iconMarkup("check");
 ---
 
 <button
-  class="ds-button ds-interactive ds-copy-button"
+  class="sk-button sk-interactive sk-copy-button"
   data-variant="ghost"
-  data-ds-copy-button
-  data-copy-target={target}
+  data-size="sm"
+  data-icon-only
+  data-sk-copy-button
+  data-sk-copy-button-target={target}
   type="button"
-  aria-label="Copiar código"
+  aria-label={t("copy.code")}
+  data-sk-copy-button-success-label={t("copy.copied")}
+  data-sk-copy-button-error-label={t("copy.error")}
+  data-sk-copy-button-success-aria-label={t("copy.codeCopied")}
+  data-sk-copy-button-error-aria-label={t("copy.failed")}
 >
-  <span class="ds-copy-button__icon" data-copy-icon="idle" aria-hidden="true"><Fragment set:html={copyIcon} /></span>
-  <span class="ds-copy-button__icon" data-copy-icon="copied" aria-hidden="true"><Fragment set:html={copiedIcon} /></span>
-  <span class="ds-copy-button__label" data-copy-label aria-live="polite">Copiar</span>
+  <span class="sk-copy-button__icon" data-sk-copy-button-icon="idle" aria-hidden="true"><Fragment set:html={copyIcon} /></span>
+  <span class="sk-copy-button__icon" data-sk-copy-button-icon="copied" aria-hidden="true"><Fragment set:html={copiedIcon} /></span>
+  <span class="sk-copy-button__label" data-sk-copy-button-label aria-live="polite">{t("copy.action")}</span>
 </button>
 
-<script>
-  import { initCopyButtons } from "../scripts/copy-button";
-  initCopyButtons();
-</script>

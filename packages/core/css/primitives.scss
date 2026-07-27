@@ -1,8 +1,8 @@
 /*
  * TIER 1, PRIMITIVE SCALE
  *
- * Raw tier-1 values: the foundational ramp set plus space, radius, size, type and motion. The
- * ramps live on `:root` and are configured through seed custom properties; no brand file or selector is needed.
+ * Raw tier-1 values: the foundational ramp set plus space, radius, size, type and motion. Ramps
+ * live on `:root`; consumers replace complete role ramps from an unlayered brand stylesheet.
  */
 @use "primitives/space";
 @use "primitives/radius";

@@ -1,20 +1,20 @@
 /*
  * TIER 2, SEMANTIC
  *
- * Purpose, not appearance. Every colour references a RAMP POSITION (accent-600), never a
- * hue, so brand can swap tier 1 underneath. Colour tokens carry their light + dark values
+ * Purpose, not appearance. Every color references a RAMP POSITION (accent-600), never a
+ * hue, so brand can swap tier 1 underneath. Color tokens carry their light + dark values
  * in a single light-dark() call: the browser serves the right one based on the used
  * color-scheme, so flipping color-scheme on <html> re-themes with no extra CSS.
  *
  * Three constraints show up as structure here:
- *   • light-dark() takes exactly TWO colours, so high contrast is NOT a third slot, it
+ *   • light-dark() takes exactly TWO colors, so high contrast is NOT a third slot, it
  *     lives in modes/hc.scss and re-declares these tokens. And only COLOUR can be
- *     mode-aware, which is why a shadow's colour is its own token and elevation.* is a
+ *     mode-aware, which is why a shadow's color is its own token and elevation.* is a
  *     composite that references it.
- *   • Density is a runtime system multiplier (--ds-density) with opt-in descendant scopes, not a
+ *   • Density is a runtime system multiplier (--sk-density) with opt-in descendant scopes, not a
  *     second spacing scale.
  *   • Interactive sizes floor at the WCAG target via max(), so density cannot shrink a
- *     control below the minimum hit size no matter what --ds-density is set to.
+ *     control below the minimum hit size no matter what --sk-density is set to.
  */
 @use "semantic/base";
 @use "semantic/density";
@@ -29,21 +29,21 @@
 @use "semantic/breakpoints";
 @use "semantic/reduced-motion";
 
-/* --ds-density registered so the browser type-checks it as a number and gives it a real
- * initial value; a junk value like `--ds-density: red` is now rejected, not inherited. */
-@property --ds-density {
+/* --sk-density registered so the browser type-checks it as a number and gives it a real
+ * initial value; a junk value like `--sk-density: red` is now rejected, not inherited. */
+@property --sk-density {
   syntax: "<number>";
   inherits: true;
   initial-value: 1;
 }
 
-@property --ds-density-system {
+@property --sk-density-system {
   syntax: "<number>";
   inherits: true;
   initial-value: 1;
 }
 
-@property --ds-density-factor {
+@property --sk-density-factor {
   syntax: "<number>";
   inherits: false;
   initial-value: 1;

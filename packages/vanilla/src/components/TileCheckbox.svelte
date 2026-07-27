@@ -16,7 +16,7 @@
   const input = root.querySelector<HTMLInputElement>('input[type="checkbox"][data-part="input"], input[type="checkbox"]');
   if (!input) throw new Error("TileCheckbox requires an input[type=checkbox] part.");
 
-  if (!root.id) root.id = uniqueId("ds-tile-checkbox");
+  if (!root.id) root.id = uniqueId("sk-tile-checkbox");
   const dc = root.getAttribute("data-default-checked");
   const defaultChecked: boolean | "indeterminate" | undefined =
     dc === "true" ? true : dc === "indeterminate" ? "indeterminate" : dc === "false" ? false : undefined;
@@ -46,7 +46,7 @@
     input.indeterminate = api.indeterminate;
     scopeTile(root);
     input.setAttribute("data-part", "input");
-    root.classList.add("ds-interactive");
+    root.classList.add("sk-interactive");
   });
 
   const cleanups: Array<() => void> = [];

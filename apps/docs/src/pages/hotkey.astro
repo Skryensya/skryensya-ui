@@ -41,8 +41,8 @@ formatHotkey("mod+k", false);  // "Ctrl+K"
     declarativo en <code>@skryensya/react</code>.
   </p>
   <p>
-    Pruébalo ahora: aprieta <kbd class="ds-kbd" data-cmdk-hint>⌘K</kbd>, el buscador de esta documentación
-    es el único consumidor de este primitivo. El <a href="/componentes/kbd"><code>Kbd</code></a> tiene
+    Pruébalo ahora: aprieta <kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd>, el buscador de esta documentación
+    es <a href="/componentes/command-palette">CommandPalette</a>, el componente que consume este primitivo. El <a href="/componentes/kbd"><code>Kbd</code></a> tiene
     además un estado que reacciona al teclado con este mismo <code>matchesHotkey</code>; se ve en su
     página.
   </p>
@@ -61,7 +61,7 @@ formatHotkey("mod+k", false);  // "Ctrl+K"
     <code>bindHotkey(spec, handler)</code> engancha un listener de <code>keydown</code> y devuelve su
     propia limpieza, la misma forma que devuelve todo enhancer del sistema.
   </p>
-  <CodeBlock code={vanilla} label="tu JavaScript" />
+  <CodeBlock code={vanilla} label="JavaScript" />
 
   <h2>React</h2>
   <p>
@@ -69,7 +69,7 @@ formatHotkey("mod+k", false);  // "Ctrl+K"
     (nunca el paquete vanilla, los dos bindings son hermanos sobre el core), pasa el handler por un ref
     para no re-enganchar en cada render, y la limpieza del efecto quita el listener.
   </p>
-  <CodeBlock code={react} label="tu React" />
+  <CodeBlock code={react} label="React" />
 
   <h2>El spec</h2>
   <p>
@@ -84,7 +84,7 @@ formatHotkey("mod+k", false);  // "Ctrl+K"
     Un atajo solo se descubre si se ve. <code>formatHotkey</code> lo escribe como lo escribe el sistema
     operativo, glifos en Mac, palabras en el resto, para el badge junto a un buscador o en un menú.
   </p>
-  <CodeBlock code={format} label="tu JavaScript" />
+  <CodeBlock code={format} label="JavaScript" />
 
   <h2>Lo que hace por ti, y lo que no</h2>
   <ul>

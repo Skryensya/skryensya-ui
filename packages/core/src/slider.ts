@@ -6,14 +6,14 @@
  * exposed as a custom property so the fill can be painted without JavaScript.
  */
 export const sliderParts = {
-  root: "ds-slider",
+  root: "sk-slider",
 } as const;
 
 export type SliderPart = keyof typeof sliderParts;
 export type SliderPartClass = (typeof sliderParts)[SliderPart];
 
 /** The custom property carrying the filled fraction (0–1) the track paints against. */
-export const sliderFillProperty = "--ds-slider-fill";
+export const sliderFillProperty = "--sk-slider-fill";
 
 /** Filled fraction (0–1) for a value within [min, max]. Guards an empty or inverted range. */
 export function sliderFill(value: number, min: number, max: number): number {

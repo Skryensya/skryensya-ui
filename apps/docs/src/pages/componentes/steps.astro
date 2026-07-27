@@ -1,4 +1,5 @@
 ---
+import "@skryensya/core/components/steps.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
@@ -6,39 +7,39 @@ import Showcase from "../../components/Showcase.astro";
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
 /* A completed step is marked with the real `check` icon, not a ✓ glyph; the pending steps keep numbers. */
-const html = `<ol class="ds-steps">
-  <li class="ds-steps__item" data-status="complete">
-    <span class="ds-steps__marker">
-      <span data-ds-icon="check"></span>
+const html = `<ol class="sk-steps">
+  <li class="sk-steps__item" data-status="complete">
+    <span class="sk-steps__marker">
+      <span data-sk-icon="check"></span>
     </span>
     <span>
-      <span class="ds-steps__label">Elegir seeds</span>
-      <span class="ds-steps__description">Tu base cromática</span>
+      <span class="sk-steps__label">Elegir marca</span>
+      <span class="sk-steps__description">Tu intención cromática</span>
     </span>
   </li>
-  <li class="ds-steps__item" data-status="current" aria-current="step">
-    <span class="ds-steps__marker">2</span>
+  <li class="sk-steps__item" data-status="current" aria-current="step">
+    <span class="sk-steps__marker">2</span>
     <span>
-      <span class="ds-steps__label">Ajustar ramps</span>
-      <span class="ds-steps__description">
+      <span class="sk-steps__label">Ajustar ramps</span>
+      <span class="sk-steps__description">
         Define la luz y la sombra
       </span>
     </span>
   </li>
-  <li class="ds-steps__item" data-status="upcoming">
-    <span class="ds-steps__marker">3</span>
+  <li class="sk-steps__item" data-status="upcoming">
+    <span class="sk-steps__marker">3</span>
     <span>
-      <span class="ds-steps__label">Auditar contraste</span>
-      <span class="ds-steps__description">
+      <span class="sk-steps__label">Auditar contraste</span>
+      <span class="sk-steps__description">
         Prueba cada par de color
       </span>
     </span>
   </li>
-  <li class="ds-steps__item" data-status="upcoming">
-    <span class="ds-steps__marker">4</span>
+  <li class="sk-steps__item" data-status="upcoming">
+    <span class="sk-steps__marker">4</span>
     <span>
-      <span class="ds-steps__label">Exportar</span>
-      <span class="ds-steps__description">Publica el contrato</span>
+      <span class="sk-steps__label">Exportar</span>
+      <span class="sk-steps__description">Publica el contrato</span>
     </span>
   </li>
 </ol>`;
@@ -48,10 +49,10 @@ const react = `import { Steps } from "@skryensya/react/steps";
 <Steps
   current={1}
   steps={[
-    { label: "Elegir seeds", description: "Tu base cromática" },
+    { label: "Elegir marca", description: "Tu intención cromática" },
     {
-      label: "Ajustar ramps",
-      description: "Define la luz y la sombra",
+      label: "Definir rampas",
+      description: "Exporta cada posición",
     },
     {
       label: "Auditar contraste",
@@ -70,7 +71,6 @@ const react = `import { Steps } from "@skryensya/react/steps";
     secuencia, no gobierna cuál está activo ni guarda la navegación entre pasos.
   </p>
 
-  <h2>Demo HTML</h2>
   <Showcase html={html} react={react} label="Steps" />
   <p>En React, <code>current</code> deriva el estado de los pasos que no declaran el suyo; un paso puede sobrescribirlo con <code>status</code>. <code>description</code> agrega contexto sin convertir el paso en una tarjeta.</p>
 
@@ -85,5 +85,5 @@ const react = `import { Steps } from "@skryensya/react/steps";
   <CodeBlock code={install} label="terminal" />
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
 </Base>

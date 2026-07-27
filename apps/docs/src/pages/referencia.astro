@@ -1,4 +1,5 @@
 ---
+import "@skryensya/core/components/select.css";
 import Base from "../layouts/Base.astro";
 import TokenTable from "../components/TokenTable.astro";
 ---
@@ -23,7 +24,7 @@ import TokenTable from "../components/TokenTable.astro";
     saltó la capa semántica y rompió el modo oscuro para ese componente solo.
   </p>
   <p>
-    Los tokens <span class="ds-badge" data-tone="success">component</span> viven en el elemento, no
+    Los tokens <span class="sk-badge" data-tone="success">component</span> viven en el elemento, no
     en <code>:root</code>, por eso se resuelven contra un elemento de prueba que lleva la clase. Si
     aparece <em>no resuelto en este contexto</em>, no es un bug: es el scoping de tier 3 mostrándose. Ese
     token no existe hasta que un elemento opta por él.

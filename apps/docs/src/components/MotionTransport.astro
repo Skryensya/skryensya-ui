@@ -1,0 +1,85 @@
+---
+/*
+ * The transport for a group of motion specimens (/motion).
+ *
+ * A play/pause pair, not a replay button. What the reader is comparing is a LENGTH OF TIME, and a
+ * length only reads next to another one, so the useful control is the one that keeps the whole
+ * group running while you look at it. Replay says "here it goes again"; play/pause says "this is
+ * still true", which is what a specimen is.
+ *
+ * The two glyphs are geometry the docs own (src/icons.ts), not stable roles: play/pause is a
+ * player's vocabulary, not the design system's. They cross-fade in the same grid cell, the same
+ * two-state recipe the contrast toggle uses in the chrome.
+ *
+ * State lives in ONE place, `data-playing` on the button, written by scripts/motion-specimens.ts.
+ * CSS reads it for the glyph and for which label is in the DOM, so the icon, the word and the
+ * accessible name can't disagree — there is no second copy of the state to get out of sync.
+ */
+import { iconDataMarkup, pause, play } from "../icons";
+
+interface Props {
+  /** Which specimens this transport drives, for the accessible name; several live on one page. */
+  label: string;
+}
+
+const { label } = Astro.props;
+
+const playIcon = iconDataMarkup("play", play, { attrs: { "data-motion-icon": "play" } });
+const pauseIcon = iconDataMarkup("pause", pause, { attrs: { "data-motion-icon": "pause" } });
+---
+
+<button
+  class="sk-button sk-interactive transport"
+  type="button"
+  data-motion-play
+  data-playing="false"
+  data-variant="ghost"
+  data-size="sm"
+>
+  <span class="transport__glyphs" aria-hidden="true">
+    <Fragment set:html={playIcon} />
+    <Fragment set:html={pauseIcon} />
+  </span>
+  <span class="transport__label" data-when="idle">Reproducir<span class="transport__what"> {label}</span></span>
+  <span class="transport__label" data-when="playing">Pausar<span class="transport__what"> {label}</span></span>
+</button>
+
+<style>
+  /* One cell, two glyphs: the swap happens in place, so the label never shifts sideways when the
+   * state changes. Sized to the icon so the button keeps a button's proportions. */
+  .transport__glyphs {
+    display: grid;
+    place-items: center;
+  }
+
+  .transport__glyphs :global(.sk-icon) {
+    grid-area: 1 / 1;
+    transition-property: opacity, scale;
+    transition-duration: var(--motion-state-change-duration);
+    transition-timing-function: var(--motion-state-change-easing);
+  }
+
+  .transport[data-playing="false"] .transport__glyphs :global([data-motion-icon="pause"]),
+  .transport[data-playing="true"] .transport__glyphs :global([data-motion-icon="play"]) {
+    opacity: 0;
+    scale: 0.6;
+  }
+
+  /* `display: none` rather than hidden text: the label that isn't showing must not reach the
+   * accessible name either, or the button announces both verbs at once. */
+  .transport[data-playing="false"] [data-when="playing"],
+  .transport[data-playing="true"] [data-when="idle"] {
+    display: none;
+  }
+
+  /* Which specimens this drives: redundant on screen, where the figure's own title is right
+   * beside it, and necessary in a list of four buttons all reading "Reproducir". */
+  .transport__what {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+</style>

@@ -53,6 +53,12 @@ const MAP = {
   user: "User",
   visibility: "Eye",
   "visibility-off": "EyeOff",
+  "mode-system": "Monitor",
+  "mode-light": "Sun",
+  "mode-dark": "Moon",
+  "screen-desktop": "Monitor",
+  "screen-tablet": "Tablet",
+  "screen-mobile": "Smartphone",
 };
 
 /* Los defaults del <svg> de Lucide. Van en attrs y no en el CSS porque una declaración CSS le gana a

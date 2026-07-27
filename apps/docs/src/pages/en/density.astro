@@ -1,0 +1,226 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+
+/* The site remains an honest consumer: input/field needs its authored paint rules. */
+
+const componentMarkup = `<section
+  class="sk-box sk-stack"
+  data-sk-density-scope
+  style="--sk-density-factor: 0.72"
+  data-surface="surface"
+  data-border="subtle"
+  data-padding="lg"
+  data-gap="sm"
+>
+  <header>
+    <strong>Order Summary</strong>
+  </header>
+
+  <div class="sk-field">
+    <label class="sk-field__label" for="delivery-email">Email</label>
+    <input class="sk-input" id="delivery-email" type="email" />
+  </div>
+
+  <button
+    class="sk-button sk-interactive"
+    data-sk-button
+    data-variant="primary"
+    type="button"
+  >
+    Save changes
+  </button>
+</section>`;
+
+const absoluteDensity = `<section
+  data-sk-density-scope
+  style="--sk-density: 0.72"
+>
+  <!-- normal component content -->
+</section>`;
+
+const labMarkup = `<section
+  class="sk-box sk-stack"
+  data-sk-density-scope
+  data-surface="surface"
+  data-border="subtle"
+  data-padding="lg"
+  data-gap="sm"
+  style="--sk-density-factor: 0.72"
+>
+  <!-- normal component content -->
+</section>`;
+const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEach((lab) => {
+  const slider = lab.querySelector("[data-density-slider]");
+  const target = lab.querySelector("[data-density-target]");
+  const factorOutput = lab.querySelector("[data-density-factor-output]");
+  const effectiveOutput = lab.querySelector("[data-density-effective-output]");
+  const paddingOutput = lab.querySelector("[data-density-padding-output]");
+  const buttonOutput = lab.querySelector("[data-density-button-output]");
+  const button = target?.querySelector(".sk-button");
+
+  if (
+    !(slider instanceof HTMLInputElement)
+    || !(target instanceof HTMLElement)
+    || !(factorOutput instanceof HTMLOutputElement)
+    || !(effectiveOutput instanceof HTMLOutputElement)
+    || !(paddingOutput instanceof HTMLOutputElement)
+    || !(buttonOutput instanceof HTMLOutputElement)
+    || !(button instanceof HTMLButtonElement)
+  ) return;
+
+  const render = () => {
+    const value = Number(slider.value);
+    const min = Number(slider.min);
+    const max = Number(slider.max);
+    const factor = value / 100;
+
+    target.style.setProperty("--sk-density-factor", String(factor));
+    slider.style.setProperty("--sk-slider-fill", String((value - min) / (max - min)));
+    slider.setAttribute("aria-valuetext", \`\${factor.toFixed(2)} veces la densidad del sistema\`);
+    factorOutput.textContent = \`\${factor.toFixed(2)}×\`;
+
+    const density = Number.parseFloat(getComputedStyle(target).getPropertyValue("--sk-density"));
+    effectiveOutput.textContent = \`\${density.toFixed(2)}×\`;
+    paddingOutput.textContent = getComputedStyle(target).paddingInlineStart;
+    buttonOutput.textContent = \`\${Math.round(button.getBoundingClientRect().height)}px\`;
+  };
+
+  slider.addEventListener("input", render);
+  render();
+});`;
+
+---
+
+<Base
+  title="Component Density"
+  description="Adjust the spacing and controls of an isolated component without compacting the rest of the interface."
+>
+  <h1>Component Density</h1>
+  <p class="lede">
+    Local density is not a component variant. It is a scope that recalculates the tokens
+    space and control <strong>at the limit of your component</strong>, without touching its neighbors or density
+    chosen for the application.
+  </p>
+
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
+      <p>
+        <strong>The entire contract lives on the same node:</strong> <code>data-sk-density-scope</code>
+        activates local reprojection; <code>--sk-density-factor</code> or <code>--sk-density</code>,
+        written in <code>style</code>, decide its value. This scope does not add classes, selectors,
+        mandatory presets nor a prop for each component.
+      </p>
+    </div>
+  </div>
+
+  <h2>Set it to the limit you already have</h2>
+  <p>
+    Put the attribute once, at the root of the component you want to compact, and write the value there
+    as inline style. Their descendants continue to read the same semantic tokens; you do not need
+    create a class for the scope or mark each button, field or row separately.
+  </p>
+  <CodeBlock code={componentMarkup} label="Component HTML" />
+
+  <h2>Use a relative factor by default</h2>
+  <p>
+    <code>--sk-density-factor</code> preserves the user's intent. If the application is in
+    <code>0.8</code> and the component uses <code>0.72</code>, its effective density is
+    <code>0.576</code>. The value can be any valid number, without depending on presets.
+  </p>
+
+  <p>
+    Use an absolute value only when the component needs an application-independent measurement.
+    The absolute value wins over the factor; choose one or the other, not both.
+  </p>
+  <CodeBlock code={absoluteDensity} label="HTML with absolute value" />
+
+  <h2>Test an isolated component</h2>
+  <p>
+    Control is out of scope. Drag it: change the padding, gaps and semantic sizes
+    within the summary; the rest of the page does not move.
+  </p>
+  <Showcase code={labMarkup} previewScript={densityLabScript} label="Local Scope in action" note="scope and value live inline on the same node">
+    <div class="sk-stack" data-gap="lg" data-density-lab style="inline-size: 100%">
+      <div class="sk-stack" data-gap="xs">
+        <div class="sk-inline" data-gap="sm" data-align="baseline">
+          <label for="density-factor-control"><strong>Factor local</strong></label>
+          <output class="mono" data-density-factor-output>1.00×</output>
+        </div>
+        <input
+          class="sk-slider"
+          data-density-slider
+          id="density-factor-control"
+          type="range"
+          min="50"
+          max="150"
+          step="1"
+          value="100"
+          aria-valuetext="1.00 times the system density"
+          style="--sk-slider-fill: 0.5"
+        />
+        <div class="sk-inline" data-gap="lg" data-align="baseline" aria-live="polite">
+          <span>Densidad efectiva: <output class="mono" data-density-effective-output>1.00×</output></span>
+          <span>Padding inline: <output class="mono" data-density-padding-output>…</output></span>
+          <span>Button: <output class="mono" data-density-button-output>…</output></span>
+        </div>
+      </div>
+
+      <section
+        class="sk-box sk-stack"
+        data-sk-density-scope
+        data-density-target
+        data-surface="surface"
+        data-border="subtle"
+        data-padding="lg"
+        data-gap="sm"
+        style="--sk-density-factor: 1"
+        aria-labelledby="density-component-title"
+      >
+        <header class="sk-inline" data-gap="sm" data-align="baseline">
+          <strong id="density-component-title">Order Summary</strong>
+          <span>3 items</span>
+        </header>
+        <div class="sk-field">
+          <label class="sk-field__label" for="density-email">Delivery email</label>
+          <input class="sk-input" id="density-email" name="density-email" type="email" placeholder="name@team.com" />
+        </div>
+        <div class="sk-inline" data-gap="sm">
+          <button class="sk-button sk-interactive" data-sk-button data-variant="primary" type="button">Save changes</button>
+          <button class="sk-button sk-interactive" data-sk-button data-variant="ghost" type="button">Cancel</button>
+        </div>
+      </section>
+    </div>
+  </Showcase>
+
+  <h2>What changes, and what does not</h2>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr><th>Within the scope</th><th>Comportamiento</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--space-*</code></td><td>Padding, gaps and insets are recalculated with the effective density.</td></tr>
+        <tr><td><code>--size-control-*</code></td><td>They are recalculated, with the minimum floor size incorporated.</td></tr>
+        <tr><td>Typography, icons and radio</td><td>They remain invariant: density brings content closer, the visual scale does not change.</td></tr>
+        <tr><td>Focus ring and touch area</td><td>They remain protected. A default Button does not drop <code>44px</code> paint; <code>data-size="sm"</code> can paint at 32px and the hit is still on <code>44px</code>.</td></tr>
+        <tr><td>Wrappers y <code>--space-section</code></td><td>They are not compacted: the page geometry does not belong to the component.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Nested Scopes do not shrink twice</h2>
+  <p>
+    Each scope calculates its factor against the captured density of the system, not against the parent scope. A
+    component to <code>0.72</code> within another to <code>0.72</code> continues resolving to
+    <code>0.72 × sistema</code>, not <code>0.5184 × sistema</code>. So a subcomponent does not become
+    illegible due to accidental composition.
+  </p>
+
+  <p>
+    To set the density of the entire application, use <a href="/en/dimensions#densidad--un-multiplicador-con-el-piso-adentro">the global dimension</a>.
+    For a local exception, keep the scope at the edge of the component and let its tokens do the rest.
+  </p>
+</Base>
+

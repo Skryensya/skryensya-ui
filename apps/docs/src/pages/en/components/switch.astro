@@ -1,0 +1,53 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+
+
+
+const html = `<label class="sk-switch">
+  <input
+    class="sk-switch__input"
+    type="checkbox"
+    name="deploy-automatically"
+    role="switch"
+  />
+  <span class="sk-switch__control" aria-hidden="true">
+    <span class="sk-switch__thumb"></span>
+  </span>
+  <span class="sk-switch__label">Deploy automatically</span>
+</label>`;
+
+const react = `import { Switch } from "@skryensya/react/switch";
+
+<Switch
+  name="deploy-automatically"
+  defaultChecked
+  onCheckedChange={(details) => {
+    console.log(details.checked); // true | false
+  }}
+>
+  Deploy automatically
+</Switch>;`;
+---
+
+<Base title="Switch" description="Switch: A persistent binary preference over native checkbox.">
+  <h1>Switch</h1>
+  <p class="lede">A binary state that takes effect immediately: on or off. For a selection that requires saving, use Checkbox.</p>
+
+  <Showcase html={html} react={react} label="Switch" />
+  <p>Does not require vanilla initialization: the native checkbox preserves keyboard, reset and form submit. React only encapsulates that same control.</p>
+
+
+  <h2>React</h2>
+  <p>The code is in the <strong>React</strong> tab of the preview.</p>
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>The input is still <code>checkbox</code>; <code>role="switch"</code> communicates the correct semantics.</li>
+    <li><code>defaultChecked</code> leaves the value to the browser; <code>checked</code> controls it.</li>
+    <li><code>onCheckedChange</code> reports the intent; It does not infer persistence or make requests.</li>
+    <li>Use it only if the change takes effect immediately and there are exactly two states.</li>
+  </ul>
+  <StylingHooks groups={[{ file: "components/switch.css", probe: "sk-switch" }]} />
+</Base>

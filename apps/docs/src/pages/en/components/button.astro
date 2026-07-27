@@ -1,0 +1,464 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+import AnatomyDiagram from "../../../components/AnatomyDiagram.astro";
+
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const html = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="primary"
+>
+  Save
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="neutral"
+>
+  Cancel
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="danger"
+>
+  Delete
+</button>`;
+
+/* Icon + text: no extra hook. The button is already an inline-flex row with a gap, so an authored
+   <svg class="sk-icon"> and the label lay themselves out. The icon is DECORATIVE, the label already
+   names the action, so it stays aria-hidden. */
+const iconHtml = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="primary"
+>
+  <span data-sk-icon="download"></span>
+  Descargar
+</button>`;
+
+/* Icon-only: data-icon-only makes the box a square, and the name, with no text to carry it, MUST
+   be authored as aria-label. The icon stays decorative. Default size matches the control (md). */
+const iconOnlyHtml = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-icon-only
+  aria-label="Settings"
+>
+  <span data-sk-icon="settings"></span>
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-icon-only
+  data-variant="ghost"
+  aria-label="Editar"
+>
+  <span data-sk-icon="edit"></span>
+</button>`;
+
+/* Same shape at sm: face paints at control-sm; ::after keeps the 44px hit. */
+const iconOnlySmHtml = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="sm"
+  data-icon-only
+  aria-label="Settings"
+>
+  <span data-sk-icon="settings"></span>
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="sm"
+  data-icon-only
+  data-variant="ghost"
+  aria-label="Editar"
+>
+  <span data-sk-icon="edit"></span>
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="sm"
+  data-icon-only
+  data-variant="primary"
+  aria-label="Add"
+>
+  <span data-sk-icon="add"></span>
+</button>`;
+
+const js = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// Icons are authored as <span data-sk-icon> placeholders;
+// mountIcons replaces them with the <svg> of the linked set.
+mountIcons(document, lucideIcons);
+
+await initComponents();`;
+
+const react = `import { Button } from "@skryensya/react/button";
+
+<Button variant="primary">Save</Button>
+<Button variant="neutral">Cancel</Button>
+<Button variant="danger">Delete</Button>;`;
+
+const sizeHtml = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="sm"
+  data-variant="primary"
+>
+  Save
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="md"
+  data-variant="primary"
+>
+  Save
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="lg"
+  data-variant="primary"
+>
+  Save
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="sm"
+  data-icon-only
+  data-variant="ghost"
+  aria-label="More actions"
+>
+  <span data-sk-icon="more"></span>
+</button>
+<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-size="md"
+  data-icon-only
+  data-variant="ghost"
+  aria-label="More actions"
+>
+  <span data-sk-icon="more"></span>
+</button>`;
+
+const sizeReact = `import { Button } from "@skryensya/react/button";
+import { Icon } from "@skryensya/react/icon";
+
+<Button size="sm" variant="primary">Save</Button>
+<Button variant="primary">Save</Button>
+{/* md is the default: skip size or size="md" */}
+<Button size="lg" variant="primary">Save</Button>
+<Button
+  size="sm"
+  iconOnly
+  variant="ghost"
+  aria-label="More actions"
+>
+  <Icon name="more" />
+</Button>
+<Button iconOnly variant="ghost" aria-label="More actions">
+  <Icon name="more" />
+</Button>;`;
+
+const sizeHit = `/* Ya viene en components/button.css. No hay que
+   escribirlo: está acá porque es la parte del componente
+   que más sorprende, y conviene saber que existe.
+
+   El positioning NO se declara acá a propósito: lo pone
+   .sk-interactive (state layer). Un position propio haría
+   de cualquier botón el bloque contenedor de lo que tenga
+   dentro en absoluto. */
+.sk-button::after {
+  content: "";
+  position: absolute;
+  inset-block: min(
+    0px,
+    calc((100% - var(--size-touch-target)) / 2)
+  );
+  inset-inline: min(
+    0px,
+    calc((100% - var(--size-touch-target)) / 2)
+  );
+}`;
+
+const iconReact = `import { Button } from "@skryensya/react/button";
+import { Icon } from "@skryensya/react/icon";
+
+<Button variant="primary">
+  <Icon name="download" />
+  Descargar
+</Button>;`;
+
+
+const iconOnlyReact = `import { Button } from "@skryensya/react/button";
+import { Icon } from "@skryensya/react/icon";
+
+// no visible text, name is required: aria-label
+<Button iconOnly aria-label="Settings">
+  <Icon name="settings" />
+</Button>
+<Button iconOnly variant="ghost" aria-label="Editar">
+  <Icon name="edit" />
+</Button>;`;
+
+const iconOnlySmReact = `import { Button } from "@skryensya/react/button";
+import { Icon } from "@skryensya/react/icon";
+
+// Face sm (32px) + hit 44px via ::after. aria-label is required.
+<Button size="sm" iconOnly aria-label="Settings">
+  <Icon name="settings" />
+</Button>
+<Button
+  size="sm"
+  iconOnly
+  variant="ghost"
+  aria-label="Editar"
+>
+  <Icon name="edit" />
+</Button>
+<Button
+  size="sm"
+  iconOnly
+  variant="primary"
+  aria-label="Add"
+>
+  <Icon name="add" />
+</Button>;`;
+
+const tileButtonHtml = `<button
+  class="sk-tile sk-tile--interactive sk-interactive"
+  type="button"
+>
+  <span class="sk-tile__content">
+    <span class="sk-tile__title">Run deployment</span>
+    <span class="sk-tile__description">
+      Start the production deployment now.
+    </span>
+  </span>
+</button>`;
+
+const tileButtonVanilla = `import { createTileButton } from "@skryensya/vanilla/tile-button";
+
+const button = createTileButton();
+button.textContent = "Run deployment";
+button.addEventListener("click", runDeployment);`;
+
+const tileButtonReact = `import { TileButton } from "@skryensya/react/tile-button";
+
+<TileButton onClick={runDeployment}>
+  <span className="sk-tile__content">
+    <span className="sk-tile__title">Run deployment</span>
+    <span className="sk-tile__description">
+      Start the production deployment now.
+    </span>
+  </span>
+</TileButton>;`;
+const linkHtml = `<a
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-variant="primary"
+  href="/en/first-component"
+>
+  Go to first component
+</a>`;
+
+const linkReact = `import { ButtonLink } from "@skryensya/react/button";
+
+<ButtonLink
+  variant="primary"
+  href="/en/first-component"
+>
+  Go to first component
+</ButtonLink>;`;
+
+---
+
+<Base title="Button" description="Button: style hooks, minimal vanilla enhancer and React component.">
+  <h1>Button</h1>
+  <p class="lede">
+    Button is a static component: the platform already comes with the behavior of <code>&lt;button&gt;</code>.
+    The system provides styling hooks, a vanilla enhancer that normalizes attributes and a React wrapper.
+  </p>
+
+  <h2>Anatomy</h2>
+  <AnatomyDiagram
+    src="/anatomies/button.svg"
+    alt="Diagram of real primary Button with Lucide download icon and label. Its colors, radius, padding, gap, typography, shadow, width and height replicate the documented Button; Width and height have independent dimensions."
+    caption="The anatomy shows the primary Button with icon and text as documented. Each card contains actual hooks and their arrow ends on the property they control."
+  />
+
+  <Showcase html={html} react={react} label="Button" />
+
+  <h2>ButtonLink: Button appearance, link semantics</h2>
+  <p>
+    If you trigger an action, use <code>Button</code>. If you navigate to a
+    <code>href</code>, use <code>ButtonLink</code>: render a
+    <code>&lt;a&gt;</code> and retains the same variant, size and shape
+    icon-only. It does not use <code>as="a"</code> or a <code>link</code> variant.
+  </p>
+  <Showcase
+    html={linkHtml}
+    react={linkReact}
+    label="ButtonLink"
+    note="Button-like navigation"
+  />
+  <p>
+    A <code>ButtonLink</code> demands <code>href</code> and does not accept
+    <code>disabled</code>. If the destination is not available, render
+    unlinked content: <code>aria-disabled</code> alone does not stop the
+    navigation.
+  </p>
+
+  <h2>Sizes</h2>
+  <p>
+    The size is an <strong>orthogonal</strong> axis to the variant: a primary can be
+    <code>sm</code>, <code>md</code> or <code>lg</code>. It is written with <code>data-size</code>
+    (vanilla) or <code>size</code> (React). HTML without attribute preserves fallback
+    <code>md</code>; React serializes that default as <code>data-size="md"</code>.
+  </p>
+  <Showcase
+    html={sizeHtml}
+    react={sizeReact}
+    label="Button · sm / md / lg"
+    note="text + icon-only sm and md"
+  />
+
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th scope="col">Size</th>
+          <th scope="col">Pintura</th>
+          <th scope="col">Hit</th>
+          <th scope="col">When</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>sm</code></td>
+          <td>
+            <code>--size-control-sm</code> (32px a densidad 1)
+          </td>
+          <td>
+            <code>44px</code> via <code>::after</code>
+          </td>
+          <td>
+            Toolbars, dense tables, secondary actions next to a control
+            <code>md</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>md</code> (default)</td>
+          <td>
+            <code>max(control-md, 44px)</code> → 44px
+          </td>
+          <td>The box itself</td>
+          <td>Main Form and Page Actions</td>
+        </tr>
+        <tr>
+          <td><code>lg</code></td>
+          <td>
+            <code>max(control-lg, 44px)</code> → 48px
+          </td>
+          <td>The box itself</td>
+          <td>Heroes, marketing CTAs, low noise screens</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Button <code>sm</code>: pintar chico, tocar grande</h3>
+  <p>
+    <code>data-size="sm"</code> is the only size that <strong> paints below </strong> of the
+    44px touch target (iOS HIG / <code>--size-touch-target</code>). The WCAG hard floor
+    (24px) lives inside <code>--size-control-sm</code>; the HIG is fulfilled by expanding the hit, not
+    the paint (<a href="/en/density">density</a>, ADR-4).
+  </p>
+  <ul>
+    <li>
+      Layout, border-box and focus ring follow <code>--sk-button-height</code> (32px).
+    </li>
+    <li>
+      The clickable area reaches 44px with an absolute <code>::after</code> that brings the own
+      <code>button.css</code> (the state layer already uses <code>::before</code>). Nothing to be done.
+    </li>
+    <li>
+      Combines with any variant and with <code>data-icon-only</code>: a ghost icon-only
+      <code>sm</code> is the typical “more shares” pattern in a row.
+    </li>
+  </ul>
+  <CodeBlock
+    code={sizeHit}
+    label="components/button.css"
+    lang="css"
+    note="already included; the hit never drops to 32px"
+  />
+
+  <h2>Surface Button: TileButton</h2>
+  <p>
+    When the entire surface performs a single action, use <code>TileButton</code>. Renders a
+    <code>&lt;button type="button"&gt;</code>; Enter, Space and <code>disabled</code> are still native.
+  </p>
+  <Showcase html={tileButtonHtml} react={tileButtonReact} label="TileButton" />
+  <p>Authored HTML works without initialization. <code>createTileButton</code> constructs the button when the tree is generated from JavaScript.</p>
+  <CodeBlock code={tileButtonVanilla} label="JavaScript" />
+
+  <h2>With icon</h2>
+  <p>
+    An icon inside does not need any new hook: the button is already a row <code>inline-flex</code> with
+    a gap, so a <code>&lt;svg class="sk-icon"&gt;</code> and the text arrange themselves. The icon is
+    <strong>decorative</strong>, the text already names the action, so it goes <code>aria-hidden</code> and
+    the accessible name remains that of the button.
+  </p>
+  <Showcase html={iconHtml} react={iconReact} label="Button with icon" />
+
+  <h2>button icon</h2>
+  <p>
+    <code>data-icon-only</code> is a <strong>shape</strong>, a third axis orthogonal to variant and
+    size: a square the height of the control that holds a single glyph. Since there is no text where
+    live, the accessible name <strong>has</strong> to go in <code>aria-label</code> (or
+    <code>aria-labelledby</code>): vanilla enhancer and React wrapper reject an icon button
+    unnamed, just as the enhancer rejects the missing class. The icon inside is decorative,
+    the name is from the button, not the svg.
+  </p>
+  <Showcase html={iconOnlyHtml} react={iconOnlyReact} label="button icon" />
+
+  <h3>Icono <code>sm</code>: pintar chico, tocar grande</h3>
+  <p>
+    With <code>data-size="sm"</code> the face paints <code>--size-control-sm</code> (32px) and the
+    <code>::after</code> of the button keeps expanding the clickable area to
+    <code>--size-touch-target</code> (44px): looks compact, feels big.
+  </p>
+  <Showcase
+    html={iconOnlySmHtml}
+    react={iconOnlySmReact}
+    label="button icon sm"
+    note="pinta 32px · hit 44px"
+  />
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+
+  <h2>Initialize vanilla</h2>
+  <p>
+    The authored root needs <code>sk-button</code> for the face and <code>sk-interactive</code>
+    for the state layer and the touch area. The enhancer rejects either of the two if it is missing.
+  </p>
+  <CodeBlock code={js} label="JavaScript" />
+
+  <StylingHooks groups={[{"file":"components/button.css","probe":"sk-button"}]} />
+</Base>

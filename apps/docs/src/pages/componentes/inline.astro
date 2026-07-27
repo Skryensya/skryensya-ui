@@ -5,68 +5,104 @@ import Showcase from "../../components/Showcase.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<nav
-  class="ds-inline"
-  data-gap="sm"
-  data-align="center"
-  data-wrap="true"
-  aria-label="Acciones del documento"
+const html = `<section
+  class="sk-box"
+  data-surface="raised"
+  data-border="subtle"
+  data-padding="lg"
+  aria-labelledby="project-title"
 >
-  <a class="ds-link ds-interactive" href="/componentes/inline">
-    Guardar
-  </a>
-  <a class="ds-link ds-interactive" href="/componentes/inline">
-    Compartir
-  </a>
-  <a class="ds-link ds-interactive" href="/componentes/inline">
-    Ver historial
-  </a>
-</nav>`;
+  <div
+    class="sk-inline"
+    data-gap="md"
+    data-align="center"
+    data-justify="between"
+  >
+    <div class="sk-stack" data-gap="none">
+      <h2 class="sk-heading" data-size="h4" id="project-title">
+        Proyecto Atlas
+      </h2>
+      <p class="sk-text" data-size="sm" data-tone="secondary">
+        3 cambios sin publicar
+      </p>
+    </div>
 
-const react = `import { Inline } from "@skryensya/react/inline";
+    <div class="sk-inline" data-gap="sm" data-wrap="false">
+      <button
+        class="sk-button sk-interactive"
+        data-sk-button
+        data-variant="ghost"
+        type="button"
+      >
+        Vista previa
+      </button>
+      <button
+        class="sk-button sk-interactive"
+        data-sk-button
+        data-variant="primary"
+        type="button"
+      >
+        Publicar
+      </button>
+    </div>
+  </div>
+</section>`;
 
-<Inline
-  as="nav"
-  gap="sm"
-  align="center"
-  wrap
-  aria-label="Acciones del documento"
+const react = `import { Button } from "@skryensya/react/button";
+import { Heading } from "@skryensya/react/heading";
+import { Box, Inline, Stack } from "@skryensya/react/layout";
+import { Text } from "@skryensya/react/text";
+
+<Box
+  as="section"
+  aria-labelledby="project-title"
+  border="subtle"
+  padding="lg"
+  surface="raised"
 >
-  <a className="ds-link ds-interactive" href="/guardar">Guardar</a>
-  <a className="ds-link ds-interactive" href="/compartir">Compartir</a>
-  <a className="ds-link ds-interactive" href="/historial">
-    Ver historial
-  </a>
-</Inline>`;
+  <Inline gap="md" justify="between">
+    <Stack gap="none">
+      <Heading as="h2" id="project-title" size="h4">
+        Proyecto Atlas
+      </Heading>
+      <Text size="sm" tone="secondary">3 cambios sin publicar</Text>
+    </Stack>
+
+    <Inline gap="sm" wrap={false}>
+      <Button variant="ghost">Vista previa</Button>
+      <Button variant="primary">Publicar</Button>
+    </Inline>
+  </Inline>
+</Box>`;
 ---
 
 <Base title="Inline" description="Inline, el pattern de layout horizontal y adaptable.">
   <h1>Inline</h1>
   <p class="lede">
-    Organiza elementos en horizontal y los devuelve a otra línea cuando el espacio se agota. La semántica
-    pertenece al elemento que eliges, no al layout.
+    Organiza elementos en horizontal y los devuelve a otra línea cuando el espacio se agota. Úsalo
+    para barras de acciones y pares label–control; la semántica pertenece al elemento que eliges.
   </p>
 
-  <h2>Demo</h2>
-  <Showcase html={html} react={react} label="Inline" />
+  <Showcase html={html} react={react} label="Barra de acciones" note="Box + Stack + Inline + Button" />
 
   <h2>HTML autorado</h2>
   <p>
-    Usa <code>ds-inline</code> en el elemento semántico que corresponda. Los atributos describen el
-    espaciado, la alineación vertical y si la fila puede envolver sus hijos.
+    Usa <code>sk-inline</code> en el elemento semántico que corresponda. Los atributos describen el
+    espaciado, la alineación vertical, la distribución horizontal y si la fila puede envolver sus hijos.
   </p>
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />
 
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
 
   <h2>Contrato</h2>
   <ul>
     <li><code>as</code> elige el elemento raíz; por defecto es <code>div</code>.</li>
     <li><code>gap</code> acepta <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> o <code>xl</code>; por defecto es <code>md</code>.</li>
     <li><code>align</code> acepta <code>start</code>, <code>center</code>, <code>end</code> o <code>baseline</code>; por defecto es <code>center</code>.</li>
+    <li><code>justify</code> acepta <code>start</code>, <code>center</code>, <code>end</code> o <code>between</code>; en HTML se escribe con <code>data-justify</code>.</li>
     <li><code>wrap</code> permite envolver los hijos; por defecto es <code>true</code>. Usa <code>data-wrap="false"</code> para una sola fila en HTML.</li>
   </ul>
 </Base>

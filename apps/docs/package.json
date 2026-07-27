@@ -3,10 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "Documentation site for @skryensya/core. Consumes the package through its exports map, the same path it documents.",
+  "description": "Documentation site for skryensya/ui. Consumes @skryensya/core through the same exports map it documents.",
   "scripts": {
     "dev": "astro dev stop && astro dev --port 4173",
     "generate:anatomies": "node scripts/generate-anatomies.mjs",
+    "check": "astro check",
     "build": "node scripts/generate-anatomies.mjs && astro build",
     "preview": "astro preview"
   },
@@ -18,9 +19,12 @@
     "@skryensya/vanilla": "workspace:*"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.9",
     "@sveltejs/vite-plugin-svelte": "^7.2.0",
+    "@types/node": "^26.1.1",
     "astro": "^7.1.0",
     "sass": "^1.83.0",
-    "svelte": "^5.56.7"
+    "svelte": "^5.56.7",
+    "typescript": "^5.9.3"
   }
 }

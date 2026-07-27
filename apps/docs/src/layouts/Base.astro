@@ -9,33 +9,23 @@ import "@skryensya/core/modes/hc.scss";
 import "@skryensya/core/dimensions/radius.scss";
 import "@skryensya/core/components/badge.css";
 import "@skryensya/core/components/button.css";
+import "@skryensya/core/components/copy-button.css";
+import "@skryensya/core/components/theme-toggle.css";
 import "@skryensya/core/components/kbd.css";
 import "@skryensya/core/components/field.css";
-import "@skryensya/core/components/checkbox.css";
-import "@skryensya/core/components/toast.css";
 import "@skryensya/core/components/alert.css";
 import "@skryensya/core/components/avatar.css";
-import "@skryensya/core/components/tag.css";
-import "@skryensya/core/components/progress.css";
-import "@skryensya/core/components/slider.css";
+import "@skryensya/core/components/loader.css";
 import "@skryensya/core/components/segmented.css";
-import "@skryensya/core/components/steps.css";
 import "@skryensya/core/components/pagination.css";
-import "@skryensya/core/components/stat.css";
 import "@skryensya/core/components/input.css";
-import "@skryensya/core/components/navbar.css";
-import "@skryensya/core/components/sidebar.css";
-import "@skryensya/core/patterns/vaul.css"; // the drawer IS a Vaul on the inline edge
-import "@skryensya/core/components/drawer.css";
-import "@skryensya/core/components/dialog.css";
-import "@skryensya/core/patterns/dialog-vaul.css";
-import "@skryensya/core/components/details.css";
+import "@skryensya/core/components/command-palette.css";
 import "@skryensya/core/components/tabs.css";
-import "@skryensya/core/components/select.css";
-import "@skryensya/core/components/radio-group.css";
+/* Anclaje: la colocación compartida por tooltip, popover, popup, menu, select, combobox, date picker
+ * y flyout (decisión 25). Va antes que ellos porque son sus consumidores. */
+import "@skryensya/core/patterns/anchored.css";
+import "@skryensya/core/components/tooltip.css";
 import "@skryensya/core/components/switch.css";
-import "@skryensya/core/components/tile.css";
-import "@skryensya/core/components/accordion.css";
 import "@skryensya/core/components/table.css";
 import "@skryensya/core/components/typography.css";
 /* icon.css NO se importa aquí: viaja en tokens.scss, como el state layer. Un icono no es un extra al
@@ -43,26 +33,50 @@ import "@skryensya/core/components/typography.css";
 import "@skryensya/core/patterns/nav-list.css"; // opt-in: una app puede no tener navegación (decisión 17)
 import "@skryensya/core/patterns/scrollbar.css";
 import "@skryensya/core/patterns/scroll-lock.css";
+import "@skryensya/core/patterns/media-gradient.css";
 import "@skryensya/core/patterns/layout.css";
+import "@skryensya/core/patterns/table-pager.css";
 
-import "../examples/button.css";
 /* kbd is in the global chrome (the ⌘K search badge, the palette footer), so its consumer skin loads
  * here rather than per-page, the same reason the button skin above does. */
-import "../examples/kbd.css";
 /* table skin: TokenTable, demos and playground all share one consumer CSS. */
-import "../examples/table.css";
 /* pagination appears in /personalizar and the component page, one consumer skin. */
-import "../examples/pagination.css";
+/* switch: CodeBlock Condensed/Full density control, plus /personalizar and the component page. */
 import "../styles/site.css";
 import "../styles/shell.scss";
 
+import LanguageToggle from "../components/LanguageToggle.astro";
 import SidebarNav from "../components/SidebarNav.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import Toc from "../components/Toc.astro";
 import VanillaMount from "../components/VanillaMount.astro";
 import { vanillaMounts } from "../lib/vanilla-mounts";
-import { allSets, contrastHigh, contrastNormal, iconDataMarkup, iconMarkup } from "../icons";
-import { documentationNavigation, globalNavigation, type NavigationSection } from "../lib/navigation";
+import { allSets, contrastHigh, contrastNormal, iconDataMarkup, iconMarkup, siteIconSet } from "../icons";
+import { getGlobalNavigation, getNavigation, type NavigationSection } from "../lib/navigation";
+import { availableLocales, canonicalPath, getLocale, localizePath, useTranslations } from "../i18n";
+import { createRamp } from "../lib/ramps";
+import { STORAGE_KEY } from "@skryensya/core/storage";
+import {
+  colorModePreference,
+  componentPreviewBindingPreference,
+  componentPreviewScreenPreference,
+  contrastPreference,
+  palettePreference,
+} from "../lib/preferences";
+
+/*
+ * What the pre-paint script is allowed to know: the storage key and the slot names, taken from the
+ * declarations rather than re-typed as literals. That inline script cannot import (it runs before
+ * modules), so this is how it stays tied to the single source instead of being a second one.
+ */
+const PREPAINT = {
+  key: STORAGE_KEY,
+  scheme: colorModePreference.slot,
+  contrast: contrastPreference.slot,
+  binding: componentPreviewBindingPreference.slot,
+  screen: componentPreviewScreenPreference.slot,
+  palette: palettePreference.slot,
+};
 
 interface Props {
   title: string;
@@ -73,7 +87,23 @@ interface Props {
 
 const { title, description, fullBleed = false } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
-const vanillaMount = vanillaMounts[path as keyof typeof vanillaMounts];
+
+/*
+ * `path` is what the reader's URL says; `canonical` is the same page named in Spanish, the site's
+ * locale-independent identity for a document. Anything keyed by page — the mount catalogue, the
+ * alternate-language links — looks up `canonical`; anything compared against a rendered href
+ * compares `path`, because the rail is already rendered in this locale.
+ */
+const locale = getLocale(Astro.url);
+const canonical = canonicalPath(path);
+const t = useTranslations(locale);
+const vanillaMount = vanillaMounts[canonical as keyof typeof vanillaMounts];
+/* Every translation of this page that actually EXISTS: advertising one that 404s is worse than
+ * advertising none, so the list comes from the page directory rather than from the locale list. */
+const alternates = availableLocales(canonical).map((code) => ({
+  code,
+  href: localizePath(canonical, code),
+}));
 
 
 /*
@@ -94,18 +124,21 @@ const iconGeometry = Object.fromEntries(allSets.map((set) => [set.id, set.set]))
  * The navigation lives in lib/navigation.ts, shared with the catalog so the same task grouping
  * cannot drift between exploration and navigation.
  */
-const navigation = documentationNavigation satisfies readonly NavigationSection[];
-const componentSection = navigation.find((section) => section.section === "Componentes");
-const systemSection = navigation.find((section) => section.section === "Sistema");
+const navigation = getNavigation(locale) satisfies readonly NavigationSection[];
+const globalNavigation = getGlobalNavigation(locale);
+/* By stable id, never by visible title: the titles are translated now and would stop matching. */
+const componentSection = navigation.find((section) => section.id === "components");
+const systemSection = navigation.find((section) => section.id === "system");
 
 /*
  * One rail follows the reader through the whole library. Catalog and reference subpages inherit
  * the section that explains their context.
  */
+/* Matched on `canonical`, so one rule covers `/componentes/...` and `/en/components/...` alike. */
 const currentSection =
-  path === "/componentes" || path.startsWith("/componentes/")
+  canonical === "/componentes" || canonical.startsWith("/componentes/")
     ? componentSection ?? navigation[0]
-    : path.startsWith("/referencia/")
+    : canonical.startsWith("/referencia/")
       ? systemSection ?? navigation[0]
       : navigation.find((section) => section.groups.some((group) => group.items.some((item) => item.href === path))) ?? navigation[0];
 
@@ -133,9 +166,27 @@ const searchIndex = [
         })),
     ),
   ),
-  { label: "Explorar componentes", aliases: ["all", "catalog", "catálogo", "todos"], href: "/componentes", section: "Componentes", group: "Explorar" },
-  { label: "Guía de layout y lectura", aliases: ["overview", "primitivas", "resumen"], href: "/componentes/primitivas", section: "Componentes", group: "Layout" },
-  { label: "Personalizar", aliases: ["personalizar", "marca", "brand", "playground"], href: "/personalizar", section: "Global", group: "Personalizar" },
+  {
+    label: t("search.exploreComponents"),
+    aliases: ["all", "catalog", "catálogo", "todos"],
+    href: localizePath("/componentes", locale),
+    section: t("section.components"),
+    group: t("group.explore"),
+  },
+  {
+    label: t("search.layoutGuide"),
+    aliases: ["overview", "primitivas", "resumen"],
+    href: localizePath("/componentes/primitivas", locale),
+    section: t("section.components"),
+    group: t("group.layout"),
+  },
+  {
+    label: t("nav.customize"),
+    aliases: ["personalizar", "marca", "brand", "playground"],
+    href: localizePath("/personalizar", locale),
+    section: t("group.global"),
+    group: t("nav.customize"),
+  },
 ];
 
 const searchIcon = iconMarkup("search");
@@ -143,65 +194,101 @@ const closeIcon = iconMarkup("close");
 const menuIcon = iconMarkup("menu");
 const previousIcon = iconMarkup("arrow-left");
 const nextIcon = iconMarkup("arrow-right");
-/* Out-of-set glyphs, like the theme toggle's sun/moon: two contrast states that cross-fade in place. */
+/* Out-of-set glyphs for the contrast toggle: two states that cross-fade in place. */
 const contrastNormalIcon = iconDataMarkup("contrast-normal", contrastNormal, { attrs: { "data-contrast-icon": "normal" } });
 const contrastHighIcon = iconDataMarkup("contrast-high", contrastHigh, { attrs: { "data-contrast-icon": "high" } });
 
 /*
- * A FEW curated palette presets, not the whole customiser. Each is an { accent, neutral } pair drawn
- * verbatim from the verified seed lists on /personalizar, the accents are contrast-checked in light
- * and dark and kept clear of the feedback hues, and the neutrals stay near-grey so the undertone
- * harmonises without shifting text/background contrast. Setting these two seeds on :root re-derives the
- * entire theme live (the system's whole premise), so the nav control is just two custom properties.
+ * A FEW curated palette presets, not the whole customiser. Each preset carries the complete accent
+ * and neutral ramp declarations generated at build time. The nav control writes that explicit
+ * tier-1 contract onto :root; Core does not derive colors from a hidden input.
  * `id` persists in localStorage; "azul" is the system default and the fallback everywhere.
  */
+const palettePreset = (id: string, name: string, accent: string, neutral: string) => ({
+  id,
+  name,
+  accent,
+  ramps: { ...createRamp("accent", accent), ...createRamp("neutral", neutral) },
+});
 const PALETTE_PRESETS = [
-  { id: "azul", name: "Azul", accent: "oklch(50.4% 0.169 259.6)", neutral: "oklch(58.8% 0.018 260)" },
-  { id: "violeta", name: "Violeta", accent: "oklch(51% 0.185 300)", neutral: "oklch(58.8% 0.018 260)" },
-  { id: "teal", name: "Turquesa", accent: "oklch(50% 0.115 210)", neutral: "oklch(58% 0.08 248)" },
-  { id: "rosa", name: "Rosa", accent: "oklch(56% 0.185 354)", neutral: "oklch(58.8% 0.018 260)" },
-  { id: "naranja", name: "Naranja", accent: "oklch(52% 0.15 50)", neutral: "oklch(59% 0.08 80)" },
+  palettePreset("azul", "Azul", "oklch(50.4% 0.169 259.6)", "oklch(58.8% 0.018 260)"),
+  palettePreset("violeta", "Violeta", "oklch(51% 0.185 300)", "oklch(58.8% 0.018 260)"),
+  palettePreset("teal", "Turquesa", "oklch(50% 0.115 210)", "oklch(58% 0.08 248)"),
+  palettePreset("rosa", "Rosa", "oklch(56% 0.185 354)", "oklch(58.8% 0.018 260)"),
+  palettePreset("naranja", "Naranja", "oklch(52% 0.15 50)", "oklch(59% 0.08 80)"),
 ];
 ---
 
 <!doctype html>
-<html lang="es" data-scheme="system" data-icon-set="phosphor" data-radius="md" style="--ds-density: 1">
+<html lang={locale} class="sk-scrollbar" data-scheme="system" data-icon-set={siteIconSet} data-radius="md" style="--sk-density: 1">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} · @skryensya</title>
+    <title>{title} · skryensya/ui</title>
     {description && <meta name="description" content={description} />}
+    {/* Each translation of this page announces the others, so a crawler treats them as one document
+        in two languages rather than as duplicates competing with each other. */}
+    {alternates.map((alternate) => (
+      <link rel="alternate" hreflang={alternate.code} href={alternate.href} />
+    ))}
 
     {/*
       Docs has a fixed visual contract: Phosphor icons, medium density and medium rounding. The reader
-      preferences are scheme, contrast and the colour palette, so apply those saved values before first
-      paint, the palette especially, or the page would flash the default blue and then re-tint.
+      preferences are scheme, contrast, the color palette and the two ComponentPreview ones, so apply
+      those saved values before first paint, the palette especially, or the page would flash the
+      default blue and then re-tint.
+
+      THE ONE PLACE THAT TOUCHES localStorage DIRECTLY, and it has to: this runs before any module
+      loads, so it cannot import the storage primitive — importing is the entire thing it exists to
+      happen before. What it does NOT do is re-type the key and the slot names: `PREPAINT` carries
+      them in from the real declarations, so renaming a slot cannot leave this script reading a slot
+      nobody writes any more. The value guards stay duplicated here, because a parser is a function
+      and functions do not survive serialisation; that is the known and only cost of the exception.
     */}
-    <script is:inline define:vars={{ PALETTE_PRESETS }}>
+    <script is:inline define:vars={{ PALETTE_PRESETS, PREPAINT, siteIconSet }}>
       (function () {
         var d = document.documentElement;
         var s = {};
         try {
-          s = JSON.parse(localStorage.getItem("ds") || "{}");
+          s = JSON.parse(localStorage.getItem(PREPAINT.key) || "{}");
         } catch (e) {}
-        var scheme = s.scheme === "light" || s.scheme === "dark" ? s.scheme : "system";
+        var stored = function (slot) {
+          return s && typeof s === "object" ? s[slot] : undefined;
+        };
+        var schemeValue = stored(PREPAINT.scheme);
+        var scheme = schemeValue === "light" || schemeValue === "dark" ? schemeValue : "system";
         d.setAttribute("data-scheme", scheme);
         d.style.colorScheme = scheme === "system" ? "light dark" : scheme;
-        if (s.contrast === "high") d.setAttribute("data-contrast", "high");
+        if (stored(PREPAINT.contrast) === "high") d.setAttribute("data-contrast", "high");
         else d.removeAttribute("data-contrast");
-        d.style.setProperty("--ds-density", "1");
+        d.style.setProperty("--sk-density", "1");
         d.setAttribute("data-radius", "md");
-        d.setAttribute("data-icon-set", "phosphor");
-        /* The palette is two seeds on :root; the base derives every ramp from them, so this one write
-         * re-tints the whole page. Unknown/absent id falls back to the default (first preset), which is
-         * the same blue the stylesheet ships, so clearing storage is a no-op, never a broken theme. */
+        d.setAttribute("data-icon-set", siteIconSet);
+        /* Shared Vanilla | React preference for every ComponentPreview on the site. */
+        d.setAttribute(
+          "data-sk-component-preview-pref",
+          stored(PREPAINT.binding) === "react" ? "react" : "vanilla",
+        );
+        /* Shared screen preset, same shape. `free` is the ABSENCE of the attribute, so an unknown
+         * or missing value removes it rather than writing a third state nothing styles. */
+        var screen = stored(PREPAINT.screen);
+        if (screen === "tablet" || screen === "mobile") {
+          d.setAttribute("data-sk-component-preview-screen-pref", screen);
+        } else {
+          d.removeAttribute("data-sk-component-preview-screen-pref");
+        }
+        /* Each non-default preset carries complete accent and neutral ramp declarations. Unknown
+         * or absent ids fall back to the default stylesheet, so clearing storage is a no-op. */
         var preset = null;
+        var paletteId = stored(PREPAINT.palette);
         for (var i = 0; i < PALETTE_PRESETS.length; i++) {
-          if (PALETTE_PRESETS[i].id === s.palette) { preset = PALETTE_PRESETS[i]; break; }
+          if (PALETTE_PRESETS[i].id === paletteId) { preset = PALETTE_PRESETS[i]; break; }
         }
         if (preset && preset.id !== PALETTE_PRESETS[0].id) {
-          d.style.setProperty("--seed-accent", preset.accent);
-          d.style.setProperty("--seed-neutral", preset.neutral);
+          var properties = Object.keys(preset.ramps);
+          for (var j = 0; j < properties.length; j++) {
+            d.style.setProperty(properties[j], preset.ramps[properties[j]]);
+          }
         }
       })();
     </script>
@@ -210,24 +297,24 @@ const PALETTE_PRESETS = [
   <body>
     <div class="docs-canvas">
     <header class="dimensions">
-      <div class="dimensions__content ds-wrapper" data-size="shell">
+      <div class="dimensions__content sk-wrapper" data-size="lg">
         <button
-          class={`ds-button ds-interactive dimensions__menu-trigger${fullBleed ? " dimensions__menu-trigger--always" : ""}`}
+          class={`sk-button sk-interactive dimensions__menu-trigger${fullBleed ? " dimensions__menu-trigger--always" : ""}`}
           data-variant="ghost"
           type="button"
           aria-controls="docs-drawer"
           aria-expanded="false"
-          aria-label="Abrir navegación"
+          aria-label={t("nav.openMenu")}
           data-docs-drawer-open
         >
           <Fragment set:html={menuIcon} />
         </button>
-        <a class="dimensions__brand" href="/">@skryensya</a>
-        <nav class="dimensions__global" aria-label="Navegación global">
+        <a class="dimensions__brand" href={localizePath("/", locale)}>skryensya/ui</a>
+        <nav class="dimensions__global" aria-label={t("nav.global")}>
           {
             globalNavigation.map((item) => (
               <a
-                class="dimensions__global-link ds-interactive"
+                class="dimensions__global-link sk-interactive"
                 href={item.href}
                 aria-current={path === item.href ? "page" : undefined}
               >
@@ -244,17 +331,17 @@ const PALETTE_PRESETS = [
           trailing controls keep only reader preferences: scheme and contrast.
         */}
         <button
-          class="ds-button ds-interactive dimensions__search-trigger"
+          class="sk-button sk-interactive dimensions__search-trigger"
           data-variant="ghost"
           type="button"
           aria-controls="docs-cmdk"
           aria-expanded="false"
           aria-keyshortcuts="Meta+K Control+K"
-          data-docs-cmdk-open
+          data-sk-command-palette-open
         >
           <Fragment set:html={searchIcon} />
-          <span class="dimensions__search-label">Buscar</span>
-          <kbd class="ds-kbd" data-cmdk-hint aria-hidden="true">⌘K</kbd>
+          <span class="dimensions__search-label">{t("search.label")}</span>
+          <kbd class="sk-kbd" data-sk-command-palette-hint aria-hidden="true">⌘K</kbd>
         </button>
 
         {/*
@@ -265,20 +352,20 @@ const PALETTE_PRESETS = [
         */}
         <div class="dimensions__prefs">
           {/*
-            Colour palette: ONE button that cycles the curated presets (PALETTE_PRESETS), the same shape
+            Color palette: ONE button that cycles the curated presets (PALETTE_PRESETS), the same shape
             as the mode and contrast toggles beside it rather than a rail of swatches. Its dot shows the
-            current accent; a click advances to the next preset and re-tints the whole page (two seeds on
-            :root). The script fills the seeds, dot colour and label, the button ships neutral so there
-            is no wrong-colour flash before it runs.
+            current accent; a click advances to the next preset and applies its complete root ramps. The
+            button ships neutral so there is no wrong-color flash before the script runs.
           */}
           <button
-            class="ds-button ds-interactive dimensions__palette-toggle"
+            class="sk-button sk-interactive dimensions__palette-toggle"
             data-variant="ghost"
             data-icon-only
             type="button"
-            aria-label="Paleta de color"
-            title="Paleta de color"
+            aria-label={t("prefs.palette")}
+            title={t("prefs.palette")}
             data-docs-palette-toggle
+            data-label-template={t("prefs.paletteNamed")}
           >
             <span class="dimensions__palette-dot" aria-hidden="true"></span>
           </button>
@@ -287,57 +374,83 @@ const PALETTE_PRESETS = [
           <ThemeToggle />
 
           <button
-            class="ds-button ds-interactive dimensions__contrast-toggle"
+            class="sk-button sk-interactive dimensions__contrast-toggle"
             data-variant="ghost"
             data-icon-only
             type="button"
             aria-pressed="false"
-            aria-label="Contraste: normal"
-            title="Contraste: normal"
+            aria-label={t("prefs.contrastNormal")}
+            title={t("prefs.contrastNormal")}
             data-docs-contrast-toggle
+            data-label-normal={t("prefs.contrastNormal")}
+            data-label-high={t("prefs.contrastHigh")}
           >
             <Fragment set:html={contrastNormalIcon} />
             <Fragment set:html={contrastHighIcon} />
           </button>
+
+          <LanguageToggle />
         </div>
 
       </div>
     </header>
 
     {/*
-      The command palette. It IS a ds-dialog, the shell (border, radius, surface, elevation and the
-      mode-aware ::backdrop) is the component's; `.docs-cmdk` only adds what a palette needs on top: the
-      width and the search / list / footer layout. Centred on both axes via ds-dialog's `margin: auto`.
-      showModal gives the focus trap, ESC and inert page (the platform's); site.css locks document and
-      rail scroll while `[open]`. ⌘K/Ctrl+K is wired by the hotkey primitive. The list is a
-      combobox+listbox: the input owns focus and aria-activedescendant points at the highlighted option,
-      so arrow keys move a selection without moving focus off the field. The script fills the list from
-      the JSON index below.
+      Command Palette is a DS component on Dialog (ADR-11). The site chrome owns one instance: ⌘K via
+      data-sk-command-palette-hotkey, openers via data-sk-command-palette-open + aria-controls, and the
+      nav JSON index. initComponents() mounts the enhancer with the rest of the vanilla surface.
     */}
-    <dialog class="ds-dialog docs-cmdk" id="docs-cmdk" aria-label="Buscar en la documentación">
-      <div class="docs-cmdk__search">
+    <dialog
+      class="sk-dialog sk-command-palette"
+      id="docs-cmdk"
+      data-sk-command-palette
+      data-sk-command-palette-index="docs-cmdk-index"
+      data-sk-command-palette-hotkey="mod+k"
+      aria-label={t("search.dialog")}
+    >
+      <div class="sk-command-palette__search">
         <Fragment set:html={searchIcon} />
         <input
-          class="docs-cmdk__input"
+          class="sk-command-palette__input"
           id="docs-cmdk-input"
           type="text"
           role="combobox"
-          placeholder="Buscar componentes y páginas…"
+          placeholder={t("search.placeholder")}
           autocomplete="off"
           autocorrect="off"
           spellcheck="false"
           aria-controls="docs-cmdk-list"
           aria-expanded="true"
           aria-autocomplete="list"
+          data-sk-command-palette-input
         />
-        <kbd class="ds-kbd" data-cmdk-hint aria-hidden="true">Esc</kbd>
+        <form method="dialog">
+          <button
+            class="sk-button sk-interactive sk-dialog__close sk-command-palette__close"
+            data-sk-button
+            data-variant="ghost"
+            data-size="sm"
+            data-icon-only
+            type="submit"
+            value="cancel"
+            aria-label={t("action.close")}
+          >
+            <Fragment set:html={closeIcon} />
+          </button>
+        </form>
       </div>
-      <ul class="docs-cmdk__list" id="docs-cmdk-list" role="listbox" aria-label="Resultados"></ul>
-      <p class="docs-cmdk__empty" data-cmdk-empty hidden>Sin resultados.</p>
-      <footer class="docs-cmdk__footer">
-        <span><kbd class="ds-kbd">↑</kbd><kbd class="ds-kbd">↓</kbd> navegar</span>
-        <span><kbd class="ds-kbd">↵</kbd> abrir</span>
-        <span><kbd class="ds-kbd">Esc</kbd> cerrar</span>
+      <ul
+        class="sk-command-palette__list sk-scrollbar"
+        id="docs-cmdk-list"
+        role="listbox"
+        aria-label={t("search.results")}
+        data-sk-command-palette-list
+      ></ul>
+      <p class="sk-command-palette__empty" data-sk-command-palette-empty hidden>{t("search.empty")}</p>
+      <footer class="sk-command-palette__footer">
+        <span><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd> {t("search.hintNavigate")}</span>
+        <span><kbd class="sk-kbd">↵</kbd> {t("search.hintOpen")}</span>
+        <span><kbd class="sk-kbd">Esc</kbd> {t("search.hintClose")}</span>
       </footer>
     </dialog>
     <script type="application/json" id="docs-cmdk-index" set:html={JSON.stringify(searchIndex)}></script>
@@ -349,19 +462,19 @@ const PALETTE_PRESETS = [
       <dialog> opened with showModal(), so the focus trap, ESC, the inert page and focus restoration
       are the platform's (decision 11), none of it is shipped as JS.
     */}
-    <dialog class="ds-vaul ds-drawer docs-drawer" id="docs-drawer" data-edge="inline-start" aria-label="Navegación">
-      <div class="ds-vaul__handle" data-part="handle" aria-hidden="true"></div>
+    <dialog class="sk-vaul sk-drawer docs-drawer" id="docs-drawer" data-edge="inline-start" aria-label={t("nav.drawer")}>
+      <div class="sk-vaul__handle" data-part="handle" aria-hidden="true"></div>
       <div class="docs-drawer__header">
-        <span class="docs-drawer__title">Navegación</span>
-        <button class="ds-button ds-interactive" data-variant="ghost" type="button" aria-label="Cerrar navegación" data-docs-drawer-close>
+        <span class="docs-drawer__title">{t("nav.drawer")}</span>
+        <button class="sk-button sk-interactive" data-variant="ghost" type="button" aria-label={t("nav.closeDrawer")} data-docs-drawer-close>
           <Fragment set:html={closeIcon} />
         </button>
       </div>
-      <nav class="docs-drawer__global" aria-label="Navegación global">
+      <nav class="docs-drawer__global" aria-label={t("nav.global")}>
         {
           globalNavigation.map((item) => (
             <a
-              class="docs-drawer__global-link ds-interactive"
+              class="docs-drawer__global-link sk-interactive"
               href={item.href}
               aria-current={path === item.href ? "page" : undefined}
             >
@@ -370,41 +483,41 @@ const PALETTE_PRESETS = [
           ))
         }
       </nav>
-      <div class="docs-drawer__content ds-scrollbar ds-scrollbar--reveal">
+      <div class="docs-drawer__content sk-scrollbar sk-scrollbar--reveal">
         <SidebarNav nav={navigation} path={path} idPrefix="docs-drawer-nav" />
       </div>
     </dialog>
 
     {fullBleed ? (
-      <main class="ds-main">
+      <main class="sk-main">
         <slot />
       </main>
     ) : (
     <Fragment>
-    <div class="shell ds-wrapper" data-size="shell">
-      <aside class="ds-sidebar docs-sidebar">
-        <div class="ds-sidebar__content ds-scrollbar ds-scrollbar--reveal">
+    <div class="shell sk-wrapper" data-size="lg">
+      <aside class="sk-sidebar docs-sidebar">
+        <div class="sk-sidebar__content sk-scrollbar sk-scrollbar--reveal">
           <SidebarNav nav={navigation} path={path} idPrefix="docs-nav" />
         </div>
 
-        <hr class="ds-sidebar__separator" />
-        <div class="ds-sidebar__footer">@skryensya</div>
+        <hr class="sk-sidebar__separator" />
+        <div class="sk-sidebar__footer">skryensya/ui</div>
       </aside>
 
-      <main class="ds-wrapper" data-size="content">
+      <main class="sk-wrapper" data-size="md">
         <slot />
         {vanillaMount && <VanillaMount {...vanillaMount} />}
         {
           currentNavIndex >= 0 && (
-            <nav class="docs-page-nav" aria-label="Navegación entre documentos">
+            <nav class="docs-page-nav" aria-label={t("nav.between")}>
               {previousNavItem && (
-                <a class="ds-button ds-interactive docs-page-nav__link" data-variant="ghost" href={previousNavItem.href} rel="prev">
+                <a class="sk-button sk-interactive docs-page-nav__link" data-variant="ghost" href={previousNavItem.href} rel="prev">
                   <Fragment set:html={previousIcon} />
                   <span>{previousNavItem.label}</span>
                 </a>
               )}
               {nextNavItem && (
-                <a class="ds-button ds-interactive docs-page-nav__link docs-page-nav__link--next" data-variant="ghost" href={nextNavItem.href} rel="next">
+                <a class="sk-button sk-interactive docs-page-nav__link docs-page-nav__link--next" data-variant="ghost" href={nextNavItem.href} rel="next">
                   <span>{nextNavItem.label}</span>
                   <Fragment set:html={nextIcon} />
                 </a>
@@ -412,10 +525,12 @@ const PALETTE_PRESETS = [
             </nav>
           )
         }
-        <footer class="docs-footer">
-          Este sitio consume <code>@skryensya/core</code> y los paquetes de componentes por sus exports maps,
-          con bundler, el mismo camino que documenta. Cada píxel sale de un token.
-        </footer>
+        {/*
+          The footer names a package inside a sentence, so the string is split on `{core}` rather
+          than concatenated: word order around it differs by language, and only the translator of a
+          given locale knows where the code element lands.
+        */}
+        <footer class="docs-footer" set:html={t("footer.body", { core: "<code>@skryensya/core</code>" })} />
       </main>
 
       <Toc />
@@ -438,29 +553,54 @@ const PALETTE_PRESETS = [
     */}
     <div aria-hidden="true" style="position:fixed; top:0; left:0; visibility:hidden; pointer-events:none;">
       <div data-probe-for=""></div>
-      <span class="ds-badge" data-probe-for="ds-badge"></span>
-      <kbd class="ds-kbd" data-probe-for="ds-kbd"></kbd>
-      <button class="ds-button" data-ds-button data-probe-for="ds-button"></button>
-      <div class="ds-field" data-probe-for="ds-field"></div>
-      <input class="ds-input" data-probe-for="ds-input" />
-      <label class="ds-checkbox" data-probe-for="ds-checkbox"></label>
-      <div class="ds-radio-group" data-probe-for="ds-radio-group"></div>
-      <label class="ds-switch" data-probe-for="ds-switch"></label>
-      <span class="ds-interactive" data-probe-for="ds-interactive"></span>
-      <div class="ds-tabs" data-probe-for="ds-tabs"></div>
-      <div class="ds-nav-list" data-probe-for="ds-nav-list"></div>
-      <div class="ds-scrollbar" data-probe-for="ds-scrollbar"></div>
-      <aside class="ds-sidebar" data-probe-for="ds-sidebar"></aside>
-      <div class="ds-vaul" data-probe-for="ds-vaul"></div>
-      <div class="ds-drawer" data-probe-for="ds-drawer"></div>
-      <div class="ds-dialog" data-probe-for="ds-dialog"></div>
-      <details class="ds-details" data-probe-for="ds-details"></details>
-      <header class="ds-navbar" data-probe-for="ds-navbar"></header>
-      <nav class="ds-pagination" data-probe-for="ds-pagination"></nav>
-      <select class="ds-select-native" data-probe-for="ds-select-native"></select>
-      <div class="ds-select" data-probe-for="ds-select"></div>
-      <dialog class="ds-dialog" data-ds-dialog-vaul data-probe-for="data-ds-dialog-vaul"></dialog>
-      <table class="ds-table" data-probe-for="ds-table"></table>
+      <span class="sk-badge" data-probe-for="sk-badge"></span>
+      <kbd class="sk-kbd" data-probe-for="sk-kbd"></kbd>
+      <button class="sk-button sk-interactive" data-sk-button data-probe-for="sk-button"></button>
+      <div class="sk-field" data-probe-for="sk-field"></div>
+      <input class="sk-input" data-probe-for="sk-input" />
+      <label class="sk-checkbox" data-probe-for="sk-checkbox"></label>
+      <div class="sk-radio-group" data-probe-for="sk-radio-group"></div>
+      <label class="sk-switch" data-probe-for="sk-switch"></label>
+      <span class="sk-interactive" data-probe-for="sk-interactive"></span>
+      <div class="sk-tabs" data-probe-for="sk-tabs"></div>
+      <div class="sk-nav-list" data-probe-for="sk-nav-list"></div>
+      <div class="sk-scrollbar" data-probe-for="sk-scrollbar"></div>
+      <aside class="sk-sidebar" data-probe-for="sk-sidebar"></aside>
+      <div class="sk-vaul" data-probe-for="sk-vaul"></div>
+      <div class="sk-drawer" data-probe-for="sk-drawer"></div>
+      <div class="sk-dialog" data-probe-for="sk-dialog"></div>
+      <details class="sk-details" data-probe-for="sk-details"></details>
+      <header class="sk-navbar" data-probe-for="sk-navbar"></header>
+      <nav class="sk-pagination" data-probe-for="sk-pagination"></nav>
+      <select class="sk-select-native" data-probe-for="sk-select-native"></select>
+      <div class="sk-select" data-probe-for="sk-select"></div>
+      <dialog class="sk-dialog" data-sk-dialog-vaul data-probe-for="data-sk-dialog-vaul"></dialog>
+      <table class="sk-table" data-probe-for="sk-table"></table>
+      {/* One probe per component whose page documents styling hooks; used-values.ts resolves each
+          hook against the element that scopes it. A component with a hooks table and no probe here
+          renders its "used value" column as ", sin elemento donde existir". */}
+      <nav class="sk-breadcrumb" data-probe-for="sk-breadcrumb"></nav>
+      <div class="sk-carousel" data-probe-for="sk-carousel"></div>
+      <div class="sk-combobox" data-probe-for="sk-combobox"></div>
+      <div class="sk-command-palette" data-probe-for="sk-command-palette"></div>
+      <button class="sk-copy-button" data-probe-for="sk-copy-button"></button>
+      <div class="sk-date-picker" data-probe-for="sk-date-picker"></div>
+      <div class="sk-empty-state" data-probe-for="sk-empty-state"></div>
+      <div class="sk-file-upload" data-probe-for="sk-file-upload"></div>
+      <div class="sk-flyout" data-probe-for="sk-flyout"></div>
+      <div class="sk-image-frame" data-probe-for="sk-image-frame"></div>
+      <ul class="sk-list" data-probe-for="sk-list"></ul>
+      <div class="sk-loader" data-probe-for="sk-loader"></div>
+      <div class="sk-menu" data-probe-for="sk-menu"></div>
+      <div class="sk-number-field" data-probe-for="sk-number-field"></div>
+      <div class="sk-placeholder" data-probe-for="sk-placeholder"></div>
+      <div class="sk-popover" data-probe-for="sk-popover"></div>
+      <ol class="sk-process-list" data-probe-for="sk-process-list"></ol>
+      <div class="sk-segmented" data-probe-for="sk-segmented"></div>
+      <div class="sk-split-button" data-probe-for="sk-split-button"></div>
+      <div class="sk-time-field" data-probe-for="sk-time-field"></div>
+      <div class="sk-toolbar" data-probe-for="sk-toolbar"></div>
+      <div class="sk-tree-view" data-probe-for="sk-tree-view"></div>
     </div>
 
     {/*
@@ -475,16 +615,17 @@ const PALETTE_PRESETS = [
 
       They are the same trick as the FOUC guard in <head>, moved down to where the DOM exists.
     */}
-    <script is:inline define:vars={{ iconGeometry }}>
+    <script is:inline define:vars={{ iconGeometry, siteIconSet }}>
       (function () {
         /* The set owns geometry intent, fill, stroke, viewBox, and the binding owns the box and
          * accessibility. So everything the set did not write is stripped, and the managed few stay. */
         var managed = { class: 1, "data-icon": 1, "data-size": 1, "aria-hidden": 1, focusable: 1 };
 
-        // Docs always paints Phosphor. Only the playground calls the scoped form to preview a set
-        // inside its own stage; the documentation chrome never adopts that preview.
+        // Docs always paints `siteIconSet`, the same set `iconMarkup` serialises at build, so this
+        // pass is a no-op on the chrome instead of a visible re-draw. Only the playground calls the
+        // scoped form to preview a set inside its own stage; the chrome never adopts that preview.
         function applyIconSet(requested, root) {
-          var setId = iconGeometry[requested] ? requested : "phosphor";
+          var setId = iconGeometry[requested] ? requested : siteIconSet;
           var set = iconGeometry[setId];
           (root || document.documentElement).setAttribute("data-icon-set", setId);
 
@@ -507,7 +648,7 @@ const PALETTE_PRESETS = [
 
         // Scoped swap for the playground: same geometry, one preview subtree, no global state.
         window.__dsApplyIconSetWithin = function (root, setId) { applyIconSet(setId, root); };
-        applyIconSet("phosphor");
+        applyIconSet(siteIconSet);
       })();
     </script>
 
@@ -543,7 +684,7 @@ const PALETTE_PRESETS = [
     <script is:inline>
       (function () {
         var KEY = "docs-sidebar-scroll";
-        var rail = document.querySelector(".docs-sidebar .ds-sidebar__content");
+        var rail = document.querySelector(".docs-sidebar .sk-sidebar__content");
         if (!rail) return;
         var saved = sessionStorage.getItem(KEY);
         if (saved) rail.scrollTop = parseInt(saved, 10) || 0;
@@ -564,8 +705,14 @@ const PALETTE_PRESETS = [
 
         /* Only the page's own sections. A demo's heading lives nested inside a showcase and is
          * content being demonstrated, not a section, `:scope >` excludes it with no blocklist. */
-        var headings = main.querySelectorAll(":scope > h2:scope > h3");
-        if (headings.length < 2) return; // one section is not an index of anything
+        var headings = main.querySelectorAll(":scope > h2, :scope > h3");
+        /* A single section is still worth indexing. Zero: mark ready anyway so the reserved
+         * column does not stay in the pre-fill skeleton state forever. */
+        if (headings.length < 1) {
+          toc.setAttribute("data-empty", "");
+          toc.setAttribute("data-ready", "");
+          return;
+        }
 
         for (var i = 0; i < headings.length; i++) {
           var heading = headings[i];
@@ -590,7 +737,7 @@ const PALETTE_PRESETS = [
           item.setAttribute("data-level", heading.tagName.toLowerCase());
 
           var link = document.createElement("a");
-          link.className = "docs-toc__link ds-interactive";
+          link.className = "docs-toc__link sk-interactive";
           link.href = "#" + heading.id;
           link.textContent = heading.textContent;
 
@@ -612,24 +759,23 @@ const PALETTE_PRESETS = [
       })();
     </script>
 
+
     <script>
       import { initUsedValues } from "../scripts/used-values";
       initUsedValues();
     </script>
 
-    {/* Only the spy: the list itself is already on screen, built above before the first paint. */}
+    {/* Shape and spy share the same controller used inside ComponentPreview. */}
     <script>
-      import { initTocSpy } from "../scripts/toc";
+      import { initTocDisclosure, initTocSpy } from "../scripts/toc";
+      initTocDisclosure();
       initTocSpy();
     </script>
 
-    {/* ⌘K / Ctrl+K component search, built on the hotkey primitive. */}
     <script>
-      import { initCommandPalette } from "../scripts/command-palette";
-      initCommandPalette();
-    </script>
+      import { setPreference } from "@skryensya/vanilla/storage";
+      import { contrastPreference } from "../lib/preferences";
 
-    <script>
       const contrastToggle = document.querySelector<HTMLButtonElement>("[data-docs-contrast-toggle]");
 
       if (contrastToggle) {
@@ -645,7 +791,13 @@ const PALETTE_PRESETS = [
           else root.removeAttribute("data-contrast");
           // Icon-only button: the state lives in aria-pressed (drives the active fill in CSS) and the
           // tooltip, not in visible text.
-          const text = `Contraste: ${high ? "alto" : "normal"}`;
+          //
+          // Both labels are rendered onto the element at build, because this is a module script: it
+          // cannot see `t()`, and a template literal here would hard-code Spanish into every locale.
+          const text =
+            (high
+              ? contrastToggle.dataset.labelHigh
+              : contrastToggle.dataset.labelNormal) ?? "";
           contrastToggle.setAttribute("aria-pressed", String(high));
           contrastToggle.setAttribute("aria-label", text);
           contrastToggle.setAttribute("title", text);
@@ -655,64 +807,49 @@ const PALETTE_PRESETS = [
         contrastToggle.addEventListener("click", () => {
           high = !high;
           paint();
-          try {
-            const saved = JSON.parse(localStorage.getItem("ds") || "{}");
-            localStorage.setItem("ds", JSON.stringify({ ...saved, contrast: high ? "high" : "normal" }));
-          } catch {}
-          document.dispatchEvent(new CustomEvent("ds:dimensions-changed"));
+          setPreference(contrastPreference, high ? "high" : "normal");
+          document.dispatchEvent(new CustomEvent("sk:dimensions-changed"));
         });
       }
     </script>
 
     <script>
-      /* The colour-palette toggle: ONE button that cycles the curated presets, like the mode and
-       * contrast toggles beside it. A click advances to the next preset and writes its two seeds onto
-       * :root (the base derives every ramp from the seeds, so the whole page re-tints), then persists the
-       * id in localStorage["ds"].palette, the FOUC guard replays it before paint on the next load, so
-       * there is never a flash of the default. The first preset is the DEFAULT: it clears the inline
-       * seeds rather than setting them, landing back on exactly the stylesheet's shipped values. */
+      /* The color-palette toggle cycles the curated presets. Each preset contains complete accent
+       * and neutral ramp declarations; a click writes those explicit tier-1 values onto :root and
+       * persists the id. The FOUC guard replays them before paint on the next load. The first preset
+       * is the default and removes every inline ramp override. */
+      import { getPreference, setPreference } from "@skryensya/vanilla/storage";
+      import { palettePreference } from "../lib/preferences";
+
       const paletteToggle = document.querySelector("[data-docs-palette-toggle]");
       const presetsEl = document.getElementById("docs-palette-presets");
       if (paletteToggle && presetsEl) {
         const root = document.documentElement;
-        const dot = paletteToggle.querySelector(".dimensions__palette-dot");
+        const dot = paletteToggle.querySelector<HTMLElement>(".dimensions__palette-dot");
         let presets = [];
         try {
           presets = JSON.parse(presetsEl.textContent || "[]");
         } catch {}
 
-        const read = () => {
-          try {
-            return JSON.parse(localStorage.getItem("ds") || "{}").palette || "";
-          } catch {
-            return "";
-          }
-        };
-        let index = Math.max(0, presets.findIndex((p) => p.id === read()));
+        let index = Math.max(0, presets.findIndex((p) => p.id === getPreference(palettePreference)));
 
         const apply = (persist) => {
           const preset = presets[index];
           if (!preset) return;
-          if (index === 0) {
-            /* back to the shipped theme: remove the overrides so the stylesheet's :root seeds win again */
-            root.style.removeProperty("--seed-accent");
-            root.style.removeProperty("--seed-neutral");
-          } else {
-            root.style.setProperty("--seed-accent", preset.accent);
-            root.style.setProperty("--seed-neutral", preset.neutral);
+          const properties = Object.keys(presets[0].ramps);
+          for (const property of properties) {
+            if (index === 0) root.style.removeProperty(property);
+            else root.style.setProperty(property, preset.ramps[property]);
           }
-          /* the dot shows the current colour; the label names it so the icon-only button stays legible */
+          /* the dot shows the current color; the label names it so the icon-only button stays legible */
           if (dot) dot.style.setProperty("--swatch", preset.accent);
-          const text = `Paleta: ${preset.name}`;
+          /* Template rendered at build (`Paleta: {name}` / `Palette: {name}`): a module script has
+           * no access to `t()`, so the locale arrives on the element. */
+          const template = paletteToggle.getAttribute("data-label-template") || "{name}";
+          const text = template.replace("{name}", preset.name);
           paletteToggle.setAttribute("aria-label", text);
           paletteToggle.setAttribute("title", text);
-          if (persist) {
-            try {
-              const store = JSON.parse(localStorage.getItem("ds") || "{}");
-              store.palette = preset.id;
-              localStorage.setItem("ds", JSON.stringify(store));
-            } catch {}
-          }
+          if (persist) setPreference(palettePreference, preset.id);
         };
 
         apply(false); // sync the dot + label to the saved preset the FOUC guard already applied
@@ -766,32 +903,50 @@ const PALETTE_PRESETS = [
 
 
     <script>
-      /* Icons hydrate the same way a consumer's would: authored `<span data-ds-icon="role">`
-       * placeholders swapped for the bound set's <svg>. The site picks Lucide (see src/icons.ts);
-       * mountIcons is NOT part of initComponents on purpose, a set is always explicit (ADR-15), so
-       * the demos prove that path by taking it. Runs BEFORE initComponents so machine enhancers patch
-       * over already-hydrated markup. */
+      /* Icons hydrate the same way a consumer's would: authored `<span data-sk-icon="role">`
+       * placeholders swapped for the bound set's <svg>. mountIcons is NOT part of initComponents on
+       * purpose, a set is always explicit (ADR-15), so the chrome proves that path by taking it.
+       * Runs BEFORE initComponents so machine enhancers patch over already-hydrated markup.
+       *
+       * The set is `siteIcons`, the SAME one the guard above already painted. A different set here
+       * would win — this runs after the guard — and the placeholders would land in one set while
+       * everything serialised at build stayed in the other. */
       import { mountIcons } from "@skryensya/vanilla/icon";
-      import { lucideIcons } from "@skryensya/icons-lucide";
       import { initComponents } from "@skryensya/vanilla/auto";
-      mountIcons(document, lucideIcons);
-      initComponents();
+      import { siteIcons } from "../icons";
+      mountIcons(document, siteIcons);
+      await initComponents();
     </script>
 
     <script>
       /* Mode remains the sole scheme control in the docs chrome. */
-      import { initThemeToggle } from "../scripts/theme-toggle";
-      initThemeToggle();
+      import { initThemeTogglePersistence } from "../scripts/theme-toggle";
+      import { initDocsBinding } from "../scripts/docs-binding";
+      initThemeTogglePersistence();
+      initDocsBinding();
     </script>
   </body>
 </html>
 
 <style>
-  /* The full-bleed tool layout (/personalizar) owns its own <main>: no page gutter, so its sticky sidebar
-     butts straight against the navbar. Scoped HERE because this component authors <main class="ds-main">;
+  /* The full-bleed tool layout (/personalizar) owns its own <main>: no page gutter, so its sidebar
+     butts straight against the navbar. Scoped HERE because this component authors <main class="sk-main">;
      a page's own scoped style can't reach a layout-owned element. */
-  main.ds-main {
+  /* At LEAST the viewport under the navbar, and free to grow past it: the preview card sizes to its
+     content instead of framing a scrollport, so the DOCUMENT is what scrolls. Nothing here may clip
+     or scroll, or the tool's sticky sidebar would have no scrollport to stick against. */
+  main.sk-main {
     padding: 0;
     min-width: 0;
+    min-block-size: calc(100dvh - var(--docs-navbar-h, var(--docs-header-block-size)));
+  }
+
+  /* The used-value probes measure length hooks by assigning them to `width` and reading it back
+     (used-values.ts). A probe that carries its component's own `min-inline-size` (number-field,
+     time-field, date-picker) would clamp every width read up to that floor, so a 1px border-width
+     resolved as 160px. The probes never lay out, so drop the inline-size constraints. */
+  [data-probe-for] {
+    min-inline-size: 0;
+    max-inline-size: none;
   }
 </style>

@@ -22,7 +22,7 @@ export const toastLiveRegions = {
 } as const;
 
 export const toastEvents = {
-  dismiss: "ds-dismiss",
+  dismiss: "sk-dismiss",
 } as const;
 
 export function getToastLiveRegion(tone: ToastTone): ToastLiveRegion {
@@ -38,7 +38,7 @@ export function hasToastTimeout(timeout: number | undefined): timeout is number 
  * so the floating message and the inline message stay one visual contract.
  */
 export const contentParts = {
-  toastRegion: "ds-toast-region",
+  toastRegion: "sk-toast-region",
   toast: alertParts.root,
   toastIcon: alertParts.icon,
   toastContent: alertParts.content,

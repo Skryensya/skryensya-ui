@@ -6,30 +6,37 @@
  * of separate cards.
  */
 @layer components {
-  .ds-accordion {
+  .sk-accordion {
+    /* The frame is accordion's own theming surface; the item bodies are Tiles and read Tile's hooks. */
+    --sk-accordion-border-color: var(--color-border-subtle);
+    --sk-accordion-radius: var(--radius-surface);
+    --sk-accordion-bg: var(--color-bg-surface);
+    --sk-accordion-divider-color: var(--color-border-subtle);
+    --sk-accordion-open-bg: var(--color-bg-surface-sunken);
+
     display: grid;
     gap: 0;
     /* Fill the parent (or a max-inline-size the consumer sets). Never shrink-wrap to the open item. */
     inline-size: 100%;
     min-inline-size: 0;
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-surface);
-    background: var(--color-bg-surface);
+    border: 1px solid var(--sk-accordion-border-color);
+    border-radius: var(--sk-accordion-radius);
+    background: var(--sk-accordion-bg);
     overflow: hidden;
   }
 
   /* The root owns the outer frame; items keep Tile anatomy without a second border or radius. */
-  .ds-accordion > .ds-tile--expandable {
+  .sk-accordion > .sk-tile--expandable {
     inline-size: 100%;
     min-inline-size: 0;
     border: 0;
     border-radius: 0;
-    border-block-start: 1px solid var(--color-border-subtle);
+    border-block-start: 1px solid var(--sk-accordion-divider-color);
     background: transparent;
     box-shadow: none;
   }
 
-  .ds-accordion > .ds-tile--expandable:first-child {
+  .sk-accordion > .sk-tile--expandable:first-child {
     border-block-start: 0;
   }
 
@@ -37,19 +44,19 @@
    * `:not([hidden]):not([data-state="closed"])` (not [data-state="open"]) so the inset survives after the
    * collapsible machine drops data-state at rest, see the OPEN LOOK note in tile.css.
    * (Raised shares the light fill with surface, elevation is shadow-only there.) */
-  .ds-accordion > .ds-tile--expandable > .ds-tile__expandable-content:not([hidden]):not([data-state="closed"]) {
-    padding-block: var(--ds-tile-padding);
-    background: var(--color-bg-surface-sunken);
+  .sk-accordion > .sk-tile--expandable > .sk-tile__expandable-content:not([hidden]):not([data-state="closed"]) {
+    padding-block: var(--sk-tile-padding);
+    background: var(--sk-accordion-open-bg);
   }
 
   @media (forced-colors: active) {
-    .ds-accordion {
+    .sk-accordion {
       border-color: CanvasText;
       background: Canvas;
       forced-color-adjust: none;
     }
 
-    .ds-accordion > .ds-tile--expandable {
+    .sk-accordion > .sk-tile--expandable {
       border-block-start-color: CanvasText;
     }
   }

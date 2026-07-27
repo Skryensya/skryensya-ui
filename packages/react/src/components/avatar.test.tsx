@@ -9,11 +9,19 @@ describe("Avatar", () => {
     expect(avatar.textContent).toBe("AL");
   });
 
-  it("renders the image with the name as alt text when src is given", () => {
+  it("uses the first two characters of a single-word username", () => {
+    const ui = render(<Avatar name="allison" />);
+    expect(ui.getByLabelText("allison").textContent).toBe("al");
+  });
+
+  it("renders the image inside ImageFrame when src is given", () => {
     const ui = render(<Avatar name="Ada Lovelace" src="/ada.png" />);
     const img = ui.getByRole("img", { name: "Ada Lovelace" }) as HTMLImageElement;
     expect(img.tagName).toBe("IMG");
     expect(img.getAttribute("src")).toBe("/ada.png");
+    expect(img.className).toContain("sk-image-frame__media");
+    expect(img.closest(".sk-image-frame")).toBeTruthy();
+    expect(img.closest(".sk-avatar")).toBeTruthy();
   });
 });
 

@@ -1,0 +1,70 @@
+---
+import Base from "../../layouts/Base.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+import "@skryensya/core/components/empty-state.css";
+
+const install = `@import "@skryensya/core/components/empty-state.css";`;
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+mountIcons(document, lucideIcons);`;
+const html = `<section class="sk-empty-state">
+  <div class="sk-empty-state__icon" aria-hidden="true">
+    <span data-sk-icon="folder-open"></span>
+  </div>
+  <h2 class="sk-empty-state__title">Todavía no hay proyectos</h2>
+  <p class="sk-empty-state__description">
+    Crea el primero para organizar el trabajo del equipo.
+  </p>
+  <div class="sk-empty-state__actions">
+    <button class="sk-button sk-interactive" type="button">
+      Crear proyecto
+    </button>
+  </div>
+</section>`;
+const react = `import { EmptyState } from "@skryensya/react/empty-state";
+import { Icon } from "@skryensya/react/icon";
+
+<EmptyState
+  title="Todavía no hay proyectos"
+  description="Crea el primero para organizar el trabajo."
+  icon={<Icon name="folder-open" />}
+  actions={<button type="button">Crear proyecto</button>}
+/>`;
+---
+
+<Base
+  title="EmptyState"
+  description="Explica por qué no hay contenido y ofrece una siguiente acción concreta."
+>
+  <h1>EmptyState</h1>
+  <p class="lede">Explica por qué no hay contenido y ofrece una siguiente acción concreta.</p>
+
+  <h2>Instalación</h2>
+  <Showcase
+    html={html}
+    js={js}
+    react={react}
+    label="EmptyState"
+    viewport="auto"
+  />
+
+  <h2>Contrato</h2>
+  <p>El título nombra el estado, la descripción explica, y la acción resuelve. No uses EmptyState durante carga.</p>
+
+  <h2>Accesibilidad</h2>
+  <p>El icono es decorativo; el texto y la acción sostienen el significado sin depender de una ilustración.</p>
+
+  <h2>CSS</h2>
+  <pre><code>{install}</code></pre>
+  <StylingHooks
+    groups={[
+      {
+        file: "components/empty-state.css",
+        probe: "sk-empty-state",
+        title: "EmptyState",
+      },
+    ]}
+  />
+</Base>

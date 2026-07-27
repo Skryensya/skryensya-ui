@@ -68,7 +68,7 @@ describe("Field and Input contracts", () => {
       </Field>,
     );
 
-    expect(fieldIn(ui).getByRole("textbox", { name: "Notes" }).className).toContain("ds-input");
+    expect(fieldIn(ui).getByRole("textbox", { name: "Notes" }).className).toContain("sk-input");
   });
 
   it("passes axe on a field with a hint and an error", async () => {

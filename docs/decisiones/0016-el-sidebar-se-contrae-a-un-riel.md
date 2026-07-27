@@ -46,9 +46,9 @@ principio es uno y cae distinto en cada lugar porque la plataforma es distinta e
 
 ## Un ancho, dos valores, un solo hook
 
-Los dos anchos no son dos propiedades. `--ds-sidebar-inline-size` arranca en
-`--ds-sidebar-expanded-inline-size`, y `[data-state="collapsed"]` lo **re-declara** en
-`--ds-sidebar-collapsed-inline-size`. El consumidor escribe `inline-size: var(--ds-sidebar-inline-size)`
+Los dos anchos no son dos propiedades. `--sk-sidebar-inline-size` arranca en
+`--sk-sidebar-expanded-inline-size`, y `[data-state="collapsed"]` lo **re-declara** en
+`--sk-sidebar-collapsed-inline-size`. El consumidor escribe `inline-size: var(--sk-sidebar-inline-size)`
 una vez y no vuelve a tocar el tema: no hay una segunda regla que mantener sincronizada, que es
 exactamente lo que dice el contrato de styling hooks, una variante re-declara el hook que cambia en vez
 de agregar uno nuevo.
@@ -62,7 +62,7 @@ La duración sale de los tokens de intención de expand/collapse
 
 ## El label se desvanece, no se va
 
-Contraído, la opacidad del label va a 0, `--ds-nav-list-label-opacity`, un hook del pattern de la lista
+Contraído, la opacidad del label va a 0, `--sk-nav-list-label-opacity`, un hook del pattern de la lista
 que el shell re-declara al contraerse ([decisión 17](/decisiones/0017-el-sidebar-es-un-shell-y-la-lista-es-un-pattern)), 
 y el riel recorta lo que sobra. El label **sigue en el DOM**, y eso no es una simplificación: es lo único
 que le pone nombre al icono para un lector de pantalla. Un usuario vidente ve un riel de dibujos; un
@@ -70,8 +70,8 @@ usuario de lector de pantalla escucha "Reportes" porque el texto nunca se fue.
 
 Por lo mismo el sidebar **no tiene un part de icono**. El icono es un
 [pattern](/decisiones/0015-el-icono-es-un-pattern-y-el-set-es-una-marca) y trae su propia caja; el color
-lo saca de `currentColor`, que el link ya fija. Un `ds-sidebar__icon` sería el sidebar re-declarando lo
-que `ds-icon` ya envía, la duplicación que un pattern existe para prevenir.
+lo saca de `currentColor`, que el link ya fija. Un `sk-sidebar__icon` sería el sidebar re-declarando lo
+que `sk-icon` ya envía, la duplicación que un pattern existe para prevenir.
 
 ## Lo que se rechazó
 
@@ -87,7 +87,7 @@ que `ds-icon` ya envía, la duplicación que un pattern existe para prevenir.
   aplica cuándo. El estado ya sabe cuál es; el hook es uno.
 - *Persistir la preferencia adentro del enhancer.* `localStorage` es una decisión de la app, no del
   design system, con qué clave, por usuario o por dispositivo, y si sincroniza. El enhancer emite
-  `ds-collapsed-change` y React llama `onCollapsedChange`; guardar eso es del consumidor.
+  `sk-collapsed-change` y React llama `onCollapsedChange`; guardar eso es del consumidor.
 
 ## Costo
 

@@ -12,9 +12,9 @@ export type SegmentedOption = {
 };
 
 export const segmentedParts = {
-  root: "ds-segmented",
-  option: "ds-segmented__option",
-  indicator: "ds-segmented__indicator",
+  root: "sk-segmented",
+  option: "sk-segmented__option",
+  indicator: "sk-segmented__indicator",
 } as const;
 
 export type SegmentedPart = keyof typeof segmentedParts;

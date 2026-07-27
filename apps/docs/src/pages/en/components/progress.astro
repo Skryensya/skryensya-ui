@@ -1,0 +1,67 @@
+---
+import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import Showcase from "../../../components/Showcase.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const html = `<div
+  class="sk-progress"
+  role="progressbar"
+  aria-label="Subida"
+  aria-valuenow="68"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  style="--sk-progress-fill: 68%"
+>
+  <div class="sk-progress__bar"></div>
+</div>
+<div
+  class="sk-progress"
+  data-tone="success"
+  role="progressbar"
+  aria-label="Completado"
+  aria-valuenow="100"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  style="--sk-progress-fill: 100%"
+>
+  <div class="sk-progress__bar"></div>
+</div>
+<div
+  class="sk-progress"
+  data-tone="danger"
+  role="progressbar"
+  aria-label="Cuota"
+  aria-valuenow="24"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  style="--sk-progress-fill: 24%"
+>
+  <div class="sk-progress__bar"></div>
+</div>`;
+
+const react = `import { Progress } from "@skryensya/react/progress";
+
+<Progress label="Subida" value={68} />
+<Progress label="Completado" value={100} tone="success" />
+<Progress label="Cuota" value={24} tone="danger" />;`;
+---
+
+<Base title="Progress" description="Progress: determined bar with fraction cut in core, tones and React component.">
+  <h1>Progress</h1>
+  <p class="lede">
+    Progress is a given <strong></strong> bar: the consumer knows the value. The fraction is
+    trims to <code>[0, max]</code> at the core (<code>progressFraction</code>), so the width
+    painted and <code>aria-valuenow</code> can never diverge.
+  </p>
+
+  <Showcase html={html} react={react} label="Progress" />
+  <p>For work without a measurable value use <a href="/en/components/loader">Loader</a>: its semantics are indeterminate.</p>
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>The code is in the <strong>React</strong> tab of the preview.</p>
+</Base>

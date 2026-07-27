@@ -87,7 +87,7 @@ describe("Icon React contracts", () => {
     const { svg } = renderIcon(<Icon name="check" size="lg" className="mine" />);
 
     expect(svg().getAttribute("data-size")).toBe("lg");
-    expect(svg().getAttribute("class")).toBe("ds-icon mine");
+    expect(svg().getAttribute("class")).toBe("sk-icon mine");
   });
 
   it("defaults to md rather than leaving the size unset", () => {
@@ -165,8 +165,8 @@ describe.each(sets)("the %s set", (_name, iconSet) => {
     }
   });
 
-  it("never lets the browser's default black win over the container's colour", () => {
-    // An icon has no colour of its own: it inherits currentColor. A set whose root declares neither
+  it("never lets the browser's default black win over the container's color", () => {
+    // An icon has no color of its own: it inherits currentColor. A set whose root declares neither
     // fill nor stroke would paint black, invisible in dark mode. Material's raw assets do exactly
     // that, which is why its generator declares fill explicitly.
     for (const role of stableIconNames) {

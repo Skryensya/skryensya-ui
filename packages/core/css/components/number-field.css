@@ -1,0 +1,88 @@
+/* TIER 3, NUMBER FIELD — formatted numeric input with step controls. */
+@layer components {
+  .sk-number-field {
+    --sk-number-field-gap: var(--space-stack-xs);
+    --sk-number-field-min-inline-size: 10rem;
+    --sk-number-field-label-color: var(--color-text-secondary);
+    --sk-number-field-border-color: var(--color-border-default);
+    --sk-number-field-border-width: 1px;
+    --sk-number-field-radius: var(--radius-control);
+    --sk-number-field-bg: var(--color-bg-surface-raised);
+    --sk-number-field-fg: var(--color-text-primary);
+    --sk-number-field-step-color: var(--color-text-secondary);
+    /* El stepper es un botón icon-only sm: se pinta chico y separado del borde del control, así que
+     * lleva su propio radio y su propio aire. */
+    --sk-number-field-step-radius: var(--radius-control);
+    --sk-number-field-step-inset: calc((var(--size-touch-target) - var(--size-control-sm)) * 0.5);
+    --sk-number-field-hint-color: var(--color-text-secondary);
+
+    display: grid;
+    gap: var(--sk-number-field-gap);
+    min-inline-size: var(--sk-number-field-min-inline-size);
+  }
+  .sk-number-field__label {
+    color: var(--sk-number-field-label-color);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+  }
+  .sk-number-field__control {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    border: var(--sk-number-field-border-width) solid var(--sk-number-field-border-color);
+    border-radius: var(--sk-number-field-radius);
+    background: var(--sk-number-field-bg);
+  }
+  .sk-number-field__control:focus-within {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+  .sk-number-field__input {
+    box-sizing: border-box;
+    min-inline-size: 0;
+    min-block-size: var(--size-touch-target);
+    padding: 0 var(--space-inset-sm);
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--sk-number-field-fg);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+  /* Los steppers SON el botón icon-only (`.sk-button[data-icon-only] .sk-interactive`), compuestos,
+   * no reimplementados: el cuadrado, el hit target de 44px, el foco y el state layer ya viven ahí.
+   * Lo único de este archivo es encajar ese botón dentro del control: sin fondo ni borde propios
+   * (el borde es del control) y con las esquinas de la caja que lo contiene. */
+  :is(.sk-number-field__increment, .sk-number-field__decrement).sk-button {
+    --sk-button-bg: transparent;
+    --sk-button-fg: var(--sk-number-field-step-color);
+    --sk-button-border-color: transparent;
+    --sk-button-border-width: 0;
+    --sk-button-shadow: none;
+    --sk-button-radius: var(--sk-number-field-step-radius);
+
+    /* El cuadrado paint a control-sm (data-size="sm") y queda flotando dentro del control, no
+     * pegado al borde. El ::after del botón sigue estirando el hit target a 44px. */
+    margin: var(--sk-number-field-step-inset);
+  }
+  /* El disabled del botón pinta un relleno (`--color-action-disabled`); acá adentro eso sería un
+   * cuadrado gris dentro del campo. Se conserva sólo el color de texto y el cursor. */
+  :is(.sk-number-field__increment, .sk-number-field__decrement).sk-button:is(
+      :disabled,
+      [aria-disabled="true"]
+    ) {
+    --sk-button-bg: transparent;
+    --sk-button-border-color: transparent;
+    --sk-button-fg: var(--color-text-disabled);
+  }
+  .sk-number-field__hint {
+    color: var(--sk-number-field-hint-color);
+    font-size: var(--font-size-body-sm);
+  }
+  @media (forced-colors: active) {
+    .sk-number-field__control {
+      border-color: CanvasText;
+    }
+  }
+}

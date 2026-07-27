@@ -7,12 +7,12 @@ export type InputOptions = {
 };
 
 /*
- * One appearance contract for every native text control: `ds-input` goes on `<input>`,
+ * One appearance contract for every native text control: `sk-input` goes on `<input>`,
  * `<textarea>` and any other native text entry element. A second class per element would be a
  * second set of hooks to keep in sync for what is, visually, the same control.
  */
 export const inputParts = {
-  root: "ds-input",
+  root: "sk-input",
 } as const;
 
 export type InputPart = keyof typeof inputParts;

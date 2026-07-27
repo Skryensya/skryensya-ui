@@ -5,10 +5,10 @@ import Showcase from "../../components/Showcase.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const titleHtml = `<header class="ds-stack" data-gap="none">
-  <p class="ds-text" data-role="eyebrow">Integración</p>
-  <h2 class="ds-heading" data-size="h3">Exportar configuración</h2>
-  <p class="ds-text" data-role="subtitle">
+const titleHtml = `<header class="sk-stack" data-gap="none">
+  <p class="sk-text" data-role="eyebrow">Integración</p>
+  <h2 class="sk-heading" data-size="h3">Exportar configuración</h2>
+  <p class="sk-text" data-role="subtitle">
     Copia el CSS derivado y pégalo una vez en tu proyecto.
   </p>
 </header>`;
@@ -16,7 +16,7 @@ const titleHtml = `<header class="ds-stack" data-gap="none">
 const titleReact = `import { Text } from "@skryensya/react/text";
 import { Heading } from "@skryensya/react/heading";
 
-<header className="ds-stack" data-gap="none">
+<header className="sk-stack" data-gap="none">
   <Text data-role="eyebrow">Integración</Text>
   <Heading as="h2" size="h3">Exportar configuración</Heading>
   <Text data-role="subtitle">
@@ -24,22 +24,22 @@ import { Heading } from "@skryensya/react/heading";
   </Text>
 </header>;`;
 
-const readingHtml = `<article class="ds-stack" data-gap="sm">
-  <span class="ds-text" data-role="eyebrow">
+const readingHtml = `<article class="sk-stack" data-gap="sm">
+  <span class="sk-text" data-role="eyebrow">
     Actualización · hace 5 minutos
   </span>
-  <p class="ds-text" data-size="body" data-tone="primary">
+  <p class="sk-text" data-size="body" data-tone="primary">
     El despliegue terminó sin interrupciones para las personas que
     ya estaban usando el producto.
   </p>
-  <p class="ds-text" data-size="sm" data-tone="secondary">
+  <p class="sk-text" data-size="sm" data-tone="secondary">
     La versión 2.18.4 ya está disponible en Frankfurt y São Paulo.
   </p>
 </article>`;
 
 const readingReact = `import { Text } from "@skryensya/react/text";
 
-<article className="ds-stack" data-gap="sm">
+<article className="sk-stack" data-gap="sm">
   <Text as="span" data-role="eyebrow">
     Actualización · hace 5 minutos
   </Text>
@@ -52,7 +52,7 @@ const readingReact = `import { Text } from "@skryensya/react/text";
   </Text>
 </article>;`;
 
-const inlineHtml = `<p class="ds-text">
+const inlineHtml = `<p class="sk-text">
   El plan <strong>Pro</strong> incluye cinco entornos activos y
   conserva el flujo de lectura dentro del mismo párrafo.
 </p>`;
@@ -65,7 +65,7 @@ const inlineReact = `import { Text } from "@skryensya/react/text";
 </Text>;`;
 
 const feedbackHtml = `<p
-  class="ds-text"
+  class="sk-text"
   data-size="sm"
   data-tone="danger"
   role="alert"
@@ -119,11 +119,11 @@ const feedbackReact = `import { Text } from "@skryensya/react/text";
 
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de la demo.</p>
+  <p>El código está en la pestaña <strong>React</strong> del preview.</p>
 
   <h2>Contrato</h2>
   <ul>
-    <li><code>ds-text</code> aporta el estilo base de lectura.</li>
+    <li><code>sk-text</code> aporta el estilo base de lectura.</li>
     <li><code>data-size</code>: <code>caption</code>, <code>sm</code>, <code>body</code> o <code>lg</code>.</li>
     <li><code>data-tone</code>: <code>primary</code>, <code>secondary</code>, <code>tertiary</code> o <code>danger</code>.</li>
     <li><code>data-weight</code>: <code>body</code>, <code>emphasis</code> o <code>label</code>.</li>

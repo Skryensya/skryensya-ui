@@ -35,8 +35,8 @@ export type VaulOptions = {
 };
 
 export const vaulParts = {
-  root: "ds-vaul",
-  handle: "ds-vaul__handle",
+  root: "sk-vaul",
+  handle: "sk-vaul__handle",
 } as const;
 
 export type VaulPart = keyof typeof vaulParts;
@@ -50,5 +50,5 @@ export const vaulDataParts = {
 } as const;
 
 export const vaulEvents = {
-  openChange: "ds:openchange",
+  openChange: "sk:openchange",
 } as const;

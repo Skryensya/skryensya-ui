@@ -1,0 +1,507 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+import "../../examples/placeholder.css";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/placeholder.css";
+@import "@skryensya/core/patterns/layout.css";
+@import "@skryensya/core/components/badge.css";
+@import "@skryensya/core/components/avatar.css";
+@import "@skryensya/core/components/typography.css";`;
+
+const mediaSrc = "/demos/media-gradient.svg";
+
+const placeholderLayoutHtml = `<div
+  class="sk-box"
+  data-surface="surface"
+  data-border="subtle"
+  data-padding="lg"
+>
+  <div class="sk-stack" data-gap="md">
+    <div
+      class="sk-image-frame"
+      data-aspect="16/9"
+      data-radius="control"
+      data-border="subtle"
+    >
+      <span
+        class="sk-placeholder sk-image-frame__media placeholder-example__media"
+        data-shape="block"
+        aria-hidden="true"
+      ></span>
+    </div>
+    <div class="sk-stack" data-gap="sm">
+      <span
+        class="sk-placeholder placeholder-example__line--eyebrow"
+        data-shape="text"
+        aria-hidden="true"
+      ></span>
+      <div class="sk-stack" data-gap="xs">
+        <span
+          class="sk-placeholder placeholder-example__line--title"
+          data-shape="text"
+          aria-hidden="true"
+        ></span>
+        <span
+          class="sk-placeholder placeholder-example__line--title-short"
+          data-shape="text"
+          aria-hidden="true"
+        ></span>
+      </div>
+      <div class="sk-stack" data-gap="xs">
+        <span
+          class="sk-placeholder placeholder-example__line--body"
+          data-shape="text"
+          aria-hidden="true"
+        ></span>
+        <span
+          class="sk-placeholder placeholder-example__line--body-short"
+          data-shape="text"
+          aria-hidden="true"
+        ></span>
+      </div>
+      <div
+        class="sk-inline"
+        data-gap="sm"
+        data-align="center"
+      >
+        <span
+          class="sk-placeholder placeholder-example__avatar"
+          data-shape="circle"
+          aria-hidden="true"
+        ></span>
+        <span class="sk-stack placeholder-example__byline-copy" data-gap="xs">
+          <span
+            class="sk-placeholder"
+            data-shape="text"
+            aria-hidden="true"
+          ></span>
+          <span
+            class="sk-placeholder"
+            data-shape="text"
+            aria-hidden="true"
+          ></span>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>`;
+
+const staticHtml = `<div class="placeholder-example" aria-busy="true">
+  <p
+    class="sk-text"
+    data-size="sm"
+    data-tone="secondary"
+    role="status"
+  >
+    Cargando publicación…
+  </p>
+  ${placeholderLayoutHtml}
+</div>`;
+
+const staticReact = `import { Placeholder } from "@skryensya/react/placeholder";
+import { ImageFrame } from "@skryensya/react/image-frame";
+import { Box, Inline, Stack } from "@skryensya/react/layout";
+import { Text } from "@skryensya/react/text";
+
+function PublicationPlaceholder() {
+  return (
+    <Box border="subtle" padding="lg" surface="surface">
+      <Stack gap="md">
+        <ImageFrame
+          aspect="16/9"
+          border="subtle"
+          radius="control"
+        >
+          <Placeholder
+            className="sk-image-frame__media placeholder-example__media"
+            shape="block"
+          />
+        </ImageFrame>
+        <Stack gap="sm">
+          <Placeholder className="placeholder-example__line--eyebrow" />
+          <Stack gap="xs">
+            <Placeholder className="placeholder-example__line--title" />
+            <Placeholder className="placeholder-example__line--title-short" />
+          </Stack>
+          <Stack gap="xs">
+            <Placeholder className="placeholder-example__line--body" />
+            <Placeholder className="placeholder-example__line--body-short" />
+          </Stack>
+          <Inline align="center" gap="sm">
+            <Placeholder
+              className="placeholder-example__avatar"
+              shape="circle"
+            />
+            <Stack
+              className="placeholder-example__byline-copy"
+              gap="xs"
+            >
+              <Placeholder />
+              <Placeholder />
+            </Stack>
+          </Inline>
+        </Stack>
+      </Stack>
+    </Box>
+  );
+}
+
+export function PublicationPlaceholderDemo() {
+  return (
+    <div className="placeholder-example" aria-busy="true">
+      <Text as="p" role="status" size="sm" tone="secondary">
+        Cargando publicación…
+      </Text>
+      <PublicationPlaceholder />
+    </div>
+  );
+}`;
+
+const loadedLayoutHtml = `<article
+  class="sk-box"
+  data-surface="surface"
+  data-border="subtle"
+  data-padding="lg"
+  aria-labelledby="publication-title"
+>
+  <div class="sk-stack" data-gap="md">
+    <div
+      class="sk-image-frame"
+      data-aspect="16/9"
+      data-fit="cover"
+      data-radius="control"
+      data-border="subtle"
+    >
+      <img
+        class="sk-image-frame__media"
+        src="${mediaSrc}"
+        alt=""
+      />
+    </div>
+    <div class="sk-stack" data-gap="sm">
+      <span class="sk-badge" data-tone="accent">
+        Investigación
+      </span>
+      <div class="sk-stack" data-gap="xs">
+        <h3
+          class="sk-heading"
+          data-size="h3"
+          id="publication-title"
+        >
+          Cuando una ruta deja de ser lineal
+        </h3>
+        <p class="sk-text" data-tone="secondary">
+          Doce entrevistas muestran dónde se pierde el
+          contexto y qué señales ayudan a recuperarlo.
+        </p>
+      </div>
+      <div
+        class="sk-inline"
+        data-gap="sm"
+        data-align="center"
+      >
+        <span
+          class="sk-avatar"
+          role="img"
+          aria-label="Rocío Mora"
+        >
+          <span
+            class="sk-avatar__fallback"
+            aria-hidden="true"
+          >RM</span>
+        </span>
+        <span class="sk-stack" data-gap="none">
+          <span
+            class="sk-text"
+            data-size="sm"
+            data-weight="label"
+          >Rocío Mora</span>
+          <span
+            class="sk-text"
+            data-size="caption"
+            data-tone="tertiary"
+          >8 min de lectura · actualizado hoy</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</article>`;
+
+const loadingHtml = `<section
+  class="placeholder-example"
+  data-placeholder-demo
+  aria-busy="true"
+>
+  <p
+    class="sk-text"
+    data-size="sm"
+    data-tone="secondary"
+    data-placeholder-status
+    role="status"
+    aria-live="polite"
+  >
+    Cargando publicación…
+  </p>
+  <div
+    class="placeholder-example__swap"
+    data-placeholder-swap
+    data-state="loading"
+  >
+    <div data-placeholder-loading aria-hidden="false">
+      ${placeholderLayoutHtml}
+    </div>
+    <div data-placeholder-content aria-hidden="true">
+      ${loadedLayoutHtml}
+    </div>
+  </div>
+</section>`;
+
+const loadingJs = `const demo = document.querySelector(
+  "[data-placeholder-demo]",
+);
+
+if (demo instanceof HTMLElement) {
+  const loading = demo.querySelector(
+    "[data-placeholder-loading]",
+  );
+  const content = demo.querySelector(
+    "[data-placeholder-content]",
+  );
+  const swap = demo.querySelector(
+    "[data-placeholder-swap]",
+  );
+  const status = demo.querySelector(
+    "[data-placeholder-status]",
+  );
+
+  window.setTimeout(() => {
+    demo.setAttribute("aria-busy", "false");
+    swap?.setAttribute("data-state", "loaded");
+    loading?.setAttribute("aria-hidden", "true");
+    content?.setAttribute("aria-hidden", "false");
+    if (status) status.textContent = "Publicación cargada.";
+  }, 5000);
+}`;
+
+const loadingReact = `import { useEffect, useState } from "react";
+import { Avatar } from "@skryensya/react/avatar";
+import { Badge } from "@skryensya/react/badge";
+import { Heading } from "@skryensya/react/heading";
+import { ImageFrame } from "@skryensya/react/image-frame";
+import { Box, Inline, Stack } from "@skryensya/react/layout";
+import { Placeholder } from "@skryensya/react/placeholder";
+import { Text } from "@skryensya/react/text";
+
+function PublicationPlaceholder() {
+  return (
+    <Box border="subtle" padding="lg" surface="surface">
+      <Stack gap="md">
+        <ImageFrame
+          aspect="16/9"
+          border="subtle"
+          radius="control"
+        >
+          <Placeholder
+            className="sk-image-frame__media placeholder-example__media"
+            shape="block"
+          />
+        </ImageFrame>
+        <Stack gap="sm">
+          <Placeholder className="placeholder-example__line--eyebrow" />
+          <Stack gap="xs">
+            <Placeholder className="placeholder-example__line--title" />
+            <Placeholder className="placeholder-example__line--title-short" />
+          </Stack>
+          <Stack gap="xs">
+            <Placeholder className="placeholder-example__line--body" />
+            <Placeholder className="placeholder-example__line--body-short" />
+          </Stack>
+          <Inline align="center" gap="sm">
+            <Placeholder
+              className="placeholder-example__avatar"
+              shape="circle"
+            />
+            <Stack
+              className="placeholder-example__byline-copy"
+              gap="xs"
+            >
+              <Placeholder />
+              <Placeholder />
+            </Stack>
+          </Inline>
+        </Stack>
+      </Stack>
+    </Box>
+  );
+}
+
+function Publication() {
+  return (
+    <Box
+      as="article"
+      aria-labelledby="publication-title"
+      border="subtle"
+      padding="lg"
+      surface="surface"
+    >
+      <Stack gap="md">
+        <ImageFrame
+          aspect="16/9"
+          border="subtle"
+          fit="cover"
+          radius="control"
+        >
+          <img
+            alt=""
+            className="sk-image-frame__media"
+            src="${mediaSrc}"
+          />
+        </ImageFrame>
+        <Stack gap="sm">
+          <Badge tone="accent">Investigación</Badge>
+          <Stack gap="xs">
+            <Heading as="h3" id="publication-title" size="h3">
+              Cuando una ruta deja de ser lineal
+            </Heading>
+            <Text tone="secondary">
+              Doce entrevistas muestran dónde se pierde el
+              contexto y qué señales ayudan a recuperarlo.
+            </Text>
+          </Stack>
+          <Inline align="center" gap="sm">
+            <Avatar name="Rocío Mora">RM</Avatar>
+            <Stack gap="none">
+              <Text as="span" size="sm" weight="label">
+                Rocío Mora
+              </Text>
+              <Text as="span" size="caption" tone="tertiary">
+                8 min de lectura · actualizado hoy
+              </Text>
+            </Stack>
+          </Inline>
+        </Stack>
+      </Stack>
+    </Box>
+  );
+}
+
+export function PublicationDemo() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = window.setTimeout(
+      () => setLoading(false),
+      5000,
+    );
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  return (
+    <section
+      aria-busy={loading}
+      className="placeholder-example"
+    >
+      <Text
+        as="p"
+        aria-live="polite"
+        role="status"
+        size="sm"
+        tone="secondary"
+      >
+        {loading
+          ? "Cargando publicación…"
+          : "Publicación cargada."}
+      </Text>
+      <div
+        className="placeholder-example__swap"
+        data-state={loading ? "loading" : "loaded"}
+      >
+        <div aria-hidden={!loading} data-placeholder-loading>
+          <PublicationPlaceholder />
+        </div>
+        <div aria-hidden={loading} data-placeholder-content>
+          <Publication />
+        </div>
+      </div>
+    </section>
+  );
+}`;
+---
+
+<Base
+  title="Placeholder"
+  description="Placeholder: geometría decorativa para reservar el lugar del contenido mientras carga."
+>
+  <h1>Placeholder</h1>
+  <p class="lede">
+    Placeholder reserva la forma del contenido que todavía no llegó. Reduce saltos de layout y ofrece
+    una señal visual breve; el contenedor conserva la responsabilidad de explicar qué está cargando.
+  </p>
+
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
+      <div class="sk-alert__description">
+        Placeholder siempre es decorativo. Usa <code>aria-busy="true"</code> y un mensaje de estado en
+        la región que espera los datos.
+      </div>
+    </div>
+  </div>
+
+  <h2>Layout pendiente</h2>
+  <p>
+    La geometría sigue el layout final: una card del kit (<code>Box</code> + <code>Stack</code>) con
+    media, texto y byline. Este primer ejemplo permanece siempre en carga para poder inspeccionar el
+    Placeholder.
+  </p>
+  <Showcase
+    html={staticHtml}
+    react={staticReact}
+    label="Layout con Placeholder"
+    note="Siempre pendiente"
+  />
+
+  <h2>Carga simulada</h2>
+  <p>
+    El segundo ejemplo espera <strong>5 segundos</strong>, retira el layout provisional y muestra el
+    contenido real en el mismo espacio: <code>ImageFrame</code>, <code>Badge</code>,
+    <code>Heading</code>, <code>Text</code> y <code>Avatar</code>.
+  </p>
+  <Showcase
+    html={loadingHtml}
+    js={loadingJs}
+    previewScript={loadingJs}
+    react={loadingReact}
+    label="Placeholder → contenido"
+    note="Carga falsa · 5 s"
+  />
+
+  <h2>Formas</h2>
+  <ul>
+    <li><code>text</code>: una línea; es el valor por defecto.</li>
+    <li><code>block</code>: media, tablas o regiones rectangulares.</li>
+    <li><code>circle</code>: avatares y controles circulares.</li>
+  </ul>
+  <p>
+    Ajusta <code>--sk-placeholder-inline-size</code>, <code>--sk-placeholder-block-size</code> o
+    <code>--sk-placeholder-size</code> desde el layout consumidor. La forma no conoce el contenido.
+  </p>
+
+  <h2>Movimiento reducido</h2>
+  <p>
+    El brillo se desplaza con <code>transform</code>. Con <code>prefers-reduced-motion: reduce</code>,
+    desaparece la animación y permanece el relleno estático.
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+  <CodeBlock code={styles} label="CSS" lang="css" />
+
+  <h2>React</h2>
+  <p>El código está en la pestaña <strong>React</strong> de cada preview.</p>
+
+  <StylingHooks groups={[{ file: "components/placeholder.css", probe: "sk-placeholder" }]} />
+</Base>

@@ -1,0 +1,505 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const styles = `@import "@skryensya/core/components/flyout.css";`;
+
+type FlyoutDocOption = {
+  value: string;
+  label: string;
+  disabled?: boolean;
+};
+
+function flyoutMarkup({
+  id,
+  label,
+  value,
+  options,
+  disabled = false,
+  placeholder,
+}: {
+  id: string;
+  label: string;
+  value?: string;
+  options: readonly FlyoutDocOption[];
+  disabled?: boolean;
+  placeholder?: string;
+}): string {
+  const current = options.find((o) => o.value === value);
+  const valueText = current?.label ?? placeholder ?? "";
+  const dataValue = value ? `\n  data-value="${value}"` : "";
+  const dataPlaceholder = placeholder ? `\n  data-placeholder="${placeholder}"` : "";
+  const dataDisabled = disabled ? `\n  data-disabled` : "";
+
+  const items = options
+    .map(
+      (option) => `    <li
+      class="sk-flyout__item sk-interactive"
+      data-sk-flyout-item
+      data-value="${option.value}"${option.disabled ? "\n      data-disabled" : ""}
+    >
+      <span
+        class="sk-flyout__item-text"
+        data-sk-flyout-item-text
+      >
+        ${option.label}
+      </span>
+      <span
+        class="sk-flyout__item-indicator"
+        data-sk-flyout-item-indicator
+        aria-hidden="true"
+      >
+        <span data-sk-icon="check"></span>
+      </span>
+    </li>`,
+    )
+    .join("\n");
+
+  return `<div
+  class="sk-flyout"
+  data-sk-flyout
+  id="${id}"${dataValue}${dataPlaceholder}${dataDisabled}
+>
+  <label class="sk-flyout__label" data-sk-flyout-label>
+    ${label}
+  </label>
+
+  <button
+    class="sk-flyout__trigger sk-interactive"
+    data-sk-flyout-trigger
+    type="button"${disabled ? "\n    disabled" : ""}
+  >
+    <span class="sk-flyout__value" data-sk-flyout-value>
+      ${valueText}
+    </span>
+    <span
+      class="sk-flyout__indicator"
+      data-sk-flyout-indicator
+      aria-hidden="true"
+    >
+      <span data-state="closed">
+        <span data-sk-icon="chevron-right"></span>
+      </span>
+      <span data-state="open">
+        <span data-sk-icon="chevron-left"></span>
+      </span>
+    </span>
+  </button>
+
+  <ul class="sk-flyout__panel" data-sk-flyout-panel>
+${items}
+  </ul>
+</div>`;
+}
+
+function reactFlyout({
+  label,
+  defaultValue,
+  options,
+  disabled,
+  placeholder,
+}: {
+  label: string;
+  defaultValue?: string;
+  options: readonly FlyoutDocOption[];
+  disabled?: boolean;
+  placeholder?: string;
+}): string {
+  const opts = options
+    .map((o) =>
+      o.disabled
+        ? `    { value: "${o.value}", label: "${o.label}", disabled: true }`
+        : `    { value: "${o.value}", label: "${o.label}" }`,
+    )
+    .join(",\n");
+  const lines = [
+    `import { Icon } from "@skryensya/react/icon";`,
+    `import { Flyout } from "@skryensya/react/flyout";`,
+    ``,
+    `<Flyout`,
+    `  label="${label}"`,
+  ];
+  if (defaultValue) lines.push(`  defaultValue={["${defaultValue}"]}`);
+  if (placeholder) lines.push(`  placeholder="${placeholder}"`);
+  if (disabled) lines.push(`  disabled`);
+  lines.push(
+    `  indicator={<Icon name="chevron-right" />}`,
+    `  openIndicator={<Icon name="chevron-left" />}`,
+    `  itemIndicator={<Icon name="check" />}`,
+    `  options={[`,
+    opts,
+    `  ]}`,
+    `/>;`,
+  );
+  return lines.join("\n");
+}
+
+const planOptions: FlyoutDocOption[] = [
+  { value: "starter", label: "Starter" },
+  { value: "pro", label: "Pro" },
+  { value: "enterprise", label: "Enterprise" },
+];
+
+const densityOptions: FlyoutDocOption[] = [
+  { value: "0.5", label: "Condensada" },
+  { value: "0.6", label: "Densa" },
+  { value: "0.8", label: "Compacta" },
+  { value: "1", label: "Cómoda" },
+  { value: "1.2", label: "Amplia" },
+];
+
+const radiusOptions: FlyoutDocOption[] = [
+  { value: "0", label: "Recta" },
+  { value: "0.5", label: "Sutil" },
+  { value: "1", label: "Suave" },
+  { value: "1.5", label: "Marcada" },
+  { value: "2", label: "Redonda" },
+];
+
+const regionOptions: FlyoutDocOption[] = [
+  { value: "eu", label: "Europa" },
+  { value: "us", label: "América" },
+  { value: "apac", label: "Asia-Pacífico", disabled: true },
+  { value: "latam", label: "Latinoamérica" },
+];
+
+const longOptions: FlyoutDocOption[] = [
+  { value: "es", label: "Español" },
+  { value: "en", label: "English" },
+  { value: "pt", label: "Português" },
+  { value: "fr", label: "Français" },
+  { value: "de", label: "Deutsch" },
+  { value: "it", label: "Italiano" },
+  { value: "nl", label: "Nederlands" },
+  { value: "pl", label: "Polski" },
+  { value: "sv", label: "Svenska" },
+  { value: "ja", label: "日本語" },
+];
+
+const flyoutHtml = flyoutMarkup({
+  id: "plan",
+  label: "Plan",
+  value: "starter",
+  options: planOptions,
+});
+
+const reactBasic = reactFlyout({
+  label: "Plan",
+  defaultValue: "starter",
+  options: planOptions,
+});
+
+const railHtml = `<div style="inline-size: 13.5rem; max-inline-size: 100%;">
+${flyoutMarkup({
+  id: "density",
+  label: "Densidad",
+  value: "1",
+  options: densityOptions,
+})}
+</div>`;
+
+const reactRail = reactFlyout({
+  label: "Densidad",
+  defaultValue: "1",
+  options: densityOptions,
+});
+
+const exclusiveHtml = `<div
+  class="sk-stack"
+  data-gap="md"
+  style="inline-size: 13.5rem; max-inline-size: 100%;"
+>
+${flyoutMarkup({
+  id: "dim-density",
+  label: "Densidad",
+  value: "1",
+  options: densityOptions,
+})}
+${flyoutMarkup({
+  id: "dim-radius",
+  label: "Redondez",
+  value: "1",
+  options: radiusOptions,
+})}
+</div>`;
+
+const reactExclusive = `import { Icon } from "@skryensya/react/icon";
+import { Flyout } from "@skryensya/react/flyout";
+import { Stack } from "@skryensya/react/layout";
+
+const chevrons = {
+  indicator: <Icon name="chevron-right" />,
+  openIndicator: <Icon name="chevron-left" />,
+  itemIndicator: <Icon name="check" />,
+};
+
+<Stack gap="md" style={{ inlineSize: "13.5rem" }}>
+  <Flyout
+    label="Densidad"
+    defaultValue={["1"]}
+    {...chevrons}
+    options={[
+      { value: "0.5", label: "Condensada" },
+      { value: "1", label: "Cómoda" },
+      { value: "1.2", label: "Amplia" },
+    ]}
+  />
+  <Flyout
+    label="Redondez"
+    defaultValue={["1"]}
+    {...chevrons}
+    options={[
+      { value: "0", label: "Recta" },
+      { value: "1", label: "Suave" },
+      { value: "2", label: "Redonda" },
+    ]}
+  />
+</Stack>;`;
+
+const disabledItemHtml = flyoutMarkup({
+  id: "region",
+  label: "Región",
+  value: "eu",
+  options: regionOptions,
+});
+
+const reactDisabledItem = reactFlyout({
+  label: "Región",
+  defaultValue: "eu",
+  options: regionOptions,
+});
+
+const disabledHtml = flyoutMarkup({
+  id: "plan-locked",
+  label: "Plan",
+  value: "pro",
+  options: planOptions,
+  disabled: true,
+});
+
+const reactDisabled = reactFlyout({
+  label: "Plan",
+  defaultValue: "pro",
+  options: planOptions,
+  disabled: true,
+});
+
+const longHtml = flyoutMarkup({
+  id: "locale",
+  label: "Idioma",
+  value: "es",
+  options: longOptions,
+});
+
+const reactLong = reactFlyout({
+  label: "Idioma",
+  defaultValue: "es",
+  options: longOptions,
+});
+
+const placeholderHtml = flyoutMarkup({
+  id: "theme-custom",
+  label: "Tema",
+  options: [
+    { value: "dawn", label: "Dawn" },
+    { value: "dusk", label: "Dusk" },
+    { value: "ember", label: "Ember" },
+  ],
+  placeholder: "Personalizado",
+});
+
+const reactPlaceholder = reactFlyout({
+  label: "Tema",
+  options: [
+    { value: "dawn", label: "Dawn" },
+    { value: "dusk", label: "Dusk" },
+    { value: "ember", label: "Ember" },
+  ],
+  placeholder: "Personalizado",
+});
+
+const js = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+mountIcons(document, lucideIcons);
+
+await initComponents();`;
+
+const listen = `document
+  .getElementById("plan")
+  .addEventListener("sk-value-change", (event) => {
+    console.log(event.detail.value); // ["pro"]
+  });`;
+
+const remount = `import { mountFlyout } from "@skryensya/vanilla/flyout";
+import { destroyMount } from "@skryensya/vanilla/runtime";
+
+function remountFlyout(root, value) {
+  destroyMount(root);
+  if (value) root.setAttribute("data-value", value);
+  else root.removeAttribute("data-value");
+  mountFlyout(root);
+}`;
+---
+
+<Base
+  title="Flyout"
+  description="Flyout: elige un valor como Select, con el panel al lado del trigger."
+>
+  <h1>Flyout</h1>
+  <p class="lede">
+    Un selector de valor como <a href="/componentes/select">Select</a>, pero el panel abre al
+    <strong>inline-end</strong> del trigger (no debajo). Pensado para rieles estrechos —por ejemplo el
+    sidebar de <a href="/personalizar">Personalizar</a>— donde un menú hacia abajo no cabe.
+  </p>
+
+  <p>
+    No es un “menu” de navegación (ADR-0017): es un picker. Abre al <strong>click</strong> del trigger
+    (y con teclado). Elegir un ítem emite <code>sk-value-change</code> y cierra. Escape o click fuera
+    también cierran. Solo puede haber un Flyout abierto a la vez.
+  </p>
+
+  <Showcase html={flyoutHtml} react={reactBasic} label="Flyout" viewport="menu" />
+
+  <h2>Cuándo usarlo</h2>
+  <ul>
+    <li>
+      <strong>Flyout</strong> — el espacio debajo del control es escaso (sidebar, toolbar, rail) y el
+      panel debe abrirse al lado.
+    </li>
+    <li>
+      <strong>Select</strong> — hay sitio debajo, quieres typeahead / posicionamiento Zag, o es un
+      formulario estándar. Para elección nativa de plataforma, usa el
+      <a href="/componentes/select#select-nativo">Select nativo</a>.
+    </li>
+  </ul>
+
+  <h2>Comportamiento</h2>
+  <ul>
+    <li>
+      <strong>Abrir:</strong> click en el trigger, o teclado (<code>Enter</code>, <code>Space</code>,
+      <code>ArrowDown</code>, <code>ArrowRight</code>). No abre al hover.
+    </li>
+    <li>
+      <strong>Elegir:</strong> click o <code>Enter</code> / <code>Space</code> en un ítem. Emite
+      <code>sk-value-change</code> con <code>{'{ value: string[] }'}</code> y cierra.
+    </li>
+    <li>
+      <strong>Cerrar:</strong> Escape (devuelve el foco al trigger), click fuera, o elegir un ítem.
+    </li>
+    <li>
+      <strong>Exclusivo:</strong> al abrir uno, los demás escuchan <code>sk-flyout-open</code> y se
+      cierran.
+    </li>
+    <li>
+      <strong>Ancho:</strong> el panel mide al menos <code>280px</code> y crece con el ítem más largo
+      (con tope de viewport).
+    </li>
+    <li>
+      <strong>Viewport:</strong> si no cabe al inline-end, abre al inline-start; el top se ajusta para
+      no salirse del viewport (también al hacer scroll o resize).
+    </li>
+  </ul>
+
+  <h2>Anatomía</h2>
+  <CodeBlock
+    code={`.sk-flyout[data-sk-flyout][data-value]
+  .sk-flyout__label
+  .sk-flyout__trigger[data-sk-flyout-trigger]
+    .sk-flyout__value[data-sk-flyout-value]
+    .sk-flyout__indicator
+  .sk-flyout__panel[data-sk-flyout-panel]
+    .sk-flyout__item[data-sk-flyout-item][data-value]
+      .sk-flyout__item-text
+      .sk-flyout__item-indicator`}
+    label="parts"
+  />
+  <p>
+    Los items <strong>son</strong> la colección: el enhancer los lee del DOM. Cada
+    <code>data-sk-flyout-item</code> necesita un <code>data-value</code>. El panel vive en el root
+    (<code>position: absolute</code> por defecto; el enhancer lo fija con <code>position: fixed</code>
+    cuando un ancestro recorta).
+  </p>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+  <CodeBlock code={styles} label="CSS" lang="css" />
+
+  <h2>Inicializar Vanilla</h2>
+  <CodeBlock code={js} label="JavaScript" />
+
+  <h2>Escuchar el cambio</h2>
+  <CodeBlock code={listen} label="JavaScript" />
+
+  <h2>En un riel estrecho</h2>
+  <p>
+    El caso típico: un control de ~13.5rem de ancho. El panel sale al inline-end y no compite con el
+    alto del rail.
+  </p>
+  <Showcase html={railHtml} react={reactRail} label="Flyout en riel" viewport="menu" />
+
+  <h2>Solo uno abierto</h2>
+  <p>
+    Abre uno y luego el otro: el primero se cierra solo. Mismo contrato en Vanilla y React vía el
+    evento de documento <code>sk-flyout-open</code>.
+  </p>
+  <Showcase html={exclusiveHtml} react={reactExclusive} label="Dos Flyouts" viewport="menu" />
+
+  <h2>Ítem deshabilitado</h2>
+  <p>
+    Marca el ítem con <code>data-disabled</code> (o <code>disabled: true</code> en React). No se puede
+    elegir; el resto sigue activo.
+  </p>
+  <Showcase html={disabledItemHtml} react={reactDisabledItem} label="Ítem deshabilitado" viewport="menu" />
+
+  <h2>Flyout deshabilitado</h2>
+  <p>
+    <code>data-disabled</code> en la raíz (o <code>disabled</code> en React) bloquea apertura y cambio
+    de valor.
+  </p>
+  <Showcase html={disabledHtml} react={reactDisabled} label="Flyout deshabilitado" viewport="menu" />
+
+  <h2>Lista larga</h2>
+  <p>
+    El panel limita su alto (<code>--sk-flyout-panel-max-block-size</code>, 18rem por defecto) y hace
+    scroll cuando hace falta.
+  </p>
+  <Showcase html={longHtml} react={reactLong} label="Lista larga" viewport="menu" />
+
+  <h2>Placeholder</h2>
+  <p>
+    Si no hay <code>data-value</code> que coincida con un ítem —por ejemplo un valor externo
+    “personalizado”— el trigger muestra el placeholder.
+  </p>
+  <Showcase html={placeholderHtml} react={reactPlaceholder} label="Placeholder" viewport="menu" />
+
+  <h2>Remontar con otro valor</h2>
+  <p>
+    El enhancer posee el texto del trigger. Para forzar un valor desde fuera (reset, URL, reparación),
+    desmonta, escribe <code>data-value</code> y vuelve a montar — el mismo patrón que usa
+    <a href="/personalizar">Personalizar</a>.
+  </p>
+  <CodeBlock code={remount} label="JavaScript" />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>La raíz lleva <code>data-sk-flyout</code> y la anatomía de parts documentada.</li>
+    <li>
+      El evento de valor es el mismo que Select: <code>sk-value-change</code> con
+      <code>{'{ value: string[] }'}</code>.
+    </li>
+    <li>
+      Apertura exclusiva vía <code>sk-flyout-open</code> (detalle <code>{'{ root }'}</code>).
+    </li>
+    <li>Sin máquina Zag en v1: enhancer propio, apertura por click/teclado.</li>
+    <li>React renderiza el mismo contrato sin portal (panel en el root).</li>
+    <li>El enhancer no inventa clases; solo conecta los nodos autorados.</li>
+  </ul>
+
+  <StylingHooks groups={[{ file: "components/flyout.css", probe: "sk-flyout" }]} />
+</Base>

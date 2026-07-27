@@ -1,0 +1,145 @@
+---
+import Base from "../../layouts/Base.astro";
+import Showcase from "../../components/Showcase.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+import "@skryensya/core/components/date-picker.css";
+
+const install = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/date-picker.css";`;
+
+const nativeHtml = `<div class="sk-date-picker" lang="es-DO">
+  <label class="sk-date-picker__label" for="arrival">Reserva</label>
+  <div class="sk-date-picker__control">
+    <input
+      class="sk-date-picker__input"
+      id="arrival"
+      lang="es-DO"
+      name="arrival"
+      type="date"
+    />
+  </div>
+</div>`;
+
+const customHtml = `<div
+  class="sk-date-picker"
+  data-sk-date-picker
+  data-locale="es-DO"
+  data-time-zone="America/Santo_Domingo"
+  data-name="checkin"
+>
+  <label class="sk-date-picker__label" data-sk-date-picker-label>Reserva</label>
+  <div class="sk-date-picker__control sk-anchor" data-sk-date-picker-control>
+    <input
+      class="sk-date-picker__input"
+      data-sk-date-picker-input
+      placeholder="dd/mm/aaaa"
+    />
+    <button
+      class="sk-date-picker__clear sk-button sk-interactive"
+      data-sk-button
+      data-sk-date-picker-clear
+      data-icon-only
+      data-size="sm"
+      data-variant="ghost"
+      type="button"
+      aria-label="Limpiar fecha"
+      hidden
+    ><span data-sk-icon="close" data-sk-icon-size="sm"></span></button>
+    <button
+      class="sk-date-picker__trigger sk-button sk-interactive"
+      data-sk-button
+      data-sk-date-picker-trigger
+      data-icon-only
+      data-size="sm"
+      data-variant="ghost"
+      type="button"
+      aria-label="Abrir calendario"
+    >
+      <span data-sk-icon="calendar"></span>
+    </button>
+  </div>
+</div>`;
+
+const react = `import { DatePicker } from "@skryensya/react/date-picker";
+
+<DatePicker
+  label="Reserva"
+  locale="es-DO"
+  name="checkin"
+  placeholder="dd/mm/aaaa"
+  selectionMode="single"
+  timeZone="America/Santo_Domingo"
+/>`;
+---
+
+<Base
+  title="DatePicker"
+  description="Campo de fecha único o en rango, con nativo type=date y calendario custom detrás de un trigger."
+>
+  <h1>DatePicker</h1>
+  <p class="lede">
+    Dos versiones, un solo campo. La <strong>nativa</strong> es un <code>&lt;input type="date"&gt;</code>
+    con el chrome del sistema: teclado, formulario y calendario del SO vienen de la plataforma, sin
+    JavaScript. La <strong>custom</strong> monta un <a href="/componentes/calendar">Calendar</a> detrás
+    de un trigger con la misma forma de campo, para cuando necesitas rango, localización explícita o un
+    calendario consistente entre navegadores. Las dos comparten <code>.sk-date-picker__control</code>,
+    así que se ven igual. El calendario en sí — encabezado, vistas, grillas — es responsabilidad de
+    Calendar, no de este componente: DatePicker sólo lo nestea dentro de su popover.
+  </p>
+
+  <h2>Nativo</h2>
+  <p>El control de plataforma, sin JavaScript ni enhancer.</p>
+  <Showcase html={nativeHtml} label="DatePicker nativo" />
+
+  <h2>Custom</h2>
+  <p>El campo custom y su calendario emergente viven en una demostración independiente.</p>
+  {/* `overlay` (~24rem): el calendario reserva la altura de sus seis filas dentro del frame. */}
+  <Showcase html={customHtml} react={react} label="DatePicker custom" viewport="overlay" />
+
+  <h2>Cuál usar</h2>
+  <p>
+    Empieza por el <strong>nativo</strong>: es el que funciona sin JS y el que el sistema operativo ya
+    sabe presentar en cada plataforma. Sube al <strong>custom</strong> sólo cuando el nativo no alcanza:
+    selección de <em>rango</em>, una zona horaria y un locale que no pueden quedar como string ambiguo, o
+    un calendario que se vea igual en todos los navegadores. Es la misma decisión que Select nativo vs.
+    Select custom.
+  </p>
+
+  <h2>Contrato</h2>
+  <p>
+    React ofrece <code>DatePicker</code> sobre la misma máquina que <code>Calendar</code>
+    (<code>@zag-js/date-picker</code>), y reusa el mismo cuerpo de calendario: no hay dos
+    implementaciones del grid. Vanilla hidrata el <code>data-sk-date-picker</code> autorado: parchea el
+    control y renderiza el calendario con el componente compartido de Calendar. El input
+    <code>type="date"</code> nativo no necesita enhancer.
+  </p>
+
+  <h2>En móvil</h2>
+  <p>
+    Bajo el breakpoint de escritorio (30rem) el calendario custom deja de colgar del campo y se vuelve
+    una <strong>hoja inferior</strong>: el positioner llena la pantalla como scrim y el contenido se
+    ancla al borde inferior, a todo el ancho, y sube. Toma el <em>aspecto</em> del Vaul, no el arrastre
+    —es un popover de Zag, no un <code>&lt;dialog&gt;</code> nativo—, pero cierra igual al tocar fuera o
+    con <kbd class="sk-kbd">Esc</kbd>. Es el mismo corte responsivo que <a href="/componentes/dialog">Dialog Vaul</a>.
+  </p>
+
+  <h2>Accesibilidad</h2>
+  <p>
+    La fecha usa valores <code>DateValue</code> y zona horaria explícita; no se modela como string
+    ambiguo de locale. El control conserva nombre accesible por su <code>label</code>. La accesibilidad
+    del grid en sí (rol, navegación por teclado, cambio de vista) es contrato de
+    <a href="/componentes/calendar">Calendar</a>.
+  </p>
+
+  <h2>CSS</h2>
+  <pre><code>{install}</code></pre>
+  <StylingHooks
+    groups={[
+      { file: "components/date-picker.css", probe: "sk-date-picker", title: "DatePicker" },
+      { file: "components/calendar.css", probe: "sk-calendar", title: "Heredados de Calendar" },
+      { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+      { file: "components/button.css", probe: "sk-button", title: "Heredados de Button" },
+    ]}
+  />
+</Base>

@@ -1,14 +1,14 @@
 /*
  * TIER 3, PROGRESS
  *
- * A determinate bar. The track is a sunken pill; the fill width comes from --ds-progress-fill, which
+ * A determinate bar. The track is a sunken pill; the fill width comes from --sk-progress-fill, which
  * the binding sets from the clamped fraction, so the paint and aria-valuenow can never diverge. Tone
- * recolours the fill only.
+ * recolors the fill only.
  */
 @layer components {
-  .ds-progress {
-    --ds-progress-fill: 0%;
-    --ds-progress-color: var(--color-action-primary);
+  .sk-progress {
+    --sk-progress-fill: 0%;
+    --sk-progress-color: var(--color-action-primary);
 
     display: block;
     inline-size: 100%;
@@ -17,19 +17,30 @@
     border-radius: var(--radius-pill);
     background: var(--color-bg-surface-sunken);
   }
-  .ds-progress[data-tone="success"] { --ds-progress-color: var(--color-text-success); }
-  .ds-progress[data-tone="warning"] { --ds-progress-color: var(--color-text-warning); }
-  .ds-progress[data-tone="danger"] { --ds-progress-color: var(--color-text-danger); }
+  .sk-progress[data-tone="success"] { --sk-progress-color: var(--color-text-success); }
+  .sk-progress[data-tone="warning"] { --sk-progress-color: var(--color-text-warning); }
+  .sk-progress[data-tone="danger"] { --sk-progress-color: var(--color-text-danger); }
 
-  .ds-progress__bar {
+  .sk-progress__bar {
     display: block;
     block-size: 100%;
-    inline-size: var(--ds-progress-fill);
+    inline-size: var(--sk-progress-fill);
     border-radius: inherit;
-    background: var(--ds-progress-color);
+    background: var(--sk-progress-color);
     transition: inline-size var(--motion-state-change-duration) var(--motion-state-change-easing);
   }
   @media (prefers-reduced-motion: reduce) {
-    .ds-progress__bar { transition: none; }
+    .sk-progress__bar { transition: none; }
+  }
+
+  @media (forced-colors: active) {
+    .sk-progress {
+      background: Canvas;
+      border: 1px solid CanvasText;
+    }
+
+    .sk-progress__bar {
+      background: Highlight;
+    }
   }
 }

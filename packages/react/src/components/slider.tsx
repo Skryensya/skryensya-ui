@@ -48,4 +48,4 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
 });
 
 // Kept as a literal so the CSS custom property name and the core constant can be diffed at a glance.
-const sliderFillPropertyName = "--ds-slider-fill";
+const sliderFillPropertyName = "--sk-slider-fill";

@@ -1,0 +1,209 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Showcase from "../../../components/Showcase.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
+import StylingHooks from "../../../components/StylingHooks.astro";
+
+
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const css = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/sidebar.css";
+@import "@skryensya/core/patterns/nav-list.css";
+@import "@skryensya/core/patterns/icon.css";
+@import "@skryensya/core/patterns/state-layer.css";`;
+
+const html = `<aside
+  class="sk-sidebar"
+  data-sk-sidebar
+  id="app-sidebar"
+>
+  <div class="sk-sidebar__header">
+    <button
+      class="sk-sidebar__trigger sk-interactive"
+      data-sk-sidebar-trigger
+      type="button"
+      aria-label="Collapse navigation"
+    >
+      <span data-sk-icon="menu"></span>
+    </button>
+  </div>
+
+  <div class="sk-sidebar__content" data-sk-sidebar-content>
+    <!-- The sidebar is the shell; the list is a pattern,
+         invited here -->
+    <nav class="sk-nav-list" aria-label="Principal">
+      <div class="sk-nav-list__group">
+        <div class="sk-nav-list__group-label" id="app-workspace">
+          Espacio
+        </div>
+        <ul class="sk-nav-list__list" aria-labelledby="app-workspace">
+          <li class="sk-nav-list__item">
+            <a
+              class="sk-nav-list__link sk-interactive"
+              href="/in"
+              aria-current="page"
+            >
+              <span data-sk-icon="info"></span>
+              <span class="sk-nav-list__label">Inicio</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+  <hr class="sk-sidebar__separator" />
+  <div class="sk-sidebar__footer">v0.3.0</div>
+</aside>`;
+
+const js = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// Icons are authored as <span data-sk-icon> placeholders;
+// mountIcons replaces them with the <svg> of the linked set.
+mountIcons(document, lucideIcons);
+
+await initComponents();`;
+
+const react = `import { Icon } from "@skryensya/react/icon";
+import {
+  NavList,
+  NavListGroup,
+  NavListLink,
+} from "@skryensya/react/nav-list";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarTrigger,
+} from "@skryensya/react/sidebar";
+
+<Sidebar
+  defaultCollapsed={false}
+  onCollapsedChange={({ collapsed }) => persist(collapsed)}
+>
+  <SidebarHeader>
+    <SidebarTrigger
+      label="Collapse navigation"
+      icon={<Icon name="menu" />}
+    />
+  </SidebarHeader>
+
+  <SidebarContent>
+    <NavList aria-label="Principal">
+      <NavListGroup label="Espacio">
+        <NavListLink href="/in" icon={<Icon name="info" />} current>
+          Inicio
+        </NavListLink>
+        <NavListLink
+          href="/reportes"
+          icon={<Icon name="calendar" />}
+          trailing="12"
+        >
+          Reportes
+        </NavListLink>
+      </NavListGroup>
+    </NavList>
+  </SidebarContent>
+
+  <SidebarFooter>v0.3.0</SidebarFooter>
+</Sidebar>;`;
+
+---
+
+<Base title="Sidebar" description="Sidebar: The shell that collapses to a rail, with the navigation list as a guest pattern.">
+  <h1>Sidebar</h1>
+  <p class="lede">
+    Sidebar is the <strong>shell</strong>: a header, a scrolling middle, a footer, and the collapse.
+    It contracts to a <strong>rail</strong>, narrows, never hides.
+  </p>
+
+  <h2>One thing is the sidebar; another, its content</h2>
+  <p>
+    What goes inside is not a matter of the sidebar. The destination list is the pattern
+    <a href="/en/nav-list"><code>nav-list</code></a>, invited here and with the same structure used by the
+    navbar horizontally. That is why there is no <code>sk-sidebar__link</code>: that list was never from
+    sidebar, and naming it that way would be naming a tenant.
+  </p>
+
+  <p>Collapse the sidebar with the button: the list becomes a rail of icons, and it is all still there.</p>
+  {/* The slot, not the `html` prop: a sidebar is only legible next to the thing it sits beside, and
+      that surrounding shell is the site playing consumer, not part of the markup being taught. */}
+  <Showcase code={html} react={react} label="Sidebar" flush>
+    <div class="app-shell">
+      <Fragment set:html={html} />
+      <div class="app-shell__main">
+        <p>The content of the app goes here.</p>
+      </div>
+    </div>
+  </Showcase>
+
+  <h2>Why is it not a <code>&lt;details&gt;</code></h2>
+  <p>
+    A disclosure is sent by
+    platform: <code>&lt;details&gt;</code> / <code>&lt;summary&gt;</code>, without machine. a sidebar
+    collapsible <em>no</em> is a disclosure. A closed <code>&lt;details&gt;</code> hides its contents;
+    a collapsed sidebar still shows it, just as icons. Since the platform does not send anything for
+    That is, a small enhancer earns its place, and does not reimplement anything that already exists.
+  </p>
+  <p>
+    That is why the labels fade out but <strong>no</strong> are removed from the DOM: collapsed, the label is what
+    only one that names the icon for a screen reader. A nested group that <em>yes</em> hides
+    its items are still a disclosure, and go in <code>&lt;details&gt;</code>.
+  </p>
+
+  <h2>One width, two states</h2>
+  <p>
+    The two widths are two values of <strong>un</strong> styling hook. The consumer writes
+    <code>inline-size: var(--sk-sidebar-inline-size)</code> once; collapse re-declares that hook
+it does not add a new one, which is the rule of styling hooks. The <code>state</code> is written by
+    machine like <code>data-state</code> at the root, never by hand.
+  </p>
+  <p>
+    The rail measures exactly one control, and when the sidebar is collapsed it lists the padding that
+    <em>centra</em> the icon in that square, calculated, not guessed, so it is centered in the three
+    densities. It is the shell re-declaring a pattern hook: it never touches its markup.
+  </p>
+  <p>
+    There is also no block <code>prefers-reduced-motion</code>: la duración sale de los tokens de intención
+    de expand/collapse, que ya se achican solos.
+    El sidebar le presta esa intención a la lista, so los labels se desvanecen en el mismo tiempo en que
+    se mueve el ancho.
+  </p>
+
+  <h2>The trigger does not have a visible label</h2>
+  <p>
+    It measures one icon wide, so its accessible name goes in a <code>aria-label</code> (or in text
+    visually hidden): a label visible inside would be text inside a square the width of a
+    icon. The enhancer patches attributes, never content, the name is yours.
+  </p>
+
+  <h2>Install</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>CSS</h2>
+  <CodeBlock code={css} label="CSS" />
+
+  <h2>HTML autorado</h2>
+  <p>
+    The enhancer looks for <code>[data-sk-sidebar]</code>, demands a <code>[data-sk-sidebar-trigger]</code> and
+    patches <code>aria-expanded</code>, <code>aria-controls</code> and <code>data-state</code>. Does not write
+    markup or classes. The complete markup is in the <strong>Vanilla</strong> tab of the preview.
+  </p>
+
+  <h2>Initialize vanilla</h2>
+  <CodeBlock code={js} label="JavaScript" />
+
+  <h2>React</h2>
+  <p>
+    Controlled (<code>collapsed</code>) or uncontrolled (<code>defaultCollapsed</code>), with
+    <code>onCollapsedChange</code> to persist the preference. The equivalent event in vanilla is
+    <code>sk-collapsed-change</code>. Persistence is up to the consumer: with what password and by user or by
+    device is not decided by a design system. The code is in the <strong>React</strong> tab of the preview.
+  </p>
+  <StylingHooks groups={[{"file":"components/sidebar.css","probe":"sk-sidebar"}]} />
+</Base>

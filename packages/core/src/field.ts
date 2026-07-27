@@ -10,11 +10,11 @@ export type FieldOptions = {
  * the control it most often holds would make the name a lie the first time it holds another.
  */
 export const fieldParts = {
-  root: "ds-field",
-  label: "ds-field__label",
-  hint: "ds-field__hint",
-  error: "ds-field__error",
-  requiredIndicator: "ds-field__required",
+  root: "sk-field",
+  label: "sk-field__label",
+  hint: "sk-field__hint",
+  error: "sk-field__error",
+  requiredIndicator: "sk-field__required",
 } as const;
 
 export type FieldPart = keyof typeof fieldParts;

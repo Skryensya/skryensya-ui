@@ -1,58 +1,109 @@
 /*
- * TIER 3, BADGE (opt-in styling hooks)
+ * TIER 3, BADGE
  *
  * Badge is a static status label. It does not imply interactivity, selection or notification count
  * semantics by itself; consumers choose the surrounding HTML semantics.
  *
  * Two shapes share the hooks: the LABEL (a pill with text) and the DOT (`data-dot`), a bare solid
  * indicator with no text, meant to ride the top-right corner of another element through a positioned
- * holder the consumer owns. The edge is tinted from the badge's own text colour (`currentColor`), so
+ * holder the consumer owns. The edge is tinted from the badge's own text color (`currentColor`), so
  * every tone gets a hairline of its own hue and the neutral badge, whose fill is the page canvas, 
  * stops being an invisible rectangle.
  */
 @layer components {
-  .ds-badge {
-    --ds-badge-bg: light-dark(var(--color-bg-canvas), var(--color-bg-surface-sunken));
-    --ds-badge-fg: light-dark(var(--color-text-tertiary), var(--color-text-secondary));
-    --ds-badge-border: color-mix(in oklab, currentColor 22%, transparent);
-    --ds-badge-radius: var(--radius-pill);
-    --ds-badge-padding-x: var(--space-inset-sm);
-    --ds-badge-padding-y: var(--space-inset-xs);
-    --ds-badge-font-size: var(--font-size-caption);
-    --ds-badge-font-weight: var(--font-weight-label);
-    --ds-badge-line-height: var(--font-line-height-caption);
+  .sk-badge {
+    --sk-badge-bg: light-dark(var(--color-bg-canvas), var(--color-bg-surface-sunken));
+    --sk-badge-fg: light-dark(var(--color-text-tertiary), var(--color-text-secondary));
+    --sk-badge-border: color-mix(in oklab, currentColor 22%, transparent);
+    --sk-badge-radius: var(--radius-pill);
+    --sk-badge-padding-x: var(--space-inset-sm);
+    --sk-badge-padding-y: var(--space-inset-xs);
+    --sk-badge-font-size: var(--font-size-caption);
+    --sk-badge-font-weight: var(--font-weight-label);
+    --sk-badge-line-height: var(--font-line-height-caption);
 
     /* Dot: a solid indicator, no text. Its fill is a SATURATED tone (the border-tone ramp), because a
      * few-pixel dot has to read at a glance where a soft label fill would wash out. The ring lets it sit
      * over busy content, an icon, an avatar, without smudging into it; the consumer sets it to whatever
      * surface the dot floats on. */
-    --ds-badge-dot-size: 0.5rem;
-    --ds-badge-dot-color: var(--color-text-secondary);
-    --ds-badge-dot-ring-width: 2px;
-    --ds-badge-dot-ring-color: var(--color-bg-surface);
+    --sk-badge-dot-size: 0.5rem;
+    --sk-badge-dot-color: var(--color-text-secondary);
+    --sk-badge-dot-ring-width: 2px;
+    --sk-badge-dot-ring-color: var(--color-bg-surface);
+
+    /* The label pill. The dot variant and the corner holder are below. */
+    display: inline-block;
+    padding: var(--sk-badge-padding-y) var(--sk-badge-padding-x);
+    border: 1px solid var(--sk-badge-border);
+    border-radius: var(--sk-badge-radius);
+    background: var(--sk-badge-bg);
+    color: var(--sk-badge-fg);
+    font-size: var(--sk-badge-font-size);
+    font-weight: var(--sk-badge-font-weight);
+    line-height: var(--sk-badge-line-height);
+    white-space: nowrap;
   }
 
-  .ds-badge[data-tone="accent"] {
-    --ds-badge-bg: var(--color-bg-accent-subtle);
-    --ds-badge-fg: var(--color-text-accent);
-    --ds-badge-dot-color: var(--color-border-accent);
+  .sk-badge[data-tone="accent"] {
+    --sk-badge-bg: var(--color-bg-accent-subtle);
+    --sk-badge-fg: var(--color-text-accent);
+    --sk-badge-dot-color: var(--color-border-accent);
   }
 
-  .ds-badge[data-tone="success"] {
-    --ds-badge-bg: var(--color-bg-success-subtle);
-    --ds-badge-fg: var(--color-text-success);
-    --ds-badge-dot-color: var(--color-border-success);
+  .sk-badge[data-tone="success"] {
+    --sk-badge-bg: var(--color-bg-success-subtle);
+    --sk-badge-fg: var(--color-text-success);
+    --sk-badge-dot-color: var(--color-border-success);
   }
 
-  .ds-badge[data-tone="warning"] {
-    --ds-badge-bg: var(--color-bg-warning-subtle);
-    --ds-badge-fg: var(--color-text-warning);
-    --ds-badge-dot-color: var(--color-border-warning);
+  .sk-badge[data-tone="warning"] {
+    --sk-badge-bg: var(--color-bg-warning-subtle);
+    --sk-badge-fg: var(--color-text-warning);
+    --sk-badge-dot-color: var(--color-border-warning);
   }
 
-  .ds-badge[data-tone="danger"] {
-    --ds-badge-bg: var(--color-bg-danger-subtle);
-    --ds-badge-fg: var(--color-text-danger);
-    --ds-badge-dot-color: var(--color-border-danger);
+  .sk-badge[data-tone="danger"] {
+    --sk-badge-bg: var(--color-bg-danger-subtle);
+    --sk-badge-fg: var(--color-text-danger);
+    --sk-badge-dot-color: var(--color-border-danger);
+  }
+
+  /* The dot: a bare solid circle, no text, no padding, no hairline. It carries meaning by color and
+   * position alone, so it drops the label's box entirely. */
+  .sk-badge[data-dot] {
+    padding: 0;
+    border: 0;
+    inline-size: var(--sk-badge-dot-size);
+    block-size: var(--sk-badge-dot-size);
+    border-radius: var(--radius-pill);
+    background: var(--sk-badge-dot-color);
+  }
+
+  /* The holder anchors a badge to the top-right corner of whatever it wraps, an icon button, an avatar.
+   * The badge rides the corner (mostly outside it, the canonical notification spot) with a ring in the
+   * host surface's color so it reads as floating above, not painted onto, the element below. Works for a
+   * dot or a small count pill alike. */
+  .sk-badge-holder {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .sk-badge-holder > .sk-badge {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    translate: 35% -35%;
+    box-shadow: 0 0 0 var(--sk-badge-dot-ring-width) var(--sk-badge-dot-ring-color);
+    pointer-events: none;
+  }
+
+  @media (forced-colors: active) {
+    .sk-badge {
+      border-color: CanvasText;
+    }
+    .sk-badge[data-dot] {
+      border: 1px solid CanvasText;
+      background: CanvasText;
+    }
   }
 }

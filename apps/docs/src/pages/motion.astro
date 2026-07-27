@@ -1,18 +1,84 @@
 ---
+import "@skryensya/core/components/dialog.css";
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
+import EasingCurve from "../components/EasingCurve.astro";
+import MotionTrack from "../components/MotionTrack.astro";
+import MotionTransport from "../components/MotionTransport.astro";
 import Used from "../components/Used.astro";
-import { tokens } from "../lib/tokens";
+import { byName, literalOf, tokens } from "../lib/tokens";
 
-const durations = tokens.filter((t) => t.name.startsWith("--scale-duration-"));
-const easings = tokens.filter((t) => t.name.startsWith("--scale-easing-"));
-const intents = ["enter", "exit", "feedback", "expand", "reveal", "navigate"];
+/* The duration scale, split by what the number MEASURES. A transition is a one-way trip and a
+ * cycle is a lap; putting both in one race made the fastest lane and the longest lane mean
+ * different things, which is the one thing a race is not allowed to do. Each half is ordered by
+ * its own value, so the specimens finish top to bottom and the ranking needs no label. */
+const durationsBy = (cycles: boolean) =>
+  tokens
+    .filter((t) => t.name.startsWith("--scale-duration-"))
+    .map((t) => ({
+      ...t,
+      short: t.name.replace("--scale-duration-", ""),
+      ms: Number.parseFloat(literalOf(t.value)),
+    }))
+    .filter((t) => t.short.startsWith("cycle") === cycles)
+    .sort((a, b) => a.ms - b.ms);
+
+const transitionDurations = durationsBy(false);
+const cycleDurations = durationsBy(true);
+
+/* What each curve is FOR. The values are read from the stylesheet; only the reason is written
+ * here, and it's the one thing the CSS comment can't put on screen. */
+const easings = [
+  ["--scale-easing-linear", "sin aceleración, solo para loops"],
+  ["--scale-easing-standard", "cambios dentro de la pantalla"],
+  ["--scale-easing-enter", "arranca a fondo y se asienta"],
+  ["--scale-easing-exit", "acelera hasta irse"],
+  ["--scale-easing-emphasized", "un asentado más largo, para el foco"],
+  ["--scale-easing-spring", "sobrepasa y vuelve, no para UI crítica"],
+  ["--scale-easing-glide", "continúa el impulso de un gesto"],
+];
+
+/*
+ * The intent tokens, read out of the corpus instead of listed by hand.
+ *
+ * A hand-written list is a second source of truth that silently goes stale: this page claimed
+ * "las ocho intenciones" while semantic/_motion.scss shipped fifteen, so the table was documenting
+ * a smaller system than the one installed. Every `--motion-<intent>-duration` IS an intent, and
+ * that is the definition the table now uses.
+ *
+ * Each row shows the PRIMITIVE the intent composes, not the literal 0.2s / cubic-bezier(…): the
+ * literal was already read off the specimens above, and repeating it fifteen times said nothing
+ * about tier 2 while making the table too wide for its column. The name says what the composition
+ * is; the used value underneath says what the browser resolved it to right now.
+ */
+const shortRef = (ref?: string) => ref?.replace(/^--(?:scale|motion)-(?:duration|easing|distance)-/, "");
+
+const intents = tokens
+  .filter(
+    (t) =>
+      t.tier === "semantic" &&
+      /^--motion-[a-z-]+-duration$/.test(t.name) &&
+      // The reduced-mode primitives are what the @media block swaps intents TO, not an intent.
+      t.name !== "--motion-reduced-duration",
+  )
+  .map((t) => {
+    const key = t.name.slice("--motion-".length, -"-duration".length);
+    const distance = byName.get(`--motion-${key}-distance`);
+    return {
+      key,
+      duration: shortRef(t.refs[0]),
+      easing: shortRef(byName.get(`--motion-${key}-easing`)?.refs[0]),
+      distance: distance && shortRef(distance.refs[0]),
+      /* A loop, not a transition: its token measures a lap, so its specimen has to run like one. */
+      loops: key === "loading",
+    };
+  });
 
 const bad = `/* Esto falla el build: un componente no llega a un primitivo. */
-.ds-dialog { transition: opacity var(--scale-duration-fast); }`;
+.sk-dialog { transition: opacity var(--scale-duration-fast); }`;
 
 const good = `/* Un componente consume intención, nunca un valor técnico. */
-.ds-dialog {
+.sk-dialog {
   transition: opacity var(--motion-enter-duration)
     var(--motion-enter-easing);
   translate: 0 var(--motion-enter-distance);
@@ -24,6 +90,7 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
   --motion-enter-distance: 0px;
   --motion-expand-duration: 120ms; /* esencial → sigue siendo legible */
   --motion-emphasize-duration: 0ms; /* decorativo → fuera */
+  --motion-count-duration: 0ms; /* count-up → al número final */
 }`;
 ---
 
@@ -38,8 +105,8 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
     componente.
   </p>
 
-  <div class="ds-alert" data-tone="info" data-presentation="accent">
-    <div class="ds-alert__content">
+  <div class="sk-alert" data-tone="info" data-presentation="accent">
+    <div class="sk-alert__content">
     <p>
       <strong>Motion no es un patrón opt-in.</strong> Vive en <code>primitives.scss</code> y
       <code>semantic.scss</code>, es decir que viene en el bundle base: si se importa
@@ -51,46 +118,144 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
   <h2>Los mismos tres tiers que el color</h2>
 
   <h3>Tier 1, valores técnicos, sin significado</h3>
-  <div class="ds-table-scroll">
-    <table class="ds-table">
-      <thead><tr><th>Token</th><th>Valor usado</th></tr></thead>
-      <tbody>
-        {durations.map((t) => (
-          <tr>
-            <td class="mono">{t.name}</td>
-            <td><Used token={t.name} /></td>
-          </tr>
-        ))}
-        {easings.map((t) => (
-          <tr>
-            <td class="mono">{t.name}</td>
-            <td><Used token={t.name} /></td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
+  <p>
+    Dos escalas y nada más: cuánto dura y cómo reparte ese tiempo. Ninguna de las dos dice para qué
+    sirve, así que las dos se pueden mirar de frente.
+  </p>
+
+  <p class="howto">
+    <strong>Cómo se leen las muestras.</strong> Cada carril es una pieza cruzando la misma distancia,
+    animada por el token que dice al lado, no por un número copiado a mano: si se retoca el primitivo,
+    la muestra cambia con él. En reposo todas arrancan del mismo punto y solo se mueven al pulsar
+    <em>Reproducir</em>, que las deja corriendo juntas hasta que pauses.
+  </p>
+
+  <figure class="specimens" data-motion-group data-motion-specimen>
+    <figcaption class="specimens__head">
+      <span class="specimens__title">Duraciones de transición, el mismo recorrido</span>
+      <MotionTransport label="las duraciones de transición" />
+    </figcaption>
+    <div class="specimens__rows">
+      {
+        transitionDurations.map((t) => (
+          <div class="race">
+            <span class="mono race__name">{t.short}</span>
+            <MotionTrack duration={`var(${t.name})`} easing="linear" />
+            <span class="mono race__value"><Used token={t.name} /></span>
+          </div>
+        ))
+      }
+    </div>
+    <p class="specimens__note">
+      Todas salen a la vez y recorren lo mismo, así que la única diferencia es el tiempo. Van a
+      velocidad constante a propósito: la curva es la otra escala, y aparece más abajo.
+      <code>instant</code> vale 0 s, que es el caso legítimo de "sin transición" dentro de la escala,
+      no la ausencia de un token.
+    </p>
+  </figure>
+
+  <figure class="specimens" data-motion-group data-motion-continuous data-motion-specimen>
+    <figcaption class="specimens__head">
+      <span class="specimens__title">Duraciones de ciclo, una vuelta de un loop</span>
+      <MotionTransport label="las duraciones de ciclo" />
+    </figcaption>
+    <div class="specimens__rows">
+      {
+        cycleDurations.map((t) => (
+          <div class="race">
+            <span class="mono race__name">{t.short}</span>
+            <MotionTrack duration={`var(${t.name})`} easing="linear" loop />
+            <span class="mono race__value"><Used token={t.name} /></span>
+          </div>
+        ))
+      }
+    </div>
+    <p class="specimens__note">
+      Estas tres no son transiciones: miden <strong>una vuelta</strong> de algo que se repite, un
+      spinner o una barra indeterminada, y por eso su muestra da vueltas en vez de llegar y quedarse.
+      Un loop no tiene destino, así que ningún componente debería usar una de estas para mover algo de
+      un estado a otro.
+    </p>
+  </figure>
+
+  <figure class="specimens" data-motion-group>
+    <figcaption class="specimens__head">
+      <span class="specimens__title">Curvas, el mismo tiempo</span>
+      <MotionTransport label="las curvas" />
+    </figcaption>
+    <div class="specimens__grid">
+      {easings.map(([token, note]) => <EasingCurve token={token} note={note} />)}
+    </div>
+    <p class="specimens__note">
+      Progreso contra tiempo sobre un cuadrado unitario; la diagonal punteada es el movimiento sin
+      curva. Todas duran <strong>1 s</strong> para que lo único que cambie sea el reparto. El techo
+      sobre el cuadrado es común: ahí es donde <code>spring</code> se pasa del 100 % y vuelve.
+      Cada tarjeta se reproduce sola al pulsarla, sin mover a las demás.
+    </p>
+  </figure>
 
   <h3>Tier 2, intención</h3>
-  <p>Cada intención compone un primitivo por propósito. Esto es lo que se consume.</p>
-  <div class="ds-table-scroll">
-    <table class="ds-table">
+  <p>
+    Cada intención compone <strong>una duración y una curva</strong> del tier 1, y algunas además una
+    distancia. Esto es lo único que un componente consume, y es lo que se lee en la tabla: el nombre
+    del primitivo que compone, con el valor que el navegador está usando debajo.
+  </p>
+  <figure class="specimens" data-motion-group data-motion-specimen>
+    <figcaption class="specimens__head">
+      <span class="specimens__title">Las {intents.length} intenciones, a la vez</span>
+      <MotionTransport label="las intenciones" />
+    </figcaption>
+    <table class="sk-table intents">
       <thead>
-        <tr><th>Intención</th><th>Duración</th><th>Easing</th></tr>
+        <tr>
+          <th>Intención</th>
+          <th>Duración</th>
+          <th>Easing</th>
+          <th>Distancia</th>
+          <th class="intents__sample">Muestra</th>
+        </tr>
       </thead>
       <tbody>
         {
           intents.map((i) => (
             <tr>
-              <td class="mono">--motion-{i}-*</td>
-              <td><Used token={`--motion-${i}-duration`} /></td>
-              <td><Used token={`--motion-${i}-easing`} /></td>
+              <td class="mono intents__name">--motion-{i.key}-*</td>
+              <td class="mono">
+                <span class="intents__ref">{i.duration}</span>
+                <span class="intents__used"><Used token={`--motion-${i.key}-duration`} /></span>
+              </td>
+              <td class="mono">
+                <span class="intents__ref">{i.easing}</span>
+              </td>
+              <td class="mono">
+                {i.distance ? (
+                  <>
+                    <span class="intents__ref">{i.distance}</span>
+                    <span class="intents__used"><Used token={`--motion-${i.key}-distance`} /></span>
+                  </>
+                ) : (
+                  <span class="intents__none">—</span>
+                )}
+              </td>
+              <td>
+                <MotionTrack
+                  duration={`var(--motion-${i.key}-duration)`}
+                  easing={`var(--motion-${i.key}-easing)`}
+                  loop={i.loops}
+                />
+              </td>
             </tr>
           ))
         }
       </tbody>
     </table>
-  </div>
+    <p class="specimens__note">
+      Las muestras leen los mismos tokens que un componente, así que si tu sistema pide
+      <em>reduced motion</em> estas ya no son las duraciones de arriba: son las reducidas, que es
+      justo lo que verías en la UI real. Ahí el nombre del primitivo y el valor usado dejan de
+      coincidir a propósito, y eso es exactamente lo que hace el bloque del final de la página.
+    </p>
+  </figure>
 
   <h2>La intención está enforced gratis</h2>
   <p>
@@ -133,20 +298,178 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
   </p>
   <CodeBlock code={reduced} label="semantic.scss" />
 
-  <div class="ds-table-scroll">
-    <table class="ds-table">
-      <thead><tr><th>Rol</th><th>Qué le pasa</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Helpful</strong> (enter, exit, reveal, navigate)</td><td>distancia a 0, queda un fade corto</td></tr>
-        <tr><td><strong>Essential</strong> (state-change, expand/collapse)</td><td>conserva una duración breve y legible</td></tr>
-        <tr><td><strong>Decorative</strong> (emphasize)</td><td>a 0</td></tr>
-        <tr><td><strong>Continuous</strong> (loading)</td><td>duración más suave; el componente debería cambiar a una variante no espacial</td></tr>
-      </tbody>
-    </table>
-  </div>
+  <table class="sk-table roles">
+    <thead><tr><th>Rol</th><th>Qué le pasa</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Helpful</strong> (enter, exit, reveal, navigate)</td><td>distancia a 0, queda un fade corto</td></tr>
+      <tr><td><strong>Essential</strong> (state-change, expand/collapse)</td><td>conserva una duración breve y legible</td></tr>
+      <tr><td><strong>Decorative</strong> (emphasize, count)</td><td>a 0</td></tr>
+      <tr><td><strong>Continuous</strong> (loading)</td><td>duración más suave; el componente debería cambiar a una variante no espacial</td></tr>
+    </tbody>
+  </table>
 
   <p>
     Como redefine tokens que los componentes ya consumen, <strong>ningún componente cambia</strong>.
     La reducción es sistémica, no per-componente.
   </p>
 </Base>
+
+<style>
+  /* ── specimens: the tokens, played ──────────────────────────────────────────
+   * A specimen is a token you can watch instead of read. The chrome around it stays flat on the
+   * page background: the cards and rails bring their own surfaces, and a box around a box needs
+   * a third radius nobody can keep concentric. */
+  .specimens {
+    display: grid;
+    gap: var(--space-stack-sm);
+    margin: var(--space-stack-md) 0 var(--space-section);
+    overflow-x: clip;
+  }
+
+  .specimens__head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-sm);
+    align-items: center;
+    justify-content: space-between;
+    padding-block-end: var(--space-inset-xs);
+    border-block-end: 1px solid var(--color-border-subtle);
+  }
+
+  .specimens__title {
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+    color: var(--color-text-secondary);
+  }
+
+  .specimens__note {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
+    text-wrap: pretty;
+  }
+
+  /* The reading instructions for every specimen on the page, said once. Marked as an aside by the
+   * rule rather than by a box: it's addressed to the reader, not to the system. */
+  .howto {
+    border-inline-start: 2px solid var(--color-border-default);
+    padding-inline-start: var(--space-inset-md);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+
+  .specimens__rows {
+    display: grid;
+    gap: var(--space-stack-xs);
+  }
+
+  .specimens__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: var(--space-inline-sm);
+  }
+
+  /* Name, track, value. The value column is fixed so the rails all start and end on the same two
+   * lines: a race is only readable if the lanes are. */
+  .race {
+    display: grid;
+    grid-template-columns: minmax(5.5rem, auto) minmax(0, 1fr) 4.5rem;
+    gap: var(--space-inline-sm);
+    align-items: center;
+  }
+
+  .race__name {
+    color: var(--color-text-secondary);
+  }
+
+  .race__value {
+    text-align: end;
+    /* The values are read down the column, so the digits have to line up. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  /*
+   * The intents table carries no scrollport of its own.
+   *
+   * A table inside `.sk-table-scroll` owns a second scroll axis nested in the page's, and this one
+   * had earned it by holding a `cubic-bezier(0.2, 0, 0, 1)` in every row: four unbreakable strings
+   * wide, so the box overflowed and scrolled sideways at narrow widths. Naming the primitive
+   * instead of quoting it removed the reason, and every cell left can wrap, so the table simply
+   * fits and the page keeps a single scroll direction.
+   */
+  .intents {
+    inline-size: 100%;
+  }
+
+  .intents :is(th, td) {
+    /* Token names are one long unbreakable word; let them break rather than push the table wide. */
+    overflow-wrap: anywhere;
+  }
+
+  .intents__sample {
+    inline-size: 22%;
+  }
+
+  .intents__name {
+    color: var(--color-text-primary);
+  }
+
+  .intents__ref {
+    display: block;
+  }
+
+  /* The live value sits under the name it resolves from, quieter: the composition is the claim,
+   * the number is the evidence. */
+  .intents__used {
+    display: block;
+    color: var(--color-text-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .intents__none {
+    color: var(--color-text-tertiary);
+  }
+
+  .roles {
+    inline-size: 100%;
+  }
+
+  /*
+   * Narrow: the table has to FIT, because there is no scrollport under it any more.
+   *
+   * Two givens, in the order they cost the least. A rail shorter than a thumb can't time
+   * anything, so the sample column is the first thing that can go. Below that the four columns
+   * left are all load-bearing, and what's still spendable is the gutter between them, so the
+   * consumer skin tightens the cell padding through the table's own styling hook rather than
+   * dropping a column the reader came for.
+   */
+  @media (max-width: 34rem) {
+    .intents :is(th, td):last-child {
+      display: none;
+    }
+  }
+
+  @media (max-width: 28rem) {
+    .intents {
+      --sk-table-cell-padding-x: var(--space-inset-xs);
+      --sk-table-font-size: var(--font-size-caption);
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .race {
+      grid-template-columns: minmax(0, 1fr) 4.5rem;
+    }
+
+    .race__name {
+      grid-column: 1 / -1;
+    }
+  }
+</style>
+
+<script>
+  import { initMotionSpecimens } from "../scripts/motion-specimens";
+
+  initMotionSpecimens();
+</script>

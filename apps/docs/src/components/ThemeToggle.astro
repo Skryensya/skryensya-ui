@@ -1,27 +1,29 @@
 ---
 /*
- * Header chrome: cycles reading mode system → light → dark. Preference lives in localStorage["ds"]
- * under `scheme`, the same key the Opciones "Modo" select uses, the script keeps them in sync.
+ * Header chrome: cycles color mode system → light → dark. Preference lives in localStorage["sk"]
+ * under `scheme` (FOUC + persistence listener). Markup is the ThemeToggle contract from the DS.
  *
- * Markup is the icon-only button contract (one centred .ds-icon in a square). Three glyphs share
- * that same cell so the active one can cross-fade without a custom-sized wrapper.
+ * The three labels are ATTRIBUTES, read by the vanilla enhancer when it swaps state, so they are
+ * translated here at build rather than by the enhancer: the DS component has no business knowing
+ * what language its host speaks.
  */
-import { iconDataMarkup, monitor, moon, sun } from "../icons";
+import { getLocale, useTranslations } from "../i18n";
 
-const systemIcon = iconDataMarkup("theme-monitor", monitor, { attrs: { "data-scheme-icon": "system" } });
-const lightIcon = iconDataMarkup("theme-sun", sun, { attrs: { "data-scheme-icon": "light" } });
-const darkIcon = iconDataMarkup("theme-moon", moon, { attrs: { "data-scheme-icon": "dark" } });
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <button
-  class="ds-button ds-interactive dimensions__theme-toggle"
+  class="sk-button sk-interactive sk-theme-toggle"
   data-variant="ghost"
   data-icon-only
-  data-docs-theme-toggle
+  data-sk-theme-toggle
+  data-sk-theme-toggle-label-system={t("prefs.modeSystem")}
+  data-sk-theme-toggle-label-light={t("prefs.modeLight")}
+  data-sk-theme-toggle-label-dark={t("prefs.modeDark")}
   type="button"
-  aria-label="Modo: sistema"
+  aria-label={t("prefs.modeSystem")}
 >
-  <Fragment set:html={systemIcon} />
-  <Fragment set:html={lightIcon} />
-  <Fragment set:html={darkIcon} />
+  <span data-sk-icon="mode-system" data-sk-theme-toggle-icon="system"></span>
+  <span data-sk-icon="mode-light" data-sk-theme-toggle-icon="light"></span>
+  <span data-sk-icon="mode-dark" data-sk-theme-toggle-icon="dark"></span>
 </button>

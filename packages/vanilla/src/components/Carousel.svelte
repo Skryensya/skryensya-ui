@@ -160,7 +160,7 @@
     // Los handlers de la pista (focus/blur/wheel/touch/mousedown) se cablean una vez y se re-leen en
     // cada disparo: la máquina cambia de estado y con ella el closure de Zag.
     cleanups.push(
-      bindZagEvents(track, () => carousel.connect(service, normalizeProps).getItemGroupProps() as DomProps),
+      bindZagEvents(track, () => api.getItemGroupProps() as DomProps),
     );
 
     const onGoto = ((event: CustomEvent<CarouselGotoDetail>) => {

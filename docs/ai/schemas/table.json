@@ -1,0 +1,73 @@
+{
+  "$schema": "./_meta.json",
+  "id": "table",
+  "consume": {
+    "css": "@skryensya/core/components/table.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "Table": {
+      "use": "tabular data",
+      "element": "table",
+      "react": {
+        "from": "@skryensya/react/table",
+        "name": "Table"
+      }
+    }
+  },
+  "children": [
+    "TableScroll",
+    "TableCaption",
+    "TableHead",
+    "TableBody",
+    "TableFooter",
+    "TableRow",
+    "TableHeader",
+    "TableCell"
+  ],
+  "composes": {
+    "TableScroll": {
+      "from": "@skryensya/react/table",
+      "name": "TableScroll"
+    },
+    "TableCaption": {
+      "from": "@skryensya/react/table",
+      "name": "TableCaption"
+    },
+    "TableHead": {
+      "from": "@skryensya/react/table",
+      "name": "TableHead"
+    },
+    "TableBody": {
+      "from": "@skryensya/react/table",
+      "name": "TableBody"
+    },
+    "TableFooter": {
+      "from": "@skryensya/react/table",
+      "name": "TableFooter"
+    },
+    "TableRow": {
+      "from": "@skryensya/react/table",
+      "name": "TableRow"
+    },
+    "TableHeader": {
+      "from": "@skryensya/react/table",
+      "name": "TableHeader"
+    },
+    "TableCell": {
+      "from": "@skryensya/react/table",
+      "name": "TableCell"
+    }
+  },
+  "rules": {
+    "scroll": "Wrap Table in TableScroll when columns may overflow; set stickyColumn or stickyHeader on TableScroll to pin an edge.",
+    "caption": "Use TableCaption for an accessible description of the table, not a heading placed above it.",
+    "header-scope": "TableHeader defaults to scope=\"col\"; pass scope=\"row\" for a header cell that labels its row instead."
+  },
+  "examples": {
+    "Table": {
+      "basic": "<Table><TableHead><TableRow><TableHeader>Nombre</TableHeader><TableHeader>Rol</TableHeader></TableRow></TableHead><TableBody><TableRow><TableCell>Ana</TableCell><TableCell>Admin</TableCell></TableRow></TableBody></Table>",
+      "scrollable": "<TableScroll stickyHeader><Table><TableCaption>Usuarios activos</TableCaption><TableHead><TableRow><TableHeader>Nombre</TableHeader></TableRow></TableHead><TableBody><TableRow><TableCell>Ana</TableCell></TableRow></TableBody></Table></TableScroll>"
+    }
+  }
+}

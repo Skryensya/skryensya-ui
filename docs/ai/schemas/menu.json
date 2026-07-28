@@ -1,0 +1,39 @@
+{
+  "$schema": "./_meta.json",
+  "id": "menu",
+  "consume": {
+    "css": "@skryensya/core/components/menu.css",
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-menu"],
+      "attributes": ["data-sk-menu"],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "Menu": {
+      "use": "list of actions triggered from a control",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/menu",
+        "name": "Menu"
+      },
+      "requires": ["items", "label"]
+    }
+  },
+  "rules": {
+    "items": "Give every item a stable value and label; kind \"checkbox\" or \"radio\" makes it a toggled option, and nested children turn it into a submenu.",
+    "label": "label names the menu for assistive tech; it is not shown as visible text.",
+    "trigger": "Pass trigger for the default button opener, or contextTarget to open the same menu from a right-click surface instead.",
+    "radio": "Group radio items with a shared group so selecting one clears its siblings."
+  },
+  "examples": {
+    "Menu": {
+      "trigger": "<Menu items={fileActions} label=\"File actions\" trigger=\"Actions\" />",
+      "context": "<Menu contextTarget={<Row />} items={rowActions} label=\"Row actions\" />"
+    }
+  }
+}

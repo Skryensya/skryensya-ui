@@ -1,0 +1,56 @@
+{
+  "$schema": "./_meta.json",
+  "id": "toast",
+  "consume": {
+    "css": "@skryensya/core/components/toast.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "Toast": {
+      "use": "transient feedback that appears because something happened, then goes away",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/content",
+        "name": "Toast"
+      }
+    }
+  },
+  "props": {
+    "tone": ["neutral", "info", "success", "warning", "danger"],
+    "presentation": ["banner", "accent", "inline"]
+  },
+  "meanings": {
+    "tone": {
+      "neutral": "plain message, no semantic color; the default for most toasts",
+      "info": "background activity or progress",
+      "success": "a completed action",
+      "warning": "a condition worth noticing but not blocking",
+      "danger": "an error; announced assertively instead of politely"
+    },
+    "presentation": {
+      "banner": "raised floating panel, the toast default",
+      "accent": "same panel with a stronger tone accent",
+      "inline": "flattened to sit inside surrounding content"
+    }
+  },
+  "children": ["ToastRegion"],
+  "composes": {
+    "ToastRegion": {
+      "from": "@skryensya/react/content",
+      "name": "ToastRegion"
+    }
+  },
+  "rules": {
+    "ToastRegion": "Every Toast is rendered inside a ToastRegion, which owns the live region and the stacking of multiple toasts.",
+    "timeout": "Pass timeout together with onDismiss to auto-dismiss; a toast with an action should not carry a timeout, since it could disappear before the action is used.",
+    "onDismiss": "Without onDismiss there is no close button; the toast can only leave through its own timeout.",
+    "lifecycle": "Toast never removes itself from the DOM. The app owns the array of visible toasts and removes the entry in onDismiss."
+  },
+  "examples": {
+    "Toast": {
+      "dismissible": "<ToastRegion><Toast onDismiss={() => remove(id)}>Link copied to clipboard.</Toast></ToastRegion>",
+      "timed": "<ToastRegion><Toast timeout={6000} title=\"Syncing\" tone=\"info\">This may take a few seconds.</Toast></ToastRegion>",
+      "action": "<ToastRegion><Toast actions={<Button onClick={undo} size=\"sm\" variant=\"neutral\">Undo</Button>} onDismiss={() => remove(id)} title=\"Document archived\">Moved to Archived.</Toast></ToastRegion>"
+    }
+  }
+}

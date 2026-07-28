@@ -1,0 +1,41 @@
+{
+  "$schema": "./_meta.json",
+  "id": "badge",
+  "consume": {
+    "css": "@skryensya/core/components/badge.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "Badge": {
+      "use": "static status label",
+      "element": "span",
+      "react": {
+        "from": "@skryensya/react/badge",
+        "name": "Badge"
+      }
+    }
+  },
+  "props": {
+    "tone": ["neutral", "accent", "success", "warning", "danger"]
+  },
+  "meanings": {
+    "tone": {
+      "neutral": "plain classification with no semantic color",
+      "accent": "brand-emphasized classification",
+      "success": "a favorable state",
+      "warning": "a state that needs attention",
+      "danger": "a failed or blocking state"
+    }
+  },
+  "children": ["text"],
+  "rules": {
+    "interaction": "Badge has no interaction. Use Tag when the label must be removable."
+  },
+  "examples": {
+    "Badge": {
+      "neutral": "<Badge>Borrador</Badge>",
+      "status": "<Badge tone=\"success\">Activo</Badge>",
+      "danger": "<Badge tone=\"danger\">Vencido</Badge>"
+    }
+  }
+}

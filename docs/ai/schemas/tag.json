@@ -1,0 +1,41 @@
+{
+  "$schema": "./_meta.json",
+  "id": "tag",
+  "consume": {
+    "css": "@skryensya/core/components/tag.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "Tag": {
+      "use": "removable classification or filter facet",
+      "element": "span",
+      "react": {
+        "from": "@skryensya/react/tag",
+        "name": "Tag"
+      }
+    }
+  },
+  "props": {
+    "tone": ["neutral", "accent", "success", "warning", "danger"]
+  },
+  "meanings": {
+    "tone": {
+      "neutral": "plain classification with no semantic color",
+      "accent": "brand-emphasized classification",
+      "success": "a favorable classification",
+      "warning": "a classification that needs attention",
+      "danger": "a blocking or destructive classification"
+    }
+  },
+  "children": ["text"],
+  "rules": {
+    "onRemove": "Omit onRemove to render a plain, non-removable tag; providing it renders the remove control.",
+    "removeLabel": "Set removeLabel to the specific facet removed when the default \"Remove\" is ambiguous."
+  },
+  "examples": {
+    "Tag": {
+      "plain": "<Tag>Frontend</Tag>",
+      "removable": "<Tag onRemove={clearFilter} removeLabel=\"Quitar filtro Frontend\" tone=\"accent\">Frontend</Tag>"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "./_meta.json",
+  "id": "stat",
+  "consume": {
+    "css": "@skryensya/core/components/stat.css",
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-stat"],
+      "attributes": ["data-sk-stat", "data-animate"],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "Stat": {
+      "use": "headline metric",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/stat",
+        "name": "Stat"
+      }
+    }
+  },
+  "props": {
+    "trend": ["neutral", "up", "down"],
+    "animate": [false, true]
+  },
+  "meanings": {
+    "trend": {
+      "neutral": "colors the change indicator as neutral, independent of the value's sign",
+      "up": "colors the change indicator as positive",
+      "down": "colors the change indicator as negative"
+    }
+  },
+  "rules": {
+    "trend": "Pick trend by whether the change is good or bad news, not by whether the number itself is positive or negative.",
+    "animate": "animate only runs when value is a finite number; pass an object ({ from, duration, whenVisible }) instead of true to customize the count-up, and it honours prefers-reduced-motion automatically.",
+    "format": "Pass format to override the default locale, tabular formatting used for each tick and the final value."
+  },
+  "examples": {
+    "Stat": {
+      "static": "<Stat label=\"Usuarios activos\" value={1240} />",
+      "trend": "<Stat change={<>+12.5%</>} label=\"Ingresos\" trend=\"up\" value={48200} />",
+      "animated": "<Stat animate label=\"Descargas\" value={9800} />"
+    }
+  }
+}

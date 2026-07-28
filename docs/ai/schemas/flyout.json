@@ -1,0 +1,39 @@
+{
+  "$schema": "./_meta.json",
+  "id": "flyout",
+  "consume": {
+    "css": "@skryensya/core/components/flyout.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "Flyout": {
+      "use": "pick one option from a side panel, no portal",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/flyout",
+        "name": "Flyout"
+      }
+    }
+  },
+  "children": ["Icon"],
+  "composes": {
+    "Icon": {
+      "from": "@skryensya/react/icon",
+      "name": "Icon"
+    }
+  },
+  "rules": {
+    "options": "Array of {value, label, disabled?}; controls both the trigger's selected label and the panel's items — there is no separate children API.",
+    "value": "Controlled: pass value + onValueChange. Omitting value makes it uncontrolled from defaultValue (or the first option).",
+    "indicator": "Decorative glyph for the closed trigger state (e.g. a chevron-down Icon), omit Icon.label — Flyout owns the accessible name via its own label prop.",
+    "openIndicator": "Decorative glyph swapped in while the panel is open (e.g. chevron-up); paired with indicator.",
+    "itemIndicator": "Decorative glyph shown next to the currently selected item inside the panel (e.g. a check).",
+    "portal": "Unlike Select/Combobox/Menu, the panel is NOT portaled — it participates in normal document flow next to the trigger. Prefer Select when the panel must escape an overflow:hidden ancestor.",
+    "exclusive": "Only one Flyout stays open at a time across the page; opening one closes any other open Flyout automatically."
+  },
+  "examples": {
+    "Flyout": {
+      "basic": "<Flyout label=\"Plan\" value={plan} onValueChange={(d) => setPlan(d.value)} indicator={<Icon name=\"chevron-down\" />} openIndicator={<Icon name=\"chevron-up\" />} itemIndicator={<Icon name=\"check\" />} options={[{ value: \"starter\", label: \"Starter\" }, { value: \"pro\", label: \"Pro\" }]} />"
+    }
+  }
+}

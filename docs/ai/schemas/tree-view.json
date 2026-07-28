@@ -1,0 +1,49 @@
+{
+  "$schema": "./_meta.json",
+  "id": "tree-view",
+  "consume": {
+    "css": "@skryensya/core/components/tree-view.css",
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-tree-view"],
+      "attributes": [
+        "data-sk-tree-view",
+        "data-sk-tree-view-tree",
+        "data-sk-tree-view-branch",
+        "data-sk-tree-view-branch-control",
+        "data-sk-tree-view-branch-content",
+        "data-sk-tree-view-item"
+      ],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "TreeView": {
+      "use": "hierarchical selection of nested nodes",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/tree-view",
+        "name": "TreeView"
+      },
+      "requires": ["nodes", "label"],
+      "props": {
+        "selectionMode": ["single", "multiple"]
+      }
+    }
+  },
+  "rules": {
+    "nodes": "Give every node a stable id and label; nodes with children render as expandable branches, the rest as leaves.",
+    "label": "TreeView has no visible heading of its own; label names the tree for assistive tech.",
+    "selection": "Use selectedValue/onSelectionChange for controlled selection or defaultSelectedValue for uncontrolled.",
+    "expansion": "Use expandedValue/onExpandedChange for controlled branch expansion or defaultExpandedValue for uncontrolled."
+  },
+  "examples": {
+    "TreeView": {
+      "basic": "<TreeView label=\"Archivos\" nodes={[{ id: \"src\", label: \"src\", children: [{ id: \"index\", label: \"index.ts\" }] }]} />",
+      "multiple": "<TreeView defaultSelectedValue={[\"index\"]} label=\"Archivos\" nodes={files} selectionMode=\"multiple\" />"
+    }
+  }
+}

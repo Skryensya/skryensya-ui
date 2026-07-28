@@ -1,0 +1,63 @@
+{
+  "$schema": "./_meta.json",
+  "id": "toolbar",
+  "consume": {
+    "css": "@skryensya/core/components/toolbar.css",
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-toolbar"],
+      "attributes": ["data-sk-toolbar"],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "Toolbar": {
+      "use": "row of grouped controls with roving keyboard focus",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/toolbar",
+        "name": "Toolbar"
+      },
+      "requires": ["label"],
+      "props": {
+        "orientation": ["horizontal", "vertical"],
+        "loopFocus": [false, true]
+      }
+    },
+    "ToolbarGroup": {
+      "use": "cluster of related controls inside a toolbar",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/toolbar",
+        "name": "ToolbarGroup"
+      }
+    },
+    "ToolbarSeparator": {
+      "use": "visual break between toolbar groups",
+      "element": "span",
+      "react": {
+        "from": "@skryensya/react/toolbar",
+        "name": "ToolbarSeparator"
+      }
+    }
+  },
+  "rules": {
+    "label": "Toolbar names the toolbar landmark for assistive tech; give it a concrete accessible name.",
+    "focus": "Arrow keys move focus between the toolbar's controls (and any composite child that owns its own roving tabindex, like a Tabs or Segmented control, counts as a single stop). Home and End jump to the first and last control.",
+    "loopFocus": "Set loopFocus to false when focus should stop at the ends instead of wrapping around."
+  },
+  "examples": {
+    "Toolbar": {
+      "basic": "<Toolbar label=\"Formato\"><ToolbarGroup><Button variant=\"ghost\">Negrita</Button><Button variant=\"ghost\">Cursiva</Button></ToolbarGroup></Toolbar>"
+    },
+    "ToolbarGroup": {
+      "basic": "<ToolbarGroup><Button variant=\"ghost\">Negrita</Button><Button variant=\"ghost\">Cursiva</Button></ToolbarGroup>"
+    },
+    "ToolbarSeparator": {
+      "basic": "<Toolbar label=\"Formato\"><ToolbarGroup><Button variant=\"ghost\">Negrita</Button></ToolbarGroup><ToolbarSeparator /><ToolbarGroup><Button variant=\"ghost\">Alinear</Button></ToolbarGroup></Toolbar>"
+    }
+  }
+}

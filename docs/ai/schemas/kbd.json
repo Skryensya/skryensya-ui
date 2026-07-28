@@ -1,0 +1,29 @@
+{
+  "$schema": "./_meta.json",
+  "id": "kbd",
+  "consume": {
+    "css": "@skryensya/core/components/kbd.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "Kbd": {
+      "use": "render a single keyboard key",
+      "element": "kbd",
+      "react": {
+        "from": "@skryensya/react/kbd",
+        "name": "Kbd"
+      }
+    }
+  },
+  "children": ["text"],
+  "rules": {
+    "static": "No state, no machine: Kbd is a styled native <kbd>, nothing more. One Kbd per key; compose several inline for a chord.",
+    "content": "Content is the key's own label/glyph (e.g. \"⌘\", \"Esc\", \"K\") — Kbd does not translate a keyboard event into text for you."
+  },
+  "examples": {
+    "Kbd": {
+      "single": "<Kbd>Esc</Kbd>",
+      "chord": "<Text as=\"span\">Press <Kbd>⌘</Kbd> <Kbd>K</Kbd> to open the command palette</Text>"
+    }
+  }
+}

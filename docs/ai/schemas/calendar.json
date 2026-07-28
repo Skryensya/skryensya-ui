@@ -1,0 +1,49 @@
+{
+  "$schema": "./_meta.json",
+  "id": "calendar",
+  "consume": {
+    "css": "@skryensya/core/components/calendar.css",
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-calendar"],
+      "attributes": ["data-sk-calendar"],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "Calendar": {
+      "use": "standalone date grid",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/calendar",
+        "name": "Calendar"
+      }
+    }
+  },
+  "props": {
+    "selectionMode": ["single", "range"],
+    "disabled": [false, true],
+    "readOnly": [false, true]
+  },
+  "meanings": {
+    "selectionMode": {
+      "single": "pick exactly one date",
+      "range": "pick a start date and an end date"
+    }
+  },
+  "rules": {
+    "selectionMode": "Use range only for start/end pairs; value and defaultValue then hold two dates instead of one.",
+    "label": "Pass label for an accessible caption above the grid; Calendar has no visible label otherwise.",
+    "icons": "previousIcon, nextIcon and viewIcon override the built-in navigation glyphs without changing behavior.",
+    "view": "The heading itself steps day → month → year on click; there is no separate month/year <select>."
+  },
+  "examples": {
+    "Calendar": {
+      "single": "<Calendar label=\"Fecha\" onValueChange={handleChange} />",
+      "range": "<Calendar label=\"Rango de estadía\" selectionMode=\"range\" />"
+    }
+  }
+}

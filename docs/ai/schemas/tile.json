@@ -5,6 +5,7 @@
     "css": [
       "@skryensya/core/components/tile.css",
       "@skryensya/core/components/checkbox.css",
+      "@skryensya/core/components/switch.css",
       "@skryensya/core/patterns/state-layer.css"
     ],
     "prefer": "react"
@@ -35,6 +36,14 @@
       "react": {
         "from": "@skryensya/react/tile-checkbox",
         "name": "TileCheckbox"
+      }
+    },
+    "TileSwitch": {
+      "use": "surface preference that takes effect immediately",
+      "element": "label",
+      "react": {
+        "from": "@skryensya/react/tile-switch",
+        "name": "TileSwitch"
       }
     },
     "TileRadioGroup": {
@@ -81,6 +90,9 @@
     },
     "TileCheckbox": {
       "selection": "<TileCheckbox name=\"alerts\" value=\"enabled\">Enable alerts</TileCheckbox>"
+    },
+    "TileSwitch": {
+      "preference": "<TileSwitch name=\"auto-deploy\" defaultChecked>Deploy automatically</TileSwitch>"
     },
     "TileRadioGroup": {
       "selection": "<TileRadioGroup defaultValue=\"pro\" items={plans} name=\"plan\" />"

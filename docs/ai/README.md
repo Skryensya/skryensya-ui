@@ -17,9 +17,51 @@ La IA carga sólo las instancias necesarias, por ejemplo `schemas/button.json`. 
 | `input.json` | `Input` vs `Textarea` y composición con `Field`. |
 | `tabs.json` | Tabs por datos, orientación y modo de activación. |
 | `tile.json` | Acción, navegación, checkbox, radio group o disclosure sobre una superficie completa. |
+| `alert.json` | Mensaje de estado persistente e inline, con tono y presentación. |
+| `badge.json` | Etiqueta de estado estática, no removible. |
+| `avatar.json` | Identidad de usuario, con imagen o iniciales, y agrupación con overflow. |
+| `tag.json` | Clasificación o faceta de filtro, opcionalmente removible. |
+| `progress.json` | Barra de progreso determinada, con tono. |
+| `loader.json` | Indicador de trabajo indeterminado. |
+| `placeholder.json` | Geometría decorativa de esqueleto de carga. |
+| `empty-state.json` | Mensaje de estado vacío o sin resultados. |
+| `checkbox.json` | Selección independiente, no exclusiva. |
+| `radio-group.json` | Selección exclusiva entre opciones. |
+| `switch.json` | Preferencia que aplica de inmediato, sin envío de formulario. |
+| `select.json` | Selección desde una lista desplegable con disparador propio. |
+| `select-native.json` | Selección nativa del navegador, sin binding vanilla. |
+| `combobox.json` | Selección con filtro por texto y opción múltiple. |
+| `number-field.json` | Entrada numérica con incrementos. |
+| `time-field.json` | Entrada de hora segmentada. |
+| `slider.json` | Selección de un valor dentro de un rango. |
+| `navbar.json` | Barra de navegación superior, con marca y acciones. |
+| `sidebar.json` | Navegación lateral persistente, con secciones. |
+| `nav-list.json` | Lista de enlaces de navegación agrupables. |
+| `breadcrumb.json` | Ruta jerárquica de navegación. |
+| `toolbar.json` | Agrupación de controles de acción. |
+| `tree-view.json` | Navegación jerárquica expandible. |
+| `accordion.json` | Pila de disclosures mutuamente enmarcados. |
+| `steps.json` | Progreso a través de una secuencia de pasos. |
+| `process-list.json` | Lista de pasos de un proceso con estado. |
+| `pagination.json` | Navegación entre páginas de resultados. |
+| `menu.json` | Lista de acciones o navegación anclada a un disparador. |
+| `popover.json` | `Popover` con título propio o `Popup` para contenido anclado a medida. |
+| `tooltip.json` | Descripción breve anclada al pasar el foco o el mouse. |
+| `toast.json` | Notificación transitoria fuera de flujo. |
+| `split-button.json` | Acción primaria con acciones secundarias en menú. |
+| `file-upload.json` | Selección y carga de archivos. |
+| `theme-toggle.json` | Alternancia entre modos de tema. |
+| `table.json` | Datos tabulares. |
+| `list.json` | Lista de contenido genérico. |
+| `carousel.json` | Contenido desplazable en un eje, con navegación. |
+| `stat.json` | Métrica destacada con etiqueta. |
+| `calendar.json` | Grilla de fechas autónoma. |
+| `date-picker.json` | Selección de fecha con campo y calendario anclado. |
 
 Estas cinco guías ejercitan una superficie simple, defaults omitidos, CSS múltiple, props
-específicas de una superficie, composición y familias semánticas.
+específicas de una superficie, composición y familias semánticas. Las guías de feedback/estado
+añaden ejemplos de props sin sentido enumerable (React puro) y de familias con dos componentes
+hermanos no mutuamente excluyentes (`Avatar` + `AvatarGroup`).
 
 ## Una apariencia puede tener varias superficies
 

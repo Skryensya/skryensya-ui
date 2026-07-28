@@ -1,0 +1,40 @@
+{
+  "$schema": "./_meta.json",
+  "id": "number-field",
+  "consume": {
+    "css": [
+      "@skryensya/core/patterns/state-layer.css",
+      "@skryensya/core/components/button.css",
+      "@skryensya/core/components/number-field.css"
+    ],
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-number-field"],
+      "attributes": ["data-sk-number-field"],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "NumberField": {
+      "use": "numeric text entry with stepper",
+      "element": "input",
+      "react": {
+        "from": "@skryensya/react/number-field",
+        "name": "NumberField"
+      },
+      "requires": ["label"]
+    }
+  },
+  "rules": {
+    "range": "Pass min, max and step to bound and quantize the value; the stepper buttons respect them."
+  },
+  "examples": {
+    "NumberField": {
+      "labelled": "<NumberField label=\"Quantity\" max={10} min={0} name=\"quantity\" step={1} />",
+      "controlled": "<NumberField label=\"Amount\" onValueChange={setAmount} value={amount} />"
+    }
+  }
+}

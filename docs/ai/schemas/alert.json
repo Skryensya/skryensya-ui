@@ -1,0 +1,47 @@
+{
+  "$schema": "./_meta.json",
+  "id": "alert",
+  "consume": {
+    "css": "@skryensya/core/components/alert.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "Alert": {
+      "use": "persistent inline status message",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/alert",
+        "name": "Alert"
+      }
+    }
+  },
+  "props": {
+    "tone": ["neutral", "info", "success", "warning", "danger"],
+    "presentation": ["banner", "accent", "inline"]
+  },
+  "meanings": {
+    "tone": {
+      "neutral": "plain message with no semantic color",
+      "info": "context worth noting, not a problem",
+      "success": "a condition completed favorably",
+      "warning": "a condition needs attention before it becomes a problem",
+      "danger": "a condition already failed"
+    },
+    "presentation": {
+      "banner": "full-width block at the top of a region",
+      "accent": "emphasized block inline with content",
+      "inline": "lightweight message inline with surrounding content"
+    }
+  },
+  "rules": {
+    "onDismiss": "Omit onDismiss to render a non-dismissible alert; the dismiss control only appears when it is provided.",
+    "title": "Use title for a short heading and put the full message in children."
+  },
+  "examples": {
+    "Alert": {
+      "banner": "<Alert title=\"Actualización disponible\" tone=\"info\">Hay una nueva versión lista para instalar.</Alert>",
+      "dismissible": "<Alert onDismiss={dismiss} tone=\"warning\">La sesión expira en 5 minutos.</Alert>",
+      "danger": "<Alert presentation=\"inline\" tone=\"danger\">No se pudo guardar el cambio.</Alert>"
+    }
+  }
+}

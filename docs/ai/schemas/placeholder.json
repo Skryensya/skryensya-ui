@@ -1,0 +1,37 @@
+{
+  "$schema": "./_meta.json",
+  "id": "placeholder",
+  "consume": {
+    "css": "@skryensya/core/components/placeholder.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "Placeholder": {
+      "use": "decorative loading-skeleton geometry",
+      "element": "span",
+      "react": {
+        "from": "@skryensya/react/placeholder",
+        "name": "Placeholder"
+      }
+    }
+  },
+  "props": {
+    "shape": ["text", "block", "circle"]
+  },
+  "meanings": {
+    "shape": {
+      "text": "stands in for a line of text",
+      "block": "stands in for a rectangular region such as an image or card",
+      "circle": "stands in for a round element such as an Avatar"
+    }
+  },
+  "rules": {
+    "accessibility": "Placeholder is always aria-hidden. Put aria-busy and the loading message on the surrounding region."
+  },
+  "examples": {
+    "Placeholder": {
+      "text": "<Placeholder shape=\"text\" />",
+      "circle": "<Placeholder shape=\"circle\" />"
+    }
+  }
+}

@@ -20,8 +20,7 @@
       "react": {
         "from": "@skryensya/react/button",
         "name": "Button"
-      },
-      "forbids": ["href"]
+      }
     },
     "ButtonLink": {
       "use": "navigation",
@@ -55,7 +54,8 @@
     }
   },
   "rules": {
-    "Button.href": "Use ButtonLink for navigation.",
+    "Button.href": "Passing href renders <a> instead of <button>, same classes and data-* attributes, and drops disabled/type. Prefer this over ButtonLink for a new Button that navigates.",
+    "ButtonLink": "Deprecated: a thin wrapper that forwards to Button with href. Kept only so existing code keeps working — write Button with href instead.",
     "ButtonLink.disabled": "Render non-link content when the destination is unavailable.",
     "iconOnly": "Set aria-label or aria-labelledby on the chosen surface.",
     "Icon": "Omit Icon.label; the Button surface owns the accessible name."
@@ -63,11 +63,12 @@
   "examples": {
     "Button": {
       "primary": "<Button variant=\"primary\" onClick={save}>Guardar</Button>",
-      "danger": "<Button variant=\"danger\" onClick={remove}>Eliminar</Button>"
+      "danger": "<Button variant=\"danger\" onClick={remove}>Eliminar</Button>",
+      "asLink": "<Button variant=\"primary\" href=\"/docs\">Documentación</Button>",
+      "asLinkIconOnly": "<Button iconOnly aria-label=\"Documentación\" href=\"/docs\"><Icon name=\"arrow-right\" /></Button>"
     },
     "ButtonLink": {
-      "primary": "<ButtonLink variant=\"primary\" href=\"/docs\">Documentación</ButtonLink>",
-      "iconOnly": "<ButtonLink iconOnly aria-label=\"Documentación\" href=\"/docs\"><Icon name=\"arrow-right\" /></ButtonLink>"
+      "primary": "<ButtonLink variant=\"primary\" href=\"/docs\">Documentación</ButtonLink>"
     }
   }
 }

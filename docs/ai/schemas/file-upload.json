@@ -1,0 +1,45 @@
+{
+  "$schema": "./_meta.json",
+  "id": "file-upload",
+  "consume": {
+    "css": "@skryensya/core/components/file-upload.css",
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-file-upload"],
+      "attributes": ["data-sk-file-upload"],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "FileUpload": {
+      "use": "select or drop one or more files with limits and a rejection list",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/file-upload",
+        "name": "FileUpload"
+      },
+      "requires": ["label"]
+    }
+  },
+  "props": {
+    "multiple": [false, true],
+    "allowDrop": [null, false, true],
+    "disabled": [false, true],
+    "required": [false, true]
+  },
+  "rules": {
+    "multiple": "multiple lifts the default maxFiles from 1 to unlimited; pass an explicit maxFiles to cap either case.",
+    "accept": "accept restricts by MIME type; the browser and the drop target both enforce it before a file is accepted.",
+    "rejection": "Files that fail accept, maxFileSize or minFileSize surface through onFileChange's rejectedFiles, not as a thrown error.",
+    "controlled": "Use acceptedFiles with onFileChange for a controlled file list, or defaultAcceptedFiles to start pre-filled and stay uncontrolled."
+  },
+  "examples": {
+    "FileUpload": {
+      "basic": "<FileUpload label=\"Adjuntos\" maxFileSize={10000000} maxFiles={3} name=\"attachments\" />",
+      "multiple": "<FileUpload label=\"Fotos\" multiple name=\"photos\" />"
+    }
+  }
+}

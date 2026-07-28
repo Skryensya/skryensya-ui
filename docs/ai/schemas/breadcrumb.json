@@ -1,0 +1,28 @@
+{
+  "$schema": "./_meta.json",
+  "id": "breadcrumb",
+  "consume": {
+    "css": "@skryensya/core/components/breadcrumb.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "Breadcrumb": {
+      "use": "trail of ancestor pages",
+      "element": "nav",
+      "react": {
+        "from": "@skryensya/react/breadcrumb",
+        "name": "Breadcrumb"
+      },
+      "requires": ["items"]
+    }
+  },
+  "rules": {
+    "items": "Give every item a label, and an href unless it is the current page.",
+    "current": "The last item without an href (or explicitly marked current) renders as plain text with aria-current=\"page\", never as a link to itself."
+  },
+  "examples": {
+    "Breadcrumb": {
+      "basic": "<Breadcrumb items={[{ label: \"Inicio\", href: \"/\" }, { label: \"Reportes\", href: \"/reports\" }, { label: \"Ventas\" }]} />"
+    }
+  }
+}

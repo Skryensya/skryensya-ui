@@ -1,7 +1,10 @@
 /*
  * COMPOSITION GUIDE VALIDATOR, the shell.
  *
- * It reads the meta-schema and each AI guide, asks checks.mjs to judge, reports and exits.
+ * It reads the meta-schema and each AI guide, asks checks.mjs (gate 0: is the guide coherent with
+ * itself) and gate1.mjs (gate 1: do the artefacts it names actually exist and import) to judge,
+ * reports and exits. Gate 1 only runs once gate 0 passes for a schema — a schema whose own shape
+ * is broken has nothing meaningful to resolve yet.
  *
  * Usage:  node docs/ai/validate.mjs [id …]     (no args = every schema in schemas/)
  */
@@ -9,11 +12,14 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { unsupportedKeywords, validateSchema } from "./checks.mjs";
+import { checkArtifacts } from "./gate1.mjs";
+import { buildWorld } from "./gate1-world.mjs";
 
 const SCHEMA_DIR = join(import.meta.dirname, "schemas");
 const read = (f) => JSON.parse(readFileSync(join(SCHEMA_DIR, f), "utf8"));
 
 const meta = read("_meta.json");
+const world = buildWorld();
 
 // Before judging any instance: the meta document must be entirely within the subset this validator
 // implements. An unimplemented keyword does not fail loudly, it passes silently, so a schema could
@@ -38,7 +44,13 @@ if (files.length === 0) {
 
 let failed = 0;
 for (const file of files) {
-  const problems = validateSchema(read(file), meta);
+  const schema = read(file);
+  const shapeProblems = validateSchema(schema, meta);
+  // Gate 1 needs surfaces/composes to already be well-formed; a gate-0 failure has nothing
+  // meaningful to resolve, so it would only add noise on top of the real problem.
+  const artifactProblems = shapeProblems.length === 0 ? checkArtifacts(schema, world) : [];
+  const problems = [...shapeProblems, ...artifactProblems];
+
   if (problems.length === 0) {
     console.log(`✓ ${file}`);
     continue;
@@ -54,5 +66,5 @@ for (const file of files) {
   }
 }
 
-if (failed === 0) console.log(`\n✓ ${files.length} composition guide(s) valid`);
+if (failed === 0) console.log(`\n✓ ${files.length} composition guide(s) valid (gate 0 + gate 1)`);
 process.exit(failed ? 1 : 0);

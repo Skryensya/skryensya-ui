@@ -1,0 +1,60 @@
+{
+  "$schema": "./_meta.json",
+  "id": "date-picker",
+  "consume": {
+    "css": [
+      "@skryensya/core/components/date-picker.css",
+      "@skryensya/core/components/calendar.css"
+    ],
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-date-picker"],
+      "attributes": ["data-sk-date-picker"],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "DatePicker": {
+      "use": "editable date field with popover",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/date-picker",
+        "name": "DatePicker"
+      }
+    }
+  },
+  "props": {
+    "selectionMode": ["single", "range"],
+    "disabled": [false, true],
+    "readOnly": [false, true],
+    "required": [false, true],
+    "invalid": [false, true]
+  },
+  "meanings": {
+    "selectionMode": {
+      "single": "pick exactly one date",
+      "range": "pick a start date and an end date"
+    }
+  },
+  "composes": {
+    "Calendar": {
+      "from": "@skryensya/react/calendar",
+      "name": "Calendar"
+    }
+  },
+  "rules": {
+    "selectionMode": "Use range only for start/end pairs; value and defaultValue then hold two dates and the field renders two inputs.",
+    "invalid": "Set invalid together with a visible error message near the field; DatePicker only toggles the visual/aria state.",
+    "Calendar": "min, max and the day/month/year navigation behave like the standalone Calendar guide; DatePicker adds only the label, input, trigger, clear button and popover around that same grid.",
+    "clear": "The clear control only renders once a value is set; there is no separate prop to force it."
+  },
+  "examples": {
+    "DatePicker": {
+      "single": "<DatePicker label=\"Fecha de nacimiento\" name=\"birthdate\" onValueChange={handleChange} />",
+      "range": "<DatePicker label=\"Rango de estadía\" name=\"stay\" selectionMode=\"range\" />"
+    }
+  }
+}

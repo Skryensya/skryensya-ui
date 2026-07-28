@@ -1,0 +1,35 @@
+{
+  "$schema": "./_meta.json",
+  "id": "slider",
+  "consume": {
+    "css": "@skryensya/core/components/slider.css",
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-slider"],
+      "attributes": ["data-sk-slider"],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "Slider": {
+      "use": "single numeric value picker",
+      "element": "input",
+      "react": {
+        "from": "@skryensya/react/slider",
+        "name": "Slider"
+      }
+    }
+  },
+  "rules": {
+    "accessibleName": "Slider has no visible label of its own; provide aria-label or aria-labelledby."
+  },
+  "examples": {
+    "Slider": {
+      "standalone": "<Slider aria-label=\"Volume\" defaultValue={40} max={100} min={0} />",
+      "controlled": "<Slider aria-label=\"Brightness\" onChange={handleBrightness} value={brightness} />"
+    }
+  }
+}

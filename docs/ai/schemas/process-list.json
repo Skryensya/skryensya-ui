@@ -1,0 +1,39 @@
+{
+  "$schema": "./_meta.json",
+  "id": "process-list",
+  "consume": {
+    "css": "@skryensya/core/components/process-list.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "ProcessList": {
+      "use": "static ordered sequence of instructions",
+      "element": "ol",
+      "react": {
+        "from": "@skryensya/react/process-list",
+        "name": "ProcessList"
+      }
+    },
+    "ProcessListItem": {
+      "use": "one instruction with rich content",
+      "element": "li",
+      "react": {
+        "from": "@skryensya/react/process-list",
+        "name": "ProcessListItem"
+      },
+      "requires": ["title"]
+    }
+  },
+  "rules": {
+    "progress": "ProcessList never models complete/current/upcoming state; a sequence that tracks progress is Steps instead.",
+    "order": "Order is carried by the native <ol>; ProcessListItem only adds the visual marker and connector."
+  },
+  "examples": {
+    "ProcessList": {
+      "basic": "<ProcessList><ProcessListItem title=\"Crear cuenta\">Completa tus datos.</ProcessListItem><ProcessListItem title=\"Verificar correo\">Revisa tu bandeja.</ProcessListItem></ProcessList>"
+    },
+    "ProcessListItem": {
+      "basic": "<ProcessListItem title=\"Crear cuenta\">Completa tus datos.</ProcessListItem>"
+    }
+  }
+}

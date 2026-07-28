@@ -1,0 +1,52 @@
+{
+  "$schema": "./_meta.json",
+  "id": "carousel",
+  "consume": {
+    "css": "@skryensya/core/components/carousel.css",
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-carousel"],
+      "attributes": [
+        "data-sk-carousel",
+        "data-loop",
+        "data-autoplay",
+        "data-orientation",
+        "data-controls",
+        "data-mouse-drag"
+      ],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "Carousel": {
+      "use": "region of snapping slides",
+      "element": "section",
+      "react": {
+        "from": "@skryensya/react/carousel",
+        "name": "Carousel"
+      }
+    }
+  },
+  "children": ["CarouselSlide"],
+  "composes": {
+    "CarouselSlide": {
+      "from": "@skryensya/react/carousel",
+      "name": "CarouselSlide"
+    }
+  },
+  "rules": {
+    "controls": "Import initComponents once for the app; it draws the prev/next buttons and one dot per page for every mounted Carousel root, including this React binding.",
+    "behavior": "Configure loop, autoplay, orientation, controls and mouse-drag with plain data-* attributes forwarded through Carousel's own props (see consume.vanilla for the exact names).",
+    "label": "Pass aria-label to name the region for assistive tech; the track and slides otherwise carry no label of their own.",
+    "goto": "Use the Carousel ref's snapTo(index) to jump to a slide programmatically instead of scrolling the track manually."
+  },
+  "examples": {
+    "Carousel": {
+      "basic": "<Carousel aria-label=\"Destacados\"><CarouselSlide><Card>Producto 1</Card></CarouselSlide><CarouselSlide><Card>Producto 2</Card></CarouselSlide></Carousel>",
+      "loop": "<Carousel aria-label=\"Testimonios\" data-loop=\"\"><CarouselSlide>Reseña 1</CarouselSlide><CarouselSlide>Reseña 2</CarouselSlide></Carousel>"
+    }
+  }
+}

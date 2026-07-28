@@ -1,0 +1,30 @@
+{
+  "$schema": "./_meta.json",
+  "id": "pagination",
+  "consume": {
+    "css": "@skryensya/core/components/pagination.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "Pagination": {
+      "use": "move through a paged result set",
+      "element": "nav",
+      "react": {
+        "from": "@skryensya/react/pagination",
+        "name": "Pagination"
+      },
+      "requires": ["page", "total"]
+    }
+  },
+  "rules": {
+    "range": "Pagination always shows the first and last page, keeps siblings pages around the current one, and collapses longer gaps to an ellipsis.",
+    "control": "Pagination is controlled: it renders the given page and reports changes through onPageChange; it does not own page state.",
+    "labels": "Set previousLabel/nextLabel/label when the default English accessible names don't match the page's language."
+  },
+  "examples": {
+    "Pagination": {
+      "basic": "<Pagination onPageChange={setPage} page={page} total={12} />",
+      "siblings": "<Pagination onPageChange={setPage} page={page} siblings={2} total={40} />"
+    }
+  }
+}

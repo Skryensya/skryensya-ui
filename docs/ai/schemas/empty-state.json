@@ -1,0 +1,29 @@
+{
+  "$schema": "./_meta.json",
+  "id": "empty-state",
+  "consume": {
+    "css": "@skryensya/core/components/empty-state.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "EmptyState": {
+      "use": "zero-data or zero-result messaging",
+      "element": "section",
+      "react": {
+        "from": "@skryensya/react/empty-state",
+        "name": "EmptyState"
+      },
+      "requires": ["title"]
+    }
+  },
+  "rules": {
+    "description": "Use description to explain why there is nothing to show or what to do next.",
+    "actions": "Compose Button or ButtonLink in actions for the recovery action."
+  },
+  "examples": {
+    "EmptyState": {
+      "basic": "<EmptyState title=\"Sin resultados\" />",
+      "withAction": "<EmptyState actions={<Button onClick={reset} variant=\"primary\">Limpiar filtros</Button>} description=\"Intenta ajustar los filtros de búsqueda.\" title=\"Sin resultados\" />"
+    }
+  }
+}

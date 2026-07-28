@@ -1,0 +1,47 @@
+{
+  "$schema": "./_meta.json",
+  "id": "combobox",
+  "consume": {
+    "css": [
+      "@skryensya/core/patterns/anchored.css",
+      "@skryensya/core/patterns/scrollbar.css",
+      "@skryensya/core/components/button.css",
+      "@skryensya/core/components/field.css",
+      "@skryensya/core/components/combobox.css"
+    ],
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-combobox"],
+      "attributes": ["data-sk-combobox"],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "Combobox": {
+      "use": "searchable single or multiple selection",
+      "element": "input",
+      "react": {
+        "from": "@skryensya/react/combobox",
+        "name": "Combobox"
+      },
+      "requires": ["items", "label"]
+    }
+  },
+  "props": {
+    "multiple": [false, true]
+  },
+  "rules": {
+    "items": "Give every item a stable value, label and optional description.",
+    "multiple": "When multiple is true, value and defaultValue are string arrays and selections render as removable chips.",
+    "allowCustomValue": "Set allowCustomValue when text the user typed but never selected should still be a valid submission."
+  },
+  "examples": {
+    "Combobox": {
+      "single": "<Combobox items={countries} label=\"Country\" name=\"country\" />",
+      "multiple": "<Combobox items={countries} label=\"Countries\" multiple name=\"countries\" />"
+    }
+  }
+}

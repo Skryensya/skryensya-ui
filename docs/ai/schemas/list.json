@@ -1,0 +1,69 @@
+{
+  "$schema": "./_meta.json",
+  "id": "list",
+  "consume": {
+    "css": "@skryensya/core/components/list.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "List": {
+      "use": "list of rows",
+      "element": "ul",
+      "react": {
+        "from": "@skryensya/react/list",
+        "name": "List"
+      }
+    },
+    "ListItem": {
+      "use": "static row",
+      "element": "li",
+      "react": {
+        "from": "@skryensya/react/list",
+        "name": "ListItem"
+      }
+    },
+    "ListItemLink": {
+      "use": "row navigation",
+      "element": "a",
+      "react": {
+        "from": "@skryensya/react/list",
+        "name": "ListItemLink"
+      },
+      "requires": ["href"]
+    },
+    "ListItemButton": {
+      "use": "row action",
+      "element": "button",
+      "react": {
+        "from": "@skryensya/react/list",
+        "name": "ListItemButton"
+      }
+    }
+  },
+  "props": {
+    "ordered": [false, true],
+    "dividers": [false, true],
+    "density": [null, "compact"]
+  },
+  "rules": {
+    "ordered": "Set ordered when the sequence of otherwise equivalent rows is meaningful; it renders an <ol> instead of <ul>.",
+    "density": "Use density=\"compact\" for dense data lists; omit it for the comfortable default.",
+    "row-content": "Use the leading/title/description/trailing slots for the standard row shape, or pass children for full control over a row.",
+    "interaction": "ListItemLink and ListItemButton make the whole row a real link or button; ListItem carries no interaction of its own."
+  },
+  "examples": {
+    "List": {
+      "basic": "<List><ListItem description=\"Admin\" title=\"Ana\" /></List>",
+      "ordered": "<List dividers={false} ordered><ListItem title=\"Paso 1\" /></List>"
+    },
+    "ListItem": {
+      "static": "<ListItem description=\"Lectura de medidor\" title=\"12.4 kWh\" />"
+    },
+    "ListItemLink": {
+      "navigation": "<ListItemLink href=\"/users/1\" title=\"Ana\" />"
+    },
+    "ListItemButton": {
+      "action": "<ListItemButton onClick={remove} title=\"Eliminar\" />"
+    }
+  }
+}

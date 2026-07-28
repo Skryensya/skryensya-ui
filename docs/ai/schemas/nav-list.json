@@ -1,0 +1,58 @@
+{
+  "$schema": "./_meta.json",
+  "id": "nav-list",
+  "consume": {
+    "css": "@skryensya/core/patterns/nav-list.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "NavList": {
+      "use": "list of destinations",
+      "element": "nav",
+      "react": {
+        "from": "@skryensya/react/nav-list",
+        "name": "NavList"
+      },
+      "props": {
+        "orientation": ["vertical", "horizontal"]
+      }
+    },
+    "NavListGroup": {
+      "use": "labeled group of destinations",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/nav-list",
+        "name": "NavListGroup"
+      }
+    },
+    "NavListLink": {
+      "use": "one destination",
+      "element": "a",
+      "react": {
+        "from": "@skryensya/react/nav-list",
+        "name": "NavListLink"
+      },
+      "requires": ["href"]
+    }
+  },
+  "rules": {
+    "landmark": "NavList is a <nav>; give it aria-label when a page hosts more than one.",
+    "current": "Set current on the active NavListLink; it renders aria-current=\"page\".",
+    "role": "This is a list of links, not a menu: no role=\"menu\" or menuitem semantics.",
+    "host": "The same NavList composes inside Sidebar or Navbar with only the orientation changing; it does not belong to either.",
+    "composition": "A NavListLink is always inside a NavListGroup, never a direct child of NavList. NavList itself only renders the <nav>; NavListGroup is what renders the <ul> a <li> needs to sit inside. Skipping it produces <nav><li>...</li></nav> — invalid markup, list items with no list. An unlabeled NavListGroup (omit label) still supplies the required <ul> without adding a visible heading."
+  },
+  "examples": {
+    "NavList": {
+      "vertical": "<NavList><NavListGroup><NavListLink href=\"/\" current>Inicio</NavListLink><NavListLink href=\"/reports\">Reportes</NavListLink></NavListGroup></NavList>",
+      "horizontal": "<NavList orientation=\"horizontal\"><NavListGroup><NavListLink href=\"/\" current>Inicio</NavListLink></NavListGroup></NavList>"
+    },
+    "NavListGroup": {
+      "labeled": "<NavListGroup label=\"Cuenta\"><NavListLink href=\"/profile\">Perfil</NavListLink></NavListGroup>"
+    },
+    "NavListLink": {
+      "basic": "<NavListLink href=\"/reports\">Reportes</NavListLink>",
+      "trailing": "<NavListLink href=\"/inbox\" trailing=\"3\">Bandeja</NavListLink>"
+    }
+  }
+}

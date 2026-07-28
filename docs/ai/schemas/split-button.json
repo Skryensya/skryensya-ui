@@ -1,0 +1,39 @@
+{
+  "$schema": "./_meta.json",
+  "id": "split-button",
+  "consume": {
+    "css": [
+      "@skryensya/core/components/split-button.css",
+      "@skryensya/core/components/menu.css"
+    ],
+    "prefer": "react"
+  },
+  "surfaces": {
+    "SplitButton": {
+      "use": "one stable primary action next to a menu of related actions",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/split-button",
+        "name": "SplitButton"
+      },
+      "requires": ["menuItems", "menuLabel"]
+    }
+  },
+  "children": ["Menu"],
+  "composes": {
+    "Menu": {
+      "from": "@skryensya/react/menu",
+      "name": "Menu"
+    }
+  },
+  "rules": {
+    "primary": "The primary action, onClick and the button's own children, never changes based on the menu selection. If there is no single dominant action, use Menu alone instead.",
+    "menuItems": "Give every item a stable value and label, same shape as Menu's items.",
+    "menuLabel": "menuLabel names the adjacent menu trigger for assistive tech since it has no visible text."
+  },
+  "examples": {
+    "SplitButton": {
+      "basic": "<SplitButton menuItems={alternatives} menuLabel=\"More options\" onClick={save}>Save</SplitButton>"
+    }
+  }
+}

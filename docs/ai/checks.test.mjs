@@ -72,7 +72,7 @@ test("surface-contract rejects attributes that are both required and forbidden",
 });
 
 test("forbid-unexplained gives the AI the sibling alternative", () => {
-  hasRule("forbid-unexplained", (schema) => delete schema.rules["Button.href"]);
+  hasRule("forbid-unexplained", (schema) => delete schema.rules["ButtonLink.disabled"]);
 });
 
 test("prop-type rejects mixed public prop values", () => {
@@ -123,10 +123,9 @@ test("example-required keeps href on every ButtonLink", () => {
   });
 });
 
-test("example-forbidden separates action and navigation attributes", () => {
-  hasRule("example-forbidden", (schema) => {
-    schema.examples.Button.primary = '<Button href="/docs">Docs</Button>';
-  });
+test("example-forbidden rejects a ButtonLink that also tries to be disabled", () => {
+  // Button itself has no forbids: href switches it to <a>, same as ButtonLink, so this contract
+  // now lives only on ButtonLink — a link cannot be disabled and stay a link.
   hasRule("example-forbidden", (schema) => {
     schema.examples.ButtonLink.primary = '<ButtonLink href="/docs" disabled>Docs</ButtonLink>';
   });

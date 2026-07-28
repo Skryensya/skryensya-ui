@@ -1,0 +1,31 @@
+{
+  "$schema": "./_meta.json",
+  "id": "time-field",
+  "consume": {
+    "css": "@skryensya/core/components/time-field.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "TimeField": {
+      "use": "time entry with native picker",
+      "element": "input",
+      "react": {
+        "from": "@skryensya/react/time-field",
+        "name": "TimeField"
+      },
+      "requires": ["label"]
+    }
+  },
+  "props": {
+    "controlSize": ["md", "sm", "lg"]
+  },
+  "rules": {
+    "value": "TimeField publishes the native HH:mm value, with no date or time zone."
+  },
+  "examples": {
+    "TimeField": {
+      "labelled": "<TimeField label=\"Meeting time\" name=\"meeting\" />",
+      "hint": "<TimeField controlSize=\"sm\" hint=\"24-hour format\" label=\"Start time\" name=\"start\" required />"
+    }
+  }
+}

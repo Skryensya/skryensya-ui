@@ -1,0 +1,102 @@
+{
+  "$schema": "./_meta.json",
+  "id": "sidebar",
+  "consume": {
+    "css": [
+      "@skryensya/core/components/sidebar.css",
+      "@skryensya/core/patterns/nav-list.css"
+    ],
+    "prefer": "react",
+    "vanilla": {
+      "classes": ["sk-sidebar"],
+      "attributes": ["data-sk-sidebar", "data-sk-sidebar-trigger", "data-sk-sidebar-content"],
+      "init": {
+        "from": "@skryensya/vanilla/auto",
+        "name": "initComponents"
+      }
+    }
+  },
+  "surfaces": {
+    "Sidebar": {
+      "use": "collapsible navigation rail",
+      "element": "aside",
+      "react": {
+        "from": "@skryensya/react/sidebar",
+        "name": "Sidebar"
+      }
+    },
+    "SidebarHeader": {
+      "use": "sidebar header slot",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/sidebar",
+        "name": "SidebarHeader"
+      }
+    },
+    "SidebarContent": {
+      "use": "sidebar scrolling content",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/sidebar",
+        "name": "SidebarContent"
+      }
+    },
+    "SidebarFooter": {
+      "use": "sidebar footer slot",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/sidebar",
+        "name": "SidebarFooter"
+      }
+    },
+    "SidebarSeparator": {
+      "use": "sidebar section divider",
+      "element": "hr",
+      "react": {
+        "from": "@skryensya/react/sidebar",
+        "name": "SidebarSeparator"
+      }
+    },
+    "SidebarTrigger": {
+      "use": "collapse or expand the sidebar",
+      "element": "button",
+      "react": {
+        "from": "@skryensya/react/sidebar",
+        "name": "SidebarTrigger"
+      },
+      "requires": ["label"]
+    }
+  },
+  "children": ["NavList"],
+  "composes": {
+    "NavList": {
+      "from": "@skryensya/react/nav-list",
+      "name": "NavList"
+    }
+  },
+  "rules": {
+    "collapse": "Collapsing narrows the sidebar; it never hides it. Content stays mounted and in the accessibility tree at both widths, so this is not a disclosure like ExpandableTile.",
+    "SidebarTrigger.label": "SidebarTrigger is icon-sized; label names it for a screen reader since no visible text fits.",
+    "NavList": "Host the destination list inside SidebarContent as a NavList; the navbar hosts the same list horizontally instead of a second one that could drift."
+  },
+  "examples": {
+    "Sidebar": {
+      "basic": "<Sidebar defaultCollapsed={false}><SidebarHeader><SidebarTrigger label=\"Alternar navegación\" /></SidebarHeader><SidebarContent><NavList><NavListLink href=\"/\" current>Inicio</NavListLink></NavList></SidebarContent><SidebarFooter>v1.0</SidebarFooter></Sidebar>"
+    },
+    "SidebarHeader": {
+      "basic": "<SidebarHeader><SidebarTrigger label=\"Alternar navegación\" /></SidebarHeader>"
+    },
+    "SidebarContent": {
+      "basic": "<SidebarContent><NavList><NavListLink href=\"/\">Inicio</NavListLink></NavList></SidebarContent>"
+    },
+    "SidebarFooter": {
+      "basic": "<SidebarFooter>v1.0</SidebarFooter>"
+    },
+    "SidebarSeparator": {
+      "basic": "<SidebarSeparator />"
+    },
+    "SidebarTrigger": {
+      "basic": "<SidebarTrigger label=\"Alternar navegación\" />"
+    }
+  }
+}

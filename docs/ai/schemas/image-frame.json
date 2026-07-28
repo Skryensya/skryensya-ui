@@ -1,0 +1,52 @@
+{
+  "$schema": "./_meta.json",
+  "id": "image-frame",
+  "consume": {
+    "css": "@skryensya/core/patterns/image-frame.css",
+    "prefer": "react"
+  },
+  "surfaces": {
+    "ImageFrame": {
+      "use": "clipped media container",
+      "element": "div",
+      "react": {
+        "from": "@skryensya/react/image-frame",
+        "name": "ImageFrame"
+      }
+    }
+  },
+  "props": {
+    "aspect": ["auto", "1/1", "4/3", "3/2", "16/9", "3/4", "2/3", "9/16"],
+    "fit": ["cover", "contain", "fill", "none", "scale-down"],
+    "position": ["center", "top", "bottom", "left", "right", "top-left", "top-right", "bottom-left", "bottom-right"],
+    "radius": ["none", "top", "control", "surface", "pill"],
+    "border": ["none", "subtle", "default"]
+  },
+  "meanings": {
+    "fit": {
+      "cover": "fills the frame, crops the overflow (the common case)",
+      "contain": "fits entirely inside the frame, may letterbox",
+      "fill": "stretches to the frame, ignores the media's own ratio",
+      "none": "renders the media at its natural size",
+      "scale-down": "the smaller of contain or the media's natural size"
+    },
+    "radius": {
+      "none": "square corners",
+      "top": "rounds only the block-start edge — flush media atop a rounded card body",
+      "control": "matches an input/button corner radius",
+      "surface": "matches a card/panel corner radius, the default",
+      "pill": "fully rounded, e.g. a circular avatar-style frame"
+    }
+  },
+  "children": ["img", "picture", "video"],
+  "rules": {
+    "as": "Polymorphic host; the caller owns semantics (figure, div, or a Link/Button wrapping the frame).",
+    "src": "Convenience prop: renders a plain <img> internally. Pass children instead (a <picture> or <video>) when you need responsive sources or a non-image media type — src and children are mutually exclusive in practice."
+  },
+  "examples": {
+    "ImageFrame": {
+      "cover": "<ImageFrame aspect=\"16/9\" fit=\"cover\" radius=\"surface\" src=\"/hero.jpg\" alt=\"\" />",
+      "video": "<ImageFrame as=\"figure\" aspect=\"16/9\" radius=\"top\"><video src=\"/clip.mp4\" controls /></ImageFrame>"
+    }
+  }
+}

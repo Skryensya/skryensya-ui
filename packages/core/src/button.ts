@@ -48,19 +48,33 @@ export const buttonContract = {
       type: "string",
       attr: "href",
     },
+    /*
+     * Unavailable right now. Native `disabled` AND `aria-disabled`: the first is what stops the
+     * click and the form, the second is what a screen reader announces on a control it can still
+     * land on. Only on the action signature — a link cannot be disabled and stay a link.
+     */
+    disabled: {
+      type: "boolean",
+      default: false,
+      attr: "disabled",
+      trueValue: "",
+    },
   },
 
   signatures: {
     "Button.action": {
       intent: ["action", "submit", "destructive-action"],
       host: { element: "button", when: { href: "absent" } },
-      options: ["variant", "size", "iconOnly"],
+      options: ["variant", "size", "iconOnly", "disabled"],
       slots: { children: { accepts: "node", required: true } },
       template: {
         element: "button",
         part: "root",
         also: [buttonParts.interactive],
         host: true,
+        // The announcement, beside the behaviour: `disabled` stops the click, `aria-disabled` is
+        // what a screen reader reads on a control it can still land on.
+        attrsWhen: [{ option: "disabled", equals: "true", attrs: { "aria-disabled": "true" } }],
         slot: "children",
       },
       react: { from: "@skryensya/react/button", name: "Button" },

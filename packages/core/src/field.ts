@@ -55,7 +55,7 @@ export const fieldContract = {
       intent: ["labelled-control", "form-field", "input-with-label", "validation-message"],
       host: { element: "div" },
       // Neither lands on the field box: both are the control's, delivered by the wiring below.
-      options: [],
+      options: ["required", "disabled"],
       slots: {
         label: { accepts: "node", required: true },
         /** Guidance shown before the control. Pointed at by `aria-describedby`. */

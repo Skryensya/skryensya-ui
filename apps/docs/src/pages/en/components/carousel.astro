@@ -32,7 +32,7 @@ const featureSlide = (opts: {
   const position = opts.position
     ? `\n        data-position="${opts.position}"`
     : "";
-  return `  <li class="sk-carousel__slide">
+  return `  <div class="sk-carousel__slide">
     <article
       class="sk-box carousel-card"
       data-surface="surface"
@@ -77,7 +77,7 @@ const featureSlide = (opts: {
         </p>
       </div>
     </article>
-  </li>`;
+  </div>`;
 };
 
 const slides = [
@@ -115,9 +115,9 @@ const cardsHtml = `<section
   aria-label="Novedades"
   style="--sk-carousel-slide-size: min(85%, 22rem)"
 >
-  <ul class="sk-carousel__track">
+  <div class="sk-carousel__track">
 ${slides}
-  </ul>
+  </div>
 </section>`;
 
 const cardsReact = `import { Box } from "@skryensya/react/layout";
@@ -193,9 +193,9 @@ const nativeHtml = `<section
   aria-label="What's new (without JS)"
   style="--sk-carousel-slide-size: min(85%, 22rem)"
 >
-  <ul class="sk-carousel__track">
+  <div class="sk-carousel__track">
 ${slides}
-  </ul>
+  </div>
 </section>`;
 
 const nativeCss = `@import "@skryensya/icons-lucide/carousel.css";
@@ -219,7 +219,7 @@ const nativeCss = `@import "@skryensya/icons-lucide/carousel.css";
 /* The ::scroll-button boxes are laid out after the scroller, in the
    parent flow. The 3-column grid reserves the extremes for them. */`;
 
-const person = (name: string, initials: string, role: string) => `    <li class="sk-carousel__slide">
+const person = (name: string, initials: string, role: string) => `    <div class="sk-carousel__slide">
       <article
         class="sk-box carousel-person"
         data-surface="surface"
@@ -250,7 +250,7 @@ const person = (name: string, initials: string, role: string) => `    <li class=
           </p>
         </div>
       </article>
-    </li>`;
+    </div>`;
 
 /* Multi-up + loop + autoplay: the slides are narrower, several words fit per page, and the
    machine counts them by measuring, not dividing. */
@@ -262,7 +262,7 @@ const autoHtml = `<section
   aria-label="Team"
   style="--sk-carousel-slide-size: min(42%, 14rem)"
 >
-  <ul class="sk-carousel__track">
+  <div class="sk-carousel__track">
 ${[
   person("Ada Lovelace", "AL", "Plataforma"),
   person("Grace Hopper", "GH", "Compiladores"),
@@ -270,7 +270,7 @@ ${[
   person("Barbara McClintock", "BM", "Genetics"),
   person("Karen Spärck Jones", "KS", "Recovery"),
 ].join("\n")}
-  </ul>
+  </div>
 </section>`;
 
 /* No controls: the same track, without buttons or dots on either layer. It drags or
@@ -282,7 +282,7 @@ const bareHtml = `<section
   aria-label="Team"
   style="--sk-carousel-slide-size: min(42%, 14rem)"
 >
-  <ul class="sk-carousel__track">
+  <div class="sk-carousel__track">
 ${[
   person("Ada Lovelace", "AL", "Plataforma"),
   person("Grace Hopper", "GH", "Compiladores"),
@@ -290,7 +290,7 @@ ${[
   person("Barbara McClintock", "BM", "Genetics"),
   person("Karen Spärck Jones", "KS", "Recovery"),
 ].join("\n")}
-  </ul>
+  </div>
 </section>`;
 
 const api = `const carousel = document.querySelector("[data-sk-carousel]");
@@ -310,7 +310,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
 >
   <h1>Carousel</h1>
   <p class="lede">
-    Scrollable sections <strong>native</strong>: the track is a <code>&lt;ul&gt;</code> with
+    Scrollable sections <strong>native</strong>: the track is a <code>&lt;div&gt;</code> with
     <code>scroll-snap-type</code>, so scrolling, tactile momentum and anchor points
     They are from the platform, not from a script. Above are two layers of control on that same substrate: one
     base <strong>without JS</strong> with native carousel pseudo-elements, and an enhancer
@@ -393,7 +393,9 @@ carousel.addEventListener("sk-carousel-change", (event) => {
   <h2>Contract</h2>
   <ul>
     <li>
-      Root: <code>&lt;section class="sk-carousel" data-sk-carousel&gt;</code> with a hint <code>&lt;ul class="sk-carousel__track"&gt;</code> of <code>&lt;li class="sk-carousel__slide"&gt;</code>.
+      Root: <code>&lt;section class="sk-carousel" data-sk-carousel&gt;</code> with a hint <code>&lt;div class="sk-carousel__track"&gt;</code> of <code>&lt;div class="sk-carousel__slide"&gt;</code>.
+            Not a list: the machine gives each slide <code>role="group"</code>, which takes it out of
+            the list and would leave a list with no list items.
     </li>
     <li>
       Slides: any content. <code>--sk-carousel-slide-size</code> sets the width (peek or multi-up)

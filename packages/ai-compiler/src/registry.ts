@@ -8,6 +8,7 @@ import { processListContract } from "@skryensya/core/process-list";
 import { stepsContract } from "@skryensya/core/steps";
 import { listContract } from "@skryensya/core/list";
 import { mediaGradientContract } from "@skryensya/core/media-gradient";
+import { carouselContract } from "@skryensya/core/carousel";
 import { treeViewContract } from "@skryensya/core/tree-view";
 import { sidebarContract } from "@skryensya/core/sidebar";
 import { accordionContract } from "@skryensya/core/accordion";
@@ -74,6 +75,7 @@ export const contracts = {
   pagination: paginationContract,
   accordion: accordionContract,
   sidebar: sidebarContract,
+  carousel: carouselContract,
   "tree-view": treeViewContract,
   tile: tileContract,
   "theme-toggle": themeToggleContract,

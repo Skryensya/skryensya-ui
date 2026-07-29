@@ -961,6 +961,159 @@
         }
       }
     },
+    "carousel": {
+      "css": "@skryensya/core/components/carousel.css",
+      "id": "carousel",
+      "options": {
+        "autoplay": {
+          "attr": "data-autoplay",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "controls": {
+          "attr": "data-controls",
+          "type": "enum",
+          "values": [
+            "auto",
+            "none"
+          ]
+        },
+        "loop": {
+          "attr": "data-loop",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "mouseDrag": {
+          "attr": "data-mouse-drag",
+          "type": "enum",
+          "values": [
+            "on",
+            "off"
+          ]
+        },
+        "orientation": {
+          "attr": "data-orientation",
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ]
+        }
+      },
+      "parts": {
+        "autoplay": "sk-carousel__autoplay",
+        "button": "sk-carousel__button",
+        "controls": "sk-carousel__controls",
+        "dot": "sk-carousel__dot",
+        "dots": "sk-carousel__dots",
+        "root": "sk-carousel",
+        "slide": "sk-carousel__slide",
+        "track": "sk-carousel__track"
+      },
+      "semantics": {
+        "Carousel": {
+          "alternatives": [
+            "Grid",
+            "List"
+          ],
+          "avoidWhen": [
+            "el contenido es importante y no puede depender de que alguien deslice; ahí va una grilla",
+            "son pocos ítems y entran todos; el carrusel esconde lo que ya cabía",
+            "es un solo mensaje rotando solo; eso se lee poco y molesta mucho"
+          ],
+          "useWhen": [
+            "hay muchos ítems parejos y el espacio horizontal alcanza para unos pocos: tarjetas, fotos",
+            "conviene que se vea que hay más al costado, con el ítem siguiente asomando"
+          ]
+        },
+        "CarouselSlide": {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Carousel; no hay pista donde encajar"
+          ],
+          "useWhen": [
+            "es un ítem del carrusel; adentro puede ir cualquier cosa, normalmente una Card"
+          ]
+        }
+      },
+      "signatures": {
+        "Carousel": {
+          "host": {
+            "element": "section"
+          },
+          "intent": [
+            "carousel",
+            "slider-of-cards",
+            "snap-scroller",
+            "gallery"
+          ],
+          "mount": "data-sk-carousel",
+          "options": [
+            "loop",
+            "autoplay",
+            "orientation",
+            "controls",
+            "mouseDrag"
+          ],
+          "react": {
+            "from": "@skryensya/react/carousel",
+            "name": "Carousel"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "CarouselSlide"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "div",
+                "part": "track",
+                "slot": "children"
+              }
+            ],
+            "element": "section",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "CarouselSlide": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "slide",
+            "carousel-item"
+          ],
+          "options": [],
+          "parents": [
+            "Carousel"
+          ],
+          "react": {
+            "from": "@skryensya/react/carousel",
+            "name": "CarouselSlide"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "slide",
+            "slot": "children"
+          }
+        }
+      }
+    },
     "checkbox": {
       "css": "@skryensya/core/components/checkbox.css",
       "id": "checkbox",
@@ -6423,5 +6576,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "f6c5da3ce43a0801"
+  "sourceHash": "ca3323c82822474b"
 }

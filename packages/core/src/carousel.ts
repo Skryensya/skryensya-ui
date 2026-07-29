@@ -1,3 +1,5 @@
+import type { ComponentContract } from "./contract.js";
+
 /*
  * CAROUSEL, a native scroll-snap region of slides (cards or any content) with controls.
  *
@@ -78,3 +80,71 @@ export type CarouselChangeDetail = {
 export type CarouselGotoDetail = {
   index: number;
 };
+
+/**
+ * The contract. Both bindings render the SAME markup and hand it to the same enhancer — React's
+ * Carousel writes the mount mark itself — so what a contract adds here is not symmetry, which is
+ * free, but the vocabulary: which knobs exist and what each one costs.
+ *
+ * `autoplay` is the interesting one. A carousel that moves by itself has to be stoppable (WCAG
+ * 2.2.2), so turning it on is also what draws the pause control: the option and the control are one
+ * thing. The millisecond form (`data-autoplay="6000"`) stays authorable and is not published — a
+ * delay is tuning, and the catalogue is for choosing.
+ */
+export const carouselContract = {
+  id: "carousel",
+  css: "@skryensya/core/components/carousel.css",
+  parts: carouselParts,
+
+  options: {
+    /** Wrap around past either end. */
+    loop: { type: "boolean", default: false, attr: "data-loop", trueValue: "" },
+    /** Advance on a timer, and draw the pause control that WCAG 2.2.2 requires along with it. */
+    autoplay: { type: "boolean", default: false, attr: "data-autoplay", trueValue: "" },
+    orientation: { type: "enum", values: ["horizontal", "vertical"], attr: "data-orientation" },
+    /**
+     * `none` draws no prev/next and no dots, in either layer. The track is then a plain snap
+     * scroller, and the peeking slide is the only thing saying so — which is a real design, and a
+     * bad accident.
+     */
+    controls: { type: "enum", values: ["auto", "none"], attr: "data-controls" },
+    /**
+     * Click-and-drag with a mouse, ON by default: a mouse cannot scroll a horizontal track any
+     * other way. Turn it off for slides whose text people are meant to select.
+     */
+    mouseDrag: { type: "enum", values: ["on", "off"], attr: "data-mouse-drag" },
+  },
+
+  signatures: {
+    Carousel: {
+      intent: ["carousel", "slider-of-cards", "snap-scroller", "gallery"],
+      host: { element: "section" },
+      options: ["loop", "autoplay", "orientation", "controls", "mouseDrag"],
+      slots: { children: { accepts: "signature", of: ["CarouselSlide"], required: true } },
+      mount: "data-sk-carousel",
+      template: {
+        element: "section",
+        part: "root",
+        host: true,
+        /*
+         * A plain div, not a `<ul>`. It reads like a list and it is not one: the machine gives each
+         * slide `role="group"` and `aria-roledescription="slide"`, which is the ARIA carousel
+         * pattern and which takes the items OUT of the list — leaving a list with no list items,
+         * exactly what axe reports. The slides are counted by "1 de 3", not by the list.
+         */
+        children: [{ element: "div", part: "track", slot: "children" }],
+      },
+      react: { from: "@skryensya/react/carousel", name: "Carousel" },
+    },
+
+    CarouselSlide: {
+      intent: ["slide", "carousel-item"],
+      host: { element: "div" },
+      parents: ["Carousel"],
+      options: [],
+      slots: { children: { accepts: "node", required: true } },
+      template: { element: "div", part: "slide", host: true, slot: "children" },
+      react: { from: "@skryensya/react/carousel", name: "CarouselSlide" },
+    },
+  },
+} as const satisfies ComponentContract;

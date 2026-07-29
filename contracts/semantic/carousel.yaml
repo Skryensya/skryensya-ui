@@ -1,0 +1,20 @@
+# La estructura vive en packages/core/src/carousel.ts. Acá sólo por qué se elige.
+
+Carousel:
+  useWhen:
+    - "hay muchos ítems parejos y el espacio horizontal alcanza para unos pocos: tarjetas, fotos"
+    - "conviene que se vea que hay más al costado, con el ítem siguiente asomando"
+  avoidWhen:
+    - "el contenido es importante y no puede depender de que alguien deslice; ahí va una grilla"
+    - "son pocos ítems y entran todos; el carrusel esconde lo que ya cabía"
+    - "es un solo mensaje rotando solo; eso se lee poco y molesta mucho"
+  alternatives:
+    - Grid
+    - List
+
+CarouselSlide:
+  useWhen:
+    - "es un ítem del carrusel; adentro puede ir cualquier cosa, normalmente una Card"
+  avoidWhen:
+    - "está fuera de un Carousel; no hay pista donde encajar"
+  alternatives: []

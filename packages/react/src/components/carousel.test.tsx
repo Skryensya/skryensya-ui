@@ -19,8 +19,9 @@ describe("Carousel", () => {
     expect(region.getAttribute("aria-label")).toBe("Destacados");
 
     const track = region.querySelector(".sk-carousel__track")!;
-    expect(track.tagName).toBe("UL");
-    expect(track.querySelectorAll("li.sk-carousel__slide")).toHaveLength(3);
+    // A div, not a list: the machine gives each slide role="group", which takes it out of the list.
+    expect(track.tagName).toBe("DIV");
+    expect(track.querySelectorAll("div.sk-carousel__slide")).toHaveLength(3);
   });
 
   it("exposes a snapTo handle that dispatches the goto command the enhancer listens for", () => {

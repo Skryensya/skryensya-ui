@@ -1,10 +1,10 @@
-import { carouselEvents, carouselParts, type CarouselGotoDetail } from "@skryensya/core/carousel";
+import { carouselContract, carouselEvents, carouselParts, type CarouselGotoDetail } from "@skryensya/core/carousel";
+import type { OptionValue } from "@skryensya/core/contract";
 import {
   forwardRef,
   useImperativeHandle,
   useRef,
   type HTMLAttributes,
-  type LiHTMLAttributes,
   type ReactNode,
 } from "react";
 
@@ -21,6 +21,17 @@ export type CarouselProps = HTMLAttributes<HTMLElement> & {
   children: ReactNode;
   /** Names the carousel region for assistive tech. */
   "aria-label"?: string;
+  /*
+   * The enhancer's knobs, as props. It reads them off the DOM either way — these exist so a React
+   * caller sets them by name instead of hand-writing the data attributes, and the values are DERIVED
+   * so Core stays the only place they are defined.
+   */
+  loop?: boolean;
+  /** Advance on a timer. Also draws the pause control, which WCAG 2.2.2 requires along with it. */
+  autoplay?: boolean;
+  orientation?: OptionValue<typeof carouselContract.options.orientation>;
+  controls?: OptionValue<typeof carouselContract.options.controls>;
+  mouseDrag?: OptionValue<typeof carouselContract.options.mouseDrag>;
 };
 
 /*
@@ -30,7 +41,7 @@ export type CarouselProps = HTMLAttributes<HTMLElement> & {
  * through the same goto event any consumer can dispatch.
  */
 export const Carousel = forwardRef<CarouselHandle, CarouselProps>(function Carousel(
-  { children, className, ...props },
+  { autoplay, children, className, controls, loop, mouseDrag, orientation, ...props },
   ref,
 ) {
   const rootRef = useRef<HTMLElement>(null);
@@ -48,21 +59,33 @@ export const Carousel = forwardRef<CarouselHandle, CarouselProps>(function Carou
   );
 
   return (
-    <section {...props} className={cx(carouselParts.root, className)} data-sk-carousel="" ref={rootRef}>
-      <ul className={carouselParts.track}>{children}</ul>
+    <section
+      {...props}
+      className={cx(carouselParts.root, className)}
+      data-autoplay={autoplay ? "" : undefined}
+      data-controls={controls}
+      data-loop={loop ? "" : undefined}
+      data-mouse-drag={mouseDrag}
+      data-orientation={orientation}
+      data-sk-carousel=""
+      ref={rootRef}
+    >
+      {/* A div, not a <ul>: the machine gives each slide role="group", which takes it out of the
+          list and leaves a list with no list items. */}
+      <div className={carouselParts.track}>{children}</div>
     </section>
   );
 });
 
-export type CarouselSlideProps = LiHTMLAttributes<HTMLLIElement> & {
+export type CarouselSlideProps = HTMLAttributes<HTMLDivElement> & {
   children: ReactNode;
 };
 
 /** One slide. Any content: a Card, an image, a stat — the track snaps to its start edge. */
 export function CarouselSlide({ children, className, ...props }: CarouselSlideProps) {
   return (
-    <li {...props} className={cx(carouselParts.slide, className)}>
+    <div {...props} className={cx(carouselParts.slide, className)}>
       {children}
-    </li>
+    </div>
   );
 }

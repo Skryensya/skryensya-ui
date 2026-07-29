@@ -438,6 +438,16 @@ function checkCollection(
           message: `Every entry of "${name}" needs its "${slotName}" filled.`,
         });
       }
+
+      /*
+       * A recursive slot holds entries of the shape that CONTAINS it, so it is checked against the
+       * same shape, one level down. Without this a folder's children were accepted unread — every
+       * rule the entries above owe, they owe at every depth.
+       */
+      if (itemSlot.recursive) {
+        const nested = collectionItems(entry.slots[slotName]);
+        if (nested.length > 0) checkCollection(slotName, { ...itemSlot, item: shape }, nested, tree, where, problems);
+      }
     }
 
     for (const slotName of Object.keys(entry.slots)) {

@@ -1,0 +1,46 @@
+# La estructura vive en packages/core/src/sidebar.ts. Acá sólo por qué se elige.
+
+Sidebar:
+  useWhen:
+    - "la navegación principal de una aplicación vive al costado y acompaña a toda la sesión"
+    - "hay muchas secciones y conviene que se vean sin abrir nada"
+  avoidWhen:
+    - "es un sitio de contenido con pocas secciones; eso es un Navbar"
+    - "aparece sobre el contenido y se cierra al elegir; eso es un Drawer"
+  alternatives:
+    - Navbar
+
+SidebarHeader:
+  useWhen:
+    - "arriba va la marca, el nombre del espacio de trabajo o el trigger"
+  avoidWhen:
+    - "es parte de la lista de destinos; eso va en SidebarContent"
+  alternatives: []
+
+SidebarContent:
+  useWhen:
+    - "es el medio que scrollea; acá adentro va la NavList"
+  avoidWhen:
+    - "tiene que quedar fijo al scrollear; eso es el header o el footer"
+  alternatives: []
+
+SidebarFooter:
+  useWhen:
+    - "abajo va la cuenta, el modo de color o lo que se usa poco y se busca siempre"
+  avoidWhen:
+    - "es un destino más; eso va en la lista"
+  alternatives: []
+
+SidebarSeparator:
+  useWhen:
+    - "hay que separar dos grupos de destinos y el corte es parte de la información"
+  avoidWhen:
+    - "sólo se busca aire entre elementos; eso es espaciado, no un separador"
+  alternatives: []
+
+SidebarTrigger:
+  useWhen:
+    - "la persona tiene que poder angostar la barra para ganar ancho de contenido"
+  avoidWhen:
+    - "se espera que oculte la barra; angosta, nunca esconde"
+  alternatives: []

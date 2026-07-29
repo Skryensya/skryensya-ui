@@ -1,0 +1,14 @@
+# La estructura vive en packages/core/src/tree-view.ts. Acá sólo por qué se elige.
+
+TreeView:
+  useWhen:
+    - "los datos anidan de verdad y la jerarquía es parte de lo que hay que entender"
+    - "hace falta abrir y cerrar ramas sin perder de vista dónde se está"
+    - "un explorador de archivos, un organigrama, un índice de contenidos"
+  avoidWhen:
+    - "hay un solo nivel; eso es una List o una NavList"
+    - "son dos niveles fijos y conocidos; una NavList con grupos se lee mejor"
+    - "la jerarquía es una vista de tabla con filas que se expanden; eso es una Table"
+  alternatives:
+    - NavList
+    - List

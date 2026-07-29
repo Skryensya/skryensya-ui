@@ -87,6 +87,14 @@ export type ContractSlot = {
    */
   readonly cardinality?: Readonly<Record<string, "one" | "optional" | "many">>;
   /**
+   * Entries of this slot have the shape of the entry that CONTAINS it. A folder holds folders, and
+   * declaring that by writing the shape again would be writing it forever.
+   *
+   * The one structural thing a flat collection cannot say. It is not only a tree's: a nested menu
+   * and a nav list with sub-groups are the same claim.
+   */
+  readonly recursive?: true;
+  /**
    * The shape of one entry, when `accepts` is `"items"`.
    *
    * A collection is not a list of child signatures: its entries are DATA, and one entry's fields can
@@ -186,6 +194,21 @@ export type ContractTemplate = {
    */
   readonly repeat?: string;
   /**
+   * This node is emitted once per entry of the CURRENT ENTRY's named slot — the nested half of
+   * `repeat`. With a `recursive` slot it is what makes a template of fixed depth render a
+   * structure of any depth.
+   */
+  readonly repeatItemSlot?: string;
+  /**
+   * Render the template node carrying this `name`, here, with the current entry.
+   *
+   * The counterpart of a `recursive` slot: the data nests without limit, and a literal cannot
+   * contain itself, so the shape is written once, named, and pointed back at from inside. It
+   * terminates because a leaf's children slot is empty — the DATA is what has a bottom, not the
+   * template.
+   */
+  readonly recurse?: string;
+  /**
    * This node repeats over a collection the CONTRACT computes rather than the author supplies.
    *
    * Pagination is the case that needs it: which page numbers are visible follows from the current
@@ -211,6 +234,13 @@ export type ContractTemplate = {
    */
   readonly whenItemGiven?: string;
   readonly whenItemMissing?: string;
+  /**
+   * The same question asked of the entry's CONTENT rather than its options: a tree node with
+   * children is a branch and gets a control that opens it, one without is a leaf. Whether it has
+   * children is not an option anyone sets — it is whether the slot was filled.
+   */
+  readonly whenItemSlotGiven?: string;
+  readonly whenItemSlotMissing?: string;
   /**
    * This node exists on every entry but the last. Separators are the case: they go BETWEEN crumbs,
    * so a trailing one would be punctuation with nothing after it.

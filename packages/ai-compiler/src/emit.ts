@@ -156,6 +156,30 @@ function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number)
     );
   }
 
+  // The nested half: entries of the CURRENT entry's slot. With a recursive slot this is what lets a
+  // template of fixed depth render a folder inside a folder inside a folder.
+  if (node.repeatItemSlot !== undefined) {
+    const entries = collectionItems(ctx.item?.slots[node.repeatItemSlot]);
+    return entries.flatMap((item, index) =>
+      renderTemplate({ ...node, repeatItemSlot: undefined }, { ...ctx, item, last: index === entries.length - 1 }, depth),
+    );
+  }
+
+  /*
+   * Back to a shape written once and named, with whatever entry is current. AFTER the repeat above,
+   * never before: recursion has to consume a level of data to reach a bottom, and a `recurse` that
+   * fired first would re-render the same entry until the stack ran out — which is exactly what it
+   * did the first time these two were in the wrong order.
+   */
+  if (node.recurse !== undefined) {
+    if (ctx.item === undefined) {
+      throw new EmitError(`${node.recurse} recurses with no entry to recurse on; it must sit under a repeat.`);
+    }
+    const target = namedNode(ctx.signature.template, node.recurse);
+    if (!target) throw new EmitError(`No template node named ${node.recurse} to recurse into.`);
+    return renderTemplate(target, ctx, depth);
+  }
+
   // Between, not after: a trailing separator is punctuation with nothing following it.
   if (node.whenNotLast && ctx.last !== false) return [];
 
@@ -163,6 +187,11 @@ function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number)
   // without is the page you are on.
   if (node.whenItemGiven !== undefined && ctx.item?.options?.[node.whenItemGiven] === undefined) return [];
   if (node.whenItemMissing !== undefined && ctx.item?.options?.[node.whenItemMissing] !== undefined) return [];
+
+  // Asked of the entry's CONTENT: a node with children is a branch, one without is a leaf, and
+  // nobody sets that — it is whether the slot was filled.
+  if (node.whenItemSlotGiven !== undefined && collectionItems(ctx.item?.slots[node.whenItemSlotGiven]).length === 0) return [];
+  if (node.whenItemSlotMissing !== undefined && collectionItems(ctx.item?.slots[node.whenItemSlotMissing]).length > 0) return [];
 
   // A conditional node names either an option or a slot; both mean "supplied by the author".
   if (node.whenGiven !== undefined) {
@@ -232,6 +261,16 @@ function computedKeyOf(signature: ContractSignature): string | undefined {
   const find = (node: ContractTemplate): string | undefined =>
     node.repeatComputed?.key ?? (node.children ?? []).map(find).find((k) => k !== undefined);
   return find(signature.template);
+}
+
+/** The template node carrying a given `name`, anywhere below the signature's root. */
+function namedNode(node: ContractTemplate, name: string): ContractTemplate | undefined {
+  if (node.name === name) return node;
+  for (const child of node.children ?? []) {
+    const found = namedNode(child, name);
+    if (found) return found;
+  }
+  return undefined;
 }
 
 function computedWindow(
@@ -524,6 +563,17 @@ function flattenItem(item: ItemInput): Record<string, unknown> {
   const flat: Record<string, unknown> = { ...item.options };
 
   for (const [name, content] of Object.entries(item.slots)) {
+    /*
+     * A slot that holds MORE ENTRIES is flattened the same way, one level down: a folder's children
+     * are folders. Reading only the text of an entry's slots dropped them silently, and a tree with
+     * no branches passed every check there was.
+     */
+    const nested = collectionItems(content);
+    if (nested.length > 0) {
+      flat[name] = nested.map(flattenItem);
+      continue;
+    }
+
     const values = slotItems(content);
     const text = values.find((value) => !isUsageTree(value));
     if (typeof text === "string") flat[name] = text;

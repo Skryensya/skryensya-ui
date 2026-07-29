@@ -790,4 +790,67 @@ export const canonicalTrees: readonly Canonical[] = [
       ],
     },
   },
+  {
+    /*
+     * Six signatures composed as a shell. The trigger points at the content with `aria-controls`
+     * and NEITHER binding's markup carries the pair — the id is generated at runtime, so both write
+     * it themselves. G2 compares the relationship, which is the only part that has to hold.
+     */
+    name: "sidebar/collapsible-shell",
+    enhanced: true,
+    tree: {
+      contract: "sidebar",
+      signature: "Sidebar",
+      children: [
+        {
+          contract: "sidebar",
+          signature: "SidebarHeader",
+          children: {
+            contract: "sidebar",
+            signature: "SidebarTrigger",
+            options: { label: "Angostar la barra" },
+            slots: { icon: { contract: "icon", signature: "Icon", options: { name: "menu" } } },
+          },
+        },
+        { contract: "sidebar", signature: "SidebarContent", children: "Proyectos" },
+        { contract: "sidebar", signature: "SidebarSeparator" },
+        { contract: "sidebar", signature: "SidebarFooter", children: "Allison Peña" },
+      ],
+    },
+  },
+  {
+    /*
+     * The recursive case, and the only one in the catalogue: an entry's children are entries of the
+     * same shape, three levels deep here. What G2 proves is that a template written once — named,
+     * and pointed back at from inside — lands on the same DOM as React's recursive component.
+     */
+    name: "tree-view/nested-folders",
+    enhanced: true,
+    tree: {
+      contract: "tree-view",
+      signature: "TreeView",
+      options: { label: "Archivos del proyecto" },
+      slots: {
+        items: [
+          {
+            options: { id: "src" },
+            slots: {
+              label: "src",
+              children: [
+                {
+                  options: { id: "componentes" },
+                  slots: {
+                    label: "componentes",
+                    children: [{ options: { id: "boton.ts" }, slots: { label: "boton.ts" } }],
+                  },
+                },
+                { options: { id: "indice.ts" }, slots: { label: "indice.ts" } },
+              ],
+            },
+          },
+          { options: { id: "leeme.md" }, slots: { label: "leeme.md" } },
+        ],
+      },
+    },
+  },
 ];

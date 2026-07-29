@@ -1,8 +1,5 @@
-import { existsSync } from "node:fs";
-import { pathToFileURL } from "node:url";
-import { join } from "node:path";
+import { recipes } from "@skryensya/recipes";
 import { validateUsageTree } from "./validate.js";
-import type { UsageTree } from "./usage-tree.js";
 
 /*
  * Recipes, checked against the catalogue that has to keep them true.
@@ -13,53 +10,20 @@ import type { UsageTree } from "./usage-tree.js";
  * `validate_ui` does, and a failure stops the build rather than printing a warning nobody reads.
  */
 
-type LoadedRecipe = {
-  readonly id: string;
-  readonly states: Readonly<Record<string, UsageTree>>;
-};
-
-/**
- * Every problem across every recipe, as lines ready to print. Empty means all of them still compose.
- *
- * Returns `[]` when there is no recipe directory: recipes are a phase of the plan, not a
- * precondition for emitting a catalogue.
- */
-export async function checkRecipes(root: string): Promise<readonly string[]> {
-  const entry = join(root, "contracts", "recipes", "index.ts");
-  if (!existsSync(entry)) return [];
-
-  const loaded = await loadRecipes(entry);
-  if (typeof loaded === "string") return [loaded];
-
+/** Every problem across every recipe, as lines ready to print. Empty means all of them compose. */
+export function checkRecipes(): readonly string[] {
   const problems: string[] = [];
 
-  for (const recipe of loaded) {
+  for (const recipe of recipes) {
     for (const [state, tree] of Object.entries(recipe.states)) {
-      const result = validateUsageTree(tree);
-      for (const problem of result.problems) {
-        // Advisories are the contract's own accessibility hints; a recipe is published, so they are
-        // reported too — but only an error stops the build, exactly as for any other tree.
-        const mark = problem.severity === "error" ? "" : " (advisory)";
-        problems.push(`${recipe.id} · ${state} · ${problem.path}: ${problem.message}${mark}`);
+      for (const problem of validateUsageTree(tree).problems) {
+        // Only errors stop the build. Advisories are the contract's own accessibility hints, and a
+        // recipe is held to the same bar as any other tree, not a stricter one.
+        if (problem.severity !== "error") continue;
+        problems.push(`${recipe.id} · ${state} · ${problem.path}: ${problem.message}`);
       }
-      if (!result.valid) continue;
     }
   }
 
-  return problems.filter((line) => !line.endsWith("(advisory)"));
-}
-
-/*
- * A dynamic import, so the compiler takes no build-time dependency on the recipe directory: the
- * catalogue has to compile in a checkout that has none, and `checkRecipes` already returns early
- * when it is missing.
- */
-async function loadRecipes(entry: string): Promise<readonly LoadedRecipe[] | string> {
-  try {
-    const module = (await import(pathToFileURL(entry).href)) as { recipes?: readonly LoadedRecipe[] };
-    if (!module.recipes) return `${entry} exports no "recipes".`;
-    return module.recipes;
-  } catch (error) {
-    return `${entry} could not be loaded: ${(error as Error).message}`;
-  }
+  return problems;
 }

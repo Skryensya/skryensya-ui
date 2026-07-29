@@ -1,0 +1,16 @@
+{
+  "name": "@skryensya/recipes",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Whole screens as usage trees, one per state. The compiler validates every state against the contracts; the gates render and diff them; the docs site publishes them.",
+  "dependencies": {
+    "@skryensya/core": "workspace:*"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    }
+  }
+}

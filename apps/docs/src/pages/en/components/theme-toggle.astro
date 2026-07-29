@@ -2,61 +2,31 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
-import { ThemeToggleDemo } from "../../../components/react-demos/theme-toggle";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
-const html = `<div class="sk-inline" data-gap="md" data-align="center">
-  <button
-    class="sk-button sk-interactive sk-theme-toggle"
-    data-sk-theme-toggle
-    data-variant="ghost"
-    data-icon-only
-    type="button"
-    aria-label="Modo: sistema"
-    data-sk-theme-toggle-label-system="Modo: sistema"
-    data-sk-theme-toggle-label-light="Mode: clear"
-    data-sk-theme-toggle-label-dark="Mode: dark"
-  >
-    <span
-      data-sk-icon="mode-system"
-      data-sk-theme-toggle-icon="system"
-    ></span>
-    <span
-      data-sk-icon="mode-light"
-      data-sk-theme-toggle-icon="light"
-    ></span>
-    <span
-      data-sk-icon="mode-dark"
-      data-sk-theme-toggle-icon="dark"
-    ></span>
-  </button>
-  <button
-    class="sk-button sk-interactive sk-theme-toggle"
-    data-sk-theme-toggle
-    data-variant="ghost"
-    data-size="sm"
-    data-icon-only
-    type="button"
-    aria-label="Modo: sistema"
-    data-sk-theme-toggle-label-system="Modo: sistema"
-    data-sk-theme-toggle-label-light="Mode: clear"
-    data-sk-theme-toggle-label-dark="Mode: dark"
-  >
-    <span
-      data-sk-icon="mode-system"
-      data-sk-theme-toggle-icon="system"
-    ></span>
-    <span
-      data-sk-icon="mode-light"
-      data-sk-theme-toggle-icon="light"
-    ></span>
-    <span
-      data-sk-icon="mode-dark"
-      data-sk-theme-toggle-icon="dark"
-    ></span>
-  </button>
-</div>`;
+/*
+ * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
+ * island are all emitted from this, so the snippet a reader copies is what they just saw render.
+ */
+const tree = {
+  contract: "layout",
+  signature: "Inline",
+  options: { gap: "md" },
+  children: [
+    {
+      contract: "theme-toggle",
+      signature: "ThemeToggle",
+      options: { labelSystem: "Mode: system", labelLight: "Mode: light", labelDark: "Mode: dark" },
+    },
+    {
+      contract: "theme-toggle",
+      signature: "ThemeToggle",
+      options: { size: "sm", labelSystem: "Mode: system", labelLight: "Mode: light", labelDark: "Mode: dark" },
+    },
+  ],
+} as const satisfies UsageTree;
 
 const css = `@import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/theme-toggle.css";`;
@@ -68,9 +38,9 @@ import { initComponents } from "@skryensya/vanilla/auto";
 mountIcons(document, lucideIcons);
 await initComponents();
 
-// Persistence (optional): the enhancer applies the mode;
-// The app saves the preference. The preference is coming
-// declarada, ver /almacenamiento.
+// Persistence (optional): the enhancer applies the mode,
+// the app stores the preference. The preference itself is
+// already declared, see /en/storage.
 import { setPreference } from "@skryensya/vanilla/storage";
 import { colorModePreference } from "@skryensya/core/theme-toggle";
 
@@ -78,20 +48,6 @@ document.addEventListener("sk-theme-toggle-change", (event) => {
   setPreference(colorModePreference, event.detail.value);
 });`;
 
-const react = `import { ThemeToggle } from "@skryensya/react/theme-toggle";
-import { IconSetProvider } from "@skryensya/react/icon";
-import { lucideIcons } from "@skryensya/icons-lucide";
-
-const labels = {
-  system: "Modo: sistema",
-  light: "Mode: clear",
-  dark: "Mode: dark",
-};
-
-<IconSetProvider set={lucideIcons}>
-  <ThemeToggle labels={labels} />
-  <ThemeToggle size="sm" labels={labels} />
-</IconSetProvider>;`;
 ---
 
 <Base
@@ -103,17 +59,7 @@ const labels = {
     Theme Toggle cycles the <strong>color mode</strong> (system → light → dark → system). It is a ghost icon-only Button with three stacked faces; when clicked it writes <code>data-scheme</code> and <code>color-scheme</code> to <code>&lt;html&gt;</code> for <code>light-dark()</code> to re-theme. The size is that of the Button: <strong>md</strong> (default) or <code>data-size="sm"</code> / <code>size="sm"</code>. The persistence is provided by the app.
   </p>
 
-  <Showcase
-    html={html}
-    js={js}
-    react={react}
-    label="Theme Toggle"
-    note="md · sm"
-  >
-    <Fragment slot="react">
-      <ThemeToggleDemo client:load />
-    </Fragment>
-  </Showcase>
+  <Showcase tree={tree} js={js} label="Theme Toggle" note="md · sm" />
 
   <h2>Contract</h2>
   <ul>

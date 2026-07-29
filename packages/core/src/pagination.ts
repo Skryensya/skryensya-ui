@@ -119,6 +119,10 @@ export const paginationContract = {
             also: ["sk-interactive"],
             options: ["previousLabel"],
             attrs: { type: "button" },
+            // There is no page before the first one. React already refuses the click; without this
+            // the authored markup offered a control that cannot do anything, and said so to a
+            // screen reader.
+            attrsWhen: [{ option: "page", equals: "1", attrs: { disabled: "" } }],
             children: [{ element: "span", attrs: { "data-sk-icon": "chevron-left", "data-sk-icon-size": "sm" } }],
           },
           /*
@@ -155,6 +159,8 @@ export const paginationContract = {
             also: ["sk-interactive"],
             options: ["nextLabel"],
             attrs: { type: "button" },
+            // And none after the last, which is `page === total` — a comparison between two options.
+            attrsWhen: [{ option: "page", equalsOption: "total", attrs: { disabled: "" } }],
             children: [{ element: "span", attrs: { "data-sk-icon": "chevron-right", "data-sk-icon-size": "sm" } }],
           },
         ],

@@ -33,7 +33,7 @@ if (drift.length > 0) {
  * the same failure as an overlay naming one — a screen an agent is invited to copy, teaching
  * something the catalogue no longer does.
  */
-const badRecipes = await checkRecipes(root);
+const badRecipes = checkRecipes();
 
 if (badRecipes.length > 0) {
   console.error("\n  RECIPE_INVALID — nothing emitted\n");

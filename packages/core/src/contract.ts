@@ -165,6 +165,11 @@ export type ContractTemplate = {
     /** Or which value it holds — an alert is assertive only when its tone is danger. */
     readonly equals?: string;
     readonly notEquals?: string;
+    /**
+     * Or whether it holds the same value as ANOTHER option. "You are on the last page" is
+     * `page === total`, and there is no literal to compare against: the answer depends on both.
+     */
+    readonly equalsOption?: string;
     readonly attrs: Readonly<Record<string, string>>;
   }[];
   /**

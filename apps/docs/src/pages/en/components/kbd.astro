@@ -2,32 +2,28 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 import StylingHooks from "../../../components/StylingHooks.astro";
-import { KbdBasicDemo } from "../../../components/react-demos/kbd";
 
 /* The skin is already global (Base.astro imports it for the ⌘K badge), so this page needs no import. */
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<div class="sk-inline">
-  <kbd class="sk-kbd">⌘</kbd>
-  <kbd class="sk-kbd">K</kbd>
-  <kbd class="sk-kbd">Esc</kbd>
-  <kbd class="sk-kbd">↵</kbd>
-</div>`;
-
-const react = `import { Kbd } from "@skryensya/react/kbd";
-
-function Example() {
-  return (
-    <div className="sk-inline">
-      <Kbd>⌘</Kbd>
-      <Kbd>K</Kbd>
-      <Kbd>Esc</Kbd>
-      <Kbd>↵</Kbd>
-    </div>
-  );
-}`;
+/*
+ * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
+ * island are all emitted from this, so the snippet a reader copies is what they just saw render.
+ */
+const tree = {
+  contract: "layout",
+  signature: "Inline",
+  options: { gap: "sm" },
+  children: [
+    { contract: "kbd", signature: "Kbd", children: "⌘" },
+    { contract: "kbd", signature: "Kbd", children: "K" },
+    { contract: "kbd", signature: "Kbd", children: "Esc" },
+    { contract: "kbd", signature: "Kbd", children: "↵" },
+  ],
+} as const satisfies UsageTree;
 ---
 
 <Base title="Kbd" description="Kbd: a rendered key using the native <kbd>, styling hooks, and a React wrapper.">
@@ -39,11 +35,7 @@ function Example() {
     <code>&lt;kbd&gt;</code> is from the platform; The component only provides the look.
   </p>
 
-  <Showcase html={html} react={react} label="Kbd">
-    <Fragment slot="react">
-      <KbdBasicDemo client:load />
-    </Fragment>
-  </Showcase>
+  <Showcase tree={tree} label="Kbd" />
 
   <h2>A glyph reads square</h2>
   <p>

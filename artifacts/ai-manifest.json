@@ -3957,6 +3957,15 @@
                 "attrs": {
                   "type": "button"
                 },
+                "attrsWhen": [
+                  {
+                    "attrs": {
+                      "disabled": ""
+                    },
+                    "equals": "1",
+                    "option": "page"
+                  }
+                ],
                 "children": [
                   {
                     "attrs": {
@@ -4018,6 +4027,15 @@
                 "attrs": {
                   "type": "button"
                 },
+                "attrsWhen": [
+                  {
+                    "attrs": {
+                      "disabled": ""
+                    },
+                    "equalsOption": "total",
+                    "option": "page"
+                  }
+                ],
                 "children": [
                   {
                     "attrs": {
@@ -7547,5 +7565,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "de8ca8fe95820374"
+  "sourceHash": "906817548eacf0ec"
 }

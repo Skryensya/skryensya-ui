@@ -1,5 +1,5 @@
 /*
- * Live React demos for /components/box, /grid, /inline, /stack, /wrapper. Each export is a
+ * Live React demos for /components/grid, /inline, /stack, /primitives. Each export is a
  * self-contained island (no function props crossing the Astro boundary), mounted directly
  * from the page with a bare `<XyzDemo client:load />`.
  */
@@ -11,17 +11,7 @@ import { framedIn } from "./framed";
 /** Every demo below runs inside its own preview frame — see `framed.tsx`. */
 const framed = framedIn(import.meta.url);
 
-export const BoxBasicDemo = framed(function BoxBasicDemo() {
-  return (
-    <Box as="section" surface="raised" border="subtle" padding="lg">
-      <h2>Summary</h2>
-      <p>The content preserves the semantics of the chosen element.</p>
-      <button type="button" onClick={() => {}}>
-        Administrar
-      </button>
-    </Box>
-  );
-});
+/* Box's demo is a usage tree on the page itself (both languages), so there is no island here. */
 
 export const GridBasicDemo = framed(function GridBasicDemo() {
   return (

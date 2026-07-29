@@ -17,6 +17,7 @@
     "@skryensya/icons-material": "workspace:*",
     "@skryensya/icons-phosphor": "workspace:*",
     "@skryensya/react": "workspace:*",
+    "@skryensya/recipes": "workspace:*",
     "@skryensya/vanilla": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

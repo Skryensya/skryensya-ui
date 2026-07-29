@@ -1,4 +1,4 @@
-import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 
 /*
  * A RECIPE: a whole screen as usage trees, one per state.

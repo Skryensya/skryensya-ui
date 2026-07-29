@@ -1,31 +1,22 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
-import { BoxBasicDemo } from "../../../components/react-demos/layout";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 
-const html = `<section
-  class="sk-box"
-  data-surface="raised"
-  data-border="subtle"
-  data-padding="lg"
->
-  <h3>Summary</h3>
-  <p>A semantic section with surface, border and padding.</p>
-  <button type="button">Administrar</button>
-</section>`;
-
-const react = `import { Box } from "@skryensya/react/box";
-
-function Example() {
-  return (
-    <Box as="section" surface="raised" border="subtle" padding="lg">
-      <h2>Summary</h2>
-      <p>The content preserves the semantics of the chosen element.</p>
-      <button type="button">Administrar</button>
-    </Box>
-  );
-}`;
+/*
+ * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
+ * island are all emitted from this, so the snippet a reader copies is what they just saw render.
+ */
+const tree = {
+  contract: "box",
+  signature: "Box",
+  options: { surface: "raised", border: "subtle", padding: "lg" },
+  children: [
+    { contract: "typography", signature: "Heading", children: "Summary" },
+    { contract: "typography", signature: "Text", children: "A semantic section with surface, border and padding." },
+    { contract: "button", signature: "Button.action", children: "Manage" },
+  ],
+} as const satisfies UsageTree;
 ---
 <Base title="Box" description="Visual and semantic surface chosen by the user; without own interaction.">
   <h1>Box</h1>
@@ -37,11 +28,7 @@ function Example() {
   <p>The <a href="/en/components/card">Card</a> guide applies this decision to content, news, product, link, action, selection and metrics cards.</p>
 
   <h2>Authored HTML</h2>
-  <Showcase html={html} react={react} label="Box">
-    <Fragment slot="react">
-      <BoxBasicDemo client:load />
-    </Fragment>
-  </Showcase>
+  <Showcase tree={tree} label="Box" />
 
   <h2>React</h2>
   <p>The code is in the <strong>React</strong> tab of the preview.</p>

@@ -1,4 +1,5 @@
 import type { Recipe } from "./recipe.js";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 
 /**
  * The frame every screen inside an application sits in: a navbar across the top, a sidebar of
@@ -82,7 +83,7 @@ export const appShellRecipe: Recipe = {
  * the sidebar are IDENTICAL in every state — that is the claim the recipe is making — and writing
  * them out four times would let one of them drift and quietly stop making it.
  */
-function shell(content: import("@skryensya/ai-compiler/usage-tree").UsageTree) {
+function shell(content: UsageTree): UsageTree {
   return {
     contract: "layout",
     signature: "Stack",
@@ -158,5 +159,5 @@ function shell(content: import("@skryensya/ai-compiler/usage-tree").UsageTree) {
         ],
       },
     ],
-  } as const satisfies import("@skryensya/ai-compiler/usage-tree").UsageTree;
+  };
 }

@@ -12,7 +12,8 @@
   "dependencies": {
     "@skryensya/core": "workspace:*",
     "yaml": "^2.9.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "@skryensya/recipes": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

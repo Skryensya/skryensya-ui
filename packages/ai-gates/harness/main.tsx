@@ -98,7 +98,13 @@ async function stage(): Promise<void> {
      */
     const vanilla = document.createElement("form");
     vanilla.dataset.binding = "vanilla";
-    vanilla.innerHTML = emitMarkup(tree);
+    /*
+     * Every case shares ONE document, so the generated ids are namespaced by case name. Without
+     * this, three states of the same recipe emitted the same field id and each label pointed at the
+     * first input on the page — a divergence the gate reported as real when it was the stage's own.
+     * A real page never needs this: each preview is its own srcdoc document.
+     */
+    vanilla.innerHTML = emitMarkup(tree, { idPrefix: name.replace(/[^a-z0-9]+/gi, "-") });
 
     const react = document.createElement("form");
     react.dataset.binding = "react";

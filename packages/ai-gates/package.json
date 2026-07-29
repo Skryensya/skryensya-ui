@@ -28,6 +28,7 @@
     "vite": "^8.1.5",
     "axe-core": "^4.10.2",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
-    "svelte": "^5.0.0"
+    "svelte": "^5.0.0",
+    "@skryensya/recipes": "workspace:*"
   }
 }

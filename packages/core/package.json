@@ -345,6 +345,10 @@
     "./kbd": {
       "types": "./src/kbd.ts",
       "default": "./src/kbd.ts"
+    },
+    "./usage-tree": {
+      "types": "./src/usage-tree.ts",
+      "default": "./src/usage-tree.ts"
     }
   },
   "scripts": {

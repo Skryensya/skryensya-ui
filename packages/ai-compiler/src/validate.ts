@@ -410,23 +410,27 @@ function checkCollection(
       if (problem) problems.push({ path: where, rule: "invalid-option-value", severity: "error", message: problem });
     }
 
-    const key = entry.options?.[shape.key];
-    if (typeof key !== "string" || key === "") {
-      problems.push({
-        path: where,
-        rule: "missing-item-key",
-        severity: "error",
-        message: `Every entry of "${name}" needs "${shape.key}": it is what pairs the parts this entry becomes.`,
-      });
-    } else if (seen.has(key)) {
-      problems.push({
-        path: where,
-        rule: "duplicate-item-key",
-        severity: "error",
-        message: `Two entries of "${name}" share ${shape.key}="${key}". The parts they become would collapse into one.`,
-      });
-    } else {
-      seen.add(key);
+    // Only when the collection HAS a key: an entry that becomes one element has nothing to pair,
+    // and a uniqueness rule over nothing rejects trees for a reason that does not exist.
+    if (shape.key !== undefined) {
+      const key = entry.options?.[shape.key];
+      if (typeof key !== "string" || key === "") {
+        problems.push({
+          path: where,
+          rule: "missing-item-key",
+          severity: "error",
+          message: `Every entry of "${name}" needs "${shape.key}": it is what pairs the parts this entry becomes.`,
+        });
+      } else if (seen.has(key)) {
+        problems.push({
+          path: where,
+          rule: "duplicate-item-key",
+          severity: "error",
+          message: `Two entries of "${name}" share ${shape.key}="${key}". The parts they become would collapse into one.`,
+        });
+      } else {
+        seen.add(key);
+      }
     }
 
     for (const [slotName, itemSlot] of Object.entries(shape.slots)) {

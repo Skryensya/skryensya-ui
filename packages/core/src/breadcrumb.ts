@@ -44,7 +44,6 @@ export const breadcrumbContract = {
           accepts: "items",
           required: true,
           item: {
-            key: "label",
             options: {
               href: { type: "string", attr: "href" },
 

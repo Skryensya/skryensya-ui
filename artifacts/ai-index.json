@@ -1279,7 +1279,9 @@
             "hamburger"
           ],
           "parents": [
-            "Sidebar"
+            "Sidebar",
+            "SidebarHeader",
+            "SidebarFooter"
           ],
           "useWhen": [
             "la persona tiene que poder angostar la barra para ganar ancho de contenido"
@@ -2004,5 +2006,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "c7ef6f4810b1fecc"
+  "sourceHash": "de8ca8fe95820374"
 }

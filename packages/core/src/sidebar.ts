@@ -139,7 +139,12 @@ export const sidebarContract = {
     SidebarTrigger: {
       intent: ["collapse-sidebar", "rail-toggle", "hamburger"],
       host: { element: "button" },
-      parents: ["Sidebar"],
+      /*
+       * The header is where a sidebar actually puts it, beside the brand — and the footer is the
+       * other real answer. `Sidebar` alone said the only legal place was loose in the shell, which
+       * is the one place nobody puts it.
+       */
+      parents: ["Sidebar", "SidebarHeader", "SidebarFooter"],
       options: ["label"],
       requires: ["label"],
       slots: { icon: { accepts: "signature", of: ["Icon"] } },

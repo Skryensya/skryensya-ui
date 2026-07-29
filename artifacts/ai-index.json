@@ -794,8 +794,32 @@
       "id": "media-gradient",
       "signatures": [
         {
-          "alternatives": [],
+          "alternatives": [
+            "ImageFrame"
+          ],
           "avoidWhen": [
+            "el texto puede ir debajo de la imagen; ahí se lee mejor y no necesita lavado",
+            "es un pie de foto descriptivo; eso es un `<figcaption>` fuera del marco"
+          ],
+          "host": "div",
+          "id": "MediaCaption",
+          "intent": [
+            "caption-over-a-photo",
+            "text-on-media",
+            "overlay-title"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el texto va encima de la foto y no debajo: un título sobre la imagen de portada",
+            "hace falta que el lavado tenga el alto del texto y no un porcentaje de la imagen"
+          ]
+        },
+        {
+          "alternatives": [
+            "MediaCaption"
+          ],
+          "avoidWhen": [
+            "está fuera de un MediaCaption; no tiene caja que llenar y no pinta nada",
             "oscurece un diálogo sobre la página; eso es un Backdrop"
           ],
           "host": "div",
@@ -1980,5 +2004,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "4fc2555583a69d4e"
+  "sourceHash": "c7ef6f4810b1fecc"
 }

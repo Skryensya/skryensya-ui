@@ -72,7 +72,13 @@ export const layoutContract = {
     gap: { type: "enum", values: ["none", "xs", "sm", "md", "lg", "xl"], default: "md", attr: "data-gap" },
     align: { type: "enum", values: ["start", "center", "end", "stretch"], attr: "data-align" },
     inlineAlign: { type: "enum", values: ["start", "center", "end", "baseline"], default: "center", attr: "data-align", prop: "align" },
-    justify: { type: "enum", values: ["start", "center", "end", "between"], attr: "data-justify" },
+    justify: { type: "enum", values: ["start", "center", "end", "between"], default: "start", attr: "data-justify" },
+    /*
+     * Whether items fall to a second line. Written as "true"/"false" and not by presence, because
+     * the stylesheet has a rule for `data-wrap="false"` and an absent attribute would be a third
+     * state nobody meant.
+     */
+    wrap: { type: "boolean", default: true, attr: "data-wrap", trueValue: "true", falseValue: "false" },
     columns: { type: "enum", values: ["1", "2", "3", "4"], default: "1", attr: "data-columns" },
   },
 
@@ -89,7 +95,7 @@ export const layoutContract = {
     Inline: {
       intent: ["things-side-by-side", "button-row", "label-and-value"],
       host: { element: "div" },
-      options: ["gap", "inlineAlign", "justify"],
+      options: ["gap", "inlineAlign", "justify", "wrap"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "inline", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Inline" },

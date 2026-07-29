@@ -2,82 +2,20 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { PaginationDemo } from "../../components/react-demos/pagination";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<nav class="sk-pagination" aria-label="Paginación">
-  <button
-    class="sk-pagination__previous sk-interactive"
-    type="button"
-    aria-label="Página anterior"
-  >
-    <span data-sk-icon="chevron-left" data-sk-icon-size="sm"></span>
-  </button>
-  <button
-    class="sk-pagination__item sk-interactive"
-    type="button"
-    aria-label="Página 1"
-  >
-    1
-  </button>
-  <span class="sk-pagination__ellipsis" aria-hidden="true">…</span>
-  <button
-    class="sk-pagination__item sk-interactive"
-    type="button"
-    aria-label="Página 4"
-  >
-    4
-  </button>
-  <button
-    class="sk-pagination__item sk-interactive"
-    type="button"
-    aria-current="page"
-    aria-label="Página 5"
-  >
-    5
-  </button>
-  <button
-    class="sk-pagination__item sk-interactive"
-    type="button"
-    aria-label="Página 6"
-  >
-    6
-  </button>
-  <span class="sk-pagination__ellipsis" aria-hidden="true">…</span>
-  <button
-    class="sk-pagination__item sk-interactive"
-    type="button"
-    aria-label="Página 12"
-  >
-    12
-  </button>
-  <button
-    class="sk-pagination__next sk-interactive"
-    type="button"
-    aria-label="Página siguiente"
-  >
-    <span data-sk-icon="chevron-right" data-sk-icon-size="sm"></span>
-  </button>
-</nav>`;
-
-const react = `import { useState } from "react";
-import { Pagination } from "@skryensya/react/pagination";
-
-function Example() {
-  const [page, setPage] = useState(5);
-  return (
-    <Pagination
-      page={page}
-      total={12}
-      onPageChange={setPage}
-      label="Paginación"
-      previousLabel="Página anterior"
-      nextLabel="Página siguiente"
-    />
-  );
-}`;
+/*
+ * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
+ * island are all emitted from this, so the snippet a reader copies is what they just saw render.
+ */
+const tree = {
+  contract: "pagination",
+  signature: "Pagination",
+  options: { page: 1, total: 12, label: "Paginación", previousLabel: "Página anterior", nextLabel: "Página siguiente" },
+} as const satisfies UsageTree;
 
 const rangeExample = `import { paginationRange } from "@skryensya/core/pagination";
 
@@ -93,11 +31,7 @@ paginationRange(5, 20);
     con un hermano a cada lado, y las corridas ocultas colapsan en una elipsis.
   </p>
 
-  <Showcase html={html} react={react} label="Pagination">
-    <Fragment slot="react">
-      <PaginationDemo client:load />
-    </Fragment>
-  </Showcase>
+  <Showcase tree={tree} label="Pagination" />
   <p>
     Prev/next usan los roles <code>chevron-left</code> y <code>chevron-right</code> del set.
     La página actual lleva <code>aria-current="page"</code>; prev/next se deshabilitan en los bordes.

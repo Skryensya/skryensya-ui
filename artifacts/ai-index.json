@@ -1,6 +1,92 @@
 {
   "contracts": [
     {
+      "css": "@skryensya/core/components/accordion.css",
+      "id": "accordion",
+      "signatures": [
+        {
+          "alternatives": [
+            "Tabs",
+            "ExpandableTile"
+          ],
+          "avoidWhen": [
+            "son pocas secciones cortas; mostrarlas todas se lee más rápido que plegarlas",
+            "el contenido se compara entre secciones; plegar obliga a recordar en vez de mirar",
+            "las secciones son vistas alternativas del mismo espacio; eso es Tabs"
+          ],
+          "host": "div",
+          "id": "Accordion",
+          "intent": [
+            "accordion",
+            "faq",
+            "collapsible-sections",
+            "one-open-at-a-time"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay varias secciones largas y sólo una importa a la vez: preguntas frecuentes, términos",
+            "conviene que abrir una cierre la anterior para que la página no crezca sin fin"
+          ]
+        },
+        {
+          "alternatives": [
+            "ExpandableTile"
+          ],
+          "avoidWhen": [
+            "está sola, fuera de un acordeón; eso es un ExpandableTile"
+          ],
+          "host": "section",
+          "id": "Accordion.Item",
+          "intent": [
+            "accordion-section",
+            "faq-entry"
+          ],
+          "parents": [
+            "Accordion"
+          ],
+          "useWhen": [
+            "es una sección del acordeón; su `value` es cómo el acordeón la nombra"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Accordion.Item; no tiene qué abrir"
+          ],
+          "host": "button",
+          "id": "Accordion.Trigger",
+          "intent": [
+            "accordion-header",
+            "section-toggle"
+          ],
+          "parents": [
+            "Accordion.Item"
+          ],
+          "useWhen": [
+            "es el encabezado que abre y cierra su sección"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Accordion.Item; no tiene quién lo abra"
+          ],
+          "host": "div",
+          "id": "Accordion.Content",
+          "intent": [
+            "accordion-body",
+            "the-answer"
+          ],
+          "parents": [
+            "Accordion.Item"
+          ],
+          "useWhen": [
+            "es el cuerpo que se pliega dentro de su sección"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/alert.css",
       "id": "alert",
       "signatures": [
@@ -1283,6 +1369,116 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/tile.css",
+      "id": "tile",
+      "signatures": [
+        {
+          "alternatives": [
+            "TileButton",
+            "Card"
+          ],
+          "avoidWhen": [
+            "adentro hay más de una acción; dos targets anidados es una trampa, no una tarjeta",
+            "no navega a ningún lado; eso es un TileButton"
+          ],
+          "host": "a",
+          "id": "TileLink",
+          "intent": [
+            "clickable-card",
+            "navigation-tile",
+            "linked-surface",
+            "card-that-goes-somewhere"
+          ],
+          "parents": [],
+          "useWhen": [
+            "toda la tarjeta lleva al mismo lado y conviene que el área clickeable sea toda",
+            "una grilla de destinos: proyectos, artículos, secciones"
+          ]
+        },
+        {
+          "alternatives": [
+            "TileLink",
+            "Button"
+          ],
+          "avoidWhen": [
+            "la acción es elegir entre varias y la elección se ve; eso es TileCheckbox o un RadioGroup",
+            "navega; eso es un TileLink"
+          ],
+          "host": "button",
+          "id": "TileButton",
+          "intent": [
+            "actionable-card",
+            "selectable-surface",
+            "card-that-does-something"
+          ],
+          "parents": [],
+          "useWhen": [
+            "la tarjeta entera dispara una acción: elegir un plan, empezar un flujo"
+          ]
+        },
+        {
+          "alternatives": [
+            "Accordion"
+          ],
+          "avoidWhen": [
+            "el contenido es lo que la persona vino a leer; esconderlo agrega un clic y nada más",
+            "flota sobre la página; eso es un Popover o un Dialog"
+          ],
+          "host": "section",
+          "id": "ExpandableTile",
+          "intent": [
+            "expandable-card",
+            "show-more",
+            "collapsible-surface",
+            "disclosure"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay detalle que no todos necesitan y esconderlo baja el ruido de la página",
+            "son varias secciones y sólo importa una a la vez; ahí se arma un Accordion con éstas"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un ExpandableTile; no tiene a qué apuntar"
+          ],
+          "host": "button",
+          "id": "ExpandableTileTrigger",
+          "intent": [
+            "expand-control",
+            "disclosure-trigger",
+            "show-more-button"
+          ],
+          "parents": [
+            "ExpandableTile"
+          ],
+          "useWhen": [
+            "es el encabezado que abre y cierra su ExpandableTile"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un ExpandableTile; no tiene quién lo abra"
+          ],
+          "host": "div",
+          "id": "ExpandableTileContent",
+          "intent": [
+            "expandable-body",
+            "disclosure-panel",
+            "the-part-that-unfolds"
+          ],
+          "parents": [
+            "ExpandableTile"
+          ],
+          "useWhen": [
+            "es el cuerpo que se pliega dentro de su ExpandableTile"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/toolbar.css",
       "id": "toolbar",
       "signatures": [
@@ -1424,5 +1620,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "88c3bda89d9f2810"
+  "sourceHash": "8088df589bd211ae"
 }

@@ -29,6 +29,8 @@ import "@skryensya/core/components/segmented.css";
 import "@skryensya/core/components/slider.css";
 import "@skryensya/core/components/number-field.css";
 import "@skryensya/core/components/pagination.css";
+import "@skryensya/core/components/accordion.css";
+import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/theme-toggle.css";
 import "@skryensya/core/components/toast.css";
 import "@skryensya/core/components/tooltip.css";

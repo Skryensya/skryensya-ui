@@ -1,0 +1,46 @@
+# La estructura vive en packages/core/src/tile.ts. Acá sólo por qué se elige.
+
+TileLink:
+  useWhen:
+    - "toda la tarjeta lleva al mismo lado y conviene que el área clickeable sea toda"
+    - "una grilla de destinos: proyectos, artículos, secciones"
+  avoidWhen:
+    - "adentro hay más de una acción; dos targets anidados es una trampa, no una tarjeta"
+    - "no navega a ningún lado; eso es un TileButton"
+  alternatives:
+    - TileButton
+    - Card
+
+TileButton:
+  useWhen:
+    - "la tarjeta entera dispara una acción: elegir un plan, empezar un flujo"
+  avoidWhen:
+    - "la acción es elegir entre varias y la elección se ve; eso es TileCheckbox o un RadioGroup"
+    - "navega; eso es un TileLink"
+  alternatives:
+    - TileLink
+    - Button
+
+ExpandableTile:
+  useWhen:
+    - "hay detalle que no todos necesitan y esconderlo baja el ruido de la página"
+    - "son varias secciones y sólo importa una a la vez; ahí se arma un Accordion con éstas"
+  avoidWhen:
+    - "el contenido es lo que la persona vino a leer; esconderlo agrega un clic y nada más"
+    - "flota sobre la página; eso es un Popover o un Dialog"
+  alternatives:
+    - Accordion
+
+ExpandableTileTrigger:
+  useWhen:
+    - "es el encabezado que abre y cierra su ExpandableTile"
+  avoidWhen:
+    - "está fuera de un ExpandableTile; no tiene a qué apuntar"
+  alternatives: []
+
+ExpandableTileContent:
+  useWhen:
+    - "es el cuerpo que se pliega dentro de su ExpandableTile"
+  avoidWhen:
+    - "está fuera de un ExpandableTile; no tiene quién lo abra"
+  alternatives: []

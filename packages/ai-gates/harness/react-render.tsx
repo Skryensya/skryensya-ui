@@ -40,6 +40,7 @@ import * as navListModule from "@skryensya/react/nav-list";
 import * as selectionModule from "@skryensya/react/selection";
 import * as tableModule from "@skryensya/react/table";
 import * as tabsModule from "@skryensya/react/tabs";
+import type { ContractSlot } from "@skryensya/core/contract";
 import { getContract, getSignature } from "@skryensya/ai-compiler/registry";
 import {
   collectionItems,
@@ -154,7 +155,7 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
     // The markup emitter is the one that expands it, which is the asymmetry the template exists for.
     const entries = collectionItems(content);
     if (entries.length > 0) {
-      props[slotProp] = entries.map(flattenEntry);
+      props[slotProp] = entries.map((entry) => flattenEntry(entry, signature.slots[slot]?.item));
       continue;
     }
 
@@ -174,18 +175,22 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
  * One entry as the flat object a React binding takes — and a slot holding MORE ENTRIES flattened
  * the same way, one level down, because a folder's children are folders.
  */
-function flattenEntry(entry: ItemInput): Record<string, unknown> {
+function flattenEntry(entry: ItemInput, shape?: ContractSlot["item"]): Record<string, unknown> {
   const flat: Record<string, unknown> = { ...entry.options };
 
   for (const [field, value] of Object.entries(entry.slots)) {
+    // The binding's own name for this field, when the contract keyed it differently — a tile
+    // option's content is `label` in the contract and `children` in React.
+    const name = shape?.slots[field]?.prop ?? field;
+
     const nested = collectionItems(value);
     if (nested.length > 0) {
-      flat[field] = nested.map(flattenEntry);
+      flat[name] = nested.map((child) => flattenEntry(child, shape));
       continue;
     }
 
     const values = slotItems(value);
-    flat[field] = values.length === 1 && !isUsageTree(values[0]!) ? values[0] : values.map(renderItem);
+    flat[name] = values.length === 1 && !isUsageTree(values[0]!) ? values[0] : values.map(renderItem);
   }
 
   return flat;

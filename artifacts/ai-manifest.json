@@ -5791,12 +5791,23 @@
       "css": "@skryensya/core/components/tile.css",
       "id": "tile",
       "options": {
+        "defaultChecked": {
+          "attr": "data-default-checked",
+          "default": false,
+          "machineInput": true,
+          "type": "boolean"
+        },
         "defaultOpen": {
           "attr": "data-default-open",
           "default": false,
           "machineInput": true,
           "trueValue": "",
           "type": "boolean"
+        },
+        "defaultValue": {
+          "attr": "data-default-value",
+          "machineInput": true,
+          "type": "string"
         },
         "disabled": {
           "attr": "disabled",
@@ -5807,6 +5818,20 @@
         "href": {
           "attr": "href",
           "type": "string"
+        },
+        "name": {
+          "attr": "data-name",
+          "machineInput": true,
+          "type": "string"
+        },
+        "orientation": {
+          "attr": "data-orientation",
+          "machineInput": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ]
         },
         "padding": {
           "attr": "data-padding",
@@ -5819,6 +5844,18 @@
             "lg",
             "xl"
           ]
+        },
+        "required": {
+          "attr": "data-required",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "value": {
+          "attr": "data-value",
+          "machineInput": true,
+          "type": "string"
         }
       },
       "parts": {
@@ -5879,6 +5916,20 @@
             "la tarjeta entera dispara una acción: elegir un plan, empezar un flujo"
           ]
         },
+        "TileCheckbox": {
+          "alternatives": [
+            "Checkbox",
+            "TileRadioGroup"
+          ],
+          "avoidWhen": [
+            "es una sola opción en una lista de texto; eso es un Checkbox",
+            "sólo se puede elegir una; eso es un TileRadioGroup"
+          ],
+          "useWhen": [
+            "se eligen varias opciones y cada una es una tarjeta con su propio contenido",
+            "conviene que toda la tarjeta sea el área de click, no sólo el cuadradito"
+          ]
+        },
         "TileLink": {
           "alternatives": [
             "TileButton",
@@ -5891,6 +5942,33 @@
           "useWhen": [
             "toda la tarjeta lleva al mismo lado y conviene que el área clickeable sea toda",
             "una grilla de destinos: proyectos, artículos, secciones"
+          ]
+        },
+        "TileRadioGroup": {
+          "alternatives": [
+            "RadioGroup",
+            "Segmented"
+          ],
+          "avoidWhen": [
+            "las opciones son una palabra cada una; eso es un RadioGroup o un Segmented",
+            "se pueden elegir varias; eso es TileCheckbox"
+          ],
+          "useWhen": [
+            "se elige una sola opción y cada una necesita explicarse: planes, métodos de envío",
+            "conviene comparar las opciones lado a lado antes de decidir"
+          ]
+        },
+        "TileSwitch": {
+          "alternatives": [
+            "Switch",
+            "TileCheckbox"
+          ],
+          "avoidWhen": [
+            "el cambio recién se aplica al enviar el formulario; ahí un Checkbox dice la verdad",
+            "es una opción entre varias; eso es un TileRadioGroup"
+          ],
+          "useWhen": [
+            "la tarjeta prende o apaga algo y el efecto es inmediato: una preferencia, una integración"
           ]
         }
       },
@@ -6063,6 +6141,114 @@
             "slot": "children"
           }
         },
+        "TileCheckbox": {
+          "host": {
+            "element": "label"
+          },
+          "intent": [
+            "selectable-card",
+            "multi-select-tile",
+            "card-with-a-checkbox",
+            "pick-several"
+          ],
+          "mount": "data-sk-tile-checkbox",
+          "options": [
+            "name",
+            "value",
+            "defaultChecked",
+            "disabled",
+            "required",
+            "padding"
+          ],
+          "react": {
+            "from": "@skryensya/react/tile",
+            "name": "TileCheckbox"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-tile--interactive",
+              "sk-interactive"
+            ],
+            "attrs": {
+              "data-scope": "tile"
+            },
+            "children": [
+              {
+                "attrs": {
+                  "data-part": "input",
+                  "type": "checkbox"
+                },
+                "element": "input"
+              },
+              {
+                "attrs": {
+                  "data-part": "content"
+                },
+                "element": "span",
+                "part": "content",
+                "slot": "children"
+              },
+              {
+                "also": [
+                  "sk-checkbox__control",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "aria-hidden": "true",
+                  "data-part": "indicator"
+                },
+                "children": [
+                  {
+                    "also": [
+                      "sk-checkbox__indicator"
+                    ],
+                    "attrs": {
+                      "data-state": "checked"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "check",
+                          "data-sk-icon-size": "sm"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span"
+                  },
+                  {
+                    "also": [
+                      "sk-checkbox__indicator"
+                    ],
+                    "attrs": {
+                      "data-state": "indeterminate"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "remove",
+                          "data-sk-icon-size": "sm"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span"
+                  }
+                ],
+                "element": "span"
+              }
+            ],
+            "element": "label",
+            "host": true,
+            "part": "root"
+          }
+        },
         "TileLink": {
           "host": {
             "element": "a"
@@ -6103,6 +6289,193 @@
             "host": true,
             "part": "root",
             "slot": "children"
+          }
+        },
+        "TileRadioGroup": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "pick-one-card",
+            "plan-picker",
+            "single-select-tiles",
+            "choose-one"
+          ],
+          "mount": "data-sk-tile-radio-group",
+          "options": [
+            "name",
+            "defaultValue",
+            "orientation",
+            "disabled",
+            "required",
+            "padding"
+          ],
+          "react": {
+            "from": "@skryensya/react/tile",
+            "name": "TileRadioGroup"
+          },
+          "requires": [
+            "name"
+          ],
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "value",
+                "options": {
+                  "disabled": {
+                    "attr": "disabled",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "value": {
+                    "attr": "value",
+                    "type": "string"
+                  }
+                },
+                "slots": {
+                  "label": {
+                    "accepts": "node",
+                    "prop": "children",
+                    "required": true
+                  }
+                }
+              },
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-scope": "tile"
+            },
+            "children": [
+              {
+                "also": [
+                  "sk-tile--interactive",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "data-part": "item",
+                  "data-scope": "tile"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-part": "input",
+                      "type": "radio"
+                    },
+                    "element": "input",
+                    "itemOptions": [
+                      "value",
+                      "disabled"
+                    ]
+                  },
+                  {
+                    "attrs": {
+                      "data-part": "content"
+                    },
+                    "element": "span",
+                    "itemSlot": "label",
+                    "part": "content"
+                  },
+                  {
+                    "attrs": {
+                      "aria-hidden": "true",
+                      "data-part": "indicator"
+                    },
+                    "element": "span",
+                    "part": "selectionIndicator"
+                  }
+                ],
+                "element": "label",
+                "options": [
+                  "padding"
+                ],
+                "part": "root",
+                "repeat": "items"
+              }
+            ],
+            "element": "div",
+            "host": true
+          }
+        },
+        "TileSwitch": {
+          "host": {
+            "element": "label"
+          },
+          "intent": [
+            "toggle-card",
+            "setting-tile",
+            "card-with-a-switch",
+            "turn-on-or-off"
+          ],
+          "mount": "data-sk-tile-switch",
+          "options": [
+            "name",
+            "value",
+            "defaultChecked",
+            "disabled",
+            "required",
+            "padding"
+          ],
+          "react": {
+            "from": "@skryensya/react/tile",
+            "name": "TileSwitch"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-tile--interactive",
+              "sk-interactive"
+            ],
+            "attrs": {
+              "data-scope": "tile"
+            },
+            "children": [
+              {
+                "attrs": {
+                  "data-part": "input",
+                  "role": "switch",
+                  "type": "checkbox"
+                },
+                "element": "input"
+              },
+              {
+                "attrs": {
+                  "data-part": "content"
+                },
+                "element": "span",
+                "part": "content",
+                "slot": "children"
+              },
+              {
+                "also": [
+                  "sk-switch__control"
+                ],
+                "attrs": {
+                  "aria-hidden": "true",
+                  "data-part": "indicator"
+                },
+                "children": [
+                  {
+                    "also": [
+                      "sk-switch__thumb"
+                    ],
+                    "element": "span"
+                  }
+                ],
+                "element": "span"
+              }
+            ],
+            "element": "label",
+            "host": true,
+            "part": "root"
           }
         }
       }
@@ -6883,5 +7256,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "64d459d8ad5ff2ab"
+  "sourceHash": "e644b13819931b6f"
 }

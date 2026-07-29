@@ -50,6 +50,18 @@ export type ContractOption = {
    * of reporting a divergence that is really two ways of saying the same thing.
    */
   readonly machineInput?: true;
+  /**
+   * This option is INPUT TO A COMPUTATION rather than something that lands in the markup.
+   *
+   * Pagination's page, total and siblings decide which page buttons exist; once they have, there is
+   * nothing left for them to be an attribute of. Writing them anyway would put three values in the
+   * DOM that nothing reads and that React has no reason to mirror — a divergence at G2 standing in
+   * for a fact that is already expressed by the buttons themselves.
+   *
+   * `attr` stays declared: it names where the value WOULD go, which is what the docs and the
+   * validator quote, and keeps every option one shape.
+   */
+  readonly computedInput?: true;
 };
 
 /** Where authored content lands inside a part template. */
@@ -174,6 +186,25 @@ export type ContractTemplate = {
    */
   readonly repeat?: string;
   /**
+   * This node repeats over a collection the CONTRACT computes rather than the author supplies.
+   *
+   * Pagination is the case that needs it: which page numbers are visible follows from the current
+   * page, the total and how many siblings are kept — it is not data anyone should be typing, and an
+   * author who typed it could type a window that skips a page. So the contract names a computation
+   * the compiler knows, exactly as `style.percentOf` names one, and the entries come out of it.
+   *
+   * The entries look like any other collection's, so everything downstream — `whenItemGiven`,
+   * `itemSlot`, `selectedBy` — works on them unchanged.
+   */
+  readonly repeatComputed?: {
+    /** The computation. The compiler holds the list; a name it does not know fails the build. */
+    readonly window: "pagination-range";
+    /** Option names, in the computation's argument order. */
+    readonly from: readonly string[];
+    /** The item option each entry's value lands in, so `selectedBy` and `itemOptions` can name it. */
+    readonly key: string;
+  };
+  /**
    * This node exists only when the ENTRY supplied — or omitted — the named item option. A breadcrumb
    * crumb is a link when it has an href and plain text when it does not: one entry, two shapes, and
    * `whenGiven` cannot say it because it asks the composition rather than the entry.
@@ -199,7 +230,12 @@ export type ContractTemplate = {
    * option is selected belongs to the group, not to any entry — exclusivity is exactly the claim
    * that only one can be — so the contract asks the group and marks the match.
    */
-  readonly selectedBy?: { readonly option: string; readonly attr: string };
+  readonly selectedBy?: {
+    readonly option: string;
+    readonly attr: string;
+    /** What the attribute holds. Absent means presence-only, the boolean case. */
+    readonly value?: string;
+  };
   /** The item slot whose content lands here. Inside a repeated node only. */
   readonly itemSlot?: string;
   /**

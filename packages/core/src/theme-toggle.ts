@@ -7,6 +7,7 @@
  * record on a server); `colorModePreference` below is the declaration for the localStorage case, so
  * an app that takes the default does not hand-roll the slot name and the guard.
  */
+import type { ComponentContract } from "./contract.js";
 import { definePreference, oneOf } from "./storage.js";
 
 export type ColorMode = "system" | "light" | "dark";
@@ -85,3 +86,72 @@ export function readColorMode(root: HTMLElement): ColorMode {
 }
 
 export type ThemeToggleChangeDetail = { value: ColorMode };
+
+/**
+ * The color-mode control: one icon-only button that cycles system → light → dark.
+ *
+ * Three faces are always in the markup and CSS shows one, which is why they are template structure
+ * rather than a slot: which face is lit follows `data-scheme`, and a binding that rendered only the
+ * current one would have nothing to cross-fade between.
+ *
+ * `data-scheme` is state, not authorship. Whatever the author writes is read once as the initial
+ * mode, and from then on both bindings read the value off `<html>` — so two toggles on one page
+ * cannot disagree.
+ */
+export const themeToggleContract = {
+  id: "theme-toggle",
+  css: "@skryensya/core/components/theme-toggle.css",
+  parts: themeToggleParts,
+
+  options: {
+    /**
+     * The initial mode. Authored as `data-scheme` and read once by the enhancer; React takes it as
+     * `defaultValue`. After the first paint both bindings overwrite this attribute with the live
+     * mode, which is why it is machine input rather than a styling hook.
+     */
+    defaultValue: { type: "enum", values: ["system", "light", "dark"], attr: "data-scheme", machineInput: true },
+    /** Same size axis as Button. Absent means the control's default size. */
+    size: { type: "enum", values: ["sm", "md", "lg"], attr: "data-size" },
+    /*
+     * The three accessible names, one per mode, because the button's name changes as it cycles.
+     * Authored markup carries one attribute each; React takes them as a single `labels` object —
+     * different channels for one option, exactly what machine input means here too.
+     */
+    labelSystem: { type: "string", attr: "data-sk-theme-toggle-label-system", machineInput: true },
+    labelLight: { type: "string", attr: "data-sk-theme-toggle-label-light", machineInput: true },
+    labelDark: { type: "string", attr: "data-sk-theme-toggle-label-dark", machineInput: true },
+  },
+
+  signatures: {
+    ThemeToggle: {
+      intent: ["color-mode", "dark-mode-switch", "light-dark-toggle", "appearance"],
+      host: { element: "button" },
+      options: ["defaultValue", "size", "labelSystem", "labelLight", "labelDark"],
+      slots: {},
+      mount: "data-sk-theme-toggle",
+      template: {
+        element: "button",
+        part: "root",
+        host: true,
+        also: ["sk-button", "sk-interactive"],
+        /*
+         * A name before the JavaScript runs. Both bindings replace it with the live mode's label on
+         * their first paint, but an icon-only button that ships nameless is nameless for as long as
+         * the script takes to arrive — and for anyone whose script never does.
+         */
+        attrs: {
+          type: "button",
+          "data-variant": "ghost",
+          "data-icon-only": "",
+          "aria-label": "Color mode: system",
+        },
+        children: [
+          { element: "span", attrs: { "data-sk-icon": "mode-system", "data-sk-icon-size": "md", "data-sk-theme-toggle-icon": "system" } },
+          { element: "span", attrs: { "data-sk-icon": "mode-light", "data-sk-icon-size": "md", "data-sk-theme-toggle-icon": "light" } },
+          { element: "span", attrs: { "data-sk-icon": "mode-dark", "data-sk-icon-size": "md", "data-sk-theme-toggle-icon": "dark" } },
+        ],
+      },
+      react: { from: "@skryensya/react/theme-toggle", name: "ThemeToggle" },
+    },
+  },
+} as const satisfies ComponentContract;

@@ -16,6 +16,8 @@ import * as toolbarModule from "@skryensya/react/toolbar";
 import * as mediaGradientModule from "@skryensya/react/media-gradient";
 import * as segmentedModule from "@skryensya/react/segmented";
 import * as sliderModule from "@skryensya/react/slider";
+import * as paginationModule from "@skryensya/react/pagination";
+import * as themeToggleModule from "@skryensya/react/theme-toggle";
 import * as contentModule from "@skryensya/react/content";
 import * as numberFieldModule from "@skryensya/react/number-field";
 import * as tooltipModule from "@skryensya/react/tooltip";
@@ -66,6 +68,8 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/segmented": segmentedModule,
   "@skryensya/react/slider": sliderModule,
   "@skryensya/react/content": contentModule,
+  "@skryensya/react/pagination": paginationModule,
+  "@skryensya/react/theme-toggle": themeToggleModule,
   "@skryensya/react/number-field": numberFieldModule,
   "@skryensya/react/tooltip": tooltipModule,
   "@skryensya/react/badge": badgeModule,

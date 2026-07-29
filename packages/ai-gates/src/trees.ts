@@ -907,4 +907,44 @@ export const canonicalTrees: readonly Canonical[] = [
       slots: { label: "Hora de la cita", hint: "Atendemos entre las 9 y las 18." },
     },
   },
+  {
+    name: "tile/checkbox",
+    enhanced: true,
+    tree: {
+      contract: "tile",
+      signature: "TileCheckbox",
+      options: { name: "canales", value: "correo", padding: "md" },
+      children: "Avisarme por correo",
+    },
+  },
+  {
+    name: "tile/switch",
+    enhanced: true,
+    tree: {
+      contract: "tile",
+      signature: "TileSwitch",
+      options: { name: "resumen", value: "semanal", padding: "md" },
+      children: "Resumen semanal",
+    },
+  },
+  {
+    /*
+     * A collection whose entries are whole surfaces. The `name` belongs to the GROUP — that is what
+     * makes the choice exclusive — and the tile paint belongs to each option, which is why the root
+     * carries no part class on either side.
+     */
+    name: "tile/radio-group",
+    enhanced: true,
+    tree: {
+      contract: "tile",
+      signature: "TileRadioGroup",
+      options: { name: "envio", padding: "md" },
+      slots: {
+        items: [
+          { options: { value: "estandar" }, slots: { label: "Estándar, 3 a 5 días" } },
+          { options: { value: "express" }, slots: { label: "Express, al día siguiente" } },
+        ],
+      },
+    },
+  },
 ];

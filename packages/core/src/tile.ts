@@ -124,6 +124,14 @@ export const tileContract = {
     /** Inner spacing, on the same scale Box uses. Absent means the stylesheet's own. */
     padding: { type: "enum", values: ["none", "xs", "sm", "md", "lg", "xl"], attr: "data-padding" },
     href: { type: "string", attr: "href" },
+    /* The choice's identity in a form. Machine input: the enhancer reads them off the root, React
+       passes props, and Zag never writes them back. */
+    name: { type: "string", attr: "data-name", machineInput: true },
+    value: { type: "string", attr: "data-value", machineInput: true },
+    defaultChecked: { type: "boolean", default: false, attr: "data-default-checked", machineInput: true },
+    required: { type: "boolean", default: false, attr: "data-required", trueValue: "", machineInput: true },
+    defaultValue: { type: "string", attr: "data-default-value", machineInput: true },
+    orientation: { type: "enum", values: ["horizontal", "vertical"], attr: "data-orientation", machineInput: true },
     disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "" },
     /** Starts expanded. Read once as the initial state; after that the machine owns it. */
     defaultOpen: { type: "boolean", default: false, attr: "data-default-open", trueValue: "", machineInput: true },
@@ -169,6 +177,137 @@ export const tileContract = {
      * content are composed in the author's own order and can each carry arbitrary markup. The
      * machine pairs them; the contract only fixes that both are there.
      */
+    /*
+     * The three that WRAP a real control. The input is the tile's own, visually hidden and never
+     * replaced: it is what carries the choice into a form, what a screen reader announces, and what
+     * the keyboard reaches. Wrapping IS the association — no `for`, no `id` — and the paint beside
+     * it is `aria-hidden`, so the choice is announced once rather than twice.
+     */
+    TileCheckbox: {
+      intent: ["selectable-card", "multi-select-tile", "card-with-a-checkbox", "pick-several"],
+      host: { element: "label" },
+      options: ["name", "value", "defaultChecked", "disabled", "required", "padding"],
+      slots: { children: { accepts: "node", required: true } },
+      mount: "data-sk-tile-checkbox",
+      template: {
+        element: "label",
+        part: "root",
+        host: true,
+        also: ["sk-tile--interactive", "sk-interactive"],
+        attrs: { "data-scope": "tile" },
+        children: [
+          { element: "input", attrs: { type: "checkbox", "data-part": "input" } },
+          { element: "span", part: "content", attrs: { "data-part": "content" }, slot: "children" },
+          {
+            element: "span",
+            also: ["sk-checkbox__control", "sk-interactive"],
+            attrs: { "aria-hidden": "true", "data-part": "indicator" },
+            children: [
+              {
+                element: "span",
+                also: ["sk-checkbox__indicator"],
+                attrs: { "data-state": "checked" },
+                children: [{ element: "span", attrs: { "data-sk-icon": "check", "data-sk-icon-size": "sm" } }],
+              },
+              {
+                element: "span",
+                also: ["sk-checkbox__indicator"],
+                attrs: { "data-state": "indeterminate" },
+                children: [{ element: "span", attrs: { "data-sk-icon": "remove", "data-sk-icon-size": "sm" } }],
+              },
+            ],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/tile", name: "TileCheckbox" },
+    },
+
+    TileSwitch: {
+      intent: ["toggle-card", "setting-tile", "card-with-a-switch", "turn-on-or-off"],
+      host: { element: "label" },
+      options: ["name", "value", "defaultChecked", "disabled", "required", "padding"],
+      slots: { children: { accepts: "node", required: true } },
+      mount: "data-sk-tile-switch",
+      template: {
+        element: "label",
+        part: "root",
+        host: true,
+        also: ["sk-tile--interactive", "sk-interactive"],
+        attrs: { "data-scope": "tile" },
+        children: [
+          // A checkbox wearing `role="switch"`: the state is on/off rather than checked, and there
+          // is no native element for it. Same machine, different announcement.
+          { element: "input", attrs: { type: "checkbox", role: "switch", "data-part": "input" } },
+          { element: "span", part: "content", attrs: { "data-part": "content" }, slot: "children" },
+          {
+            element: "span",
+            also: ["sk-switch__control"],
+            attrs: { "aria-hidden": "true", "data-part": "indicator" },
+            children: [{ element: "span", also: ["sk-switch__thumb"] }],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/tile", name: "TileSwitch" },
+    },
+
+    TileRadioGroup: {
+      intent: ["pick-one-card", "plan-picker", "single-select-tiles", "choose-one"],
+      host: { element: "div" },
+      options: ["name", "defaultValue", "orientation", "disabled", "required", "padding"],
+      requires: ["name"],
+      slots: {
+        items: {
+          accepts: "items",
+          required: true,
+          item: {
+            options: {
+              value: { type: "string", attr: "value" },
+              disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "" },
+            },
+            // The binding calls it `children`; the contract keys every entry's content by name.
+            slots: { label: { accepts: "node", prop: "children", required: true } },
+            key: "value",
+          },
+        },
+      },
+      mount: "data-sk-tile-radio-group",
+      template: {
+        /*
+         * No part class on the root: the group is a box the machine wires, and the tile paint
+         * belongs to each OPTION. React writes nothing here either, and a class the stylesheet does
+         * not select would be a divergence standing in for nothing.
+         */
+        element: "div",
+        host: true,
+        attrs: { "data-scope": "tile" },
+        children: [
+          {
+            element: "label",
+            part: "root",
+            also: ["sk-tile--interactive", "sk-interactive"],
+            attrs: { "data-scope": "tile", "data-part": "item" },
+            // Padding is the OPTION's, not the group's: each tile is the surface being padded.
+            options: ["padding"],
+            repeat: "items",
+            children: [
+              {
+                element: "input",
+                attrs: { type: "radio", "data-part": "input" },
+                itemOptions: ["value", "disabled"],
+              },
+              { element: "span", part: "content", attrs: { "data-part": "content" }, itemSlot: "label" },
+              {
+                element: "span",
+                part: "selectionIndicator",
+                attrs: { "aria-hidden": "true", "data-part": "indicator" },
+              },
+            ],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/tile", name: "TileRadioGroup" },
+    },
+
     ExpandableTile: {
       intent: ["expandable-card", "show-more", "collapsible-surface", "disclosure"],
       host: { element: "section" },

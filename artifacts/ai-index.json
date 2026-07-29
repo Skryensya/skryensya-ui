@@ -1617,6 +1617,74 @@
         },
         {
           "alternatives": [
+            "Checkbox",
+            "TileRadioGroup"
+          ],
+          "avoidWhen": [
+            "es una sola opción en una lista de texto; eso es un Checkbox",
+            "sólo se puede elegir una; eso es un TileRadioGroup"
+          ],
+          "host": "label",
+          "id": "TileCheckbox",
+          "intent": [
+            "selectable-card",
+            "multi-select-tile",
+            "card-with-a-checkbox",
+            "pick-several"
+          ],
+          "parents": [],
+          "useWhen": [
+            "se eligen varias opciones y cada una es una tarjeta con su propio contenido",
+            "conviene que toda la tarjeta sea el área de click, no sólo el cuadradito"
+          ]
+        },
+        {
+          "alternatives": [
+            "Switch",
+            "TileCheckbox"
+          ],
+          "avoidWhen": [
+            "el cambio recién se aplica al enviar el formulario; ahí un Checkbox dice la verdad",
+            "es una opción entre varias; eso es un TileRadioGroup"
+          ],
+          "host": "label",
+          "id": "TileSwitch",
+          "intent": [
+            "toggle-card",
+            "setting-tile",
+            "card-with-a-switch",
+            "turn-on-or-off"
+          ],
+          "parents": [],
+          "useWhen": [
+            "la tarjeta prende o apaga algo y el efecto es inmediato: una preferencia, una integración"
+          ]
+        },
+        {
+          "alternatives": [
+            "RadioGroup",
+            "Segmented"
+          ],
+          "avoidWhen": [
+            "las opciones son una palabra cada una; eso es un RadioGroup o un Segmented",
+            "se pueden elegir varias; eso es TileCheckbox"
+          ],
+          "host": "div",
+          "id": "TileRadioGroup",
+          "intent": [
+            "pick-one-card",
+            "plan-picker",
+            "single-select-tiles",
+            "choose-one"
+          ],
+          "parents": [],
+          "useWhen": [
+            "se elige una sola opción y cada una necesita explicarse: planes, métodos de envío",
+            "conviene comparar las opciones lado a lado antes de decidir"
+          ]
+        },
+        {
+          "alternatives": [
             "Accordion"
           ],
           "avoidWhen": [
@@ -1881,5 +1949,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "64d459d8ad5ff2ab"
+  "sourceHash": "e644b13819931b6f"
 }

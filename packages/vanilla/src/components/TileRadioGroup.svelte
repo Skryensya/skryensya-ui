@@ -14,12 +14,26 @@
    */
   const root = getRoot();
 
-  type Item = { value: string; label: HTMLElement; input: HTMLInputElement };
+  type Item = {
+    value: string;
+    label: HTMLElement;
+    input: HTMLInputElement;
+    text: HTMLElement | null;
+    control: HTMLElement | null;
+  };
   const items: Item[] = Array.from(root.querySelectorAll<HTMLElement>('[data-part="item"]'))
     .map((label): Item | null => {
       const input = label.querySelector<HTMLInputElement>('input[type="radio"]');
       if (!input) return null;
-      return { value: input.value, label, input };
+      return {
+        value: input.value,
+        label,
+        input,
+        // The machine names these too, and leaving them unpatched left the option's text with no id
+        // for its own label to point at — invisible on screen, missing in the accessibility tree.
+        text: label.querySelector<HTMLElement>('[data-part="content"]'),
+        control: label.querySelector<HTMLElement>('[data-part="indicator"]'),
+      };
     })
     .filter((item): item is Item => item !== null);
 
@@ -52,6 +66,17 @@
       applyZagProps(item.input, api.getItemHiddenInputProps(props) as DomProps);
       // `checked` es propiedad viva del radio; setAttribute no la sincroniza. Fuente de verdad: api.value.
       item.input.checked = api.value === item.value;
+      // The machine's part names are the radio group's (`item-text`, `item-control`); the tile's
+      // vocabulary is `content` and `indicator`, and the CSS reads the tile's. Restored after the
+      // patch, exactly as `data-scope` is — React does the same by writing them after the spread.
+      if (item.text) {
+        applyZagProps(item.text, api.getItemTextProps(props) as DomProps);
+        item.text.setAttribute("data-part", "content");
+      }
+      if (item.control) {
+        applyZagProps(item.control, api.getItemControlProps(props) as DomProps);
+        item.control.setAttribute("data-part", "indicator");
+      }
       scopeTile(item.label);
       item.label.setAttribute("data-part", "item");
       item.input.setAttribute("data-part", "input");

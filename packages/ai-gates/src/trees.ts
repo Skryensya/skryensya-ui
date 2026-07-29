@@ -710,4 +710,24 @@ export const canonicalTrees: readonly Canonical[] = [
       },
     },
   },
+  {
+    /*
+     * Three faces in the markup, one lit. The tree says nothing about which: `data-scheme` is state
+     * both bindings read off `<html>`, so what this case proves is that they agree on where the
+     * mode lives rather than each keeping their own.
+     */
+    name: "theme-toggle/default",
+    enhanced: true,
+    tree: { contract: "theme-toggle", signature: "ThemeToggle" },
+  },
+  {
+    /*
+     * The first COMPUTED collection: the tree says page 4 of 12, and the window — 1 … 3 4 5 … 12 —
+     * comes from the contract, not from the author. What G2 checks is that both bindings arrive at
+     * the same window, which they do because both go through `paginationRange`.
+     */
+    name: "pagination/middle-of-twelve",
+    enhanced: false,
+    tree: { contract: "pagination", signature: "Pagination", options: { page: 4, total: 12 } },
+  },
 ];

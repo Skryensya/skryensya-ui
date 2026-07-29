@@ -8,6 +8,8 @@ import { processListContract } from "@skryensya/core/process-list";
 import { stepsContract } from "@skryensya/core/steps";
 import { listContract } from "@skryensya/core/list";
 import { mediaGradientContract } from "@skryensya/core/media-gradient";
+import { paginationContract } from "@skryensya/core/pagination";
+import { themeToggleContract } from "@skryensya/core/theme-toggle";
 import { contentContract } from "@skryensya/core/content";
 import { numberFieldContract } from "@skryensya/core/number-field";
 import { navbarContract } from "@skryensya/core/navbar";
@@ -65,6 +67,8 @@ export const contracts = {
   "nav-list": navListContract,
   navbar: navbarContract,
   content: contentContract,
+  pagination: paginationContract,
+  "theme-toggle": themeToggleContract,
   "number-field": numberFieldContract,
   placeholder: placeholderContract,
   "process-list": processListContract,

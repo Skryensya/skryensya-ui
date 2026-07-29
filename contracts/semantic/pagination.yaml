@@ -1,0 +1,11 @@
+# La estructura vive en packages/core/src/pagination.ts. Acá sólo por qué se elige.
+
+Pagination:
+  useWhen:
+    - "los resultados vienen de a páginas y hay que poder saltar a una en particular"
+    - "importa saber cuántas páginas hay: el total es parte de la información"
+  avoidWhen:
+    - "la lista es corta y entra entera; paginar agrega un paso que no compra nada"
+    - "el orden es cronológico y se explora hacia abajo; ahí conviene cargar más al llegar al final"
+  alternatives:
+    - Table

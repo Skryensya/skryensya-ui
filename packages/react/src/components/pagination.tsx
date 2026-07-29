@@ -48,7 +48,8 @@ export function Pagination({
         ) : (
           <button
             aria-current={slot === page ? "page" : undefined}
-            aria-label={`Page ${slot}`}
+            /* No aria-label: the number IS the name, and the nav landmark already supplies the
+               context. A label that restated it would also have to be translated twice. */
             className={cx(paginationParts.item, "sk-interactive")}
             key={slot}
             onClick={() => go(slot)}

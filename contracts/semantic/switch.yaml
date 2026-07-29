@@ -1,0 +1,11 @@
+# La estructura vive en packages/core/src/selection.ts. Acá sólo por qué se elige.
+
+Switch:
+  useWhen:
+    - "el cambio surte efecto en el momento: modo oscuro, notificaciones, una función que se enciende"
+    - "no hay botón de guardar de por medio"
+  avoidWhen:
+    - "el valor se envía con un formulario; eso es un Checkbox"
+    - "hace falta un tercer estado indeterminado; un switch está encendido o apagado"
+  alternatives:
+    - Checkbox

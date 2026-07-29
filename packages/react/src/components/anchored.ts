@@ -6,7 +6,7 @@ import {
   stripPositioningStyle,
   supportsAnchorPositioning,
 } from "@skryensya/core/anchored";
-import type { CSSProperties } from "react";
+import { useSyncExternalStore, type CSSProperties } from "react";
 
 /*
  * The React side of the Anclaje pattern (decision 25), and the reason the anchored components here
@@ -41,8 +41,26 @@ export type Anchored = {
   ) => Omit<T, "style"> & { className: string; style: CSSProperties | undefined };
 };
 
-export function anchored(id: string): Anchored {
-  const on = supportsAnchorPositioning();
+/*
+ * `supportsAnchorPositioning()` is a BROWSER question, and the server cannot answer it: it has no
+ * `CSS`, so it always says no and renders the machine's inline placement. If the client asked the
+ * real question during hydration it would say yes and render the anchor names instead, and React
+ * would report a mismatch on every anchored component (decision 25 note).
+ *
+ * So the answer is routed through `useSyncExternalStore`, whose whole job is exactly this: React
+ * uses the SERVER snapshot for the hydration pass, so the first client render matches the HTML by
+ * construction, then re-renders with the client snapshot once hydration is done. The store never
+ * changes, hence the no-op `subscribe`; this is a one-way flip at mount, not a subscription.
+ *
+ * The extra render is free in practice: every anchored box here is CLOSED at mount, so nothing is
+ * placed by either engine before the flip lands.
+ */
+const subscribeToNothing = () => () => {};
+const clientSupport = () => supportsAnchorPositioning();
+const serverSupport = () => false;
+
+export function useAnchored(id: string): Anchored {
+  const on = useSyncExternalStore(subscribeToNothing, clientSupport, serverSupport);
   const anchorStyle = on
     ? ({ [anchoredHooks.name]: anchorNameFor(id) } as CSSProperties)
     : undefined;

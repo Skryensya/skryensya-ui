@@ -1,3 +1,4 @@
+import type { ComponentContract } from "./contract.js";
 /*
  * El contrato de iconos. Tipos y vocabulario, ni geometría, ni DOM, ni dependencias.
  *
@@ -103,6 +104,7 @@ export const stableIconNames = [
 
   // contenido y sistema
   "calendar",
+  "clock",
   "upload",
   "download",
   "settings",
@@ -225,3 +227,52 @@ export function renderIconBox({ icon, dataIcon, size, label, className }: Render
 
   return { presentation, box, body: icon.body };
 }
+
+/*
+ * The contract. An icon is the clearest case of the two bindings meeting at different depths:
+ * React renders the `<svg>` itself, while authored markup writes a PLACEHOLDER — `<span
+ * data-sk-icon="delete">` — that the enhancer replaces with the real element once a set is bound.
+ *
+ * They converge because both go through `renderIconBox` above: the same box attributes, the same
+ * viewBox from the set, the same decorative-by-default accessibility. The placeholder is not a
+ * lesser form, it is the only form authored markup can take — the system ships no geometry
+ * (decision 15), so the drawing cannot exist until a set is chosen.
+ *
+ * `name` is a stable icon name, a ROLE the system names: `delete`, never `trash`.
+ */
+export const iconContract = {
+  id: "icon",
+  css: "@skryensya/core/patterns/icon.css",
+  parts: { root: "sk-icon" },
+
+  options: {
+    /**
+     * The stable name: a ROLE the system names, never the drawing. Constrained to the vocabulary
+     * itself, so a name no set is obliged to draw fails validation instead of crashing at mount —
+     * which is what `inbox` did the first time this contract was exercised.
+     */
+    name: { type: "enum", values: stableIconNames, attr: "data-sk-icon" },
+    size: { type: "enum", values: ["sm", "md", "lg"], default: "md", attr: "data-sk-icon-size" },
+    /**
+     * The accessible name. Absent means decorative, which is the right default: a control with a
+     * visible label already names itself, and a second name is noise.
+     */
+    label: { type: "string", attr: "data-sk-icon-label" },
+  },
+
+  signatures: {
+    Icon: {
+      intent: ["icon", "glyph", "pictogram", "decorative-mark"],
+      host: { element: "span" },
+      options: ["name", "size", "label"],
+      requires: ["name"],
+      slots: {},
+      /*
+       * The placeholder carries no part class: the class belongs to the `<svg>` the binding writes,
+       * and a set never controls the class, the size or the accessibility (decision 15).
+       */
+      template: { element: "span", host: true },
+      react: { from: "@skryensya/react/icon", name: "Icon" },
+    },
+  },
+} as const satisfies ComponentContract;

@@ -119,13 +119,27 @@
   .sk-calendar__year-grid {
     min-block-size: calc(var(--sk-calendar-row-size) * 7);
   }
+  /* `height: 100%` on the trigger won't resolve here — a `<td>`'s height comes out of the table's
+   * row-distribution pass, which percentage-height children can't see. Absolutely positioning the
+   * trigger against its own (now `position: relative`) `<td>` sidesteps that: an inset fill is
+   * resolved against the cell's actual laid-out box, the same mechanism button.css already uses
+   * for its `::after` hit-target. The cell's own padding is redundant once its one child no longer
+   * participates in flow, so the gutter moves onto the trigger's inset instead. */
+  .sk-calendar__month-grid .sk-calendar__cell,
+  .sk-calendar__year-grid .sk-calendar__cell {
+    position: relative;
+    padding: 0;
+  }
   .sk-calendar__month-grid .sk-calendar__cell-trigger.sk-button,
   .sk-calendar__year-grid .sk-calendar__cell-trigger.sk-button {
-    --sk-button-width: 100%;
-    --sk-button-height: 100%;
+    --sk-button-width: auto;
+    --sk-button-height: auto;
     /* A pill radius on a wide, tall rectangle reads as a capsule/badge, not a button; the plain
      * control radius is what every other normal-sized Button in the system uses. */
     --sk-button-radius: var(--radius-control);
+
+    position: absolute;
+    inset: calc(var(--space-inset-xs) * 0.5);
   }
   /* ── state layer bridge ────────────────────────────────────────────────────
    * Zag marks a selected cell with a BARE `data-selected` (no `="true"`), which the pattern's
@@ -145,6 +159,32 @@
   }
   .sk-calendar__cell-trigger[data-outside-range] {
     --sk-button-fg: var(--color-text-tertiary);
+  }
+  /* ── range fill ─────────────────────────────────────────────────────────────
+   * `selectionMode: "range"` marks the two picked days `data-selected` (the solid pill above
+   * already covers them) but marks everything BETWEEN them `data-in-range` instead — a plain day,
+   * not a selected one. That attribute lives on the TRIGGER (Zag's cell-state, not the `<td>`), and
+   * a fill on just the trigger's own inset box would leave a gap between consecutive days instead
+   * of one continuous band. `:has()` reaches from the cell into its trigger's state — the same
+   * technique Combobox's control already uses to react to its input's focus — so the tint can
+   * paint the whole `<td>`, edge-to-edge under `border-collapse`. `data-in-hover-range` is the SAME
+   * band while a range is still being picked (Zag tracks pointer movement automatically once
+   * range mode is on): the two never overlap in practice, so one rule covers both. */
+  .sk-calendar__cell:has(.sk-calendar__cell-trigger[data-in-range]),
+  .sk-calendar__cell:has(.sk-calendar__cell-trigger[data-in-hover-range]) {
+    background: var(--color-bg-accent-subtle);
+  }
+  /* Only the band's outer edge rounds, to cap it like the pill it is flanking; the inner edge
+   * (against the rest of the range) stays square so the fill still reads as one unbroken shape. */
+  .sk-calendar__cell:has(.sk-calendar__cell-trigger[data-range-start]),
+  .sk-calendar__cell:has(.sk-calendar__cell-trigger[data-hover-range-start]) {
+    border-start-start-radius: var(--sk-calendar-cell-radius);
+    border-end-start-radius: var(--sk-calendar-cell-radius);
+  }
+  .sk-calendar__cell:has(.sk-calendar__cell-trigger[data-range-end]),
+  .sk-calendar__cell:has(.sk-calendar__cell-trigger[data-hover-range-end]) {
+    border-start-end-radius: var(--sk-calendar-cell-radius);
+    border-end-end-radius: var(--sk-calendar-cell-radius);
   }
   @media (forced-colors: active) {
     .sk-calendar__cell-trigger[data-selected] {

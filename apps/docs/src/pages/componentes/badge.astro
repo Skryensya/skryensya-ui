@@ -3,23 +3,32 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { BadgeDemo } from "../../components/react-demos/badge";
 
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<span class="sk-badge" data-tone="neutral">Neutral</span>
+const html = `<div class="sk-inline">
+<span class="sk-badge" data-tone="neutral">Neutral</span>
 <span class="sk-badge" data-tone="accent">Accent</span>
 <span class="sk-badge" data-tone="success">Success</span>
 <span class="sk-badge" data-tone="warning">Warning</span>
-<span class="sk-badge" data-tone="danger">Danger</span>`;
+<span class="sk-badge" data-tone="danger">Danger</span>
+</div>`;
 
 const react = `import { Badge } from "@skryensya/react/badge";
 
-<Badge>Neutral</Badge>
-<Badge tone="accent">Accent</Badge>
-<Badge tone="success">Success</Badge>
-<Badge tone="warning">Warning</Badge>
-<Badge tone="danger">Danger</Badge>;`;
+function Example() {
+  return (
+    <div className="sk-inline">
+      <Badge>Neutral</Badge>
+      <Badge tone="accent">Accent</Badge>
+      <Badge tone="success">Success</Badge>
+      <Badge tone="warning">Warning</Badge>
+      <Badge tone="danger">Danger</Badge>
+    </div>
+  );
+}`;
 
 /* The dot: a badge with no text, only color and position. Standalone it is a status light; anchored in
  * a holder it is a notification/presence indicator on the top-right corner of another element. */
@@ -93,7 +102,11 @@ const holderReact = `import { Badge } from "@skryensya/react/badge";
   <h2>Etiqueta</h2>
   <p>La forma con texto: un estado, una categoría o un metadato corto. Cada tono lleva un borde de su
     propio color, así el neutral, cuyo fondo es el lienzo, no queda como un rectángulo invisible.</p>
-  <Showcase html={html} react={react} label="Badge" />
+  <Showcase html={html} react={react} label="Badge">
+    <Fragment slot="react">
+      <BadgeDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Dot</h2>
   <p>

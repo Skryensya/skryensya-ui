@@ -3,6 +3,10 @@ export const tileSharedStateContract = {
     initial: { checked: false, dataState: "unchecked" },
     changed: { checked: true, dataState: "checked" },
   },
+  switch: {
+    initial: { checked: false, dataState: "unchecked" },
+    changed: { checked: true, dataState: "checked" },
+  },
   radioGroup: {
     initial: { selectedValue: "basic", selectedState: "checked", unselectedState: "unchecked" },
     changed: { selectedValue: "pro", selectedState: "checked", unselectedState: "unchecked" },
@@ -19,6 +23,7 @@ export const tileSharedAccessibilityContract = {
   link: { role: "link" },
   button: { role: "button", disabled: true },
   checkbox: { role: "checkbox", formAssociated: true },
+  switch: { role: "switch", formAssociated: true },
   radioGroup: { role: "radiogroup", orientation: "vertical", formAssociated: true },
   expandable: { triggerRole: "button", expanded: "false", contentHidden: true },
 } as const;

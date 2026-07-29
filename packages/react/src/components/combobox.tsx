@@ -3,7 +3,7 @@ import { fieldParts } from "@skryensya/core/field";
 import { combobox } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
 import { useId, useMemo, useState, type ReactNode } from "react";
-import { anchored } from "./anchored.js";
+import { useAnchored } from "./anchored.js";
 const cx = (...classes: Array<string | undefined>) =>
   classes.filter(Boolean).join(" ");
 const combiningMarks = /\p{M}+/gu;
@@ -176,7 +176,7 @@ export function Combobox({
 
   /* El ancla es el CONTROL entero, no el botón del chevron: el listbox se alinea con el campo que
    * el usuario está escribiendo, y anclarlo al chevron lo pegaría a un cuadrado de 32px. */
-  const anchor = anchored(machineId);
+  const anchor = useAnchored(machineId);
   const inputProps = api.getInputProps();
   const describedBy =
     [

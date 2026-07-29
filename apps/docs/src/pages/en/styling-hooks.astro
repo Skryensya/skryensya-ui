@@ -36,51 +36,39 @@ const consumer = `/* Your CSS reads it once and never branches. */
   title="The styling hooks contract"
   description="A styling hook is the public knob for a component: what it means, how they are named, and how to step on them."
 >
-  <h1>The styling hooks contract</h1>
+  <h1>The</h1>
   <p class="lede">
-    Importing <code>components/button.css</code> gives you a button <em>and</em>
-    {buttonHooks.length} styling hooks. Class is what you see; hooks are how you change it without
-    touch a selector. That is the contract.
+    styling hooks contract Import <code>components/button.css</code> gives you a <em>button and</em> {buttonHooks.length} styling hooks. Class is what you see; hooks are how you change it without touching a selector. That is the contract.
   </p>
 
   <div class="sk-alert" data-tone="info" data-presentation="accent">
     <div class="sk-alert__content">
     <p>
-      This <strong>changed</strong>. For a long time the system sent the hooks and nothing else: the
-      structure was written by each consumer. It was reversed, because it did not hold,
-      <a href="/decisiones/0008-que-envia-tier-3">decision 8</a> tells what was measured. What not
-      What changed is why a hook exists: it is not a replacement for the missing structure, it is the knob.
+      This <strong>changed</strong>. For a long time the system sent the hooks and nothing more: the structure was written by each consumer. It was reversed, because it was not sustained, <a href="/decisiones/0008-que-envia-tier-3">decision 8</a> tells what was measured. What hasn't changed is why a hook exists: it is not a replacement for the missing structure, it is the knob.
     </p>
     </div>
   </div>
 
   <h2>Why hooks and not one class per variant</h2>
   <p>
-    Because a component has a base look, variants and sizes, and those combinations multiply.
-    A styling hook collapses them: it is a custom property, and a custom property does not care what
-    element carries it nor how many selectors re-declare it. Also, what you do not care about
-    <strong>no weight</strong>: a consumer that does not send buttons does not download a single byte of
-    <code>button.css</code>.
+    Because a component has a base look, variants and sizes, and those combinations are multiplied. A styling hook collapses them: it is a custom property, and a custom property does not care what element carries it or how many selectors re-declare it. Also, what you do not import <strong>does not weigh</strong>: a consumer that does not send buttons does not download a single byte of <code>button.css</code>.
   </p>
 
-  <h2>Styling hooks lose group segment</h2>
+  <h2>Styling hooks lose the group segment</h2>
   <p>
-    Naive coding gives each variant its own variable, and ends in an explosion that
-    your CSS has to disambiguate with conditionals:
+    Naive coding gives each variant its own variable, and ends up in a bang that your CSS has to disambiguate with conditionals:
   </p>
   <CodeBlock code={naive} label="what we do not do" />
 
   <p>
-    Instead, the base and each variant declare <strong>the same</strong> styling hook. The variant
-    you just re-declare it in a more specific selector and <strong>wins for specificity</strong>:
+    Instead, the base and each variant declare <strong>the same</strong> styling hook. The variant simply re-declares it in a more specific selector and <strong>wins for specificity</strong>:
   </p>
   <CodeBlock code={actual} label="components/button.css" />
   <CodeBlock code={consumer} label="CSS" note="one line, zero branches" />
 
-  <h2>That is why stepping on a styling hook is trivial and total</h2>
+  <h2>That is why stepping on a styling hook is totally trivial</h2>
   <p>
-    Since all variants read the same styling hook, one line restyles them all within a scope.
-    And there is no specificity fight because any rule without a layer beats all layers.
+    Since all variants read the same styling hook, one line restyles them all within a scope. And there is no specificity fight because any rule without a layer beats all layers.
   </p>
 
   <Showcase code={overrideSource} lang="css" label="src/examples/styling-hook-override.css" note="the override that paints the demo">
@@ -94,22 +82,17 @@ const consumer = `/* Your CSS reads it once and never branches. */
   </Showcase>
 
   <p>
-    The three buttons above are the same variants of the home button. Three lines restyled them to
-    all, without touching the design system and without inventing a new token.
+    The three buttons above are the same variants of the home button. Three lines restyled them all, without touching the design system and without inventing a new token.
   </p>
 
   <h2>The risk of specificity</h2>
   <p>
-    Variants are gained by selector specificity. A consumer writing one more selector
-    specific can step on a variant inadvertently. We accept that risk to maintain few styling
-    hooks, without nesting them by variant.
+    Variants gain by selector specificity. A consumer who types a more specific selector may inadvertently step on a variant. We accept that risk to keep few styling hooks, without nesting them by variant.
   </p>
 
   <h2>All button styling hooks</h2>
   <p>
-    These are the {buttonHooks.length} sent by <code>components/button.css</code>. They live in
-    <code>.sk-button</code>, never in <code>:root</code>, do not exist until an element chooses
-    them.
+    These are the {buttonHooks.length} sent by <code>components/button.css</code>. They live in <code>.sk-button</code>, never in <code>: root</code>, they do not exist until an element opts for them.
   </p>
 
   <div class="sk-table-scroll">
@@ -134,7 +117,6 @@ const consumer = `/* Your CSS reads it once and never branches. */
   </div>
 
   <p>
-    Note that none point to a <code>--ramp-*</code>. It is not discipline: it is
-    <a href="/en/tiers">the tier-skip rule</a>, and breaks the build.
+    Note that none point to a <code>--ramp-*</code>. It is not discipline: it is <a href="/en/tiers">the tier-skip rule</a>, and it breaks the build.
   </p>
 </Base>

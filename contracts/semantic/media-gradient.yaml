@@ -1,0 +1,7 @@
+# La estructura vive en packages/core/src/media-gradient.ts. Acá sólo por qué se elige.
+
+MediaGradient:
+  useWhen:
+    - "hay texto encima de una foto y necesita contraste para leerse"
+  avoidWhen:
+    - "oscurece un diálogo sobre la página; eso es un Backdrop"

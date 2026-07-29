@@ -5,6 +5,7 @@ import Showcase from "../../../components/Showcase.astro";
 // The preview clones the <head> sheets of the page, but whatever the demo uses has to be
 // imported here: `.sk-truncate` is from the demo, not the package.
 import "../../../examples/tooltip.css";
+import { TooltipDemo } from "../../../components/react-demos/tooltip";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
@@ -16,80 +17,88 @@ const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
  * Without layout container: `.sk-tooltip` is `inline-flex`, so the three flow in line where
  * whether they stick. A wrapper here would be markup that is not a tooltip.
  */
-const html = `<!-- 1. An icon-only control. The name lives in aria-label; the tooltip expands it. -->
-<span class="sk-tooltip" data-sk-anchor data-sk-placement="block-end">
-  <button
-    class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
-    type="button"
-    data-variant="ghost"
-    data-icon-only
-    aria-label="Exportar"
-    data-sk-anchor-trigger
-  ><span data-sk-icon="download"></span></button>
-  <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-    <!-- The arrow, optional: is authored or does not exist. It comes out from the trigger, not from the center of the box. -->
-    <span class="sk-anchored-arrow" aria-hidden="true"></span>
-    <span class="sk-tooltip__content" data-sk-anchor-content>Download the visible period in CSV</span>
-  </span>
-</span>
-
-<!-- 2. Explain a piece of information that is already on the screen: the number is always seen, the tooltip says how it is calculated. -->
-<span class="sk-inline" data-gap="xs">
-  Ingresos $48.2k
-  <span class="sk-tooltip" data-sk-anchor>
+const html = `<div class="sk-inline" data-gap="md" data-align="center">
+  <!-- 1. An icon-only control. The name lives in aria-label; the tooltip expands it. -->
+  <span class="sk-tooltip" data-sk-anchor data-sk-placement="block-end">
     <button
       class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
       type="button"
       data-variant="ghost"
       data-icon-only
-      data-size="sm"
-      aria-label="How Income is Calculated"
+      aria-label="Exportar"
       data-sk-anchor-trigger
-    ><span data-sk-icon="info"></span></button>
+    ><span data-sk-icon="download"></span></button>
     <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+      <!-- The arrow, optional: is authored or does not exist. It comes out from the trigger, not from the center of the box. -->
       <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>Amount invoiced for the period, without taxes or refunds</span>
+      <span class="sk-tooltip__content" data-sk-anchor-content>Download the visible period in CSV</span>
     </span>
   </span>
-</span>
 
-<!-- 3. Return what width had to be cut. The trigger is the truncated text itself. -->
-<span class="sk-tooltip" data-sk-anchor data-sk-placement="inline-end">
-  <span
-    class="sk-truncate sk-tooltip__trigger sk-anchor"
-    tabindex="0"
-    data-sk-anchor-trigger
-  >Billing pipeline migration</span>
-  <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-    <span class="sk-anchored-arrow" aria-hidden="true"></span>
-    <span class="sk-tooltip__content" data-sk-anchor-content>Billing pipeline migration</span>
+  <!-- 2. Explain a piece of information that is already on the screen: the number is always seen, the tooltip says how it is calculated. -->
+  <span class="sk-inline" data-gap="xs">
+    Ingresos $48.2k
+    <span class="sk-tooltip" data-sk-anchor>
+      <button
+        class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
+        type="button"
+        data-variant="ghost"
+        data-icon-only
+        data-size="sm"
+        aria-label="How Income is Calculated"
+        data-sk-anchor-trigger
+      ><span data-sk-icon="info"></span></button>
+      <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+        <span class="sk-anchored-arrow" aria-hidden="true"></span>
+        <span class="sk-tooltip__content" data-sk-anchor-content>Amount invoiced for the period, without taxes or refunds</span>
+      </span>
+    </span>
   </span>
-</span>`;
+
+  <!-- 3. Return what width had to be cut. The trigger is the truncated text itself. -->
+  <span class="sk-tooltip" data-sk-anchor data-sk-placement="inline-end">
+    <span
+      class="sk-truncate sk-tooltip__trigger sk-anchor"
+      tabindex="0"
+      data-sk-anchor-trigger
+    >Billing pipeline migration</span>
+    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+      <span class="sk-anchored-arrow" aria-hidden="true"></span>
+      <span class="sk-tooltip__content" data-sk-anchor-content>Billing pipeline migration</span>
+    </span>
+  </span>
+</div>`;
 
 const react = `import { Tooltip } from "@skryensya/react/tooltip";
 
-// 1. An icon-only control. The name lives in aria-label, the tooltip expands it.
-//    \`arrow\` is the same as authoring <span className="sk-anchored-arrow" />
-//    inside the positioner in the HTML: optional in both bindings, and off
-//    by default.
-<Tooltip content="Download the visible period in CSV" placement="block-end" arrow>
-  <button aria-label="Exportar" type="button">
-    <DownloadIcon />
-  </button>
-</Tooltip>
+function Example() {
+  return (
+    <div className="sk-inline" data-gap="md" data-align="center">
+      {/* 1. An icon-only control. The name lives in aria-label, the tooltip expands it.
+             \`arrow\` is the same as authoring <span className="sk-anchored-arrow" />
+             inside the positioner in the HTML: optional in both bindings, and off
+             by default. */}
+      <Tooltip content="Download the visible period in CSV" placement="block-end" arrow>
+        <button aria-label="Exportar" type="button">
+          <DownloadIcon />
+        </button>
+      </Tooltip>
 
-// 2. Explain a piece of information that is already on the screen; This tells how it is calculated.
-<Tooltip content="Amount invoiced for the period, without taxes or refunds" arrow>
-  <button aria-label="How Income is Calculated" type="button">
-    <InfoIcon />
-  </button>
-</Tooltip>
+      {/* 2. Explain a piece of information that is already on the screen; this tells how it is calculated. */}
+      <Tooltip content="Amount invoiced for the period, without taxes or refunds" arrow>
+        <button aria-label="How Income is Calculated" type="button">
+          <InfoIcon />
+        </button>
+      </Tooltip>
 
-// 3. Return what the width cut off. tabIndex makes text truncated
-//    be reachable: without focus, the tooltip would be mouse-only.
-<Tooltip content={row.title} placement="inline-end" arrow>
-  <span className="sk-truncate" tabIndex={0}>{row.title}</span>
-</Tooltip>;`;
+      {/* 3. Return what the width cut off. tabIndex makes truncated text
+             reachable: without focus, the tooltip would be mouse-only. */}
+      <Tooltip content={row.title} placement="inline-end" arrow>
+        <span className="sk-truncate" tabIndex={0}>{row.title}</span>
+      </Tooltip>
+    </div>
+  );
+}`;
 ---
 
 <Base
@@ -98,68 +107,58 @@ const react = `import { Tooltip } from "@skryensya/react/tooltip";
 >
   <h1>Tooltip</h1>
   <p class="lede">
-    Tooltip is an <strong>auxiliary description</strong>, never the name of a control nor the only one
-    place where a data lives. The machine hangs <code>aria-describedby</code> from the trigger while
-    is open, not <code>aria-labelledby</code>: the control must already have a name accessible by
-    your account, and the tooltip expands it.
+    Tooltip is a <strong>auxiliary description</strong>, never the name of a control or the only place where a piece of data lives. The machine hangs <code>aria-describedby</code> from the trigger while it is open, not <code>aria-labelledby</code>: the control already has to have an accessible name on its own, and the tooltip extends it.
   </p>
 
   {/* `menu`: the tooltip paints outside the flow, and in a stage at the top of the content it would not have to
       where to go, so the actual placement would never be seen. */}
-  <Showcase html={html} react={react} label="Tooltip" viewport="menu" />
+  <Showcase html={html} react={react} label="Tooltip" viewport="menu">
+    <Fragment slot="react">
+      <TooltipDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>The rule that the system cannot verify</h2>
   <p>
-    There are two situations with no possible fix within the component. In <strong>touch</strong> there is no
-    hover: The machine opens in <code>pointerenter</code> and in <code>focus</code>, so in a
-    phone the tooltip practically does not appear. <strong>Without JavaScript</strong> the content is
-    It looks hidden and only the machine opens it, so it does not appear either.
+    There are two situations with no possible fix within the component. In <strong>touch</strong> there is no hover: the machine opens in <code>pointerenter</code> and in <code>focus</code>, so on a phone the tooltip practically does not appear. <strong>Without JavaScript</strong> the content is painted hidden and only the machine opens it, so it does not appear either.
   </p>
   <p>
-    In both cases, no information is lost <em>because</em> the contract prohibits there being
-    information there that is not elsewhere. A tooltip that is the only source of something is a bug.
-    who uses it, and the validator cannot detect it: that is why it is written here and in the contract
-    <code>@skryensya/core/tooltip</code>.
+    In both cases, no information is lost <em>because</em> the contract prohibits there being information there that is not elsewhere. A tooltip that is the only source of something is a bug of the person who uses it, and the validator cannot detect it: that is why it is written here and in the <code>@skryensya/core/tooltip</code> contract.
   </p>
 
   <h2>WCAG 1.4.13</h2>
   <p>
-    The <em>Content on Hover or Focus</em> criterion asks for three things, and all three are met by
-    defect. <strong>Disposable</strong>: <kbd class="sk-kbd">Esc</kbd> closes without moving the pointer
-    nor the focus. <strong>Persistent</strong>: does not close itself on a timer.
-    <strong>Hoverable</strong>: the pointer can reach the tooltip without disappearing.
+    The <em>Content on Hover or Focus</em> criterion requires three behaviors, all enabled by
+    default. <strong>Dismissible</strong>: <kbd class="sk-kbd">Esc</kbd> closes the tooltip without
+    moving the pointer or focus. <strong>Persistent</strong>: no timer closes it.
+    <strong>Hoverable</strong>: the pointer can move onto the tooltip without making it disappear.
   </p>
   <p>
-    That last one is the machine's <code>interactive</code> option, and comes <strong>on</strong>.
-    With it turned off the content receives <code>pointer-events: none</code>, the pointer never reaches and the tooltip closes on the way: that fails the criterion. The temptation is to turn it off reasoning that a descriptive tooltip has nothing to click on, and is a reading error:
-    <em>hoverable</em> does not exist to be able to operate the tooltip, it exists to be able to <strong>read it</strong>,
-    which is just what someone with screen magnification or shakiness needs. You can
-    turn off with <code>data-interactive="false"</code>, and turning it off is knowingly departing from the criteria.
+    Hoverability comes from the machine's <code>interactive</code> option, which is
+    <strong>enabled</strong> by default. Disabling it gives the content
+    <code>pointer-events: none</code>; the pointer cannot reach the tooltip before it closes, so the
+    result fails the criterion. A descriptive tooltip may have nothing to click, but
+    <em>hoverable</em> exists so people can <strong>read it</strong>, including people using screen
+    magnification or living with tremors. You can opt out with
+    <code>data-interactive="false"</code>, knowing that the result no longer meets the criterion.
   </p>
 
   <h2>Placement</h2>
   <p>
-    <code>data-sk-placement</code> accepts four values in logical axes:
-    <code>block-start</code> (the default), <code>block-end</code>, <code>inline-start</code> and
-    <code>inline-end</code>. They are a <em>preference</em>, not a guarantee: if it does not fit, turn to the
-    opposite side of the same axis, because whoever orders <code>inline-end</code> wants the tooltip on
-    side and falling up would be disobeying, not adapting.
+    <code>data-sk-placement</code> accepts four values on logical axes:
+    <code>block-start</code> (the default), <code>block-end</code>, <code>inline-start</code>, and
+    <code>inline-end</code>. They express a <em>preference</em>, not a guarantee. When the tooltip does
+    not fit, it flips to the opposite side on the same axis: a request for <code>inline-end</code>
+    still means “beside the trigger,” so moving above it would change the intent rather than adapt
+    the placement.
   </p>
 
-  <h2>Posicionamiento</h2>
+  <h2>Positioning</h2>
   <p>
-    Where there is <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning" rel="noopener noreferrer" target="_blank">CSS anchor positioning</a>,
-    The browser places the tooltip: without layout loop and without measuring on each scroll. The enhancer
-    prints a unique <code>anchor-name</code> and stops passing inline styles to Zag, so it does not
-    There are two positioning engines fighting. Browsers without the API are left with the
-    Zag JS positioning, which is the fallback, not an inferior path.
+    Where there is <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning" rel="noopener noreferrer" target="_blank">CSS anchor positioning</a>, the browser places the tooltip: without layout loop and without measuring on each scroll. The enhancer stamps a single <code>anchor-name</code> and stops passing inline styles to Zag, so there are no two positioning engines fighting. Browsers without the API are left with Zag JS positioning, which is the fallback, not an inferior path.
   </p>
   <p>
-    The <strong>arrow</strong> follows the same distribution: it comes out of the <em>trigger</em> and not from the center of the
-    box, so keep pointing at the control even if the box has moved so as not to go out of
-    screen, and flips along with it. It lives inside the positioner and still anchors itself to the trigger,
-    because it is <code>fixed</code>: a fix is contained in the viewport, not its parent. In the fallback the
-    place the machine. It is counted in <a href="/en/anchoring">Anchor</a>.
+    The <strong>arrow</strong> follows the same distribution: it comes out of the <em>trigger</em> and not from the center of the box, so it continues pointing at the control even if the box has been moved so as not to leave the screen, and it turns with it. It lives inside the positioner and is still anchored to the trigger, because it is <code>fixed</code>: a fix is contained in the viewport, not its parent. The machine places it in the fallback. It is counted in <a href="/en/anchoring">Anchor</a>.
   </p>
 
   <h2>Install</h2>

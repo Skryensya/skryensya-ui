@@ -3,6 +3,11 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import {
+  TabsAdvancedDemo,
+  TabsBasicDemo,
+  TabsStatesDemo,
+} from "../../components/react-demos/tabs";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -406,7 +411,11 @@ export function WorkspaceTabs() {
     html={basicHtml}
     react={basicReact}
     label="Tabs básicos"
-  />
+  >
+    <Fragment slot="react">
+      <TabsBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>2. Estados e iconos</h2>
   <p>
@@ -418,7 +427,11 @@ export function WorkspaceTabs() {
     html={statesHtml}
     react={statesReact}
     label="Tabs con estados"
-  />
+  >
+    <Fragment slot="react">
+      <TabsStatesDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>3. Orientación y estado</h2>
   <p>
@@ -435,7 +448,11 @@ export function WorkspaceTabs() {
     react={advancedReact}
     previewScript={advancedBehavior}
     label="Tabs verticales con control manual"
-  />
+  >
+    <Fragment slot="react">
+      <TabsAdvancedDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

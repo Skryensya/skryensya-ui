@@ -9,18 +9,14 @@ import TokenTable from "../../components/TokenTable.astro";
 >
   <h1>Token reference</h1>
   <p class="lede">
-    Each token in its two forms: the one that was written and the one that resolves right now, in the
-    dimensions selected above.
+    Each token in its two forms: the one that was written and the one that resolves right now, in the dimensions selected above.
   </p>
 
   <TokenTable />
 
   <h2>How to read the tiers</h2>
   <p>
-    References point <strong>down or sideways, never up</strong>, and tier 3
-    you cannot jump to tier 1. That is not convention: the validator enforces it. A
-    <code>--ramp-*</code> within the CSS of a component is the visible sign that someone is
-    it skipped the semantic layer and broke dark mode for that component alone.
+    References point <strong>down or sideways, never up</strong>, and tier 3 cannot jump to tier 1. That is not convention: the validator enforces it. A <code>--ramp-*</code> within a component's CSS is the visible sign that someone skipped the semantic layer and broke dark mode for that component alone.
   </p>
   <p>
     The <span class="sk-badge" data-tone="success">component</span> tokens live on the element, not

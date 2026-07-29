@@ -2,18 +2,51 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "lint": {
-      "inputs": ["$TURBO_DEFAULT$", "scss/**", "css/**", "contrast-pairs.json", "scripts/**", "src/**", "package.json", "tsconfig.json"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "scss/**",
+        "css/**",
+        "contrast-pairs.json",
+        "scripts/**",
+        "src/**",
+        "package.json",
+        "tsconfig.json"
+      ],
       "outputs": []
     },
     "check": {
-      "dependsOn": ["^check"],
-      "inputs": ["$TURBO_DEFAULT$", "scss/**", "css/**", "contrast-pairs.json", "scripts/**", "src/**", "package.json", "tsconfig.json"],
+      "dependsOn": [
+        "^check",
+        "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "scss/**",
+        "css/**",
+        "contrast-pairs.json",
+        "scripts/**",
+        "src/**",
+        "package.json",
+        "tsconfig.json"
+      ],
       "outputs": []
     },
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", "scss/**", "css/**", "src/**", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**", "css/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "scss/**",
+        "css/**",
+        "src/**",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": [
+        "dist/**",
+        "css/**"
+      ]
     },
     "dev": {
       "cache": false,

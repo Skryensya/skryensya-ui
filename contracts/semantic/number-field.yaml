@@ -1,0 +1,14 @@
+# La estructura vive en packages/core/src/number-field.ts. Acá sólo por qué se elige.
+
+NumberField:
+  useWhen:
+    - "el valor es un número que se escribe: una cantidad, un monto, una cantidad de noches"
+    - "ajustar de a un paso es una acción frecuente y conviene que tenga botones"
+    - "hace falta formato por locale (miles, decimales, moneda) sin perder el valor crudo"
+  avoidWhen:
+    - "el valor es aproximado y verlo moverse ayuda; eso es un Slider"
+    - "son pocas opciones discretas; eso es un Segmented o un RadioGroup"
+    - "es texto que sólo parece número (un RUT, un teléfono, un código); eso es un Input"
+  alternatives:
+    - Slider
+    - Input

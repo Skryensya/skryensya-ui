@@ -4,6 +4,7 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import { buildPreviewFrameDocument } from "../../lib/preview-frame";
+import { SaveActionDemo, ScreensGridDemo } from "../../components/react-demos/component-preview";
 
 const install = `pnpm add shiki @skryensya/core @skryensya/vanilla`;
 
@@ -276,7 +277,11 @@ await initComponents(document);`;
     viewport y top layer. Debajo, CodePreview muestra el código.
   </p>
 
-  <Showcase html={demoHtml} js={demoJs} react={demoReact} label="Button" />
+  <Showcase html={demoHtml} js={demoJs} react={demoReact} label="Button">
+    <Fragment slot="react">
+      <SaveActionDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Responsabilidades</h2>
   <ul>
@@ -417,7 +422,11 @@ await initComponents(document);`;
     note="3 carriles libre · 2 en tablet · 1 en móvil"
     html={screensHtml}
     react={screensReact}
-  />
+  >
+    <Fragment slot="react">
+      <ScreensGridDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
     Viene <strong>encendido en todos los previews</strong> del sitio. «¿Esto aguanta en un teléfono?»
     es una pregunta que se le puede hacer a cualquier componente, no sólo a los que son

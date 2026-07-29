@@ -1,7 +1,9 @@
 ---
+import "@skryensya/core/components/steps.css";
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
+import { StepsDemo, StepsVerticalDemo } from "../../../components/react-demos/steps";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -45,40 +47,102 @@ const html = `<ol class="sk-steps">
 
 const react = `import { Steps } from "@skryensya/react/steps";
 
-<Steps
-  current={1}
-  steps={[
-    { label: "Elegir marca", description: "Your chromatic intention" },
-    {
-      label: "Definir rampas",
-      description: "Export each position",
-    },
-    {
-      label: "Auditar contraste",
-      description: "Try each color pair",
-    },
-    { label: "Exportar", description: "Publish the contract" },
-  ]}
-/>;`;
+function Example() {
+  return (
+    <Steps
+      current={1}
+      steps={[
+        { label: "Choose a brand", description: "Your chromatic intent" },
+        {
+          label: "Define ramps",
+          description: "Export each position",
+        },
+        {
+          label: "Audit contrast",
+          description: "Test each color pair",
+        },
+        { label: "Export", description: "Publish the contract" },
+      ]}
+    />
+  );
+}`;
+
+const verticalHtml = `<ol class="sk-steps" data-orientation="vertical">
+  <li class="sk-steps__item" data-status="complete">
+    <span class="sk-steps__marker">
+      <span data-sk-icon="check"></span>
+    </span>
+    <span>
+      <span class="sk-steps__label">Account</span>
+      <span class="sk-steps__description">Sign-in details</span>
+    </span>
+  </li>
+  <li class="sk-steps__item" data-status="current" aria-current="step">
+    <span class="sk-steps__marker">2</span>
+    <span>
+      <span class="sk-steps__label">Shipping</span>
+      <span class="sk-steps__description">Delivery address</span>
+    </span>
+  </li>
+  <li class="sk-steps__item" data-status="upcoming">
+    <span class="sk-steps__marker">3</span>
+    <span>
+      <span class="sk-steps__label">Payment</span>
+      <span class="sk-steps__description">Method and billing</span>
+    </span>
+  </li>
+</ol>`;
+
+const verticalReact = `import { Steps } from "@skryensya/react/steps";
+
+function Example() {
+  return (
+    <Steps
+      current={1}
+      data-orientation="vertical"
+      steps={[
+        { label: "Account", description: "Sign-in details" },
+        { label: "Shipping", description: "Delivery address" },
+        { label: "Payment", description: "Method and billing" },
+      ]}
+    />
+  );
+}`;
 ---
 
-<Base title="Steps" description="Steps: indicador de progreso lineal con estados complete / current / upcoming.">
+<Base title="Steps" description="Steps: linear progress indicator with complete, current, and upcoming states.">
   <h1>Steps</h1>
   <p class="lede">
-    Steps shows progress in an ordered sequence. Each step reports one of three states
-<code>complete</code>, <code>current</code>, <code>upcoming</code>; The component displays the
-    sequence, it does not govern which is active or save navigation between steps.
+    Steps shows progress in an ordered sequence. Each step reports one of three states <code>complete</code>, <code>current</code>, <code>upcoming</code>; the component displays the sequence, it does not govern which is active or save navigation between steps.
   </p>
 
-  <Showcase html={html} react={react} label="Steps" />
+  <Showcase html={html} react={react} label="Steps">
+    <Fragment slot="react">
+      <StepsDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>In React, <code>current</code> derives state from steps that do not declare theirs; one step can overwrite it with <code>status</code>. <code>description</code> adds context without converting the step to a card.</p>
 
   <h2>On mobile</h2>
   <p>
-    When the container does not reach <code>36rem</code>, the path becomes a vertical rail: the
-    marker is on the left and each label retains its full width. There is no truncation or scrolling
-    horizontal.
+    When the viewport does not reach <code>40rem</code>, the path becomes a vertical rail
+    automatically: the marker is on the left and each label retains its full width. There is no
+    truncation or horizontal scrolling.
   </p>
+
+  <h2>Option: vertical at any size</h2>
+  <p>
+    <code>data-orientation="vertical"</code> requests the same rail at any viewport width, not just
+    on mobile: the use case is a wizard with content to the right, where the step-by-step is the
+    navigation of a fixed sidebar instead of a narrow-space fallback. The mark
+    <code>data-orientation="horizontal"</code> does the reverse: it forces the horizontal path even
+    below <code>40rem</code>.
+  </p>
+  <Showcase html={verticalHtml} react={verticalReact} label="Vertical Steps">
+    <Fragment slot="react">
+      <StepsVerticalDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />

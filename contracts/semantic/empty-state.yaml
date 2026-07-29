@@ -1,0 +1,11 @@
+# La estructura vive en packages/core/src/empty-state.ts. Acá sólo por qué se elige.
+
+EmptyState:
+  useWhen:
+    - "una lista o una región no tiene nada que mostrar, y hay que decir por qué"
+    - "es la primera vez y conviene ofrecer la acción que la llena"
+  avoidWhen:
+    - "los datos están cargando; eso es un Loader o Placeholder"
+    - "hubo un error; ahí el mensaje es un Alert, no un vacío"
+  alternatives:
+    - Alert

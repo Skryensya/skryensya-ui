@@ -8,14 +8,9 @@ import {
 function markup(id: string): string {
   return `
     <div data-sk-component-preview data-test-id="${id}">
-      <div
-        class="sk-segmented"
-        data-sk-segmented
-        data-sk-component-preview-binding-tabs
-        data-value="vanilla"
-      >
-        <button data-sk-segmented-option data-value="vanilla" type="button">Vanilla</button>
-        <button data-sk-segmented-option data-value="react" type="button">React</button>
+      <div data-sk-component-preview-binding-tabs data-value="vanilla">
+        <button data-sk-component-preview-binding-option data-value="vanilla" type="button">Vanilla</button>
+        <button data-sk-component-preview-binding-option data-value="react" type="button">React</button>
       </div>
       <div data-sk-component-preview-binding="vanilla">
         <div data-sk-component-preview-source-tabs data-value="html"></div>
@@ -51,13 +46,18 @@ describe("ComponentPreview opt-in enhancer", () => {
     resetBindingState();
     document.body.innerHTML = markup("one");
     const root = document.querySelector<HTMLElement>("[data-sk-component-preview]");
-    const bindingTabs = root?.querySelector<HTMLElement>("[data-sk-component-preview-binding-tabs]");
     const sourceTabs = root?.querySelector<HTMLElement>("[data-sk-component-preview-source-tabs]");
+    const vanillaOption = root?.querySelector<HTMLElement>(
+      '[data-sk-component-preview-binding-option][data-value="vanilla"]',
+    );
+    const reactOption = root?.querySelector<HTMLElement>(
+      '[data-sk-component-preview-binding-option][data-value="react"]',
+    );
     const vanilla = root?.querySelector<HTMLElement>('[data-sk-component-preview-binding="vanilla"]');
     const react = root?.querySelector<HTMLElement>('[data-sk-component-preview-binding="react"]');
     const html = root?.querySelector<HTMLElement>('[data-sk-component-preview-source="html"]');
     const js = root?.querySelector<HTMLElement>('[data-sk-component-preview-source="js"]');
-    if (!root || !bindingTabs || !sourceTabs || !vanilla || !react || !html || !js) {
+    if (!root || !sourceTabs || !vanillaOption || !reactOption || !vanilla || !react || !html || !js) {
       throw new Error("Invalid test markup.");
     }
 
@@ -67,17 +67,21 @@ describe("ComponentPreview opt-in enhancer", () => {
     expect(react.hidden).toBe(true);
     expect(html.hidden).toBe(false);
     expect(js.hidden).toBe(true);
+    expect(vanillaOption.getAttribute("aria-pressed")).toBe("true");
+    expect(reactOption.getAttribute("aria-pressed")).toBe("false");
 
     changeValue(sourceTabs, "js");
     expect(html.hidden).toBe(true);
     expect(js.hidden).toBe(false);
 
-    changeValue(bindingTabs, "react");
+    reactOption.click();
     expect(vanilla.hidden).toBe(true);
     expect(react.hidden).toBe(false);
+    expect(vanillaOption.getAttribute("aria-pressed")).toBe("false");
+    expect(reactOption.getAttribute("aria-pressed")).toBe("true");
     expect(document.documentElement.getAttribute("data-sk-component-preview-pref")).toBe("react");
 
-    changeValue(bindingTabs, "vanilla");
+    vanillaOption.click();
     expect(vanilla.hidden).toBe(false);
     expect(react.hidden).toBe(true);
     expect(js.hidden).toBe(false);
@@ -89,16 +93,18 @@ describe("ComponentPreview opt-in enhancer", () => {
     const roots = [...document.querySelectorAll<HTMLElement>("[data-sk-component-preview]")];
     expect(mountComponentPreview(document)).toBe(2);
 
-    const tabsA = roots[0]?.querySelector<HTMLElement>("[data-sk-component-preview-binding-tabs]");
+    const reactOptionA = roots[0]?.querySelector<HTMLElement>(
+      '[data-sk-component-preview-binding-option][data-value="react"]',
+    );
     const vanillaB = roots[1]?.querySelector<HTMLElement>(
       '[data-sk-component-preview-binding="vanilla"]',
     );
     const reactB = roots[1]?.querySelector<HTMLElement>(
       '[data-sk-component-preview-binding="react"]',
     );
-    if (!tabsA || !vanillaB || !reactB) throw new Error("Invalid test markup.");
+    if (!reactOptionA || !vanillaB || !reactB) throw new Error("Invalid test markup.");
 
-    changeValue(tabsA, "react");
+    reactOptionA.click();
     expect(vanillaB.hidden).toBe(true);
     expect(reactB.hidden).toBe(false);
     expect(document.documentElement.getAttribute("data-sk-component-preview-pref")).toBe("react");
@@ -211,16 +217,14 @@ describe("ComponentPreview opt-in enhancer", () => {
     function screenMarkupFor(id = "one", extraStageAttrs = ""): string {
       return `
         <div data-sk-component-preview data-test-id="${id}">
-          <div
-            class="sk-segmented"
-            data-sk-segmented
+          <button
             data-sk-component-preview-screen-tabs
             data-value="free"
-          >
-            <button data-sk-segmented-option data-value="free" type="button">Libre</button>
-            <button data-sk-segmented-option data-value="tablet" type="button">Tablet</button>
-            <button data-sk-segmented-option data-value="mobile" type="button">Móvil</button>
-          </div>
+            type="button"
+            data-sk-component-preview-screen-label-free="Free"
+            data-sk-component-preview-screen-label-tablet="Tablet"
+            data-sk-component-preview-screen-label-mobile="Mobile"
+          ></button>
           <iframe
             class="sk-component-preview__stage"
             srcdoc="<!doctype html><body>one</body>"
@@ -236,41 +240,45 @@ describe("ComponentPreview opt-in enhancer", () => {
 
     function parts() {
       const root = document.querySelector<HTMLElement>("[data-sk-component-preview]");
-      const tabs = root?.querySelector<HTMLElement>("[data-sk-component-preview-screen-tabs]");
+      const toggle = root?.querySelector<HTMLElement>("[data-sk-component-preview-screen-tabs]");
       const stage = root?.querySelector<HTMLIFrameElement>(".sk-component-preview__stage");
-      if (!root || !tabs || !stage) throw new Error("Invalid test markup.");
-      return { root, tabs, stage };
+      if (!root || !toggle || !stage) throw new Error("Invalid test markup.");
+      return { root, toggle, stage };
     }
 
-    it("marks the stage with the chosen preset and clears it for free", () => {
+    it("cycles free → tablet → mobile → free on click, marking the stage and clearing it for free", () => {
       resetBindingState();
       screenMarkup();
-      const { tabs, stage } = parts();
+      const { toggle, stage } = parts();
 
       expect(mountComponentPreview(document)).toBe(1);
       // `free` is the absence of the attribute, so every fit/reserve/scroll rule stays untouched.
       expect(stage.hasAttribute("data-sk-component-preview-screen")).toBe(false);
 
-      changeValue(tabs, "mobile");
-      expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("mobile");
-
-      changeValue(tabs, "tablet");
+      toggle.click();
+      expect(toggle.getAttribute("data-value")).toBe("tablet");
       expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("tablet");
 
-      changeValue(tabs, "free");
+      toggle.click();
+      expect(toggle.getAttribute("data-value")).toBe("mobile");
+      expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("mobile");
+
+      toggle.click();
+      expect(toggle.getAttribute("data-value")).toBe("free");
       expect(stage.hasAttribute("data-sk-component-preview-screen")).toBe(false);
     });
 
-    it("ignores a value that is not a preset", () => {
+    it("paints the toggle's accessible name from its per-instance label attributes", () => {
       resetBindingState();
       screenMarkup();
-      const { tabs, stage } = parts();
+      const { toggle } = parts();
       mountComponentPreview(document);
 
-      changeValue(tabs, "mobile");
-      changeValue(tabs, "watch");
-
-      expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("mobile");
+      expect(toggle.getAttribute("aria-label")).toBe("Free");
+      toggle.click();
+      expect(toggle.getAttribute("aria-label")).toBe("Tablet");
+      toggle.click();
+      expect(toggle.getAttribute("aria-label")).toBe("Mobile");
     });
 
     it("takes the height back from a reader drag, inline style included", () => {
@@ -278,21 +286,21 @@ describe("ComponentPreview opt-in enhancer", () => {
       // stale drag would silently win over the device height and the stage would not be a device.
       resetBindingState();
       screenMarkup('data-sk-component-preview-resized style="height: 320px"');
-      const { tabs, stage } = parts();
+      const { toggle, stage } = parts();
       mountComponentPreview(document);
 
-      changeValue(tabs, "mobile");
+      toggle.click();
 
       expect(stage.style.height).toBe("");
       expect(stage.hasAttribute("data-sk-component-preview-resized")).toBe(false);
-      expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("mobile");
+      expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("tablet");
     });
 
     it("honours a preset authored as the initial value", () => {
       resetBindingState();
       document.body.innerHTML = `
         <div data-sk-component-preview>
-          <div data-sk-component-preview-screen-tabs data-value="tablet"></div>
+          <button data-sk-component-preview-screen-tabs data-value="tablet" type="button"></button>
           <iframe class="sk-component-preview__stage" srcdoc="<!doctype html><body>one</body>"></iframe>
         </div>
       `;
@@ -317,37 +325,39 @@ describe("ComponentPreview opt-in enhancer", () => {
       document.body.innerHTML = `${screenMarkupFor("a")}${screenMarkupFor("b")}`;
       const roots = [...document.querySelectorAll<HTMLElement>("[data-sk-component-preview]")];
       const stages = roots.map((r) => r.querySelector<HTMLElement>(".sk-component-preview__stage")!);
-      const tabsB = roots[1].querySelector<HTMLElement>("[data-sk-component-preview-screen-tabs]")!;
+      const toggleB = roots[1].querySelector<HTMLElement>("[data-sk-component-preview-screen-tabs]")!;
 
       expect(mountComponentPreview(document)).toBe(2);
 
-      // choosing on the SECOND preview moves the first one too
-      changeValue(tabsB, "mobile");
+      // clicking the SECOND preview's toggle moves the first one too
+      toggleB.click();
+      toggleB.click();
       expect(stages.map((s) => s.getAttribute("data-sk-component-preview-screen"))).toEqual([
         "mobile",
         "mobile",
       ]);
-      // and the other preview's own tabs follow, so the two controls never disagree
-      const tabsA = roots[0].querySelector<HTMLElement>("[data-sk-component-preview-screen-tabs]")!;
-      expect(tabsA.getAttribute("data-value")).toBe("mobile");
+      // and the other preview's own toggle follows, so the two controls never disagree
+      const toggleA = roots[0].querySelector<HTMLElement>("[data-sk-component-preview-screen-tabs]")!;
+      expect(toggleA.getAttribute("data-value")).toBe("mobile");
 
-      changeValue(tabsB, "free");
+      toggleB.click();
       expect(stages.every((s) => !s.hasAttribute("data-sk-component-preview-screen"))).toBe(true);
     });
 
     it("records the shared preset on the document element, free as an absence", () => {
       resetBindingState();
       screenMarkup();
-      const { tabs } = parts();
+      const { toggle } = parts();
       mountComponentPreview(document);
       const pref = () => document.documentElement.getAttribute("data-sk-component-preview-screen-pref");
 
       expect(pref()).toBeNull();
 
-      changeValue(tabs, "tablet");
+      toggle.click();
       expect(pref()).toBe("tablet");
 
-      changeValue(tabs, "free");
+      toggle.click();
+      toggle.click();
       expect(pref()).toBeNull();
     });
 
@@ -355,15 +365,15 @@ describe("ComponentPreview opt-in enhancer", () => {
       resetBindingState();
       document.documentElement.setAttribute("data-sk-component-preview-screen-pref", "mobile");
       screenMarkup();
-      const { tabs, stage } = parts();
+      const { toggle, stage } = parts();
 
       mountComponentPreview(document);
 
       expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("mobile");
-      expect(tabs.getAttribute("data-value")).toBe("mobile");
+      expect(toggle.getAttribute("data-value")).toBe("mobile");
     });
 
-    it("applies the shared preset to a preview that has no tabs of its own", () => {
+    it("applies the shared preset to a preview that has no toggle of its own", () => {
       resetBindingState();
       document.documentElement.setAttribute("data-sk-component-preview-screen-pref", "tablet");
       document.body.innerHTML = `

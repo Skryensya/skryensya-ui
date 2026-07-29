@@ -64,8 +64,21 @@
 
   :root[data-sk-component-preview-pref="react"]
     .sk-component-preview:has([data-sk-component-preview-binding-tabs])
-    > [data-sk-component-preview-binding="react"] {
+    > [data-sk-component-preview-binding="react"]:not(.sk-component-preview__react-stage) {
     display: block !important;
+  }
+
+  /*
+   * The React STAGE host is the one panel this rule must not turn into a block: it is a slot host
+   * with no box of its own, and the iframe inside it is the real stage that the preview grid places
+   * in row 2. Forced to `block` it became a grid item itself, so the stage landed in a row of its
+   * own BELOW the resizer — the grip drew above the demo instead of on its bottom edge, and the
+   * React binding sat 12px lower than the Vanilla one it is supposed to match exactly.
+   */
+  :root[data-sk-component-preview-pref="react"]
+    .sk-component-preview:has([data-sk-component-preview-binding-tabs])
+    > .sk-component-preview__react-stage[data-sk-component-preview-binding="react"] {
+    display: contents !important;
   }
 
   .sk-component-preview,
@@ -141,6 +154,28 @@
     border: 0;
     border-block-end: 1px solid var(--sk-component-preview-border-color);
     background: var(--sk-component-preview-bg);
+    transition-property: inline-size, block-size;
+    transition-duration: var(--motion-state-change-duration);
+    transition-timing-function: var(--motion-state-change-easing);
+  }
+
+  /*
+   * JS owns the number in these three states (the reader's drag, the keyboard nudge it leaves
+   * behind, and fitFrame's initial auto-fit) — a CSS transition would either lag visibly behind
+   * the pointer or animate the very first paint instead of snapping to the measured height. Only
+   * a screen PRESET switch is a pure attribute/custom-property change with no JS writing `height`
+   * itself, so that is the one case left free to transition.
+   */
+  .sk-component-preview[data-sk-component-preview-resizing] .sk-component-preview__stage,
+  .sk-component-preview__stage:not([data-sk-component-preview-frame-ready], [data-sk-component-preview-frame-error]),
+  .sk-component-preview__stage[data-sk-component-preview-resized] {
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-component-preview__stage {
+      transition: none;
+    }
   }
 
   /*
@@ -301,14 +336,19 @@
       [data-sk-component-preview-frame-ready],
       [data-sk-component-preview-frame-error]
     ))
-  ) .sk-component-preview__resizer,
-  /* A preset owns the height, so the grip would be a second, contradicting owner. Pick `free` to
-   * get the drag back — which is also what makes the preset legible as a mode rather than a nudge. */
-  .sk-component-preview:has(
-    > .sk-component-preview__stage[data-sk-component-preview-screen]
   ) .sk-component-preview__resizer {
     display: none;
   }
+
+  /*
+   * A screen preset stays grabbable rather than vanishing. It used to hide outright — "a preset
+   * owns the height, so the grip would be a second, contradicting owner" — but the preset is a
+   * SHARED, PERSISTED preference: choosing one anywhere on the site leaves every other preview's
+   * grip invisible with no visible cause, which reads as "resize is broken" rather than "a device
+   * preset is on". The grip's own pointerdown now clears the preset back to free before it starts
+   * sizing (component-preview.ts), which resolves the two-owners conflict procedurally, so the CSS
+   * no longer needs to hide the escape hatch to avoid it.
+   */
 
   .sk-component-preview__resizer::before {
     content: "";
@@ -355,6 +395,26 @@
 
   .sk-component-preview[data-sk-component-preview-resizing] .sk-component-preview__stage {
     pointer-events: none;
+  }
+
+  /*
+   * The React binding stage is now an IFRAME too, rendered by the `framed()` island rather than by
+   * the Astro template: same `.sk-component-preview__stage` element, same runtime, so every rule
+   * above (boot gating, screen presets, the reserved viewports, the resizer) applies to both
+   * bindings without a second copy of itself. The two bindings are meant to be the same component
+   * seen twice; they now also get the same box.
+   *
+   * What is left here is only the CHAIN down to that iframe. Astro's `client:load` wrapper and the
+   * `.sk-component-preview__react-stage` slot host both sit between the preview grid and the frame,
+   * and neither is a box: `display: contents` erases them so the iframe is placed by the preview
+   * grid directly, exactly as the Vanilla stage is.
+   *
+   * `:not([hidden])` matters — `display: contents` would otherwise beat the UA's `[hidden]` rule
+   * and the React stage would keep painting under the Vanilla one when the binding toggle hides it.
+   */
+  .sk-component-preview__react-stage:not([hidden]),
+  .sk-component-preview__react-stage > astro-island {
+    display: contents;
   }
 
   .sk-component-preview__frame-body {
@@ -429,4 +489,69 @@
     border: 0;
     border-radius: 0;
   }
+
+  /*
+   * Screen-size toggle: one icon-only button that cycles free → tablet → mobile → free on click,
+   * the same stacked-faces cross-fade as ThemeToggle (components/theme-toggle.css) — three glyphs
+   * share one grid cell, `data-value` on the button picks which is opaque. Composes onto
+   * `.sk-button` (ghost + icon-only); this rule only owns the face cross-fade. The `display: grid`
+   * override that stacks the faces lives unlayered below, same reason ThemeToggle's does: `.sk-button
+   * [data-icon-only]` is layered but has higher specificity (class + attribute), so a same-layer
+   * `display: inline-grid` here would lose to it regardless of source order.
+   *
+   * The marker lives on a `<span>` WRAPPING each icon, not on the `<svg>` itself: this site's own
+   * icon-set swap (Base.astro's `applyIconSet`) strips any attribute it does not manage from every
+   * `svg[data-icon]` on the page, screen icons included, since they are pre-rendered at build time
+   * like the rest of the header chrome. A wrapper span is invisible to that pass.
+   */
+  .sk-component-preview__screen-toggle [data-sk-component-preview-screen-icon] {
+    display: grid;
+    grid-area: 1 / 1;
+    place-items: center;
+    opacity: 0;
+    transform: scale(0.25);
+    filter: blur(4px);
+    transition-property: opacity, transform, filter;
+    transition-duration: var(--motion-state-change-duration);
+    transition-timing-function: var(--motion-state-change-easing);
+  }
+
+  [data-sk-component-preview-screen-tabs][data-value="free"] [data-sk-component-preview-screen-icon="free"],
+  [data-sk-component-preview-screen-tabs][data-value="tablet"] [data-sk-component-preview-screen-icon="tablet"],
+  [data-sk-component-preview-screen-tabs][data-value="mobile"] [data-sk-component-preview-screen-icon="mobile"] {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+
+  /* Before the enhancer stamps data-value: show free, the default preset. */
+  [data-sk-component-preview-screen-tabs]:not([data-value]) [data-sk-component-preview-screen-icon="free"] {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-component-preview__screen-toggle [data-sk-component-preview-screen-icon] {
+      transition: none;
+    }
+  }
+
+  /*
+   * Toolbar binding buttons (Vanilla | React): two plain buttons, not a boxed Segmented control.
+   * The pressed one gets Segmented's own selected treatment (`--sk-segmented-selected-*`) so the
+   * two states read the same across both patterns without a second color decision.
+   */
+  .sk-component-preview__binding-option[aria-pressed="true"] {
+    background: var(--color-bg-accent-subtle);
+    color: var(--color-text-accent);
+    box-shadow: inset 0 0 0 1px var(--color-border-accent);
+  }
+}
+
+/* Consumer button skins set `display: inline-flex` unlayered; re-assert grid so faces stack. */
+.sk-button.sk-component-preview__screen-toggle {
+  display: inline-grid;
+  place-items: center;
+  padding-inline: 0;
 }

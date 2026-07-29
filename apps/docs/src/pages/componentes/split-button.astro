@@ -4,6 +4,7 @@ import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import "@skryensya/core/components/split-button.css";
 import "@skryensya/core/components/menu.css";
+import { SplitButtonDemo } from "../../components/react-demos/split-button";
 
 const install = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/split-button.css";
@@ -47,16 +48,20 @@ const html = `<div class="sk-split-button">
 const react = `import { Icon } from "@skryensya/react/icon";
 import { SplitButton } from "@skryensya/react/split-button";
 
-<SplitButton
-  menuLabel="Más opciones"
-  menuIndicator={<Icon name="chevron-down" />}
-  menuItems={[
-    { label: "Guardar una copia", value: "save-copy" },
-  ]}
-  onClick={save}
->
-  Guardar
-</SplitButton>`;
+function Example() {
+  return (
+    <SplitButton
+      menuLabel="Más opciones"
+      menuIndicator={<Icon name="chevron-down" />}
+      menuItems={[
+        { label: "Guardar una copia", value: "save-copy" },
+      ]}
+      onClick={SomeFunction}
+    >
+      Guardar
+    </SplitButton>
+  );
+}`;
 ---
 
 <Base
@@ -73,7 +78,11 @@ import { SplitButton } from "@skryensya/react/split-button";
     react={react}
     label="SplitButton"
     viewport="menu"
-  />
+  >
+    <Fragment slot="react">
+      <SplitButtonDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Contrato</h2>
   <p>La acción principal no cambia silenciosamente al elegir el menú. Si no hay una acción dominante, usa Menu.</p>

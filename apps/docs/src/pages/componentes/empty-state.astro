@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { EmptyStateBasicDemo } from "../../components/react-demos/empty-state";
 import "@skryensya/core/components/empty-state.css";
 
 const install = `@import "@skryensya/core/components/empty-state.css";`;
@@ -11,7 +12,7 @@ import { lucideIcons } from "@skryensya/icons-lucide";
 mountIcons(document, lucideIcons);`;
 const html = `<section class="sk-empty-state">
   <div class="sk-empty-state__icon" aria-hidden="true">
-    <span data-sk-icon="folder-open"></span>
+    <span data-sk-icon="search"></span>
   </div>
   <h2 class="sk-empty-state__title">Todavía no hay proyectos</h2>
   <p class="sk-empty-state__description">
@@ -26,12 +27,16 @@ const html = `<section class="sk-empty-state">
 const react = `import { EmptyState } from "@skryensya/react/empty-state";
 import { Icon } from "@skryensya/react/icon";
 
-<EmptyState
-  title="Todavía no hay proyectos"
-  description="Crea el primero para organizar el trabajo."
-  icon={<Icon name="folder-open" />}
-  actions={<button type="button">Crear proyecto</button>}
-/>`;
+function Example() {
+  return (
+    <EmptyState
+      title="Todavía no hay proyectos"
+      description="Crea el primero para organizar el trabajo."
+      icon={<Icon name="search" />}
+      actions={<button type="button">Crear proyecto</button>}
+    />
+  );
+}`;
 ---
 
 <Base
@@ -48,7 +53,11 @@ import { Icon } from "@skryensya/react/icon";
     react={react}
     label="EmptyState"
     viewport="auto"
-  />
+  >
+    <Fragment slot="react">
+      <EmptyStateBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Contrato</h2>
   <p>El título nombra el estado, la descripción explica, y la acción resuelve. No uses EmptyState durante carga.</p>

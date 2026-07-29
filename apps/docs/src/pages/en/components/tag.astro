@@ -2,101 +2,103 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
+import { TagDemo } from "../../../components/react-demos/tag";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<span class="sk-tag">
-  <span class="sk-tag__label">design</span>
-</span>
-<span class="sk-tag" data-tone="accent">
-  <span class="sk-tag__label">tokens</span>
-</span>
-<span class="sk-tag" data-tone="success">
-  <span class="sk-tag__label">activo</span>
-</span>
-<span class="sk-tag" data-tone="warning">
-  <span class="sk-tag__label">beta</span>
-</span>
-<span class="sk-tag" data-tone="danger">
-  <span class="sk-tag__label">deprecado</span>
-</span>
-<span class="sk-tag" data-tone="accent">
-  <span class="sk-tag__label">react</span>
-  <button
-    class="sk-button sk-interactive sk-tag__remove"
-    type="button"
-    data-variant="ghost"
-    data-size="sm"
-    data-icon-only
-    aria-label="Quitar react"
-  >
-    <span data-sk-icon="close"></span>
-  </button>
-</span>
-<span class="sk-tag">
-  <span class="sk-tag__label">frontend</span>
-  <button
-    class="sk-button sk-interactive sk-tag__remove"
-    type="button"
-    data-variant="ghost"
-    data-size="sm"
-    data-icon-only
-    aria-label="Quitar frontend"
-  >
-    <span data-sk-icon="close"></span>
-  </button>
-</span>`;
+const html = `<div class="sk-inline">
+  <span class="sk-tag">
+    <span class="sk-tag__label">design</span>
+  </span>
+  <span class="sk-tag" data-tone="accent">
+    <span class="sk-tag__label">tokens</span>
+  </span>
+  <span class="sk-tag" data-tone="success">
+    <span class="sk-tag__label">activo</span>
+  </span>
+  <span class="sk-tag" data-tone="warning">
+    <span class="sk-tag__label">beta</span>
+  </span>
+  <span class="sk-tag" data-tone="danger">
+    <span class="sk-tag__label">deprecado</span>
+  </span>
+  <span class="sk-tag" data-tone="accent">
+    <span class="sk-tag__label">react</span>
+    <button
+      class="sk-button sk-interactive sk-tag__remove"
+      type="button"
+      data-variant="ghost"
+      data-size="sm"
+      data-icon-only
+      aria-label="Quitar react"
+    >
+      <span data-sk-icon="close"></span>
+    </button>
+  </span>
+  <span class="sk-tag">
+    <span class="sk-tag__label">frontend</span>
+    <button
+      class="sk-button sk-interactive sk-tag__remove"
+      type="button"
+      data-variant="ghost"
+      data-size="sm"
+      data-icon-only
+      aria-label="Quitar frontend"
+    >
+      <span data-sk-icon="close"></span>
+    </button>
+  </span>
+</div>`;
 
 const react = `import { Tag } from "@skryensya/react/tag";
 
-<Tag>design</Tag>
-<Tag tone="accent">tokens</Tag>
-<Tag tone="success">activo</Tag>
-<Tag tone="warning">beta</Tag>
-<Tag tone="danger">deprecado</Tag>
-<Tag
-  tone="accent"
-  onRemove={() => remove("react")}
-  removeLabel="Quitar react"
->
-  react
-</Tag>
-<Tag onRemove={() => remove("frontend")} removeLabel="Quitar frontend">
-  frontend
-</Tag>;`;
+function Example() {
+  return (
+    <div className="sk-inline">
+      <Tag>design</Tag>
+      <Tag tone="accent">tokens</Tag>
+      <Tag tone="success">activo</Tag>
+      <Tag tone="warning">beta</Tag>
+      <Tag tone="danger">deprecado</Tag>
+      <Tag
+        tone="accent"
+        onRemove={SomeFunction}
+        removeLabel="Quitar react"
+      >
+        react
+      </Tag>
+      <Tag onRemove={SomeFunction} removeLabel="Quitar frontend">
+        frontend
+      </Tag>
+    </div>
+  );
+}`;
 ---
 
 <Base title="Tag" description="Tag: optionally removable keyword chip, with tones and React component.">
   <h1>Tag</h1>
   <p class="lede">
-    Tag classifies content that the user can act on: filters, facets, chips. where
-    <a href="/en/components/badge">Badge</a> is a read-only status tag, Tag is more
-    square (control radius, not pill) to be read as actionable, and may have a remove button.
+    Tag classifies content that the user can act on: filters, facets, chips. Where <a href="/en/components/badge">Badge</a> is a read-only status tag, Tag is more square (control radius, not pill) to be read as actionable, and may carry a remove button.
   </p>
 
-  <Showcase html={html} react={react} label="Tag" />
+  <Showcase html={html} react={react} label="Tag">
+    <Fragment slot="react">
+      <TagDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
-    When removable, the label and the remove button are two different purposes: the name
-    accessible control names the tag it removes.
+    When removable, the tag and the remove button are two different targets: the control's accessible name names the tag it removes.
   </p>
 
   <h2>The X is a Button, not a drawing of one</h2>
   <p>
-    The remove control is an actual <a href="/en/components/button">Button</a> —
-    <code>sk-button sk-interactive</code> with <code>data-size="sm"</code>,
-    <code>data-icon-only</code> and <code>data-variant="ghost"</code>— and
-    <code>sk-tag__remove</code> is just the modifier that shrinks it to the height of the capsule. Tag no
-    sends own interaction.
+    The remove control is an actual <a href="/en/components/button">Button</a> — <code>sk-button sk-interactive</code> with <code>data-size="sm"</code>, <code>data-icon-only</code>, and <code>data-variant="ghost"</code> — and <code>sk-tag__remove</code> is just the modifier that shrinks it to the height of the capsule. Tag does not send its own interaction.
   </p>
   <p>
-    What you gain is what you no longer have to maintain here: the hover and the press come from the
-    <a href="/en/state-layer">state layer</a>, the focus ring is the same as all controls, and
-    the touch area reaches <strong>44px</strong> by the <code>::after</code> of the button although the
-    face paint 20px. Before they were 20px for face and 20px for useful white.
+    What you gain is what you no longer have to maintain here: the hover and the press come from the <a href="/en/state-layer">state layer</a>, the focus ring is the same as all the controls, and the touch area reaches <strong>44px</strong> by the <code>:: after</code> of the button even though the face paints 20px. Before they were 20px for face and 20px for useful white.
   </p>
   <p>
-    The color is still <code>currentColor</code>, so each shade brings its X in its own color
-    without a rule per tone.
+    The color is still <code>currentColor</code>, so each shade brings its X in its own color without a per-tone rule.
   </p>
 
   <h2>Install</h2>

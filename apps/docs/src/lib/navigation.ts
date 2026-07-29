@@ -1,11 +1,26 @@
 import { hasTranslation, localizePath, navLabel, useTranslations, type Locale } from "../i18n";
 
+/** Maturity of a component's contract. Only meaningful within `componentItems`. */
+export type ComponentStatus = "wip" | "stable";
+
 export type NavigationItem = {
   href: string;
   label: string;
   aliases?: readonly string[];
   todo?: boolean;
+  /**
+   * Maturity of the component this entry documents. Omitted defaults to "wip" — the honest state
+   * of every entry in this catalog today — via {@link componentStatus}. Flip an entry to "stable"
+   * once its contract has actually settled; never the reverse, an entry does not go back to "wip"
+   * once it has shipped as settled.
+   */
+  status?: ComponentStatus;
 };
+
+/** `item.status`, defaulted: every catalog entry reads "wip" until deliberately marked "stable". */
+export function componentStatus(item: NavigationItem): ComponentStatus {
+  return item.status ?? "wip";
+}
 
 export type NavigationGroup = {
   group: string;
@@ -374,7 +389,15 @@ const componentItems = [
   {
     href: "/componentes/time-field",
     label: "TimeField",
-    aliases: ["hora", "campo de hora", "time input"],
+    aliases: [
+      "hora",
+      "campo de hora",
+      "time input",
+      "selector de hora",
+      "time picker",
+      "campo segmentado",
+      "segmented input",
+    ],
   },
   {
     href: "/componentes/toolbar",

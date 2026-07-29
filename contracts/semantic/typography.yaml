@@ -1,0 +1,24 @@
+# La estructura vive en packages/core/src/typography.ts. Acá sólo por qué se elige.
+
+Text:
+  useWhen:
+    - "un párrafo, una bajada, una nota al pie"
+    - "el tono dice jerarquía: secondary para lo accesorio, danger para un error en prosa"
+  avoidWhen:
+    - "titula una sección; eso es un Heading, aunque se vea chico"
+
+Heading:
+  useWhen:
+    - "abre una sección y hay que decir a qué nivel del documento pertenece"
+  avoidWhen:
+    - "sólo se busca texto grande; el nivel es estructura, no tamaño"
+  alternatives:
+    - Text
+
+Link:
+  useWhen:
+    - "un enlace dentro de una frase, subrayado y en el flujo del texto"
+  avoidWhen:
+    - "se ve y se usa como botón; eso es Button.navigation"
+  alternatives:
+    - Button.navigation

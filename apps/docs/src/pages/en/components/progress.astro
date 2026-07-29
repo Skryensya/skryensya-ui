@@ -2,6 +2,7 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
+import { ProgressDemo } from "../../../components/react-demos/progress";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -43,20 +44,28 @@ const html = `<div
 
 const react = `import { Progress } from "@skryensya/react/progress";
 
-<Progress label="Subida" value={68} />
-<Progress label="Completado" value={100} tone="success" />
-<Progress label="Cuota" value={24} tone="danger" />;`;
+function Example() {
+  return (
+    <>
+      <Progress label="Subida" value={68} />
+      <Progress label="Completado" value={100} tone="success" />
+      <Progress label="Cuota" value={24} tone="danger" />
+    </>
+  );
+}`;
 ---
 
 <Base title="Progress" description="Progress: determined bar with fraction cut in core, tones and React component.">
   <h1>Progress</h1>
   <p class="lede">
-    Progress is a given <strong></strong> bar: the consumer knows the value. The fraction is
-    trims to <code>[0, max]</code> at the core (<code>progressFraction</code>), so the width
-    painted and <code>aria-valuenow</code> can never diverge.
+    Progress is a given <strong>bar</strong> - the value is known to the consumer. The fraction is trimmed to <code>[0, max]</code> in the core (<code>progressFraction</code>), so that the painted width and <code>aria-valuenow</code> can never diverge.
   </p>
 
-  <Showcase html={html} react={react} label="Progress" />
+  <Showcase html={html} react={react} label="Progress">
+    <Fragment slot="react">
+      <ProgressDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>For work without a measurable value use <a href="/en/components/loader">Loader</a>: its semantics are indeterminate.</p>
 
   <h2>Install</h2>

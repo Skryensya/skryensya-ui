@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import { GridBasicDemo, GridMulticolDemo } from "../../components/react-demos/layout";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -39,16 +40,20 @@ const html = `<section
 
 const react = `import { Grid } from "@skryensya/react/grid";
 
-<Grid
-  as="section"
-  columns={3}
-  gap="md"
-  aria-label="Proyectos recientes"
->
-  <article>Proyecto Atlas</article>
-  <article>Proyecto Brisa</article>
-  <article>Proyecto Cauce</article>
-</Grid>`;
+function Example() {
+  return (
+    <Grid
+      as="section"
+      columns={3}
+      gap="md"
+      aria-label="Proyectos recientes"
+    >
+      <article>Proyecto Atlas</article>
+      <article>Proyecto Brisa</article>
+      <article>Proyecto Cauce</article>
+    </Grid>
+  );
+}`;
 
 const multicolHtml = `<section
   class="sk-grid"
@@ -150,17 +155,21 @@ const multicolReact = `import { Grid } from "@skryensya/react/grid";
 
 // data-multicol activa CSS Multi-column Layout. data-columns es
 // el máximo de carriles.
-<Grid
-  as="section"
-  columns={4}
-  gap="md"
-  data-multicol
-  aria-label="Notas"
->
-  {notes.map((n) => (
-    <article key={n.id}>{n.body}</article>
-  ))}
-</Grid>`;
+function Example() {
+  return (
+    <Grid
+      as="section"
+      columns={4}
+      gap="md"
+      data-multicol
+      aria-label="Notas"
+    >
+      {notes.map((n) => (
+        <article key={n.id}>{n.body}</article>
+      ))}
+    </Grid>
+  );
+}`;
 
 const multicolCss = `/* data-columns="4": 1 carril → 2 → 3 → 4,
    según el viewport. */
@@ -203,7 +212,11 @@ const multicolCss = `/* data-columns="4": 1 carril → 2 → 3 → 4,
     evita que el tamaño mínimo intrínseco ensanche las columnas.
   </p>
 
-  <Showcase html={html} react={react} label="Grid" />
+  <Showcase html={html} react={react} label="Grid">
+    <Fragment slot="react">
+      <GridBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>CSS Multi-column Layout</h2>
   <p>
@@ -218,7 +231,11 @@ const multicolCss = `/* data-columns="4": 1 carril → 2 → 3 → 4,
     máximo.
   </p>
   <CodeBlock code={multicolCss} label="patterns/layout.css" />
-  <Showcase html={multicolHtml} react={multicolReact} label="Multi-column layout" />
+  <Showcase html={multicolHtml} react={multicolReact} label="Multi-column layout">
+    <Fragment slot="react">
+      <GridMulticolDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
     Las columnas llenan un carril de arriba hacia abajo antes de pasar al siguiente. Conserva un orden
     útil en el DOM y úsalo para tarjetas independientes; no para una secuencia cuyo orden visual de

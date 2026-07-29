@@ -24,6 +24,21 @@ export type TileCheckboxOptions = TileSurfaceOptions & {
   onCheck?: (details: TileCheckboxChangeDetails) => void;
 };
 
+export type TileSwitchChangeDetails = {
+  checked: boolean;
+};
+
+export type TileSwitchOptions = TileSurfaceOptions & {
+  id?: string;
+  name?: string;
+  value?: string;
+  checked?: boolean;
+  defaultChecked?: boolean;
+  disabled?: boolean;
+  required?: boolean;
+  onCheck?: (details: TileSwitchChangeDetails) => void;
+};
+
 export type TileRadioValueChangeDetails = {
   value: string | null;
 };

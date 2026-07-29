@@ -38,6 +38,8 @@ export const ui = {
     "nav.docs": "Docs",
     "nav.customize": "Personalizar",
 
+    "status.wip": "En progreso",
+
     "search.label": "Buscar",
     "search.dialog": "Buscar en la documentación",
     "search.placeholder": "Buscar componentes y páginas…",
@@ -80,7 +82,9 @@ export const ui = {
 
     "preview.reload": "Recargar preview: {name}",
     "preview.reloadHint": "Recargar · vuelve a montar el demo desde cero",
-    "preview.screenGroup": "Tamaño de pantalla del preview: {name}",
+    "preview.toolbarLabel": "Controles del preview: {name}",
+    "preview.screenToggleLabel": "Tamaño de pantalla ({name}): {hint}",
+    "preview.bindingGroup": "Vínculo del código: {name}",
     "preview.screenFree": "Ancho libre",
     "preview.screenFreeHint": "Ancho libre · el preview ocupa la columna entera y crece hasta el alto de su contenido",
     "preview.screenTablet": "Tablet",
@@ -138,6 +142,8 @@ export const ui = {
     "nav.docs": "Docs",
     "nav.customize": "Customize",
 
+    "status.wip": "Work in progress",
+
     "search.label": "Search",
     "search.dialog": "Search the documentation",
     "search.placeholder": "Search components and pages…",
@@ -180,7 +186,9 @@ export const ui = {
 
     "preview.reload": "Reload preview: {name}",
     "preview.reloadHint": "Reload · remount the demo from scratch",
-    "preview.screenGroup": "Preview screen size: {name}",
+    "preview.toolbarLabel": "Preview controls: {name}",
+    "preview.screenToggleLabel": "Screen size ({name}): {hint}",
+    "preview.bindingGroup": "Code binding: {name}",
     "preview.screenFree": "Free width",
     "preview.screenFreeHint": "Free width · the preview fills the column and grows to its content height",
     "preview.screenTablet": "Tablet",

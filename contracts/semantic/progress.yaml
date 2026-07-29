@@ -1,0 +1,9 @@
+# La estructura vive en packages/core/src/progress.ts. Acá sólo por qué se elige.
+
+Progress:
+  useWhen:
+    - "se conoce cuánto falta: una subida, un formulario por pasos, una descarga"
+  avoidWhen:
+    - "la espera es de duración desconocida; eso es un Loader"
+  alternatives:
+    - Loader

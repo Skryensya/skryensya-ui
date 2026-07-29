@@ -52,10 +52,11 @@ Esto no cambia con el idioma:
 La persona gramatical no es una preferencia de quien escribe, depende de qué tipo de documento es:
 
 - **Tutorial o página de componente** → se dirige al lector directamente (segunda persona). Enseña a
-  alguien a hacer algo, paso a paso: "Si activa una acción, usa Button. Si navega a un href, usa
-  ButtonLink" (`componentes/button.astro`).
-- **Referencia o regla** (`CONTEXT.md`, ADRs, `docs/ai/README.md`) → impersonal, con "se". Describe un
-  sistema, no acompaña a nadie: "no se usa `as="a"`", "el icono queda decorativo" (`docs/ai/README.md`).
+  alguien a hacer algo, paso a paso: "Si activa una acción, usa Button. Si navega, pasale `href` y
+  Button se renderiza como `<a>`" (`componentes/button.astro`).
+- **Referencia o regla** (`CONTEXT.md`, ADRs, `docs/plataforma-ai-ui.md`) → impersonal, con "se". Describe
+  un sistema, no acompaña a nadie: "no se usa `as="a"`", "el icono queda decorativo" (`docs/ai/README.md`,
+  archivado en el tag `ai-v1`).
   Esta misma guía es referencia, por eso está escrita así y no como "vos vas a aprender a escribir…".
 
 Confundir los dos registros dentro de un mismo documento es el error a evitar: una página de componente
@@ -80,7 +81,7 @@ traduce:
 
 **Nunca se traduce** (son identificadores, o nombres propios fijados por `CONTEXT.md`):
 
-- Nombres de componente o patrón: `Button`, `ButtonLink`, `TileButton`, `Vaul`, `Avatar`.
+- Nombres de componente o patrón: `Button`, `TileButton`, `Vaul`, `Avatar`.
 - Nombres de prop, clase, atributo o archivo: `data-icon-only`, `sk-interactive`, `button.css`.
 - Términos ya fijados por `CONTEXT.md`: `styling hook`, `state layer`, `enhancer`, `machine`, `ramp`.
   Esta guía no repite esa lista, ver `CONTEXT.md` para la lista completa y sus `_Avoid_`.
@@ -99,7 +100,7 @@ Una lista con viñetas sigue una de dos formas, y cuál depende de si los ítems
 partida o varias oraciones independientes:
 
 - **Enumeración de una sola oración** → cada ítem termina en punto y coma, el anteúltimo agrega
-  `; y` antes del último, que cierra con punto. Ejemplo real, `docs/ai/README.md`:
+  `; y` antes del último, que cierra con punto. Ejemplo real, `docs/ai/README.md` (tag `ai-v1`):
 
   ```
   - `sk-button sk-interactive`;
@@ -127,7 +128,7 @@ El error a evitar es mezclar los dos: una lista de afirmaciones independientes q
 ### Comillas y énfasis
 
 Comillas curvas (`“…”`), nunca rectas (`"…"`), para citar una palabra como mención más que como uso.
-`docs/ai/README.md` escribe `no se “deshabilita”`, con curvas, no `no se "deshabilita"`. Negrita en la
+`docs/ai/README.md` (tag `ai-v1`) escribe `no se “deshabilita”`, con curvas, no `no se "deshabilita"`. Negrita en la
 primera mención de un término que el párrafo va a explicar (`**ImageFrame**`, `**AvatarGroup**` en
 `en/components/avatar.astro`); cursiva para la palabra que se está definiendo dentro de una
 explicación (`un *conjunto sin orden*`, ADR 0002).
@@ -207,9 +208,10 @@ secuencia. "Para mostrar que existe" no es un escenario.
 
 **Numerar encabezados** (`1.`, `2.`, `3.`, como en `tabs.astro`) quiere decir que la página cuenta una
 sola historia continua, cada paso construye sobre el anterior. Cuando las secciones son facetas
-independientes del componente en vez de una progresión — `button.astro` no numera `ButtonLink`,
-`Tamaños`, `TileButton`, `Con icono`, `Botón icono`, porque cada una es una variante distinta, no un
-paso sobre la anterior — no se numera, pero el orden todavía va de lo más común a lo más especializado.
+independientes del componente en vez de una progresión — `button.astro` no numera `Variantes`,
+`Tamaños`, `Con icono`, `Solo icono`, `Como enlace`, `TileButton`, porque cada una es una variante
+distinta, no un paso sobre la anterior — no se numera, pero el orden todavía va de lo más común a lo
+más especializado.
 
 **Alternativas avanzadas u opcionales se marcan como tal, explicando qué agregan.** `dialog.astro`
 presenta `Confirm` (el caso común) y recién después `Opción: Dialog Vaul`, con su propia sección "Qué

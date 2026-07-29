@@ -3,6 +3,14 @@ import "@skryensya/core/components/dialog.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import {
+  HeadingDisplayDemo,
+  HeadingDocumentDemo,
+  HeadingPageTitleDemo,
+  HeadingOutlineDemo,
+  HeadingCompactDemo,
+  HeadingFlushDemo,
+} from "../../components/react-demos/heading";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -35,11 +43,15 @@ const displayHtml = `<div class="sk-stack" data-gap="xs">
 
 const displayReact = `import { Heading } from "@skryensya/react/heading";
 
-<>
-  <Heading size="display-lg">La plataforma está lista</Heading>
-  <Heading size="display-md">La plataforma está lista</Heading>
-  <Heading size="display-sm">La plataforma está lista</Heading>
-</>;`;
+function Example() {
+  return (
+    <div className="sk-stack" data-gap="xs">
+      <Heading size="display-lg">La plataforma está lista</Heading>
+      <Heading size="display-md">La plataforma está lista</Heading>
+      <Heading size="display-sm">La plataforma está lista</Heading>
+    </div>
+  );
+}`;
 
 const documentHtml = `<div class="sk-stack" data-gap="xs">
   <div class="sk-stack" data-gap="none">
@@ -82,12 +94,16 @@ const documentHtml = `<div class="sk-stack" data-gap="xs">
 
 const documentReact = `import { Heading } from "@skryensya/react/heading";
 
-<>
-  <Heading size="h1">La plataforma está lista</Heading>
-  <Heading size="h2">La plataforma está lista</Heading>
-  <Heading size="h3">La plataforma está lista</Heading>
-  <Heading size="h4">La plataforma está lista</Heading>
-</>;`;
+function Example() {
+  return (
+    <div className="sk-stack" data-gap="xs">
+      <Heading size="h1">La plataforma está lista</Heading>
+      <Heading size="h2">La plataforma está lista</Heading>
+      <Heading size="h3">La plataforma está lista</Heading>
+      <Heading size="h4">La plataforma está lista</Heading>
+    </div>
+  );
+}`;
 
 const pageTitleHtml = `<header class="sk-stack" data-gap="sm">
   <span
@@ -110,18 +126,22 @@ const pageTitleHtml = `<header class="sk-stack" data-gap="sm">
 const pageTitleReact = `import { Heading } from "@skryensya/react/heading";
 import { Text } from "@skryensya/react/text";
 
-<header className="sk-stack" data-gap="sm">
-  <Text as="span" size="caption" tone="tertiary" weight="label">
-    OPERACIONES · MAYO 2026
-  </Text>
-  <Heading as="h1" size="display-md">
-    La plataforma está lista para el próximo despliegue
-  </Heading>
-  <Text size="lg" tone="secondary">
-    Un título de página comunica el resultado antes de que la
-    persona lea los detalles.
-  </Text>
-</header>;`;
+function Example() {
+  return (
+    <header className="sk-stack" data-gap="sm">
+      <Text as="span" size="caption" tone="tertiary" weight="label">
+        OPERACIONES · MAYO 2026
+      </Text>
+      <Heading as="h1" size="display-md">
+        La plataforma está lista para el próximo despliegue
+      </Heading>
+      <Text size="lg" tone="secondary">
+        Un título de página comunica el resultado antes de que la
+        persona lea los detalles.
+      </Text>
+    </header>
+  );
+}`;
 
 const outlineHtml = `<section class="sk-stack" data-gap="lg">
   <h2 class="sk-heading" data-size="h2">Estado del despliegue</h2>
@@ -142,21 +162,25 @@ const outlineHtml = `<section class="sk-stack" data-gap="lg">
 const outlineReact = `import { Heading } from "@skryensya/react/heading";
 import { Text } from "@skryensya/react/text";
 
-<section className="sk-stack" data-gap="lg">
-  <Heading as="h2" size="h2">Estado del despliegue</Heading>
-  <section className="sk-stack" data-gap="sm">
-    <Heading as="h3" size="h3">Regiones listas</Heading>
-    <Text size="sm" tone="secondary">
-      Frankfurt y São Paulo ya reciben tráfico.
-    </Text>
-  </section>
-  <section className="sk-stack" data-gap="sm">
-    <Heading as="h3" size="h3">Siguiente verificación</Heading>
-    <Text size="sm" tone="secondary">
-      Revisa la latencia después del cambio de tráfico.
-    </Text>
-  </section>
-</section>;`;
+function Example() {
+  return (
+    <section className="sk-stack" data-gap="lg">
+      <Heading as="h2" size="h2">Estado del despliegue</Heading>
+      <section className="sk-stack" data-gap="sm">
+        <Heading as="h3" size="h3">Regiones listas</Heading>
+        <Text size="sm" tone="secondary">
+          Frankfurt y São Paulo ya reciben tráfico.
+        </Text>
+      </section>
+      <section className="sk-stack" data-gap="sm">
+        <Heading as="h3" size="h3">Siguiente verificación</Heading>
+        <Text size="sm" tone="secondary">
+          Revisa la latencia después del cambio de tráfico.
+        </Text>
+      </section>
+    </section>
+  );
+}`;
 
 const compactHtml = `<section class="sk-stack" data-gap="xs">
   <h2 class="sk-heading" data-size="h4">Uso del almacenamiento</h2>
@@ -169,13 +193,17 @@ const compactHtml = `<section class="sk-stack" data-gap="xs">
 const compactReact = `import { Heading } from "@skryensya/react/heading";
 import { Text } from "@skryensya/react/text";
 
-<section className="sk-stack" data-gap="xs">
-  <Heading as="h2" size="h4">Uso del almacenamiento</Heading>
-  <Text size="sm" tone="secondary">
-    El nivel semántico sigue siendo h2 aunque el panel necesita
-    el piso visual (h4).
-  </Text>
-</section>;`;
+function Example() {
+  return (
+    <section className="sk-stack" data-gap="xs">
+      <Heading as="h2" size="h4">Uso del almacenamiento</Heading>
+      <Text size="sm" tone="secondary">
+        El nivel semántico sigue siendo h2 aunque el panel necesita
+        el piso visual (h4).
+      </Text>
+    </section>
+  );
+}`;
 
 const flushHtml = `<header class="sk-dialog__header" style="max-inline-size: 24rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md)">
   <h3 class="sk-heading sk-dialog__title" data-size="h3" data-flush>
@@ -185,11 +213,15 @@ const flushHtml = `<header class="sk-dialog__header" style="max-inline-size: 24r
 
 const flushReact = `import { Heading } from "@skryensya/react/heading";
 
-<header className="sk-dialog__header">
-  <Heading as="h3" size="h3" flush className="sk-dialog__title">
-    ¿Borrar este proyecto?
-  </Heading>
-</header>;`;
+function Example() {
+  return (
+    <header className="sk-dialog__header">
+      <Heading as="h3" size="h3" flush className="sk-dialog__title">
+        ¿Borrar este proyecto?
+      </Heading>
+    </header>
+  );
+}`;
 ---
 
 <Base title="Heading" description="Heading: jerarquía semántica y tamaño visual independientes.">
@@ -206,22 +238,42 @@ const flushReact = `import { Heading } from "@skryensya/react/heading";
   </p>
 
   <h3>Display</h3>
-  <Showcase html={displayHtml} react={displayReact} label="Escala display" />
+  <Showcase html={displayHtml} react={displayReact} label="Escala display">
+    <Fragment slot="react">
+      <HeadingDisplayDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h3>Documento</h3>
-  <Showcase html={documentHtml} react={documentReact} label="Escala h1–h6" />
+  <Showcase html={documentHtml} react={documentReact} label="Escala h1–h6">
+    <Fragment slot="react">
+      <HeadingDocumentDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Título de página</h2>
   <p>El único <code>h1</code> presenta la página; un display aporta presencia sin inventar otra semántica.</p>
-  <Showcase html={pageTitleHtml} react={pageTitleReact} label="Título de página" />
+  <Showcase html={pageTitleHtml} react={pageTitleReact} label="Título de página">
+    <Fragment slot="react">
+      <HeadingPageTitleDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Jerarquía de secciones</h2>
   <p>La estructura avanza de <code>h2</code> a <code>h3</code>; el tamaño visual puede acompañar el nivel.</p>
-  <Showcase html={outlineHtml} react={outlineReact} label="Jerarquía de contenido" />
+  <Showcase html={outlineHtml} react={outlineReact} label="Jerarquía de contenido">
+    <Fragment slot="react">
+      <HeadingOutlineDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Jerarquía compacta</h2>
   <p>Un heading conserva su lugar en el documento aunque el contexto visual use el piso <code>h4</code>.</p>
-  <Showcase html={compactHtml} react={compactReact} label="Heading compacto" />
+  <Showcase html={compactHtml} react={compactReact} label="Heading compacto">
+    <Fragment slot="react">
+      <HeadingCompactDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Flush</h2>
   <p>
@@ -230,7 +282,11 @@ const flushReact = `import { Heading } from "@skryensya/react/heading";
     dialog con <code>sk-dialog__title</code>, cabecera de card) y no quieres que el margen o el
     padding lo empujen contra el borde. No se infiere de <code>:first-child</code>.
   </p>
-  <Showcase html={flushHtml} react={flushReact} label="Heading flush" />
+  <Showcase html={flushHtml} react={flushReact} label="Heading flush">
+    <Fragment slot="react">
+      <HeadingFlushDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

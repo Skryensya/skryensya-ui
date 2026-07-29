@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { InputBasicDemo } from "../../components/react-demos/input";
 
 
 
@@ -38,18 +39,24 @@ const html = `<div class="sk-field">
 
 const react = `import { Field, Input, Textarea } from "@skryensya/react/input";
 
-<Field
-  label="Email"
-  hint="Sólo la usamos para las boletas."
-  error={errors.email}
-  required
->
-  <Input name="email" type="email" />
-</Field>
+function Example() {
+  return (
+    <>
+      <Field
+        label="Email"
+        hint="Sólo la usamos para las boletas."
+        error={errors.email}
+        required
+      >
+        <Input name="email" type="email" />
+      </Field>
 
-<Field label="Notas">
-  <Textarea name="notes" />
-</Field>;`;
+      <Field label="Notas">
+        <Textarea name="notes" />
+      </Field>
+    </>
+  );
+}`;
 ---
 
 <Base title="Input" description="Input: control nativo, field con label/hint/error y styling hooks.">
@@ -59,7 +66,11 @@ const react = `import { Field, Input, Textarea } from "@skryensya/react/input";
     queda con la validación, el autofill, el IME y la asociación al formulario.
   </p>
 
-  <Showcase html={html} react={react} label="Input" />
+  <Showcase html={html} react={react} label="Input">
+    <Fragment slot="react">
+      <InputBasicDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>La densidad compacta el espacio alrededor del campo, no su área de interacción: Input conserva un mínimo de <code>44px</code> de alto, incluso con <code>data-size="sm"</code>.</p>
 
   <h2>Una clase para todo control de texto</h2>

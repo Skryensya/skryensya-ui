@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import { ThemeToggleDemo } from "../../components/react-demos/theme-toggle";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
@@ -113,7 +114,11 @@ const labels = {
     react={react}
     label="Theme Toggle"
     note="md · sm"
-  />
+  >
+    <Fragment slot="react">
+      <ThemeToggleDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Contrato</h2>
   <ul>

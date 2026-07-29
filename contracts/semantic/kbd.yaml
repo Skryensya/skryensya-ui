@@ -1,0 +1,7 @@
+# La estructura vive en packages/core/src/kbd.ts. Acá sólo por qué se elige.
+
+Kbd:
+  useWhen:
+    - "se muestra una tecla o una combinación que el usuario puede presionar"
+  avoidWhen:
+    - "es texto de código o un comando; eso va en un bloque de código"

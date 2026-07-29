@@ -1,0 +1,9 @@
+# La estructura vive en packages/core/src/tag.ts. Acá sólo por qué se elige.
+
+Tag:
+  useWhen:
+    - "una etiqueta que el usuario puede quitar: un filtro aplicado, una palabra clave"
+  avoidWhen:
+    - "es sólo un conteo o un estado que nadie puede tocar; eso es un Badge"
+  alternatives:
+    - Badge

@@ -3,6 +3,7 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { TreeViewSettingsDemo } from "../../../components/react-demos/tree-view";
 import "@skryensya/core/components/tree-view.css";
 
 /* The examples go from less to more: each one adds ONE thing over the previous one, so the
@@ -15,14 +16,14 @@ const chevron = `<span
           aria-hidden="true"
         ></span>`;
 
-const minimal = `<div class="sk-tree-view" data-sk-tree-view aria-label="Proyecto">
+const minimal = `<div class="sk-tree-view" data-sk-tree-view aria-label="Project">
   <ul class="sk-tree-view__tree" data-sk-tree-view-tree>
     <li
       class="sk-tree-view__branch"
       data-sk-tree-view-branch
       data-value="src"
     >
-      <div
+      <button type="button"
         class="sk-tree-view__branch-control sk-interactive"
         data-sk-tree-view-branch-control
       >
@@ -31,7 +32,7 @@ const minimal = `<div class="sk-tree-view" data-sk-tree-view aria-label="Proyect
           class="sk-tree-view__branch-text"
           data-sk-tree-view-branch-text
         >src</span>
-      </div>
+      </button>
       <ul
         class="sk-tree-view__branch-content"
         data-sk-tree-view-branch-content
@@ -79,7 +80,7 @@ const initialState = `<div
   data-sk-tree-view
   data-expanded-value="src"
   data-selected-value="app.ts"
-  aria-label="Proyecto"
+  aria-label="Project"
 >
   <ul class="sk-tree-view__tree" data-sk-tree-view-tree>
     <li
@@ -87,7 +88,7 @@ const initialState = `<div
       data-sk-tree-view-branch
       data-value="src"
     >
-      <div
+      <button type="button"
         class="sk-tree-view__branch-control sk-interactive"
         data-sk-tree-view-branch-control
       >
@@ -96,7 +97,7 @@ const initialState = `<div
           class="sk-tree-view__branch-text"
           data-sk-tree-view-branch-text
         >src</span>
-      </div>
+      </button>
       <ul
         class="sk-tree-view__branch-content"
         data-sk-tree-view-branch-content
@@ -145,7 +146,7 @@ const multiple = `<div
   data-selection-mode="multiple"
   data-expanded-value="src, src/ui"
   data-selected-value="index.ts button.ts"
-  aria-label="Archivos a publicar"
+  aria-label="Files to publish"
 >
   <ul class="sk-tree-view__tree" data-sk-tree-view-tree>
     <li
@@ -153,7 +154,7 @@ const multiple = `<div
       data-sk-tree-view-branch
       data-value="src"
     >
-      <div
+      <button type="button"
         class="sk-tree-view__branch-control sk-interactive"
         data-sk-tree-view-branch-control
       >
@@ -162,7 +163,7 @@ const multiple = `<div
           class="sk-tree-view__branch-text"
           data-sk-tree-view-branch-text
         >src</span>
-      </div>
+      </button>
       <ul
         class="sk-tree-view__branch-content"
         data-sk-tree-view-branch-content
@@ -183,7 +184,7 @@ const multiple = `<div
           data-sk-tree-view-branch
           data-value="src/ui"
         >
-          <div
+          <button type="button"
             class="sk-tree-view__branch-control sk-interactive"
             data-sk-tree-view-branch-control
           >
@@ -192,7 +193,7 @@ const multiple = `<div
               class="sk-tree-view__branch-text"
               data-sk-tree-view-branch-text
             >ui</span>
-          </div>
+          </button>
           <ul
             class="sk-tree-view__branch-content"
             data-sk-tree-view-branch-content
@@ -238,7 +239,7 @@ const disabled = `<div
       data-sk-tree-view-branch
       data-value="dist"
     >
-      <div
+      <button type="button"
         class="sk-tree-view__branch-control sk-interactive"
         data-sk-tree-view-branch-control
       >
@@ -247,7 +248,7 @@ const disabled = `<div
           class="sk-tree-view__branch-text"
           data-sk-tree-view-branch-text
         >dist</span>
-      </div>
+      </button>
       <ul
         class="sk-tree-view__branch-content"
         data-sk-tree-view-branch-content
@@ -293,7 +294,7 @@ const events = `<div class="sk-stack" data-gap="md">
         data-sk-tree-view-branch
         data-value="cuenta"
       >
-        <div
+        <button type="button"
           class="sk-tree-view__branch-control sk-interactive"
           data-sk-tree-view-branch-control
         >
@@ -306,8 +307,8 @@ const events = `<div class="sk-stack" data-gap="md">
           <span
             class="sk-tree-view__branch-text"
             data-sk-tree-view-branch-text
-          >Cuenta</span>
-        </div>
+          >Account</span>
+        </button>
         <ul
           class="sk-tree-view__branch-content"
           data-sk-tree-view-branch-content
@@ -321,7 +322,7 @@ const events = `<div class="sk-stack" data-gap="md">
             <span
               class="sk-tree-view__item-text"
               data-sk-tree-view-item-text
-            >Perfil</span>
+            >Profile</span>
           </li>
           <li
             class="sk-tree-view__item sk-interactive"
@@ -388,9 +389,9 @@ import { TreeView } from "@skryensya/react/tree-view";
 const nodes = [
   {
     id: "cuenta",
-    label: "Cuenta",
+    label: "Account",
     children: [
-      { id: "perfil", label: "Perfil" },
+      { id: "perfil", label: "Profile" },
       {
         id: "seguridad",
         label: "Seguridad",
@@ -433,26 +434,18 @@ const indentHook = `.sk-tree-view {
 >
   <h1>TreeView</h1>
   <p class="lede">
-    A hierarchy that is navigated with the keyboard: branches open and close, nodes are
-    they select. Use TreeView when the parent-child relationship <em>is</em> the content: files,
-    categories, an organization. For non-hierarchical sister disclosures use
-    <a href="/en/components/accordion">Accordion</a>; to navigate by sections,
-    <a href="/en/components/sidebar">Sidebar</a>.
+    A hierarchy that is traversed with the keyboard: branches are opened and closed, nodes are selected. Use TreeView when the parent-child relationship <em>is</em> the content: files, categories, an organization. For sister disclosures without hierarchy use <a href="/en/components/accordion">Accordion</a>; to navigate sections, <a href="/en/components/sidebar">Sidebar</a>.
   </p>
 
-  <h2>Minimal tree</h2>
+  <h2>Minimum tree</h2>
   <p>
-    The minimum is the complete anatomy and nothing more: a root, the list, and for each node a branch
-    (<code>branch</code> + <code>branch-control</code> + <code>branch-content</code>) or a sheet
-    (<code>item</code>). Without state attributes, everything starts closed and without selection.
+    The minimum is the complete anatomy and nothing more: a root, the list, and for each node a branch (<code>branch</code> + <code>branch-control</code> + <code>branch-content</code>) or a leaf (<code>item</code>). Without state attributes, everything starts closed and without selection.
   </p>
   <Showcase html={minimal} label="Minimal TreeView" />
 
-  <h2>Initial state</h2>
+  <h2>Initial State</h2>
   <p>
-    <code>data-expanded-value</code> and <code>data-selected-value</code> list the
-    <code>data-value</code> that boot open and selected. They accept spaces or commas as
-    separator, and they are only the state <em>initial</em>: from there the machine commands.
+    <code>data-expanded-value</code> and <code>data-selected-value</code> list the <code>data-value</code>s that boot open and selected. They accept spaces or commas as a separator, and are only the initial <em>state</em>: the machine commands from there.
   </p>
   <Showcase html={initialState} label="Open and selected input" />
 
@@ -460,25 +453,20 @@ const indentHook = `.sk-tree-view {
   <p>
     <code>data-selection-mode="multiple"</code> lets mark several nodes with
     <kbd class="sk-kbd">Ctrl</kbd>/<kbd class="sk-kbd">⌘</kbd> and extend the range with
-    <kbd class="sk-kbd">Shift</kbd>. Las ramas anidan sin límite: una rama es un nodo con
-    <code>branch-content</code>, no matter how deep it is, and the vertical guide marks who each level hangs from.
+    <kbd class="sk-kbd">Shift</kbd>. Branches nest without limit: a branch is a node with
+    <code>branch-content</code>, regardless of depth, and the vertical guide shows which parent each level belongs to.
   </p>
-  <Showcase html={multiple} label="Multiple selection y tres niveles" />
+  <Showcase html={multiple} label="Multiple selection and three levels" />
 
-  <h2>Nodos deshabilitados</h2>
+  <h2>Disabled nodes</h2>
   <p>
-    A node with <code>disabled</code> is not selected or given focus, but is still read. one
-    disabled branch does not open either, so do not use it to hide content: for that, do not
-    authors.
+    A node with <code>disabled</code> is not selected or given focus, but is still read. A disabled branch also will not open, so do not use it to hide content: do not author it for that.
   </p>
   <Showcase html={disabled} label="Disabled node" />
 
-  <h2>Iconos y eventos</h2>
+  <h2>Icons and events</h2>
   <p>
-    The leaf reserves the same column as the branch chevron, so one level labels
-    They are aligned even if not all sheets have an icon. That gap is the
-    empty <code>&lt;span aria-hidden="true"&gt;</code> from the previous examples; here he has a
-    icon. The selection and opening are heard as events above the root.
+    The sheet reserves the same column as the branch's chevron, so the labels of a level are aligned even if not all sheets have an icon. That gap is the empty <code>&lt;span aria-hidden="true"&gt;</code> from the previous examples; here it has an icon. The selection and opening are heard as events above the root.
   </p>
   <Showcase
     html={events}
@@ -486,40 +474,35 @@ const indentHook = `.sk-tree-view {
     react={react}
     previewScript={previewScript}
     label="Settings with icons"
-  />
+  >
+    <Fragment slot="react">
+      <TreeViewSettingsDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
     <li>
-      The root is authored with <code>data-sk-tree-view</code> and <code>class="sk-tree-view"</code>; your
-      <code>aria-label</code> names the tree.
+      The root is authored with <code>data-sk-tree-view</code> and <code>class="sk-tree-view"</code>; your <code>aria-label</code> names the tree.
     </li>
     <li>
-      The list has <code>data-sk-tree-view-tree</code>. Each direct child is a branch
-      (<code>data-sk-tree-view-branch</code>) or a sheet (<code>data-sk-tree-view-item</code>).
+      The list has <code>data-sk-tree-view-tree</code>. Each direct child is a branch (<code>data-sk-tree-view-branch</code>) or a leaf (<code>data-sk-tree-view-item</code>).
     </li>
     <li>
-      A branch contains its control (<code>data-sk-tree-view-branch-control</code>, with flag and
-      text) and its content (<code>data-sk-tree-view-branch-content</code>), which is another list of
-      branches and leaves.
+      A branch contains its control (<code>data-sk-tree-view-branch-control</code>, with indicator and text) and its contents (<code>data-sk-tree-view-branch-content</code>), which is another list of branches and leaves.
     </li>
     <li>
-      <code>data-value</code> identifies the node: it is what appears in the events and in
-      <code>data-expanded-value</code> / <code>data-selected-value</code>. It is unique in all the
-      tree; without it, the enhancer derives an id from the position, which is broken when reordering the markup.
+      <code>data-value</code> identifies the node: it is what appears in the events and in <code>data-expanded-value</code> / <code>data-selected-value</code>. It is unique in the entire tree; without it, the enhancer derives an id from the position, which is broken when reordering the markup.
     </li>
     <li>
-      Each clickable row has <code>sk-interactive</code>: from there come hover, focus, pressed,
-      selection and focus ring. The component does not paint states on its own.
+      Each clickable row has <code>sk-interactive</code>: from there come hover, focus, pressed, selection and the focus ring. The component does not paint states on its own.
     </li>
     <li>
-      Events about root: <code>sk-selection-change</code> with
-      <code>detail.selectedValue</code> and <code>sk-expanded-change</code> with
-      <code>detail.expandedValue</code>, both arrays of <code>data-value</code>.
+      Events on the root: <code>sk-selection-change</code> with <code>detail.selectedValue</code> and <code>sk-expanded-change</code> with <code>detail.expandedValue</code>, both arrays of <code>data-value</code>.
     </li>
   </ul>
 
-  <h2>Accesibilidad</h2>
+  <h2>Accessibility</h2>
   <p>
     The public machine <code>role="tree"</code>/<code>treeitem</code> with the level and position of each node, and manages the keyboard: arrows to move,
     <kbd class="sk-kbd">→</kbd>/<kbd class="sk-kbd">←</kbd> to open and close branches,
@@ -529,8 +512,7 @@ const indentHook = `.sk-tree-view {
   <h2>CSS</h2>
   <CodeBlock code={install} label="CSS" lang="css" />
   <p>
-    Indentation and vertical guide are hooks: change the indentation pitch or turn off the guide without
-    touch the rest.
+    Indentation and vertical guide are hooks: change the indentation step or turn off the guide without touching the rest.
   </p>
   <CodeBlock code={indentHook} label="CSS" lang="css" />
   <StylingHooks

@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { ComboboxBasicDemo } from "../../components/react-demos/combobox";
 import "@skryensya/core/components/combobox.css";
 import "@skryensya/core/components/field.css";
 import "@skryensya/core/patterns/scrollbar.css";
@@ -166,15 +167,19 @@ import { Icon } from "@skryensya/react/icon";
 import { countries } from "./countries";
 // countries: { label: string; value: string }[] con la lista completa de países
 
-<Combobox
-  label="País"
-  hint="Escribe para filtrar. Usa las flechas para recorrer."
-  placeholder="Buscar país"
-  items={countries}
-  clearIndicator={<Icon name="close" />}
-  itemIndicator={<Icon name="check" />}
-  triggerIndicator={<Icon name="chevron-down" />}
-/>`;
+function Example() {
+  return (
+    <Combobox
+      label="País"
+      hint="Escribe para filtrar. Usa las flechas para recorrer."
+      placeholder="Buscar país"
+      items={countries}
+      clearIndicator={<Icon name="close" />}
+      itemIndicator={<Icon name="check" />}
+      triggerIndicator={<Icon name="chevron-down" />}
+    />
+  );
+}`;
 ---
 
 <Base
@@ -191,7 +196,11 @@ import { countries } from "./countries";
     react={react}
     label="Combobox"
     viewport="menu"
-  />
+  >
+    <Fragment slot="react">
+      <ComboboxBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Contrato</h2>
   <p>

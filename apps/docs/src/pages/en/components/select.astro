@@ -3,6 +3,7 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { NativeSelectDemo, SelectBasicDemo } from "../../../components/react-demos/select";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -143,19 +144,23 @@ const forms = `<div
 const reactSelect = `import { Icon } from "@skryensya/react/icon";
 import { Select } from "@skryensya/react/select";
 
-<Select
-  label="Plan"
-  name="plan"
-  defaultValue={["starter"]}
-  indicator={<Icon name="chevron-down" />}
-  openIndicator={<Icon name="chevron-up" />}
-  itemIndicator={<Icon name="check" />}
-  options={[
-    { value: "starter", label: "Starter" },
-    { value: "pro", label: "Pro" },
-    { value: "enterprise", label: "Enterprise" },
-  ]}
-/>;`;
+function Example() {
+  return (
+    <Select
+      label="Plan"
+      name="plan"
+      defaultValue={["starter"]}
+      indicator={<Icon name="chevron-down" />}
+      openIndicator={<Icon name="chevron-up" />}
+      itemIndicator={<Icon name="check" />}
+      options={[
+        { value: "starter", label: "Starter" },
+        { value: "pro", label: "Pro" },
+        { value: "enterprise", label: "Enterprise" },
+      ]}
+    />
+  );
+}`;
 
 const nativeSelectHtml = `<div class="sk-stack" data-gap="xs">
   <label for="native-plan">Plan</label>
@@ -168,14 +173,18 @@ const nativeSelectHtml = `<div class="sk-stack" data-gap="xs">
 
 const nativeReactSelect = `import { NativeSelect } from "@skryensya/react/select-native";
 
-<NativeSelect
-  aria-label="Plan"
-  name="plan"
-  options={[
-    { value: "starter", label: "Starter" },
-    { value: "pro", label: "Pro" },
-  ]}
-/>;`;
+function Example() {
+  return (
+    <NativeSelect
+      aria-label="Plan"
+      name="plan"
+      options={[
+        { value: "starter", label: "Starter" },
+        { value: "pro", label: "Pro" },
+      ]}
+    />
+  );
+}`;
 ---
 
 <Base
@@ -184,49 +193,45 @@ const nativeReactSelect = `import { NativeSelect } from "@skryensya/react/select
 >
   <h1>Select</h1>
   <p class="lede">
-    The main selector when the interaction needs typeahead, highlight, controlled popup and
-    positioning. <code>Select</code> shares his parts contract on
-    <code>@skryensya/vanilla</code> and <code>@skryensya/react</code>; the machine of each binding is a
-    internal detail.
+    The main selector when the interaction needs typeahead, highlight, controlled popup and positioning. <code>Select</code> shares his parts contract at <code>@skryensya/vanilla</code> and <code>@skryensya/react</code>; The machine of each binding is an internal detail.
   </p>
 
   <p>
-    For a standard choice of form, use the
-    <a href="#select-nativo">Select native</a> documented at the end: does not load an enhancer, keeps
-    platform behavior and stylizes your picker through progressive improvement.
+    For a standard form choice, use the <a href="#native-select">native Select</a> documented at the end: it does not load an enhancer, preserves platform behavior, and styles its picker through progressive enhancement.
   </p>
 
-  <Showcase html={selectHtml} react={reactSelect} label="Select enhanced" viewport="menu" />
+  <Showcase html={selectHtml} react={reactSelect} label="Select enhanced" viewport="menu">
+    <Fragment slot="react">
+      <SelectBasicDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
-    Density compacts the space around the selector, not its tactile objectives: the trigger and
-    each option retains a minimum of <code>44px</code> height.
+    Density compacts the space around the selector, not its tactile targets: the trigger and each option remain a minimum of <code>44px</code> high.
   </p>
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />
   <CodeBlock code={styles} label="CSS" lang="css" />
 
-  <h2>HTML autorado</h2>
+  <h2>Authored HTML</h2>
   <p>
-    The items <strong>are</strong> the collection: the enhancer reads them from the DOM, just like tabs reads their
-    triggers. Each <code>data-sk-select-item</code> needs a <code>data-value</code>. The markup
-    The full version is in the <strong>Vanilla</strong> tab of the preview.
+    The <strong>items are</strong> the collection: the enhancer reads them from the DOM, just as tabs read their triggers. Each <code>data-sk-select-item</code> needs one <code>data-value</code>. The full markup is in the <strong>Vanilla</strong> tab of the preview.
   </p>
 
   <h2>Initialize Vanilla</h2>
   <CodeBlock code={js} label="JavaScript" />
 
-  <h2>Hear the change</h2>
+  <h2>Listen to the change</h2>
   <CodeBlock code={listen} label="JavaScript" />
 
   <h2>Forms and fallback without JavaScript</h2>
   <CodeBlock code={forms} label="HTML" />
 
-  <h2>Contrato enhanced</h2>
+  <h2>Enhanced contract</h2>
   <ul>
-    <li>The root carries <code>data-sk-select</code> and the parts anatomy documented.</li>
+    <li>The root carries <code>data-sk-select</code> and the documented part anatomy.</li>
     <li>The enhancer does not render markup or invent classes; only connects authored nodes.</li>
-    <li>The text of the value is owned by the machine; placeholder, options and ids remain the consumer's.</li>
+    <li>The value text is owned by the machine; placeholder, options and ids remain the consumer's.</li>
     <li>React renders the same contract and does not hydrate the vanilla markup.</li>
   </ul>
 
@@ -235,38 +240,34 @@ const nativeReactSelect = `import { NativeSelect } from "@skryensya/react/select
       { file: "patterns/anchored.css", probe: "sk-anchored", title: "Anchor Inherits" },
     ]} />
 
-  <h2>Select nativo</h2>
+  <h2 id="native-select">Native Select</h2>
   <p class="lede">
-    It is a real <code>&lt;select&gt;</code>: the selection, the keyboard, the form submission and the
-    Accessibility still belongs to the browser. Allison applies
-    <code>sk-select-native</code>; there is no <code>data-sk-*</code>, machine or package
-    <code>@skryensya/vanilla</code>.
+    It is a real <code>&lt;select&gt;</code>: selection, keyboarding, form submission, and accessibility still belong to the browser. Allison applies <code>sk-select-native</code>; there is no <code>data-sk-*</code>, machine or package <code>@skryensya/vanilla</code>.
   </p>
   <p>
-    Use it for a standard choice. Choose Select enhanced only when you need your collection
-    controlled, item markup, positioning or event <code>sk-value-change</code>; the appearance
-    no longer a reason to replace the native control.
+    Use for a standard choice. Choose Select enhanced only when you need controlled collection, item markup, positioning or <code>sk-value-change</code> event; appearance is no longer a reason to replace the native control.
   </p>
-  <Showcase html={nativeSelectHtml} react={nativeReactSelect} label="Select nativo" viewport="menu" />
+  <Showcase html={nativeSelectHtml} react={nativeReactSelect} label="Native Select" viewport="menu">
+    <Fragment slot="react">
+      <NativeSelectDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h3>Mejora progresiva</h3>
+  <h3>Progressive enhancement</h3>
   <p>
-    If the browser supports <code>appearance: base-select</code> and
-    <code>::picker(select)</code>, Core applies the same to the field, the picker and its options
-    surface, spacing, states and icons that Select uses. Other browsers ignore that block
-    and they preserve the classic popup of the operating system. The HTML and behavior do not change.
+    If the browser supports <code>appearance: base-select</code> and <code>:: picker(select)</code>, Core applies the same surface, spacing, states, and icons to the field, picker, and their options that Select uses. Other browsers ignore this block and retain the classic popup of the operating system. The HTML and behavior do not change.
   </p>
 
   <h3>Install only the native Select</h3>
   <CodeBlock code={nativeInstall} label="terminal" />
   <CodeBlock code={styles} label="CSS" lang="css" />
 
-  <h3>Contrato nativo</h3>
+  <h3>Native contract</h3>
   <ul>
     <li>Use an associated <code>&lt;label&gt;</code> or equivalent accessible name.</li>
-    <li>The selection, keyboard, and serialization of <code>form</code> belong to the browser.</li>
+    <li><code>form</code> selection, keyboard, and serialization belong to the browser.</li>
     <li><code>disabled</code> is the native attribute; It is not replaced by JavaScript state.</li>
-    <li>Customizable select makes the picker uniform; the classic popup is still the fallback.</li>
+    <li>Customizable select uniforms the picker; the classic popup is still the fallback.</li>
   </ul>
 
   <StylingHooks groups={[{ file: "components/select.css", probe: "sk-select-native" }]} />

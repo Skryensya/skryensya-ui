@@ -3,6 +3,7 @@ import "@skryensya/core/components/stat.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import { StatAnimatedCardsDemo, StatCardsDemo } from "../../components/react-demos/stat";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -61,37 +62,41 @@ const react = `import { Icon } from "@skryensya/react/icon";
 import { Box, Grid } from "@skryensya/react/layout";
 import { Stat } from "@skryensya/react/stat";
 
-<Grid
-  aria-label="Resumen del negocio"
-  columns={3}
-  data-multicol=""
-  gap="md"
->
-  <Box as="article" border="subtle" padding="lg" surface="surface">
-    <Stat
-      label="Ingresos"
-      value="48.200 €"
-      trend="up"
-      change={<><Icon name="arrow-up" /> 12,5%</>}
-    />
-  </Box>
-  <Box as="article" border="subtle" padding="lg" surface="surface">
-    <Stat
-      label="Pedidos"
-      value="1.204"
-      trend="up"
-      change={<><Icon name="arrow-up" /> 8,2%</>}
-    />
-  </Box>
-  <Box as="article" border="subtle" padding="lg" surface="surface">
-    <Stat
-      label="Cancelaciones"
-      value="0,9%"
-      trend="up"
-      change={<><Icon name="arrow-down" /> 0,3 puntos</>}
-    />
-  </Box>
-</Grid>`;
+function Example() {
+  return (
+    <Grid
+      aria-label="Resumen del negocio"
+      columns={3}
+      data-multicol=""
+      gap="md"
+    >
+      <Box as="article" border="subtle" padding="lg" surface="surface">
+        <Stat
+          label="Ingresos"
+          value="48.200 €"
+          trend="up"
+          change={<><Icon name="arrow-up" /> 12,5%</>}
+        />
+      </Box>
+      <Box as="article" border="subtle" padding="lg" surface="surface">
+        <Stat
+          label="Pedidos"
+          value="1.204"
+          trend="up"
+          change={<><Icon name="arrow-up" /> 8,2%</>}
+        />
+      </Box>
+      <Box as="article" border="subtle" padding="lg" surface="surface">
+        <Stat
+          label="Cancelaciones"
+          value="0,9%"
+          trend="up"
+          change={<><Icon name="arrow-down" /> 0,3 puntos</>}
+        />
+      </Box>
+    </Grid>
+  );
+}`;
 
 const htmlAnimate = `<section
   class="sk-grid"
@@ -166,48 +171,52 @@ import { Stat } from "@skryensya/react/stat";
 const es = (n: number, opts?: Intl.NumberFormatOptions) =>
   n.toLocaleString("es-ES", opts);
 
-<Grid
-  aria-label="Resumen del negocio"
-  columns={3}
-  data-multicol=""
-  gap="md"
->
-  <Box as="article" border="subtle" padding="lg" surface="surface">
-    <Stat
-      animate
-      format={(n) => \`\${es(n)} €\`}
-      label="Ingresos"
-      value={48200}
-      trend="up"
-      change={<><Icon name="arrow-up" /> 12,5%</>}
-    />
-  </Box>
-  <Box as="article" border="subtle" padding="lg" surface="surface">
-    <Stat
-      animate
-      format={es}
-      label="Pedidos"
-      value={1204}
-      trend="up"
-      change={<><Icon name="arrow-up" /> 8,2%</>}
-    />
-  </Box>
-  <Box as="article" border="subtle" padding="lg" surface="surface">
-    <Stat
-      animate
-      format={(n) =>
-        \`\${es(n, {
-          minimumFractionDigits: 1,
-          maximumFractionDigits: 1,
-        })}%\`
-      }
-      label="Cancelaciones"
-      value={0.9}
-      trend="up"
-      change={<><Icon name="arrow-down" /> 0,3 puntos</>}
-    />
-  </Box>
-</Grid>`;
+function Example() {
+  return (
+    <Grid
+      aria-label="Resumen del negocio"
+      columns={3}
+      data-multicol=""
+      gap="md"
+    >
+      <Box as="article" border="subtle" padding="lg" surface="surface">
+        <Stat
+          animate
+          format={(n) => \`\${es(n)} €\`}
+          label="Ingresos"
+          value={48200}
+          trend="up"
+          change={<><Icon name="arrow-up" /> 12,5%</>}
+        />
+      </Box>
+      <Box as="article" border="subtle" padding="lg" surface="surface">
+        <Stat
+          animate
+          format={es}
+          label="Pedidos"
+          value={1204}
+          trend="up"
+          change={<><Icon name="arrow-up" /> 8,2%</>}
+        />
+      </Box>
+      <Box as="article" border="subtle" padding="lg" surface="surface">
+        <Stat
+          animate
+          format={(n) =>
+            \`\${es(n, {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}%\`
+          }
+          label="Cancelaciones"
+          value={0.9}
+          trend="up"
+          change={<><Icon name="arrow-down" /> 0,3 puntos</>}
+        />
+      </Box>
+    </Grid>
+  );
+}`;
 ---
 
 <Base title="Stat" description="Stat: métrica de titular con label, valor tabular y cambio coloreado por tendencia.">
@@ -225,7 +234,11 @@ const es = (n: number, opts?: Intl.NumberFormatOptions) =>
     <a href="/componentes/box">Box</a> aporta la superficie y Grid organiza la colección. La flecha
     baja en cancelaciones, pero <code>trend="up"</code> comunica que ese cambio es favorable.
   </p>
-  <Showcase html={html} react={react} label="Stat Cards" note="Grid + Box + Stat + Icon" />
+  <Showcase html={html} react={react} label="Stat Cards" note="Grid + Box + Stat + Icon">
+    <Fragment slot="react">
+      <StatCardsDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2 id="animar">Animar el valor</h2>
   <p>
@@ -239,7 +252,11 @@ const es = (n: number, opts?: Intl.NumberFormatOptions) =>
     react={reactAnimate}
     label="Stat Cards animadas"
     note="Mismo card · animate + format / data-count"
-  />
+  >
+    <Fragment slot="react">
+      <StatAnimatedCardsDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

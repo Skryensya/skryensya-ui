@@ -1,0 +1,19 @@
+# La estructura vive en packages/core/src/list.ts. Acá sólo por qué se elige.
+
+List:
+  useWhen:
+    - "filas de cosas del mismo tipo: una bandeja, ajustes, resultados"
+  avoidWhen:
+    - "las filas tienen columnas comparables entre sí; eso es una Table"
+  alternatives:
+    - Table
+
+ListItem:
+  useWhen:
+    - "una fila que no se toca"
+
+ListItemLink:
+  useWhen:
+    - "la fila entera navega, y el objetivo de foco y de clic es la fila"
+  avoidWhen:
+    - "sólo una parte de la fila es enlace; ahí el enlace va adentro, no envolviendo"

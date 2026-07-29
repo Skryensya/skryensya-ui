@@ -1,0 +1,8 @@
+# La estructura vive en packages/core/src/layout.ts. Acá sólo por qué se elige.
+
+Wrapper:
+  useWhen:
+    - "la página necesita una medida centrada para que el texto no se estire de borde a borde"
+  avoidWhen:
+    - "el contenido debe ocupar todo el ancho; ahí se elige full o no hay wrapper"
+

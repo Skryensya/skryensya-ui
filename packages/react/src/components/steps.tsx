@@ -7,6 +7,8 @@ export type StepsProps = Omit<HTMLAttributes<HTMLOListElement>, "children"> & {
   steps: readonly Step[];
   /** Zero-based index of the current step. Used only for steps that don't declare their own status. */
   current?: number;
+  /** Rail direction. Defaults to horizontal, switching to vertical below 40rem. Pin either value to opt out of that responsive default. */
+  "data-orientation"?: "horizontal" | "vertical";
 };
 
 export function Steps({ className, current = 0, steps, ...props }: StepsProps) {

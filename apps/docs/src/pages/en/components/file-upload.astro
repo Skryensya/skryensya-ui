@@ -2,6 +2,7 @@
 import Base from "../../../layouts/Base.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { FileUploadBasicDemo } from "../../../components/react-demos/file-upload";
 import "@skryensya/core/components/file-upload.css";
 
 const install = `@import "@skryensya/core/components/file-upload.css";`;
@@ -36,18 +37,22 @@ const html = `<div
       data-sk-file-upload-trigger
       type="button"
     >
-      Elegir archivos
+      Choose files
     </button>
   </div>
 </div>`;
 const react = `import { FileUpload } from "@skryensya/react/file-upload";
 
-<FileUpload
-  label="Adjuntos"
-  maxFiles={3}
-  maxFileSize={10_000_000}
-  name="attachments"
-/>`;
+function Example() {
+  return (
+    <FileUpload
+      label="Adjuntos"
+      maxFiles={3}
+      maxFileSize={10_000_000}
+      name="attachments"
+    />
+  );
+}`;
 ---
 
 <Base
@@ -57,19 +62,23 @@ const react = `import { FileUpload } from "@skryensya/react/file-upload";
   <h1>FileUpload</h1>
   <p class="lede">Selection and drag-and-drop with limits, rejection and file list.</p>
 
-  <h2>Installation</h2>
+  <h2>Facility</h2>
   <Showcase
     html={html}
     js={js}
     react={react}
     label="FileUpload"
     viewport="auto"
-  />
+  >
+    <Fragment slot="react">
+      <FileUploadBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Contrato</h2>
-  <p>Vanilla issues sk-file-change and never invents a remote upload. React exposes accepted and rejected files.</p>
+  <h2>Contract</h2>
+  <p>Vanilla issues sk-file-change and never invents a remote load. React exposes accepted and rejected files.</p>
 
-  <h2>Accesibilidad</h2>
+  <h2>Accessibility</h2>
   <p>Actual input remains available for forms and assistive technology; the dropzone does not replace it.</p>
 
   <h2>CSS</h2>

@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import "@skryensya/core/components/popover.css";
+import { PopoverDemo } from "../../components/react-demos/popover";
 
 const install = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/popover.css";`;
@@ -44,14 +45,18 @@ const react = `import { Popover } from "@skryensya/react/popover";
 
 // \`arrow\` es lo mismo que autorar <span className="sk-anchored-arrow" /> dentro
 // del positioner: opcional en los dos bindings, y off por defecto.
-<Popover
-  title="Ada Lovelace"
-  description="Matemática y escritora."
-  trigger="Ver perfil"
-  arrow
->
-  <a href="/personas/ada">Abrir perfil</a>
-</Popover>`;
+function Example() {
+  return (
+    <Popover
+      title="Ada Lovelace"
+      description="Matemática y escritora."
+      trigger="Ver perfil"
+      arrow
+    >
+      <a href="/personas/ada">Abrir perfil</a>
+    </Popover>
+  );
+}`;
 ---
 
 <Base
@@ -68,7 +73,11 @@ const react = `import { Popover } from "@skryensya/react/popover";
     react={react}
     label="Popover"
     viewport="overlay"
-  />
+  >
+    <Fragment slot="react">
+      <PopoverDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Contrato</h2>
   <p>Popover describe contenido auxiliar rico. Menu contiene acciones; Tooltip solo una descripción corta.</p>

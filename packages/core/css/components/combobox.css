@@ -179,7 +179,16 @@
    *
    * Debajo y con los bordes de inicio alineados, como el select: la lista de resultados es la
    * continuación del campo, no una caja que flota cerca. */
+  /* Redeclarado, no duplicado: React portea el positioner al `<body>`, así que lo que declara
+   * `.sk-combobox` no le llega por herencia y cada hook que se lea de acá para abajo resuelve vacío
+   * (un `padding` vacío es `0`). Ver la nota equivalente en `select.css`. */
   .sk-combobox__positioner {
+    --sk-combobox-content-bg: var(--color-bg-surface-raised);
+    --sk-combobox-content-border-color: var(--color-border-subtle);
+    --sk-combobox-content-radius: var(--radius-surface);
+    --sk-combobox-content-max-block-size: 18rem;
+    --sk-combobox-item-padding: var(--space-inset-xs) var(--space-inset-sm);
+
     --sk-anchored-position-area: block-end span-inline-end;
     --sk-anchored-justify: start;
     --sk-anchored-align: auto;

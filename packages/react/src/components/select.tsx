@@ -2,7 +2,7 @@ import { selectParts, type SelectOption, type SelectOptions } from "@skryensya/c
 import { select } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
 import { useMemo, useId, type ReactNode } from "react";
-import { anchored } from "./anchored.js";
+import { useAnchored } from "./anchored.js";
 
 export type SelectProps = Omit<SelectOptions, "options"> & {
   label?: ReactNode;
@@ -54,7 +54,7 @@ export function Select({
   });
   const api = select.connect(service, normalizeProps);
 
-  const anchor = anchored(id ?? generatedId);
+  const anchor = useAnchored(id ?? generatedId);
 
   return (
     <div {...api.getRootProps()} className={selectParts.root}>

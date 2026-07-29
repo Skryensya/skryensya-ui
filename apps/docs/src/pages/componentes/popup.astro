@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import "@skryensya/core/components/popover.css";
+import { PopupDemo } from "../../components/react-demos/popup";
 
 const install = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/popover.css";`;
@@ -30,11 +31,15 @@ const react = `import { Popup } from "@skryensya/react/popup";
 
 // \`arrow\` es lo mismo que autorar <span className="sk-anchored-arrow" /> dentro
 // del positioner: opcional en los dos bindings, y off por defecto.
-<Popup trigger="Filtros" arrow>
-  <label>
-    <input type="checkbox" /> Solo activos
-  </label>
-</Popup>`;
+function Example() {
+  return (
+    <Popup trigger="Filtros" arrow>
+      <label>
+        <input type="checkbox" /> Solo activos
+      </label>
+    </Popup>
+  );
+}`;
 ---
 
 <Base
@@ -50,7 +55,11 @@ const react = `import { Popup } from "@skryensya/react/popup";
     react={react}
     label="Popup"
     viewport="menu"
-  />
+  >
+    <Fragment slot="react">
+      <PopupDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Contrato</h2>
   <p>Popup aporta ancla y superficie, no semántica interna. Si el patrón tiene título y acciones de cierre, usa Popover.</p>

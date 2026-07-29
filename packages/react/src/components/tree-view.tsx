@@ -38,7 +38,8 @@ function NodeView({
   if (state.isBranch) {
     return (
       <li {...api.getBranchProps(nodeProps)} className={treeViewParts.branch}>
-        <div
+        <button
+          type="button"
           {...api.getBranchControlProps(nodeProps)}
           className={`${treeViewParts.branchControl} sk-interactive`}
         >
@@ -55,7 +56,7 @@ function NodeView({
           >
             {node.label}
           </span>
-        </div>
+        </button>
         <ul
           {...api.getBranchContentProps(nodeProps)}
           className={treeViewParts.branchContent}

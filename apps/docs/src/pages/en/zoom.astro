@@ -65,32 +65,27 @@ for (const route of routes) {
   title="Zoom y reflow"
   description="Text at 200% and reflow at 400% without loss of content, controls or functionality."
 >
-  <h1>Zoom y reflow</h1>
+  <h1>Zoom and reflow</h1>
   <p class="lede">
-    Zoom is not a visual preference or media query. It is a transformation of the viewport and the
-    readable size: content should wrap, columns should stack, and all controls
-    They must remain available. The interface changes geometry, not capabilities.
+    Zoom is not a visual preference or media query. It is a transformation of the viewport and the readable size: the content must wrap, the columns must stack, and all controls must remain available. The interface changes geometry, not capabilities.
   </p>
 
   <div class="sk-alert" data-tone="info" data-presentation="accent">
     <div class="sk-alert__content">
       <p>
-        <strong>200% and 400% prove different contracts.</strong> At 200% it is verified that the text
-        can grow without losing content or functionality. At 400% reflow is checked: a viewport of
-        1280px is equivalent to <strong>320 CSS px</strong> and the page must be readable in one
-        direction.
+        <strong>200% and 400% test different contracts. </strong> At 200% it is verified that the text can grow without losing content or functionality. At 400% reflow is checked: a 1280px viewport is equivalent to <strong>320 CSS px</strong> and the page must be readable in only one direction.
       </p>
     </div>
   </div>
 
-  <h2>Dos pruebas, dos fallos posibles</h2>
+  <h2>Two tests, two possible failures</h2>
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead>
         <tr>
           <th>Prueba</th>
-          <th>What does it require?</th>
-          <th>Typical fault</th>
+          <th>What it requires</th>
+          <th>Typical failure</th>
         </tr>
       </thead>
       <tbody>
@@ -108,11 +103,9 @@ for (const route of routes) {
     </table>
   </div>
 
-  <h2>The layout retains capacity</h2>
+  <h2>Layout retains capacity</h2>
   <p>
-    This sample uses the same rule as a real card list. In wide width it has three
-    columns; in the equivalent of 400% it converges into one. No card disappears or changes
-    order.
+    This sample uses the same rule as a real card list. In wide width it has three columns; in the equivalent of 400% it converges into one. No cards disappear or change order.
   </p>
 
   <figure class="reflow-specimen">
@@ -130,12 +123,11 @@ for (const route of routes) {
       <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="md">
         <span class="reflow-specimen__index">03</span>
         <strong>Orden</strong>
-        <p>The DOM maintains a coherent reading sequence.</p>
+        <p>The DOM maintains a consistent reading sequence.</p>
       </article>
     </div>
     <figcaption>
-      The grid does not need a breakpoint per device: <code>auto-fit</code> responds to space
-      available and <code>min(100%, 18rem)</code> prevents a column from imposing overflow.
+      The grid does not need a breakpoint per device: <code>auto-fit</code> responds to available space and <code>min(100%, 18rem)</code> prevents a column from imposing overflow.
     </figcaption>
   </figure>
 
@@ -143,30 +135,26 @@ for (const route of routes) {
 
   <h2>Implementation rules</h2>
 
-  <h3>Let the text grow and a half</h3>
+  <h3>Let text and media grow</h3>
   <p>
-    Avoid fixed heights in boxes with contents. Images and video are limited to the available width without
-    deform its proportion.
+    Avoid fixed heights in boxes with content. Images and video are limited to the available width without distorting their proportion.
   </p>
   <CodeBlock code={mediaCss} label="CSS · flexible content" />
 
   <h3>Horizontal scrolling is local, not global</h3>
   <p>
-    Data tables, code, maps and diagrams may require two dimensions. The scroll belongs
-    to that component; the title, the explanation and the rest of the page continue to reflow.
+    Data tables, code, maps and diagrams may require two dimensions. The scroll belongs to that component; the title, the explanation and the rest of the page continue to reflow.
   </p>
   <CodeBlock code={localScrollCss} label="CSS · overflow local" />
 
-  <h2>How to guarantee it in your system</h2>
+  <h2>How to ensure it in your system</h2>
 
   <h3>1. Make the container decide</h3>
   <p>
-    A component should not know the width of the device. Give it a flexible width, allow
-    its children shrink with <code>min-inline-size: 0</code> and let the container change columns,
-    wrapping or distribution according to the real space.
+    A component should not know the width of the device. Give it a flexible width, allow its children to shrink with <code>min-inline-size: 0</code>, and let the container change columns, wrapping, or layout based on actual space.
   </p>
 
-  <h3>2. Define a reflow contract per component</h3>
+  <h3>2. Defines one reflow contract per component</h3>
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead>
@@ -178,19 +166,19 @@ for (const route of routes) {
       <tbody>
         <tr>
           <td>Text, Alert, Tile, Card</td>
-          <td>automatic height; labels and content can wrap.</td>
+          <td>Automatic height; labels and content can wrap.</td>
         </tr>
         <tr>
           <td>Navbar y toolbar</td>
-          <td>Actions wrap, change rows or move to an accessible menu.</td>
+          <td>Actions wrap, change rows, or move to an accessible menu.</td>
         </tr>
         <tr>
           <td>Dialog, Drawer y popover</td>
-          <td>They fit into the viewport; The bodysuit has internal scrolling if necessary.</td>
+          <td>Head into the viewport; The bodysuit has internal scrolling if necessary.</td>
         </tr>
         <tr>
           <td>Grid y Stack</td>
-          <td>The columns converge without changing the order of the DOM.</td>
+          <td>Columns converge without changing the order of the DOM.</td>
         </tr>
         <tr>
           <td>Table, code, map</td>
@@ -200,28 +188,24 @@ for (const route of routes) {
     </table>
   </div>
 
-  <h3>3. Audit all routes</h3>
+  <h3>3. Audit all paths</h3>
   <p>
-    Runs an array with each path and the effective widths of 200% and 400%. This test detects
-    global overflow automatically; adds to each flow its essential interactions because a
-    Visible interface may still have lost functionality.
+    Run a matrix with each path and the effective widths of 200% and 400%. This test detects global overflow automatically; It adds to each flow its essential interactions because a visible interface may still have lost functionality.
   </p>
   <CodeBlock code={auditTs} label="Playwright reflow matrix" lang="ts" />
 
-  <h3>4. End with real zoom</h3>
+  <h3>4. Finish with real zoom</h3>
   <p>
-    An automated narrow viewport tests the geometry, but is not a substitute for final review:
-    Open the browser at 200% and 400%, scroll through the page with the keyboard and try menus, dialogs,
-    tooltips, validations and states with long content.
+    An automated narrow viewport tests the geometry, but does not replace the final review: open the browser at 200% and 400%, navigate the page with the keyboard and test menus, dialogs, tooltips, validations and states with long content.
   </p>
 
-  <h2>What breaks with zoom</h2>
+  <h2>What breaks with fixed zoom</h2>
   <ul>
-    <li>Fixed <code>width</code> or <code>min-width</code> greater than the effective viewport.</li>
+    <li><code>width</code> or <code>min-width</code> larger than the effective viewport.</li>
     <li><code>height</code> fixed on buttons, cards, alerts or fields with text.</li>
-    <li><code>white-space: nowrap</code> on labels that do not have a responsive output.</li>
+    <li><code>white-space: nowrap</code> in labels that do not have a responsive output.</li>
     <li>Toolbars that hide actions instead of wrapping or rearranging them.</li>
-    <li>Content positioned with physical offsets that stops participating in the flow.</li>
+    <li>Positioned content with physical offsets that stops participating in the flow.</li>
     <li><code>overflow: hidden</code> used to hide the symptom instead of fixing the width.</li>
   </ul>
 
@@ -240,18 +224,18 @@ for (const route of routes) {
       Menu, search, palette, theme and contrast remain visible and operable.
     </li>
     <li>
-      Code blocks and tables contain their own overflow when they need it.
+      Code blocks and tables contain their own overflow when needed.
     </li>
   </ul>
 
   <h2>Checklist</h2>
   <ul>
-    <li>Test 200% text, not just a mobile viewport.</li>
-    <li>Try 400% from 1280px or directly to 320 CSS px.</li>
+    <li>Test text at 200%, not just a mobile viewport.</li>
+    <li>Test 400% from 1280px or directly to 320 CSS px.</li>
     <li>Read the entire page using only vertical scrolling.</li>
-    <li>Open menus, dialogs and popovers; visible does not mean operable.</li>
+    <li>Opens menus, dialogs and popovers; visible does not mean operable.</li>
     <li>Change theme and preferences to detect overlapping controls.</li>
-    <li>Confirm that focus and reading order follow the visual order.</li>
+    <li>Confirms that focus and reading order follow the visual order.</li>
   </ul>
 
   <p>

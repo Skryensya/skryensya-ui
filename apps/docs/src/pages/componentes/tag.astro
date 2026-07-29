@@ -3,68 +3,77 @@ import "@skryensya/core/components/tag.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import { TagDemo } from "../../components/react-demos/tag";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<span class="sk-tag">
-  <span class="sk-tag__label">diseño</span>
-</span>
-<span class="sk-tag" data-tone="accent">
-  <span class="sk-tag__label">tokens</span>
-</span>
-<span class="sk-tag" data-tone="success">
-  <span class="sk-tag__label">activo</span>
-</span>
-<span class="sk-tag" data-tone="warning">
-  <span class="sk-tag__label">beta</span>
-</span>
-<span class="sk-tag" data-tone="danger">
-  <span class="sk-tag__label">deprecado</span>
-</span>
-<span class="sk-tag" data-tone="accent">
-  <span class="sk-tag__label">react</span>
-  <button
-    class="sk-button sk-interactive sk-tag__remove"
-    type="button"
-    data-variant="ghost"
-    data-size="sm"
-    data-icon-only
-    aria-label="Quitar react"
-  >
-    <span data-sk-icon="close"></span>
-  </button>
-</span>
-<span class="sk-tag">
-  <span class="sk-tag__label">frontend</span>
-  <button
-    class="sk-button sk-interactive sk-tag__remove"
-    type="button"
-    data-variant="ghost"
-    data-size="sm"
-    data-icon-only
-    aria-label="Quitar frontend"
-  >
-    <span data-sk-icon="close"></span>
-  </button>
-</span>`;
+const html = `<div class="sk-inline">
+  <span class="sk-tag">
+    <span class="sk-tag__label">diseño</span>
+  </span>
+  <span class="sk-tag" data-tone="accent">
+    <span class="sk-tag__label">tokens</span>
+  </span>
+  <span class="sk-tag" data-tone="success">
+    <span class="sk-tag__label">activo</span>
+  </span>
+  <span class="sk-tag" data-tone="warning">
+    <span class="sk-tag__label">beta</span>
+  </span>
+  <span class="sk-tag" data-tone="danger">
+    <span class="sk-tag__label">deprecado</span>
+  </span>
+  <span class="sk-tag" data-tone="accent">
+    <span class="sk-tag__label">react</span>
+    <button
+      class="sk-button sk-interactive sk-tag__remove"
+      type="button"
+      data-variant="ghost"
+      data-size="sm"
+      data-icon-only
+      aria-label="Quitar react"
+    >
+      <span data-sk-icon="close"></span>
+    </button>
+  </span>
+  <span class="sk-tag">
+    <span class="sk-tag__label">frontend</span>
+    <button
+      class="sk-button sk-interactive sk-tag__remove"
+      type="button"
+      data-variant="ghost"
+      data-size="sm"
+      data-icon-only
+      aria-label="Quitar frontend"
+    >
+      <span data-sk-icon="close"></span>
+    </button>
+  </span>
+</div>`;
 
 const react = `import { Tag } from "@skryensya/react/tag";
 
-<Tag>diseño</Tag>
-<Tag tone="accent">tokens</Tag>
-<Tag tone="success">activo</Tag>
-<Tag tone="warning">beta</Tag>
-<Tag tone="danger">deprecado</Tag>
-<Tag
-  tone="accent"
-  onRemove={() => remove("react")}
-  removeLabel="Quitar react"
->
-  react
-</Tag>
-<Tag onRemove={() => remove("frontend")} removeLabel="Quitar frontend">
-  frontend
-</Tag>;`;
+function Example() {
+  return (
+    <div className="sk-inline">
+      <Tag>diseño</Tag>
+      <Tag tone="accent">tokens</Tag>
+      <Tag tone="success">activo</Tag>
+      <Tag tone="warning">beta</Tag>
+      <Tag tone="danger">deprecado</Tag>
+      <Tag
+        tone="accent"
+        onRemove={SomeFunction}
+        removeLabel="Quitar react"
+      >
+        react
+      </Tag>
+      <Tag onRemove={SomeFunction} removeLabel="Quitar frontend">
+        frontend
+      </Tag>
+    </div>
+  );
+}`;
 ---
 
 <Base title="Tag" description="Tag: chip de palabra clave opcionalmente removible, con tonos y componente React.">
@@ -75,7 +84,11 @@ const react = `import { Tag } from "@skryensya/react/tag";
     cuadrado (radio de control, no píldora) para leerse como accionable, y puede llevar un botón de quitar.
   </p>
 
-  <Showcase html={html} react={react} label="Tag" />
+  <Showcase html={html} react={react} label="Tag">
+    <Fragment slot="react">
+      <TagDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
     Cuando es removible, la etiqueta y el botón de quitar son dos objetivos distintos: el nombre
     accesible del control nombra el tag que remueve.

@@ -1,0 +1,10 @@
+# La estructura vive en packages/core/src/slider.ts. Acá sólo por qué se elige.
+
+Slider:
+  useWhen:
+    - "el valor es aproximado y verlo moverse ayuda: volumen, brillo, un rango de precio"
+  avoidWhen:
+    - "hace falta precisión; ahí un campo numérico se escribe más rápido"
+    - "son opciones discretas y pocas; eso es un RadioGroup o un Segmented"
+  alternatives:
+    - Segmented

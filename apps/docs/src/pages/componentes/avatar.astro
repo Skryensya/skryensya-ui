@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import { AvatarDemo } from "../../components/react-demos/avatar";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -23,7 +24,8 @@ const ON_ACCENT_HEX = "ffffff";
 const demoSrc = (initials: string) =>
   `https://dummyimage.com/160/${ACCENT_HEX}/${ON_ACCENT_HEX}?text=${initials}`;
 
-const html = `<span class="sk-avatar" data-size="sm">
+const html = `<div class="sk-inline">
+<span class="sk-avatar" data-size="sm">
   <span
     class="sk-image-frame"
     data-aspect="1/1"
@@ -108,6 +110,7 @@ const html = `<span class="sk-avatar" data-size="sm">
     <span class="sk-avatar__fallback" aria-hidden="true">GH</span>
   </span>
   <span class="sk-avatar-group__overflow">+8</span>
+</div>
 </div>`;
 
 const react = `import {
@@ -115,35 +118,41 @@ const react = `import {
   AvatarGroup,
 } from "@skryensya/react/avatar";
 
-<Avatar
-  name="Ada Lovelace"
-  size="sm"
-  src="${demoSrc("AL")}"
-/>
-<Avatar
-  name="Alan Turing"
-  src="${demoSrc("AT")}"
-/>
-<Avatar
-  name="Grace Hopper"
-  size="lg"
-  src="${demoSrc("GH")}"
-/>
+function Example() {
+  return (
+    <div className="sk-inline">
+      <Avatar
+        name="Ada Lovelace"
+        size="sm"
+        src="${demoSrc("AL")}"
+      />
+      <Avatar
+        name="Alan Turing"
+        src="${demoSrc("AT")}"
+      />
+      <Avatar
+        name="Grace Hopper"
+        size="lg"
+        src="${demoSrc("GH")}"
+      />
 
-<Avatar name="Ada Lovelace" size="sm" />
-<Avatar name="Alan Turing" />
-<Avatar name="Grace Hopper" size="lg" />
+      <Avatar name="Ada Lovelace" size="sm" />
+      <Avatar name="Alan Turing" />
+      <Avatar name="Grace Hopper" size="lg" />
 
-<AvatarGroup max={3}>
-  <Avatar
-    name="Ada Lovelace"
-    src="${demoSrc("AL")}"
-  />
-  <Avatar name="Alan Turing" />
-  <Avatar name="Grace Hopper" />
-  <Avatar name="Raúl G" />
-  {/* …8 más → colapsan en +8 */}
-</AvatarGroup>;`;
+      <AvatarGroup max={3}>
+        <Avatar
+          name="Ada Lovelace"
+          src="${demoSrc("AL")}"
+        />
+        <Avatar name="Alan Turing" />
+        <Avatar name="Grace Hopper" />
+        <Avatar name="Raúl G" />
+        {/* …8 más → colapsan en +8 */}
+      </AvatarGroup>
+    </div>
+  );
+}`;
 
 /*
  * Repaint the placeholders in the accent the reader is actually looking at.
@@ -220,7 +229,11 @@ window.addEventListener("pagehide", () => observer.disconnect(), { once: true })
     excedente en un contador «+N».
   </p>
 
-  <Showcase html={html} react={react} previewScript={previewScript} label="Avatar" />
+  <Showcase html={html} react={react} previewScript={previewScript} label="Avatar">
+    <Fragment slot="react">
+      <AvatarDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
     Con imagen, el avatar anida <code>sk-image-frame</code> y el
     <code>&lt;img alt&gt;</code> aporta la semántica. Sin ella, el contenedor toma

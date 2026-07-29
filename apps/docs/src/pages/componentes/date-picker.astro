@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { DatePickerCustomDemo, DatePickerDisabledDemo } from "../../components/react-demos/date-picker";
 import "@skryensya/core/components/date-picker.css";
 
 const install = `@import "@skryensya/core/patterns/anchored.css";
@@ -63,14 +64,52 @@ const customHtml = `<div
 
 const react = `import { DatePicker } from "@skryensya/react/date-picker";
 
-<DatePicker
-  label="Reserva"
-  locale="es-DO"
-  name="checkin"
-  placeholder="dd/mm/aaaa"
-  selectionMode="single"
-  timeZone="America/Santo_Domingo"
-/>`;
+function Example() {
+  return (
+    <DatePicker
+      label="Reserva"
+      locale="es-DO"
+      name="checkin"
+      placeholder="dd/mm/aaaa"
+      selectionMode="single"
+      timeZone="America/Santo_Domingo"
+    />
+  );
+}`;
+
+const disabledHtml = `<div
+  class="sk-date-picker"
+  data-sk-date-picker
+  data-disabled
+  data-locale="es-DO"
+>
+  <label class="sk-date-picker__label" data-sk-date-picker-label>Reserva</label>
+  <div class="sk-date-picker__control sk-anchor" data-sk-date-picker-control>
+    <input
+      class="sk-date-picker__input"
+      data-sk-date-picker-input
+      placeholder="dd/mm/aaaa"
+    />
+    <button
+      class="sk-date-picker__trigger sk-button sk-interactive"
+      data-sk-button
+      data-sk-date-picker-trigger
+      data-icon-only
+      data-size="sm"
+      data-variant="ghost"
+      type="button"
+      aria-label="Abrir calendario"
+    >
+      <span data-sk-icon="calendar"></span>
+    </button>
+  </div>
+</div>`;
+
+const disabledReact = `import { DatePicker } from "@skryensya/react/date-picker";
+
+function Example() {
+  return <DatePicker label="Reserva" locale="es-DO" placeholder="dd/mm/aaaa" disabled />;
+}`;
 ---
 
 <Base
@@ -95,7 +134,28 @@ const react = `import { DatePicker } from "@skryensya/react/date-picker";
   <h2>Custom</h2>
   <p>El campo custom y su calendario emergente viven en una demostración independiente.</p>
   {/* `overlay` (~24rem): el calendario reserva la altura de sus seis filas dentro del frame. */}
-  <Showcase html={customHtml} react={react} label="DatePicker custom" viewport="overlay" />
+  <Showcase html={customHtml} react={react} label="DatePicker custom" viewport="overlay">
+    <Fragment slot="react">
+      <DatePickerCustomDemo client:load />
+    </Fragment>
+  </Showcase>
+
+  <h2>Disabled</h2>
+  <p>
+    <code>data-disabled</code> en la raíz configura la máquina y Zag reparte el estado solo:
+    <code>data-disabled</code> en <code>sk-date-picker__control</code>, y un <code>disabled</code>
+    nativo en el input y en el trigger. Pero cada uno de esos tres leía su color/fondo/borde desde un
+    hook (<code>--sk-date-picker-fg</code>/<code>-bg</code>/<code>-border-color</code>) declarado sin
+    condición, así que deshabilitar el campo no cambiaba nada de lo que esos hooks resolvían — el campo
+    seguía leyéndose interactivo. La regla vive ahora en un solo lugar,
+    <code>.sk-date-picker__control[data-disabled]</code>, que reescribe esos tres hooks: el input y el
+    trigger los heredan sin reglas propias.
+  </p>
+  <Showcase html={disabledHtml} react={disabledReact} label="DatePicker (disabled)">
+    <Fragment slot="react">
+      <DatePickerDisabledDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Cuál usar</h2>
   <p>

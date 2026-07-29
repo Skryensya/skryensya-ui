@@ -30,7 +30,9 @@ export function Breadcrumb({
                   {item.label}
                 </a>
               ) : (
-                <span aria-current={current ? "page" : undefined}>
+                // The CSS styles `.sk-breadcrumb__current`; without the class the page you are on
+                // was the one crumb that never got its own styling.
+                <span aria-current={current ? "page" : undefined} className={breadcrumbParts.current}>
                   {item.label}
                 </span>
               )}

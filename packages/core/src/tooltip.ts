@@ -1,3 +1,5 @@
+import type { ComponentContract } from "./contract.js";
+
 /*
  * TOOLTIP, el contrato.
  *
@@ -121,3 +123,61 @@ export const tooltipAttrs = {
 
 export type TooltipAttr = keyof typeof tooltipAttrs;
 export type TooltipAttrName = (typeof tooltipAttrs)[TooltipAttr];
+
+/*
+ * A hint that expands a control's own name — never replaces it. Wired as `aria-describedby`, so the
+ * control must already be named: a tooltip that IS the name disappears for anyone who never hovers.
+ *
+ * `portals` is the honest part. React portals the floating content out of the subtree so an ancestor
+ * with `overflow: hidden` cannot clip it; authored markup keeps the positioner in place and lets CSS
+ * anchoring position it (decision 25). Two strategies for one job — declared here so a consumer can
+ * scope the portal, and so the symmetry gate knows to look inside one container rather than two.
+ */
+export const tooltipContract = {
+  id: "tooltip",
+  css: "@skryensya/core/components/tooltip.css",
+  parts: tooltipParts,
+
+  options: {
+    placement: {
+      type: "enum",
+      values: ["block-start", "block-end", "inline-start", "inline-end"],
+      default: "block-end",
+      attr: "data-sk-placement",
+    },
+  },
+
+  signatures: {
+    Tooltip: {
+      intent: ["hint", "expand-a-control-name", "explain-an-icon-button"],
+      host: { element: "span" },
+      options: ["placement"],
+      portals: true,
+      slots: {
+        /** The control being described. It carries its own accessible name. */
+        children: { accepts: "signature", required: true },
+        /** The hint. Short — it is a description, not documentation. */
+        content: { accepts: "text", required: true },
+      },
+      template: {
+        element: "span",
+        part: "root",
+        host: true,
+        attrs: { "data-sk-anchor": "" },
+        children: [
+          { slot: "children" },
+          {
+            element: "span",
+            part: "positioner",
+            also: ["sk-anchored"],
+            attrs: { "data-sk-anchor-positioner": "" },
+            children: [
+              { element: "span", part: "content", attrs: { role: "tooltip" }, slot: "content" },
+            ],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/tooltip", name: "Tooltip" },
+    },
+  },
+} as const satisfies ComponentContract;

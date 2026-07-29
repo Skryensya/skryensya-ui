@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import { PrimitivesOverviewDemo } from "../../components/react-demos/layout";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -60,34 +61,40 @@ const html = `<div class="sk-stack" data-gap="lg">
 const react = `import { Box, Grid, Inline, Stack } from "@skryensya/react/layout";
 import { Heading, Link, Text } from "@skryensya/react/typography";
 
-<Box as="section" surface="raised" border="subtle" padding="lg">
-  <Stack gap="md">
-    <Heading as="h2" size="sm">
-      Resumen
-    </Heading>
-    <Text tone="secondary">
-      Un bloque con espaciado, superficie y jerarquía.
-    </Text>
-    <Inline gap="sm" align="baseline">
-      <Link href="/detalles">Ver detalles</Link>
-      <Text as="span" size="caption">
-        Actualizado hoy
-      </Text>
-    </Inline>
-  </Stack>
-</Box>
+function Example() {
+  return (
+    <>
+      <Box as="section" surface="raised" border="subtle" padding="lg">
+        <Stack gap="md">
+          <Heading as="h2" size="sm">
+            Resumen
+          </Heading>
+          <Text tone="secondary">
+            Un bloque con espaciado, superficie y jerarquía.
+          </Text>
+          <Inline gap="sm" align="baseline">
+            <Link href="/detalles">Ver detalles</Link>
+            <Text as="span" size="caption">
+              Actualizado hoy
+            </Text>
+          </Inline>
+        </Stack>
+      </Box>
 
-<Grid columns={3} gap="md">
-  <Box surface="surface" padding="md">
-    Uno
-  </Box>
-  <Box surface="surface" padding="md">
-    Dos
-  </Box>
-  <Box surface="surface" padding="md">
-    Tres
-  </Box>
-</Grid>;`;
+      <Grid columns={3} gap="md">
+        <Box surface="surface" padding="md">
+          Uno
+        </Box>
+        <Box surface="surface" padding="md">
+          Dos
+        </Box>
+        <Box surface="surface" padding="md">
+          Tres
+        </Box>
+      </Grid>
+    </>
+  );
+}`;
 ---
 
 <Base title="Primitivas" description="Primitivas de layout y tipografía: estructura reutilizable, roles de lectura y adapters React.">
@@ -97,7 +104,11 @@ import { Heading, Link, Text } from "@skryensya/react/typography";
     no reemplazan la semántica: eliges el elemento que corresponde al contenido.
   </p>
 
-  <Showcase html={html} react={react} label="Primitivas" />
+  <Showcase html={html} react={react} label="Primitivas">
+    <Fragment slot="react">
+      <PrimitivesOverviewDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>HTML autorado</h2>
   <p>

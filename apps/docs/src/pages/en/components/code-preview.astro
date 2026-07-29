@@ -38,34 +38,28 @@ const example = `const registrations = [
 
 <Base
   title="CodePreview"
-  description="Preview de código Shiki con resaltado en build/SSR y comportamiento Vanilla opt-in."
+  description="Shiki code preview with build-time SSR highlighting and opt-in Vanilla behavior."
 >
   <h1>CodePreview</h1>
   <p class="lede">
-    Surface for HTML highlighted by Shiki, with copy, condensed/full view and preview
-    long blocks. Shiki finishes his work in build or SSR; the browser receives HTML and just mounts
-    the controls that the document authored.
+    Surface for HTML highlighted by Shiki, with copy, condensed/full view and long block preview. Shiki finishes his work in build or SSR; The browser receives HTML and only mounts the controls that the document authored.
   </p>
 
   <CodeBlock code={example} label="TypeScript" lang="ts" />
   <p>
-    To present this block below the actual render of a component, use
-    <a href="/en/components/component-preview">ComponentPreview</a>.
+    To present this block below the actual render of a component, use <a href="/en/components/component-preview">ComponentPreview</a>.
   </p>
 
-  <h2>Cargo contract</h2>
+  <h2>Load contract</h2>
   <ul>
     <li>
-      <code>@skryensya/core/components/code-preview.css</code> contains the anatomy and consumes the
-      dual variables <code>--shiki-light</code> and <code>--shiki-dark</code>.
+      <code>@skryensya/core/components/code-preview.css</code> contains the anatomy and consumes the dual variables <code>--shiki-light</code> and <code>--shiki-dark</code>.
     </li>
     <li>
-      <code>initComponents()</code> does not know <code>[data-sk-code-preview]</code>. Import the
-      auto-loader never downloads this enhancer.
+      <code>initComponents()</code> does not know <code>[data-sk-code-preview]</code>. Importing the auto-loader never downloads this enhancer.
     </li>
     <li>
-      <code>mountCodePreview()</code> is the only behavioral seam and is idempotent. The
-      highlighted is not part of that runtime.
+      <code>mountCodePreview()</code> is the only behavioral seam and is idempotent. Highlighting is not part of that runtime.
     </li>
   </ul>
 
@@ -76,7 +70,7 @@ const example = `const registrations = [
   <h2>Highlight in build or SSR</h2>
   <CodeBlock code={highlight} label="TypeScript" lang="ts" />
 
-  <h2>Mount explicitly</h2>
+  <h2>Explicitly mount</h2>
   <p>
     Normal components are discovered by selector. CodePreview is mounted in a second deliberate call, so that no application loads a documentation preview by accident.
   </p>

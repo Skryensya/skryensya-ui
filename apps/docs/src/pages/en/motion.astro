@@ -107,9 +107,7 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
   <div class="sk-alert" data-tone="info" data-presentation="accent">
     <div class="sk-alert__content">
     <p>
-      <strong>Motion is not an opt-in pattern.</strong> Lives in <code>primitives.scss</code> and
-      <code>semantic.scss</code>, that is, it comes in the base bundle: if it is imported
-      <code>tokens.scss</code>, is already included. There is nothing to import.
+      <strong>Motion is not an opt-in pattern. </strong> Lives in <code>primitives.scss</code> and <code>semantic.scss</code>, meaning it comes in the base bundle: if <code>tokens.scss</code> is imported, it is already included. There is nothing to import.
     </p>
     </div>
   </div>
@@ -118,15 +116,11 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
 
   <h3>Tier 1, technical values, meaningless</h3>
   <p>
-    Two stops and nothing more: how long it lasts and how it distributes that time. Neither of them says why.
-    It works, so they can both look at each other.
+    Two stops and nothing more: how long it lasts and how it distributes that time. Neither of them says what it is for, so they can both look at each other head on.
   </p>
 
   <p class="howto">
-    <strong>How samples are read.</strong> Each lane is a piece crossing the same distance,
-    animated by the token next to it, not by a hand-copied number: if the primitive is retouched,
-    the sample changes with it. At rest they all start from the same point and only move when you press
-    <em>Play</em>, which leaves them running together until you pause.
+    <strong>How samples are read. </strong> Each lane is a piece crossing the same distance, animated by the token next to it, not by a hand-copied number: if you tweak the primitive, the sample changes with it. At rest they all start from the same point and only move when you press <em>Play</em>, which leaves them running together until you pause.
   </p>
 
   <figure class="specimens" data-motion-group data-motion-specimen>
@@ -146,10 +140,7 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
       }
     </div>
     <p class="specimens__note">
-      They all leave at the same time and cover the same route, so the only difference is the time. They are going to
-      constant speed on purpose: the curve is the other scale, and appears below.
-      <code>instant</code> is worth 0 s, which is the legitimate case of "no transition" within the scale,
-      not the absence of a token.
+      They all leave at the same time and cover the same route, so the only difference is the time. They go at a constant speed on purpose: the curve is the other scale, and it appears further down. <code>instant</code> is worth 0 s, which is the legitimate case of "no transition" within the scale, not the absence of a token.
     </p>
   </figure>
 
@@ -170,10 +161,7 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
       }
     </div>
     <p class="specimens__note">
-      These three are not transitions: they measure <strong>a turn</strong> of something that repeats, a
-      spinner or an indeterminate bar, and that is why your sample spins instead of coming and staying.
-      A loop has no destination, so no component should use one of these to move something.
-      one state to another.
+      These three are not transitions: they measure <strong>a turn</strong> of something that repeats, a spinner or an indeterminate bar, and that is why their sample circles instead of arriving and staying. A loop has no destination, so no component should use one to move something from one state to another.
     </p>
   </figure>
 
@@ -186,18 +174,13 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
       {easings.map(([token, note]) => <EasingCurve token={token} note={note} />)}
     </div>
     <p class="specimens__note">
-      Progress against time on a unit square; the dotted diagonal is the movement without
-      curve. They all last <strong>1 s</strong> so the only thing that changes is the distribution. The roof
-      over the square is common: that is where <code>spring</code> goes over 100% and comes back.
-      Each card plays itself when you press it, without moving the others.
+      Progress against time on a unit square; the dotted diagonal is the movement without a curve. They all last <strong>1 s</strong> so that the only thing that changes is the distribution. The ceiling above the square is common - that is where <code>spring</code> goes over 100% and comes back. Each card plays itself when you press it, without moving the others.
     </p>
   </figure>
 
   <h3>Tier 2, intention</h3>
   <p>
-    Each intention composes <strong>a duration and a curve</strong> of tier 1, and some also a
-    distance. This is the only thing that a component consumes, and it is what is read in the table: the name
-    of the composing primitive, with the value the browser is using below.
+    Each intention composes <strong>a duration and a tier 1</strong> curve, and some also a distance. This is the only thing a component consumes, and it is what is read into the table: the name of the primitive it composes, with the value the browser is using underneath.
   </p>
   <figure class="specimens" data-motion-group data-motion-specimen>
     <figcaption class="specimens__head">
@@ -207,7 +190,7 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
     <table class="sk-table intents">
       <thead>
         <tr>
-          <th>Intent</th>
+          <th>Intention</th>
           <th>Duration</th>
           <th>Easing</th>
           <th>Distancia</th>
@@ -249,51 +232,39 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
       </tbody>
     </table>
     <p class="specimens__note">
-      Samples read the same tokens as a component, so if your system asks for
-      <em>reduced motion</em> these are no longer the durations above: they are the reduced ones, which is
-      just what you would see in the real UI. There the name of the primitive and the value used stop being
-      match on purpose, and that is exactly what the block at the bottom of the page does.
+      Samples read the same tokens as a component, so if your system asks for <em>reduced motion</em> these are no longer the durations above: they are the reduced ones, which is just what you would see in the real UI. There the name of the primitive and the value used stop matching on purpose, and that is exactly what the block at the end of the page does.
     </p>
   </figure>
 
   <h2>The intention is enforced free</h2>
   <p>
-    Since raw durations and easings are tier 1 primitives, the tier-skip rule
-    <strong>already prohibits</strong> for a component to reference a technical value. There was no need for a rule
-    new: the one that already existed for color does the job.
+    Since raw durations and easings are tier 1 primitives, the tier-skip rule <strong>already prohibits</strong> a component from referencing a technical value. There was no need for a new rule: the one that already existed for color does the job.
   </p>
   <CodeBlock code={bad} label="build fails" />
   <CodeBlock code={good} label="woe is consumed" />
   <p>
-    Setting a primitive (<code>fast</code> from 120ms to 100ms) restyles the entire system with zero
-    edits on components or intent tokens. That is the whole point of a semantic API.
+    Adjusting a primitive (<code>fast</code> from 120ms to 100ms) restyles the entire system with zero edits to components or intent tokens. That is the whole point of a semantic API.
   </p>
 
   <h2>Address carries meaning</h2>
   <ul>
     <li>
-      <strong>Entering decelerates</strong> (<code>easing-enter</code>) and travels a distance
-      <code>md</code> until settled.
+      <strong>Entering decelerates</strong> (<code>easing-enter</code>) and travels a distance <code>md</code> until settling.
     </li>
     <li>
-      <strong>Exit accelerates</strong> (<code>easing-exit</code>), lasts less and travels less: an element
-      that it leaves has already been decided, and making the user wait is pure latency.
+      <strong>Exit speeds up</strong> (<code>easing-exit</code>), lasts less and travels less: an element that leaves has already been decided, and making the user wait is pure latency.
     </li>
     <li>
-      <strong>Distance maps hierarchy</strong>: <code>lg</code> for navigation and depth,
-      <code>sm</code> for reveals inline.
+      <strong>Distance maps hierarchy</strong>: <code>lg</code> for navigation and depth, <code>sm</code> for reveals inline.
     </li>
   </ul>
   <p>
-    The springs exist as a primitive but are marked <em>not for critical UI</em>: the overshoot
-    reads as imprecision.
+    The springs exist as a primitive but are marked <em>not for critical UI</em>: overshoot is read as inaccuracy.
   </p>
 
   <h2>Reduced motion is a functional variant, not a switch</h2>
   <p>
-    A <code>@media</code> that sets all durations to zero is the easy solution and is wrong: it does
-    essential changes of state imperceptible. Instead, the same block redefines the
-    same intent tokens <strong>according to their role</strong>:
+    A <code>@media</code> that sets all durations to zero is the easy solution and it is wrong: it makes essential state changes imperceptible. Instead, the same block redefines the same <strong>intent tokens based on their</strong> role:
   </p>
   <CodeBlock code={reduced} label="semantic.scss" />
 
@@ -308,8 +279,7 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
   </table>
 
   <p>
-    Because it redefines tokens that components already consume, <strong>no components change</strong>.
-    The reduction is systemic, not per-component.
+    Because <strong>redefines tokens that components already consume, no components change</strong>. The reduction is systemic, not per-component.
   </p>
 </Base>
 

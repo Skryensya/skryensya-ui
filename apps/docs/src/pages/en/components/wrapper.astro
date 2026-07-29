@@ -56,18 +56,12 @@ const react = `import { Wrapper } from "@skryensya/react/wrapper";
   </Showcase>
 
   <p>
-    Ceilings are stable: density changes spacing and controls, never the maximum width of
-    the column. <code>full</code> centers the same but without putting a roof.
+    Roofs are stable: density changes spacing and controls, never maximum column width. <code>full</code> centers the same but without putting a ceiling.
   </p>
 
   <h2>on this site</h2>
   <p>
-    This documentation wraps itself, with two steps. The header and the three-column shell
-    they both carry <code>data-size="lg"</code> (and the site tunes the ceiling to an eigenvalue), so a
-    single number keeps its edges aligned. The column you are reading is
-    <code>md</code>: the <code>&lt;main&gt;</code> carries <code>data-size="md"</code> and its roof is the
-    token, not a copied number. And a full screen tool, like the configurator, releases
-    the wrapper of everything.
+    This documentation wraps itself, with two steps. The header and three-column shell both carry <code>data-size="lg"</code> (and the site tunes the ceiling to its own value), so a single number keeps its edges aligned. The column you are reading is <code>md</code>: the <code>&lt;main&gt;</code> carries <code>data-size="md"</code> and its ceiling is the token, not a copied number. And a full-screen tool, like the configurator, drops the wrapper altogether.
   </p>
 
   <h2>Install</h2>
@@ -76,20 +70,17 @@ const react = `import { Wrapper } from "@skryensya/react/wrapper";
   <h2>React</h2>
   <p>The code is in the <strong>React</strong> tab of the preview.</p>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
-    <li>In HTML, add <code>sk-wrapper</code> to the element that delimits the column.</li>
+    <li>In HTML, add <code>sk-wrapper</code> to the element delimiting the column.</li>
     <li>
-      <code>data-size</code> accepts <code>sm</code>, <code>md</code> (default), <code>lg</code> or
-      <code>full</code> (no roof).
+      <code>data-size</code> accepts <code>sm</code>, <code>md</code> (default), <code>lg</code> or <code>full</code> (no roof).
     </li>
     <li>
-      The ceilings are tier 2 tokens: <code>--size-wrapper-sm</code>,
-      <code>--size-wrapper-md</code>, <code>--size-wrapper-lg</code>.
+      The ceilings are tier 2 tokens: <code>--size-wrapper-sm</code>, <code>--size-wrapper-md</code>, <code>--size-wrapper-lg</code>.
     </li>
     <li>
-      The only hook that a consumer tunes is <code>--sk-wrapper-max</code>, to a width that the
-      scale still does not name, without reimplementing centering or padding.
+      The only hook that a consumer tunes is <code>--sk-wrapper-max</code>, for a width that the scale does not yet name, without reimplementing centering or padding.
     </li>
   </ul>
 </Base>

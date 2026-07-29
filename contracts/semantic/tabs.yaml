@@ -1,0 +1,14 @@
+# La estructura vive en packages/core/src/tabs.ts. Acá sólo por qué se elige.
+
+Tabs:
+  useWhen:
+    - varias secciones comparten una región y sólo una se ve a la vez
+    - el contenido es hermano, no una jerarquía — todas las pestañas están al mismo nivel
+    - el usuario alterna entre vistas del mismo objeto (resumen, actividad, ajustes)
+  avoidWhen:
+    - el contenido de cada sección es largo y el usuario querría verlo todo junto — eso es un
+      Accordion o una página con secciones
+    - cada pestaña navega a otra URL — eso es un NavList
+    - hay una sola sección; una pestaña sola no es una elección
+  alternatives:
+    - NavList

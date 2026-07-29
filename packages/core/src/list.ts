@@ -1,3 +1,5 @@
+import type { ComponentContract } from "./contract.js";
+
 /*
  * LIST, a semantic collection of rows with real anatomy.
  *
@@ -30,3 +32,109 @@ export const listParts = {
 
 export type ListPart = keyof typeof listParts;
 export type ListPartClass = (typeof listParts)[ListPart];
+
+/*
+ * Rows of things, and three ways a row can behave: inert, navigating, or acting.
+ *
+ * The interactive ones put the ANCHOR or the BUTTON around the whole row rather than a link inside
+ * it, so the focus target and the click target are the row itself — which is what a pointer already
+ * suggests and a keyboard otherwise cannot reach.
+ */
+export const listContract = {
+  id: "list",
+  css: "@skryensya/core/components/list.css",
+  parts: listParts,
+
+  options: {
+    /**
+     * Only `compact` means anything: the CSS selects on it and the comfortable default is the bare
+     * class. So this has no default to serialize — writing one would be an attribute nothing reads.
+     */
+    density: { type: "enum", values: ["compact"], attr: "data-density" },
+    /** Dividers are the default; this turns them off, which is why the attribute reads `none`. */
+    dividers: { type: "boolean", default: true, attr: "data-dividers" },
+    href: { type: "string", attr: "href" },
+    disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "" },
+  },
+
+  signatures: {
+    List: {
+      intent: ["rows", "list-of-records", "settings-rows", "inbox"],
+      host: { element: "ul" },
+      options: ["density"],
+      slots: { children: { accepts: "signature", required: true, of: ["ListItem", "ListItemLink"] } },
+      template: { element: "ul", part: "root", host: true, slot: "children" },
+      react: { from: "@skryensya/react/list", name: "List" },
+    },
+
+    ListItem: {
+      intent: ["one-row", "inert-row"],
+      host: { element: "li" },
+      options: ["disabled"],
+      parents: ["List"],
+      slots: {
+        leading: { accepts: "signature", of: ["Icon", "Avatar.initials"] },
+        title: { accepts: "text", required: true },
+        description: { accepts: "text" },
+        trailing: { accepts: "node" },
+      },
+      template: {
+        element: "li",
+        part: "item",
+        host: true,
+        children: [
+          { element: "span", part: "leading", whenGiven: "leading", slot: "leading" },
+          {
+            element: "span",
+            part: "content",
+            children: [
+              { element: "span", part: "title", slot: "title" },
+              { element: "span", part: "description", whenGiven: "description", slot: "description" },
+            ],
+          },
+          { element: "span", part: "trailing", whenGiven: "trailing", slot: "trailing" },
+        ],
+      },
+      react: { from: "@skryensya/react/list", name: "ListItem" },
+    },
+
+    ListItemLink: {
+      intent: ["row-that-navigates", "tappable-row"],
+      host: { element: "a" },
+      options: ["href"],
+      requires: ["href"],
+      parents: ["List"],
+      slots: {
+        leading: { accepts: "signature", of: ["Icon", "Avatar.initials"] },
+        title: { accepts: "text", required: true },
+        description: { accepts: "text" },
+        trailing: { accepts: "node" },
+      },
+      template: {
+        element: "li",
+        part: "item",
+        children: [
+          {
+            element: "a",
+            part: "action",
+            also: ["sk-interactive"],
+            host: true,
+            children: [
+              { element: "span", part: "leading", whenGiven: "leading", slot: "leading" },
+              {
+                element: "span",
+                part: "content",
+                children: [
+                  { element: "span", part: "title", slot: "title" },
+                  { element: "span", part: "description", whenGiven: "description", slot: "description" },
+                ],
+              },
+              { element: "span", part: "trailing", whenGiven: "trailing", slot: "trailing" },
+            ],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/list", name: "ListItemLink" },
+    },
+  },
+} as const satisfies ComponentContract;

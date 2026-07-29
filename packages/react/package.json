@@ -200,6 +200,10 @@
       "types": "./src/components/tile.tsx",
       "default": "./src/components/tile.tsx"
     },
+    "./tile-switch": {
+      "types": "./src/components/tile.tsx",
+      "default": "./src/components/tile.tsx"
+    },
     "./tile-radio-group": {
       "types": "./src/components/tile.tsx",
       "default": "./src/components/tile.tsx"
@@ -257,8 +261,8 @@
       "default": "./src/components/date-picker.tsx"
     },
     "./calendar": {
-      "types": "./src/components/date-picker.tsx",
-      "default": "./src/components/date-picker.tsx"
+      "types": "./src/components/calendar.tsx",
+      "default": "./src/components/calendar.tsx"
     },
     "./empty-state": {
       "types": "./src/components/empty-state.tsx",

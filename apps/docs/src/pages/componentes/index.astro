@@ -1,10 +1,12 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { getLocale, useTranslations } from "../../i18n";
 import { iconMarkup } from "../../icons";
-import { componentNavigation } from "../../lib/navigation";
+import { componentNavigation, componentStatus } from "../../lib/navigation";
 
 const searchIcon = iconMarkup("search");
 const items = componentNavigation.flatMap((group) => group.items);
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base
@@ -39,6 +41,11 @@ const items = componentNavigation.flatMap((group) => group.items);
           <li>
             <a class="docs-catalog__link sk-interactive" href={item.href}>
               {item.label}
+              {componentStatus(item) === "wip" && (
+                <span class="sk-badge" data-tone="warning">
+                  {t("status.wip")}
+                </span>
+              )}
             </a>
           </li>
         ))

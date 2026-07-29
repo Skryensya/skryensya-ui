@@ -1,6 +1,6 @@
 <script lang="ts">
   import { datePicker } from "@skryensya/core/machines";
-  import { calendarParts } from "@skryensya/core/calendar";
+  import { calendarParts, parseCalendarDate } from "@skryensya/core/calendar";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onMount } from "svelte";
   import { applyZagProps, type DomProps } from "../runtime/apply";
@@ -22,6 +22,8 @@
     locale,
     timeZone: root.dataset.timeZone || "UTC",
     selectionMode: (root.dataset.selectionMode === "range" ? "range" : "single") as "single" | "range",
+    min: parseCalendarDate(root.dataset.min),
+    max: parseCalendarDate(root.dataset.max),
     disabled: root.hasAttribute("data-disabled"),
     readOnly: root.hasAttribute("data-readonly"),
     inline: true,

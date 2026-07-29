@@ -1,21 +1,21 @@
 ---
 import Base from "../../../layouts/Base.astro";
+import { getLocale, useTranslations } from "../../../i18n";
 import { iconMarkup } from "../../../icons";
-import { componentNavigation } from "../../../lib/navigation";
+import { componentNavigation, componentStatus } from "../../../lib/navigation";
 
 const searchIcon = iconMarkup("search");
 const items = componentNavigation.flatMap((group) => group.items);
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base
   title="Explorar componentes"
   description="A–Z catalog of system parts: components, patterns and usage primitives."
 >
-  <h1>Explorar componentes</h1>
+  <h1>Explore components</h1>
   <p class="lede">
-    A–Z list. Includes product parts, patterns (scrollbar, vaul, nav list) and the use of
-    <a href="/en/components/icon">Icon</a>. The iconography—roles, sets, rules—lives in
-    <a href="/en/icons">Fundamentals → Iconography</a>.
+    A–Z list. Includes product parts, patterns (scrollbar, vaul, nav list) and the use of <a href="/en/components/icon">Icon</a>. Iconography—roles, sets, rules—lives in <a href="/en/icons">Fundamentals → Iconography</a>.
   </p>
 
   <button
@@ -39,6 +39,11 @@ const items = componentNavigation.flatMap((group) => group.items);
           <li>
             <a class="docs-catalog__link sk-interactive" href={item.href}>
               {item.label}
+              {componentStatus(item) === "wip" && (
+                <span class="sk-badge" data-tone="warning">
+                  {t("status.wip")}
+                </span>
+              )}
             </a>
           </li>
         ))

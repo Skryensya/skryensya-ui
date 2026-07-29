@@ -1,0 +1,12 @@
+# La estructura vive en packages/core/src/selection.ts. Acá sólo por qué se elige.
+
+Checkbox:
+  useWhen:
+    - "una decisión de sí o no que se envía con el formulario"
+    - "varias opciones independientes donde cada una se marca por su cuenta"
+    - "aceptar términos, suscribirse, activar una preferencia que se guarda al enviar"
+  avoidWhen:
+    - "el cambio surte efecto de inmediato, sin enviar nada; eso es un Switch"
+    - "se elige UNA opción de un conjunto; eso es un RadioGroup"
+  alternatives:
+    - Switch

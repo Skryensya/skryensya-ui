@@ -6,9 +6,9 @@ import {
 } from "@skryensya/core/tooltip";
 import { tooltip } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
-import { useId, type ReactNode } from "react";
+import { useId, type ReactNode, type RefObject } from "react";
 import { anchoredParts } from "@skryensya/core/anchored";
-import { anchored } from "./anchored.js";
+import { useAnchored } from "./anchored.js";
 
 export type TooltipProps = TooltipOptions & {
   /**
@@ -20,9 +20,16 @@ export type TooltipProps = TooltipOptions & {
   content: ReactNode;
   /** Draw a small arrow pointing at the trigger. Off by default; decorative, never announced. */
   arrow?: boolean;
+  /**
+   * Where the floating content is portalled. Defaults to `document.body`, which is right whenever
+   * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead — a preview
+   * frame, a scoped test harness, or a dialog that owns its own stacking context.
+   */
+  container?: RefObject<HTMLElement>;
 };
 
 export function Tooltip({
+  container,
   id,
   arrow = false,
   children,
@@ -59,7 +66,7 @@ export function Tooltip({
   });
   const api = tooltip.connect(service, normalizeProps);
 
-  const anchor = anchored(id ?? generatedId);
+  const anchor = useAnchored(id ?? generatedId);
   const triggerProps = api.getTriggerProps();
   const contentProps = api.getContentProps();
   /*
@@ -96,7 +103,7 @@ export function Tooltip({
         {children}
       </span>
       {api.open ? (
-        <Portal>
+        <Portal container={container}>
           <div
             {...anchor.positioner(api.getPositionerProps(), tooltipParts.positioner)}
             data-sk-placement={side}

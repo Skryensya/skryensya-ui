@@ -4,7 +4,7 @@ import {
 } from "@skryensya/core/popover";
 import { useId, type HTMLAttributes, type ReactNode } from "react";
 import { anchoredParts } from "@skryensya/core/anchored";
-import { anchored } from "./anchored.js";
+import { useAnchored } from "./anchored.js";
 
 const cx = (...classes: Array<string | undefined>) =>
   classes.filter(Boolean).join(" ");
@@ -32,7 +32,7 @@ export function Popup({
 }: PopupProps) {
   const generatedId = useId();
   const contentId = id ?? `${generatedId}-popup`;
-  const anchor = anchored(contentId);
+  const anchor = useAnchored(contentId);
 
   return (
     <div {...props} className={cx(popupParts.root, className)}>

@@ -1,5 +1,7 @@
 import { contentParts, getToastLiveRegion, hasToastTimeout, toastLiveRegions, type ToastOptions, type ToastTone } from "@skryensya/core/content";
 import { type AlertPresentation } from "@skryensya/core/alert";
+import { Button } from "./button.js";
+import { Icon } from "./icon.js";
 import { useCallback, useEffect, useRef, type HTMLAttributes, type ReactNode } from "react";
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
@@ -11,6 +13,14 @@ export type ToastProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "titl
     /** Optional actions owned by the caller, such as a recovery link. */
     actions?: ReactNode;
     children: ReactNode;
+    /**
+     * Whether the toast carries a dismiss control. Structure, not behaviour — the same split Tag
+     * makes: the contract owns whether the control EXISTS, `onDismiss` owns what it does. Defaults
+     * to whether a handler was passed, so callers written before this prop keep their button.
+     */
+    dismissible?: boolean;
+    /** The dismiss control's accessible name. It is icon-only, so it has no other. */
+    dismissLabel?: string;
     /** Optional decorative leading glyph. It is marked aria-hidden, meaning lives in the text. */
     icon?: ReactNode;
     presentation?: AlertPresentation;
@@ -23,6 +33,8 @@ export function Toast({
   actions,
   children,
   className,
+  dismissLabel = "Dismiss notification",
+  dismissible,
   icon,
   onDismiss,
   presentation = "banner",
@@ -42,6 +54,7 @@ export function Toast({
     [onDismiss],
   );
   const liveRegion = toastLiveRegions[getToastLiveRegion(tone)];
+  const hasDismiss = dismissible ?? Boolean(onDismiss);
 
   useEffect(() => {
     if (!onDismiss || !hasToastTimeout(timeout)) return;
@@ -55,6 +68,7 @@ export function Toast({
       {...props}
       aria-live={liveRegion.ariaLive}
       className={cx(contentParts.toast, className)}
+      data-dismissible={hasDismiss ? "" : undefined}
       data-presentation={presentation}
       data-tone={tone}
       role={liveRegion.role}
@@ -68,24 +82,23 @@ export function Toast({
         {title ? <p className={contentParts.toastTitle}>{title}</p> : null}
         <div className={contentParts.toastDescription}>{children}</div>
       </div>
-      {actions || onDismiss ? (
+      {actions || hasDismiss ? (
         <div className={contentParts.toastActions}>
           {actions}
-          {onDismiss ? (
-            /* The dismiss is a real icon-only Button at sm: it inherits the button's 44px hit target
-               and state layer, while the part class keeps the enhancer hook and ties the glyph to the
-               tone color. */
-            <button
-              aria-label="Dismiss notification"
-              className={`${contentParts.toastDismiss} sk-button sk-interactive`}
-              data-icon-only
-              data-size="sm"
-              data-variant="ghost"
+          {hasDismiss ? (
+            /* A real Button, not a toast-shaped lookalike: the state layer, the focus ring and the
+               44px hit target come with it. `close` is the system's icon for dismissing, never a
+               literal "×". Same control Tag uses, so both dismissals are one contract. */
+            <Button
+              aria-label={dismissLabel}
+              className={contentParts.toastDismiss}
+              iconOnly
               onClick={() => dismiss("dismiss")}
-              type="button"
+              size="sm"
+              variant="ghost"
             >
-              ×
-            </button>
+              <Icon name="close" />
+            </Button>
           ) : null}
         </div>
       ) : null}

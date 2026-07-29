@@ -1,10 +1,12 @@
-import { toolbarParts } from "@skryensya/core/toolbar";
+import { toolbarContract, toolbarParts } from "@skryensya/core/toolbar";
+import type { OptionValue } from "@skryensya/core/contract";
 import { useRef, type KeyboardEvent, type ReactNode } from "react";
 
 export type ToolbarProps = {
   label: string;
   children: ReactNode;
-  orientation?: "horizontal" | "vertical";
+  // Derived: Core owns the axis, and a copy here would go stale the day a third one appears.
+  orientation?: OptionValue<typeof toolbarContract.options.orientation>;
   loopFocus?: boolean;
 };
 

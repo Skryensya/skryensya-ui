@@ -3,6 +3,7 @@ import "@skryensya/core/components/progress.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import { ProgressDemo } from "../../components/react-demos/progress";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -44,9 +45,15 @@ const html = `<div
 
 const react = `import { Progress } from "@skryensya/react/progress";
 
-<Progress label="Subida" value={68} />
-<Progress label="Completado" value={100} tone="success" />
-<Progress label="Cuota" value={24} tone="danger" />;`;
+function Example() {
+  return (
+    <>
+      <Progress label="Subida" value={68} />
+      <Progress label="Completado" value={100} tone="success" />
+      <Progress label="Cuota" value={24} tone="danger" />
+    </>
+  );
+}`;
 ---
 
 <Base title="Progress" description="Progress: barra determinada con fracción recortada en el core, tonos y componente React.">
@@ -57,7 +64,11 @@ const react = `import { Progress } from "@skryensya/react/progress";
     pintado y <code>aria-valuenow</code> nunca pueden divergir.
   </p>
 
-  <Showcase html={html} react={react} label="Progress" />
+  <Showcase html={html} react={react} label="Progress">
+    <Fragment slot="react">
+      <ProgressDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>Para trabajo sin un valor medible usa <a href="/componentes/loader">Loader</a>: su semántica es indeterminada.</p>
 
   <h2>Instalar</h2>

@@ -12,6 +12,7 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
+import { AvatarDemo } from "../../../components/react-demos/avatar";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -28,7 +29,8 @@ const ON_ACCENT_HEX = "ffffff";
 const demoSrc = (initials: string) =>
   `https://dummyimage.com/160/${ACCENT_HEX}/${ON_ACCENT_HEX}?text=${initials}`;
 
-const html = `<span class="sk-avatar" data-size="sm">
+const html = `<div class="sk-inline">
+<span class="sk-avatar" data-size="sm">
   <span
     class="sk-image-frame"
     data-aspect="1/1"
@@ -113,6 +115,7 @@ const html = `<span class="sk-avatar" data-size="sm">
     <span class="sk-avatar__fallback" aria-hidden="true">GH</span>
   </span>
   <span class="sk-avatar-group__overflow">+8</span>
+</div>
 </div>`;
 
 const react = `import {
@@ -120,35 +123,41 @@ const react = `import {
   AvatarGroup,
 } from "@skryensya/react/avatar";
 
-<Avatar
-  name="Ada Lovelace"
-  size="sm"
-  src="${demoSrc("AL")}"
-/>
-<Avatar
-  name="Alan Turing"
-  src="${demoSrc("AT")}"
-/>
-<Avatar
-  name="Grace Hopper"
-  size="lg"
-  src="${demoSrc("GH")}"
-/>
+function Example() {
+  return (
+    <div className="sk-inline">
+      <Avatar
+        name="Ada Lovelace"
+        size="sm"
+        src="${demoSrc("AL")}"
+      />
+      <Avatar
+        name="Alan Turing"
+        src="${demoSrc("AT")}"
+      />
+      <Avatar
+        name="Grace Hopper"
+        size="lg"
+        src="${demoSrc("GH")}"
+      />
 
-<Avatar name="Ada Lovelace" size="sm" />
-<Avatar name="Alan Turing" />
-<Avatar name="Grace Hopper" size="lg" />
+      <Avatar name="Ada Lovelace" size="sm" />
+      <Avatar name="Alan Turing" />
+      <Avatar name="Grace Hopper" size="lg" />
 
-<AvatarGroup max={3}>
-  <Avatar
-    name="Ada Lovelace"
-    src="${demoSrc("AL")}"
-  />
-  <Avatar name="Alan Turing" />
-  <Avatar name="Grace Hopper" />
-  <Avatar name="Raul G" />
-  {/* …8 more → collapse into +8 */}
-</AvatarGroup>;`;
+      <AvatarGroup max={3}>
+        <Avatar
+          name="Ada Lovelace"
+          src="${demoSrc("AL")}"
+        />
+        <Avatar name="Alan Turing" />
+        <Avatar name="Grace Hopper" />
+        <Avatar name="Raul G" />
+        {/* …8 more → collapse into +8 */}
+      </AvatarGroup>
+    </div>
+  );
+}`;
 
 /*
  * Repaint the placeholders in the accent the reader is actually looking at.
@@ -219,19 +228,16 @@ window.addEventListener("pagehide", () => observer.disconnect(), { once: true })
 <Base title="Avatar" description="Avatar: ImageFrame or initials, AvatarGroup with +N collapse, and the React component.">
   <h1>Avatar</h1>
   <p class="lede">
-    Avatar is the visual token of a person or entity: a photo cropped with
-    <strong>ImageFrame</strong> (1/1, cover, pill) or, with no image, the first two
-    letters of the name. <strong>AvatarGroup</strong> stacks a set and collapses the
-    remainder into a “+N” counter.
+    Avatar is the visual token of a person or entity: a cropped photo with <strong>ImageFrame</strong> (1/1, cover, pill) or, without an image, the first two letters of the name. <strong>AvatarGroup</strong> stacks a set and collapses the excess into a "+N" counter.
   </p>
 
-  <Showcase html={html} react={react} previewScript={previewScript} label="Avatar" />
+  <Showcase html={html} react={react} previewScript={previewScript} label="Avatar">
+    <Fragment slot="react">
+      <AvatarDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
-    With an image, the avatar nests <code>sk-image-frame</code> and the
-    <code>&lt;img alt&gt;</code> carries the semantics. Without one, the container takes
-    <code>role="img"</code> and the initials become decorative. In React,
-    <code>avatarInitials(name)</code> derives the fallback when you pass no children: two
-    words → the first letter of each; a single word → its first two characters.
+    With image, the avatar nests <code>sk-image-frame</code> and the <code>&lt;img alt&gt;</code> provides the semantics. Without it, the container takes <code>role="img"</code> and the initials remain decorative. In React, <code>avatarInitials(name)</code> derives the fallback when you do not pass children: two words → first letter of each; a single → the first two characters.
   </p>
 
   <h2>Install</h2>

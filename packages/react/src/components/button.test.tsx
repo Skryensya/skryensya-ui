@@ -1,6 +1,6 @@
 import { fireEvent, render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { Button, ButtonLink } from "./button.js";
+import { Button } from "./button.js";
 
 describe("Button", () => {
   it("renders a native button that does not submit forms by default", () => {
@@ -83,12 +83,12 @@ describe("Button", () => {
   });
 });
 
-describe("ButtonLink", () => {
+describe("Button.navigation", () => {
   it("renders navigation with Button appearance and anchor attributes", () => {
     const ui = render(
-      <ButtonLink href="/docs" rel="next" target="_self" variant="primary">
+      <Button href="/docs" rel="next" target="_self" variant="primary">
         Documentation
-      </ButtonLink>,
+      </Button>,
     );
     const link = ui.getByRole("link", { name: "Documentation" });
 

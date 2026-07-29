@@ -1,30 +1,29 @@
 {
   "name": "@skryensya/mcp",
-  "version": "0.4.0",
+  "version": "0.0.0",
+  "private": true,
   "type": "module",
-  "description": "MCP server that lets an AI discover, compose and validate skryensya/ui components by intent, using docs/ai/schemas as the sole source of truth. It never authors new components.",
-  "bin": {
-    "skryensya-mcp": "./dist/index.js"
-  },
-  "files": [
-    "dist"
-  ],
+  "description": "MCP server over the compiled manifest: get_catalog, get_contract and validate_ui. Rebuilt from zero; the v1 server that read docs/ai/schemas is gone (tag ai-v1).",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "dev": "tsx watch src/index.ts",
+    "build": "node scripts/build.mjs",
     "start": "node dist/index.js",
-    "check": "tsc -p tsconfig.json --noEmit && vitest run",
+    "check": "node scripts/build.mjs && tsc -p tsconfig.json --noEmit && vitest run",
     "lint": "tsc -p tsconfig.json --noEmit",
     "inspector": "npx @modelcontextprotocol/inspector node dist/index.js"
   },
+  "bin": {
+    "skryensya-mcp": "./dist/index.js"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
+    "@skryensya/ai-compiler": "workspace:*",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "tsx": "^4.19.2",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "esbuild": "^0.28.1"
   }
 }

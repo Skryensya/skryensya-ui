@@ -2,50 +2,60 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
+import { SliderDemo } from "../../../components/react-demos/slider";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
-const html = `<input
-  class="sk-slider"
-  type="range"
-  min="0"
-  max="100"
-  value="65"
-  data-sk-slider
-  aria-label="Volumen"
-  style="--sk-slider-fill: 0.65"
-/>
-<input
-  class="sk-slider"
-  type="range"
-  min="0"
-  max="100"
-  value="30"
-  disabled
-  aria-label="Brightness (disabled)"
-  style="--sk-slider-fill: 0.3"
-/>`;
+const html = `<div class="sk-inline">
+  <input
+    class="sk-slider"
+    type="range"
+    min="0"
+    max="100"
+    value="65"
+    data-sk-slider
+    aria-label="Volumen"
+    style="--sk-slider-fill: 0.65"
+  />
+  <input
+    class="sk-slider"
+    type="range"
+    min="0"
+    max="100"
+    value="30"
+    disabled
+    aria-label="Brightness (disabled)"
+    style="--sk-slider-fill: 0.3"
+  />
+</div>`;
 
 const react = `import { Slider } from "@skryensya/react/slider";
 
-<Slider
-  aria-label="Volumen"
-  defaultValue={65}
-  onValueChange={setVolume}
-/>
-<Slider aria-label="Brillo" defaultValue={30} disabled />;`;
+function Example() {
+  return (
+    <div className="sk-inline">
+      <Slider
+        aria-label="Volumen"
+        defaultValue={65}
+        onValueChange={SomeFunction}
+      />
+      <Slider aria-label="Brillo" defaultValue={30} disabled />
+    </div>
+  );
+}`;
 ---
 
 <Base title="Slider" description="Slider: native range with skin, painted fill without JavaScript and React component.">
   <h1>Slider</h1>
   <p class="lede">
-    Slider is a real <code>&lt;input type="range"&gt;</code> with skin: keyboard, participation in
-    Forms and accessibility tree come from the platform. The filled portion is displayed as
-    the <code>--sk-slider-fill</code> property (0–1): the initial value is painted by the CSS alone, and continue
-    the thumb while dragging is the only thing the binding needs.
+    Slider is a real <code>&lt;input type="range"&gt;</code> with skin: keyboard, form participation and accessibility tree come from the platform. The filled portion is exposed as the <code>--sk-slider-fill</code> (0–1) property: the initial value is painted by the CSS itself, and following your thumb while dragging is all the binding needs.
   </p>
 
-  <Showcase html={html} react={react} label="Slider" />
+  <Showcase html={html} react={react} label="Slider">
+    <Fragment slot="react">
+      <SliderDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>In Vanilla, <code>data-sk-slider</code> records the minimum binding that rewrites <code>--sk-slider-fill</code> in each <code>input</code>, nothing more: keyboard, focus and form remain platform-specific. In React, <code>&lt;Slider&gt;</code> keeps the property in sync in controlled and uncontrolled mode, and reports the change as a number via <code>onValueChange</code>.</p>
 
   <h2>Install</h2>

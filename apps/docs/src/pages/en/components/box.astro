@@ -2,6 +2,7 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
+import { BoxBasicDemo } from "../../../components/react-demos/layout";
 
 const html = `<section
   class="sk-box"
@@ -10,39 +11,47 @@ const html = `<section
   data-padding="lg"
 >
   <h3>Summary</h3>
-  <p>A semantic section with surface, edge and padding.</p>
+  <p>A semantic section with surface, border and padding.</p>
   <button type="button">Administrar</button>
 </section>`;
 
 const react = `import { Box } from "@skryensya/react/box";
 
-<Box as="section" surface="raised" border="subtle" padding="lg">
-  <h2>Summary</h2>
-  <p>The content preserves the semantics of the chosen element.</p>
-  <button type="button">Administrar</button>
-</Box>;`;
+function Example() {
+  return (
+    <Box as="section" surface="raised" border="subtle" padding="lg">
+      <h2>Summary</h2>
+      <p>The content preserves the semantics of the chosen element.</p>
+      <button type="button">Administrar</button>
+    </Box>
+  );
+}`;
 ---
 <Base title="Box" description="Visual and semantic surface chosen by the user; without own interaction.">
   <h1>Box</h1>
   <p class="lede">Box only has surface, edge and padding. Whoever uses it chooses the semantic element. It does not provide interaction or convert the content into a destination or action.</p>
 
   <h2>When to use it</h2>
-  <p>Use Box for static content or for a surface with several independent controls. If the entire surface represents exactly one interaction, choose the corresponding semantic component: <a href="/en/components/link">Link</a>, <a href="/en/components/button">Button</a>, <a href="/en/components/checkbox">Checkbox</a>, <a href="/en/components/radio-group">RadioGroup</a> or <a href="/en/components/accordion">Accordion</a>.</p>
-  <p>Box and Tile share surface, border, radius, and the <code>padding</code> vocabulary. Use <code>data-padding="none"</code> in HTML or <code>padding="none"</code> in React when the header or content image must touch the border; That child declares its own inset. The difference between the two is exclusively the interaction that Tile does have.</p>
+  <p>Use Box for static content or for a surface with several independent controls. If the entire surface represents exactly one interaction, choose the corresponding semantic component: <a href="/en/components/link">Link</a>, <a href="/en/components/button">Button</a>, <a href="/en/components/checkbox">Checkbox</a>, <a href="/en/components/radio-group">RadioGroup</a>, or <a href="/en/components/accordion">Accordion</a>.</p>
+  <p>Box and Tile share surface, border, radius, and the <code>padding</code> vocabulary. Use <code>data-padding="none"</code> in HTML or <code>padding="none"</code> in React when a header or content image must touch the border; that child declares its own inset. The difference between the two is interaction: Tile has one, Box does not.</p>
   <p>The <a href="/en/components/card">Card</a> guide applies this decision to content, news, product, link, action, selection and metrics cards.</p>
 
-  <h2>HTML autorado</h2>
-  <Showcase html={html} react={react} label="Box" />
+  <h2>Authored HTML</h2>
+  <Showcase html={html} react={react} label="Box">
+    <Fragment slot="react">
+      <BoxBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>React</h2>
   <p>The code is in the <strong>React</strong> tab of the preview.</p>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
-    <li>In HTML, choose the semantic element and add the <code>sk-box</code> class.</li>
-    <li><code>data-surface</code> acepta <code>none</code>, <code>sunken</code>, <code>surface</code> o <code>raised</code>.</li>
-    <li><code>data-border</code> acepta <code>none</code>, <code>subtle</code> o <code>default</code>.</li>
-    <li><code>data-padding</code> acepta <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> o <code>xl</code>.</li>
+    <li>In HTML, choose the semantic element and add the class <code>sk-box</code>.</li>
+    <li><code>data-surface</code> accepts <code>none</code>, <code>sunken</code>, <code>surface</code> or <code>raised</code>.</li>
+    <li><code>data-border</code> accepts <code>none</code>, <code>subtle</code> or <code>default</code>.</li>
+    <li><code>data-padding</code> accepts <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> or <code>xl</code>.</li>
     <li>In React, <code>as</code> selects the element; <code>surface</code>, <code>border</code> and <code>padding</code> render those attributes.</li>
   </ul>
 </Base>

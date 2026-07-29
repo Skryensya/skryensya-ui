@@ -3,6 +3,7 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { CarouselCardsDemo } from "../../../components/react-demos/carousel";
 import "../../../examples/carousel.css";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla \\
@@ -100,7 +101,7 @@ const slides = [
   }),
   featureSlide({
     eyebrow: "Collaboration",
-    title: "Equipo",
+    title: "Team",
     body: "Invite, assign roles and share spaces without leaving the flow.",
     position: "left",
   }),
@@ -141,45 +142,49 @@ const features = [
   // …
 ] as const;
 
-<Carousel
-  aria-label="Novedades"
-  style={{ "--sk-carousel-slide-size": "min(85%, 22rem)" }}
->
-  {features.map((f) => (
-    <CarouselSlide key={f.title}>
-      <Box
-        as="article"
-        className="carousel-card"
-        surface="surface"
-        border="subtle"
-        padding="none"
-      >
-        <ImageFrame
-          aspect="16/9"
-          radius="top"
-          position={f.position}
-        >
-          <img
-            className="sk-image-frame__media"
-            src="${demoSrc}"
-            alt=""
-          />
-          <MediaCaption edge="bottom" strength="md">
-            <Heading as="h3" size="h4" flush>
-              {f.title}
-            </Heading>
-          </MediaCaption>
-        </ImageFrame>
-        <div className="carousel-card__body">
-          <Text data-role="eyebrow">{f.eyebrow}</Text>
-          <Text tone="secondary" size="sm">
-            {f.body}
-          </Text>
-        </div>
-      </Box>
-    </CarouselSlide>
-  ))}
-</Carousel>;`;
+function Example() {
+  return (
+    <Carousel
+      aria-label="Novedades"
+      style={{ "--sk-carousel-slide-size": "min(85%, 22rem)" }}
+    >
+      {features.map((f) => (
+        <CarouselSlide key={f.title}>
+          <Box
+            as="article"
+            className="carousel-card"
+            surface="surface"
+            border="subtle"
+            padding="none"
+          >
+            <ImageFrame
+              aspect="16/9"
+              radius="top"
+              position={f.position}
+            >
+              <img
+                className="sk-image-frame__media"
+                src="${demoSrc}"
+                alt=""
+              />
+              <MediaCaption edge="bottom" strength="md">
+                <Heading as="h3" size="h4" flush>
+                  {f.title}
+                </Heading>
+              </MediaCaption>
+            </ImageFrame>
+            <div className="carousel-card__body">
+              <Text data-role="eyebrow">{f.eyebrow}</Text>
+              <Text tone="secondary" size="sm">
+                {f.body}
+              </Text>
+            </div>
+          </Box>
+        </CarouselSlide>
+      ))}
+    </Carousel>
+  );
+}`;
 
 /* The base without JS: the SAME markup without data-sk-carousel, so the enhancer does not touch it and the
    Native pseudo-elements draw controls with zero JavaScript. */
@@ -254,7 +259,7 @@ const autoHtml = `<section
   data-sk-carousel
   data-loop
   data-autoplay="3500"
-  aria-label="Equipo"
+  aria-label="Team"
   style="--sk-carousel-slide-size: min(42%, 14rem)"
 >
   <ul class="sk-carousel__track">
@@ -274,7 +279,7 @@ const bareHtml = `<section
   class="sk-carousel"
   data-sk-carousel
   data-controls="none"
-  aria-label="Equipo"
+  aria-label="Team"
   style="--sk-carousel-slide-size: min(42%, 14rem)"
 >
   <ul class="sk-carousel__track">
@@ -315,11 +320,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
 
   <h2>Card carousel</h2>
   <p>
-    With <code>data-sk-carousel</code> the enhancer runs the machine: prev/next (they are disabled in the
-    ends), one dot per <strong>page</strong>, keyboard, drag and re-size when resizing.
-    Here each slide is a card with <a href="/en/components/image-frame">ImageFrame</a>,
-    <a href="/en/gradients">media gradient</a> and font body—composition, not a
-    <code>sk-card</code>. <code>--sk-carousel-slide-size</code> lets the next one appear.
+    With <code>data-sk-carousel</code> the enhancer runs the machine: prev/next (they are disabled at the ends), a dot per <strong>page</strong>, keyboard, drag and re-size when changing size. Here each slide is a card with <a href="/en/components/image-frame">ImageFrame</a>, <a href="/en/gradients">media gradient</a> and font body—composition, not a <code>sk-card</code>. <code>--sk-carousel-slide-size</code> lets the next one appear.
   </p>
   <Showcase
     html={cardsHtml}
@@ -327,7 +328,11 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     js={bootstrap}
     label="Card carousel"
     note="ImageFrame + media gradient · scroll-snap + Zag"
-  />
+  >
+    <Fragment slot="react">
+      <CarouselCardsDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>One dot per page, not per slide</h2>
   <p>
@@ -341,27 +346,18 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     number of dots, and the last one can always be reached.
   </p>
 
-  <h2>Multi-up, loop y autoplay</h2>
+  <h2>Multi-up, loop and autoplay</h2>
   <p>
-    Narrower slides enter several per page, and the machine counts them by measuring. with
-    <code>data-loop</code> the carousel turns around, with <code>data-autoplay</code> it advances alone (empty
-    for the default 4000 ms, or a delay in ms). Autoplay pauses only when the tab leaves
-    to be visible.
+    Narrower slides enter several per page, and the machine counts them by measuring. With <code>data-loop</code> the carousel turns around, with <code>data-autoplay</code> it advances by itself (empty for the default 4000 ms, or a delay in ms). Autoplay is paused only when the tab is no longer visible.
   </p>
   <p>
-    With <code>data-autoplay</code> a <strong>pause button also appears </strong>: something that moves
-    it just has to be able to stop (WCAG 2.2.2), so choice and control are one thing. and to
-    whoever declares <code>prefers-reduced-motion</code> is not started: the carousel remains still and the
-    button offers to play.
+    With <code>data-autoplay</code> there is also a <strong>pause button</strong>: something that moves only has to be able to stop (WCAG 2.2.2), so option and control are one thing. And whoever declares <code>prefers-reduced-motion</code> is not started: the carousel remains still and the button offers to play.
   </p>
   <Showcase html={autoHtml} label="Multi-up + autoplay" note="Avatar + meta · data-loop · data-autoplay" />
 
   <h2>No controls</h2>
   <p>
-    <code>data-controls="none"</code> turns off the <strong>two</strong> layers: neither buttons and dots
-    enhancer, nor native <code>::scroll-button</code> and <code>::scroll-marker</code>. The clue remains
-    naked, which is still a scroller with snap: each slide is a stop
-    (<code>scroll-snap-stop: always</code>), so swiping never skips a card.
+    <code>data-controls="none"</code> turns off the <strong>two</strong> layers: neither enhancer buttons and dots, nor native <code>:: scroll-button</code> and <code>:: scroll-marker</code>. What remains is the bare track, which is still a scroller with snap: each slide is a stop (<code>scroll-snap-stop: always</code>), so sliding never skips a card.
   </p>
   <p>
     What does not change is the behavior: the controls were chrome. The keyboard continues walking with the focus on the track, and <code>sk-carousel-goto</code> / <code>sk-carousel-change</code> They are still the same pair of events.
@@ -376,24 +372,16 @@ carousel.addEventListener("sk-carousel-change", (event) => {
   </p>
   <Showcase html={bareHtml} label="No controls" note='data-controls="none" · arrastra y desliza' />
 
-  <h2>No JS: native controls</h2>
+  <h2>Without JS: native controls</h2>
   <p>
-    The <strong>same markup</strong> without <code>data-sk-carousel</code>: the enhancer does not touch it and the
-    native pseudo-elements (<code>::scroll-button</code> and <code>::scroll-marker</code>) draw the
-    controls with <strong>zero JavaScript</strong>. The CSS adapter of the chosen set gives you the SVGs of
-    <code>chevron-left</code> and <code>chevron-right</code>, without replacing them with typographic glyphs.
-    Today it works in Chrome/Edge; in the rest it degrades to a scroller with native snap (without arrows or
-    dots, but it slides the same). When the enhancer mounts, this layer is turned off so as not to duplicate.
+    The <strong>same markup</strong> without <code>data-sk-carousel</code>: the enhancer does not touch it and the native pseudo-elements (<code>:: scroll-button</code> and <code>:: scroll-marker</code>) draw the controls with <strong>zero JavaScript</strong>. The CSS adapter of the chosen set gives you the SVGs of <code>chevron-left</code> and <code>chevron-right</code>, without replacing them with typographic glyphs. Today it works in Chrome/Edge; In the rest it degrades to a scroller with native snap (without arrows or dots, but it slides the same). When the enhancer mounts, this layer is turned off so as not to duplicate.
   </p>
   <Showcase html={nativeHtml} label="No JS (native CSS)" note="set icons + native scroll buttons" />
   <CodeBlock code={nativeCss} label="the base without JS" lang="css" />
 
-  <h2>Snap-to-index y eventos</h2>
+  <h2>Snap-to-index and events</h2>
   <p>
-    Programmatic control is a pair of events at the root: send <code>sk-carousel-goto</code> to
-    pin to a page and listen for <code>sk-carousel-change</code> to find out which one is active. In React,
-    <code>ref</code> of <code>&lt;Carousel&gt;</code> exposes <code>snapTo(index)</code>, which sends
-    that same event.
+    Programmatic control is a pair of events at the root: it sends <code>sk-carousel-goto</code> to pin to a page and listens to <code>sk-carousel-change</code> to find out which one is active. In React, the <code>ref</code> of the <code>&lt;Carousel&gt;</code> exposes <code>snapTo(index)</code>, which sends that same event.
   </p>
   <CodeBlock code={api} label="JS" lang="ts" />
 
@@ -402,11 +390,10 @@ carousel.addEventListener("sk-carousel-change", (event) => {
   <CodeBlock code={styles} label="CSS" />
   <CodeBlock code={bootstrap} label="JavaScript" lang="ts" />
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
     <li>
-      Root: <code>&lt;section class="sk-carousel" data-sk-carousel&gt;</code> with a hint
-      <code>&lt;ul class="sk-carousel__track"&gt;</code> from <code>&lt;li class="sk-carousel__slide"&gt;</code>.
+      Root: <code>&lt;section class="sk-carousel" data-sk-carousel&gt;</code> with a hint <code>&lt;ul class="sk-carousel__track"&gt;</code> of <code>&lt;li class="sk-carousel__slide"&gt;</code>.
     </li>
     <li>
       Slides: any content. <code>--sk-carousel-slide-size</code> sets the width (peek or multi-up)
@@ -414,33 +401,22 @@ carousel.addEventListener("sk-carousel-change", (event) => {
       the track instead of imposing widths on it.
     </li>
     <li>
-      Options in root: <code>data-controls="none"</code>, <code>data-loop</code>,
-      <code>data-autoplay</code> (empty or ms), <code>data-orientation="vertical"</code>.
+      Options in root: <code>data-controls="none"</code>, <code>data-loop</code>, <code>data-autoplay</code> (empty or ms), <code>data-orientation="vertical"</code>.
     </li>
     <li>
-      Mouse drag: <strong>on</strong>. <code>data-mouse-drag="off"</code> turns it off,
-      for slides whose text must be selectable.
+      Mouse drag: <strong>on</strong>. <code>data-mouse-drag="off"</code> turns it off, for slides whose text must be selectable.
     </li>
     <li>
-      Snap: each slide is a stop, with <code>scroll-snap-stop: always</code>, so slide
-      never skips one. The <em>reachable</em> stops are clipped against the end of the scroll, so
-      the last slides can share the last one.
+      Snap: Each slide is a stop, with <code>scroll-snap-stop: always</code>, so swiping never skips one. The reachable <em>stops</em> are clipped against the end of the scroll, so the last slides can share the last one.
     </li>
     <li>
-      Controls: the enhancer draws them, one per measured page; At one end the button is disabled.
-      Prev/next respect the touch floor. The dots look compact; the clickable area grows by
-      block without widening the layout or overlapping. Without JS, native pseudo-elements do
-      baseline (Chrome/Edge) and the <code>@skryensya/icons-*/carousel.css</code> adapter provides them
-      the same stable chevron roles that the enhancer uses.
+      Controls: the enhancer draws them, one per measured page; At one end the button is disabled. Prev/next respect the touch floor. The dots look compact; The clickable area grows in bulk without widening the layout or overlapping. Without JS, the native pseudo-elements act as a baseline (Chrome/Edge) and the <code>@skryensya/icons-*/carousel.css</code> adapter provides them with the same stable chevron roles that the enhancer uses.
     </li>
     <li>
-      Keyboard: with focus on the track, <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> move
-      a page and <kbd class="sk-kbd">Inicio</kbd>/<kbd class="sk-kbd">Fin</kbd> jump to the ends;
-      The same keys work with focus on dots.
+      Keyboard: With focus on the track, <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> move one page and <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">Fin</kbd> jump to the extremes; The same keys work with focus on dots.
     </li>
     <li>
-      API: <code>sk-carousel-goto</code> (command) and <code>sk-carousel-change</code> (output, with
-      <code>{"{ index, count }"}</code>); in React, <code>ref.snapTo(index)</code>.
+      API: <code>sk-carousel-goto</code> (command) and <code>sk-carousel-change</code> (output, with <code>{"{ index, count }"}</code>); in React, <code>ref.snapTo(index)</code>.
     </li>
     <li>Reduced Motion: Smooth scrolling is turned off with <code>prefers-reduced-motion</code>.</li>
   </ul>

@@ -1,0 +1,25 @@
+# La estructura vive en packages/core/src/nav-list.ts. Acá sólo por qué se elige cada firma.
+
+NavList:
+  useWhen:
+    - la lista de destinos de un sidebar, un navbar o un drawer
+    - navegación principal o secundaria de una página
+  avoidWhen:
+    - son acciones de una aplicación, no destinos — eso es un menú, con role="menu"
+    - es una ruta jerárquica hasta la página actual — eso es un Breadcrumb
+
+NavListGroup:
+  useWhen:
+    - agrupa destinos bajo un rótulo
+    - hace falta el <ul> aunque el grupo no lleve rótulo visible
+  avoidWhen:
+    - hay un solo destino y ningún rótulo — el grupo sigue siendo obligatorio, no es opcional
+
+NavListLink:
+  useWhen:
+    - un destino de la lista
+    - marca la página actual con current
+  avoidWhen:
+    - dispara una acción en vez de navegar — eso es Button.action
+  alternatives:
+    - Button.navigation

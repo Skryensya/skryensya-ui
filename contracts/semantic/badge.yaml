@@ -1,0 +1,11 @@
+# La estructura vive en packages/core/src/badge.ts. Acá sólo por qué se elige.
+
+Badge:
+  useWhen:
+    - "un conteo o un estado corto pegado a otra cosa: no leídos, cantidad, etiqueta de estado"
+    - "el tono comunica un rol del sistema: success, warning, danger"
+  avoidWhen:
+    - "el usuario puede quitarlo o actuar sobre él; eso es un Tag"
+    - "es texto de párrafo con color; un badge es una cápsula, no énfasis"
+  alternatives:
+    - Tag

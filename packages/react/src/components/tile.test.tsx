@@ -9,7 +9,7 @@ import {
   type TileSharedAccessibilityBehavior,
   type TileSharedStateBehavior,
 } from "@skryensya/core/tile-contracts";
-import { ExpandableTile, TileButton, TileCheckbox, TileLink, TileRadioGroup } from "./tile.js";
+import { ExpandableTile, TileButton, TileCheckbox, TileLink, TileRadioGroup, TileSwitch } from "./tile.js";
 
 describe("Tile React contracts", () => {
   const stateAssertions = {
@@ -27,6 +27,21 @@ describe("Tile React contracts", () => {
       await waitFor(() => {
         expect(root?.dataset.state).toBe(tileSharedStateContract.checkbox.changed.dataState);
         expect(input.checked).toBe(tileSharedStateContract.checkbox.changed.checked);
+      });
+    },
+    switch: async () => {
+      const ui = render(<TileSwitch defaultChecked={false}>Auto-deploy</TileSwitch>);
+      const input = ui.getByRole("switch") as HTMLInputElement;
+      const root = input.closest<HTMLElement>("[data-scope=tile]");
+      expect(root?.querySelector(".sk-switch__control")).not.toBeNull();
+      expect(root?.querySelector(".sk-checkbox__control")).toBeNull();
+      expect(root?.dataset.state).toBe(tileSharedStateContract.switch.initial.dataState);
+      expect(input.checked).toBe(tileSharedStateContract.switch.initial.checked);
+
+      fireEvent.click(input);
+      await waitFor(() => {
+        expect(root?.dataset.state).toBe(tileSharedStateContract.switch.changed.dataState);
+        expect(input.checked).toBe(tileSharedStateContract.switch.changed.checked);
       });
     },
     radioGroup: async () => {
@@ -86,6 +101,11 @@ describe("Tile React contracts", () => {
       const input = ui.getByRole(tileSharedAccessibilityContract.checkbox.role) as HTMLInputElement;
       expect(input.form !== null).toBe(tileSharedAccessibilityContract.checkbox.formAssociated);
     },
+    switch: () => {
+      const ui = render(<form><TileSwitch name="auto-deploy" value="on">Auto-deploy</TileSwitch></form>);
+      const input = ui.getByRole(tileSharedAccessibilityContract.switch.role) as HTMLInputElement;
+      expect(input.form !== null).toBe(tileSharedAccessibilityContract.switch.formAssociated);
+    },
     radioGroup: () => {
       const ui = render(<form><TileRadioGroup name="plan" items={[{ value: "basic", children: "Basic" }]} /></form>);
       const group = ui.getByRole(tileSharedAccessibilityContract.radioGroup.role);
@@ -119,6 +139,7 @@ describe("Tile React contracts", () => {
         <TileLink href="/details">Link</TileLink>
         <TileButton>Button</TileButton>
         <TileCheckbox>Checkbox</TileCheckbox>
+        <TileSwitch>Switch</TileSwitch>
         <TileRadioGroup items={[{ value: "basic", children: "Basic" }]} name="plan" />
         <ExpandableTile><ExpandableTile.Trigger>Composition summary</ExpandableTile.Trigger><ExpandableTile.Content>Details</ExpandableTile.Content></ExpandableTile>
       </>,

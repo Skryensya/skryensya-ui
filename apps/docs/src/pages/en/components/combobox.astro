@@ -2,6 +2,7 @@
 import Base from "../../../layouts/Base.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { ComboboxBasicDemo } from "../../../components/react-demos/combobox";
 import "@skryensya/core/components/combobox.css";
 import "@skryensya/core/components/field.css";
 import "@skryensya/core/patterns/scrollbar.css";
@@ -21,39 +22,40 @@ const slug = (name: string) =>
     .replace(/^-|-$/g, "");
 
 const countries = [
-  "Afghanistan", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda",
-  "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria",
-  "Azerbaijan", "Bahamas", "Bangladesh", "Barbados", "Bahrain", "Belgium", "Belice",
-  "Benin", "Bielorrusia", "Birmania", "Bolivia", "Bosnia y Herzegovina", "Botsuana",
-  "Brasil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Bhutan", "Cabo Verde",
-  "Camboya", "Cameroon", "Canada", "Catar", "Chad", "Chile", "China", "Chipre",
-  "Vatican City", "Colombia", "Comoras", "North Korea", "South Korea",
-  "Ivory Coast", "Costa Rica", "Croacia", "Cuba", "Dinamarca", "Dominica",
-  "Ecuador", "Egipto", "El Salvador", "United Arab Emirates", "Eritrea",
-  "Eslovaquia", "Eslovenia", "Spain", "Statuss Unidos", "Estonia", "Esuatini",
-  "Ethiopia", "Filipinas", "Finlandia", "Fiyi", "Francia", "Gabon", "Gambia",
-  "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guyana", "Guinea",
-  "Guinea-Bissau", "Guinea Ecuatorial", "Haiti", "Honduras", "Hungary", "India",
-  "Indonesia", "Irak", "Iran", "Irlanda", "Islandia", "Islas Marshall",
-  "Solomon Islands", "Israel", "Italia", "Jamaica", "Japan", "Jordania",
-  "Kazakhstan", "Kenia", "Kyrgyzstan", "Kiribati", "Kuwait", "Laos", "Lesoto",
-  "Letonia", "Lebanon", "Liberia", "Libia", "Liechtenstein", "Lituania",
-  "Luxemburgo", "North Macedonia", "Madagascar", "Msoia", "Malaui",
-  "Maldivas", "Mali", "Malta", "Marruecos", "Mauricio", "Mauritania", "Mexico",
-  "Micronesia", "Moldavia", "Monaco", "Mongolia", "Montenegro", "Mozambique",
-  "Namibia", "Nauru", "Nepal", "Nicaragua", "Niger", "Nigeria", "Noruega",
-  "Nueva Zelanda", "Oman", "Netherlands", "Pakistan", "Palaos", "Panama",
-  "Papua New Guinea", "Paraguay", "Peru", "Polonia", "Portugal", "Reino Unido",
-  "Central African Republic", "Czech Republic", "Republic of the Congo",
-  "Democratic Republic of the Congo", "Dominican Republic", "Ruanda", "Romania",
-  "Rusia", "Samoa", "Saint Kitts and Nevis", "San Marino",
-  "Saint Vincent and the Grenadines", "Saint Lucia", "Sao Tome and Principe",
-  "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria",
-  "Somalia", "Sri Lanka", "South Africa", "Sudan", "South Sudan", "Suecia",
-  "Suiza", "Surinam", "Tailandia", "Tanzania", "Tajikistan", "Timor Oriental",
-  "Togo", "Tonga", "Trinidad y Tobago", "Tunisia", "Turkmenistan", "Türkiye",
-  "Tuvalu", "Ucrania", "Uganda", "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela",
-  "Vietnam", "Yemen", "Yibuti", "Zambia", "Zimbabue",
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda",
+  "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas",
+  "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin",
+  "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei",
+  "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada",
+  "Cape Verde", "Central African Republic", "Chad", "Chile", "China", "Colombia",
+  "Comoros", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic",
+  "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica",
+  "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea",
+  "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France",
+  "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada",
+  "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras",
+  "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland",
+  "Israel", "Italy", "Ivory Coast", "Jamaica", "Japan", "Jordan", "Kazakhstan",
+  "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon",
+  "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg",
+  "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta",
+  "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia",
+  "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique",
+  "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand",
+  "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway",
+  "Oman", "Pakistan", "Palau", "Panama", "Papua New Guinea", "Paraguay",
+  "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Republic of the Congo",
+  "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia",
+  "Saint Vincent and the Grenadines", "Samoa", "San Marino",
+  "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles",
+  "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands",
+  "Somalia", "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka",
+  "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan",
+  "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago",
+  "Tunisia", "Türkiye", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine",
+  "United Arab Emirates", "United Kingdom", "United States", "Uruguay",
+  "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen",
+  "Zambia", "Zimbabwe",
 ];
 
 const countryItems = countries
@@ -166,15 +168,19 @@ import { Icon } from "@skryensya/react/icon";
 import { countries } from "./countries";
 // countries: { label: string; value: string }[] with the complete list of countries
 
-<Combobox
-  label="Country"
-  hint="Write to filter. Use the arrows to scroll."
-  placeholder="Search country"
-  items={countries}
-  clearIndicator={<Icon name="close" />}
-  itemIndicator={<Icon name="check" />}
-  triggerIndicator={<Icon name="chevron-down" />}
-/>`;
+function Example() {
+  return (
+    <Combobox
+      label="Country"
+      hint="Write to filter. Use the arrows to scroll."
+      placeholder="Search country"
+      items={countries}
+      clearIndicator={<Icon name="close" />}
+      itemIndicator={<Icon name="check" />}
+      triggerIndicator={<Icon name="chevron-down" />}
+    />
+  );
+}`;
 ---
 
 <Base
@@ -184,42 +190,34 @@ import { countries } from "./countries";
   <h1>Combobox</h1>
   <p class="lede">Editable suggestions with context, clear statuses, and full keyboard navigation.</p>
 
-  <h2>Installation</h2>
+  <h2>Facility</h2>
   <Showcase
     html={html}
     js={js}
     react={react}
     label="Combobox"
     viewport="menu"
-  />
+  >
+    <Fragment slot="react">
+      <ComboboxBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <p>
-    Combobox filters an authored collection without overriding its options. Select
-    keeps a closed list and Input does not show suggestions.
+    Combobox filters an authored collection without overriding its options. Select maintains a closed list and Input does not show suggestions.
   </p>
   <p>
-    What is written is the user's job: leave the field without choosing anything
-    —blur, click away, Escape—closes the list but <strong
-      >does not clear the search</strong
-    >. Just choosing an option rewrites the input (with the chosen label), and
-    only the ✕ empties it. Upon reopening, the filter returns to the full list: what
-    what you see is the selection, not the last typed text.
+    The writing is the user's job: leaving the field without choosing anything — blur, click outside, Escape — closes the list but <strong
+ >does not delete the search</strong>. Only choosing an option rewrites the input (with the chosen label), and only the ✕ empties it. Upon reopening, the filter returns to the full list: what you see is the selection, not the last typed text.
   </p>
 
-  <h2>Accesibilidad</h2>
+  <h2>Accessibility</h2>
   <p>
-    Focus remains on the input while <code>aria-activedescendant</code>
-    indicates the active option. Down and up arrow cycle through results, Enter
-    select and Escape closes. <code>hint</code> and <code>error</code> are
-    bind via <code>aria-describedby</code>; changes in the quantity
-    Results are announced with a state region.
+    The focus remains on the input while <code>aria-activedescendant</code> signals the active option. Down and up arrow cycle through results, Enter selects and Escape closes. <code>hint</code> and <code>error</code> are linked via <code>aria-describedby</code>; changes in the number of results are announced with a state region.
   </p>
   <p>
-    Scrolling with the keyboard moves the focus ring to the highlighted item (focus
-    virtual) and the control gives up its own: there is a single ring on the screen and it travels
-    to the list and back. No ring appears with the pointer—a ring
-    Following the cursor reads as broken focus—only the state layer.
+    Scrolling with the keyboard moves the focus ring to the highlighted item (virtual focus) and the control gives up its own: there is a single ring on the screen and it travels to the list and back. With the pointer, no ring appears - a ring following the cursor is read as broken focus - only the state layer.
   </p>
 
   <h2>CSS</h2>

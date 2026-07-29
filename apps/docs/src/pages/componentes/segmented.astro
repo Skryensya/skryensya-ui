@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import { SegmentedDemo } from "../../components/react-demos/segmented";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
@@ -42,18 +43,24 @@ const html = `<div
   </button>
 </div>`;
 
-const react = `import { SegmentedControl } from "@skryensya/react/segmented";
+const react = `import { useState } from "react";
+import { SegmentedControl } from "@skryensya/react/segmented";
 
-<SegmentedControl
-  aria-label="Rango"
-  defaultValue="day"
-  onValueChange={setRange}
-  options={[
-    { value: "day", label: "Día" },
-    { value: "week", label: "Semana" },
-    { value: "month", label: "Mes" },
-  ]}
-/>;`;
+function Example() {
+  const [range, setRange] = useState("day");
+  return (
+    <SegmentedControl
+      aria-label="Rango"
+      value={range}
+      onValueChange={setRange}
+      options={[
+        { value: "day", label: "Día" },
+        { value: "week", label: "Semana" },
+        { value: "month", label: "Mes" },
+      ]}
+    />
+  );
+}`;
 
 const js = `import { initComponents } from "@skryensya/vanilla/auto";
 
@@ -69,7 +76,11 @@ await initComponents();`;
     <a href="/componentes/select">Select</a>.
   </p>
 
-  <Showcase html={html} react={react} label="SegmentedControl" />
+  <Showcase html={html} react={react} label="SegmentedControl">
+    <Fragment slot="react">
+      <SegmentedDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
     El enhancer vanilla selecciona con click y con flechas; <code>Home</code> y <code>End</code> saltan
     al primer y último segmento. La opción elegida queda en <code>data-value</code> y se anuncia con

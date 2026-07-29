@@ -2,8 +2,10 @@
  * TIER 3, STEPS
  *
  * A progress rail: markers carry the sequence, labels explain it, and the connector says how much
- * work is already behind the reader. Wide layouts keep the journey horizontal; narrow viewports turn
- * it into a left-hand rail so no label gets clipped, abbreviated, or forced into a tiny column.
+ * work is already behind the reader. Wide layouts keep the journey horizontal by default; narrow
+ * viewports turn it into a left-hand rail so no label gets clipped, abbreviated, or forced into a
+ * tiny column. `data-orientation="vertical"` opts into that same rail layout at any viewport size,
+ * for cases like a wizard sidebar where vertical is the point, not a mobile fallback.
  */
 @layer components {
   .sk-steps {
@@ -117,12 +119,43 @@
     font-weight: var(--font-weight-emphasis);
   }
 
+  /* The rail layout applies whenever the step is explicitly vertical, and also below 40rem unless
+   * the consumer pins `data-orientation="horizontal"` (opting out of the mobile fallback). Repeated
+   * under the media query because a media condition can't join a selector list with a plain one. */
+  .sk-steps[data-orientation="vertical"] {
+    flex-direction: column;
+  }
+
+  .sk-steps[data-orientation="vertical"] .sk-steps__item {
+    grid-template-columns: var(--sk-steps-marker-size) minmax(0, 1fr);
+    grid-template-rows: auto;
+    justify-items: start;
+    align-items: start;
+    padding-block-end: var(--space-stack-md);
+    text-align: start;
+  }
+
+  .sk-steps[data-orientation="vertical"] .sk-steps__item > :not(.sk-steps__marker) {
+    padding-block-start: 2px;
+  }
+
+  .sk-steps[data-orientation="vertical"] .sk-steps__item:not(:last-child)::after {
+    inset-block-start: var(--sk-steps-marker-size);
+    inset-inline-start: calc(var(--sk-steps-marker-size) / 2 - var(--sk-steps-connector-size) / 2);
+    inline-size: var(--sk-steps-connector-size);
+    block-size: calc(100% - var(--sk-steps-marker-size));
+  }
+
+  .sk-steps[data-orientation="vertical"] .sk-steps__item:last-child {
+    padding-block-end: var(--space-inset-xs);
+  }
+
   @media (max-width: 40rem) {
-    .sk-steps {
+    .sk-steps:not([data-orientation="horizontal"]) {
       flex-direction: column;
     }
 
-    .sk-steps__item {
+    .sk-steps:not([data-orientation="horizontal"]) .sk-steps__item {
       grid-template-columns: var(--sk-steps-marker-size) minmax(0, 1fr);
       grid-template-rows: auto;
       justify-items: start;
@@ -131,18 +164,18 @@
       text-align: start;
     }
 
-    .sk-steps__item > :not(.sk-steps__marker) {
+    .sk-steps:not([data-orientation="horizontal"]) .sk-steps__item > :not(.sk-steps__marker) {
       padding-block-start: 2px;
     }
 
-    .sk-steps__item:not(:last-child)::after {
+    .sk-steps:not([data-orientation="horizontal"]) .sk-steps__item:not(:last-child)::after {
       inset-block-start: var(--sk-steps-marker-size);
       inset-inline-start: calc(var(--sk-steps-marker-size) / 2 - var(--sk-steps-connector-size) / 2);
       inline-size: var(--sk-steps-connector-size);
       block-size: calc(100% - var(--sk-steps-marker-size));
     }
 
-    .sk-steps__item:last-child {
+    .sk-steps:not([data-orientation="horizontal"]) .sk-steps__item:last-child {
       padding-block-end: var(--space-inset-xs);
     }
   }

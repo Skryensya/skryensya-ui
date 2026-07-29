@@ -1,0 +1,43 @@
+# La estructura vive en packages/core/src/table.ts. Acá sólo por qué se elige.
+
+Table:
+  useWhen:
+    - "los datos tienen filas y columnas, y una celda significa algo por su cruce"
+    - "el usuario va a comparar valores entre filas"
+  avoidWhen:
+    - "es una lista de cosas sin columnas; eso es una List"
+    - "se usa para maquetar; una tabla anuncia relaciones que la maquetación no tiene"
+
+TableCaption:
+  useWhen:
+    - "la tabla necesita un nombre que un lector de pantalla anuncie antes del contenido"
+  avoidWhen:
+    - "el título ya está fuera y asociado por aria-labelledby"
+
+TableHead:
+  useWhen:
+    - "las columnas tienen encabezado, que es casi siempre"
+
+TableBody:
+  useWhen:
+    - "siempre: es donde viven las filas de datos, y la tabla no está completa sin él"
+
+TableFooter:
+  useWhen:
+    - "hay totales o un resumen al pie de las columnas"
+  avoidWhen:
+    - "es una fila de datos más; eso va en el cuerpo"
+
+TableRow:
+  useWhen:
+    - "un registro de la tabla"
+
+TableHeader:
+  useWhen:
+    - "la celda nombra su columna, o nombra su fila con scope row"
+  avoidWhen:
+    - "es un dato; eso es TableCell"
+
+TableCell:
+  useWhen:
+    - "un valor dentro de una fila"

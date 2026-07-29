@@ -4,6 +4,12 @@ import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import "../../examples/loader.css";
+import {
+  LoaderContextsDemo,
+  LoaderSimulationDemo,
+  LoaderSizesDemo,
+  LoaderSpeedDemo,
+} from "../../components/react-demos/loader";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const styles = `@import "@skryensya/core/components/loader.css";`;
@@ -80,7 +86,7 @@ const simulationReact = `import { useEffect, useState } from "react";
 import { Button } from "@skryensya/react/button";
 import { Loader } from "@skryensya/react/loader";
 
-export function MixAnalysis() {
+function Example() {
   const [analyzing, setAnalyzing] = useState(true);
   const [run, setRun] = useState(0);
 
@@ -237,86 +243,90 @@ import { Loader } from "@skryensya/react/loader";
 import { Box, Grid, Inline, Stack } from "@skryensya/react/layout";
 import { Text } from "@skryensya/react/text";
 
-<Grid columns={3} data-multicol="">
-  <Box
-    as="article"
-    aria-labelledby="save-title"
-    border="subtle"
-    padding="lg"
-    surface="surface"
-  >
-    <Stack>
-      <Text as="span" data-role="eyebrow">Acción local</Text>
-      <Stack gap="xs">
-        <Heading as="h3" id="save-title" size="h4">
-          Guardar informe
-        </Heading>
-        <Text tone="secondary">
-          El botón conserva la acción y el Loader queda decorativo.
-        </Text>
-      </Stack>
-      <Button aria-busy={true} disabled variant="primary">
-        <Loader size="sm" /> Guardando…
-      </Button>
-    </Stack>
-  </Box>
+function Example() {
+  return (
+    <Grid columns={3} data-multicol="">
+      <Box
+        as="article"
+        aria-labelledby="save-title"
+        border="subtle"
+        padding="lg"
+        surface="surface"
+      >
+        <Stack>
+          <Text as="span" data-role="eyebrow">Acción local</Text>
+          <Stack gap="xs">
+            <Heading as="h3" id="save-title" size="h4">
+              Guardar informe
+            </Heading>
+            <Text tone="secondary">
+              El botón conserva la acción y el Loader queda decorativo.
+            </Text>
+          </Stack>
+          <Button aria-busy={true} disabled variant="primary">
+            <Loader size="sm" /> Guardando…
+          </Button>
+        </Stack>
+      </Box>
 
-  <Box
-    as="section"
-    aria-busy={true}
-    aria-labelledby="orders-title"
-    border="subtle"
-    padding="lg"
-    surface="surface"
-  >
-    <Stack>
-      <Inline justify="between" wrap={false}>
-        <Heading as="h3" id="orders-title" size="h4">
-          Pedidos recientes
-        </Heading>
-        <Loader label="Actualizando pedidos" variant="dots" />
-      </Inline>
-      <Text tone="secondary">
-        El contenido previo permanece visible mientras se actualiza la región.
-      </Text>
-      <Stack gap="xs">
-        <Inline justify="between" wrap={false}>
-          <Text as="span" tone="secondary">Procesados</Text>
-          <Text as="span" weight="label">128</Text>
-        </Inline>
-        <Inline justify="between" wrap={false}>
-          <Text as="span" tone="secondary">Pendientes</Text>
-          <Text as="span" weight="label">24</Text>
-        </Inline>
-      </Stack>
-    </Stack>
-  </Box>
+      <Box
+        as="section"
+        aria-busy={true}
+        aria-labelledby="orders-title"
+        border="subtle"
+        padding="lg"
+        surface="surface"
+      >
+        <Stack>
+          <Inline justify="between" wrap={false}>
+            <Heading as="h3" id="orders-title" size="h4">
+              Pedidos recientes
+            </Heading>
+            <Loader label="Actualizando pedidos" variant="dots" />
+          </Inline>
+          <Text tone="secondary">
+            El contenido previo permanece visible mientras se actualiza la región.
+          </Text>
+          <Stack gap="xs">
+            <Inline justify="between" wrap={false}>
+              <Text as="span" tone="secondary">Procesados</Text>
+              <Text as="span" weight="label">128</Text>
+            </Inline>
+            <Inline justify="between" wrap={false}>
+              <Text as="span" tone="secondary">Pendientes</Text>
+              <Text as="span" weight="label">24</Text>
+            </Inline>
+          </Stack>
+        </Stack>
+      </Box>
 
-  <Box
-    as="section"
-    aria-busy={true}
-    aria-labelledby="analytics-title"
-    border="subtle"
-    padding="lg"
-    surface="surface"
-  >
-    <Stack gap="sm">
-      <Inline justify="center">
-        <Loader
-          label="Cargando panel de analítica"
-          size="lg"
-          variant="sweep"
-        />
-      </Inline>
-      <Heading as="h3" id="analytics-title" size="h4">
-        Preparando analítica
-      </Heading>
-      <Text tone="secondary">
-        La carga inicial mantiene un título y una explicación útiles.
-      </Text>
-    </Stack>
-  </Box>
-</Grid>;`;
+      <Box
+        as="section"
+        aria-busy={true}
+        aria-labelledby="analytics-title"
+        border="subtle"
+        padding="lg"
+        surface="surface"
+      >
+        <Stack gap="sm">
+          <Inline justify="center">
+            <Loader
+              label="Cargando panel de analítica"
+              size="lg"
+              variant="sweep"
+            />
+          </Inline>
+          <Heading as="h3" id="analytics-title" size="h4">
+            Preparando analítica
+          </Heading>
+          <Text tone="secondary">
+            La carga inicial mantiene un título y una explicación útiles.
+          </Text>
+        </Stack>
+      </Box>
+    </Grid>
+  );
+}`;
 
 const sizesHtml = `<div class="loader-specimens" role="group" aria-label="Tamaños de Loader">
   <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
@@ -349,9 +359,15 @@ const sizesHtml = `<div class="loader-specimens" role="group" aria-label="Tamañ
 
 const sizesReact = `import { Loader } from "@skryensya/react/loader";
 
-<Loader size="sm" />
-<Loader />
-<Loader size="lg" label="Cargando resultados" />;`;
+function Example() {
+  return (
+    <div className="sk-inline">
+      <Loader size="sm" />
+      <Loader />
+      <Loader size="lg" label="Cargando resultados" />
+    </div>
+  );
+}`;
 
 const speedHtml = `<div class="loader-specimens" role="group" aria-label="Velocidades de Loader">
   <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
@@ -398,14 +414,20 @@ const speedHtml = `<div class="loader-specimens" role="group" aria-label="Veloci
 
 const speedReact = `import { Loader } from "@skryensya/react/loader";
 
-<Loader speed="fast" size="lg" variant="bars" />
-<Loader speed="normal" size="lg" variant="bars" />
-<Loader
-  label="Sincronizando en segundo plano"
-  speed="slow"
-  size="lg"
-  variant="bars"
-/>;`;
+function Example() {
+  return (
+    <div className="sk-inline">
+      <Loader speed="fast" size="lg" variant="bars" />
+      <Loader speed="normal" size="lg" variant="bars" />
+      <Loader
+        label="Sincronizando en segundo plano"
+        speed="slow"
+        size="lg"
+        variant="bars"
+      />
+    </div>
+  );
+}`;
 
 const customSpeed = `.sk-loader.mi-loader {
   --sk-loader-duration: 2s;
@@ -444,7 +466,11 @@ const customSpeed = `.sk-loader.mi-loader {
     react={simulationReact}
     label="Análisis de mezcla"
     note="Ocupado → listo"
-  />
+  >
+    <Fragment slot="react">
+      <LoaderSimulationDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
     <code>bars</code> aporta movimiento sin fingir un porcentaje. El contenedor conserva
     <code>aria-busy</code> y el estado visible aporta el anuncio accesible.
@@ -460,7 +486,11 @@ const customSpeed = `.sk-loader.mi-loader {
     react={contextsReact}
     label="Loader en contexto"
     note="Acción local · actualización de región · carga inicial"
-  />
+  >
+    <Fragment slot="react">
+      <LoaderContextsDemo client:load />
+    </Fragment>
+  </Showcase>
   <ul>
     <li>En un botón, Loader es decorativo: «Guardando…» ya nombra el estado.</li>
     <li>En una actualización local, conserva el contenido previo y marca la región como ocupada.</li>
@@ -472,7 +502,11 @@ const customSpeed = `.sk-loader.mi-loader {
     Usa <code>sm</code> dentro de controles, <code>md</code> junto a texto y <code>lg</code> cuando la
     marca ocupa una región propia. El tamaño no comunica cuánto trabajo queda.
   </p>
-  <Showcase html={sizesHtml} react={sizesReact} label="Tamaños de Loader" />
+  <Showcase html={sizesHtml} react={sizesReact} label="Tamaños de Loader">
+    <Fragment slot="react">
+      <LoaderSizesDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Velocidad</h2>
   <p>
@@ -480,7 +514,11 @@ const customSpeed = `.sk-loader.mi-loader {
     intención (<code>--motion-loading-duration*</code>), no desde milisegundos crudos. Elige la
     cadencia por presencia visual, no como promesa sobre la duración real de la operación.
   </p>
-  <Showcase html={speedHtml} react={speedReact} label="Velocidades de Loader" />
+  <Showcase html={speedHtml} react={speedReact} label="Velocidades de Loader">
+    <Fragment slot="react">
+      <LoaderSpeedDemo client:load />
+    </Fragment>
+  </Showcase>
   <CodeBlock code={customSpeed} label="override local" lang="css" />
 
   <h2>Semántica</h2>

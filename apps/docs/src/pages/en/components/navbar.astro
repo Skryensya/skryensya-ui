@@ -3,6 +3,7 @@ import Base from "../../../layouts/Base.astro";
 import Showcase from "../../../components/Showcase.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { NavbarBasicDemo } from "../../../components/react-demos/navbar";
 
 
 
@@ -24,15 +25,15 @@ const html = `<header class="sk-navbar">
       <li class="sk-nav-list__item">
         <a
           class="sk-nav-list__link sk-interactive"
-          href="/in"
+          href="/"
           aria-current="page"
         >
-          <span class="sk-nav-list__label">Inicio</span>
+          <span class="sk-nav-list__label">Home</span>
         </a>
       </li>
       <li class="sk-nav-list__item">
-        <a class="sk-nav-list__link sk-interactive" href="/proyectos">
-          <span class="sk-nav-list__label">Proyectos</span>
+        <a class="sk-nav-list__link sk-interactive" href="/projects">
+          <span class="sk-nav-list__label">Projects</span>
         </a>
       </li>
       <li class="sk-nav-list__item">
@@ -41,8 +42,8 @@ const html = `<header class="sk-navbar">
         </a>
       </li>
       <li class="sk-nav-list__item">
-        <a class="sk-nav-list__link sk-interactive" href="/equipo">
-          <span class="sk-nav-list__label">Equipo</span>
+        <a class="sk-nav-list__link sk-interactive" href="/team">
+          <span class="sk-nav-list__label">Team</span>
         </a>
       </li>
     </ul>
@@ -61,7 +62,7 @@ const html = `<header class="sk-navbar">
       type="button"
       data-variant="primary"
     >
-      Nuevo proyecto
+      New project
     </button>
   </div>
 </header>`;
@@ -78,25 +79,29 @@ import {
   NavbarBrand,
 } from "@skryensya/react/navbar";
 
-<Navbar>
-  <NavbarBrand>Atlas</NavbarBrand>
+function Example() {
+  return (
+    <Navbar>
+      <NavbarBrand>Atlas</NavbarBrand>
 
-  <NavList orientation="horizontal" aria-label="Principal">
-    <NavListGroup>
-      <NavListLink href="/in" current>
-        Inicio
-      </NavListLink>
-      <NavListLink href="/proyectos">Proyectos</NavListLink>
-      <NavListLink href="/reportes">Reportes</NavListLink>
-      <NavListLink href="/equipo">Equipo</NavListLink>
-    </NavListGroup>
-  </NavList>
+      <NavList orientation="horizontal" aria-label="Principal">
+        <NavListGroup>
+          <NavListLink href="/" current>
+            Home
+          </NavListLink>
+          <NavListLink href="/projects">Projects</NavListLink>
+          <NavListLink href="/reportes">Reportes</NavListLink>
+          <NavListLink href="/team">Team</NavListLink>
+        </NavListGroup>
+      </NavList>
 
-  <NavbarActions>
-    <Button variant="ghost">Invitar</Button>
-    <Button variant="primary">Nuevo proyecto</Button>
-  </NavbarActions>
-</Navbar>;`;
+      <NavbarActions>
+        <Button variant="ghost">Invite</Button>
+        <Button variant="primary">New project</Button>
+      </NavbarActions>
+    </Navbar>
+  );
+}`;
 ---
 
 <Base title="Navbar" description="Navbar: the bar, with the navigation list as a horizontal pattern.">
@@ -108,20 +113,18 @@ import {
 
   <h2>The links are not from the navbar</h2>
   <p>
-    They are the pattern <a href="/en/nav-list"><code>nav-list</code></a> horizontally, the same structure as
-    houses the sidebar vertically. That two components need this exact structure is what the
-    returns a pattern and not a component: before
-    the navbar and the sidebar each had their list, with the same rules written twice and free
-    to diverge.
+    They are the pattern <a href="/en/nav-list"><code>nav-list</code></a> horizontally, the same structure that hosts the sidebar vertically. That two components need this exact structure is what makes it a pattern and not a component: before the navbar and the sidebar each had their list, with the same rules written twice and free to diverge.
   </p>
 
-  <Showcase html={html} react={react} label="Navbar" flush />
+  <Showcase html={html} react={react} label="Navbar" flush>
+    <Fragment slot="react">
+      <NavbarBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>The current page is from the platform</h2>
+  <h2>The current page is from platform</h2>
   <p>
-    The current link is marked with <code>aria-current="page"</code>, which the consumer already has to type
-    for screen readers. The styling hooks follow it instead of calling for a modifier class, and
-    a <code>state</code> is written by a machine; there is none here.
+    The current link is marked with <code>aria-current="page"</code>, which the consumer already has to type for screen readers. Styling hooks follow it instead of calling for a modifier class, and a <code>state</code> is written by a machine; there is none here.
   </p>
 
   <h2>Install</h2>

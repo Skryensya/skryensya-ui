@@ -1,0 +1,11 @@
+# La estructura vive en packages/core/src/segmented.ts. Acá sólo por qué se elige.
+
+Segmented:
+  useWhen:
+    - "dos o tres opciones excluyentes que conviene ver todas a la vez"
+    - "cambia una vista, no un dato del formulario"
+  avoidWhen:
+    - "son más de tres o cuatro; ahí conviene un RadioGroup o un Select"
+    - "el valor se envía con el formulario; eso es un RadioGroup"
+  alternatives:
+    - RadioGroup

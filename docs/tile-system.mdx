@@ -10,6 +10,7 @@ Choose by behavior:
 - Navigation: `TileLink` with an `a`.
 - One action: `TileButton` with a `button type="button"`.
 - Independent selection: `TileCheckbox` with a real checkbox input.
+- Independent binary preference that takes effect immediately: `TileSwitch` with a real checkbox input and `role="switch"`, the same relationship Switch has to Checkbox.
 - Exclusive selection: `TileRadioGroup` with real radio inputs.
 - Disclosure: `ExpandableTile` with a button trigger; `Accordion` coordinates one or more disclosures in `single` or `multiple` mode.
 
@@ -22,6 +23,7 @@ Start with native HTML. `TileLink` and `TileButton` require no enhancer. Their V
 The Vanilla enhancers improve authored stateful markup; they do not replace its semantics:
 
 - `connectTileCheckbox` requires an `input[type="checkbox"]`, with `data-part="input"` recommended, inside a `data-part="root"` label.
+- `connectTileSwitch` requires an `input[type="checkbox"]` with `role="switch"`, with `data-part="input"` recommended, inside a `data-part="root"` label. Same machine as `connectTileCheckbox`, no indeterminate state.
 - `connectTileRadioGroup` requires real radio inputs and `data-part="item"` on each item. The group root is `data-part="root"`.
 - `connectExpandableTile` requires `data-part="trigger"` on its button and `data-part="content"` on its associated content. `initComponents()` recognizes an authored root with `sk-tile sk-tile--expandable`, `data-scope="tile"`, and `data-part="root"`; `connectAccordion` mounts a `data-sk-accordion` root and coordinates direct `data-part="item"` Tile children.
 

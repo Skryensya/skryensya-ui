@@ -16,6 +16,7 @@ import * as toolbarModule from "@skryensya/react/toolbar";
 import * as mediaGradientModule from "@skryensya/react/media-gradient";
 import * as segmentedModule from "@skryensya/react/segmented";
 import * as sliderModule from "@skryensya/react/slider";
+import * as timeFieldModule from "@skryensya/react/time-field";
 import * as fileUploadModule from "@skryensya/react/file-upload";
 import * as carouselModule from "@skryensya/react/carousel";
 import * as treeViewModule from "@skryensya/react/tree-view";
@@ -80,6 +81,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/sidebar": sidebarModule,
   "@skryensya/react/carousel": carouselModule,
   "@skryensya/react/file-upload": fileUploadModule,
+  "@skryensya/react/time-field": timeFieldModule,
   "@skryensya/react/tree-view": treeViewModule,
   "@skryensya/react/tile": tileModule,
   "@skryensya/react/theme-toggle": themeToggleModule,

@@ -275,6 +275,15 @@ export function TimeField({
       <span className={timeFieldParts.label} id={labelId}>
         {label}
       </span>
+      {/* Before the control, not after it. The vanilla enhancer RENDERS the control into the root,
+          so an authored hint always precedes it — and this is the better reading order anyway: the
+          instruction is heard before the first spinbutton is reached. Where it PAINTS is the
+          stylesheet's call. */}
+      {hint ? (
+        <span className={timeFieldParts.hint} id={hintId}>
+          {hint}
+        </span>
+      ) : null}
       <div
         aria-describedby={hintId}
         aria-labelledby={labelId}
@@ -296,6 +305,7 @@ export function TimeField({
               aria-valuenow={segments[token.type]}
               aria-valuetext={segmentText(token.type, segments[token.type], periods)}
               className={timeFieldParts.segment}
+              data-sk-time-field-segment={token.type}
               data-placeholder={segments[token.type] === undefined ? "" : undefined}
               key={token.type}
               onFocus={() => {
@@ -329,11 +339,6 @@ export function TimeField({
           </button>
         ) : null}
       </div>
-      {hint ? (
-        <span className={timeFieldParts.hint} id={hintId}>
-          {hint}
-        </span>
-      ) : null}
       {/* The wire value, always canonical `HH:mm` — no real `<input>` composes the segments, so this
        * is the only thing a form behind TimeField ever sees. */}
       <input name={name} type="hidden" value={canonical ? formatTimeValue(canonical) : ""} />

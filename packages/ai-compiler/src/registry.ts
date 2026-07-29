@@ -8,6 +8,7 @@ import { processListContract } from "@skryensya/core/process-list";
 import { stepsContract } from "@skryensya/core/steps";
 import { listContract } from "@skryensya/core/list";
 import { mediaGradientContract } from "@skryensya/core/media-gradient";
+import { timeFieldContract } from "@skryensya/core/time-field";
 import { fileUploadContract } from "@skryensya/core/file-upload";
 import { carouselContract } from "@skryensya/core/carousel";
 import { treeViewContract } from "@skryensya/core/tree-view";
@@ -78,6 +79,7 @@ export const contracts = {
   sidebar: sidebarContract,
   carousel: carouselContract,
   "file-upload": fileUploadContract,
+  "time-field": timeFieldContract,
   "tree-view": treeViewContract,
   tile: tileContract,
   "theme-toggle": themeToggleContract,

@@ -891,4 +891,20 @@ export const canonicalTrees: readonly Canonical[] = [
       },
     },
   },
+  {
+    /*
+     * The CalendarView case: both bindings RENDER the control, because the segments and the
+     * separators come from the locale and are not knowable when the markup is written. What the tree
+     * carries is the shell — and what G2 proves is that two independent renderers of the same
+     * `Intl` output land on the same DOM.
+     */
+    name: "time-field/appointment",
+    enhanced: true,
+    tree: {
+      contract: "time-field",
+      signature: "TimeField",
+      options: { name: "hora", required: true },
+      slots: { label: "Hora de la cita", hint: "Atendemos entre las 9 y las 18." },
+    },
+  },
 ];

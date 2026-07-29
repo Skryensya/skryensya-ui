@@ -32,6 +32,7 @@ import "@skryensya/core/components/pagination.css";
 import "@skryensya/core/components/accordion.css";
 import "@skryensya/core/components/carousel.css";
 import "@skryensya/core/components/file-upload.css";
+import "@skryensya/core/components/time-field.css";
 import "@skryensya/core/components/sidebar.css";
 import "@skryensya/core/components/tree-view.css";
 import "@skryensya/core/components/tile.css";

@@ -1,3 +1,5 @@
+import type { ComponentContract } from "./contract.js";
+
 /*
  * TIME FIELD, a segmented editable time input: hour, minute, and AM/PM (12-hour locales) as
  * independently steppable and typeable segments in one accessible group, the shape a native
@@ -170,3 +172,82 @@ export function segmentBounds(type: TimeFieldSegmentType, cycle: HourCycle): { m
   if (type === "minute") return { min: 0, max: 59 };
   return { min: 0, max: 1 };
 }
+
+/**
+ * Hour, minute and — in a 12-hour locale — AM/PM, as one `role="group"` of `role="spinbutton"`
+ * segments. No popover, no wheel: an earlier design put a scroll picker behind a trigger and it was
+ * neither simpler nor more accessible than the segments themselves, which is the primitive every
+ * native segmented time control already uses.
+ *
+ * The unusual part, and why this contract stops where it does: the segments and the separators are
+ * DERIVED FROM THE LOCALE, through `Intl.DateTimeFormat.formatToParts`. Some locales put the day
+ * period first and the separator is not always ":", so the order is not knowable when the markup is
+ * written. Both bindings therefore RENDER the control — this is the CalendarView case, not the
+ * enhancer case — and what an author writes is the shell: a root, a label, and maybe a hint.
+ *
+ * The value on the wire is the canonical `HH:mm` on a hidden input, so a form behind this field
+ * never parses a locale-formatted string.
+ */
+export const timeFieldContract = {
+  id: "time-field",
+  css: "@skryensya/core/components/time-field.css",
+  parts: timeFieldParts,
+
+  options: {
+    name: { type: "string", attr: "data-name", machineInput: true },
+    /** Decides the hour cycle, the segment order and the separators. Not decoration. */
+    locale: { type: "string", default: "es", attr: "data-locale", machineInput: true },
+    /** How far an arrow key moves the minutes. */
+    minuteStep: { type: "number", default: 1, attr: "data-minute-step", machineInput: true },
+    disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "", machineInput: true },
+    readOnly: { type: "boolean", default: false, attr: "data-readonly", trueValue: "", machineInput: true },
+    required: { type: "boolean", default: false, attr: "data-required", trueValue: "", machineInput: true },
+    /*
+     * Each segment is a spinbutton with no visible label of its own, so these ARE their accessible
+     * names — "14" announced alone is a number, not an hour.
+     */
+    hourLabel: { type: "string", default: "Hora", attr: "data-hour-label", machineInput: true },
+    minuteLabel: { type: "string", default: "Minuto", attr: "data-minute-label", machineInput: true },
+    periodLabel: { type: "string", default: "Periodo", attr: "data-period-label", machineInput: true },
+    clearLabel: { type: "string", default: "Limpiar hora", attr: "data-clear-label", machineInput: true },
+  },
+
+  signatures: {
+    TimeField: {
+      intent: ["time-input", "hour-and-minute", "pick-a-time", "schedule-at"],
+      host: { element: "div" },
+      options: [
+        "name",
+        "locale",
+        "minuteStep",
+        "disabled",
+        "readOnly",
+        "required",
+        "hourLabel",
+        "minuteLabel",
+        "periodLabel",
+        "clearLabel",
+      ],
+      slots: {
+        label: { accepts: "text", required: true },
+        hint: { accepts: "text" },
+      },
+      mount: "data-sk-time-field",
+      template: {
+        element: "div",
+        part: "root",
+        host: true,
+        children: [
+          /*
+           * A span, not a `<label>`: there is no single form control to point at — the group is made
+           * of three spinbuttons — so the association is `aria-labelledby` from the group, which
+           * both bindings write at runtime because they own the ids.
+           */
+          { element: "span", part: "label", slot: "label" },
+          { element: "span", part: "hint", whenGiven: "hint", slot: "hint" },
+        ],
+      },
+      react: { from: "@skryensya/react/time-field", name: "TimeField" },
+    },
+  },
+} as const satisfies ComponentContract;

@@ -6107,6 +6107,157 @@
         }
       }
     },
+    "time-field": {
+      "css": "@skryensya/core/components/time-field.css",
+      "id": "time-field",
+      "options": {
+        "clearLabel": {
+          "attr": "data-clear-label",
+          "default": "Limpiar hora",
+          "machineInput": true,
+          "type": "string"
+        },
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "hourLabel": {
+          "attr": "data-hour-label",
+          "default": "Hora",
+          "machineInput": true,
+          "type": "string"
+        },
+        "locale": {
+          "attr": "data-locale",
+          "default": "es",
+          "machineInput": true,
+          "type": "string"
+        },
+        "minuteLabel": {
+          "attr": "data-minute-label",
+          "default": "Minuto",
+          "machineInput": true,
+          "type": "string"
+        },
+        "minuteStep": {
+          "attr": "data-minute-step",
+          "default": 1,
+          "machineInput": true,
+          "type": "number"
+        },
+        "name": {
+          "attr": "data-name",
+          "machineInput": true,
+          "type": "string"
+        },
+        "periodLabel": {
+          "attr": "data-period-label",
+          "default": "Periodo",
+          "machineInput": true,
+          "type": "string"
+        },
+        "readOnly": {
+          "attr": "data-readonly",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "required": {
+          "attr": "data-required",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        }
+      },
+      "parts": {
+        "clear": "sk-time-field__clear",
+        "control": "sk-time-field__control",
+        "hint": "sk-time-field__hint",
+        "label": "sk-time-field__label",
+        "literal": "sk-time-field__literal",
+        "root": "sk-time-field",
+        "segment": "sk-time-field__segment"
+      },
+      "semantics": {
+        "TimeField": {
+          "alternatives": [
+            "DatePicker",
+            "NumberField"
+          ],
+          "avoidWhen": [
+            "también hace falta el día; eso es un DatePicker, o los dos juntos",
+            "es una duración, no una hora del día; eso es un NumberField con su unidad"
+          ],
+          "useWhen": [
+            "hay que escribir una hora y el formato importa: la reserva, el turno, el horario de atención",
+            "conviene que cada segmento se pueda corregir por separado sin volver a escribir todo",
+            "el formato tiene que seguir al locale (12 o 24 horas, AM/PM adelante o atrás)"
+          ]
+        }
+      },
+      "signatures": {
+        "TimeField": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "time-input",
+            "hour-and-minute",
+            "pick-a-time",
+            "schedule-at"
+          ],
+          "mount": "data-sk-time-field",
+          "options": [
+            "name",
+            "locale",
+            "minuteStep",
+            "disabled",
+            "readOnly",
+            "required",
+            "hourLabel",
+            "minuteLabel",
+            "periodLabel",
+            "clearLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/time-field",
+            "name": "TimeField"
+          },
+          "slots": {
+            "hint": {
+              "accepts": "text"
+            },
+            "label": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "span",
+                "part": "label",
+                "slot": "label"
+              },
+              {
+                "element": "span",
+                "part": "hint",
+                "slot": "hint",
+                "whenGiven": "hint"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "toolbar": {
       "css": "@skryensya/core/components/toolbar.css",
       "id": "toolbar",
@@ -6732,5 +6883,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "4dcaf61839e6f92b"
+  "sourceHash": "64d459d8ad5ff2ab"
 }

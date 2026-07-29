@@ -29,10 +29,13 @@
    * that chrome directly rather than patching pre-existing markup.
    */
   const root = getRoot();
+  let hidden: HTMLInputElement | undefined = $state();
   const label = root.querySelector<HTMLElement>(`.${timeFieldParts.label}`);
   const hint = root.querySelector<HTMLElement>(`.${timeFieldParts.hint}`);
 
-  if (!root.id) root.id = uniqueId("sk-time-field");
+  // A base for the label and hint ids, NOT an id on the root: nothing points at the root, and
+  // stamping one there is a difference React has no reason to match.
+  const idBase = root.id || uniqueId("sk-time-field");
   const locale = root.dataset.locale || "es";
   const minuteStep = Number(root.dataset.minuteStep) || 1;
   const disabled = root.hasAttribute("data-disabled");
@@ -44,8 +47,8 @@
   const periodLabel = root.dataset.periodLabel || "Periodo";
   const clearLabel = root.dataset.clearLabel || "Limpiar hora";
 
-  const labelId = label ? (label.id ||= `${root.id}-label`) : undefined;
-  const hintId = hint ? (hint.id ||= `${root.id}-hint`) : undefined;
+  const labelId = label ? (label.id ||= `${idBase}-label`) : undefined;
+  const hintId = hint ? (hint.id ||= `${idBase}-hint`) : undefined;
 
   const cycle: HourCycle = getHourCycle(locale);
   const periods = getPeriodLabels(locale);
@@ -95,6 +98,12 @@
   let segments = $state<SegmentValues>(decompose(parseTimeValue(root.dataset.value)));
   const canonical = $derived(compose(segments));
   const hasValue = $derived(canonical !== undefined);
+
+  // As an ATTRIBUTE. Svelte would set the property, and an empty property is invisible to anything
+  // that reads the DOM — including a form serializer that runs before the first commit.
+  $effect(() => {
+    hidden?.setAttribute("value", canonical ? formatTimeValue(canonical) : "");
+  });
 
   function commit(next: SegmentValues) {
     segments = next;
@@ -254,4 +263,6 @@
     ><span aria-hidden="true">×</span></button>
   {/if}
 </div>
-<input name={name} type="hidden" value={canonical ? formatTimeValue(canonical) : ""} />
+<!-- `value` set as an attribute, not only as the property Svelte would bind: an empty property is
+     invisible to anything that reads the DOM, and React renders `value=""` from the start. -->
+<input bind:this={hidden} name={name} type="hidden" />

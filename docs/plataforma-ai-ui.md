@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Estado** | En construcción · F0–F3 y F5 completas, el MCP nuevo corre; F4 en curso (46 familias, 85 firmas; quedan las ancladas) |
+| **Estado** | En construcción · F0–F3 y F5 completas; F4 completa salvo las ancladas (46 familias, 86 firmas); F6 en curso (9 recetas, 16 de 349 llamadas convertidas) |
 | **Fecha** | 28 de julio de 2026 |
 | **Supersede** | `apps/docs/01_arquitectura_objetivo_skryensya_ai_ui.md` y `apps/docs/02_plan_reconstruccion_desde_cero_skryensya_ai_ui.md`, que quedan como material de origen y no dirigen el trabajo |
 | **Decisiones** | [28](./decisiones/0028-el-contrato-vive-en-core-y-los-frameworks-son-bindings.md) · [29](./decisiones/0029-el-usage-tree-es-la-moneda-unica.md) · [30](./decisiones/0030-la-evidencia-se-renderiza-en-los-dos-bindings.md) · [31](./decisiones/0031-el-catalogo-cabe-en-el-contexto.md) |
@@ -601,9 +601,10 @@ distintas que conviene no mezclar:
 | 5 | `dialog`, `drawer`, `copy-button`, `command-palette`, `toc` | La familia no está publicada. Dos de ellas (`dialog`, `copy-button`) ni siquiera tienen binding React |
 | 21 | `anclaje`, `densidad`, `iconos`, `scrollbar`, `state-layer`, `styling-hooks`, `vaul`, `nav-list` (× 2 idiomas) | Documentan un patrón CSS, no un componente. No hay componente React que demostrar |
 
-**Los recipes** viven en `contracts/recipes/` como datos, no como prosa: cinco pantallas
-—`app-shell`, `form`, `data-table`, `settings`, `destructive-confirm`— cada una en sus cuatro
-estados. `checkRecipes` pasa los veinte árboles por el mismo validador que `validate_ui`, y el build
+**Los recipes** viven en `contracts/recipes/` como datos, no como prosa, y son un paquete del
+workspace para que el compilador, los gates y el sitio importen el MISMO módulo: nueve pantallas
+—`app-shell`, `browse`, `detail`, `form`, `checkout`, `upload`, `data-table`, `settings`,
+`destructive-confirm`— cada una en sus cuatro estados. `checkRecipes` pasa los veinte árboles por el mismo validador que `validate_ui`, y el build
 **no emite nada** si uno falla. `/recetas` los renderiza todos, en los dos bindings.
 
 > **Escribir los recipes encontró cuatro bugs de contrato**
@@ -625,8 +626,53 @@ estados. `checkRecipes` pasa los veinte árboles por el mismo validador que `val
 > columna de contenido caía debajo del sidebar en vez de al lado. Válida, renderizada, y la pantalla
 > equivocada.
 
-**Convertidas hasta ahora (8 de 349 llamadas a `Showcase`):** `tag`, `kbd`, `pagination`,
-`theme-toggle`, `box`, `progress`, `empty-state`, `segmented`. Quedan 341, de las cuales unas 98
+**Las nueve recetas** cubren **71 de 86 firmas (83%)**. No es el objetivo: una receta existe porque
+una **pantalla** vale la pena enseñarse, no porque a un componente le falte salida. Pero la cobertura
+sí dice qué pantallas reales no se están enseñando — así aparecieron `browse`, `detail`, `checkout` y
+`upload`.
+
+Los **36 árboles pasan por G2, G4 y G5**, derivados de `recipes` en vez de copiados: 72 casos nuevos
+sin un gate nuevo. Más dos chequeos que sólo tienen sentido en una receta, porque un contrato no
+puede pedirlos —un Alert sin acciones es válido, y debe serlo— y sólo son defectos a escala de pantalla:
+
+| Chequeo | Dónde | Qué atrapa |
+|---|---|---|
+| El estado `error` ofrece una salida | Compilador, rompe el build | Una pantalla de la que sólo se sale con el botón atrás |
+| Los cuatro estados son cuatro pantallas | Gates, árbol ARIA | Dos estados que son la misma pantalla con otro string |
+
+> **Lo que encontraron los gates al mirar composiciones**
+>
+> Tres defectos que un fixture de una sola firma no podía ver:
+>
+> - **Los ids generados no eran únicos por emisión.** Dos Fields con el mismo rótulo —un «Nombre» de
+>   facturación y un «Nombre» de envío— recibían `id="nombre"` los dos, así que la segunda etiqueta
+>   apuntaba al primer input. Silencioso, con pinta de válido, y roto justo para quien depende de esa
+>   asociación.
+> - **`attrsWhen` comparaba estrictamente contra un literal de atributo**, así que ninguna opción
+>   numérica coincidía nunca: una paginación en la página `1` publicaba un botón «anterior» habilitado
+>   que se anuncia como disponible y no hace nada.
+> - **No había forma de decir «estás en la última página»**, porque eso es `page === total` y ningún
+>   lado es un literal. Ahora dos opciones se comparan entre sí (`equalsOption`).
+>
+> Y turbo encontró un ciclo: las recetas importaban el compilador para `UsageTree` mientras el
+> compilador importaba las recetas para validarlas. **Un dato no depende de su consumidor**, así que la
+> forma se mudó a `@skryensya/core/usage-tree` —al lado del contrato contra el que está escrita— y las
+> funciones que recorren un árbol se quedaron en el compilador, que reexporta los tipos para que nadie
+> cambie un import. Romper el ciclo además hizo que **TypeScript chequee las recetas por primera vez**.
+
+> **Un hueco nombrado y sin tapar: el esqueleto no se anuncia**
+>
+> El estado `loading` de `browse` son Placeholders, que es lo correcto en pantalla: la forma de lo que
+> viene ya se conoce. Pero un esqueleto **no dice nada** a quien no lo ve — no hay región viva, así que
+> un lector de pantalla encuentra una página quieta.
+>
+> La pieza que falta es un **status visualmente oculto**, y el catálogo no la tiene: `Loader` con
+> `label` anuncia pero dibuja un spinner, que es justo lo que el esqueleto vino a evitar. Preferible
+> nombrarlo que agregar un spinner arriba de los esqueletos para que un chequeo pase.
+
+**Convertidas hasta ahora (16 de 349 llamadas a `Showcase`):** `tag`, `kbd`, `pagination`,
+`theme-toggle`, `box`, `progress`, `empty-state`, `segmented` — cada una en los dos idiomas. Quedan
+333, de las cuales unas 98
 son de familias publicadas en español (más su espejo en inglés); el resto demuestra familias sin
 publicar o composiciones que las firmas publicadas todavía no cubren — el avatar con imagen y el
 grupo de avatares, por ejemplo, no son firmas.

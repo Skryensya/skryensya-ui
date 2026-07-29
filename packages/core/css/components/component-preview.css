@@ -452,6 +452,29 @@
     min-inline-size: 0;
   }
 
+  /*
+   * A layout whose content cannot size it takes the whole line.
+   *
+   * The stage is a wrapping ROW of specimens, so each top-level child is a flex item sized by its
+   * content — and Progress has no content to be sized by: it declares `inline-size: 100%`, which is
+   * 100% of nothing inside a shrink-to-fit Stack. The bars measured 0 wide and the stage painted
+   * empty, which is what a usage tree that wraps its demo in a layout primitive gets by default.
+   *
+   * Keyed on the CHILD rather than applied to every Stack and Grid on purpose: the ~46 stages that
+   * already root in a layout primitive hug their content deliberately (a Select at 192px, not 699).
+   * Whether the stage should stretch every layout demo is a wider call than this rule makes.
+   *
+   * Two selectors because the two bindings nest differently by one level: React mounts into its own
+   * `[data-sk-react-demo-root]`, whose `display: contents` keeps it out of layout but not out of the
+   * selector. Without the second line the bars paint in Vanilla and stay collapsed in React.
+   */
+  .sk-component-preview__frame-body > :is(.sk-stack, .sk-grid):has(> .sk-progress),
+  .sk-component-preview__frame-body
+    > [data-sk-react-demo-root]
+    > :is(.sk-stack, .sk-grid):has(> .sk-progress) {
+    flex: 1 1 100%;
+  }
+
   .sk-component-preview__frame-body[data-sk-component-preview-flush] {
     display: block;
     padding: 0;

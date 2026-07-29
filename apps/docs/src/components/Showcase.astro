@@ -19,6 +19,9 @@
  * never beside React.
  */
 import CodeBlock from "./CodeBlock.astro";
+import { emitMarkup, emitReact } from "@skryensya/ai-compiler/emit";
+import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import { TreeDemo } from "./react-demos/tree";
 import { iconMarkup } from "../icons";
 import "@skryensya/core/components/component-preview.css";
 import "@skryensya/core/components/loader.css";
@@ -32,6 +35,16 @@ import { getLocale, useTranslations } from "../i18n";
 type CodeLanguage = "bash" | "css" | "html" | "ts" | "tsx";
 
 interface Props {
+  /*
+   * A USAGE TREE, and the preferred way to write a demo.
+   *
+   * One authoring, both stages: the markup, the TSX and the live React island are all EMITTED from
+   * it, so a page cannot show a snippet that differs from what it renders — which is the whole
+   * failure mode hand-written examples have. The same tree shape the MCP validates and the gates
+   * measure; when a tree is given, `html` and `react` are ignored rather than merged, because two
+   * sources of truth is exactly what this replaces.
+   */
+  tree?: UsageTree;
   /** The authored markup. Renders inside the srcdoc frame and is the HTML/Vanilla source. */
   html?: string;
   /**
@@ -81,6 +94,7 @@ interface Props {
 }
 
 const {
+  tree,
   html,
   js,
   react,
@@ -96,7 +110,16 @@ const {
   screens = true,
 } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
-const vanillaCode = code ?? html;
+
+/*
+ * Both sources from the one tree. Emitted at BUILD time: the compiler is data in, strings out, so
+ * there is nothing to ship to the reader — the page carries the same bytes it would have carried if
+ * someone had typed them, minus the chance that they typed something else.
+ */
+const treeHtml = tree ? emitMarkup(tree) : undefined;
+const treeReact = tree ? emitReact(tree) : undefined;
+
+const vanillaCode = code ?? treeHtml ?? html;
 const hasJs = Boolean(js);
 /*
  * The `react` slot carries the LIVE demo (an actual `@skryensya/react` component, `client:load`);
@@ -104,11 +127,11 @@ const hasJs = Boolean(js);
  * React binding" — a page can render a live demo before it has bothered to also show its source.
  */
 const reactSlotHtml = Astro.slots.has("react") ? await Astro.slots.render("react") : undefined;
-const hasReact = Boolean(react) || Boolean(reactSlotHtml);
+const hasReact = Boolean(tree) || Boolean(treeReact ?? react) || Boolean(reactSlotHtml);
 const hasBindingTabs = Boolean(vanillaCode && hasReact);
 const hasSourceTabs = Boolean(vanillaCode && js);
 const slotHtml = Astro.slots.has("default") ? await Astro.slots.render("default") : undefined;
-const previewHtml = slotHtml ?? html ?? "";
+const previewHtml = treeHtml ?? slotHtml ?? html ?? "";
 const encodedPreviewScript = previewScript ? encodeURIComponent(previewScript) : "";
 /** Unique id so the FOUC inline script can target this preview (Astro may dedupe identical scripts). */
 const previewId = `sk-cp-${Math.random().toString(36).slice(2, 10)}`;
@@ -312,13 +335,13 @@ const screenToggleLabels = Object.fromEntries(
      * same isolation, theme sync, auto-fit and screen presets as the Vanilla one — the two bindings
      * are the same component seen twice, so they get the same box.
      */
-    reactSlotHtml && (
+    (tree || reactSlotHtml) && (
       <div
         class="sk-component-preview__react-stage"
         data-sk-component-preview-binding="react"
         hidden={hasBindingTabs ? true : undefined}
       >
-        <Fragment set:html={reactSlotHtml} />
+        {tree ? <TreeDemo tree={tree} client:load /> : <Fragment set:html={reactSlotHtml} />}
       </div>
     )
   }
@@ -400,14 +423,14 @@ const screenToggleLabels = Object.fromEntries(
   }
 
   {
-    react && (
+    (treeReact ?? react) && (
       <div
         class="sk-component-preview__binding"
         data-sk-component-preview-binding="react"
         hidden={hasBindingTabs ? true : undefined}
       >
         <div class="sk-component-preview__code">
-          <CodeBlock code={react} lang="tsx" />
+          <CodeBlock code={(treeReact ?? react)!} lang="tsx" />
         </div>
       </div>
     )

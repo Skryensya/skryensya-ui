@@ -20,6 +20,9 @@ importers:
 
   apps/docs:
     dependencies:
+      '@skryensya/ai-compiler':
+        specifier: workspace:*
+        version: link:../../packages/ai-compiler
       '@skryensya/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -277,6 +280,9 @@ importers:
 
   packages/react:
     dependencies:
+      '@skryensya/ai-compiler':
+        specifier: workspace:*
+        version: link:../ai-compiler
       '@skryensya/core':
         specifier: workspace:*
         version: link:../core

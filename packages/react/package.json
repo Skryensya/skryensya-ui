@@ -299,6 +299,10 @@
     "./tree-view": {
       "types": "./src/components/tree-view.tsx",
       "default": "./src/components/tree-view.tsx"
+    },
+    "./render-tree": {
+      "types": "./src/render-tree.tsx",
+      "default": "./src/render-tree.tsx"
     }
   },
   "scripts": {
@@ -315,7 +319,8 @@
     "@zag-js/react": "^1.42.0",
     "@zag-js/select": "^1.42.0",
     "@zag-js/tabs": "^1.42.0",
-    "@zag-js/tooltip": "1.42.0"
+    "@zag-js/tooltip": "1.42.0",
+    "@skryensya/ai-compiler": "workspace:*"
   },
   "peerDependencies": {
     "@skryensya/icons-lucide": "workspace:*",

@@ -1,7 +1,7 @@
 import { popoverParts, type PopoverPlacement } from "@skryensya/core/popover";
-import { useId, type HTMLAttributes, type ReactNode } from "react";
+import { useId, type HTMLAttributes, type ReactNode, type RefObject } from "react";
 import { anchoredParts } from "@skryensya/core/anchored";
-import { anchored } from "./anchored.js";
+import { useAnchored } from "./anchored.js";
 
 const cx = (...classes: Array<string | undefined>) => classes.filter(Boolean).join(" ");
 
@@ -16,10 +16,17 @@ export type PopoverProps = Omit<HTMLAttributes<HTMLDivElement>, "content" | "tit
   triggerLabel?: string;
   closeLabel?: string;
   contentClassName?: string;
+  /**
+   * Where the floating content is portalled. Defaults to `document.body`, which is right whenever
+   * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead — a preview
+   * frame, a scoped test harness, or a dialog that owns its own stacking context.
+   */
+  container?: RefObject<HTMLElement>;
 };
 
 /** Native Popover API: the browser owns light-dismiss, Escape and top-layer behaviour. */
 export function Popover({
+  container,
   children,
   className,
   closeLabel = "Cerrar",
@@ -35,7 +42,7 @@ export function Popover({
 }: PopoverProps) {
   const generatedId = useId();
   const contentId = id ?? `${generatedId}-popover`;
-  const anchor = anchored(contentId);
+  const anchor = useAnchored(contentId);
 
   return (
     <div {...props} className={cx(popoverParts.root, className)}>

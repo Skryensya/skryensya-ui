@@ -15,8 +15,8 @@ const basicHtml = `<article
   data-padding="lg"
   data-surface="surface"
 >
-  <h2>weekly summary</h2>
-  <p>The content always lives on an opaque fallback.</p>
+  <h2>Weekly Summary</h2>
+  <p>Content always lives on an opaque fallback.</p>
 </article>`;
 
 const navbarReact = `import {
@@ -55,11 +55,11 @@ const dialogHtml = `<dialog
 >
   <header class="sk-dialog__header">
     <h2 id="invite-title" class="sk-dialog__title">
-      Invite the team
+      Invite team
     </h2>
   </header>
   <div class="sk-dialog__body">
-    <p>The backdrop and the surface are reduced separately.</p>
+    <p>The backdrop and surface are reduced separately.</p>
   </div>
 </dialog>`;
 
@@ -90,25 +90,20 @@ const manualReduction = `.legacy-glass {
   title="Transparencias"
   description="Reusable translucent surfaces, with progressive blur, opaque fallback and automatic reduction."
 >
-  <h1>Transparencias</h1>
+  <h1>Transparency</h1>
   <p class="lede">
-    A translucent surface allows the context to be seen without giving it contrast. The class
-    <code>sk-translucent</code> composes alpha and backdrop blur on known components, but
-    always starts from an opaque surface. If the browser does not understand the preference—or the person
-    asks to reduce transparency—the content retains exactly the same box and reading.
+    A translucent surface allows the context to be seen without giving it contrast. The <code>sk-translucent</code> class composes alpha and backdrop blur on known components, but always starts from an opaque surface. If the browser does not understand the preference—or the person asks to reduce transparency—the content retains exactly the same box and reading.
   </p>
 
   <div class="sk-alert" data-tone="info" data-presentation="accent">
     <div class="sk-alert__content">
       <p>
-        <strong><code>prefers-reduced-transparency</code> is still experimental.</strong> That is why
-        the system does not depend on the <code>reduce</code> branch to be secure: transparency and blur
-        they only activate under <code>no-preference</code>. Without support, the fallback is opaque.
+        <strong><code>prefers-reduced-transparency</code> remains experimental. </strong> That is why the system does not depend on the <code>reduce</code> branch to be secure: transparency and blur are only enabled under <code>no-preference</code>. Without support, the fallback is opaque.
       </p>
     </div>
   </div>
 
-  <h2>what's happening</h2>
+  <h2>What's happening</h2>
   <p>
     There are three layers. The <strong>backdrop</strong> is what was already behind; the
     <strong>surface</strong> mixes its opaque color with alpha and blurs that backdrop; the
@@ -137,8 +132,8 @@ const manualReduction = `.legacy-glass {
           data-border="subtle"
         >
           <code>sm</code>
-          <strong>Discreta</strong>
-          <span>92% superficie · blur 8px</span>
+          <strong>Discreet</strong>
+          <span>92% surface · 8px blur</span>
         </article>
         <article
           class="sk-box sk-translucent transparency-lab__panel"
@@ -147,7 +142,7 @@ const manualReduction = `.legacy-glass {
         >
           <code>md</code>
           <strong>Standard</strong>
-          <span>82% superficie · blur 16px</span>
+          <span>82% surface · 16px blur</span>
         </article>
         <article
           class="sk-box sk-translucent transparency-lab__panel"
@@ -155,29 +150,25 @@ const manualReduction = `.legacy-glass {
           data-border="subtle"
         >
           <code>lg</code>
-          <strong>Expresiva</strong>
-          <span>70% superficie · blur 24px</span>
+          <strong>Expressive</strong>
+          <span>70% surface · 24px blur</span>
         </article>
       </div>
     </div>
     <figcaption>
-      The calibration background combines fine borders, color changes and typography so that alpha and
-      blur are visible. With reduction, the three samples converge on the same opaque surface.
+      The calibration background combines fine borders, color changes and typography so that alpha and blur are visible. With reduction, the three samples converge on the same opaque surface.
     </figcaption>
   </figure>
 
   <h2>Install</h2>
   <p>
-    The pattern is opt-in. First import the tokens and styles of the component you want to paint;
-    <code>transparency.css</code> provides the composable class and its accessible policy.
+    The pattern is opt-in. First import the tokens and styles of the component you want to paint; <code>transparency.css</code> provides the composable class and its accessible policy.
   </p>
   <CodeBlock code={install} label="CSS" />
 
   <h2>One class, three intensities</h2>
   <p>
-    Add <code>sk-translucent</code> to the same node that already paints the surface. Without
-    <code>data-strength</code>, the value is <code>md</code>. Intensity describes how much you perceive
-    the effect: <code>lg</code> lets you see more of the backdrop and blurs it more.
+    Adds <code>sk-translucent</code> to the same node that already paints the surface. Without <code>data-strength</code>, the value is <code>md</code>. Intensity describes how much the effect is perceived: <code>lg</code> lets you see more of the backdrop and blurs it more.
   </p>
   <CodeBlock code={basicHtml} label="HTML" lang="html" />
 
@@ -186,9 +177,9 @@ const manualReduction = `.legacy-glass {
       <thead>
         <tr>
           <th>Strength</th>
-          <th>Superficie</th>
+          <th>Surface</th>
           <th>Blur</th>
-          <th>Uso recomendado</th>
+          <th>Recommended use</th>
         </tr>
       </thead>
       <tbody>
@@ -216,81 +207,68 @@ const manualReduction = `.legacy-glass {
 
   <h2>Components conocidos</h2>
   <p>
-    The class already binds the surface hooks of <strong>Box, Navbar, Dialog, Sidebar, Vaul and
-    Drawer</strong>. It does not change its anatomy or create a parallel variant: the same component wins
-    an optional painting.
+    The class already binds the <strong>Box, Navbar, Dialog, Sidebar, Vaul and Drawer</strong> surface hooks. It does not change its anatomy or create a parallel variant: the same component gains an optional paint.
   </p>
 
-  <h3>Navbar: persistente y discreta</h3>
+  <h3>Navbar: persistent and unobtrusive</h3>
   <p>
-    Use <code>sm</code>: Navigation remains stable while content scrolls behind.
+    Use <code>sm</code>: Navigation remains stable while content passes behind.
   </p>
   <CodeBlock code={navbarReact} label="React · Navbar" lang="tsx" />
 
-  <h3>Box: one card on half</h3>
+  <h3>Box: a card on media</h3>
   <p>
-    <code>md</code> works when the card floats over an image or editorial background. About a
-    flat canvas, an opaque Box is simpler and does not need this pattern.
+    <code>md</code> works when the card floats over an image or editorial background. On a flat canvas, an opaque Box is simpler and does not need this pattern.
   </p>
   <CodeBlock code={boxReact} label="React · Box" lang="tsx" />
 
   <h3>Dialog: the panel and the backdrop are different things</h3>
   <p>
-    The class paints the panel. The <code>::backdrop</code> still belongs to Dialog and becomes
-    opaque with reduced transparency. For a modal preserves <code>sm</code>: the task must dominate,
-    not the background.
+    The class paints the panel. The <code>:: backdrop</code> still belongs to Dialog and becomes opaque with reduced transparency. For a modal preserves <code>sm</code>: the task should dominate, not the background.
   </p>
   <CodeBlock code={dialogHtml} label="HTML · Dialog" lang="html" />
 
   <h2>Customize without breaking the fallback</h2>
   <p>
-    <code>--sk-translucent-surface</code> is the actual opaque surface. The other three hooks alone
-    affect transparent improvement. Changing the alpha should never be the way to fix contrast:
-    First choose a correct opaque surface and validate text and borders against it.
+    <code>--sk-translucent-surface</code> is the actual opaque surface. The other three hooks only affect transparent enhancement. Changing the alpha should never be the way to fix contrast: first choose a correct opaque surface and validate text and borders against it.
   </p>
   <CodeBlock code={customize} label="CSS · hooks" />
 
   <h2>When not to use it</h2>
   <ul>
     <li>On a flat canvas: there is no useful context to reveal.</li>
-    <li>In tables, long forms or dense UI: the backdrop competes with reading.</li>
-    <li>As the only separation between two regions: it preserves edge, space or elevation.</li>
+    <li>In tables, long forms or dense UI: the backdrop competes with the reading.</li>
+    <li>As the only separation between two regions: preserves edge, space or elevation.</li>
     <li>Applying <code>opacity</code> to the container: also makes the contents translucent.</li>
     <li>In State layer: that alpha communicates interaction and is not a glassmorphism surface.</li>
   </ul>
 
-  <h2>Superficies heredadas</h2>
+  <h2>Inherited surfaces</h2>
   <p>
-    If you cannot adopt <code>sk-translucent</code>, add an explicit reduction. This form serves
-    for older code, but the baseline is still transparent in unsupported browsers;
-    for new code, the system class is safer.
+    If you cannot adopt <code>sk-translucent</code>, add an explicit reduction. This form works for older code, but the baseline remains transparent in browsers without support; for new code, the system class is safer.
   </p>
   <CodeBlock code={manualReduction} label="CSS legado" />
 
-  <h2>System contract</h2>
+  <h2>System Contract</h2>
   <ul>
     <li>
-      <strong>Dialog and Vaul.</strong> Their backdrops go from a mix with
-      <code>transparent</code> to an opaque background. Modality and drag remain.
+      <strong>Dialog and Vaul. </strong> Your backdrops go from a mix with <code>transparent</code> to an opaque background. Modality and drag remain.
     </li>
     <li>
-      <strong>Media gradient.</strong> The wash becomes the opaque base color inside the box
-      from the caption; It does not cover the entire image.
+      <strong>Half gradient. </strong> The wash becomes the opaque base color inside the caption box; It does not cover the entire image.
     </li>
     <li>
-      <strong>State layer.</strong> It is kept because it is essential feedback; selection and focus have
-      independent indicators.
+      <strong>State layer. </strong> It is kept because it is essential feedback; selection and focus have independent indicators.
     </li>
     <li>
-      <strong>Transition blur.</strong> Belongs to
-      <a href="/en/motion"><code>prefers-reduced-motion</code></a>, no to this surface policy.
+      <strong>Transition blur. </strong> Belongs to <a href="/en/motion"><code>prefers-reduced-motion</code></a>, not this surface policy.
     </li>
   </ul>
 
   <h2>Checklist</h2>
   <ul>
     <li>The opaque fallback works before any media query.</li>
-    <li>The class lives in the same node that paints the surface.</li>
+    <li>The class lives on the same node that paints the surface.</li>
     <li>Text and icons remain at 100% opacity.</li>
     <li>The edge or elevation continues to separate the box from the bottom.</li>
     <li>The UI works if the browser completely ignores the preference.</li>
@@ -307,12 +285,9 @@ const manualReduction = `.legacy-glass {
   />
 
   <p>
-    Platform reference:
-    <a
-      href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-transparency"
-    >
-      MDN, <code>prefers-reduced-transparency</code>
-    </a>.
+    Platform reference: <a
+ href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-transparency"
+ >MDN, <code>prefers-reduced-transparency</code></a>.
   </p>
 </Base>
 

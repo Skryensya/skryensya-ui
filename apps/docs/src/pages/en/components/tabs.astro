@@ -3,6 +3,11 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import {
+  TabsAdvancedDemo,
+  TabsBasicDemo,
+  TabsStatesDemo,
+} from "../../../components/react-demos/tabs";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -20,7 +25,7 @@ const basicHtml = `<div
   <div
     class="sk-tabs__list"
     data-sk-tabs-list
-    aria-label="Proyecto"
+    aria-label="Project"
   >
     <button
       class="sk-tabs__trigger sk-interactive"
@@ -392,40 +397,40 @@ export function WorkspaceTabs() {
 >
   <h1>Tabs</h1>
   <p class="lede">
-    Start with two views, add states and icons, and end with one
-    controlled vertical navigation. Anatomy does not change as we grow:
-    list, triggers and a panel for each value.
+    Start with two views, add states and icons, and end with controlled vertical navigation. The anatomy does not change as it grows: list, triggers and a panel for each value.
   </p>
 
   <h2>1. Basic</h2>
   <p>
-    Two triggers and two panels. <code>data-value</code> links each
-    option with its content; the enhancer completes roles, focus and ARIA.
+    Two triggers and two panels. <code>data-value</code> links each option to its content; the enhancer completes roles, focus and ARIA.
   </p>
   <Showcase
     html={basicHtml}
     react={basicReact}
     label="Basic tabs"
-  />
+  >
+    <Fragment slot="react">
+      <TabsBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>2. Statuses and icons</h2>
+  <h2>2. States and icons</h2>
   <p>
-    The same contract supports composite labels and options
-    disabled. The icon accompanies the text; never replaces
-    accessible name of the tab.
+    The same contract supports composite labels and disabled options. The icon accompanies the text; it never replaces the accessible name of the tab.
   </p>
   <Showcase
     html={statesHtml}
     react={statesReact}
     label="Tabs with states"
-  />
+  >
+    <Fragment slot="react">
+      <TabsStatesDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>3. Orientation and status</h2>
   <p>
-    In vertical orientation, the arrows run along the rail. with
-    manual activation, moving the focus does not change the panel: Enter or
-    Space confirms the selection. Event updates live region
-    below the component.
+    In vertical orientation, the arrows run along the rail. With manual activation, moving the focus does not change the panel: Enter or Space confirms the selection. The event updates the live region beneath the component.
   </p>
   <Showcase
     html={advancedHtml}
@@ -435,7 +440,11 @@ export function WorkspaceTabs() {
     react={advancedReact}
     previewScript={advancedBehavior}
     label="Vertical tabs with manual control"
-  />
+  >
+    <Fragment slot="react">
+      <TabsAdvancedDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />
@@ -445,16 +454,14 @@ export function WorkspaceTabs() {
 
   <h2>Initialize vanilla</h2>
   <p>
-    <code>initComponents</code> connects the Tabs. The icons are assembled
-    separately with the set chosen by the application.
+    <code>initComponents</code> connects the Tabs. The icons are assembled separately with the set chosen by the application.
   </p>
   <CodeBlock code={vanillaJs} label="JavaScript" />
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
     <li>
-      Root uses <code>data-sk-tabs</code> and keeps the active value
-      in <code>data-value</code>.
+      Root uses <code>data-sk-tabs</code> and retains the active value in <code>data-value</code>.
     </li>
     <li>
       Each trigger and panel declares the same <code>data-value</code>.
@@ -463,12 +470,10 @@ export function WorkspaceTabs() {
       <code>data-disabled</code> removes an option from the interaction.
     </li>
     <li>
-      <code>data-orientation="vertical"</code> changes the axis
-      navigation and indicator.
+      <code>data-orientation="vertical"</code> changes the navigation and indicator axis.
     </li>
     <li>
-      <code>data-activation-mode="manual"</code> separates focus and
-      selection.
+      <code>data-activation-mode="manual"</code> separates focus and selection.
     </li>
     <li>
       Vanilla emite <code>sk-value-change</code>; React expone
@@ -478,9 +483,7 @@ export function WorkspaceTabs() {
 
   <h2>React</h2>
   <p>
-    The component renders the same anatomy from <code>items</code>.
-    Use <code>value</code> and <code>onValueChange</code> when another
-    Application status depends on the active tab.
+    The component renders the same anatomy from <code>items</code>. Use <code>value</code> and <code>onValueChange</code> when other application state depends on the active tab.
   </p>
 
   <StylingHooks

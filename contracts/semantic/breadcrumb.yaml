@@ -1,0 +1,10 @@
+# La estructura vive en packages/core/src/breadcrumb.ts. Acá sólo por qué se elige.
+
+Breadcrumb:
+  useWhen:
+    - "la página vive dentro de una jerarquía y el usuario necesita volver hacia arriba"
+  avoidWhen:
+    - "la navegación es plana; eso es un NavList"
+    - "son pasos de un proceso; eso es Steps"
+  alternatives:
+    - NavList

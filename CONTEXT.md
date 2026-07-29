@@ -109,9 +109,43 @@ the machine's.
 _Avoid_: modifier, flag, status
 
 **Markup contract**:
-The structure a consumer must author for a machine-driven component to work, the parts, in the right
-nesting. Documented, never shipped: the system describes the markup and the consumer writes it.
+The authorable half of a **Contract**: the structure a consumer writes by hand, the parts in the right
+nesting, with the attributes the contract maps its options onto. Documented, never shipped: the system
+describes the markup and the consumer writes it. Not restricted to machine-driven components, a
+component with no machine still has one, it just needs no enhancer to come alive.
 _Avoid_: template, schema, markup API
+
+## The contract
+
+**Contract**:
+Everything Core declares about one component: its signatures, the options they take, the parts they
+own, the attributes those options map onto, and the accessibility a consumer owes. Core is its only
+author, which is what makes React and Vanilla two views of one truth rather than two truths.
+_Avoid_: schema, spec, component API, definition
+
+**Binding**:
+One realization of a Contract for one consumption path, React or Vanilla. A binding *realizes* a
+contract and never restates it: an option it re-declares locally is drift, not a binding.
+_Avoid_: adapter, wrapper, implementation, framework layer
+
+**Signature**:
+One selectable meaning inside a Contract, identified apart from the exported name because a single
+export can carry several. What discriminates them is a value the consumer supplies, so a signature
+names an intent and the host element it lands on, never an appearance.
+_Avoid_: surface, variant, overload, mode
+
+**Part template**:
+The subtree of parts one signature owns, and where a child lands inside it. It exists because the
+two bindings meet a contract at different depths, React writes three elements where authored markup
+writes five, so the template is what makes those the same structure rather than two.
+_Avoid_: markup template, skeleton, scaffold
+
+**Usage tree**:
+A composition written as data: signatures, the options given to each, and their children. Authored
+once and rendered by both bindings, so it is simultaneously the example, the snippet, the thing an
+agent proposes and the thing the gates check. Written in signatures, never in parts, because
+selecting meaning is the author's job and expanding it into structure is the template's.
+_Avoid_: usage plan, spec, recipe (a recipe is a named usage tree, not a synonym)
 
 ## Native and enhanced
 
@@ -332,6 +366,18 @@ inferred: it belongs to floating chrome that must say *which* control it describ
 popover), not to a box whose shared edge already says it (a menu, a select). Always decorative, so
 always `aria-hidden` — it repeats what the placement already shows.
 _Avoid_: caret, tail, pointer, beak, nub
+
+## Consumer setup
+
+**Root contract**:
+Everything a new consumer must author once, before composing any component: the token import, the
+color-mode script that runs before first paint, and the override mechanism for anything Core names
+but does not supply, a type-face included. The system never ships a font, the same way it never
+ships a brand ramp (ADR-23): it exposes the tier-1 hook (`--scale-font-family-sans`, unlayered,
+already overridable) and stops there. Analogous to a Markup contract but at the scope of the whole
+app rather than one component — documented, never shipped, and never implied by an individual
+component's own guide.
+_Avoid_: bootstrap, setup, boilerplate, starter, font provisioning
 
 ## Enforcement
 

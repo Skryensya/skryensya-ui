@@ -109,6 +109,16 @@
     display: block;
     min-inline-size: 0;
     margin: 0;
+    /*
+     * Center the title's FIRST LINE on the marker's center. The marker is a fixed
+     * `--marker-size` box starting at the content edge, so the first line has to come down by
+     * half the difference between that box and its own line box — `1lh` here resolves against
+     * this element's own font-size/line-height, so the offset follows density and type scale
+     * without restating either. Padding (not centering the whole block) keeps the alignment
+     * exact when the title wraps: later lines run on below, the first stays on the circle.
+     * `max()` floors it at 0 for the case where the line box outgrows the marker.
+     */
+    padding-block-start: max(0px, calc((var(--sk-process-list-marker-size) - 1lh) / 2));
     color: var(--sk-process-list-title-fg);
     font-size: var(--sk-process-list-title-font-size);
     font-weight: var(--sk-process-list-title-font-weight);

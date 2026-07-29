@@ -5,6 +5,7 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { CheckboxBasicDemo, CheckboxGroupDemo, TileCheckboxDemo } from "../../components/react-demos/checkbox";
 
 
 const indicators = `<span
@@ -31,16 +32,18 @@ const html = `<label class="sk-checkbox">
 
 const react = `import { Checkbox } from "@skryensya/react/checkbox";
 
-<Checkbox
-  name="alerts"
-  value="email"
-  defaultChecked="indeterminate"
-  onCheckedChange={(details) => {
-    console.log(details.checked); // true | false | "indeterminate"
-  }}
->
-  Alertas por email
-</Checkbox>;`;
+function Example() {
+  return (
+    <Checkbox
+      name="alerts"
+      value="email"
+      defaultChecked="indeterminate"
+      onCheckedChange={SomeFunction}
+    >
+      Alertas por email
+    </Checkbox>
+  );
+}`;
 
 /* The children indent to where the PARENT'S LABEL starts, not to an arbitrary step: same two
  * tokens the control composes its own row from, so the nesting survives a density change. */
@@ -282,32 +285,38 @@ const alertas = [
   },
 ];
 
-<div className="sk-inline" style={{ alignItems: "stretch" }}>
-  {alertas.map((alerta, index) => (
-    <TileCheckbox
-      key={alerta.value}
-      name="alerts"
-      value={alerta.value}
-      defaultChecked={index === 0}
-      onCheck={(details) => {
-        console.log(alerta.value, details.checked);
-      }}
-      style={{ flex: 1 }}
-    >
-      <span className="sk-tile__title">{alerta.title}</span>
-      <span className="sk-tile__description">
-        {alerta.description}
-      </span>
-    </TileCheckbox>
-  ))}
-</div>;`;
+function Example() {
+  return (
+    <div className="sk-inline" style={{ alignItems: "stretch" }}>
+      {alertas.map((alerta, index) => (
+        <TileCheckbox
+          key={alerta.value}
+          name="alerts"
+          value={alerta.value}
+          defaultChecked={index === 0}
+          onCheck={SomeFunction}
+          style={{ flex: 1 }}
+        >
+          <span className="sk-tile__title">{alerta.title}</span>
+          <span className="sk-tile__description">
+            {alerta.description}
+          </span>
+        </TileCheckbox>
+      ))}
+    </div>
+  );
+}`;
 ---
 
 <Base title="Checkbox" description="Checkbox nativo: estado independiente, indeterminado y formulario sin máquina.">
   <h1>Checkbox</h1>
   <p class="lede">Una elección independiente. Conserva un <code>input type="checkbox"</code>: submit, reset, teclado y validación pertenecen al browser.</p>
 
-  <Showcase html={html} react={react} label="Checkbox" />
+  <Showcase html={html} react={react} label="Checkbox">
+    <Fragment slot="react">
+      <CheckboxBasicDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
     El control usa los roles <code>check</code> y <code>remove</code> del set de iconos, no un trazo CSS.
     Importa <code>@skryensya/core/components/checkbox.css</code> y llama <code>initComponents()</code> una vez.
@@ -327,7 +336,11 @@ const alertas = [
     react={groupReact}
     label="Seleccionar todo"
     note="tres estados a partir de dos booleanos"
-  />
+  >
+    <Fragment slot="react">
+      <CheckboxGroupDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
     El estado del padre es <strong>derivado</strong>, nunca autorado: se recalcula desde los hijos
     en cada cambio. Al revés, un padre con estado propio empieza a mentir en cuanto alguien marca
@@ -341,7 +354,11 @@ const alertas = [
     <code>TileCheckbox</code>. Es el mismo control (<code>sk-checkbox__control</code> + iconos); solo
     cambia el contenedor.
   </p>
-  <Showcase html={tileCheckboxHtml} react={tileCheckboxReact} label="TileCheckbox" />
+  <Showcase html={tileCheckboxHtml} react={tileCheckboxReact} label="TileCheckbox">
+    <Fragment slot="react">
+      <TileCheckboxDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>El enhancer <code>tile-checkbox</code> (Svelte + <code>@zag-js/checkbox</code>, la misma máquina que React) hidrata cada label <code>data-sk-tile-checkbox</code> con <code>initComponents()</code>: controla su <code>input[data-part="input"]</code> (oculto) y sincroniza <code>data-state</code>; el <code>[data-part="indicator"]</code> es el control visual.</p>
   <CodeBlock code={tileCheckboxVanilla} label="JavaScript" />
 

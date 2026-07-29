@@ -18,6 +18,8 @@
     --sk-date-picker-bg: var(--color-bg-surface-raised);
     --sk-date-picker-fg: var(--color-text-primary);
     --sk-date-picker-affordance-color: var(--color-text-secondary);
+    --sk-date-picker-disabled-bg: var(--color-action-disabled);
+    --sk-date-picker-disabled-fg: var(--color-text-disabled);
     /* The calendar popover surface. Compact by default: a dense grid does not need the full 22rem, so
      * the width and the padding are hooks, and the sheet on mobile widens it back to full-bleed. */
     --sk-date-picker-content-bg: var(--color-bg-surface-raised);
@@ -55,6 +57,20 @@
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: var(--focus-ring-offset);
   }
+  /* Zag marks `disabled` on the machine as `data-disabled` here and as a REAL `disabled` on the
+   * input and trigger further down — but every visual property those two read (input `color`,
+   * trigger's `--sk-button-fg`) points at `--sk-date-picker-fg`/`-bg`/`-border-color` UNCONDITIONALLY,
+   * so disabling the picker never changed what any of them resolved to. Overriding the hooks HERE,
+   * on their shared ancestor, reaches both through the inheritance those hooks already rely on —
+   * no need to out-specificity the trigger's own `--sk-button-fg: var(--sk-date-picker-fg)` (same
+   * specificity as button.css's `:disabled` rule, declared later, so it was winning that fight and
+   * silently cancelling the dimming Button already provides for free). */
+  .sk-date-picker__control[data-disabled] {
+    --sk-date-picker-bg: var(--sk-date-picker-disabled-bg);
+    --sk-date-picker-fg: var(--sk-date-picker-disabled-fg);
+    --sk-date-picker-border-color: var(--color-border-subtle);
+    cursor: not-allowed;
+  }
   .sk-date-picker__input {
     box-sizing: border-box;
     min-inline-size: 0;
@@ -70,8 +86,7 @@
     color: var(--sk-date-picker-fg);
     opacity: 1;
   }
-  /* Every action inside the field is the real icon-only sm Button. Its painted square reserves half
-   * the touch-target delta on each side, so the 44px hit areas meet without overlapping. */
+  /* Every action inside the field is the real icon-only sm Button. */
   :is(.sk-date-picker__trigger, .sk-date-picker__clear).sk-button {
     --sk-button-bg: transparent;
     --sk-button-border-color: transparent;
@@ -80,13 +95,21 @@
     --sk-button-radius: var(--sk-date-picker-radius);
 
     align-self: center;
-    margin-inline: calc((var(--size-touch-target) - var(--size-control-sm)) * 0.5);
   }
+  /* Trigger reserves the FULL touch-target delta (12px: the 44px hit area painted at 32px) on BOTH
+   * sides, not half — its leading margin alone has to clear Clear's expanded hit zone when Clear is
+   * showing, AND double as the sole input-side reserve when Clear is hidden or never authored
+   * (Clear is optional, per the enhancer's own contract). Clear then reserves ONLY on its leading
+   * side, against the input, which has no expanded hit zone of its own to clear. Giving Clear a
+   * trailing margin too would double-count the same gap Trigger's leading margin already covers —
+   * that was the bug: clear↔trigger measured 12px while input↔clear measured only 6px. */
   .sk-date-picker__trigger.sk-button {
     --sk-button-fg: var(--sk-date-picker-fg);
+    margin-inline: calc(var(--size-touch-target) - var(--size-control-sm));
   }
   .sk-date-picker__clear.sk-button {
     --sk-button-fg: var(--sk-date-picker-affordance-color);
+    margin-inline-start: calc(var(--size-touch-target) - var(--size-control-sm));
   }
   :is(.sk-date-picker__trigger, .sk-date-picker__clear).sk-button:is(
       :disabled,
@@ -107,7 +130,16 @@
    *
    * Antes esto vivía en un `@supports` propio que leía `--sk-date-picker-anchor`, una custom property
    * que NADIE escribía: el bloque entero era inerte y el calendario lo colocaba siempre Zag. */
+  /* Redeclarado, no duplicado: React portea el positioner al `<body>`, así que lo que declara
+   * `.sk-date-picker` no le llega por herencia y cada hook que se lea de acá para abajo resuelve
+   * vacío (un `padding` vacío es `0`). Ver la nota equivalente en `select.css`. */
   .sk-date-picker__positioner {
+    --sk-date-picker-content-bg: var(--color-bg-surface-raised);
+    --sk-date-picker-content-border-color: var(--color-border-subtle);
+    --sk-date-picker-content-radius: var(--radius-surface);
+    --sk-date-picker-content-padding: var(--space-inset-xs) var(--space-inset-sm);
+    --sk-date-picker-content-inline-size: 18rem;
+
     --sk-anchored-position-area: block-end span-inline-end;
     --sk-anchored-justify: start;
     --sk-anchored-align: auto;

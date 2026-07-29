@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import Showcase from "../../components/Showcase.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { NavbarBasicDemo } from "../../components/react-demos/navbar";
 
 
 
@@ -78,25 +79,29 @@ import {
   NavbarBrand,
 } from "@skryensya/react/navbar";
 
-<Navbar>
-  <NavbarBrand>Atlas</NavbarBrand>
+function Example() {
+  return (
+    <Navbar>
+      <NavbarBrand>Atlas</NavbarBrand>
 
-  <NavList orientation="horizontal" aria-label="Principal">
-    <NavListGroup>
-      <NavListLink href="/" current>
-        Inicio
-      </NavListLink>
-      <NavListLink href="/proyectos">Proyectos</NavListLink>
-      <NavListLink href="/reportes">Reportes</NavListLink>
-      <NavListLink href="/equipo">Equipo</NavListLink>
-    </NavListGroup>
-  </NavList>
+      <NavList orientation="horizontal" aria-label="Principal">
+        <NavListGroup>
+          <NavListLink href="/" current>
+            Inicio
+          </NavListLink>
+          <NavListLink href="/proyectos">Proyectos</NavListLink>
+          <NavListLink href="/reportes">Reportes</NavListLink>
+          <NavListLink href="/equipo">Equipo</NavListLink>
+        </NavListGroup>
+      </NavList>
 
-  <NavbarActions>
-    <Button variant="ghost">Invitar</Button>
-    <Button variant="primary">Nuevo proyecto</Button>
-  </NavbarActions>
-</Navbar>;`;
+      <NavbarActions>
+        <Button variant="ghost">Invitar</Button>
+        <Button variant="primary">Nuevo proyecto</Button>
+      </NavbarActions>
+    </Navbar>
+  );
+}`;
 ---
 
 <Base title="Navbar" description="Navbar: la barra, con la lista de navegación como pattern horizontal.">
@@ -115,7 +120,11 @@ import {
     de divergir.
   </p>
 
-  <Showcase html={html} react={react} label="Navbar" flush />
+  <Showcase html={html} react={react} label="Navbar" flush>
+    <Fragment slot="react">
+      <NavbarBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>La página actual es de la plataforma</h2>
   <p>

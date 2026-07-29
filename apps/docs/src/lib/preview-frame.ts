@@ -17,6 +17,23 @@ export interface PreviewFrameOptions {
   scroll?: boolean;
   /** App-only JavaScript, already `encodeURIComponent`-encoded. */
   encodedScript?: string;
+  /**
+   * A React demo for the frame to import and mount ITSELF, named by module + export rather than
+   * handed over as a function.
+   *
+   * The frame owning the mount is what makes the React binding isolated rather than
+   * isolated-looking: the component's code then runs in the frame's realm, where `document` is the
+   * frame's document. Mounted from the parent it would render into the frame but still execute
+   * against the DOCS document — a `ThemeToggle` demo re-themed the whole site that way.
+   */
+  reactDemo?: {
+    /** Demo file basename, e.g. `button` — the key of the frame runtime's glob map. */
+    module: string;
+    /** Named export within that module, e.g. `ButtonBasicDemo`. */
+    export: string;
+    /** Plain, JSON-serialisable props. These demos take no others, by the same rule Astro imposes. */
+    props?: unknown;
+  };
 }
 
 const escapeAttribute = (value: string): string =>
@@ -27,7 +44,18 @@ export function buildPreviewFrameDocument({
   flush = false,
   scroll = false,
   encodedScript = "",
+  reactDemo,
 }: PreviewFrameOptions): string {
+  const demoAttrs = reactDemo
+    ? [
+        `data-sk-react-demo-module="${escapeAttribute(reactDemo.module)}"`,
+        `data-sk-react-demo-export="${escapeAttribute(reactDemo.export)}"`,
+        reactDemo.props && Object.keys(reactDemo.props).length
+          ? `data-sk-react-demo-props="${escapeAttribute(JSON.stringify(reactDemo.props))}"`
+          : "",
+      ].join("\n    ")
+    : "";
+
   return `<!doctype html>
 <html lang="es">
   <head>
@@ -42,6 +70,7 @@ export function buildPreviewFrameDocument({
     ${flush ? "data-sk-component-preview-flush" : ""}
     ${scroll ? "data-sk-component-preview-scroll" : ""}
     ${encodedScript ? `data-sk-component-preview-script="${encodedScript}"` : ""}
+    ${demoAttrs}
   >
     ${body}
   </body>

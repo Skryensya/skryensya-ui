@@ -1,8 +1,11 @@
 ---
+import "@skryensya/core/components/process-list.css";
+import "@skryensya/core/components/code-preview.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { ProcessListDemo } from "../../components/react-demos/process-list";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -102,68 +105,72 @@ import {
 } from "@skryensya/react/process-list";
 import { Text } from "@skryensya/react/text";
 
-<ProcessList aria-label="Instalar @skryensya">
-  <ProcessListItem title="Instala la librería">
-    <Stack gap="sm">
-      <Text tone="secondary">
-        Añade el núcleo y el binding de React al proyecto.
-      </Text>
-      <div
-        className="sk-code-preview"
-        data-sk-code-preview=""
-      >
-        <div className="sk-code-preview__label">
-          <span className="sk-code-preview__meta">
-            <span>terminal</span>
-          </span>
-        </div>
-        <div className="sk-code-preview__preview">
-          <div className="sk-code-preview__viewport">
-            <pre><code>pnpm add @skryensya/core \\
+function Example() {
+  return (
+    <ProcessList aria-label="Instalar @skryensya">
+      <ProcessListItem title="Instala la librería">
+        <Stack gap="sm">
+          <Text tone="secondary">
+            Añade el núcleo y el binding de React al proyecto.
+          </Text>
+          <div
+            className="sk-code-preview"
+            data-sk-code-preview=""
+          >
+            <div className="sk-code-preview__label">
+              <span className="sk-code-preview__meta">
+                <span>terminal</span>
+              </span>
+            </div>
+            <div className="sk-code-preview__preview">
+              <div className="sk-code-preview__viewport">
+                <pre><code>pnpm add @skryensya/core \\
   @skryensya/react</code></pre>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </Stack>
-  </ProcessListItem>
-  <ProcessListItem title="Importa ProcessList">
-    <Stack gap="sm">
-      <Text tone="secondary">
-        Carga el CSS y después importa los componentes.
-      </Text>
-      <ul>
-        <li>
-          <code>@import
+        </Stack>
+      </ProcessListItem>
+      <ProcessListItem title="Importa ProcessList">
+        <Stack gap="sm">
+          <Text tone="secondary">
+            Carga el CSS y después importa los componentes.
+          </Text>
+          <ul>
+            <li>
+              <code>@import
   "@skryensya/core/components/code-preview.css";</code>
-        </li>
-        <li>
-          <code>@import
+            </li>
+            <li>
+              <code>@import
   "@skryensya/core/components/process-list.css";</code>
-        </li>
-        <li>
-          <code>import {
+            </li>
+            <li>
+              <code>import {
   ProcessList,
   ProcessListItem,
 } from "@skryensya/react/process-list";</code>
-        </li>
-      </ul>
-    </Stack>
-  </ProcessListItem>
-  <ProcessListItem title="Renderiza las instrucciones">
-    <Stack gap="sm">
-      <Text tone="secondary">
-        El contador conserva la numeración sin estado adicional.
-      </Text>
-      <code>{"<ProcessList>…</ProcessList>"}</code>
-      <Inline gap="sm">
-        <Badge tone="success">Instalación lista</Badge>
-        <Link href="/componentes/process-list">
-          Abrir documentación
-        </Link>
-      </Inline>
-    </Stack>
-  </ProcessListItem>
-</ProcessList>;`;
+            </li>
+          </ul>
+        </Stack>
+      </ProcessListItem>
+      <ProcessListItem title="Renderiza las instrucciones">
+        <Stack gap="sm">
+          <Text tone="secondary">
+            El contador conserva la numeración sin estado adicional.
+          </Text>
+          <code>{"<ProcessList>…</ProcessList>"}</code>
+          <Inline gap="sm">
+            <Badge tone="success">Instalación lista</Badge>
+            <Link href="/componentes/process-list">
+              Abrir documentación
+            </Link>
+          </Inline>
+        </Stack>
+      </ProcessListItem>
+    </ProcessList>
+  );
+}`;
 ---
 
 <Base
@@ -182,7 +189,11 @@ import { Text } from "@skryensya/react/text";
     react={react}
     label="ProcessList de instalación"
     note="ol + contenido arbitrario + CodePreview"
-  />
+  >
+    <Fragment slot="react">
+      <ProcessListDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Cuándo usarlo</h2>
   <ul>

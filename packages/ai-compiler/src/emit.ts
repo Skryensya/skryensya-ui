@@ -1,0 +1,518 @@
+import type {
+  ComponentContract,
+  ContractSignature,
+  ContractSlot,
+  ContractTemplate,
+} from "@skryensya/core/contract";
+import { getContract, getSignature, signatureOptions } from "./registry.js";
+import {
+  collectionItems,
+  isUsageTree,
+  slotItems,
+  slotsOf,
+  type ItemInput,
+  type SlotContent,
+  type UsageTree,
+} from "./usage-tree.js";
+
+/*
+ * One tree, two renders (decision 29).
+ *
+ * The markup emitter walks the PART TEMPLATE: a nav list group becomes `<div><div label><ul>`,
+ * because that is the structure a consumer must author. The React emitter walks the SIGNATURES and
+ * stops there: React renders the same three elements itself, so emitting them here would be writing
+ * the component's body at the call site.
+ *
+ * That the two arrive at the same DOM is not assumed. It is gate G2, and it needs a browser, which
+ * is why nothing in this file claims it.
+ */
+
+export type Binding = "vanilla" | "react";
+
+export class EmitError extends Error {}
+
+/** Elements the HTML parser closes itself; a written close tag is invalid, not merely redundant. */
+const VOID_ELEMENTS = new Set(["area","base","br","col","embed","hr","img","input","link","meta","source","track","wbr"]);
+
+/* ------------------------------------------------------------------ markup (the vanilla binding) */
+
+export function emitMarkup(tree: UsageTree): string {
+  return renderSignature(tree, 0).join("\n");
+}
+
+function renderSignature(tree: UsageTree, depth: number, inherited?: Wiring): string[] {
+  const { contract, signature } = resolve(tree);
+  return renderTemplate(
+    signature.template,
+    { tree, contract, signature, wiring: wiringFor(tree, signature), inherited },
+    depth,
+  );
+}
+
+/**
+ * Attributes a parent computed for the child it slots. A field's control gets its `id`, its
+ * `aria-describedby` and its `aria-invalid` this way — the parent knows the ids because it owns them.
+ */
+type Wiring = {
+  readonly base: string;
+  readonly forControl: readonly [string, string][];
+  readonly onNode: Readonly<Record<string, [string, string][]>>;
+};
+
+/** One deterministic id per wired node, all derived from the composition's own id. */
+function wiringFor(tree: UsageTree, signature: ContractSignature): Wiring | undefined {
+  const rules = signature.wiring;
+  if (!rules || rules.length === 0) return undefined;
+
+  const base = tree.attrs?.id ?? slugOf(tree) ?? "sk-field";
+  const filled = slotsOf(tree);
+
+  // "Supplied by the author" covers both channels: `error` is a slot, `required` is an option, and a
+  // wiring rule names either without caring which.
+  const present = (node: string): boolean =>
+    node === "control" ||
+    slotItems(filled[node]).length > 0 ||
+    (tree.options?.[node] !== undefined && tree.options[node] !== false);
+
+  const idOf = (node: string): string => (node === "control" ? base : `${base}-${node}`);
+
+  const forControl: [string, string][] = [["id", base]];
+  const onNode: Record<string, [string, string][]> = {};
+
+  for (const rule of rules) {
+    if (rule.whenGiven !== undefined && !present(rule.whenGiven)) continue;
+
+    /*
+     * A literal value is written as given — including `""`, which is how a boolean attribute is
+     * spelled (`required`, not `required="true"`). Only a REFERENCE list that resolved to nothing is
+     * dropped: an `aria-describedby` pointing at absent nodes would describe nothing.
+     */
+    const value = rule.value ?? (rule.references ?? []).filter(present).map(idOf).join(" ");
+    if (rule.value === undefined && value === "") continue;
+
+    const target = rule.on === "control" ? forControl : (onNode[rule.on] ??= []);
+    target.push([rule.attr, value]);
+  }
+
+  // Every node a rule points at carries the id it is pointed at by.
+  for (const rule of rules) {
+    for (const node of rule.references ?? []) {
+      if (node === "control" || !present(node)) continue;
+      (onNode[node] ??= []).push(["id", idOf(node)]);
+    }
+  }
+
+  return { base, forControl, onNode };
+}
+
+/** A stable id from the label's own text, so the same tree keeps producing the same bytes. */
+function slugOf(tree: UsageTree): string | undefined {
+  const label = slotItems(slotsOf(tree).label).find((item) => !isUsageTree(item));
+  if (typeof label !== "string") return undefined;
+
+  const slug = label
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  return slug || undefined;
+}
+
+type NodeContext = {
+  readonly tree: UsageTree;
+  readonly contract: ComponentContract;
+  readonly signature: ContractSignature;
+  /** The collection entry being emitted, while inside a repeated node. */
+  readonly item?: ItemInput;
+  /** Ids this signature owns, when it declares wiring. */
+  readonly wiring?: Wiring;
+  /** Attributes the PARENT computed for this signature, because the parent owns the ids. */
+  readonly inherited?: Wiring;
+  /** Whether the entry being emitted is the last of its collection. */
+  readonly last?: boolean;
+};
+
+function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number): string[] {
+  const filled = slotsOf(ctx.tree);
+
+  // One element per entry. Two nodes can repeat over the same collection from different places, so
+  // the entry's fields land where the markup wants them and the key keeps the pieces paired.
+  if (node.repeat !== undefined) {
+    const entries = collectionItems(filled[node.repeat]);
+    return entries.flatMap((item, index) =>
+      renderTemplate({ ...node, repeat: undefined }, { ...ctx, item, last: index === entries.length - 1 }, depth),
+    );
+  }
+
+  // Between, not after: a trailing separator is punctuation with nothing following it.
+  if (node.whenNotLast && ctx.last !== false) return [];
+
+  // Conditional on the ENTRY rather than the composition: a crumb with an href is a link, one
+  // without is the page you are on.
+  if (node.whenItemGiven !== undefined && ctx.item?.options?.[node.whenItemGiven] === undefined) return [];
+  if (node.whenItemMissing !== undefined && ctx.item?.options?.[node.whenItemMissing] !== undefined) return [];
+
+  // A conditional node names either an option or a slot; both mean "supplied by the author".
+  if (node.whenGiven !== undefined) {
+    const names = typeof node.whenGiven === "string" ? [node.whenGiven] : node.whenGiven;
+    // A list means ANY of them; `false` is the author saying no, which is not saying nothing.
+    const given = names.some((name) => {
+      const option = ctx.tree.options?.[name];
+      return (option !== undefined && option !== false) || slotItems(filled[name]).length > 0;
+    });
+    if (!given) return [];
+  }
+
+  // No element of its own: the slot's content stands where this node is. A decorative icon brings
+  // its own box and must not be wrapped in one.
+  if (!node.element) {
+    return node.slot ? renderSlot(filled[node.slot], depth, node.slot === "children" ? ctx.wiring : undefined) : [];
+  }
+
+  const pad = "  ".repeat(depth);
+  const attrs = attributesFor(node, ctx);
+  const open = `<${node.element}${attrs.map((a) => ` ${a}`).join("")}>`;
+
+  /*
+   * A node's content, in order: its own literal text, then its slot, then its child nodes. A label
+   * needs two of these at once — the author's text and the required mark after it — so these are
+   * additive rather than a chain of alternatives.
+   */
+  const children = [
+    ...(node.text !== undefined ? [`${"  ".repeat(depth + 1)}${escapeText(node.text)}`] : []),
+    ...(node.textFromOption !== undefined
+      ? [`${"  ".repeat(depth + 1)}${escapeText(String(ctx.tree.options?.[node.textFromOption] ?? ctx.contract.options[node.textFromOption]?.default ?? ""))}`]
+      : []),
+    ...(node.itemSlot ? renderSlot(ctx.item?.slots[node.itemSlot], depth + 1) : []),
+    ...(node.slot
+      ? renderSlot(filled[node.slot], depth + 1, node.slot === "children" ? ctx.wiring : undefined)
+      : []),
+    ...(node.children ?? []).flatMap((child) => renderTemplate(child, ctx, depth + 1)),
+  ];
+
+  if (children.length === 0) {
+    // A void element closes itself; writing </input> is markup no browser accepts as written.
+    return VOID_ELEMENTS.has(node.element)
+      ? [`${pad}${open}`]
+      : [`${pad}${open}</${node.element}>`];
+  }
+
+  // A single line of text stays on the element's own line; anything else gets its own lines.
+  if (children.length === 1 && !children[0]!.trimStart().startsWith("<")) {
+    return [`${pad}${open}${children[0]!.trim()}</${node.element}>`];
+  }
+
+  return [`${pad}${open}`, ...children, `${pad}</${node.element}>`];
+}
+
+function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
+  const { tree, contract, signature } = ctx;
+  const out: string[] = [];
+
+  const classes = [
+    ...(node.part ? [contract.parts[node.part]!] : []),
+    ...(node.also ?? []),
+  ];
+  if (classes.length > 0) out.push(`class="${classes.join(" ")}"`);
+
+  // Options a non-host node claims (a frame's `src`/`alt` belong to its `<img>`), and everything
+  // else on the host. Every mapped option is written, DEFAULTS INCLUDED: React serializes its
+  // defaults, so a silent one here would read as a divergence at G2 that does not exist.
+  const claimed = new Set(
+    claimedElsewhere(signature.template, node).flatMap((other) => other.options ?? []),
+  );
+
+  const mine = node.host
+    ? signatureOptions(contract, signature).filter(([name]) => !claimed.has(name))
+    : signatureOptions(contract, signature).filter(([name]) => (node.options ?? []).includes(name));
+
+  if (node.mount) out.push(node.mount);
+  if (node.host && signature.mount) {
+    // The enhancer's mount point. Binding-specific by nature, which is why it is not in the template.
+    out.push(signature.mount);
+  }
+
+  for (const [name, option] of mine) {
+    const value = tree.options?.[name] ?? option.default;
+    if (value === undefined || value === false) continue;
+    out.push(value === true ? attr(option.attr, option.trueValue ?? "") : attr(option.attr, String(value)));
+    if (option.alsoAttr && value !== true) out.push(attr(option.alsoAttr, String(value)));
+  }
+
+  // The one entry the group selected. Asked of the group, marked on the entry — which is what makes
+  // "only one can be selected" a fact of the structure rather than a hope about the data.
+  if (node.selectedBy && ctx.item) {
+    const shape = itemShapeOf(signature);
+    const key = shape ? ctx.item.options?.[shape.key] : undefined;
+    if (key !== undefined && tree.options?.[node.selectedBy.option] === key) {
+      out.push(attr(node.selectedBy.attr, ""));
+    }
+  }
+
+  // Values that belong to the entry, not to the composition: the key that pairs this element with
+  // its twin elsewhere in the markup, and whatever else the entry carries.
+  if (node.itemOptions && ctx.item) {
+    const itemOptions = itemShapeOf(signature)?.options ?? {};
+    for (const name of node.itemOptions) {
+      const option = itemOptions[name];
+      const value = ctx.item.options?.[name] ?? option?.default;
+      if (!option || value === undefined || value === false) continue;
+      out.push(value === true ? attr(option.attr, option.trueValue ?? "") : attr(option.attr, String(value)));
+    }
+  }
+
+  // Copied from the entry's own content: a crumb's title repeats its label, derived so the two
+  // can never disagree.
+  for (const [name, slot] of Object.entries(node.attrsFromItemSlot ?? {})) {
+    const text = slotItems(ctx.item?.slots[slot]).find((v) => !isUsageTree(v));
+    if (typeof text === "string") out.push(attr(name, text));
+  }
+
+  // Structure the contract fixes for every instance: the enhancer's mount points, a native `type`.
+  for (const [name, value] of Object.entries(node.attrs ?? {})) out.push(attr(name, value));
+
+  // Values made visible: a fill computed from the option it represents, never typed by an author.
+  const styles = (node.style ?? []).flatMap((rule) => {
+    const [num, den] = rule.percentOf;
+    const value = Number(tree.options?.[num] ?? contract.options[num]?.default ?? 0);
+    const max = Number(tree.options?.[den] ?? contract.options[den]?.default ?? 100);
+    if (!Number.isFinite(value) || !Number.isFinite(max) || max <= 0) return [];
+    const min = 0;
+    const ratio = Math.max(0, Math.min(1, (value - min) / (max - min)));
+    return [rule.as === "fraction" ? `${rule.property}: ${ratio}` : `${rule.property}: ${ratio * 100}%`];
+  });
+  if (styles.length > 0) out.push(attr("style", styles.join("; ") + ";"));
+
+  // Structure that depends on whether the author supplied something: a named loader is a status, an
+  // unnamed one is decoration beside one, and no static attribute can be both.
+  for (const rule of node.attrsWhen ?? []) {
+    const value = tree.options?.[rule.option] ?? contract.options[rule.option]?.default;
+    if (rule.given !== undefined && (value !== undefined && value !== false) !== rule.given) continue;
+    if (rule.equals !== undefined && value !== rule.equals) continue;
+    if (rule.notEquals !== undefined && value === rule.notEquals) continue;
+    for (const [name, literal] of Object.entries(rule.attrs)) out.push(attr(name, literal));
+  }
+
+  // What the author passes through. The host takes everything except what another node claimed —
+  // a tab list's accessible name belongs to the tablist, not to the box around it.
+  const claimedAttrs = new Set(
+    claimedElsewhere(signature.template, node).flatMap((other) => other.attrsFor ?? []),
+  );
+
+  for (const [name, value] of Object.entries(tree.attrs ?? {})) {
+    const mineToWrite = node.host ? !claimedAttrs.has(name) : (node.attrsFor ?? []).includes(name);
+    if (mineToWrite) out.push(attr(name, value));
+  }
+
+  /*
+   * The two halves of one relationship the contract declares: the node that renders the label slot
+   * carries the id, the node that points at it carries `aria-labelledby`. Ids belong to the binding,
+   * the relationship belongs to the contract.
+   */
+  if (node.labelledBySlot) {
+    const id = slotId(ctx, node.labelledBySlot);
+    if (id) out.push(attr("aria-labelledby", id));
+  }
+
+  if (node.slot && labelledSlots(ctx.signature.template).has(node.slot)) {
+    const id = slotId(ctx, node.slot);
+    if (id) out.push(attr("id", id));
+  }
+
+  // The id relationships this signature owns: what a named node carries, and what the parent
+  // computed for this one because the parent is where the ids live.
+  if (node.name && ctx.wiring?.onNode[node.name]) {
+    for (const [name, value] of ctx.wiring.onNode[node.name]!) out.push(attr(name, value));
+  }
+
+  if (node.host && ctx.inherited) {
+    for (const [name, value] of ctx.inherited.forControl) out.push(attr(name, value));
+  }
+
+  return out;
+}
+
+/** The collection shape a signature declares, if it has one. At most one slot may be a collection. */
+function itemShapeOf(signature: ContractSignature): ContractSlot["item"] {
+  return Object.values(signature.slots).find((slot) => slot.accepts === "items")?.item;
+}
+
+/** Every other node of the template, so the host can tell which options are already spoken for. */
+function claimedElsewhere(root: ContractTemplate, node: ContractTemplate): ContractTemplate[] {
+  const others: ContractTemplate[] = [];
+  const visit = (candidate: ContractTemplate): void => {
+    if (candidate !== node) others.push(candidate);
+    for (const child of candidate.children ?? []) visit(child);
+  };
+  visit(root);
+  return others;
+}
+
+/** Slot names some node in this template points at with `labelledBySlot`. */
+function labelledSlots(root: ContractTemplate): ReadonlySet<string> {
+  const names = new Set<string>();
+  const visit = (node: ContractTemplate): void => {
+    if (node.labelledBySlot) names.add(node.labelledBySlot);
+    for (const child of node.children ?? []) visit(child);
+  };
+  visit(root);
+  return names;
+}
+
+/**
+ * A deterministic id for a labelled slot: the same tree must produce the same bytes, so a counter or
+ * a random suffix is out. The label's own text is what a human would have typed anyway.
+ */
+function slotId(ctx: NodeContext, slot: string): string | undefined {
+  const items = slotItems(slotsOf(ctx.tree)[slot]);
+  const text = items.find((item) => !isUsageTree(item));
+  if (typeof text !== "string") return undefined;
+  const slug = text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  return slug || undefined;
+}
+
+function renderSlot(content: SlotContent | undefined, depth: number, wiring?: Wiring): string[] {
+  return slotItems(content).flatMap((item) =>
+    isUsageTree(item) ? renderSignature(item, depth, wiring) : [`${"  ".repeat(depth)}${escapeText(item)}`],
+  );
+}
+
+/* ------------------------------------------------------------------------- TSX (the React binding) */
+
+export function emitReact(tree: UsageTree): string {
+  const imports = new Map<string, Set<string>>();
+  const body = renderJsx(tree, 0, imports);
+
+  const lines = [...imports.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([from, names]) => `import { ${[...names].sort().join(", ")} } from "${from}";`);
+
+  return [...lines, "", ...body].join("\n");
+}
+
+function renderJsx(tree: UsageTree, depth: number, imports: Map<string, Set<string>>): string[] {
+  const { contract, signature } = resolve(tree);
+  const pad = "  ".repeat(depth);
+  const name = signature.react.name;
+
+  const from = signature.react.from;
+  if (!imports.has(from)) imports.set(from, new Set());
+  imports.get(from)!.add(name);
+
+  const props: string[] = [];
+  for (const [option, declared] of signatureOptions(contract, signature)) {
+    const value = tree.options?.[option];
+    if (value === undefined || value === false) continue;
+    // The binding's own name for it, when the contract had to choose a different key.
+    const name = declared.prop ?? option;
+    props.push(value === true ? name : `${name}=${JSON.stringify(String(value))}`);
+  }
+  for (const [attrName, value] of Object.entries(tree.attrs ?? {})) {
+    props.push(`${jsxPropName(attrName)}=${JSON.stringify(value)}`);
+  }
+
+  const filled = slotsOf(tree);
+  // Every slot except `children` is a prop in React; the template is what turns it into an element.
+  for (const [slot, content] of Object.entries(filled)) {
+    if (slot === "children") continue;
+
+    // A collection stays data on this side: React takes the array and renders the repetition itself,
+    // which is the whole reason the two bindings meet a collection at different depths.
+    const declaredSlot = signature.slots[slot];
+    const propName = declaredSlot?.prop ?? slot;
+
+    const entries = collectionItems(content);
+    if (entries.length > 0) {
+      props.push(`${propName}={${JSON.stringify(entries.map(flattenItem))}}`);
+      continue;
+    }
+
+    const items = slotItems(content);
+
+    // A slot can hold another signature — a nav link's decorative icon — and on this side it becomes
+    // an element in a prop. Emitting only the text ones silently dropped it.
+    const composed = items.filter(isUsageTree);
+    if (composed.length > 0) {
+      const jsx = composed.map((item) => renderJsx(item, 0, imports).join("").trim());
+      props.push(`${propName}={${jsx.length === 1 ? jsx[0] : `<>${jsx.join("")}</>`}}`);
+      continue;
+    }
+
+    const text = items.find((item) => !isUsageTree(item));
+    if (typeof text === "string") props.push(`${propName}=${JSON.stringify(text)}`);
+  }
+
+  const open = props.length > 0 ? `<${name} ${props.join(" ")}>` : `<${name}>`;
+  const children = slotItems(filled.children).flatMap((item) =>
+    isUsageTree(item) ? renderJsx(item, depth + 1, imports) : [`${"  ".repeat(depth + 1)}${item}`],
+  );
+
+  if (children.length === 0) {
+    const selfClosing = props.length > 0 ? `<${name} ${props.join(" ")} />` : `<${name} />`;
+    return [`${pad}${selfClosing}`];
+  }
+
+  if (children.length === 1 && !children[0]!.trimStart().startsWith("<")) {
+    return [`${pad}${open}${children[0]!.trim()}</${name}>`];
+  }
+
+  return [`${pad}${open}`, ...children, `${pad}</${name}>`];
+}
+
+/**
+ * One entry, as the flat object a React binding takes. The split between an entry's options and its
+ * slots exists so the markup emitter knows what is an attribute and what is content; React takes one
+ * object and decides that itself.
+ */
+function flattenItem(item: ItemInput): Record<string, unknown> {
+  const flat: Record<string, unknown> = { ...item.options };
+
+  for (const [name, content] of Object.entries(item.slots)) {
+    const values = slotItems(content);
+    const text = values.find((value) => !isUsageTree(value));
+    if (typeof text === "string") flat[name] = text;
+  }
+
+  return flat;
+}
+
+function jsxPropName(attr: string): string {
+  if (attr === "class") return "className";
+  if (attr.startsWith("aria-") || attr.startsWith("data-")) return attr;
+  return attr;
+}
+
+/* ------------------------------------------------------------------------------------- shared */
+
+export function emit(tree: UsageTree, binding: Binding): string {
+  return binding === "vanilla" ? emitMarkup(tree) : emitReact(tree);
+}
+
+function resolve(tree: UsageTree): { contract: ComponentContract; signature: ContractSignature } {
+  const contract = getContract(tree.contract);
+  if (!contract) throw new EmitError(`No contract "${tree.contract}".`);
+
+  const signature = getSignature(contract, tree.signature);
+  if (!signature) throw new EmitError(`Contract "${tree.contract}" has no signature "${tree.signature}".`);
+
+  return { contract, signature };
+}
+
+function attr(name: string, value: string): string {
+  return value === "" ? name : `${name}="${escapeAttr(value)}"`;
+}
+
+function escapeAttr(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+}
+
+function escapeText(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}

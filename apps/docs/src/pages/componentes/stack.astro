@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import { StackBasicDemo } from "../../components/react-demos/layout";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -23,18 +24,22 @@ const html = `<section
 const react = `import { Stack } from "@skryensya/react/stack";
 import { Heading } from "@skryensya/react/heading";
 
-<Stack
-  as="section"
-  gap="md"
-  align="start"
-  aria-labelledby="resumen-title"
->
-  <Heading as="h2" size="h2" id="resumen-title">
-    Resumen
-  </Heading>
-  <p>La solicitud está lista para revisar.</p>
-  <a href="/detalles">Ver detalles</a>
-</Stack>;`;
+function Example() {
+  return (
+    <Stack
+      as="section"
+      gap="md"
+      align="start"
+      aria-labelledby="resumen-title"
+    >
+      <Heading as="h2" size="h2" id="resumen-title">
+        Resumen
+      </Heading>
+      <p>La solicitud está lista para revisar.</p>
+      <a href="/detalles">Ver detalles</a>
+    </Stack>
+  );
+}`;
 ---
 
 <Base title="Stack" description="Stack: primitive de layout vertical con separación y alineación transversal.">
@@ -44,7 +49,11 @@ import { Heading } from "@skryensya/react/heading";
     la semántica del contenido, y el gap expresa la separación entre sus hijos.
   </p>
 
-  <Showcase html={html} react={react} label="Stack" />
+  <Showcase html={html} react={react} label="Stack">
+    <Fragment slot="react">
+      <StackBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>HTML autorado</h2>
   <p>

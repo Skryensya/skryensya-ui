@@ -5,6 +5,11 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import {
+  AccordionExclusiveDemo,
+  AccordionMultipleDemo,
+  AccordionSingleDemo,
+} from "../../components/react-demos/accordion";
 
 const disclosureIcon = `<span
         class="sk-tile__chevron"
@@ -327,40 +332,44 @@ root.addEventListener("sk:accordionvaluechange", (event) => {
 const react = `import { Accordion } from "@skryensya/react/accordion";
 import { Icon } from "@skryensya/react/icon";
 
-<Accordion type="multiple" defaultValue={["runtime", "rollout"]}>
-  <Accordion.Item value="runtime">
-    <Accordion.Trigger>
-      <span className="sk-tile__content">
-        <span className="sk-tile__title">Runtime</span>
-        <span className="sk-tile__description">
-          Versión y región
-        </span>
-      </span>
-      <span className="sk-tile__chevron" aria-hidden="true">
-        <span data-state="closed">
-          <Icon name="chevron-down" />
-        </span>
-        <span data-state="open">
-          <Icon name="chevron-up" />
-        </span>
-      </span>
-    </Accordion.Trigger>
-    <Accordion.Content>
-      <div className="sk-stack" data-gap="sm">
-        <p className="sk-tile__description">
-          Node 22 sobre el pool compartido de Fráncfort. Cada
-          despliegue reserva dos vCPU y 512 MB, con autoscaling
-          hasta seis réplicas.
-        </p>
-        <p className="sk-tile__description">
-          El healthcheck pega a <code>/status</code> cada diez
-          segundos; tres fallos seguidos sacan la réplica del
-          balanceador.
-        </p>
-      </div>
-    </Accordion.Content>
-  </Accordion.Item>
-</Accordion>`;
+function Example() {
+  return (
+    <Accordion type="multiple" defaultValue={["runtime", "rollout"]}>
+      <Accordion.Item value="runtime">
+        <Accordion.Trigger>
+          <span className="sk-tile__content">
+            <span className="sk-tile__title">Runtime</span>
+            <span className="sk-tile__description">
+              Versión y región
+            </span>
+          </span>
+          <span className="sk-tile__chevron" aria-hidden="true">
+            <span data-state="closed">
+              <Icon name="chevron-down" />
+            </span>
+            <span data-state="open">
+              <Icon name="chevron-up" />
+            </span>
+          </span>
+        </Accordion.Trigger>
+        <Accordion.Content>
+          <div className="sk-stack" data-gap="sm">
+            <p className="sk-tile__description">
+              Node 22 sobre el pool compartido de Fráncfort. Cada
+              despliegue reserva dos vCPU y 512 MB, con autoscaling
+              hasta seis réplicas.
+            </p>
+            <p className="sk-tile__description">
+              El healthcheck pega a <code>/status</code> cada diez
+              segundos; tres fallos seguidos sacan la réplica del
+              balanceador.
+            </p>
+          </div>
+        </Accordion.Content>
+      </Accordion.Item>
+    </Accordion>
+  );
+}`;
 
 const nativeInstall = `pnpm add @skryensya/core`;
 
@@ -461,7 +470,11 @@ const nativeDetails = `<section
     Para una divulgación aislada (antes “ExpandableTile”), usa Accordion con un único item: la raíz
     aporta el marco y el Tile conserva la superficie y el state layer.
   </p>
-  <Showcase html={single} label="Accordion de un item" />
+  <Showcase html={single} label="Accordion de un item">
+    <Fragment slot="react">
+      <AccordionSingleDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Grupo exclusivo</h2>
   <p>
@@ -469,11 +482,19 @@ const nativeDetails = `<section
     item abierto. Con <code>data-collapsible="false"</code> o <code>collapsible={false}</code>, el item
     abierto no puede cerrarse.
   </p>
-  <Showcase html={exclusive} label="Accordion single" />
+  <Showcase html={exclusive} label="Accordion single">
+    <Fragment slot="react">
+      <AccordionExclusiveDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Grupo múltiple</h2>
   <p><code>type="multiple"</code> conserva cada disclosure de forma independiente.</p>
-  <Showcase html={multiple} react={react} label="Accordion multiple" />
+  <Showcase html={multiple} react={react} label="Accordion multiple">
+    <Fragment slot="react">
+      <AccordionMultipleDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Vanilla</h2>
   <p>

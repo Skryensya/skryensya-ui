@@ -1,8 +1,11 @@
 ---
+import "@skryensya/core/components/process-list.css";
+import "@skryensya/core/components/code-preview.css";
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { ProcessListDemo } from "../../../components/react-demos/process-list";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -102,68 +105,72 @@ import {
 } from "@skryensya/react/process-list";
 import { Text } from "@skryensya/react/text";
 
-<ProcessList aria-label="Install @skryensya">
-  <ProcessListItem title="Install the library">
-    <Stack gap="sm">
-      <Text tone="secondary">
-        Add the React core and binding to the project.
-      </Text>
-      <div
-        className="sk-code-preview"
-        data-sk-code-preview=""
-      >
-        <div className="sk-code-preview__label">
-          <span className="sk-code-preview__meta">
-            <span>terminal</span>
-          </span>
-        </div>
-        <div className="sk-code-preview__preview">
-          <div className="sk-code-preview__viewport">
-            <pre><code>pnpm add @skryensya/core \\
+function Example() {
+  return (
+    <ProcessList aria-label="Install @skryensya">
+      <ProcessListItem title="Install the library">
+        <Stack gap="sm">
+          <Text tone="secondary">
+            Add the React core and binding to the project.
+          </Text>
+          <div
+            className="sk-code-preview"
+            data-sk-code-preview=""
+          >
+            <div className="sk-code-preview__label">
+              <span className="sk-code-preview__meta">
+                <span>terminal</span>
+              </span>
+            </div>
+            <div className="sk-code-preview__preview">
+              <div className="sk-code-preview__viewport">
+                <pre><code>pnpm add @skryensya/core \\
   @skryensya/react</code></pre>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </Stack>
-  </ProcessListItem>
-  <ProcessListItem title="Importa ProcessList">
-    <Stack gap="sm">
-      <Text tone="secondary">
-        Load the CSS and then import the components.
-      </Text>
-      <ul>
-        <li>
-          <code>@import
+        </Stack>
+      </ProcessListItem>
+      <ProcessListItem title="Importa ProcessList">
+        <Stack gap="sm">
+          <Text tone="secondary">
+            Load the CSS and then import the components.
+          </Text>
+          <ul>
+            <li>
+              <code>@import
   "@skryensya/core/components/code-preview.css";</code>
-        </li>
-        <li>
-          <code>@import
+            </li>
+            <li>
+              <code>@import
   "@skryensya/core/components/process-list.css";</code>
-        </li>
-        <li>
-          <code>import {
+            </li>
+            <li>
+              <code>import {
   ProcessList,
   ProcessListItem,
 } from "@skryensya/react/process-list";</code>
-        </li>
-      </ul>
-    </Stack>
-  </ProcessListItem>
-  <ProcessListItem title="Render instructions">
-    <Stack gap="sm">
-      <Text tone="secondary">
-        The counter retains numbering without additional state.
-      </Text>
-      <code>{"<ProcessList>…</ProcessList>"}</code>
-      <Inline gap="sm">
-        <Badge tone="success">Installation lista</Badge>
-        <Link href="/en/components/process-list">
-          Open documentation
-        </Link>
-      </Inline>
-    </Stack>
-  </ProcessListItem>
-</ProcessList>;`;
+            </li>
+          </ul>
+        </Stack>
+      </ProcessListItem>
+      <ProcessListItem title="Render instructions">
+        <Stack gap="sm">
+          <Text tone="secondary">
+            The counter retains numbering without additional state.
+          </Text>
+          <code>{"<ProcessList>…</ProcessList>"}</code>
+          <Inline gap="sm">
+            <Badge tone="success">Installation lista</Badge>
+            <Link href="/en/components/process-list">
+              Open documentation
+            </Link>
+          </Inline>
+        </Stack>
+      </ProcessListItem>
+    </ProcessList>
+  );
+}`;
 ---
 
 <Base
@@ -172,9 +179,7 @@ import { Text } from "@skryensya/react/text";
 >
   <h1>ProcessList</h1>
   <p class="lede">
-    A static sequence of instructions where the content is the main thing. Use a
-    real <code>&lt;ol&gt;</code>, number each <code>&lt;li&gt;</code> and visually connect the steps without
-    convert them into states of progress.
+    A static sequence of instructions where the content is the main thing. Use a real <code>&lt;ol&gt;</code>, number each <code>&lt;li&gt;</code>, and visually connect the steps without turning them into progress states.
   </p>
 
   <Showcase
@@ -182,7 +187,11 @@ import { Text } from "@skryensya/react/text";
     react={react}
     label="Installation ProcessList"
     note="ol + arbitrary content + CodePreview"
-  />
+  >
+    <Fragment slot="react">
+      <ProcessListDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>When to use it</h2>
   <ul>
@@ -193,8 +202,7 @@ import { Text } from "@skryensya/react/text";
       Use <a href="/en/components/list">List</a> for static or interactive row collections.
     </li>
     <li>
-      Use <a href="/en/components/steps">Steps</a> when states exist
-      <code>complete</code>, <code>current</code> or <code>upcoming</code>.
+      Use <a href="/en/components/steps">Steps</a> when states <code>complete</code>, <code>current</code>, or <code>upcoming</code> exist.
     </li>
   </ul>
 
@@ -202,7 +210,7 @@ import { Text } from "@skryensya/react/text";
   <CodeBlock code={install} label="terminal" />
   <CodeBlock code={styles} label="CSS" />
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
     <li>
       The root is always <code>&lt;ol class="sk-process-list"&gt;</code>.
@@ -211,11 +219,10 @@ import { Text } from "@skryensya/react/text";
       Each instruction is a <code>&lt;li class="sk-process-list__item"&gt;</code>.
     </li>
     <li>
-      <code>sk-process-list__title</code> identifies the step and
-      <code>sk-process-list__content</code> supports any stream content.
+      <code>sk-process-list__title</code> identifies the step and <code>sk-process-list__content</code> supports any stream content.
     </li>
     <li>
-      The accountant generates the numbers; They are not manually typed nor do they represent progress.
+      The counter generates the numbers; They are not manually typed nor do they represent progress.
     </li>
     <li>
       There are no persistent states or fully clickable rows. For progress use Steps.

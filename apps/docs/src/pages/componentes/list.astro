@@ -3,6 +3,14 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import {
+  ListFullDemo,
+  ListLeadingDemo,
+  ListLinksDemo,
+  ListPlainDemo,
+  ListTitledDemo,
+  ListTrailingDemo,
+} from "../../components/react-demos/list";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -22,13 +30,17 @@ const plainHtml = `<ul class="sk-list" aria-label="Integraciones">
 
 const plainReact = `import { List, ListItem } from "@skryensya/react/list";
 
-<List aria-label="Integraciones">
-  <ListItem>Slack</ListItem>
-  <ListItem>Notion</ListItem>
-  <ListItem>Figma</ListItem>
-  <ListItem>GitHub</ListItem>
-  <ListItem>Linear</ListItem>
-</List>;`;
+function Example() {
+  return (
+    <List aria-label="Integraciones">
+      <ListItem>Slack</ListItem>
+      <ListItem>Notion</ListItem>
+      <ListItem>Figma</ListItem>
+      <ListItem>GitHub</ListItem>
+      <ListItem>Linear</ListItem>
+    </List>
+  );
+}`;
 
 /* 2 — The content column. Title and description stack; still no icons, no trailing. */
 const titledHtml = `<ul class="sk-list" aria-label="Preferencias">
@@ -66,13 +78,17 @@ const titledHtml = `<ul class="sk-list" aria-label="Preferencias">
 
 const titledReact = `import { List, ListItem } from "@skryensya/react/list";
 
-<List aria-label="Preferencias">
-  <ListItem title="Notificaciones" description="Resumen semanal cada viernes." />
-  <ListItem title="Zona horaria" description="Se usa para programar envíos." />
-  <ListItem title="Idioma" description="Interfaz y correos." />
-  <ListItem title="Formato de fecha" description="Cómo se escriben días y meses." />
-  <ListItem title="Página de inicio" description="Dónde caes al entrar." />
-</List>;`;
+function Example() {
+  return (
+    <List aria-label="Preferencias">
+      <ListItem title="Notificaciones" description="Resumen semanal cada viernes." />
+      <ListItem title="Zona horaria" description="Se usa para programar envíos." />
+      <ListItem title="Idioma" description="Interfaz y correos." />
+      <ListItem title="Formato de fecha" description="Cómo se escriben días y meses." />
+      <ListItem title="Página de inicio" description="Dónde caes al entrar." />
+    </List>
+  );
+}`;
 
 /* 3 — Leading media. Same rows as step 2 plus an icon; decorative, so it names nothing. */
 const leadingHtml = `<ul class="sk-list" aria-label="Preferencias">
@@ -116,33 +132,37 @@ const leadingHtml = `<ul class="sk-list" aria-label="Preferencias">
 const leadingReact = `import { Icon } from "@skryensya/react/icon";
 import { List, ListItem } from "@skryensya/react/list";
 
-<List aria-label="Preferencias">
-  <ListItem
-    leading={<Icon name="info" />}
-    title="Notificaciones"
-    description="Resumen semanal cada viernes."
-  />
-  <ListItem
-    leading={<Icon name="calendar" />}
-    title="Zona horaria"
-    description="Se usa para programar envíos."
-  />
-  <ListItem
-    leading={<Icon name="settings" />}
-    title="Idioma"
-    description="Interfaz y correos."
-  />
-  <ListItem
-    leading={<Icon name="calendar" />}
-    title="Formato de fecha"
-    description="Cómo se escriben días y meses."
-  />
-  <ListItem
-    leading={<Icon name="visibility" />}
-    title="Página de inicio"
-    description="Dónde caes al entrar."
-  />
-</List>;`;
+function Example() {
+  return (
+    <List aria-label="Preferencias">
+      <ListItem
+        leading={<Icon name="info" />}
+        title="Notificaciones"
+        description="Resumen semanal cada viernes."
+      />
+      <ListItem
+        leading={<Icon name="calendar" />}
+        title="Zona horaria"
+        description="Se usa para programar envíos."
+      />
+      <ListItem
+        leading={<Icon name="settings" />}
+        title="Idioma"
+        description="Interfaz y correos."
+      />
+      <ListItem
+        leading={<Icon name="calendar" />}
+        title="Formato de fecha"
+        description="Cómo se escriben días y meses."
+      />
+      <ListItem
+        leading={<Icon name="visibility" />}
+        title="Página de inicio"
+        description="Dónde caes al entrar."
+      />
+    </List>
+  );
+}`;
 
 /* 4 — The row is complete: leading + content + trailing. Still static, still no interaction. */
 const trailingHtml = `<ul class="sk-list" aria-label="Preferencias">
@@ -194,38 +214,42 @@ const trailingReact = `import { Badge } from "@skryensya/react/badge";
 import { Icon } from "@skryensya/react/icon";
 import { List, ListItem } from "@skryensya/react/list";
 
-<List aria-label="Preferencias">
-  <ListItem
-    leading={<Icon name="info" />}
-    title="Notificaciones"
-    description="Resumen semanal cada viernes."
-    trailing={<Badge tone="success">Activo</Badge>}
-  />
-  <ListItem
-    leading={<Icon name="calendar" />}
-    title="Zona horaria"
-    description="Se usa para programar envíos."
-    trailing="GMT−3"
-  />
-  <ListItem
-    leading={<Icon name="settings" />}
-    title="Idioma"
-    description="Interfaz y correos."
-    trailing="Español"
-  />
-  <ListItem
-    leading={<Icon name="calendar" />}
-    title="Formato de fecha"
-    description="Cómo se escriben días y meses."
-    trailing="31/12/2026"
-  />
-  <ListItem
-    leading={<Icon name="visibility" />}
-    title="Página de inicio"
-    description="Dónde caes al entrar."
-    trailing="Resumen"
-  />
-</List>;`;
+function Example() {
+  return (
+    <List aria-label="Preferencias">
+      <ListItem
+        leading={<Icon name="info" />}
+        title="Notificaciones"
+        description="Resumen semanal cada viernes."
+        trailing={<Badge tone="success">Activo</Badge>}
+      />
+      <ListItem
+        leading={<Icon name="calendar" />}
+        title="Zona horaria"
+        description="Se usa para programar envíos."
+        trailing="GMT−3"
+      />
+      <ListItem
+        leading={<Icon name="settings" />}
+        title="Idioma"
+        description="Interfaz y correos."
+        trailing="Español"
+      />
+      <ListItem
+        leading={<Icon name="calendar" />}
+        title="Formato de fecha"
+        description="Cómo se escriben días y meses."
+        trailing="31/12/2026"
+      />
+      <ListItem
+        leading={<Icon name="visibility" />}
+        title="Página de inicio"
+        description="Dónde caes al entrar."
+        trailing="Resumen"
+      />
+    </List>
+  );
+}`;
 
 /* 5 — The row starts acting. Same anatomy, wrapped in a real anchor: focus, keyboard and state
    layer come free, and List still owns no navigation state. */
@@ -285,43 +309,47 @@ const linksHtml = `<ul class="sk-list" aria-label="Recursos del proyecto">
 const linksReact = `import { Icon } from "@skryensya/react/icon";
 import { List, ListItemLink } from "@skryensya/react/list";
 
-<List aria-label="Recursos del proyecto">
-  <ListItemLink
-    href="/prerrequisitos"
-    leading={<Icon name="info" />}
-    title="Prerrequisitos"
-    description="Qué necesitas antes de instalar."
-    trailing={<Icon name="arrow-right" />}
-  />
-  <ListItemLink
-    href="/primer-componente"
-    leading={<Icon name="info" />}
-    title="Guía de inicio"
-    description="Instala y configura tu primer proyecto."
-    trailing={<Icon name="arrow-right" />}
-  />
-  <ListItemLink
-    href="/personalizar"
-    leading={<Icon name="settings" />}
-    title="Personalización"
-    description="Ajusta color, densidad, radio e iconografía."
-    trailing={<Icon name="arrow-right" />}
-  />
-  <ListItemLink
-    href="/referencia"
-    leading={<Icon name="copy" />}
-    title="Referencia de tokens"
-    description="Consulta roles, escalas y cadenas de decisión."
-    trailing={<Icon name="arrow-right" />}
-  />
-  <ListItemLink
-    href="/tiers"
-    leading={<Icon name="copy" />}
-    title="Tiers"
-    description="Qué capa resuelve cada decisión."
-    trailing={<Icon name="arrow-right" />}
-  />
-</List>;`;
+function Example() {
+  return (
+    <List aria-label="Recursos del proyecto">
+      <ListItemLink
+        href="/prerrequisitos"
+        leading={<Icon name="info" />}
+        title="Prerrequisitos"
+        description="Qué necesitas antes de instalar."
+        trailing={<Icon name="arrow-right" />}
+      />
+      <ListItemLink
+        href="/primer-componente"
+        leading={<Icon name="info" />}
+        title="Guía de inicio"
+        description="Instala y configura tu primer proyecto."
+        trailing={<Icon name="arrow-right" />}
+      />
+      <ListItemLink
+        href="/personalizar"
+        leading={<Icon name="settings" />}
+        title="Personalización"
+        description="Ajusta color, densidad, radio e iconografía."
+        trailing={<Icon name="arrow-right" />}
+      />
+      <ListItemLink
+        href="/referencia"
+        leading={<Icon name="copy" />}
+        title="Referencia de tokens"
+        description="Consulta roles, escalas y cadenas de decisión."
+        trailing={<Icon name="arrow-right" />}
+      />
+      <ListItemLink
+        href="/tiers"
+        leading={<Icon name="copy" />}
+        title="Tiers"
+        description="Qué capa resuelve cada decisión."
+        trailing={<Icon name="arrow-right" />}
+      />
+    </List>
+  );
+}`;
 
 /* 6 — The top of the ladder: interactive rows, a component in each end slot, and compact density. */
 const fullHtml = `<ul class="sk-list" data-density="compact" aria-label="Equipo">
@@ -399,44 +427,48 @@ const fullReact = `import { Badge } from "@skryensya/react/badge";
 import { Icon } from "@skryensya/react/icon";
 import { List, ListItemLink } from "@skryensya/react/list";
 
-<List aria-label="Equipo" density="compact">
-  <ListItemLink
-    href="/equipo/allison"
-    leading={<Icon name="user" />}
-    title="Allison Peña"
-    description="Sistema de diseño y experiencia."
-    trailing={<><Badge>Diseño</Badge><Icon name="arrow-right" /></>}
-  />
-  <ListItemLink
-    href="/equipo/mateo"
-    leading={<Icon name="user" />}
-    title="Mateo Ruiz"
-    description="Componentes e infraestructura."
-    trailing={<><Badge>Ingeniería</Badge><Icon name="arrow-right" /></>}
-  />
-  <ListItemLink
-    href="/equipo/elena"
-    leading={<Icon name="user" />}
-    title="Elena Torres"
-    description="Estrategia y descubrimiento."
-    trailing={<><Badge>Producto</Badge><Icon name="arrow-right" /></>}
-  />
-  <ListItemLink
-    href="/equipo/nadia"
-    leading={<Icon name="user" />}
-    title="Nadia Sepúlveda"
-    description="Investigación y contenido."
-    trailing={<><Badge>Producto</Badge><Icon name="arrow-right" /></>}
-  />
-  <ListItemLink
-    href="/equipo/tomas"
-    aria-disabled="true"
-    leading={<Icon name="user" />}
-    title="Tomás Vidal"
-    description="De licencia hasta septiembre."
-    trailing={<Badge>Ingeniería</Badge>}
-  />
-</List>;`;
+function Example() {
+  return (
+    <List aria-label="Equipo" density="compact">
+      <ListItemLink
+        href="/equipo/allison"
+        leading={<Icon name="user" />}
+        title="Allison Peña"
+        description="Sistema de diseño y experiencia."
+        trailing={<><Badge>Diseño</Badge><Icon name="arrow-right" /></>}
+      />
+      <ListItemLink
+        href="/equipo/mateo"
+        leading={<Icon name="user" />}
+        title="Mateo Ruiz"
+        description="Componentes e infraestructura."
+        trailing={<><Badge>Ingeniería</Badge><Icon name="arrow-right" /></>}
+      />
+      <ListItemLink
+        href="/equipo/elena"
+        leading={<Icon name="user" />}
+        title="Elena Torres"
+        description="Estrategia y descubrimiento."
+        trailing={<><Badge>Producto</Badge><Icon name="arrow-right" /></>}
+      />
+      <ListItemLink
+        href="/equipo/nadia"
+        leading={<Icon name="user" />}
+        title="Nadia Sepúlveda"
+        description="Investigación y contenido."
+        trailing={<><Badge>Producto</Badge><Icon name="arrow-right" /></>}
+      />
+      <ListItemLink
+        href="/equipo/tomas"
+        aria-disabled="true"
+        leading={<Icon name="user" />}
+        title="Tomás Vidal"
+        description="De licencia hasta septiembre."
+        trailing={<Badge>Ingeniería</Badge>}
+      />
+    </List>
+  );
+}`;
 
 ---
 
@@ -470,6 +502,9 @@ import { List, ListItemLink } from "@skryensya/react/list";
   </p>
   <Showcase code={plainHtml} react={plainReact} lang="html" label="1 · Sólo la lista" note="ul + item">
     <div class="sk-list-demo"><Fragment set:html={plainHtml} /></div>
+    <Fragment slot="react">
+      <ListPlainDemo client:load />
+    </Fragment>
   </Showcase>
 
   <h3>2 · Título y descripción</h3>
@@ -480,6 +515,9 @@ import { List, ListItemLink } from "@skryensya/react/list";
   </p>
   <Showcase code={titledHtml} react={titledReact} lang="html" label="2 · Título y descripción" note="+ content">
     <div class="sk-list-demo"><Fragment set:html={titledHtml} /></div>
+    <Fragment slot="react">
+      <ListTitledDemo client:load />
+    </Fragment>
   </Showcase>
 
   <h3>3 · Media al inicio</h3>
@@ -490,6 +528,9 @@ import { List, ListItemLink } from "@skryensya/react/list";
   </p>
   <Showcase code={leadingHtml} react={leadingReact} lang="html" label="3 · Media al inicio" note="+ leading (Icon)">
     <div class="sk-list-demo"><Fragment set:html={leadingHtml} /></div>
+    <Fragment slot="react">
+      <ListLeadingDemo client:load />
+    </Fragment>
   </Showcase>
 
   <h3>4 · Meta al final</h3>
@@ -500,6 +541,9 @@ import { List, ListItemLink } from "@skryensya/react/list";
   </p>
   <Showcase code={trailingHtml} react={trailingReact} lang="html" label="4 · Meta al final" note="+ trailing + Badge">
     <div class="sk-list-demo"><Fragment set:html={trailingHtml} /></div>
+    <Fragment slot="react">
+      <ListTrailingDemo client:load />
+    </Fragment>
   </Showcase>
 
   <h3>5 · La fila actúa</h3>
@@ -511,6 +555,9 @@ import { List, ListItemLink } from "@skryensya/react/list";
   </p>
   <Showcase code={linksHtml} react={linksReact} lang="html" label="5 · La fila actúa" note="+ a[href] + state layer">
     <div class="sk-list-demo"><Fragment set:html={linksHtml} /></div>
+    <Fragment slot="react">
+      <ListLinksDemo client:load />
+    </Fragment>
   </Showcase>
 
   <h3>6 · Todo junto</h3>
@@ -521,6 +568,9 @@ import { List, ListItemLink } from "@skryensya/react/list";
   </p>
   <Showcase code={fullHtml} react={fullReact} lang="html" label="6 · Todo junto" note="+ density + fila deshabilitada">
     <div class="sk-list-demo"><Fragment set:html={fullHtml} /></div>
+    <Fragment slot="react">
+      <ListFullDemo client:load />
+    </Fragment>
   </Showcase>
 
   <h2>Instalar</h2>

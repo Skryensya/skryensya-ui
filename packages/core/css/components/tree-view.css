@@ -13,6 +13,16 @@
     color: var(--color-text-primary);
   }
 
+  /*
+   * `.sk-icon` defaults to --size-icon-md (icon/patterns/icon.css); the column reserved for it
+   * here is --sk-tree-indicator-size (sm). Left unscoped, an authored icon overflows its column
+   * by the difference and eats the row's own `gap` doing it — the icon and the label end up
+   * touching with no visible space between them, even though `gap` is declared and non-zero.
+   */
+  .sk-tree-view .sk-icon {
+    --sk-icon-size: var(--size-icon-sm);
+  }
+
   .sk-tree-view__tree,
   .sk-tree-view__branch-content {
     display: grid;
@@ -20,6 +30,13 @@
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  /* `display: grid` above is an AUTHOR rule, so it beats the UA stylesheet's `[hidden] {
+   * display: none }` regardless of specificity — collapsing a branch toggled `hidden` correctly
+   * (Zag's own state), but the content kept rendering as a grid anyway. Needs saying explicitly. */
+  .sk-tree-view__branch-content[hidden] {
+    display: none;
   }
 
   /* The guide hangs from the centre of the parent's chevron, so the rule points back at
@@ -37,23 +54,53 @@
       var(--sk-tree-guide-color);
   }
 
-  /* A row. `sk-interactive` (patterns/state-layer.css) owns hover / focus / pressed /
-   * selected and the focus ring; this only lays the row out. */
+  /*
+   * A row, painted like a `sk-button[data-size="sm"]`: same --size-control-sm height and
+   * --font-size-body-sm type, so a tree sitting next to small buttons (a sidebar, a panel
+   * toolbar) reads as one density instead of the tree rows looming taller than everything
+   * beside them. `sk-interactive` (patterns/state-layer.css) owns hover / focus / pressed /
+   * selected and the focus ring; this only lays the row out.
+   *
+   * The HIG hit target doesn't shrink with the paint: `::after` below expands it to
+   * --size-touch-target the same way Button's own `::after` does, absolutely positioned against
+   * the containing block `sk-interactive` already establishes.
+   */
   .sk-tree-view__item,
   .sk-tree-view__branch-control {
     display: grid;
     grid-template-columns: var(--sk-tree-indicator-size) minmax(0, 1fr);
     gap: var(--space-inline-xs);
     align-items: center;
-    min-block-size: var(--size-touch-target);
-    padding: var(--space-inset-xs) var(--space-inset-sm);
+    min-block-size: var(--size-control-sm);
+    padding-block: 0;
+    padding-inline: var(--space-inset-sm);
     border: 0;
     border-radius: var(--radius-control);
     background: transparent;
     color: inherit;
-    font: inherit;
+    font-size: var(--font-size-body-sm);
     text-align: start;
     cursor: pointer;
+  }
+
+  /*
+   * The gutter aligns a leaf's label with a SIBLING branch's chevron. A tree that has no branch
+   * anywhere — a plain flat list — has no chevron to align with anywhere in it either, so every
+   * item reserving the column is dead space with nothing on the other end of the alignment. Scoped
+   * to the whole tree (`:has()` on the root list), not per-row: a single branch anywhere still means
+   * every item at every level keeps the reservation, so nested mixed content never loses alignment.
+   */
+  .sk-tree-view__tree:not(:has(.sk-tree-view__branch)) .sk-tree-view__item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .sk-tree-view__item::after,
+  .sk-tree-view__branch-control::after {
+    content: "";
+    position: absolute;
+    inset-block: min(0px, calc((100% - var(--size-touch-target)) / 2));
+    inset-inline: min(0px, calc((100% - var(--size-touch-target)) / 2));
   }
 
   .sk-tree-view__item-text,

@@ -10,11 +10,11 @@ export function connectButton(root: HTMLElement): () => void {
   const disabled = root.hasAttribute("disabled") || root.getAttribute("aria-disabled") === "true";
   const isLink = root.tagName === "A";
   if (isLink && !root.hasAttribute("href")) {
-    throw new Error("ButtonLink expects href. Use Button for actions.");
+    throw new Error("Button.navigation expects href. Use Button.action for actions.");
   }
   if (isLink && disabled) {
     throw new Error(
-      "ButtonLink cannot be disabled while it has navigation semantics. Render non-link content when the destination is unavailable.",
+      "Button.navigation cannot be disabled while it has navigation semantics. Render non-link content when the destination is unavailable.",
     );
   }
 

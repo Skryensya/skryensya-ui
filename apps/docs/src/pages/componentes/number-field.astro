@@ -5,6 +5,7 @@ import StylingHooks from "../../components/StylingHooks.astro";
 import "@skryensya/core/patterns/state-layer.css";
 import "@skryensya/core/components/button.css";
 import "@skryensya/core/components/number-field.css";
+import { NumberFieldDemo } from "../../components/react-demos/number-field";
 
 const install = `@import "@skryensya/core/patterns/state-layer.css";
 @import "@skryensya/core/components/button.css";
@@ -61,12 +62,16 @@ const react = `import { NumberField } from "@skryensya/react/number-field";
 
 // Los steppers ya son icon buttons (roles \`remove\` y \`add\`);
 // decrementIcon/incrementIcon sólo cambian el glifo.
-<NumberField
-  defaultValue="2"
-  label="Cantidad"
-  min={0}
-  step={1}
-/>`;
+function Example() {
+  return (
+    <NumberField
+      defaultValue="2"
+      label="Cantidad"
+      min={0}
+      step={1}
+    />
+  );
+}`;
 ---
 
 <Base
@@ -83,7 +88,11 @@ const react = `import { NumberField } from "@skryensya/react/number-field";
     react={react}
     label="NumberField"
     viewport="auto"
-  />
+  >
+    <Fragment slot="react">
+      <NumberFieldDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Contrato</h2>
   <p>El valor público conserva string y valueAsNumber. Intl.NumberFormat controla la presentación.</p>

@@ -116,6 +116,10 @@
       "types": "./src/components/tile-checkbox.ts",
       "default": "./src/components/tile-checkbox.ts"
     },
+    "./tile-switch": {
+      "types": "./src/components/tile-switch.ts",
+      "default": "./src/components/tile-switch.ts"
+    },
     "./tile-radio-group": {
       "types": "./src/components/tile-radio-group.ts",
       "default": "./src/components/tile-radio-group.ts"
@@ -159,6 +163,10 @@
     "./date-picker": {
       "types": "./src/components/date-picker.ts",
       "default": "./src/components/date-picker.ts"
+    },
+    "./time-field": {
+      "types": "./src/components/time-field.ts",
+      "default": "./src/components/time-field.ts"
     },
     "./calendar": {
       "types": "./src/components/calendar.ts",

@@ -3,6 +3,7 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { PaginationDemo } from "../../../components/react-demos/pagination";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -61,16 +62,22 @@ const html = `<nav class="sk-pagination" aria-label="Pagination">
   </button>
 </nav>`;
 
-const react = `import { Pagination } from "@skryensya/react/pagination";
+const react = `import { useState } from "react";
+import { Pagination } from "@skryensya/react/pagination";
 
-<Pagination
-  page={page}
-  total={12}
-  onPageChange={setPage}
-  label="Pagination"
-  previousLabel="Previous page"
-  nextLabel="Next page"
-/>;`;
+function Example() {
+  const [page, setPage] = useState(5);
+  return (
+    <Pagination
+      page={page}
+      total={12}
+      onPageChange={setPage}
+      label="Pagination"
+      previousLabel="Previous page"
+      nextLabel="Next page"
+    />
+  );
+}`;
 
 const rangeExample = `import { paginationRange } from "@skryensya/core/pagination";
 
@@ -81,16 +88,16 @@ paginationRange(5, 20);
 <Base title="Pagination" description="Pagination: page window as a pure function of the core, with first, last and ellipsis.">
   <h1>Pagination</h1>
   <p class="lede">
-    Pagination cycles through a paginated set, one page at a time. The visible window is the part
-    interesting, and lives as a pure function in the core: first and last always present, the current
-    with a brother on each side, and the hidden runs collapse into an ellipsis.
+    Pagination cycles through a paginated set, one page at a time. The visible window is the interesting part, and it lives as a pure function in the core: first and last always present, the current one with a brother on each side, and the hidden runs collapse into an ellipsis.
   </p>
 
-  <Showcase html={html} react={react} label="Pagination" />
+  <Showcase html={html} react={react} label="Pagination">
+    <Fragment slot="react">
+      <PaginationDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
-    Prev/next use the set roles <code>chevron-left</code> and <code>chevron-right</code>.
-    The current page has <code>aria-current="page"</code>; prev/next are disabled on borders.
-    The ellipsis is inert text, not an objective. Targets have <code>sk-interactive</code>.
+    Prev/next use the <code>chevron-left</code> and <code>chevron-right</code> roles from the set. The current page has <code>aria-current="page"</code>; prev/next are disabled on borders. The ellipsis is inert text, not an objective. The targets carry <code>sk-interactive</code>.
   </p>
 
   <h2>The window, in the core</h2>

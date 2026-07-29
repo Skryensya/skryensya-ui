@@ -1,0 +1,33 @@
+{
+  "name": "@skryensya/ai-gates",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Runtime gates: renders every canonical usage tree in BOTH bindings and proves they land on the same DOM (G2), plus accessibility and visual checks.",
+  "scripts": {
+    "check": "playwright test",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@skryensya/ai-compiler": "workspace:*",
+    "@skryensya/core": "workspace:*",
+    "@skryensya/react": "workspace:*",
+    "@skryensya/vanilla": "workspace:*",
+    "@skryensya/icons-phosphor": "workspace:*"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "typescript": "^5.9.3",
+    "vite": "^8.1.5",
+    "axe-core": "^4.10.2",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "svelte": "^5.0.0"
+  }
+}

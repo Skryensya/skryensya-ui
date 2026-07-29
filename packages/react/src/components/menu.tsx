@@ -6,8 +6,8 @@ import {
 } from "@skryensya/core/menu";
 import { menu } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
-import { useEffect, useId, useState, type ReactNode } from "react";
-import { anchored } from "./anchored.js";
+import { useEffect, useId, useState, type ReactNode, type RefObject } from "react";
+import { useAnchored } from "./anchored.js";
 
 const cx = (...classes: Array<string | undefined>) =>
   classes.filter(Boolean).join(" ");
@@ -29,9 +29,17 @@ export type MenuProps = {
   onOpenChange?: (details: { open: boolean }) => void;
   onSelect?: (details: { value: string }) => void;
   onCheckedChange?: (details: { value: string; checked: boolean }) => void;
+  /**
+   * Where the floating content is portalled. Defaults to `document.body`, which is right whenever
+   * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead — a preview
+   * frame, a scoped test harness, or a dialog that owns its own stacking context.
+   */
+  container?: RefObject<HTMLElement>;
 };
 
 type MenuListProps = {
+  /** Inherited from the Menu, so every level portals to the same place. */
+  container?: RefObject<HTMLElement>;
   api: MenuApi;
   checkedState: CheckedState;
   service: MenuService;
@@ -54,6 +62,7 @@ function initialCheckedState(items: readonly MenuItem[]): CheckedState {
 
 function MenuList({
   api,
+  container,
   checkedState,
   itemIndicator,
   items,
@@ -67,6 +76,7 @@ function MenuList({
     if (item.children?.length) {
       return (
         <Submenu
+          container={container}
           item={item}
           itemIndicator={itemIndicator}
           key={item.value}
@@ -132,6 +142,7 @@ function MenuList({
 }
 
 function Submenu({
+  container,
   item,
   itemIndicator,
   onCheckedChange,
@@ -140,6 +151,8 @@ function Submenu({
   parentService,
   submenuIndicator,
 }: {
+  /** Inherited from the Menu that owns this submenu, so both portal to the same place. */
+  container?: RefObject<HTMLElement>;
   item: MenuItem;
   itemIndicator?: ReactNode;
   onCheckedChange?: MenuProps["onCheckedChange"];
@@ -159,7 +172,7 @@ function Submenu({
     positioning: { placement: "right-start", gutter: 4 },
   });
   const api = menu.connect(service, normalizeProps);
-  const anchor = anchored(id);
+  const anchor = useAnchored(id);
 
   useEffect(() => {
     api.setParent(parentService);
@@ -206,7 +219,7 @@ function Submenu({
           {submenuIndicator ?? "›"}
         </span>
       </div>
-      <Portal>
+      <Portal container={container}>
         {/* Un submenú sale al COSTADO y alineado arriba, que no está en el juego de cuatro; se pide
           * por el hook de escape del pattern (menu.css), no agrandando el vocabulario público. */}
         <div
@@ -216,6 +229,7 @@ function Submenu({
           <div {...api.getContentProps()} className={menuParts.content}>
             <MenuList
               api={api}
+              container={container}
               checkedState={checkedState}
               itemIndicator={itemIndicator}
               items={children}
@@ -233,6 +247,7 @@ function Submenu({
 }
 
 export function Menu({
+  container,
   contextTarget,
   disabled,
   defaultOpen,
@@ -262,7 +277,7 @@ export function Menu({
     positioning: { placement: "bottom-start" },
   });
   const api = menu.connect(service, normalizeProps);
-  const anchor = anchored(id ?? generatedId);
+  const anchor = useAnchored(id ?? generatedId);
 
   const setCheckedState = (changedItem: MenuItem, checked: boolean) => {
     setChecked((current) => {
@@ -298,11 +313,12 @@ export function Menu({
           {indicator ? <span aria-hidden="true">{indicator}</span> : null}
         </button>
       )}
-      <Portal>
+      <Portal container={container}>
         <div {...anchor.positioner(api.getPositionerProps(), menuParts.positioner)}>
           <div {...api.getContentProps()} className={menuParts.content}>
             <MenuList
               api={api}
+              container={container}
               checkedState={checkedState}
               itemIndicator={itemIndicator}
               items={items}

@@ -48,40 +48,57 @@ function publishBinding(binding: ComponentPreviewBinding): void {
   );
 }
 
-/** Sync a Segmented control to the shared binding without a no-op click when already matched. */
-function syncBindingTabs(tabs: HTMLElement | null, binding: ComponentPreviewBinding): void {
+/** Paint the two plain binding buttons: `data-value` on the group, `aria-pressed` on each option. */
+function paintBindingTabs(tabs: HTMLElement | null, binding: ComponentPreviewBinding): void {
   if (!tabs) return;
-  if (tabs.getAttribute("data-value") === binding) return;
   tabs.setAttribute("data-value", binding);
-  // Prefer a silent attr write when the enhancer is not ready yet; click only if Segmented is live
-  // so its closed-over value stays honest — and only then (user changes), so load never animates.
-  if (!tabs.hasAttribute("data-sk-segmented-ready")) return;
   tabs
-    .querySelector<HTMLElement>(
-      `${selector("data-sk-segmented-option")}[data-value="${CSS.escape(binding)}"]`,
-    )
-    ?.click();
+    .querySelectorAll<HTMLElement>(selector(componentPreviewAttrs.bindingOption))
+    .forEach((option) => {
+      option.setAttribute("aria-pressed", option.getAttribute("data-value") === binding ? "true" : "false");
+    });
 }
 
-/** Re-boot the srcdoc stage so count-ups, loaders and mount side-effects run again. */
+/**
+ * Every stage in this preview.
+ *
+ * Both bindings render an iframe stage now, and the height controls — the resizer, the screen
+ * presets, the reload button — are ONE control each in the header, above both. So they act on all
+ * of them: a reader who drags the grip and then flips to React must not find the height they just
+ * chose reverted, and the hidden stage has to already be the right size when it appears rather
+ * than resizing in front of them.
+ */
+function stagesOf(root: HTMLElement): HTMLElement[] {
+  /*
+   * Not `:scope >`: the React stage is nested under its slot host and Astro's island wrapper, both
+   * of which are `display: contents` so the iframe is still a grid item of this preview. A nested
+   * preview (the ComponentPreview page documents itself) lives in another DOCUMENT, so a plain
+   * descendant query cannot reach into one and never over-matches.
+   */
+  return [...root.querySelectorAll<HTMLElement>(`.${componentPreviewParts.stage}`)];
+}
+
+/** Re-boot the srcdoc stages so count-ups, loaders and mount side-effects run again. */
 export function reloadComponentPreviewStage(root: HTMLElement): void {
-  const stage = root.querySelector<HTMLIFrameElement>(`.${componentPreviewParts.stage}`);
-  if (!stage || stage.tagName !== "IFRAME") return;
+  for (const stage of stagesOf(root)) {
+    if (stage.tagName !== "IFRAME") continue;
+    const frame = stage as HTMLIFrameElement;
 
-  const srcdoc = stage.getAttribute("srcdoc") ?? stage.srcdoc;
-  if (!srcdoc) return;
+    const srcdoc = frame.getAttribute("srcdoc") ?? frame.srcdoc;
+    if (!srcdoc) continue;
 
-  stage.removeAttribute(componentPreviewAttrs.frameReady);
-  stage.removeAttribute(componentPreviewAttrs.frameError);
-  stage.setAttribute("aria-busy", "true");
-  // A height the reader chose survives the reboot; an auto-fitted one is re-measured.
-  if (!stage.hasAttribute(componentPreviewAttrs.resized)) stage.style.removeProperty("height");
+    frame.removeAttribute(componentPreviewAttrs.frameReady);
+    frame.removeAttribute(componentPreviewAttrs.frameError);
+    frame.setAttribute("aria-busy", "true");
+    // A height the reader chose survives the reboot; an auto-fitted one is re-measured.
+    if (!frame.hasAttribute(componentPreviewAttrs.resized)) frame.style.removeProperty("height");
 
-  // Browsers coalesce identical srcdoc writes; clear first so the document remounts.
-  stage.srcdoc = "";
-  requestAnimationFrame(() => {
-    stage.srcdoc = srcdoc;
-  });
+    // Browsers coalesce identical srcdoc writes; clear first so the document remounts.
+    frame.srcdoc = "";
+    requestAnimationFrame(() => {
+      frame.srcdoc = srcdoc;
+    });
+  }
 }
 
 /** Shared screen preset for every preview on the page, exactly like `sharedBinding` above. */
@@ -119,23 +136,30 @@ function publishScreen(screen: ComponentPreviewScreen): void {
   );
 }
 
-/** Sync a Segmented control to the shared screen without a no-op click when already matched. */
-function syncScreenTabs(tabs: HTMLElement | null, screen: ComponentPreviewScreen): void {
-  if (!tabs) return;
-  if (tabs.getAttribute("data-value") === screen) return;
-  tabs.setAttribute("data-value", screen);
-  // Same rule as the binding tabs: a silent attr write before the enhancer is ready, a real click
-  // after, so Segmented's closed-over value stays honest and load never animates.
-  if (!tabs.hasAttribute("data-sk-segmented-ready")) return;
-  tabs
-    .querySelector<HTMLElement>(
-      `${selector("data-sk-segmented-option")}[data-value="${CSS.escape(screen)}"]`,
-    )
-    ?.click();
+const screenOrder: readonly ComponentPreviewScreen[] = ["free", "tablet", "mobile"];
+
+function nextScreen(current: ComponentPreviewScreen): ComponentPreviewScreen {
+  return screenOrder[(screenOrder.indexOf(current) + 1) % screenOrder.length]!;
 }
 
 /**
- * Screen presets for the stage.
+ * Paint the toggle button: which of its stacked icon faces is visible (CSS keys off `data-value`,
+ * same mechanism as ThemeToggle's stacked faces) and its accessible name. The three names are
+ * authored per instance as `data-sk-component-preview-screen-label-{screen}` — same pattern as
+ * ThemeToggle's `data-sk-theme-toggle-label-*` — because each preview's toggle names its own
+ * component ("Screen size (Button): Tablet"), not a generic string shared by every preview.
+ */
+function paintScreenToggle(toggle: HTMLElement, screen: ComponentPreviewScreen): void {
+  toggle.setAttribute("data-value", screen);
+  const label = toggle.getAttribute(`data-sk-component-preview-screen-label-${screen}`);
+  if (label) toggle.setAttribute("aria-label", label);
+}
+
+/**
+ * Screen presets for the stage: a single icon-only button that cycles free → tablet → mobile →
+ * free on click, exactly like ThemeToggle cycles system → light → dark. Three options in a row are
+ * one decision ("what does this look like smaller"), not three independent choices, so one button
+ * that advances beats a radiogroup that makes the reader aim at a specific option.
  *
  * The preset takes over BOTH axes, so choosing one drops any height the reader had dragged: two
  * owners of the same height is the bug, and the preset is the one the reader just asked for. The
@@ -146,50 +170,53 @@ function syncScreenTabs(tabs: HTMLElement | null, screen: ComponentPreviewScreen
  * scrolls then keeps working untouched, and the frame runtime needs no third case.
  *
  * The preference is per DOCUMENT, not per preview, and every mounted preview applies it — so a
- * preview with no tabs of its own (or one mounted later) still follows the page.
+ * preview with no toggle of its own (or one mounted later) still follows the page.
  */
 function connectScreenTabs(root: HTMLElement): Cleanup {
-  const tabs = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.screenTabs));
-  const stage = root.querySelector<HTMLElement>(`.${componentPreviewParts.stage}`);
-  if (!stage) return () => {};
+  const toggle = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.screenTabs));
+  if (!stagesOf(root).length) return () => {};
 
   const applyScreen = (screen: ComponentPreviewScreen) => {
-    if (screen === "free") {
-      stage.removeAttribute(componentPreviewAttrs.screen);
-      return;
+    // Re-queried per call: the React stage is an island, so it can arrive after this mount ran.
+    for (const stage of stagesOf(root)) {
+      if (screen === "free") {
+        stage.removeAttribute(componentPreviewAttrs.screen);
+        continue;
+      }
+      stage.style.removeProperty("height");
+      stage.removeAttribute(componentPreviewAttrs.resized);
+      stage.setAttribute(componentPreviewAttrs.screen, screen);
     }
-    stage.style.removeProperty("height");
-    stage.removeAttribute(componentPreviewAttrs.resized);
-    stage.setAttribute(componentPreviewAttrs.screen, screen);
   };
 
-  const onScreenChange = (event: Event) => {
-    const value = (event as ValueChangeEvent).detail?.value;
-    if (!isScreen(value)) return;
-    publishScreen(value);
-    applyScreen(value);
+  const onClick = () => {
+    const current = readDocumentScreen() ?? sharedScreen ?? "free";
+    const next = nextScreen(current);
+    publishScreen(next);
+    applyScreen(next);
+    if (toggle) paintScreenToggle(toggle, next);
   };
 
   const onSharedScreen = (event: Event) => {
     const value = (event as ValueChangeEvent).detail?.value;
     if (!isScreen(value)) return;
     applyScreen(value);
-    syncScreenTabs(tabs, value);
+    if (toggle) paintScreenToggle(toggle, value);
   };
 
-  tabs?.addEventListener("sk-value-change", onScreenChange);
+  toggle?.addEventListener("click", onClick);
   document.addEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
 
-  const fromTabs = tabs?.getAttribute("data-value");
+  const fromToggle = toggle?.getAttribute("data-value");
   const initial =
-    readDocumentScreen() ?? sharedScreen ?? (isScreen(fromTabs) ? fromTabs : "free");
+    readDocumentScreen() ?? sharedScreen ?? (isScreen(fromToggle) ? fromToggle : "free");
   sharedScreen = initial;
   writeDocumentScreen(initial);
   applyScreen(initial);
-  syncScreenTabs(tabs, initial);
+  if (toggle) paintScreenToggle(toggle, initial);
 
   return () => {
-    tabs?.removeEventListener("sk-value-change", onScreenChange);
+    toggle?.removeEventListener("click", onClick);
     document.removeEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
   };
 }
@@ -211,17 +238,28 @@ const clamp = (value: number, min: number, max: number): number =>
  * Double click (or Home) hands the height back to the content.
  */
 function connectStageResizer(root: HTMLElement): Cleanup {
-  const stage = root.querySelector<HTMLElement>(`.${componentPreviewParts.stage}`);
   const resizer = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.resizer));
-  if (!stage || !resizer) return () => {};
+  if (!stagesOf(root).length || !resizer) return () => {};
+
+  /*
+   * The one the reader is actually looking at. The drag reads its height to know where it started,
+   * and writes the result to every stage — measuring a HIDDEN stage would read 0 and snap the demo
+   * to the floor on the first pointer move.
+   */
+  const visibleStage = (): HTMLElement | null =>
+    stagesOf(root).find((stage) => stage.offsetParent !== null || stage.getClientRects().length) ??
+    stagesOf(root)[0] ??
+    null;
 
   const maxHeight = () =>
     Math.max(stageMinHeight, Math.round((window.innerHeight || 0) * 0.9) || stageMinHeight);
 
   const setHeight = (height: number) => {
     const next = Math.round(clamp(height, stageMinHeight, maxHeight()));
-    stage.style.height = `${next}px`;
-    stage.setAttribute(componentPreviewAttrs.resized, "");
+    for (const stage of stagesOf(root)) {
+      stage.style.height = `${next}px`;
+      stage.setAttribute(componentPreviewAttrs.resized, "");
+    }
     resizer.setAttribute("aria-valuenow", String(next));
     resizer.setAttribute("aria-valuemin", String(stageMinHeight));
     resizer.setAttribute("aria-valuemax", String(maxHeight()));
@@ -229,14 +267,33 @@ function connectStageResizer(root: HTMLElement): Cleanup {
   };
 
   const resetHeight = () => {
-    stage.style.removeProperty("height");
-    stage.removeAttribute(componentPreviewAttrs.resized);
+    for (const stage of stagesOf(root)) {
+      stage.style.removeProperty("height");
+      stage.removeAttribute(componentPreviewAttrs.resized);
+    }
     for (const name of ["aria-valuenow", "aria-valuemin", "aria-valuemax", "aria-valuetext"]) {
       resizer.removeAttribute(name);
     }
   };
 
-  const nudge = (delta: number) => setHeight(stage.getBoundingClientRect().height + delta);
+  const nudge = (delta: number) =>
+    setHeight((visibleStage()?.getBoundingClientRect().height ?? stageMinHeight) + delta);
+
+  /*
+   * A screen preset owns both axes, so grabbing the grip while one is active would make it a
+   * SECOND owner of the height — the original reason the grip used to hide outright under a
+   * preset. Clearing the preset here resolves that conflict procedurally instead: the reader's
+   * drag is a clearer statement of intent ("I want THIS height") than a stale preset from
+   * whichever preview last touched the shared, persisted preference, on this page or another.
+   * `publishScreen` is synchronous (a plain `document.dispatchEvent`), so by the time this
+   * returns, THIS stage has already lost its `screen` attribute and reverted to auto-fit sizing —
+   * `startHeight` below reads the POST-escape box, not the device preset's.
+   */
+  const escapePresetIfActive = () => {
+    if (stagesOf(root).some((stage) => stage.hasAttribute(componentPreviewAttrs.screen))) {
+      publishScreen("free");
+    }
+  };
 
   let dragPointer: number | null = null;
   let startY = 0;
@@ -256,9 +313,10 @@ function connectStageResizer(root: HTMLElement): Cleanup {
 
   const onPointerDown = (event: PointerEvent) => {
     if (dragPointer !== null || (event.button !== 0 && event.pointerType === "mouse")) return;
+    escapePresetIfActive();
     dragPointer = event.pointerId;
     startY = event.clientY;
-    startHeight = stage.getBoundingClientRect().height;
+    startHeight = visibleStage()?.getBoundingClientRect().height ?? stageMinHeight;
     try {
       resizer.setPointerCapture(event.pointerId);
     } catch {
@@ -290,6 +348,7 @@ function connectStageResizer(root: HTMLElement): Cleanup {
     };
     const step = steps[event.key];
     if (step !== undefined) {
+      escapePresetIfActive();
       nudge(step);
       event.preventDefault();
       return;
@@ -341,11 +400,14 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
 
   const applyBinding = (binding: ComponentPreviewBinding) => {
     showBinding(binding);
-    syncBindingTabs(bindingTabs, binding);
+    paintBindingTabs(bindingTabs, binding);
   };
 
-  const onBindingChange = (event: Event) => {
-    const value = (event as ValueChangeEvent).detail?.value;
+  const onBindingOptionClick = (event: Event) => {
+    const target = event.target;
+    const option =
+      target instanceof Element ? target.closest<HTMLElement>(selector(componentPreviewAttrs.bindingOption)) : null;
+    const value = option?.getAttribute("data-value");
     if (!isBinding(value)) return;
     publishBinding(value);
     showBinding(value);
@@ -366,7 +428,7 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
   const disconnectResizer = connectStageResizer(root);
   const disconnectScreenTabs = connectScreenTabs(root);
 
-  bindingTabs?.addEventListener("sk-value-change", onBindingChange);
+  bindingTabs?.addEventListener("click", onBindingOptionClick);
   sourceTabs?.addEventListener("sk-value-change", onSourceChange);
   document.addEventListener(componentPreviewBindingChangeEvent, onSharedBinding);
   reload?.addEventListener("click", onReload);
@@ -384,7 +446,7 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
   if (initialSource === "html" || initialSource === "js") showSource(initialSource);
 
   return () => {
-    bindingTabs?.removeEventListener("sk-value-change", onBindingChange);
+    bindingTabs?.removeEventListener("click", onBindingOptionClick);
     sourceTabs?.removeEventListener("sk-value-change", onSourceChange);
     document.removeEventListener(componentPreviewBindingChangeEvent, onSharedBinding);
     reload?.removeEventListener("click", onReload);

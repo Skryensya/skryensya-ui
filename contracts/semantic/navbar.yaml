@@ -1,0 +1,15 @@
+# La estructura vive en packages/core/src/navbar.ts. Acá sólo por qué se elige.
+
+Navbar:
+  useWhen:
+    - "la app necesita una barra superior con marca y acciones"
+  avoidWhen:
+    - "la navegación va al costado; eso es un Sidebar"
+
+NavbarBrand:
+  useWhen:
+    - "el logo o el nombre del producto, normalmente enlazando al inicio"
+
+NavbarActions:
+  useWhen:
+    - "las acciones del extremo: cuenta, notificaciones, tema"

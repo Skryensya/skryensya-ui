@@ -344,6 +344,39 @@ main {
   pointer-events: none;
 }
 
+/* The readiness dot rides the item's top-right corner (Badge's own `sk-badge-holder` contract,
+ * `.sk-nav-list__item` opts in directly), a SIBLING of the link rather than content inside it —
+ * the link's own `overflow: hidden` would otherwise clip a corner-riding dot. Ring color matches
+ * `--sk-sidebar-bg` for free: both default to `--color-bg-surface`. */
+
+/* Not a wall of identical dots: every entry reads "wip" today, so painting it unconditionally
+ * down the whole rail would be forty amber dots saying nothing a reader didn't already know.
+ * Reveal it on hover/focus of the row, or once the row IS the current page. A screen reader still
+ * always hears it (the dot's own aria-label), since hover carries no meaning there — this opacity
+ * is a SIGHTED-mouse restraint only. `:has()` reaches sideways from the link's state to its
+ * sibling dot, since the dot is no longer the link's descendant. */
+.docs-sidebar .sk-nav-list__item .sk-badge[data-dot],
+.docs-drawer .sk-nav-list__item .sk-badge[data-dot] {
+  opacity: 0;
+  transition: opacity var(--motion-feedback-duration) var(--motion-feedback-easing);
+}
+
+.docs-sidebar .sk-nav-list__item:has(.sk-nav-list__link:hover) .sk-badge[data-dot],
+.docs-sidebar .sk-nav-list__item:has(.sk-nav-list__link:focus-visible) .sk-badge[data-dot],
+.docs-sidebar .sk-nav-list__item:has(.sk-nav-list__link[aria-current="page"]) .sk-badge[data-dot],
+.docs-drawer .sk-nav-list__item:has(.sk-nav-list__link:hover) .sk-badge[data-dot],
+.docs-drawer .sk-nav-list__item:has(.sk-nav-list__link:focus-visible) .sk-badge[data-dot],
+.docs-drawer .sk-nav-list__item:has(.sk-nav-list__link[aria-current="page"]) .sk-badge[data-dot] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .docs-sidebar .sk-nav-list__item .sk-badge[data-dot],
+  .docs-drawer .sk-nav-list__item .sk-badge[data-dot] {
+    transition: none;
+  }
+}
+
 /* ── the drawer, the rail's small-screen form ────────────────────────────── */
 /* The panel, its motion and its backdrop are Vaul's; what is left for the site is
    what goes inside, exactly like the rail (which writes its own structure over sk-sidebar's hooks). */
@@ -554,11 +587,18 @@ h2.docs-nav-section__title {
   list-style: none;
 }
 
+/* Column, not a row: a tile now carries the label AND a readiness badge (nearly every entry today,
+ * see ADR on component status), and a row layout squeezed "Work in progress" against short labels
+ * at the grid's 12rem minimum width. Stacking keeps every tile legible regardless of label length. */
 .docs-catalog__link {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-stack-xs);
   min-block-size: var(--size-touch-target);
   padding-inline: var(--space-inset-md);
+  padding-block: var(--space-inset-sm);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-control);
   background: var(--color-bg-surface);

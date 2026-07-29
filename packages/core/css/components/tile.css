@@ -90,7 +90,7 @@
     align-items: start;
   }
 
-  .sk-tile--interactive > :is(.sk-checkbox__control, .sk-tile__selection-indicator) {
+  .sk-tile--interactive > :is(.sk-checkbox__control, .sk-switch__control, .sk-tile__selection-indicator) {
     place-self: start end;
   }
 

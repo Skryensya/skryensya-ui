@@ -2,6 +2,12 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import {
+  AlertAccentDemo,
+  AlertBannerDemo,
+  AlertInlineDemo,
+  AlertNeutralDemo,
+} from "../../components/react-demos/alert";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -93,41 +99,61 @@ const inlineHtml = `<div
 
 const neutralReact = `import { Alert } from "@skryensya/react/alert";
 
-<Alert
-  tone="neutral"
-  title="Mantenimiento programado"
-  onDismiss={() => hide()}
->
-  El domingo de 02:00 a 04:00 UTC el panel estará en solo lectura.
-</Alert>;`;
+function SomeFunction() {}
+
+function Example() {
+  return (
+    <Alert
+      tone="neutral"
+      title="Mantenimiento programado"
+      onDismiss={SomeFunction}
+    >
+      El domingo de 02:00 a 04:00 UTC el panel estará en solo lectura.
+    </Alert>
+  );
+}`;
 
 const bannerReact = `import { Alert } from "@skryensya/react/alert";
 
-<Alert tone="info" title="Nueva versión">
-  Una actualización está disponible.
-</Alert>;`;
+function Example() {
+  return (
+    <Alert tone="info" title="Nueva versión">
+      Una actualización está disponible.
+    </Alert>
+  );
+}`;
 
 const accentReact = `import { Alert } from "@skryensya/react/alert";
 
-<Alert
-  onDismiss={() => hide()}
-  actions={
-    <a className="sk-link sk-interactive" href="/billing">
-      Ver planes
-    </a>
-  }
-  presentation="accent"
-  title="Tu plan expira en 3 días"
-  tone="warning"
->
-  Elige un plan para no interrumpir los despliegues.
-</Alert>;`;
+function SomeFunction() {}
+
+function Example() {
+  return (
+    <Alert
+      onDismiss={SomeFunction}
+      actions={
+        <a className="sk-link sk-interactive" href="/billing">
+          Ver planes
+        </a>
+      }
+      presentation="accent"
+      title="Tu plan expira en 3 días"
+      tone="warning"
+    >
+      Elige un plan para no interrumpir los despliegues.
+    </Alert>
+  );
+}`;
 
 const inlineReact = `import { Alert } from "@skryensya/react/alert";
 
-<Alert presentation="inline" tone="success">
-  Tus cambios se guardaron.
-</Alert>;`;
+function Example() {
+  return (
+    <Alert presentation="inline" tone="success">
+      Tus cambios se guardaron.
+    </Alert>
+  );
+}`;
 ---
 
 <Base title="Alert" description="Alert: mensaje inline persistente con tono (incluido neutral), anuncio accesible y componente React.">
@@ -159,22 +185,38 @@ const inlineReact = `import { Alert } from "@skryensya/react/alert";
     Úsalo en avisos ordinarios, confirmaciones breves o cualquier caso donde pintar el panel de
     “éxito” o “info” añadiría urgencia que el contenido no tiene.
   </p>
-  <Showcase html={neutralHtml} react={neutralReact} label="Alert neutral" />
+  <Showcase html={neutralHtml} react={neutralReact} label="Alert neutral">
+    <Fragment slot="react">
+      <AlertNeutralDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Presentaciones</h2>
   <p>La presentación decide el peso visual, no la urgencia.</p>
 
   <h3>Banner</h3>
   <p>El panel completo sirve para una condición que necesita título y explicación junto al contenido afectado.</p>
-  <Showcase html={bannerHtml} react={bannerReact} label="Alert banner" />
+  <Showcase html={bannerHtml} react={bannerReact} label="Alert banner">
+    <Fragment slot="react">
+      <AlertBannerDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h3>Acento</h3>
   <p>La barra lateral conserva la señal de tono y deja que una acción de recuperación tenga protagonismo.</p>
-  <Showcase html={accentHtml} react={accentReact} label="Alert acento" />
+  <Showcase html={accentHtml} react={accentReact} label="Alert acento">
+    <Fragment slot="react">
+      <AlertAccentDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h3>Inline</h3>
   <p>Sin panel ni borde, una confirmación breve acompaña un bloque que ya tiene estructura propia.</p>
-  <Showcase html={inlineHtml} react={inlineReact} label="Alert inline" />
+  <Showcase html={inlineHtml} react={inlineReact} label="Alert inline">
+    <Fragment slot="react">
+      <AlertInlineDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Anatomía</h2>
   <ul>

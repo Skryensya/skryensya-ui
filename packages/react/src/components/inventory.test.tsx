@@ -351,10 +351,10 @@ describe("expanded component inventory", () => {
     );
   });
 
-  it("keeps native contracts for time and popup", () => {
+  it("keeps TimeField's segmented contract and Popup's native contract", () => {
     const ui = render(
       <>
-        <TimeField label="Hora" name="meeting" />
+        <TimeField label="Hora de reunión" locale="en-US" name="meeting" />
         <Popup trigger="Filtros">
           <label>
             <input type="checkbox" /> Activos
@@ -362,7 +362,10 @@ describe("expanded component inventory", () => {
         </Popup>
       </>,
     );
-    expect(ui.getByLabelText("Hora").getAttribute("type")).toBe("time");
+    // No `@zag-js/time-picker` machine exists, so TimeField is its own segmented
+    // `role="group"` of `role="spinbutton"`s, not a real `type="time"` input.
+    expect(ui.getByRole("group", { name: "Hora de reunión" })).toBeTruthy();
+    expect(ui.getByRole("spinbutton", { name: "Hora" })).toBeTruthy();
     expect(
       ui.getByRole("button", { name: "Filtros" }).hasAttribute("popovertarget"),
     ).toBe(true);

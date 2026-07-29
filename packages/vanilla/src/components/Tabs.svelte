@@ -66,7 +66,7 @@
     root.setAttribute("data-value", api.value ?? "");
     if (list) applyZagProps(list, api.getListProps() as DomProps);
     for (const item of items) {
-      applyZagProps(item.trigger, api.getTriggerProps({ value: item.value, disabled: item.disabled }) as DomProps);
+      applyZagProps(item.trigger, api.getTriggerProps({ value: item.value, disabled: item.disabled || undefined }) as DomProps);
       applyZagProps(item.content, api.getContentProps({ value: item.value }) as DomProps);
     }
   });
@@ -85,7 +85,7 @@
           () =>
             api.getTriggerProps({
               value: item.value,
-              disabled: item.disabled,
+              disabled: item.disabled || undefined,
             }) as DomProps,
         ),
       );

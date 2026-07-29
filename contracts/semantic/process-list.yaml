@@ -1,0 +1,13 @@
+# La estructura vive en packages/core/src/process-list.ts. Acá sólo por qué se elige.
+
+ProcessList:
+  useWhen:
+    - "son instrucciones a seguir y el contenido de cada paso es lo importante"
+  avoidWhen:
+    - "lo que importa es en qué paso está el usuario; eso es Steps"
+  alternatives:
+    - Steps
+
+ProcessListItem:
+  useWhen:
+    - "una instrucción dentro de la lista"

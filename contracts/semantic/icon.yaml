@@ -1,0 +1,10 @@
+# La estructura vive en packages/core/src/icon.ts. Acá sólo por qué se elige.
+
+Icon:
+  useWhen:
+    - "refuerza una acción que ya tiene texto; sin label, decorativo"
+    - "es el único contenido de un control cuadrado, y entonces el CONTROL lleva el nombre accesible, no el icono"
+    - "el nombre es un rol que el sistema nombra: delete, visibility, chevron-down"
+  avoidWhen:
+    - "es un concepto de producto (una factura, un avión): eso se pasa como icon data, no como nombre estable"
+    - "se le pondría label dentro de un botón que ya tiene texto; el nombre accesible quedaría duplicado"

@@ -48,6 +48,7 @@ const MAP = {
   warning: "warning",
   danger: "cancel",
   calendar: "calendar_today",
+  clock: "schedule",
   upload: "upload",
   download: "download",
   settings: "settings",

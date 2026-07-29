@@ -67,6 +67,21 @@ function applyOverflow(): void {
   }
 }
 
+/**
+ * An auto-fit frame (`!scrolls()`) has nothing to scroll internally — `overflow: hidden` sees to
+ * that — but a wheel gesture over it does not reliably chain up to the PARENT page's scroll either:
+ * cross-frame scroll chaining is not something browsers do consistently once the local document
+ * has nowhere to go, so the frame just swallows the gesture and the reader's scroll appears to
+ * stop dead the moment their pointer crosses into a preview. Forward it to the parent explicitly
+ * instead. Once the frame legitimately owns scroll (reader-resized, screened, or a demo that opted
+ * into `scroll`) this gets out of the way entirely, and the frame's own content scrolls normally.
+ */
+function forwardWheelToParent(event: WheelEvent): void {
+  if (scrolls()) return;
+  event.preventDefault();
+  window.parent.scrollBy({ left: event.deltaX, top: event.deltaY });
+}
+
 function syncRootState(): void {
   for (const name of rootAttributes) {
     const value = parentRoot.getAttribute(name);
@@ -165,6 +180,117 @@ declare global {
   }
 }
 
+/*
+ * Every React demo module, as lazy loaders keyed by basename.
+ *
+ * A glob, not a hand-kept registry: the map is derived from the directory at build time, so adding
+ * a demo file cannot forget to register it. The loaders are lazy, so a preview pays only for the
+ * one module it names — and, critically, these imports resolve in THIS realm, giving the frame its
+ * own React instance and its own `document`. That is the entire point of mounting here instead of
+ * from the parent (see `react-demos/framed.tsx` for the two shapes that failed first).
+ */
+const reactDemoModules = import.meta.glob<Record<string, unknown>>(
+  "../components/react-demos/*.tsx",
+);
+
+const reactDemoLoaders = new Map(
+  Object.entries(reactDemoModules).map(([path, load]) => [
+    (path.split("/").pop() ?? path).replace(/\.tsx$/, ""),
+    load,
+  ]),
+);
+
+/**
+ * Vite's React Fast Refresh preamble, for THIS realm.
+ *
+ * In dev, `@vitejs/plugin-react` instruments every `.tsx` with `$RefreshSig$`/`$RefreshReg$` calls
+ * and relies on a preamble that Astro injects into the PAGE. The frame is a separate document with
+ * its own globals, so importing a demo here threw `ReferenceError: $RefreshSig$ is not defined`
+ * before the component ever rendered. Installing the same preamble on the frame's window is what
+ * the page does for itself; production builds carry no instrumentation, so this is dev-only.
+ */
+async function installRefreshPreamble(): Promise<void> {
+  if (!import.meta.env.DEV) return;
+  const win = window as unknown as Record<string, unknown>;
+  if (win.__vite_plugin_react_preamble_installed__) return;
+
+  // Through a variable: `/@react-refresh` is a dev-server virtual module with no file for TS to
+  // resolve, and a literal specifier would fail the type check.
+  const specifier = "/@react-refresh";
+  const runtime = (await import(/* @vite-ignore */ specifier)) as {
+    injectIntoGlobalHook: (target: unknown) => void;
+  };
+  runtime.injectIntoGlobalHook(window);
+  win.$RefreshReg$ = () => {};
+  win.$RefreshSig$ = () => (type: unknown) => type;
+  win.__vite_plugin_react_preamble_installed__ = true;
+}
+
+/**
+ * Match the name the island reported against the glob's source-file keys.
+ *
+ * Dev reports the file stem and hits exactly. A BUILD reports the hashed chunk stem
+ * (`button_vlYZB2ck`), so fall back to the LONGEST key it starts with — longest because
+ * `select-menu_HASH` starts with both `select` and `select-menu`, and only the longer one is the
+ * module actually asked for.
+ */
+function resolveDemoLoader(name: string): (() => Promise<Record<string, unknown>>) | undefined {
+  const exact = reactDemoLoaders.get(name);
+  if (exact) return exact;
+
+  let bestKey = "";
+  for (const key of reactDemoLoaders.keys()) {
+    if (name.startsWith(key) && key.length > bestKey.length) bestKey = key;
+  }
+  return bestKey ? reactDemoLoaders.get(bestKey) : undefined;
+}
+
+/** Import and mount the demo this frame was told to render, in this frame's own realm. */
+async function mountReactDemo(): Promise<void> {
+  const { skReactDemoModule: moduleKey, skReactDemoExport: exportName } = document.body.dataset;
+  if (!moduleKey || !exportName) return;
+
+  const load = resolveDemoLoader(moduleKey);
+  if (!load) throw new Error(`[ComponentPreview] Unknown React demo module "${moduleKey}".`);
+
+  await installRefreshPreamble();
+
+  const [module, { createRoot }, { createElement }] = await Promise.all([
+    load(),
+    import("react-dom/client"),
+    import("react"),
+  ]);
+
+  const exported = module[exportName];
+  if (typeof exported !== "function") {
+    throw new Error(`[ComponentPreview] "${moduleKey}" has no demo export "${exportName}".`);
+  }
+
+  /*
+   * Unwrap: the export is the `framed()` wrapper, whose whole job is to render THIS frame. Render
+   * it here and the preview nests a preview inside itself, forever. `demoComponent` is the original
+   * component, resolved in this realm because this realm loaded the module.
+   */
+  const Component = (exported as { demoComponent?: unknown }).demoComponent ?? exported;
+
+  const raw = document.body.dataset.skReactDemoProps;
+  const props = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+
+  /*
+   * A container of its own rather than `document.body`: React owns everything inside its root, and
+   * the body is shared with the authored-script demos and the enhancers' own insertions. The
+   * `display: contents` keeps it out of layout, so the demo's children sit directly in the frame
+   * body's padded, wrapping row — the same box the Vanilla markup gets, which is what makes the two
+   * bindings line up instead of the React one sitting in a nested block.
+   */
+  const host = document.createElement("div");
+  host.setAttribute("data-sk-react-demo-root", "");
+  host.style.display = "contents";
+  document.body.append(host);
+
+  createRoot(host).render(createElement(Component as never, props as never));
+}
+
 function runAuthoredScript(): void {
   const encoded = document.body.dataset.skComponentPreviewScript;
   delete document.body.dataset.skComponentPreviewScript;
@@ -193,13 +319,25 @@ function measureContentHeight(): number {
   const bodyTop = body.getBoundingClientRect().top;
 
   let contentBottom = bodyTop + borderTop + paddingTop;
-  for (const child of body.children) {
-    if (!(child instanceof Element)) continue;
-    const position = getComputedStyle(child).position;
-    if (position === "absolute" || position === "fixed") continue;
-    const bottom = child.getBoundingClientRect().bottom;
+
+  /*
+   * `display: contents` has no box of its own, so its rect is empty and measuring it would report
+   * nothing — which is exactly what happened to the React binding, whose mount host is `contents`
+   * so the demo's children join the body's flex row like the Vanilla markup does. Descend through
+   * such wrappers and measure the real boxes underneath.
+   */
+  const consider = (element: Element): void => {
+    const styles = getComputedStyle(element);
+    if (styles.position === "absolute" || styles.position === "fixed") return;
+    if (styles.display === "contents") {
+      for (const child of element.children) consider(child);
+      return;
+    }
+    const bottom = element.getBoundingClientRect().bottom;
     if (Number.isFinite(bottom)) contentBottom = Math.max(contentBottom, bottom);
-  }
+  };
+
+  for (const child of body.children) consider(child);
 
   const height = contentBottom - bodyTop + paddingBottom + borderBottom;
   return Math.max(1, Math.ceil(height));
@@ -226,6 +364,14 @@ async function boot(): Promise<void> {
     () => window.parent.removeEventListener("resize", onParentResize),
     { once: true },
   );
+  // Not passive: forwarding depends on preventDefault() to stop the (otherwise no-op) local scroll
+  // attempt cleanly, rather than racing it.
+  window.addEventListener("wheel", forwardWheelToParent, { passive: false });
+  window.addEventListener(
+    "pagehide",
+    () => window.removeEventListener("wheel", forwardWheelToParent),
+    { once: true },
+  );
 
   await waitForParentFrame();
   await cloneParentStyles();
@@ -242,6 +388,7 @@ async function boot(): Promise<void> {
   mountCodePreview(document);
   mountComponentPreview(document);
   runAuthoredScript();
+  await mountReactDemo();
 
   if (frame) {
     /*
@@ -275,6 +422,33 @@ async function boot(): Promise<void> {
       if (child instanceof Element) resizeObserver.observe(child);
     }
     window.addEventListener("pagehide", () => resizeObserver.disconnect(), { once: true });
+
+    /*
+     * The body's children are not fixed at boot. The React binding portals its whole tree in AFTER
+     * this runtime is ready (that is the signal it waits for), and an authored script can append a
+     * toast or a dialog at any time. Observing only the children that existed at boot would leave
+     * those measured by the body observer alone, which misses the case that matters most: a child
+     * that grows without changing the body's own border box.
+     */
+    const childObserver = new MutationObserver((records) => {
+      for (const record of records) {
+        for (const node of record.addedNodes) {
+          if (node instanceof Element) resizeObserver.observe(node);
+        }
+        for (const node of record.removedNodes) {
+          if (node instanceof Element) resizeObserver.unobserve(node);
+        }
+      }
+      fitFrame();
+    });
+    /*
+     * `subtree`, not just the body's own children: the React demo mounts into a `display: contents`
+     * host, so its nodes are appended INSIDE that host and a childList-only watch never sees them —
+     * the frame stayed at its empty-body height. Watching the subtree also covers a demo that grows
+     * a menu or a row deeper in its own tree.
+     */
+    childObserver.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener("pagehide", () => childObserver.disconnect(), { once: true });
 
     let lastWidth = frame?.getBoundingClientRect().width ?? -1;
     const hostObserver = new ResizeObserver((entries) => {

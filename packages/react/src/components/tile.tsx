@@ -3,6 +3,7 @@ import {
   type ExpandableTileOptions,
   type TileCheckboxOptions,
   type TileRadioGroupOptions,
+  type TileSwitchOptions,
 } from "@skryensya/core/tile";
 import { selectionParts } from "@skryensya/core/selection";
 import { checkbox, collapsible, radioGroup as radio } from "@skryensya/core/machines";
@@ -110,6 +111,46 @@ export const TileCheckbox = forwardRef<HTMLLabelElement, TileCheckboxProps>(func
       </span>
       <span aria-hidden="true" className={`${selectionParts.checkboxControl} sk-interactive`} data-part="indicator">
         <CheckboxIndicators />
+      </span>
+    </label>
+  );
+});
+
+export type TileSwitchProps = Omit<LabelHTMLAttributes<HTMLLabelElement>, "onChange"> &
+  TileSwitchOptions & {
+    children?: ReactNode;
+    inputProps?: Omit<
+      InputHTMLAttributes<HTMLInputElement>,
+      "checked" | "defaultChecked" | "disabled" | "name" | "required" | "role" | "type" | "value"
+    >;
+  };
+
+export const TileSwitch = forwardRef<HTMLLabelElement, TileSwitchProps>(function TileSwitch(
+  { id, className, children, inputProps, onCheck, padding, ...options },
+  ref,
+) {
+  const generatedId = useId();
+  const service = useMachine(checkbox.machine, {
+    id: id ?? generatedId,
+    checked: options.checked,
+    defaultChecked: options.defaultChecked,
+    name: options.name,
+    value: options.value,
+    disabled: options.disabled,
+    required: options.required,
+    onCheckedChange: (details) => onCheck?.({ checked: details.checked === true }),
+  });
+  const api = checkbox.connect(service, normalizeProps);
+  const classes = tileRootClasses(className, tileParts.interactive, "sk-interactive");
+
+  return (
+    <label {...api.getRootProps()} className={classes} data-padding={padding} data-scope="tile" ref={ref}>
+      <input {...api.getHiddenInputProps()} {...inputProps} data-part="input" role="switch" />
+      <span className={tileParts.content} data-part="content">
+        {children}
+      </span>
+      <span aria-hidden="true" className={selectionParts.switchControl} data-part="indicator">
+        <span className={selectionParts.switchThumb} />
       </span>
     </label>
   );

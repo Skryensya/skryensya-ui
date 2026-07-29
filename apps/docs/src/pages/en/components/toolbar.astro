@@ -3,6 +3,10 @@ import Base from "../../../layouts/Base.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import "@skryensya/core/components/toolbar.css";
+import "@skryensya/core/components/segmented.css";
+import "@skryensya/core/patterns/anchored.css";
+import "@skryensya/core/components/tooltip.css";
+import { ToolbarDemo } from "../../../components/react-demos/toolbar";
 
 const install = `@import "@skryensya/core/components/toolbar.css";`;
 const js = `import { mountIcons } from "@skryensya/vanilla/icon";
@@ -11,6 +15,11 @@ import { initComponents } from "@skryensya/vanilla/auto";
 
 mountIcons(document, lucideIcons);
 initComponents();`;
+/*
+ * Icon-only, not icon+text: a toolbar button repeats in a row, so text competes for width with its
+ * neighbors. The name lives in aria-label (required with no visible text); the tooltip expands it
+ * for anyone hovering or focusing, without the control depending on it to be accessible.
+ */
 const html = `<div
   class="sk-toolbar"
   data-sk-toolbar
@@ -18,32 +27,126 @@ const html = `<div
   aria-label="Text format"
 >
   <div class="sk-toolbar__group" role="group">
-    <button class="sk-button sk-interactive" type="button">
-      Negrita
-    </button>
-    <button class="sk-button sk-interactive" type="button">
-      Cursiva
-    </button>
+    <span class="sk-tooltip" data-sk-anchor data-sk-placement="block-end">
+      <button
+        class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
+        type="button"
+        data-icon-only
+        data-size="sm"
+        aria-label="Bold"
+        data-sk-anchor-trigger
+      ><span data-sk-icon="bold"></span></button>
+      <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+        <span class="sk-anchored-arrow" aria-hidden="true"></span>
+        <span class="sk-tooltip__content" data-sk-anchor-content>Bold</span>
+      </span>
+    </span>
+    <span class="sk-tooltip" data-sk-anchor data-sk-placement="block-end">
+      <button
+        class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
+        type="button"
+        data-icon-only
+        data-size="sm"
+        aria-label="Italic"
+        data-sk-anchor-trigger
+      ><span data-sk-icon="italic"></span></button>
+      <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+        <span class="sk-anchored-arrow" aria-hidden="true"></span>
+        <span class="sk-tooltip__content" data-sk-anchor-content>Italic</span>
+      </span>
+    </span>
   </div>
   <span class="sk-toolbar__separator" aria-hidden="true"></span>
-  <button class="sk-button sk-interactive" type="button">
-    Enlace
-  </button>
+  <span class="sk-tooltip" data-sk-anchor data-sk-placement="block-end">
+    <button
+      class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
+      type="button"
+      data-icon-only
+      data-size="sm"
+      aria-label="Link"
+      data-sk-anchor-trigger
+    ><span data-sk-icon="link"></span></button>
+    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+      <span class="sk-anchored-arrow" aria-hidden="true"></span>
+      <span class="sk-tooltip__content" data-sk-anchor-content>Link</span>
+    </span>
+  </span>
 </div>`;
 const react = `import {
   Toolbar,
   ToolbarGroup,
   ToolbarSeparator,
 } from "@skryensya/react/toolbar";
+import { Tooltip } from "@skryensya/react/tooltip";
 
 <Toolbar label="Text format">
   <ToolbarGroup>
-    <button type="button">Negrita</button>
-    <button type="button">Cursiva</button>
+    <Tooltip content="Bold" placement="block-end" arrow>
+      <button type="button" aria-label="Bold">
+        <BoldIcon />
+      </button>
+    </Tooltip>
+    <Tooltip content="Italic" placement="block-end" arrow>
+      <button type="button" aria-label="Italic">
+        <ItalicIcon />
+      </button>
+    </Tooltip>
   </ToolbarGroup>
   <ToolbarSeparator />
-  <button type="button">Enlace</button>
+  <Tooltip content="Link" placement="block-end" arrow>
+    <button type="button" aria-label="Link">
+      <LinkIcon />
+    </button>
+  </Tooltip>
 </Toolbar>`;
+
+/*
+ * A group doesn't have to be loose buttons: it can BE a composite widget, like a Segmented (its
+ * own radiogroup). This site's own component-preview header is exactly this — the screen-size
+ * selector and the Vanilla/React toggle — so the example isn't hypothetical, it's this page's own
+ * chrome.
+ *
+ * The contract that makes it work: each Segmented already has its own roving tabindex (one option
+ * at tabindex="0", the rest at "-1"), so only that option is a STOP for the Toolbar. Arrows inside
+ * the focused Segmented navigate its own options and consume the event (preventDefault); the
+ * Toolbar sees the bubbled event, notices it was already handled, and doesn't move focus again —
+ * without that check, one arrow press would jump two stops instead of one.
+ */
+const nestedHtml = `<div
+  class="sk-toolbar"
+  data-sk-toolbar
+  data-loop-focus
+  aria-label="View controls"
+>
+  <div class="sk-toolbar__group" role="group" aria-label="Screen size">
+    <div
+      class="sk-segmented"
+      data-sk-segmented
+      data-value="free"
+      role="radiogroup"
+      aria-label="Screen size"
+    >
+      <span class="sk-segmented__indicator" aria-hidden="true"></span>
+      <button class="sk-segmented__option sk-interactive" data-sk-segmented-option data-value="free" type="button" role="radio">Free</button>
+      <button class="sk-segmented__option sk-interactive" data-sk-segmented-option data-value="tablet" type="button" role="radio">Tablet</button>
+      <button class="sk-segmented__option sk-interactive" data-sk-segmented-option data-value="mobile" type="button" role="radio">Mobile</button>
+    </div>
+  </div>
+  <span class="sk-toolbar__separator" aria-hidden="true"></span>
+  <div class="sk-toolbar__group" role="group" aria-label="Binding">
+    <div
+      class="sk-segmented"
+      data-sk-segmented
+      data-value="vanilla"
+      role="radiogroup"
+      aria-label="Binding"
+    >
+      <span class="sk-segmented__indicator" aria-hidden="true"></span>
+      <button class="sk-segmented__option sk-interactive" data-sk-segmented-option data-value="vanilla" type="button" role="radio">Vanilla</button>
+      <button class="sk-segmented__option sk-interactive" data-sk-segmented-option data-value="react" type="button" role="radio">React</button>
+    </div>
+  </div>
+</div>`;
 ---
 
 <Base
@@ -53,20 +156,41 @@ const react = `import {
   <h1>Toolbar</h1>
   <p class="lede">Groups related controls and allows you to navigate through them with arrows.</p>
 
-  <h2>Installation</h2>
+  <h2>Facility</h2>
   <Showcase
     html={html}
     js={js}
     react={react}
     label="Toolbar"
     viewport="auto"
-  />
+  >
+    <Fragment slot="react">
+      <ToolbarDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <p>Toolbar groups controls; It does not replace Navbar or Menu. Internal groups use role=group.</p>
 
-  <h2>Accesibilidad</h2>
+  <h2>Accessibility</h2>
   <p>Arrows cycle through controls; Home and End jump to extremes. Tab enters and exits the bar.</p>
+
+  <h2>Toolbar with composite widgets</h2>
+  <p>
+    A group doesn't have to be loose buttons: it can be an entire composite widget, like a
+    Segmented. The bar treats each composite widget as <strong>a single stop</strong> — Segmented's
+    own roving tabindex already leaves only one option at <code>tabindex="0"</code>, so Toolbar
+    only visits that one. Inside the focused Segmented, arrows navigate its own options; they don't
+    escape to the bar's next group. This is the real pattern this site's own component-preview
+    header uses: the screen-size selector and Vanilla/React toggle on every demo on this page are
+    two Segmented widgets inside a Toolbar.
+  </p>
+  <Showcase
+    html={nestedHtml}
+    js={js}
+    label="Toolbar with nested Segmented"
+    viewport="auto"
+  />
 
   <h2>CSS</h2>
   <pre><code>{install}</code></pre>

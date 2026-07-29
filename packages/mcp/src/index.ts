@@ -2,232 +2,227 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { checkUsage } from "./check.js";
-import { getSchema, listIds, listSurfaces } from "./catalog.js";
-import { rankByIntent } from "./search.js";
+import { emitMarkup, emitReact } from "@skryensya/ai-compiler/emit";
+import { validateUsageTree } from "@skryensya/ai-compiler/validate";
+import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import { catalogueIndex, manifest, provenance } from "./manifest.js";
+
+/*
+ * Three tools over a compiled manifest.
+ *
+ * The shape of the old server was: search by keyword, read a schema, check some props — and then the
+ * agent typed the markup itself, which is where correctness leaked out. This one closes that: the
+ * agent proposes a composition as DATA, and gets the code back. It never types kit markup.
+ *
+ * There is no search tool. The catalogue is small enough to read whole (decision 31), and the ranker
+ * it replaces documented its own failure by telling clients to list everything instead.
+ */
 
 const server = new McpServer(
   {
     name: "skryensya-ui",
-    version: "0.3.0",
+    version: "1.0.0",
     description:
-      "Discover, compose and validate @skryensya/ui components by intent. This server never authors " +
-      "new components: it only teaches how to import, choose a surface, and configure the ones that " +
-      "already exist, from the same guides a human author would read in docs/ai.",
+      "Compose interfaces with @skryensya/ui. Read the catalogue, read a contract, then propose a " +
+      "usage tree and receive the emitted code for either binding.",
   },
   {
     instructions:
-      "Workflow: find_component (search or, with no intent, full catalog) -> get_component(id) for " +
-      "the composition guide -> check_usage before writing code that uses an unusual prop combo. " +
-      "Never guess an id, surface name, or prop value; these three tools are the only source of truth.\n\n" +
-      "find_component ranks by literal keyword overlap over {id, surface, use} — it is not semantic " +
-      "search, so word choice matters:\n" +
-      "  - Prefer the words you'd expect IN THE COMPONENT'S OWN NAME or its short 'use' description " +
-      "(e.g. 'navigation list', 'popover', 'tag') over generic UI vocabulary ('a widget for links at " +
-      "the top', 'some kind of label').\n" +
-      "  - A miss does not mean the component doesn't exist. If your first query returns nothing " +
-      "relevant, or you're not confident the top match is right, call find_component again with NO " +
-      "intent to read the full catalog directly rather than guessing an id from memory or trying " +
-      "several rephrasings blind.\n" +
-      "  - The ranker can rank a related-but-wrong surface above the one you want when they share " +
-      "more literal words — skim past the #1 result if it doesn't quite fit; the right one is often " +
-      "still in the top 5.\n\n" +
-      "check_usage takes a `usages` array — validate every surface a page/component composes in ONE " +
-      "call, not one call per surface. Skipping the ones that 'feel obviously fine' is exactly how a " +
-      "bad prop combination ships; batching removes the excuse to skip any of them.\n\n" +
-      "Root contract — before composing any component in a NEW consuming app, set up three things " +
-      "these three tools never mention because they are per-app, not per-component:\n" +
-      "  1. Import `@skryensya/core/tokens.scss` once (or the equivalent CSS entry) — it brings " +
-      "every tier-1 primitive, tier-2 semantic token, the state layer and the icon base.\n" +
-      "  2. Typography: Core names a default (`--scale-font-family-sans: Inter, system-ui, " +
-      "sans-serif`) but ships no font file — same contract as a brand ramp (Core exposes the tier-1 " +
-      "hook, never the asset). Left alone, the browser silently falls back to system-ui, which is " +
-      "NOT a bug to fix by linking a Google Fonts (or any) CDN uninvited — that is a real dependency " +
-      "and a real request, ask the user first. If they want the named face actually rendered, they " +
-      "supply it (self-hosted files, a font package, whatever they choose) and override " +
-      "`--scale-font-family-sans` from their own UNLAYERED stylesheet, the exact mechanism " +
-      "brand-ramps.css uses for color. Otherwise the system-ui fallback is a legitimate, working " +
-      "choice — not a broken state.\n" +
-      "  3. Color-mode flash: ONLY needed once the app persists a mode preference (composes a " +
-      "ThemeToggle, or otherwise writes to the shared `sk` localStorage entry). If it does, add a " +
-      "synchronous inline script before first paint that reads the stored `scheme` slot and sets " +
-      "`document.documentElement.style.colorScheme` — the one sanctioned inline-script exception in " +
-      "this system, because it must run before any module can load. An app with no preference-writing " +
-      "control does not need this; the `color-scheme: light dark` meta tag alone is enough.\n\n" +
-      "Rendered result: check_usage proves a usage matches its schema — it has NO visibility into " +
-      "whether the resulting page looks right or has real content. A component can pass every check " +
-      "and still render broken (e.g. an ImageFrame with neither `src` nor `children` passes cleanly " +
-      "and renders as an empty box). After composing a page with real content, actually render it " +
-      "(dev server + a browser, headless is fine) and look at the result before calling the work " +
-      "done. \"It builds\" and \"no console errors\" are not a substitute for looking at the output.",
+      "Workflow: get_catalog -> get_contract(id) for the signatures you picked -> validate_ui with " +
+      "the composition you intend to build. validate_ui returns the CODE when the tree is valid: " +
+      "paste that, never retype it. Typing it yourself reintroduces the gap between what was " +
+      "validated and what was written.\n\n" +
+      "A usage tree has three distinct fields, and confusing them is the common mistake:\n" +
+      "  - options  what the contract maps to an attribute (variant, href, current)\n" +
+      "  - attrs    what you pass to the host element untouched (aria-label, id, rel, target)\n" +
+      "  - slots    where content goes; `children` is the usual one and can be written directly\n\n" +
+      "validate_ui proves the tree matches its contract. It does NOT prove the page looks right: a " +
+      "valid tree can still render an empty region, a wrong layout or unreadable content. When the " +
+      "task is visual, render it and look at the result before calling the work done.",
   },
 );
 
 server.registerTool(
-  "find_component",
+  "get_catalog",
   {
-    title: "Find the component surface(s) that match a UI intent, or list the whole catalog",
+    title: "Read the whole published catalogue",
     description:
-      "Given a free-text description of what the interface needs to DO (e.g. 'navigate to another " +
-      "page', 'let the user pick one option from a list', 'show destructive action'), ranks the " +
-      "catalog's surfaces by relevance and returns the top matches with their {id, surface, use}. " +
-      "Omit intent to get the FULL catalog instead — every surface across every component, " +
-      "untranked — useful for a first browse or when nothing you tried matched. Cheap either way: " +
-      "no props, examples or rules, just the index. Always call this before assuming a component " +
-      "exists — never guess a name or import path. Follow up with get_component(id) to load the " +
-      "full composition guide for the surface you pick.",
-    inputSchema: {
-      intent: z
-        .string()
-        .min(1)
-        .optional()
-        .describe(
-          "What the UI element should accomplish, in terms of user intent, e.g. 'save changes', " +
-            "'go to the docs page', 'pick a date', 'toggle a checkbox tile'. Describe the behavior, " +
-            "not a visual style — this is not a search over component names. Omit to list everything.",
-        ),
-    },
+      "Returns every published family and signature with what it is for (useWhen), what it is NOT " +
+      "for (avoidWhen), its HTML host, valid parents, alternatives and deprecations. Takes no " +
+      "query: the catalogue is meant to be read whole, and choosing from it is your job, not a " +
+      "ranker's. Start here — a family absent from this list is not published, whatever the kit may " +
+      "contain.",
+    inputSchema: {},
   },
-  async ({ intent }) => {
-    const surfaces = await listSurfaces();
-
-    if (intent === undefined) {
-      return {
-        content: [{ type: "text", text: JSON.stringify(surfaces, null, 2) }],
-      };
-    }
-
-    const matches = rankByIntent(intent, surfaces).slice(0, 5);
-
-    if (matches.length === 0) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify({
-              matches: [],
-              hint: "No surface matched. Call find_component with no intent to see the full catalog before concluding nothing fits.",
-            }),
-          },
-        ],
-      };
-    }
-
-    return {
-      content: [{ type: "text", text: JSON.stringify({ matches }, null, 2) }],
-    };
-  },
+  async () => ok(catalogueIndex),
 );
 
 server.registerTool(
-  "get_component",
+  "get_contract",
   {
-    title: "Get the full composition guide for one component",
+    title: "Read one family's compiled contract",
     description:
-      "Returns the complete docs/ai/schemas guide for one component id: every surface, its required " +
-      "CSS import, framework binding, requires/forbids, prop meanings, composition rules and worked " +
-      "examples. This is the authority for how to import and configure the component — do not invent " +
-      "props, class names or import paths beyond what this returns. If the id is unknown, call " +
-      "find_component first.",
+      "The full contract for one family: every signature, the options it takes and the attribute " +
+      "each maps to, its part template, slots, constraints (requires / forbids / exactlyOneOf), the " +
+      "accessibility it owes, and the CSS a consumer must import. This is the authority for how a " +
+      "component is configured and composed — do not infer an option, a class or an import path " +
+      "beyond what it returns.",
     inputSchema: {
-      id: z
-        .string()
-        .min(1)
-        .describe("The component id, e.g. 'button', 'tabs', 'tile' — from find_component."),
+      id: z.string().min(1).describe("A family id from get_catalog, e.g. 'button', 'nav-list'."),
+      detail: z
+        .enum(["contract", "full"])
+        .default("contract")
+        .describe("'contract' omits the semantic overlay you already read in get_catalog."),
     },
   },
-  async ({ id }) => {
-    const schema = await getSchema(id);
+  async ({ id, detail }) => {
+    const contract = manifest.contracts[id];
 
-    if (!schema) {
-      const known = await listIds();
-      return {
-        isError: true,
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify({
-              error: `No component with id "${id}".`,
-              knownIds: known,
-            }),
-          },
-        ],
-      };
+    if (!contract) {
+      return problem(
+        `No published contract "${id}".`,
+        `Published: ${Object.keys(manifest.contracts).join(", ")}. A family the kit ships but this ` +
+          `list omits has no contract yet, and composing against it would be guessing.`,
+      );
     }
 
-    return {
-      content: [{ type: "text", text: JSON.stringify(schema, null, 2) }],
-    };
+    if (detail === "contract") {
+      const { semantics: _semantics, ...rest } = contract;
+      return ok(rest);
+    }
+
+    return ok(contract);
   },
 );
 
-const usageInput = z.object({
-  id: z.string().min(1).describe("The component id, e.g. 'button' — from find_component."),
-  surface: z.string().min(1).describe("The surface name, e.g. 'ButtonLink' — from get_component(id)."),
-  props: z
-    .record(z.string(), z.unknown())
-    .default({})
-    .describe(
-      "The prop names and values you intend to pass, e.g. { variant: \"primary\", href: \"/docs\" }. " +
-        "Include a key even for a prop whose value doesn't matter for the check (e.g. an event " +
-        "handler) — presence is what requires/forbids look at.",
-    ),
-});
+/*
+ * One entry of a collection slot. Data, not a child node: a tab's label goes in the trigger and its
+ * body in a panel the markup keeps far away, and the key is what pairs them.
+ *
+ * This existed in the compiler's types before it existed here, and the gap was invisible until the
+ * server was driven as a client: every Tabs composition was rejected at the door by the one tool
+ * meant to validate it. Two declarations of one shape is the duplication this whole system argues
+ * against, so `usage-tree.contract.test.ts` now fails when they drift.
+ */
+const itemSchema = z.lazy(() =>
+  z.object({
+    options: z
+      .record(z.string(), z.union([z.string(), z.boolean()]))
+      .optional()
+      .describe("Entry values that land on an attribute, including the key that pairs its parts."),
+    slots: z
+      .record(z.string(), slotContentSchema)
+      .describe("Entry content by slot name, e.g. a tab's `label` and `children`."),
+  }),
+);
+
+const slotContentSchema: z.ZodType<unknown> = z.lazy(() =>
+  z.union([
+    z.string(),
+    usageTreeSchema,
+    z.array(z.union([z.string(), usageTreeSchema])),
+    z.array(itemSchema),
+  ]),
+);
+
+const usageTreeSchema: z.ZodType<UsageTree> = z.lazy(() =>
+  z.object({
+    contract: z.string().min(1).describe("Family id, from get_catalog."),
+    signature: z.string().min(1).describe("Signature id within that family."),
+    options: z
+      .record(z.string(), z.union([z.string(), z.boolean()]))
+      .optional()
+      .describe("Values for options the signature declares. Anything else is rejected, not ignored."),
+    attrs: z
+      .record(z.string(), z.string())
+      .optional()
+      .describe("Attributes passed to the host element as-is: aria-label, id, rel, target."),
+    slots: z
+      .record(z.string(), slotContentSchema)
+      .optional()
+      .describe(
+        "Named slots other than children: a group's `label`, a link's `icon`, or a collection like " +
+          "a tab set's `items`, whose entries are {options, slots} objects rather than nodes.",
+      ),
+    children: z.lazy(() => slotContentSchema).optional().describe("The `children` slot, written directly."),
+  }),
+) as z.ZodType<UsageTree>;
 
 server.registerTool(
-  "check_usage",
+  "validate_ui",
   {
-    title: "Validate one or more proposed surface usages against their composition guides",
+    title: "Validate a composition and, if it holds, return its code",
     description:
-      "Given a list of {id, surface, props}, checks each one's props against exactly what " +
-      "get_component(id) would return for that surface: requires (must be present), forbids (must " +
-      "be absent), and any prop with a declared enum (must be one of the listed values). Returns " +
-      "{results: [{id, surface, valid, problems}, ...]} in the same order as the input. Pass every " +
-      "surface you are about to use in ONE call — a page composed from 6 components is 1 call with " +
-      "6 entries, not 6 calls; batching removes the temptation to validate only the ones that felt " +
-      "risky and skip the rest. Call this BEFORE writing code that composes an unusual prop " +
-      "combination (iconOnly, a navigation surface, disabled state) — catching a forbidden/missing " +
-      "prop here is cheaper than a review round-trip. This checks only what the schema declares; a " +
-      "clean result is not a guarantee of correctness beyond that guide (e.g. it will not catch a " +
-      "missing aria-label — read the guide's own rules for those).",
+      "Checks a usage tree against its contracts — signatures, option values, requires / forbids / " +
+      "exactlyOneOf, valid parents, slots and declared accessibility — and when it is valid, returns " +
+      "the emitted markup AND the emitted TSX. Use the returned code; it is the only way what you " +
+      "write and what was validated stay the same artifact. Problems come back with a path into the " +
+      "tree, a rule and a severity: an `advisory` is something no static check can settle (a page " +
+      "with two navs) and does not make the tree invalid.",
     inputSchema: {
-      usages: z
-        .array(usageInput)
-        .min(1)
-        .describe("Every surface usage to validate in this call, e.g. every component a page composes."),
+      tree: usageTreeSchema.describe("The composition to check, written in signatures."),
     },
   },
-  async ({ usages }) => {
-    const knownIds = await listIds();
+  async ({ tree }) => {
+    const { valid, problems } = validateUsageTree(tree);
 
-    const results = await Promise.all(
-      usages.map(async ({ id, surface, props }) => {
-        const schema = await getSchema(id);
-        if (!schema) {
-          return {
-            id,
-            surface,
-            valid: false,
-            problems: [{ rule: "unknown-id", msg: `No component with id "${id}". Known ids: ${knownIds.join(", ")}.` }],
-          };
-        }
-        const problems = checkUsage(schema, surface, props);
-        return { id, surface, valid: problems.length === 0, problems };
-      }),
-    );
+    /*
+     * Emitting only when valid is not a nicety. The emitter is a renderer, not a checker: given a
+     * tree with an unmet required slot it will happily produce an empty <button>, and given an option
+     * the signature does not take it drops it silently. Code produced from an invalid tree would look
+     * plausible and be wrong.
+     */
+    if (!valid) {
+      return ok({
+        valid,
+        problems,
+        emitted: null,
+        hint: "Fix the errors and validate again. Nothing was emitted: code built from an invalid tree looks plausible and is wrong.",
+      });
+    }
 
-    return {
-      content: [{ type: "text", text: JSON.stringify({ results }, null, 2) }],
-    };
+    return ok({
+      valid,
+      problems,
+      emitted: { vanilla: emitMarkup(tree), react: emitReact(tree) },
+      css: cssFor(tree),
+    });
   },
 );
 
-async function main() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
+/** Every stylesheet the composition needs, so a consumer is not left to guess the imports. */
+function cssFor(tree: UsageTree, into = new Set<string>()): readonly string[] {
+  const contract = manifest.contracts[tree.contract];
+  if (contract && typeof contract.css === "string") into.add(contract.css);
+
+  const branches = [...Object.values(tree.slots ?? {}), tree.children];
+  for (const branch of branches) {
+    for (const item of Array.isArray(branch) ? branch : [branch]) {
+      if (item && typeof item === "object") cssFor(item, into);
+    }
+  }
+
+  return [...into].sort();
 }
 
-main().catch((error) => {
+function ok(payload: unknown) {
+  return {
+    content: [{ type: "text" as const, text: JSON.stringify({ ...provenance, ...(payload as object) }, undefined, 2) }],
+  };
+}
+
+function problem(error: string, detail: string) {
+  return {
+    isError: true,
+    content: [{ type: "text" as const, text: JSON.stringify({ ...provenance, error, detail }, undefined, 2) }],
+  };
+}
+
+async function main(): Promise<void> {
+  await server.connect(new StdioServerTransport());
+}
+
+main().catch((error: unknown) => {
   console.error("skryensya-ui MCP server failed to start:", error);
   process.exit(1);
 });

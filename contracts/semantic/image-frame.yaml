@@ -1,0 +1,13 @@
+# La estructura vive en packages/core/src/image-frame.ts. Acá sólo por qué se elige.
+
+ImageFrame:
+  useWhen:
+    - recorta una imagen o un video a una proporción fija
+    - la foto tiene que llenar una caja sin deformarse
+    - hace falta decidir qué parte de la imagen sobrevive al recorte
+  avoidWhen:
+    - es la identidad circular de una persona — eso es un Avatar
+    - no hay medio que mostrar, ni src ni contenido autoreado; el marco vacío es una caja vacía,
+      no un placeholder
+  alternatives:
+    - Avatar

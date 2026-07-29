@@ -99,47 +99,36 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
 >
   <h1>Component Density</h1>
   <p class="lede">
-    Local density is not a component variant. It is a scope that recalculates the tokens
-    space and control <strong>at the limit of your component</strong>, without touching its neighbors or density
-    chosen for the application.
+    Local density is not a component variant. It is a scope that recalculates the <strong>space and control tokens at the boundary of your</strong> component, without touching its neighbors or the density chosen for the application.
   </p>
 
   <div class="sk-alert" data-tone="info" data-presentation="accent">
     <div class="sk-alert__content">
       <p>
-        <strong>The entire contract lives on the same node:</strong> <code>data-sk-density-scope</code>
-        activates local reprojection; <code>--sk-density-factor</code> or <code>--sk-density</code>,
-        written in <code>style</code>, decide its value. This scope does not add classes, selectors,
-        mandatory presets nor a prop for each component.
+        <strong>The entire contract lives on the same node: </strong> <code>data-sk-density-scope</code> triggers local reprojection; <code>--sk-density-factor</code> or <code>--sk-density</code>, written in <code>style</code>, decides its value. This scope does not add classes, selectors, required presets or a prop to each component.
       </p>
     </div>
   </div>
 
   <h2>Set it to the limit you already have</h2>
   <p>
-    Put the attribute once, at the root of the component you want to compact, and write the value there
-    as inline style. Their descendants continue to read the same semantic tokens; you do not need
-    create a class for the scope or mark each button, field or row separately.
+    Put the attribute once, at the root of the component you want to compact, and write the value there as an inline style. Their descendants continue to read the same semantic tokens; you do not need to create a class for the scope or mark each button, field or row separately.
   </p>
   <CodeBlock code={componentMarkup} label="Component HTML" />
 
   <h2>Use a relative factor by default</h2>
   <p>
-    <code>--sk-density-factor</code> preserves the user's intent. If the application is in
-    <code>0.8</code> and the component uses <code>0.72</code>, its effective density is
-    <code>0.576</code>. The value can be any valid number, without depending on presets.
+    <code>--sk-density-factor</code> preserves the user's intent. If the application is in <code>0.8</code> and the component uses <code>0.72</code>, its effective density is <code>0.576</code>. The value can be any valid number, without depending on presets.
   </p>
 
   <p>
-    Use an absolute value only when the component needs an application-independent measurement.
-    The absolute value wins over the factor; choose one or the other, not both.
+    Use an absolute value only when the component needs an application-independent measurement. The absolute value wins over the factor; choose one or the other, not both.
   </p>
   <CodeBlock code={absoluteDensity} label="HTML with absolute value" />
 
   <h2>Test an isolated component</h2>
   <p>
-    Control is out of scope. Drag it: change the padding, gaps and semantic sizes
-    within the summary; the rest of the page does not move.
+    Control is out of scope. Drag it: change the padding, gaps and semantic sizes within the summary; the rest of the page does not move.
   </p>
   <Showcase code={labMarkup} previewScript={densityLabScript} label="Local Scope in action" note="scope and value live inline on the same node">
     <div class="sk-stack" data-gap="lg" data-density-lab style="inline-size: 100%">
@@ -205,22 +194,18 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
         <tr><td><code>--size-control-*</code></td><td>They are recalculated, with the minimum floor size incorporated.</td></tr>
         <tr><td>Typography, icons and radio</td><td>They remain invariant: density brings content closer, the visual scale does not change.</td></tr>
         <tr><td>Focus ring and touch area</td><td>They remain protected. A default Button does not drop <code>44px</code> paint; <code>data-size="sm"</code> can paint at 32px and the hit is still on <code>44px</code>.</td></tr>
-        <tr><td>Wrappers y <code>--space-section</code></td><td>They are not compacted: the page geometry does not belong to the component.</td></tr>
+        <tr><td>Wrappers y <code>--space-section</code></td><td>Not compacted: The page geometry does not belong to the component.</td></tr>
       </tbody>
     </table>
   </div>
 
   <h2>Nested Scopes do not shrink twice</h2>
   <p>
-    Each scope calculates its factor against the captured density of the system, not against the parent scope. A
-    component to <code>0.72</code> within another to <code>0.72</code> continues resolving to
-    <code>0.72 × sistema</code>, not <code>0.5184 × sistema</code>. So a subcomponent does not become
-    illegible due to accidental composition.
+    Each scope calculates its factor against the captured density of the system, not against the parent scope. A <code>0.72</code> component inside a <code>0.72</code> component still resolves to <code>0.72 × sistema</code>, not <code>0.5184 × sistema</code>. Thus a subcomponent is not made unreadable by accidental composition.
   </p>
 
   <p>
-    To set the density of the entire application, use <a href="/en/dimensions#densidad--un-multiplicador-con-el-piso-adentro">the global dimension</a>.
-    For a local exception, keep the scope at the edge of the component and let its tokens do the rest.
+    To configure the density of the entire application, use <a href="/en/dimensions#densidad--un-multiplicador-con-el-piso-adentro">the</a> global dimension. For a local exception, keep the scope at the edge of the component and let its tokens do the rest.
   </p>
 </Base>
 

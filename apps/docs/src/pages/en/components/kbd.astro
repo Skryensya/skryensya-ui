@@ -3,22 +3,31 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { KbdBasicDemo } from "../../../components/react-demos/kbd";
 
 /* The skin is already global (Base.astro imports it for the ⌘K badge), so this page needs no import. */
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<kbd class="sk-kbd">⌘</kbd>
-<kbd class="sk-kbd">K</kbd>
-<kbd class="sk-kbd">Esc</kbd>
-<kbd class="sk-kbd">↵</kbd>`;
+const html = `<div class="sk-inline">
+  <kbd class="sk-kbd">⌘</kbd>
+  <kbd class="sk-kbd">K</kbd>
+  <kbd class="sk-kbd">Esc</kbd>
+  <kbd class="sk-kbd">↵</kbd>
+</div>`;
 
 const react = `import { Kbd } from "@skryensya/react/kbd";
 
-<Kbd>⌘</Kbd>
-<Kbd>K</Kbd>
-<Kbd>Esc</Kbd>
-<Kbd>↵</Kbd>;`;
+function Example() {
+  return (
+    <div className="sk-inline">
+      <Kbd>⌘</Kbd>
+      <Kbd>K</Kbd>
+      <Kbd>Esc</Kbd>
+      <Kbd>↵</Kbd>
+    </div>
+  );
+}`;
 ---
 
 <Base title="Kbd" description="Kbd: a rendered key using the native <kbd>, styling hooks, and a React wrapper.">
@@ -30,29 +39,24 @@ const react = `import { Kbd } from "@skryensya/react/kbd";
     <code>&lt;kbd&gt;</code> is from the platform; The component only provides the look.
   </p>
 
-  <Showcase html={html} react={react} label="Kbd" />
+  <Showcase html={html} react={react} label="Kbd">
+    <Fragment slot="react">
+      <KbdBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>A glyph reads square</h2>
   <p>
-    Single key (<kbd class="sk-kbd">K</kbd>, <kbd class="sk-kbd">⌘</kbd>,
-    <kbd class="sk-kbd">↑</kbd>) takes a least square instead of being a sliver; a label
-    longer (<kbd class="sk-kbd">Esc</kbd>, <kbd class="sk-kbd">Enter</kbd>) grows with its text. The
-    minimum is <code>--sk-kbd-min-size</code>, relative to the key's own font, so it is
-    stays square at any size.
+    A single key (<kbd class="sk-kbd">K</kbd>, <kbd class="sk-kbd">⌘</kbd>, <kbd class="sk-kbd">↑</kbd>) takes a least square instead of being a sliver; a longer tag (<kbd class="sk-kbd">Esc</kbd>, <kbd class="sk-kbd">Enter</kbd>) grows with its text. The minimum is <code>--sk-kbd-min-size</code>, relative to the key's own font, so it remains square at any size.
   </p>
 
-  <h2>The tight state</h2>
+  <h2>The pressed state</h2>
   <p>
-    Kbd is not a control, it is not clicked, so its only state <strong>reflects</strong> an event
-    external: <code>data-pressed</code>, which turns it on while its physical key is pressed, just like
-    a component reflects the <code>data-state</code> of a machine. It is written by whoever looks at the keyboard,
-    not the kbd. When turned on, the key becomes accented, sinks a pixel and loses its shadow, like a
-    real key that goes down. The transition uses the <code>feedback</code> intent
-    (<a href="/en/motion">motion</a>).
+    Kbd is not a control, it is not clickable, so its only state <strong>reflects</strong> an external event: <code>data-pressed</code>, which turns it on while its physical key is pressed, just as a component reflects the <code>data-state</code> of a machine. It is written by someone looking at the keyboard, not the kbd. When turned on, the key becomes accented, sinks a pixel and loses its shadow, like a real key that goes down. The transition uses the <code>feedback</code> intent ( <a href="/en/motion">motion</a> ).
   </p>
   <p>
-    Try it: squeeze any of these and it turns on by itself; hold <kbd class="sk-kbd" data-key="meta"
-    >⌘</kbd> and add another to see the combination.
+    Try it: press any of these and it turns on by itself; hold <kbd class="sk-kbd" data-key="meta"
+ >⌘</kbd> and add another to see the combination.
   </p>
   <div class="key-echo" role="group" aria-label="Keys that react to the keyboard">
     <kbd class="sk-kbd" data-key="meta">⌘</kbd>
@@ -67,13 +71,10 @@ const react = `import { Kbd } from "@skryensya/react/kbd";
   </div>
   <p>
     An entire chord also, as a unit, presses <kbd class="sk-kbd" data-hotkey="mod+enter"
-    >⌘ ↵</kbd> and is turned on when the entire combination is down:
+ >⌘ ↵</kbd> and is turned on when the entire combination is down:
   </p>
   <p>
-    A small script from the doc puts it while the physical key is pressed; for the chord use the
-    <code>matchesHotkey</code> of the <a href="/en/hotkey">hotkey primitive</a>, the same matcher as the
-    shortcut The ⌘K badge of the search engine above comes from that pair: <code>formatHotkey</code> gives the text
-    By platform, KBD provides the box.
+    It is set by a small script from the doc while the physical key is pressed; for the chord it uses the <code>matchesHotkey</code> of the <a href="/en/hotkey">hotkey primitive</a>, the same matcher as the shortcut. The ⌘K badge of the search engine above comes from that pair: <code>formatHotkey</code> gives the text by platform, Kbd gives it the box.
   </p>
 
   <h2>Install</h2>

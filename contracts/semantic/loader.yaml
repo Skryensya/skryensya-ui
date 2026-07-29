@@ -1,0 +1,11 @@
+# La estructura vive en packages/core/src/loader.ts. Acá sólo por qué se elige.
+
+Loader:
+  useWhen:
+    - "hay una espera de duración desconocida"
+    - "con label, ES el estado que se anuncia; sin label, acompaña a un texto que ya lo dice"
+  avoidWhen:
+    - "se conoce el progreso; eso es un Progress con su valor"
+    - "el contenido tiene forma y se puede prefigurar; eso es un Placeholder"
+  alternatives:
+    - Placeholder

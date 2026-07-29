@@ -15,6 +15,7 @@ type NavigationItem = {
   label: string;
   aliases?: readonly string[];
   todo?: boolean;
+  status?: "wip" | "stable";
 };
 
 type NavigationGroup = {
@@ -41,6 +42,9 @@ interface Props {
 
 const { nav, path, idPrefix } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
+
+/** `item.status`, defaulted: an entry with no status is "wip" until deliberately marked "stable". */
+const status = (item: NavigationItem) => item.status ?? "wip";
 ---
 
 {
@@ -71,7 +75,10 @@ const t = useTranslations(getLocale(Astro.url));
               aria-labelledby={group.group ? `${idPrefix}-${sectionIndex}-${groupIndex}` : undefined}
             >
               {group.items.map((item) => (
-                <li class="sk-nav-list__item" data-todo={item.todo ? "" : undefined}>
+                <li
+                  class="sk-nav-list__item sk-badge-holder"
+                  data-todo={item.todo ? "" : undefined}
+                >
                   <a
                     class="sk-nav-list__link sk-interactive"
                     href={item.href}
@@ -81,6 +88,20 @@ const t = useTranslations(getLocale(Astro.url));
                   >
                     <span class="sk-nav-list__label">{item.label}</span>
                   </a>
+                  {
+                    /* A sibling of the link, not content inside it: `sk-badge-holder` (Badge's own
+                     * corner-riding contract) needs the dot as its DIRECT child to place it, and the
+                     * link's `overflow: hidden` would clip a corner-riding dot were it nested inside. */
+                    section.id === "components" && status(item) === "wip" && (
+                      <span
+                        class="sk-badge"
+                        data-dot
+                        data-tone="warning"
+                        aria-label={t("status.wip")}
+                        title={t("status.wip")}
+                      />
+                    )
+                  }
                 </li>
               ))}
             </ul>

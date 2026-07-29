@@ -87,6 +87,11 @@ const registrations: readonly Registration[] = [
       (await import("../components/tile-checkbox.js")).mountTileCheckbox,
   },
   {
+    selector: "[data-sk-tile-switch]",
+    load: async () =>
+      (await import("../components/tile-switch.js")).mountTileSwitch,
+  },
+  {
     selector: "[data-sk-tile-radio-group]",
     load: async () =>
       (await import("../components/tile-radio-group.js")).mountTileRadioGroup,
@@ -104,6 +109,10 @@ const registrations: readonly Registration[] = [
   {
     selector: "[data-sk-date-picker]",
     load: async () => (await import("../components/date-picker.js")).mountDatePicker,
+  },
+  {
+    selector: "[data-sk-time-field]",
+    load: async () => (await import("../components/time-field.js")).mountTimeField,
   },
   {
     selector: "[data-sk-calendar]",

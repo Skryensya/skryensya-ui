@@ -1,16 +1,12 @@
-import {
-  imageFrameParts,
-  type ImageFrameAspect,
-  type ImageFrameBorder,
-  type ImageFrameFit,
-  type ImageFramePosition,
-  type ImageFrameRadius,
-} from "@skryensya/core/image-frame";
+import { imageFrameContract, imageFrameParts } from "@skryensya/core/image-frame";
+import type { OptionsOf } from "@skryensya/core/contract";
 import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
 
 type PolymorphicProps<Element extends ElementType, OwnProps> = OwnProps & {
   as?: Element;
 } & Omit<ComponentPropsWithoutRef<Element>, keyof OwnProps | "as">;
+
+const o = imageFrameContract.options;
 
 function classes(base: string, className: string | undefined) {
   return className ? `${base} ${className}` : base;
@@ -21,15 +17,7 @@ export type ImageFrameProps<Element extends ElementType = "div"> = PolymorphicPr
   {
     children?: ReactNode;
     className?: string;
-    aspect?: ImageFrameAspect;
-    fit?: ImageFrameFit;
-    position?: ImageFramePosition;
-    radius?: ImageFrameRadius;
-    border?: ImageFrameBorder;
-    /** Convenience: renders an `<img class="sk-image-frame__media">`. Prefer `children` for `picture` / `video`. */
-    src?: string;
-    alt?: string;
-  }
+  } & OptionsOf<typeof imageFrameContract>
 >;
 
 /**
@@ -38,11 +26,11 @@ export type ImageFrameProps<Element extends ElementType = "div"> = PolymorphicPr
  */
 export function ImageFrame<Element extends ElementType = "div">({
   as,
-  aspect = "auto",
-  fit = "cover",
-  position = "center",
-  radius = "surface",
-  border = "none",
+  aspect = o.aspect.default,
+  fit = o.fit.default,
+  position = o.position.default,
+  radius = o.radius.default,
+  border = o.border.default,
   className,
   src,
   alt = "",
@@ -54,11 +42,13 @@ export function ImageFrame<Element extends ElementType = "div">({
     <Component
       {...props}
       className={classes(imageFrameParts.root, className)}
-      data-aspect={aspect}
-      data-fit={fit}
-      data-position={position}
-      data-radius={radius}
-      data-border={border}
+      {...{
+        [o.aspect.attr]: aspect,
+        [o.fit.attr]: fit,
+        [o.position.attr]: position,
+        [o.radius.attr]: radius,
+        [o.border.attr]: border,
+      }}
     >
       {src != null ? <img className={imageFrameParts.media} src={src} alt={alt} /> : children}
     </Component>

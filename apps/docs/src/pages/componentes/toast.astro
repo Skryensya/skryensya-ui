@@ -3,6 +3,13 @@ import "@skryensya/core/components/toast.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import {
+  ToastActionDemo,
+  ToastEmitDemo,
+  ToastSimpleDemo,
+  ToastStackDemo,
+  ToastStatusDemo,
+} from "../../components/react-demos/toast";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
@@ -510,7 +517,11 @@ await initComponents();`;
     label="Toast después de una acción"
     note="Pulsa el botón"
     viewport="menu"
-  />
+  >
+    <Fragment slot="react">
+      <ToastEmitDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Simple</h2>
   <p>
@@ -521,7 +532,11 @@ await initComponents();`;
     chrome elevado, no como panel de página. Ver el mismo criterio en
     <a href="/componentes/alert">Alert</a>.
   </p>
-  <Showcase html={simpleHtml} react={simpleReact} label="Toast simple" viewport="menu" />
+  <Showcase html={simpleHtml} react={simpleReact} label="Toast simple" viewport="menu">
+    <Fragment slot="react">
+      <ToastSimpleDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Con estado</h2>
   <p>
@@ -534,7 +549,11 @@ await initComponents();`;
     hasta que se cierren. La regla práctica: <strong>si el toast puede cerrarse solo, no necesita ✕;
     si no puede, el ✕ es obligatorio</strong>.
   </p>
-  <Showcase html={statusHtml} react={statusReact} label="Toast con estado" viewport="overlay" />
+  <Showcase html={statusHtml} react={statusReact} label="Toast con estado" viewport="overlay">
+    <Fragment slot="react">
+      <ToastStatusDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Con acción</h2>
   <p>
@@ -542,7 +561,11 @@ await initComponents();`;
     ahí, en ese orden. Un toast con acción no lleva <code>data-timeout</code>, desaparecer antes de
     que alguien alcance a pulsar “Deshacer” convierte la acción en decorado.
   </p>
-  <Showcase html={actionHtml} react={actionReact} label="Toast con acción" viewport="menu" />
+  <Showcase html={actionHtml} react={actionReact} label="Toast con acción" viewport="menu">
+    <Fragment slot="react">
+      <ToastActionDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Apilado</h2>
   <p>
@@ -588,7 +611,11 @@ await initComponents();`;
     label="Pila de toasts"
     note="Pasa el puntero para abrirla"
     viewport="overlay"
-  />
+  >
+    <Fragment slot="react">
+      <ToastStackDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
     El JavaScript es el mismo del primer ejemplo, y el HTML también: clonar, insertar, montar y
     remover en <code>sk-dismiss</code>. No hay nada que agregar para apilar. Los hooks son de la

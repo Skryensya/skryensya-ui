@@ -17,6 +17,7 @@ export {
 export type { TablePagerChangeDetail } from "./components/table-pager.js";
 export { mountTabs } from "./components/tabs.js";
 export { mountTileCheckbox } from "./components/tile-checkbox.js";
+export { mountTileSwitch } from "./components/tile-switch.js";
 export { mountTileRadioGroup } from "./components/tile-radio-group.js";
 export { connectToast, mountToast } from "./components/toast.js";
 export { mountDatePicker } from "./components/date-picker.js";

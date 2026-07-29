@@ -1,0 +1,19 @@
+# La estructura vive en packages/core/src/input.ts. Acá sólo por qué se elige.
+
+Input:
+  useWhen:
+    - "el usuario escribe una línea de texto: email, nombre, búsqueda"
+    - "el tipo nativo aporta teclado y validación del navegador (email, tel, url)"
+  avoidWhen:
+    - "el texto es largo o multilínea; eso es Textarea"
+    - "se elige de un conjunto cerrado de opciones; eso es un Select"
+  alternatives:
+    - Textarea
+
+Textarea:
+  useWhen:
+    - "el texto ocupa varias líneas: una descripción, un comentario"
+  avoidWhen:
+    - "una sola línea alcanza; un Textarea invita a escribir de más"
+  alternatives:
+    - Input

@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import { BoxBasicDemo } from "../../components/react-demos/layout";
 
 const html = `<section
   class="sk-box"
@@ -16,11 +17,15 @@ const html = `<section
 
 const react = `import { Box } from "@skryensya/react/box";
 
-<Box as="section" surface="raised" border="subtle" padding="lg">
-  <h2>Resumen</h2>
-  <p>El contenido conserva la semántica del elemento elegido.</p>
-  <button type="button">Administrar</button>
-</Box>;`;
+function Example() {
+  return (
+    <Box as="section" surface="raised" border="subtle" padding="lg">
+      <h2>Resumen</h2>
+      <p>El contenido conserva la semántica del elemento elegido.</p>
+      <button type="button">Administrar</button>
+    </Box>
+  );
+}`;
 ---
 <Base title="Box" description="Superficie visual y semántica elegida por quien la usa; sin interacción propia.">
   <h1>Box</h1>
@@ -32,7 +37,11 @@ const react = `import { Box } from "@skryensya/react/box";
   <p>La guía <a href="/componentes/card">Card</a> aplica esta decisión a cards de contenido, noticia, producto, enlace, acción, selección y métricas.</p>
 
   <h2>HTML autorado</h2>
-  <Showcase html={html} react={react} label="Box" />
+  <Showcase html={html} react={react} label="Box">
+    <Fragment slot="react">
+      <BoxBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>React</h2>
   <p>El código está en la pestaña <strong>React</strong> del preview.</p>

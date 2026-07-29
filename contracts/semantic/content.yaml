@@ -1,0 +1,22 @@
+# La estructura vive en packages/core/src/content.ts. Acá sólo por qué se elige.
+
+ToastRegion:
+  useWhen:
+    - "la página va a mostrar toasts: son suyos, y sin región no hay dónde ponerlos"
+    - "hace falta que se anuncien solos; la región es la que el lector de pantalla ya está mirando"
+  avoidWhen:
+    - "hay un solo mensaje y es parte de la página; eso es un Alert en su lugar"
+  alternatives:
+    - Alert
+
+Toast:
+  useWhen:
+    - "confirmar algo que ya pasó y no requiere respuesta: se guardó, se envió, se copió"
+    - "ofrecer deshacer una acción durante unos segundos"
+    - "avisar que terminó algo que corría en segundo plano"
+  avoidWhen:
+    - "el mensaje es parte del contenido y tiene que quedarse; eso es un Alert"
+    - "hay que leerlo sí o sí antes de seguir; eso es un Dialog"
+    - "es un error de un campo; eso va en el Field, pegado al control"
+  alternatives:
+    - Alert

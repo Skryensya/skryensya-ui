@@ -3,6 +3,7 @@ import Base from "../../../layouts/Base.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import "@skryensya/core/components/menu.css";
+import { MenuBasicDemo } from "../../../components/react-demos/menu";
 
 const install = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/menu.css";`;
@@ -100,24 +101,25 @@ import { Menu } from "@skryensya/react/menu";
   <h1>Menu</h1>
   <p class="lede">Actions, checkboxes and radios with keyboard navigation and typeahead.</p>
 
-  <h2>Installation</h2>
+  <h2>Facility</h2>
   <Showcase
     js={js}
     html={html}
     react={react}
     label="Menu"
     viewport="menu"
-  />
+  >
+    <Fragment slot="react">
+      <MenuBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <p>
-    Menu executes actions, also as a context menu using
-    <code>contextTarget</code> or <code>data-sk-menu-context-trigger</code>.
-    An item with <code>children</code> creates a submenu. To choose a value
-    from form uses Select; for editable suggestions, Combobox.
+    Menu executes actions, also as context menu using <code>contextTarget</code> or <code>data-sk-menu-context-trigger</code>. An item with <code>children</code> creates a submenu. To choose a form value use Select; for editable suggestions, Combobox.
   </p>
 
-  <h2>Accesibilidad</h2>
+  <h2>Accessibility</h2>
   <p>The machine manages arrows, Home, End, Escape, typeahead and focus return.</p>
 
   <h2>CSS</h2>

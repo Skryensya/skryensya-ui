@@ -6,9 +6,8 @@
   "description": "Documentation site for skryensya/ui. Consumes @skryensya/core through the same exports map it documents.",
   "scripts": {
     "dev": "astro dev stop && astro dev --port 4173",
-    "generate:anatomies": "node scripts/generate-anatomies.mjs",
     "check": "astro check",
-    "build": "node scripts/generate-anatomies.mjs && astro build",
+    "build": "astro build",
     "preview": "astro preview"
   },
   "dependencies": {
@@ -16,12 +15,18 @@
     "@skryensya/icons-lucide": "workspace:*",
     "@skryensya/icons-material": "workspace:*",
     "@skryensya/icons-phosphor": "workspace:*",
-    "@skryensya/vanilla": "workspace:*"
+    "@skryensya/react": "workspace:*",
+    "@skryensya/vanilla": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@astrojs/react": "^6.0.1",
     "@sveltejs/vite-plugin-svelte": "^7.2.0",
     "@types/node": "^26.1.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "astro": "^7.1.0",
     "sass": "^1.83.0",
     "svelte": "^5.56.7",

@@ -4,7 +4,7 @@ import type { DateValue } from "@skryensya/core/calendar";
 import { datePicker } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
 import { useId, type ReactNode } from "react";
-import { anchored } from "./anchored.js";
+import { useAnchored } from "./anchored.js";
 import { CalendarBody } from "./calendar.js";
 
 export type DatePickerProps = {
@@ -82,7 +82,7 @@ export function DatePicker({
 
   /* El ancla es el control entero (input + botones), no el botón del calendario: el panel se alinea
    * con el campo, que es lo que el calendario está editando. */
-  const anchor = anchored(id ?? generatedId);
+  const anchor = useAnchored(id ?? generatedId);
   const inputCount = selectionMode === "range" ? 2 : 1;
 
   return (

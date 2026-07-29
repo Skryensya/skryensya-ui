@@ -1,0 +1,10 @@
+# La estructura vive en packages/core/src/steps.ts. Acá sólo por qué se elige.
+
+Steps:
+  useWhen:
+    - "hay que mostrar en qué etapa está el usuario de un proceso de varias"
+    - "importa qué está hecho, qué falta y dónde está parado"
+  avoidWhen:
+    - "son instrucciones para leer y hacer; eso es un ProcessList"
+  alternatives:
+    - ProcessList

@@ -1,9 +1,7 @@
-/*
- * TIER 3, TIME FIELD
- *
- * Time entry is one native input. The platform owns editing, validation and the picker indicator;
- * this component owns the shared field surface around it.
- */
+/* TIER 3, TIME FIELD — a segmented time input: hour, minute, and AM/PM as independently
+ * steppable/typeable segments in one field, no popover and no wheel behind it. Each segment is a
+ * real `role="spinbutton"`, so this file only needs to skin one focusable row, not place a floating
+ * panel (compare DatePicker/Combobox, which both carry the Anclaje pattern for exactly that). */
 @layer components {
   .sk-time-field {
     --sk-time-field-gap: var(--space-stack-xs);
@@ -11,12 +9,16 @@
     --sk-time-field-label-color: var(--color-text-secondary);
     --sk-time-field-border-color: var(--color-border-default);
     --sk-time-field-invalid-border-color: var(--color-border-danger);
-    --sk-time-field-border-width: 1px;
     --sk-time-field-radius: var(--radius-control);
     --sk-time-field-bg: var(--color-bg-surface-raised);
     --sk-time-field-fg: var(--color-text-primary);
-    --sk-time-field-hint-color: var(--color-text-secondary);
+    --sk-time-field-placeholder-color: var(--color-text-secondary);
+    --sk-time-field-affordance-color: var(--color-text-secondary);
+    --sk-time-field-disabled-bg: var(--color-action-disabled);
+    --sk-time-field-disabled-fg: var(--color-text-disabled);
+    --sk-time-field-segment-radius: calc(var(--radius-control) / 2);
 
+    box-sizing: border-box;
     display: grid;
     gap: var(--sk-time-field-gap);
     inline-size: var(--sk-time-field-inline-size);
@@ -29,70 +31,101 @@
     font-weight: var(--font-weight-label);
   }
 
+  .sk-time-field__hint {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+  }
+
   .sk-time-field__control {
     box-sizing: border-box;
     display: flex;
     align-items: center;
     min-block-size: var(--size-touch-target);
-    border: var(--sk-time-field-border-width) solid
-      var(--sk-time-field-border-color);
+    padding-inline: var(--space-inset-sm);
+    border: 1px solid var(--sk-time-field-border-color);
     border-radius: var(--sk-time-field-radius);
     background: var(--sk-time-field-bg);
     color: var(--sk-time-field-fg);
+    font-variant-numeric: tabular-nums;
   }
 
-  .sk-time-field__control:focus-within {
+  .sk-time-field__control:has(.sk-time-field__segment:focus) {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: var(--focus-ring-offset);
   }
 
-  .sk-time-field__input {
-    box-sizing: border-box;
-    align-self: stretch;
-    inline-size: 100%;
-    min-inline-size: 0;
-    min-block-size: calc(
-      var(--size-touch-target) - 2 * var(--sk-time-field-border-width)
-    );
-    padding: 0 var(--space-inset-sm);
-    border: 0;
-    outline: 0;
-    background: transparent;
-    color: inherit;
-    font: inherit;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .sk-time-field__input::-webkit-date-and-time-value {
-    text-align: start;
-  }
-
-  .sk-time-field__input::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-  }
-
-  .sk-time-field__hint {
-    color: var(--sk-time-field-hint-color);
-    font-size: var(--font-size-body-sm);
-  }
-
-  .sk-time-field[data-invalid] .sk-time-field__control,
-  .sk-time-field__control:has(.sk-time-field__input[aria-invalid="true"]) {
+  .sk-time-field[data-invalid] .sk-time-field__control {
     border-color: var(--sk-time-field-invalid-border-color);
   }
 
-  .sk-time-field[data-disabled] .sk-time-field__control,
-  .sk-time-field__control:has(.sk-time-field__input:disabled) {
-    border-color: var(--color-border-subtle);
-    background: var(--color-action-disabled);
-    color: var(--color-text-disabled);
+  .sk-time-field__control[data-disabled] {
+    --sk-time-field-bg: var(--sk-time-field-disabled-bg);
+    --sk-time-field-fg: var(--sk-time-field-disabled-fg);
+    --sk-time-field-placeholder-color: var(--sk-time-field-disabled-fg);
+    --sk-time-field-border-color: var(--color-border-subtle);
+    cursor: not-allowed;
   }
 
+  /* One editable piece — hour, minute, or the AM/PM toggle. A `role="spinbutton"` div, not an
+   * `<input>`: its value is one whole number or one of two named states, never free text, and the
+   * digit-by-digit typing/auto-advance behaviour has no native HTML control that already gives it
+   * for free either way. */
+  .sk-time-field__segment {
+    display: inline-block;
+    box-sizing: border-box;
+    padding-inline: 0.125em;
+    border-radius: var(--sk-time-field-segment-radius);
+    font: inherit;
+    text-align: center;
+    cursor: default;
+    outline: none;
+  }
+
+  .sk-time-field__segment[data-placeholder] {
+    color: var(--sk-time-field-placeholder-color);
+  }
+
+  .sk-time-field__segment:hover {
+    background: var(--color-action-hover);
+  }
+
+  .sk-time-field__segment:focus {
+    background: var(--color-action-hover);
+    color: var(--sk-time-field-fg);
+  }
+
+  .sk-time-field__literal {
+    padding-inline: 0.0625em;
+    color: var(--sk-time-field-affordance-color);
+    white-space: pre;
+  }
+
+  /* The clear trigger is the real icon-only sm Button, same treatment as every other field's. */
+  .sk-time-field__clear.sk-button {
+    --sk-button-bg: transparent;
+    --sk-button-border-color: transparent;
+    --sk-button-border-width: 0;
+    --sk-button-shadow: none;
+    --sk-button-radius: var(--sk-time-field-radius);
+    --sk-button-fg: var(--sk-time-field-affordance-color);
+
+    margin-inline-start: auto;
+  }
+
+  .sk-time-field__clear.sk-button:is(:disabled, [aria-disabled="true"]) {
+    --sk-button-fg: var(--color-text-disabled);
+  }
+
+  .sk-time-field__clear[hidden] {
+    display: none;
+  }
 
   @media (forced-colors: active) {
     .sk-time-field__control {
       border-color: CanvasText;
     }
-
+    .sk-time-field__segment:focus {
+      outline: 1px solid Highlight;
+    }
   }
 }

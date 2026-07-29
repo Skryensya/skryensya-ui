@@ -2,6 +2,7 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
+import { StackBasicDemo } from "../../../components/react-demos/layout";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -14,7 +15,7 @@ const html = `<section
   <h3 class="sk-heading" data-size="h3" id="stack-demo-title">
     Summary
   </h3>
-  <p>The application is ready to review.</p>
+  <p>The request is ready for review.</p>
   <a class="sk-link sk-interactive" href="/en/components/stack">
     See details
   </a>
@@ -23,30 +24,37 @@ const html = `<section
 const react = `import { Stack } from "@skryensya/react/stack";
 import { Heading } from "@skryensya/react/heading";
 
-<Stack
-  as="section"
-  gap="md"
-  align="start"
-  aria-labelledby="summary-title"
->
-  <Heading as="h2" size="h2" id="summary-title">
-    Summary
-  </Heading>
-  <p>The application is ready to review.</p>
-  <a href="/detalles">See details</a>
-</Stack>;`;
+function Example() {
+  return (
+    <Stack
+      as="section"
+      gap="md"
+      align="start"
+      aria-labelledby="summary-title"
+    >
+      <Heading as="h2" size="h2" id="summary-title">
+        Summary
+      </Heading>
+      <p>The request is ready for review.</p>
+      <a href="/detalles">See details</a>
+    </Stack>
+  );
+}`;
 ---
 
 <Base title="Stack" description="Stack: vertical layout primitive with separation and transversal alignment.">
   <h1>Stack</h1>
   <p class="lede">
-    Stack stacks content on the vertical axis. It is a structural pattern: the element that carries it preserves
-    the semantics of the content, and the gap expresses the separation between its children.
+    Stack stacks content on the vertical axis. It is a structural pattern: the element that carries it preserves the semantics of the content, and the gap expresses the separation between its children.
   </p>
 
-  <Showcase html={html} react={react} label="Stack" />
+  <Showcase html={html} react={react} label="Stack">
+    <Fragment slot="react">
+      <StackBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>HTML autorado</h2>
+  <h2>Authored HTML</h2>
   <p>
     Directly choose the semantic element; Stack does not require vanilla initialization.
   </p>
@@ -60,7 +68,7 @@ import { Heading } from "@skryensya/react/heading";
   </p>
   <p>The code is in the <strong>React</strong> tab of the preview.</p>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
     <li><code>sk-stack</code> creates a one-column grid and stacks its children vertically.</li>
     <li><code>data-gap</code> accepts <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> or <code>xl</code>; omitting it uses <code>md</code>.</li>

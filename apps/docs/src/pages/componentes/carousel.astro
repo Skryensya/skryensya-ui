@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { CarouselCardsDemo } from "../../components/react-demos/carousel";
 import "../../examples/carousel.css";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla \\
@@ -141,45 +142,49 @@ const features = [
   // …
 ] as const;
 
-<Carousel
-  aria-label="Novedades"
-  style={{ "--sk-carousel-slide-size": "min(85%, 22rem)" }}
->
-  {features.map((f) => (
-    <CarouselSlide key={f.title}>
-      <Box
-        as="article"
-        className="carousel-card"
-        surface="surface"
-        border="subtle"
-        padding="none"
-      >
-        <ImageFrame
-          aspect="16/9"
-          radius="top"
-          position={f.position}
-        >
-          <img
-            className="sk-image-frame__media"
-            src="${demoSrc}"
-            alt=""
-          />
-          <MediaCaption edge="bottom" strength="md">
-            <Heading as="h3" size="h4" flush>
-              {f.title}
-            </Heading>
-          </MediaCaption>
-        </ImageFrame>
-        <div className="carousel-card__body">
-          <Text data-role="eyebrow">{f.eyebrow}</Text>
-          <Text tone="secondary" size="sm">
-            {f.body}
-          </Text>
-        </div>
-      </Box>
-    </CarouselSlide>
-  ))}
-</Carousel>;`;
+function Example() {
+  return (
+    <Carousel
+      aria-label="Novedades"
+      style={{ "--sk-carousel-slide-size": "min(85%, 22rem)" }}
+    >
+      {features.map((f) => (
+        <CarouselSlide key={f.title}>
+          <Box
+            as="article"
+            className="carousel-card"
+            surface="surface"
+            border="subtle"
+            padding="none"
+          >
+            <ImageFrame
+              aspect="16/9"
+              radius="top"
+              position={f.position}
+            >
+              <img
+                className="sk-image-frame__media"
+                src="${demoSrc}"
+                alt=""
+              />
+              <MediaCaption edge="bottom" strength="md">
+                <Heading as="h3" size="h4" flush>
+                  {f.title}
+                </Heading>
+              </MediaCaption>
+            </ImageFrame>
+            <div className="carousel-card__body">
+              <Text data-role="eyebrow">{f.eyebrow}</Text>
+              <Text tone="secondary" size="sm">
+                {f.body}
+              </Text>
+            </div>
+          </Box>
+        </CarouselSlide>
+      ))}
+    </Carousel>
+  );
+}`;
 
 /* La base sin JS: el MISMO markup sin data-sk-carousel, así el enhancer no lo toca y los
    pseudo-elementos nativos dibujan los controles con cero JavaScript. */
@@ -327,7 +332,11 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     js={bootstrap}
     label="Carrusel de tarjetas"
     note="ImageFrame + media gradient · scroll-snap + Zag"
-  />
+  >
+    <Fragment slot="react">
+      <CarouselCardsDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Un dot por página, no por slide</h2>
   <p>

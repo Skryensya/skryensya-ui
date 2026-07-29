@@ -4,12 +4,18 @@ import Showcase from "../../../components/Showcase.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import DimensionSelect from "../../../components/DimensionSelect.astro";
+import {
+  TableBasicDemo,
+  TablePagerDemo,
+  TableStickyColumnDemo,
+  TableStickyHeaderDemo,
+} from "../../../components/react-demos/table";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
 const services = ["API", "Worker", "Gateway", "Billing", "Auth", "Search"] as const;
 const envs = ["prod", "staging", "dev"] as const;
-const statuses = ["Exitoso", "In progress", "Fallido"] as const;
+const statuses = ["Successful", "In progress", "Failed"] as const;
 
 const pagerRows = Array.from({ length: 28 }, (_, index) => {
   const n = index + 1;
@@ -24,11 +30,11 @@ const pagerRows = Array.from({ length: 28 }, (_, index) => {
 
 const html = `<div class="sk-table-scroll">
   <table class="sk-table">
-    <caption class="sk-table__caption">Planes disponibles</caption>
+    <caption class="sk-table__caption">Available plans</caption>
     <thead class="sk-table__head">
       <tr class="sk-table__row">
         <th class="sk-table__header" scope="col">Plan</th>
-        <th class="sk-table__header" scope="col">Uso</th>
+        <th class="sk-table__header" scope="col">Use</th>
         <th class="sk-table__header" scope="col">Status</th>
       </tr>
     </thead>
@@ -57,11 +63,11 @@ const boxHtml = `<section
 >
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <caption class="sk-table__caption">Planes disponibles</caption>
+      <caption class="sk-table__caption">Available plans</caption>
       <thead class="sk-table__head">
         <tr class="sk-table__row">
           <th class="sk-table__header" scope="col">Plan</th>
-          <th class="sk-table__header" scope="col">Uso</th>
+          <th class="sk-table__header" scope="col">Use</th>
           <th class="sk-table__header" scope="col">Status</th>
         </tr>
       </thead>
@@ -130,32 +136,36 @@ const react = `import {
   TableScroll,
 } from "@skryensya/react/table";
 
-<TableScroll>
-  <Table>
-    <TableCaption>Planes disponibles</TableCaption>
-    <TableHead>
-      <TableRow>
-        <TableHeader>Plan</TableHeader>
-        <TableHeader>Uso</TableHeader>
-        <TableHeader>Status</TableHeader>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      <TableRow>
-        <TableHeader scope="row">Starter</TableHeader>
-        <TableCell>Small teams</TableCell>
-        <TableCell>Activo</TableCell>
-      </TableRow>
-    </TableBody>
-    <TableFooter>
-      <TableRow>
-        <TableCell colSpan={3}>
-          Prices do not include taxes.
-        </TableCell>
-      </TableRow>
-    </TableFooter>
-  </Table>
-</TableScroll>;`;
+function Example() {
+  return (
+    <TableScroll>
+      <Table>
+        <TableCaption>Available plans</TableCaption>
+        <TableHead>
+          <TableRow>
+            <TableHeader>Plan</TableHeader>
+            <TableHeader>Uso</TableHeader>
+            <TableHeader>Status</TableHeader>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableHeader scope="row">Starter</TableHeader>
+            <TableCell>Small teams</TableCell>
+            <TableCell>Activo</TableCell>
+          </TableRow>
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell colSpan={3}>
+              Prices do not include taxes.
+            </TableCell>
+          </TableRow>
+        </TableFooter>
+      </Table>
+    </TableScroll>
+  );
+}`;
 
 const stickyColumnHtml = `<div
   aria-labelledby="service-metrics"
@@ -183,7 +193,7 @@ const stickyColumnHtml = `<div
           Latencia p95
         </th>
         <th class="sk-table__header" scope="col">
-          Error
+          Mistake
         </th>
         <th class="sk-table__header" scope="col">
           Solicitudes
@@ -245,42 +255,46 @@ const metrics = [
   ["Identidad", "Frankfurt", "97 ms", "0,04%", "6,9 M", "v1.44.0"],
 ] as const;
 
-<TableScroll
-  aria-labelledby="service-metrics"
-  role="region"
-  stickyColumn
-  tabIndex={0}
->
-  <Table>
-    <TableCaption id="service-metrics">
-      Performance by region
-    </TableCaption>
-    <TableHead>
-      <TableRow>
-        <TableHeader>Servicio</TableHeader>
-        <TableHeader>Region</TableHeader>
-        <TableHeader>Latencia p95</TableHeader>
-        <TableHeader>Error</TableHeader>
-        <TableHeader>Solicitudes</TableHeader>
-        <TableHeader>Version</TableHeader>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {metrics.map(
-        ([service, region, latency, error, requests, version]) => (
-          <TableRow key={service}>
-            <TableHeader scope="row">{service}</TableHeader>
-            <TableCell>{region}</TableCell>
-            <TableCell>{latency}</TableCell>
-            <TableCell>{error}</TableCell>
-            <TableCell>{requests}</TableCell>
-            <TableCell>{version}</TableCell>
+function Example() {
+  return (
+    <TableScroll
+      aria-labelledby="service-metrics"
+      role="region"
+      stickyColumn
+      tabIndex={0}
+    >
+      <Table>
+        <TableCaption id="service-metrics">
+          Performance by region
+        </TableCaption>
+        <TableHead>
+          <TableRow>
+            <TableHeader>Servicio</TableHeader>
+            <TableHeader>Region</TableHeader>
+            <TableHeader>Latencia p95</TableHeader>
+            <TableHeader>Error</TableHeader>
+            <TableHeader>Solicitudes</TableHeader>
+            <TableHeader>Version</TableHeader>
           </TableRow>
-        ),
-      )}
-    </TableBody>
-  </Table>
-</TableScroll>;`;
+        </TableHead>
+        <TableBody>
+          {metrics.map(
+            ([service, region, latency, error, requests, version]) => (
+              <TableRow key={service}>
+                <TableHeader scope="row">{service}</TableHeader>
+                <TableCell>{region}</TableCell>
+                <TableCell>{latency}</TableCell>
+                <TableCell>{error}</TableCell>
+                <TableCell>{requests}</TableCell>
+                <TableCell>{version}</TableCell>
+              </TableRow>
+            ),
+          )}
+        </TableBody>
+      </Table>
+    </TableScroll>
+  );
+}`;
 
 const stickyHeaderHtml = `<div
   aria-labelledby="deployment-history"
@@ -327,13 +341,13 @@ const stickyHeaderHtml = `<div
       <tr class="sk-table__row">
         <th class="sk-table__header" scope="row">DEP-1080</th>
         <td class="sk-table__cell">Gateway</td>
-        <td class="sk-table__cell">Exitoso</td>
+        <td class="sk-table__cell">Successful</td>
         <td class="sk-table__cell">18 min ago</td>
       </tr>
       <tr class="sk-table__row">
         <th class="sk-table__header" scope="row">DEP-1079</th>
         <td class="sk-table__cell">Billing</td>
-        <td class="sk-table__cell">Fallido</td>
+        <td class="sk-table__cell">Failed</td>
         <td class="sk-table__cell">31 min ago</td>
       </tr>
       <tr class="sk-table__row">
@@ -358,44 +372,48 @@ const stickyHeaderReact = `import {
 } from "@skryensya/react/table";
 
 const deployments = [
-  ["DEP-1082", "API", "Exitoso", "2 min ago"],
+  ["DEP-1082", "API", "Successful", "2 min ago"],
   ["DEP-1081", "Worker", "In progress", "6 min ago"],
-  ["DEP-1080", "Gateway", "Exitoso", "18 min ago"],
-  ["DEP-1079", "Billing", "Fallido", "31 min ago"],
-  ["DEP-1078", "Auth", "Exitoso", "48 min ago"],
+  ["DEP-1080", "Gateway", "Successful", "18 min ago"],
+  ["DEP-1079", "Billing", "Failed", "31 min ago"],
+  ["DEP-1078", "Auth", "Successful", "48 min ago"],
 ] as const;
 
-<TableScroll
-  aria-labelledby="deployment-history"
-  role="region"
-  stickyHeader
-  style={{ maxBlockSize: "14rem" }}
-  tabIndex={0}
->
-  <Table>
-    <TableCaption id="deployment-history">
-      Deployment history
-    </TableCaption>
-    <TableHead>
-      <TableRow>
-        <TableHeader>ID</TableHeader>
-        <TableHeader>Servicio</TableHeader>
-        <TableHeader>Status</TableHeader>
-        <TableHeader>Actualizado</TableHeader>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {deployments.map(([id, service, status, updated]) => (
-        <TableRow key={id}>
-          <TableHeader scope="row">{id}</TableHeader>
-          <TableCell>{service}</TableCell>
-          <TableCell>{status}</TableCell>
-          <TableCell>{updated}</TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-</TableScroll>;`;
+function Example() {
+  return (
+    <TableScroll
+      aria-labelledby="deployment-history"
+      role="region"
+      stickyHeader
+      style={{ maxBlockSize: "14rem" }}
+      tabIndex={0}
+    >
+      <Table>
+        <TableCaption id="deployment-history">
+          Deployment history
+        </TableCaption>
+        <TableHead>
+          <TableRow>
+            <TableHeader>ID</TableHeader>
+            <TableHeader>Servicio</TableHeader>
+            <TableHeader>Status</TableHeader>
+            <TableHeader>Actualizado</TableHeader>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {deployments.map(([id, service, status, updated]) => (
+            <TableRow key={id}>
+              <TableHeader scope="row">{id}</TableHeader>
+              <TableCell>{service}</TableCell>
+              <TableCell>{status}</TableCell>
+              <TableCell>{updated}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableScroll>
+  );
+}`;
 
 const pagerRowHtml = (row: (typeof pagerRows)[number]) => `        <tr
           class="sk-table__row"
@@ -426,7 +444,7 @@ const pagerShell = (tbody: string) => `<div
   >
     <table class="sk-table" data-layout="fixed">
       <caption class="sk-table__caption">
-        Despliegues recientes
+        Recent deployments
       </caption>
       <thead class="sk-table__head">
         <tr class="sk-table__row">
@@ -568,7 +586,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
         tabIndex={0}
       >
         <Table data-layout="fixed">
-          <TableCaption>Despliegues recientes</TableCaption>
+          <TableCaption>Recent deployments</TableCaption>
           <TableHead>
             <TableRow>
               <TableHeader>ID</TableHeader>
@@ -634,56 +652,47 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
 >
   <h1>Table</h1>
   <p class="lede">
-    Table maintains the native semantics of
-    <code>&lt;table&gt;</code>. The overflow wrapper preserves a
-    readable width per column and scrolls the table instead of
-    compress it. Header and first sticky column are opt-in and use the
-    same contract on mobile and desktop.
+    Table maintains the native semantics of <code>&lt;table&gt;</code>. The overflow wrapper preserves a readable width per column and scrolls the table instead of compressing it. Header and first sticky column are opt-in and use the same contract on mobile and desktop.
   </p>
 
-  <Showcase html={html} react={react} label="Table" />
+  <Showcase html={html} react={react} label="Table">
+    <Fragment slot="react">
+      <TableBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Uncompressed horizontal scroll</h2>
   <p>
-    Within <code>.sk-table-scroll</code>, each cell retains the
-    floor <code>--sk-table-cell-min-inline-size</code>; the headers
-    of row they retain a larger one. a table
-    <code>data-layout="fixed"</code> also uses
-    <code>--sk-table-fixed-min-inline-size</code>. on screens
-    narrow scroll appears, not 56px columns or letter-by-text
-    letter. The wrapper supports focus for keyboard scrolling and
-    paints a compact but visible scrollbar.
+    Within <code>.sk-table-scroll</code>, each cell retains floor <code>--sk-table-cell-min-inline-size</code>; row headers retain a larger one. A table <code>data-layout="fixed"</code> additionally uses <code>--sk-table-fixed-min-inline-size</code>. On narrow screens a scroll appears, not 56px columns or letter-by-letter text. The wrapper supports focus for keyboard scrolling and paints a compact but visible scrollbar.
   </p>
 
-  <h2>Primera columna sticky</h2>
+  <h2>Sticky first column</h2>
   <p>
-    Use <code>data-sticky-column</code> in HTML or
-    <code>stickyColumn</code> in React. The first cell of each row
-    is frozen and its shadow separates the identifier from the data
-    that pass underneath. It should be a
-    <code>&lt;th scope="row"&gt;</code>. Does not depend on a breakpoint:
-    It works the same with touch, mouse, zoom or a narrow window.
+    Use <code>data-sticky-column</code> in HTML or <code>stickyColumn</code> in React. The first cell of each row is frozen and its shadow separates the identifier from the data passing below it. It should be a <code>&lt;th scope="row"&gt;</code>. It does not depend on a breakpoint: it works the same with touch, mouse, zoom or a narrow window.
   </p>
   <Showcase
     html={stickyColumnHtml}
     react={stickyColumnReact}
     label="Primera columna sticky"
-  />
+  >
+    <Fragment slot="react">
+      <TableStickyColumnDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Header row sticky</h2>
+  <h2>Sticky header row</h2>
   <p>
-    Use <code>data-sticky-header</code> or
-    <code>stickyHeader</code>. The wrapper gains vertical scroll and a
-    maximum height of <code>20rem</code>, which you can override as
-    in this example. The header is visible on both desktop
-    as in mobile; if you combine both modifiers, the corner cell
-    It remains on the two layers.
+    Use <code>data-sticky-header</code> or <code>stickyHeader</code>. The wrapper gains vertical scroll and a maximum height of <code>20rem</code>, which you can override as in this example. The header is visible on both desktop and mobile; If you combine both modifiers, the corner cell is on top of the two layers.
   </p>
   <Showcase
     html={stickyHeaderHtml}
     react={stickyHeaderReact}
     label="Header row sticky"
-  />
+  >
+    <Fragment slot="react">
+      <TableStickyHeaderDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>With pagination</h2>
   <p>
@@ -720,7 +729,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
         tabindex="0"
       >
         <table class="sk-table" data-layout="fixed">
-          <caption class="sk-table__caption">Despliegues recientes</caption>
+          <caption class="sk-table__caption">Recent deployments</caption>
           <thead class="sk-table__head">
             <tr class="sk-table__row">
               <th class="sk-table__header" scope="col">ID</th>
@@ -765,22 +774,20 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
         </div>
       </div>
     </div>
+    <Fragment slot="react">
+      <TablePagerDemo client:load />
+    </Fragment>
   </Showcase>
 
   <h2>Inside a Box</h2>
   <p>
-    Within the <code>padding</code> of a <code>.sk-box</code>, the <code>.sk-table</code> rounds with the
-    radius of nested element (<code>--radius-control</code>) instead of surface: Box provides the
-    surface and the table is an element within it. This way the radius is tighter, it never collapses
-    to a square box, and continues to accompany the <code>data-radius</code> axis.
+    Within the <code>padding</code> of a <code>.sk-box</code>, the <code>.sk-table</code> rounds with the nested element radius (<code>--radius-control</code>) instead of the surface: Box provides the surface and the table is an element within it. This way the radius is tighter, never collapses into a square box, and continues to accompany the <code>data-radius</code> axis.
   </p>
   <Showcase html={boxHtml} label="Table in Box" />
 
-  <h2>Densidad local</h2>
+  <h2>Local density</h2>
   <p>
-    The scope contract is just <code>data-sk-density-scope</code> and a density value. here
-    <code>--sk-density-factor</code> is system relative; write <code>--sk-density</code> in the
-    same node if you need an absolute value. The numbers are still continuous.
+    The scope contract is just <code>data-sk-density-scope</code> and a density value. Here <code>--sk-density-factor</code> is relative to the system; write <code>--sk-density</code> in the same node if you need an absolute value. The numbers are still continuous.
   </p>
   <Showcase html={spaciousDensityHtml} label="System wide table · 1.2×" />
   <Showcase html={compactDensityHtml} label="Compact table · 0.6× system" />
@@ -790,8 +797,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
 
   <h2>React</h2>
   <p>
-    The binding is in <strong>Vanilla | React</strong>. In Vanilla, the HTML is enough
-    <code>data-sk-*</code>; <code>initComponents</code> (and <code>mountIcons</code>) are loaded by the site.
+    The binding is in <strong>Vanilla |React</strong>. In Vanilla, the HTML with <code>data-sk-*</code> is enough; <code>initComponents</code> (and <code>mountIcons</code>) are loaded by the site.
   </p>
   <StylingHooks groups={[{ file: "components/table.css", probe: "sk-table" }]} />
 </Base>

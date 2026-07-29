@@ -1,0 +1,48 @@
+{
+  "name": "@skryensya/ai-compiler",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Imports the contracts Core declares, reconciles them with the semantic overlay, and emits the manifest plus the usage-tree emitter that turns a composition into markup or TSX.",
+  "scripts": {
+    "build": "tsx src/cli.ts ../..",
+    "check": "tsc -p tsconfig.json --noEmit && vitest run && tsx src/cli.ts ../..",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@skryensya/core": "workspace:*",
+    "yaml": "^2.9.0",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "vitest": "^4.1.10",
+    "tsx": "^4.19.2"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./emit": {
+      "types": "./src/emit.ts",
+      "default": "./src/emit.ts"
+    },
+    "./registry": {
+      "types": "./src/registry.ts",
+      "default": "./src/registry.ts"
+    },
+    "./usage-tree": {
+      "types": "./src/usage-tree.ts",
+      "default": "./src/usage-tree.ts"
+    },
+    "./validate": {
+      "types": "./src/validate.ts",
+      "default": "./src/validate.ts"
+    },
+    "./manifest": {
+      "types": "./src/manifest.ts",
+      "default": "./src/manifest.ts"
+    }
+  }
+}

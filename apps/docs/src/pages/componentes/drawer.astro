@@ -218,16 +218,6 @@ trigger?.addEventListener("click", () => {
     sigue completo.
   </p>
 
-  <h2>Instalar</h2>
-  <CodeBlock code={import_} label="CSS" />
-
-  <StylingHooks
-    groups={[
-      { file: "components/drawer.css", probe: "sk-drawer", title: "Drawer" },
-      { file: "patterns/vaul.css", probe: "sk-vaul", title: "Heredados de Vaul" },
-    ]}
-  />
-
   <h2>Drawer nativo</h2>
   <p class="lede">
     La misma superficie puede quedarse en la plataforma. Conserva
@@ -252,6 +242,17 @@ trigger?.addEventListener("click", () => {
     <li>Sin handle no se anuncia una interacción de drag que no existe.</li>
     <li>El enhancer sólo hace falta para drag-to-dismiss y light-dismiss.</li>
   </ul>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={import_} label="CSS" />
+
+  <StylingHooks
+    groups={[
+      { file: "components/drawer.css", probe: "sk-drawer", title: "Drawer" },
+      { file: "patterns/vaul.css", probe: "sk-vaul", title: "Heredados de Vaul" },
+    ]}
+  />
+
 </Base>
 
 <style is:global>

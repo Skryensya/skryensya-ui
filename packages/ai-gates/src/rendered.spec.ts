@@ -19,6 +19,26 @@ import { canonicalTrees } from "./trees.js";
  * predicted.
  */
 
+/*
+ * Before anything is rendered: does the tree even compose?
+ *
+ * This check was missing, and the recipes are what exposed it — the first recipe written put a
+ * SidebarTrigger inside a SidebarHeader and the validator rejected it, while a canonical tree doing
+ * exactly the same thing had been passing every gate for days. The gates were measuring symmetry,
+ * accessibility and paint on trees nobody had asked the contract about.
+ *
+ * The contract was wrong there, not the tree — but that is the point: nothing was asking.
+ */
+test("every canonical tree is valid against its contract", () => {
+  const problems = canonicalTrees.flatMap(({ name, tree }) =>
+    validateUsageTree(tree)
+      .problems.filter((problem) => problem.severity === "error")
+      .map((problem) => `${name} · ${problem.path}: ${problem.message}`),
+  );
+
+  expect(problems, "a fixture the contract rejects proves nothing about the contract").toEqual([]);
+});
+
 test("every canonical tree paints something", async ({ page }) => {
   await page.goto("/");
   await page.waitForSelector('body[data-ready="true"]');

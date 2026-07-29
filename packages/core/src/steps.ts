@@ -50,7 +50,6 @@ export const stepsContract = {
           // React calls it `steps`; the contract keys every collection `items`.
           prop: "steps",
           item: {
-            key: "label",
             options: {
               status: {
                 type: "enum",

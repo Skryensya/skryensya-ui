@@ -116,8 +116,15 @@ export type ContractSlot = {
     readonly options: Readonly<Record<string, ContractOption>>;
     /** Item content: the label, the panel body. */
     readonly slots: Readonly<Record<string, ContractSlot>>;
-    /** Which option identifies an entry, so the emitter can pair the parts that repeat over it. */
-    readonly key: string;
+    /**
+     * Which OPTION identifies an entry, so the emitter can pair the parts that repeat over it — a
+     * tab's trigger and its panel are uncles, and this is what keeps them together.
+     *
+     * Absent when an entry becomes ONE element: a breadcrumb crumb and a step have nothing to pair,
+     * and demanding a key there made two contracts name a slot as if it were an option, which the
+     * validator then rejected for every tree that used them.
+     */
+    readonly key?: string;
   };
 };
 

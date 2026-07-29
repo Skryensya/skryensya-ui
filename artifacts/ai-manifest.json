@@ -718,7 +718,6 @@
             "items": {
               "accepts": "items",
               "item": {
-                "key": "label",
                 "options": {
                   "current": {
                     "attr": "aria-current",
@@ -810,6 +809,12 @@
       "css": "@skryensya/core/components/button.css",
       "id": "button",
       "options": {
+        "disabled": {
+          "attr": "disabled",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
         "href": {
           "attr": "href",
           "type": "string"
@@ -892,7 +897,8 @@
           "options": [
             "variant",
             "size",
-            "iconOnly"
+            "iconOnly",
+            "disabled"
           ],
           "react": {
             "from": "@skryensya/react/button",
@@ -907,6 +913,15 @@
           "template": {
             "also": [
               "sk-interactive"
+            ],
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "aria-disabled": "true"
+                },
+                "equals": "true",
+                "option": "disabled"
+              }
             ],
             "element": "button",
             "host": true,
@@ -1681,7 +1696,10 @@
             "input-with-label",
             "validation-message"
           ],
-          "options": [],
+          "options": [
+            "required",
+            "disabled"
+          ],
           "react": {
             "from": "@skryensya/react/input",
             "name": "Field"
@@ -4839,7 +4857,9 @@
             "label"
           ],
           "parents": [
-            "Sidebar"
+            "Sidebar",
+            "SidebarHeader",
+            "SidebarFooter"
           ],
           "react": {
             "from": "@skryensya/react/sidebar",
@@ -5106,7 +5126,6 @@
             "items": {
               "accepts": "items",
               "item": {
-                "key": "label",
                 "options": {
                   "current": {
                     "attr": "aria-current",
@@ -7528,5 +7547,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "c7ef6f4810b1fecc"
+  "sourceHash": "de8ca8fe95820374"
 }

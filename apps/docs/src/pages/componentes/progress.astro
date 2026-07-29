@@ -3,57 +3,24 @@ import "@skryensya/core/components/progress.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
-import { ProgressDemo } from "../../components/react-demos/progress";
+import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<div
-  class="sk-progress"
-  role="progressbar"
-  aria-label="Subida"
-  aria-valuenow="68"
-  aria-valuemin="0"
-  aria-valuemax="100"
-  style="--sk-progress-fill: 68%"
->
-  <div class="sk-progress__bar"></div>
-</div>
-<div
-  class="sk-progress"
-  data-tone="success"
-  role="progressbar"
-  aria-label="Completado"
-  aria-valuenow="100"
-  aria-valuemin="0"
-  aria-valuemax="100"
-  style="--sk-progress-fill: 100%"
->
-  <div class="sk-progress__bar"></div>
-</div>
-<div
-  class="sk-progress"
-  data-tone="danger"
-  role="progressbar"
-  aria-label="Cuota"
-  aria-valuenow="24"
-  aria-valuemin="0"
-  aria-valuemax="100"
-  style="--sk-progress-fill: 24%"
->
-  <div class="sk-progress__bar"></div>
-</div>`;
-
-const react = `import { Progress } from "@skryensya/react/progress";
-
-function Example() {
-  return (
-    <>
-      <Progress label="Subida" value={68} />
-      <Progress label="Completado" value={100} tone="success" />
-      <Progress label="Cuota" value={24} tone="danger" />
-    </>
-  );
-}`;
+/*
+ * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
+ * island are all emitted from this, so the snippet a reader copies is what they just saw render.
+ */
+const tree = {
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "md" },
+  children: [
+    { contract: "progress", signature: "Progress", options: { value: 68, label: "Subida" } },
+    { contract: "progress", signature: "Progress", options: { value: 100, tone: "success", label: "Completado" } },
+    { contract: "progress", signature: "Progress", options: { value: 24, tone: "danger", label: "Cuota" } },
+  ],
+} as const satisfies UsageTree;
 ---
 
 <Base title="Progress" description="Progress: barra determinada con fracción recortada en el core, tonos y componente React.">
@@ -64,11 +31,7 @@ function Example() {
     pintado y <code>aria-valuenow</code> nunca pueden divergir.
   </p>
 
-  <Showcase html={html} react={react} label="Progress">
-    <Fragment slot="react">
-      <ProgressDemo client:load />
-    </Fragment>
-  </Showcase>
+  <Showcase tree={tree} label="Progress" />
   <p>Para trabajo sin un valor medible usa <a href="/componentes/loader">Loader</a>: su semántica es indeterminada.</p>
 
   <h2>Instalar</h2>

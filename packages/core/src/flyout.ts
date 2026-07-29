@@ -1,3 +1,5 @@
+import type { ComponentContract } from "./contract.js";
+
 export type FlyoutOption = {
   value: string;
   label: string;
@@ -115,3 +117,110 @@ export function computeFlyoutFixedCoords(input: {
 
   return { top: Math.round(top), left: Math.round(left), side };
 }
+
+/**
+ * A value picker whose panel opens BESIDE the trigger and stays in the DOM.
+ *
+ * The one floating family that is not anchored: the panel is a child of the root, and placement is
+ * fixed coordinates computed from the trigger's rect (flipping and clamping so it stays inside the
+ * viewport, clipping ancestors included). Nothing is portalled, nothing is CSS-anchored, and both
+ * bindings therefore land on the same subtree — which is why this one is published while tooltip,
+ * popover and menu are not.
+ *
+ * Closed, the panel is `hidden`. Not removed: it is what `aria-controls` points at, and a reference
+ * to an element that does not exist yet is a reference to nothing.
+ */
+export const flyoutContract = {
+  id: "flyout",
+  css: "@skryensya/core/components/flyout.css",
+  parts: flyoutParts,
+
+  options: {
+    /** What the trigger shows before anything is chosen. */
+    placeholder: { type: "string", default: "Select option", attr: "data-placeholder", machineInput: true },
+    disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "", machineInput: true },
+    /** The value chosen to begin with. Read once; after that the interaction owns it. */
+    defaultValue: { type: "string", attr: "data-default-value", machineInput: true },
+  },
+
+  signatures: {
+    Flyout: {
+      intent: ["value-picker", "dropdown", "choose-from-a-list", "filter-picker"],
+      host: { element: "div" },
+      options: ["placeholder", "disabled", "defaultValue"],
+      slots: {
+        label: { accepts: "text" },
+        items: {
+          accepts: "items",
+          prop: "options",
+          required: true,
+          item: {
+            options: {
+              value: { type: "string", attr: "data-value" },
+              disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "" },
+            },
+            slots: { label: { accepts: "text", required: true } },
+            key: "value",
+          },
+        },
+      },
+      mount: "data-sk-flyout",
+      template: {
+        element: "div",
+        part: "root",
+        host: true,
+        children: [
+          { element: "label", part: "label", mount: "data-sk-flyout-label", whenGiven: "label", slot: "label" },
+          {
+            element: "button",
+            part: "trigger",
+            also: ["sk-interactive"],
+            mount: "data-sk-flyout-trigger",
+            attrs: { type: "button", "aria-haspopup": "listbox" },
+            children: [
+              { element: "span", part: "value", mount: "data-sk-flyout-value", textFromOption: "placeholder" },
+              {
+                element: "span",
+                part: "indicator",
+                mount: "data-sk-flyout-indicator",
+                attrs: { "aria-hidden": "true" },
+                children: [
+                  { element: "span", attrs: { "data-state": "closed" } },
+                  { element: "span", attrs: { "data-state": "open" } },
+                ],
+              },
+            ],
+          },
+          {
+            element: "ul",
+            part: "panel",
+            mount: "data-sk-flyout-panel",
+            // Hidden, not absent: `aria-controls` points at it, and closed is a state, not a removal.
+            attrs: { role: "listbox", hidden: "" },
+            children: [
+              {
+                element: "li",
+                part: "item",
+                also: ["sk-interactive"],
+                mount: "data-sk-flyout-item",
+                attrs: { role: "option" },
+                repeat: "items",
+                itemOptions: ["value", "disabled"],
+                children: [
+                  { element: "span", part: "itemText", mount: "data-sk-flyout-item-text", itemSlot: "label" },
+                  {
+                    element: "span",
+                    part: "itemIndicator",
+                    mount: "data-sk-flyout-item-indicator",
+                    attrs: { "aria-hidden": "true" },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/flyout", name: "Flyout" },
+    },
+  },
+} as const satisfies ComponentContract;

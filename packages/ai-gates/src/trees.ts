@@ -947,4 +947,25 @@ export const canonicalTrees: readonly Canonical[] = [
       },
     },
   },
+  {
+    /*
+     * The one floating family that is not anchored: the panel is a CHILD of the root and placement is
+     * fixed coordinates from the trigger's rect. Nothing is portalled, so both bindings land on the
+     * same subtree — which is exactly why this one is published and tooltip, popover and menu are not.
+     */
+    name: "flyout/pick-a-status",
+    enhanced: true,
+    tree: {
+      contract: "flyout",
+      signature: "Flyout",
+      slots: {
+        label: "Estado",
+        items: [
+          { options: { value: "abierto" }, slots: { label: "Abierto" } },
+          { options: { value: "en-curso" }, slots: { label: "En curso" } },
+          { options: { value: "cerrado" }, slots: { label: "Cerrado" } },
+        ],
+      },
+    },
+  },
 ];

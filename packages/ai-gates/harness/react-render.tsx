@@ -16,6 +16,8 @@ import * as toolbarModule from "@skryensya/react/toolbar";
 import * as mediaGradientModule from "@skryensya/react/media-gradient";
 import * as segmentedModule from "@skryensya/react/segmented";
 import * as sliderModule from "@skryensya/react/slider";
+import * as accordionModule from "@skryensya/react/accordion";
+import * as tileModule from "@skryensya/react/tile";
 import * as paginationModule from "@skryensya/react/pagination";
 import * as themeToggleModule from "@skryensya/react/theme-toggle";
 import * as contentModule from "@skryensya/react/content";
@@ -69,6 +71,8 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/slider": sliderModule,
   "@skryensya/react/content": contentModule,
   "@skryensya/react/pagination": paginationModule,
+  "@skryensya/react/accordion": accordionModule,
+  "@skryensya/react/tile": tileModule,
   "@skryensya/react/theme-toggle": themeToggleModule,
   "@skryensya/react/number-field": numberFieldModule,
   "@skryensya/react/tooltip": tooltipModule,
@@ -107,7 +111,11 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
 
   // A forwardRef export is an object, not a function — NavListLink is one, so `typeof` is not the
   // question. What matters is that the module exports the name the contract points at.
-  const component = modules[signature.react.from]?.[signature.react.name];
+  // A dotted name walks a compound binding's namespace: `Accordion.Item` is a property of the
+  // exported root, which is how React spells "this piece only makes sense inside that one".
+  const component = signature.react.name
+    .split(".")
+    .reduce<unknown>((held, key) => (held as Record<string, unknown>)?.[key], modules[signature.react.from]);
   if (component === undefined) {
     throw new Error(`${signature.react.from} exports no "${signature.react.name}".`);
   }

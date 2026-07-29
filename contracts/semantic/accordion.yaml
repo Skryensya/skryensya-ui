@@ -1,0 +1,35 @@
+# La estructura vive en packages/core/src/accordion.ts. Acá sólo por qué se elige.
+
+Accordion:
+  useWhen:
+    - "hay varias secciones largas y sólo una importa a la vez: preguntas frecuentes, términos"
+    - "conviene que abrir una cierre la anterior para que la página no crezca sin fin"
+  avoidWhen:
+    - "son pocas secciones cortas; mostrarlas todas se lee más rápido que plegarlas"
+    - "el contenido se compara entre secciones; plegar obliga a recordar en vez de mirar"
+    - "las secciones son vistas alternativas del mismo espacio; eso es Tabs"
+  alternatives:
+    - Tabs
+    - ExpandableTile
+
+Accordion.Item:
+  useWhen:
+    - "es una sección del acordeón; su `value` es cómo el acordeón la nombra"
+  avoidWhen:
+    - "está sola, fuera de un acordeón; eso es un ExpandableTile"
+  alternatives:
+    - ExpandableTile
+
+Accordion.Trigger:
+  useWhen:
+    - "es el encabezado que abre y cierra su sección"
+  avoidWhen:
+    - "está fuera de un Accordion.Item; no tiene qué abrir"
+  alternatives: []
+
+Accordion.Content:
+  useWhen:
+    - "es el cuerpo que se pliega dentro de su sección"
+  avoidWhen:
+    - "está fuera de un Accordion.Item; no tiene quién lo abra"
+  alternatives: []

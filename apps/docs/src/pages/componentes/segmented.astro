@@ -2,65 +2,27 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
-import { SegmentedDemo } from "../../components/react-demos/segmented";
+import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
-const html = `<div
-  class="sk-segmented"
-  data-sk-segmented
-  data-value="day"
-  role="radiogroup"
-  aria-label="Rango"
->
-  <span class="sk-segmented__indicator" aria-hidden="true"></span>
-  <button
-    class="sk-segmented__option sk-interactive"
-    data-sk-segmented-option
-    data-value="day"
-    type="button"
-    role="radio"
-  >
-    Día
-  </button>
-  <button
-    class="sk-segmented__option sk-interactive"
-    data-sk-segmented-option
-    data-value="week"
-    type="button"
-    role="radio"
-  >
-    Semana
-  </button>
-  <button
-    class="sk-segmented__option sk-interactive"
-    data-sk-segmented-option
-    data-value="month"
-    type="button"
-    role="radio"
-  >
-    Mes
-  </button>
-</div>`;
-
-const react = `import { useState } from "react";
-import { SegmentedControl } from "@skryensya/react/segmented";
-
-function Example() {
-  const [range, setRange] = useState("day");
-  return (
-    <SegmentedControl
-      aria-label="Rango"
-      value={range}
-      onValueChange={setRange}
-      options={[
-        { value: "day", label: "Día" },
-        { value: "week", label: "Semana" },
-        { value: "month", label: "Mes" },
-      ]}
-    />
-  );
-}`;
+/*
+ * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
+ * island are all emitted from this, so the snippet a reader copies is what they just saw render.
+ */
+const tree = {
+  contract: "segmented",
+  signature: "Segmented",
+  options: { value: "day" },
+  attrs: { "aria-label": "Rango" },
+  slots: {
+    items: [
+      { options: { value: "day" }, slots: { label: "Día" } },
+      { options: { value: "week" }, slots: { label: "Semana" } },
+      { options: { value: "month" }, slots: { label: "Mes" } },
+    ],
+  },
+} as const satisfies UsageTree;
 
 const js = `import { initComponents } from "@skryensya/vanilla/auto";
 
@@ -76,11 +38,7 @@ await initComponents();`;
     <a href="/componentes/select">Select</a>.
   </p>
 
-  <Showcase html={html} react={react} label="SegmentedControl">
-    <Fragment slot="react">
-      <SegmentedDemo client:load />
-    </Fragment>
-  </Showcase>
+  <Showcase tree={tree} label="Segmented" />
   <p>
     El enhancer vanilla selecciona con click y con flechas; <code>Home</code> y <code>End</code> saltan
     al primer y último segmento. La opción elegida queda en <code>data-value</code> y se anuncia con

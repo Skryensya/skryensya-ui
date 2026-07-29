@@ -24,22 +24,22 @@ const html = `<div
     class="sk-file-upload__dropzone"
     data-sk-file-upload-dropzone
   >
-    <input
-      class="sk-file-upload__input"
-      data-sk-file-upload-input
-      name="attachments"
-      type="file"
-      multiple
-    />
     <span>Arrastra archivos aquí</span>
-    <button
-      class="sk-button sk-interactive"
-      data-sk-file-upload-trigger
-      type="button"
-    >
-      Elegir archivos
-    </button>
   </div>
+  <input
+    class="sk-file-upload__input"
+    data-sk-file-upload-input
+    name="attachments"
+    type="file"
+    multiple
+  />
+  <button
+    class="sk-button sk-interactive"
+    data-sk-file-upload-trigger
+    type="button"
+  >
+    Elegir archivos
+  </button>
 </div>`;
 const react = `import { FileUpload } from "@skryensya/react/file-upload";
 

@@ -79,18 +79,23 @@ export function FileUpload({
       <label {...api.getLabelProps()} className={fileUploadParts.label}>
         {label}
       </label>
+      {/* The dropzone holds the instruction and nothing interactive: it is role="button" with its
+          own tab stop, and a button containing a focusable descendant is unreachable past its first
+          child. The input and the trigger are siblings; Zag wires them by props, not by nesting. */}
       <div {...api.getDropzoneProps()} className={fileUploadParts.dropzone}>
-        <input {...api.getHiddenInputProps()} />
         <span>{dropzoneLabel}</span>
-        <button
-          {...api.getTriggerProps()}
-          className="sk-button sk-interactive"
-          data-variant="secondary"
-          type="button"
-        >
-          {triggerLabel}
-        </button>
       </div>
+      {/* The part class is what hides it (`clip-path: inset(50%)`); without it the raw file input
+          paints on top of everything it is supposed to be behind. */}
+      <input {...api.getHiddenInputProps()} className={fileUploadParts.input} />
+      <button
+        {...api.getTriggerProps()}
+        className="sk-button sk-interactive"
+        data-variant="secondary"
+        type="button"
+      >
+        {triggerLabel}
+      </button>
       {api.acceptedFiles.length ? (
         <>
           <ul

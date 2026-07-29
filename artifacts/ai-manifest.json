@@ -1781,6 +1781,162 @@
         }
       }
     },
+    "file-upload": {
+      "css": "@skryensya/core/components/file-upload.css",
+      "id": "file-upload",
+      "options": {
+        "accept": {
+          "attr": "accept",
+          "machineInput": true,
+          "type": "string"
+        },
+        "disabled": {
+          "attr": "disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "multiple": {
+          "attr": "multiple",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "name": {
+          "attr": "name",
+          "machineInput": true,
+          "type": "string"
+        },
+        "required": {
+          "attr": "required",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        }
+      },
+      "parts": {
+        "dropzone": "sk-file-upload__dropzone",
+        "hint": "sk-file-upload__hint",
+        "input": "sk-file-upload__input",
+        "item": "sk-file-upload__item",
+        "itemDelete": "sk-file-upload__item-delete",
+        "itemGroup": "sk-file-upload__item-group",
+        "itemName": "sk-file-upload__item-name",
+        "itemSize": "sk-file-upload__item-size",
+        "label": "sk-file-upload__label",
+        "rejection": "sk-file-upload__rejection",
+        "root": "sk-file-upload",
+        "trigger": "sk-file-upload__trigger"
+      },
+      "semantics": {
+        "FileUpload": {
+          "alternatives": [
+            "Input"
+          ],
+          "avoidWhen": [
+            "es una foto de perfil sola y se recorta ahí mismo; eso pide su propio flujo",
+            "el dato es texto, aunque venga de un archivo; eso es un Input o un Textarea"
+          ],
+          "useWhen": [
+            "hay que adjuntar archivos: un CV, un comprobante, fotos",
+            "conviene aceptar arrastrar y soltar además del botón, sin obligar a nadie a arrastrar"
+          ]
+        }
+      },
+      "signatures": {
+        "FileUpload": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "file-upload",
+            "attach-a-file",
+            "dropzone",
+            "choose-files",
+            "browse"
+          ],
+          "mount": "data-sk-file-upload",
+          "options": [
+            "name",
+            "multiple",
+            "accept",
+            "disabled",
+            "required"
+          ],
+          "react": {
+            "from": "@skryensya/react/file-upload",
+            "name": "FileUpload"
+          },
+          "slots": {
+            "dropzoneLabel": {
+              "accepts": "text"
+            },
+            "label": {
+              "accepts": "text",
+              "required": true
+            },
+            "triggerLabel": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "label",
+                "mount": "data-sk-file-upload-label",
+                "part": "label",
+                "slot": "label"
+              },
+              {
+                "children": [
+                  {
+                    "element": "span",
+                    "slot": "dropzoneLabel"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-file-upload-dropzone",
+                "part": "dropzone"
+              },
+              {
+                "attrs": {
+                  "type": "file"
+                },
+                "element": "input",
+                "mount": "data-sk-file-upload-input",
+                "options": [
+                  "name",
+                  "multiple",
+                  "accept",
+                  "disabled",
+                  "required"
+                ],
+                "part": "input"
+              },
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "data-variant": "secondary",
+                  "type": "button"
+                },
+                "element": "button",
+                "mount": "data-sk-file-upload-trigger",
+                "slot": "triggerLabel"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "icon": {
       "css": "@skryensya/core/patterns/icon.css",
       "id": "icon",
@@ -6576,5 +6732,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "ca3323c82822474b"
+  "sourceHash": "4dcaf61839e6f92b"
 }

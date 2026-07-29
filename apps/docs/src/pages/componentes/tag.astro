@@ -3,77 +3,41 @@ import "@skryensya/core/components/tag.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
-import { TagDemo } from "../../components/react-demos/tag";
+import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<div class="sk-inline">
-  <span class="sk-tag">
-    <span class="sk-tag__label">diseño</span>
-  </span>
-  <span class="sk-tag" data-tone="accent">
-    <span class="sk-tag__label">tokens</span>
-  </span>
-  <span class="sk-tag" data-tone="success">
-    <span class="sk-tag__label">activo</span>
-  </span>
-  <span class="sk-tag" data-tone="warning">
-    <span class="sk-tag__label">beta</span>
-  </span>
-  <span class="sk-tag" data-tone="danger">
-    <span class="sk-tag__label">deprecado</span>
-  </span>
-  <span class="sk-tag" data-tone="accent">
-    <span class="sk-tag__label">react</span>
-    <button
-      class="sk-button sk-interactive sk-tag__remove"
-      type="button"
-      data-variant="ghost"
-      data-size="sm"
-      data-icon-only
-      aria-label="Quitar react"
-    >
-      <span data-sk-icon="close"></span>
-    </button>
-  </span>
-  <span class="sk-tag">
-    <span class="sk-tag__label">frontend</span>
-    <button
-      class="sk-button sk-interactive sk-tag__remove"
-      type="button"
-      data-variant="ghost"
-      data-size="sm"
-      data-icon-only
-      aria-label="Quitar frontend"
-    >
-      <span data-sk-icon="close"></span>
-    </button>
-  </span>
-</div>`;
-
-const react = `import { Tag } from "@skryensya/react/tag";
-
-function Example() {
-  return (
-    <div className="sk-inline">
-      <Tag>diseño</Tag>
-      <Tag tone="accent">tokens</Tag>
-      <Tag tone="success">activo</Tag>
-      <Tag tone="warning">beta</Tag>
-      <Tag tone="danger">deprecado</Tag>
-      <Tag
-        tone="accent"
-        onRemove={SomeFunction}
-        removeLabel="Quitar react"
-      >
-        react
-      </Tag>
-      <Tag onRemove={SomeFunction} removeLabel="Quitar frontend">
-        frontend
-      </Tag>
-    </div>
-  );
-}`;
+/*
+ * The demo, as a USAGE TREE.
+ *
+ * The markup below the stage, the TSX beside it and the live React island are all emitted from
+ * this — so the snippet a reader copies is, byte for byte, what they just watched render. It is the
+ * same shape `validate_ui` accepts and the same one the gates measure.
+ */
+const tree = {
+  contract: "layout",
+  signature: "Inline",
+  options: { gap: "sm" },
+  children: [
+    { contract: "tag", signature: "Tag", children: "diseño" },
+    { contract: "tag", signature: "Tag", options: { tone: "accent" }, children: "tokens" },
+    { contract: "tag", signature: "Tag", options: { tone: "success" }, children: "activo" },
+    { contract: "tag", signature: "Tag", options: { tone: "warning" }, children: "beta" },
+    { contract: "tag", signature: "Tag", options: { tone: "danger" }, children: "deprecado" },
+    {
+      contract: "tag",
+      signature: "Tag",
+      options: { tone: "accent", removable: true, removeLabel: "Quitar react" },
+      children: "react",
+    },
+    {
+      contract: "tag",
+      signature: "Tag",
+      options: { removable: true, removeLabel: "Quitar frontend" },
+      children: "frontend",
+    },
+  ],
+} as const satisfies UsageTree;
 ---
 
 <Base title="Tag" description="Tag: chip de palabra clave opcionalmente removible, con tonos y componente React.">
@@ -84,11 +48,7 @@ function Example() {
     cuadrado (radio de control, no píldora) para leerse como accionable, y puede llevar un botón de quitar.
   </p>
 
-  <Showcase html={html} react={react} label="Tag">
-    <Fragment slot="react">
-      <TagDemo client:load />
-    </Fragment>
-  </Showcase>
+  <Showcase tree={tree} label="Tag" />
   <p>
     Cuando es removible, la etiqueta y el botón de quitar son dos objetivos distintos: el nombre
     accesible del control nombra el tag que remueve.

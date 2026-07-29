@@ -1678,6 +1678,36 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/time-field.css",
+      "id": "time-field",
+      "signatures": [
+        {
+          "alternatives": [
+            "DatePicker",
+            "NumberField"
+          ],
+          "avoidWhen": [
+            "también hace falta el día; eso es un DatePicker, o los dos juntos",
+            "es una duración, no una hora del día; eso es un NumberField con su unidad"
+          ],
+          "host": "div",
+          "id": "TimeField",
+          "intent": [
+            "time-input",
+            "hour-and-minute",
+            "pick-a-time",
+            "schedule-at"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay que escribir una hora y el formato importa: la reserva, el turno, el horario de atención",
+            "conviene que cada segmento se pueda corregir por separado sin volver a escribir todo",
+            "el formato tiene que seguir al locale (12 o 24 horas, AM/PM adelante o atrás)"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/toolbar.css",
       "id": "toolbar",
       "signatures": [
@@ -1851,5 +1881,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "4dcaf61839e6f92b"
+  "sourceHash": "64d459d8ad5ff2ab"
 }

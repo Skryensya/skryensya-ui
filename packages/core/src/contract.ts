@@ -37,6 +37,14 @@ export type ContractOption = {
   /** For a boolean option, what the attribute holds when true. `""` means presence-only. */
   readonly trueValue?: string;
   /**
+   * What the attribute holds when FALSE. Absent means the attribute is not written at all, which is
+   * how a presence-only boolean works (`disabled`, `required`) — saying no is saying nothing.
+   *
+   * Some booleans are not like that: an Inline is `data-wrap="false"` because the stylesheet has a
+   * rule for exactly that string, and an attribute that vanished would be a third state nobody meant.
+   */
+  readonly falseValue?: string;
+  /**
    * A second attribute carrying the same value, when the CSS and the accessibility tree read
    * different names for one idea — a radiogroup is styled by `data-orientation` and announced by
    * `aria-orientation`, and they can never disagree because there is one option behind both.

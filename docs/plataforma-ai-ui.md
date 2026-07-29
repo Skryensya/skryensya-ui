@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Estado** | En construcción · F0–F3 y F5 completas, el MCP nuevo corre; F4 en curso (34 familias de ~54) |
+| **Estado** | En construcción · F0–F3 y F5 completas, el MCP nuevo corre; F4 en curso (46 familias, 85 firmas; quedan las ancladas) |
 | **Fecha** | 28 de julio de 2026 |
 | **Supersede** | `apps/docs/01_arquitectura_objetivo_skryensya_ai_ui.md` y `apps/docs/02_plan_reconstruccion_desde_cero_skryensya_ai_ui.md`, que quedan como material de origen y no dirigen el trabajo |
 | **Decisiones** | [28](./decisiones/0028-el-contrato-vive-en-core-y-los-frameworks-son-bindings.md) · [29](./decisiones/0029-el-usage-tree-es-la-moneda-unica.md) · [30](./decisiones/0030-la-evidencia-se-renderiza-en-los-dos-bindings.md) · [31](./decisiones/0031-el-catalogo-cabe-en-el-contexto.md) |
@@ -332,12 +332,35 @@ G5 (baseline visual aprobada a ojo, no a ciegas).
 > - **La primera baseline visual era inútil** y sólo se supo mirándola: apuntaba a un `.jpg`
 >   inexistente, y las imágenes rotas la estiraban a 4500px. El fixture ahora lleva la imagen inline.
 
-### F4 · El resto del catálogo — en curso (34 de ~54)
+### F4 · El resto del catálogo — en curso (46 familias, 85 firmas)
 Familia por familia: contract completo, overlay, árboles canónicos, gates. Una familia entra al
 manifest cuando pasa; una familia a medias no se publica.
 **Salida:** cobertura acordada, con `ai-coverage.json` diciendo qué falta y por qué.
 
-**Publicadas (34):** `alert`, `avatar`, `badge`, `box`, `breadcrumb`, `button`, `checkbox`, `empty-state`, `field`, `icon`, `image-frame`, `input`, `kbd`, `layout`, `list`, `loader`, `media-gradient`, `nav-list`, `navbar`, `placeholder`, `process-list`, `progress`, `radio-group`, `segmented`, `slider`, `stat`, `steps`, `switch`, `table`, `tabs`, `tag`, `toolbar`, `typography`, `wrapper`.
+**Publicadas (46):** `accordion`, `alert`, `avatar`, `badge`, `box`, `breadcrumb`, `button`, `carousel`, `checkbox`, `content`, `empty-state`, `field`, `file-upload`, `flyout`, `icon`, `image-frame`, `input`, `kbd`, `layout`, `list`, `loader`, `media-gradient`, `nav-list`, `navbar`, `number-field`, `pagination`, `placeholder`, `process-list`, `progress`, `radio-group`, `segmented`, `sidebar`, `slider`, `stat`, `steps`, `switch`, `table`, `tabs`, `tag`, `theme-toggle`, `tile`, `time-field`, `toolbar`, `tree-view`, `typography`, `wrapper`.
+
+**Sin publicar:** las **ancladas** (tooltip, popover, menu, select, combobox, date-picker, calendar,
+split-button — ésta última porque compone un Menu) y `copy-button`, que **no tiene binding React**:
+una familia con un solo binding no tiene qué comparar, y publicar media es peor que no publicarla.
+
+> **Lo que el catálogo completo le hizo al modelo**
+>
+> Cinco capacidades nuevas, cada una forzada por una familia concreta y ninguna inventada de antemano:
+>
+> | Qué | Por qué | Quién la forzó |
+> |---|---|---|
+> | `mount` en un nodo del template | Una marca de montaje en una parte interna se declara donde está, en vez de ser una excepción escrita a mano en el gate | number-field, tree-view |
+> | `repeatComputed` + `computedInput` | Qué páginas se ven **se deriva**; que lo escriba alguien es exactamente el invariante que un contrato debería sostener. Y las tres opciones que alimentan ese cálculo no son atributos de nada | pagination |
+> | Un nodo sin `element` renderiza sus hijos | Un hueco y una página tienen que **intercalarse**; dos recorridos de la ventana los sacan agrupados | pagination |
+> | `recursive` + `repeatItemSlot` + `whenItemSlotGiven` + `recurse` | Una carpeta contiene carpetas, y un literal no puede contenerse a sí mismo. Lo único estructural que a una colección plana le faltaba | tree-view |
+> | `react.name` acepta una ruta | Un binding compuesto se alcanza por su namespace (`Accordion.Item`), sin obligarlo a exportar alias planos para el compilador | accordion |
+>
+> Y el catálogo encontró bugs del kit que ningún test tenía: un `<ul>` de slides que la máquina saca
+> de la lista (axe: serious, en **los dos** bindings), un dropzone `role=button` con el input y el
+> botón adentro (nested-interactive, en los dos), un RadioGroup que pasaba `checked` y
+> `defaultChecked` a la vez delegando `onChange` —que React renderiza de sólo lectura—, un input
+> oculto cuyo `value` era propiedad y no atributo, y dos enhancers que estampaban un `id` en una raíz
+> a la que nadie apunta.
 
 > **El icono era el bloqueador, no un caso más**
 >
@@ -362,10 +385,10 @@ manifest cuando pasa; una familia a medias no se publica.
 > Y el emisor React **descartaba en silencio** un slot que contuviera otra firma: sólo manejaba texto,
 > así que el icono de un NavListLink desaparecía del TSX.
 
-> **Lo que frena a las 20 familias restantes: portal contra markup en su lugar**
+> **Lo que frena a las ancladas: portal contra markup en su lugar**
 >
-> Ocho de las que quedan son **ancladas** — tooltip, popover, flyout, menu, select, combobox,
-> date-picker, calendar — y las dos rutas difieren **estructuralmente**, no en un atributo:
+> Las que quedan son **ancladas** — tooltip, popover, menu, select, combobox, date-picker, calendar —
+> y las dos rutas difieren **estructuralmente**, no en un atributo:
 >
 > - El markup autoreado deja el positioner **siempre en el DOM**, oculto por CSS.
 > - React lo **portalea a `document.body` sólo cuando abre** (`<Portal>` de `@zag-js/react`).
@@ -386,6 +409,14 @@ manifest cuando pasa; una familia a medias no se publica.
 >
 > Hasta que esto se decida, las ancladas quedan **sin publicar**: el agente no las ve, que es
 > preferible a que las vea a medias.
+>
+> **`flyout` sí se publicó**, y la razón vale la pena: su panel es **hijo de la raíz** y se ubica con
+> coordenadas fijas calculadas del rect del trigger. No portalea ni usa anclaje CSS, así que los dos
+> bindings caen en el mismo subárbol y pasó G2 al primer intento. Es exactamente la propiedad que a
+> las otras les falta.
+>
+> Lo que sí se hizo mientras tanto: `container` está expuesto en tooltip, popover y menu, y el
+> harness lo usa. Falta la decisión sobre el positioner cerrado, que es la que de verdad las desbloquea.
 
 > **Table: orden y cardinalidad, lo último del slice original**
 >

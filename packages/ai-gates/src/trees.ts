@@ -872,4 +872,23 @@ export const canonicalTrees: readonly Canonical[] = [
       ],
     },
   },
+  {
+    /*
+     * The shell, which is all an author writes. The list of chosen files is runtime state the two
+     * bindings meet differently — React renders it, the enhancer never renders markup — and the
+     * contract says so rather than pretending the gap is not there.
+     */
+    name: "file-upload/attach-documents",
+    enhanced: true,
+    tree: {
+      contract: "file-upload",
+      signature: "FileUpload",
+      options: { name: "adjuntos", multiple: true, accept: ".pdf,.docx" },
+      slots: {
+        label: "Documentos de respaldo",
+        dropzoneLabel: "Arrastra los archivos aquí",
+        triggerLabel: "Elegir archivos",
+      },
+    },
+  },
 ];

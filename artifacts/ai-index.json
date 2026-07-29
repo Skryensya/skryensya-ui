@@ -479,6 +479,37 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/flyout.css",
+      "id": "flyout",
+      "signatures": [
+        {
+          "alternatives": [
+            "Segmented",
+            "RadioGroup"
+          ],
+          "avoidWhen": [
+            "son tres opciones o menos y caben a la vista; eso es un Segmented o un RadioGroup",
+            "hay que escribir para filtrar; eso es un Combobox",
+            "el panel lleva acciones, no valores; eso es un Menu"
+          ],
+          "host": "div",
+          "id": "Flyout",
+          "intent": [
+            "value-picker",
+            "dropdown",
+            "choose-from-a-list",
+            "filter-picker"
+          ],
+          "parents": [],
+          "useWhen": [
+            "se elige un valor de una lista y el panel tiene que abrirse al lado, no ocupar la página",
+            "son más opciones de las que conviene mostrar siempre, pero pocas para buscar",
+            "hace falta que el panel escape del recorte de un contenedor con overflow"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/patterns/icon.css",
       "id": "icon",
       "signatures": [
@@ -1949,5 +1980,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "e644b13819931b6f"
+  "sourceHash": "4fc2555583a69d4e"
 }

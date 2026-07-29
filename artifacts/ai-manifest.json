@@ -1937,6 +1937,212 @@
         }
       }
     },
+    "flyout": {
+      "css": "@skryensya/core/components/flyout.css",
+      "id": "flyout",
+      "options": {
+        "defaultValue": {
+          "attr": "data-default-value",
+          "machineInput": true,
+          "type": "string"
+        },
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "placeholder": {
+          "attr": "data-placeholder",
+          "default": "Select option",
+          "machineInput": true,
+          "type": "string"
+        }
+      },
+      "parts": {
+        "indicator": "sk-flyout__indicator",
+        "item": "sk-flyout__item",
+        "itemIndicator": "sk-flyout__item-indicator",
+        "itemText": "sk-flyout__item-text",
+        "label": "sk-flyout__label",
+        "panel": "sk-flyout__panel",
+        "root": "sk-flyout",
+        "trigger": "sk-flyout__trigger",
+        "value": "sk-flyout__value"
+      },
+      "semantics": {
+        "Flyout": {
+          "alternatives": [
+            "Segmented",
+            "RadioGroup"
+          ],
+          "avoidWhen": [
+            "son tres opciones o menos y caben a la vista; eso es un Segmented o un RadioGroup",
+            "hay que escribir para filtrar; eso es un Combobox",
+            "el panel lleva acciones, no valores; eso es un Menu"
+          ],
+          "useWhen": [
+            "se elige un valor de una lista y el panel tiene que abrirse al lado, no ocupar la página",
+            "son más opciones de las que conviene mostrar siempre, pero pocas para buscar",
+            "hace falta que el panel escape del recorte de un contenedor con overflow"
+          ]
+        }
+      },
+      "signatures": {
+        "Flyout": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "value-picker",
+            "dropdown",
+            "choose-from-a-list",
+            "filter-picker"
+          ],
+          "mount": "data-sk-flyout",
+          "options": [
+            "placeholder",
+            "disabled",
+            "defaultValue"
+          ],
+          "react": {
+            "from": "@skryensya/react/flyout",
+            "name": "Flyout"
+          },
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "value",
+                "options": {
+                  "disabled": {
+                    "attr": "data-disabled",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "value": {
+                    "attr": "data-value",
+                    "type": "string"
+                  }
+                },
+                "slots": {
+                  "label": {
+                    "accepts": "text",
+                    "required": true
+                  }
+                }
+              },
+              "prop": "options",
+              "required": true
+            },
+            "label": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "label",
+                "mount": "data-sk-flyout-label",
+                "part": "label",
+                "slot": "label",
+                "whenGiven": "label"
+              },
+              {
+                "also": [
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "aria-haspopup": "listbox",
+                  "type": "button"
+                },
+                "children": [
+                  {
+                    "element": "span",
+                    "mount": "data-sk-flyout-value",
+                    "part": "value",
+                    "textFromOption": "placeholder"
+                  },
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-state": "closed"
+                        },
+                        "element": "span"
+                      },
+                      {
+                        "attrs": {
+                          "data-state": "open"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span",
+                    "mount": "data-sk-flyout-indicator",
+                    "part": "indicator"
+                  }
+                ],
+                "element": "button",
+                "mount": "data-sk-flyout-trigger",
+                "part": "trigger"
+              },
+              {
+                "attrs": {
+                  "hidden": "",
+                  "role": "listbox"
+                },
+                "children": [
+                  {
+                    "also": [
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "role": "option"
+                    },
+                    "children": [
+                      {
+                        "element": "span",
+                        "itemSlot": "label",
+                        "mount": "data-sk-flyout-item-text",
+                        "part": "itemText"
+                      },
+                      {
+                        "attrs": {
+                          "aria-hidden": "true"
+                        },
+                        "element": "span",
+                        "mount": "data-sk-flyout-item-indicator",
+                        "part": "itemIndicator"
+                      }
+                    ],
+                    "element": "li",
+                    "itemOptions": [
+                      "value",
+                      "disabled"
+                    ],
+                    "mount": "data-sk-flyout-item",
+                    "part": "item",
+                    "repeat": "items"
+                  }
+                ],
+                "element": "ul",
+                "mount": "data-sk-flyout-panel",
+                "part": "panel"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "icon": {
       "css": "@skryensya/core/patterns/icon.css",
       "id": "icon",
@@ -7256,5 +7462,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "e644b13819931b6f"
+  "sourceHash": "4fc2555583a69d4e"
 }

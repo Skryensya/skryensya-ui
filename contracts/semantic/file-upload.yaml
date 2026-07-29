@@ -1,0 +1,11 @@
+# La estructura vive en packages/core/src/file-upload.ts. Acá sólo por qué se elige.
+
+FileUpload:
+  useWhen:
+    - "hay que adjuntar archivos: un CV, un comprobante, fotos"
+    - "conviene aceptar arrastrar y soltar además del botón, sin obligar a nadie a arrastrar"
+  avoidWhen:
+    - "es una foto de perfil sola y se recorta ahí mismo; eso pide su propio flujo"
+    - "el dato es texto, aunque venga de un archivo; eso es un Input o un Textarea"
+  alternatives:
+    - Input

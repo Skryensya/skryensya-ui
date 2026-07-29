@@ -1,43 +1,13 @@
+import type { ItemInput, SlotContent, UsageTree } from "@skryensya/core/usage-tree";
+
 /*
- * A composition written as data (decision 29). Authored once, rendered by both bindings, and the
- * same shape an agent proposes to `validate_ui`.
+ * Reading a usage tree. The SHAPE lives in Core (`@skryensya/core/usage-tree`) because the recipes
+ * are data the compiler consumes and data must not depend on its consumer; these are the functions
+ * that walk it, which is machinery and belongs here.
  *
- * Written in SIGNATURES, never in parts: choosing meaning is the author's job, expanding it into
- * structure is the part template's. Which is why one node here becomes one React element and, in
- * the same breath, five nested elements of authored markup.
+ * Re-exported so every consumer keeps one import for both.
  */
-
-export type OptionInput = string | boolean | number;
-
-/**
- * One entry of a collection slot: its own options, and its own content by slot name. Data, not a
- * child node — the fields of one entry are scattered across the markup and joined by the key.
- */
-export type ItemInput = {
-  readonly options?: Readonly<Record<string, OptionInput>>;
-  readonly slots: Readonly<Record<string, string | UsageTree | readonly (string | UsageTree)[]>>;
-};
-
-export type SlotContent =
-  | string
-  | UsageTree
-  | readonly (string | UsageTree)[]
-  | readonly ItemInput[];
-
-export type UsageTree = {
-  readonly contract: string;
-  readonly signature: string;
-  /** Values for the options this signature declares. Anything else is a problem, not a passthrough. */
-  readonly options?: Readonly<Record<string, OptionInput>>;
-  /**
-   * What the author passes straight to the host: `aria-label`, `id`, `rel`, `target`. Deliberately
-   * separate from options — an option is something the contract maps, and these are not.
-   */
-  readonly attrs?: Readonly<Record<string, string>>;
-  readonly slots?: Readonly<Record<string, SlotContent>>;
-  /** Sugar for `slots.children`, since almost every node fills it. */
-  readonly children?: SlotContent;
-};
+export type { OptionInput, ItemInput, SlotContent, UsageTree } from "@skryensya/core/usage-tree";
 
 /** The content of one slot, normalized to a list. Entries of a collection are not children. */
 export function slotItems(content: SlotContent | undefined): readonly (string | UsageTree)[] {

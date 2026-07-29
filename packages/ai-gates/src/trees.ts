@@ -1,4 +1,5 @@
 import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import { recipes } from "@skryensya/recipes";
 
 /*
  * The canonical usage trees: one per signature, plus one per state that is materially different.
@@ -33,7 +34,7 @@ export type Canonical = {
   readonly enhanced: boolean;
 };
 
-export const canonicalTrees: readonly Canonical[] = [
+const signatureTrees: readonly Canonical[] = [
   {
     name: "button/action",
     enhanced: true,
@@ -1115,3 +1116,27 @@ export const canonicalTrees: readonly Canonical[] = [
     },
   },
 ];
+
+/*
+ * The recipes, as gate cases.
+ *
+ * DERIVED, not copied. A recipe is already a usage tree per state, and the gates already know how to
+ * render, diff and photograph a usage tree — so writing them out again here would be the duplication
+ * this whole system argues against, and the copy would be the one that goes stale.
+ *
+ * They earn their place because a recipe exercises what a single-signature fixture cannot: a Field
+ * inside a Stack inside a shell, a Toast inside its region, an Alert whose actions are two buttons.
+ * The composition is where the two bindings have room to disagree, and until now nothing was looking.
+ *
+ * All marked `enhanced`: a recipe usually contains something machine-backed, and running the
+ * enhancers over markup that has none is a no-op.
+ */
+const recipeTrees: readonly Canonical[] = recipes.flatMap((recipe) =>
+  Object.entries(recipe.states).map(([state, tree]) => ({
+    name: `recipe/${recipe.id}/${state}`,
+    enhanced: true,
+    tree,
+  })),
+);
+
+export const canonicalTrees: readonly Canonical[] = [...signatureTrees, ...recipeTrees];

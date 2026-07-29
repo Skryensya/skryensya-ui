@@ -37,8 +37,52 @@ const VOID_ELEMENTS = new Set(["area","base","br","col","embed","hr","img","inpu
 
 /* ------------------------------------------------------------------ markup (the vanilla binding) */
 
-export function emitMarkup(tree: UsageTree): string {
-  return renderSignature(tree, 0).join("\n");
+/**
+ * One tree, as authored markup.
+ *
+ * `idPrefix` namespaces every generated id. Only needed when several INDEPENDENT trees land in the
+ * same document — the gates' stage does that, a real page does not (each preview is its own srcdoc
+ * document). Absent, the ids read as the author would have written them.
+ */
+export function emitMarkup(tree: UsageTree, options: { idPrefix?: string } = {}): string {
+  /*
+   * Ids are unique per emit, and the counter below is what makes them so.
+   *
+   * The base is derived from the label so the same tree keeps producing the same bytes — but two
+   * fields can legitimately share a label (a billing "Nombre" and a shipping "Nombre"), and
+   * before this the second label pointed at the FIRST input. Silent, valid-looking, and wrong for
+   * exactly the person who depends on the association.
+   */
+  usedIds.clear();
+  idPrefix = options.idPrefix;
+  try {
+    return renderSignature(tree, 0).join("\n");
+  } finally {
+    idPrefix = undefined;
+  }
+}
+
+/*
+ * Module state, deliberately: `emitMarkup` is one synchronous top-level call, and threading a
+ * context object through every `renderTemplate` recursion to carry two fields would cost more
+ * clarity than it buys.
+ */
+const usedIds = new Set<string>();
+let idPrefix: string | undefined;
+
+/** A base nobody else in this emit is using, prefixed when the caller shares a document. */
+function uniqueBase(candidate: string): string {
+  const prefixed = idPrefix ? `${idPrefix}-${candidate}` : candidate;
+  if (!usedIds.has(prefixed)) {
+    usedIds.add(prefixed);
+    return prefixed;
+  }
+  for (let n = 2; ; n++) {
+    const next = `${prefixed}-${n}`;
+    if (usedIds.has(next)) continue;
+    usedIds.add(next);
+    return next;
+  }
 }
 
 function renderSignature(tree: UsageTree, depth: number, inherited?: Wiring): string[] {
@@ -65,7 +109,8 @@ function wiringFor(tree: UsageTree, signature: ContractSignature): Wiring | unde
   const rules = signature.wiring;
   if (!rules || rules.length === 0) return undefined;
 
-  const base = tree.attrs?.id ?? slugOf(tree) ?? "sk-field";
+  // An author-given id is theirs and is used verbatim; a derived one is made unique for this emit.
+  const base = tree.attrs?.id ?? uniqueBase(slugOf(tree) ?? "sk-field");
   const filled = slotsOf(tree);
 
   // "Supplied by the author" covers both channels: `error` is a slot, `required` is an option, and a
@@ -382,8 +427,20 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   for (const rule of node.attrsWhen ?? []) {
     const value = tree.options?.[rule.option] ?? contract.options[rule.option]?.default;
     if (rule.given !== undefined && (value !== undefined && value !== false) !== rule.given) continue;
-    if (rule.equals !== undefined && value !== rule.equals) continue;
-    if (rule.notEquals !== undefined && value === rule.notEquals) continue;
+    /*
+     * Compared as STRINGS, because the rule is written in the vocabulary of attributes and an
+     * attribute value is a string. Strict equality silently skipped every numeric option — a
+     * pagination on page `1` never matched `equals: "1"`, so the first page shipped an enabled
+     * "previous" button that announces itself as available and does nothing.
+     */
+    if (rule.equals !== undefined && String(value) !== rule.equals) continue;
+    if (rule.notEquals !== undefined && String(value) === rule.notEquals) continue;
+    // Two options compared to each other: `page === total` is the last page, and neither side is a
+    // literal anyone could have written.
+    if (rule.equalsOption !== undefined) {
+      const other = tree.options?.[rule.equalsOption] ?? contract.options[rule.equalsOption]?.default;
+      if (String(value) !== String(other)) continue;
+    }
     for (const [name, literal] of Object.entries(rule.attrs)) out.push(attr(name, literal));
   }
 

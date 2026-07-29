@@ -4007,6 +4007,289 @@
         }
       }
     },
+    "sidebar": {
+      "css": "@skryensya/core/components/sidebar.css",
+      "id": "sidebar",
+      "options": {
+        "defaultCollapsed": {
+          "attr": "data-default-collapsed",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "content": "sk-sidebar__content",
+        "footer": "sk-sidebar__footer",
+        "header": "sk-sidebar__header",
+        "root": "sk-sidebar",
+        "separator": "sk-sidebar__separator",
+        "trigger": "sk-sidebar__trigger"
+      },
+      "semantics": {
+        "Sidebar": {
+          "alternatives": [
+            "Navbar"
+          ],
+          "avoidWhen": [
+            "es un sitio de contenido con pocas secciones; eso es un Navbar",
+            "aparece sobre el contenido y se cierra al elegir; eso es un Drawer"
+          ],
+          "useWhen": [
+            "la navegación principal de una aplicación vive al costado y acompaña a toda la sesión",
+            "hay muchas secciones y conviene que se vean sin abrir nada"
+          ]
+        },
+        "SidebarContent": {
+          "alternatives": [],
+          "avoidWhen": [
+            "tiene que quedar fijo al scrollear; eso es el header o el footer"
+          ],
+          "useWhen": [
+            "es el medio que scrollea; acá adentro va la NavList"
+          ]
+        },
+        "SidebarFooter": {
+          "alternatives": [],
+          "avoidWhen": [
+            "es un destino más; eso va en la lista"
+          ],
+          "useWhen": [
+            "abajo va la cuenta, el modo de color o lo que se usa poco y se busca siempre"
+          ]
+        },
+        "SidebarHeader": {
+          "alternatives": [],
+          "avoidWhen": [
+            "es parte de la lista de destinos; eso va en SidebarContent"
+          ],
+          "useWhen": [
+            "arriba va la marca, el nombre del espacio de trabajo o el trigger"
+          ]
+        },
+        "SidebarSeparator": {
+          "alternatives": [],
+          "avoidWhen": [
+            "sólo se busca aire entre elementos; eso es espaciado, no un separador"
+          ],
+          "useWhen": [
+            "hay que separar dos grupos de destinos y el corte es parte de la información"
+          ]
+        },
+        "SidebarTrigger": {
+          "alternatives": [],
+          "avoidWhen": [
+            "se espera que oculte la barra; angosta, nunca esconde"
+          ],
+          "useWhen": [
+            "la persona tiene que poder angostar la barra para ganar ancho de contenido"
+          ]
+        }
+      },
+      "signatures": {
+        "Sidebar": {
+          "host": {
+            "element": "aside"
+          },
+          "intent": [
+            "sidebar",
+            "side-navigation",
+            "app-shell-rail",
+            "left-nav"
+          ],
+          "mount": "data-sk-sidebar",
+          "options": [
+            "defaultCollapsed"
+          ],
+          "react": {
+            "from": "@skryensya/react/sidebar",
+            "name": "Sidebar"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "SidebarHeader",
+                "SidebarContent",
+                "SidebarFooter",
+                "SidebarSeparator",
+                "SidebarTrigger"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "aside",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "SidebarContent": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "sidebar-body",
+            "where-the-nav-list-goes",
+            "scrolling-middle"
+          ],
+          "mount": "data-sk-sidebar-content",
+          "options": [],
+          "parents": [
+            "Sidebar"
+          ],
+          "react": {
+            "from": "@skryensya/react/sidebar",
+            "name": "SidebarContent"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "content",
+            "slot": "children"
+          }
+        },
+        "SidebarFooter": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "sidebar-footer",
+            "account-area",
+            "pinned-bottom"
+          ],
+          "options": [],
+          "parents": [
+            "Sidebar"
+          ],
+          "react": {
+            "from": "@skryensya/react/sidebar",
+            "name": "SidebarFooter"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "footer",
+            "slot": "children"
+          }
+        },
+        "SidebarHeader": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "sidebar-header",
+            "brand-area",
+            "pinned-top"
+          ],
+          "options": [],
+          "parents": [
+            "Sidebar"
+          ],
+          "react": {
+            "from": "@skryensya/react/sidebar",
+            "name": "SidebarHeader"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "header",
+            "slot": "children"
+          }
+        },
+        "SidebarSeparator": {
+          "host": {
+            "element": "hr"
+          },
+          "intent": [
+            "sidebar-divider",
+            "group-break"
+          ],
+          "options": [],
+          "parents": [
+            "Sidebar"
+          ],
+          "react": {
+            "from": "@skryensya/react/sidebar",
+            "name": "SidebarSeparator"
+          },
+          "slots": {},
+          "template": {
+            "element": "hr",
+            "host": true,
+            "part": "separator"
+          }
+        },
+        "SidebarTrigger": {
+          "host": {
+            "element": "button"
+          },
+          "intent": [
+            "collapse-sidebar",
+            "rail-toggle",
+            "hamburger"
+          ],
+          "mount": "data-sk-sidebar-trigger",
+          "options": [
+            "label"
+          ],
+          "parents": [
+            "Sidebar"
+          ],
+          "react": {
+            "from": "@skryensya/react/sidebar",
+            "name": "SidebarTrigger"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {
+            "icon": {
+              "accepts": "signature",
+              "of": [
+                "Icon"
+              ]
+            }
+          },
+          "template": {
+            "also": [
+              "sk-interactive"
+            ],
+            "attrs": {
+              "type": "button"
+            },
+            "element": "button",
+            "host": true,
+            "part": "trigger",
+            "slot": "icon"
+          }
+        }
+      }
+    },
     "slider": {
       "css": "@skryensya/core/components/slider.css",
       "id": "slider",
@@ -5657,6 +5940,216 @@
         }
       }
     },
+    "tree-view": {
+      "css": "@skryensya/core/components/tree-view.css",
+      "id": "tree-view",
+      "options": {
+        "label": {
+          "attr": "aria-label",
+          "machineInput": true,
+          "type": "string"
+        },
+        "selectionMode": {
+          "attr": "data-selection-mode",
+          "default": "single",
+          "machineInput": true,
+          "type": "enum",
+          "values": [
+            "single",
+            "multiple"
+          ]
+        }
+      },
+      "parts": {
+        "branch": "sk-tree-view__branch",
+        "branchContent": "sk-tree-view__branch-content",
+        "branchControl": "sk-tree-view__branch-control",
+        "branchIndicator": "sk-tree-view__branch-indicator",
+        "branchText": "sk-tree-view__branch-text",
+        "item": "sk-tree-view__item",
+        "itemText": "sk-tree-view__item-text",
+        "root": "sk-tree-view",
+        "tree": "sk-tree-view__tree"
+      },
+      "semantics": {
+        "TreeView": {
+          "alternatives": [
+            "NavList",
+            "List"
+          ],
+          "avoidWhen": [
+            "hay un solo nivel; eso es una List o una NavList",
+            "son dos niveles fijos y conocidos; una NavList con grupos se lee mejor",
+            "la jerarquía es una vista de tabla con filas que se expanden; eso es una Table"
+          ],
+          "useWhen": [
+            "los datos anidan de verdad y la jerarquía es parte de lo que hay que entender",
+            "hace falta abrir y cerrar ramas sin perder de vista dónde se está",
+            "un explorador de archivos, un organigrama, un índice de contenidos"
+          ]
+        }
+      },
+      "signatures": {
+        "TreeView": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "tree",
+            "file-explorer",
+            "hierarchy",
+            "nested-list",
+            "folder-structure"
+          ],
+          "mount": "data-sk-tree-view",
+          "options": [
+            "label",
+            "selectionMode"
+          ],
+          "react": {
+            "from": "@skryensya/react/tree-view",
+            "name": "TreeView"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "id",
+                "options": {
+                  "disabled": {
+                    "attr": "disabled",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "id": {
+                    "attr": "data-value",
+                    "type": "string"
+                  }
+                },
+                "slots": {
+                  "children": {
+                    "accepts": "items",
+                    "recursive": true
+                  },
+                  "label": {
+                    "accepts": "text",
+                    "required": true
+                  }
+                }
+              },
+              "prop": "nodes",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "also": [
+                                  "sk-interactive"
+                                ],
+                                "attrs": {
+                                  "type": "button"
+                                },
+                                "children": [
+                                  {
+                                    "attrs": {
+                                      "aria-hidden": "true"
+                                    },
+                                    "element": "span",
+                                    "mount": "data-sk-tree-view-branch-indicator",
+                                    "part": "branchIndicator",
+                                    "text": "›"
+                                  },
+                                  {
+                                    "element": "span",
+                                    "itemSlot": "label",
+                                    "mount": "data-sk-tree-view-branch-text",
+                                    "part": "branchText"
+                                  }
+                                ],
+                                "element": "button",
+                                "mount": "data-sk-tree-view-branch-control",
+                                "part": "branchControl"
+                              },
+                              {
+                                "children": [
+                                  {
+                                    "recurse": "node",
+                                    "repeatItemSlot": "children"
+                                  }
+                                ],
+                                "element": "ul",
+                                "mount": "data-sk-tree-view-branch-content",
+                                "part": "branchContent"
+                              }
+                            ],
+                            "element": "li",
+                            "itemOptions": [
+                              "id",
+                              "disabled"
+                            ],
+                            "mount": "data-sk-tree-view-branch",
+                            "part": "branch",
+                            "whenItemSlotGiven": "children"
+                          },
+                          {
+                            "also": [
+                              "sk-interactive"
+                            ],
+                            "children": [
+                              {
+                                "attrs": {
+                                  "aria-hidden": "true"
+                                },
+                                "element": "span"
+                              },
+                              {
+                                "element": "span",
+                                "itemSlot": "label",
+                                "mount": "data-sk-tree-view-item-text",
+                                "part": "itemText"
+                              }
+                            ],
+                            "element": "li",
+                            "itemOptions": [
+                              "id",
+                              "disabled"
+                            ],
+                            "mount": "data-sk-tree-view-item",
+                            "part": "item",
+                            "whenItemSlotMissing": "children"
+                          }
+                        ],
+                        "name": "node"
+                      }
+                    ],
+                    "repeat": "items"
+                  }
+                ],
+                "element": "ul",
+                "mount": "data-sk-tree-view-tree",
+                "part": "tree"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "typography": {
       "css": "@skryensya/core/components/typography.css",
       "id": "typography",
@@ -5930,5 +6423,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "8088df589bd211ae"
+  "sourceHash": "f6c5da3ce43a0801"
 }

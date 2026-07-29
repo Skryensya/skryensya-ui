@@ -853,4 +853,23 @@ export const canonicalTrees: readonly Canonical[] = [
       },
     },
   },
+  {
+    /*
+     * The rare family where symmetry is free: React renders the same markup and writes the mount
+     * mark itself, so BOTH bindings are the same enhanced carousel. What the contract adds is the
+     * vocabulary — which knobs exist and what each one costs.
+     */
+    name: "carousel/three-slides",
+    enhanced: true,
+    tree: {
+      contract: "carousel",
+      signature: "Carousel",
+      attrs: { "aria-label": "Proyectos recientes" },
+      children: [
+        { contract: "carousel", signature: "CarouselSlide", children: "Atlas" },
+        { contract: "carousel", signature: "CarouselSlide", children: "Brújula" },
+        { contract: "carousel", signature: "CarouselSlide", children: "Cardumen" },
+      ],
+    },
+  },
 ];

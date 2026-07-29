@@ -53,9 +53,9 @@ const markup = (count: number, attrs = "") => `<section
   aria-label="Novedades"
   style="--sk-carousel-slide-size: min(85%, 26rem)"
 >
-  <ul class="sk-carousel__track">
-    ${Array.from({ length: count }, (_, i) => `<li class="sk-carousel__slide">Slide ${i + 1}</li>`).join("")}
-  </ul>
+  <div class="sk-carousel__track">
+    ${Array.from({ length: count }, (_, i) => `<div class="sk-carousel__slide">Slide ${i + 1}</div>`).join("")}
+  </div>
 </section>`;
 
 function mount(count: number, attrs = ""): HTMLElement {

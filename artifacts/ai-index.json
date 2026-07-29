@@ -266,6 +266,54 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/carousel.css",
+      "id": "carousel",
+      "signatures": [
+        {
+          "alternatives": [
+            "Grid",
+            "List"
+          ],
+          "avoidWhen": [
+            "el contenido es importante y no puede depender de que alguien deslice; ahí va una grilla",
+            "son pocos ítems y entran todos; el carrusel esconde lo que ya cabía",
+            "es un solo mensaje rotando solo; eso se lee poco y molesta mucho"
+          ],
+          "host": "section",
+          "id": "Carousel",
+          "intent": [
+            "carousel",
+            "slider-of-cards",
+            "snap-scroller",
+            "gallery"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay muchos ítems parejos y el espacio horizontal alcanza para unos pocos: tarjetas, fotos",
+            "conviene que se vea que hay más al costado, con el ítem siguiente asomando"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Carousel; no hay pista donde encajar"
+          ],
+          "host": "div",
+          "id": "CarouselSlide",
+          "intent": [
+            "slide",
+            "carousel-item"
+          ],
+          "parents": [
+            "Carousel"
+          ],
+          "useWhen": [
+            "es un ítem del carrusel; adentro puede ir cualquier cosa, normalmente una Card"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/checkbox.css",
       "id": "checkbox",
       "signatures": [
@@ -1774,5 +1822,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "f6c5da3ce43a0801"
+  "sourceHash": "ca3323c82822474b"
 }

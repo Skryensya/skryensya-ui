@@ -1,3 +1,5 @@
+import type { ComponentContract } from "./contract.js";
+
 export type SidebarCollapsedChangeDetails = {
   collapsed: boolean;
 };
@@ -35,3 +37,122 @@ export const sidebarParts = {
 
 export type SidebarPart = keyof typeof sidebarParts;
 export type SidebarPartClass = (typeof sidebarParts)[SidebarPart];
+
+/**
+ * The navigation shell down the side of an application.
+ *
+ * Collapsing NARROWS it; it never hides it (decision 8). The content stays mounted, reachable and
+ * in the accessibility tree at both widths — the labels go visually quiet but keep naming the icons
+ * — which is why this is not a disclosure and has no `hidden` anywhere.
+ *
+ * What goes inside is the caller's, usually a NavList, which the sidebar HOSTS rather than owns
+ * (decision 17). There is no link or item part here for the same reason.
+ *
+ * The trigger points at the content with `aria-controls`, and neither binding's markup carries that
+ * pair: the id is generated at runtime, so both bindings write it themselves. What the contract
+ * fixes is that the two elements exist and can be found.
+ */
+export const sidebarContract = {
+  id: "sidebar",
+  css: "@skryensya/core/components/sidebar.css",
+  parts: sidebarParts,
+
+  options: {
+    /** Starts narrowed. Read once as the initial state; after that the interaction owns it. */
+    defaultCollapsed: {
+      type: "boolean",
+      default: false,
+      attr: "data-default-collapsed",
+      trueValue: "",
+      machineInput: true,
+    },
+    /**
+     * The trigger's accessible name. It is icon-sized, so this is never painted — and an icon on
+     * its own names nothing.
+     */
+    label: { type: "string", attr: "aria-label" },
+  },
+
+  signatures: {
+    Sidebar: {
+      intent: ["sidebar", "side-navigation", "app-shell-rail", "left-nav"],
+      host: { element: "aside" },
+      options: ["defaultCollapsed"],
+      slots: {
+        children: {
+          accepts: "signature",
+          of: ["SidebarHeader", "SidebarContent", "SidebarFooter", "SidebarSeparator", "SidebarTrigger"],
+          required: true,
+        },
+      },
+      mount: "data-sk-sidebar",
+      template: { element: "aside", part: "root", host: true, slot: "children" },
+      react: { from: "@skryensya/react/sidebar", name: "Sidebar" },
+    },
+
+    SidebarHeader: {
+      intent: ["sidebar-header", "brand-area", "pinned-top"],
+      host: { element: "div" },
+      parents: ["Sidebar"],
+      options: [],
+      slots: { children: { accepts: "node", required: true } },
+      template: { element: "div", part: "header", host: true, slot: "children" },
+      react: { from: "@skryensya/react/sidebar", name: "SidebarHeader" },
+    },
+
+    SidebarContent: {
+      intent: ["sidebar-body", "where-the-nav-list-goes", "scrolling-middle"],
+      host: { element: "div" },
+      parents: ["Sidebar"],
+      options: [],
+      slots: { children: { accepts: "node", required: true } },
+      // The trigger points at this by id, so the enhancer has to be able to find it.
+      mount: "data-sk-sidebar-content",
+      template: { element: "div", part: "content", host: true, slot: "children" },
+      react: { from: "@skryensya/react/sidebar", name: "SidebarContent" },
+    },
+
+    SidebarFooter: {
+      intent: ["sidebar-footer", "account-area", "pinned-bottom"],
+      host: { element: "div" },
+      parents: ["Sidebar"],
+      options: [],
+      slots: { children: { accepts: "node", required: true } },
+      template: { element: "div", part: "footer", host: true, slot: "children" },
+      react: { from: "@skryensya/react/sidebar", name: "SidebarFooter" },
+    },
+
+    SidebarSeparator: {
+      intent: ["sidebar-divider", "group-break"],
+      host: { element: "hr" },
+      parents: ["Sidebar"],
+      options: [],
+      slots: {},
+      /*
+       * A real `<hr>`, not a styled div. It is the element that MEANS a break between groups, so a
+       * screen reader announces the grouping instead of only sighted users seeing it.
+       */
+      template: { element: "hr", part: "separator", host: true },
+      react: { from: "@skryensya/react/sidebar", name: "SidebarSeparator" },
+    },
+
+    SidebarTrigger: {
+      intent: ["collapse-sidebar", "rail-toggle", "hamburger"],
+      host: { element: "button" },
+      parents: ["Sidebar"],
+      options: ["label"],
+      requires: ["label"],
+      slots: { icon: { accepts: "signature", of: ["Icon"] } },
+      mount: "data-sk-sidebar-trigger",
+      template: {
+        element: "button",
+        part: "trigger",
+        host: true,
+        also: ["sk-interactive"],
+        attrs: { type: "button" },
+        slot: "icon",
+      },
+      react: { from: "@skryensya/react/sidebar", name: "SidebarTrigger" },
+    },
+  },
+} as const satisfies ComponentContract;

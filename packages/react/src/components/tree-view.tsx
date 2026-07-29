@@ -1,4 +1,5 @@
-import { treeViewParts, type TreeNode } from "@skryensya/core/tree-view";
+import { treeViewContract, treeViewParts, type TreeNode } from "@skryensya/core/tree-view";
+import type { OptionValue } from "@skryensya/core/contract";
 import { treeView } from "@skryensya/core/machines";
 import { normalizeProps, useMachine } from "@zag-js/react";
 import { useId, useMemo, type ReactNode } from "react";
@@ -7,7 +8,8 @@ export type TreeViewProps = {
   id?: string;
   label: string;
   nodes: readonly TreeNode[];
-  selectionMode?: "single" | "multiple";
+  // Derived: Core owns the modes, and a copy here goes stale the day a third one appears.
+  selectionMode?: OptionValue<typeof treeViewContract.options.selectionMode>;
   selectedValue?: string[];
   defaultSelectedValue?: string[];
   expandedValue?: string[];

@@ -1034,6 +1034,128 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/sidebar.css",
+      "id": "sidebar",
+      "signatures": [
+        {
+          "alternatives": [
+            "Navbar"
+          ],
+          "avoidWhen": [
+            "es un sitio de contenido con pocas secciones; eso es un Navbar",
+            "aparece sobre el contenido y se cierra al elegir; eso es un Drawer"
+          ],
+          "host": "aside",
+          "id": "Sidebar",
+          "intent": [
+            "sidebar",
+            "side-navigation",
+            "app-shell-rail",
+            "left-nav"
+          ],
+          "parents": [],
+          "useWhen": [
+            "la navegación principal de una aplicación vive al costado y acompaña a toda la sesión",
+            "hay muchas secciones y conviene que se vean sin abrir nada"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "es parte de la lista de destinos; eso va en SidebarContent"
+          ],
+          "host": "div",
+          "id": "SidebarHeader",
+          "intent": [
+            "sidebar-header",
+            "brand-area",
+            "pinned-top"
+          ],
+          "parents": [
+            "Sidebar"
+          ],
+          "useWhen": [
+            "arriba va la marca, el nombre del espacio de trabajo o el trigger"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "tiene que quedar fijo al scrollear; eso es el header o el footer"
+          ],
+          "host": "div",
+          "id": "SidebarContent",
+          "intent": [
+            "sidebar-body",
+            "where-the-nav-list-goes",
+            "scrolling-middle"
+          ],
+          "parents": [
+            "Sidebar"
+          ],
+          "useWhen": [
+            "es el medio que scrollea; acá adentro va la NavList"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "es un destino más; eso va en la lista"
+          ],
+          "host": "div",
+          "id": "SidebarFooter",
+          "intent": [
+            "sidebar-footer",
+            "account-area",
+            "pinned-bottom"
+          ],
+          "parents": [
+            "Sidebar"
+          ],
+          "useWhen": [
+            "abajo va la cuenta, el modo de color o lo que se usa poco y se busca siempre"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "sólo se busca aire entre elementos; eso es espaciado, no un separador"
+          ],
+          "host": "hr",
+          "id": "SidebarSeparator",
+          "intent": [
+            "sidebar-divider",
+            "group-break"
+          ],
+          "parents": [
+            "Sidebar"
+          ],
+          "useWhen": [
+            "hay que separar dos grupos de destinos y el corte es parte de la información"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "se espera que oculte la barra; angosta, nunca esconde"
+          ],
+          "host": "button",
+          "id": "SidebarTrigger",
+          "intent": [
+            "collapse-sidebar",
+            "rail-toggle",
+            "hamburger"
+          ],
+          "parents": [
+            "Sidebar"
+          ],
+          "useWhen": [
+            "la persona tiene que poder angostar la barra para ganar ancho de contenido"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/slider.css",
       "id": "slider",
       "signatures": [
@@ -1534,6 +1656,38 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/tree-view.css",
+      "id": "tree-view",
+      "signatures": [
+        {
+          "alternatives": [
+            "NavList",
+            "List"
+          ],
+          "avoidWhen": [
+            "hay un solo nivel; eso es una List o una NavList",
+            "son dos niveles fijos y conocidos; una NavList con grupos se lee mejor",
+            "la jerarquía es una vista de tabla con filas que se expanden; eso es una Table"
+          ],
+          "host": "div",
+          "id": "TreeView",
+          "intent": [
+            "tree",
+            "file-explorer",
+            "hierarchy",
+            "nested-list",
+            "folder-structure"
+          ],
+          "parents": [],
+          "useWhen": [
+            "los datos anidan de verdad y la jerarquía es parte de lo que hay que entender",
+            "hace falta abrir y cerrar ramas sin perder de vista dónde se está",
+            "un explorador de archivos, un organigrama, un índice de contenidos"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/typography.css",
       "id": "typography",
       "signatures": [
@@ -1620,5 +1774,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "8088df589bd211ae"
+  "sourceHash": "f6c5da3ce43a0801"
 }

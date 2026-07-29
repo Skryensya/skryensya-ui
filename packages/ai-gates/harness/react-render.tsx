@@ -16,6 +16,8 @@ import * as toolbarModule from "@skryensya/react/toolbar";
 import * as mediaGradientModule from "@skryensya/react/media-gradient";
 import * as segmentedModule from "@skryensya/react/segmented";
 import * as sliderModule from "@skryensya/react/slider";
+import * as treeViewModule from "@skryensya/react/tree-view";
+import * as sidebarModule from "@skryensya/react/sidebar";
 import * as accordionModule from "@skryensya/react/accordion";
 import * as tileModule from "@skryensya/react/tile";
 import * as paginationModule from "@skryensya/react/pagination";
@@ -41,6 +43,7 @@ import {
   isUsageTree,
   slotItems,
   slotsOf,
+  type ItemInput,
   type UsageTree,
 } from "@skryensya/ai-compiler/usage-tree";
 
@@ -72,6 +75,8 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/content": contentModule,
   "@skryensya/react/pagination": paginationModule,
   "@skryensya/react/accordion": accordionModule,
+  "@skryensya/react/sidebar": sidebarModule,
+  "@skryensya/react/tree-view": treeViewModule,
   "@skryensya/react/tile": tileModule,
   "@skryensya/react/theme-toggle": themeToggleModule,
   "@skryensya/react/number-field": numberFieldModule,
@@ -143,15 +148,7 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
     // The markup emitter is the one that expands it, which is the asymmetry the template exists for.
     const entries = collectionItems(content);
     if (entries.length > 0) {
-      props[slotProp] = entries.map((entry) => ({
-        ...entry.options,
-        ...Object.fromEntries(
-          Object.entries(entry.slots).map(([field, value]) => {
-            const values = slotItems(value);
-            return [field, values.length === 1 && !isUsageTree(values[0]!) ? values[0] : values.map(renderItem)];
-          }),
-        ),
-      }));
+      props[slotProp] = entries.map(flattenEntry);
       continue;
     }
 
@@ -165,6 +162,27 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
   );
 
   return createElement(component as never, props, ...children);
+}
+
+/**
+ * One entry as the flat object a React binding takes — and a slot holding MORE ENTRIES flattened
+ * the same way, one level down, because a folder's children are folders.
+ */
+function flattenEntry(entry: ItemInput): Record<string, unknown> {
+  const flat: Record<string, unknown> = { ...entry.options };
+
+  for (const [field, value] of Object.entries(entry.slots)) {
+    const nested = collectionItems(value);
+    if (nested.length > 0) {
+      flat[field] = nested.map(flattenEntry);
+      continue;
+    }
+
+    const values = slotItems(value);
+    flat[field] = values.length === 1 && !isUsageTree(values[0]!) ? values[0] : values.map(renderItem);
+  }
+
+  return flat;
 }
 
 function renderItem(item: string | UsageTree, index: number): ReactNode {

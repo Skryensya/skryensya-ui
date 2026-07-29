@@ -578,12 +578,58 @@ publicado. Verificado extremo a extremo: catálogo → contrato → árbol → c
 >   plausible, y ante una opción ajena la descarta en silencio. Código sacado de un árbol inválido se
 >   ve bien y está mal.
 
-### F6 · El sitio y los recipes
-`Showcase` recibe usage trees. Las 10 páginas sin demo React ganan uno o quedan fuera de G2. Escribir
-los recipes —App Shell, Form, Settings, Data Table, confirmación destructiva— como usage trees
-nombrados, cada uno con sus estados loading/empty/error/success, **y cada uno renderizado por una
-página real**.
+### F6 · El sitio y los recipes — en curso
+`Showcase` recibe usage trees ✅. Los recipes están escritos, validados y renderizados ✅. Falta el
+grueso de la conversión de páginas.
 **Salida:** una página completa se construye desde el catálogo publicado, se renderiza y pasa G2–G5.
+
+**`<Showcase tree={…} />`** emite los tres: el markup autoreado en el escenario vanilla, el TSX al
+lado, y la isla React viva. Una página ya no puede mostrar un snippet distinto de lo que renderiza,
+que es el modo de fallar que tiene por construcción cualquier ejemplo escrito a mano.
+
+El renderer de usage tree → React se mudó del harness de los gates a
+`@skryensya/react/render-tree`. Pertenece al binding: ese paquete ya tiene todos los componentes, y
+una segunda copia en el sitio habría significado un segundo mapa de módulos — la duplicación contra
+la que argumenta todo esto. Ahora el demo que mira un lector y la evidencia que junta G2 son la
+misma llamada.
+
+**Las 26 páginas sin demo React** (no 10, medidas) quedan **fuera de G2**, y por dos razones
+distintas que conviene no mezclar:
+
+| Cuántas | Cuáles | Por qué |
+|---|---|---|
+| 5 | `dialog`, `drawer`, `copy-button`, `command-palette`, `toc` | La familia no está publicada. Dos de ellas (`dialog`, `copy-button`) ni siquiera tienen binding React |
+| 21 | `anclaje`, `densidad`, `iconos`, `scrollbar`, `state-layer`, `styling-hooks`, `vaul`, `nav-list` (× 2 idiomas) | Documentan un patrón CSS, no un componente. No hay componente React que demostrar |
+
+**Los recipes** viven en `contracts/recipes/` como datos, no como prosa: cinco pantallas
+—`app-shell`, `form`, `data-table`, `settings`, `destructive-confirm`— cada una en sus cuatro
+estados. `checkRecipes` pasa los veinte árboles por el mismo validador que `validate_ui`, y el build
+**no emite nada** si uno falla. `/recetas` los renderiza todos, en los dos bindings.
+
+> **Escribir los recipes encontró cuatro bugs de contrato**
+>
+> - `Button.action` **no se podía deshabilitar**. El binding React escribe `disabled` y
+>   `aria-disabled`; el contrato nunca declaró la opción, así que todo estado «guardando…» era
+>   inexpresable.
+> - El único padre legal de `SidebarTrigger` era `Sidebar` — el único lugar donde nadie lo pone.
+> - `Field` declaraba `required` y `disabled` y no listaba ninguna de las dos en su firma.
+> - Breadcrumb y Steps nombraban un **slot** como clave de su colección. La clave existe para
+>   emparejar las partes en que se convierte una entrada; una entrada que se convierte en un solo
+>   elemento no tiene qué emparejar, así que `key` ahora es opcional.
+>
+> Y destapó un agujero mayor: **los árboles canónicos se renderizaban, se difeaban y se pasaban por
+> axe, y nunca se validaban**. Uno de ellos llevaba días metiendo un `SidebarTrigger` dentro de un
+> `SidebarHeader`. Ahora hay un gate, y encontró los tres de arriba en su primera corrida.
+>
+> Un bug más, que **sólo podía encontrar el render**: la `Inline` del app shell envolvía, así que la
+> columna de contenido caía debajo del sidebar en vez de al lado. Válida, renderizada, y la pantalla
+> equivocada.
+
+**Convertidas hasta ahora (8 de 349 llamadas a `Showcase`):** `tag`, `kbd`, `pagination`,
+`theme-toggle`, `box`, `progress`, `empty-state`, `segmented`. Quedan 341, de las cuales unas 98
+son de familias publicadas en español (más su espejo en inglés); el resto demuestra familias sin
+publicar o composiciones que las firmas publicadas todavía no cubren — el avatar con imagen y el
+grupo de avatares, por ejemplo, no son firmas.
 
 ### F7 · Evals
 Corpus de intenciones de producto en español e inglés, con las regresiones históricas como casos

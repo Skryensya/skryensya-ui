@@ -17,7 +17,8 @@ describe("Pagination", () => {
     const ui = render(<Pagination onPageChange={onPageChange} page={5} total={20} />);
     expect(ui.getAllByText("…").length).toBeGreaterThan(0);
 
-    fireEvent.click(ui.getByLabelText("Page 6"));
+    // The number IS the accessible name: no aria-label restates what the button already says.
+    fireEvent.click(ui.getByRole("button", { name: "6" }));
     expect(onPageChange).toHaveBeenCalledWith(6);
   });
 });

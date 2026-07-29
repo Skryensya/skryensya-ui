@@ -1,3 +1,4 @@
+import { paginationRange } from "@skryensya/core/pagination";
 import type {
   ComponentContract,
   ContractSignature,
@@ -137,6 +138,15 @@ type NodeContext = {
 function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number): string[] {
   const filled = slotsOf(ctx.tree);
 
+  // One element per entry of a collection the contract computes: which pages are visible follows
+  // from the current page and the total, and is not data an author should be typing.
+  if (node.repeatComputed !== undefined) {
+    const entries = computedWindow(node.repeatComputed, ctx);
+    return entries.flatMap((item, index) =>
+      renderTemplate({ ...node, repeatComputed: undefined }, { ...ctx, item, last: index === entries.length - 1 }, depth),
+    );
+  }
+
   // One element per entry. Two nodes can repeat over the same collection from different places, so
   // the entry's fields land where the markup wants them and the key keeps the pieces paired.
   if (node.repeat !== undefined) {
@@ -165,10 +175,16 @@ function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number)
     if (!given) return [];
   }
 
-  // No element of its own: the slot's content stands where this node is. A decorative icon brings
-  // its own box and must not be wrapped in one.
+  /*
+   * No element of its own: whatever this node holds stands where the node is, adding no box. A
+   * decorative icon brings its own and must not be wrapped in one; a computed entry that comes out
+   * as either of two shapes needs the two to be siblings in ONE place, not two runs of the window.
+   */
   if (!node.element) {
-    return node.slot ? renderSlot(filled[node.slot], depth, node.slot === "children" ? ctx.wiring : undefined) : [];
+    if (node.slot) {
+      return renderSlot(filled[node.slot], depth, node.slot === "children" ? ctx.wiring : undefined);
+    }
+    return (node.children ?? []).flatMap((child) => renderTemplate(child, ctx, depth));
   }
 
   const pad = "  ".repeat(depth);
@@ -207,6 +223,34 @@ function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number)
   return [`${pad}${open}`, ...children, `${pad}</${node.element}>`];
 }
 
+/*
+ * The computations a contract may name. Bounded on purpose: the emitter walks DATA, and a contract
+ * that could name any function would be code again, one indirection further away.
+ */
+/** The key of whatever computed window this signature declares, if it declares one. */
+function computedKeyOf(signature: ContractSignature): string | undefined {
+  const find = (node: ContractTemplate): string | undefined =>
+    node.repeatComputed?.key ?? (node.children ?? []).map(find).find((k) => k !== undefined);
+  return find(signature.template);
+}
+
+function computedWindow(
+  spec: NonNullable<ContractTemplate["repeatComputed"]>,
+  ctx: NodeContext,
+): readonly ItemInput[] {
+  const args = spec.from.map((name) =>
+    Number(ctx.tree.options?.[name] ?? ctx.contract.options[name]?.default ?? 0),
+  );
+
+  // A gap is an entry with no page: `whenItemMissing` then tells the two shapes apart, the same way
+  // a breadcrumb tells a link from the page you are on.
+  return paginationRange(args[0] ?? 1, args[1] ?? 0, args[2]).map((slot): ItemInput =>
+    slot === "ellipsis"
+      ? { slots: {} }
+      : { options: { [spec.key]: slot }, slots: { label: String(slot) } },
+  );
+}
+
 function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   const { tree, contract, signature } = ctx;
   const out: string[] = [];
@@ -236,7 +280,8 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
 
   for (const [name, option] of mine) {
     const value = tree.options?.[name] ?? option.default;
-    if (value === undefined || value === false) continue;
+    // An option that only feeds a computation has already done its work in the structure above.
+    if (value === undefined || value === false || option.computedInput) continue;
     out.push(value === true ? attr(option.attr, option.trueValue ?? "") : attr(option.attr, String(value)));
     if (option.alsoAttr && value !== true) out.push(attr(option.alsoAttr, String(value)));
   }
@@ -244,10 +289,12 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   // The one entry the group selected. Asked of the group, marked on the entry — which is what makes
   // "only one can be selected" a fact of the structure rather than a hope about the data.
   if (node.selectedBy && ctx.item) {
-    const shape = itemShapeOf(signature);
-    const key = shape ? ctx.item.options?.[shape.key] : undefined;
+    // The key comes from the collection's declared shape, or — for a computed window, which has no
+    // authored slot to declare one — from the computation itself.
+    const keyName = itemShapeOf(signature)?.key ?? computedKeyOf(signature);
+    const key = keyName ? ctx.item.options?.[keyName] : undefined;
     if (key !== undefined && tree.options?.[node.selectedBy.option] === key) {
-      out.push(attr(node.selectedBy.attr, ""));
+      out.push(attr(node.selectedBy.attr, node.selectedBy.value ?? ""));
     }
   }
 

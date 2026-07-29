@@ -3011,6 +3011,183 @@
         }
       }
     },
+    "pagination": {
+      "css": "@skryensya/core/components/pagination.css",
+      "id": "pagination",
+      "options": {
+        "label": {
+          "attr": "aria-label",
+          "default": "Pagination",
+          "type": "string"
+        },
+        "nextLabel": {
+          "attr": "aria-label",
+          "default": "Next page",
+          "type": "string"
+        },
+        "page": {
+          "attr": "data-page",
+          "computedInput": true,
+          "default": 1,
+          "type": "number"
+        },
+        "previousLabel": {
+          "attr": "aria-label",
+          "default": "Previous page",
+          "type": "string"
+        },
+        "siblings": {
+          "attr": "data-siblings",
+          "computedInput": true,
+          "default": 1,
+          "type": "number"
+        },
+        "total": {
+          "attr": "data-total",
+          "computedInput": true,
+          "default": 1,
+          "type": "number"
+        }
+      },
+      "parts": {
+        "ellipsis": "sk-pagination__ellipsis",
+        "item": "sk-pagination__item",
+        "next": "sk-pagination__next",
+        "previous": "sk-pagination__previous",
+        "root": "sk-pagination"
+      },
+      "semantics": {
+        "Pagination": {
+          "alternatives": [
+            "Table"
+          ],
+          "avoidWhen": [
+            "la lista es corta y entra entera; paginar agrega un paso que no compra nada",
+            "el orden es cronológico y se explora hacia abajo; ahí conviene cargar más al llegar al final"
+          ],
+          "useWhen": [
+            "los resultados vienen de a páginas y hay que poder saltar a una en particular",
+            "importa saber cuántas páginas hay: el total es parte de la información"
+          ]
+        }
+      },
+      "signatures": {
+        "Pagination": {
+          "host": {
+            "element": "nav"
+          },
+          "intent": [
+            "pagination",
+            "pager",
+            "page-numbers",
+            "next-previous"
+          ],
+          "options": [
+            "page",
+            "total",
+            "siblings",
+            "label",
+            "previousLabel",
+            "nextLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/pagination",
+            "name": "Pagination"
+          },
+          "slots": {},
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "type": "button"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon": "chevron-left",
+                      "data-sk-icon-size": "sm"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "button",
+                "options": [
+                  "previousLabel"
+                ],
+                "part": "previous"
+              },
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "span",
+                    "part": "ellipsis",
+                    "text": "…",
+                    "whenItemMissing": "page"
+                  },
+                  {
+                    "also": [
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "type": "button"
+                    },
+                    "element": "button",
+                    "itemSlot": "label",
+                    "part": "item",
+                    "selectedBy": {
+                      "attr": "aria-current",
+                      "option": "page",
+                      "value": "page"
+                    },
+                    "whenItemGiven": "page"
+                  }
+                ],
+                "repeatComputed": {
+                  "from": [
+                    "page",
+                    "total",
+                    "siblings"
+                  ],
+                  "key": "page",
+                  "window": "pagination-range"
+                }
+              },
+              {
+                "also": [
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "type": "button"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon": "chevron-right",
+                      "data-sk-icon-size": "sm"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "button",
+                "options": [
+                  "nextLabel"
+                ],
+                "part": "next"
+              }
+            ],
+            "element": "nav",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "placeholder": {
       "css": "@skryensya/core/components/placeholder.css",
       "id": "placeholder",
@@ -4638,6 +4815,132 @@
         }
       }
     },
+    "theme-toggle": {
+      "css": "@skryensya/core/components/theme-toggle.css",
+      "id": "theme-toggle",
+      "options": {
+        "defaultValue": {
+          "attr": "data-scheme",
+          "machineInput": true,
+          "type": "enum",
+          "values": [
+            "system",
+            "light",
+            "dark"
+          ]
+        },
+        "labelDark": {
+          "attr": "data-sk-theme-toggle-label-dark",
+          "machineInput": true,
+          "type": "string"
+        },
+        "labelLight": {
+          "attr": "data-sk-theme-toggle-label-light",
+          "machineInput": true,
+          "type": "string"
+        },
+        "labelSystem": {
+          "attr": "data-sk-theme-toggle-label-system",
+          "machineInput": true,
+          "type": "string"
+        },
+        "size": {
+          "attr": "data-size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        }
+      },
+      "parts": {
+        "root": "sk-theme-toggle"
+      },
+      "semantics": {
+        "ThemeToggle": {
+          "alternatives": [
+            "Switch",
+            "Segmented"
+          ],
+          "avoidWhen": [
+            "sólo hay dos modos y ninguno es 'seguir al sistema'; ahí un Switch dice más",
+            "es una preferencia cualquiera dentro de un formulario; eso es un Switch o un Segmented"
+          ],
+          "useWhen": [
+            "la persona tiene que poder elegir claro, oscuro o seguir al sistema",
+            "va en el header o en un menú de preferencias, donde se busca una sola vez"
+          ]
+        }
+      },
+      "signatures": {
+        "ThemeToggle": {
+          "host": {
+            "element": "button"
+          },
+          "intent": [
+            "color-mode",
+            "dark-mode-switch",
+            "light-dark-toggle",
+            "appearance"
+          ],
+          "mount": "data-sk-theme-toggle",
+          "options": [
+            "defaultValue",
+            "size",
+            "labelSystem",
+            "labelLight",
+            "labelDark"
+          ],
+          "react": {
+            "from": "@skryensya/react/theme-toggle",
+            "name": "ThemeToggle"
+          },
+          "slots": {},
+          "template": {
+            "also": [
+              "sk-button",
+              "sk-interactive"
+            ],
+            "attrs": {
+              "aria-label": "Color mode: system",
+              "data-icon-only": "",
+              "data-variant": "ghost",
+              "type": "button"
+            },
+            "children": [
+              {
+                "attrs": {
+                  "data-sk-icon": "mode-system",
+                  "data-sk-icon-size": "md",
+                  "data-sk-theme-toggle-icon": "system"
+                },
+                "element": "span"
+              },
+              {
+                "attrs": {
+                  "data-sk-icon": "mode-light",
+                  "data-sk-icon-size": "md",
+                  "data-sk-theme-toggle-icon": "light"
+                },
+                "element": "span"
+              },
+              {
+                "attrs": {
+                  "data-sk-icon": "mode-dark",
+                  "data-sk-icon-size": "md",
+                  "data-sk-theme-toggle-icon": "dark"
+                },
+                "element": "span"
+              }
+            ],
+            "element": "button",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "toolbar": {
       "css": "@skryensya/core/components/toolbar.css",
       "id": "toolbar",
@@ -5053,5 +5356,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "fc6016a77b56ac00"
+  "sourceHash": "88c3bda89d9f2810"
 }

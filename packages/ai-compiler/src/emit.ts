@@ -451,7 +451,9 @@ function renderJsx(tree: UsageTree, depth: number, imports: Map<string, Set<stri
 
   const from = signature.react.from;
   if (!imports.has(from)) imports.set(from, new Set());
-  imports.get(from)!.add(name);
+  // A compound binding is reached through its root — `Accordion.Item` is written that way and
+  // imported as `Accordion`, which is the whole point of the namespace.
+  imports.get(from)!.add(name.split(".")[0]!);
 
   const props: string[] = [];
   for (const [option, declared] of signatureOptions(contract, signature)) {

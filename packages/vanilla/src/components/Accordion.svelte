@@ -16,7 +16,8 @@
     if (!el.dataset.value) el.dataset.value = el.id || `item-${i + 1}`;
   });
 
-  if (!root.id) root.id = uniqueId("sk-accordion");
+  // No id on the root: nothing points at it. Each item gets one because its trigger and content
+  // point at each other, and the coordinator has no such pair.
   root.classList.add(accordionParts.root);
   root.setAttribute("data-part", accordionDataParts.root);
   root.setAttribute("data-scope", accordionScope);

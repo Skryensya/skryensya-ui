@@ -730,4 +730,64 @@ export const canonicalTrees: readonly Canonical[] = [
     enhanced: false,
     tree: { contract: "pagination", signature: "Pagination", options: { page: 4, total: 12 } },
   },
+  {
+    name: "tile/link",
+    enhanced: false,
+    tree: {
+      contract: "tile",
+      signature: "TileLink",
+      options: { href: "/proyectos/atlas", padding: "md" },
+      children: "Atlas",
+    },
+  },
+  {
+    /*
+     * Three signatures composed in the author's order, paired by a machine both bindings run. The
+     * trigger and the content are separate because each carries arbitrary markup — a slot would have
+     * flattened them into two strings.
+     */
+    name: "tile/expandable",
+    enhanced: true,
+    tree: {
+      contract: "tile",
+      signature: "ExpandableTile",
+      children: [
+        { contract: "tile", signature: "ExpandableTileTrigger", children: "Detalle del envío" },
+        { contract: "tile", signature: "ExpandableTileContent", children: "Sale el martes desde Valparaíso." },
+      ],
+    },
+  },
+  {
+    /*
+     * A coordinator over two composed sections, and the first signature reached through a compound
+     * binding — React spells "only inside that one" as `Accordion.Item`, and the contract points at
+     * it by the same path.
+     */
+    name: "accordion/two-sections",
+    enhanced: true,
+    tree: {
+      contract: "accordion",
+      signature: "Accordion",
+      children: [
+        {
+          contract: "accordion",
+          signature: "Accordion.Item",
+          options: { value: "envio" },
+          children: [
+            { contract: "accordion", signature: "Accordion.Trigger", children: "¿Cuánto tarda el envío?" },
+            { contract: "accordion", signature: "Accordion.Content", children: "Entre tres y cinco días hábiles." },
+          ],
+        },
+        {
+          contract: "accordion",
+          signature: "Accordion.Item",
+          options: { value: "devoluciones" },
+          children: [
+            { contract: "accordion", signature: "Accordion.Trigger", children: "¿Puedo devolver una compra?" },
+            { contract: "accordion", signature: "Accordion.Content", children: "Sí, dentro de los treinta días." },
+          ],
+        },
+      ],
+    },
+  },
 ];

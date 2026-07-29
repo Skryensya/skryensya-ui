@@ -1,5 +1,259 @@
 {
   "contracts": {
+    "accordion": {
+      "css": "@skryensya/core/components/accordion.css",
+      "id": "accordion",
+      "options": {
+        "collapsible": {
+          "attr": "data-collapsible",
+          "default": true,
+          "machineInput": true,
+          "type": "boolean"
+        },
+        "defaultOpen": {
+          "attr": "data-default-open",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "type": {
+          "attr": "data-type",
+          "default": "single",
+          "type": "enum",
+          "values": [
+            "single",
+            "multiple"
+          ]
+        },
+        "value": {
+          "attr": "data-value",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "content": "sk-tile__expandable-content",
+        "item": "sk-tile",
+        "root": "sk-accordion",
+        "trigger": "sk-tile__trigger"
+      },
+      "semantics": {
+        "Accordion": {
+          "alternatives": [
+            "Tabs",
+            "ExpandableTile"
+          ],
+          "avoidWhen": [
+            "son pocas secciones cortas; mostrarlas todas se lee más rápido que plegarlas",
+            "el contenido se compara entre secciones; plegar obliga a recordar en vez de mirar",
+            "las secciones son vistas alternativas del mismo espacio; eso es Tabs"
+          ],
+          "useWhen": [
+            "hay varias secciones largas y sólo una importa a la vez: preguntas frecuentes, términos",
+            "conviene que abrir una cierre la anterior para que la página no crezca sin fin"
+          ]
+        },
+        "Accordion.Content": {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Accordion.Item; no tiene quién lo abra"
+          ],
+          "useWhen": [
+            "es el cuerpo que se pliega dentro de su sección"
+          ]
+        },
+        "Accordion.Item": {
+          "alternatives": [
+            "ExpandableTile"
+          ],
+          "avoidWhen": [
+            "está sola, fuera de un acordeón; eso es un ExpandableTile"
+          ],
+          "useWhen": [
+            "es una sección del acordeón; su `value` es cómo el acordeón la nombra"
+          ]
+        },
+        "Accordion.Trigger": {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Accordion.Item; no tiene qué abrir"
+          ],
+          "useWhen": [
+            "es el encabezado que abre y cierra su sección"
+          ]
+        }
+      },
+      "signatures": {
+        "Accordion": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "accordion",
+            "faq",
+            "collapsible-sections",
+            "one-open-at-a-time"
+          ],
+          "mount": "data-sk-accordion",
+          "options": [
+            "type",
+            "collapsible",
+            "disabled"
+          ],
+          "react": {
+            "from": "@skryensya/react/accordion",
+            "name": "Accordion"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "Accordion.Item"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-part": "root",
+              "data-scope": "accordion"
+            },
+            "element": "div",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "Accordion.Content": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "accordion-body",
+            "the-answer"
+          ],
+          "options": [],
+          "parents": [
+            "Accordion.Item"
+          ],
+          "react": {
+            "from": "@skryensya/react/accordion",
+            "name": "Accordion.Content"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-part": "content",
+              "data-scope": "tile"
+            },
+            "element": "div",
+            "host": true,
+            "part": "content",
+            "slot": "children"
+          }
+        },
+        "Accordion.Item": {
+          "host": {
+            "element": "section"
+          },
+          "intent": [
+            "accordion-section",
+            "faq-entry"
+          ],
+          "options": [
+            "value",
+            "defaultOpen",
+            "disabled"
+          ],
+          "parents": [
+            "Accordion"
+          ],
+          "react": {
+            "from": "@skryensya/react/accordion",
+            "name": "Accordion.Item"
+          },
+          "requires": [
+            "value"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "cardinality": {
+                "Accordion.Content": "one",
+                "Accordion.Trigger": "one"
+              },
+              "of": [
+                "Accordion.Trigger",
+                "Accordion.Content"
+              ],
+              "ordered": true,
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-tile--interactive",
+              "sk-tile--expandable",
+              "sk-interactive"
+            ],
+            "attrs": {
+              "data-part": "item",
+              "data-scope": "tile"
+            },
+            "element": "section",
+            "host": true,
+            "part": "item",
+            "slot": "children"
+          }
+        },
+        "Accordion.Trigger": {
+          "host": {
+            "element": "button"
+          },
+          "intent": [
+            "accordion-header",
+            "section-toggle"
+          ],
+          "options": [],
+          "parents": [
+            "Accordion.Item"
+          ],
+          "react": {
+            "from": "@skryensya/react/accordion",
+            "name": "Accordion.Trigger"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-part": "trigger",
+              "data-scope": "tile",
+              "type": "button"
+            },
+            "element": "button",
+            "host": true,
+            "part": "trigger",
+            "slot": "children"
+          }
+        }
+      }
+    },
     "alert": {
       "css": "@skryensya/core/components/alert.css",
       "id": "alert",
@@ -4941,6 +5195,326 @@
         }
       }
     },
+    "tile": {
+      "css": "@skryensya/core/components/tile.css",
+      "id": "tile",
+      "options": {
+        "defaultOpen": {
+          "attr": "data-default-open",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "disabled": {
+          "attr": "disabled",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "href": {
+          "attr": "href",
+          "type": "string"
+        },
+        "padding": {
+          "attr": "data-padding",
+          "type": "enum",
+          "values": [
+            "none",
+            "xs",
+            "sm",
+            "md",
+            "lg",
+            "xl"
+          ]
+        }
+      },
+      "parts": {
+        "chevron": "sk-tile__chevron",
+        "content": "sk-tile__content",
+        "description": "sk-tile__description",
+        "expandable": "sk-tile--expandable",
+        "expandableContent": "sk-tile__expandable-content",
+        "grid": "sk-tile-grid",
+        "interactive": "sk-tile--interactive",
+        "root": "sk-tile",
+        "selectionIndicator": "sk-tile__selection-indicator",
+        "title": "sk-tile__title",
+        "trigger": "sk-tile__trigger"
+      },
+      "semantics": {
+        "ExpandableTile": {
+          "alternatives": [
+            "Accordion"
+          ],
+          "avoidWhen": [
+            "el contenido es lo que la persona vino a leer; esconderlo agrega un clic y nada más",
+            "flota sobre la página; eso es un Popover o un Dialog"
+          ],
+          "useWhen": [
+            "hay detalle que no todos necesitan y esconderlo baja el ruido de la página",
+            "son varias secciones y sólo importa una a la vez; ahí se arma un Accordion con éstas"
+          ]
+        },
+        "ExpandableTileContent": {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un ExpandableTile; no tiene quién lo abra"
+          ],
+          "useWhen": [
+            "es el cuerpo que se pliega dentro de su ExpandableTile"
+          ]
+        },
+        "ExpandableTileTrigger": {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un ExpandableTile; no tiene a qué apuntar"
+          ],
+          "useWhen": [
+            "es el encabezado que abre y cierra su ExpandableTile"
+          ]
+        },
+        "TileButton": {
+          "alternatives": [
+            "TileLink",
+            "Button"
+          ],
+          "avoidWhen": [
+            "la acción es elegir entre varias y la elección se ve; eso es TileCheckbox o un RadioGroup",
+            "navega; eso es un TileLink"
+          ],
+          "useWhen": [
+            "la tarjeta entera dispara una acción: elegir un plan, empezar un flujo"
+          ]
+        },
+        "TileLink": {
+          "alternatives": [
+            "TileButton",
+            "Card"
+          ],
+          "avoidWhen": [
+            "adentro hay más de una acción; dos targets anidados es una trampa, no una tarjeta",
+            "no navega a ningún lado; eso es un TileButton"
+          ],
+          "useWhen": [
+            "toda la tarjeta lleva al mismo lado y conviene que el área clickeable sea toda",
+            "una grilla de destinos: proyectos, artículos, secciones"
+          ]
+        }
+      },
+      "signatures": {
+        "ExpandableTile": {
+          "host": {
+            "element": "section"
+          },
+          "intent": [
+            "expandable-card",
+            "show-more",
+            "collapsible-surface",
+            "disclosure"
+          ],
+          "mount": "data-sk-expandable-tile",
+          "options": [
+            "defaultOpen",
+            "disabled",
+            "padding"
+          ],
+          "react": {
+            "from": "@skryensya/react/tile",
+            "name": "ExpandableTile"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "cardinality": {
+                "ExpandableTileContent": "one",
+                "ExpandableTileTrigger": "one"
+              },
+              "of": [
+                "ExpandableTileTrigger",
+                "ExpandableTileContent"
+              ],
+              "ordered": true,
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-tile--interactive",
+              "sk-tile--expandable",
+              "sk-interactive"
+            ],
+            "attrs": {
+              "data-part": "root",
+              "data-scope": "tile"
+            },
+            "element": "section",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "ExpandableTileContent": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "expandable-body",
+            "disclosure-panel",
+            "the-part-that-unfolds"
+          ],
+          "options": [],
+          "parents": [
+            "ExpandableTile"
+          ],
+          "react": {
+            "from": "@skryensya/react/tile",
+            "name": "ExpandableTileContent"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-part": "content",
+              "data-scope": "tile"
+            },
+            "element": "div",
+            "host": true,
+            "part": "expandableContent",
+            "slot": "children"
+          }
+        },
+        "ExpandableTileTrigger": {
+          "host": {
+            "element": "button"
+          },
+          "intent": [
+            "expand-control",
+            "disclosure-trigger",
+            "show-more-button"
+          ],
+          "options": [],
+          "parents": [
+            "ExpandableTile"
+          ],
+          "react": {
+            "from": "@skryensya/react/tile",
+            "name": "ExpandableTileTrigger"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-part": "trigger",
+              "data-scope": "tile",
+              "type": "button"
+            },
+            "element": "button",
+            "host": true,
+            "part": "trigger",
+            "slot": "children"
+          }
+        },
+        "TileButton": {
+          "host": {
+            "element": "button"
+          },
+          "intent": [
+            "actionable-card",
+            "selectable-surface",
+            "card-that-does-something"
+          ],
+          "options": [
+            "disabled",
+            "padding"
+          ],
+          "react": {
+            "from": "@skryensya/react/tile",
+            "name": "TileButton"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-tile--interactive",
+              "sk-interactive"
+            ],
+            "attrs": {
+              "data-part": "root",
+              "data-scope": "tile",
+              "type": "button"
+            },
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "data-disabled": ""
+                },
+                "equals": "true",
+                "option": "disabled"
+              }
+            ],
+            "element": "button",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "TileLink": {
+          "host": {
+            "element": "a"
+          },
+          "intent": [
+            "clickable-card",
+            "navigation-tile",
+            "linked-surface",
+            "card-that-goes-somewhere"
+          ],
+          "options": [
+            "href",
+            "padding"
+          ],
+          "react": {
+            "from": "@skryensya/react/tile",
+            "name": "TileLink"
+          },
+          "requires": [
+            "href"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-tile--interactive",
+              "sk-interactive"
+            ],
+            "attrs": {
+              "data-part": "root",
+              "data-scope": "tile"
+            },
+            "element": "a",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        }
+      }
+    },
     "toolbar": {
       "css": "@skryensya/core/components/toolbar.css",
       "id": "toolbar",
@@ -5356,5 +5930,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "88c3bda89d9f2810"
+  "sourceHash": "8088df589bd211ae"
 }

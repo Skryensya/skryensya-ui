@@ -44,3 +44,35 @@ ExpandableTileContent:
   avoidWhen:
     - "está fuera de un ExpandableTile; no tiene quién lo abra"
   alternatives: []
+
+TileCheckbox:
+  useWhen:
+    - "se eligen varias opciones y cada una es una tarjeta con su propio contenido"
+    - "conviene que toda la tarjeta sea el área de click, no sólo el cuadradito"
+  avoidWhen:
+    - "es una sola opción en una lista de texto; eso es un Checkbox"
+    - "sólo se puede elegir una; eso es un TileRadioGroup"
+  alternatives:
+    - Checkbox
+    - TileRadioGroup
+
+TileSwitch:
+  useWhen:
+    - "la tarjeta prende o apaga algo y el efecto es inmediato: una preferencia, una integración"
+  avoidWhen:
+    - "el cambio recién se aplica al enviar el formulario; ahí un Checkbox dice la verdad"
+    - "es una opción entre varias; eso es un TileRadioGroup"
+  alternatives:
+    - Switch
+    - TileCheckbox
+
+TileRadioGroup:
+  useWhen:
+    - "se elige una sola opción y cada una necesita explicarse: planes, métodos de envío"
+    - "conviene comparar las opciones lado a lado antes de decidir"
+  avoidWhen:
+    - "las opciones son una palabra cada una; eso es un RadioGroup o un Segmented"
+    - "se pueden elegir varias; eso es TileCheckbox"
+  alternatives:
+    - RadioGroup
+    - Segmented

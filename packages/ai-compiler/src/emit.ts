@@ -518,7 +518,7 @@ function renderJsx(tree: UsageTree, depth: number, imports: Map<string, Set<stri
 
     const entries = collectionItems(content);
     if (entries.length > 0) {
-      props.push(`${propName}={${JSON.stringify(entries.map(flattenItem))}}`);
+      props.push(`${propName}={${JSON.stringify(entries.map((entry) => flattenItem(entry, declaredSlot?.item)))}}`);
       continue;
     }
 
@@ -559,10 +559,12 @@ function renderJsx(tree: UsageTree, depth: number, imports: Map<string, Set<stri
  * slots exists so the markup emitter knows what is an attribute and what is content; React takes one
  * object and decides that itself.
  */
-function flattenItem(item: ItemInput): Record<string, unknown> {
+function flattenItem(item: ItemInput, shape?: ContractSlot["item"]): Record<string, unknown> {
   const flat: Record<string, unknown> = { ...item.options };
 
-  for (const [name, content] of Object.entries(item.slots)) {
+  for (const [field, content] of Object.entries(item.slots)) {
+    // The binding's own name for this field, when the contract keyed it differently.
+    const name = shape?.slots[field]?.prop ?? field;
     /*
      * A slot that holds MORE ENTRIES is flattened the same way, one level down: a folder's children
      * are folders. Reading only the text of an entry's slots dropped them silently, and a tree with
@@ -570,7 +572,7 @@ function flattenItem(item: ItemInput): Record<string, unknown> {
      */
     const nested = collectionItems(content);
     if (nested.length > 0) {
-      flat[name] = nested.map(flattenItem);
+      flat[name] = nested.map((child) => flattenItem(child, shape));
       continue;
     }
 

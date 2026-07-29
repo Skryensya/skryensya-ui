@@ -34,7 +34,7 @@ const paginationNext = iconMarkup("chevron-right", { size: "sm" });
  */
 const RAMPS = [
   {
-    role: "accent", label: "Acento", def: defaultRampColors.accent,
+    role: "accent", label: "Accent", def: defaultRampColors.accent,
     /* Every option is verified (light + dark) for text-on-accent, accent-text and focus-ring contrast,
      * and kept ≥15° in hue from danger (27), warning (75) and success (150) so a brand fill never
      * reads like an error/success/warning state. Pure red, orange-red and grass-green are absent on
@@ -44,56 +44,56 @@ const RAMPS = [
      * info costs nothing: a brand that reads "informational" is not a false alarm, while a brand that
      * reads "error" is. Anyone who wants the two separated can choose another info ramp. */
     presets: [
-      { name: "Azul", value: "oklch(50.4% 0.169 259.6)" },
-      { name: "Zafiro", value: "oklch(49% 0.185 270)" },
+      { name: "Blue", value: "oklch(50.4% 0.169 259.6)" },
+      { name: "Sapphire", value: "oklch(49% 0.185 270)" },
       { name: "Indigo", value: "oklch(49.5% 0.185 283)" },
-      { name: "Violeta", value: "oklch(51% 0.185 300)" },
-      { name: "Lila", value: "oklch(52% 0.17 315)" },
+      { name: "Violet", value: "oklch(51% 0.185 300)" },
+      { name: "Lilac", value: "oklch(52% 0.17 315)" },
       { name: "Magenta", value: "oklch(52% 0.2 344)" },
-      { name: "Rosa", value: "oklch(56% 0.185 354)" },
-      { name: "Naranja", value: "oklch(52% 0.15 50)" },
-      { name: "Turquesa", value: "oklch(50% 0.1 190)" },
-      { name: "Cian", value: "oklch(50% 0.115 210)" },
-      { name: "Celeste", value: "oklch(54% 0.13 228)" },
-      { name: "Cielo", value: "oklch(53% 0.14 242)" },
+      { name: "Pink", value: "oklch(56% 0.185 354)" },
+      { name: "Orange", value: "oklch(52% 0.15 50)" },
+      { name: "Turquoise", value: "oklch(50% 0.1 190)" },
+      { name: "Cyan", value: "oklch(50% 0.115 210)" },
+      { name: "Light blue", value: "oklch(54% 0.13 228)" },
+      { name: "Sky", value: "oklch(53% 0.14 242)" },
     ],
   },
   {
-    role: "neutral", label: "Neutro", def: defaultRampColors.neutral,
+    role: "neutral", label: "Neutral", def: defaultRampColors.neutral,
     presets: [
-      { name: "Gris", value: "oklch(58.8% 0.018 260)" },
-      { name: "Acero", value: "oklch(58% 0.08 248)" },
-      { name: "Pizarra", value: "oklch(56% 0.09 235)" },
-      { name: "Arena", value: "oklch(59% 0.08 80)" },
-      { name: "Piedra", value: "oklch(58% 0.06 55)" },
-      { name: "Topo", value: "oklch(58% 0.09 45)" },
+      { name: "Gray", value: "oklch(58.8% 0.018 260)" },
+      { name: "Steel", value: "oklch(58% 0.08 248)" },
+      { name: "Slate", value: "oklch(56% 0.09 235)" },
+      { name: "Sand", value: "oklch(59% 0.08 80)" },
+      { name: "Stone", value: "oklch(58% 0.06 55)" },
+      { name: "Taupe", value: "oklch(58% 0.09 45)" },
     ],
   },
   {
-    role: "danger", label: "Peligro", def: defaultRampColors.danger,
+    role: "danger", label: "Danger", def: defaultRampColors.danger,
     presets: [
-      { name: "Rojo", value: "oklch(56% 0.208 27)" },
-      { name: "Guinda", value: "oklch(52% 0.18 8)" },
-      { name: "Carmeyes", value: "oklch(57% 0.205 20)" },
-      { name: "Ladrillo", value: "oklch(58% 0.165 40)" },
+      { name: "Red", value: "oklch(56% 0.208 27)" },
+      { name: "Burgundy", value: "oklch(52% 0.18 8)" },
+      { name: "Crimson", value: "oklch(57% 0.205 20)" },
+      { name: "Brick", value: "oklch(58% 0.165 40)" },
     ],
   },
   {
     role: "success", label: "Success", def: defaultRampColors.success,
     presets: [
-      { name: "Verde", value: defaultRampColors.success },
+      { name: "Green", value: defaultRampColors.success },
       { name: "Jade", value: "oklch(56% 0.1 175)" },
-      { name: "Lima", value: "oklch(63% 0.15 130)" },
-      { name: "Esmeralda", value: "oklch(55% 0.15 160)" },
+      { name: "Lime", value: "oklch(63% 0.15 130)" },
+      { name: "Emerald", value: "oklch(55% 0.15 160)" },
     ],
   },
   {
-    role: "warning", label: "Aviso", def: defaultRampColors.warning,
+    role: "warning", label: "Warning", def: defaultRampColors.warning,
     presets: [
       { name: "Amber", value: defaultRampColors.warning },
-      { name: "Naranja", value: "oklch(62% 0.15 55)" },
-      { name: "Oro", value: "oklch(70% 0.13 90)" },
-      { name: "Mostaza", value: "oklch(61% 0.1 88)" },
+      { name: "Orange", value: "oklch(62% 0.15 55)" },
+      { name: "Gold", value: "oklch(70% 0.13 90)" },
+      { name: "Mustard", value: "oklch(61% 0.1 88)" },
     ],
   },
   {
@@ -102,10 +102,10 @@ const RAMPS = [
      * brand information when the brand turns blue. */
     role: "info", label: "Info", def: defaultRampColors.info,
     presets: [
-      { name: "Azur", value: "oklch(56% 0.12 233)" },
-      { name: "Cian", value: "oklch(56% 0.11 215)" },
+      { name: "Azure", value: "oklch(56% 0.12 233)" },
+      { name: "Cyan", value: "oklch(56% 0.11 215)" },
       { name: "Teal", value: "oklch(56% 0.1 198)" },
-      { name: "Cobalto", value: "oklch(54% 0.14 245)" },
+      { name: "Cobalt", value: "oklch(54% 0.14 245)" },
     ],
   },
 ];
@@ -386,8 +386,8 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
           <div class="sk-flow">
             <p class="sk-panel__desc">Correct these fields before saving your changes.</p>
             <ul class="sk-validation-list">
-              <li><Fragment set:html={iconMarkup("warning")} /><span><strong>Billing email</strong><small>Include a valid domain, for example ada@ejemplo.com.</small></span></li>
-              <li><Fragment set:html={iconMarkup("warning")} /><span><strong>Empresa</strong><small>Indicates the legal name that must appear on invoices.</small></span></li>
+              <li><Fragment set:html={iconMarkup("warning")} /><span><strong>Billing email</strong><small>Include a valid domain, for example ada@example.com.</small></span></li>
+              <li><Fragment set:html={iconMarkup("warning")} /><span><strong>Company</strong><small>Provide the legal name that must appear on invoices.</small></span></li>
             </ul>
             <div class="sk-row sk-row--end"><button class="sk-button sk-interactive" data-variant="primary" type="button"><Fragment set:html={iconMarkup("check")} />Review and save</button></div>
           </div>
@@ -438,10 +438,10 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
               <span class="sk-badge" data-tone="warning">warning</span>
               <span class="sk-badge" data-tone="neutral">neutral</span>
             </div>
-            <div class="sk-segmented" role="radiogroup" aria-label="Rango">
-              <button class="sk-segmented__option sk-interactive" type="button" role="radio" aria-checked="true">Día</button>
+            <div class="sk-segmented" role="radiogroup" aria-label="Range">
+              <button class="sk-segmented__option sk-interactive" type="button" role="radio" aria-checked="true">Day</button>
               <button class="sk-segmented__option sk-interactive" type="button" role="radio" aria-checked="false">Week</button>
-              <button class="sk-segmented__option sk-interactive" type="button" role="radio" aria-checked="false">Mes</button>
+              <button class="sk-segmented__option sk-interactive" type="button" role="radio" aria-checked="false">Month</button>
             </div>
           </div>
         </section>
@@ -451,10 +451,10 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
           <header><Fragment set:html={iconMarkup("refresh")} /><strong>Recent activity</strong></header>
           <div class="sk-flow">
             <ul class="sk-list">
-              <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Maria J."><span class="sk-avatar__fallback" aria-hidden="true">MJ</span></span><div><strong>Maria J.</strong> created a project<span class="sk-time">2 min ago</span></div><span class="sk-badge" data-tone="accent">nuevo</span></li>
-              <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Tomas L."><span class="sk-avatar__fallback" aria-hidden="true">TL</span></span><div><strong>Tomas L.</strong> closed a ticket<span class="sk-time">1 hour ago</span></div><span class="sk-badge" data-tone="success">resuelto</span></li>
-              <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Sofia B."><span class="sk-avatar__fallback" aria-hidden="true">SB</span></span><div><strong>Sofia B.</strong> commented<span class="sk-time">3 hours ago</span></div><span class="sk-badge" data-tone="warning">pendiente</span></li>
-              <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Raul G."><span class="sk-avatar__fallback" aria-hidden="true">RG</span></span><div><strong>Raul G.</strong> reported a bug<span class="sk-time">ayer</span></div><span class="sk-badge" data-tone="danger">urgente</span></li>
+              <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Maria J."><span class="sk-avatar__fallback" aria-hidden="true">MJ</span></span><div><strong>Maria J.</strong> created a project<span class="sk-time">2 min ago</span></div><span class="sk-badge" data-tone="accent">new</span></li>
+              <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Tomas L."><span class="sk-avatar__fallback" aria-hidden="true">TL</span></span><div><strong>Tomas L.</strong> closed a ticket<span class="sk-time">1 hour ago</span></div><span class="sk-badge" data-tone="success">resolved</span></li>
+              <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Sofia B."><span class="sk-avatar__fallback" aria-hidden="true">SB</span></span><div><strong>Sofia B.</strong> commented<span class="sk-time">3 hours ago</span></div><span class="sk-badge" data-tone="warning">pending</span></li>
+              <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Raul G."><span class="sk-avatar__fallback" aria-hidden="true">RG</span></span><div><strong>Raul G.</strong> reported a bug<span class="sk-time">yesterday</span></div><span class="sk-badge" data-tone="danger">urgent</span></li>
             </ul>
           </div>
         </section>
@@ -513,9 +513,9 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
           <header><span class="sk-badge" data-tone="accent">Popular</span></header>
           <div class="sk-flow">
             <strong class="sk-panel__title">Pro</strong>
-            <p class="sk-price__amt">$29<span>/mes</span></p>
-            <ul class="sk-price__list"><li>✓ Proyectos ilimitados</li><li>✓ Soporte prioritario</li><li>✓ Advanced analytics</li></ul>
-            <button class="sk-button sk-interactive" data-variant="primary" type="button" style="inline-size: 100%">Elegir Pro</button>
+            <p class="sk-price__amt">$29<span>/month</span></p>
+            <ul class="sk-price__list"><li>✓ Unlimited projects</li><li>✓ Priority support</li><li>✓ Advanced analytics</li></ul>
+            <button class="sk-button sk-interactive" data-variant="primary" type="button" style="inline-size: 100%">Choose Pro</button>
           </div>
         </section>
 
@@ -663,17 +663,17 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
             </section>
 
             <section class="sk-box sk-dash__span sk-dash__tablebox" data-surface="surface" data-border="subtle" data-padding="none">
-              <header><strong>Transacciones recientes</strong><a class="sk-link sk-interactive" href="#dash-tx">Ver todas</a></header>
+              <header><strong>Recent transactions</strong><a class="sk-link sk-interactive" href="#dash-tx">View all</a></header>
               <div class="sk-flow">
                 <div class="sk-table-scroll">
                   <table class="sk-table">
-                    <thead class="sk-table__head"><tr class="sk-table__row"><th class="sk-table__header" scope="col">Cliente</th><th class="sk-table__header" scope="col">Plan</th><th class="sk-table__header" scope="col">Monto</th><th class="sk-table__header" scope="col">Status</th><th class="sk-table__header" scope="col">Date</th></tr></thead>
+                    <thead class="sk-table__head"><tr class="sk-table__row"><th class="sk-table__header" scope="col">Customer</th><th class="sk-table__header" scope="col">Plan</th><th class="sk-table__header" scope="col">Amount</th><th class="sk-table__header" scope="col">Status</th><th class="sk-table__header" scope="col">Date</th></tr></thead>
                     <tbody class="sk-table__body">
-                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Lucia F."><span class="sk-avatar__fallback" aria-hidden="true">LF</span></span>Lucia Fernandez</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="accent">Pro</span></td><td class="sk-table__cell">$79.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="success">pagado</span></td><td class="sk-table__cell">Hoy, 09:14</td></tr>
-                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Diego M."><span class="sk-avatar__fallback" aria-hidden="true">DM</span></span>Diego Morales</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="neutral">Starter</span></td><td class="sk-table__cell">$19.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="success">pagado</span></td><td class="sk-table__cell">Hoy, 08:02</td></tr>
-                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Renata O."><span class="sk-avatar__fallback" aria-hidden="true">RO</span></span>Renata Ortiz</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="accent">Enterprise</span></td><td class="sk-table__cell">$420.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="warning">pendiente</span></td><td class="sk-table__cell">Ayer, 21:47</td></tr>
-                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Bruno S."><span class="sk-avatar__fallback" aria-hidden="true">BS</span></span>Bruno Salas</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="accent">Pro</span></td><td class="sk-table__cell">$79.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="danger">fallido</span></td><td class="sk-table__cell">Ayer, 18:20</td></tr>
-                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Camila R."><span class="sk-avatar__fallback" aria-hidden="true">CR</span></span>Camila Ruiz</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="neutral">Starter</span></td><td class="sk-table__cell">$19.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="success">pagado</span></td><td class="sk-table__cell">Ayer, 16:05</td></tr>
+                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Lucia F."><span class="sk-avatar__fallback" aria-hidden="true">LF</span></span>Lucia Fernandez</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="accent">Pro</span></td><td class="sk-table__cell">$79.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="success">paid</span></td><td class="sk-table__cell">Today, 09:14</td></tr>
+                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Diego M."><span class="sk-avatar__fallback" aria-hidden="true">DM</span></span>Diego Morales</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="neutral">Starter</span></td><td class="sk-table__cell">$19.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="success">paid</span></td><td class="sk-table__cell">Today, 08:02</td></tr>
+                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Renata O."><span class="sk-avatar__fallback" aria-hidden="true">RO</span></span>Renata Ortiz</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="accent">Enterprise</span></td><td class="sk-table__cell">$420.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="warning">pending</span></td><td class="sk-table__cell">Yesterday, 21:47</td></tr>
+                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Bruno S."><span class="sk-avatar__fallback" aria-hidden="true">BS</span></span>Bruno Salas</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="accent">Pro</span></td><td class="sk-table__cell">$79.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="danger">failed</span></td><td class="sk-table__cell">Yesterday, 18:20</td></tr>
+                      <tr class="sk-table__row"><th class="sk-table__header" scope="row"><span class="sk-cell-user"><span class="sk-avatar" data-size="sm" role="img" aria-label="Camila R."><span class="sk-avatar__fallback" aria-hidden="true">CR</span></span>Camila Ruiz</span></th><td class="sk-table__cell"><span class="sk-badge" data-tone="neutral">Starter</span></td><td class="sk-table__cell">$19.00</td><td class="sk-table__cell"><span class="sk-badge" data-tone="success">paid</span></td><td class="sk-table__cell">Yesterday, 16:05</td></tr>
                     </tbody>
                   </table>
                 </div>
@@ -684,10 +684,10 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
               <header><strong>Team activity</strong></header>
               <div class="sk-flow">
                 <ul class="sk-list">
-                  <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Maria J."><span class="sk-avatar__fallback" aria-hidden="true">MJ</span></span><div><strong>Maria J.</strong> approved a refund<span class="sk-time">8 min ago</span></div><span class="sk-badge" data-tone="neutral">soporte</span></li>
-                  <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Tomas L."><span class="sk-avatar__fallback" aria-hidden="true">TL</span></span><div><strong>Tomas L.</strong> published a new plan<span class="sk-time">1 hour ago</span></div><span class="sk-badge" data-tone="accent">producto</span></li>
-                  <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Sofia B."><span class="sk-avatar__fallback" aria-hidden="true">SB</span></span><div><strong>Sofia B.</strong> closed 3 tickets<span class="sk-time">2 hours ago</span></div><span class="sk-badge" data-tone="success">resuelto</span></li>
-                  <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Raul G."><span class="sk-avatar__fallback" aria-hidden="true">RG</span></span><div><strong>Raul G.</strong> flagged a fraud alert<span class="sk-time">5 hours ago</span></div><span class="sk-badge" data-tone="danger">urgente</span></li>
+                  <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Maria J."><span class="sk-avatar__fallback" aria-hidden="true">MJ</span></span><div><strong>Maria J.</strong> approved a refund<span class="sk-time">8 min ago</span></div><span class="sk-badge" data-tone="neutral">support</span></li>
+                  <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Tomas L."><span class="sk-avatar__fallback" aria-hidden="true">TL</span></span><div><strong>Tomas L.</strong> published a new plan<span class="sk-time">1 hour ago</span></div><span class="sk-badge" data-tone="accent">product</span></li>
+                  <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Sofia B."><span class="sk-avatar__fallback" aria-hidden="true">SB</span></span><div><strong>Sofia B.</strong> closed 3 tickets<span class="sk-time">2 hours ago</span></div><span class="sk-badge" data-tone="success">resolved</span></li>
+                  <li><span class="sk-avatar" data-size="sm" role="img" aria-label="Raul G."><span class="sk-avatar__fallback" aria-hidden="true">RG</span></span><div><strong>Raul G.</strong> flagged a fraud alert<span class="sk-time">5 hours ago</span></div><span class="sk-badge" data-tone="danger">urgent</span></li>
                 </ul>
               </div>
             </section>
@@ -696,12 +696,12 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
               <header><strong>Subscriptions by plan</strong></header>
               <div class="sk-flow">
                 {[["Starter", 3120, 60], ["Pro", 2380, 46], ["Enterprise", 704, 22]].map(([plan, count, pct]) => (
-                  <div class="sk-bars"><div class="sk-bars__top"><span>{plan}</span><strong>{Number(count).toLocaleString("es")}</strong></div><div class="sk-bars__track"><i style={`inline-size:${pct}%`}></i></div></div>
+                  <div class="sk-bars"><div class="sk-bars__top"><span>{plan}</span><strong>{Number(count).toLocaleString("en")}</strong></div><div class="sk-bars__track"><i style={`inline-size:${pct}%`}></i></div></div>
                 ))}
                 <div class="sk-avatar-group">
-                  <span class="sk-avatar" data-size="sm" role="img" aria-label="Cliente 1"><span class="sk-avatar__fallback" aria-hidden="true">AL</span></span>
-                  <span class="sk-avatar" data-size="sm" role="img" aria-label="Cliente 2"><span class="sk-avatar__fallback" aria-hidden="true">AT</span></span>
-                  <span class="sk-avatar" data-size="sm" role="img" aria-label="Cliente 3"><span class="sk-avatar__fallback" aria-hidden="true">GH</span></span>
+                  <span class="sk-avatar" data-size="sm" role="img" aria-label="Customer 1"><span class="sk-avatar__fallback" aria-hidden="true">AL</span></span>
+                  <span class="sk-avatar" data-size="sm" role="img" aria-label="Customer 2"><span class="sk-avatar__fallback" aria-hidden="true">AT</span></span>
+                  <span class="sk-avatar" data-size="sm" role="img" aria-label="Customer 3"><span class="sk-avatar__fallback" aria-hidden="true">GH</span></span>
                   <span class="sk-avatar-group__overflow">+6.2k</span>
                 </div>
               </div>
@@ -712,22 +712,22 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
 
       <div class="sk-tabs__content sk-view" data-sk-tabs-content data-value="landing" hidden>
         <div class="sk-landing">
-          <nav class="sk-sitebar" aria-label="Ritual Navigation"><strong>ritual</strong><div><a href="#ritual-origen">Origen</a><a href="#ritual-caja">The box</a><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Suscribirme</button></div></nav>
+          <nav class="sk-sitebar" aria-label="Ritual navigation"><strong>ritual</strong><div><a href="#ritual-origin">Origin</a><a href="#ritual-box">The box</a><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Subscribe</button></div></nav>
           <div class="sk-landing__hero">
-            <div><span class="sk-badge" data-tone="accent">roasted this week</span><h3>Coffee that arrives when it is still fresh.</h3><p>Choose your profile, adjust the frequency and receive a box made for your morning.</p><div class="sk-row"><button class="sk-button sk-interactive" data-variant="primary" type="button">Armar mi caja</button><button class="sk-button sk-interactive" data-variant="ghost" type="button">See origins</button></div></div>
-            <div class="sk-coffee-box" aria-label="Colombia Coffee, notes of cocoa and cherry"><span>Colombia</span><strong>Cacao · cereza</strong><small>250 g · filtro</small></div>
+            <div><span class="sk-badge" data-tone="accent">roasted this week</span><h3>Coffee that arrives while it is still fresh.</h3><p>Choose your profile, adjust the frequency, and receive a box made for your morning.</p><div class="sk-row"><button class="sk-button sk-interactive" data-variant="primary" type="button">Build my box</button><button class="sk-button sk-interactive" data-variant="ghost" type="button">See origins</button></div></div>
+            <div class="sk-coffee-box" aria-label="Colombian coffee, notes of cocoa and cherry"><span>Colombia</span><strong>Cocoa · cherry</strong><small>250 g · filter</small></div>
           </div>
-          <div class="sk-landing__proof"><span>Entrega flexible</span><span>Origen trazable</span><span>Pause whenever you want</span></div>
+          <div class="sk-landing__proof"><span>Flexible delivery</span><span>Traceable origin</span><span>Pause whenever you want</span></div>
 
           <section class="sk-lp-logos"><span>With the trust of teams in</span><div><b>Faro</b><b>Nimbus</b><b>Atlas</b><b>Vertex</b><b>Norte</b></div></section>
 
           <section class="sk-lp-section">
-            <header class="sk-lp-head"><span class="sk-badge" data-tone="neutral">why Ritual</span><h4>Coffee designed for your routine, not for the warehouse.</h4><p>Each box is roasted against your order and travels as soon as it is ready. No old stock, no intermediaries.</p></header>
+            <header class="sk-lp-head"><span class="sk-badge" data-tone="neutral">why Ritual</span><h4>Coffee designed for your routine, not for the tank.</h4><p>Each box is roasted against your order and travels as soon as it is ready. No old stock, no intermediaries.</p></header>
             <div class="sk-lp-features">
-              <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-lp-ico" data-tone="accent">◐</span><strong>Tueste semanal</strong><p>We roast on Mondays and ship on Tuesday. Freshness measured in days, not months.</p></div></article>
-              <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-lp-ico" data-tone="success">✦</span><strong>Origen trazable</strong><p>Each bag has a farm, altitude and producer. You know exactly what you are taking.</p></div></article>
-              <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-lp-ico" data-tone="warning">⟳</span><strong>Frecuencia flexible</strong><p>Weekly, biweekly or monthly. Change, pause or skip a delivery whenever you want.</p></div></article>
-              <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-lp-ico" data-tone="danger">◇</span><strong>Molido a pedido</strong><p>Whole or ground bean for your method: press, filter, espresso or mocha.</p></div></article>
+              <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-lp-ico" data-tone="accent">◐</span><strong>Weekly roast</strong><p>We roast on Mondays and ship on Tuesday. Freshness measured in days, not months.</p></div></article>
+              <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-lp-ico" data-tone="success">✦</span><strong>Traceable origin</strong><p>Each bag names the farm, altitude, and producer. You know exactly what you are drinking.</p></div></article>
+              <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-lp-ico" data-tone="warning">⟳</span><strong>Flexible frequency</strong><p>Weekly, biweekly, or monthly. Change, pause, or skip a delivery whenever you want.</p></div></article>
+              <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-lp-ico" data-tone="danger">◇</span><strong>Ground to order</strong><p>Whole beans or ground for your method: press, filter, espresso, or moka pot.</p></div></article>
             </div>
           </section>
 
@@ -736,16 +736,16 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
             <ol class="sk-lp-steps">
               <li><span class="sk-lp-step__n">1</span><strong>Choose your profile</strong><p>Answer three questions and we will suggest origins according to your taste.</p></li>
               <li><span class="sk-lp-step__n">2</span><strong>Adjust the box</strong><p>Quantity, grinding and frequency. All editable from your account.</p></li>
-              <li><span class="sk-lp-step__n">3</span><strong>Recibe y disfruta</strong><p>It arrives at your door freshly roasted, with tasting notes in each bag.</p></li>
+              <li><span class="sk-lp-step__n">3</span><strong>Receive and enjoy</strong><p>It arrives at your door freshly roasted, with tasting notes in each bag.</p></li>
             </ol>
           </section>
 
           <section class="sk-lp-section">
             <header class="sk-lp-head"><h4>Origins of this season</h4><p>We rotate the selection every few weeks.</p></header>
             <div class="sk-lp-origins">
-              <article class="sk-origin" data-o="a"><div class="sk-origin__img"></div><div class="sk-origin__body"><span class="sk-badge" data-tone="accent">nuevo</span><strong>Colombia · Huila</strong><small>Cacao · cereza · panela</small></div></article>
+              <article class="sk-origin" data-o="a"><div class="sk-origin__img"></div><div class="sk-origin__body"><span class="sk-badge" data-tone="accent">new</span><strong>Colombia · Huila</strong><small>Cocoa · cherry · panela</small></div></article>
               <article class="sk-origin" data-o="b"><div class="sk-origin__img"></div><div class="sk-origin__body"><span class="sk-badge" data-tone="neutral">classic</span><strong>Ethiopia Yirgacheffe</strong><small>Jasmine · peach · black tea</small></div></article>
-              <article class="sk-origin" data-o="c"><div class="sk-origin__img"></div><div class="sk-origin__body"><span class="sk-badge" data-tone="warning">latest bags</span><strong>Brasil · Cerrado</strong><small>Chocolate · peanut · candy</small></div></article>
+              <article class="sk-origin" data-o="c"><div class="sk-origin__img"></div><div class="sk-origin__body"><span class="sk-badge" data-tone="warning">latest bags</span><strong>Brazil · Cerrado</strong><small>Chocolate · peanut · caramel</small></div></article>
             </div>
           </section>
 
@@ -759,16 +759,16 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
           </section>
 
           <section class="sk-lp-section sk-lp-pricing-sec">
-            <header class="sk-lp-head"><h4>Choose your rhythm</h4><p>Change plans whenever you want. Without permanence.</p></header>
+            <header class="sk-lp-head"><h4>Choose your pace</h4><p>Change your plan whenever you want. Without permanence.</p></header>
             <div class="sk-lp-pricing">
-              <article class="sk-box sk-plan" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><strong class="sk-plan__name">Descubrir</strong><p class="sk-plan__price">$9.900<span>/mes</span></p><p class="sk-plan__desc">250 g monthly. Ideal to try.</p><ul class="sk-plan__list"><li>✓ 1 origin per month</li><li>✓ Tasting notes</li><li>✓ Pause whenever you want</li></ul><button class="sk-button sk-interactive" data-variant="ghost" type="button" style="inline-size:100%">Elegir</button></div></article>
-              <article class="sk-box sk-plan sk-plan--featured" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-badge" data-tone="accent">most chosen</span><strong class="sk-plan__name">Ritual</strong><p class="sk-plan__price">$16.900<span>/mes</span></p><p class="sk-plan__desc">500 g biweekly. To take every day.</p><ul class="sk-plan__list"><li>✓ 2 rotating origins</li><li>✓ Molienda a pedido</li><li>✓ Priority shipping</li></ul><button class="sk-button sk-interactive" data-variant="primary" type="button" style="inline-size:100%">Elegir</button></div></article>
-              <article class="sk-box sk-plan" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><strong class="sk-plan__name">home coffee shop</strong><p class="sk-plan__price">$28.900<span>/mes</span></p><p class="sk-plan__desc">1 kg weekly. For those who receive people.</p><ul class="sk-plan__list"><li>✓ 3 origins of your choice</li><li>✓ Acceso a lotes especiales</li><li>✓ Barista support</li></ul><button class="sk-button sk-interactive" data-variant="ghost" type="button" style="inline-size:100%">Elegir</button></div></article>
+              <article class="sk-box sk-plan" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><strong class="sk-plan__name">Discover</strong><p class="sk-plan__price">$9.900<span>/month</span></p><p class="sk-plan__desc">250 g monthly. Ideal for trying the service.</p><ul class="sk-plan__list"><li>✓ 1 origin per month</li><li>✓ Tasting notes</li><li>✓ Pause whenever you want</li></ul><button class="sk-button sk-interactive" data-variant="ghost" type="button" style="inline-size:100%">Choose</button></div></article>
+              <article class="sk-box sk-plan sk-plan--featured" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><span class="sk-badge" data-tone="accent">most chosen</span><strong class="sk-plan__name">Ritual</strong><p class="sk-plan__price">$16.900<span>/month</span></p><p class="sk-plan__desc">500 g biweekly. For daily coffee.</p><ul class="sk-plan__list"><li>✓ 2 rotating origins</li><li>✓ Ground to order</li><li>✓ Priority shipping</li></ul><button class="sk-button sk-interactive" data-variant="primary" type="button" style="inline-size:100%">Choose</button></div></article>
+              <article class="sk-box sk-plan" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><strong class="sk-plan__name">Home coffee shop</strong><p class="sk-plan__price">$28.900<span>/month</span></p><p class="sk-plan__desc">1 kg weekly. For people who entertain.</p><ul class="sk-plan__list"><li>✓ 3 origins of your choice</li><li>✓ Access to special lots</li><li>✓ Barista support</li></ul><button class="sk-button sk-interactive" data-variant="ghost" type="button" style="inline-size:100%">Choose</button></div></article>
             </div>
           </section>
 
           <section class="sk-lp-section">
-            <header class="sk-lp-head"><h4>Preguntas frecuentes</h4></header>
+            <header class="sk-lp-head"><h4>Frequently asked questions</h4></header>
             <div class="sk-lp-faq">
               <div class="sk-faq"><strong>Can I pause the subscription?</strong><p>Yes, from your account, as many times as you want and at no cost.</p></div>
               <div class="sk-faq"><strong>How does the coffee arrive?</strong><p>In bags with a degassing valve, within 24 hours of roasting.</p></div>
@@ -778,16 +778,16 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
           </section>
 
           <section class="sk-lp-cta">
-            <div><h4>Your next cup starts today.</h4><p>Assemble your box in two minutes and receive it this week.</p></div>
-            <div class="sk-row"><button class="sk-button sk-interactive" data-variant="primary" type="button">Armar mi caja</button><button class="sk-button sk-interactive" data-variant="ghost" type="button">Ver planes</button></div>
+            <div><h4>Your next cuppa starts today.</h4><p>Assemble your box in two minutes and receive it this week.</p></div>
+            <div class="sk-row"><button class="sk-button sk-interactive" data-variant="primary" type="button">Build my box</button><button class="sk-button sk-interactive" data-variant="ghost" type="button">View plans</button></div>
           </section>
 
           <footer class="sk-lp-footer">
             <div class="sk-lp-footer__brand"><strong>ritual</strong><small>Specialty coffee, freshly roasted.</small></div>
             <nav class="sk-lp-footer__cols">
-              <div><span>Producto</span><a href="#">Origins</a><a href="#">Planes</a><a href="#">Regalos</a></div>
-              <div><span>Empresa</span><a href="#">Nosotros</a><a href="#">Productores</a><a href="#">Blog</a></div>
-              <div><span>Soporte</span><a href="#">Ayuda</a><a href="#">Shipping</a><a href="#">Contacto</a></div>
+              <div><span>Product</span><a href="#">Origins</a><a href="#">Plans</a><a href="#">Gifts</a></div>
+              <div><span>Company</span><a href="#">About us</a><a href="#">Producers</a><a href="#">Blog</a></div>
+              <div><span>Support</span><a href="#">Help</a><a href="#">Shipping</a><a href="#">Contact</a></div>
             </nav>
           </footer>
         </div>
@@ -798,76 +798,76 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
           <div class="sk-shop-announce">Free shipping from $40,000 · Free exchanges within 30 days</div>
           <header class="sk-sitebar">
             <strong>mercado norte</strong>
-            <nav class="sk-shop-nav" aria-label="Categories"><a href="#">Cocina</a><a href="#">Mesa</a><a href="#">Deco</a><a href="#">Bathroom</a></nav>
-            <div><button class="sk-button sk-interactive" data-variant="ghost" data-size="sm" type="button">Search</button><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Bolsa · 2</button></div>
+            <nav class="sk-shop-nav" aria-label="Categories"><a href="#">Kitchen</a><a href="#">Table</a><a href="#">Decor</a><a href="#">Bathroom</a></nav>
+            <div><button class="sk-button sk-interactive" data-variant="ghost" data-size="sm" type="button">Search</button><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Bag · 2</button></div>
           </header>
 
           <section class="sk-shop-hero">
-            <div class="sk-shop-hero__copy"><span class="sk-badge" data-tone="accent">nueva temporada</span><h3>Simple objects for every day.</h3><p>Durable pieces, designed to use and not to store. Honest design at a fair price.</p><div class="sk-row"><button class="sk-button sk-interactive" data-variant="primary" type="button">Ver novedades</button><button class="sk-button sk-interactive" data-variant="ghost" type="button">Explore catalog</button></div></div>
+            <div class="sk-shop-hero__copy"><span class="sk-badge" data-tone="accent">new season</span><h3>Simple objects for every day.</h3><p>Durable pieces, designed to be used rather than stored. Honest design at a fair price.</p><div class="sk-row"><button class="sk-button sk-interactive" data-variant="primary" type="button">View new arrivals</button><button class="sk-button sk-interactive" data-variant="ghost" type="button">Explore catalog</button></div></div>
             <div class="sk-shop-hero__art" aria-hidden="true"></div>
           </section>
 
           <section class="sk-shop-cats">
-            <a class="sk-shop-cat" href="#" data-c="blue"><span>Cocina</span><small>128 productos</small></a>
-            <a class="sk-shop-cat" href="#" data-c="orange"><span>Mesa</span><small>94 productos</small></a>
-            <a class="sk-shop-cat" href="#" data-c="green"><span>Deco</span><small>76 productos</small></a>
-            <a class="sk-shop-cat" href="#" data-c="purple"><span>Bathroom</span><small>52 productos</small></a>
+            <a class="sk-shop-cat" href="#" data-c="blue"><span>Kitchen</span><small>128 products</small></a>
+            <a class="sk-shop-cat" href="#" data-c="orange"><span>Table</span><small>94 products</small></a>
+            <a class="sk-shop-cat" href="#" data-c="green"><span>Decor</span><small>76 products</small></a>
+            <a class="sk-shop-cat" href="#" data-c="purple"><span>Bathroom</span><small>52 products</small></a>
           </section>
 
           <section class="sk-shop-block">
-            <header class="sk-shop-block__head"><h4>Novedades</h4><a class="sk-link sk-interactive" href="#">Ver todo</a></header>
+            <header class="sk-shop-block__head"><h4>What's new</h4><a class="sk-link sk-interactive" href="#">View all</a></header>
             <div class="sk-products sk-products--wide">
-              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="blue"></div><div class="sk-flow"><span class="sk-badge" data-tone="neutral">nuevo</span><strong>thermal glass</strong><span>$32.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
-              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="orange"></div><div class="sk-flow"><span class="sk-badge" data-tone="warning">latest</span><strong>Plato hondo</strong><span>$18.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
-              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="green"></div><div class="sk-flow"><span class="sk-badge" data-tone="success">in stock</span><strong>glass bottle</strong><span>$24.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
-              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="purple"></div><div class="sk-flow"><span class="sk-badge" data-tone="accent">destacado</span><strong>ceramic bowl</strong><span>$21.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
-              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="pink"></div><div class="sk-flow"><span class="sk-badge" data-tone="neutral">nuevo</span><strong>Repasadores (x2)</strong><span>$14.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
-              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="sky"></div><div class="sk-flow"><span class="sk-badge" data-tone="success">in stock</span><strong>glass jug</strong><span>$27.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="blue"></div><div class="sk-flow"><span class="sk-badge" data-tone="neutral">new</span><strong>Thermal tumbler</strong><span>$32.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Add</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="orange"></div><div class="sk-flow"><span class="sk-badge" data-tone="warning">latest</span><strong>Deep plate</strong><span>$18.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Add</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="green"></div><div class="sk-flow"><span class="sk-badge" data-tone="success">in stock</span><strong>Glass bottle</strong><span>$24.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Add</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="purple"></div><div class="sk-flow"><span class="sk-badge" data-tone="accent">featured</span><strong>Ceramic bowl</strong><span>$21.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Add</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="pink"></div><div class="sk-flow"><span class="sk-badge" data-tone="neutral">new</span><strong>Dish towels (2)</strong><span>$14.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Add</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="sky"></div><div class="sk-flow"><span class="sk-badge" data-tone="success">in stock</span><strong>Glass jug</strong><span>$27.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Add</button></div></article>
             </div>
           </section>
 
           <section class="sk-shop-editorial">
             <div class="sk-shop-editorial__art" aria-hidden="true"></div>
-            <div class="sk-shop-editorial__copy"><span class="sk-badge" data-tone="neutral">collection</span><h4>Ceramic mornings</h4><p>Cups, plates and jugs handmade by local workshops. Unique pieces, with small differences that make them yours.</p><button class="sk-button sk-interactive" data-variant="ghost" type="button">See the collection</button></div>
+            <div class="sk-shop-editorial__copy"><span class="sk-badge" data-tone="neutral">collection</span><h4>Ceramic Mornings</h4><p>Cups, plates and jugs handmade by local workshops. Unique pieces, with small differences that make them yours.</p><button class="sk-button sk-interactive" data-variant="ghost" type="button">See the collection</button></div>
           </section>
 
           <section class="sk-shop-block">
-            <header class="sk-shop-block__head"><h4>best sellers</h4><a class="sk-link sk-interactive" href="#">Ver ranking</a></header>
+            <header class="sk-shop-block__head"><h4>Best sellers</h4><a class="sk-link sk-interactive" href="#">View ranking</a></header>
             <div class="sk-products sk-products--wide">
-              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="orange"></div><div class="sk-flow"><span class="sk-badge" data-tone="warning">top 1</span><strong>Bowl set</strong><span>$38.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
-              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="green"></div><div class="sk-flow"><span class="sk-badge" data-tone="success">top 2</span><strong>wooden board</strong><span>$29.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
-              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="blue"></div><div class="sk-flow"><span class="sk-badge" data-tone="accent">top 3</span><strong>steel mate</strong><span>$34.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
-              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="purple"></div><div class="sk-flow"><span class="sk-badge" data-tone="neutral">top 4</span><strong>airtight jar</strong><span>$12.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Agregar</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="orange"></div><div class="sk-flow"><span class="sk-badge" data-tone="warning">top 1</span><strong>Bowl set</strong><span>$38.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Add</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="green"></div><div class="sk-flow"><span class="sk-badge" data-tone="success">top 2</span><strong>Wooden board</strong><span>$29.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Add</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="blue"></div><div class="sk-flow"><span class="sk-badge" data-tone="accent">top 3</span><strong>Steel mate cup</strong><span>$34.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Add</button></div></article>
+              <article class="sk-box sk-product" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-product__image" data-product="purple"></div><div class="sk-flow"><span class="sk-badge" data-tone="neutral">top 4</span><strong>Airtight jar</strong><span>$12.000</span><button class="sk-button sk-interactive" data-variant="primary" data-size="sm" type="button">Add</button></div></article>
             </div>
           </section>
 
           <section class="sk-shop-benefits">
             <div class="sk-shop-benefit"><span aria-hidden="true">🚚</span><div><strong>Shipping in 48 hours</strong><small>to the main cities</small></div></div>
-            <div class="sk-shop-benefit"><span aria-hidden="true">↺</span><div><strong>Cambios gratis</strong><small>up to 30 days</small></div></div>
-            <div class="sk-shop-benefit"><span aria-hidden="true">🔒</span><div><strong>Pago seguro</strong><small>with any card</small></div></div>
-            <div class="sk-shop-benefit"><span aria-hidden="true">✦</span><div><strong>Hecho local</strong><small>country workshops</small></div></div>
+            <div class="sk-shop-benefit"><span aria-hidden="true">↺</span><div><strong>Free exchanges</strong><small>up to 30 days</small></div></div>
+            <div class="sk-shop-benefit"><span aria-hidden="true">🔒</span><div><strong>Secure payment</strong><small>with any card</small></div></div>
+            <div class="sk-shop-benefit"><span aria-hidden="true">✦</span><div><strong>Locally made</strong><small>regional workshops</small></div></div>
           </section>
 
           <section class="sk-shop-block">
             <header class="sk-shop-block__head"><h4>What they say</h4></header>
             <div class="sk-lp-quotes">
-              <figure class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><div class="sk-stars" aria-label="5 out of 5">★★★★★</div><blockquote>"The bowls are beautiful and arrived in two days. I already ordered more."</blockquote><figcaption><span class="sk-avatar" data-size="sm" role="img" aria-label="Clara N."><span class="sk-avatar__fallback" aria-hidden="true">CN</span></span><span><strong>Clara N.</strong><small>compra verificada</small></span></figcaption></div></figure>
-              <figure class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><div class="sk-stars" aria-label="5 out of 5">★★★★★</div><blockquote>"Quality well above the price. The ceramic feels premium."</blockquote><figcaption><span class="sk-avatar" data-size="sm" role="img" aria-label="Julian P."><span class="sk-avatar__fallback" aria-hidden="true">JP</span></span><span><strong>Julian P.</strong><small>compra verificada</small></span></figcaption></div></figure>
-              <figure class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><div class="sk-stars" aria-label="4 out of 5">★★★★☆</div><blockquote>"Everything impeccable. All that remains is that I want more colors available."</blockquote><figcaption><span class="sk-avatar" data-size="sm" role="img" aria-label="Vera S."><span class="sk-avatar__fallback" aria-hidden="true">VS</span></span><span><strong>Vera S.</strong><small>compra verificada</small></span></figcaption></div></figure>
+              <figure class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><div class="sk-stars" aria-label="5 out of 5">★★★★★</div><blockquote>"The bowls are beautiful and arrived in two days. I already ordered more."</blockquote><figcaption><span class="sk-avatar" data-size="sm" role="img" aria-label="Clara N."><span class="sk-avatar__fallback" aria-hidden="true">CN</span></span><span><strong>Clara N.</strong><small>verified purchase</small></span></figcaption></div></figure>
+              <figure class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><div class="sk-stars" aria-label="5 out of 5">★★★★★</div><blockquote>"Quality well above the price. The ceramic feels premium."</blockquote><figcaption><span class="sk-avatar" data-size="sm" role="img" aria-label="Julian P."><span class="sk-avatar__fallback" aria-hidden="true">JP</span></span><span><strong>Julian P.</strong><small>verified purchase</small></span></figcaption></div></figure>
+              <figure class="sk-box" data-surface="surface" data-border="subtle" data-padding="none"><div class="sk-flow"><div class="sk-stars" aria-label="4 out of 5">★★★★☆</div><blockquote>"Everything is impeccable. I only wish more colors were available."</blockquote><figcaption><span class="sk-avatar" data-size="sm" role="img" aria-label="Vera S."><span class="sk-avatar__fallback" aria-hidden="true">VS</span></span><span><strong>Vera S.</strong><small>verified purchase</small></span></figcaption></div></figure>
             </div>
           </section>
 
           <section class="sk-shop-news">
-            <div><h4>Join the club</h4><p>10% on your first purchase and early access to releases.</p></div>
-            <form class="sk-shop-news__form" onsubmit="return false"><input class="sk-input" type="email" aria-label="Your email" placeholder="tu@email.com" /><button class="sk-button sk-interactive" data-variant="primary" type="submit">Suscribirme</button></form>
+            <div><h4>Join the club</h4><p>Get 10% off your first purchase and early access to new releases.</p></div>
+            <form class="sk-shop-news__form" onsubmit="return false"><input class="sk-input" type="email" aria-label="Your email" placeholder="you@example.com" /><button class="sk-button sk-interactive" data-variant="primary" type="submit">Subscribe</button></form>
           </section>
 
           <footer class="sk-lp-footer">
             <div class="sk-lp-footer__brand"><strong>mercado norte</strong><small>Objects for every day.</small></div>
             <nav class="sk-lp-footer__cols">
-              <div><span>Tienda</span><a href="#">Cocina</a><a href="#">Mesa</a><a href="#">Deco</a></div>
-              <div><span>Ayuda</span><a href="#">Shipping</a><a href="#">Cambios</a><a href="#">Contacto</a></div>
-              <div><span>Nosotros</span><a href="#">Historia</a><a href="#">Talleres</a><a href="#">work here</a></div>
+              <div><span>Shop</span><a href="#">Kitchen</a><a href="#">Table</a><a href="#">Decor</a></div>
+              <div><span>Help</span><a href="#">Shipping</a><a href="#">Exchanges</a><a href="#">Contact</a></div>
+              <div><span>About us</span><a href="#">History</a><a href="#">Workshops</a><a href="#">Careers</a></div>
             </nav>
           </footer>
         </div>
@@ -881,17 +881,17 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
     <header class="sk-dialog__header">
       <div class="sk-stack" data-gap="none">
         <p class="sk-text" data-role="eyebrow">WCAG AA</p>
-        <h2 class="sk-heading sk-dialog__title" data-size="h3" id="sk-contrast-title">Revisar contraste</h2>
+        <h2 class="sk-heading sk-dialog__title" data-size="h3" id="sk-contrast-title">Review contrast</h2>
       </div>
-      <form method="dialog"><button class="sk-button sk-interactive sk-dialog__close" data-variant="ghost" data-icon-only type="submit" aria-label="Cerrar"><span data-sk-icon="close"></span></button></form>
+      <form method="dialog"><button class="sk-button sk-interactive sk-dialog__close" data-variant="ghost" data-icon-only type="submit" aria-label="Close"><span data-sk-icon="close"></span></button></form>
     </header>
     <div class="sk-dialog__body">
       <div id="sk-audit" class="sk-audit"></div>
       <p class="sk-dialog__note" id="sk-fix-note" aria-live="polite">The ratios are measured in light and dark on the current colors.</p>
     </div>
     <footer class="sk-dialog__footer sk-dialog__footer--split">
-      <form method="dialog"><button class="sk-button sk-interactive" data-variant="ghost" type="submit">Cerrar</button></form>
-      <button class="sk-button sk-interactive" data-variant="primary" id="sk-contrast-fix" type="button">Corregir colores</button>
+      <form method="dialog"><button class="sk-button sk-interactive" data-variant="ghost" type="submit">Close</button></form>
+      <button class="sk-button sk-interactive" data-variant="primary" id="sk-contrast-fix" type="button">Fix colors</button>
     </footer>
   </dialog>
 </Base>
@@ -965,7 +965,7 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
 
   /* The view switcher is a bare strip above the card, no window chrome behind it. core/tabs.css ships
      only styling-hook tokens (no element rules), so this page maps them to paint itself, the
-     consumer's job, exactly as decisión 8 frames it. */
+     consumer's job, exactly as decision 8 frames it. */
   .sk-views {
     flex: none;
     display: flex;

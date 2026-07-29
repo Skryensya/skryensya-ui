@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { PublicationDemo, PublicationPlaceholderDemo } from "../../components/react-demos/placeholder";
 import "../../examples/placeholder.css";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -462,7 +463,11 @@ export function PublicationDemo() {
     react={staticReact}
     label="Layout con Placeholder"
     note="Siempre pendiente"
-  />
+  >
+    <Fragment slot="react">
+      <PublicationPlaceholderDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Carga simulada</h2>
   <p>
@@ -477,7 +482,11 @@ export function PublicationDemo() {
     react={loadingReact}
     label="Placeholder → contenido"
     note="Carga falsa · 5 s"
-  />
+  >
+    <Fragment slot="react">
+      <PublicationDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Formas</h2>
   <ul>

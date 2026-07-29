@@ -1,0 +1,7 @@
+# La estructura vive en packages/core/src/layout.ts. Acá sólo por qué se elige.
+
+Box:
+  useWhen:
+    - "hace falta relleno, una superficie o un borde alrededor de un grupo"
+  avoidWhen:
+    - "sólo hace falta separar cosas; eso es un Stack sin caja"

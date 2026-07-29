@@ -31,9 +31,7 @@ const html = `<button
 
   <header class="demo-vaul__header">
     <span class="demo-vaul__heading">
-      <h2 class="demo-vaul__title" id="demo-vaul-title" data-flush>
-        Propuesta comercial Q3
-      </h2>
+      <h2 class="demo-vaul__title" id="demo-vaul-title" data-flush>Q3 commercial proposal</h2>
       <span class="demo-vaul__meta">
         PDF · 2.4 MB · edited 2 hours ago
       </span>
@@ -45,7 +43,7 @@ const html = `<button
       data-icon-only
       data-sk-vaul-close
       type="button"
-      aria-label="Cerrar"
+      aria-label="Close"
     >
       <span data-sk-icon="close"></span>
     </button>
@@ -141,7 +139,7 @@ const html = `<button
       </span>
       <span class="sk-list__content">
         <span class="sk-list__title">Lucia Vergara</span>
-        <span class="sk-list__description">lucia@cliente.cl</span>
+        <span class="sk-list__description">lucia@example.cl</span>
       </span>
       <span class="sk-list__trailing">Invitation sent</span>
     </li>
@@ -200,98 +198,62 @@ const noDrag = `<dialog
 <Base title="Vaul" description="A pattern: modal panel anchored to a viewport edge, with optional drag-to-dismiss.">
   <h1>Vaul</h1>
   <p class="lede">
-    A modal panel anchored to a <strong>edge</strong> of the viewport: arrives from that edge, leaves the
-    inert page behind a backdrop, and goes where it came from. The edge is the whole idea, a Vaul
-    It is named by where it comes from, never by the shape it makes when it arrives.
+    A modal panel anchored to a <strong>edge</strong> of the viewport: it arrives from that edge, leaves the page inert behind a backdrop, and goes back the way it came. The edge is the entire idea, a Vaul is named by where it comes from, never by the shape it makes when it arrives.
   </p>
 
   <Showcase html={html} label="HTML" viewport="overlay" />
 
-  <h2>Why is it a pattern and not a component?</h2>
+  <h2>Why is it a pattern and not a component</h2>
   <p>
-    The rule is a single question:
-    <em>could a second component need this exact structure?</em> Here the answer is not a
-    prediction, it happens, today, in this repo: <a href="/en/components/drawer">Drawer</a> <strong>es</strong>
-    a Vaul on the inline edge. The <a href="/en/components/dialog">Dialog Vaul</a> option reuses the same
-    Block-end interaction on mobile without converting Dialog into a Vaul component.
+    The rule is a single question: <em>could a second component need this exact structure? </em> Here the answer is not a prediction, it already happens, today, in this repo: <a href="/en/components/drawer">Drawer</a> <strong>is</strong> a Vaul on the inline edge. The <a href="/en/components/dialog">Dialog Vaul</a> option reuses the same block-end interaction on mobile without converting the Dialog into a Vaul component.
   </p>
   <p>
-    So Vaul sends <strong>hooks and structure</strong>. A drawer that reimplemented the panel would be
-    a second Vaul with another name.
+    So Vaul sends <strong>hooks and</strong> structure. A drawer that reimplemented the panel would be a second Vaul with a different name.
   </p>
 
   <h2>The edge is a data, not a component</h2>
   <p>
-    Three edges, one pattern. <code>data-edge</code> choose; nothing else changes. The inline edges are
-    logical, so they turn around on their own in RTL instead of sticking to the wrong side of the screen.
+    Three edges, one pattern. <code>data-edge</code> choose; nothing else changes. The inline edges are logical, so they turn around on their own in RTL instead of sticking to the wrong side of the screen.
   </p>
   <CodeBlock code={edges} label="HTML" />
 
-  <h2>Requires native <code>&lt;dialog&gt;</code></h2>
+  <h2>Requires the native <code>&lt; dialog&gt; </code></h2>
   <p>
-    The focus trap, ESC, the inert background, the focus restoration, the top layer and a
-    Real <code>::backdrop</code> are behaviors that the platform already has. A Vaul over a div
-    it reimplements them in JavaScript that would have to be sent, and the top layer and <code>:modal</code> are not
-    available for a div at no price.
+    The focus trap, ESC, inert background, focus restoration, top layer and a real <code>:: backdrop</code> are behaviors that the platform already has. A Vaul on a div reimplements them in JavaScript that would have to be sent, and the top layer and <code>: modal</code> are not available for a div at any price.
   </p>
 
   <h2>Zag is not used here, and that is the finding</h2>
   <p>
-    The rule is that Zag enters only when the state coordination is worth its cost. The record was reviewed before
-    write a line: <strong>no Vaul machine</strong> exists. And what Zag could cover is
-    exactly what the platform already does best, <code>@zag-js/dialog</code> would reimplement the
-    modality that <code>&lt;dialog&gt;</code> provides, and <code>@zag-js/presence</code> is redundant
-    against <code>@starting-style</code>. That the answer is "none" is the working rule, not a
-    exception.
+    The rule is that Zag comes in only when state coordination is worth its cost. The log was checked before writing a line: <strong>Vaul machine does not exist</strong>. And what Zag could cover is exactly what the platform already does best, <code>@zag-js/dialog</code> would reimplement the modality that <code>&lt; dialog&gt; </code> gives away, and <code>@zag-js/presence</code> is redundant against <code>@starting-style</code>. That the answer is "none" is the working rule, not an exception.
   </p>
 
   <h2>Drag is the only thing that costs JS</h2>
   <p>
-    There remains <strong>un</strong> behavior without an equivalent on the platform and without a machine in Zag:
-    Drag the panel toward its edge to close it. That, and only that, is the enhancer.
-    <strong>Vaul is complete without it</strong>: without JS there is panel, slide, backdrop, ESC and click outside.
+    What remains <strong>is a</strong> behavior without an equivalent on the platform and without a machine in Zag: drag the panel towards its edge to close it. That, and only that, is the enhancer. <strong>Vaul is complete without it</strong>: without JS there is panel, slide, backdrop, ESC and click outside.
   </p>
   <CodeBlock code={vanilla} label="JavaScript" />
   <p>
-    It closes by distance <strong>or</strong> by speed: a flick is an intention, and waiting for
-    crossing a distance threshold is exactly what makes a blade feel stuck. The speed
-    is measured on the <strong>last millimeters</strong> of the gesture, not on the average: if you drag
-    Slowly, you hesitate, and only then do you pull, the pull is real, averaged from when you put your finger down.
-    dilute until it seems like you did not move. And a flick <em>back</em> beats him from distance: the
-    last word of the hand is your word.
+    Closes by distance <strong>or</strong> by speed: a flick is an intention, and waiting for it to cross a distance threshold is exactly what makes a blade feel stuck. The speed is measured on the last <strong>millimeters</strong> of the gesture, not on the average: if you drag slowly, hesitate, and only then pull, the pull is real, averaged from when you put your finger down it dilutes until it seems like you did not move. And a <em>flick back to</em> beats him by distance: the last word of the hand is his word.
   </p>
   <CodeBlock code={noDrag} label="no drag" />
 
-  <h2>For the other side, resist</h2>
+  <h2>For the other side, it resists</h2>
   <p>
-    Pulling the panel inwards does not detach it from its edge, but it does not leave it stuck either: it gives way
-    starting 1∶1 under the bud and curves to a stop of about 12px. Let the finger move and the thing
-    below is not the only moment in which a surface of direct manipulation reveals itself as a drawing
-    of a surface. The asymmetry <em>is</em> the message: there is no path to that side.
+    Pulling the panel inwards does not detach it from its edge, but it does not leave it stuck either: it gives way, tearing off 1∶1 under the bud and it curves to a stop of about 12px. That the finger moves and the thing below is not the only moment in which a direct manipulation surface gives itself away as a drawing of a surface. The <em>asymmetry is</em> the message: there is no path to that side.
   </p>
   <p>
-    And what appears in that gap is <strong>plus panel</strong>: the material continues past the
-    edge, so lifting a leaf reveals a leaf and not a strip of backdrop. They are two numbers
-    different on purpose, how much it gives (<code>--sk-vaul-overpull</code>) and how far the
-    material (<code>--sk-vaul-material</code>), and the second is declared as a floor above the first
-    so that giving in can never win. Material is painted <em>above</em> elevation: at
-    On the other hand, the shadow of the panel dyed just the strip that had just been revealed, and a raised leaf
-    showed a dark band where its own surface should be, which is exactly the hole
-    that this exists to not have.
+    And what appears in that gap is <strong>plus panel</strong>: the material continues long past the edge, so lifting a sheet reveals a sheet and not a strip of backdrop. They are two different numbers on purpose, how much he gives (<code>--sk-vaul-overpull</code>) and how far the material goes (<code>--sk-vaul-material</code>), and the second is declared as a floor above the first so that giving can never beat him. The material is painted <em>over</em> of the elevation: in reverse, the shadow of the panel dyed just the stripe that was just revealed, and a raised sheet showed a dark band where its own surface should be, which is exactly the hole this exists not to have.
   </p>
   <p>
-    The backdrop goes with that: its opacity follows the drag. A full backdrop with the panel half out
-    I would be lying about what modal is.
+    The backdrop goes with that: its opacity follows the drag. A full backdrop with the panel halfway out would be lying about what is modal.
   </p>
 
-  <h2>The handle is still on the edge</h2>
+  <h2>Handle follows edge</h2>
   <p>
-    It is not cosmetic: a sash pulls down from a bar that crosses its roof, and a side panel
-    It is pulled sideways from a bar along its inside edge. A horizontal pill in a drawer advertises
-    the wrong gesture, and an affordance that lies is worse than having none.
+    It is not cosmetic: a sash is pulled down from a bar across its roof, and a side panel is pulled sideways from a bar along its inside edge. A horizontal pill in a drawer announces the wrong gesture, and an affordance that lies is worse than having none.
   </p>
 
-  <h2>On desktop it does not drag</h2>
+  <h2>On desktop it is not dragged</h2>
   <p>
     The handle is a <strong>tactile</strong> affordance: a bar that is pulled with the thumb. in a pointer
     There is nothing to pull that a click away or an ESC will not do better, so above the breakpoint of the
@@ -302,24 +264,13 @@ const noDrag = `<dialog
 
   <h2>Motion: arriving, leaving and releasing are three intentions</h2>
   <p>
-    Each one with its tokens, never an average duration: entering is announced, leaving is already decided. with
-    <code>prefers-reduced-motion</code> the panel <strong>continues to arrive</strong>, the trip is dropped, not the
-    Vaul, and the fade of the backdrop is what says that the page was inert. Drag is not touched: it is
-    direct manipulation, no motion that the system reproduces for you.
+    Each one with its tokens, never an averaged duration: entering is announced, leaving is already decided. With <code>prefers-reduced-motion</code> the <strong>panel continues to arrive at</strong>, the trip falls, not the Vaul, and the fade of the backdrop is what says that the page was inert. The drag is not touched: it is direct manipulation, not motion that the system reproduces for you.
   </p>
   <p>
-    <a href="/en/transparency"><code>prefers-reduced-transparency</code></a> does not remove the backdrop:
-    makes it opaque. The modality and direct response to drag remain.
+    <a href="/en/transparency"><code>prefers-reduced-transparency</code></a> does not remove the backdrop: it makes it opaque. The modality and direct response to drag remain.
   </p>
   <p>
-    <strong>Drop</strong> is the third, and it is its own: a dropped panel is not exiting, it is ending
-    the impulse that the hand already gave him. That is why it does not consume <code>enter</code> or <code>exit</code>, both
-    are short because no one expects them, but the <code>release</code> intent, with a long duration
-    purpose: cutting it is what causes the panel to stop dead under your finger instead of continuing
-    long. The same attempt for both destinations: returning home and leaving completely are the same shot with
-    different ending. It is the only intent that under <code>prefers-reduced-motion</code> cannot release its
-    trip, the panel is where your finger left it and it has to get somewhere, so let go of the luxury and
-    lands short.
+    <strong>Releasing</strong> is the third, and its own: a released panel is not coming out, it is ending the momentum that the hand already gave it. That is why it does not consume <code>enter</code> or <code>exit</code>, both are short because no one expects them, but rather the <code>release</code> intent, with a long duration on purpose: cutting it is what makes the panel stop suddenly under your finger instead of continuing on. The same attempt for both destinations: returning home and leaving completely are the same shot with a different ending. It is the only intent that under <code>prefers-reduced-motion</code> he cannot let go of his ride, the panel is where his finger left it and he has to get somewhere, so he lets go of the ride and lands short.
   </p>
 
   <h2>Install</h2>
@@ -329,35 +280,36 @@ const noDrag = `<dialog
 </Base>
 
 <style is:global>
-  /* La piel del demo es del consumidor, como siempre: el pattern trae hooks y estructura, no pintura.
-     El ancho lo decide el clamp del pattern; el alto lo da el contenido hasta el techo del sheet.
-     `is:global`: el HTML autorado vive dentro del srcdoc y no lleva el atributo de scope de Astro;
-     el adapter copia esta regla global al frame, una regla scopeada no podría alcanzarlo. */
+  /* The demo's skin belongs to the consumer, as always: the pattern brings hooks and structure, not
+     paint. Width is decided by the pattern's clamp; height comes from the content up to the sheet's
+     ceiling.
+     `is:global`: the authored HTML lives inside the srcdoc and doesn't carry Astro's scope attribute;
+     the adapter copies this global rule to the frame, a scoped rule couldn't reach it. */
   .demo-vaul {
     --sk-vaul-radius: var(--radius-surface) var(--radius-surface) 0 0;
     /* claim a real slice of the screen rather than hugging three rows at the bottom edge */
     min-block-size: min(64dvh, 32rem);
 
-    /* El inset lateral de la hoja, en UN solo lugar: la cabecera, la fila del enlace, las filas de la
-       lista y las acciones tienen que caer sobre la misma vertical, y son cuatro reglas distintas.
-       Un pelo por encima de `md` y no `lg`: en una hoja angosta el salto a `lg` se nota como ancho
-       perdido, mientras que estos 4px sólo despegan el texto del borde. */
+    /* The sheet's side inset, in ONE single place: the header, the link row, the list rows, and the
+       actions all have to land on the same vertical line, and they're four separate rules.
+       A hair above `md` and not `lg`: in a narrow sheet the jump to `lg` reads as lost width, while
+       these 4px only pull the text off the edge. */
     --demo-vaul-inset: calc(var(--space-inset-md) + var(--space-inset-xs));
   }
 
-  /* El sheet ES la columna: header, fila de enlace, lista y acciones son sus hijos directos. Un
-     wrapper interno sólo existiría para volver a declarar el mismo flex y para poner un padding que
-     las filas ya traen. */
+  /* The sheet IS the column: header, link row, list, and actions are its direct children. An
+     inner wrapper would only exist to redeclare the same flex and to add a padding the rows
+     already carry. */
   .demo-vaul[open] {
     display: flex;
     flex-direction: column;
   }
 
-  /* Un sheet se sostiene con una mano: cada fila de padding es una fila de contenido que no entró.
-     Por eso el inset es corto y no `xl`, y por eso las bandas se separan con una línea en vez de con
-     un `gap` grande, una línea cuesta 1px y dice lo mismo.
-     Arriba sí se paga: el handle es una barra de 12px sin aire propio, y con la cabecera pegada a
-     ella el título parecía colgar del borde en vez de empezar la hoja. */
+  /* A sheet is held with one hand: every row of padding is a row of content that didn't fit.
+     That's why the inset is short and not `xl`, and why the bands are separated with a line
+     instead of a large `gap` — a line costs 1px and says the same thing.
+     Up top it's worth paying for: the handle is a 12px bar with no air of its own, and with the
+     header stuck to it the title looked like it was hanging off the edge instead of starting the sheet. */
   .demo-vaul__header {
     display: flex;
     gap: var(--space-inline-md);
@@ -390,11 +342,11 @@ const noDrag = `<dialog
     border-block: 1px solid var(--color-border-subtle);
   }
 
-  /* La lista se lleva el alto sobrante y scrollea sola: header, enlace y acciones se quedan quietos
-     mientras el dedo recorre las personas.
-     El inset lateral NO se pone acá: las filas ya traen el suyo, así que se les pasa el de la hoja
-     por su hook y siguen corriendo de borde a borde. Un padding en la lista las metería hacia adentro
-     y dejaría el divisor corto. */
+  /* The list takes the remaining height and scrolls on its own: header, link, and actions stay
+     put while the finger scrolls through the people.
+     The side inset is NOT set here: the rows already carry their own, so the sheet's is passed to
+     them through its hook and they keep running edge to edge. Padding on the list would pull them
+     inward and leave the divider short. */
   .demo-vaul__people {
     --sk-list-row-padding-x: var(--demo-vaul-inset);
 

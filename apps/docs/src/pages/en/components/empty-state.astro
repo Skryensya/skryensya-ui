@@ -2,6 +2,7 @@
 import Base from "../../../layouts/Base.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { EmptyStateBasicDemo } from "../../../components/react-demos/empty-state";
 import "@skryensya/core/components/empty-state.css";
 
 const install = `@import "@skryensya/core/components/empty-state.css";`;
@@ -11,7 +12,7 @@ import { lucideIcons } from "@skryensya/icons-lucide";
 mountIcons(document, lucideIcons);`;
 const html = `<section class="sk-empty-state">
   <div class="sk-empty-state__icon" aria-hidden="true">
-    <span data-sk-icon="folder-open"></span>
+    <span data-sk-icon="search"></span>
   </div>
   <h2 class="sk-empty-state__title">There are no projects yet</h2>
   <p class="sk-empty-state__description">
@@ -26,12 +27,16 @@ const html = `<section class="sk-empty-state">
 const react = `import { EmptyState } from "@skryensya/react/empty-state";
 import { Icon } from "@skryensya/react/icon";
 
-<EmptyState
-  title="There are no projects yet"
-  description="Create the first one to organize the work."
-  icon={<Icon name="folder-open" />}
-  actions={<button type="button">Crear proyecto</button>}
-/>`;
+function Example() {
+  return (
+    <EmptyState
+      title="There are no projects yet"
+      description="Create the first one to organize the work."
+      icon={<Icon name="search" />}
+      actions={<button type="button">Crear proyecto</button>}
+    />
+  );
+}`;
 ---
 
 <Base
@@ -39,21 +44,25 @@ import { Icon } from "@skryensya/react/icon";
   description="Explain why there is no content and offer a concrete next action."
 >
   <h1>EmptyState</h1>
-  <p class="lede">Explain why there is no content and offer a concrete next action.</p>
+  <p class="lede">Explains why there is no content and offers a concrete next action.</p>
 
-  <h2>Installation</h2>
+  <h2>Facility</h2>
   <Showcase
     html={html}
     js={js}
     react={react}
     label="EmptyState"
     viewport="auto"
-  />
+  >
+    <Fragment slot="react">
+      <EmptyStateBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <p>The title names the state, the description explains, and the action resolves. Do not use EmptyState during loading.</p>
 
-  <h2>Accesibilidad</h2>
+  <h2>Accessibility</h2>
   <p>The icon is decorative; the text and action support the meaning without depending on an illustration.</p>
 
   <h2>CSS</h2>

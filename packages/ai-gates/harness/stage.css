@@ -1,0 +1,50 @@
+/*
+ * The stage's own layout, not the system's. It exists so the visual baseline is readable and stable:
+ * a fixed measure means a case cannot stretch to the viewport, and labels make a diff say WHICH case
+ * moved. None of this styles a component — the components bring their own CSS.
+ */
+#stage {
+  display: grid;
+  gap: 1.5rem;
+  inline-size: 44rem;
+  padding: 1.5rem;
+  font-family: system-ui, sans-serif;
+}
+
+#stage section {
+  display: grid;
+  gap: 0.5rem;
+  border-block-start: 1px solid #d0d0d0;
+  padding-block-start: 0.75rem;
+}
+
+#stage section::before {
+  content: attr(data-case);
+  font-size: 0.75rem;
+  font-family: ui-monospace, monospace;
+  color: #666;
+}
+
+#stage [data-binding] {
+  padding: 0.5rem;
+}
+
+/*
+ * Which half is which, when a diff has to be read by eye.
+ *
+ * The label is a real element OUTSIDE the measured container, and `aria-hidden`, for a reason worth
+ * keeping: generated content lands in the accessibility tree. A first version put this on
+ * `[data-binding]::before`, which added the words "vanilla" and "react" to the two snapshots being
+ * compared, and failed every ARIA case at once. A harness must not be visible to what it measures.
+ */
+#stage .stage-label {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #999;
+}
+
+/* A frame with no intrinsic measure would otherwise take the whole column. */
+#stage .sk-image-frame {
+  inline-size: 16rem;
+}

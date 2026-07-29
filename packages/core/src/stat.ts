@@ -1,3 +1,5 @@
+import type { ComponentContract } from "./contract.js";
+
 /*
  * STAT, a single headline metric: a label, a big value, and an optional change indicator.
  *
@@ -150,3 +152,43 @@ function parseCssDuration(raw: string): number | undefined {
   const n = Number.parseFloat(raw);
   return Number.isFinite(n) ? n : undefined;
 }
+
+/*
+ * A number with a name. The label comes first in the markup so it is read before the value: a screen
+ * reader announcing "1.284" without "usuarios activos" has said nothing.
+ */
+export const statContract = {
+  id: "stat",
+  css: "@skryensya/core/components/stat.css",
+  parts: statParts,
+
+  options: {
+    /** Which way the change points. Paired with the change text, never the only cue. */
+    trend: { type: "enum", values: ["up", "down", "neutral"], attr: "data-trend" },
+  },
+
+  signatures: {
+    Stat: {
+      intent: ["metric", "kpi", "one-number-with-a-name", "dashboard-figure"],
+      host: { element: "div" },
+      options: ["trend"],
+      slots: {
+        label: { accepts: "text", required: true },
+        value: { accepts: "text", required: true },
+        /** The delta, as text. `trend` only says which way it points. */
+        change: { accepts: "text" },
+      },
+      template: {
+        element: "div",
+        part: "root",
+        host: true,
+        children: [
+          { element: "span", part: "label", slot: "label" },
+          { element: "span", part: "value", slot: "value" },
+          { element: "span", part: "change", whenGiven: "change", options: ["trend"], slot: "change" },
+        ],
+      },
+      react: { from: "@skryensya/react/stat", name: "Stat" },
+    },
+  },
+} as const satisfies ComponentContract;

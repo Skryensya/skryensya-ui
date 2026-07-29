@@ -2,6 +2,7 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
+import { GridBasicDemo, GridMulticolDemo } from "../../../components/react-demos/layout";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -9,7 +10,7 @@ const html = `<section
   class="sk-grid"
   data-columns="3"
   data-gap="md"
-  aria-label="Proyectos recientes"
+  aria-label="Recent projects"
 >
   <article
     class="sk-box"
@@ -17,7 +18,7 @@ const html = `<section
     data-border="subtle"
     data-padding="md"
   >
-    Proyecto Atlas
+    Atlas Project
   </article>
   <article
     class="sk-box"
@@ -25,7 +26,7 @@ const html = `<section
     data-border="subtle"
     data-padding="md"
   >
-    Proyecto Brisa
+    Breeze Project
   </article>
   <article
     class="sk-box"
@@ -33,22 +34,26 @@ const html = `<section
     data-border="subtle"
     data-padding="md"
   >
-    Proyecto Cauce
+    Cauce Project
   </article>
 </section>`;
 
 const react = `import { Grid } from "@skryensya/react/grid";
 
-<Grid
-  as="section"
-  columns={3}
-  gap="md"
-  aria-label="Proyectos recientes"
->
-  <article>Proyecto Atlas</article>
-  <article>Proyecto Brisa</article>
-  <article>Proyecto Cauce</article>
-</Grid>`;
+function Example() {
+  return (
+    <Grid
+      as="section"
+      columns={3}
+      gap="md"
+      aria-label="Recent projects"
+    >
+      <article>Atlas Project</article>
+      <article>Breeze Project</article>
+      <article>Cauce Project</article>
+    </Grid>
+  );
+}`;
 
 const multicolHtml = `<section
   class="sk-grid"
@@ -76,8 +81,7 @@ const multicolHtml = `<section
   >
     <strong>Brisa</strong>
     <p class="sk-text" data-size="sm" data-tone="secondary">
-      This note is longer: it occupies several lines and that is why its
-      card is higher than the other two.
+      This note is longer: it occupies several lines and that is why its card is taller than the other two.
     </p>
   </article>
   <article
@@ -88,7 +92,7 @@ const multicolHtml = `<section
   >
     <strong>Cauce</strong>
     <p class="sk-text" data-size="sm" data-tone="secondary">
-      Two lines of<br />content here.
+      Two lines of content here.
     </p>
   </article>
   <article
@@ -108,8 +112,7 @@ const multicolHtml = `<section
   >
     <strong>Eco</strong>
     <p class="sk-text" data-size="sm" data-tone="secondary">
-      Another card with enough text so that its height differs and
-      the packaging in lanes is noticeable.
+      Another card with enough text so that its height differs and the packaging in lanes is noticeable.
     </p>
   </article>
   <article
@@ -129,7 +132,7 @@ const multicolHtml = `<section
   >
     <strong>Gala</strong>
     <p class="sk-text" data-size="sm" data-tone="secondary">
-      Brief summary, with a different rhythm.
+      Brief summary, with another rhythm.
     </p>
   </article>
   <article
@@ -140,8 +143,7 @@ const multicolHtml = `<section
   >
     <strong>Humo</strong>
     <p class="sk-text" data-size="sm" data-tone="secondary">
-      An additional note for occupying the fourth lane in a
-      wide screen.
+      An additional note for occupying the fourth lane on a wide screen.
     </p>
   </article>
 </section>`;
@@ -150,17 +152,21 @@ const multicolReact = `import { Grid } from "@skryensya/react/grid";
 
 // data-multicol activa CSS Multi-column Layout. data-columns es
 // the maximum number of lanes.
-<Grid
-  as="section"
-  columns={4}
-  gap="md"
-  data-multicol
-  aria-label="Notas"
->
-  {notes.map((n) => (
-    <article key={n.id}>{n.body}</article>
-  ))}
-</Grid>`;
+function Example() {
+  return (
+    <Grid
+      as="section"
+      columns={4}
+      gap="md"
+      data-multicol
+      aria-label="Notas"
+    >
+      {notes.map((n) => (
+        <article key={n.id}>{n.body}</article>
+      ))}
+    </Grid>
+  );
+}`;
 
 const multicolCss = `/* data-columns="4": 1 lane → 2 → 3 → 4,
    depending on the viewport. */
@@ -199,33 +205,33 @@ const multicolCss = `/* data-columns="4": 1 lane → 2 → 3 → 4,
 <Base title="Grid" description="Grid: equal columns with named gap and semantics chosen by the user.">
   <h1>Grid</h1>
   <p class="lede">
-    A grid of equal columns for content groups. Each column uses <code>minmax(0, 1fr)</code>:
-    prevents the intrinsic minimum size from widening the columns.
+    A grid of equal columns for content groups. Each column uses <code>minmax(0, 1fr)</code>: prevents the intrinsic minimum size from widening the columns.
   </p>
 
-  <Showcase html={html} react={react} label="Grid" />
+  <Showcase html={html} react={react} label="Grid">
+    <Fragment slot="react">
+      <GridBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>CSS Multi-column Layout</h2>
   <p>
-    <a href="https://www.w3.org/TR/css-multicol-1/">CSS Multi-column Layout Module Level 1</a>
-    calls <strong>multi-column layout</strong> on this flow. <code>data-multicol</code> activates
-    CSS columns: each card ends before splitting and the next continues in the same lane.
+    <a href="https://www.w3.org/TR/css-multicol-1/">CSS Multi-column Layout Module Level 1</a> calls <strong>multi-column layout</strong> to this flow. <code>data-multicol</code> activates CSS columns: each card ends before splitting and the next continues in the same lane.
   </p>
   <p>
-    <code>data-columns</code> marks the maximum number of lanes. With <code>data-columns="4"</code>, the collection
-    use 1 lane before <code>36rem</code>, 2 from <code>36rem</code>, 3 from <code>52rem</code> and 4
-    from <code>72rem</code>. Values <code>1</code>, <code>2</code> and <code>3</code> stop at that
-    maximum.
+    <code>data-columns</code> marks the maximum number of lanes. With <code>data-columns="4"</code>, the collection uses 1 lane before <code>36rem</code>, 2 from <code>36rem</code>, 3 from <code>52rem</code>, and 4 from <code>72rem</code>. Values <code>1</code>, <code>2</code> and <code>3</code> stop at that maximum.
   </p>
   <CodeBlock code={multicolCss} label="patterns/layout.css" />
-  <Showcase html={multicolHtml} react={multicolReact} label="Multi-column layout" />
+  <Showcase html={multicolHtml} react={multicolReact} label="Multi-column layout">
+    <Fragment slot="react">
+      <GridMulticolDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
-    Columns fill one lane from top to bottom before moving on to the next. Maintain an order
-    useful in the DOM and use it for standalone cards; not for a sequence whose visual order of
-    left to right has meaning.
+    Columns fill a lane from top to bottom before moving to the next. Preserve a useful order in the DOM and use it for independent cards; not for a sequence whose visual order from left to right has meaning.
   </p>
 
-  <h2>HTML autorado</h2>
+  <h2>Authored HTML</h2>
   <p>
     Choose the semantic element, such as <code>section</code>, and apply <code>sk-grid</code>. Does not require vanilla initialization.
   </p>
@@ -237,14 +243,12 @@ const multicolCss = `/* data-columns="4": 1 lane → 2 → 3 → 4,
   <p>The <code>as</code> prop preserves that semantic choice.</p>
   <p>The code is in the <strong>React</strong> tab of the preview.</p>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
-    <li><code>sk-grid</code> creates a grid of equal columns; <code>data-columns</code> supports <code>1</code>, <code>2</code>, <code>3</code> or <code>4</code>.</li>
+    <li><code>sk-grid</code> creates a grid of equal columns; <code>data-columns</code> supports <code>1</code>, <code>2</code>, <code>3</code>, or <code>4</code>.</li>
     <li><code>data-gap</code> supports <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> or <code>xl</code>; The default value is <code>md</code>.</li>
     <li>
-      <code>data-multicol</code> activates the wall of cards by columns. <code>data-columns</code>
-      defines its maximum number of lanes: 1 → 2 → 3 → 4 at breakpoints <code>36rem</code>,
-      <code>52rem</code> and <code>72rem</code>. In React it is passed as <code>data-multicol</code>.
+      <code>data-multicol</code> activates the column card wall. <code>data-columns</code> defines its maximum number of lanes: 1 → 2 → 3 → 4 at breakpoints <code>36rem</code>, <code>52rem</code> and <code>72rem</code>. In React it is passed as <code>data-multicol</code>.
     </li>
     <li>In React, <code>Grid</code> receives <code>as</code>, <code>columns</code>, and <code>gap</code>; <code>columns</code> defaults to <code>1</code>.</li>
   </ul>

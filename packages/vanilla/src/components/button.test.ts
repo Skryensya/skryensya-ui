@@ -59,7 +59,7 @@ describe("Button Vanilla contracts", () => {
   });
 });
 
-describe("ButtonLink Vanilla contracts", () => {
+describe("Button.navigation Vanilla contracts", () => {
   it("enhances an authored anchor without changing its navigation semantics", () => {
     const root = mount(
       '<a class="sk-button sk-interactive" data-sk-button href="/docs" rel="next">Documentation</a>',

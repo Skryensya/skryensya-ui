@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import Showcase from "../../components/Showcase.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { SidebarDemo } from "../../components/react-demos/sidebar";
 
 
 
@@ -82,36 +83,40 @@ import {
   SidebarTrigger,
 } from "@skryensya/react/sidebar";
 
-<Sidebar
-  defaultCollapsed={false}
-  onCollapsedChange={({ collapsed }) => persist(collapsed)}
->
-  <SidebarHeader>
-    <SidebarTrigger
-      label="Contraer navegación"
-      icon={<Icon name="menu" />}
-    />
-  </SidebarHeader>
+function Example() {
+  return (
+    <Sidebar
+      defaultCollapsed={false}
+      onCollapsedChange={({ collapsed }) => SomeFunction(collapsed)}
+    >
+      <SidebarHeader>
+        <SidebarTrigger
+          label="Contraer navegación"
+          icon={<Icon name="menu" />}
+        />
+      </SidebarHeader>
 
-  <SidebarContent>
-    <NavList aria-label="Principal">
-      <NavListGroup label="Espacio">
-        <NavListLink href="/" icon={<Icon name="info" />} current>
-          Inicio
-        </NavListLink>
-        <NavListLink
-          href="/reportes"
-          icon={<Icon name="calendar" />}
-          trailing="12"
-        >
-          Reportes
-        </NavListLink>
-      </NavListGroup>
-    </NavList>
-  </SidebarContent>
+      <SidebarContent>
+        <NavList aria-label="Principal">
+          <NavListGroup label="Espacio">
+            <NavListLink href="/" icon={<Icon name="info" />} current>
+              Inicio
+            </NavListLink>
+            <NavListLink
+              href="/reportes"
+              icon={<Icon name="calendar" />}
+              trailing="12"
+            >
+              Reportes
+            </NavListLink>
+          </NavListGroup>
+        </NavList>
+      </SidebarContent>
 
-  <SidebarFooter>v0.3.0</SidebarFooter>
-</Sidebar>;`;
+      <SidebarFooter>v0.3.0</SidebarFooter>
+    </Sidebar>
+  );
+}`;
 
 ---
 
@@ -140,6 +145,9 @@ import {
         <p>El contenido de la app va aquí.</p>
       </div>
     </div>
+    <Fragment slot="react">
+      <SidebarDemo client:load />
+    </Fragment>
   </Showcase>
 
   <h2>Por qué no es un <code>&lt;details&gt;</code></h2>

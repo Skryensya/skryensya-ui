@@ -11,25 +11,16 @@ const always = `<div
   tabindex="0"
 >
   <p>
-    Region with native scroll and system chrome: track and thumb
-    always visible. The wheel, the momentum and the touch continue
-    being from the platform; the pattern only paints the surface
-    that the browser exposes.
+    Region with native scroll and system chrome: track and thumb always visible. The wheel, momentum and touch remain from the platform; The pattern only paints the surface that the browser exposes.
   </p>
   <p>
-    Add <code>sk-scrollbar</code> to any container with
-    <code>overflow: auto</code> (or <code>scroll</code>). Without the
-    class, the OS paints its native scrollbar.
+    Adds <code>sk-scrollbar</code> to any container with <code>overflow: auto</code> (or <code>scroll</code>). Without the class, the OS paints its native scrollbar.
   </p>
   <p>
-    Third paragraph to force overflow and see the
-    thumb. Change mode or contrast above: hooks continue
-    to semantic tokens.
+    Third paragraph to force overflow and view the thumb. Change mode or contrast above: hooks follow semantic tokens.
   </p>
   <p>
-    Fourth paragraph. The size of the thumb is decided by the browser
-    depending on how much content there is; the system only sets the width
-    of the rail and the colors.
+    Fourth paragraph. The size of the thumb is decided by the browser depending on how much content there is; The system only sets the width of the rail and the colors.
   </p>
 </div>`;
 
@@ -38,53 +29,38 @@ const reveal = `<div
   tabindex="0"
 >
   <p>
-    Same region, variant <code>sk-scrollbar--reveal</code>:
-    the gutter is reserved (<code>scrollbar-gutter: stable</code>)
-    but the thumb is transparent until you hover or
-    keyboard focus enters the region.
+    Same region, variant <code>sk-scrollbar--reveal</code>: the gutter is reserved (<code>scrollbar-gutter: stable</code>) but the thumb is transparent until you hover or keyboard focus enters the region.
   </p>
   <p>
-    When revealing, a filled track does not appear: only the thumb,
-    where are you A painted rail would read as an edge that the
-    layout did not ask for.
+    When revealing, a filled track does not appear: only the thumb, where you are. A painted rail would read as a border that the layout did not call for.
   </p>
   <p>
-    Mouse over here, or tab to this box, to
-    see the thumb. When he leaves, he remains silent again without moving his
-    layout.
+    Mouse over here, or tab to this box, to see the thumb. When exiting, it remains silent again without moving the layout.
   </p>
   <p>
-    Ideal on sidebars and dense rails, where a scrollbar
-    always on competes with the content.
+    Ideal in dense sidebars and rails, where an always-on scrollbar competes with content.
   </p>
 </div>`;
 ---
 
 <Base
   title="Scrollbar"
-  description="Pattern opt-in que pinta la scrollbar nativa del navegador: siempre visible, o silenciosa hasta hover/foco."
+  description="Opt-in pattern that paints the browser's native scrollbar: always visible or quiet until hover and focus."
 >
   <h1>Scrollbar</h1>
   <p class="lede">
-    It does not replace the native scroll. Color the surface that the browser already exposes
-    (<code>scrollbar-color</code>, <code>scrollbar-width</code> and the pseudo-elements
-    <code>::-webkit-scrollbar*</code>). The wheel, the momentum, the touch pad and the
-    OS preferences remain platform-specific.
+    Does not replace the native scroll. Colors the surface that the browser already exposes (<code>scrollbar-color</code>, <code>scrollbar-width</code> and the <code>::-webkit-scrollbar*</code> pseudo-elements). The wheel, momentum, touch pad, and OS preferences remain platform-specific.
   </p>
 
-  <h2>Why is it a pattern?</h2>
+  <h2>Why it is a pattern</h2>
   <p>
-    Several hosts share the same rail: the docs sidebar, the drawer, the
-    customize. Sending the paint once prevents each surface from reinventing a thumb.
-    It is <strong>opt-in</strong>, like nav-list: an app can keep the OS scrollbar.
+    Several hosts share the same rail: the docs sidebar, the drawer, the customize canvas. Sending the paint once prevents each surface from reinventing a thumb. It is <strong>opt-in</strong>, like nav-list: an app can keep the OS scrollbar.
   </p>
 
   <h2>Install</h2>
   <CodeBlock code={import_} label="CSS" />
   <p>
-    Then mark the region that is already scrolling (<code>overflow: auto</code> or
-    <code>scroll</code>, with a limited size). The pattern does not define the overflow: it only paints
-    the scrollbar that the browser exposes.
+    Then mark the region that is already scrolling (<code>overflow: auto</code> or <code>scroll</code>, with a limited size). The pattern does not define the overflow: it only paints the scrollbar that the browser exposes.
   </p>
   <CodeBlock
     code={`<!-- your container with overflow: auto -->
@@ -95,67 +71,54 @@ const reveal = `<div
     label="HTML"
   />
 
-  <h2>Siempre visible</h2>
+  <h2>Always visible</h2>
   <p>
-    <code>sk-scrollbar</code> leaves track and thumb visible. Use it when scrolling is part
-    of the UI map (a code panel, a wide table).
+    <code>sk-scrollbar</code> leaves track and thumb visible. Use it when the scroll is part of the UI map (a code panel, a wide table).
   </p>
   <Showcase html={always} label="sk-scrollbar" />
 
   <h2>Reveal on hover (and focus)</h2>
   <p>
-    <code>sk-scrollbar sk-scrollbar--reveal</code> reserves the gutter so as not to move the layout, and
-    leave the thumb transparent until <code>:hover</code> or <code>:focus-within</code>. At
-    reveal only the thumb appears, not a filled track.
+    <code>sk-scrollbar sk-scrollbar--reveal</code> reserves the gutter so as not to move the layout, and leaves the thumb transparent until <code>: hover</code> or <code>: focus-within</code>. When revealed, only the thumb appears, not a filled track.
   </p>
   <Showcase html={reveal} label="sk-scrollbar--reveal" note="hover or tab to reveal" />
   <p>
-    The sidebar rail in this documentation uses exactly this variant: still at rest,
-    legible when you touch it.
+    The sidebar rail in this documentation uses exactly this variant: still at rest, readable when you touch it.
   </p>
 
   <h2>Which one to choose</h2>
   <ul>
     <li>
-      <strong>Always visible</strong> when the reader needs to know up front that there is more
-      content (long lists, logs, editors).
+      <strong>Always visible</strong> when the reader needs to know in advance that there is more content (long lists, logs, editors).
     </li>
     <li>
-      <strong>Reveal</strong> when chrome competes with content (navigation, touch,
-      narrow panels). The stable gutter prevents CLS when the thumb appears.
+      <strong>Reveal</strong> when chrome competes with content (navigation, touch, narrow panels). The stable gutter prevents CLS when the thumb appears.
     </li>
   </ul>
   <p>
-    Freezing the scroll of the <em>document</em> behind a modal is another pattern:
-    <a class="sk-link sk-interactive" href="/en/scroll-lock">scroll lock</a>. They do not step on one another: one paints
-    regions, the other freezes <code>html</code>.
+    Freezing the scroll of the <em>document</em> behind a modal is another pattern: <a class="sk-link sk-interactive" href="/en/scroll-lock">scroll lock</a>. They do not step on each other: one paints regions, the other freezes <code>html</code>.
   </p>
 
   <StylingHooks
     groups={[{ file: "patterns/scrollbar.css", probe: "sk-scrollbar" }]}
   />
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
     <li>
-      Opt-in: import <code>patterns/scrollbar.css</code> and mark the region with
-      <code>sk-scrollbar</code>.
+      Opt-in: Import <code>patterns/scrollbar.css</code> and mark the region with <code>sk-scrollbar</code>.
     </li>
     <li>
-      The region must be scrollable (<code>overflow: auto|scroll</code> and a size
-      bounded). The pattern does not define the overflow.
+      The region must be scrollable (<code>overflow: auto|scroll</code> and a limited size). The pattern does not define the overflow.
     </li>
     <li>
-      <code>sk-scrollbar--reveal</code> also requires <code>sk-scrollbar</code> (the variant
-      only re-declare hooks; the base provides the rest).
+      <code>sk-scrollbar--reveal</code> also requires <code>sk-scrollbar</code> (the variant only re-declares hooks; the base provides the rest).
     </li>
     <li>
-      It does not invent a thumb in JS or hide the native scroll with a fake div. If the OS uses
-      scrollbar overlay, the reveal gutter is a no-op and does not bother.
+      Do not invent a thumb in JS or hide the native scroll with a fake div. If the OS uses scrollbar overlay, the reveal gutter is a no-op and does not bother.
     </li>
     <li>
-      The <code>--sk-scrollbar-*</code> hooks are stepped on from your CSS on
-      <code>.sk-scrollbar</code>, just like any other styling hook.
+      The <code>--sk-scrollbar-*</code> hooks are stepped on from your CSS on <code>.sk-scrollbar</code>, just like any other styling hook.
     </li>
   </ul>
 </Base>

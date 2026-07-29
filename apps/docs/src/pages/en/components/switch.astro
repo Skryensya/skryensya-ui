@@ -1,7 +1,10 @@
 ---
+import "@skryensya/core/components/tile.css";
 import Base from "../../../layouts/Base.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { SwitchDemo, TileSwitchDemo } from "../../../components/react-demos/switch";
 
 
 
@@ -20,34 +23,166 @@ const html = `<label class="sk-switch">
 
 const react = `import { Switch } from "@skryensya/react/switch";
 
-<Switch
-  name="deploy-automatically"
-  defaultChecked
-  onCheckedChange={(details) => {
-    console.log(details.checked); // true | false
-  }}
+function Example() {
+  return (
+    <Switch
+      name="deploy-automatically"
+      defaultChecked
+      onCheckedChange={(details) => {
+        console.log(details.checked); // true | false
+      }}
+    >
+      Deploy automatically
+    </Switch>
+  );
+}`;
+
+const tileSwitchHtml = `<div
+  class="sk-inline"
+  style="align-items: stretch"
 >
-  Deploy automatically
-</Switch>;`;
+  <label
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-scope="tile"
+    data-part="root"
+    data-sk-tile-switch
+    data-name="preferences"
+    data-value="auto-deploy"
+    data-default-checked="true"
+    style="flex: 1"
+  >
+    <input type="checkbox" checked data-part="input" role="switch" />
+    <span class="sk-tile__content" data-part="content">
+      <span class="sk-tile__title">Auto-deploy</span>
+      <span class="sk-tile__description">
+        Publish every push to main without manual approval.
+      </span>
+    </span>
+    <span
+      class="sk-switch__control"
+      data-part="indicator"
+      aria-hidden="true"
+    >
+      <span class="sk-switch__thumb"></span>
+    </span>
+  </label>
+
+  <label
+    class="sk-tile sk-tile--interactive sk-interactive"
+    data-scope="tile"
+    data-part="root"
+    data-sk-tile-switch
+    data-name="preferences"
+    data-value="preview-comments"
+    style="flex: 1"
+  >
+    <input type="checkbox" data-part="input" role="switch" />
+    <span class="sk-tile__content" data-part="content">
+      <span class="sk-tile__title">Preview comments</span>
+      <span class="sk-tile__description">
+        Post a preview link on every pull request.
+      </span>
+    </span>
+    <span
+      class="sk-switch__control"
+      data-part="indicator"
+      aria-hidden="true"
+    >
+      <span class="sk-switch__thumb"></span>
+    </span>
+  </label>
+</div>`;
+
+const tileSwitchVanilla = `import { initComponents } from "@skryensya/vanilla/auto";
+
+// Each label is authored with data-sk-tile-switch (data-name, data-value,
+// data-default-checked) plus its role="switch" input and its indicator.
+// initComponents hydrates them with the @zag-js/checkbox machine.
+await initComponents();
+
+for (const root of document.querySelectorAll(
+  "[data-sk-tile-switch]",
+)) {
+  root.addEventListener("sk:checkedchange", (event) => {
+    console.log(root.dataset.value, event.detail.checked);
+  });
+}`;
+
+const tileSwitchReact = `import { TileSwitch } from "@skryensya/react/tile-switch";
+
+const preferences = [
+  {
+    value: "auto-deploy",
+    title: "Auto-deploy",
+    description: "Publish every push to main without manual approval.",
+  },
+  {
+    value: "preview-comments",
+    title: "Preview comments",
+    description: "Post a preview link on every pull request.",
+  },
+];
+
+function Example() {
+  return (
+    <div className="sk-inline" style={{ alignItems: "stretch" }}>
+      {preferences.map((preference, index) => (
+        <TileSwitch
+          key={preference.value}
+          name="preferences"
+          value={preference.value}
+          defaultChecked={index === 0}
+          onCheck={(details) => {
+            console.log(preference.value, details.checked);
+          }}
+          style={{ flex: 1 }}
+        >
+          <span className="sk-tile__title">{preference.title}</span>
+          <span className="sk-tile__description">
+            {preference.description}
+          </span>
+        </TileSwitch>
+      ))}
+    </div>
+  );
+}`;
 ---
 
 <Base title="Switch" description="Switch: A persistent binary preference over native checkbox.">
   <h1>Switch</h1>
   <p class="lede">A binary state that takes effect immediately: on or off. For a selection that requires saving, use Checkbox.</p>
 
-  <Showcase html={html} react={react} label="Switch" />
+  <Showcase html={html} react={react} label="Switch">
+    <Fragment slot="react">
+      <SwitchDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>Does not require vanilla initialization: the native checkbox preserves keyboard, reset and form submit. React only encapsulates that same control.</p>
 
+  <h2>Surface switch: TileSwitch</h2>
+  <p>
+    When the preference needs a title, a description, and the whole surface as target, use
+    <code>TileSwitch</code>. It's the same control (<code>sk-switch__control</code> + thumb); only
+    the container changes, the same relationship <code>TileCheckbox</code> has to Checkbox.
+  </p>
+  <Showcase html={tileSwitchHtml} react={tileSwitchReact} label="TileSwitch">
+    <Fragment slot="react">
+      <TileSwitchDemo client:load />
+    </Fragment>
+  </Showcase>
+  <p>The <code>tile-switch</code> enhancer (Svelte + <code>@zag-js/checkbox</code>, the same machine as TileCheckbox and React) hydrates each <code>data-sk-tile-switch</code> label with <code>initComponents()</code>: it controls its (hidden, <code>role="switch"</code>) <code>input[data-part="input"]</code> and syncs <code>data-state</code>; the <code>[data-part="indicator"]</code> is the visual control.</p>
+  <CodeBlock code={tileSwitchVanilla} label="JavaScript" />
 
   <h2>React</h2>
   <p>The code is in the <strong>React</strong> tab of the preview.</p>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
     <li>The input is still <code>checkbox</code>; <code>role="switch"</code> communicates the correct semantics.</li>
     <li><code>defaultChecked</code> leaves the value to the browser; <code>checked</code> controls it.</li>
-    <li><code>onCheckedChange</code> reports the intent; It does not infer persistence or make requests.</li>
-    <li>Use it only if the change takes effect immediately and there are exactly two states.</li>
+    <li><code>onCheckedChange</code> (<code>onCheck</code> on TileSwitch) reports the intent; it does not infer persistence or make requests.</li>
+    <li>Use only if the change takes effect immediately and there are exactly two states: no indeterminate, unlike Checkbox.</li>
+    <li>TileSwitch reuses <code>sk-switch__control</code> and the same thumb; it does not invent another control.</li>
   </ul>
   <StylingHooks groups={[{ file: "components/switch.css", probe: "sk-switch" }]} />
 </Base>

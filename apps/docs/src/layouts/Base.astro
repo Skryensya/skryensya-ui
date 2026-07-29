@@ -210,12 +210,15 @@ const palettePreset = (id: string, name: string, accent: string, neutral: string
   accent,
   ramps: { ...createRamp("accent", accent), ...createRamp("neutral", neutral) },
 });
+const paletteNames = locale === "en"
+  ? { azul: "Blue", violeta: "Violet", teal: "Teal", rosa: "Pink", naranja: "Orange" }
+  : { azul: "Azul", violeta: "Violeta", teal: "Turquesa", rosa: "Rosa", naranja: "Naranja" };
 const PALETTE_PRESETS = [
-  palettePreset("azul", "Azul", "oklch(50.4% 0.169 259.6)", "oklch(58.8% 0.018 260)"),
-  palettePreset("violeta", "Violeta", "oklch(51% 0.185 300)", "oklch(58.8% 0.018 260)"),
-  palettePreset("teal", "Turquesa", "oklch(50% 0.115 210)", "oklch(58% 0.08 248)"),
-  palettePreset("rosa", "Rosa", "oklch(56% 0.185 354)", "oklch(58.8% 0.018 260)"),
-  palettePreset("naranja", "Naranja", "oklch(52% 0.15 50)", "oklch(59% 0.08 80)"),
+  palettePreset("azul", paletteNames.azul, "oklch(50.4% 0.169 259.6)", "oklch(58.8% 0.018 260)"),
+  palettePreset("violeta", paletteNames.violeta, "oklch(51% 0.185 300)", "oklch(58.8% 0.018 260)"),
+  palettePreset("teal", paletteNames.teal, "oklch(50% 0.115 210)", "oklch(58% 0.08 248)"),
+  palettePreset("rosa", paletteNames.rosa, "oklch(56% 0.185 354)", "oklch(58.8% 0.018 260)"),
+  palettePreset("naranja", paletteNames.naranja, "oklch(52% 0.15 50)", "oklch(59% 0.08 80)"),
 ];
 ---
 

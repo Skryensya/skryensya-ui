@@ -1,3 +1,5 @@
+import type { ComponentContract } from "./contract.js";
+
 /*
  * PROGRESS, a determinate bar for a value between 0 and a max.
  *
@@ -20,3 +22,48 @@ export function progressFraction(value: number, max: number): number {
   if (!Number.isFinite(value) || !Number.isFinite(max) || max <= 0) return 0;
   return Math.min(Math.max(value, 0), max) / max;
 }
+
+/*
+ * A wait whose end is known, which is the whole difference from a Loader.
+ *
+ * `role="progressbar"` plus the three aria-value attributes are not decoration: they are what makes
+ * "62%" audible. The fill is a child element rather than a background so the bar can be styled
+ * without the value living in CSS.
+ */
+export const progressContract = {
+  id: "progress",
+  css: "@skryensya/core/components/progress.css",
+  parts: progressParts,
+
+  options: {
+    value: { type: "number", default: 0, attr: "aria-valuenow" },
+    max: { type: "number", default: 100, attr: "aria-valuemax" },
+    tone: {
+      type: "enum",
+      values: ["accent", "success", "warning", "danger"],
+      default: "accent",
+      attr: "data-tone",
+    },
+    /** The accessible name. A bar with no name announces a number about nothing. */
+    label: { type: "string", attr: "aria-label" },
+  },
+
+  signatures: {
+    Progress: {
+      intent: ["determinate-progress", "percentage-complete", "upload-progress"],
+      host: { element: "div" },
+      options: ["value", "max", "tone", "label"],
+      requires: ["label"],
+      slots: {},
+      template: {
+        element: "div",
+        part: "root",
+        host: true,
+        attrs: { role: "progressbar", "aria-valuemin": "0" },
+        style: [{ property: "--sk-progress-fill", percentOf: ["value", "max"] }],
+        children: [{ element: "div", part: "bar" }],
+      },
+      react: { from: "@skryensya/react/progress", name: "Progress" },
+    },
+  },
+} as const satisfies ComponentContract;

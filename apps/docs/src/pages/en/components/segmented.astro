@@ -2,6 +2,7 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
+import { SegmentedDemo } from "../../../components/react-demos/segmented";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
@@ -42,18 +43,24 @@ const html = `<div
   </button>
 </div>`;
 
-const react = `import { SegmentedControl } from "@skryensya/react/segmented";
+const react = `import { useState } from "react";
+import { SegmentedControl } from "@skryensya/react/segmented";
 
-<SegmentedControl
-  aria-label="Rango"
-  defaultValue="day"
-  onValueChange={setRange}
-  options={[
-    { value: "day", label: "Day" },
-    { value: "week", label: "Week" },
-    { value: "month", label: "Month" },
-  ]}
-/>;`;
+function Example() {
+  const [range, setRange] = useState("day");
+  return (
+    <SegmentedControl
+      aria-label="Rango"
+      value={range}
+      onValueChange={setRange}
+      options={[
+        { value: "day", label: "Day" },
+        { value: "week", label: "Week" },
+        { value: "month", label: "Month" },
+      ]}
+    />
+  );
+}`;
 
 const js = `import { initComponents } from "@skryensya/vanilla/auto";
 
@@ -63,18 +70,16 @@ await initComponents();`;
 <Base title="SegmentedControl" description="SegmentedControl: unique and visible choice over a small group, with radiogroup semantics.">
   <h1>SegmentedControl</h1>
   <p class="lede">
-    SegmentedControl is a single choice from a small, fixed set, displayed at once: a
-    radiogroup with button bar clothes. To navigate between panels use
-    <a href="/en/components/tabs">Tabs</a>; for many options or free text,
-    <a href="/en/components/select">Select</a>.
+    SegmentedControl is a single choice of a small, fixed set, shown at once: a radiogroup with button bar clothing. To navigate between panels use <a href="/en/components/tabs">Tabs</a>; for many options or free text, <a href="/en/components/select">Select</a>.
   </p>
 
-  <Showcase html={html} react={react} label="SegmentedControl" />
+  <Showcase html={html} react={react} label="SegmentedControl">
+    <Fragment slot="react">
+      <SegmentedDemo client:load />
+    </Fragment>
+  </Showcase>
   <p>
-    The vanilla enhancer selects with click and arrows; <code>Home</code> and <code>End</code> jump
-    to the first and last segment. The chosen option is <code>data-value</code> and is announced with
-    <code>aria-checked</code>. Each segment paints <code>--size-control-sm</code> and retains one hit
-    from <code>44px</code> via <code>::after</code> (indicator follows painted case).
+    The vanilla enhancer selects with click and arrows; <code>Home</code> and <code>End</code> jump to the first and last segment. The chosen option is <code>data-value</code> and is announced with <code>aria-checked</code>. Each segment paints <code>--size-control-sm</code> and retains a hit from <code>44px</code> via <code>:: after</code> (the indicator follows the painted box).
   </p>
 
   <h2>Install</h2>

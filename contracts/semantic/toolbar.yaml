@@ -1,0 +1,17 @@
+# La estructura vive en packages/core/src/toolbar.ts. Acá sólo por qué se elige.
+
+Toolbar:
+  useWhen:
+    - "hay muchos controles juntos y el teclado no debería pagar una parada por cada uno"
+  avoidWhen:
+    - "son dos o tres botones sueltos; ahí un Inline alcanza"
+  alternatives:
+    - Inline
+
+ToolbarGroup:
+  useWhen:
+    - "un subconjunto de controles que van juntos"
+
+ToolbarSeparator:
+  useWhen:
+    - "hay que separar visualmente dos grupos"

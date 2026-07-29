@@ -1,0 +1,22 @@
+# La estructura vive en packages/core/src/layout.ts. Acá sólo por qué se elige.
+
+Stack:
+  useWhen:
+    - "las cosas van una debajo de otra con un ritmo constante"
+    - "es la disposición por defecto de un formulario"
+
+Inline:
+  useWhen:
+    - "las cosas van una al lado de otra: una fila de botones, un rótulo con su valor"
+  avoidWhen:
+    - "son columnas de igual ancho; eso es un Grid"
+  alternatives:
+    - Grid
+
+Grid:
+  useWhen:
+    - "columnas de igual ancho: una grilla de tarjetas"
+  avoidWhen:
+    - "los anchos son distintos entre sí; eso es un Inline"
+  alternatives:
+    - Inline

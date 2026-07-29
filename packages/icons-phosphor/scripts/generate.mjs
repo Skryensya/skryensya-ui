@@ -47,6 +47,7 @@ const MAP = {
   warning: "warning",
   danger: "x-circle",
   calendar: "calendar",
+  clock: "clock",
   upload: "upload",
   download: "download",
   settings: "gear",

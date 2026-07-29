@@ -5,6 +5,7 @@ import Showcase from "../../components/Showcase.astro";
 // El preview clona las hojas del <head> de la página, así que lo que use el demo tiene que estar
 // importado acá: `.sk-truncate` es del demo, no del paquete.
 import "../../examples/tooltip.css";
+import { TooltipDemo } from "../../components/react-demos/tooltip";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
@@ -16,80 +17,88 @@ const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
  * Sin contenedor de layout: `.sk-tooltip` es `inline-flex`, así que los tres fluyen en línea donde
  * sea que se peguen. Un wrapper acá sería markup que no es tooltip.
  */
-const html = `<!-- 1. Un control icon-only. El nombre vive en aria-label; el tooltip lo amplía. -->
-<span class="sk-tooltip" data-sk-anchor data-sk-placement="block-end">
-  <button
-    class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
-    type="button"
-    data-variant="ghost"
-    data-icon-only
-    aria-label="Exportar"
-    data-sk-anchor-trigger
-  ><span data-sk-icon="download"></span></button>
-  <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-    <!-- La flecha, opcional: se autora o no existe. Sale del trigger, no del centro de la caja. -->
-    <span class="sk-anchored-arrow" aria-hidden="true"></span>
-    <span class="sk-tooltip__content" data-sk-anchor-content>Descarga el periodo visible en CSV</span>
-  </span>
-</span>
-
-<!-- 2. Explicar un dato que ya está en pantalla: el número se ve siempre, el tooltip dice cómo se calcula. -->
-<span class="sk-inline" data-gap="xs">
-  Ingresos $48.2k
-  <span class="sk-tooltip" data-sk-anchor>
+const html = `<div class="sk-inline" data-gap="md" data-align="center">
+  <!-- 1. Un control icon-only. El nombre vive en aria-label; el tooltip lo amplía. -->
+  <span class="sk-tooltip" data-sk-anchor data-sk-placement="block-end">
     <button
       class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
       type="button"
       data-variant="ghost"
       data-icon-only
-      data-size="sm"
-      aria-label="Cómo se calcula Ingresos"
+      aria-label="Exportar"
       data-sk-anchor-trigger
-    ><span data-sk-icon="info"></span></button>
+    ><span data-sk-icon="download"></span></button>
     <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+      <!-- La flecha, opcional: se autora o no existe. Sale del trigger, no del centro de la caja. -->
       <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>Suma facturada del periodo, sin impuestos ni reembolsos</span>
+      <span class="sk-tooltip__content" data-sk-anchor-content>Descarga el periodo visible en CSV</span>
     </span>
   </span>
-</span>
 
-<!-- 3. Devolver lo que el ancho tuvo que cortar. El trigger es el propio texto truncado. -->
-<span class="sk-tooltip" data-sk-anchor data-sk-placement="inline-end">
-  <span
-    class="sk-truncate sk-tooltip__trigger sk-anchor"
-    tabindex="0"
-    data-sk-anchor-trigger
-  >Migración del pipeline de facturación</span>
-  <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-    <span class="sk-anchored-arrow" aria-hidden="true"></span>
-    <span class="sk-tooltip__content" data-sk-anchor-content>Migración del pipeline de facturación</span>
+  <!-- 2. Explicar un dato que ya está en pantalla: el número se ve siempre, el tooltip dice cómo se calcula. -->
+  <span class="sk-inline" data-gap="xs">
+    Ingresos $48.2k
+    <span class="sk-tooltip" data-sk-anchor>
+      <button
+        class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
+        type="button"
+        data-variant="ghost"
+        data-icon-only
+        data-size="sm"
+        aria-label="Cómo se calcula Ingresos"
+        data-sk-anchor-trigger
+      ><span data-sk-icon="info"></span></button>
+      <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+        <span class="sk-anchored-arrow" aria-hidden="true"></span>
+        <span class="sk-tooltip__content" data-sk-anchor-content>Suma facturada del periodo, sin impuestos ni reembolsos</span>
+      </span>
+    </span>
   </span>
-</span>`;
+
+  <!-- 3. Devolver lo que el ancho tuvo que cortar. El trigger es el propio texto truncado. -->
+  <span class="sk-tooltip" data-sk-anchor data-sk-placement="inline-end">
+    <span
+      class="sk-truncate sk-tooltip__trigger sk-anchor"
+      tabindex="0"
+      data-sk-anchor-trigger
+    >Migración del pipeline de facturación</span>
+    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+      <span class="sk-anchored-arrow" aria-hidden="true"></span>
+      <span class="sk-tooltip__content" data-sk-anchor-content>Migración del pipeline de facturación</span>
+    </span>
+  </span>
+</div>`;
 
 const react = `import { Tooltip } from "@skryensya/react/tooltip";
 
-// 1. Un control icon-only. El nombre vive en aria-label, el tooltip lo amplía.
-//    \`arrow\` es lo mismo que autorar <span className="sk-anchored-arrow" />
-//    dentro del positioner en el HTML: opcional en los dos bindings, y off
-//    por defecto.
-<Tooltip content="Descarga el periodo visible en CSV" placement="block-end" arrow>
-  <button aria-label="Exportar" type="button">
-    <DownloadIcon />
-  </button>
-</Tooltip>
+function Example() {
+  return (
+    <div className="sk-inline" data-gap="md" data-align="center">
+      {/* 1. Un control icon-only. El nombre vive en aria-label, el tooltip lo amplía.
+             \`arrow\` es lo mismo que autorar <span className="sk-anchored-arrow" />
+             dentro del positioner en el HTML: opcional en los dos bindings, y off
+             por defecto. */}
+      <Tooltip content="Descarga el periodo visible en CSV" placement="block-end" arrow>
+        <button aria-label="Exportar" type="button">
+          <DownloadIcon />
+        </button>
+      </Tooltip>
 
-// 2. Explicar un dato que ya está en pantalla; esto cuenta cómo se calcula.
-<Tooltip content="Suma facturada del periodo, sin impuestos ni reembolsos" arrow>
-  <button aria-label="Cómo se calcula Ingresos" type="button">
-    <InfoIcon />
-  </button>
-</Tooltip>
+      {/* 2. Explicar un dato que ya está en pantalla; esto cuenta cómo se calcula. */}
+      <Tooltip content="Suma facturada del periodo, sin impuestos ni reembolsos" arrow>
+        <button aria-label="Cómo se calcula Ingresos" type="button">
+          <InfoIcon />
+        </button>
+      </Tooltip>
 
-// 3. Devolver lo que el ancho cortó. tabIndex hace que el texto truncado
-//    sea alcanzable: sin foco, el tooltip sería sólo para mouse.
-<Tooltip content={row.title} placement="inline-end" arrow>
-  <span className="sk-truncate" tabIndex={0}>{row.title}</span>
-</Tooltip>;`;
+      {/* 3. Devolver lo que el ancho cortó. tabIndex hace que el texto truncado
+             sea alcanzable: sin foco, el tooltip sería sólo para mouse. */}
+      <Tooltip content={row.title} placement="inline-end" arrow>
+        <span className="sk-truncate" tabIndex={0}>{row.title}</span>
+      </Tooltip>
+    </div>
+  );
+}`;
 ---
 
 <Base
@@ -106,7 +115,11 @@ const react = `import { Tooltip } from "@skryensya/react/tooltip";
 
   {/* `menu`: el tooltip pinta fuera del flujo, y en un stage al alto del contenido no tendría a
       dónde ir, así que la colocación real nunca se vería. */}
-  <Showcase html={html} react={react} label="Tooltip" viewport="menu" />
+  <Showcase html={html} react={react} label="Tooltip" viewport="menu">
+    <Fragment slot="react">
+      <TooltipDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>La regla que no puede verificar el sistema</h2>
   <p>

@@ -27,11 +27,9 @@ const linterOutput = `✗ 1 problem(s):
   title="Tres tiers"
   description="Primitives, semantics and styling hooks: what each tier can reference, and why the direction of the references is what makes it a system."
 >
-  <h1>Tres tiers</h1>
+  <h1>Three tiers</h1>
   <p class="lede">
-    A tier is not defined by the folder where it lives, but by <strong>what </strong> can reference.
-    Three folders called primitive/semantic/component do not make a three-tier system; does it
-    the obligatory address of references.
+    A tier is not defined by the folder where it lives, but by <strong>which</strong> can reference. Three folders called primitive/semantic/component do not make a three-tier system; makes it the obligatory address of references.
   </p>
 
   <div class="sk-table-scroll">
@@ -48,13 +46,13 @@ const linterOutput = `✗ 1 problem(s):
         <tr>
           <td><span class="sk-badge" data-tone="warning">primitive</span></td>
           <td>what values exist</td>
-          <td>nothing, it is the background</td>
+          <td>nothing, is the background</td>
           <td class="mono">{counts.primitive}</td>
         </tr>
         <tr>
           <td><span class="sk-badge" data-tone="accent">semantic</span></td>
           <td>what does a value mean</td>
-          <td>primitives, and other semantic</td>
+          <td>primitives, and other semantics</td>
           <td class="mono">{counts.semantic}</td>
         </tr>
         <tr>
@@ -67,16 +65,12 @@ const linterOutput = `✗ 1 problem(s):
     </table>
   </div>
 
-  <h2>The chain, live</h2>
+  <h2>The string, live</h2>
   <p>
-    Each rung shows its currently used value. Change the <strong>brand</strong> above and see what
-    moves: the literal below changes hue, and the names above do not notice. That
-    indifference is the whole mechanism.
+    Each rung shows its currently used value. Change the <strong>mark to</strong> above and see what moves: the literal below changes hue, and the names above do not notice. That indifference is the entire mechanism.
   </p>
   <p>
-    The chain opens in two where there is a mode-aware token, because <code>light-dark()</code> has
-    two parents. Change the <strong>mode</strong> and you will see which of the two slots your
-    value above.
+    The chain is split into two where there is a mode-aware token, because <code>light-dark()</code> has two parents. Change the <strong>mode to</strong> and you will see which of the two slots is using your value above.
   </p>
 
   <Chain
@@ -89,15 +83,12 @@ const linterOutput = `✗ 1 problem(s):
     caption="A semantic token names a purpose and points to a ramp position, never a hue."
   />
 
-  <h2>Why referrals only go down</h2>
+  <h2>Why references only go down</h2>
   <p>
-    A semanticist can point to a primitive or sideways to another semanticist. A styling hook can point to
-    a semantic Nothing points up, and <strong>tier 3 cannot jump to tier 1</strong>.
+    A semanticist can point to a primitive or sideways to another semanticist. A styling hook can point to a semantic hook. Nothing points up, and tier 3 <strong>cannot jump to tier 1</strong>.
   </p>
   <p>
-    That jump is what seems harmless and is not. A styling hook that takes <code>--ramp-accent-600</code>
-    It directly skips the layer where <code>light-dark()</code> lives. That component, and only that one,
-    It stops having dark mode. The defect is not seen until someone looks at the page in darkness.
+    That jump is the one that seems harmless and is not. A styling hook that takes <code>--ramp-accent-600</code> directly skips the layer where <code>light-dark()</code> lives. That component, and only that one, no longer has a dark mode. The defect is not seen until someone looks at the page in darkness.
   </p>
 
   <CodeBlock code={badExample} label="components/button.css" note="tier 3 → tier 1" />
@@ -106,27 +97,19 @@ const linterOutput = `✗ 1 problem(s):
   <div class="sk-alert" data-tone="info" data-presentation="accent">
     <div class="sk-alert__content">
     <p>
-      It is not a documented convention: it is an executable rule. The validator runs over the CSS before
-      of each build, in <em>all</em> the marks, because a rule that is only fulfilled in the palette for
-      default is not a rule. The output above is real: it comes from aiming a styling hook at a ramp
-      on purpose.
+      It is not a documented convention: it is an executable rule. The validator runs over the CSS before each build, in <em>all</em> marks, because a rule that is only satisfied in the default palette is not a rule. The output above is real: it comes from aiming a styling hook at a ramp on purpose.
     </p>
     </div>
   </div>
 
   <h2>The prefix marks the tier</h2>
   <p>
-    A primitive reads <code>--ramp-accent-600</code>; a semantic, <code>--color-action-primary</code>.
-    The distinct prefix is intentional: see a <code>--ramp-*</code> within a component's CSS
-    It is the visible sign, with the naked eye, that someone skipped a tier. Flatten to <code>--accent-600</code>
-    I would lose that signal.
+    A primitive reads <code>--ramp-accent-600</code>; a semantic, <code>--color-action-primary</code>. The different prefix is intentional: seeing a <code>--ramp-*</code> within the CSS of a component is the visible sign, at first glance, that someone has skipped a tier. Flattening <code>--accent-600</code> would lose that signal.
   </p>
 
   <h2>The edge of the tier is a cascade layer</h2>
   <p>
-    The precedence between tiers does not depend on the order of the <code>@import</code>: it is in the cascade.
-    A later layer wins, so brand and contrast overrides always beat
-    base semantics, regardless of the import order.
+    The precedence between tiers does not depend on the order of the <code>@import</code>: it is in the cascade. A later layer wins, so mark and contrast overrides always beat base semantics, regardless of import order.
   </p>
   <CodeBlock
     code={`@layer primitives, semantic, components, overrides;`}
@@ -134,8 +117,7 @@ const linterOutput = `✗ 1 problem(s):
     note="the order that decides everything"
   />
   <p>
-    And it has a benefit: since <strong>any rule without a layer beats all layers</strong>,
-    your app can step on a styling hook without fighting specificity.
+    And it has a benefit: since <strong>any rule without a layer beats all layers</strong>, your app can step on a styling hook without fighting specificity.
   </p>
   <CodeBlock code={`.hero .sk-button { --sk-button-bg: rebeccapurple; }`} label="CSS" />
 </Base>

@@ -137,9 +137,9 @@ const currentColorHtml = `<div class="sl-tiles">
 
 const labHtml = `<div class="sl-lab">
   <p class="sl-lab__caption">
-    Superficie neutra · hover, foco, press, selected, disabled
+    Neutral surface · hover, focus, press, selected, disabled
   </p>
-  <nav class="sl-list" aria-label="Carpetas">
+  <nav class="sl-list" aria-label="Folders">
     <a class="sl-item sk-interactive" href="#">
       <span data-sk-icon="info"></span>
       <span class="sl-item__label">inbox</span>
@@ -170,7 +170,7 @@ const labHtml = `<div class="sl-lab">
   </nav>
 
   <p class="sl-lab__caption">
-    Saturated fill · layer is currentColor (on-accent)
+    Saturated fill · the layer is currentColor (on-accent)
   </p>
   <div class="sl-actions">
     <button
@@ -216,34 +216,30 @@ const ladder = [
 >
   <h1>State layer</h1>
   <p class="lede">
-    The same semi-transparent overlay expresses hover, focus, pressed, selected and dragged. The system
-    You have two ways to connect it: from the real state of the DOM or from the logical state of a machine.
-    They share paint and tokens; They are not two visual variants nor two superimposed layers.
+    The same semi-transparent overlay expresses hover, focus, pressed, selected and dragged. The system has two ways to connect it: from the real state of the DOM or from the logical state of a machine. They share paint and tokens; They are not two visual variants nor two superimposed layers.
   </p>
 
   <h2>Two connection types, single layer</h2>
   <p>
-    The type describes <strong>who knows the state</strong>. If the element itself receives hover,
-    focus and press, the connection is direct. If DOM focus remains on another node and a machine knows
-    which item is active, the adapter projects that state to the DOM.
+    The type <strong>describes who knows the state</strong>. If the element itself receives hover, focus and press, the connection is direct. If the DOM focus remains on another node and a machine knows which item is active, the adapter projects that state to the DOM.
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead>
-        <tr><th>Tipo</th><th>source of truth</th><th>use it when</th><th>Who connects it</th></tr>
+        <tr><th>Tipo</th><th>Source of truth</th><th>Use it when</th><th>Who connects it</th></tr>
       </thead>
       <tbody>
         <tr>
           <td><strong>Directo</strong></td>
           <td><code>:hover</code>, <code>:focus-visible</code>, <code>:active</code>, ARIA y <code>:has()</code></td>
-          <td>The same button, link, tile or wrapper has the interaction.</td>
+          <td>The same button, link, tile or wrapper owns the interaction.</td>
           <td>The consumer adds <code>sk-interactive</code> once.</td>
         </tr>
         <tr>
           <td><strong>Proyectado</strong></td>
           <td><code>data-highlighted</code>, <code>data-selected</code>, <code>data-disabled</code> and other machine states.</td>
           <td>A composite widget retains focus on its input or root, but activates an internal item.</td>
-          <td>The adapter and the CSS of the component; the consumer does not recreate the mapping.</td>
+          <td>The adapter and CSS of the component; the consumer does not recreate the mapping.</td>
         </tr>
       </tbody>
     </table>
@@ -251,18 +247,13 @@ const ladder = [
 
   <h2>1. Direct: the element has the state</h2>
   <p>
-    Button, link and tile receive the browser states in the same node that is painted. The pattern
-    comes in <code>tokens.scss</code>: the consumer only adds <code>sk-interactive</code>. Your
-    Selectors also read ARIA and use <code>:has()</code> when a wrapper contains the native input.
-    The <code>::before</code> remains inert in everything else.
+    Button, link and tile receive the browser states in the same node that is painted. The pattern comes in <code>tokens.scss</code>: the consumer only adds <code>sk-interactive</code>. Its selectors also read ARIA and use <code>: has()</code> when a wrapper contains the native input. The <code>:: before</code> remains inert in everything else.
   </p>
   <CodeBlock code={usage} label="HTML · direct connection" note="mark the target once" />
 
   <h3>All states, two surfaces</h3>
   <p>
-    The two previews freeze the same entire staircase to compare it without moving the pointer.
-    The first uses a neutral surface; the second, an inverse surface whose layer inherits
-    <code>currentColor</code>. In both, the first tile is still interactive.
+    The two previews freeze the same entire staircase for comparison without moving the pointer. The first uses a neutral surface; the second, an inverse surface whose layer inherits <code>currentColor</code>. In both, the first tile is still interactive.
   </p>
   <Showcase html={bareHtml} label="Neutral surface · all states" />
   <Showcase
@@ -270,18 +261,12 @@ const ladder = [
     label="currentColor · all states"
   />
   <p>
-    Selected, hover, focus, pressed and dragged now advance in visible steps. In high contrast
-    the wash does not increase: doing so would bring the background closer to the text and dull the surface. Instead,
-    A keyline inset appears whose thickness grows with each state.
+    Selected, hover, focus, pressed, and dragged now advance in visible steps. In high contrast the wash does not increase: doing so would bring the background closer to the text and dull the surface. Instead, a keyline inset appears whose thickness grows with each state.
   </p>
 
-  <h2>2. Projected: the machine owns the state</h2>
+  <h2>2. Projected: the machine has state</h2>
   <p>
-    In Combobox, Menu, DatePicker and TreeView the focus can remain on the input or the root while
-    The arrows activate another item. This item does not necessarily coincide with
-    <code>:focus-visible</code>. The adapter writes <code>data-highlighted</code>,
-    <code>data-selected</code> or <code>data-disabled</code>, and the component's CSS translates that
-    logical state to the same opacity tokens.
+    In Combobox, Menu, DatePicker and TreeView the focus can remain on the input or the root while the arrows activate another item. That item does not necessarily match <code>: focus-visible</code>. The adapter writes <code>data-highlighted</code>, <code>data-selected</code>, or <code>data-disabled</code>, and the component's CSS translates that logical state into the same opacity tokens.
   </p>
   <CodeBlock
     code={projectedUsage}
@@ -291,44 +276,35 @@ const ladder = [
   <div class="sk-alert" data-tone="info" data-presentation="accent">
     <div class="sk-alert__content">
       <p>
-        <strong>The consumer does not choose between two classes.</strong> Uses <code>sk-interactive</code>
-        for your own DOM target. When consuming a composite widget, its adapter and stylesheet are already
-        They have the projected connection.
+        <strong>The consumer does not choose between two classes. </strong> Use <code>sk-interactive</code> for a DOM target of your own. When consuming a composite widget, its adapter and stylesheet already have the projected connection.
       </p>
     </div>
   </div>
 
-  <h2>Mismo layer, superficies distintas</h2>
+  <h2>Same layer, different surfaces</h2>
   <p>
-    Neutral surface and saturated fill are not additional types: they only change the
-    <code>currentColor</code> that dyes the same layer. The list uses the text color; on the button
-    primary veil is <code>on-accent</code>. Change brand, mode or contrast: the contract is maintained.
+    Neutral surface and saturated fill are not additional types: they only change the <code>currentColor</code> that colors the same layer. The list uses the text color; on the primary button the veil is <code>on-accent</code>. Change brand, mode or contrast: the contract is maintained.
   </p>
   <Showcase html={labHtml} label="Lista + acciones" />
 
-  <h2>The dye is <code>currentColor</code></h2>
+  <h2>The tint is <code>currentColor</code></h2>
   <p>
-    The color of the layer is <Used token="--state-layer-color" />, the content color of the layer itself
-    component. A single token covers all cases:
+    The color of the layer is, the content color of the component itself. A single token covers all cases:
   </p>
   <ul>
     <li>
-      <strong>Subsume negro-sobre-clear / blanco-sobre-dark:</strong> A neutral surface has dark (clear) or clear (dark) text, and the layer darkens or lightens it alone, without a branch per mode.
+      <strong>It subsumes black-on-light and white-on-dark:</strong> A neutral surface has dark text in light mode and light text in dark mode, and the layer alone darkens or lightens it without a branch per mode.
     </li>
     <li>
-      <strong>Y is correct over saturated fills</strong>, where setting black or white fails: the
-      content of a primary button uses <code>on-accent</code>, which resolves based on padding.
-      The layer inherits that exact tone instead of assuming one.
+      <strong>And is correct over saturated fills</strong>, where setting black or white fails: the content of a primary button uses <code>on-accent</code>, which resolves based on the fill. The layer inherits that exact tone instead of assuming one.
     </li>
-    <li><strong>Zero color tokens per component.</strong> One fits all.</li>
+    <li><strong>Zero color tokens per component. </strong> One fits all.</li>
   </ul>
 
 
-  <h2>Exactly an active layer</h2>
+  <h2>Exactly one active layer</h2>
   <p>
-    The two connections write a single opacity over a single pseudo-element; They never stack overlays.
-    In direct connection, the shared pattern resolves simultaneous matches with this ladder,
-    From highest to lowest priority:
+    The two connections write a single opacity over a single pseudo-element; They never stack overlays. On direct connection, the shared pattern resolves concurrent matches to this ladder, from highest to lowest priority:
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
@@ -361,63 +337,48 @@ const ladder = [
     </div>
   </div>
 
-  <h2>In direct connection, <code>selected</code> is the lowest step</h2>
+  <h2>In the direct connection, <code>selected</code> is the lowest rung</h2>
   <p>
-    Una base persistente debajo de hover significaría dos capas superpuestas, es decir, opacidad
-    sumada, que el modelo prohíbe. Ayes que selected es el más bajo y hover/pressed lo reemplazan.
+    A persistent base beneath hover would create two overlapping layers and therefore combined
+    opacity, which the model forbids. Selected is the lowest state; hover and pressed replace it.
   </p>
   <p>
-    The selection never disappears because <strong>always carries a separate flag</strong>: a
-    check, a filled control, a rail, a type weight. In the list above, "Sent" has a
-    accent rail and emphasized typography, does not depend on the layer. If you need one more selected+hover
-    strong, you define a combined opacity token; never a sum in runtime.
+    The selection never disappears because <strong>always carries an independent indicator</strong>: a check, a filled control, a rail, a type weight. In the list above, "Sent" has an accent rail and emphasized typography, it does not depend on the layer. If you need a stronger selected+hover, you define a combined opacity token; never a sum in runtime.
   </p>
 
-  <h2>Accesibilidad, no negociable</h2>
-  <p>The layer <strong> is never the only signal</strong>:</p>
+  <h2>Accessibility, non-negotiable</h2>
+  <p>The layer <strong>is never the only signal</strong>:</p>
   <ul>
     <li>
-      The spotlight has an independent ring (<Used token="--focus-ring-width" /> of
-      <Used token="--focus-ring-color" />), verified at ≥3:1 by the validator. That is why he lives in his
-      own family <code>--focus-ring-*</code> and not within <code>--state-layer-*</code>: the name
-      charge the warranty.
+      The focus carries an independent ring ( de ), verified at ≥3:1 by the validator. That is why it lives in its own <code>--focus-ring-*</code> family and not within <code>--state-layer-*</code>: the name carries the guarantee.
     </li>
     <li>The selection carries a real indicator.</li>
     <li>
-      <code>disabled</code> fades with the component tokens and <strong>forces the layer to 0</strong>.
+      <code>disabled</code> dims with component tokens and <strong>forces the layer to 0</strong>.
     </li>
-    <li><code>:focus-visible</code> is used, not <code>:focus</code>, so a mouse click does not leave a layer stuck.</li>
+    <li><code>: focus-visible</code> is used, not <code>: focus</code>, so a mouse click does not leave a layer stuck.</li>
     <li>The fade respects <code>prefers-reduced-motion</code>.</li>
   </ul>
 
   <h2>High contrast adds a keyline, no more wash</h2>
   <p>
-    Light and dark share the same ladder: <code>currentColor</code> already changes with the mode.
-    High contrast also does not duplicate opacities. That would bring the background closer to the text color and make
-    that the control would read off. <code>[data-contrast="high"]</code> preserves the wash, adds a
-    keyline inset proportional to the state and increases the focus ring to <code>3px</code>. Active
-    high contrast above and compare both galleries.
+    Light and dark share the same scale: <code>currentColor</code> already changes with the mode. High contrast also does not duplicate opacities. That would bring the background closer to the text color and make the control read off. <code>[data-contrast="high"]</code> preserves the wash, adds a state-proportional keyline inset, and increases the focus ring to <code>3px</code>. Activate high contrast above and compare both galleries.
   </p>
 
   <h2>Your CSS</h2>
   <p>
-    For your own DOM target, the pattern sends the structure of the layer and the ladder; you write the
-    layout and add the class. Composite widgets already send their mapping projected in the CSS of the
-    component:
+    For your own DOM target, the pattern sends the structure of the layer and the ladder; you write the layout and add the class. Composite widgets already send their mapping projected in the CSS of the component:
   </p>
   <CodeBlock code={listSource} label="src/examples/state-layer.css" note="the CSS of the previews ↞" />
 
   <p>
-    Zero state colors and zero hardcoded opacities. Use direct connection on your own controls;
-    for machine states, it consumes the component instead of duplicating its internal selectors.
+    Zero state colors and zero hardcoded opacities. Use direct connection on your own controls; for machine states, it consumes the component instead of duplicating its internal selectors.
   </p>
 
   <div class="sk-alert" data-tone="info" data-presentation="accent">
     <div class="sk-alert__content">
     <p>
-      A consumer with a more specific selector than <code>.sk-interactive:hover</code> can break
-      the staircase It is a CSS limitation, the same one you accept
-      <a href="/en/styling-hooks">the styling hooks contract</a>.
+      A consumer with a more specific selector than <code>.sk-interactive: hover</code> can break the ladder. It is a CSS limitation, the same one that <a href="/en/styling-hooks">accepts in the</a> styling hooks contract.
     </p>
     </div>
   </div>

@@ -71,7 +71,8 @@
     cursor: pointer;
   }
 
-  /* ButtonLink is an anchor semantically, but visited state must not replace the chosen variant. */
+  /* A Button with `href` IS an anchor, so the UA gives it a visited colour. That must not replace
+   * the chosen variant: a primary button does not turn purple because the link was followed. */
   a.sk-button:visited {
     color: var(--sk-button-fg);
   }
@@ -148,16 +149,47 @@
     --sk-button-font-size: var(--font-size-body-sm);
   }
 
-  /* Icon-only sm: the square paints at control-sm; ::after still expands the hit to 44px. The glyph
-   * follows the smaller control so it does not crowd the 32px face. */
-  .sk-button[data-size="sm"][data-icon-only] .sk-icon {
-    --sk-icon-size: var(--size-icon-sm);
-  }
-
   .sk-button[data-size="lg"] {
     --sk-button-height: max(var(--size-control-lg), var(--size-touch-target));
     --sk-button-padding-x: var(--space-inset-lg);
     --sk-button-font-size: var(--font-size-body-lg);
+  }
+
+  /*
+   * THE GLYPH FOLLOWS THE SIZE AXIS, exactly like --sk-button-font-size does. A button that grew
+   * its face and its label but kept a 20px icon left the glyph floating: measured on the real page,
+   * the icon-only md was 20px of glyph in a 44px square (45%) and lg 20px in 48px (42%), against
+   * 63% for sm. Same icon, three different optical weights, and the two big ones read as
+   * under-sized rather than as the same icon in a bigger button.
+   *
+   * The set below holds the ratio roughly flat instead: sm 20/32, md 24/44, lg 28/48.
+   *
+   * NOTE THE OFF-BY-ONE in the names, it is deliberate, not a typo. The icon pattern's own
+   * sm/md/lg triple (16/20/24) is scaled for TEXT-adjacent glyphs; a control face is bigger than a
+   * line box, so each button size reaches one step up the icon scale, and lg needs the xl step that
+   * the pattern itself has no name for.
+   *
+   * WHY A DESCENDANT SELECTOR: .sk-icon declares --sk-icon-size ON ITSELF, so a value inherited
+   * from the button would lose to it. These have to target the icon directly, and they have to
+   * out-specify `.sk-icon[data-size="…"]` (0,2,0) because React's <Icon> always serializes a
+   * data-size (it defaults to "md"), so every React icon carries one. That means a per-call
+   * `<Icon size="sm">` inside a button does NOT win; the escape hatch is the system-wide one, an
+   * unlayered consumer rule: `.toolbar .sk-button .sk-icon { --sk-icon-size: 1rem; }`.
+   *
+   * Base carries the md value, so authored HTML that omits data-size matches the md face it
+   * already gets from --sk-button-height above.
+   */
+  .sk-button .sk-icon,
+  .sk-button[data-size="md"] .sk-icon {
+    --sk-icon-size: var(--size-icon-lg);
+  }
+
+  .sk-button[data-size="sm"] .sk-icon {
+    --sk-icon-size: var(--size-icon-md);
+  }
+
+  .sk-button[data-size="lg"] .sk-icon {
+    --sk-icon-size: var(--size-icon-xl);
   }
 
   /* Real disabled state, keys off the actual pseudo-class and ARIA, not a variant name. The

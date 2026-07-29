@@ -3,6 +3,12 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import {
+  ImageFrameAspectDemo,
+  ImageFrameBasicDemo,
+  ImageFrameFitDemo,
+  ImageFramePositionDemo,
+} from "../../../components/react-demos/image-frame";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -160,34 +166,52 @@ const positionReact = `import { ImageFrame } from "@skryensya/react/image-frame"
 >
   <h1>ImageFrame</h1>
   <p class="lede">
-    ImageFrame is the <strong>media frame</strong>: una caja que fija un aspect ratio, recorta con
-    radio/borde y decide cómo llena la image (<code>object-fit</code>) and from where (<code>object-position</code>). It is not an image component with CDN nor an Avatar: it is the pattern that Card, Tile and galleries reuse instead of copying
-    <code>aspect-ratio</code> by hand. To type on the photo, compose with
-    <a href="/en/gradients">Gradients</a> (<code>sk-media-gradient</code>).
+    ImageFrame is the <strong>media frame</strong>: a box that fixes an aspect ratio, clips with its
+    radius and border, and controls how the image fills it (<code>object-fit</code>) and from where
+    (<code>object-position</code>). It is not an image CDN component or an Avatar. Card, Tile, and
+    galleries reuse this pattern instead of copying <code>aspect-ratio</code> by hand. To place text
+    over the image, compose it with <a href="/en/gradients">Gradients</a>
+    (<code>sk-media-gradient</code>).
   </p>
 
-  <Showcase html={basicHtml} react={basicReact} label="ImageFrame" />
+  <Showcase html={basicHtml} react={basicReact} label="ImageFrame">
+    <Fragment slot="react">
+      <ImageFrameBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Aspect</h2>
   <p>
-    <code>data-aspect</code> is the box, not the file. With <code>cover</code> (default) the average
-    fills and trims; with <code>auto</code> the frame follows the intrinsic measurement of the media.
+    <code>data-aspect</code> is the box, not the file. With <code>cover</code> (the default) the media
+    fills the box and is cropped; with <code>auto</code> the frame follows the media's intrinsic size.
   </p>
-  <Showcase html={aspectHtml} label="Aspect" />
+  <Showcase html={aspectHtml} label="Aspect">
+    <Fragment slot="react">
+      <ImageFrameAspectDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Fit</h2>
   <p>
-    Same box <code>1/1</code>, different <code>data-fit</code>: <code>cover</code> cuts,
-    <code>contain</code> letterboxa (the background of the frame is visible), <code>fill</code> stretches.
+    Same <code>1/1</code> box, different <code>data-fit</code>: <code>cover</code> crops,
+    <code>contain</code> letterboxes (the frame's background shows), <code>fill</code> stretches.
   </p>
-  <Showcase html={fitHtml} label="Fit" />
+  <Showcase html={fitHtml} label="Fit">
+    <Fragment slot="react">
+      <ImageFrameFitDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Position</h2>
   <p>
-    With <code>cover</code>, <code>data-position</code> chooses the clipping anchor. The demo concentrates
-    a disk at the top-left and a block at the bottom-right so that the anchor is noticeable.
+    With <code>cover</code>, <code>data-position</code> chooses the crop anchor. The demo puts a disc at
+    the top left and a block at the bottom right so the anchor is easy to see.
   </p>
-  <Showcase html={positionHtml} react={positionReact} label="Position" />
+  <Showcase html={positionHtml} react={positionReact} label="Position">
+    <Fragment slot="react">
+      <ImageFramePositionDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />
@@ -195,17 +219,17 @@ const positionReact = `import { ImageFrame } from "@skryensya/react/image-frame"
 
   <h2>React</h2>
   <p>
-    <code>src</code> / <code>alt</code> they paint a <code>img</code> with the middle class. For
-    <code>picture</code> o <code>video</code>, spend children with
+    <code>src</code> / <code>alt</code> render an <code>img</code> carrying the media class. For
+    <code>picture</code> or <code>video</code>, pass children with
     <code>className="sk-image-frame__media"</code> (or leave the <code>img</code>/<code>video</code>
     as a direct child: CSS also reaches them).
   </p>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
     <li>
-      Root: <code>sk-image-frame</code>. Media: <code>sk-image-frame__media</code>, o
-      <code>img</code>/<code>video</code>/<code>picture &gt; img</code> hijo directo.
+      Root: <code>sk-image-frame</code>. Media: <code>sk-image-frame__media</code>, or a direct child
+      <code>img</code>/<code>video</code>/<code>picture &gt; img</code>.
     </li>
     <li>
       <code>data-aspect</code>: <code>auto</code>, <code>1/1</code>, <code>4/3</code>,
@@ -216,9 +240,7 @@ const positionReact = `import { ImageFrame } from "@skryensya/react/image-frame"
       <code>none</code>, <code>scale-down</code>.
     </li>
     <li>
-      <code>data-position</code>: <code>center</code> (default), <code>top</code>,
-      <code>bottom</code>, <code>left</code>, <code>right</code>, and the four corners
-      (<code>top-left</code>, …).
+      <code>data-position</code>: <code>center</code> (default), <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, and the four corners (<code>top-left</code>, …).
     </li>
     <li>
       <code>data-radius</code>: <code>none</code>, <code>top</code>, <code>control</code>,

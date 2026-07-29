@@ -5,6 +5,7 @@ import StylingHooks from "../../../components/StylingHooks.astro";
 import "@skryensya/core/patterns/state-layer.css";
 import "@skryensya/core/components/button.css";
 import "@skryensya/core/components/number-field.css";
+import { NumberFieldDemo } from "../../../components/react-demos/number-field";
 
 const install = `@import "@skryensya/core/patterns/state-layer.css";
 @import "@skryensya/core/components/button.css";
@@ -20,7 +21,7 @@ const html = `<div class="sk-number-field" data-sk-number-field>
     class="sk-number-field__label"
     data-sk-number-field-label
   >
-    Cantidad
+    Quantity
   </label>
   <div
     class="sk-number-field__control"
@@ -32,7 +33,7 @@ const html = `<div class="sk-number-field" data-sk-number-field>
       data-icon-only
       data-size="sm"
       data-variant="ghost"
-      aria-label="Disminuir"
+      aria-label="Decrease"
       type="button"
     >
       <span data-sk-icon="remove" data-sk-icon-size="sm"></span>
@@ -50,7 +51,7 @@ const html = `<div class="sk-number-field" data-sk-number-field>
       data-icon-only
       data-size="sm"
       data-variant="ghost"
-      aria-label="Aumentar"
+      aria-label="Increase"
       type="button"
     >
       <span data-sk-icon="add" data-sk-icon-size="sm"></span>
@@ -60,13 +61,17 @@ const html = `<div class="sk-number-field" data-sk-number-field>
 const react = `import { NumberField } from "@skryensya/react/number-field";
 
 // The steppers are already icon buttons (roles \`remove\` and \`add\`);
-// decrementIcon/incrementIcon sólo cambian el glifo.
-<NumberField
-  defaultValue="2"
-  label="Cantidad"
-  min={0}
-  step={1}
-/>`;
+// decrementIcon/incrementIcon only change the glyph.
+function Example() {
+  return (
+    <NumberField
+      defaultValue="2"
+      label="Quantity"
+      min={0}
+      step={1}
+    />
+  );
+}`;
 ---
 
 <Base
@@ -74,21 +79,25 @@ const react = `import { NumberField } from "@skryensya/react/number-field";
   description="Localized numerical entry with limits, steps and increment controls."
 >
   <h1>NumberField</h1>
-  <p class="lede">Localized numerical entry with limits, steps and increment controls.</p>
+  <p class="lede">Localized numeric input with limits, steps, and increment controls.</p>
 
-  <h2>Installation</h2>
+  <h2>Facility</h2>
   <Showcase
     html={html}
     js={js}
     react={react}
     label="NumberField"
     viewport="auto"
-  />
+  >
+    <Fragment slot="react">
+      <NumberFieldDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Contrato</h2>
-  <p>The public value preserves string and valueAsNumber. Intl.NumberFormat controls the presentation.</p>
+  <h2>Contract</h2>
+  <p>Public value preserves string and valueAsNumber. Intl. NumberFormat controls the presentation.</p>
 
-  <h2>Accesibilidad</h2>
+  <h2>Accessibility</h2>
   <p>The triggers have their own names and the input announces min, max, current value and invalid state.</p>
 
   <h2>CSS</h2>

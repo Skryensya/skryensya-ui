@@ -55,6 +55,8 @@ export type ComponentPreviewPartClass = (typeof componentPreviewParts)[Component
 export const componentPreviewAttrs = {
   root: "data-sk-component-preview",
   bindingTabs: "data-sk-component-preview-binding-tabs",
+  /** One of the two plain buttons inside `bindingTabs`; its `data-value` is "vanilla" | "react". */
+  bindingOption: "data-sk-component-preview-binding-option",
   binding: "data-sk-component-preview-binding",
   /** Document-level shared Vanilla | React preference (`<html>`). */
   documentBinding: "data-sk-component-preview-pref",

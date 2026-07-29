@@ -1,0 +1,10 @@
+# La estructura vive en packages/core/src/stat.ts. Acá sólo por qué se elige.
+
+Stat:
+  useWhen:
+    - "un número con su nombre: usuarios activos, ingresos del mes"
+    - "hay un delta que muestra hacia dónde va"
+  avoidWhen:
+    - "son varios números comparables entre sí; eso es una Table"
+  alternatives:
+    - Table

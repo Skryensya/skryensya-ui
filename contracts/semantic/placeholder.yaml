@@ -1,0 +1,10 @@
+# La estructura vive en packages/core/src/placeholder.ts. Acá sólo por qué se elige.
+
+Placeholder:
+  useWhen:
+    - "se prefigura contenido que está por llegar y ya se sabe qué forma tendrá"
+    - "evita el salto de layout cuando los datos aparecen"
+  avoidWhen:
+    - "no se sabe qué va a aparecer; ahí un Loader dice más"
+  alternatives:
+    - Loader

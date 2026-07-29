@@ -4,3 +4,11 @@ dist/
 *.log
 .DS_Store
 .cursor/
+
+# allison.sh reskin experiments: live under apps/ for now, not part of the tracked monorepo.
+apps/allison/
+apps/allison-v2/
+apps/allison-v3/
+
+# Playwright run output. The BASELINE is committed (src/**/*-snapshots); this is the diff of a run.
+test-results/

@@ -3,6 +3,15 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import {
+  FlyoutBasicDemo,
+  FlyoutRailDemo,
+  FlyoutExclusiveDemo,
+  FlyoutDisabledItemDemo,
+  FlyoutDisabledDemo,
+  FlyoutLongDemo,
+  FlyoutPlaceholderDemo,
+} from "../../../components/react-demos/flyout";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -120,20 +129,24 @@ function reactFlyout({
     `import { Icon } from "@skryensya/react/icon";`,
     `import { Flyout } from "@skryensya/react/flyout";`,
     ``,
-    `<Flyout`,
-    `  label="${label}"`,
+    `function Example() {`,
+    `  return (`,
+    `    <Flyout`,
+    `      label="${label}"`,
   ];
-  if (defaultValue) lines.push(`  defaultValue={["${defaultValue}"]}`);
-  if (placeholder) lines.push(`  placeholder="${placeholder}"`);
-  if (disabled) lines.push(`  disabled`);
+  if (defaultValue) lines.push(`      defaultValue={["${defaultValue}"]}`);
+  if (placeholder) lines.push(`      placeholder="${placeholder}"`);
+  if (disabled) lines.push(`      disabled`);
   lines.push(
-    `  indicator={<Icon name="chevron-right" />}`,
-    `  openIndicator={<Icon name="chevron-left" />}`,
-    `  itemIndicator={<Icon name="check" />}`,
-    `  options={[`,
-    opts,
-    `  ]}`,
-    `/>;`,
+    `      indicator={<Icon name="chevron-right" />}`,
+    `      openIndicator={<Icon name="chevron-left" />}`,
+    `      itemIndicator={<Icon name="check" />}`,
+    `      options={[`,
+    opts.replace(/^ {4}/gm, "        "),
+    `      ]}`,
+    `    />`,
+    `  );`,
+    `}`,
   );
   return lines.join("\n");
 }
@@ -237,28 +250,32 @@ const chevrons = {
   itemIndicator: <Icon name="check" />,
 };
 
-<Stack gap="md" style={{ inlineSize: "13.5rem" }}>
-  <Flyout
-    label="Densidad"
-    defaultValue={["1"]}
-    {...chevrons}
-    options={[
-      { value: "0.5", label: "Condensada" },
-      { value: "1", label: "Chest of drawers" },
-      { value: "1.2", label: "Amplia" },
-    ]}
-  />
-  <Flyout
-    label="Redondez"
-    defaultValue={["1"]}
-    {...chevrons}
-    options={[
-      { value: "0", label: "Recta" },
-      { value: "1", label: "Suave" },
-      { value: "2", label: "Redonda" },
-    ]}
-  />
-</Stack>;`;
+function Example() {
+  return (
+    <Stack gap="md" style={{ inlineSize: "13.5rem" }}>
+      <Flyout
+        label="Densidad"
+        defaultValue={["1"]}
+        {...chevrons}
+        options={[
+          { value: "0.5", label: "Condensada" },
+          { value: "1", label: "Chest of drawers" },
+          { value: "1.2", label: "Amplia" },
+        ]}
+      />
+      <Flyout
+        label="Redondez"
+        defaultValue={["1"]}
+        {...chevrons}
+        options={[
+          { value: "0", label: "Recta" },
+          { value: "1", label: "Suave" },
+          { value: "2", label: "Redonda" },
+        ]}
+      />
+    </Stack>
+  );
+}`;
 
 const disabledItemHtml = flyoutMarkup({
   id: "region",
@@ -353,56 +370,49 @@ function remountFlyout(root, value) {
 >
   <h1>Flyout</h1>
   <p class="lede">
-    A value selector like <a href="/en/components/select">Select</a>, but the panel opens to
-    <strong>inline-end</strong> of the trigger (not below). Intended for narrow rails—for example the
-    <a href="/en/customize">Customize</a> sidebar—where a downward menu does not fit.
+    A value selector like <a href="/en/components/select">Select</a>, but the panel opens to the <strong>inline-end</strong> of the trigger (not below it). Intended for narrow rails — for example the <a href="/en/customize">sidebar Customize</a> — where a downward menu does not fit.
   </p>
 
   <p>
-    It is not a navigation “menu” (ADR-0017): it is a picker. Opens at <strong>click</strong> of the trigger
-    (and with a keyboard). Choosing an item outputs <code>sk-value-change</code> and closes. Escape or click outside
-    They also close. Only one Flyout can be open at a time.
+    It is not a navigation “menu” (ADR-0017): it is a picker. Opens when <strong>click</strong> of the trigger (and with keyboard). Choosing an item outputs <code>sk-value-change</code> and closes. Escape or click outside also closes. Only one Flyout can be open at a time.
   </p>
 
-  <Showcase html={flyoutHtml} react={reactBasic} label="Flyout" viewport="menu" />
+  <Showcase html={flyoutHtml} react={reactBasic} label="Flyout" viewport="menu">
+    <Fragment slot="react">
+      <FlyoutBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>When to use it</h2>
   <ul>
     <li>
-      <strong>Flyout</strong> — the space below the control is scarce (sidebar, toolbar, rail) and the
-      panel should open to the side.
+      <strong>Flyout</strong> — the space under the control is limited (sidebar, toolbar, rail) and the panel must open to the side.
     </li>
     <li>
-      <strong>Select</strong> — is there room below, do you want typeahead/Zag positioning, or is it a
-      standard form. For native platform choice, use the
-      <a href="/en/components/select#select-nativo">Select native</a>.
+      <strong>Select</strong> — is there room below, do you want typeahead and Zag positioning, or is this a standard form? For platform-native selection, use the <a href="/en/components/select#native-select">native Select</a>.
     </li>
   </ul>
 
-  <h2>Comportamiento</h2>
+  <h2>Behavior</h2>
   <ul>
     <li>
-      <strong>Open:</strong> click on the trigger, or keyboard (<code>Enter</code>, <code>Space</code>,
-      <code>ArrowDown</code>, <code>ArrowRight</code>). Does not open on hover.
+      <strong>Open: </strong> click on the trigger, or keyboard (<code>Enter</code>, <code>Space</code>, <code>ArrowDown</code>, <code>ArrowRight</code>). Does not open on hover.
     </li>
     <li>
-      <strong>Elegir:</strong> click o <code>Enter</code> / <code>Space</code> in an item. Issue
-      <code>sk-value-change</code> con <code>{'{ value: string[] }'}</code> and close.
+      <strong>Select:</strong> click an item or press <code>Enter</code> / <code>Space</code>. Emit
+      <code>sk-value-change</code> with <code>{'{ value: string[] }'}</code>, then close.
     </li>
     <li>
-      <strong>Close:</strong> Escape (returns focus to the trigger), click outside, or choose an item.
+      <strong>Close: </strong> Escape (returns focus to the trigger), click outside, or choose an item.
     </li>
     <li>
-      <strong>Exclusive:</strong> when you open one, the others hear <code>sk-flyout-open</code> and are
-      they close
+      <strong>Exclusive: </strong> when opening one, the others listen to <code>sk-flyout-open</code> and close.
     </li>
     <li>
-      <strong>Width:</strong> the panel measures at least <code>280px</code> and grows with the longest item
-      (with viewport stop).
+      <strong>Width: </strong> the panel measures at least <code>280px</code> and grows with the longest item (with viewport cap).
     </li>
     <li>
-      <strong>Viewport:</strong> if it does not fit the inline-end, it opens at the inline-start; the top adjusts to
-      not leaving the viewport (also when scrolling or resizing).
+      <strong>Viewport: </strong> if it does not fit the inline-end, it opens at the inline-start; The top is adjusted so as not to leave the viewport (also when scrolling or resizing).
     </li>
   </ul>
 
@@ -420,10 +430,7 @@ function remountFlyout(root, value) {
     label="parts"
   />
   <p>
-    The items <strong>are</strong> the collection: the enhancer reads them from the DOM. Each
-    <code>data-sk-flyout-item</code> needs a <code>data-value</code>. The panel lives in root
-    (<code>position: absolute</code> by default; the enhancer sets it to <code>position: fixed</code>
-    when an ancestor cuts).
+    The <strong>items are</strong> the collection: the enhancer reads them from the DOM. Each <code>data-sk-flyout-item</code> needs one <code>data-value</code>. The panel lives in root (<code>position: absolute</code> by default; the enhancer sets it to <code>position: fixed</code> when an ancestor trims).
   </p>
 
   <h2>Install</h2>
@@ -433,70 +440,85 @@ function remountFlyout(root, value) {
   <h2>Initialize Vanilla</h2>
   <CodeBlock code={js} label="JavaScript" />
 
-  <h2>Hear the change</h2>
+  <h2>Listen to the change</h2>
   <CodeBlock code={listen} label="JavaScript" />
 
   <h2>On a narrow rail</h2>
   <p>
-    The typical case: a ~13.5rem wide control. The panel exits to the inline-end and does not compete with the
-    height of the rail.
+    The typical case: a ~13.5rem wide control. The panel comes out to the inline-end and does not compete with the height of the rail.
   </p>
-  <Showcase html={railHtml} react={reactRail} label="Rail flyout" viewport="menu" />
+  <Showcase html={railHtml} react={reactRail} label="Rail flyout" viewport="menu">
+    <Fragment slot="react">
+      <FlyoutRailDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Only one open</h2>
   <p>
-    Open one and then the other: the first one closes by itself. Same contract in Vanilla and React via the
-    document event <code>sk-flyout-open</code>.
+    Open one and then the other: the first one closes by itself. Same contract in Vanilla and React via document event <code>sk-flyout-open</code>.
   </p>
-  <Showcase html={exclusiveHtml} react={reactExclusive} label="Dos Flyouts" viewport="menu" />
+  <Showcase html={exclusiveHtml} react={reactExclusive} label="Dos Flyouts" viewport="menu">
+    <Fragment slot="react">
+      <FlyoutExclusiveDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Disabled item</h2>
   <p>
-    Mark the item with <code>data-disabled</code> (or <code>disabled: true</code> in React). you cannot
-    choose; the rest are still active.
+    Mark the item with <code>data-disabled</code> (or <code>disabled: true</code> in React). You cannot choose; the rest are still active.
   </p>
-  <Showcase html={disabledItemHtml} react={reactDisabledItem} label="Disabled item" viewport="menu" />
+  <Showcase html={disabledItemHtml} react={reactDisabledItem} label="Disabled item" viewport="menu">
+    <Fragment slot="react">
+      <FlyoutDisabledItemDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Flyout disabled</h2>
   <p>
-    <code>data-disabled</code> in root (or <code>disabled</code> in React) blocks opening and changing
-    of value.
+    <code>data-disabled</code> in root (or <code>disabled</code> in React) blocks opening and changing value.
   </p>
-  <Showcase html={disabledHtml} react={reactDisabled} label="Flyout disabled" viewport="menu" />
+  <Showcase html={disabledHtml} react={reactDisabled} label="Flyout disabled" viewport="menu">
+    <Fragment slot="react">
+      <FlyoutDisabledDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Lista larga</h2>
+  <h2>Long list</h2>
   <p>
-    The panel limits its height (<code>--sk-flyout-panel-max-block-size</code>, 18rem by default) and makes
-    scroll when necessary.
+    The panel limits its height (<code>--sk-flyout-panel-max-block-size</code>, 18rem by default) and scrolls when necessary.
   </p>
-  <Showcase html={longHtml} react={reactLong} label="Lista larga" viewport="menu" />
+  <Showcase html={longHtml} react={reactLong} label="Lista larga" viewport="menu">
+    <Fragment slot="react">
+      <FlyoutLongDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Placeholder</h2>
   <p>
-    If there is no <code>data-value</code> that matches an item—for example an external value
-    “custom”—the trigger displays the placeholder.
+    If there is no <code>data-value</code> that matches an item—for example an external “custom” value—the trigger displays the placeholder.
   </p>
-  <Showcase html={placeholderHtml} react={reactPlaceholder} label="Placeholder" viewport="menu" />
+  <Showcase html={placeholderHtml} react={reactPlaceholder} label="Placeholder" viewport="menu">
+    <Fragment slot="react">
+      <FlyoutPlaceholderDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Go back with another value</h2>
+  <h2>Retrace with another value</h2>
   <p>
-    The enhancer has the trigger text. To force a value from outside (reset, URL, repair),
-    dismount, type <code>data-value</code> and remount — the same pattern you use
-    <a href="/en/customize">Customize</a>.
+    The enhancer has the trigger text. To force a value from outside (reset, URL, repair), unmount, type <code>data-value</code>, and remount — the same pattern used by <a href="/en/customize">Customize</a>.
   </p>
   <CodeBlock code={remount} label="JavaScript" />
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
-    <li>The root carries <code>data-sk-flyout</code> and the parts anatomy documented.</li>
+    <li>The root carries <code>data-sk-flyout</code> and the documented part anatomy.</li>
     <li>
-      The value event is the same as Select: <code>sk-value-change</code> with
-      <code>{'{ value: string[] }'}</code>.
+      The value event is the same as Select: <code>sk-value-change</code> with <code>{'{ value: string[] }'}</code>.
     </li>
     <li>
       Exclusive opening via <code>sk-flyout-open</code> (detail <code>{'{ root }'}</code>).
     </li>
-    <li>Sin máquina Zag en v1: enhancer propio, apertura por click/teclado.</li>
+    <li>No Zag machine in v1: a dedicated enhancer opens it by click or keyboard.</li>
     <li>React renders the same contract without a portal (panel in root).</li>
     <li>The enhancer does not invent classes; only connects authored nodes.</li>
   </ul>

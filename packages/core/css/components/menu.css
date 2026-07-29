@@ -10,7 +10,17 @@
 
   /* La colocación es del pattern Anclaje (ADR-25): el trigger lleva además `sk-anchor` y el
    * positioner además `sk-anchored`. El default del pattern, debajo y centrado, es el de un menú, así
-   * que acá no hay nada que re-declarar. */
+   * que de COLOCACIÓN acá no hay nada que re-declarar. */
+
+  /* De APARIENCIA sí: React portea el positioner al `<body>`, así que lo que declara `.sk-menu` no le
+   * llega por herencia y cada hook que se lea de acá para abajo resuelve vacío. Ver la nota
+   * equivalente en `select.css`. */
+  .sk-menu__positioner {
+    --sk-menu-bg: var(--color-bg-surface-raised);
+    --sk-menu-fg: var(--color-text-primary);
+    --sk-menu-border-color: var(--color-border-subtle);
+    --sk-menu-radius: var(--radius-surface);
+  }
 
   /* Un SUBMENÚ sale al costado y alineado por arriba con el item del que cuelga, que no es ninguna
    * de las cuatro colocaciones públicas. Se pide por el hook de escape en vez de agregar una quinta

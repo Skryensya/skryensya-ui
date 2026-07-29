@@ -1,0 +1,10 @@
+# La estructura vive en packages/core/src/avatar.ts. Acá sólo por qué se elige.
+
+Avatar.initials:
+  useWhen:
+    - "no hay foto y hacen falta las iniciales de la persona"
+    - "el avatar identifica a alguien y necesita nombre accesible"
+  avoidWhen:
+    - "es una imagen cualquiera recortada; eso es un ImageFrame"
+  alternatives:
+    - ImageFrame

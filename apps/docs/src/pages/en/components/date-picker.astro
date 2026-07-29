@@ -2,6 +2,7 @@
 import Base from "../../../layouts/Base.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { DatePickerCustomDemo, DatePickerDisabledDemo } from "../../../components/react-demos/date-picker";
 import "@skryensya/core/components/date-picker.css";
 
 const install = `@import "@skryensya/core/patterns/anchored.css";
@@ -9,7 +10,7 @@ const install = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/date-picker.css";`;
 
 const nativeHtml = `<div class="sk-date-picker" lang="es-DO">
-  <label class="sk-date-picker__label" for="arrival">Reserva</label>
+  <label class="sk-date-picker__label" for="arrival">Booking</label>
   <div class="sk-date-picker__control">
     <input
       class="sk-date-picker__input"
@@ -28,12 +29,12 @@ const customHtml = `<div
   data-time-zone="America/Santo_Domingo"
   data-name="checkin"
 >
-  <label class="sk-date-picker__label" data-sk-date-picker-label>Reserva</label>
+  <label class="sk-date-picker__label" data-sk-date-picker-label>Booking</label>
   <div class="sk-date-picker__control sk-anchor" data-sk-date-picker-control>
     <input
       class="sk-date-picker__input"
       data-sk-date-picker-input
-      placeholder="dd/mm/aaaa"
+      placeholder="mm/dd/yyyy"
     />
     <button
       class="sk-date-picker__clear sk-button sk-interactive"
@@ -54,7 +55,7 @@ const customHtml = `<div
       data-size="sm"
       data-variant="ghost"
       type="button"
-      aria-label="Abrir calendario"
+      aria-label="Open calendar"
     >
       <span data-sk-icon="calendar"></span>
     </button>
@@ -63,14 +64,52 @@ const customHtml = `<div
 
 const react = `import { DatePicker } from "@skryensya/react/date-picker";
 
-<DatePicker
-  label="Reserva"
-  locale="es-DO"
-  name="checkin"
-  placeholder="dd/mm/aaaa"
-  selectionMode="single"
-  timeZone="America/Santo_Domingo"
-/>`;
+function Example() {
+  return (
+    <DatePicker
+      label="Booking"
+      locale="es-DO"
+      name="checkin"
+      placeholder="mm/dd/yyyy"
+      selectionMode="single"
+      timeZone="America/Santo_Domingo"
+    />
+  );
+}`;
+
+const disabledHtml = `<div
+  class="sk-date-picker"
+  data-sk-date-picker
+  data-disabled
+  data-locale="en-US"
+>
+  <label class="sk-date-picker__label" data-sk-date-picker-label>Booking</label>
+  <div class="sk-date-picker__control sk-anchor" data-sk-date-picker-control>
+    <input
+      class="sk-date-picker__input"
+      data-sk-date-picker-input
+      placeholder="mm/dd/yyyy"
+    />
+    <button
+      class="sk-date-picker__trigger sk-button sk-interactive"
+      data-sk-button
+      data-sk-date-picker-trigger
+      data-icon-only
+      data-size="sm"
+      data-variant="ghost"
+      type="button"
+      aria-label="Open calendar"
+    >
+      <span data-sk-icon="calendar"></span>
+    </button>
+  </div>
+</div>`;
+
+const disabledReact = `import { DatePicker } from "@skryensya/react/date-picker";
+
+function Example() {
+  return <DatePicker label="Booking" locale="en-US" placeholder="mm/dd/yyyy" disabled />;
+}`;
 ---
 
 <Base
@@ -88,14 +127,36 @@ const react = `import { DatePicker } from "@skryensya/react/date-picker";
     Calendar, not this component: DatePicker just nests it inside its popover.
   </p>
 
-  <h2>Nativo</h2>
+  <h2>Native</h2>
   <p>Platform control, without JavaScript or enhancer.</p>
-  <Showcase html={nativeHtml} label="DatePicker nativo" />
+  <Showcase html={nativeHtml} label="Native DatePicker" />
 
   <h2>Custom</h2>
-  <p>The custom field and its pop-up calendar live in a separate demo.</p>
+  <p>The custom field and its popup calendar live in a separate demo.</p>
   {/* `overlay` (~24rem): the calendar reserves the height of its six rows inside the frame. */}
-  <Showcase html={customHtml} react={react} label="DatePicker custom" viewport="overlay" />
+  <Showcase html={customHtml} react={react} label="DatePicker custom" viewport="overlay">
+    <Fragment slot="react">
+      <DatePickerCustomDemo client:load />
+    </Fragment>
+  </Showcase>
+
+  <h2>Disabled</h2>
+  <p>
+    <code>data-disabled</code> on the root configures the machine and Zag distributes the state on its
+    own: <code>data-disabled</code> on <code>sk-date-picker__control</code>, and a native
+    <code>disabled</code> on the input and on the trigger. But each of those three read its
+    color/background/border from a hook
+    (<code>--sk-date-picker-fg</code>/<code>-bg</code>/<code>-border-color</code>) declared
+    unconditionally, so disabling the field changed nothing about what those hooks resolved to — the
+    field still read as interactive. The rule now lives in a single place,
+    <code>.sk-date-picker__control[data-disabled]</code>, which rewrites those three hooks: the input
+    and the trigger inherit them with no rules of their own.
+  </p>
+  <Showcase html={disabledHtml} react={disabledReact} label="DatePicker (disabled)">
+    <Fragment slot="react">
+      <DatePickerDisabledDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Which one to use</h2>
   <p>
@@ -106,13 +167,9 @@ const react = `import { DatePicker } from "@skryensya/react/date-picker";
     Select custom.
   </p>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <p>
-    React offers <code>DatePicker</code> on the same machine as <code>Calendar</code>
-    (<code>@zag-js/date-picker</code>), and reuses the same calendar body: there are no two
-    grid implementations. Vanilla hydrates the authored <code>data-sk-date-picker</code>: patches the
-    control and render the calendar with the shared Calendar component. The input
-    <code>type="date"</code> native does not need enhancer.
+    React delivers <code>DatePicker</code> on the same machine as <code>Calendar</code> (<code>@zag-js/date-picker</code>), and reuses the same calendar body: there are no two grid implementations. Vanilla hydrates the authored <code>data-sk-date-picker</code>: Patches the control and renders the calendar with the Calendar shared component. The native <code>type="date"</code> input does not need an enhancer.
   </p>
 
   <h2>On mobile</h2>
@@ -124,12 +181,9 @@ const react = `import { DatePicker } from "@skryensya/react/date-picker";
     with <kbd class="sk-kbd">Esc</kbd>. It is the same responsive slice as <a href="/en/components/dialog">Dialog Vaul</a>.
   </p>
 
-  <h2>Accesibilidad</h2>
+  <h2>Accessibility</h2>
   <p>
-    The date uses <code>DateValue</code> values and explicit time zone; not modeled as string
-    ambiguous of locale. The control retains its name accessible by its <code>label</code>. Accessibility
-    of the grid itself (role, keyboard navigation, view change) is a contract
-    <a href="/en/components/calendar">Calendar</a>.
+    Date uses <code>DateValue</code> values and explicit time zone; It is not modeled as an ambiguous locale string. The control retains its accessible name <code>label</code>. The accessibility of the grid itself (role, keyboard navigation, view switching) is a contract of <a href="/en/components/calendar">Calendar</a>.
   </p>
 
   <h2>CSS</h2>

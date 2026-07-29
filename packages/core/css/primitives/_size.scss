@@ -10,6 +10,9 @@
   --scale-size-icon-sm: 16px;
   --scale-size-icon-md: 20px;
   --scale-size-icon-lg: 24px;
+  /* xl exists for the CONTROL sizes, not for the icon pattern's own sm/md/lg triple: a 48px lg
+   * button needs a glyph past 24px or the icon floats in the middle of the face. */
+  --scale-size-icon-xl: 28px;
 
   /* ── scale: fixed accessibility constants (never density-scaled) ─ */
   --scale-fixed-touch-target: 44px; /* iOS HIG hit area */

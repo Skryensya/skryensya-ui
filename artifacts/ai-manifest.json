@@ -1,0 +1,5057 @@
+{
+  "contracts": {
+    "alert": {
+      "css": "@skryensya/core/components/alert.css",
+      "id": "alert",
+      "options": {
+        "presentation": {
+          "attr": "data-presentation",
+          "default": "banner",
+          "type": "enum",
+          "values": [
+            "banner",
+            "accent",
+            "inline"
+          ]
+        },
+        "tone": {
+          "attr": "data-tone",
+          "default": "neutral",
+          "type": "enum",
+          "values": [
+            "neutral",
+            "info",
+            "success",
+            "warning",
+            "danger"
+          ]
+        }
+      },
+      "parts": {
+        "actions": "sk-alert__actions",
+        "content": "sk-alert__content",
+        "description": "sk-alert__description",
+        "dismiss": "sk-alert__dismiss",
+        "icon": "sk-alert__icon",
+        "root": "sk-alert",
+        "title": "sk-alert__title"
+      },
+      "semantics": {
+        "Alert": {
+          "alternatives": [
+            "EmptyState"
+          ],
+          "avoidWhen": [
+            "el mensaje es efímero y se va solo; eso es un Toast",
+            "la región está vacía por no tener datos; eso es un EmptyState"
+          ],
+          "useWhen": [
+            "hay que contar algo que pasó: un error, una confirmación, una advertencia",
+            "el mensaje queda en la página, no desaparece solo"
+          ]
+        }
+      },
+      "signatures": {
+        "Alert": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "message",
+            "something-went-wrong",
+            "confirmation",
+            "warning-notice"
+          ],
+          "options": [
+            "tone",
+            "presentation"
+          ],
+          "react": {
+            "from": "@skryensya/react/alert",
+            "name": "Alert"
+          },
+          "slots": {
+            "actions": {
+              "accepts": "signature",
+              "of": [
+                "Button.action",
+                "Button.navigation"
+              ]
+            },
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "icon": {
+              "accepts": "signature",
+              "of": [
+                "Icon"
+              ]
+            },
+            "title": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "aria-live": "assertive",
+                  "role": "alert"
+                },
+                "equals": "danger",
+                "option": "tone"
+              },
+              {
+                "attrs": {
+                  "aria-live": "polite",
+                  "role": "status"
+                },
+                "notEquals": "danger",
+                "option": "tone"
+              }
+            ],
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "span",
+                "part": "icon",
+                "slot": "icon",
+                "whenGiven": "icon"
+              },
+              {
+                "children": [
+                  {
+                    "element": "p",
+                    "part": "title",
+                    "slot": "title",
+                    "whenGiven": "title"
+                  },
+                  {
+                    "element": "div",
+                    "part": "description",
+                    "slot": "children"
+                  }
+                ],
+                "element": "div",
+                "part": "content"
+              },
+              {
+                "element": "div",
+                "part": "actions",
+                "slot": "actions",
+                "whenGiven": "actions"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "avatar": {
+      "css": "@skryensya/core/components/avatar.css",
+      "id": "avatar",
+      "options": {
+        "name": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "size": {
+          "attr": "data-size",
+          "default": "md",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        "src": {
+          "attr": "src",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "fallback": "sk-avatar__fallback",
+        "group": "sk-avatar-group",
+        "groupOverflow": "sk-avatar-group__overflow",
+        "root": "sk-avatar"
+      },
+      "semantics": {
+        "Avatar.initials": {
+          "alternatives": [
+            "ImageFrame"
+          ],
+          "avoidWhen": [
+            "es una imagen cualquiera recortada; eso es un ImageFrame"
+          ],
+          "useWhen": [
+            "no hay foto y hacen falta las iniciales de la persona",
+            "el avatar identifica a alguien y necesita nombre accesible"
+          ]
+        }
+      },
+      "signatures": {
+        "Avatar.initials": {
+          "forbids": [
+            "src"
+          ],
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "person",
+            "user-identity",
+            "no-photo-available"
+          ],
+          "options": [
+            "size",
+            "name"
+          ],
+          "react": {
+            "from": "@skryensya/react/avatar",
+            "name": "Avatar"
+          },
+          "requires": [
+            "name"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "img"
+            },
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "span",
+                "part": "fallback",
+                "slot": "children"
+              }
+            ],
+            "element": "span",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "badge": {
+      "css": "@skryensya/core/components/badge.css",
+      "id": "badge",
+      "options": {
+        "tone": {
+          "attr": "data-tone",
+          "default": "neutral",
+          "type": "enum",
+          "values": [
+            "neutral",
+            "accent",
+            "success",
+            "warning",
+            "danger"
+          ]
+        }
+      },
+      "parts": {
+        "root": "sk-badge"
+      },
+      "semantics": {
+        "Badge": {
+          "alternatives": [
+            "Tag"
+          ],
+          "avoidWhen": [
+            "el usuario puede quitarlo o actuar sobre él; eso es un Tag",
+            "es texto de párrafo con color; un badge es una cápsula, no énfasis"
+          ],
+          "useWhen": [
+            "un conteo o un estado corto pegado a otra cosa: no leídos, cantidad, etiqueta de estado",
+            "el tono comunica un rol del sistema: success, warning, danger"
+          ]
+        }
+      },
+      "signatures": {
+        "Badge": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "count",
+            "status",
+            "label-on-something",
+            "unread-indicator"
+          ],
+          "options": [
+            "tone"
+          ],
+          "react": {
+            "from": "@skryensya/react/badge",
+            "name": "Badge"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "span",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        }
+      }
+    },
+    "box": {
+      "css": "@skryensya/core/patterns/box.css",
+      "id": "box",
+      "options": {
+        "border": {
+          "attr": "data-border",
+          "default": "none",
+          "type": "enum",
+          "values": [
+            "none",
+            "subtle",
+            "default"
+          ]
+        },
+        "padding": {
+          "attr": "data-padding",
+          "default": "none",
+          "type": "enum",
+          "values": [
+            "none",
+            "xs",
+            "sm",
+            "md",
+            "lg",
+            "xl"
+          ]
+        },
+        "surface": {
+          "attr": "data-surface",
+          "default": "none",
+          "type": "enum",
+          "values": [
+            "none",
+            "sunken",
+            "surface",
+            "raised"
+          ]
+        }
+      },
+      "parts": {
+        "box": "sk-box",
+        "grid": "sk-grid",
+        "inline": "sk-inline",
+        "stack": "sk-stack",
+        "wrapper": "sk-wrapper"
+      },
+      "semantics": {
+        "Box": {
+          "avoidWhen": [
+            "sólo hace falta separar cosas; eso es un Stack sin caja"
+          ],
+          "useWhen": [
+            "hace falta relleno, una superficie o un borde alrededor de un grupo"
+          ]
+        }
+      },
+      "signatures": {
+        "Box": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "padded-region",
+            "card-like-surface",
+            "bordered-region"
+          ],
+          "options": [
+            "padding",
+            "surface",
+            "border"
+          ],
+          "react": {
+            "from": "@skryensya/react/layout",
+            "name": "Box"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "box",
+            "slot": "children"
+          }
+        }
+      }
+    },
+    "breadcrumb": {
+      "css": "@skryensya/core/components/breadcrumb.css",
+      "id": "breadcrumb",
+      "options": {
+        "label": {
+          "attr": "aria-label",
+          "default": "Migas de pan",
+          "type": "string"
+        },
+        "separator": {
+          "attr": "data-separator",
+          "default": "/",
+          "machineInput": true,
+          "type": "string"
+        }
+      },
+      "parts": {
+        "current": "sk-breadcrumb__current",
+        "item": "sk-breadcrumb__item",
+        "link": "sk-breadcrumb__link",
+        "list": "sk-breadcrumb__list",
+        "root": "sk-breadcrumb",
+        "separator": "sk-breadcrumb__separator"
+      },
+      "semantics": {
+        "Breadcrumb": {
+          "alternatives": [
+            "NavList"
+          ],
+          "avoidWhen": [
+            "la navegación es plana; eso es un NavList",
+            "son pasos de un proceso; eso es Steps"
+          ],
+          "useWhen": [
+            "la página vive dentro de una jerarquía y el usuario necesita volver hacia arriba"
+          ]
+        }
+      },
+      "signatures": {
+        "Breadcrumb": {
+          "host": {
+            "element": "nav"
+          },
+          "intent": [
+            "where-am-i",
+            "path-back-up",
+            "hierarchy-trail"
+          ],
+          "options": [
+            "label",
+            "separator"
+          ],
+          "react": {
+            "from": "@skryensya/react/breadcrumb",
+            "name": "Breadcrumb"
+          },
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "label",
+                "options": {
+                  "current": {
+                    "attr": "aria-current",
+                    "default": false,
+                    "trueValue": "page",
+                    "type": "boolean"
+                  },
+                  "href": {
+                    "attr": "href",
+                    "type": "string"
+                  }
+                },
+                "slots": {
+                  "label": {
+                    "accepts": "text",
+                    "required": true
+                  }
+                }
+              },
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "attrsFromItemSlot": {
+                          "title": "label"
+                        },
+                        "element": "a",
+                        "itemOptions": [
+                          "href"
+                        ],
+                        "itemSlot": "label",
+                        "part": "link",
+                        "whenItemGiven": "href"
+                      },
+                      {
+                        "element": "span",
+                        "itemOptions": [
+                          "current"
+                        ],
+                        "itemSlot": "label",
+                        "part": "current",
+                        "whenItemMissing": "href"
+                      },
+                      {
+                        "attrs": {
+                          "aria-hidden": "true"
+                        },
+                        "element": "span",
+                        "part": "separator",
+                        "textFromOption": "separator",
+                        "whenNotLast": true
+                      }
+                    ],
+                    "element": "li",
+                    "part": "item",
+                    "repeat": "items"
+                  }
+                ],
+                "element": "ol",
+                "part": "list"
+              }
+            ],
+            "element": "nav",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "button": {
+      "a11y": [
+        {
+          "because": "A square control shows no text, so the host owns the accessible name; the icon child is decorative.",
+          "requiresOneOf": [
+            "aria-label",
+            "aria-labelledby"
+          ],
+          "when": {
+            "iconOnly": true
+          }
+        }
+      ],
+      "css": "@skryensya/core/components/button.css",
+      "id": "button",
+      "options": {
+        "href": {
+          "attr": "href",
+          "type": "string"
+        },
+        "iconOnly": {
+          "attr": "data-icon-only",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "size": {
+          "attr": "data-size",
+          "default": "md",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        "variant": {
+          "attr": "data-variant",
+          "default": "neutral",
+          "type": "enum",
+          "values": [
+            "neutral",
+            "primary",
+            "danger",
+            "ghost"
+          ]
+        }
+      },
+      "parts": {
+        "interactive": "sk-interactive",
+        "root": "sk-button"
+      },
+      "semantics": {
+        "Button.action": {
+          "alternatives": [
+            "Button.navigation"
+          ],
+          "avoidWhen": [
+            "lleva a otra URL, aunque se vea igual — esa es Button.navigation",
+            "la acción es secundaria dentro de un texto — eso es un Link"
+          ],
+          "useWhen": [
+            "ejecuta una acción en la página",
+            "envía un formulario",
+            "confirma o descarta un diálogo"
+          ]
+        },
+        "Button.navigation": {
+          "alternatives": [
+            "Button.action"
+          ],
+          "avoidWhen": [
+            "el destino no está disponible — un enlace no se deshabilita, se renderiza contenido no enlazable",
+            "el enlace vive dentro de un párrafo — eso es un Link"
+          ],
+          "useWhen": [
+            "lleva a una URL y tiene que verse como un botón",
+            "una llamada a la acción principal que es un enlace"
+          ]
+        }
+      },
+      "signatures": {
+        "Button.action": {
+          "host": {
+            "element": "button",
+            "when": {
+              "href": "absent"
+            }
+          },
+          "intent": [
+            "action",
+            "submit",
+            "destructive-action"
+          ],
+          "mount": "data-sk-button",
+          "options": [
+            "variant",
+            "size",
+            "iconOnly"
+          ],
+          "react": {
+            "from": "@skryensya/react/button",
+            "name": "Button"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-interactive"
+            ],
+            "element": "button",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "Button.navigation": {
+          "forbids": [
+            "disabled",
+            "type"
+          ],
+          "host": {
+            "element": "a",
+            "when": {
+              "href": "present"
+            }
+          },
+          "intent": [
+            "navigation",
+            "single-destination"
+          ],
+          "mount": "data-sk-button",
+          "options": [
+            "variant",
+            "size",
+            "iconOnly",
+            "href"
+          ],
+          "react": {
+            "from": "@skryensya/react/button",
+            "name": "Button"
+          },
+          "requires": [
+            "href"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-interactive"
+            ],
+            "element": "a",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        }
+      }
+    },
+    "checkbox": {
+      "css": "@skryensya/core/components/checkbox.css",
+      "id": "checkbox",
+      "options": {
+        "checked": {
+          "attr": "checked",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "disabled": {
+          "attr": "disabled",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "name": {
+          "attr": "name",
+          "type": "string"
+        },
+        "orientation": {
+          "attr": "data-orientation",
+          "default": "vertical",
+          "type": "enum",
+          "values": [
+            "vertical",
+            "horizontal"
+          ]
+        },
+        "required": {
+          "attr": "required",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "value": {
+          "attr": "value",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "checkbox": "sk-checkbox",
+        "checkboxControl": "sk-checkbox__control",
+        "checkboxIndicator": "sk-checkbox__indicator",
+        "checkboxInput": "sk-checkbox__input",
+        "checkboxLabel": "sk-checkbox__label",
+        "radio": "sk-radio",
+        "radioControl": "sk-radio__control",
+        "radioGroup": "sk-radio-group",
+        "radioIndicator": "sk-radio__indicator",
+        "radioInput": "sk-radio__input",
+        "radioLabel": "sk-radio__label",
+        "switch": "sk-switch",
+        "switchControl": "sk-switch__control",
+        "switchInput": "sk-switch__input",
+        "switchLabel": "sk-switch__label",
+        "switchThumb": "sk-switch__thumb"
+      },
+      "semantics": {
+        "Checkbox": {
+          "alternatives": [
+            "Switch"
+          ],
+          "avoidWhen": [
+            "el cambio surte efecto de inmediato, sin enviar nada; eso es un Switch",
+            "se elige UNA opción de un conjunto; eso es un RadioGroup"
+          ],
+          "useWhen": [
+            "una decisión de sí o no que se envía con el formulario",
+            "varias opciones independientes donde cada una se marca por su cuenta",
+            "aceptar términos, suscribirse, activar una preferencia que se guarda al enviar"
+          ]
+        }
+      },
+      "signatures": {
+        "Checkbox": {
+          "host": {
+            "element": "input"
+          },
+          "intent": [
+            "boolean-choice",
+            "opt-in",
+            "accept-terms",
+            "toggle-one-setting"
+          ],
+          "options": [
+            "name",
+            "value",
+            "checked",
+            "disabled",
+            "required"
+          ],
+          "react": {
+            "from": "@skryensya/react/selection",
+            "name": "Checkbox"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "attrs": {
+                  "type": "checkbox"
+                },
+                "element": "input",
+                "host": true,
+                "part": "checkboxInput"
+              },
+              {
+                "also": [
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-state": "checked"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "check",
+                          "data-sk-icon-size": "sm"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span",
+                    "part": "checkboxIndicator"
+                  },
+                  {
+                    "attrs": {
+                      "data-state": "indeterminate"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "remove",
+                          "data-sk-icon-size": "sm"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span",
+                    "part": "checkboxIndicator"
+                  }
+                ],
+                "element": "span",
+                "part": "checkboxControl"
+              },
+              {
+                "element": "span",
+                "part": "checkboxLabel",
+                "slot": "children",
+                "whenGiven": "children"
+              }
+            ],
+            "element": "label",
+            "part": "checkbox"
+          }
+        }
+      }
+    },
+    "content": {
+      "css": "@skryensya/core/components/toast.css",
+      "id": "content",
+      "options": {
+        "dismissible": {
+          "attr": "data-dismissible",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "dismissLabel": {
+          "attr": "aria-label",
+          "default": "Dismiss notification",
+          "type": "string"
+        },
+        "presentation": {
+          "attr": "data-presentation",
+          "default": "banner",
+          "type": "enum",
+          "values": [
+            "banner",
+            "accent",
+            "inline"
+          ]
+        },
+        "tone": {
+          "attr": "data-tone",
+          "default": "neutral",
+          "type": "enum",
+          "values": [
+            "neutral",
+            "info",
+            "success",
+            "warning",
+            "danger"
+          ]
+        }
+      },
+      "parts": {
+        "toast": "sk-alert",
+        "toastActions": "sk-alert__actions",
+        "toastContent": "sk-alert__content",
+        "toastDescription": "sk-alert__description",
+        "toastDismiss": "sk-alert__dismiss",
+        "toastIcon": "sk-alert__icon",
+        "toastRegion": "sk-toast-region",
+        "toastTitle": "sk-alert__title"
+      },
+      "semantics": {
+        "Toast": {
+          "alternatives": [
+            "Alert"
+          ],
+          "avoidWhen": [
+            "el mensaje es parte del contenido y tiene que quedarse; eso es un Alert",
+            "hay que leerlo sí o sí antes de seguir; eso es un Dialog",
+            "es un error de un campo; eso va en el Field, pegado al control"
+          ],
+          "useWhen": [
+            "confirmar algo que ya pasó y no requiere respuesta: se guardó, se envió, se copió",
+            "ofrecer deshacer una acción durante unos segundos",
+            "avisar que terminó algo que corría en segundo plano"
+          ]
+        },
+        "ToastRegion": {
+          "alternatives": [
+            "Alert"
+          ],
+          "avoidWhen": [
+            "hay un solo mensaje y es parte de la página; eso es un Alert en su lugar"
+          ],
+          "useWhen": [
+            "la página va a mostrar toasts: son suyos, y sin región no hay dónde ponerlos",
+            "hace falta que se anuncien solos; la región es la que el lector de pantalla ya está mirando"
+          ]
+        }
+      },
+      "signatures": {
+        "Toast": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "transient-message",
+            "saved-confirmation",
+            "undo-prompt",
+            "background-task-finished"
+          ],
+          "options": [
+            "tone",
+            "presentation",
+            "dismissible",
+            "dismissLabel"
+          ],
+          "parents": [
+            "ToastRegion"
+          ],
+          "react": {
+            "from": "@skryensya/react/content",
+            "name": "Toast"
+          },
+          "slots": {
+            "actions": {
+              "accepts": "signature",
+              "of": [
+                "Button.action",
+                "Button.navigation"
+              ]
+            },
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "icon": {
+              "accepts": "signature",
+              "of": [
+                "Icon"
+              ]
+            },
+            "title": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "aria-live": "assertive",
+                  "role": "alert"
+                },
+                "equals": "danger",
+                "option": "tone"
+              },
+              {
+                "attrs": {
+                  "aria-live": "polite",
+                  "role": "status"
+                },
+                "notEquals": "danger",
+                "option": "tone"
+              }
+            ],
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "span",
+                "part": "toastIcon",
+                "slot": "icon",
+                "whenGiven": "icon"
+              },
+              {
+                "children": [
+                  {
+                    "element": "p",
+                    "part": "toastTitle",
+                    "slot": "title",
+                    "whenGiven": "title"
+                  },
+                  {
+                    "element": "div",
+                    "part": "toastDescription",
+                    "slot": "children"
+                  }
+                ],
+                "element": "div",
+                "part": "toastContent"
+              },
+              {
+                "children": [
+                  {
+                    "slot": "actions"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-icon-only": "",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "close",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "button",
+                    "mount": "data-sk-button",
+                    "options": [
+                      "dismissLabel"
+                    ],
+                    "part": "toastDismiss",
+                    "whenGiven": "dismissible"
+                  }
+                ],
+                "element": "div",
+                "part": "toastActions",
+                "whenGiven": [
+                  "actions",
+                  "dismissible"
+                ]
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "toast"
+          }
+        },
+        "ToastRegion": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "toast-container",
+            "notification-area",
+            "where-toasts-live"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/content",
+            "name": "ToastRegion"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "Toast"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "aria-live": "polite"
+            },
+            "element": "div",
+            "host": true,
+            "part": "toastRegion",
+            "slot": "children"
+          }
+        }
+      }
+    },
+    "empty-state": {
+      "css": "@skryensya/core/components/empty-state.css",
+      "id": "empty-state",
+      "options": {},
+      "parts": {
+        "actions": "sk-empty-state__actions",
+        "description": "sk-empty-state__description",
+        "icon": "sk-empty-state__icon",
+        "root": "sk-empty-state",
+        "title": "sk-empty-state__title"
+      },
+      "semantics": {
+        "EmptyState": {
+          "alternatives": [
+            "Alert"
+          ],
+          "avoidWhen": [
+            "los datos están cargando; eso es un Loader o Placeholder",
+            "hubo un error; ahí el mensaje es un Alert, no un vacío"
+          ],
+          "useWhen": [
+            "una lista o una región no tiene nada que mostrar, y hay que decir por qué",
+            "es la primera vez y conviene ofrecer la acción que la llena"
+          ]
+        }
+      },
+      "signatures": {
+        "EmptyState": {
+          "host": {
+            "element": "section"
+          },
+          "intent": [
+            "no-results",
+            "nothing-here-yet",
+            "empty-list",
+            "first-run"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/empty-state",
+            "name": "EmptyState"
+          },
+          "slots": {
+            "actions": {
+              "accepts": "signature",
+              "of": [
+                "Button.action",
+                "Button.navigation"
+              ]
+            },
+            "description": {
+              "accepts": "node"
+            },
+            "icon": {
+              "accepts": "signature",
+              "of": [
+                "Icon"
+              ]
+            },
+            "title": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "div",
+                "part": "icon",
+                "slot": "icon",
+                "whenGiven": "icon"
+              },
+              {
+                "element": "h2",
+                "part": "title",
+                "slot": "title"
+              },
+              {
+                "element": "div",
+                "part": "description",
+                "slot": "description",
+                "whenGiven": "description"
+              },
+              {
+                "element": "div",
+                "part": "actions",
+                "slot": "actions",
+                "whenGiven": "actions"
+              }
+            ],
+            "element": "section",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "field": {
+      "css": "@skryensya/core/components/field.css",
+      "id": "field",
+      "options": {
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "required": {
+          "attr": "required",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        }
+      },
+      "parts": {
+        "error": "sk-field__error",
+        "hint": "sk-field__hint",
+        "label": "sk-field__label",
+        "requiredIndicator": "sk-field__required",
+        "root": "sk-field"
+      },
+      "semantics": {
+        "Field": {
+          "avoidWhen": [
+            "el control no lleva rótulo visible; entonces el control mismo lleva aria-label y no hay Field",
+            "se quiere marcar inválido sin decir por qué; la presencia del error es lo que invalida, el color nunca es la única señal"
+          ],
+          "useWhen": [
+            "un control necesita rótulo, y casi siempre lo necesita",
+            "hay que mostrar un mensaje de validación junto al control",
+            "hace falta una ayuda breve antes de que el usuario escriba"
+          ]
+        }
+      },
+      "signatures": {
+        "Field": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "labelled-control",
+            "form-field",
+            "input-with-label",
+            "validation-message"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/input",
+            "name": "Field"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "required": true
+            },
+            "error": {
+              "accepts": "node"
+            },
+            "hint": {
+              "accepts": "node"
+            },
+            "label": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "span",
+                    "part": "requiredIndicator",
+                    "text": "*",
+                    "whenGiven": "required"
+                  }
+                ],
+                "element": "label",
+                "name": "label",
+                "part": "label",
+                "slot": "label"
+              },
+              {
+                "element": "div",
+                "name": "hint",
+                "part": "hint",
+                "slot": "hint",
+                "whenGiven": "hint"
+              },
+              {
+                "slot": "children"
+              },
+              {
+                "element": "div",
+                "name": "error",
+                "part": "error",
+                "slot": "error",
+                "whenGiven": "error"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          },
+          "wiring": [
+            {
+              "attr": "for",
+              "on": "label",
+              "references": [
+                "control"
+              ]
+            },
+            {
+              "attr": "required",
+              "on": "control",
+              "value": "",
+              "whenGiven": "required"
+            },
+            {
+              "attr": "disabled",
+              "on": "control",
+              "value": "",
+              "whenGiven": "disabled"
+            },
+            {
+              "attr": "aria-describedby",
+              "on": "control",
+              "references": [
+                "hint",
+                "error"
+              ]
+            },
+            {
+              "attr": "aria-invalid",
+              "on": "control",
+              "value": "true",
+              "whenGiven": "error"
+            }
+          ]
+        }
+      }
+    },
+    "icon": {
+      "css": "@skryensya/core/patterns/icon.css",
+      "id": "icon",
+      "options": {
+        "label": {
+          "attr": "data-sk-icon-label",
+          "type": "string"
+        },
+        "name": {
+          "attr": "data-sk-icon",
+          "type": "enum",
+          "values": [
+            "chevron-up",
+            "chevron-down",
+            "chevron-left",
+            "chevron-right",
+            "arrow-up",
+            "arrow-down",
+            "arrow-left",
+            "arrow-right",
+            "external-link",
+            "add",
+            "remove",
+            "close",
+            "check",
+            "search",
+            "edit",
+            "delete",
+            "copy",
+            "filter",
+            "refresh",
+            "more",
+            "menu",
+            "info",
+            "success",
+            "warning",
+            "danger",
+            "calendar",
+            "clock",
+            "upload",
+            "download",
+            "settings",
+            "user",
+            "visibility",
+            "visibility-off",
+            "mode-system",
+            "mode-light",
+            "mode-dark",
+            "screen-desktop",
+            "screen-tablet",
+            "screen-mobile"
+          ]
+        },
+        "size": {
+          "attr": "data-sk-icon-size",
+          "default": "md",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        }
+      },
+      "parts": {
+        "root": "sk-icon"
+      },
+      "semantics": {
+        "Icon": {
+          "avoidWhen": [
+            "es un concepto de producto (una factura, un avión): eso se pasa como icon data, no como nombre estable",
+            "se le pondría label dentro de un botón que ya tiene texto; el nombre accesible quedaría duplicado"
+          ],
+          "useWhen": [
+            "refuerza una acción que ya tiene texto; sin label, decorativo",
+            "es el único contenido de un control cuadrado, y entonces el CONTROL lleva el nombre accesible, no el icono",
+            "el nombre es un rol que el sistema nombra: delete, visibility, chevron-down"
+          ]
+        }
+      },
+      "signatures": {
+        "Icon": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "icon",
+            "glyph",
+            "pictogram",
+            "decorative-mark"
+          ],
+          "options": [
+            "name",
+            "size",
+            "label"
+          ],
+          "react": {
+            "from": "@skryensya/react/icon",
+            "name": "Icon"
+          },
+          "requires": [
+            "name"
+          ],
+          "slots": {},
+          "template": {
+            "element": "span",
+            "host": true
+          }
+        }
+      }
+    },
+    "image-frame": {
+      "a11y": [
+        {
+          "because": "An authored image needs an alt, empty when decorative. The frame never invents one.",
+          "requiresOneOf": [
+            "alt"
+          ],
+          "when": {
+            "src": "present"
+          }
+        }
+      ],
+      "css": "@skryensya/core/patterns/image-frame.css",
+      "id": "image-frame",
+      "options": {
+        "alt": {
+          "attr": "alt",
+          "type": "string"
+        },
+        "aspect": {
+          "attr": "data-aspect",
+          "default": "auto",
+          "type": "enum",
+          "values": [
+            "auto",
+            "1/1",
+            "4/3",
+            "3/2",
+            "16/9",
+            "3/4",
+            "2/3",
+            "9/16"
+          ]
+        },
+        "border": {
+          "attr": "data-border",
+          "default": "none",
+          "type": "enum",
+          "values": [
+            "none",
+            "subtle",
+            "default"
+          ]
+        },
+        "fit": {
+          "attr": "data-fit",
+          "default": "cover",
+          "type": "enum",
+          "values": [
+            "cover",
+            "contain",
+            "fill",
+            "none",
+            "scale-down"
+          ]
+        },
+        "position": {
+          "attr": "data-position",
+          "default": "center",
+          "type": "enum",
+          "values": [
+            "center",
+            "top",
+            "bottom",
+            "left",
+            "right",
+            "top-left",
+            "top-right",
+            "bottom-left",
+            "bottom-right"
+          ]
+        },
+        "radius": {
+          "attr": "data-radius",
+          "default": "surface",
+          "type": "enum",
+          "values": [
+            "none",
+            "top",
+            "control",
+            "surface",
+            "pill"
+          ]
+        },
+        "src": {
+          "attr": "src",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "media": "sk-image-frame__media",
+        "root": "sk-image-frame"
+      },
+      "semantics": {
+        "ImageFrame": {
+          "alternatives": [
+            "Avatar"
+          ],
+          "avoidWhen": [
+            "es la identidad circular de una persona — eso es un Avatar",
+            "no hay medio que mostrar, ni src ni contenido autoreado; el marco vacío es una caja vacía, no un placeholder"
+          ],
+          "useWhen": [
+            "recorta una imagen o un video a una proporción fija",
+            "la foto tiene que llenar una caja sin deformarse",
+            "hace falta decidir qué parte de la imagen sobrevive al recorte"
+          ]
+        }
+      },
+      "signatures": {
+        "ImageFrame": {
+          "exactlyOneOf": [
+            [
+              "src",
+              "children"
+            ]
+          ],
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "media",
+            "clipped-media",
+            "aspect-ratio-box",
+            "thumbnail",
+            "cover-image"
+          ],
+          "options": [
+            "aspect",
+            "fit",
+            "position",
+            "radius",
+            "border",
+            "src",
+            "alt"
+          ],
+          "react": {
+            "from": "@skryensya/react/image-frame",
+            "name": "ImageFrame"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "img",
+                "options": [
+                  "src",
+                  "alt"
+                ],
+                "part": "media",
+                "whenGiven": "src"
+              },
+              {
+                "slot": "children"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "input": {
+      "css": "@skryensya/core/components/input.css",
+      "id": "input",
+      "options": {
+        "controlSize": {
+          "attr": "data-size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        "disabled": {
+          "attr": "disabled",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "name": {
+          "attr": "name",
+          "type": "string"
+        },
+        "placeholder": {
+          "attr": "placeholder",
+          "type": "string"
+        },
+        "type": {
+          "attr": "type",
+          "default": "text",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "root": "sk-input"
+      },
+      "semantics": {
+        "Input": {
+          "alternatives": [
+            "Textarea"
+          ],
+          "avoidWhen": [
+            "el texto es largo o multilínea; eso es Textarea",
+            "se elige de un conjunto cerrado de opciones; eso es un Select"
+          ],
+          "useWhen": [
+            "el usuario escribe una línea de texto: email, nombre, búsqueda",
+            "el tipo nativo aporta teclado y validación del navegador (email, tel, url)"
+          ]
+        },
+        "Textarea": {
+          "alternatives": [
+            "Input"
+          ],
+          "avoidWhen": [
+            "una sola línea alcanza; un Textarea invita a escribir de más"
+          ],
+          "useWhen": [
+            "el texto ocupa varias líneas: una descripción, un comentario"
+          ]
+        }
+      },
+      "signatures": {
+        "Input": {
+          "host": {
+            "element": "input"
+          },
+          "intent": [
+            "text-entry",
+            "single-line-input",
+            "email",
+            "password",
+            "search-field"
+          ],
+          "options": [
+            "controlSize",
+            "type",
+            "name",
+            "placeholder",
+            "disabled"
+          ],
+          "parents": [
+            "Field"
+          ],
+          "react": {
+            "from": "@skryensya/react/input",
+            "name": "Input"
+          },
+          "slots": {},
+          "template": {
+            "element": "input",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "Textarea": {
+          "host": {
+            "element": "textarea"
+          },
+          "intent": [
+            "multi-line-input",
+            "long-text",
+            "comment",
+            "description-entry"
+          ],
+          "options": [
+            "controlSize",
+            "name",
+            "placeholder",
+            "disabled"
+          ],
+          "parents": [
+            "Field"
+          ],
+          "react": {
+            "from": "@skryensya/react/input",
+            "name": "Textarea"
+          },
+          "slots": {},
+          "template": {
+            "element": "textarea",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "kbd": {
+      "css": "@skryensya/core/components/kbd.css",
+      "id": "kbd",
+      "options": {},
+      "parts": {
+        "root": "sk-kbd"
+      },
+      "semantics": {
+        "Kbd": {
+          "avoidWhen": [
+            "es texto de código o un comando; eso va en un bloque de código"
+          ],
+          "useWhen": [
+            "se muestra una tecla o una combinación que el usuario puede presionar"
+          ]
+        }
+      },
+      "signatures": {
+        "Kbd": {
+          "host": {
+            "element": "kbd"
+          },
+          "intent": [
+            "keyboard-key",
+            "shortcut",
+            "key-combination"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/kbd",
+            "name": "Kbd"
+          },
+          "slots": {
+            "children": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "kbd",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        }
+      }
+    },
+    "layout": {
+      "css": "@skryensya/core/patterns/layout.css",
+      "id": "layout",
+      "options": {
+        "align": {
+          "attr": "data-align",
+          "type": "enum",
+          "values": [
+            "start",
+            "center",
+            "end",
+            "stretch"
+          ]
+        },
+        "columns": {
+          "attr": "data-columns",
+          "default": "1",
+          "type": "enum",
+          "values": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "gap": {
+          "attr": "data-gap",
+          "default": "md",
+          "type": "enum",
+          "values": [
+            "none",
+            "xs",
+            "sm",
+            "md",
+            "lg",
+            "xl"
+          ]
+        },
+        "inlineAlign": {
+          "attr": "data-align",
+          "default": "center",
+          "prop": "align",
+          "type": "enum",
+          "values": [
+            "start",
+            "center",
+            "end",
+            "baseline"
+          ]
+        },
+        "justify": {
+          "attr": "data-justify",
+          "type": "enum",
+          "values": [
+            "start",
+            "center",
+            "end",
+            "between"
+          ]
+        }
+      },
+      "parts": {
+        "box": "sk-box",
+        "grid": "sk-grid",
+        "inline": "sk-inline",
+        "stack": "sk-stack",
+        "wrapper": "sk-wrapper"
+      },
+      "semantics": {
+        "Grid": {
+          "alternatives": [
+            "Inline"
+          ],
+          "avoidWhen": [
+            "los anchos son distintos entre sí; eso es un Inline"
+          ],
+          "useWhen": [
+            "columnas de igual ancho: una grilla de tarjetas"
+          ]
+        },
+        "Inline": {
+          "alternatives": [
+            "Grid"
+          ],
+          "avoidWhen": [
+            "son columnas de igual ancho; eso es un Grid"
+          ],
+          "useWhen": [
+            "las cosas van una al lado de otra: una fila de botones, un rótulo con su valor"
+          ]
+        },
+        "Stack": {
+          "useWhen": [
+            "las cosas van una debajo de otra con un ritmo constante",
+            "es la disposición por defecto de un formulario"
+          ]
+        }
+      },
+      "signatures": {
+        "Grid": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "columns",
+            "card-grid",
+            "equal-width-cells"
+          ],
+          "options": [
+            "gap",
+            "columns"
+          ],
+          "react": {
+            "from": "@skryensya/react/layout",
+            "name": "Grid"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "grid",
+            "slot": "children"
+          }
+        },
+        "Inline": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "things-side-by-side",
+            "button-row",
+            "label-and-value"
+          ],
+          "options": [
+            "gap",
+            "inlineAlign",
+            "justify"
+          ],
+          "react": {
+            "from": "@skryensya/react/layout",
+            "name": "Inline"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "inline",
+            "slot": "children"
+          }
+        },
+        "Stack": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "vertical-rhythm",
+            "things-one-above-another",
+            "form-fields"
+          ],
+          "options": [
+            "gap",
+            "align"
+          ],
+          "react": {
+            "from": "@skryensya/react/layout",
+            "name": "Stack"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "stack",
+            "slot": "children"
+          }
+        }
+      }
+    },
+    "list": {
+      "css": "@skryensya/core/components/list.css",
+      "id": "list",
+      "options": {
+        "density": {
+          "attr": "data-density",
+          "type": "enum",
+          "values": [
+            "compact"
+          ]
+        },
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "dividers": {
+          "attr": "data-dividers",
+          "default": true,
+          "type": "boolean"
+        },
+        "href": {
+          "attr": "href",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "action": "sk-list__action",
+        "content": "sk-list__content",
+        "description": "sk-list__description",
+        "interactive": "sk-interactive",
+        "item": "sk-list__item",
+        "leading": "sk-list__leading",
+        "root": "sk-list",
+        "title": "sk-list__title",
+        "trailing": "sk-list__trailing"
+      },
+      "semantics": {
+        "List": {
+          "alternatives": [
+            "Table"
+          ],
+          "avoidWhen": [
+            "las filas tienen columnas comparables entre sí; eso es una Table"
+          ],
+          "useWhen": [
+            "filas de cosas del mismo tipo: una bandeja, ajustes, resultados"
+          ]
+        },
+        "ListItem": {
+          "useWhen": [
+            "una fila que no se toca"
+          ]
+        },
+        "ListItemLink": {
+          "avoidWhen": [
+            "sólo una parte de la fila es enlace; ahí el enlace va adentro, no envolviendo"
+          ],
+          "useWhen": [
+            "la fila entera navega, y el objetivo de foco y de clic es la fila"
+          ]
+        }
+      },
+      "signatures": {
+        "List": {
+          "host": {
+            "element": "ul"
+          },
+          "intent": [
+            "rows",
+            "list-of-records",
+            "settings-rows",
+            "inbox"
+          ],
+          "options": [
+            "density"
+          ],
+          "react": {
+            "from": "@skryensya/react/list",
+            "name": "List"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "ListItem",
+                "ListItemLink"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "ul",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "ListItem": {
+          "host": {
+            "element": "li"
+          },
+          "intent": [
+            "one-row",
+            "inert-row"
+          ],
+          "options": [
+            "disabled"
+          ],
+          "parents": [
+            "List"
+          ],
+          "react": {
+            "from": "@skryensya/react/list",
+            "name": "ListItem"
+          },
+          "slots": {
+            "description": {
+              "accepts": "text"
+            },
+            "leading": {
+              "accepts": "signature",
+              "of": [
+                "Icon",
+                "Avatar.initials"
+              ]
+            },
+            "title": {
+              "accepts": "text",
+              "required": true
+            },
+            "trailing": {
+              "accepts": "node"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "span",
+                "part": "leading",
+                "slot": "leading",
+                "whenGiven": "leading"
+              },
+              {
+                "children": [
+                  {
+                    "element": "span",
+                    "part": "title",
+                    "slot": "title"
+                  },
+                  {
+                    "element": "span",
+                    "part": "description",
+                    "slot": "description",
+                    "whenGiven": "description"
+                  }
+                ],
+                "element": "span",
+                "part": "content"
+              },
+              {
+                "element": "span",
+                "part": "trailing",
+                "slot": "trailing",
+                "whenGiven": "trailing"
+              }
+            ],
+            "element": "li",
+            "host": true,
+            "part": "item"
+          }
+        },
+        "ListItemLink": {
+          "host": {
+            "element": "a"
+          },
+          "intent": [
+            "row-that-navigates",
+            "tappable-row"
+          ],
+          "options": [
+            "href"
+          ],
+          "parents": [
+            "List"
+          ],
+          "react": {
+            "from": "@skryensya/react/list",
+            "name": "ListItemLink"
+          },
+          "requires": [
+            "href"
+          ],
+          "slots": {
+            "description": {
+              "accepts": "text"
+            },
+            "leading": {
+              "accepts": "signature",
+              "of": [
+                "Icon",
+                "Avatar.initials"
+              ]
+            },
+            "title": {
+              "accepts": "text",
+              "required": true
+            },
+            "trailing": {
+              "accepts": "node"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-interactive"
+                ],
+                "children": [
+                  {
+                    "element": "span",
+                    "part": "leading",
+                    "slot": "leading",
+                    "whenGiven": "leading"
+                  },
+                  {
+                    "children": [
+                      {
+                        "element": "span",
+                        "part": "title",
+                        "slot": "title"
+                      },
+                      {
+                        "element": "span",
+                        "part": "description",
+                        "slot": "description",
+                        "whenGiven": "description"
+                      }
+                    ],
+                    "element": "span",
+                    "part": "content"
+                  },
+                  {
+                    "element": "span",
+                    "part": "trailing",
+                    "slot": "trailing",
+                    "whenGiven": "trailing"
+                  }
+                ],
+                "element": "a",
+                "host": true,
+                "part": "action"
+              }
+            ],
+            "element": "li",
+            "part": "item"
+          }
+        }
+      }
+    },
+    "loader": {
+      "css": "@skryensya/core/components/loader.css",
+      "id": "loader",
+      "options": {
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "size": {
+          "attr": "data-size",
+          "default": "md",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        "speed": {
+          "attr": "data-speed",
+          "default": "normal",
+          "type": "enum",
+          "values": [
+            "fast",
+            "normal",
+            "slow"
+          ]
+        },
+        "variant": {
+          "attr": "data-variant",
+          "default": "ring",
+          "type": "enum",
+          "values": [
+            "ring",
+            "sweep",
+            "bars",
+            "dots"
+          ]
+        }
+      },
+      "parts": {
+        "root": "sk-loader"
+      },
+      "semantics": {
+        "Loader": {
+          "alternatives": [
+            "Placeholder"
+          ],
+          "avoidWhen": [
+            "se conoce el progreso; eso es un Progress con su valor",
+            "el contenido tiene forma y se puede prefigurar; eso es un Placeholder"
+          ],
+          "useWhen": [
+            "hay una espera de duración desconocida",
+            "con label, ES el estado que se anuncia; sin label, acompaña a un texto que ya lo dice"
+          ]
+        }
+      },
+      "signatures": {
+        "Loader": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "loading",
+            "waiting",
+            "in-progress-unknown-duration"
+          ],
+          "options": [
+            "size",
+            "variant",
+            "speed",
+            "label"
+          ],
+          "react": {
+            "from": "@skryensya/react/loader",
+            "name": "Loader"
+          },
+          "slots": {},
+          "template": {
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "role": "status"
+                },
+                "given": true,
+                "option": "label"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "given": false,
+                "option": "label"
+              }
+            ],
+            "element": "span",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "media-gradient": {
+      "css": "@skryensya/core/patterns/media-gradient.css",
+      "id": "media-gradient",
+      "options": {
+        "strength": {
+          "attr": "data-strength",
+          "default": "md",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        }
+      },
+      "parts": {
+        "caption": "sk-media-caption",
+        "root": "sk-media-gradient"
+      },
+      "semantics": {
+        "MediaGradient": {
+          "avoidWhen": [
+            "oscurece un diálogo sobre la página; eso es un Backdrop"
+          ],
+          "useWhen": [
+            "hay texto encima de una foto y necesita contraste para leerse"
+          ]
+        }
+      },
+      "signatures": {
+        "MediaGradient": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "readable-text-over-a-photo",
+            "scrim-behind-a-caption"
+          ],
+          "options": [
+            "strength"
+          ],
+          "react": {
+            "from": "@skryensya/react/media-gradient",
+            "name": "MediaGradient"
+          },
+          "slots": {},
+          "template": {
+            "attrs": {
+              "aria-hidden": "true"
+            },
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "nav-list": {
+      "a11y": [
+        {
+          "because": "A page with a second nav needs each landmark named; the platform's own rule, not this system's.",
+          "requiresOneOf": [
+            "aria-label",
+            "aria-labelledby"
+          ],
+          "signatures": [
+            "NavList"
+          ],
+          "when": {
+            "landmarkCount": "many"
+          }
+        }
+      ],
+      "css": "@skryensya/core/patterns/nav-list.css",
+      "id": "nav-list",
+      "options": {
+        "current": {
+          "attr": "aria-current",
+          "default": false,
+          "trueValue": "page",
+          "type": "boolean"
+        },
+        "href": {
+          "attr": "href",
+          "type": "string"
+        },
+        "orientation": {
+          "attr": "data-orientation",
+          "default": "vertical",
+          "type": "enum",
+          "values": [
+            "vertical",
+            "horizontal"
+          ]
+        }
+      },
+      "parts": {
+        "group": "sk-nav-list__group",
+        "groupLabel": "sk-nav-list__group-label",
+        "item": "sk-nav-list__item",
+        "label": "sk-nav-list__label",
+        "link": "sk-nav-list__link",
+        "list": "sk-nav-list__list",
+        "root": "sk-nav-list",
+        "trailing": "sk-nav-list__trailing"
+      },
+      "semantics": {
+        "NavList": {
+          "avoidWhen": [
+            "son acciones de una aplicación, no destinos — eso es un menú, con role=\"menu\"",
+            "es una ruta jerárquica hasta la página actual — eso es un Breadcrumb"
+          ],
+          "useWhen": [
+            "la lista de destinos de un sidebar, un navbar o un drawer",
+            "navegación principal o secundaria de una página"
+          ]
+        },
+        "NavListGroup": {
+          "avoidWhen": [
+            "hay un solo destino y ningún rótulo — el grupo sigue siendo obligatorio, no es opcional"
+          ],
+          "useWhen": [
+            "agrupa destinos bajo un rótulo",
+            "hace falta el <ul> aunque el grupo no lleve rótulo visible"
+          ]
+        },
+        "NavListLink": {
+          "alternatives": [
+            "Button.navigation"
+          ],
+          "avoidWhen": [
+            "dispara una acción en vez de navegar — eso es Button.action"
+          ],
+          "useWhen": [
+            "un destino de la lista",
+            "marca la página actual con current"
+          ]
+        }
+      },
+      "signatures": {
+        "NavList": {
+          "host": {
+            "element": "nav"
+          },
+          "intent": [
+            "navigation",
+            "list-of-destinations",
+            "sidebar-navigation",
+            "navbar-navigation"
+          ],
+          "options": [
+            "orientation"
+          ],
+          "react": {
+            "from": "@skryensya/react/nav-list",
+            "name": "NavList"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "NavListGroup"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "nav",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "NavListGroup": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "group-of-destinations",
+            "labeled-navigation-section"
+          ],
+          "options": [],
+          "parents": [
+            "NavList"
+          ],
+          "react": {
+            "from": "@skryensya/react/nav-list",
+            "name": "NavListGroup"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "NavListLink"
+              ],
+              "required": true
+            },
+            "label": {
+              "accepts": "node"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "div",
+                "part": "groupLabel",
+                "slot": "label",
+                "whenGiven": "label"
+              },
+              {
+                "element": "ul",
+                "labelledBySlot": "label",
+                "part": "list",
+                "slot": "children"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "group"
+          }
+        },
+        "NavListLink": {
+          "host": {
+            "element": "a"
+          },
+          "intent": [
+            "destination",
+            "single-destination",
+            "current-page"
+          ],
+          "options": [
+            "href",
+            "current"
+          ],
+          "parents": [
+            "NavListGroup"
+          ],
+          "react": {
+            "from": "@skryensya/react/nav-list",
+            "name": "NavListLink"
+          },
+          "requires": [
+            "href"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "text",
+              "required": true
+            },
+            "icon": {
+              "accepts": "node"
+            },
+            "trailing": {
+              "accepts": "node"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-interactive"
+                ],
+                "children": [
+                  {
+                    "slot": "icon",
+                    "whenGiven": "icon"
+                  },
+                  {
+                    "element": "span",
+                    "part": "label",
+                    "slot": "children"
+                  },
+                  {
+                    "element": "span",
+                    "part": "trailing",
+                    "slot": "trailing",
+                    "whenGiven": "trailing"
+                  }
+                ],
+                "element": "a",
+                "host": true,
+                "part": "link"
+              }
+            ],
+            "element": "li",
+            "part": "item"
+          }
+        }
+      }
+    },
+    "navbar": {
+      "css": "@skryensya/core/components/navbar.css",
+      "id": "navbar",
+      "options": {},
+      "parts": {
+        "actions": "sk-navbar__actions",
+        "brand": "sk-navbar__brand",
+        "root": "sk-navbar"
+      },
+      "semantics": {
+        "Navbar": {
+          "avoidWhen": [
+            "la navegación va al costado; eso es un Sidebar"
+          ],
+          "useWhen": [
+            "la app necesita una barra superior con marca y acciones"
+          ]
+        },
+        "NavbarActions": {
+          "useWhen": [
+            "las acciones del extremo: cuenta, notificaciones, tema"
+          ]
+        },
+        "NavbarBrand": {
+          "useWhen": [
+            "el logo o el nombre del producto, normalmente enlazando al inicio"
+          ]
+        }
+      },
+      "signatures": {
+        "Navbar": {
+          "host": {
+            "element": "header"
+          },
+          "intent": [
+            "top-bar",
+            "app-header",
+            "page-chrome"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/navbar",
+            "name": "Navbar"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "NavbarBrand",
+                "NavbarActions",
+                "NavList"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "header",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "NavbarActions": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "actions-in-the-bar",
+            "account-menu-area"
+          ],
+          "options": [],
+          "parents": [
+            "Navbar"
+          ],
+          "react": {
+            "from": "@skryensya/react/navbar",
+            "name": "NavbarActions"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "actions",
+            "slot": "children"
+          }
+        },
+        "NavbarBrand": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "logo",
+            "product-name",
+            "home-link-in-the-bar"
+          ],
+          "options": [],
+          "parents": [
+            "Navbar"
+          ],
+          "react": {
+            "from": "@skryensya/react/navbar",
+            "name": "NavbarBrand"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "brand",
+            "slot": "children"
+          }
+        }
+      }
+    },
+    "number-field": {
+      "css": "@skryensya/core/components/number-field.css",
+      "id": "number-field",
+      "options": {
+        "decrementLabel": {
+          "attr": "aria-label",
+          "default": "Disminuir",
+          "machineInput": true,
+          "type": "string"
+        },
+        "disabled": {
+          "attr": "disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "incrementLabel": {
+          "attr": "aria-label",
+          "default": "Aumentar",
+          "machineInput": true,
+          "type": "string"
+        },
+        "max": {
+          "attr": "max",
+          "machineInput": true,
+          "type": "number"
+        },
+        "min": {
+          "attr": "min",
+          "machineInput": true,
+          "type": "number"
+        },
+        "name": {
+          "attr": "name",
+          "machineInput": true,
+          "type": "string"
+        },
+        "readOnly": {
+          "attr": "readonly",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "required": {
+          "attr": "required",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "step": {
+          "attr": "step",
+          "machineInput": true,
+          "type": "number"
+        }
+      },
+      "parts": {
+        "control": "sk-number-field__control",
+        "decrement": "sk-number-field__decrement",
+        "hint": "sk-number-field__hint",
+        "increment": "sk-number-field__increment",
+        "input": "sk-number-field__input",
+        "label": "sk-number-field__label",
+        "root": "sk-number-field",
+        "scrubber": "sk-number-field__scrubber"
+      },
+      "semantics": {
+        "NumberField": {
+          "alternatives": [
+            "Slider",
+            "Input"
+          ],
+          "avoidWhen": [
+            "el valor es aproximado y verlo moverse ayuda; eso es un Slider",
+            "son pocas opciones discretas; eso es un Segmented o un RadioGroup",
+            "es texto que sólo parece número (un RUT, un teléfono, un código); eso es un Input"
+          ],
+          "useWhen": [
+            "el valor es un número que se escribe: una cantidad, un monto, una cantidad de noches",
+            "ajustar de a un paso es una acción frecuente y conviene que tenga botones",
+            "hace falta formato por locale (miles, decimales, moneda) sin perder el valor crudo"
+          ]
+        }
+      },
+      "signatures": {
+        "NumberField": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "number-input",
+            "quantity",
+            "stepper",
+            "amount",
+            "spinner"
+          ],
+          "mount": "data-sk-number-field",
+          "options": [
+            "name",
+            "min",
+            "max",
+            "step",
+            "disabled",
+            "readOnly",
+            "required",
+            "decrementLabel",
+            "incrementLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/number-field",
+            "name": "NumberField"
+          },
+          "slots": {
+            "label": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "label",
+                "mount": "data-sk-number-field-label",
+                "part": "label",
+                "slot": "label"
+              },
+              {
+                "children": [
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-icon-only": "",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "remove",
+                          "data-sk-icon-size": "sm"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "button",
+                    "mount": "data-sk-number-field-decrement",
+                    "options": [
+                      "decrementLabel"
+                    ],
+                    "part": "decrement"
+                  },
+                  {
+                    "attrs": {
+                      "autocomplete": "off",
+                      "inputmode": "decimal",
+                      "type": "text"
+                    },
+                    "element": "input",
+                    "mount": "data-sk-number-field-input",
+                    "options": [
+                      "name",
+                      "min",
+                      "max",
+                      "step",
+                      "disabled",
+                      "readOnly",
+                      "required"
+                    ],
+                    "part": "input"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-icon-only": "",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "add",
+                          "data-sk-icon-size": "sm"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "button",
+                    "mount": "data-sk-number-field-increment",
+                    "options": [
+                      "incrementLabel"
+                    ],
+                    "part": "increment"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-number-field-control",
+                "part": "control"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "placeholder": {
+      "css": "@skryensya/core/components/placeholder.css",
+      "id": "placeholder",
+      "options": {
+        "shape": {
+          "attr": "data-shape",
+          "default": "text",
+          "type": "enum",
+          "values": [
+            "text",
+            "block",
+            "circle"
+          ]
+        }
+      },
+      "parts": {
+        "root": "sk-placeholder"
+      },
+      "semantics": {
+        "Placeholder": {
+          "alternatives": [
+            "Loader"
+          ],
+          "avoidWhen": [
+            "no se sabe qué va a aparecer; ahí un Loader dice más"
+          ],
+          "useWhen": [
+            "se prefigura contenido que está por llegar y ya se sabe qué forma tendrá",
+            "evita el salto de layout cuando los datos aparecen"
+          ]
+        }
+      },
+      "signatures": {
+        "Placeholder": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "loading-skeleton",
+            "content-not-yet-loaded",
+            "shape-of-absent-content"
+          ],
+          "options": [
+            "shape"
+          ],
+          "react": {
+            "from": "@skryensya/react/placeholder",
+            "name": "Placeholder"
+          },
+          "slots": {},
+          "template": {
+            "attrs": {
+              "aria-hidden": "true"
+            },
+            "element": "span",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "process-list": {
+      "css": "@skryensya/core/components/process-list.css",
+      "id": "process-list",
+      "options": {},
+      "parts": {
+        "content": "sk-process-list__content",
+        "item": "sk-process-list__item",
+        "root": "sk-process-list",
+        "title": "sk-process-list__title"
+      },
+      "semantics": {
+        "ProcessList": {
+          "alternatives": [
+            "Steps"
+          ],
+          "avoidWhen": [
+            "lo que importa es en qué paso está el usuario; eso es Steps"
+          ],
+          "useWhen": [
+            "son instrucciones a seguir y el contenido de cada paso es lo importante"
+          ]
+        },
+        "ProcessListItem": {
+          "useWhen": [
+            "una instrucción dentro de la lista"
+          ]
+        }
+      },
+      "signatures": {
+        "ProcessList": {
+          "host": {
+            "element": "ol"
+          },
+          "intent": [
+            "instructions",
+            "how-to",
+            "ordered-steps-to-follow"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/process-list",
+            "name": "ProcessList"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "ProcessListItem"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "ol",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "ProcessListItem": {
+          "host": {
+            "element": "li"
+          },
+          "intent": [
+            "one-instruction",
+            "one-step-of-a-how-to"
+          ],
+          "options": [],
+          "parents": [
+            "ProcessList"
+          ],
+          "react": {
+            "from": "@skryensya/react/process-list",
+            "name": "ProcessListItem"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node"
+            },
+            "title": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "element": "span",
+                    "part": "title",
+                    "slot": "title"
+                  },
+                  {
+                    "slot": "children"
+                  }
+                ],
+                "element": "div",
+                "part": "content"
+              }
+            ],
+            "element": "li",
+            "host": true,
+            "part": "item"
+          }
+        }
+      }
+    },
+    "progress": {
+      "css": "@skryensya/core/components/progress.css",
+      "id": "progress",
+      "options": {
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "max": {
+          "attr": "aria-valuemax",
+          "default": 100,
+          "type": "number"
+        },
+        "tone": {
+          "attr": "data-tone",
+          "default": "accent",
+          "type": "enum",
+          "values": [
+            "accent",
+            "success",
+            "warning",
+            "danger"
+          ]
+        },
+        "value": {
+          "attr": "aria-valuenow",
+          "default": 0,
+          "type": "number"
+        }
+      },
+      "parts": {
+        "bar": "sk-progress__bar",
+        "root": "sk-progress"
+      },
+      "semantics": {
+        "Progress": {
+          "alternatives": [
+            "Loader"
+          ],
+          "avoidWhen": [
+            "la espera es de duración desconocida; eso es un Loader"
+          ],
+          "useWhen": [
+            "se conoce cuánto falta: una subida, un formulario por pasos, una descarga"
+          ]
+        }
+      },
+      "signatures": {
+        "Progress": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "determinate-progress",
+            "percentage-complete",
+            "upload-progress"
+          ],
+          "options": [
+            "value",
+            "max",
+            "tone",
+            "label"
+          ],
+          "react": {
+            "from": "@skryensya/react/progress",
+            "name": "Progress"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {},
+          "template": {
+            "attrs": {
+              "aria-valuemin": "0",
+              "role": "progressbar"
+            },
+            "children": [
+              {
+                "element": "div",
+                "part": "bar"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root",
+            "style": [
+              {
+                "percentOf": [
+                  "value",
+                  "max"
+                ],
+                "property": "--sk-progress-fill"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "radio-group": {
+      "css": "@skryensya/core/components/radio-group.css",
+      "id": "radio-group",
+      "options": {
+        "disabled": {
+          "attr": "disabled",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "name": {
+          "attr": "name",
+          "type": "string"
+        },
+        "orientation": {
+          "alsoAttr": "aria-orientation",
+          "attr": "data-orientation",
+          "default": "vertical",
+          "type": "enum",
+          "values": [
+            "vertical",
+            "horizontal"
+          ]
+        },
+        "required": {
+          "attr": "required",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "value": {
+          "attr": "data-value",
+          "machineInput": true,
+          "type": "string"
+        }
+      },
+      "parts": {
+        "checkbox": "sk-checkbox",
+        "checkboxControl": "sk-checkbox__control",
+        "checkboxIndicator": "sk-checkbox__indicator",
+        "checkboxInput": "sk-checkbox__input",
+        "checkboxLabel": "sk-checkbox__label",
+        "radio": "sk-radio",
+        "radioControl": "sk-radio__control",
+        "radioGroup": "sk-radio-group",
+        "radioIndicator": "sk-radio__indicator",
+        "radioInput": "sk-radio__input",
+        "radioLabel": "sk-radio__label",
+        "switch": "sk-switch",
+        "switchControl": "sk-switch__control",
+        "switchInput": "sk-switch__input",
+        "switchLabel": "sk-switch__label",
+        "switchThumb": "sk-switch__thumb"
+      },
+      "semantics": {
+        "RadioGroup": {
+          "alternatives": [
+            "Checkbox"
+          ],
+          "avoidWhen": [
+            "las opciones son más de siete u ocho; ahí conviene un Select",
+            "se pueden marcar varias a la vez; eso son Checkbox independientes",
+            "hay una sola opción; una elección de uno no es una elección"
+          ],
+          "useWhen": [
+            "se elige UNA opción de un conjunto pequeño y todas las opciones valen la pena mostrarlas",
+            "las opciones son excluyentes entre sí"
+          ]
+        }
+      },
+      "signatures": {
+        "RadioGroup": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "one-of-many",
+            "exclusive-choice",
+            "pick-a-single-option"
+          ],
+          "options": [
+            "name",
+            "value",
+            "orientation",
+            "disabled",
+            "required"
+          ],
+          "react": {
+            "from": "@skryensya/react/selection",
+            "name": "RadioGroup"
+          },
+          "requires": [
+            "name"
+          ],
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "value",
+                "options": {
+                  "disabled": {
+                    "attr": "disabled",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "value": {
+                    "attr": "value",
+                    "type": "string"
+                  }
+                },
+                "slots": {
+                  "label": {
+                    "accepts": "node",
+                    "required": true
+                  }
+                }
+              },
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "radiogroup"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "type": "radio"
+                    },
+                    "element": "input",
+                    "itemOptions": [
+                      "value",
+                      "disabled"
+                    ],
+                    "options": [
+                      "name",
+                      "required"
+                    ],
+                    "part": "radioInput",
+                    "selectedBy": {
+                      "attr": "checked",
+                      "option": "value"
+                    }
+                  },
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "children": [
+                      {
+                        "element": "span",
+                        "part": "radioIndicator"
+                      }
+                    ],
+                    "element": "span",
+                    "part": "radioControl"
+                  },
+                  {
+                    "element": "span",
+                    "itemSlot": "label",
+                    "part": "radioLabel"
+                  }
+                ],
+                "element": "label",
+                "part": "radio",
+                "repeat": "items"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "radioGroup"
+          }
+        }
+      }
+    },
+    "segmented": {
+      "css": "@skryensya/core/components/segmented.css",
+      "id": "segmented",
+      "options": {
+        "value": {
+          "attr": "data-value",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "indicator": "sk-segmented__indicator",
+        "option": "sk-segmented__option",
+        "root": "sk-segmented"
+      },
+      "semantics": {
+        "Segmented": {
+          "alternatives": [
+            "RadioGroup"
+          ],
+          "avoidWhen": [
+            "son más de tres o cuatro; ahí conviene un RadioGroup o un Select",
+            "el valor se envía con el formulario; eso es un RadioGroup"
+          ],
+          "useWhen": [
+            "dos o tres opciones excluyentes que conviene ver todas a la vez",
+            "cambia una vista, no un dato del formulario"
+          ]
+        }
+      },
+      "signatures": {
+        "Segmented": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "small-exclusive-choice",
+            "view-switcher",
+            "two-or-three-options"
+          ],
+          "mount": "data-sk-segmented",
+          "options": [
+            "value"
+          ],
+          "react": {
+            "from": "@skryensya/react/segmented",
+            "name": "SegmentedControl"
+          },
+          "requires": [
+            "value"
+          ],
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "value",
+                "options": {
+                  "disabled": {
+                    "attr": "disabled",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "value": {
+                    "attr": "data-value",
+                    "type": "string"
+                  }
+                },
+                "slots": {
+                  "label": {
+                    "accepts": "text",
+                    "required": true
+                  }
+                }
+              },
+              "prop": "options",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "radiogroup"
+            },
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "span",
+                "part": "indicator"
+              },
+              {
+                "also": [
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "role": "radio",
+                  "type": "button"
+                },
+                "element": "button",
+                "itemOptions": [
+                  "value",
+                  "disabled"
+                ],
+                "itemSlot": "label",
+                "mount": "data-sk-segmented-option",
+                "part": "option",
+                "repeat": "items",
+                "selectedBy": {
+                  "attr": "aria-checked",
+                  "option": "value"
+                }
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "slider": {
+      "css": "@skryensya/core/components/slider.css",
+      "id": "slider",
+      "options": {
+        "disabled": {
+          "attr": "disabled",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "max": {
+          "attr": "max",
+          "default": 100,
+          "type": "number"
+        },
+        "min": {
+          "attr": "min",
+          "default": 0,
+          "type": "number"
+        },
+        "name": {
+          "attr": "name",
+          "type": "string"
+        },
+        "step": {
+          "attr": "step",
+          "type": "number"
+        },
+        "value": {
+          "attr": "value",
+          "default": 0,
+          "type": "number"
+        }
+      },
+      "parts": {
+        "root": "sk-slider"
+      },
+      "semantics": {
+        "Slider": {
+          "alternatives": [
+            "Segmented"
+          ],
+          "avoidWhen": [
+            "hace falta precisión; ahí un campo numérico se escribe más rápido",
+            "son opciones discretas y pocas; eso es un RadioGroup o un Segmented"
+          ],
+          "useWhen": [
+            "el valor es aproximado y verlo moverse ayuda: volumen, brillo, un rango de precio"
+          ]
+        }
+      },
+      "signatures": {
+        "Slider": {
+          "host": {
+            "element": "input"
+          },
+          "intent": [
+            "value-in-a-range",
+            "volume",
+            "adjust-a-number-roughly"
+          ],
+          "options": [
+            "value",
+            "min",
+            "max",
+            "step",
+            "name",
+            "disabled"
+          ],
+          "react": {
+            "from": "@skryensya/react/slider",
+            "name": "Slider"
+          },
+          "slots": {},
+          "template": {
+            "attrs": {
+              "type": "range"
+            },
+            "element": "input",
+            "host": true,
+            "part": "root",
+            "style": [
+              {
+                "as": "fraction",
+                "percentOf": [
+                  "value",
+                  "max"
+                ],
+                "property": "--sk-slider-fill"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "stat": {
+      "css": "@skryensya/core/components/stat.css",
+      "id": "stat",
+      "options": {
+        "trend": {
+          "attr": "data-trend",
+          "type": "enum",
+          "values": [
+            "up",
+            "down",
+            "neutral"
+          ]
+        }
+      },
+      "parts": {
+        "change": "sk-stat__change",
+        "label": "sk-stat__label",
+        "root": "sk-stat",
+        "value": "sk-stat__value",
+        "valueSizer": "sk-stat__value-sizer",
+        "valueTick": "sk-stat__value-tick"
+      },
+      "semantics": {
+        "Stat": {
+          "alternatives": [
+            "Table"
+          ],
+          "avoidWhen": [
+            "son varios números comparables entre sí; eso es una Table"
+          ],
+          "useWhen": [
+            "un número con su nombre: usuarios activos, ingresos del mes",
+            "hay un delta que muestra hacia dónde va"
+          ]
+        }
+      },
+      "signatures": {
+        "Stat": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "metric",
+            "kpi",
+            "one-number-with-a-name",
+            "dashboard-figure"
+          ],
+          "options": [
+            "trend"
+          ],
+          "react": {
+            "from": "@skryensya/react/stat",
+            "name": "Stat"
+          },
+          "slots": {
+            "change": {
+              "accepts": "text"
+            },
+            "label": {
+              "accepts": "text",
+              "required": true
+            },
+            "value": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "span",
+                "part": "label",
+                "slot": "label"
+              },
+              {
+                "element": "span",
+                "part": "value",
+                "slot": "value"
+              },
+              {
+                "element": "span",
+                "options": [
+                  "trend"
+                ],
+                "part": "change",
+                "slot": "change",
+                "whenGiven": "change"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "steps": {
+      "css": "@skryensya/core/components/steps.css",
+      "id": "steps",
+      "options": {},
+      "parts": {
+        "description": "sk-steps__description",
+        "item": "sk-steps__item",
+        "label": "sk-steps__label",
+        "marker": "sk-steps__marker",
+        "root": "sk-steps"
+      },
+      "semantics": {
+        "Steps": {
+          "alternatives": [
+            "ProcessList"
+          ],
+          "avoidWhen": [
+            "son instrucciones para leer y hacer; eso es un ProcessList"
+          ],
+          "useWhen": [
+            "hay que mostrar en qué etapa está el usuario de un proceso de varias",
+            "importa qué está hecho, qué falta y dónde está parado"
+          ]
+        }
+      },
+      "signatures": {
+        "Steps": {
+          "host": {
+            "element": "ol"
+          },
+          "intent": [
+            "progress-through-stages",
+            "checkout-progress",
+            "wizard-position"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/steps",
+            "name": "Steps"
+          },
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "label",
+                "options": {
+                  "current": {
+                    "attr": "aria-current",
+                    "default": false,
+                    "trueValue": "step",
+                    "type": "boolean"
+                  },
+                  "status": {
+                    "attr": "data-status",
+                    "default": "upcoming",
+                    "type": "enum",
+                    "values": [
+                      "complete",
+                      "current",
+                      "upcoming"
+                    ]
+                  }
+                },
+                "slots": {
+                  "description": {
+                    "accepts": "text"
+                  },
+                  "label": {
+                    "accepts": "text",
+                    "required": true
+                  },
+                  "marker": {
+                    "accepts": "text",
+                    "required": true
+                  }
+                }
+              },
+              "prop": "steps",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "element": "span",
+                    "itemSlot": "marker",
+                    "part": "marker"
+                  },
+                  {
+                    "children": [
+                      {
+                        "element": "span",
+                        "itemSlot": "label",
+                        "part": "label"
+                      },
+                      {
+                        "element": "span",
+                        "itemSlot": "description",
+                        "part": "description",
+                        "whenItemGiven": "description"
+                      }
+                    ],
+                    "element": "span"
+                  }
+                ],
+                "element": "li",
+                "itemOptions": [
+                  "status",
+                  "current"
+                ],
+                "part": "item",
+                "repeat": "items"
+              }
+            ],
+            "element": "ol",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "switch": {
+      "css": "@skryensya/core/components/switch.css",
+      "id": "switch",
+      "options": {
+        "checked": {
+          "attr": "checked",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "disabled": {
+          "attr": "disabled",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "name": {
+          "attr": "name",
+          "type": "string"
+        },
+        "value": {
+          "attr": "value",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "checkbox": "sk-checkbox",
+        "checkboxControl": "sk-checkbox__control",
+        "checkboxIndicator": "sk-checkbox__indicator",
+        "checkboxInput": "sk-checkbox__input",
+        "checkboxLabel": "sk-checkbox__label",
+        "radio": "sk-radio",
+        "radioControl": "sk-radio__control",
+        "radioGroup": "sk-radio-group",
+        "radioIndicator": "sk-radio__indicator",
+        "radioInput": "sk-radio__input",
+        "radioLabel": "sk-radio__label",
+        "switch": "sk-switch",
+        "switchControl": "sk-switch__control",
+        "switchInput": "sk-switch__input",
+        "switchLabel": "sk-switch__label",
+        "switchThumb": "sk-switch__thumb"
+      },
+      "semantics": {
+        "Switch": {
+          "alternatives": [
+            "Checkbox"
+          ],
+          "avoidWhen": [
+            "el valor se envía con un formulario; eso es un Checkbox",
+            "hace falta un tercer estado indeterminado; un switch está encendido o apagado"
+          ],
+          "useWhen": [
+            "el cambio surte efecto en el momento: modo oscuro, notificaciones, una función que se enciende",
+            "no hay botón de guardar de por medio"
+          ]
+        }
+      },
+      "signatures": {
+        "Switch": {
+          "host": {
+            "element": "input"
+          },
+          "intent": [
+            "on-off",
+            "immediate-setting",
+            "enable-feature"
+          ],
+          "options": [
+            "name",
+            "value",
+            "checked",
+            "disabled"
+          ],
+          "react": {
+            "from": "@skryensya/react/selection",
+            "name": "Switch"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "attrs": {
+                  "role": "switch",
+                  "type": "checkbox"
+                },
+                "element": "input",
+                "host": true,
+                "part": "switchInput"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "children": [
+                  {
+                    "element": "span",
+                    "part": "switchThumb"
+                  }
+                ],
+                "element": "span",
+                "part": "switchControl"
+              },
+              {
+                "element": "span",
+                "part": "switchLabel",
+                "slot": "children",
+                "whenGiven": "children"
+              }
+            ],
+            "element": "label",
+            "part": "switch"
+          }
+        }
+      }
+    },
+    "table": {
+      "css": "@skryensya/core/components/table.css",
+      "id": "table",
+      "options": {
+        "scope": {
+          "attr": "scope",
+          "default": "col",
+          "type": "enum",
+          "values": [
+            "col",
+            "row"
+          ]
+        }
+      },
+      "parts": {
+        "body": "sk-table__body",
+        "caption": "sk-table__caption",
+        "cell": "sk-table__cell",
+        "foot": "sk-table__foot",
+        "head": "sk-table__head",
+        "header": "sk-table__header",
+        "root": "sk-table",
+        "row": "sk-table__row",
+        "scroll": "sk-table-scroll"
+      },
+      "semantics": {
+        "Table": {
+          "avoidWhen": [
+            "es una lista de cosas sin columnas; eso es una List",
+            "se usa para maquetar; una tabla anuncia relaciones que la maquetación no tiene"
+          ],
+          "useWhen": [
+            "los datos tienen filas y columnas, y una celda significa algo por su cruce",
+            "el usuario va a comparar valores entre filas"
+          ]
+        },
+        "TableBody": {
+          "useWhen": [
+            "siempre: es donde viven las filas de datos, y la tabla no está completa sin él"
+          ]
+        },
+        "TableCaption": {
+          "avoidWhen": [
+            "el título ya está fuera y asociado por aria-labelledby"
+          ],
+          "useWhen": [
+            "la tabla necesita un nombre que un lector de pantalla anuncie antes del contenido"
+          ]
+        },
+        "TableCell": {
+          "useWhen": [
+            "un valor dentro de una fila"
+          ]
+        },
+        "TableFooter": {
+          "avoidWhen": [
+            "es una fila de datos más; eso va en el cuerpo"
+          ],
+          "useWhen": [
+            "hay totales o un resumen al pie de las columnas"
+          ]
+        },
+        "TableHead": {
+          "useWhen": [
+            "las columnas tienen encabezado, que es casi siempre"
+          ]
+        },
+        "TableHeader": {
+          "avoidWhen": [
+            "es un dato; eso es TableCell"
+          ],
+          "useWhen": [
+            "la celda nombra su columna, o nombra su fila con scope row"
+          ]
+        },
+        "TableRow": {
+          "useWhen": [
+            "un registro de la tabla"
+          ]
+        }
+      },
+      "signatures": {
+        "Table": {
+          "host": {
+            "element": "table"
+          },
+          "intent": [
+            "tabular-data",
+            "rows-and-columns",
+            "data-table",
+            "comparison"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/table",
+            "name": "Table"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "cardinality": {
+                "TableBody": "one",
+                "TableCaption": "optional",
+                "TableFooter": "optional",
+                "TableHead": "optional"
+              },
+              "of": [
+                "TableCaption",
+                "TableHead",
+                "TableBody",
+                "TableFooter"
+              ],
+              "ordered": true,
+              "required": true
+            }
+          },
+          "template": {
+            "element": "table",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "TableBody": {
+          "host": {
+            "element": "tbody"
+          },
+          "intent": [
+            "table-rows",
+            "the-data-itself"
+          ],
+          "options": [],
+          "parents": [
+            "Table"
+          ],
+          "react": {
+            "from": "@skryensya/react/table",
+            "name": "TableBody"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "TableRow"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "tbody",
+            "host": true,
+            "part": "body",
+            "slot": "children"
+          }
+        },
+        "TableCaption": {
+          "host": {
+            "element": "caption"
+          },
+          "intent": [
+            "table-name",
+            "what-this-table-shows"
+          ],
+          "options": [],
+          "parents": [
+            "Table"
+          ],
+          "react": {
+            "from": "@skryensya/react/table",
+            "name": "TableCaption"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "caption",
+            "host": true,
+            "part": "caption",
+            "slot": "children"
+          }
+        },
+        "TableCell": {
+          "host": {
+            "element": "td"
+          },
+          "intent": [
+            "one-value",
+            "table-cell"
+          ],
+          "options": [],
+          "parents": [
+            "TableRow"
+          ],
+          "react": {
+            "from": "@skryensya/react/table",
+            "name": "TableCell"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "td",
+            "host": true,
+            "part": "cell",
+            "slot": "children"
+          }
+        },
+        "TableFooter": {
+          "host": {
+            "element": "tfoot"
+          },
+          "intent": [
+            "totals",
+            "summary-row"
+          ],
+          "options": [],
+          "parents": [
+            "Table"
+          ],
+          "react": {
+            "from": "@skryensya/react/table",
+            "name": "TableFooter"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "TableRow"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "tfoot",
+            "host": true,
+            "part": "foot",
+            "slot": "children"
+          }
+        },
+        "TableHead": {
+          "host": {
+            "element": "thead"
+          },
+          "intent": [
+            "column-headers"
+          ],
+          "options": [],
+          "parents": [
+            "Table"
+          ],
+          "react": {
+            "from": "@skryensya/react/table",
+            "name": "TableHead"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "TableRow"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "thead",
+            "host": true,
+            "part": "head",
+            "slot": "children"
+          }
+        },
+        "TableHeader": {
+          "host": {
+            "element": "th"
+          },
+          "intent": [
+            "column-header",
+            "row-header"
+          ],
+          "options": [
+            "scope"
+          ],
+          "parents": [
+            "TableRow"
+          ],
+          "react": {
+            "from": "@skryensya/react/table",
+            "name": "TableHeader"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "th",
+            "host": true,
+            "part": "header",
+            "slot": "children"
+          }
+        },
+        "TableRow": {
+          "host": {
+            "element": "tr"
+          },
+          "intent": [
+            "one-record",
+            "one-row"
+          ],
+          "options": [],
+          "parents": [
+            "TableHead",
+            "TableBody",
+            "TableFooter"
+          ],
+          "react": {
+            "from": "@skryensya/react/table",
+            "name": "TableRow"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "TableHeader",
+                "TableCell"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "tr",
+            "host": true,
+            "part": "row",
+            "slot": "children"
+          }
+        }
+      }
+    },
+    "tabs": {
+      "a11y": [
+        {
+          "because": "The tab list is a named region; a page with two of them needs to tell them apart.",
+          "requiresOneOf": [
+            "aria-label",
+            "aria-labelledby"
+          ],
+          "when": {
+            "orientation": "present"
+          }
+        }
+      ],
+      "css": "@skryensya/core/components/tabs.css",
+      "id": "tabs",
+      "options": {
+        "activationMode": {
+          "attr": "data-activation-mode",
+          "default": "automatic",
+          "machineInput": true,
+          "type": "enum",
+          "values": [
+            "automatic",
+            "manual"
+          ]
+        },
+        "orientation": {
+          "attr": "data-orientation",
+          "default": "horizontal",
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ]
+        },
+        "value": {
+          "attr": "data-value",
+          "machineInput": true,
+          "type": "string"
+        }
+      },
+      "parts": {
+        "content": "sk-tabs__content",
+        "list": "sk-tabs__list",
+        "root": "sk-tabs",
+        "trigger": "sk-tabs__trigger"
+      },
+      "semantics": {
+        "Tabs": {
+          "alternatives": [
+            "NavList"
+          ],
+          "avoidWhen": [
+            "el contenido de cada sección es largo y el usuario querría verlo todo junto — eso es un Accordion o una página con secciones",
+            "cada pestaña navega a otra URL — eso es un NavList",
+            "hay una sola sección; una pestaña sola no es una elección"
+          ],
+          "useWhen": [
+            "varias secciones comparten una región y sólo una se ve a la vez",
+            "el contenido es hermano, no una jerarquía — todas las pestañas están al mismo nivel",
+            "el usuario alterna entre vistas del mismo objeto (resumen, actividad, ajustes)"
+          ]
+        }
+      },
+      "signatures": {
+        "Tabs": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "tabs",
+            "switch-between-panels",
+            "sections-in-one-region"
+          ],
+          "options": [
+            "orientation",
+            "activationMode",
+            "value"
+          ],
+          "react": {
+            "from": "@skryensya/react/tabs",
+            "name": "Tabs"
+          },
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "value",
+                "options": {
+                  "disabled": {
+                    "attr": "data-disabled",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "value": {
+                    "attr": "data-value",
+                    "type": "string"
+                  }
+                },
+                "slots": {
+                  "children": {
+                    "accepts": "node",
+                    "required": true
+                  },
+                  "label": {
+                    "accepts": "node",
+                    "required": true
+                  }
+                }
+              },
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-sk-tabs": ""
+            },
+            "children": [
+              {
+                "attrs": {
+                  "data-sk-tabs-list": ""
+                },
+                "attrsFor": [
+                  "aria-label",
+                  "aria-labelledby"
+                ],
+                "children": [
+                  {
+                    "also": [
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-sk-tabs-trigger": "",
+                      "type": "button"
+                    },
+                    "element": "button",
+                    "itemOptions": [
+                      "value",
+                      "disabled"
+                    ],
+                    "itemSlot": "label",
+                    "part": "trigger",
+                    "repeat": "items"
+                  }
+                ],
+                "element": "div",
+                "part": "list"
+              },
+              {
+                "attrs": {
+                  "data-sk-tabs-content": ""
+                },
+                "element": "div",
+                "itemOptions": [
+                  "value"
+                ],
+                "itemSlot": "children",
+                "part": "content",
+                "repeat": "items"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "tag": {
+      "css": "@skryensya/core/components/tag.css",
+      "id": "tag",
+      "options": {
+        "removable": {
+          "attr": "data-removable",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "removeLabel": {
+          "attr": "aria-label",
+          "default": "Remove",
+          "type": "string"
+        },
+        "tone": {
+          "attr": "data-tone",
+          "default": "neutral",
+          "type": "enum",
+          "values": [
+            "neutral",
+            "accent",
+            "success",
+            "warning",
+            "danger"
+          ]
+        }
+      },
+      "parts": {
+        "label": "sk-tag__label",
+        "remove": "sk-tag__remove",
+        "root": "sk-tag"
+      },
+      "semantics": {
+        "Tag": {
+          "alternatives": [
+            "Badge"
+          ],
+          "avoidWhen": [
+            "es sólo un conteo o un estado que nadie puede tocar; eso es un Badge"
+          ],
+          "useWhen": [
+            "una etiqueta que el usuario puede quitar: un filtro aplicado, una palabra clave"
+          ]
+        }
+      },
+      "signatures": {
+        "Tag": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "removable-label",
+            "filter-chip",
+            "applied-filter",
+            "keyword"
+          ],
+          "options": [
+            "tone",
+            "removable",
+            "removeLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/tag",
+            "name": "Tag"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "span",
+                "part": "label",
+                "slot": "children"
+              },
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "data-icon-only": "",
+                  "data-size": "sm",
+                  "data-sk-button": "",
+                  "data-variant": "ghost",
+                  "type": "button"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon": "close",
+                      "data-sk-icon-size": "md"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "button",
+                "options": [
+                  "removeLabel"
+                ],
+                "part": "remove",
+                "whenGiven": "removable"
+              }
+            ],
+            "element": "span",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "toolbar": {
+      "css": "@skryensya/core/components/toolbar.css",
+      "id": "toolbar",
+      "options": {
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "orientation": {
+          "alsoAttr": "aria-orientation",
+          "attr": "data-orientation",
+          "default": "horizontal",
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ]
+        }
+      },
+      "parts": {
+        "group": "sk-toolbar__group",
+        "root": "sk-toolbar",
+        "separator": "sk-toolbar__separator"
+      },
+      "semantics": {
+        "Toolbar": {
+          "alternatives": [
+            "Inline"
+          ],
+          "avoidWhen": [
+            "son dos o tres botones sueltos; ahí un Inline alcanza"
+          ],
+          "useWhen": [
+            "hay muchos controles juntos y el teclado no debería pagar una parada por cada uno"
+          ]
+        },
+        "ToolbarGroup": {
+          "useWhen": [
+            "un subconjunto de controles que van juntos"
+          ]
+        },
+        "ToolbarSeparator": {
+          "useWhen": [
+            "hay que separar visualmente dos grupos"
+          ]
+        }
+      },
+      "signatures": {
+        "Toolbar": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "bar-of-controls",
+            "editor-toolbar",
+            "grouped-actions"
+          ],
+          "options": [
+            "orientation",
+            "label"
+          ],
+          "react": {
+            "from": "@skryensya/react/toolbar",
+            "name": "Toolbar"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "toolbar"
+            },
+            "element": "div",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "ToolbarGroup": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "related-controls-together"
+          ],
+          "options": [],
+          "parents": [
+            "Toolbar"
+          ],
+          "react": {
+            "from": "@skryensya/react/toolbar",
+            "name": "ToolbarGroup"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "group"
+            },
+            "element": "div",
+            "host": true,
+            "part": "group",
+            "slot": "children"
+          }
+        },
+        "ToolbarSeparator": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "divide-two-groups"
+          ],
+          "options": [],
+          "parents": [
+            "Toolbar"
+          ],
+          "react": {
+            "from": "@skryensya/react/toolbar",
+            "name": "ToolbarSeparator"
+          },
+          "slots": {},
+          "template": {
+            "attrs": {
+              "aria-hidden": "true"
+            },
+            "element": "span",
+            "host": true,
+            "part": "separator"
+          }
+        }
+      }
+    },
+    "typography": {
+      "css": "@skryensya/core/components/typography.css",
+      "id": "typography",
+      "options": {
+        "flush": {
+          "attr": "data-flush",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "headingSize": {
+          "attr": "data-size",
+          "default": "h2",
+          "prop": "size",
+          "type": "enum",
+          "values": [
+            "display-lg",
+            "display-md",
+            "display-sm",
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "sm",
+            "md",
+            "lg",
+            "display"
+          ]
+        },
+        "href": {
+          "attr": "href",
+          "type": "string"
+        },
+        "size": {
+          "attr": "data-size",
+          "default": "body",
+          "type": "enum",
+          "values": [
+            "caption",
+            "sm",
+            "body",
+            "lg"
+          ]
+        },
+        "tone": {
+          "attr": "data-tone",
+          "default": "primary",
+          "type": "enum",
+          "values": [
+            "primary",
+            "secondary",
+            "tertiary",
+            "danger"
+          ]
+        },
+        "weight": {
+          "attr": "data-weight",
+          "default": "body",
+          "type": "enum",
+          "values": [
+            "body",
+            "emphasis",
+            "label"
+          ]
+        }
+      },
+      "parts": {
+        "heading": "sk-heading",
+        "link": "sk-link",
+        "text": "sk-text"
+      },
+      "semantics": {
+        "Heading": {
+          "alternatives": [
+            "Text"
+          ],
+          "avoidWhen": [
+            "sólo se busca texto grande; el nivel es estructura, no tamaño"
+          ],
+          "useWhen": [
+            "abre una sección y hay que decir a qué nivel del documento pertenece"
+          ]
+        },
+        "Link": {
+          "alternatives": [
+            "Button.navigation"
+          ],
+          "avoidWhen": [
+            "se ve y se usa como botón; eso es Button.navigation"
+          ],
+          "useWhen": [
+            "un enlace dentro de una frase, subrayado y en el flujo del texto"
+          ]
+        },
+        "Text": {
+          "avoidWhen": [
+            "titula una sección; eso es un Heading, aunque se vea chico"
+          ],
+          "useWhen": [
+            "un párrafo, una bajada, una nota al pie",
+            "el tono dice jerarquía: secondary para lo accesorio, danger para un error en prosa"
+          ]
+        }
+      },
+      "signatures": {
+        "Heading": {
+          "host": {
+            "element": "h2"
+          },
+          "intent": [
+            "section-title",
+            "page-title",
+            "heading"
+          ],
+          "options": [
+            "headingSize",
+            "flush"
+          ],
+          "react": {
+            "from": "@skryensya/react/typography",
+            "name": "Heading"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "h2",
+            "host": true,
+            "part": "heading",
+            "slot": "children"
+          }
+        },
+        "Link": {
+          "host": {
+            "element": "a"
+          },
+          "intent": [
+            "inline-link",
+            "link-in-a-sentence"
+          ],
+          "options": [
+            "href"
+          ],
+          "react": {
+            "from": "@skryensya/react/typography",
+            "name": "Link"
+          },
+          "requires": [
+            "href"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-interactive"
+            ],
+            "element": "a",
+            "host": true,
+            "part": "link",
+            "slot": "children"
+          }
+        },
+        "Text": {
+          "host": {
+            "element": "p"
+          },
+          "intent": [
+            "paragraph",
+            "body-copy",
+            "caption",
+            "secondary-text"
+          ],
+          "options": [
+            "tone",
+            "size",
+            "weight"
+          ],
+          "react": {
+            "from": "@skryensya/react/typography",
+            "name": "Text"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "p",
+            "host": true,
+            "part": "text",
+            "slot": "children"
+          }
+        }
+      }
+    },
+    "wrapper": {
+      "css": "@skryensya/core/patterns/wrapper.css",
+      "id": "wrapper",
+      "options": {
+        "wrapperSize": {
+          "attr": "data-size",
+          "default": "md",
+          "prop": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg",
+            "full"
+          ]
+        }
+      },
+      "parts": {
+        "box": "sk-box",
+        "grid": "sk-grid",
+        "inline": "sk-inline",
+        "stack": "sk-stack",
+        "wrapper": "sk-wrapper"
+      },
+      "semantics": {
+        "Wrapper": {
+          "avoidWhen": [
+            "el contenido debe ocupar todo el ancho; ahí se elige full o no hay wrapper"
+          ],
+          "useWhen": [
+            "la página necesita una medida centrada para que el texto no se estire de borde a borde"
+          ]
+        }
+      },
+      "signatures": {
+        "Wrapper": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "page-column",
+            "centred-measure",
+            "content-width"
+          ],
+          "options": [
+            "wrapperSize"
+          ],
+          "react": {
+            "from": "@skryensya/react/layout",
+            "name": "Wrapper"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "wrapper",
+            "slot": "children"
+          }
+        }
+      }
+    }
+  },
+  "schemaVersion": "2.0",
+  "sourceHash": "fc6016a77b56ac00"
+}

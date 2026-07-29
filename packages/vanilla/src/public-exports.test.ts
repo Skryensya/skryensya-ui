@@ -20,7 +20,9 @@ import { destroyMount } from "@skryensya/vanilla/runtime";
 import { mountTabs } from "@skryensya/vanilla/tabs";
 import { mountTablePager } from "@skryensya/vanilla/table-pager";
 import { mountTileCheckbox } from "@skryensya/vanilla/tile-checkbox";
+import { mountTileSwitch } from "@skryensya/vanilla/tile-switch";
 import { mountTileRadioGroup } from "@skryensya/vanilla/tile-radio-group";
+import { mountTimeField } from "@skryensya/vanilla/time-field";
 import { mountToast } from "@skryensya/vanilla/toast";
 import { mountTooltip } from "@skryensya/vanilla/tooltip";
 import { mountVaul } from "@skryensya/vanilla/vaul";
@@ -45,7 +47,9 @@ const mounts = [
   mountTablePager,
   mountTabs,
   mountTileCheckbox,
+  mountTileSwitch,
   mountTileRadioGroup,
+  mountTimeField,
   mountToast,
   mountTooltip,
   mountVaul,
@@ -54,7 +58,7 @@ const mounts = [
 describe("Vanilla public entry points", () => {
   it("publishes the lazy auto-loader and one mount for every regular enhanced module", () => {
     expect(initComponents).toBeTypeOf("function");
-    expect(mounts).toHaveLength(22);
+    expect(mounts).toHaveLength(24);
     expect(mounts.every((mount) => typeof mount === "function")).toBe(true);
   });
 

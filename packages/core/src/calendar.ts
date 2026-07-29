@@ -1,6 +1,19 @@
+import { parseDate } from "@internationalized/date";
+
 export type { DateValue, DateView } from "@zag-js/date-picker";
 
 const weekdayLetterPattern = /\p{L}\p{M}*/gu;
+
+/*
+ * `min`/`max` on the Zag machine are `DateValue` objects, but the vanilla enhancers only have an
+ * authored HTML attribute (`data-min="2026-07-01"`) to read. One parse, shared by every enhancer
+ * that needs it, rather than each reimplementing the "attribute absent → undefined" branch.
+ * Malformed input throws `parseDate`'s own descriptive error — the same "loud, not swallowed"
+ * contract the icon-only Button check uses for a missing accessible name.
+ */
+export function parseCalendarDate(value: string | null | undefined) {
+  return value ? parseDate(value) : undefined;
+}
 
 export function getTwoLetterWeekdayLabel(
   day: Readonly<{ long: string; short: string }>,

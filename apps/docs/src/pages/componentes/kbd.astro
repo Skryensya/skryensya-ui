@@ -3,22 +3,31 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { KbdBasicDemo } from "../../components/react-demos/kbd";
 
 /* The skin is already global (Base.astro imports it for the ⌘K badge), so this page needs no import. */
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<kbd class="sk-kbd">⌘</kbd>
-<kbd class="sk-kbd">K</kbd>
-<kbd class="sk-kbd">Esc</kbd>
-<kbd class="sk-kbd">↵</kbd>`;
+const html = `<div class="sk-inline">
+  <kbd class="sk-kbd">⌘</kbd>
+  <kbd class="sk-kbd">K</kbd>
+  <kbd class="sk-kbd">Esc</kbd>
+  <kbd class="sk-kbd">↵</kbd>
+</div>`;
 
 const react = `import { Kbd } from "@skryensya/react/kbd";
 
-<Kbd>⌘</Kbd>
-<Kbd>K</Kbd>
-<Kbd>Esc</Kbd>
-<Kbd>↵</Kbd>;`;
+function Example() {
+  return (
+    <div className="sk-inline">
+      <Kbd>⌘</Kbd>
+      <Kbd>K</Kbd>
+      <Kbd>Esc</Kbd>
+      <Kbd>↵</Kbd>
+    </div>
+  );
+}`;
 ---
 
 <Base title="Kbd" description="Kbd: una tecla dibujada, el <kbd> nativo con styling hooks y wrapper React.">
@@ -30,7 +39,11 @@ const react = `import { Kbd } from "@skryensya/react/kbd";
     <code>&lt;kbd&gt;</code> es de la plataforma; el componente solo aporta la pinta.
   </p>
 
-  <Showcase html={html} react={react} label="Kbd" />
+  <Showcase html={html} react={react} label="Kbd">
+    <Fragment slot="react">
+      <KbdBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Un glifo se lee cuadrado</h2>
   <p>

@@ -61,7 +61,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
         {...props}
         checked={controlled ? checked === true : undefined}
         className={selectionParts.checkboxInput}
-        defaultChecked={!controlled && defaultChecked === true}
+        // `undefined` when controlled, never `false`: React reads a present `defaultChecked` as the
+        // author asking for an uncontrolled input, and warns that the element is both at once.
+        defaultChecked={controlled ? undefined : defaultChecked === true}
         disabled={disabled}
         onChange={onChange}
         ref={setRef}
@@ -98,21 +100,26 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
 ) {
   const controlled = value !== undefined;
 
-  const onChange = (event: ChangeEvent<HTMLDivElement>) => {
-    const target = event.target;
-    if (target instanceof HTMLInputElement && target.type === "radio" && target.checked) onValueChange?.({ value: target.value });
+  /*
+   * On each input rather than delegated on the group. A change event does bubble, so one handler on
+   * the wrapper would fire — but React checks per element whether a `checked` input can be typed
+   * into, sees no handler of its own, and renders every option read-only.
+   */
+  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.currentTarget.checked) onValueChange?.({ value: event.currentTarget.value });
   };
 
   return (
-    <div {...props} aria-orientation={orientation} className={classes(selectionParts.radioGroup, className)} data-orientation={orientation} onChange={onChange} ref={ref} role="radiogroup">
+    <div {...props} aria-orientation={orientation} className={classes(selectionParts.radioGroup, className)} data-orientation={orientation} ref={ref} role="radiogroup">
       {items.map((item) => (
         <label className={selectionParts.radio} key={item.value}>
           <input
             checked={controlled ? value === item.value : undefined}
             className={selectionParts.radioInput}
-            defaultChecked={!controlled && defaultValue === item.value}
+            defaultChecked={controlled ? undefined : defaultValue === item.value}
             disabled={disabled || item.disabled}
             name={name}
+            onChange={onChange}
             required={required}
             type="radio"
             value={item.value}

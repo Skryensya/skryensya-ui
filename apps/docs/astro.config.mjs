@@ -1,15 +1,19 @@
 // @ts-check
 import { defineConfig } from "astro/config";
+import react from "@astrojs/react";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { NodePackageImporter } from "sass";
 
 /*
- * The site still renders no Svelte UI: authored ComponentPreview demos run in srcdoc frames and
- * hydrate with @skryensya/vanilla; React remains documentation-only. Vanilla's machine-backed
- * enhancers keep private implementations in `.svelte` files, so both the page graph and the isolated
- * frame worker graph need the compiler while preserving consumer-authored light DOM.
+ * Vanilla ComponentPreview demos still run in srcdoc frames and hydrate with @skryensya/vanilla.
+ * The React binding is a real island now (@astrojs/react, client:load): a Showcase's `react` slot
+ * renders actual `@skryensya/react` components in the parent document, sitting next to the vanilla
+ * iframe stage and toggled by the same binding switch. Vanilla's machine-backed enhancers keep
+ * private implementations in `.svelte` files, so both the page graph and the isolated frame worker
+ * graph still need the Svelte compiler while preserving consumer-authored light DOM.
  */
 export default defineConfig({
+  integrations: [react()],
   // Static output: the site is content, and every dimension (brand, mode, contrast, density)
   // resolves in the browser from custom properties, there is nothing for a server to decide.
   output: "static",
@@ -43,6 +47,35 @@ export default defineConfig({
   // package's exports map, the same bare-specifier contract the JS imports use (ADR-19), so the
   // docs consume the breakpoint source the way any Sass consumer would.
   vite: {
+    /*
+     * `@skryensya/react` is workspace SOURCE, served raw through `@fs/…` (no build step of its
+     * own), while `@astrojs/react`'s island runtime is pre-bundled by Vite's dep optimizer. Left
+     * alone, the two resolve `react`/`react-dom` to different served URLs — same package on disk,
+     * two module instances in the browser — and any hook (Icon's `useContext`, Button's forwardRef)
+     * throws "Invalid hook call" the moment it runs. `dedupe` alone does not fix this: it only
+     * picks one INSTALLED copy when several exist, it does not force every importer through the
+     * SAME served URL. `optimizeDeps.include` does — it pins react/react-dom into the shared
+     * pre-bundle cache so `@fs`-served source and the island runtime both resolve to it.
+     *
+     * `@zag-js/react` is the same failure mode one hop further out: it has its own `react` import
+     * that needs the SAME pre-bundle too. Left off this list, Vite only discovers it the first
+     * time some page's island actually imports it, triggers an on-demand re-optimize +
+     * page-reload mid-session, and whichever island already mounted before that reload lands with
+     * a stale dispatcher — `Cannot read properties of null (reading 'useId')`/`'useState'`.
+     *
+     * The per-machine `@zag-js/<name>` packages (select, accordion, combobox, date-picker, …) do
+     * NOT belong here: they're plain state-machine definitions with no `react` import of their
+     * own (only `@skryensya/core/machines` touches them), and — critically — apps/docs never
+     * depends on them directly, only `@skryensya/core` does. Vite's `optimizeDeps.include` can
+     * only pre-bundle a specifier that resolves from the DECLARING project's own dependency graph;
+     * naming one of these here just logs "Failed to resolve dependency" and does nothing.
+     */
+    resolve: {
+      dedupe: ["react", "react-dom"],
+    },
+    optimizeDeps: {
+      include: ["react", "react-dom", "react/jsx-runtime", "react-dom/client", "@zag-js/react"],
+    },
     plugins: [svelte()],
     worker: {
       // The srcdoc loads this URL as a module. ESM preserves the registry's selector-gated dynamic

@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import { InlineActionBarDemo } from "../../components/react-demos/layout";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -53,27 +54,31 @@ import { Heading } from "@skryensya/react/heading";
 import { Box, Inline, Stack } from "@skryensya/react/layout";
 import { Text } from "@skryensya/react/text";
 
-<Box
-  as="section"
-  aria-labelledby="project-title"
-  border="subtle"
-  padding="lg"
-  surface="raised"
->
-  <Inline gap="md" justify="between">
-    <Stack gap="none">
-      <Heading as="h2" id="project-title" size="h4">
-        Proyecto Atlas
-      </Heading>
-      <Text size="sm" tone="secondary">3 cambios sin publicar</Text>
-    </Stack>
+function Example() {
+  return (
+    <Box
+      as="section"
+      aria-labelledby="project-title"
+      border="subtle"
+      padding="lg"
+      surface="raised"
+    >
+      <Inline gap="md" justify="between">
+        <Stack gap="none">
+          <Heading as="h2" id="project-title" size="h4">
+            Proyecto Atlas
+          </Heading>
+          <Text size="sm" tone="secondary">3 cambios sin publicar</Text>
+        </Stack>
 
-    <Inline gap="sm" wrap={false}>
-      <Button variant="ghost">Vista previa</Button>
-      <Button variant="primary">Publicar</Button>
-    </Inline>
-  </Inline>
-</Box>`;
+        <Inline gap="sm" wrap={false}>
+          <Button variant="ghost">Vista previa</Button>
+          <Button variant="primary">Publicar</Button>
+        </Inline>
+      </Inline>
+    </Box>
+  );
+}`;
 ---
 
 <Base title="Inline" description="Inline, el pattern de layout horizontal y adaptable.">
@@ -83,7 +88,11 @@ import { Text } from "@skryensya/react/text";
     para barras de acciones y pares label–control; la semántica pertenece al elemento que eliges.
   </p>
 
-  <Showcase html={html} react={react} label="Barra de acciones" note="Box + Stack + Inline + Button" />
+  <Showcase html={html} react={react} label="Barra de acciones" note="Box + Stack + Inline + Button">
+    <Fragment slot="react">
+      <InlineActionBarDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>HTML autorado</h2>
   <p>

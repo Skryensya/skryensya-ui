@@ -74,7 +74,7 @@ export function Icon({ name, data, label, size = "md", className, ...props }: Ic
 
   // La caja se calcula una vez, en core, como dato: presentation son los attrs del set (sin las llaves
   // que la caja se reserva), box es lo que el binding manda. Este componente es sólo el adapter a JSX.
-  const { presentation, box, body } = renderIconBox({ icon, size, label, className });
+  const { presentation, box, body } = renderIconBox({ icon, dataIcon: name, size, label, className });
 
   // presentation primero (fill/stroke), luego los props del consumidor, luego la caja, que gana. En
   // JSX el último spread pisa, así que este orden reproduce la precedencia exacta: un set no puede

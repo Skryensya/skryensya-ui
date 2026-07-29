@@ -3,6 +3,7 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { PublicationDemo, PublicationPlaceholderDemo } from "../../../components/react-demos/placeholder";
 import "../../../examples/placeholder.css";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -97,7 +98,7 @@ const staticHtml = `<div class="placeholder-example" aria-busy="true">
     data-tone="secondary"
     role="status"
   >
-    Loading post…
+    Loading publication…
   </p>
   ${placeholderLayoutHtml}
 </div>`;
@@ -195,8 +196,7 @@ const loadedLayoutHtml = `<article
           When a route stops being linear
         </h3>
         <p class="sk-text" data-tone="secondary">
-          Twelve interviews show where the
-          context and what signals help to recover it.
+          Twelve interviews show where context is lost and what signs help to recover it.
         </p>
       </div>
       <div
@@ -244,7 +244,7 @@ const loadingHtml = `<section
     role="status"
     aria-live="polite"
   >
-    Loading post…
+    Loading publication…
   </p>
   <div
     class="placeholder-example__swap"
@@ -437,8 +437,7 @@ export function PublicationDemo() {
 >
   <h1>Placeholder</h1>
   <p class="lede">
-    Placeholder reserves the form of content that has not yet arrived. Reduces layout breaks and offers
-    a brief visual signal; The container retains the responsibility of explaining what it is loading.
+    Placeholder reserves the form of content that has not yet arrived. Reduces layout breaks and offers a brief visual cue; The container retains the responsibility of explaining what it is loading.
   </p>
 
   <div class="sk-alert" data-tone="info" data-presentation="accent">
@@ -449,24 +448,24 @@ export function PublicationDemo() {
     </div>
   </div>
 
-  <h2>Layout pendiente</h2>
+  <h2>Pending layout</h2>
   <p>
-    The geometry follows the final layout: a card from the kit (<code>Box</code> + <code>Stack</code>) with
-    media, text and byline. This first example always remains on charge to be able to inspect the
-    Place holder.
+    The geometry follows the final layout: a card from the kit (<code>Box</code> + <code>Stack</code>) with media, text and byline. This first example always remains loaded so that the Placeholder can be inspected.
   </p>
   <Showcase
     html={staticHtml}
     react={staticReact}
     label="Layout with Placeholder"
-    note="Siempre pendiente"
-  />
+    note="Always pending"
+  >
+    <Fragment slot="react">
+      <PublicationPlaceholderDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Carga simulada</h2>
+  <h2>Simulated loading</h2>
   <p>
-    The second example waits <strong>5 seconds</strong>, removes the temporary layout and displays the
-    actual content in the same space: <code>ImageFrame</code>, <code>Badge</code>,
-    <code>Heading</code>, <code>Text</code> and <code>Avatar</code>.
+    The second example waits <strong>5 seconds</strong>, removes the temporary layout and displays the actual content in the same space: <code>ImageFrame</code>, <code>Badge</code>, <code>Heading</code>, <code>Text</code> and <code>Avatar</code>.
   </p>
   <Showcase
     html={loadingHtml}
@@ -474,24 +473,26 @@ export function PublicationDemo() {
     previewScript={loadingJs}
     react={loadingReact}
     label="Placeholder → content"
-    note="Carga falsa · 5 s"
-  />
+    note="Simulated load · 5 s"
+  >
+    <Fragment slot="react">
+      <PublicationDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Formas</h2>
+  <h2>Shapes</h2>
   <ul>
     <li><code>text</code>: one line; is the default value.</li>
-    <li><code>block</code>: media, tablas o regiones rectangulares.</li>
-    <li><code>circle</code>: avatares y controles circulares.</li>
+    <li><code>block</code>: media, tables, or rectangular regions.</li>
+    <li><code>circle</code>: avatars and circular controls.</li>
   </ul>
   <p>
-    Sets <code>--sk-placeholder-inline-size</code>, <code>--sk-placeholder-block-size</code> or
-    <code>--sk-placeholder-size</code> from the consumer layout. The form does not know the content.
+    Sets <code>--sk-placeholder-inline-size</code>, <code>--sk-placeholder-block-size</code> or <code>--sk-placeholder-size</code> from the consumer layout. The form does not know the content.
   </p>
 
-  <h2>Movimiento reducido</h2>
+  <h2>Reduced motion</h2>
   <p>
-    The brightness is shifted with <code>transform</code>. With <code>prefers-reduced-motion: reduce</code>,
-    The animation disappears and the static fill remains.
+    Brightness scrolls with <code>transform</code>. With <code>prefers-reduced-motion: reduce</code>, the animation disappears and the static fill remains.
   </p>
 
   <h2>Install</h2>

@@ -2,30 +2,47 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
+import { IconBasicDemo, IconSizeDemo } from "../../components/react-demos/icon";
 
-const html = `<span data-sk-icon="search" data-sk-icon-size="lg"></span>
-<span data-sk-icon="settings" data-sk-icon-size="lg"></span>
-<span data-sk-icon="warning" data-sk-icon-size="lg"></span>
-<span data-sk-icon="check" data-sk-icon-size="lg"></span>
-<span data-sk-icon="close" data-sk-icon-size="lg"></span>`;
+const html = `<div class="sk-inline">
+  <span data-sk-icon="search" data-sk-icon-size="lg"></span>
+  <span data-sk-icon="settings" data-sk-icon-size="lg"></span>
+  <span data-sk-icon="warning" data-sk-icon-size="lg"></span>
+  <span data-sk-icon="check" data-sk-icon-size="lg"></span>
+  <span data-sk-icon="close" data-sk-icon-size="lg"></span>
+</div>`;
 
 const react = `import { Icon } from "@skryensya/react/icon";
 
-<Icon name="search" size="lg" />
-<Icon name="settings" size="lg" />
-<Icon name="warning" size="lg" />
-<Icon name="check" size="lg" />
-<Icon name="close" size="lg" />;`;
+function Example() {
+  return (
+    <div className="sk-inline">
+      <Icon name="search" size="lg" />
+      <Icon name="settings" size="lg" />
+      <Icon name="warning" size="lg" />
+      <Icon name="check" size="lg" />
+      <Icon name="close" size="lg" />
+    </div>
+  );
+}`;
 
-const sizeHtml = `<span data-sk-icon="check" data-sk-icon-size="sm"></span>
-<span data-sk-icon="check"></span>
-<span data-sk-icon="check" data-sk-icon-size="lg"></span>`;
+const sizeHtml = `<div class="sk-inline">
+  <span data-sk-icon="check" data-sk-icon-size="sm"></span>
+  <span data-sk-icon="check"></span>
+  <span data-sk-icon="check" data-sk-icon-size="lg"></span>
+</div>`;
 
 const sizeReact = `import { Icon } from "@skryensya/react/icon";
 
-<Icon name="check" size="sm" />
-<Icon name="check" />
-<Icon name="check" size="lg" />;`;
+function Example() {
+  return (
+    <div className="sk-inline">
+      <Icon name="check" size="sm" />
+      <Icon name="check" />
+      <Icon name="check" size="lg" />
+    </div>
+  );
+}`;
 
 const vanilla = `<!-- Geometría fuera del set: la escribes tú. -->
 <svg
@@ -87,7 +104,11 @@ const sizesCss = `/* ¿otro tamaño? se redeclara el hook, como todo valor
     qué el CSS no toca fill/stroke están en <a href="/iconos">Iconografía</a>.
   </p>
 
-  <Showcase html={html} react={react} label="Icon" />
+  <Showcase html={html} react={react} label="Icon">
+    <Fragment slot="react">
+      <IconBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>React</h2>
   <p>
@@ -143,6 +164,10 @@ const sizesCss = `/* ¿otro tamaño? se redeclara el hook, como todo valor
     densidad es espaciado; un icono es contenido al lado de un glifo — si el texto no encoge, el icono
     tampoco.
   </p>
-  <Showcase html={sizeHtml} react={sizeReact} label="Icon · sm / md / lg" />
+  <Showcase html={sizeHtml} react={sizeReact} label="Icon · sm / md / lg">
+    <Fragment slot="react">
+      <IconSizeDemo client:load />
+    </Fragment>
+  </Showcase>
   <CodeBlock code={sizesCss} label="tamaño arbitrario" note="no hay prop numérica" />
 </Base>

@@ -327,13 +327,23 @@
     display: block;
   }
 
+  /* Esta lista REDECLARA lo que `.sk-select` ya declara, y no es duplicación: el binding de React
+   * portea el positioner al `<body>`, así que deja de ser descendiente de la raíz y NINGUNA de esas
+   * custom properties le llega por herencia. Un hook que se lea de acá para abajo — del positioner,
+   * del content o de un item — tiene que estar en esta lista; si falta, resuelve vacío y la
+   * declaración que lo usa se cae (un `padding` vacío es `0`, que fue justo el síntoma: items sin
+   * aire y el check pegado al borde). En Vanilla el positioner sigue adentro y esto es inocuo. */
   .sk-select__positioner {
     --sk-select-fg: var(--color-text-primary);
     --sk-select-radius: var(--radius-control);
     --sk-select-content-bg: var(--color-bg-surface-raised);
     --sk-select-content-border-color: var(--color-border-subtle);
+    --sk-select-content-padding: var(--space-inset-xs);
+    --sk-select-content-max-block-size: 18rem;
     --sk-select-item-fg: var(--color-text-primary);
     --sk-select-item-disabled-fg: var(--color-text-disabled);
+    --sk-select-item-padding: var(--space-inset-xs) var(--space-inset-sm);
+    --sk-select-item-radius: var(--radius-control);
 
     /* ── La colocación es del pattern Anclaje (ADR-25) ─────────────────────────
      * El positioner lleva además `sk-anchored` y el trigger `sk-anchor`. El z-index, el `fixed`, el

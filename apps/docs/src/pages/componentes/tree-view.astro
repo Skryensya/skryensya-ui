@@ -4,6 +4,7 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { TreeViewSettingsDemo } from "../../components/react-demos/tree-view";
 import "@skryensya/core/components/tree-view.css";
 
 /* Los ejemplos van de menos a más: cada uno agrega UNA cosa sobre el anterior, así que la
@@ -23,7 +24,7 @@ const minimal = `<div class="sk-tree-view" data-sk-tree-view aria-label="Proyect
       data-sk-tree-view-branch
       data-value="src"
     >
-      <div
+      <button type="button"
         class="sk-tree-view__branch-control sk-interactive"
         data-sk-tree-view-branch-control
       >
@@ -32,7 +33,7 @@ const minimal = `<div class="sk-tree-view" data-sk-tree-view aria-label="Proyect
           class="sk-tree-view__branch-text"
           data-sk-tree-view-branch-text
         >src</span>
-      </div>
+      </button>
       <ul
         class="sk-tree-view__branch-content"
         data-sk-tree-view-branch-content
@@ -88,7 +89,7 @@ const initialState = `<div
       data-sk-tree-view-branch
       data-value="src"
     >
-      <div
+      <button type="button"
         class="sk-tree-view__branch-control sk-interactive"
         data-sk-tree-view-branch-control
       >
@@ -97,7 +98,7 @@ const initialState = `<div
           class="sk-tree-view__branch-text"
           data-sk-tree-view-branch-text
         >src</span>
-      </div>
+      </button>
       <ul
         class="sk-tree-view__branch-content"
         data-sk-tree-view-branch-content
@@ -154,7 +155,7 @@ const multiple = `<div
       data-sk-tree-view-branch
       data-value="src"
     >
-      <div
+      <button type="button"
         class="sk-tree-view__branch-control sk-interactive"
         data-sk-tree-view-branch-control
       >
@@ -163,7 +164,7 @@ const multiple = `<div
           class="sk-tree-view__branch-text"
           data-sk-tree-view-branch-text
         >src</span>
-      </div>
+      </button>
       <ul
         class="sk-tree-view__branch-content"
         data-sk-tree-view-branch-content
@@ -184,7 +185,7 @@ const multiple = `<div
           data-sk-tree-view-branch
           data-value="src/ui"
         >
-          <div
+          <button type="button"
             class="sk-tree-view__branch-control sk-interactive"
             data-sk-tree-view-branch-control
           >
@@ -193,7 +194,7 @@ const multiple = `<div
               class="sk-tree-view__branch-text"
               data-sk-tree-view-branch-text
             >ui</span>
-          </div>
+          </button>
           <ul
             class="sk-tree-view__branch-content"
             data-sk-tree-view-branch-content
@@ -239,7 +240,7 @@ const disabled = `<div
       data-sk-tree-view-branch
       data-value="dist"
     >
-      <div
+      <button type="button"
         class="sk-tree-view__branch-control sk-interactive"
         data-sk-tree-view-branch-control
       >
@@ -248,7 +249,7 @@ const disabled = `<div
           class="sk-tree-view__branch-text"
           data-sk-tree-view-branch-text
         >dist</span>
-      </div>
+      </button>
       <ul
         class="sk-tree-view__branch-content"
         data-sk-tree-view-branch-content
@@ -294,7 +295,7 @@ const events = `<div class="sk-stack" data-gap="md">
         data-sk-tree-view-branch
         data-value="cuenta"
       >
-        <div
+        <button type="button"
           class="sk-tree-view__branch-control sk-interactive"
           data-sk-tree-view-branch-control
         >
@@ -308,7 +309,7 @@ const events = `<div class="sk-stack" data-gap="md">
             class="sk-tree-view__branch-text"
             data-sk-tree-view-branch-text
           >Cuenta</span>
-        </div>
+        </button>
         <ul
           class="sk-tree-view__branch-content"
           data-sk-tree-view-branch-content
@@ -488,7 +489,11 @@ const indentHook = `.sk-tree-view {
     react={react}
     previewScript={previewScript}
     label="Ajustes con iconos"
-  />
+  >
+    <Fragment slot="react">
+      <TreeViewSettingsDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Contrato</h2>
   <ul>

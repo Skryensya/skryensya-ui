@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Showcase from "../../components/Showcase.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { FileUploadBasicDemo } from "../../components/react-demos/file-upload";
 import "@skryensya/core/components/file-upload.css";
 
 const install = `@import "@skryensya/core/components/file-upload.css";`;
@@ -42,12 +43,16 @@ const html = `<div
 </div>`;
 const react = `import { FileUpload } from "@skryensya/react/file-upload";
 
-<FileUpload
-  label="Adjuntos"
-  maxFiles={3}
-  maxFileSize={10_000_000}
-  name="attachments"
-/>`;
+function Example() {
+  return (
+    <FileUpload
+      label="Adjuntos"
+      maxFiles={3}
+      maxFileSize={10_000_000}
+      name="attachments"
+    />
+  );
+}`;
 ---
 
 <Base
@@ -64,7 +69,11 @@ const react = `import { FileUpload } from "@skryensya/react/file-upload";
     react={react}
     label="FileUpload"
     viewport="auto"
-  />
+  >
+    <Fragment slot="react">
+      <FileUploadBasicDemo client:load />
+    </Fragment>
+  </Showcase>
 
   <h2>Contrato</h2>
   <p>Vanilla emite sk-file-change y nunca inventa una carga remota. React expone archivos aceptados y rechazados.</p>

@@ -34,73 +34,51 @@ formatHotkey("mod+k", false);  // "Ctrl+K"
 <Base title="Hotkey" description="The keyboard shortcut primitive: a framework-agnostic matcher, an imperative bindHotkey, and a React useHotkey.">
   <h1>Hotkey</h1>
   <p class="lede">
-    A keyboard shortcut is behavior with no equivalent on the platform, <code>accesskey</code>
-    It exists but the browser hides it behind its own chords and never gives a ⌘K type trigger. So
-    that the system sends it, matched like all behavior: the pure matcher in
-    <code>@skryensya/core</code>, the imperative binding in <code>@skryensya/vanilla</code>, the hook
-    declarative in <code>@skryensya/react</code>.
+    A keyboard shortcut is behavior without an equivalent on the platform, <code>accesskey</code> exists but the browser hides it behind its own chords and never gives a ⌘K type trigger. So the system sends it, split like all behavior: the pure matcher in <code>@skryensya/core</code>, the imperative binding in <code>@skryensya/vanilla</code>, the declarative hook in <code>@skryensya/react</code>.
   </p>
   <p>
-    Try it now: press <kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd>, the search engine for this documentation
-    is <a href="/en/components/command-palette">CommandPalette</a>, the component that consumes this primitive. The <a href="/en/components/kbd"><code>Kbd</code></a> has
-    also a state that reacts to the keyboard with this same <code>matchesHotkey</code>; seen in his
-    page.
+    Try it now: press <kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd>, the finder in this documentation is <a href="/en/components/command-palette">CommandPalette</a>, the component that consumes this primitive. The <a href="/en/components/kbd"><code>Kbd</code></a> also has a state that reacts to the keyboard with this same <code>matchesHotkey</code>; It is seen on your page.
   </p>
 
   <h2>Why <code>mod</code> is worth it</h2>
   <p>
-    That is why this deserves a primitive and not a loose <code>event.metaKey</code>:
-    <code>mod</code> is ⌘ on a Mac and Ctrl on everything else, so a single spec, 
-    <code>"mod+k"</code>, is the correct chord in both without the writer ever branching out
-    platform. The core takes that data as a boolean instead of sniffing at <code>navigator</code>, like this
-    that remains pure and testable; The bindings detect it and pass it on.
+    It is why this deserves a primitive and not a loose <code>event.metaKey</code>: <code>mod</code> is ⌘ on a Mac and Ctrl everywhere else, so a single spec, <code>"mod+k"</code>, is the correct chord on both without the writer ever branchingper platform. The core takes that data as a boolean instead of sniffing <code>navigator</code>, so it remains pure and testable; The bindings detect it and pass it on.
   </p>
 
   <h2>Vanilla</h2>
   <p>
-    <code>bindHotkey(spec, handler)</code> hooks a listener from <code>keydown</code> and returns its
-    own cleaning, the same way that returns every system enhancer.
+    <code>bindHotkey(spec, handler)</code> hooks a <code>keydown</code> listener and returns its own cleanup, the same way every system enhancer returns.
   </p>
   <CodeBlock code={vanilla} label="JavaScript" />
 
   <h2>React</h2>
   <p>
-    <code>useHotkey(spec, handler)</code> is the same as hook: it consumes the same core matcher
-    (never the vanilla package, the two bindings are siblings on the core), pass the handler through a ref
-    so as not to re-hook on each render, and clearing the effect removes the listener.
+    <code>useHotkey(spec, handler)</code> is the same as a hook: it consumes the same core matcher (never the vanilla package, the two bindings are siblings on the core), passes the handler through a ref so as not to re-hook in each render, and cleaning the effect removes the listener.
   </p>
   <CodeBlock code={react} label="React" />
 
   <h2>The spec</h2>
   <p>
-    Modifiers and a key, separated by <code>+</code>, in any order. The chord is
-    <strong>exact</strong>: <code>"mod+k"</code> does not fire with <code>mod+shift+k</code>, so a
-    shortcut do not silently swallow a superset that the app wanted for something else.
+    Modifiers and a key, separated by <code>+</code>, in any order. The chord is <strong>exact</strong>: <code>"mod+k"</code> does not trigger with <code>mod+shift+k</code>, so that a shortcut does not silently swallow a superset that the app wanted for something else.
   </p>
   <CodeBlock code={specs} label="specs" lang="ts" />
 
-  <h2>Mostrarlo</h2>
+  <h2>Showing it</h2>
   <p>
-    A shortcut is only discovered if it is seen. <code>formatHotkey</code> writes it as the system writes it
-    operational, glyphs on Mac, words on the rest, for the badge next to a search engine or in a menu.
+    A shortcut is only discovered if it is seen. <code>formatHotkey</code> writes it as the operating system writes it, glyphs on Mac, words on the rest, for the badge next to a search engine or in a menu.
   </p>
   <CodeBlock code={format} label="JavaScript" />
 
   <h2>What it does for you, and what it does not</h2>
   <ul>
     <li>
-      <strong>Does not fire a single letter as you type.</strong> A <code>"/in"</code> inside a
-      input is text, not a command, it is suppressed. But a chord with a modifier (⌘K) <em>always</em>
-      shoot, because it has to reach you from inside the search engine that opens. It can be forced with
-      <code>enableWhileTyping</code>.
+      <strong>It does not trigger a single letter while you type. </strong> A <code>"/"</code> within an input is text, not a command, it is deleted. But a chord with modifier (⌘K) <em>always triggers</em>, because it has to reach you from within the search engine it opens. It can be forced with <code>enableWhileTyping</code>.
     </li>
     <li>
-      <strong>Stops the default browser.</strong> A ⌘S that also saves the page is a bug, so
-      which calls <code>preventDefault()</code> by default.
+      <strong>Stops the default browser. </strong> A ⌘S that also saves the page is a bug, so it calls <code>preventDefault()</code> by default.
     </li>
     <li>
-      <strong>Does not handle sequences</strong> (type <code>g</code> after <code>g</code>) or scopes
-      widget: is a chord and a handler. The rest is put together by whoever consumes it, like the search engine above.
+      <strong>It does not handle</strong> sequences (type <code>g</code> after <code>g</code>) or scopes per widget: it is a chord and a handler. The rest is put together by whoever consumes it, like the search engine above.
     </li>
   </ul>
 </Base>

@@ -3,6 +3,7 @@ import Base from "../../../layouts/Base.astro";
 import Showcase from "../../../components/Showcase.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import "@skryensya/core/components/popover.css";
+import { PopoverDemo } from "../../../components/react-demos/popover";
 
 const install = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/popover.css";`;
@@ -36,7 +37,7 @@ const html = `<div class="sk-popover">
       type="button"
     >
       <span data-sk-icon="close"></span>
-      <span class="sr-only">Cerrar</span>
+      <span class="sr-only">Close</span>
     </button>
   </div>
 </div>`;
@@ -44,14 +45,18 @@ const react = `import { Popover } from "@skryensya/react/popover";
 
 // \`arrow\` is the same as authoring <span className="sk-anchored-arrow" /> inside
 // positioner: optional in both bindings, and off by default.
-<Popover
-  title="Ada Lovelace"
-  description="Mathematician and writer."
-  trigger="Ver perfil"
-  arrow
->
-  <a href="/personas/ada">Abrir perfil</a>
-</Popover>`;
+function Example() {
+  return (
+    <Popover
+      title="Ada Lovelace"
+      description="Mathematician and writer."
+      trigger="View profile"
+      arrow
+    >
+      <a href="/people/ada">Open profile</a>
+    </Popover>
+  );
+}`;
 ---
 
 <Base
@@ -61,19 +66,23 @@ const react = `import { Popover } from "@skryensya/react/popover";
   <h1>Popover</h1>
   <p class="lede">Non-modal content with title, description and explicit closure on native top layer.</p>
 
-  <h2>Installation</h2>
+  <h2>Facility</h2>
   <Showcase
     html={html}
     js={js}
     react={react}
     label="Popover"
     viewport="overlay"
-  />
+  >
+    <Fragment slot="react">
+      <PopoverDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <p>Popover describes rich auxiliary content. Menu contains actions; Tooltip just a short description.</p>
 
-  <h2>Accesibilidad</h2>
+  <h2>Accessibility</h2>
   <p>The platform has top layer, Escape and light-dismiss through popover=auto.</p>
 
   <h2>CSS</h2>

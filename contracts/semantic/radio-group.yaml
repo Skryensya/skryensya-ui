@@ -1,0 +1,12 @@
+# La estructura vive en packages/core/src/selection.ts. Acá sólo por qué se elige.
+
+RadioGroup:
+  useWhen:
+    - "se elige UNA opción de un conjunto pequeño y todas las opciones valen la pena mostrarlas"
+    - "las opciones son excluyentes entre sí"
+  avoidWhen:
+    - "las opciones son más de siete u ocho; ahí conviene un Select"
+    - "se pueden marcar varias a la vez; eso son Checkbox independientes"
+    - "hay una sola opción; una elección de uno no es una elección"
+  alternatives:
+    - Checkbox

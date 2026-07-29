@@ -2,6 +2,7 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
+import { ThemeToggleDemo } from "../../../components/react-demos/theme-toggle";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
@@ -99,12 +100,7 @@ const labels = {
 >
   <h1>Theme Toggle</h1>
   <p class="lede">
-    Theme Toggle cycles the <strong>color mode</strong> (system → light → dark → system). It is a
-    Button ghost icon-only with three stacked faces; when you click write
-    <code>data-scheme</code> and <code>color-scheme</code> in <code>&lt;html&gt;</code> so that
-    <code>light-dark()</code> re-theme. The size is that of the Button:
-    <strong>md</strong> (default) or <code>data-size="sm"</code> /
-    <code>size="sm"</code>. The persistence is provided by the app.
+    Theme Toggle cycles the <strong>color mode</strong> (system → light → dark → system). It is a ghost icon-only Button with three stacked faces; when clicked it writes <code>data-scheme</code> and <code>color-scheme</code> to <code>&lt;html&gt;</code> for <code>light-dark()</code> to re-theme. The size is that of the Button: <strong>md</strong> (default) or <code>data-size="sm"</code> / <code>size="sm"</code>. The persistence is provided by the app.
   </p>
 
   <Showcase
@@ -113,17 +109,19 @@ const labels = {
     react={react}
     label="Theme Toggle"
     note="md · sm"
-  />
+  >
+    <Fragment slot="react">
+      <ThemeToggleDemo client:load />
+    </Fragment>
+  </Showcase>
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
     <li>
-      The faces use the stable roles <code>mode-system</code>, <code>mode-light</code> and
-      <code>mode-dark</code>, marked <code>data-sk-theme-toggle-icon</code>.
+      The faces use the stable roles <code>mode-system</code>, <code>mode-light</code>, and <code>mode-dark</code>, marked <code>data-sk-theme-toggle-icon</code>.
     </li>
     <li>
-      The enhancer applies the mode to <code>document.documentElement</code> and fires
-      <code>sk-theme-toggle-change</code> with <code>detail.value</code>.
+      The enhancer applies the mode to <code>document.documentElement</code> and triggers <code>sk-theme-toggle-change</code> with <code>detail.value</code>.
     </li>
     <li>
       A FOUC script in the <code>&lt;head&gt;</code> you must read the saved preference and paint

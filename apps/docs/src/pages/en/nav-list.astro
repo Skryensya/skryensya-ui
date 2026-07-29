@@ -43,29 +43,20 @@ const html = `<nav class="sk-nav-list" aria-label="Principal">
 >
   <h1>Nav list</h1>
   <p class="lede">
-    The system destination list: a <code>&lt;nav&gt;</code> of <code>&lt;ul&gt;&lt;li&gt;&lt;a&gt;</code>,
-    each link with an icon, a label and optional metadata at the end. Vertical in a sidebar, horizontal
-    in a navbar.
+    The list of system destinations: a <code>&lt; nav&gt; </code> of <code>&lt; ul&gt;&lt; li&gt;&lt; a&gt; </code>, each link with an icon, a label and optional metadata at the end. Vertical in a sidebar, horizontal in a navbar.
   </p>
 
-  <h2>Why is it a pattern and not a component?</h2>
+  <h2>Why is it a pattern and not a component</h2>
   <p>
-    The rule is a single question:
-    <em>do many components share this exact structure?</em> Here the answer is not a
-    prediction, the navbar and the sidebar share it today, in this repo. so send
-    <strong>styling hooks and </strong> structure, and <code>sk-nav-list</code> is a class to which
-    any container is added, the same way as <code>sk-interactive</code> and <code>sk-icon</code>.
+    The rule is a single question: <em>do many components share this exact structure? </em> Here the answer is not a prediction, the navbar and the sidebar share it today, in this repo. So it sends <strong>styling hooks and</strong> structure, and <code>sk-nav-list</code> is a class that any container adds to, the same way as <code>sk-interactive</code> and <code>sk-icon</code>.
   </p>
   <p>
-    It is <strong>opt-in</strong>, like the icon and unlike the state layer: an app may not have
-    navigation.
+    It is <strong>opt-in</strong>, like the icon and unlike the state layer: an app may not have navigation.
   </p>
 
   <h2>It is not a menu</h2>
   <p>
-    <code>role="menu"</code> is an application menu with <code>menuitem</code> inside. This is a
-    list of links, and the markup stays at <code>&lt;nav&gt;&lt;ul&gt;&lt;li&gt;&lt;a&gt;</code>, which is
-    what a screen reader should hear.
+    <code>role="menu"</code> is an application menu with <code>menuitem</code> inside. This is a list of links, and the markup stays at <code>&lt; nav&gt;&lt; ul&gt;&lt; li&gt;&lt; a&gt; </code>, which is what a screen reader should hear.
   </p>
 
   <Showcase code={html} lang="html" label="Nav list">
@@ -78,27 +69,17 @@ const html = `<nav class="sk-nav-list" aria-label="Principal">
 
   <h2>Vertical, more compact</h2>
   <p>
-    Vertically, consecutive destinations leave no gap: each link already retains its touch area. The
-    group label has its own top and bottom padding, to sort the sections without converting
-    the space between items in redundant air. The horizontal variant retains its row separation.
+    Vertically, consecutive destinations leave no gap: each link already retains its touch area. The group label has its own top and bottom padding, to organize the sections without converting the space between items into redundant air. The horizontal variant retains its row separation.
   </p>
 
-  <h2>Current page is not interaction</h2>
+  <h2>The current page is not interaction</h2>
   <p>
-    The hover, focus and press are from the <a href="/en/state-layer">state layer</a>, which is the mechanism
-    unique to the system, this file does not touch them. What does live here is the background of the current page,
-    which is not interaction feedback: it persists when no one is touching it, and the state layer paints
-    above. And the brand is <code>aria-current="page"</code>, the one you already write; a
-    <code>data-selected</code> itself would be a second source for the same fact, free of
-    contradict the first.
+    The hover, focus and press are from the <a href="/en/state-layer">state layer</a>, which is the only mechanism of the system, this file does not touch them. What does live here is the background of the current page, which is not interaction feedback: it persists when no one is touching it, and the state layer paints over it. And the brand is <code>aria-current="page"</code>, the one you already write; a <code>data-selected</code> of his own would be a second source for the same fact, free to contradict the first.
   </p>
 
-  <h2>The host sends his motion</h2>
+  <h2>The host sends its motion</h2>
   <p>
-    <code>--sk-nav-list-duration</code> and <code>--sk-nav-list-easing</code> start on intent
-    <em>state-change</em>, and the sidebar re-declares them with its collapse intent: so the labels are
-    they fade at the same time that the width moves. Re-declaring a pattern hook is
-    exactly what a hook exists for, the host never touches its markup.
+    <code>--sk-nav-list-duration</code> and <code>--sk-nav-list-easing</code> start in the intent <em>state-change</em>, and the sidebar re-declares them with its collapse intent: so the labels fade out at the same time as the width moves. Re-declaring a pattern hook is exactly what a hook exists for, the host never touches its markup.
   </p>
 
   <h2>Install</h2>

@@ -968,4 +968,150 @@ export const canonicalTrees: readonly Canonical[] = [
       },
     },
   },
+  {
+    /*
+     * The other control a Field can wrap. Same six ids, same wiring, a different element — which is
+     * the point: the field derives its ids from whatever signature is slotted into it, and never
+     * asks what that is.
+     */
+    name: "input/textarea-in-a-field",
+    enhanced: false,
+    tree: {
+      contract: "field",
+      signature: "Field",
+      slots: { label: "Comentario", hint: "Contanos qué te pasó, con el detalle que puedas." },
+      children: {
+        contract: "input",
+        signature: "Textarea",
+        options: { name: "comentario", placeholder: "Escribí acá" },
+      },
+    },
+  },
+  {
+    name: "layout/inline-row",
+    enhanced: false,
+    tree: {
+      contract: "layout",
+      signature: "Inline",
+      options: { gap: "sm", justify: "between" },
+      children: [
+        { contract: "typography", signature: "Text", children: "Plan anual" },
+        { contract: "badge", signature: "Badge", options: { tone: "success" }, children: "Activo" },
+      ],
+    },
+  },
+  {
+    /*
+     * The pattern only exists as a pair. The wash is `position: absolute` and sizes to the caption
+     * it protects, so on its own it paints NOTHING — which is what the render gate caught the first
+     * time this was published standalone. The caption is the measure, and that is the composition.
+     */
+    name: "media-gradient/caption-over-a-frame",
+    enhanced: false,
+    tree: {
+      contract: "image-frame",
+      signature: "ImageFrame",
+      options: { aspect: "16/9" },
+      children: {
+        contract: "media-gradient",
+        signature: "MediaCaption",
+        children: [
+          { contract: "media-gradient", signature: "MediaGradient", options: { strength: "lg" } },
+          { contract: "typography", signature: "Heading", children: "La plaza al atardecer" },
+        ],
+      },
+    },
+  },
+  {
+    name: "tile/button",
+    enhanced: false,
+    tree: {
+      contract: "tile",
+      signature: "TileButton",
+      options: { padding: "md" },
+      children: "Empezar de cero",
+    },
+  },
+  {
+    name: "typography/link-in-a-sentence",
+    enhanced: false,
+    tree: {
+      contract: "typography",
+      signature: "Link",
+      options: { href: "/politica-de-privacidad" },
+      children: "la política de privacidad",
+    },
+  },
+  {
+    name: "wrapper/page-column",
+    enhanced: false,
+    tree: {
+      contract: "wrapper",
+      signature: "Wrapper",
+      options: { wrapperSize: "lg" },
+      children: { contract: "typography", signature: "Text", children: "El ancho de medida vive acá." },
+    },
+  },
+  {
+    /*
+     * The footer is where order and cardinality stop being abstract: written BEFORE the body it is
+     * markup the parser silently moves, and the page still looks right while the reading order is
+     * wrong. This case is the same table as `table/captioned` with the totals row it was missing.
+     */
+    name: "table/with-a-footer",
+    enhanced: false,
+    tree: {
+      contract: "table",
+      signature: "Table",
+      children: [
+        { contract: "table", signature: "TableCaption", children: "Gastos de julio" },
+        {
+          contract: "table",
+          signature: "TableHead",
+          children: {
+            contract: "table",
+            signature: "TableRow",
+            children: [
+              { contract: "table", signature: "TableHeader", children: "Concepto" },
+              { contract: "table", signature: "TableHeader", children: "Monto" },
+            ],
+          },
+        },
+        {
+          contract: "table",
+          signature: "TableBody",
+          children: [
+            {
+              contract: "table",
+              signature: "TableRow",
+              children: [
+                { contract: "table", signature: "TableCell", children: "Servidores" },
+                { contract: "table", signature: "TableCell", children: "$120" },
+              ],
+            },
+            {
+              contract: "table",
+              signature: "TableRow",
+              children: [
+                { contract: "table", signature: "TableCell", children: "Dominios" },
+                { contract: "table", signature: "TableCell", children: "$30" },
+              ],
+            },
+          ],
+        },
+        {
+          contract: "table",
+          signature: "TableFooter",
+          children: {
+            contract: "table",
+            signature: "TableRow",
+            children: [
+              { contract: "table", signature: "TableCell", children: "Total" },
+              { contract: "table", signature: "TableCell", children: "$150" },
+            ],
+          },
+        },
+      ],
+    },
+  },
 ];

@@ -2647,6 +2647,7 @@
         },
         "justify": {
           "attr": "data-justify",
+          "default": "start",
           "type": "enum",
           "values": [
             "start",
@@ -2654,6 +2655,13 @@
             "end",
             "between"
           ]
+        },
+        "wrap": {
+          "attr": "data-wrap",
+          "default": true,
+          "falseValue": "false",
+          "trueValue": "true",
+          "type": "boolean"
         }
       },
       "parts": {
@@ -2736,7 +2744,8 @@
           "options": [
             "gap",
             "inlineAlign",
-            "justify"
+            "justify",
+            "wrap"
           ],
           "react": {
             "from": "@skryensya/react/layout",
@@ -3155,6 +3164,17 @@
       "css": "@skryensya/core/patterns/media-gradient.css",
       "id": "media-gradient",
       "options": {
+        "edge": {
+          "attr": "data-edge",
+          "default": "bottom",
+          "type": "enum",
+          "values": [
+            "top",
+            "bottom",
+            "start",
+            "end"
+          ]
+        },
         "strength": {
           "attr": "data-strength",
           "default": "md",
@@ -3171,8 +3191,25 @@
         "root": "sk-media-gradient"
       },
       "semantics": {
-        "MediaGradient": {
+        "MediaCaption": {
+          "alternatives": [
+            "ImageFrame"
+          ],
           "avoidWhen": [
+            "el texto puede ir debajo de la imagen; ahí se lee mejor y no necesita lavado",
+            "es un pie de foto descriptivo; eso es un `<figcaption>` fuera del marco"
+          ],
+          "useWhen": [
+            "el texto va encima de la foto y no debajo: un título sobre la imagen de portada",
+            "hace falta que el lavado tenga el alto del texto y no un porcentaje de la imagen"
+          ]
+        },
+        "MediaGradient": {
+          "alternatives": [
+            "MediaCaption"
+          ],
+          "avoidWhen": [
+            "está fuera de un MediaCaption; no tiene caja que llenar y no pinta nada",
             "oscurece un diálogo sobre la página; eso es un Backdrop"
           ],
           "useWhen": [
@@ -3181,6 +3218,35 @@
         }
       },
       "signatures": {
+        "MediaCaption": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "caption-over-a-photo",
+            "text-on-media",
+            "overlay-title"
+          ],
+          "options": [
+            "edge"
+          ],
+          "react": {
+            "from": "@skryensya/react/media-gradient",
+            "name": "MediaCaption"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "caption",
+            "slot": "children"
+          }
+        },
         "MediaGradient": {
           "host": {
             "element": "div"
@@ -7462,5 +7528,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "4fc2555583a69d4e"
+  "sourceHash": "c7ef6f4810b1fecc"
 }

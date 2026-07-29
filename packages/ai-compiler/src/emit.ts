@@ -320,7 +320,13 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   for (const [name, option] of mine) {
     const value = tree.options?.[name] ?? option.default;
     // An option that only feeds a computation has already done its work in the structure above.
-    if (value === undefined || value === false || option.computedInput) continue;
+    if (value === undefined || option.computedInput) continue;
+    // Saying no is saying nothing, UNLESS the contract gave `false` a spelling of its own.
+    if (value === false) {
+      if (option.falseValue === undefined) continue;
+      out.push(attr(option.attr, option.falseValue));
+      continue;
+    }
     out.push(value === true ? attr(option.attr, option.trueValue ?? "") : attr(option.attr, String(value)));
     if (option.alsoAttr && value !== true) out.push(attr(option.alsoAttr, String(value)));
   }

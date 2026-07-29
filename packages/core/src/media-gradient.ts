@@ -31,10 +31,26 @@ export const mediaGradientContract = {
   parts: mediaGradientParts,
 
   options: {
+    /** Which edge of the media the caption sits on. The wash fades toward the photo from there. */
+    edge: { type: "enum", values: ["top", "bottom", "start", "end"], default: "bottom", attr: "data-edge" },
     strength: { type: "enum", values: ["sm", "md", "lg"], default: "md", attr: "data-strength" },
   },
 
   signatures: {
+    /*
+     * The caption is the MEASURE. The wash sizes to it, not to a percentage of the media, which is
+     * the whole idea of the pattern — and it is why publishing the gradient without this was
+     * publishing something that paints nothing: absolutely positioned with no box to fill.
+     */
+    MediaCaption: {
+      intent: ["caption-over-a-photo", "text-on-media", "overlay-title"],
+      host: { element: "div" },
+      options: ["edge"],
+      slots: { children: { accepts: "node", required: true } },
+      template: { element: "div", part: "caption", host: true, slot: "children" },
+      react: { from: "@skryensya/react/media-gradient", name: "MediaCaption" },
+    },
+
     MediaGradient: {
       intent: ["readable-text-over-a-photo", "scrim-behind-a-caption"],
       host: { element: "div" },

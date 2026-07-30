@@ -5,6 +5,10 @@ import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import { RadioGroupDemo, TileRadioGroupDemo } from "../../../components/react-demos/radio-group";
 
+/*
+ * The usage-tree port is blocked: the contract only exposes controlled `value`. The React emitter
+ * cannot express `defaultValue`, so the example would stop allowing the selection to change.
+ */
 
 const html = `<div
   class="sk-radio-group"

@@ -11,12 +11,7 @@ import { getLocale, useTranslations } from "../../../i18n";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import DimensionSelect from "../../../components/DimensionSelect.astro";
-import {
-  TableBasicDemo,
-  TablePagerDemo,
-  TableStickyColumnDemo,
-  TableStickyHeaderDemo,
-} from "../../../components/react-demos/table";
+import { TablePagerDemo } from "../../../components/react-demos/table";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -36,33 +31,6 @@ const pagerRows = Array.from({ length: 28 }, (_, index) => {
     when: n === 1 ? "2 min ago" : n < 10 ? `${n * 3} min ago` : `${n} h ago`,
   };
 });
-
-const html = `<div class="sk-table-scroll">
-  <table class="sk-table">
-    <caption class="sk-table__caption">Available plans</caption>
-    <thead class="sk-table__head">
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="col">Plan</th>
-        <th class="sk-table__header" scope="col">Use</th>
-        <th class="sk-table__header" scope="col">Status</th>
-      </tr>
-    </thead>
-    <tbody class="sk-table__body">
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="row">Starter</th>
-        <td class="sk-table__cell">Small teams</td>
-        <td class="sk-table__cell">Activo</td>
-      </tr>
-    </tbody>
-    <tfoot class="sk-table__foot">
-      <tr class="sk-table__row">
-        <td class="sk-table__cell" colspan="3">
-          Prices do not include taxes.
-        </td>
-      </tr>
-    </tfoot>
-  </table>
-</div>`;
 
 const densityTable = (factor: string) => `<div
   data-sk-density-scope
@@ -100,49 +68,6 @@ const densityTable = (factor: string) => `<div
 
 const spaciousDensityHtml = densityTable("1.2");
 const compactDensityHtml = densityTable("0.6");
-
-const react = `import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableScroll,
-} from "@skryensya/react/table";
-
-function Example() {
-  return (
-    <TableScroll>
-      <Table>
-        <TableCaption>Available plans</TableCaption>
-        <TableHead>
-          <TableRow>
-            <TableHeader>Plan</TableHeader>
-            <TableHeader>Uso</TableHeader>
-            <TableHeader>Status</TableHeader>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <TableRow>
-            <TableHeader scope="row">Starter</TableHeader>
-            <TableCell>Small teams</TableCell>
-            <TableCell>Activo</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>
-              Prices do not include taxes.
-            </TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
-    </TableScroll>
-  );
-}`;
 
 const pagerRowHtml = (row: (typeof pagerRows)[number]) => `        <tr
           class="sk-table__row"
@@ -395,13 +320,13 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
   <p>
     Use <code>data-sticky-column</code> in HTML or <code>stickyColumn</code> in React. The first cell of each row is frozen and its shadow separates the identifier from the data passing below it. It should be a <code>&lt;th scope="row"&gt;</code>. It does not depend on a breakpoint: it works the same with touch, mouse, zoom or a narrow window.
   </p>
-  <ComponentPreview tree={tableStickyColumnTree(t)} label="Primera columna sticky" />
+  <ComponentPreview tree={tableStickyColumnTree(t)} label="Sticky first column" />
 
   <h2>Sticky header row</h2>
   <p>
     Use <code>data-sticky-header</code> or <code>stickyHeader</code>. The wrapper gains vertical scroll and a maximum height of <code>20rem</code>, which you can override as in this example. The header is visible on both desktop and mobile; If you combine both modifiers, the corner cell is on top of the two layers.
   </p>
-  <ComponentPreview tree={tableStickyHeaderTree(t)} label="Header row sticky" />
+  <ComponentPreview tree={tableStickyHeaderTree(t)} label="Sticky header row" />
 
   <h2>With pagination</h2>
   <p>
@@ -484,7 +409,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
       </div>
     </div>
     <Fragment slot="react">
-      <TablePagerDemo client:load />
+      <TablePagerDemo client:load lang="en" />
     </Fragment>
   </ComponentPreview>
 

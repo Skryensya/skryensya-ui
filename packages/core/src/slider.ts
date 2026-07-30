@@ -37,7 +37,16 @@ export const sliderContract = {
   parts: sliderParts,
 
   options: {
-    value: { type: "number", default: 0, attr: "value" },
+    /**
+     * Where the thumb STARTS. Spelled `value` in markup because that is the attribute a range input
+     * takes, and `defaultValue` in React because that is what React calls the same idea.
+     *
+     * The rename is the whole point rather than a nicety: `value` in React means CONTROLLED, so a
+     * tree that emitted it handed over a slider whose thumb could not move — the author asked for an
+     * initial position and got a locked control, which every static check called correct. A
+     * composition is data and has no state to own, so the initial value is the only one it can mean.
+     */
+    value: { type: "number", default: 0, attr: "value", prop: "defaultValue" },
     min: { type: "number", default: 0, attr: "min" },
     max: { type: "number", default: 100, attr: "max" },
     step: { type: "number", attr: "step" },
@@ -60,6 +69,13 @@ export const sliderContract = {
         style: [{ property: "--sk-slider-fill", percentOf: ["value", "max"], as: "fraction" }],
       },
       react: { from: "@skryensya/react/slider", name: "Slider" },
+      /*
+       * The fill follows the thumb only if something recomputes it: CSS can read the initial `value`
+       * but has no selector for the current one. React does it in its own render; authored markup
+       * needs the enhancer, and without this attribute it never attached — every emitted slider
+       * painted its starting fraction and then kept it while the thumb moved away.
+       */
+      mount: "data-sk-slider",
     },
   },
 } as const satisfies ComponentContract;

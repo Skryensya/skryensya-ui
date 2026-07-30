@@ -2,99 +2,11 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
-import { PrimitivesOverviewDemo } from "../../../components/react-demos/layout";
+import { primitivesTree } from "../../../demos/layout";
+import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
-
-const html = `<div class="sk-stack" data-gap="lg">
-  <section
-    class="sk-box"
-    data-surface="raised"
-    data-border="subtle"
-    data-padding="lg"
-  >
-    <div class="sk-stack" data-gap="md">
-      <h3 class="sk-heading" data-size="sm">Summary</h3>
-      <p class="sk-text" data-tone="secondary">
-        A block with spacing, surface, and hierarchy.
-      </p>
-      <div class="sk-inline" data-gap="sm" data-align="baseline">
-        <a
-          class="sk-link sk-interactive"
-          href="/en/components/primitives"
-        >
-          See details
-        </a>
-        <span class="sk-text" data-size="caption">Updated today</span>
-      </div>
-    </div>
-  </section>
-
-  <div class="sk-grid" data-columns="3" data-gap="md">
-    <div
-      class="sk-box"
-      data-surface="surface"
-      data-border="subtle"
-      data-padding="md"
-    >
-      Uno
-    </div>
-    <div
-      class="sk-box"
-      data-surface="surface"
-      data-border="subtle"
-      data-padding="md"
-    >
-      Dos
-    </div>
-    <div
-      class="sk-box"
-      data-surface="surface"
-      data-border="subtle"
-      data-padding="md"
-    >
-      Tres
-    </div>
-  </div>
-</div>`;
-
-const react = `import { Box, Grid, Inline, Stack } from "@skryensya/react/layout";
-import { Heading, Link, Text } from "@skryensya/react/typography";
-
-function Example() {
-  return (
-    <>
-      <Box as="section" surface="raised" border="subtle" padding="lg">
-        <Stack gap="md">
-          <Heading as="h2" size="sm">
-            Summary
-          </Heading>
-          <Text tone="secondary">
-            A block with spacing, surface and hierarchy.
-          </Text>
-          <Inline gap="sm" align="baseline">
-            <Link href="/detalles">See details</Link>
-            <Text as="span" size="caption">
-              Updated today
-            </Text>
-          </Inline>
-        </Stack>
-      </Box>
-
-      <Grid columns={3} gap="md">
-        <Box surface="surface" padding="md">
-          Uno
-        </Box>
-        <Box surface="surface" padding="md">
-          Dos
-        </Box>
-        <Box surface="surface" padding="md">
-          Tres
-        </Box>
-      </Grid>
-    </>
-  );
-}`;
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base title="Primitivas" description="Layout and typography primitives: reusable structure, reading roles and React adapters.">
@@ -103,11 +15,7 @@ function Example() {
     Box, Wrapper, ImageFrame, Stack, Inline and Grid are layout patterns. Text, Heading and Link express the reading role; They do not replace semantics: you choose the element that corresponds to the content.
   </p>
 
-  <ComponentPreview html={html} react={react} label="Primitivas">
-    <Fragment slot="react">
-      <PrimitivesOverviewDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={primitivesTree(t, "/en/components/primitives")} label="Primitivas" />
 
   <h2>Authored HTML</h2>
   <p>

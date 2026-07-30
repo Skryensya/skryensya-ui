@@ -2,26 +2,20 @@
 import Base from "../../layouts/Base.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { timeFieldTree } from "../../demos/time-field";
+import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/time-field.css";
-import { TimeFieldDemo } from "../../components/react-demos/time-field";
 
 const install = `@import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/time-field.css";`;
 
 const nativeHtml = `<input type="time" name="inicio" id="inicio" />`;
 
-const customHtml = `<div class="sk-time-field" data-sk-time-field data-locale="es-DO" data-value="09:30">
-  <span class="sk-time-field__label">Salida</span>
-</div>`;
+const t = useTranslations(getLocale(Astro.url));
 
-const react = `import { TimeField } from "@skryensya/react/time-field";
-
-<TimeField
-  defaultValue="09:30"
-  label="Salida"
-  locale="es-DO"
-  name="salida"
-/>`;
+/*
+ * Native `<input type="time">` stays authored: there is no contract for a platform control.
+ */
 ---
 
 <Base
@@ -40,11 +34,10 @@ const react = `import { TimeField } from "@skryensya/react/time-field";
     los segmentos directamente.
   </p>
 
-  <ComponentPreview html={customHtml} react={react} label="TimeField">
-    <Fragment slot="react">
-      <TimeFieldDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview
+    tree={timeFieldTree(t, { locale: "es-DO", name: "salida" })}
+    label="TimeField"
+  />
 
   <h2>Contrato</h2>
   <p>

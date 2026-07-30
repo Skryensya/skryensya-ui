@@ -1,207 +1,25 @@
 ---
+import "@skryensya/core/components/dialog.css";
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
+import { HeadingFlushDemo } from "../../../components/react-demos/heading";
 import {
-  HeadingDisplayDemo,
-  HeadingDocumentDemo,
-  HeadingPageTitleDemo,
-  HeadingOutlineDemo,
-  HeadingCompactDemo,
-  HeadingFlushDemo,
-} from "../../../components/react-demos/heading";
+  headingCompactTree,
+  headingDisplayTree,
+  headingDocumentTree,
+  headingOutlineTree,
+  headingPageTitleTree,
+} from "../../../demos/typography";
+import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
 
-const displayHtml = `<div class="sk-stack" data-gap="xs">
-  <div class="sk-stack" data-gap="none">
-    <p class="sk-text" data-size="caption" data-tone="tertiary">
-      display-lg · 60
-    </p>
-    <p class="sk-heading" data-size="display-lg">
-      The platform is ready
-    </p>
-  </div>
-  <div class="sk-stack" data-gap="none">
-    <p class="sk-text" data-size="caption" data-tone="tertiary">
-      display-md · 48
-    </p>
-    <p class="sk-heading" data-size="display-md">
-      The platform is ready
-    </p>
-  </div>
-  <div class="sk-stack" data-gap="none">
-    <p class="sk-text" data-size="caption" data-tone="tertiary">
-      display-sm · 36
-    </p>
-    <p class="sk-heading" data-size="display-sm">
-      The platform is ready
-    </p>
-  </div>
-</div>`;
-
-const displayReact = `import { Heading } from "@skryensya/react/heading";
-
-function Example() {
-  return (
-    <div className="sk-stack" data-gap="xs">
-      <Heading size="display-lg">The platform is ready</Heading>
-      <Heading size="display-md">The platform is ready</Heading>
-      <Heading size="display-sm">The platform is ready</Heading>
-    </div>
-  );
-}`;
-
-const documentHtml = `<div class="sk-stack" data-gap="xs">
-  <div class="sk-stack" data-gap="none">
-    <p class="sk-text" data-size="caption" data-tone="tertiary">
-      h1 · 30
-    </p>
-    <p class="sk-heading" data-size="h1">The platform is ready</p>
-  </div>
-  <div class="sk-stack" data-gap="none">
-    <p class="sk-text" data-size="caption" data-tone="tertiary">
-      h2 · 24
-    </p>
-    <p class="sk-heading" data-size="h2">The platform is ready</p>
-  </div>
-  <div class="sk-stack" data-gap="none">
-    <p class="sk-text" data-size="caption" data-tone="tertiary">
-      h3 · 20
-    </p>
-    <p class="sk-heading" data-size="h3">The platform is ready</p>
-  </div>
-  <div class="sk-stack" data-gap="none">
-    <p class="sk-text" data-size="caption" data-tone="tertiary">
-      h4 · 18 · floor (also h5 and h6)
-    </p>
-    <p class="sk-heading" data-size="h4">The platform is ready</p>
-  </div>
-  <div class="sk-stack" data-gap="none">
-    <p class="sk-text" data-size="caption" data-tone="tertiary">
-      h5 · same as h4
-    </p>
-    <p class="sk-heading" data-size="h5">The platform is ready</p>
-  </div>
-  <div class="sk-stack" data-gap="none">
-    <p class="sk-text" data-size="caption" data-tone="tertiary">
-      h6 · same as h4
-    </p>
-    <p class="sk-heading" data-size="h6">The platform is ready</p>
-  </div>
-</div>`;
-
-const documentReact = `import { Heading } from "@skryensya/react/heading";
-
-function Example() {
-  return (
-    <div className="sk-stack" data-gap="xs">
-      <Heading size="h1">The platform is ready</Heading>
-      <Heading size="h2">The platform is ready</Heading>
-      <Heading size="h3">The platform is ready</Heading>
-      <Heading size="h4">The platform is ready</Heading>
-    </div>
-  );
-}`;
-
-const pageTitleHtml = `<header class="sk-stack" data-gap="sm">
-  <span
-    class="sk-text"
-    data-size="caption"
-    data-tone="tertiary"
-    data-weight="label"
-  >
-    OPERACIONES · MAYO 2026
-  </span>
-  <h1 class="sk-heading" data-size="display-md">
-    The platform is ready for the next deployment
-  </h1>
-  <p class="sk-text" data-size="lg" data-tone="secondary">
-    A title ofpage communicates the result before the person reads the details.
-  </p>
-</header>`;
-
-const pageTitleReact = `import { Heading } from "@skryensya/react/heading";
-import { Text } from "@skryensya/react/text";
-
-function Example() {
-  return (
-    <header className="sk-stack" data-gap="sm">
-      <Text as="span" size="caption" tone="tertiary" weight="label">
-        OPERACIONES · MAYO 2026
-      </Text>
-      <Heading as="h1" size="display-md">
-        The platform is ready for the next deployment
-      </Heading>
-      <Text size="lg" tone="secondary">
-        A page title communicates the result before the
-        person read the details.
-      </Text>
-    </header>
-  );
-}`;
-
-const outlineHtml = `<section class="sk-stack" data-gap="lg">
-  <h2 class="sk-heading" data-size="h2">Deployment status</h2>
-  <section class="sk-stack" data-gap="sm">
-    <h3 class="sk-heading" data-size="h3">Ready regions</h3>
-    <p class="sk-text" data-size="sm" data-tone="secondary">
-      Frankfurt and São Paulo already receive traffic.
-    </p>
-  </section>
-  <section class="sk-stack" data-gap="sm">
-    <h3 class="sk-heading" data-size="h3">Next check</h3>
-    <p class="sk-text" data-size="sm" data-tone="secondary">
-      Check latency after traffic change.
-    </p>
-  </section>
-</section>`;
-
-const outlineReact = `import { Heading } from "@skryensya/react/heading";
-import { Text } from "@skryensya/react/text";
-
-function Example() {
-  return (
-    <section className="sk-stack" data-gap="lg">
-      <Heading as="h2" size="h2">Deployment status</Heading>
-      <section className="sk-stack" data-gap="sm">
-        <Heading as="h3" size="h3">Regiones listas</Heading>
-        <Text size="sm" tone="secondary">
-          Frankfurt and São Paulo already receive traffic.
-        </Text>
-      </section>
-      <section className="sk-stack" data-gap="sm">
-        <Heading as="h3" size="h3">Next verification</Heading>
-        <Text size="sm" tone="secondary">
-          Check latency after traffic change.
-        </Text>
-      </section>
-    </section>
-  );
-}`;
-
-const compactHtml = `<section class="sk-stack" data-gap="xs">
-  <h2 class="sk-heading" data-size="h4">Storage usage</h2>
-  <p class="sk-text" data-size="sm" data-tone="secondary">
-    The semantic level is still h2 although the panel needs the visual floor (h4).
-  </p>
-</section>`;
-
-const compactReact = `import { Heading } from "@skryensya/react/heading";
-import { Text } from "@skryensya/react/text";
-
-function Example() {
-  return (
-    <section className="sk-stack" data-gap="xs">
-      <Heading as="h2" size="h4">Storage usage</Heading>
-      <Text size="sm" tone="secondary">
-        The semantic level is still h2 although the panel needs
-        the visual floor (h4).
-      </Text>
-    </section>
-  );
-}`;
-
+/*
+ * Flush stays authored: it wraps dialog chrome (`sk-dialog__header` / `sk-dialog__title`) that no
+ * signature emits.
+ */
 const flushHtml = `<header class="sk-dialog__header" style="max-inline-size: 24rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md)">
   <h3 class="sk-heading sk-dialog__title" data-size="h3" data-flush>
     Delete this project?
@@ -224,55 +42,40 @@ function Example() {
 <Base title="Heading" description="Heading: independent semantic hierarchy and visual size.">
   <h1>Heading</h1>
   <p class="lede">
-    Heading separates the hierarchy of the document from its appearance. Choose <code>as</code> based on the semantic level and <code>size</code> based on the size needed by the visual context.
+    Heading separates the hierarchy of the document from its appearance. Choose <code>as</code> based
+    on the semantic level and <code>size</code> based on the size the visual context needs.
   </p>
 
   <h2>Sizes</h2>
   <p>
-    Three displays above the document scale. In the document, <code>h1</code>–<code>h4</code> decrease in size; <code>h5</code> and <code>h6</code> share <code>h4</code>'s apartment (18px).
+    Three displays above the document scale. In the document, <code>h1</code>–<code>h4</code> step
+    down; <code>h5</code> and <code>h6</code> share the <code>h4</code> floor (18px).
   </p>
 
   <h3>Display</h3>
-  <ComponentPreview html={displayHtml} react={displayReact} label="Escala display">
-    <Fragment slot="react">
-      <HeadingDisplayDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={headingDisplayTree(t)} label="Display scale" />
 
   <h3>Document</h3>
-  <ComponentPreview html={documentHtml} react={documentReact} label="Escala h1–h6">
-    <Fragment slot="react">
-      <HeadingDocumentDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={headingDocumentTree(t)} label="h1–h6 scale" />
 
   <h2>Page title</h2>
-  <p>The single <code>h1</code> presents the page; A display provides presence without inventing other semantics.</p>
-  <ComponentPreview html={pageTitleHtml} react={pageTitleReact} label="Page Title">
-    <Fragment slot="react">
-      <HeadingPageTitleDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <p>The single <code>h1</code> presents the page; a display adds presence without inventing other semantics.</p>
+  <ComponentPreview tree={headingPageTitleTree(t)} label="Page title" />
 
-  <h2>Section Hierarchy</h2>
-  <p>The structure advances from <code>h2</code> to <code>h3</code>; The visual size can accompany the level.</p>
-  <ComponentPreview html={outlineHtml} react={outlineReact} label="Content Hierarchy">
-    <Fragment slot="react">
-      <HeadingOutlineDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <h2>Section hierarchy</h2>
+  <p>Structure advances from <code>h2</code> to <code>h3</code>; visual size can follow the level.</p>
+  <ComponentPreview tree={headingOutlineTree(t)} label="Content hierarchy" />
 
-  <h2>Compact Hierarchy</h2>
-  <p>A heading retains its place in the document even if the visual context uses floor <code>h4</code>.</p>
-  <ComponentPreview html={compactHtml} react={compactReact} label="Heading compacto">
-    <Fragment slot="react">
-      <HeadingCompactDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <h2>Compact hierarchy</h2>
+  <p>A heading keeps its place in the document even when the visual context uses the <code>h4</code> floor.</p>
+  <ComponentPreview tree={headingCompactTree(t)} label="Compact heading" />
 
   <h2>Flush</h2>
   <p>
-    <code>data-flush</code> (React: <code>flush</code>) removes air from block, top and bottom. It is explicit opt-in: use it when the heading is the first (or last) thing in the container (dialog title with <code>sk-dialog__title</code>, card header) and you do not want the margin or padding to push it against the edge. It is not inferred from <code>: first-child</code>.
+    <code>data-flush</code> (React: <code>flush</code>) removes block air, top and bottom. Explicit
+    opt-in: use it when the heading is first (or last) in the container (dialog title with
+    <code>sk-dialog__title</code>, card header) and you do not want margin or padding pushing it
+    against the edge. It is not inferred from <code>:first-child</code>.
   </p>
   <ComponentPreview html={flushHtml} react={flushReact} label="Heading flush">
     <Fragment slot="react">
@@ -290,9 +93,9 @@ function Example() {
   <ul>
     <li><code>data-size</code> accepts <code>display-lg</code>, <code>display-md</code>, <code>display-sm</code>, <code>h1</code>, <code>h2</code>, <code>h3</code>, <code>h4</code>, <code>h5</code> and <code>h6</code>. <code>h5</code>/<code>h6</code> paint the same as <code>h4</code>.</li>
     <li>Legacy aliases: <code>sm</code>→<code>h3</code>, <code>md</code>→<code>h2</code>, <code>lg</code>→<code>h1</code>, <code>display</code>→<code>display-sm</code>.</li>
-    <li>In HTML, use <code>h1</code>–<code>h6</code> for the document hierarchy; <code>data-size</code> does not modify it.</li>
+    <li>In HTML, use <code>h1</code>–<code>h6</code> for document hierarchy; <code>data-size</code> does not change it.</li>
     <li>In React, <code>as</code> accepts <code>h1</code>–<code>h6</code> (default <code>h2</code>); <code>size</code> defaults to <code>h2</code>.</li>
-    <li><code>data-flush</code> / React <code>flush</code>: no margin or block padding (top and bottom). Explicit; not automatic.</li>
+    <li><code>data-flush</code> / React <code>flush</code>: no block margin or padding. Explicit; not automatic.</li>
     <li>Does not require vanilla initialization.</li>
   </ul>
 </Base>

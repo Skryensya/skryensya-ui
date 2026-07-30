@@ -185,6 +185,36 @@ export const buttonAsLinkTree = (t: Translate, href: string): UsageTree => ({
   ],
 });
 
+/**
+ * The four buttons on the "first component" walkthrough — default, primary, danger, and sm.
+ * Same signatures as the Button page; shared so the teaching page cannot drift from the reference.
+ */
+export const firstComponentButtonsTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Inline",
+  children: [
+    { contract: "button", signature: "Button.action", children: t("demo.button.save") },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "primary" },
+      children: t("demo.button.save"),
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "danger" },
+      children: t("demo.button.delete"),
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { size: "sm" },
+      children: t("demo.button.small"),
+    },
+  ],
+});
+
 /*
  * TileButton is NOT here, and the reason is a contract gap rather than an oversight.
  *

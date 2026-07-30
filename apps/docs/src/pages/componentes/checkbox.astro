@@ -4,8 +4,12 @@ import "@skryensya/core/components/checkbox.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
+import { checkboxTree } from "../../demos/checkbox";
+import { getLocale, useTranslations } from "../../i18n";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { CheckboxBasicDemo, CheckboxGroupDemo, TileCheckboxDemo } from "../../components/react-demos/checkbox";
+import { CheckboxGroupDemo, TileCheckboxDemo } from "../../components/react-demos/checkbox";
+
+const t = useTranslations(getLocale(Astro.url));
 
 
 const indicators = `<span
@@ -17,33 +21,6 @@ const indicators = `<span
       data-state="indeterminate"
     ><span data-sk-icon="remove" data-sk-icon-size="sm"></span></span>`;
 
-const html = `<label class="sk-checkbox">
-  <input
-    class="sk-checkbox__input"
-    type="checkbox"
-    name="alerts"
-    value="email"
-  />
-  <span class="sk-checkbox__control sk-interactive" aria-hidden="true">
-    ${indicators}
-  </span>
-  <span class="sk-checkbox__label">Alertas por email</span>
-</label>`;
-
-const react = `import { Checkbox } from "@skryensya/react/checkbox";
-
-function Example() {
-  return (
-    <Checkbox
-      name="alerts"
-      value="email"
-      defaultChecked="indeterminate"
-      onCheckedChange={SomeFunction}
-    >
-      Alertas por email
-    </Checkbox>
-  );
-}`;
 
 /* The children indent to where the PARENT'S LABEL starts, not to an arbitrary step: same two
  * tokens the control composes its own row from, so the nesting survives a density change. */
@@ -312,11 +289,7 @@ function Example() {
   <h1>Checkbox</h1>
   <p class="lede">Una elección independiente. Conserva un <code>input type="checkbox"</code>: submit, reset, teclado y validación pertenecen al browser.</p>
 
-  <ComponentPreview html={html} react={react} label="Checkbox">
-    <Fragment slot="react">
-      <CheckboxBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={checkboxTree(t)} label="Checkbox" />
   <p>
     El control usa los roles <code>check</code> y <code>remove</code> del set de iconos, no un trazo CSS.
     Importa <code>@skryensya/core/components/checkbox.css</code> y llama <code>initComponents()</code> una vez.

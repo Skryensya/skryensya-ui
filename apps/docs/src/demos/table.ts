@@ -163,7 +163,7 @@ export const tableStickyHeaderTree = (t: Translate): UsageTree => ({
         contract: "table",
         signature: "TableBody",
         children: [
-          labelledRow("14:02", ["Allison Peña", t("demo.table.succeeded")]),
+          labelledRow("14:02", ["John Doe", t("demo.table.succeeded")]),
           labelledRow("13:47", ["Mateo Rivas", t("demo.table.succeeded")]),
           labelledRow("13:20", ["Elena Soto", t("demo.table.running")]),
           labelledRow("12:58", ["Nadia Kim", t("demo.table.succeeded")]),

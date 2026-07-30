@@ -197,6 +197,12 @@ export const timeFieldContract = {
     name: { type: "string", attr: "data-name", machineInput: true },
     /** Decides the hour cycle, the segment order and the separators. Not decoration. */
     locale: { type: "string", default: "es", attr: "data-locale", machineInput: true },
+    /**
+     * Where the segments START. Spelled `data-value` in markup (what Vanilla reads off the root) and
+     * `defaultValue` in React — same rename Slider makes, for the same reason: React's `value` is
+     * controlled, and a usage tree has no change handler to feed it.
+     */
+    value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
     /** How far an arrow key moves the minutes. */
     minuteStep: { type: "number", default: 1, attr: "data-minute-step", machineInput: true },
     disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "", machineInput: true },
@@ -219,6 +225,7 @@ export const timeFieldContract = {
       options: [
         "name",
         "locale",
+        "value",
         "minuteStep",
         "disabled",
         "readOnly",

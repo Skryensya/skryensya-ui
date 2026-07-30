@@ -1,27 +1,13 @@
 /*
- * Live React demos for /components/grid, /inline, /stack, /primitives. Each export is a
- * self-contained island (no function props crossing the Astro boundary), mounted directly
- * from the page with a bare `<XyzDemo client:load />`.
+ * Live React demo for the authored Grid multicol stage. Grid basic is tree-driven; multicol stays
+ * an island because `data-multicol` is not a declared option.
  */
-import { Button } from "@skryensya/react/button";
-import { Box, Grid, Inline, Stack } from "@skryensya/react/layout";
-import { Heading, Link, Text } from "@skryensya/react/typography";
+import { Box, Grid } from "@skryensya/react/layout";
+import { Text } from "@skryensya/react/typography";
 import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame — see `framed.tsx`. */
 const framed = framedIn(import.meta.url);
-
-/* Box's demo is a usage tree on the page itself (both languages), so there is no island here. */
-
-export const GridBasicDemo = framed(function GridBasicDemo() {
-  return (
-    <Grid as="section" columns={3} gap="md" aria-label="Recent projects">
-      <article>Atlas Project</article>
-      <article>Breeze Project</article>
-      <article>Cauce Project</article>
-    </Grid>
-  );
-});
 
 export const GridMulticolDemo = framed(function GridMulticolDemo() {
   const notes = [
@@ -60,76 +46,3 @@ export const GridMulticolDemo = framed(function GridMulticolDemo() {
     </Grid>
   );
 });
-
-export const InlineActionBarDemo = framed(function InlineActionBarDemo() {
-  return (
-    <Box as="section" aria-labelledby="project-title" border="subtle" padding="lg" surface="raised">
-      <Inline gap="md" justify="between">
-        <Stack gap="none">
-          <Heading as="h2" id="project-title" size="h4">
-            Proyecto Atlas
-          </Heading>
-          <Text size="sm" tone="secondary">
-            3 unpublished changes
-          </Text>
-        </Stack>
-
-        <Inline gap="sm" wrap={false}>
-          <Button variant="ghost" onClick={() => {}}>
-            Vista previa
-          </Button>
-          <Button variant="primary" onClick={() => {}}>
-            Publicar
-          </Button>
-        </Inline>
-      </Inline>
-    </Box>
-  );
-});
-
-export const StackBasicDemo = framed(function StackBasicDemo() {
-  return (
-    <Stack as="section" gap="md" align="start" aria-labelledby="summary-title">
-      <Heading as="h2" size="h2" id="summary-title">
-        Summary
-      </Heading>
-      <p>The request is ready for review.</p>
-      <Link href="/en/components/stack">See details</Link>
-    </Stack>
-  );
-});
-
-export const PrimitivesOverviewDemo = framed(function PrimitivesOverviewDemo() {
-  return (
-    <div className="sk-stack" data-gap="lg">
-      <Box as="section" surface="raised" border="subtle" padding="lg">
-        <Stack gap="md">
-          <Heading as="h2" size="sm">
-            Summary
-          </Heading>
-          <Text tone="secondary">A block with spacing, surface and hierarchy.</Text>
-          <Inline gap="sm" align="baseline">
-            <Link href="/en/components/primitives">See details</Link>
-            <Text as="span" size="caption">
-              Updated today
-            </Text>
-          </Inline>
-        </Stack>
-      </Box>
-
-      <Grid columns={3} gap="md">
-        <Box surface="surface" border="subtle" padding="md">
-          Uno
-        </Box>
-        <Box surface="surface" border="subtle" padding="md">
-          Dos
-        </Box>
-        <Box surface="surface" border="subtle" padding="md">
-          Tres
-        </Box>
-      </Grid>
-    </div>
-  );
-});
-
-/* Wrapper's preview is a to-scale diagram, not a live component (see wrapper.astro): no demo here. */

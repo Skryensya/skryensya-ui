@@ -13,12 +13,7 @@ import { getLocale, useTranslations } from "../../i18n";
 import CodeBlock from "../../components/CodeBlock.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import DimensionSelect from "../../components/DimensionSelect.astro";
-import {
-  TableBasicDemo,
-  TablePagerDemo,
-  TableStickyColumnDemo,
-  TableStickyHeaderDemo,
-} from "../../components/react-demos/table";
+import { TablePagerDemo } from "../../components/react-demos/table";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -38,33 +33,6 @@ const pagerRows = Array.from({ length: 28 }, (_, index) => {
     when: n === 1 ? "Hace 2 min" : n < 10 ? `Hace ${n * 3} min` : `Hace ${n} h`,
   };
 });
-
-const html = `<div class="sk-table-scroll">
-  <table class="sk-table">
-    <caption class="sk-table__caption">Planes disponibles</caption>
-    <thead class="sk-table__head">
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="col">Plan</th>
-        <th class="sk-table__header" scope="col">Uso</th>
-        <th class="sk-table__header" scope="col">Estado</th>
-      </tr>
-    </thead>
-    <tbody class="sk-table__body">
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="row">Starter</th>
-        <td class="sk-table__cell">Equipos pequeños</td>
-        <td class="sk-table__cell">Activo</td>
-      </tr>
-    </tbody>
-    <tfoot class="sk-table__foot">
-      <tr class="sk-table__row">
-        <td class="sk-table__cell" colspan="3">
-          Los precios no incluyen impuestos.
-        </td>
-      </tr>
-    </tfoot>
-  </table>
-</div>`;
 
 const densityTable = (factor: string) => `<div
   data-sk-density-scope
@@ -102,49 +70,6 @@ const densityTable = (factor: string) => `<div
 
 const spaciousDensityHtml = densityTable("1.2");
 const compactDensityHtml = densityTable("0.6");
-
-const react = `import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableScroll,
-} from "@skryensya/react/table";
-
-function Example() {
-  return (
-    <TableScroll>
-      <Table>
-        <TableCaption>Planes disponibles</TableCaption>
-        <TableHead>
-          <TableRow>
-            <TableHeader>Plan</TableHeader>
-            <TableHeader>Uso</TableHeader>
-            <TableHeader>Estado</TableHeader>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <TableRow>
-            <TableHeader scope="row">Starter</TableHeader>
-            <TableCell>Equipos pequeños</TableCell>
-            <TableCell>Activo</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>
-              Los precios no incluyen impuestos.
-            </TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
-    </TableScroll>
-  );
-}`;
 
 const pagerRowHtml = (row: (typeof pagerRows)[number]) => `        <tr
           class="sk-table__row"
@@ -424,7 +349,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     como en móvil; si combinas ambos modifiers, la celda de la esquina
     queda sobre las dos capas.
   </p>
-  <ComponentPreview tree={tableStickyHeaderTree(t)} label="Header row sticky" />
+  <ComponentPreview tree={tableStickyHeaderTree(t)} label="Fila de encabezado sticky" />
 
   <h2>Con paginación</h2>
   <p>
@@ -507,7 +432,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
       </div>
     </div>
     <Fragment slot="react">
-      <TablePagerDemo client:load />
+      <TablePagerDemo client:load lang="es" />
     </Fragment>
   </ComponentPreview>
 

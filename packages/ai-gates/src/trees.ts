@@ -573,16 +573,34 @@ const signatureTrees: readonly Canonical[] = [
     },
   },
   /*
-   * MEDIA-GRADIENT has no canonical tree, and the visual gate is why.
-   *
-   * A gradient is `position: absolute` and has no size of its own — its own CSS says "compose as a
-   * sibling of the media inside a positioned host". Rendered alone it paints nothing, which G5
-   * reported as a failure and was right to: a canonical tree has to be a real use.
-   *
-   * The real use is inside an ImageFrame beside the media, and the contract cannot express it yet:
-   * ImageFrame takes EXACTLY ONE of `src` or children, so "an image AND a wash over it" has no shape
-   * in the model. Named here rather than papered over.
+   * Caption wash over a photo. ImageFrame's `caption` slot is not a second media source, so `src`
+   * and MediaCaption can coexist without breaking `exactlyOneOf`. Alone, MediaGradient paints
+   * nothing — its CSS says so — which is why the canonical tree is this composition, not the wash.
    */
+  {
+    name: "media-gradient/caption-on-frame",
+    enhanced: false,
+    tree: {
+      contract: "image-frame",
+      signature: "ImageFrame",
+      options: { aspect: "16/9", src: "/demos/media-gradient.svg", alt: "" },
+      slots: {
+        caption: {
+          contract: "media-gradient",
+          signature: "MediaCaption",
+          options: { edge: "bottom" },
+          children: [
+            {
+              contract: "media-gradient",
+              signature: "MediaGradient",
+              options: { strength: "lg" },
+            },
+            "Horizonte",
+          ],
+        },
+      },
+    },
+  },
   {
     name: "nav-list/labelled",
     enhanced: false,

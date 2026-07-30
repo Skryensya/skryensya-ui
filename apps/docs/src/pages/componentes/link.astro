@@ -3,40 +3,16 @@ import "@skryensya/core/components/tile.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
-import { LinkBasicDemo, TileLinkDemo } from "../../components/react-demos/link";
+import { TileLinkDemo } from "../../components/react-demos/link";
+import { linkTree } from "../../demos/link";
+import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
 
-const html = `<p>
-  Un párrafo con un
-  <a class="sk-link sk-interactive" href="/componentes/link">
-    enlace del color del texto
-  </a>
-  y otro
-  <a
-    class="sk-link sk-interactive"
-    href="/componentes/link"
-    data-tone="primary"
-  >
-    de color primary
-  </a>,
-  los dos con subrayado permanente.
-</p>`;
-
-const react = `import { Link } from "@skryensya/react/link";
-
-function Example() {
-  return (
-    <p>
-      Un párrafo con un{" "}
-      <Link href="/componentes/link">enlace del color del texto</Link> y otro{" "}
-      <Link href="/componentes/link" tone="primary">
-        de color primary
-      </Link>
-      , los dos con subrayado permanente.
-    </p>
-  );
-}`;
+/*
+ * TileLink stays authored: tile title/description parts are declared and unreachable.
+ */
 
 const tileLinkHtml = `<a
   class="sk-tile sk-tile--interactive sk-interactive"
@@ -80,11 +56,7 @@ function Example() {
     no un color inventado por el componente.
   </p>
 
-  <ComponentPreview html={html} react={react} label="Link">
-    <Fragment slot="react">
-      <LinkBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={linkTree(t, "/componentes/link")} label="Link" />
 
   <h2>Link de superficie: TileLink</h2>
   <p>

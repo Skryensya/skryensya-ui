@@ -3,13 +3,19 @@ import "@skryensya/core/components/toast.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
+import { toastActionTree, toastSimpleTree } from "../../demos/toast";
+import { getLocale, useTranslations } from "../../i18n";
 import {
-  ToastActionDemo,
   ToastEmitDemo,
-  ToastSimpleDemo,
   ToastStackDemo,
   ToastStatusDemo,
 } from "../../components/react-demos/toast";
+
+const t = useTranslations(getLocale(Astro.url));
+
+/*
+ * Emisión, estados con timeout y apilado permanecen autorados: dependen de comportamiento runtime.
+ */
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
@@ -120,35 +126,6 @@ const remove = (id) =>
   ))}
 </ToastRegion>;`;
 
-const simpleHtml = `<div class="sk-toast-region" aria-live="polite">
-  <div
-    class="sk-alert"
-    data-sk-toast
-    data-presentation="banner"
-    data-tone="neutral"
-    role="status"
-    aria-live="polite"
-  >
-    <div class="sk-alert__content">
-      <div class="sk-alert__description">
-        Enlace copiado al portapapeles.
-      </div>
-    </div>
-    <div class="sk-alert__actions">
-      <button
-        class="sk-alert__dismiss sk-button sk-interactive"
-        data-sk-button
-        data-size="sm"
-        data-icon-only
-        data-variant="ghost"
-        type="button"
-        aria-label="Descartar"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </div>
-  </div>
-</div>`;
 
 const statusHtml = `<div class="sk-toast-region" data-stack="off" aria-live="polite">
   <div
@@ -234,47 +211,6 @@ const statusHtml = `<div class="sk-toast-region" data-stack="off" aria-live="pol
   </div>
 </div>`;
 
-/* Acción + cierre en la misma columna. Sin timeout a propósito: un toast con acción no debe
-   evaporarse antes de que se pueda usar. */
-const actionHtml = `<div class="sk-toast-region" aria-live="polite">
-  <div
-    class="sk-alert"
-    data-sk-toast
-    data-presentation="banner"
-    data-tone="neutral"
-    role="status"
-    aria-live="polite"
-  >
-    <div class="sk-alert__content">
-      <p class="sk-alert__title">Documento archivado</p>
-      <div class="sk-alert__description">
-        Se movió a Archivados.
-      </div>
-    </div>
-    <div class="sk-alert__actions">
-      <button
-        class="sk-button sk-interactive"
-        data-sk-button
-        data-size="sm"
-        data-variant="neutral"
-        type="button"
-      >
-        Deshacer
-      </button>
-      <button
-        class="sk-alert__dismiss sk-button sk-interactive"
-        data-sk-button
-        data-size="sm"
-        data-icon-only
-        data-variant="ghost"
-        type="button"
-        aria-label="Descartar"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </div>
-  </div>
-</div>`;
 
 /* La pila: EXACTAMENTE el mismo markup del primer ejemplo. Apilar es el default. */
 const stackHtml = `<button
@@ -408,16 +344,6 @@ const stackCss = `/* Ya viene en components/toast.css: está acá porque
   }
 }`;
 
-const simpleReact = `import {
-  Toast,
-  ToastRegion,
-} from "@skryensya/react/content";
-
-<ToastRegion>
-  <Toast onDismiss={() => remove(id)}>
-    Enlace copiado al portapapeles.
-  </Toast>
-</ToastRegion>;`;
 
 const statusReact = `import {
   Toast,
@@ -444,25 +370,6 @@ const statusReact = `import {
   </Toast>
 </ToastRegion>;`;
 
-const actionReact = `import { Button } from "@skryensya/react/button";
-import {
-  Toast,
-  ToastRegion,
-} from "@skryensya/react/content";
-
-<ToastRegion>
-  <Toast
-    title="Documento archivado"
-    actions={
-      <Button size="sm" variant="neutral" onClick={undo}>
-        Deshacer
-      </Button>
-    }
-    onDismiss={() => remove(id)}
-  >
-    Se movió a Archivados.
-  </Toast>
-</ToastRegion>;`;
 
 const stackReact = `import {
   Toast,
@@ -532,11 +439,7 @@ await initComponents();`;
     chrome elevado, no como panel de página. Ver el mismo criterio en
     <a href="/componentes/alert">Alert</a>.
   </p>
-  <ComponentPreview html={simpleHtml} react={simpleReact} label="Toast simple" viewport="menu">
-    <Fragment slot="react">
-      <ToastSimpleDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={toastSimpleTree(t)} label="Toast simple" viewport="menu" />
 
   <h2>Con estado</h2>
   <p>
@@ -561,11 +464,7 @@ await initComponents();`;
     ahí, en ese orden. Un toast con acción no lleva <code>data-timeout</code>, desaparecer antes de
     que alguien alcance a pulsar “Deshacer” convierte la acción en decorado.
   </p>
-  <ComponentPreview html={actionHtml} react={actionReact} label="Toast con acción" viewport="menu">
-    <Fragment slot="react">
-      <ToastActionDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={toastActionTree(t)} label="Toast con acción" viewport="menu" />
 
   <h2>Apilado</h2>
   <p>

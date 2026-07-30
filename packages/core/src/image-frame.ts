@@ -22,6 +22,10 @@ export type ImageFramePartClass = (typeof imageFrameParts)[ImageFramePart];
  * empty box. `requires` would demand both and `forbids` would refuse both, so neither can say it.
  * That is a real bug this repo shipped, and it is now a structured constraint rather than a warning
  * nobody could enforce.
+ *
+ * A caption over the photo is not a second media source. It is its own slot so `src` (or authored
+ * children) can coexist with a MediaCaption — the wash needs the media beside it, and that composition
+ * is the whole reason the gradient pattern exists.
  */
 export const imageFrameContract = {
   id: "image-frame",
@@ -91,6 +95,11 @@ export const imageFrameContract = {
       slots: {
         /** Authored media: `picture`, `video`, anything the `src` convenience cannot express. */
         children: { accepts: "node" },
+        /**
+         * Type on the photo. Not a media source — `exactlyOneOf` does not count it — so a `src`
+         * frame can still carry a wash and a title.
+         */
+        caption: { accepts: "signature", of: ["MediaCaption"] },
       },
       template: {
         element: "div",
@@ -100,6 +109,7 @@ export const imageFrameContract = {
           // `src` and `alt` belong to the image, never to the box around it.
           { element: "img", part: "media", options: ["src", "alt"], whenGiven: "src" },
           { slot: "children" },
+          { slot: "caption" },
         ],
       },
       react: { from: "@skryensya/react/image-frame", name: "ImageFrame" },

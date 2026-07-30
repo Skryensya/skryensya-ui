@@ -3,105 +3,15 @@ import Base from "../../../layouts/Base.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
-import { NavbarBasicDemo } from "../../../components/react-demos/navbar";
-
-
+import { navbarTree } from "../../../demos/navbar";
+import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
 
 const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/navbar.css";
 @import "@skryensya/core/patterns/nav-list.css";`;
-
-const html = `<header class="sk-navbar">
-  <div class="sk-navbar__brand">Atlas</div>
-
-  <nav
-    class="sk-nav-list"
-    data-orientation="horizontal"
-    aria-label="Principal"
-  >
-    <ul class="sk-nav-list__list">
-      <li class="sk-nav-list__item">
-        <a
-          class="sk-nav-list__link sk-interactive"
-          href="/"
-          aria-current="page"
-        >
-          <span class="sk-nav-list__label">Home</span>
-        </a>
-      </li>
-      <li class="sk-nav-list__item">
-        <a class="sk-nav-list__link sk-interactive" href="/projects">
-          <span class="sk-nav-list__label">Projects</span>
-        </a>
-      </li>
-      <li class="sk-nav-list__item">
-        <a class="sk-nav-list__link sk-interactive" href="/reportes">
-          <span class="sk-nav-list__label">Reportes</span>
-        </a>
-      </li>
-      <li class="sk-nav-list__item">
-        <a class="sk-nav-list__link sk-interactive" href="/team">
-          <span class="sk-nav-list__label">Team</span>
-        </a>
-      </li>
-    </ul>
-  </nav>
-
-  <div class="sk-navbar__actions">
-    <button
-      class="sk-button sk-interactive"
-      type="button"
-      data-variant="ghost"
-    >
-      Invitar
-    </button>
-    <button
-      class="sk-button sk-interactive"
-      type="button"
-      data-variant="primary"
-    >
-      New project
-    </button>
-  </div>
-</header>`;
-
-const react = `import { Button } from "@skryensya/react/button";
-import {
-  NavList,
-  NavListGroup,
-  NavListLink,
-} from "@skryensya/react/nav-list";
-import {
-  Navbar,
-  NavbarActions,
-  NavbarBrand,
-} from "@skryensya/react/navbar";
-
-function Example() {
-  return (
-    <Navbar>
-      <NavbarBrand>Atlas</NavbarBrand>
-
-      <NavList orientation="horizontal" aria-label="Principal">
-        <NavListGroup>
-          <NavListLink href="/" current>
-            Home
-          </NavListLink>
-          <NavListLink href="/projects">Projects</NavListLink>
-          <NavListLink href="/reportes">Reportes</NavListLink>
-          <NavListLink href="/team">Team</NavListLink>
-        </NavListGroup>
-      </NavList>
-
-      <NavbarActions>
-        <Button variant="ghost">Invite</Button>
-        <Button variant="primary">New project</Button>
-      </NavbarActions>
-    </Navbar>
-  );
-}`;
 ---
 
 <Base title="Navbar" description="Navbar: the bar, with the navigation list as a horizontal pattern.">
@@ -116,11 +26,16 @@ function Example() {
     They are the pattern <a href="/en/nav-list"><code>nav-list</code></a> horizontally, the same structure that hosts the sidebar vertically. That two components need this exact structure is what makes it a pattern and not a component: before the navbar and the sidebar each had their list, with the same rules written twice and free to diverge.
   </p>
 
-  <ComponentPreview html={html} react={react} label="Navbar" flush>
-    <Fragment slot="react">
-      <NavbarBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview
+    tree={navbarTree(t, {
+      home: "/",
+      projects: "/projects",
+      reports: "/reports",
+      team: "/team",
+    })}
+    label="Navbar"
+    flush
+  />
 
   <h2>The current page is from platform</h2>
   <p>

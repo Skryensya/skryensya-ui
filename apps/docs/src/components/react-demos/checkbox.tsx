@@ -1,7 +1,5 @@
 /*
- * Live React demos for /components/checkbox. Each export is a self-contained island (no function
- * props crossing the Astro boundary), mounted directly from the page with a bare
- * `<CheckboxBasicDemo client:load />`.
+ * Live React demos that still need authored derived state or tile composition.
  */
 import { useState } from "react";
 import { Checkbox } from "@skryensya/react/checkbox";
@@ -10,14 +8,6 @@ import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame — see `framed.tsx`. */
 const framed = framedIn(import.meta.url);
-
-export const CheckboxBasicDemo = framed(function CheckboxBasicDemo() {
-  return (
-    <Checkbox name="alerts" value="email" defaultChecked="indeterminate" onCheckedChange={() => {}}>
-      Email alerts
-    </Checkbox>
-  );
-});
 
 const PERMISOS = [
   { value: "read", label: "Leer" },
@@ -35,7 +25,9 @@ export const CheckboxGroupDemo = framed(function CheckboxGroupDemo() {
     <div className="sk-stack" data-gap="sm">
       <Checkbox
         checked={estado}
-        onCheckedChange={({ checked }) => setMarcados(checked === true ? PERMISOS.map((p) => p.value) : [])}
+        onCheckedChange={({ checked }) =>
+          setMarcados(checked === true ? PERMISOS.map((p) => p.value) : [])
+        }
       >
         Repository permissions
       </Checkbox>
@@ -45,7 +37,10 @@ export const CheckboxGroupDemo = framed(function CheckboxGroupDemo() {
         data-gap="xs"
         role="group"
         aria-label="Repository permissions"
-        style={{ paddingInlineStart: "calc(var(--size-icon-md) + var(--space-inline-sm))" }}
+        style={{
+          paddingInlineStart:
+            "calc(var(--size-icon-md) + var(--space-inline-sm))",
+        }}
       >
         {PERMISOS.map((permiso) => (
           <Checkbox
@@ -55,7 +50,9 @@ export const CheckboxGroupDemo = framed(function CheckboxGroupDemo() {
             value={permiso.value}
             onCheckedChange={({ checked }) =>
               setMarcados((previos) =>
-                checked === true ? [...previos, permiso.value] : previos.filter((valor) => valor !== permiso.value),
+                checked === true
+                  ? [...previos, permiso.value]
+                  : previos.filter((valor) => valor !== permiso.value),
               )
             }
           >

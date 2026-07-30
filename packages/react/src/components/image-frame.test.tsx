@@ -26,4 +26,18 @@ describe("ImageFrame", () => {
     expect(img?.getAttribute("src")).toBe("/cover.jpg");
     expect(img?.getAttribute("alt")).toBe("Portada");
   });
+
+  it("keeps a caption beside the src media", () => {
+    const ui = render(
+      <ImageFrame
+        src="/cover.jpg"
+        alt=""
+        aspect="16/9"
+        caption={<div className="sk-media-caption" data-edge="bottom">Title</div>}
+      />,
+    );
+    const frame = ui.container.querySelector(".sk-image-frame");
+    expect(frame?.querySelector("img.sk-image-frame__media")?.getAttribute("src")).toBe("/cover.jpg");
+    expect(frame?.querySelector(".sk-media-caption")?.textContent).toBe("Title");
+  });
 });

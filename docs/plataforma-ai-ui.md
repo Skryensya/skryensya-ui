@@ -670,11 +670,29 @@ puede pedirlos —un Alert sin acciones es válido, y debe serlo— y sólo son 
 > `label` anuncia pero dibuja un spinner, que es justo lo que el esqueleto vino a evitar. Preferible
 > nombrarlo que agregar un spinner arriba de los esqueletos para que un chequeo pase.
 
-**Convertidas hasta ahora (28 de 349 llamadas a `ComponentPreview`):** `tag`, `kbd`, `pagination`,
-`theme-toggle`, `box`, `progress`, `empty-state`, `segmented` y `button` — cada una en los dos
+**Convertidas hasta ahora (38 de 349 llamadas a `ComponentPreview`):** `tag`, `kbd`, `pagination`,
+`theme-toggle`, `box`, `progress`, `empty-state`, `segmented`, `button` y `list` — cada una en los dos
 idiomas. Las conversiones dejaron sin consumidor a siete `react-demos/*.tsx` enteros, al
-`BoxBasicDemo` de `layout.tsx` y a seis de los siete demos de `button.tsx`: un demo por página deja
-de existir cuando el árbol ES el demo.
+`BoxBasicDemo` de `layout.tsx`, a seis de los siete demos de `button.tsx` y a cinco de los seis de
+`list.tsx`: un demo por página deja de existir cuando el árbol ES el demo.
+
+> **Dos escalones que el contrato no puede decir**
+>
+> La página de List enseña una **escalera**: seis demos que agregan exactamente un slot cada uno, del
+> `<li>` pelado a la fila completa. Dos de los seis no se convirtieron, y ninguno por descuido:
+>
+> - **El piso.** Un `<li>` con puro texto es justo lo que `ListItem` no puede expresar: declara `title`
+>   como slot requerido y no ofrece `children`. El escalón que la página existe para mostrar es el que
+>   el contrato no sabe nombrar.
+> - **La fila deshabilitada.** `disabled` es opción de `ListItem` y no de `ListItemLink`, así que un
+>   enlace deshabilitado no tiene expresión. El demo quedó con cuatro filas en vez de cinco.
+
+**`measure`, una prop nueva de `ComponentPreview`.** Los demos de List se veían mal a lo ancho del
+escenario entero —una lista de preferencias de 700px no se parece a nada que alguien publique—, así
+que la página los envolvía en un `<div>` de 34rem y pasaba el `code` por separado: dos fuentes para
+un demo, exactamente lo que el árbol viene a borrar. Ahora `measure="34rem"` limita **el escenario y
+no el snippet**, porque ese ancho es del layout del consumidor y no del componente. Medido: 544px en
+los dos bindings, y el wrapper no aparece en el código que el lector copia.
 
 **Un árbol por demo, no uno por página.** Los árboles viven en `apps/docs/src/demos/`, uno por demo,
 escritos como función del traductor; las dos páginas importan el mismo y le pasan su `t`. Las

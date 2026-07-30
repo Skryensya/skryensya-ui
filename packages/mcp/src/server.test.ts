@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { recipes } from "@skryensya/recipes";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -257,6 +258,27 @@ describe("the tool schema accepts everything the compiler's model does", () => {
    * A guard in `index.ts` now fails to COMPILE when the type widens. This is the runtime half: the
    * shapes an agent actually sends, through the real server.
    */
+  /*
+   * Every recipe, through the real door.
+   *
+   * The two bugs this file exists because of — collections, then numbers — were both found by driving
+   * the server as a CLIENT after everything else was green, and both were shapes the catalogue
+   * publishes and no test happened to send. So rather than add a case per shape and hope the next gap
+   * is one somebody predicted, this sends the richest compositions there are: nine screens, thirty-six
+   * states, collections nested in collections, numbers, signatures inside named slots.
+   *
+   * A recipe that the door rejects is a recipe an agent cannot copy, which is the whole point of
+   * publishing them.
+   */
+  it("accepts every recipe, which is every shape the catalogue publishes at once", async () => {
+    for (const recipe of recipes) {
+      for (const [state, tree] of Object.entries(recipe.states)) {
+        const { payload } = await call("validate_ui", { tree });
+        expect(payload.valid, `${recipe.id} · ${state}`).toBe(true);
+      }
+    }
+  });
+
   it("accepts numeric options, which half the catalogue is made of", async () => {
     for (const tree of [
       { contract: "pagination", signature: "Pagination", options: { page: 4, total: 12 } },

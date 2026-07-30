@@ -3,6 +3,13 @@ import "@skryensya/core/components/flyout.css";
 import "@skryensya/core/components/select.css";
 import Base from "../../layouts/Base.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
+import {
+  tableInBoxTree,
+  tableStickyColumnTree,
+  tableStickyHeaderTree,
+  tableTree,
+} from "../../demos/table";
+import { getLocale, useTranslations } from "../../i18n";
 import CodeBlock from "../../components/CodeBlock.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import DimensionSelect from "../../components/DimensionSelect.astro";
@@ -12,6 +19,8 @@ import {
   TableStickyColumnDemo,
   TableStickyHeaderDemo,
 } from "../../components/react-demos/table";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -56,38 +65,6 @@ const html = `<div class="sk-table-scroll">
     </tfoot>
   </table>
 </div>`;
-
-const boxHtml = `<section
-  class="sk-box"
-  data-surface="surface"
-  data-border="subtle"
-  data-padding="md"
->
-  <div class="sk-table-scroll">
-    <table class="sk-table">
-      <caption class="sk-table__caption">Planes disponibles</caption>
-      <thead class="sk-table__head">
-        <tr class="sk-table__row">
-          <th class="sk-table__header" scope="col">Plan</th>
-          <th class="sk-table__header" scope="col">Uso</th>
-          <th class="sk-table__header" scope="col">Estado</th>
-        </tr>
-      </thead>
-      <tbody class="sk-table__body">
-        <tr class="sk-table__row">
-          <th class="sk-table__header" scope="row">Starter</th>
-          <td class="sk-table__cell">Equipos pequeños</td>
-          <td class="sk-table__cell">Activo</td>
-        </tr>
-        <tr class="sk-table__row">
-          <th class="sk-table__header" scope="row">Pro</th>
-          <td class="sk-table__cell">Equipos en crecimiento</td>
-          <td class="sk-table__cell">Activo</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>`;
 
 const densityTable = (factor: string) => `<div
   data-sk-density-scope
@@ -164,254 +141,6 @@ function Example() {
             </TableCell>
           </TableRow>
         </TableFooter>
-      </Table>
-    </TableScroll>
-  );
-}`;
-
-const stickyColumnHtml = `<div
-  aria-labelledby="service-metrics"
-  class="sk-table-scroll"
-  data-sticky-column
-  role="region"
-  tabindex="0"
->
-  <table class="sk-table">
-    <caption
-      class="sk-table__caption"
-      id="service-metrics"
-    >
-      Rendimiento por región
-    </caption>
-    <thead class="sk-table__head">
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="col">
-          Servicio
-        </th>
-        <th class="sk-table__header" scope="col">
-          Región
-        </th>
-        <th class="sk-table__header" scope="col">
-          Latencia p95
-        </th>
-        <th class="sk-table__header" scope="col">
-          Error
-        </th>
-        <th class="sk-table__header" scope="col">
-          Solicitudes
-        </th>
-        <th class="sk-table__header" scope="col">
-          Versión
-        </th>
-      </tr>
-    </thead>
-    <tbody class="sk-table__body">
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="row">
-          API principal
-        </th>
-        <td class="sk-table__cell">Madrid</td>
-        <td class="sk-table__cell">142 ms</td>
-        <td class="sk-table__cell">0,08%</td>
-        <td class="sk-table__cell">8,4 M</td>
-        <td class="sk-table__cell">v3.18.2</td>
-      </tr>
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="row">
-          Checkout
-        </th>
-        <td class="sk-table__cell">Dublín</td>
-        <td class="sk-table__cell">218 ms</td>
-        <td class="sk-table__cell">0,21%</td>
-        <td class="sk-table__cell">3,1 M</td>
-        <td class="sk-table__cell">v2.9.0</td>
-      </tr>
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="row">
-          Identidad
-        </th>
-        <td class="sk-table__cell">Fráncfort</td>
-        <td class="sk-table__cell">97 ms</td>
-        <td class="sk-table__cell">0,04%</td>
-        <td class="sk-table__cell">6,9 M</td>
-        <td class="sk-table__cell">v1.44.0</td>
-      </tr>
-    </tbody>
-  </table>
-</div>`;
-
-const stickyColumnReact = `import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableScroll,
-} from "@skryensya/react/table";
-
-const metrics = [
-  ["API principal", "Madrid", "142 ms", "0,08%", "8,4 M", "v3.18.2"],
-  ["Checkout", "Dublín", "218 ms", "0,21%", "3,1 M", "v2.9.0"],
-  ["Identidad", "Fráncfort", "97 ms", "0,04%", "6,9 M", "v1.44.0"],
-] as const;
-
-function Example() {
-  return (
-    <TableScroll
-      aria-labelledby="service-metrics"
-      role="region"
-      stickyColumn
-      tabIndex={0}
-    >
-      <Table>
-        <TableCaption id="service-metrics">
-          Rendimiento por región
-        </TableCaption>
-        <TableHead>
-          <TableRow>
-            <TableHeader>Servicio</TableHeader>
-            <TableHeader>Región</TableHeader>
-            <TableHeader>Latencia p95</TableHeader>
-            <TableHeader>Error</TableHeader>
-            <TableHeader>Solicitudes</TableHeader>
-            <TableHeader>Versión</TableHeader>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {metrics.map(
-            ([service, region, latency, error, requests, version]) => (
-              <TableRow key={service}>
-                <TableHeader scope="row">{service}</TableHeader>
-                <TableCell>{region}</TableCell>
-                <TableCell>{latency}</TableCell>
-                <TableCell>{error}</TableCell>
-                <TableCell>{requests}</TableCell>
-                <TableCell>{version}</TableCell>
-              </TableRow>
-            ),
-          )}
-        </TableBody>
-      </Table>
-    </TableScroll>
-  );
-}`;
-
-const stickyHeaderHtml = `<div
-  aria-labelledby="deployment-history"
-  class="sk-table-scroll"
-  data-sticky-header
-  role="region"
-  style="max-block-size: 14rem"
-  tabindex="0"
->
-  <table class="sk-table">
-    <caption
-      class="sk-table__caption"
-      id="deployment-history"
-    >
-      Historial de despliegues
-    </caption>
-    <thead class="sk-table__head">
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="col">ID</th>
-        <th class="sk-table__header" scope="col">
-          Servicio
-        </th>
-        <th class="sk-table__header" scope="col">
-          Estado
-        </th>
-        <th class="sk-table__header" scope="col">
-          Actualizado
-        </th>
-      </tr>
-    </thead>
-    <tbody class="sk-table__body">
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="row">DEP-1082</th>
-        <td class="sk-table__cell">API</td>
-        <td class="sk-table__cell">Exitoso</td>
-        <td class="sk-table__cell">Hace 2 min</td>
-      </tr>
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="row">DEP-1081</th>
-        <td class="sk-table__cell">Worker</td>
-        <td class="sk-table__cell">En curso</td>
-        <td class="sk-table__cell">Hace 6 min</td>
-      </tr>
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="row">DEP-1080</th>
-        <td class="sk-table__cell">Gateway</td>
-        <td class="sk-table__cell">Exitoso</td>
-        <td class="sk-table__cell">Hace 18 min</td>
-      </tr>
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="row">DEP-1079</th>
-        <td class="sk-table__cell">Billing</td>
-        <td class="sk-table__cell">Fallido</td>
-        <td class="sk-table__cell">Hace 31 min</td>
-      </tr>
-      <tr class="sk-table__row">
-        <th class="sk-table__header" scope="row">DEP-1078</th>
-        <td class="sk-table__cell">Auth</td>
-        <td class="sk-table__cell">Exitoso</td>
-        <td class="sk-table__cell">Hace 48 min</td>
-      </tr>
-    </tbody>
-  </table>
-</div>`;
-
-const stickyHeaderReact = `import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableScroll,
-} from "@skryensya/react/table";
-
-const deployments = [
-  ["DEP-1082", "API", "Exitoso", "Hace 2 min"],
-  ["DEP-1081", "Worker", "En curso", "Hace 6 min"],
-  ["DEP-1080", "Gateway", "Exitoso", "Hace 18 min"],
-  ["DEP-1079", "Billing", "Fallido", "Hace 31 min"],
-  ["DEP-1078", "Auth", "Exitoso", "Hace 48 min"],
-] as const;
-
-function Example() {
-  return (
-    <TableScroll
-      aria-labelledby="deployment-history"
-      role="region"
-      stickyHeader
-      style={{ maxBlockSize: "14rem" }}
-      tabIndex={0}
-    >
-      <Table>
-        <TableCaption id="deployment-history">
-          Historial de despliegues
-        </TableCaption>
-        <TableHead>
-          <TableRow>
-            <TableHeader>ID</TableHeader>
-            <TableHeader>Servicio</TableHeader>
-            <TableHeader>Estado</TableHeader>
-            <TableHeader>Actualizado</TableHeader>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {deployments.map(([id, service, status, updated]) => (
-            <TableRow key={id}>
-              <TableHeader scope="row">{id}</TableHeader>
-              <TableCell>{service}</TableCell>
-              <TableCell>{status}</TableCell>
-              <TableCell>{updated}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
       </Table>
     </TableScroll>
   );
@@ -661,11 +390,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     mismo contrato en móvil y desktop.
   </p>
 
-  <ComponentPreview html={html} react={react} label="Table">
-    <Fragment slot="react">
-      <TableBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={tableTree(t)} label="Table" />
 
   <h2>Scroll horizontal sin comprimir</h2>
   <p>
@@ -688,15 +413,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     <code>&lt;th scope="row"&gt;</code>. No depende de un breakpoint:
     funciona igual con touch, mouse, zoom o una ventana angosta.
   </p>
-  <ComponentPreview
-    html={stickyColumnHtml}
-    react={stickyColumnReact}
-    label="Primera columna sticky"
-  >
-    <Fragment slot="react">
-      <TableStickyColumnDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={tableStickyColumnTree(t)} label="Primera columna sticky" />
 
   <h2>Header row sticky</h2>
   <p>
@@ -707,15 +424,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     como en móvil; si combinas ambos modifiers, la celda de la esquina
     queda sobre las dos capas.
   </p>
-  <ComponentPreview
-    html={stickyHeaderHtml}
-    react={stickyHeaderReact}
-    label="Header row sticky"
-  >
-    <Fragment slot="react">
-      <TableStickyHeaderDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={tableStickyHeaderTree(t)} label="Header row sticky" />
 
   <h2>Con paginación</h2>
   <p>
@@ -809,7 +518,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     superficie y la tabla es un elemento dentro de ella. Así el radio queda más ajustado, nunca colapsa
     a una caja cuadrada, y sigue acompañando al eje <code>data-radius</code>.
   </p>
-  <ComponentPreview html={boxHtml} label="Table en Box" />
+  <ComponentPreview tree={tableInBoxTree(t)} label="Table en Box" />
 
   <h2>Densidad local</h2>
   <p>

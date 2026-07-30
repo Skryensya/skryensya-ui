@@ -11,7 +11,7 @@ import type { Translate } from "../i18n";
  */
 
 /** The rows the middle of the ladder repeats, so a step differs from the last one by one field. */
-const preferences = (t: Translate) =>
+const preferences = () =>
   [
     ["notifications", "info"],
     ["timezone", "calendar"],
@@ -25,7 +25,7 @@ export const listTitledTree = (t: Translate): UsageTree => ({
   contract: "list",
   signature: "List",
   attrs: { "aria-label": t("demo.list.preferences") },
-  children: preferences(t).map(([key]) => ({
+  children: preferences().map(([key]) => ({
     contract: "list",
     signature: "ListItem",
     slots: {
@@ -40,7 +40,7 @@ export const listLeadingTree = (t: Translate): UsageTree => ({
   contract: "list",
   signature: "List",
   attrs: { "aria-label": t("demo.list.preferences") },
-  children: preferences(t).map(([key, icon]) => ({
+  children: preferences().map(([key, icon]) => ({
     contract: "list",
     signature: "ListItem",
     slots: {
@@ -56,7 +56,7 @@ export const listTrailingTree = (t: Translate): UsageTree => ({
   contract: "list",
   signature: "List",
   attrs: { "aria-label": t("demo.list.preferences") },
-  children: preferences(t).map(([key, icon], i) => ({
+  children: preferences().map(([key, icon], i) => ({
     contract: "list",
     signature: "ListItem",
     slots: {
@@ -123,10 +123,10 @@ export const listFullTree = (t: Translate, hrefs: readonly string[]): UsageTree 
   attrs: { "aria-label": t("demo.list.team") },
   children: (
     [
-      ["allison", "design"],
-      ["mateo", "engineering"],
-      ["elena", "product"],
-      ["nadia", "product"],
+      ["first", "design"],
+      ["second", "engineering"],
+      ["third", "product"],
+      ["fourth", "product"],
     ] as const
   ).map(([person, area], i) => ({
     contract: "list",

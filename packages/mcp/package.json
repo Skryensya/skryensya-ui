@@ -24,6 +24,7 @@
     "tsx": "^4.19.2",
     "typescript": "^5.9.3",
     "vitest": "^4.1.10",
-    "esbuild": "^0.28.1"
+    "esbuild": "^0.28.1",
+    "@skryensya/recipes": "workspace:*"
   }
 }

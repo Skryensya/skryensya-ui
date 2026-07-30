@@ -4,7 +4,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { emitMarkup, emitReact } from "@skryensya/ai-compiler/emit";
 import { validateUsageTree } from "@skryensya/ai-compiler/validate";
-import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import type { OptionInput, UsageTree } from "@skryensya/ai-compiler/usage-tree";
 import { catalogueIndex, manifest, provenance } from "./manifest.js";
 
 /*
@@ -104,10 +104,32 @@ server.registerTool(
  * meant to validate it. Two declarations of one shape is the duplication this whole system argues
  * against, so `usage-tree.contract.test.ts` now fails when they drift.
  */
+/*
+ * What an option may hold, and the second time this exact duplication bit.
+ *
+ * `OptionInput` in Core is `string | boolean | number`. This said `string | boolean`, so the server
+ * rejected EVERY numeric option — an agent could not compose a Pagination, a Progress, a Slider, a
+ * NumberField or a TimeField at all, and no test noticed because none of the fourteen used a number.
+ *
+ * The type below is the authority; the guard under `optionValueSchema` fails to COMPILE if it ever
+ * grows again without this following. That is the only mechanism that works here: zod cannot be
+ * derived from a TypeScript type, so what is left is making the drift impossible to commit.
+ */
+const optionValueSchema = z.union([z.string(), z.boolean(), z.number()]);
+
+/*
+ * Compile-time proof that the union above covers `OptionInput`. Widen the type in Core and this
+ * stops building until the schema follows — which is exactly what nothing did the first two times.
+ */
+type CoveredOptionInput = z.infer<typeof optionValueSchema>;
+type UncoveredOptionInput = Exclude<OptionInput, CoveredOptionInput>;
+const _everyOptionInputIsAccepted: UncoveredOptionInput extends never ? true : never = true;
+void _everyOptionInputIsAccepted;
+
 const itemSchema = z.lazy(() =>
   z.object({
     options: z
-      .record(z.string(), z.union([z.string(), z.boolean()]))
+      .record(z.string(), optionValueSchema)
       .optional()
       .describe("Entry values that land on an attribute, including the key that pairs its parts."),
     slots: z
@@ -130,7 +152,7 @@ const usageTreeSchema: z.ZodType<UsageTree> = z.lazy(() =>
     contract: z.string().min(1).describe("Family id, from get_catalog."),
     signature: z.string().min(1).describe("Signature id within that family."),
     options: z
-      .record(z.string(), z.union([z.string(), z.boolean()]))
+      .record(z.string(), optionValueSchema)
       .optional()
       .describe("Values for options the signature declares. Anything else is rejected, not ignored."),
     attrs: z

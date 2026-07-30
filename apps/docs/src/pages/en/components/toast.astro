@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import {
   ToastActionDemo,
   ToastEmitDemo,
@@ -506,7 +506,7 @@ await initComponents();`;
     item. The app clones, inserts and remounts; <code>initComponents</code> is idempotent, so
     which only touches what was recently inserted.
   </p>
-  <Showcase
+  <ComponentPreview
     html={emitHtml}
     js={emitJs}
     previewScript={emitScript}
@@ -518,17 +518,17 @@ await initComponents();`;
     <Fragment slot="react">
       <ToastEmitDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Simple</h2>
   <p>
     <code>tone="neutral"</code> (the default). In a toast, color should almost never be the main signal: it already floats and retreats. Neutral lets the text say the message without painting more urgency, and floats on a surface <strong>raised</strong> (<code>--color-bg-surface-raised</code> + <code>--elevation-raised</code>) to be read as raised chrome, not as a page panel. See the same criteria in <a href="/en/components/alert">Alert</a>.
   </p>
-  <Showcase html={simpleHtml} react={simpleReact} label="Toast simple" viewport="menu">
+  <ComponentPreview html={simpleHtml} react={simpleReact} label="Toast simple" viewport="menu">
     <Fragment slot="react">
       <ToastSimpleDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Stateful</h2>
   <p>
@@ -537,21 +537,21 @@ await initComponents();`;
   <p>
     The first one does not have ✕: it has <code>data-timeout</code>, so it leaves alone. The other two ask for something from the person, a display to confirm and an error to read, and so they stay until they are closed. The rule of thumb: <strong>if the toast can close itself, you do not need ✕; if you cannot, the ✕ is required</strong>.
   </p>
-  <Showcase html={statusHtml} react={statusReact} label="Toast with status" viewport="overlay">
+  <ComponentPreview html={statusHtml} react={statusReact} label="Toast with status" viewport="overlay">
     <Fragment slot="react">
       <ToastStatusDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>With action</h2>
   <p>
     <code>sk-alert__actions</code> is a single column: the recovery action and the close live there, in that order. A toast with an action does not have <code>data-timeout</code>, disappearing before someone can press “Undo” turns the action into a decoration.
   </p>
-  <Showcase html={actionHtml} react={actionReact} label="Toast with action" viewport="menu">
+  <ComponentPreview html={actionHtml} react={actionReact} label="Toast with action" viewport="menu">
     <Fragment slot="react">
       <ToastActionDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Stacking</h2>
   <p>
@@ -587,7 +587,7 @@ await initComponents();`;
     and upward movement into its new position. The newest toast does not animate because it never
     moved.
   </p>
-  <Showcase
+  <ComponentPreview
     html={stackHtml}
     previewScript={stackScript}
     react={stackReact}
@@ -598,7 +598,7 @@ await initComponents();`;
     <Fragment slot="react">
       <ToastStackDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     The JavaScript is the same as the first example, and the HTML too: clone, insert, mount and remove in <code>sk-dismiss</code>. There is nothing to add to stack. The hooks are from the region: <code>--sk-toast-peek</code> (how much each one sticks out), <code>--sk-toast-shrink</code> (how much each step back shrinks) and <code>--sk-toast-cascade</code> (how much they separate in time when opening). No toast knows it is in a stack.
   </p>

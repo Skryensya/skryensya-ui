@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
-import Showcase from "../components/Showcase.astro";
+import ComponentPreview from "../components/ComponentPreview.astro";
 import Used from "../components/Used.astro";
 import { stableIconNames } from "@skryensya/core/icon";
 import { allSets, iconMarkup } from "../icons";
@@ -50,7 +50,7 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
     <a href="/componentes/icon">Icon</a>.
   </p>
 
-  <Showcase html={vocabHtml} label="Vocabulario estable" />
+  <ComponentPreview html={vocabHtml} label="Vocabulario estable" />
   <p>
     Cambia marca, modo o contraste arriba: los iconos siguen, y no declaran un solo token de color.
     Heredan <code>currentColor</code>.

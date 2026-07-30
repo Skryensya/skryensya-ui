@@ -1,6 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { NavbarBasicDemo } from "../../components/react-demos/navbar";
@@ -120,11 +120,11 @@ function Example() {
     de divergir.
   </p>
 
-  <Showcase html={html} react={react} label="Navbar" flush>
+  <ComponentPreview html={html} react={react} label="Navbar" flush>
     <Fragment slot="react">
       <NavbarBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>La página actual es de la plataforma</h2>
   <p>

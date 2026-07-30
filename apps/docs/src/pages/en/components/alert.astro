@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import {
   AlertAccentDemo,
   AlertBannerDemo,
@@ -173,38 +173,38 @@ function Example() {
   <p>
     The default: surface and edge, without semantic painting. It exists for when the color should not be the prominent signal, the text (and, in a <a href="/en/components/toast">Toast</a>, the floating and disappearing) already loads the message. Use it in ordinary notices, short confirmations, or any case where painting the “success” or “info” panel would add urgency that the content does not have.
   </p>
-  <Showcase html={neutralHtml} react={neutralReact} label="Alert neutral">
+  <ComponentPreview html={neutralHtml} react={neutralReact} label="Alert neutral">
     <Fragment slot="react">
       <AlertNeutralDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Presentations</h2>
   <p>Presentation decides visual weight, not urgency.</p>
 
   <h3>Banner</h3>
   <p>The full panel is for a condition that needs a title and explanation next to the affected content.</p>
-  <Showcase html={bannerHtml} react={bannerReact} label="Alert banner">
+  <ComponentPreview html={bannerHtml} react={bannerReact} label="Alert banner">
     <Fragment slot="react">
       <AlertBannerDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Accent</h3>
   <p>The sidebar preserves the tone signal and lets a recovery action take center stage.</p>
-  <Showcase html={accentHtml} react={accentReact} label="Alert acento">
+  <ComponentPreview html={accentHtml} react={accentReact} label="Alert acento">
     <Fragment slot="react">
       <AlertAccentDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Inline</h3>
   <p>Without panel or border, a short confirmation accompanies a block that already has its own structure.</p>
-  <Showcase html={inlineHtml} react={inlineReact} label="Alert inline">
+  <ComponentPreview html={inlineHtml} react={inlineReact} label="Alert inline">
     <Fragment slot="react">
       <AlertInlineDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Anatomy</h2>
   <ul>

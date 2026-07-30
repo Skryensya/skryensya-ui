@@ -1,6 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import "@skryensya/core/components/menu.css";
 import { MenuBasicDemo } from "../../../components/react-demos/menu";
@@ -102,7 +102,7 @@ import { Menu } from "@skryensya/react/menu";
   <p class="lede">Actions, checkboxes and radios with keyboard navigation and typeahead.</p>
 
   <h2>Facility</h2>
-  <Showcase
+  <ComponentPreview
     js={js}
     html={html}
     react={react}
@@ -112,7 +112,7 @@ import { Menu } from "@skryensya/react/menu";
     <Fragment slot="react">
       <MenuBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contract</h2>
   <p>

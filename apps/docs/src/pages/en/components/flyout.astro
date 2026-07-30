@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import {
   FlyoutBasicDemo,
@@ -377,11 +377,11 @@ function remountFlyout(root, value) {
     It is not a navigation “menu” (ADR-0017): it is a picker. Opens when <strong>click</strong> of the trigger (and with keyboard). Choosing an item outputs <code>sk-value-change</code> and closes. Escape or click outside also closes. Only one Flyout can be open at a time.
   </p>
 
-  <Showcase html={flyoutHtml} react={reactBasic} label="Flyout" viewport="menu">
+  <ComponentPreview html={flyoutHtml} react={reactBasic} label="Flyout" viewport="menu">
     <Fragment slot="react">
       <FlyoutBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>When to use it</h2>
   <ul>
@@ -447,61 +447,61 @@ function remountFlyout(root, value) {
   <p>
     The typical case: a ~13.5rem wide control. The panel comes out to the inline-end and does not compete with the height of the rail.
   </p>
-  <Showcase html={railHtml} react={reactRail} label="Rail flyout" viewport="menu">
+  <ComponentPreview html={railHtml} react={reactRail} label="Rail flyout" viewport="menu">
     <Fragment slot="react">
       <FlyoutRailDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Only one open</h2>
   <p>
     Open one and then the other: the first one closes by itself. Same contract in Vanilla and React via document event <code>sk-flyout-open</code>.
   </p>
-  <Showcase html={exclusiveHtml} react={reactExclusive} label="Dos Flyouts" viewport="menu">
+  <ComponentPreview html={exclusiveHtml} react={reactExclusive} label="Dos Flyouts" viewport="menu">
     <Fragment slot="react">
       <FlyoutExclusiveDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Disabled item</h2>
   <p>
     Mark the item with <code>data-disabled</code> (or <code>disabled: true</code> in React). You cannot choose; the rest are still active.
   </p>
-  <Showcase html={disabledItemHtml} react={reactDisabledItem} label="Disabled item" viewport="menu">
+  <ComponentPreview html={disabledItemHtml} react={reactDisabledItem} label="Disabled item" viewport="menu">
     <Fragment slot="react">
       <FlyoutDisabledItemDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Flyout disabled</h2>
   <p>
     <code>data-disabled</code> in root (or <code>disabled</code> in React) blocks opening and changing value.
   </p>
-  <Showcase html={disabledHtml} react={reactDisabled} label="Flyout disabled" viewport="menu">
+  <ComponentPreview html={disabledHtml} react={reactDisabled} label="Flyout disabled" viewport="menu">
     <Fragment slot="react">
       <FlyoutDisabledDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Long list</h2>
   <p>
     The panel limits its height (<code>--sk-flyout-panel-max-block-size</code>, 18rem by default) and scrolls when necessary.
   </p>
-  <Showcase html={longHtml} react={reactLong} label="Lista larga" viewport="menu">
+  <ComponentPreview html={longHtml} react={reactLong} label="Lista larga" viewport="menu">
     <Fragment slot="react">
       <FlyoutLongDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Placeholder</h2>
   <p>
     If there is no <code>data-value</code> that matches an item—for example an external “custom” value—the trigger displays the placeholder.
   </p>
-  <Showcase html={placeholderHtml} react={reactPlaceholder} label="Placeholder" viewport="menu">
+  <ComponentPreview html={placeholderHtml} react={reactPlaceholder} label="Placeholder" viewport="menu">
     <Fragment slot="react">
       <FlyoutPlaceholderDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Retrace with another value</h2>
   <p>

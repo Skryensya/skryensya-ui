@@ -3,7 +3,7 @@ import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/radio-group.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { RadioGroupDemo, TileRadioGroupDemo } from "../../components/react-demos/radio-group";
 
@@ -157,22 +157,22 @@ function Example() {
   <h1>RadioGroup</h1>
   <p class="lede">Una elección exclusiva entre alternativas relacionadas. Cada opción es un radio nativo; el nombre compartido impone la exclusión.</p>
 
-  <Showcase html={html} react={react} label="RadioGroup">
+  <ComponentPreview html={html} react={react} label="RadioGroup">
     <Fragment slot="react">
       <RadioGroupDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Opciones de superficie: TileRadioGroup</h2>
   <p>
     Cuando cada alternativa necesita título, descripción y una superficie completa, usa
     <code>TileRadioGroup</code>. Cada item conserva un radio nativo; el grupo no impone disposición.
   </p>
-  <Showcase html={tileRadioGroupHtml} react={tileRadioGroupReact} label="TileRadioGroup">
+  <ComponentPreview html={tileRadioGroupHtml} react={tileRadioGroupReact} label="TileRadioGroup">
     <Fragment slot="react">
       <TileRadioGroupDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>En este preview las opciones van en fila con <a href="/componentes/inline"><code>sk-inline</code></a> y cada Tile toma <code>flex: 1</code>. En una columna, omite <code>sk-inline</code>.</p>
   <p>El enhancer <code>tile-radio-group</code> (Svelte + <code>@zag-js/radio-group</code>, la misma máquina que React) hidrata la raíz <code>data-sk-tile-radio-group</code> con <code>initComponents()</code>: garantiza la exclusión mutua y sincroniza el estado de cada <code>[data-part="item"]</code> con su radio real.</p>
   <CodeBlock code={tileRadioGroupVanilla} label="JavaScript" />

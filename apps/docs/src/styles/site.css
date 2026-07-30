@@ -836,7 +836,7 @@ a:not(.sk-link) {
 
 
 /* ── example: a bare demo stage for the custom interactive demos (state-layer list, icon galleries) that
-   are not a component + source pair. Everything that WAS a preview beside its code is a <Showcase> now,
+   are not a component + source pair. Everything that WAS a preview beside its code is a <ComponentPreview> now,
    so the old `[data-side-by-side]` two-column rule is gone with it. */
 .example {
   display: grid;

@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { InputBasicDemo } from "../../components/react-demos/input";
 
@@ -66,11 +66,11 @@ function Example() {
     queda con la validación, el autofill, el IME y la asociación al formulario.
   </p>
 
-  <Showcase html={html} react={react} label="Input">
+  <ComponentPreview html={html} react={react} label="Input">
     <Fragment slot="react">
       <InputBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>La densidad compacta el espacio alrededor del campo, no su área de interacción: Input conserva un mínimo de <code>44px</code> de alto, incluso con <code>data-size="sm"</code>.</p>
 
   <h2>Una clase para todo control de texto</h2>

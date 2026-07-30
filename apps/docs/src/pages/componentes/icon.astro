@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import { IconBasicDemo, IconSizeDemo } from "../../components/react-demos/icon";
 
 const html = `<div class="sk-inline">
@@ -104,11 +104,11 @@ const sizesCss = `/* ¿otro tamaño? se redeclara el hook, como todo valor
     qué el CSS no toca fill/stroke están en <a href="/iconos">Iconografía</a>.
   </p>
 
-  <Showcase html={html} react={react} label="Icon">
+  <ComponentPreview html={html} react={react} label="Icon">
     <Fragment slot="react">
       <IconBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>React</h2>
   <p>
@@ -164,10 +164,10 @@ const sizesCss = `/* ¿otro tamaño? se redeclara el hook, como todo valor
     densidad es espaciado; un icono es contenido al lado de un glifo — si el texto no encoge, el icono
     tampoco.
   </p>
-  <Showcase html={sizeHtml} react={sizeReact} label="Icon · sm / md / lg">
+  <ComponentPreview html={sizeHtml} react={sizeReact} label="Icon · sm / md / lg">
     <Fragment slot="react">
       <IconSizeDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <CodeBlock code={sizesCss} label="tamaño arbitrario" note="no hay prop numérica" />
 </Base>

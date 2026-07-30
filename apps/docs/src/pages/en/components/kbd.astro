@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { kbdTree } from "../../../demos/kbd";
 import StylingHooks from "../../../components/StylingHooks.astro";
 
@@ -20,7 +20,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
     <code>&lt;kbd&gt;</code> is from the platform; The component only provides the look.
   </p>
 
-  <Showcase tree={kbdTree} label="Kbd" />
+  <ComponentPreview tree={kbdTree} label="Kbd" />
 
   <h2>A glyph reads square</h2>
   <p>

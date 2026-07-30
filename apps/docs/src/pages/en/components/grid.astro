@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { GridBasicDemo, GridMulticolDemo } from "../../../components/react-demos/layout";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -208,11 +208,11 @@ const multicolCss = `/* data-columns="4": 1 lane → 2 → 3 → 4,
     A grid of equal columns for content groups. Each column uses <code>minmax(0, 1fr)</code>: prevents the intrinsic minimum size from widening the columns.
   </p>
 
-  <Showcase html={html} react={react} label="Grid">
+  <ComponentPreview html={html} react={react} label="Grid">
     <Fragment slot="react">
       <GridBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>CSS Multi-column Layout</h2>
   <p>
@@ -222,11 +222,11 @@ const multicolCss = `/* data-columns="4": 1 lane → 2 → 3 → 4,
     <code>data-columns</code> marks the maximum number of lanes. With <code>data-columns="4"</code>, the collection uses 1 lane before <code>36rem</code>, 2 from <code>36rem</code>, 3 from <code>52rem</code>, and 4 from <code>72rem</code>. Values <code>1</code>, <code>2</code> and <code>3</code> stop at that maximum.
   </p>
   <CodeBlock code={multicolCss} label="patterns/layout.css" />
-  <Showcase html={multicolHtml} react={multicolReact} label="Multi-column layout">
+  <ComponentPreview html={multicolHtml} react={multicolReact} label="Multi-column layout">
     <Fragment slot="react">
       <GridMulticolDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     Columns fill a lane from top to bottom before moving to the next. Preserve a useful order in the DOM and use it for independent cards; not for a sequence whose visual order from left to right has meaning.
   </p>

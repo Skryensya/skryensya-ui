@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import {
   TabsAdvancedDemo,
@@ -404,7 +404,7 @@ export function WorkspaceTabs() {
   <p>
     Two triggers and two panels. <code>data-value</code> links each option to its content; the enhancer completes roles, focus and ARIA.
   </p>
-  <Showcase
+  <ComponentPreview
     html={basicHtml}
     react={basicReact}
     label="Basic tabs"
@@ -412,13 +412,13 @@ export function WorkspaceTabs() {
     <Fragment slot="react">
       <TabsBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>2. States and icons</h2>
   <p>
     The same contract supports composite labels and disabled options. The icon accompanies the text; it never replaces the accessible name of the tab.
   </p>
-  <Showcase
+  <ComponentPreview
     html={statesHtml}
     react={statesReact}
     label="Tabs with states"
@@ -426,13 +426,13 @@ export function WorkspaceTabs() {
     <Fragment slot="react">
       <TabsStatesDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>3. Orientation and status</h2>
   <p>
     In vertical orientation, the arrows run along the rail. With manual activation, moving the focus does not change the panel: Enter or Space confirms the selection. The event updates the live region beneath the component.
   </p>
-  <Showcase
+  <ComponentPreview
     html={advancedHtml}
     code={advancedCode}
     codeFull={advancedHtml}
@@ -444,7 +444,7 @@ export function WorkspaceTabs() {
     <Fragment slot="react">
       <TabsAdvancedDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />

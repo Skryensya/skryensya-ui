@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 // El preview clona las hojas del <head> de la página, así que lo que use el demo tiene que estar
 // importado acá: `.sk-truncate` es del demo, no del paquete.
 import "../../examples/tooltip.css";
@@ -115,11 +115,11 @@ function Example() {
 
   {/* `menu`: el tooltip pinta fuera del flujo, y en un stage al alto del contenido no tendría a
       dónde ir, así que la colocación real nunca se vería. */}
-  <Showcase html={html} react={react} label="Tooltip" viewport="menu">
+  <ComponentPreview html={html} react={react} label="Tooltip" viewport="menu">
     <Fragment slot="react">
       <TooltipDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>La regla que no puede verificar el sistema</h2>
   <p>

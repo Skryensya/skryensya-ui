@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { PrimitivesOverviewDemo } from "../../../components/react-demos/layout";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -103,11 +103,11 @@ function Example() {
     Box, Wrapper, ImageFrame, Stack, Inline and Grid are layout patterns. Text, Heading and Link express the reading role; They do not replace semantics: you choose the element that corresponds to the content.
   </p>
 
-  <Showcase html={html} react={react} label="Primitivas">
+  <ComponentPreview html={html} react={react} label="Primitivas">
     <Fragment slot="react">
       <PrimitivesOverviewDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Authored HTML</h2>
   <p>

@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import Toc from "../../../components/Toc.astro";
 
 /* The real Toc.astro renders every preview. Strings below are only the copyable HTML interface;
@@ -233,25 +233,25 @@ initTocSpy();`;
   <p>
     Text only: The layout builder writes this markup from the page headers.
   </p>
-  <Showcase code={plainHtml} label="Text" flush>
+  <ComponentPreview code={plainHtml} label="Text" flush>
     <Toc items={plainItems} />
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="levels">Levels</h2>
   <p>
     A <code>h3</code> marks <code>data-level="h3"</code> and is indented under its <code>h2</code>. The divider is still between rows.
   </p>
-  <Showcase code={nestedHtml} label="h2 and h3" flush>
+  <ComponentPreview code={nestedHtml} label="h2 and h3" flush>
     <Toc items={nestedItems} />
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="iconos">Icons</h2>
   <p>
     The link supports a <code>data-sk-icon</code> placeholder in front of the tag. This site hydrates the set with <code>mountIcons</code>; The automatic doc builder does not inject icons, only the header text.
   </p>
-  <Showcase code={iconsHtml} label="With icons" flush>
+  <ComponentPreview code={iconsHtml} label="With icons" flush>
     <Toc items={iconItems} />
-  </Showcase>
+  </ComponentPreview>
   <CodeBlock code={linkWithIcon} label="link with icon" />
 
   <h2 id="rail-o-disclosure">Rail or disclosure</h2>

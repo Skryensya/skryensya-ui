@@ -2,7 +2,7 @@
 import "@skryensya/core/components/toast.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import {
   ToastActionDemo,
   ToastEmitDemo,
@@ -509,7 +509,7 @@ await initComponents();`;
     ítem. La app clona, inserta y vuelve a montar; <code>initComponents</code> es idempotente, así
     que sólo toca lo recién insertado.
   </p>
-  <Showcase
+  <ComponentPreview
     html={emitHtml}
     js={emitJs}
     previewScript={emitScript}
@@ -521,7 +521,7 @@ await initComponents();`;
     <Fragment slot="react">
       <ToastEmitDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Simple</h2>
   <p>
@@ -532,11 +532,11 @@ await initComponents();`;
     chrome elevado, no como panel de página. Ver el mismo criterio en
     <a href="/componentes/alert">Alert</a>.
   </p>
-  <Showcase html={simpleHtml} react={simpleReact} label="Toast simple" viewport="menu">
+  <ComponentPreview html={simpleHtml} react={simpleReact} label="Toast simple" viewport="menu">
     <Fragment slot="react">
       <ToastSimpleDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Con estado</h2>
   <p>
@@ -549,11 +549,11 @@ await initComponents();`;
     hasta que se cierren. La regla práctica: <strong>si el toast puede cerrarse solo, no necesita ✕;
     si no puede, el ✕ es obligatorio</strong>.
   </p>
-  <Showcase html={statusHtml} react={statusReact} label="Toast con estado" viewport="overlay">
+  <ComponentPreview html={statusHtml} react={statusReact} label="Toast con estado" viewport="overlay">
     <Fragment slot="react">
       <ToastStatusDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Con acción</h2>
   <p>
@@ -561,11 +561,11 @@ await initComponents();`;
     ahí, en ese orden. Un toast con acción no lleva <code>data-timeout</code>, desaparecer antes de
     que alguien alcance a pulsar “Deshacer” convierte la acción en decorado.
   </p>
-  <Showcase html={actionHtml} react={actionReact} label="Toast con acción" viewport="menu">
+  <ComponentPreview html={actionHtml} react={actionReact} label="Toast con acción" viewport="menu">
     <Fragment slot="react">
       <ToastActionDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Apilado</h2>
   <p>
@@ -604,7 +604,7 @@ await initComponents();`;
     lo tapa: cada toast entra con un fade y unos pixeles de subida hasta el lugar que acaba de tomar,
     en la misma cascada. El más nuevo no participa, nunca se movió y no debe parpadear.
   </p>
-  <Showcase
+  <ComponentPreview
     html={stackHtml}
     previewScript={stackScript}
     react={stackReact}
@@ -615,7 +615,7 @@ await initComponents();`;
     <Fragment slot="react">
       <ToastStackDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     El JavaScript es el mismo del primer ejemplo, y el HTML también: clonar, insertar, montar y
     remover en <code>sk-dismiss</code>. No hay nada que agregar para apilar. Los hooks son de la

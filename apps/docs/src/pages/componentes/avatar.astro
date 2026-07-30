@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import { AvatarDemo } from "../../components/react-demos/avatar";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -229,11 +229,11 @@ window.addEventListener("pagehide", () => observer.disconnect(), { once: true })
     excedente en un contador «+N».
   </p>
 
-  <Showcase html={html} react={react} previewScript={previewScript} label="Avatar">
+  <ComponentPreview html={html} react={react} previewScript={previewScript} label="Avatar">
     <Fragment slot="react">
       <AvatarDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     Con imagen, el avatar anida <code>sk-image-frame</code> y el
     <code>&lt;img alt&gt;</code> aporta la semántica. Sin ella, el contenedor toma

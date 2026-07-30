@@ -1,6 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import {
   BreadcrumbIconSeparatorDemo,
@@ -160,30 +160,30 @@ function Example() {
 
   <h3>Dos niveles</h3>
   <p>El caso mínimo: un enlace al nivel anterior y la página actual, sin enlace ni separador final.</p>
-  <Showcase html={simpleHtml} react={simpleReact} label="Breadcrumb de dos niveles" viewport="auto">
+  <ComponentPreview html={simpleHtml} react={simpleReact} label="Breadcrumb de dos niveles" viewport="auto">
     <Fragment slot="react">
       <BreadcrumbTwoLevelDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Varios niveles</h3>
   <p>Cada nivel intermedio es un enlace real seguido de su separador; solo el último elemento pierde ambos.</p>
-  <Showcase html={multiHtml} react={multiReact} label="Breadcrumb de varios niveles" viewport="auto">
+  <ComponentPreview html={multiHtml} react={multiReact} label="Breadcrumb de varios niveles" viewport="auto">
     <Fragment slot="react">
       <BreadcrumbMultiLevelDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Separador con ícono</h3>
   <p>
     El separador es una ranura libre: por default es texto (<code>/</code>), pero acepta cualquier
     marcado decorativo, como un <code>chevron-right</code>.
   </p>
-  <Showcase html={iconHtml} react={iconReact} label="Breadcrumb con separador de ícono" viewport="auto">
+  <ComponentPreview html={iconHtml} react={iconReact} label="Breadcrumb con separador de ícono" viewport="auto">
     <Fragment slot="react">
       <BreadcrumbIconSeparatorDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Etiquetas largas</h3>
   <p>
@@ -203,11 +203,11 @@ function Example() {
       no quepa en una sola línea.
     </li>
   </ul>
-  <Showcase html={longHtml} react={longReact} label="Breadcrumb con etiquetas largas" viewport="auto">
+  <ComponentPreview html={longHtml} react={longReact} label="Breadcrumb con etiquetas largas" viewport="auto">
     <Fragment slot="react">
       <BreadcrumbLongLabelsDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contrato</h2>
   <p>Usa nav + ol; el último elemento lleva aria-current=page y no es un enlace.</p>

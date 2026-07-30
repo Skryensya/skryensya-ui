@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import { paginationTree } from "../../demos/pagination";
 import { getLocale, useTranslations } from "../../i18n";
 
@@ -24,7 +24,7 @@ paginationRange(5, 20);
     con un hermano a cada lado, y las corridas ocultas colapsan en una elipsis.
   </p>
 
-  <Showcase tree={paginationTree(t)} label="Pagination" />
+  <ComponentPreview tree={paginationTree(t)} label="Pagination" />
   <p>
     Prev/next usan los roles <code>chevron-left</code> y <code>chevron-right</code> del set.
     La página actual lleva <code>aria-current="page"</code>; prev/next se deshabilitan en los bordes.

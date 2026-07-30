@@ -1,6 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { SidebarDemo } from "../../components/react-demos/sidebar";
@@ -138,7 +138,7 @@ function Example() {
   <p>Contrae el sidebar con el botón: la lista se vuelve un riel de iconos, y sigue toda ahí.</p>
   {/* The slot, not the `html` prop: a sidebar is only legible next to the thing it sits beside, and
       that surrounding shell is the site playing consumer, not part of the markup being taught. */}
-  <Showcase code={html} react={react} label="Sidebar" flush>
+  <ComponentPreview code={html} react={react} label="Sidebar" flush>
     <div class="app-shell">
       <Fragment set:html={html} />
       <div class="app-shell__main">
@@ -148,7 +148,7 @@ function Example() {
     <Fragment slot="react">
       <SidebarDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Por qué no es un <code>&lt;details&gt;</code></h2>
   <p>

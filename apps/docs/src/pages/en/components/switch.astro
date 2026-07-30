@@ -2,7 +2,7 @@
 import "@skryensya/core/components/tile.css";
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import { SwitchDemo, TileSwitchDemo } from "../../../components/react-demos/switch";
 
@@ -152,11 +152,11 @@ function Example() {
   <h1>Switch</h1>
   <p class="lede">A binary state that takes effect immediately: on or off. For a selection that requires saving, use Checkbox.</p>
 
-  <Showcase html={html} react={react} label="Switch">
+  <ComponentPreview html={html} react={react} label="Switch">
     <Fragment slot="react">
       <SwitchDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>Does not require vanilla initialization: the native checkbox preserves keyboard, reset and form submit. React only encapsulates that same control.</p>
 
   <h2>Surface switch: TileSwitch</h2>
@@ -165,11 +165,11 @@ function Example() {
     <code>TileSwitch</code>. It's the same control (<code>sk-switch__control</code> + thumb); only
     the container changes, the same relationship <code>TileCheckbox</code> has to Checkbox.
   </p>
-  <Showcase html={tileSwitchHtml} react={tileSwitchReact} label="TileSwitch">
+  <ComponentPreview html={tileSwitchHtml} react={tileSwitchReact} label="TileSwitch">
     <Fragment slot="react">
       <TileSwitchDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>The <code>tile-switch</code> enhancer (Svelte + <code>@zag-js/checkbox</code>, the same machine as TileCheckbox and React) hydrates each <code>data-sk-tile-switch</code> label with <code>initComponents()</code>: it controls its (hidden, <code>role="switch"</code>) <code>input[data-part="input"]</code> and syncs <code>data-state</code>; the <code>[data-part="indicator"]</code> is the visual control.</p>
   <CodeBlock code={tileSwitchVanilla} label="JavaScript" />
 

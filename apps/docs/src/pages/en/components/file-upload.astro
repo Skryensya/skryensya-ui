@@ -1,6 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import { FileUploadBasicDemo } from "../../../components/react-demos/file-upload";
 import "@skryensya/core/components/file-upload.css";
@@ -63,7 +63,7 @@ function Example() {
   <p class="lede">Selection and drag-and-drop with limits, rejection and file list.</p>
 
   <h2>Facility</h2>
-  <Showcase
+  <ComponentPreview
     html={html}
     js={js}
     react={react}
@@ -73,7 +73,7 @@ function Example() {
     <Fragment slot="react">
       <FileUploadBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contract</h2>
   <p>Vanilla issues sk-file-change and never invents a remote load. React exposes accepted and rejected files.</p>

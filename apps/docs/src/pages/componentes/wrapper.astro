@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -38,7 +38,7 @@ const react = `import { Wrapper } from "@skryensya/react/wrapper";
     una pantalla angosta los cuatro se ven iguales, y sólo se separan cuando hay lugar.
   </p>
 
-  <Showcase code={code} react={react} label="Wrapper" flush>
+  <ComponentPreview code={code} react={react} label="Wrapper" flush>
     <figure class="wrapper-scale" aria-label="Anchos de wrapper, a escala">
       <div class="wrapper-scale__bar" style="--w: 47%">
         <code>sm</code> · 42rem
@@ -53,7 +53,7 @@ const react = `import { Wrapper } from "@skryensya/react/wrapper";
         <code>full</code> · sin techo · el viewport entero
       </div>
     </figure>
-  </Showcase>
+  </ComponentPreview>
 
   <p>
     Los techos son estables: la densidad cambia el espaciado y los controles, nunca el ancho máximo de

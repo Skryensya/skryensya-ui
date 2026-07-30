@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
-import Showcase from "../components/Showcase.astro";
+import ComponentPreview from "../components/ComponentPreview.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -68,7 +68,7 @@ const usageReact = `import { Button } from "@skryensya/react/button";
     <code>@skryensya/react</code> renderiza el mismo contrato.
   </p>
 
-  <Showcase html={usage} react={usageReact} label="Button" />
+  <ComponentPreview html={usage} react={usageReact} label="Button" />
 
   <h2>Componentes con comportamiento</h2>
   <p>

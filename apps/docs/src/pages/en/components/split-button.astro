@@ -1,6 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import "@skryensya/core/components/split-button.css";
 import "@skryensya/core/components/menu.css";
@@ -72,7 +72,7 @@ function Example() {
   <p class="lede">Stable main action and adjacent menu with alternative actions.</p>
 
   <h2>Facility</h2>
-  <Showcase
+  <ComponentPreview
     html={html}
     js={js}
     react={react}
@@ -82,7 +82,7 @@ function Example() {
     <Fragment slot="react">
       <SplitButtonDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contract</h2>
   <p>The main action does not change silently when choosing the menu. If there is no dominant action, use Menu.</p>

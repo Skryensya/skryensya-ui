@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import Toc from "../../components/Toc.astro";
 
 /* The real Toc.astro renders every preview. Strings below are only the copyable HTML interface;
@@ -235,18 +235,18 @@ initTocSpy();`;
   <p>
     Texto solo: el builder del layout escribe este markup a partir de los encabezados de la página.
   </p>
-  <Showcase code={plainHtml} label="Texto" flush>
+  <ComponentPreview code={plainHtml} label="Texto" flush>
     <Toc items={plainItems} />
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="niveles">Niveles</h2>
   <p>
     Un <code>h3</code> marca <code>data-level="h3"</code> y se sangra bajo su <code>h2</code>. El
     divisor sigue siendo entre filas.
   </p>
-  <Showcase code={nestedHtml} label="h2 y h3" flush>
+  <ComponentPreview code={nestedHtml} label="h2 y h3" flush>
     <Toc items={nestedItems} />
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="iconos">Iconos</h2>
   <p>
@@ -254,9 +254,9 @@ initTocSpy();`;
     hidrata el set con <code>mountIcons</code>; el builder automático de docs no inyecta iconos, solo
     el texto del encabezado.
   </p>
-  <Showcase code={iconsHtml} label="Con iconos" flush>
+  <ComponentPreview code={iconsHtml} label="Con iconos" flush>
     <Toc items={iconItems} />
-  </Showcase>
+  </ComponentPreview>
   <CodeBlock code={linkWithIcon} label="enlace con icono" />
 
   <h2 id="rail-o-disclosure">Rail o disclosure</h2>

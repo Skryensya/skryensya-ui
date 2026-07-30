@@ -2,7 +2,7 @@
 import "@skryensya/core/components/tile.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import { buildPreviewFrameDocument } from "../../lib/preview-frame";
 import { SaveActionDemo, ScreensGridDemo } from "../../components/react-demos/component-preview";
 
@@ -241,7 +241,7 @@ mountCodePreview();`;
 
 /*
  * El stage de los dos ejemplos de abajo es un ComponentPreview: el mismo documento srcdoc que usa
- * Showcase, montado un nivel más adentro. El runtime del frame monta las superficies de
+ * ComponentPreview, montado un nivel más adentro. El runtime del frame monta las superficies de
  * documentación, así el preview anidado tiene sus propios tabs, recarga, resizer y disclosure.
  */
 const nestedFrame = buildPreviewFrameDocument({ body: demoHtml });
@@ -277,11 +277,11 @@ await initComponents(document);`;
     viewport y top layer. Debajo, CodePreview muestra el código.
   </p>
 
-  <Showcase html={demoHtml} js={demoJs} react={demoReact} label="Button">
+  <ComponentPreview html={demoHtml} js={demoJs} react={demoReact} label="Button">
     <Fragment slot="react">
       <SaveActionDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Responsabilidades</h2>
   <ul>
@@ -311,7 +311,7 @@ await initComponents(document);`;
     adentro. El frame anidado clona los estilos de su padre y monta su propio runtime, así que
     recargar, arrastrar el borde o cambiar el modo de color funcionan en los dos niveles a la vez.
   </p>
-  <Showcase
+  <ComponentPreview
     label="ComponentPreview"
     note="dentro de un ComponentPreview"
     code={anatomy}
@@ -367,7 +367,7 @@ await initComponents(document);`;
           aria-label="Cargando preview: Button"></span>
       </div>
     </div>
-  </Showcase>
+  </ComponentPreview>
   <p>
     Añade <code>data-sk-component-preview-flush</code> al iframe y a su body cuando el componente sea
     un layout.     Usa <code>data-sk-component-preview-viewport="menu"</code> para listboxes y popovers, u
@@ -417,7 +417,7 @@ await initComponents(document);`;
     scrollea, así que lo único que se pierde es la fidelidad de las unidades <code>vh</code> del
     propio ejemplo.
   </p>
-  <Showcase
+  <ComponentPreview
     label="Grid multicol"
     note="3 carriles libre · 2 en tablet · 1 en móvil"
     html={screensHtml}
@@ -426,7 +426,7 @@ await initComponents(document);`;
     <Fragment slot="react">
       <ScreensGridDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     Viene <strong>encendido en todos los previews</strong> del sitio. «¿Esto aguanta en un teléfono?»
     es una pregunta que se le puede hacer a cualquier componente, no sólo a los que son
@@ -461,7 +461,7 @@ await initComponents(document);`;
     resizer y un CodePreview por binding. Los tabs de adentro son independientes de los de afuera —
     la preferencia Vanilla | React se comparte por documento, y el frame es su propio documento.
   </p>
-  <Showcase
+  <ComponentPreview
     label="ComponentPreview"
     note="la superficie completa"
     code={anatomyFull}
@@ -554,7 +554,7 @@ await initComponents(document);`;
         </div>
       </div>
     </div>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

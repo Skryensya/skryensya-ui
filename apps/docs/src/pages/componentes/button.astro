@@ -2,112 +2,24 @@
 import "@skryensya/core/components/tile.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
-import StylingHooks from "../../components/StylingHooks.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import {
-  ButtonBasicDemo,
-  ButtonIconDemo,
-  ButtonIconOnlyDemo,
-  ButtonIconOnlySmDemo,
-  ButtonAsLinkDemo,
-  ButtonSizeDemo,
-  TileButtonDemo,
-} from "../../components/react-demos/button";
+  buttonAsLinkTree,
+  buttonIconOnlySmTree,
+  buttonIconOnlyTree,
+  buttonIconTree,
+  buttonSizesTree,
+  buttonVariantsTree,
+} from "../../demos/button";
+import { getLocale, useTranslations } from "../../i18n";
+import StylingHooks from "../../components/StylingHooks.astro";
+import { TileButtonDemo } from "../../components/react-demos/button";
 
+const t = useTranslations(getLocale(Astro.url));
+/* The link demo points at a real docs page, and that page's path differs per locale. */
+const LINK_HREF = "/primer-componente";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
-
-const html = `<div class="sk-inline">
-  <button
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-variant="primary"
-  >
-    Guardar
-  </button>
-  <button
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-variant="neutral"
-  >
-    Cancelar
-  </button>
-  <button
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-variant="danger"
-  >
-    Borrar
-  </button>
-</div>`;
-
-/* Icon + text: no extra hook. The button is already an inline-flex row with a gap, so an authored
-   <svg class="sk-icon"> and the label lay themselves out. The icon is DECORATIVE, the label already
-   names the action, so it stays aria-hidden. */
-const iconHtml = `<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-variant="primary"
->
-  <span data-sk-icon="download"></span>
-  Descargar
-</button>`;
-
-/* Icon-only: data-icon-only makes the box a square, and the name, with no text to carry it, MUST
-   be authored as aria-label. The icon stays decorative. Default size matches the control (md). */
-const iconOnlyHtml = `<div class="sk-inline">
-  <button
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-icon-only
-    aria-label="Configuración"
-  >
-    <span data-sk-icon="settings"></span>
-  </button>
-  <button
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-icon-only
-    data-variant="ghost"
-    aria-label="Editar"
-  >
-    <span data-sk-icon="edit"></span>
-  </button>
-</div>`;
-
-/* Same shape at sm: face paints at control-sm; ::after keeps the 44px hit. */
-const iconOnlySmHtml = `<div class="sk-inline">
-  <button
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-size="sm"
-    data-icon-only
-    aria-label="Configuración"
-  >
-    <span data-sk-icon="settings"></span>
-  </button>
-  <button
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-size="sm"
-    data-icon-only
-    data-variant="ghost"
-    aria-label="Editar"
-  >
-    <span data-sk-icon="edit"></span>
-  </button>
-  <button
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-size="sm"
-    data-icon-only
-    data-variant="primary"
-    aria-label="Añadir"
-  >
-    <span data-sk-icon="add"></span>
-  </button>
-</div>`;
-
 const js = `import { initComponents } from "@skryensya/vanilla/auto";
 import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
@@ -117,90 +29,6 @@ import { lucideIcons } from "@skryensya/icons-lucide";
 mountIcons(document, lucideIcons);
 
 await initComponents();`;
-
-const react = `import { Button } from "@skryensya/react/button";
-
-function Example() {
-  return (
-    <div className="sk-inline">
-      <Button variant="primary">Guardar</Button>
-      <Button variant="neutral">Cancelar</Button>
-      <Button variant="danger">Borrar</Button>
-    </div>
-  );
-}`;
-
-const sizeHtml = `<div class="sk-inline">
-  <button
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-size="sm"
-    data-variant="primary"
-  >
-    Guardar
-  </button>
-  <button
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-size="md"
-    data-variant="primary"
-  >
-    Guardar
-  </button>
-  <button
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-size="lg"
-    data-variant="primary"
-  >
-    Guardar
-  </button>
-  <button
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-size="sm"
-    data-icon-only
-    data-variant="ghost"
-    aria-label="Más acciones"
-  >
-    <span data-sk-icon="more"></span>
-  </button>
-  <button
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-size="md"
-    data-icon-only
-    data-variant="ghost"
-    aria-label="Más acciones"
-  >
-    <span data-sk-icon="more"></span>
-  </button>
-</div>`;
-
-const sizeReact = `import { Button } from "@skryensya/react/button";
-import { Icon } from "@skryensya/react/icon";
-
-function Example() {
-  return (
-    <div className="sk-inline">
-      <Button size="sm" variant="primary">Guardar</Button>
-      <Button variant="primary">Guardar</Button>
-      {/* md es el default: omitir size o size="md" */}
-      <Button size="lg" variant="primary">Guardar</Button>
-      <Button
-        size="sm"
-        iconOnly
-        variant="ghost"
-        aria-label="Más acciones"
-      >
-        <Icon name="more" />
-      </Button>
-      <Button iconOnly variant="ghost" aria-label="Más acciones">
-        <Icon name="more" />
-      </Button>
-    </div>
-  );
-}`;
 
 const sizeHit = `/* Ya viene en components/button.css. No hay que
    escribirlo: está acá porque es la parte del componente
@@ -223,65 +51,6 @@ const sizeHit = `/* Ya viene en components/button.css. No hay que
   );
 }`;
 
-const iconReact = `import { Button } from "@skryensya/react/button";
-import { Icon } from "@skryensya/react/icon";
-
-function Example() {
-  return (
-    <Button variant="primary">
-      <Icon name="download" />
-      Descargar
-    </Button>
-  );
-}`;
-
-
-const iconOnlyReact = `import { Button } from "@skryensya/react/button";
-import { Icon } from "@skryensya/react/icon";
-
-function Example() {
-  // sin texto visible, el nombre es obligatorio: aria-label
-  return (
-    <div className="sk-inline">
-      <Button iconOnly aria-label="Configuración">
-        <Icon name="settings" />
-      </Button>
-      <Button iconOnly variant="ghost" aria-label="Editar">
-        <Icon name="edit" />
-      </Button>
-    </div>
-  );
-}`;
-
-const iconOnlySmReact = `import { Button } from "@skryensya/react/button";
-import { Icon } from "@skryensya/react/icon";
-
-function Example() {
-  // Face sm (32px) + hit 44px via ::after. aria-label is required.
-  return (
-    <div className="sk-inline">
-      <Button size="sm" iconOnly aria-label="Configuración">
-        <Icon name="settings" />
-      </Button>
-      <Button
-        size="sm"
-        iconOnly
-        variant="ghost"
-        aria-label="Editar"
-      >
-        <Icon name="edit" />
-      </Button>
-      <Button
-        size="sm"
-        iconOnly
-        variant="primary"
-        aria-label="Añadir"
-      >
-        <Icon name="add" />
-      </Button>
-    </div>
-  );
-}`;
 
 const tileButtonHtml = `<button
   class="sk-tile sk-tile--interactive sk-interactive"
@@ -315,86 +84,6 @@ function Example() {
     </TileButton>
   );
 }`;
-const linkHtml = `<div class="sk-inline">
-  <a
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-variant="primary"
-    href="/primer-componente"
-  >
-    Ir a primer componente
-  </a>
-  <a
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-size="sm"
-    data-variant="neutral"
-    href="/primer-componente"
-  >
-    Chico
-  </a>
-  <a
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-size="lg"
-    data-variant="neutral"
-    href="/primer-componente"
-  >
-    Grande
-  </a>
-  <a
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-variant="neutral"
-    href="/primer-componente"
-  >
-    <span data-sk-icon="download"></span>
-    Con icono
-  </a>
-  <a
-    class="sk-button sk-interactive"
-    data-sk-button
-    data-icon-only
-    data-variant="ghost"
-    aria-label="Ir a primer componente"
-    href="/primer-componente"
-  >
-    <span data-sk-icon="arrow-right"></span>
-  </a>
-</div>`;
-
-const linkReact = `import { Button } from "@skryensya/react/button";
-import { Icon } from "@skryensya/react/icon";
-
-function Example() {
-  // Es el mismo Button: un href cambia el tag a <a>. Cada forma lo sigue: tamaño, icono, iconOnly.
-  return (
-    <div className="sk-inline">
-      <Button variant="primary" href="/primer-componente">
-        Ir a primer componente
-      </Button>
-      <Button size="sm" variant="neutral" href="/primer-componente">
-        Chico
-      </Button>
-      <Button size="lg" variant="neutral" href="/primer-componente">
-        Grande
-      </Button>
-      <Button variant="neutral" href="/primer-componente">
-        <Icon name="download" />
-        Con icono
-      </Button>
-      <Button
-        iconOnly
-        variant="ghost"
-        aria-label="Ir a primer componente"
-        href="/primer-componente"
-      >
-        <Icon name="arrow-right" />
-      </Button>
-    </div>
-  );
-}`;
-
 ---
 
 <Base title="Button" description="Button: hooks de estilo, enhancer vanilla mínimo y componente React.">
@@ -404,22 +93,10 @@ function Example() {
   </p>
 
   <h2>Variantes</h2>
-  <Showcase html={html} react={react} label="Button">
-    <Fragment slot="react">
-      <ButtonBasicDemo client:load />
-    </Fragment>
-  </Showcase>
+  <ComponentPreview tree={buttonVariantsTree(t)} label="Button" />
 
   <h2>Tamaños</h2>
-  <Showcase
-    html={sizeHtml}
-    react={sizeReact}
-    label="Button · sm / md / lg"
-  >
-    <Fragment slot="react">
-      <ButtonSizeDemo client:load />
-    </Fragment>
-  </Showcase>
+  <ComponentPreview tree={buttonSizesTree(t)} label="Button · sm / md / lg" />
   <CodeBlock
     code={sizeHit}
     label="components/button.css"
@@ -428,27 +105,11 @@ function Example() {
   />
 
   <h2>Con icono</h2>
-  <Showcase html={iconHtml} react={iconReact} label="Button con icono">
-    <Fragment slot="react">
-      <ButtonIconDemo client:load />
-    </Fragment>
-  </Showcase>
+  <ComponentPreview tree={buttonIconTree(t)} label="Button con icono" />
 
   <h2>Solo icono</h2>
-  <Showcase html={iconOnlyHtml} react={iconOnlyReact} label="Solo icono">
-    <Fragment slot="react">
-      <ButtonIconOnlyDemo client:load />
-    </Fragment>
-  </Showcase>
-  <Showcase
-    html={iconOnlySmHtml}
-    react={iconOnlySmReact}
-    label="Solo icono · sm"
-  >
-    <Fragment slot="react">
-      <ButtonIconOnlySmDemo client:load />
-    </Fragment>
-  </Showcase>
+  <ComponentPreview tree={buttonIconOnlyTree(t)} label="Solo icono" />
+  <ComponentPreview tree={buttonIconOnlySmTree(t)} label="Solo icono · sm" />
 
   <h2>Como enlace</h2>
   <p>
@@ -457,19 +118,15 @@ function Example() {
     en vez de <code>&lt;button&gt;</code>). En React, pasarle <code>href</code> a <code>Button</code>
     hace el cambio. Un enlace no puede ser <code>disabled</code>: renderiza contenido no enlazado en su lugar.
   </p>
-  <Showcase html={linkHtml} react={linkReact} label="Button como enlace">
-    <Fragment slot="react">
-      <ButtonAsLinkDemo client:load />
-    </Fragment>
-  </Showcase>
+  <ComponentPreview tree={buttonAsLinkTree(t, LINK_HREF)} label="Button como enlace" />
 
   <h2>TileButton</h2>
   <p>Cuando toda la superficie es una acción, no solo una etiqueta adentro.</p>
-  <Showcase html={tileButtonHtml} react={tileButtonReact} label="TileButton">
+  <ComponentPreview html={tileButtonHtml} react={tileButtonReact} label="TileButton">
     <Fragment slot="react">
       <TileButtonDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <CodeBlock code={tileButtonVanilla} label="JavaScript" />
 
   <h2>Instalar</h2>

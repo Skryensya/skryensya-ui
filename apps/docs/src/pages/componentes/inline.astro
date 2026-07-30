@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import { InlineActionBarDemo } from "../../components/react-demos/layout";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -88,11 +88,11 @@ function Example() {
     para barras de acciones y pares label–control; la semántica pertenece al elemento que eliges.
   </p>
 
-  <Showcase html={html} react={react} label="Barra de acciones" note="Box + Stack + Inline + Button">
+  <ComponentPreview html={html} react={react} label="Barra de acciones" note="Box + Stack + Inline + Button">
     <Fragment slot="react">
       <InlineActionBarDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>HTML autorado</h2>
   <p>

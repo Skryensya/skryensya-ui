@@ -1,6 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import {
   CalendarBasicDemo,
@@ -70,11 +70,11 @@ function Example() {
   <p>
     Behind it still running <code>@zag-js/date-picker</code> (there is no separate calendar machine in this stack), configured <code>inline</code>: same keyboard navigation, same grid with six fixed weeks.
   </p>
-  <Showcase html={html} react={react} label="Calendar" viewport="auto">
+  <ComponentPreview html={html} react={react} label="Calendar" viewport="auto">
     <Fragment slot="react">
       <CalendarBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Switch view: buttons, no selects</h2>
   <p>
@@ -107,11 +107,11 @@ function Example() {
     state from the cell — the same technique Combobox's focus ring already uses — so the whole cell is
     painted and the band reads as continuous under <code>border-collapse</code>.
   </p>
-  <Showcase html={rangeHtml} react={rangeReact} label="Calendar (range)" viewport="auto">
+  <ComponentPreview html={rangeHtml} react={rangeReact} label="Calendar (range)" viewport="auto">
     <Fragment slot="react">
       <CalendarRangeDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Bounded range: min and max</h2>
   <p>
@@ -127,11 +127,11 @@ function Example() {
     month falls outside it). Neither view needed new CSS: both already go through
     <code>.sk-button:disabled</code>.
   </p>
-  <Showcase html={minMaxHtml} react={minMaxReact} label="Calendar (min/max)" viewport="auto">
+  <ComponentPreview html={minMaxHtml} react={minMaxReact} label="Calendar (min/max)" viewport="auto">
     <Fragment slot="react">
       <CalendarMinMaxDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contract</h2>
   <ul>

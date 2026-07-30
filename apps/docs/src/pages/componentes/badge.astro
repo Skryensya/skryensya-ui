@@ -1,34 +1,29 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { BadgeDemo } from "../../components/react-demos/badge";
 
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<div class="sk-inline">
-<span class="sk-badge" data-tone="neutral">Neutral</span>
-<span class="sk-badge" data-tone="accent">Accent</span>
-<span class="sk-badge" data-tone="success">Success</span>
-<span class="sk-badge" data-tone="warning">Warning</span>
-<span class="sk-badge" data-tone="danger">Danger</span>
-</div>`;
-
-const react = `import { Badge } from "@skryensya/react/badge";
-
-function Example() {
-  return (
-    <div className="sk-inline">
-      <Badge>Neutral</Badge>
-      <Badge tone="accent">Accent</Badge>
-      <Badge tone="success">Success</Badge>
-      <Badge tone="warning">Warning</Badge>
-      <Badge tone="danger">Danger</Badge>
-    </div>
-  );
-}`;
+/*
+ * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
+ * island are all emitted from this, so the snippet a reader copies is what they just saw render.
+ */
+const tree = {
+  contract: "layout",
+  signature: "Inline",
+  options: { gap: "sm" },
+  children: [
+    { contract: "badge", signature: "Badge", options: { tone: "neutral" }, children: "Neutral" },
+    { contract: "badge", signature: "Badge", options: { tone: "accent" }, children: "Accent" },
+    { contract: "badge", signature: "Badge", options: { tone: "success" }, children: "Success" },
+    { contract: "badge", signature: "Badge", options: { tone: "warning" }, children: "Warning" },
+    { contract: "badge", signature: "Badge", options: { tone: "danger" }, children: "Danger" },
+  ],
+} as const satisfies UsageTree;
 
 /* The dot: a badge with no text, only color and position. Standalone it is a status light; anchored in
  * a holder it is a notification/presence indicator on the top-right corner of another element. */
@@ -102,18 +97,14 @@ const holderReact = `import { Badge } from "@skryensya/react/badge";
   <h2>Etiqueta</h2>
   <p>La forma con texto: un estado, una categoría o un metadato corto. Cada tono lleva un borde de su
     propio color, así el neutral, cuyo fondo es el lienzo, no queda como un rectángulo invisible.</p>
-  <Showcase html={html} react={react} label="Badge">
-    <Fragment slot="react">
-      <BadgeDemo client:load />
-    </Fragment>
-  </Showcase>
+  <ComponentPreview tree={tree} label="Badge" />
 
   <h2>Dot</h2>
   <p>
     Un badge que es <strong>sólo un punto</strong>: sin texto, comunica por color y posición. Suelto es
     una luz de estado; su relleno es un tono saturado para que se lea a unos pocos píxeles.
   </p>
-  <Showcase html={dotHtml} label="Badge dot" />
+  <ComponentPreview html={dotHtml} label="Badge dot" />
 
   <h3>En la esquina de un elemento</h3>
   <p>
@@ -122,7 +113,7 @@ const holderReact = `import { Badge } from "@skryensya/react/badge";
     superficie lo despega del contenido de abajo. El punto lleva su propio <code>aria-label</code>
     porque significa algo; el elemento anfitrión no cambia.
   </p>
-  <Showcase html={holderHtml} react={holderReact} label="Badge dot en la esquina" />
+  <ComponentPreview html={holderHtml} react={holderReact} label="Badge dot en la esquina" />
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

@@ -2,7 +2,7 @@
 import "@skryensya/core/components/slider.css";
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
-import Showcase from "../components/Showcase.astro";
+import ComponentPreview from "../components/ComponentPreview.astro";
 
 /* The site remains an honest consumer: input/field needs its authored paint rules. */
 
@@ -142,7 +142,7 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
     El control queda fuera del scope. Arrástralo: cambian el padding, los gaps y los tamaños semánticos
     dentro del resumen; el resto de la página no se mueve.
   </p>
-  <Showcase code={labMarkup} previewScript={densityLabScript} label="Scope local en acción" note="scope y valor viven inline en el mismo nodo">
+  <ComponentPreview code={labMarkup} previewScript={densityLabScript} label="Scope local en acción" note="scope y valor viven inline en el mismo nodo">
     <div class="sk-stack" data-gap="lg" data-density-lab style="inline-size: 100%">
       <div class="sk-stack" data-gap="xs">
         <div class="sk-inline" data-gap="sm" data-align="baseline">
@@ -193,7 +193,7 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
         </div>
       </section>
     </div>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Qué cambia, y qué no</h2>
   <div class="sk-table-scroll">

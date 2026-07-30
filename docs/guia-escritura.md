@@ -223,7 +223,7 @@ dos después del camino enhanced, nunca antes.
 
 ## Labels de los bloques de código
 
-El `label` de un `CodeBlock` o `Showcase` nombra el lenguaje o el artefacto del ejemplo (`CSS`,
+El `label` de un `CodeBlock` o `ComponentPreview` nombra el lenguaje o el artefacto del ejemplo (`CSS`,
 `JavaScript`, `HTML`, `terminal`), nunca con la posesión "tu"/"tu propio". Nada de `tu CSS`, `tu JS`,
 `tu JavaScript`: sobrio y profesional es `CSS`, `JavaScript`. Cuando el lenguaje tiene nombre completo
 y abreviatura (`JavaScript`/`JS`, `TypeScript`/`TS`), el label usa el nombre completo, nunca la sigla.
@@ -311,7 +311,7 @@ cambios relacionados dentro del mismo commit en vez de forzar dos oraciones sepa
   más complejo que el anterior nombra en una oración qué uso real lo necesita.
 - ¿Una variante nativa o una alternativa avanzada? Va después del camino principal, marcada como tal,
   con una frase que explique qué agrega.
-- ¿Label de un `CodeBlock`/`Showcase`? Sin "tu", nombre completo del lenguaje (`JavaScript`, no `JS`).
+- ¿Label de un `CodeBlock`/`ComponentPreview`? Sin "tu", nombre completo del lenguaje (`JavaScript`, no `JS`).
   Si el label no es uno de los nombres reconocidos, pasa `lang` explícito.
 - ¿Español? Tú, nunca usted ni vos.
 - ¿Un nombre de componente, prop, clase o archivo? No se traduce en ningún idioma.

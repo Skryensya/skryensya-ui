@@ -2,7 +2,7 @@
 import "@skryensya/core/components/tag.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import { tagTree } from "../../demos/tag";
 import { getLocale, useTranslations } from "../../i18n";
 
@@ -20,7 +20,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
     cuadrado (radio de control, no píldora) para leerse como accionable, y puede llevar un botón de quitar.
   </p>
 
-  <Showcase tree={tagTree(t)} label="Tag" />
+  <ComponentPreview tree={tagTree(t)} label="Tag" />
   <p>
     Cuando es removible, la etiqueta y el botón de quitar son dos objetivos distintos: el nombre
     accesible del control nombra el tag que remueve.

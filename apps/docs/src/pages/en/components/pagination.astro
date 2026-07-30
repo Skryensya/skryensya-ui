@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { paginationTree } from "../../../demos/pagination";
 import { getLocale, useTranslations } from "../../../i18n";
 
@@ -22,7 +22,7 @@ paginationRange(5, 20);
     Pagination cycles through a paginated set, one page at a time. The visible window is the interesting part, and it lives as a pure function in the core: first and last always present, the current one with a brother on each side, and the hidden runs collapse into an ellipsis.
   </p>
 
-  <Showcase tree={paginationTree(t)} label="Pagination" />
+  <ComponentPreview tree={paginationTree(t)} label="Pagination" />
   <p>
     Prev/next use the <code>chevron-left</code> and <code>chevron-right</code> roles from the set. The current page has <code>aria-current="page"</code>; prev/next are disabled on borders. The ellipsis is inert text, not an objective. The targets carry <code>sk-interactive</code>.
   </p>

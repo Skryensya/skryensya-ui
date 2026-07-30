@@ -2,7 +2,7 @@
 import "@skryensya/core/components/select.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { TreeViewSettingsDemo } from "../../components/react-demos/tree-view";
 import "@skryensya/core/components/tree-view.css";
@@ -448,7 +448,7 @@ const indentHook = `.sk-tree-view {
     (<code>branch</code> + <code>branch-control</code> + <code>branch-content</code>) o una hoja
     (<code>item</code>). Sin atributos de estado, todo arranca cerrado y sin selección.
   </p>
-  <Showcase html={minimal} label="TreeView mínimo" />
+  <ComponentPreview html={minimal} label="TreeView mínimo" />
 
   <h2>Estado inicial</h2>
   <p>
@@ -456,7 +456,7 @@ const indentHook = `.sk-tree-view {
     <code>data-value</code> que arrancan abiertos y seleccionados. Aceptan espacios o comas como
     separador, y son sólo el estado <em>inicial</em>: desde ahí manda la máquina.
   </p>
-  <Showcase html={initialState} label="Abierto y seleccionado de entrada" />
+  <ComponentPreview html={initialState} label="Abierto y seleccionado de entrada" />
 
   <h2>Selección múltiple</h2>
   <p>
@@ -466,7 +466,7 @@ const indentHook = `.sk-tree-view {
     <code>branch-content</code>, tenga la profundidad que tenga, y la guía vertical marca de quién
     cuelga cada nivel.
   </p>
-  <Showcase html={multiple} label="Selección múltiple y tres niveles" />
+  <ComponentPreview html={multiple} label="Selección múltiple y tres niveles" />
 
   <h2>Nodos deshabilitados</h2>
   <p>
@@ -474,7 +474,7 @@ const indentHook = `.sk-tree-view {
     rama deshabilitada tampoco se abre, así que no la uses para esconder contenido: para eso, no lo
     autores.
   </p>
-  <Showcase html={disabled} label="Nodo deshabilitado" />
+  <ComponentPreview html={disabled} label="Nodo deshabilitado" />
 
   <h2>Iconos y eventos</h2>
   <p>
@@ -483,7 +483,7 @@ const indentHook = `.sk-tree-view {
     <code>&lt;span aria-hidden="true"&gt;</code> vacío de los ejemplos anteriores; acá lleva un
     icono. La selección y la apertura se escuchan como eventos sobre la raíz.
   </p>
-  <Showcase
+  <ComponentPreview
     html={events}
     js={eventsJs}
     react={react}
@@ -493,7 +493,7 @@ const indentHook = `.sk-tree-view {
     <Fragment slot="react">
       <TreeViewSettingsDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contrato</h2>
   <ul>

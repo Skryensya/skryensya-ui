@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import {
   AlertAccentDemo,
   AlertBannerDemo,
@@ -185,38 +185,38 @@ function Example() {
     Úsalo en avisos ordinarios, confirmaciones breves o cualquier caso donde pintar el panel de
     “éxito” o “info” añadiría urgencia que el contenido no tiene.
   </p>
-  <Showcase html={neutralHtml} react={neutralReact} label="Alert neutral">
+  <ComponentPreview html={neutralHtml} react={neutralReact} label="Alert neutral">
     <Fragment slot="react">
       <AlertNeutralDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Presentaciones</h2>
   <p>La presentación decide el peso visual, no la urgencia.</p>
 
   <h3>Banner</h3>
   <p>El panel completo sirve para una condición que necesita título y explicación junto al contenido afectado.</p>
-  <Showcase html={bannerHtml} react={bannerReact} label="Alert banner">
+  <ComponentPreview html={bannerHtml} react={bannerReact} label="Alert banner">
     <Fragment slot="react">
       <AlertBannerDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Acento</h3>
   <p>La barra lateral conserva la señal de tono y deja que una acción de recuperación tenga protagonismo.</p>
-  <Showcase html={accentHtml} react={accentReact} label="Alert acento">
+  <ComponentPreview html={accentHtml} react={accentReact} label="Alert acento">
     <Fragment slot="react">
       <AlertAccentDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Inline</h3>
   <p>Sin panel ni borde, una confirmación breve acompaña un bloque que ya tiene estructura propia.</p>
-  <Showcase html={inlineHtml} react={inlineReact} label="Alert inline">
+  <ComponentPreview html={inlineHtml} react={inlineReact} label="Alert inline">
     <Fragment slot="react">
       <AlertInlineDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Anatomía</h2>
   <ul>

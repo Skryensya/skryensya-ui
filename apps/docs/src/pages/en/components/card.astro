@@ -1,6 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import "../../../examples/card.css";
 import { cardCopy } from "../../../examples/card-data";
 import { cardSources } from "../../../examples/card-sources";
@@ -71,7 +71,7 @@ const src = cardSources(copy);
   <p>
     The floor of the ladder: a surface, a title, a paragraph. Nothing here is interactive, so the root is <a href="/en/components/box">Box</a> on an <code>article</code>. No <code>card</code> class is involved — only the surface, the subtle border and padding <code>lg</code>.
   </p>
-  <Showcase
+  <ComponentPreview
     html={src.basic.html}
     react={src.basic.react}
     label={copy.labels.basic}
@@ -80,13 +80,13 @@ const src = cardSources(copy);
     <Fragment slot="react">
       <CardBasicDemo client:load lang="en" />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="meta">Status and date</h2>
   <p>
     The same Box, now with hierarchy: <a href="/en/components/badge">Badge</a> states the status and a Text at <code>caption</code> the date. The card did not grow an API, it grew content.
   </p>
-  <Showcase
+  <ComponentPreview
     html={src.meta.html}
     react={src.meta.react}
     label={copy.labels.meta}
@@ -95,13 +95,13 @@ const src = cardSources(copy);
     <Fragment slot="react">
       <CardMetaDemo client:load lang="en" />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="accent-soft">Soft accent</h2>
   <p>
     The accent background is asked for by rewriting the hooks Box already publishes — <code>--sk-box-bg</code> to <code>--color-bg-accent-subtle</code> and the border to <code>--color-border-accent</code> — never with a raw <code>background</code> on <code>.sk-box</code>, which would bypass the surface the pattern owns. The fill is subtle, so the text keeps using the normal tokens.
   </p>
-  <Showcase
+  <ComponentPreview
     html={src.accentSoft.html}
     react={src.accentSoft.react}
     label={copy.labels.accentSoft}
@@ -110,13 +110,13 @@ const src = cardSources(copy);
     <Fragment slot="react">
       <CardAccentSoftDemo client:load lang="en" />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="accent-solid">Solid accent</h2>
   <p>
     Once the fill is the action color, the text is no longer read against the page but against that fill, which is why it comes from <code>--color-text-on-accent</code>. In dark mode the accent is a <em>light</em> blue and that token flips to near-black: a <code>data-tone</code> here would resolve against the wrong background and land unreadable in one of the two modes.
   </p>
-  <Showcase
+  <ComponentPreview
     html={src.accentSolid.html}
     react={src.accentSolid.react}
     label={copy.labels.accentSolid}
@@ -125,13 +125,13 @@ const src = cardSources(copy);
     <Fragment slot="react">
       <CardAccentSolidDemo client:load lang="en" />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="stat-card">Metric card</h2>
   <p>
     <a href="/en/components/stat">Stat</a> supplies the metric and Box supplies the card. The collection fits a grid without Stat becoming a surface or growing a <code>card</code> variant in its API.
   </p>
-  <Showcase
+  <ComponentPreview
     html={src.stat.html}
     react={src.stat.react}
     label={copy.labels.stat}
@@ -140,13 +140,13 @@ const src = cardSources(copy);
     <Fragment slot="react">
       <CardStatDemo client:load lang="en" />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="link">Card that navigates</h2>
   <p>
     First interactive rung. The whole surface leads to <strong>one</strong> destination, so the root is the <code>a[href]</code> itself: a TileLink. There is no CSS-stretched link and no <code>onClick</code> on a <code>div</code>, and the title is what names the link.
   </p>
-  <Showcase
+  <ComponentPreview
     html={src.link.html}
     react={src.link.react}
     label={copy.labels.link}
@@ -155,13 +155,13 @@ const src = cardSources(copy);
     <Fragment slot="react">
       <CardLinkDemo client:load lang="en" />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="action">Card that acts</h2>
   <p>
     Same geometry, different platform element: this one <em>does</em> something, so it is a <code>button</code>. The shape does not decide the element; the intent does.
   </p>
-  <Showcase
+  <ComponentPreview
     html={src.action.html}
     react={src.action.react}
     label={copy.labels.action}
@@ -170,13 +170,13 @@ const src = cardSources(copy);
     <Fragment slot="react">
       <CardActionDemo client:load lang="en" />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="selection">Card that is chosen</h2>
   <p>
     And a preference is a checkbox. The surface is the same again, but the state belongs to the platform: it toggles with the space bar, it submits with a form, and a screen reader announces it as a checkbox.
   </p>
-  <Showcase
+  <ComponentPreview
     html={src.select.html}
     react={src.select.react}
     label={copy.labels.select}
@@ -185,13 +185,13 @@ const src = cardSources(copy);
     <Fragment slot="react">
       <CardSelectDemo client:load lang="en" />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="image">Card with image</h2>
   <p>
     Media arrives. The Box carries no padding: it already clips through <code>overflow</code>, so an <a href="/en/components/image-frame">ImageFrame</a> at <code>data-radius="none"</code> reaches the edge and inherits the rounded corner. The text inset is restored by <code>.sk-card-body</code>, because padding on the root would have inset the photo too.
   </p>
-  <Showcase
+  <ComponentPreview
     html={src.media.html}
     react={src.media.react}
     label={copy.labels.media}
@@ -200,13 +200,13 @@ const src = cardSources(copy);
     <Fragment slot="react">
       <CardMediaDemo client:load lang="en" />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="gradient">Card with gradient</h2>
   <p>
     The wash that keeps text readable over a photo. It sizes itself to the <strong>type</strong> it protects and not to a percentage of the image: the caption is the box and the gradient fills it, fading toward the photo. The three cards show the three <code>data-strength</code> values — <code>sm</code>, <code>md</code> and <code>lg</code> — over the same pale panel, because strength is opacity and tint and never how much of the image is covered. The images are deliberately light: over an already-dark background the wash would be invisible and the example would argue against itself.
   </p>
-  <Showcase
+  <ComponentPreview
     html={src.gradient.html}
     react={src.gradient.react}
     label={copy.labels.gradient}
@@ -215,13 +215,13 @@ const src = cardSources(copy);
     <Fragment slot="react">
       <CardGradientDemo client:load lang="en" />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="image-link">Card with image that navigates</h2>
   <p>
     All three at once: media, gradient and navigation. It is a TileLink at <code>data-padding="none"</code> so the photo reaches the edge, and everything inside is a <code>span</code>, because an <code>a</code> may not contain block-level interactive content.
   </p>
-  <Showcase
+  <ComponentPreview
     html={src.mediaLink.html}
     react={src.mediaLink.react}
     label={copy.labels.mediaLink}
@@ -230,13 +230,13 @@ const src = cardSources(copy);
     <Fragment slot="react">
       <CardMediaLinkDemo client:load lang="en" />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2 id="product">Product card</h2>
   <p>
     The top of the ladder, and the example that proves the rule. <strong>Two</strong> independent decisions live here — see details and add — so the root cannot be a Tile: a link and a button nested inside an <code>a</code> is invalid HTML, and a whole-surface click could only ever mean one of the two. This is what Box is for.
   </p>
-  <Showcase
+  <ComponentPreview
     html={src.product.html}
     react={src.product.react}
     label={copy.labels.product}
@@ -245,7 +245,7 @@ const src = cardSources(copy);
     <Fragment slot="react">
       <CardProductDemo client:load lang="en" />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Do and don't</h2>
   <div class="sk-grid" data-columns="2" data-gap="md" data-multicol>

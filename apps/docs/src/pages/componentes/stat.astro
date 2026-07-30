@@ -2,101 +2,75 @@
 import "@skryensya/core/components/stat.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
-import { StatAnimatedCardsDemo, StatCardsDemo } from "../../components/react-demos/stat";
+import ComponentPreview from "../../components/ComponentPreview.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
+import { StatAnimatedCardsDemo } from "../../components/react-demos/stat";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-const html = `<section
-  class="sk-grid"
-  data-columns="3"
-  data-gap="md"
-  data-multicol
-  aria-label="Resumen del negocio"
->
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="lg"
-  >
-    <div class="sk-stat">
-      <span class="sk-stat__label">Ingresos</span>
-      <span class="sk-stat__value">48.200 €</span>
-      <span class="sk-stat__change" data-trend="up">
-        <span data-sk-icon="arrow-up"></span> 12,5%
-      </span>
-    </div>
-  </article>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="lg"
-  >
-    <div class="sk-stat">
-      <span class="sk-stat__label">Pedidos</span>
-      <span class="sk-stat__value">1.204</span>
-      <span class="sk-stat__change" data-trend="up">
-        <span data-sk-icon="arrow-up"></span> 8,2%
-      </span>
-    </div>
-  </article>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="lg"
-  >
-    <div class="sk-stat">
-      <span class="sk-stat__label">Cancelaciones</span>
-      <span class="sk-stat__value">0,9%</span>
-      <span class="sk-stat__change" data-trend="up">
-        <span data-sk-icon="arrow-down"></span> 0,3 puntos
-      </span>
-    </div>
-  </article>
-</section>`;
-
-const react = `import { Icon } from "@skryensya/react/icon";
-import { Box, Grid } from "@skryensya/react/layout";
-import { Stat } from "@skryensya/react/stat";
-
-function Example() {
-  return (
-    <Grid
-      aria-label="Resumen del negocio"
-      columns={3}
-      data-multicol=""
-      gap="md"
-    >
-      <Box as="article" border="subtle" padding="lg" surface="surface">
-        <Stat
-          label="Ingresos"
-          value="48.200 €"
-          trend="up"
-          change={<><Icon name="arrow-up" /> 12,5%</>}
-        />
-      </Box>
-      <Box as="article" border="subtle" padding="lg" surface="surface">
-        <Stat
-          label="Pedidos"
-          value="1.204"
-          trend="up"
-          change={<><Icon name="arrow-up" /> 8,2%</>}
-        />
-      </Box>
-      <Box as="article" border="subtle" padding="lg" surface="surface">
-        <Stat
-          label="Cancelaciones"
-          value="0,9%"
-          trend="up"
-          change={<><Icon name="arrow-down" /> 0,3 puntos</>}
-        />
-      </Box>
-    </Grid>
-  );
-}`;
+/*
+ * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
+ * island are all emitted from this, so the snippet a reader copies is what they just saw render.
+ */
+const tree = {
+  contract: "layout",
+  signature: "Grid",
+  options: { columns: "3", gap: "md" },
+  attrs: { "aria-label": "Resumen del negocio" },
+  children: [
+    {
+      contract: "box",
+      signature: "Box",
+      options: { surface: "surface", border: "subtle", padding: "lg" },
+      children: {
+        contract: "stat",
+        signature: "Stat",
+        options: { trend: "up" },
+        slots: {
+          label: "Ingresos",
+          value: "48.200 €",
+          /* The glyph belongs in the change: colour alone must not carry the direction, and the
+             stylesheet sizes it to the caption it sits beside. */
+          change: [{ contract: "icon", signature: "Icon", options: { name: "arrow-up", size: "sm" } }, "12,5%"],
+        },
+      },
+    },
+    {
+      contract: "box",
+      signature: "Box",
+      options: { surface: "surface", border: "subtle", padding: "lg" },
+      children: {
+        contract: "stat",
+        signature: "Stat",
+        options: { trend: "up" },
+        slots: {
+          label: "Pedidos",
+          value: "1.204",
+          /* The glyph belongs in the change: colour alone must not carry the direction, and the
+             stylesheet sizes it to the caption it sits beside. */
+          change: [{ contract: "icon", signature: "Icon", options: { name: "arrow-up", size: "sm" } }, "8,2%"],
+        },
+      },
+    },
+    {
+      contract: "box",
+      signature: "Box",
+      options: { surface: "surface", border: "subtle", padding: "lg" },
+      children: {
+        contract: "stat",
+        signature: "Stat",
+        options: { trend: "up" },
+        slots: {
+          label: "Cancelaciones",
+          value: "0,9%",
+          /* The glyph belongs in the change: colour alone must not carry the direction, and the
+             stylesheet sizes it to the caption it sits beside. */
+          change: [{ contract: "icon", signature: "Icon", options: { name: "arrow-up", size: "sm" } }, "0,3 puntos"],
+        },
+      },
+    },
+  ],
+} as const satisfies UsageTree;
 
 const htmlAnimate = `<section
   class="sk-grid"
@@ -234,11 +208,7 @@ function Example() {
     <a href="/componentes/box">Box</a> aporta la superficie y Grid organiza la colección. La flecha
     baja en cancelaciones, pero <code>trend="up"</code> comunica que ese cambio es favorable.
   </p>
-  <Showcase html={html} react={react} label="Stat Cards" note="Grid + Box + Stat + Icon">
-    <Fragment slot="react">
-      <StatCardsDemo client:load />
-    </Fragment>
-  </Showcase>
+  <ComponentPreview tree={tree} label="Stat" />
 
   <h2 id="animar">Animar el valor</h2>
   <p>
@@ -247,7 +217,7 @@ function Example() {
     estático. La duración sale de <code>--motion-count-duration</code>; con
     <code>prefers-reduced-motion</code> salta al final.
   </p>
-  <Showcase
+  <ComponentPreview
     html={htmlAnimate}
     react={reactAnimate}
     label="Stat Cards animadas"
@@ -256,7 +226,7 @@ function Example() {
     <Fragment slot="react">
       <StatAnimatedCardsDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
 const import_ = `/* un drawer ES un Vaul */
@@ -178,7 +178,7 @@ trigger?.addEventListener("click", () => {
     layer son del pattern, y este archivo sólo dice <em>qué Vaul es un drawer</em> y cómo se ve.
   </p>
 
-  <Showcase html={html} label="HTML" viewport="overlay" />
+  <ComponentPreview html={html} label="HTML" viewport="overlay" />
 
   <h2>Envía hooks y nada de estructura</h2>
   <p>
@@ -230,7 +230,7 @@ trigger?.addEventListener("click", () => {
     inerte, backdrop y restauración pertenecen al navegador. Los estilos y la transición siguen
     siendo los mismos porque viven en Core, no en el enhancer.
   </p>
-  <Showcase html={nativeHtml} previewScript={nativeJs} label="Drawer nativo" viewport="overlay" />
+  <ComponentPreview html={nativeHtml} previewScript={nativeJs} label="Drawer nativo" viewport="overlay" />
 
   <h3>Abrir</h3>
   <CodeBlock code={nativeJs} label="JavaScript" />

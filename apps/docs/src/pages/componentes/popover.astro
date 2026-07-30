@@ -1,6 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import "@skryensya/core/components/popover.css";
 import { PopoverDemo } from "../../components/react-demos/popover";
@@ -67,7 +67,7 @@ function Example() {
   <p class="lede">Contenido no modal con título, descripción y cierre explícito sobre top layer nativo.</p>
 
   <h2>Instalación</h2>
-  <Showcase
+  <ComponentPreview
     html={html}
     js={js}
     react={react}
@@ -77,7 +77,7 @@ function Example() {
     <Fragment slot="react">
       <PopoverDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contrato</h2>
   <p>Popover describe contenido auxiliar rico. Menu contiene acciones; Tooltip solo una descripción corta.</p>

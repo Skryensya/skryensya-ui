@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import { tokens } from "../../lib/tokens";
 
 import "../../examples/styling-hook-override.css";
@@ -71,15 +71,15 @@ const consumer = `/* Your CSS reads it once and never branches. */
     Since all variants read the same styling hook, one line restyles them all within a scope. And there is no specificity fight because any rule without a layer beats all layers.
   </p>
 
-  <Showcase code={overrideSource} lang="css" label="src/examples/styling-hook-override.css" note="the override that paints the demo">
+  <ComponentPreview code={overrideSource} lang="css" label="src/examples/styling-hook-override.css" note="the override that paints the demo">
     {/* `.promo` is the override's scope (`.promo .sk-button`); display:contents keeps the scope while
-        letting the buttons lay out in the Showcase stage's own flow. */}
+        letting the buttons lay out in the ComponentPreview stage's own flow. */}
     <div class="promo" style="display: contents">
       <button class="sk-button sk-interactive" data-sk-button data-variant="primary">Save</button>
       <button class="sk-button sk-interactive" data-sk-button data-variant="neutral">Cancel</button>
       <button class="sk-button sk-interactive" data-sk-button data-variant="danger">Delete</button>
     </div>
-  </Showcase>
+  </ComponentPreview>
 
   <p>
     The three buttons above are the same variants of the home button. Three lines restyled them all, without touching the design system and without inventing a new token.

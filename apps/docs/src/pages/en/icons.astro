@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import Used from "../../components/Used.astro";
 import { stableIconNames } from "@skryensya/core/icon";
 import { allSets, iconMarkup } from "../../icons";
@@ -47,7 +47,7 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
     The system names <strong>roles</strong>, not drawings. A set (Lucide, Phosphor, Material) is a brand: it chooses the geometry that each role occupies, just as a brand chooses the hue of <code>--ramp-accent-600</code>. How you mount the SVG in React or vanilla is in <a href="/en/components/icon">Icon</a>.
   </p>
 
-  <Showcase html={vocabHtml} label="Vocabulario estable" />
+  <ComponentPreview html={vocabHtml} label="Vocabulario estable" />
   <p>
     Change brand, mode or contrast above: the icons follow, and do not declare a single color token. They inherit <code>currentColor</code>.
   </p>

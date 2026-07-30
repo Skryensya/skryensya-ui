@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { segmentedTree } from "../../../demos/segmented";
 import { getLocale, useTranslations } from "../../../i18n";
 
@@ -20,7 +20,7 @@ await initComponents();`;
     SegmentedControl is a single choice of a small, fixed set, shown at once: a radiogroup with button bar clothing. To navigate between panels use <a href="/en/components/tabs">Tabs</a>; for many options or free text, <a href="/en/components/select">Select</a>.
   </p>
 
-  <Showcase tree={segmentedTree(t)} label="Segmented" />
+  <ComponentPreview tree={segmentedTree(t)} label="Segmented" />
   <p>
     The vanilla enhancer selects with click and arrows; <code>Home</code> and <code>End</code> jump to the first and last segment. The chosen option is <code>data-value</code> and is announced with <code>aria-checked</code>. Each segment paints <code>--size-control-sm</code> and retains a hit from <code>44px</code> via <code>:: after</code> (the indicator follows the painted box).
   </p>

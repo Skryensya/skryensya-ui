@@ -1,6 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { emptyStateTree } from "../../../demos/empty-state";
 import { getLocale, useTranslations } from "../../../i18n";
 
@@ -19,7 +19,7 @@ const install = `@import "@skryensya/core/components/empty-state.css";`;
   <p class="lede">Explains why there is no content and offers a concrete next action.</p>
 
   <h2>Facility</h2>
-  <Showcase tree={emptyStateTree(t)} label="Empty State" />
+  <ComponentPreview tree={emptyStateTree(t)} label="Empty State" />
 
   <h2>Contract</h2>
   <p>The title names the state, the description explains, and the action resolves. Do not use EmptyState during loading.</p>

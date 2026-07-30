@@ -1,6 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import "@skryensya/core/components/time-field.css";
 import { TimeFieldDemo } from "../../../components/react-demos/time-field";
@@ -40,11 +40,11 @@ const react = `import { TimeField } from "@skryensya/react/time-field";
     segments directly.
   </p>
 
-  <Showcase html={customHtml} react={react} label="TimeField">
+  <ComponentPreview html={customHtml} react={react} label="TimeField">
     <Fragment slot="react">
       <TimeFieldDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contract</h2>
   <p>
@@ -77,7 +77,7 @@ const react = `import { TimeField } from "@skryensya/react/time-field";
     inconsistency across browsers, or its total absence of styling hooks, actually costs you
     something — the same trade DatePicker makes against a plain <code>type="date"</code> input.
   </p>
-  <Showcase html={nativeHtml} label="Native time input" />
+  <ComponentPreview html={nativeHtml} label="Native time input" />
 
   <h2>Accessibility</h2>
   <p>

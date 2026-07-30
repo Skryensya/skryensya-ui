@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { IconBasicDemo, IconSizeDemo } from "../../../components/react-demos/icon";
 
 const html = `<div class="sk-inline">
@@ -104,11 +104,11 @@ const sizesCss = `/* another size? the hook is redeclared, like any value
     CSS does not touch <code>fill</code> or <code>stroke</code> are documented in <a href="/en/icons">Iconography</a>.
   </p>
 
-  <Showcase html={html} react={react} label="Icon">
+  <ComponentPreview html={html} react={react} label="Icon">
     <Fragment slot="react">
       <IconBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>React</h2>
   <p>
@@ -151,10 +151,10 @@ const sizesCss = `/* another size? the hook is redeclared, like any value
   <p>
     Three values of <strong>a</strong> hook. <code>--sk-icon-size</code> is density invariant: density is spacing; an icon is contained next to a glyph — if the text does not shrink, neither does the icon.
   </p>
-  <Showcase html={sizeHtml} react={sizeReact} label="Icon · sm / md / lg">
+  <ComponentPreview html={sizeHtml} react={sizeReact} label="Icon · sm / md / lg">
     <Fragment slot="react">
       <IconSizeDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <CodeBlock code={sizesCss} label="arbitrary size" note="no numeric prop" />
 </Base>

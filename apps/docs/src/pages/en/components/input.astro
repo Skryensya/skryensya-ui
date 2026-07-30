@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import { InputBasicDemo } from "../../../components/react-demos/input";
 
@@ -65,11 +65,11 @@ function Example() {
     The native text control stays native: there is no machine, and there is no border <code>div</code> posing as input. The platform is left with the validation, the autofill, the IME and the association to the form.
   </p>
 
-  <Showcase html={html} react={react} label="Input">
+  <ComponentPreview html={html} react={react} label="Input">
     <Fragment slot="react">
       <InputBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>Density compacts the space around the field, not its interaction area: Input retains a minimum of <code>44px</code> high, even with <code>data-size="sm"</code>.</p>
 
   <h2>A class for all text controls</h2>

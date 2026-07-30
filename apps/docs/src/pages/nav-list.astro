@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
-import Showcase from "../components/Showcase.astro";
+import ComponentPreview from "../components/ComponentPreview.astro";
 import { probeProp, tokens } from "../lib/tokens";
 
 const hooks = tokens
@@ -68,13 +68,13 @@ const html = `<nav class="sk-nav-list" aria-label="Principal">
     lo que un lector de pantalla debería escuchar.
   </p>
 
-  <Showcase code={html} lang="html" label="Nav list">
+  <ComponentPreview code={html} lang="html" label="Nav list">
     {/* A nav-list is sized by its host, a sidebar rail, a navbar row. The demo pins it to a rail width
         so it reads as one; the code shows the markup without that host-owned width. */}
     <div style="inline-size: 14rem">
       <Fragment set:html={html} />
     </div>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Vertical, más compacta</h2>
   <p>

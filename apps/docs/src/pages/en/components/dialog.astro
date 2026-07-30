@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 
 const install = `pnpm add @skryensya/core`;
@@ -205,7 +205,7 @@ const vaulHtml = `<button
   <p>
     Anatomy: <code>sk-dialog__header</code> (title with <code>Heading</code> + <code>sk-dialog__title</code>, and closure), <code>sk-dialog__body</code> and <code>sk-dialog__footer</code> (controls). The closure and footer are <code>&lt;form method="dialog"&gt;</code>: they close without a handler and leave the <code>value</code> in <code>dialog.returnValue</code>.
   </p>
-  <Showcase html={confirmHtml} previewScript={confirmJs} label="Confirm" viewport="overlay" />
+  <ComponentPreview html={confirmHtml} previewScript={confirmJs} label="Confirm" viewport="overlay" />
 
   <h2>Opening it</h2>
   <CodeBlock code={confirmJs} label="JavaScript" />
@@ -270,7 +270,7 @@ const vaulHtml = `<button
   <p>
     When the content requests a surface from the edge on mobile, the same <code>&lt;dialog&gt;</code> can opt in <strong>Dialog Vaul</strong>: adds slide, light-dismiss and drag-to-dismiss. The mode (focus, Escape, inert) remains <code>showModal()</code>.
   </p>
-  <Showcase html={vaulHtml} label="Dialog Vaul" viewport="overlay" />
+  <ComponentPreview html={vaulHtml} label="Dialog Vaul" viewport="overlay" />
 
   <h3>What</h3>
   <ul>

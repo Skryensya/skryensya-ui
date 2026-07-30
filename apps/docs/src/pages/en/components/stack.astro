@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { StackBasicDemo } from "../../../components/react-demos/layout";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -48,11 +48,11 @@ function Example() {
     Stack stacks content on the vertical axis. It is a structural pattern: the element that carries it preserves the semantics of the content, and the gap expresses the separation between its children.
   </p>
 
-  <Showcase html={html} react={react} label="Stack">
+  <ComponentPreview html={html} react={react} label="Stack">
     <Fragment slot="react">
       <StackBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Authored HTML</h2>
   <p>

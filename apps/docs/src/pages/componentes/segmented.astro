@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import { segmentedTree } from "../../demos/segmented";
 import { getLocale, useTranslations } from "../../i18n";
 
@@ -23,7 +23,7 @@ await initComponents();`;
     <a href="/componentes/select">Select</a>.
   </p>
 
-  <Showcase tree={segmentedTree(t)} label="Segmented" />
+  <ComponentPreview tree={segmentedTree(t)} label="Segmented" />
   <p>
     El enhancer vanilla selecciona con click y con flechas; <code>Home</code> y <code>End</code> saltan
     al primer y último segmento. La opción elegida queda en <code>data-value</code> y se anuncia con

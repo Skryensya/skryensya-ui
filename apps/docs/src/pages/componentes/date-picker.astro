@@ -1,6 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { DatePickerCustomDemo, DatePickerDisabledDemo } from "../../components/react-demos/date-picker";
 import "@skryensya/core/components/date-picker.css";
@@ -129,16 +129,16 @@ function Example() {
 
   <h2>Nativo</h2>
   <p>El control de plataforma, sin JavaScript ni enhancer.</p>
-  <Showcase html={nativeHtml} label="DatePicker nativo" />
+  <ComponentPreview html={nativeHtml} label="DatePicker nativo" />
 
   <h2>Custom</h2>
   <p>El campo custom y su calendario emergente viven en una demostración independiente.</p>
   {/* `overlay` (~24rem): el calendario reserva la altura de sus seis filas dentro del frame. */}
-  <Showcase html={customHtml} react={react} label="DatePicker custom" viewport="overlay">
+  <ComponentPreview html={customHtml} react={react} label="DatePicker custom" viewport="overlay">
     <Fragment slot="react">
       <DatePickerCustomDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Disabled</h2>
   <p>
@@ -151,11 +151,11 @@ function Example() {
     <code>.sk-date-picker__control[data-disabled]</code>, que reescribe esos tres hooks: el input y el
     trigger los heredan sin reglas propias.
   </p>
-  <Showcase html={disabledHtml} react={disabledReact} label="DatePicker (disabled)">
+  <ComponentPreview html={disabledHtml} react={disabledReact} label="DatePicker (disabled)">
     <Fragment slot="react">
       <DatePickerDisabledDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Cuál usar</h2>
   <p>

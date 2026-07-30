@@ -1,6 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import DimensionSelect from "../../../components/DimensionSelect.astro";
@@ -655,11 +655,11 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     Table maintains the native semantics of <code>&lt;table&gt;</code>. The overflow wrapper preserves a readable width per column and scrolls the table instead of compressing it. Header and first sticky column are opt-in and use the same contract on mobile and desktop.
   </p>
 
-  <Showcase html={html} react={react} label="Table">
+  <ComponentPreview html={html} react={react} label="Table">
     <Fragment slot="react">
       <TableBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Uncompressed horizontal scroll</h2>
   <p>
@@ -670,7 +670,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
   <p>
     Use <code>data-sticky-column</code> in HTML or <code>stickyColumn</code> in React. The first cell of each row is frozen and its shadow separates the identifier from the data passing below it. It should be a <code>&lt;th scope="row"&gt;</code>. It does not depend on a breakpoint: it works the same with touch, mouse, zoom or a narrow window.
   </p>
-  <Showcase
+  <ComponentPreview
     html={stickyColumnHtml}
     react={stickyColumnReact}
     label="Primera columna sticky"
@@ -678,13 +678,13 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     <Fragment slot="react">
       <TableStickyColumnDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Sticky header row</h2>
   <p>
     Use <code>data-sticky-header</code> or <code>stickyHeader</code>. The wrapper gains vertical scroll and a maximum height of <code>20rem</code>, which you can override as in this example. The header is visible on both desktop and mobile; If you combine both modifiers, the corner cell is on top of the two layers.
   </p>
-  <Showcase
+  <ComponentPreview
     html={stickyHeaderHtml}
     react={stickyHeaderReact}
     label="Header row sticky"
@@ -692,7 +692,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     <Fragment slot="react">
       <TableStickyHeaderDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>With pagination</h2>
   <p>
@@ -705,7 +705,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     they go together in <code>sk-table-pager__end</code>. Use <code>data-layout="fixed"</code> so that no
     the column widths dance.
   </p>
-  <Showcase
+  <ComponentPreview
     code={pagedCode}
     codeFull={pagedCodeFull}
     react={pagedReact}
@@ -777,20 +777,20 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     <Fragment slot="react">
       <TablePagerDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Inside a Box</h2>
   <p>
     Within the <code>padding</code> of a <code>.sk-box</code>, the <code>.sk-table</code> rounds with the nested element radius (<code>--radius-control</code>) instead of the surface: Box provides the surface and the table is an element within it. This way the radius is tighter, never collapses into a square box, and continues to accompany the <code>data-radius</code> axis.
   </p>
-  <Showcase html={boxHtml} label="Table in Box" />
+  <ComponentPreview html={boxHtml} label="Table in Box" />
 
   <h2>Local density</h2>
   <p>
     The scope contract is just <code>data-sk-density-scope</code> and a density value. Here <code>--sk-density-factor</code> is relative to the system; write <code>--sk-density</code> in the same node if you need an absolute value. The numbers are still continuous.
   </p>
-  <Showcase html={spaciousDensityHtml} label="System wide table · 1.2×" />
-  <Showcase html={compactDensityHtml} label="Compact table · 0.6× system" />
+  <ComponentPreview html={spaciousDensityHtml} label="System wide table · 1.2×" />
+  <ComponentPreview html={compactDensityHtml} label="Compact table · 0.6× system" />
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />

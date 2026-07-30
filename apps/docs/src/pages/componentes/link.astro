@@ -2,7 +2,7 @@
 import "@skryensya/core/components/tile.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import { LinkBasicDemo, TileLinkDemo } from "../../components/react-demos/link";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -80,11 +80,11 @@ function Example() {
     no un color inventado por el componente.
   </p>
 
-  <Showcase html={html} react={react} label="Link">
+  <ComponentPreview html={html} react={react} label="Link">
     <Fragment slot="react">
       <LinkBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Link de superficie: TileLink</h2>
   <p>
@@ -92,11 +92,11 @@ function Example() {
     <code>&lt;a&gt;</code>, pero no es <code>sk-link</code>: conserva la geometría Tile y su state layer
     porque el contexto, no un subrayado en prosa, comunica que la superficie es navegable.
   </p>
-  <Showcase html={tileLinkHtml} react={tileLinkReact} label="TileLink">
+  <ComponentPreview html={tileLinkHtml} react={tileLinkReact} label="TileLink">
     <Fragment slot="react">
       <TileLinkDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>El HTML autorado funciona sin inicialización. <code>createTileLink</code> solo crea el ancla cuando el árbol se genera desde JavaScript.</p>
   <CodeBlock code={tileLinkVanilla} label="JavaScript" />
 

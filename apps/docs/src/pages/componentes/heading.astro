@@ -2,7 +2,7 @@
 import "@skryensya/core/components/dialog.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import {
   HeadingDisplayDemo,
   HeadingDocumentDemo,
@@ -238,42 +238,42 @@ function Example() {
   </p>
 
   <h3>Display</h3>
-  <Showcase html={displayHtml} react={displayReact} label="Escala display">
+  <ComponentPreview html={displayHtml} react={displayReact} label="Escala display">
     <Fragment slot="react">
       <HeadingDisplayDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Documento</h3>
-  <Showcase html={documentHtml} react={documentReact} label="Escala h1–h6">
+  <ComponentPreview html={documentHtml} react={documentReact} label="Escala h1–h6">
     <Fragment slot="react">
       <HeadingDocumentDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Título de página</h2>
   <p>El único <code>h1</code> presenta la página; un display aporta presencia sin inventar otra semántica.</p>
-  <Showcase html={pageTitleHtml} react={pageTitleReact} label="Título de página">
+  <ComponentPreview html={pageTitleHtml} react={pageTitleReact} label="Título de página">
     <Fragment slot="react">
       <HeadingPageTitleDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Jerarquía de secciones</h2>
   <p>La estructura avanza de <code>h2</code> a <code>h3</code>; el tamaño visual puede acompañar el nivel.</p>
-  <Showcase html={outlineHtml} react={outlineReact} label="Jerarquía de contenido">
+  <ComponentPreview html={outlineHtml} react={outlineReact} label="Jerarquía de contenido">
     <Fragment slot="react">
       <HeadingOutlineDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Jerarquía compacta</h2>
   <p>Un heading conserva su lugar en el documento aunque el contexto visual use el piso <code>h4</code>.</p>
-  <Showcase html={compactHtml} react={compactReact} label="Heading compacto">
+  <ComponentPreview html={compactHtml} react={compactReact} label="Heading compacto">
     <Fragment slot="react">
       <HeadingCompactDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Flush</h2>
   <p>
@@ -282,11 +282,11 @@ function Example() {
     dialog con <code>sk-dialog__title</code>, cabecera de card) y no quieres que el margen o el
     padding lo empujen contra el borde. No se infiere de <code>:first-child</code>.
   </p>
-  <Showcase html={flushHtml} react={flushReact} label="Heading flush">
+  <ComponentPreview html={flushHtml} react={flushReact} label="Heading flush">
     <Fragment slot="react">
       <HeadingFlushDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

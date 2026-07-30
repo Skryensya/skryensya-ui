@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import {
   FlyoutBasicDemo,
@@ -381,11 +381,11 @@ function remountFlyout(root, value) {
     también cierran. Solo puede haber un Flyout abierto a la vez.
   </p>
 
-  <Showcase html={flyoutHtml} react={reactBasic} label="Flyout" viewport="menu">
+  <ComponentPreview html={flyoutHtml} react={reactBasic} label="Flyout" viewport="menu">
     <Fragment slot="react">
       <FlyoutBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Cuándo usarlo</h2>
   <ul>
@@ -462,66 +462,66 @@ function remountFlyout(root, value) {
     El caso típico: un control de ~13.5rem de ancho. El panel sale al inline-end y no compite con el
     alto del rail.
   </p>
-  <Showcase html={railHtml} react={reactRail} label="Flyout en riel" viewport="menu">
+  <ComponentPreview html={railHtml} react={reactRail} label="Flyout en riel" viewport="menu">
     <Fragment slot="react">
       <FlyoutRailDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Solo uno abierto</h2>
   <p>
     Abre uno y luego el otro: el primero se cierra solo. Mismo contrato en Vanilla y React vía el
     evento de documento <code>sk-flyout-open</code>.
   </p>
-  <Showcase html={exclusiveHtml} react={reactExclusive} label="Dos Flyouts" viewport="menu">
+  <ComponentPreview html={exclusiveHtml} react={reactExclusive} label="Dos Flyouts" viewport="menu">
     <Fragment slot="react">
       <FlyoutExclusiveDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Ítem deshabilitado</h2>
   <p>
     Marca el ítem con <code>data-disabled</code> (o <code>disabled: true</code> en React). No se puede
     elegir; el resto sigue activo.
   </p>
-  <Showcase html={disabledItemHtml} react={reactDisabledItem} label="Ítem deshabilitado" viewport="menu">
+  <ComponentPreview html={disabledItemHtml} react={reactDisabledItem} label="Ítem deshabilitado" viewport="menu">
     <Fragment slot="react">
       <FlyoutDisabledItemDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Flyout deshabilitado</h2>
   <p>
     <code>data-disabled</code> en la raíz (o <code>disabled</code> en React) bloquea apertura y cambio
     de valor.
   </p>
-  <Showcase html={disabledHtml} react={reactDisabled} label="Flyout deshabilitado" viewport="menu">
+  <ComponentPreview html={disabledHtml} react={reactDisabled} label="Flyout deshabilitado" viewport="menu">
     <Fragment slot="react">
       <FlyoutDisabledDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Lista larga</h2>
   <p>
     El panel limita su alto (<code>--sk-flyout-panel-max-block-size</code>, 18rem por defecto) y hace
     scroll cuando hace falta.
   </p>
-  <Showcase html={longHtml} react={reactLong} label="Lista larga" viewport="menu">
+  <ComponentPreview html={longHtml} react={reactLong} label="Lista larga" viewport="menu">
     <Fragment slot="react">
       <FlyoutLongDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Placeholder</h2>
   <p>
     Si no hay <code>data-value</code> que coincida con un ítem —por ejemplo un valor externo
     “personalizado”— el trigger muestra el placeholder.
   </p>
-  <Showcase html={placeholderHtml} react={reactPlaceholder} label="Placeholder" viewport="menu">
+  <ComponentPreview html={placeholderHtml} react={reactPlaceholder} label="Placeholder" viewport="menu">
     <Fragment slot="react">
       <FlyoutPlaceholderDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Remontar con otro valor</h2>
   <p>

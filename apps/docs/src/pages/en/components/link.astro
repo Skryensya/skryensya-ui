@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { LinkBasicDemo, TileLinkDemo } from "../../../components/react-demos/link";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -67,21 +67,21 @@ function Example() {
     Link preserves the native semantics of <code>&lt;a&gt;</code>: use it for navigation and provide a valid <code>href</code>. It is a <strong>text link</strong> with permanent underlining, the only treatment that WCAG 1.4.1 allows in prose. The hover uses the state layer (<code>sk-interactive</code>), not a color invented by the component.
   </p>
 
-  <Showcase html={html} react={react} label="Link">
+  <ComponentPreview html={html} react={react} label="Link">
     <Fragment slot="react">
       <LinkBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Surface Link: TileLink</h2>
   <p>
     When an entire surface is a single destination, use <code>TileLink</code>. It also renders a <code>&lt;a&gt;</code>, but it is not <code>sk-link</code>: it preserves the Tile geometry and its state layer because the context, not a prose underline, communicates that the surface is navigable.
   </p>
-  <Showcase html={tileLinkHtml} react={tileLinkReact} label="TileLink">
+  <ComponentPreview html={tileLinkHtml} react={tileLinkReact} label="TileLink">
     <Fragment slot="react">
       <TileLinkDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>Authored HTML works without initialization. <code>createTileLink</code> only creates the anchor when the tree is generated from JavaScript.</p>
   <CodeBlock code={tileLinkVanilla} label="JavaScript" />
 

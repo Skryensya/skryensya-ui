@@ -1,6 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import { ComboboxBasicDemo } from "../../../components/react-demos/combobox";
 import "@skryensya/core/components/combobox.css";
@@ -191,7 +191,7 @@ function Example() {
   <p class="lede">Editable suggestions with context, clear statuses, and full keyboard navigation.</p>
 
   <h2>Facility</h2>
-  <Showcase
+  <ComponentPreview
     html={html}
     js={js}
     react={react}
@@ -201,7 +201,7 @@ function Example() {
     <Fragment slot="react">
       <ComboboxBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contract</h2>
   <p>

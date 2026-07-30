@@ -4,11 +4,11 @@ import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import {
-  ImageFrameAspectDemo,
-  ImageFrameFitDemo,
-  ImageFramePositionDemo,
-} from "../../../components/react-demos/image-frame";
-import { DEMO_IMAGE_FRAME_SRC, imageFrameTree } from "../../../demos/image-frame";
+  imageFrameAspectTree,
+  imageFrameFitTree,
+  imageFramePositionTree,
+  imageFrameTree,
+} from "../../../demos/image-frame";
 import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -18,124 +18,6 @@ const styles = `@import "@skryensya/core/patterns/image-frame.css";
 
 const t = useTranslations(getLocale(Astro.url));
 
-/*
- * Aspect / fit / position stay authored: they wrap frames in docs-only `demo-grid` / `demo-shot`
- * chrome that no signature emits.
- */
-const demoSrc = DEMO_IMAGE_FRAME_SRC;
-
-const aspectHtml = `<div class="demo-grid">
-  <figure class="demo-shot">
-    <div class="sk-image-frame" data-aspect="1/1" data-fit="cover">
-      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
-    </div>
-    <figcaption><code>1/1</code></figcaption>
-  </figure>
-  <figure class="demo-shot">
-    <div class="sk-image-frame" data-aspect="4/3" data-fit="cover">
-      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
-    </div>
-    <figcaption><code>4/3</code></figcaption>
-  </figure>
-  <figure class="demo-shot">
-    <div class="sk-image-frame" data-aspect="16/9" data-fit="cover">
-      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
-    </div>
-    <figcaption><code>16/9</code></figcaption>
-  </figure>
-  <figure class="demo-shot">
-    <div
-      class="sk-image-frame"
-      data-aspect="9/16"
-      data-fit="cover"
-    >
-      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
-    </div>
-    <figcaption><code>9/16</code></figcaption>
-  </figure>
-</div>`;
-
-const fitHtml = `<div class="demo-grid demo-grid--fit">
-  <figure class="demo-shot">
-    <div
-      class="sk-image-frame"
-      data-aspect="1/1"
-      data-fit="cover"
-      data-border="subtle"
-    >
-      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
-    </div>
-    <figcaption><code>cover</code></figcaption>
-  </figure>
-  <figure class="demo-shot">
-    <div
-      class="sk-image-frame"
-      data-aspect="1/1"
-      data-fit="contain"
-      data-border="subtle"
-    >
-      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
-    </div>
-    <figcaption><code>contain</code></figcaption>
-  </figure>
-  <figure class="demo-shot">
-    <div
-      class="sk-image-frame"
-      data-aspect="1/1"
-      data-fit="fill"
-      data-border="subtle"
-    >
-      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
-    </div>
-    <figcaption><code>fill</code></figcaption>
-  </figure>
-</div>`;
-
-const positionHtml = `<div class="demo-grid">
-  <figure class="demo-shot">
-    <div
-      class="sk-image-frame"
-      data-aspect="1/1"
-      data-fit="cover"
-      data-position="top-left"
-    >
-      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
-    </div>
-    <figcaption><code>top-left</code></figcaption>
-  </figure>
-  <figure class="demo-shot">
-    <div
-      class="sk-image-frame"
-      data-aspect="1/1"
-      data-fit="cover"
-      data-position="center"
-    >
-      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
-    </div>
-    <figcaption><code>center</code></figcaption>
-  </figure>
-  <figure class="demo-shot">
-    <div
-      class="sk-image-frame"
-      data-aspect="1/1"
-      data-fit="cover"
-      data-position="bottom-right"
-    >
-      <img class="sk-image-frame__media" src="${demoSrc}" alt="" />
-    </div>
-    <figcaption><code>bottom-right</code></figcaption>
-  </figure>
-</div>`;
-
-const positionReact = `import { ImageFrame } from "@skryensya/react/image-frame";
-
-<ImageFrame
-  aspect="1/1"
-  fit="cover"
-  position="top-left"
-  src="/foto.jpg"
-  alt=""
-/>;`;
 ---
 
 <Base
@@ -159,33 +41,21 @@ const positionReact = `import { ImageFrame } from "@skryensya/react/image-frame"
     <code>data-aspect</code> is the box, not the file. With <code>cover</code> (the default) the media
     fills the box and is cropped; with <code>auto</code> the frame follows the media's intrinsic size.
   </p>
-  <ComponentPreview html={aspectHtml} label="Aspect">
-    <Fragment slot="react">
-      <ImageFrameAspectDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={imageFrameAspectTree(t)} label="Aspect" />
 
   <h2>Fit</h2>
   <p>
     Same <code>1/1</code> box, different <code>data-fit</code>: <code>cover</code> crops,
     <code>contain</code> letterboxes (the frame's background shows), <code>fill</code> stretches.
   </p>
-  <ComponentPreview html={fitHtml} label="Fit">
-    <Fragment slot="react">
-      <ImageFrameFitDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={imageFrameFitTree(t)} label="Fit" />
 
   <h2>Position</h2>
   <p>
     With <code>cover</code>, <code>data-position</code> chooses the crop anchor. The demo puts a disc at
     the top left and a block at the bottom right so the anchor is easy to see.
   </p>
-  <ComponentPreview html={positionHtml} react={positionReact} label="Position">
-    <Fragment slot="react">
-      <ImageFramePositionDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={imageFramePositionTree(t)} label="Position" />
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />
@@ -241,35 +111,3 @@ const positionReact = `import { ImageFrame } from "@skryensya/react/image-frame"
     ]}
   />
 </Base>
-
-<style is:global>
-  .demo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
-    gap: var(--space-stack-md);
-    align-items: start;
-  }
-
-  .demo-shot {
-    margin: 0;
-    display: grid;
-    gap: var(--space-stack-xs);
-  }
-
-  .demo-grid--fit .demo-shot {
-    max-inline-size: 12rem;
-    margin-inline: auto;
-  }
-
-  .demo-shot figcaption {
-    text-align: center;
-    color: var(--color-text-tertiary);
-    font-size: var(--font-size-caption);
-  }
-
-  /* Tall ratio needs a narrower column so 9/16 doesn't dominate the stage. */
-  .demo-shot:has([data-aspect="9/16"]) {
-    max-inline-size: 7rem;
-    margin-inline: auto;
-  }
-</style>

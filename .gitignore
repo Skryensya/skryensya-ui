@@ -14,6 +14,8 @@ PORTING-DEMOS.md
 
 # Scratch harnesses for that same porting: they check a page's stages rather than the product, and
 # PORTING-DEMOS.md carries the copy that matters. Delete them with it.
-verify-stages.mjs
-shot-stages.mjs
+# The glob, not the bare name: these borrow Playwright from packages/ai-gates, so a per-page copy
+# has to sit inside the repo to resolve it, and everyone porting a page makes one.
+verify-stages*.mjs
+shot-stages*.mjs
 apps/docs/check-trees.mts

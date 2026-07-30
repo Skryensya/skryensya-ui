@@ -3,7 +3,7 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
-import { carouselCardsTree } from "../../../demos/carousel";
+import { carouselBareTree, carouselCardsTree } from "../../../demos/carousel";
 import { getLocale, useTranslations } from "../../../i18n";
 import "@skryensya/core/components/carousel.css";
 import "@skryensya/icons-lucide/carousel.css";
@@ -87,20 +87,20 @@ const featureSlide = (opts: {
 
 const slides = [
   featureSlide({
-    eyebrow: "Productividad",
+    eyebrow: "Productivity",
     title: "Search",
     body: "Find any project instantly, with live shortcuts and filters.",
     position: "top",
   }),
   featureSlide({
-    eyebrow: "Contexto",
+    eyebrow: "Context",
     title: "Activity",
     body: "Six months of changes in a timeline that does not lose track.",
     position: "center",
   }),
   featureSlide({
     eyebrow: "Analytics",
-    title: "Informes",
+    title: "Reports",
     body: "Cohorts, scheduled export and metrics that fit on one card.",
     position: "bottom",
   }),
@@ -190,31 +190,11 @@ const autoHtml = `<section
 >
   <div class="sk-carousel__track">
 ${[
-  person("Ada Lovelace", "AL", "Plataforma"),
-  person("Grace Hopper", "GH", "Compiladores"),
-  person("Radia Perlman", "RP", "Redes"),
+  person("Ada Lovelace", "AL", "Platform"),
+  person("Grace Hopper", "GH", "Compilers"),
+  person("Radia Perlman", "RP", "Networks"),
   person("Barbara McClintock", "BM", "Genetics"),
-  person("Karen Spärck Jones", "KS", "Recovery"),
-].join("\n")}
-  </div>
-</section>`;
-
-/* No controls: the same track, without buttons or dots on either layer. It drags or
-   slide, and the peek of the next slide is the only thing that announces it. */
-const bareHtml = `<section
-  class="sk-carousel"
-  data-sk-carousel
-  data-controls="none"
-  aria-label="Team"
-  style="--sk-carousel-slide-size: min(42%, 14rem)"
->
-  <div class="sk-carousel__track">
-${[
-  person("Ada Lovelace", "AL", "Plataforma"),
-  person("Grace Hopper", "GH", "Compiladores"),
-  person("Radia Perlman", "RP", "Redes"),
-  person("Barbara McClintock", "BM", "Genetics"),
-  person("Karen Spärck Jones", "KS", "Recovery"),
+  person("Karen Spärck Jones", "KS", "Retrieval"),
 ].join("\n")}
   </div>
 </section>`;
@@ -295,7 +275,11 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     with <code>data-mouse-drag="off"</code> when the slide text is to be selected: the
     Drag deletes the selection.
   </p>
-  <ComponentPreview html={bareHtml} label="No controls" note='data-controls="none" · arrastra y desliza' />
+  <ComponentPreview
+    tree={carouselBareTree(t)}
+    label="No controls"
+    note='data-controls="none" · drag and swipe'
+  />
 
   <h2>Without JS: native controls</h2>
   <p>

@@ -181,8 +181,13 @@ export const radioGroupContract = {
     /**
      * The selected option, named by its key. A GROUP property: exclusivity is the claim that only
      * one can be selected, so no entry can own it.
+     *
+     * React spells it `defaultValue`, and the difference is not cosmetic: `value` there is the
+     * CONTROLLED prop, so emitting it would freeze the demo on whichever option it named. The
+     * markup's `data-value` is a starting point the machine then owns, which is what
+     * `defaultValue` means. Same reasoning, same fix as Slider, Tabs and TimeField.
      */
-    value: { type: "string", attr: "data-value", machineInput: true },
+    value: { type: "string", attr: "data-value", machineInput: true, prop: "defaultValue" },
     /**
      * Two attributes, one value: the CSS reads `data-orientation` and the accessibility tree reads
      * `aria-orientation`, and a radiogroup owes the second one — arrow keys move along the axis it

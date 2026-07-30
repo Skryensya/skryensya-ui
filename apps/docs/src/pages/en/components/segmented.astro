@@ -2,27 +2,12 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
+import { segmentedTree } from "../../../demos/segmented";
+import { getLocale, useTranslations } from "../../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
-
-/*
- * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
- * island are all emitted from this, so the snippet a reader copies is what they just saw render.
- */
-const tree = {
-  contract: "segmented",
-  signature: "Segmented",
-  options: { value: "day" },
-  attrs: { "aria-label": "Range" },
-  slots: {
-    items: [
-      { options: { value: "day" }, slots: { label: "Day" } },
-      { options: { value: "week" }, slots: { label: "Week" } },
-      { options: { value: "month" }, slots: { label: "Month" } },
-    ],
-  },
-} as const satisfies UsageTree;
 
 const js = `import { initComponents } from "@skryensya/vanilla/auto";
 
@@ -35,7 +20,7 @@ await initComponents();`;
     SegmentedControl is a single choice of a small, fixed set, shown at once: a radiogroup with button bar clothing. To navigate between panels use <a href="/en/components/tabs">Tabs</a>; for many options or free text, <a href="/en/components/select">Select</a>.
   </p>
 
-  <Showcase tree={tree} label="Segmented" />
+  <Showcase tree={segmentedTree(t)} label="Segmented" />
   <p>
     The vanilla enhancer selects with click and arrows; <code>Home</code> and <code>End</code> jump to the first and last segment. The chosen option is <code>data-value</code> and is announced with <code>aria-checked</code>. Each segment paints <code>--size-control-sm</code> and retains a hit from <code>44px</code> via <code>:: after</code> (the indicator follows the painted box).
   </p>

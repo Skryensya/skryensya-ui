@@ -9,3 +9,14 @@ Loader:
     - "el contenido tiene forma y se puede prefigurar; eso es un Placeholder"
   alternatives:
     - Placeholder
+
+Loader.status:
+  useWhen:
+    - "la espera ya se ve —hay esqueletos, o una barra— y falta que además se anuncie"
+    - "el estado de carga tiene que existir para un lector de pantalla sin dibujar nada"
+  avoidWhen:
+    - "no hay nada más que indique la espera; entonces se necesita un Loader visible"
+    - "el progreso es medible; eso es un Progress, que ya se anuncia solo"
+  alternatives:
+    - Loader
+    - Progress

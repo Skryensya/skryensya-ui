@@ -54,7 +54,16 @@ export function getLocale(url: URL | string): Locale {
  * `vars` interpolates `{name}` placeholders — used by the strings that carry a value the caller owns
  * (the palette name, the package name in the footer).
  */
-export function useTranslations(locale: Locale) {
+/**
+ * The translator itself, as a type.
+ *
+ * Named because things other than a page now take one: a demo's usage tree is one composition read
+ * in two languages, so it is authored as a function of `t` (see `src/demos/`) instead of being copied
+ * per locale.
+ */
+export type Translate = (key: UIKey, vars?: Record<string, string>) => string;
+
+export function useTranslations(locale: Locale): Translate {
   return function t(key: UIKey, vars?: Record<string, string>): string {
     const table = ui[locale] as Record<string, string>;
     const fallback = ui[defaultLocale] as Record<string, string>;

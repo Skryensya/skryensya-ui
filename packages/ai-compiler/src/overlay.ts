@@ -34,6 +34,11 @@ export function readOverlays(dir: string): OverlayReadResult {
   const semantics: Record<string, ContractSemantics> = {};
   const conflicts: string[] = [];
 
+  /** Every signature an overlay may point at. Built once; `alternatives` are checked against it. */
+  const published = new Set(
+    contractIds().flatMap((id) => Object.keys(getContract(id)?.signatures ?? {})),
+  );
+
   for (const file of listYaml(dir)) {
     const id = file.replace(/\.ya?ml$/, "");
     const contract = getContract(id);
@@ -59,6 +64,24 @@ export function readOverlays(dir: string): OverlayReadResult {
       if (!parsed[signature]) {
         conflicts.push(
           `${file}: signature "${signature}" has no semantics. A signature an agent cannot choose on purpose is not published.`,
+        );
+      }
+    }
+
+    /*
+     * `alternatives` is a POINTER, not prose: an agent reads "use X instead" and asks for X. Four of
+     * these named something no signature declares — `Avatar` where the signature is
+     * `Avatar.initials`, `Button` where it is `Button.action`, and two families that are not
+     * published at all — so following the advice meant asking for a signature that does not exist.
+     *
+     * Nothing was checking, because a dangling pointer costs nothing until an agent follows it.
+     */
+    for (const [signature, semantics] of Object.entries(parsed)) {
+      for (const alternative of semantics.alternatives ?? []) {
+        if (published.has(alternative)) continue;
+        conflicts.push(
+          `${file}: ${signature} names "${alternative}" as an alternative, and no published signature ` +
+            `declares it. An agent that follows that pointer asks for something that does not exist.`,
         );
       }
     }

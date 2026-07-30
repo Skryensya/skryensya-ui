@@ -109,7 +109,7 @@ function connect(root: HTMLElement): () => void {
   let status = root.querySelector<HTMLElement>(selector.status);
   if (!status) {
     status = document.createElement("div");
-    status.className = `${comboboxParts.status} sr-only`;
+    status.className = `${comboboxParts.status} sk-visually-hidden`;
     status.setAttribute("data-sk-combobox-status", "");
     status.setAttribute("role", "status");
     status.setAttribute("aria-atomic", "true");

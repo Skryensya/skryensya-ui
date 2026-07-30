@@ -125,7 +125,7 @@ export function FileUpload({
                   className={fileUploadParts.itemDelete}
                   type="button"
                 >
-                  <span className="sr-only">Quitar {file.name}</span>
+                  <span className="sk-visually-hidden">Quitar {file.name}</span>
                   <span aria-hidden="true">{deleteIcon ?? "×"}</span>
                 </button>
               </li>

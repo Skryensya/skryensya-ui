@@ -2368,7 +2368,7 @@
       "semantics": {
         "ImageFrame": {
           "alternatives": [
-            "Avatar"
+            "Avatar.initials"
           ],
           "avoidWhen": [
             "es la identidad circular de una persona — eso es un Avatar",
@@ -3131,6 +3131,20 @@
             "hay una espera de duración desconocida",
             "con label, ES el estado que se anuncia; sin label, acompaña a un texto que ya lo dice"
           ]
+        },
+        "Loader.status": {
+          "alternatives": [
+            "Loader",
+            "Progress"
+          ],
+          "avoidWhen": [
+            "no hay nada más que indique la espera; entonces se necesita un Loader visible",
+            "el progreso es medible; eso es un Progress, que ya se anuncia solo"
+          ],
+          "useWhen": [
+            "la espera ya se ve —hay esqueletos, o una barra— y falta que además se anuncie",
+            "el estado de carga tiene que existir para un lector de pantalla sin dibujar nada"
+          ]
         }
       },
       "signatures": {
@@ -3174,6 +3188,37 @@
             "element": "span",
             "host": true,
             "part": "root"
+          }
+        },
+        "Loader.status": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "announce-loading",
+            "status-for-a-skeleton",
+            "loading-without-a-spinner"
+          ],
+          "options": [
+            "label"
+          ],
+          "react": {
+            "from": "@skryensya/react/loader",
+            "name": "LoaderStatus"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {},
+          "template": {
+            "also": [
+              "sk-visually-hidden"
+            ],
+            "attrs": {
+              "role": "status"
+            },
+            "element": "span",
+            "host": true
           }
         }
       }
@@ -6215,7 +6260,7 @@
         "TileButton": {
           "alternatives": [
             "TileLink",
-            "Button"
+            "Button.action"
           ],
           "avoidWhen": [
             "la acción es elegir entre varias y la elección se ve; eso es TileCheckbox o un RadioGroup",
@@ -6241,8 +6286,7 @@
         },
         "TileLink": {
           "alternatives": [
-            "TileButton",
-            "Card"
+            "TileButton"
           ],
           "avoidWhen": [
             "adentro hay más de una acción; dos targets anidados es una trampa, no una tarjeta",
@@ -6868,7 +6912,6 @@
       "semantics": {
         "TimeField": {
           "alternatives": [
-            "DatePicker",
             "NumberField"
           ],
           "avoidWhen": [
@@ -7565,5 +7608,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "906817548eacf0ec"
+  "sourceHash": "9c4c5a955d8bb75c"
 }

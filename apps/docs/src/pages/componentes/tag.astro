@@ -3,41 +3,13 @@ import "@skryensya/core/components/tag.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
-import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import { tagTree } from "../../demos/tag";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-/*
- * The demo, as a USAGE TREE.
- *
- * The markup below the stage, the TSX beside it and the live React island are all emitted from
- * this — so the snippet a reader copies is, byte for byte, what they just watched render. It is the
- * same shape `validate_ui` accepts and the same one the gates measure.
- */
-const tree = {
-  contract: "layout",
-  signature: "Inline",
-  options: { gap: "sm" },
-  children: [
-    { contract: "tag", signature: "Tag", children: "diseño" },
-    { contract: "tag", signature: "Tag", options: { tone: "accent" }, children: "tokens" },
-    { contract: "tag", signature: "Tag", options: { tone: "success" }, children: "activo" },
-    { contract: "tag", signature: "Tag", options: { tone: "warning" }, children: "beta" },
-    { contract: "tag", signature: "Tag", options: { tone: "danger" }, children: "deprecado" },
-    {
-      contract: "tag",
-      signature: "Tag",
-      options: { tone: "accent", removable: true, removeLabel: "Quitar react" },
-      children: "react",
-    },
-    {
-      contract: "tag",
-      signature: "Tag",
-      options: { removable: true, removeLabel: "Quitar frontend" },
-      children: "frontend",
-    },
-  ],
-} as const satisfies UsageTree;
 ---
 
 <Base title="Tag" description="Tag: chip de palabra clave opcionalmente removible, con tonos y componente React.">
@@ -48,7 +20,7 @@ const tree = {
     cuadrado (radio de control, no píldora) para leerse como accionable, y puede llevar un botón de quitar.
   </p>
 
-  <Showcase tree={tree} label="Tag" />
+  <Showcase tree={tagTree(t)} label="Tag" />
   <p>
     Cuando es removible, la etiqueta y el botón de quitar son dos objetivos distintos: el nombre
     accesible del control nombra el tag que remueve.

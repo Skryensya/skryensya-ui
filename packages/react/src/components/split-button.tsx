@@ -41,7 +41,7 @@ export function SplitButton({
         items={menuItems}
         label={menuLabel}
         onSelect={onSelect}
-        trigger={<span className="sr-only">{menuLabel}</span>}
+        trigger={<span className="sk-visually-hidden">{menuLabel}</span>}
         triggerClassName={splitButtonParts.trigger}
       />
     </div>

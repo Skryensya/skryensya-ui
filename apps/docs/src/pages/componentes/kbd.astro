@@ -2,28 +2,13 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
-import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import { kbdTree } from "../../demos/kbd";
 import StylingHooks from "../../components/StylingHooks.astro";
 
 /* The skin is already global (Base.astro imports it for the ⌘K badge), so this page needs no import. */
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-/*
- * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
- * island are all emitted from this, so the snippet a reader copies is what they just saw render.
- */
-const tree = {
-  contract: "layout",
-  signature: "Inline",
-  options: { gap: "sm" },
-  children: [
-    { contract: "kbd", signature: "Kbd", children: "⌘" },
-    { contract: "kbd", signature: "Kbd", children: "K" },
-    { contract: "kbd", signature: "Kbd", children: "Esc" },
-    { contract: "kbd", signature: "Kbd", children: "↵" },
-  ],
-} as const satisfies UsageTree;
 ---
 
 <Base title="Kbd" description="Kbd: una tecla dibujada, el <kbd> nativo con styling hooks y wrapper React.">
@@ -35,7 +20,7 @@ const tree = {
     <code>&lt;kbd&gt;</code> es de la plataforma; el componente solo aporta la pinta.
   </p>
 
-  <Showcase tree={tree} label="Kbd" />
+  <Showcase tree={kbdTree} label="Kbd" />
 
   <h2>Un glifo se lee cuadrado</h2>
   <p>

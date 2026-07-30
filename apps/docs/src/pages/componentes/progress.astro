@@ -3,24 +3,13 @@ import "@skryensya/core/components/progress.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
-import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import { progressTree } from "../../demos/progress";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-/*
- * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
- * island are all emitted from this, so the snippet a reader copies is what they just saw render.
- */
-const tree = {
-  contract: "layout",
-  signature: "Stack",
-  options: { gap: "md" },
-  children: [
-    { contract: "progress", signature: "Progress", options: { value: 68, label: "Subida" } },
-    { contract: "progress", signature: "Progress", options: { value: 100, tone: "success", label: "Completado" } },
-    { contract: "progress", signature: "Progress", options: { value: 24, tone: "danger", label: "Cuota" } },
-  ],
-} as const satisfies UsageTree;
 ---
 
 <Base title="Progress" description="Progress: barra determinada con fracción recortada en el core, tonos y componente React.">
@@ -31,7 +20,7 @@ const tree = {
     pintado y <code>aria-valuenow</code> nunca pueden divergir.
   </p>
 
-  <Showcase tree={tree} label="Progress" />
+  <Showcase tree={progressTree(t)} label="Progress" />
   <p>Para trabajo sin un valor medible usa <a href="/componentes/loader">Loader</a>: su semántica es indeterminada.</p>
 
   <h2>Instalar</h2>

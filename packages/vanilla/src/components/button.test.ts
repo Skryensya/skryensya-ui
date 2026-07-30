@@ -52,7 +52,7 @@ describe("Button Vanilla contracts", () => {
 
   it("accepts an icon-only button named by visually-hidden text", () => {
     const root = mount(
-      '<button class="sk-button sk-interactive" data-sk-button data-icon-only><svg class="sk-icon" data-icon="close"></svg><span class="sr-only">Cerrar</span></button>',
+      '<button class="sk-button sk-interactive" data-sk-button data-icon-only><svg class="sk-icon" data-icon="close"></svg><span class="sk-visually-hidden">Cerrar</span></button>',
     );
 
     expect(() => mountButton(root)).not.toThrow();

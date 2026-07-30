@@ -39,11 +39,18 @@ test("every canonical tree is valid against its contract", () => {
   expect(problems, "a fixture the contract rejects proves nothing about the contract").toEqual([]);
 });
 
+/** Cases whose whole purpose is to render no box. Exempt from the paint check, never from G2/G4. */
+const DRAWS_NOTHING = new Set(["loader/status-only"]);
+
 test("every canonical tree paints something", async ({ page }) => {
   await page.goto("/");
   await page.waitForSelector('body[data-ready="true"]');
 
   for (const { name } of canonicalTrees) {
+    // A visually-hidden status has no box by design; measuring one would be measuring the wrong
+    // component. G2 and G4 still hold it to the claim that matters — same name, same live region.
+    if (DRAWS_NOTHING.has(name)) continue;
+
     for (const binding of ["vanilla", "react"] as const) {
       const box = await page
         .locator(`[data-case="${name}"] [data-binding="${binding}"] > *`)

@@ -44,3 +44,16 @@ export function Loader({
     />
   );
 }
+
+/**
+ * The wait announced and not drawn — for a skeleton screen, where Placeholders already carry the
+ * shape and a spinner would undo the reason for them.
+ *
+ * The label is required, not optional: this element renders nothing, so without a name it is an
+ * empty live region that announces an empty string.
+ */
+export function LoaderStatus({ label }: { label: string }) {
+  return (
+    <span aria-label={label} className="sk-visually-hidden" role="status" />
+  );
+}

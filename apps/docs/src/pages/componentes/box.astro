@@ -1,22 +1,12 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Showcase from "../../components/Showcase.astro";
-import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import { boxTree } from "../../demos/layout";
+import { getLocale, useTranslations } from "../../i18n";
 
-/*
- * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
- * island are all emitted from this, so the snippet a reader copies is what they just saw render.
- */
-const tree = {
-  contract: "box",
-  signature: "Box",
-  options: { surface: "raised", border: "subtle", padding: "lg" },
-  children: [
-    { contract: "typography", signature: "Heading", children: "Resumen" },
-    { contract: "typography", signature: "Text", children: "Una sección semántica con superficie, borde y padding." },
-    { contract: "button", signature: "Button.action", children: "Administrar" },
-  ],
-} as const satisfies UsageTree;
+const t = useTranslations(getLocale(Astro.url));
+
+
 ---
 <Base title="Box" description="Superficie visual y semántica elegida por quien la usa; sin interacción propia.">
   <h1>Box</h1>
@@ -28,7 +18,7 @@ const tree = {
   <p>La guía <a href="/componentes/card">Card</a> aplica esta decisión a cards de contenido, noticia, producto, enlace, acción, selección y métricas.</p>
 
   <h2>HTML autorado</h2>
-  <Showcase tree={tree} label="Box" />
+  <Showcase tree={boxTree(t)} label="Box" />
 
   <h2>React</h2>
   <p>El código está en la pestaña <strong>React</strong> del preview.</p>

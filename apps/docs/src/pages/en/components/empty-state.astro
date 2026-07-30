@@ -1,25 +1,14 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import Showcase from "../../../components/Showcase.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
+import { emptyStateTree } from "../../../demos/empty-state";
+import { getLocale, useTranslations } from "../../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 import StylingHooks from "../../../components/StylingHooks.astro";
 import "@skryensya/core/components/empty-state.css";
 
 const install = `@import "@skryensya/core/components/empty-state.css";`;
-/*
- * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
- * island are all emitted from this, so the snippet a reader copies is what they just saw render.
- */
-const tree = {
-  contract: "empty-state",
-  signature: "EmptyState",
-  slots: {
-    icon: { contract: "icon", signature: "Icon", options: { name: "search" } },
-    title: "There are no projects yet",
-    description: "Create the first one to organize the team's work.",
-    actions: { contract: "button", signature: "Button.action", children: "Create project" },
-  },
-} as const satisfies UsageTree;
 ---
 
 <Base
@@ -30,7 +19,7 @@ const tree = {
   <p class="lede">Explains why there is no content and offers a concrete next action.</p>
 
   <h2>Facility</h2>
-  <Showcase tree={tree} label="Empty State" />
+  <Showcase tree={emptyStateTree(t)} label="Empty State" />
 
   <h2>Contract</h2>
   <p>The title names the state, the description explains, and the action resolves. Do not use EmptyState during loading.</p>

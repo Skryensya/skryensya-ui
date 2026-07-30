@@ -9,7 +9,6 @@ TileLink:
     - "no navega a ningún lado; eso es un TileButton"
   alternatives:
     - TileButton
-    - Card
 
 TileButton:
   useWhen:
@@ -19,7 +18,7 @@ TileButton:
     - "navega; eso es un TileLink"
   alternatives:
     - TileLink
-    - Button
+    - Button.action
 
 ExpandableTile:
   useWhen:

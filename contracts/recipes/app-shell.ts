@@ -152,7 +152,7 @@ function shell(content: UsageTree): UsageTree {
                 },
               },
               { contract: "sidebar", signature: "SidebarSeparator" },
-              { contract: "sidebar", signature: "SidebarFooter", children: "Allison Peña" },
+              { contract: "sidebar", signature: "SidebarFooter", children: "John Doe" },
             ],
           },
           { contract: "wrapper", signature: "Wrapper", options: { wrapperSize: "md" }, children: content },

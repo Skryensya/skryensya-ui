@@ -35,9 +35,50 @@ export const tableContract = {
   options: {
     /** Header cells scope their column by default; a row header says so explicitly. */
     scope: { type: "enum", values: ["col", "row"], default: "col", attr: "scope" },
+    /**
+     * The first column stays put while the rest scrolls sideways. For a table whose rows are
+     * identified by that column — a service name, a plan — where losing it mid-scroll leaves a row
+     * of numbers about nothing.
+     */
+    stickyColumn: { type: "boolean", default: false, attr: "data-sticky-column", trueValue: "" },
+    /** The header row stays put while the body scrolls down. For a table longer than the viewport. */
+    stickyHeader: { type: "boolean", default: false, attr: "data-sticky-header", trueValue: "" },
+    /*
+     * How many columns a cell spans. The one place a table's structure is a NUMBER, and it is real
+     * structure: a footnote under a three-column table belongs across all three, and a note stranded
+     * in the first column reads as a value of that column.
+     *
+     * The DOM spells it `colspan` and React spells it `colSpan`, which is exactly what `prop` is for.
+     */
+    colspan: { type: "number", attr: "colspan", prop: "colSpan" },
   },
 
   signatures: {
+    /*
+     * The box a table scrolls inside, and it is not optional decoration.
+     *
+     * A flex or grid parent defaults to `min-size: auto`, so a table wider than its column pushes
+     * that column open and blows the surface it sits in. This is the element that shrinks instead
+     * and owns the sideways scroll — which is why every table on the docs site already had one, in
+     * hand-written markup, while the catalogue published a bare `<table>` that would overflow.
+     *
+     * The overflow lives here and NOT on `.sk-table`: browsers clip `<caption>` under
+     * `overflow: hidden`, even though the caption box sits outside the table box in the CSS table
+     * model. The border and the radius stay on the table for the same reason.
+     *
+     * A region that scrolls has to be reachable by keyboard, so a scrolling table wants
+     * `tabindex="0"` and a name — but WHETHER it scrolls depends on the data and the viewport, and
+     * the name has to point at the caption's generated id. Both are the author's, through `attrs`.
+     */
+    TableScroll: {
+      intent: ["scrollable-table", "wide-table", "table-that-does-not-blow-the-layout"],
+      host: { element: "div" },
+      options: ["stickyColumn", "stickyHeader"],
+      slots: { children: { accepts: "signature", of: ["Table"], required: true } },
+      template: { element: "div", part: "scroll", host: true, slot: "children" },
+      react: { from: "@skryensya/react/table", name: "TableScroll" },
+    },
+
     Table: {
       intent: ["tabular-data", "rows-and-columns", "data-table", "comparison"],
       host: { element: "table" },
@@ -123,7 +164,7 @@ export const tableContract = {
     TableCell: {
       intent: ["one-value", "table-cell"],
       host: { element: "td" },
-      options: [],
+      options: ["colspan"],
       parents: ["TableRow"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "td", part: "cell", host: true, slot: "children" },

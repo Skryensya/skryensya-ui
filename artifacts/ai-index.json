@@ -1422,6 +1422,27 @@
       "id": "table",
       "signatures": [
         {
+          "alternatives": [
+            "Table"
+          ],
+          "avoidWhen": [
+            "la tabla es angosta y su contenedor tiene ancho fijo; ahí el envoltorio no aporta nada"
+          ],
+          "host": "div",
+          "id": "TableScroll",
+          "intent": [
+            "scrollable-table",
+            "wide-table",
+            "table-that-does-not-blow-the-layout"
+          ],
+          "parents": [],
+          "useWhen": [
+            "casi siempre: una tabla dentro de un flex o un grid empuja la columna y revienta la superficie, y ésta es la caja que se encoge en su lugar",
+            "la tabla es más ancha que su espacio y hay que poder desplazarla de lado",
+            "conviene fijar la primera columna o el encabezado mientras el resto se desplaza"
+          ]
+        },
+        {
           "alternatives": [],
           "avoidWhen": [
             "es una lista de cosas sin columnas; eso es una List",
@@ -2026,5 +2047,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "843e7a92b998aea3"
+  "sourceHash": "3f7583f3a169f7db"
 }

@@ -320,8 +320,8 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "avatar",
       signature: "Avatar.initials",
-      options: { name: "Allison Peña" },
-      children: "AP",
+      options: { name: "John Doe" },
+      children: "JD",
     },
   },
   {
@@ -480,7 +480,7 @@ const signatureTrees: readonly Canonical[] = [
         {
           contract: "list",
           signature: "ListItem",
-          slots: { title: "Cuenta", description: "allison@ejemplo.cl" },
+          slots: { title: "Cuenta", description: "john.doe@ejemplo.cl" },
         },
         {
           contract: "list",
@@ -815,7 +815,7 @@ const signatureTrees: readonly Canonical[] = [
         },
         { contract: "sidebar", signature: "SidebarContent", children: "Proyectos" },
         { contract: "sidebar", signature: "SidebarSeparator" },
-        { contract: "sidebar", signature: "SidebarFooter", children: "Allison Peña" },
+        { contract: "sidebar", signature: "SidebarFooter", children: "John Doe" },
       ],
     },
   },
@@ -1062,6 +1062,14 @@ const signatureTrees: readonly Canonical[] = [
     name: "table/with-a-footer",
     enhanced: false,
     tree: {
+      /*
+       * Wrapped, because that is how a table is actually written: a flex or grid parent would let a
+       * wide one blow the surface, and this is the box that scrolls instead. The catalogue published
+       * a bare `<table>` until converting the docs page made the omission visible.
+       */
+      contract: "table",
+      signature: "TableScroll",
+      children: {
       contract: "table",
       signature: "Table",
       children: [
@@ -1113,6 +1121,7 @@ const signatureTrees: readonly Canonical[] = [
           },
         },
       ],
+    },
     },
   },
   {

@@ -41,3 +41,13 @@ TableHeader:
 TableCell:
   useWhen:
     - "un valor dentro de una fila"
+
+TableScroll:
+  useWhen:
+    - "casi siempre: una tabla dentro de un flex o un grid empuja la columna y revienta la superficie, y ésta es la caja que se encoge en su lugar"
+    - "la tabla es más ancha que su espacio y hay que poder desplazarla de lado"
+    - "conviene fijar la primera columna o el encabezado mientras el resto se desplaza"
+  avoidWhen:
+    - "la tabla es angosta y su contenedor tiene ancho fijo; ahí el envoltorio no aporta nada"
+  alternatives:
+    - Table

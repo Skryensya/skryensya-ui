@@ -5391,6 +5391,11 @@
       "css": "@skryensya/core/components/table.css",
       "id": "table",
       "options": {
+        "colspan": {
+          "attr": "colspan",
+          "prop": "colSpan",
+          "type": "number"
+        },
         "scope": {
           "attr": "scope",
           "default": "col",
@@ -5399,6 +5404,18 @@
             "col",
             "row"
           ]
+        },
+        "stickyColumn": {
+          "attr": "data-sticky-column",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "stickyHeader": {
+          "attr": "data-sticky-header",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
         }
       },
       "parts": {
@@ -5465,6 +5482,19 @@
         "TableRow": {
           "useWhen": [
             "un registro de la tabla"
+          ]
+        },
+        "TableScroll": {
+          "alternatives": [
+            "Table"
+          ],
+          "avoidWhen": [
+            "la tabla es angosta y su contenedor tiene ancho fijo; ahí el envoltorio no aporta nada"
+          ],
+          "useWhen": [
+            "casi siempre: una tabla dentro de un flex o un grid empuja la columna y revienta la superficie, y ésta es la caja que se encoge en su lugar",
+            "la tabla es más ancha que su espacio y hay que poder desplazarla de lado",
+            "conviene fijar la primera columna o el encabezado mientras el resto se desplaza"
           ]
         }
       },
@@ -5579,7 +5609,9 @@
             "one-value",
             "table-cell"
           ],
-          "options": [],
+          "options": [
+            "colspan"
+          ],
           "parents": [
             "TableRow"
           ],
@@ -5726,6 +5758,39 @@
             "element": "tr",
             "host": true,
             "part": "row",
+            "slot": "children"
+          }
+        },
+        "TableScroll": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "scrollable-table",
+            "wide-table",
+            "table-that-does-not-blow-the-layout"
+          ],
+          "options": [
+            "stickyColumn",
+            "stickyHeader"
+          ],
+          "react": {
+            "from": "@skryensya/react/table",
+            "name": "TableScroll"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "Table"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "scroll",
             "slot": "children"
           }
         }
@@ -7608,5 +7673,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "843e7a92b998aea3"
+  "sourceHash": "3f7583f3a169f7db"
 }

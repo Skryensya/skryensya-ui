@@ -3,73 +3,16 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
-import { RadioGroupDemo, TileRadioGroupDemo } from "../../../components/react-demos/radio-group";
+import { TileRadioGroupDemo } from "../../../components/react-demos/radio-group";
+import { radioGroupTree } from "../../../demos/radio-group";
+import { getLocale, useTranslations } from "../../../i18n";
 
 /*
  * The usage-tree port is blocked: the contract only exposes controlled `value`. The React emitter
  * cannot express `defaultValue`, so the example would stop allowing the selection to change.
  */
 
-const html = `<div
-  class="sk-radio-group"
-  role="radiogroup"
-  aria-label="Plan"
-  data-orientation="vertical"
->
-  <label class="sk-radio">
-    <input
-      class="sk-radio__input"
-      type="radio"
-      name="plan"
-      value="basic"
-      checked
-    />
-    <span class="sk-radio__control" aria-hidden="true">
-      <span class="sk-radio__indicator"></span>
-    </span>
-    <span class="sk-radio__label">Basic</span>
-  </label>
-  <label class="sk-radio">
-    <input
-      class="sk-radio__input"
-      type="radio"
-      name="plan"
-      value="pro"
-    />
-    <span class="sk-radio__control" aria-hidden="true">
-      <span class="sk-radio__indicator"></span>
-    </span>
-    <span class="sk-radio__label">Professional</span>
-  </label>
-  <label class="sk-radio">
-    <input
-      class="sk-radio__input"
-      type="radio"
-      name="plan"
-      value="enterprise"
-    />
-    <span class="sk-radio__control" aria-hidden="true">
-      <span class="sk-radio__indicator"></span>
-    </span>
-    <span class="sk-radio__label">Enterprise</span>
-  </label>
-</div>`;
-
-const react = `import { RadioGroup } from "@skryensya/react/radio-group";
-
-function Example() {
-  return (
-    <RadioGroup
-      name="plan"
-      defaultValue="pro"
-      items={[
-        { value: "basic", label: "Basic" },
-        { value: "pro", label: "Professional" },
-      ]}
-      onValueChange={(details) => console.log(details.value)}
-    />
-  );
-}`;
+const t = useTranslations(getLocale(Astro.url));
 
 const tileRadioGroupHtml = `<div
   class="sk-inline"
@@ -159,11 +102,7 @@ function Example() {
   <h1>RadioGroup</h1>
   <p class="lede">An exclusive choice between related alternatives. Each option is a native radius; the shared name imposes exclusion.</p>
 
-  <ComponentPreview html={html} react={react} label="RadioGroup">
-    <Fragment slot="react">
-      <RadioGroupDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={radioGroupTree(t)} label="RadioGroup" />
 
   <h2>Surface Options: TileRadioGroup</h2>
   <p>

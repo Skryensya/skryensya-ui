@@ -14,8 +14,9 @@ import { framedIn } from "./framed";
  * The module key, written out instead of taken from `import.meta.url`.
  *
  * Every other demo is imported by a PAGE, so Vite keeps it as its own chunk and `import.meta.url`
- * reports a stem the frame's glob knows. This one is imported by `Showcase.astro`, which inlines it
- * — in a build `import.meta.url` reported `Showcase_CBJVDNqQ`, the frame could not resolve it, and
+ * reports a stem the frame's glob knows. This one is imported by `ComponentPreview.astro`, which inlines it
+ * — in a build `import.meta.url` reported `Showcase_CBJVDNqQ` (the chunk was still named that at
+ * the time; it is `ComponentPreview` now), the frame could not resolve it, and
  * the React stage came up empty with the error inside the frame where nobody was looking.
  *
  * The glob is keyed by SOURCE basename, so this is that key, and it cannot drift: rename the file
@@ -25,6 +26,8 @@ const framed = framedIn("tree.tsx");
 
 export interface TreeDemoProps {
   tree: UsageTree;
+  /** Cap the stage width — read by `framed()`, never by this component. See `framed.tsx`. */
+  measure?: string;
 }
 
 /*

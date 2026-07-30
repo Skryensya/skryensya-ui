@@ -1,6 +1,6 @@
 /*
  * Live React demo for /components/sidebar. Mirrors the vanilla `app-shell` wrapper used in the
- * page's Showcase: a sidebar next to a stand-in main area, so the collapse behavior is legible.
+ * page's ComponentPreview: a sidebar next to a stand-in main area, so the collapse behavior is legible.
  */
 import { Icon } from "@skryensya/react/icon";
 import { NavList, NavListGroup, NavListLink } from "@skryensya/react/nav-list";

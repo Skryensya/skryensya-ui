@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
 const import_ = `@import "@skryensya/core/patterns/anchored.css";`;
@@ -106,7 +106,7 @@ const arrowReact = `<Tooltip arrow content="It keeps itself">
     A box placed against <strong>another</strong> element, not against the page: it leaves one side of the anchor, goes to the opposite side when it does not enter, and disappears if the anchor leaves the screen. This is what tooltip, popover, popup, menu and its submenus, select, combobox, date picker and flyout do.
   </p>
 
-  <Showcase html={html} js={js} label="HTML" />
+  <ComponentPreview html={html} js={js} label="HTML" />
 
   <h2>Why is it a pattern and not a component</h2>
   <p>

@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import { NativeSelectDemo, SelectBasicDemo } from "../../../components/react-demos/select";
 
@@ -200,11 +200,11 @@ function Example() {
     For a standard form choice, use the <a href="#native-select">native Select</a> documented at the end: it does not load an enhancer, preserves platform behavior, and styles its picker through progressive enhancement.
   </p>
 
-  <Showcase html={selectHtml} react={reactSelect} label="Select enhanced" viewport="menu">
+  <ComponentPreview html={selectHtml} react={reactSelect} label="Select enhanced" viewport="menu">
     <Fragment slot="react">
       <SelectBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     Density compacts the space around the selector, not its tactile targets: the trigger and each option remain a minimum of <code>44px</code> high.
   </p>
@@ -247,11 +247,11 @@ function Example() {
   <p>
     Use for a standard choice. Choose Select enhanced only when you need controlled collection, item markup, positioning or <code>sk-value-change</code> event; appearance is no longer a reason to replace the native control.
   </p>
-  <Showcase html={nativeSelectHtml} react={nativeReactSelect} label="Native Select" viewport="menu">
+  <ComponentPreview html={nativeSelectHtml} react={nativeReactSelect} label="Native Select" viewport="menu">
     <Fragment slot="react">
       <NativeSelectDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Progressive enhancement</h3>
   <p>

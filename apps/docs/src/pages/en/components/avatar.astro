@@ -11,7 +11,7 @@
  */
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { AvatarDemo } from "../../../components/react-demos/avatar";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -231,11 +231,11 @@ window.addEventListener("pagehide", () => observer.disconnect(), { once: true })
     Avatar is the visual token of a person or entity: a cropped photo with <strong>ImageFrame</strong> (1/1, cover, pill) or, without an image, the first two letters of the name. <strong>AvatarGroup</strong> stacks a set and collapses the excess into a "+N" counter.
   </p>
 
-  <Showcase html={html} react={react} previewScript={previewScript} label="Avatar">
+  <ComponentPreview html={html} react={react} previewScript={previewScript} label="Avatar">
     <Fragment slot="react">
       <AvatarDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     With image, the avatar nests <code>sk-image-frame</code> and the <code>&lt;img alt&gt;</code> provides the semantics. Without it, the container takes <code>role="img"</code> and the initials remain decorative. In React, <code>avatarInitials(name)</code> derives the fallback when you do not pass children: two words → first letter of each; a single → the first two characters.
   </p>

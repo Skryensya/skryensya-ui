@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 // The preview clones the <head> sheets of the page, but whatever the demo uses has to be
 // imported here: `.sk-truncate` is from the demo, not the package.
 import "../../../examples/tooltip.css";
@@ -112,11 +112,11 @@ function Example() {
 
   {/* `menu`: the tooltip paints outside the flow, and in a stage at the top of the content it would not have to
       where to go, so the actual placement would never be seen. */}
-  <Showcase html={html} react={react} label="Tooltip" viewport="menu">
+  <ComponentPreview html={html} react={react} label="Tooltip" viewport="menu">
     <Fragment slot="react">
       <TooltipDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>The rule that the system cannot verify</h2>
   <p>

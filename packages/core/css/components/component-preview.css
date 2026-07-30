@@ -480,6 +480,25 @@
     padding: 0;
   }
 
+  /*
+   * A realistic measure for the specimen, without putting it in the snippet.
+   *
+   * Some components only read correctly at a real column width — a settings List stretched across the
+   * whole stage looks like nothing anyone ships — but that width comes from the CONSUMER's layout, so
+   * it must not appear in the markup a reader copies. Capping here keeps the demo honest and the
+   * snippet clean; the alternative (a wrapper `<div>` authored into the slot, with `code=` passed
+   * separately) is two sources of truth for one demo, which is what the usage tree exists to end.
+   *
+   * Two selectors for the same reason the Progress rule needs two: React mounts one level deeper,
+   * under its own `display: contents` root.
+   */
+  .sk-component-preview__frame-body[data-sk-component-preview-measure] > *,
+  .sk-component-preview__frame-body[data-sk-component-preview-measure]
+    > [data-sk-react-demo-root]
+    > * {
+    inline-size: min(100%, var(--sk-component-preview-measure));
+  }
+
   /* HTML | JS: Tabs at local low density. The list is the chrome; panels sit flush under it. */
   .sk-component-preview__source-tabs {
     --sk-tabs-gap: 0;

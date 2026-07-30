@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
 const import_ = `@import "@skryensya/core/patterns/vaul.css";
@@ -201,7 +201,7 @@ const noDrag = `<dialog
     A modal panel anchored to a <strong>edge</strong> of the viewport: it arrives from that edge, leaves the page inert behind a backdrop, and goes back the way it came. The edge is the entire idea, a Vaul is named by where it comes from, never by the shape it makes when it arrives.
   </p>
 
-  <Showcase html={html} label="HTML" viewport="overlay" />
+  <ComponentPreview html={html} label="HTML" viewport="overlay" />
 
   <h2>Why is it a pattern and not a component</h2>
   <p>

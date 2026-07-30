@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
-import Showcase from "../components/Showcase.astro";
+import ComponentPreview from "../components/ComponentPreview.astro";
 import StylingHooks from "../components/StylingHooks.astro";
 
 const install = `@import "@skryensya/core/patterns/media-gradient.css";
@@ -165,7 +165,7 @@ import { MediaCaption } from "@skryensya/react/media-gradient";
     ImageFrame recorta; el caption lleva el tipo y el wash a su medida. La card debajo sigue
     siendo <a href="/componentes/box">Box</a> + composición (no hay <code>sk-card</code>).
   </p>
-  <Showcase html={cardHtml} react={cardReact} label="Card + media gradient" />
+  <ComponentPreview html={cardHtml} react={cardReact} label="Card + media gradient" />
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="CSS" />
@@ -185,7 +185,7 @@ import { MediaCaption } from "@skryensya/react/media-gradient";
     <code>top</code>/<code>bottom</code>: el band es tan alto como el texto (ancho completo).
     <code>start</code>/<code>end</code>: tan ancho como el texto (alto al contenido).
   </p>
-  <Showcase html={edgesHtml} label="Edges" />
+  <ComponentPreview html={edgesHtml} label="Edges" />
 
   <h2>Contrato</h2>
   <ul>

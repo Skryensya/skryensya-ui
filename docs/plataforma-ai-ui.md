@@ -579,11 +579,11 @@ publicado. Verificado extremo a extremo: catálogo → contrato → árbol → c
 >   ve bien y está mal.
 
 ### F6 · El sitio y los recipes — en curso
-`Showcase` recibe usage trees ✅. Los recipes están escritos, validados y renderizados ✅. Falta el
+`ComponentPreview` recibe usage trees ✅. Los recipes están escritos, validados y renderizados ✅. Falta el
 grueso de la conversión de páginas.
 **Salida:** una página completa se construye desde el catálogo publicado, se renderiza y pasa G2–G5.
 
-**`<Showcase tree={…} />`** emite los tres: el markup autoreado en el escenario vanilla, el TSX al
+**`<ComponentPreview tree={…} />`** emite los tres: el markup autoreado en el escenario vanilla, el TSX al
 lado, y la isla React viva. Una página ya no puede mostrar un snippet distinto de lo que renderiza,
 que es el modo de fallar que tiene por construcción cualquier ejemplo escrito a mano.
 
@@ -670,10 +670,11 @@ puede pedirlos —un Alert sin acciones es válido, y debe serlo— y sólo son 
 > `label` anuncia pero dibuja un spinner, que es justo lo que el esqueleto vino a evitar. Preferible
 > nombrarlo que agregar un spinner arriba de los esqueletos para que un chequeo pase.
 
-**Convertidas hasta ahora (16 de 349 llamadas a `Showcase`):** `tag`, `kbd`, `pagination`,
-`theme-toggle`, `box`, `progress`, `empty-state`, `segmented` — cada una en los dos idiomas. Las ocho
-conversiones dejaron sin consumidor a siete `react-demos/*.tsx` (169 líneas) y al `BoxBasicDemo` de
-`layout.tsx`: un demo por página deja de existir cuando el árbol ES el demo.
+**Convertidas hasta ahora (28 de 349 llamadas a `ComponentPreview`):** `tag`, `kbd`, `pagination`,
+`theme-toggle`, `box`, `progress`, `empty-state`, `segmented` y `button` — cada una en los dos
+idiomas. Las conversiones dejaron sin consumidor a siete `react-demos/*.tsx` enteros, al
+`BoxBasicDemo` de `layout.tsx` y a seis de los siete demos de `button.tsx`: un demo por página deja
+de existir cuando el árbol ES el demo.
 
 **Un árbol por demo, no uno por página.** Los árboles viven en `apps/docs/src/demos/`, uno por demo,
 escritos como función del traductor; las dos páginas importan el mismo y le pasan su `t`. Las
@@ -692,18 +693,34 @@ Medido después de compartir: los ocho demos emiten **estructura idéntica** en 
 los dos bindings —mismo esqueleto de tags, clases y `data-*`— y difieren sólo en texto y en atributos
 de label. Que es la propiedad entera, y ahora se cumple por construcción y no por revisión.
 
-Medidas, de las **126 páginas de componente** (los dos idiomas) que tienen al menos un `Showcase`:
+**El censo, por dificultad de conversión.** Cada `ComponentPreview` pendiente, clasificado leyendo el markup
+que enseña y preguntándole al manifiesto si ese markup es expresable:
 
-| | Páginas | Showcases |
+| | Demos | Qué falta |
 |---|---|---|
-| Familia con contrato publicado | 92 | 238 (16 convertidas) |
-| Familia **sin** contrato | 34 | 80 |
+| **A · fáciles** | 136 | nada: se convierten hoy |
+| **B · con `js`** | 10 | nada del árbol; el `js` sigue autoreado al lado |
+| **C · bloqueados** | 140 | una firma, una opción o una familia entera |
+| **D · sin markup legible** | 42 | pasan el markup por slot; hay que mirarlos uno a uno |
 
-Las sin contrato son `calendar`, `card`, `combobox`, `command-palette`, `component-preview`,
-`copy-button`, `date-picker`, `dialog`, `drawer`, `menu`, `popover`, `popup`, `primitivas`, `select`,
-`split-button`, `toc` y `tooltip`. Y dentro de las publicadas queda un tercer grupo, el que no se ve
-en la tabla: demos que la **firma** no cubre. Badge tiene tres y sólo el primero es convertible —
-`data-dot` y `sk-badge-holder` no son opciones de `badgeContract`, que declara `tone` y nada más.
+> **«Es una parte» no es «se puede escribir»**
+>
+> El primer censo dio 194 fáciles y estaba mal. Preguntaba si cada clase del demo era una **parte**
+> declarada por algún contrato — y `sk-tile__title` lo es, y **ninguna firma la emite**: la plantilla
+> de `TileButton` es un host con un slot `children`, y no existe `TileTitle` ni `TileDescription` que
+> anidar adentro. El demo de TileButton es inexpresable, y el censo lo llamaba trivial.
+>
+> Lo que hace alcanzable a una clase es una **plantilla que la pinta**, no un contrato que la nombra.
+> Recontado así: 136 fáciles, no 194. Y salieron **29 partes declaradas que ninguna firma emite** —
+> `sk-avatar-group`, los cinco de `carousel`, ocho de `file-upload`, `sk-icon`, cuatro de
+> `time-field`, `sk-tile__title` / `__description` / `__chevron`, `sk-table-scroll`, `sk-tile-grid`.
+> Cada una es un pedazo de CSS publicado que un agente no puede componer.
+
+Lo bloqueado tiene dos causas distintas. Familias sin publicar: `calendar`, `card`, `combobox`,
+`command-palette`, `component-preview`, `copy-button`, `date-picker`, `dialog`, `drawer`, `menu`,
+`popover`, `popup`, `select`, `split-button`, `toc`, `tooltip`, `scrollbar`, `vaul`. Y familias
+publicadas a las que les falta una opción: `data-dot` en Badge —que declara `tone` y nada más—,
+`data-multicol` en Grid, `data-level`, `data-expanded-value`, `data-state`.
 
 > **Un árbol con layout arriba colapsa en el escenario**
 >

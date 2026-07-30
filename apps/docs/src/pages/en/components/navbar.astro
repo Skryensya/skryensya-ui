@@ -1,6 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import { NavbarBasicDemo } from "../../../components/react-demos/navbar";
@@ -116,11 +116,11 @@ function Example() {
     They are the pattern <a href="/en/nav-list"><code>nav-list</code></a> horizontally, the same structure that hosts the sidebar vertically. That two components need this exact structure is what makes it a pattern and not a component: before the navbar and the sidebar each had their list, with the same rules written twice and free to diverge.
   </p>
 
-  <Showcase html={html} react={react} label="Navbar" flush>
+  <ComponentPreview html={html} react={react} label="Navbar" flush>
     <Fragment slot="react">
       <NavbarBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>The current page is from platform</h2>
   <p>

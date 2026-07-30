@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
@@ -91,7 +91,7 @@ await initComponents();`;
     CopyButton copies the text of the indicated element and briefly changes the icon to confirm the result. It is a Button ghost icon-only with its own anatomy: the enhancer only links the clipboard and the feedback; you write the markup. The size is that of the Button: <strong>md</strong> (default) or <code>data-size="sm"</code> (face at 32px, hit at 44px via <code>:: after</code>).
   </p>
 
-  <Showcase
+  <ComponentPreview
     html={html}
     js={js}
     label="CopyButton"

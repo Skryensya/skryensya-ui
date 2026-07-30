@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import {
   AccordionExclusiveDemo,
@@ -430,29 +430,29 @@ const nativeDetails = `<section
   <p>
     For an isolated disclosure (formerly “ExpandableTile”), use Accordion with a single item: the root provides the frame and the Tile retains the surface and state layer.
   </p>
-  <Showcase html={single} label="Accordion of an item">
+  <ComponentPreview html={single} label="Accordion of an item">
     <Fragment slot="react">
       <AccordionSingleDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Exclusive group</h2>
   <p>
     <code>data-type="single"</code> in HTML, <code>type="single"</code> in React, keeps at most one item open. With <code>data-collapsible="false"</code> or <code>collapsible={false}</code>, the open item cannot be closed.
   </p>
-  <Showcase html={exclusive} label="Accordion single">
+  <ComponentPreview html={exclusive} label="Accordion single">
     <Fragment slot="react">
       <AccordionExclusiveDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Multigroup</h2>
   <p><code>type="multiple"</code> maintains each disclosure independently.</p>
-  <Showcase html={multiple} react={react} label="Accordion multiple">
+  <ComponentPreview html={multiple} react={react} label="Accordion multiple">
     <Fragment slot="react">
       <AccordionMultipleDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Vanilla</h2>
   <p>
@@ -477,7 +477,7 @@ const nativeDetails = `<section
   <p>
     Use when the state can live in the document. Choose Accordion enhanced when you need controlled value, <code>multiple</code>, change callbacks, or composition with system events. The Tile anatomy (title, description, chevron) is the same, so the group looks the same.
   </p>
-  <Showcase html={nativeDetails} label="Details with shared name" />
+  <ComponentPreview html={nativeDetails} label="Details with shared name" />
 
   <h3>Install only Details</h3>
   <CodeBlock code={nativeInstall} label="terminal" />

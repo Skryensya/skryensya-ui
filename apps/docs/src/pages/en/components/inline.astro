@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { InlineActionBarDemo } from "../../../components/react-demos/layout";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -87,11 +87,11 @@ function Example() {
     Arranges elements horizontally and returns them to another line when space runs out. Use it for action bars and label–control pairs; the semantics belong to the element you choose.
   </p>
 
-  <Showcase html={html} react={react} label="Action bar" note="Box + Stack + Inline + Button">
+  <ComponentPreview html={html} react={react} label="Action bar" note="Box + Stack + Inline + Button">
     <Fragment slot="react">
       <InlineActionBarDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Authored HTML</h2>
   <p>

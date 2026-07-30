@@ -2,7 +2,7 @@
 import "@skryensya/core/components/progress.css";
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { progressTree } from "../../../demos/progress";
 import { getLocale, useTranslations } from "../../../i18n";
 
@@ -18,7 +18,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
     Progress is a given <strong>bar</strong> - the value is known to the consumer. The fraction is trimmed to <code>[0, max]</code> in the core (<code>progressFraction</code>), so that the painted width and <code>aria-valuenow</code> can never diverge.
   </p>
 
-  <Showcase tree={progressTree(t)} label="Progress" />
+  <ComponentPreview tree={progressTree(t)} label="Progress" />
   <p>For work without a measurable value use <a href="/en/components/loader">Loader</a>: its semantics are indeterminate.</p>
 
   <h2>Install</h2>

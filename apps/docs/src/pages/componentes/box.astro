@@ -1,6 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import { boxTree } from "../../demos/layout";
 import { getLocale, useTranslations } from "../../i18n";
 
@@ -18,7 +18,7 @@ const t = useTranslations(getLocale(Astro.url));
   <p>La guía <a href="/componentes/card">Card</a> aplica esta decisión a cards de contenido, noticia, producto, enlace, acción, selección y métricas.</p>
 
   <h2>HTML autorado</h2>
-  <Showcase tree={boxTree(t)} label="Box" />
+  <ComponentPreview tree={boxTree(t)} label="Box" />
 
   <h2>React</h2>
   <p>El código está en la pestaña <strong>React</strong> del preview.</p>

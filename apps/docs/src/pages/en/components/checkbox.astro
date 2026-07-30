@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import { CheckboxBasicDemo, CheckboxGroupDemo, TileCheckboxDemo } from "../../../components/react-demos/checkbox";
 
@@ -310,11 +310,11 @@ function Example() {
   <h1>Checkbox</h1>
   <p class="lede">An independent choice. Keep a <code>input type="checkbox"</code>: submit, reset, keyboard and validation belong to the browser.</p>
 
-  <Showcase html={html} react={react} label="Checkbox">
+  <ComponentPreview html={html} react={react} label="Checkbox">
     <Fragment slot="react">
       <CheckboxBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     The control uses the <code>check</code> and <code>remove</code> icon set roles, not a CSS stroke. Imports <code>@skryensya/core/components/checkbox.css</code> and calls <code>initComponents()</code> once.
   </p>
@@ -323,7 +323,7 @@ function Example() {
   <p>
     <code>indeterminate</code> is not a third value that someone can choose: it is what a parent says when <strong>their children cannot agree</strong>. That is why the glyph is <code>remove</code> and not a half-check, and that is why the parent does not send anything to the form, those with <code>name</code> and <code>value</code> are the children.
   </p>
-  <Showcase
+  <ComponentPreview
     html={groupHtml}
     js={groupJs}
     previewScript={groupJs}
@@ -334,7 +334,7 @@ function Example() {
     <Fragment slot="react">
       <CheckboxGroupDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     The state of the parent is <strong>derived from</strong>, never authored: it is recalculated from the children on each change. On the contrary, a father with his own status begins to lie as soon as someone marks a child. There are fifteen lines without a machine or a new component, so the system does not involve it: grouping is a rule of the form, not of the control.
   </p>
@@ -343,11 +343,11 @@ function Example() {
   <p>
     When the choice needs title, description and the entire surface as a target, use <code>TileCheckbox</code>. It is the same control (<code>sk-checkbox__control</code> + icons); just change the container.
   </p>
-  <Showcase html={tileCheckboxHtml} react={tileCheckboxReact} label="TileCheckbox">
+  <ComponentPreview html={tileCheckboxHtml} react={tileCheckboxReact} label="TileCheckbox">
     <Fragment slot="react">
       <TileCheckboxDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>The <code>tile-checkbox</code> enhancer (Svelte + <code>@zag-js/checkbox</code>, same machine as React) hydrates each <code>data-sk-tile-checkbox</code> label with <code>initComponents()</code>: controls its <code>input[data-part="input"]</code> (hidden) and syncs <code>data-state</code>; the <code>[data-part="indicator"]</code> is the visual control.</p>
   <CodeBlock code={tileCheckboxVanilla} label="JavaScript" />
 

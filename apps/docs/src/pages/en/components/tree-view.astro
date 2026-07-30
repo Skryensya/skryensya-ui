@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import { TreeViewSettingsDemo } from "../../../components/react-demos/tree-view";
 import "@skryensya/core/components/tree-view.css";
@@ -441,13 +441,13 @@ const indentHook = `.sk-tree-view {
   <p>
     The minimum is the complete anatomy and nothing more: a root, the list, and for each node a branch (<code>branch</code> + <code>branch-control</code> + <code>branch-content</code>) or a leaf (<code>item</code>). Without state attributes, everything starts closed and without selection.
   </p>
-  <Showcase html={minimal} label="Minimal TreeView" />
+  <ComponentPreview html={minimal} label="Minimal TreeView" />
 
   <h2>Initial State</h2>
   <p>
     <code>data-expanded-value</code> and <code>data-selected-value</code> list the <code>data-value</code>s that boot open and selected. They accept spaces or commas as a separator, and are only the initial <em>state</em>: the machine commands from there.
   </p>
-  <Showcase html={initialState} label="Open and selected input" />
+  <ComponentPreview html={initialState} label="Open and selected input" />
 
   <h2>Multiple selection</h2>
   <p>
@@ -456,19 +456,19 @@ const indentHook = `.sk-tree-view {
     <kbd class="sk-kbd">Shift</kbd>. Branches nest without limit: a branch is a node with
     <code>branch-content</code>, regardless of depth, and the vertical guide shows which parent each level belongs to.
   </p>
-  <Showcase html={multiple} label="Multiple selection and three levels" />
+  <ComponentPreview html={multiple} label="Multiple selection and three levels" />
 
   <h2>Disabled nodes</h2>
   <p>
     A node with <code>disabled</code> is not selected or given focus, but is still read. A disabled branch also will not open, so do not use it to hide content: do not author it for that.
   </p>
-  <Showcase html={disabled} label="Disabled node" />
+  <ComponentPreview html={disabled} label="Disabled node" />
 
   <h2>Icons and events</h2>
   <p>
     The sheet reserves the same column as the branch's chevron, so the labels of a level are aligned even if not all sheets have an icon. That gap is the empty <code>&lt;span aria-hidden="true"&gt;</code> from the previous examples; here it has an icon. The selection and opening are heard as events above the root.
   </p>
-  <Showcase
+  <ComponentPreview
     html={events}
     js={eventsJs}
     react={react}
@@ -478,7 +478,7 @@ const indentHook = `.sk-tree-view {
     <Fragment slot="react">
       <TreeViewSettingsDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contract</h2>
   <ul>

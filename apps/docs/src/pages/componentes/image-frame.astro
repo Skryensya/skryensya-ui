@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import {
   ImageFrameAspectDemo,
@@ -174,44 +174,44 @@ const positionReact = `import { ImageFrame } from "@skryensya/react/image-frame"
     <a href="/gradientes">Gradientes</a> (<code>sk-media-gradient</code>).
   </p>
 
-  <Showcase html={basicHtml} react={basicReact} label="ImageFrame">
+  <ComponentPreview html={basicHtml} react={basicReact} label="ImageFrame">
     <Fragment slot="react">
       <ImageFrameBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Aspect</h2>
   <p>
     <code>data-aspect</code> es la caja, no el archivo. Con <code>cover</code> (por defecto) la media
     rellena y se recorta; con <code>auto</code> el marco sigue la medida intrínseca del media.
   </p>
-  <Showcase html={aspectHtml} label="Aspect">
+  <ComponentPreview html={aspectHtml} label="Aspect">
     <Fragment slot="react">
       <ImageFrameAspectDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Fit</h2>
   <p>
     Misma caja <code>1/1</code>, distinto <code>data-fit</code>: <code>cover</code> recorta,
     <code>contain</code> letterboxa (se ve el fondo del marco), <code>fill</code> estira.
   </p>
-  <Showcase html={fitHtml} label="Fit">
+  <ComponentPreview html={fitHtml} label="Fit">
     <Fragment slot="react">
       <ImageFrameFitDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Position</h2>
   <p>
     Con <code>cover</code>, <code>data-position</code> elige el ancla del recorte. El demo concentra
     un disco arriba-izquierda y un bloque abajo-derecha para que el ancla se note.
   </p>
-  <Showcase html={positionHtml} react={positionReact} label="Position">
+  <ComponentPreview html={positionHtml} react={positionReact} label="Position">
     <Fragment slot="react">
       <ImageFramePositionDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

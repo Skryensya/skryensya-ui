@@ -3,7 +3,7 @@ import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/checkbox.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { CheckboxBasicDemo, CheckboxGroupDemo, TileCheckboxDemo } from "../../components/react-demos/checkbox";
 
@@ -312,11 +312,11 @@ function Example() {
   <h1>Checkbox</h1>
   <p class="lede">Una elección independiente. Conserva un <code>input type="checkbox"</code>: submit, reset, teclado y validación pertenecen al browser.</p>
 
-  <Showcase html={html} react={react} label="Checkbox">
+  <ComponentPreview html={html} react={react} label="Checkbox">
     <Fragment slot="react">
       <CheckboxBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     El control usa los roles <code>check</code> y <code>remove</code> del set de iconos, no un trazo CSS.
     Importa <code>@skryensya/core/components/checkbox.css</code> y llama <code>initComponents()</code> una vez.
@@ -329,7 +329,7 @@ function Example() {
     <code>remove</code> y no un check a medias, y por eso el padre no envía nada al formulario,
     los que tienen <code>name</code> y <code>value</code> son los hijos.
   </p>
-  <Showcase
+  <ComponentPreview
     html={groupHtml}
     js={groupJs}
     previewScript={groupJs}
@@ -340,7 +340,7 @@ function Example() {
     <Fragment slot="react">
       <CheckboxGroupDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     El estado del padre es <strong>derivado</strong>, nunca autorado: se recalcula desde los hijos
     en cada cambio. Al revés, un padre con estado propio empieza a mentir en cuanto alguien marca
@@ -354,11 +354,11 @@ function Example() {
     <code>TileCheckbox</code>. Es el mismo control (<code>sk-checkbox__control</code> + iconos); solo
     cambia el contenedor.
   </p>
-  <Showcase html={tileCheckboxHtml} react={tileCheckboxReact} label="TileCheckbox">
+  <ComponentPreview html={tileCheckboxHtml} react={tileCheckboxReact} label="TileCheckbox">
     <Fragment slot="react">
       <TileCheckboxDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>El enhancer <code>tile-checkbox</code> (Svelte + <code>@zag-js/checkbox</code>, la misma máquina que React) hidrata cada label <code>data-sk-tile-checkbox</code> con <code>initComponents()</code>: controla su <code>input[data-part="input"]</code> (oculto) y sincroniza <code>data-state</code>; el <code>[data-part="indicator"]</code> es el control visual.</p>
   <CodeBlock code={tileCheckboxVanilla} label="JavaScript" />
 

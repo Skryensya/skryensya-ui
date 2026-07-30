@@ -1,6 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import "@skryensya/core/components/time-field.css";
 import { TimeFieldDemo } from "../../components/react-demos/time-field";
@@ -40,11 +40,11 @@ const react = `import { TimeField } from "@skryensya/react/time-field";
     los segmentos directamente.
   </p>
 
-  <Showcase html={customHtml} react={react} label="TimeField">
+  <ComponentPreview html={customHtml} react={react} label="TimeField">
     <Fragment slot="react">
       <TimeFieldDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contrato</h2>
   <p>
@@ -80,7 +80,7 @@ const react = `import { TimeField } from "@skryensya/react/time-field";
     estilo, realmente te cuesta algo — la misma decisión que DatePicker toma contra un
     <code>type="date"</code> plano.
   </p>
-  <Showcase html={nativeHtml} label="Input de hora nativo" />
+  <ComponentPreview html={nativeHtml} label="Input de hora nativo" />
 
   <h2>Accesibilidad</h2>
   <p>

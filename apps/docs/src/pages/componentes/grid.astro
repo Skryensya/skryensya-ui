@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import { GridBasicDemo, GridMulticolDemo } from "../../components/react-demos/layout";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -212,11 +212,11 @@ const multicolCss = `/* data-columns="4": 1 carril → 2 → 3 → 4,
     evita que el tamaño mínimo intrínseco ensanche las columnas.
   </p>
 
-  <Showcase html={html} react={react} label="Grid">
+  <ComponentPreview html={html} react={react} label="Grid">
     <Fragment slot="react">
       <GridBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>CSS Multi-column Layout</h2>
   <p>
@@ -231,11 +231,11 @@ const multicolCss = `/* data-columns="4": 1 carril → 2 → 3 → 4,
     máximo.
   </p>
   <CodeBlock code={multicolCss} label="patterns/layout.css" />
-  <Showcase html={multicolHtml} react={multicolReact} label="Multi-column layout">
+  <ComponentPreview html={multicolHtml} react={multicolReact} label="Multi-column layout">
     <Fragment slot="react">
       <GridMulticolDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     Las columnas llenan un carril de arriba hacia abajo antes de pasar al siguiente. Conserva un orden
     útil en el DOM y úsalo para tarjetas independientes; no para una secuencia cuyo orden visual de

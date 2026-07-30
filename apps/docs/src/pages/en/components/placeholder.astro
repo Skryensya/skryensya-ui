@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import { PublicationDemo, PublicationPlaceholderDemo } from "../../../components/react-demos/placeholder";
 import "../../../examples/placeholder.css";
@@ -452,7 +452,7 @@ export function PublicationDemo() {
   <p>
     The geometry follows the final layout: a card from the kit (<code>Box</code> + <code>Stack</code>) with media, text and byline. This first example always remains loaded so that the Placeholder can be inspected.
   </p>
-  <Showcase
+  <ComponentPreview
     html={staticHtml}
     react={staticReact}
     label="Layout with Placeholder"
@@ -461,13 +461,13 @@ export function PublicationDemo() {
     <Fragment slot="react">
       <PublicationPlaceholderDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Simulated loading</h2>
   <p>
     The second example waits <strong>5 seconds</strong>, removes the temporary layout and displays the actual content in the same space: <code>ImageFrame</code>, <code>Badge</code>, <code>Heading</code>, <code>Text</code> and <code>Avatar</code>.
   </p>
-  <Showcase
+  <ComponentPreview
     html={loadingHtml}
     js={loadingJs}
     previewScript={loadingJs}
@@ -478,7 +478,7 @@ export function PublicationDemo() {
     <Fragment slot="react">
       <PublicationDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Shapes</h2>
   <ul>

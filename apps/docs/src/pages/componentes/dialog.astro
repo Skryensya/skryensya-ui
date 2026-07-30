@@ -2,7 +2,7 @@
 import "@skryensya/core/components/list.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
 const install = `pnpm add @skryensya/core`;
@@ -215,7 +215,7 @@ const vaulHtml = `<button
     <code>&lt;form method="dialog"&gt;</code>: cierran sin handler y dejan el
     <code>value</code> en <code>dialog.returnValue</code>.
   </p>
-  <Showcase html={confirmHtml} previewScript={confirmJs} label="Confirm" viewport="overlay" />
+  <ComponentPreview html={confirmHtml} previewScript={confirmJs} label="Confirm" viewport="overlay" />
 
   <h2>Abrirlo</h2>
   <CodeBlock code={confirmJs} label="JavaScript" />
@@ -305,7 +305,7 @@ const vaulHtml = `<button
     light-dismiss y drag-to-dismiss. La modalidad (foco, Escape, inert) sigue siendo de
     <code>showModal()</code>.
   </p>
-  <Showcase html={vaulHtml} label="Dialog Vaul" viewport="overlay" />
+  <ComponentPreview html={vaulHtml} label="Dialog Vaul" viewport="overlay" />
 
   <h3>Qué añade</h3>
   <ul>

@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 
 const step1 = `pnpm add @skryensya/core`;
 
@@ -99,7 +99,7 @@ const fouc = `<script>
   <p>
     Variants and sizes are attributes. You do not need new classes or branching in your CSS: all <a href="/en/styling-hooks">variants re-declare the same</a> styling hook.
   </p>
-  <Showcase html={step5} react={step5React} label="Button" />
+  <ComponentPreview html={step5} react={step5React} label="Button" />
 
   <h2>5. Change it</h2>
   <p>

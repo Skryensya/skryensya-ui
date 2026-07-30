@@ -2,7 +2,7 @@
 import "@skryensya/core/components/steps.css";
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { StepsDemo, StepsVerticalDemo } from "../../../components/react-demos/steps";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -116,11 +116,11 @@ function Example() {
     Steps shows progress in an ordered sequence. Each step reports one of three states <code>complete</code>, <code>current</code>, <code>upcoming</code>; the component displays the sequence, it does not govern which is active or save navigation between steps.
   </p>
 
-  <Showcase html={html} react={react} label="Steps">
+  <ComponentPreview html={html} react={react} label="Steps">
     <Fragment slot="react">
       <StepsDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>In React, <code>current</code> derives state from steps that do not declare theirs; one step can overwrite it with <code>status</code>. <code>description</code> adds context without converting the step to a card.</p>
 
   <h2>On mobile</h2>
@@ -138,11 +138,11 @@ function Example() {
     <code>data-orientation="horizontal"</code> does the reverse: it forces the horizontal path even
     below <code>40rem</code>.
   </p>
-  <Showcase html={verticalHtml} react={verticalReact} label="Vertical Steps">
+  <ComponentPreview html={verticalHtml} react={verticalReact} label="Vertical Steps">
     <Fragment slot="react">
       <StepsVerticalDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />

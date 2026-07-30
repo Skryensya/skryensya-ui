@@ -3,7 +3,7 @@ import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/accordion.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import {
   AccordionExclusiveDemo,
@@ -470,11 +470,11 @@ const nativeDetails = `<section
     Para una divulgación aislada (antes “ExpandableTile”), usa Accordion con un único item: la raíz
     aporta el marco y el Tile conserva la superficie y el state layer.
   </p>
-  <Showcase html={single} label="Accordion de un item">
+  <ComponentPreview html={single} label="Accordion de un item">
     <Fragment slot="react">
       <AccordionSingleDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Grupo exclusivo</h2>
   <p>
@@ -482,19 +482,19 @@ const nativeDetails = `<section
     item abierto. Con <code>data-collapsible="false"</code> o <code>collapsible={false}</code>, el item
     abierto no puede cerrarse.
   </p>
-  <Showcase html={exclusive} label="Accordion single">
+  <ComponentPreview html={exclusive} label="Accordion single">
     <Fragment slot="react">
       <AccordionExclusiveDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Grupo múltiple</h2>
   <p><code>type="multiple"</code> conserva cada disclosure de forma independiente.</p>
-  <Showcase html={multiple} react={react} label="Accordion multiple">
+  <ComponentPreview html={multiple} react={react} label="Accordion multiple">
     <Fragment slot="react">
       <AccordionMultipleDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Vanilla</h2>
   <p>
@@ -524,7 +524,7 @@ const nativeDetails = `<section
     valor controlado, <code>multiple</code>, callbacks de cambio o la composición con eventos del
     sistema. La anatomía Tile (título, descripción, chevron) es la misma, así el grupo se ve igual.
   </p>
-  <Showcase html={nativeDetails} label="Details con name compartido" />
+  <ComponentPreview html={nativeDetails} label="Details con name compartido" />
 
   <h3>Instalar sólo Details</h3>
   <CodeBlock code={nativeInstall} label="terminal" />

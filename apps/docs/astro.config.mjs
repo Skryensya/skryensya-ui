@@ -6,7 +6,7 @@ import { NodePackageImporter } from "sass";
 
 /*
  * Vanilla ComponentPreview demos still run in srcdoc frames and hydrate with @skryensya/vanilla.
- * The React binding is a real island now (@astrojs/react, client:load): a Showcase's `react` slot
+ * The React binding is a real island now (@astrojs/react, client:load): a ComponentPreview's `react` slot
  * renders actual `@skryensya/react` components in the parent document, sitting next to the vanilla
  * iframe stage and toggled by the same binding switch. Vanilla's machine-backed enhancers keep
  * private implementations in `.svelte` files, so both the page graph and the isolated frame worker

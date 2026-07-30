@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { PublicationDemo, PublicationPlaceholderDemo } from "../../components/react-demos/placeholder";
 import "../../examples/placeholder.css";
@@ -458,7 +458,7 @@ export function PublicationDemo() {
     media, texto y byline. Este primer ejemplo permanece siempre en carga para poder inspeccionar el
     Placeholder.
   </p>
-  <Showcase
+  <ComponentPreview
     html={staticHtml}
     react={staticReact}
     label="Layout con Placeholder"
@@ -467,7 +467,7 @@ export function PublicationDemo() {
     <Fragment slot="react">
       <PublicationPlaceholderDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Carga simulada</h2>
   <p>
@@ -475,7 +475,7 @@ export function PublicationDemo() {
     contenido real en el mismo espacio: <code>ImageFrame</code>, <code>Badge</code>,
     <code>Heading</code>, <code>Text</code> y <code>Avatar</code>.
   </p>
-  <Showcase
+  <ComponentPreview
     html={loadingHtml}
     js={loadingJs}
     previewScript={loadingJs}
@@ -486,7 +486,7 @@ export function PublicationDemo() {
     <Fragment slot="react">
       <PublicationDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Formas</h2>
   <ul>

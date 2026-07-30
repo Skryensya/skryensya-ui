@@ -247,6 +247,33 @@ describe("the tool schema accepts everything the compiler's model does", () => {
     expect(payload.emitted.react).toContain("items={");
   });
 
+  /*
+   * The SECOND time the same duplication bit, and it bit the same way: the schema at the door said an
+   * option is a string or a boolean, while the type it mirrors has said `string | boolean | number`
+   * for as long as there have been numeric options. So the server rejected every Pagination, every
+   * Progress, every Slider, every NumberField — the whole numeric half of the catalogue — and none of
+   * the fourteen tests above noticed, because not one of them passed a number.
+   *
+   * A guard in `index.ts` now fails to COMPILE when the type widens. This is the runtime half: the
+   * shapes an agent actually sends, through the real server.
+   */
+  it("accepts numeric options, which half the catalogue is made of", async () => {
+    for (const tree of [
+      { contract: "pagination", signature: "Pagination", options: { page: 4, total: 12 } },
+      { contract: "progress", signature: "Progress", options: { value: 68, label: "Subida" } },
+      { contract: "slider", signature: "Slider", options: { value: 40, min: 0, max: 100 } },
+      {
+        contract: "number-field",
+        signature: "NumberField",
+        options: { name: "noches", min: 1, max: 14 },
+        slots: { label: "Noches" },
+      },
+    ]) {
+      const { payload } = await call("validate_ui", { tree });
+      expect(payload.valid, `${tree.signature} con opciones numéricas`).toBe(true);
+    }
+  });
+
   it("accepts a signature nested in a named slot, which is how an icon is written", async () => {
     const { payload } = await call("validate_ui", {
       tree: {

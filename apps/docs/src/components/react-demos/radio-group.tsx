@@ -1,28 +1,16 @@
 /*
- * Live React demos for /components/radio-group. Each export is a self-contained island (no
- * function props crossing the Astro boundary), mounted directly from the page.
+ * Live React demo for /components/radio-group. A self-contained island (no function props crossing
+ * the Astro boundary), mounted directly from the page.
+ *
+ * Only TileRadioGroup is left. The plain RadioGroup demo is a usage tree now — see
+ * `src/demos/radio-group.ts`. This one cannot follow: it writes `sk-tile__title` and
+ * `sk-tile__description`, and no signature emits either, so the composition has nothing to say.
  */
-import { RadioGroup } from "@skryensya/react/radio-group";
 import { TileRadioGroup } from "@skryensya/react/tile-radio-group";
 import { framedIn } from "./framed";
 
-/** Every demo below runs inside its own preview frame — see `framed.tsx`. */
+/** The demo below runs inside its own preview frame — see `framed.tsx`. */
 const framed = framedIn(import.meta.url);
-
-export const RadioGroupDemo = framed(function RadioGroupDemo() {
-  return (
-    <RadioGroup
-      name="plan"
-      defaultValue="pro"
-      items={[
-        { value: "basic", label: "Basic" },
-        { value: "pro", label: "Professional" },
-      ]}
-      onValueChange={() => {}}
-    />
-  );
-});
-
 
 export const TileRadioGroupDemo = framed(function TileRadioGroupDemo() {
   return (

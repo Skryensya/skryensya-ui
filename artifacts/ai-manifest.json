@@ -4478,6 +4478,7 @@
         "value": {
           "attr": "data-value",
           "machineInput": true,
+          "prop": "defaultValue",
           "type": "string"
         }
       },
@@ -7766,5 +7767,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "8a401600195bd79e"
+  "sourceHash": "45cd9739b4ee8aea"
 }

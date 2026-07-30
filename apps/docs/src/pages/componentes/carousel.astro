@@ -3,7 +3,7 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { carouselCardsTree } from "../../demos/carousel";
+import { carouselBareTree, carouselCardsTree } from "../../demos/carousel";
 import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/carousel.css";
 import "@skryensya/icons-lucide/carousel.css";
@@ -199,26 +199,6 @@ ${[
   </div>
 </section>`;
 
-/* Sin controles: la misma pista, sin botones ni dots en ninguna de las dos capas. Se arrastra o se
-   desliza, y el peek del siguiente slide es lo único que lo anuncia. */
-const bareHtml = `<section
-  class="sk-carousel"
-  data-sk-carousel
-  data-controls="none"
-  aria-label="Equipo"
-  style="--sk-carousel-slide-size: min(42%, 14rem)"
->
-  <div class="sk-carousel__track">
-${[
-  person("Ada Lovelace", "AL", "Plataforma"),
-  person("Grace Hopper", "GH", "Compiladores"),
-  person("Radia Perlman", "RP", "Redes"),
-  person("Barbara McClintock", "BM", "Genética"),
-  person("Karen Spärck Jones", "KS", "Recuperación"),
-].join("\n")}
-  </div>
-</section>`;
-
 const api = `const carousel = document.querySelector("[data-sk-carousel]");
 
 // anclar a una página (0-based) — el mismo comando que envía snapTo() del ref de React
@@ -306,7 +286,11 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     con <code>data-mouse-drag="off"</code> cuando el texto de los slides esté para seleccionarse: el
     arrastre suprime la selección.
   </p>
-  <ComponentPreview html={bareHtml} label="Sin controles" note='data-controls="none" · arrastra y desliza' />
+  <ComponentPreview
+    tree={carouselBareTree(t)}
+    label="Sin controles"
+    note='data-controls="none" · arrastra y desliza'
+  />
 
   <h2>Sin JS: controles nativos</h2>
   <p>

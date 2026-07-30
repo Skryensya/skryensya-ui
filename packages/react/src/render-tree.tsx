@@ -43,6 +43,7 @@ import * as tableModule from "./components/table.js";
 import * as tabsModule from "./components/tabs.js";
 import type { ContractSlot } from "@skryensya/core/contract";
 import { getContract, getSignature } from "@skryensya/ai-compiler/registry";
+import { jsxPropName } from "@skryensya/ai-compiler/emit";
 import {
   collectionItems,
   isUsageTree,
@@ -144,7 +145,10 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
    * signatures can each have a `size` over different values — so the contract keys one `headingSize`
    * and says the binding still calls it `size`.
    */
-  const props: Record<string, unknown> = { key, ...tree.attrs };
+  // `attrs` are written in HTML spelling; React wants its own for a handful of them, and it has to
+  // be the SAME handful the emitter renames or the snippet stops describing the stage beside it.
+  const props: Record<string, unknown> = { key };
+  for (const [attr, value] of Object.entries(tree.attrs ?? {})) props[jsxPropName(attr)] = value;
   // Only the signatures that portal take a container; the rest would pass it to a DOM element.
   if (portalContainer && signature.portals) props.container = portalContainer;
   for (const [option, value] of Object.entries(tree.options ?? {})) {

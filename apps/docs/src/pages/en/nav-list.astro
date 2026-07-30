@@ -2,6 +2,8 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
+import { navListTree } from "../../demos/nav-list";
+import { getLocale, useTranslations } from "../../i18n";
 import { probeProp, tokens } from "../../lib/tokens";
 
 const hooks = tokens
@@ -9,32 +11,7 @@ const hooks = tokens
   .map((t) => ({ ...t, prop: probeProp(t.value) }));
 
 const import_ = `@import "@skryensya/core/patterns/nav-list.css";`;
-
-const html = `<nav class="sk-nav-list" aria-label="Principal">
-  <div class="sk-nav-list__group">
-    <div class="sk-nav-list__group-label" id="espacio">Espacio</div>
-    <ul class="sk-nav-list__list" aria-labelledby="espacio">
-      <li class="sk-nav-list__item">
-        <a
-          class="sk-nav-list__link sk-interactive"
-          href="/in"
-          aria-current="page"
-        >
-          <span data-sk-icon="info"></span>
-          <span class="sk-nav-list__label">Inicio</span>
-        </a>
-      </li>
-      <li class="sk-nav-list__item">
-        <a class="sk-nav-list__link sk-interactive" href="/reportes">
-          <span data-sk-icon="calendar"></span>
-          <span class="sk-nav-list__label">Reportes</span>
-          <span class="sk-nav-list__trailing">12</span>
-        </a>
-      </li>
-    </ul>
-  </div>
-</nav>`;
-
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base
@@ -43,12 +20,12 @@ const html = `<nav class="sk-nav-list" aria-label="Principal">
 >
   <h1>Nav list</h1>
   <p class="lede">
-    The list of system destinations: a <code>&lt; nav&gt; </code> of <code>&lt; ul&gt;&lt; li&gt;&lt; a&gt; </code>, each link with an icon, a label and optional metadata at the end. Vertical in a sidebar, horizontal in a navbar.
+    The list of system destinations: a <code>&lt;nav&gt;</code> of <code>&lt;ul&gt;&lt;li&gt;&lt;a&gt;</code>, each link with an icon, a label and optional metadata at the end. Vertical in a sidebar, horizontal in a navbar.
   </p>
 
   <h2>Why is it a pattern and not a component</h2>
   <p>
-    The rule is a single question: <em>do many components share this exact structure? </em> Here the answer is not a prediction, the navbar and the sidebar share it today, in this repo. So it sends <strong>styling hooks and</strong> structure, and <code>sk-nav-list</code> is a class that any container adds to, the same way as <code>sk-interactive</code> and <code>sk-icon</code>.
+    The rule is a single question: <em>do many components share this exact structure?</em> Here the answer is not a prediction, the navbar and the sidebar share it today, in this repo. So it sends <strong>styling hooks and</strong> structure, and <code>sk-nav-list</code> is a class that any container adds to, the same way as <code>sk-interactive</code> and <code>sk-icon</code>.
   </p>
   <p>
     It is <strong>opt-in</strong>, like the icon and unlike the state layer: an app may not have navigation.
@@ -56,16 +33,14 @@ const html = `<nav class="sk-nav-list" aria-label="Principal">
 
   <h2>It is not a menu</h2>
   <p>
-    <code>role="menu"</code> is an application menu with <code>menuitem</code> inside. This is a list of links, and the markup stays at <code>&lt; nav&gt;&lt; ul&gt;&lt; li&gt;&lt; a&gt; </code>, which is what a screen reader should hear.
+    <code>role="menu"</code> is an application menu with <code>menuitem</code> inside. This is a list of links, and the markup stays at <code>&lt;nav&gt;&lt;ul&gt;&lt;li&gt;&lt;a&gt;</code>, which is what a screen reader should hear.
   </p>
 
-  <ComponentPreview code={html} lang="html" label="Nav list">
-    {/* A nav-list is sized by its host, a sidebar rail, a navbar row. The demo pins it to a rail width
-        so it reads as one; the code shows the markup without that host-owned width. */}
-    <div style="inline-size: 14rem">
-      <Fragment set:html={html} />
-    </div>
-  </ComponentPreview>
+  <ComponentPreview
+    tree={navListTree(t, { home: "/", reports: "/reports" })}
+    label="Nav list"
+    measure="14rem"
+  />
 
   <h2>Vertical, more compact</h2>
   <p>

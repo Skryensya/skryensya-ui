@@ -7,6 +7,10 @@ import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { RadioGroupDemo, TileRadioGroupDemo } from "../../components/react-demos/radio-group";
 
+/*
+ * El port a usage tree queda bloqueado: el contrato sólo expone `value` controlado. El emitter
+ * React no puede expresar `defaultValue`, así que el ejemplo dejaría de permitir cambiar la opción.
+ */
 
 const html = `<div
   class="sk-radio-group"

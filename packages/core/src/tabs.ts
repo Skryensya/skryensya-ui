@@ -51,8 +51,12 @@ export const tabsContract = {
       attr: "data-activation-mode",
       machineInput: true,
     },
-    /** Which tab starts selected. Falls back to the first enabled one when it names none. */
-    value: { type: "string", attr: "data-value", machineInput: true },
+    /**
+     * Which tab starts selected. Falls back to the first enabled one when it names none.
+     * Markup: `data-value`. React: `defaultValue` — React's `value` is controlled, and a usage
+     * tree has no change handler to feed it (same rename Slider and TimeField make).
+     */
+    value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
   },
 
   signatures: {

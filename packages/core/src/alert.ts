@@ -59,18 +59,33 @@ export const alertContract = {
       default: "banner",
       attr: "data-presentation",
     },
+    /**
+     * Whether the alert carries a dismiss control. Structure, not behaviour: the contract owns
+     * whether the control EXISTS, and what happens when it is used stays the binding's
+     * (`onDismiss`) — the same split Tag and Toast make. Toast is this contract's own anatomy
+     * wrapped in a lifecycle, so a dismissible Alert had to be sayable for the two to stay one.
+     */
+    dismissible: { type: "boolean", default: false, attr: "data-dismissible", trueValue: "" },
+    /** The dismiss control's accessible name. It is icon-only, so it has no other. */
+    dismissLabel: { type: "string", default: "Dismiss alert", attr: "aria-label" },
   },
 
   signatures: {
     Alert: {
       intent: ["message", "something-went-wrong", "confirmation", "warning-notice"],
       host: { element: "div" },
-      options: ["tone", "presentation"],
+      options: ["tone", "presentation", "dismissible", "dismissLabel"],
       slots: {
         icon: { accepts: "signature", of: ["Icon"] },
         title: { accepts: "text" },
         children: { accepts: "node", required: true },
-        actions: { accepts: "signature", of: ["Button.action", "Button.navigation"] },
+        /*
+         * A recovery path, and a plain Link is one of its shapes: "Ver planes" beside an expiring
+         * plan is a destination, not a command, and the accent presentation exists to give exactly
+         * that link the room to be read. Restricted to these three because an action row is where a
+         * consumer would otherwise put anything at all.
+         */
+        actions: { accepts: "signature", of: ["Button.action", "Button.navigation", "Link"] },
       },
       template: {
         element: "div",
@@ -94,7 +109,33 @@ export const alertContract = {
               { element: "div", part: "description", slot: "children" },
             ],
           },
-          { element: "div", part: "actions", whenGiven: "actions", slot: "actions" },
+          {
+            element: "div",
+            part: "actions",
+            // Either reason is enough for the row to exist; React draws it for both too.
+            whenGiven: ["actions", "dismissible"],
+            children: [
+              { slot: "actions" },
+              /*
+               * A real Button, not an alert-shaped lookalike: the state layer, the focus ring and the
+               * 44px hit target come with it, and `close` is the system's icon for dismissing, never
+               * a literal ×. The part class stays on it — that is what makes the glyph read the
+               * alert's tone instead of the accent a ghost button would paint, and what pulls the
+               * control back out of the panel's inset. The same control Toast draws, because Toast
+               * IS this anatomy.
+               */
+              {
+                element: "button",
+                part: "dismiss",
+                also: ["sk-button", "sk-interactive"],
+                whenGiven: "dismissible",
+                options: ["dismissLabel"],
+                mount: "data-sk-button",
+                attrs: { type: "button", "data-variant": "ghost", "data-size": "sm", "data-icon-only": "" },
+                children: [{ element: "span", attrs: { "data-sk-icon": "close", "data-sk-icon-size": "md" } }],
+              },
+            ],
+          },
         ],
       },
       react: { from: "@skryensya/react/alert", name: "Alert" },

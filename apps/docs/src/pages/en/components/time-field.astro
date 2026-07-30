@@ -2,95 +2,88 @@
 import Base from "../../../layouts/Base.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { timeFieldTree } from "../../../demos/time-field";
+import { getLocale, useTranslations } from "../../../i18n";
 import "@skryensya/core/components/time-field.css";
-import { TimeFieldDemo } from "../../../components/react-demos/time-field";
 
 const install = `@import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/time-field.css";`;
 
 const nativeHtml = `<input type="time" name="start" id="start" />`;
 
-const customHtml = `<div class="sk-time-field" data-sk-time-field data-locale="en-US" data-value="09:30">
-  <span class="sk-time-field__label">Departure</span>
-</div>`;
+const t = useTranslations(getLocale(Astro.url));
 
-const react = `import { TimeField } from "@skryensya/react/time-field";
-
-<TimeField
-  defaultValue="09:30"
-  label="Departure"
-  locale="en-US"
-  name="departure"
-/>`;
+/*
+ * Native `<input type="time">` stays authored: there is no contract for a platform control.
+ */
 ---
 
 <Base
   title="TimeField"
-  description="A segmented time field — hour, minute, and AM/PM as independently editable, keyboard-operable parts."
+  description="A segmented time field — hour, minute and AM/PM as independently editable parts, operable from the keyboard."
 >
   <h1>TimeField</h1>
   <p class="lede">
-    A field for a local wall-clock time — no date, no time zone. Hour, minute, and (in a 12-hour
-    locale) AM/PM are three independently editable segments in one field, instead of the browser's
-    own <code>&lt;input type="time"&gt;</code> chrome, which differs enough between Chrome, Firefox
-    and Safari that it cannot be styled or relied on to look the same twice. There is no
-    <code>@zag-js/time-picker</code> machine, so this component is hand-rolled state, the same way
-    Slider and Segmented are — but no popover either: an earlier version put a scroll-wheel picker
+    A field for a local wall-clock time — no date, no time zone. Hour, minute and (in a 12-hour
+    locale) AM/PM are three independently editable segments in one field, instead of the chrome of
+    a plain <code>&lt;input type="time"&gt;</code>, which differs enough across Chrome, Firefox and
+    Safari that it cannot be styled or trusted to look the same twice. There is no
+    <code>@zag-js/time-picker</code> machine, so this component owns its state by hand, like Slider
+    and Segmented — and there is no popover either: an earlier design put a scroll-wheel picker
     behind a trigger, and it turned out to be neither simpler nor more accessible than building the
     segments directly.
   </p>
 
-  <ComponentPreview html={customHtml} react={react} label="TimeField">
-    <Fragment slot="react">
-      <TimeFieldDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview
+    tree={timeFieldTree(t, { locale: "en-US", name: "departure" })}
+    label="TimeField"
+  />
 
   <h2>Contract</h2>
   <p>
-    Segment order and the separator between them are read off <code>Intl.DateTimeFormat</code>'s
-    own <code>formatToParts</code>, not assumed: some locales place the day period before the time,
-    and the separator is not always <code>":"</code>. The public value is still the canonical
-    <code>HH:mm</code> string, the same shape a plain <code>&lt;input type="time"&gt;</code>
-    submits — carried on a hidden input, so a form behind TimeField never has to parse a
-    locale-dependent string. React holds this as component state (<code>value</code>/<code>defaultValue</code>,
-    an <code>onValueChange</code> callback). Vanilla hydrates the authored
-    <code>data-sk-time-field</code>: the consumer authors only the root and its label, and the
-    component generates the segments from <code>data-locale</code>.
+    Segment order and separators come from <code>Intl.DateTimeFormat.formatToParts</code>, not from
+    assumptions: some locales put the day period before the time, and the separator is not always
+    <code>":"</code>. The public value is still the canonical <code>HH:mm</code> string — the same
+    shape a plain <code>&lt;input type="time"&gt;</code> submits — carried on a hidden input, so a
+    form behind TimeField never has to parse a locale-dependent string. React holds this as
+    component state (<code>value</code>/<code>defaultValue</code>, an <code>onValueChange</code>
+    callback). Vanilla hydrates the authored <code>data-sk-time-field</code>: the consumer only
+    authors the root and its label, and the component builds the segments from
+    <code>data-locale</code>.
   </p>
 
   <h2>Editing a segment</h2>
   <p>
-    Typing a digit fills the focused segment and moves on once no further digit could keep it
-    valid — typing <kbd class="sk-kbd">1</kbd> in the hour segment of a 12-hour field waits briefly
-    for a possible second digit (<code>10</code>–<code>12</code>), typing <kbd class="sk-kbd">9</kbd>
-    advances immediately, since no second digit could follow it and stay ≤ 12. Arrow Up/Down step
-    the value and wrap at the ends; <kbd class="sk-kbd">Backspace</kbd> clears the segment;
+    Typing a digit fills the focused segment and advances as soon as no further digit could keep it
+    valid — typing <kbd class="sk-kbd">1</kbd> in a 12-hour hour segment waits briefly for a possible
+    second digit (<code>10</code>–<code>12</code>); typing <kbd class="sk-kbd">9</kbd> advances at
+    once, because no second digit could follow it and stay ≤ 12. Arrow up/down steps the value and
+    wraps at the ends; <kbd class="sk-kbd">Backspace</kbd> clears the segment;
     <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> move between segments; typing the first
     letter of the locale's AM/PM label on that segment sets it directly.
   </p>
 
-  <h2>If you just need the platform picker</h2>
+  <h2>If you only need the platform picker</h2>
   <p>
-    A plain <code>&lt;input type="time"&gt;</code> still works, needs no CSS or JavaScript, and gets
+    A plain <code>&lt;input type="time"&gt;</code> still works, needs no CSS or JavaScript, and brings
     the OS's own keyboard and picker for free. Reach for TimeField only once that picker's
-    inconsistency across browsers, or its total absence of styling hooks, actually costs you
-    something — the same trade DatePicker makes against a plain <code>type="date"</code> input.
+    inconsistency across browsers, or the total lack of styling hooks, actually costs you something —
+    the same decision DatePicker makes against a plain <code>type="date"</code>.
   </p>
   <ComponentPreview html={nativeHtml} label="Native time input" />
 
   <h2>Accessibility</h2>
   <p>
-    Each segment is <code>role="spinbutton"</code> inside one <code>role="group"</code> named by
-    the field's own label: <code>aria-valuenow</code>/<code>aria-valuetext</code> carry its current
-    value (a friendly placeholder like “hh” before anything is set, not a bare empty string), and
+    Each segment is <code>role="spinbutton"</code> inside a <code>role="group"</code> named by the
+    field's label: <code>aria-valuenow</code>/<code>aria-valuetext</code> carry its current value (a
+    friendly placeholder like "hh" before anything is set, not an empty string), and
     <code>aria-valuemin</code>/<code>aria-valuemax</code> its real range — 1–12 for an hour segment
-    in a 12-hour locale, 0–23 in a 24-hour one. Every segment is its own tab stop, the same way a
-    native multi-part date input already works, so keyboard use needs nothing beyond Tab and the
-    arrow keys documented above.
+    in a 12-hour locale, 0–23 in a 24-hour one. Each segment is its own tab stop, the way a native
+    multi-part date input already works, so keyboard use needs nothing beyond Tab and the arrows
+    documented above.
   </p>
 
-  <h2>Install</h2>
+  <h2>CSS</h2>
   <pre><code>{install}</code></pre>
   <StylingHooks
     groups={[

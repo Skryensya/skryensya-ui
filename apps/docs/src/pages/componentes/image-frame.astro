@@ -5,46 +5,24 @@ import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import {
   ImageFrameAspectDemo,
-  ImageFrameBasicDemo,
   ImageFrameFitDemo,
   ImageFramePositionDemo,
 } from "../../components/react-demos/image-frame";
+import { DEMO_IMAGE_FRAME_SRC, imageFrameTree } from "../../demos/image-frame";
+import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
 const styles = `@import "@skryensya/core/patterns/image-frame.css";
 /* o patterns/layout.css, que ya lo incluye */`;
 
-/* Offline demo asset: asymmetric so crop + object-position read clearly. */
-const demoSrc = "/demos/image-frame.svg";
+const t = useTranslations(getLocale(Astro.url));
 
-const basicHtml = `<figure
-  class="sk-image-frame"
-  data-aspect="16/9"
-  data-fit="cover"
-  data-position="center"
-  data-radius="surface"
-  data-border="subtle"
->
-  <img
-    class="sk-image-frame__media"
-    src="${demoSrc}"
-    alt="Paisaje de demostración"
-  />
-</figure>`;
-
-const basicReact = `import { ImageFrame } from "@skryensya/react/image-frame";
-
-<ImageFrame
-  as="figure"
-  aspect="16/9"
-  fit="cover"
-  position="center"
-  radius="surface"
-  border="subtle"
-  src="${demoSrc}"
-  alt="Paisaje de demostración"
-/>;`;
+/*
+ * Aspect / fit / position stay authored: they wrap frames in docs-only `demo-grid` / `demo-shot`
+ * chrome that no signature emits.
+ */
+const demoSrc = DEMO_IMAGE_FRAME_SRC;
 
 const aspectHtml = `<div class="demo-grid">
   <figure class="demo-shot">
@@ -174,11 +152,7 @@ const positionReact = `import { ImageFrame } from "@skryensya/react/image-frame"
     <a href="/gradientes">Gradientes</a> (<code>sk-media-gradient</code>).
   </p>
 
-  <ComponentPreview html={basicHtml} react={basicReact} label="ImageFrame">
-    <Fragment slot="react">
-      <ImageFrameBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={imageFrameTree(t)} label="ImageFrame" />
 
   <h2>Aspect</h2>
   <p>

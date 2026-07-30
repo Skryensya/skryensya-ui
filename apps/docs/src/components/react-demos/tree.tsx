@@ -8,7 +8,7 @@
  */
 import { renderTree } from "@skryensya/react/render-tree";
 import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
-import { framedIn } from "./framed";
+import { framedIn, type FramedOverrides } from "./framed";
 
 /*
  * The module key, written out instead of taken from `import.meta.url`.
@@ -28,6 +28,8 @@ export interface TreeDemoProps {
   tree: UsageTree;
   /** Cap the stage width — read by `framed()`, never by this component. See `framed.tsx`. */
   measure?: string;
+  /** Stage settings supplied by the ComponentPreview call site and consumed by `framed()`. */
+  frameOptions?: FramedOverrides;
 }
 
 /*

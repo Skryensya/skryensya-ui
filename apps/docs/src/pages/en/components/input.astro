@@ -3,60 +3,15 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
-import { InputBasicDemo } from "../../../components/react-demos/input";
-
-
+import { inputTree } from "../../../demos/input";
+import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
 
 const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/input.css";
 @import "@skryensya/core/components/field.css";`;
-
-const html = `<div class="sk-field">
-  <label class="sk-field__label" for="email">
-    Email
-    <span class="sk-field__required" aria-hidden="true">*</span>
-  </label>
-  <div class="sk-field__hint" id="email-hint">
-    We only use it for ballots.
-  </div>
-
-  <input
-    class="sk-input"
-    id="email"
-    name="email"
-    type="email"
-    required
-    aria-describedby="email-hint email-error"
-    aria-invalid="true"
-  />
-
-  <div class="sk-field__error" id="email-error">
-    Enter a work address.
-  </div>
-</div>`;
-
-const react = `import { Field, Input, Textarea } from "@skryensya/react/input";
-
-function Example() {
-  return (
-    <>
-      <Field
-        label="Email"
-        hint="We only use it for ballots."
-        error={errors.email}
-        required
-      >
-        <Input name="email" type="email" />
-      </Field>
-
-      <Field label="Notes">
-        <Textarea name="notes" />
-      </Field>
-    </>
-  );
-}`;
 ---
 
 <Base title="Input" description="Input: native control, Field with label, hint, error, and styling hooks.">
@@ -65,11 +20,7 @@ function Example() {
     The native text control stays native: there is no machine, and there is no border <code>div</code> posing as input. The platform is left with the validation, the autofill, the IME and the association to the form.
   </p>
 
-  <ComponentPreview html={html} react={react} label="Input">
-    <Fragment slot="react">
-      <InputBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={inputTree(t)} label="Input" />
   <p>Density compacts the space around the field, not its interaction area: Input retains a minimum of <code>44px</code> high, even with <code>data-size="sm"</code>.</p>
 
   <h2>A class for all text controls</h2>

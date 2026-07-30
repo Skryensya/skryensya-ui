@@ -3,157 +3,15 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import {
-  AlertAccentDemo,
-  AlertBannerDemo,
-  AlertInlineDemo,
-  AlertNeutralDemo,
-} from "../../components/react-demos/alert";
+  alertAccentTree,
+  alertBannerTree,
+  alertInlineTree,
+  alertNeutralTree,
+} from "../../demos/alert";
+import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
-
-const neutralHtml = `<div
-  class="sk-alert"
-  data-presentation="banner"
-  data-tone="neutral"
-  role="status"
-  aria-live="polite"
->
-  <div class="sk-alert__content">
-    <p class="sk-alert__title">Mantenimiento programado</p>
-    <div class="sk-alert__description">
-      El domingo de 02:00 a 04:00 UTC el panel estará en solo
-      lectura.
-    </div>
-  </div>
-  <div class="sk-alert__actions">
-    <button
-      class="sk-alert__dismiss"
-      type="button"
-      aria-label="Cerrar alerta"
-    >
-      <span data-sk-icon="close"></span>
-    </button>
-  </div>
-</div>`;
-
-const bannerHtml = `<div
-  class="sk-alert"
-  data-presentation="banner"
-  data-tone="info"
-  role="status"
-  aria-live="polite"
->
-  <span class="sk-alert__icon" aria-hidden="true">
-    <span data-sk-icon="info"></span>
-  </span>
-  <div class="sk-alert__content">
-    <p class="sk-alert__title">Nueva versión</p>
-    <div class="sk-alert__description">
-      Una actualización está disponible.
-    </div>
-  </div>
-</div>`;
-
-const accentHtml = `<div
-  class="sk-alert"
-  data-presentation="accent"
-  data-tone="warning"
-  role="status"
-  aria-live="polite"
->
-  <span class="sk-alert__icon" aria-hidden="true">
-    <span data-sk-icon="warning"></span>
-  </span>
-  <div class="sk-alert__content">
-    <p class="sk-alert__title">Tu plan expira en 3 días</p>
-    <div class="sk-alert__description">
-      Elige un plan para no interrumpir los despliegues.
-    </div>
-  </div>
-  <div class="sk-alert__actions">
-    <a class="sk-link sk-interactive" href="/billing">Ver planes</a>
-    <button
-      class="sk-alert__dismiss"
-      type="button"
-      aria-label="Cerrar alerta"
-    >
-      <span data-sk-icon="close"></span>
-    </button>
-  </div>
-</div>`;
-
-const inlineHtml = `<div
-  class="sk-alert"
-  data-presentation="inline"
-  data-tone="success"
-  role="status"
-  aria-live="polite"
->
-  <span class="sk-alert__icon" aria-hidden="true">
-    <span data-sk-icon="success"></span>
-  </span>
-  <div class="sk-alert__content">
-    <div class="sk-alert__description">Tus cambios se guardaron.</div>
-  </div>
-</div>`;
-
-const neutralReact = `import { Alert } from "@skryensya/react/alert";
-
-function SomeFunction() {}
-
-function Example() {
-  return (
-    <Alert
-      tone="neutral"
-      title="Mantenimiento programado"
-      onDismiss={SomeFunction}
-    >
-      El domingo de 02:00 a 04:00 UTC el panel estará en solo lectura.
-    </Alert>
-  );
-}`;
-
-const bannerReact = `import { Alert } from "@skryensya/react/alert";
-
-function Example() {
-  return (
-    <Alert tone="info" title="Nueva versión">
-      Una actualización está disponible.
-    </Alert>
-  );
-}`;
-
-const accentReact = `import { Alert } from "@skryensya/react/alert";
-
-function SomeFunction() {}
-
-function Example() {
-  return (
-    <Alert
-      onDismiss={SomeFunction}
-      actions={
-        <a className="sk-link sk-interactive" href="/billing">
-          Ver planes
-        </a>
-      }
-      presentation="accent"
-      title="Tu plan expira en 3 días"
-      tone="warning"
-    >
-      Elige un plan para no interrumpir los despliegues.
-    </Alert>
-  );
-}`;
-
-const inlineReact = `import { Alert } from "@skryensya/react/alert";
-
-function Example() {
-  return (
-    <Alert presentation="inline" tone="success">
-      Tus cambios se guardaron.
-    </Alert>
-  );
-}`;
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base title="Alert" description="Alert: mensaje inline persistente con tono (incluido neutral), anuncio accesible y componente React.">
@@ -185,51 +43,48 @@ function Example() {
     Úsalo en avisos ordinarios, confirmaciones breves o cualquier caso donde pintar el panel de
     “éxito” o “info” añadiría urgencia que el contenido no tiene.
   </p>
-  <ComponentPreview html={neutralHtml} react={neutralReact} label="Alert neutral">
-    <Fragment slot="react">
-      <AlertNeutralDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={alertNeutralTree(t)} label="Alert neutral" />
 
   <h2>Presentaciones</h2>
   <p>La presentación decide el peso visual, no la urgencia.</p>
 
   <h3>Banner</h3>
   <p>El panel completo sirve para una condición que necesita título y explicación junto al contenido afectado.</p>
-  <ComponentPreview html={bannerHtml} react={bannerReact} label="Alert banner">
-    <Fragment slot="react">
-      <AlertBannerDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={alertBannerTree(t)} label="Alert banner" />
 
   <h3>Acento</h3>
   <p>La barra lateral conserva la señal de tono y deja que una acción de recuperación tenga protagonismo.</p>
-  <ComponentPreview html={accentHtml} react={accentReact} label="Alert acento">
-    <Fragment slot="react">
-      <AlertAccentDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={alertAccentTree(t)} label="Alert acento" />
 
   <h3>Inline</h3>
   <p>Sin panel ni borde, una confirmación breve acompaña un bloque que ya tiene estructura propia.</p>
-  <ComponentPreview html={inlineHtml} react={inlineReact} label="Alert inline">
-    <Fragment slot="react">
-      <AlertInlineDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={alertInlineTree(t)} label="Alert inline" />
 
   <h2>Anatomía</h2>
   <ul>
     <li><code>sk-alert__icon</code> es decorativo y solo aparece cuando aporta una señal visual.</li>
     <li><code>sk-alert__content</code> agrupa título opcional y descripción.</li>
     <li><code>sk-alert__actions</code> aloja acciones que pertenecen al consumidor; el cierre opcional vive ahí.</li>
+    <li>
+      <code>sk-alert__dismiss</code> es el cierre, y se autora como
+      <a href="/componentes/button">Button</a> icon-only <code>sm</code> ghost, igual que en
+      <a href="/componentes/toast">Toast</a>: hereda el hit target de 44px, el state layer y el foco,
+      y la clase de parte hace que el glifo lea el color del tono. Sin texto visible,
+      <code>aria-label</code> es obligatorio.
+    </li>
     <li><code>data-tone</code> acepta <code>neutral</code> (default), <code>info</code>, <code>success</code>, <code>warning</code> o <code>danger</code>.</li>
     <li><code>data-presentation</code> acepta <code>banner</code> (default), <code>accent</code> o <code>inline</code>.</li>
+    <li><code>data-dismissible</code> dice que el cierre existe; qué hace al usarse es del binding.</li>
   </ul>
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />
 
   <h2>React</h2>
-  <p>El código está en la pestaña <strong>React</strong> de cada ejemplo. <code>onDismiss</code> es opcional: sin él, no se dibuja el botón de cierre.</p>
+  <p>
+    El código está en la pestaña <strong>React</strong> de cada ejemplo. <code>dismissible</code>
+    decide si el botón de cierre existe y <code>onDismiss</code> qué hace al usarse: la estructura es
+    del contrato, el comportamiento del binding. Pasar solo <code>onDismiss</code> también dibuja el
+    botón, para el código escrito antes de que <code>dismissible</code> existiera.
+  </p>
 </Base>

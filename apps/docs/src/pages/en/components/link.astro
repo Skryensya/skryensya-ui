@@ -2,31 +2,16 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
-import { LinkBasicDemo, TileLinkDemo } from "../../../components/react-demos/link";
+import { TileLinkDemo } from "../../../components/react-demos/link";
+import { linkTree } from "../../../demos/link";
+import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
 
-const html = `<p>
-  A paragraph with a link <a class="sk-link sk-interactive" href="/en/components/link">of the text color</a> and another <a
- class="sk-link sk-interactive"
- href="/en/components/link"
- data-tone="primary"
- >of primary color</a>, both with permanent underlining.
-</p>`;
-
-const react = `import { Link } from "@skryensya/react/link";
-
-function Example() {
-  return (
-    <p>
-      A paragraph with a link <Link href="/en/components/link">of the text color</Link> and another{" "}
-      <Link href="/en/components/link" tone="primary">
-        of primary color
-      </Link>
-      , both with permanent underlining.
-    </p>
-  );
-}`;
+/*
+ * TileLink stays authored: tile title/description parts are declared and unreachable.
+ */
 
 const tileLinkHtml = `<a
   class="sk-tile sk-tile--interactive sk-interactive"
@@ -67,11 +52,7 @@ function Example() {
     Link preserves the native semantics of <code>&lt;a&gt;</code>: use it for navigation and provide a valid <code>href</code>. It is a <strong>text link</strong> with permanent underlining, the only treatment that WCAG 1.4.1 allows in prose. The hover uses the state layer (<code>sk-interactive</code>), not a color invented by the component.
   </p>
 
-  <ComponentPreview html={html} react={react} label="Link">
-    <Fragment slot="react">
-      <LinkBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={linkTree(t, "/en/components/link")} label="Link" />
 
   <h2>Surface Link: TileLink</h2>
   <p>

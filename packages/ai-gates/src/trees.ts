@@ -1115,6 +1115,20 @@ const signatureTrees: readonly Canonical[] = [
       ],
     },
   },
+  {
+    /*
+     * The signature that draws nothing, which makes it the one case G5 cannot judge: there is no
+     * box to measure. What G2 and G4 CAN say is the whole point of it — that both bindings put the
+     * same name in the same live region, and that a screen reader finds it.
+     */
+    name: "loader/status-only",
+    enhanced: false,
+    tree: {
+      contract: "loader",
+      signature: "Loader.status",
+      options: { label: "Cargando el catálogo" },
+    },
+  },
 ];
 
 /*

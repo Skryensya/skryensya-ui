@@ -20,6 +20,7 @@ export const browseRecipe: Recipe = {
   intent: "Un catálogo que se filtra y se recorre, con la ruta y los filtros siempre a la vista.",
   notes: [
     "Cargando son esqueletos, no un spinner: la forma de lo que viene ya se conoce, y un spinner tira esa información — la página salta cuando llegan los datos.",
+    "Los esqueletos no dicen nada a quien no los ve, así que el estado lleva además un `Loader.status`: la espera anunciada sin dibujar. Un spinner arriba de los esqueletos desharía el motivo de los esqueletos.",
     "El estado vacío **conserva los filtros**. Un catálogo que se vacía y esconde el control que lo vació no deja vuelta atrás salvo el botón del navegador.",
     "El Breadcrumb dice dónde estás, no cómo llegaste: es la ruta del contenido, no el historial de navegación.",
     "El texto sobre la foto necesita un MediaCaption, no sólo un gradiente: el lavado se dimensiona al texto que protege, y suelto no pinta nada.",
@@ -33,6 +34,16 @@ export const browseRecipe: Recipe = {
       children: [
         crumbs(),
         filters(),
+        /*
+         * The skeletons carry the shape; this carries the fact. Placeholders say nothing to anyone
+         * who cannot see them — no live region, so a screen reader finds a still page and no reason
+         * to wait — and a spinner above them would undo the reason for the skeletons.
+         */
+        {
+          contract: "loader",
+          signature: "Loader.status",
+          options: { label: "Cargando el catálogo" },
+        },
         {
           contract: "layout",
           signature: "Grid",

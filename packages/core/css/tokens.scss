@@ -27,6 +27,7 @@
  * non-interactive elements. (Component-specific patterns, the dialog's top-layer, backdrop,
  * scroll-lock, stay opt-in below, because only some apps need them.) */
 @import url("./patterns/state-layer.css");
+@import url("./patterns/visually-hidden.css");
 
 /* The icon pattern ships in base for the same reason: an icon is not an extra a component opts into
  * the moment anything has a chevron, a close or a status glyph, it needs the identical <svg> box,

@@ -92,6 +92,39 @@ export const ui = {
     "preview.screenMobile": "Móvil",
     "preview.screenMobileHint": "Móvil · 390 × 844 px, el ancho donde todo termina apilado",
 
+    /*
+     * THE CONTENT OF THE DEMOS, so a usage tree can be written ONCE and read in either language.
+     *
+     * A demo's tree is its composition — which signature, nested how, with which options — and none
+     * of that is Spanish or English. Only the words inside it are, so only the words live here: the
+     * two pages import the same tree factory from `src/demos/` and hand it their translator. Before
+     * this, each page carried its own copy of the tree, which is the same duplication the tree came
+     * to remove, one language later.
+     *
+     * A demo string that is a PROPER NOUN stays in the tree (`react`, `frontend`, `tokens`): it is
+     * not translated, and a key for it would only be an identity entry that can rot.
+     */
+    "demo.tag.design": "diseño",
+    "demo.tag.active": "activo",
+    "demo.tag.deprecated": "deprecado",
+    "demo.tag.remove": "Quitar {name}",
+    "demo.pagination.label": "Paginación",
+    "demo.pagination.previous": "Página anterior",
+    "demo.pagination.next": "Página siguiente",
+    "demo.box.title": "Resumen",
+    "demo.box.body": "Una sección semántica con superficie, borde y padding.",
+    "demo.box.action": "Administrar",
+    "demo.progress.upload": "Subida",
+    "demo.progress.complete": "Completado",
+    "demo.progress.quota": "Cuota",
+    "demo.emptyState.title": "Todavía no hay proyectos",
+    "demo.emptyState.description": "Crea el primero para organizar el trabajo del equipo.",
+    "demo.emptyState.action": "Crear proyecto",
+    "demo.segmented.label": "Rango",
+    "demo.segmented.day": "Día",
+    "demo.segmented.week": "Semana",
+    "demo.segmented.month": "Mes",
+
     "hooks.intro": "Los valores autorales salen del CSS publicado. Los valores usados se resuelven en vivo contra el elemento real del componente y cambian con las dimensiones elegidas arriba.",
     "hooks.authored": "Valor autoral",
     "hooks.used": "Valor usado",
@@ -195,6 +228,28 @@ export const ui = {
     "preview.screenTabletHint": "Tablet · 768 × 1024 px, where two-column layouts begin to yield",
     "preview.screenMobile": "Mobile",
     "preview.screenMobileHint": "Mobile · 390 × 844 px, where every layout finishes stacking",
+
+    /* The demos' words. The composition they sit in is shared — see the Spanish block above. */
+    "demo.tag.design": "design",
+    "demo.tag.active": "active",
+    "demo.tag.deprecated": "deprecated",
+    "demo.tag.remove": "Remove {name}",
+    "demo.pagination.label": "Pagination",
+    "demo.pagination.previous": "Previous page",
+    "demo.pagination.next": "Next page",
+    "demo.box.title": "Summary",
+    "demo.box.body": "A semantic section with surface, border and padding.",
+    "demo.box.action": "Manage",
+    "demo.progress.upload": "Upload",
+    "demo.progress.complete": "Complete",
+    "demo.progress.quota": "Quota",
+    "demo.emptyState.title": "There are no projects yet",
+    "demo.emptyState.description": "Create the first one to organize the team's work.",
+    "demo.emptyState.action": "Create project",
+    "demo.segmented.label": "Range",
+    "demo.segmented.day": "Day",
+    "demo.segmented.week": "Week",
+    "demo.segmented.month": "Month",
 
     "hooks.intro": "Authored values come from the published CSS. Used values resolve live against the real component element and change with the dimensions selected above.",
     "hooks.authored": "Authored value",

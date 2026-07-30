@@ -17,8 +17,17 @@ import { initTocDisclosure } from "./toc";
  */
 const frame = hostIframe();
 const parentRoot = window.parent.document.documentElement;
-const rootAttributes = ["lang", "dir", "data-scheme", "data-contrast", "data-radius", "data-icon-set"] as const;
-const allowScroll = document.body.hasAttribute("data-sk-component-preview-scroll");
+const rootAttributes = [
+  "lang",
+  "dir",
+  "data-scheme",
+  "data-contrast",
+  "data-radius",
+  "data-icon-set",
+] as const;
+const allowScroll = document.body.hasAttribute(
+  "data-sk-component-preview-scroll",
+);
 const frameReadyAttribute = "data-sk-component-preview-frame-ready";
 const previewViewportBlockSize = "--sk-component-preview-viewport-block-size";
 
@@ -90,9 +99,17 @@ function syncRootState(): void {
   }
   document.documentElement.style.cssText = parentRoot.style.cssText;
   // Host scroll-lock reserves a classic scrollbar gutter; previews size to content.
-  document.documentElement.style.setProperty("scrollbar-gutter", "auto", "important");
+  document.documentElement.style.setProperty(
+    "scrollbar-gutter",
+    "auto",
+    "important",
+  );
   document.documentElement.style.setProperty("block-size", "auto", "important");
-  document.documentElement.style.setProperty("min-block-size", "0", "important");
+  document.documentElement.style.setProperty(
+    "min-block-size",
+    "0",
+    "important",
+  );
   document.body.style.setProperty("min-block-size", "0", "important");
   document.body.style.setProperty("block-size", "auto", "important");
   applyOverflow();
@@ -129,7 +146,8 @@ function injectFrameChrome(): void {
  */
 async function waitForParentFrame(): Promise<void> {
   const parentBody = window.parent.document.body;
-  const nested = parentBody?.classList.contains("sk-component-preview__frame-body") ?? false;
+  const nested =
+    parentBody?.classList.contains("sk-component-preview__frame-body") ?? false;
   if (!nested || parentRoot.hasAttribute(frameReadyAttribute)) return;
 
   await new Promise<void>((resolve) => {
@@ -141,7 +159,10 @@ async function waitForParentFrame(): Promise<void> {
     const observer = new MutationObserver(() => {
       if (parentRoot.hasAttribute(frameReadyAttribute)) settle();
     });
-    observer.observe(parentRoot, { attributes: true, attributeFilter: [frameReadyAttribute] });
+    observer.observe(parentRoot, {
+      attributes: true,
+      attributeFilter: [frameReadyAttribute],
+    });
     // A parent that never finishes must not leave this frame blank forever.
     const timer = setTimeout(settle, 4000);
   });
@@ -149,9 +170,9 @@ async function waitForParentFrame(): Promise<void> {
 
 async function cloneParentStyles(): Promise<void> {
   const pending: Promise<void>[] = [];
-  const styles = window.parent.document.head.querySelectorAll<HTMLLinkElement | HTMLStyleElement>(
-    'link[rel="stylesheet"], style',
-  );
+  const styles = window.parent.document.head.querySelectorAll<
+    HTMLLinkElement | HTMLStyleElement
+  >('link[rel="stylesheet"], style');
 
   for (const source of styles) {
     const clone = document.importNode(source, true);
@@ -234,7 +255,9 @@ async function installRefreshPreamble(): Promise<void> {
  * `select-menu_HASH` starts with both `select` and `select-menu`, and only the longer one is the
  * module actually asked for.
  */
-function resolveDemoLoader(name: string): (() => Promise<Record<string, unknown>>) | undefined {
+function resolveDemoLoader(
+  name: string,
+): (() => Promise<Record<string, unknown>>) | undefined {
   const exact = reactDemoLoaders.get(name);
   if (exact) return exact;
 
@@ -245,25 +268,46 @@ function resolveDemoLoader(name: string): (() => Promise<Record<string, unknown>
   return bestKey ? reactDemoLoaders.get(bestKey) : undefined;
 }
 
+/**
+ * Mount authored placeholders first, then hydrate placeholders injected by async enhancers.
+ *
+ * Svelte enhancers can finish their DOM commit after `initComponents()` resolves. Waiting one frame
+ * makes the second icon pass deterministic instead of leaving newly injected controls blank.
+ */
+async function mountFrameComponents(root: Document | Element): Promise<void> {
+  mountIcons(root, siteIcons);
+  await initComponents(root);
+  await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+  mountIcons(root, siteIcons);
+}
+
 /** Import and mount the demo this frame was told to render, in this frame's own realm. */
 async function mountReactDemo(): Promise<void> {
-  const { skReactDemoModule: moduleKey, skReactDemoExport: exportName } = document.body.dataset;
+  const { skReactDemoModule: moduleKey, skReactDemoExport: exportName } =
+    document.body.dataset;
   if (!moduleKey || !exportName) return;
 
   const load = resolveDemoLoader(moduleKey);
-  if (!load) throw new Error(`[ComponentPreview] Unknown React demo module "${moduleKey}".`);
+  if (!load)
+    throw new Error(
+      `[ComponentPreview] Unknown React demo module "${moduleKey}".`,
+    );
 
   await installRefreshPreamble();
 
-  const [module, { createRoot }, { createElement }] = await Promise.all([
-    load(),
-    import("react-dom/client"),
-    import("react"),
-  ]);
+  const [module, { createRoot }, { createElement }, { flushSync }] =
+    await Promise.all([
+      load(),
+      import("react-dom/client"),
+      import("react"),
+      import("react-dom"),
+    ]);
 
   const exported = module[exportName];
   if (typeof exported !== "function") {
-    throw new Error(`[ComponentPreview] "${moduleKey}" has no demo export "${exportName}".`);
+    throw new Error(
+      `[ComponentPreview] "${moduleKey}" has no demo export "${exportName}".`,
+    );
   }
 
   /*
@@ -271,7 +315,8 @@ async function mountReactDemo(): Promise<void> {
    * it here and the preview nests a preview inside itself, forever. `demoComponent` is the original
    * component, resolved in this realm because this realm loaded the module.
    */
-  const Component = (exported as { demoComponent?: unknown }).demoComponent ?? exported;
+  const Component =
+    (exported as { demoComponent?: unknown }).demoComponent ?? exported;
 
   const raw = document.body.dataset.skReactDemoProps;
   const props = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
@@ -288,17 +333,18 @@ async function mountReactDemo(): Promise<void> {
   host.style.display = "contents";
   document.body.append(host);
 
-  createRoot(host).render(createElement(Component as never, props as never));
+  const root = createRoot(host);
+  flushSync(() => {
+    root.render(createElement(Component as never, props as never));
+  });
+  await mountFrameComponents(host);
 }
 
 function runAuthoredScript(): void {
   const encoded = document.body.dataset.skComponentPreviewScript;
   delete document.body.dataset.skComponentPreviewScript;
   if (!encoded) return;
-  window.skMount = async (root = document) => {
-    await initComponents(root);
-    mountIcons(root, siteIcons);
-  };
+  window.skMount = (root = document) => mountFrameComponents(root);
   Function(decodeURIComponent(encoded)).call(window);
 }
 
@@ -334,7 +380,8 @@ function measureContentHeight(): number {
       return;
     }
     const bottom = element.getBoundingClientRect().bottom;
-    if (Number.isFinite(bottom)) contentBottom = Math.max(contentBottom, bottom);
+    if (Number.isFinite(bottom))
+      contentBottom = Math.max(contentBottom, bottom);
   };
 
   for (const child of body.children) consider(child);
@@ -353,7 +400,9 @@ async function boot(): Promise<void> {
   syncRootState();
   const rootObserver = new MutationObserver(syncRootState);
   rootObserver.observe(parentRoot, { attributes: true });
-  window.addEventListener("pagehide", () => rootObserver.disconnect(), { once: true });
+  window.addEventListener("pagehide", () => rootObserver.disconnect(), {
+    once: true,
+  });
   const onParentResize = () => {
     applyOverflow();
     fitFrame();
@@ -376,10 +425,21 @@ async function boot(): Promise<void> {
   await waitForParentFrame();
   await cloneParentStyles();
   injectFrameChrome();
+  /*
+   * Lazy enhancers can insert their control chrome after their mount promise resolves. Hydrate
+   * placeholders as they arrive; observing child additions avoids timing guesses and ignores state
+   * updates, which only change attributes.
+   */
+  const iconObserver = new MutationObserver(() =>
+    mountIcons(document, siteIcons),
+  );
+  iconObserver.observe(document.body, { childList: true, subtree: true });
+  window.addEventListener("pagehide", () => iconObserver.disconnect(), {
+    once: true,
+  });
   const disposeToc = initTocDisclosure(document);
   window.addEventListener("pagehide", disposeToc, { once: true });
-  mountIcons(document, siteIcons);
-  await initComponents(document);
+  await mountFrameComponents(document);
   /*
    * The documentation surfaces are opt-in, and this realm opts in: a preview of ComponentPreview
    * has to behave like one — its own tabs, reload, resizer and code disclosure. Both mounts are
@@ -402,9 +462,14 @@ async function boot(): Promise<void> {
     });
     sizingObserver.observe(frame, {
       attributes: true,
-      attributeFilter: ["data-sk-component-preview-resized", "data-sk-component-preview-screen"],
+      attributeFilter: [
+        "data-sk-component-preview-resized",
+        "data-sk-component-preview-screen",
+      ],
     });
-    window.addEventListener("pagehide", () => sizingObserver.disconnect(), { once: true });
+    window.addEventListener("pagehide", () => sizingObserver.disconnect(), {
+      once: true,
+    });
   }
 
   if (!allowScroll) {
@@ -421,7 +486,9 @@ async function boot(): Promise<void> {
     for (const child of document.body.children) {
       if (child instanceof Element) resizeObserver.observe(child);
     }
-    window.addEventListener("pagehide", () => resizeObserver.disconnect(), { once: true });
+    window.addEventListener("pagehide", () => resizeObserver.disconnect(), {
+      once: true,
+    });
 
     /*
      * The body's children are not fixed at boot. The React binding portals its whole tree in AFTER
@@ -448,7 +515,9 @@ async function boot(): Promise<void> {
      * a menu or a row deeper in its own tree.
      */
     childObserver.observe(document.body, { childList: true, subtree: true });
-    window.addEventListener("pagehide", () => childObserver.disconnect(), { once: true });
+    window.addEventListener("pagehide", () => childObserver.disconnect(), {
+      once: true,
+    });
 
     let lastWidth = frame?.getBoundingClientRect().width ?? -1;
     const hostObserver = new ResizeObserver((entries) => {
@@ -458,7 +527,9 @@ async function boot(): Promise<void> {
       fitFrame();
     });
     if (frame) hostObserver.observe(frame);
-    window.addEventListener("pagehide", () => hostObserver.disconnect(), { once: true });
+    window.addEventListener("pagehide", () => hostObserver.disconnect(), {
+      once: true,
+    });
 
     fitFrame();
     requestAnimationFrame(() => {
@@ -469,7 +540,10 @@ async function boot(): Promise<void> {
     frame.setAttribute("data-sk-component-preview-scroll", "");
   }
 
-  document.documentElement.setAttribute("data-sk-component-preview-frame-ready", "");
+  document.documentElement.setAttribute(
+    "data-sk-component-preview-frame-ready",
+    "",
+  );
   frame?.setAttribute("data-sk-component-preview-frame-ready", "");
   frame?.setAttribute("aria-busy", "false");
   window.dispatchEvent(new CustomEvent("sk-component-preview-ready"));

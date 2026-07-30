@@ -2,44 +2,11 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
-import { StackBasicDemo } from "../../../components/react-demos/layout";
+import { stackTree } from "../../../demos/layout";
+import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
-
-const html = `<section
-  class="sk-stack"
-  data-gap="md"
-  data-align="start"
-  aria-labelledby="stack-demo-title"
->
-  <h3 class="sk-heading" data-size="h3" id="stack-demo-title">
-    Summary
-  </h3>
-  <p>The request is ready for review.</p>
-  <a class="sk-link sk-interactive" href="/en/components/stack">
-    See details
-  </a>
-</section>`;
-
-const react = `import { Stack } from "@skryensya/react/stack";
-import { Heading } from "@skryensya/react/heading";
-
-function Example() {
-  return (
-    <Stack
-      as="section"
-      gap="md"
-      align="start"
-      aria-labelledby="summary-title"
-    >
-      <Heading as="h2" size="h2" id="summary-title">
-        Summary
-      </Heading>
-      <p>The request is ready for review.</p>
-      <a href="/detalles">See details</a>
-    </Stack>
-  );
-}`;
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base title="Stack" description="Stack: vertical layout primitive with separation and transversal alignment.">
@@ -48,11 +15,7 @@ function Example() {
     Stack stacks content on the vertical axis. It is a structural pattern: the element that carries it preserves the semantics of the content, and the gap expresses the separation between its children.
   </p>
 
-  <ComponentPreview html={html} react={react} label="Stack">
-    <Fragment slot="react">
-      <StackBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={stackTree(t, "/en/components/stack")} label="Stack" />
 
   <h2>Authored HTML</h2>
   <p>

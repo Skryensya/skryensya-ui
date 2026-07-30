@@ -43,6 +43,12 @@ export interface FramedOptions {
   label?: string;
 }
 
+/** Per-call overrides for shared demo wrappers such as the usage-tree renderer. */
+export type FramedOverrides = Pick<
+  FramedOptions,
+  "flush" | "scroll" | "viewport"
+>;
+
 /**
  * The demo file's name, as the frame's glob map keys it.
  *
@@ -84,24 +90,25 @@ export function framedIn(moduleUrl: string) {
        * Props are serialised into the frame as JSON. These demos take only plain data (`lang`), by
        * the same rule that already governs them: nothing that cannot cross the Astro boundary for
        * `client:load`. A function prop could not have been authored here in the first place.
-       */
-      /*
-       * `measure` is the one RESERVED prop: it belongs to the frame, not to the demo.
        *
-       * The other frame settings (`flush`, `scroll`) are baked in at wrap time because they are
-       * properties of the demo itself. A measure is a property of the CALL SITE — the same `TreeDemo`
-       * renders every tree-driven preview on the site, and only the page knows whether this one wants
-       * a narrower column. So it arrives as a prop and is lifted out here rather than handed to the
-       * component, which has no use for it.
+       * `measure` and `frameOptions` are RESERVED props: they belong to the frame, not to the demo.
+       * Most wrappers bake their frame settings in at definition time. Shared wrappers such as
+       * `TreeDemo` serve many call sites, so their page supplies per-call overrides instead.
        */
-      const { measure, ...demoProps } = props as P & { measure?: string };
+      const { frameOptions, measure, ...demoProps } = props as P & {
+        frameOptions?: FramedOverrides;
+        measure?: string;
+      };
+      const flush = frameOptions?.flush ?? options.flush;
+      const scroll = frameOptions?.scroll ?? options.scroll;
+      const viewport = frameOptions?.viewport ?? options.viewport;
 
       const srcDoc = useMemo(
         () =>
           buildPreviewFrameDocument({
             body: "",
-            flush: options.flush,
-            scroll: options.scroll,
+            flush,
+            scroll,
             measure,
             reactDemo: { module, export: name, props: demoProps },
           }),
@@ -112,11 +119,11 @@ export function framedIn(moduleUrl: string) {
         <iframe
           className={componentPreviewParts.stage}
           data-sk-component-preview-binding="react"
-          data-sk-component-preview-flush={options.flush ? "" : undefined}
+          data-sk-component-preview-flush={flush ? "" : undefined}
           data-sk-component-preview-viewport={
-            options.viewport && options.viewport !== "auto" ? options.viewport : undefined
+            viewport && viewport !== "auto" ? viewport : undefined
           }
-          data-sk-component-preview-scroll={options.scroll ? "" : undefined}
+          data-sk-component-preview-scroll={scroll ? "" : undefined}
           aria-busy="true"
           srcDoc={srcDoc}
           title={`Preview renderizado (React): ${title}`}

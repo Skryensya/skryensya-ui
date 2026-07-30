@@ -10,8 +10,8 @@ describe("Avatar", () => {
   });
 
   it("uses the first two characters of a single-word username", () => {
-    const ui = render(<Avatar name="allison" />);
-    expect(ui.getByLabelText("allison").textContent).toBe("al");
+    const ui = render(<Avatar name="alice" />);
+    expect(ui.getByLabelText("alice").textContent).toBe("al");
   });
 
   it("renders the image inside ImageFrame when src is given", () => {

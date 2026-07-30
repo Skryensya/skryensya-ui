@@ -2,6 +2,8 @@
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import ComponentPreview from "../components/ComponentPreview.astro";
+import { navListTree } from "../demos/nav-list";
+import { getLocale, useTranslations } from "../i18n";
 import { probeProp, tokens } from "../lib/tokens";
 
 const hooks = tokens
@@ -9,32 +11,7 @@ const hooks = tokens
   .map((t) => ({ ...t, prop: probeProp(t.value) }));
 
 const import_ = `@import "@skryensya/core/patterns/nav-list.css";`;
-
-const html = `<nav class="sk-nav-list" aria-label="Principal">
-  <div class="sk-nav-list__group">
-    <div class="sk-nav-list__group-label" id="espacio">Espacio</div>
-    <ul class="sk-nav-list__list" aria-labelledby="espacio">
-      <li class="sk-nav-list__item">
-        <a
-          class="sk-nav-list__link sk-interactive"
-          href="/"
-          aria-current="page"
-        >
-          <span data-sk-icon="info"></span>
-          <span class="sk-nav-list__label">Inicio</span>
-        </a>
-      </li>
-      <li class="sk-nav-list__item">
-        <a class="sk-nav-list__link sk-interactive" href="/reportes">
-          <span data-sk-icon="calendar"></span>
-          <span class="sk-nav-list__label">Reportes</span>
-          <span class="sk-nav-list__trailing">12</span>
-        </a>
-      </li>
-    </ul>
-  </div>
-</nav>`;
-
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base
@@ -68,13 +45,11 @@ const html = `<nav class="sk-nav-list" aria-label="Principal">
     lo que un lector de pantalla debería escuchar.
   </p>
 
-  <ComponentPreview code={html} lang="html" label="Nav list">
-    {/* A nav-list is sized by its host, a sidebar rail, a navbar row. The demo pins it to a rail width
-        so it reads as one; the code shows the markup without that host-owned width. */}
-    <div style="inline-size: 14rem">
-      <Fragment set:html={html} />
-    </div>
-  </ComponentPreview>
+  <ComponentPreview
+    tree={navListTree(t, { home: "/", reports: "/reportes" })}
+    label="Nav list"
+    measure="14rem"
+  />
 
   <h2>Vertical, más compacta</h2>
   <p>

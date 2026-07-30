@@ -15,6 +15,8 @@ function classes(base: string, className: string | undefined) {
 export type ImageFrameProps<Element extends ElementType = "div"> = PolymorphicProps<
   Element,
   {
+    /** Type over the media — a MediaCaption (and its wash). Not a second media source. */
+    caption?: ReactNode;
     children?: ReactNode;
     className?: string;
   } & OptionsOf<typeof imageFrameContract>
@@ -31,6 +33,7 @@ export function ImageFrame<Element extends ElementType = "div">({
   position = o.position.default,
   radius = o.radius.default,
   border = o.border.default,
+  caption,
   className,
   src,
   alt = "",
@@ -51,6 +54,7 @@ export function ImageFrame<Element extends ElementType = "div">({
       }}
     >
       {src != null ? <img className={imageFrameParts.media} src={src} alt={alt} /> : children}
+      {caption}
     </Component>
   );
 }

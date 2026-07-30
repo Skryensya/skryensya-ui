@@ -258,6 +258,17 @@
       "css": "@skryensya/core/components/alert.css",
       "id": "alert",
       "options": {
+        "dismissible": {
+          "attr": "data-dismissible",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "dismissLabel": {
+          "attr": "aria-label",
+          "default": "Dismiss alert",
+          "type": "string"
+        },
         "presentation": {
           "attr": "data-presentation",
           "default": "banner",
@@ -318,7 +329,9 @@
           ],
           "options": [
             "tone",
-            "presentation"
+            "presentation",
+            "dismissible",
+            "dismissLabel"
           ],
           "react": {
             "from": "@skryensya/react/alert",
@@ -329,7 +342,8 @@
               "accepts": "signature",
               "of": [
                 "Button.action",
-                "Button.navigation"
+                "Button.navigation",
+                "Link"
               ]
             },
             "children": {
@@ -393,10 +407,45 @@
                 "part": "content"
               },
               {
+                "children": [
+                  {
+                    "slot": "actions"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-icon-only": "",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "close",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "button",
+                    "mount": "data-sk-button",
+                    "options": [
+                      "dismissLabel"
+                    ],
+                    "part": "dismiss",
+                    "whenGiven": "dismissible"
+                  }
+                ],
                 "element": "div",
                 "part": "actions",
-                "slot": "actions",
-                "whenGiven": "actions"
+                "whenGiven": [
+                  "actions",
+                  "dismissible"
+                ]
               }
             ],
             "element": "div",
@@ -666,12 +715,6 @@
           "attr": "aria-label",
           "default": "Migas de pan",
           "type": "string"
-        },
-        "separator": {
-          "attr": "data-separator",
-          "default": "/",
-          "machineInput": true,
-          "type": "string"
         }
       },
       "parts": {
@@ -707,8 +750,7 @@
             "hierarchy-trail"
           ],
           "options": [
-            "label",
-            "separator"
+            "label"
           ],
           "react": {
             "from": "@skryensya/react/breadcrumb",
@@ -738,6 +780,12 @@
                 }
               },
               "required": true
+            },
+            "separator": {
+              "accepts": "node",
+              "of": [
+                "Icon"
+              ]
             }
           },
           "template": {
@@ -773,7 +821,18 @@
                         },
                         "element": "span",
                         "part": "separator",
-                        "textFromOption": "separator",
+                        "slot": "separator",
+                        "whenGiven": "separator",
+                        "whenNotLast": true
+                      },
+                      {
+                        "attrs": {
+                          "aria-hidden": "true"
+                        },
+                        "element": "span",
+                        "part": "separator",
+                        "text": "/",
+                        "whenMissing": "separator",
                         "whenNotLast": true
                       }
                     ],
@@ -2413,6 +2472,12 @@
             "name": "ImageFrame"
           },
           "slots": {
+            "caption": {
+              "accepts": "signature",
+              "of": [
+                "MediaCaption"
+              ]
+            },
             "children": {
               "accepts": "node"
             }
@@ -2430,6 +2495,9 @@
               },
               {
                 "slot": "children"
+              },
+              {
+                "slot": "caption"
               }
             ],
             "element": "div",
@@ -3293,6 +3361,9 @@
           "options": [
             "edge"
           ],
+          "parents": [
+            "ImageFrame"
+          ],
           "react": {
             "from": "@skryensya/react/media-gradient",
             "name": "MediaCaption"
@@ -3320,6 +3391,9 @@
           ],
           "options": [
             "strength"
+          ],
+          "parents": [
+            "MediaCaption"
           ],
           "react": {
             "from": "@skryensya/react/media-gradient",
@@ -4985,6 +5059,7 @@
         "value": {
           "attr": "value",
           "default": 0,
+          "prop": "defaultValue",
           "type": "number"
         }
       },
@@ -5015,6 +5090,7 @@
             "volume",
             "adjust-a-number-roughly"
           ],
+          "mount": "data-sk-slider",
           "options": [
             "value",
             "min",
@@ -5834,6 +5910,7 @@
         "value": {
           "attr": "data-value",
           "machineInput": true,
+          "prop": "defaultValue",
           "type": "string"
         }
       },
@@ -6963,6 +7040,12 @@
           "machineInput": true,
           "trueValue": "",
           "type": "boolean"
+        },
+        "value": {
+          "attr": "data-value",
+          "machineInput": true,
+          "prop": "defaultValue",
+          "type": "string"
         }
       },
       "parts": {
@@ -7005,6 +7088,7 @@
           "options": [
             "name",
             "locale",
+            "value",
             "minuteStep",
             "disabled",
             "readOnly",
@@ -7435,6 +7519,14 @@
           "attr": "href",
           "type": "string"
         },
+        "linkTone": {
+          "attr": "data-tone",
+          "prop": "tone",
+          "type": "enum",
+          "values": [
+            "primary"
+          ]
+        },
         "size": {
           "attr": "data-size",
           "default": "body",
@@ -7546,7 +7638,8 @@
             "link-in-a-sentence"
           ],
           "options": [
-            "href"
+            "href",
+            "linkTone"
           ],
           "react": {
             "from": "@skryensya/react/typography",
@@ -7673,5 +7766,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "3f7583f3a169f7db"
+  "sourceHash": "8a401600195bd79e"
 }

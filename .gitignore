@@ -5,10 +5,15 @@ dist/
 .DS_Store
 .cursor/
 
-# allison.sh reskin experiments: live under apps/ for now, not part of the tracked monorepo.
-apps/allison/
-apps/allison-v2/
-apps/allison-v3/
-
 # Playwright run output. The BASELINE is committed (src/**/*-snapshots); this is the diff of a run.
 test-results/
+
+# Handoff note for the in-flight demo → usage-tree porting. Temporary by design: delete it when the
+# porting lands. What outlives it belongs in docs/plataforma-ai-ui.md, F6.
+PORTING-DEMOS.md
+
+# Scratch harnesses for that same porting: they check a page's stages rather than the product, and
+# PORTING-DEMOS.md carries the copy that matters. Delete them with it.
+verify-stages.mjs
+shot-stages.mjs
+apps/docs/check-trees.mts

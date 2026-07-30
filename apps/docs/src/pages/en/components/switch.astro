@@ -3,39 +3,12 @@ import "@skryensya/core/components/tile.css";
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
+import { switchTree } from "../../../demos/switch";
+import { getLocale, useTranslations } from "../../../i18n";
 import StylingHooks from "../../../components/StylingHooks.astro";
-import { SwitchDemo, TileSwitchDemo } from "../../../components/react-demos/switch";
+import { TileSwitchDemo } from "../../../components/react-demos/switch";
 
-
-
-const html = `<label class="sk-switch">
-  <input
-    class="sk-switch__input"
-    type="checkbox"
-    name="deploy-automatically"
-    role="switch"
-  />
-  <span class="sk-switch__control" aria-hidden="true">
-    <span class="sk-switch__thumb"></span>
-  </span>
-  <span class="sk-switch__label">Deploy automatically</span>
-</label>`;
-
-const react = `import { Switch } from "@skryensya/react/switch";
-
-function Example() {
-  return (
-    <Switch
-      name="deploy-automatically"
-      defaultChecked
-      onCheckedChange={(details) => {
-        console.log(details.checked); // true | false
-      }}
-    >
-      Deploy automatically
-    </Switch>
-  );
-}`;
+const t = useTranslations(getLocale(Astro.url));
 
 const tileSwitchHtml = `<div
   class="sk-inline"
@@ -152,11 +125,7 @@ function Example() {
   <h1>Switch</h1>
   <p class="lede">A binary state that takes effect immediately: on or off. For a selection that requires saving, use Checkbox.</p>
 
-  <ComponentPreview html={html} react={react} label="Switch">
-    <Fragment slot="react">
-      <SwitchDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={switchTree(t)} label="Switch" />
   <p>Does not require vanilla initialization: the native checkbox preserves keyboard, reset and form submit. React only encapsulates that same control.</p>
 
   <h2>Surface switch: TileSwitch</h2>

@@ -30,16 +30,26 @@ export const breadcrumbContract = {
   options: {
     /** Names the landmark. A page with a second nav needs each one told apart. */
     label: { type: "string", default: "Migas de pan", attr: "aria-label" },
-    /** What sits between the crumbs. Punctuation, so it is `aria-hidden` wherever it lands. */
-    separator: { type: "string", default: "/", attr: "data-separator", machineInput: true },
   },
 
   signatures: {
     Breadcrumb: {
       intent: ["where-am-i", "path-back-up", "hierarchy-trail"],
       host: { element: "nav" },
-      options: ["label", "separator"],
+      options: ["label"],
       slots: {
+        /*
+         * What sits between the crumbs, as CONTENT rather than as a string option.
+         *
+         * It was a string, and a chevron between the crumbs — which the stylesheet has a rule for,
+         * `.sk-breadcrumb__separator .sk-icon` — was the one separator no tree could say. Text is
+         * still a separator (`·`, `›`), so the slot takes either; what it does not take is arbitrary
+         * markup, because punctuation with a heading in it is not punctuation.
+         *
+         * Absent, the `/` comes from the template (`whenMissing` below), which is where a default
+         * that is markup has to live. React spells the same default as its `separator` prop's.
+         */
+        separator: { accepts: "node", of: ["Icon"] },
         items: {
           accepts: "items",
           required: true,
@@ -83,12 +93,23 @@ export const breadcrumbContract = {
                     itemOptions: ["current"],
                     itemSlot: "label",
                   },
+                  // Two nodes, one condition each: the separator the author slotted, or the one the
+                  // system owns when they slotted none.
                   {
                     element: "span",
                     part: "separator",
                     whenNotLast: true,
+                    whenGiven: "separator",
                     attrs: { "aria-hidden": "true" },
-                    textFromOption: "separator",
+                    slot: "separator",
+                  },
+                  {
+                    element: "span",
+                    part: "separator",
+                    whenNotLast: true,
+                    whenMissing: "separator",
+                    attrs: { "aria-hidden": "true" },
+                    text: "/",
                   },
                 ],
               },

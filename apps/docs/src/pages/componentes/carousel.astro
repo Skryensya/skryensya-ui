@@ -3,8 +3,13 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { CarouselCardsDemo } from "../../components/react-demos/carousel";
+import { carouselCardsTree } from "../../demos/carousel";
+import { getLocale, useTranslations } from "../../i18n";
+import "@skryensya/core/components/carousel.css";
+import "@skryensya/icons-lucide/carousel.css";
 import "../../examples/carousel.css";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla \\
   @skryensya/icons-lucide`;
@@ -106,85 +111,6 @@ const slides = [
     position: "left",
   }),
 ].join("\n");
-
-/* El carrusel enhanceado: la máquina de Zag mide los snap points reales de la pista, deriva las
-   páginas de ahí y sigue la posición de scroll nativa. Los controles los dibuja el enhancer. */
-const cardsHtml = `<section
-  class="sk-carousel"
-  data-sk-carousel
-  aria-label="Novedades"
-  style="--sk-carousel-slide-size: min(85%, 22rem)"
->
-  <div class="sk-carousel__track">
-${slides}
-  </div>
-</section>`;
-
-const cardsReact = `import { Box } from "@skryensya/react/layout";
-import {
-  Carousel,
-  CarouselSlide,
-} from "@skryensya/react/carousel";
-import { Heading } from "@skryensya/react/heading";
-import { ImageFrame } from "@skryensya/react/image-frame";
-import {
-  MediaCaption,
-} from "@skryensya/react/media-gradient";
-import { Text } from "@skryensya/react/text";
-
-const features = [
-  {
-    eyebrow: "Productividad",
-    title: "Búsqueda",
-    body: "Encuentra cualquier proyecto al instante.",
-    position: "top",
-  },
-  // …
-] as const;
-
-function Example() {
-  return (
-    <Carousel
-      aria-label="Novedades"
-      style={{ "--sk-carousel-slide-size": "min(85%, 22rem)" }}
-    >
-      {features.map((f) => (
-        <CarouselSlide key={f.title}>
-          <Box
-            as="article"
-            className="carousel-card"
-            surface="surface"
-            border="subtle"
-            padding="none"
-          >
-            <ImageFrame
-              aspect="16/9"
-              radius="top"
-              position={f.position}
-            >
-              <img
-                className="sk-image-frame__media"
-                src="${demoSrc}"
-                alt=""
-              />
-              <MediaCaption edge="bottom" strength="md">
-                <Heading as="h3" size="h4" flush>
-                  {f.title}
-                </Heading>
-              </MediaCaption>
-            </ImageFrame>
-            <div className="carousel-card__body">
-              <Text data-role="eyebrow">{f.eyebrow}</Text>
-              <Text tone="secondary" size="sm">
-                {f.body}
-              </Text>
-            </div>
-          </Box>
-        </CarouselSlide>
-      ))}
-    </Carousel>
-  );
-}`;
 
 /* La base sin JS: el MISMO markup sin data-sk-carousel, así el enhancer no lo toca y los
    pseudo-elementos nativos dibujan los controles con cero JavaScript. */
@@ -322,21 +248,16 @@ carousel.addEventListener("sk-carousel-change", (event) => {
   <p>
     Con <code>data-sk-carousel</code> el enhancer corre la máquina: prev/next (se deshabilitan en los
     extremos), un dot por <strong>página</strong>, teclado, arrastre y re-medición al cambiar de tamaño.
-    Aquí cada slide es una card con <a href="/componentes/image-frame">ImageFrame</a>,
-    <a href="/gradientes">media gradient</a> y cuerpo tipográfico —composición, no un
-    <code>sk-card</code>. <code>--sk-carousel-slide-size</code> deja asomar la siguiente.
+    Aquí cada slide es una card con <a href="/componentes/image-frame">ImageFrame</a> y un cuerpo
+    compuesto con <code>Box</code>, <code>Stack</code> y <code>Text</code> —sin clases locales.
+    El tamaño base de CSS deja asomar la siguiente.
   </p>
   <ComponentPreview
-    html={cardsHtml}
-    react={cardsReact}
+    tree={carouselCardsTree(t)}
     js={bootstrap}
     label="Carrusel de tarjetas"
-    note="ImageFrame + media gradient · scroll-snap + Zag"
-  >
-    <Fragment slot="react">
-      <CarouselCardsDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+    note="ImageFrame + layout + typography · scroll-snap + Zag"
+  />
 
   <h2>Un dot por página, no por slide</h2>
   <p>

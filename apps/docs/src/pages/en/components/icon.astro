@@ -2,47 +2,7 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
-import { IconBasicDemo, IconSizeDemo } from "../../../components/react-demos/icon";
-
-const html = `<div class="sk-inline">
-  <span data-sk-icon="search" data-sk-icon-size="lg"></span>
-  <span data-sk-icon="settings" data-sk-icon-size="lg"></span>
-  <span data-sk-icon="warning" data-sk-icon-size="lg"></span>
-  <span data-sk-icon="check" data-sk-icon-size="lg"></span>
-  <span data-sk-icon="close" data-sk-icon-size="lg"></span>
-</div>`;
-
-const react = `import { Icon } from "@skryensya/react/icon";
-
-function Example() {
-  return (
-    <div className="sk-inline">
-      <Icon name="search" size="lg" />
-      <Icon name="settings" size="lg" />
-      <Icon name="warning" size="lg" />
-      <Icon name="check" size="lg" />
-      <Icon name="close" size="lg" />
-    </div>
-  );
-}`;
-
-const sizeHtml = `<div class="sk-inline">
-  <span data-sk-icon="check" data-sk-icon-size="sm"></span>
-  <span data-sk-icon="check"></span>
-  <span data-sk-icon="check" data-sk-icon-size="lg"></span>
-</div>`;
-
-const sizeReact = `import { Icon } from "@skryensya/react/icon";
-
-function Example() {
-  return (
-    <div className="sk-inline">
-      <Icon name="check" size="sm" />
-      <Icon name="check" />
-      <Icon name="check" size="lg" />
-    </div>
-  );
-}`;
+import { iconSizeTree, iconTree } from "../../../demos/icon";
 
 const vanilla = `<!-- Geometry outside the set: you write it. -->
 <svg
@@ -104,11 +64,7 @@ const sizesCss = `/* another size? the hook is redeclared, like any value
     CSS does not touch <code>fill</code> or <code>stroke</code> are documented in <a href="/en/icons">Iconography</a>.
   </p>
 
-  <ComponentPreview html={html} react={react} label="Icon">
-    <Fragment slot="react">
-      <IconBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={iconTree} label="Icon" />
 
   <h2>React</h2>
   <p>
@@ -151,10 +107,6 @@ const sizesCss = `/* another size? the hook is redeclared, like any value
   <p>
     Three values of <strong>a</strong> hook. <code>--sk-icon-size</code> is density invariant: density is spacing; an icon is contained next to a glyph — if the text does not shrink, neither does the icon.
   </p>
-  <ComponentPreview html={sizeHtml} react={sizeReact} label="Icon · sm / md / lg">
-    <Fragment slot="react">
-      <IconSizeDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={iconSizeTree} label="Icon · sm / md / lg" />
   <CodeBlock code={sizesCss} label="arbitrary size" note="no numeric prop" />
 </Base>

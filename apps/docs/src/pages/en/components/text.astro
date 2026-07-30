@@ -2,63 +2,24 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
+import { TextInlineDemo } from "../../../components/react-demos/text";
 import {
-  TextFeedbackDemo,
-  TextInlineDemo,
-  TextReadingDemo,
-  TextTitleDemo,
-} from "../../../components/react-demos/text";
+  textFeedbackTree,
+  textReadingTree,
+  textTitleTree,
+} from "../../../demos/typography";
+import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
 
-const titleHtml = `<header class="sk-stack" data-gap="none">
-  <p class="sk-text" data-role="eyebrow">Integration</p>
-  <h2 class="sk-heading" data-size="h3">Export Configuration</h2>
-  <p class="sk-text" data-role="subtitle">
-    Copy the derived CSS and paste it once into your project.
-  </p>
-</header>`;
-
-const titleReact = `import { Text } from "@skryensya/react/text";
-import { Heading } from "@skryensya/react/heading";
-
-<header className="sk-stack" data-gap="none">
-  <Text data-role="eyebrow">Integration</Text>
-  <Heading as="h2" size="h3">Export settings</Heading>
-  <Text data-role="subtitle">
-    Copy the derived CSS and paste it once into your project.
-  </Text>
-</header>;`;
-
-const readingHtml = `<article class="sk-stack" data-gap="sm">
-  <span class="sk-text" data-role="eyebrow">
-    Update · 5 minutes ago
-  </span>
-  <p class="sk-text" data-size="body" data-tone="primary">
-    The deployment ended without interruption for people who were already using the product.
-  </p>
-  <p class="sk-text" data-size="sm" data-tone="secondary">
-    Version 2.18.4 is now available in Frankfurt and São Paulo.
-  </p>
-</article>`;
-
-const readingReact = `import { Text } from "@skryensya/react/text";
-
-<article className="sk-stack" data-gap="sm">
-  <Text as="span" data-role="eyebrow">
-    Update · 5 minutes ago
-  </Text>
-  <Text>
-    The deployment ended without interruptions for the people who
-    They were already using the product.
-  </Text>
-  <Text size="sm" tone="secondary">
-    Version 2.18.4 is now available in Frankfurt and São Paulo.
-  </Text>
-</article>;`;
-
+/*
+ * Inline stays authored: the point is `<strong>` inside the paragraph. Trees escape text, so nested
+ * HTML is inexpressible.
+ */
 const inlineHtml = `<p class="sk-text">
-  The <strong>Pro</strong> plan includes five active environments and preserves the reading flow within the same paragraph.
+  The <strong>Pro</strong> plan includes five active environments and
+  preserves the reading flow within the same paragraph.
 </p>`;
 
 const inlineReact = `import { Text } from "@skryensya/react/text";
@@ -67,68 +28,53 @@ const inlineReact = `import { Text } from "@skryensya/react/text";
   The <strong>Pro</strong> plan includes five active environments and
   preserves the reading flow within the same paragraph.
 </Text>;`;
-
-const feedbackHtml = `<p
-  class="sk-text"
-  data-size="sm"
-  data-tone="danger"
-  role="alert"
->
-  The change could not be saved. Check the connection and try again.
-</p>`;
-
-const feedbackReact = `import { Text } from "@skryensya/react/text";
-
-<Text role="alert" size="sm" tone="danger">
-  The change could not be saved. Check the connection and try again.
-</Text>;`;
 ---
 
-<Base title="Text" description="Text: Reading text with typographic roles and explicit HTML semantics.">
+<Base title="Text" description="Text: reading copy with typographic roles and explicit HTML semantics.">
   <h1>Text</h1>
   <p class="lede">
-    Text presents reading content with named typographic roles. Choose the HTML element that describes the content; Text does not create header semantics.
+    Text presents reading content with named typographic roles. Choose the HTML element that
+    describes the content; Text does not create heading semantics.
   </p>
 
-  <h2>Title Block</h2>
+  <h2>Title block</h2>
   <p>
-    <strong>Eyebrow, title and subtitle as a single unit. </strong> Two roles make up the header: <code>eyebrow</code> is the uppercase surtitle, <code>subtitle</code> is the drop under the title. The air between roles is put by the brother below (<code>padding-block-start</code> of the heading and subtitle), thus the block stack uses <code>data-gap="none"</code>.
+    <strong>Eyebrow, title and subtitle as one unit.</strong> Two roles compose the header:
+    <code>eyebrow</code> is the uppercase overline, <code>subtitle</code> is the line under the
+    title. Spacing between roles comes from the sibling below (<code>padding-block-start</code> on
+    the heading and subtitle), so the block's stack uses <code>data-gap="none"</code>.
   </p>
-  <ComponentPreview html={titleHtml} react={titleReact} label="Title block">
-    <Fragment slot="react">
-      <TextTitleDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={textTitleTree(t)} label="Title block" />
 
   <h2>Reading with context</h2>
-  <p>A metadata must accompany the reading without competing with the body; hierarchy comes from role, tone and weight, not arbitrary sizes. The supertitle above uses the <code>eyebrow</code> role.</p>
-  <ComponentPreview html={readingHtml} react={readingReact} label="Update text">
-    <Fragment slot="react">
-      <TextReadingDemo client:load />
-    </Fragment>
-  </ComponentPreview>
-
-  <h2>Emphasis within a sentence</h2>
   <p>
-    Use the <strong>semantic tag</strong>, not a weighted span: <code>&lt;strong&gt;</code> within Text takes the system's <code>emphasis</code> weight (not the browser's heaviest bold), and is also announced by a screen reader. <code>&lt;em&gt;</code> is in italics. The <code>data-weight</code> axis is for the weight of an entire Text; this is to emphasize <em>within</em> of the phrase.
+    Metadata should accompany reading without competing with the body; hierarchy comes from role,
+    tone and weight, not arbitrary sizes. The overline above uses the <code>eyebrow</code> role.
   </p>
-  <ComponentPreview html={inlineHtml} react={inlineReact} label="inline text">
+  <ComponentPreview tree={textReadingTree(t)} label="Update text" />
+
+  <h2>Emphasis inside a sentence</h2>
+  <p>
+    Use the <strong>semantic tag</strong>, not a weighted span: <code>&lt;strong&gt;</code> inside
+    Text takes the system's <code>emphasis</code> weight (not the browser's heaviest bold) and a
+    screen reader announces it. <code>&lt;em&gt;</code> stays italic. The <code>data-weight</code>
+    axis is for a whole Text; this is for emphasis <em>inside</em> the sentence.
+  </p>
+  <ComponentPreview html={inlineHtml} react={inlineReact} label="Inline text">
     <Fragment slot="react">
       <TextInlineDemo client:load />
     </Fragment>
   </ComponentPreview>
 
-  <h2>Validation Feedback</h2>
-  <p>Tone <code>danger</code> communicates the problem; the live region role is still a decision of the context that Text uses.</p>
-  <ComponentPreview html={feedbackHtml} react={feedbackReact} label="Validation message">
-    <Fragment slot="react">
-      <TextFeedbackDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <h2>Validation feedback</h2>
+  <p>
+    The <code>danger</code> tone communicates the problem; the live-region role remains a decision of
+    the context that uses Text.
+  </p>
+  <ComponentPreview tree={textFeedbackTree(t)} label="Validation message" />
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />
-
 
   <h2>React</h2>
   <p>The code is in the <strong>React</strong> tab of the preview.</p>
@@ -140,9 +86,11 @@ const feedbackReact = `import { Text } from "@skryensya/react/text";
     <li><code>data-tone</code>: <code>primary</code>, <code>secondary</code>, <code>tertiary</code> or <code>danger</code>.</li>
     <li><code>data-weight</code>: <code>body</code>, <code>emphasis</code> or <code>label</code>.</li>
     <li>
-      <code>data-role</code>: <code>eyebrow</code> (upper-case title) or <code>subtitle</code> (lower-case title). A role composes several axes at once; in React it is passed as <code>data-role</code>.
+      <code>data-role</code>: <code>eyebrow</code> (uppercase overline) or <code>subtitle</code>
+      (line under a title). A role composes several axes at once; in React pass
+      <code>data-role</code>.
     </li>
-    <li>In React, <code>as</code> accepts <code>p</code>, <code>div</code>, or <code>span</code>; The default is <code>p</code>.</li>
-    <li>For headings, use Heading and a <code>h1</code>–<code>h6</code> element, not Text.</li>
+    <li>In React, <code>as</code> accepts <code>p</code>, <code>div</code> or <code>span</code>; default is <code>p</code>.</li>
+    <li>For headings, use Heading and an <code>h1</code>–<code>h6</code> element, not Text.</li>
   </ul>
 </Base>

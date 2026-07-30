@@ -7,12 +7,18 @@ import "../../examples/loader.css";
 import {
   LoaderContextsDemo,
   LoaderSimulationDemo,
-  LoaderSizesDemo,
-  LoaderSpeedDemo,
 } from "../../components/react-demos/loader";
+import { loaderSizesTree, loaderSpeedsTree } from "../../demos/loader";
+import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const styles = `@import "@skryensya/core/components/loader.css";`;
+
+const t = useTranslations(getLocale(Astro.url));
+
+/*
+ * Simulation and contexts stay authored: demo DOM / js, and data-multicol + heavy composition.
+ */
 
 const simulationHtml = `<div
   class="loader-demo"
@@ -328,106 +334,6 @@ function Example() {
   );
 }`;
 
-const sizesHtml = `<div class="loader-specimens" role="group" aria-label="Tamaños de Loader">
-  <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
-    <div class="sk-stack" data-align="center" data-gap="sm">
-      <span class="sk-loader" data-size="sm" aria-hidden="true"></span>
-      <span class="loader-specimen__name">sm</span>
-      <p class="loader-specimen__description">Dentro de controles</p>
-    </div>
-  </div>
-  <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
-    <div class="sk-stack" data-align="center" data-gap="sm">
-      <span class="sk-loader" data-size="md" aria-hidden="true"></span>
-      <span class="loader-specimen__name">md</span>
-      <p class="loader-specimen__description">Estado inline</p>
-    </div>
-  </div>
-  <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
-    <div class="sk-stack" data-align="center" data-gap="sm">
-      <span
-        class="sk-loader"
-        data-size="lg"
-        role="status"
-        aria-label="Cargando resultados"
-      ></span>
-      <span class="loader-specimen__name">lg</span>
-      <p class="loader-specimen__description">Región o carga inicial</p>
-    </div>
-  </div>
-</div>`;
-
-const sizesReact = `import { Loader } from "@skryensya/react/loader";
-
-function Example() {
-  return (
-    <div className="sk-inline">
-      <Loader size="sm" />
-      <Loader />
-      <Loader size="lg" label="Cargando resultados" />
-    </div>
-  );
-}`;
-
-const speedHtml = `<div class="loader-specimens" role="group" aria-label="Velocidades de Loader">
-  <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
-    <div class="sk-stack" data-align="center" data-gap="sm">
-      <span
-        class="sk-loader"
-        data-variant="bars"
-        data-speed="fast"
-        data-size="lg"
-        aria-hidden="true"
-      ></span>
-      <span class="loader-specimen__name">fast</span>
-      <p class="loader-specimen__description">Ciclo corto</p>
-    </div>
-  </div>
-  <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
-    <div class="sk-stack" data-align="center" data-gap="sm">
-      <span
-        class="sk-loader"
-        data-variant="bars"
-        data-speed="normal"
-        data-size="lg"
-        aria-hidden="true"
-      ></span>
-      <span class="loader-specimen__name">normal</span>
-      <p class="loader-specimen__description">Ciclo base</p>
-    </div>
-  </div>
-  <div class="sk-box loader-specimen" data-surface="surface" data-border="subtle" data-padding="lg">
-    <div class="sk-stack" data-align="center" data-gap="sm">
-      <span
-        class="sk-loader"
-        data-variant="bars"
-        data-speed="slow"
-        data-size="lg"
-        role="status"
-        aria-label="Sincronizando en segundo plano"
-      ></span>
-      <span class="loader-specimen__name">slow</span>
-      <p class="loader-specimen__description">Ciclo largo</p>
-    </div>
-  </div>
-</div>`;
-
-const speedReact = `import { Loader } from "@skryensya/react/loader";
-
-function Example() {
-  return (
-    <div className="sk-inline">
-      <Loader speed="fast" size="lg" variant="bars" />
-      <Loader speed="normal" size="lg" variant="bars" />
-      <Loader
-        label="Sincronizando en segundo plano"
-        speed="slow"
-        size="lg"
-        variant="bars"
-      />
-    </div>
-  );
-}`;
 
 const customSpeed = `.sk-loader.mi-loader {
   --sk-loader-duration: 2s;
@@ -502,11 +408,7 @@ const customSpeed = `.sk-loader.mi-loader {
     Usa <code>sm</code> dentro de controles, <code>md</code> junto a texto y <code>lg</code> cuando la
     marca ocupa una región propia. El tamaño no comunica cuánto trabajo queda.
   </p>
-  <ComponentPreview html={sizesHtml} react={sizesReact} label="Tamaños de Loader">
-    <Fragment slot="react">
-      <LoaderSizesDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={loaderSizesTree(t)} label="Tamaños de Loader" />
 
   <h2>Velocidad</h2>
   <p>
@@ -514,11 +416,7 @@ const customSpeed = `.sk-loader.mi-loader {
     intención (<code>--motion-loading-duration*</code>), no desde milisegundos crudos. Elige la
     cadencia por presencia visual, no como promesa sobre la duración real de la operación.
   </p>
-  <ComponentPreview html={speedHtml} react={speedReact} label="Velocidades de Loader">
-    <Fragment slot="react">
-      <LoaderSpeedDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={loaderSpeedsTree(t)} label="Velocidades de Loader" />
   <CodeBlock code={customSpeed} label="override local" lang="css" />
 
   <h2>Semántica</h2>

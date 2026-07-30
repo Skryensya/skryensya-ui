@@ -108,7 +108,12 @@ describe("emitMarkup", () => {
     const unlabelled: UsageTree = {
       contract: "nav-list",
       signature: "NavListGroup",
-      children: { contract: "nav-list", signature: "NavListLink", options: { href: "/" }, children: "Inicio" },
+      children: {
+        contract: "nav-list",
+        signature: "NavListLink",
+        options: { href: "/" },
+        children: "Inicio",
+      },
     };
 
     const markup = emitMarkup(unlabelled);
@@ -116,6 +121,39 @@ describe("emitMarkup", () => {
     // The label goes, the <ul> stays: a <li> still needs a list to sit inside.
     expect(markup).not.toContain("sk-nav-list__group-label");
     expect(markup).toContain('<ul class="sk-nav-list__list">');
+  });
+
+  /*
+   * A slot whose default is MARKUP, which is what `whenMissing` exists for. A breadcrumb separator is
+   * the case: text or an Icon when the author fills it, and the system's `/` when they do not — two
+   * nodes with one condition each, so no precedence rule has to live in this file.
+   */
+  it("falls back to the template's own separator, and steps aside when the slot is filled", () => {
+    const trail = (separator?: UsageTree): UsageTree => ({
+      contract: "breadcrumb",
+      signature: "Breadcrumb",
+      slots: {
+        ...(separator ? { separator } : {}),
+        items: [
+          { options: { href: "/" }, slots: { label: "Inicio" } },
+          { options: { current: true }, slots: { label: "Atlas" } },
+        ],
+      },
+    });
+
+    expect(emitMarkup(trail())).toContain(
+      '<span class="sk-breadcrumb__separator" aria-hidden="true">/</span>',
+    );
+
+    const chevron = emitMarkup(
+      trail({
+        contract: "icon",
+        signature: "Icon",
+        options: { name: "chevron-right" },
+      }),
+    );
+    expect(chevron).toContain('data-sk-icon="chevron-right"');
+    expect(chevron).not.toContain(">/<");
   });
 
   it("is deterministic: same tree, same bytes", () => {
@@ -126,17 +164,79 @@ describe("emitMarkup", () => {
 describe("emitReact", () => {
   it("emits signatures with complete imports, not the part template", () => {
     expect(emitReact(saveButton)).toBe(
-      ['import { Button } from "@skryensya/react/button";', "", '<Button variant="primary">Guardar</Button>'].join("\n"),
+      [
+        'import { Button } from "@skryensya/react/button";',
+        "",
+        '<Button variant="primary">Guardar</Button>',
+      ].join("\n"),
     );
   });
 
   it("keeps a composition three elements deep, because React renders the rest", () => {
     const tsx = emitReact(navigation);
 
-    expect(tsx).toContain('import { NavList, NavListGroup, NavListLink } from "@skryensya/react/nav-list";');
+    expect(tsx).toContain(
+      'import { NavList, NavListGroup, NavListLink } from "@skryensya/react/nav-list";',
+    );
     expect(tsx).toContain('<NavListLink href="/" current>');
     expect(tsx).toContain('<NavListGroup label="Espacio">');
     expect(tsx).not.toContain("sk-nav-list__item");
+  });
+
+  it("spells a passthrough attr the way React does, so the snippet pastes without a warning", () => {
+    const scroll: UsageTree = {
+      contract: "table",
+      signature: "TableScroll",
+      attrs: { role: "region", tabindex: "0", "aria-label": "Regiones" },
+      children: { contract: "table", signature: "Table", children: [] },
+    };
+
+    const tsx = emitReact(scroll);
+
+    expect(tsx).toContain('tabIndex="0"');
+    expect(tsx).not.toContain("tabindex");
+    // `role` and `aria-*` are already what React wants; renaming them would be the opposite bug.
+    expect(tsx).toContain('role="region"');
+    expect(tsx).toContain('aria-label="Regiones"');
+  });
+
+  it("wraps composed props and prose before docs snippets need horizontal scroll", () => {
+    const toast: UsageTree = {
+      contract: "content",
+      signature: "ToastRegion",
+      children: {
+        contract: "content",
+        signature: "Toast",
+        options: { dismissible: true, dismissLabel: "Descartar" },
+        slots: {
+          title: "Documento archivado",
+          actions: {
+            contract: "button",
+            signature: "Button.action",
+            options: { size: "sm", variant: "neutral" },
+            children: "Deshacer",
+          },
+        },
+        children: "Se movió a Archivados.",
+      },
+    };
+
+    const tsx = emitReact(toast);
+    expect(tsx).toContain(
+      [
+        "<ToastRegion>",
+        "  <Toast",
+        "    dismissible",
+        '    dismissLabel="Descartar"',
+        '    title="Documento archivado"',
+        '    actions={<Button variant="neutral" size="sm">Deshacer</Button>}',
+        "  >",
+        "    Se movió a Archivados.",
+        "  </Toast>",
+        "</ToastRegion>",
+      ].join("\n"),
+    );
+    expect(tsx.split("\n").every((line) => line.length <= 72)).toBe(true);
   });
 });
 
@@ -155,12 +255,18 @@ describe("wiring — six ids from one name", () => {
       signature: "Field",
       slots: { label: "Email", ...(extra.slots as object) },
       options: extra.options as Record<string, string | boolean>,
-      children: { contract: "input", signature: "Input", options: { name: "email" } },
+      children: {
+        contract: "input",
+        signature: "Input",
+        options: { name: "email" },
+      },
     }) as UsageTree;
 
   it("binds the label, the control, the hint and the error", () => {
     const markup = emitMarkup(
-      field({ slots: { hint: "Sólo para boletas.", error: "Dirección inválida." } }),
+      field({
+        slots: { hint: "Sólo para boletas.", error: "Dirección inválida." },
+      }),
     );
 
     // The author wrote a label and two messages. These six ids are the contract's, not theirs.
@@ -195,12 +301,19 @@ describe("wiring — six ids from one name", () => {
 
     // The asterisk is decorative; the attribute is what actually says it, and it belongs to the input.
     // Options come out in the contract's own declaration order, then what the wiring added.
-    expect(markup).toContain('<input class="sk-input" type="text" name="email" id="email" required>');
-    expect(markup).toContain('<span class="sk-field__required" aria-hidden="true">*</span>');
+    expect(markup).toContain(
+      '<input class="sk-input" type="text" name="email" id="email" required>',
+    );
+    expect(markup).toContain(
+      '<span class="sk-field__required" aria-hidden="true">*</span>',
+    );
   });
 
   it("honours an author's own id", () => {
-    const tree = { ...field({ slots: { error: "Falta." } }), attrs: { id: "correo" } } as UsageTree;
+    const tree = {
+      ...field({ slots: { error: "Falta." } }),
+      attrs: { id: "correo" },
+    } as UsageTree;
     const markup = emitMarkup(tree);
 
     expect(markup).toContain('for="correo"');

@@ -1,6 +1,6 @@
 /*
- * Live React demos for /components/tabs. Each export is a self-contained island (no function props
- * crossing the Astro boundary), mounted directly from the page with a bare `<TabsBasicDemo client:load />`.
+ * Live React demo for the authored advanced Tabs stage. Basic and states are tree-driven; advanced
+ * stays an island because a live-region status line driven by React state is the point of the demo.
  */
 import { useState } from "react";
 import { Icon } from "@skryensya/react/icon";
@@ -9,72 +9,6 @@ import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame — see `framed.tsx`. */
 const framed = framedIn(import.meta.url);
-
-export const TabsBasicDemo = framed(function TabsBasicDemo() {
-  return (
-    <Tabs
-      defaultValue="summary"
-      items={[
-        {
-          value: "summary",
-          label: "Summary",
-          children: "Atlas is ready for a July launch.",
-        },
-        {
-          value: "activity",
-          label: "Activity",
-          children: "Three changes approved during the last week.",
-        },
-      ]}
-    />
-  );
-});
-
-export const TabsStatesDemo = framed(function TabsStatesDemo() {
-  return (
-    <Tabs
-      defaultValue="details"
-      items={[
-        {
-          value: "details",
-          label: (
-            <>
-              <Icon name="info" size="sm" />
-              Details
-            </>
-          ),
-          children: (
-            <div className="sk-stack" data-gap="xs">
-              <strong>Solicitud #248</strong>
-              <span>Update the Atlas runtime to Node 24.</span>
-            </div>
-          ),
-        },
-        {
-          value: "validation",
-          label: (
-            <>
-              <Icon name="check" size="sm" />
-              Validation
-            </>
-          ),
-          children: "12 comprobaciones aprobadas.",
-        },
-        {
-          value: "settings",
-          label: (
-            <>
-              <Icon name="settings" size="sm" />
-              Settings
-            </>
-          ),
-          children: "Available after approving application.",
-          disabled: true,
-        },
-      ]}
-    />
-  );
-});
 
 const sectionNames: Record<string, string> = {
   general: "General",

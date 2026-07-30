@@ -3,156 +3,16 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import {
-  AlertAccentDemo,
-  AlertBannerDemo,
-  AlertInlineDemo,
-  AlertNeutralDemo,
-} from "../../../components/react-demos/alert";
+  alertAccentTree,
+  alertBannerTree,
+  alertInlineTree,
+  alertNeutralTree,
+} from "../../../demos/alert";
+import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
 
-const neutralHtml = `<div
-  class="sk-alert"
-  data-presentation="banner"
-  data-tone="neutral"
-  role="status"
-  aria-live="polite"
->
-  <div class="sk-alert__content">
-    <p class="sk-alert__title">Mantenimiento programado</p>
-    <div class="sk-alert__description">
-      On Sunday from 02:00 to 04:00 UTC the panel will be read-only.
-    </div>
-  </div>
-  <div class="sk-alert__actions">
-    <button
-      class="sk-alert__dismiss"
-      type="button"
-      aria-label="Close alert"
-    >
-      <span data-sk-icon="close"></span>
-    </button>
-  </div>
-</div>`;
-
-const bannerHtml = `<div
-  class="sk-alert"
-  data-presentation="banner"
-  data-tone="info"
-  role="status"
-  aria-live="polite"
->
-  <span class="sk-alert__icon" aria-hidden="true">
-    <span data-sk-icon="info"></span>
-  </span>
-  <div class="sk-alert__content">
-    <p class="sk-alert__title">New version</p>
-    <div class="sk-alert__description">
-      An update is available.
-    </div>
-  </div>
-</div>`;
-
-const accentHtml = `<div
-  class="sk-alert"
-  data-presentation="accent"
-  data-tone="warning"
-  role="status"
-  aria-live="polite"
->
-  <span class="sk-alert__icon" aria-hidden="true">
-    <span data-sk-icon="warning"></span>
-  </span>
-  <div class="sk-alert__content">
-    <p class="sk-alert__title">Your plan expires in 3 days</p>
-    <div class="sk-alert__description">
-      Choose a plan so as not to interrupt your deployments.
-    </div>
-  </div>
-  <div class="sk-alert__actions">
-    <a class="sk-link sk-interactive" href="/billing">View plans</a>
-    <button
-      class="sk-alert__dismiss"
-      type="button"
-      aria-label="Close alert"
-    >
-      <span data-sk-icon="close"></span>
-    </button>
-  </div>
-</div>`;
-
-const inlineHtml = `<div
-  class="sk-alert"
-  data-presentation="inline"
-  data-tone="success"
-  role="status"
-  aria-live="polite"
->
-  <span class="sk-alert__icon" aria-hidden="true">
-    <span data-sk-icon="success"></span>
-  </span>
-  <div class="sk-alert__content">
-    <div class="sk-alert__description">Your changes have been saved.</div>
-  </div>
-</div>`;
-
-const neutralReact = `import { Alert } from "@skryensya/react/alert";
-
-function SomeFunction() {}
-
-function Example() {
-  return (
-    <Alert
-      tone="neutral"
-      title="Mantenimiento programado"
-      onDismiss={SomeFunction}
-    >
-      On Sunday from 02:00 to 04:00 UTC the panel will be read-only.
-    </Alert>
-  );
-}`;
-
-const bannerReact = `import { Alert } from "@skryensya/react/alert";
-
-function Example() {
-  return (
-    <Alert tone="info" title="New version">
-      An update is available.
-    </Alert>
-  );
-}`;
-
-const accentReact = `import { Alert } from "@skryensya/react/alert";
-
-function SomeFunction() {}
-
-function Example() {
-  return (
-    <Alert
-      onDismiss={SomeFunction}
-      actions={
-        <a className="sk-link sk-interactive" href="/billing">
-          View plans
-        </a>
-      }
-      presentation="accent"
-      title="Your plan expires in 3 days"
-      tone="warning"
-    >
-      Choose a plan so as not to interrupt your deployments.
-    </Alert>
-  );
-}`;
-
-const inlineReact = `import { Alert } from "@skryensya/react/alert";
-
-function Example() {
-  return (
-    <Alert presentation="inline" tone="success">
-      Your changes have been saved.
-    </Alert>
-  );
-}`;
 ---
 
 <Base title="Alert" description="Alert: Persistent inline message with tone (including neutral), accessible announcement and React component.">
@@ -173,51 +33,48 @@ function Example() {
   <p>
     The default: surface and edge, without semantic painting. It exists for when the color should not be the prominent signal, the text (and, in a <a href="/en/components/toast">Toast</a>, the floating and disappearing) already loads the message. Use it in ordinary notices, short confirmations, or any case where painting the “success” or “info” panel would add urgency that the content does not have.
   </p>
-  <ComponentPreview html={neutralHtml} react={neutralReact} label="Alert neutral">
-    <Fragment slot="react">
-      <AlertNeutralDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={alertNeutralTree(t)} label="Alert neutral" />
 
   <h2>Presentations</h2>
   <p>Presentation decides visual weight, not urgency.</p>
 
   <h3>Banner</h3>
   <p>The full panel is for a condition that needs a title and explanation next to the affected content.</p>
-  <ComponentPreview html={bannerHtml} react={bannerReact} label="Alert banner">
-    <Fragment slot="react">
-      <AlertBannerDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={alertBannerTree(t)} label="Alert banner" />
 
   <h3>Accent</h3>
   <p>The sidebar preserves the tone signal and lets a recovery action take center stage.</p>
-  <ComponentPreview html={accentHtml} react={accentReact} label="Alert acento">
-    <Fragment slot="react">
-      <AlertAccentDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={alertAccentTree(t)} label="Alert accent" />
 
   <h3>Inline</h3>
   <p>Without panel or border, a short confirmation accompanies a block that already has its own structure.</p>
-  <ComponentPreview html={inlineHtml} react={inlineReact} label="Alert inline">
-    <Fragment slot="react">
-      <AlertInlineDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={alertInlineTree(t)} label="Alert inline" />
 
   <h2>Anatomy</h2>
   <ul>
     <li><code>sk-alert__icon</code> is decorative and only appears when it provides a visual signal.</li>
     <li><code>sk-alert__content</code> groups optional title and description.</li>
     <li><code>sk-alert__actions</code> hosts actions that belong to the consumer; the optional closure lives there.</li>
+    <li>
+      <code>sk-alert__dismiss</code> is that closure, authored as an icon-only ghost
+      <a href="/en/components/button">Button</a> in size <code>sm</code>, exactly as in
+      <a href="/en/components/toast">Toast</a>: it inherits the 44px hit target, the state layer and
+      the focus ring, and the part class is what makes the glyph read the tone's color. With no
+      visible text, <code>aria-label</code> is required.
+    </li>
     <li><code>data-tone</code> accepts <code>neutral</code> (default), <code>info</code>, <code>success</code>, <code>warning</code> or <code>danger</code>.</li>
     <li><code>data-presentation</code> accepts <code>banner</code> (default), <code>accent</code> or <code>inline</code>.</li>
+    <li><code>data-dismissible</code> says the closure exists; what it does when used is the binding's.</li>
   </ul>
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />
 
   <h2>React</h2>
-  <p>The code is in the <strong>React</strong> tab of each example. <code>onDismiss</code> is optional: without it, the close button is not drawn.</p>
+  <p>
+    The code is in the <strong>React</strong> tab of each example. <code>dismissible</code> decides
+    whether the close button exists and <code>onDismiss</code> what it does when used: the structure
+    is the contract's, the behaviour is the binding's. Passing only <code>onDismiss</code> also draws
+    the button, for code written before <code>dismissible</code> existed.
+  </p>
 </Base>

@@ -68,6 +68,17 @@ export const typographyContract = {
     /** No block-start margin. For a heading that opens a box, where the box already spaces it. */
     flush: { type: "boolean", default: false, attr: "data-flush", trueValue: "" },
     href: { type: "string", attr: "href" },
+    /**
+     * Link's accent. Spelled `linkTone` here because Text already owns `tone` over a wider enum;
+     * the binding still calls it `tone` / `data-tone`. Only `primary` — a link is either the
+     * surrounding text colour or the action colour, never a status colour.
+     */
+    linkTone: {
+      type: "enum",
+      values: ["primary"],
+      attr: "data-tone",
+      prop: "tone",
+    },
   },
 
   signatures: {
@@ -92,7 +103,7 @@ export const typographyContract = {
     Link: {
       intent: ["inline-link", "link-in-a-sentence"],
       host: { element: "a" },
-      options: ["href"],
+      options: ["href", "linkTone"],
       requires: ["href"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "a", part: "link", also: ["sk-interactive"], host: true, slot: "children" },

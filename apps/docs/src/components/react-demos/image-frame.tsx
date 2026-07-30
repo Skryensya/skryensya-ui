@@ -1,7 +1,6 @@
 /*
- * Live React demos for /components/image-frame. Each export is a self-contained island (no
- * function props crossing the Astro boundary), mounted directly from the page with a bare
- * `<ImageFrameBasicDemo client:load />`.
+ * Live React demos for the authored ImageFrame stages (aspect / fit / position). The basic frame
+ * is tree-driven; these stay islands because they wrap frames in docs-only `demo-grid` chrome.
  */
 import { ImageFrame } from "@skryensya/react/image-frame";
 import { framedIn } from "./framed";
@@ -10,21 +9,6 @@ import { framedIn } from "./framed";
 const framed = framedIn(import.meta.url);
 
 const demoSrc = "/demos/image-frame.svg";
-
-export const ImageFrameBasicDemo = framed(function ImageFrameBasicDemo() {
-  return (
-    <ImageFrame
-      as="figure"
-      aspect="16/9"
-      fit="cover"
-      position="center"
-      radius="surface"
-      border="subtle"
-      src={demoSrc}
-      alt="Demonstration landscape"
-    />
-  );
-});
 
 export const ImageFrameAspectDemo = framed(function ImageFrameAspectDemo() {
   return (

@@ -2,62 +2,21 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
+import { TextInlineDemo } from "../../components/react-demos/text";
 import {
-  TextFeedbackDemo,
-  TextInlineDemo,
-  TextReadingDemo,
-  TextTitleDemo,
-} from "../../components/react-demos/text";
+  textFeedbackTree,
+  textReadingTree,
+  textTitleTree,
+} from "../../demos/typography";
+import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
 
-const titleHtml = `<header class="sk-stack" data-gap="none">
-  <p class="sk-text" data-role="eyebrow">Integración</p>
-  <h2 class="sk-heading" data-size="h3">Exportar configuración</h2>
-  <p class="sk-text" data-role="subtitle">
-    Copia el CSS derivado y pégalo una vez en tu proyecto.
-  </p>
-</header>`;
-
-const titleReact = `import { Text } from "@skryensya/react/text";
-import { Heading } from "@skryensya/react/heading";
-
-<header className="sk-stack" data-gap="none">
-  <Text data-role="eyebrow">Integración</Text>
-  <Heading as="h2" size="h3">Exportar configuración</Heading>
-  <Text data-role="subtitle">
-    Copia el CSS derivado y pégalo una vez en tu proyecto.
-  </Text>
-</header>;`;
-
-const readingHtml = `<article class="sk-stack" data-gap="sm">
-  <span class="sk-text" data-role="eyebrow">
-    Actualización · hace 5 minutos
-  </span>
-  <p class="sk-text" data-size="body" data-tone="primary">
-    El despliegue terminó sin interrupciones para las personas que
-    ya estaban usando el producto.
-  </p>
-  <p class="sk-text" data-size="sm" data-tone="secondary">
-    La versión 2.18.4 ya está disponible en Frankfurt y São Paulo.
-  </p>
-</article>`;
-
-const readingReact = `import { Text } from "@skryensya/react/text";
-
-<article className="sk-stack" data-gap="sm">
-  <Text as="span" data-role="eyebrow">
-    Actualización · hace 5 minutos
-  </Text>
-  <Text>
-    El despliegue terminó sin interrupciones para las personas que
-    ya estaban usando el producto.
-  </Text>
-  <Text size="sm" tone="secondary">
-    La versión 2.18.4 ya está disponible en Frankfurt y São Paulo.
-  </Text>
-</article>;`;
-
+/*
+ * Inline stays authored: the point is `<strong>` inside the paragraph. Trees escape text, so nested
+ * HTML is inexpressible.
+ */
 const inlineHtml = `<p class="sk-text">
   El plan <strong>Pro</strong> incluye cinco entornos activos y
   conserva el flujo de lectura dentro del mismo párrafo.
@@ -68,21 +27,6 @@ const inlineReact = `import { Text } from "@skryensya/react/text";
 <Text>
   El plan <strong>Pro</strong> incluye cinco entornos activos y
   conserva el flujo de lectura dentro del mismo párrafo.
-</Text>;`;
-
-const feedbackHtml = `<p
-  class="sk-text"
-  data-size="sm"
-  data-tone="danger"
-  role="alert"
->
-  No se pudo guardar el cambio. Revisa la conexión e intenta de nuevo.
-</p>`;
-
-const feedbackReact = `import { Text } from "@skryensya/react/text";
-
-<Text role="alert" size="sm" tone="danger">
-  No se pudo guardar el cambio. Revisa la conexión e intenta de nuevo.
 </Text>;`;
 ---
 
@@ -100,19 +44,11 @@ const feedbackReact = `import { Text } from "@skryensya/react/text";
     El aire entre roles lo pone el hermano de abajo (<code>padding-block-start</code> del heading y del
     subtitle), así el stack del bloque usa <code>data-gap="none"</code>.
   </p>
-  <ComponentPreview html={titleHtml} react={titleReact} label="Bloque de título">
-    <Fragment slot="react">
-      <TextTitleDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={textTitleTree(t)} label="Bloque de título" />
 
   <h2>Lectura con contexto</h2>
   <p>Un metadato debe acompañar la lectura sin competir con el cuerpo; la jerarquía sale de rol, tono y peso, no de tamaños arbitrarios. El sobretítulo de arriba usa el rol <code>eyebrow</code>.</p>
-  <ComponentPreview html={readingHtml} react={readingReact} label="Texto de actualización">
-    <Fragment slot="react">
-      <TextReadingDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={textReadingTree(t)} label="Texto de actualización" />
 
   <h2>Énfasis dentro de una frase</h2>
   <p>
@@ -130,15 +66,10 @@ const feedbackReact = `import { Text } from "@skryensya/react/text";
 
   <h2>Feedback de validación</h2>
   <p>El tono <code>danger</code> comunica el problema; el rol de región viva sigue siendo una decisión del contexto que usa Text.</p>
-  <ComponentPreview html={feedbackHtml} react={feedbackReact} label="Mensaje de validación">
-    <Fragment slot="react">
-      <TextFeedbackDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={textFeedbackTree(t)} label="Mensaje de validación" />
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />
-
 
   <h2>React</h2>
   <p>El código está en la pestaña <strong>React</strong> del preview.</p>

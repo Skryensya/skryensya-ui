@@ -352,7 +352,16 @@ const screenToggleLabels = Object.fromEntries(
         data-sk-component-preview-binding="react"
         hidden={hasBindingTabs ? true : undefined}
       >
-        {tree ? <TreeDemo tree={tree} measure={measure} client:load /> : <Fragment set:html={reactSlotHtml} />}
+        {tree ? (
+          <TreeDemo
+            tree={tree}
+            measure={measure}
+            frameOptions={{ flush, scroll, viewport }}
+            client:load
+          />
+        ) : (
+          <Fragment set:html={reactSlotHtml} />
+        )}
       </div>
     )
   }

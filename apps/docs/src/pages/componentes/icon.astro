@@ -2,47 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
-import { IconBasicDemo, IconSizeDemo } from "../../components/react-demos/icon";
-
-const html = `<div class="sk-inline">
-  <span data-sk-icon="search" data-sk-icon-size="lg"></span>
-  <span data-sk-icon="settings" data-sk-icon-size="lg"></span>
-  <span data-sk-icon="warning" data-sk-icon-size="lg"></span>
-  <span data-sk-icon="check" data-sk-icon-size="lg"></span>
-  <span data-sk-icon="close" data-sk-icon-size="lg"></span>
-</div>`;
-
-const react = `import { Icon } from "@skryensya/react/icon";
-
-function Example() {
-  return (
-    <div className="sk-inline">
-      <Icon name="search" size="lg" />
-      <Icon name="settings" size="lg" />
-      <Icon name="warning" size="lg" />
-      <Icon name="check" size="lg" />
-      <Icon name="close" size="lg" />
-    </div>
-  );
-}`;
-
-const sizeHtml = `<div class="sk-inline">
-  <span data-sk-icon="check" data-sk-icon-size="sm"></span>
-  <span data-sk-icon="check"></span>
-  <span data-sk-icon="check" data-sk-icon-size="lg"></span>
-</div>`;
-
-const sizeReact = `import { Icon } from "@skryensya/react/icon";
-
-function Example() {
-  return (
-    <div className="sk-inline">
-      <Icon name="check" size="sm" />
-      <Icon name="check" />
-      <Icon name="check" size="lg" />
-    </div>
-  );
-}`;
+import { iconSizeTree, iconTree } from "../../demos/icon";
 
 const vanilla = `<!-- Geometría fuera del set: la escribes tú. -->
 <svg
@@ -101,14 +61,10 @@ const sizesCss = `/* ¿otro tamaño? se redeclara el hook, como todo valor
     Cómo pones un icono en pantalla: <code>&lt;Icon&gt;</code> en React,
     <code>data-sk-icon</code> + <code>mountIcons</code> en vanilla, o el
     <code>&lt;svg class="sk-icon"&gt;</code> a mano. El vocabulario de roles, los sets como marca y por
-    qué el CSS no toca fill/stroke están en <a href="/iconos">Iconografía</a>.
+    qué el CSS no toca fill/stroke viven en <a href="/iconos">Iconografía</a>.
   </p>
 
-  <ComponentPreview html={html} react={react} label="Icon">
-    <Fragment slot="react">
-      <IconBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={iconTree} label="Icon" />
 
   <h2>React</h2>
   <p>
@@ -164,10 +120,6 @@ const sizesCss = `/* ¿otro tamaño? se redeclara el hook, como todo valor
     densidad es espaciado; un icono es contenido al lado de un glifo — si el texto no encoge, el icono
     tampoco.
   </p>
-  <ComponentPreview html={sizeHtml} react={sizeReact} label="Icon · sm / md / lg">
-    <Fragment slot="react">
-      <IconSizeDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={iconSizeTree} label="Icon · sm / md / lg" />
   <CodeBlock code={sizesCss} label="tamaño arbitrario" note="no hay prop numérica" />
 </Base>

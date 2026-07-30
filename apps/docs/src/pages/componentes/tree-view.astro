@@ -3,9 +3,13 @@ import "@skryensya/core/components/select.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
+import { treeViewMinimalTree } from "../../demos/tree-view";
+import { getLocale, useTranslations } from "../../i18n";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { TreeViewSettingsDemo } from "../../components/react-demos/tree-view";
 import "@skryensya/core/components/tree-view.css";
+
+const t = useTranslations(getLocale(Astro.url));
 
 /* Los ejemplos van de menos a más: cada uno agrega UNA cosa sobre el anterior, así que la
    diferencia entre dos bloques de código es exactamente la feature que introduce la sección. */
@@ -17,64 +21,6 @@ const chevron = `<span
           aria-hidden="true"
         ></span>`;
 
-const minimal = `<div class="sk-tree-view" data-sk-tree-view aria-label="Proyecto">
-  <ul class="sk-tree-view__tree" data-sk-tree-view-tree>
-    <li
-      class="sk-tree-view__branch"
-      data-sk-tree-view-branch
-      data-value="src"
-    >
-      <button type="button"
-        class="sk-tree-view__branch-control sk-interactive"
-        data-sk-tree-view-branch-control
-      >
-        ${chevron}
-        <span
-          class="sk-tree-view__branch-text"
-          data-sk-tree-view-branch-text
-        >src</span>
-      </button>
-      <ul
-        class="sk-tree-view__branch-content"
-        data-sk-tree-view-branch-content
-      >
-        <li
-          class="sk-tree-view__item sk-interactive"
-          data-sk-tree-view-item
-          data-value="index.ts"
-        >
-          <span aria-hidden="true"></span>
-          <span
-            class="sk-tree-view__item-text"
-            data-sk-tree-view-item-text
-          >index.ts</span>
-        </li>
-        <li
-          class="sk-tree-view__item sk-interactive"
-          data-sk-tree-view-item
-          data-value="app.ts"
-        >
-          <span aria-hidden="true"></span>
-          <span
-            class="sk-tree-view__item-text"
-            data-sk-tree-view-item-text
-          >app.ts</span>
-        </li>
-      </ul>
-    </li>
-    <li
-      class="sk-tree-view__item sk-interactive"
-      data-sk-tree-view-item
-      data-value="README.md"
-    >
-      <span aria-hidden="true"></span>
-      <span
-        class="sk-tree-view__item-text"
-        data-sk-tree-view-item-text
-      >README.md</span>
-    </li>
-  </ul>
-</div>`;
 
 const initialState = `<div
   class="sk-tree-view"
@@ -448,7 +394,7 @@ const indentHook = `.sk-tree-view {
     (<code>branch</code> + <code>branch-control</code> + <code>branch-content</code>) o una hoja
     (<code>item</code>). Sin atributos de estado, todo arranca cerrado y sin selección.
   </p>
-  <ComponentPreview html={minimal} label="TreeView mínimo" />
+  <ComponentPreview tree={treeViewMinimalTree(t)} label="TreeView mínimo" />
 
   <h2>Estado inicial</h2>
   <p>

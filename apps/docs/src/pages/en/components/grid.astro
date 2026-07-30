@@ -2,58 +2,16 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
-import { GridBasicDemo, GridMulticolDemo } from "../../../components/react-demos/layout";
+import { GridMulticolDemo } from "../../../components/react-demos/layout";
+import { gridTree } from "../../../demos/layout";
+import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
 
-const html = `<section
-  class="sk-grid"
-  data-columns="3"
-  data-gap="md"
-  aria-label="Recent projects"
->
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="md"
-  >
-    Atlas Project
-  </article>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="md"
-  >
-    Breeze Project
-  </article>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="md"
-  >
-    Cauce Project
-  </article>
-</section>`;
-
-const react = `import { Grid } from "@skryensya/react/grid";
-
-function Example() {
-  return (
-    <Grid
-      as="section"
-      columns={3}
-      gap="md"
-      aria-label="Recent projects"
-    >
-      <article>Atlas Project</article>
-      <article>Breeze Project</article>
-      <article>Cauce Project</article>
-    </Grid>
-  );
-}`;
+/*
+ * Multicol stays authored: `data-multicol` is not a declared option.
+ */
 
 const multicolHtml = `<section
   class="sk-grid"
@@ -92,7 +50,7 @@ const multicolHtml = `<section
   >
     <strong>Cauce</strong>
     <p class="sk-text" data-size="sm" data-tone="secondary">
-      Two lines of content here.
+      Two lines of<br />content here.
     </p>
   </article>
   <article
@@ -102,7 +60,7 @@ const multicolHtml = `<section
     data-padding="md"
   >
     <strong>Delta</strong>
-    <p class="sk-text" data-size="sm" data-tone="secondary">Corta.</p>
+    <p class="sk-text" data-size="sm" data-tone="secondary">Short.</p>
   </article>
   <article
     class="sk-box"
@@ -122,7 +80,7 @@ const multicolHtml = `<section
     data-padding="md"
   >
     <strong>Faro</strong>
-    <p class="sk-text" data-size="sm" data-tone="secondary">Media.</p>
+    <p class="sk-text" data-size="sm" data-tone="secondary">Medium.</p>
   </article>
   <article
     class="sk-box"
@@ -208,11 +166,7 @@ const multicolCss = `/* data-columns="4": 1 lane → 2 → 3 → 4,
     A grid of equal columns for content groups. Each column uses <code>minmax(0, 1fr)</code>: prevents the intrinsic minimum size from widening the columns.
   </p>
 
-  <ComponentPreview html={html} react={react} label="Grid">
-    <Fragment slot="react">
-      <GridBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={gridTree(t)} label="Grid" />
 
   <h2>CSS Multi-column Layout</h2>
   <p>

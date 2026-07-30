@@ -2,6 +2,8 @@
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import ComponentPreview from "../components/ComponentPreview.astro";
+import { firstComponentButtonsTree } from "../demos/button";
+import { getLocale, useTranslations } from "../i18n";
 
 const step1 = `pnpm add @skryensya/core`;
 
@@ -18,35 +20,7 @@ const step4 = `/* Un hook, no un selector nuevo: todas las variantes
   --sk-button-radius: var(--radius-pill);
 }`;
 
-const step5 = `<button class="sk-button sk-interactive" data-sk-button>Guardar</button>
-<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-variant="primary"
->
-  Guardar
-</button>
-<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-variant="danger"
->
-  Borrar
-</button>
-<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-size="sm"
->
-  Pequeño
-</button>`;
-
-const step5React = `import { Button } from "@skryensya/react/button";
-
-<Button>Guardar</Button>
-<Button variant="primary">Guardar</Button>
-<Button variant="danger">Borrar</Button>
-<Button size="sm">Pequeño</Button>;`;
+const t = useTranslations(getLocale(Astro.url));
 
 const step6html = `<button
   class="sk-button sk-interactive"
@@ -105,7 +79,7 @@ const fouc = `<script>
     Las variantes y los tamaños son atributos. No necesitas clases nuevas ni ramificar en tu CSS:
     todas las variantes re-declaran <a href="/styling-hooks">el mismo styling hook</a>.
   </p>
-  <ComponentPreview html={step5} react={step5React} label="Button" />
+  <ComponentPreview tree={firstComponentButtonsTree(t)} label="Button" />
 
   <h2>5. Cambiarlo</h2>
   <p>

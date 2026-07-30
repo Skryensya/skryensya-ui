@@ -3,105 +3,15 @@ import Base from "../../layouts/Base.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { NavbarBasicDemo } from "../../components/react-demos/navbar";
-
-
+import { navbarTree } from "../../demos/navbar";
+import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
 
 const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/navbar.css";
 @import "@skryensya/core/patterns/nav-list.css";`;
-
-const html = `<header class="sk-navbar">
-  <div class="sk-navbar__brand">Atlas</div>
-
-  <nav
-    class="sk-nav-list"
-    data-orientation="horizontal"
-    aria-label="Principal"
-  >
-    <ul class="sk-nav-list__list">
-      <li class="sk-nav-list__item">
-        <a
-          class="sk-nav-list__link sk-interactive"
-          href="/"
-          aria-current="page"
-        >
-          <span class="sk-nav-list__label">Inicio</span>
-        </a>
-      </li>
-      <li class="sk-nav-list__item">
-        <a class="sk-nav-list__link sk-interactive" href="/proyectos">
-          <span class="sk-nav-list__label">Proyectos</span>
-        </a>
-      </li>
-      <li class="sk-nav-list__item">
-        <a class="sk-nav-list__link sk-interactive" href="/reportes">
-          <span class="sk-nav-list__label">Reportes</span>
-        </a>
-      </li>
-      <li class="sk-nav-list__item">
-        <a class="sk-nav-list__link sk-interactive" href="/equipo">
-          <span class="sk-nav-list__label">Equipo</span>
-        </a>
-      </li>
-    </ul>
-  </nav>
-
-  <div class="sk-navbar__actions">
-    <button
-      class="sk-button sk-interactive"
-      type="button"
-      data-variant="ghost"
-    >
-      Invitar
-    </button>
-    <button
-      class="sk-button sk-interactive"
-      type="button"
-      data-variant="primary"
-    >
-      Nuevo proyecto
-    </button>
-  </div>
-</header>`;
-
-const react = `import { Button } from "@skryensya/react/button";
-import {
-  NavList,
-  NavListGroup,
-  NavListLink,
-} from "@skryensya/react/nav-list";
-import {
-  Navbar,
-  NavbarActions,
-  NavbarBrand,
-} from "@skryensya/react/navbar";
-
-function Example() {
-  return (
-    <Navbar>
-      <NavbarBrand>Atlas</NavbarBrand>
-
-      <NavList orientation="horizontal" aria-label="Principal">
-        <NavListGroup>
-          <NavListLink href="/" current>
-            Inicio
-          </NavListLink>
-          <NavListLink href="/proyectos">Proyectos</NavListLink>
-          <NavListLink href="/reportes">Reportes</NavListLink>
-          <NavListLink href="/equipo">Equipo</NavListLink>
-        </NavListGroup>
-      </NavList>
-
-      <NavbarActions>
-        <Button variant="ghost">Invitar</Button>
-        <Button variant="primary">Nuevo proyecto</Button>
-      </NavbarActions>
-    </Navbar>
-  );
-}`;
 ---
 
 <Base title="Navbar" description="Navbar: la barra, con la lista de navegación como pattern horizontal.">
@@ -120,11 +30,16 @@ function Example() {
     de divergir.
   </p>
 
-  <ComponentPreview html={html} react={react} label="Navbar" flush>
-    <Fragment slot="react">
-      <NavbarBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview
+    tree={navbarTree(t, {
+      home: "/",
+      projects: "/proyectos",
+      reports: "/reportes",
+      team: "/equipo",
+    })}
+    label="Navbar"
+    flush
+  />
 
   <h2>La página actual es de la plataforma</h2>
   <p>

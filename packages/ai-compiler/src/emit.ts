@@ -33,7 +33,21 @@ export type Binding = "vanilla" | "react";
 export class EmitError extends Error {}
 
 /** Elements the HTML parser closes itself; a written close tag is invalid, not merely redundant. */
-const VOID_ELEMENTS = new Set(["area","base","br","col","embed","hr","img","input","link","meta","source","track","wbr"]);
+const VOID_ELEMENTS = new Set([
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "source",
+  "track",
+  "wbr",
+]);
 
 /* ------------------------------------------------------------------ markup (the vanilla binding) */
 
@@ -44,7 +58,10 @@ const VOID_ELEMENTS = new Set(["area","base","br","col","embed","hr","img","inpu
  * same document — the gates' stage does that, a real page does not (each preview is its own srcdoc
  * document). Absent, the ids read as the author would have written them.
  */
-export function emitMarkup(tree: UsageTree, options: { idPrefix?: string } = {}): string {
+export function emitMarkup(
+  tree: UsageTree,
+  options: { idPrefix?: string } = {},
+): string {
   /*
    * Ids are unique per emit, and the counter below is what makes them so.
    *
@@ -85,11 +102,21 @@ function uniqueBase(candidate: string): string {
   }
 }
 
-function renderSignature(tree: UsageTree, depth: number, inherited?: Wiring): string[] {
+function renderSignature(
+  tree: UsageTree,
+  depth: number,
+  inherited?: Wiring,
+): string[] {
   const { contract, signature } = resolve(tree);
   return renderTemplate(
     signature.template,
-    { tree, contract, signature, wiring: wiringFor(tree, signature), inherited },
+    {
+      tree,
+      contract,
+      signature,
+      wiring: wiringFor(tree, signature),
+      inherited,
+    },
     depth,
   );
 }
@@ -105,7 +132,10 @@ type Wiring = {
 };
 
 /** One deterministic id per wired node, all derived from the composition's own id. */
-function wiringFor(tree: UsageTree, signature: ContractSignature): Wiring | undefined {
+function wiringFor(
+  tree: UsageTree,
+  signature: ContractSignature,
+): Wiring | undefined {
   const rules = signature.wiring;
   if (!rules || rules.length === 0) return undefined;
 
@@ -120,7 +150,8 @@ function wiringFor(tree: UsageTree, signature: ContractSignature): Wiring | unde
     slotItems(filled[node]).length > 0 ||
     (tree.options?.[node] !== undefined && tree.options[node] !== false);
 
-  const idOf = (node: string): string => (node === "control" ? base : `${base}-${node}`);
+  const idOf = (node: string): string =>
+    node === "control" ? base : `${base}-${node}`;
 
   const forControl: [string, string][] = [["id", base]];
   const onNode: Record<string, [string, string][]> = {};
@@ -133,10 +164,12 @@ function wiringFor(tree: UsageTree, signature: ContractSignature): Wiring | unde
      * spelled (`required`, not `required="true"`). Only a REFERENCE list that resolved to nothing is
      * dropped: an `aria-describedby` pointing at absent nodes would describe nothing.
      */
-    const value = rule.value ?? (rule.references ?? []).filter(present).map(idOf).join(" ");
+    const value =
+      rule.value ?? (rule.references ?? []).filter(present).map(idOf).join(" ");
     if (rule.value === undefined && value === "") continue;
 
-    const target = rule.on === "control" ? forControl : (onNode[rule.on] ??= []);
+    const target =
+      rule.on === "control" ? forControl : (onNode[rule.on] ??= []);
     target.push([rule.attr, value]);
   }
 
@@ -153,7 +186,9 @@ function wiringFor(tree: UsageTree, signature: ContractSignature): Wiring | unde
 
 /** A stable id from the label's own text, so the same tree keeps producing the same bytes. */
 function slugOf(tree: UsageTree): string | undefined {
-  const label = slotItems(slotsOf(tree).label).find((item) => !isUsageTree(item));
+  const label = slotItems(slotsOf(tree).label).find(
+    (item) => !isUsageTree(item),
+  );
   if (typeof label !== "string") return undefined;
 
   const slug = label
@@ -180,7 +215,11 @@ type NodeContext = {
   readonly last?: boolean;
 };
 
-function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number): string[] {
+function renderTemplate(
+  node: ContractTemplate,
+  ctx: NodeContext,
+  depth: number,
+): string[] {
   const filled = slotsOf(ctx.tree);
 
   // One element per entry of a collection the contract computes: which pages are visible follows
@@ -188,7 +227,11 @@ function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number)
   if (node.repeatComputed !== undefined) {
     const entries = computedWindow(node.repeatComputed, ctx);
     return entries.flatMap((item, index) =>
-      renderTemplate({ ...node, repeatComputed: undefined }, { ...ctx, item, last: index === entries.length - 1 }, depth),
+      renderTemplate(
+        { ...node, repeatComputed: undefined },
+        { ...ctx, item, last: index === entries.length - 1 },
+        depth,
+      ),
     );
   }
 
@@ -197,7 +240,11 @@ function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number)
   if (node.repeat !== undefined) {
     const entries = collectionItems(filled[node.repeat]);
     return entries.flatMap((item, index) =>
-      renderTemplate({ ...node, repeat: undefined }, { ...ctx, item, last: index === entries.length - 1 }, depth),
+      renderTemplate(
+        { ...node, repeat: undefined },
+        { ...ctx, item, last: index === entries.length - 1 },
+        depth,
+      ),
     );
   }
 
@@ -206,7 +253,11 @@ function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number)
   if (node.repeatItemSlot !== undefined) {
     const entries = collectionItems(ctx.item?.slots[node.repeatItemSlot]);
     return entries.flatMap((item, index) =>
-      renderTemplate({ ...node, repeatItemSlot: undefined }, { ...ctx, item, last: index === entries.length - 1 }, depth),
+      renderTemplate(
+        { ...node, repeatItemSlot: undefined },
+        { ...ctx, item, last: index === entries.length - 1 },
+        depth,
+      ),
     );
   }
 
@@ -218,10 +269,15 @@ function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number)
    */
   if (node.recurse !== undefined) {
     if (ctx.item === undefined) {
-      throw new EmitError(`${node.recurse} recurses with no entry to recurse on; it must sit under a repeat.`);
+      throw new EmitError(
+        `${node.recurse} recurses with no entry to recurse on; it must sit under a repeat.`,
+      );
     }
     const target = namedNode(ctx.signature.template, node.recurse);
-    if (!target) throw new EmitError(`No template node named ${node.recurse} to recurse into.`);
+    if (!target)
+      throw new EmitError(
+        `No template node named ${node.recurse} to recurse into.`,
+      );
     return renderTemplate(target, ctx, depth);
   }
 
@@ -230,24 +286,37 @@ function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number)
 
   // Conditional on the ENTRY rather than the composition: a crumb with an href is a link, one
   // without is the page you are on.
-  if (node.whenItemGiven !== undefined && ctx.item?.options?.[node.whenItemGiven] === undefined) return [];
-  if (node.whenItemMissing !== undefined && ctx.item?.options?.[node.whenItemMissing] !== undefined) return [];
+  if (
+    node.whenItemGiven !== undefined &&
+    ctx.item?.options?.[node.whenItemGiven] === undefined
+  )
+    return [];
+  if (
+    node.whenItemMissing !== undefined &&
+    ctx.item?.options?.[node.whenItemMissing] !== undefined
+  )
+    return [];
 
   // Asked of the entry's CONTENT: a node with children is a branch, one without is a leaf, and
   // nobody sets that — it is whether the slot was filled.
-  if (node.whenItemSlotGiven !== undefined && collectionItems(ctx.item?.slots[node.whenItemSlotGiven]).length === 0) return [];
-  if (node.whenItemSlotMissing !== undefined && collectionItems(ctx.item?.slots[node.whenItemSlotMissing]).length > 0) return [];
+  if (
+    node.whenItemSlotGiven !== undefined &&
+    collectionItems(ctx.item?.slots[node.whenItemSlotGiven]).length === 0
+  )
+    return [];
+  if (
+    node.whenItemSlotMissing !== undefined &&
+    collectionItems(ctx.item?.slots[node.whenItemSlotMissing]).length > 0
+  )
+    return [];
 
   // A conditional node names either an option or a slot; both mean "supplied by the author".
-  if (node.whenGiven !== undefined) {
-    const names = typeof node.whenGiven === "string" ? [node.whenGiven] : node.whenGiven;
-    // A list means ANY of them; `false` is the author saying no, which is not saying nothing.
-    const given = names.some((name) => {
-      const option = ctx.tree.options?.[name];
-      return (option !== undefined && option !== false) || slotItems(filled[name]).length > 0;
-    });
-    if (!given) return [];
-  }
+  if (node.whenGiven !== undefined && !supplied(node.whenGiven, ctx)) return [];
+
+  // And its negative, for the node that stands in when the author supplied nothing: the separator
+  // the system owns when none was slotted.
+  if (node.whenMissing !== undefined && supplied(node.whenMissing, ctx))
+    return [];
 
   /*
    * No element of its own: whatever this node holds stands where the node is, adding no box. A
@@ -256,9 +325,15 @@ function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number)
    */
   if (!node.element) {
     if (node.slot) {
-      return renderSlot(filled[node.slot], depth, node.slot === "children" ? ctx.wiring : undefined);
+      return renderSlot(
+        filled[node.slot],
+        depth,
+        node.slot === "children" ? ctx.wiring : undefined,
+      );
     }
-    return (node.children ?? []).flatMap((child) => renderTemplate(child, ctx, depth));
+    return (node.children ?? []).flatMap((child) =>
+      renderTemplate(child, ctx, depth),
+    );
   }
 
   const pad = "  ".repeat(depth);
@@ -271,15 +346,27 @@ function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number)
    * additive rather than a chain of alternatives.
    */
   const children = [
-    ...(node.text !== undefined ? [`${"  ".repeat(depth + 1)}${escapeText(node.text)}`] : []),
+    ...(node.text !== undefined
+      ? [`${"  ".repeat(depth + 1)}${escapeText(node.text)}`]
+      : []),
     ...(node.textFromOption !== undefined
-      ? [`${"  ".repeat(depth + 1)}${escapeText(String(ctx.tree.options?.[node.textFromOption] ?? ctx.contract.options[node.textFromOption]?.default ?? ""))}`]
+      ? [
+          `${"  ".repeat(depth + 1)}${escapeText(String(ctx.tree.options?.[node.textFromOption] ?? ctx.contract.options[node.textFromOption]?.default ?? ""))}`,
+        ]
       : []),
-    ...(node.itemSlot ? renderSlot(ctx.item?.slots[node.itemSlot], depth + 1) : []),
+    ...(node.itemSlot
+      ? renderSlot(ctx.item?.slots[node.itemSlot], depth + 1)
+      : []),
     ...(node.slot
-      ? renderSlot(filled[node.slot], depth + 1, node.slot === "children" ? ctx.wiring : undefined)
+      ? renderSlot(
+          filled[node.slot],
+          depth + 1,
+          node.slot === "children" ? ctx.wiring : undefined,
+        )
       : []),
-    ...(node.children ?? []).flatMap((child) => renderTemplate(child, ctx, depth + 1)),
+    ...(node.children ?? []).flatMap((child) =>
+      renderTemplate(child, ctx, depth + 1),
+    ),
   ];
 
   if (children.length === 0) {
@@ -297,6 +384,24 @@ function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number)
   return [`${pad}${open}`, ...children, `${pad}</${node.element}>`];
 }
 
+/**
+ * Whether the author supplied ANY of these, as an option or as slot content — the one question both
+ * `whenGiven` and `whenMissing` ask. `false` is the author saying no, which is not saying nothing.
+ */
+function supplied(
+  names: string | readonly string[],
+  ctx: NodeContext,
+): boolean {
+  const filled = slotsOf(ctx.tree);
+  return (typeof names === "string" ? [names] : names).some((name) => {
+    const option = ctx.tree.options?.[name];
+    return (
+      (option !== undefined && option !== false) ||
+      slotItems(filled[name]).length > 0
+    );
+  });
+}
+
 /*
  * The computations a contract may name. Bounded on purpose: the emitter walks DATA, and a contract
  * that could name any function would be code again, one indirection further away.
@@ -304,12 +409,16 @@ function renderTemplate(node: ContractTemplate, ctx: NodeContext, depth: number)
 /** The key of whatever computed window this signature declares, if it declares one. */
 function computedKeyOf(signature: ContractSignature): string | undefined {
   const find = (node: ContractTemplate): string | undefined =>
-    node.repeatComputed?.key ?? (node.children ?? []).map(find).find((k) => k !== undefined);
+    node.repeatComputed?.key ??
+    (node.children ?? []).map(find).find((k) => k !== undefined);
   return find(signature.template);
 }
 
 /** The template node carrying a given `name`, anywhere below the signature's root. */
-function namedNode(node: ContractTemplate, name: string): ContractTemplate | undefined {
+function namedNode(
+  node: ContractTemplate,
+  name: string,
+): ContractTemplate | undefined {
   if (node.name === name) return node;
   for (const child of node.children ?? []) {
     const found = namedNode(child, name);
@@ -323,15 +432,18 @@ function computedWindow(
   ctx: NodeContext,
 ): readonly ItemInput[] {
   const args = spec.from.map((name) =>
-    Number(ctx.tree.options?.[name] ?? ctx.contract.options[name]?.default ?? 0),
+    Number(
+      ctx.tree.options?.[name] ?? ctx.contract.options[name]?.default ?? 0,
+    ),
   );
 
   // A gap is an entry with no page: `whenItemMissing` then tells the two shapes apart, the same way
   // a breadcrumb tells a link from the page you are on.
-  return paginationRange(args[0] ?? 1, args[1] ?? 0, args[2]).map((slot): ItemInput =>
-    slot === "ellipsis"
-      ? { slots: {} }
-      : { options: { [spec.key]: slot }, slots: { label: String(slot) } },
+  return paginationRange(args[0] ?? 1, args[1] ?? 0, args[2]).map(
+    (slot): ItemInput =>
+      slot === "ellipsis"
+        ? { slots: {} }
+        : { options: { [spec.key]: slot }, slots: { label: String(slot) } },
   );
 }
 
@@ -349,12 +461,18 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   // else on the host. Every mapped option is written, DEFAULTS INCLUDED: React serializes its
   // defaults, so a silent one here would read as a divergence at G2 that does not exist.
   const claimed = new Set(
-    claimedElsewhere(signature.template, node).flatMap((other) => other.options ?? []),
+    claimedElsewhere(signature.template, node).flatMap(
+      (other) => other.options ?? [],
+    ),
   );
 
   const mine = node.host
-    ? signatureOptions(contract, signature).filter(([name]) => !claimed.has(name))
-    : signatureOptions(contract, signature).filter(([name]) => (node.options ?? []).includes(name));
+    ? signatureOptions(contract, signature).filter(
+        ([name]) => !claimed.has(name),
+      )
+    : signatureOptions(contract, signature).filter(([name]) =>
+        (node.options ?? []).includes(name),
+      );
 
   if (node.mount) out.push(node.mount);
   if (node.host && signature.mount) {
@@ -372,8 +490,13 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
       out.push(attr(option.attr, option.falseValue));
       continue;
     }
-    out.push(value === true ? attr(option.attr, option.trueValue ?? "") : attr(option.attr, String(value)));
-    if (option.alsoAttr && value !== true) out.push(attr(option.alsoAttr, String(value)));
+    out.push(
+      value === true
+        ? attr(option.attr, option.trueValue ?? "")
+        : attr(option.attr, String(value)),
+    );
+    if (option.alsoAttr && value !== true)
+      out.push(attr(option.alsoAttr, String(value)));
   }
 
   // The one entry the group selected. Asked of the group, marked on the entry — which is what makes
@@ -396,7 +519,11 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
       const option = itemOptions[name];
       const value = ctx.item.options?.[name] ?? option?.default;
       if (!option || value === undefined || value === false) continue;
-      out.push(value === true ? attr(option.attr, option.trueValue ?? "") : attr(option.attr, String(value)));
+      out.push(
+        value === true
+          ? attr(option.attr, option.trueValue ?? "")
+          : attr(option.attr, String(value)),
+      );
     }
   }
 
@@ -408,25 +535,39 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   }
 
   // Structure the contract fixes for every instance: the enhancer's mount points, a native `type`.
-  for (const [name, value] of Object.entries(node.attrs ?? {})) out.push(attr(name, value));
+  for (const [name, value] of Object.entries(node.attrs ?? {}))
+    out.push(attr(name, value));
 
   // Values made visible: a fill computed from the option it represents, never typed by an author.
   const styles = (node.style ?? []).flatMap((rule) => {
     const [num, den] = rule.percentOf;
-    const value = Number(tree.options?.[num] ?? contract.options[num]?.default ?? 0);
-    const max = Number(tree.options?.[den] ?? contract.options[den]?.default ?? 100);
+    const value = Number(
+      tree.options?.[num] ?? contract.options[num]?.default ?? 0,
+    );
+    const max = Number(
+      tree.options?.[den] ?? contract.options[den]?.default ?? 100,
+    );
     if (!Number.isFinite(value) || !Number.isFinite(max) || max <= 0) return [];
     const min = 0;
     const ratio = Math.max(0, Math.min(1, (value - min) / (max - min)));
-    return [rule.as === "fraction" ? `${rule.property}: ${ratio}` : `${rule.property}: ${ratio * 100}%`];
+    return [
+      rule.as === "fraction"
+        ? `${rule.property}: ${ratio}`
+        : `${rule.property}: ${ratio * 100}%`,
+    ];
   });
   if (styles.length > 0) out.push(attr("style", styles.join("; ") + ";"));
 
   // Structure that depends on whether the author supplied something: a named loader is a status, an
   // unnamed one is decoration beside one, and no static attribute can be both.
   for (const rule of node.attrsWhen ?? []) {
-    const value = tree.options?.[rule.option] ?? contract.options[rule.option]?.default;
-    if (rule.given !== undefined && (value !== undefined && value !== false) !== rule.given) continue;
+    const value =
+      tree.options?.[rule.option] ?? contract.options[rule.option]?.default;
+    if (
+      rule.given !== undefined &&
+      (value !== undefined && value !== false) !== rule.given
+    )
+      continue;
     /*
      * Compared as STRINGS, because the rule is written in the vocabulary of attributes and an
      * attribute value is a string. Strict equality silently skipped every numeric option — a
@@ -434,24 +575,32 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
      * "previous" button that announces itself as available and does nothing.
      */
     if (rule.equals !== undefined && String(value) !== rule.equals) continue;
-    if (rule.notEquals !== undefined && String(value) === rule.notEquals) continue;
+    if (rule.notEquals !== undefined && String(value) === rule.notEquals)
+      continue;
     // Two options compared to each other: `page === total` is the last page, and neither side is a
     // literal anyone could have written.
     if (rule.equalsOption !== undefined) {
-      const other = tree.options?.[rule.equalsOption] ?? contract.options[rule.equalsOption]?.default;
+      const other =
+        tree.options?.[rule.equalsOption] ??
+        contract.options[rule.equalsOption]?.default;
       if (String(value) !== String(other)) continue;
     }
-    for (const [name, literal] of Object.entries(rule.attrs)) out.push(attr(name, literal));
+    for (const [name, literal] of Object.entries(rule.attrs))
+      out.push(attr(name, literal));
   }
 
   // What the author passes through. The host takes everything except what another node claimed —
   // a tab list's accessible name belongs to the tablist, not to the box around it.
   const claimedAttrs = new Set(
-    claimedElsewhere(signature.template, node).flatMap((other) => other.attrsFor ?? []),
+    claimedElsewhere(signature.template, node).flatMap(
+      (other) => other.attrsFor ?? [],
+    ),
   );
 
   for (const [name, value] of Object.entries(tree.attrs ?? {})) {
-    const mineToWrite = node.host ? !claimedAttrs.has(name) : (node.attrsFor ?? []).includes(name);
+    const mineToWrite = node.host
+      ? !claimedAttrs.has(name)
+      : (node.attrsFor ?? []).includes(name);
     if (mineToWrite) out.push(attr(name, value));
   }
 
@@ -473,11 +622,13 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   // The id relationships this signature owns: what a named node carries, and what the parent
   // computed for this one because the parent is where the ids live.
   if (node.name && ctx.wiring?.onNode[node.name]) {
-    for (const [name, value] of ctx.wiring.onNode[node.name]!) out.push(attr(name, value));
+    for (const [name, value] of ctx.wiring.onNode[node.name]!)
+      out.push(attr(name, value));
   }
 
   if (node.host && ctx.inherited) {
-    for (const [name, value] of ctx.inherited.forControl) out.push(attr(name, value));
+    for (const [name, value] of ctx.inherited.forControl)
+      out.push(attr(name, value));
   }
 
   return out;
@@ -485,11 +636,15 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
 
 /** The collection shape a signature declares, if it has one. At most one slot may be a collection. */
 function itemShapeOf(signature: ContractSignature): ContractSlot["item"] {
-  return Object.values(signature.slots).find((slot) => slot.accepts === "items")?.item;
+  return Object.values(signature.slots).find((slot) => slot.accepts === "items")
+    ?.item;
 }
 
 /** Every other node of the template, so the host can tell which options are already spoken for. */
-function claimedElsewhere(root: ContractTemplate, node: ContractTemplate): ContractTemplate[] {
+function claimedElsewhere(
+  root: ContractTemplate,
+  node: ContractTemplate,
+): ContractTemplate[] {
   const others: ContractTemplate[] = [];
   const visit = (candidate: ContractTemplate): void => {
     if (candidate !== node) others.push(candidate);
@@ -527,9 +682,15 @@ function slotId(ctx: NodeContext, slot: string): string | undefined {
   return slug || undefined;
 }
 
-function renderSlot(content: SlotContent | undefined, depth: number, wiring?: Wiring): string[] {
+function renderSlot(
+  content: SlotContent | undefined,
+  depth: number,
+  wiring?: Wiring,
+): string[] {
   return slotItems(content).flatMap((item) =>
-    isUsageTree(item) ? renderSignature(item, depth, wiring) : [`${"  ".repeat(depth)}${escapeText(item)}`],
+    isUsageTree(item)
+      ? renderSignature(item, depth, wiring)
+      : [`${"  ".repeat(depth)}${escapeText(item)}`],
   );
 }
 
@@ -541,12 +702,63 @@ export function emitReact(tree: UsageTree): string {
 
   const lines = [...imports.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([from, names]) => `import { ${[...names].sort().join(", ")} } from "${from}";`);
+    .map(
+      ([from, names]) =>
+        `import { ${[...names].sort().join(", ")} } from "${from}";`,
+    );
 
   return [...lines, "", ...body].join("\n");
 }
 
-function renderJsx(tree: UsageTree, depth: number, imports: Map<string, Set<string>>): string[] {
+const JSX_PRINT_WIDTH = 72;
+
+function jsxOpening(
+  name: string,
+  props: readonly string[],
+  depth: number,
+  selfClosing: boolean,
+): string[] {
+  const pad = "  ".repeat(depth);
+  const end = selfClosing ? " />" : ">";
+  const inline =
+    props.length > 0
+      ? `${pad}<${name} ${props.join(" ")}${end}`
+      : `${pad}<${name}${end}`;
+  if (inline.length <= JSX_PRINT_WIDTH || props.length === 0) return [inline];
+
+  return [
+    `${pad}<${name}`,
+    ...props.map((prop) => `${pad}  ${prop}`),
+    `${pad}${selfClosing ? "/>" : ">"}`,
+  ];
+}
+
+function wrapJsxText(text: string, depth: number): string[] {
+  const pad = "  ".repeat(depth);
+  const width = Math.max(1, JSX_PRINT_WIDTH - pad.length);
+  const words = text.trim().split(/\s+/);
+  const lines: string[] = [];
+  let line = "";
+
+  for (const word of words) {
+    if (line === "") {
+      line = word;
+    } else if (line.length + 1 + word.length <= width) {
+      line += ` ${word}`;
+    } else {
+      lines.push(`${pad}${line}`);
+      line = word;
+    }
+  }
+  if (line !== "") lines.push(`${pad}${line}`);
+  return lines;
+}
+
+function renderJsx(
+  tree: UsageTree,
+  depth: number,
+  imports: Map<string, Set<string>>,
+): string[] {
   const { contract, signature } = resolve(tree);
   const pad = "  ".repeat(depth);
   const name = signature.react.name;
@@ -563,7 +775,21 @@ function renderJsx(tree: UsageTree, depth: number, imports: Map<string, Set<stri
     if (value === undefined || value === false) continue;
     // The binding's own name for it, when the contract had to choose a different key.
     const name = declared.prop ?? option;
-    props.push(value === true ? name : `${name}=${JSON.stringify(String(value))}`);
+    if (value === true) {
+      props.push(name);
+      continue;
+    }
+    /*
+     * A number goes in braces, because that is what the binding receives. The live island passes the
+     * tree's own value — a number — while this string said `defaultValue="65"`, so the snippet on the
+     * page and the component beside it were taking different types. Small, and exactly the drift one
+     * authoring is supposed to make impossible.
+     */
+    props.push(
+      declared.type === "number" && typeof value === "number"
+        ? `${name}={${value}}`
+        : `${name}=${JSON.stringify(String(value))}`,
+    );
   }
   for (const [attrName, value] of Object.entries(tree.attrs ?? {})) {
     props.push(`${jsxPropName(attrName)}=${JSON.stringify(value)}`);
@@ -581,7 +807,9 @@ function renderJsx(tree: UsageTree, depth: number, imports: Map<string, Set<stri
 
     const entries = collectionItems(content);
     if (entries.length > 0) {
-      props.push(`${propName}={${JSON.stringify(entries.map((entry) => flattenItem(entry, declaredSlot?.item)))}}`);
+      props.push(
+        `${propName}={${JSON.stringify(entries.map((entry) => flattenItem(entry, declaredSlot?.item)))}}`,
+      );
       continue;
     }
 
@@ -591,30 +819,40 @@ function renderJsx(tree: UsageTree, depth: number, imports: Map<string, Set<stri
     // an element in a prop. Emitting only the text ones silently dropped it.
     const composed = items.filter(isUsageTree);
     if (composed.length > 0) {
-      const jsx = composed.map((item) => renderJsx(item, 0, imports).join("").trim());
-      props.push(`${propName}={${jsx.length === 1 ? jsx[0] : `<>${jsx.join("")}</>`}}`);
+      const jsx = composed.map((item) =>
+        renderJsx(item, 0, imports).join("").trim(),
+      );
+      props.push(
+        `${propName}={${jsx.length === 1 ? jsx[0] : `<>${jsx.join("")}</>`}}`,
+      );
       continue;
     }
 
     const text = items.find((item) => !isUsageTree(item));
-    if (typeof text === "string") props.push(`${propName}=${JSON.stringify(text)}`);
+    if (typeof text === "string")
+      props.push(`${propName}=${JSON.stringify(text)}`);
   }
 
-  const open = props.length > 0 ? `<${name} ${props.join(" ")}>` : `<${name}>`;
   const children = slotItems(filled.children).flatMap((item) =>
-    isUsageTree(item) ? renderJsx(item, depth + 1, imports) : [`${"  ".repeat(depth + 1)}${item}`],
+    isUsageTree(item)
+      ? renderJsx(item, depth + 1, imports)
+      : [`${"  ".repeat(depth + 1)}${item}`],
   );
 
-  if (children.length === 0) {
-    const selfClosing = props.length > 0 ? `<${name} ${props.join(" ")} />` : `<${name} />`;
-    return [`${pad}${selfClosing}`];
-  }
+  if (children.length === 0) return jsxOpening(name, props, depth, true);
 
+  const opening = jsxOpening(name, props, depth, false);
   if (children.length === 1 && !children[0]!.trimStart().startsWith("<")) {
-    return [`${pad}${open}${children[0]!.trim()}</${name}>`];
+    const text = children[0]!.trim();
+    const inlineOpen =
+      props.length > 0 ? `<${name} ${props.join(" ")}>` : `<${name}>`;
+    const inline = `${pad}${inlineOpen}${text}</${name}>`;
+    if (inline.length <= JSX_PRINT_WIDTH) return [inline];
+
+    return [...opening, ...wrapJsxText(text, depth + 1), `${pad}</${name}>`];
   }
 
-  return [`${pad}${open}`, ...children, `${pad}</${name}>`];
+  return [...opening, ...children, `${pad}</${name}>`];
 }
 
 /**
@@ -622,7 +860,10 @@ function renderJsx(tree: UsageTree, depth: number, imports: Map<string, Set<stri
  * slots exists so the markup emitter knows what is an attribute and what is content; React takes one
  * object and decides that itself.
  */
-function flattenItem(item: ItemInput, shape?: ContractSlot["item"]): Record<string, unknown> {
+function flattenItem(
+  item: ItemInput,
+  shape?: ContractSlot["item"],
+): Record<string, unknown> {
   const flat: Record<string, unknown> = { ...item.options };
 
   for (const [field, content] of Object.entries(item.slots)) {
@@ -647,10 +888,48 @@ function flattenItem(item: ItemInput, shape?: ContractSlot["item"]): Record<stri
   return flat;
 }
 
-function jsxPropName(attr: string): string {
-  if (attr === "class") return "className";
+/*
+ * `attrs` reach the host element untouched, which is right for markup and wrong for JSX: React
+ * spells a handful of HTML attributes in camelCase and warns on the hyphenated form. The snippet a
+ * page shows is meant to be pasted, so it has to be the React spelling — `tabindex="0"` on a
+ * TableScroll printed a console warning in every table demo.
+ */
+const JSX_PROP_NAMES: Record<string, string> = {
+  class: "className",
+  for: "htmlFor",
+  accesskey: "accessKey",
+  autocapitalize: "autoCapitalize",
+  autocomplete: "autoComplete",
+  autofocus: "autoFocus",
+  cellpadding: "cellPadding",
+  cellspacing: "cellSpacing",
+  colspan: "colSpan",
+  contenteditable: "contentEditable",
+  crossorigin: "crossOrigin",
+  datetime: "dateTime",
+  enctype: "encType",
+  formaction: "formAction",
+  inputmode: "inputMode",
+  maxlength: "maxLength",
+  minlength: "minLength",
+  novalidate: "noValidate",
+  readonly: "readOnly",
+  rowspan: "rowSpan",
+  spellcheck: "spellCheck",
+  srcset: "srcSet",
+  tabindex: "tabIndex",
+  usemap: "useMap",
+};
+
+/**
+ * The React spelling of a passthrough attribute name. Exported because the live island renders the
+ * same tree through `renderTree` — if only the emitter renamed, the snippet and the thing beside it
+ * would disagree, which is the one failure this whole shape exists to prevent.
+ */
+export function jsxPropName(attr: string): string {
+  // `aria-*` and `data-*` keep their hyphens in JSX; everything else may need the camelCase name.
   if (attr.startsWith("aria-") || attr.startsWith("data-")) return attr;
-  return attr;
+  return JSX_PROP_NAMES[attr.toLowerCase()] ?? attr;
 }
 
 /* ------------------------------------------------------------------------------------- shared */
@@ -659,12 +938,18 @@ export function emit(tree: UsageTree, binding: Binding): string {
   return binding === "vanilla" ? emitMarkup(tree) : emitReact(tree);
 }
 
-function resolve(tree: UsageTree): { contract: ComponentContract; signature: ContractSignature } {
+function resolve(tree: UsageTree): {
+  contract: ComponentContract;
+  signature: ContractSignature;
+} {
   const contract = getContract(tree.contract);
   if (!contract) throw new EmitError(`No contract "${tree.contract}".`);
 
   const signature = getSignature(contract, tree.signature);
-  if (!signature) throw new EmitError(`Contract "${tree.contract}" has no signature "${tree.signature}".`);
+  if (!signature)
+    throw new EmitError(
+      `Contract "${tree.contract}" has no signature "${tree.signature}".`,
+    );
 
   return { contract, signature };
 }
@@ -678,5 +963,8 @@ function escapeAttr(value: string): string {
 }
 
 function escapeText(value: string): string {
-  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }

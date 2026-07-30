@@ -3,11 +3,9 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
-import {
-  TabsAdvancedDemo,
-  TabsBasicDemo,
-  TabsStatesDemo,
-} from "../../components/react-demos/tabs";
+import { TabsAdvancedDemo } from "../../components/react-demos/tabs";
+import { tabsBasicTree, tabsStatesTree } from "../../demos/tabs";
+import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -16,183 +14,11 @@ const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/patterns/state-layer.css";
 @import "@skryensya/core/patterns/layout.css";`;
 
-const basicHtml = `<div
-  class="sk-tabs"
-  data-sk-tabs
-  id="project-tabs"
-  data-value="summary"
->
-  <div
-    class="sk-tabs__list"
-    data-sk-tabs-list
-    aria-label="Proyecto"
-  >
-    <button
-      class="sk-tabs__trigger sk-interactive"
-      data-sk-tabs-trigger
-      data-value="summary"
-      type="button"
-    >
-      Resumen
-    </button>
-    <button
-      class="sk-tabs__trigger sk-interactive"
-      data-sk-tabs-trigger
-      data-value="activity"
-      type="button"
-    >
-      Actividad
-    </button>
-  </div>
+const t = useTranslations(getLocale(Astro.url));
 
-  <div
-    class="sk-tabs__content"
-    data-sk-tabs-content
-    data-value="summary"
-  >
-    Atlas está listo para el lanzamiento de julio.
-  </div>
-  <div
-    class="sk-tabs__content"
-    data-sk-tabs-content
-    data-value="activity"
-  >
-    Tres cambios aprobados durante la última semana.
-  </div>
-</div>`;
-
-const basicReact = `import { Tabs } from "@skryensya/react/tabs";
-
-<Tabs
-  defaultValue="summary"
-  items={[
-    {
-      value: "summary",
-      label: "Resumen",
-      children: "Atlas está listo para el lanzamiento de julio.",
-    },
-    {
-      value: "activity",
-      label: "Actividad",
-      children: "Tres cambios aprobados durante la última semana.",
-    },
-  ]}
-/>;`;
-
-const statesHtml = `<div
-  class="sk-tabs"
-  data-sk-tabs
-  id="review-tabs"
-  data-value="details"
->
-  <div
-    class="sk-tabs__list"
-    data-sk-tabs-list
-    aria-label="Revisión"
-  >
-    <button
-      class="sk-tabs__trigger sk-interactive"
-      data-sk-tabs-trigger
-      data-value="details"
-      type="button"
-    >
-      <span data-sk-icon="info" data-sk-icon-size="sm"></span>
-      Detalles
-    </button>
-    <button
-      class="sk-tabs__trigger sk-interactive"
-      data-sk-tabs-trigger
-      data-value="validation"
-      type="button"
-    >
-      <span data-sk-icon="check" data-sk-icon-size="sm"></span>
-      Validación
-    </button>
-    <button
-      class="sk-tabs__trigger sk-interactive"
-      data-sk-tabs-trigger
-      data-value="settings"
-      data-disabled
-      type="button"
-    >
-      <span data-sk-icon="settings" data-sk-icon-size="sm"></span>
-      Ajustes
-    </button>
-  </div>
-
-  <div
-    class="sk-tabs__content"
-    data-sk-tabs-content
-    data-value="details"
-  >
-    <div class="sk-stack" data-gap="xs">
-      <strong>Solicitud #248</strong>
-      <span>Actualiza el runtime de Atlas a Node 24.</span>
-    </div>
-  </div>
-  <div
-    class="sk-tabs__content"
-    data-sk-tabs-content
-    data-value="validation"
-  >
-    <div class="sk-stack" data-gap="xs">
-      <strong>12 comprobaciones aprobadas</strong>
-      <span>Tipos, pruebas y revisión de dependencias sin fallos.</span>
-    </div>
-  </div>
-  <div
-    class="sk-tabs__content"
-    data-sk-tabs-content
-    data-value="settings"
-  >
-    Los ajustes estarán disponibles después de aprobar la solicitud.
-  </div>
-</div>`;
-
-const statesReact = `import { Icon } from "@skryensya/react/icon";
-import { Tabs } from "@skryensya/react/tabs";
-
-<Tabs
-  defaultValue="details"
-  items={[
-    {
-      value: "details",
-      label: (
-        <>
-          <Icon name="info" size="sm" />
-          Detalles
-        </>
-      ),
-      children: (
-        <div className="sk-stack" data-gap="xs">
-          <strong>Solicitud #248</strong>
-          <span>Actualiza el runtime de Atlas a Node 24.</span>
-        </div>
-      ),
-    },
-    {
-      value: "validation",
-      label: (
-        <>
-          <Icon name="check" size="sm" />
-          Validación
-        </>
-      ),
-      children: "12 comprobaciones aprobadas.",
-    },
-    {
-      value: "settings",
-      label: (
-        <>
-          <Icon name="settings" size="sm" />
-          Ajustes
-        </>
-      ),
-      children: "Disponible después de aprobar la solicitud.",
-      disabled: true,
-    },
-  ]}
-/>;`;
+/*
+ * Advanced stays authored: live-region status driven by js / React state is the point of the demo.
+ */
 
 const advancedHtml = `<div class="sk-stack" data-gap="sm">
   <div
@@ -407,15 +233,7 @@ export function WorkspaceTabs() {
     Dos triggers y dos paneles. <code>data-value</code> enlaza cada
     opción con su contenido; el enhancer completa roles, foco y ARIA.
   </p>
-  <ComponentPreview
-    html={basicHtml}
-    react={basicReact}
-    label="Tabs básicos"
-  >
-    <Fragment slot="react">
-      <TabsBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={tabsBasicTree(t)} label="Tabs básicos" />
 
   <h2>2. Estados e iconos</h2>
   <p>
@@ -423,15 +241,7 @@ export function WorkspaceTabs() {
     deshabilitadas. El icono acompaña al texto; nunca reemplaza el
     nombre accesible del tab.
   </p>
-  <ComponentPreview
-    html={statesHtml}
-    react={statesReact}
-    label="Tabs con estados"
-  >
-    <Fragment slot="react">
-      <TabsStatesDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={tabsStatesTree(t)} label="Tabs con estados" />
 
   <h2>3. Orientación y estado</h2>
   <p>

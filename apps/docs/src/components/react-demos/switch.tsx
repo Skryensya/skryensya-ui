@@ -1,20 +1,11 @@
 /*
  * Live React demos for /components/switch.
  */
-import { Switch } from "@skryensya/react/switch";
 import { TileSwitch } from "@skryensya/react/tile-switch";
 import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame — see `framed.tsx`. */
 const framed = framedIn(import.meta.url);
-
-export const SwitchDemo = framed(function SwitchDemo() {
-  return (
-    <Switch name="deploy-automatically" defaultChecked onCheckedChange={() => {}}>
-      Deploy automatically
-    </Switch>
-  );
-});
 
 const preferences = [
   {

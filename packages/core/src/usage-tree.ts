@@ -25,14 +25,11 @@ export type OptionInput = string | boolean | number;
  */
 export type ItemInput = {
   readonly options?: Readonly<Record<string, OptionInput>>;
-  readonly slots: Readonly<Record<string, string | UsageTree | readonly (string | UsageTree)[]>>;
+  readonly slots: Readonly<Record<string, SlotContent>>;
 };
 
 export type SlotContent =
-  | string
-  | UsageTree
-  | readonly (string | UsageTree)[]
-  | readonly ItemInput[];
+  string | UsageTree | readonly (string | UsageTree)[] | readonly ItemInput[];
 
 export type UsageTree = {
   readonly contract: string;

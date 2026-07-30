@@ -1,7 +1,6 @@
 /*
- * Live React demos for /components/loader. Each export is a self-contained island (no function
- * props crossing the Astro boundary), mounted directly from the page with a bare
- * `<LoaderSimulationDemo client:load />`.
+ * Live React demos for authored Loader stages (simulation + contexts). Sizes and speeds are
+ * tree-driven on the page.
  */
 import { useEffect, useState } from "react";
 import { Button } from "@skryensya/react/button";
@@ -121,25 +120,5 @@ export const LoaderContextsDemo = framed(function LoaderContextsDemo() {
         </Stack>
       </Box>
     </Grid>
-  );
-});
-
-export const LoaderSizesDemo = framed(function LoaderSizesDemo() {
-  return (
-    <div className="sk-inline">
-      <Loader size="sm" />
-      <Loader />
-      <Loader size="lg" label="Loading results" />
-    </div>
-  );
-});
-
-export const LoaderSpeedDemo = framed(function LoaderSpeedDemo() {
-  return (
-    <div className="sk-inline">
-      <Loader speed="fast" size="lg" variant="bars" />
-      <Loader speed="normal" size="lg" variant="bars" />
-      <Loader label="Syncing in the background" speed="slow" size="lg" variant="bars" />
-    </div>
   );
 });

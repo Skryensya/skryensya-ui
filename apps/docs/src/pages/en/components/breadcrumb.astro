@@ -3,150 +3,16 @@ import Base from "../../../layouts/Base.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import {
-  BreadcrumbIconSeparatorDemo,
-  BreadcrumbLongLabelsDemo,
-  BreadcrumbMultiLevelDemo,
-  BreadcrumbTwoLevelDemo,
-} from "../../../components/react-demos/breadcrumb";
+  breadcrumbIconTree,
+  breadcrumbLongTree,
+  breadcrumbMultiTree,
+  breadcrumbTwoTree,
+} from "../../../demos/breadcrumb";
+import { getLocale, useTranslations } from "../../../i18n";
 import "@skryensya/core/components/breadcrumb.css";
 
 const install = `@import "@skryensya/core/components/breadcrumb.css";`;
-
-const simpleHtml = `<nav class="sk-breadcrumb" aria-label="breadcrumbs">
-  <ol class="sk-breadcrumb__list">
-    <li class="sk-breadcrumb__item">
-      <a class="sk-breadcrumb__link" href="/">Home</a>
-      <span class="sk-breadcrumb__separator" aria-hidden="true">/</span>
-    </li>
-    <li class="sk-breadcrumb__item" aria-current="page">
-      Projects
-    </li>
-  </ol>
-</nav>`;
-const simpleReact = `import { Breadcrumb } from "@skryensya/react/breadcrumb";
-
-function Example() {
-  return (
-    <Breadcrumb
-      items={[
-        { href: "/in", label: "Home" },
-        { label: "Projects", current: true },
-      ]}
-    />
-  );
-}`;
-
-const multiHtml = `<nav class="sk-breadcrumb" aria-label="breadcrumbs">
-  <ol class="sk-breadcrumb__list">
-    <li class="sk-breadcrumb__item">
-      <a class="sk-breadcrumb__link" href="/">Home</a>
-      <span class="sk-breadcrumb__separator" aria-hidden="true">/</span>
-    </li>
-    <li class="sk-breadcrumb__item">
-      <a class="sk-breadcrumb__link" href="/projects">Projects</a>
-      <span class="sk-breadcrumb__separator" aria-hidden="true">/</span>
-    </li>
-    <li class="sk-breadcrumb__item">
-      <a class="sk-breadcrumb__link" href="/projects/kit-digital">Kit Digital</a>
-      <span class="sk-breadcrumb__separator" aria-hidden="true">/</span>
-    </li>
-    <li class="sk-breadcrumb__item" aria-current="page">
-      Settings
-    </li>
-  </ol>
-</nav>`;
-const multiReact = `import { Breadcrumb } from "@skryensya/react/breadcrumb";
-
-function Example() {
-  return (
-    <Breadcrumb
-      items={[
-        { href: "/in", label: "Home" },
-        { href: "/proyectos", label: "Projects" },
-        { href: "/proyectos/kit-digital", label: "Kit Digital" },
-        { label: "Settings", current: true },
-      ]}
-    />
-  );
-}`;
-
-const iconHtml = `<nav class="sk-breadcrumb" aria-label="breadcrumbs">
-  <ol class="sk-breadcrumb__list">
-    <li class="sk-breadcrumb__item">
-      <a class="sk-breadcrumb__link" href="/">Home</a>
-      <span class="sk-breadcrumb__separator" aria-hidden="true">
-        <span data-sk-icon="chevron-right"></span>
-      </span>
-    </li>
-    <li class="sk-breadcrumb__item">
-      <a class="sk-breadcrumb__link" href="/projects">Projects</a>
-      <span class="sk-breadcrumb__separator" aria-hidden="true">
-        <span data-sk-icon="chevron-right"></span>
-      </span>
-    </li>
-    <li class="sk-breadcrumb__item" aria-current="page">
-      Kit Digital
-    </li>
-  </ol>
-</nav>`;
-const iconReact = `import { Breadcrumb } from "@skryensya/react/breadcrumb";
-
-function Example() {
-  return (
-    <Breadcrumb
-      separator={<span data-sk-icon="chevron-right" />}
-      items={[
-        { href: "/in", label: "Home" },
-        { href: "/proyectos", label: "Projects" },
-        { label: "Kit Digital", current: true },
-      ]}
-    />
-  );
-}`;
-
-const longHtml = `<nav class="sk-breadcrumb" aria-label="breadcrumbs">
-  <ol class="sk-breadcrumb__list">
-    <li class="sk-breadcrumb__item">
-      <a class="sk-breadcrumb__link" href="/">Home</a>
-      <span class="sk-breadcrumb__separator" aria-hidden="true">/</span>
-    </li>
-    <li class="sk-breadcrumb__item">
-      <a
-        class="sk-breadcrumb__link"
-        href="/projects"
-        title="Migration from vanilla layer to Svelte components"
-      >
-        Migration from vanilla layer to Svelte components
-      </a>
-      <span class="sk-breadcrumb__separator" aria-hidden="true">/</span>
-    </li>
-    <li class="sk-breadcrumb__item" aria-current="page">
-      <span class="sk-breadcrumb__current">
-        Zag machines shared between vanilla layer and Svelte components
-      </span>
-    </li>
-  </ol>
-</nav>`;
-const longReact = `import { Breadcrumb } from "@skryensya/react/breadcrumb";
-
-function Example() {
-  return (
-    <Breadcrumb
-      items={[
-        { href: "/in", label: "Home" },
-        {
-          href: "/proyectos",
-          label: "Migration from vanilla layer to Svelte components",
-        },
-        {
-          label:
-            "Zag machines shared between vanilla layer and Svelte components",
-          current: true,
-        },
-      ]}
-    />
-  );
-}`;
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base
@@ -160,29 +26,30 @@ function Example() {
 
   <h3>Two levels</h3>
   <p>The minimum case: a link to the previous level and the current page, without a link or trailing separator.</p>
-  <ComponentPreview html={simpleHtml} react={simpleReact} label="Two Tier Breadcrumb" viewport="auto">
-    <Fragment slot="react">
-      <BreadcrumbTwoLevelDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={breadcrumbTwoTree(t)} label="Two Tier Breadcrumb" viewport="auto" />
 
   <h3>Multiple levels</h3>
   <p>Each intermediate level is a real link followed by its separator; only the last element loses both.</p>
-  <ComponentPreview html={multiHtml} react={multiReact} label="Multi-tiered breadcrumb" viewport="auto">
-    <Fragment slot="react">
-      <BreadcrumbMultiLevelDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview
+    tree={breadcrumbMultiTree(t, {
+      projects: "/projects",
+      kit: "/projects/kit-digital",
+    })}
+    label="Multi-tiered breadcrumb"
+    viewport="auto"
+  />
 
   <h3>Separator with icon</h3>
   <p>
-    The separator is a free slot: it defaults to text (<code>/</code>), but accepts any decorative markup, such as a <code>chevron-right</code>.
+    The separator is a content slot: leave it empty and the template writes <code>/</code>; fill it
+    with text (<code>·</code>, <code>›</code>) or an <a href="/en/components/icon">Icon</a>, such as
+    <code>chevron-right</code>. Nothing else: punctuation with a heading inside is not punctuation.
   </p>
-  <ComponentPreview html={iconHtml} react={iconReact} label="Breadcrumb with icon separator" viewport="auto">
-    <Fragment slot="react">
-      <BreadcrumbIconSeparatorDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview
+    tree={breadcrumbIconTree(t, "/projects")}
+    label="Breadcrumb with icon separator"
+    viewport="auto"
+  />
 
   <h3>Long labels</h3>
   <p>
@@ -196,11 +63,11 @@ function Example() {
       <code>sk-breadcrumb__current</code> never truncates: wraps over multiple lines (<code>overflow-wrap: anywhere</code>) so that the entire title remains readable even if it does not fit on a single line.
     </li>
   </ul>
-  <ComponentPreview html={longHtml} react={longReact} label="Breadcrumb with long labels" viewport="auto">
-    <Fragment slot="react">
-      <BreadcrumbLongLabelsDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview
+    tree={breadcrumbLongTree(t, "/projects")}
+    label="Breadcrumb with long labels"
+    viewport="auto"
+  />
 
   <h2>Contract</h2>
   <p>Use nav + ol; the last element takes aria-current=page and is not a link.</p>

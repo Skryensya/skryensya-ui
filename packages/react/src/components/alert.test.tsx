@@ -28,6 +28,24 @@ describe("Alert", () => {
     expect(plain.container.querySelector(".sk-alert__dismiss")).toBeNull();
   });
 
+  /*
+   * Whether the control EXISTS is the contract's, what it does is the binding's — the split Tag and
+   * Toast make, and the reason a composition written as data can say "dismissible" at all: a handler
+   * is not something data can carry.
+   */
+  it("draws the dismiss from `dismissible` alone, under the name it is given", () => {
+    const ui = render(
+      <Alert dismissible dismissLabel="Cerrar alerta" title="Mantenimiento">
+        Solo lectura
+      </Alert>,
+    );
+
+    const alert = ui.getByRole("status");
+    expect(alert.getAttribute("data-dismissible")).toBe("");
+    expect(alert.querySelector(".sk-alert__dismiss")).not.toBeNull();
+    expect(ui.getByLabelText("Cerrar alerta")).not.toBeNull();
+  });
+
   it("renders presentations and optional actions through explicit parts", () => {
     const ui = render(
       <Alert actions={<a href="/billing">Review plan</a>} icon="!" presentation="accent" title="Plan expires" tone="warning">

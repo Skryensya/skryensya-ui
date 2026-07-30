@@ -9,5 +9,4 @@ TimeField:
     - "también hace falta el día; eso es un DatePicker, o los dos juntos"
     - "es una duración, no una hora del día; eso es un NumberField con su unidad"
   alternatives:
-    - DatePicker
     - NumberField

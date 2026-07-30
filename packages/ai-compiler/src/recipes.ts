@@ -31,6 +31,19 @@ export function checkRecipes(): readonly string[] {
        * screen: an error state with no action is a page whose only exit is the Back button, and that
        * is the shape a generated UI falls into by default.
        */
+      /*
+       * A loading state has to ANNOUNCE itself. Nothing in a contract can ask for this either: a
+       * Placeholder is valid on its own and should be, it is paint. It only becomes a defect at the
+       * scale of a screen — a skeleton with no live region is a still page to anyone who cannot see
+       * it, with nothing saying to wait.
+       */
+      if (state === "loading" && !announcesItself(tree)) {
+        problems.push(
+          `${recipe.id} · loading · no se anuncia: quien no ve la espera no tiene cómo saber que hay una. ` +
+            `Un Loader con label, un Progress, o un Loader.status si ya se ve.`,
+        );
+      }
+
       if (state === "error" && !offersAWayForward(tree)) {
         problems.push(
           `${recipe.id} · error · no ofrece ninguna acción: un estado de error sin salida es una pantalla ` +
@@ -42,6 +55,28 @@ export function checkRecipes(): readonly string[] {
 
   return problems;
 }
+
+/**
+ * Whether anything in this tree tells assistive tech that a wait is happening.
+ *
+ * All three of these carry a name that lands in a live region — which is why `Loader.status` had to
+ * exist before this check could be written: the only honest way to satisfy it beside a skeleton was
+ * a spinner nobody wanted.
+ */
+function announcesItself(node: unknown): boolean {
+  if (!node || typeof node !== "object") return false;
+  if (Array.isArray(node)) return node.some(announcesItself);
+
+  const tree = node as Record<string, unknown>;
+  if (typeof tree.signature === "string" && ANNOUNCING.has(tree.signature)) {
+    // A Loader with no label is decoration, not a status — the contract says so, and so does this.
+    const label = (tree.options as Record<string, unknown> | undefined)?.label;
+    if (typeof label === "string" && label !== "") return true;
+  }
+  return Object.values(tree).some(announcesItself);
+}
+
+const ANNOUNCING = new Set(["Loader", "Loader.status", "Progress"]);
 
 /** Whether anything in this tree can be acted on: a button, a link, or a control. */
 function offersAWayForward(node: unknown): boolean {

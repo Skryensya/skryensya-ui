@@ -2,27 +2,12 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
-import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import { segmentedTree } from "../../demos/segmented";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
-
-/*
- * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
- * island are all emitted from this, so the snippet a reader copies is what they just saw render.
- */
-const tree = {
-  contract: "segmented",
-  signature: "Segmented",
-  options: { value: "day" },
-  attrs: { "aria-label": "Rango" },
-  slots: {
-    items: [
-      { options: { value: "day" }, slots: { label: "Día" } },
-      { options: { value: "week" }, slots: { label: "Semana" } },
-      { options: { value: "month" }, slots: { label: "Mes" } },
-    ],
-  },
-} as const satisfies UsageTree;
 
 const js = `import { initComponents } from "@skryensya/vanilla/auto";
 
@@ -38,7 +23,7 @@ await initComponents();`;
     <a href="/componentes/select">Select</a>.
   </p>
 
-  <Showcase tree={tree} label="Segmented" />
+  <Showcase tree={segmentedTree(t)} label="Segmented" />
   <p>
     El enhancer vanilla selecciona con click y con flechas; <code>Home</code> y <code>End</code> saltan
     al primer y último segmento. La opción elegida queda en <code>data-value</code> y se anuncia con

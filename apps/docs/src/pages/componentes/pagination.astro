@@ -2,20 +2,13 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Showcase from "../../components/Showcase.astro";
-import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import { paginationTree } from "../../demos/pagination";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 import StylingHooks from "../../components/StylingHooks.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
-
-/*
- * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
- * island are all emitted from this, so the snippet a reader copies is what they just saw render.
- */
-const tree = {
-  contract: "pagination",
-  signature: "Pagination",
-  options: { page: 1, total: 12, label: "Paginación", previousLabel: "Página anterior", nextLabel: "Página siguiente" },
-} as const satisfies UsageTree;
 
 const rangeExample = `import { paginationRange } from "@skryensya/core/pagination";
 
@@ -31,7 +24,7 @@ paginationRange(5, 20);
     con un hermano a cada lado, y las corridas ocultas colapsan en una elipsis.
   </p>
 
-  <Showcase tree={tree} label="Pagination" />
+  <Showcase tree={paginationTree(t)} label="Pagination" />
   <p>
     Prev/next usan los roles <code>chevron-left</code> y <code>chevron-right</code> del set.
     La página actual lleva <code>aria-current="page"</code>; prev/next se deshabilitan en los bordes.

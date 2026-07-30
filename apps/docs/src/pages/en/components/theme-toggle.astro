@@ -2,31 +2,12 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import Showcase from "../../../components/Showcase.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
+import { themeToggleTree } from "../../../demos/theme-toggle";
+import { getLocale, useTranslations } from "../../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
-
-/*
- * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
- * island are all emitted from this, so the snippet a reader copies is what they just saw render.
- */
-const tree = {
-  contract: "layout",
-  signature: "Inline",
-  options: { gap: "md" },
-  children: [
-    {
-      contract: "theme-toggle",
-      signature: "ThemeToggle",
-      options: { labelSystem: "Mode: system", labelLight: "Mode: light", labelDark: "Mode: dark" },
-    },
-    {
-      contract: "theme-toggle",
-      signature: "ThemeToggle",
-      options: { size: "sm", labelSystem: "Mode: system", labelLight: "Mode: light", labelDark: "Mode: dark" },
-    },
-  ],
-} as const satisfies UsageTree;
 
 const css = `@import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/theme-toggle.css";`;
@@ -59,7 +40,7 @@ document.addEventListener("sk-theme-toggle-change", (event) => {
     Theme Toggle cycles the <strong>color mode</strong> (system → light → dark → system). It is a ghost icon-only Button with three stacked faces; when clicked it writes <code>data-scheme</code> and <code>color-scheme</code> to <code>&lt;html&gt;</code> for <code>light-dark()</code> to re-theme. The size is that of the Button: <strong>md</strong> (default) or <code>data-size="sm"</code> / <code>size="sm"</code>. The persistence is provided by the app.
   </p>
 
-  <Showcase tree={tree} js={js} label="Theme Toggle" note="md · sm" />
+  <Showcase tree={themeToggleTree(t)} js={js} label="Theme Toggle" note="md · sm" />
 
   <h2>Contract</h2>
   <ul>

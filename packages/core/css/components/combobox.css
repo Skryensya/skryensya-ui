@@ -337,19 +337,8 @@
   }
 
   /* The result-count live region is for assistive tech only: it announces "N resultados
-     disponibles" as the filter changes. It ships with the authored markup carrying an `sr-only`
-     class, but the component must not depend on a global utility that may be absent — so it owns
-     its own visually-hidden recipe here (same one CopyButton uses). Kept in the accessibility tree
-     (not `display: none`), just off-screen. */
-  .sk-combobox__status {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
+     disponibles" as the filter changes. The hiding is `sk-visually-hidden`, which ships in the base
+     bundle — this used to carry its own copy of that recipe because the utility did not exist yet. */
 
   .sk-combobox__empty {
     padding: var(--space-inset-lg) var(--space-inset-md);

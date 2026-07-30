@@ -10,4 +10,4 @@ ImageFrame:
     - no hay medio que mostrar, ni src ni contenido autoreado; el marco vacío es una caja vacía,
       no un placeholder
   alternatives:
-    - Avatar
+    - Avatar.initials

@@ -671,11 +671,57 @@ puede pedirlos —un Alert sin acciones es válido, y debe serlo— y sólo son 
 > nombrarlo que agregar un spinner arriba de los esqueletos para que un chequeo pase.
 
 **Convertidas hasta ahora (16 de 349 llamadas a `Showcase`):** `tag`, `kbd`, `pagination`,
-`theme-toggle`, `box`, `progress`, `empty-state`, `segmented` — cada una en los dos idiomas. Quedan
-333, de las cuales unas 98
-son de familias publicadas en español (más su espejo en inglés); el resto demuestra familias sin
-publicar o composiciones que las firmas publicadas todavía no cubren — el avatar con imagen y el
-grupo de avatares, por ejemplo, no son firmas.
+`theme-toggle`, `box`, `progress`, `empty-state`, `segmented` — cada una en los dos idiomas. Las ocho
+conversiones dejaron sin consumidor a siete `react-demos/*.tsx` (169 líneas) y al `BoxBasicDemo` de
+`layout.tsx`: un demo por página deja de existir cuando el árbol ES el demo.
+
+**Un árbol por demo, no uno por página.** Los árboles viven en `apps/docs/src/demos/`, uno por demo,
+escritos como función del traductor; las dos páginas importan el mismo y le pasan su `t`. Las
+palabras son claves `demo.*` en `i18n/ui.ts`, y una palabra que es nombre propio (`react`, `tokens`,
+`⌘`) se queda escrita en el árbol: no se traduce, y una clave para ella sería una entrada identidad
+que se puede podrir. Un demo sin palabras se exporta como constante, no como función — ver `kbd.ts`.
+
+Un árbol por página habría sido la misma duplicación que el árbol vino a borrar, un idioma después, y
+ya había derivado: el demo inglés de Box decía `<h3>` en su HTML y `<h2>` en su TSX, con otra frase
+debajo; el Theme Toggle inglés mezclaba idiomas dentro de un botón (`aria-label="Modo: sistema"` al
+lado de `label-light="Mode: clear"`); Tag y Progress en inglés seguían diciendo `activo`, `deprecado`,
+`Subida` y `Cuota`. Nada de eso fallaba un chequeo, porque nada estaba mal: eran páginas válidas que
+documentaban componentes ligeramente distintos.
+
+Medido después de compartir: los ocho demos emiten **estructura idéntica** en los dos idiomas y en
+los dos bindings —mismo esqueleto de tags, clases y `data-*`— y difieren sólo en texto y en atributos
+de label. Que es la propiedad entera, y ahora se cumple por construcción y no por revisión.
+
+Medidas, de las **126 páginas de componente** (los dos idiomas) que tienen al menos un `Showcase`:
+
+| | Páginas | Showcases |
+|---|---|---|
+| Familia con contrato publicado | 92 | 238 (16 convertidas) |
+| Familia **sin** contrato | 34 | 80 |
+
+Las sin contrato son `calendar`, `card`, `combobox`, `command-palette`, `component-preview`,
+`copy-button`, `date-picker`, `dialog`, `drawer`, `menu`, `popover`, `popup`, `primitivas`, `select`,
+`split-button`, `toc` y `tooltip`. Y dentro de las publicadas queda un tercer grupo, el que no se ve
+en la tabla: demos que la **firma** no cubre. Badge tiene tres y sólo el primero es convertible —
+`data-dot` y `sk-badge-holder` no son opciones de `badgeContract`, que declara `tone` y nada más.
+
+> **Un árbol con layout arriba colapsa en el escenario**
+>
+> La conversión de `progress` dejó la etapa **vacía en los dos idiomas**, válida y renderizada: el
+> escenario es una **fila flex** que envuelve, así que cada hijo de nivel superior se dimensiona por
+> su contenido — y Progress no tiene contenido que lo dimensione, declara `inline-size: 100%`, que es
+> 100% de nada dentro de un Stack que se encoge. Las barras medían **0px de ancho**.
+>
+> Es la trampa de convertir a árbol, no de Progress: el markup a mano ponía tres `.sk-progress`
+> sueltos, hijos directos del escenario, y ahí `100%` sí resuelve. Cualquier árbol que envuelva su
+> demo en un primitivo de layout se la encuentra.
+>
+> El arreglo está en `component-preview.css`, y está **keyed en el hijo** (`:has(> .sk-progress)`) a
+> propósito: las ~46 etapas que ya nacen en un Stack o un Grid se encogen a su contenido a propósito
+> —un Select mide 192px, no 699— así que estirar todo demo de layout es una decisión más ancha que la
+> que toma esta regla. Lleva dos selectores porque los dos bindings anidan distinto por un nivel:
+> React monta en su `[data-sk-react-demo-root]`, cuyo `display: contents` lo saca del layout pero no
+> del selector. Con uno solo, las barras pintaban en Vanilla y seguían colapsadas en React.
 
 ### F7 · Evals
 Corpus de intenciones de producto en español e inglés, con las regresiones históricas como casos

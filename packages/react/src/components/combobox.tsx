@@ -303,7 +303,7 @@ export function Combobox({
       ) : null}
       <div
         aria-atomic="true"
-        className={cx(comboboxParts.status, "sr-only")}
+        className={cx(comboboxParts.status, "sk-visually-hidden")}
         role="status"
       >
         {api.open

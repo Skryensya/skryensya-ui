@@ -1,22 +1,12 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import Showcase from "../../../components/Showcase.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
+import { boxTree } from "../../../demos/layout";
+import { getLocale, useTranslations } from "../../../i18n";
 
-/*
- * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
- * island are all emitted from this, so the snippet a reader copies is what they just saw render.
- */
-const tree = {
-  contract: "box",
-  signature: "Box",
-  options: { surface: "raised", border: "subtle", padding: "lg" },
-  children: [
-    { contract: "typography", signature: "Heading", children: "Summary" },
-    { contract: "typography", signature: "Text", children: "A semantic section with surface, border and padding." },
-    { contract: "button", signature: "Button.action", children: "Manage" },
-  ],
-} as const satisfies UsageTree;
+const t = useTranslations(getLocale(Astro.url));
+
+
 ---
 <Base title="Box" description="Visual and semantic surface chosen by the user; without own interaction.">
   <h1>Box</h1>
@@ -28,7 +18,7 @@ const tree = {
   <p>The <a href="/en/components/card">Card</a> guide applies this decision to content, news, product, link, action, selection and metrics cards.</p>
 
   <h2>Authored HTML</h2>
-  <Showcase tree={tree} label="Box" />
+  <Showcase tree={boxTree(t)} label="Box" />
 
   <h2>React</h2>
   <p>The code is in the <strong>React</strong> tab of the preview.</p>

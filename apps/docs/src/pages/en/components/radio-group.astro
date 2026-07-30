@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import { RadioGroupDemo, TileRadioGroupDemo } from "../../../components/react-demos/radio-group";
 
@@ -155,21 +155,21 @@ function Example() {
   <h1>RadioGroup</h1>
   <p class="lede">An exclusive choice between related alternatives. Each option is a native radius; the shared name imposes exclusion.</p>
 
-  <Showcase html={html} react={react} label="RadioGroup">
+  <ComponentPreview html={html} react={react} label="RadioGroup">
     <Fragment slot="react">
       <RadioGroupDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Surface Options: TileRadioGroup</h2>
   <p>
     When each alternative needs a title, description, and a complete surface, use <code>TileRadioGroup</code>. Each item retains a native radius; The group does not impose a disposition.
   </p>
-  <Showcase html={tileRadioGroupHtml} react={tileRadioGroupReact} label="TileRadioGroup">
+  <ComponentPreview html={tileRadioGroupHtml} react={tileRadioGroupReact} label="TileRadioGroup">
     <Fragment slot="react">
       <TileRadioGroupDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>In this preview the options are in a row with <a href="/en/components/inline"><code>sk-inline</code></a> and each Tile takes <code>flex: 1</code>. In a column, omits <code>sk-inline</code>.</p>
   <p>The <code>tile-radio-group</code> enhancer (Svelte + <code>@zag-js/radio-group</code>, same machine as React) hydrates the <code>data-sk-tile-radio-group</code> root with <code>initComponents()</code>: it guarantees mutual exclusion and synchronizes the state of each <code>[data-part="item"]</code> with its real radius.</p>
   <CodeBlock code={tileRadioGroupVanilla} label="JavaScript" />

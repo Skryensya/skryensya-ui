@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
@@ -106,7 +106,7 @@ await initComponents();`;
     <kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd>.
   </p>
 
-  <Showcase html={html} js={js} label="CommandPalette" viewport="overlay" />
+  <ComponentPreview html={html} js={js} label="CommandPalette" viewport="overlay" />
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

@@ -57,7 +57,7 @@ grupo del Toolbar.
 
 ## Dónde se usa
 
-El propio header del component preview (`apps/docs/src/components/Showcase.astro`) es el caso real,
+El propio header del component preview (`apps/docs/src/components/ComponentPreview.astro`) es el caso real,
 no un ejemplo de laboratorio: el selector de tamaño de pantalla y el toggle Vanilla/React son ahora
 un `sk-toolbar` con dos `sk-toolbar__group`, cada uno conteniendo un Segmented, separados por un
 `sk-toolbar__separator`. Está documentado como patrón en

@@ -15,6 +15,16 @@ export interface PreviewFrameOptions {
   flush?: boolean;
   /** Let the frame scroll instead of growing to its content. */
   scroll?: boolean;
+  /**
+   * Cap how wide the specimen gets, as a CSS length (`"34rem"`).
+   *
+   * Stage-only, and that is the whole point: some components only read correctly at a realistic
+   * measure — a settings List across 700px of stage looks like nothing anyone ships — but that width
+   * belongs to the CONSUMER's layout, not to the component, so it must not appear in the snippet the
+   * reader copies. Before this, a page bought the same effect by authoring a wrapper `<div>` in the
+   * slot and passing `code=` separately, which is two sources of truth for one demo.
+   */
+  measure?: string;
   /** App-only JavaScript, already `encodeURIComponent`-encoded. */
   encodedScript?: string;
   /**
@@ -43,6 +53,7 @@ export function buildPreviewFrameDocument({
   body,
   flush = false,
   scroll = false,
+  measure,
   encodedScript = "",
   reactDemo,
 }: PreviewFrameOptions): string {
@@ -69,6 +80,7 @@ export function buildPreviewFrameDocument({
     class="sk-component-preview__frame-body"
     ${flush ? "data-sk-component-preview-flush" : ""}
     ${scroll ? "data-sk-component-preview-scroll" : ""}
+    ${measure ? `data-sk-component-preview-measure style="--sk-component-preview-measure: ${escapeAttribute(measure)}"` : ""}
     ${encodedScript ? `data-sk-component-preview-script="${encodedScript}"` : ""}
     ${demoAttrs}
   >

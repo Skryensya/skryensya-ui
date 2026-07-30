@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { NativeSelectDemo, SelectBasicDemo } from "../../components/react-demos/select";
 
@@ -205,11 +205,11 @@ function Example() {
     el comportamiento de plataforma y estiliza su picker mediante mejora progresiva.
   </p>
 
-  <Showcase html={selectHtml} react={reactSelect} label="Select enhanced" viewport="menu">
+  <ComponentPreview html={selectHtml} react={reactSelect} label="Select enhanced" viewport="menu">
     <Fragment slot="react">
       <SelectBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     La densidad compacta el espacio alrededor del selector, no sus objetivos táctiles: el trigger y
     cada opción conservan un mínimo de <code>44px</code> de alto.
@@ -260,11 +260,11 @@ function Example() {
     controlada, markup de items, posicionamiento o evento <code>sk-value-change</code>; la apariencia
     ya no es motivo para reemplazar el control nativo.
   </p>
-  <Showcase html={nativeSelectHtml} react={nativeReactSelect} label="Select nativo" viewport="menu">
+  <ComponentPreview html={nativeSelectHtml} react={nativeReactSelect} label="Select nativo" viewport="menu">
     <Fragment slot="react">
       <NativeSelectDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Mejora progresiva</h3>
   <p>

@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import "../../examples/loader.css";
 import {
@@ -459,7 +459,7 @@ const customSpeed = `.sk-loader.mi-loader {
     Un único contenedor cambia de ocupado a listo. No necesita una pantalla, métricas ni una card
     exterior: sólo la marca, el texto que explica el trabajo y una acción para repetirlo.
   </p>
-  <Showcase
+  <ComponentPreview
     html={simulationHtml}
     js={simulationJs}
     previewScript={simulationJs}
@@ -470,7 +470,7 @@ const customSpeed = `.sk-loader.mi-loader {
     <Fragment slot="react">
       <LoaderSimulationDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     <code>bars</code> aporta movimiento sin fingir un porcentaje. El contenedor conserva
     <code>aria-busy</code> y el estado visible aporta el anuncio accesible.
@@ -481,7 +481,7 @@ const customSpeed = `.sk-loader.mi-loader {
     Loader posee la marca, no la superficie ni el ciclo de vida. El contexto decide dónde vive,
     quién aporta el nombre accesible y qué región conserva <code>aria-busy="true"</code>.
   </p>
-  <Showcase
+  <ComponentPreview
     html={contextsHtml}
     react={contextsReact}
     label="Loader en contexto"
@@ -490,7 +490,7 @@ const customSpeed = `.sk-loader.mi-loader {
     <Fragment slot="react">
       <LoaderContextsDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <ul>
     <li>En un botón, Loader es decorativo: «Guardando…» ya nombra el estado.</li>
     <li>En una actualización local, conserva el contenido previo y marca la región como ocupada.</li>
@@ -502,11 +502,11 @@ const customSpeed = `.sk-loader.mi-loader {
     Usa <code>sm</code> dentro de controles, <code>md</code> junto a texto y <code>lg</code> cuando la
     marca ocupa una región propia. El tamaño no comunica cuánto trabajo queda.
   </p>
-  <Showcase html={sizesHtml} react={sizesReact} label="Tamaños de Loader">
+  <ComponentPreview html={sizesHtml} react={sizesReact} label="Tamaños de Loader">
     <Fragment slot="react">
       <LoaderSizesDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Velocidad</h2>
   <p>
@@ -514,11 +514,11 @@ const customSpeed = `.sk-loader.mi-loader {
     intención (<code>--motion-loading-duration*</code>), no desde milisegundos crudos. Elige la
     cadencia por presencia visual, no como promesa sobre la duración real de la operación.
   </p>
-  <Showcase html={speedHtml} react={speedReact} label="Velocidades de Loader">
+  <ComponentPreview html={speedHtml} react={speedReact} label="Velocidades de Loader">
     <Fragment slot="react">
       <LoaderSpeedDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <CodeBlock code={customSpeed} label="override local" lang="css" />
 
   <h2>Semántica</h2>

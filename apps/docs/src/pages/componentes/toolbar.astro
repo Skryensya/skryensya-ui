@@ -1,6 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import "@skryensya/core/components/toolbar.css";
 import "@skryensya/core/components/segmented.css";
@@ -157,7 +157,7 @@ const nestedHtml = `<div
   <p class="lede">Agrupa controles relacionados y permite recorrerlos con flechas.</p>
 
   <h2>Instalación</h2>
-  <Showcase
+  <ComponentPreview
     html={html}
     js={js}
     react={react}
@@ -167,7 +167,7 @@ const nestedHtml = `<div
     <Fragment slot="react">
       <ToolbarDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contrato</h2>
   <p>Toolbar agrupa controles; no reemplaza Navbar ni Menu. Los grupos internos usan role=group.</p>
@@ -185,7 +185,7 @@ const nestedHtml = `<div
     del component preview de este sitio: el selector de tamaño de pantalla y el toggle
     Vanilla/React de cada demo en esta página son dos Segmented dentro de un Toolbar.
   </p>
-  <Showcase
+  <ComponentPreview
     html={nestedHtml}
     js={js}
     label="Toolbar con Segmented anidado"

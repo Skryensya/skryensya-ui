@@ -1,6 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import "@skryensya/core/patterns/state-layer.css";
 import "@skryensya/core/components/button.css";
@@ -82,7 +82,7 @@ function Example() {
   <p class="lede">Localized numeric input with limits, steps, and increment controls.</p>
 
   <h2>Facility</h2>
-  <Showcase
+  <ComponentPreview
     html={html}
     js={js}
     react={react}
@@ -92,7 +92,7 @@ function Example() {
     <Fragment slot="react">
       <NumberFieldDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contract</h2>
   <p>Public value preserves string and valueAsNumber. Intl. NumberFormat controls the presentation.</p>

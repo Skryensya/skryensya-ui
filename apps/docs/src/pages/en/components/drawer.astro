@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 
 const import_ = `/* a drawer IS a Vaul */
@@ -176,7 +176,7 @@ trigger?.addEventListener("click", () => {
     A <strong>drawer is</strong> a <a href="/en/vaul">Vaul</a> on the inline edge, running along the top of the screen. That sentence is the entire component: the border, the slide, the backdrop, the drag and the top layer are from the pattern, and this file only tells <em>which Vaul is a</em> drawer and what it looks like.
   </p>
 
-  <Showcase html={html} label="HTML" viewport="overlay" />
+  <ComponentPreview html={html} label="HTML" viewport="overlay" />
 
   <h2>Sends hooks and no structure</h2>
   <p>
@@ -214,7 +214,7 @@ trigger?.addEventListener("click", () => {
   <p>
     <code>&lt;form method="dialog"&gt;</code> closes without a listener of its own; Escape, focus, dead page, backdrop and restore belong to the browser. The styles and transition remain the same because they live in Core, not the enhancer.
   </p>
-  <Showcase html={nativeHtml} previewScript={nativeJs} label="Native drawer" viewport="overlay" />
+  <ComponentPreview html={nativeHtml} previewScript={nativeJs} label="Native drawer" viewport="overlay" />
 
   <h3>Opening</h3>
   <CodeBlock code={nativeJs} label="JavaScript" />

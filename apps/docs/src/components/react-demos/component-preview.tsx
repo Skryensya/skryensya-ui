@@ -1,7 +1,7 @@
 /*
- * Live React demos for /components/component-preview. Only the Showcases that demonstrate a real
- * component get a live island — "Minimal anatomy" and "The complete example" showcase the
- * ComponentPreview/Showcase system's own chrome (a nested srcdoc mockup of the preview UI itself),
+ * Live React demos for /components/component-preview. Only the previews that demonstrate a real
+ * component get a live island — "Minimal anatomy" and "The complete example" demonstrate the
+ * ComponentPreview's own chrome (a nested srcdoc mockup of the preview UI itself),
  * so they have no React equivalent and are skipped.
  */
 import { Button } from "@skryensya/react/button";

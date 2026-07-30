@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import {
   TextFeedbackDemo,
   TextInlineDemo,
@@ -94,37 +94,37 @@ const feedbackReact = `import { Text } from "@skryensya/react/text";
   <p>
     <strong>Eyebrow, title and subtitle as a single unit. </strong> Two roles make up the header: <code>eyebrow</code> is the uppercase surtitle, <code>subtitle</code> is the drop under the title. The air between roles is put by the brother below (<code>padding-block-start</code> of the heading and subtitle), thus the block stack uses <code>data-gap="none"</code>.
   </p>
-  <Showcase html={titleHtml} react={titleReact} label="Title block">
+  <ComponentPreview html={titleHtml} react={titleReact} label="Title block">
     <Fragment slot="react">
       <TextTitleDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Reading with context</h2>
   <p>A metadata must accompany the reading without competing with the body; hierarchy comes from role, tone and weight, not arbitrary sizes. The supertitle above uses the <code>eyebrow</code> role.</p>
-  <Showcase html={readingHtml} react={readingReact} label="Update text">
+  <ComponentPreview html={readingHtml} react={readingReact} label="Update text">
     <Fragment slot="react">
       <TextReadingDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Emphasis within a sentence</h2>
   <p>
     Use the <strong>semantic tag</strong>, not a weighted span: <code>&lt;strong&gt;</code> within Text takes the system's <code>emphasis</code> weight (not the browser's heaviest bold), and is also announced by a screen reader. <code>&lt;em&gt;</code> is in italics. The <code>data-weight</code> axis is for the weight of an entire Text; this is to emphasize <em>within</em> of the phrase.
   </p>
-  <Showcase html={inlineHtml} react={inlineReact} label="inline text">
+  <ComponentPreview html={inlineHtml} react={inlineReact} label="inline text">
     <Fragment slot="react">
       <TextInlineDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Validation Feedback</h2>
   <p>Tone <code>danger</code> communicates the problem; the live region role is still a decision of the context that Text uses.</p>
-  <Showcase html={feedbackHtml} react={feedbackReact} label="Validation message">
+  <ComponentPreview html={feedbackHtml} react={feedbackReact} label="Validation message">
     <Fragment slot="react">
       <TextFeedbackDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />

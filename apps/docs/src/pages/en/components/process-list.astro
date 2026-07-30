@@ -3,7 +3,7 @@ import "@skryensya/core/components/process-list.css";
 import "@skryensya/core/components/code-preview.css";
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import { ProcessListDemo } from "../../../components/react-demos/process-list";
 
@@ -182,7 +182,7 @@ function Example() {
     A static sequence of instructions where the content is the main thing. Use a real <code>&lt;ol&gt;</code>, number each <code>&lt;li&gt;</code>, and visually connect the steps without turning them into progress states.
   </p>
 
-  <Showcase
+  <ComponentPreview
     html={html}
     react={react}
     label="Installation ProcessList"
@@ -191,7 +191,7 @@ function Example() {
     <Fragment slot="react">
       <ProcessListDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>When to use it</h2>
   <ul>

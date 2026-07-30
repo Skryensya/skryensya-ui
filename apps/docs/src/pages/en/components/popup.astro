@@ -1,6 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import "@skryensya/core/components/popover.css";
 import { PopupDemo } from "../../../components/react-demos/popup";
@@ -50,7 +50,7 @@ function Example() {
   <p class="lede">Minimal floating surface for compositions that do not need Popover chrome.</p>
 
   <h2>Facility</h2>
-  <Showcase
+  <ComponentPreview
     html={html}
     react={react}
     label="Popup"
@@ -59,7 +59,7 @@ function Example() {
     <Fragment slot="react">
       <PopupDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contract</h2>
   <p>Popup provides anchor and surface, not internal semantics. If the pattern has title and closing actions, use Popover.</p>

@@ -2,7 +2,7 @@
 import "@skryensya/core/components/flyout.css";
 import "@skryensya/core/components/select.css";
 import Base from "../../layouts/Base.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import DimensionSelect from "../../components/DimensionSelect.astro";
@@ -661,11 +661,11 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     mismo contrato en móvil y desktop.
   </p>
 
-  <Showcase html={html} react={react} label="Table">
+  <ComponentPreview html={html} react={react} label="Table">
     <Fragment slot="react">
       <TableBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Scroll horizontal sin comprimir</h2>
   <p>
@@ -688,7 +688,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     <code>&lt;th scope="row"&gt;</code>. No depende de un breakpoint:
     funciona igual con touch, mouse, zoom o una ventana angosta.
   </p>
-  <Showcase
+  <ComponentPreview
     html={stickyColumnHtml}
     react={stickyColumnReact}
     label="Primera columna sticky"
@@ -696,7 +696,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     <Fragment slot="react">
       <TableStickyColumnDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Header row sticky</h2>
   <p>
@@ -707,7 +707,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     como en móvil; si combinas ambos modifiers, la celda de la esquina
     queda sobre las dos capas.
   </p>
-  <Showcase
+  <ComponentPreview
     html={stickyHeaderHtml}
     react={stickyHeaderReact}
     label="Header row sticky"
@@ -715,7 +715,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     <Fragment slot="react">
       <TableStickyHeaderDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Con paginación</h2>
   <p>
@@ -728,7 +728,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     van juntos en <code>sk-table-pager__end</code>. Usa <code>data-layout="fixed"</code> para que no
     bailen los anchos de columna.
   </p>
-  <Showcase
+  <ComponentPreview
     code={pagedCode}
     codeFull={pagedCodeFull}
     react={pagedReact}
@@ -800,7 +800,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     <Fragment slot="react">
       <TablePagerDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Dentro de un Box</h2>
   <p>
@@ -809,7 +809,7 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     superficie y la tabla es un elemento dentro de ella. Así el radio queda más ajustado, nunca colapsa
     a una caja cuadrada, y sigue acompañando al eje <code>data-radius</code>.
   </p>
-  <Showcase html={boxHtml} label="Table en Box" />
+  <ComponentPreview html={boxHtml} label="Table en Box" />
 
   <h2>Densidad local</h2>
   <p>
@@ -817,8 +817,8 @@ function DeploymentsTable({ rows }: { rows: Deployment[] }) {
     <code>--sk-density-factor</code> es relativo al sistema; escribe <code>--sk-density</code> en el
     mismo nodo si necesitas un valor absoluto. Los números siguen siendo continuos.
   </p>
-  <Showcase html={spaciousDensityHtml} label="Table amplia · 1.2× del sistema" />
-  <Showcase html={compactDensityHtml} label="Table compacta · 0.6× del sistema" />
+  <ComponentPreview html={spaciousDensityHtml} label="Table amplia · 1.2× del sistema" />
+  <ComponentPreview html={compactDensityHtml} label="Table compacta · 0.6× del sistema" />
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

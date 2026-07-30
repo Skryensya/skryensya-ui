@@ -2,7 +2,7 @@
 import "@skryensya/core/components/tile.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { SwitchDemo, TileSwitchDemo } from "../../components/react-demos/switch";
 
@@ -152,11 +152,11 @@ function Example() {
   <h1>Switch</h1>
   <p class="lede">Un estado binario que toma efecto inmediatamente: encendido o apagado. Para una selección que requiere guardar, usa Checkbox.</p>
 
-  <Showcase html={html} react={react} label="Switch">
+  <ComponentPreview html={html} react={react} label="Switch">
     <Fragment slot="react">
       <SwitchDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>No requiere inicialización Vanilla: el checkbox nativo conserva teclado, reset y submit de formularios. React sólo encapsula ese mismo control.</p>
 
   <h2>Switch de superficie: TileSwitch</h2>
@@ -165,11 +165,11 @@ function Example() {
     <code>TileSwitch</code>. Es el mismo control (<code>sk-switch__control</code> + thumb); solo
     cambia el contenedor, la misma relación que <code>TileCheckbox</code> tiene con Checkbox.
   </p>
-  <Showcase html={tileSwitchHtml} react={tileSwitchReact} label="TileSwitch">
+  <ComponentPreview html={tileSwitchHtml} react={tileSwitchReact} label="TileSwitch">
     <Fragment slot="react">
       <TileSwitchDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>El enhancer <code>tile-switch</code> (Svelte + <code>@zag-js/checkbox</code>, la misma máquina que TileCheckbox y que React) hidrata cada label <code>data-sk-tile-switch</code> con <code>initComponents()</code>: controla su <code>input[data-part="input"]</code> (oculto, <code>role="switch"</code>) y sincroniza <code>data-state</code>; el <code>[data-part="indicator"]</code> es el control visual.</p>
   <CodeBlock code={tileSwitchVanilla} label="JavaScript" />
 

@@ -1,6 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import {
   BreadcrumbIconSeparatorDemo,
@@ -160,29 +160,29 @@ function Example() {
 
   <h3>Two levels</h3>
   <p>The minimum case: a link to the previous level and the current page, without a link or trailing separator.</p>
-  <Showcase html={simpleHtml} react={simpleReact} label="Two Tier Breadcrumb" viewport="auto">
+  <ComponentPreview html={simpleHtml} react={simpleReact} label="Two Tier Breadcrumb" viewport="auto">
     <Fragment slot="react">
       <BreadcrumbTwoLevelDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Multiple levels</h3>
   <p>Each intermediate level is a real link followed by its separator; only the last element loses both.</p>
-  <Showcase html={multiHtml} react={multiReact} label="Multi-tiered breadcrumb" viewport="auto">
+  <ComponentPreview html={multiHtml} react={multiReact} label="Multi-tiered breadcrumb" viewport="auto">
     <Fragment slot="react">
       <BreadcrumbMultiLevelDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Separator with icon</h3>
   <p>
     The separator is a free slot: it defaults to text (<code>/</code>), but accepts any decorative markup, such as a <code>chevron-right</code>.
   </p>
-  <Showcase html={iconHtml} react={iconReact} label="Breadcrumb with icon separator" viewport="auto">
+  <ComponentPreview html={iconHtml} react={iconReact} label="Breadcrumb with icon separator" viewport="auto">
     <Fragment slot="react">
       <BreadcrumbIconSeparatorDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Long labels</h3>
   <p>
@@ -196,11 +196,11 @@ function Example() {
       <code>sk-breadcrumb__current</code> never truncates: wraps over multiple lines (<code>overflow-wrap: anywhere</code>) so that the entire title remains readable even if it does not fit on a single line.
     </li>
   </ul>
-  <Showcase html={longHtml} react={longReact} label="Breadcrumb with long labels" viewport="auto">
+  <ComponentPreview html={longHtml} react={longReact} label="Breadcrumb with long labels" viewport="auto">
     <Fragment slot="react">
       <BreadcrumbLongLabelsDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contract</h2>
   <p>Use nav + ol; the last element takes aria-current=page and is not a link.</p>

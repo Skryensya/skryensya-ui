@@ -175,8 +175,16 @@ export const statContract = {
       slots: {
         label: { accepts: "text", required: true },
         value: { accepts: "text", required: true },
-        /** The delta, as text. `trend` only says which way it points. */
-        change: { accepts: "text" },
+        /**
+         * The delta. `node`, not `text`, because the trend GLYPH lives here — the stylesheet sizes
+         * `.sk-stat__change .sk-icon` to the caption beside it, which is only reachable if an Icon
+         * can be composed in. Typed as text, the contract could express the number and not the arrow
+         * that every hand-written example on the docs page already had.
+         *
+         * `trend` still owns the colour and the direction. The glyph is the redundant cue that keeps
+         * the meaning from depending on colour alone.
+         */
+        change: { accepts: "node" },
       },
       template: {
         element: "div",

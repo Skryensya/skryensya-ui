@@ -4,13 +4,13 @@
  *
  * Nothing on this page is written twice. The trees live in `contracts/recipes/`, the compiler
  * validates all four states of each against the contracts before it will emit a catalogue, and this
- * page hands the same trees to `Showcase` — which emits the markup, the TSX and the live React
+ * page hands the same trees to `ComponentPreview` — which emits the markup, the TSX and the live React
  * island from them.
  *
  * So a recipe cannot rot into prose that no longer works: the build fails first.
  */
 import Base from "../layouts/Base.astro";
-import Showcase from "../components/Showcase.astro";
+import ComponentPreview from "../components/ComponentPreview.astro";
 import { recipes, type RecipeState } from "@skryensya/recipes";
 
 import "@skryensya/core/components/alert.css";
@@ -78,7 +78,7 @@ const stateBlurb: Record<RecipeState, string> = {
           <>
             <h3>{stateLabel[state]}</h3>
             <p>{stateBlurb[state]}</p>
-            <Showcase
+            <ComponentPreview
               tree={recipe.states[state]}
               label={`${recipe.id} · ${stateLabel[state]}`}
               flush

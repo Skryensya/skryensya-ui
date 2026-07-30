@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import { PrimitivesOverviewDemo } from "../../components/react-demos/layout";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -104,11 +104,11 @@ function Example() {
     no reemplazan la semántica: eliges el elemento que corresponde al contenido.
   </p>
 
-  <Showcase html={html} react={react} label="Primitivas">
+  <ComponentPreview html={html} react={react} label="Primitivas">
     <Fragment slot="react">
       <PrimitivesOverviewDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>HTML autorado</h2>
   <p>

@@ -1,5 +1,5 @@
 /*
- * Live React demo for /components/carousel's "Card carousel" showcase. `Carousel` renders the
+ * Live React demo for /components/carousel's "Card carousel" preview. `Carousel` renders the
  * static structure (a `<section data-sk-carousel>` + `<ul>` track) and already carries the
  * `data-sk-carousel` attribute the vanilla enhancer selects on — the controls (prev/next, dots,
  * keyboard, drag) are the enhancer's job at runtime, so this island boots it itself in a `useEffect`,

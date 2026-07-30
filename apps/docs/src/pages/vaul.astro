@@ -2,7 +2,7 @@
 import "@skryensya/core/components/list.css";
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
-import Showcase from "../components/Showcase.astro";
+import ComponentPreview from "../components/ComponentPreview.astro";
 import StylingHooks from "../components/StylingHooks.astro";
 
 const import_ = `@import "@skryensya/core/patterns/vaul.css";
@@ -206,7 +206,7 @@ const noDrag = `<dialog
     se nombra por de dónde viene, nunca por la forma que hace al llegar.
   </p>
 
-  <Showcase html={html} label="HTML" viewport="overlay" />
+  <ComponentPreview html={html} label="HTML" viewport="overlay" />
 
   <h2>Por qué es un pattern y no un componente</h2>
   <p>

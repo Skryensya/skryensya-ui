@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import { CarouselCardsDemo } from "../../../components/react-demos/carousel";
 import "../../../examples/carousel.css";
@@ -322,7 +322,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
   <p>
     With <code>data-sk-carousel</code> the enhancer runs the machine: prev/next (they are disabled at the ends), a dot per <strong>page</strong>, keyboard, drag and re-size when changing size. Here each slide is a card with <a href="/en/components/image-frame">ImageFrame</a>, <a href="/en/gradients">media gradient</a> and font body—composition, not a <code>sk-card</code>. <code>--sk-carousel-slide-size</code> lets the next one appear.
   </p>
-  <Showcase
+  <ComponentPreview
     html={cardsHtml}
     react={cardsReact}
     js={bootstrap}
@@ -332,7 +332,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     <Fragment slot="react">
       <CarouselCardsDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>One dot per page, not per slide</h2>
   <p>
@@ -353,7 +353,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
   <p>
     With <code>data-autoplay</code> there is also a <strong>pause button</strong>: something that moves only has to be able to stop (WCAG 2.2.2), so option and control are one thing. And whoever declares <code>prefers-reduced-motion</code> is not started: the carousel remains still and the button offers to play.
   </p>
-  <Showcase html={autoHtml} label="Multi-up + autoplay" note="Avatar + meta · data-loop · data-autoplay" />
+  <ComponentPreview html={autoHtml} label="Multi-up + autoplay" note="Avatar + meta · data-loop · data-autoplay" />
 
   <h2>No controls</h2>
   <p>
@@ -370,13 +370,13 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     with <code>data-mouse-drag="off"</code> when the slide text is to be selected: the
     Drag deletes the selection.
   </p>
-  <Showcase html={bareHtml} label="No controls" note='data-controls="none" · arrastra y desliza' />
+  <ComponentPreview html={bareHtml} label="No controls" note='data-controls="none" · arrastra y desliza' />
 
   <h2>Without JS: native controls</h2>
   <p>
     The <strong>same markup</strong> without <code>data-sk-carousel</code>: the enhancer does not touch it and the native pseudo-elements (<code>:: scroll-button</code> and <code>:: scroll-marker</code>) draw the controls with <strong>zero JavaScript</strong>. The CSS adapter of the chosen set gives you the SVGs of <code>chevron-left</code> and <code>chevron-right</code>, without replacing them with typographic glyphs. Today it works in Chrome/Edge; In the rest it degrades to a scroller with native snap (without arrows or dots, but it slides the same). When the enhancer mounts, this layer is turned off so as not to duplicate.
   </p>
-  <Showcase html={nativeHtml} label="No JS (native CSS)" note="set icons + native scroll buttons" />
+  <ComponentPreview html={nativeHtml} label="No JS (native CSS)" note="set icons + native scroll buttons" />
   <CodeBlock code={nativeCss} label="the base without JS" lang="css" />
 
   <h2>Snap-to-index and events</h2>

@@ -14,7 +14,7 @@ import { getLocale, useTranslations } from "../../i18n";
 
 const t = useTranslations(getLocale(Astro.url));
 ---
-<Showcase tree={tagTree(t)} label="Tag" />
+<ComponentPreview tree={tagTree(t)} label="Tag" />
 ```
 
 The words themselves are `demo.*` keys in `src/i18n/ui.ts`. A string that is a proper noun (`react`,

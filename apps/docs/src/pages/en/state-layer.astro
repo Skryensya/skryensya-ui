@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import Used from "../../components/Used.astro";
 
 import "../../examples/state-layer.css";
@@ -255,8 +255,8 @@ const ladder = [
   <p>
     The two previews freeze the same entire staircase for comparison without moving the pointer. The first uses a neutral surface; the second, an inverse surface whose layer inherits <code>currentColor</code>. In both, the first tile is still interactive.
   </p>
-  <Showcase html={bareHtml} label="Neutral surface · all states" />
-  <Showcase
+  <ComponentPreview html={bareHtml} label="Neutral surface · all states" />
+  <ComponentPreview
     html={currentColorHtml}
     label="currentColor · all states"
   />
@@ -285,7 +285,7 @@ const ladder = [
   <p>
     Neutral surface and saturated fill are not additional types: they only change the <code>currentColor</code> that colors the same layer. The list uses the text color; on the primary button the veil is <code>on-accent</code>. Change brand, mode or contrast: the contract is maintained.
   </p>
-  <Showcase html={labHtml} label="Lista + acciones" />
+  <ComponentPreview html={labHtml} label="Lista + acciones" />
 
   <h2>The tint is <code>currentColor</code></h2>
   <p>

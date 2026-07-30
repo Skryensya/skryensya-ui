@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import {
   HeadingDisplayDemo,
   HeadingDocumentDemo,
@@ -233,52 +233,52 @@ function Example() {
   </p>
 
   <h3>Display</h3>
-  <Showcase html={displayHtml} react={displayReact} label="Escala display">
+  <ComponentPreview html={displayHtml} react={displayReact} label="Escala display">
     <Fragment slot="react">
       <HeadingDisplayDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h3>Document</h3>
-  <Showcase html={documentHtml} react={documentReact} label="Escala h1–h6">
+  <ComponentPreview html={documentHtml} react={documentReact} label="Escala h1–h6">
     <Fragment slot="react">
       <HeadingDocumentDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Page title</h2>
   <p>The single <code>h1</code> presents the page; A display provides presence without inventing other semantics.</p>
-  <Showcase html={pageTitleHtml} react={pageTitleReact} label="Page Title">
+  <ComponentPreview html={pageTitleHtml} react={pageTitleReact} label="Page Title">
     <Fragment slot="react">
       <HeadingPageTitleDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Section Hierarchy</h2>
   <p>The structure advances from <code>h2</code> to <code>h3</code>; The visual size can accompany the level.</p>
-  <Showcase html={outlineHtml} react={outlineReact} label="Content Hierarchy">
+  <ComponentPreview html={outlineHtml} react={outlineReact} label="Content Hierarchy">
     <Fragment slot="react">
       <HeadingOutlineDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Compact Hierarchy</h2>
   <p>A heading retains its place in the document even if the visual context uses floor <code>h4</code>.</p>
-  <Showcase html={compactHtml} react={compactReact} label="Heading compacto">
+  <ComponentPreview html={compactHtml} react={compactReact} label="Heading compacto">
     <Fragment slot="react">
       <HeadingCompactDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Flush</h2>
   <p>
     <code>data-flush</code> (React: <code>flush</code>) removes air from block, top and bottom. It is explicit opt-in: use it when the heading is the first (or last) thing in the container (dialog title with <code>sk-dialog__title</code>, card header) and you do not want the margin or padding to push it against the edge. It is not inferred from <code>: first-child</code>.
   </p>
-  <Showcase html={flushHtml} react={flushReact} label="Heading flush">
+  <ComponentPreview html={flushHtml} react={flushReact} label="Heading flush">
     <Fragment slot="react">
       <HeadingFlushDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />

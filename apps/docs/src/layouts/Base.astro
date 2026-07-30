@@ -706,7 +706,7 @@ const PALETTE_PRESETS = [
         var list = toc && toc.querySelector("ul");
         if (!toc || !main || !list) return;
 
-        /* Only the page's own sections. A demo's heading lives nested inside a showcase and is
+        /* Only the page's own sections. A demo's heading lives nested inside a preview and is
          * content being demonstrated, not a section, `:scope >` excludes it with no blocklist. */
         var headings = main.querySelectorAll(":scope > h2, :scope > h3");
         /* A single section is still worth indexing. Zero: mark ready anyway so the reserved

@@ -132,4 +132,4 @@ export const PrimitivesOverviewDemo = framed(function PrimitivesOverviewDemo() {
   );
 });
 
-/* Wrapper's showcase is a to-scale diagram, not a live component (see wrapper.astro): no demo here. */
+/* Wrapper's preview is a to-scale diagram, not a live component (see wrapper.astro): no demo here. */

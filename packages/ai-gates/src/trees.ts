@@ -400,7 +400,7 @@ const signatureTrees: readonly Canonical[] = [
       contract: "stat",
       signature: "Stat",
       options: { trend: "up" },
-      slots: { label: "Usuarios activos", value: "1.284", change: "+12%" },
+      slots: { label: "Usuarios activos", value: "1.284", change: [{ contract: "icon", signature: "Icon", options: { name: "arrow-up", size: "sm" } }, "+12%"] },
     },
   },
   {

@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
-import Showcase from "../components/Showcase.astro";
+import ComponentPreview from "../components/ComponentPreview.astro";
 import Used from "../components/Used.astro";
 
 import "../examples/state-layer.css";
@@ -264,8 +264,8 @@ const ladder = [
     El primero usa una superficie neutra; el segundo, una superficie inversa cuyo layer hereda
     <code>currentColor</code>. En ambos, el primer tile sigue siendo interactivo.
   </p>
-  <Showcase html={bareHtml} label="Superficie neutra · todos los estados" />
-  <Showcase
+  <ComponentPreview html={bareHtml} label="Superficie neutra · todos los estados" />
+  <ComponentPreview
     html={currentColorHtml}
     label="currentColor · todos los estados"
   />
@@ -304,7 +304,7 @@ const ladder = [
     <code>currentColor</code> que tiñe el mismo layer. La lista usa el color de texto; en el botón
     primario el velo es <code>on-accent</code>. Cambia marca, modo o contraste: el contrato se mantiene.
   </p>
-  <Showcase html={labHtml} label="Lista + acciones" />
+  <ComponentPreview html={labHtml} label="Lista + acciones" />
 
   <h2>El tinte es <code>currentColor</code></h2>
   <p>

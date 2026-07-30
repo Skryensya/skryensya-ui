@@ -1,6 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import {
   CalendarBasicDemo,
@@ -71,11 +71,11 @@ function Example() {
     en este stack), configurada <code>inline</code>: la misma navegación por teclado, el mismo grid con
     seis semanas fijas.
   </p>
-  <Showcase html={html} react={react} label="Calendar" viewport="auto">
+  <ComponentPreview html={html} react={react} label="Calendar" viewport="auto">
     <Fragment slot="react">
       <CalendarBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Cambiar de vista: botones, no selects</h2>
   <p>
@@ -107,11 +107,11 @@ function Example() {
     del trigger desde la celda — la misma técnica que ya usa el anillo de foco de Combobox — para pintar
     la celda completa y que la franja se vea continua bajo <code>border-collapse</code>.
   </p>
-  <Showcase html={rangeHtml} react={rangeReact} label="Calendar (rango)" viewport="auto">
+  <ComponentPreview html={rangeHtml} react={rangeReact} label="Calendar (rango)" viewport="auto">
     <Fragment slot="react">
       <CalendarRangeDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Rango acotado: min y max</h2>
   <p>
@@ -126,11 +126,11 @@ function Example() {
     deshabilitar un mes que sí toca el rango si el día enfocado, trasladado a ese mes, cae fuera).
     Ninguna de las dos vistas necesitó CSS nuevo: ambas ya pasan por <code>.sk-button:disabled</code>.
   </p>
-  <Showcase html={minMaxHtml} react={minMaxReact} label="Calendar (min/max)" viewport="auto">
+  <ComponentPreview html={minMaxHtml} react={minMaxReact} label="Calendar (min/max)" viewport="auto">
     <Fragment slot="react">
       <CalendarMinMaxDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Contrato</h2>
   <ul>

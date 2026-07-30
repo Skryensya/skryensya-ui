@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import {
   TabsAdvancedDemo,
@@ -407,7 +407,7 @@ export function WorkspaceTabs() {
     Dos triggers y dos paneles. <code>data-value</code> enlaza cada
     opción con su contenido; el enhancer completa roles, foco y ARIA.
   </p>
-  <Showcase
+  <ComponentPreview
     html={basicHtml}
     react={basicReact}
     label="Tabs básicos"
@@ -415,7 +415,7 @@ export function WorkspaceTabs() {
     <Fragment slot="react">
       <TabsBasicDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>2. Estados e iconos</h2>
   <p>
@@ -423,7 +423,7 @@ export function WorkspaceTabs() {
     deshabilitadas. El icono acompaña al texto; nunca reemplaza el
     nombre accesible del tab.
   </p>
-  <Showcase
+  <ComponentPreview
     html={statesHtml}
     react={statesReact}
     label="Tabs con estados"
@@ -431,7 +431,7 @@ export function WorkspaceTabs() {
     <Fragment slot="react">
       <TabsStatesDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>3. Orientación y estado</h2>
   <p>
@@ -440,7 +440,7 @@ export function WorkspaceTabs() {
     Espacio confirma la selección. El evento actualiza la región viva
     debajo del componente.
   </p>
-  <Showcase
+  <ComponentPreview
     html={advancedHtml}
     code={advancedCode}
     codeFull={advancedHtml}
@@ -452,7 +452,7 @@ export function WorkspaceTabs() {
     <Fragment slot="react">
       <TabsAdvancedDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

@@ -2,7 +2,7 @@
 import "@skryensya/core/components/progress.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import { progressTree } from "../../demos/progress";
 import { getLocale, useTranslations } from "../../i18n";
 
@@ -20,7 +20,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
     pintado y <code>aria-valuenow</code> nunca pueden divergir.
   </p>
 
-  <Showcase tree={progressTree(t)} label="Progress" />
+  <ComponentPreview tree={progressTree(t)} label="Progress" />
   <p>Para trabajo sin un valor medible usa <a href="/componentes/loader">Loader</a>: su semántica es indeterminada.</p>
 
   <h2>Instalar</h2>

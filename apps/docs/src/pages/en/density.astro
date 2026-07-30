@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 
 /* The site remains an honest consumer: input/field needs its authored paint rules. */
 
@@ -130,7 +130,7 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
   <p>
     Control is out of scope. Drag it: change the padding, gaps and semantic sizes within the summary; the rest of the page does not move.
   </p>
-  <Showcase code={labMarkup} previewScript={densityLabScript} label="Local Scope in action" note="scope and value live inline on the same node">
+  <ComponentPreview code={labMarkup} previewScript={densityLabScript} label="Local Scope in action" note="scope and value live inline on the same node">
     <div class="sk-stack" data-gap="lg" data-density-lab style="inline-size: 100%">
       <div class="sk-stack" data-gap="xs">
         <div class="sk-inline" data-gap="sm" data-align="baseline">
@@ -181,7 +181,7 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
         </div>
       </section>
     </div>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>What changes, and what does not</h2>
   <div class="sk-table-scroll">

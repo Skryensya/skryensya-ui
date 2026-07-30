@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { CarouselCardsDemo } from "../../components/react-demos/carousel";
 import "../../examples/carousel.css";
@@ -326,7 +326,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     <a href="/gradientes">media gradient</a> y cuerpo tipográfico —composición, no un
     <code>sk-card</code>. <code>--sk-carousel-slide-size</code> deja asomar la siguiente.
   </p>
-  <Showcase
+  <ComponentPreview
     html={cardsHtml}
     react={cardsReact}
     js={bootstrap}
@@ -336,7 +336,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     <Fragment slot="react">
       <CarouselCardsDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Un dot por página, no por slide</h2>
   <p>
@@ -363,7 +363,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     quien declara <code>prefers-reduced-motion</code> no se le arranca: el carrusel queda quieto y el
     botón ofrece reproducir.
   </p>
-  <Showcase html={autoHtml} label="Multi-up + autoplay" note="Avatar + meta · data-loop · data-autoplay" />
+  <ComponentPreview html={autoHtml} label="Multi-up + autoplay" note="Avatar + meta · data-loop · data-autoplay" />
 
   <h2>Sin controles</h2>
   <p>
@@ -385,7 +385,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     con <code>data-mouse-drag="off"</code> cuando el texto de los slides esté para seleccionarse: el
     arrastre suprime la selección.
   </p>
-  <Showcase html={bareHtml} label="Sin controles" note='data-controls="none" · arrastra y desliza' />
+  <ComponentPreview html={bareHtml} label="Sin controles" note='data-controls="none" · arrastra y desliza' />
 
   <h2>Sin JS: controles nativos</h2>
   <p>
@@ -396,7 +396,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     Hoy funciona en Chrome/Edge; en el resto degrada a un scroller con snap nativo (sin flechas ni
     dots, pero se desliza igual). Cuando el enhancer monta, esta capa se apaga para no duplicar.
   </p>
-  <Showcase html={nativeHtml} label="Sin JS (CSS nativo)" note="iconos del set + scroll buttons nativos" />
+  <ComponentPreview html={nativeHtml} label="Sin JS (CSS nativo)" note="iconos del set + scroll buttons nativos" />
   <CodeBlock code={nativeCss} label="la base sin JS" lang="css" />
 
   <h2>Snap-to-index y eventos</h2>

@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import Showcase from "../../components/Showcase.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
 import {
   TextFeedbackDemo,
   TextInlineDemo,
@@ -100,19 +100,19 @@ const feedbackReact = `import { Text } from "@skryensya/react/text";
     El aire entre roles lo pone el hermano de abajo (<code>padding-block-start</code> del heading y del
     subtitle), así el stack del bloque usa <code>data-gap="none"</code>.
   </p>
-  <Showcase html={titleHtml} react={titleReact} label="Bloque de título">
+  <ComponentPreview html={titleHtml} react={titleReact} label="Bloque de título">
     <Fragment slot="react">
       <TextTitleDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Lectura con contexto</h2>
   <p>Un metadato debe acompañar la lectura sin competir con el cuerpo; la jerarquía sale de rol, tono y peso, no de tamaños arbitrarios. El sobretítulo de arriba usa el rol <code>eyebrow</code>.</p>
-  <Showcase html={readingHtml} react={readingReact} label="Texto de actualización">
+  <ComponentPreview html={readingHtml} react={readingReact} label="Texto de actualización">
     <Fragment slot="react">
       <TextReadingDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Énfasis dentro de una frase</h2>
   <p>
@@ -122,19 +122,19 @@ const feedbackReact = `import { Text } from "@skryensya/react/text";
     <code>data-weight</code> es para el peso de un Text entero; esto es para enfatizar <em>dentro</em> de
     la frase.
   </p>
-  <Showcase html={inlineHtml} react={inlineReact} label="Texto inline">
+  <ComponentPreview html={inlineHtml} react={inlineReact} label="Texto inline">
     <Fragment slot="react">
       <TextInlineDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Feedback de validación</h2>
   <p>El tono <code>danger</code> comunica el problema; el rol de región viva sigue siendo una decisión del contexto que usa Text.</p>
-  <Showcase html={feedbackHtml} react={feedbackReact} label="Mensaje de validación">
+  <ComponentPreview html={feedbackHtml} react={feedbackReact} label="Mensaje de validación">
     <Fragment slot="react">
       <TextFeedbackDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

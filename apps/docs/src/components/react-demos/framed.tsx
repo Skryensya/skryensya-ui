@@ -37,7 +37,7 @@ export interface FramedOptions {
   flush?: boolean;
   /** Let the frame scroll instead of growing to its content. */
   scroll?: boolean;
-  /** Reserve stage height for demos that paint out of flow — same values as `Showcase`'s prop. */
+  /** Reserve stage height for demos that paint out of flow — same values as `ComponentPreview`'s prop. */
   viewport?: "auto" | "menu" | "overlay";
   /** Frame title, for the accessibility tree. Defaults to the wrapped component's name. */
   label?: string;
@@ -85,13 +85,25 @@ export function framedIn(moduleUrl: string) {
        * the same rule that already governs them: nothing that cannot cross the Astro boundary for
        * `client:load`. A function prop could not have been authored here in the first place.
        */
+      /*
+       * `measure` is the one RESERVED prop: it belongs to the frame, not to the demo.
+       *
+       * The other frame settings (`flush`, `scroll`) are baked in at wrap time because they are
+       * properties of the demo itself. A measure is a property of the CALL SITE — the same `TreeDemo`
+       * renders every tree-driven preview on the site, and only the page knows whether this one wants
+       * a narrower column. So it arrives as a prop and is lifted out here rather than handed to the
+       * component, which has no use for it.
+       */
+      const { measure, ...demoProps } = props as P & { measure?: string };
+
       const srcDoc = useMemo(
         () =>
           buildPreviewFrameDocument({
             body: "",
             flush: options.flush,
             scroll: options.scroll,
-            reactDemo: { module, export: name, props },
+            measure,
+            reactDemo: { module, export: name, props: demoProps },
           }),
         [props],
       );

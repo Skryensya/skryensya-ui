@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { SliderDemo } from "../../../components/react-demos/slider";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
@@ -51,11 +51,11 @@ function Example() {
     Slider is a real <code>&lt;input type="range"&gt;</code> with skin: keyboard, form participation and accessibility tree come from the platform. The filled portion is exposed as the <code>--sk-slider-fill</code> (0–1) property: the initial value is painted by the CSS itself, and following your thumb while dragging is all the binding needs.
   </p>
 
-  <Showcase html={html} react={react} label="Slider">
+  <ComponentPreview html={html} react={react} label="Slider">
     <Fragment slot="react">
       <SliderDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>In Vanilla, <code>data-sk-slider</code> records the minimum binding that rewrites <code>--sk-slider-fill</code> in each <code>input</code>, nothing more: keyboard, focus and form remain platform-specific. In React, <code>&lt;Slider&gt;</code> keeps the property in sync in controlled and uncontrolled mode, and reports the change as a number via <code>onValueChange</code>.</p>
 
   <h2>Install</h2>

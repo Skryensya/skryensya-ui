@@ -1,7 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
-import Showcase from "../../../components/Showcase.astro";
+import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { buildPreviewFrameDocument } from "../../../lib/preview-frame";
 import { SaveActionDemo, ScreensGridDemo } from "../../../components/react-demos/component-preview";
 
@@ -240,7 +240,7 @@ mountCodePreview();`;
 
 /*
  * The stage of the two examples below is a ComponentPreview: the same srcdoc document that uses
- * Showcase, mounted one level further inside. The frame runtime mounts the surfaces of
+ * ComponentPreview, mounted one level further inside. The frame runtime mounts the surfaces of
  * documentation, oh the nested preview has its own tabs, reload, resizer and disclosure.
  */
 const nestedFrame = buildPreviewFrameDocument({ body: demoHtml });
@@ -274,11 +274,11 @@ await initComponents(document);`;
     Joins the actual <strong>render of the</strong> component and its implementation on a single surface. The stage is a static <code>iframe srcdoc</code>: it does not create a route, but it does create its own DOM, viewport and top layer. Below, CodePreview shows the code.
   </p>
 
-  <Showcase html={demoHtml} js={demoJs} react={demoReact} label="Button">
+  <ComponentPreview html={demoHtml} js={demoJs} react={demoReact} label="Button">
     <Fragment slot="react">
       <SaveActionDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Responsibilities</h2>
   <ul>
@@ -300,7 +300,7 @@ await initComponents(document);`;
   <p>
     The stage of this example is another ComponentPreview: the same <code>srcdoc</code>, one level deeper. The nested frame clones its parent's styles and sets up its own runtime, so reloading, dragging the border or changing the color mode works on both levels at the same time.
   </p>
-  <Showcase
+  <ComponentPreview
     label="ComponentPreview"
     note="inside a ComponentPreview"
     code={anatomy}
@@ -356,7 +356,7 @@ await initComponents(document);`;
           aria-label="Loading preview: Button"></span>
       </div>
     </div>
-  </Showcase>
+  </ComponentPreview>
   <p>
     Add <code>data-sk-component-preview-flush</code> to the iframe and its body when the component is a layout. Use <code>data-sk-component-preview-viewport="menu"</code> for listboxes and popovers, or <code>overlay</code> for dialogs, drawers and toasts. The reload button goes back to <code>srcdoc</code> (useful for count-ups and loaders). The tabs are normal <code>SegmentedControl</code>.
   </p>
@@ -382,7 +382,7 @@ await initComponents(document);`;
   <p>
     With an active preset the stage is a device: the runtime stops auto-adjusting and the document scrolls inside, just like on the real device. The resizer hides - the preset already owns the pitch, and two owners of the same pitch is the bug; return to <em>Free</em> returns the drag. The stop is at <code>80svh</code> so that the code below remains reachable: the frame scrolls, so the only thing that is lost is the fidelity of the <code>vh</code> units of the example itself.
   </p>
-  <Showcase
+  <ComponentPreview
     label="Grid multicol"
     note="3 free lanes · 2 on tablet · 1 on mobile"
     html={screensHtml}
@@ -391,7 +391,7 @@ await initComponents(document);`;
     <Fragment slot="react">
       <ScreensGridDemo client:load />
     </Fragment>
-  </Showcase>
+  </ComponentPreview>
   <p>
     It <strong>comes on in every preview</strong> of the site. “Does this hold up on a phone?” is a
     question worth asking of any component, not only the ones that are obviously a layout: a button
@@ -420,7 +420,7 @@ await initComponents(document);`;
   <p>
     The entire surface, also nested: header with note, reload and binding tabs, stage, resizer and a CodePreview per binding. The inside tabs are independent of the outside ones — the Vanilla preference |React is shared per document, and the frame is its own document.
   </p>
-  <Showcase
+  <ComponentPreview
     label="ComponentPreview"
     note="the entire surface"
     code={anatomyFull}
@@ -513,7 +513,7 @@ await initComponents(document);`;
         </div>
       </div>
     </div>
-  </Showcase>
+  </ComponentPreview>
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />

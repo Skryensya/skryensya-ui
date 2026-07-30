@@ -80,6 +80,15 @@ interface Props {
    */
   scroll?: boolean;
   /**
+   * Cap the specimen's width on the STAGE only, as a CSS length (`measure="34rem"`).
+   *
+   * For components that only read correctly at a realistic column — a settings List across the full
+   * stage looks like nothing anyone ships. The cap never reaches the snippet, because that width is
+   * the consumer's layout, not the component's. This is what lets such a demo be a single `tree`
+   * instead of a wrapper `<div>` in the slot plus a separate `code` string.
+   */
+  measure?: string;
+  /**
    * Offer the screen presets (Libre | Tablet | Móvil) in the header.
    *
    * ON by default, on every preview: "does this hold up on a phone" is a question a reader can ask
@@ -107,6 +116,7 @@ const {
   flush = false,
   viewport = "auto",
   scroll = false,
+  measure,
   screens = true,
 } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
@@ -139,6 +149,7 @@ const frameDocument = buildPreviewFrameDocument({
   body: previewHtml,
   flush,
   scroll,
+  measure,
   encodedScript: encodedPreviewScript,
 });
 
@@ -341,7 +352,7 @@ const screenToggleLabels = Object.fromEntries(
         data-sk-component-preview-binding="react"
         hidden={hasBindingTabs ? true : undefined}
       >
-        {tree ? <TreeDemo tree={tree} client:load /> : <Fragment set:html={reactSlotHtml} />}
+        {tree ? <TreeDemo tree={tree} measure={measure} client:load /> : <Fragment set:html={reactSlotHtml} />}
       </div>
     )
   }

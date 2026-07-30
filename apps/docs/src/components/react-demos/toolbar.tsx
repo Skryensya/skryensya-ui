@@ -1,5 +1,5 @@
 /*
- * Live React demo for /components/toolbar. The "nested Segmented" Showcase on this page ships no
+ * Live React demo for /components/toolbar. The "nested Segmented" preview on this page ships no
  * `react` source (see toolbar.astro) so it stays vanilla-only; only the plain-buttons example gets
  * a live island. `bold`/`italic`/`link` aren't in the default Phosphor stable vocabulary, so this
  * demo links lucide the same way theme-toggle.tsx does.

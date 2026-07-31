@@ -3,111 +3,13 @@ import "@skryensya/core/components/steps.css";
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
-import { StepsDemo, StepsVerticalDemo } from "../../../components/react-demos/steps";
+import { stepsTree, stepsVerticalTree } from "../../../demos/steps";
+import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-/* A completed step is marked with the real `check` icon, not a ✓ glyph; the pending steps keep numbers. */
-const html = `<ol class="sk-steps">
-  <li class="sk-steps__item" data-status="complete">
-    <span class="sk-steps__marker">
-      <span data-sk-icon="check"></span>
-    </span>
-    <span>
-      <span class="sk-steps__label">Choose brand</span>
-      <span class="sk-steps__description">Your chromatic intention</span>
-    </span>
-  </li>
-  <li class="sk-steps__item" data-status="current" aria-current="step">
-    <span class="sk-steps__marker">2</span>
-    <span>
-      <span class="sk-steps__label">Adjust ramps</span>
-      <span class="sk-steps__description">
-        Defines light and shadow
-      </span>
-    </span>
-  </li>
-  <li class="sk-steps__item" data-status="upcoming">
-    <span class="sk-steps__marker">3</span>
-    <span>
-      <span class="sk-steps__label">Audit contrast</span>
-      <span class="sk-steps__description">
-        Try each color pair
-      </span>
-    </span>
-  </li>
-  <li class="sk-steps__item" data-status="upcoming">
-    <span class="sk-steps__marker">4</span>
-    <span>
-      <span class="sk-steps__label">Export</span>
-      <span class="sk-steps__description">Publish the contract</span>
-    </span>
-  </li>
-</ol>`;
+const t = useTranslations(getLocale(Astro.url));
 
-const react = `import { Steps } from "@skryensya/react/steps";
-
-function Example() {
-  return (
-    <Steps
-      current={1}
-      steps={[
-        { label: "Choose a brand", description: "Your chromatic intent" },
-        {
-          label: "Define ramps",
-          description: "Export each position",
-        },
-        {
-          label: "Audit contrast",
-          description: "Test each color pair",
-        },
-        { label: "Export", description: "Publish the contract" },
-      ]}
-    />
-  );
-}`;
-
-const verticalHtml = `<ol class="sk-steps" data-orientation="vertical">
-  <li class="sk-steps__item" data-status="complete">
-    <span class="sk-steps__marker">
-      <span data-sk-icon="check"></span>
-    </span>
-    <span>
-      <span class="sk-steps__label">Account</span>
-      <span class="sk-steps__description">Sign-in details</span>
-    </span>
-  </li>
-  <li class="sk-steps__item" data-status="current" aria-current="step">
-    <span class="sk-steps__marker">2</span>
-    <span>
-      <span class="sk-steps__label">Shipping</span>
-      <span class="sk-steps__description">Delivery address</span>
-    </span>
-  </li>
-  <li class="sk-steps__item" data-status="upcoming">
-    <span class="sk-steps__marker">3</span>
-    <span>
-      <span class="sk-steps__label">Payment</span>
-      <span class="sk-steps__description">Method and billing</span>
-    </span>
-  </li>
-</ol>`;
-
-const verticalReact = `import { Steps } from "@skryensya/react/steps";
-
-function Example() {
-  return (
-    <Steps
-      current={1}
-      data-orientation="vertical"
-      steps={[
-        { label: "Account", description: "Sign-in details" },
-        { label: "Shipping", description: "Delivery address" },
-        { label: "Payment", description: "Method and billing" },
-      ]}
-    />
-  );
-}`;
 ---
 
 <Base title="Steps" description="Steps: linear progress indicator with complete, current, and upcoming states.">
@@ -116,11 +18,7 @@ function Example() {
     Steps shows progress in an ordered sequence. Each step reports one of three states <code>complete</code>, <code>current</code>, <code>upcoming</code>; the component displays the sequence, it does not govern which is active or save navigation between steps.
   </p>
 
-  <ComponentPreview html={html} react={react} label="Steps">
-    <Fragment slot="react">
-      <StepsDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={stepsTree(t)} label="Steps" />
   <p>In React, <code>current</code> derives state from steps that do not declare theirs; one step can overwrite it with <code>status</code>. <code>description</code> adds context without converting the step to a card.</p>
 
   <h2>On mobile</h2>
@@ -138,11 +36,7 @@ function Example() {
     <code>data-orientation="horizontal"</code> does the reverse: it forces the horizontal path even
     below <code>40rem</code>.
   </p>
-  <ComponentPreview html={verticalHtml} react={verticalReact} label="Vertical Steps">
-    <Fragment slot="react">
-      <StepsVerticalDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={stepsVerticalTree(t)} label="Vertical Steps" />
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />

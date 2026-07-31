@@ -297,18 +297,22 @@ function renderTemplate(
   )
     return [];
 
-  // Asked of the entry's CONTENT: a node with children is a branch, one without is a leaf, and
-  // nobody sets that — it is whether the slot was filled.
-  if (
-    node.whenItemSlotGiven !== undefined &&
-    collectionItems(ctx.item?.slots[node.whenItemSlotGiven]).length === 0
-  )
-    return [];
-  if (
-    node.whenItemSlotMissing !== undefined &&
-    collectionItems(ctx.item?.slots[node.whenItemSlotMissing]).length > 0
-  )
-    return [];
+  /*
+   * Asked of the entry's CONTENT: a node with children is a branch, one without is a leaf, and
+   * nobody sets that — it is whether the slot was filled.
+   *
+   * "Filled" has to ask BOTH helpers, because they are complements, not one being broader:
+   * `slotItems` drops collection entries and `collectionItems` drops everything that is not one. So
+   * `collectionItems` alone answered "no" for every TEXT slot — which is how Steps' description
+   * span, guarded on a text slot, never emitted while React rendered it from the same tree.
+   */
+  const itemSlotFilled = (slot: string): boolean => {
+    const content = ctx.item?.slots[slot];
+    return slotItems(content).length > 0 || collectionItems(content).length > 0;
+  };
+
+  if (node.whenItemSlotGiven !== undefined && !itemSlotFilled(node.whenItemSlotGiven)) return [];
+  if (node.whenItemSlotMissing !== undefined && itemSlotFilled(node.whenItemSlotMissing)) return [];
 
   // A conditional node names either an option or a slot; both mean "supplied by the author".
   if (node.whenGiven !== undefined && !supplied(node.whenGiven, ctx)) return [];

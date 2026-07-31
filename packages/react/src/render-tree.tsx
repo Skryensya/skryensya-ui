@@ -29,6 +29,8 @@ import * as themeToggleModule from "./components/theme-toggle.js";
 import * as contentModule from "./components/content.js";
 import * as numberFieldModule from "./components/number-field.js";
 import * as tooltipModule from "./components/tooltip.js";
+import * as selectModule from "./components/select.js";
+import * as selectNativeModule from "./components/select-native.js";
 import * as badgeModule from "./components/badge.js";
 import * as kbdModule from "./components/kbd.js";
 import * as loaderModule from "./components/loader.js";
@@ -66,6 +68,8 @@ import {
  * contract joins the map when it joins the catalogue.
  */
 const modules: Record<string, Record<string, unknown>> = {
+  "@skryensya/react/select": selectModule,
+  "@skryensya/react/select-native": selectNativeModule,
   "@skryensya/react/tag": tagModule,
   "@skryensya/react/progress": progressModule,
   "@skryensya/react/avatar": avatarModule,

@@ -41,14 +41,23 @@ export function Select({
       }),
     [options],
   );
+  /*
+   * The contract models a select as holding ONE value, because that is what `data-value` can say in
+   * markup. Zag takes arrays. Accepting both here is what lets one usage tree drive both bindings:
+   * without it, an emitted `defaultValue="starter"` reached the machine as a string, matched no
+   * item, and the trigger silently fell back to the placeholder while Vanilla showed "Starter".
+   */
+  const asValues = (v: string | readonly string[] | undefined) =>
+    v === undefined ? undefined : typeof v === "string" ? [v] : [...v];
+
   const service = useMachine(select.machine, {
     id: id ?? generatedId,
     collection,
     name,
     disabled,
     required,
-    value,
-    defaultValue,
+    value: asValues(value),
+    defaultValue: asValues(defaultValue),
     onValueChange,
     positioning: { sameWidth: false },
   });

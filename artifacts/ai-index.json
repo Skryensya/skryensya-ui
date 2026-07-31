@@ -1368,6 +1368,54 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/select.css",
+      "id": "select",
+      "signatures": [
+        {
+          "alternatives": [
+            "Select"
+          ],
+          "avoidWhen": [
+            "cada opción necesita markup propio: icono, descripción, dos líneas",
+            "hace falta el evento sk-value-change o una colección controlada"
+          ],
+          "host": "select",
+          "id": "Select.native",
+          "intent": [
+            "a-standard-choice",
+            "one-of-a-known-list",
+            "form-field"
+          ],
+          "parents": [],
+          "useWhen": [
+            "una elección estándar de una lista conocida, dentro de un formulario",
+            "el teclado, el envío y la accesibilidad deben pertenecer al navegador"
+          ]
+        },
+        {
+          "alternatives": [
+            "Select.native"
+          ],
+          "avoidWhen": [
+            "alcanza con una elección estándar: la apariencia dejó de ser razón para reemplazar el control nativo"
+          ],
+          "host": "div",
+          "id": "Select",
+          "intent": [
+            "controlled-collection",
+            "item-markup",
+            "positioned-listbox",
+            "value-change-event"
+          ],
+          "parents": [],
+          "useWhen": [
+            "las opciones necesitan markup, no sólo texto",
+            "hace falta una colección controlada, posicionamiento propio o el evento sk-value-change"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/sidebar.css",
       "id": "sidebar",
       "signatures": [
@@ -2430,5 +2478,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "21c9bbd13d7d4e38"
+  "sourceHash": "0fd7e6236d9c888e"
 }

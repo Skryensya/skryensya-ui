@@ -3,9 +3,10 @@ import Base from "../../../layouts/Base.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
-import { SidebarDemo } from "../../../components/react-demos/sidebar";
+import { sidebarTree } from "../../../demos/sidebar";
+import { getLocale, useTranslations } from "../../../i18n";
 
-
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -14,50 +15,6 @@ const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/patterns/nav-list.css";
 @import "@skryensya/core/patterns/icon.css";
 @import "@skryensya/core/patterns/state-layer.css";`;
-
-const html = `<aside
-  class="sk-sidebar"
-  data-sk-sidebar
-  id="app-sidebar"
->
-  <div class="sk-sidebar__header">
-    <button
-      class="sk-sidebar__trigger sk-interactive"
-      data-sk-sidebar-trigger
-      type="button"
-      aria-label="Collapse navigation"
-    >
-      <span data-sk-icon="menu"></span>
-    </button>
-  </div>
-
-  <div class="sk-sidebar__content" data-sk-sidebar-content>
-    <!-- The sidebar is the shell; the list is a pattern,
-         invited here -->
-    <nav class="sk-nav-list" aria-label="Principal">
-      <div class="sk-nav-list__group">
-        <div class="sk-nav-list__group-label" id="app-workspace">
-          Espacio
-        </div>
-        <ul class="sk-nav-list__list" aria-labelledby="app-workspace">
-          <li class="sk-nav-list__item">
-            <a
-              class="sk-nav-list__link sk-interactive"
-              href="/"
-              aria-current="page"
-            >
-              <span data-sk-icon="info"></span>
-              <span class="sk-nav-list__label">Home</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  </div>
-
-  <hr class="sk-sidebar__separator" />
-  <div class="sk-sidebar__footer">v0.3.0</div>
-</aside>`;
 
 const js = `import { initComponents } from "@skryensya/vanilla/auto";
 import { mountIcons } from "@skryensya/vanilla/icon";
@@ -68,55 +25,6 @@ import { lucideIcons } from "@skryensya/icons-lucide";
 mountIcons(document, lucideIcons);
 
 await initComponents();`;
-
-const react = `import { Icon } from "@skryensya/react/icon";
-import {
-  NavList,
-  NavListGroup,
-  NavListLink,
-} from "@skryensya/react/nav-list";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarTrigger,
-} from "@skryensya/react/sidebar";
-
-function Example() {
-  return (
-    <Sidebar
-      defaultCollapsed={false}
-      onCollapsedChange={({ collapsed }) => SomeFunction(collapsed)}
-    >
-      <SidebarHeader>
-        <SidebarTrigger
-          label="Collapse navigation"
-          icon={<Icon name="menu" />}
-        />
-      </SidebarHeader>
-
-      <SidebarContent>
-        <NavList aria-label="Principal">
-          <NavListGroup label="Espacio">
-            <NavListLink href="/" icon={<Icon name="info" />} current>
-              Home
-            </NavListLink>
-            <NavListLink
-              href="/reportes"
-              icon={<Icon name="calendar" />}
-              trailing="12"
-            >
-              Reportes
-            </NavListLink>
-          </NavListGroup>
-        </NavList>
-      </SidebarContent>
-
-      <SidebarFooter>v0.3.0</SidebarFooter>
-    </Sidebar>
-  );
-}`;
 
 ---
 
@@ -133,19 +41,17 @@ function Example() {
   </p>
 
   <p>Collapse the sidebar with the button: the list becomes a rail of icons, and it is all still there.</p>
-  {/* The slot, not the `html` prop: a sidebar is only legible next to the thing it sits beside, and
-      that surrounding shell is the site playing consumer, not part of the markup being taught. */}
-  <ComponentPreview code={html} react={react} label="Sidebar" flush>
-    <div class="app-shell">
-      <Fragment set:html={html} />
-      <div class="app-shell__main">
-        <p>The content of the app goes here.</p>
-      </div>
-    </div>
-    <Fragment slot="react">
-      <SidebarDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  {/* The `.app-shell` wrapping the Sidebar lives INSIDE the tree, not in a slot around it.
+      A sidebar is only legible next to the thing it sits beside: with no main area to widen,
+      collapsing shows nothing. That framing used to live in the slot, and since a tree REPLACES the
+      slot (`previewHtml = treeHtml ?? slotHtml ?? html`), dropping it would leave the rail with no
+      neighbour. The price is the `sk-box app-shell` that shows up in the snippet; it is called out
+      below, under "Authored HTML". Do not strip it from the tree thinking it is noise. */}
+  <ComponentPreview
+    tree={sidebarTree(t, { home: "/", reports: "/reports" })}
+    label="Sidebar"
+    flush
+  />
 
   <h2>Why is it not a <code>&lt;details&gt;</code></h2>
   <p>
@@ -185,6 +91,12 @@ function Example() {
   <h2>Authored HTML</h2>
   <p>
     The enhancer looks for <code>[data-sk-sidebar]</code>, demands a <code>[data-sk-sidebar-trigger]</code>, and patches <code>aria-expanded</code>, <code>aria-controls</code>, and <code>data-state</code>. Does not write markup or classes. The full markup is in the <strong>Vanilla</strong> tab of the preview.
+  </p>
+  <p>
+    In that markup, the <code>.app-shell</code> wrapping the <code>&lt;aside&gt;</code> and the
+    <code>.app-shell__main</code> beside it are <strong>not the sidebar's</strong>: they are the app
+    consuming it, put there because a rail with nothing next to it does not read. What you copy is the
+    <code>&lt;aside class="sk-sidebar"&gt;</code>; your layout supplies the rest.
   </p>
 
   <h2>Initialize vanilla</h2>

@@ -3,9 +3,10 @@ import Base from "../../layouts/Base.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { SidebarDemo } from "../../components/react-demos/sidebar";
+import { sidebarTree } from "../../demos/sidebar";
+import { getLocale, useTranslations } from "../../i18n";
 
-
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -14,50 +15,6 @@ const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/patterns/nav-list.css";
 @import "@skryensya/core/patterns/icon.css";
 @import "@skryensya/core/patterns/state-layer.css";`;
-
-const html = `<aside
-  class="sk-sidebar"
-  data-sk-sidebar
-  id="app-sidebar"
->
-  <div class="sk-sidebar__header">
-    <button
-      class="sk-sidebar__trigger sk-interactive"
-      data-sk-sidebar-trigger
-      type="button"
-      aria-label="Contraer navegación"
-    >
-      <span data-sk-icon="menu"></span>
-    </button>
-  </div>
-
-  <div class="sk-sidebar__content" data-sk-sidebar-content>
-    <!-- El sidebar es el shell; la lista es un pattern,
-         invitada aquí -->
-    <nav class="sk-nav-list" aria-label="Principal">
-      <div class="sk-nav-list__group">
-        <div class="sk-nav-list__group-label" id="app-workspace">
-          Espacio
-        </div>
-        <ul class="sk-nav-list__list" aria-labelledby="app-workspace">
-          <li class="sk-nav-list__item">
-            <a
-              class="sk-nav-list__link sk-interactive"
-              href="/"
-              aria-current="page"
-            >
-              <span data-sk-icon="info"></span>
-              <span class="sk-nav-list__label">Inicio</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  </div>
-
-  <hr class="sk-sidebar__separator" />
-  <div class="sk-sidebar__footer">v0.3.0</div>
-</aside>`;
 
 const js = `import { initComponents } from "@skryensya/vanilla/auto";
 import { mountIcons } from "@skryensya/vanilla/icon";
@@ -68,55 +25,6 @@ import { lucideIcons } from "@skryensya/icons-lucide";
 mountIcons(document, lucideIcons);
 
 await initComponents();`;
-
-const react = `import { Icon } from "@skryensya/react/icon";
-import {
-  NavList,
-  NavListGroup,
-  NavListLink,
-} from "@skryensya/react/nav-list";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarTrigger,
-} from "@skryensya/react/sidebar";
-
-function Example() {
-  return (
-    <Sidebar
-      defaultCollapsed={false}
-      onCollapsedChange={({ collapsed }) => SomeFunction(collapsed)}
-    >
-      <SidebarHeader>
-        <SidebarTrigger
-          label="Contraer navegación"
-          icon={<Icon name="menu" />}
-        />
-      </SidebarHeader>
-
-      <SidebarContent>
-        <NavList aria-label="Principal">
-          <NavListGroup label="Espacio">
-            <NavListLink href="/" icon={<Icon name="info" />} current>
-              Inicio
-            </NavListLink>
-            <NavListLink
-              href="/reportes"
-              icon={<Icon name="calendar" />}
-              trailing="12"
-            >
-              Reportes
-            </NavListLink>
-          </NavListGroup>
-        </NavList>
-      </SidebarContent>
-
-      <SidebarFooter>v0.3.0</SidebarFooter>
-    </Sidebar>
-  );
-}`;
 
 ---
 
@@ -136,19 +44,17 @@ function Example() {
   </p>
 
   <p>Contrae el sidebar con el botón: la lista se vuelve un riel de iconos, y sigue toda ahí.</p>
-  {/* The slot, not the `html` prop: a sidebar is only legible next to the thing it sits beside, and
-      that surrounding shell is the site playing consumer, not part of the markup being taught. */}
-  <ComponentPreview code={html} react={react} label="Sidebar" flush>
-    <div class="app-shell">
-      <Fragment set:html={html} />
-      <div class="app-shell__main">
-        <p>El contenido de la app va aquí.</p>
-      </div>
-    </div>
-    <Fragment slot="react">
-      <SidebarDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  {/* El `.app-shell` que envuelve al Sidebar está DENTRO del árbol, no en un slot alrededor de él.
+      Un sidebar sólo se lee al lado de la cosa junto a la que se sienta: sin un main que se ensanche,
+      contraer no muestra nada. Antes eso vivía en el slot, y como un árbol reemplaza al slot
+      (`previewHtml = treeHtml ?? slotHtml ?? html`), sacarlo dejaría al riel sin vecino. El precio
+      es el `sk-box app-shell` que aparece en el snippet; está explicado abajo, en «HTML autorado».
+      No lo quites del árbol pensando que es ruido. */}
+  <ComponentPreview
+    tree={sidebarTree(t, { home: "/", reports: "/reportes" })}
+    label="Sidebar"
+    flush
+  />
 
   <h2>Por qué no es un <code>&lt;details&gt;</code></h2>
   <p>
@@ -201,6 +107,12 @@ no agrega uno nuevo, que es la regla de los styling hooks. El <code>state</code>
     El enhancer busca <code>[data-sk-sidebar]</code>, exige un <code>[data-sk-sidebar-trigger]</code> y
     parchea <code>aria-expanded</code>, <code>aria-controls</code> y <code>data-state</code>. No escribe
     markup ni clases. El markup completo está en la pestaña <strong>Vanilla</strong> del preview.
+  </p>
+  <p>
+    En ese markup, el <code>.app-shell</code> que envuelve al <code>&lt;aside&gt;</code> y el
+    <code>.app-shell__main</code> de al lado <strong>no son del sidebar</strong>: son la app que lo
+    consume, puesta ahí porque un riel sin nada al lado no se lee. Lo que copias es el
+    <code>&lt;aside class="sk-sidebar"&gt;</code>; el resto lo pone tu layout.
   </p>
 
   <h2>Inicializar vanilla</h2>

@@ -35,8 +35,16 @@ export const segmentedContract = {
   parts: segmentedParts,
 
   options: {
-    /** Which option is selected. A group property: exclusivity means only one can be. */
-    value: { type: "string", attr: "data-value" },
+    /**
+     * Which option is selected. A group property: exclusivity means only one can be.
+     *
+     * React spells it `defaultValue`. Emitting `value` there hands React its CONTROLLED prop with no
+     * `onValueChange` beside it, which freezes the control: measured on /componentes/segmented,
+     * clicking the second option moved the Vanilla stage and left React on the first. The markup's
+     * `data-value` is a starting point the machine then owns — that is what `defaultValue` means.
+     * Slider, Tabs, RadioGroup and TimeField all carry this line; Segmented never got it.
+     */
+    value: { type: "string", attr: "data-value", prop: "defaultValue" },
   },
 
   signatures: {

@@ -3,6 +3,34 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 
+/*
+ * Authored on purpose, and it must NOT become a usage tree. Measured, not assumed.
+ *
+ * `previewHtml = treeHtml ?? slotHtml ?? html` in ComponentPreview, so a tree REPLACES this slot —
+ * wiring one swaps the diagram for four real Wrappers. Their rendered widths on this page, read out
+ * of the stage in both bindings on 2026-07-31:
+ *
+ *   screen preset   stage    sm     md     lg     full
+ *   Libre           907px    672    907    907    907
+ *   Tablet          766px    672    766    766    766
+ *   Móvil           388px    388    388    388    388
+ *
+ * md (64rem = 1024px) and lg (90rem = 1440px) are both wider than the widest stage this page can
+ * ever offer — `<main>` is itself `data-size="md"`, so the column tops out around 907px — and every
+ * wrapper below its ceiling is just `100%`. So md, lg and full render as three IDENTICAL boxes at
+ * every preset, all four are identical on Móvil, and `measure` only caps the stage further, which
+ * makes it strictly worse. There is no width available here at which the four sizes differ.
+ *
+ * Two more things the swap costs: this page's scoped `.wrapper-scale` CSS never reaches emitted
+ * markup (no `data-astro-cid-*` on it), so the bars lose their frames and read as four bare lines of
+ * text; and the emitted snippet then advertises docs-only classes (`wrapper-scale__bar--md`) inside
+ * the code a reader is invited to copy. `apps/docs/src/demos/wrapper.ts` was deleted for this
+ * reason — an unwired tree is an invitation to wire it blindly.
+ *
+ * The diagram below is the demo: the bars are the ceilings as a fraction of the widest, so
+ * sm < md < lg reads at a glance. `code` / `react` carry the real markup separately.
+ */
+
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
 /* The real markup, shown as the source. The demo above is a to-scale diagram because the sizes only

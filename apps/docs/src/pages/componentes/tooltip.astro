@@ -6,8 +6,31 @@ import ComponentPreview from "../../components/ComponentPreview.astro";
 // importado acá: `.sk-truncate` es del demo, no del paquete.
 import "../../examples/tooltip.css";
 import { TooltipDemo } from "../../components/react-demos/tooltip";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
+
+/*
+ * ESTE DEMO SIGUE AUTORADO A MANO, y no por falta de contrato: `tooltip` está publicado y el árbol
+ * está escrito y validado en `src/demos/tooltip.ts`. Lo que falta son tres líneas del template, que
+ * ahí están anotadas — sin ellas el markup emitido sale sin los ganchos que escanea el enhancer y el
+ * tooltip no abre nunca en Vanilla. Medido: `data-state` no se escribe y el contenido se queda en
+ * `display: none`.
+ *
+ * Lo que sí se comparte ya son las PALABRAS: las mismas claves `demo.tooltip.*` alimentan el HTML,
+ * el snippet de React y el island, así que las dos lenguas y los dos bindings no se pueden separar
+ * aunque el árbol todavía no los una.
+ */
+const strings = {
+  exportLabel: t("demo.tooltip.export.label"),
+  exportContent: t("demo.tooltip.export.content"),
+  metricValue: t("demo.tooltip.metric.value"),
+  metricLabel: t("demo.tooltip.metric.label"),
+  metricContent: t("demo.tooltip.metric.content"),
+  truncated: t("demo.tooltip.truncated.content"),
+};
 
 /*
  * Tres triggers y nada más: los tres casos donde un tooltip se gana su lugar, sin el dashboard que
@@ -25,19 +48,19 @@ const html = `<div class="sk-inline" data-gap="md" data-align="center">
       type="button"
       data-variant="ghost"
       data-icon-only
-      aria-label="Exportar"
+      aria-label="${strings.exportLabel}"
       data-sk-anchor-trigger
     ><span data-sk-icon="download"></span></button>
     <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
       <!-- La flecha, opcional: se autora o no existe. Sale del trigger, no del centro de la caja. -->
       <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>Descarga el periodo visible en CSV</span>
+      <span class="sk-tooltip__content" data-sk-anchor-content>${strings.exportContent}</span>
     </span>
   </span>
 
   <!-- 2. Explicar un dato que ya está en pantalla: el número se ve siempre, el tooltip dice cómo se calcula. -->
   <span class="sk-inline" data-gap="xs">
-    Ingresos $48.2k
+    ${strings.metricValue}
     <span class="sk-tooltip" data-sk-anchor>
       <button
         class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
@@ -45,12 +68,12 @@ const html = `<div class="sk-inline" data-gap="md" data-align="center">
         data-variant="ghost"
         data-icon-only
         data-size="sm"
-        aria-label="Cómo se calcula Ingresos"
+        aria-label="${strings.metricLabel}"
         data-sk-anchor-trigger
       ><span data-sk-icon="info"></span></button>
       <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
         <span class="sk-anchored-arrow" aria-hidden="true"></span>
-        <span class="sk-tooltip__content" data-sk-anchor-content>Suma facturada del periodo, sin impuestos ni reembolsos</span>
+        <span class="sk-tooltip__content" data-sk-anchor-content>${strings.metricContent}</span>
       </span>
     </span>
   </span>
@@ -61,10 +84,10 @@ const html = `<div class="sk-inline" data-gap="md" data-align="center">
       class="sk-truncate sk-tooltip__trigger sk-anchor"
       tabindex="0"
       data-sk-anchor-trigger
-    >Migración del pipeline de facturación</span>
+    >${strings.truncated}</span>
     <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
       <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>Migración del pipeline de facturación</span>
+      <span class="sk-tooltip__content" data-sk-anchor-content>${strings.truncated}</span>
     </span>
   </span>
 </div>`;
@@ -78,15 +101,15 @@ function Example() {
              \`arrow\` es lo mismo que autorar <span className="sk-anchored-arrow" />
              dentro del positioner en el HTML: opcional en los dos bindings, y off
              por defecto. */}
-      <Tooltip content="Descarga el periodo visible en CSV" placement="block-end" arrow>
-        <button aria-label="Exportar" type="button">
+      <Tooltip content="${strings.exportContent}" placement="block-end" arrow>
+        <button aria-label="${strings.exportLabel}" type="button">
           <DownloadIcon />
         </button>
       </Tooltip>
 
       {/* 2. Explicar un dato que ya está en pantalla; esto cuenta cómo se calcula. */}
-      <Tooltip content="Suma facturada del periodo, sin impuestos ni reembolsos" arrow>
-        <button aria-label="Cómo se calcula Ingresos" type="button">
+      <Tooltip content="${strings.metricContent}" arrow>
+        <button aria-label="${strings.metricLabel}" type="button">
           <InfoIcon />
         </button>
       </Tooltip>
@@ -117,7 +140,7 @@ function Example() {
       dónde ir, así que la colocación real nunca se vería. */}
   <ComponentPreview html={html} react={react} label="Tooltip" viewport="menu">
     <Fragment slot="react">
-      <TooltipDemo client:load />
+      <TooltipDemo strings={strings} client:load />
     </Fragment>
   </ComponentPreview>
 

@@ -5152,6 +5152,7 @@
       "options": {
         "value": {
           "attr": "data-value",
+          "prop": "defaultValue",
           "type": "string"
         }
       },
@@ -7653,7 +7654,8 @@
             "TileButton",
             "TileCheckbox",
             "TileSwitch",
-            "ExpandableTileTrigger"
+            "ExpandableTileTrigger",
+            "Accordion.Trigger"
           ],
           "react": {
             "from": "@skryensya/react/tile",
@@ -8924,5 +8926,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "63d41ef9b54ce897"
+  "sourceHash": "21c9bbd13d7d4e38"
 }

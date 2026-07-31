@@ -282,6 +282,39 @@ async function mountFrameComponents(root: Document | Element): Promise<void> {
 }
 
 /** Import and mount the demo this frame was told to render, in this frame's own realm. */
+/*
+ * Most React components own their behavior and must never receive the sibling Vanilla machine.
+ * Three intentionally render authored structure for a Vanilla enhancer instead: Carousel adds
+ * controls and tracks the active slide; TablePager builds its navigation; Toast owns dismissal
+ * through the same DOM event API in both bindings. Keep that seam narrow so React-owned machines
+ * such as Tabs, Flyout and TreeView cannot race a second state owner.
+ */
+// Runtime selector registry: keep these imports lazy so ordinary frames do not ship three unused enhancers.
+const reactEnhancers = [
+  {
+    selector: "[data-sk-carousel]",
+    load: async () => (await import("@skryensya/vanilla/carousel")).mountCarousel,
+  },
+  {
+    selector: "[data-sk-table-pager]",
+    load: async () => (await import("@skryensya/vanilla/table-pager")).mountTablePager,
+  },
+  {
+    selector: "[data-sk-toast]",
+    load: async () => (await import("@skryensya/vanilla/toast")).mountToast,
+  },
+] as const;
+
+async function mountReactEnhancers(host: Element): Promise<void> {
+  await Promise.all(reactEnhancers.map(async ({ selector, load }) => {
+    const roots = host.querySelectorAll<HTMLElement>(selector);
+    if (roots.length === 0) return;
+
+    const mount = await load();
+    for (const root of roots) mount(root);
+  }));
+}
+
 async function mountReactDemo(): Promise<void> {
   const { skReactDemoModule: moduleKey, skReactDemoExport: exportName } =
     document.body.dataset;
@@ -337,7 +370,8 @@ async function mountReactDemo(): Promise<void> {
   flushSync(() => {
     root.render(createElement(Component as never, props as never));
   });
-  await mountFrameComponents(host);
+  await mountReactEnhancers(host);
+  mountIcons(host, siteIcons);
 }
 
 function runAuthoredScript(): void {
@@ -447,8 +481,8 @@ async function boot(): Promise<void> {
    */
   mountCodePreview(document);
   mountComponentPreview(document);
-  runAuthoredScript();
   await mountReactDemo();
+  runAuthoredScript();
 
   if (frame) {
     /*

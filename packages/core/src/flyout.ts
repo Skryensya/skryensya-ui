@@ -14,7 +14,7 @@ export type FlyoutOptions = {
   id?: string;
   disabled?: boolean;
   value?: string[];
-  defaultValue?: string[];
+  defaultValue?: string[] | string;
   placeholder?: string;
   options?: readonly FlyoutOption[];
   onValueChange?: (details: FlyoutValueChangeDetails) => void;
@@ -140,7 +140,7 @@ export const flyoutContract = {
     placeholder: { type: "string", default: "Select option", attr: "data-placeholder", machineInput: true },
     disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "", machineInput: true },
     /** The value chosen to begin with. Read once; after that the interaction owns it. */
-    defaultValue: { type: "string", attr: "data-default-value", machineInput: true },
+    defaultValue: { type: "string", attr: "data-value", machineInput: true },
   },
 
   signatures: {
@@ -150,6 +150,9 @@ export const flyoutContract = {
       options: ["placeholder", "disabled", "defaultValue"],
       slots: {
         label: { accepts: "text" },
+        indicator: { accepts: "node" },
+        openIndicator: { accepts: "node" },
+        itemIndicator: { accepts: "node" },
         items: {
           accepts: "items",
           prop: "options",
@@ -185,8 +188,8 @@ export const flyoutContract = {
                 mount: "data-sk-flyout-indicator",
                 attrs: { "aria-hidden": "true" },
                 children: [
-                  { element: "span", attrs: { "data-state": "closed" } },
-                  { element: "span", attrs: { "data-state": "open" } },
+                  { element: "span", attrs: { "data-state": "closed" }, slot: "indicator" },
+                  { element: "span", attrs: { "data-state": "open" }, slot: "openIndicator" },
                 ],
               },
             ],
@@ -213,6 +216,7 @@ export const flyoutContract = {
                     part: "itemIndicator",
                     mount: "data-sk-flyout-item-indicator",
                     attrs: { "aria-hidden": "true" },
+                    slot: "itemIndicator",
                   },
                 ],
               },

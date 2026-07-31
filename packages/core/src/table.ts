@@ -43,6 +43,10 @@ export const tableContract = {
     stickyColumn: { type: "boolean", default: false, attr: "data-sticky-column", trueValue: "" },
     /** The header row stays put while the body scrolls down. For a table longer than the viewport. */
     stickyHeader: { type: "boolean", default: false, attr: "data-sticky-header", trueValue: "" },
+    /** Absolute density scope for one table preview. */
+    density: { type: "number", styleProperty: "--sk-density" },
+    /** Multiplier relative to the table's density scope. */
+    densityFactor: { type: "number", styleProperty: "--sk-density-factor" },
     /*
      * How many columns a cell spans. The one place a table's structure is a NUMBER, and it is real
      * structure: a footnote under a three-column table belongs across all three, and a note stranded
@@ -73,7 +77,7 @@ export const tableContract = {
     TableScroll: {
       intent: ["scrollable-table", "wide-table", "table-that-does-not-blow-the-layout"],
       host: { element: "div" },
-      options: ["stickyColumn", "stickyHeader"],
+      options: ["stickyColumn", "stickyHeader", "density", "densityFactor"],
       slots: { children: { accepts: "signature", of: ["Table"], required: true } },
       template: { element: "div", part: "scroll", host: true, slot: "children" },
       react: { from: "@skryensya/react/table", name: "TableScroll" },

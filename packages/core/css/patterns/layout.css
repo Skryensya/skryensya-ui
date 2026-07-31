@@ -47,7 +47,9 @@
   .sk-inline[data-align="start"] { align-items: flex-start; }
   .sk-inline[data-align="end"] { align-items: flex-end; }
   .sk-inline[data-align="baseline"] { align-items: baseline; }
+  .sk-inline[data-align="stretch"] { align-items: stretch; }
   .sk-inline[data-wrap="false"] { flex-wrap: nowrap; }
+  .sk-inline[data-equal] > * { flex: 1 1 0; min-inline-size: 0; }
   .sk-inline[data-justify="start"] { justify-content: flex-start; }
   .sk-inline[data-justify="center"] { justify-content: center; }
   .sk-inline[data-justify="end"] { justify-content: flex-end; }

@@ -27,7 +27,7 @@ const screenTiles = [
 
 export const ScreensGridDemo = framed(function ScreensGridDemo() {
   return (
-    <Grid columns={3} data-multicol>
+    <Grid columns={3} multicol>
       {screenTiles.map((tile) => (
         <TileLink href={tile.href} key={tile.href}>
           <span className="sk-tile__content">

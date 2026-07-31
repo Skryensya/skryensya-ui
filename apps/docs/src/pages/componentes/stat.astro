@@ -3,194 +3,12 @@ import "@skryensya/core/components/stat.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
-import { StatAnimatedCardsDemo } from "../../components/react-demos/stat";
+import { statAnimatedTree, statCardsTree } from "../../demos/stat";
+import { getLocale, useTranslations } from "../../i18n";
 
+const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-/*
- * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
- * island are all emitted from this, so the snippet a reader copies is what they just saw render.
- */
-const tree = {
-  contract: "layout",
-  signature: "Grid",
-  options: { columns: "3", gap: "md" },
-  attrs: { "aria-label": "Resumen del negocio" },
-  children: [
-    {
-      contract: "box",
-      signature: "Box",
-      options: { surface: "surface", border: "subtle", padding: "lg" },
-      children: {
-        contract: "stat",
-        signature: "Stat",
-        options: { trend: "up" },
-        slots: {
-          label: "Ingresos",
-          value: "48.200 €",
-          /* The glyph belongs in the change: colour alone must not carry the direction, and the
-             stylesheet sizes it to the caption it sits beside. */
-          change: [{ contract: "icon", signature: "Icon", options: { name: "arrow-up", size: "sm" } }, "12,5%"],
-        },
-      },
-    },
-    {
-      contract: "box",
-      signature: "Box",
-      options: { surface: "surface", border: "subtle", padding: "lg" },
-      children: {
-        contract: "stat",
-        signature: "Stat",
-        options: { trend: "up" },
-        slots: {
-          label: "Pedidos",
-          value: "1.204",
-          /* The glyph belongs in the change: colour alone must not carry the direction, and the
-             stylesheet sizes it to the caption it sits beside. */
-          change: [{ contract: "icon", signature: "Icon", options: { name: "arrow-up", size: "sm" } }, "8,2%"],
-        },
-      },
-    },
-    {
-      contract: "box",
-      signature: "Box",
-      options: { surface: "surface", border: "subtle", padding: "lg" },
-      children: {
-        contract: "stat",
-        signature: "Stat",
-        options: { trend: "up" },
-        slots: {
-          label: "Cancelaciones",
-          value: "0,9%",
-          /* The glyph belongs in the change: colour alone must not carry the direction, and the
-             stylesheet sizes it to the caption it sits beside. */
-          change: [{ contract: "icon", signature: "Icon", options: { name: "arrow-up", size: "sm" } }, "0,3 puntos"],
-        },
-      },
-    },
-  ],
-} as const satisfies UsageTree;
-
-const htmlAnimate = `<section
-  class="sk-grid"
-  data-columns="3"
-  data-gap="md"
-  data-multicol
-  aria-label="Resumen del negocio"
->
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="lg"
-  >
-    <div class="sk-stat" data-sk-stat data-animate>
-      <span class="sk-stat__label">Ingresos</span>
-      <span
-        class="sk-stat__value"
-        data-count="48200"
-        data-locale="es-ES"
-        data-suffix=" €"
-      >48.200 €</span>
-      <span class="sk-stat__change" data-trend="up">
-        <span data-sk-icon="arrow-up"></span> 12,5%
-      </span>
-    </div>
-  </article>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="lg"
-  >
-    <div class="sk-stat" data-sk-stat data-animate>
-      <span class="sk-stat__label">Pedidos</span>
-      <span
-        class="sk-stat__value"
-        data-count="1204"
-        data-locale="es-ES"
-      >1.204</span>
-      <span class="sk-stat__change" data-trend="up">
-        <span data-sk-icon="arrow-up"></span> 8,2%
-      </span>
-    </div>
-  </article>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="lg"
-  >
-    <div class="sk-stat" data-sk-stat data-animate>
-      <span class="sk-stat__label">Cancelaciones</span>
-      <span
-        class="sk-stat__value"
-        data-count="0.9"
-        data-locale="es-ES"
-        data-suffix="%"
-        data-fraction-digits="1"
-      >0,9%</span>
-      <span class="sk-stat__change" data-trend="up">
-        <span data-sk-icon="arrow-down"></span> 0,3 puntos
-      </span>
-    </div>
-  </article>
-</section>`;
-
-const reactAnimate = `import { Icon } from "@skryensya/react/icon";
-import { Box, Grid } from "@skryensya/react/layout";
-import { Stat } from "@skryensya/react/stat";
-
-const es = (n: number, opts?: Intl.NumberFormatOptions) =>
-  n.toLocaleString("es-ES", opts);
-
-function Example() {
-  return (
-    <Grid
-      aria-label="Resumen del negocio"
-      columns={3}
-      data-multicol=""
-      gap="md"
-    >
-      <Box as="article" border="subtle" padding="lg" surface="surface">
-        <Stat
-          animate
-          format={(n) => \`\${es(n)} €\`}
-          label="Ingresos"
-          value={48200}
-          trend="up"
-          change={<><Icon name="arrow-up" /> 12,5%</>}
-        />
-      </Box>
-      <Box as="article" border="subtle" padding="lg" surface="surface">
-        <Stat
-          animate
-          format={es}
-          label="Pedidos"
-          value={1204}
-          trend="up"
-          change={<><Icon name="arrow-up" /> 8,2%</>}
-        />
-      </Box>
-      <Box as="article" border="subtle" padding="lg" surface="surface">
-        <Stat
-          animate
-          format={(n) =>
-            \`\${es(n, {
-              minimumFractionDigits: 1,
-              maximumFractionDigits: 1,
-            })}%\`
-          }
-          label="Cancelaciones"
-          value={0.9}
-          trend="up"
-          change={<><Icon name="arrow-down" /> 0,3 puntos</>}
-        />
-      </Box>
-    </Grid>
-  );
-}`;
 ---
 
 <Base title="Stat" description="Stat: métrica de titular con label, valor tabular y cambio coloreado por tendencia.">
@@ -208,7 +26,7 @@ function Example() {
     <a href="/componentes/box">Box</a> aporta la superficie y Grid organiza la colección. La flecha
     baja en cancelaciones, pero <code>trend="up"</code> comunica que ese cambio es favorable.
   </p>
-  <ComponentPreview tree={tree} label="Stat" />
+  <ComponentPreview tree={statCardsTree(t, "es")} label="Stat" />
 
   <h2 id="animar">Animar el valor</h2>
   <p>
@@ -218,15 +36,10 @@ function Example() {
     <code>prefers-reduced-motion</code> salta al final.
   </p>
   <ComponentPreview
-    html={htmlAnimate}
-    react={reactAnimate}
+    tree={statAnimatedTree(t, "es")}
     label="Stat Cards animadas"
     note="Mismo card · animate + format / data-count"
-  >
-    <Fragment slot="react">
-      <StatAnimatedCardsDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  />
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

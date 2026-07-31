@@ -2,32 +2,8 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /*
- * The six Flyout demos that the contract can say. Two things it cannot, both found by writing them:
- *
- * 1. NO SLOT FOR THE INDICATOR GEOMETRY. The React binding takes `indicator`, `openIndicator` and
- *    `itemIndicator` ("decorative geometry supplied by the consumer's bound icon set"), and the part
- *    template paints the wrappers for all three — `[data-state="closed"]`, `[data-state="open"]`,
- *    `.sk-flyout__item-indicator` — but the contract publishes no slot to fill them. So an emitted
- *    Flyout is a legal Flyout with empty indicators: no chevron on the trigger, no check on the
- *    chosen item. Every icon-bearing family solved this the same way (Alert, EmptyState, Toast and
- *    SidebarTrigger each declare `icon: { accepts: "signature", of: ["Icon"] }`); Flyout needs three
- *    of those, the last one on the ITEM shape.
- *
- * 2. `defaultValue` REACHES NEITHER BINDING. The contract maps it to `data-default-value`, and the
- *    Vanilla enhancer reads `root.dataset.value` — so the attribute lands and is ignored. React gets
- *    it worse: `FlyoutProps.defaultValue` is `string[]`, the option is `type: "string"`, so
- *    `defaultValue?.[0]` on `"pro"` is `"p"`, which matches nothing and falls through to the
- *    placeholder. Tabs, TimeField and Slider all have the working shape — one option `value`, with
- *    `attr: "data-value"` and `prop: "defaultValue"` — and Flyout should have it too.
- *
- *    Until it does, no tree here sets a starting value: both bindings independently fall back to the
- *    FIRST option, which is the one preselection they agree on. It costs these demos nothing (none
- *    of them is about which value is chosen) and it keeps the snippet honest — a reader who pastes
- *    `defaultValue="pro"` gets a picker showing "Select option".
- *
- * The seventh demo, Placeholder, stays authored on the page for the same reason #2 exists: the
- * placeholder is only visible when the current value matches no item, and setting such a value is
- * exactly what a tree cannot do. See the page for its markup.
+ * Every Flyout demo is now a tree. The contract owns closed/open/item indicators and its
+ * `defaultValue` maps to the machine value in Vanilla and the array-shaped React prop.
  */
 
 /** One option of a Flyout: the value the contract keys on, and the words the reader sees. */
@@ -156,5 +132,18 @@ export const flyoutLongTree = (t: Translate): UsageTree => ({
       { value: "sv", label: "Svenska" },
       { value: "ja", label: "日本語" },
     ]),
+  },
+});
+
+export const flyoutPlaceholderTree = (t: Translate): UsageTree => ({
+  contract: "flyout",
+  signature: "Flyout",
+  options: {
+    placeholder: t("demo.flyout.placeholder"),
+    defaultValue: "__no-selection__",
+  },
+  slots: {
+    label: t("demo.flyout.plan"),
+    items: items(plans),
   },
 });

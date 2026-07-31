@@ -3,286 +3,27 @@ import "@skryensya/core/components/toast.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
-import { toastActionTree, toastSimpleTree } from "../../demos/toast";
-import { getLocale, useTranslations } from "../../i18n";
 import {
-  ToastEmitDemo,
-  ToastStackDemo,
-  ToastStatusDemo,
-} from "../../components/react-demos/toast";
+  toastActionTree,
+  toastEmitScript,
+  toastEmitTree,
+  toastSimpleTree,
+  toastStackScript,
+  toastStackTree,
+  toastStatusScript,
+  toastStatusTree,
+} from "../../demos/toast";
+import { getLocale, useTranslations } from "../../i18n";
 
 const t = useTranslations(getLocale(Astro.url));
 
-/*
- * Emisión, estados con timeout y apilado permanecen autorados: dependen de comportamiento runtime.
- */
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
-/* EL EJEMPLO PRINCIPAL: un toast no se autora "ya visible", aparece porque algo pasó. El markup
-   estable es el trigger, la región vacía y el <template> del ítem; el resto lo hace la app. */
-const emitHtml = `<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-variant="primary"
-  data-emit-toast
-  type="button"
->
-  Archivar documento
-</button>
-
-<div class="sk-toast-region" aria-live="polite"></div>
-
-<template data-toast-template>
-  <div
-    class="sk-alert"
-    data-sk-toast
-    data-presentation="banner"
-    data-tone="neutral"
-    data-timeout="4000"
-    role="status"
-    aria-live="polite"
-  >
-    <div class="sk-alert__content">
-      <div class="sk-alert__description">
-        Documento archivado.
-      </div>
-    </div>
-    <div class="sk-alert__actions">
-      <button
-        class="sk-alert__dismiss sk-button sk-interactive"
-        data-sk-button
-        data-size="sm"
-        data-icon-only
-        data-variant="ghost"
-        type="button"
-        aria-label="Descartar"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </div>
-  </div>
-</template>`;
-
-const emitJs = `import { initComponents } from "@skryensya/vanilla/auto";
-
-const region = document.querySelector(".sk-toast-region");
-const template = document.querySelector("[data-toast-template]");
-
-document
-  .querySelector("[data-emit-toast]")
-  .addEventListener("click", async () => {
-    region.append(template.content.cloneNode(true));
-    // initComponents es idempotente: monta sólo lo recién
-    // insertado, y con eso el toast gana ✕ y timeout.
-    await initComponents(region);
-  });
-
-// El toast NUNCA se retira solo: pide permiso con sk-dismiss
-// (detail.reason: "timeout" | "dismiss") y la app decide.
-region.addEventListener("sk-dismiss", (event) => {
-  event.target.remove();
-});`;
-
-const emitScript = `const region = document.querySelector(".sk-toast-region");
-const template = document.querySelector("[data-toast-template]");
-
-document.querySelector("[data-emit-toast]").addEventListener("click", async () => {
-  region.append(template.content.cloneNode(true));
-  await window.skMount(region);
-});
-
-region.addEventListener("sk-dismiss", (event) => {
-  event.target.remove();
-});`;
-
-const emitReact = `import { useState } from "react";
-import { Button } from "@skryensya/react/button";
-import {
-  Toast,
-  ToastRegion,
-} from "@skryensya/react/content";
-
-const [toasts, setToasts] = useState([]);
-const remove = (id) =>
-  setToasts((all) => all.filter((toast) => toast.id !== id));
-
-<Button
-  variant="primary"
-  onClick={() => setToasts((all) => [...all, { id: crypto.randomUUID() }])}
->
-  Archivar documento
-</Button>
-
-<ToastRegion>
-  {toasts.map((toast) => (
-    <Toast
-      key={toast.id}
-      timeout={4000}
-      onDismiss={() => remove(toast.id)}
-    >
-      Documento archivado.
-    </Toast>
-  ))}
-</ToastRegion>;`;
 
 
-const statusHtml = `<div class="sk-toast-region" data-stack="off" aria-live="polite">
-  <div
-    class="sk-alert"
-    data-sk-toast
-    data-presentation="banner"
-    data-tone="info"
-    data-timeout="6000"
-    role="status"
-    aria-live="polite"
-  >
-    <span class="sk-alert__icon" aria-hidden="true">
-      <span data-sk-icon="info"></span>
-    </span>
-    <div class="sk-alert__content">
-      <p class="sk-alert__title">Sincronizando</p>
-      <div class="sk-alert__description">
-        Esto puede tardar unos segundos.
-      </div>
-    </div>
-  </div>
-  <div
-    class="sk-alert"
-    data-sk-toast
-    data-presentation="banner"
-    data-tone="success"
-    role="status"
-    aria-live="polite"
-  >
-    <span class="sk-alert__icon" aria-hidden="true">
-      <span data-sk-icon="success"></span>
-    </span>
-    <div class="sk-alert__content">
-      <p class="sk-alert__title">Despliegue creado</p>
-      <div class="sk-alert__description">
-        La revisión ya está en producción.
-      </div>
-    </div>
-    <div class="sk-alert__actions">
-      <button
-        class="sk-alert__dismiss sk-button sk-interactive"
-        data-sk-button
-        data-size="sm"
-        data-icon-only
-        data-variant="ghost"
-        type="button"
-        aria-label="Descartar"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </div>
-  </div>
-  <div
-    class="sk-alert"
-    data-sk-toast
-    data-presentation="banner"
-    data-tone="danger"
-    role="alert"
-    aria-live="assertive"
-  >
-    <span class="sk-alert__icon" aria-hidden="true">
-      <span data-sk-icon="danger"></span>
-    </span>
-    <div class="sk-alert__content">
-      <p class="sk-alert__title">No se pudo conectar</p>
-      <div class="sk-alert__description">
-        Revisa la red e inténtalo de nuevo.
-      </div>
-    </div>
-    <div class="sk-alert__actions">
-      <button
-        class="sk-alert__dismiss sk-button sk-interactive"
-        data-sk-button
-        data-size="sm"
-        data-icon-only
-        data-variant="ghost"
-        type="button"
-        aria-label="Descartar"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </div>
-  </div>
-</div>`;
 
 
-/* La pila: EXACTAMENTE el mismo markup del primer ejemplo. Apilar es el default. */
-const stackHtml = `<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-variant="primary"
-  data-emit-toast
-  type="button"
->
-  Archivar otro
-</button>
-
-<div class="sk-toast-region" aria-live="polite"></div>
-
-<template data-toast-template>
-  <div
-    class="sk-alert"
-    data-sk-toast
-    data-presentation="banner"
-    data-tone="neutral"
-    role="status"
-    aria-live="polite"
-  >
-    <div class="sk-alert__content">
-      <div class="sk-alert__description">
-        Documento archivado.
-      </div>
-    </div>
-    <div class="sk-alert__actions">
-      <button
-        class="sk-alert__dismiss sk-button sk-interactive"
-        data-sk-button
-        data-size="sm"
-        data-icon-only
-        data-variant="ghost"
-        type="button"
-        aria-label="Descartar"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </div>
-  </div>
-</template>`;
-
-const stackScript = `const region = document.querySelector(".sk-toast-region");
-const template = document.querySelector("[data-toast-template]");
-let count = 0;
-
-document.querySelector("[data-emit-toast]").addEventListener("click", async () => {
-  count += 1;
-  const toast = template.content.firstElementChild.cloneNode(true);
-  const description = toast.querySelector(".sk-alert__description");
-  description.textContent = "Documento " + count + " archivado.";
-  // Uno de cada dos con título: alturas distintas, para que se vea que la pila
-  // colapsada agrupa sobre la caja del más nuevo y no sobre la de cada uno.
-  if (count % 2 === 0) {
-    const title = document.createElement("p");
-    title.className = "sk-alert__title";
-    title.textContent = "Movido a Archivados";
-    description.before(title);
-  }
-  region.append(toast);
-  await window.skMount(region);
-});
-
-region.addEventListener("sk-dismiss", (event) => {
-  event.target.remove();
-});
-
-document.querySelector("[data-emit-toast]").click();
-document.querySelector("[data-emit-toast]").click();
-document.querySelector("[data-emit-toast]").click();`;
 
 const stackCss = `/* Ya viene en components/toast.css: está acá porque
    es la única parte del componente que lee el DOM
@@ -345,47 +86,6 @@ const stackCss = `/* Ya viene en components/toast.css: está acá porque
 }`;
 
 
-const statusReact = `import {
-  Toast,
-  ToastRegion,
-} from "@skryensya/react/content";
-
-<ToastRegion>
-  {/* sin onDismiss no hay ✕: el timeout lo retira */}
-  <Toast
-    tone="info"
-    title="Sincronizando"
-    icon={<InfoIcon />}
-    timeout={6000}
-  >
-    Esto puede tardar unos segundos.
-  </Toast>
-  <Toast
-    tone="success"
-    title="Despliegue creado"
-    icon={<SuccessIcon />}
-    onDismiss={() => remove(id)}
-  >
-    La revisión ya está en producción.
-  </Toast>
-</ToastRegion>;`;
-
-
-const stackReact = `import {
-  Toast,
-  ToastRegion,
-} from "@skryensya/react/content";
-
-// Apilar es el default de la región; ningún Toast sabe que
-// está en una pila. El orden del array es el de la pila.
-// Para NO apilar: <ToastRegion data-stack="off">
-<ToastRegion>
-  {toasts.map((toast) => (
-    <Toast key={toast.id} onDismiss={() => remove(toast.id)}>
-      {toast.message}
-    </Toast>
-  ))}
-</ToastRegion>;`;
 
 const vanilla = `import {
   initComponents,
@@ -417,18 +117,13 @@ await initComponents();`;
     que sólo toca lo recién insertado.
   </p>
   <ComponentPreview
-    html={emitHtml}
-    js={emitJs}
-    previewScript={emitScript}
-    react={emitReact}
+    tree={toastEmitTree(t)}
+    js={toastEmitScript}
+    previewScript={toastEmitScript}
     label="Toast después de una acción"
     note="Pulsa el botón"
     viewport="menu"
-  >
-    <Fragment slot="react">
-      <ToastEmitDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  />
 
   <h2>Simple</h2>
   <p>
@@ -452,11 +147,13 @@ await initComponents();`;
     hasta que se cierren. La regla práctica: <strong>si el toast puede cerrarse solo, no necesita ✕;
     si no puede, el ✕ es obligatorio</strong>.
   </p>
-  <ComponentPreview html={statusHtml} react={statusReact} label="Toast con estado" viewport="overlay">
-    <Fragment slot="react">
-      <ToastStatusDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview
+    tree={toastStatusTree(t)}
+    js={toastStatusScript}
+    previewScript={toastStatusScript}
+    label="Toast con estado"
+    viewport="overlay"
+  />
 
   <h2>Con acción</h2>
   <p>
@@ -504,17 +201,13 @@ await initComponents();`;
     en la misma cascada. El más nuevo no participa, nunca se movió y no debe parpadear.
   </p>
   <ComponentPreview
-    html={stackHtml}
-    previewScript={stackScript}
-    react={stackReact}
+    tree={toastStackTree(t)}
+    js={toastStackScript}
+    previewScript={toastStackScript}
     label="Pila de toasts"
     note="Pasa el puntero para abrirla"
     viewport="overlay"
-  >
-    <Fragment slot="react">
-      <ToastStackDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  />
   <p>
     El JavaScript es el mismo del primer ejemplo, y el HTML también: clonar, insertar, montar y
     remover en <code>sk-dismiss</code>. No hay nada que agregar para apilar. Los hooks son de la

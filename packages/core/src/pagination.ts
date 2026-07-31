@@ -39,8 +39,8 @@ export const tablePagerParts = {
   size: "sk-table-pager__size",
   end: "sk-table-pager__end",
   status: "sk-table-pager__status",
+  nav: paginationParts.root,
 } as const;
-
 export type TablePagerPart = keyof typeof tablePagerParts;
 export type TablePagerPartClass = (typeof tablePagerParts)[TablePagerPart];
 
@@ -166,6 +166,151 @@ export const paginationContract = {
         ],
       },
       react: { from: "@skryensya/react/pagination", name: "Pagination" },
+    },
+  },
+} as const satisfies ComponentContract;
+
+/**
+ * The authored table + page-size control + generated pagination bar. The table remains the Table
+ * contract; this family owns only the composition and the enhancer attachment points.
+ */
+export const tablePagerContract = {
+  id: "table-pager",
+  css: "@skryensya/core/patterns/table-pager.css",
+  parts: tablePagerParts,
+
+  options: {
+    pageSize: { type: "number", default: 10, attr: "data-page-size", machineInput: true },
+    page: { type: "number", default: 1, attr: "data-page", machineInput: true },
+    siblings: { type: "number", default: 1, attr: "data-siblings", machineInput: true },
+    statusTemplate: {
+      type: "string",
+      default: "{start}–{end} of {total}",
+      attr: "data-status-template",
+      machineInput: true,
+    },
+    previousLabel: {
+      type: "string",
+      default: "Previous page",
+      attr: "data-previous-label",
+      machineInput: true,
+    },
+    nextLabel: {
+      type: "string",
+      default: "Next page",
+      attr: "data-next-label",
+      machineInput: true,
+    },
+    pageLabel: {
+      type: "string",
+      default: "Page",
+      attr: "data-page-label",
+      machineInput: true,
+    },
+    navLabel: { type: "string", default: "Pagination", attr: "aria-label" },
+  },
+
+  signatures: {
+    TablePager: {
+      intent: ["paged-table", "table-with-page-size", "client-side-table-pagination"],
+      host: { element: "div" },
+      options: [
+        "pageSize",
+        "page",
+        "siblings",
+        "statusTemplate",
+        "previousLabel",
+        "nextLabel",
+        "pageLabel",
+      ],
+      slots: {
+        children: {
+          accepts: "signature",
+          of: ["TableScroll", "TablePagerBar"],
+          required: true,
+        },
+      },
+      mount: tablePagerAttrs.root,
+      template: {
+        element: "div",
+        part: "root",
+        host: true,
+        slot: "children",
+      },
+      react: { from: "@skryensya/react/pagination", name: "TablePager" },
+    },
+
+    TablePagerBar: {
+      intent: ["table-pagination-controls", "table-pager-bar"],
+      host: { element: "div" },
+      parents: ["TablePager"],
+      options: [],
+      slots: {
+        children: {
+          accepts: "signature",
+          of: ["TablePagerSize", "TablePagerEnd"],
+          required: true,
+        },
+      },
+      template: { element: "div", part: "bar", host: true, slot: "children" },
+      react: { from: "@skryensya/react/pagination", name: "TablePagerBar" },
+    },
+
+    TablePagerSize: {
+      intent: ["page-size-control", "rows-per-page-control"],
+      host: { element: "div" },
+      parents: ["TablePagerBar"],
+      options: [],
+      slots: { children: { accepts: "node", required: true } },
+      template: { element: "div", part: "size", host: true, slot: "children" },
+      react: { from: "@skryensya/react/pagination", name: "TablePagerSize" },
+    },
+
+    TablePagerEnd: {
+      intent: ["table-pager-status-and-navigation", "pager-end-controls"],
+      host: { element: "div" },
+      parents: ["TablePagerBar"],
+      options: [],
+      slots: {
+        children: {
+          accepts: "signature",
+          of: ["TablePagerStatus", "TablePagerNav"],
+          required: true,
+        },
+      },
+      template: { element: "div", part: "end", host: true, slot: "children" },
+      react: { from: "@skryensya/react/pagination", name: "TablePagerEnd" },
+    },
+
+    TablePagerStatus: {
+      intent: ["visible-row-range", "table-page-status"],
+      host: { element: "div" },
+      parents: ["TablePagerEnd"],
+      options: [],
+      slots: { children: { accepts: "text", required: true } },
+      template: {
+        element: "div",
+        part: "status",
+        host: true,
+        mount: tablePagerAttrs.status,
+        slot: "children",
+      },
+      react: { from: "@skryensya/react/pagination", name: "TablePagerStatus" },
+    },
+
+    TablePagerNav: {
+      intent: ["generated-table-pagination", "table-page-navigation"],
+      host: { element: "nav" },
+      parents: ["TablePagerEnd"],
+      options: ["navLabel"],
+      slots: {},
+      template: {
+        element: "nav",
+        part: "nav",
+        host: true,
+        mount: tablePagerAttrs.nav,
+      },
+      react: { from: "@skryensya/react/pagination", name: "TablePagerNav" },
     },
   },
 } as const satisfies ComponentContract;

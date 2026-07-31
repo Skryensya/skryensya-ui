@@ -8,10 +8,10 @@ import {
   listLinksTree,
   listTitledTree,
   listTrailingTree,
+  listPlainTree,
 } from "../../demos/list";
 import { getLocale, useTranslations } from "../../i18n";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { ListPlainDemo } from "../../components/react-demos/list";
 
 const t = useTranslations(getLocale(Astro.url));
 /* Both link demos point at real docs routes, and a docs route differs per locale. */
@@ -25,28 +25,7 @@ const styles = `@import "@skryensya/core/components/list.css";`;
 /* THE LADDER. Six examples that add exactly one slot each, so the page reads as anatomy being
    assembled rather than six finished screens. Step 1 is a bare `<li>`, step 6 is the full row. */
 
-/* 1 — The floor: a real `<ul>` with rows and dividers, and nothing else. No slots at all. */
-const plainHtml = `<ul class="sk-list" aria-label="Integraciones">
-  <li class="sk-list__item">Slack</li>
-  <li class="sk-list__item">Notion</li>
-  <li class="sk-list__item">Figma</li>
-  <li class="sk-list__item">GitHub</li>
-  <li class="sk-list__item">Linear</li>
-</ul>`;
 
-const plainReact = `import { List, ListItem } from "@skryensya/react/list";
-
-function Example() {
-  return (
-    <List aria-label="Integraciones">
-      <ListItem>Slack</ListItem>
-      <ListItem>Notion</ListItem>
-      <ListItem>Figma</ListItem>
-      <ListItem>GitHub</ListItem>
-      <ListItem>Linear</ListItem>
-    </List>
-  );
-}`;
 
 ---
 
@@ -78,12 +57,7 @@ function Example() {
     de fila, inset y hairlines, y el lector oye <em>lista de 5 ítems</em>. Muchas listas no necesitan
     nada más que esto.
   </p>
-  <ComponentPreview code={plainHtml} react={plainReact} lang="html" label="1 · Sólo la lista" note="ul + item">
-    <div class="sk-list-demo"><Fragment set:html={plainHtml} /></div>
-    <Fragment slot="react">
-      <ListPlainDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={listPlainTree(t)} label="1 · Sólo la lista" note="ul + item" />
 
   <h3>2 · Título y descripción</h3>
   <p>

@@ -56,6 +56,20 @@ export const checkboxContract = {
     name: { type: "string", attr: "name" },
     value: { type: "string", attr: "value" },
     checked: { type: "boolean", default: false, attr: "checked", trueValue: "" },
+    defaultChecked: {
+      type: "boolean",
+      default: false,
+      attr: "checked",
+      prop: "defaultChecked",
+      trueValue: "",
+    },
+    defaultIndeterminate: {
+      type: "boolean",
+      default: false,
+      attr: "data-default-indeterminate",
+      prop: "defaultIndeterminate",
+      trueValue: "",
+    },
     disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "" },
     required: { type: "boolean", default: false, attr: "required", trueValue: "" },
     orientation: {
@@ -70,7 +84,7 @@ export const checkboxContract = {
     Checkbox: {
       intent: ["boolean-choice", "opt-in", "accept-terms", "toggle-one-setting"],
       host: { element: "input" },
-      options: ["name", "value", "checked", "disabled", "required"],
+      options: ["name", "value", "checked", "defaultChecked", "defaultIndeterminate", "disabled", "required"],
       slots: {
         /** The visible text. Absent means the control is named by something else nearby. */
         children: { accepts: "node" },

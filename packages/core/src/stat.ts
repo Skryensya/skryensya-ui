@@ -165,13 +165,19 @@ export const statContract = {
   options: {
     /** Which way the change points. Paired with the change text, never the only cue. */
     trend: { type: "enum", values: ["up", "down", "neutral"], attr: "data-trend" },
+    animate: { type: "boolean", default: false, attr: "data-animate", trueValue: "", machineInput: true },
+    count: { type: "number", attr: "data-count", machineInput: true },
+    locale: { type: "string", attr: "data-locale", machineInput: true },
+    suffix: { type: "string", attr: "data-suffix", machineInput: true },
+    fractionDigits: { type: "number", attr: "data-fraction-digits", machineInput: true },
   },
 
   signatures: {
     Stat: {
       intent: ["metric", "kpi", "one-number-with-a-name", "dashboard-figure"],
       host: { element: "div" },
-      options: ["trend"],
+      options: ["trend", "animate", "count", "locale", "suffix", "fractionDigits"],
+      mount: "data-sk-stat",
       slots: {
         label: { accepts: "text", required: true },
         value: { accepts: "text", required: true },
@@ -192,7 +198,12 @@ export const statContract = {
         host: true,
         children: [
           { element: "span", part: "label", slot: "label" },
-          { element: "span", part: "value", slot: "value" },
+          {
+            element: "span",
+            part: "value",
+            options: ["count", "locale", "suffix", "fractionDigits"],
+            slot: "value",
+          },
           { element: "span", part: "change", whenGiven: "change", options: ["trend"], slot: "change" },
         ],
       },

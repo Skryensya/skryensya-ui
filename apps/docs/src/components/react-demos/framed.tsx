@@ -47,7 +47,10 @@ export interface FramedOptions {
 export type FramedOverrides = Pick<
   FramedOptions,
   "flush" | "scroll" | "viewport"
->;
+> & {
+  /** App-only script shared by both tree-rendered bindings. */
+  script?: string;
+};
 
 /**
  * The demo file's name, as the frame's glob map keys it.
@@ -102,6 +105,9 @@ export function framedIn(moduleUrl: string) {
       const flush = frameOptions?.flush ?? options.flush;
       const scroll = frameOptions?.scroll ?? options.scroll;
       const viewport = frameOptions?.viewport ?? options.viewport;
+      const encodedScript = frameOptions?.script
+        ? encodeURIComponent(frameOptions.script)
+        : undefined;
 
       const srcDoc = useMemo(
         () =>
@@ -110,6 +116,7 @@ export function framedIn(moduleUrl: string) {
             flush,
             scroll,
             measure,
+            encodedScript,
             reactDemo: { module, export: name, props: demoProps },
           }),
         [props],

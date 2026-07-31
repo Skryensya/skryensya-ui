@@ -5,6 +5,7 @@ import {
   useImperativeHandle,
   useRef,
   type HTMLAttributes,
+  type CSSProperties,
   type ReactNode,
 } from "react";
 
@@ -28,10 +29,14 @@ export type CarouselProps = HTMLAttributes<HTMLElement> & {
    */
   loop?: boolean;
   /** Advance on a timer. Also draws the pause control, which WCAG 2.2.2 requires along with it. */
-  autoplay?: boolean;
+  autoplay?: boolean | number;
   orientation?: OptionValue<typeof carouselContract.options.orientation>;
   controls?: OptionValue<typeof carouselContract.options.controls>;
   mouseDrag?: OptionValue<typeof carouselContract.options.mouseDrag>;
+  /** Set false to leave the native CSS-only scroll-snap baseline unenhanced. */
+  mounted?: boolean;
+  /** CSS length for each slide, e.g. `min(42%, 14rem)`. */
+  slideSize?: string;
 };
 
 /*
@@ -41,10 +46,12 @@ export type CarouselProps = HTMLAttributes<HTMLElement> & {
  * through the same goto event any consumer can dispatch.
  */
 export const Carousel = forwardRef<CarouselHandle, CarouselProps>(function Carousel(
-  { autoplay, children, className, controls, loop, mouseDrag, orientation, ...props },
+  { autoplay, children, className, controls, loop, mounted = true, mouseDrag, orientation, slideSize, style, ...props },
   ref,
 ) {
   const rootRef = useRef<HTMLElement>(null);
+  const carouselStyle: (CSSProperties & { "--sk-carousel-slide-size"?: string }) | undefined =
+    slideSize ? { ...style, "--sk-carousel-slide-size": slideSize } : style;
 
   useImperativeHandle(
     ref,
@@ -62,13 +69,14 @@ export const Carousel = forwardRef<CarouselHandle, CarouselProps>(function Carou
     <section
       {...props}
       className={cx(carouselParts.root, className)}
-      data-autoplay={autoplay ? "" : undefined}
+      data-autoplay={typeof autoplay === "number" ? autoplay : autoplay ? "" : undefined}
       data-controls={controls}
       data-loop={loop ? "" : undefined}
       data-mouse-drag={mouseDrag}
       data-orientation={orientation}
-      data-sk-carousel=""
+      data-sk-carousel={mounted ? "" : undefined}
       ref={rootRef}
+      style={carouselStyle}
     >
       {/* A div, not a <ul>: the machine gives each slide role="group", which takes it out of the
           list and leaves a list with no list items. */}

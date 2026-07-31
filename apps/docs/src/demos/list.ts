@@ -1,14 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
-/*
- * THE LADDER. Each demo adds exactly one slot to the one before it, so the page reads as an anatomy
- * being assembled rather than as six finished screens.
- *
- * Step 1 of that ladder — a bare `<li>` with nothing but text — is NOT here: `ListItem` declares
- * `title` as a required slot and has no `children`, so "a row with no slots at all" is precisely the
- * thing the contract cannot say. It is the floor the page exists to show, and it stays authored.
- */
+/* The anatomy ladder. Each demo adds one slot to the row before it. */
 
 /** The rows the middle of the ladder repeats, so a step differs from the last one by one field. */
 const preferences = () =>
@@ -19,6 +12,17 @@ const preferences = () =>
     ["dateFormat", "calendar"],
     ["homePage", "visibility"],
   ] as const;
+
+export const listPlainTree = (t: Translate): UsageTree => ({
+  contract: "list",
+  signature: "List",
+  attrs: { "aria-label": t("demo.list.integrations") },
+  children: ["GitHub", "Slack", "Linear", "Figma", "Notion"].map((name) => ({
+    contract: "list",
+    signature: "ListItemPlain",
+    children: name,
+  })),
+});
 
 /** 2 — The content column: title over description. No icons, no trailing. */
 export const listTitledTree = (t: Translate): UsageTree => ({

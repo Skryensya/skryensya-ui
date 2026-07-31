@@ -3,112 +3,17 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
-import { NativeSelectDemo, SelectBasicDemo } from "../../../components/react-demos/select";
+import { selectNativeTree, selectTree } from "../../../demos/select";
+import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const t = useTranslations(getLocale(Astro.url));
 
 const styles = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/select.css";`;
 
 const nativeInstall = `pnpm add @skryensya/core`;
-
-const selectHtml = `<div
-  class="sk-select"
-  data-sk-select
-  id="plan"
-  data-value="starter"
->
-  <label class="sk-select__label" data-sk-select-label>
-    Plan
-  </label>
-
-  <button
-    class="sk-select__trigger sk-anchor sk-interactive"
-    data-sk-select-trigger
-    type="button"
-  >
-    <span class="sk-select__value" data-sk-select-value>
-      Starter
-    </span>
-    <span
-      class="sk-select__indicator"
-      data-sk-select-indicator
-      aria-hidden="true"
-    >
-      <span data-state="closed">
-        <span data-sk-icon="chevron-down"></span>
-      </span>
-      <span data-state="open">
-        <span data-sk-icon="chevron-up"></span>
-      </span>
-    </span>
-  </button>
-
-  <div
-    class="sk-select__positioner sk-anchored"
-    data-sk-select-positioner
-  >
-    <ul class="sk-select__content" data-sk-select-content>
-      <li
-        class="sk-select__item sk-interactive"
-        data-sk-select-item
-        data-value="starter"
-      >
-        <span
-          class="sk-select__item-text"
-          data-sk-select-item-text
-        >
-          Starter
-        </span>
-        <span
-          class="sk-select__item-indicator"
-          data-sk-select-item-indicator
-          aria-hidden="true"
-        >
-          <span data-sk-icon="check"></span>
-        </span>
-      </li>
-      <li
-        class="sk-select__item sk-interactive"
-        data-sk-select-item
-        data-value="pro"
-      >
-        <span
-          class="sk-select__item-text"
-          data-sk-select-item-text
-        >
-          Pro
-        </span>
-        <span
-          class="sk-select__item-indicator"
-          data-sk-select-item-indicator
-          aria-hidden="true"
-        >
-          <span data-sk-icon="check"></span>
-        </span>
-      </li>
-      <li
-        class="sk-select__item sk-interactive"
-        data-sk-select-item
-        data-value="enterprise"
-      >
-        <span
-          class="sk-select__item-text"
-          data-sk-select-item-text
-        >
-          Enterprise
-        </span>
-        <span
-          class="sk-select__item-indicator"
-          data-sk-select-item-indicator
-          aria-hidden="true"
-        >
-          <span data-sk-icon="check"></span>
-        </span>
-      </li>
-    </ul>
-  </div>
-</div>`;
 
 const js = `import { initComponents } from "@skryensya/vanilla/auto";
 import { mountIcons } from "@skryensya/vanilla/icon";
@@ -141,50 +46,6 @@ const forms = `<div
   …
 </div>`;
 
-const reactSelect = `import { Icon } from "@skryensya/react/icon";
-import { Select } from "@skryensya/react/select";
-
-function Example() {
-  return (
-    <Select
-      label="Plan"
-      name="plan"
-      defaultValue={["starter"]}
-      indicator={<Icon name="chevron-down" />}
-      openIndicator={<Icon name="chevron-up" />}
-      itemIndicator={<Icon name="check" />}
-      options={[
-        { value: "starter", label: "Starter" },
-        { value: "pro", label: "Pro" },
-        { value: "enterprise", label: "Enterprise" },
-      ]}
-    />
-  );
-}`;
-
-const nativeSelectHtml = `<div class="sk-stack" data-gap="xs">
-  <label for="native-plan">Plan</label>
-  <select class="sk-select-native" id="native-plan" name="plan">
-    <option value="starter">Starter</option>
-    <option value="pro">Pro</option>
-    <option value="enterprise">Enterprise</option>
-  </select>
-</div>`;
-
-const nativeReactSelect = `import { NativeSelect } from "@skryensya/react/select-native";
-
-function Example() {
-  return (
-    <NativeSelect
-      aria-label="Plan"
-      name="plan"
-      options={[
-        { value: "starter", label: "Starter" },
-        { value: "pro", label: "Pro" },
-      ]}
-    />
-  );
-}`;
 ---
 
 <Base
@@ -200,11 +61,7 @@ function Example() {
     For a standard form choice, use the <a href="#native-select">native Select</a> documented at the end: it does not load an enhancer, preserves platform behavior, and styles its picker through progressive enhancement.
   </p>
 
-  <ComponentPreview html={selectHtml} react={reactSelect} label="Select enhanced" viewport="menu">
-    <Fragment slot="react">
-      <SelectBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={selectTree(t)} label="Select enhanced" viewport="menu" />
   <p>
     Density compacts the space around the selector, not its tactile targets: the trigger and each option remain a minimum of <code>44px</code> high.
   </p>
@@ -247,11 +104,7 @@ function Example() {
   <p>
     Use for a standard choice. Choose Select enhanced only when you need controlled collection, item markup, positioning or <code>sk-value-change</code> event; appearance is no longer a reason to replace the native control.
   </p>
-  <ComponentPreview html={nativeSelectHtml} react={nativeReactSelect} label="Native Select" viewport="menu">
-    <Fragment slot="react">
-      <NativeSelectDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={selectNativeTree(t)} label="Native Select" viewport="menu" />
 
   <h3>Progressive enhancement</h3>
   <p>

@@ -1,0 +1,20 @@
+# La estructura vive en packages/core/src/select.ts. Acá sólo por qué se elige.
+
+Select.native:
+  useWhen:
+    - "una elección estándar de una lista conocida, dentro de un formulario"
+    - "el teclado, el envío y la accesibilidad deben pertenecer al navegador"
+  avoidWhen:
+    - "cada opción necesita markup propio: icono, descripción, dos líneas"
+    - "hace falta el evento sk-value-change o una colección controlada"
+  alternatives:
+    - Select
+
+Select:
+  useWhen:
+    - "las opciones necesitan markup, no sólo texto"
+    - "hace falta una colección controlada, posicionamiento propio o el evento sk-value-change"
+  avoidWhen:
+    - "alcanza con una elección estándar: la apariencia dejó de ser razón para reemplazar el control nativo"
+  alternatives:
+    - Select.native

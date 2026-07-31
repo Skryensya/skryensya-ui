@@ -5267,6 +5267,331 @@
         }
       }
     },
+    "select": {
+      "css": "@skryensya/core/components/select.css",
+      "id": "select",
+      "options": {
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "name": {
+          "attr": "name",
+          "type": "string"
+        },
+        "placeholder": {
+          "attr": "data-placeholder",
+          "machineInput": true,
+          "type": "string"
+        },
+        "required": {
+          "attr": "data-required",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "value": {
+          "attr": "data-value",
+          "machineInput": true,
+          "prop": "defaultValue",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "content": "sk-select__content",
+        "control": "sk-select__control",
+        "indicator": "sk-select__indicator",
+        "item": "sk-select__item",
+        "itemIndicator": "sk-select__item-indicator",
+        "itemText": "sk-select__item-text",
+        "label": "sk-select__label",
+        "native": "sk-select-native",
+        "positioner": "sk-select__positioner",
+        "root": "sk-select",
+        "trigger": "sk-select__trigger",
+        "value": "sk-select__value"
+      },
+      "semantics": {
+        "Select": {
+          "alternatives": [
+            "Select.native"
+          ],
+          "avoidWhen": [
+            "alcanza con una elección estándar: la apariencia dejó de ser razón para reemplazar el control nativo"
+          ],
+          "useWhen": [
+            "las opciones necesitan markup, no sólo texto",
+            "hace falta una colección controlada, posicionamiento propio o el evento sk-value-change"
+          ]
+        },
+        "Select.native": {
+          "alternatives": [
+            "Select"
+          ],
+          "avoidWhen": [
+            "cada opción necesita markup propio: icono, descripción, dos líneas",
+            "hace falta el evento sk-value-change o una colección controlada"
+          ],
+          "useWhen": [
+            "una elección estándar de una lista conocida, dentro de un formulario",
+            "el teclado, el envío y la accesibilidad deben pertenecer al navegador"
+          ]
+        }
+      },
+      "signatures": {
+        "Select": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "controlled-collection",
+            "item-markup",
+            "positioned-listbox",
+            "value-change-event"
+          ],
+          "mount": "data-sk-select",
+          "options": [
+            "name",
+            "value",
+            "placeholder",
+            "disabled",
+            "required"
+          ],
+          "portals": true,
+          "react": {
+            "from": "@skryensya/react/select",
+            "name": "Select"
+          },
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "value",
+                "options": {
+                  "disabled": {
+                    "attr": "data-disabled",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "value": {
+                    "attr": "data-value",
+                    "type": "string"
+                  }
+                },
+                "slots": {
+                  "label": {
+                    "accepts": "text",
+                    "required": true
+                  }
+                }
+              },
+              "prop": "options",
+              "required": true
+            },
+            "label": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "element": "label",
+                    "mount": "data-sk-select-label",
+                    "part": "label",
+                    "slot": "label",
+                    "whenGiven": "label"
+                  },
+                  {
+                    "also": [
+                      "sk-anchor",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "element": "span",
+                        "mount": "data-sk-select-value",
+                        "part": "value"
+                      },
+                      {
+                        "attrs": {
+                          "aria-hidden": "true"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-state": "closed"
+                            },
+                            "children": [
+                              {
+                                "attrs": {
+                                  "data-sk-icon": "chevron-down"
+                                },
+                                "element": "span"
+                              }
+                            ],
+                            "element": "span"
+                          },
+                          {
+                            "attrs": {
+                              "data-state": "open"
+                            },
+                            "children": [
+                              {
+                                "attrs": {
+                                  "data-sk-icon": "chevron-up"
+                                },
+                                "element": "span"
+                              }
+                            ],
+                            "element": "span"
+                          }
+                        ],
+                        "element": "span",
+                        "mount": "data-sk-select-indicator",
+                        "part": "indicator"
+                      }
+                    ],
+                    "element": "button",
+                    "mount": "data-sk-select-trigger",
+                    "part": "trigger"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-select-control",
+                "part": "control"
+              },
+              {
+                "also": [
+                  "sk-anchored"
+                ],
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "also": [
+                          "sk-interactive"
+                        ],
+                        "children": [
+                          {
+                            "element": "span",
+                            "itemSlot": "label",
+                            "mount": "data-sk-select-item-text",
+                            "part": "itemText"
+                          },
+                          {
+                            "children": [
+                              {
+                                "attrs": {
+                                  "data-sk-icon": "check"
+                                },
+                                "element": "span"
+                              }
+                            ],
+                            "element": "span",
+                            "mount": "data-sk-select-item-indicator",
+                            "part": "itemIndicator"
+                          }
+                        ],
+                        "element": "li",
+                        "itemOptions": [
+                          "value",
+                          "disabled"
+                        ],
+                        "mount": "data-sk-select-item",
+                        "part": "item",
+                        "repeat": "items"
+                      }
+                    ],
+                    "element": "ul",
+                    "mount": "data-sk-select-content",
+                    "part": "content"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-select-positioner",
+                "part": "positioner"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "Select.native": {
+          "host": {
+            "element": "select"
+          },
+          "intent": [
+            "a-standard-choice",
+            "one-of-a-known-list",
+            "form-field"
+          ],
+          "options": [
+            "name",
+            "disabled",
+            "required"
+          ],
+          "react": {
+            "from": "@skryensya/react/select-native",
+            "name": "NativeSelect"
+          },
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "value",
+                "options": {
+                  "disabled": {
+                    "attr": "disabled",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "value": {
+                    "attr": "value",
+                    "type": "string"
+                  }
+                },
+                "slots": {
+                  "label": {
+                    "accepts": "text",
+                    "required": true
+                  }
+                }
+              },
+              "prop": "options",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "option",
+                "itemOptions": [
+                  "value",
+                  "disabled"
+                ],
+                "itemSlot": "label",
+                "repeat": "items"
+              }
+            ],
+            "element": "select",
+            "host": true,
+            "part": "native"
+          }
+        }
+      }
+    },
     "sidebar": {
       "css": "@skryensya/core/components/sidebar.css",
       "id": "sidebar",
@@ -8926,5 +9251,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "21c9bbd13d7d4e38"
+  "sourceHash": "0fd7e6236d9c888e"
 }

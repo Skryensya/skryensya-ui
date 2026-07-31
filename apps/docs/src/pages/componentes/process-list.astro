@@ -7,6 +7,16 @@ import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import { ProcessListDemo } from "../../components/react-demos/process-list";
 
+/*
+ * Authored on purpose, and it cannot be a usage tree yet.
+ *
+ * The first step's content is a CodePreview showing the install command, and `code-preview` has no
+ * published contract. Everything around it — the list, the titles, the Stack, the Text, the Badge —
+ * is expressible; the one block this walkthrough exists to hand you is not. A tree without it would
+ * leave three steps of plain prose, which teaches less than this does. Revisit when code-preview is
+ * published; that is F4 work, not F6.
+ */
+
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
 const styles = `@import "@skryensya/core/components/process-list.css";

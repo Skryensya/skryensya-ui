@@ -3,111 +3,13 @@ import "@skryensya/core/components/steps.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
-import { StepsDemo, StepsVerticalDemo } from "../../components/react-demos/steps";
+import { stepsTree, stepsVerticalTree } from "../../demos/steps";
+import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
-/* A completed step is marked with the real `check` icon, not a ✓ glyph; the pending steps keep numbers. */
-const html = `<ol class="sk-steps">
-  <li class="sk-steps__item" data-status="complete">
-    <span class="sk-steps__marker">
-      <span data-sk-icon="check"></span>
-    </span>
-    <span>
-      <span class="sk-steps__label">Elegir marca</span>
-      <span class="sk-steps__description">Tu intención cromática</span>
-    </span>
-  </li>
-  <li class="sk-steps__item" data-status="current" aria-current="step">
-    <span class="sk-steps__marker">2</span>
-    <span>
-      <span class="sk-steps__label">Ajustar ramps</span>
-      <span class="sk-steps__description">
-        Define la luz y la sombra
-      </span>
-    </span>
-  </li>
-  <li class="sk-steps__item" data-status="upcoming">
-    <span class="sk-steps__marker">3</span>
-    <span>
-      <span class="sk-steps__label">Auditar contraste</span>
-      <span class="sk-steps__description">
-        Prueba cada par de color
-      </span>
-    </span>
-  </li>
-  <li class="sk-steps__item" data-status="upcoming">
-    <span class="sk-steps__marker">4</span>
-    <span>
-      <span class="sk-steps__label">Exportar</span>
-      <span class="sk-steps__description">Publica el contrato</span>
-    </span>
-  </li>
-</ol>`;
+const t = useTranslations(getLocale(Astro.url));
 
-const react = `import { Steps } from "@skryensya/react/steps";
-
-function Example() {
-  return (
-    <Steps
-      current={1}
-      steps={[
-        { label: "Elegir marca", description: "Tu intención cromática" },
-        {
-          label: "Definir rampas",
-          description: "Exporta cada posición",
-        },
-        {
-          label: "Auditar contraste",
-          description: "Prueba cada par de color",
-        },
-        { label: "Exportar", description: "Publica el contrato" },
-      ]}
-    />
-  );
-}`;
-
-const verticalHtml = `<ol class="sk-steps" data-orientation="vertical">
-  <li class="sk-steps__item" data-status="complete">
-    <span class="sk-steps__marker">
-      <span data-sk-icon="check"></span>
-    </span>
-    <span>
-      <span class="sk-steps__label">Cuenta</span>
-      <span class="sk-steps__description">Datos de acceso</span>
-    </span>
-  </li>
-  <li class="sk-steps__item" data-status="current" aria-current="step">
-    <span class="sk-steps__marker">2</span>
-    <span>
-      <span class="sk-steps__label">Envío</span>
-      <span class="sk-steps__description">Dirección de entrega</span>
-    </span>
-  </li>
-  <li class="sk-steps__item" data-status="upcoming">
-    <span class="sk-steps__marker">3</span>
-    <span>
-      <span class="sk-steps__label">Pago</span>
-      <span class="sk-steps__description">Método y facturación</span>
-    </span>
-  </li>
-</ol>`;
-
-const verticalReact = `import { Steps } from "@skryensya/react/steps";
-
-function Example() {
-  return (
-    <Steps
-      current={1}
-      data-orientation="vertical"
-      steps={[
-        { label: "Cuenta", description: "Datos de acceso" },
-        { label: "Envío", description: "Dirección de entrega" },
-        { label: "Pago", description: "Método y facturación" },
-      ]}
-    />
-  );
-}`;
 ---
 
 <Base title="Steps" description="Steps: indicador de progreso lineal con estados complete / current / upcoming.">
@@ -118,11 +20,7 @@ function Example() {
     secuencia, no gobierna cuál está activo ni guarda la navegación entre pasos.
   </p>
 
-  <ComponentPreview html={html} react={react} label="Steps">
-    <Fragment slot="react">
-      <StepsDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={stepsTree(t)} label="Steps" />
   <p>En React, <code>current</code> deriva el estado de los pasos que no declaran el suyo; un paso puede sobrescribirlo con <code>status</code>. <code>description</code> agrega contexto sin convertir el paso en una tarjeta.</p>
 
   <h2>En móvil</h2>
@@ -140,11 +38,7 @@ function Example() {
     <code>data-orientation="horizontal"</code> hace el inverso: fuerza el recorrido horizontal incluso
     por debajo de <code>40rem</code>.
   </p>
-  <ComponentPreview html={verticalHtml} react={verticalReact} label="Steps vertical">
-    <Fragment slot="react">
-      <StepsVerticalDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={stepsVerticalTree(t)} label="Steps vertical" />
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

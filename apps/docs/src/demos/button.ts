@@ -215,15 +215,15 @@ export const firstComponentButtonsTree = (t: Translate): UsageTree => ({
   ],
 });
 
-/*
- * TileButton is NOT here, and the reason is a contract gap rather than an oversight.
- *
- * The demo is a card whose face is a title over a description, which is `sk-tile__content`,
- * `sk-tile__title` and `sk-tile__description`. The tile contract DECLARES all three as parts — and no
- * signature emits them: `TileButton`'s template is a host with a `children` slot, and there is no
- * `TileContent` / `TileTitle` / `TileDescription` to nest inside it. So the composition is
- * inexpressible, and the page keeps its authored markup until the contract grows those signatures.
- *
- * Worth stating because it is the trap in judging what converts: a class being a declared PART is
- * not the same as being reachable. Twenty-nine parts across the catalogue are in this position.
- */
+export const tileButtonTree = (_t: Translate): UsageTree => ({
+  contract: "tile",
+  signature: "TileButton",
+  children: {
+    contract: "tile",
+    signature: "TileContent",
+    slots: {
+      title: "Run deployment",
+      description: "Start the production deployment now.",
+    },
+  },
+});

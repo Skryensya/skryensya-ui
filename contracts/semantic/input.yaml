@@ -17,3 +17,10 @@ Textarea:
     - "una sola línea alcanza; un Textarea invita a escribir de más"
   alternatives:
     - Input
+NativeInput:
+  useWhen:
+    - "la plataforma ya ofrece el control correcto y se quiere enseñar su comportamiento nativo sin la apariencia de Input"
+  avoidWhen:
+    - "es entrada de texto con la apariencia del sistema; eso es Input dentro de Field"
+  alternatives:
+    - Input

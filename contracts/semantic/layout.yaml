@@ -20,3 +20,12 @@ Grid:
     - "los anchos son distintos entre sí; eso es un Inline"
   alternatives:
     - Inline
+DensityScope:
+  useWhen:
+    - "un subárbol completo necesita escalar el espaciado semántico sin cambiar cada componente"
+  avoidWhen:
+    - "sólo cambia un gap; configura el Stack, Inline o Grid directamente"
+  alternatives:
+    - Stack
+    - Inline
+    - Grid

@@ -62,16 +62,35 @@ export const listContract = {
       intent: ["rows", "list-of-records", "settings-rows", "inbox"],
       host: { element: "ul" },
       options: ["density"],
-      slots: { children: { accepts: "signature", required: true, of: ["ListItem", "ListItemLink"] } },
+      slots: { children: { accepts: "signature", required: true, of: ["ListItemPlain", "ListItem", "ListItemLink"] } },
       template: { element: "ul", part: "root", host: true, slot: "children" },
       react: { from: "@skryensya/react/list", name: "List" },
+    },
+
+    OrderedList: {
+      intent: ["ordered-rows", "steps-with-rich-row-anatomy", "ranked-records"],
+      host: { element: "ol" },
+      options: ["density"],
+      slots: { children: { accepts: "signature", required: true, of: ["ListItemPlain", "ListItem", "ListItemLink"] } },
+      template: { element: "ol", part: "root", host: true, slot: "children" },
+      react: { from: "@skryensya/react/list", name: "OrderedList" },
+    },
+
+    ListItemPlain: {
+      intent: ["plain-list-row", "text-only-ui-row"],
+      host: { element: "li" },
+      options: ["disabled"],
+      parents: ["List", "OrderedList"],
+      slots: { children: { accepts: "node", required: true } },
+      template: { element: "li", part: "item", host: true, slot: "children" },
+      react: { from: "@skryensya/react/list", name: "ListItemPlain" },
     },
 
     ListItem: {
       intent: ["one-row", "inert-row"],
       host: { element: "li" },
       options: ["disabled"],
-      parents: ["List"],
+      parents: ["List", "OrderedList"],
       slots: {
         leading: { accepts: "signature", of: ["Icon", "Avatar.initials"] },
         title: { accepts: "text", required: true },
@@ -103,7 +122,7 @@ export const listContract = {
       host: { element: "a" },
       options: ["href"],
       requires: ["href"],
-      parents: ["List"],
+      parents: ["List", "OrderedList"],
       slots: {
         leading: { accepts: "signature", of: ["Icon", "Avatar.initials"] },
         title: { accepts: "text", required: true },

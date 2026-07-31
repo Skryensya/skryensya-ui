@@ -1,0 +1,45 @@
+# La estructura vive en packages/core/src/pagination.ts. Acá sólo por qué se elige.
+
+TablePager:
+  useWhen:
+    - "una tabla autorada necesita paginar filas en el cliente y cambiar cuántas se ven"
+  avoidWhen:
+    - "los datos vienen paginados del servidor; la aplicación debe controlar esa consulta"
+  alternatives:
+    - Table
+
+TablePagerBar:
+  useWhen:
+    - "agrupa el tamaño de página, el rango visible y la navegación de un TablePager"
+  avoidWhen:
+    - "está fuera de un TablePager"
+  alternatives: []
+
+TablePagerSize:
+  useWhen:
+    - "contiene el selector que cambia cuántas filas muestra el TablePager"
+  avoidWhen:
+    - "no existe elección de tamaño de página"
+  alternatives: []
+
+TablePagerEnd:
+  useWhen:
+    - "agrupa el rango visible y la navegación al final de la barra"
+  avoidWhen:
+    - "está fuera de un TablePagerBar"
+  alternatives: []
+
+TablePagerStatus:
+  useWhen:
+    - "muestra el rango de filas visibles y el total"
+  avoidWhen:
+    - "el texto no describe un TablePager"
+  alternatives: []
+
+TablePagerNav:
+  useWhen:
+    - "el enhancer debe generar los controles de página de un TablePager"
+  avoidWhen:
+    - "se necesita paginación autónoma; eso es Pagination"
+  alternatives:
+    - Pagination

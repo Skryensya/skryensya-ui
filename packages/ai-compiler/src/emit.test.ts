@@ -73,6 +73,19 @@ describe("emitMarkup", () => {
     );
   });
 
+  it("merges a consumer class into the host's contract class", () => {
+    const tree: UsageTree = {
+      contract: "box",
+      signature: "Box",
+      attrs: { class: "consumer-shell" },
+      children: "Content",
+    };
+    const markup = emitMarkup(tree);
+
+    expect(markup).toContain('class="sk-box consumer-shell"');
+    expect(markup.match(/\bclass=/g)).toHaveLength(1);
+  });
+
   it("expands three signatures into the five levels the markup needs", () => {
     const handWritten = `
       <nav class="sk-nav-list" aria-label="Principal">
@@ -245,6 +258,59 @@ describe("the two bindings agree on what the tree says", () => {
     for (const tree of [saveButton, docsLink, navigation]) {
       expect(validateUsageTree(tree).valid).toBe(true);
     }
+  });
+
+  it("writes style-backed options as CSS custom properties in both bindings", () => {
+    const carousel: UsageTree = {
+      contract: "carousel",
+      signature: "Carousel",
+      options: { slideSize: "min(42%, 14rem)" },
+      attrs: { "aria-label": "Features" },
+      children: {
+        contract: "carousel",
+        signature: "CarouselSlide",
+        children: "Search",
+      },
+    };
+
+    const carouselMarkup = emitMarkup(carousel);
+    expect(carouselMarkup).toContain(
+      'style="--sk-carousel-slide-size: min(42%, 14rem);"',
+    );
+    expect(carouselMarkup).not.toContain("data-slide-size");
+    expect(emitReact(carousel)).toContain(
+      'style={{ "--sk-carousel-slide-size": "min(42%, 14rem)" } as CSSProperties}',
+    );
+
+    const table: UsageTree = {
+      contract: "table",
+      signature: "TableScroll",
+      options: { density: 1, densityFactor: 0.6 },
+      children: {
+        contract: "table",
+        signature: "Table",
+        children: {
+          contract: "table",
+          signature: "TableBody",
+          children: {
+            contract: "table",
+            signature: "TableRow",
+            children: {
+              contract: "table",
+              signature: "TableCell",
+              children: "Search",
+            },
+          },
+        },
+      },
+    };
+
+    expect(emitMarkup(table)).toContain(
+      'style="--sk-density: 1; --sk-density-factor: 0.6;"',
+    );
+    expect(emitReact(table)).toContain(
+      'style={{ "--sk-density": 1, "--sk-density-factor": 0.6 } as CSSProperties}',
+    );
   });
 });
 

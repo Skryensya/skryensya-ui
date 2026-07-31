@@ -101,6 +101,15 @@ export const carouselContract = {
     loop: { type: "boolean", default: false, attr: "data-loop", trueValue: "" },
     /** Advance on a timer, and draw the pause control that WCAG 2.2.2 requires along with it. */
     autoplay: { type: "boolean", default: false, attr: "data-autoplay", trueValue: "" },
+    /** Explicit delay in milliseconds. Same behavior as autoplay, with authored timing. */
+    autoplayDelay: { type: "number", attr: "data-autoplay", prop: "autoplay" },
+    /** Leave false to demonstrate the native CSS-only scroll-snap baseline. */
+    mounted: { type: "boolean", default: true, attr: "data-sk-carousel", trueValue: "" },
+    /** The one authored size knob, kept as a custom property on the root. */
+    slideSize: {
+      type: "string",
+      styleProperty: "--sk-carousel-slide-size",
+    },
     orientation: { type: "enum", values: ["horizontal", "vertical"], attr: "data-orientation" },
     /**
      * `none` draws no prev/next and no dots, in either layer. The track is then a plain snap
@@ -119,9 +128,8 @@ export const carouselContract = {
     Carousel: {
       intent: ["carousel", "slider-of-cards", "snap-scroller", "gallery"],
       host: { element: "section" },
-      options: ["loop", "autoplay", "orientation", "controls", "mouseDrag"],
+      options: ["loop", "autoplay", "autoplayDelay", "mounted", "slideSize", "orientation", "controls", "mouseDrag"],
       slots: { children: { accepts: "signature", of: ["CarouselSlide"], required: true } },
-      mount: "data-sk-carousel",
       template: {
         element: "section",
         part: "root",

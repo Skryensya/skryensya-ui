@@ -77,6 +77,23 @@ export const TileButton = forwardRef<HTMLButtonElement, TileButtonProps>(functio
   );
 });
 
+export type TileContentProps = HTMLAttributes<HTMLSpanElement> & {
+  title: ReactNode;
+  description?: ReactNode;
+};
+
+export const TileContent = forwardRef<HTMLSpanElement, TileContentProps>(function TileContent(
+  { className, description, title, ...props },
+  ref,
+) {
+  return (
+    <span {...props} className={className ? `${tileParts.content} ${className}` : tileParts.content} data-part="content" ref={ref}>
+      <span className={tileParts.title}>{title}</span>
+      {description != null ? <span className={tileParts.description}>{description}</span> : null}
+    </span>
+  );
+});
+
 export type TileCheckboxProps = Omit<LabelHTMLAttributes<HTMLLabelElement>, "onChange"> &
   TileCheckboxOptions & {
     children?: ReactNode;

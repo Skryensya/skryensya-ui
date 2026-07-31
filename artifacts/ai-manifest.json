@@ -459,6 +459,11 @@
       "css": "@skryensya/core/components/avatar.css",
       "id": "avatar",
       "options": {
+        "imageName": {
+          "attr": "alt",
+          "prop": "name",
+          "type": "string"
+        },
         "name": {
           "attr": "aria-label",
           "type": "string"
@@ -485,6 +490,19 @@
         "root": "sk-avatar"
       },
       "semantics": {
+        "Avatar.image": {
+          "alternatives": [
+            "Avatar.initials",
+            "ImageFrame"
+          ],
+          "avoidWhen": [
+            "es una imagen de contenido y no una identidad; usa ImageFrame"
+          ],
+          "useWhen": [
+            "hay una foto que identifica a una persona o entidad",
+            "el recorte circular necesita conservar el nombre como texto alternativo"
+          ]
+        },
         "Avatar.initials": {
           "alternatives": [
             "ImageFrame"
@@ -496,15 +514,89 @@
             "no hay foto y hacen falta las iniciales de la persona",
             "el avatar identifica a alguien y necesita nombre accesible"
           ]
+        },
+        "AvatarGroup": {
+          "alternatives": [
+            "List"
+          ],
+          "avoidWhen": [
+            "cada persona necesita nombre, detalle o acción visible; usa List"
+          ],
+          "useWhen": [
+            "varias identidades se muestran juntas en una pila compacta",
+            "el excedente visible se resume con un contador"
+          ]
         }
       },
       "signatures": {
+        "Avatar.image": {
+          "host": {
+            "element": "span",
+            "when": {
+              "src": "present"
+            }
+          },
+          "intent": [
+            "person",
+            "user-identity",
+            "photo"
+          ],
+          "options": [
+            "size",
+            "imageName",
+            "src"
+          ],
+          "react": {
+            "from": "@skryensya/react/avatar",
+            "name": "Avatar"
+          },
+          "requires": [
+            "imageName",
+            "src"
+          ],
+          "slots": {},
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-image-frame"
+                ],
+                "attrs": {
+                  "data-aspect": "1/1",
+                  "data-border": "none",
+                  "data-fit": "cover",
+                  "data-position": "center",
+                  "data-radius": "pill"
+                },
+                "children": [
+                  {
+                    "also": [
+                      "sk-image-frame__media"
+                    ],
+                    "element": "img",
+                    "options": [
+                      "src",
+                      "imageName"
+                    ]
+                  }
+                ],
+                "element": "span"
+              }
+            ],
+            "element": "span",
+            "host": true,
+            "part": "root"
+          }
+        },
         "Avatar.initials": {
           "forbids": [
             "src"
           ],
           "host": {
-            "element": "span"
+            "element": "span",
+            "when": {
+              "src": "absent"
+            }
           },
           "intent": [
             "person",
@@ -546,6 +638,50 @@
             "host": true,
             "part": "root"
           }
+        },
+        "AvatarGroup": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "people",
+            "avatar-stack",
+            "group-with-overflow"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/avatar",
+            "name": "AvatarGroup"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "Avatar.initials",
+                "Avatar.image"
+              ],
+              "required": true
+            },
+            "overflow": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "slot": "children"
+              },
+              {
+                "element": "span",
+                "part": "groupOverflow",
+                "slot": "overflow",
+                "whenGiven": "overflow"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "group"
+          }
         }
       }
     },
@@ -567,6 +703,7 @@
         }
       },
       "parts": {
+        "holder": "sk-badge-holder",
         "root": "sk-badge"
       },
       "semantics": {
@@ -581,6 +718,28 @@
           "useWhen": [
             "un conteo o un estado corto pegado a otra cosa: no leídos, cantidad, etiqueta de estado",
             "el tono comunica un rol del sistema: success, warning, danger"
+          ]
+        },
+        "BadgeDot": {
+          "alternatives": [
+            "Badge"
+          ],
+          "avoidWhen": [
+            "hay texto o un conteo visible; eso es un Badge"
+          ],
+          "useWhen": [
+            "un punto compacto comunica presencia, novedad o estado junto a otro control"
+          ]
+        },
+        "BadgeHolder": {
+          "alternatives": [
+            "Badge"
+          ],
+          "avoidWhen": [
+            "el badge participa del flujo normal; no necesita un ancla"
+          ],
+          "useWhen": [
+            "un BadgeDot se ancla a la esquina de un botón o avatar"
           ]
         }
       },
@@ -612,6 +771,65 @@
             "element": "span",
             "host": true,
             "part": "root",
+            "slot": "children"
+          }
+        },
+        "BadgeDot": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "unread-dot",
+            "presence-dot",
+            "status-dot"
+          ],
+          "options": [
+            "tone"
+          ],
+          "react": {
+            "from": "@skryensya/react/badge",
+            "name": "BadgeDot"
+          },
+          "slots": {},
+          "template": {
+            "attrs": {
+              "data-dot": ""
+            },
+            "element": "span",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "BadgeHolder": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "badge-anchored-to-control",
+            "presence-on-avatar",
+            "unread-on-button"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/badge",
+            "name": "BadgeHolder"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "Button.action",
+                "Button.navigation",
+                "Avatar.initials",
+                "BadgeDot"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "span",
+            "host": true,
+            "part": "holder",
             "slot": "children"
           }
         }
@@ -1045,6 +1263,11 @@
           "trueValue": "",
           "type": "boolean"
         },
+        "autoplayDelay": {
+          "attr": "data-autoplay",
+          "prop": "autoplay",
+          "type": "number"
+        },
         "controls": {
           "attr": "data-controls",
           "type": "enum",
@@ -1056,6 +1279,12 @@
         "loop": {
           "attr": "data-loop",
           "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "mounted": {
+          "attr": "data-sk-carousel",
+          "default": true,
           "trueValue": "",
           "type": "boolean"
         },
@@ -1074,6 +1303,10 @@
             "horizontal",
             "vertical"
           ]
+        },
+        "slideSize": {
+          "styleProperty": "--sk-carousel-slide-size",
+          "type": "string"
         }
       },
       "parts": {
@@ -1123,10 +1356,12 @@
             "snap-scroller",
             "gallery"
           ],
-          "mount": "data-sk-carousel",
           "options": [
             "loop",
             "autoplay",
+            "autoplayDelay",
+            "mounted",
+            "slideSize",
             "orientation",
             "controls",
             "mouseDrag"
@@ -1195,6 +1430,20 @@
         "checked": {
           "attr": "checked",
           "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "defaultChecked": {
+          "attr": "checked",
+          "default": false,
+          "prop": "defaultChecked",
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "defaultIndeterminate": {
+          "attr": "data-default-indeterminate",
+          "default": false,
+          "prop": "defaultIndeterminate",
           "trueValue": "",
           "type": "boolean"
         },
@@ -1277,6 +1526,8 @@
             "name",
             "value",
             "checked",
+            "defaultChecked",
+            "defaultIndeterminate",
             "disabled",
             "required"
           ],
@@ -1381,6 +1632,11 @@
             "inline"
           ]
         },
+        "timeout": {
+          "attr": "data-timeout",
+          "machineInput": true,
+          "type": "number"
+        },
         "tone": {
           "attr": "data-tone",
           "default": "neutral",
@@ -1431,6 +1687,17 @@
             "la página va a mostrar toasts: son suyos, y sin región no hay dónde ponerlos",
             "hace falta que se anuncien solos; la región es la que el lector de pantalla ya está mirando"
           ]
+        },
+        "ToastTemplate": {
+          "alternatives": [
+            "Toast"
+          ],
+          "avoidWhen": [
+            "el Toast ya existe en la región desde el primer render"
+          ],
+          "useWhen": [
+            "un script va a clonar la misma anatomía de Toast para mensajes dinámicos"
+          ]
         }
       },
       "signatures": {
@@ -1444,14 +1711,17 @@
             "undo-prompt",
             "background-task-finished"
           ],
+          "mount": "data-sk-toast",
           "options": [
             "tone",
             "presentation",
             "dismissible",
-            "dismissLabel"
+            "dismissLabel",
+            "timeout"
           ],
           "parents": [
-            "ToastRegion"
+            "ToastRegion",
+            "ToastTemplate"
           ],
           "react": {
             "from": "@skryensya/react/content",
@@ -1591,8 +1861,7 @@
               "accepts": "signature",
               "of": [
                 "Toast"
-              ],
-              "required": true
+              ]
             }
           },
           "template": {
@@ -1602,6 +1871,34 @@
             "element": "div",
             "host": true,
             "part": "toastRegion",
+            "slot": "children"
+          }
+        },
+        "ToastTemplate": {
+          "host": {
+            "element": "template"
+          },
+          "intent": [
+            "toast-blueprint",
+            "dynamic-toast-template"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/content",
+            "name": "ToastTemplate"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "Toast"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "template",
+            "host": true,
             "slot": "children"
           }
         }
@@ -1874,6 +2171,16 @@
           "trueValue": "",
           "type": "boolean"
         },
+        "maxFiles": {
+          "attr": "data-max-files",
+          "machineInput": true,
+          "type": "number"
+        },
+        "maxFileSize": {
+          "attr": "data-max-file-size",
+          "machineInput": true,
+          "type": "number"
+        },
         "multiple": {
           "attr": "multiple",
           "default": false,
@@ -1941,7 +2248,9 @@
             "multiple",
             "accept",
             "disabled",
-            "required"
+            "required",
+            "maxFiles",
+            "maxFileSize"
           ],
           "react": {
             "from": "@skryensya/react/file-upload",
@@ -2019,7 +2328,7 @@
       "id": "flyout",
       "options": {
         "defaultValue": {
-          "attr": "data-default-value",
+          "attr": "data-value",
           "machineInput": true,
           "type": "string"
         },
@@ -2088,6 +2397,12 @@
             "name": "Flyout"
           },
           "slots": {
+            "indicator": {
+              "accepts": "node"
+            },
+            "itemIndicator": {
+              "accepts": "node"
+            },
             "items": {
               "accepts": "items",
               "item": {
@@ -2116,6 +2431,9 @@
             },
             "label": {
               "accepts": "text"
+            },
+            "openIndicator": {
+              "accepts": "node"
             }
           },
           "template": {
@@ -2151,13 +2469,15 @@
                         "attrs": {
                           "data-state": "closed"
                         },
-                        "element": "span"
+                        "element": "span",
+                        "slot": "indicator"
                       },
                       {
                         "attrs": {
                           "data-state": "open"
                         },
-                        "element": "span"
+                        "element": "span",
+                        "slot": "openIndicator"
                       }
                     ],
                     "element": "span",
@@ -2195,7 +2515,8 @@
                         },
                         "element": "span",
                         "mount": "data-sk-flyout-item-indicator",
-                        "part": "itemIndicator"
+                        "part": "itemIndicator",
+                        "slot": "itemIndicator"
                       }
                     ],
                     "element": "li",
@@ -2557,6 +2878,17 @@
             "el tipo nativo aporta teclado y validación del navegador (email, tel, url)"
           ]
         },
+        "NativeInput": {
+          "alternatives": [
+            "Input"
+          ],
+          "avoidWhen": [
+            "es entrada de texto con la apariencia del sistema; eso es Input dentro de Field"
+          ],
+          "useWhen": [
+            "la plataforma ya ofrece el control correcto y se quiere enseñar su comportamiento nativo sin la apariencia de Input"
+          ]
+        },
         "Textarea": {
           "alternatives": [
             "Input"
@@ -2600,6 +2932,30 @@
             "element": "input",
             "host": true,
             "part": "root"
+          }
+        },
+        "NativeInput": {
+          "host": {
+            "element": "input"
+          },
+          "intent": [
+            "unstyled-native-input",
+            "platform-control",
+            "native-time-input"
+          ],
+          "options": [
+            "type",
+            "name",
+            "disabled"
+          ],
+          "react": {
+            "from": "@skryensya/react/input",
+            "name": "NativeInput"
+          },
+          "slots": {},
+          "template": {
+            "element": "input",
+            "host": true
           }
         },
         "Textarea": {
@@ -2706,6 +3062,17 @@
             "4"
           ]
         },
+        "densityFactor": {
+          "default": 1,
+          "styleProperty": "--sk-density-factor",
+          "type": "number"
+        },
+        "equal": {
+          "attr": "data-equal",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
         "gap": {
           "attr": "data-gap",
           "default": "md",
@@ -2728,7 +3095,8 @@
             "start",
             "center",
             "end",
-            "baseline"
+            "baseline",
+            "stretch"
           ]
         },
         "justify": {
@@ -2741,6 +3109,12 @@
             "end",
             "between"
           ]
+        },
+        "multicol": {
+          "attr": "data-multicol",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
         },
         "wrap": {
           "attr": "data-wrap",
@@ -2758,6 +3132,19 @@
         "wrapper": "sk-wrapper"
       },
       "semantics": {
+        "DensityScope": {
+          "alternatives": [
+            "Stack",
+            "Inline",
+            "Grid"
+          ],
+          "avoidWhen": [
+            "sólo cambia un gap; configura el Stack, Inline o Grid directamente"
+          ],
+          "useWhen": [
+            "un subárbol completo necesita escalar el espaciado semántico sin cambiar cada componente"
+          ]
+        },
         "Grid": {
           "alternatives": [
             "Inline"
@@ -2788,6 +3175,40 @@
         }
       },
       "signatures": {
+        "DensityScope": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "local-density",
+            "compact-subtree",
+            "scaled-component-spacing"
+          ],
+          "options": [
+            "densityFactor"
+          ],
+          "react": {
+            "from": "@skryensya/react/layout",
+            "name": "DensityScope"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-sk-density-scope": ""
+            },
+            "element": "div",
+            "host": true,
+            "options": [
+              "densityFactor"
+            ],
+            "slot": "children"
+          }
+        },
         "Grid": {
           "host": {
             "element": "div"
@@ -2799,7 +3220,8 @@
           ],
           "options": [
             "gap",
-            "columns"
+            "columns",
+            "multicol"
           ],
           "react": {
             "from": "@skryensya/react/layout",
@@ -2831,7 +3253,8 @@
             "gap",
             "inlineAlign",
             "justify",
-            "wrap"
+            "wrap",
+            "equal"
           ],
           "react": {
             "from": "@skryensya/react/layout",
@@ -2944,6 +3367,22 @@
           "useWhen": [
             "la fila entera navega, y el objetivo de foco y de clic es la fila"
           ]
+        },
+        "ListItemPlain": {
+          "useWhen": [
+            "una fila de interfaz sólo necesita contenido directo, sin anatomía de título, descripción o trailing"
+          ]
+        },
+        "OrderedList": {
+          "alternatives": [
+            "List"
+          ],
+          "avoidWhen": [
+            "reordenar las filas no cambia su significado; eso es List"
+          ],
+          "useWhen": [
+            "el orden de las filas comunica secuencia, prioridad o ranking"
+          ]
         }
       },
       "signatures": {
@@ -2968,6 +3407,7 @@
             "children": {
               "accepts": "signature",
               "of": [
+                "ListItemPlain",
                 "ListItem",
                 "ListItemLink"
               ],
@@ -2993,7 +3433,8 @@
             "disabled"
           ],
           "parents": [
-            "List"
+            "List",
+            "OrderedList"
           ],
           "react": {
             "from": "@skryensya/react/list",
@@ -3067,7 +3508,8 @@
             "href"
           ],
           "parents": [
-            "List"
+            "List",
+            "OrderedList"
           ],
           "react": {
             "from": "@skryensya/react/list",
@@ -3139,6 +3581,72 @@
             ],
             "element": "li",
             "part": "item"
+          }
+        },
+        "ListItemPlain": {
+          "host": {
+            "element": "li"
+          },
+          "intent": [
+            "plain-list-row",
+            "text-only-ui-row"
+          ],
+          "options": [
+            "disabled"
+          ],
+          "parents": [
+            "List",
+            "OrderedList"
+          ],
+          "react": {
+            "from": "@skryensya/react/list",
+            "name": "ListItemPlain"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "li",
+            "host": true,
+            "part": "item",
+            "slot": "children"
+          }
+        },
+        "OrderedList": {
+          "host": {
+            "element": "ol"
+          },
+          "intent": [
+            "ordered-rows",
+            "steps-with-rich-row-anatomy",
+            "ranked-records"
+          ],
+          "options": [
+            "density"
+          ],
+          "react": {
+            "from": "@skryensya/react/list",
+            "name": "OrderedList"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "ListItemPlain",
+                "ListItem",
+                "ListItemLink"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "ol",
+            "host": true,
+            "part": "root",
+            "slot": "children"
           }
         }
       }
@@ -3777,6 +4285,12 @@
           "machineInput": true,
           "type": "string"
         },
+        "defaultValue": {
+          "attr": "value",
+          "machineInput": true,
+          "prop": "defaultValue",
+          "type": "string"
+        },
         "disabled": {
           "attr": "disabled",
           "default": false,
@@ -3787,6 +4301,11 @@
         "incrementLabel": {
           "attr": "aria-label",
           "default": "Aumentar",
+          "machineInput": true,
+          "type": "string"
+        },
+        "locale": {
+          "attr": "lang",
           "machineInput": true,
           "type": "string"
         },
@@ -3868,6 +4387,8 @@
           "mount": "data-sk-number-field",
           "options": [
             "name",
+            "defaultValue",
+            "locale",
             "min",
             "max",
             "step",
@@ -3934,6 +4455,7 @@
                     "mount": "data-sk-number-field-input",
                     "options": [
                       "name",
+                      "defaultValue",
                       "min",
                       "max",
                       "step",
@@ -5130,6 +5652,33 @@
       "css": "@skryensya/core/components/stat.css",
       "id": "stat",
       "options": {
+        "animate": {
+          "attr": "data-animate",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "count": {
+          "attr": "data-count",
+          "machineInput": true,
+          "type": "number"
+        },
+        "fractionDigits": {
+          "attr": "data-fraction-digits",
+          "machineInput": true,
+          "type": "number"
+        },
+        "locale": {
+          "attr": "data-locale",
+          "machineInput": true,
+          "type": "string"
+        },
+        "suffix": {
+          "attr": "data-suffix",
+          "machineInput": true,
+          "type": "string"
+        },
         "trend": {
           "attr": "data-trend",
           "type": "enum",
@@ -5173,8 +5722,14 @@
             "one-number-with-a-name",
             "dashboard-figure"
           ],
+          "mount": "data-sk-stat",
           "options": [
-            "trend"
+            "trend",
+            "animate",
+            "count",
+            "locale",
+            "suffix",
+            "fractionDigits"
           ],
           "react": {
             "from": "@skryensya/react/stat",
@@ -5202,6 +5757,12 @@
               },
               {
                 "element": "span",
+                "options": [
+                  "count",
+                  "locale",
+                  "suffix",
+                  "fractionDigits"
+                ],
                 "part": "value",
                 "slot": "value"
               },
@@ -5293,7 +5854,7 @@
                     "required": true
                   },
                   "marker": {
-                    "accepts": "text",
+                    "accepts": "node",
                     "required": true
                   }
                 }
@@ -5471,6 +6032,14 @@
         "colspan": {
           "attr": "colspan",
           "prop": "colSpan",
+          "type": "number"
+        },
+        "density": {
+          "styleProperty": "--sk-density",
+          "type": "number"
+        },
+        "densityFactor": {
+          "styleProperty": "--sk-density-factor",
           "type": "number"
         },
         "scope": {
@@ -5849,7 +6418,9 @@
           ],
           "options": [
             "stickyColumn",
-            "stickyHeader"
+            "stickyHeader",
+            "density",
+            "densityFactor"
           ],
           "react": {
             "from": "@skryensya/react/table",
@@ -5868,6 +6439,320 @@
             "element": "div",
             "host": true,
             "part": "scroll",
+            "slot": "children"
+          }
+        }
+      }
+    },
+    "table-pager": {
+      "css": "@skryensya/core/patterns/table-pager.css",
+      "id": "table-pager",
+      "options": {
+        "navLabel": {
+          "attr": "aria-label",
+          "default": "Pagination",
+          "type": "string"
+        },
+        "nextLabel": {
+          "attr": "data-next-label",
+          "default": "Next page",
+          "machineInput": true,
+          "type": "string"
+        },
+        "page": {
+          "attr": "data-page",
+          "default": 1,
+          "machineInput": true,
+          "type": "number"
+        },
+        "pageLabel": {
+          "attr": "data-page-label",
+          "default": "Page",
+          "machineInput": true,
+          "type": "string"
+        },
+        "pageSize": {
+          "attr": "data-page-size",
+          "default": 10,
+          "machineInput": true,
+          "type": "number"
+        },
+        "previousLabel": {
+          "attr": "data-previous-label",
+          "default": "Previous page",
+          "machineInput": true,
+          "type": "string"
+        },
+        "siblings": {
+          "attr": "data-siblings",
+          "default": 1,
+          "machineInput": true,
+          "type": "number"
+        },
+        "statusTemplate": {
+          "attr": "data-status-template",
+          "default": "{start}–{end} of {total}",
+          "machineInput": true,
+          "type": "string"
+        }
+      },
+      "parts": {
+        "bar": "sk-table-pager__bar",
+        "end": "sk-table-pager__end",
+        "nav": "sk-pagination",
+        "root": "sk-table-pager",
+        "size": "sk-table-pager__size",
+        "status": "sk-table-pager__status"
+      },
+      "semantics": {
+        "TablePager": {
+          "alternatives": [
+            "Table"
+          ],
+          "avoidWhen": [
+            "los datos vienen paginados del servidor; la aplicación debe controlar esa consulta"
+          ],
+          "useWhen": [
+            "una tabla autorada necesita paginar filas en el cliente y cambiar cuántas se ven"
+          ]
+        },
+        "TablePagerBar": {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un TablePager"
+          ],
+          "useWhen": [
+            "agrupa el tamaño de página, el rango visible y la navegación de un TablePager"
+          ]
+        },
+        "TablePagerEnd": {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un TablePagerBar"
+          ],
+          "useWhen": [
+            "agrupa el rango visible y la navegación al final de la barra"
+          ]
+        },
+        "TablePagerNav": {
+          "alternatives": [
+            "Pagination"
+          ],
+          "avoidWhen": [
+            "se necesita paginación autónoma; eso es Pagination"
+          ],
+          "useWhen": [
+            "el enhancer debe generar los controles de página de un TablePager"
+          ]
+        },
+        "TablePagerSize": {
+          "alternatives": [],
+          "avoidWhen": [
+            "no existe elección de tamaño de página"
+          ],
+          "useWhen": [
+            "contiene el selector que cambia cuántas filas muestra el TablePager"
+          ]
+        },
+        "TablePagerStatus": {
+          "alternatives": [],
+          "avoidWhen": [
+            "el texto no describe un TablePager"
+          ],
+          "useWhen": [
+            "muestra el rango de filas visibles y el total"
+          ]
+        }
+      },
+      "signatures": {
+        "TablePager": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "paged-table",
+            "table-with-page-size",
+            "client-side-table-pagination"
+          ],
+          "mount": "data-sk-table-pager",
+          "options": [
+            "pageSize",
+            "page",
+            "siblings",
+            "statusTemplate",
+            "previousLabel",
+            "nextLabel",
+            "pageLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/pagination",
+            "name": "TablePager"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "TableScroll",
+                "TablePagerBar"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "TablePagerBar": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "table-pagination-controls",
+            "table-pager-bar"
+          ],
+          "options": [],
+          "parents": [
+            "TablePager"
+          ],
+          "react": {
+            "from": "@skryensya/react/pagination",
+            "name": "TablePagerBar"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "TablePagerSize",
+                "TablePagerEnd"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "bar",
+            "slot": "children"
+          }
+        },
+        "TablePagerEnd": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "table-pager-status-and-navigation",
+            "pager-end-controls"
+          ],
+          "options": [],
+          "parents": [
+            "TablePagerBar"
+          ],
+          "react": {
+            "from": "@skryensya/react/pagination",
+            "name": "TablePagerEnd"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "TablePagerStatus",
+                "TablePagerNav"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "end",
+            "slot": "children"
+          }
+        },
+        "TablePagerNav": {
+          "host": {
+            "element": "nav"
+          },
+          "intent": [
+            "generated-table-pagination",
+            "table-page-navigation"
+          ],
+          "options": [
+            "navLabel"
+          ],
+          "parents": [
+            "TablePagerEnd"
+          ],
+          "react": {
+            "from": "@skryensya/react/pagination",
+            "name": "TablePagerNav"
+          },
+          "slots": {},
+          "template": {
+            "element": "nav",
+            "host": true,
+            "mount": "data-sk-table-pager-nav",
+            "part": "nav"
+          }
+        },
+        "TablePagerSize": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "page-size-control",
+            "rows-per-page-control"
+          ],
+          "options": [],
+          "parents": [
+            "TablePagerBar"
+          ],
+          "react": {
+            "from": "@skryensya/react/pagination",
+            "name": "TablePagerSize"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "size",
+            "slot": "children"
+          }
+        },
+        "TablePagerStatus": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "visible-row-range",
+            "table-page-status"
+          ],
+          "options": [],
+          "parents": [
+            "TablePagerEnd"
+          ],
+          "react": {
+            "from": "@skryensya/react/pagination",
+            "name": "TablePagerStatus"
+          },
+          "slots": {
+            "children": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "mount": "data-sk-table-pager-status",
+            "part": "status",
             "slot": "children"
           }
         }
@@ -6427,6 +7312,15 @@
             "conviene que toda la tarjeta sea el área de click, no sólo el cuadradito"
           ]
         },
+        "TileContent": {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Tile; no es contenido autónomo"
+          ],
+          "useWhen": [
+            "un Tile necesita la anatomía compartida de título y descripción"
+          ]
+        },
         "TileLink": {
           "alternatives": [
             "TileButton"
@@ -6743,6 +7637,57 @@
             "element": "label",
             "host": true,
             "part": "root"
+          }
+        },
+        "TileContent": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "tile-copy",
+            "tile-title-and-description"
+          ],
+          "options": [],
+          "parents": [
+            "TileLink",
+            "TileButton",
+            "TileCheckbox",
+            "TileSwitch",
+            "ExpandableTileTrigger"
+          ],
+          "react": {
+            "from": "@skryensya/react/tile",
+            "name": "TileContent"
+          },
+          "slots": {
+            "description": {
+              "accepts": "node"
+            },
+            "title": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-part": "content"
+            },
+            "children": [
+              {
+                "element": "span",
+                "part": "title",
+                "slot": "title"
+              },
+              {
+                "element": "span",
+                "part": "description",
+                "slot": "description",
+                "whenGiven": "description"
+              }
+            ],
+            "element": "span",
+            "host": true,
+            "part": "content"
           }
         },
         "TileLink": {
@@ -7141,6 +8086,13 @@
           "attr": "aria-label",
           "type": "string"
         },
+        "loopFocus": {
+          "attr": "data-loop-focus",
+          "default": true,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
         "orientation": {
           "alsoAttr": "aria-orientation",
           "attr": "data-orientation",
@@ -7190,9 +8142,11 @@
             "editor-toolbar",
             "grouped-actions"
           ],
+          "mount": "data-sk-toolbar",
           "options": [
             "orientation",
-            "label"
+            "label",
+            "loopFocus"
           ],
           "react": {
             "from": "@skryensya/react/toolbar",
@@ -7275,10 +8229,121 @@
         }
       }
     },
+    "tooltip": {
+      "css": "@skryensya/core/components/tooltip.css",
+      "id": "tooltip",
+      "options": {
+        "placement": {
+          "attr": "data-sk-placement",
+          "default": "block-end",
+          "type": "enum",
+          "values": [
+            "block-start",
+            "block-end",
+            "inline-start",
+            "inline-end"
+          ]
+        }
+      },
+      "parts": {
+        "content": "sk-tooltip__content",
+        "positioner": "sk-tooltip__positioner",
+        "root": "sk-tooltip",
+        "trigger": "sk-tooltip__trigger"
+      },
+      "semantics": {
+        "Tooltip": {
+          "alternatives": [
+            "Flyout"
+          ],
+          "avoidWhen": [
+            "el texto es el único nombre o la única información disponible; debe vivir fuera del tooltip",
+            "el contenido necesita acciones, formato o varias líneas; usa Flyout"
+          ],
+          "useWhen": [
+            "un control ya tiene nombre accesible y necesita una descripción breve al pasar el puntero o enfocar",
+            "un botón de sólo icono necesita una pista visual redundante para quien puede verla"
+          ]
+        }
+      },
+      "signatures": {
+        "Tooltip": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "hint",
+            "expand-a-control-name",
+            "explain-an-icon-button"
+          ],
+          "options": [
+            "placement"
+          ],
+          "portals": true,
+          "react": {
+            "from": "@skryensya/react/tooltip",
+            "name": "Tooltip"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "required": true
+            },
+            "content": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-sk-anchor": ""
+            },
+            "children": [
+              {
+                "slot": "children"
+              },
+              {
+                "also": [
+                  "sk-anchored"
+                ],
+                "attrs": {
+                  "data-sk-anchor-positioner": ""
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "role": "tooltip"
+                    },
+                    "element": "span",
+                    "part": "content",
+                    "slot": "content"
+                  }
+                ],
+                "element": "span",
+                "part": "positioner"
+              }
+            ],
+            "element": "span",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "tree-view": {
       "css": "@skryensya/core/components/tree-view.css",
       "id": "tree-view",
       "options": {
+        "defaultExpandedValue": {
+          "attr": "data-expanded-value",
+          "machineInput": true,
+          "type": "string"
+        },
+        "defaultSelectedValue": {
+          "attr": "data-selected-value",
+          "machineInput": true,
+          "type": "string"
+        },
         "label": {
           "attr": "aria-label",
           "machineInput": true,
@@ -7339,7 +8404,9 @@
           "mount": "data-sk-tree-view",
           "options": [
             "label",
-            "selectionMode"
+            "selectionMode",
+            "defaultExpandedValue",
+            "defaultSelectedValue"
           ],
           "react": {
             "from": "@skryensya/react/tree-view",
@@ -7349,6 +8416,9 @@
             "label"
           ],
           "slots": {
+            "branchIndicator": {
+              "accepts": "node"
+            },
             "items": {
               "accepts": "items",
               "item": {
@@ -7378,6 +8448,9 @@
               },
               "prop": "nodes",
               "required": true
+            },
+            "leafIndicator": {
+              "accepts": "node"
             }
           },
           "template": {
@@ -7405,7 +8478,18 @@
                                     "element": "span",
                                     "mount": "data-sk-tree-view-branch-indicator",
                                     "part": "branchIndicator",
-                                    "text": "›"
+                                    "slot": "branchIndicator",
+                                    "whenGiven": "branchIndicator"
+                                  },
+                                  {
+                                    "attrs": {
+                                      "aria-hidden": "true"
+                                    },
+                                    "element": "span",
+                                    "mount": "data-sk-tree-view-branch-indicator",
+                                    "part": "branchIndicator",
+                                    "text": "›",
+                                    "whenMissing": "branchIndicator"
                                   },
                                   {
                                     "element": "span",
@@ -7448,7 +8532,8 @@
                                 "attrs": {
                                   "aria-hidden": "true"
                                 },
-                                "element": "span"
+                                "element": "span",
+                                "slot": "leafIndicator"
                               },
                               {
                                 "element": "span",
@@ -7589,6 +8674,28 @@
             "un enlace dentro de una frase, subrayado y en el flujo del texto"
           ]
         },
+        "Output": {
+          "alternatives": [
+            "Text"
+          ],
+          "avoidWhen": [
+            "es texto estático sin relación con un cálculo; eso es Text"
+          ],
+          "useWhen": [
+            "muestra el resultado calculado de una entrada o interacción"
+          ]
+        },
+        "Strong": {
+          "alternatives": [
+            "Heading"
+          ],
+          "avoidWhen": [
+            "titula una sección; eso es un Heading"
+          ],
+          "useWhen": [
+            "una frase dentro de texto tiene importancia fuerte, no sólo un peso visual distinto"
+          ]
+        },
         "Text": {
           "avoidWhen": [
             "titula una sección; eso es un Heading, aunque se vea chico"
@@ -7662,6 +8769,56 @@
             "element": "a",
             "host": true,
             "part": "link",
+            "slot": "children"
+          }
+        },
+        "Output": {
+          "host": {
+            "element": "output"
+          },
+          "intent": [
+            "calculated-result",
+            "inline-live-result"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/typography",
+            "name": "Output"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "output",
+            "host": true,
+            "slot": "children"
+          }
+        },
+        "Strong": {
+          "host": {
+            "element": "strong"
+          },
+          "intent": [
+            "strong-importance",
+            "emphasis-inside-text"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/typography",
+            "name": "Strong"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "strong",
+            "host": true,
             "slot": "children"
           }
         },
@@ -7767,5 +8924,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "45cd9739b4ee8aea"
+  "sourceHash": "8ae40892fa1475eb"
 }

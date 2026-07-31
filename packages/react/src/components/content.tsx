@@ -71,6 +71,7 @@ export function Toast({
       data-dismissible={hasDismiss ? "" : undefined}
       data-presentation={presentation}
       data-tone={tone}
+      data-sk-toast=""
       role={liveRegion.role}
     >
       {icon ? (
@@ -106,11 +107,20 @@ export function Toast({
   );
 }
 
-export type ToastRegionProps = WithChildren<HTMLAttributes<HTMLDivElement>>;
+export type ToastRegionProps = HTMLAttributes<HTMLDivElement> & {
+  children?: ReactNode;
+};
 export function ToastRegion({ children, className, ...props }: ToastRegionProps) {
   return (
     <div {...props} aria-live="polite" className={cx(contentParts.toastRegion, className)}>
       {children}
     </div>
   );
+}
+
+export type ToastTemplateProps = HTMLAttributes<HTMLTemplateElement> & {
+  children: ReactNode;
+};
+export function ToastTemplate({ children, ...props }: ToastTemplateProps) {
+  return <template {...props}>{children}</template>;
 }

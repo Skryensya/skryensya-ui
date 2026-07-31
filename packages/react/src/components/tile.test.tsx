@@ -9,7 +9,7 @@ import {
   type TileSharedAccessibilityBehavior,
   type TileSharedStateBehavior,
 } from "@skryensya/core/tile-contracts";
-import { ExpandableTile, TileButton, TileCheckbox, TileLink, TileRadioGroup, TileSwitch } from "./tile.js";
+import { ExpandableTile, TileButton, TileCheckbox, TileContent, TileLink, TileRadioGroup, TileSwitch } from "./tile.js";
 
 describe("Tile React contracts", () => {
   const stateAssertions = {
@@ -148,6 +148,22 @@ describe("Tile React contracts", () => {
     const roots = [...ui.container.querySelectorAll<HTMLElement>(".sk-tile")];
     expect(roots).not.toHaveLength(0);
     expect(roots.every((root) => root.classList.contains("sk-tile--interactive") || root.classList.contains("sk-tile--expandable"))).toBe(true);
+  });
+
+  it("renders the shared title and description anatomy for selectable tiles", () => {
+    const ui = render(
+      <TileButton>
+        <TileContent
+          description="Start the production deployment."
+          title="Run deployment"
+        />
+      </TileButton>,
+    );
+
+    expect(ui.getByText("Run deployment").classList).toContain("sk-tile__title");
+    expect(ui.getByText("Start the production deployment.").classList).toContain(
+      "sk-tile__description",
+    );
   });
 
   it("emits requested Tile padding while leaving the default inset implicit", () => {

@@ -3,7 +3,12 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
-import { carouselBareTree, carouselCardsTree } from "../../../demos/carousel";
+import {
+  carouselAutoplayTree,
+  carouselBareTree,
+  carouselCardsTree,
+  carouselNativeTree,
+} from "../../../demos/carousel";
 import { getLocale, useTranslations } from "../../../i18n";
 import "@skryensya/core/components/carousel.css";
 import "@skryensya/icons-lucide/carousel.css";
@@ -26,103 +31,7 @@ import { lucideIcons } from "@skryensya/icons-lucide";
 mountIcons(document, lucideIcons);
 await initComponents(); // run the machine at every [data-sk-carousel]`;
 
-const demoSrc = "/demos/media-gradient.svg";
 
-const featureSlide = (opts: {
-  eyebrow: string;
-  title: string;
-  body: string;
-  position?: string;
-}) => {
-  const position = opts.position
-    ? `\n        data-position="${opts.position}"`
-    : "";
-  return `  <div class="sk-carousel__slide">
-    <article
-      class="sk-box carousel-card"
-      data-surface="surface"
-      data-border="subtle"
-      data-padding="none"
-    >
-      <div
-        class="sk-image-frame"
-        data-aspect="16/9"
-        data-radius="top"${position}
-      >
-        <img
-          class="sk-image-frame__media"
-          src="${demoSrc}"
-          alt=""
-        />
-        <div class="sk-media-caption" data-edge="bottom">
-          <div
-            class="sk-media-gradient"
-            data-strength="md"
-            aria-hidden="true"
-          ></div>
-          <h3
-            class="sk-heading"
-            data-size="h4"
-            data-flush
-          >
-            ${opts.title}
-          </h3>
-        </div>
-      </div>
-      <div class="carousel-card__body">
-        <p class="sk-text" data-role="eyebrow">
-          ${opts.eyebrow}
-        </p>
-        <p
-          class="sk-text"
-          data-tone="secondary"
-          data-size="sm"
-        >
-          ${opts.body}
-        </p>
-      </div>
-    </article>
-  </div>`;
-};
-
-const slides = [
-  featureSlide({
-    eyebrow: "Productivity",
-    title: "Search",
-    body: "Find any project instantly, with live shortcuts and filters.",
-    position: "top",
-  }),
-  featureSlide({
-    eyebrow: "Context",
-    title: "Activity",
-    body: "Six months of changes in a timeline that does not lose track.",
-    position: "center",
-  }),
-  featureSlide({
-    eyebrow: "Analytics",
-    title: "Reports",
-    body: "Cohorts, scheduled export and metrics that fit on one card.",
-    position: "bottom",
-  }),
-  featureSlide({
-    eyebrow: "Collaboration",
-    title: "Team",
-    body: "Invite, assign roles and share spaces without leaving the flow.",
-    position: "left",
-  }),
-].join("\n");
-
-/* The base without JS: the SAME markup without data-sk-carousel, so the enhancer does not touch it and the
-   Native pseudo-elements draw controls with zero JavaScript. */
-const nativeHtml = `<section
-  class="sk-carousel"
-  aria-label="What's new (without JS)"
-  style="--sk-carousel-slide-size: min(85%, 22rem)"
->
-  <div class="sk-carousel__track">
-${slides}
-  </div>
-</section>`;
 
 const nativeCss = `@import "@skryensya/icons-lucide/carousel.css";
 
@@ -145,59 +54,7 @@ const nativeCss = `@import "@skryensya/icons-lucide/carousel.css";
 /* The ::scroll-button boxes are laid out after the scroller, in the
    parent flow. The 3-column grid reserves the extremes for them. */`;
 
-const person = (name: string, initials: string, role: string) => `    <div class="sk-carousel__slide">
-      <article
-        class="sk-box carousel-person"
-        data-surface="surface"
-        data-border="subtle"
-        data-padding="lg"
-      >
-        <span
-          class="sk-avatar"
-          data-size="lg"
-          role="img"
-          aria-label="${name}"
-        >
-          <span
-            class="sk-avatar__fallback"
-            aria-hidden="true"
-          >${initials}</span>
-        </span>
-        <div class="carousel-person__meta">
-          <p class="sk-text" data-weight="label">
-            ${name}
-          </p>
-          <p
-            class="sk-text"
-            data-tone="secondary"
-            data-size="sm"
-          >
-            ${role}
-          </p>
-        </div>
-      </article>
-    </div>`;
 
-/* Multi-up + loop + autoplay: the slides are narrower, several words fit per page, and the
-   machine counts them by measuring, not dividing. */
-const autoHtml = `<section
-  class="sk-carousel"
-  data-sk-carousel
-  data-loop
-  data-autoplay="3500"
-  aria-label="Team"
-  style="--sk-carousel-slide-size: min(42%, 14rem)"
->
-  <div class="sk-carousel__track">
-${[
-  person("Ada Lovelace", "AL", "Platform"),
-  person("Grace Hopper", "GH", "Compilers"),
-  person("Radia Perlman", "RP", "Networks"),
-  person("Barbara McClintock", "BM", "Genetics"),
-  person("Karen Spärck Jones", "KS", "Retrieval"),
-].join("\n")}
-  </div>
-</section>`;
 
 const api = `const carousel = document.querySelector("[data-sk-carousel]");
 
@@ -258,7 +115,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
   <p>
     With <code>data-autoplay</code> there is also a <strong>pause button</strong>: something that moves only has to be able to stop (WCAG 2.2.2), so option and control are one thing. And whoever declares <code>prefers-reduced-motion</code> is not started: the carousel remains still and the button offers to play.
   </p>
-  <ComponentPreview html={autoHtml} label="Multi-up + autoplay" note="Avatar + meta · data-loop · data-autoplay" />
+  <ComponentPreview tree={carouselAutoplayTree(t)} label="Multi-up + autoplay" note="Avatar + meta · data-loop · data-autoplay" />
 
   <h2>No controls</h2>
   <p>
@@ -285,7 +142,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
   <p>
     The <strong>same markup</strong> without <code>data-sk-carousel</code>: the enhancer does not touch it and the native pseudo-elements (<code>:: scroll-button</code> and <code>:: scroll-marker</code>) draw the controls with <strong>zero JavaScript</strong>. The CSS adapter of the chosen set gives you the SVGs of <code>chevron-left</code> and <code>chevron-right</code>, without replacing them with typographic glyphs. Today it works in Chrome/Edge; In the rest it degrades to a scroller with native snap (without arrows or dots, but it slides the same). When the enhancer mounts, this layer is turned off so as not to duplicate.
   </p>
-  <ComponentPreview html={nativeHtml} label="No JS (native CSS)" note="set icons + native scroll buttons" />
+  <ComponentPreview tree={carouselNativeTree(t)} label="No JS (native CSS)" note="set icons + native scroll buttons" />
   <CodeBlock code={nativeCss} label="the base without JS" lang="css" />
 
   <h2>Snap-to-index and events</h2>

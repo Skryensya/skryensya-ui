@@ -2,20 +2,16 @@
 import Base from "../../layouts/Base.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { timeFieldTree } from "../../demos/time-field";
+import { timeFieldNativeTree, timeFieldTree } from "../../demos/time-field";
 import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/time-field.css";
 
 const install = `@import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/time-field.css";`;
 
-const nativeHtml = `<input type="time" name="inicio" id="inicio" />`;
 
 const t = useTranslations(getLocale(Astro.url));
 
-/*
- * Native `<input type="time">` stays authored: there is no contract for a platform control.
- */
 ---
 
 <Base
@@ -73,7 +69,7 @@ const t = useTranslations(getLocale(Astro.url));
     estilo, realmente te cuesta algo — la misma decisión que DatePicker toma contra un
     <code>type="date"</code> plano.
   </p>
-  <ComponentPreview html={nativeHtml} label="Input de hora nativo" />
+  <ComponentPreview tree={timeFieldNativeTree(t, { name: "inicio" })} label="Input de hora nativo" />
 
   <h2>Accesibilidad</h2>
   <p>

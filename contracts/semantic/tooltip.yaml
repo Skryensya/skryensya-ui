@@ -1,0 +1,11 @@
+# La estructura vive en packages/core/src/tooltip.ts. Acá sólo por qué se elige.
+
+Tooltip:
+  useWhen:
+    - "un control ya tiene nombre accesible y necesita una descripción breve al pasar el puntero o enfocar"
+    - "un botón de sólo icono necesita una pista visual redundante para quien puede verla"
+  avoidWhen:
+    - "el texto es el único nombre o la única información disponible; debe vivir fuera del tooltip"
+    - "el contenido necesita acciones, formato o varias líneas; usa Flyout"
+  alternatives:
+    - Flyout

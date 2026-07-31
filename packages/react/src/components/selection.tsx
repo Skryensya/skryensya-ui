@@ -30,11 +30,12 @@ export type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, "checked
   checked?: CheckedState;
   children?: ReactNode;
   defaultChecked?: CheckedState;
+  defaultIndeterminate?: boolean;
   onCheckedChange?: (details: CheckedChangeDetails) => void;
 };
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
-  { checked, children, className, defaultChecked, disabled, onCheckedChange, ...props },
+  { checked, children, className, defaultChecked, defaultIndeterminate, disabled, onCheckedChange, ...props },
   ref,
 ) {
   const input = useRef<HTMLInputElement>(null);
@@ -46,7 +47,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
 
   const setRef = (node: HTMLInputElement | null) => {
     input.current = node;
-    if (node) node.indeterminate = !controlled && defaultChecked === "indeterminate";
+    if (node) node.indeterminate = !controlled && (defaultChecked === "indeterminate" || defaultIndeterminate === true);
     if (typeof ref === "function") ref(node);
     else if (ref) ref.current = node;
   };

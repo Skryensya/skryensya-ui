@@ -9,3 +9,17 @@ Badge:
     - "es texto de párrafo con color; un badge es una cápsula, no énfasis"
   alternatives:
     - Tag
+BadgeDot:
+  useWhen:
+    - "un punto compacto comunica presencia, novedad o estado junto a otro control"
+  avoidWhen:
+    - "hay texto o un conteo visible; eso es un Badge"
+  alternatives:
+    - Badge
+BadgeHolder:
+  useWhen:
+    - "un BadgeDot se ancla a la esquina de un botón o avatar"
+  avoidWhen:
+    - "el badge participa del flujo normal; no necesita un ancla"
+  alternatives:
+    - Badge

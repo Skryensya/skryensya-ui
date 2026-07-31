@@ -8,3 +8,22 @@ Avatar.initials:
     - "es una imagen cualquiera recortada; eso es un ImageFrame"
   alternatives:
     - ImageFrame
+
+Avatar.image:
+  useWhen:
+    - "hay una foto que identifica a una persona o entidad"
+    - "el recorte circular necesita conservar el nombre como texto alternativo"
+  avoidWhen:
+    - "es una imagen de contenido y no una identidad; usa ImageFrame"
+  alternatives:
+    - Avatar.initials
+    - ImageFrame
+
+AvatarGroup:
+  useWhen:
+    - "varias identidades se muestran juntas en una pila compacta"
+    - "el excedente visible se resume con un contador"
+  avoidWhen:
+    - "cada persona necesita nombre, detalle o acción visible; usa List"
+  alternatives:
+    - List

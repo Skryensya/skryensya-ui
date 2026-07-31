@@ -2,57 +2,12 @@
 import Base from "../../layouts/Base.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { FileUploadBasicDemo } from "../../components/react-demos/file-upload";
+import { fileUploadTree } from "../../demos/file-upload";
+import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/file-upload.css";
 
+const t = useTranslations(getLocale(Astro.url));
 const install = `@import "@skryensya/core/components/file-upload.css";`;
-const js = `import { mountIcons } from "@skryensya/vanilla/icon";
-import { lucideIcons } from "@skryensya/icons-lucide";
-import { initComponents } from "@skryensya/vanilla/auto";
-
-mountIcons(document, lucideIcons);
-initComponents();`;
-const html = `<div
-  class="sk-file-upload"
-  data-sk-file-upload
-  data-max-files="3"
->
-  <label class="sk-file-upload__label" data-sk-file-upload-label>
-    Adjuntos
-  </label>
-  <div
-    class="sk-file-upload__dropzone"
-    data-sk-file-upload-dropzone
-  >
-    <span>Arrastra archivos aquí</span>
-  </div>
-  <input
-    class="sk-file-upload__input"
-    data-sk-file-upload-input
-    name="attachments"
-    type="file"
-    multiple
-  />
-  <button
-    class="sk-button sk-interactive"
-    data-sk-file-upload-trigger
-    type="button"
-  >
-    Elegir archivos
-  </button>
-</div>`;
-const react = `import { FileUpload } from "@skryensya/react/file-upload";
-
-function Example() {
-  return (
-    <FileUpload
-      label="Adjuntos"
-      maxFiles={3}
-      maxFileSize={10_000_000}
-      name="attachments"
-    />
-  );
-}`;
 ---
 
 <Base
@@ -63,17 +18,7 @@ function Example() {
   <p class="lede">Selección y drag-and-drop con límites, rechazo y lista de archivos.</p>
 
   <h2>Instalación</h2>
-  <ComponentPreview
-    html={html}
-    js={js}
-    react={react}
-    label="FileUpload"
-    viewport="auto"
-  >
-    <Fragment slot="react">
-      <FileUploadBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={fileUploadTree(t)} label="FileUpload" viewport="auto" />
 
   <h2>Contrato</h2>
   <p>Vanilla emite sk-file-change y nunca inventa una carga remota. React expone archivos aceptados y rechazados.</p>

@@ -1,6 +1,8 @@
 import { toolbarContract, toolbarParts } from "@skryensya/core/toolbar";
 import type { OptionValue } from "@skryensya/core/contract";
-import { useRef, type KeyboardEvent, type ReactNode } from "react";
+import { useRef, type HTMLAttributes, type KeyboardEvent, type ReactNode } from "react";
+
+const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
 export type ToolbarProps = {
   label: string;
@@ -54,9 +56,13 @@ export function Toolbar({
   );
 }
 
-export function ToolbarGroup({ children }: { children: ReactNode }) {
+export function ToolbarGroup({
+  children,
+  className,
+  ...props
+}: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) {
   return (
-    <div className={toolbarParts.group} role="group">
+    <div {...props} className={cx(toolbarParts.group, className)} role="group">
       {children}
     </div>
   );

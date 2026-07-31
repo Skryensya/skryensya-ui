@@ -172,6 +172,28 @@ export const tileContract = {
       react: { from: "@skryensya/react/tile", name: "TileButton" },
     },
 
+    TileContent: {
+      intent: ["tile-copy", "tile-title-and-description"],
+      host: { element: "span" },
+      parents: ["TileLink", "TileButton", "TileCheckbox", "TileSwitch", "ExpandableTileTrigger"],
+      options: [],
+      slots: {
+        title: { accepts: "node", required: true },
+        description: { accepts: "node" },
+      },
+      template: {
+        element: "span",
+        part: "content",
+        host: true,
+        attrs: { "data-part": "content" },
+        children: [
+          { element: "span", part: "title", slot: "title" },
+          { element: "span", part: "description", whenGiven: "description", slot: "description" },
+        ],
+      },
+      react: { from: "@skryensya/react/tile", name: "TileContent" },
+    },
+
     /*
      * The expandable tile is three signatures, not one with slots, because the trigger and the
      * content are composed in the author's own order and can each carry arbitrary markup. The

@@ -5,10 +5,12 @@ import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import "../../../examples/loader.css";
 import {
-  LoaderContextsDemo,
-  LoaderSimulationDemo,
-} from "../../../components/react-demos/loader";
-import { loaderSizesTree, loaderSpeedsTree } from "../../../demos/loader";
+  loaderContextsTree,
+  loaderSimulationScript,
+  loaderSimulationTree,
+  loaderSizesTree,
+  loaderSpeedsTree,
+} from "../../../demos/loader";
 import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -16,321 +18,7 @@ const styles = `@import "@skryensya/core/components/loader.css";`;
 
 const t = useTranslations(getLocale(Astro.url));
 
-/*
- * Simulation and contexts stay authored: demo DOM / js, and data-multicol + heavy composition.
- */
 
-const simulationHtml = `<div
-  class="loader-demo"
-  data-loader-demo
-  aria-busy="true"
->
-  <div
-    class="loader-demo__status"
-    role="status"
-    aria-live="polite"
-    aria-atomic="true"
-  >
-    <div class="loader-demo__state" data-loader-busy>
-      <span
-        class="sk-loader"
-        data-size="md"
-        data-variant="bars"
-        aria-hidden="true"
-      ></span>
-      <span class="loader-demo__copy">
-        <strong>Analizando mezcla</strong>
-        <span>Searching for resonances and transients…</span>
-      </span>
-    </div>
-    <div class="loader-demo__state" data-loader-ready hidden>
-      <span class="loader-demo__ready-dot" aria-hidden="true"></span>
-      <span class="loader-demo__copy">
-        <strong>Updated analysis</strong>
-        <span>The mixture is ready to review.</span>
-      </span>
-    </div>
-  </div>
-
-  <button
-    class="sk-button sk-interactive"
-    data-variant="ghost"
-    data-loader-replay
-    type="button"
-    hidden
-  >
-    Analyze again
-  </button>
-</div>`;
-
-const simulationJs = `const demo = document.querySelector("[data-loader-demo]");
-
-if (demo instanceof HTMLElement) {
-  const replay = demo.querySelector("[data-loader-replay]");
-  const busy = demo.querySelector("[data-loader-busy]");
-  const ready = demo.querySelector("[data-loader-ready]");
-  let timer = 0;
-
-  const setBusy = (active) => {
-    demo.setAttribute("aria-busy", String(active));
-    busy?.toggleAttribute("hidden", !active);
-    ready?.toggleAttribute("hidden", active);
-    replay?.toggleAttribute("hidden", active);
-  };
-
-  const analyze = () => {
-    window.clearTimeout(timer);
-    setBusy(true);
-    timer = window.setTimeout(() => setBusy(false), 2200);
-  };
-
-  replay?.addEventListener("click", analyze);
-  analyze();
-}`;
-
-const simulationReact = `import { useEffect, useState } from "react";
-import { Button } from "@skryensya/react/button";
-import { Loader } from "@skryensya/react/loader";
-
-function Example() {
-  const [analyzing, setAnalyzing] = useState(true);
-  const [run, setRun] = useState(0);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setAnalyzing(false), 2200);
-    return () => window.clearTimeout(timer);
-  }, [run]);
-
-  const analyze = () => {
-    setAnalyzing(true);
-    setRun((current) => current + 1);
-  };
-
-  return (
-    <div className="loader-demo" aria-busy={analyzing}>
-      <div
-        aria-atomic="true"
-        aria-live="polite"
-        className="loader-demo__status"
-        role="status"
-      >
-        {analyzing ? (
-          <div className="loader-demo__state">
-            <Loader size="md" variant="bars" />
-            <span className="loader-demo__copy">
-              <strong>Analizando mezcla</strong>
-              <span>Searching for resonances and transients…</span>
-            </span>
-          </div>
-        ) : (
-          <div className="loader-demo__state">
-            <span className="loader-demo__ready-dot" aria-hidden="true" />
-            <span className="loader-demo__copy">
-              <strong>Updated analysis</strong>
-              <span>The mixture is ready to review.</span>
-            </span>
-          </div>
-        )}
-      </div>
-
-      {!analyzing && (
-        <Button onClick={analyze} variant="ghost">
-          Analyze again
-        </Button>
-      )}
-    </div>
-  );
-}`;
-
-const contextsHtml = `<div class="sk-grid" data-columns="3" data-gap="md" data-multicol>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="lg"
-    aria-labelledby="save-title"
-  >
-    <div class="sk-stack" data-gap="md">
-      <span class="sk-text" data-role="eyebrow">Local action</span>
-      <div class="sk-stack" data-gap="xs">
-        <h3 class="sk-heading" data-size="h4" id="save-title">
-          Save report
-        </h3>
-        <p class="sk-text" data-tone="secondary">
-          The button retains the action and the Loader becomes decorative.
-        </p>
-      </div>
-      <button
-        class="sk-button sk-interactive"
-        data-variant="primary"
-        type="button"
-        aria-busy="true"
-        disabled
-      >
-        <span
-          class="sk-loader"
-          data-size="sm"
-          data-variant="ring"
-          aria-hidden="true"
-        ></span>
-        Guardando…
-      </button>
-    </div>
-  </article>
-
-  <section
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="lg"
-    aria-busy="true"
-    aria-labelledby="orders-title"
-  >
-    <div class="sk-stack" data-gap="md">
-      <div class="sk-inline" data-justify="between" data-wrap="false">
-        <h3 class="sk-heading" data-size="h4" id="orders-title">Recent orders</h3>
-        <span
-          class="sk-loader"
-          data-size="md"
-          data-variant="dots"
-          role="status"
-          aria-label="Actualizando pedidos"
-        ></span>
-      </div>
-      <p class="sk-text" data-tone="secondary">
-        Previous content remains visible while the region is updated.
-      </p>
-      <div class="sk-stack" data-gap="xs">
-        <div class="sk-inline" data-justify="between" data-wrap="false">
-          <span class="sk-text" data-tone="secondary">Procesados</span>
-          <span class="sk-text" data-weight="label">128</span>
-        </div>
-        <div class="sk-inline" data-justify="between" data-wrap="false">
-          <span class="sk-text" data-tone="secondary">Pendientes</span>
-          <span class="sk-text" data-weight="label">24</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="lg"
-    aria-busy="true"
-    aria-labelledby="analytics-title"
-  >
-    <div class="sk-stack" data-gap="sm">
-      <div class="sk-inline" data-justify="center">
-        <span
-          class="sk-loader"
-          data-size="lg"
-          data-variant="sweep"
-          role="status"
-          aria-label="Loading analytics panel"
-        ></span>
-      </div>
-      <h3 class="sk-heading" data-size="h4" id="analytics-title">
-        Preparing analytics
-      </h3>
-      <p class="sk-text" data-tone="secondary">
-        The initial load maintains a useful title and explanation.
-      </p>
-    </div>
-  </section>
-</div>`;
-
-const contextsReact = `import { Button } from "@skryensya/react/button";
-import { Heading } from "@skryensya/react/heading";
-import { Loader } from "@skryensya/react/loader";
-import { Box, Grid, Inline, Stack } from "@skryensya/react/layout";
-import { Text } from "@skryensya/react/text";
-
-function Example() {
-  return (
-    <Grid columns={3} data-multicol="">
-      <Box
-        as="article"
-        aria-labelledby="save-title"
-        border="subtle"
-        padding="lg"
-        surface="surface"
-      >
-        <Stack>
-          <Text as="span" data-role="eyebrow">Local action</Text>
-          <Stack gap="xs">
-            <Heading as="h3" id="save-title" size="h4">
-              Save report
-            </Heading>
-            <Text tone="secondary">
-              The button retains the action and the Loader remains decorative.
-            </Text>
-          </Stack>
-          <Button aria-busy={true} disabled variant="primary">
-            <Loader size="sm" /> Guardando…
-          </Button>
-        </Stack>
-      </Box>
-
-      <Box
-        as="section"
-        aria-busy={true}
-        aria-labelledby="orders-title"
-        border="subtle"
-        padding="lg"
-        surface="surface"
-      >
-        <Stack>
-          <Inline justify="between" wrap={false}>
-            <Heading as="h3" id="orders-title" size="h4">
-              Recent orders
-            </Heading>
-            <Loader label="Updating orders" variant="dots" />
-          </Inline>
-          <Text tone="secondary">
-            Previous content remains visible while the region is updated.
-          </Text>
-          <Stack gap="xs">
-            <Inline justify="between" wrap={false}>
-              <Text as="span" tone="secondary">Procesados</Text>
-              <Text as="span" weight="label">128</Text>
-            </Inline>
-            <Inline justify="between" wrap={false}>
-              <Text as="span" tone="secondary">Pendientes</Text>
-              <Text as="span" weight="label">24</Text>
-            </Inline>
-          </Stack>
-        </Stack>
-      </Box>
-
-      <Box
-        as="section"
-        aria-busy={true}
-        aria-labelledby="analytics-title"
-        border="subtle"
-        padding="lg"
-        surface="surface"
-      >
-        <Stack gap="sm">
-          <Inline justify="center">
-            <Loader
-              label="Loading analytics panel"
-              size="lg"
-              variant="sweep"
-            />
-          </Inline>
-          <Heading as="h3" id="analytics-title" size="h4">
-            Preparing analytics
-          </Heading>
-          <Text tone="secondary">
-            The initial load maintains a helpful title and explanation.
-          </Text>
-        </Stack>
-      </Box>
-    </Grid>
-  );
-}`;
 
 
 const customSpeed = `.sk-loader.mi-loader {
@@ -361,17 +49,12 @@ const customSpeed = `.sk-loader.mi-loader {
     A single container changes from busy to ready. You do not need a screen, metrics or an external card: just the brand, the text that explains the work and an action to repeat it.
   </p>
   <ComponentPreview
-    html={simulationHtml}
-    js={simulationJs}
-    previewScript={simulationJs}
-    react={simulationReact}
+    tree={loaderSimulationTree(t)}
+    js={loaderSimulationScript}
+    previewScript={loaderSimulationScript}
     label="Mixture analysis"
     note="Busy → ready"
-  >
-    <Fragment slot="react">
-      <LoaderSimulationDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  />
   <p>
     <code>bars</code> provides movement without pretending a percentage. The container keeps <code>aria-busy</code> and the visible state makes the advertisement accessible.
   </p>
@@ -381,15 +64,10 @@ const customSpeed = `.sk-loader.mi-loader {
     Loader owns the brand, not the surface or the life cycle. The context decides where it lives, who contributes the accessible name, and what region <code>aria-busy="true"</code> keeps.
   </p>
   <ComponentPreview
-    html={contextsHtml}
-    react={contextsReact}
+    tree={loaderContextsTree(t)}
     label="Loader in context"
     note="Local action · region update · initial load"
-  >
-    <Fragment slot="react">
-      <LoaderContextsDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  />
   <ul>
     <li>On a button, Loader is decorative: “Saving…” already names the state.</li>
     <li>In a local update, preserves the previous content and marks the region as busy.</li>

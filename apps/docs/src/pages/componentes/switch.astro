@@ -3,68 +3,12 @@ import "@skryensya/core/components/tile.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
-import { switchTree } from "../../demos/switch";
+import { switchTree, tileSwitchTree } from "../../demos/switch";
 import { getLocale, useTranslations } from "../../i18n";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { TileSwitchDemo } from "../../components/react-demos/switch";
 
 const t = useTranslations(getLocale(Astro.url));
 
-const tileSwitchHtml = `<div
-  class="sk-inline"
-  style="align-items: stretch"
->
-  <label
-    class="sk-tile sk-tile--interactive sk-interactive"
-    data-scope="tile"
-    data-part="root"
-    data-sk-tile-switch
-    data-name="preferences"
-    data-value="auto-deploy"
-    data-default-checked="true"
-    style="flex: 1"
-  >
-    <input type="checkbox" checked data-part="input" role="switch" />
-    <span class="sk-tile__content" data-part="content">
-      <span class="sk-tile__title">Deploy automático</span>
-      <span class="sk-tile__description">
-        Publica cada push a main sin aprobación manual.
-      </span>
-    </span>
-    <span
-      class="sk-switch__control"
-      data-part="indicator"
-      aria-hidden="true"
-    >
-      <span class="sk-switch__thumb"></span>
-    </span>
-  </label>
-
-  <label
-    class="sk-tile sk-tile--interactive sk-interactive"
-    data-scope="tile"
-    data-part="root"
-    data-sk-tile-switch
-    data-name="preferences"
-    data-value="preview-comments"
-    style="flex: 1"
-  >
-    <input type="checkbox" data-part="input" role="switch" />
-    <span class="sk-tile__content" data-part="content">
-      <span class="sk-tile__title">Comentarios en preview</span>
-      <span class="sk-tile__description">
-        Publica un enlace de preview en cada pull request.
-      </span>
-    </span>
-    <span
-      class="sk-switch__control"
-      data-part="indicator"
-      aria-hidden="true"
-    >
-      <span class="sk-switch__thumb"></span>
-    </span>
-  </label>
-</div>`;
 
 const tileSwitchVanilla = `import { initComponents } from "@skryensya/vanilla/auto";
 
@@ -81,44 +25,6 @@ for (const root of document.querySelectorAll(
   });
 }`;
 
-const tileSwitchReact = `import { TileSwitch } from "@skryensya/react/tile-switch";
-
-const preferencias = [
-  {
-    value: "auto-deploy",
-    title: "Deploy automático",
-    description: "Publica cada push a main sin aprobación manual.",
-  },
-  {
-    value: "preview-comments",
-    title: "Comentarios en preview",
-    description: "Publica un enlace de preview en cada pull request.",
-  },
-];
-
-function Example() {
-  return (
-    <div className="sk-inline" style={{ alignItems: "stretch" }}>
-      {preferencias.map((preferencia, index) => (
-        <TileSwitch
-          key={preferencia.value}
-          name="preferences"
-          value={preferencia.value}
-          defaultChecked={index === 0}
-          onCheck={(details) => {
-            console.log(preferencia.value, details.checked);
-          }}
-          style={{ flex: 1 }}
-        >
-          <span className="sk-tile__title">{preferencia.title}</span>
-          <span className="sk-tile__description">
-            {preferencia.description}
-          </span>
-        </TileSwitch>
-      ))}
-    </div>
-  );
-}`;
 ---
 
 <Base title="Switch" description="Switch: una preferencia binaria persistente sobre checkbox nativo.">
@@ -134,11 +40,7 @@ function Example() {
     <code>TileSwitch</code>. Es el mismo control (<code>sk-switch__control</code> + thumb); solo
     cambia el contenedor, la misma relación que <code>TileCheckbox</code> tiene con Checkbox.
   </p>
-  <ComponentPreview html={tileSwitchHtml} react={tileSwitchReact} label="TileSwitch">
-    <Fragment slot="react">
-      <TileSwitchDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={tileSwitchTree(t)} label="TileSwitch" />
   <p>El enhancer <code>tile-switch</code> (Svelte + <code>@zag-js/checkbox</code>, la misma máquina que TileCheckbox y que React) hidrata cada label <code>data-sk-tile-switch</code> con <code>initComponents()</code>: controla su <code>input[data-part="input"]</code> (oculto, <code>role="switch"</code>) y sincroniza <code>data-state</code>; el <code>[data-part="indicator"]</code> es el control visual.</p>
   <CodeBlock code={tileSwitchVanilla} label="JavaScript" />
 

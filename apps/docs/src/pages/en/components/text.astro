@@ -2,32 +2,18 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
-import { TextInlineDemo } from "../../../components/react-demos/text";
 import {
   textFeedbackTree,
   textReadingTree,
   textTitleTree,
+  textInlineTree,
 } from "../../../demos/typography";
 import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
 
-/*
- * Inline stays authored: the point is `<strong>` inside the paragraph. Trees escape text, so nested
- * HTML is inexpressible.
- */
-const inlineHtml = `<p class="sk-text">
-  The <strong>Pro</strong> plan includes five active environments and
-  preserves the reading flow within the same paragraph.
-</p>`;
 
-const inlineReact = `import { Text } from "@skryensya/react/text";
-
-<Text>
-  The <strong>Pro</strong> plan includes five active environments and
-  preserves the reading flow within the same paragraph.
-</Text>;`;
 ---
 
 <Base title="Text" description="Text: reading copy with typographic roles and explicit HTML semantics.">
@@ -60,11 +46,7 @@ const inlineReact = `import { Text } from "@skryensya/react/text";
     screen reader announces it. <code>&lt;em&gt;</code> stays italic. The <code>data-weight</code>
     axis is for a whole Text; this is for emphasis <em>inside</em> the sentence.
   </p>
-  <ComponentPreview html={inlineHtml} react={inlineReact} label="Inline text">
-    <Fragment slot="react">
-      <TextInlineDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={textInlineTree(t)} label="Inline text" />
 
   <h2>Validation feedback</h2>
   <p>

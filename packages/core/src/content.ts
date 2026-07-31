@@ -84,6 +84,8 @@ export const contentContract = {
     dismissible: { type: "boolean", default: false, attr: "data-dismissible", trueValue: "" },
     /** The dismiss control's accessible name. It is icon-only, so it has no other. */
     dismissLabel: { type: "string", default: "Dismiss notification", attr: "aria-label" },
+    /** Milliseconds before the enhancer requests dismissal. Omit to keep the toast visible. */
+    timeout: { type: "number", attr: "data-timeout", machineInput: true },
   },
 
   signatures: {
@@ -91,7 +93,7 @@ export const contentContract = {
       intent: ["toast-container", "notification-area", "where-toasts-live"],
       host: { element: "div" },
       options: [],
-      slots: { children: { accepts: "signature", of: ["Toast"], required: true } },
+      slots: { children: { accepts: "signature", of: ["Toast"] } },
       /*
        * `aria-live` on the REGION, not only on each toast: a toast that is inserted into a live
        * region is announced because the region was already being watched. Announcing an element
@@ -107,11 +109,21 @@ export const contentContract = {
       react: { from: "@skryensya/react/content", name: "ToastRegion" },
     },
 
+    ToastTemplate: {
+      intent: ["toast-blueprint", "dynamic-toast-template"],
+      host: { element: "template" },
+      options: [],
+      slots: { children: { accepts: "signature", of: ["Toast"], required: true } },
+      template: { element: "template", host: true, slot: "children" },
+      react: { from: "@skryensya/react/content", name: "ToastTemplate" },
+    },
+
     Toast: {
       intent: ["transient-message", "saved-confirmation", "undo-prompt", "background-task-finished"],
       host: { element: "div" },
-      parents: ["ToastRegion"],
-      options: ["tone", "presentation", "dismissible", "dismissLabel"],
+      parents: ["ToastRegion", "ToastTemplate"],
+      options: ["tone", "presentation", "dismissible", "dismissLabel", "timeout"],
+      mount: "data-sk-toast",
       slots: {
         icon: { accepts: "signature", of: ["Icon"] },
         title: { accepts: "text" },

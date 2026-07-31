@@ -1,13 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
-/*
- * The segmented shell. Locale is owned by the page (`es-DO` / `en-US`) so the hour cycle the stage
- * teaches matches the language around it. `value` lands as `data-value` in markup and `defaultValue`
- * in React — the same binding-aware rename Slider uses.
- *
- * The native `<input type="time">` demo stays authored: there is no contract for a platform control.
- */
+/* Segmented and native time controls share the page's locale-owned field name. */
 
 /** A departure time, already set. Locale and field name are owned by the page. */
 export const timeFieldTree = (
@@ -22,4 +16,18 @@ export const timeFieldTree = (
     name: opts.name,
   },
   slots: { label: t("demo.timeField.label") },
+});
+
+export const timeFieldNativeTree = (
+  t: Translate,
+  opts: { name: string },
+): UsageTree => ({
+  contract: "field",
+  signature: "Field",
+  slots: { label: t("demo.timeField.label") },
+  children: {
+    contract: "input",
+    signature: "NativeInput",
+    options: { type: "time", name: opts.name },
+  },
 });

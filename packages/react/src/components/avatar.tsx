@@ -42,17 +42,20 @@ export type AvatarGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> 
   children: ReactNode;
   /** Cap the visible avatars; the rest collapse into a "+N" counter. */
   max?: number;
+  /** Explicit overflow label for a composition that already supplies its visible avatars. */
+  overflow?: ReactNode;
 };
 
-export function AvatarGroup({ children, className, max, ...props }: AvatarGroupProps) {
+export function AvatarGroup({ children, className, max, overflow: overflowLabel, ...props }: AvatarGroupProps) {
   const items = Children.toArray(children);
   const visible = max && items.length > max ? items.slice(0, max) : items;
-  const overflow = items.length - visible.length;
+  const overflowCount = items.length - visible.length;
+  const overflow = overflowCount > 0 ? `+${overflowCount}` : overflowLabel;
 
   return (
     <div {...props} className={cx(avatarParts.group, className)}>
       {visible}
-      {overflow > 0 ? <span className={avatarParts.groupOverflow}>+{overflow}</span> : null}
+      {overflow != null ? <span className={avatarParts.groupOverflow}>{overflow}</span> : null}
     </div>
   );
 }

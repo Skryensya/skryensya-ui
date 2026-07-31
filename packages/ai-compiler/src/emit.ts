@@ -450,10 +450,24 @@ function computedWindow(
 function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   const { tree, contract, signature } = ctx;
   const out: string[] = [];
+  const optionStyles: string[] = [];
+  const claimedAttrs = new Set(
+    claimedElsewhere(signature.template, node).flatMap(
+      (other) => other.attrsFor ?? [],
+    ),
+  );
+  const authoredClass =
+    tree.attrs?.class !== undefined &&
+    (node.host
+      ? !claimedAttrs.has("class")
+      : (node.attrsFor ?? []).includes("class"))
+      ? tree.attrs.class
+      : undefined;
 
   const classes = [
     ...(node.part ? [contract.parts[node.part]!] : []),
     ...(node.also ?? []),
+    ...(authoredClass !== undefined ? [authoredClass] : []),
   ];
   if (classes.length > 0) out.push(`class="${classes.join(" ")}"`);
 
@@ -484,6 +498,11 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
     const value = tree.options?.[name] ?? option.default;
     // An option that only feeds a computation has already done its work in the structure above.
     if (value === undefined || option.computedInput) continue;
+    if (option.styleProperty) {
+      optionStyles.push(`${option.styleProperty}: ${String(value)}`);
+      continue;
+    }
+    if (!option.attr) continue;
     // Saying no is saying nothing, UNLESS the contract gave `false` a spelling of its own.
     if (value === false) {
       if (option.falseValue === undefined) continue;
@@ -519,6 +538,11 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
       const option = itemOptions[name];
       const value = ctx.item.options?.[name] ?? option?.default;
       if (!option || value === undefined || value === false) continue;
+      if (option.styleProperty) {
+        optionStyles.push(`${option.styleProperty}: ${String(value)}`);
+        continue;
+      }
+      if (!option.attr) continue;
       out.push(
         value === true
           ? attr(option.attr, option.trueValue ?? "")
@@ -539,23 +563,21 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
     out.push(attr(name, value));
 
   // Values made visible: a fill computed from the option it represents, never typed by an author.
-  const styles = (node.style ?? []).flatMap((rule) => {
-    const [num, den] = rule.percentOf;
-    const value = Number(
-      tree.options?.[num] ?? contract.options[num]?.default ?? 0,
-    );
-    const max = Number(
-      tree.options?.[den] ?? contract.options[den]?.default ?? 100,
-    );
-    if (!Number.isFinite(value) || !Number.isFinite(max) || max <= 0) return [];
-    const min = 0;
-    const ratio = Math.max(0, Math.min(1, (value - min) / (max - min)));
-    return [
-      rule.as === "fraction"
-        ? `${rule.property}: ${ratio}`
-        : `${rule.property}: ${ratio * 100}%`,
-    ];
-  });
+  const styles = [
+    ...optionStyles,
+    ...(node.style ?? []).flatMap((rule) => {
+      const [num, den] = rule.percentOf;
+      const value = Number(tree.options?.[num] ?? contract.options[num]?.default ?? 0);
+      const max = Number(tree.options?.[den] ?? contract.options[den]?.default ?? 100);
+      if (!Number.isFinite(value) || !Number.isFinite(max) || max <= 0) return [];
+      const ratio = Math.max(0, Math.min(1, value / max));
+      return [
+        rule.as === "fraction"
+          ? `${rule.property}: ${ratio}`
+          : `${rule.property}: ${ratio * 100}%`,
+      ];
+    }),
+  ];
   if (styles.length > 0) out.push(attr("style", styles.join("; ") + ";"));
 
   // Structure that depends on whether the author supplied something: a named loader is a status, an
@@ -589,19 +611,12 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
       out.push(attr(name, literal));
   }
 
-  // What the author passes through. The host takes everything except what another node claimed —
-  // a tab list's accessible name belongs to the tablist, not to the box around it.
-  const claimedAttrs = new Set(
-    claimedElsewhere(signature.template, node).flatMap(
-      (other) => other.attrsFor ?? [],
-    ),
-  );
 
   for (const [name, value] of Object.entries(tree.attrs ?? {})) {
     const mineToWrite = node.host
       ? !claimedAttrs.has(name)
       : (node.attrsFor ?? []).includes(name);
-    if (mineToWrite) out.push(attr(name, value));
+    if (mineToWrite && name !== "class") out.push(attr(name, value));
   }
 
   /*
@@ -770,11 +785,26 @@ function renderJsx(
   imports.get(from)!.add(name.split(".")[0]!);
 
   const props: string[] = [];
+  const optionStyles: string[] = [];
   for (const [option, declared] of signatureOptions(contract, signature)) {
     const value = tree.options?.[option];
-    if (value === undefined || value === false) continue;
     // The binding's own name for it, when the contract had to choose a different key.
     const name = declared.prop ?? option;
+    if (value === undefined) continue;
+    if (declared.styleProperty) {
+      optionStyles.push(
+        `${JSON.stringify(declared.styleProperty)}: ${
+          declared.type === "number" && typeof value === "number"
+            ? value
+            : JSON.stringify(String(value))
+        }`,
+      );
+      continue;
+    }
+    if (value === false) {
+      if (declared.default === true) props.push(`${name}={false}`);
+      continue;
+    }
     if (value === true) {
       props.push(name);
       continue;
@@ -790,6 +820,11 @@ function renderJsx(
         ? `${name}={${value}}`
         : `${name}=${JSON.stringify(String(value))}`,
     );
+  }
+  if (optionStyles.length > 0) {
+    if (!imports.has("react")) imports.set("react", new Set());
+    imports.get("react")!.add("type CSSProperties");
+    props.push(`style={{ ${optionStyles.join(", ")} } as CSSProperties}`);
   }
   for (const [attrName, value] of Object.entries(tree.attrs ?? {})) {
     props.push(`${jsxPropName(attrName)}=${JSON.stringify(value)}`);

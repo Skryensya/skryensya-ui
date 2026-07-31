@@ -22,3 +22,18 @@ Link:
     - "se ve y se usa como botón; eso es Button.navigation"
   alternatives:
     - Button.navigation
+Strong:
+  useWhen:
+    - "una frase dentro de texto tiene importancia fuerte, no sólo un peso visual distinto"
+  avoidWhen:
+    - "titula una sección; eso es un Heading"
+  alternatives:
+    - Heading
+
+Output:
+  useWhen:
+    - "muestra el resultado calculado de una entrada o interacción"
+  avoidWhen:
+    - "es texto estático sin relación con un cálculo; eso es Text"
+  alternatives:
+    - Text

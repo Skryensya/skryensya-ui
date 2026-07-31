@@ -52,15 +52,17 @@ export const avatarContract = {
 
   options: {
     size: { type: "enum", values: ["sm", "md", "lg"], default: "md", attr: "data-size" },
-    /** The person's name: the alt text with an image, the accessible name without one. */
+    /** The accessible name when initials are the fallback. */
     name: { type: "string", attr: "aria-label" },
+    /** The image's alt text; React calls this prop `name`. */
+    imageName: { type: "string", attr: "alt", prop: "name" },
     src: { type: "string", attr: "src" },
   },
 
   signatures: {
     "Avatar.initials": {
       intent: ["person", "user-identity", "no-photo-available"],
-      host: { element: "span" },
+      host: { element: "span", when: { src: "absent" } },
       options: ["size", "name"],
       requires: ["name"],
       forbids: ["src"],
@@ -78,6 +80,69 @@ export const avatarContract = {
         ],
       },
       react: { from: "@skryensya/react/avatar", name: "Avatar" },
+    },
+
+    "Avatar.image": {
+      intent: ["person", "user-identity", "photo"],
+      host: { element: "span", when: { src: "present" } },
+      options: ["size", "imageName", "src"],
+      requires: ["imageName", "src"],
+      slots: {},
+      template: {
+        element: "span",
+        part: "root",
+        host: true,
+        children: [
+          {
+            element: "span",
+            also: ["sk-image-frame"],
+            attrs: {
+              "data-aspect": "1/1",
+              "data-fit": "cover",
+              "data-position": "center",
+              "data-radius": "pill",
+              "data-border": "none",
+            },
+            children: [
+              {
+                element: "img",
+                also: ["sk-image-frame__media"],
+                options: ["src", "imageName"],
+              },
+            ],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/avatar", name: "Avatar" },
+    },
+
+    AvatarGroup: {
+      intent: ["people", "avatar-stack", "group-with-overflow"],
+      host: { element: "div" },
+      options: [],
+      slots: {
+        children: {
+          accepts: "signature",
+          of: ["Avatar.initials", "Avatar.image"],
+          required: true,
+        },
+        overflow: { accepts: "text" },
+      },
+      template: {
+        element: "div",
+        part: "group",
+        host: true,
+        children: [
+          { slot: "children" },
+          {
+            element: "span",
+            part: "groupOverflow",
+            slot: "overflow",
+            whenGiven: "overflow",
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/avatar", name: "AvatarGroup" },
     },
   },
 } as const satisfies ComponentContract;

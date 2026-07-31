@@ -9,7 +9,7 @@ import {
   type Space,
   type WrapperSize,
 } from "@skryensya/core/layout";
-import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, CSSProperties, ElementType, ReactNode } from "react";
 
 type PolymorphicProps<Element extends ElementType, OwnProps> = OwnProps & {
   as?: Element;
@@ -50,30 +50,82 @@ export function Stack<Element extends ElementType = "div">({ as, align, classNam
 
 export type InlineProps<Element extends ElementType = "div"> = PolymorphicProps<
   Element,
-  LayoutChildren & { align?: InlineAlign; gap?: Space; justify?: InlineJustify; wrap?: boolean }
+  LayoutChildren & {
+    align?: InlineAlign;
+    equal?: boolean;
+    gap?: Space;
+    justify?: InlineJustify;
+    wrap?: boolean;
+  }
 >;
 
 export function Inline<Element extends ElementType = "div">({
   as,
   align = "center",
   className,
+  equal = false,
   gap = "md",
   justify = "start",
   wrap = true,
   ...props
 }: InlineProps<Element>) {
   const Component = as ?? "div";
-  return <Component {...props} className={classes(layoutParts.inline, className)} data-align={align} data-gap={gap} data-justify={justify} data-wrap={wrap} />;
+  return (
+    <Component
+      {...props}
+      className={classes(layoutParts.inline, className)}
+      data-align={align}
+      data-equal={equal ? "" : undefined}
+      data-gap={gap}
+      data-justify={justify}
+      data-wrap={wrap}
+    />
+  );
 }
 
 export type GridProps<Element extends ElementType = "div"> = PolymorphicProps<
   Element,
-  LayoutChildren & { columns?: GridColumns; gap?: Space }
+  LayoutChildren & { columns?: GridColumns; gap?: Space; multicol?: boolean; "data-multicol"?: string }
 >;
 
-export function Grid<Element extends ElementType = "div">({ as, className, columns = 1, gap = "md", ...props }: GridProps<Element>) {
+export function Grid<Element extends ElementType = "div">({
+  as,
+  className,
+  columns = 1,
+  gap = "md",
+  multicol,
+  "data-multicol": rawMulticol,
+  ...props
+}: GridProps<Element>) {
   const Component = as ?? "div";
-  return <Component {...props} className={classes(layoutParts.grid, className)} data-columns={columns} data-gap={gap} />;
+  return (
+    <Component
+      {...props}
+      className={classes(layoutParts.grid, className)}
+      data-columns={columns}
+      data-gap={gap}
+      data-multicol={multicol === true ? "" : multicol === false ? undefined : rawMulticol}
+    />
+  );
+}
+
+export type DensityScopeProps<Element extends ElementType = "div"> = PolymorphicProps<
+  Element,
+  LayoutChildren & { densityFactor?: number }
+>;
+
+export function DensityScope<Element extends ElementType = "div">({
+  as,
+  densityFactor = 1,
+  style,
+  ...props
+}: DensityScopeProps<Element>) {
+  const Component = as ?? "div";
+  const densityStyle = {
+    ...style,
+    "--sk-density-factor": densityFactor,
+  } as CSSProperties;
+  return <Component {...props} data-sk-density-scope="" style={densityStyle} />;
 }
 
 export type WrapperProps<Element extends ElementType = "div"> = PolymorphicProps<

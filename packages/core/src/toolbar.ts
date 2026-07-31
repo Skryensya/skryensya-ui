@@ -36,13 +36,21 @@ export const toolbarContract = {
     },
     /** Names the bar. A page with two toolbars needs each told apart. */
     label: { type: "string", attr: "aria-label" },
+    /** Whether focus wraps at either end. Vanilla reads the presence attribute; React reads the prop. */
+    loopFocus: {
+      type: "boolean",
+      default: true,
+      attr: "data-loop-focus",
+      trueValue: "",
+      machineInput: true,
+    },
   },
 
   signatures: {
     Toolbar: {
       intent: ["bar-of-controls", "editor-toolbar", "grouped-actions"],
       host: { element: "div" },
-      options: ["orientation", "label"],
+      options: ["orientation", "label", "loopFocus"],
       requires: ["label"],
       slots: { children: { accepts: "node", required: true } },
       template: {
@@ -52,6 +60,7 @@ export const toolbarContract = {
         attrs: { role: "toolbar" },
         slot: "children",
       },
+      mount: "data-sk-toolbar",
       react: { from: "@skryensya/react/toolbar", name: "Toolbar" },
     },
 

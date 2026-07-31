@@ -3,48 +3,18 @@ import "@skryensya/core/components/tile.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
-import { TileLinkDemo } from "../../components/react-demos/link";
-import { linkTree } from "../../demos/link";
+import { linkTree, tileLinkTree } from "../../demos/link";
 import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
 
-/*
- * TileLink stays authored: tile title/description parts are declared and unreachable.
- */
-
-const tileLinkHtml = `<a
-  class="sk-tile sk-tile--interactive sk-interactive"
-  href="/usage"
->
-  <span class="sk-tile__content">
-    <span class="sk-tile__title">Usage details</span>
-    <span class="sk-tile__description">
-      Open the account usage report.
-    </span>
-  </span>
-</a>`;
 
 const tileLinkVanilla = `import { createTileLink } from "@skryensya/vanilla/tile-link";
 
 const link = createTileLink({ href: "/usage" });
 link.textContent = "Usage details";`;
 
-const tileLinkReact = `import { TileLink } from "@skryensya/react/tile-link";
-
-function Example() {
-  return (
-    <TileLink href="/usage">
-      <span className="sk-tile__content">
-        <span className="sk-tile__title">Usage details</span>
-        <span className="sk-tile__description">
-          Open the account usage report.
-        </span>
-      </span>
-    </TileLink>
-  );
-}`;
 ---
 
 <Base title="Link" description="Link: un enlace de texto, siempre subrayado, el único tratamiento que WCAG 1.4.1 permite.">
@@ -64,11 +34,7 @@ function Example() {
     <code>&lt;a&gt;</code>, pero no es <code>sk-link</code>: conserva la geometría Tile y su state layer
     porque el contexto, no un subrayado en prosa, comunica que la superficie es navegable.
   </p>
-  <ComponentPreview html={tileLinkHtml} react={tileLinkReact} label="TileLink">
-    <Fragment slot="react">
-      <TileLinkDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={tileLinkTree(t, "/componentes/link")} label="TileLink" />
   <p>El HTML autorado funciona sin inicialización. <code>createTileLink</code> solo crea el ancla cuando el árbol se genera desde JavaScript.</p>
   <CodeBlock code={tileLinkVanilla} label="JavaScript" />
 

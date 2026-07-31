@@ -3,7 +3,6 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
-import { FlyoutPlaceholderDemo } from "../../../components/react-demos/flyout";
 import {
   flyoutTree,
   flyoutRailTree,
@@ -11,6 +10,7 @@ import {
   flyoutDisabledItemTree,
   flyoutDisabledTree,
   flyoutLongTree,
+  flyoutPlaceholderTree,
 } from "../../../demos/flyout";
 import { getLocale, useTranslations } from "../../../i18n";
 
@@ -20,77 +20,6 @@ const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
 const styles = `@import "@skryensya/core/components/flyout.css";`;
 
-/*
- * The one demo on this page that is still hand-written, and the only one whose subject the contract
- * cannot state: the placeholder shows when the current value matches NO item, and `data-value` is
- * the way to say that — an attribute the Flyout contract maps nowhere (it declares `defaultValue`
- * over `data-default-value`, which the enhancer never reads). See `src/demos/flyout.ts`.
- */
-const placeholderHtml = `<div
-  class="sk-flyout"
-  data-sk-flyout
-  id="theme-custom"
-  data-value="custom"
-  data-placeholder="${t("demo.flyout.themeCustom")}"
->
-  <label class="sk-flyout__label" data-sk-flyout-label>
-    ${t("demo.flyout.theme")}
-  </label>
-
-  <button class="sk-flyout__trigger sk-interactive" data-sk-flyout-trigger type="button">
-    <span class="sk-flyout__value" data-sk-flyout-value>
-      ${t("demo.flyout.themeCustom")}
-    </span>
-    <span class="sk-flyout__indicator" data-sk-flyout-indicator aria-hidden="true">
-      <span data-state="closed">
-        <span data-sk-icon="chevron-right"></span>
-      </span>
-      <span data-state="open">
-        <span data-sk-icon="chevron-left"></span>
-      </span>
-    </span>
-  </button>
-
-  <ul class="sk-flyout__panel" data-sk-flyout-panel>
-${["Dawn", "Dusk", "Ember"]
-  .map(
-    (name) => `    <li
-      class="sk-flyout__item sk-interactive"
-      data-sk-flyout-item
-      data-value="${name.toLowerCase()}"
-    >
-      <span class="sk-flyout__item-text" data-sk-flyout-item-text>
-        ${name}
-      </span>
-      <span class="sk-flyout__item-indicator" data-sk-flyout-item-indicator aria-hidden="true">
-        <span data-sk-icon="check"></span>
-      </span>
-    </li>`,
-  )
-  .join("\n")}
-  </ul>
-</div>`;
-
-const reactPlaceholder = `import { Icon } from "@skryensya/react/icon";
-import { Flyout } from "@skryensya/react/flyout";
-
-function Example() {
-  return (
-    <Flyout
-      label="${t("demo.flyout.theme")}"
-      defaultValue={["custom"]}
-      placeholder="${t("demo.flyout.themeCustom")}"
-      indicator={<Icon name="chevron-right" />}
-      openIndicator={<Icon name="chevron-left" />}
-      itemIndicator={<Icon name="check" />}
-      options={[
-        { value: "dawn", label: "Dawn" },
-        { value: "dusk", label: "Dusk" },
-        { value: "ember", label: "Ember" },
-      ]}
-    />
-  );
-}`;
 
 const js = `import { initComponents } from "@skryensya/vanilla/auto";
 import { mountIcons } from "@skryensya/vanilla/icon";
@@ -231,15 +160,7 @@ function remountFlyout(root, value) {
   <p>
     If no <code>data-value</code> matches an item — for example an external “custom” value — the trigger shows the placeholder.
   </p>
-  <ComponentPreview html={placeholderHtml} react={reactPlaceholder} label="Placeholder" viewport="menu">
-    <Fragment slot="react">
-      <FlyoutPlaceholderDemo
-        label={t("demo.flyout.theme")}
-        placeholder={t("demo.flyout.themeCustom")}
-        client:load
-      />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={flyoutPlaceholderTree(t)} label="Placeholder" viewport="menu" />
 
   <h2>Remount with another value</h2>
   <p>

@@ -1,10 +1,12 @@
 import { stepsParts, type Step, type StepStatus } from "@skryensya/core/steps";
-import { type HTMLAttributes } from "react";
+import { type HTMLAttributes, type ReactNode } from "react";
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
+export type ReactStep = Omit<Step, "marker"> & { marker?: ReactNode };
+
 export type StepsProps = Omit<HTMLAttributes<HTMLOListElement>, "children"> & {
-  steps: readonly Step[];
+  steps: readonly ReactStep[];
   /** Zero-based index of the current step. Used only for steps that don't declare their own status. */
   current?: number;
   /** Rail direction. Defaults to horizontal, switching to vertical below 40rem. Pin either value to opt out of that responsive default. */
@@ -23,7 +25,7 @@ export function Steps({ className, current = 0, steps, ...props }: StepsProps) {
             data-status={status}
             key={step.label + index}
           >
-            <span className={stepsParts.marker}>{status === "complete" ? "✓" : index + 1}</span>
+            <span className={stepsParts.marker}>{step.marker ?? (status === "complete" ? "✓" : index + 1)}</span>
             <span>
               <span className={stepsParts.label}>{step.label}</span>
               {step.description ? <span className={stepsParts.description}>{step.description}</span> : null}

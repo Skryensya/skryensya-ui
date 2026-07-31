@@ -2,20 +2,16 @@
 import Base from "../../../layouts/Base.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
-import { timeFieldTree } from "../../../demos/time-field";
+import { timeFieldNativeTree, timeFieldTree } from "../../../demos/time-field";
 import { getLocale, useTranslations } from "../../../i18n";
 import "@skryensya/core/components/time-field.css";
 
 const install = `@import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/time-field.css";`;
 
-const nativeHtml = `<input type="time" name="start" id="start" />`;
 
 const t = useTranslations(getLocale(Astro.url));
 
-/*
- * Native `<input type="time">` stays authored: there is no contract for a platform control.
- */
 ---
 
 <Base
@@ -70,7 +66,7 @@ const t = useTranslations(getLocale(Astro.url));
     inconsistency across browsers, or the total lack of styling hooks, actually costs you something —
     the same decision DatePicker makes against a plain <code>type="date"</code>.
   </p>
-  <ComponentPreview html={nativeHtml} label="Native time input" />
+  <ComponentPreview tree={timeFieldNativeTree(t, { name: "departure" })} label="Native time input" />
 
   <h2>Accessibility</h2>
   <p>

@@ -26,6 +26,22 @@ export function Text({ as: Component = "p", children, className, size = "body", 
   );
 }
 
+export type StrongProps = HTMLAttributes<HTMLElement> & {
+  children: ReactNode;
+};
+
+export function Strong({ children, ...props }: StrongProps) {
+  return <strong {...props}>{children}</strong>;
+}
+
+export type OutputProps = HTMLAttributes<HTMLOutputElement> & {
+  children: ReactNode;
+};
+
+export function Output({ children, ...props }: OutputProps) {
+  return <output {...props}>{children}</output>;
+}
+
 export type HeadingProps = Omit<HTMLAttributes<HTMLHeadingElement>, "children"> & {
   as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
   children: ReactNode;

@@ -4,7 +4,7 @@ export type Space = "none" | "xs" | "sm" | "md" | "lg" | "xl";
 export type BoxSurface = "none" | "sunken" | "surface" | "raised";
 export type BoxBorder = "none" | "subtle" | "default";
 export type LayoutAlign = "start" | "center" | "end" | "stretch";
-export type InlineAlign = "start" | "center" | "end" | "baseline";
+export type InlineAlign = "start" | "center" | "end" | "baseline" | "stretch";
 export type InlineJustify = "start" | "center" | "end" | "between";
 export type GridColumns = 1 | 2 | 3 | 4;
 /** Page-column max measure on a size scale, see patterns/wrapper.css. */
@@ -71,8 +71,9 @@ export const layoutContract = {
   options: {
     gap: { type: "enum", values: ["none", "xs", "sm", "md", "lg", "xl"], default: "md", attr: "data-gap" },
     align: { type: "enum", values: ["start", "center", "end", "stretch"], attr: "data-align" },
-    inlineAlign: { type: "enum", values: ["start", "center", "end", "baseline"], default: "center", attr: "data-align", prop: "align" },
+    inlineAlign: { type: "enum", values: ["start", "center", "end", "baseline", "stretch"], default: "center", attr: "data-align", prop: "align" },
     justify: { type: "enum", values: ["start", "center", "end", "between"], default: "start", attr: "data-justify" },
+    equal: { type: "boolean", default: false, attr: "data-equal", trueValue: "" },
     /*
      * Whether items fall to a second line. Written as "true"/"false" and not by presence, because
      * the stylesheet has a rule for `data-wrap="false"` and an absent attribute would be a third
@@ -80,6 +81,8 @@ export const layoutContract = {
      */
     wrap: { type: "boolean", default: true, attr: "data-wrap", trueValue: "true", falseValue: "false" },
     columns: { type: "enum", values: ["1", "2", "3", "4"], default: "1", attr: "data-columns" },
+    multicol: { type: "boolean", default: false, attr: "data-multicol", trueValue: "" },
+    densityFactor: { type: "number", default: 1, styleProperty: "--sk-density-factor" },
   },
 
   signatures: {
@@ -95,7 +98,7 @@ export const layoutContract = {
     Inline: {
       intent: ["things-side-by-side", "button-row", "label-and-value"],
       host: { element: "div" },
-      options: ["gap", "inlineAlign", "justify", "wrap"],
+      options: ["gap", "inlineAlign", "justify", "wrap", "equal"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "inline", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Inline" },
@@ -104,10 +107,25 @@ export const layoutContract = {
     Grid: {
       intent: ["columns", "card-grid", "equal-width-cells"],
       host: { element: "div" },
-      options: ["gap", "columns"],
+      options: ["gap", "columns", "multicol"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "grid", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Grid" },
+    },
+
+    DensityScope: {
+      intent: ["local-density", "compact-subtree", "scaled-component-spacing"],
+      host: { element: "div" },
+      options: ["densityFactor"],
+      slots: { children: { accepts: "node", required: true } },
+      template: {
+        element: "div",
+        host: true,
+        options: ["densityFactor"],
+        attrs: { "data-sk-density-scope": "" },
+        slot: "children",
+      },
+      react: { from: "@skryensya/react/layout", name: "DensityScope" },
     },
   },
 } as const satisfies ComponentContract;

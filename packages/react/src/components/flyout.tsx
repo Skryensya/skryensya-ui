@@ -59,7 +59,8 @@ export function Flyout({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLUListElement>(null);
 
-  const [uncontrolled, setUncontrolled] = useState(defaultValue?.[0] ?? options[0]?.value ?? "");
+  const initialValue = Array.isArray(defaultValue) ? defaultValue[0] : defaultValue;
+  const [uncontrolled, setUncontrolled] = useState(initialValue ?? options[0]?.value ?? "");
   const controlled = valueProp !== undefined;
   const value = controlled ? (valueProp[0] ?? "") : uncontrolled;
   const [open, setOpen] = useState(false);

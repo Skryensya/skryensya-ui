@@ -91,6 +91,24 @@ export const typographyContract = {
       react: { from: "@skryensya/react/typography", name: "Text" },
     },
 
+    Strong: {
+      intent: ["strong-importance", "emphasis-inside-text"],
+      host: { element: "strong" },
+      options: [],
+      slots: { children: { accepts: "node", required: true } },
+      template: { element: "strong", host: true, slot: "children" },
+      react: { from: "@skryensya/react/typography", name: "Strong" },
+    },
+
+    Output: {
+      intent: ["calculated-result", "inline-live-result"],
+      host: { element: "output" },
+      options: [],
+      slots: { children: { accepts: "node", required: true } },
+      template: { element: "output", host: true, slot: "children" },
+      react: { from: "@skryensya/react/typography", name: "Output" },
+    },
+
     Heading: {
       intent: ["section-title", "page-title", "heading"],
       host: { element: "h2" },

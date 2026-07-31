@@ -151,9 +151,18 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
   for (const [attr, value] of Object.entries(tree.attrs ?? {})) props[jsxPropName(attr)] = value;
   // Only the signatures that portal take a container; the rest would pass it to a DOM element.
   if (portalContainer && signature.portals) props.container = portalContainer;
+  const optionStyle: Record<string, string | number> = {};
   for (const [option, value] of Object.entries(tree.options ?? {})) {
     const declared = contract.options[option];
+    if (declared?.styleProperty) {
+      optionStyle[declared.styleProperty] =
+        typeof value === "number" ? value : String(value);
+      continue;
+    }
     props[declared?.prop ?? option] = value;
+  }
+  if (Object.keys(optionStyle).length > 0) {
+    props.style = { ...(props.style as object | undefined), ...optionStyle };
   }
 
   const slots = slotsOf(tree);

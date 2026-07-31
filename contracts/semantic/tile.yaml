@@ -75,3 +75,9 @@ TileRadioGroup:
   alternatives:
     - RadioGroup
     - Segmented
+TileContent:
+  useWhen:
+    - "un Tile necesita la anatomía compartida de título y descripción"
+  avoidWhen:
+    - "está fuera de un Tile; no es contenido autónomo"
+  alternatives: []

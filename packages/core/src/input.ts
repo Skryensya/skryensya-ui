@@ -58,6 +58,15 @@ export const inputContract = {
       react: { from: "@skryensya/react/input", name: "Input" },
     },
 
+    NativeInput: {
+      intent: ["unstyled-native-input", "platform-control", "native-time-input"],
+      host: { element: "input" },
+      options: ["type", "name", "disabled"],
+      slots: {},
+      template: { element: "input", host: true },
+      react: { from: "@skryensya/react/input", name: "NativeInput" },
+    },
+
     Textarea: {
       intent: ["multi-line-input", "long-text", "comment", "description-entry"],
       host: { element: "textarea" },

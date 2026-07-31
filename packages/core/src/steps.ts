@@ -11,6 +11,10 @@ export type StepStatus = "complete" | "current" | "upcoming";
 export type Step = {
   label: string;
   description?: string;
+  /** Visible marker override. Complete stages commonly use a tick instead of their position. */
+  marker?: string;
+  /** Mirrors the authored `aria-current` cue when a usage tree supplies explicit statuses. */
+  current?: boolean;
   status?: StepStatus;
 };
 
@@ -62,9 +66,9 @@ export const stepsContract = {
 
             },
             slots: {
-              /** What the marker shows: a tick when complete, the position otherwise. Content, not an
-               * attribute — a screen reader reads it, and it is the non-colour cue for "done". */
-              marker: { accepts: "text", required: true },
+              /** What the marker shows: an icon when complete, the position otherwise. Content, not
+               * an attribute — a screen reader reads it, and it is the non-colour cue for "done". */
+              marker: { accepts: "node", required: true },
               label: { accepts: "text", required: true },
               description: { accepts: "text" },
             },

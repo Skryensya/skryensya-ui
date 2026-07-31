@@ -1,12 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
-/*
- * Heading and Text demos that convert. Left authored on their pages:
- * - Heading flush — wraps dialog chrome (`sk-dialog__header` / `sk-dialog__title`) no signature emits
- * - Text inline — the point is `<strong>` inside the paragraph; trees escape text, so nested HTML
- *   is inexpressible
- */
+/* Heading and Text demos shared by both locales. */
 
 type HeadingSize =
   | "display-lg"
@@ -235,4 +230,30 @@ export const textFeedbackTree = (t: Translate): UsageTree => ({
   options: { size: "sm", tone: "danger" },
   attrs: { role: "alert" },
   children: t("demo.text.feedback"),
+});
+
+export const headingFlushTree = (t: Translate): UsageTree => ({
+  contract: "box",
+  signature: "Box",
+  options: { surface: "surface", border: "subtle", padding: "md" },
+  children: {
+    contract: "typography",
+    signature: "Heading",
+    options: { headingSize: "h3", flush: true },
+    children: t("demo.heading.flush"),
+  },
+});
+
+export const textInlineTree = (t: Translate): UsageTree => ({
+  contract: "typography",
+  signature: "Text",
+  children: [
+    t("demo.text.before"),
+    {
+      contract: "typography",
+      signature: "Strong",
+      children: " Pro ",
+    },
+    t("demo.text.after"),
+  ],
 });

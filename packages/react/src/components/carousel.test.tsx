@@ -1,7 +1,9 @@
+import type { UsageTree } from "@skryensya/core/usage-tree";
 import { createRef } from "react";
 import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Carousel, CarouselSlide, type CarouselHandle } from "./carousel.js";
+import { renderTree } from "../render-tree.js";
 
 describe("Carousel", () => {
   it("renders a section region with a scroll-snap track of slides", () => {
@@ -22,6 +24,28 @@ describe("Carousel", () => {
     // A div, not a list: the machine gives each slide role="group", which takes it out of the list.
     expect(track.tagName).toBe("DIV");
     expect(track.querySelectorAll("div.sk-carousel__slide")).toHaveLength(3);
+  });
+
+  it("maps style-backed tree options onto the Carousel host", () => {
+    const tree: UsageTree = {
+      contract: "carousel",
+      signature: "Carousel",
+      options: { mounted: false, slideSize: "min(42%, 14rem)" },
+      children: {
+        contract: "carousel",
+        signature: "CarouselSlide",
+        children: "Search",
+      },
+    };
+
+    const ui = render(<>{renderTree(tree)}</>);
+    const region = ui.container.querySelector<HTMLElement>(".sk-carousel")!;
+
+    expect(region.hasAttribute("data-sk-carousel")).toBe(false);
+    expect(region.hasAttribute("data-slide-size")).toBe(false);
+    expect(region.style.getPropertyValue("--sk-carousel-slide-size")).toBe(
+      "min(42%, 14rem)",
+    );
   });
 
   it("exposes a snapTo handle that dispatches the goto command the enhancer listens for", () => {

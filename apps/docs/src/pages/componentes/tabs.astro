@@ -3,8 +3,12 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { TabsAdvancedDemo } from "../../components/react-demos/tabs";
-import { tabsBasicTree, tabsStatesTree } from "../../demos/tabs";
+import {
+  tabsAdvancedScript,
+  tabsAdvancedTree,
+  tabsBasicTree,
+  tabsStatesTree,
+} from "../../demos/tabs";
 import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
@@ -14,207 +18,15 @@ const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/patterns/state-layer.css";
 @import "@skryensya/core/patterns/layout.css";`;
 
-const t = useTranslations(getLocale(Astro.url));
-
-/*
- * Advanced stays authored: live-region status driven by js / React state is the point of the demo.
- */
-
-const advancedHtml = `<div class="sk-stack" data-gap="sm">
-  <div
-    class="sk-tabs"
-    data-sk-tabs
-    id="workspace-tabs"
-    data-value="general"
-    data-orientation="vertical"
-    data-activation-mode="manual"
-  >
-    <div
-      class="sk-tabs__list"
-      data-sk-tabs-list
-      aria-label="Ajustes del espacio"
-    >
-      <button
-        class="sk-tabs__trigger sk-interactive"
-        data-sk-tabs-trigger
-        data-value="general"
-        type="button"
-      >
-        <span data-sk-icon="settings" data-sk-icon-size="sm"></span>
-        General
-      </button>
-      <button
-        class="sk-tabs__trigger sk-interactive"
-        data-sk-tabs-trigger
-        data-value="access"
-        type="button"
-      >
-        <span data-sk-icon="user" data-sk-icon-size="sm"></span>
-        Acceso
-      </button>
-      <button
-        class="sk-tabs__trigger sk-interactive"
-        data-sk-tabs-trigger
-        data-value="notifications"
-        type="button"
-      >
-        <span data-sk-icon="info" data-sk-icon-size="sm"></span>
-        Avisos
-      </button>
-    </div>
-
-    <div
-      class="sk-tabs__content"
-      data-sk-tabs-content
-      data-value="general"
-    >
-      <div class="sk-stack" data-gap="xs">
-        <strong>Identidad del espacio</strong>
-        <span>Atlas · Europe/Madrid · Español</span>
-      </div>
-    </div>
-    <div
-      class="sk-tabs__content"
-      data-sk-tabs-content
-      data-value="access"
-    >
-      <div class="sk-stack" data-gap="xs">
-        <strong>Acceso de equipo</strong>
-        <span>8 miembros · 2 administradores</span>
-      </div>
-    </div>
-    <div
-      class="sk-tabs__content"
-      data-sk-tabs-content
-      data-value="notifications"
-    >
-      <div class="sk-stack" data-gap="xs">
-        <strong>Avisos operativos</strong>
-        <span>Correo y chat para despliegues e incidentes.</span>
-      </div>
-    </div>
-  </div>
-
-  <p id="workspace-tab-status" aria-live="polite">
-    Sección activa: General
-  </p>
-</div>`;
-
-const advancedCode = `<div class="sk-stack" data-gap="sm">
-  <div
-    class="sk-tabs"
-    data-sk-tabs
-    id="workspace-tabs"
-    data-value="general"
-    data-orientation="vertical"
-    data-activation-mode="manual"
-  >
-    <div class="sk-tabs__list" data-sk-tabs-list>
-      <!-- Tres triggers: General, Acceso y Avisos. -->
-    </div>
-
-    <div
-      class="sk-tabs__content"
-      data-sk-tabs-content
-      data-value="general"
-    >
-      Identidad del espacio.
-    </div>
-    <!-- Los otros paneles repiten el data-value de su trigger. -->
-  </div>
-
-  <p id="workspace-tab-status" aria-live="polite">
-    Sección activa: General
-  </p>
-</div>`;
-
-const advancedBehavior = `const root = document.querySelector(
-  "#workspace-tabs",
-);
-const status = document.querySelector("#workspace-tab-status");
-const sectionNames = {
-  general: "General",
-  access: "Acceso",
-  notifications: "Avisos",
-};
-
-root?.addEventListener("sk-value-change", (event) => {
-  const name = sectionNames[event.detail.value];
-  if (status && name) status.textContent = "Sección activa: " + name;
-});`;
-
-const vanillaJs = `import { mountIcons } from "@skryensya/vanilla/icon";
+const vanillaJs = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
-import { initComponents } from "@skryensya/vanilla/auto";
 
 mountIcons(document, lucideIcons);
 await initComponents();`;
 
-const advancedJs = `${vanillaJs}
+const t = useTranslations(getLocale(Astro.url));
 
-${advancedBehavior}`;
-
-const advancedReact = `import { useState } from "react";
-import { Icon } from "@skryensya/react/icon";
-import { Tabs } from "@skryensya/react/tabs";
-
-const sectionNames: Record<string, string> = {
-  general: "General",
-  access: "Acceso",
-  notifications: "Avisos",
-};
-
-const items = [
-  {
-    value: "general",
-    label: (
-      <>
-        <Icon name="settings" size="sm" />
-        General
-      </>
-    ),
-    children: "Atlas · Europe/Madrid · Español",
-  },
-  {
-    value: "access",
-    label: (
-      <>
-        <Icon name="user" size="sm" />
-        Acceso
-      </>
-    ),
-    children: "8 miembros · 2 administradores",
-  },
-  {
-    value: "notifications",
-    label: (
-      <>
-        <Icon name="info" size="sm" />
-        Avisos
-      </>
-    ),
-    children: "Correo y chat para despliegues e incidentes.",
-  },
-];
-
-export function WorkspaceTabs() {
-  const [value, setValue] = useState("general");
-
-  return (
-    <div className="sk-stack" data-gap="sm">
-      <Tabs
-        value={value}
-        orientation="vertical"
-        activationMode="manual"
-        items={items}
-        onValueChange={(details) => setValue(details.value)}
-      />
-      <p aria-live="polite">
-        Sección activa: {sectionNames[value]}
-      </p>
-    </div>
-  );
-}`;
 ---
 
 <Base
@@ -251,18 +63,11 @@ export function WorkspaceTabs() {
     debajo del componente.
   </p>
   <ComponentPreview
-    html={advancedHtml}
-    code={advancedCode}
-    codeFull={advancedHtml}
-    js={advancedJs}
-    react={advancedReact}
-    previewScript={advancedBehavior}
+    tree={tabsAdvancedTree(t)}
+    js={tabsAdvancedScript}
+    previewScript={tabsAdvancedScript}
     label="Tabs verticales con control manual"
-  >
-    <Fragment slot="react">
-      <TabsAdvancedDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  />
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />

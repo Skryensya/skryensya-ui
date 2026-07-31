@@ -356,7 +356,7 @@ const screenToggleLabels = Object.fromEntries(
           <TreeDemo
             tree={tree}
             measure={measure}
-            frameOptions={{ flush, scroll, viewport }}
+            frameOptions={{ flush, scroll, viewport, script: previewScript }}
             client:load
           />
         ) : (

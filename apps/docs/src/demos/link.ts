@@ -1,12 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
-/*
- * The prose pair: text-coloured link and primary-coloured link in one sentence. TileLink stays
- * authored — tile title/description parts are declared and unreachable.
- *
- * Locale-owned href comes from the page (`/componentes/link` vs `/en/components/link`).
- */
+/* Link demos shared by both locales. Locale-owned hrefs come from the pages. */
 
 /** Two links in a paragraph — underline always, tone optional. */
 export const linkTree = (t: Translate, href: string): UsageTree => ({
@@ -29,4 +24,18 @@ export const linkTree = (t: Translate, href: string): UsageTree => ({
     },
     t("demo.link.after"),
   ],
+});
+
+export const tileLinkTree = (_t: Translate, href: string): UsageTree => ({
+  contract: "tile",
+  signature: "TileLink",
+  options: { href },
+  children: {
+    contract: "tile",
+    signature: "TileContent",
+    slots: {
+      title: "Usage details",
+      description: "Open the account usage report.",
+    },
+  },
 });

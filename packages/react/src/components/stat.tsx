@@ -27,14 +27,16 @@ export type StatProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
    * as-is (the default, static path).
    */
   value: ReactNode;
-  /** Formats each tick and the final number when `value` is numeric. Default: locale tabular count. */
+  /** Machine-readable metric used by usage-tree markup while `value` remains the final fallback text. */
+  count?: number;
+  locale?: string;
+  suffix?: string;
+  fractionDigits?: number;
+  /** Formats each tick and the final number when the metric is numeric. */
   format?: (n: number) => string;
-  /**
-   * Opt-in count-up. Only runs when `value` is a finite number. Honours
-   * `prefers-reduced-motion` (jumps to the end).
-   */
+  /** Opt-in count-up. Reduced motion jumps directly to the final value. */
   animate?: boolean | StatAnimateOptions;
-  /** Optional change indicator, e.g. `<><Icon name="arrow-up" size="sm" /> 12.5%</>`. Colored by `trend`, not by its own sign. */
+  /** Optional change indicator, paired with `trend` so color is not the only cue. */
   change?: ReactNode;
   trend?: StatTrend;
 };
@@ -43,22 +45,40 @@ export function Stat({
   animate = false,
   change,
   className,
+  count,
   format,
+  fractionDigits,
   label,
+  locale,
+  suffix = "",
   trend = "neutral",
   value,
   ...props
 }: StatProps) {
-  const animated = Boolean(animate) && typeof value === "number" && Number.isFinite(value);
+  const metric = count ?? value;
+  const countFormat = useMemo(() => {
+    if (format) return format;
+    if (count === undefined) return undefined;
+    const formatter = new Intl.NumberFormat(locale, {
+      maximumFractionDigits: fractionDigits,
+      minimumFractionDigits: fractionDigits,
+    });
+    return (n: number) => `${formatter.format(n)}${suffix}`;
+  }, [count, format, fractionDigits, locale, suffix]);
+  const animated = Boolean(animate) && typeof metric === "number" && Number.isFinite(metric);
   const options: StatAnimateOptions = typeof animate === "object" && animate ? animate : {};
+  const staticValue =
+    count !== undefined && typeof metric === "number" && countFormat
+      ? countFormat(metric)
+      : metric;
 
   return (
-    <div {...props} className={cx(statParts.root, className)}>
+    <div {...props} className={cx(statParts.root, className)} data-sk-stat="">
       <span className={statParts.label}>{label}</span>
       {animated ? (
-        <StatValue animate={options} format={format} to={value} />
+        <StatValue animate={options} format={countFormat} to={metric as number} />
       ) : (
-        <span className={statParts.value}>{value}</span>
+        <span className={statParts.value}>{staticValue}</span>
       )}
       {change != null ? (
         <span className={statParts.change} data-trend={trend}>

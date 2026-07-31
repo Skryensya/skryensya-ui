@@ -16,12 +16,13 @@ import { treeViewContract } from "@skryensya/core/tree-view";
 import { sidebarContract } from "@skryensya/core/sidebar";
 import { accordionContract } from "@skryensya/core/accordion";
 import { tileContract } from "@skryensya/core/tile";
-import { paginationContract } from "@skryensya/core/pagination";
+import { paginationContract, tablePagerContract } from "@skryensya/core/pagination";
 import { themeToggleContract } from "@skryensya/core/theme-toggle";
 import { contentContract } from "@skryensya/core/content";
 import { numberFieldContract } from "@skryensya/core/number-field";
 import { navbarContract } from "@skryensya/core/navbar";
 import { toolbarContract } from "@skryensya/core/toolbar";
+import { tooltipContract } from "@skryensya/core/tooltip";
 import { segmentedContract } from "@skryensya/core/segmented";
 import { sliderContract } from "@skryensya/core/slider";
 import { avatarContract } from "@skryensya/core/avatar";
@@ -76,6 +77,7 @@ export const contracts = {
   navbar: navbarContract,
   content: contentContract,
   pagination: paginationContract,
+  "table-pager": tablePagerContract,
   accordion: accordionContract,
   sidebar: sidebarContract,
   carousel: carouselContract,
@@ -98,6 +100,7 @@ export const contracts = {
   table: tableContract,
   tag: tagContract,
   toolbar: toolbarContract,
+  tooltip: tooltipContract,
   typography: typographyContract,
   wrapper: wrapperContract,
   tabs: tabsContract,

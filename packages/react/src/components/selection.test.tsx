@@ -16,6 +16,14 @@ describe("selection controls", () => {
     expect(onCheckedChange).toHaveBeenCalledWith({ checked: true });
   });
 
+  it("accepts the contract's boolean spelling for an uncontrolled indeterminate checkbox", () => {
+    const ui = render(<Checkbox defaultIndeterminate>Archive</Checkbox>);
+    const checkbox = ui.getByRole("checkbox", { name: "Archive" }) as HTMLInputElement;
+
+    expect(checkbox.indeterminate).toBe(true);
+    expect(checkbox.checked).toBe(false);
+  });
+
   it("lets the browser own uncontrolled RadioGroup selection and reports it", () => {
     const onValueChange = vi.fn();
     const ui = render(

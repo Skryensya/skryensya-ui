@@ -1,4 +1,11 @@
 ---
+/* The Spanish twin imported these three and this page imported none of them; dev hid it, because
+   Vite keeps every stylesheet the session has already pulled in. `details.css` was missing on BOTH
+   pages — the "Details nativo" stage rendered as bare <details> with the browser's own marker,
+   since a preview frame only ever copies the styles its PAGE loaded. */
+import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/accordion.css";
+import "@skryensya/core/components/details.css";
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";

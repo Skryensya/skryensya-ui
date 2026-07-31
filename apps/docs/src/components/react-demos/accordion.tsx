@@ -2,6 +2,41 @@
  * Live React demos for /components/accordion. Each export is a self-contained island (no function
  * props crossing the Astro boundary), mounted directly from the page with a bare
  * `<AccordionSingleDemo client:load />`.
+ *
+ * ALL THREE ISLANDS ARE STILL HERE because none of this page's four previews can be a usage tree.
+ * There is no `src/demos/accordion.ts`; writing one would mean writing a demo the page does not
+ * show. Two holes, both measured against `artifacts/ai-manifest.json` and confirmed by the
+ * validator, and both of them are in TILE, not in Accordion — the Accordion family itself is fine:
+ *
+ * 1. `sk-tile__chevron` is a declared part of the `tile` contract that NO signature's template
+ *    paints. It is not a class you can reach by choosing the right signature; there is no
+ *    `TileChevron`, and the two `<span data-state="closed|open">` children it wraps are STRUCTURE,
+ *    so no option or `attrs` can fill them either — `attrs` land on the host, never on a child.
+ *    Every one of the four previews on this page ends its trigger with that chevron, and
+ *    `tile.css` keys the open/closed swap on exactly `.sk-tile__chevron > [data-state]`.
+ *
+ * 2. `TileContent` DOES emit `sk-tile__title` and `sk-tile__description` (so the older note that
+ *    "no signature emits them" is stale), but its `parents` list is
+ *    `[TileLink, TileButton, TileCheckbox, TileSwitch, ExpandableTileTrigger]` — it omits
+ *    `Accordion.Trigger`. The validator answers `invalid-parent`, so a title over a description
+ *    inside an accordion item has no expression, even though React's `Accordion.Trigger` IS an
+ *    `ExpandableTileTrigger` underneath and would render it correctly. One entry in one array.
+ *
+ * The fourth preview, "Details nativo", is blocked further back: there is no `details` family in
+ * the catalogue at all, so `sk-details`, `sk-details__summary`, `sk-details__content` and
+ * `sk-details-group` are unreachable the way anything unpublished is.
+ *
+ * What is NOT the blocker, in case the next reader assumes it: `defaultOpen` on `Accordion.Item`
+ * works in both bindings. It emits `data-default-open` (which `Accordion.svelte` reads) and a
+ * `defaultOpen` prop (which reaches the collapsible machine and renders `data-state="open"`).
+ *
+ * While these stay authored they carry the drift the tree exists to remove, and it is live today:
+ * these islands are English-only but BOTH pages import them, so on `/componentes/accordion` the
+ * Vanilla stage is Spanish and the React stage beside it is English. On top of that,
+ * `AccordionMultipleDemo`'s two body paragraphs are shorter than the same demo's authored HTML, so
+ * that preview's two stages measure 21px apart in both locales. Do not patch either by hand: a
+ * fourth copy of these sentences is what the port is deleting. Fix the two holes above, then
+ * delete this file.
  */
 import { Accordion } from "@skryensya/react/accordion";
 import { Icon } from "@skryensya/react/icon";

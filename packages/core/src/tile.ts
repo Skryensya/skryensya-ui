@@ -175,7 +175,21 @@ export const tileContract = {
     TileContent: {
       intent: ["tile-copy", "tile-title-and-description"],
       host: { element: "span" },
-      parents: ["TileLink", "TileButton", "TileCheckbox", "TileSwitch", "ExpandableTileTrigger"],
+      /*
+       * `Accordion.Trigger` belongs here because it IS an ExpandableTileTrigger: React's
+       * `AccordionTrigger` renders one directly (`packages/react/src/components/accordion.tsx`), and
+       * the authored markup on the accordion page puts `sk-tile__content` inside the trigger button
+       * exactly as this emits it. Omitting it made the validator reject a title-over-description in
+       * an accordion item — the composition all three accordion demos are built on.
+       */
+      parents: [
+        "TileLink",
+        "TileButton",
+        "TileCheckbox",
+        "TileSwitch",
+        "ExpandableTileTrigger",
+        "Accordion.Trigger",
+      ],
       options: [],
       slots: {
         title: { accepts: "node", required: true },

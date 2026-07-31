@@ -48,6 +48,34 @@ export function List({
   );
 }
 
+export type OrderedListProps = Omit<ListProps, "ordered">;
+
+export function OrderedList(props: OrderedListProps) {
+  return <List {...props} ordered />;
+}
+
+export type ListItemPlainProps = LiHTMLAttributes<HTMLLIElement> & {
+  children: ReactNode;
+  disabled?: boolean;
+};
+
+export function ListItemPlain({
+  children,
+  className,
+  disabled,
+  ...props
+}: ListItemPlainProps) {
+  return (
+    <li
+      {...props}
+      className={cx(listParts.item, className)}
+      data-disabled={disabled ? "" : undefined}
+    >
+      {children}
+    </li>
+  );
+}
+
 /** The composable row slots, shared by static and interactive items. */
 type RowSlots = {
   /** Decorative leading media: an Icon, an Avatar, a number. Names nothing on its own. */

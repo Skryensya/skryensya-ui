@@ -34,8 +34,8 @@ export const mountTablePager = createConnectMount({
  *
  * Owns showing/hiding `[data-sk-table-pager-row]`, rebuilding the empty
  * `[data-sk-table-pager-nav]` from `paginationRange`, and filling an optional status node.
- * Page size comes from `data-page-size` on the root, or from a nested `[data-sk-select]` via
- * `sk-value-change`. Does not invent the table or the select.
+ * Page size comes from `data-page-size` on the root, or from a nested Flyout/Select via
+ * `sk-value-change`. Does not invent the table or the picker.
  *
  * Chevron placeholders are injected as `data-sk-icon` and hydrated via `remountIcons` when the
  * app already called `mountIcons` (ADR-15: set stays explicit on the app side).
@@ -47,7 +47,7 @@ export function connectTablePager(root: HTMLElement): Cleanup {
   }
 
   const status = root.querySelector<HTMLElement>(statusSelector);
-  const sizeMenu = root.querySelector<HTMLElement>("[data-sk-select]");
+  const sizeMenu = root.querySelector<HTMLElement>("[data-sk-select], [data-sk-flyout]");
   const previousLabel = root.getAttribute("data-previous-label") || "Previous page";
   const nextLabel = root.getAttribute("data-next-label") || "Next page";
   const pageLabel = root.getAttribute("data-page-label") || "Page";

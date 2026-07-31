@@ -1,11 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
-/*
- * Only the minimum tree is expressible today. The remaining demos intentionally stay authored:
- * initial state needs expandedValue/selectedValue, the disabled example needs expandedValue to
- * reveal its disabled child, and the events example also needs per-node icons plus an output sibling.
- */
+/* TreeView state, hierarchy, disabled nodes and event feedback share one node model. */
 export const treeViewMinimalTree = (t: Translate): UsageTree => ({
   contract: "tree-view",
   signature: "TreeView",
@@ -26,3 +22,143 @@ export const treeViewMinimalTree = (t: Translate): UsageTree => ({
     ],
   },
 });
+
+const projectItems = (t: Translate) => [
+  {
+    options: { id: "src" },
+    slots: {
+      label: t("demo.tree.source"),
+      children: [
+        {
+          options: { id: "src/components" },
+          slots: {
+            label: t("demo.tree.components"),
+            children: [
+              {
+                options: { id: "src/components/button.tsx" },
+                slots: { label: t("demo.tree.buttonFile") },
+              },
+            ],
+          },
+        },
+        { options: { id: "src/index.ts" }, slots: { label: t("demo.tree.indexFile") } },
+      ],
+    },
+  },
+  { options: { id: "README.md" }, slots: { label: "README.md" } },
+];
+
+export const treeViewInitialTree = (t: Translate): UsageTree => ({
+  contract: "tree-view",
+  signature: "TreeView",
+  options: {
+    label: t("demo.tree.initialLabel"),
+    defaultExpandedValue: "src,src/components",
+    defaultSelectedValue: "src/components/button.tsx",
+  },
+  slots: { items: projectItems(t) },
+});
+
+export const treeViewMultipleTree = (t: Translate): UsageTree => ({
+  contract: "tree-view",
+  signature: "TreeView",
+  options: {
+    label: t("demo.tree.multipleLabel"),
+    selectionMode: "multiple",
+    defaultExpandedValue: "src,src/components",
+    defaultSelectedValue: "src/components/button.tsx,README.md",
+  },
+  slots: { items: projectItems(t) },
+});
+
+export const treeViewDisabledTree = (t: Translate): UsageTree => ({
+  contract: "tree-view",
+  signature: "TreeView",
+  options: {
+    label: t("demo.tree.disabledLabel"),
+    defaultExpandedValue: "src",
+  },
+  slots: {
+    items: [
+      {
+        options: { id: "src" },
+        slots: {
+          label: t("demo.tree.source"),
+          children: [
+            {
+              options: { id: "src/legacy", disabled: true },
+              slots: { label: t("demo.tree.disabledFolder") },
+            },
+            { options: { id: "src/index.ts" }, slots: { label: t("demo.tree.indexFile") } },
+          ],
+        },
+      },
+    ],
+  },
+});
+
+export const treeViewEventsTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "sm" },
+  attrs: { "data-tree-events": "" },
+  children: [
+    {
+      contract: "tree-view",
+      signature: "TreeView",
+      options: {
+        label: t("demo.tree.settingsLabel"),
+        defaultExpandedValue: "src",
+      },
+      slots: {
+        branchIndicator: {
+          contract: "icon",
+          signature: "Icon",
+          options: { name: "chevron-right", size: "sm" },
+        },
+        leafIndicator: {
+          contract: "icon",
+          signature: "Icon",
+          options: { name: "settings", size: "sm" },
+        },
+        items: projectItems(t),
+      },
+    },
+    {
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "none" },
+      children: [
+        {
+          contract: "typography",
+          signature: "Text",
+          options: { size: "sm", tone: "secondary" },
+          attrs: { role: "status", "data-tree-selection": "" },
+          children: `${t("demo.tree.selection")}: —`,
+        },
+        {
+          contract: "typography",
+          signature: "Text",
+          options: { size: "sm", tone: "secondary" },
+          attrs: { role: "status", "data-tree-expansion": "" },
+          children: `${t("demo.tree.expansion")}: —`,
+        },
+      ],
+    },
+  ],
+});
+
+export const treeViewEventsScript = `
+const demo = document.querySelector("[data-tree-events]");
+demo?.addEventListener("click", (event) => {
+  const branch = event.target.closest("[data-sk-tree-view-branch]");
+  const item = event.target.closest("[data-sk-tree-view-item]");
+  if (branch) {
+    const output = demo.querySelector("[data-tree-expansion]");
+    output.textContent = output.textContent.split(":")[0] + ": " + branch.dataset.value;
+  } else if (item) {
+    const output = demo.querySelector("[data-tree-selection]");
+    output.textContent = output.textContent.split(":")[0] + ": " + item.dataset.value;
+  }
+});
+`;

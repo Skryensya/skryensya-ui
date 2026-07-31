@@ -1,10 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
-/*
- * Layout's demos, one export per page — Box, Stack, Inline, Primitives and Grid basic. Multicol
- * stays authored: `data-multicol` is not a declared option.
- */
+/* Layout demos shared by both locales, including the masonry-style multicolumn Grid. */
 
 /** A surface with a heading, a line of prose and an action: the three things Box has to hold up. */
 export const boxTree = (t: Translate): UsageTree => ({
@@ -202,4 +199,41 @@ export const gridTree = (t: Translate): UsageTree => ({
       children: "Cauce",
     },
   ],
+});
+
+export const gridMulticolTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Grid",
+  options: { columns: "3", gap: "md", multicol: true },
+  attrs: { "aria-label": t("demo.grid.label") },
+  children: ["Atlas", "Brisa", "Cauce", "Delta", "Estuario", "Faro", "Greda", "Hiedra"].map(
+    (name, index) => ({
+      contract: "box",
+      signature: "Box",
+      options: {
+        surface: index % 2 === 0 ? "raised" : "surface",
+        border: "subtle",
+        padding: index % 3 === 0 ? "lg" : "md",
+      },
+      children: {
+        contract: "layout",
+        signature: "Stack",
+        options: { gap: "xs" },
+        children: [
+          {
+            contract: "typography",
+            signature: "Text",
+            options: { weight: "label" },
+            children: name,
+          },
+          {
+            contract: "typography",
+            signature: "Text",
+            options: { size: "sm", tone: "secondary" },
+            children: `${index + 1}`,
+          },
+        ],
+      },
+    }),
+  ),
 });

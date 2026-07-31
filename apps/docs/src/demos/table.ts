@@ -185,3 +185,132 @@ export const tableInBoxTree = (t: Translate): UsageTree => ({
   options: { surface: "surface", border: "subtle", padding: "md" },
   children: tableTree(t),
 });
+
+const pagerRows = [
+  ["dep-1040", "API", "production", "succeeded", "minutes", "4"],
+  ["dep-1039", "Worker", "production", "running", "minutes", "12"],
+  ["dep-1038", "Gateway", "staging", "succeeded", "minutes", "27"],
+  ["dep-1037", "Billing", "production", "failed", "hours", "1"],
+  ["dep-1036", "Auth", "staging", "succeeded", "hours", "2"],
+  ["dep-1035", "Search", "production", "succeeded", "hours", "3"],
+  ["dep-1034", "API", "staging", "running", "hours", "4"],
+  ["dep-1033", "Worker", "production", "succeeded", "hours", "5"],
+] as const;
+
+function deploymentsTable(t: Translate, markPagerRows = false): UsageTree {
+  return {
+    contract: "table",
+    signature: "TableScroll",
+    children: {
+      contract: "table",
+      signature: "Table",
+      children: [
+        { contract: "table", signature: "TableCaption", children: t("demo.table.activity") },
+        {
+          contract: "table",
+          signature: "TableHead",
+          children: headerRow(t, [
+            "demo.table.result",
+            "demo.table.service",
+            "demo.table.environment",
+            "demo.table.status",
+            "demo.table.when",
+          ]),
+        },
+        {
+          contract: "table",
+          signature: "TableBody",
+          children: pagerRows.map(([id, service, environment, status, unit, amount]) => ({
+            contract: "table",
+            signature: "TableRow",
+            attrs: markPagerRows ? { "data-sk-table-pager-row": "" } : {},
+            children: [
+              {
+                contract: "table",
+                signature: "TableHeader",
+                options: { scope: "row" },
+                children: id,
+              },
+              { contract: "table", signature: "TableCell", children: service },
+              { contract: "table", signature: "TableCell", children: environment },
+              {
+                contract: "table",
+                signature: "TableCell",
+                children: t(`demo.table.${status}` as never),
+              },
+              {
+                contract: "table",
+                signature: "TableCell",
+                children: t(
+                  unit === "minutes" ? "demo.table.minutesAgo" : "demo.table.hoursAgo",
+                  { n: amount },
+                ),
+              },
+            ],
+          })),
+        },
+      ],
+    },
+  };
+}
+
+export const tablePagerTree = (t: Translate): UsageTree => ({
+  contract: "table-pager",
+  signature: "TablePager",
+  options: {
+    pageSize: 5,
+    statusTemplate: t("demo.table.range"),
+    previousLabel: t("demo.table.previousPage"),
+    nextLabel: t("demo.table.nextPage"),
+    pageLabel: t("demo.table.page"),
+  },
+  children: [
+    deploymentsTable(t, true),
+    {
+      contract: "table-pager",
+      signature: "TablePagerBar",
+      children: [
+        {
+          contract: "table-pager",
+          signature: "TablePagerSize",
+          children: {
+            contract: "flyout",
+            signature: "Flyout",
+            options: { defaultValue: "5" },
+            slots: {
+              label: t("demo.table.rowsPerPage"),
+              items: ["5", "10", "25"].map((value) => ({
+                options: { value },
+                slots: { label: value },
+              })),
+            },
+          },
+        },
+        {
+          contract: "table-pager",
+          signature: "TablePagerEnd",
+          children: [
+            {
+              contract: "table-pager",
+              signature: "TablePagerStatus",
+              children: t("demo.table.range", { start: "1", end: "5", total: "8" }),
+            },
+            {
+              contract: "table-pager",
+              signature: "TablePagerNav",
+              options: { navLabel: t("demo.table.pagination") },
+            },
+          ],
+        },
+      ],
+    },
+  ],
+});
+
+export const tableDensityTree = (t: Translate, densityFactor: number): UsageTree => {
+  const tree = deploymentsTable(t);
+  return {
+    ...tree,
+    options: { density: 1, densityFactor },
+  };
+};

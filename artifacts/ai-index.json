@@ -137,6 +137,47 @@
             "no hay foto y hacen falta las iniciales de la persona",
             "el avatar identifica a alguien y necesita nombre accesible"
           ]
+        },
+        {
+          "alternatives": [
+            "Avatar.initials",
+            "ImageFrame"
+          ],
+          "avoidWhen": [
+            "es una imagen de contenido y no una identidad; usa ImageFrame"
+          ],
+          "host": "span",
+          "id": "Avatar.image",
+          "intent": [
+            "person",
+            "user-identity",
+            "photo"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay una foto que identifica a una persona o entidad",
+            "el recorte circular necesita conservar el nombre como texto alternativo"
+          ]
+        },
+        {
+          "alternatives": [
+            "List"
+          ],
+          "avoidWhen": [
+            "cada persona necesita nombre, detalle o acción visible; usa List"
+          ],
+          "host": "div",
+          "id": "AvatarGroup",
+          "intent": [
+            "people",
+            "avatar-stack",
+            "group-with-overflow"
+          ],
+          "parents": [],
+          "useWhen": [
+            "varias identidades se muestran juntas en una pila compacta",
+            "el excedente visible se resume con un contador"
+          ]
         }
       ]
     },
@@ -164,6 +205,44 @@
           "useWhen": [
             "un conteo o un estado corto pegado a otra cosa: no leídos, cantidad, etiqueta de estado",
             "el tono comunica un rol del sistema: success, warning, danger"
+          ]
+        },
+        {
+          "alternatives": [
+            "Badge"
+          ],
+          "avoidWhen": [
+            "hay texto o un conteo visible; eso es un Badge"
+          ],
+          "host": "span",
+          "id": "BadgeDot",
+          "intent": [
+            "unread-dot",
+            "presence-dot",
+            "status-dot"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un punto compacto comunica presencia, novedad o estado junto a otro control"
+          ]
+        },
+        {
+          "alternatives": [
+            "Badge"
+          ],
+          "avoidWhen": [
+            "el badge participa del flujo normal; no necesita un ancla"
+          ],
+          "host": "span",
+          "id": "BadgeHolder",
+          "intent": [
+            "badge-anchored-to-control",
+            "presence-on-avatar",
+            "unread-on-button"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un BadgeDot se ancla a la esquina de un botón o avatar"
           ]
         }
       ]
@@ -368,6 +447,24 @@
         },
         {
           "alternatives": [
+            "Toast"
+          ],
+          "avoidWhen": [
+            "el Toast ya existe en la región desde el primer render"
+          ],
+          "host": "template",
+          "id": "ToastTemplate",
+          "intent": [
+            "toast-blueprint",
+            "dynamic-toast-template"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un script va a clonar la misma anatomía de Toast para mensajes dinámicos"
+          ]
+        },
+        {
+          "alternatives": [
             "Alert"
           ],
           "avoidWhen": [
@@ -384,7 +481,8 @@
             "background-task-finished"
           ],
           "parents": [
-            "ToastRegion"
+            "ToastRegion",
+            "ToastTemplate"
           ],
           "useWhen": [
             "confirmar algo que ya pasó y no requiere respuesta: se guardó, se envió, se copió",
@@ -600,6 +698,25 @@
             "Input"
           ],
           "avoidWhen": [
+            "es entrada de texto con la apariencia del sistema; eso es Input dentro de Field"
+          ],
+          "host": "input",
+          "id": "NativeInput",
+          "intent": [
+            "unstyled-native-input",
+            "platform-control",
+            "native-time-input"
+          ],
+          "parents": [],
+          "useWhen": [
+            "la plataforma ya ofrece el control correcto y se quiere enseñar su comportamiento nativo sin la apariencia de Input"
+          ]
+        },
+        {
+          "alternatives": [
+            "Input"
+          ],
+          "avoidWhen": [
             "una sola línea alcanza; un Textarea invita a escribir de más"
           ],
           "host": "textarea",
@@ -699,6 +816,27 @@
           "useWhen": [
             "columnas de igual ancho: una grilla de tarjetas"
           ]
+        },
+        {
+          "alternatives": [
+            "Stack",
+            "Inline",
+            "Grid"
+          ],
+          "avoidWhen": [
+            "sólo cambia un gap; configura el Stack, Inline o Grid directamente"
+          ],
+          "host": "div",
+          "id": "DensityScope",
+          "intent": [
+            "local-density",
+            "compact-subtree",
+            "scaled-component-spacing"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un subárbol completo necesita escalar el espaciado semántico sin cambiar cada componente"
+          ]
         }
       ]
     },
@@ -727,6 +865,42 @@
           ]
         },
         {
+          "alternatives": [
+            "List"
+          ],
+          "avoidWhen": [
+            "reordenar las filas no cambia su significado; eso es List"
+          ],
+          "host": "ol",
+          "id": "OrderedList",
+          "intent": [
+            "ordered-rows",
+            "steps-with-rich-row-anatomy",
+            "ranked-records"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el orden de las filas comunica secuencia, prioridad o ranking"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [],
+          "host": "li",
+          "id": "ListItemPlain",
+          "intent": [
+            "plain-list-row",
+            "text-only-ui-row"
+          ],
+          "parents": [
+            "List",
+            "OrderedList"
+          ],
+          "useWhen": [
+            "una fila de interfaz sólo necesita contenido directo, sin anatomía de título, descripción o trailing"
+          ]
+        },
+        {
           "alternatives": [],
           "avoidWhen": [],
           "host": "li",
@@ -736,7 +910,8 @@
             "inert-row"
           ],
           "parents": [
-            "List"
+            "List",
+            "OrderedList"
           ],
           "useWhen": [
             "una fila que no se toca"
@@ -754,7 +929,8 @@
             "tappable-row"
           ],
           "parents": [
-            "List"
+            "List",
+            "OrderedList"
           ],
           "useWhen": [
             "la fila entera navega, y el objetivo de foco y de clic es la fila"
@@ -1588,6 +1764,123 @@
       ]
     },
     {
+      "css": "@skryensya/core/patterns/table-pager.css",
+      "id": "table-pager",
+      "signatures": [
+        {
+          "alternatives": [
+            "Table"
+          ],
+          "avoidWhen": [
+            "los datos vienen paginados del servidor; la aplicación debe controlar esa consulta"
+          ],
+          "host": "div",
+          "id": "TablePager",
+          "intent": [
+            "paged-table",
+            "table-with-page-size",
+            "client-side-table-pagination"
+          ],
+          "parents": [],
+          "useWhen": [
+            "una tabla autorada necesita paginar filas en el cliente y cambiar cuántas se ven"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un TablePager"
+          ],
+          "host": "div",
+          "id": "TablePagerBar",
+          "intent": [
+            "table-pagination-controls",
+            "table-pager-bar"
+          ],
+          "parents": [
+            "TablePager"
+          ],
+          "useWhen": [
+            "agrupa el tamaño de página, el rango visible y la navegación de un TablePager"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "no existe elección de tamaño de página"
+          ],
+          "host": "div",
+          "id": "TablePagerSize",
+          "intent": [
+            "page-size-control",
+            "rows-per-page-control"
+          ],
+          "parents": [
+            "TablePagerBar"
+          ],
+          "useWhen": [
+            "contiene el selector que cambia cuántas filas muestra el TablePager"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un TablePagerBar"
+          ],
+          "host": "div",
+          "id": "TablePagerEnd",
+          "intent": [
+            "table-pager-status-and-navigation",
+            "pager-end-controls"
+          ],
+          "parents": [
+            "TablePagerBar"
+          ],
+          "useWhen": [
+            "agrupa el rango visible y la navegación al final de la barra"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "el texto no describe un TablePager"
+          ],
+          "host": "div",
+          "id": "TablePagerStatus",
+          "intent": [
+            "visible-row-range",
+            "table-page-status"
+          ],
+          "parents": [
+            "TablePagerEnd"
+          ],
+          "useWhen": [
+            "muestra el rango de filas visibles y el total"
+          ]
+        },
+        {
+          "alternatives": [
+            "Pagination"
+          ],
+          "avoidWhen": [
+            "se necesita paginación autónoma; eso es Pagination"
+          ],
+          "host": "nav",
+          "id": "TablePagerNav",
+          "intent": [
+            "generated-table-pagination",
+            "table-page-navigation"
+          ],
+          "parents": [
+            "TablePagerEnd"
+          ],
+          "useWhen": [
+            "el enhancer debe generar los controles de página de un TablePager"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/tabs.css",
       "id": "tabs",
       "signatures": [
@@ -1716,6 +2009,28 @@
           "parents": [],
           "useWhen": [
             "la tarjeta entera dispara una acción: elegir un plan, empezar un flujo"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Tile; no es contenido autónomo"
+          ],
+          "host": "span",
+          "id": "TileContent",
+          "intent": [
+            "tile-copy",
+            "tile-title-and-description"
+          ],
+          "parents": [
+            "TileLink",
+            "TileButton",
+            "TileCheckbox",
+            "TileSwitch",
+            "ExpandableTileTrigger"
+          ],
+          "useWhen": [
+            "un Tile necesita la anatomía compartida de título y descripción"
           ]
         },
         {
@@ -1933,6 +2248,33 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/tooltip.css",
+      "id": "tooltip",
+      "signatures": [
+        {
+          "alternatives": [
+            "Flyout"
+          ],
+          "avoidWhen": [
+            "el texto es el único nombre o la única información disponible; debe vivir fuera del tooltip",
+            "el contenido necesita acciones, formato o varias líneas; usa Flyout"
+          ],
+          "host": "span",
+          "id": "Tooltip",
+          "intent": [
+            "hint",
+            "expand-a-control-name",
+            "explain-an-icon-button"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un control ya tiene nombre accesible y necesita una descripción breve al pasar el puntero o enfocar",
+            "un botón de sólo icono necesita una pista visual redundante para quien puede verla"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/tree-view.css",
       "id": "tree-view",
       "signatures": [
@@ -1985,6 +2327,42 @@
           "useWhen": [
             "un párrafo, una bajada, una nota al pie",
             "el tono dice jerarquía: secondary para lo accesorio, danger para un error en prosa"
+          ]
+        },
+        {
+          "alternatives": [
+            "Heading"
+          ],
+          "avoidWhen": [
+            "titula una sección; eso es un Heading"
+          ],
+          "host": "strong",
+          "id": "Strong",
+          "intent": [
+            "strong-importance",
+            "emphasis-inside-text"
+          ],
+          "parents": [],
+          "useWhen": [
+            "una frase dentro de texto tiene importancia fuerte, no sólo un peso visual distinto"
+          ]
+        },
+        {
+          "alternatives": [
+            "Text"
+          ],
+          "avoidWhen": [
+            "es texto estático sin relación con un cálculo; eso es Text"
+          ],
+          "host": "output",
+          "id": "Output",
+          "intent": [
+            "calculated-result",
+            "inline-live-result"
+          ],
+          "parents": [],
+          "useWhen": [
+            "muestra el resultado calculado de una entrada o interacción"
           ]
         },
         {
@@ -2051,5 +2429,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "45cd9739b4ee8aea"
+  "sourceHash": "8ae40892fa1475eb"
 }

@@ -1,13 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
-/*
- * Basic and states convert. Advanced stays authored: it needs a live-region status line driven by
- * `js` / React state, and that composition is the point of the demo.
- *
- * `value` lands as `data-value` in markup and `defaultValue` in React. "Atlas" and "Node 24" stay
- * written — product / version names.
- */
+/* Basic, states and live-status Tabs compositions shared by both locales. */
 
 /** Two panels; the first starts selected. */
 export const tabsBasicTree = (t: Translate): UsageTree => ({
@@ -110,3 +104,69 @@ export const tabsStatesTree = (t: Translate): UsageTree => ({
     ],
   },
 });
+
+export const tabsAdvancedTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "sm" },
+  attrs: { "data-tabs-advanced": "" },
+  children: [
+    {
+      contract: "tabs",
+      signature: "Tabs",
+      options: { value: "summary", orientation: "vertical", activationMode: "manual" },
+      attrs: { "aria-label": t("demo.tabs.basic.label") },
+      slots: {
+        items: [
+          {
+            options: { value: "summary" },
+            slots: {
+              label: t("demo.tabs.summary"),
+              children: t("demo.tabs.summary.body"),
+            },
+          },
+          {
+            options: { value: "activity" },
+            slots: {
+              label: t("demo.tabs.activity"),
+              children: t("demo.tabs.activity.body"),
+            },
+          },
+          {
+            options: { value: "metrics" },
+            slots: {
+              label: t("demo.tabs.metrics"),
+              children: t("demo.tabs.metrics.body"),
+            },
+          },
+          {
+            options: { value: "settings" },
+            slots: {
+              label: t("demo.tabs.settings"),
+              children: t("demo.tabs.settings.body"),
+            },
+          },
+        ],
+      },
+    },
+    {
+      contract: "typography",
+      signature: "Text",
+      options: { size: "sm", tone: "secondary" },
+      attrs: { role: "status", "data-tabs-status": "" },
+      children: `${t("demo.tabs.status")}: ${t("demo.tabs.summary")}`,
+    },
+  ],
+});
+
+export const tabsAdvancedScript = `
+const root = document.querySelector("[data-tabs-advanced]");
+const status = root?.querySelector("[data-tabs-status]");
+root?.addEventListener("click", (event) => {
+  const trigger = event.target.closest("[data-sk-tabs-trigger]");
+  if (trigger && status) {
+    const label = status.textContent.split(":")[0];
+    status.textContent = label + ": " + trigger.textContent.trim();
+  }
+});
+`;

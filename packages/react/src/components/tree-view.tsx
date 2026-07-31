@@ -11,9 +11,9 @@ export type TreeViewProps = {
   // Derived: Core owns the modes, and a copy here goes stale the day a third one appears.
   selectionMode?: OptionValue<typeof treeViewContract.options.selectionMode>;
   selectedValue?: string[];
-  defaultSelectedValue?: string[];
+  defaultSelectedValue?: string[] | string;
   expandedValue?: string[];
-  defaultExpandedValue?: string[];
+  defaultExpandedValue?: string[] | string;
   branchIndicator?: ReactNode;
   leafIndicator?: ReactNode;
   onSelectionChange?: (details: { selectedValue: string[] }) => void;
@@ -97,8 +97,8 @@ function NodeView({
 
 export function TreeView({
   branchIndicator,
-  defaultExpandedValue,
-  defaultSelectedValue,
+  defaultExpandedValue: defaultExpandedValueProp,
+  defaultSelectedValue: defaultSelectedValueProp,
   expandedValue,
   id,
   label,
@@ -110,6 +110,14 @@ export function TreeView({
   selectionMode = "single",
 }: TreeViewProps) {
   const generatedId = useId();
+  const defaultExpandedValue =
+    typeof defaultExpandedValueProp === "string"
+      ? defaultExpandedValueProp.split(/[\s,]+/).filter(Boolean)
+      : defaultExpandedValueProp;
+  const defaultSelectedValue =
+    typeof defaultSelectedValueProp === "string"
+      ? defaultSelectedValueProp.split(/[\s,]+/).filter(Boolean)
+      : defaultSelectedValueProp;
   const collection = useMemo(
     () =>
       treeView.collection<TreeNode>({

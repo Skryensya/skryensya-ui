@@ -2,129 +2,14 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
-import { GridMulticolDemo } from "../../../components/react-demos/layout";
-import { gridTree } from "../../../demos/layout";
+import { gridMulticolTree, gridTree } from "../../../demos/layout";
 import { getLocale, useTranslations } from "../../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
 
-/*
- * Multicol stays authored: `data-multicol` is not a declared option.
- */
 
-const multicolHtml = `<section
-  class="sk-grid"
-  data-columns="4"
-  data-gap="md"
-  data-multicol
-  aria-label="Notas"
->
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="md"
-  >
-    <strong>Atlas</strong>
-    <p class="sk-text" data-size="sm" data-tone="secondary">
-      One line.
-    </p>
-  </article>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="md"
-  >
-    <strong>Brisa</strong>
-    <p class="sk-text" data-size="sm" data-tone="secondary">
-      This note is longer: it occupies several lines and that is why its card is taller than the other two.
-    </p>
-  </article>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="md"
-  >
-    <strong>Cauce</strong>
-    <p class="sk-text" data-size="sm" data-tone="secondary">
-      Two lines of<br />content here.
-    </p>
-  </article>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="md"
-  >
-    <strong>Delta</strong>
-    <p class="sk-text" data-size="sm" data-tone="secondary">Short.</p>
-  </article>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="md"
-  >
-    <strong>Eco</strong>
-    <p class="sk-text" data-size="sm" data-tone="secondary">
-      Another card with enough text so that its height differs and the packaging in lanes is noticeable.
-    </p>
-  </article>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="md"
-  >
-    <strong>Faro</strong>
-    <p class="sk-text" data-size="sm" data-tone="secondary">Medium.</p>
-  </article>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="md"
-  >
-    <strong>Gala</strong>
-    <p class="sk-text" data-size="sm" data-tone="secondary">
-      Brief summary, with another rhythm.
-    </p>
-  </article>
-  <article
-    class="sk-box"
-    data-surface="surface"
-    data-border="subtle"
-    data-padding="md"
-  >
-    <strong>Humo</strong>
-    <p class="sk-text" data-size="sm" data-tone="secondary">
-      An additional note for occupying the fourth lane on a wide screen.
-    </p>
-  </article>
-</section>`;
 
-const multicolReact = `import { Grid } from "@skryensya/react/grid";
-
-// data-multicol activa CSS Multi-column Layout. data-columns es
-// the maximum number of lanes.
-function Example() {
-  return (
-    <Grid
-      as="section"
-      columns={4}
-      gap="md"
-      data-multicol
-      aria-label="Notas"
-    >
-      {notes.map((n) => (
-        <article key={n.id}>{n.body}</article>
-      ))}
-    </Grid>
-  );
-}`;
 
 const multicolCss = `/* data-columns="4": 1 lane → 2 → 3 → 4,
    depending on the viewport. */
@@ -176,11 +61,7 @@ const multicolCss = `/* data-columns="4": 1 lane → 2 → 3 → 4,
     <code>data-columns</code> marks the maximum number of lanes. With <code>data-columns="4"</code>, the collection uses 1 lane before <code>36rem</code>, 2 from <code>36rem</code>, 3 from <code>52rem</code>, and 4 from <code>72rem</code>. Values <code>1</code>, <code>2</code> and <code>3</code> stop at that maximum.
   </p>
   <CodeBlock code={multicolCss} label="patterns/layout.css" />
-  <ComponentPreview html={multicolHtml} react={multicolReact} label="Multi-column layout">
-    <Fragment slot="react">
-      <GridMulticolDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={gridMulticolTree(t)} label="Multi-column layout" />
   <p>
     Columns fill a lane from top to bottom before moving to the next. Preserve a useful order in the DOM and use it for independent cards; not for a sequence whose visual order from left to right has meaning.
   </p>

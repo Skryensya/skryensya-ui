@@ -1,13 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
-/*
- * Sizes and speeds convert. Simulation (`js` + demo DOM) and contexts (`data-multicol` + heavy
- * composition) stay authored.
- *
- * Specimens use Box + Stack + Text rather than docs-only `loader-specimen*` classes — same teaching
- * shape, reachable parts. Size/speed names (`sm`, `fast`, …) stay written.
- */
+/* Loader specimens use only published surface, layout and typography vocabulary. */
 
 function specimen(loader: UsageTree, name: string, description: string): UsageTree {
   return {
@@ -104,6 +98,95 @@ export const loaderSpeedsTree = (t: Translate): UsageTree => ({
       },
       "slow",
       t("demo.loader.speed.slow"),
+    ),
+  ],
+});
+
+export const loaderSimulationTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "md", align: "center" },
+  attrs: { "aria-label": t("demo.loader.simulation"), "data-loader-demo": "" },
+  children: [
+    {
+      contract: "box",
+      signature: "Box",
+      options: { surface: "surface", border: "subtle", padding: "lg" },
+      attrs: { "data-loader-busy": "" },
+      children: {
+        contract: "loader",
+        signature: "Loader",
+        options: { size: "lg", label: t("demo.loader.busy") },
+      },
+    },
+    {
+      contract: "typography",
+      signature: "Text",
+      attrs: { "data-loader-ready": "", hidden: "" },
+      children: t("demo.loader.ready"),
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      attrs: { "data-loader-start": "", hidden: "" },
+      children: t("demo.loader.start"),
+    },
+  ],
+});
+
+export const loaderSimulationScript = `
+const root = document.querySelector("[data-loader-demo]");
+if (root) {
+  const busy = root.querySelector("[data-loader-busy]");
+  const ready = root.querySelector("[data-loader-ready]");
+  const start = root.querySelector("[data-loader-start]");
+  const run = () => {
+    busy.hidden = false;
+    ready.hidden = true;
+    start.hidden = true;
+    window.setTimeout(() => {
+      busy.hidden = true;
+      ready.hidden = false;
+      start.hidden = false;
+    }, 1400);
+  };
+  start.addEventListener("click", run);
+  run();
+}
+`;
+
+export const loaderContextsTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Grid",
+  options: { columns: "3", gap: "md", multicol: true },
+  attrs: { "aria-label": t("demo.loader.contexts") },
+  children: [
+    specimen(
+      {
+        contract: "loader",
+        signature: "Loader",
+        options: { size: "lg", label: t("demo.loader.busy") },
+      },
+      t("demo.loader.page.title"),
+      t("demo.loader.page.body"),
+    ),
+    specimen(
+      {
+        contract: "loader",
+        signature: "Loader.status",
+        options: { label: t("demo.loader.busy") },
+      },
+      t("demo.loader.card.title"),
+      t("demo.loader.card.body"),
+    ),
+    specimen(
+      {
+        contract: "loader",
+        signature: "Loader",
+        options: { size: "sm" },
+      },
+      t("demo.loader.control.title"),
+      t("demo.loader.control.body"),
     ),
   ],
 });

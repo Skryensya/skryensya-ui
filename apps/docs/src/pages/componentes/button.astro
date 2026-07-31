@@ -10,10 +10,10 @@ import {
   buttonIconTree,
   buttonSizesTree,
   buttonVariantsTree,
+  tileButtonTree,
 } from "../../demos/button";
 import { getLocale, useTranslations } from "../../i18n";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { TileButtonDemo } from "../../components/react-demos/button";
 
 const t = useTranslations(getLocale(Astro.url));
 /* The link demo points at a real docs page, and that page's path differs per locale. */
@@ -52,17 +52,6 @@ const sizeHit = `/* Ya viene en components/button.css. No hay que
 }`;
 
 
-const tileButtonHtml = `<button
-  class="sk-tile sk-tile--interactive sk-interactive"
-  type="button"
->
-  <span class="sk-tile__content">
-    <span class="sk-tile__title">Run deployment</span>
-    <span class="sk-tile__description">
-      Start the production deployment now.
-    </span>
-  </span>
-</button>`;
 
 const tileButtonVanilla = `import { createTileButton } from "@skryensya/vanilla/tile-button";
 
@@ -70,20 +59,6 @@ const button = createTileButton();
 button.textContent = "Run deployment";
 button.addEventListener("click", runDeployment);`;
 
-const tileButtonReact = `import { TileButton } from "@skryensya/react/tile-button";
-
-function Example() {
-  return (
-    <TileButton onClick={SomeFunction}>
-      <span className="sk-tile__content">
-        <span className="sk-tile__title">Run deployment</span>
-        <span className="sk-tile__description">
-          Start the production deployment now.
-        </span>
-      </span>
-    </TileButton>
-  );
-}`;
 ---
 
 <Base title="Button" description="Button: hooks de estilo, enhancer vanilla mínimo y componente React.">
@@ -122,11 +97,7 @@ function Example() {
 
   <h2>TileButton</h2>
   <p>Cuando toda la superficie es una acción, no solo una etiqueta adentro.</p>
-  <ComponentPreview html={tileButtonHtml} react={tileButtonReact} label="TileButton">
-    <Fragment slot="react">
-      <TileButtonDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={tileButtonTree(t)} label="TileButton" />
   <CodeBlock code={tileButtonVanilla} label="JavaScript" />
 
   <h2>Instalar</h2>

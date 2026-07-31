@@ -116,6 +116,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   );
 });
 
+export type NativeInputProps = InputHTMLAttributes<HTMLInputElement>;
+
+export const NativeInput = forwardRef<HTMLInputElement, NativeInputProps>(function NativeInput(
+  props,
+  ref,
+) {
+  return <input {...props} ref={ref} />;
+});
+
 export type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   controlSize?: InputSize;
 };

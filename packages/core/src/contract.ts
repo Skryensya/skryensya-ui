@@ -24,7 +24,7 @@ export type ContractOption = {
   readonly values?: readonly string[];
   readonly default?: string | boolean | number;
   /** The DOM attribute the value is written to: `data-variant`, `href`, `aria-current`. */
-  readonly attr: string;
+  readonly attr?: string;
   /**
    * The name the React binding uses, when it differs from this option's key.
    *
@@ -34,6 +34,8 @@ export type ContractOption = {
    * `attr` already does for the DOM, pointed at the other binding.
    */
   readonly prop?: string;
+  /** CSS custom property written on the host instead of a DOM attribute. */
+  readonly styleProperty?: `--${string}`;
   /** For a boolean option, what the attribute holds when true. `""` means presence-only. */
   readonly trueValue?: string;
   /**

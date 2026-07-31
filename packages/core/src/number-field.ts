@@ -46,6 +46,10 @@ export const numberFieldContract = {
   options: {
     /** Submitted with the form. The machine writes it onto the real input. */
     name: { type: "string", attr: "name", machineInput: true },
+    /** Initial uncontrolled value. Authored markup puts it on the input; React names the prop. */
+    defaultValue: { type: "string", attr: "value", prop: "defaultValue", machineInput: true },
+    /** Locale used by the formatter. The vanilla enhancer inherits it from the root's `lang`. */
+    locale: { type: "string", attr: "lang", machineInput: true },
     min: { type: "number", attr: "min", machineInput: true },
     max: { type: "number", attr: "max", machineInput: true },
     step: { type: "number", attr: "step", machineInput: true },
@@ -64,7 +68,19 @@ export const numberFieldContract = {
     NumberField: {
       intent: ["number-input", "quantity", "stepper", "amount", "spinner"],
       host: { element: "div" },
-      options: ["name", "min", "max", "step", "disabled", "readOnly", "required", "decrementLabel", "incrementLabel"],
+      options: [
+        "name",
+        "defaultValue",
+        "locale",
+        "min",
+        "max",
+        "step",
+        "disabled",
+        "readOnly",
+        "required",
+        "decrementLabel",
+        "incrementLabel",
+      ],
       slots: { label: { accepts: "text", required: true } },
       mount: "data-sk-number-field",
       template: {
@@ -91,7 +107,7 @@ export const numberFieldContract = {
                 element: "input",
                 part: "input",
                 mount: "data-sk-number-field-input",
-                options: ["name", "min", "max", "step", "disabled", "readOnly", "required"],
+                options: ["name", "defaultValue", "min", "max", "step", "disabled", "readOnly", "required"],
                 attrs: { type: "text", inputmode: "decimal", autocomplete: "off" },
               },
               {

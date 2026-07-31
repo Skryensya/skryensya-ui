@@ -35,7 +35,13 @@ export function Tabs({
   const api = tabs.connect(service, normalizeProps);
 
   return (
-    <div {...api.getRootProps()} className={tabsParts.root} data-sk-tabs="">
+    <div
+      {...api.getRootProps()}
+      className={tabsParts.root}
+      data-activation-mode={options.activationMode ?? "automatic"}
+      data-sk-tabs=""
+      data-value={api.value}
+    >
       <div
         {...api.getListProps()}
         aria-label={ariaLabel}

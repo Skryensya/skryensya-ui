@@ -4,6 +4,7 @@ export type BadgeTone = "neutral" | "accent" | "success" | "warning" | "danger";
 
 export const badgeParts = {
   root: "sk-badge",
+  holder: "sk-badge-holder",
 } as const;
 
 export type BadgePart = keyof typeof badgeParts;
@@ -37,6 +38,35 @@ export const badgeContract = {
       slots: { children: { accepts: "node", required: true } },
       template: { element: "span", part: "root", host: true, slot: "children" },
       react: { from: "@skryensya/react/badge", name: "Badge" },
+    },
+
+    BadgeDot: {
+      intent: ["unread-dot", "presence-dot", "status-dot"],
+      host: { element: "span" },
+      options: ["tone"],
+      slots: {},
+      template: {
+        element: "span",
+        part: "root",
+        host: true,
+        attrs: { "data-dot": "" },
+      },
+      react: { from: "@skryensya/react/badge", name: "BadgeDot" },
+    },
+
+    BadgeHolder: {
+      intent: ["badge-anchored-to-control", "presence-on-avatar", "unread-on-button"],
+      host: { element: "span" },
+      options: [],
+      slots: {
+        children: {
+          accepts: "signature",
+          of: ["Button.action", "Button.navigation", "Avatar.initials", "BadgeDot"],
+          required: true,
+        },
+      },
+      template: { element: "span", part: "holder", host: true, slot: "children" },
+      react: { from: "@skryensya/react/badge", name: "BadgeHolder" },
     },
   },
 } as const satisfies ComponentContract;

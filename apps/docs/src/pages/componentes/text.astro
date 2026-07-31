@@ -2,32 +2,18 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
-import { TextInlineDemo } from "../../components/react-demos/text";
 import {
   textFeedbackTree,
   textReadingTree,
   textTitleTree,
+  textInlineTree,
 } from "../../demos/typography";
 import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
 
-/*
- * Inline stays authored: the point is `<strong>` inside the paragraph. Trees escape text, so nested
- * HTML is inexpressible.
- */
-const inlineHtml = `<p class="sk-text">
-  El plan <strong>Pro</strong> incluye cinco entornos activos y
-  conserva el flujo de lectura dentro del mismo párrafo.
-</p>`;
 
-const inlineReact = `import { Text } from "@skryensya/react/text";
-
-<Text>
-  El plan <strong>Pro</strong> incluye cinco entornos activos y
-  conserva el flujo de lectura dentro del mismo párrafo.
-</Text>;`;
 ---
 
 <Base title="Text" description="Text: texto de lectura con roles tipográficos y semántica HTML explícita.">
@@ -58,11 +44,7 @@ const inlineReact = `import { Text } from "@skryensya/react/text";
     <code>data-weight</code> es para el peso de un Text entero; esto es para enfatizar <em>dentro</em> de
     la frase.
   </p>
-  <ComponentPreview html={inlineHtml} react={inlineReact} label="Texto inline">
-    <Fragment slot="react">
-      <TextInlineDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={textInlineTree(t)} label="Texto inline" />
 
   <h2>Feedback de validación</h2>
   <p>El tono <code>danger</code> comunica el problema; el rol de región viva sigue siendo una decisión del contexto que usa Text.</p>

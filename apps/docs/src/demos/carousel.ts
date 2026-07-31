@@ -2,33 +2,9 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /*
- * Two of the page's four demos. The card carousel and the control-less one convert; multi-up +
- * autoplay and the zero-JS baseline do not, and each names a different hole.
- *
- * The old card put a heading over a raw image inside ImageFrame. Its contract deliberately requires
- * exactly one of `src` or authored children, so the reachable composition uses `src` and keeps the
- * card copy in a Box + Stack body instead. The carousel's default CSS slide size still provides the
- * multi-card peek without an untyped inline `style` attr crossing into React.
- *
- * What stays authored, and why:
- *
- *   - MULTI-UP + AUTOPLAY. `--sk-carousel-slide-size` is, in the stylesheet's own words, the ONE
- *     size knob, and it is declared on `.sk-carousel` itself — a declaration on the element beats
- *     anything an ancestor could inherit down, so only an inline `style` moves it. A tree has no
- *     way to write one: there is no such option on `Carousel`, and `attrs` reach the host verbatim,
- *     which in React means a `style` STRING where React demands an object. Multi-up IS that knob.
- *     The same demo also shows `data-autoplay="3500"`, and `autoplay` is declared `boolean`
- *     (`trueValue: ""`): the validator rejects `autoplay: 3500`, so only the 4000 ms default is
- *     expressible. Two holes, either one enough.
- *   - ZERO-JS (NATIVE CSS). Its whole point is the SAME markup WITHOUT `data-sk-carousel`, so the
- *     enhancer never touches it and `::scroll-button` / `::scroll-marker` draw the controls. The
- *     emitter writes `signature.mount` on every host unconditionally — a tree cannot spell
- *     "unmounted". Its slides are otherwise reachable now, caption and all, since ImageFrame grew a
- *     `caption` slot that lets `src` and MediaCaption coexist.
- *
- * Not a blocker, though the census counted them: `sk-carousel__controls`, `__button`, `__dots`,
- * `__dot` and `__autoplay` are parts no template paints — because the ENHANCER paints them at
- * runtime, in both bindings. No demo on this page writes them by hand, so nothing here needs them.
+ * The four page demos share the same Carousel contract. Authored options cover both former gaps:
+ * `slideSize` writes the root custom property, `autoplayDelay` preserves the exact timer, and
+ * `mounted: false` deliberately leaves the zero-JS baseline to native scroll controls.
  */
 
 const demoSrc = "/demos/media-gradient.svg";
@@ -112,6 +88,15 @@ export const carouselCardsTree = (t: Translate): UsageTree => ({
   ),
 });
 
+/** A narrower multi-up track advancing every 3.5 seconds. */
+export const carouselAutoplayTree = (t: Translate): UsageTree => ({
+  contract: "carousel",
+  signature: "Carousel",
+  options: { autoplayDelay: 3500, slideSize: "min(65%, 22rem)" },
+  attrs: { "aria-label": t("demo.carousel.label") },
+  children: features.map(([feature, position]) => featureSlide(t, feature, position)),
+});
+
 /*
  * The people track. Names are written here rather than translated — a name reads the same in every
  * language — while the roles beside them are words and come from the dictionary, keyed by POSITION
@@ -188,4 +173,38 @@ export const carouselBareTree = (t: Translate): UsageTree => ({
   options: { controls: "none" },
   attrs: { "aria-label": t("demo.carousel.team.label") },
   children: people.map((person) => personSlide(t, person)),
+});
+
+/** Same scroll-snap markup with the enhancer intentionally absent. */
+export const carouselNativeTree = (t: Translate): UsageTree => ({
+  contract: "carousel",
+  signature: "Carousel",
+  options: { mounted: false },
+  attrs: { "aria-label": t("demo.carousel.nativeLabel") },
+  children: features.slice(0, 3).map(([feature, position]) => ({
+    contract: "carousel",
+    signature: "CarouselSlide",
+    children: {
+      contract: "image-frame",
+      signature: "ImageFrame",
+      options: {
+        src: demoSrc,
+        alt: "",
+        aspect: "16/9",
+        position,
+      },
+      slots: {
+        caption: {
+          contract: "media-gradient",
+          signature: "MediaCaption",
+          children: {
+            contract: "typography",
+            signature: "Text",
+            options: { size: "sm", weight: "label" },
+            children: t(`demo.carousel.${feature}.title` as never),
+          },
+        },
+      },
+    },
+  })),
 });

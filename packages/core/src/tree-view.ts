@@ -64,15 +64,19 @@ export const treeViewContract = {
       attr: "data-selection-mode",
       machineInput: true,
     },
+    defaultExpandedValue: { type: "string", attr: "data-expanded-value", machineInput: true },
+    defaultSelectedValue: { type: "string", attr: "data-selected-value", machineInput: true },
   },
 
   signatures: {
     TreeView: {
       intent: ["tree", "file-explorer", "hierarchy", "nested-list", "folder-structure"],
       host: { element: "div" },
-      options: ["label", "selectionMode"],
+      options: ["label", "selectionMode", "defaultExpandedValue", "defaultSelectedValue"],
       requires: ["label"],
       slots: {
+        branchIndicator: { accepts: "node" },
+        leafIndicator: { accepts: "node" },
         items: {
           accepts: "items",
           prop: "nodes",
@@ -134,6 +138,15 @@ export const treeViewContract = {
                                 part: "branchIndicator",
                                 mount: "data-sk-tree-view-branch-indicator",
                                 attrs: { "aria-hidden": "true" },
+                                whenGiven: "branchIndicator",
+                                slot: "branchIndicator",
+                              },
+                              {
+                                element: "span",
+                                part: "branchIndicator",
+                                mount: "data-sk-tree-view-branch-indicator",
+                                attrs: { "aria-hidden": "true" },
+                                whenMissing: "branchIndicator",
                                 text: "›",
                               },
                               { element: "span", part: "branchText", mount: "data-sk-tree-view-branch-text", itemSlot: "label" },
@@ -159,7 +172,7 @@ export const treeViewContract = {
                            * The chevron's column, kept empty on a leaf. Without it the labels of one
                            * level do not line up with the labels of the level above.
                            */
-                          { element: "span", attrs: { "aria-hidden": "true" } },
+                          { element: "span", attrs: { "aria-hidden": "true" }, slot: "leafIndicator" },
                           { element: "span", part: "itemText", mount: "data-sk-tree-view-item-text", itemSlot: "label" },
                         ],
                       },

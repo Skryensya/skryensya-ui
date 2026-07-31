@@ -1,7 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
-/** Dynamic emission, timeout state and stacking stay authored; they require runtime behavior. */
+/* Static and runtime Toast compositions share the same emitted anatomy. */
 export const toastSimpleTree = (t: Translate): UsageTree => ({
   contract: "content",
   signature: "ToastRegion",
@@ -38,3 +38,133 @@ export const toastActionTree = (t: Translate): UsageTree => ({
     children: t("demo.toast.movedToArchived"),
   },
 });
+
+const dismissScript = `
+document.querySelectorAll(".sk-toast-region").forEach((region) => {
+  region.addEventListener("sk-dismiss", (event) => event.target.remove());
+});
+`;
+
+export const toastEmitTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "md", align: "start" },
+  children: [
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "primary" },
+      attrs: { "data-emit-toast": "" },
+      children: t("demo.toast.emit"),
+    },
+    {
+      contract: "content",
+      signature: "ToastRegion",
+      attrs: { "data-emit-region": "" },
+    },
+    {
+      contract: "content",
+      signature: "ToastTemplate",
+      attrs: { "data-toast-template": "" },
+      children: {
+        contract: "content",
+        signature: "Toast",
+        options: { dismissible: true, dismissLabel: t("demo.toast.dismiss"), timeout: 4000 },
+        children: t("demo.toast.dynamic"),
+      },
+    },
+  ],
+});
+
+export const toastEmitScript = `
+const region = document.querySelector("[data-emit-region]");
+const template = document.querySelector("[data-toast-template]");
+document.querySelector("[data-emit-toast]")?.addEventListener("click", async () => {
+  const toast = template.content.firstElementChild?.cloneNode(true);
+  if (!toast) return;
+  region.append(toast);
+  await window.skMount?.(toast);
+});
+${dismissScript}
+`;
+
+export const toastStatusTree = (t: Translate): UsageTree => ({
+  contract: "content",
+  signature: "ToastRegion",
+  attrs: { "data-stack": "off" },
+  children: [
+    {
+      contract: "content",
+      signature: "Toast",
+      options: { tone: "info", timeout: 6000 },
+      slots: {
+        icon: { contract: "icon", signature: "Icon", options: { name: "info" } },
+        title: t("demo.toast.syncing"),
+      },
+      children: t("demo.toast.syncingBody"),
+    },
+    {
+      contract: "content",
+      signature: "Toast",
+      options: { tone: "success", dismissible: true, dismissLabel: t("demo.toast.dismiss") },
+      slots: {
+        icon: { contract: "icon", signature: "Icon", options: { name: "success" } },
+        title: t("demo.toast.deploymentCreated"),
+      },
+      children: t("demo.toast.deploymentCreatedBody"),
+    },
+    {
+      contract: "content",
+      signature: "Toast",
+      options: { tone: "danger", dismissible: true, dismissLabel: t("demo.toast.dismiss") },
+      slots: {
+        icon: { contract: "icon", signature: "Icon", options: { name: "danger" } },
+        title: t("demo.toast.connectionFailed"),
+      },
+      children: t("demo.toast.connectionFailedBody"),
+    },
+  ],
+});
+
+export const toastStatusScript = dismissScript;
+
+export const toastStackTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "md", align: "start" },
+  children: [
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "primary" },
+      attrs: { "data-stack-add": "" },
+      children: t("demo.toast.emit"),
+    },
+    {
+      contract: "content",
+      signature: "ToastRegion",
+      attrs: { "data-stack-region": "" },
+      children: [
+        t("demo.toast.stack.first"),
+        t("demo.toast.stack.second"),
+        t("demo.toast.stack.third"),
+      ].map((message) => ({
+        contract: "content",
+        signature: "Toast",
+        options: { dismissible: true, dismissLabel: t("demo.toast.dismiss") },
+        children: message,
+      })),
+    },
+  ],
+});
+
+export const toastStackScript = `
+const stack = document.querySelector("[data-stack-region]");
+document.querySelector("[data-stack-add]")?.addEventListener("click", async () => {
+  const toast = stack.lastElementChild?.cloneNode(true);
+  if (!toast) return;
+  stack.append(toast);
+  await window.skMount?.(toast);
+});
+${dismissScript}
+`;

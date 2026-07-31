@@ -2,76 +2,16 @@
 import Base from "../../../layouts/Base.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { numberFieldTree } from "../../../demos/number-field";
+import { getLocale, useTranslations } from "../../../i18n";
 import "@skryensya/core/patterns/state-layer.css";
 import "@skryensya/core/components/button.css";
 import "@skryensya/core/components/number-field.css";
-import { NumberFieldDemo } from "../../../components/react-demos/number-field";
 
+const t = useTranslations(getLocale(Astro.url));
 const install = `@import "@skryensya/core/patterns/state-layer.css";
 @import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/number-field.css";`;
-const js = `import { mountIcons } from "@skryensya/vanilla/icon";
-import { lucideIcons } from "@skryensya/icons-lucide";
-import { initComponents } from "@skryensya/vanilla/auto";
-
-mountIcons(document, lucideIcons);
-initComponents();`;
-const html = `<div class="sk-number-field" data-sk-number-field>
-  <label
-    class="sk-number-field__label"
-    data-sk-number-field-label
-  >
-    Quantity
-  </label>
-  <div
-    class="sk-number-field__control"
-    data-sk-number-field-control
-  >
-    <button
-      class="sk-button sk-interactive sk-number-field__decrement"
-      data-sk-number-field-decrement
-      data-icon-only
-      data-size="sm"
-      data-variant="ghost"
-      aria-label="Decrease"
-      type="button"
-    >
-      <span data-sk-icon="remove" data-sk-icon-size="sm"></span>
-    </button>
-    <input
-      class="sk-number-field__input"
-      data-sk-number-field-input
-      min="0"
-      step="1"
-      value="2"
-    />
-    <button
-      class="sk-button sk-interactive sk-number-field__increment"
-      data-sk-number-field-increment
-      data-icon-only
-      data-size="sm"
-      data-variant="ghost"
-      aria-label="Increase"
-      type="button"
-    >
-      <span data-sk-icon="add" data-sk-icon-size="sm"></span>
-    </button>
-  </div>
-</div>`;
-const react = `import { NumberField } from "@skryensya/react/number-field";
-
-// The steppers are already icon buttons (roles \`remove\` and \`add\`);
-// decrementIcon/incrementIcon only change the glyph.
-function Example() {
-  return (
-    <NumberField
-      defaultValue="2"
-      label="Quantity"
-      min={0}
-      step={1}
-    />
-  );
-}`;
 ---
 
 <Base
@@ -82,17 +22,7 @@ function Example() {
   <p class="lede">Localized numeric input with limits, steps, and increment controls.</p>
 
   <h2>Facility</h2>
-  <ComponentPreview
-    html={html}
-    js={js}
-    react={react}
-    label="NumberField"
-    viewport="auto"
-  >
-    <Fragment slot="react">
-      <NumberFieldDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={numberFieldTree(t)} label="NumberField" viewport="auto" />
 
   <h2>Contract</h2>
   <p>Public value preserves string and valueAsNumber. Intl. NumberFormat controls the presentation.</p>

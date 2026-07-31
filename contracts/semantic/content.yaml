@@ -20,3 +20,10 @@ Toast:
     - "es un error de un campo; eso va en el Field, pegado al control"
   alternatives:
     - Alert
+ToastTemplate:
+  useWhen:
+    - "un script va a clonar la misma anatomía de Toast para mensajes dinámicos"
+  avoidWhen:
+    - "el Toast ya existe en la región desde el primer render"
+  alternatives:
+    - Toast

@@ -2,286 +2,27 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
-import { toastActionTree, toastSimpleTree } from "../../../demos/toast";
-import { getLocale, useTranslations } from "../../../i18n";
 import {
-  ToastEmitDemo,
-  ToastStackDemo,
-  ToastStatusDemo,
-} from "../../../components/react-demos/toast";
+  toastActionTree,
+  toastEmitScript,
+  toastEmitTree,
+  toastSimpleTree,
+  toastStackScript,
+  toastStackTree,
+  toastStatusScript,
+  toastStatusTree,
+} from "../../../demos/toast";
+import { getLocale, useTranslations } from "../../../i18n";
 
 const t = useTranslations(getLocale(Astro.url));
 
-/*
- * Emission, timed states and stacking stay authored because they depend on runtime behavior.
- */
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
-/* THE MAIN EXAMPLE: a toast is not authored "already visible", it appears because something happened. The markup
-   stable is the trigger, the empty region and the <template> of the item; the rest is done by the app. */
-const emitHtml = `<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-variant="primary"
-  data-emit-toast
-  type="button"
->
-  Archive document
-</button>
-
-<div class="sk-toast-region" aria-live="polite"></div>
-
-<template data-toast-template>
-  <div
-    class="sk-alert"
-    data-sk-toast
-    data-presentation="banner"
-    data-tone="neutral"
-    data-timeout="4000"
-    role="status"
-    aria-live="polite"
-  >
-    <div class="sk-alert__content">
-      <div class="sk-alert__description">
-        Document archived.
-      </div>
-    </div>
-    <div class="sk-alert__actions">
-      <button
-        class="sk-alert__dismiss sk-button sk-interactive"
-        data-sk-button
-        data-size="sm"
-        data-icon-only
-        data-variant="ghost"
-        type="button"
-        aria-label="Descartar"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </div>
-  </div>
-</template>`;
-
-const emitJs = `import { initComponents } from "@skryensya/vanilla/auto";
-
-const region = document.querySelector(".sk-toast-region");
-const template = document.querySelector("[data-toast-template]");
-
-document
-  .querySelector("[data-emit-toast]")
-  .addEventListener("click", async () => {
-    region.append(template.content.cloneNode(true));
-    // initComponents is idempotent: it mounts only what was recently
-    // inserted, and with that the toast gains ✕ and timeout.
-    await initComponents(region);
-  });
-
-// The toast NEVER withdraws on its own: ask permission with sk-dismiss
-// (detail.reason: "timeout" | "dismiss") and the app decides.
-region.addEventListener("sk-dismiss", (event) => {
-  event.target.remove();
-});`;
-
-const emitScript = `const region = document.querySelector(".sk-toast-region");
-const template = document.querySelector("[data-toast-template]");
-
-document.querySelector("[data-emit-toast]").addEventListener("click", async () => {
-  region.append(template.content.cloneNode(true));
-  await window.skMount(region);
-});
-
-region.addEventListener("sk-dismiss", (event) => {
-  event.target.remove();
-});`;
-
-const emitReact = `import { useState } from "react";
-import { Button } from "@skryensya/react/button";
-import {
-  Toast,
-  ToastRegion,
-} from "@skryensya/react/content";
-
-const [toasts, setToasts] = useState([]);
-const remove = (id) =>
-  setToasts((all) => all.filter((toast) => toast.id !== id));
-
-<Button
-  variant="primary"
-  onClick={() => setToasts((all) => [...all, { id: crypto.randomUUID() }])}
->
-  Archive document
-</Button>
-
-<ToastRegion>
-  {toasts.map((toast) => (
-    <Toast
-      key={toast.id}
-      timeout={4000}
-      onDismiss={() => remove(toast.id)}
-    >
-      Document archived.
-    </Toast>
-  ))}
-</ToastRegion>;`;
 
 
-const statusHtml = `<div class="sk-toast-region" data-stack="off" aria-live="polite">
-  <div
-    class="sk-alert"
-    data-sk-toast
-    data-presentation="banner"
-    data-tone="info"
-    data-timeout="6000"
-    role="status"
-    aria-live="polite"
-  >
-    <span class="sk-alert__icon" aria-hidden="true">
-      <span data-sk-icon="info"></span>
-    </span>
-    <div class="sk-alert__content">
-      <p class="sk-alert__title">Sincronizando</p>
-      <div class="sk-alert__description">
-        This may take a few seconds.
-      </div>
-    </div>
-  </div>
-  <div
-    class="sk-alert"
-    data-sk-toast
-    data-presentation="banner"
-    data-tone="success"
-    role="status"
-    aria-live="polite"
-  >
-    <span class="sk-alert__icon" aria-hidden="true">
-      <span data-sk-icon="success"></span>
-    </span>
-    <div class="sk-alert__content">
-      <p class="sk-alert__title">Despliegue creado</p>
-      <div class="sk-alert__description">
-        The revision is now in production.
-      </div>
-    </div>
-    <div class="sk-alert__actions">
-      <button
-        class="sk-alert__dismiss sk-button sk-interactive"
-        data-sk-button
-        data-size="sm"
-        data-icon-only
-        data-variant="ghost"
-        type="button"
-        aria-label="Descartar"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </div>
-  </div>
-  <div
-    class="sk-alert"
-    data-sk-toast
-    data-presentation="banner"
-    data-tone="danger"
-    role="alert"
-    aria-live="assertive"
-  >
-    <span class="sk-alert__icon" aria-hidden="true">
-      <span data-sk-icon="danger"></span>
-    </span>
-    <div class="sk-alert__content">
-      <p class="sk-alert__title">Could not connect</p>
-      <div class="sk-alert__description">
-        Check the network and try again.
-      </div>
-    </div>
-    <div class="sk-alert__actions">
-      <button
-        class="sk-alert__dismiss sk-button sk-interactive"
-        data-sk-button
-        data-size="sm"
-        data-icon-only
-        data-variant="ghost"
-        type="button"
-        aria-label="Descartar"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </div>
-  </div>
-</div>`;
 
 
-/* The stack: EXACTLY the same markup as the first example. Stacking is the default. */
-const stackHtml = `<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-variant="primary"
-  data-emit-toast
-  type="button"
->
-  Archive another
-</button>
-
-<div class="sk-toast-region" aria-live="polite"></div>
-
-<template data-toast-template>
-  <div
-    class="sk-alert"
-    data-sk-toast
-    data-presentation="banner"
-    data-tone="neutral"
-    role="status"
-    aria-live="polite"
-  >
-    <div class="sk-alert__content">
-      <div class="sk-alert__description">
-        Document archived.
-      </div>
-    </div>
-    <div class="sk-alert__actions">
-      <button
-        class="sk-alert__dismiss sk-button sk-interactive"
-        data-sk-button
-        data-size="sm"
-        data-icon-only
-        data-variant="ghost"
-        type="button"
-        aria-label="Descartar"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </div>
-  </div>
-</template>`;
-
-const stackScript = `const region = document.querySelector(".sk-toast-region");
-const template = document.querySelector("[data-toast-template]");
-let count = 0;
-
-document.querySelector("[data-emit-toast]").addEventListener("click", async () => {
-  count += 1;
-  const toast = template.content.firstElementChild.cloneNode(true);
-  const description = toast.querySelector(".sk-alert__description");
-  description.textContent = "Document " + count + " archived.";
-  // One of each two with title: different heights, so that it can be seen that the stack
-  // collapsed grouped on the box of the newest and not on each one.
-  if (count % 2 === 0) {
-    const title = document.createElement("p");
-    title.className = "sk-alert__title";
-    title.textContent = "Movido a Archivados";
-    description.before(title);
-  }
-  region.append(toast);
-  await window.skMount(region);
-});
-
-region.addEventListener("sk-dismiss", (event) => {
-  event.target.remove();
-});
-
-document.querySelector("[data-emit-toast]").click();
-document.querySelector("[data-emit-toast]").click();
-document.querySelector("[data-emit-toast]").click();`;
 
 const stackCss = `/* Already ships in components/toast.css: it's here because
    it's the only part of the component that reads the DOM
@@ -344,47 +85,6 @@ const stackCss = `/* Already ships in components/toast.css: it's here because
 }`;
 
 
-const statusReact = `import {
-  Toast,
-  ToastRegion,
-} from "@skryensya/react/content";
-
-<ToastRegion>
-  {/* without onDismiss there is no ✕: the timeout removes it */}
-  <Toast
-    tone="info"
-    title="Sincronizando"
-    icon={<InfoIcon />}
-    timeout={6000}
-  >
-    This may take a few seconds.
-  </Toast>
-  <Toast
-    tone="success"
-    title="Despliegue creado"
-    icon={<SuccessIcon />}
-    onDismiss={() => remove(id)}
-  >
-    The revision is now in production.
-  </Toast>
-</ToastRegion>;`;
-
-
-const stackReact = `import {
-  Toast,
-  ToastRegion,
-} from "@skryensya/react/content";
-
-// Stacking is the region's default; no Toast knows that
-// It is in a pile. The order of the array is that of the stack.
-// To NOT stack: <ToastRegion data-stack="off">
-<ToastRegion>
-  {toasts.map((toast) => (
-    <Toast key={toast.id} onDismiss={() => remove(toast.id)}>
-      {toast.message}
-    </Toast>
-  ))}
-</ToastRegion>;`;
 
 const vanilla = `import {
   initComponents,
@@ -414,18 +114,13 @@ await initComponents();`;
     which only touches what was recently inserted.
   </p>
   <ComponentPreview
-    html={emitHtml}
-    js={emitJs}
-    previewScript={emitScript}
-    react={emitReact}
+    tree={toastEmitTree(t)}
+    js={toastEmitScript}
+    previewScript={toastEmitScript}
     label="Toast after an action"
     note="press the button"
     viewport="menu"
-  >
-    <Fragment slot="react">
-      <ToastEmitDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  />
 
   <h2>Simple</h2>
   <p>
@@ -440,11 +135,13 @@ await initComponents();`;
   <p>
     The first one does not have ✕: it has <code>data-timeout</code>, so it leaves alone. The other two ask for something from the person, a display to confirm and an error to read, and so they stay until they are closed. The rule of thumb: <strong>if the toast can close itself, you do not need ✕; if you cannot, the ✕ is required</strong>.
   </p>
-  <ComponentPreview html={statusHtml} react={statusReact} label="Toast with status" viewport="overlay">
-    <Fragment slot="react">
-      <ToastStatusDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview
+    tree={toastStatusTree(t)}
+    js={toastStatusScript}
+    previewScript={toastStatusScript}
+    label="Toast with status"
+    viewport="overlay"
+  />
 
   <h2>With action</h2>
   <p>
@@ -487,17 +184,13 @@ await initComponents();`;
     moved.
   </p>
   <ComponentPreview
-    html={stackHtml}
-    previewScript={stackScript}
-    react={stackReact}
+    tree={toastStackTree(t)}
+    js={toastStackScript}
+    previewScript={toastStackScript}
     label="Pile of toasts"
     note="Hover to open it"
     viewport="overlay"
-  >
-    <Fragment slot="react">
-      <ToastStackDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  />
   <p>
     The JavaScript is the same as the first example, and the HTML too: clone, insert, mount and remove in <code>sk-dismiss</code>. There is nothing to add to stack. The hooks are from the region: <code>--sk-toast-peek</code> (how much each one sticks out), <code>--sk-toast-shrink</code> (how much each step back shrinks) and <code>--sk-toast-cascade</code> (how much they separate in time when opening). No toast knows it is in a stack.
   </p>

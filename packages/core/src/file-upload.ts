@@ -57,13 +57,17 @@ export const fileUploadContract = {
     accept: { type: "string", attr: "accept", machineInput: true },
     disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "", machineInput: true },
     required: { type: "boolean", default: false, attr: "required", trueValue: "", machineInput: true },
+    /** Maximum accepted file count. The enhancer reads the shell; React receives the same value. */
+    maxFiles: { type: "number", attr: "data-max-files", machineInput: true },
+    /** Maximum accepted file size in bytes. */
+    maxFileSize: { type: "number", attr: "data-max-file-size", machineInput: true },
   },
 
   signatures: {
     FileUpload: {
       intent: ["file-upload", "attach-a-file", "dropzone", "choose-files", "browse"],
       host: { element: "div" },
-      options: ["name", "multiple", "accept", "disabled", "required"],
+      options: ["name", "multiple", "accept", "disabled", "required", "maxFiles", "maxFileSize"],
       slots: {
         label: { accepts: "text", required: true },
         /** What the dropzone says. It is an instruction, so it is content, not a placeholder. */

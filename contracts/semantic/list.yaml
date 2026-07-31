@@ -8,6 +8,10 @@ List:
   alternatives:
     - Table
 
+ListItemPlain:
+  useWhen:
+    - "una fila de interfaz sólo necesita contenido directo, sin anatomía de título, descripción o trailing"
+
 ListItem:
   useWhen:
     - "una fila que no se toca"
@@ -17,3 +21,10 @@ ListItemLink:
     - "la fila entera navega, y el objetivo de foco y de clic es la fila"
   avoidWhen:
     - "sólo una parte de la fila es enlace; ahí el enlace va adentro, no envolviendo"
+OrderedList:
+  useWhen:
+    - "el orden de las filas comunica secuencia, prioridad o ranking"
+  avoidWhen:
+    - "reordenar las filas no cambia su significado; eso es List"
+  alternatives:
+    - List

@@ -110,3 +110,63 @@ describe("the index is what discovery reads", () => {
     expect(action.slots).toBeUndefined();
   });
 });
+
+/*
+ * A conditional node names something, and nothing checked that the something exists.
+ *
+ * Steps' description span said `whenItemGiven: "description"` while `description` is a SLOT, so the
+ * option lookup was permanently undefined and the span never emitted. Nothing failed: the tree
+ * validated, React rendered the descriptions from its `steps` prop, and only the markup lost them.
+ * One tree, two bindings, two different answers — which is the one thing this compiler exists to
+ * make impossible. A misspelling would do exactly the same, silently.
+ */
+describe("a conditional names something that exists", () => {
+  const conditionals = [
+    { key: "whenItemGiven", from: "options" },
+    { key: "whenItemMissing", from: "options" },
+    { key: "whenItemSlotGiven", from: "slots" },
+    { key: "whenItemSlotMissing", from: "slots" },
+  ] as const;
+
+  /** Only the parts this test walks; the manifest is emitted as data, not as a typed graph. */
+  type Item = { options?: Record<string, unknown>; slots?: Record<string, unknown> };
+  type Signature = { slots?: Record<string, { item?: Item }>; template?: unknown };
+  type Contracts = Record<string, { signatures?: Record<string, Signature> }>;
+
+  it("resolves every item conditional against the entry's own options and slots", () => {
+    const { manifest } = buildManifest(OVERLAYS);
+    const contracts = (manifest as { contracts: Contracts }).contracts;
+    const problems: string[] = [];
+
+    for (const [contractId, contract] of Object.entries(contracts)) {
+      for (const [signatureId, signature] of Object.entries(contract.signatures ?? {})) {
+        const item = Object.values(signature.slots ?? {}).find((slot) => slot.item)?.item;
+        if (!item) continue;
+
+        const declared = {
+          options: Object.keys(item.options ?? {}),
+          slots: Object.keys(item.slots ?? {}),
+        };
+
+        const walk = (node: unknown): void => {
+          if (!node || typeof node !== "object") return;
+          const record = node as Record<string, unknown> & { children?: unknown[] };
+          for (const { key, from } of conditionals) {
+            const named = record[key];
+            if (typeof named === "string" && !declared[from].includes(named)) {
+              problems.push(
+                `${contractId}/${signatureId}: ${key}="${named}" names no item ${from.slice(0, -1)} ` +
+                  `(has ${from}: ${declared[from].join(", ") || "none"})`,
+              );
+            }
+          }
+          for (const child of record.children ?? []) walk(child);
+        };
+
+        walk(signature.template);
+      }
+    }
+
+    expect(problems).toEqual([]);
+  });
+});

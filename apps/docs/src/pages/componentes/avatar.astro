@@ -2,7 +2,8 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
-import { AvatarDemo } from "../../components/react-demos/avatar";
+import { avatarTree } from "../../demos/avatar";
+import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
@@ -21,139 +22,6 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
  */
 const ACCENT_HEX = "1f5fc3";
 const ON_ACCENT_HEX = "ffffff";
-const demoSrc = (initials: string) =>
-  `https://dummyimage.com/160/${ACCENT_HEX}/${ON_ACCENT_HEX}?text=${initials}`;
-
-const html = `<div class="sk-inline">
-<span class="sk-avatar" data-size="sm">
-  <span
-    class="sk-image-frame"
-    data-aspect="1/1"
-    data-fit="cover"
-    data-radius="pill"
-  >
-    <img
-      class="sk-image-frame__media"
-      src="${demoSrc("AL")}"
-      alt="Ada Lovelace"
-    />
-  </span>
-</span>
-<span class="sk-avatar">
-  <span
-    class="sk-image-frame"
-    data-aspect="1/1"
-    data-fit="cover"
-    data-radius="pill"
-  >
-    <img
-      class="sk-image-frame__media"
-      src="${demoSrc("AT")}"
-      alt="Alan Turing"
-    />
-  </span>
-</span>
-<span class="sk-avatar" data-size="lg">
-  <span
-    class="sk-image-frame"
-    data-aspect="1/1"
-    data-fit="cover"
-    data-radius="pill"
-  >
-    <img
-      class="sk-image-frame__media"
-      src="${demoSrc("GH")}"
-      alt="Grace Hopper"
-    />
-  </span>
-</span>
-
-<span
-  class="sk-avatar"
-  data-size="sm"
-  role="img"
-  aria-label="Ada Lovelace"
->
-  <span class="sk-avatar__fallback" aria-hidden="true">AL</span>
-</span>
-<span class="sk-avatar" role="img" aria-label="Alan Turing">
-  <span class="sk-avatar__fallback" aria-hidden="true">AT</span>
-</span>
-<span
-  class="sk-avatar"
-  data-size="lg"
-  role="img"
-  aria-label="Grace Hopper"
->
-  <span class="sk-avatar__fallback" aria-hidden="true">GH</span>
-</span>
-
-<div class="sk-avatar-group">
-  <span class="sk-avatar">
-    <span
-      class="sk-image-frame"
-      data-aspect="1/1"
-      data-fit="cover"
-      data-radius="pill"
-    >
-      <img
-        class="sk-image-frame__media"
-        src="${demoSrc("AL")}"
-        alt="Ada Lovelace"
-      />
-    </span>
-  </span>
-  <span class="sk-avatar" role="img" aria-label="Alan Turing">
-    <span class="sk-avatar__fallback" aria-hidden="true">AT</span>
-  </span>
-  <span class="sk-avatar" role="img" aria-label="Grace Hopper">
-    <span class="sk-avatar__fallback" aria-hidden="true">GH</span>
-  </span>
-  <span class="sk-avatar-group__overflow">+8</span>
-</div>
-</div>`;
-
-const react = `import {
-  Avatar,
-  AvatarGroup,
-} from "@skryensya/react/avatar";
-
-function Example() {
-  return (
-    <div className="sk-inline">
-      <Avatar
-        name="Ada Lovelace"
-        size="sm"
-        src="${demoSrc("AL")}"
-      />
-      <Avatar
-        name="Alan Turing"
-        src="${demoSrc("AT")}"
-      />
-      <Avatar
-        name="Grace Hopper"
-        size="lg"
-        src="${demoSrc("GH")}"
-      />
-
-      <Avatar name="Ada Lovelace" size="sm" />
-      <Avatar name="Alan Turing" />
-      <Avatar name="Grace Hopper" size="lg" />
-
-      <AvatarGroup max={3}>
-        <Avatar
-          name="Ada Lovelace"
-          src="${demoSrc("AL")}"
-        />
-        <Avatar name="Alan Turing" />
-        <Avatar name="Grace Hopper" />
-        <Avatar name="Raúl G" />
-        {/* …8 más → colapsan en +8 */}
-      </AvatarGroup>
-    </div>
-  );
-}`;
-
 /*
  * Repaint the placeholders in the accent the reader is actually looking at.
  *
@@ -170,6 +38,8 @@ function Example() {
  * The frame runtime mirrors the parent's root attributes and inline style, so observing our own
  * <html> is enough to catch a mode, contrast or brand change.
  */
+const t = useTranslations(getLocale(Astro.url));
+
 const previewScript = `
 const probe = document.createElement("span");
 probe.hidden = true;
@@ -229,11 +99,7 @@ window.addEventListener("pagehide", () => observer.disconnect(), { once: true })
     excedente en un contador «+N».
   </p>
 
-  <ComponentPreview html={html} react={react} previewScript={previewScript} label="Avatar">
-    <Fragment slot="react">
-      <AvatarDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={avatarTree(t)} previewScript={previewScript} label="Avatar" />
   <p>
     Con imagen, el avatar anida <code>sk-image-frame</code> y el
     <code>&lt;img alt&gt;</code> aporta la semántica. Sin ella, el contenedor toma

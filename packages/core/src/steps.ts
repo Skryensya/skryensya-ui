@@ -91,7 +91,12 @@ export const stepsContract = {
                 element: "span",
                 children: [
                   { element: "span", part: "label", itemSlot: "label" },
-                  { element: "span", part: "description", whenItemGiven: "description", itemSlot: "description" },
+                  // `whenItemSlotGiven`, not `whenItemGiven`: the first asks whether the entry
+                  // filled a SLOT, the second whether it set an OPTION. `description` is a slot, so
+                  // the option lookup was permanently undefined and this span never emitted — the
+                  // tree validated, React rendered the descriptions from `steps={[…]}`, and the
+                  // markup silently dropped them. Two bindings, one tree, different answers.
+                  { element: "span", part: "description", whenItemSlotGiven: "description", itemSlot: "description" },
                 ],
               },
             ],

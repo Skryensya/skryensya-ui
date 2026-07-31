@@ -1,6 +1,11 @@
 ---
 import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/accordion.css";
+/* The "Details nativo" preview paints `.sk-details*`, and the page told the reader to import this
+   stylesheet without importing it itself: the stage rendered as bare <details> with the browser's
+   own marker. A preview frame copies the PAGE's styles, so a sheet the page never loads is a sheet
+   the stage never gets. */
+import "@skryensya/core/components/details.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";

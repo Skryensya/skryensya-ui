@@ -315,6 +315,10 @@
     "./command-palette": {
       "types": "./src/components/command-palette.tsx",
       "default": "./src/components/command-palette.tsx"
+    },
+    "./code-preview": {
+      "types": "./src/components/code-preview.tsx",
+      "default": "./src/components/code-preview.tsx"
     }
   },
   "scripts": {

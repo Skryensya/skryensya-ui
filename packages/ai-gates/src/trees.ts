@@ -822,6 +822,17 @@ const signatureTrees: readonly Canonical[] = [
       options: { label: "Buscar", paletteId: "demo-palette", open: true },
     },
   },
+  /* The chrome, not the highlighting: Shiki runs where the code is made, never in the browser. */
+  {
+    name: "code-preview/collapsible",
+    enhanced: true,
+    tree: {
+      contract: "code-preview",
+      signature: "CodePreview",
+      options: { collapsible: true, lines: "48", previewLines: "8" },
+      slots: { label: "vite.config.ts", children: "export default defineConfig({})" },
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

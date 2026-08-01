@@ -14,7 +14,11 @@
    */
   const root = getRoot();
   const trigger = root.querySelector<HTMLElement>('[data-part="trigger"]');
-  const content = root.querySelector<HTMLElement>('[data-part="content"], [data-part="expandable-content"]');
+  // Direct child, for the reason spelled out in Accordion.svelte: `data-part="content"` names both
+  // the collapsible panel and the copy block a Tile puts inside its own trigger.
+  const content = root.querySelector<HTMLElement>(
+    ':scope > [data-part="content"], :scope > [data-part="expandable-content"]',
+  );
   if (!trigger || !content) throw new Error("ExpandableTile requires trigger and content parts.");
 
   if (!root.id) root.id = uniqueId("sk-tile");

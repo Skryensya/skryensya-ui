@@ -923,7 +923,20 @@ const signatureTrees: readonly Canonical[] = [
           signature: "Accordion.Item",
           options: { value: "envio" },
           children: [
-            { contract: "accordion", signature: "Accordion.Trigger", children: "¿Cuánto tarda el envío?" },
+            {
+              contract: "accordion",
+              signature: "Accordion.Trigger",
+              /* Title, description and the disclosure mark: the composition all three accordion
+               * demos are built on, and the one the chevron signature exists for. */
+              children: [
+                {
+                  contract: "tile",
+                  signature: "TileContent",
+                  slots: { title: "¿Cuánto tarda el envío?", description: "Despachos y plazos" },
+                },
+                { contract: "tile", signature: "TileChevron" },
+              ],
+            },
             { contract: "accordion", signature: "Accordion.Content", children: "Entre tres y cinco días hábiles." },
           ],
         },

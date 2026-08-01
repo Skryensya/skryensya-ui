@@ -28,6 +28,7 @@ import {
   type Ref,
 } from "react";
 import { CheckboxIndicators } from "./selection.js";
+import { Icon } from "./icon.js";
 
 
 function tileRootClasses(className: string | undefined, ...parts: readonly string[]) {
@@ -90,6 +91,35 @@ export const TileContent = forwardRef<HTMLSpanElement, TileContentProps>(functio
     <span {...props} className={className ? `${tileParts.content} ${className}` : tileParts.content} data-part="content" ref={ref}>
       <span className={tileParts.title}>{title}</span>
       {description != null ? <span className={tileParts.description}>{description}</span> : null}
+    </span>
+  );
+});
+
+export type TileChevronProps = HTMLAttributes<HTMLSpanElement>;
+
+/**
+ * The disclosure mark on an expandable tile. Both children are always rendered and the stylesheet
+ * shows one, off the trigger's `data-state` — on the authored path there is no runtime to swap an
+ * icon with. Decorative on purpose: the trigger's `aria-expanded` already announces the state.
+ */
+export const TileChevron = forwardRef<HTMLSpanElement, TileChevronProps>(function TileChevron(
+  { className, ...props },
+  ref,
+) {
+  return (
+    <span
+      {...props}
+      aria-hidden="true"
+      className={className ? `${tileParts.chevron} ${className}` : tileParts.chevron}
+      data-part="chevron"
+      ref={ref}
+    >
+      <span data-state="closed">
+        <Icon name="chevron-down" />
+      </span>
+      <span data-state="open">
+        <Icon name="chevron-up" />
+      </span>
     </span>
   );
 });

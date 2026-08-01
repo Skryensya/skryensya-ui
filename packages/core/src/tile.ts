@@ -209,6 +209,52 @@ export const tileContract = {
     },
 
     /*
+     * THE DISCLOSURE MARK, which was a declared part no template painted.
+     *
+     * `sk-tile__chevron` has had CSS since the expandable tile shipped — rules that hide one child
+     * and show the other off the trigger's `data-state` — but no signature emitted it, so every
+     * accordion demo hand-wrote the same nine lines twice, once as an HTML string and once as JSX.
+     * They had already drifted: the authored HTML carried `data-part="chevron"` and the React half
+     * did not, which is the exact failure a shared tree exists to make impossible.
+     *
+     * BOTH children are always emitted, and the stylesheet picks one. The mark cannot be a single
+     * icon swapped at runtime, because on the authored path there is no runtime — the enhancer only
+     * toggles `data-state` on the trigger, and CSS does the rest. That is also why it is purely
+     * decorative: the trigger's own `aria-expanded` is what announces the state, so an announced
+     * chevron would say it twice.
+     */
+    TileChevron: {
+      intent: ["disclosure-mark", "expand-collapse-affordance", "accordion-chevron"],
+      host: { element: "span" },
+      parents: ["ExpandableTileTrigger", "Accordion.Trigger"],
+      options: [],
+      slots: {},
+      template: {
+        element: "span",
+        part: "chevron",
+        host: true,
+        attrs: { "data-part": "chevron", "aria-hidden": "true" },
+        children: [
+          {
+            element: "span",
+            attrs: { "data-state": "closed" },
+            children: [
+              { element: "span", attrs: { "data-sk-icon": "chevron-down", "data-sk-icon-size": "md" } },
+            ],
+          },
+          {
+            element: "span",
+            attrs: { "data-state": "open" },
+            children: [
+              { element: "span", attrs: { "data-sk-icon": "chevron-up", "data-sk-icon-size": "md" } },
+            ],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/tile", name: "TileChevron" },
+    },
+
+    /*
      * The expandable tile is three signatures, not one with slots, because the trigger and the
      * content are composed in the author's own order and can each carry arbitrary markup. The
      * machine pairs them; the contract only fixes that both are there.

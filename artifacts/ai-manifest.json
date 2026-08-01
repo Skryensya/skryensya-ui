@@ -8657,6 +8657,16 @@
             "conviene que toda la tarjeta sea el área de click, no sólo el cuadradito"
           ]
         },
+        "TileChevron": {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un trigger expandible: no es un icono de propósito general",
+            "hace falta que el estado se anuncie; eso ya lo dice el aria-expanded del trigger"
+          ],
+          "useWhen": [
+            "un tile expandible o una sección de accordion necesita mostrar que se abre y se cierra"
+          ]
+        },
         "TileContent": {
           "alternatives": [],
           "avoidWhen": [
@@ -8982,6 +8992,67 @@
             "element": "label",
             "host": true,
             "part": "root"
+          }
+        },
+        "TileChevron": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "disclosure-mark",
+            "expand-collapse-affordance",
+            "accordion-chevron"
+          ],
+          "options": [],
+          "parents": [
+            "ExpandableTileTrigger",
+            "Accordion.Trigger"
+          ],
+          "react": {
+            "from": "@skryensya/react/tile",
+            "name": "TileChevron"
+          },
+          "slots": {},
+          "template": {
+            "attrs": {
+              "aria-hidden": "true",
+              "data-part": "chevron"
+            },
+            "children": [
+              {
+                "attrs": {
+                  "data-state": "closed"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon": "chevron-down",
+                      "data-sk-icon-size": "md"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "span"
+              },
+              {
+                "attrs": {
+                  "data-state": "open"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon": "chevron-up",
+                      "data-sk-icon-size": "md"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "span"
+              }
+            ],
+            "element": "span",
+            "host": true,
+            "part": "chevron"
           }
         },
         "TileContent": {
@@ -10274,5 +10345,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "9a0d5012468547ba"
+  "sourceHash": "023ff10ae77f59ab"
 }

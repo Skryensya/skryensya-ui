@@ -8,6 +8,7 @@ import { menu } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
 import { useEffect, useId, useState, type ReactNode, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
+import { Icon } from "./icon.js";
 
 const cx = (...classes: Array<string | undefined>) =>
   classes.filter(Boolean).join(" ");
@@ -121,7 +122,22 @@ function MenuList({
             onSelect?.({ value: item.value });
         }}
       >
-        <span className={menuParts.itemLabel}>{item.label}</span>
+        {/*
+          * Zag names the label too, and only the vanilla enhancer was applying it: React shipped a
+          * bare span while authored markup carried `data-part="item-text"` and the checked state.
+          * The label is what a screen reader reads for the item, so this is not decoration.
+          */}
+        <span
+          {...api.getItemTextProps({
+            value: item.value,
+            valueText: item.label,
+            disabled: item.disabled,
+            checked,
+          })}
+          className={menuParts.itemLabel}
+        >
+          {item.label}
+        </span>
         {kind !== "item" ? (
           <span
             {...api.getItemIndicatorProps({
@@ -133,7 +149,7 @@ function MenuList({
             aria-hidden="true"
             className={menuParts.itemIndicator}
           >
-            {itemIndicator ?? "✓"}
+            {itemIndicator ?? <Icon name="check" />}
           </span>
         ) : null}
       </div>
@@ -200,7 +216,21 @@ function Submenu({
 
   return (
     <>
-      <div
+      {/*
+        * Wrapped in a menu root, like the markup emits. Vanilla needs this element because it is
+        * where the submenu machine mounts; React has no such need, and for a while that was the
+        * excuse for the two producing different DOM. It is only an excuse: `.sk-menu` inside a
+        * content panel is now laid out as a full-width row, so the wrapper costs nothing here and
+        * the two bindings finally nest the same.
+        */}
+      <div className={menuParts.root}>
+      {/*
+        * A BUTTON, like the markup emits. The contract describes one shape; two elements for one
+        * node is the divergence this whole arrangement exists to prevent, and a submenu trigger is
+        * a control either way. `type="button"` keeps it out of form submission, and Zag's props
+        * still own the role and the roving tabindex.
+        */}
+      <button
         {...parentApi.getTriggerItemProps(api)}
         {...anchor.anchor(cx(menuParts.item, "sk-interactive"))}
         onKeyDown={(event) => {
@@ -209,15 +239,18 @@ function Submenu({
             document.documentElement.dir === "rtl" ? "ArrowLeft" : "ArrowRight";
           if (event.key === direction) api.setOpen(true);
         }}
+        type="button"
       >
         <span className={menuParts.itemLabel}>{item.label}</span>
-        <span
-          {...api.getIndicatorProps()}
-          aria-hidden="true"
-          className={menuParts.itemIndicator}
-        >
-          {submenuIndicator ?? "›"}
+        {/*
+          * No `getIndicatorProps` here. It is `aria-hidden` decoration, and the vanilla enhancer has
+          * no selector that reaches a submenu trigger's chevron — so naming it in one binding only
+          * bought a divergence and no behaviour.
+          */}
+        <span aria-hidden="true" className={menuParts.itemIndicator}>
+          {submenuIndicator ?? <Icon name="chevron-right" />}
         </span>
+      </button>
       </div>
       <Portal container={container}>
         {/* Un submenú sale al COSTADO y alineado arriba, que no está en el juego de cuatro; se pide
@@ -310,7 +343,15 @@ export function Menu({
           type="button"
         >
           {trigger}
-          {indicator ? <span aria-hidden="true">{indicator}</span> : null}
+          {/*
+            * The chevron is the DEFAULT, not an opt-in. The contract template paints one on every
+            * menu trigger, so authored markup always had it and React only rendered one when the
+            * caller remembered to pass `indicator` — the same tree came out 28px narrower here
+            * than in Vanilla. Pass `indicator={null}` to suppress it deliberately.
+            */}
+          <span aria-hidden="true">
+            {indicator === undefined ? <Icon name="chevron-down" /> : indicator}
+          </span>
         </button>
       )}
       <Portal container={container}>

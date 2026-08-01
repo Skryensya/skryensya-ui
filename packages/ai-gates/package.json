@@ -13,22 +13,23 @@
   "dependencies": {
     "@skryensya/ai-compiler": "workspace:*",
     "@skryensya/core": "workspace:*",
+    "@skryensya/icons-phosphor": "workspace:*",
     "@skryensya/react": "workspace:*",
-    "@skryensya/vanilla": "workspace:*",
-    "@skryensya/icons-phosphor": "workspace:*"
+    "@skryensya/vanilla": "workspace:*"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.0",
+    "@skryensya/recipes": "workspace:*",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "@types/node": "^22.20.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "axe-core": "^4.10.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "typescript": "^5.9.3",
-    "vite": "^8.1.5",
-    "axe-core": "^4.10.2",
-    "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "svelte": "^5.0.0",
-    "@skryensya/recipes": "workspace:*"
+    "typescript": "^5.9.3",
+    "vite": "^8.1.5"
   }
 }

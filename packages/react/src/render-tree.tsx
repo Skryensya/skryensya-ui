@@ -30,6 +30,7 @@ import * as contentModule from "./components/content.js";
 import * as numberFieldModule from "./components/number-field.js";
 import * as tooltipModule from "./components/tooltip.js";
 import * as selectModule from "./components/select.js";
+import * as menuModule from "./components/menu.js";
 import * as selectNativeModule from "./components/select-native.js";
 import * as badgeModule from "./components/badge.js";
 import * as kbdModule from "./components/kbd.js";
@@ -69,6 +70,7 @@ import {
  */
 const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/select": selectModule,
+  "@skryensya/react/menu": menuModule,
   "@skryensya/react/select-native": selectNativeModule,
   "@skryensya/react/tag": tagModule,
   "@skryensya/react/progress": progressModule,

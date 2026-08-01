@@ -148,13 +148,39 @@ export const selectContract = {
         host: true,
         children: [
           /*
-           * NO hidden `<select>` here, deliberately. Both bindings already produce their own —
-           * React through Zag's `getHiddenSelectProps`, and the vanilla enhancer accepts an authored
-           * `[data-sk-select-hidden]` without requiring one. Emitting it from the template would
-           * need the `<option>`s to spell the entry key as `value`, where the listbox `<li>` spells
-           * the same entry as `data-value`, and a template node cannot override an item option's
-           * attribute per node. Form participation is the binding's job; the markup teaches shape.
+           * The hidden native control, so the value reaches a form submission.
+           *
+           * This was left out at first, on the theory that form participation is the binding's job.
+           * G2 disagreed and was right twice over: React renders one through Zag, so omitting it
+           * made the two bindings produce different DOM — and the vanilla enhancer only ADOPTS an
+           * authored hidden select, it never creates one, so markup without it silently submitted
+           * nothing. `itemOptionAttrs` exists because of this node: the same entry value is
+           * `data-value` on the listbox row and `value` here.
            */
+          {
+            element: "select",
+            mount: "data-sk-select-hidden",
+            attrs: {
+              "aria-hidden": "true",
+              tabindex: "-1",
+              /* Zag's own visually-hidden declaration, byte for byte: a second spelling of the same rule
+               * reads as a divergence to G2 and is one more thing that can drift. */
+              style:
+                "border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;white-space:nowrap;word-wrap:normal;",
+            },
+            options: ["name"],
+            children: [
+              {
+                element: "option",
+                repeat: "items",
+                itemOptions: ["value", "disabled"],
+                itemOptionAttrs: { value: "value", disabled: "disabled" },
+                /* The option the browser submits, marked the way the platform marks it. */
+                selectedBy: { attr: "selected", option: "value" },
+                itemSlot: "label",
+              },
+            ],
+          },
           {
             element: "div",
             part: "control",
@@ -184,12 +210,12 @@ export const selectContract = {
                       {
                         element: "span",
                         attrs: { "data-state": "closed" },
-                        children: [{ element: "span", attrs: { "data-sk-icon": "chevron-down" } }],
+                        children: [{ element: "span", attrs: { "data-sk-icon": "chevron-down", "data-sk-icon-size": "md" } }],
                       },
                       {
                         element: "span",
                         attrs: { "data-state": "open" },
-                        children: [{ element: "span", attrs: { "data-sk-icon": "chevron-up" } }],
+                        children: [{ element: "span", attrs: { "data-sk-icon": "chevron-up", "data-sk-icon-size": "md" } }],
                       },
                     ],
                   },
@@ -226,7 +252,7 @@ export const selectContract = {
                         element: "span",
                         part: "itemIndicator",
                         mount: "data-sk-select-item-indicator",
-                        children: [{ element: "span", attrs: { "data-sk-icon": "check" } }],
+                        children: [{ element: "span", attrs: { "data-sk-icon": "check", "data-sk-icon-size": "md" } }],
                       },
                     ],
                   },

@@ -242,6 +242,16 @@ export type ContractTemplate = {
    */
   readonly recurse?: string;
   /**
+   * Rename the attribute an item option maps to, for THIS node only.
+   *
+   * One entry datum sometimes needs two spellings in one template: a Select row is
+   * `<li data-value>` because the enhancer reads it there, while the hidden `<select>` beside it
+   * needs `<option value>` for the browser to submit. The option means one thing; where it lands
+   * decides how it is written.
+   */
+  readonly itemOptionAttrs?: Readonly<Record<string, string>>;
+
+  /**
    * This node repeats over a collection the CONTRACT computes rather than the author supplies.
    *
    * Pagination is the case that needs it: which page numbers are visible follows from the current

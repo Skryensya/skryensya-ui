@@ -1,0 +1,13 @@
+# La estructura vive en packages/core/src/menu.ts. Acá sólo por qué se elige.
+
+Menu:
+  useWhen:
+    - "un conjunto de comandos que actúan sobre algo, detrás de un disparador"
+    - "las acciones son demasiadas para mostrarlas todas, o son secundarias"
+    - "un submenú: la misma lista, anidada sin límite"
+  avoidWhen:
+    - "es una elección de un valor dentro de un formulario; eso es Select"
+    - "el contenido es una descripción y no una lista de acciones; eso es Tooltip o Flyout"
+  alternatives:
+    - Select
+    - Flyout

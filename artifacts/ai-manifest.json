@@ -3919,6 +3919,288 @@
         }
       }
     },
+    "menu": {
+      "css": "@skryensya/core/components/menu.css",
+      "id": "menu",
+      "options": {
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "content": "sk-menu__content",
+        "group": "sk-menu__group",
+        "groupLabel": "sk-menu__group-label",
+        "item": "sk-menu__item",
+        "itemIndicator": "sk-menu__item-indicator",
+        "itemLabel": "sk-menu__item-label",
+        "positioner": "sk-menu__positioner",
+        "root": "sk-menu",
+        "separator": "sk-menu__separator",
+        "trigger": "sk-menu__trigger"
+      },
+      "semantics": {
+        "Menu": {
+          "alternatives": [
+            "Select",
+            "Flyout"
+          ],
+          "avoidWhen": [
+            "es una elección de un valor dentro de un formulario; eso es Select",
+            "el contenido es una descripción y no una lista de acciones; eso es Tooltip o Flyout"
+          ],
+          "useWhen": [
+            "un conjunto de comandos que actúan sobre algo, detrás de un disparador",
+            "las acciones son demasiadas para mostrarlas todas, o son secundarias",
+            "un submenú: la misma lista, anidada sin límite"
+          ]
+        }
+      },
+      "signatures": {
+        "Menu": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "a-list-of-commands",
+            "actions-behind-a-trigger",
+            "submenu"
+          ],
+          "mount": "data-sk-menu",
+          "options": [
+            "label",
+            "disabled"
+          ],
+          "portals": true,
+          "react": {
+            "from": "@skryensya/react/menu",
+            "name": "Menu"
+          },
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "value",
+                "options": {
+                  "disabled": {
+                    "attr": "data-disabled",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "kind": {
+                    "attr": "data-type",
+                    "type": "enum",
+                    "values": [
+                      "checkbox",
+                      "radio"
+                    ]
+                  },
+                  "value": {
+                    "attr": "data-value",
+                    "type": "string"
+                  }
+                },
+                "slots": {
+                  "children": {
+                    "accepts": "items",
+                    "recursive": true
+                  },
+                  "label": {
+                    "accepts": "text",
+                    "required": true
+                  }
+                }
+              },
+              "prop": "items",
+              "required": true
+            },
+            "trigger": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive",
+                  "sk-anchor"
+                ],
+                "attrs": {
+                  "type": "button"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "chevron-down",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span"
+                  }
+                ],
+                "element": "button",
+                "mount": "data-sk-menu-trigger",
+                "part": "trigger",
+                "slot": "trigger"
+              },
+              {
+                "also": [
+                  "sk-anchored"
+                ],
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "also": [
+                                  "sk-interactive"
+                                ],
+                                "children": [
+                                  {
+                                    "element": "span",
+                                    "itemSlot": "label",
+                                    "part": "itemLabel"
+                                  },
+                                  {
+                                    "attrs": {
+                                      "aria-hidden": "true"
+                                    },
+                                    "children": [
+                                      {
+                                        "attrs": {
+                                          "data-sk-icon": "check",
+                                          "data-sk-icon-size": "md"
+                                        },
+                                        "element": "span"
+                                      }
+                                    ],
+                                    "element": "span",
+                                    "part": "itemIndicator",
+                                    "whenItemGiven": "kind"
+                                  }
+                                ],
+                                "element": "div",
+                                "itemOptions": [
+                                  "value",
+                                  "disabled",
+                                  "kind"
+                                ],
+                                "mount": "data-sk-menu-item",
+                                "part": "item",
+                                "whenItemSlotMissing": "children"
+                              },
+                              {
+                                "children": [
+                                  {
+                                    "also": [
+                                      "sk-interactive",
+                                      "sk-anchor"
+                                    ],
+                                    "attrs": {
+                                      "type": "button"
+                                    },
+                                    "children": [
+                                      {
+                                        "element": "span",
+                                        "itemSlot": "label",
+                                        "part": "itemLabel"
+                                      },
+                                      {
+                                        "attrs": {
+                                          "aria-hidden": "true"
+                                        },
+                                        "children": [
+                                          {
+                                            "attrs": {
+                                              "data-sk-icon": "chevron-right",
+                                              "data-sk-icon-size": "md"
+                                            },
+                                            "element": "span"
+                                          }
+                                        ],
+                                        "element": "span",
+                                        "part": "itemIndicator"
+                                      }
+                                    ],
+                                    "element": "button",
+                                    "mount": "data-sk-menu-trigger",
+                                    "part": "item"
+                                  },
+                                  {
+                                    "also": [
+                                      "sk-anchored"
+                                    ],
+                                    "attrs": {
+                                      "data-sk-submenu": ""
+                                    },
+                                    "children": [
+                                      {
+                                        "children": [
+                                          {
+                                            "recurse": "entry",
+                                            "repeatItemSlot": "children"
+                                          }
+                                        ],
+                                        "element": "div",
+                                        "mount": "data-sk-menu-content",
+                                        "part": "content"
+                                      }
+                                    ],
+                                    "element": "div",
+                                    "mount": "data-sk-menu-positioner",
+                                    "part": "positioner"
+                                  }
+                                ],
+                                "element": "div",
+                                "mount": "data-sk-menu",
+                                "part": "root",
+                                "whenItemSlotGiven": "children"
+                              }
+                            ],
+                            "name": "entry"
+                          }
+                        ],
+                        "repeat": "items"
+                      }
+                    ],
+                    "element": "div",
+                    "mount": "data-sk-menu-content",
+                    "part": "content"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-menu-positioner",
+                "part": "positioner"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "nav-list": {
       "a11y": [
         {
@@ -5400,6 +5682,37 @@
           "template": {
             "children": [
               {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "style": "border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;white-space:nowrap;word-wrap:normal;",
+                  "tabindex": "-1"
+                },
+                "children": [
+                  {
+                    "element": "option",
+                    "itemOptionAttrs": {
+                      "disabled": "disabled",
+                      "value": "value"
+                    },
+                    "itemOptions": [
+                      "value",
+                      "disabled"
+                    ],
+                    "itemSlot": "label",
+                    "repeat": "items",
+                    "selectedBy": {
+                      "attr": "selected",
+                      "option": "value"
+                    }
+                  }
+                ],
+                "element": "select",
+                "mount": "data-sk-select-hidden",
+                "options": [
+                  "name"
+                ]
+              },
+              {
                 "children": [
                   {
                     "element": "label",
@@ -5434,7 +5747,8 @@
                             "children": [
                               {
                                 "attrs": {
-                                  "data-sk-icon": "chevron-down"
+                                  "data-sk-icon": "chevron-down",
+                                  "data-sk-icon-size": "md"
                                 },
                                 "element": "span"
                               }
@@ -5448,7 +5762,8 @@
                             "children": [
                               {
                                 "attrs": {
-                                  "data-sk-icon": "chevron-up"
+                                  "data-sk-icon": "chevron-up",
+                                  "data-sk-icon-size": "md"
                                 },
                                 "element": "span"
                               }
@@ -5492,7 +5807,8 @@
                             "children": [
                               {
                                 "attrs": {
-                                  "data-sk-icon": "check"
+                                  "data-sk-icon": "check",
+                                  "data-sk-icon-size": "md"
                                 },
                                 "element": "span"
                               }
@@ -9251,5 +9567,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "0fd7e6236d9c888e"
+  "sourceHash": "9dc960d45450ca14"
 }

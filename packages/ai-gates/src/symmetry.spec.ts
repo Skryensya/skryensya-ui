@@ -1,5 +1,5 @@
 import { expect, test, type Locator } from "@playwright/test";
-import type { ContractTemplate } from "@skryensya/core/contract";
+import type { ContractSlot, ContractTemplate } from "@skryensya/core/contract";
 import { contracts } from "@skryensya/ai-compiler/registry";
 import { canonicalTrees } from "./trees.js";
 
@@ -61,7 +61,7 @@ const enhancerAttributes = [
     // Same rule one level down: a collection ENTRY can carry machine input too — a radio's initial
     // `checked` is authored as an attribute and set by React as a property.
     ...Object.values(contract.signatures).flatMap((signature) =>
-      Object.values(signature.slots).flatMap((slot) =>
+      Object.values(signature.slots as Record<string, ContractSlot>).flatMap((slot) =>
         Object.values(slot.item?.options ?? {})
           .filter((option) => option.machineInput)
           .map((option) => option.attr),
@@ -124,12 +124,8 @@ async function shapeOf(
   binding: "vanilla" | "react",
 ): Promise<unknown> {
   return block.locator(`[data-binding="${binding}"]`).evaluate((host: HTMLElement, [skip, idRefs]: [string[], string[]]) => {
-    // Ids are positional: the relationship survives, the generated string does not.
     const ids = new Map<string, number>();
-    let next = 0;
-    for (const element of host.querySelectorAll<HTMLElement>("[id]")) {
-      ids.set(element.id, next++);
-    }
+    const anchorNames = new Map<string, number>();
 
     const describe = (element: Element): unknown => {
       const attributes: Record<string, string> = {};
@@ -156,7 +152,42 @@ async function shapeOf(
           continue;
         }
 
-        attributes[name] = value;
+        /*
+         * A generated name is an id by another route. React derives them from `useId` and the
+         * vanilla helpers from their own counters, so the STRING can never match while the pairing
+         * it expresses must — the same reasoning as the `id` attribute above, applied to the two
+         * other places a generated name shows up: the anchor name inside a style, and the machine's
+         * own uid, which Zag writes as `data-uid` and refers to from `data-controls`.
+         */
+        const token = (raw: string): string => {
+          if (!anchorNames.has(raw)) anchorNames.set(raw, anchorNames.size);
+          return `#${anchorNames.get(raw)}`;
+        };
+
+        if (name === "data-uid" || name === "data-controls") {
+          attributes[name] = value.replace(/(_r_[0-9a-z]+_|sk-[a-z-]+-[0-9a-z]+)/g, token);
+          continue;
+        }
+
+        /*
+         * A style attribute's STRING is not its meaning. React assigns through CSSOM, so the
+         * browser re-serialises it (`border: 0px`, `overflow-wrap`); authored markup keeps whatever
+         * text was written (`border:0`, `word-wrap`). Both declare the same style. Round-tripping
+         * each side through CSSOM makes them comparable without pretending the difference matters —
+         * matching Zag's source string byte for byte does NOT work, because only one side gets
+         * normalised.
+         */
+        if (name === "style") {
+          const scratch = document.createElement("div");
+          scratch.setAttribute("style", value);
+          attributes.style = scratch.style.cssText.replace(
+            /--sk-anchor-[\w-]+/g,
+            (raw) => `--sk-anchor${token(raw)}`,
+          );
+          continue;
+        }
+
+        attributes[name] = value.replace(/--sk-anchor-[\w-]+/g, (raw) => `--sk-anchor${token(raw)}`);
       }
 
       return {
@@ -174,6 +205,76 @@ async function shapeOf(
       };
     };
 
-    return [...host.children].map(describe);
+    /*
+     * FLOATING CONTENT IS HOISTED, in both bindings, before anything is compared.
+     *
+     * A positioned region is nested where it belongs in authored markup and PORTALLED to the
+     * container in React — that is the whole point of portalling, since an ancestor with
+     * `overflow: hidden` would otherwise clip it. So the two bindings genuinely disagree about
+     * nesting while agreeing about everything else, and comparing the raw trees says they differ
+     * for a reason neither one is wrong about.
+     *
+     * Lifting every `.sk-anchored` subtree out to one flat list, in document order, makes the two
+     * shapes comparable again without weakening anything: the region's own contents are still
+     * compared in full, and a positioner appearing in one binding and not the other still fails.
+     *
+     * Nothing exercised this until now — menu, select and tooltip are the only signatures that
+     * portal, and none of them had a canonical tree, so G2 had never once compared a portalling
+     * component. The scoping machinery was there; the comparison was not.
+     */
+    const floating: Element[] = [];
+    const hoist = (element: Element): void => {
+      for (const child of [...element.children]) {
+        if (child.classList.contains("sk-anchored")) {
+          floating.push(child);
+          child.remove();
+          hoist(child);
+          continue;
+        }
+        hoist(child);
+      }
+    };
+    for (const child of [...host.children]) {
+      if (child.classList.contains("sk-anchored")) continue;
+      hoist(child);
+    }
+
+    /*
+     * Floating regions are compared as a SET, not a sequence. Their order in the container is an
+     * accident of how each binding got them there — nesting depth in authored markup, mount order
+     * in React — and no reader can perceive it, since each one is positioned against its own
+     * anchor. Ordering both sides by content keeps every region compared in full while dropping the
+     * one property that legitimately differs.
+     *
+     * Which forces two passes, because ids are POSITIONAL. Numbering them requires a stable
+     * traversal, and the traversal is only stable once the regions are ordered — so the first pass
+     * orders them by a signature that ignores ids entirely, and the second numbers and describes.
+     * Getting this backwards is what made `aria-labelledby` point at "#8" on one side and "#5" on
+     * the other while both were pointing at the same element.
+     */
+    const rooted = [...host.children].filter((child) => !child.classList.contains("sk-anchored"));
+    const anchored = [...host.children]
+      .filter((child) => child.classList.contains("sk-anchored"))
+      .concat(floating);
+
+    const skeleton = (element: Element): string =>
+      `${element.tagName}[${[...element.attributes]
+        .filter(({ name }) => name !== "id" && !idRefs.includes(name) && name !== "style")
+        .map(({ name, value }) => `${name}=${value}`)
+        .sort()
+        .join(",")}]{${[...element.children].map(skeleton).join("")}}`;
+
+    anchored.sort((a, b) => skeleton(a).localeCompare(skeleton(b)));
+
+    const number = (element: Element): void => {
+      if (element.id && !ids.has(element.id)) ids.set(element.id, ids.size);
+      for (const child of element.children) number(child);
+    };
+    for (const element of [...rooted, ...anchored]) number(element);
+
+    return {
+      anchored: anchored.map(describe),
+      rooted: rooted.map(describe),
+    };
   }, [enhancerAttributes, idReferences] as [string[], string[]]);
 }

@@ -1,4 +1,5 @@
-import { copyButtonAttrs, copyButtonParts } from "@skryensya/core/copy-button";
+import { copyButtonAttrs, copyButtonContract, copyButtonParts } from "@skryensya/core/copy-button";
+import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import { useEffect, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { Icon } from "./icon.js";
 
@@ -45,11 +46,15 @@ async function writeClipboard(text: string): Promise<boolean> {
   }
 }
 
-export type CopyButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type"> & {
+/* The button paint comes from the contract, so Core stays the only place its values are defined —
+   the root is a `.sk-button` and that sheet reads these exact attributes. */
+export type CopyButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type"> &
+  Pick<SignatureOptionsOf<typeof copyButtonContract, "CopyButton">, "variant" | "size" | "iconOnly"> & {
   /** The id of the element whose text is copied. Read at click time, like the enhancer does. */
   target: string;
   /** The resting label. */
   children?: ReactNode;
+
   successLabel?: string;
   errorLabel?: string;
   successAriaLabel?: string;
@@ -63,6 +68,11 @@ export function CopyButton({
   errorLabel = "No se pudo copiar",
   successAriaLabel,
   successLabel = "Copiado",
+  // Resolved, not left absent: the contract declares these defaults and the emitter writes them
+  // into markup, so leaving them undefined here made the two bindings differ on an untouched button.
+  size = "md",
+  iconOnly,
+  variant = "neutral",
   target,
   "aria-label": ariaLabel,
   ...props
@@ -102,6 +112,9 @@ export function CopyButton({
         }
         void writeClipboard(text).then((copied) => settle(copied ? "copied" : "error"));
       }}
+      data-icon-only={iconOnly ? "" : undefined}
+      data-size={size}
+      data-variant={variant}
       type="button"
       {...{ [copyButtonAttrs.target]: target, [copyButtonAttrs.state]: state }}
     >

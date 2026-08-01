@@ -2406,6 +2406,22 @@
           "machineInput": true,
           "type": "string"
         },
+        "iconOnly": {
+          "attr": "data-icon-only",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "size": {
+          "attr": "data-size",
+          "default": "md",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
         "successLabel": {
           "attr": "data-sk-copy-button-success-label",
           "default": "Copiado",
@@ -2415,6 +2431,17 @@
         "target": {
           "attr": "data-sk-copy-button-target",
           "type": "string"
+        },
+        "variant": {
+          "attr": "data-variant",
+          "default": "neutral",
+          "type": "enum",
+          "values": [
+            "neutral",
+            "primary",
+            "danger",
+            "ghost"
+          ]
         }
       },
       "parts": {
@@ -2448,6 +2475,9 @@
           "mount": "data-sk-copy-button",
           "options": [
             "target",
+            "variant",
+            "size",
+            "iconOnly",
             "successLabel",
             "errorLabel"
           ],
@@ -10495,5 +10525,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "8120d6b98c8e2c21"
+  "sourceHash": "1171d63ce1b182b7"
 }

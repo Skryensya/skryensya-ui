@@ -1,0 +1,10 @@
+# La estructura vive en packages/core/src/copy-button.ts. Acá sólo por qué se elige.
+
+CopyButton:
+  useWhen:
+    - "hay un valor en pantalla que la gente va a querer pegar en otro lado: un comando, un token, un id"
+    - "copiar a mano es propenso a error: cadenas largas, sin espacios, sensibles a mayúsculas"
+  avoidWhen:
+    - "el valor no está visible: el botón copia lo que el lector tiene delante, no un dato oculto"
+    - "la acción cambia algo; esto no muta nada, sólo duplica"
+  alternatives: []

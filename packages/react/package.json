@@ -303,6 +303,10 @@
     "./render-tree": {
       "types": "./src/render-tree.tsx",
       "default": "./src/render-tree.tsx"
+    },
+    "./copy-button": {
+      "types": "./src/components/copy-button.tsx",
+      "default": "./src/components/copy-button.tsx"
     }
   },
   "scripts": {

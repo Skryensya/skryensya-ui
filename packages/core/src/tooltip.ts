@@ -142,8 +142,21 @@ export const tooltipContract = {
     placement: {
       type: "enum",
       values: ["block-start", "block-end", "inline-start", "inline-end"],
-      default: "block-end",
+      /*
+       * `block-start`, matching `tooltipDefaultPlacement` above — the constant this file exports so
+       * that the box, the arrow and the machine name one side. It read `block-end` here, which is
+       * the PATTERN's default and the one thing a tooltip deliberately does not share: below is what
+       * the pointer just touched. So a tree that left placement alone emitted `block-end` into the
+       * markup while the React binding resolved `block-start`, and the same tooltip came out on
+       * opposite sides of its trigger in the two bindings.
+       */
+      default: "block-start",
       attr: "data-sk-placement",
+      /*
+       * Machine configuration: the enhancer reads it off the root because authored markup has no
+       * other channel, React passes it as a prop, and Zag never writes it back.
+       */
+      machineInput: true,
     },
   },
 
@@ -151,6 +164,7 @@ export const tooltipContract = {
     Tooltip: {
       intent: ["hint", "expand-a-control-name", "explain-an-icon-button"],
       host: { element: "span" },
+      mount: "data-sk-anchor",
       options: ["placement"],
       portals: true,
       slots: {
@@ -159,20 +173,45 @@ export const tooltipContract = {
         /** The hint. Short — it is a description, not documentation. */
         content: { accepts: "text", required: true },
       },
+      /*
+       * THE TRIGGER IS A WRAPPER, and it was the missing half of this template.
+       *
+       * The enhancer scans for `[data-sk-anchor-trigger]`, `[data-sk-anchor-positioner]` and
+       * `[data-sk-anchor-content]` and patches Zag's props onto whatever it finds. Only the
+       * positioner was ever written, so an emitted tooltip had no trigger to bind and could never
+       * open in Vanilla — the component was published and unusable from a tree at the same time.
+       *
+       * It has to be an element of our own rather than the consumer's control, because
+       * `getTriggerProps` returns BUTTON props: putting them on their control would work only if
+       * their control were a button, and wrapping it in one of ours would put two controls in the
+       * tab order for one action. A span carries the props and the anchor name and stays out of the
+       * way, which is exactly what the React binding already did and the template did not say.
+       */
       template: {
         element: "span",
         part: "root",
         host: true,
-        attrs: { "data-sk-anchor": "" },
         children: [
-          { slot: "children" },
           {
             element: "span",
+            part: "trigger",
+            also: ["sk-anchor"],
+            mount: "data-sk-anchor-trigger",
+            slot: "children",
+          },
+          {
+            element: "div",
             part: "positioner",
             also: ["sk-anchored"],
-            attrs: { "data-sk-anchor-positioner": "" },
+            mount: "data-sk-anchor-positioner",
             children: [
-              { element: "span", part: "content", attrs: { role: "tooltip" }, slot: "content" },
+              {
+                element: "div",
+                part: "content",
+                mount: "data-sk-anchor-content",
+                attrs: { role: "tooltip" },
+                slot: "content",
+              },
             ],
           },
         ],

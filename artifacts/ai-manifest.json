@@ -9581,7 +9581,8 @@
       "options": {
         "placement": {
           "attr": "data-sk-placement",
-          "default": "block-end",
+          "default": "block-start",
+          "machineInput": true,
           "type": "enum",
           "values": [
             "block-start",
@@ -9622,6 +9623,7 @@
             "expand-a-control-name",
             "explain-an-icon-button"
           ],
+          "mount": "data-sk-anchor",
           "options": [
             "placement"
           ],
@@ -9641,31 +9643,33 @@
             }
           },
           "template": {
-            "attrs": {
-              "data-sk-anchor": ""
-            },
             "children": [
               {
+                "also": [
+                  "sk-anchor"
+                ],
+                "element": "span",
+                "mount": "data-sk-anchor-trigger",
+                "part": "trigger",
                 "slot": "children"
               },
               {
                 "also": [
                   "sk-anchored"
                 ],
-                "attrs": {
-                  "data-sk-anchor-positioner": ""
-                },
                 "children": [
                   {
                     "attrs": {
                       "role": "tooltip"
                     },
-                    "element": "span",
+                    "element": "div",
+                    "mount": "data-sk-anchor-content",
                     "part": "content",
                     "slot": "content"
                   }
                 ],
-                "element": "span",
+                "element": "div",
+                "mount": "data-sk-anchor-positioner",
                 "part": "positioner"
               }
             ],
@@ -10270,5 +10274,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "659802d2cc7f24ad"
+  "sourceHash": "9a0d5012468547ba"
 }

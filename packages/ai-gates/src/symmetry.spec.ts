@@ -1,7 +1,8 @@
-import { expect, test, type Locator } from "@playwright/test";
+import type { Locator } from "@playwright/test";
 import type { ContractSlot, ContractTemplate } from "@skryensya/core/contract";
 import { contracts } from "@skryensya/ai-compiler/registry";
 import { canonicalTrees } from "./trees.js";
+import { expect, test } from "./fixtures.js";
 
 /*
  * G2 — the gate that makes "two bindings" mean something.
@@ -23,21 +24,6 @@ import { canonicalTrees } from "./trees.js";
  *
  * Anything else that differs is a real divergence and fails here.
  */
-
-test.beforeEach(async ({ page }) => {
-  const failures: string[] = [];
-  page.on("pageerror", (error) => failures.push(error.message));
-
-  await page.goto("/");
-  await page.waitForSelector("body[data-ready]");
-
-  const state = await page.getAttribute("body", "data-ready");
-  if (state !== "true") {
-    const reason = await page.evaluate(() => window.gateError);
-    throw new Error(`The stage never became ready: ${reason ?? "unknown"}`);
-  }
-  expect(failures, "the page must render both bindings without throwing").toEqual([]);
-});
 
 /*
  * Exactly what the enhancer adds, taken from the contracts themselves plus the runtime's two
@@ -95,7 +81,7 @@ const idReferences = [
 ];
 
 for (const { name } of canonicalTrees) {
-  test(`${name} — both bindings land on the same DOM`, async ({ page }) => {
+  test(`${name} — both bindings land on the same DOM`, async ({ stagePage: page }) => {
     const block = page.locator(`[data-case="${name}"]`);
 
     const [vanilla, react] = await Promise.all([
@@ -106,7 +92,7 @@ for (const { name } of canonicalTrees) {
     expect(vanilla).toEqual(react);
   });
 
-  test(`${name} — both bindings expose the same accessibility tree`, async ({ page }) => {
+  test(`${name} — both bindings expose the same accessibility tree`, async ({ stagePage: page }) => {
     const block = page.locator(`[data-case="${name}"]`);
 
     const [vanilla, react] = await Promise.all([
@@ -123,7 +109,15 @@ async function shapeOf(
   block: Locator,
   binding: "vanilla" | "react",
 ): Promise<unknown> {
-  return block.locator(`[data-binding="${binding}"]`).evaluate((host: HTMLElement, [skip, idRefs]: [string[], string[]]) => {
+  return block.locator(`[data-binding="${binding}"]`).evaluate((live: HTMLElement, [skip, idRefs]: [string[], string[]]) => {
+    /*
+     * On a COPY, because hoisting below detaches nodes and the stage is shared by every other gate in
+     * this worker (fixtures.ts). Reading the live tree would leave each portalling case stripped of
+     * its floating regions for whatever test ran next — the accessibility snapshot and axe would then
+     * scan a subtree this gate had quietly mutilated, in an order nothing controls. Only attributes,
+     * tag names and text are read here, so a detached clone says exactly the same thing.
+     */
+    const host = live.cloneNode(true) as HTMLElement;
     const ids = new Map<string, number>();
     const anchorNames = new Map<string, number>();
 

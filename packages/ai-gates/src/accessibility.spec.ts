@@ -1,7 +1,5 @@
-import { createRequire } from "node:module";
-import { readFileSync } from "node:fs";
-import { expect, test } from "@playwright/test";
 import { canonicalTrees } from "./trees.js";
+import { expect, test } from "./fixtures.js";
 
 /*
  * G4 — accessibility, on both bindings.
@@ -15,20 +13,11 @@ import { canonicalTrees } from "./trees.js";
  * where that kind of rule is actually settled — in a rendered page, by a tool that can see it.
  */
 
-const require = createRequire(import.meta.url);
-const axeSource = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
-
 type AxeViolation = { id: string; impact?: string; nodes: { html: string }[] };
-
-test.beforeEach(async ({ page }) => {
-  await page.goto("/");
-  await page.waitForSelector('body[data-ready="true"]');
-  await page.addScriptTag({ content: axeSource });
-});
 
 for (const { name } of canonicalTrees) {
   for (const binding of ["vanilla", "react"] as const) {
-    test(`${name} — the ${binding} binding has no accessibility violations`, async ({ page }) => {
+    test(`${name} — the ${binding} binding has no accessibility violations`, async ({ axePage: page }) => {
       const violations = await page.evaluate(
         async ([caseName, bindingName]) => {
           const target = document.querySelector(

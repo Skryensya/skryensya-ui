@@ -733,6 +733,17 @@ const signatureTrees: readonly Canonical[] = [
       ],
     },
   },
+  /** The first component whose React half had to be WRITTEN before it could be published. */
+  {
+    name: "copy-button/copies-a-command",
+    enhanced: true,
+    tree: {
+      contract: "copy-button",
+      signature: "CopyButton",
+      options: { target: "install-command" },
+      children: "Copiar",
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

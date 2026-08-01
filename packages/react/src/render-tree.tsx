@@ -34,6 +34,7 @@ import * as menuModule from "./components/menu.js";
 import * as comboboxModule from "./components/combobox.js";
 import * as calendarModule from "./components/calendar.js";
 import * as datePickerModule from "./components/date-picker.js";
+import * as copyButtonModule from "./components/copy-button.js";
 import * as selectNativeModule from "./components/select-native.js";
 import * as badgeModule from "./components/badge.js";
 import * as kbdModule from "./components/kbd.js";
@@ -77,6 +78,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/combobox": comboboxModule,
   "@skryensya/react/calendar": calendarModule,
   "@skryensya/react/date-picker": datePickerModule,
+  "@skryensya/react/copy-button": copyButtonModule,
   "@skryensya/react/select-native": selectNativeModule,
   "@skryensya/react/tag": tagModule,
   "@skryensya/react/progress": progressModule,

@@ -1,0 +1,11 @@
+# La estructura vive en packages/core/src/date-picker.ts. Acá sólo por qué se elige.
+
+DatePicker:
+  useWhen:
+    - "la fecha es un campo de un formulario, junto a otros campos"
+    - "conviene poder escribirla y también buscarla en el calendario"
+  avoidWhen:
+    - "elegir la fecha ES la pantalla: ahí la grilla va siempre visible"
+    - "sólo importa el mes o el año, no el día"
+  alternatives:
+    - Calendar

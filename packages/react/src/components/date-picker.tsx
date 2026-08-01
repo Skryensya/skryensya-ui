@@ -1,23 +1,31 @@
-import { datePickerParts } from "@skryensya/core/date-picker";
+import { datePickerContract, datePickerParts } from "@skryensya/core/date-picker";
+import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import { calendarParts } from "@skryensya/core/calendar";
 import type { DateValue } from "@skryensya/core/calendar";
 import { datePicker } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
-import { useId, type ReactNode } from "react";
+import { useId, type ReactNode, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
-import { CalendarBody } from "./calendar.js";
+import { asDate, asDates, CalendarBody } from "./calendar.js";
+import { Icon } from "./icon.js";
 
-export type DatePickerProps = {
+// `selectionMode` comes from the contract, so Core stays the only place its values are defined.
+export type DatePickerProps = Pick<
+  SignatureOptionsOf<typeof datePickerContract, "DatePicker">,
+  "selectionMode"
+> & {
+  /** Where the popover is portalled. Absent it goes to the body — see `ComboboxProps.container`. */
+  container?: RefObject<HTMLElement>;
   id?: string;
   name?: string;
   label?: ReactNode;
   locale?: string;
   timeZone?: string;
-  selectionMode?: "single" | "range";
-  value?: DateValue[];
-  defaultValue?: DateValue[];
-  min?: DateValue;
-  max?: DateValue;
+  /* Dates as `DateValue` OR as the ISO strings authored markup carries — see `CalendarProps`. */
+  value?: readonly (DateValue | string)[] | string;
+  defaultValue?: readonly (DateValue | string)[] | string;
+  min?: DateValue | string;
+  max?: DateValue | string;
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
@@ -38,6 +46,7 @@ export type DatePickerProps = {
  */
 export function DatePicker({
   clearLabel = "Limpiar",
+  container,
   defaultValue,
   disabled,
   id,
@@ -65,10 +74,10 @@ export function DatePicker({
     locale,
     timeZone,
     selectionMode,
-    value,
-    defaultValue,
-    min,
-    max,
+    value: asDates(value),
+    defaultValue: asDates(defaultValue),
+    min: asDate(min),
+    max: asDate(max),
     disabled,
     readOnly,
     required,
@@ -105,19 +114,20 @@ export function DatePicker({
             placeholder={placeholder}
           />
         ))}
-        {api.value.length ? (
-          <button
-            {...api.getClearTriggerProps()}
-            aria-label={clearLabel}
-            className={`${datePickerParts.clear} sk-button sk-interactive`}
-            data-icon-only=""
-            data-size="sm"
-            data-variant="ghost"
-            type="button"
-          >
-            <span aria-hidden="true">×</span>
-          </button>
-        ) : null}
+        {/* Rendered-and-hidden, not conditional: the enhancer patches authored markup and can only
+            toggle `hidden`, so that is what the contract's template can say. */}
+        <button
+          {...api.getClearTriggerProps()}
+          aria-label={clearLabel}
+          className={`${datePickerParts.clear} sk-button sk-interactive`}
+          data-icon-only=""
+          data-size="sm"
+          data-variant="ghost"
+          hidden={api.value.length === 0}
+          type="button"
+        >
+          <Icon name="close" size="sm" />
+        </button>
         <button
           {...api.getTriggerProps()}
           className={`${datePickerParts.trigger} sk-button sk-interactive`}
@@ -126,10 +136,10 @@ export function DatePicker({
           data-variant="ghost"
           type="button"
         >
-          <span aria-hidden="true">{triggerIcon ?? "▦"}</span>
+          {triggerIcon ?? <Icon name="calendar" size="sm" />}
         </button>
       </div>
-      <Portal>
+      <Portal container={container}>
         <div {...anchor.positioner(api.getPositionerProps(), datePickerParts.positioner)}>
           <div
             {...api.getContentProps()}

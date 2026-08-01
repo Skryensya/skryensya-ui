@@ -1,0 +1,12 @@
+# La estructura vive en packages/core/src/calendar.ts. Acá sólo por qué se elige.
+
+Calendar:
+  useWhen:
+    - "elegir la fecha es la tarea de la pantalla, no un campo más de un formulario"
+    - "ver el mes ayuda a decidir: fines de semana, feriados, cuántos días faltan"
+    - "hay lugar para una grilla siempre visible"
+  avoidWhen:
+    - "es un campo dentro de un formulario: ahí el calendario va detrás de un input"
+    - "la fecha se escribe más rápido de lo que se busca en una grilla"
+  alternatives:
+    - DatePicker

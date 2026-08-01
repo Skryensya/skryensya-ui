@@ -66,7 +66,7 @@
   <button
     {...api.getPrevTriggerProps({ view: api.view })}
     class="{calendarParts.previous} sk-button sk-interactive"
-    data-icon-only
+    data-icon-only=""
     data-size="sm"
     data-variant="ghost"
     type="button"
@@ -88,7 +88,7 @@
   <button
     {...api.getNextTriggerProps({ view: api.view })}
     class="{calendarParts.next} sk-button sk-interactive"
-    data-icon-only
+    data-icon-only=""
     data-size="sm"
     data-variant="ghost"
     type="button"

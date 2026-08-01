@@ -22,6 +22,16 @@
     locale,
     timeZone: root.dataset.timeZone || "UTC",
     selectionMode: (root.dataset.selectionMode === "range" ? "range" : "single") as "single" | "range",
+    /*
+     * The preselected date. Absent until now, which meant authored markup had no way to say one at
+     * all — a calendar could only ever open on today, and the React binding accepted a value the
+     * enhancer silently dropped. Space-separated so a range can name both ends the way it reads.
+     */
+    defaultValue: root.dataset.value
+      ?.split(" ")
+      .filter(Boolean)
+      .map((date) => parseCalendarDate(date)!)
+      .filter(Boolean),
     min: parseCalendarDate(root.dataset.min),
     max: parseCalendarDate(root.dataset.max),
     disabled: root.hasAttribute("data-disabled"),

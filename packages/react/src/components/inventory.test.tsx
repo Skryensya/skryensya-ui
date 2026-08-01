@@ -8,9 +8,9 @@ import { EmptyState } from "./empty-state.js";
 import { FileUpload } from "./file-upload.js";
 import { Menu } from "./menu.js";
 import { NumberField } from "./number-field.js";
-import { Popup } from "./popup.js";
 import { SplitButton } from "./split-button.js";
 import { TimeField } from "./time-field.js";
+import { Popover } from "./popover.js";
 import { Toolbar } from "./toolbar.js";
 import { TreeView } from "./tree-view.js";
 
@@ -356,15 +356,17 @@ describe("expanded component inventory", () => {
     );
   });
 
-  it("keeps TimeField's segmented contract and Popup's native contract", () => {
+  it("keeps TimeField's segmented contract and the bare popover's native one", () => {
     const ui = render(
       <>
         <TimeField label="Hora de reunión" locale="en-US" name="meeting" />
-        <Popup trigger="Filtros">
+        {/* The bare surface — `Popover.bare` in the contract. It replaced a separate `Popup`
+            component that aliased popover's own parts under a second name. */}
+        <Popover bare trigger="Filtros">
           <label>
             <input type="checkbox" /> Activos
           </label>
-        </Popup>
+        </Popover>
       </>,
     );
     // No `@zag-js/time-picker` machine exists, so TimeField is its own segmented

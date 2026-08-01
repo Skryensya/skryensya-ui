@@ -196,8 +196,6 @@ export { Menu } from "./components/menu.js";
 export type { MenuProps } from "./components/menu.js";
 export { NumberField } from "./components/number-field.js";
 export type { NumberFieldProps } from "./components/number-field.js";
-export { Popup } from "./components/popup.js";
-export type { PopupProps } from "./components/popup.js";
 export { SplitButton } from "./components/split-button.js";
 export type { SplitButtonProps } from "./components/split-button.js";
 export { TimeField } from "./components/time-field.js";

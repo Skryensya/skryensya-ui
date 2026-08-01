@@ -1,7 +1,7 @@
 import { popoverParts, type PopoverPlacement } from "@skryensya/core/popover";
 import { useId, type HTMLAttributes, type ReactNode, type RefObject } from "react";
 import { anchoredParts } from "@skryensya/core/anchored";
-import { useAnchored } from "./anchored.js";
+
 
 const cx = (...classes: Array<string | undefined>) => classes.filter(Boolean).join(" ");
 
@@ -42,20 +42,19 @@ export function Popover({
 }: PopoverProps) {
   const generatedId = useId();
   const contentId = id ?? `${generatedId}-popover`;
-  const anchor = useAnchored(contentId);
 
   return (
     <div {...props} className={cx(popoverParts.root, className)}>
       <button
         aria-label={triggerLabel}
-        {...anchor.anchor(cx("sk-button", "sk-interactive", popoverParts.trigger))}
+        className={cx("sk-button", "sk-interactive", popoverParts.trigger, anchoredParts.anchor)}
         popoverTarget={contentId}
         type="button"
       >
         {trigger}
       </button>
       <div
-        {...anchor.positioner({}, cx(popoverParts.positioner, popoverParts.content, contentClassName))}
+        className={cx(popoverParts.positioner, popoverParts.content, anchoredParts.positioner, contentClassName)}
         data-sk-placement={placement}
         id={contentId}
         popover="auto"

@@ -796,6 +796,22 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
+  /* No enhancer at all: the browser owns light-dismiss, Escape and the top layer. */
+  {
+    name: "popover/on-a-trigger",
+    enhanced: false,
+    tree: {
+      contract: "popover",
+      signature: "Popover",
+      options: { panelId: "demo-popover", arrow: true },
+      slots: {
+        trigger: "Detalles del plan",
+        title: "Plan Pro",
+        description: "Facturación mensual",
+        children: "Incluye seis réplicas y soporte en horario hábil.",
+      },
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

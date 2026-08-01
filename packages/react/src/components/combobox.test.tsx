@@ -62,7 +62,10 @@ describe("Combobox", () => {
 
     fireEvent.click(input);
     const listbox = await ui.findByRole("listbox");
-    expect(listbox.dataset.highlightSource).toBeUndefined();
+    // `pointer` at rest, matching the enhancer: no key has moved the highlight yet, and only
+    // `keyboard` changes what is drawn. This read `toBeUndefined()` while the two bindings
+    // disagreed about the attribute before anyone had touched the control.
+    expect(listbox.dataset.highlightSource).toBe("pointer");
 
     fireEvent.keyDown(input, { key: "ArrowDown" });
 

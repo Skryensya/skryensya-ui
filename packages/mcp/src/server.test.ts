@@ -110,7 +110,9 @@ describe("get_contract", () => {
   });
 
   it("names what IS published when asked for something that is not", async () => {
-    const { isError, payload } = await call("get_contract", { id: "combobox" });
+    // Deliberately a name nothing will ever publish. This asked for `combobox` until combobox was
+    // published, at which point the test was proving the opposite of what it claims.
+    const { isError, payload } = await call("get_contract", { id: "nonesuch" });
 
     expect(isError).toBe(true);
     expect(payload.detail).toContain("button");

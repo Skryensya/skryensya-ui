@@ -10,3 +10,13 @@ CodePreview:
   alternatives:
     - Code
     - CopyButton
+
+CodePreview.density:
+  useWhen:
+    - "el mismo código tiene una versión corta para entenderlo y una completa para copiarlo"
+    - "mostrar sólo la completa hace que nadie la lea, y sólo la corta deja afuera lo que hace falta"
+  avoidWhen:
+    - "hay una sola versión del código: eso es CodePreview y no necesita el switch"
+    - "las dos versiones son código distinto, no dos niveles de detalle del mismo"
+  alternatives:
+    - CodePreview

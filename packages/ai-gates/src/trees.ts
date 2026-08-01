@@ -844,6 +844,23 @@ const signatureTrees: readonly Canonical[] = [
       slots: { trigger: "Filtros", children: "Cualquier cosa cabe acá." },
     },
   },
+  /* Two panels and a switch — a second anatomy, not a flag on the first. */
+  {
+    name: "code-preview/density",
+    enhanced: true,
+    tree: {
+      contract: "code-preview",
+      signature: "CodePreview.density",
+      options: { switchLabel: "Mostrar la versión completa" },
+      slots: {
+        label: "vite.config.ts",
+        condensedLabel: "Condensado",
+        fullLabel: "Completo",
+        condensed: "export default defineConfig({})",
+        full: "import { defineConfig } from 'vite';",
+      },
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

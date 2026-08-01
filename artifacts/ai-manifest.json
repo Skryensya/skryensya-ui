@@ -1775,6 +1775,11 @@
           "attr": "data-sk-code-preview-preview-lines",
           "machineInput": true,
           "type": "string"
+        },
+        "switchLabel": {
+          "attr": "aria-label",
+          "default": "Mostrar la versión completa",
+          "type": "string"
         }
       },
       "parts": {
@@ -1803,6 +1808,19 @@
           "useWhen": [
             "hay que mostrar código y conviene que se lea como código: resaltado, con su etiqueta",
             "el bloque es largo y mostrarlo entero empuja el resto de la página fuera de la vista"
+          ]
+        },
+        "CodePreview.density": {
+          "alternatives": [
+            "CodePreview"
+          ],
+          "avoidWhen": [
+            "hay una sola versión del código: eso es CodePreview y no necesita el switch",
+            "las dos versiones son código distinto, no dos niveles de detalle del mismo"
+          ],
+          "useWhen": [
+            "el mismo código tiene una versión corta para entenderlo y una completa para copiarlo",
+            "mostrar sólo la completa hace que nadie la lea, y sólo la corta deja afuera lo que hace falta"
           ]
         }
       },
@@ -1925,6 +1943,160 @@
                 "mount": "data-sk-code-preview-more",
                 "part": "more",
                 "whenGiven": "collapsible"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "CodePreview.density": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "condensed-and-full-code",
+            "two-levels-of-detail",
+            "code-with-a-density-switch"
+          ],
+          "mount": "data-sk-code-preview",
+          "options": [
+            "collapsible",
+            "lines",
+            "previewLines",
+            "moreLabel",
+            "lessLabel",
+            "switchLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/code-preview",
+            "name": "CodePreviewDensity"
+          },
+          "slots": {
+            "condensed": {
+              "accepts": "node",
+              "required": true
+            },
+            "condensedLabel": {
+              "accepts": "text",
+              "required": true
+            },
+            "full": {
+              "accepts": "node",
+              "required": true
+            },
+            "fullLabel": {
+              "accepts": "text",
+              "required": true
+            },
+            "label": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-sk-code-preview-density": "condensed"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "element": "span",
+                        "slot": "label",
+                        "whenGiven": "label"
+                      }
+                    ],
+                    "element": "span",
+                    "part": "meta"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-density": "condensed"
+                        },
+                        "element": "span",
+                        "part": "densityEdge",
+                        "slot": "condensedLabel"
+                      },
+                      {
+                        "also": [
+                          "sk-switch"
+                        ],
+                        "children": [
+                          {
+                            "also": [
+                              "sk-switch__input"
+                            ],
+                            "attrs": {
+                              "role": "switch",
+                              "type": "checkbox"
+                            },
+                            "element": "input",
+                            "mount": "data-sk-code-preview-density-input",
+                            "options": [
+                              "switchLabel"
+                            ]
+                          },
+                          {
+                            "also": [
+                              "sk-switch__control"
+                            ],
+                            "attrs": {
+                              "aria-hidden": "true"
+                            },
+                            "children": [
+                              {
+                                "also": [
+                                  "sk-switch__thumb"
+                                ],
+                                "element": "span"
+                              }
+                            ],
+                            "element": "span"
+                          }
+                        ],
+                        "element": "label"
+                      },
+                      {
+                        "attrs": {
+                          "data-density": "full"
+                        },
+                        "element": "span",
+                        "part": "densityEdge",
+                        "slot": "fullLabel"
+                      }
+                    ],
+                    "element": "div",
+                    "part": "density"
+                  }
+                ],
+                "element": "div",
+                "part": "label"
+              },
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-code-preview-density-panel": "condensed"
+                    },
+                    "element": "div",
+                    "part": "viewport",
+                    "slot": "condensed"
+                  },
+                  {
+                    "attrs": {
+                      "data-sk-code-preview-density-panel": "full"
+                    },
+                    "element": "div",
+                    "part": "viewport",
+                    "slot": "full"
+                  }
+                ],
+                "element": "div",
+                "part": "preview"
               }
             ],
             "element": "div",
@@ -11457,5 +11629,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "48d7982ea7e9f2b1"
+  "sourceHash": "6ca8452ae13e4f38"
 }

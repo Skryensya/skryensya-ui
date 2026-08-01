@@ -78,6 +78,12 @@ export const codePreviewContract = {
     /** What the disclosure says while collapsed, and once open. */
     moreLabel: { type: "string", default: "Ver todo", attr: "data-more-label", machineInput: true },
     lessLabel: { type: "string", default: "Ver menos", attr: codePreviewAttrs.expandedLabel, machineInput: true },
+    /**
+     * What the density switch announces. An option, not a slot: it lands on `aria-label`, and a
+     * slot would need a way to copy its text onto an attribute of a node it does not render.
+     * It says what the switch DOES, because the words at each end are out of a screen reader's reach.
+     */
+    switchLabel: { type: "string", default: "Mostrar la versión completa", attr: "aria-label" },
   },
 
   signatures: {
@@ -155,5 +161,110 @@ export const codePreviewContract = {
       },
       react: { from: "@skryensya/react/code-preview", name: "CodePreview" },
     },
+
+    /*
+     * THE DENSITY VARIANT — two panels and a switch between them.
+     *
+     * A second signature rather than an option on the first, because the anatomy genuinely differs:
+     * one panel becomes two, each addressable, and a control appears that has no meaning without
+     * them. `CodePreview` with a `density` flag would have carried two slots that are required when
+     * the flag is set and forbidden when it is not, which is a signature wearing a disguise.
+     *
+     * The switch is a real `sk-switch`, not a pair of buttons: one binary choice with two named
+     * ends. The ends are labels BESIDE it, not its accessible name — the name says what the switch
+     * does, which is what a screen reader needs when the words beside it are out of reach.
+     */
+    "CodePreview.density": {
+      intent: ["condensed-and-full-code", "two-levels-of-detail", "code-with-a-density-switch"],
+      host: { element: "div" },
+      mount: codePreviewAttrs.root,
+      options: ["collapsible", "lines", "previewLines", "moreLabel", "lessLabel", "switchLabel"],
+      slots: {
+        /** The short version, shown first. */
+        condensed: { accepts: "node", required: true },
+        /** Everything, behind the switch. */
+        full: { accepts: "node", required: true },
+        label: { accepts: "text" },
+        /** What each end of the switch is called, and what the switch itself announces. */
+        condensedLabel: { accepts: "text", required: true },
+        fullLabel: { accepts: "text", required: true },
+      },
+      template: {
+        element: "div",
+        part: "root",
+        host: true,
+        attrs: { "data-sk-code-preview-density": "condensed" },
+        children: [
+          {
+            element: "div",
+            part: "label",
+            children: [
+              {
+                element: "span",
+                part: "meta",
+                children: [{ element: "span", slot: "label", whenGiven: "label" }],
+              },
+              {
+                element: "div",
+                part: "density",
+                children: [
+                  {
+                    element: "span",
+                    part: "densityEdge",
+                    attrs: { "data-density": "condensed" },
+                    slot: "condensedLabel",
+                  },
+                  {
+                    element: "label",
+                    also: ["sk-switch"],
+                    children: [
+                      {
+                        element: "input",
+                        also: ["sk-switch__input"],
+                        mount: codePreviewAttrs.densityInput,
+                        attrs: { type: "checkbox", role: "switch" },
+                        options: ["switchLabel"],
+                      },
+                      {
+                        element: "span",
+                        also: ["sk-switch__control"],
+                        attrs: { "aria-hidden": "true" },
+                        children: [{ element: "span", also: ["sk-switch__thumb"] }],
+                      },
+                    ],
+                  },
+                  {
+                    element: "span",
+                    part: "densityEdge",
+                    attrs: { "data-density": "full" },
+                    slot: "fullLabel",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            element: "div",
+            part: "preview",
+            children: [
+              {
+                element: "div",
+                part: "viewport",
+                attrs: { "data-sk-code-preview-density-panel": "condensed" },
+                slot: "condensed",
+              },
+              {
+                element: "div",
+                part: "viewport",
+                attrs: { "data-sk-code-preview-density-panel": "full" },
+                slot: "full",
+              },
+            ],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/code-preview", name: "CodePreviewDensity" },
+    },
+
   },
 } as const satisfies ComponentContract;

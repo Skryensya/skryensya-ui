@@ -1,4 +1,5 @@
 import { codePreviewAttrs, codePreviewParts } from "@skryensya/core/code-preview";
+import { selectionParts } from "@skryensya/core/selection";
 import { useState, type ReactNode } from "react";
 import { Icon } from "./icon.js";
 
@@ -24,9 +25,21 @@ export type CodePreviewProps = {
   previewLines?: number;
   moreLabel?: string;
   lessLabel?: string;
+  /** Rendered in the label row BESIDE the meta block, not inside it. The density switch lives here. */
+  aside?: ReactNode;
+  /** Extra attributes for the root, so the density variant can mark which panel is showing. */
+  rootAttrs?: Record<string, string>;
+  /**
+   * The children already ARE the viewports, so no wrapper is added. The density variant renders one
+   * per panel: each has to be addressable on its own for the enhancer to show and hide them.
+   */
+  ownViewports?: boolean;
 };
 
 export function CodePreview({
+  aside,
+  ownViewports = false,
+  rootAttrs,
   children,
   collapsible = false,
   lessLabel = "Ver menos",
@@ -48,18 +61,20 @@ export function CodePreview({
         ...(collapsible ? { [codePreviewAttrs.collapsible]: "" } : {}),
         ...(lines !== undefined ? { [codePreviewAttrs.lines]: String(lines) } : {}),
         ...(previewLines !== undefined ? { [codePreviewAttrs.previewLines]: String(previewLines) } : {}),
+        ...rootAttrs,
       }}
     >
-      {label || note ? (
+      {label || note || aside ? (
         <div className={codePreviewParts.label}>
           <span className={codePreviewParts.meta}>
             {label ? <span>{label}</span> : null}
             {note ? <span>{note}</span> : null}
           </span>
+          {aside}
         </div>
       ) : null}
       <div className={codePreviewParts.preview}>
-        <div className={codePreviewParts.viewport}>{children}</div>
+        {ownViewports ? children : <div className={codePreviewParts.viewport}>{children}</div>}
       </div>
       {collapsible ? (
         <div className={codePreviewParts.more} {...{ [codePreviewAttrs.more]: "" }}>
@@ -83,5 +98,74 @@ export function CodePreview({
         </div>
       ) : null}
     </div>
+  );
+}
+
+export type CodePreviewDensityProps = Omit<CodePreviewProps, "children"> & {
+  /** The short version, shown first. */
+  condensed: ReactNode;
+  /** Everything, behind the switch. */
+  full: ReactNode;
+  condensedLabel?: string;
+  fullLabel?: string;
+  switchLabel?: string;
+};
+
+/*
+ * THE DENSITY VARIANT — two panels and a switch between them.
+ *
+ * A second signature rather than an option on the first, because the anatomy is genuinely different:
+ * one panel becomes two, each addressable, and a control appears that has no meaning without them.
+ * `CodePreview` with a `density` flag would have carried two slots that are required when the flag
+ * is set and forbidden when it is not, which is a signature wearing a disguise.
+ *
+ * The switch is a real `sk-switch`, not a pair of buttons: it is one binary choice with two named
+ * ends. Those ends are labels BESIDE it rather than its accessible name, because the name has to say
+ * what the switch does — show the full version — which is what a screen reader needs when the words
+ * beside it are out of reach.
+ */
+export function CodePreviewDensity({
+  condensed,
+  condensedLabel = "Condensado",
+  full,
+  fullLabel = "Completo",
+  switchLabel = "Mostrar la versión completa",
+  ...rest
+}: CodePreviewDensityProps) {
+  return (
+    <CodePreview
+      {...rest}
+      ownViewports
+      rootAttrs={{ "data-sk-code-preview-density": "condensed" }}
+      aside={
+        <div className={codePreviewParts.density}>
+            <span className={codePreviewParts.densityEdge} data-density="condensed">
+              {condensedLabel}
+            </span>
+            <label className={selectionParts.switch}>
+              <input
+                aria-label={switchLabel}
+                className={selectionParts.switchInput}
+                role="switch"
+                type="checkbox"
+                {...{ [codePreviewAttrs.densityInput]: "" }}
+              />
+              <span aria-hidden="true" className={selectionParts.switchControl}>
+                <span className={selectionParts.switchThumb} />
+              </span>
+            </label>
+          <span className={codePreviewParts.densityEdge} data-density="full">
+            {fullLabel}
+          </span>
+        </div>
+      }
+    >
+      <div className={codePreviewParts.viewport} {...{ [codePreviewAttrs.densityPanel]: "condensed" }}>
+        {condensed}
+      </div>
+      <div className={codePreviewParts.viewport} {...{ [codePreviewAttrs.densityPanel]: "full" }}>
+        {full}
+      </div>
+    </CodePreview>
   );
 }

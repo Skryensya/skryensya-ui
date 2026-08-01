@@ -1743,6 +1743,197 @@
         }
       }
     },
+    "code-preview": {
+      "css": "@skryensya/core/components/code-preview.css",
+      "id": "code-preview",
+      "options": {
+        "collapsible": {
+          "attr": "data-sk-code-preview-collapsible",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "lessLabel": {
+          "attr": "data-sk-code-preview-expanded-label",
+          "default": "Ver menos",
+          "machineInput": true,
+          "type": "string"
+        },
+        "lines": {
+          "attr": "data-sk-code-preview-lines",
+          "machineInput": true,
+          "type": "string"
+        },
+        "moreLabel": {
+          "attr": "data-more-label",
+          "default": "Ver todo",
+          "machineInput": true,
+          "type": "string"
+        },
+        "previewLines": {
+          "attr": "data-sk-code-preview-preview-lines",
+          "machineInput": true,
+          "type": "string"
+        }
+      },
+      "parts": {
+        "density": "sk-code-preview__density",
+        "densityEdge": "sk-code-preview__density-edge",
+        "label": "sk-code-preview__label",
+        "meta": "sk-code-preview__meta",
+        "more": "sk-code-preview__more",
+        "preview": "sk-code-preview__preview",
+        "root": "sk-code-preview",
+        "toggle": "sk-code-preview__toggle",
+        "toggleCount": "sk-code-preview__toggle-count",
+        "toggleIcon": "sk-code-preview__toggle-icon",
+        "viewport": "sk-code-preview__viewport"
+      },
+      "semantics": {
+        "CodePreview": {
+          "alternatives": [
+            "Code",
+            "CopyButton"
+          ],
+          "avoidWhen": [
+            "es un literal dentro de una frase: eso es Code",
+            "lo que importa es copiarlo, no leerlo: eso es un CopyButton sobre el valor"
+          ],
+          "useWhen": [
+            "hay que mostrar código y conviene que se lea como código: resaltado, con su etiqueta",
+            "el bloque es largo y mostrarlo entero empuja el resto de la página fuera de la vista"
+          ]
+        }
+      },
+      "signatures": {
+        "CodePreview": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "code-block",
+            "show-a-snippet",
+            "long-code-with-a-window"
+          ],
+          "mount": "data-sk-code-preview",
+          "options": [
+            "collapsible",
+            "lines",
+            "previewLines",
+            "moreLabel",
+            "lessLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/code-preview",
+            "name": "CodePreview"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "label": {
+              "accepts": "text"
+            },
+            "note": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "element": "span",
+                        "slot": "label",
+                        "whenGiven": "label"
+                      },
+                      {
+                        "element": "span",
+                        "slot": "note",
+                        "whenGiven": "note"
+                      }
+                    ],
+                    "element": "span",
+                    "part": "meta"
+                  }
+                ],
+                "element": "div",
+                "part": "label",
+                "whenGiven": [
+                  "label",
+                  "note"
+                ]
+              },
+              {
+                "children": [
+                  {
+                    "element": "div",
+                    "part": "viewport",
+                    "slot": "children"
+                  }
+                ],
+                "element": "div",
+                "part": "preview"
+              },
+              {
+                "children": [
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "aria-expanded": "false",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "element": "span",
+                        "mount": "data-sk-code-preview-toggle-label",
+                        "textFromOption": "moreLabel"
+                      },
+                      {
+                        "element": "span",
+                        "part": "toggleCount"
+                      },
+                      {
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "chevron-down",
+                              "data-sk-icon-size": "sm"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "span",
+                        "part": "toggleIcon"
+                      }
+                    ],
+                    "element": "button",
+                    "mount": "data-sk-code-preview-toggle",
+                    "part": "toggle"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-code-preview-more",
+                "part": "more",
+                "whenGiven": "collapsible"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "combobox": {
       "css": "@skryensya/core/components/combobox.css",
       "id": "combobox",
@@ -11159,5 +11350,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "7891c55faf35ec1f"
+  "sourceHash": "3a5a88e30170a223"
 }

@@ -104,7 +104,21 @@ async function stage(): Promise<void> {
      * first input on the page — a divergence the gate reported as real when it was the stage's own.
      * A real page never needs this: each preview is its own srcdoc document.
      */
-    vanilla.innerHTML = emitMarkup(tree, { idPrefix: name.replace(/[^a-z0-9]+/gi, "-") });
+    /*
+     * PARSED IN A NEUTRAL ELEMENT, then moved — not assigned to the form's own `innerHTML`.
+     *
+     * The two are not equivalent. The HTML parser drops a `<form>` that appears inside another form,
+     * and the stage IS a form for the reason above, so any template containing one lost it silently:
+     * `dialog`'s close control is a `<form method="dialog">`, which is the platform's own way to
+     * close a dialog with no script, and it simply vanished from this binding while React kept it.
+     * G2 reported that as a divergence between the bindings when it was the stage's own doing.
+     *
+     * The drop is a rule about parsing CONTEXT, not about insertion, so parsing in a plain `<div>`
+     * and appending the resulting nodes keeps the form and keeps the radio scoping both.
+     */
+    const parsed = document.createElement("div");
+    parsed.innerHTML = emitMarkup(tree, { idPrefix: name.replace(/[^a-z0-9]+/gi, "-") });
+    vanilla.append(...parsed.childNodes);
 
     const react = document.createElement("form");
     react.dataset.binding = "react";

@@ -3,55 +3,17 @@ import Base from "../../layouts/Base.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import {
-  CalendarBasicDemo,
-  CalendarMinMaxDemo,
-  CalendarRangeDemo,
-} from "../../components/react-demos/calendar";
+  calendarMinMaxTree,
+  calendarRangeTree,
+  calendarTree,
+} from "../../demos/calendar";
+import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/calendar.css";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `@import "@skryensya/core/components/calendar.css";`;
 
-const html = `<div class="sk-calendar" data-sk-calendar data-locale="es-DO"></div>`;
-
-const react = `import { Calendar } from "@skryensya/react/calendar";
-
-function Example() {
-  return <Calendar label="Disponibilidad" locale="es-DO" />;
-}`;
-
-const rangeHtml = `<div class="sk-calendar" data-sk-calendar data-locale="es-DO" data-selection-mode="range"></div>`;
-
-const rangeReact = `import { Calendar } from "@skryensya/react/calendar";
-
-function Example() {
-  return <Calendar label="Estadía" locale="es-DO" selectionMode="range" />;
-}`;
-
-// Ancla la demo a HOY en cada build/carga en vez de una fecha fija: nunca queda "vencida".
-const today = new Date();
-const minMaxDate = new Date(today);
-minMaxDate.setDate(minMaxDate.getDate() + 14);
-const isoDate = (date: Date) => date.toISOString().slice(0, 10);
-const minDate = isoDate(today);
-const maxDate = isoDate(minMaxDate);
-
-const minMaxHtml = `<div
-  class="sk-calendar"
-  data-sk-calendar
-  data-locale="es-DO"
-  data-min="${minDate}"
-  data-max="${maxDate}"
-></div>`;
-
-const minMaxReact = `import { Calendar } from "@skryensya/react/calendar";
-import { today, getLocalTimeZone } from "@internationalized/date";
-
-function Example() {
-  const min = today(getLocalTimeZone());
-  const max = min.add({ days: 14 });
-
-  return <Calendar label="Disponibilidad" locale="es-DO" min={min} max={max} />;
-}`;
 ---
 
 <Base
@@ -71,11 +33,7 @@ function Example() {
     en este stack), configurada <code>inline</code>: la misma navegación por teclado, el mismo grid con
     seis semanas fijas.
   </p>
-  <ComponentPreview html={html} react={react} label="Calendar" viewport="auto">
-    <Fragment slot="react">
-      <CalendarBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={calendarTree(t)} label="Calendar" viewport="auto" />
 
   <h2>Cambiar de vista: botones, no selects</h2>
   <p>
@@ -107,11 +65,7 @@ function Example() {
     del trigger desde la celda — la misma técnica que ya usa el anillo de foco de Combobox — para pintar
     la celda completa y que la franja se vea continua bajo <code>border-collapse</code>.
   </p>
-  <ComponentPreview html={rangeHtml} react={rangeReact} label="Calendar (rango)" viewport="auto">
-    <Fragment slot="react">
-      <CalendarRangeDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={calendarRangeTree(t)} label="Calendar (rango)" viewport="auto" />
 
   <h2>Rango acotado: min y max</h2>
   <p>
@@ -126,11 +80,7 @@ function Example() {
     deshabilitar un mes que sí toca el rango si el día enfocado, trasladado a ese mes, cae fuera).
     Ninguna de las dos vistas necesitó CSS nuevo: ambas ya pasan por <code>.sk-button:disabled</code>.
   </p>
-  <ComponentPreview html={minMaxHtml} react={minMaxReact} label="Calendar (min/max)" viewport="auto">
-    <Fragment slot="react">
-      <CalendarMinMaxDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={calendarMinMaxTree(t)} label="Calendar (min/max)" viewport="auto" />
 
   <h2>Contrato</h2>
   <ul>

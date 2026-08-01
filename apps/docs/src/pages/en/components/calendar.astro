@@ -3,58 +3,17 @@ import Base from "../../../layouts/Base.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import {
-  CalendarBasicDemo,
-  CalendarMinMaxDemo,
-  CalendarRangeDemo,
-} from "../../../components/react-demos/calendar";
+  calendarMinMaxTree,
+  calendarRangeTree,
+  calendarTree,
+} from "../../../demos/calendar";
+import { getLocale, useTranslations } from "../../../i18n";
 import "@skryensya/core/components/calendar.css";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `@import "@skryensya/core/components/calendar.css";`;
 
-const html = `<div class="sk-calendar" data-sk-calendar data-locale="en-US"></div>`;
-
-const react = `import { Calendar } from "@skryensya/react/calendar";
-
-function Example() {
-  return <Calendar label="Availability" locale="en-US" />;
-}`;
-
-const rangeHtml = `<div class="sk-calendar" data-sk-calendar data-locale="en-US" data-selection-mode="range"></div>`;
-
-const rangeReact = `import { Calendar } from "@skryensya/react/calendar";
-
-function Example() {
-  return <Calendar label="Stay" locale="en-US" selectionMode="range" />;
-}`;
-
-// Anchors the demo to TODAY on every build/load instead of a fixed date: it never goes stale.
-const today = new Date();
-const minMaxDate = new Date(today);
-minMaxDate.setDate(minMaxDate.getDate() + 14);
-const isoDate = (date: Date) => date.toISOString().slice(0, 10);
-const minDate = isoDate(today);
-const maxDate = isoDate(minMaxDate);
-
-const minMaxHtml = `<div
-  class="sk-calendar"
-  data-sk-calendar
-  data-locale="en-US"
-  data-min="${minDate}"
-  data-max="${maxDate}"
-></div>`;
-
-const minMaxReact = `import { Calendar } from "@skryensya/react/calendar";
-
-function Example() {
-  return (
-    <Calendar
-      label="Check-in"
-      locale="en-US"
-      min="${minDate}"
-      max="${maxDate}"
-    />
-  );
-}`;
 ---
 
 <Base
@@ -70,11 +29,7 @@ function Example() {
   <p>
     Behind it still running <code>@zag-js/date-picker</code> (there is no separate calendar machine in this stack), configured <code>inline</code>: same keyboard navigation, same grid with six fixed weeks.
   </p>
-  <ComponentPreview html={html} react={react} label="Calendar" viewport="auto">
-    <Fragment slot="react">
-      <CalendarBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={calendarTree(t)} label="Calendar" viewport="auto" />
 
   <h2>Switch view: buttons, no selects</h2>
   <p>
@@ -107,11 +62,7 @@ function Example() {
     state from the cell — the same technique Combobox's focus ring already uses — so the whole cell is
     painted and the band reads as continuous under <code>border-collapse</code>.
   </p>
-  <ComponentPreview html={rangeHtml} react={rangeReact} label="Calendar (range)" viewport="auto">
-    <Fragment slot="react">
-      <CalendarRangeDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={calendarRangeTree(t)} label="Calendar (range)" viewport="auto" />
 
   <h2>Bounded range: min and max</h2>
   <p>
@@ -127,11 +78,7 @@ function Example() {
     month falls outside it). Neither view needed new CSS: both already go through
     <code>.sk-button:disabled</code>.
   </p>
-  <ComponentPreview html={minMaxHtml} react={minMaxReact} label="Calendar (min/max)" viewport="auto">
-    <Fragment slot="react">
-      <CalendarMinMaxDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={calendarMinMaxTree(t)} label="Calendar (min/max)" viewport="auto" />
 
   <h2>Contract</h2>
   <ul>

@@ -72,6 +72,12 @@ export const datePickerContract = {
     required: { type: "boolean", default: false, attr: "data-required", trueValue: "", machineInput: true },
     /** Shown in the input while it is empty. */
     placeholder: { type: "string", attr: "placeholder" },
+    /**
+     * Names the control that wipes the date. An option rather than a literal in the template: this
+     * is the only user-visible STRING the component emits on its own, and a hardcoded one renders
+     * Spanish on an English page.
+     */
+    clearLabel: { type: "string", default: "Limpiar", attr: "aria-label" },
   },
 
   signatures: {
@@ -91,6 +97,7 @@ export const datePickerContract = {
         "readOnly",
         "required",
         "placeholder",
+        "clearLabel",
       ],
       portals: true,
       slots: {
@@ -115,9 +122,9 @@ export const datePickerContract = {
                 element: "button",
                 part: "clear",
                 also: ["sk-button", "sk-interactive"],
+                options: ["clearLabel"],
                 attrs: {
                   type: "button",
-                  "aria-label": "Limpiar",
                   "data-icon-only": "",
                   "data-size": "sm",
                   "data-variant": "ghost",

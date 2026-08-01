@@ -25,6 +25,7 @@ import { toolbarContract } from "@skryensya/core/toolbar";
 import { tooltipContract } from "@skryensya/core/tooltip";
 import { selectContract } from "@skryensya/core/select";
 import { menuContract } from "@skryensya/core/menu";
+import { comboboxContract } from "@skryensya/core/combobox";
 import { segmentedContract } from "@skryensya/core/segmented";
 import { sliderContract } from "@skryensya/core/slider";
 import { avatarContract } from "@skryensya/core/avatar";
@@ -105,6 +106,7 @@ export const contracts = {
   tooltip: tooltipContract,
   select: selectContract,
   menu: menuContract,
+  combobox: comboboxContract,
   typography: typographyContract,
   wrapper: wrapperContract,
   tabs: tabsContract,

@@ -640,6 +640,25 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
+  /** A description on one row and not the other, so the conditional second line is compared too. */
+  {
+    name: "combobox/filterable",
+    enhanced: true,
+    tree: {
+      contract: "combobox",
+      signature: "Combobox",
+      options: { name: "country", placeholder: "Buscar país" },
+      slots: {
+        label: "País",
+        hint: "Escribí para filtrar la lista",
+        items: [
+          { options: { value: "cl" }, slots: { label: "Chile", description: "América del Sur" } },
+          { options: { value: "mx" }, slots: { label: "México" } },
+          { options: { value: "pt", disabled: true }, slots: { label: "Portugal" } },
+        ],
+      },
+    },
+  },
   /** A command, a checkbox and a submenu — the three item shapes, including the recursive one. */
   {
     name: "menu/with-submenu",

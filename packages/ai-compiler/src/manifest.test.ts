@@ -79,7 +79,10 @@ describe("reconciliation", () => {
   });
 
   it("reports an overlay for a contract that is not published", () => {
-    const files = { ...complete(), "combobox.yaml": "Combobox:\n  useWhen: [pick]\n" };
+    // Deliberately a name nothing will ever publish. This read `combobox.yaml` until combobox was
+    // published, at which point the test was asserting about a contract that now exists — the
+    // example has to be fictional or it stops testing what it says.
+    const files = { ...complete(), "nonesuch.yaml": "Nonesuch:\n  useWhen: [pick]\n" };
 
     const { conflicts } = buildManifest(overlayDir(files));
 

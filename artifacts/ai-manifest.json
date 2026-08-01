@@ -1607,6 +1607,362 @@
         }
       }
     },
+    "combobox": {
+      "css": "@skryensya/core/components/combobox.css",
+      "id": "combobox",
+      "options": {
+        "allowCustomValue": {
+          "attr": "data-allow-custom-value",
+          "default": false,
+          "machineInput": true,
+          "type": "boolean"
+        },
+        "disabled": {
+          "attr": "disabled",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "multiple": {
+          "attr": "data-multiple",
+          "default": false,
+          "machineInput": true,
+          "type": "boolean"
+        },
+        "name": {
+          "attr": "name",
+          "type": "string"
+        },
+        "placeholder": {
+          "attr": "placeholder",
+          "type": "string"
+        },
+        "readOnly": {
+          "attr": "readonly",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "required": {
+          "attr": "required",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "value": {
+          "attr": "data-value",
+          "machineInput": true,
+          "prop": "defaultValue",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "clear": "sk-combobox__clear",
+        "content": "sk-combobox__content",
+        "control": "sk-combobox__control",
+        "empty": "sk-combobox__empty",
+        "input": "sk-combobox__input",
+        "item": "sk-combobox__item",
+        "itemCopy": "sk-combobox__item-copy",
+        "itemDescription": "sk-combobox__item-description",
+        "itemIndicator": "sk-combobox__item-indicator",
+        "itemLabel": "sk-combobox__item-label",
+        "label": "sk-combobox__label",
+        "positioner": "sk-combobox__positioner",
+        "removeTrigger": "sk-combobox__remove-trigger",
+        "root": "sk-combobox",
+        "selectedItem": "sk-combobox__selected-item",
+        "selectedItemLabel": "sk-combobox__selected-item-label",
+        "selectedItems": "sk-combobox__selected-items",
+        "status": "sk-combobox__status",
+        "trigger": "sk-combobox__trigger",
+        "value": "sk-combobox__value"
+      },
+      "semantics": {
+        "Combobox": {
+          "alternatives": [
+            "Select",
+            "Select.native"
+          ],
+          "avoidWhen": [
+            "las opciones caben a la vista: un select ya resuelve elegir de una lista conocida",
+            "el valor es libre y no sale de una lista: eso es un input con sugerencias"
+          ],
+          "useWhen": [
+            "la lista es larga: escribir para filtrar llega antes que recorrerla",
+            "cada opción necesita una descripción bajo la etiqueta, no sólo texto",
+            "hace falta elegir varias y verlas como chips removibles"
+          ]
+        }
+      },
+      "signatures": {
+        "Combobox": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "filter-a-long-list",
+            "type-to-search",
+            "one-of-many-known-values",
+            "form-field"
+          ],
+          "mount": "data-sk-combobox",
+          "options": [
+            "name",
+            "value",
+            "placeholder",
+            "disabled",
+            "required",
+            "readOnly",
+            "multiple",
+            "allowCustomValue"
+          ],
+          "portals": true,
+          "react": {
+            "from": "@skryensya/react/combobox",
+            "name": "Combobox"
+          },
+          "slots": {
+            "error": {
+              "accepts": "text"
+            },
+            "hint": {
+              "accepts": "text"
+            },
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "value",
+                "options": {
+                  "disabled": {
+                    "attr": "data-disabled",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "value": {
+                    "attr": "data-value",
+                    "type": "string"
+                  }
+                },
+                "slots": {
+                  "description": {
+                    "accepts": "text"
+                  },
+                  "label": {
+                    "accepts": "text",
+                    "required": true
+                  }
+                }
+              },
+              "required": true
+            },
+            "label": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-field"
+            ],
+            "children": [
+              {
+                "also": [
+                  "sk-field__label"
+                ],
+                "element": "label",
+                "mount": "data-sk-combobox-label",
+                "part": "label",
+                "slot": "label"
+              },
+              {
+                "also": [
+                  "sk-field__hint"
+                ],
+                "element": "div",
+                "mount": "data-sk-combobox-hint",
+                "slot": "hint",
+                "whenGiven": "hint"
+              },
+              {
+                "also": [
+                  "sk-anchor"
+                ],
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "element": "input",
+                        "mount": "data-sk-combobox-input",
+                        "options": [
+                          "name",
+                          "placeholder",
+                          "disabled",
+                          "required",
+                          "readOnly"
+                        ],
+                        "part": "input"
+                      }
+                    ],
+                    "element": "div",
+                    "mount": "data-sk-combobox-value",
+                    "part": "value"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-icon-only": "",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "aria-hidden": "true"
+                        },
+                        "element": "span",
+                        "text": "×"
+                      }
+                    ],
+                    "element": "button",
+                    "mount": "data-sk-combobox-clear",
+                    "part": "clear"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-icon-only": "",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "aria-hidden": "true"
+                        },
+                        "element": "span",
+                        "text": "⌄"
+                      }
+                    ],
+                    "element": "button",
+                    "mount": "data-sk-combobox-trigger",
+                    "part": "trigger"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-combobox-control",
+                "part": "control"
+              },
+              {
+                "also": [
+                  "sk-field__error"
+                ],
+                "element": "div",
+                "mount": "data-sk-combobox-error",
+                "slot": "error",
+                "whenGiven": "error"
+              },
+              {
+                "also": [
+                  "sk-visually-hidden"
+                ],
+                "attrs": {
+                  "aria-atomic": "true",
+                  "role": "status"
+                },
+                "element": "div",
+                "mount": "data-sk-combobox-status",
+                "part": "status"
+              },
+              {
+                "also": [
+                  "sk-anchored"
+                ],
+                "children": [
+                  {
+                    "also": [
+                      "sk-scrollbar"
+                    ],
+                    "children": [
+                      {
+                        "also": [
+                          "sk-interactive"
+                        ],
+                        "attrsFromItemSlot": {
+                          "data-description": "description",
+                          "data-value-text": "label"
+                        },
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "element": "span",
+                                "itemSlot": "label",
+                                "mount": "data-sk-combobox-item-text",
+                                "part": "itemLabel"
+                              },
+                              {
+                                "element": "span",
+                                "itemSlot": "description",
+                                "part": "itemDescription",
+                                "whenItemSlotGiven": "description"
+                              }
+                            ],
+                            "element": "span",
+                            "part": "itemCopy"
+                          },
+                          {
+                            "element": "span",
+                            "mount": "data-sk-combobox-item-indicator",
+                            "part": "itemIndicator",
+                            "text": "✓"
+                          }
+                        ],
+                        "element": "div",
+                        "itemOptions": [
+                          "value",
+                          "disabled"
+                        ],
+                        "mount": "data-sk-combobox-item",
+                        "part": "item",
+                        "repeat": "items"
+                      },
+                      {
+                        "attrs": {
+                          "role": "presentation"
+                        },
+                        "element": "div",
+                        "mount": "data-sk-combobox-empty",
+                        "part": "empty",
+                        "text": "Sin resultados"
+                      }
+                    ],
+                    "element": "div",
+                    "mount": "data-sk-combobox-content",
+                    "part": "content"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-combobox-positioner",
+                "part": "positioner"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "content": {
       "css": "@skryensya/core/components/toast.css",
       "id": "content",
@@ -9567,5 +9923,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "9dc960d45450ca14"
+  "sourceHash": "34904c7318b508ba"
 }

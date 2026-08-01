@@ -1415,6 +1415,36 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/popover.css",
+      "id": "popover",
+      "signatures": [
+        {
+          "alternatives": [
+            "Tooltip",
+            "Menu",
+            "Dialog"
+          ],
+          "avoidWhen": [
+            "es una descripción de una línea; eso es un Tooltip y no roba el foco",
+            "es una lista de acciones; eso es un Menu, que ya trae la navegación por teclado",
+            "bloquea la pantalla hasta decidir; eso es un Dialog"
+          ],
+          "host": "div",
+          "id": "Popover",
+          "intent": [
+            "popover",
+            "rich-panel-on-a-trigger",
+            "light-dismiss-panel"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hace falta un panel con contenido propio colgado de un control: un formulario corto, una explicación con formato",
+            "conviene que el navegador se encargue de cerrar al hacer clic afuera y con Escape"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/process-list.css",
       "id": "process-list",
       "signatures": [
@@ -2716,5 +2746,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "e88271d422c8cd81"
+  "sourceHash": "4a9634308052b3b6"
 }

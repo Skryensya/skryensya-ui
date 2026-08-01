@@ -6052,6 +6052,195 @@
         }
       }
     },
+    "popover": {
+      "css": "@skryensya/core/components/popover.css",
+      "id": "popover",
+      "options": {
+        "arrow": {
+          "attr": "data-arrow",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "closeLabel": {
+          "attr": "data-close-label",
+          "default": "Cerrar",
+          "machineInput": true,
+          "type": "string"
+        },
+        "panelId": {
+          "attr": "id",
+          "prop": "id",
+          "type": "string"
+        },
+        "placement": {
+          "attr": "data-sk-placement",
+          "default": "block-end",
+          "type": "enum",
+          "values": [
+            "block-start",
+            "block-end",
+            "inline-start",
+            "inline-end"
+          ]
+        }
+      },
+      "parts": {
+        "close": "sk-popover__close",
+        "content": "sk-popover__content",
+        "description": "sk-popover__description",
+        "positioner": "sk-popover__positioner",
+        "root": "sk-popover",
+        "title": "sk-popover__title",
+        "trigger": "sk-popover__trigger"
+      },
+      "semantics": {
+        "Popover": {
+          "alternatives": [
+            "Tooltip",
+            "Menu",
+            "Dialog"
+          ],
+          "avoidWhen": [
+            "es una descripción de una línea; eso es un Tooltip y no roba el foco",
+            "es una lista de acciones; eso es un Menu, que ya trae la navegación por teclado",
+            "bloquea la pantalla hasta decidir; eso es un Dialog"
+          ],
+          "useWhen": [
+            "hace falta un panel con contenido propio colgado de un control: un formulario corto, una explicación con formato",
+            "conviene que el navegador se encargue de cerrar al hacer clic afuera y con Escape"
+          ]
+        }
+      },
+      "signatures": {
+        "Popover": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "popover",
+            "rich-panel-on-a-trigger",
+            "light-dismiss-panel"
+          ],
+          "options": [
+            "panelId",
+            "placement",
+            "arrow",
+            "closeLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/popover",
+            "name": "Popover"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "description": {
+              "accepts": "text"
+            },
+            "title": {
+              "accepts": "text"
+            },
+            "trigger": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive",
+                  "sk-anchor"
+                ],
+                "attrs": {
+                  "type": "button"
+                },
+                "element": "button",
+                "optionAttrs": {
+                  "panelId": "popovertarget"
+                },
+                "options": [
+                  "panelId"
+                ],
+                "part": "trigger",
+                "slot": "trigger"
+              },
+              {
+                "also": [
+                  "sk-popover__content",
+                  "sk-anchored"
+                ],
+                "attrs": {
+                  "popover": "auto"
+                },
+                "children": [
+                  {
+                    "also": [
+                      "sk-anchored-arrow"
+                    ],
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "span",
+                    "whenGiven": "arrow"
+                  },
+                  {
+                    "element": "h2",
+                    "part": "title",
+                    "slot": "title",
+                    "whenGiven": "title"
+                  },
+                  {
+                    "element": "p",
+                    "part": "description",
+                    "slot": "description",
+                    "whenGiven": "description"
+                  },
+                  {
+                    "slot": "children"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "popovertargetaction": "hide",
+                      "type": "button"
+                    },
+                    "element": "button",
+                    "optionAttrs": {
+                      "closeLabel": "data-close-label",
+                      "panelId": "popovertarget"
+                    },
+                    "options": [
+                      "panelId",
+                      "closeLabel"
+                    ],
+                    "part": "close",
+                    "textFromOption": "closeLabel"
+                  }
+                ],
+                "element": "div",
+                "options": [
+                  "panelId",
+                  "placement"
+                ],
+                "part": "positioner"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "process-list": {
       "css": "@skryensya/core/components/process-list.css",
       "id": "process-list",
@@ -10788,5 +10977,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "e88271d422c8cd81"
+  "sourceHash": "4a9634308052b3b6"
 }

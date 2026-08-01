@@ -1,0 +1,14 @@
+# La estructura vive en packages/core/src/popover.ts. Acá sólo por qué se elige.
+
+Popover:
+  useWhen:
+    - "hace falta un panel con contenido propio colgado de un control: un formulario corto, una explicación con formato"
+    - "conviene que el navegador se encargue de cerrar al hacer clic afuera y con Escape"
+  avoidWhen:
+    - "es una descripción de una línea; eso es un Tooltip y no roba el foco"
+    - "es una lista de acciones; eso es un Menu, que ya trae la navegación por teclado"
+    - "bloquea la pantalla hasta decidir; eso es un Dialog"
+  alternatives:
+    - Tooltip
+    - Menu
+    - Dialog

@@ -41,16 +41,20 @@ que lo deja claro: lo usan tooltip, menu, select, combobox, date-picker y popove
 
 La regla queda escrita, entonces: **`css/components/*` lleva contrato, `css/patterns/*` no.**
 
-**** tampoco es un componente aparte, y su propia página lo dice: *"superficie flotante mínima
-para composiciones que no necesitan chrome de Popover"*, y más abajo *"si el patrón tiene título y
-acciones de cierre, usá Popover"*. No tiene archivo en core ni hoja propia — importa .
-Es el mismo componente con menos anatomía.
+**`popup`** tampoco era un componente aparte, y su propia página lo dice: *"superficie flotante
+mínima para composiciones que no necesitan chrome de Popover"*, y más abajo *"si el patrón tiene
+título y acciones de cierre, usá Popover"*. No tiene archivo en core ni hoja propia — importa
+`popover.css`. Es el mismo componente con menos anatomía.
 
-Así quedó resuelto: ****, una segunda signature del mismo contrato — raíz, trigger y
+Así quedó resuelto: **`Popover.bare`**, una segunda signature del mismo contrato — raíz, trigger y
 superficie, sin título, sin descripción y sin control de cierre. Un contrato propio habría duplicado
 cada part y dejado a un agente eligiendo entre dos nombres para una sola cosa, que es exactamente lo
 que un catálogo no debe hacer. Escape y el cierre al hacer clic afuera siguen funcionando: son de la
 plataforma, no del chrome.
+
+Así que `popup` ya no está en esta lista por falta de contrato: **su página está armada con el
+árbol**. Sigue acá porque la decisión de que NO tuviera contrato propio es lo que había que dejar
+escrito.
 
 ## Los que faltaban, y ya no
 
@@ -78,12 +82,14 @@ de mejorarlo. Los dos tienen que describir un componente, no dos parecidos.
 
 Contra las 66 páginas de `componentes/`, el estado es: **todas las que deben tener contrato lo
 tienen**, publicado, con árbol canónico y con sus dos capas comparadas por G2. De las que no, dos son
-chrome de este sitio (`component-preview`, `toc`), una es una receta (`card`), una es un alias
-(`drawer`) y una es el mismo componente con menos anatomía (`popup`).
+chrome de este sitio (`component-preview`, `toc`), una es una receta (`card`) y una es un alias
+(`drawer`). `popup` era la quinta y dejó de serlo: se resolvió como `Popover.bare`.
 
-De las páginas que tienen previews, **52 están completamente armadas con el árbol**. Las que no
-están, no están por alguna de las razones de este archivo — no por falta de trabajo. Si alguien
-vuelve a contar y el número no cierra, la diferencia debería aparecer acá o es un hueco de verdad.
+De las páginas que tienen previews, **53 de 63 están completamente armadas con el árbol**. Las diez
+que no lo están son, exactamente: `accordion` y `date-picker` (parciales, por su preview nativo),
+`card`, `command-palette`, `component-preview`, `dialog`, `drawer`, `process-list`, `toc` y
+`wrapper` — cada una con su razón en este archivo. Si alguien vuelve a contar y el número no cierra,
+la diferencia debería aparecer acá o es un hueco de verdad.
 
 No queda nada de esta lista esperando un contrato. `vaul` tampoco: es un patrón, y los patrones no
 llevan uno — ver arriba.

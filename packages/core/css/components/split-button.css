@@ -14,6 +14,13 @@
     border-start-end-radius: 0;
     border-end-end-radius: 0;
   }
+  /*
+   * The composed case: a Menu dropped inside a split button brings its own trigger, and a
+   * composition has no way to hand it our class — the class belongs to whoever renders the button,
+   * and that is Menu. Reaching it by structure is what lets the tree compose the two instead of
+   * SplitButton having to build the menu itself from a flat prop.
+   */
+  .sk-split-button > .sk-menu > button,
   .sk-split-button__trigger {
     min-inline-size: var(--sk-split-button-trigger-inline-size);
     padding-inline: var(--space-inset-sm);

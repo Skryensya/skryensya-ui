@@ -5,10 +5,16 @@ import { Menu } from "./menu.js";
 
 export type SplitButtonProps = {
   children: ReactNode;
+  /**
+   * A composed Menu. Preferred over `menuItems`: it is what lets one tree describe both halves,
+   * and it keeps the menu's own contract in charge of the menu instead of this component
+   * reassembling it from a flat list.
+   */
+  menu?: ReactNode;
   onClick?: () => void;
   disabled?: boolean;
-  menuLabel: string;
-  menuItems: readonly MenuItem[];
+  menuLabel?: string;
+  menuItems?: readonly MenuItem[];
   menuIndicator?: ReactNode;
   itemIndicator?: ReactNode;
   onSelect?: (details: { value: string }) => void;
@@ -16,6 +22,7 @@ export type SplitButtonProps = {
 export function SplitButton({
   children,
   disabled,
+  menu,
   itemIndicator,
   menuIndicator,
   menuItems,
@@ -34,16 +41,18 @@ export function SplitButton({
       >
         {children}
       </button>
-      <Menu
+      {menu ?? (
+        <Menu
         disabled={disabled}
         indicator={menuIndicator}
         itemIndicator={itemIndicator}
-        items={menuItems}
-        label={menuLabel}
+        items={menuItems ?? []}
+        label={menuLabel ?? ""}
         onSelect={onSelect}
         trigger={<span className="sk-visually-hidden">{menuLabel}</span>}
         triggerClassName={splitButtonParts.trigger}
-      />
+        />
+      )}
     </div>
   );
 }

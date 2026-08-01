@@ -772,6 +772,30 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
+  /* A composition, not a component with a list: the Menu half is a Menu. */
+  {
+    name: "split-button/save-and-more",
+    enhanced: true,
+    tree: {
+      contract: "split-button",
+      signature: "SplitButton",
+      slots: {
+        children: "Guardar",
+        menu: {
+          contract: "menu",
+          signature: "Menu",
+          options: { label: "Otras formas de guardar" },
+          slots: {
+            trigger: "Más",
+            items: [
+              { options: { value: "copy" }, slots: { label: "Guardar una copia" } },
+              { options: { value: "template" }, slots: { label: "Guardar como plantilla" } },
+            ],
+          },
+        },
+      },
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

@@ -744,6 +744,20 @@ const signatureTrees: readonly Canonical[] = [
       children: "Copiar",
     },
   },
+  /** A literal inside a sentence — the signature the accordion prose had to do without. */
+  {
+    name: "typography/code-in-a-sentence",
+    enhanced: false,
+    tree: {
+      contract: "typography",
+      signature: "Text",
+      children: [
+        "El healthcheck pega a ",
+        { contract: "typography", signature: "Code", children: "/status" },
+        " cada diez segundos.",
+      ],
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

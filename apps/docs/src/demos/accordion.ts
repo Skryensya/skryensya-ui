@@ -9,11 +9,10 @@ import type { Translate } from "../i18n";
  * demo hand-wrote the same nine lines twice, as an HTML string and as JSX, and they had already
  * drifted: the authored HTML carried `data-part="chevron"` and the React half did not.
  *
- * ONE THING IS LOST IN THE MOVE, deliberately. The body paragraphs used to wrap a path in `<code>`
- * ("el healthcheck pega a /status"). There is no inline-code signature in `typography` — no part, no
- * React export, no CSS rule — so emitting one would mean publishing a new component in the middle of
- * a page conversion. The sentences keep their words and lose the monospace; the gap is filed rather
- * than papered over with `Strong`, which would be the wrong semantics for a path.
+ * The runtime section's second paragraph names a path, and it is `Code` — a signature that did not
+ * exist when this file was first written. Converting the page had to drop the monospace because
+ * `typography` had no inline-code part at all; publishing one is what let the sentence come back
+ * whole. `Strong` was the nearest thing available and it is the wrong claim: a path is not emphasis.
  */
 
 /** One section: the trigger's copy and mark, then the body. */
@@ -56,7 +55,18 @@ const item = (t: Translate, value: string): UsageTree => ({
               contract: "typography",
               signature: "Text",
               options: { tone: "secondary" },
-              children: t(`demo.accordion.${value}.p2` as never),
+              children:
+                value === "runtime"
+                  ? [
+                      t("demo.accordion.runtime.p2a"),
+                      {
+                        contract: "typography",
+                        signature: "Code",
+                        children: t("demo.accordion.runtime.p2code"),
+                      },
+                      t("demo.accordion.runtime.p2b"),
+                    ]
+                  : t(`demo.accordion.${value}.p2` as never),
             },
           ],
         },

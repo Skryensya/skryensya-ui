@@ -1,31 +1,19 @@
 /*
- * NEITHER TREE IS WIRED YET, and both validate. Measured against what the page renders today
- * (2026-07-31); each is blocked on one line of contract, not on someone converting the page.
+ * The toolbar, twice: loose controls, and a composite widget as one stop.
  *
- * `toolbarTree` — Tooltip's template never paints its own mount hooks. The Vanilla enhancer
- * (`packages/vanilla/src/components/Tooltip.svelte`) finds the trigger and the content by
- * `[data-sk-anchor-trigger]` / `[data-sk-anchor-content]`, and `emitMarkup` writes neither: the
- * trigger is a bare `{ slot: "children" }` with no `also`/`attrs` (so `parts.trigger`,
- * `sk-tooltip__trigger`, is a declared part no signature emits — and `sk-anchor` with it), and the
- * content node carries only `role="tooltip"`. So `trigger` and `content` come back null, no Zag
- * handler is ever bound, `data-state="open"` is never written, and `.sk-tooltip__content` stays at
- * `display: none` forever. React builds its own trigger span and portals its own content, so it
- * works — the two bindings would paint identically and only one of them would have a tooltip.
- * The content hook cannot be patched from the tree either: `attrs` reach the HOST, and the content
- * is a node inside Tooltip's own template. The page's authored markup writes all three hooks by
- * hand, so converting would trade a working tooltip for a dead one.
- * Two smaller gaps behind it: `arrow` is a React-only prop with no contract option (the arrow is
- * authored as `.sk-anchored-arrow` inside the positioner), and `bold`/`italic`/`link` are not in
- * Icon's stable `name` enum, which is why the tree below reaches for edit/copy/delete instead.
+ * Both trees sat here validated and unwired, each blocked on one line of contract rather than on
+ * anyone converting the page. Both lines have landed:
  *
- * `nestedToolbarTree` — Segmented's `value` option has no `prop: "defaultValue"`, so `emitReact`
- * writes `value="free"`, which `SegmentedControl` reads as the CONTROLLED prop with no
- * `onValueChange` beside it: the control is frozen. Measured on the already-converted
- * /componentes/segmented, where clicking the React stage's second option leaves `aria-checked`
- * exactly where it started while Vanilla moves it. Slider, Tabs, RadioGroup and TimeField all
- * carry that one line; Segmented never got it. This page's nested preview is Vanilla-only today,
- * so wiring the tree would ADD a React stage whose selection cannot move — on the one demo whose
- * whole subject is moving a selection with the keyboard.
+ *   - Tooltip's template never painted its own mount hooks, so an emitted toolbar had buttons whose
+ *     tooltips could never open in Vanilla while React's worked — two stages painting the same
+ *     markup and only one of them having a tooltip.
+ *   - Segmented's `value` had no `prop: "defaultValue"`, so the emitter wrote `value="free"`,
+ *     which React reads as the CONTROLLED prop with no handler beside it: the control was frozen.
+ *     Wiring this tree would have ADDED a React stage whose selection cannot move, on the one demo
+ *     whose whole subject is moving a selection with the keyboard.
+ *
+ * The icons still reach for edit/copy/delete rather than bold/italic/link, which are not in Icon's
+ * stable `name` enum. That one is a gap in the icon set, not in the contract.
  */
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";

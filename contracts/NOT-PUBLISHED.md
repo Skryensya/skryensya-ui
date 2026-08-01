@@ -47,10 +47,10 @@ Seis páginas llegaron acá sin contrato y salieron con uno. Ninguna estaba bloq
 cuatro necesitaban una CAPA que nunca se había escrito, una necesitaba dejar de acoplarse, y una
 parecía trabada en un patrón y no lo estaba.
 
-- **`copy-button`**, **`dialog`** y **`command-palette`** — tenían enhancer vanilla y ningún
-  binding de React. Un contrato nombra un export de React, G1 verifica que exista y G2 compara las
-  dos capas; con una sola no hay contrato, hay un script con parts. Escribir la mitad faltante fue lo
-  que los hizo publicables, no al revés.
+- **`copy-button`**, **`dialog`**, **`command-palette`** y **`code-preview`** — tenían enhancer
+  vanilla y ningún binding de React. Un contrato nombra un export de React, G1 verifica que exista y
+  G2 compara las dos capas; con una sola no hay contrato, hay un script con parts. Escribir la mitad
+  faltante fue lo que los hizo publicables, no al revés.
 - **`split-button`** — las dos capas existían. Lo que estorbaba era que su React construía el menú
   desde un prop plano y le pasaba una clase que un Menu compuesto no puede recibir, porque esa clase
   pertenece a quien dibuja ese botón. La hoja lo alcanza por estructura y la composición quedó
@@ -70,8 +70,13 @@ tienen**, publicado, con árbol canónico y con sus dos capas comparadas por G2.
 chrome de este sitio (`component-preview`, `toc`), una es una receta (`card`) y una es un alias
 (`drawer`).
 
-Lo único que queda abierto de esta lista es que **`vaul` no tiene contrato**, y la página de `drawer`
-apunta ahí. Eso es un componente propio que nadie publicó todavía, no un hueco heredado de `drawer`.
+No queda nada de esta lista esperando un contrato. `vaul` tampoco: es un patrón, y los patrones no
+llevan uno — ver arriba.
+
+Dicho de otro modo, y es la forma en que conviene volver a contarlo: **todo archivo de
+`packages/core/src` que exporta parts y cuya hoja vive en `css/components/` tiene contrato**. Los
+únicos que exportan parts y no lo tienen son `anchored` y `vaul`, que son patrones, y
+`component-preview`, que es chrome de este sitio.
 
 ## Demos que se quedan autorados aunque el contrato exista
 

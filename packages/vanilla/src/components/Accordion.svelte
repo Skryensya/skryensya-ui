@@ -41,7 +41,15 @@
       value: el.dataset.value ?? "",
       el,
       trigger: el.querySelector<HTMLElement>('[data-part="trigger"]'),
-      content: el.querySelector<HTMLElement>('[data-part="content"]'),
+      /*
+       * DIRECT CHILD, not any descendant. `data-part="content"` names two different things in this
+       * component's vocabulary — the collapsible PANEL, and the title-and-description block a Tile
+       * puts inside its trigger (`tileDataParts.content` and `.expandableContent` are both the
+       * string "content"). A descendant query finds whichever comes first in the DOM, which is the
+       * one inside the button, so a section built out of TileContent bound the wrong element as its
+       * panel: the answer never collapsed and stayed exposed to a screen reader.
+       */
+      content: el.querySelector<HTMLElement>(':scope > [data-part="content"]'),
       disabled: rootDisabled || el.hasAttribute("data-disabled"),
     };
   });

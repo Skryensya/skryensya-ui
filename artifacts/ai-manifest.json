@@ -2400,6 +2400,11 @@
       "css": "@skryensya/core/components/date-picker.css",
       "id": "date-picker",
       "options": {
+        "clearLabel": {
+          "attr": "aria-label",
+          "default": "Limpiar",
+          "type": "string"
+        },
         "disabled": {
           "attr": "data-disabled",
           "default": false,
@@ -2516,7 +2521,8 @@
             "disabled",
             "readOnly",
             "required",
-            "placeholder"
+            "placeholder",
+            "clearLabel"
           ],
           "portals": true,
           "react": {
@@ -2554,7 +2560,6 @@
                       "sk-interactive"
                     ],
                     "attrs": {
-                      "aria-label": "Limpiar",
                       "data-icon-only": "",
                       "data-size": "sm",
                       "data-variant": "ghost",
@@ -2570,6 +2575,9 @@
                       }
                     ],
                     "element": "button",
+                    "options": [
+                      "clearLabel"
+                    ],
                     "part": "clear"
                   },
                   {
@@ -10345,5 +10353,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "023ff10ae77f59ab"
+  "sourceHash": "95e3431f1977d97c"
 }

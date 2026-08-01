@@ -2099,6 +2099,188 @@
         }
       }
     },
+    "command-palette": {
+      "css": "@skryensya/core/components/command-palette.css",
+      "id": "command-palette",
+      "options": {
+        "emptyLabel": {
+          "attr": "data-empty-label",
+          "default": "Sin resultados.",
+          "machineInput": true,
+          "type": "string"
+        },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "open": {
+          "attr": "open",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "paletteId": {
+          "attr": "id",
+          "prop": "id",
+          "type": "string"
+        },
+        "placeholder": {
+          "attr": "placeholder",
+          "default": "Buscar…",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "close": "sk-command-palette__close",
+        "empty": "sk-command-palette__empty",
+        "footer": "sk-command-palette__footer",
+        "input": "sk-command-palette__input",
+        "list": "sk-command-palette__list",
+        "option": "sk-command-palette__option",
+        "optionContext": "sk-command-palette__option-context",
+        "optionLabel": "sk-command-palette__option-label",
+        "root": "sk-command-palette",
+        "search": "sk-command-palette__search"
+      },
+      "semantics": {
+        "CommandPalette": {
+          "alternatives": [
+            "Menu",
+            "Combobox"
+          ],
+          "avoidWhen": [
+            "las opciones son pocas y caben a la vista: eso es un Menu",
+            "es el único camino a algo: una paleta complementa la navegación, no la reemplaza"
+          ],
+          "useWhen": [
+            "hay muchos destinos o acciones y escribir el nombre llega antes que recorrerlos",
+            "quien usa el producto seguido quiere llegar sin navegar"
+          ]
+        }
+      },
+      "signatures": {
+        "CommandPalette": {
+          "host": {
+            "element": "dialog"
+          },
+          "intent": [
+            "command-palette",
+            "search-everything",
+            "keyboard-first-navigation"
+          ],
+          "mount": "data-sk-command-palette",
+          "options": [
+            "label",
+            "paletteId",
+            "placeholder",
+            "emptyLabel",
+            "open"
+          ],
+          "react": {
+            "from": "@skryensya/react/command-palette",
+            "name": "CommandPalette"
+          },
+          "slots": {},
+          "template": {
+            "also": [
+              "sk-dialog"
+            ],
+            "children": [
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon": "search",
+                      "data-sk-icon-size": "md"
+                    },
+                    "element": "span"
+                  },
+                  {
+                    "attrs": {
+                      "aria-autocomplete": "list",
+                      "aria-expanded": "false",
+                      "autocomplete": "off",
+                      "role": "combobox",
+                      "spellcheck": "false",
+                      "type": "text"
+                    },
+                    "element": "input",
+                    "mount": "data-sk-command-palette-input",
+                    "options": [
+                      "placeholder"
+                    ],
+                    "part": "input"
+                  },
+                  {
+                    "attrs": {
+                      "method": "dialog"
+                    },
+                    "children": [
+                      {
+                        "also": [
+                          "sk-button",
+                          "sk-dialog__close",
+                          "sk-interactive"
+                        ],
+                        "attrs": {
+                          "aria-label": "Cerrar",
+                          "data-icon-only": "",
+                          "data-size": "sm",
+                          "data-variant": "ghost",
+                          "type": "submit",
+                          "value": "cancel"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "close",
+                              "data-sk-icon-size": "md"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "button",
+                        "part": "close"
+                      }
+                    ],
+                    "element": "form"
+                  }
+                ],
+                "element": "div",
+                "part": "search"
+              },
+              {
+                "also": [
+                  "sk-scrollbar"
+                ],
+                "attrs": {
+                  "aria-label": "Resultados",
+                  "role": "listbox"
+                },
+                "element": "ul",
+                "mount": "data-sk-command-palette-list",
+                "part": "list"
+              },
+              {
+                "attrs": {
+                  "hidden": ""
+                },
+                "element": "p",
+                "mount": "data-sk-command-palette-empty",
+                "options": [
+                  "emptyLabel"
+                ],
+                "part": "empty",
+                "textFromOption": "emptyLabel"
+              }
+            ],
+            "element": "dialog",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "content": {
       "css": "@skryensya/core/components/toast.css",
       "id": "content",
@@ -10977,5 +11159,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "4a9634308052b3b6"
+  "sourceHash": "7891c55faf35ec1f"
 }

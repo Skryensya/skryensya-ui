@@ -311,6 +311,10 @@
     "./dialog": {
       "types": "./src/components/dialog.tsx",
       "default": "./src/components/dialog.tsx"
+    },
+    "./command-palette": {
+      "types": "./src/components/command-palette.tsx",
+      "default": "./src/components/command-palette.tsx"
     }
   },
   "scripts": {

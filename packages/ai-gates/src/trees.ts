@@ -812,6 +812,16 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
+  /* Open but not yet searched: the list is empty in BOTH bindings until something is typed. */
+  {
+    name: "command-palette/open",
+    enhanced: true,
+    tree: {
+      contract: "command-palette",
+      signature: "CommandPalette",
+      options: { label: "Buscar", paletteId: "demo-palette", open: true },
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

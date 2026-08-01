@@ -46,6 +46,20 @@ export const copyButtonContract = {
   parts: copyButtonParts,
 
   options: {
+    /*
+     * THE BUTTON'S OWN THREE, repeated here rather than inherited, because this root IS a
+     * `.sk-button`: the paint comes from that stylesheet and reads these exact attributes. Without
+     * them a copy button emitted from a tree could only ever be the default neutral md, and every
+     * real use of it in these docs is a ghost icon-only one.
+     */
+    variant: {
+      type: "enum",
+      values: ["neutral", "primary", "danger", "ghost"],
+      default: "neutral",
+      attr: "data-variant",
+    },
+    size: { type: "enum", values: ["sm", "md", "lg"], default: "md", attr: "data-size" },
+    iconOnly: { type: "boolean", default: false, attr: "data-icon-only", trueValue: "" },
     /** The id of the element whose text is copied, read at click time. */
     target: { type: "string", attr: copyButtonAttrs.target },
     /** What the label says once the text is on the clipboard. */
@@ -70,7 +84,7 @@ export const copyButtonContract = {
       intent: ["copy-to-clipboard", "copy-a-code-block", "copy-a-token"],
       host: { element: "button" },
       mount: copyButtonAttrs.root,
-      options: ["target", "successLabel", "errorLabel"],
+      options: ["target", "variant", "size", "iconOnly", "successLabel", "errorLabel"],
       slots: {
         /** The resting label. Replaced by the success or error one while the feedback shows. */
         children: { accepts: "text", required: true },

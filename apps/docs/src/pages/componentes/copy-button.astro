@@ -2,72 +2,14 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
+import { copyButtonTree } from "../../demos/copy-button";
+import { getLocale, useTranslations } from "../../i18n";
 import StylingHooks from "../../components/StylingHooks.astro";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
-const html = `<div class="sk-inline" data-gap="md" data-align="center">
-  <code id="install-command">pnpm add @skryensya/core</code>
-  <button
-    class="sk-button sk-interactive sk-copy-button"
-    data-sk-copy-button
-    data-sk-copy-button-target="install-command"
-    data-variant="ghost"
-    data-icon-only
-    type="button"
-    aria-label="Copiar código"
-  >
-    <span
-      class="sk-copy-button__icon"
-      data-sk-copy-button-icon="idle"
-      aria-hidden="true"
-    >
-      <span data-sk-icon="copy"></span>
-    </span>
-    <span
-      class="sk-copy-button__icon"
-      data-sk-copy-button-icon="copied"
-      aria-hidden="true"
-    >
-      <span data-sk-icon="check"></span>
-    </span>
-    <span
-      class="sk-copy-button__label"
-      data-sk-copy-button-label
-      aria-live="polite"
-    >Copiar</span>
-  </button>
-  <button
-    class="sk-button sk-interactive sk-copy-button"
-    data-sk-copy-button
-    data-sk-copy-button-target="install-command"
-    data-variant="ghost"
-    data-size="sm"
-    data-icon-only
-    type="button"
-    aria-label="Copiar código"
-  >
-    <span
-      class="sk-copy-button__icon"
-      data-sk-copy-button-icon="idle"
-      aria-hidden="true"
-    >
-      <span data-sk-icon="copy"></span>
-    </span>
-    <span
-      class="sk-copy-button__icon"
-      data-sk-copy-button-icon="copied"
-      aria-hidden="true"
-    >
-      <span data-sk-icon="check"></span>
-    </span>
-    <span
-      class="sk-copy-button__label"
-      data-sk-copy-button-label
-      aria-live="polite"
-    >Copiar</span>
-  </button>
-</div>`;
 
 const css = `@import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/copy-button.css";`;
@@ -95,8 +37,7 @@ await initComponents();`;
     <code>::after</code>).
   </p>
 
-  <ComponentPreview
-    html={html}
+  <ComponentPreview tree={copyButtonTree(t)}
     js={js}
     label="CopyButton"
     note="md · sm"

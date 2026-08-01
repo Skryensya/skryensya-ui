@@ -63,6 +63,8 @@ export const popoverContract = {
     },
     /** Draw the small arrow pointing at the trigger. Decorative, never announced. */
     arrow: { type: "boolean", default: false, attr: "data-arrow", trueValue: "", machineInput: true },
+    /** The bare surface: no title, no description, no close control. */
+    bare: { type: "boolean", default: false, attr: "data-bare", trueValue: "", machineInput: true },
     /** What the closing control says. */
     closeLabel: { type: "string", default: "Cerrar", attr: "data-close-label", machineInput: true },
   },
@@ -121,6 +123,62 @@ export const popoverContract = {
                 optionAttrs: { panelId: "popovertarget", closeLabel: "data-close-label" },
                 textFromOption: "closeLabel",
               },
+            ],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/popover", name: "Popover" },
+    },
+
+    /*
+     * THE BARE SURFACE — an anchor and a panel, and nothing the panel does not need.
+     *
+     * The docs call this one `popup` and its own page says what it is: "superficie flotante mínima
+     * para composiciones que no necesitan chrome de Popover". It has no core file and no stylesheet
+     * of its own — it imports `popover.css` — because it is not another component, it is this one
+     * with less anatomy. A contract of its own would duplicate every part and leave a reader
+     * choosing between two names for one thing, which is exactly what a catalogue must not do.
+     *
+     * Escape and light-dismiss still work: they belong to the platform, not to the chrome.
+     */
+    "Popover.bare": {
+      intent: ["bare-floating-surface", "anchored-panel-without-chrome", "popup"],
+      host: { element: "div" },
+      options: ["panelId", "placement", "bare", "arrow"],
+      slots: {
+        /** What opens it. Carries its own accessible name. */
+        trigger: { accepts: "node", required: true },
+        /** Whatever the surface holds. Its own semantics are the composition's business. */
+        children: { accepts: "node", required: true },
+      },
+      template: {
+        element: "div",
+        part: "root",
+        host: true,
+        children: [
+          {
+            element: "button",
+            part: "trigger",
+            also: ["sk-button", "sk-interactive", "sk-anchor"],
+            attrs: { type: "button" },
+            options: ["panelId"],
+            optionAttrs: { panelId: "popovertarget" },
+            slot: "trigger",
+          },
+          {
+            element: "div",
+            part: "positioner",
+            also: ["sk-popover__content", "sk-anchored"],
+            attrs: { popover: "auto" },
+            options: ["panelId", "placement"],
+            children: [
+              {
+                element: "span",
+                also: ["sk-anchored-arrow"],
+                attrs: { "aria-hidden": "true" },
+                whenGiven: "arrow",
+              },
+              { slot: "children" },
             ],
           },
         ],

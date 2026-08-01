@@ -2,85 +2,14 @@
 import Base from "../../../layouts/Base.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
-import { ComboboxBasicDemo } from "../../../components/react-demos/combobox";
+import { comboboxTree } from "../../../demos/combobox";
+import { getLocale, useTranslations } from "../../../i18n";
 import "@skryensya/core/components/combobox.css";
 import "@skryensya/core/components/field.css";
 import "@skryensya/core/patterns/scrollbar.css";
 
-/*
- * The full roster of countries, in Spanish, alphabetical. `value` is derived from the name so the
- * data stays a plain list: accents stripped, spaced/punctuated runs collapsed to single hyphens.
- * The combobox filters this whole set client-side, so "all countries" costs no more markup logic
- * than the four it used to ship — only more rows.
- */
-const slug = (name: string) =>
-  name
-    .normalize("NFD")
-    .replace(/\p{M}+/gu, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-
-const countries = [
-  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda",
-  "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas",
-  "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin",
-  "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei",
-  "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada",
-  "Cape Verde", "Central African Republic", "Chad", "Chile", "China", "Colombia",
-  "Comoros", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic",
-  "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica",
-  "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea",
-  "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France",
-  "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada",
-  "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras",
-  "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland",
-  "Israel", "Italy", "Ivory Coast", "Jamaica", "Japan", "Jordan", "Kazakhstan",
-  "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon",
-  "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg",
-  "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta",
-  "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia",
-  "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique",
-  "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand",
-  "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway",
-  "Oman", "Pakistan", "Palau", "Panama", "Papua New Guinea", "Paraguay",
-  "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Republic of the Congo",
-  "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia",
-  "Saint Vincent and the Grenadines", "Samoa", "San Marino",
-  "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles",
-  "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands",
-  "Somalia", "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka",
-  "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan",
-  "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago",
-  "Tunisia", "Türkiye", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine",
-  "United Arab Emirates", "United Kingdom", "United States", "Uruguay",
-  "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen",
-  "Zambia", "Zimbabwe",
-];
-
-const countryItems = countries
-  .map(
-    (name) => `      <div
-        class="sk-combobox__item sk-interactive"
-        data-sk-combobox-item
-        data-value="${slug(name)}"
-        data-value-text="${name}"
-      >
-        <span
-          class="sk-combobox__item-label"
-          data-sk-combobox-item-text
-        >
-          ${name}
-        </span>
-        <span
-          class="sk-combobox__item-indicator"
-          data-sk-combobox-item-indicator
-        >
-          <span data-sk-icon="check"></span>
-        </span>
-      </div>`,
-  )
-  .join("\n");
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
 
 const install = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/button.css";
@@ -88,99 +17,13 @@ const install = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/combobox.css";
 /* The list scrolls: the rail is painted by the pattern, marked with sk-scrollbar. */
 @import "@skryensya/core/patterns/scrollbar.css";`;
+
 const js = `import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 import { initComponents } from "@skryensya/vanilla/auto";
 
 mountIcons(document, lucideIcons);
 initComponents();`;
-const html = `<div class="sk-field sk-combobox" data-sk-combobox>
-  <label
-    class="sk-field__label sk-combobox__label"
-    data-sk-combobox-label
-  >
-    Country
-  </label>
-  <div class="sk-field__hint" data-sk-combobox-hint>
-    Write to filter. Use the arrows to scroll.
-  </div>
-  <div class="sk-combobox__control sk-anchor" data-sk-combobox-control>
-    <div class="sk-combobox__value" data-sk-combobox-value>
-      <input
-        class="sk-combobox__input"
-        data-sk-combobox-input
-        placeholder="Search country"
-      />
-    </div>
-    <button
-      class="sk-combobox__clear sk-button sk-interactive"
-      data-sk-button
-      data-sk-combobox-clear
-      data-icon-only
-      data-size="sm"
-      data-variant="ghost"
-      aria-label="Clear selection"
-      type="button"
-      hidden
-    >
-      <span data-sk-icon="close"></span>
-    </button>
-    <button
-      class="sk-combobox__trigger sk-button sk-interactive"
-      data-sk-button
-      data-sk-combobox-trigger
-      data-icon-only
-      data-size="sm"
-      data-variant="ghost"
-      aria-label="Show options"
-      type="button"
-    >
-      <span data-sk-icon="chevron-down"></span>
-    </button>
-  </div>
-  <div
-    class="sk-combobox__status sk-visually-hidden"
-    data-sk-combobox-status
-    role="status"
-    aria-atomic="true"
-  ></div>
-  <div
-    class="sk-combobox__positioner sk-anchored"
-    data-sk-combobox-positioner
-  >
-    <div
-      class="sk-combobox__content sk-scrollbar"
-      data-sk-combobox-content
-    >
-${countryItems}
-      <div
-        class="sk-combobox__empty"
-        data-sk-combobox-empty
-        hidden
-      >
-        No results
-      </div>
-    </div>
-  </div>
-</div>`;
-const react = `import { Combobox } from "@skryensya/react/combobox";
-import { Icon } from "@skryensya/react/icon";
-import { countries } from "./countries";
-// countries: { label: string; value: string }[] with the complete list of countries
-
-function Example() {
-  return (
-    <Combobox
-      label="Country"
-      hint="Write to filter. Use the arrows to scroll."
-      placeholder="Search country"
-      items={countries}
-      clearIndicator={<Icon name="close" />}
-      itemIndicator={<Icon name="check" />}
-      triggerIndicator={<Icon name="chevron-down" />}
-    />
-  );
-}`;
 ---
 
 <Base
@@ -191,17 +34,10 @@ function Example() {
   <p class="lede">Editable suggestions with context, clear statuses, and full keyboard navigation.</p>
 
   <h2>Facility</h2>
-  <ComponentPreview
-    html={html}
-    js={js}
-    react={react}
+  <ComponentPreview tree={comboboxTree(t, locale)} js={js}
     label="Combobox"
     viewport="menu"
-  >
-    <Fragment slot="react">
-      <ComboboxBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  />
 
   <h2>Contract</h2>
   <p>

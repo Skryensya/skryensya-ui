@@ -1,0 +1,12 @@
+# La estructura vive en packages/core/src/command-palette.ts. Acá sólo por qué se elige.
+
+CommandPalette:
+  useWhen:
+    - "hay muchos destinos o acciones y escribir el nombre llega antes que recorrerlos"
+    - "quien usa el producto seguido quiere llegar sin navegar"
+  avoidWhen:
+    - "las opciones son pocas y caben a la vista: eso es un Menu"
+    - "es el único camino a algo: una paleta complementa la navegación, no la reemplaza"
+  alternatives:
+    - Menu
+    - Combobox

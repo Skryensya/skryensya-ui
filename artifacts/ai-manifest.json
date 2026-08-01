@@ -6436,6 +6436,13 @@
           "trueValue": "",
           "type": "boolean"
         },
+        "bare": {
+          "attr": "data-bare",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
         "closeLabel": {
           "attr": "data-close-label",
           "default": "Cerrar",
@@ -6483,6 +6490,20 @@
           "useWhen": [
             "hace falta un panel con contenido propio colgado de un control: un formulario corto, una explicación con formato",
             "conviene que el navegador se encargue de cerrar al hacer clic afuera y con Escape"
+          ]
+        },
+        "Popover.bare": {
+          "alternatives": [
+            "Popover",
+            "Tooltip"
+          ],
+          "avoidWhen": [
+            "hay un título o algo que cerrar: eso es Popover y ya trae esa anatomía",
+            "es una descripción de una línea; eso es un Tooltip"
+          ],
+          "useWhen": [
+            "hace falta una superficie flotante y nada más: la composición trae su propia semántica",
+            "el patrón no tiene título ni acciones de cierre que justifiquen el chrome de Popover"
           ]
         }
       },
@@ -6597,6 +6618,92 @@
                     ],
                     "part": "close",
                     "textFromOption": "closeLabel"
+                  }
+                ],
+                "element": "div",
+                "options": [
+                  "panelId",
+                  "placement"
+                ],
+                "part": "positioner"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "Popover.bare": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "bare-floating-surface",
+            "anchored-panel-without-chrome",
+            "popup"
+          ],
+          "options": [
+            "panelId",
+            "placement",
+            "bare",
+            "arrow"
+          ],
+          "react": {
+            "from": "@skryensya/react/popover",
+            "name": "Popover"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "trigger": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive",
+                  "sk-anchor"
+                ],
+                "attrs": {
+                  "type": "button"
+                },
+                "element": "button",
+                "optionAttrs": {
+                  "panelId": "popovertarget"
+                },
+                "options": [
+                  "panelId"
+                ],
+                "part": "trigger",
+                "slot": "trigger"
+              },
+              {
+                "also": [
+                  "sk-popover__content",
+                  "sk-anchored"
+                ],
+                "attrs": {
+                  "popover": "auto"
+                },
+                "children": [
+                  {
+                    "also": [
+                      "sk-anchored-arrow"
+                    ],
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "span",
+                    "whenGiven": "arrow"
+                  },
+                  {
+                    "slot": "children"
                   }
                 ],
                 "element": "div",
@@ -11350,5 +11457,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "3a5a88e30170a223"
+  "sourceHash": "48d7982ea7e9f2b1"
 }

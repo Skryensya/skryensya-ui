@@ -52,8 +52,14 @@ test("every canonical tree paints something", async ({ page }) => {
     if (DRAWS_NOTHING.has(name)) continue;
 
     for (const binding of ["vanilla", "react"] as const) {
+      /*
+       * The first child that is not a FLOATING region. React portals its positioner into this same
+       * container, so for a menu or a select it lands ahead of the component itself — and a closed
+       * positioner is 0×0 by design, which made "paints something" measure the one element built
+       * not to. Vanilla nests the positioner instead, so it never hit this.
+       */
       const box = await page
-        .locator(`[data-case="${name}"] [data-binding="${binding}"] > *`)
+        .locator(`[data-case="${name}"] [data-binding="${binding}"] > *:not(.sk-anchored)`)
         .first()
         .boundingBox();
 

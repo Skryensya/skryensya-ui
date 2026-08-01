@@ -1,8 +1,9 @@
 import { selectParts, type SelectOption, type SelectOptions } from "@skryensya/core/select";
 import { select } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
-import { useMemo, useId, type ReactNode } from "react";
+import { useMemo, useId, type ReactNode, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
+import { Icon } from "./icon.js";
 
 export type SelectProps = Omit<SelectOptions, "options"> & {
   label?: ReactNode;
@@ -13,9 +14,20 @@ export type SelectProps = Omit<SelectOptions, "options"> & {
   /** Decorative checked-state geometry supplied by the consumer's bound icon set. */
   itemIndicator?: ReactNode;
   options: readonly SelectOption[];
+  /**
+   * Where the floating listbox is portalled. Defaults to `document.body`, which is right whenever
+   * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead — a preview
+   * frame, or a scoped harness.
+   *
+   * The contract declares `portals: true` so `renderTree` hands this down, and for a while nothing
+   * received it: the listbox landed on `document.body`, outside the container G2 measures, and the
+   * gate saw React render no floating region at all.
+   */
+  container?: RefObject<HTMLElement>;
 };
 
 export function Select({
+  container,
   id,
   name,
   label,
@@ -85,14 +97,21 @@ export function Select({
           {...anchor.anchor(`${selectParts.trigger} sk-interactive`)}
           type="button"
         >
-          <span className={selectParts.value}>{api.valueAsString || placeholder}</span>
-          <span aria-hidden="true" className={selectParts.indicator}>
-            <span data-state="closed">{indicator}</span>
-            <span data-state="open">{openIndicator}</span>
+          <span {...api.getValueTextProps()} className={selectParts.value}>
+            {api.valueAsString || placeholder}
+          </span>
+          <span {...api.getIndicatorProps()} aria-hidden="true" className={selectParts.indicator}>
+            {/*
+              * The template paints all three of these, so authored markup always had them and React
+              * only did when a caller remembered to pass one. Defaults, not opt-ins — pass null to
+              * suppress one deliberately.
+              */}
+            <span data-state="closed">{indicator ?? <Icon name="chevron-down" />}</span>
+            <span data-state="open">{openIndicator ?? <Icon name="chevron-up" />}</span>
           </span>
         </button>
       </div>
-      <Portal>
+      <Portal container={container}>
         <div {...anchor.positioner(api.getPositionerProps(), selectParts.positioner)}>
           <ul {...api.getContentProps()} className={selectParts.content}>
             {options.map((option) => (
@@ -101,7 +120,7 @@ export function Select({
                   {option.label}
                 </span>
                 <span {...api.getItemIndicatorProps({ item: option })} className={selectParts.itemIndicator}>
-                  {itemIndicator}
+                  {itemIndicator ?? <Icon name="check" />}
                 </span>
               </li>
             ))}

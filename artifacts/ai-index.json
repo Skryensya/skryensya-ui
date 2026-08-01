@@ -1038,6 +1038,35 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/menu.css",
+      "id": "menu",
+      "signatures": [
+        {
+          "alternatives": [
+            "Select",
+            "Flyout"
+          ],
+          "avoidWhen": [
+            "es una elección de un valor dentro de un formulario; eso es Select",
+            "el contenido es una descripción y no una lista de acciones; eso es Tooltip o Flyout"
+          ],
+          "host": "div",
+          "id": "Menu",
+          "intent": [
+            "a-list-of-commands",
+            "actions-behind-a-trigger",
+            "submenu"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un conjunto de comandos que actúan sobre algo, detrás de un disparador",
+            "las acciones son demasiadas para mostrarlas todas, o son secundarias",
+            "un submenú: la misma lista, anidada sin límite"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/patterns/nav-list.css",
       "id": "nav-list",
       "signatures": [
@@ -2478,5 +2507,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "0fd7e6236d9c888e"
+  "sourceHash": "9dc960d45450ca14"
 }

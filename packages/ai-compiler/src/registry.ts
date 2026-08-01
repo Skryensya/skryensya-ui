@@ -30,6 +30,7 @@ import { calendarContract } from "@skryensya/core/calendar";
 import { datePickerContract } from "@skryensya/core/date-picker";
 import { copyButtonContract } from "@skryensya/core/copy-button";
 import { dialogContract } from "@skryensya/core/dialog";
+import { splitButtonContract } from "@skryensya/core/split-button";
 import { segmentedContract } from "@skryensya/core/segmented";
 import { sliderContract } from "@skryensya/core/slider";
 import { avatarContract } from "@skryensya/core/avatar";
@@ -115,6 +116,7 @@ export const contracts = {
   "date-picker": datePickerContract,
   "copy-button": copyButtonContract,
   dialog: dialogContract,
+  "split-button": splitButtonContract,
   typography: typographyContract,
   wrapper: wrapperContract,
   tabs: tabsContract,

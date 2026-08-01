@@ -7299,6 +7299,85 @@
         }
       }
     },
+    "split-button": {
+      "css": "@skryensya/core/components/split-button.css",
+      "id": "split-button",
+      "options": {},
+      "parts": {
+        "primary": "sk-split-button__primary",
+        "root": "sk-split-button",
+        "trigger": "sk-split-button__trigger"
+      },
+      "semantics": {
+        "SplitButton": {
+          "alternatives": [
+            "Menu",
+            "Button.action"
+          ],
+          "avoidWhen": [
+            "las acciones no son variantes de una misma cosa; eso es un Menu solo",
+            "hay una sola acción: eso es un Button"
+          ],
+          "useWhen": [
+            "hay una acción que casi todos quieren y unas pocas variantes de la misma acción",
+            "conviene que la principal esté a un clic y las otras no ocupen lugar"
+          ]
+        }
+      },
+      "signatures": {
+        "SplitButton": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "primary-action-with-alternatives",
+            "default-plus-more",
+            "save-and-save-as"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/split-button",
+            "name": "SplitButton"
+          },
+          "slots": {
+            "children": {
+              "accepts": "text",
+              "required": true
+            },
+            "menu": {
+              "accepts": "signature",
+              "of": [
+                "Menu"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "data-variant": "primary",
+                  "type": "button"
+                },
+                "element": "button",
+                "part": "primary",
+                "slot": "children"
+              },
+              {
+                "slot": "menu"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "stat": {
       "css": "@skryensya/core/components/stat.css",
       "id": "stat",
@@ -10709,5 +10788,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "1543f8194262f22a"
+  "sourceHash": "e88271d422c8cd81"
 }

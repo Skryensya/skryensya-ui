@@ -1,0 +1,12 @@
+# La estructura vive en packages/core/src/split-button.ts. Acá sólo por qué se elige.
+
+SplitButton:
+  useWhen:
+    - "hay una acción que casi todos quieren y unas pocas variantes de la misma acción"
+    - "conviene que la principal esté a un clic y las otras no ocupen lugar"
+  avoidWhen:
+    - "las acciones no son variantes de una misma cosa; eso es un Menu solo"
+    - "hay una sola acción: eso es un Button"
+  alternatives:
+    - Menu
+    - Button.action

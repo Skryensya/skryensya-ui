@@ -666,6 +666,25 @@ const signatureTrees: readonly Canonical[] = [
       slots: { label: "Fecha de la reserva" },
     },
   },
+  /* The first tooltip tree there has ever been: nothing compared the two bindings until now. */
+  {
+    name: "tooltip/on-an-icon-button",
+    enhanced: true,
+    tree: {
+      contract: "tooltip",
+      signature: "Tooltip",
+      slots: {
+        children: {
+          contract: "button",
+          signature: "Button.action",
+          options: { iconOnly: true },
+          attrs: { "aria-label": "Archivar" },
+          slots: { children: "🗄" },
+        },
+        content: "Archiva el hilo sin borrarlo",
+      },
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

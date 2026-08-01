@@ -93,7 +93,19 @@ export function Tooltip({
   ) : null;
 
   return (
-    <>
+    /*
+     * A ROOT ELEMENT, not a fragment. The enhancer's whole scan is scoped to `[data-sk-anchor]` — it
+     * finds the trigger, the positioner and the content by querying inside it — so authored markup
+     * cannot omit it, which means the template cannot either, which means this binding owes the same
+     * element. Rendering a fragment made the two bindings disagree about the outermost node of the
+     * component, and nothing compared them until a canonical tree existed.
+     */
+    /*
+     * The root carries the MACHINE's id, as the enhancer's root does — Zag points `data-ownedby` at
+     * it from the trigger, so without it that attribute referenced an element this binding never
+     * rendered. A dangling reference, identical in shape to a mistyped `aria-describedby`.
+     */
+    <span className={tooltipParts.root} id={id ?? generatedId}>
       {/*
        * `getTriggerProps` returns button props, so the trigger is a real span-wrapper around whatever
        * the consumer passed rather than a nested <button>: wrapping their control in our own button
@@ -102,23 +114,27 @@ export function Tooltip({
       <span {...triggerProps} {...anchor.anchor(tooltipParts.trigger, triggerProps.style)}>
         {children}
       </span>
-      {api.open ? (
-        <Portal container={container}>
+      {/*
+       * Rendered whether or not it is open, and hidden by the machine's own `hidden` prop — the same
+       * rendered-and-hidden rule the combobox and the date picker follow. The enhancer patches
+       * authored markup that is always present, so "closed" has to mean hidden rather than absent
+       * for the two bindings to describe one component.
+       */}
+      <Portal container={container}>
+        <div
+          {...anchor.positioner(api.getPositionerProps(), tooltipParts.positioner)}
+          data-sk-placement={side}
+        >
+          {arrowNode}
           <div
-            {...anchor.positioner(api.getPositionerProps(), tooltipParts.positioner)}
-            data-sk-placement={side}
+            {...contentProps}
+            className={tooltipParts.content}
+            data-interactive={interactive ? undefined : "false"}
           >
-            {arrowNode}
-            <div
-              {...contentProps}
-              className={tooltipParts.content}
-              data-interactive={interactive ? undefined : "false"}
-            >
-              {content}
-            </div>
+            {content}
           </div>
-        </Portal>
-      ) : null}
-    </>
+        </div>
+      </Portal>
+    </span>
   );
 }

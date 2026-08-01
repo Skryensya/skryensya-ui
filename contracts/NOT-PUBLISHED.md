@@ -48,7 +48,12 @@ contrato:
 
 Contra las 66 páginas de `componentes/`, el estado es: las que tienen contrato lo tienen publicado y
 con árbol canónico, y sus dos capas están comparadas por G2. De las que no, tres no deberían tenerlo
-(arriba), una es una receta, una es un alias, y cuatro son trabajo pendiente de verdad.
+(arriba), una es una receta, una es un alias, y **tres** son trabajo pendiente de verdad —
+`command-palette`, `split-button` y `popover`.
+
+`dialog` estaba en esa lista y ya no: se publicó escribiéndole la mitad de React que faltaba, igual
+que `copy-button`. Los dos siguen el mismo patrón y vale como receta para los que quedan — el
+contrato no es lo que falta, es la capa que nunca se escribió.
 
 ## Demos que se quedan autorados aunque el contrato exista
 

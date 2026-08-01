@@ -280,10 +280,6 @@
       "types": "./src/components/number-field.tsx",
       "default": "./src/components/number-field.tsx"
     },
-    "./popup": {
-      "types": "./src/components/popup.tsx",
-      "default": "./src/components/popup.tsx"
-    },
     "./split-button": {
       "types": "./src/components/split-button.tsx",
       "default": "./src/components/split-button.tsx"

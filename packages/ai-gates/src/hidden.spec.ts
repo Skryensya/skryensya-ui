@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures.js";
 
 /*
  * `Loader.status` is the one signature whose correctness is that it draws NOTHING while still being
@@ -9,13 +9,8 @@ import { expect, test } from "@playwright/test";
  * in review (the text just appears, and it reads like a label someone meant to add) and invisible in
  * every other gate. This is the only place that would notice.
  */
-test.beforeEach(async ({ page }) => {
-  await page.goto("/");
-  await page.waitForSelector('body[data-ready="true"]');
-});
-
 for (const binding of ["vanilla", "react"] as const) {
-  test(`the ${binding} visually-hidden status is announced and not drawn`, async ({ page }) => {
+  test(`the ${binding} visually-hidden status is announced and not drawn`, async ({ stagePage: page }) => {
     const status = page.locator(
       `[data-case="loader/status-only"] [data-binding="${binding}"] .sk-visually-hidden`,
     );

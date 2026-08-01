@@ -1,5 +1,5 @@
-import { expect, test } from "@playwright/test";
 import { recipes } from "@skryensya/recipes";
+import { expect, test } from "./fixtures.js";
 
 /*
  * The one thing a recipe claims that no single tree can: that its four states are FOUR STATES.
@@ -15,13 +15,8 @@ import { recipes } from "@skryensya/recipes";
  * see the spinner, and that is exactly the reader this catches.
  */
 
-test.beforeEach(async ({ page }) => {
-  await page.goto("/");
-  await page.waitForSelector('body[data-ready="true"]');
-});
-
 for (const recipe of recipes) {
-  test(`${recipe.id} — its four states are four different screens`, async ({ page }) => {
+  test(`${recipe.id} — its four states are four different screens`, async ({ stagePage: page }) => {
     const snapshots = new Map<string, string>();
 
     for (const state of Object.keys(recipe.states)) {

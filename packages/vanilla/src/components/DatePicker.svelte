@@ -7,6 +7,7 @@
     supportsAnchorPositioning,
   } from "@skryensya/core/anchored";
   import { datePicker } from "@skryensya/core/machines";
+  import { parseCalendarDate } from "@skryensya/core/calendar";
   import { datePickerParts } from "@skryensya/core/date-picker";
   import { calendarParts } from "@skryensya/core/calendar";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
@@ -55,6 +56,11 @@
     locale,
     timeZone: root.dataset.timeZone || "UTC",
     selectionMode: (root.dataset.selectionMode === "range" ? "range" : "single") as "single" | "range",
+    /* La fecha inicial y el rango permitido. Faltaban las tres: el markup autorado no tenía forma de
+     * decir ninguna, mientras el binding React aceptaba props que esta mitad descartaba. */
+    defaultValue: root.dataset.value?.split(" ").filter(Boolean).map((date) => parseCalendarDate(date)!),
+    min: parseCalendarDate(root.dataset.min),
+    max: parseCalendarDate(root.dataset.max),
     disabled: root.hasAttribute("data-disabled"),
     readOnly: root.hasAttribute("data-readonly"),
     required: root.hasAttribute("data-required"),

@@ -27,22 +27,27 @@ estados distintos.
 un Vaul"*. Es el patrón `vaul` más una hoja que lo ancla a un borde. Lo que puede faltar acá es el
 contrato de **vaul**, no uno de drawer.
 
-## Son componentes, y les falta una capa
+## Los que faltaban, y ya no
 
-Estos sí son huecos reales, y cada uno está bloqueado en escribir un binding, no en escribir un
-contrato:
+Cinco páginas llegaron acá sin contrato y salieron con uno. Ninguna estaba bloqueada por el
+contrato: cuatro de las cinco necesitaban una CAPA que nunca se había escrito, y la quinta necesitaba
+dejar de acoplarse.
 
-- **`command-palette`** — parts en core y enhancer vanilla completo (scoring difuso, navegación por
-  teclado, control del `<dialog>`). No hay binding de React. Misma forma que tenía `copy-button`
-  antes de publicarse: hay que escribir la mitad faltante primero.
-- **`popover`** — el comportamiento es de la plataforma (Popover API), así que su "enhancer" puede
-  ser legítimamente nada, igual que `Select.native` no tiene uno. Dos de sus tres bloqueos ya están
-  resueltos: `popovertarget` es una referencia de id para el gate de simetría, y `optionAttrs` deja
-  que un mismo id autorado sea el `id` del panel y el `popovertarget` del trigger. Queda uno
-  estructural: **sin enhancer, nadie escribe el nombre de ancla en el markup autorado**. React genera
-  `--sk-anchored-name` inline por instancia y un template no puede, porque el nombre tiene que ser
-  único por instancia y un template es el mismo texto siempre. Es una pregunta sobre el patrón
-  Anclaje —quién nombra el ancla cuando no hay JS— y no una línea que falte.
+- **`copy-button`**, **`dialog`** y **`command-palette`** — tenían enhancer vanilla y ningún
+  binding de React. Un contrato nombra un export de React, G1 verifica que exista y G2 compara las
+  dos capas; con una sola no hay contrato, hay un script con parts. Escribir la mitad faltante fue lo
+  que los hizo publicables, no al revés.
+- **`split-button`** — las dos capas existían. Lo que estorbaba era que su React construía el menú
+  desde un prop plano y le pasaba una clase que un Menu compuesto no puede recibir, porque esa clase
+  pertenece a quien dibuja ese botón. La hoja lo alcanza por estructura y la composición quedó
+  posible.
+- **`popover`** — parecía bloqueado por el patrón Anclaje: nadie escribe el nombre de ancla cuando
+  no hay JS, y un template no puede generar uno único por instancia. La salida fue dejar de generar
+  nombres: `anchor-scope` acota uno estático al subárbol.
+
+Los tres publicados por la vía "faltaba la capa" comparten una regla que conviene repetir: el
+binding nuevo COPIA el comportamiento del enhancer, incluidos sus estados vacíos y de error, en vez
+de mejorarlo. Los dos tienen que describir un componente, no dos parecidos.
 
 ## Cómo se cuenta
 

@@ -28,6 +28,7 @@ export type LinkTone = "primary";
 
 export const typographyParts = {
   text: "sk-text",
+  code: "sk-code",
   heading: "sk-heading",
   link: "sk-link",
 } as const;
@@ -107,6 +108,26 @@ export const typographyContract = {
       slots: { children: { accepts: "node", required: true } },
       template: { element: "output", host: true, slot: "children" },
       react: { from: "@skryensya/react/typography", name: "Output" },
+    },
+
+    /*
+     * INLINE CODE — a literal in the middle of a sentence: a path, a flag, a property name.
+     *
+     * It did not exist until now, and the absence was only visible from a tree: the accordion demo's
+     * prose wraps `/status` in a `<code>` that no signature could emit, so converting that page
+     * had to drop the monospace. `Strong` was the nearest thing available and it is the wrong
+     * claim — a path is not emphasis.
+     *
+     * A BLOCK of code is a different component (`code-preview`), with its own scrolling, copy
+     * control and language label. This is the one that lives inside a paragraph.
+     */
+    Code: {
+      intent: ["inline-code", "a-path-in-a-sentence", "a-flag-or-property-name"],
+      host: { element: "code" },
+      options: [],
+      slots: { children: { accepts: "text", required: true } },
+      template: { element: "code", part: "code", host: true, slot: "children" },
+      react: { from: "@skryensya/react/typography", name: "Code" },
     },
 
     Heading: {

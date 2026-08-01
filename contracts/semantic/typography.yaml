@@ -37,3 +37,13 @@ Output:
     - "es texto estático sin relación con un cálculo; eso es Text"
   alternatives:
     - Text
+
+Code:
+  useWhen:
+    - "hay un literal dentro de una frase: una ruta, un flag, el nombre de una propiedad"
+    - "conviene que se lea distinto del texto que lo rodea para no confundirlo con prosa"
+  avoidWhen:
+    - "es un bloque de código entero: eso es CodePreview, con su scroll y su botón de copiar"
+    - "sólo se busca énfasis; eso es Strong y es otra afirmación"
+  alternatives:
+    - Strong

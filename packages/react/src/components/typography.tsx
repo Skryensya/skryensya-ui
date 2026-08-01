@@ -50,6 +50,17 @@ export type HeadingProps = Omit<HTMLAttributes<HTMLHeadingElement>, "children"> 
   flush?: boolean;
 };
 
+export type CodeProps = HTMLAttributes<HTMLElement> & { children?: ReactNode };
+
+/** A literal inside a sentence. A whole block of code is `code-preview`, not this. */
+export function Code({ children, className, ...props }: CodeProps) {
+  return (
+    <code {...props} className={className ? `${typographyParts.code} ${className}` : typographyParts.code}>
+      {children}
+    </code>
+  );
+}
+
 export function Heading({ as: Component = "h2", children, className, flush = false, size = "h2", ...props }: HeadingProps) {
   return (
     <Component

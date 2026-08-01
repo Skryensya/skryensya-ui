@@ -187,3 +187,21 @@
     inset-inline: -0.28em;
   }
 }
+
+@layer components {
+  /*
+   * Inline code: a literal in the middle of a sentence. Sized in `em` so it tracks whatever text it
+   * sits in — a path inside a caption should not come out the size of one inside a heading — and
+   * kept to a tint rather than a box, because a border on every flag name turns prose into a fence.
+   */
+  .sk-code {
+    padding-inline: 0.3em;
+    padding-block: 0.1em;
+    border-radius: var(--radius-xs, 0.25rem);
+    background: var(--color-surface-sunken, rgb(0 0 0 / 6%));
+    color: var(--color-text-primary);
+    font-family: var(--font-family-code);
+    font-size: 0.9em;
+    overflow-wrap: anywhere;
+  }
+}

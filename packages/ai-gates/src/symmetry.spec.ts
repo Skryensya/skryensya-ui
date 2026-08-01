@@ -78,6 +78,14 @@ const idReferences = [
   // A label's `for` is an id reference like any other: the relationship is what has to match, and
   // React generates ids with useId while the emitter slugs the label text.
   "for",
+  /*
+   * The native Popover API's wiring is an id reference too, and the same rule applies for the same
+   * reason: what has to hold is that the trigger points at the element that IS the popover, not that
+   * both bindings invented the same string for it. Listed before anything uses it, because the
+   * alternative is discovering it as a false divergence the first time a popover is compared — the
+   * shape of failure `for` and `aria-controls` are already here to prevent.
+   */
+  "popovertarget",
 ];
 
 for (const { name } of canonicalTrees) {

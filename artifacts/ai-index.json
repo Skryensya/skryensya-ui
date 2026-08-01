@@ -480,6 +480,34 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/command-palette.css",
+      "id": "command-palette",
+      "signatures": [
+        {
+          "alternatives": [
+            "Menu",
+            "Combobox"
+          ],
+          "avoidWhen": [
+            "las opciones son pocas y caben a la vista: eso es un Menu",
+            "es el único camino a algo: una paleta complementa la navegación, no la reemplaza"
+          ],
+          "host": "dialog",
+          "id": "CommandPalette",
+          "intent": [
+            "command-palette",
+            "search-everything",
+            "keyboard-first-navigation"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay muchos destinos o acciones y escribir el nombre llega antes que recorrerlos",
+            "quien usa el producto seguido quiere llegar sin navegar"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/toast.css",
       "id": "content",
       "signatures": [
@@ -2746,5 +2774,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "4a9634308052b3b6"
+  "sourceHash": "7891c55faf35ec1f"
 }

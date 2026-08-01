@@ -1,3 +1,4 @@
+import type { ComponentContract } from "./contract.js";
 /*
  * COMMAND PALETTE, a searchable listbox inside a native Dialog.
  *
@@ -89,3 +90,117 @@ export function commandPaletteOptionContext(entry: CommandPaletteEntry): string 
   if (entry.section && entry.group) return `${entry.section} › ${entry.group}`;
   return entry.section ?? entry.group ?? "";
 }
+
+/*
+ * COMMAND PALETTE, the contract — the last of the ten pages that had none.
+ *
+ * The enhancer shipped with no React counterpart, so this could not be a contract at all: one
+ * binding is not a contract, it is a script. Writing the missing half is what made it possible, the
+ * same way it did for `copy-button` and `dialog`.
+ *
+ * THE LIST IS EMPTY IN THE MARKUP, on purpose: the enhancer only fills it when the palette opens,
+ * and the React half copies that rather than improving on it. What a composition supplies is the
+ * INDEX, and the enhancer reads that from a JSON script the way authored markup has to.
+ *
+ * `aria-expanded` is NOT written here, and that is a fix rather than an omission. The authored
+ * markup on the docs page hardcoded `aria-expanded="true"` — a combobox announcing an expanded
+ * popup over an empty listbox, which axe reports and a screen reader would act on. Both bindings set
+ * it when there is something to expand; neither claims it at rest.
+ */
+export const commandPaletteContract = {
+  id: "command-palette",
+  css: "@skryensya/core/components/command-palette.css",
+  parts: commandPaletteParts,
+
+  options: {
+    /** Names the dialog for anyone who cannot see it. An option, not a slot: both bindings put it
+     * on `aria-label`, and a visually-hidden element would be a second way to say one thing. */
+    label: { type: "string", attr: "aria-label" },
+    /** The dialog's own id: the trigger points at it and the index is keyed to it. */
+    paletteId: { type: "string", attr: "id", prop: "id" },
+    /** Shown in the search field while it is empty. */
+    placeholder: { type: "string", default: "Buscar…", attr: "placeholder" },
+    /** What the empty state says once a filter matches nothing. */
+    emptyLabel: { type: "string", default: "Sin resultados.", attr: "data-empty-label", machineInput: true },
+    /** Rendered already open, non-modally — the platform's attribute, same as `Dialog.open`. */
+    open: { type: "boolean", default: false, attr: "open", trueValue: "" },
+  },
+
+  signatures: {
+    CommandPalette: {
+      intent: ["command-palette", "search-everything", "keyboard-first-navigation"],
+      host: { element: "dialog" },
+      mount: commandPaletteAttrs.root,
+      options: ["label", "paletteId", "placeholder", "emptyLabel", "open"],
+      slots: {},
+      template: {
+        element: "dialog",
+        part: "root",
+        also: ["sk-dialog"],
+        host: true,
+        children: [
+          {
+            element: "div",
+            part: "search",
+            children: [
+              { element: "span", attrs: { "data-sk-icon": "search", "data-sk-icon-size": "md" } },
+              {
+                element: "input",
+                part: "input",
+                mount: commandPaletteAttrs.input,
+                options: ["placeholder"],
+                attrs: {
+                  type: "text",
+                  role: "combobox",
+                  autocomplete: "off",
+                  spellcheck: "false",
+                  "aria-expanded": "false",
+                  "aria-autocomplete": "list",
+                },
+              },
+              {
+                element: "form",
+                attrs: { method: "dialog" },
+                children: [
+                  {
+                    element: "button",
+                    part: "close",
+                    also: ["sk-button", "sk-dialog__close", "sk-interactive"],
+                    attrs: {
+                      type: "submit",
+                      value: "cancel",
+                      "aria-label": "Cerrar",
+                      "data-icon-only": "",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                    },
+                    children: [
+                      { element: "span", attrs: { "data-sk-icon": "close", "data-sk-icon-size": "md" } },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            /* Empty by construction: the enhancer fills it on open, and so does the React half. */
+            element: "ul",
+            part: "list",
+            also: ["sk-scrollbar"],
+            mount: commandPaletteAttrs.list,
+            attrs: { role: "listbox", "aria-label": "Resultados" },
+          },
+          {
+            element: "p",
+            part: "empty",
+            mount: commandPaletteAttrs.empty,
+            options: ["emptyLabel"],
+            attrs: { hidden: "" },
+            textFromOption: "emptyLabel",
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/command-palette", name: "CommandPalette" },
+    },
+  },
+} as const satisfies ComponentContract;

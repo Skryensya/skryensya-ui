@@ -49,3 +49,23 @@ contrato:
 Contra las 66 páginas de `componentes/`, el estado es: las que tienen contrato lo tienen publicado y
 con árbol canónico, y sus dos capas están comparadas por G2. De las que no, tres no deberían tenerlo
 (arriba), una es una receta, una es un alias, y cuatro son trabajo pendiente de verdad.
+
+## Demos que se quedan autorados aunque el contrato exista
+
+Un árbol es una composición ESTÁTICA. Cuando lo que la demo enseña es una interacción que sólo
+existe en el tiempo — abrir, cerrar, elegir — el árbol puede emitir el componente pero no la lección.
+En esos casos la página se queda autorada a propósito, y el contrato igual está publicado y
+comparado por G2 con su propio árbol canónico.
+
+- **`dialog`** — su demo es un botón que abre el diálogo y un `previewScript` que llama a
+  `showModal()`. El contrato expone `open`, que es la parte de "está mostrándose" que el markup
+  autorado SÍ puede decir, pero `showModal()` es una llamada y no markup: emitir el árbol dejaría un
+  diálogo abierto y sin el botón que lo abre, que es justo lo que la página enseña.
+- **`date-picker`**, el preview nativo — un `<input type="date">` dentro del chrome compartido de
+  campo. Es la capa sin JS, no una composición de este componente.
+- **`accordion`**, el preview de `<details>` — otro componente, con su propia anatomía.
+
+La regla no es "esta página es difícil". Es que el árbol REEMPLAZA el slot del preview, así que
+cuando la demo necesita más de lo que el contrato emite, convertirla degrada la página. La
+alternativa correcta no es forzar el árbol: es que el contrato crezca hasta cubrir lo que falta, o
+que la demo se quede donde está y lo diga.

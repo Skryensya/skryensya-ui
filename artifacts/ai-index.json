@@ -603,6 +603,35 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/dialog.css",
+      "id": "dialog",
+      "signatures": [
+        {
+          "alternatives": [
+            "Flyout",
+            "Tooltip"
+          ],
+          "avoidWhen": [
+            "es información auxiliar que no bloquea; eso es un Tooltip o un Flyout",
+            "es una lista de acciones colgada de un botón; eso es un Menu",
+            "el contenido es largo o navegable: eso pide una página, no una caja modal"
+          ],
+          "host": "dialog",
+          "id": "Dialog",
+          "intent": [
+            "modal-dialog",
+            "blocking-confirmation",
+            "focused-task"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay que decidir algo antes de seguir: confirmar un borrado, completar un paso corto",
+            "conviene que el resto de la página quede inerte mientras tanto"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/empty-state.css",
       "id": "empty-state",
       "signatures": [
@@ -2659,5 +2688,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "ccc7eff7e3e71db8"
+  "sourceHash": "1543f8194262f22a"
 }

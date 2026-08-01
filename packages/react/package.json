@@ -307,6 +307,10 @@
     "./copy-button": {
       "types": "./src/components/copy-button.tsx",
       "default": "./src/components/copy-button.tsx"
+    },
+    "./dialog": {
+      "types": "./src/components/dialog.tsx",
+      "default": "./src/components/dialog.tsx"
     }
   },
   "scripts": {

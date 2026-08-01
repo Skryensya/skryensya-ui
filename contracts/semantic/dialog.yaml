@@ -1,0 +1,13 @@
+# La estructura vive en packages/core/src/dialog.ts. Acá sólo por qué se elige.
+
+Dialog:
+  useWhen:
+    - "hay que decidir algo antes de seguir: confirmar un borrado, completar un paso corto"
+    - "conviene que el resto de la página quede inerte mientras tanto"
+  avoidWhen:
+    - "es información auxiliar que no bloquea; eso es un Tooltip o un Flyout"
+    - "es una lista de acciones colgada de un botón; eso es un Menu"
+    - "el contenido es largo o navegable: eso pide una página, no una caja modal"
+  alternatives:
+    - Flyout
+    - Tooltip

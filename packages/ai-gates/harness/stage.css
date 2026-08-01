@@ -27,6 +27,16 @@
 
 #stage [data-binding] {
   padding: 0.5rem;
+  /*
+   * A CONTAINING BLOCK PER BINDING, so a case cannot position itself over its neighbours.
+   *
+   * An open `<dialog>` is `position: absolute` by UA style and resolves against the nearest
+   * positioned ancestor — with none, that is the whole page, so it floated across the stage and the
+   * visual baseline stopped reproducing between runs. This is the same isolation the id prefixes
+   * already give: every case shares one document, so anything the platform resolves against an
+   * ancestor has to be scoped or the cases read each other.
+   */
+  position: relative;
 }
 
 /*

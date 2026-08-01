@@ -2770,6 +2770,149 @@
         }
       }
     },
+    "dialog": {
+      "css": "@skryensya/core/components/dialog.css",
+      "id": "dialog",
+      "options": {
+        "closeLabel": {
+          "attr": "data-close-label",
+          "default": "Cerrar",
+          "machineInput": true,
+          "type": "string"
+        },
+        "open": {
+          "attr": "open",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        }
+      },
+      "parts": {
+        "body": "sk-dialog__body",
+        "close": "sk-dialog__close",
+        "footer": "sk-dialog__footer",
+        "header": "sk-dialog__header",
+        "root": "sk-dialog",
+        "title": "sk-dialog__title"
+      },
+      "semantics": {
+        "Dialog": {
+          "alternatives": [
+            "Flyout",
+            "Tooltip"
+          ],
+          "avoidWhen": [
+            "es información auxiliar que no bloquea; eso es un Tooltip o un Flyout",
+            "es una lista de acciones colgada de un botón; eso es un Menu",
+            "el contenido es largo o navegable: eso pide una página, no una caja modal"
+          ],
+          "useWhen": [
+            "hay que decidir algo antes de seguir: confirmar un borrado, completar un paso corto",
+            "conviene que el resto de la página quede inerte mientras tanto"
+          ]
+        }
+      },
+      "signatures": {
+        "Dialog": {
+          "host": {
+            "element": "dialog"
+          },
+          "intent": [
+            "modal-dialog",
+            "blocking-confirmation",
+            "focused-task"
+          ],
+          "options": [
+            "closeLabel",
+            "open"
+          ],
+          "react": {
+            "from": "@skryensya/react/dialog",
+            "name": "Dialog"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "footer": {
+              "accepts": "node"
+            },
+            "title": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "element": "h2",
+                    "part": "title",
+                    "slot": "title"
+                  },
+                  {
+                    "attrs": {
+                      "method": "dialog"
+                    },
+                    "children": [
+                      {
+                        "also": [
+                          "sk-button",
+                          "sk-interactive"
+                        ],
+                        "attrs": {
+                          "data-icon-only": "",
+                          "data-size": "sm",
+                          "data-variant": "ghost",
+                          "type": "submit",
+                          "value": "cancel"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "close",
+                              "data-sk-icon-size": "sm"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "button",
+                        "optionAttrs": {
+                          "closeLabel": "aria-label"
+                        },
+                        "options": [
+                          "closeLabel"
+                        ],
+                        "part": "close"
+                      }
+                    ],
+                    "element": "form"
+                  }
+                ],
+                "element": "header",
+                "part": "header"
+              },
+              {
+                "element": "div",
+                "part": "body",
+                "slot": "children"
+              },
+              {
+                "element": "footer",
+                "part": "footer",
+                "slot": "footer",
+                "whenGiven": "footer"
+              }
+            ],
+            "element": "dialog",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "empty-state": {
       "css": "@skryensya/core/components/empty-state.css",
       "id": "empty-state",
@@ -10566,5 +10709,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "ccc7eff7e3e71db8"
+  "sourceHash": "1543f8194262f22a"
 }

@@ -758,6 +758,20 @@ const signatureTrees: readonly Canonical[] = [
       ],
     },
   },
+  /* Behaviour the browser owns entirely: no enhancer, no machine, nothing to anchor. */
+  {
+    name: "dialog/confirm",
+    enhanced: false,
+    tree: {
+      contract: "dialog",
+      signature: "Dialog",
+      options: { open: true },
+      slots: {
+        title: "Borrar el despliegue",
+        children: "Esto quita las tres réplicas y no se puede deshacer.",
+      },
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

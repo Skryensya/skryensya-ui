@@ -2,7 +2,7 @@ import { comboboxParts, type ComboboxItem } from "@skryensya/core/combobox";
 import { fieldParts } from "@skryensya/core/field";
 import { combobox } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
-import { useId, useMemo, useState, type ReactNode } from "react";
+import { useId, useMemo, useState, type ReactNode, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
 const cx = (...classes: Array<string | undefined>) =>
   classes.filter(Boolean).join(" ");
@@ -19,11 +19,21 @@ const navigationKeys = new Set([
   "PageUp",
   "PageDown",
 ]);
+// The machine takes an array even when only one thing can be chosen. Authored markup carries a
+// single `data-value`, so a lone string has to reach it as the one-element array it means.
+const asValues = (value: string | readonly string[] | undefined) =>
+  value === undefined ? undefined : typeof value === "string" ? [value] : [...value];
 const defaultRemoveLabel = (item: ComboboxItem) => `Quitar ${item.label}`;
 const defaultResultCountLabel = ({ count }: { count: number }) =>
   count === 1 ? "1 resultado disponible" : `${count} resultados disponibles`;
 
 export type ComboboxProps = {
+  /**
+   * Where the positioned listbox is portalled. Absent it goes to the body, which is right in a page
+   * and wrong in the gate: the listbox would land outside the box G2 measures, and the two bindings
+   * would be compared with one of them missing its whole floating half.
+   */
+  container?: RefObject<HTMLElement>;
   id?: string;
   name?: string;
   label: ReactNode;
@@ -35,8 +45,8 @@ export type ComboboxProps = {
   readOnly?: boolean;
   required?: boolean;
   multiple?: boolean;
-  value?: string[];
-  defaultValue?: string[];
+  value?: string | readonly string[];
+  defaultValue?: string | readonly string[];
   inputValue?: string;
   defaultInputValue?: string;
   openOnClick?: boolean;
@@ -59,6 +69,7 @@ export function Combobox({
   allowCustomValue,
   clearLabel = "Limpiar selección",
   clearIndicator,
+  container,
   defaultInputValue = "",
   defaultValue,
   disabled,
@@ -104,7 +115,10 @@ export function Combobox({
    * pointer the hover tint carries the highlight alone. The updater returns the previous value when
    * nothing changed, so a mouse crossing the list does not re-render on every frame.
    */
-  const [highlightSource, setHighlightSource] = useState<HighlightSource>();
+  // Starts at `pointer`, matching the enhancer: at rest no key has moved the highlight, and only
+  // `keyboard` changes what is drawn. Leaving it unset meant the two bindings disagreed about the
+  // attribute before anyone had touched the control.
+  const [highlightSource, setHighlightSource] = useState<HighlightSource>("pointer");
   const keepHighlightSource =
     (next: HighlightSource) => (previous: HighlightSource) =>
       previous === next ? previous : next;
@@ -137,8 +151,8 @@ export function Combobox({
     readOnly,
     required,
     multiple,
-    value,
-    defaultValue,
+    value: asValues(value),
+    defaultValue: asValues(defaultValue),
     inputValue,
     defaultInputValue,
     openOnClick,
@@ -271,20 +285,21 @@ export function Combobox({
             className={comboboxParts.input}
           />
         </div>
-        {showClear ? (
-          <button
-            {...api.getClearTriggerProps()}
-            className={cx(comboboxParts.clear, "sk-button", "sk-interactive")}
-            data-icon-only=""
-            data-size="sm"
-            data-variant="ghost"
-            hidden={false}
-            tabIndex={0}
-            type="button"
-          >
-            <span aria-hidden="true">{clearIndicator ?? "×"}</span>
-          </button>
-        ) : null}
+        {/* Rendered-and-hidden rather than conditional, which is what the enhancer can do with
+            authored markup and therefore what the contract's template says. `hidden` keeps it out
+            of the accessibility tree exactly as absence would, and it is what the CSS styles. */}
+        <button
+          {...api.getClearTriggerProps()}
+          className={cx(comboboxParts.clear, "sk-button", "sk-interactive")}
+          data-icon-only=""
+          data-size="sm"
+          data-variant="ghost"
+          hidden={!showClear}
+          tabIndex={0}
+          type="button"
+        >
+          <span aria-hidden="true">{clearIndicator ?? "×"}</span>
+        </button>
         <button
           {...api.getTriggerProps()}
           className={cx(comboboxParts.trigger, "sk-button", "sk-interactive")}
@@ -313,7 +328,7 @@ export function Combobox({
             })
           : null}
       </div>
-      <Portal>
+      <Portal container={container}>
         <div {...anchor.positioner(api.getPositionerProps(), comboboxParts.positioner)}>
           <div
             {...api.getContentProps()}
@@ -321,39 +336,46 @@ export function Combobox({
             data-highlight-source={highlightSource}
             onPointerMove={() => setHighlightSource(keepHighlightSource("pointer"))}
           >
-            {filteredItems.length ? (
-              filteredItems.map((item) => (
-                <div
-                  {...api.getItemProps({ item })}
-                  className={`${comboboxParts.item} sk-interactive`}
-                  key={item.value}
-                >
-                  <span className={comboboxParts.itemCopy}>
-                    <span
-                      {...api.getItemTextProps({ item })}
-                      className={comboboxParts.itemLabel}
-                    >
-                      {item.label}
-                    </span>
-                    {item.description ? (
-                      <span className={comboboxParts.itemDescription}>
-                        {item.description}
-                      </span>
-                    ) : null}
-                  </span>
+            {filteredItems.map((item) => (
+              <div
+                {...api.getItemProps({ item })}
+                className={`${comboboxParts.item} sk-interactive`}
+                /* What the enhancer reads to build its collection: a row's `textContent` is label +
+                   description + indicator glued together, which is not the label. Written here too
+                   so the two bindings land on the same row. */
+                data-description={item.description}
+                data-value-text={item.label}
+                key={item.value}
+              >
+                <span className={comboboxParts.itemCopy}>
                   <span
-                    {...api.getItemIndicatorProps({ item })}
-                    className={comboboxParts.itemIndicator}
+                    {...api.getItemTextProps({ item })}
+                    className={comboboxParts.itemLabel}
                   >
-                    {itemIndicator ?? "✓"}
+                    {item.label}
                   </span>
-                </div>
-              ))
-            ) : (
-              <div className={comboboxParts.empty} role="presentation">
-                {emptyLabel}
+                  {item.description ? (
+                    <span className={comboboxParts.itemDescription}>
+                      {item.description}
+                    </span>
+                  ) : null}
+                </span>
+                <span
+                  {...api.getItemIndicatorProps({ item })}
+                  className={comboboxParts.itemIndicator}
+                >
+                  {itemIndicator ?? "✓"}
+                </span>
               </div>
-            )}
+            ))}
+            {/* Same rendered-and-hidden rule as the clear control above. */}
+            <div
+              className={comboboxParts.empty}
+              hidden={filteredItems.length > 0}
+              role="presentation"
+            >
+              {emptyLabel}
+            </div>
           </div>
         </div>
       </Portal>

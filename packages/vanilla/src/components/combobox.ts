@@ -46,6 +46,28 @@ const navigationKeys = new Set([
 const combiningMarks = /\p{M}+/gu;
 const searchKey = (value: string) =>
   value.normalize("NFD").replace(combiningMarks, "").toLocaleLowerCase();
+/*
+ * The text of a button, as a NAME rather than as characters.
+ *
+ * `textContent` was the fallback here, and on an icon-only control it produces the icon: the
+ * chevron's `⌄` and the clear control's `×` became their accessible names, announced verbatim. Both
+ * glyphs sit inside `aria-hidden="true"` precisely to say they are decoration, so reading through
+ * that attribute contradicts the markup — and the same markup gives React the right name, because
+ * React never derived one from the children at all.
+ */
+const nameText = (element: Element): string => {
+  let text = "";
+  for (const node of element.childNodes) {
+    if (node.nodeType === Node.TEXT_NODE) text += node.textContent ?? "";
+    else if (
+      node.nodeType === Node.ELEMENT_NODE &&
+      (node as Element).getAttribute("aria-hidden") !== "true" &&
+      !(node as Element).hasAttribute("hidden")
+    )
+      text += nameText(node as Element);
+  }
+  return text.trim();
+};
 const fromTemplate = (template: string, values: Record<string, string>) => {
   let result = template;
   for (const [key, value] of Object.entries(values))
@@ -130,12 +152,12 @@ function connect(root: HTMLElement): () => void {
   const triggerLabel =
     trigger.getAttribute("aria-label") ||
     root.dataset.triggerLabel ||
-    trigger.textContent?.trim() ||
+    nameText(trigger) ||
     "Mostrar opciones";
   const clearLabel =
     clear?.getAttribute("aria-label") ||
     root.dataset.clearLabel ||
-    clear?.textContent?.trim() ||
+    (clear ? nameText(clear) : "") ||
     "Limpiar selección";
   const resultText = (count: number) => {
     if (count === 0) return empty.textContent?.trim() || "Sin resultados";

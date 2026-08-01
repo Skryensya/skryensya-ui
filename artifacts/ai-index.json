@@ -422,6 +422,36 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/combobox.css",
+      "id": "combobox",
+      "signatures": [
+        {
+          "alternatives": [
+            "Select",
+            "Select.native"
+          ],
+          "avoidWhen": [
+            "las opciones caben a la vista: un select ya resuelve elegir de una lista conocida",
+            "el valor es libre y no sale de una lista: eso es un input con sugerencias"
+          ],
+          "host": "div",
+          "id": "Combobox",
+          "intent": [
+            "filter-a-long-list",
+            "type-to-search",
+            "one-of-many-known-values",
+            "form-field"
+          ],
+          "parents": [],
+          "useWhen": [
+            "la lista es larga: escribir para filtrar llega antes que recorrerla",
+            "cada opción necesita una descripción bajo la etiqueta, no sólo texto",
+            "hace falta elegir varias y verlas como chips removibles"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/toast.css",
       "id": "content",
       "signatures": [
@@ -2507,5 +2537,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "9dc960d45450ca14"
+  "sourceHash": "34904c7318b508ba"
 }

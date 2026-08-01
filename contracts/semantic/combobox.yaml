@@ -1,0 +1,13 @@
+# La estructura vive en packages/core/src/combobox.ts. Acá sólo por qué se elige.
+
+Combobox:
+  useWhen:
+    - "la lista es larga: escribir para filtrar llega antes que recorrerla"
+    - "cada opción necesita una descripción bajo la etiqueta, no sólo texto"
+    - "hace falta elegir varias y verlas como chips removibles"
+  avoidWhen:
+    - "las opciones caben a la vista: un select ya resuelve elegir de una lista conocida"
+    - "el valor es libre y no sale de una lista: eso es un input con sugerencias"
+  alternatives:
+    - Select
+    - Select.native

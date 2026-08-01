@@ -2396,6 +2396,131 @@
         }
       }
     },
+    "copy-button": {
+      "css": "@skryensya/core/components/copy-button.css",
+      "id": "copy-button",
+      "options": {
+        "errorLabel": {
+          "attr": "data-sk-copy-button-error-label",
+          "default": "No se pudo copiar",
+          "machineInput": true,
+          "type": "string"
+        },
+        "successLabel": {
+          "attr": "data-sk-copy-button-success-label",
+          "default": "Copiado",
+          "machineInput": true,
+          "type": "string"
+        },
+        "target": {
+          "attr": "data-sk-copy-button-target",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "icon": "sk-copy-button__icon",
+        "label": "sk-copy-button__label",
+        "root": "sk-copy-button"
+      },
+      "semantics": {
+        "CopyButton": {
+          "alternatives": [],
+          "avoidWhen": [
+            "el valor no está visible: el botón copia lo que el lector tiene delante, no un dato oculto",
+            "la acción cambia algo; esto no muta nada, sólo duplica"
+          ],
+          "useWhen": [
+            "hay un valor en pantalla que la gente va a querer pegar en otro lado: un comando, un token, un id",
+            "copiar a mano es propenso a error: cadenas largas, sin espacios, sensibles a mayúsculas"
+          ]
+        }
+      },
+      "signatures": {
+        "CopyButton": {
+          "host": {
+            "element": "button"
+          },
+          "intent": [
+            "copy-to-clipboard",
+            "copy-a-code-block",
+            "copy-a-token"
+          ],
+          "mount": "data-sk-copy-button",
+          "options": [
+            "target",
+            "successLabel",
+            "errorLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/copy-button",
+            "name": "CopyButton"
+          },
+          "slots": {
+            "children": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-button",
+              "sk-interactive"
+            ],
+            "attrs": {
+              "type": "button"
+            },
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "data-sk-copy-button-icon": "idle"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon": "copy",
+                      "data-sk-icon-size": "md"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "span",
+                "part": "icon"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "data-sk-copy-button-icon": "copied"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon": "check",
+                      "data-sk-icon-size": "md"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "span",
+                "part": "icon"
+              },
+              {
+                "attrs": {
+                  "aria-live": "polite"
+                },
+                "element": "span",
+                "mount": "data-sk-copy-button-label",
+                "part": "label",
+                "slot": "children"
+              }
+            ],
+            "element": "button",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "date-picker": {
       "css": "@skryensya/core/components/date-picker.css",
       "id": "date-picker",
@@ -10370,5 +10495,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "82929cc6ce902adb"
+  "sourceHash": "8120d6b98c8e2c21"
 }

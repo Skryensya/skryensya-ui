@@ -28,6 +28,7 @@ import { menuContract } from "@skryensya/core/menu";
 import { comboboxContract } from "@skryensya/core/combobox";
 import { calendarContract } from "@skryensya/core/calendar";
 import { datePickerContract } from "@skryensya/core/date-picker";
+import { copyButtonContract } from "@skryensya/core/copy-button";
 import { segmentedContract } from "@skryensya/core/segmented";
 import { sliderContract } from "@skryensya/core/slider";
 import { avatarContract } from "@skryensya/core/avatar";
@@ -111,6 +112,7 @@ export const contracts = {
   combobox: comboboxContract,
   calendar: calendarContract,
   "date-picker": datePickerContract,
+  "copy-button": copyButtonContract,
   typography: typographyContract,
   wrapper: wrapperContract,
   tabs: tabsContract,

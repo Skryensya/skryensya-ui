@@ -51,18 +51,13 @@ de mejorarlo. Los dos tienen que describir un componente, no dos parecidos.
 
 ## Cómo se cuenta
 
-Contra las 66 páginas de `componentes/`, el estado es: las que tienen contrato lo tienen publicado y
-con árbol canónico, y sus dos capas están comparadas por G2. De las que no, tres no deberían tenerlo
-(arriba), una es una receta, una es un alias, y **dos** son trabajo pendiente de verdad —
-`command-palette` y `popover`.
+Contra las 66 páginas de `componentes/`, el estado es: **todas las que deben tener contrato lo
+tienen**, publicado, con árbol canónico y con sus dos capas comparadas por G2. De las que no, dos son
+chrome de este sitio (`component-preview`, `toc`), una es una receta (`card`) y una es un alias
+(`drawer`).
 
-`dialog` y `split-button` estaban en esa lista y ya no, y salieron por caminos distintos que vale
-distinguir. `dialog` se publicó escribiéndole la mitad de React que faltaba, igual que
-`copy-button`: ahí el contrato no era lo que faltaba, era la capa que nunca se escribió.
-`split-button` no necesitaba binding nuevo — necesitaba dejar de acoplarse. Su React construía el
-menú desde un prop plano y le pasaba una clase que un Menu compuesto no puede recibir, porque esa
-clase pertenece a quien dibuja ese botón, y eso es Menu. La hoja lo alcanza por estructura y la
-composición quedó posible.
+Lo único que queda abierto de esta lista es que **`vaul` no tiene contrato**, y la página de `drawer`
+apunta ahí. Eso es un componente propio que nadie publicó todavía, no un hueco heredado de `drawer`.
 
 ## Demos que se quedan autorados aunque el contrato exista
 

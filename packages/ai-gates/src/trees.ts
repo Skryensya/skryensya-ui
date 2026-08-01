@@ -673,6 +673,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "tooltip",
       signature: "Tooltip",
+      options: { arrow: true },
       slots: {
         children: {
           contract: "button",

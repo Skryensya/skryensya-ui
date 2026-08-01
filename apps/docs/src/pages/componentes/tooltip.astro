@@ -5,123 +5,13 @@ import ComponentPreview from "../../components/ComponentPreview.astro";
 // El preview clona las hojas del <head> de la página, así que lo que use el demo tiene que estar
 // importado acá: `.sk-truncate` es del demo, no del paquete.
 import "../../examples/tooltip.css";
-import { TooltipDemo } from "../../components/react-demos/tooltip";
+import { tooltipTree } from "../../demos/tooltip";
 import { getLocale, useTranslations } from "../../i18n";
 
 const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
-/*
- * ESTE DEMO SIGUE AUTORADO A MANO, y no por falta de contrato: `tooltip` está publicado y el árbol
- * está escrito y validado en `src/demos/tooltip.ts`. Lo que falta son tres líneas del template, que
- * ahí están anotadas — sin ellas el markup emitido sale sin los ganchos que escanea el enhancer y el
- * tooltip no abre nunca en Vanilla. Medido: `data-state` no se escribe y el contenido se queda en
- * `display: none`.
- *
- * Lo que sí se comparte ya son las PALABRAS: las mismas claves `demo.tooltip.*` alimentan el HTML,
- * el snippet de React y el island, así que las dos lenguas y los dos bindings no se pueden separar
- * aunque el árbol todavía no los una.
- */
-const strings = {
-  exportLabel: t("demo.tooltip.export.label"),
-  exportContent: t("demo.tooltip.export.content"),
-  metricValue: t("demo.tooltip.metric.value"),
-  metricLabel: t("demo.tooltip.metric.label"),
-  metricContent: t("demo.tooltip.metric.content"),
-  truncated: t("demo.tooltip.truncated.content"),
-};
-
-/*
- * Tres triggers y nada más: los tres casos donde un tooltip se gana su lugar, sin el dashboard que
- * antes los rodeaba. Entre uno y otro cambia sólo la forma del trigger y la colocación; el resto del
- * markup es idéntico, que es justo lo que hay que poder leer.
- *
- * Sin contenedor de layout: `.sk-tooltip` es `inline-flex`, así que los tres fluyen en línea donde
- * sea que se peguen. Un wrapper acá sería markup que no es tooltip.
- */
-const html = `<div class="sk-inline" data-gap="md" data-align="center">
-  <!-- 1. Un control icon-only. El nombre vive en aria-label; el tooltip lo amplía. -->
-  <span class="sk-tooltip" data-sk-anchor data-sk-placement="block-end">
-    <button
-      class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
-      type="button"
-      data-variant="ghost"
-      data-icon-only
-      aria-label="${strings.exportLabel}"
-      data-sk-anchor-trigger
-    ><span data-sk-icon="download"></span></button>
-    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-      <!-- La flecha, opcional: se autora o no existe. Sale del trigger, no del centro de la caja. -->
-      <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>${strings.exportContent}</span>
-    </span>
-  </span>
-
-  <!-- 2. Explicar un dato que ya está en pantalla: el número se ve siempre, el tooltip dice cómo se calcula. -->
-  <span class="sk-inline" data-gap="xs">
-    ${strings.metricValue}
-    <span class="sk-tooltip" data-sk-anchor>
-      <button
-        class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
-        type="button"
-        data-variant="ghost"
-        data-icon-only
-        data-size="sm"
-        aria-label="${strings.metricLabel}"
-        data-sk-anchor-trigger
-      ><span data-sk-icon="info"></span></button>
-      <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-        <span class="sk-anchored-arrow" aria-hidden="true"></span>
-        <span class="sk-tooltip__content" data-sk-anchor-content>${strings.metricContent}</span>
-      </span>
-    </span>
-  </span>
-
-  <!-- 3. Devolver lo que el ancho tuvo que cortar. El trigger es el propio texto truncado. -->
-  <span class="sk-tooltip" data-sk-anchor data-sk-placement="inline-end">
-    <span
-      class="sk-truncate sk-tooltip__trigger sk-anchor"
-      tabindex="0"
-      data-sk-anchor-trigger
-    >${strings.truncated}</span>
-    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-      <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>${strings.truncated}</span>
-    </span>
-  </span>
-</div>`;
-
-const react = `import { Tooltip } from "@skryensya/react/tooltip";
-
-function Example() {
-  return (
-    <div className="sk-inline" data-gap="md" data-align="center">
-      {/* 1. Un control icon-only. El nombre vive en aria-label, el tooltip lo amplía.
-             \`arrow\` es lo mismo que autorar <span className="sk-anchored-arrow" />
-             dentro del positioner en el HTML: opcional en los dos bindings, y off
-             por defecto. */}
-      <Tooltip content="${strings.exportContent}" placement="block-end" arrow>
-        <button aria-label="${strings.exportLabel}" type="button">
-          <DownloadIcon />
-        </button>
-      </Tooltip>
-
-      {/* 2. Explicar un dato que ya está en pantalla; esto cuenta cómo se calcula. */}
-      <Tooltip content="${strings.metricContent}" arrow>
-        <button aria-label="${strings.metricLabel}" type="button">
-          <InfoIcon />
-        </button>
-      </Tooltip>
-
-      {/* 3. Devolver lo que el ancho cortó. tabIndex hace que el texto truncado
-             sea alcanzable: sin foco, el tooltip sería sólo para mouse. */}
-      <Tooltip content={row.title} placement="inline-end" arrow>
-        <span className="sk-truncate" tabIndex={0}>{row.title}</span>
-      </Tooltip>
-    </div>
-  );
-}`;
 ---
 
 <Base
@@ -138,11 +28,7 @@ function Example() {
 
   {/* `menu`: el tooltip pinta fuera del flujo, y en un stage al alto del contenido no tendría a
       dónde ir, así que la colocación real nunca se vería. */}
-  <ComponentPreview html={html} react={react} label="Tooltip" viewport="menu">
-    <Fragment slot="react">
-      <TooltipDemo strings={strings} client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={tooltipTree(t)} label="Tooltip" viewport="menu" />
 
   <h2>La regla que no puede verificar el sistema</h2>
   <p>

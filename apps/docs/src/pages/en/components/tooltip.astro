@@ -5,123 +5,13 @@ import ComponentPreview from "../../../components/ComponentPreview.astro";
 // The preview clones the <head> sheets of the page, but whatever the demo uses has to be
 // imported here: `.sk-truncate` is from the demo, not the package.
 import "../../../examples/tooltip.css";
-import { TooltipDemo } from "../../../components/react-demos/tooltip";
+import { tooltipTree } from "../../../demos/tooltip";
 import { getLocale, useTranslations } from "../../../i18n";
 
 const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 
-/*
- * THIS DEMO IS STILL HAND-AUTHORED, and not for want of a contract: `tooltip` is published and the
- * tree is written and validated in `src/demos/tooltip.ts`. What is missing is three lines of the
- * template, annotated there — without them the emitted markup carries none of the hooks the
- * enhancer scans for, and the tooltip never opens in Vanilla. Measured: `data-state` is never
- * written and the content stays at `display: none`.
- *
- * What IS shared already are the WORDS: the same `demo.tooltip.*` keys feed the HTML, the React
- * snippet and the island, so the two languages and the two bindings cannot drift apart even though
- * a tree does not yet join them.
- */
-const strings = {
-  exportLabel: t("demo.tooltip.export.label"),
-  exportContent: t("demo.tooltip.export.content"),
-  metricValue: t("demo.tooltip.metric.value"),
-  metricLabel: t("demo.tooltip.metric.label"),
-  metricContent: t("demo.tooltip.metric.content"),
-  truncated: t("demo.tooltip.truncated.content"),
-};
-
-/*
- * Three triggers and nothing more: the three cases where a tooltip earns its place, without the
- * dashboard that used to surround them. From one to the next only the shape of the trigger and the
- * placement change; the rest of the markup is identical, which is exactly what has to be readable.
- *
- * No layout container: `.sk-tooltip` is `inline-flex`, so all three flow inline wherever they are
- * dropped. A wrapper here would be markup that is not a tooltip.
- */
-const html = `<div class="sk-inline" data-gap="md" data-align="center">
-  <!-- 1. An icon-only control. The name lives in aria-label; the tooltip expands it. -->
-  <span class="sk-tooltip" data-sk-anchor data-sk-placement="block-end">
-    <button
-      class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
-      type="button"
-      data-variant="ghost"
-      data-icon-only
-      aria-label="${strings.exportLabel}"
-      data-sk-anchor-trigger
-    ><span data-sk-icon="download"></span></button>
-    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-      <!-- The arrow, optional: it is authored or it does not exist. It comes out of the trigger, not the centre of the box. -->
-      <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>${strings.exportContent}</span>
-    </span>
-  </span>
-
-  <!-- 2. Explain a figure already on screen: the number is always visible, the tooltip says how it is arrived at. -->
-  <span class="sk-inline" data-gap="xs">
-    ${strings.metricValue}
-    <span class="sk-tooltip" data-sk-anchor>
-      <button
-        class="sk-button sk-interactive sk-tooltip__trigger sk-anchor"
-        type="button"
-        data-variant="ghost"
-        data-icon-only
-        data-size="sm"
-        aria-label="${strings.metricLabel}"
-        data-sk-anchor-trigger
-      ><span data-sk-icon="info"></span></button>
-      <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-        <span class="sk-anchored-arrow" aria-hidden="true"></span>
-        <span class="sk-tooltip__content" data-sk-anchor-content>${strings.metricContent}</span>
-      </span>
-    </span>
-  </span>
-
-  <!-- 3. Give back what the width had to cut. The trigger is the truncated text itself. -->
-  <span class="sk-tooltip" data-sk-anchor data-sk-placement="inline-end">
-    <span
-      class="sk-truncate sk-tooltip__trigger sk-anchor"
-      tabindex="0"
-      data-sk-anchor-trigger
-    >${strings.truncated}</span>
-    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-      <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>${strings.truncated}</span>
-    </span>
-  </span>
-</div>`;
-
-const react = `import { Tooltip } from "@skryensya/react/tooltip";
-
-function Example() {
-  return (
-    <div className="sk-inline" data-gap="md" data-align="center">
-      {/* 1. An icon-only control. The name lives in aria-label, the tooltip expands it.
-             \`arrow\` is the same as authoring <span className="sk-anchored-arrow" />
-             inside the positioner in the HTML: optional in both bindings, and off
-             by default. */}
-      <Tooltip content="${strings.exportContent}" placement="block-end" arrow>
-        <button aria-label="${strings.exportLabel}" type="button">
-          <DownloadIcon />
-        </button>
-      </Tooltip>
-
-      {/* 2. Explain a piece of information that is already on the screen; this tells how it is calculated. */}
-      <Tooltip content="${strings.metricContent}" arrow>
-        <button aria-label="${strings.metricLabel}" type="button">
-          <InfoIcon />
-        </button>
-      </Tooltip>
-
-      {/* 3. Return what the width cut off. tabIndex makes truncated text
-             reachable: without focus, the tooltip would be mouse-only. */}
-      <Tooltip content={row.title} placement="inline-end" arrow>
-        <span className="sk-truncate" tabIndex={0}>{row.title}</span>
-      </Tooltip>
-    </div>
-  );
-}`;
 ---
 
 <Base
@@ -135,11 +25,7 @@ function Example() {
 
   {/* `menu`: the tooltip paints outside the flow, and in a stage sized to its content it would have
       nowhere to go, so the real placement would never be visible. */}
-  <ComponentPreview html={html} react={react} label="Tooltip" viewport="menu">
-    <Fragment slot="react">
-      <TooltipDemo strings={strings} client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={tooltipTree(t)} label="Tooltip" viewport="menu" />
 
   <h2>The rule that the system cannot verify</h2>
   <p>

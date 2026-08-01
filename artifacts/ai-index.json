@@ -1734,6 +1734,34 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/split-button.css",
+      "id": "split-button",
+      "signatures": [
+        {
+          "alternatives": [
+            "Menu",
+            "Button.action"
+          ],
+          "avoidWhen": [
+            "las acciones no son variantes de una misma cosa; eso es un Menu solo",
+            "hay una sola acción: eso es un Button"
+          ],
+          "host": "div",
+          "id": "SplitButton",
+          "intent": [
+            "primary-action-with-alternatives",
+            "default-plus-more",
+            "save-and-save-as"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay una acción que casi todos quieren y unas pocas variantes de la misma acción",
+            "conviene que la principal esté a un clic y las otras no ocupen lugar"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/stat.css",
       "id": "stat",
       "signatures": [
@@ -2688,5 +2716,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "1543f8194262f22a"
+  "sourceHash": "e88271d422c8cd81"
 }

@@ -640,6 +640,32 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
+  /*
+   * A FIXED month, deliberately. Everything a calendar draws is derived from the date it opens on,
+   * so a tree with no value would render a different grid every day and mark a different cell as
+   * today — the visual baseline would rot on its own, monthly. March 2026 contains no today.
+   */
+  {
+    name: "calendar/month",
+    enhanced: true,
+    tree: {
+      contract: "calendar",
+      signature: "Calendar",
+      options: { value: "2026-03-12", min: "2026-03-01", max: "2026-03-31" },
+      slots: { label: "Fecha de la reserva" },
+    },
+  },
+  /** Same fixed month as the calendar above, and for the same reason. */
+  {
+    name: "date-picker/field",
+    enhanced: true,
+    tree: {
+      contract: "date-picker",
+      signature: "DatePicker",
+      options: { name: "reserva", value: "2026-03-12", placeholder: "AAAA-MM-DD" },
+      slots: { label: "Fecha de la reserva" },
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

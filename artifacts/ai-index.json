@@ -345,6 +345,34 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/calendar.css",
+      "id": "calendar",
+      "signatures": [
+        {
+          "alternatives": [
+            "DatePicker"
+          ],
+          "avoidWhen": [
+            "es un campo dentro de un formulario: ahí el calendario va detrás de un input",
+            "la fecha se escribe más rápido de lo que se busca en una grilla"
+          ],
+          "host": "div",
+          "id": "Calendar",
+          "intent": [
+            "pick-a-date-inline",
+            "show-a-month",
+            "no-popover"
+          ],
+          "parents": [],
+          "useWhen": [
+            "elegir la fecha es la tarea de la pantalla, no un campo más de un formulario",
+            "ver el mes ayuda a decidir: fines de semana, feriados, cuántos días faltan",
+            "hay lugar para una grilla siempre visible"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/carousel.css",
       "id": "carousel",
       "signatures": [
@@ -518,6 +546,33 @@
             "confirmar algo que ya pasó y no requiere respuesta: se guardó, se envió, se copió",
             "ofrecer deshacer una acción durante unos segundos",
             "avisar que terminó algo que corría en segundo plano"
+          ]
+        }
+      ]
+    },
+    {
+      "css": "@skryensya/core/components/date-picker.css",
+      "id": "date-picker",
+      "signatures": [
+        {
+          "alternatives": [
+            "Calendar"
+          ],
+          "avoidWhen": [
+            "elegir la fecha ES la pantalla: ahí la grilla va siempre visible",
+            "sólo importa el mes o el año, no el día"
+          ],
+          "host": "div",
+          "id": "DatePicker",
+          "intent": [
+            "pick-a-date-in-a-form",
+            "date-field",
+            "calendar-behind-an-input"
+          ],
+          "parents": [],
+          "useWhen": [
+            "la fecha es un campo de un formulario, junto a otros campos",
+            "conviene poder escribirla y también buscarla en el calendario"
           ]
         }
       ]
@@ -2537,5 +2592,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "34904c7318b508ba"
+  "sourceHash": "659802d2cc7f24ad"
 }

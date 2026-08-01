@@ -1,11 +1,15 @@
+import { calendarContract } from "@skryensya/core/calendar";
+import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import {
   calendarParts,
   getTwoLetterWeekdayLabel,
+  parseCalendarDate,
   type DateValue,
 } from "@skryensya/core/calendar";
 import { datePicker } from "@skryensya/core/machines";
 import { normalizeProps, useMachine, type PropTypes } from "@zag-js/react";
 import { useId, type MouseEvent, type ReactNode } from "react";
+import { Icon } from "./icon.js";
 
 // Sin depender de `@zag-js/date-picker` directamente (react no lo trae como dependencia propia,
 // sólo core la reexporta vía `machines.ts`): el tipo del `api` sale de la misma función `connect`.
@@ -82,7 +86,7 @@ export function CalendarBody({
           data-variant="ghost"
           type="button"
         >
-          <span aria-hidden="true">{previousIcon ?? "‹"}</span>
+          {previousIcon ?? <Icon name="chevron-left" size="sm" />}
         </button>
         <button
           {...viewTriggerProps}
@@ -92,7 +96,7 @@ export function CalendarBody({
           type="button"
         >
           {headingLabel}
-          <span aria-hidden="true">{viewIcon ?? "▾"}</span>
+          {viewIcon ?? <Icon name="chevron-down" size="sm" />}
         </button>
         <button
           {...api.getNextTriggerProps()}
@@ -102,7 +106,7 @@ export function CalendarBody({
           data-variant="ghost"
           type="button"
         >
-          <span aria-hidden="true">{nextIcon ?? "›"}</span>
+          {nextIcon ?? <Icon name="chevron-right" size="sm" />}
         </button>
       </div>
 
@@ -223,16 +227,25 @@ export function CalendarBody({
   );
 }
 
-export type CalendarProps = {
+// `selectionMode` and friends come from the contract, so Core stays the only place they are defined.
+export type CalendarProps = Pick<
+  SignatureOptionsOf<typeof calendarContract, "Calendar">,
+  "selectionMode"
+> & {
   id?: string;
   label?: ReactNode;
   locale?: string;
   timeZone?: string;
-  selectionMode?: "single" | "range";
-  value?: DateValue[];
-  defaultValue?: DateValue[];
-  min?: DateValue;
-  max?: DateValue;
+  /*
+   * Dates as `DateValue` OR as the ISO strings authored markup can carry. The enhancer only ever
+   * has an attribute to read, so a contract option is a string by construction; accepting both here
+   * is what lets one emitted tree drive both bindings instead of the React half needing a parser at
+   * the call site.
+   */
+  value?: readonly (DateValue | string)[] | string;
+  defaultValue?: readonly (DateValue | string)[] | string;
+  min?: DateValue | string;
+  max?: DateValue | string;
   disabled?: boolean;
   readOnly?: boolean;
   previousIcon?: ReactNode;
@@ -240,6 +253,16 @@ export type CalendarProps = {
   viewIcon?: ReactNode;
   onValueChange?: (details: { value: string[] }) => void;
 };
+
+export const asDate = (date: DateValue | string | undefined) =>
+  typeof date === "string" ? parseCalendarDate(date) : date;
+// Space-separated, so a range can name both ends the way authored markup reads it.
+export const asDates = (value: readonly (DateValue | string)[] | string | undefined) =>
+  value === undefined
+    ? undefined
+    : (typeof value === "string" ? value.split(" ").filter(Boolean) : value)
+        .map((date) => asDate(date))
+        .filter((date): date is DateValue => date !== undefined);
 
 /** Standalone calendar grid: no field, no popover — the same machine as DatePicker, `inline: true`. */
 export function Calendar({
@@ -265,10 +288,10 @@ export function Calendar({
     locale,
     timeZone,
     selectionMode,
-    value,
-    defaultValue,
-    min,
-    max,
+    value: asDates(value),
+    defaultValue: asDates(defaultValue),
+    min: asDate(min),
+    max: asDate(max),
     disabled,
     readOnly,
     inline: true,

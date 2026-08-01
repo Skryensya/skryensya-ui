@@ -275,18 +275,23 @@ describe("expanded component inventory", () => {
       return element!;
     });
     expect(clear.getAttribute("aria-label")).toBe("Limpiar");
-    expect(clear.textContent).toBe("×");
+    // A real icon, not the `×` glyph this asserted while React drew one and the enhancer mounted
+    // the other — the two bindings were showing different marks on the same button.
+    expect(clear.querySelector("svg")?.getAttribute("data-icon")).toBe("close");
     expect(clear.classList.contains("sk-button")).toBe(true);
     expect(clear.classList.contains("sk-interactive")).toBe(true);
     expect(clear.getAttribute("data-icon-only")).toBe("");
     expect(clear.getAttribute("data-size")).toBe("sm");
     expect(clear.getAttribute("data-variant")).toBe("ghost");
 
+    // Hidden once there is nothing to clear, not removed: the enhancer patches authored markup and
+    // can only toggle `hidden`, so both bindings do that and land on the same DOM. `hidden` keeps it
+    // out of the accessibility tree exactly as absence did.
     fireEvent.click(clear);
     await waitFor(() => {
       expect(
-        ui.container.querySelector(".sk-date-picker__clear"),
-      ).toBeNull();
+        ui.container.querySelector<HTMLElement>(".sk-date-picker__clear")?.hidden,
+      ).toBe(true);
     });
   });
 

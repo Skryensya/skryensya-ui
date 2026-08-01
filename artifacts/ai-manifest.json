@@ -1253,6 +1253,142 @@
         }
       }
     },
+    "calendar": {
+      "css": "@skryensya/core/components/calendar.css",
+      "id": "calendar",
+      "options": {
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "locale": {
+          "attr": "data-locale",
+          "default": "es",
+          "machineInput": true,
+          "type": "string"
+        },
+        "max": {
+          "attr": "data-max",
+          "machineInput": true,
+          "type": "string"
+        },
+        "min": {
+          "attr": "data-min",
+          "machineInput": true,
+          "type": "string"
+        },
+        "readOnly": {
+          "attr": "data-readonly",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "selectionMode": {
+          "attr": "data-selection-mode",
+          "default": "single",
+          "machineInput": true,
+          "type": "enum",
+          "values": [
+            "single",
+            "range"
+          ]
+        },
+        "timeZone": {
+          "attr": "data-time-zone",
+          "default": "UTC",
+          "machineInput": true,
+          "type": "string"
+        },
+        "value": {
+          "attr": "data-value",
+          "machineInput": true,
+          "prop": "defaultValue",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "cell": "sk-calendar__cell",
+        "cellTrigger": "sk-calendar__cell-trigger",
+        "header": "sk-calendar__header",
+        "heading": "sk-calendar__heading",
+        "label": "sk-calendar__label",
+        "monthGrid": "sk-calendar__month-grid",
+        "next": "sk-calendar__next",
+        "previous": "sk-calendar__previous",
+        "root": "sk-calendar",
+        "table": "sk-calendar__table",
+        "tableBody": "sk-calendar__table-body",
+        "tableHeader": "sk-calendar__table-header",
+        "viewTrigger": "sk-calendar__view-trigger",
+        "yearGrid": "sk-calendar__year-grid"
+      },
+      "semantics": {
+        "Calendar": {
+          "alternatives": [
+            "DatePicker"
+          ],
+          "avoidWhen": [
+            "es un campo dentro de un formulario: ahí el calendario va detrás de un input",
+            "la fecha se escribe más rápido de lo que se busca en una grilla"
+          ],
+          "useWhen": [
+            "elegir la fecha es la tarea de la pantalla, no un campo más de un formulario",
+            "ver el mes ayuda a decidir: fines de semana, feriados, cuántos días faltan",
+            "hay lugar para una grilla siempre visible"
+          ]
+        }
+      },
+      "signatures": {
+        "Calendar": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "pick-a-date-inline",
+            "show-a-month",
+            "no-popover"
+          ],
+          "mount": "data-sk-calendar",
+          "options": [
+            "value",
+            "min",
+            "max",
+            "selectionMode",
+            "locale",
+            "timeZone",
+            "disabled",
+            "readOnly"
+          ],
+          "react": {
+            "from": "@skryensya/react/calendar",
+            "name": "Calendar"
+          },
+          "slots": {
+            "label": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "p",
+                "part": "label",
+                "slot": "label",
+                "whenGiven": "label"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "labelledBySlot": "label",
+            "part": "root"
+          }
+        }
+      }
+    },
     "carousel": {
       "css": "@skryensya/core/components/carousel.css",
       "id": "carousel",
@@ -2256,6 +2392,217 @@
             "element": "template",
             "host": true,
             "slot": "children"
+          }
+        }
+      }
+    },
+    "date-picker": {
+      "css": "@skryensya/core/components/date-picker.css",
+      "id": "date-picker",
+      "options": {
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "locale": {
+          "attr": "data-locale",
+          "default": "es",
+          "machineInput": true,
+          "type": "string"
+        },
+        "max": {
+          "attr": "data-max",
+          "machineInput": true,
+          "type": "string"
+        },
+        "min": {
+          "attr": "data-min",
+          "machineInput": true,
+          "type": "string"
+        },
+        "name": {
+          "attr": "data-name",
+          "machineInput": true,
+          "type": "string"
+        },
+        "placeholder": {
+          "attr": "placeholder",
+          "type": "string"
+        },
+        "readOnly": {
+          "attr": "data-readonly",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "required": {
+          "attr": "data-required",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "selectionMode": {
+          "attr": "data-selection-mode",
+          "default": "single",
+          "machineInput": true,
+          "type": "enum",
+          "values": [
+            "single",
+            "range"
+          ]
+        },
+        "timeZone": {
+          "attr": "data-time-zone",
+          "default": "UTC",
+          "machineInput": true,
+          "type": "string"
+        },
+        "value": {
+          "attr": "data-value",
+          "machineInput": true,
+          "prop": "defaultValue",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "clear": "sk-date-picker__clear",
+        "content": "sk-date-picker__content",
+        "control": "sk-date-picker__control",
+        "input": "sk-date-picker__input",
+        "label": "sk-date-picker__label",
+        "positioner": "sk-date-picker__positioner",
+        "root": "sk-date-picker",
+        "trigger": "sk-date-picker__trigger"
+      },
+      "semantics": {
+        "DatePicker": {
+          "alternatives": [
+            "Calendar"
+          ],
+          "avoidWhen": [
+            "elegir la fecha ES la pantalla: ahí la grilla va siempre visible",
+            "sólo importa el mes o el año, no el día"
+          ],
+          "useWhen": [
+            "la fecha es un campo de un formulario, junto a otros campos",
+            "conviene poder escribirla y también buscarla en el calendario"
+          ]
+        }
+      },
+      "signatures": {
+        "DatePicker": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "pick-a-date-in-a-form",
+            "date-field",
+            "calendar-behind-an-input"
+          ],
+          "mount": "data-sk-date-picker",
+          "options": [
+            "name",
+            "value",
+            "min",
+            "max",
+            "selectionMode",
+            "locale",
+            "timeZone",
+            "disabled",
+            "readOnly",
+            "required",
+            "placeholder"
+          ],
+          "portals": true,
+          "react": {
+            "from": "@skryensya/react/date-picker",
+            "name": "DatePicker"
+          },
+          "slots": {
+            "label": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "label",
+                "part": "label",
+                "slot": "label",
+                "whenGiven": "label"
+              },
+              {
+                "also": [
+                  "sk-anchor"
+                ],
+                "children": [
+                  {
+                    "element": "input",
+                    "options": [
+                      "placeholder"
+                    ],
+                    "part": "input"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "aria-label": "Limpiar",
+                      "data-icon-only": "",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "close",
+                          "data-sk-icon-size": "sm"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "button",
+                    "part": "clear"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-icon-only": "",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "calendar",
+                          "data-sk-icon-size": "sm"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "button",
+                    "part": "trigger"
+                  }
+                ],
+                "element": "div",
+                "part": "control"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
           }
         }
       }
@@ -9923,5 +10270,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "34904c7318b508ba"
+  "sourceHash": "659802d2cc7f24ad"
 }

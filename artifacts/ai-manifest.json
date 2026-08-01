@@ -9658,6 +9658,12 @@
       "css": "@skryensya/core/components/tooltip.css",
       "id": "tooltip",
       "options": {
+        "arrow": {
+          "attr": "data-arrow",
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
         "placement": {
           "attr": "data-sk-placement",
           "default": "block-start",
@@ -9704,7 +9710,8 @@
           ],
           "mount": "data-sk-anchor",
           "options": [
-            "placement"
+            "placement",
+            "arrow"
           ],
           "portals": true,
           "react": {
@@ -9737,6 +9744,16 @@
                   "sk-anchored"
                 ],
                 "children": [
+                  {
+                    "also": [
+                      "sk-anchored-arrow"
+                    ],
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "span",
+                    "whenGiven": "arrow"
+                  },
                   {
                     "attrs": {
                       "role": "tooltip"
@@ -10353,5 +10370,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "95e3431f1977d97c"
+  "sourceHash": "82929cc6ce902adb"
 }

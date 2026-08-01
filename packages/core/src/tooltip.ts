@@ -158,6 +158,18 @@ export const tooltipContract = {
        */
       machineInput: true,
     },
+    /**
+     * Draw the small arrow pointing at the trigger. Off unless asked for, in both bindings.
+     *
+     * It was unreachable from a tree until now: authored markup writes a `sk-anchored-arrow` span
+     * inside the positioner, React takes an `arrow` prop, and the contract declared neither — so
+     * every emitted tooltip came out without one while all three documented demos draw one.
+     *
+     * The attribute is bookkeeping rather than wiring: the enhancer finds the arrow by the pattern's
+     * class, not by this. It is marked machine input so the gate reads it as configuration present
+     * on one side by construction, which is what it is.
+     */
+    arrow: { type: "boolean", attr: "data-arrow", trueValue: "", machineInput: true },
   },
 
   signatures: {
@@ -165,7 +177,7 @@ export const tooltipContract = {
       intent: ["hint", "expand-a-control-name", "explain-an-icon-button"],
       host: { element: "span" },
       mount: "data-sk-anchor",
-      options: ["placement"],
+      options: ["placement", "arrow"],
       portals: true,
       slots: {
         /** The control being described. It carries its own accessible name. */
@@ -205,6 +217,14 @@ export const tooltipContract = {
             also: ["sk-anchored"],
             mount: "data-sk-anchor-positioner",
             children: [
+              /* Decorative by construction: it repeats the box's own direction, and the box is
+                 already announced through `aria-describedby`. */
+              {
+                element: "span",
+                also: ["sk-anchored-arrow"],
+                attrs: { "aria-hidden": "true" },
+                whenGiven: "arrow",
+              },
               {
                 element: "div",
                 part: "content",

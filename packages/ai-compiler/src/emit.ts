@@ -506,17 +506,20 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
       optionStyles.push(`${option.styleProperty}: ${String(value)}`);
       continue;
     }
-    if (!option.attr) continue;
+    // Renamed for THIS node when the contract says so: one fact, two spellings, the way an id is
+    // both the content's `id` and the trigger's `popovertarget`. Mirrors `itemOptionAttrs`.
+    const attrName = node.optionAttrs?.[name] ?? option.attr;
+    if (!attrName) continue;
     // Saying no is saying nothing, UNLESS the contract gave `false` a spelling of its own.
     if (value === false) {
       if (option.falseValue === undefined) continue;
-      out.push(attr(option.attr, option.falseValue));
+      out.push(attr(attrName, option.falseValue));
       continue;
     }
     out.push(
       value === true
-        ? attr(option.attr, option.trueValue ?? "")
-        : attr(option.attr, String(value)),
+        ? attr(attrName, option.trueValue ?? "")
+        : attr(attrName, String(value)),
     );
     if (option.alsoAttr && value !== true)
       out.push(attr(option.alsoAttr, String(value)));

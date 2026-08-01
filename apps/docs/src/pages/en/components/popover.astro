@@ -3,7 +3,10 @@ import Base from "../../../layouts/Base.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import "@skryensya/core/components/popover.css";
-import { PopoverDemo } from "../../../components/react-demos/popover";
+import { popoverTree } from "../../../demos/popover";
+import { getLocale, useTranslations } from "../../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/popover.css";`;
@@ -11,52 +14,6 @@ const js = `import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 
 mountIcons(document, lucideIcons);`;
-const html = `<div class="sk-popover">
-  <button
-    class="sk-button sk-interactive sk-popover__trigger sk-anchor"
-    popovertarget="profile-popover"
-    style="--sk-anchored-name: --profile-anchor"
-    type="button"
-  >
-    Ver perfil
-  </button>
-  <div
-    class="sk-popover__positioner sk-anchored sk-popover__content"
-    id="profile-popover"
-    popover="auto"
-    style="--sk-anchored-name: --profile-anchor; --sk-anchored-box-name: --profile-box"
-  >
-    <!-- The arrow, optional: is authored or does not exist. A popover wants it, a select does not. -->
-    <span class="sk-anchored-arrow" aria-hidden="true"></span>
-    <h2 class="sk-popover__title">Ada Lovelace</h2>
-    <p class="sk-popover__description">Mathematician and writer.</p>
-    <button
-      class="sk-button sk-interactive sk-popover__close"
-      popovertarget="profile-popover"
-      popovertargetaction="hide"
-      type="button"
-    >
-      <span data-sk-icon="close"></span>
-      <span class="sk-visually-hidden">Close</span>
-    </button>
-  </div>
-</div>`;
-const react = `import { Popover } from "@skryensya/react/popover";
-
-// \`arrow\` is the same as authoring <span className="sk-anchored-arrow" /> inside
-// positioner: optional in both bindings, and off by default.
-function Example() {
-  return (
-    <Popover
-      title="Ada Lovelace"
-      description="Mathematician and writer."
-      trigger="View profile"
-      arrow
-    >
-      <a href="/people/ada">Open profile</a>
-    </Popover>
-  );
-}`;
 ---
 
 <Base
@@ -67,17 +24,10 @@ function Example() {
   <p class="lede">Non-modal content with title, description and explicit closure on native top layer.</p>
 
   <h2>Facility</h2>
-  <ComponentPreview
-    html={html}
-    js={js}
-    react={react}
+  <ComponentPreview tree={popoverTree(t)} js={js}
     label="Popover"
     viewport="overlay"
-  >
-    <Fragment slot="react">
-      <PopoverDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  />
 
   <h2>Contract</h2>
   <p>Popover describes rich auxiliary content. Menu contains actions; Tooltip just a short description.</p>

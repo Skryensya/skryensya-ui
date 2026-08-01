@@ -601,6 +601,72 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
+  /*
+   * SELECT and MENU were published without fixtures, and G2 only compares what is listed here — so
+   * for a while the two newest families were the only ones nobody was checking. Menu's divergences
+   * (a `<div>` where the markup emitted a `<button>`, three indicators React drew only on request,
+   * a tick that showed while unchecked) were all found by opening the page and looking, which is
+   * exactly the work this gate exists to stop anyone having to do.
+   */
+  {
+    name: "select/enhanced",
+    enhanced: true,
+    tree: {
+      contract: "select",
+      signature: "Select",
+      options: { name: "plan", value: "starter" },
+      slots: {
+        label: "Plan",
+        items: [
+          { options: { value: "starter" }, slots: { label: "Starter" } },
+          { options: { value: "pro" }, slots: { label: "Pro" } },
+        ],
+      },
+    },
+  },
+  {
+    name: "select/native",
+    enhanced: false,
+    tree: {
+      contract: "select",
+      signature: "Select.native",
+      options: { name: "plan" },
+      attrs: { "aria-label": "Plan" },
+      slots: {
+        items: [
+          { options: { value: "starter" }, slots: { label: "Starter" } },
+          { options: { value: "pro" }, slots: { label: "Pro" } },
+        ],
+      },
+    },
+  },
+  /** A command, a checkbox and a submenu — the three item shapes, including the recursive one. */
+  {
+    name: "menu/with-submenu",
+    enhanced: true,
+    tree: {
+      contract: "menu",
+      signature: "Menu",
+      options: { label: "Acciones del archivo" },
+      slots: {
+        trigger: "Acciones",
+        items: [
+          { options: { value: "rename" }, slots: { label: "Renombrar" } },
+          { options: { value: "favorite", kind: "checkbox" }, slots: { label: "Favorito" } },
+          {
+            options: { value: "export" },
+            slots: {
+              label: "Exportar",
+              children: [
+                { options: { value: "pdf" }, slots: { label: "PDF" } },
+                { options: { value: "csv" }, slots: { label: "CSV" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  },
   {
     name: "nav-list/labelled",
     enhanced: false,

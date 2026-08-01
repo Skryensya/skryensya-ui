@@ -546,11 +546,18 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
         optionStyles.push(`${option.styleProperty}: ${String(value)}`);
         continue;
       }
-      if (!option.attr) continue;
+      /*
+       * The same entry datum can need two spellings in one template. A Select's listbox row is a
+       * `<li data-value>` the enhancer reads, and the hidden `<select>` beside it needs
+       * `<option value>` for the browser to submit — one value, two attributes, decided by WHERE it
+       * lands rather than by what it means. `itemOptionAttrs` renames it for this node only.
+       */
+      const attrName = node.itemOptionAttrs?.[name] ?? option.attr;
+      if (!attrName) continue;
       out.push(
         value === true
-          ? attr(option.attr, option.trueValue ?? "")
-          : attr(option.attr, String(value)),
+          ? attr(attrName, option.trueValue ?? "")
+          : attr(attrName, String(value)),
       );
     }
   }

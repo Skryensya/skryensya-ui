@@ -3,95 +3,19 @@ import Base from "../../layouts/Base.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import "@skryensya/core/components/menu.css";
-import { MenuBasicDemo } from "../../components/react-demos/menu";
+import { menuTree } from "../../demos/menu";
+import { getLocale, useTranslations } from "../../i18n";
 
 const install = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/menu.css";`;
+const t = useTranslations(getLocale(Astro.url));
+
 const js = `import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 import { initComponents } from "@skryensya/vanilla/auto";
 
 mountIcons(document, lucideIcons);
 initComponents();`;
-const html = `<div class="sk-menu" data-sk-menu aria-label="Acciones del archivo">
-  <button
-    class="sk-button sk-interactive sk-menu__trigger sk-anchor"
-    data-sk-menu-trigger
-    type="button"
-  >
-    Acciones
-    <span data-sk-icon="chevron-down"></span>
-  </button>
-  <div class="sk-menu__positioner sk-anchored" data-sk-menu-positioner>
-    <div class="sk-menu__content" data-sk-menu-content>
-      <div
-        class="sk-menu__item sk-interactive"
-        data-sk-menu-item
-        data-value="rename"
-      >
-        <span class="sk-menu__item-label">Renombrar</span>
-      </div>
-      <div
-        class="sk-menu__item sk-interactive"
-        data-sk-menu-item
-        data-type="checkbox"
-        data-value="favorite"
-      >
-        <span class="sk-menu__item-label">Favorito</span>
-        <span
-          class="sk-menu__item-indicator"
-          data-sk-icon="check"
-        ></span>
-      </div>
-      <div class="sk-menu" data-sk-menu aria-label="Exportar">
-        <button
-          class="sk-menu__item sk-interactive sk-anchor"
-          data-sk-menu-trigger
-          type="button"
-        >
-          <span class="sk-menu__item-label">Exportar</span>
-          <span data-sk-icon="chevron-right"></span>
-        </button>
-        <div
-          class="sk-menu__positioner sk-anchored"
-          data-sk-menu-positioner
-          data-sk-submenu
-        >
-          <div class="sk-menu__content" data-sk-menu-content>
-            <div
-              class="sk-menu__item sk-interactive"
-              data-sk-menu-item
-              data-value="export-pdf"
-            >PDF</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>`;
-const react = `import { Icon } from "@skryensya/react/icon";
-import { Menu } from "@skryensya/react/menu";
-
-<Menu
-  label="Acciones del archivo"
-  trigger="Acciones"
-  indicator={<Icon name="chevron-down" />}
-  itemIndicator={<Icon name="check" />}
-  submenuIndicator={<Icon name="chevron-right" />}
-  items={[
-    { label: "Renombrar", value: "rename" },
-    {
-      kind: "checkbox",
-      label: "Favorito",
-      value: "favorite",
-    },
-    {
-      label: "Exportar",
-      value: "export",
-      children: [{ label: "PDF", value: "export-pdf" }],
-    },
-  ]}
-/>`;
 ---
 
 <Base
@@ -102,17 +26,7 @@ import { Menu } from "@skryensya/react/menu";
   <p class="lede">Acciones, checkboxes y radios con navegación por teclado y typeahead.</p>
 
   <h2>Instalación</h2>
-  <ComponentPreview
-    js={js}
-    html={html}
-    react={react}
-    label="Menu"
-    viewport="menu"
-  >
-    <Fragment slot="react">
-      <MenuBasicDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={menuTree(t)} js={js} label="Menu" viewport="menu" />
 
   <h2>Contrato</h2>
   <p>

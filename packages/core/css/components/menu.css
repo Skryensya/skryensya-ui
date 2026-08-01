@@ -71,6 +71,31 @@
     outline: none;
   }
 
+  /*
+   * A SUBMENU STANDS WHERE AN ITEM STANDS, and until both bindings were rendered side by side
+   * nothing said so. The vanilla layer needs a nested `[data-sk-menu]` root to mount a second
+   * machine on, so a submenu's trigger sits inside one — and `.sk-menu` is `inline-flex`, which
+   * shrink-wrapped that row while its siblings filled the panel. React composes components and
+   * never had the wrapper, so the two bindings looked different and only one looked right.
+   */
+  .sk-menu__content > .sk-menu {
+    display: block;
+    inline-size: 100%;
+  }
+
+  /*
+   * And an item may BE a button. Only `<div>`s ever carried this class, so nothing reset the native
+   * chrome: the submenu trigger painted a bordered grey box inside a menu of flat rows.
+   */
+  button.sk-menu__item {
+    inline-size: 100%;
+    appearance: none;
+    border: 0;
+    background: none;
+    font: inherit;
+    text-align: start;
+  }
+
   .sk-menu__item::before {
     content: "";
     position: absolute;
@@ -95,8 +120,21 @@
     min-inline-size: 0;
     overflow-wrap: anywhere;
   }
+  /*
+   * The check means CHECKED, and nothing used to enforce that. The markup always carries the
+   * indicator and the machine writes `data-state` onto it, but no rule read that state — so an
+   * unchecked checkbox item painted a blue tick anyway. React never showed it (Zag hides the
+   * indicator when unchecked), which is how the two bindings disagreed about whether "Favorito" was
+   * on. Hidden unless checked: a tick that appears when it should not is a lie, where one that
+   * arrives a frame late is only late.
+   */
   .sk-menu__item-indicator {
+    visibility: hidden;
     color: var(--color-text-accent);
+  }
+
+  .sk-menu__item-indicator[data-state="checked"] {
+    visibility: visible;
   }
   .sk-menu__separator {
     block-size: 1px;

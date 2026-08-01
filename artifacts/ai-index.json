@@ -2197,6 +2197,27 @@
           ]
         },
         {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un trigger expandible: no es un icono de propósito general",
+            "hace falta que el estado se anuncie; eso ya lo dice el aria-expanded del trigger"
+          ],
+          "host": "span",
+          "id": "TileChevron",
+          "intent": [
+            "disclosure-mark",
+            "expand-collapse-affordance",
+            "accordion-chevron"
+          ],
+          "parents": [
+            "ExpandableTileTrigger",
+            "Accordion.Trigger"
+          ],
+          "useWhen": [
+            "un tile expandible o una sección de accordion necesita mostrar que se abre y se cierra"
+          ]
+        },
+        {
           "alternatives": [
             "Checkbox",
             "TileRadioGroup"
@@ -2592,5 +2613,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "9a0d5012468547ba"
+  "sourceHash": "023ff10ae77f59ab"
 }

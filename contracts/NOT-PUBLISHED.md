@@ -35,25 +35,29 @@ contrato:
 - **`command-palette`** — parts en core y enhancer vanilla completo (scoring difuso, navegación por
   teclado, control del `<dialog>`). No hay binding de React. Misma forma que tenía `copy-button`
   antes de publicarse: hay que escribir la mitad faltante primero.
-- **`split-button`** — es composición pura: un `div`, un botón primario y un Menu, sin comportamiento
-  propio, así que no necesita enhancer. El bloqueo está del otro lado: el `SplitButton` de React
-  construye su menú desde un prop plano `menuItems` en vez de aceptar un Menu compuesto, así que un
-  template fiel tendría que duplicar el template entero de `menu`. Lo que corresponde es que el
-  binding de React acepte composición.
-- **`dialog`** y **`popover`** — el comportamiento es de la plataforma (`<dialog>` + `showModal()`,
-  Popover API). Su "enhancer" puede ser legítimamente nada, igual que `Select.native` no tiene uno:
-  el contrato fija el elemento anfitrión y las parts, y el navegador se encarga del resto.
+- **`popover`** — el comportamiento es de la plataforma (Popover API), así que su "enhancer" puede
+  ser legítimamente nada, igual que `Select.native` no tiene uno. Dos de sus tres bloqueos ya están
+  resueltos: `popovertarget` es una referencia de id para el gate de simetría, y `optionAttrs` deja
+  que un mismo id autorado sea el `id` del panel y el `popovertarget` del trigger. Queda uno
+  estructural: **sin enhancer, nadie escribe el nombre de ancla en el markup autorado**. React genera
+  `--sk-anchored-name` inline por instancia y un template no puede, porque el nombre tiene que ser
+  único por instancia y un template es el mismo texto siempre. Es una pregunta sobre el patrón
+  Anclaje —quién nombra el ancla cuando no hay JS— y no una línea que falte.
 
 ## Cómo se cuenta
 
 Contra las 66 páginas de `componentes/`, el estado es: las que tienen contrato lo tienen publicado y
 con árbol canónico, y sus dos capas están comparadas por G2. De las que no, tres no deberían tenerlo
-(arriba), una es una receta, una es un alias, y **tres** son trabajo pendiente de verdad —
-`command-palette`, `split-button` y `popover`.
+(arriba), una es una receta, una es un alias, y **dos** son trabajo pendiente de verdad —
+`command-palette` y `popover`.
 
-`dialog` estaba en esa lista y ya no: se publicó escribiéndole la mitad de React que faltaba, igual
-que `copy-button`. Los dos siguen el mismo patrón y vale como receta para los que quedan — el
-contrato no es lo que falta, es la capa que nunca se escribió.
+`dialog` y `split-button` estaban en esa lista y ya no, y salieron por caminos distintos que vale
+distinguir. `dialog` se publicó escribiéndole la mitad de React que faltaba, igual que
+`copy-button`: ahí el contrato no era lo que faltaba, era la capa que nunca se escribió.
+`split-button` no necesitaba binding nuevo — necesitaba dejar de acoplarse. Su React construía el
+menú desde un prop plano y le pasaba una clase que un Menu compuesto no puede recibir, porque esa
+clase pertenece a quien dibuja ese botón, y eso es Menu. La hoja lo alcanza por estructura y la
+composición quedó posible.
 
 ## Demos que se quedan autorados aunque el contrato exista
 

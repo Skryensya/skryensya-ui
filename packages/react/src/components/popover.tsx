@@ -12,6 +12,13 @@ export type PopoverProps = Omit<HTMLAttributes<HTMLDivElement>, "content" | "tit
   description?: ReactNode;
   /** Draw a small arrow pointing at the trigger. Off by default; decorative, never announced. */
   arrow?: boolean;
+  /**
+   * The bare surface: an anchor and a panel, with no title, no description and no close control.
+   * It is the same component with less anatomy — `Popover.bare` in the contract — rather than a
+   * second component, because duplicating the parts would leave a reader choosing between two names
+   * for one thing. Escape and light-dismiss still work: they are the platform's, not the chrome's.
+   */
+  bare?: boolean;
   placement?: PopoverPlacement;
   triggerLabel?: string;
   closeLabel?: string;
@@ -26,6 +33,7 @@ export type PopoverProps = Omit<HTMLAttributes<HTMLDivElement>, "content" | "tit
 
 /** Native Popover API: the browser owns light-dismiss, Escape and top-layer behaviour. */
 export function Popover({
+  bare = false,
   container,
   children,
   className,
@@ -60,9 +68,10 @@ export function Popover({
         popover="auto"
       >
         {arrow ? <span aria-hidden="true" className={anchoredParts.arrow} /> : null}
-        {title ? <h2 className={popoverParts.title}>{title}</h2> : null}
-        {description ? <p className={popoverParts.description}>{description}</p> : null}
+        {title && !bare ? <h2 className={popoverParts.title}>{title}</h2> : null}
+        {description && !bare ? <p className={popoverParts.description}>{description}</p> : null}
         {children}
+        {bare ? null : (
         <button
           className={cx("sk-button", "sk-interactive", popoverParts.close)}
           popoverTarget={contentId}
@@ -71,6 +80,7 @@ export function Popover({
         >
           {closeLabel}
         </button>
+        )}
       </div>
     </div>
   );

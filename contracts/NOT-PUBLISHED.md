@@ -41,17 +41,16 @@ que lo deja claro: lo usan tooltip, menu, select, combobox, date-picker y popove
 
 La regla queda escrita, entonces: **`css/components/*` lleva contrato, `css/patterns/*` no.**
 
-**`popup`** tampoco es un componente aparte, y su propia página lo dice: *"superficie flotante mínima
+**** tampoco es un componente aparte, y su propia página lo dice: *"superficie flotante mínima
 para composiciones que no necesitan chrome de Popover"*, y más abajo *"si el patrón tiene título y
-acciones de cierre, usá Popover"*. No tiene archivo en core ni hoja propia — importa `popover.css`.
+acciones de cierre, usá Popover"*. No tiene archivo en core ni hoja propia — importa .
 Es el mismo componente con menos anatomía.
 
-Lo que corresponde, si algún día se quiere emitible, **no es un contrato propio sino una segunda
-signature de `popover`** — algo como `Popover.bare`: raíz, trigger y superficie, sin título, sin
-descripción y sin control de cierre. Eso pide que el binding de React haga opcional el botón de
-cerrar, que hoy dibuja siempre. Es trabajo chico y está sin hacer a propósito: publicar un contrato
-separado duplicaría parts que ya existen y dejaría a un agente eligiendo entre dos nombres para una
-sola cosa.
+Así quedó resuelto: ****, una segunda signature del mismo contrato — raíz, trigger y
+superficie, sin título, sin descripción y sin control de cierre. Un contrato propio habría duplicado
+cada part y dejado a un agente eligiendo entre dos nombres para una sola cosa, que es exactamente lo
+que un catálogo no debe hacer. Escape y el cierre al hacer clic afuera siguen funcionando: son de la
+plataforma, no del chrome.
 
 ## Los que faltaban, y ya no
 

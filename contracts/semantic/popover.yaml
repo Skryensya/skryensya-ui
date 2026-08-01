@@ -12,3 +12,14 @@ Popover:
     - Tooltip
     - Menu
     - Dialog
+
+Popover.bare:
+  useWhen:
+    - "hace falta una superficie flotante y nada más: la composición trae su propia semántica"
+    - "el patrón no tiene título ni acciones de cierre que justifiquen el chrome de Popover"
+  avoidWhen:
+    - "hay un título o algo que cerrar: eso es Popover y ya trae esa anatomía"
+    - "es una descripción de una línea; eso es un Tooltip"
+  alternatives:
+    - Popover
+    - Tooltip

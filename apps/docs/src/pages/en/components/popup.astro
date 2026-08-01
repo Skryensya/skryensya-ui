@@ -3,43 +3,13 @@ import Base from "../../../layouts/Base.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import "@skryensya/core/components/popover.css";
-import { PopupDemo } from "../../../components/react-demos/popup";
+import { popupTree } from "../../../demos/popup";
+import { getLocale, useTranslations } from "../../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/popover.css";`;
-const html = `<div class="sk-popover">
-  <button
-    class="sk-button sk-interactive sk-popover__trigger sk-anchor"
-    popovertarget="filters-popup"
-    style="--sk-anchored-name: --filters-anchor"
-    type="button"
-  >
-    Filtros
-  </button>
-  <div
-    class="sk-popover__positioner sk-anchored sk-popover__content"
-    id="filters-popup"
-    popover="auto"
-    style="--sk-anchored-name: --filters-anchor; --sk-anchored-box-name: --filters-box"
-  >
-    <!-- The arrow, optional: is authored or does not exist. A popup wants it, a select does not. -->
-    <span class="sk-anchored-arrow" aria-hidden="true"></span>
-    <label><input type="checkbox" /> Active only</label>
-  </div>
-</div>`;
-const react = `import { Popup } from "@skryensya/react/popup";
-
-// \`arrow\` is the same as authoring <span className="sk-anchored-arrow" /> inside
-// positioner: optional in both bindings, and off by default.
-function Example() {
-  return (
-    <Popup trigger="Filtros" arrow>
-      <label>
-        <input type="checkbox" /> Active only
-      </label>
-    </Popup>
-  );
-}`;
 ---
 
 <Base
@@ -50,16 +20,10 @@ function Example() {
   <p class="lede">Minimal floating surface for compositions that do not need Popover chrome.</p>
 
   <h2>Facility</h2>
-  <ComponentPreview
-    html={html}
-    react={react}
+  <ComponentPreview tree={popupTree(t)}
     label="Popup"
     viewport="menu"
-  >
-    <Fragment slot="react">
-      <PopupDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  />
 
   <h2>Contract</h2>
   <p>Popup provides anchor and surface, not internal semantics. If the pattern has title and closing actions, use Popover.</p>

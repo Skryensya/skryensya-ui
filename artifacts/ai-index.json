@@ -1497,6 +1497,28 @@
             "hace falta un panel con contenido propio colgado de un control: un formulario corto, una explicación con formato",
             "conviene que el navegador se encargue de cerrar al hacer clic afuera y con Escape"
           ]
+        },
+        {
+          "alternatives": [
+            "Popover",
+            "Tooltip"
+          ],
+          "avoidWhen": [
+            "hay un título o algo que cerrar: eso es Popover y ya trae esa anatomía",
+            "es una descripción de una línea; eso es un Tooltip"
+          ],
+          "host": "div",
+          "id": "Popover.bare",
+          "intent": [
+            "bare-floating-surface",
+            "anchored-panel-without-chrome",
+            "popup"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hace falta una superficie flotante y nada más: la composición trae su propia semántica",
+            "el patrón no tiene título ni acciones de cierre que justifiquen el chrome de Popover"
+          ]
         }
       ]
     },
@@ -2802,5 +2824,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "3a5a88e30170a223"
+  "sourceHash": "48d7982ea7e9f2b1"
 }

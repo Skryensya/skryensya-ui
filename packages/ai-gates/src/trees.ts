@@ -833,6 +833,17 @@ const signatureTrees: readonly Canonical[] = [
       slots: { label: "vite.config.ts", children: "export default defineConfig({})" },
     },
   },
+  /* The same component with less anatomy — what the docs call "popup". */
+  {
+    name: "popover/bare",
+    enhanced: false,
+    tree: {
+      contract: "popover",
+      signature: "Popover.bare",
+      options: { panelId: "filters-popup", bare: true },
+      slots: { trigger: "Filtros", children: "Cualquier cosa cabe acá." },
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

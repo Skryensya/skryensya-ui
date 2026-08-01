@@ -17,6 +17,11 @@ Los dos tienen CSS y uno tiene enhancer, y ninguno de los dos es algo que un con
 system componga en su producto. Publicarlos pondría infraestructura de docs en el catálogo que un
 agente lee para elegir qué usar.
 
+Vale nombrar la tensión en vez de taparla: la hoja de `component-preview` vive en `css/components/`,
+que por la regla de abajo diría que lleva contrato. Gana el criterio de para quién es. Si algún día
+se decide que sí es del sistema, lo que corresponde es MOVER la hoja y publicarlo — no publicarlo
+dejándolo donde está y que la ubicación siga diciendo otra cosa.
+
 **`card`** no tiene archivo en core, ni hoja propia, ni binding. Sus doce previews importan datos y
 fuentes locales de la página (`examples/card-data`, `examples/card-sources`) y se construyen con
 signatures que ya existen — Tile, Content, tipografía. Eso es una **receta**, no un componente: la
@@ -24,14 +29,23 @@ forma correcta de publicarlo es en `packages/recipes`, donde el gate ya verifica
 estados distintos.
 
 **`drawer`** no es un componente aparte. La propia página lo dice en su primera línea: *"un drawer ES
-un Vaul"*. Es el patrón `vaul` más una hoja que lo ancla a un borde. Lo que puede faltar acá es el
-contrato de **vaul**, no uno de drawer.
+un Vaul"*. Es el patrón `vaul` más una hoja que lo ancla a un borde.
+
+Acá corrijo algo que este mismo archivo afirmaba antes: dije que "lo que puede faltar es el contrato
+de vaul". No falta. **`vaul` es un PATRÓN**, no un componente — su hoja vive en `css/patterns/`, no
+en `css/components/`, igual que `anchored`. Y ningún patrón tiene contrato en este sistema, por una
+razón: un contrato fija una ANATOMÍA que las dos capas emiten, y un patrón no tiene anatomía propia
+— es un puñado de clases y custom properties que otros componentes componen. `anchored` es el caso
+que lo deja claro: lo usan tooltip, menu, select, combobox, date-picker y popover, y ninguno de ellos
+"contiene un anchored".
+
+La regla queda escrita, entonces: **`css/components/*` lleva contrato, `css/patterns/*` no.**
 
 ## Los que faltaban, y ya no
 
-Cinco páginas llegaron acá sin contrato y salieron con uno. Ninguna estaba bloqueada por el
-contrato: cuatro de las cinco necesitaban una CAPA que nunca se había escrito, y la quinta necesitaba
-dejar de acoplarse.
+Seis páginas llegaron acá sin contrato y salieron con uno. Ninguna estaba bloqueada por el contrato:
+cuatro necesitaban una CAPA que nunca se había escrito, una necesitaba dejar de acoplarse, y una
+parecía trabada en un patrón y no lo estaba.
 
 - **`copy-button`**, **`dialog`** y **`command-palette`** — tenían enhancer vanilla y ningún
   binding de React. Un contrato nombra un export de React, G1 verifica que exista y G2 compara las

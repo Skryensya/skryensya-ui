@@ -10248,11 +10248,25 @@
         }
       },
       "parts": {
+        "code": "sk-code",
         "heading": "sk-heading",
         "link": "sk-link",
         "text": "sk-text"
       },
       "semantics": {
+        "Code": {
+          "alternatives": [
+            "Strong"
+          ],
+          "avoidWhen": [
+            "es un bloque de código entero: eso es CodePreview, con su scroll y su botón de copiar",
+            "sólo se busca énfasis; eso es Strong y es otra afirmación"
+          ],
+          "useWhen": [
+            "hay un literal dentro de una frase: una ruta, un flag, el nombre de una propiedad",
+            "conviene que se lea distinto del texto que lo rodea para no confundirlo con prosa"
+          ]
+        },
         "Heading": {
           "alternatives": [
             "Text"
@@ -10308,6 +10322,33 @@
         }
       },
       "signatures": {
+        "Code": {
+          "host": {
+            "element": "code"
+          },
+          "intent": [
+            "inline-code",
+            "a-path-in-a-sentence",
+            "a-flag-or-property-name"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/typography",
+            "name": "Code"
+          },
+          "slots": {
+            "children": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "code",
+            "host": true,
+            "part": "code",
+            "slot": "children"
+          }
+        },
         "Heading": {
           "host": {
             "element": "h2"
@@ -10525,5 +10566,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "1171d63ce1b182b7"
+  "sourceHash": "ccc7eff7e3e71db8"
 }

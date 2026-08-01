@@ -11,308 +11,19 @@ import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 import {
-  AccordionExclusiveDemo,
-  AccordionMultipleDemo,
-  AccordionSingleDemo,
-} from "../../components/react-demos/accordion";
+  accordionExclusiveTree,
+  accordionMultipleTree,
+  accordionSingleTree,
+} from "../../demos/accordion";
+import { getLocale, useTranslations } from "../../i18n";
 
-const disclosureIcon = `<span
-        class="sk-tile__chevron"
-        data-part="chevron"
-        aria-hidden="true"
-      >
-        <span data-state="closed">
-          <span data-sk-icon="chevron-down"></span>
-        </span>
-        <span data-state="open">
-          <span data-sk-icon="chevron-up"></span>
-        </span>
-      </span>`;
 
-const single = `<div
-  class="sk-accordion"
-  data-sk-accordion
-  data-type="single"
-  data-default-value="environment"
->
-  <section
-    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
-    data-part="item"
-    data-value="environment"
-  >
-    <button
-      type="button"
-      class="sk-tile__trigger"
-      data-part="trigger"
-      aria-expanded="true"
-      aria-controls="environment-content"
-    >
-      <span class="sk-tile__content">
-        <span class="sk-tile__title">Entorno</span>
-        <span class="sk-tile__description">
-          Producción · Fráncfort
-        </span>
-      </span>
-      ${disclosureIcon}
-    </button>
-    <div
-      id="environment-content"
-      class="sk-tile__expandable-content"
-      data-part="content"
-    >
-      <div class="sk-stack" data-gap="sm">
-        <p class="sk-tile__description">
-          Node 22 corre en tres réplicas detrás del balanceador de
-          Fráncfort. El tráfico se reparte por round-robin y una
-          réplica se recicla sola si falla dos health checks
-          seguidos.
-        </p>
-        <p class="sk-tile__description">
-          Los secretos se inyectan en el arranque desde el vault
-          regional, así que ningún valor sensible queda en la
-          imagen ni en el log de build.
-        </p>
-      </div>
-    </div>
-  </section>
-</div>`;
 
-const exclusive = `<div
-  class="sk-accordion"
-  data-sk-accordion
-  data-type="single"
-  data-default-value="runtime"
->
-  <section
-    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
-    data-part="item"
-    data-value="runtime"
-  >
-    <button
-      type="button"
-      class="sk-tile__trigger"
-      data-part="trigger"
-      aria-expanded="true"
-      aria-controls="runtime-content"
-    >
-      <span class="sk-tile__content">
-        <span class="sk-tile__title">Runtime</span>
-        <span class="sk-tile__description">
-          Versión y región
-        </span>
-      </span>
-      ${disclosureIcon}
-    </button>
-    <div
-      id="runtime-content"
-      class="sk-tile__expandable-content"
-      data-part="content"
-    >
-      <div class="sk-stack" data-gap="sm">
-        <p class="sk-tile__description">
-          Node 22 sobre el pool compartido de Fráncfort. Cada
-          despliegue reserva dos vCPU y 512 MB, con autoscaling
-          hasta seis réplicas cuando la cola de peticiones
-          supera el umbral.
-        </p>
-        <p class="sk-tile__description">
-          El healthcheck pega a <code>/status</code> cada diez
-          segundos; tres fallos seguidos sacan la réplica del
-          balanceador sin cortar el tráfico en vuelo.
-        </p>
-      </div>
-    </div>
-  </section>
-  <section
-    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
-    data-part="item"
-    data-value="rollout"
-  >
-    <button
-      type="button"
-      class="sk-tile__trigger"
-      data-part="trigger"
-      aria-expanded="false"
-      aria-controls="rollout-content"
-    >
-      <span class="sk-tile__content">
-        <span class="sk-tile__title">Rollout</span>
-        <span class="sk-tile__description">
-          Canary por porcentaje
-        </span>
-      </span>
-      ${disclosureIcon}
-    </button>
-    <div
-      id="rollout-content"
-      class="sk-tile__expandable-content"
-      data-part="content"
-      hidden
-    >
-      <div class="sk-stack" data-gap="sm">
-        <p class="sk-tile__description">
-          El canary sube en tres tramos, 10%, 50% y 100%, y
-          espera a que las métricas de error y latencia se
-          mantengan estables antes de avanzar a cada tramo.
-        </p>
-        <p class="sk-tile__description">
-          Si un tramo degrada, el rollout se detiene solo y
-          avisa al canal de guardia: nada avanza sin luz verde.
-        </p>
-      </div>
-    </div>
-  </section>
-  <section
-    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
-    data-part="item"
-    data-value="rollback"
-  >
-    <button
-      type="button"
-      class="sk-tile__trigger"
-      data-part="trigger"
-      aria-expanded="false"
-      aria-controls="rollback-content"
-    >
-      <span class="sk-tile__content">
-        <span class="sk-tile__title">Rollback</span>
-        <span class="sk-tile__description">
-          Versión estable anterior
-        </span>
-      </span>
-      ${disclosureIcon}
-    </button>
-    <div
-      id="rollback-content"
-      class="sk-tile__expandable-content"
-      data-part="content"
-      hidden
-    >
-      <p class="sk-tile__description">
-        Restaura v2.18.4 si el canary falla las comprobaciones.
-      </p>
-    </div>
-  </section>
-</div>`;
 
 /* Same group as exclusive, but multiple can keep several items open
    and needs unique content ids so both demos can live on one page. */
-const multiple = `<div
-  class="sk-accordion"
-  data-sk-accordion
-  data-type="multiple"
-  data-default-value="runtime,rollout"
->
-  <section
-    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
-    data-part="item"
-    data-value="runtime"
-  >
-    <button
-      type="button"
-      class="sk-tile__trigger"
-      data-part="trigger"
-      aria-expanded="true"
-      aria-controls="multiple-runtime-content"
-    >
-      <span class="sk-tile__content">
-        <span class="sk-tile__title">Runtime</span>
-        <span class="sk-tile__description">
-          Versión y región
-        </span>
-      </span>
-      ${disclosureIcon}
-    </button>
-    <div
-      id="multiple-runtime-content"
-      class="sk-tile__expandable-content"
-      data-part="content"
-    >
-      <div class="sk-stack" data-gap="sm">
-        <p class="sk-tile__description">
-          Node 22 sobre el pool compartido de Fráncfort. Cada
-          despliegue reserva dos vCPU y 512 MB, con autoscaling
-          hasta seis réplicas cuando la cola de peticiones
-          supera el umbral.
-        </p>
-        <p class="sk-tile__description">
-          El healthcheck pega a <code>/status</code> cada diez
-          segundos; tres fallos seguidos sacan la réplica del
-          balanceador sin cortar el tráfico en vuelo.
-        </p>
-      </div>
-    </div>
-  </section>
-  <section
-    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
-    data-part="item"
-    data-value="rollout"
-  >
-    <button
-      type="button"
-      class="sk-tile__trigger"
-      data-part="trigger"
-      aria-expanded="true"
-      aria-controls="multiple-rollout-content"
-    >
-      <span class="sk-tile__content">
-        <span class="sk-tile__title">Rollout</span>
-        <span class="sk-tile__description">
-          Canary por porcentaje
-        </span>
-      </span>
-      ${disclosureIcon}
-    </button>
-    <div
-      id="multiple-rollout-content"
-      class="sk-tile__expandable-content"
-      data-part="content"
-    >
-      <div class="sk-stack" data-gap="sm">
-        <p class="sk-tile__description">
-          El canary sube en tres tramos, 10%, 50% y 100%, y
-          espera a que las métricas de error y latencia se
-          mantengan estables antes de avanzar a cada tramo.
-        </p>
-        <p class="sk-tile__description">
-          Si un tramo degrada, el rollout se detiene solo y
-          avisa al canal de guardia: nada avanza sin luz verde.
-        </p>
-      </div>
-    </div>
-  </section>
-  <section
-    class="sk-tile sk-tile--interactive sk-tile--expandable sk-interactive"
-    data-part="item"
-    data-value="rollback"
-  >
-    <button
-      type="button"
-      class="sk-tile__trigger"
-      data-part="trigger"
-      aria-expanded="false"
-      aria-controls="multiple-rollback-content"
-    >
-      <span class="sk-tile__content">
-        <span class="sk-tile__title">Rollback</span>
-        <span class="sk-tile__description">
-          Versión estable anterior
-        </span>
-      </span>
-      ${disclosureIcon}
-    </button>
-    <div
-      id="multiple-rollback-content"
-      class="sk-tile__expandable-content"
-      data-part="content"
-      hidden
-    >
-      <p class="sk-tile__description">
-        Restaura v2.18.4 si el canary falla las comprobaciones.
-      </p>
-    </div>
-  </section>
-</div>`;
+
+const t = useTranslations(getLocale(Astro.url));
 
 const vanilla = `import { initComponents } from "@skryensya/vanilla/auto";
 import { mountIcons } from "@skryensya/vanilla/icon";
@@ -334,47 +45,6 @@ root.addEventListener("sk:accordionvaluechange", (event) => {
   console.log(event.detail.value);
 });`;
 
-const react = `import { Accordion } from "@skryensya/react/accordion";
-import { Icon } from "@skryensya/react/icon";
-
-function Example() {
-  return (
-    <Accordion type="multiple" defaultValue={["runtime", "rollout"]}>
-      <Accordion.Item value="runtime">
-        <Accordion.Trigger>
-          <span className="sk-tile__content">
-            <span className="sk-tile__title">Runtime</span>
-            <span className="sk-tile__description">
-              Versión y región
-            </span>
-          </span>
-          <span className="sk-tile__chevron" aria-hidden="true">
-            <span data-state="closed">
-              <Icon name="chevron-down" />
-            </span>
-            <span data-state="open">
-              <Icon name="chevron-up" />
-            </span>
-          </span>
-        </Accordion.Trigger>
-        <Accordion.Content>
-          <div className="sk-stack" data-gap="sm">
-            <p className="sk-tile__description">
-              Node 22 sobre el pool compartido de Fráncfort. Cada
-              despliegue reserva dos vCPU y 512 MB, con autoscaling
-              hasta seis réplicas.
-            </p>
-            <p className="sk-tile__description">
-              El healthcheck pega a <code>/status</code> cada diez
-              segundos; tres fallos seguidos sacan la réplica del
-              balanceador.
-            </p>
-          </div>
-        </Accordion.Content>
-      </Accordion.Item>
-    </Accordion>
-  );
-}`;
 
 const nativeInstall = `pnpm add @skryensya/core`;
 
@@ -382,6 +52,24 @@ const nativeStyles = `@import "@skryensya/core/components/details.css";`;
 
 /* Same exclusive group as Accordion single, but platform <details name>. Tile anatomy
    (content / title / description / chevron) keeps the chrome identical to Accordion. */
+/*
+ * The disclosure mark for the NATIVE <details> demo below, which stays authored: <details> is a
+ * different component with its own contract-less anatomy, so it cannot borrow TileChevron. The
+ * three accordions above emit theirs from the tree.
+ */
+const disclosureIcon = `<span
+        class="sk-tile__chevron"
+        data-part="chevron"
+        aria-hidden="true"
+      >
+        <span data-state="closed">
+          <span data-sk-icon="chevron-down"></span>
+        </span>
+        <span data-state="open">
+          <span data-sk-icon="chevron-up"></span>
+        </span>
+      </span>`;
+
 const nativeDetails = `<section
   class="sk-details-group"
   aria-label="Configuración de despliegue"
@@ -475,11 +163,7 @@ const nativeDetails = `<section
     Para una divulgación aislada (antes “ExpandableTile”), usa Accordion con un único item: la raíz
     aporta el marco y el Tile conserva la superficie y el state layer.
   </p>
-  <ComponentPreview html={single} label="Accordion de un item">
-    <Fragment slot="react">
-      <AccordionSingleDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={accordionSingleTree(t)} label="Accordion de un item" />
 
   <h2>Grupo exclusivo</h2>
   <p>
@@ -487,19 +171,11 @@ const nativeDetails = `<section
     item abierto. Con <code>data-collapsible="false"</code> o <code>collapsible={false}</code>, el item
     abierto no puede cerrarse.
   </p>
-  <ComponentPreview html={exclusive} label="Accordion single">
-    <Fragment slot="react">
-      <AccordionExclusiveDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={accordionExclusiveTree(t)} label="Accordion single" />
 
   <h2>Grupo múltiple</h2>
   <p><code>type="multiple"</code> conserva cada disclosure de forma independiente.</p>
-  <ComponentPreview html={multiple} react={react} label="Accordion multiple">
-    <Fragment slot="react">
-      <AccordionMultipleDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={accordionMultipleTree(t)} label="Accordion multiple" />
 
   <h2>Vanilla</h2>
   <p>

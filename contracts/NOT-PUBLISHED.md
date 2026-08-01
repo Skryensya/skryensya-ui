@@ -41,6 +41,18 @@ que lo deja claro: lo usan tooltip, menu, select, combobox, date-picker y popove
 
 La regla queda escrita, entonces: **`css/components/*` lleva contrato, `css/patterns/*` no.**
 
+**`popup`** tampoco es un componente aparte, y su propia página lo dice: *"superficie flotante mínima
+para composiciones que no necesitan chrome de Popover"*, y más abajo *"si el patrón tiene título y
+acciones de cierre, usá Popover"*. No tiene archivo en core ni hoja propia — importa `popover.css`.
+Es el mismo componente con menos anatomía.
+
+Lo que corresponde, si algún día se quiere emitible, **no es un contrato propio sino una segunda
+signature de `popover`** — algo como `Popover.bare`: raíz, trigger y superficie, sin título, sin
+descripción y sin control de cierre. Eso pide que el binding de React haga opcional el botón de
+cerrar, que hoy dibuja siempre. Es trabajo chico y está sin hacer a propósito: publicar un contrato
+separado duplicaría parts que ya existen y dejaría a un agente eligiendo entre dos nombres para una
+sola cosa.
+
 ## Los que faltaban, y ya no
 
 Seis páginas llegaron acá sin contrato y salieron con uno. Ninguna estaba bloqueada por el contrato:
@@ -67,8 +79,12 @@ de mejorarlo. Los dos tienen que describir un componente, no dos parecidos.
 
 Contra las 66 páginas de `componentes/`, el estado es: **todas las que deben tener contrato lo
 tienen**, publicado, con árbol canónico y con sus dos capas comparadas por G2. De las que no, dos son
-chrome de este sitio (`component-preview`, `toc`), una es una receta (`card`) y una es un alias
-(`drawer`).
+chrome de este sitio (`component-preview`, `toc`), una es una receta (`card`), una es un alias
+(`drawer`) y una es el mismo componente con menos anatomía (`popup`).
+
+De las páginas que tienen previews, **52 están completamente armadas con el árbol**. Las que no
+están, no están por alguna de las razones de este archivo — no por falta de trabajo. Si alguien
+vuelve a contar y el número no cierra, la diferencia debería aparecer acá o es un hueco de verdad.
 
 No queda nada de esta lista esperando un contrato. `vaul` tampoco: es un patrón, y los patrones no
 llevan uno — ver arriba.
@@ -89,9 +105,18 @@ comparado por G2 con su propio árbol canónico.
   `showModal()`. El contrato expone `open`, que es la parte de "está mostrándose" que el markup
   autorado SÍ puede decir, pero `showModal()` es una llamada y no markup: emitir el árbol dejaría un
   diálogo abierto y sin el botón que lo abre, que es justo lo que la página enseña.
+- **`command-palette`** — misma forma que `dialog`, y más marcada. Su demo es un botón que abre la
+  paleta más un `<script type="application/json">` con el índice que el enhancer lee. El contrato
+  emite el diálogo y nada más, así que el árbol dejaría un preview EN BLANCO: un diálogo cerrado, sin
+  el control que lo abre ni los datos que lo llenan.
 - **`date-picker`**, el preview nativo — un `<input type="date">` dentro del chrome compartido de
   campo. Es la capa sin JS, no una composición de este componente.
 - **`accordion`**, el preview de `<details>` — otro componente, con su propia anatomía.
+- **`process-list`** y **`wrapper`** — acá el árbol es válido y aun así degrada la página, por una
+  razón que conviene tener escrita: **el stage no es el componente**. El preview de `wrapper` enseña
+  el diagrama de una columna de página y el de `process-list` una lista dentro de su contexto; el
+  árbol REEMPLAZA ese slot, así que emitirlo cambia el preview por el componente suelto y se pierde
+  justo lo que la página explica. Los árboles llegaron a escribirse para los dos y se borraron.
 
 La regla no es "esta página es difícil". Es que el árbol REEMPLAZA el slot del preview, así que
 cuando la demo necesita más de lo que el contrato emite, convertirla degrada la página. La

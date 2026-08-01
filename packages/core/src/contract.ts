@@ -250,6 +250,15 @@ export type ContractTemplate = {
    * decides how it is written.
    */
   readonly itemOptionAttrs?: Readonly<Record<string, string>>;
+  /**
+   * The same rename, one level UP: which attribute a HOST option maps to, for this node only.
+   *
+   * The case that needs it is the native Popover API. One authored id is two things — the content
+   * element's `id` and the trigger's `popovertarget` — and neither spelling is more true than
+   * the other. Without this the contract would need two options for one fact, which an author could
+   * set to two different values, and the popover would simply not open.
+   */
+  readonly optionAttrs?: Readonly<Record<string, string>>;
 
   /**
    * This node repeats over a collection the CONTRACT computes rather than the author supplies.

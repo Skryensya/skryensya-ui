@@ -474,6 +474,27 @@
             "hay que mostrar código y conviene que se lea como código: resaltado, con su etiqueta",
             "el bloque es largo y mostrarlo entero empuja el resto de la página fuera de la vista"
           ]
+        },
+        {
+          "alternatives": [
+            "CodePreview"
+          ],
+          "avoidWhen": [
+            "hay una sola versión del código: eso es CodePreview y no necesita el switch",
+            "las dos versiones son código distinto, no dos niveles de detalle del mismo"
+          ],
+          "host": "div",
+          "id": "CodePreview.density",
+          "intent": [
+            "condensed-and-full-code",
+            "two-levels-of-detail",
+            "code-with-a-density-switch"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el mismo código tiene una versión corta para entenderlo y una completa para copiarlo",
+            "mostrar sólo la completa hace que nadie la lea, y sólo la corta deja afuera lo que hace falta"
+          ]
         }
       ]
     },
@@ -2824,5 +2845,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "48d7982ea7e9f2b1"
+  "sourceHash": "6ca8452ae13e4f38"
 }

@@ -4,7 +4,10 @@ import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
 import "@skryensya/core/components/split-button.css";
 import "@skryensya/core/components/menu.css";
-import { SplitButtonDemo } from "../../../components/react-demos/split-button";
+import { splitButtonTree } from "../../../demos/split-button";
+import { getLocale, useTranslations } from "../../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/split-button.css";
@@ -15,53 +18,6 @@ import { initComponents } from "@skryensya/vanilla/auto";
 
 mountIcons(document, lucideIcons);
 initComponents();`;
-const html = `<div class="sk-split-button">
-  <button
-    class="sk-button sk-interactive sk-split-button__primary"
-    data-variant="primary"
-    type="button"
-  >
-    Save
-  </button>
-  <div class="sk-menu" data-sk-menu aria-label="More options">
-    <button
-      class="
-        sk-button sk-interactive
-        sk-menu__trigger sk-anchor sk-split-button__trigger
-      "
-      data-sk-menu-trigger
-      type="button"
-    >
-      <span data-sk-icon="chevron-down"></span>
-    </button>
-    <div class="sk-menu__positioner sk-anchored" data-sk-menu-positioner>
-      <div class="sk-menu__content" data-sk-menu-content>
-        <div
-          class="sk-menu__item sk-interactive"
-          data-sk-menu-item
-          data-value="save-copy"
-        >Save a copy</div>
-      </div>
-    </div>
-  </div>
-</div>`;
-const react = `import { Icon } from "@skryensya/react/icon";
-import { SplitButton } from "@skryensya/react/split-button";
-
-function Example() {
-  return (
-    <SplitButton
-      menuLabel="More options"
-      menuIndicator={<Icon name="chevron-down" />}
-      menuItems={[
-        { label: "Save a copy", value: "save-copy" },
-      ]}
-      onClick={SomeFunction}
-    >
-      Save
-    </SplitButton>
-  );
-}`;
 ---
 
 <Base
@@ -72,17 +28,10 @@ function Example() {
   <p class="lede">Stable main action and adjacent menu with alternative actions.</p>
 
   <h2>Facility</h2>
-  <ComponentPreview
-    html={html}
-    js={js}
-    react={react}
+  <ComponentPreview tree={splitButtonTree(t)} js={js}
     label="SplitButton"
     viewport="menu"
-  >
-    <Fragment slot="react">
-      <SplitButtonDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  />
 
   <h2>Contract</h2>
   <p>The main action does not change silently when choosing the menu. If there is no dominant action, use Menu.</p>

@@ -686,6 +686,53 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
+  /*
+   * The last published contract whose two bindings had never been compared. Six signatures, and the
+   * page window is COMPUTED rather than authored — `repeatComputed` is what makes the emitted nav
+   * agree with React's about which pages are visible.
+   */
+  {
+    name: "table-pager/page-two-of-nine",
+    enhanced: true,
+    tree: {
+      contract: "table-pager",
+      signature: "TablePager",
+      options: { page: 2, pageSize: 10, siblings: 1 },
+      children: [
+        {
+          contract: "table-pager",
+          signature: "TablePagerBar",
+          children: [
+            {
+              contract: "table-pager",
+              signature: "TablePagerSize",
+              /* The rows-per-page control. A native select: the browser owns the keyboard and the
+                 form, and the pager only owns the box around it. */
+              children: {
+                contract: "select",
+                signature: "Select.native",
+                attrs: { "aria-label": "Filas por página" },
+                slots: {
+                  items: [
+                    { options: { value: "10" }, slots: { label: "10" } },
+                    { options: { value: "25" }, slots: { label: "25" } },
+                  ],
+                },
+              },
+            },
+            {
+              contract: "table-pager",
+              signature: "TablePagerEnd",
+              children: [
+                { contract: "table-pager", signature: "TablePagerStatus", children: "11–20 de 90" },
+                { contract: "table-pager", signature: "TablePagerNav" },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

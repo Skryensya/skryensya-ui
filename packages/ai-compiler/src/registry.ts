@@ -33,6 +33,7 @@ import { dialogContract } from "@skryensya/core/dialog";
 import { splitButtonContract } from "@skryensya/core/split-button";
 import { popoverContract } from "@skryensya/core/popover";
 import { commandPaletteContract } from "@skryensya/core/command-palette";
+import { codePreviewContract } from "@skryensya/core/code-preview";
 import { segmentedContract } from "@skryensya/core/segmented";
 import { sliderContract } from "@skryensya/core/slider";
 import { avatarContract } from "@skryensya/core/avatar";
@@ -121,6 +122,7 @@ export const contracts = {
   "split-button": splitButtonContract,
   popover: popoverContract,
   "command-palette": commandPaletteContract,
+  "code-preview": codePreviewContract,
   typography: typographyContract,
   wrapper: wrapperContract,
   tabs: tabsContract,

@@ -450,6 +450,34 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/code-preview.css",
+      "id": "code-preview",
+      "signatures": [
+        {
+          "alternatives": [
+            "Code",
+            "CopyButton"
+          ],
+          "avoidWhen": [
+            "es un literal dentro de una frase: eso es Code",
+            "lo que importa es copiarlo, no leerlo: eso es un CopyButton sobre el valor"
+          ],
+          "host": "div",
+          "id": "CodePreview",
+          "intent": [
+            "code-block",
+            "show-a-snippet",
+            "long-code-with-a-window"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay que mostrar código y conviene que se lea como código: resaltado, con su etiqueta",
+            "el bloque es largo y mostrarlo entero empuja el resto de la página fuera de la vista"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/combobox.css",
       "id": "combobox",
       "signatures": [
@@ -2774,5 +2802,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "7891c55faf35ec1f"
+  "sourceHash": "3a5a88e30170a223"
 }

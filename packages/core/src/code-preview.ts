@@ -1,3 +1,4 @@
+import type { ComponentContract } from "./contract.js";
 export type CodePreviewDensity = "condensed" | "full";
 
 /**
@@ -45,3 +46,114 @@ export const codePreviewAttrs = {
 
 export type CodePreviewAttr = keyof typeof codePreviewAttrs;
 export type CodePreviewAttrName = (typeof codePreviewAttrs)[CodePreviewAttr];
+
+/*
+ * CODE PREVIEW, the contract — a block of code with a window over it.
+ *
+ * The enhancer shipped with no React counterpart, so this could not be a contract: one binding is
+ * not a contract, it is a script. Writing the missing half is what made it publishable, the same as
+ * `copy-button`, `dialog` and `command-palette`.
+ *
+ * HIGHLIGHTING IS NOT THIS COMPONENT'S JOB. Shiki runs at build or on the server and never in the
+ * browser, so the code arrives already marked up and `children` is whatever the author produced.
+ * What this owns is the chrome: the label row, the disclosure, and the LINE COUNTS that turn
+ * "show 40 more lines" into a real number. Those counts are machine input in the strict sense —
+ * they are measured where the code is highlighted and authored markup has no other channel for them.
+ *
+ * ONE SIGNATURE, NOT TWO, for now. The docs' own `CodeBlock` also renders a DENSITY variant: two
+ * panels, condensed and full, with a switch between them. That is a second signature with its own
+ * anatomy and its own required pair of slots, and it is deliberately not guessed at here.
+ */
+export const codePreviewContract = {
+  id: "code-preview",
+  css: "@skryensya/core/components/code-preview.css",
+  parts: codePreviewParts,
+
+  options: {
+    /** The panel is taller than its window, so it gets a disclosure control. */
+    collapsible: { type: "boolean", default: false, attr: codePreviewAttrs.collapsible, trueValue: "", machineInput: true },
+    /** Total lines, and how many the collapsed window shows. Counted where the code is made. */
+    lines: { type: "string", attr: codePreviewAttrs.lines, machineInput: true },
+    previewLines: { type: "string", attr: codePreviewAttrs.previewLines, machineInput: true },
+    /** What the disclosure says while collapsed, and once open. */
+    moreLabel: { type: "string", default: "Ver todo", attr: "data-more-label", machineInput: true },
+    lessLabel: { type: "string", default: "Ver menos", attr: codePreviewAttrs.expandedLabel, machineInput: true },
+  },
+
+  signatures: {
+    CodePreview: {
+      intent: ["code-block", "show-a-snippet", "long-code-with-a-window"],
+      host: { element: "div" },
+      mount: codePreviewAttrs.root,
+      options: ["collapsible", "lines", "previewLines", "moreLabel", "lessLabel"],
+      slots: {
+        /** The code itself, already highlighted. */
+        children: { accepts: "node", required: true },
+        /** What this snippet is: a filename, a language, a step. */
+        label: { accepts: "text" },
+        /** A second line beside the label — a caveat, a version. */
+        note: { accepts: "text" },
+      },
+      template: {
+        element: "div",
+        part: "root",
+        host: true,
+        children: [
+          {
+            element: "div",
+            part: "label",
+            whenGiven: ["label", "note"],
+            children: [
+              {
+                element: "span",
+                part: "meta",
+                children: [
+                  { element: "span", slot: "label", whenGiven: "label" },
+                  { element: "span", slot: "note", whenGiven: "note" },
+                ],
+              },
+            ],
+          },
+          {
+            element: "div",
+            part: "preview",
+            children: [{ element: "div", part: "viewport", slot: "children" }],
+          },
+          {
+            element: "div",
+            part: "more",
+            mount: codePreviewAttrs.more,
+            whenGiven: "collapsible",
+            children: [
+              {
+                element: "button",
+                part: "toggle",
+                also: ["sk-button", "sk-interactive"],
+                mount: codePreviewAttrs.toggle,
+                attrs: {
+                  type: "button",
+                  "aria-expanded": "false",
+                  "data-size": "sm",
+                  "data-variant": "ghost",
+                },
+                children: [
+                  { element: "span", mount: codePreviewAttrs.toggleLabel, textFromOption: "moreLabel" },
+                  /* Filled by the enhancer once there is a layout to measure. */
+                  { element: "span", part: "toggleCount" },
+                  {
+                    element: "span",
+                    part: "toggleIcon",
+                    children: [
+                      { element: "span", attrs: { "data-sk-icon": "chevron-down", "data-sk-icon-size": "sm" } },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/code-preview", name: "CodePreview" },
+    },
+  },
+} as const satisfies ComponentContract;

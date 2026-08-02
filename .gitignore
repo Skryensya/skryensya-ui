@@ -19,3 +19,7 @@ PORTING-DEMOS.md
 verify-stages*.mjs
 shot-stages*.mjs
 apps/docs/check-trees.mts
+
+# The dev server writes its own PID and port here on every run. Tracked once by accident, and
+# stripped out of every commit by hand since — which is a chore that only ever ends one way.
+apps/docs/.astro/dev.json

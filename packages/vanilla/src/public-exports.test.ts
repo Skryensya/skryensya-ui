@@ -24,6 +24,7 @@ import { mountTileSwitch } from "@skryensya/vanilla/tile-switch";
 import { mountTileRadioGroup } from "@skryensya/vanilla/tile-radio-group";
 import { mountTimeField } from "@skryensya/vanilla/time-field";
 import { mountToast } from "@skryensya/vanilla/toast";
+import { mountToc } from "@skryensya/vanilla/toc";
 import { mountTooltip } from "@skryensya/vanilla/tooltip";
 import { mountVaul } from "@skryensya/vanilla/vaul";
 import { describe, expect, it } from "vitest";
@@ -51,6 +52,7 @@ const mounts = [
   mountTileRadioGroup,
   mountTimeField,
   mountToast,
+  mountToc,
   mountTooltip,
   mountVaul,
 ];
@@ -58,7 +60,7 @@ const mounts = [
 describe("Vanilla public entry points", () => {
   it("publishes the lazy auto-loader and one mount for every regular enhanced module", () => {
     expect(initComponents).toBeTypeOf("function");
-    expect(mounts).toHaveLength(24);
+    expect(mounts).toHaveLength(25);
     expect(mounts.every((mount) => typeof mount === "function")).toBe(true);
   });
 

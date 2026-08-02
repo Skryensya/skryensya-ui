@@ -319,6 +319,10 @@
     "./code-preview": {
       "types": "./src/components/code-preview.tsx",
       "default": "./src/components/code-preview.tsx"
+    },
+    "./details": {
+      "types": "./src/components/details.tsx",
+      "default": "./src/components/details.tsx"
     }
   },
   "scripts": {

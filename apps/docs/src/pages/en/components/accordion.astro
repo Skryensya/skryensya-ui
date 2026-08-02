@@ -14,6 +14,7 @@ import {
   accordionExclusiveTree,
   accordionMultipleTree,
   accordionSingleTree,
+  detailsGroupTree,
 } from "../../../demos/accordion";
 import { getLocale, useTranslations } from "../../../i18n";
 
@@ -57,84 +58,7 @@ const nativeStyles = `@import "@skryensya/core/components/details.css";`;
  * different component with its own contract-less anatomy, so it cannot borrow TileChevron. The
  * three accordions above emit theirs from the tree.
  */
-const disclosureIcon = `<span
-        class="sk-tile__chevron"
-        data-part="chevron"
-        aria-hidden="true"
-      >
-        <span data-state="closed">
-          <span data-sk-icon="chevron-down"></span>
-        </span>
-        <span data-state="open">
-          <span data-sk-icon="chevron-up"></span>
-        </span>
-      </span>`;
 
-const nativeDetails = `<section
-  class="sk-details-group"
-  aria-label="Deployment configuration"
->
-  <details class="sk-details" name="deployment" open>
-    <summary class="sk-details__summary sk-interactive">
-      <span class="sk-tile__content">
-        <span class="sk-tile__title">Runtime</span>
-        <span class="sk-tile__description">
-          Version and region
-        </span>
-      </span>
-      ${disclosureIcon}
-    </summary>
-    <div class="sk-details__content">
-      <div class="sk-stack" data-gap="sm">
-        <p class="sk-tile__description">
-          Node 22 on the Frankfurt shared pool. Each deployment reserves two vCPUs and 512 MB, with autoscaling up to six replicas when the request queue exceeds the threshold.
-        </p>
-        <p class="sk-tile__description">
-          The healthcheck hits <code>/status</code> every ten seconds; three failures in a row take the replica out of the balancer without cutting off in-flight traffic.
-        </p>
-      </div>
-    </div>
-  </details>
-
-  <details class="sk-details" name="deployment">
-    <summary class="sk-details__summary sk-interactive">
-      <span class="sk-tile__content">
-        <span class="sk-tile__title">Rollout</span>
-        <span class="sk-tile__description">
-          Canary by percentage
-        </span>
-      </span>
-      ${disclosureIcon}
-    </summary>
-    <div class="sk-details__content">
-      <div class="sk-stack" data-gap="sm">
-        <p class="sk-tile__description">
-          The canary rises in three legs, 10%, 50% and 100%, and waits for the error and latency metrics to remain stable before advancing to each leg.
-        </p>
-        <p class="sk-tile__description">
-          If a section degrades, the rollout stops by itself and notifies the guard channel: nothing advances without a green light.
-        </p>
-      </div>
-    </div>
-  </details>
-
-  <details class="sk-details" name="deployment">
-    <summary class="sk-details__summary sk-interactive">
-      <span class="sk-tile__content">
-        <span class="sk-tile__title">Rollback</span>
-        <span class="sk-tile__description">
-          Previous stable version
-        </span>
-      </span>
-      ${disclosureIcon}
-    </summary>
-    <div class="sk-details__content">
-      <p class="sk-tile__description">
-        Restore v2.18.4 if the canary fails checks.
-      </p>
-    </div>
-  </details>
-</section>`;
 ---
 <Base title="Accordion" description="One or more Tile disclosures coordinated into a single framework.">
   <h1>Accordion</h1>
@@ -185,7 +109,7 @@ const nativeDetails = `<section
   <p>
     Use when the state can live in the document. Choose Accordion enhanced when you need controlled value, <code>multiple</code>, change callbacks, or composition with system events. The Tile anatomy (title, description, chevron) is the same, so the group looks the same.
   </p>
-  <ComponentPreview html={nativeDetails} label="Details with shared name" />
+  <ComponentPreview tree={detailsGroupTree(t)} label="Details with shared name" />
 
   <h3>Install only Details</h3>
   <CodeBlock code={nativeInstall} label="terminal" />

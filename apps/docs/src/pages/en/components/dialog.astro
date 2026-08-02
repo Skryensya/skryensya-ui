@@ -2,74 +2,17 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
+import { dialogConfirmScript, dialogConfirmTree } from "../../../demos/dialog";
+import { getLocale, useTranslations } from "../../../i18n";
 import StylingHooks from "../../../components/StylingHooks.astro";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core`;
 
 const styles = `@import "@skryensya/core/components/dialog.css";
 @import "@skryensya/core/patterns/scroll-lock.css";`;
 
-const confirmHtml = `<button
-  class="sk-button sk-interactive"
-  data-variant="danger"
-  type="button"
-  data-dialog-open="confirm-delete"
->
-  Delete project
-</button>
-
-<dialog
-  class="sk-dialog"
-  id="confirm-delete"
-  aria-labelledby="confirm-delete-title"
->
-  <header class="sk-dialog__header">
-    <h3
-      class="sk-heading sk-dialog__title"
-      data-size="h3"
-      data-flush
-      id="confirm-delete-title"
-    >
-      Delete this project?
-    </h3>
-    <form method="dialog">
-      <button
-        class="sk-button sk-interactive sk-dialog__close"
-        data-variant="ghost"
-        data-icon-only
-        type="submit"
-        value="cancel"
-        aria-label="Close"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </form>
-  </header>
-  <div class="sk-dialog__body">
-    <p>
-      The project and all its history are deleted. This action cannot be undone.
-    </p>
-  </div>
-  <form method="dialog" class="sk-dialog__footer">
-    <button
-      class="sk-button sk-interactive"
-      data-variant="ghost"
-      type="submit"
-      value="cancel"
-      autofocus
-    >
-      Cancel
-    </button>
-    <button
-      class="sk-button sk-interactive"
-      data-variant="danger"
-      type="submit"
-      value="confirm"
-    >
-      Delete
-    </button>
-  </form>
-</dialog>`;
 
 const confirmJs = `const dialog = document.getElementById("confirm-delete");
 const trigger = document.querySelector(
@@ -205,7 +148,7 @@ const vaulHtml = `<button
   <p>
     Anatomy: <code>sk-dialog__header</code> (title with <code>Heading</code> + <code>sk-dialog__title</code>, and closure), <code>sk-dialog__body</code> and <code>sk-dialog__footer</code> (controls). The closure and footer are <code>&lt;form method="dialog"&gt;</code>: they close without a handler and leave the <code>value</code> in <code>dialog.returnValue</code>.
   </p>
-  <ComponentPreview html={confirmHtml} previewScript={confirmJs} label="Confirm" viewport="overlay" />
+  <ComponentPreview tree={dialogConfirmTree(t)} previewScript={dialogConfirmScript} label="Confirm" viewport="overlay" />
 
   <h2>Opening it</h2>
   <CodeBlock code={confirmJs} label="JavaScript" />

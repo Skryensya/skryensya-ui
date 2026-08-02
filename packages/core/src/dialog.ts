@@ -90,7 +90,19 @@ export const dialogContract = {
             ],
           },
           { element: "div", part: "body", slot: "children" },
-          { element: "footer", part: "footer", slot: "footer", whenGiven: "footer" },
+          {
+            /*
+             * A FORM, not a <footer>, and `method="dialog"` is the reason. A modal's footer is
+             * where the closing actions live, and that method is how the platform closes the dialog
+             * and reports WHICH button did it — `returnValue` — with no script at all. A plain
+             * <footer> would need a click handler per button to do the same thing worse.
+             */
+            element: "form",
+            part: "footer",
+            attrs: { method: "dialog" },
+            slot: "footer",
+            whenGiven: "footer",
+          },
         ],
       },
       react: { from: "@skryensya/react/dialog", name: "Dialog" },

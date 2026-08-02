@@ -3,75 +3,17 @@ import "@skryensya/core/components/list.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
+import { dialogConfirmScript, dialogConfirmTree } from "../../demos/dialog";
+import { getLocale, useTranslations } from "../../i18n";
 import StylingHooks from "../../components/StylingHooks.astro";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core`;
 
 const styles = `@import "@skryensya/core/components/dialog.css";
 @import "@skryensya/core/patterns/scroll-lock.css";`;
 
-const confirmHtml = `<button
-  class="sk-button sk-interactive"
-  data-variant="danger"
-  type="button"
-  data-dialog-open="confirm-borrar"
->
-  Borrar proyecto
-</button>
-
-<dialog
-  class="sk-dialog"
-  id="confirm-borrar"
-  aria-labelledby="confirm-borrar-title"
->
-  <header class="sk-dialog__header">
-    <h3
-      class="sk-heading sk-dialog__title"
-      data-size="h3"
-      data-flush
-      id="confirm-borrar-title"
-    >
-      ¿Borrar este proyecto?
-    </h3>
-    <form method="dialog">
-      <button
-        class="sk-button sk-interactive sk-dialog__close"
-        data-variant="ghost"
-        data-icon-only
-        type="submit"
-        value="cancel"
-        aria-label="Cerrar"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </form>
-  </header>
-  <div class="sk-dialog__body">
-    <p>
-      Se elimina el proyecto y todo su historial. Esta acción no se
-      puede deshacer.
-    </p>
-  </div>
-  <form method="dialog" class="sk-dialog__footer">
-    <button
-      class="sk-button sk-interactive"
-      data-variant="ghost"
-      type="submit"
-      value="cancel"
-      autofocus
-    >
-      Cancelar
-    </button>
-    <button
-      class="sk-button sk-interactive"
-      data-variant="danger"
-      type="submit"
-      value="confirm"
-    >
-      Borrar
-    </button>
-  </form>
-</dialog>`;
 
 const confirmJs = `const dialog = document.getElementById("confirm-borrar");
 const trigger = document.querySelector(
@@ -215,7 +157,7 @@ const vaulHtml = `<button
     <code>&lt;form method="dialog"&gt;</code>: cierran sin handler y dejan el
     <code>value</code> en <code>dialog.returnValue</code>.
   </p>
-  <ComponentPreview html={confirmHtml} previewScript={confirmJs} label="Confirm" viewport="overlay" />
+  <ComponentPreview tree={dialogConfirmTree(t)} previewScript={dialogConfirmScript} label="Confirm" viewport="overlay" />
 
   <h2>Abrirlo</h2>
   <CodeBlock code={confirmJs} label="JavaScript" />

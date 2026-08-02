@@ -22,11 +22,31 @@ que por la regla de abajo diría que lleva contrato. Gana el criterio de para qu
 se decide que sí es del sistema, lo que corresponde es MOVER la hoja y publicarlo — no publicarlo
 dejándolo donde está y que la ubicación siga diciendo otra cosa.
 
-**`card`** no tiene archivo en core, ni hoja propia, ni binding. Sus doce previews importan datos y
-fuentes locales de la página (`examples/card-data`, `examples/card-sources`) y se construyen con
-signatures que ya existen — Tile, Content, tipografía. Eso es una **receta**, no un componente: la
-forma correcta de publicarlo es en `packages/recipes`, donde el gate ya verifica que sus estados sean
-estados distintos.
+**`card`** no tiene archivo en core, ni hoja propia, ni binding. Su propia página lo dice: *"Card no
+es un componente, así que los docs lo enseñan con una ESCALERA de composiciones"* — doce ejemplos que
+van de un Box pelado a un Tile con portada que navega.
+
+Este archivo dijo antes que `card` era una **receta** y que su lugar era `contracts/recipes`. Eso
+estaba mal, y la corrección vale más que el error: una receta son CUATRO ESTADOS de una misma
+pantalla —cargando, vacía, con error, con datos— y el gate de recetas existe para probar que son
+cuatro pantallas distintas. Card no es eso; son doce variantes de una composición. Meterlo ahí habría
+roto el sentido del gate para que el conteo cerrara.
+
+Lo que sí es, medido variante por variante:
+
+- **`basic`, `meta`, `stat`** son composiciones puras del sistema — Box, Stack, Inline, Badge,
+  Heading, Text, Stat — y se podrían emitir hoy.
+- **Las otras nueve** dependen de clases LOCALES DE LA PÁGINA (`sk-card-accent__icon`,
+  `sk-card-eyebrow`, `sk-card-price__value`, `sk-card-link-chevron`, `sk-card-body`…) que viven en
+  `apps/docs/src/examples/card.css`, y varias caen sobre nodos INTERNOS, no sobre el host de una
+  signature. Un árbol sólo direcciona hosts: `attrs` llegan al host y los nodos de adentro los pone
+  el template. No hay forma de llevarlas sin meter decoración de una página adentro de un contrato.
+
+Así que la página se queda autorada, y convertir sólo tres de doce la dejaría hablando dos idiomas
+sin ganar nada. Si algún día se quiere emitible, el camino no es un árbol: es decidir que esas
+decoraciones son una FAMILIA de verdad — un `Card` con sus parts — y publicarla. Eso es una decisión
+de diseño sobre qué pertenece al sistema, que es exactamente lo que la página de card evita tomar a
+propósito.
 
 **`drawer`** no es un componente aparte. La propia página lo dice en su primera línea: *"un drawer ES
 un Vaul"*. Es el patrón `vaul` más una hoja que lo ancla a un borde.
@@ -82,8 +102,9 @@ de mejorarlo. Los dos tienen que describir un componente, no dos parecidos.
 
 Contra las 66 páginas de `componentes/`, el estado es: **todas las que deben tener contrato lo
 tienen**, publicado, con árbol canónico y con sus dos capas comparadas por G2. De las que no, dos son
-chrome de este sitio (`component-preview`, `toc`), una es una receta (`card`) y una es un alias
-(`drawer`). `popup` era la quinta y dejó de serlo: se resolvió como `Popover.bare`.
+chrome de este sitio (`component-preview`, `toc`), una es una escalera de composiciones decorada con
+clases de la propia página (`card`) y una es un alias (`drawer`). `popup` era la quinta y dejó de
+serlo: se resolvió como `Popover.bare`.
 
 De las páginas que tienen previews, **53 de 63 están completamente armadas con el árbol**. Las diez
 que no lo están son, exactamente: `accordion` y `date-picker` (parciales, por su preview nativo),

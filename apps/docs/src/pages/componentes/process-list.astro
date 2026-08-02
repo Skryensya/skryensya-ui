@@ -5,7 +5,8 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { ProcessListDemo } from "../../components/react-demos/process-list";
+import { processListTree } from "../../demos/process-list";
+import { getLocale, useTranslations } from "../../i18n";
 
 /*
  * Authored on purpose, and it cannot be a usage tree yet.
@@ -17,170 +18,15 @@ import { ProcessListDemo } from "../../components/react-demos/process-list";
  * published; that is F4 work, not F6.
  */
 
+const t = useTranslations(getLocale(Astro.url));
+
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
 const styles = `@import "@skryensya/core/components/process-list.css";
 @import "@skryensya/core/components/code-preview.css";`;
 
 /* A Process List is static instructional content, not workflow progress. */
-const html = `<ol
-  class="sk-process-list"
-  aria-label="Instalar @skryensya"
->
-  <li class="sk-process-list__item">
-    <div class="sk-process-list__content">
-      <span class="sk-process-list__title">
-        Instala la librería
-      </span>
-      <div class="sk-stack" data-gap="sm">
-        <p class="sk-text" data-tone="secondary">
-          Añade el núcleo y el binding de React al proyecto.
-        </p>
-        <div
-          class="sk-code-preview"
-          data-sk-code-preview
-        >
-          <div class="sk-code-preview__label">
-            <span class="sk-code-preview__meta">
-              <span>terminal</span>
-            </span>
-          </div>
-          <div class="sk-code-preview__preview">
-            <div class="sk-code-preview__viewport">
-              <pre><code>pnpm add @skryensya/core \\
-  @skryensya/react</code></pre>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </li>
-  <li class="sk-process-list__item">
-    <div class="sk-process-list__content">
-      <span class="sk-process-list__title">
-        Importa ProcessList
-      </span>
-      <div class="sk-stack" data-gap="sm">
-        <p class="sk-text" data-tone="secondary">
-          Carga el CSS y después importa los componentes.
-        </p>
-        <ul>
-          <li>
-            <code>@import
-  "@skryensya/core/components/code-preview.css";</code>
-          </li>
-          <li>
-            <code>@import
-  "@skryensya/core/components/process-list.css";</code>
-          </li>
-          <li>
-            <code>import {
-  ProcessList,
-  ProcessListItem,
-} from "@skryensya/react/process-list";</code>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </li>
-  <li class="sk-process-list__item">
-    <div class="sk-process-list__content">
-      <span class="sk-process-list__title">
-        Renderiza las instrucciones
-      </span>
-      <div class="sk-stack" data-gap="sm">
-        <p class="sk-text" data-tone="secondary">
-          El contador conserva la numeración sin estado adicional.
-        </p>
-        <code>&lt;ProcessList&gt;…&lt;/ProcessList&gt;</code>
-        <div class="sk-inline" data-gap="sm">
-          <span class="sk-badge" data-tone="success">
-            Instalación lista
-          </span>
-          <a class="sk-link" href="/componentes/process-list">
-            Abrir documentación
-          </a>
-        </div>
-      </div>
-    </div>
-  </li>
-</ol>`;
 
-const react = `import { Badge } from "@skryensya/react/badge";
-import { Inline, Stack } from "@skryensya/react/layout";
-import { Link } from "@skryensya/react/link";
-import {
-  ProcessList,
-  ProcessListItem,
-} from "@skryensya/react/process-list";
-import { Text } from "@skryensya/react/text";
-
-function Example() {
-  return (
-    <ProcessList aria-label="Instalar @skryensya">
-      <ProcessListItem title="Instala la librería">
-        <Stack gap="sm">
-          <Text tone="secondary">
-            Añade el núcleo y el binding de React al proyecto.
-          </Text>
-          <div
-            className="sk-code-preview"
-            data-sk-code-preview=""
-          >
-            <div className="sk-code-preview__label">
-              <span className="sk-code-preview__meta">
-                <span>terminal</span>
-              </span>
-            </div>
-            <div className="sk-code-preview__preview">
-              <div className="sk-code-preview__viewport">
-                <pre><code>pnpm add @skryensya/core \\
-  @skryensya/react</code></pre>
-              </div>
-            </div>
-          </div>
-        </Stack>
-      </ProcessListItem>
-      <ProcessListItem title="Importa ProcessList">
-        <Stack gap="sm">
-          <Text tone="secondary">
-            Carga el CSS y después importa los componentes.
-          </Text>
-          <ul>
-            <li>
-              <code>@import
-  "@skryensya/core/components/code-preview.css";</code>
-            </li>
-            <li>
-              <code>@import
-  "@skryensya/core/components/process-list.css";</code>
-            </li>
-            <li>
-              <code>import {
-  ProcessList,
-  ProcessListItem,
-} from "@skryensya/react/process-list";</code>
-            </li>
-          </ul>
-        </Stack>
-      </ProcessListItem>
-      <ProcessListItem title="Renderiza las instrucciones">
-        <Stack gap="sm">
-          <Text tone="secondary">
-            El contador conserva la numeración sin estado adicional.
-          </Text>
-          <code>{"<ProcessList>…</ProcessList>"}</code>
-          <Inline gap="sm">
-            <Badge tone="success">Instalación lista</Badge>
-            <Link href="/componentes/process-list">
-              Abrir documentación
-            </Link>
-          </Inline>
-        </Stack>
-      </ProcessListItem>
-    </ProcessList>
-  );
-}`;
 ---
 
 <Base
@@ -194,16 +40,7 @@ function Example() {
     convertirlos en estados de progreso.
   </p>
 
-  <ComponentPreview
-    html={html}
-    react={react}
-    label="ProcessList de instalación"
-    note="ol + contenido arbitrario + CodePreview"
-  >
-    <Fragment slot="react">
-      <ProcessListDemo client:load />
-    </Fragment>
-  </ComponentPreview>
+  <ComponentPreview tree={processListTree(t)} label="ProcessList" />
 
   <h2>Cuándo usarlo</h2>
   <ul>

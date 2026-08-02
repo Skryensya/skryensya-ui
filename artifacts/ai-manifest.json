@@ -11972,6 +11972,152 @@
         }
       }
     },
+    "vaul": {
+      "css": "@skryensya/core/patterns/vaul.css",
+      "id": "vaul",
+      "options": {
+        "edge": {
+          "attr": "data-edge",
+          "default": "block-end",
+          "type": "enum",
+          "values": [
+            "inline-start",
+            "inline-end",
+            "block-end"
+          ]
+        },
+        "open": {
+          "attr": "open",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        }
+      },
+      "parts": {
+        "handle": "sk-vaul__handle",
+        "root": "sk-vaul"
+      },
+      "semantics": {
+        "Vaul": {
+          "alternatives": [
+            "Dialog",
+            "Popover"
+          ],
+          "avoidWhen": [
+            "es una decisión corta que hay que confirmar: eso es Dialog, centrado y sin borde",
+            "no bloquea el resto de la pantalla: eso es Popover o Flyout"
+          ],
+          "useWhen": [
+            "un panel llega desde un borde y se va arrastrándolo: navegación en móvil, un filtro, una hoja",
+            "conviene que ocupe el borde entero y no una caja centrada"
+          ]
+        },
+        "Vaul.drawer": {
+          "alternatives": [
+            "Vaul"
+          ],
+          "avoidWhen": [
+            "alcanza con una hoja que se apoya en el borde: eso es Vaul"
+          ],
+          "useWhen": [
+            "el panel ocupa su borde entero: la navegación de un móvil, un panel lateral persistente",
+            "el contenido es una lista larga que necesita todo el alto"
+          ]
+        }
+      },
+      "signatures": {
+        "Vaul": {
+          "host": {
+            "element": "dialog"
+          },
+          "intent": [
+            "edge-anchored-panel",
+            "bottom-sheet",
+            "drag-to-dismiss",
+            "mobile-navigation"
+          ],
+          "mount": "data-sk-vaul",
+          "options": [
+            "edge",
+            "open"
+          ],
+          "react": {
+            "from": "@skryensya/react/vaul",
+            "name": "Vaul"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "data-part": "handle"
+                },
+                "element": "div",
+                "part": "handle"
+              },
+              {
+                "slot": "children"
+              }
+            ],
+            "element": "dialog",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "Vaul.drawer": {
+          "host": {
+            "element": "dialog"
+          },
+          "intent": [
+            "navigation-drawer",
+            "side-panel",
+            "mobile-navigation"
+          ],
+          "mount": "data-sk-vaul",
+          "options": [
+            "edge",
+            "open"
+          ],
+          "react": {
+            "from": "@skryensya/react/vaul",
+            "name": "Drawer"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-drawer"
+            ],
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "data-part": "handle"
+                },
+                "element": "div",
+                "part": "handle"
+              },
+              {
+                "slot": "children"
+              }
+            ],
+            "element": "dialog",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "wrapper": {
       "css": "@skryensya/core/patterns/wrapper.css",
       "id": "wrapper",
@@ -12040,5 +12186,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "d87edf4febce055a"
+  "sourceHash": "aad8944aabc46358"
 }

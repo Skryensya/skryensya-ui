@@ -922,6 +922,30 @@ const signatureTrees: readonly Canonical[] = [
       ],
     },
   },
+  /* A panel anchored to an edge: the modality is the platform's, the drag is the enhancer's. */
+  {
+    name: "vaul/edge-panel",
+    enhanced: true,
+    tree: {
+      contract: "vaul",
+      signature: "Vaul",
+      options: { edge: "inline-start", open: true },
+      attrs: { "aria-label": "Navegación" },
+      children: "Trabajo, Personal, Archivo",
+    },
+  },
+  /* One modifier class away from the Vaul above — which is why it is a signature, not a family. */
+  {
+    name: "vaul/drawer",
+    enhanced: true,
+    tree: {
+      contract: "vaul",
+      signature: "Vaul.drawer",
+      options: { edge: "inline-start", open: true },
+      attrs: { "aria-label": "Navegación" },
+      children: "Trabajo, Personal, Archivo",
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

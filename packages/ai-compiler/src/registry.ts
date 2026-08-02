@@ -54,6 +54,7 @@ import { tableContract } from "@skryensya/core/table";
 import { tabsContract } from "@skryensya/core/tabs";
 import { tocContract } from "@skryensya/core/toc";
 import { detailsContract } from "@skryensya/core/details";
+import { vaulContract } from "@skryensya/core/vaul";
 import type {
   ComponentContract,
   ContractOption,
@@ -130,6 +131,7 @@ export const contracts = {
   tabs: tabsContract,
   toc: tocContract,
   details: detailsContract,
+  vaul: vaulContract,
 } as const satisfies Record<string, ComponentContract>;
 
 export type ContractId = keyof typeof contracts;

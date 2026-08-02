@@ -1,0 +1,21 @@
+# La estructura vive en packages/core/src/vaul.ts. Acá sólo por qué se elige.
+
+Vaul:
+  useWhen:
+    - "un panel llega desde un borde y se va arrastrándolo: navegación en móvil, un filtro, una hoja"
+    - "conviene que ocupe el borde entero y no una caja centrada"
+  avoidWhen:
+    - "es una decisión corta que hay que confirmar: eso es Dialog, centrado y sin borde"
+    - "no bloquea el resto de la pantalla: eso es Popover o Flyout"
+  alternatives:
+    - Dialog
+    - Popover
+
+Vaul.drawer:
+  useWhen:
+    - "el panel ocupa su borde entero: la navegación de un móvil, un panel lateral persistente"
+    - "el contenido es una lista larga que necesita todo el alto"
+  avoidWhen:
+    - "alcanza con una hoja que se apoya en el borde: eso es Vaul"
+  alternatives:
+    - Vaul

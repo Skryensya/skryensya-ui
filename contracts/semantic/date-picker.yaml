@@ -9,3 +9,14 @@ DatePicker:
     - "sólo importa el mes o el año, no el día"
   alternatives:
     - Calendar
+
+DatePicker.native:
+  useWhen:
+    - "una fecha común dentro de un formulario, sin rango ni reglas propias"
+    - "el teclado, el formato local y el envío deben pertenecer al navegador"
+  avoidWhen:
+    - "hace falta un rango, un mínimo o un máximo: eso es DatePicker"
+    - "el calendario tiene que verse siempre: eso es Calendar"
+  alternatives:
+    - DatePicker
+    - Calendar

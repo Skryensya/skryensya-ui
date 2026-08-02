@@ -861,6 +861,17 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
+  /* The no-JS layer: a real <input type="date"> inside the same field chrome. */
+  {
+    name: "date-picker/native",
+    enhanced: false,
+    tree: {
+      contract: "date-picker",
+      signature: "DatePicker.native",
+      options: { name: "arrival", locale: "es-DO" },
+      slots: { label: "Reserva" },
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

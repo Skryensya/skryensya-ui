@@ -153,5 +153,62 @@ export const datePickerContract = {
       },
       react: { from: "@skryensya/react/date-picker", name: "DatePicker" },
     },
+
+    /*
+     * THE NATIVE DATE FIELD — the layer that works with no script at all.
+     *
+     * A real `<input type="date">` inside the same field chrome, so the enhanced control and this
+     * one read as the SAME field rather than two designs. The browser owns the picker, the keyboard,
+     * the locale format and form submission; the system contributes the label wiring and the box.
+     *
+     * Its own signature rather than an option on `DatePicker`, for the reason `Select.native` is
+     * one: choosing between them is choosing who owns the behaviour, and no flag should be able to
+     * stand in for that decision. There is no enhancer here and there is nothing to enhance.
+     */
+    "DatePicker.native": {
+      intent: ["a-standard-date-field", "form-field", "no-javascript"],
+      host: { element: "div" },
+      options: ["name", "locale"],
+      slots: {
+        /** Names the field. Required: a bare date input announces only its format. */
+        label: { accepts: "text", required: true },
+      },
+      template: {
+        element: "div",
+        part: "root",
+        host: true,
+        children: [
+          { element: "label", part: "label", slot: "label" },
+          {
+            element: "div",
+            part: "control",
+            children: [
+              {
+                element: "input",
+                part: "input",
+                attrs: { type: "date" },
+                options: ["name", "locale"],
+                /* The enhanced control reads these off data-attributes because its enhancer has no
+                   other channel. A native input wants the real ones — the browser is the consumer
+                   here, not a script. */
+                optionAttrs: { name: "name", locale: "lang" },
+                /*
+                 * NAMED BY `aria-labelledby`, not by `for`, and the reason is the stage rather
+                 * than the markup. `for`/`id` is the better pair here — it also focuses the input
+                 * when the label is clicked, which on a date field is most of what a label is for —
+                 * but it needs an AUTHORED id, and both bindings render into one document in the
+                 * gate, so any literal id collides and each label reaches the other binding's input.
+                 * The generated kind is prefixed per case and cannot. Worth revisiting if the stage
+                 * ever gives each binding its own document.
+                 */
+                labelledBySlot: "label",
+              },
+            ],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/date-picker", name: "NativeDatePicker" },
+    },
+
   },
 } as const satisfies ComponentContract;

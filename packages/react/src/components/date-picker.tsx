@@ -157,3 +157,45 @@ export function DatePicker({
     </div>
   );
 }
+
+export type NativeDatePickerProps = {
+  label: ReactNode;
+  name?: string;
+  locale?: string;
+  id?: string;
+};
+
+/*
+ * THE NATIVE DATE FIELD — the layer that works with no script at all.
+ *
+ * A real `<input type="date">` inside the same field chrome, so the enhanced control and this one
+ * read as the SAME field rather than two designs. The browser owns the picker, the keyboard, the
+ * locale format and the form; the system contributes the label wiring and the box around it.
+ *
+ * Its own signature rather than an option on `DatePicker`, for the reason `Select.native` is one:
+ * choosing between them is choosing who owns the behaviour, and no flag should be able to stand in
+ * for that decision.
+ */
+export function NativeDatePicker({ id, label, locale, name }: NativeDatePickerProps) {
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
+
+  return (
+    <div className={datePickerParts.root}>
+      {/* Named through `aria-labelledby` rather than `for`/`id` — see the contract, where the
+          reason is the shared stage rather than the markup. */}
+      <label className={datePickerParts.label} id={`${inputId}-label`}>
+        {label}
+      </label>
+      <div className={datePickerParts.control}>
+        <input
+          aria-labelledby={`${inputId}-label`}
+          className={datePickerParts.input}
+          lang={locale}
+          name={name}
+          type="date"
+        />
+      </div>
+    </div>
+  );
+}

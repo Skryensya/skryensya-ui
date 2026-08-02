@@ -4,6 +4,10 @@ import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import { buildPreviewFrameDocument } from "../../../lib/preview-frame";
 import { SaveActionDemo, ScreensGridDemo } from "../../../components/react-demos/component-preview";
+import { componentPreviewBareTree } from "../../../demos/component-preview";
+import { getLocale, useTranslations } from "../../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add shiki @skryensya/core @skryensya/vanilla`;
 
@@ -514,6 +518,20 @@ await initComponents(document);`;
       </div>
     </div>
   </ComponentPreview>
+
+  <h2 id="bare">The portable part</h2>
+  <p>
+    Everything above — the Vanilla/React switch, the screen presets, the tree compiler that builds
+    each stage — is THIS SITE's own machinery for comparing two bindings of ANOTHER component. None
+    of it is something a consumer would compose into their product.
+  </p>
+  <p>
+    What is portable: a title with its note, a stage with whatever is shown, and its code
+    underneath — composed from <code>CodePreview</code>, not reimplemented. That is
+    <code>ComponentPreview.bare</code>, the same root and the same parts with less anatomy, the
+    same way <code>Popover.bare</code> is.
+  </p>
+  <ComponentPreview tree={componentPreviewBareTree(t)} label="ComponentPreview.bare" />
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />

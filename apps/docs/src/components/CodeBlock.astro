@@ -1,5 +1,6 @@
 ---
 import { Code } from "astro:components";
+import { codePreviewAttrs, codePreviewParts } from "@skryensya/core/code-preview";
 import "@skryensya/core/components/code-preview.css";
 import CopyButton from "./CopyButton.astro";
 import { iconMarkup } from "../icons";
@@ -43,6 +44,27 @@ const collapsibleLineCount = hasDensity
   : condensedLines;
 const collapsibleTargetId = hasDensity && condensedCollapsible ? condensedId : complete ? fullId : condensedId;
 
+/* The same anatomy `codePreviewContract` (`CodePreview.density`) declares, written by hand because
+ * Shiki's highlighted output has to land as real markup — a usage tree has no channel for that, only
+ * for text or composed signatures (see `contracts/NOT-PUBLISHED.md`, the `command-palette` entry, for
+ * the general shape of that limit). The classes and data-attributes below are the contract's own. */
+const rootAttrs: Record<string, string | undefined> = {
+  [codePreviewAttrs.root]: "",
+  [codePreviewAttrs.density]: hasDensity ? "condensed" : undefined,
+  [codePreviewAttrs.collapsible]: isCollapsible ? "" : undefined,
+  [codePreviewAttrs.condensedCollapsible]: condensedCollapsible ? "" : undefined,
+  [codePreviewAttrs.expanded]: isCollapsible ? "false" : undefined,
+  [codePreviewAttrs.lines]: isCollapsible ? String(complete ? fullLines : condensedLines) : undefined,
+  [codePreviewAttrs.condensedLines]: condensedCollapsible ? String(condensedLines) : undefined,
+  [codePreviewAttrs.previewLines]: isCollapsible ? String(previewLineCount) : undefined,
+};
+
+const toggleAttrs: Record<string, string> = {
+  [codePreviewAttrs.toggle]: "",
+  [codePreviewAttrs.expandedLabel]: t("code.showLess"),
+  [codePreviewAttrs.expandedAriaLabel]: t("code.showFirstLines", { count: String(previewLineCount) }),
+};
+
 /* The shared CodePreview CSS consumes Shiki's conventional `light`/`dark` variable names.
    `light-dark()` then follows the page color mode without a brand or docs-only selector. */
 const themes = {
@@ -67,28 +89,18 @@ const language =
 const toggleIcon = iconMarkup("chevron-down", { size: "sm" });
 ---
 
-<div
-  class="sk-code-preview"
-  data-sk-code-preview
-  data-sk-code-preview-density={hasDensity ? "condensed" : undefined}
-  data-sk-code-preview-collapsible={isCollapsible ? "" : undefined}
-  data-sk-code-preview-condensed-collapsible={condensedCollapsible ? "" : undefined}
-  data-sk-code-preview-expanded={isCollapsible ? "false" : undefined}
-  data-sk-code-preview-lines={isCollapsible ? (complete ? fullLines : condensedLines) : undefined}
-  data-sk-code-preview-condensed-lines={condensedCollapsible ? condensedLines : undefined}
-  data-sk-code-preview-preview-lines={isCollapsible ? previewLineCount : undefined}
->
+<div class={codePreviewParts.root} {...rootAttrs}>
   {
     (label || note || hasDensity) && (
-      <div class="sk-code-preview__label">
-        <span class="sk-code-preview__meta">
+      <div class={codePreviewParts.label}>
+        <span class={codePreviewParts.meta}>
           {label && <span>{label}</span>}
           {note && <span>{note}</span>}
         </span>
         {
           hasDensity && (
-            <div class="sk-code-preview__density">
-              <span class="sk-code-preview__density-edge" data-density="condensed">
+            <div class={codePreviewParts.density}>
+              <span class={codePreviewParts.densityEdge} data-density="condensed">
                 {t("code.condensed")}
               </span>
               <label class="sk-switch">
@@ -96,14 +108,14 @@ const toggleIcon = iconMarkup("chevron-down", { size: "sm" });
                   class="sk-switch__input"
                   type="checkbox"
                   role="switch"
-                  data-sk-code-preview-density-input
+                  {...{ [codePreviewAttrs.densityInput]: "" }}
                   aria-label={t("code.showFull")}
                 />
                 <span class="sk-switch__control" aria-hidden="true">
                   <span class="sk-switch__thumb"></span>
                 </span>
               </label>
-              <span class="sk-code-preview__density-edge" data-density="full">
+              <span class={codePreviewParts.densityEdge} data-density="full">
                 {t("code.full")}
               </span>
             </div>
@@ -112,21 +124,13 @@ const toggleIcon = iconMarkup("chevron-down", { size: "sm" });
       </div>
     )
   }
-  <div class="sk-code-preview__preview">
-    <div
-      class="sk-code-preview__viewport"
-      id={condensedId}
-      data-sk-code-preview-density-panel="condensed"
-    >
+  <div class={codePreviewParts.preview}>
+    <div class={codePreviewParts.viewport} id={condensedId} {...{ [codePreviewAttrs.densityPanel]: "condensed" }}>
       <Code code={condensed} lang={language} themes={themes} defaultColor={false} tabindex={-1} />
     </div>
     {
       complete && (
-        <div
-          class="sk-code-preview__viewport"
-          id={fullId}
-          data-sk-code-preview-density-panel="full"
-        >
+        <div class={codePreviewParts.viewport} id={fullId} {...{ [codePreviewAttrs.densityPanel]: "full" }}>
           <Code code={complete} lang={language} themes={themes} defaultColor={false} tabindex={-1} />
         </div>
       )
@@ -137,25 +141,23 @@ const toggleIcon = iconMarkup("chevron-down", { size: "sm" });
   {
     isCollapsible && (
       <div
-        class="sk-code-preview__more"
-        data-sk-code-preview-more
+        class={codePreviewParts.more}
+        {...{ [codePreviewAttrs.more]: "" }}
         hidden={hasDensity && !condensedCollapsible ? true : undefined}
       >
         <button
-          class="sk-button sk-interactive sk-code-preview__toggle"
-          data-sk-code-preview-toggle
+          class={`sk-button sk-interactive ${codePreviewParts.toggle}`}
           data-variant="ghost"
           data-size="sm"
           type="button"
           aria-controls={collapsibleTargetId}
           aria-expanded="false"
           aria-label={t("code.showLines", { count: String(collapsibleLineCount) })}
-          data-sk-code-preview-expanded-label={t("code.showLess")}
-          data-sk-code-preview-expanded-aria-label={t("code.showFirstLines", { count: String(previewLineCount) })}
+          {...toggleAttrs}
         >
-          <span data-sk-code-preview-toggle-label>{t("code.showMore")}</span>
-          <span class="sk-code-preview__toggle-count" aria-hidden="true">{t("code.lines", { count: String(collapsibleLineCount) })}</span>
-          <span class="sk-code-preview__toggle-icon" aria-hidden="true">
+          <span {...{ [codePreviewAttrs.toggleLabel]: "" }}>{t("code.showMore")}</span>
+          <span class={codePreviewParts.toggleCount} aria-hidden="true">{t("code.lines", { count: String(collapsibleLineCount) })}</span>
+          <span class={codePreviewParts.toggleIcon} aria-hidden="true">
             <Fragment set:html={toggleIcon} />
           </span>
         </button>

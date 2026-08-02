@@ -859,6 +859,30 @@ const signatureTrees: readonly Canonical[] = [
       slots: { label: "vite.config.ts", children: "export default defineConfig({})" },
     },
   },
+  /* The portable half of this site's own preview frame: a titled stage plus its source, composed
+   * from an already-published signature rather than reimplemented. */
+  {
+    name: "component-preview/bare",
+    enhanced: false,
+    tree: {
+      contract: "component-preview",
+      signature: "ComponentPreview.bare",
+      slots: {
+        title: "Botón primario",
+        stage: {
+          contract: "button",
+          signature: "Button.action",
+          options: { variant: "primary" },
+          children: "Guardar",
+        },
+        code: {
+          contract: "code-preview",
+          signature: "CodePreview",
+          slots: { children: "<button class=\"sk-button\" data-variant=\"primary\">Guardar</button>" },
+        },
+      },
+    },
+  },
   /* The same component with less anatomy — what the docs call "popup". */
   {
     name: "popover/bare",

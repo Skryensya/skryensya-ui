@@ -53,6 +53,7 @@ import { navListContract } from "@skryensya/core/nav-list";
 import { tableContract } from "@skryensya/core/table";
 import { tabsContract } from "@skryensya/core/tabs";
 import { tocContract } from "@skryensya/core/toc";
+import { componentPreviewContract } from "@skryensya/core/component-preview";
 import { detailsContract } from "@skryensya/core/details";
 import { vaulContract } from "@skryensya/core/vaul";
 import type {
@@ -132,6 +133,7 @@ export const contracts = {
   toc: tocContract,
   details: detailsContract,
   vaul: vaulContract,
+  "component-preview": componentPreviewContract,
 } as const satisfies Record<string, ComponentContract>;
 
 export type ContractId = keyof typeof contracts;

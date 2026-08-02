@@ -557,6 +557,33 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/component-preview.css",
+      "id": "component-preview",
+      "signatures": [
+        {
+          "alternatives": [
+            "CodePreview"
+          ],
+          "avoidWhen": [
+            "hace falta comparar Vanilla y React del MISMO componente — eso es la maquinaria de este sitio, no un contrato publicado",
+            "el bloque es sólo código, sin nada que mostrar arriba — eso es CodePreview solo"
+          ],
+          "host": "div",
+          "id": "ComponentPreview.bare",
+          "intent": [
+            "labelled-demo",
+            "show-something-with-its-source",
+            "example-with-code"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay que mostrar algo junto a su código fuente — un ejemplo, una demo, un caso de uso",
+            "la superficie de docs no necesita comparar dos bindings ni presets de pantalla"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/toast.css",
       "id": "content",
       "signatures": [
@@ -2991,5 +3018,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "aad8944aabc46358"
+  "sourceHash": "3e50a2a874f00562"
 }

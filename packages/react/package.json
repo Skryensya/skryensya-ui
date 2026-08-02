@@ -184,6 +184,10 @@
       "types": "./src/components/toc.tsx",
       "default": "./src/components/toc.tsx"
     },
+    "./component-preview": {
+      "types": "./src/components/component-preview.tsx",
+      "default": "./src/components/component-preview.tsx"
+    },
     "./table": {
       "types": "./src/components/table.tsx",
       "default": "./src/components/table.tsx"

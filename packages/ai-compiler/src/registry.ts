@@ -52,6 +52,7 @@ import { imageFrameContract } from "@skryensya/core/image-frame";
 import { navListContract } from "@skryensya/core/nav-list";
 import { tableContract } from "@skryensya/core/table";
 import { tabsContract } from "@skryensya/core/tabs";
+import { tocContract } from "@skryensya/core/toc";
 import type {
   ComponentContract,
   ContractOption,
@@ -126,6 +127,7 @@ export const contracts = {
   typography: typographyContract,
   wrapper: wrapperContract,
   tabs: tabsContract,
+  toc: tocContract,
 } as const satisfies Record<string, ComponentContract>;
 
 export type ContractId = keyof typeof contracts;

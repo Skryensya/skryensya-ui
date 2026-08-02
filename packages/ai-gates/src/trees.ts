@@ -822,6 +822,32 @@ const signatureTrees: readonly Canonical[] = [
       options: { label: "Buscar", paletteId: "demo-palette", open: true },
     },
   },
+  /*
+   * No real headings on this page, so the scroll-spy's own `IntersectionObserver` finds nothing to
+   * observe and never writes — what is compared is the seeded `current`, identical in both bindings
+   * whether or not the machine ever runs.
+   */
+  {
+    name: "toc/nested",
+    enhanced: true,
+    tree: {
+      contract: "toc",
+      signature: "Toc",
+      options: { title: "En esta página" },
+      slots: {
+        items: [
+          { options: { href: "#resumen", current: true }, slots: { children: "Resumen" } },
+          {
+            options: { href: "#detalle", level: "h3" },
+            slots: {
+              children: "Detalle",
+              icon: { contract: "icon", signature: "Icon", options: { name: "info", size: "sm" } },
+            },
+          },
+        ],
+      },
+    },
+  },
   /* The chrome, not the highlighting: Shiki runs where the code is made, never in the browser. */
   {
     name: "code-preview/collapsible",

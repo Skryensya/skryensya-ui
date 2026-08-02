@@ -2,181 +2,41 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
-import Toc from "../../../components/Toc.astro";
+import { tocIconsTree, tocNestedTree, tocPlainTree } from "../../../demos/toc";
+import { getLocale, useTranslations } from "../../../i18n";
 
-/* The real Toc.astro renders every preview. Strings below are only the copyable HTML interface;
- * responsive shape is owned once by scripts/toc.ts and mounted by docs shell + preview frame. */
-const plainItems = [
-  { href: "#anatomia", label: "Anatomy", current: true },
-  { href: "#espacio", label: "Reserved space" },
-  { href: "#contrato", label: "Contract" },
-] as const;
+const t = useTranslations(getLocale(Astro.url));
 
-const nestedItems = [
-  { href: "#espacio", label: "Reserved space" },
-  { href: "#cls", label: "Without CLS", level: "h3", current: true },
-  { href: "#ready", label: "data-ready", level: "h3" },
-  { href: "#contrato", label: "Contract" },
-] as const;
-
-const iconItems = [
-  {
-    href: "#anatomia",
-    label: "Anatomy",
-    current: true,
-    icon: "menu",
-  },
-  {
-    href: "#espacio",
-    label: "Reserved space",
-    icon: "settings",
-  },
-  { href: "#cls", label: "Without CLS", level: "h3", icon: "check" },
-  { href: "#contrato", label: "Contract", icon: "info" },
-] as const;
-
-const plainHtml = `<aside class="docs-toc sk-scrollbar" data-docs-toc data-ready>
-  <details class="docs-toc__inner" data-docs-toc-disclosure>
-    <summary class="docs-toc__summary sk-interactive">
-      <h2 class="docs-toc__title" data-flush>On this page</h2>
-      <span class="docs-toc__chevron" aria-hidden="true">
-        <span data-sk-icon="chevron-down"></span>
-      </span>
-    </summary>
-    <nav aria-label="On this page">
-      <ul class="docs-toc__list">
-        <li class="docs-toc__item" data-level="h2">
-          <a
- class="docs-toc__link sk-interactive"
- href="#anatomia"
- aria-current="true"
- >Anatomy</a>
-        </li>
-        <li class="docs-toc__item" data-level="h2">
-          <a class="docs-toc__link sk-interactive" href="#espacio">
-            Reserved space
-          </a>
-        </li>
-        <li class="docs-toc__item" data-level="h2">
-          <a class="docs-toc__link sk-interactive" href="#contrato">
-            Contract
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </details>
-</aside>`;
-
-const nestedHtml = `<aside class="docs-toc sk-scrollbar" data-docs-toc data-ready>
-  <details class="docs-toc__inner" data-docs-toc-disclosure>
-    <summary class="docs-toc__summary sk-interactive">
-      <h2 class="docs-toc__title" data-flush>On this page</h2>
-      <span class="docs-toc__chevron" aria-hidden="true">
-        <span data-sk-icon="chevron-down"></span>
-      </span>
-    </summary>
-    <nav aria-label="On this page">
-      <ul class="docs-toc__list">
-        <li class="docs-toc__item" data-level="h2">
-          <a class="docs-toc__link sk-interactive" href="#espacio">
-            Reserved space
-          </a>
-        </li>
-        <li class="docs-toc__item" data-level="h3">
-          <a
- class="docs-toc__link sk-interactive"
- href="#cls"
- aria-current="true"
- >Without CLS</a>
-        </li>
-        <li class="docs-toc__item" data-level="h3">
-          <a class="docs-toc__link sk-interactive" href="#ready">
-            data-ready
-          </a>
-        </li>
-        <li class="docs-toc__item" data-level="h2">
-          <a class="docs-toc__link sk-interactive" href="#contrato">
-            Contract
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </details>
-</aside>`;
-
-const iconsHtml = `<aside class="docs-toc sk-scrollbar" data-docs-toc data-ready>
-  <details class="docs-toc__inner" data-docs-toc-disclosure>
-    <summary class="docs-toc__summary sk-interactive">
-      <h2 class="docs-toc__title" data-flush>On this page</h2>
-      <span class="docs-toc__chevron" aria-hidden="true">
-        <span data-sk-icon="chevron-down"></span>
-      </span>
-    </summary>
-    <nav aria-label="On this page">
-      <ul class="docs-toc__list">
-        <li class="docs-toc__item" data-level="h2">
-          <a
-            class="docs-toc__link sk-interactive"
-            href="#anatomia"
-            aria-current="true"
-          >
-            <span data-sk-icon="menu"></span>
-            Anatomy
-          </a>
-        </li>
-        <li class="docs-toc__item" data-level="h2">
-          <a class="docs-toc__link sk-interactive" href="#espacio">
-            <span data-sk-icon="settings"></span>
-            Reserved space
-          </a>
-        </li>
-        <li class="docs-toc__item" data-level="h3">
-          <a class="docs-toc__link sk-interactive" href="#cls">
-            <span data-sk-icon="check"></span>
-            Without CLS
-          </a>
-        </li>
-        <li class="docs-toc__item" data-level="h2">
-          <a class="docs-toc__link sk-interactive" href="#contrato">
-            <span data-sk-icon="info"></span>
-            Contract
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </details>
-</aside>`;
-
-/* Authored closed: the shared controller opens it only where the rail has its own column. The live
-   demos use this same component and controller instead of carrying a preview-only open state. */
-const markup = `<aside class="docs-toc sk-scrollbar" data-docs-toc>
-  <details class="docs-toc__inner" data-docs-toc-disclosure>
-    <summary class="docs-toc__summary sk-interactive">
-      <h2 class="docs-toc__title" data-flush>On this page</h2>
-      <span class="docs-toc__chevron" aria-hidden="true">
-        <span data-sk-icon="chevron-down"></span>
-      </span>
-    </summary>
-    <nav aria-label="On this page">
-      <ul class="docs-toc__list"></ul>
-    </nav>
-  </details>
-</aside>`;
-
-const responsive = `import {
-  initTocDisclosure,
-} from "./toc";
-
-initTocDisclosure();`;
-
-const linkWithIcon = `<a class="docs-toc__link sk-interactive" href="#espacio">
-  <span data-sk-icon="settings"></span>
-  Reserved space
+/* The real Toc.astro renders the site's own rail; it cannot use the tree below because its items
+ * are discovered from THIS page's headings at runtime, in the browser, which is what the CLS
+ * section further down is about. */
+const linkWithIcon = `<a class="sk-toc__link sk-interactive" href="#installation">
+  <span class="sk-toc__icon">
+    <span data-sk-icon="settings"></span>
+  </span>
+  <span class="sk-toc__label">Installation</span>
 </a>`;
+
+const markup = `<aside class="sk-toc" data-sk-toc>
+  <details class="sk-toc__inner" data-sk-toc-disclosure>
+    <summary class="sk-toc__summary sk-interactive">
+      <h2 class="sk-toc__title">On this page</h2>
+      <span class="sk-toc__chevron" aria-hidden="true"></span>
+    </summary>
+    <nav aria-label="On this page">
+      <ul class="sk-toc__list"></ul>
+    </nav>
+  </details>
+</aside>`;
+
+const mount = `import { initComponents } from "@skryensya/vanilla/auto";
+
+// Finds [data-sk-toc], wires the rail/disclosure switch and the scroll-spy.
+await initComponents();`;
 
 const builder = `<script is:inline>
   (function () {
-    var toc = document.querySelector("[data-docs-toc]");
+    var toc = document.querySelector("[data-sk-toc]");
     var main = document.querySelector("main");
     var list = toc && toc.querySelector("ul");
     if (!toc || !main || !list) return;
@@ -193,11 +53,11 @@ const builder = `<script is:inline>
       if (!heading.id) heading.id = slugify(heading.textContent);
 
       var item = document.createElement("li");
-      item.className = "docs-toc__item";
+      item.className = "sk-toc__item";
       item.setAttribute("data-level", heading.tagName.toLowerCase());
 
       var link = document.createElement("a");
-      link.className = "docs-toc__link sk-interactive";
+      link.className = "sk-toc__link sk-interactive";
       link.href = "#" + heading.id;
       link.textContent = heading.textContent;
 
@@ -213,91 +73,103 @@ const builder = `<script is:inline>
     toc.setAttribute("data-ready", "");
   })();
 <\/script>`;
-
-const spy = `import { initTocSpy } from "./toc";
-
-initTocSpy();`;
 ---
 
 <Base
-  title="Table of contents"
-  description="Table of contents: rail “On this page” of the documentation. Section index plus scroll-spy, with reserved column before the first paint."
+  title="Toc"
+  description="Toc: the index of a long document. Lists its sections (h2/h3) and marks the current one with scroll-spy."
 >
-  <h1>Table of contents</h1>
+  <h1>Toc</h1>
   <p class="lede">
-    The page index: third column of the docs layout. List your own sections (<code>h2</code>/<code>h3</code>) and mark the current one with scroll-spy. Each row is a link with
-    <a href="/en/state-layer"><code>sk-interactive</code></a> (state layer), separated from the next by a divisor, not by a card. The icon is optional.
+    The index of a document: a list of links to its sections (<code>h2</code>/<code>h3</code>),
+    with the current one marked by a scroll-spy. Each row is a link with
+    <a href="/en/state-layer"><code>sk-interactive</code></a> (state layer), separated from the
+    next by a divider, not by a card. The icon is optional.
   </p>
 
   <h2 id="anatomia">Anatomy</h2>
   <p>
-    Text only: The layout builder writes this markup from the page headers.
+    A root <code>&lt;aside&gt;</code>, a <code>&lt;details&gt;</code> as the disclosure's shell,
+    and inside it a <code>&lt;nav&gt;</code> with the list of links.
   </p>
-  <ComponentPreview code={plainHtml} label="Text" flush>
-    <Toc items={plainItems} />
-  </ComponentPreview>
+  <ComponentPreview tree={tocPlainTree(t)} label="Text" flush />
 
   <h2 id="levels">Levels</h2>
   <p>
-    A <code>h3</code> marks <code>data-level="h3"</code> and is indented under its <code>h2</code>. The divider is still between rows.
+    An <code>h3</code> marks <code>data-level="h3"</code> and is indented under its
+    <code>h2</code>. The divider stays between rows.
   </p>
-  <ComponentPreview code={nestedHtml} label="h2 and h3" flush>
-    <Toc items={nestedItems} />
-  </ComponentPreview>
+  <ComponentPreview tree={tocNestedTree(t)} label="h2 and h3" flush />
 
   <h2 id="iconos">Icons</h2>
   <p>
-    The link supports a <code>data-sk-icon</code> placeholder in front of the tag. This site hydrates the set with <code>mountIcons</code>; The automatic doc builder does not inject icons, only the header text.
+    The link accepts a decorative icon in front of the label — the label already names the
+    destination, so the icon carries no accessible name of its own.
   </p>
-  <ComponentPreview code={iconsHtml} label="With icons" flush>
-    <Toc items={iconItems} />
-  </ComponentPreview>
+  <ComponentPreview tree={tocIconsTree(t)} label="With icons" flush />
   <CodeBlock code={linkWithIcon} label="link with icon" />
 
   <h2 id="rail-o-disclosure">Rail or disclosure</h2>
   <p>
-    One element, two shapes, and the shape depends on whether there is a column for it. Starting from <code>wide</code> is the <strong>rail</strong>: the third column, sticky next to the prose, always open and with its <code>&lt;summary&gt;</code> inert. Below is the same <code>Toc.astro</code> converted into <strong>disclosure</strong>: closed, in flow and single row. The real shell and ComponentPreview call the same <code>initTocDisclosure()</code>, so mobile no longer has a parallel implementation.
+    The contract ships ONE shape: an interactive <code>&lt;details&gt;</code>, closed — the
+    platform's own behaviour, free. It is a consumer with a column to spare that turns it into an
+    always-open, sticky <strong>rail</strong> beside the prose, the same way <code>sidebar</code>
+    never decides on its own that it becomes a drawer. On this site, that consumer is the docs
+    shell: below <code>wide</code> the same <code>Toc</code> is the <strong>disclosure</strong>
+    the contract already ships; from <code>wide</code> up, <code>shell.scss</code> forces it open
+    and inert.
   </p>
   <p>
-    <code>&lt;details&gt;</code> is what makes that change cheaper: the open state, the toggle, the keyboard and the accessibility are from the platform. As a disclosure, the rows carry the gutter themselves instead of the container: the touch destination reaches both edges of the screen while the text stays at the margin of the document. With padding in the container, the state layer would end where the text ends and the list scroll bar would rest on the last letter.
+    <code>&lt;details&gt;</code> is what makes that switch cheap: the open state, the toggle, the
+    keyboard and the accessibility are the platform's. As a disclosure, the rows carry their own
+    gutter instead of the container: the tap target reaches both screen edges while the text
+    stays on the document's own margin.
   </p>
-  <CodeBlock code={responsive} label="shared module" lang="ts" />
 
   <h2 id="espacio">Reserved space</h2>
   <p>
-    The grid track is the width of the TOC (<code>--docs-toc-inline-size</code>). The <code>&lt;aside&gt;</code> is always in flow: before <code>data-ready</code> the list is invisible with a minimum height, so the links do not push the layout when they appear.
+    On this site the grid track is the TOC's width (<code>--docs-toc-inline-size</code>). The
+    <code>&lt;aside&gt;</code> is always in flow: before <code>data-ready</code> the list stays
+    invisible with a minimum height, so links appearing never push the layout.
   </p>
   <CodeBlock code={markup} label="HTML" />
   <h3 id="cls">Without CLS</h3>
   <p>
-    A <code>is: inline</code> script builds the list before the first paint. Without sections, brand <code>data-empty</code>.
+    A tree already knows its items when composed — that is the case above. This site's real shell
+    does not: its headings are discovered by walking <code>main</code> in the browser, so an
+    <code>is:inline</code> script builds the list before the first paint. With no sections, it
+    marks <code>data-empty</code>.
   </p>
   <CodeBlock code={builder} label="in the layout" lang="html" />
   <p>
-    The scroll-spy marks <code>aria-current</code> according to the section that crosses the top band of the viewport.
+    Once mounted, the same enhancer wires the rail/disclosure switch and the scroll-spy that marks
+    <code>aria-current</code> for whichever section crosses the top band of the viewport —
+    <code>connectToc</code>, behind <code>data-sk-toc</code>.
   </p>
-  <CodeBlock code={spy} label="JavaScript" lang="ts" />
+  <CodeBlock code={mount} label="JavaScript" lang="ts" />
 
   <h2 id="contrato">Contract</h2>
   <ul>
     <li>
-      Root: <code>&lt;aside class="docs-toc" data-docs-toc&gt;</code> with a <code>&lt;details class="docs-toc__inner" data-docs-toc-disclosure&gt;</code> inside: <code>&lt;summary class="docs-toc__summary"&gt;</code> and <code>&lt;ul class="docs-toc__list"&gt;</code>.
+      Root: <code>&lt;aside class="sk-toc" data-sk-toc&gt;</code> with a
+      <code>&lt;details class="sk-toc__inner" data-sk-toc-disclosure&gt;</code> inside:
+      <code>&lt;summary class="sk-toc__summary"&gt;</code> and
+      <code>&lt;ul class="sk-toc__list"&gt;</code>.
     </li>
     <li>
-      Form: <strong>rail</strong> starting from <code>wide</code> (open, sticky, summary inert), <strong>disclosure</strong> below (closed, in flow, non-sticky). Shell and previews mount the same <code>initTocDisclosure()</code>.
+      Shape: one, a closed <code>&lt;details&gt;</code>. A sticky rail is a consumer's decision,
+      not the contract's — see above.
     </li>
     <li>
-      Each item: <code>docs-toc__item</code> + lower divisor (except the last one). The link is <code>docs-toc__link sk-interactive</code>.
+      Each item: <code>sk-toc__item</code> + a bottom divider (except the last). The link is
+      <code>sk-toc__link sk-interactive</code>, with its label in <code>sk-toc__label</code>.
     </li>
     <li>
-      Optional icon: <code>&lt;span data-sk-icon="…"&gt;</code> as the first child of the link.
+      Optional icon: <code>&lt;span class="sk-toc__icon"&gt;</code> as the link's first child.
     </li>
     <li>
-      Automatic index: <code>main :scope &gt; h2, :scope &gt; h3</code>. An <code>h3</code> is marked with
-      <code>data-level="h3"</code>.
-    </li>
-    <li>
-      Active status: <code>aria-current="true"</code> on the link.
+      Active state: <code>aria-current="true"</code> on the link, written by the scroll-spy at
+      runtime.
     </li>
   </ul>
 </Base>

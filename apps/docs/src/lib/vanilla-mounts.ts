@@ -104,6 +104,12 @@ export const vanillaMounts = {
     mount: "mountToast",
     selector: "[data-sk-toast]",
   },
+  "/componentes/toc": {
+    name: "Toc",
+    entrypoint: "@skryensya/vanilla/toc",
+    mount: "mountToc",
+    selector: "[data-sk-toc]",
+  },
   "/componentes/tooltip": {
     name: "Tooltip",
     entrypoint: "@skryensya/vanilla/tooltip",

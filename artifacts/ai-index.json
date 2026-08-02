@@ -676,6 +676,28 @@
             "la fecha es un campo de un formulario, junto a otros campos",
             "conviene poder escribirla y también buscarla en el calendario"
           ]
+        },
+        {
+          "alternatives": [
+            "DatePicker",
+            "Calendar"
+          ],
+          "avoidWhen": [
+            "hace falta un rango, un mínimo o un máximo: eso es DatePicker",
+            "el calendario tiene que verse siempre: eso es Calendar"
+          ],
+          "host": "div",
+          "id": "DatePicker.native",
+          "intent": [
+            "a-standard-date-field",
+            "form-field",
+            "no-javascript"
+          ],
+          "parents": [],
+          "useWhen": [
+            "una fecha común dentro de un formulario, sin rango ni reglas propias",
+            "el teclado, el formato local y el envío deben pertenecer al navegador"
+          ]
         }
       ]
     },
@@ -2588,6 +2610,33 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/toc.css",
+      "id": "toc",
+      "signatures": [
+        {
+          "alternatives": [
+            "NavList"
+          ],
+          "avoidWhen": [
+            "los destinos son páginas distintas, no secciones de ESTA página — eso es NavList",
+            "el documento es corto y cabe entero en una pantalla — un índice no ahorra nada ahí"
+          ],
+          "host": "aside",
+          "id": "Toc",
+          "intent": [
+            "table-of-contents",
+            "in-page-navigation",
+            "document-index"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un documento largo tiene varias secciones (h2/h3) y el lector necesita saltar entre ellas",
+            "hace falta ver, mientras se lee, en qué sección se está — el \"current\" lo mueve el scroll-spy"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/toolbar.css",
       "id": "toolbar",
       "signatures": [
@@ -2845,5 +2894,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "6ca8452ae13e4f38"
+  "sourceHash": "5f25359124c5598a"
 }

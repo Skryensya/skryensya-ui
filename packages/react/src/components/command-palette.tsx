@@ -4,7 +4,7 @@ import {
   filterCommandPaletteEntries,
   type CommandPaletteEntry,
 } from "@skryensya/core/command-palette";
-import { useRef, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { Icon } from "./icon.js";
 
 /*
@@ -26,7 +26,12 @@ import { Icon } from "./icon.js";
 export type CommandPaletteProps = {
   id: string;
   label: string;
-  items?: readonly CommandPaletteEntry[];
+  /**
+   * The index. An array for a hand-written composition; a JSON string for a usage tree, which has
+   * no channel for anything but an option's own value — the same string the Vanilla binding reads
+   * off its authored `<script type="application/json">`.
+   */
+  items?: readonly CommandPaletteEntry[] | string;
   placeholder?: string;
   emptyLabel?: string;
   closeLabel?: string;
@@ -39,12 +44,16 @@ export function CommandPalette({
   emptyLabel = "Sin resultados.",
   footer,
   id,
-  items = [],
+  items: itemsProp = [],
   label,
   open = false,
   placeholder = "Buscar…",
 }: CommandPaletteProps) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const items = useMemo(
+    () => (typeof itemsProp === "string" ? (JSON.parse(itemsProp) as CommandPaletteEntry[]) : itemsProp),
+    [itemsProp],
+  );
   const [results, setResults] = useState<CommandPaletteEntry[]>([]);
   const [active, setActive] = useState(-1);
   const [expanded, setExpanded] = useState(false);

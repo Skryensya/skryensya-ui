@@ -149,6 +149,10 @@ const registrations: readonly Registration[] = [
     selector: "[data-sk-toolbar]",
     load: async () => (await import("../components/toolbar.js")).mountToolbar,
   },
+  {
+    selector: "[data-sk-toc]",
+    load: async () => (await import("../components/toc.js")).mountToc,
+  },
 ];
 
 function containsSelector(root: Document | Element, selector: string): boolean {

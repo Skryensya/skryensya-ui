@@ -199,6 +199,10 @@
       "types": "./src/tabs.ts",
       "default": "./src/tabs.ts"
     },
+    "./toc": {
+      "types": "./src/toc.ts",
+      "default": "./src/toc.ts"
+    },
     "./tooltip": {
       "types": "./src/tooltip.ts",
       "default": "./src/tooltip.ts"

@@ -180,6 +180,10 @@
       "types": "./src/components/tabs.tsx",
       "default": "./src/components/tabs.tsx"
     },
+    "./toc": {
+      "types": "./src/components/toc.tsx",
+      "default": "./src/components/toc.tsx"
+    },
     "./table": {
       "types": "./src/components/table.tsx",
       "default": "./src/components/table.tsx"

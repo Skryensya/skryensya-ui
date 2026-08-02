@@ -15,7 +15,7 @@
  * pinned over the document is worse than one that costs its space once and scrolls away. Measured
  * on a 390px viewport, the old sticky version stood 510px tall: 60% of the screen, permanently.
  *
- * Component rules are deliberately unscoped so the same `.docs-toc` inside ComponentPreview
+ * Component rules are deliberately unscoped so the same `.sk-toc` inside ComponentPreview
  * becomes the same disclosure. Only grid placement stays scoped to `.shell`. */
 @include bp.down("wide") {
   .shell {
@@ -26,12 +26,12 @@
     grid-row: 1 / span 2;
   }
 
-  .shell .docs-toc {
+  .shell .sk-toc {
     grid-column: 2;
     grid-row: 1;
   }
 
-  .docs-toc {
+  .sk-toc {
     position: static;
     inline-size: 100%;
     min-inline-size: 0;
@@ -43,7 +43,7 @@
 
   /* An index of nothing takes no row here: `visibility: hidden` would leave the summary's gap in
    * the flow, which on the rail was a reserved column and here is just a blank band. */
-  .docs-toc[data-empty] {
+  .sk-toc[data-empty] {
     display: none;
   }
 
@@ -53,28 +53,28 @@
    * document's own margin, and the row's own padding is the only thing that gives both. Padding the
    * container instead leaves the state layer stopping at the text and the list's scrollbar sitting on
    * top of the last character. */
-  .docs-toc__inner {
+  .sk-toc__inner {
     border-inline-start: 0;
     padding: 0;
   }
 
-  .docs-toc__summary,
-  .docs-toc__link {
+  .sk-toc__summary,
+  .sk-toc__link {
     padding-inline: var(--space-inset-lg);
   }
 
   /* The h3 indent moves from the item to the link: on the item it would push the row's divider in
    * with the text, and a list whose separators jog in and out per level reads as broken, not nested. */
-  .docs-toc__item {
+  .sk-toc__item {
     padding-inline-start: 0;
   }
 
-  .docs-toc__item[data-level="h3"] .docs-toc__link {
+  .sk-toc__item[data-level="h3"] .sk-toc__link {
     padding-inline-start: calc(var(--space-inset-lg) + var(--space-inset-md));
   }
 
   /* Now a real control: a full-width row you tap, with the marker the rail suppressed. */
-  .docs-toc__summary {
+  .sk-toc__summary {
     justify-content: space-between;
     min-block-size: var(--size-control-md);
     margin-block-end: 0;
@@ -83,11 +83,11 @@
     pointer-events: auto;
   }
 
-  .docs-toc__summary::before {
+  .sk-toc__summary::before {
     display: block;
   }
 
-  .docs-toc__chevron {
+  .sk-toc__chevron {
     display: inline-grid;
     place-items: center;
     flex: none;
@@ -95,14 +95,14 @@
     transition: rotate var(--motion-state-change-duration) var(--motion-state-change-easing);
   }
 
-  .docs-toc__inner[open] .docs-toc__chevron {
+  .sk-toc__inner[open] .sk-toc__chevron {
     rotate: 180deg;
   }
 
   /* Opening it must not turn the top of the page into a mile of links either: past half the
    * viewport the list scrolls on its own. Auto-fit previews mirror the reader viewport through the
    * custom property; using their content-sized `dvh` here would keep an opened list one row tall. */
-  .docs-toc__inner[open] .docs-toc__list {
+  .sk-toc__inner[open] .sk-toc__list {
     max-block-size: calc(var(--sk-component-preview-viewport-block-size, 100dvh) * 0.5);
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -116,7 +116,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .docs-toc__chevron {
+  .sk-toc__chevron {
     transition: none;
   }
 }
@@ -134,7 +134,7 @@
     display: none;
   }
 
-  .shell .docs-toc {
+  .shell .sk-toc {
     grid-column: 1;
     grid-row: 1;
   }

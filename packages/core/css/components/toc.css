@@ -1,0 +1,127 @@
+/*
+ * TIER 3, TOC
+ *
+ * Ships one shape: an interactive `<details>` disclosure, closed by default — the platform's own
+ * behaviour, free. A consumer with a column to spare turns it into an always-open rail, sticky
+ * beside the prose, by overriding `--sk-toc-sticky-top` and pinning `open` past its own breakpoint,
+ * the same way a consumer decides `sidebar` becomes a drawer rather than this file deciding it.
+ */
+@layer components {
+  .sk-toc {
+    --sk-toc-inline-size: 14rem;
+    --sk-toc-sticky-top: 0px;
+
+    position: sticky;
+    top: var(--sk-toc-sticky-top);
+    display: block;
+    inline-size: var(--sk-toc-inline-size);
+    min-inline-size: var(--sk-toc-inline-size);
+    max-block-size: calc(100dvh - var(--sk-toc-sticky-top));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .sk-toc__inner {
+    min-inline-size: 0;
+    padding: var(--space-stack-md) var(--space-inset-md);
+    border-inline-start: 1px solid var(--color-border-subtle);
+  }
+
+  /* As a rail it is not a control: the column is always open, so it paints as the caption it used
+   * to be — no marker, no chevron, no state layer. A consumer's breakpoint gives these back once
+   * this becomes a real disclosure below its own column width. */
+  .sk-toc__summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-inline-sm);
+    min-inline-size: 0;
+    margin-block-end: var(--space-stack-sm);
+    pointer-events: none;
+    list-style: none;
+  }
+
+  .sk-toc__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .sk-toc__summary::marker {
+    content: "";
+  }
+
+  .sk-toc__summary::before {
+    /* the state layer of `sk-interactive`, off while the summary is a caption */
+    display: none;
+  }
+
+  .sk-toc__chevron {
+    display: none;
+  }
+
+  /* Caption label, not a prose section title. */
+  h2.sk-toc__title {
+    margin: 0;
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption, 1.3);
+    font-weight: var(--font-weight-emphasis);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+  }
+
+  .sk-toc__list {
+    display: grid;
+    min-inline-size: 0;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sk-toc__item {
+    min-inline-size: 0;
+    border-block-end: 1px solid var(--color-border-subtle);
+  }
+
+  .sk-toc__item:last-child {
+    border-block-end: 0;
+  }
+
+  .sk-toc__item[data-level="h3"] {
+    padding-inline-start: var(--space-inset-sm);
+  }
+
+  /* A link row, not a card: no fill, no radius. State layer paints on hover/press/current. */
+  .sk-toc__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-inline-sm);
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: var(--size-control-sm);
+    padding-block: var(--space-inset-sm);
+    padding-inline: var(--space-inset-sm);
+    border-radius: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body);
+    overflow-wrap: anywhere;
+    text-decoration: none;
+    text-wrap: pretty;
+  }
+
+  .sk-toc__icon {
+    flex: none;
+    display: inline-flex;
+    color: var(--color-text-tertiary);
+  }
+
+  /* The section you're reading, the only accent in the list — written by the scroll-spy. */
+  .sk-toc__link[aria-current="true"] {
+    color: var(--color-text-accent);
+    font-weight: var(--font-weight-label);
+  }
+
+  .sk-toc__link[aria-current="true"] .sk-toc__icon {
+    color: var(--color-text-accent);
+  }
+}

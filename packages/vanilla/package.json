@@ -84,6 +84,10 @@
       "types": "./src/components/tabs.ts",
       "default": "./src/components/tabs.ts"
     },
+    "./toc": {
+      "types": "./src/components/toc.ts",
+      "default": "./src/components/toc.ts"
+    },
     "./carousel": {
       "types": "./src/components/carousel.ts",
       "default": "./src/components/carousel.ts"

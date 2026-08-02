@@ -2,7 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
-import { datePickerDisabledTree, datePickerTree } from "../../demos/date-picker";
+import { datePickerDisabledTree, datePickerTree, nativeDatePickerTree } from "../../demos/date-picker";
 import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/date-picker.css";
 
@@ -12,18 +12,6 @@ const install = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/date-picker.css";`;
 
-const nativeHtml = `<div class="sk-date-picker" lang="es-DO">
-  <label class="sk-date-picker__label" for="arrival">Reserva</label>
-  <div class="sk-date-picker__control">
-    <input
-      class="sk-date-picker__input"
-      id="arrival"
-      lang="es-DO"
-      name="arrival"
-      type="date"
-    />
-  </div>
-</div>`;
 
 ---
 
@@ -44,7 +32,7 @@ const nativeHtml = `<div class="sk-date-picker" lang="es-DO">
 
   <h2>Nativo</h2>
   <p>El control de plataforma, sin JavaScript ni enhancer.</p>
-  <ComponentPreview html={nativeHtml} label="DatePicker nativo" />
+  <ComponentPreview tree={nativeDatePickerTree(t)} label="DatePicker nativo" />
 
   <h2>Custom</h2>
   <p>El campo custom y su calendario emergente viven en una demostración independiente.</p>

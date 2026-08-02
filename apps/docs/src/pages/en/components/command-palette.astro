@@ -3,6 +3,10 @@ import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
 import StylingHooks from "../../../components/StylingHooks.astro";
+import { commandPaletteDemoScript, commandPaletteDemoTree } from "../../../demos/command-palette";
+import { getLocale, useTranslations } from "../../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -10,87 +14,6 @@ const styles = `@import "@skryensya/core/components/dialog.css";
 @import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/command-palette.css";
 @import "@skryensya/core/patterns/scroll-lock.css";`;
-
-const html = `<button
-  class="sk-button sk-interactive"
-  data-variant="secondary"
-  type="button"
-  aria-controls="demo-cmdk"
-  aria-expanded="false"
-  data-sk-command-palette-open
->
-  <span data-sk-icon="search"></span>
-  Open command palette
-</button>
-
-<dialog
-  class="sk-dialog sk-command-palette"
-  id="demo-cmdk"
-  data-sk-command-palette
-  data-sk-command-palette-index="demo-cmdk-index"
-  aria-label="Search"
->
-  <div class="sk-command-palette__search">
-    <span data-sk-icon="search"></span>
-    <input
-      class="sk-command-palette__input"
-      type="text"
-      role="combobox"
-      placeholder="Search…"
-      autocomplete="off"
-      spellcheck="false"
-      aria-controls="demo-cmdk-list"
-      aria-expanded="true"
-      aria-autocomplete="list"
-      data-sk-command-palette-input
-    />
-    <form method="dialog">
-      <button
-        class="sk-button sk-interactive sk-dialog__close sk-command-palette__close"
-        data-sk-button
-        data-variant="ghost"
-        data-size="sm"
-        data-icon-only
-        type="submit"
-        value="cancel"
-        aria-label="Close"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </form>
-  </div>
-  <ul
-    class="sk-command-palette__list sk-scrollbar"
-    id="demo-cmdk-list"
-    role="listbox"
-    aria-label="Results"
-    data-sk-command-palette-list
-  ></ul>
-  <p
-    class="sk-command-palette__empty"
-    data-sk-command-palette-empty
-    hidden
-  >
-    No results.
-  </p>
-  <footer class="sk-command-palette__footer">
-    <span>
-      <kbd class="sk-kbd">↑</kbd>
-      <kbd class="sk-kbd">↓</kbd>
-      navigate
-    </span>
-    <span><kbd class="sk-kbd">↵</kbd> open</span>
-    <span><kbd class="sk-kbd">Esc</kbd> close</span>
-  </footer>
-</dialog>
-<script type="application/json" id="demo-cmdk-index">[{"label":"Button","href":"/en/components/button","section":"Components","group":"Controls"},{"label":"Dialog","href":"/en/components/dialog","section":"Components","group":"Overlays"},{"label":"Hotkey","href":"/en/hotkey","aliases":["shortcut"],"section":"Foundations","group":"Behavior"}]</script>`;
-
-const js = `import { mountIcons } from "@skryensya/vanilla/icon";
-import { lucideIcons } from "@skryensya/icons-lucide";
-import { initComponents } from "@skryensya/vanilla/auto";
-
-mountIcons(document, lucideIcons);
-await initComponents();`;
 ---
 
 <Base
@@ -102,7 +25,13 @@ await initComponents();`;
     A <strong>command palette</strong>: a field that filters an index and a listbox with <code>aria-activedescendant</code>, hosted in a native <a href="/en/components/dialog"><code>Dialog</code></a> (<code>showModal</code>, Esc, focus). The shortcut ( <a href="/en/hotkey">Hotkey</a> ) is opt-in by attribute; this site uses it with <kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd>.
   </p>
 
-  <ComponentPreview html={html} js={js} label="CommandPalette" viewport="overlay" />
+  <ComponentPreview
+    tree={commandPaletteDemoTree(t)}
+    js={commandPaletteDemoScript}
+    previewScript={commandPaletteDemoScript}
+    label="CommandPalette"
+    viewport="overlay"
+  />
 
   <h2>Install</h2>
   <CodeBlock code={install} label="terminal" />
@@ -124,6 +53,12 @@ await initComponents();`;
     </li>
     <li>
       Close: <code>&lt;form method="dialog"&gt;</code> with IconButton (<code>sk-dialog__close sk-command-palette__close</code>), Esc, or click on the backdrop.
+    </li>
+    <li>
+      <code>entries</code> is a contract option, not part of normal usage: it exists so a tree
+      (like the one above) can seed the demo's index — it is emitted as the
+      <code>&lt;script&gt;</code> itself in Vanilla, and as the parsed <code>items</code> prop in
+      React. A real composition still authors its own index.
     </li>
   </ul>
 

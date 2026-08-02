@@ -53,6 +53,7 @@ import * as navListModule from "./components/nav-list.js";
 import * as selectionModule from "./components/selection.js";
 import * as tableModule from "./components/table.js";
 import * as tabsModule from "./components/tabs.js";
+import * as tocModule from "./components/toc.js";
 import type { ContractSlot } from "@skryensya/core/contract";
 import { getContract, getSignature } from "@skryensya/ai-compiler/registry";
 import { jsxPropName } from "@skryensya/ai-compiler/emit";
@@ -132,6 +133,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/selection": selectionModule,
   "@skryensya/react/table": tableModule,
   "@skryensya/react/tabs": tabsModule,
+  "@skryensya/react/toc": tocModule,
 };
 
 /*

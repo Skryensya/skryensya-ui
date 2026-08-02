@@ -17,6 +17,7 @@
  * The list starts empty and is filled by the layout's synchronous inline script before first paint.
  * The aside itself is always in the grid so the document column never shifts when links appear.
  */
+import { tocParts } from "@skryensya/core/toc";
 import type { StableIconName } from "@skryensya/core/icon";
 import { iconMarkup } from "../icons";
 import { getLocale, useTranslations } from "../i18n";
@@ -40,36 +41,36 @@ const chevron = iconMarkup("chevron-down", { size: "sm" });
 ---
 
 <aside
-  class="docs-toc sk-scrollbar"
-  data-docs-toc
+  class={`${tocParts.root} sk-scrollbar`}
+  data-sk-toc
   data-ready={items.length > 0 ? "" : undefined}
 >
-  <details class="docs-toc__inner" data-docs-toc-disclosure>
-    <summary class="docs-toc__summary sk-interactive">
-      <h2 class="docs-toc__title" data-flush>{title}</h2>
-      <span class="docs-toc__chevron" aria-hidden="true">
+  <details class={tocParts.disclosure} data-sk-toc-disclosure>
+    <summary class={`${tocParts.summary} sk-interactive`}>
+      <h2 class={tocParts.title} data-flush>{title}</h2>
+      <span class={tocParts.chevron} aria-hidden="true">
         <Fragment set:html={chevron} />
       </span>
     </summary>
     <nav aria-label={title}>
-      <ul class="docs-toc__list">
+      <ul class={tocParts.list}>
         {
           items.map((item) => (
             <li
-              class="docs-toc__item"
+              class={tocParts.item}
               data-level={item.level ?? "h2"}
             >
               <a
                 aria-current={item.current ? "true" : undefined}
-                class="docs-toc__link sk-interactive"
+                class={`${tocParts.link} sk-interactive`}
                 href={item.href}
               >
                 {item.icon && (
-                  <Fragment
-                    set:html={iconMarkup(item.icon, { size: "sm" })}
-                  />
+                  <span class={tocParts.icon}>
+                    <Fragment set:html={iconMarkup(item.icon, { size: "sm" })} />
+                  </span>
                 )}
-                {item.label}
+                <span class={tocParts.label}>{item.label}</span>
               </a>
             </li>
           ))

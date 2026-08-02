@@ -3,6 +3,10 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
+import { commandPaletteDemoScript, commandPaletteDemoTree } from "../../demos/command-palette";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -10,87 +14,6 @@ const styles = `@import "@skryensya/core/components/dialog.css";
 @import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/command-palette.css";
 @import "@skryensya/core/patterns/scroll-lock.css";`;
-
-const html = `<button
-  class="sk-button sk-interactive"
-  data-variant="secondary"
-  type="button"
-  aria-controls="demo-cmdk"
-  aria-expanded="false"
-  data-sk-command-palette-open
->
-  <span data-sk-icon="search"></span>
-  Abrir paleta
-</button>
-
-<dialog
-  class="sk-dialog sk-command-palette"
-  id="demo-cmdk"
-  data-sk-command-palette
-  data-sk-command-palette-index="demo-cmdk-index"
-  aria-label="Buscar"
->
-  <div class="sk-command-palette__search">
-    <span data-sk-icon="search"></span>
-    <input
-      class="sk-command-palette__input"
-      type="text"
-      role="combobox"
-      placeholder="Buscar…"
-      autocomplete="off"
-      spellcheck="false"
-      aria-controls="demo-cmdk-list"
-      aria-expanded="true"
-      aria-autocomplete="list"
-      data-sk-command-palette-input
-    />
-    <form method="dialog">
-      <button
-        class="sk-button sk-interactive sk-dialog__close sk-command-palette__close"
-        data-sk-button
-        data-variant="ghost"
-        data-size="sm"
-        data-icon-only
-        type="submit"
-        value="cancel"
-        aria-label="Cerrar"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </form>
-  </div>
-  <ul
-    class="sk-command-palette__list sk-scrollbar"
-    id="demo-cmdk-list"
-    role="listbox"
-    aria-label="Resultados"
-    data-sk-command-palette-list
-  ></ul>
-  <p
-    class="sk-command-palette__empty"
-    data-sk-command-palette-empty
-    hidden
-  >
-    Sin resultados.
-  </p>
-  <footer class="sk-command-palette__footer">
-    <span>
-      <kbd class="sk-kbd">↑</kbd>
-      <kbd class="sk-kbd">↓</kbd>
-      navegar
-    </span>
-    <span><kbd class="sk-kbd">↵</kbd> abrir</span>
-    <span><kbd class="sk-kbd">Esc</kbd> cerrar</span>
-  </footer>
-</dialog>
-<script type="application/json" id="demo-cmdk-index">[{"label":"Button","href":"/componentes/button","section":"Componentes","group":"Controles"},{"label":"Dialog","href":"/componentes/dialog","section":"Componentes","group":"Overlays"},{"label":"Hotkey","href":"/hotkey","aliases":["atajo","shortcut"],"section":"Fundamentos","group":"Comportamiento"}]</script>`;
-
-const js = `import { mountIcons } from "@skryensya/vanilla/icon";
-import { lucideIcons } from "@skryensya/icons-lucide";
-import { initComponents } from "@skryensya/vanilla/auto";
-
-mountIcons(document, lucideIcons);
-await initComponents();`;
 ---
 
 <Base
@@ -106,7 +29,13 @@ await initComponents();`;
     <kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd>.
   </p>
 
-  <ComponentPreview html={html} js={js} label="CommandPalette" viewport="overlay" />
+  <ComponentPreview
+    tree={commandPaletteDemoTree(t)}
+    js={commandPaletteDemoScript}
+    previewScript={commandPaletteDemoScript}
+    label="CommandPalette"
+    viewport="overlay"
+  />
 
   <h2>Instalar</h2>
   <CodeBlock code={install} label="terminal" />
@@ -131,6 +60,12 @@ await initComponents();`;
     <li>
       Cerrar: <code>&lt;form method="dialog"&gt;</code> con IconButton
       (<code>sk-dialog__close sk-command-palette__close</code>), Esc, o clic en el backdrop.
+    </li>
+    <li>
+      <code>entries</code> es una opción del contrato, no del uso normal: existe para que un árbol
+      (como el de arriba) pueda sembrar el índice del demo — se emite como el
+      <code>&lt;script&gt;</code> mismo en Vanilla, y como el prop <code>items</code> (parseado) en
+      React. Una composición real sigue autorando su propio índice.
     </li>
   </ul>
 

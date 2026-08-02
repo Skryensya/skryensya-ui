@@ -191,7 +191,7 @@ body {
 /* Document scroll lock + scrollbar gutter come from patterns/scroll-lock.css (imported in Base).
    Nested overflow:auto rails can still wheel under an open modal, so freeze those here. */
 html:has(dialog:modal) .docs-sidebar .sk-sidebar__content,
-html:has(dialog:modal) .docs-toc,
+html:has(dialog:modal) .sk-toc,
 html:has(dialog:modal) .docs-drawer__content {
   overflow: hidden;
 }
@@ -614,139 +614,27 @@ h2.docs-nav-section__title {
 }
 
 /* ── "En esta página", the index of the document ─────────────────────────── */
-/* Built client-side, because .astro pages have no build-time heading list. The rail ALWAYS
-   occupies its column (grid track + min-inline-size) before the list fills, so revealing links
-   never shifts the prose. Empty pages keep the quiet title shell. */
-.docs-toc {
-  position: sticky;
+/* The component (`@skryensya/core/components/toc.css`) owns the anatomy; this is only what makes
+ * THIS shell's instance a rail rather than the disclosure it ships as. Built client-side, because
+ * .astro pages have no build-time heading list — the rail ALWAYS occupies its column (grid track +
+ * min-inline-size) before the list fills, so revealing links never shifts the prose. */
+.shell .sk-toc {
   /* Same sticky-under-navbar contract as the sidebar, read the measured navbar height (fallback to
      the token) so the toc and the sidebar align on the exact same line. */
-  top: var(--docs-navbar-h, var(--docs-header-block-size));
-  display: block;
-  inline-size: var(--docs-toc-inline-size);
-  /* Never let the grid crush the rail to 0 under space-between pressure. */
-  min-inline-size: var(--docs-toc-inline-size);
-  max-block-size: calc(100dvh - var(--docs-navbar-h, var(--docs-header-block-size)));
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
-.docs-toc__inner {
-  min-inline-size: 0;
-  padding: var(--space-stack-md) var(--space-inset-md);
-  /* the rail is a quiet aid, never a second nav competing with the sidebar */
-  border-inline-start: 1px solid var(--color-border-subtle);
-}
-
-/* The disclosure's trigger. AS A RAIL it is not a control: the column is always open, so it paints as
-   the caption it used to be — no marker, no chevron, no state layer, and no way to collapse a column
-   the layout is holding open (the keyboard half of that is the `tabindex` in Base.astro). shell.scss
-   gives it back its affordances below `wide`, where it is a real disclosure. */
-.docs-toc__summary {
-  display: flex;
-  align-items: center;
-  gap: var(--space-inline-sm);
-  min-inline-size: 0;
-  margin-block-end: var(--space-stack-sm);
-  pointer-events: none;
-  list-style: none;
-}
-
-.docs-toc__summary::-webkit-details-marker {
-  display: none;
-}
-
-.docs-toc__summary::marker {
-  content: "";
-}
-
-.docs-toc__summary::before {
-  /* the state layer of `sk-interactive`, off while the summary is a caption */
-  display: none;
-}
-
-.docs-toc__chevron {
-  display: none;
-}
-
-/* Caption label, not a prose section title. Spec must beat the unlayered `h2:not([data-flush])`
- * rule below or "En esta página" inherits heading-md. */
-h2.docs-toc__title {
-  margin: 0;
-  font-size: var(--font-size-caption);
-  line-height: var(--font-line-height-caption, 1.3);
-  font-weight: var(--font-weight-emphasis);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-tertiary);
-}
-
-.docs-toc__list {
-  display: grid;
-  min-inline-size: 0;
-  gap: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  --sk-toc-sticky-top: var(--docs-navbar-h, var(--docs-header-block-size));
+  --sk-toc-inline-size: var(--docs-toc-inline-size);
 }
 
 /* Before the inline builder runs, keep the column and a stable list band so links appearing
-   cannot grow the sticky rail into the prose (vertical) or shift tracks (horizontal). */
-.docs-toc:not([data-ready]) .docs-toc__list {
+   cannot grow the sticky rail into the prose (vertical) or shift tracks (horizontal). Specific to
+   this shell's runtime-discovered headings — a tree-authored Toc already knows its items. */
+.sk-toc:not([data-ready]) .sk-toc__list {
   visibility: hidden;
   min-block-size: calc(var(--size-control-sm) * 4);
 }
 
-.docs-toc[data-empty] {
+.sk-toc[data-empty] {
   visibility: hidden;
-}
-
-.docs-toc__item {
-  min-inline-size: 0;
-  border-block-end: 1px solid var(--color-border-subtle);
-}
-
-.docs-toc__item:last-child {
-  border-block-end: 0;
-}
-
-.docs-toc__item[data-level="h3"] {
-  padding-inline-start: var(--space-inset-sm);
-}
-
-/* A link row, not a card: no fill, no radius. State layer paints on hover/press/current. */
-.docs-toc__link {
-  display: flex;
-  align-items: center;
-  gap: var(--space-inline-sm);
-  inline-size: 100%;
-  min-inline-size: 0;
-  min-block-size: var(--size-control-sm);
-  padding-block: var(--space-inset-sm);
-  padding-inline: var(--space-inset-sm);
-  border-radius: 0;
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-body-sm);
-  line-height: var(--font-line-height-body);
-  overflow-wrap: anywhere;
-  text-decoration: none;
-  text-wrap: pretty;
-}
-
-.docs-toc__link .sk-icon {
-  flex: none;
-  color: var(--color-text-tertiary);
-}
-
-/* the section you're reading, the only accent in the rail, same restraint as the sidebar's
-   current page (scroll-spy writes this, so it must not be tuned away) */
-.docs-toc__link[aria-current="true"] {
-  color: var(--color-text-accent);
-  font-weight: var(--font-weight-label);
-}
-
-.docs-toc__link[aria-current="true"] .sk-icon {
-  color: var(--color-text-accent);
 }
 
 /* An anchored heading must clear the sticky header instead of hiding under it, measured height so it

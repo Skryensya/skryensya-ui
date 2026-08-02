@@ -32,6 +32,14 @@ export type Binding = "vanilla" | "react";
 
 export class EmitError extends Error {}
 
+/**
+ * Elements whose content the HTML parser never treats as markup — no entity decoding happens
+ * inside them, so escaping `&`/`<`/`>` before writing their text would corrupt it instead of
+ * protecting it (a JSON index with `&` in an href, escaped, comes back out of `.textContent` as
+ * literal `&amp;`). Literal text elsewhere in a template IS markup and still needs `escapeText`.
+ */
+const RAW_TEXT_ELEMENTS = new Set(["script", "style"]);
+
 /** Elements the HTML parser closes itself; a written close tag is invalid, not merely redundant. */
 const VOID_ELEMENTS = new Set([
   "area",
@@ -349,13 +357,21 @@ function renderTemplate(
    * needs two of these at once — the author's text and the required mark after it — so these are
    * additive rather than a chain of alternatives.
    */
+  const raw = RAW_TEXT_ELEMENTS.has(node.element);
   const children = [
     ...(node.text !== undefined
-      ? [`${"  ".repeat(depth + 1)}${escapeText(node.text)}`]
+      ? [`${"  ".repeat(depth + 1)}${raw ? node.text : escapeText(node.text)}`]
       : []),
     ...(node.textFromOption !== undefined
       ? [
-          `${"  ".repeat(depth + 1)}${escapeText(String(ctx.tree.options?.[node.textFromOption] ?? ctx.contract.options[node.textFromOption]?.default ?? ""))}`,
+          (() => {
+            const text = String(
+              ctx.tree.options?.[node.textFromOption] ??
+                ctx.contract.options[node.textFromOption]?.default ??
+                "",
+            );
+            return `${"  ".repeat(depth + 1)}${raw ? text : escapeText(text)}`;
+          })(),
         ]
       : []),
     ...(node.itemSlot

@@ -1,3 +1,4 @@
+import type { ComponentContract } from "./contract.js";
 import { definePreference, oneOf } from "./storage.js";
 
 export type ComponentPreviewBinding = "vanilla" | "react";
@@ -122,3 +123,69 @@ export const componentPreviewScreenPreference = definePreference<ComponentPrevie
   fallback: "free",
   parse: oneOf(["free", "tablet", "mobile"]),
 });
+
+/*
+ * COMPONENT PREVIEW, the contract — but only for what a consumer would actually compose.
+ *
+ * Most of `componentPreviewParts`/`componentPreviewAttrs` above describes THIS SITE's own
+ * apparatus for comparing two bindings of some OTHER component: the Vanilla/React switch, the
+ * screen presets, the resizer, the iframe-vs-portal machinery that keeps a demo isolated in its own
+ * realm. None of that is something a design-system consumer would build into their product — it is
+ * how this catalogue teaches itself, the same category as `wrapper`'s stage or the tree compiler.
+ *
+ * What IS portable: a titled box that shows something, with its source underneath. `header` (title
+ * + note) and `stage` are the part of `component-preview.astro` that has nothing to do with
+ * comparing bindings — any docs surface, anyone's, wants "here's a thing, here's its code". So this
+ * signature is named `.bare` for the same reason `Popover.bare` is: same root, same parts, less
+ * anatomy — no binding tabs, no screen tabs, no resizer, because those belong to the page that reads
+ * this file, not to the shape it publishes.
+ *
+ * The code panel is composed, not reimplemented: `code` accepts `CodePreview` (or its `.density`
+ * signature) by signature, because a code block already has a contract and repeating its anatomy
+ * here would be the same mistake `popup` was before `Popover.bare`.
+ */
+export const componentPreviewContract = {
+  id: "component-preview",
+  css: "@skryensya/core/components/component-preview.css",
+  parts: componentPreviewParts,
+
+  options: {},
+
+  signatures: {
+    "ComponentPreview.bare": {
+      intent: ["labelled-demo", "show-something-with-its-source", "example-with-code"],
+      host: { element: "div" },
+      mount: componentPreviewAttrs.root,
+      options: [],
+      slots: {
+        /** What this example is. */
+        title: { accepts: "text", required: true },
+        /** A second line beside the title — a caveat, a variant name. */
+        note: { accepts: "text" },
+        /** Whatever is being demonstrated. */
+        stage: { accepts: "node", required: true },
+        /** The source, already a `CodePreview` — composed, not reimplemented. */
+        code: { accepts: "signature", of: ["CodePreview", "CodePreview.density"], required: true },
+      },
+      template: {
+        element: "div",
+        part: "root",
+        host: true,
+        children: [
+          {
+            element: "header",
+            part: "header",
+            whenGiven: ["title", "note"],
+            children: [
+              { element: "span", part: "title", slot: "title" },
+              { element: "span", part: "note", whenGiven: "note", slot: "note" },
+            ],
+          },
+          { element: "div", part: "stage", slot: "stage" },
+          { slot: "code" },
+        ],
+      },
+      react: { from: "@skryensya/react/component-preview", name: "ComponentPreviewBare" },
+    },
+  },
+} as const satisfies ComponentContract;

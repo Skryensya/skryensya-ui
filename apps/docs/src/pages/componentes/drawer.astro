@@ -2,119 +2,17 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
+import { drawerScript, drawerTree } from "../../demos/drawer";
+import { getLocale, useTranslations } from "../../i18n";
 import StylingHooks from "../../components/StylingHooks.astro";
+
+const t = useTranslations(getLocale(Astro.url));
 
 const import_ = `/* un drawer ES un Vaul */
 @import "@skryensya/core/patterns/vaul.css";
 @import "@skryensya/core/components/drawer.css";
 @import "@skryensya/core/patterns/scroll-lock.css";`;
 
-const html = `<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-sk-vaul-open="demo-drawer"
-  type="button"
->
-  Abrir navegación
-</button>
-
-<dialog
-  class="sk-vaul sk-drawer demo-drawer"
-  id="demo-drawer"
-  data-sk-vaul
-  data-edge="inline-start"
-  aria-label="Navegación"
->
-  <div
-    class="sk-vaul__handle"
-    data-part="handle"
-    aria-hidden="true"
-  ></div>
-
-  <header class="demo-drawer__header">
-    <span class="demo-drawer__brand">Estudio</span>
-    <button
-      class="sk-button sk-interactive"
-      data-sk-button
-      data-variant="ghost"
-      data-icon-only
-      data-sk-vaul-close
-      type="button"
-      aria-label="Cerrar"
-    >
-      <span data-sk-icon="close"></span>
-    </button>
-  </header>
-
-  <nav class="sk-nav-list demo-drawer__nav" aria-label="Principal">
-    <div class="sk-nav-list__group">
-      <div class="sk-nav-list__group-label" id="demo-drawer-trabajo">
-        Trabajo
-      </div>
-      <ul
-        class="sk-nav-list__list"
-        aria-labelledby="demo-drawer-trabajo"
-      >
-        <li class="sk-nav-list__item">
-          <a
-            class="sk-nav-list__link sk-interactive"
-            href="#resumen"
-            aria-current="page"
-          >
-            <span data-sk-icon="info"></span>
-            <span class="sk-nav-list__label">Resumen</span>
-          </a>
-        </li>
-        <li class="sk-nav-list__item">
-          <a class="sk-nav-list__link sk-interactive" href="#agenda">
-            <span data-sk-icon="calendar"></span>
-            <span class="sk-nav-list__label">Agenda</span>
-            <span class="sk-nav-list__trailing">3</span>
-          </a>
-        </li>
-        <li class="sk-nav-list__item">
-          <a class="sk-nav-list__link sk-interactive" href="#archivos">
-            <span data-sk-icon="download"></span>
-            <span class="sk-nav-list__label">Archivos</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <div class="sk-nav-list__group">
-      <div class="sk-nav-list__group-label" id="demo-drawer-cuenta">
-        Cuenta
-      </div>
-      <ul
-        class="sk-nav-list__list"
-        aria-labelledby="demo-drawer-cuenta"
-      >
-        <li class="sk-nav-list__item">
-          <a class="sk-nav-list__link sk-interactive" href="#equipo">
-            <span data-sk-icon="user"></span>
-            <span class="sk-nav-list__label">Equipo</span>
-          </a>
-        </li>
-        <li class="sk-nav-list__item">
-          <a class="sk-nav-list__link sk-interactive" href="#ajustes">
-            <span data-sk-icon="settings"></span>
-            <span class="sk-nav-list__label">Ajustes</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </nav>
-
-  <footer class="demo-drawer__footer">
-    <span class="sk-avatar" data-size="sm" aria-hidden="true">
-      <span class="sk-avatar__fallback">AK</span>
-    </span>
-    <span class="demo-drawer__user">
-      <span class="demo-drawer__user-name">Ada Kovač</span>
-      <span class="demo-drawer__user-meta">ada@estudio.cl</span>
-    </span>
-  </footer>
-</dialog>`;
 
 const composition = `/* El drawer no declara panel, borde, slide ni
    backdrop: los re-declara desde sus hooks. */
@@ -178,7 +76,7 @@ trigger?.addEventListener("click", () => {
     layer son del pattern, y este archivo sólo dice <em>qué Vaul es un drawer</em> y cómo se ve.
   </p>
 
-  <ComponentPreview html={html} label="HTML" viewport="overlay" />
+  <ComponentPreview tree={drawerTree(t)} previewScript={drawerScript} label="HTML" viewport="overlay" />
 
   <h2>Envía hooks y nada de estructura</h2>
   <p>

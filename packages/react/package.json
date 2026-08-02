@@ -323,6 +323,10 @@
     "./details": {
       "types": "./src/components/details.tsx",
       "default": "./src/components/details.tsx"
+    },
+    "./vaul": {
+      "types": "./src/components/vaul.tsx",
+      "default": "./src/components/vaul.tsx"
     }
   },
   "scripts": {

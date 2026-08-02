@@ -2668,6 +2668,118 @@
         }
       }
     },
+    "component-preview": {
+      "css": "@skryensya/core/components/component-preview.css",
+      "id": "component-preview",
+      "options": {},
+      "parts": {
+        "actions": "sk-component-preview__actions",
+        "binding": "sk-component-preview__binding",
+        "bindingTabs": "sk-component-preview__binding-tabs",
+        "code": "sk-component-preview__code",
+        "frameBody": "sk-component-preview__frame-body",
+        "header": "sk-component-preview__header",
+        "loading": "sk-component-preview__loading",
+        "note": "sk-component-preview__note",
+        "reload": "sk-component-preview__reload",
+        "resizer": "sk-component-preview__resizer",
+        "root": "sk-component-preview",
+        "screenTabs": "sk-component-preview__screen-tabs",
+        "sourceTabs": "sk-component-preview__source-tabs",
+        "stage": "sk-component-preview__stage",
+        "title": "sk-component-preview__title"
+      },
+      "semantics": {
+        "ComponentPreview.bare": {
+          "alternatives": [
+            "CodePreview"
+          ],
+          "avoidWhen": [
+            "hace falta comparar Vanilla y React del MISMO componente — eso es la maquinaria de este sitio, no un contrato publicado",
+            "el bloque es sólo código, sin nada que mostrar arriba — eso es CodePreview solo"
+          ],
+          "useWhen": [
+            "hay que mostrar algo junto a su código fuente — un ejemplo, una demo, un caso de uso",
+            "la superficie de docs no necesita comparar dos bindings ni presets de pantalla"
+          ]
+        }
+      },
+      "signatures": {
+        "ComponentPreview.bare": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "labelled-demo",
+            "show-something-with-its-source",
+            "example-with-code"
+          ],
+          "mount": "data-sk-component-preview",
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/component-preview",
+            "name": "ComponentPreviewBare"
+          },
+          "slots": {
+            "code": {
+              "accepts": "signature",
+              "of": [
+                "CodePreview",
+                "CodePreview.density"
+              ],
+              "required": true
+            },
+            "note": {
+              "accepts": "text"
+            },
+            "stage": {
+              "accepts": "node",
+              "required": true
+            },
+            "title": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "element": "span",
+                    "part": "title",
+                    "slot": "title"
+                  },
+                  {
+                    "element": "span",
+                    "part": "note",
+                    "slot": "note",
+                    "whenGiven": "note"
+                  }
+                ],
+                "element": "header",
+                "part": "header",
+                "whenGiven": [
+                  "title",
+                  "note"
+                ]
+              },
+              {
+                "element": "div",
+                "part": "stage",
+                "slot": "stage"
+              },
+              {
+                "slot": "code"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "content": {
       "css": "@skryensya/core/components/toast.css",
       "id": "content",
@@ -12186,5 +12298,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "aad8944aabc46358"
+  "sourceHash": "3e50a2a874f00562"
 }

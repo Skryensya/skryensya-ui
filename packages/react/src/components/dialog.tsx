@@ -41,7 +41,12 @@ export function Dialog({ children, className, closeLabel = "Cerrar", footer, tit
         </form>
       </header>
       <div className={dialogParts.body}>{children}</div>
-      {footer ? <footer className={dialogParts.footer}>{footer}</footer> : null}
+      {/* A form, not a <footer>: `method="dialog"` closes and reports which button did it. */}
+      {footer ? (
+        <form className={dialogParts.footer} method="dialog">
+          {footer}
+        </form>
+      ) : null}
     </dialog>
   );
 }

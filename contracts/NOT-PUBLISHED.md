@@ -11,16 +11,25 @@ vuelva a discutir cada vez que alguien cuenta contratos contra páginas.
 
 ## No son componentes del sistema
 
-**`component-preview`** y **`toc`** son chrome de este sitio de documentación. `component-preview`
-es literalmente el marco que renderiza los previews de las demás páginas; `toc` es el índice lateral.
-Los dos tienen CSS y uno tiene enhancer, y ninguno de los dos es algo que un consumidor del design
-system componga en su producto. Publicarlos pondría infraestructura de docs en el catálogo que un
+**`component-preview`** es chrome de este sitio de documentación: el marco que renderiza los
+previews de las demás páginas. Tiene CSS y enhancer, y no es algo que un consumidor del design
+system componga en su producto. Publicarlo pondría infraestructura de docs en el catálogo que un
 agente lee para elegir qué usar.
 
 Vale nombrar la tensión en vez de taparla: la hoja de `component-preview` vive en `css/components/`,
 que por la regla de abajo diría que lleva contrato. Gana el criterio de para quién es. Si algún día
 se decide que sí es del sistema, lo que corresponde es MOVER la hoja y publicarlo — no publicarlo
 dejándolo donde está y que la ubicación siga diciendo otra cosa.
+
+**`toc` ya no está acá.** Estaba en esta misma sección, con la misma razón que `component-preview`:
+su markup vivía en `apps/docs`, su hoja en `apps/docs/src/styles/site.css`, no había archivo en core.
+Pero esa era una descripción del LUGAR, no del componente — un índice de secciones con scroll-spy es
+algo que un consumidor SÍ compone (cualquier documento largo lo necesita), a diferencia de
+`component-preview`, que de verdad es sólo el marco de este sitio. Tiene contrato ahora:
+`packages/core/src/toc.ts`, con las dos capas y su página armada con árbol
+(`/componentes/toc`). El shell real de este sitio sigue autorando el suyo — no por ser chrome, sino
+porque sus ítems se descubren recorriendo `main` en el navegador, un caso de datos-no-conocidos-en-
+build-time y no de "esto no es un componente", igual que el índice de `command-palette` más abajo.
 
 **`card`** no tiene archivo en core, ni hoja propia, ni binding. Su propia página lo dice: *"Card no
 es un componente, así que los docs lo enseñan con una ESCALERA de composiciones"* — doce ejemplos que
@@ -101,16 +110,16 @@ de mejorarlo. Los dos tienen que describir un componente, no dos parecidos.
 ## Cómo se cuenta
 
 Contra las 66 páginas de `componentes/`, el estado es: **todas las que deben tener contrato lo
-tienen**, publicado, con árbol canónico y con sus dos capas comparadas por G2. De las que no, dos son
-chrome de este sitio (`component-preview`, `toc`), una es una escalera de composiciones decorada con
-clases de la propia página (`card`) y una es un alias (`drawer`). `popup` era la quinta y dejó de
-serlo: se resolvió como `Popover.bare`.
+tienen**, publicado, con árbol canónico y con sus dos capas comparadas por G2. De las que no, una es
+chrome de este sitio (`component-preview`), una es una escalera de composiciones decorada con
+clases de la propia página (`card`) y una es un alias (`drawer`). `popup` y `toc` dejaron de estar en
+esta cuenta: el primero se resolvió como `Popover.bare`, el segundo se publicó como contrato propio.
 
-De las páginas que tienen previews, **53 de 63 están completamente armadas con el árbol**. Las diez
+De las páginas que tienen previews, **55 de 63 están completamente armadas con el árbol**. Las ocho
 que no lo están son, exactamente: `accordion` y `date-picker` (parciales, por su preview nativo),
-`card`, `command-palette`, `component-preview`, `dialog`, `drawer`, `process-list`, `toc` y
-`wrapper` — cada una con su razón en este archivo. Si alguien vuelve a contar y el número no cierra,
-la diferencia debería aparecer acá o es un hueco de verdad.
+`card`, `component-preview`, `dialog`, `drawer`, `process-list` y `wrapper` — cada una con su razón
+en este archivo. Si alguien vuelve a contar y el número no cierra, la diferencia debería aparecer acá
+o es un hueco de verdad.
 
 No queda nada de esta lista esperando un contrato. `vaul` tampoco: es un patrón, y los patrones no
 llevan uno — ver arriba.
@@ -129,12 +138,16 @@ comparado por G2 con su propio árbol canónico.
 
 - **`dialog`** — su demo es un botón que abre el diálogo y un `previewScript` que llama a
   `showModal()`. El contrato expone `open`, que es la parte de "está mostrándose" que el markup
-  autorado SÍ puede decir, pero `showModal()` es una llamada y no markup: emitir el árbol dejaría un
-  diálogo abierto y sin el botón que lo abre, que es justo lo que la página enseña.
-- **`command-palette`** — misma forma que `dialog`, y más marcada. Su demo es un botón que abre la
-  paleta más un `<script type="application/json">` con el índice que el enhancer lee. El contrato
-  emite el diálogo y nada más, así que el árbol dejaría un preview EN BLANCO: un diálogo cerrado, sin
-  el control que lo abre ni los datos que lo llenan.
+  autorado SÍ puede decir, pero `showModal()` es una llamada y no markup: emitir SÓLO el contrato de
+  Dialog dejaría un diálogo abierto y sin el botón que lo abre.
+
+  Vale nombrar la tensión: `command-palette` tenía la misma forma — "el árbol no puede emitir el
+  botón que abre el diálogo" — y dejó de tenerla componiendo un `Button` y el `CommandPalette` como
+  hermanos bajo un `layout/Stack` (el mismo truco que ya usaba `tabsAdvancedTree` para un `Tabs` y su
+  status line), con un `previewScript` que hace la llamada a `showModal()` sobre el nodo compuesto.
+  El motivo real por el que `dialog` sigue autorado no es "el árbol no puede", entonces — es que
+  nadie escribió todavía esa composición para esta página. Queda como una candidata, no como un caso
+  cerrado.
 - **`date-picker`**, el preview nativo — un `<input type="date">` dentro del chrome compartido de
   campo. Es la capa sin JS, no una composición de este componente.
 - **`accordion`**, el preview de `<details>` — otro componente, con su propia anatomía.

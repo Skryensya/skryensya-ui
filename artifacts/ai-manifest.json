@@ -2472,6 +2472,11 @@
           "machineInput": true,
           "type": "string"
         },
+        "entries": {
+          "machineInput": true,
+          "prop": "items",
+          "type": "string"
+        },
         "label": {
           "attr": "aria-label",
           "type": "string"
@@ -2537,7 +2542,8 @@
             "paletteId",
             "placeholder",
             "emptyLabel",
-            "open"
+            "open",
+            "entries"
           ],
           "react": {
             "from": "@skryensya/react/command-palette",
@@ -2547,6 +2553,15 @@
           "template": {
             "also": [
               "sk-dialog"
+            ],
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "data-sk-command-palette-index": "sk-command-palette-index"
+                },
+                "given": true,
+                "option": "entries"
+              }
             ],
             "children": [
               {
@@ -2635,6 +2650,15 @@
                 ],
                 "part": "empty",
                 "textFromOption": "emptyLabel"
+              },
+              {
+                "attrs": {
+                  "id": "sk-command-palette-index",
+                  "type": "application/json"
+                },
+                "element": "script",
+                "textFromOption": "entries",
+                "whenGiven": "entries"
               }
             ],
             "element": "dialog",
@@ -3197,6 +3221,20 @@
             "la fecha es un campo de un formulario, junto a otros campos",
             "conviene poder escribirla y también buscarla en el calendario"
           ]
+        },
+        "DatePicker.native": {
+          "alternatives": [
+            "DatePicker",
+            "Calendar"
+          ],
+          "avoidWhen": [
+            "hace falta un rango, un mínimo o un máximo: eso es DatePicker",
+            "el calendario tiene que verse siempre: eso es Calendar"
+          ],
+          "useWhen": [
+            "una fecha común dentro de un formulario, sin rango ni reglas propias",
+            "el teclado, el formato local y el envío deben pertenecer al navegador"
+          ]
         }
       },
       "signatures": {
@@ -3302,6 +3340,64 @@
                     ],
                     "element": "button",
                     "part": "trigger"
+                  }
+                ],
+                "element": "div",
+                "part": "control"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "DatePicker.native": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "a-standard-date-field",
+            "form-field",
+            "no-javascript"
+          ],
+          "options": [
+            "name",
+            "locale"
+          ],
+          "react": {
+            "from": "@skryensya/react/date-picker",
+            "name": "NativeDatePicker"
+          },
+          "slots": {
+            "label": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "label",
+                "part": "label",
+                "slot": "label"
+              },
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "type": "date"
+                    },
+                    "element": "input",
+                    "labelledBySlot": "label",
+                    "optionAttrs": {
+                      "locale": "lang",
+                      "name": "name"
+                    },
+                    "options": [
+                      "name",
+                      "locale"
+                    ],
+                    "part": "input"
                   }
                 ],
                 "element": "div",
@@ -10721,6 +10817,187 @@
         }
       }
     },
+    "toc": {
+      "css": "@skryensya/core/components/toc.css",
+      "id": "toc",
+      "options": {
+        "title": {
+          "attr": "aria-label",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "chevron": "sk-toc__chevron",
+        "disclosure": "sk-toc__inner",
+        "icon": "sk-toc__icon",
+        "item": "sk-toc__item",
+        "label": "sk-toc__label",
+        "link": "sk-toc__link",
+        "list": "sk-toc__list",
+        "nav": "sk-toc__nav",
+        "root": "sk-toc",
+        "summary": "sk-toc__summary",
+        "title": "sk-toc__title"
+      },
+      "semantics": {
+        "Toc": {
+          "alternatives": [
+            "NavList"
+          ],
+          "avoidWhen": [
+            "los destinos son páginas distintas, no secciones de ESTA página — eso es NavList",
+            "el documento es corto y cabe entero en una pantalla — un índice no ahorra nada ahí"
+          ],
+          "useWhen": [
+            "un documento largo tiene varias secciones (h2/h3) y el lector necesita saltar entre ellas",
+            "hace falta ver, mientras se lee, en qué sección se está — el \"current\" lo mueve el scroll-spy"
+          ]
+        }
+      },
+      "signatures": {
+        "Toc": {
+          "host": {
+            "element": "aside"
+          },
+          "intent": [
+            "table-of-contents",
+            "in-page-navigation",
+            "document-index"
+          ],
+          "mount": "data-sk-toc",
+          "options": [
+            "title"
+          ],
+          "react": {
+            "from": "@skryensya/react/toc",
+            "name": "Toc"
+          },
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "options": {
+                  "current": {
+                    "attr": "aria-current",
+                    "default": false,
+                    "machineInput": true,
+                    "trueValue": "true",
+                    "type": "boolean"
+                  },
+                  "href": {
+                    "attr": "href",
+                    "type": "string"
+                  },
+                  "level": {
+                    "attr": "data-level",
+                    "default": "h2",
+                    "type": "enum",
+                    "values": [
+                      "h2",
+                      "h3"
+                    ]
+                  }
+                },
+                "slots": {
+                  "children": {
+                    "accepts": "text",
+                    "required": true
+                  },
+                  "icon": {
+                    "accepts": "node"
+                  }
+                }
+              },
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "also": [
+                      "sk-interactive"
+                    ],
+                    "children": [
+                      {
+                        "element": "h2",
+                        "part": "title",
+                        "textFromOption": "title"
+                      },
+                      {
+                        "attrs": {
+                          "aria-hidden": "true"
+                        },
+                        "element": "span",
+                        "part": "chevron"
+                      }
+                    ],
+                    "element": "summary",
+                    "part": "summary"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "also": [
+                                  "sk-interactive"
+                                ],
+                                "children": [
+                                  {
+                                    "element": "span",
+                                    "itemSlot": "icon",
+                                    "part": "icon",
+                                    "whenItemSlotGiven": "icon"
+                                  },
+                                  {
+                                    "element": "span",
+                                    "itemSlot": "children",
+                                    "part": "label"
+                                  }
+                                ],
+                                "element": "a",
+                                "itemOptions": [
+                                  "href",
+                                  "current"
+                                ],
+                                "part": "link"
+                              }
+                            ],
+                            "element": "li",
+                            "itemOptions": [
+                              "level"
+                            ],
+                            "part": "item",
+                            "repeat": "items"
+                          }
+                        ],
+                        "element": "ul",
+                        "part": "list"
+                      }
+                    ],
+                    "element": "nav",
+                    "options": [
+                      "title"
+                    ],
+                    "part": "nav"
+                  }
+                ],
+                "element": "details",
+                "mount": "data-sk-toc-disclosure",
+                "part": "disclosure"
+              }
+            ],
+            "element": "aside",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "toolbar": {
       "css": "@skryensya/core/components/toolbar.css",
       "id": "toolbar",
@@ -11629,5 +11906,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "6ca8452ae13e4f38"
+  "sourceHash": "5f25359124c5598a"
 }

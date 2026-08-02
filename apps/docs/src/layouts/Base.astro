@@ -701,7 +701,7 @@ const PALETTE_PRESETS = [
 
     <script is:inline>
       (function () {
-        var toc = document.querySelector("[data-docs-toc]");
+        var toc = document.querySelector("[data-sk-toc]");
         var main = document.querySelector("main");
         var list = toc && toc.querySelector("ul");
         if (!toc || !main || !list) return;
@@ -736,11 +736,11 @@ const PALETTE_PRESETS = [
           }
 
           var item = document.createElement("li");
-          item.className = "docs-toc__item";
+          item.className = "sk-toc__item";
           item.setAttribute("data-level", heading.tagName.toLowerCase());
 
           var link = document.createElement("a");
-          link.className = "docs-toc__link sk-interactive";
+          link.className = "sk-toc__link sk-interactive";
           link.href = "#" + heading.id;
           link.textContent = heading.textContent;
 
@@ -766,13 +766,6 @@ const PALETTE_PRESETS = [
     <script>
       import { initUsedValues } from "../scripts/used-values";
       initUsedValues();
-    </script>
-
-    {/* Shape and spy share the same controller used inside ComponentPreview. */}
-    <script>
-      import { initTocDisclosure, initTocSpy } from "../scripts/toc";
-      initTocDisclosure();
-      initTocSpy();
     </script>
 
     <script>

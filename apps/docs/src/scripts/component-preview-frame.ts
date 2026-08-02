@@ -8,7 +8,6 @@ import { initComponents } from "@skryensya/vanilla/auto";
 import { mountCodePreview } from "@skryensya/vanilla/code-preview";
 import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
 import { mountIcons } from "@skryensya/vanilla/icon";
-import { initTocDisclosure } from "./toc";
 
 /*
  * Root cause (do not regress): `window.frameElement instanceof HTMLIFrameElement` is FALSE inside
@@ -471,8 +470,6 @@ async function boot(): Promise<void> {
   window.addEventListener("pagehide", () => iconObserver.disconnect(), {
     once: true,
   });
-  const disposeToc = initTocDisclosure(document);
-  window.addEventListener("pagehide", disposeToc, { once: true });
   await mountFrameComponents(document);
   /*
    * The documentation surfaces are opt-in, and this realm opts in: a preview of ComponentPreview

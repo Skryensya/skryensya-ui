@@ -124,6 +124,13 @@ export const commandPaletteContract = {
     emptyLabel: { type: "string", default: "Sin resultados.", attr: "data-empty-label", machineInput: true },
     /** Rendered already open, non-modally — the platform's attribute, same as `Dialog.open`. */
     open: { type: "boolean", default: false, attr: "open", trueValue: "" },
+    /**
+     * The index, JSON-encoded — a demo's ONLY way to seed one, since a usage tree names contracts
+     * and signatures and has no channel for a literal `<script>`. No `attr`: it never lands on an
+     * element as a value, only as the JSON script's text (below) or, renamed to `items`, as
+     * React's own prop — machine input on both sides, same as `emptyLabel`.
+     */
+    entries: { type: "string", prop: "items", machineInput: true },
   },
 
   signatures: {
@@ -131,13 +138,20 @@ export const commandPaletteContract = {
       intent: ["command-palette", "search-everything", "keyboard-first-navigation"],
       host: { element: "dialog" },
       mount: commandPaletteAttrs.root,
-      options: ["label", "paletteId", "placeholder", "emptyLabel", "open"],
+      options: ["label", "paletteId", "placeholder", "emptyLabel", "open", "entries"],
       slots: {},
       template: {
         element: "dialog",
         part: "root",
         also: ["sk-dialog"],
         host: true,
+        attrsWhen: [
+          {
+            option: "entries",
+            given: true,
+            attrs: { [commandPaletteAttrs.index]: "sk-command-palette-index" },
+          },
+        ],
         children: [
           {
             element: "div",
@@ -197,6 +211,17 @@ export const commandPaletteContract = {
             options: ["emptyLabel"],
             attrs: { hidden: "" },
             textFromOption: "emptyLabel",
+          },
+          /*
+           * A demo's index, authored the only way a usage tree can: as this signature's own JSON
+           * island. Absent unless `entries` was given — a composition with a real, page-owned index
+           * still authors its own script the way it always has.
+           */
+          {
+            element: "script",
+            whenGiven: "entries",
+            attrs: { type: "application/json", id: "sk-command-palette-index" },
+            textFromOption: "entries",
           },
         ],
       },

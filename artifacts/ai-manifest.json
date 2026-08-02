@@ -3411,6 +3411,137 @@
         }
       }
     },
+    "details": {
+      "css": "@skryensya/core/components/details.css",
+      "id": "details",
+      "options": {
+        "name": {
+          "attr": "name",
+          "type": "string"
+        },
+        "open": {
+          "attr": "open",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        }
+      },
+      "parts": {
+        "content": "sk-details__content",
+        "group": "sk-details-group",
+        "root": "sk-details",
+        "summary": "sk-details__summary"
+      },
+      "semantics": {
+        "Details": {
+          "alternatives": [
+            "Accordion.Item"
+          ],
+          "avoidWhen": [
+            "hay que animar el panel o saber desde afuera si está abierto: eso es Accordion.Item"
+          ],
+          "useWhen": [
+            "una sección que se despliega y no necesita nada de JavaScript",
+            "importa que funcione antes de que cargue cualquier script"
+          ]
+        },
+        "DetailsGroup": {
+          "alternatives": [
+            "Accordion"
+          ],
+          "avoidWhen": [
+            "hay que animar la apertura o controlarla desde afuera: eso pide Accordion"
+          ],
+          "useWhen": [
+            "varias secciones se abren y cierran, y alcanza con que el navegador se encargue",
+            "conviene que sólo una quede abierta: los hermanos con el mismo name ya lo hacen solos"
+          ]
+        }
+      },
+      "signatures": {
+        "Details": {
+          "host": {
+            "element": "details"
+          },
+          "intent": [
+            "one-disclosure",
+            "expandable-section",
+            "no-javascript"
+          ],
+          "options": [
+            "name",
+            "open"
+          ],
+          "parents": [
+            "DetailsGroup"
+          ],
+          "react": {
+            "from": "@skryensya/react/details",
+            "name": "Details"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "summary": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-interactive"
+                ],
+                "element": "summary",
+                "part": "summary",
+                "slot": "summary"
+              },
+              {
+                "element": "div",
+                "part": "content",
+                "slot": "children"
+              }
+            ],
+            "element": "details",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "DetailsGroup": {
+          "host": {
+            "element": "section"
+          },
+          "intent": [
+            "faq-without-javascript",
+            "exclusive-disclosures",
+            "no-runtime-accordion"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/details",
+            "name": "DetailsGroup"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "Details"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "section",
+            "host": true,
+            "part": "group",
+            "slot": "children"
+          }
+        }
+      }
+    },
     "dialog": {
       "css": "@skryensya/core/components/dialog.css",
       "id": "dialog",
@@ -11906,5 +12037,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "5f25359124c5598a"
+  "sourceHash": "9c058edeb6c44b8e"
 }

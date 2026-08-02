@@ -100,3 +100,41 @@ export const accordionMultipleTree = (t: Translate): UsageTree => ({
   options: { type: "multiple" },
   children: deployment.map((value) => item(t, value)),
 });
+
+/*
+ * THE PLATFORM'S OWN VERSION, for the same three sections.
+ *
+ * Siblings sharing a `name` make the BROWSER keep one open, which is what the coordinator above
+ * does with a machine. Putting them side by side is the page's whole argument: the choice is not
+ * about capability, it is about who owns the behaviour — and `<details>` cannot animate its panel
+ * or be driven from outside, which is the entire difference.
+ *
+ * The chevron is not here. `TileChevron` belongs to a tile's trigger, and a `<summary>` is not
+ * one; the marker `<details>` draws itself is the platform's and needs no markup.
+ */
+export const detailsGroupTree = (t: Translate): UsageTree => ({
+  contract: "details",
+  signature: "DetailsGroup",
+  attrs: { "aria-label": t("demo.accordion.detailsLabel") },
+  children: deployment.map((value, i) => ({
+    contract: "details",
+    signature: "Details",
+    options: { name: "deployment", ...(i === 0 ? { open: true } : {}) },
+    slots: {
+      summary: {
+        contract: "tile",
+        signature: "TileContent",
+        slots: {
+          title: t(`demo.accordion.${value}.title` as never),
+          description: t(`demo.accordion.${value}.description` as never),
+        },
+      },
+      children: {
+        contract: "typography",
+        signature: "Text",
+        options: { tone: "secondary" },
+        children: t(`demo.accordion.${value}.p1` as never),
+      },
+    },
+  })),
+});

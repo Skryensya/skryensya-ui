@@ -898,6 +898,30 @@ const signatureTrees: readonly Canonical[] = [
       slots: { label: "Reserva" },
     },
   },
+  /* The browser's own accordion: siblings sharing a name keep one open, with no script. */
+  {
+    name: "details/exclusive-group",
+    enhanced: false,
+    tree: {
+      contract: "details",
+      signature: "DetailsGroup",
+      attrs: { "aria-label": "Configuración de despliegue" },
+      children: [
+        {
+          contract: "details",
+          signature: "Details",
+          options: { name: "deployment" },
+          slots: { summary: "Runtime", children: "Node 22 sobre el pool compartido." },
+        },
+        {
+          contract: "details",
+          signature: "Details",
+          options: { name: "deployment" },
+          slots: { summary: "Rollout", children: "Canary en tres tramos." },
+        },
+      ],
+    },
+  },
   /** A description on one row and not the other, so the conditional second line is compared too. */
   {
     name: "combobox/filterable",

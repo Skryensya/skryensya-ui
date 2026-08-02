@@ -702,6 +702,54 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/details.css",
+      "id": "details",
+      "signatures": [
+        {
+          "alternatives": [
+            "Accordion"
+          ],
+          "avoidWhen": [
+            "hay que animar la apertura o controlarla desde afuera: eso pide Accordion"
+          ],
+          "host": "section",
+          "id": "DetailsGroup",
+          "intent": [
+            "faq-without-javascript",
+            "exclusive-disclosures",
+            "no-runtime-accordion"
+          ],
+          "parents": [],
+          "useWhen": [
+            "varias secciones se abren y cierran, y alcanza con que el navegador se encargue",
+            "conviene que sólo una quede abierta: los hermanos con el mismo name ya lo hacen solos"
+          ]
+        },
+        {
+          "alternatives": [
+            "Accordion.Item"
+          ],
+          "avoidWhen": [
+            "hay que animar el panel o saber desde afuera si está abierto: eso es Accordion.Item"
+          ],
+          "host": "details",
+          "id": "Details",
+          "intent": [
+            "one-disclosure",
+            "expandable-section",
+            "no-javascript"
+          ],
+          "parents": [
+            "DetailsGroup"
+          ],
+          "useWhen": [
+            "una sección que se despliega y no necesita nada de JavaScript",
+            "importa que funcione antes de que cargue cualquier script"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/dialog.css",
       "id": "dialog",
       "signatures": [
@@ -2894,5 +2942,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "5f25359124c5598a"
+  "sourceHash": "9c058edeb6c44b8e"
 }

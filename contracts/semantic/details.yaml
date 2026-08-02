@@ -1,0 +1,19 @@
+# La estructura vive en packages/core/src/details.ts. Acá sólo por qué se elige.
+
+DetailsGroup:
+  useWhen:
+    - "varias secciones se abren y cierran, y alcanza con que el navegador se encargue"
+    - "conviene que sólo una quede abierta: los hermanos con el mismo name ya lo hacen solos"
+  avoidWhen:
+    - "hay que animar la apertura o controlarla desde afuera: eso pide Accordion"
+  alternatives:
+    - Accordion
+
+Details:
+  useWhen:
+    - "una sección que se despliega y no necesita nada de JavaScript"
+    - "importa que funcione antes de que cargue cualquier script"
+  avoidWhen:
+    - "hay que animar el panel o saber desde afuera si está abierto: eso es Accordion.Item"
+  alternatives:
+    - Accordion.Item

@@ -353,6 +353,10 @@
     "./usage-tree": {
       "types": "./src/usage-tree.ts",
       "default": "./src/usage-tree.ts"
+    },
+    "./details": {
+      "types": "./src/details.ts",
+      "default": "./src/details.ts"
     }
   },
   "scripts": {

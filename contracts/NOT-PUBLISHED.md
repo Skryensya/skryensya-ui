@@ -115,11 +115,13 @@ chrome de este sitio (`component-preview`), una es una escalera de composiciones
 clases de la propia página (`card`) y una es un alias (`drawer`). `popup` y `toc` dejaron de estar en
 esta cuenta: el primero se resolvió como `Popover.bare`, el segundo se publicó como contrato propio.
 
-De las páginas que tienen previews, **55 de 63 están completamente armadas con el árbol**. Las ocho
-que no lo están son, exactamente: `accordion` y `date-picker` (parciales, por su preview nativo),
-`card`, `component-preview`, `dialog`, `drawer`, `process-list` y `wrapper` — cada una con su razón
-en este archivo. Si alguien vuelve a contar y el número no cierra, la diferencia debería aparecer acá
-o es un hueco de verdad.
+De las páginas que tienen previews, **58 de 63 están completamente armadas con el árbol**. Las cinco
+que no lo están son, exactamente: `card`, `component-preview`, `dialog`, `drawer` y `wrapper` — cada
+una con su razón en este archivo. `accordion`, `date-picker` y `process-list` estaban acá y salieron:
+los tres eran "parciales" o "autorados" por una capa que faltaba (el contrato de `details`, la
+segunda signature de `DatePicker`, el contrato de `code-preview`), no por lo que la página enseña —
+la nota de `process-list`, más abajo, es la que lo deja escrito. Si alguien vuelve a contar y el
+número no cierra, la diferencia debería aparecer acá o es un hueco de verdad.
 
 No queda nada de esta lista esperando un contrato. `vaul` tampoco: es un patrón, y los patrones no
 llevan uno — ver arriba.
@@ -148,16 +150,22 @@ comparado por G2 con su propio árbol canónico.
   El motivo real por el que `dialog` sigue autorado no es "el árbol no puede", entonces — es que
   nadie escribió todavía esa composición para esta página. Queda como una candidata, no como un caso
   cerrado.
-- **`date-picker`**, el preview nativo — un `<input type="date">` dentro del chrome compartido de
-  campo. Es la capa sin JS, no una composición de este componente.
-- **`accordion`**, el preview de `<details>` — otro componente, con su propia anatomía.
-- **`process-list`** y **`wrapper`** — acá el árbol es válido y aun así degrada la página, por una
-  razón que conviene tener escrita: **el stage no es el componente**. El preview de `wrapper` enseña
-  el diagrama de una columna de página y el de `process-list` una lista dentro de su contexto; el
-  árbol REEMPLAZA ese slot, así que emitirlo cambia el preview por el componente suelto y se pierde
-  justo lo que la página explica. Los árboles llegaron a escribirse para los dos y se borraron.
+- **`wrapper`** — acá el árbol es válido y aun así degrada la página, por una razón que conviene
+  tener escrita: **el stage no es el componente**. Su preview enseña el diagrama de una columna de
+  página; el árbol REEMPLAZA ese slot, así que emitirlo cambia el preview por el componente suelto y
+  se pierde justo lo que la página explica. El árbol llegó a escribirse y se borró.
 
-La regla no es "esta página es difícil". Es que el árbol REEMPLAZA el slot del preview, así que
-cuando la demo necesita más de lo que el contrato emite, convertirla degrada la página. La
-alternativa correcta no es forzar el árbol: es que el contrato crezca hasta cubrir lo que falta, o
-que la demo se quede donde está y lo diga.
+  `process-list` estaba en esta misma entrada, con la misma razón, y salió: la lista SÍ es el
+  componente en su página, lo que faltaba era otra cosa — uno de sus pasos incrusta un bloque de
+  código, y `code-preview` no tenía contrato cuando se escribió la nota. Lo tiene ahora, y el árbol
+  quedó posible. Vale la lección: una razón que lee como un juicio sobre lo que la página ES a veces
+  es sólo una descripción de lo que faltaba existir cuando se escribió. `accordion` y `date-picker`
+  eran el mismo caso — sus previews nativos ("otro componente, con su propia anatomía" y "la capa sin
+  JS") esperaban, respectivamente, un contrato para `<details>` y una segunda signature de
+  `DatePicker`. Los dos existen ahora y las dos páginas quedaron enteras con árbol.
+
+La regla para lo que queda no es "esta página es difícil". Es que el árbol REEMPLAZA el slot del
+preview, así que cuando la demo necesita más de lo que el contrato emite, convertirla degrada la
+página. La alternativa correcta no es forzar el árbol: es que el contrato crezca hasta cubrir lo que
+falta, o que la demo se quede donde está y lo diga — y, antes de aceptar eso, vale preguntar si lo
+que falta es de verdad la lección o sólo una capa que todavía no se escribió.

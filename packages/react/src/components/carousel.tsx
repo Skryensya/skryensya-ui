@@ -23,7 +23,7 @@ export type CarouselProps = HTMLAttributes<HTMLElement> & {
   /** Names the carousel region for assistive tech. */
   "aria-label"?: string;
   /*
-   * The enhancer's knobs, as props. It reads them off the DOM either way — these exist so a React
+   * The enhancer's knobs, as props. It reads them off the DOM either way; these exist so a React
    * caller sets them by name instead of hand-writing the data attributes, and the values are DERIVED
    * so Core stays the only place they are defined.
    */
@@ -42,7 +42,7 @@ export type CarouselProps = HTMLAttributes<HTMLElement> & {
 /*
  * The static structure of a native scroll-snap carousel: a `<section>` region and a `<ul>` track of
  * slides. The controls (prev/next, dots) and the active-index tracking are the vanilla enhancer's job
- * at runtime — this only renders what it enhances, and forwards a `snapTo` handle that speaks to it
+ * at runtime; this only renders what it enhances, and forwards a `snapTo` handle that speaks to it
  * through the same goto event any consumer can dispatch.
  */
 export const Carousel = forwardRef<CarouselHandle, CarouselProps>(function Carousel(
@@ -89,7 +89,7 @@ export type CarouselSlideProps = HTMLAttributes<HTMLDivElement> & {
   children: ReactNode;
 };
 
-/** One slide. Any content: a Card, an image, a stat — the track snaps to its start edge. */
+/** One slide. Any content: a Card, an image, a stat; the track snaps to its start edge. */
 export function CarouselSlide({ children, className, ...props }: CarouselSlideProps) {
   return (
     <div {...props} className={cx(carouselParts.slide, className)}>

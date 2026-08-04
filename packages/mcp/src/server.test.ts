@@ -67,7 +67,7 @@ describe("the surface", () => {
   it("exposes exactly three tools", async () => {
     const { tools } = await client.listTools();
 
-    // Not four. Emitting is the result of validating, not a tool of its own — adding one per
+    // Not four. Emitting is the result of validating, not a tool of its own; adding one per
     // workflow need is how the old surface grew.
     expect(tools.map((tool) => tool.name).sort()).toEqual([
       "get_catalog",
@@ -131,7 +131,9 @@ describe("validate_ui", () => {
     });
 
     expect(payload.valid).toBe(true);
-    expect(payload.emitted.vanilla).toContain('<a class="sk-button sk-interactive"');
+    // Not the exact opening tag: it wraps one attribute per line past the print width, same as
+    // the React snippet beside it, so a long class list has no host to be a substring of.
+    expect(payload.emitted.vanilla).toContain('class="sk-button sk-interactive"');
     expect(payload.emitted.react).toContain('import { Button } from "@skryensya/react/button";');
     expect(payload.css).toEqual(["@skryensya/core/components/button.css"]);
   });
@@ -211,7 +213,7 @@ describe("validate_ui", () => {
     expect(payload.emitted).not.toBeNull();
   });
 
-  it("catches the empty frame — the bug a static check used to bless", async () => {
+  it("catches the empty frame; the bug a static check used to bless", async () => {
     const { payload } = await call("validate_ui", {
       tree: { contract: "image-frame", signature: "ImageFrame" },
     });
@@ -224,7 +226,7 @@ describe("validate_ui", () => {
 describe("the tool schema accepts everything the compiler's model does", () => {
   /*
    * The MCP describes a usage tree in zod; the compiler describes it in TypeScript. Two declarations
-   * of one shape, which is the duplication this whole system exists to argue against — and it drifted
+   * of one shape, which is the duplication this whole system exists to argue against; it drifted
    * the moment collections were added: every Tabs composition was rejected at the door by the one
    * tool meant to validate it, and nothing caught it until the server was driven as a client.
    *
@@ -254,7 +256,7 @@ describe("the tool schema accepts everything the compiler's model does", () => {
    * The SECOND time the same duplication bit, and it bit the same way: the schema at the door said an
    * option is a string or a boolean, while the type it mirrors has said `string | boolean | number`
    * for as long as there have been numeric options. So the server rejected every Pagination, every
-   * Progress, every Slider, every NumberField — the whole numeric half of the catalogue — and none of
+   * Progress, every Slider, every NumberField; the whole numeric half of the catalogue; and none of
    * the fourteen tests above noticed, because not one of them passed a number.
    *
    * A guard in `index.ts` now fails to COMPILE when the type widens. This is the runtime half: the
@@ -263,7 +265,7 @@ describe("the tool schema accepts everything the compiler's model does", () => {
   /*
    * Every recipe, through the real door.
    *
-   * The two bugs this file exists because of — collections, then numbers — were both found by driving
+   * The two bugs this file exists because of: collections, then numbers; were both found by driving
    * the server as a CLIENT after everything else was green, and both were shapes the catalogue
    * publishes and no test happened to send. So rather than add a case per shape and hope the next gap
    * is one somebody predicted, this sends the richest compositions there are: nine screens, thirty-six

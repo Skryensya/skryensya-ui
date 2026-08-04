@@ -107,17 +107,16 @@
 
   /*
    * THE ICON. A larger, unadorned glyph beside the title. No background circle, just the icon
-   * itself at a larger size. Vertically centered with the first line of the content using
-   * align-self: center so it doesn't push the entire content block down.
+   * itself at a larger size. Aligned to the start of the first line, whether that's a title
+   * or the description when no title is present.
    */
   .sk-callout__icon {
-    display: inline-flex;
+    display: flex;
     flex: none;
     align-items: center;
     justify-content: center;
-    align-self: center;
     inline-size: 2.25rem;
-    block-size: 1.5rem;
+    block-size: 2.25rem;
   }
   /* CONTENT sits beside the icon (or alone, with none): an optional title stacked over the
    * description. `min-inline-size: 0` is the load-bearing bit, a grid item defaults to its

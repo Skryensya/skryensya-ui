@@ -1,0 +1,160 @@
+/*
+ * TIER 3, CALLOUT
+ *
+ * A persistent, purely informational message in the document flow: it shows something, it does not
+ * run anything. No dismiss lives here on purpose (see callout.ts): the styles below never draw a
+ * close control, only the panel, the tone recipe, and an optional recovery action. Tone selects
+ * color (or none): `neutral` is a plain panel; info/success/warning/danger paint status. One visual
+ * weight for every case (a bordered, padded panel) so a brief status and a recovery message read
+ * as the same kind of thing instead of several components wearing one name.
+ *
+ * Toast (toast.css) reuses everything here but the dismiss it draws for itself: same panel, same
+ * tone recipe, same `--sk-callout-*` hooks, because Toast really is this anatomy, just transient and
+ * floating. `--sk-callout-padding` stays a hook for exactly that reuse even though nothing in THIS
+ * file reads it back for a dismiss inset any more.
+ *
+ * Formerly Alert (see callout.ts). The icon got a tinted chip in this pass: a bare glyph read as an
+ * afterthought next to a title the same weight as the body text around it, and a soft circle in the
+ * tone's own accent gives every tone a mark that is legible at a glance, the pattern Notion/GitHub/MDX
+ * admonitions all converged on independently. An earlier version of this file also carried `accent`
+ * (a rail instead of a full border) and `inline` (no panel at all); both were cut, not hidden, so
+ * there is exactly one Callout to reach for instead of three that happen to share a name.
+ */
+@layer components {
+  .sk-callout {
+    /* THREE HOOKS drive the whole color story, background, foreground (text + icon via currentColor)
+     * and accent (the border, and — mixed with the background below — the icon chip). A tone
+     * re-declares just these three; nothing below the hooks knows which tone it is. Neutral is
+     * the default recipe: a plain panel with no semantic color until a status tone opts in. */
+    --sk-callout-bg: var(--color-bg-surface);
+    --sk-callout-fg: var(--color-text-primary);
+    --sk-callout-accent: var(--color-border-subtle);
+    /* A FOURTH hook: the panel's own inset, and (in toast.css, not here) how far Toast's own dismiss
+     * is pulled back into it. A consumer that tightens the panel — Toast does, floating chrome wants
+     * less air than a page banner — moves both by declaring one value. */
+    --sk-callout-padding: var(--space-inset-md);
+    /* And the title↔description rhythm, for the same reason: a tighter panel needs a tighter stack
+     * inside it, or the gap between the two lines ends up wider than the inset around them. */
+    --sk-callout-content-gap: 0.25rem;
+
+    /* LAYOUT: a grid of ONE column, [icon | content] on the first row, actions on its own row below —
+     * never beside the text, where a lone action reads as a second, unrelated thing happening rather
+     * than what to do about the first. `minmax(0, 1fr)` lets the content column shrink below its
+     * intrinsic width, so long words wrap instead of pushing the panel wider than its container.
+     * `column-gap` is the icon↔content spacing; `row-gap` is the bigger, stack-level rhythm between
+     * the message and the actions under it. `align-items: start` tops-aligns icon and content on the
+     * FIRST row, which is what the icon rule below leans on to sit level with the title.
+     * `inline-size: 100%` makes the panel take the full width its container offers rather than
+     * hugging its content, the normal case for a message sitting in the flow of a column. */
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: var(--space-inline-sm);
+    row-gap: var(--space-stack-sm);
+    align-items: start;
+    inline-size: 100%;
+    /* The panel itself: inset padding, a hairline in the accent color, the surface radius, and the two
+     * color hooks painting fill and text. */
+    padding: var(--sk-callout-padding);
+    border: 1px solid var(--sk-callout-accent);
+    border-radius: var(--radius-surface);
+    background: var(--sk-callout-bg);
+    color: var(--sk-callout-fg);
+  }
+
+  /* With a leading icon present, a SECOND column opens at the start for it: [icon | content] on the
+   * first row. `:has()` means the markup declares the icon and the grid reshapes itself, no variant
+   * class. Actions moves into that SAME second column on the row below (see `.sk-callout__actions`),
+   * not under the icon: title, description and actions all start at one shared edge, and the icon
+   * reads as a mark beside that column rather than a fourth thing competing to line up with it. */
+  .sk-callout:has(.sk-callout__icon) {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .sk-callout:has(.sk-callout__icon) .sk-callout__actions {
+    grid-column: 2 / -1;
+  }
+
+  /* THE TONES, each swaps the three hooks to its own subtle recipe: a low-chroma fill, matching text,
+   * and a matching border. Everything else (layout, parts) is tone-agnostic and inherits from the base. */
+  .sk-callout[data-tone="neutral"] {
+    --sk-callout-bg: var(--color-bg-surface);
+    --sk-callout-fg: var(--color-text-primary);
+    --sk-callout-accent: var(--color-border-subtle);
+  }
+  /* info reads the INFO role, not accent. It borrowed accent while no info ramp existed, which made
+   * the meaning "here is something you should know" ride on the brand: a magenta brand turned every
+   * informational notice magenta, and an accent tuned for a button fill had no say in how a note
+   * should read. Feedback roles are fixed by meaning; accent is the tenant's to swap. */
+  .sk-callout[data-tone="info"] {
+    --sk-callout-bg: var(--color-bg-info-subtle);
+    --sk-callout-fg: var(--color-text-info);
+    --sk-callout-accent: var(--color-border-info);
+  }
+  .sk-callout[data-tone="success"] {
+    --sk-callout-bg: var(--color-bg-success-subtle);
+    --sk-callout-fg: var(--color-text-success);
+    --sk-callout-accent: var(--color-border-success);
+  }
+  .sk-callout[data-tone="warning"] {
+    --sk-callout-bg: var(--color-bg-warning-subtle);
+    --sk-callout-fg: var(--color-text-warning);
+    --sk-callout-accent: var(--color-border-warning);
+  }
+  .sk-callout[data-tone="danger"] {
+    --sk-callout-bg: var(--color-bg-danger-subtle);
+    --sk-callout-fg: var(--color-text-danger);
+    --sk-callout-accent: var(--color-border-danger);
+  }
+
+  /*
+   * THE ICON. A larger, unadorned glyph beside the title. No background circle, just the icon
+   * itself at a larger size. Vertically aligned with the title only, not spanning the entire
+   * content block. The icon sits beside the title and description, but its height matches the
+   * title's line-height so it aligns with that single line of text.
+   */
+  .sk-callout__icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    inline-size: 2.25rem;
+    block-size: var(--font-line-height-body);
+  }
+  /* CONTENT sits beside the icon (or alone, with none): an optional title stacked over the
+   * description. `min-inline-size: 0` is the load-bearing bit, a grid item defaults to its
+   * min-content width, so without it a long unbroken word would refuse to shrink and blow out the
+   * column instead of wrapping. Its own grid + `stack-xs` gap sets the title↔description rhythm. */
+  .sk-callout__content { min-inline-size: 0; display: grid; gap: var(--sk-callout-content-gap); }
+  /* TITLE, body size at label weight: emphasised without becoming a heading (it is a status line, not a
+   * document landmark). It inherits the tone color from the callout. */
+  .sk-callout__title { margin: 0; font-size: var(--font-size-body); font-weight: var(--font-weight-label); line-height: var(--font-line-height-body); }
+  /* DESCRIPTION, the supporting line: a step smaller and always secondary text, so it stays quiet under
+   * the tone-colored title regardless of tone. */
+  .sk-callout__description { margin: 0; font-size: var(--font-size-body-sm); color: var(--color-text-secondary); line-height: var(--font-line-height-body); }
+  /* ACTIONS is its OWN ROW below the message. `1 / -1` is the base (no-icon) case, the panel's only
+   * column, so actions starts flush with the text above it; the icon-present case narrows that to the
+   * content column alone (see above) so the SAME alignment holds either way — title, description and
+   * actions all start at one shared edge. Whatever recovery control the consumer supplies (a Link or
+   * a `subtle`/`danger` Button — the contract restricts it, see callout.ts) wraps if narrow. No
+   * dismiss ever lands here: Callout has none. */
+  .sk-callout__actions { grid-column: 1 / -1; display: inline-flex; flex-wrap: wrap; gap: var(--space-inline-xs); align-items: center; justify-content: start; }
+
+  @media (forced-colors: active) {
+    .sk-callout {
+      --sk-callout-bg: Canvas;
+      --sk-callout-fg: CanvasText;
+      --sk-callout-accent: CanvasText;
+      background: Canvas;
+      color: CanvasText;
+      border-color: CanvasText;
+    }
+
+    .sk-callout__icon {
+      background: Canvas;
+      outline: 1px solid CanvasText;
+    }
+
+    .sk-callout__description {
+      color: GrayText;
+    }
+  }
+}

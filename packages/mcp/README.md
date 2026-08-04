@@ -33,7 +33,7 @@ pueden separarse.
 }
 ```
 
-Una opción que la firma no declara se **rechaza**, no se ignora — y el mensaje nombra la firma
+Una opción que la firma no declara se **rechaza**, no se ignora; el mensaje nombra la firma
 hermana que sí la toma, porque el error casi siempre es haber elegido la firma equivocada.
 
 ## Por qué no hay búsqueda
@@ -55,7 +55,7 @@ en un archivo. El SDK de MCP queda externo porque es una dependencia npm de verd
 pnpm --filter @skryensya/ai-compiler build   # emite artifacts/ai-{index,manifest}.json
 ```
 
-El servidor lee ese artefacto y **nunca** recorre un directorio de archivos escritos a mano — esa es
+El servidor lee ese artefacto y **nunca** recorre un directorio de archivos escritos a mano; esa es
 la diferencia entera con el servidor v1 (tag `ai-v1`). Toda respuesta lleva `sourceHash`, así que un
 reporte se puede reproducir contra el mismo artefacto.
 

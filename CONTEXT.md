@@ -194,7 +194,7 @@ the entire mechanism that makes a brand a tier-1 swap.
 
 **Feedback role**:
 A ramp whose name is a *state the system reports*: `danger`, `success`, `warning`, `info`. Fixed by
-meaning, so a component that means one of them reads that role and never `accent` — accent is the
+meaning, so a component that means one of them reads that role and never `accent`; accent is the
 tenant's identity and moves when the brand does, which is the whole difference (ADR-26). A feedback
 role remains independently swappable through its complete ramp; it never moves merely because the brand did.
 _Avoid_: status color, state color, semantic color (that is tier 2), intent
@@ -364,7 +364,7 @@ _Avoid_: side, position, direction, align
 The optional notch poking out of an anchored box toward its anchor. Authored or absent, never
 inferred: it belongs to floating chrome that must say *which* control it describes (a tooltip, a
 popover), not to a box whose shared edge already says it (a menu, a select). Always decorative, so
-always `aria-hidden` — it repeats what the placement already shows.
+always `aria-hidden`; it repeats what the placement already shows.
 _Avoid_: caret, tail, pointer, beak, nub
 
 ## Consumer setup
@@ -375,7 +375,7 @@ color-mode script that runs before first paint, and the override mechanism for a
 but does not supply, a type-face included. The system never ships a font, the same way it never
 ships a brand ramp (ADR-23): it exposes the tier-1 hook (`--scale-font-family-sans`, unlayered,
 already overridable) and stops there. Analogous to a Markup contract but at the scope of the whole
-app rather than one component — documented, never shipped, and never implied by an individual
+app rather than one component; documented, never shipped, and never implied by an individual
 component's own guide.
 _Avoid_: bootstrap, setup, boilerplate, starter, font provisioning
 

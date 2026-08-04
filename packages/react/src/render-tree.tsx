@@ -7,7 +7,7 @@ import * as layoutModule from "./components/layout.js";
 import * as breadcrumbModule from "./components/breadcrumb.js";
 import * as emptyStateModule from "./components/empty-state.js";
 import * as statModule from "./components/stat.js";
-import * as alertModule from "./components/alert.js";
+import * as calloutModule from "./components/callout.js";
 import * as processListModule from "./components/process-list.js";
 import * as stepsModule from "./components/steps.js";
 import * as listModule from "./components/list.js";
@@ -70,7 +70,7 @@ import {
 } from "@skryensya/ai-compiler/usage-tree";
 
 /*
- * A usage tree, rendered by the React binding. THE renderer — the gates measure what it produces and
+ * A usage tree, rendered by the React binding. THE renderer: the gates measure what it produces and
  * the docs site shows it, so a demo and its evidence are the same call.
  *
  * It lives here, in the binding, because this package already owns every component: a renderer in
@@ -78,7 +78,7 @@ import {
  * system argues against.
  *
  * The modules are imported statically because a bundler cannot follow a specifier assembled at
- * runtime — and because a renderer that could load anything would be proving less, not more. A
+ * runtime, and because a renderer that could load anything would be proving less, not more. A
  * contract joins the map when it joins the catalogue.
  */
 const modules: Record<string, Record<string, unknown>> = {
@@ -104,7 +104,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/breadcrumb": breadcrumbModule,
   "@skryensya/react/empty-state": emptyStateModule,
   "@skryensya/react/stat": statModule,
-  "@skryensya/react/alert": alertModule,
+  "@skryensya/react/callout": calloutModule,
   "@skryensya/react/process-list": processListModule,
   "@skryensya/react/steps": stepsModule,
   "@skryensya/react/list": listModule,
@@ -161,7 +161,7 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
   const signature = getSignature(contract, tree.signature);
   if (!signature) throw new Error(`No signature "${tree.signature}".`);
 
-  // A forwardRef export is an object, not a function — NavListLink is one, so `typeof` is not the
+  // A forwardRef export is an object, not a function; NavListLink is one, so `typeof` is not the
   // question. What matters is that the module exports the name the contract points at.
   // A dotted name walks a compound binding's namespace: `Accordion.Item` is a property of the
   // exported root, which is how React spells "this piece only makes sense inside that one".
@@ -174,7 +174,7 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
 
   /*
    * Options under the names the BINDING uses. A contract key is unique across its family, but two
-   * signatures can each have a `size` over different values — so the contract keys one `headingSize`
+   * signatures can each have a `size` over different values; the contract keys one `headingSize`
    * and says the binding still calls it `size`.
    */
   // `attrs` are written in HTML spelling; React wants its own for a handful of them, and it has to
@@ -224,14 +224,14 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
 }
 
 /**
- * One entry as the flat object a React binding takes — and a slot holding MORE ENTRIES flattened
+ * One entry as the flat object a React binding takes; a slot holding MORE ENTRIES flattened
  * the same way, one level down, because a folder's children are folders.
  */
 function flattenEntry(entry: ItemInput, shape?: ContractSlot["item"]): Record<string, unknown> {
   const flat: Record<string, unknown> = { ...entry.options };
 
   for (const [field, value] of Object.entries(entry.slots)) {
-    // The binding's own name for this field, when the contract keyed it differently — a tile
+    // The binding's own name for this field, when the contract keyed it differently; a tile
     // option's content is `label` in the contract and `children` in React.
     const name = shape?.slots[field]?.prop ?? field;
 

@@ -38,7 +38,7 @@ export type TypographyPartClass = (typeof typographyParts)[TypographyPart];
 
 /*
  * Text, headings and links: three signatures, one family, because they are the same decision made
- * three ways — what this piece of writing IS.
+ * three ways: what this piece of writing IS.
  *
  * A heading's `as` and its `size` are deliberately separate: the level is document structure and the
  * size is appearance, and tying them would force an h3 to look like an h3 on a page where it should
@@ -71,7 +71,7 @@ export const typographyContract = {
     href: { type: "string", attr: "href" },
     /**
      * Link's accent. Spelled `linkTone` here because Text already owns `tone` over a wider enum;
-     * the binding still calls it `tone` / `data-tone`. Only `primary` — a link is either the
+     * the binding still calls it `tone` / `data-tone`. Only `primary`; a link is either the
      * surrounding text colour or the action colour, never a status colour.
      */
     linkTone: {
@@ -111,12 +111,12 @@ export const typographyContract = {
     },
 
     /*
-     * INLINE CODE — a literal in the middle of a sentence: a path, a flag, a property name.
+     * INLINE CODE: a literal in the middle of a sentence; a path, a flag, a property name.
      *
      * It did not exist until now, and the absence was only visible from a tree: the accordion demo's
      * prose wraps `/status` in a `<code>` that no signature could emit, so converting that page
      * had to drop the monospace. `Strong` was the nearest thing available and it is the wrong
-     * claim — a path is not emphasis.
+     * claim; a path is not emphasis.
      *
      * A BLOCK of code is a different component (`code-preview`), with its own scrolling, copy
      * control and language label. This is the one that lives inside a paragraph.

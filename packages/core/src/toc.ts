@@ -1,17 +1,17 @@
 import type { ComponentContract } from "./contract.js";
 
 /*
- * TOC, "En esta página" — the index of the document.
+ * TOC, "En esta página": the index of the document.
  *
  * Chrome of nothing but itself: a disclosure shell around a nested list of links to the headings
  * of whatever it sits beside. What made this NOT a component for a long time was that its markup
- * lived in the docs site and its behaviour lived beside it — one binding, no contract, exactly the
+ * lived in the docs site and its behaviour lived beside it; one binding, no contract, exactly the
  * shape `contracts/NOT-PUBLISHED.md` names for `copy-button`/`dialog`/`command-palette` before they
  * got their missing half.
  *
  * `NavList` was the other candidate shape and does not fit: its `current` is written once, statically,
  * by whoever composes the tree (the page you are ON). Here `current` moves on its own while the reader
- * scrolls — a scroll-spy the composition cannot state up front, because it is not know at
+ * scrolls; a scroll-spy the composition cannot state up front, because it is not know at
  * compose time which heading is "current" once a human starts reading. That is machine behaviour, not
  * a value an author picks, which is exactly the line that already separates every contract that owns a
  * Zag machine from the CSS-only patterns beside it.
@@ -69,7 +69,7 @@ export const tocContract = {
           item: {
             options: {
               href: { type: "string", attr: "href" },
-              /** Heading depth. Styling hook only — the emitter draws no anatomy from it. */
+              /** Heading depth: styling hook only; the emitter draws no anatomy from it. */
               level: {
                 type: "enum",
                 values: ["h2", "h3"],

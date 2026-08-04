@@ -10,7 +10,7 @@ import { catalogueIndex, manifest, provenance } from "./manifest.js";
 /*
  * Three tools over a compiled manifest.
  *
- * The shape of the old server was: search by keyword, read a schema, check some props — and then the
+ * The shape of the old server was: search by keyword, read a schema, check some props; then the
  * agent typed the markup itself, which is where correctness leaked out. This one closes that: the
  * agent proposes a composition as DATA, and gets the code back. It never types kit markup.
  *
@@ -50,7 +50,7 @@ server.registerTool(
       "Returns every published family and signature with what it is for (useWhen), what it is NOT " +
       "for (avoidWhen), its HTML host, valid parents, alternatives and deprecations. Takes no " +
       "query: the catalogue is meant to be read whole, and choosing from it is your job, not a " +
-      "ranker's. Start here — a family absent from this list is not published, whatever the kit may " +
+      "ranker's. Start here; a family absent from this list is not published, whatever the kit may " +
       "contain.",
     inputSchema: {},
   },
@@ -65,7 +65,7 @@ server.registerTool(
       "The full contract for one family: every signature, the options it takes and the attribute " +
       "each maps to, its part template, slots, constraints (requires / forbids / exactlyOneOf), the " +
       "accessibility it owes, and the CSS a consumer must import. This is the authority for how a " +
-      "component is configured and composed — do not infer an option, a class or an import path " +
+      "component is configured and composed; do not infer an option, a class or an import path " +
       "beyond what it returns.",
     inputSchema: {
       id: z.string().min(1).describe("A family id from get_catalog, e.g. 'button', 'nav-list'."),
@@ -108,7 +108,7 @@ server.registerTool(
  * What an option may hold, and the second time this exact duplication bit.
  *
  * `OptionInput` in Core is `string | boolean | number`. This said `string | boolean`, so the server
- * rejected EVERY numeric option — an agent could not compose a Pagination, a Progress, a Slider, a
+ * rejected EVERY numeric option; an agent could not compose a Pagination, a Progress, a Slider, a
  * NumberField or a TimeField at all, and no test noticed because none of the fourteen used a number.
  *
  * The type below is the authority; the guard under `optionValueSchema` fails to COMPILE if it ever
@@ -119,7 +119,7 @@ const optionValueSchema = z.union([z.string(), z.boolean(), z.number()]);
 
 /*
  * Compile-time proof that the union above covers `OptionInput`. Widen the type in Core and this
- * stops building until the schema follows — which is exactly what nothing did the first two times.
+ * stops building until the schema follows; which is exactly what nothing did the first two times.
  */
 type CoveredOptionInput = z.infer<typeof optionValueSchema>;
 type UncoveredOptionInput = Exclude<OptionInput, CoveredOptionInput>;
@@ -175,8 +175,8 @@ server.registerTool(
   {
     title: "Validate a composition and, if it holds, return its code",
     description:
-      "Checks a usage tree against its contracts — signatures, option values, requires / forbids / " +
-      "exactlyOneOf, valid parents, slots and declared accessibility — and when it is valid, returns " +
+      "Checks a usage tree against its contracts; signatures, option values, requires / forbids / " +
+      "exactlyOneOf, valid parents, slots and declared accessibility; when it is valid, returns " +
       "the emitted markup AND the emitted TSX. Use the returned code; it is the only way what you " +
       "write and what was validated stay the same artifact. Problems come back with a path into the " +
       "tree, a rule and a severity: an `advisory` is something no static check can settle (a page " +

@@ -7,7 +7,7 @@
  * WHY IT IS WORTH A MODULE, given every call site is three lines. Those three lines were wrong in all
  * four copies this replaced, in the same two ways:
  *
- *   - `localStorage` THROWS. Not "returns null" — throws, on property access, in Safari private mode
+ *   - `localStorage` THROWS. Not "returns null"; throws, on property access, in Safari private mode
  *     and wherever site data is blocked. A bare `localStorage.getItem` at module scope takes the page
  *     down for those readers. Every access here is guarded, and a failed store degrades to memory, so
  *     the preference stops persisting and nothing else changes.
@@ -40,7 +40,7 @@ export type Unsubscribe = () => void;
 let memoryStore: StorageStore = {};
 let storageWorks: boolean | null = null;
 
-/** Probe once. Writing is the real test — Safari private mode reads fine and throws on write. */
+/** Probe once. Writing is the real test; Safari private mode reads fine and throws on write. */
 function storage(): Storage | null {
   if (storageWorks === false) return null;
   try {

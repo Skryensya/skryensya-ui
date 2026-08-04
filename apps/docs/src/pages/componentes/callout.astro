@@ -1,0 +1,97 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
+import {
+  calloutInfoTree,
+  calloutNeutralTree,
+  calloutSuccessTree,
+  calloutWarningTree,
+} from "../../demos/callout";
+import { getLocale, useTranslations } from "../../i18n";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
+---
+
+<Base title="Callout" description="Callout: mensaje inline persistente con tono (incluido neutral), anuncio accesible y componente React.">
+  <h1>Callout</h1>
+  <p class="lede">
+    Callout es un mensaje inline que permanece en el layout mientras dure su condición. A diferencia de
+    Toast, transitorio y montado en una región flotante, Callout vive en el flujo del contenido. Un solo
+    peso visual, el panel con borde: el tono es la única variable, así que dos Callouts nunca compiten
+    por cuál se ve más urgente.
+  </p>
+  <p class="lede">
+    Es puramente informativo: muestra algo, no ejecuta nada. No tiene cierre; a diferencia de Toast,
+    Callout no se puede descartar, porque nada en la página depende de que desaparezca. La única pieza
+    interactiva que puede llevar es una acción de recuperación, y el contrato la limita a
+    <code>translucent</code> o <code>danger</code> para que nunca compita con la acción primaria real de la
+    página.
+  </p>
+
+  <h2>Tonos</h2>
+  <p>
+    El tono decide si el panel se pinta con color semántico.
+    <code>info</code>, <code>success</code>, <code>warning</code> y <code>danger</code> colorean el
+    mensaje. Solo <code>danger</code> se anuncia como <code>role="alert"</code> (assertive); el resto
+    usa <code>role="status"</code> (polite); es la minoría de casos que de verdad interrumpe, no el
+    nombre del componente, el que decide eso.
+  </p>
+  <p>
+    Los cuatro leen un <strong>rol de feedback</strong>, nunca el acento: el tono dice qué pasó, así
+    que no puede cambiar cuando cambia la marca. <code>info</code> tuvo su propia rampa recién en la
+    decisión 26 (<code>docs/decisiones/0026-info-es-un-rol-de-feedback-no-el-acento.md</code>); antes
+    leía <code>accent</code>, y una marca magenta pintaba de magenta cada aviso informativo.
+  </p>
+
+  <h3>Neutral</h3>
+  <p>
+    El default: superficie y borde, sin pintura semántica. Existe para cuando el color no debería ser
+    la señal prominente, el texto ya carga el mensaje. Úsalo en avisos ordinarios, confirmaciones
+    breves o cualquier caso donde pintar el panel de “éxito” o “info” añadiría urgencia que el
+    contenido no tiene.
+  </p>
+  <ComponentPreview tree={calloutNeutralTree(t)} label="Callout neutral" />
+
+  <h3>Info, con título</h3>
+  <p>Un título junto al icono nombra la condición en vez de solo describirla en la primera línea.</p>
+  <ComponentPreview tree={calloutInfoTree(t)} label="Callout info" />
+
+  <h3>Warning, con un Link de recuperación</h3>
+  <p>La acción de recuperación es un <code>Link</code> simple: un destino, no un comando.</p>
+  <ComponentPreview tree={calloutWarningTree(t)} label="Callout warning" />
+
+  <h3>Success, con un Button translucent</h3>
+  <p>
+    Cuando la acción es un <a href="/componentes/button">Button</a>, el slot solo acepta
+    <code>variant="translucent"</code> o <code>variant="danger"</code>; nunca <code>primary</code> ni el
+    default <code>neutral</code>: un Callout no es el lugar de la llamada a la acción principal de la
+    página. Usa <code>translucent</code> para botones que se mezclan con el fondo coloreado del callout,
+    y <code>danger</code> cuando necesites una acción destructiva que destaque visualmente.
+  </p>
+  <ComponentPreview tree={calloutSuccessTree(t)} label="Callout success" />
+
+  <h2>Anatomía</h2>
+  <ul>
+    <li><code>sk-callout__icon</code> es decorativo y solo aparece cuando aporta una señal visual.</li>
+    <li><code>sk-callout__content</code> agrupa título opcional y descripción.</li>
+    <li>
+      <code>sk-callout__actions</code> aloja la acción de recuperación opcional que pertenece al
+      consumidor; nunca un cierre: Callout no tiene ninguno.
+    </li>
+    <li><code>data-tone</code> acepta <code>neutral</code> (default), <code>info</code>, <code>success</code>, <code>warning</code> o <code>danger</code>.</li>
+  </ul>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+
+  <h2>React</h2>
+  <p>
+    El código está en la pestaña <strong>React</strong> de cada ejemplo. <code>actions</code> es el
+    único punto de interactividad: un <code>ReactNode</code> que el consumidor arma con el
+    <code>Link</code> o el <code>Button</code> (<code>translucent</code>/<code>danger</code>) que necesite.
+    No hay <code>dismissible</code> ni <code>onDismiss</code>; si necesitas que el mensaje se pueda
+    cerrar, es un <a href="/componentes/toast">Toast</a>, no un Callout.
+  </p>
+</Base>

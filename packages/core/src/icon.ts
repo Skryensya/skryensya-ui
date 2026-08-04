@@ -230,12 +230,12 @@ export function renderIconBox({ icon, dataIcon, size, label, className }: Render
 
 /*
  * The contract. An icon is the clearest case of the two bindings meeting at different depths:
- * React renders the `<svg>` itself, while authored markup writes a PLACEHOLDER — `<span
- * data-sk-icon="delete">` — that the enhancer replaces with the real element once a set is bound.
+ * React renders the `<svg>` itself, while authored markup writes a PLACEHOLDER; `<span
+ * data-sk-icon="delete">`; the enhancer replaces with the real element once a set is bound.
  *
  * They converge because both go through `renderIconBox` above: the same box attributes, the same
  * viewBox from the set, the same decorative-by-default accessibility. The placeholder is not a
- * lesser form, it is the only form authored markup can take — the system ships no geometry
+ * lesser form, it is the only form authored markup can take; the system ships no geometry
  * (decision 15), so the drawing cannot exist until a set is chosen.
  *
  * `name` is a stable icon name, a ROLE the system names: `delete`, never `trash`.
@@ -248,7 +248,7 @@ export const iconContract = {
   options: {
     /**
      * The stable name: a ROLE the system names, never the drawing. Constrained to the vocabulary
-     * itself, so a name no set is obliged to draw fails validation instead of crashing at mount —
+     * itself, so a name no set is obliged to draw fails validation instead of crashing at mount;
      * which is what `inbox` did the first time this contract was exercised.
      */
     name: { type: "enum", values: stableIconNames, attr: "data-sk-icon" },

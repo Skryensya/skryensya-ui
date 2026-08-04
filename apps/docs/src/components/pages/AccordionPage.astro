@@ -1,0 +1,162 @@
+---
+/*
+ * THE Accordion page: one component, both locales.
+ *
+ * `pages/componentes/accordion.astro` and `pages/en/components/accordion.astro` used to be two
+ * full copies of this markup, one per language, and they drifted: the English twin missed the
+ * hero, the tabs, the Style hooks and Accesibilidad panels entirely, because nothing forced a
+ * change here to land there too. Every string below goes through `t()`, the exact pattern
+ * `demos/accordion.ts` already used for its trees ("one composition read in two languages"); this
+ * extends it to the page ITSELF. The two route files that remain are shells: they exist because
+ * the site's URLs differ per locale (`/componentes/accordion` vs `/en/components/accordion`,
+ * folder name translated, English prefixed); see `i18n/index.ts`; not because the content does.
+ */
+import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/accordion.css";
+/* The "Details nativo" preview paints `.sk-details*`, and a preview frame only ever copies the
+   styles ITS page loaded; a page that never imports this sheet gets a bare <details> with the
+   browser's own marker on that stage. */
+import "@skryensya/core/components/details.css";
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import StylingHooks from "../StylingHooks.astro";
+import VanillaMount from "../VanillaMount.astro";
+import { vanillaMounts } from "../../lib/vanilla-mounts";
+import {
+  accordionExclusiveTree,
+  accordionMultipleTree,
+  accordionSingleTree,
+  detailsGroupTree,
+} from "../../demos/accordion";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+
+/*
+ * The one thing VanillaMount's generic boilerplate cannot know: an accordion's chevron is a
+ * placeholder (<span data-sk-icon="chevron-*">), and no component mounts an icon set for you;
+ * the set is always a deliberate choice, so this line is not optional setup. Code, not prose:
+ * identical in both locales, so it stays a plain constant rather than an i18n key.
+ */
+const iconsSetup = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+mountIcons(document, lucideIcons);`;
+
+const nativeInstall = `pnpm add @skryensya/core`;
+const nativeStyles = `@import "@skryensya/core/components/details.css";`;
+
+/* The link inside `accordion.intro` and `accordion.a11yP3`; its LABEL is the only part that
+   differs by locale, so it is built here from `accordion.detailsNativoLabel` and spliced into
+   those strings as {detailsLink}, the same `set:html` + var pattern the footer uses for `{core}`. */
+const detailsLink = `<a href="#details-nativo">${t("accordion.detailsNativoLabel")}</a>`;
+---
+
+<Base title="Accordion" description={t("accordion.description")} hideVanillaMount>
+  <header class="docs-component-hero">
+    <p class="docs-component-hero__eyebrow">{t("section.components")}</p>
+    <h1>Accordion</h1>
+  </header>
+
+  <div class="sk-tabs" data-sk-tabs data-value="usage">
+    <div class="sk-tabs__list docs-component-hero-tabs" data-sk-tabs-list aria-label={t("accordion.tabsAriaLabel")}>
+      <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="usage" type="button">{t("accordion.tabUsage")}</button>
+      <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="style" type="button">{t("accordion.tabStyle")}</button>
+      <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="a11y" type="button">{t("accordion.tabA11y")}</button>
+    </div>
+
+    <div class="sk-tabs__content" data-sk-tabs-content data-value="usage">
+      {/*
+        * Visually hidden: the tab strip right above already says "Uso"/"Usage" out loud. This
+        * exists purely so the document OUTLINE has a real h2 to hang the sections below off of;
+        * without it a heading-based reader jumps straight from the tablist to the first h3 with no
+        * indication it belongs to a group. See `apps/docs/src/scripts/hero-tabs-toc.ts` for the
+        * ToC half of this: it skips this heading on purpose and starts the rail one level down.
+        */}
+      <h2 class="sk-visually-hidden">{t("accordion.tabUsage")}</h2>
+      <div class="sk-callout" data-tone="info">
+        <div class="sk-callout__content">
+          <p set:html={t("accordion.intro", { detailsLink })} />
+        </div>
+      </div>
+
+      <VanillaMount {...vanillaMounts["/componentes/accordion"]} headingLevel="h3" />
+      <p set:html={t("accordion.iconsNote")} />
+      <CodeBlock code={iconsSetup} label="JavaScript" />
+
+      <h3>{t("accordion.oneItemTitle")}</h3>
+      <p set:html={t("accordion.oneItemBody")} />
+      <ComponentPreview tree={accordionSingleTree(t)} label={t("accordion.oneItemLabel")} />
+
+      <h3>{t("accordion.exclusiveTitle")}</h3>
+      <p set:html={t("accordion.exclusiveBody")} />
+      <ComponentPreview tree={accordionExclusiveTree(t)} label={t("accordion.exclusiveLabel")} />
+
+      <h3>{t("accordion.multipleTitle")}</h3>
+      <p set:html={t("accordion.multipleBody")} />
+      <ComponentPreview tree={accordionMultipleTree(t)} label={t("accordion.multipleLabel")} />
+
+      <h3>{t("accordion.contractTitle")}</h3>
+      <ul>
+        <li set:html={t("accordion.contractItem1")} />
+        <li set:html={t("accordion.contractItem2")} />
+        <li set:html={t("accordion.contractItem3")} />
+        <li set:html={t("accordion.contractItem4")} />
+        <li set:html={t("accordion.contractItem5")} />
+        <li set:html={t("accordion.contractItem6")} />
+        <li set:html={t("accordion.contractItem7")} />
+      </ul>
+
+      <h3 id="details-nativo">{t("accordion.detailsNativoLabel")}</h3>
+      <p class="lede" set:html={t("accordion.nativeLede")} />
+      <table class="sk-table">
+        <thead>
+          <tr>
+            <th>{t("accordion.decisionHeadNeed")}</th>
+            <th>{t("accordion.decisionHeadUse")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td set:html={t("accordion.decisionRow1Need")} /><td set:html={t("accordion.decisionRow1Use")} /></tr>
+          <tr><td set:html={t("accordion.decisionRow2Need")} /><td set:html={t("accordion.decisionRow2Use")} /></tr>
+          <tr><td set:html={t("accordion.decisionRow3Need")} /><td set:html={t("accordion.decisionRow3Use")} /></tr>
+          <tr><td set:html={t("accordion.decisionRow4Need")} /><td set:html={t("accordion.decisionRow4Use")} /></tr>
+          <tr><td set:html={t("accordion.decisionRow5Need")} /><td set:html={t("accordion.decisionRow5Use")} /></tr>
+          <tr><td set:html={t("accordion.decisionRow6Need")} /><td set:html={t("accordion.decisionRow6Use")} /></tr>
+        </tbody>
+      </table>
+      <p set:html={t("accordion.nativeBody")} />
+      <ComponentPreview tree={detailsGroupTree(t)} label={t("accordion.nativePreviewLabel")} />
+
+      <h4>{t("accordion.nativeInstallTitle")}</h4>
+      <CodeBlock code={nativeInstall} label="terminal" />
+      <CodeBlock code={nativeStyles} label="CSS" lang="css" />
+
+      <h4>{t("accordion.nativeContractTitle")}</h4>
+      <ul>
+        <li set:html={t("accordion.nativeContractItem1")} />
+        <li set:html={t("accordion.nativeContractItem2")} />
+        <li set:html={t("accordion.nativeContractItem3")} />
+        <li set:html={t("accordion.nativeContractItem4")} />
+        <li set:html={t("accordion.nativeContractItem5")} />
+      </ul>
+    </div>
+
+    <div class="sk-tabs__content" data-sk-tabs-content data-value="style">
+      <StylingHooks
+        groups={[
+          { file: "components/accordion.css", probe: "sk-accordion", title: "Accordion" },
+          { file: "components/details.css", probe: "sk-details", title: t("accordion.detailsNativoLabel") },
+        ]}
+      />
+    </div>
+
+    <div class="sk-tabs__content" data-sk-tabs-content data-value="a11y">
+      <h2>{t("accordion.a11yTitle")}</h2>
+      <p set:html={t("accordion.a11yP1")} />
+      <p set:html={t("accordion.a11yP2")} />
+      <p set:html={t("accordion.a11yP3", { detailsLink })} />
+    </div>
+  </div>
+</Base>

@@ -52,7 +52,7 @@ const searchKey = (value: string) =>
  * `textContent` was the fallback here, and on an icon-only control it produces the icon: the
  * chevron's `⌄` and the clear control's `×` became their accessible names, announced verbatim. Both
  * glyphs sit inside `aria-hidden="true"` precisely to say they are decoration, so reading through
- * that attribute contradicts the markup — and the same markup gives React the right name, because
+ * that attribute contradicts the markup; the same markup gives React the right name, because
  * React never derived one from the children at all.
  */
 const nameText = (element: Element): string => {
@@ -241,7 +241,7 @@ function connect(root: HTMLElement): () => void {
     defaultValue: root.dataset.value?.split(" ").filter(Boolean),
     placeholder: input.placeholder,
     // A search that was never resolved into a selection is still the user's work: leaving the field
-    // — blur, click outside, Escape — must not throw it away and leave them retyping. `preserve` is
+    // blur, click outside, Escape; must not throw it away and leave them retyping. `preserve` is
     // the only selectionBehavior that keeps it, because the machine reverts the input on every one
     // of those exits. The cost is that CHOOSING no longer writes the label either, so `onValueChange`
     // below does that write itself: preserve on leave, replace on select.
@@ -251,8 +251,8 @@ function connect(root: HTMLElement): () => void {
       triggerLabel,
     },
     onInputValueChange(details) {
-      // Only what the user TYPED is a filter. The machine writes this input too — the label after a
-      // select, "" after clear — and filtering on that would leave the list showing the single row
+      // Only what the user TYPED is a filter. The machine writes this input too; the label after a
+      // select, "" after clear; filtering on that would leave the list showing the single row
       // you just picked the next time it opens. Any non-typed write resets to the full set.
       filterAuthoredItems(
         details.reason === "input-change" ? details.inputValue : "",
@@ -264,7 +264,7 @@ function connect(root: HTMLElement): () => void {
     onValueChange(details) {
       emit(root, "sk-value-change", { value: details.value });
       // The other half of `selectionBehavior: "preserve"`. Single: the input shows what was chosen.
-      // Multiple: the chip already shows it, so the query is spent — clear it so the next search
+      // Multiple: the chip already shows it, so the query is spent; clear it so the next search
       // starts from the whole list instead of the one match that produced this chip.
       queueMicrotask(() => {
         const next = multiple ? "" : (details.items.at(-1)?.label ?? "");
@@ -278,7 +278,7 @@ function connect(root: HTMLElement): () => void {
    * for exactly one reason worth writing down: the only caller is `filterAuthoredItems`, and the
    * only caller of THAT is `onInputValueChange`, which the machine calls synchronously from
    * `context.set("inputValue", …)`. Zag's store batches its own notification to a microtask, so it
-   * always lands after this mutation — the tracker on `prop("collection")` then sees the new
+   * always lands after this mutation; the tracker on `prop("collection")` then sees the new
    * collection and the subscribers re-render once. Call this from anywhere else and the list would
    * be one event stale.
    */
@@ -288,7 +288,7 @@ function connect(root: HTMLElement): () => void {
   machine.start();
   /*
    * `connect()` is not a getter, it is a rebuild: it re-reads every prop and computed and closes
-   * over ~40 handlers. Rebuilding it per event was the second cost after the props chain — every
+   * over ~40 handlers. Rebuilding it per event was the second cost after the props chain; every
    * `pointermove` over a row paid for one. It only goes stale when the machine notifies, and that
    * is exactly where the cache is dropped, one line below in the subscription.
    */
@@ -333,7 +333,7 @@ function connect(root: HTMLElement): () => void {
    *
    * DOM focus never leaves the input: `aria-activedescendant` points at the highlighted option, so
    * nothing on screen says where the arrow keys have landed unless the option says it. It carries a
-   * real focus ring, and while it does, the control drops its own — one ring at a time, so the ring
+   * real focus ring, and while it does, the control drops its own; one ring at a time, so the ring
    * *moves* into the list and back out instead of stacking a box inside a box.
    *
    * Both attributes are gated on which device moved the highlight last, because the machine also
@@ -355,7 +355,7 @@ function connect(root: HTMLElement): () => void {
    * Which rows this patch has to touch.
    *
    * A row's props are static except for two things: whether it is highlighted and whether it is
-   * selected. Everything else `getItemProps` returns — id, role, tabindex, value, disabled — was
+   * selected. Everything else `getItemProps` returns (id, role, tabindex, value, disabled) was
    * settled at mount. So re-applying all of them on every state change meant building three prop
    * objects per row and diffing their attributes, 194 times, to move ONE highlight by one row.
    * Tracking the two values that can change turns that into two rows: the one that lost the state
@@ -398,8 +398,8 @@ function connect(root: HTMLElement): () => void {
     applyZagProps(trigger, api.getTriggerProps() as DomProps);
     if (clear) {
       applyZagProps(clear, api.getClearTriggerProps() as DomProps);
-      // Show the clear ✕ whenever there is something to clear — a chosen value OR text still in the
-      // input — and hide it when the field is truly empty. `input.value` is the live signal for the
+      // Show the clear ✕ whenever there is something to clear; a chosen value OR text still in the
+      // input; hide it when the field is truly empty. `input.value` is the live signal for the
       // typed filter (sync() runs after each input event), so a filter with no selection yet still
       // gets an affordance to wipe it.
       clear.hidden = !(api.hasSelectedItems || input.value.length > 0);
@@ -497,7 +497,7 @@ function connect(root: HTMLElement): () => void {
     cleanups.push(() => selectedItems.removeEventListener("click", onRemove));
   }
   // A notification is the only thing that can make the connected api stale, so it is the only place
-  // that drops it — and the sync that follows rebuilds it once for the whole patch.
+  // that drops it; the sync that follows rebuilds it once for the whole patch.
   const unsubscribe = machine.subscribe(() => {
     connected = null;
     sync();

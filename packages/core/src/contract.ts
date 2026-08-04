@@ -2,8 +2,8 @@
  * The shape of a Contract: everything Core declares about one component, and the single upstream
  * both bindings realize (decision 28).
  *
- * A contract is a VALUE, not a type. The markup half — which parts nest inside which, what an
- * option is written as, what accessibility a signature owes — is data, and a type system that tried
+ * A contract is a VALUE, not a type. The markup half (which parts nest inside which, what an
+ * option is written as, what accessibility a signature owes) is data, and a type system that tried
  * to hold it would need encodings nobody reads. Being a value also means the compiler imports and
  * serializes it deterministically instead of running a TypeScript Program over the catalogue; the
  * Compiler API is left proving the one thing only it can, that a binding's props are assignable to
@@ -29,7 +29,7 @@ export type ContractOption = {
    * The name the React binding uses, when it differs from this option's key.
    *
    * An option key must be unique across the contract, but two signatures can legitimately have a prop
-   * of the same name over different values — a Text is `size: "body"` and a Heading is `size: "h3"`.
+   * of the same name over different values: a Text is `size: "body"` and a Heading is `size: "h3"`.
    * So the key becomes `headingSize` and this says the binding still calls it `size`. Exactly what
    * `attr` already does for the DOM, pointed at the other binding.
    */
@@ -40,7 +40,7 @@ export type ContractOption = {
   readonly trueValue?: string;
   /**
    * What the attribute holds when FALSE. Absent means the attribute is not written at all, which is
-   * how a presence-only boolean works (`disabled`, `required`) — saying no is saying nothing.
+   * how a presence-only boolean works (`disabled`, `required`): saying no is saying nothing.
    *
    * Some booleans are not like that: an Inline is `data-wrap="false"` because the stylesheet has a
    * rule for exactly that string, and an attribute that vanished would be a third state nobody meant.
@@ -48,7 +48,7 @@ export type ContractOption = {
   readonly falseValue?: string;
   /**
    * A second attribute carrying the same value, when the CSS and the accessibility tree read
-   * different names for one idea — a radiogroup is styled by `data-orientation` and announced by
+   * different names for one idea: a radiogroup is styled by `data-orientation` and announced by
    * `aria-orientation`, and they can never disagree because there is one option behind both.
    */
   readonly alsoAttr?: string;
@@ -56,7 +56,7 @@ export type ContractOption = {
    * This option configures the MACHINE rather than the appearance, and the two bindings hand it over
    * differently: authored markup has no channel but an attribute, so the enhancer reads it off the
    * DOM, while React passes it as a prop and Zag never writes it back. The attribute therefore exists
-   * on one side by construction — like the mount point — and the symmetry gate normalizes it instead
+   * on one side by construction (like the mount point); the symmetry gate normalizes it instead
    * of reporting a divergence that is really two ways of saying the same thing.
    */
   readonly machineInput?: true;
@@ -65,7 +65,7 @@ export type ContractOption = {
    *
    * Pagination's page, total and siblings decide which page buttons exist; once they have, there is
    * nothing left for them to be an attribute of. Writing them anyway would put three values in the
-   * DOM that nothing reads and that React has no reason to mirror — a divergence at G2 standing in
+   * DOM that nothing reads and that React has no reason to mirror; a divergence at G2 stands in
    * for a fact that is already expressed by the buttons themselves.
    *
    * `attr` stays declared: it names where the value WOULD go, which is what the docs and the
@@ -87,12 +87,22 @@ export type ContractSlot = {
   /** Signature ids allowed here, when `accepts` is `"signature"`. */
   readonly of?: readonly string[];
   /**
+   * Narrows one of the ITEM's OWN options to a subset of its usual values, while it sits in this
+   * slot. The item is still whatever signature `of` allows, just held to a stricter vocabulary here
+   * than it is everywhere else: a Button is a full-strength call to action on its own, but the
+   * recovery link inside a Callout must never outrank the page's real primary action, so this slot
+   * narrows its `variant` rather than inventing a second, weaker Button signature to say the same
+   * thing. Checked against the item's own contract default when the option is omitted, so leaving
+   * `variant` unset does not quietly slip through as the disallowed default.
+   */
+  readonly restrictOptions?: Readonly<Record<string, readonly string[]>>;
+  /**
    * The order in `of` is REQUIRED, not merely a list. A table caption after its rows is markup the
    * parser moves and a screen reader announces out of sequence; nothing else in the model can say so.
    */
   readonly ordered?: true;
   /**
-   * How many of each signature may appear. Absent means any number — the common case. A table has at
+   * How many of each signature may appear. Absent means any number; the common case. A table has at
    * most one caption and needs exactly one body, and neither is expressible as a presence check.
    */
   readonly cardinality?: Readonly<Record<string, "one" | "optional" | "many">>;
@@ -110,7 +120,7 @@ export type ContractSlot = {
    * A collection is not a list of child signatures: its entries are DATA, and one entry's fields can
    * land in places the markup keeps far apart. A tab's label goes in the trigger, its content goes in
    * a panel that is the trigger's uncle, and what pairs them is the entry's key. Composing that as
-   * children would force an author to write the pairing by hand and keep it consistent — which is
+   * children would force an author to write the pairing by hand and keep it consistent: this is
    * exactly the invariant a contract should be holding.
    */
   readonly item?: {
@@ -119,7 +129,7 @@ export type ContractSlot = {
     /** Item content: the label, the panel body. */
     readonly slots: Readonly<Record<string, ContractSlot>>;
     /**
-     * Which OPTION identifies an entry, so the emitter can pair the parts that repeat over it — a
+     * Which OPTION identifies an entry, so the emitter can pair the parts that repeat over it: a
      * tab's trigger and its panel are uncles, and this is what keeps them together.
      *
      * Absent when an entry becomes ONE element: a breadcrumb crumb and a step have nothing to pair,
@@ -137,7 +147,7 @@ export type ContractSlot = {
  */
 export type ContractTemplate = {
   /**
-   * Absent means the slot's content is placed directly, with no element of its own — a decorative
+   * Absent means the slot's content is placed directly, with no element of its own; a decorative
    * icon brings its own box and must not be wrapped in one.
    */
   readonly element?: string;
@@ -148,7 +158,7 @@ export type ContractTemplate = {
   /** Static attributes every instance carries. */
   readonly attrs?: Readonly<Record<string, string>>;
   /**
-   * The enhancer's attachment point on THIS node, when it is not the signature root — a segmented
+   * The enhancer's attachment point on THIS node, when it is not the signature root: a segmented
    * control's enhancer scans for each option, a number field's for its own input and triggers.
    * Same rule as `ContractSignature.mount` one level down: present in authored markup by
    * construction and absent from React, so the symmetry gate reads this field to know which
@@ -157,14 +167,14 @@ export type ContractTemplate = {
   readonly mount?: string;
   /**
    * Attributes that appear only when the named option was supplied, or only when it was not. A
-   * loader is `role="status"` when it has a name and `aria-hidden` when it has none — one decides
+   * loader is `role="status"` when it has a name and `aria-hidden` when it has none; one decides
    * the other, and a static attribute cannot say so.
    */
   readonly attrsWhen?: readonly {
     readonly option: string;
     /** Whether the author supplied it at all. */
     readonly given?: boolean;
-    /** Or which value it holds — an alert is assertive only when its tone is danger. */
+    /** Or which value it holds: an alert is assertive only when its tone is danger. */
     readonly equals?: string;
     readonly notEquals?: string;
     /**
@@ -191,7 +201,7 @@ export type ContractTemplate = {
    */
   readonly options?: readonly string[];
   /**
-   * This node exists only when the named option or slot is supplied — an unlabelled group renders no
+   * This node exists only when the named option or slot is supplied; an unlabelled group renders no
    * label, a frame with authored children renders no `<img>`. A list means ANY of them: a toast's
    * action row exists if it has actions, or a dismiss control, or both.
    */
@@ -200,7 +210,7 @@ export type ContractTemplate = {
    * The negative: this node exists only when the author supplied NONE of the named options or slots.
    *
    * It is what lets a slot have a default that is MARKUP rather than a string. A breadcrumb separator
-   * is whatever the author slotted, and `/` when they slotted nothing — two nodes, one condition
+   * is whatever the author slotted, and `/` when they slotted nothing; two nodes, one condition
    * each, the same way a crumb is an `<a>` when it has an href and a `<span>` when it does not
    * (`whenItemGiven` / `whenItemMissing`, one level down). A fallback written INSIDE one node would
    * need the emitter to know that literal text loses to slotted content, which is a precedence rule
@@ -215,19 +225,19 @@ export type ContractTemplate = {
   readonly labelledBySlot?: string;
   /**
    * A name for this node, so a wiring rule can point at it. Only nodes that take part in one need
-   * it — a field's hint and error are pointed at, its root is not.
+   * it; a field's hint and error are pointed at, its root is not.
    */
   readonly name?: string;
   /** The slot whose content lands here. A node has either `slot` or `children`, never both. */
   readonly slot?: string;
   /**
    * This node is emitted once per entry of the named collection slot. Two nodes can repeat over the
-   * same collection from different places in the tree — the triggers inside the list, the panels
-   * beside it — which is how one entry becomes two elements that the key keeps paired.
+   * same collection from different places in the tree: the triggers inside the list, the panels
+   * beside it; this is how one entry becomes two elements that the key keeps paired.
    */
   readonly repeat?: string;
   /**
-   * This node is emitted once per entry of the CURRENT ENTRY's named slot — the nested half of
+   * This node is emitted once per entry of the CURRENT ENTRY's named slot: the nested half of
    * `repeat`. With a `recursive` slot it is what makes a template of fixed depth render a
    * structure of any depth.
    */
@@ -237,7 +247,7 @@ export type ContractTemplate = {
    *
    * The counterpart of a `recursive` slot: the data nests without limit, and a literal cannot
    * contain itself, so the shape is written once, named, and pointed back at from inside. It
-   * terminates because a leaf's children slot is empty — the DATA is what has a bottom, not the
+   * terminates because a leaf's children slot is empty; the DATA is what has a bottom, not the
    * template.
    */
   readonly recurse?: string;
@@ -253,8 +263,8 @@ export type ContractTemplate = {
   /**
    * The same rename, one level UP: which attribute a HOST option maps to, for this node only.
    *
-   * The case that needs it is the native Popover API. One authored id is two things — the content
-   * element's `id` and the trigger's `popovertarget` — and neither spelling is more true than
+   * The case that needs it is the native Popover API. One authored id is two things: the content
+   * element's `id` and the trigger's `popovertarget`; neither spelling is more true than
    * the other. Without this the contract would need two options for one fact, which an author could
    * set to two different values, and the popover would simply not open.
    */
@@ -264,12 +274,12 @@ export type ContractTemplate = {
    * This node repeats over a collection the CONTRACT computes rather than the author supplies.
    *
    * Pagination is the case that needs it: which page numbers are visible follows from the current
-   * page, the total and how many siblings are kept — it is not data anyone should be typing, and an
+   * page, the total and how many siblings are kept; it is not data anyone should be typing, and an
    * author who typed it could type a window that skips a page. So the contract names a computation
    * the compiler knows, exactly as `style.percentOf` names one, and the entries come out of it.
    *
-   * The entries look like any other collection's, so everything downstream — `whenItemGiven`,
-   * `itemSlot`, `selectedBy` — works on them unchanged.
+   * The entries look like any other collection's, so everything downstream (`whenItemGiven`,
+   * `itemSlot`, `selectedBy`) work on them unchanged.
    */
   readonly repeatComputed?: {
     /** The computation. The compiler holds the list; a name it does not know fails the build. */
@@ -280,7 +290,7 @@ export type ContractTemplate = {
     readonly key: string;
   };
   /**
-   * This node exists only when the ENTRY supplied — or omitted — the named item option. A breadcrumb
+   * This node exists only when the ENTRY supplied or omitted the named item option. A breadcrumb
    * crumb is a link when it has an href and plain text when it does not: one entry, two shapes, and
    * `whenGiven` cannot say it because it asks the composition rather than the entry.
    */
@@ -289,7 +299,7 @@ export type ContractTemplate = {
   /**
    * The same question asked of the entry's CONTENT rather than its options: a tree node with
    * children is a branch and gets a control that opens it, one without is a leaf. Whether it has
-   * children is not an option anyone sets — it is whether the slot was filled.
+   * children is not an option anyone sets; it is whether the slot was filled.
    */
   readonly whenItemSlotGiven?: string;
   readonly whenItemSlotMissing?: string;
@@ -301,7 +311,7 @@ export type ContractTemplate = {
   /** Literal content taken from an option's value rather than fixed in the template. */
   readonly textFromOption?: string;
   /**
-   * Attributes whose value is copied from an entry's slot text — a crumb's `title` repeats its label
+   * Attributes whose value is copied from an entry's slot text; a crumb's `title` repeats its label
    * so a truncated one still shows in full. Derived, so the two can never disagree.
    */
   readonly attrsFromItemSlot?: Readonly<Record<string, string>>;
@@ -309,8 +319,8 @@ export type ContractTemplate = {
   readonly itemOptions?: readonly string[];
   /**
    * Writes a boolean attribute on the ONE entry whose key matches the named group option. Which
-   * option is selected belongs to the group, not to any entry — exclusivity is exactly the claim
-   * that only one can be — so the contract asks the group and marks the match.
+   * option is selected belongs to the group, not to any entry; exclusivity is exactly the claim
+   * that only one can be; the contract asks the group and marks the match.
    */
   readonly selectedBy?: {
     readonly option: string;
@@ -321,7 +331,7 @@ export type ContractTemplate = {
   /** The item slot whose content lands here. Inside a repeated node only. */
   readonly itemSlot?: string;
   /**
-   * Literal text this node renders. For a mark the system owns rather than the author — the required
+   * Literal text this node renders. For a mark the system owns rather than the author: the required
    * asterisk, which is  because the  attribute already says it.
    */
   readonly text?: string;
@@ -344,8 +354,8 @@ export type ContractTemplate = {
 /**
  * One id relationship the contract fixes: which node points at which, with what attribute.
  *
- * A field is the reason this exists. Authored markup writes SIX ids by hand — the label's `for`, the
- * control's `id`, an `aria-describedby` naming two targets, and those two targets' own ids — and
+ * A field is the reason this exists. Authored markup writes SIX ids by hand: the label's `for`, the
+ * control's `id`, an `aria-describedby` naming two targets, and those two targets' own ids; and
  * getting `aria-describedby` wrong is invisible on screen while breaking every screen reader. Six
  * chances to be silently wrong, from one name.
  *
@@ -363,7 +373,7 @@ export type ContractWiring = {
   readonly attr: string;
   /** Nodes whose ids this attribute points at, in order. */
   readonly references?: readonly string[];
-  /** A literal value instead of a reference — `aria-invalid="true"`. */
+  /** A literal value instead of a reference: `aria-invalid="true"`. */
   readonly value?: string;
   /** Only when the named option or slot was supplied. An absent error means no `aria-invalid`. */
   readonly whenGiven?: string;
@@ -385,7 +395,7 @@ export type ContractA11yRule = {
   /** Why, for the diagnostic the agent reads when it fails. */
   readonly because: string;
   /**
-   * The signatures this rule is about. Absent means all of them — right for a rule keyed on an
+   * The signatures this rule is about. Absent means all of them; right for a rule keyed on an
    * option every signature shares, wrong for one about a landmark only the root signature is.
    */
   readonly signatures?: readonly string[];
@@ -400,15 +410,15 @@ export type ContractSignature = {
     readonly when?: Readonly<Record<string, "present" | "absent">>;
   };
   /**
-   * Which of the contract's options this signature accepts. Siblings rarely take the same set — a
-   * nav list is oriented and a nav link is not — and without this there is nothing to reject an
+   * Which of the contract's options this signature accepts. Siblings rarely take the same set: a
+   * nav list is oriented and a nav link is not; without this there is nothing to reject an
    * option on the signature that has no business with it.
    */
   readonly options: readonly string[];
   readonly requires?: readonly string[];
   readonly forbids?: readonly string[];
   /**
-   * Exactly one of these must be supplied — options and slots alike, since a frame may take its
+   * Exactly one of these must be supplied: options and slots alike, since a frame may take its
    * content either way and "one source of content" is the rule regardless of which.
    *
    * It exists because presence checks cannot express it: `requires` would demand both, `forbids`
@@ -424,7 +434,7 @@ export type ContractSignature = {
   readonly template: ContractTemplate;
   readonly react: { readonly from: string; readonly name: string };
   /**
-   * The `data-sk-*` attribute the Vanilla enhancer mounts on. Binding-specific by nature — React
+   * The `data-sk-*` attribute the Vanilla enhancer mounts on. Binding-specific by nature; React
    * needs no mount point — so it lives here and not in the template, and the symmetry gate
    * normalizes it away rather than reporting the two bindings as different.
    */
@@ -434,7 +444,7 @@ export type ContractSignature = {
    * authored markup keeps it in place, positioned by CSS anchoring (decision 25).
    *
    * Declared because two different things need to know. The binding takes a `container` so a consumer
-   * can scope the portal — a preview frame, a dialog — and the symmetry gate uses that to measure one
+   * can scope the portal (a preview frame, a dialog); the symmetry gate uses that to measure one
    * subtree instead of two loose regions.
    */
   readonly portals?: true;

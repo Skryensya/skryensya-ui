@@ -16,12 +16,12 @@ export type DialogPart = keyof typeof dialogParts;
 export type DialogPartClass = (typeof dialogParts)[DialogPart];
 
 /*
- * DIALOG, the contract — behaviour that belongs entirely to the browser.
+ * DIALOG: the contract; behaviour that belongs entirely to the browser.
  *
  * No enhancer and no machine, and here that costs nothing: a modal dialog is centred by the platform,
  * so there is no anchor to name and no positioning for the two bindings to disagree about. The
  * consumer calls `showModal()`; the browser owns the top layer, the backdrop, focus trapping and
- * Escape. The system contributes the anatomy, so both bindings are the same markup twice — exactly
+ * Escape. The system contributes the anatomy, so both bindings are the same markup twice; exactly
  * the reason `Select.native` can be a contract with no enhancer behind it.
  */
 export const dialogContract = {
@@ -33,19 +33,27 @@ export const dialogContract = {
     /** What the closing control announces. */
     closeLabel: { type: "string", default: "Cerrar", attr: "data-close-label", machineInput: true },
     /**
-     * Rendered already open, NON-modally — the platform's own attribute.
+     * Rendered already open, NON-modally; the platform's own attribute.
      *
      * `showModal()` is a call, not markup, so a composition could never express it; `open` is the
      * part of "is it showing" that authored markup CAN say, and both bindings spell it the same way.
      */
     open: { type: "boolean", default: false, attr: "open", trueValue: "" },
+    /**
+     * Opts the SAME `<dialog>` into Dialog Vaul: a block-end sheet below the desktop breakpoint,
+     * via `patterns/dialog-vaul.css`. Boolean, not an edge; the pattern only ever slides from
+     * `block-end`, so there is nothing else to choose. The attribute is also the Vanilla enhancer's
+     * own mount point (`mountVaul`'s `rootSelector` already answers to `[data-sk-dialog-vaul]`), so
+     * writing it is what recruits drag-to-dismiss and light-dismiss; a plain Dialog keeps neither.
+     */
+    vaul: { type: "boolean", default: false, attr: "data-sk-dialog-vaul", trueValue: "" },
   },
 
   signatures: {
     Dialog: {
       intent: ["modal-dialog", "blocking-confirmation", "focused-task"],
       host: { element: "dialog" },
-      options: ["closeLabel", "open"],
+      options: ["closeLabel", "open", "vaul"],
       slots: {
         /** Names the dialog. Required: a modal with no title is a box with no reason. */
         title: { accepts: "text", required: true },
@@ -57,7 +65,26 @@ export const dialogContract = {
         element: "dialog",
         part: "root",
         host: true,
+        /*
+         * `data-edge="block-end"` is not a choice here; `dialog-vaul.css` only ever slides from
+         * the bottom, which is why `vaul` carries no `edge` option of its own. But the Vanilla
+         * enhancer's drag axis is generic (`connectVaul` reads `root.dataset.edge` on ANY panel
+         * with a handle, `sk-vaul` or not), and defaults to `inline-start` when it finds nothing.
+         * Leaving the attribute off would silently hand a bottom sheet a horizontal drag.
+         */
+        attrsWhen: [{ option: "vaul", given: true, attrs: { "data-edge": "block-end" } }],
         children: [
+          {
+            /*
+             * Always drawn when `vaul` is on, never otherwise; the affordance for a gesture that
+             * only exists where the enhancer runs. It carries no class of its own: Dialog Vaul is a
+             * composition over `sk-dialog` (`patterns/dialog-vaul.css` selects a bare
+             * `[data-part="handle"]`), not a second skin with its own parts to keep in step.
+             */
+            element: "div",
+            attrs: { "data-part": "handle", "aria-hidden": "true" },
+            whenGiven: "vaul",
+          },
           {
             element: "header",
             part: "header",
@@ -94,7 +121,7 @@ export const dialogContract = {
             /*
              * A FORM, not a <footer>, and `method="dialog"` is the reason. A modal's footer is
              * where the closing actions live, and that method is how the platform closes the dialog
-             * and reports WHICH button did it — `returnValue` — with no script at all. A plain
+             * and reports WHICH button did it (`returnValue`); no script at all. A plain
              * <footer> would need a click handler per button to do the same thing worse.
              */
             element: "form",

@@ -31,12 +31,12 @@ export const datePickerAttrs = {
 export type DatePickerValueChangeDetails = { value: string[] };
 
 /*
- * DATE PICKER, the contract — half authored, half derived, and the split is the whole design.
+ * DATE PICKER: the contract; half authored, half derived, and the split is the whole design.
  *
  * The CONTROL is markup: a label, an input, a clear control and the button that opens the panel. The
  * enhancer finds those by their part classes and patches them, which is why the template has to draw
  * them and why getting one wrong is a runtime throw rather than a quiet miss. The CALENDAR is not
- * markup at all — it is derived from the machine's state, so both bindings generate it and neither
+ * markup at all; it is derived from the machine's state, so both bindings generate it and neither
  * composition nor template says anything about it, exactly as in `calendarContract`.
  *
  * `value`, `min` and `max` are new to the enhancer, which read none of them: an authored date picker
@@ -53,7 +53,7 @@ export const datePickerContract = {
     name: { type: "string", attr: "data-name", machineInput: true },
     /**
      * The starting date, ISO. Space-separated names both ends of a range. React spells it
-     * `defaultValue` — `value` there is the CONTROLLED prop.
+     * `defaultValue`; `value` there is the CONTROLLED prop.
      */
     value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
     min: { type: "string", attr: "data-min", machineInput: true },
@@ -155,7 +155,7 @@ export const datePickerContract = {
     },
 
     /*
-     * THE NATIVE DATE FIELD — the layer that works with no script at all.
+     * THE NATIVE DATE FIELD: the layer that works with no script at all.
      *
      * A real `<input type="date">` inside the same field chrome, so the enhanced control and this
      * one read as the SAME field rather than two designs. The browser owns the picker, the keyboard,
@@ -189,13 +189,13 @@ export const datePickerContract = {
                 attrs: { type: "date" },
                 options: ["name", "locale"],
                 /* The enhanced control reads these off data-attributes because its enhancer has no
-                   other channel. A native input wants the real ones — the browser is the consumer
+                   other channel. A native input wants the real ones; the browser is the consumer
                    here, not a script. */
                 optionAttrs: { name: "name", locale: "lang" },
                 /*
                  * NAMED BY `aria-labelledby`, not by `for`, and the reason is the stage rather
-                 * than the markup. `for`/`id` is the better pair here — it also focuses the input
-                 * when the label is clicked, which on a date field is most of what a label is for —
+                 * than the markup. `for`/`id` is the better pair here; it also focuses the input
+                 * when the label is clicked, which on a date field is most of what a label is for;
                  * but it needs an AUTHORED id, and both bindings render into one document in the
                  * gate, so any literal id collides and each label reaches the other binding's input.
                  * The generated kind is prefixed per case and cannot. Worth revisiting if the stage

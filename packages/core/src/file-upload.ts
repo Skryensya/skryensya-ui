@@ -34,12 +34,12 @@ export const fileUploadAttrs = {
 /**
  * Choosing files: a real `<input type="file">` behind a dropzone you can also click.
  *
- * The input is visually hidden and never replaced — it is what makes the control keyboard-reachable,
+ * The input is visually hidden and never replaced; it is what makes the control keyboard-reachable,
  * form-associated and readable by the platform's own file picker. The dropzone is the affordance;
  * the input is the control.
  *
  * KNOWN GAP, and worth naming rather than hiding: the list of CHOSEN files is not in this contract.
- * It is runtime state, and the two bindings meet it differently — React renders the list itself,
+ * It is runtime state, and the two bindings meet it differently: React renders the list itself,
  * while the vanilla enhancer patches attributes and never renders markup (decision 8), so a vanilla
  * consumer draws that list. What is published here is the shell, which is what both bindings agree
  * on and all an author writes.
@@ -84,7 +84,7 @@ export const fileUploadContract = {
           /*
            * The dropzone holds the instruction and NOTHING interactive. It is `role="button"` with
            * its own tab stop, and a button containing a focusable descendant is a control nobody can
-           * reach past — axe calls it nested-interactive, and it was true of both bindings.
+           * reach past (axe calls it nested-interactive); it was true of both bindings.
            *
            * So the real input and the real trigger are siblings of it. Zag wires them by props, not
            * by nesting, and the input is visually hidden anyway: where it sits in the DOM was never

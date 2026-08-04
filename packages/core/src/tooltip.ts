@@ -125,12 +125,12 @@ export type TooltipAttr = keyof typeof tooltipAttrs;
 export type TooltipAttrName = (typeof tooltipAttrs)[TooltipAttr];
 
 /*
- * A hint that expands a control's own name — never replaces it. Wired as `aria-describedby`, so the
+ * A hint that expands a control's own name; never replaces it. Wired as `aria-describedby`, so the
  * control must already be named: a tooltip that IS the name disappears for anyone who never hovers.
  *
  * `portals` is the honest part. React portals the floating content out of the subtree so an ancestor
  * with `overflow: hidden` cannot clip it; authored markup keeps the positioner in place and lets CSS
- * anchoring position it (decision 25). Two strategies for one job — declared here so a consumer can
+ * anchoring position it (decision 25). Two strategies for one job; declared here so a consumer can
  * scope the portal, and so the symmetry gate knows to look inside one container rather than two.
  */
 export const tooltipContract = {
@@ -143,7 +143,7 @@ export const tooltipContract = {
       type: "enum",
       values: ["block-start", "block-end", "inline-start", "inline-end"],
       /*
-       * `block-start`, matching `tooltipDefaultPlacement` above — the constant this file exports so
+       * `block-start`, matching `tooltipDefaultPlacement` above; the constant this file exports so
        * that the box, the arrow and the machine name one side. It read `block-end` here, which is
        * the PATTERN's default and the one thing a tooltip deliberately does not share: below is what
        * the pointer just touched. So a tree that left placement alone emitted `block-end` into the
@@ -162,7 +162,7 @@ export const tooltipContract = {
      * Draw the small arrow pointing at the trigger. Off unless asked for, in both bindings.
      *
      * It was unreachable from a tree until now: authored markup writes a `sk-anchored-arrow` span
-     * inside the positioner, React takes an `arrow` prop, and the contract declared neither — so
+     * inside the positioner, React takes an `arrow` prop, and the contract declared neither; so
      * every emitted tooltip came out without one while all three documented demos draw one.
      *
      * The attribute is bookkeeping rather than wiring: the enhancer finds the arrow by the pattern's
@@ -182,7 +182,7 @@ export const tooltipContract = {
       slots: {
         /** The control being described. It carries its own accessible name. */
         children: { accepts: "signature", required: true },
-        /** The hint. Short — it is a description, not documentation. */
+        /** The hint: keep it short, as it is a description, not documentation. */
         content: { accepts: "text", required: true },
       },
       /*
@@ -191,7 +191,7 @@ export const tooltipContract = {
        * The enhancer scans for `[data-sk-anchor-trigger]`, `[data-sk-anchor-positioner]` and
        * `[data-sk-anchor-content]` and patches Zag's props onto whatever it finds. Only the
        * positioner was ever written, so an emitted tooltip had no trigger to bind and could never
-       * open in Vanilla — the component was published and unusable from a tree at the same time.
+       * open in Vanilla; the component was published and unusable from a tree at the same time.
        *
        * It has to be an element of our own rather than the consumer's control, because
        * `getTriggerProps` returns BUTTON props: putting them on their control would work only if

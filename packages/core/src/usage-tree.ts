@@ -5,7 +5,7 @@
  * It lives in Core, beside the contract it is written against, for a reason turbo said out loud: the
  * recipes are data the compiler CONSUMES, so having them import the compiler for this type made the
  * two packages depend on each other. Data does not depend on its consumer. The functions that READ
- * a tree stay in the compiler — those are machinery, not vocabulary.
+ * a tree stay in the compiler; those are machinery, not vocabulary.
  */
 
 /*
@@ -21,7 +21,7 @@ export type OptionInput = string | boolean | number;
 
 /**
  * One entry of a collection slot: its own options, and its own content by slot name. Data, not a
- * child node — the fields of one entry are scattered across the markup and joined by the key.
+ * child node; the fields of one entry are scattered across the markup and joined by the key.
  */
 export type ItemInput = {
   readonly options?: Readonly<Record<string, OptionInput>>;
@@ -38,7 +38,7 @@ export type UsageTree = {
   readonly options?: Readonly<Record<string, OptionInput>>;
   /**
    * What the author passes straight to the host: `aria-label`, `id`, `rel`, `target`. Deliberately
-   * separate from options — an option is something the contract maps, and these are not.
+   * separate from options; an option is something the contract maps, and these are not.
    */
   readonly attrs?: Readonly<Record<string, string>>;
   readonly slots?: Readonly<Record<string, SlotContent>>;

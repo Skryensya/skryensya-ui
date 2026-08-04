@@ -5,7 +5,7 @@ import type { ComponentContract } from "./contract.js";
  * independently steppable and typeable segments in one accessible group, the shape a native
  * segmented time control already has. No popover, no wheel: an earlier design put a scroll-wheel
  * picker behind a trigger, and it turned out to be neither simpler nor more accessible than
- * building the segments directly — a screen reader user had to learn a bespoke scroll container
+ * building the segments directly; a screen reader user had to learn a bespoke scroll container
  * instead of the `spinbutton` pattern every platform time input already teaches.
  *
  * There is no Zag machine for time (unlike date-picker/combobox), so this file owns the value
@@ -43,7 +43,7 @@ const TIME_PATTERN = /^([01]?\d|2[0-3]):([0-5]\d)$/;
 
 /**
  * Parses the native `HH:mm` value format (same as `<input type="time">`'s `.value`). Returns
- * `undefined` for empty input or anything malformed — callers treat that as "no value", never throw.
+ * `undefined` for empty input or anything malformed; callers treat that as "no value", never throw.
  */
 export function parseTimeValue(value: string | null | undefined): TimeValue | undefined {
   if (!value) return undefined;
@@ -93,7 +93,7 @@ export function to24Hour(hour12: number, period: Period): number {
 }
 
 /**
- * Locale-correct AM/PM strings, read off `Intl` instead of hardcoded — many locales don't spell
+ * Locale-correct AM/PM strings, read off `Intl` instead of hardcoded; many locales don't spell
  * them "AM"/"PM" (e.g. `es` uses "a. m."/"p. m."). Sampled at 9 and 21 so the same call resolves
  * both, whatever the locale's actual dayPeriod boundaries are.
  */
@@ -101,7 +101,7 @@ export function getPeriodLabels(locale: string): { AM: string; PM: string } {
   const label = (hour: number) => {
     // `timeZone: "UTC"` matters here as much as `Date.UTC` on the input: a value is a wall-clock
     // time with no zone of its own, and formatting it through the system's local offset would
-    // silently reinterpret — and for a sample within a few hours of midnight, potentially shift
+    // silently reinterpret; for a sample within a few hours of midnight, potentially shift
     // into the wrong calendar day and flip which dayPeriod comes back.
     const parts = new Intl.DateTimeFormat(locale, {
       hour: "numeric",
@@ -155,8 +155,8 @@ export function getTimeFieldTokens(locale: string, cycle: HourCycle): readonly T
  * hydration and re-renders the field from scratch (error #418). It is invisible in `outerHTML`, so
  * it only shows up as a console error and a silently remounted component.
  *
- * U+202F is the one kept rather than a plain space: it is what ICU means here — narrow, and
- * non-breaking, so `9:30` never wraps away from `AM` — and picking the typographically correct
+ * U+202F is the one kept rather than a plain space: it is what ICU means here: narrow, and
+ * non-breaking, so `9:30` never wraps away from `AM`; picking the typographically correct
  * character costs nothing once the choice has to be made explicitly anyway.
  */
 const NARROW_NO_BREAK_SPACE = " ";
@@ -174,7 +174,7 @@ export function segmentBounds(type: TimeFieldSegmentType, cycle: HourCycle): { m
 }
 
 /**
- * Hour, minute and — in a 12-hour locale — AM/PM, as one `role="group"` of `role="spinbutton"`
+ * Hour, minute and (in a 12-hour locale) AM/PM, as one `role="group"` of `role="spinbutton"`
  * segments. No popover, no wheel: an earlier design put a scroll picker behind a trigger and it was
  * neither simpler nor more accessible than the segments themselves, which is the primitive every
  * native segmented time control already uses.
@@ -182,8 +182,8 @@ export function segmentBounds(type: TimeFieldSegmentType, cycle: HourCycle): { m
  * The unusual part, and why this contract stops where it does: the segments and the separators are
  * DERIVED FROM THE LOCALE, through `Intl.DateTimeFormat.formatToParts`. Some locales put the day
  * period first and the separator is not always ":", so the order is not knowable when the markup is
- * written. Both bindings therefore RENDER the control — this is the CalendarView case, not the
- * enhancer case — and what an author writes is the shell: a root, a label, and maybe a hint.
+ * written. Both bindings therefore RENDER the control; this is the CalendarView case, not the
+ * enhancer case; what an author writes is the shell: a root, a label, and maybe a hint.
  *
  * The value on the wire is the canonical `HH:mm` on a hidden input, so a form behind this field
  * never parses a locale-formatted string.
@@ -199,7 +199,7 @@ export const timeFieldContract = {
     locale: { type: "string", default: "es", attr: "data-locale", machineInput: true },
     /**
      * Where the segments START. Spelled `data-value` in markup (what Vanilla reads off the root) and
-     * `defaultValue` in React — same rename Slider makes, for the same reason: React's `value` is
+     * `defaultValue` in React; same rename Slider makes, for the same reason: React's `value` is
      * controlled, and a usage tree has no change handler to feed it.
      */
     value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
@@ -210,7 +210,7 @@ export const timeFieldContract = {
     required: { type: "boolean", default: false, attr: "data-required", trueValue: "", machineInput: true },
     /*
      * Each segment is a spinbutton with no visible label of its own, so these ARE their accessible
-     * names — "14" announced alone is a number, not an hour.
+     * names; "14" announced alone is a number, not an hour.
      */
     hourLabel: { type: "string", default: "Hora", attr: "data-hour-label", machineInput: true },
     minuteLabel: { type: "string", default: "Minuto", attr: "data-minute-label", machineInput: true },
@@ -246,8 +246,8 @@ export const timeFieldContract = {
         host: true,
         children: [
           /*
-           * A span, not a `<label>`: there is no single form control to point at — the group is made
-           * of three spinbuttons — so the association is `aria-labelledby` from the group, which
+           * A span, not a `<label>`: there is no single form control to point at; the group is made
+           * of three spinbuttons; the association is `aria-labelledby` from the group, which
            * both bindings write at runtime because they own the ids.
            */
           { element: "span", part: "label", slot: "label" },

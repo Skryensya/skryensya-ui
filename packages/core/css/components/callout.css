@@ -50,7 +50,7 @@
     grid-template-columns: minmax(0, 1fr);
     column-gap: var(--space-inline-sm);
     row-gap: var(--space-stack-sm);
-    align-items: start;
+    align-items: baseline;
     inline-size: 100%;
     /* The panel itself: inset padding, a hairline in the accent color, the surface radius, and the two
      * color hooks painting fill and text. */
@@ -107,9 +107,8 @@
 
   /*
    * THE ICON. A larger, unadorned glyph beside the title. No background circle, just the icon
-   * itself at a larger size. Vertically aligned with the title only, not spanning the entire
-   * content block. The icon sits beside the title and description, but its height matches the
-   * title's line-height so it aligns with that single line of text.
+   * itself at a larger size. Vertically aligned with the title, aligned to the top so it sits
+   * at the same height as the first line of text.
    */
   .sk-callout__icon {
     display: inline-flex;
@@ -117,7 +116,8 @@
     align-items: center;
     justify-content: center;
     inline-size: 2.25rem;
-    block-size: var(--font-line-height-body);
+    block-size: 1.25rem;
+    vertical-align: middle;
   }
   /* CONTENT sits beside the icon (or alone, with none): an optional title stacked over the
    * description. `min-inline-size: 0` is the load-bearing bit, a grid item defaults to its

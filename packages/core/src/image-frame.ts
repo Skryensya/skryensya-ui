@@ -17,14 +17,14 @@ export type ImageFramePartClass = (typeof imageFrameParts)[ImageFramePart];
 /*
  * The contract, and the case that forces `exactlyOneOf` to exist.
  *
- * A frame holds media the consumer authors — as a `src`, or as an authored `<picture>`/`<video>`.
+ * A frame holds media the consumer authors; as a `src`, or as an authored `<picture>`/`<video>`.
  * One or the other, never neither: with neither, every presence check passes and the page renders an
  * empty box. `requires` would demand both and `forbids` would refuse both, so neither can say it.
  * That is a real bug this repo shipped, and it is now a structured constraint rather than a warning
  * nobody could enforce.
  *
  * A caption over the photo is not a second media source. It is its own slot so `src` (or authored
- * children) can coexist with a MediaCaption — the wash needs the media beside it, and that composition
+ * children) can coexist with a MediaCaption; the wash needs the media beside it, and that composition
  * is the whole reason the gradient pattern exists.
  */
 export const imageFrameContract = {
@@ -65,7 +65,7 @@ export const imageFrameContract = {
       attr: "data-position",
     },
     /**
-     * Corner treatment. `top` rounds only the block-start edge — flush media on a rounded card — so
+     * Corner treatment. `top` rounds only the block-start edge; flush media on a rounded card; so
      * the join with the body stays square.
      */
     radius: {
@@ -96,7 +96,7 @@ export const imageFrameContract = {
         /** Authored media: `picture`, `video`, anything the `src` convenience cannot express. */
         children: { accepts: "node" },
         /**
-         * Type on the photo. Not a media source — `exactlyOneOf` does not count it — so a `src`
+         * Type on the photo. Not a media source; `exactlyOneOf` does not count it; so a `src`
          * frame can still carry a wash and a title.
          */
         caption: { accepts: "signature", of: ["MediaCaption"] },
@@ -127,7 +127,7 @@ export const imageFrameContract = {
 
 /*
  * Derived, never restated. These used to be hand-written unions sitting beside a hand-written
- * contract — two lists that had to agree, which is exactly the drift decision 28 exists to end. G1
+ * contract; two lists that had to agree, which is exactly the drift decision 28 exists to end. G1
  * could not have caught it: the duplication was inside Core, not in a binding.
  */
 export type ImageFrameAspect = OptionValue<typeof imageFrameContract.options.aspect>;

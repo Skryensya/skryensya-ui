@@ -1,8 +1,8 @@
-import { alertParts, type AlertTone } from "./alert.js";
+import { calloutParts, type CalloutTone } from "./callout.js";
 import type { ComponentContract } from "./contract.js";
 
-/** Same tone vocabulary as Alert, including `neutral` for a plain toast. */
-export type ToastTone = AlertTone;
+/** Same tone vocabulary as Callout, including `neutral` for a plain toast. */
+export type ToastTone = CalloutTone;
 
 export type ToastLiveRegion = "polite" | "assertive";
 export type ToastDismissReason = "dismiss" | "timeout";
@@ -35,32 +35,39 @@ export function hasToastTimeout(timeout: number | undefined): timeout is number 
 }
 
 /**
- * Toast reuses Alert anatomy. The region class is toast-specific; every item part is an alert part
- * so the floating message and the inline message stay one visual contract.
+ * Toast reuses Callout anatomy for everything BUT the dismiss control: the region class is
+ * toast-specific, and icon/content/title/description/actions are callout parts so the floating
+ * message and the inline message stay one visual panel. Dismiss is not shared; Callout has no such
+ * part, closing itself is behaviour a purely informational message does not have; Toast owns
+ * that one class outright instead of borrowing a part that does not exist on the thing it borrows
+ * everything else from.
  */
 export const contentParts = {
   toastRegion: "sk-toast-region",
-  toast: alertParts.root,
-  toastIcon: alertParts.icon,
-  toastContent: alertParts.content,
-  toastTitle: alertParts.title,
-  toastDescription: alertParts.description,
-  toastActions: alertParts.actions,
-  toastDismiss: alertParts.dismiss,
+  toast: calloutParts.root,
+  toastIcon: calloutParts.icon,
+  toastContent: calloutParts.content,
+  toastTitle: calloutParts.title,
+  toastDescription: calloutParts.description,
+  toastActions: calloutParts.actions,
+  toastDismiss: "sk-toast__dismiss",
 } as const;
 
 export type ContentPart = keyof typeof contentParts;
 export type ContentPartClass = (typeof contentParts)[ContentPart];
 
 /**
- * The transient half of Alert.
+ * The transient half of Callout; the half that IS interactive, which is the whole reason the
+ * two are separate contracts rather than one with a `presentation`. A Toast is owned by a region
+ * that floats above the page and leaves on its own, so a dismiss control and a timeout make sense
+ * here in a way they never do on a message that just sits in the document explaining something.
  *
- * Same anatomy, same part classes, same tone vocabulary — what differs is where it lives and how
- * long. A Toast is owned by a region that floats above the page and it leaves on its own, so the
- * two pieces are contracted together: a Toast outside a ToastRegion has nowhere to be.
+ * Same panel anatomy, same part classes for icon/content/title/description/actions, same tone
+ * vocabulary: what differs is where it lives, how long, and that it alone owns a dismiss.
  *
- * `timeout` is deliberately absent. How long a message stays is behaviour, and behaviour is the
- * binding's — the contract owns whether the dismiss control EXISTS, the same split Tag makes.
+ * `timeout` is deliberately absent from the contract as a rendered attribute. How long a message
+ * stays is behaviour, and behaviour is the binding's: the contract owns whether the dismiss control
+ * EXISTS, the same split Tag makes.
  */
 export const contentContract = {
   id: "content",
@@ -73,12 +80,6 @@ export const contentContract = {
       values: ["neutral", "info", "success", "warning", "danger"],
       default: "neutral",
       attr: "data-tone",
-    },
-    presentation: {
-      type: "enum",
-      values: ["banner", "accent", "inline"],
-      default: "banner",
-      attr: "data-presentation",
     },
     /** Whether the toast carries a dismiss control. Structure; `onDismiss` is the binding's. */
     dismissible: { type: "boolean", default: false, attr: "data-dismissible", trueValue: "" },
@@ -122,7 +123,7 @@ export const contentContract = {
       intent: ["transient-message", "saved-confirmation", "undo-prompt", "background-task-finished"],
       host: { element: "div" },
       parents: ["ToastRegion", "ToastTemplate"],
-      options: ["tone", "presentation", "dismissible", "dismissLabel", "timeout"],
+      options: ["tone", "dismissible", "dismissLabel", "timeout"],
       mount: "data-sk-toast",
       slots: {
         icon: { accepts: "signature", of: ["Icon"] },
@@ -134,7 +135,7 @@ export const contentContract = {
         element: "div",
         part: "toast",
         host: true,
-        // Tone decides the announcement, not just the paint — the same rule Alert states.
+        // Tone decides the announcement, not just the paint: the same rule Callout states.
         attrsWhen: [
           { option: "tone", equals: "danger", attrs: { role: "alert", "aria-live": "assertive" } },
           { option: "tone", notEquals: "danger", attrs: { role: "status", "aria-live": "polite" } },

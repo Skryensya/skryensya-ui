@@ -29,13 +29,13 @@ export type LayoutPartClass = (typeof layoutParts)[LayoutPart];
 /*
  * The five ways of arranging things, as five signatures of one family.
  *
- * They are a family and not five because the choice between them is one decision — how does this
- * group of things sit together — and an agent picking a layout should see all five side by side.
+ * They are a family and not five because the choice between them is one decision: how does this
+ * group of things sit together; an agent picking a layout should see all five side by side.
  * Every one of them is `as`-polymorphic in React; the contract fixes a sensible host and leaves the
  * element to the author, because a Stack that is really a `<ul>` is still a Stack.
  */
 /*
- * Three stylesheets, so three families — the same lesson checkbox and switch taught: a core module is
+ * Three stylesheets, so three families; the same lesson checkbox and switch taught: a core module is
  * a source file, and `css` is per family. Box, the flow layouts and Wrapper share a parts object and
  * nothing else.
  */

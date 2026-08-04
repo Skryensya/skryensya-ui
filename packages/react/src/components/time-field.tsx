@@ -64,7 +64,7 @@ function segmentText(
 }
 
 /** How long an unfinished digit ("1", which could still become "10"–"12") waits for a second
- * keystroke before it settles and focus moves on — long enough for a deliberate second digit,
+ * keystroke before it settles and focus moves on; long enough for a deliberate second digit,
  * short enough that it does not feel stuck. */
 const ADVANCE_DELAY = 500;
 
@@ -90,7 +90,7 @@ export type TimeFieldProps = {
 
 /**
  * TIME FIELD: hour, minute, and (in a 12-hour locale) AM/PM as one accessible `role="group"` of
- * `role="spinbutton"` segments — no popover, no wheel. An earlier design put a scroll-wheel picker
+ * `role="spinbutton"` segments; no popover, no wheel. An earlier design put a scroll-wheel picker
  * behind a trigger; it turned out to be neither simpler nor more accessible than the segments
  * themselves, which is the same primitive every native segmented time control already uses.
  *
@@ -142,7 +142,7 @@ export function TimeField({
   );
 
   // An external value only ever changes here because OUR OWN commit told the parent about one
-  // (controlled) or because the parent reset it independently — either way this is the one place
+  // (controlled) or because the parent reset it independently; either way this is the one place
   // that has to win, since a mid-typing segment never produces a value for the prop to carry.
   useEffect(() => {
     if (!controlled) return;
@@ -276,7 +276,7 @@ export function TimeField({
         {label}
       </span>
       {/* Before the control, not after it. The vanilla enhancer RENDERS the control into the root,
-          so an authored hint always precedes it — and this is the better reading order anyway: the
+          so an authored hint always precedes it; this is the better reading order anyway: the
           instruction is heard before the first spinbutton is reached. Where it PAINTS is the
           stylesheet's call. */}
       {hint ? (
@@ -339,7 +339,7 @@ export function TimeField({
           </button>
         ) : null}
       </div>
-      {/* The wire value, always canonical `HH:mm` — no real `<input>` composes the segments, so this
+      {/* The wire value, always canonical `HH:mm`; no real `<input>` composes the segments, so this
        * is the only thing a form behind TimeField ever sees. */}
       <input name={name} type="hidden" value={canonical ? formatTimeValue(canonical) : ""} />
     </div>

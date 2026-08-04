@@ -33,13 +33,13 @@ const stackCss = `/* Ya viene en components/toast.css: está acá porque
    mide lo que mide ÉL. Los de atrás salen de flujo
    estirados a esa misma caja: por eso la pila se lee
    como un objeto y no como cartas descuadradas. */
-.sk-toast-region:not([data-stack="off"]) > .sk-alert:not(:last-child) {
+.sk-toast-region:not([data-stack="off"]) > .sk-callout:not(:last-child) {
   position: absolute;
   inset: 0;
   overflow: clip;
 }
 
-.sk-toast-region:not([data-stack="off"]) > .sk-alert {
+.sk-toast-region:not([data-stack="off"]) > .sk-callout {
   /* 0 para el más nuevo (el último hijo), +1 por
      cada uno que quedó atrás. Sin contadores en JS. */
   --sk-toast-depth: calc(sibling-count() - sibling-index());
@@ -59,7 +59,7 @@ const stackCss = `/* Ya viene en components/toast.css: está acá porque
 }
 
 .sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within)
-  > .sk-alert {
+  > .sk-callout {
   position: static;
   overflow: visible;
   translate: none;
@@ -71,7 +71,7 @@ const stackCss = `/* Ya viene en components/toast.css: está acá porque
    están en su fila. En vez de animar el salto, se lo tapa
    con una llegada. El más nuevo no participa: no se movió. */
 .sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within)
-  > .sk-alert:not(:last-child) {
+  > .sk-callout:not(:last-child) {
   animation: sk-toast-fan var(--motion-expand-duration)
     var(--motion-expand-easing)
     calc(var(--sk-toast-depth) * var(--sk-toast-cascade))
@@ -93,24 +93,24 @@ const vanilla = `import {
 import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 
-// Los iconos se autoran como placeholders <span data-sk-icon>;
+// Los iconos se escriben como placeholders <span data-sk-icon>;
 // mountIcons los reemplaza por el <svg> del set enlazado.
 mountIcons(document, lucideIcons);
 
 await initComponents();`;
 ---
 
-<Base title="Toast" description="Toast: feedback transitorio en una región flotante. Misma anatomía que Alert, con ciclo de vida de la app.">
+<Base title="Toast" description="Toast: feedback transitorio en una región flotante. Misma anatomía que Callout, con ciclo de vida de la app.">
   <h1>Toast</h1>
   <p class="lede">
     Toast comunica feedback transitorio en una región flotante. El ítem es un
-    <a href="/componentes/alert">Alert</a>, mismo markup, mismos tonos, envuelto en
+    <a href="/componentes/callout">Callout</a>, mismo markup, mismos tonos, envuelto en
     <code>sk-toast-region</code> y en el ciclo de vida del toast (montaje, dismiss, timeout opcional).
   </p>
 
   <h2>Después de una acción</h2>
   <p>
-    Es el caso real: un toast no se autora ya visible, aparece porque algo pasó. Lo que sí es estable
+    Es el caso real: un toast no se escribe ya visible, aparece porque algo pasó. Lo que sí es estable
     en el HTML son tres piezas: el control que dispara la acción, una
     <code>sk-toast-region</code> <strong>vacía</strong>, y un <code>&lt;template&gt;</code> con el
     ítem. La app clona, inserta y vuelve a montar; <code>initComponents</code> es idempotente, así
@@ -132,7 +132,7 @@ await initComponents();`;
     más, y flota sobre una superficie <strong>raised</strong>
     (<code>--color-bg-surface-raised</code> + <code>--elevation-raised</code>) para leerse como
     chrome elevado, no como panel de página. Ver el mismo criterio en
-    <a href="/componentes/alert">Alert</a>.
+    <a href="/componentes/callout">Callout</a>.
   </p>
   <ComponentPreview tree={toastSimpleTree(t)} label="Toast simple" viewport="menu" />
 
@@ -157,7 +157,7 @@ await initComponents();`;
 
   <h2>Con acción</h2>
   <p>
-    <code>sk-alert__actions</code> es una sola columna: la acción de recuperación y el cierre viven
+    <code>sk-callout__actions</code> es una sola columna: la acción de recuperación y el cierre viven
     ahí, en ese orden. Un toast con acción no lleva <code>data-timeout</code>, desaparecer antes de
     que alguien alcance a pulsar “Deshacer” convierte la acción en decorado.
   </p>
@@ -220,29 +220,31 @@ await initComponents();`;
 
   <h2>El cierre es un Button</h2>
   <p>
-    El ✕ se autora como <a href="/componentes/button">Button</a> icon-only en tamaño
+    El ✕ se construye como <a href="/componentes/button">Button</a> icon-only en tamaño
     <code>sm</code> (<code>data-size="sm" data-icon-only data-variant="ghost"</code>), no como un
-    control ad hoc del Alert. Con eso hereda lo que ya resuelve Button: la cara de 32px, el hit
+    control ad hoc. Con eso hereda lo que ya resuelve Button: la cara de 32px, el hit
     target de 44px que <code>::after</code> expande más allá de esa cara, el state layer de hover y
     presión, y el foco. Sin texto visible, <code>aria-label</code> es obligatorio.
   </p>
   <p>
-    Conserva además la clase de parte <code>sk-alert__dismiss</code>: es el gancho que busca el
-    enhancer para cablear el dismiss, la que hace que el glifo lea el color del tono
-    (<code>currentColor</code>) en vez del acento que pintaría un ghost normal, y la que corrige la
-    <strong>posición óptica</strong>. Un icon-only ghost es casi todo aire: 16px de glifo en una caja
-    de 32px, más el inset del panel, dejan el ✕ flotando en un hueco. La parte lo tira de vuelta
-    media unidad de inset, así el <em>glifo</em> cae donde el padding dice que está el borde del
-    contenido, sin que el área de click pierda un pixel.
+    Conserva además la clase de parte <code>sk-toast__dismiss</code>; propia de Toast, no prestada
+    de Callout: es el gancho que busca el enhancer para cablear el dismiss, la que hace que el glifo
+    lea el color del tono (<code>currentColor</code>) en vez del acento que pintaría un ghost normal,
+    y la que corrige la <strong>posición óptica</strong>. Un icon-only ghost es casi todo aire: 16px
+    de glifo en una caja de 32px, más el inset del panel, dejan el ✕ flotando en un hueco. La parte lo
+    tira de vuelta media unidad de inset, así el <em>glifo</em> cae donde el padding dice que está el
+    borde del contenido, sin que el área de click pierda un pixel.
   </p>
 
   <h2>El ciclo de vida es de la app</h2>
   <p>
     Toast no gestiona colas ni persistencia: esos ciclos pertenecen a la aplicación. El componente
-    aporta la región, reutiliza Alert, anuncia el tono y avisa cuándo se quiere ir.
+    aporta la región, reutiliza la anatomía de <a href="/componentes/callout">Callout</a>;
+    icono, título, descripción, acciones; más su propio dismiss, anuncia el tono y avisa cuándo se
+    quiere ir.
   </p>
   <p>
-    En Vanilla, <code>data-sk-toast</code> sobre un <code>sk-alert</code> registra el dismiss nativo y
+    En Vanilla, <code>data-sk-toast</code> sobre un <code>sk-callout</code> registra el dismiss nativo y
     anuncia el tono. <code>data-timeout</code> es opcional; al vencer emite <code>sk-dismiss</code>
     (igual que el ✕) con <code>detail.reason</code>, <code>"timeout"</code> o
     <code>"dismiss"</code>, por si la app distingue “se fue solo” de “lo cerraron”. El componente
@@ -255,8 +257,8 @@ await initComponents();`;
 
   <h2>React</h2>
   <p>
-    El código está en la pestaña <strong>React</strong> de cada preview. La API refleja Alert
-    (<code>title</code>, <code>icon</code>, <code>actions</code>, <code>presentation</code>,
+    El código está en la pestaña <strong>React</strong> de cada preview. La API refleja Callout
+    (<code>title</code>, <code>icon</code>, <code>actions</code>,
     <code>tone</code>) más <code>timeout</code> y <code>onDismiss</code> con razón. Sin
     <code>tone</code>, es neutral.
   </p>

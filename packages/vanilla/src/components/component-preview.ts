@@ -62,8 +62,8 @@ function paintBindingTabs(tabs: HTMLElement | null, binding: ComponentPreviewBin
 /**
  * Every stage in this preview.
  *
- * Both bindings render an iframe stage now, and the height controls — the resizer, the screen
- * presets, the reload button — are ONE control each in the header, above both. So they act on all
+ * Both bindings render an iframe stage now, and the height controls (the resizer, the screen
+ * presets, the reload button) are ONE control each in the header, above both. So they act on all
  * of them: a reader who drags the grip and then flips to React must not find the height they just
  * chose reverted, and the hidden stage has to already be the right size when it appears rather
  * than resizing in front of them.
@@ -145,8 +145,8 @@ function nextScreen(current: ComponentPreviewScreen): ComponentPreviewScreen {
 /**
  * Paint the toggle button: which of its stacked icon faces is visible (CSS keys off `data-value`,
  * same mechanism as ThemeToggle's stacked faces) and its accessible name. The three names are
- * authored per instance as `data-sk-component-preview-screen-label-{screen}` — same pattern as
- * ThemeToggle's `data-sk-theme-toggle-label-*` — because each preview's toggle names its own
+ * authored per instance as `data-sk-component-preview-screen-label-{screen}`; same pattern as
+ * ThemeToggle's `data-sk-theme-toggle-label-*`; each preview's toggle names its own
  * component ("Screen size (Button): Tablet"), not a generic string shared by every preview.
  */
 function paintScreenToggle(toggle: HTMLElement, screen: ComponentPreviewScreen): void {
@@ -163,13 +163,13 @@ function paintScreenToggle(toggle: HTMLElement, screen: ComponentPreviewScreen):
  *
  * The preset takes over BOTH axes, so choosing one drops any height the reader had dragged: two
  * owners of the same height is the bug, and the preset is the one the reader just asked for. The
- * inline `height` has to go too, not only the `resized` flag — an inline style beats the preset's
+ * inline `height` has to go too, not only the `resized` flag; an inline style beats the preset's
  * rule, so a stale drag would silently win over the device height.
  *
  * `free` is the ABSENCE of the attribute rather than a value: every rule that fits, reserves or
  * scrolls then keeps working untouched, and the frame runtime needs no third case.
  *
- * The preference is per DOCUMENT, not per preview, and every mounted preview applies it — so a
+ * The preference is per DOCUMENT, not per preview, and every mounted preview applies it; so a
  * preview with no toggle of its own (or one mounted later) still follows the page.
  */
 function connectScreenTabs(root: HTMLElement): Cleanup {
@@ -243,7 +243,7 @@ function connectStageResizer(root: HTMLElement): Cleanup {
 
   /*
    * The one the reader is actually looking at. The drag reads its height to know where it started,
-   * and writes the result to every stage — measuring a HIDDEN stage would read 0 and snap the demo
+   * and writes the result to every stage; measuring a HIDDEN stage would read 0 and snap the demo
    * to the floor on the first pointer move.
    */
   const visibleStage = (): HTMLElement | null =>
@@ -281,12 +281,12 @@ function connectStageResizer(root: HTMLElement): Cleanup {
 
   /*
    * A screen preset owns both axes, so grabbing the grip while one is active would make it a
-   * SECOND owner of the height — the original reason the grip used to hide outright under a
+   * SECOND owner of the height; the original reason the grip used to hide outright under a
    * preset. Clearing the preset here resolves that conflict procedurally instead: the reader's
    * drag is a clearer statement of intent ("I want THIS height") than a stale preset from
    * whichever preview last touched the shared, persisted preference, on this page or another.
    * `publishScreen` is synchronous (a plain `document.dispatchEvent`), so by the time this
-   * returns, THIS stage has already lost its `screen` attribute and reverted to auto-fit sizing —
+   * returns, THIS stage has already lost its `screen` attribute and reverted to auto-fit sizing;
    * `startHeight` below reads the POST-escape box, not the device preset's.
    */
   const escapePresetIfActive = () => {

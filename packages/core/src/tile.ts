@@ -107,7 +107,7 @@ export const tileEvents = {
 /**
  * A tile is a SURFACE that is also one control.
  *
- * Not a card with a button inside — the whole rectangle is the target, which is why every signature
+ * Not a card with a button inside; the whole rectangle is the target, which is why every signature
  * here is a different native element rather than a wrapper with a role bolted on. A tile that
  * navigates is an `<a>`, one that acts is a `<button>`, one that chooses wraps a real `<input>`, and
  * one that expands is a `<section>` with its own trigger. Choosing among them IS choosing what the
@@ -180,7 +180,7 @@ export const tileContract = {
        * `AccordionTrigger` renders one directly (`packages/react/src/components/accordion.tsx`), and
        * the authored markup on the accordion page puts `sk-tile__content` inside the trigger button
        * exactly as this emits it. Omitting it made the validator reject a title-over-description in
-       * an accordion item — the composition all three accordion demos are built on.
+       * an accordion item; the composition all three accordion demos are built on.
        */
       parents: [
         "TileLink",
@@ -211,14 +211,14 @@ export const tileContract = {
     /*
      * THE DISCLOSURE MARK, which was a declared part no template painted.
      *
-     * `sk-tile__chevron` has had CSS since the expandable tile shipped — rules that hide one child
-     * and show the other off the trigger's `data-state` — but no signature emitted it, so every
+     * `sk-tile__chevron` has had CSS since the expandable tile shipped; rules that hide one child
+     * and show the other off the trigger's `data-state`; no signature emitted it, so every
      * accordion demo hand-wrote the same nine lines twice, once as an HTML string and once as JSX.
      * They had already drifted: the authored HTML carried `data-part="chevron"` and the React half
      * did not, which is the exact failure a shared tree exists to make impossible.
      *
      * BOTH children are always emitted, and the stylesheet picks one. The mark cannot be a single
-     * icon swapped at runtime, because on the authored path there is no runtime — the enhancer only
+     * icon swapped at runtime, because on the authored path there is no runtime; the enhancer only
      * toggles `data-state` on the trigger, and CSS does the rest. That is also why it is purely
      * decorative: the trigger's own `aria-expanded` is what announces the state, so an announced
      * chevron would say it twice.
@@ -262,7 +262,7 @@ export const tileContract = {
     /*
      * The three that WRAP a real control. The input is the tile's own, visually hidden and never
      * replaced: it is what carries the choice into a form, what a screen reader announces, and what
-     * the keyboard reaches. Wrapping IS the association — no `for`, no `id` — and the paint beside
+     * the keyboard reaches. Wrapping IS the association; no `for`, no `id`; and the paint beside
      * it is `aria-hidden`, so the choice is announced once rather than twice.
      */
     TileCheckbox: {
@@ -403,12 +403,21 @@ export const tileContract = {
           cardinality: { ExpandableTileTrigger: "one", ExpandableTileContent: "one" },
         },
       },
+      /*
+       * `sk-interactive` moved OFF this root and onto the trigger below (ADR: hover reacting to
+       * content). The section is a container, not the control; only its trigger button is
+       * clickable, and the state layer painting behind `overflow: hidden` on the WHOLE section
+       * meant hovering the revealed answer tinted it too, and `user-select: none` (part of
+       * `sk-tile--interactive`) blocked selecting that same text. `sk-tile--expandable` alone is
+       * enough for the box, selection-border and disabled selectors below, all of which already
+       * key off `:where(.sk-tile--interactive, .sk-tile--expandable)`.
+       */
       mount: "data-sk-expandable-tile",
       template: {
         element: "section",
         part: "root",
         host: true,
-        also: ["sk-tile--interactive", "sk-tile--expandable", "sk-interactive"],
+        also: ["sk-tile--expandable"],
         attrs: { "data-scope": "tile", "data-part": "root" },
         slot: "children",
       },
@@ -425,6 +434,7 @@ export const tileContract = {
         element: "button",
         part: "trigger",
         host: true,
+        also: ["sk-tile--interactive", "sk-interactive"],
         // The enhancer finds the pair by `data-part`, so these are structure, not decoration.
         attrs: { type: "button", "data-scope": "tile", "data-part": "trigger" },
         slot: "children",

@@ -55,11 +55,11 @@ export const vaulEvents = {
 } as const;
 
 /*
- * VAUL, published — and it took a while because this file's stylesheet lives in `css/patterns/`,
+ * VAUL is published; it took a while because this file's stylesheet lives in `css/patterns/`,
  * which `NOT-PUBLISHED.md` used as the rule for what is a pattern and therefore takes no contract.
  *
  * That was reasoning from WHERE THE CODE SITS, the same mistake `toc` corrected. A pattern has no
- * anatomy of its own — `anchored` is classes and custom properties that six components compose, and
+ * anatomy of its own; `anchored` is classes and custom properties that six components compose, and
  * none of them "contains an anchored". A Vaul has two parts, four options, an event and a 291-line
  * enhancer, and the drawer page opens by saying "un drawer ES un Vaul". That is a component whose
  * sheet is filed in the wrong folder, not a pattern.
@@ -104,7 +104,7 @@ export const vaulContract = {
           /*
            * Always drawn, always `aria-hidden`. It is the affordance for a gesture that only exists
            * where the enhancer runs, and announcing a grip that may do nothing is worse than
-           * silence — the panel closes with Escape and with its own control either way.
+           * silence; the panel closes with Escape and with its own control either way.
            */
           {
             element: "div",
@@ -118,12 +118,12 @@ export const vaulContract = {
     },
 
     /*
-     * THE DRAWER — a Vaul that fills its edge instead of sitting against it.
+     * THE DRAWER: a Vaul that fills its edge instead of sitting against it.
      *
      * `drawer.css` is forty-five lines and ONE class. That is the whole difference, so this is a
      * signature of this family rather than a component of its own: a separate contract would
      * duplicate both parts, both options and the enhancer's mount point to say `sk-drawer`.
-     * The docs page has always known — it opens with "un drawer ES un Vaul".
+     * The docs page has always known; it opens with "un drawer ES un Vaul".
      */
     "Vaul.drawer": {
       intent: ["navigation-drawer", "side-panel", "mobile-navigation"],

@@ -1,0 +1,68 @@
+---
+/*
+ * What changed in one component, newest first.
+ *
+ * The entries come from `contracts/changelog/<id>.yaml` through the same compiled artifact the
+ * reference tab reads, and they are there because a gate refuses to build a contract whose shape
+ * moved without one (see `packages/ai-compiler/src/changelog.ts`). That is the difference between
+ * this and a CHANGELOG.md: the file cannot quietly stop being written.
+ *
+ * Dates, not versions. Every package in this repo is still 0.1.0 and none is published, so a
+ * version number here would be four characters that distinguish nothing; the day something changed
+ * is the fact a reader actually has.
+ *
+ * THE MARKUP IS THE `changelog` CONTRACT'S, authored rather than emitted from a usage tree, for the
+ * reason `CodeBlock` records about Shiki: an entry's text is HTML that a compiler already validated
+ * and that has to land as real markup, and a tree has no channel for that, only for text or for
+ * composed signatures. The classes and attributes below are the contract's own, so this page and a
+ * tree that used it draw the same thing.
+ */
+import "@skryensya/core/components/changelog.css";
+import { changelogParts } from "@skryensya/core/changelog";
+import { contractDoc, entryText } from "../lib/contract-reference";
+import { getLocale, useTranslations, type UIKey } from "../i18n";
+
+interface Props {
+  id: string;
+  heading?: string;
+}
+
+const { id, heading } = Astro.props;
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+
+const entries = contractDoc(id).changelog;
+
+/*
+ * `timeZone: "UTC"` because the entry is a plain `YYYY-MM-DD`, which `Date` parses as midnight UTC.
+ * Formatted in a zone behind that, every entry renders as the day before it says.
+ */
+const dateFormat = new Intl.DateTimeFormat(locale, { dateStyle: "long", timeZone: "UTC" });
+---
+
+<h2>{heading ?? t("changelog.title")}</h2>
+
+{
+  entries.length === 0 ? (
+    <p>{t("changelog.empty")}</p>
+  ) : (
+    <ol class={changelogParts.root} reversed>
+      {entries.map((entry) => (
+        <li class={changelogParts.entry} data-kind={entry.kind}>
+          <span class={changelogParts.marker} aria-hidden="true" />
+          <div class={changelogParts.meta}>
+            {/* Both halves of the date: the machine one for a parser, the readable one for a
+                reader. The contract keeps them as two fields precisely so this component is the
+                one that decides how a date is spelled in each locale. */}
+            <time class={changelogParts.date} datetime={entry.date}>
+              {dateFormat.format(new Date(entry.date))}
+            </time>
+            <span class={changelogParts.kind}>{t(`changelog.kind.${entry.kind}` as UIKey)}</span>
+            {entry.target && <code class={changelogParts.target}>{entry.target}</code>}
+          </div>
+          <div class={changelogParts.text} set:html={entryText(entry, locale)} />
+        </li>
+      ))}
+    </ol>
+  )
+}

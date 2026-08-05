@@ -5,11 +5,11 @@ import type { Translate } from "../i18n";
  * The three accordions on the page, from one composition written once.
  *
  * Each trigger is `TileContent` (title over description) plus `TileChevron` (the disclosure mark).
- * Both were blocked until recently — the chevron was a declared part no template painted, so every
+ * Both were blocked until recently: the chevron was a declared part no template painted, so every
  * demo hand-wrote the same nine lines twice, as an HTML string and as JSX, and they had already
  * drifted: the authored HTML carried `data-part="chevron"` and the React half did not.
  *
- * The runtime section's second paragraph names a path, and it is `Code` — a signature that did not
+ * The runtime section's second paragraph names a path, and it is `Code`, a signature that did not
  * exist when this file was first written. Converting the page had to drop the monospace because
  * `typography` had no inline-code part at all; publishing one is what let the sentence come back
  * whole. `Strong` was the nearest thing available and it is the wrong claim: a path is not emphasis.
@@ -85,7 +85,7 @@ export const accordionSingleTree = (t: Translate): UsageTree => ({
   children: [item(t, "environment")],
 });
 
-/** Three sections, one open at a time — what `type: "single"` buys. */
+/** Three sections, one open at a time: what `type: "single"` buys. */
 export const accordionExclusiveTree = (t: Translate): UsageTree => ({
   contract: "accordion",
   signature: "Accordion",
@@ -106,11 +106,14 @@ export const accordionMultipleTree = (t: Translate): UsageTree => ({
  *
  * Siblings sharing a `name` make the BROWSER keep one open, which is what the coordinator above
  * does with a machine. Putting them side by side is the page's whole argument: the choice is not
- * about capability, it is about who owns the behaviour — and `<details>` cannot animate its panel
+ * about capability, it is about who owns the behaviour, and `<details>` cannot animate its panel
  * or be driven from outside, which is the entire difference.
  *
- * The chevron is not here. `TileChevron` belongs to a tile's trigger, and a `<summary>` is not
- * one; the marker `<details>` draws itself is the platform's and needs no markup.
+ * `Details` composes `Details.Summary` and `Details.Content` as children, the same shape
+ * `ExpandableTile` already uses, with no `summary` prop hiding that structure. The summary's own
+ * content is a bare `Heading` + `Text`, not `TileContent`: that molecule is Tile's, and Details
+ * has never had a Tile inside it, only Tile's PAINT (shared tokens, same look). The disclosure mark
+ * is baked into `Details.Summary` itself now, not composed. See the contract.
  */
 export const detailsGroupTree = (t: Translate): UsageTree => ({
   contract: "details",
@@ -120,21 +123,40 @@ export const detailsGroupTree = (t: Translate): UsageTree => ({
     contract: "details",
     signature: "Details",
     options: { name: "deployment", ...(i === 0 ? { open: true } : {}) },
-    slots: {
-      summary: {
-        contract: "tile",
-        signature: "TileContent",
-        slots: {
-          title: t(`demo.accordion.${value}.title` as never),
-          description: t(`demo.accordion.${value}.description` as never),
+    children: [
+      {
+        contract: "details",
+        signature: "Details.Summary",
+        children: {
+          contract: "layout",
+          signature: "Stack",
+          options: { gap: "xs" },
+          children: [
+            {
+              contract: "typography",
+              signature: "Heading",
+              options: { headingSize: "h3", flush: true },
+              children: t(`demo.accordion.${value}.title` as never),
+            },
+            {
+              contract: "typography",
+              signature: "Text",
+              options: { tone: "secondary" },
+              children: t(`demo.accordion.${value}.description` as never),
+            },
+          ],
         },
       },
-      children: {
-        contract: "typography",
-        signature: "Text",
-        options: { tone: "secondary" },
-        children: t(`demo.accordion.${value}.p1` as never),
+      {
+        contract: "details",
+        signature: "Details.Content",
+        children: {
+          contract: "typography",
+          signature: "Text",
+          options: { tone: "secondary" },
+          children: t(`demo.accordion.${value}.p1` as never),
+        },
       },
-    },
+    ],
   })),
 });

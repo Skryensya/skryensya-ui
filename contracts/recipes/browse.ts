@@ -6,20 +6,20 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
  *
  * Two decisions carry this one, and both are about the states nobody designs.
  *
- * The LOADING state is skeletons, not a spinner. The shape of what is coming is already known — a
- * grid of cards — and a spinner throws that information away, so the page jumps when the data lands.
+ * The LOADING state is skeletons, not a spinner. The shape of what is coming is already known (a
+ * grid of cards), and a spinner throws that information away, so the page jumps when the data lands.
  * Placeholder exists for exactly this and is the only honest use of it: a skeleton for a shape you
  * cannot predict is a lie drawn in grey.
  *
  * The EMPTY state keeps the filters. A catalogue that empties itself and then hides the controls
- * that emptied it leaves no way back except the browser's Back button — and the filter that did it
+ * that emptied it leaves no way back except the browser's Back button, and the filter that did it
  * is usually one click from being undone.
  */
 export const browseRecipe: Recipe = {
   id: "browse",
   intent: "Un catálogo que se filtra y se recorre, con la ruta y los filtros siempre a la vista.",
   notes: [
-    "Cargando son esqueletos, no un spinner: la forma de lo que viene ya se conoce, y un spinner tira esa información — la página salta cuando llegan los datos.",
+    "Cargando son esqueletos, no un spinner: la forma de lo que viene ya se conoce, y un spinner tira esa información; la página salta cuando llegan los datos.",
     "Los esqueletos no dicen nada a quien no los ve, así que el estado lleva además un `Loader.status`: la espera anunciada sin dibujar. Un spinner arriba de los esqueletos desharía el motivo de los esqueletos.",
     "El estado vacío **conserva los filtros**. Un catálogo que se vacía y esconde el control que lo vació no deja vuelta atrás salvo el botón del navegador.",
     "El Breadcrumb dice dónde estás, no cómo llegaste: es la ruta del contenido, no el historial de navegación.",
@@ -36,8 +36,8 @@ export const browseRecipe: Recipe = {
         filters(),
         /*
          * The skeletons carry the shape; this carries the fact. Placeholders say nothing to anyone
-         * who cannot see them — no live region, so a screen reader finds a still page and no reason
-         * to wait — and a spinner above them would undo the reason for the skeletons.
+         * who cannot see them: no live region, so a screen reader finds a still page and no reason
+         * to wait. A spinner above them would undo the reason for the skeletons.
          */
         {
           contract: "loader",
@@ -84,12 +84,17 @@ export const browseRecipe: Recipe = {
       children: [
         crumbs(),
         {
-          contract: "alert",
-          signature: "Alert",
+          contract: "callout",
+          signature: "Callout",
           options: { tone: "danger" },
           slots: {
             title: "No pudimos cargar el catálogo",
-            actions: { contract: "button", signature: "Button.action", children: "Reintentar" },
+            actions: {
+              contract: "button",
+              signature: "Button.action",
+              options: { variant: "subtle" },
+              children: "Reintentar",
+            },
           },
           children: "Volvé a intentar en unos segundos.",
         },
@@ -180,7 +185,7 @@ function filters(): UsageTree {
 /*
  * One card: a framed photo with its title ON the photo.
  *
- * The caption is what sizes the wash — a MediaGradient on its own is `position: absolute` with no
+ * The caption is what sizes the wash: a MediaGradient on its own is `position: absolute` with no
  * box to fill, and paints nothing. The pattern only exists as the pair.
  */
 function card(title: string): UsageTree {

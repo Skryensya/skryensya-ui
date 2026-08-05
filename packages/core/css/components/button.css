@@ -40,7 +40,12 @@
      * re-declaration of the same variable, not a second component. */
     --sk-button-width: auto;
     --sk-button-padding-x: var(--space-inset-md);
-    --sk-button-gap: var(--space-inline-xs);
+    /* Between an icon and its label, not between two words: `inline-xs` (the gap this used to be)
+     * reads fine for tight inline chips, but a glyph this size wants more air than that before text,
+     * measured tight enough at `xs` for the icon to look like it's touching the label's first
+     * letter. `inline-sm` matches the gap nav-list already settled on for the same icon+label row
+     * shape, so a button and a nav-list link now sit the same distance from their icon. */
+    --sk-button-gap: var(--space-inline-sm);
     --sk-button-font-size: var(--font-size-body);
     --sk-button-font-weight: var(--font-weight-label);
     --sk-button-shadow: var(--elevation-flat);
@@ -87,6 +92,45 @@
     position: absolute;
     inset-block: min(0px, calc((100% - var(--size-touch-target)) / 2));
     inset-inline: min(0px, calc((100% - var(--size-touch-target)) / 2));
+  }
+
+  /*
+   * A quieter neutral, not a fourth base: same fill as the default (`--color-action-neutral`), but
+   * without the base's `--color-border-default` ring. The base variant's mid-gray border is sized
+   * for a button standing alone on canvas; a filled icon-only control sitting on a busier surface,
+   * a code panel, a colored card, reads that same ring as harder than the control needs. `subtle`
+   * drops it to `--color-border-subtle`, one step down the same neutral ramp, so the button still
+   * has an edge, just a quieter one. First use: CopyButton over highlighted code
+   * (components/copy-button.css composes it as the copy button's own default look).
+   */
+  .sk-button[data-variant="subtle"] {
+    --sk-button-border-color: var(--color-border-subtle);
+  }
+
+  /*
+   * A button for use over colored backgrounds (like callouts). Semi-transparent fill that blends
+   * with the underlying surface, adapting to different tones without needing a variant for each.
+   * Uses oklab for consistent color behavior across modes. Use this when a button sits on a colored
+   * surface and should feel integrated, not layered on top.
+   */
+  /*
+   * Both halves read TIER-2 tokens, never `--ramp-*`. An earlier version of this rule reached
+   * straight into `--ramp-neutral-200`/`300` for its light values and `scripts/lint.mjs` failed it
+   * (tier-skip): a hook that names a ramp bypasses the mode layer, so it cannot follow a brand swap
+   * and breaks dark mode for this component alone. The substitutes are exact, not approximate,
+   * `--color-bg-surface-sunken` IS `--ramp-neutral-200` in light and `--color-border-subtle` IS
+   * `--ramp-neutral-300`, so the light appearance is byte-identical to what it replaced.
+   */
+  .sk-button[data-variant="translucent"] {
+    --sk-button-bg: light-dark(
+      color-mix(in oklab, var(--color-bg-surface-sunken) 45%, transparent),
+      color-mix(in oklab, var(--color-action-neutral) 36%, transparent)
+    );
+    --sk-button-fg: var(--color-text-primary);
+    --sk-button-border-color: light-dark(
+      color-mix(in oklab, var(--color-border-subtle) 50%, transparent),
+      color-mix(in oklab, var(--color-border-subtle) 60%, transparent)
+    );
   }
 
   .sk-button[data-variant="primary"] {

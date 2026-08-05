@@ -3,7 +3,7 @@
  *
  * Card is not a real component: every export here composes Box / Tile / Grid / Stack / Inline with
  * the content pieces, and each one renders a GRID OF THREE so the reader sees a card next to its
- * siblings — a card that only looks right alone is a card whose height, media and footer were never
+ * siblings: a card that only looks right alone is a card whose height, media and footer were never
  * tested. The ladder runs simple → complex, and the copy comes from `examples/card-data` so the
  * live island and the source shown beside it cannot drift apart.
  *
@@ -24,7 +24,7 @@ import type { ReactNode } from "react";
 import { cardCopy, type CardLang } from "../../examples/card-data";
 import { framedIn } from "./framed";
 
-/** Every demo below runs inside its own preview frame — see `framed.tsx`. */
+/** Every demo below runs inside its own preview frame. See `framed.tsx`. */
 const framed = framedIn(import.meta.url);
 
 type DemoProps = { lang?: CardLang };
@@ -165,7 +165,7 @@ export const CardStatDemo = framed(function CardStatDemo({ lang = "es" }: DemoPr
 });
 
 /* 6 ─ First interactive rung. The whole surface goes to ONE destination, so the root is the anchor
- * itself — no stretched-link CSS, no `onClick` on a div. */
+ * itself: no stretched-link CSS, no `onClick` on a div. */
 export const CardLinkDemo = framed(function CardLinkDemo({ lang = "es" }: DemoProps) {
   const c = cardCopy[lang];
   return (

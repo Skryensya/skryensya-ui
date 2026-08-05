@@ -4,7 +4,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 /**
  * The record page: who this is, and several views of the same subject.
  *
- * The identity — the avatar, the name, the status badge — sits OUTSIDE the tabs, and that is the
+ * The identity (the avatar, the name, the status badge) sits OUTSIDE the tabs, and that is the
  * decision. Tabs are alternative views of one space; whatever identifies the record is true in every
  * view, so putting it inside means repeating it three times or losing it on two of them.
  *
@@ -15,7 +15,7 @@ export const detailRecipe: Recipe = {
   id: "detail",
   intent: "La ficha de un registro: la identidad arriba, y varias vistas del mismo asunto abajo.",
   notes: [
-    "La identidad va **fuera** de las tabs: son vistas alternativas de un mismo espacio, y lo que identifica al registro es verdad en todas — adentro habría que repetirlo o perderlo.",
+    "La identidad va **fuera** de las tabs: son vistas alternativas de un mismo espacio, y lo que identifica al registro es verdad en todas; adentro habría que repetirlo o perderlo.",
     "Si las secciones no describen el mismo asunto, no son vistas de un espacio: esa página quiere encabezados, no tabs.",
     "El Badge es de sólo lectura y dice el estado; si se pudiera quitar sería un Tag. La diferencia se nota al leerla en voz alta, no al mirarla.",
     "El error no se lleva la identidad puesta: falló una vista, no el registro.",
@@ -66,12 +66,17 @@ export const detailRecipe: Recipe = {
       children: [
         identity(),
         {
-          contract: "alert",
-          signature: "Alert",
+          contract: "callout",
+          signature: "Callout",
           options: { tone: "danger" },
           slots: {
             title: "No pudimos cargar la actividad",
-            actions: { contract: "button", signature: "Button.action", children: "Reintentar" },
+            actions: {
+              contract: "button",
+              signature: "Button.action",
+              options: { variant: "subtle" },
+              children: "Reintentar",
+            },
           },
           children: "El resto de la ficha sigue disponible.",
         },

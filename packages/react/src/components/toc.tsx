@@ -8,12 +8,12 @@ import {
 } from "react";
 
 /*
- * TOC — the React half of the same contract the Vanilla enhancer connects to.
+ * TOC: the React half of the same contract the Vanilla enhancer connects to.
  *
  * Copies `connectToc` rather than improving on it (the rule `NOT-PUBLISHED.md` already states for
  * `copy-button`/`dialog`/`command-palette`): one shape shipped (an interactive `<details>`, closed
  * by default), a scroll-spy that moves `aria-current` on its own, and a consumer's stylesheet is
- * what turns this into an always-open rail — this component does not guess a breakpoint for it.
+ * what turns this into an always-open rail: this component does not guess a breakpoint for it.
  */
 export type TocItem = {
   href: string;
@@ -80,7 +80,7 @@ export function Toc({ className, items, title, ...props }: TocProps) {
         }
 
         const currentId = headings.find((heading) => onScreen.has(heading.id))?.id;
-        // Nothing in the band means "between sections", not "nowhere" — the last answer stands.
+        // Nothing in the band means "between sections", not "nowhere": the last answer stands.
         if (!currentId) return;
         setCurrent(hrefById.get(currentId));
       },

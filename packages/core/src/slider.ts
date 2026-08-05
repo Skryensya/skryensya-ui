@@ -24,8 +24,8 @@ export function sliderFill(value: number, min: number, max: number): number {
 }
 
 /*
- * A value along a range, on the native `<input type="range">`. Everything a slider needs — keyboard,
- * touch, screen-reader announcement of the value — the platform already ships, so this contract adds
+ * A value along a range, on the native `<input type="range">`. Everything a slider needs (keyboard,
+ * touch, screen-reader announcement of the value) the platform already ships, so this contract adds
  * paint and nothing else.
  *
  * The fill is derived from the value, never typed: a track that says 60 and looks 40 is a lie the
@@ -42,7 +42,7 @@ export const sliderContract = {
      * takes, and `defaultValue` in React because that is what React calls the same idea.
      *
      * The rename is the whole point rather than a nicety: `value` in React means CONTROLLED, so a
-     * tree that emitted it handed over a slider whose thumb could not move — the author asked for an
+     * tree that emitted it handed over a slider whose thumb could not move: the author asked for an
      * initial position and got a locked control, which every static check called correct. A
      * composition is data and has no state to own, so the initial value is the only one it can mean.
      */
@@ -72,7 +72,7 @@ export const sliderContract = {
       /*
        * The fill follows the thumb only if something recomputes it: CSS can read the initial `value`
        * but has no selector for the current one. React does it in its own render; authored markup
-       * needs the enhancer, and without this attribute it never attached — every emitted slider
+       * needs the enhancer, and without this attribute it never attached: every emitted slider
        * painted its starting fraction and then kept it while the thumb moved away.
        */
       mount: "data-sk-slider",

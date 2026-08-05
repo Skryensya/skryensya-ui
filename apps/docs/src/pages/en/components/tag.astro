@@ -26,7 +26,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
 
   <h2>The X is a Button, not a drawing of one</h2>
   <p>
-    The remove control is an actual <a href="/en/components/button">Button</a> — <code>sk-button sk-interactive</code> with <code>data-size="sm"</code>, <code>data-icon-only</code>, and <code>data-variant="ghost"</code> — and <code>sk-tag__remove</code> is just the modifier that shrinks it to the height of the capsule. Tag does not send its own interaction.
+    The remove control is an actual <a href="/en/components/button">Button</a> (<code>sk-button sk-interactive</code> with <code>data-size="sm"</code>, <code>data-icon-only</code>, and <code>data-variant="ghost"</code>) and <code>sk-tag__remove</code> is just the modifier that shrinks it to the height of the capsule. Tag does not send its own interaction.
   </p>
   <p>
     What you gain is what you no longer have to maintain here: the hover and the press come from the <a href="/en/state-layer">state layer</a>, the focus ring is the same as all the controls, and the touch area reaches <strong>44px</strong> by the <code>:: after</code> of the button even though the face paints 20px. Before they were 20px for face and 20px for useful white.

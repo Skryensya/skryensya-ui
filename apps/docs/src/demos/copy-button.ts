@@ -8,7 +8,7 @@ import type { Translate } from "../i18n";
  * time, found by id, which is why the id is the option and the text is not. Passing the string would
  * let the button copy something the reader is not looking at.
  *
- * The command itself stays written — `pnpm add @skryensya/core` is the same in every language.
+ * The command itself stays written: `pnpm add @skryensya/core` is the same in every language.
  */
 export const copyButtonTree = (t: Translate): UsageTree => ({
   contract: "layout",

@@ -1,4 +1,4 @@
-/* TIER 3, TOOLBAR — one tab stop followed by roving keyboard focus. */
+/* TIER 3, TOOLBAR: one tab stop followed by roving keyboard focus. */
 @layer components {
   .sk-toolbar {
     --sk-toolbar-gap: var(--space-inline-xs);

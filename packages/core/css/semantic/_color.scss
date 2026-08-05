@@ -24,7 +24,7 @@
     --color-bg-success-subtle: light-dark(var(--ramp-success-50), var(--ramp-success-950));
     --color-bg-warning-subtle: light-dark(var(--ramp-warning-50), var(--ramp-warning-950));
     /* info sits with the feedback roles, not with accent, even though both are blue by default.
-     * The tone an Alert or a Toast means by "info" must survive a brand swap: routed through accent,
+     * The tone a Callout or a Toast means by "info" must survive a brand swap: routed through accent,
      * a magenta brand turned every informational notice magenta. */
     --color-bg-info-subtle: light-dark(var(--ramp-info-50), var(--ramp-info-950));
 
@@ -63,13 +63,19 @@
     --color-border-strong: light-dark(var(--ramp-neutral-600), var(--ramp-neutral-400));
     --color-border-accent: light-dark(var(--ramp-accent-600), var(--ramp-accent-500));
     --color-border-danger: light-dark(var(--ramp-danger-600), var(--ramp-danger-500));
-    /* status borders mirror danger's rungs (600 light / 500 dark) so a toned edge, Toast, Alert, 
+    /* status borders mirror danger's rungs (600 light / 500 dark) so a toned edge, Toast, Callout,
      * has a real token per role instead of borrowing the saturated text color. */
     --color-border-success: light-dark(var(--ramp-success-600), var(--ramp-success-500));
     --color-border-warning: light-dark(var(--ramp-warning-600), var(--ramp-warning-500));
     --color-border-info: light-dark(var(--ramp-info-600), var(--ramp-info-500));
     /* focus ring: its own token, never an alias of border-accent, it must survive a brand
-     * swap that makes accent low-contrast, and can never be tuned away for aesthetics. */
+     * swap that makes accent low-contrast, and can never be tuned away for aesthetics.
+     *
+     * THE ACCENT-REACH DIMENSION'S DELIBERATE INVARIANT: it reads the accent directly and has no
+     * reach token, so no level can take the colour off it. Turning the brand down is an aesthetic
+     * choice and "where is my keyboard focus" is not one; a ring that went quiet with the decoration
+     * would be a product dialling out its own focus indicator. Same shape as the radius dimension
+     * leaving `--radius-pill` alone, and density flooring at the WCAG hit target (ADR-4). */
     --color-border-focus: light-dark(var(--ramp-accent-600), var(--ramp-accent-400));
 
     /* ── action: interactive FILLS. hover/press feedback is NOT a color here, it comes from
@@ -93,4 +99,28 @@
     --elevation-raised: 0 1px 2px 0 var(--shadow-sm), 0 1px 3px 0 var(--shadow-sm);
     --elevation-overlay: 0 4px 6px -2px var(--shadow-md), 0 10px 15px -3px var(--shadow-md);
     --elevation-modal: 0 8px 10px -6px var(--shadow-lg), 0 20px 25px -5px var(--shadow-lg);
+
+    /*
+     * ACCENT REACH, by KIND OF USE. Four tokens that all resolve to the accent by default, so
+     * nothing changes until a product opts in, and that each name a different REASON something is
+     * accent-coloured. `dimensions/accent.scss` re-points them per level: that is the whole
+     * mechanism, and it is why the dimension needs no knowledge of any component.
+     *
+     * The split exists because "uses the accent" is not one thing. A checked checkbox is accent
+     * because the colour is INFORMATION (this is on); a badge is accent because it is decoration; a
+     * sidebar link is accent because of navigation chrome. Turning the brand down should quiet the
+     * decoration and the chrome and leave the information alone, which no single token can express.
+     *
+     * State (checkbox, switch, tab, selected day) and the primary CTA deliberately have no token
+     * here: they read `--color-action-primary` / `--color-text-accent` directly and never dial.
+     */
+    --color-nav-current-bg: var(--color-bg-accent-subtle);
+    --color-nav-current-fg: var(--color-text-accent);
+    /* Badge, Tag, Kbd: an accent-toned label. Decoration, so the first thing to go quiet. */
+    --color-decorative-bg: var(--color-bg-accent-subtle);
+    --color-decorative-fg: var(--color-text-accent);
+    --color-decorative-border: var(--color-border-accent);
+    /* Prose links. The last to go, and when it does the underline in typography.css is what keeps
+     * the link recognisable without colour (WCAG 1.4.1: colour can never be the only signal). */
+    --color-text-link: var(--color-text-accent);
 }

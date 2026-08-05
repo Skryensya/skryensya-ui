@@ -30,7 +30,7 @@ export type StepsPart = keyof typeof stepsParts;
 export type StepsPartClass = (typeof stepsParts)[StepsPart];
 
 /*
- * Progress across ordered stages, where the STATUS is what matters — which is the whole difference
+ * Progress across ordered stages, where the STATUS is what matters, which is the whole difference
  * from a Process list, whose content is primary and which has no notion of complete or current.
  *
  * The marker shows a tick when complete and a number otherwise, so the state is never colour alone.
@@ -67,7 +67,7 @@ export const stepsContract = {
             },
             slots: {
               /** What the marker shows: an icon when complete, the position otherwise. Content, not
-               * an attribute — a screen reader reads it, and it is the non-colour cue for "done". */
+               * an attribute: a screen reader reads it, and it is the non-colour cue for "done". */
               marker: { accepts: "node", required: true },
               label: { accepts: "text", required: true },
               description: { accepts: "text" },
@@ -93,7 +93,7 @@ export const stepsContract = {
                   { element: "span", part: "label", itemSlot: "label" },
                   // `whenItemSlotGiven`, not `whenItemGiven`: the first asks whether the entry
                   // filled a SLOT, the second whether it set an OPTION. `description` is a slot, so
-                  // the option lookup was permanently undefined and this span never emitted — the
+                  // the option lookup was permanently undefined and this span never emitted: the
                   // tree validated, React rendered the descriptions from `steps={[…]}`, and the
                   // markup silently dropped them. Two bindings, one tree, different answers.
                   { element: "span", part: "description", whenItemSlotGiven: "description", itemSlot: "description" },

@@ -1,4 +1,4 @@
-/* TIER 3, EMPTY STATE — absence plus a concrete next action. */
+/* TIER 3, EMPTY STATE: absence plus a concrete next action. */
 @layer components {
   .sk-empty-state {
     --sk-empty-state-gap: var(--space-stack-sm);

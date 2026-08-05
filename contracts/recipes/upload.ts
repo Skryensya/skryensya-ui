@@ -5,10 +5,10 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
  * Attaching files, and telling someone when it finished.
  *
  * The reason this screen is worth a recipe is the SUCCESS state, and it is the only one in the set
- * that ends in a Toast rather than an Alert. An upload takes long enough that the person left: they
+ * that ends in a Toast rather than a Callout. An upload takes long enough that the person left: they
  * scrolled, they switched tabs, they started writing the next thing. A message that waits quietly on
- * a page nobody is looking at has not told anyone anything — so the confirmation floats and
- * announces itself, which is exactly what a Toast is for and what an Alert is not.
+ * a page nobody is looking at has not told anyone anything, so the confirmation floats and
+ * announces itself, which is exactly what a Toast is for and what a Callout is not.
  *
  * The failure does the opposite: it stays, because it needs a decision, and something that needs a
  * decision must not leave on a timer.
@@ -17,8 +17,8 @@ export const uploadRecipe: Recipe = {
   id: "upload",
   intent: "Adjuntar archivos y avisar cuando terminó, aunque la persona ya se haya ido a otra cosa.",
   notes: [
-    "El éxito es un **Toast** y no un Alert: la subida tarda lo suficiente como para que la persona se haya ido, y un mensaje quieto en una página que nadie mira no le avisó a nadie.",
-    "El error es un **Alert** y no un Toast: necesita una decisión, y algo que necesita una decisión no puede irse solo a los cinco segundos.",
+    "El éxito es un **Toast** y no un Callout: la subida tarda lo suficiente como para que la persona se haya ido, y un mensaje quieto en una página que nadie mira no le avisó a nadie.",
+    "El error es un **Callout** y no un Toast: necesita una decisión, y algo que necesita una decisión no puede irse solo a los cinco segundos.",
     "La barra de progreso lleva nombre. Sin él es una animación: un `progressbar` sin nombre anuncia un número sobre nada.",
     "El dropzone sigue ahí mientras sube y después de fallar: sacarlo obliga a recargar para reintentar.",
   ],
@@ -57,12 +57,17 @@ export const uploadRecipe: Recipe = {
       children: [
         { contract: "typography", signature: "Heading", children: "Documentos de respaldo" },
         {
-          contract: "alert",
-          signature: "Alert",
+          contract: "callout",
+          signature: "Callout",
           options: { tone: "danger" },
           slots: {
             title: "No pudimos subir contrato.pdf",
-            actions: { contract: "button", signature: "Button.action", children: "Reintentar" },
+            actions: {
+              contract: "button",
+              signature: "Button.action",
+              options: { variant: "subtle" },
+              children: "Reintentar",
+            },
           },
           children: "El archivo pesa 24 MB y el máximo son 10 MB.",
         },
@@ -92,7 +97,7 @@ export const uploadRecipe: Recipe = {
   },
 };
 
-/** The dropzone, present in every state where retrying is possible — which is all but success. */
+/** The dropzone, present in every state where retrying is possible, which is all but success. */
 function dropzone(): UsageTree {
   return {
     contract: "file-upload",

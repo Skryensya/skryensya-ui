@@ -5,12 +5,16 @@ import type { Translate } from "../i18n";
  * Button's seven demos, in the order the page teaches them: the variants, the three sizes, an icon
  * beside a label, icon-only at md and at sm, the same component as a link, and TileButton.
  *
- * Every one of these is `Button.action` except the link, which is `Button.navigation` — and that IS
+ * Every one of these is `Button.action` except the link, which is `Button.navigation`, and that IS
  * the lesson the page is teaching: an `href` is what changes the host element from `button` to `a`,
  * so the tree names the other signature rather than adding an option to this one.
  */
 
-/** The three variants side by side. `neutral` is the default, so the middle one declares nothing. */
+/**
+ * The six variants. `neutral` is the default, so that one declares nothing.
+ * `subtle` (quiet border) and `translucent` (blends on color) group as softened neutrals.
+ * `primary` for actions, `danger` for destructive, `ghost` for text-only.
+ */
 export const buttonVariantsTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "Inline",
@@ -22,6 +26,24 @@ export const buttonVariantsTree = (t: Translate): UsageTree => ({
       children: t("demo.button.save"),
     },
     { contract: "button", signature: "Button.action", children: t("demo.button.cancel") },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "subtle" },
+      children: t("demo.button.copy"),
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "translucent" },
+      children: t("demo.button.retry"),
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "ghost" },
+      children: t("demo.button.dismiss"),
+    },
     {
       contract: "button",
       signature: "Button.action",
@@ -71,21 +93,44 @@ export const buttonSizesTree = (t: Translate): UsageTree => ({
   ],
 });
 
-/* No hook for icon + text: the button is already an inline-flex row with a gap. The icon is
- * DECORATIVE — the label names the action — so it carries no `label` option. */
+/*
+ * No hook for icon + text: the button is already an inline-flex row with a gap. The icon is
+ * DECORATIVE (the label names the action), so it carries no `label` option.
+ *
+ * Two buttons, not one, because "icon beside a label" has two valid orders and they are not the
+ * same lesson: leading reads as "here is the kind of action" (download, before you know what gets
+ * downloaded), trailing reads as "here is where this goes" (continue, into whatever is next). Both
+ * are just `children` order: the tree's array order IS the DOM order IS the visual order in an
+ * inline-flex row, so there is no second option to teach, only the one array flipped.
+ */
 export const buttonIconTree = (t: Translate): UsageTree => ({
-  contract: "button",
-  signature: "Button.action",
-  options: { variant: "primary" },
+  contract: "layout",
+  signature: "Inline",
   children: [
-    { contract: "icon", signature: "Icon", options: { name: "download" } },
-    t("demo.button.download"),
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "primary" },
+      children: [
+        { contract: "icon", signature: "Icon", options: { name: "download" } },
+        t("demo.button.download"),
+      ],
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "primary" },
+      children: [
+        t("demo.button.continue"),
+        { contract: "icon", signature: "Icon", options: { name: "arrow-right" } },
+      ],
+    },
   ],
 });
 
 /*
  * Icon-only: with no text to carry it, the accessible name MUST be authored. It goes in `attrs`,
- * not `options` — `aria-label` is passed to the host untouched and no contract maps it.
+ * not `options`: `aria-label` is passed to the host untouched and no contract maps it.
  */
 export const buttonIconOnlyTree = (t: Translate): UsageTree => ({
   contract: "layout",
@@ -97,6 +142,16 @@ export const buttonIconOnlyTree = (t: Translate): UsageTree => ({
       options: { iconOnly: true },
       attrs: { "aria-label": t("demo.button.settings") },
       children: { contract: "icon", signature: "Icon", options: { name: "settings" } },
+    },
+    /* `subtle`'s real use: CopyButton (components/copy-button.css) composes exactly this shape
+       a fill so the button reads over a busy background, without the base variant's harder
+       border pulling focus from the icon it is protecting. */
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { iconOnly: true, variant: "subtle" },
+      attrs: { "aria-label": t("demo.button.copy") },
+      children: { contract: "icon", signature: "Icon", options: { name: "copy" } },
     },
     {
       contract: "button",
@@ -140,7 +195,7 @@ export const buttonIconOnlySmTree = (t: Translate): UsageTree => ({
 /*
  * The link form. `Button.navigation` rather than an option on `Button.action`: the host element
  * differs (`a`, not `button`), and the contract expresses that as `host.when.href = present`. Every
- * other shape follows it — size, icon, iconOnly.
+ * other shape follows it: size, icon, iconOnly.
  */
 export const buttonAsLinkTree = (t: Translate, href: string): UsageTree => ({
   // `href` comes from the page: the target is a docs route, and a docs route is locale-dependent
@@ -186,7 +241,7 @@ export const buttonAsLinkTree = (t: Translate, href: string): UsageTree => ({
 });
 
 /**
- * The four buttons on the "first component" walkthrough — default, primary, danger, and sm.
+ * The four buttons on the "first component" walkthrough: default, primary, danger, and sm.
  * Same signatures as the Button page; shared so the teaching page cannot drift from the reference.
  */
 export const firstComponentButtonsTree = (t: Translate): UsageTree => ({

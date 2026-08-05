@@ -45,8 +45,8 @@
     --sk-nav-list-link-font-size: var(--font-size-body-sm);
     --sk-nav-list-link-font-weight: var(--font-weight-body);
 
-    --sk-nav-list-link-current-bg: var(--color-bg-accent-subtle);
-    --sk-nav-list-link-current-fg: var(--color-text-accent);
+    --sk-nav-list-link-current-bg: var(--color-nav-current-bg);
+    --sk-nav-list-link-current-fg: var(--color-nav-current-fg);
     --sk-nav-list-link-current-font-weight: var(--font-weight-label);
     --sk-nav-list-link-disabled-fg: var(--color-text-disabled);
 

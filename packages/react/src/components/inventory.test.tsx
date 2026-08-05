@@ -276,7 +276,7 @@ describe("expanded component inventory", () => {
     });
     expect(clear.getAttribute("aria-label")).toBe("Limpiar");
     // A real icon, not the `×` glyph this asserted while React drew one and the enhancer mounted
-    // the other — the two bindings were showing different marks on the same button.
+    // the other: the two bindings were showing different marks on the same button.
     expect(clear.querySelector("svg")?.getAttribute("data-icon")).toBe("close");
     expect(clear.classList.contains("sk-button")).toBe(true);
     expect(clear.classList.contains("sk-interactive")).toBe(true);
@@ -360,7 +360,7 @@ describe("expanded component inventory", () => {
     const ui = render(
       <>
         <TimeField label="Hora de reunión" locale="en-US" name="meeting" />
-        {/* The bare surface — `Popover.bare` in the contract. It replaced a separate `Popup`
+        {/* The bare surface: `Popover.bare` in the contract. It replaced a separate `Popup`
             component that aliased popover's own parts under a second name. */}
         <Popover bare trigger="Filtros">
           <label>

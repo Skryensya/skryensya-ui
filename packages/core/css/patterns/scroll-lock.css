@@ -1,5 +1,5 @@
 /*
- * SCROLL LOCK — opt-in root pattern (decision 11).
+ * SCROLL LOCK: opt-in root pattern (decision 11).
  *
  * Consent IS the import. This is the first system rule that styles the document root from an
  * opt-in file: everything else scopes to its own element. Apps that already run their own scroll

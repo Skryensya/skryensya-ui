@@ -5,7 +5,7 @@
 import { NumberField } from "@skryensya/react/number-field";
 import { framedIn } from "./framed";
 
-/** Every demo below runs inside its own preview frame — see `framed.tsx`. */
+/** Every demo below runs inside its own preview frame. See `framed.tsx`. */
 const framed = framedIn(import.meta.url);
 
 export const NumberFieldDemo = framed(function NumberFieldDemo() {

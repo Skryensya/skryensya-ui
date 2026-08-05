@@ -1,7 +1,7 @@
 /*
  * TIER 3, TOC
  *
- * Ships one shape: an interactive `<details>` disclosure, closed by default — the platform's own
+ * Ships one shape: an interactive `<details>` disclosure, closed by default, the platform's own
  * behaviour, free. A consumer with a column to spare turns it into an always-open rail, sticky
  * beside the prose, by overriding `--sk-toc-sticky-top` and pinning `open` past its own breakpoint,
  * the same way a consumer decides `sidebar` becomes a drawer rather than this file deciding it.
@@ -28,7 +28,7 @@
   }
 
   /* As a rail it is not a control: the column is always open, so it paints as the caption it used
-   * to be — no marker, no chevron, no state layer. A consumer's breakpoint gives these back once
+   * to be: no marker, no chevron, no state layer. A consumer's breakpoint gives these back once
    * this becomes a real disclosure below its own column width. */
   .sk-toc__summary {
     display: flex;
@@ -79,18 +79,14 @@
 
   .sk-toc__item {
     min-inline-size: 0;
-    border-block-end: 1px solid var(--color-border-subtle);
-  }
-
-  .sk-toc__item:last-child {
-    border-block-end: 0;
   }
 
   .sk-toc__item[data-level="h3"] {
     padding-inline-start: var(--space-inset-sm);
   }
 
-  /* A link row, not a card: no fill, no radius. State layer paints on hover/press/current. */
+  /* Same row shape as nav-list's link: rounded, filled when current. State layer paints
+   * hover/press on top; this is the persistent "you are here" background, not feedback. */
   .sk-toc__link {
     display: flex;
     align-items: center;
@@ -100,7 +96,7 @@
     min-block-size: var(--size-control-sm);
     padding-block: var(--space-inset-sm);
     padding-inline: var(--space-inset-sm);
-    border-radius: 0;
+    border-radius: var(--radius-control);
     color: var(--color-text-secondary);
     font-size: var(--font-size-body-sm);
     line-height: var(--font-line-height-body);
@@ -115,13 +111,15 @@
     color: var(--color-text-tertiary);
   }
 
-  /* The section you're reading, the only accent in the list — written by the scroll-spy. */
+  /* The section you're reading (written by the scroll-spy) gets nav-list's own current
+   * treatment: a filled pill, not just a color change. */
   .sk-toc__link[aria-current="true"] {
-    color: var(--color-text-accent);
+    background: var(--color-nav-current-bg);
+    color: var(--color-nav-current-fg);
     font-weight: var(--font-weight-label);
   }
 
   .sk-toc__link[aria-current="true"] .sk-toc__icon {
-    color: var(--color-text-accent);
+    color: var(--color-nav-current-fg);
   }
 }

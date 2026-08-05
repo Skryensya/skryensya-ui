@@ -37,9 +37,9 @@ const src = cardSources(copy);
     <a href="/componentes/box">Box</a> o de <a href="/componentes/tile">Tile</a>.
   </p>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
-      <div class="sk-alert__description">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <div class="sk-callout__description">
         No existen <code>sk-card</code>, <code>@skryensya/react/card</code> ni
         <code>components/card.css</code>. Importa las piezas que la card realmente usa.
       </div>
@@ -104,7 +104,7 @@ const src = cardSources(copy);
 
   <h2 id="acento-suave">Acento suave</h2>
   <p>
-    El fondo de acento se pide reescribiendo los hooks que Box ya publica — <code>--sk-box-bg</code> a <code>--color-bg-accent-subtle</code> y el borde a <code>--color-border-accent</code> — nunca con un <code>background</code> crudo sobre <code>.sk-box</code>, que saltearía la superficie que el patrón administra. Como el relleno es sutil, el texto sigue usando los tokens normales.
+    El fondo de acento se pide reescribiendo los hooks que Box ya publica: <code>--sk-box-bg</code> a <code>--color-bg-accent-subtle</code> y el borde a <code>--color-border-accent</code>; nunca con un <code>background</code> crudo sobre <code>.sk-box</code>, que saltearía la superficie que el patrón administra. Como el relleno es sutil, el texto sigue usando los tokens normales.
   </p>
   <ComponentPreview
     html={src.accentSoft.html}
@@ -209,7 +209,7 @@ const src = cardSources(copy);
 
   <h2 id="gradiente">Card con gradiente</h2>
   <p>
-    El lavado que mantiene legible el texto sobre la foto. Se dimensiona según el <strong>tipo</strong> que protege y no según un porcentaje de la imagen: el caption es la caja y el gradiente la rellena, desvaneciéndose hacia la foto. Las tres cards muestran los tres valores de <code>data-strength</code> — <code>sm</code>, <code>md</code> y <code>lg</code> — sobre el mismo panel claro, porque es opacidad y tinte y nunca cuánta imagen se tapa. Las imágenes son claras a propósito: sobre un fondo ya oscuro el lavado no se vería y el ejemplo diría lo contrario de lo que enseña.
+    El lavado que mantiene legible el texto sobre la foto. Se dimensiona según el <strong>tipo</strong> que protege y no según un porcentaje de la imagen: el caption es la caja y el gradiente la rellena, desvaneciéndose hacia la foto. Las tres cards muestran los tres valores de <code>data-strength</code> (<code>sm</code>, <code>md</code> y <code>lg</code>) sobre el mismo panel claro, porque es opacidad y tinte y nunca cuánta imagen se tapa. Las imágenes son claras a propósito: sobre un fondo ya oscuro el lavado no se vería y el ejemplo diría lo contrario de lo que enseña.
   </p>
   <ComponentPreview
     html={src.gradient.html}
@@ -239,7 +239,7 @@ const src = cardSources(copy);
 
   <h2 id="producto">Card de producto</h2>
   <p>
-    El techo de la escalera, y el ejemplo que prueba la regla. Acá viven <strong>dos</strong> decisiones independientes — ver detalle y añadir — así que la raíz no puede ser un Tile: un enlace y un botón anidados dentro de un <code>a</code> son HTML inválido, y un click de superficie completa sólo podría significar una de las dos. Para esto existe Box.
+    El techo de la escalera, y el ejemplo que prueba la regla. Acá viven <strong>dos</strong> decisiones independientes (ver detalle y añadir), así que la raíz no puede ser un Tile: un enlace y un botón anidados dentro de un <code>a</code> son HTML inválido, y un click de superficie completa sólo podría significar una de las dos. Para esto existe Box.
   </p>
   <ComponentPreview
     html={src.product.html}

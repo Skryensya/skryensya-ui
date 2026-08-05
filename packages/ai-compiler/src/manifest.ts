@@ -2,12 +2,13 @@ import { createHash } from "node:crypto";
 import type { ComponentContract } from "@skryensya/core/contract";
 import { contracts } from "./registry.js";
 import { readOverlays, type ContractSemantics } from "./overlay.js";
+import { readChangelogs, type ContractChangelog } from "./changelog.js";
 
 /*
  * The compiled artifact. Two files, because they answer two questions and an agent should not pay
  * for the second to ask the first:
  *
- *   ai-index.json     the whole catalogue, compact — every family, every signature, what it is for
+ *   ai-index.json     the whole catalogue, compact: every family, every signature, what it is for
  *                     and when not to use it. There is no ranker (decision 31); this IS discovery.
  *   ai-manifest.json  the full contracts, for the signatures an agent actually picked.
  *
@@ -24,8 +25,17 @@ export type ManifestBuild = {
   readonly sourceHash: string;
 };
 
-export function buildManifest(overlayDir: string): ManifestBuild {
+/**
+ * `changelogDir` is separate because the two sources are separate (see `changelog.ts`). It is
+ * optional so the reconciliation tests can exercise the overlay half against a synthetic directory
+ * without also having to fabricate a changelog for all 63 contracts; the CLI always passes it, and
+ * `changelog.test.ts` covers this half on its own.
+ */
+export function buildManifest(overlayDir: string, changelogDir?: string): ManifestBuild {
   const { semantics, conflicts } = readOverlays(overlayDir);
+  const changes = changelogDir
+    ? readChangelogs(changelogDir)
+    : { changelog: {} as Record<string, ContractChangelog>, conflicts: [] };
 
   const index = {
     schemaVersion: SCHEMA_VERSION,
@@ -39,11 +49,19 @@ export function buildManifest(overlayDir: string): ManifestBuild {
     contracts: Object.fromEntries(
       Object.entries(contracts)
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([id, contract]) => [id, manifestEntry(contract, semantics[id] ?? {})]),
+        .map(([id, contract]) => [
+          id,
+          manifestEntry(contract, semantics[id] ?? {}, changes.changelog[id]),
+        ]),
     ),
   };
 
-  return { index, manifest, conflicts, sourceHash: hash([index, manifest]) };
+  return {
+    index,
+    manifest,
+    conflicts: [...conflicts, ...changes.conflicts],
+    sourceHash: hash([index, manifest]),
+  };
 }
 
 function indexEntry(id: string, contract: ComponentContract, semantics: ContractSemantics) {
@@ -63,8 +81,12 @@ function indexEntry(id: string, contract: ComponentContract, semantics: Contract
   };
 }
 
-function manifestEntry(contract: ComponentContract, semantics: ContractSemantics) {
-  return { ...contract, semantics };
+function manifestEntry(
+  contract: ComponentContract,
+  semantics: ContractSemantics,
+  changelog: ContractChangelog | undefined,
+) {
+  return { ...contract, semantics, changelog: changelog?.entries ?? [] };
 }
 
 /** Content hash over the canonical form, so the same sources always produce the same id. */

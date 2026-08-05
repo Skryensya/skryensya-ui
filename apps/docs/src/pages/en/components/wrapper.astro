@@ -2,51 +2,21 @@
 import Base from "../../../layouts/Base.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import ComponentPreview from "../../../components/ComponentPreview.astro";
+import { wrapperTree } from "../../../demos/wrapper";
+import { getLocale, useTranslations } from "../../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
 
 /*
- * Authored on purpose, and it must NOT become a usage tree. Measured, not assumed.
- *
- * `previewHtml = treeHtml ?? slotHtml ?? html` in ComponentPreview, so a tree REPLACES this slot —
- * wiring one swaps the diagram for four real Wrappers. Their rendered widths on this page, read out
- * of the stage in both bindings on 2026-07-31:
- *
- *   screen preset   stage    sm     md     lg     full
- *   Free            907px    672    907    907    907
- *   Tablet          766px    672    766    766    766
- *   Mobile          388px    388    388    388    388
- *
- * md (64rem = 1024px) and lg (90rem = 1440px) are both wider than the widest stage this page can
- * ever offer — `<main>` is itself `data-size="md"`, so the column tops out around 907px — and every
- * wrapper below its ceiling is just `100%`. So md, lg and full render as three IDENTICAL boxes at
- * every preset, all four are identical on Mobile, and `measure` only caps the stage further, which
- * makes it strictly worse. There is no width available here at which the four sizes differ.
- *
- * Two more things the swap costs: this page's scoped `.wrapper-scale` CSS never reaches emitted
- * markup (no `data-astro-cid-*` on it), so the bars lose their frames and read as four bare lines of
- * text; and the emitted snippet then advertises docs-only classes (`wrapper-scale__bar--md`) inside
- * the code a reader is invited to copy. `apps/docs/src/demos/wrapper.ts` was deleted for this
- * reason — an unwired tree is an invitation to wire it blindly.
- *
- * The diagram below is the demo: the bars are the ceilings as a fraction of the widest, so
- * sm < md < lg reads at a glance. `code` / `react` carry the real markup separately.
+ * The tree is ONE Wrapper, not four. `md`, `lg` and `full` all just fill this page's own stage
+ * (`<main>` is itself `data-size="md"`, ~907px of ceiling), so comparing them there would show
+ * three identical boxes: that was measured before this tree existed. `sm` is the one ceiling
+ * that reads: its column ends up narrower than the stage and centred, which is exactly the one
+ * thing a tree can demonstrate about a layout. The other three sizes are a fact about a number,
+ * not about layout, and stay in the table below instead of the stage.
  */
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
-
-/* The real markup, shown as the source. The demo above is a to-scale diagram because the sizes only
- * differ past widths this document column cannot show, md (64rem) and lg (90rem) would both
- * just fill the stage and read as identical, which is exactly what made the old demo confusing. */
-const code = `<div class="sk-wrapper" data-size="sm">…</div>
-<div class="sk-wrapper" data-size="md">…</div>
-<div class="sk-wrapper" data-size="lg">…</div>
-<div class="sk-wrapper" data-size="full">…</div>`;
-
-const react = `import { Wrapper } from "@skryensya/react/wrapper";
-
-<Wrapper size="sm">…</Wrapper>
-<Wrapper size="md">…</Wrapper>
-<Wrapper size="lg">…</Wrapper>
-<Wrapper size="full">…</Wrapper>;`;
 ---
 
 <Base title="Wrapper" description="Wrapper: Page column with a ceiling width of one scale.">
@@ -59,33 +29,31 @@ const react = `import { Wrapper } from "@skryensya/react/wrapper";
     ceiling tells how wide the column can grow; the work it does is decided by whoever writes it.
   </p>
 
-  <h2>The four roofs, to scale</h2>
+  <h2>A width ceiling</h2>
   <p>
-    Each size is a different <strong>ceiling width</strong>: the column centers and stops growing
-    upon reaching him. Under your roof, any wrapper is simply <code>100%</code>, so in
-    a narrow screen all four look the same, and they only separate when there is room.
+    Each size is a different <strong>ceiling width</strong>: the column centres and stops growing
+    upon reaching it. Below, a Wrapper with <code>data-size="sm"</code>: the margin on either
+    side is the ceiling doing its job.
   </p>
 
-  <ComponentPreview code={code} react={react} label="Wrapper" flush>
-    <figure class="wrapper-scale" aria-label="Wrapper widths, to scale">
-      <div class="wrapper-scale__bar" style="--w: 47%">
-        <code>sm</code> · 42rem
-      </div>
-      <div class="wrapper-scale__bar" style="--w: 71%">
-        <code>md</code> · 64rem · default
-      </div>
-      <div class="wrapper-scale__bar" style="--w: 100%">
-        <code>lg</code> · 90rem
-      </div>
-      <div class="wrapper-scale__bar wrapper-scale__bar--full">
-        <code>full</code> · no roof · the entire viewport
-      </div>
-    </figure>
-  </ComponentPreview>
+  <ComponentPreview tree={wrapperTree(t)} label="Wrapper" flush />
 
   <p>
-    Roofs are stable: density changes spacing and controls, never maximum column width. <code>full</code> centers the same but without putting a ceiling.
+    Under its ceiling, any wrapper is simply <code>100%</code>, so on a narrow screen all four
+    sizes look the same, and they only separate when there is room. Ceilings are stable: density
+    changes spacing and controls, never the column's maximum width.
   </p>
+
+  <h2>The four ceilings</h2>
+  <table class="sk-table">
+    <thead><tr><th>Size</th><th>Ceiling</th></tr></thead>
+    <tbody>
+      <tr><td><code>sm</code></td><td>42rem</td></tr>
+      <tr><td><code>md</code></td><td>64rem · default</td></tr>
+      <tr><td><code>lg</code></td><td>90rem</td></tr>
+      <tr><td><code>full</code></td><td>no ceiling, the entire viewport</td></tr>
+    </tbody>
+  </table>
 
   <h2>on this site</h2>
   <p>
@@ -112,42 +80,3 @@ const react = `import { Wrapper } from "@skryensya/react/wrapper";
     </li>
   </ul>
 </Base>
-
-<style>
-  /* A to-scale diagram, not the live component: the bars are the max-widths as a fraction of the
-     widest (lg, 90rem), so sm < md < lg reads at a glance even though this column is far
-     too narrow to show 64rem and 90rem apart. Each bar is centred, like the column it stands for. */
-  .wrapper-scale {
-    margin: 0;
-    display: grid;
-    gap: var(--space-stack-sm);
-    padding-block: var(--space-inset-md);
-  }
-
-  .wrapper-scale__bar {
-    justify-self: center;
-    inline-size: var(--w, 100%);
-    box-sizing: border-box;
-    padding: var(--space-inset-sm) var(--space-inset-md);
-    background: var(--color-bg-accent-subtle);
-    border: 1px solid var(--color-border-accent);
-    border-radius: var(--radius-control);
-    color: var(--color-text-accent);
-    font-size: var(--font-size-body-sm);
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .wrapper-scale__bar code {
-    font-family: var(--font-family-code);
-    font-weight: var(--font-weight-emphasis);
-  }
-
-  /* full has no ceiling: it fills, and a dashed edge says "no wall here". */
-  .wrapper-scale__bar--full {
-    inline-size: 100%;
-    border-style: dashed;
-  }
-</style>

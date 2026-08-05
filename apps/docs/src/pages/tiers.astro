@@ -103,8 +103,8 @@ const linterOutput = `✗ 1 problem(s):
   <CodeBlock code={badExample} label="components/button.css" note="tier 3 → tier 1" />
   <CodeBlock code={linterOutput} label="pnpm lint" note="el build se cae" />
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
     <p>
       No es una convención documentada: es una regla ejecutable. El validador corre sobre el CSS antes
       de cada build, en <em>todas</em> las marcas, porque una regla que solo se cumple en la paleta por

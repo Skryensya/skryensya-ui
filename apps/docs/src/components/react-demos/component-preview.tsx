@@ -1,6 +1,6 @@
 /*
  * Live React demos for /components/component-preview. Only the previews that demonstrate a real
- * component get a live island — "Minimal anatomy" and "The complete example" demonstrate the
+ * component get a live island: "Minimal anatomy" and "The complete example" demonstrate the
  * ComponentPreview's own chrome (a nested srcdoc mockup of the preview UI itself),
  * so they have no React equivalent and are skipped.
  */
@@ -9,7 +9,7 @@ import { Grid } from "@skryensya/react/layout";
 import { TileLink } from "@skryensya/react/tile";
 import { framedIn } from "./framed";
 
-/** Every demo below runs inside its own preview frame — see `framed.tsx`. */
+/** Every demo below runs inside its own preview frame. See `framed.tsx`. */
 const framed = framedIn(import.meta.url);
 
 export const SaveActionDemo = framed(function SaveActionDemo() {

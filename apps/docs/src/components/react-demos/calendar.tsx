@@ -1,13 +1,13 @@
 /*
  * Live React demos for /components/calendar. `Calendar` is the standalone date grid (Zag's
- * date-picker machine configured `inline`), no field or popover — a safe island since its props
+ * date-picker machine configured `inline`), no field or popover: a safe island since its props
  * are primitives/DateValue, no function props cross the boundary.
  */
 import { Calendar } from "@skryensya/react/calendar";
 import { parseCalendarDate } from "@skryensya/core/calendar";
 import { framedIn } from "./framed";
 
-/** Every demo below runs inside its own preview frame — see `framed.tsx`. */
+/** Every demo below runs inside its own preview frame. See `framed.tsx`. */
 const framed = framedIn(import.meta.url);
 
 export const CalendarBasicDemo = framed(function CalendarBasicDemo() {

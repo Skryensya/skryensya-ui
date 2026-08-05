@@ -1,0 +1,95 @@
+---
+import "@skryensya/core/components/changelog.css";
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
+import StylingHooks from "../../components/StylingHooks.astro";
+import { changelogTree } from "../../demos/changelog";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core`;
+
+const styles = `@import "@skryensya/core/components/changelog.css";`;
+---
+
+<Base
+  title="Changelog"
+  description="Changelog: historial fechado con riel, donde la fecha es lo que se busca y el punto dice qué tipo de cambio fue."
+>
+  <h1>Changelog</h1>
+  <p class="lede">
+    Un historial fechado, lo más nuevo arriba. La fecha encabeza cada entrada porque es lo que el
+    lector viene a buscar, y el punto del riel es una marca neutra que dice <em>cuándo</em>: el
+    <em>qué</em> lo dice la palabra al lado. Es estático: no hay enhancer ni estado.
+  </p>
+
+  <ComponentPreview tree={changelogTree(t)} label="Changelog" note="cuatro tipos" />
+
+  <h2>Cuándo usarlo</h2>
+  <ul>
+    <li>
+      Usa Changelog para release notes y para el historial de un contrato: cosas que pasaron, cada
+      una con su día.
+    </li>
+    <li>
+      Usa <a href="/componentes/process-list">ProcessList</a> para instrucciones en orden. Numera
+      sus marcadores con un <code>counter()</code> de CSS, así que una lista con lo más nuevo arriba
+      se numeraría al revés del tiempo.
+    </li>
+    <li>
+      Usa <a href="/componentes/steps">Steps</a> cuando haya progreso: <code>complete</code>,
+      <code>current</code>, <code>upcoming</code>. Su conector dice cuánto trabajo queda atrás, que
+      de un cambio ya publicado no es una afirmación que nadie pueda hacer.
+    </li>
+  </ul>
+
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="terminal" />
+  <CodeBlock code={styles} label="CSS" lang="css" />
+
+  <h2>Contrato</h2>
+  <ul>
+    <li>
+      La raíz es <code>&lt;ol class="sk-changelog" reversed&gt;</code>. El
+      <code>reversed</code> es fijo, no una opción: lo más nuevo arriba es lo que un changelog
+      <em>es</em>. Nadie dibuja los números, pero el árbol de accesibilidad los lee, y ahí tienen que
+      contar hacia atrás.
+    </li>
+    <li>
+      <strong>La fecha son dos campos.</strong> La opción <code>date</code> es el día legible por
+      una máquina (<code>YYYY-MM-DD</code>) y aterriza en <code>&lt;time datetime&gt;</code>; el
+      texto visible es un slot, porque una fecha formateada es copy en un idioma y Core no envía
+      ninguno. Formatea con <code>Intl.DateTimeFormat</code> y llena el slot.
+    </li>
+    <li>
+      <strong>El tipo también son dos.</strong> La opción <code>kind</code> marca la entrada
+      (<code>added</code>, <code>changed</code>, <code>fixed</code>, <code>removed</code>,
+      <code>breaking</code>); el slot es la palabra, y es obligatorio, así que el tipo nunca queda
+      sólo en el color.
+    </li>
+    <li>
+      <code>target</code> es opcional: la opción, parte o firma a la que le pegó el cambio. Una
+      entrada sobre el contrato entero no lleva ninguno.
+    </li>
+    <li>
+      <strong>Un solo color.</strong> Pintar cada tipo con su color de estado dejaba un riel verde,
+      azul y ámbar al costado de una página que es prosa, y el verde ganaba por cantidad: casi toda
+      entrada de casi todo changelog es una alta. El punto es una marca neutra; el tipo ya está
+      escrito al lado. <code>breaking</code> es la única excepción, porque es el único tipo cuyo
+      costo de pasar desapercibido es el build de quien te consume: se lleva el punto y la palabra.
+      Si querés la paleta de estado de vuelta, es una declaración de
+      <code>--sk-changelog-marker-color</code> por tipo.
+    </li>
+  </ul>
+
+  <h2>Fechas, no versiones</h2>
+  <p>
+    Este contrato no tiene campo de versión y es a propósito. Un número de versión sólo dice algo si
+    quien lee sabe qué releases existen; una fecha se lee sola. Cuando haya versiones publicadas, el
+    lugar para ponerlas es el slot de la fecha, junto al día, no en vez de él.
+  </p>
+
+  <StylingHooks groups={[{ file: "components/changelog.css", probe: "sk-changelog" }]} />
+</Base>

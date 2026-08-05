@@ -2,7 +2,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /*
- * One labelled group, two destinations. The trailing count is a proper noun of sorts — a number —
+ * One labelled group, two destinations. The trailing count is a proper noun of sorts (a number),
  * so it stays written. Locale-owned paths come from the page.
  *
  * The stage needs `measure="14rem"`: a nav-list is sized by its host (a sidebar rail), and across

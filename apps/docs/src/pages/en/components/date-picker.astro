@@ -26,7 +26,7 @@ const install = `@import "@skryensya/core/patterns/anchored.css";
     JavaScript. The <strong>custom</strong> mounts a <a href="/en/components/calendar">Calendar</a> behind
     of a trigger with the same field shape, for when you need range, explicit location or a
     Consistent calendar across browsers. The two share <code>.sk-date-picker__control</code>,
-    so they look the same. The calendar itself — header, views, grids — is the responsibility of
+    so they look the same. The calendar itself (header, views, grids) is the responsibility of
     Calendar, not this component: DatePicker just nests it inside its popover.
   </p>
 
@@ -46,7 +46,7 @@ const install = `@import "@skryensya/core/patterns/anchored.css";
     <code>disabled</code> on the input and on the trigger. But each of those three read its
     color/background/border from a hook
     (<code>--sk-date-picker-fg</code>/<code>-bg</code>/<code>-border-color</code>) declared
-    unconditionally, so disabling the field changed nothing about what those hooks resolved to — the
+    unconditionally, so disabling the field changed nothing about what those hooks resolved to: the
     field still read as interactive. The rule now lives in a single place,
     <code>.sk-date-picker__control[data-disabled]</code>, which rewrites those three hooks: the input
     and the trigger inherit them with no rules of their own.
@@ -72,7 +72,7 @@ const install = `@import "@skryensya/core/patterns/anchored.css";
     Under the desktop breakpoint (30rem) the custom calendar stops hanging from the field and becomes
     a <strong>bottom sheet</strong>: the positioner fills the screen as scrim and the content is
     anchor to the bottom edge, full width, and go up. Take the <em>skin</em> of the Vaul, not the drag
-    —it is a Zag popover, not a native <code>&lt;dialog&gt;</code>—, but it closes the same when playing outside or
+    (it is a Zag popover, not a native <code>&lt;dialog&gt;</code>), but it closes the same when playing outside or
     with <kbd class="sk-kbd">Esc</kbd>. It is the same responsive slice as <a href="/en/components/dialog">Dialog Vaul</a>.
   </p>
 

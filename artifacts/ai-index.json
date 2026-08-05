@@ -87,34 +87,6 @@
       ]
     },
     {
-      "css": "@skryensya/core/components/alert.css",
-      "id": "alert",
-      "signatures": [
-        {
-          "alternatives": [
-            "EmptyState"
-          ],
-          "avoidWhen": [
-            "el mensaje es efímero y se va solo; eso es un Toast",
-            "la región está vacía por no tener datos; eso es un EmptyState"
-          ],
-          "host": "div",
-          "id": "Alert",
-          "intent": [
-            "message",
-            "something-went-wrong",
-            "confirmation",
-            "warning-notice"
-          ],
-          "parents": [],
-          "useWhen": [
-            "hay que contar algo que pasó: un error, una confirmación, una advertencia",
-            "el mensaje queda en la página, no desaparece solo"
-          ]
-        }
-      ]
-    },
-    {
       "css": "@skryensya/core/components/avatar.css",
       "id": "avatar",
       "signatures": [
@@ -305,8 +277,12 @@
             "Button.navigation"
           ],
           "avoidWhen": [
-            "lleva a otra URL, aunque se vea igual — esa es Button.navigation",
-            "la acción es secundaria dentro de un texto — eso es un Link"
+            {
+              "lleva a otra URL, aunque se vea igual": "esa es Button.navigation"
+            },
+            {
+              "la acción es secundaria dentro de un texto": "eso es un Link"
+            }
           ],
           "host": "button",
           "id": "Button.action",
@@ -327,8 +303,12 @@
             "Button.action"
           ],
           "avoidWhen": [
-            "el destino no está disponible — un enlace no se deshabilita, se renderiza contenido no enlazable",
-            "el enlace vive dentro de un párrafo — eso es un Link"
+            {
+              "el destino no está disponible": "un enlace no se deshabilita, se renderiza contenido no enlazable"
+            },
+            {
+              "el enlace vive dentro de un párrafo": "eso es un Link"
+            }
           ],
           "host": "a",
           "id": "Button.navigation",
@@ -368,6 +348,35 @@
             "elegir la fecha es la tarea de la pantalla, no un campo más de un formulario",
             "ver el mes ayuda a decidir: fines de semana, feriados, cuántos días faltan",
             "hay lugar para una grilla siempre visible"
+          ]
+        }
+      ]
+    },
+    {
+      "css": "@skryensya/core/components/callout.css",
+      "id": "callout",
+      "signatures": [
+        {
+          "alternatives": [
+            "EmptyState"
+          ],
+          "avoidWhen": [
+            "el mensaje es efímero y se va solo; eso es un Toast",
+            "la región está vacía por no tener datos; eso es un EmptyState"
+          ],
+          "host": "div",
+          "id": "Callout",
+          "intent": [
+            "message",
+            "something-went-wrong",
+            "confirmation",
+            "warning-notice",
+            "aside-note"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay que contar algo que pasó: un error, una confirmación, una advertencia, o simplemente una nota al margen",
+            "el mensaje queda en la página, no desaparece solo"
           ]
         }
       ]
@@ -565,8 +574,10 @@
             "CodePreview"
           ],
           "avoidWhen": [
-            "hace falta comparar Vanilla y React del MISMO componente — eso es la maquinaria de este sitio, no un contrato publicado",
-            "el bloque es sólo código, sin nada que mostrar arriba — eso es CodePreview solo"
+            "hace falta comparar Vanilla y React del MISMO componente: eso es la maquinaria de este sitio, no un contrato publicado",
+            {
+              "el bloque es sólo código, sin nada que mostrar arriba": "eso es CodePreview solo"
+            }
           ],
           "host": "div",
           "id": "ComponentPreview.bare",
@@ -577,7 +588,9 @@
           ],
           "parents": [],
           "useWhen": [
-            "hay que mostrar algo junto a su código fuente — un ejemplo, una demo, un caso de uso",
+            {
+              "hay que mostrar algo junto a su código fuente": "un ejemplo, una demo, un caso de uso"
+            },
             "la superficie de docs no necesita comparar dos bindings ni presets de pantalla"
           ]
         }
@@ -589,10 +602,10 @@
       "signatures": [
         {
           "alternatives": [
-            "Alert"
+            "Callout"
           ],
           "avoidWhen": [
-            "hay un solo mensaje y es parte de la página; eso es un Alert en su lugar"
+            "hay un solo mensaje y es parte de la página; eso es un Callout en su lugar"
           ],
           "host": "div",
           "id": "ToastRegion",
@@ -627,10 +640,10 @@
         },
         {
           "alternatives": [
-            "Alert"
+            "Callout"
           ],
           "avoidWhen": [
-            "el mensaje es parte del contenido y tiene que quedarse; eso es un Alert",
+            "el mensaje es parte del contenido y tiene que quedarse; eso es un Callout",
             "hay que leerlo sí o sí antes de seguir; eso es un Dialog",
             "es un error de un campo; eso va en el Field, pegado al control"
           ],
@@ -773,6 +786,42 @@
             "una sección que se despliega y no necesita nada de JavaScript",
             "importa que funcione antes de que cargue cualquier script"
           ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Details; no tiene qué abrir"
+          ],
+          "host": "summary",
+          "id": "Details.Summary",
+          "intent": [
+            "disclosure-trigger",
+            "what-the-closed-state-shows"
+          ],
+          "parents": [
+            "Details"
+          ],
+          "useWhen": [
+            "es lo que el estado cerrado muestra y lo que abre la sección"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Details; no tiene quién lo abra"
+          ],
+          "host": "div",
+          "id": "Details.Content",
+          "intent": [
+            "disclosure-body",
+            "what-opening-reveals"
+          ],
+          "parents": [
+            "Details"
+          ],
+          "useWhen": [
+            "es lo que la apertura revela"
+          ]
         }
       ]
     },
@@ -811,11 +860,11 @@
       "signatures": [
         {
           "alternatives": [
-            "Alert"
+            "Callout"
           ],
           "avoidWhen": [
             "los datos están cargando; eso es un Loader o Placeholder",
-            "hubo un error; ahí el mensaje es un Alert, no un vacío"
+            "hubo un error; ahí el mensaje es un Callout, no un vacío"
           ],
           "host": "section",
           "id": "EmptyState",
@@ -956,7 +1005,9 @@
             "Avatar.initials"
           ],
           "avoidWhen": [
-            "es la identidad circular de una persona — eso es un Avatar",
+            {
+              "es la identidad circular de una persona": "eso es un Avatar"
+            },
             "no hay medio que mostrar, ni src ni contenido autoreado; el marco vacío es una caja vacía, no un placeholder"
           ],
           "host": "div",
@@ -1294,7 +1345,7 @@
           ],
           "parents": [],
           "useWhen": [
-            "la espera ya se ve —hay esqueletos, o una barra— y falta que además se anuncie",
+            "la espera ya se ve (hay esqueletos, o una barra) y falta que además se anuncie",
             "el estado de carga tiene que existir para un lector de pantalla sin dibujar nada"
           ]
         }
@@ -1386,8 +1437,12 @@
         {
           "alternatives": [],
           "avoidWhen": [
-            "son acciones de una aplicación, no destinos — eso es un menú, con role=\"menu\"",
-            "es una ruta jerárquica hasta la página actual — eso es un Breadcrumb"
+            {
+              "son acciones de una aplicación, no destinos": "eso es un menú, con role=\"menu\""
+            },
+            {
+              "es una ruta jerárquica hasta la página actual": "eso es un Breadcrumb"
+            }
           ],
           "host": "nav",
           "id": "NavList",
@@ -1406,7 +1461,9 @@
         {
           "alternatives": [],
           "avoidWhen": [
-            "hay un solo destino y ningún rótulo — el grupo sigue siendo obligatorio, no es opcional"
+            {
+              "hay un solo destino y ningún rótulo": "el grupo sigue siendo obligatorio, no es opcional"
+            }
           ],
           "host": "div",
           "id": "NavListGroup",
@@ -1427,7 +1484,9 @@
             "Button.navigation"
           ],
           "avoidWhen": [
-            "dispara una acción en vez de navegar — eso es Button.action"
+            {
+              "dispara una acción en vez de navegar": "eso es Button.action"
+            }
           ],
           "host": "a",
           "id": "NavListLink",
@@ -2359,8 +2418,10 @@
             "NavList"
           ],
           "avoidWhen": [
-            "el contenido de cada sección es largo y el usuario querría verlo todo junto — eso es un Accordion o una página con secciones",
-            "cada pestaña navega a otra URL — eso es un NavList",
+            "el contenido de cada sección es largo y el usuario querría verlo todo junto: eso es un Accordion o una página con secciones",
+            {
+              "cada pestaña navega a otra URL": "eso es un NavList"
+            },
             "hay una sola sección; una pestaña sola no es una elección"
           ],
           "host": "div",
@@ -2373,7 +2434,9 @@
           "parents": [],
           "useWhen": [
             "varias secciones comparten una región y sólo una se ve a la vez",
-            "el contenido es hermano, no una jerarquía — todas las pestañas están al mismo nivel",
+            {
+              "el contenido es hermano, no una jerarquía": "todas las pestañas están al mismo nivel"
+            },
             "el usuario alterna entre vistas del mismo objeto (resumen, actividad, ajustes)"
           ]
         }
@@ -2693,8 +2756,12 @@
             "NavList"
           ],
           "avoidWhen": [
-            "los destinos son páginas distintas, no secciones de ESTA página — eso es NavList",
-            "el documento es corto y cabe entero en una pantalla — un índice no ahorra nada ahí"
+            {
+              "los destinos son páginas distintas, no secciones de ESTA página": "eso es NavList"
+            },
+            {
+              "el documento es corto y cabe entero en una pantalla": "un índice no ahorra nada ahí"
+            }
           ],
           "host": "aside",
           "id": "Toc",
@@ -2706,7 +2773,9 @@
           "parents": [],
           "useWhen": [
             "un documento largo tiene varias secciones (h2/h3) y el lector necesita saltar entre ellas",
-            "hace falta ver, mientras se lee, en qué sección se está — el \"current\" lo mueve el scroll-spy"
+            {
+              "hace falta ver, mientras se lee, en qué sección se está": "el \"current\" lo mueve el scroll-spy"
+            }
           ]
         }
       ]
@@ -3018,5 +3087,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "3e50a2a874f00562"
+  "sourceHash": "1f0709f22b6fcaf9"
 }

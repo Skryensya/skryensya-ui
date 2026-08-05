@@ -11,7 +11,8 @@ const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
 
-const css = `@import "@skryensya/core/components/button.css";
+const css = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/copy-button.css";`;
 
 const js = `import { mountIcons } from "@skryensya/vanilla/icon";
@@ -54,6 +55,17 @@ await initComponents();`;
     <li>
       El estado <code>copied</code> dura brevemente y se anuncia como <strong>Copied</strong>
       (o el label que autorices en <code>data-sk-copy-button-success-label</code>).
+    </li>
+    <li>
+      Ese mismo label aparece al lado del botón como una banderita con flecha, justo lo que dura el
+      icono de check, en el tono de success (o de danger si falló). No es un tooltip: nunca se queda
+      con el puntero, así que un segundo clic sigue llegando al botón.
+    </li>
+    <li>
+      La banderita se coloca con el pattern <a href="/anclaje">Anclaje</a>: el root lleva además
+      <code>sk-anchor</code> y ella <code>sk-anchored</code> con
+      <code>data-sk-placement="inline-start"</code>. Sin anchor positioning en el navegador no se
+      dibuja, porque acá no hay machine que la coloque; el icono y el live region siguen igual.
     </li>
     <li>
       Los iconos son placeholders <code>data-sk-icon</code>; el set lo enlaza

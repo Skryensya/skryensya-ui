@@ -70,8 +70,8 @@ for (const route of routes) {
     Zoom is not a visual preference or media query. It is a transformation of the viewport and the readable size: the content must wrap, the columns must stack, and all controls must remain available. The interface changes geometry, not capabilities.
   </p>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
       <p>
         <strong>200% and 400% test different contracts. </strong> At 200% it is verified that the text can grow without losing content or functionality. At 400% reflow is checked: a 1280px viewport is equivalent to <strong>320 CSS px</strong> and the page must be readable in only one direction.
       </p>
@@ -165,7 +165,7 @@ for (const route of routes) {
       </thead>
       <tbody>
         <tr>
-          <td>Text, Alert, Tile, Card</td>
+          <td>Text, Callout, Tile, Card</td>
           <td>Automatic height; labels and content can wrap.</td>
         </tr>
         <tr>
@@ -202,7 +202,7 @@ for (const route of routes) {
   <h2>What breaks with fixed zoom</h2>
   <ul>
     <li><code>width</code> or <code>min-width</code> larger than the effective viewport.</li>
-    <li><code>height</code> fixed on buttons, cards, alerts or fields with text.</li>
+    <li><code>height</code> fixed on buttons, cards, callouts or fields with text.</li>
     <li><code>white-space: nowrap</code> in labels that do not have a responsive output.</li>
     <li>Toolbars that hide actions instead of wrapping or rearranging them.</li>
     <li>Positioned content with physical offsets that stops participating in the flow.</li>

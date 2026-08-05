@@ -4,12 +4,12 @@
  * exist, this package must FAIL rather than pass, so that "no tests yet" can never read as green.
  * Delete this script the moment the real check runs.
  */
-const phase = process.env.AI_PHASE ?? "F2 — compilador y emisor";
+const phase = process.env.AI_PHASE ?? "F2: compilador y emisor";
 
 console.error(
   [
     "",
-    "  @skryensya/ai-compiler — NOT BUILT",
+    "  @skryensya/ai-compiler: NOT BUILT",
     "",
     `  Fase pendiente: ${phase}`,
     "  Plan:           docs/plataforma-ai-ui.md",

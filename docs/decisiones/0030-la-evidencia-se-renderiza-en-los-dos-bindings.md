@@ -4,7 +4,7 @@ title: La evidencia se renderiza en los dos bindings
 short: "El sitio es el catálogo ejecutable"
 summary: >-
   El catálogo ejecutable que exigía el plan de reconstrucción ya existe: `apps/docs` renderiza los
-  dos bindings lado a lado —vanilla en un iframe `srcdoc`, React como island `client:load`— en 57 de
+  dos bindings lado a lado (vanilla en un iframe `srcdoc`, React como island `client:load`) en 57 de
   sus 67 páginas. Esta decisión lo declara el catálogo ejecutable del sistema, hace que su `ComponentPreview`
   reciba usage trees en vez de strings, y adopta Playwright para correr los cuatro gates de runtime:
   simetría por DOM-diff, interacción, accesibilidad y visual. Storybook no vuelve.
@@ -16,13 +16,13 @@ El plan de reconstrucción pedía un catálogo ejecutable y nombraba Storybook p
 de ejemplo, play tests para interacción, baselines visuales, y el Storybook MCP como la manera en que
 el agente vería el resultado.
 
-Storybook se construyó en este repo —dos, uno para vanilla con `@storybook/html-vite` y otro para
-React— y se borró el 2026-07-17. No fue un accidente ni una limitación técnica: se rechazó a
+Storybook se construyó en este repo, dos, uno para vanilla con `@storybook/html-vite` y otro para
+React, y se borró el 2026-07-17. No fue un accidente ni una limitación técnica: se rechazó a
 propósito y se pidió volver a los previews del sitio.
 
 Y mientras tanto el sitio hacía ya lo que Storybook iba a hacer. `ComponentPreview.astro` monta la demo
 vanilla en un iframe `srcdoc` con su propio DOM, viewport y top layer, y la demo React como island
-`@astrojs/react` real —no un string de código— en el mismo documento, con un segmented para alternar.
+`@astrojs/react` real (no un string de código) en el mismo documento, con un segmented para alternar.
 **57 de 67 páginas ya tienen las dos etapas vivas.** Un segundo catálogo en paralelo no habría
 agregado una sola capacidad; habría agregado una segunda cosa que mantener sincronizada.
 
@@ -60,8 +60,8 @@ conocimiento de causa, y duplicaría un catálogo que existe y funciona.
 de mantener el runner, los baselines y la captura de evidencia a mano.
 
 **jsdom para la mitad estructural y navegador solo para lo visual.** Los gates baratos correrían en
-cada commit, pero jsdom ya demostró en este repo que miente con Zag —`raf`, microtasks, `CSS.escape`
-ausente— justo en los componentes cuya interacción importa. Un gate que miente rápido no es barato.
+cada commit, pero jsdom ya demostró en este repo que miente con Zag (`raf`, microtasks, `CSS.escape`
+ausente) justo en los componentes cuya interacción importa. Un gate que miente rápido no es barato.
 
 **Que el sitio sea además el runner de CI**, exponiendo sus árboles en una ruta machine-readable. Un
 solo lugar donde las cosas se renderizan, al precio de acoplar los gates al build del sitio y a que el

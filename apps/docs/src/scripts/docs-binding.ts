@@ -1,7 +1,7 @@
 /*
  * Persist the two shared ComponentPreview preferences: binding (Vanilla | React) and screen preset.
  *
- * Both live on <html> while the page is open — that is what the enhancer and the CSS read — and this
+ * Both live on <html> while the page is open (that is what the enhancer and the CSS read), and this
  * script is the bridge between those attributes and storage. It hand-rolls neither the key, the JSON,
  * the try/catch nor the guard: `setPreference` is the one way anything in this repo writes
  * localStorage, and the two declarations come from `lib/preferences`.

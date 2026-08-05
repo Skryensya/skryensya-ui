@@ -459,6 +459,17 @@ export type ComponentContract = {
   readonly options: Readonly<Record<string, ContractOption>>;
   readonly signatures: Readonly<Record<string, ContractSignature>>;
   readonly a11y?: readonly ContractA11yRule[];
+  /**
+   * The DOM events the component dispatches, by the name the code calls them: `valueChange` →
+   * `sk:accordionvaluechange`.
+   *
+   * Authored markup has no callback to pass, so an event is the ONLY way a consumer on that side
+   * hears about state, which makes it as much a part of the promise as an option is. Every family
+   * that has one already exports it as a const beside the contract (`accordionEvents`); naming it
+   * HERE is what puts it in the manifest, so the reference table and an agent can read it instead
+   * of a person finding it in prose.
+   */
+  readonly events?: Readonly<Record<string, string>>;
 };
 
 /* ---------------------------------------------------------------------------------------------- *

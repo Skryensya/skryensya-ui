@@ -94,8 +94,8 @@ const linterOutput = `✗ 1 problem(s):
   <CodeBlock code={badExample} label="components/button.css" note="tier 3 → tier 1" />
   <CodeBlock code={linterOutput} label="pnpm lint" note="the build crashes" />
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
     <p>
       It is not a documented convention: it is an executable rule. The validator runs over the CSS before each build, in <em>all</em> marks, because a rule that is only satisfied in the default palette is not a rule. The output above is real: it comes from aiming a styling hook at a ramp on purpose.
     </p>

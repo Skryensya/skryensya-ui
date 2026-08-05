@@ -5,7 +5,7 @@ import { canonicalTrees } from "./trees.js";
 import { expect, test } from "./fixtures.js";
 
 /*
- * G2 — the gate that makes "two bindings" mean something.
+ * G2: the gate that makes "two bindings" mean something.
  *
  * Both halves of every canonical tree are rendered in one real page, the enhancers run, and then the
  * two subtrees are compared. What is compared is the DOM each binding actually produced: elements,
@@ -15,12 +15,12 @@ import { expect, test } from "./fixtures.js";
  *
  *   - The enhancer's own bookkeeping: the MOUNT attribute a signature declares (`data-sk-button`) and
  *     the lifecycle markers the runtime writes (`data-sk-…-ready`, `data-sk-mounting`). React needs
- *     no attachment point, so these exist in one binding by definition. They are matched exactly —
+ *     no attachment point, so these exist in one binding by definition. They are matched exactly,
  *     NOT by a `data-sk-*` wildcard, which would also swallow an option a contract someday maps
  *     there, and hide a real divergence behind a convenience.
  *   - The VALUE of an id. React generates ids with useId, the emitter slugs the label text. What has
- *     to hold is the relationship — that `aria-labelledby` points at the element that renders the
- *     label — so ids are replaced by their position and the pointer is resolved against that.
+ *     to hold is the relationship: that `aria-labelledby` points at the element that renders the
+ *     label, so ids are replaced by their position and the pointer is resolved against that.
  *
  * Anything else that differs is a real divergence and fails here.
  */
@@ -38,13 +38,13 @@ const enhancerAttributes = [
     /*
      * Machine configuration. Authored markup has no channel but an attribute, so the enhancer reads
      * it off the DOM; React passes a prop and Zag never writes it back. Present on one side by
-     * construction, exactly like the mount point — and the contract is what says which options these
+     * construction, exactly like the mount point, and the contract is what says which options these
      * are, so the gate is not guessing from a name.
      */
     ...Object.values(contract.options)
       .filter((option) => option.machineInput)
       .map((option) => option.attr),
-    // Same rule one level down: a collection ENTRY can carry machine input too — a radio's initial
+    // Same rule one level down: a collection ENTRY can carry machine input too: a radio's initial
     // `checked` is authored as an attribute and set by React as a property.
     ...Object.values(contract.signatures).flatMap((signature) =>
       Object.values(signature.slots as Record<string, ContractSlot>).flatMap((slot) =>
@@ -82,14 +82,14 @@ const idReferences = [
    * The native Popover API's wiring is an id reference too, and the same rule applies for the same
    * reason: what has to hold is that the trigger points at the element that IS the popover, not that
    * both bindings invented the same string for it. Listed before anything uses it, because the
-   * alternative is discovering it as a false divergence the first time a popover is compared — the
+   * alternative is discovering it as a false divergence the first time a popover is compared: the
    * shape of failure `for` and `aria-controls` are already here to prevent.
    */
   "popovertarget",
 ];
 
 for (const { name } of canonicalTrees) {
-  test(`${name} — both bindings land on the same DOM`, async ({ stagePage: page }) => {
+  test(`${name}: both bindings land on the same DOM`, async ({ stagePage: page }) => {
     const block = page.locator(`[data-case="${name}"]`);
 
     const [vanilla, react] = await Promise.all([
@@ -100,7 +100,7 @@ for (const { name } of canonicalTrees) {
     expect(vanilla).toEqual(react);
   });
 
-  test(`${name} — both bindings expose the same accessibility tree`, async ({ stagePage: page }) => {
+  test(`${name}: both bindings expose the same accessibility tree`, async ({ stagePage: page }) => {
     const block = page.locator(`[data-case="${name}"]`);
 
     const [vanilla, react] = await Promise.all([
@@ -121,7 +121,7 @@ async function shapeOf(
     /*
      * On a COPY, because hoisting below detaches nodes and the stage is shared by every other gate in
      * this worker (fixtures.ts). Reading the live tree would leave each portalling case stripped of
-     * its floating regions for whatever test ran next — the accessibility snapshot and axe would then
+     * its floating regions for whatever test ran next: the accessibility snapshot and axe would then
      * scan a subtree this gate had quietly mutilated, in an order nothing controls. Only attributes,
      * tag names and text are read here, so a detached clone says exactly the same thing.
      */
@@ -157,7 +157,7 @@ async function shapeOf(
         /*
          * A generated name is an id by another route. React derives them from `useId` and the
          * vanilla helpers from their own counters, so the STRING can never match while the pairing
-         * it expresses must — the same reasoning as the `id` attribute above, applied to the two
+         * it expresses must; the same reasoning as the `id` attribute above, applied to the two
          * other places a generated name shows up: the anchor name inside a style, and the machine's
          * own uid, which Zag writes as `data-uid` and refers to from `data-controls`.
          */
@@ -175,7 +175,7 @@ async function shapeOf(
          * A style attribute's STRING is not its meaning. React assigns through CSSOM, so the
          * browser re-serialises it (`border: 0px`, `overflow-wrap`); authored markup keeps whatever
          * text was written (`border:0`, `word-wrap`). Both declare the same style. Round-tripping
-         * each side through CSSOM makes them comparable without pretending the difference matters —
+         * each side through CSSOM makes them comparable without pretending the difference matters:
          * matching Zag's source string byte for byte does NOT work, because only one side gets
          * normalised.
          */
@@ -192,13 +192,25 @@ async function shapeOf(
         attributes[name] = value.replace(/--sk-anchor-[\w-]+/g, (raw) => `--sk-anchor${token(raw)}`);
       }
 
+      /*
+       * A text node's own whitespace RUNS collapse to one space outside `<pre>`, the same rule the
+       * browser applies when it paints them, so a line the markup emitter wrapped for readability
+       * (`packages/ai-compiler/src/emit.ts`, PRINT_WIDTH) reads identically to the one-line string a
+       * live React render never bothered to wrap. Comparing the raw bytes instead would fail two
+       * DOMs that render the same thing, over a difference no reader or screen reader can see.
+       * `<pre>` is excluded because there whitespace IS the content: collapsing it there would be
+       * the false negative this exists to avoid, not fix.
+       */
+      const normalizeText = (text: string): string =>
+        element.closest("pre") ? text.trim() : text.replace(/\s+/g, " ").trim();
+
       return {
         tag: element.tagName.toLowerCase(),
         attributes: Object.fromEntries(Object.entries(attributes).sort(([a], [b]) => a.localeCompare(b))),
         children: [...element.childNodes]
           .map((node) =>
             node.nodeType === Node.TEXT_NODE
-              ? (node.textContent ?? "").trim() || undefined
+              ? normalizeText(node.textContent ?? "") || undefined
               : node.nodeType === Node.ELEMENT_NODE
                 ? describe(node as Element)
                 : undefined,
@@ -211,7 +223,7 @@ async function shapeOf(
      * FLOATING CONTENT IS HOISTED, in both bindings, before anything is compared.
      *
      * A positioned region is nested where it belongs in authored markup and PORTALLED to the
-     * container in React — that is the whole point of portalling, since an ancestor with
+     * container in React, and that is the whole point of portalling, since an ancestor with
      * `overflow: hidden` would otherwise clip it. So the two bindings genuinely disagree about
      * nesting while agreeing about everything else, and comparing the raw trees says they differ
      * for a reason neither one is wrong about.
@@ -220,7 +232,7 @@ async function shapeOf(
      * shapes comparable again without weakening anything: the region's own contents are still
      * compared in full, and a positioner appearing in one binding and not the other still fails.
      *
-     * Nothing exercised this until now — menu, select and tooltip are the only signatures that
+     * Nothing exercised this until now: menu, select and tooltip are the only signatures that
      * portal, and none of them had a canonical tree, so G2 had never once compared a portalling
      * component. The scoping machinery was there; the comparison was not.
      */
@@ -243,13 +255,13 @@ async function shapeOf(
 
     /*
      * Floating regions are compared as a SET, not a sequence. Their order in the container is an
-     * accident of how each binding got them there — nesting depth in authored markup, mount order
-     * in React — and no reader can perceive it, since each one is positioned against its own
+     * accident of how each binding got them there (nesting depth in authored markup, mount order
+     * in React), and no reader can perceive it, since each one is positioned against its own
      * anchor. Ordering both sides by content keeps every region compared in full while dropping the
      * one property that legitimately differs.
      *
      * Which forces two passes, because ids are POSITIONAL. Numbering them requires a stable
-     * traversal, and the traversal is only stable once the regions are ordered — so the first pass
+     * traversal, and the traversal is only stable once the regions are ordered, so the first pass
      * orders them by a signature that ignores ids entirely, and the second numbers and describes.
      * Getting this backwards is what made `aria-labelledby` point at "#8" on one side and "#5" on
      * the other while both were pointing at the same element.

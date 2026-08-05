@@ -18,10 +18,19 @@ export default defineConfig({
   // resolves in the browser from custom properties, there is nothing for a server to decide.
   output: "static",
 
+  // Every navigation is a full MPA load (no ClientRouter): `hover` fetches the destination HTML
+  // into the cache before the click lands, so the page a reader is about to ask for is already
+  // there when they ask for it. `prefetchAll` covers every internal `<a>` without opting each one
+  // in by hand.
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: "hover",
+  },
+
   /*
    * Spanish is the default and keeps its BARE paths (`prefixDefaultLocale: false`): every URL the
-   * site has today keeps working, and English is additive under `/en/`. Routes are real files —
-   * `src/pages/**` is Spanish, `src/pages/en/**` is English — because a docs page is prose, and prose
+   * site has today keeps working, and English is additive under `/en/`. Routes are real files:
+   * `src/pages/**` is Spanish, `src/pages/en/**` is English, because a docs page is prose, and prose
    * is translated, not parameterised.
    *
    * `redirectToDefaultLocale: false` leaves `/` as the Spanish home rather than bouncing it, and
@@ -50,22 +59,22 @@ export default defineConfig({
     /*
      * `@skryensya/react` is workspace SOURCE, served raw through `@fs/…` (no build step of its
      * own), while `@astrojs/react`'s island runtime is pre-bundled by Vite's dep optimizer. Left
-     * alone, the two resolve `react`/`react-dom` to different served URLs — same package on disk,
-     * two module instances in the browser — and any hook (Icon's `useContext`, Button's forwardRef)
+     * alone, the two resolve `react`/`react-dom` to different served URLs (same package on disk,
+     * two module instances in the browser), and any hook (Icon's `useContext`, Button's forwardRef)
      * throws "Invalid hook call" the moment it runs. `dedupe` alone does not fix this: it only
      * picks one INSTALLED copy when several exist, it does not force every importer through the
-     * SAME served URL. `optimizeDeps.include` does — it pins react/react-dom into the shared
+     * SAME served URL. `optimizeDeps.include` does: it pins react/react-dom into the shared
      * pre-bundle cache so `@fs`-served source and the island runtime both resolve to it.
      *
      * `@zag-js/react` is the same failure mode one hop further out: it has its own `react` import
      * that needs the SAME pre-bundle too. Left off this list, Vite only discovers it the first
      * time some page's island actually imports it, triggers an on-demand re-optimize +
      * page-reload mid-session, and whichever island already mounted before that reload lands with
-     * a stale dispatcher — `Cannot read properties of null (reading 'useId')`/`'useState'`.
+     * a stale dispatcher: `Cannot read properties of null (reading 'useId')`/`'useState'`.
      *
      * The per-machine `@zag-js/<name>` packages (select, accordion, combobox, date-picker, …) do
      * NOT belong here: they're plain state-machine definitions with no `react` import of their
-     * own (only `@skryensya/core/machines` touches them), and — critically — apps/docs never
+     * own (only `@skryensya/core/machines` touches them), and, critically, apps/docs never
      * depends on them directly, only `@skryensya/core` does. Vite's `optimizeDeps.include` can
      * only pre-bundle a specifier that resolves from the DECLARING project's own dependency graph;
      * naming one of these here just logs "Failed to resolve dependency" and does nothing.

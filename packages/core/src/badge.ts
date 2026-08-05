@@ -11,7 +11,7 @@ export type BadgePart = keyof typeof badgeParts;
 export type BadgePartClass = (typeof badgeParts)[BadgePart];
 
 /*
- * A count or a status, and nothing else. One part, one option — the simplest shape a contract takes,
+ * A count or a status, and nothing else. One part, one option: the simplest shape a contract takes,
  * and worth publishing precisely because an agent reaching for a coloured pill needs to be told that
  * `tone` is the only knob and that the tones are roles, never hues.
  */

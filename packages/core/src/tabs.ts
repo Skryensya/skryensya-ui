@@ -23,7 +23,7 @@ export type TabsPartClass = (typeof tabsParts)[TabsPart];
  *
  * A tab is not a child of the tab list: its label sits in a trigger, its body sits in a panel that is
  * the trigger's uncle, and what pairs them is a key. Composed as children, an author would have to
- * write that pairing twice and keep it in step — the enhancer literally scans for `data-value` on
+ * write that pairing twice and keep it in step: the enhancer literally scans for `data-value` on
  * both sides and drops any trigger whose panel it cannot find. So a tab is an ENTRY, and the template
  * repeats over the collection from two places.
  *
@@ -53,7 +53,7 @@ export const tabsContract = {
     },
     /**
      * Which tab starts selected. Falls back to the first enabled one when it names none.
-     * Markup: `data-value`. React: `defaultValue` — React's `value` is controlled, and a usage
+     * Markup: `data-value`. React: `defaultValue`. React's `value` is controlled, and a usage
      * tree has no change handler to feed it (same rename Slider and TimeField make).
      */
     value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
@@ -106,7 +106,7 @@ export const tabsContract = {
             ],
           },
           // The panels are siblings of the LIST, not of the triggers. One entry, two elements, far
-          // apart on purpose — a panel cannot live inside the tablist.
+          // apart on purpose: a panel cannot live inside the tablist.
           {
             element: "div",
             part: "content",
@@ -133,8 +133,8 @@ export const tabsContract = {
 export type TabsOrientation = OptionValue<typeof tabsContract.options.orientation>;
 
 /*
- * The machine's own inputs. Deliberately NOT derived from the contract: these are runtime wiring —
- * callbacks, controlled value, focus behaviour — and a contract describes what a consumer authors,
+ * The machine's own inputs. Deliberately NOT derived from the contract: these are runtime wiring
+ * (callbacks, controlled value, focus behaviour), and a contract describes what a consumer authors,
  * not what a machine is configured with. Overlap in name (`orientation`) is not overlap in kind.
  */
 export type TabsOptions = {

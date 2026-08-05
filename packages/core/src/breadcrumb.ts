@@ -16,8 +16,8 @@ export const breadcrumbParts = {
 } as const;
 
 /*
- * The trail back up. A collection, because every crumb is the same shape and the LAST one is special
- * — it is where you are, so it is not a link and it carries `aria-current="page"`.
+ * The trail back up. A collection, because every crumb is the same shape and the LAST one is special:
+ * it is where you are, so it is not a link and it carries `aria-current="page"`.
  *
  * The separator is `aria-hidden`: it is punctuation between the crumbs, and a screen reader reading
  * "slash" four times has learned nothing about the hierarchy.
@@ -41,8 +41,8 @@ export const breadcrumbContract = {
         /*
          * What sits between the crumbs, as CONTENT rather than as a string option.
          *
-         * It was a string, and a chevron between the crumbs — which the stylesheet has a rule for,
-         * `.sk-breadcrumb__separator .sk-icon` — was the one separator no tree could say. Text is
+         * It was a string, and a chevron between the crumbs (which the stylesheet has a rule for,
+         * `.sk-breadcrumb__separator .sk-icon`) was the one separator no tree could say. Text is
          * still a separator (`·`, `›`), so the slot takes either; what it does not take is arbitrary
          * markup, because punctuation with a heading in it is not punctuation.
          *

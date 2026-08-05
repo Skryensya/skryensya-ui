@@ -1,7 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
-/* Icon, title, description and the action that resolves the state — EmptyState's four slots. */
+/* Icon, title, description and the action that resolves the state: EmptyState's four slots. */
 export const emptyStateTree = (t: Translate): UsageTree => ({
   contract: "empty-state",
   signature: "EmptyState",

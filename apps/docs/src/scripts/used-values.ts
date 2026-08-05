@@ -19,8 +19,8 @@ const probeFor = (cls: string) =>
 
 /*
  * Every color in this system arrives through color-mix() or light-dark(), and Chrome serialises
- * both as `oklab(…)`. Matching only the authored function names left the entire ramp — most of the
- * corpus — with no swatch at all, which is the bug that made the reference look value-only.
+ * both as `oklab(…)`. Matching only the authored function names left the entire ramp (most of the
+ * corpus) with no swatch at all, which is the bug that made the reference look value-only.
  */
 const isColor = (v: string) => /^(oklch|oklab|lab|lch|rgba?|hsla?|#|color\()/i.test(v.trim());
 

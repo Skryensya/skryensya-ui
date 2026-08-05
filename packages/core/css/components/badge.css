@@ -45,9 +45,9 @@
   }
 
   .sk-badge[data-tone="accent"] {
-    --sk-badge-bg: var(--color-bg-accent-subtle);
-    --sk-badge-fg: var(--color-text-accent);
-    --sk-badge-dot-color: var(--color-border-accent);
+    --sk-badge-bg: var(--color-decorative-bg);
+    --sk-badge-fg: var(--color-decorative-fg);
+    --sk-badge-dot-color: var(--color-decorative-border);
   }
 
   .sk-badge[data-tone="success"] {

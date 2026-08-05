@@ -182,7 +182,7 @@ export const statContract = {
         label: { accepts: "text", required: true },
         value: { accepts: "text", required: true },
         /**
-         * The delta. `node`, not `text`, because the trend GLYPH lives here — the stylesheet sizes
+         * The delta. `node`, not `text`, because the trend GLYPH lives here: the stylesheet sizes
          * `.sk-stat__change .sk-icon` to the caption beside it, which is only reachable if an Icon
          * can be composed in. Typed as text, the contract could express the number and not the arrow
          * that every hand-written example on the docs page already had.

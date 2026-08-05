@@ -71,7 +71,7 @@ export const anchoredParts = {
    * It comes out of the ANCHOR, not out of the box's centre, so it is an anchored box in its own
    * right even though it lives inside the positioner. What makes that possible is `position: fixed`:
    * the spec only lets an element use an anchor that descends from its CONTAINING BLOCK, and the
-   * trigger does not descend from the positioner — but a fixed box is contained by the viewport,
+   * trigger does not descend from the positioner, but a fixed box is contained by the viewport,
    * where the trigger does live. With `absolute` the containing block would be the positioner and
    * every anchor reference would be invalid, silently. The geometry is in `patterns/anchored.css`.
    */

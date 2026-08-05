@@ -1,4 +1,4 @@
-/* TIER 3, NUMBER FIELD — formatted numeric input with step controls. */
+/* TIER 3, NUMBER FIELD: formatted numeric input with step controls. */
 @layer components {
   .sk-number-field {
     --sk-number-field-gap: var(--space-stack-xs);

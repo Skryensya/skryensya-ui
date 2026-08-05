@@ -6,7 +6,7 @@ import { Combobox } from "@skryensya/react/combobox";
 import { Icon } from "@skryensya/react/icon";
 import { framedIn } from "./framed";
 
-/** Every demo below runs inside its own preview frame — see `framed.tsx`. */
+/** Every demo below runs inside its own preview frame. See `framed.tsx`. */
 const framed = framedIn(import.meta.url);
 
 const slug = (name: string) =>

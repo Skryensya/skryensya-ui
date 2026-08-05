@@ -14,7 +14,7 @@ export type PopoverProps = Omit<HTMLAttributes<HTMLDivElement>, "content" | "tit
   arrow?: boolean;
   /**
    * The bare surface: an anchor and a panel, with no title, no description and no close control.
-   * It is the same component with less anatomy — `Popover.bare` in the contract — rather than a
+   * It is the same component with less anatomy (`Popover.bare` in the contract) rather than a
    * second component, because duplicating the parts would leave a reader choosing between two names
    * for one thing. Escape and light-dismiss still work: they are the platform's, not the chrome's.
    */
@@ -25,7 +25,7 @@ export type PopoverProps = Omit<HTMLAttributes<HTMLDivElement>, "content" | "tit
   contentClassName?: string;
   /**
    * Where the floating content is portalled. Defaults to `document.body`, which is right whenever
-   * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead — a preview
+   * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead: a preview
    * frame, a scoped test harness, or a dialog that owns its own stacking context.
    */
   container?: RefObject<HTMLElement>;

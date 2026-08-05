@@ -1,7 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 
 /*
- * Role names and sizes are the same in every language, so these are constants — a `t` argument
+ * Role names and sizes are the same in every language, so these are constants: a `t` argument
  * would only be a parameter nobody uses.
  */
 

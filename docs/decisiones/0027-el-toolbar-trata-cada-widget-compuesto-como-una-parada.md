@@ -14,7 +14,7 @@ summary: >-
 ## El problema
 
 El component preview de este sitio agrupa dos controles relacionados en su header: el selector de
-tamaño de pantalla y el toggle Vanilla/React. Ambos son Segmented — cada uno su propio `radiogroup`
+tamaño de pantalla y el toggle Vanilla/React. Ambos son Segmented: cada uno su propio `radiogroup`
 con roving tabindex ([`connectSegmented`](/../../packages/vanilla/src/components/segmented.ts): sólo
 la opción seleccionada tiene `tabindex="0"`, el resto `-1`). Agruparlos visualmente como una sola
 barra de controles es exactamente lo que Toolbar existe para hacer.
@@ -25,7 +25,7 @@ Pero el enhancer de Toolbar no sabía nada de esto:
 const controls = Array.from(root.querySelectorAll<HTMLElement>(controlsSelector));
 ```
 
-`controlsSelector` es `button:not([disabled]), a[href], ...` — recoge TODOS los botones dentro de la
+`controlsSelector` es `button:not([disabled]), a[href], ...`: recoge TODOS los botones dentro de la
 raíz, sin filtrar por tabindex. Anidar un Segmented de 3 opciones dentro de un Toolbar significaba que
 el Toolbar veía 3 paradas donde debía ver 1. Peor: Segmented ya maneja sus propias flechas
 (`onOptionKeydown`, con `event.preventDefault()` y `next.focus()`), así que al presionar
@@ -33,7 +33,7 @@ el Toolbar veía 3 paradas donde debía ver 1. Peor: Segmented ya maneja sus pro
 
 1. El keydown del option de Segmented movía el foco a la siguiente opción y llamaba `preventDefault()`.
 2. El evento burbujeaba hasta la raíz del Toolbar, cuyo propio `onKeyDown` no comprobaba
-   `defaultPrevented` — encontraba el `document.activeElement` ya actualizado por el paso 1, y lo
+   `defaultPrevented`: encontraba el `document.activeElement` ya actualizado por el paso 1, y lo
    volvía a mover una posición más.
 
 Una sola flecha saltaba dos paradas.
@@ -43,8 +43,8 @@ Una sola flecha saltaba dos paradas.
 Dos cambios en [`packages/vanilla/src/components/toolbar.ts`](/../../packages/vanilla/src/components/toolbar.ts):
 
 1. **Filtrar por parada, no por foco posible.** `controls` ahora excluye cualquier elemento con
-   `tabindex="-1"`. Un widget compuesto que expone su propio roving tabindex —Segmented, y cualquier
-   futuro widget que siga el mismo contrato— pasa a contar como una sola parada para el Toolbar, sin
+   `tabindex="-1"`. Un widget compuesto que expone su propio roving tabindex (Segmented, y cualquier
+   futuro widget que siga el mismo contrato) pasa a contar como una sola parada para el Toolbar, sin
    que el Toolbar tenga que conocer su tipo.
 2. **Respetar `event.defaultPrevented`.** Si el hijo ya manejó la tecla (Segmented, Tabs), el
    `onKeyDown` del Toolbar no vuelve a moverse. Esto no es específico de Segmented: es el contrato

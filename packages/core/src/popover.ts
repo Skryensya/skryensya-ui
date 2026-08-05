@@ -25,7 +25,7 @@ export const popoverAttrs = {
 } as const;
 
 /*
- * POPOVER, the contract — the third whose behaviour belongs entirely to the browser.
+ * POPOVER, the contract: the third whose behaviour belongs entirely to the browser.
  *
  * No enhancer and no machine: the native Popover API owns light-dismiss, Escape and the top layer,
  * so both bindings are the same markup twice, as with `Select.native` and `Dialog`.
@@ -38,7 +38,7 @@ export const popoverAttrs = {
  * binding that writes a unique name inline; this one has no binding to write it and a template
  * cannot, since the name must be unique per instance and a template is the same text every time.
  * The answer was to stop generating names: `popover.css` sets one static name and scopes it with
- * `anchor-scope`, so any number of popovers can share it. Structure instead of generation — the
+ * `anchor-scope`, so any number of popovers can share it. Structure instead of generation, the
  * same move that let a split button reach a composed Menu's trigger.
  */
 export const popoverContract = {
@@ -131,11 +131,11 @@ export const popoverContract = {
     },
 
     /*
-     * THE BARE SURFACE — an anchor and a panel, and nothing the panel does not need.
+     * THE BARE SURFACE: an anchor and a panel, and nothing the panel does not need.
      *
      * The docs call this one `popup` and its own page says what it is: "superficie flotante mínima
      * para composiciones que no necesitan chrome de Popover". It has no core file and no stylesheet
-     * of its own — it imports `popover.css` — because it is not another component, it is this one
+     * of its own (it imports `popover.css`) because it is not another component, it is this one
      * with less anatomy. A contract of its own would duplicate every part and leave a reader
      * choosing between two names for one thing, which is exactly what a catalogue must not do.
      *

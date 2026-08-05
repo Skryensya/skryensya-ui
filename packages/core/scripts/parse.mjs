@@ -155,9 +155,19 @@ export function parseTokens(cssDir = CSS_DIR) {
     const isHc = mode.startsWith("hc-");
     const raw = isHc ? [...(hcByName.get(name) ?? [])][0] : baseSemantic.get(name);
     if (!raw) return null;
-    const ld = raw.match(/light-dark\((.*)\)/);
+    /* `[\s\S]`, not `.`: a token value may span lines, and `.` stops at the newline, so a
+     * multi-line `light-dark()` matched nothing here and fell through to "unresolvable" — the
+     * validator kept passing while it had quietly stopped checking those pairs. */
+    const ld = raw.match(/light-dark\(([\s\S]*)\)/);
     const pick = ld ? splitTopLevel(ld[1])[mode.endsWith("light") ? 0 : 1] : raw;
-    return evalColor(pick, ramps);
+
+    /*
+     * The reach tokens (`--color-text-link`, `--color-nav-current-*`, `--color-decorative-*`) are
+     * semantic-to-semantic aliases, so resolving one has to be able to chase the token it points at,
+     * not just the tier-1 ramps. `ramps` alone would dead-end on the first hop.
+     */
+    const env = new Map([...ramps, ...baseSemantic]);
+    return evalColor(pick, env);
   }
 
   // Flat, deduped token list, one entry per declared name, carrying the authored form.
@@ -259,8 +269,10 @@ function splitColorPct(arg) {
     const color = arg.slice(0, arg.length - m[0].length).trim();
     if (balancedParens(color)) return { color, pct: parseFloat(m[1]) };
   }
+
   return { color: arg.trim(), pct: null };
 }
+
 
 /**
  * Evaluate a color expression to a concrete oklch(), or null if it can't be resolved:

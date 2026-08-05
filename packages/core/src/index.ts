@@ -1,4 +1,4 @@
-export * from "./alert.js";
+export * from "./callout.js";
 export * from "./accordion.js";
 export * from "./anchored.js";
 export * from "./avatar.js";
@@ -6,6 +6,7 @@ export * from "./badge.js";
 export * from "./breadcrumb.js";
 export * from "./button.js";
 export * from "./calendar.js";
+export * from "./changelog.js";
 export * from "./code-preview.js";
 export * from "./component-preview.js";
 export * from "./copy-button.js";

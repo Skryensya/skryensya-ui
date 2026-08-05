@@ -32,7 +32,7 @@ export type MenuProps = {
   onCheckedChange?: (details: { value: string; checked: boolean }) => void;
   /**
    * Where the floating content is portalled. Defaults to `document.body`, which is right whenever
-   * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead — a preview
+   * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead: a preview
    * frame, a scoped test harness, or a dialog that owns its own stacking context.
    */
   container?: RefObject<HTMLElement>;
@@ -244,7 +244,7 @@ function Submenu({
         <span className={menuParts.itemLabel}>{item.label}</span>
         {/*
           * No `getIndicatorProps` here. It is `aria-hidden` decoration, and the vanilla enhancer has
-          * no selector that reaches a submenu trigger's chevron — so naming it in one binding only
+          * no selector that reaches a submenu trigger's chevron, so naming it in one binding only
           * bought a divergence and no behaviour.
           */}
         <span aria-hidden="true" className={menuParts.itemIndicator}>
@@ -346,7 +346,7 @@ export function Menu({
           {/*
             * The chevron is the DEFAULT, not an opt-in. The contract template paints one on every
             * menu trigger, so authored markup always had it and React only rendered one when the
-            * caller remembered to pass `indicator` — the same tree came out 28px narrower here
+            * caller remembered to pass `indicator`: the same tree came out 28px narrower here
             * than in Vanilla. Pass `indicator={null}` to suppress it deliberately.
             */}
           <span aria-hidden="true">

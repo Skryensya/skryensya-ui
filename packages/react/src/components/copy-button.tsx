@@ -1,10 +1,12 @@
+import { anchoredAttrs, anchoredParts } from "@skryensya/core/anchored";
 import { copyButtonAttrs, copyButtonContract, copyButtonParts } from "@skryensya/core/copy-button";
 import type { SignatureOptionsOf } from "@skryensya/core/contract";
-import { useEffect, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from "react";
+import { useAnchored } from "./anchored.js";
 import { Icon } from "./icon.js";
 
 /*
- * COPY BUTTON, the React half — which did not exist until now.
+ * COPY BUTTON, the React half, which did not exist until now.
  *
  * The Vanilla enhancer has been shipping for a while and nothing on this side matched it, so the
  * component could not be published as a contract at all: a contract names a React export, G1 checks
@@ -12,7 +14,7 @@ import { Icon } from "./icon.js";
  *
  * The behaviour is copied from `packages/vanilla/src/components/copy-button.ts` deliberately, down
  * to the 1800ms window and the `execCommand` fallback, because the two have to agree about what a
- * failed copy looks like — not only about what the markup is.
+ * failed copy looks like, not only about what the markup is.
  */
 
 /** Long enough to read the confirmation, short enough that the button is idle again when reused. */
@@ -46,7 +48,7 @@ async function writeClipboard(text: string): Promise<boolean> {
   }
 }
 
-/* The button paint comes from the contract, so Core stays the only place its values are defined —
+/* The button paint comes from the contract, so Core stays the only place its values are defined:
    the root is a `.sk-button` and that sheet reads these exact attributes. */
 export type CopyButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type"> &
   Pick<SignatureOptionsOf<typeof copyButtonContract, "CopyButton">, "variant" | "size" | "iconOnly"> & {
@@ -80,6 +82,18 @@ export function CopyButton({
   const [state, setState] = useState<CopyState | undefined>();
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
+  /*
+   * The flag's placement is the Anclaje pattern, so this side owes the same thing the enhancer does:
+   * one dashed-ident per instance, on the button and on the flag. `useAnchored` is the shared React
+   * half of it; there is no machine to strip a style from here, so it gets nothing to wrap.
+   */
+  const anchored = useAnchored(useId());
+  const host = anchored.anchor(
+    [copyButtonParts.root, "sk-button", "sk-interactive", className].filter(Boolean).join(" "),
+    props.style,
+  );
+  const flag = anchored.positioner({}, copyButtonParts.feedback);
+
   // The timer outlives a fast unmount otherwise, and setting state on a gone button throws.
   useEffect(() => () => clearTimeout(timer.current), []);
 
@@ -95,9 +109,8 @@ export function CopyButton({
     <button
       {...props}
       aria-label={currentAriaLabel}
-      className={[copyButtonParts.root, "sk-button", "sk-interactive", className]
-        .filter(Boolean)
-        .join(" ")}
+      className={host.className}
+      style={host.style}
       onClick={(event) => {
         props.onClick?.(event);
         const text = document.getElementById(target)?.textContent;
@@ -119,7 +132,7 @@ export function CopyButton({
       {...{ [copyButtonAttrs.target]: target, [copyButtonAttrs.state]: state }}
     >
       {/* BOTH icons are always rendered and the stylesheet shows one, off the root's state
-          attribute — the enhancer has no runtime to swap an icon with, so neither does this. */}
+          attribute: the enhancer has no runtime to swap an icon with, so neither does this. */}
       <span aria-hidden="true" className={copyButtonParts.icon} {...{ [copyButtonAttrs.icon]: "idle" }}>
         <Icon name="copy" />
       </span>
@@ -128,6 +141,19 @@ export function CopyButton({
       </span>
       <span aria-live="polite" className={copyButtonParts.label} {...{ [copyButtonAttrs.label]: "" }}>
         {state === "copied" ? successLabel : state === "error" ? errorLabel : children}
+      </span>
+      {/* THE VISIBLE HALF of that same sentence, `aria-hidden` so it is not read as a second one.
+          `data-state` is the pattern's word for open, and its ABSENCE is what closed means, so an
+          idle button carries no attribute at all, the same as one the enhancer has not reached. */}
+      <span
+        {...flag}
+        aria-hidden="true"
+        data-state={state ? "open" : undefined}
+        {...{ [anchoredAttrs.placement]: "inline-start", [copyButtonAttrs.feedback]: "" }}
+      >
+        <span {...{ [copyButtonAttrs.feedbackText]: "copied" }}>{successLabel}</span>
+        <span {...{ [copyButtonAttrs.feedbackText]: "error" }}>{errorLabel}</span>
+        <span aria-hidden="true" className={anchoredParts.arrow} />
       </span>
     </button>
   );

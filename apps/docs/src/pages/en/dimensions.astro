@@ -80,8 +80,8 @@ const radiusUse = `<!-- A multiplier preset… -->
     </table>
   </div>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
     <p>
       <strong>The separation remains structural: </strong> the ramps are tier 1 and the semantic tokens only reference positions such as<code>accent-600</code>. Substituting a ramp never steps on a semantic token: mode, contrast, density and radius remain independent.
     </p>
@@ -137,8 +137,8 @@ const radiusUse = `<!-- A multiplier preset… -->
     </p>
   </div>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
     <p>
       <strong>The accessibility floor is inside the token, not in the documentation. </strong> Interactive sizes output <code>max(round(calc(base × densidad), 2px), 24px)</code>. That <code>max()</code> is the WCAG 2.2 SC 2.5.8 minimum: no team can multiply below 24px, no matter what they assign to <code>--sk-density</code>. It is unattainable by construction, not by code review.
     </p>
@@ -171,8 +171,8 @@ const radiusUse = `<!-- A multiplier preset… -->
     </p>
   </div>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
     <p>
       <strong>The dimension invariant: <code>--radius-pill</code> does not move. </strong> The axis plays the two roles of roundness, control and surface, and leaves the shape still: a pill is a completely round lozenge, not a setting of roundness, and turning it into a rectangle in <code>none</code> would erase its identity. Each dimension carries its invariant inside: the density has the WCAG floor, the radius has the pill.
     </p>

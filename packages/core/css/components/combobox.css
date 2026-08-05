@@ -1,4 +1,4 @@
-/* TIER 3, COMBOBOX — editable input plus filtered listbox. */
+/* TIER 3, COMBOBOX: editable input plus filtered listbox. */
 @layer components {
   .sk-combobox {
     --sk-combobox-bg: var(--color-bg-surface-raised);
@@ -55,7 +55,7 @@
 
   /* The control shows the focus ring only when the INPUT itself holds focus. A plain `:focus-within`
      also fired when a child icon button (clear / trigger) was focused, and that button carries its
-     own `sk-interactive` ring — so the two nested and read as a box-in-a-box. Scoping to the input
+     own `sk-interactive` ring, so the two nested and read as a box-in-a-box. Scoping to the input
      leaves exactly one ring on screen at a time, always on the element that actually has focus:
      the whole control for the text field, the pill for a focused icon button. */
   .sk-combobox__control:has(.sk-combobox__input:focus) {
@@ -64,8 +64,8 @@
   }
 
   /* …and it gives that ring up while the arrow keys are walking the list. `data-virtual-focus` says
-     an option is holding the focus ring instead (see the item rule below), and two rings on screen —
-     one round the field, one round the row — read as two focused things. The ring MOVES into the
+     an option is holding the focus ring instead (see the item rule below), and two rings on screen,
+     one round the field, one round the row, read as two focused things. The ring MOVES into the
      list and comes back when the walk ends; DOM focus never went anywhere. */
   .sk-combobox[data-virtual-focus]
     .sk-combobox__control:has(.sk-combobox__input:focus) {
@@ -216,15 +216,15 @@
     );
     padding: var(--space-inset-xs);
     /* The list scrolls, and two things follow from that:
-       — `overscroll-behavior: contain` keeps the wheel inside the popup. Hitting the last option
+       * `overscroll-behavior: contain` keeps the wheel inside the popup. Hitting the last option
          used to hand the scroll on to the page, which slides the field out from under its own
          open list.
-       — `scroll-padding` matches the padding, so the option the arrow keys scroll into view lands
+       * `scroll-padding` matches the padding, so the option the arrow keys scroll into view lands
          inside the box instead of flush against its edge, where it reads as the last one.
        No `scrollbar-gutter: stable`, deliberately: reserving the rail on a list that is usually
        short leaves every row ending 13px early on the right and 4px on the left, and the focus
        ring makes that gap impossible to unsee. Not reserving it costs a right edge that moves when
-       filtering crosses the max height — labels are start-aligned, so nothing you are reading
+       filtering crosses the max height; labels are start-aligned, so nothing you are reading
        moves. The rail's color is the `sk-scrollbar` pattern, authored on this element (same opt-in
        as the command palette's list); this file never repaints a scrollbar itself. */
     overflow: auto;
@@ -244,7 +244,7 @@
   }
   /* `[hidden]` must win over the `display` these parts set in this layer, otherwise the UA
      `[hidden] { display: none }` (a lower, unlayered origin) loses and the element the machine
-     hides — the clear ✕ with nothing typed, an empty selected-items row — stays painted. */
+     hides (the clear ✕ with nothing typed, an empty selected-items row) stays painted. */
   .sk-combobox__item[hidden],
   .sk-combobox__empty[hidden],
   .sk-combobox__selected-items[hidden],
@@ -288,7 +288,7 @@
   /* The highlighted option IS the focus: DOM focus stays in the input and `aria-activedescendant`
      points here, so nothing else on screen says where the arrow keys have landed. Same ring as any
      focusable control, and the same treatment the command palette gives its virtual focus.
-     `data-highlight-source` gates it to keyboard navigation — the machine also highlights on
+     `data-highlight-source` gates it to keyboard navigation: the machine also highlights on
      `pointermove`, and a focus ring under the cursor reads as broken focus, so hovering keeps the
      tint alone. Offset is INSET: the content scrolls, and an outward ring would be clipped at the
      top and bottom edges and collide with the neighbouring row. */
@@ -338,7 +338,7 @@
 
   /* The result-count live region is for assistive tech only: it announces "N resultados
      disponibles" as the filter changes. The hiding is `sk-visually-hidden`, which ships in the base
-     bundle — this used to carry its own copy of that recipe because the utility did not exist yet. */
+     bundle; this used to carry its own copy of that recipe because the utility did not exist yet. */
 
   .sk-combobox__empty {
     padding: var(--space-inset-lg) var(--space-inset-md);

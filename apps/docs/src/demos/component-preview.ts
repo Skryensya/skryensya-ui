@@ -2,7 +2,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /**
- * `ComponentPreview.bare` — a titled stage plus its source, composed from `Button` and
+ * `ComponentPreview.bare`: a titled stage plus its source, composed from `Button` and
  * `CodePreview` rather than reimplemented. The full apparatus this page otherwise teaches (binding
  * switch, screen presets) is this site's own chrome and has no tree of its own; this is the part
  * that does.

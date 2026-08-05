@@ -58,7 +58,7 @@ const nativeCss = `@import "@skryensya/icons-lucide/carousel.css";
 
 const api = `const carousel = document.querySelector("[data-sk-carousel]");
 
-// pin to a page (0-based) — the same command that sends snapTo() from the React ref
+// pin to a page (0-based): the same command that sends snapTo() from the React ref
 carousel.dispatchEvent(new CustomEvent("sk-carousel-goto", { detail: { index: 2 } }));
 
 // read the active page every time it changes (swipe, wheel, button, key, drag or goto)
@@ -78,7 +78,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     They are from the platform, not from a script. Above are two layers of control on that same substrate: one
     base <strong>without JS</strong> with native carousel pseudo-elements, and an enhancer
     <strong>machine-backed</strong> on <code>@zag-js/carousel</code> which measures the track, derives the
-    pages and draw buttons and dots. Each slide is any content — a card, an image, a stat.
+    pages and draw buttons and dots. Each slide is any content: a card, an image, a stat.
   </p>
 
   <h2>Card carousel</h2>
@@ -86,7 +86,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     With <code>data-sk-carousel</code>, the enhancer runs the machine: prev/next (disabled at the
     ends), one dot per <strong>page</strong>, keyboard navigation, drag, and re-measurement on resize.
     Each slide is a card composed from <a href="/en/components/image-frame">ImageFrame</a>,
-    <code>Box</code>, <code>Stack</code>, and <code>Text</code> —without local classes. The default
+    <code>Box</code>, <code>Stack</code>, and <code>Text</code>, without local classes. The default
     CSS size lets the next card peek through.
   </p>
   <ComponentPreview
@@ -102,8 +102,8 @@ carousel.addEventListener("sk-carousel-change", (event) => {
     <strong>reachable</strong> are not one per slide: when a slide appears, the last ones are cropped
     all against the maximum scroll and collapse in the same position. A handmade carousel draws there
     one dot per slide and ends with dots that <em>never</em> can be activated and a “next” button that
-    It is never disabled. The machine derives pages from <code>getScrollSnapPositions</code>—measurements,
-    cropped and deduplicated—so the dots and scroll match by construction. It looks
+    It is never disabled. The machine derives pages from <code>getScrollSnapPositions</code> (measurements,
+    cropped and deduplicated), so the dots and scroll match by construction. It looks
     shrinking the window on any of the examples: the slides that enter change, the
     number of dots, and the last one can always be reached.
   </p>

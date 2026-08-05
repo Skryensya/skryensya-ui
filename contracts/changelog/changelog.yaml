@@ -1,0 +1,60 @@
+# Qué cambió en changelog, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# hash nuevo.
+surface: "7179c1e8d9b22c20"
+entries:
+  - date: 2026-08-04
+    kind: removed
+    es: >-
+      Se fue la parte <code>body</code>. La ENTRADA es la grilla ahora: el punto en la primera
+      columna, la meta y la prosa apiladas en la segunda. El envoltorio existía sólo para que una
+      grilla de dos columnas tuviera dos hijos, y con las dos filas puestas por nombre no hace
+      falta. Si lo estabas usando para estilar, el ancla es <code>sk-changelog__entry</code>.
+    en: >-
+      The <code>body</code> part is gone. The ENTRY is the grid now: the dot in the first column,
+      the meta and the prose stacked in the second. The wrapper existed only so a two-column grid
+      would have two children, and with both rows placed by name it does not. If you were styling
+      against it, the hook is <code>sk-changelog__entry</code>.
+  - date: 2026-08-04
+    kind: added
+    target: kind
+    es: >-
+      El tipo de cambio son dos campos: la opción pinta el punto del riel y es lo que la tabla de
+      referencia puede marcar, y el slot es la PALABRA, así que el tipo nunca queda sólo en el
+      color. Es el mismo corte que hace <code>Steps</code> entre su opción <code>status</code> y su
+      slot <code>marker</code>, por la misma razón.
+    en: >-
+      The kind is two fields: the option colours the dot on the rail and is what a reference table
+      can badge, and the slot is the WORD, so the kind is never colour alone. It is the same split
+      <code>Steps</code> makes between its <code>status</code> option and its <code>marker</code>
+      slot, for the same reason.
+  - date: 2026-08-04
+    kind: added
+    target: date
+    es: >-
+      La fecha también son dos. La opción <code>date</code> es el día legible por una máquina,
+      <code>YYYY-MM-DD</code>, y aterriza en <code>&lt;time datetime&gt;</code>; el texto visible
+      es un slot, porque una fecha formateada es copy en un idioma y Core no envía ninguno. El
+      binding formatea con <code>Intl</code> y llena el slot.
+    en: >-
+      The date is two as well. The <code>date</code> option is the machine-readable day,
+      <code>YYYY-MM-DD</code>, and it lands on <code>&lt;time datetime&gt;</code>; the visible one
+      is a slot, because a formatted date is copy in a language and Core ships none. A binding
+      formats it with <code>Intl</code> and fills the slot.
+  - date: 2026-08-04
+    kind: added
+    es: >-
+      Primera publicación del contrato: <code>Changelog</code> y <code>ChangelogEntry</code>, un
+      historial fechado con riel. No es un <code>ProcessList</code> con otra pintura: ése numera
+      sus marcadores con un <code>counter()</code> de CSS, así que una lista con lo más nuevo
+      arriba se numeraría al revés del tiempo. Tampoco es un <code>Steps</code>, cuyo conector dice
+      cuánto trabajo queda atrás, que de un cambio ya publicado no es una afirmación que nadie
+      pueda hacer.
+    en: >-
+      First published contract: <code>Changelog</code> and <code>ChangelogEntry</code>, a dated
+      history on a rail. It is not a repainted <code>ProcessList</code>: that one numbers its
+      markers with a CSS <code>counter()</code>, so a newest-first list would number itself
+      backwards through time. Nor is it <code>Steps</code>, whose connector says how much work is
+      behind the reader, which of a shipped change is not a claim anyone can make.

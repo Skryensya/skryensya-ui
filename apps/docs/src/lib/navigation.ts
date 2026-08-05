@@ -9,8 +9,8 @@ export type NavigationItem = {
   aliases?: readonly string[];
   todo?: boolean;
   /**
-   * Maturity of the component this entry documents. Omitted defaults to "wip" — the honest state
-   * of every entry in this catalog today — via {@link componentStatus}. Flip an entry to "stable"
+   * Maturity of the component this entry documents. Omitted defaults to "wip" (the honest state
+   * of every entry in this catalog today) via {@link componentStatus}. Flip an entry to "stable"
    * once its contract has actually settled; never the reverse, an entry does not go back to "wip"
    * once it has shipped as settled.
    */
@@ -24,6 +24,8 @@ export function componentStatus(item: NavigationItem): ComponentStatus {
 
 export type NavigationGroup = {
   group: string;
+  /** Short task-oriented explanation used by catalog section headers. */
+  blurb?: string;
   /** A platform-native fallback: discoverable, but visually and structurally below the enhanced route. */
   secondary?: boolean;
   items: readonly NavigationItem[];
@@ -44,7 +46,7 @@ export type NavigationSection = {
 
 export type NavigationSectionId = "start" | "system" | "components";
 
-/** Flat catalog under Componentes. Sorted A–Z by label (`es`). */
+/** Component inventory. The catalog groups this single source by task below. */
 const componentItems = [
   {
     href: "/componentes/accordion",
@@ -65,7 +67,6 @@ const componentItems = [
       "disclosure",
     ],
   },
-  { href: "/componentes/alert", label: "Alert", aliases: ["alerta"] },
   { href: "/componentes/avatar", label: "Avatar", aliases: ["perfil"] },
   { href: "/componentes/badge", label: "Badge", aliases: ["insignia"] },
   { href: "/componentes/box", label: "Box", aliases: ["caja"] },
@@ -82,6 +83,7 @@ const componentItems = [
       "tarjeta boton",
     ],
   },
+  { href: "/componentes/callout", label: "Callout", aliases: ["alerta", "nota", "aviso"] },
   {
     href: "/componentes/card",
     label: "Card",
@@ -129,6 +131,22 @@ const componentItems = [
       "checkbox de superficie",
       "tarjeta seleccionable",
       "tarjeta casilla",
+    ],
+  },
+  {
+    href: "/componentes/changelog",
+    label: "Changelog",
+    aliases: [
+      "changelog",
+      "historial",
+      "cambios",
+      "release notes",
+      "notas de versión",
+      "notas de version",
+      "novedades",
+      "timeline",
+      "línea de tiempo",
+      "linea de tiempo",
     ],
   },
   {
@@ -411,12 +429,137 @@ const componentItems = [
   },
 ] as const satisfies readonly NavigationItem[];
 
+type ComponentHref = (typeof componentItems)[number]["href"];
+
+const componentItemByHref = Object.fromEntries(
+  componentItems.map((item) => [item.href, item] as const),
+) satisfies Record<string, NavigationItem>;
+
+const componentGroupItems = (...hrefs: readonly ComponentHref[]): readonly NavigationItem[] =>
+  hrefs
+    .map((href) => {
+      const item = componentItemByHref[href];
+      if (!item) throw new Error(`Unknown component catalog entry: ${href}`);
+      return item;
+    })
+    .sort((a, b) => a.label.localeCompare(b.label, "es"));
+
 export const componentNavigation = [
   {
-    group: "",
-    items: [...componentItems].sort((a, b) => a.label.localeCompare(b.label, "es")),
+    group: "group.componentActions",
+    blurb: "group.componentActions.blurb",
+    items: componentGroupItems(
+      "/componentes/button",
+      "/componentes/calendar",
+      "/componentes/checkbox",
+      "/componentes/combobox",
+      "/componentes/copy-button",
+      "/componentes/date-picker",
+      "/componentes/file-upload",
+      "/componentes/input",
+      "/componentes/number-field",
+      "/componentes/radio-group",
+      "/componentes/segmented",
+      "/componentes/select",
+      "/componentes/slider",
+      "/componentes/split-button",
+      "/componentes/switch",
+      "/componentes/time-field",
+      "/componentes/toolbar",
+    ),
+  },
+  {
+    group: "group.componentNavigation",
+    blurb: "group.componentNavigation.blurb",
+    items: componentGroupItems(
+      "/componentes/breadcrumb",
+      "/componentes/command-palette",
+      "/componentes/link",
+      "/componentes/menu",
+      "/nav-list",
+      "/componentes/navbar",
+      "/componentes/pagination",
+      "/componentes/sidebar",
+      "/componentes/tabs",
+      "/componentes/toc",
+      "/componentes/tree-view",
+    ),
+  },
+  {
+    group: "group.componentContent",
+    blurb: "group.componentContent.blurb",
+    items: componentGroupItems(
+      "/componentes/avatar",
+      "/componentes/badge",
+      "/componentes/card",
+      "/componentes/carousel",
+      "/componentes/changelog",
+      "/componentes/code-preview",
+      "/componentes/component-preview",
+      "/componentes/heading",
+      "/componentes/icon",
+      "/componentes/image-frame",
+      "/componentes/kbd",
+      "/componentes/list",
+      "/componentes/process-list",
+      "/componentes/stat",
+      "/componentes/table",
+      "/componentes/tag",
+      "/componentes/text",
+    ),
+  },
+  {
+    group: "group.componentFeedback",
+    blurb: "group.componentFeedback.blurb",
+    items: componentGroupItems(
+      "/componentes/callout",
+      "/componentes/empty-state",
+      "/componentes/loader",
+      "/componentes/placeholder",
+      "/componentes/progress",
+      "/componentes/steps",
+      "/componentes/toast",
+      "/componentes/tooltip",
+    ),
+  },
+  {
+    group: "group.componentLayers",
+    blurb: "group.componentLayers.blurb",
+    items: componentGroupItems(
+      "/componentes/accordion",
+      "/componentes/dialog",
+      "/componentes/drawer",
+      "/componentes/flyout",
+      "/componentes/popover",
+      "/componentes/popup",
+      "/vaul",
+    ),
+  },
+  {
+    group: "group.componentLayout",
+    blurb: "group.componentLayout.blurb",
+    items: componentGroupItems(
+      "/componentes/box",
+      "/componentes/grid",
+      "/hotkey",
+      "/componentes/inline",
+      "/scrollbar",
+      "/componentes/stack",
+      "/componentes/theme-toggle",
+      "/componentes/wrapper",
+    ),
   },
 ] satisfies readonly NavigationGroup[];
+
+const categorizedComponentHrefs = componentNavigation.flatMap((group) =>
+  group.items.map((item) => item.href),
+);
+if (
+  categorizedComponentHrefs.length !== componentItems.length ||
+  new Set(categorizedComponentHrefs).size !== componentItems.length
+) {
+  throw new Error("Every component catalog entry must belong to exactly one usage group");
+}
 
 /*
  * The authored table below carries UI KEYS in `section`, `blurb` and `group`, not Spanish prose:
@@ -448,6 +591,11 @@ export const documentationNavigation = [
             href: "/primer-componente",
             label: "Tu primer componente",
             aliases: ["first component", "primer componente"],
+          },
+          {
+            href: "/montaje-automatico",
+            label: "Montaje automático",
+            aliases: ["auto mount", "initComponents", "auto-mounting", "automatic mounting", "vanilla mount"],
           },
         ],
       },
@@ -484,6 +632,11 @@ export const documentationNavigation = [
             aliases: ["density", "densidad local", "scope de densidad", "custom density", "compactar componente"],
           },
           { href: "/tiers", label: "Tiers" },
+          {
+            href: "/arquitectura",
+            label: "Arquitectura",
+            aliases: ["contrato", "binding", "capas", "cómo se construye un componente", "machine"],
+          },
           { href: "/styling-hooks", label: "Styling hooks" },
           { href: "/motion", label: "Motion" },
           {
@@ -605,9 +758,10 @@ export function getNavigation(locale: Locale): readonly NavigationSection[] {
     section: t(section.section as Parameters<typeof t>[0]),
     blurb: t(section.blurb as Parameters<typeof t>[0]),
     href: section.href ? resolveHref(section.href, locale) : undefined,
-    groups: section.groups.map((group) => ({
+    groups: section.groups.map((group: NavigationGroup) => ({
       ...group,
       group: group.group ? t(group.group as Parameters<typeof t>[0]) : "",
+      blurb: group.blurb ? t(group.blurb as Parameters<typeof t>[0]) : undefined,
       items: group.items.map(item),
     })),
   }));

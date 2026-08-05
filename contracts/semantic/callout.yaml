@@ -1,0 +1,11 @@
+# La estructura vive en packages/core/src/callout.ts. Acá sólo por qué se elige.
+
+Callout:
+  useWhen:
+    - "hay que contar algo que pasó: un error, una confirmación, una advertencia, o simplemente una nota al margen"
+    - "el mensaje queda en la página, no desaparece solo"
+  avoidWhen:
+    - "el mensaje es efímero y se va solo; eso es un Toast"
+    - "la región está vacía por no tener datos; eso es un EmptyState"
+  alternatives:
+    - EmptyState

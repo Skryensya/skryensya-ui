@@ -5,7 +5,7 @@ import type { Recipe } from "./recipe.js";
  *
  * The three non-success states are all "the table is not there", and they are three different
  * things: still coming, came back with nothing, and could not come back. Collapsing them is the
- * most common way a data screen lies — an empty state shown while loading tells the reader to stop
+ * most common way a data screen lies: an empty state shown while loading tells the reader to stop
  * waiting, and a spinner shown after a failure tells them to keep waiting forever.
  *
  * The pager is absent from all three for the same reason: paging through nothing is a control that
@@ -17,7 +17,7 @@ export const dataTableRecipe: Recipe = {
   notes: [
     "Cargando, vacío y error son tres pantallas distintas: un vacío mientras carga dice «dejá de esperar» y un spinner después de fallar dice «seguí esperando».",
     "El paginador sólo existe cuando hay páginas: paginar sobre nada es un control que no puede hacer nada.",
-    "El caption no es decoración — es el nombre de la tabla, y va primero porque un lector de pantalla lo anuncia antes del contenido.",
+    "El caption no es decoración: es el nombre de la tabla, y va primero porque un lector de pantalla lo anuncia antes del contenido.",
   ],
 
   states: {
@@ -88,12 +88,17 @@ export const dataTableRecipe: Recipe = {
           },
         },
         {
-          contract: "alert",
-          signature: "Alert",
+          contract: "callout",
+          signature: "Callout",
           options: { tone: "danger" },
           slots: {
             title: "No pudimos cargar los gastos",
-            actions: { contract: "button", signature: "Button.action", children: "Reintentar" },
+            actions: {
+              contract: "button",
+              signature: "Button.action",
+              options: { variant: "subtle" },
+              children: "Reintentar",
+            },
           },
           children: "El servidor no respondió a tiempo.",
         },

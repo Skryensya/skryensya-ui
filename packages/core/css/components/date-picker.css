@@ -1,4 +1,4 @@
-/* TIER 3, DATE PICKER — editable date input with a Calendar popover.
+/* TIER 3, DATE PICKER: editable date input with a Calendar popover.
  *
  * The calendar chrome itself (header, view switch, day/month/year grids) lives in Calendar, this
  * file only owns the FIELD: label, control, input, trigger, clear, and the popover shell that docks
@@ -58,10 +58,10 @@
     outline-offset: var(--focus-ring-offset);
   }
   /* Zag marks `disabled` on the machine as `data-disabled` here and as a REAL `disabled` on the
-   * input and trigger further down — but every visual property those two read (input `color`,
+   * input and trigger further down, but every visual property those two read (input `color`,
    * trigger's `--sk-button-fg`) points at `--sk-date-picker-fg`/`-bg`/`-border-color` UNCONDITIONALLY,
    * so disabling the picker never changed what any of them resolved to. Overriding the hooks HERE,
-   * on their shared ancestor, reaches both through the inheritance those hooks already rely on —
+   * on their shared ancestor, reaches both through the inheritance those hooks already rely on:
    * no need to out-specificity the trigger's own `--sk-button-fg: var(--sk-date-picker-fg)` (same
    * specificity as button.css's `:disabled` rule, declared later, so it was winning that fight and
    * silently cancelling the dimming Button already provides for free). */
@@ -97,11 +97,11 @@
     align-self: center;
   }
   /* Trigger reserves the FULL touch-target delta (12px: the 44px hit area painted at 32px) on BOTH
-   * sides, not half — its leading margin alone has to clear Clear's expanded hit zone when Clear is
+   * sides, not half: its leading margin alone has to clear Clear's expanded hit zone when Clear is
    * showing, AND double as the sole input-side reserve when Clear is hidden or never authored
    * (Clear is optional, per the enhancer's own contract). Clear then reserves ONLY on its leading
    * side, against the input, which has no expanded hit zone of its own to clear. Giving Clear a
-   * trailing margin too would double-count the same gap Trigger's leading margin already covers —
+   * trailing margin too would double-count the same gap Trigger's leading margin already covers:
    * that was the bug: clear↔trigger measured 12px while input↔clear measured only 6px. */
   .sk-date-picker__trigger.sk-button {
     --sk-button-fg: var(--sk-date-picker-fg);
@@ -169,7 +169,7 @@
 
   /* ── VAUL ON MOBILE ──────────────────────────────────────────────────────────
    * A calendar anchored under a field is a desktop shape: on a phone it lands half-off-screen and the
-   * finger covers what it points at. At phone width (30rem) the popover becomes a bottom sheet — the
+   * finger covers what it points at. At phone width (30rem) the popover becomes a bottom sheet: the
    * positioner fills the viewport as a scrim and the content docks to the block-end edge, full width,
    * and slides up. The breakpoint is narrower than Dialog Vaul's 52rem on purpose: an 18rem calendar
    * sits fine under its field on a laptop, so only a genuinely narrow viewport earns the sheet.

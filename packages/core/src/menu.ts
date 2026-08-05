@@ -45,12 +45,12 @@ export type MenuSelectionDetails = { value: string };
 import type { ComponentContract } from "./contract.js";
 
 /*
- * MENU, the contract — a trigger, a floating list, and submenus that nest without limit.
+ * MENU, the contract: a trigger, a floating list, and submenus that nest without limit.
  *
  * The recursion is the whole shape. A submenu here is not a nested list inside an item: it is a
  * WHOLE MENU standing where an item would, with its own trigger styled as an item and its own
  * positioner. So the entry is written once, named, and points back at itself through the entry's
- * `children` slot — the DATA has a bottom, the template does not.
+ * `children` slot: the DATA has a bottom, the template does not.
  *
  * `kind` is present only on the entries that need it, and that presence is load-bearing: the check
  * indicator exists exactly when an entry declares a kind, because a plain command has nothing to
@@ -75,8 +75,8 @@ import type { ComponentContract } from "./contract.js";
  *   - The submenu trigger was a `<button>` in markup and a `<div>` in React.
  *   - React skipped Zag's item-text props, so the label a screen reader reads was named in one
  *     binding only.
- *   - React had no `.sk-menu` wrapper around a submenu. Vanilla needs one — it is where the second
- *     machine mounts — and once the CSS above stopped punishing it, React carrying it too cost
+ *   - React had no `.sk-menu` wrapper around a submenu. Vanilla needs one (it is where the second
+ *     machine mounts), and once the CSS above stopped punishing it, React carrying it too cost
  *     nothing and made the nesting identical.
  *
  * None of this was visible to `verify-stages.mjs`, which measures the stage root that React portals
@@ -89,7 +89,7 @@ export const menuContract = {
   parts: menuParts,
 
   options: {
-    /** The menu's accessible name. The root's own — an item's name is its label. */
+    /** The menu's accessible name: the root's own. An item's name is its label. */
     label: { type: "string", attr: "aria-label" },
     disabled: {
       type: "boolean",

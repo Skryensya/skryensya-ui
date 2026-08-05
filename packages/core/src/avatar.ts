@@ -41,7 +41,7 @@ export function avatarInitials(name: string): string {
  * A person, in a circle, and two genuinely different structures rather than one with a hole in it.
  *
  * With an image, an ImageFrame clips the media and the `<img alt>` carries the name. Without one, the
- * wrapper itself becomes the named node and the initials go decorative — so there is exactly ONE
+ * wrapper itself becomes the named node and the initials go decorative, so there is exactly ONE
  * node announcing the person either way. Modelled as two signatures because the markup really is two
  * different trees, and a single signature would have to pretend otherwise.
  */

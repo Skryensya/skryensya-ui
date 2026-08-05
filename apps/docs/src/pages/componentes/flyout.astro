@@ -53,8 +53,8 @@ function remountFlyout(root, value) {
   <h1>Flyout</h1>
   <p class="lede">
     Un selector de valor como <a href="/componentes/select">Select</a>, pero el panel abre al
-    <strong>inline-end</strong> del trigger (no debajo). Pensado para rieles estrechos —por ejemplo el
-    sidebar de <a href="/personalizar">Personalizar</a>— donde un menú hacia abajo no cabe.
+    <strong>inline-end</strong> del trigger (no debajo). Pensado para rieles estrechos (por ejemplo el
+    sidebar de <a href="/personalizar">Personalizar</a>) donde un menú hacia abajo no cabe.
   </p>
 
   <p>
@@ -68,11 +68,11 @@ function remountFlyout(root, value) {
   <h2>Cuándo usarlo</h2>
   <ul>
     <li>
-      <strong>Flyout</strong> — el espacio debajo del control es escaso (sidebar, toolbar, rail) y el
+      <strong>Flyout</strong>: el espacio debajo del control es escaso (sidebar, toolbar, rail) y el
       panel debe abrirse al lado.
     </li>
     <li>
-      <strong>Select</strong> — hay sitio debajo, quieres typeahead / posicionamiento Zag, o es un
+      <strong>Select</strong>: hay sitio debajo, quieres typeahead / posicionamiento Zag, o es un
       formulario estándar. Para elección nativa de plataforma, usa el
       <a href="/componentes/select#select-nativo">Select nativo</a>.
     </li>
@@ -177,15 +177,15 @@ function remountFlyout(root, value) {
 
   <h2>Placeholder</h2>
   <p>
-    Si no hay <code>data-value</code> que coincida con un ítem —por ejemplo un valor externo
-    “personalizado”— el trigger muestra el placeholder.
+    Si no hay <code>data-value</code> que coincida con un ítem (por ejemplo un valor externo
+    “personalizado”) el trigger muestra el placeholder.
   </p>
   <ComponentPreview tree={flyoutPlaceholderTree(t)} label="Placeholder" viewport="menu" />
 
   <h2>Remontar con otro valor</h2>
   <p>
     El enhancer posee el texto del trigger. Para forzar un valor desde fuera (reset, URL, reparación),
-    desmonta, escribe <code>data-value</code> y vuelve a montar — el mismo patrón que usa
+    desmonta, escribe <code>data-value</code> y vuelve a montar, el mismo patrón que usa
     <a href="/personalizar">Personalizar</a>.
   </p>
   <CodeBlock code={remount} label="JavaScript" />

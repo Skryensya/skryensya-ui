@@ -2,7 +2,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /*
- * The default action plus its variants — and the Menu half is a real Menu, composed rather than
+ * The default action plus its variants, and the Menu half is a real Menu, composed rather than
  * described by a flat list. That is what the contract takes, and what the stylesheet now reaches by
  * structure instead of through a class the composition could never pass.
  */

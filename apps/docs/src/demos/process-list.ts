@@ -5,7 +5,7 @@ import type { Translate } from "../i18n";
  * The three steps of installing the library, as instructions rather than as prose.
  *
  * A tree was written for this page once and deleted, because one step embeds a CODE BLOCK and
- * `code-preview` had no contract then — emitting the list would have dropped it. It has one now, so
+ * `code-preview` had no contract then: emitting the list would have dropped it. It has one now, so
  * the whole demo composes: an ordered list of steps, each with a title and a body that can hold
  * anything the system publishes.
  *

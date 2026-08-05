@@ -14,7 +14,7 @@ export type NavbarPart = keyof typeof navbarParts;
 export type NavbarPartClass = (typeof navbarParts)[NavbarPart];
 
 /*
- * The page's top chrome. A `<header>` and two named regions, and nothing else — a navbar is a SHELL
+ * The page's top chrome. A `<header>` and two named regions, and nothing else: a navbar is a SHELL
  * (decision 17): it owns its own bar and adjusts its guests only by re-declaring their styling hooks,
  * never by reaching into their markup. The nav list inside it is a guest, not a part.
  */

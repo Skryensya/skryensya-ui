@@ -1,12 +1,14 @@
 /*
  * TIER 3, TOAST
  *
- * A transient floating stack. Each item is an Alert (same markup, same tone recipe); this file only
- * owns the region that lifts alerts out of document flow and the elevation that marks them as
- * floating chrome. Live-region and dismiss behaviour live in the toast runtime, not here.
+ * A transient floating stack. Each item is a Callout (same markup, same tone recipe); this file only
+ * owns the region that lifts callouts out of document flow, the elevation that marks them as
+ * floating chrome, and the dismiss control: the one part of this anatomy Callout itself does not
+ * have, because only a floating, transient message needs a way to be closed. Live-region and dismiss
+ * WIRING live in the toast runtime, not here; this file only draws the ✕.
  */
 @layer components {
-  /* THE REGION lifts its alerts out of document flow and pins them to a screen corner. `position: fixed`
+  /* THE REGION lifts its callouts out of document flow and pins them to a screen corner. `position: fixed`
    * anchors them to the viewport (not the scrolling page); `z-toast` floats them above ordinary content;
    * the two `inset-*` values park the stack at the bottom-inline-end with an inset margin, and the width
    * clamps to a readable 24rem but never wider than the viewport minus that margin on each side. A grid
@@ -21,21 +23,29 @@
     inline-size: min(24rem, calc(100vw - (var(--space-inset-lg) * 2)));
   }
 
-  /* EVERY toast gets the raised shadow so a banner alert reads as overlay chrome floating over the page,
-   * not page furniture sitting in the flow. The status tones keep their own subtle fills underneath it.
+  /* EVERY toast gets the raised shadow so a banner callout reads as overlay chrome floating over the
+   * page, not page furniture sitting in the flow. The status tones keep their own subtle fills
+   * underneath it.
    *
-   * It also sits TIGHTER than the same alert in the page. An alert's inset is sized for a panel the
+   * It also sits TIGHTER than the same callout in the page. A callout's inset is sized for a panel the
    * reader chooses to read at their own pace, inside a column of content that sets the rhythm around
    * it. A toast is chrome that arrives uninvited over the work: it should take the least screen it can
    * while staying legible, and its own elevation already separates it from what is underneath, so it
    * does not need the extra air a panel uses to hold itself apart. One step down on the same scale. */
-  .sk-toast-region > .sk-alert {
-    --sk-alert-padding: var(--space-inset-sm);
-    /* The two lines close up with the panel. At the alert's inset the `stack-xs` gap reads as rhythm;
-     * inside the tighter toast the same gap is wider than the padding around it, which makes the
-     * title and its description look like two separate messages. The line boxes' own leading is
+  .sk-toast-region > .sk-callout {
+    --sk-callout-padding: var(--space-inset-sm);
+    /* The two lines close up with the panel. At the callout's inset the `stack-xs` gap reads as
+     * rhythm; inside the tighter toast the same gap is wider than the padding around it, which makes
+     * the title and its description look like two separate messages. The line boxes' own leading is
      * enough separation at this size. */
-    --sk-alert-content-gap: 0;
+    --sk-callout-content-gap: 0;
+
+    /* TOAST KEEPS its actions (and its own dismiss) BESIDE the message, not stacked below it the way
+     * callout.css now puts a standalone Callout's actions: a floating panel is already compact and
+     * arrives, reads and leaves in one glance, so a trailing corner control stays a corner control
+     * instead of becoming a second row that pushes the toast taller. `auto` re-opens the trailing
+     * column callout.css's single-column layout closed off. */
+    grid-template-columns: minmax(0, 1fr) auto;
 
     box-shadow: var(--elevation-raised);
     /* EVERY toast arrives, none of them just appears. A panel that pops in fully formed over the work
@@ -45,8 +55,8 @@
      * the drawer use, and it already collapses to a plain fade under `prefers-reduced-motion`.
      *
      * No fill mode ON PURPOSE. `both`/`forwards` would freeze the resolved end values on the element,
-     * and the stack below changes `translate`, `scale` and `opacity` per depth after the fact — a
-     * filled animation would outrank all of it and nail every toast to how it looked when it landed. */
+     * and the stack below changes `translate`, `scale` and `opacity` per depth after the fact:
+     * a filled animation would outrank all of it and nail every toast to how it looked when it landed. */
     animation: sk-toast-enter var(--motion-enter-duration) var(--motion-enter-easing);
   }
 
@@ -60,14 +70,54 @@
   /* THE NEUTRAL toast has no tone fill to lift it, so on its own it would read as a flat panel. Swap its
    * surface for the RAISED surface token: paired with the shadow above, the plain toast now reads as
    * elevated chrome too, matching the toned ones without borrowing a status color it does not mean. */
-  .sk-toast-region > .sk-alert[data-tone="neutral"] {
-    --sk-alert-bg: var(--color-bg-surface-raised);
+  .sk-toast-region > .sk-callout[data-tone="neutral"] {
+    --sk-callout-bg: var(--color-bg-surface-raised);
+  }
+
+  /* The icon variant opens a THIRD column, same as a standalone Callout: icon, content, then the
+   * trailing actions column this file just reopened above. */
+  .sk-toast-region > .sk-callout:has(.sk-callout__icon) {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  /* Undoes callout.css's `1 / -1` row-span: here actions goes back to being the LAST column on the
+   * same row as the message, auto-placed after icon and content, pinned to the end instead of
+   * starting at the panel's own inset. */
+  .sk-toast-region > .sk-callout .sk-callout__actions {
+    grid-column: auto;
+    justify-content: end;
+  }
+
+  /* THE DISMISS. Callout has no such part; Toast owns this one outright because only a message that
+   * floats in on its own also needs a way to be sent back out. A one-line square so the ✕ centres on
+   * the FIRST line, level with the icon and title, instead of a taller control box that dropped it a
+   * few pixels below them. 1lh ≈ the line's own height, which is the 24px WCAG target floor, so it
+   * stays a legitimate hit area while sitting exactly on the line.
+   *
+   * The bare shape below is the DEFAULT. Authoring the part as a real icon-only Button (`sk-button
+   * ... data-icon-only data-size="sm"`) opts out of it: the `:not(.sk-button)` guard lets the button
+   * own its own face instead of two components fighting over the same box. */
+  .sk-toast__dismiss:not(.sk-button) { display: inline-flex; align-items: center; justify-content: center; inline-size: 1lh; block-size: 1lh; min-inline-size: 0; min-block-size: 0; border: 0; border-radius: var(--radius-control); background: transparent; color: inherit; font: inherit; line-height: var(--font-line-height-body); cursor: pointer; }
+  .sk-toast__dismiss:not(.sk-button):focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+  /* As a Button, only ONE thing carries over from the part: the glyph reads the toast's own tone
+   * color. A ghost button paints text-accent, which would put a brand-colored ✕ on a danger toast;
+   * the tone decides the foreground here, exactly as it does for the icon and the title. */
+  .sk-toast__dismiss.sk-button { --sk-button-fg: currentColor; }
+  /* OPTICAL INSET. A ghost icon button is mostly air: its 32px square holds a 16px glyph, so the ✕
+   * reads about 8px further from the edge than it measures, and stacked on the panel's own inset it
+   * floats in a hole of whitespace. Pull the control back by half that inset (the SAME
+   * `--sk-callout-padding` hook the panel's own padding reads, tightened above for the toast size) and
+   * the GLYPH lands where the padding says the content edge is, level with the title, while the hit
+   * area (and the `::after` that widens it to 44px) keeps every pixel it had. */
+  .sk-toast-region > .sk-callout .sk-toast__dismiss.sk-button {
+    margin-block: calc(var(--sk-callout-padding) * -0.5);
+    margin-inline-end: calc(var(--sk-callout-padding) * -0.5);
   }
 
   /* THE COLLAPSED STACK, and it is the DEFAULT, not a feature to turn on. Four toasts in a plain
    * region are four full panels eating a quarter of the screen, and nobody asks for that on purpose:
    * a region that ends up with several toasts is the normal outcome of an app that reports what it
-   * did. So the pile is what a region does, and `data-stack="off"` is the way out — for the rare
+   * did. So the pile is what a region does, and `data-stack="off"` is the way out, for the rare
    * region whose whole point is showing several messages at once (a docs example of the tones, a
    * page that lists statuses rather than announcing them).
    *
@@ -99,7 +149,7 @@
      * at a different width, so the peeking edges never lined up. Their own content is irrelevant now
      * (it is hidden behind the front panel), so `overflow: clip` keeps it from spilling out of a box
      * that is no longer the size it asked for. */
-    .sk-toast-region:not([data-stack="off"]) > .sk-alert:not(:last-child) {
+    .sk-toast-region:not([data-stack="off"]) > .sk-callout:not(:last-child) {
       position: absolute;
       inset: 0;
       overflow: clip;
@@ -111,7 +161,7 @@
       animation: none;
     }
 
-    .sk-toast-region:not([data-stack="off"]) > .sk-alert {
+    .sk-toast-region:not([data-stack="off"]) > .sk-callout {
       --sk-toast-depth: calc(sibling-count() - sibling-index());
 
       /* The stack grows UP from the newest toast, so it is the bottom edge that stays put. */
@@ -141,7 +191,7 @@
      * each one back to its own height. Reading one of a pile should not cost a click, and
      * `:focus-within` means the same fan-out happens on the way in with the keyboard, where hover
      * never fires. */
-    .sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within) > .sk-alert {
+    .sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within) > .sk-callout {
       position: static;
       overflow: visible;
       translate: none;
@@ -151,11 +201,11 @@
 
     /* Going back into flow is a LAYOUT change, and layout does not transition: at the instant the
      * older toasts stop being absolute they are already at their new place, several rows up. Nothing
-     * can tween that, so the fix is not to animate the jump but to cover it — each toast fades and
+     * can tween that, so the fix is not to animate the jump but to cover it: each toast fades and
      * rises the last few pixels into the spot it just took, on the same depth cascade, and the eye
      * reads arrival rather than teleporting. Only the ones that actually moved: the newest was in
      * flow the whole time and must not blink. */
-    .sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within) > .sk-alert:not(:last-child) {
+    .sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within) > .sk-callout:not(:last-child) {
       animation: sk-toast-fan var(--motion-expand-duration) var(--motion-expand-easing)
         calc(var(--sk-toast-depth) * var(--sk-toast-cascade)) backwards;
     }

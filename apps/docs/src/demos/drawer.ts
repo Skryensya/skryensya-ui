@@ -2,7 +2,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /*
- * A navigation drawer — `Vaul.drawer`, which is what this page has always said it is: "un drawer ES
+ * A navigation drawer, `Vaul.drawer`, which is what this page has always said it is: "un drawer ES
  * un Vaul".
  *
  * The page's own `demo-drawer__*` classes come along, and that works because every one of them lands
@@ -117,7 +117,7 @@ export const drawerTree = (t: Translate): UsageTree => ({
   ],
 });
 
-/** Opening is a call, never markup — the same escape hatch the dialog and the palette use. */
+/** Opening is a call, never markup: the same escape hatch the dialog and the palette use. */
 export const drawerScript = `
 const trigger = document.querySelector("[data-drawer-demo-open]");
 const drawer = document.getElementById("demo-drawer");

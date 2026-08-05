@@ -12,7 +12,7 @@ import { canonicalTrees } from "./trees.js";
  * catch it, and that they are two is the point:
  *
  *   - the CONTRACT catches it, because `exactlyOneOf` can finally say "one source, not zero";
- *   - the RENDER catches it too, because a box with no content has no painted content — which is
+ *   - the RENDER catches it too, because a box with no content has no painted content, which is
  *     what would still be true of any constraint nobody thought to write.
  *
  * If only the first ever fired, the system would be trusting that every future bug is one somebody
@@ -22,12 +22,12 @@ import { canonicalTrees } from "./trees.js";
 /*
  * Before anything is rendered: does the tree even compose?
  *
- * This check was missing, and the recipes are what exposed it — the first recipe written put a
+ * This check was missing, and the recipes are what exposed it: the first recipe written put a
  * SidebarTrigger inside a SidebarHeader and the validator rejected it, while a canonical tree doing
  * exactly the same thing had been passing every gate for days. The gates were measuring symmetry,
  * accessibility and paint on trees nobody had asked the contract about.
  *
- * The contract was wrong there, not the tree — but that is the point: nothing was asking.
+ * The contract was wrong there, not the tree, but that is the point: nothing was asking.
  */
 test("every canonical tree is valid against its contract", () => {
   const problems = canonicalTrees.flatMap(({ name, tree }) =>
@@ -48,13 +48,13 @@ test("every canonical tree paints something", async ({ page }) => {
 
   for (const { name } of canonicalTrees) {
     // A visually-hidden status has no box by design; measuring one would be measuring the wrong
-    // component. G2 and G4 still hold it to the claim that matters — same name, same live region.
+    // component. G2 and G4 still hold it to the claim that matters: same name, same live region.
     if (DRAWS_NOTHING.has(name)) continue;
 
     for (const binding of ["vanilla", "react"] as const) {
       /*
        * The first child that is not a FLOATING region. React portals its positioner into this same
-       * container, so for a menu or a select it lands ahead of the component itself — and a closed
+       * container, so for a menu or a select it lands ahead of the component itself, and a closed
        * positioner is 0×0 by design, which made "paints something" measure the one element built
        * not to. Vanilla nests the positioner instead, so it never hit this.
        */
@@ -80,7 +80,7 @@ test("the empty frame is caught by the contract, and would also be caught by the
   expect(result.valid).toBe(false);
   expect(result.problems.map((p) => p.rule)).toContain("missing-exactly-one");
 
-  // Level two: the render. Emitted anyway, past the gate, to show what shipping it looked like —
+  // Level two: the render. Emitted anyway, past the gate, to show what shipping it looked like:
   // a frame element with no content inside it.
   await page.goto("/");
   await page.waitForSelector('body[data-ready="true"]');

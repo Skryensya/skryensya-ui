@@ -3,7 +3,7 @@ import type { ComponentContract, OptionValue, SignatureOptionsOf } from "./contr
 /*
  * A PATTERN, by decision 8's rule: the navbar and the sidebar need this exact structure, a list of
  * destinations, each an icon, a label and optional trailing metadata, so shipping it once is the
- * point. That the two differ by orientation is a variant, not a second structure — which is why
+ * point. That the two differ by orientation is a variant, not a second structure, which is why
  * orientation is an option below and not a second signature.
  *
  * Named for its role, never for the thing it currently sits in (decision 2). `sk-sidebar__link`
@@ -29,8 +29,8 @@ export type NavListPartClass = (typeof navListParts)[NavListPart];
  * The contract this pattern exists to demonstrate: eight parts, three signatures, and a template
  * that says how the first becomes the second.
  *
- * React writes `<NavList><NavListGroup><NavListLink>` — three elements. Authored markup writes
- * `<nav> <div group> <ul list> <li item> <a link>` — five. Before the templates below, the rule that
+ * React writes `<NavList><NavListGroup><NavListLink>`: three elements. Authored markup writes
+ * `<nav> <div group> <ul list> <li item> <a link>`: five. Before the templates below, the rule that
  * held the two together lived as a paragraph in a JSON file ("a NavListLink is always inside a
  * NavListGroup… skipping it produces `<nav><li>`, invalid markup"). It is now `parents`, plus a
  * template that puts the `<ul>` there whether or not the group is labelled.
@@ -88,7 +88,7 @@ export const navListContract = {
       },
       /*
        * The `<ul>` is the whole reason this signature exists: a `<li>` needs a list to sit inside,
-       * and NavList itself only renders the landmark. An unlabelled group still supplies it — which
+       * and NavList itself only renders the landmark. An unlabelled group still supplies it, which
        * is why the label node is conditional and the list node is not.
        */
       template: {

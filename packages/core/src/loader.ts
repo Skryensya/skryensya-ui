@@ -69,11 +69,11 @@ export const loaderContract = {
      *
      * A second signature rather than an option, because the constraint differs: a Loader with no
      * label is legitimate decoration beside a named one, while a hidden loader with no label is
-     * nothing at all — so this one requires it. Choosing between the two is choosing whether the
+     * nothing at all, so this one requires it. Choosing between the two is choosing whether the
      * wait is drawn, which is a real design decision and not a flag.
      *
      * It exists because of the skeleton screen. Placeholders are the right paint while a known shape
-     * loads — the page does not jump when the data lands — but they say NOTHING to anyone who cannot
+     * loads (the page does not jump when the data lands), but they say NOTHING to anyone who cannot
      * see them: no live region, so a screen reader finds a still page and no reason to wait. Adding a
      * spinner above the skeletons to fix that would undo the reason for the skeletons.
      */
@@ -85,7 +85,7 @@ export const loaderContract = {
       slots: {},
       template: {
         element: "span",
-        // No part class: this draws nothing, so it has no anatomy — only the hiding and the role.
+        // No part class: this draws nothing, so it has no anatomy, only the hiding and the role.
         also: ["sk-visually-hidden"],
         host: true,
         attrs: { role: "status" },

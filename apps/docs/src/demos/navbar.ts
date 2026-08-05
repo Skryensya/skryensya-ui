@@ -2,11 +2,11 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /*
- * The bar holds a brand, a horizontal nav-list guest, and two actions. "Atlas" stays written — it
+ * The bar holds a brand, a horizontal nav-list guest, and two actions. "Atlas" stays written: it
  * is a product name. Locale-owned paths come from the page.
  *
  * The hand-written HTML skipped NavListGroup; the contract requires it (a `<li>` needs a `<ul>`),
- * so the tree always nests the group — even when it has no label.
+ * so the tree always nests the group, even when it has no label.
  */
 export const navbarTree = (
   t: Translate,

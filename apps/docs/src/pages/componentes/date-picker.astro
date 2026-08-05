@@ -26,7 +26,7 @@ const install = `@import "@skryensya/core/patterns/anchored.css";
     JavaScript. La <strong>custom</strong> monta un <a href="/componentes/calendar">Calendar</a> detrás
     de un trigger con la misma forma de campo, para cuando necesitas rango, localización explícita o un
     calendario consistente entre navegadores. Las dos comparten <code>.sk-date-picker__control</code>,
-    así que se ven igual. El calendario en sí — encabezado, vistas, grillas — es responsabilidad de
+    así que se ven igual. El calendario en sí (encabezado, vistas, grillas) es responsabilidad de
     Calendar, no de este componente: DatePicker sólo lo nestea dentro de su popover.
   </p>
 
@@ -45,7 +45,7 @@ const install = `@import "@skryensya/core/patterns/anchored.css";
     <code>data-disabled</code> en <code>sk-date-picker__control</code>, y un <code>disabled</code>
     nativo en el input y en el trigger. Pero cada uno de esos tres leía su color/fondo/borde desde un
     hook (<code>--sk-date-picker-fg</code>/<code>-bg</code>/<code>-border-color</code>) declarado sin
-    condición, así que deshabilitar el campo no cambiaba nada de lo que esos hooks resolvían — el campo
+    condición, así que deshabilitar el campo no cambiaba nada de lo que esos hooks resolvían: el campo
     seguía leyéndose interactivo. La regla vive ahora en un solo lugar,
     <code>.sk-date-picker__control[data-disabled]</code>, que reescribe esos tres hooks: el input y el
     trigger los heredan sin reglas propias.
@@ -75,7 +75,7 @@ const install = `@import "@skryensya/core/patterns/anchored.css";
     Bajo el breakpoint de escritorio (30rem) el calendario custom deja de colgar del campo y se vuelve
     una <strong>hoja inferior</strong>: el positioner llena la pantalla como scrim y el contenido se
     ancla al borde inferior, a todo el ancho, y sube. Toma el <em>aspecto</em> del Vaul, no el arrastre
-    —es un popover de Zag, no un <code>&lt;dialog&gt;</code> nativo—, pero cierra igual al tocar fuera o
+    (es un popover de Zag, no un <code>&lt;dialog&gt;</code> nativo), pero cierra igual al tocar fuera o
     con <kbd class="sk-kbd">Esc</kbd>. Es el mismo corte responsivo que <a href="/componentes/dialog">Dialog Vaul</a>.
   </p>
 

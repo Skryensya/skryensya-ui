@@ -273,8 +273,8 @@ const ladder = [
     label="Resulting DOM · projected connection"
     note="it is written by the adapter; not copied"
   />
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
       <p>
         <strong>The consumer does not choose between two classes. </strong> Use <code>sk-interactive</code> for a DOM target of your own. When consuming a composite widget, its adapter and stylesheet already have the projected connection.
       </p>
@@ -326,8 +326,8 @@ const ladder = [
     </table>
   </div>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
     <p>
       <strong>The ladder does not use combined selectors.</strong> Each state rule assigns the
       <em>same</em> <code>--state-layer-opacity</code>, and all selectors have the same
@@ -375,8 +375,8 @@ const ladder = [
     Zero state colors and zero hardcoded opacities. Use direct connection on your own controls; for machine states, it consumes the component instead of duplicating its internal selectors.
   </p>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
     <p>
       A consumer with a more specific selector than <code>.sk-interactive: hover</code> can break the ladder. It is a CSS limitation, the same one that <a href="/en/styling-hooks">accepts in the</a> styling hooks contract.
     </p>

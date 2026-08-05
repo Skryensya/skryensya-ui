@@ -14,7 +14,7 @@ import { useCallback, useSyncExternalStore } from "react";
  * STORAGE, the React binding.
  *
  * `useStoredPreference(colorModePreference)` is `useState` that remembers. Like `useHotkey`, it sits
- * on core and never on @skryensya/vanilla — the two bindings are siblings over the same contract
+ * on core and never on @skryensya/vanilla: the two bindings are siblings over the same contract
  * (decision 14), so a React app installs one package and a vanilla app the other.
  *
  * `useSyncExternalStore` rather than `useState` + `useEffect`, for two reasons that are not style:

@@ -14,14 +14,14 @@ export type DatePickerProps = Pick<
   SignatureOptionsOf<typeof datePickerContract, "DatePicker">,
   "selectionMode"
 > & {
-  /** Where the popover is portalled. Absent it goes to the body — see `ComboboxProps.container`. */
+  /** Where the popover is portalled. Absent it goes to the body: see `ComboboxProps.container`. */
   container?: RefObject<HTMLElement>;
   id?: string;
   name?: string;
   label?: ReactNode;
   locale?: string;
   timeZone?: string;
-  /* Dates as `DateValue` OR as the ISO strings authored markup carries — see `CalendarProps`. */
+  /* Dates as `DateValue` OR as the ISO strings authored markup carries: see `CalendarProps`. */
   value?: readonly (DateValue | string)[] | string;
   defaultValue?: readonly (DateValue | string)[] | string;
   min?: DateValue | string;
@@ -41,7 +41,7 @@ export type DatePickerProps = Pick<
 /*
  * DATE PICKER: the editable field (label, input, trigger, clear) plus a popover. The calendar
  * chrome inside the popover is `CalendarBody`, the same component `Calendar` (./calendar.tsx)
- * renders standalone — DatePicker never re-implements the grid, it only supplies the machine
+ * renders standalone: DatePicker never re-implements the grid, it only supplies the machine
  * instance (popover-mode, not inline) and the field around it.
  */
 export function DatePicker({
@@ -166,7 +166,7 @@ export type NativeDatePickerProps = {
 };
 
 /*
- * THE NATIVE DATE FIELD — the layer that works with no script at all.
+ * THE NATIVE DATE FIELD: the layer that works with no script at all.
  *
  * A real `<input type="date">` inside the same field chrome, so the enhanced control and this one
  * read as the SAME field rather than two designs. The browser owns the picker, the keyboard, the
@@ -182,7 +182,7 @@ export function NativeDatePicker({ id, label, locale, name }: NativeDatePickerPr
 
   return (
     <div className={datePickerParts.root}>
-      {/* Named through `aria-labelledby` rather than `for`/`id` — see the contract, where the
+      {/* Named through `aria-labelledby` rather than `for`/`id`: see the contract, where the
           reason is the shared stage rather than the markup. */}
       <label className={datePickerParts.label} id={`${inputId}-label`}>
         {label}

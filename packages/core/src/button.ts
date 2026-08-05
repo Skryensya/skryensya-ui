@@ -24,7 +24,7 @@ export const buttonContract = {
   options: {
     variant: {
       type: "enum",
-      values: ["neutral", "primary", "danger", "ghost"],
+      values: ["neutral", "subtle", "translucent", "primary", "danger", "ghost"],
       default: "neutral",
       attr: "data-variant",
     },
@@ -51,7 +51,7 @@ export const buttonContract = {
     /*
      * Unavailable right now. Native `disabled` AND `aria-disabled`: the first is what stops the
      * click and the form, the second is what a screen reader announces on a control it can still
-     * land on. Only on the action signature — a link cannot be disabled and stay a link.
+     * land on. Only on the action signature: a link cannot be disabled and stay a link.
      */
     disabled: {
       type: "boolean",
@@ -111,7 +111,7 @@ export const buttonContract = {
 } as const satisfies ComponentContract;
 
 /*
- * Derived, never restated. Adding a variant is one edit — in the contract above — and both bindings
+ * Derived, never restated. Adding a variant is one edit (in the contract above), and both bindings
  * follow. `disabled` is deliberately absent: it is a native attribute of the `<button>` host, not an
  * option this contract maps onto one, and `Button.navigation` forbids it outright.
  */

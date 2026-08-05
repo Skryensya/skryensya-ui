@@ -24,7 +24,7 @@ export const listPlainTree = (t: Translate): UsageTree => ({
   })),
 });
 
-/** 2 — The content column: title over description. No icons, no trailing. */
+/** 2. The content column: title over description. No icons, no trailing. */
 export const listTitledTree = (t: Translate): UsageTree => ({
   contract: "list",
   signature: "List",
@@ -39,7 +39,7 @@ export const listTitledTree = (t: Translate): UsageTree => ({
   })),
 });
 
-/** 3 — Leading media. The icon is DECORATIVE: it names nothing the title does not already say. */
+/** 3. Leading media. The icon is DECORATIVE: it names nothing the title does not already say. */
 export const listLeadingTree = (t: Translate): UsageTree => ({
   contract: "list",
   signature: "List",
@@ -55,7 +55,7 @@ export const listLeadingTree = (t: Translate): UsageTree => ({
   })),
 });
 
-/** 4 — The row is complete: leading, content and trailing. Still static, still no interaction. */
+/** 4. The row is complete: leading, content and trailing. Still static, still no interaction. */
 export const listTrailingTree = (t: Translate): UsageTree => ({
   contract: "list",
   signature: "List",
@@ -67,7 +67,7 @@ export const listTrailingTree = (t: Translate): UsageTree => ({
       leading: { contract: "icon", signature: "Icon", options: { name: icon } },
       title: t(`demo.list.${key}.title` as never),
       description: t(`demo.list.${key}.description` as never),
-      /* The first row's trailing is a component, the rest are plain values — which is the point:
+      /* The first row's trailing is a component, the rest are plain values, which is the point:
        * `trailing` accepts a node, so a Badge and a string are equally legal there. */
       trailing:
         i === 0
@@ -83,7 +83,7 @@ export const listTrailingTree = (t: Translate): UsageTree => ({
 });
 
 /*
- * 5 — The row starts acting. Same anatomy wrapped in a real anchor, so focus, keyboard and the state
+ * 5. The row starts acting. Same anatomy wrapped in a real anchor, so focus, keyboard and the state
  * layer come free and List still owns no navigation state.
  *
  * The hrefs come from the page: they point at real docs routes, which differ per locale.
@@ -114,7 +114,7 @@ export const listLinksTree = (t: Translate, hrefs: readonly string[]): UsageTree
 });
 
 /*
- * 6 — The top: interactive rows, a component in each end slot, and compact density.
+ * 6. The top: interactive rows, a component in each end slot, and compact density.
  *
  * The page's own version ends with a DISABLED row, and that row is not here: `disabled` is an option
  * of `ListItem` and not of `ListItemLink`, so a link that is disabled has no expression. The demo

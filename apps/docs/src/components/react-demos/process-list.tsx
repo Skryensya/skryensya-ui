@@ -9,7 +9,7 @@ import { ProcessList, ProcessListItem } from "@skryensya/react/process-list";
 import { Text } from "@skryensya/react/text";
 import { framedIn } from "./framed";
 
-/** Every demo below runs inside its own preview frame — see `framed.tsx`. */
+/** Every demo below runs inside its own preview frame. See `framed.tsx`. */
 const framed = framedIn(import.meta.url);
 
 export const ProcessListDemo = framed(function ProcessListDemo() {
@@ -20,7 +20,7 @@ export const ProcessListDemo = framed(function ProcessListDemo() {
           <Text tone="secondary">Add the React core and binding to the project.</Text>
           {/*
             * CLASS ONLY, no `data-sk-code-preview`. That attribute is the VANILLA enhancer's
-            * selector, and `Base.astro` runs `initComponents()` over the whole document — so
+            * selector, and `Base.astro` runs `initComponents()` over the whole document, so
             * authoring it here invites the enhancer inside a subtree React owns, where it mutates
             * DOM that React is about to hydrate. The result was a hydration mismatch (React #418,
             * "HTML") that self-healed, so the page looked fine while re-rendering the island on
@@ -36,8 +36,8 @@ export const ProcessListDemo = framed(function ProcessListDemo() {
               <div className="sk-code-preview__viewport">
                 {/*
                   * ONE string child, not text + {"\n"} + text. Three children make React emit
-                  * `<!-- -->` separators between them, and inside `<pre>` — where the parser keeps
-                  * whitespace and treats a newline specially — server and client stopped agreeing on
+                  * `<!-- -->` separators between them, and inside `<pre>` (where the parser keeps
+                  * whitespace and treats a newline specially) server and client stopped agreeing on
                   * the resulting node list, which is the hydration mismatch (React #418, "HTML")
                   * this page used to log. A single literal has no boundaries to disagree about.
                   */}

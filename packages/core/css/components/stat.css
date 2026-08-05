@@ -7,7 +7,7 @@
  *
  * Count-up (opt-in via bindings) reads `--sk-stat-count-duration` so tempo stays on the motion
  * intent ladder. The value stacks an invisible sizer (final string) under the ticking digits so the
- * box never grows as figures appear — mono + tabular nums keep intermediate glyphs from jittering.
+ * box never grows as figures appear: mono + tabular nums keep intermediate glyphs from jittering.
  */
 @layer components {
   .sk-stat {

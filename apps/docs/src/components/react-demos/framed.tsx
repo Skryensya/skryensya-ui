@@ -3,19 +3,19 @@
  *
  * A `client:load` island renders into the DOCS document: it inherits the page's cascade, its top
  * layer, its viewport and its `<html>`. That makes the React binding a weaker demo than the Vanilla
- * one beside it — it reflows with the docs column instead of the stage, cannot honour a screen
+ * one beside it: it reflows with the docs column instead of the stage, cannot honour a screen
  * preset, and its dialogs open against the reader's viewport. Worse, it is a different answer to
  * the same question: the two bindings are supposed to be the SAME component seen twice.
  *
- * ISOLATION IS A JS-REALM PROPERTY, NOT A DOM ONE — this is the whole design, and two cheaper
+ * ISOLATION IS A JS-REALM PROPERTY, NOT A DOM ONE: this is the whole design, and two cheaper
  * versions of it were built first and both failed:
  *
  *  1. `createPortal` into the frame's body. React attaches listeners once to its ROOT's container,
  *     not per element, and a portal moves the painted nodes but NOT that container. A native click
  *     inside the frame bubbles to the FRAME's document and stops; it never reaches the only
  *     listener, which sits in the docs document. The demo renders perfectly and is completely dead.
- *  2. `createRoot` on the frame's body, called from the parent. Events work — the container is now
- *     inside the frame — but the component's CODE still executes in the parent's realm, where the
+ *  2. `createRoot` on the frame's body, called from the parent. Events work (the container is now
+ *     inside the frame), but the component's CODE still executes in the parent's realm, where the
  *     `document` global is the DOCS document. `ThemeToggle` does `applyColorMode(document
  *     .documentElement, …)`, so clicking the toggle inside a preview re-themed the whole docs site.
  *     Every component that touches `document` (menu's `dir`, flyout's viewport) leaks the same way.
@@ -37,7 +37,7 @@ export interface FramedOptions {
   flush?: boolean;
   /** Let the frame scroll instead of growing to its content. */
   scroll?: boolean;
-  /** Reserve stage height for demos that paint out of flow — same values as `ComponentPreview`'s prop. */
+  /** Reserve stage height for demos that paint out of flow, same values as `ComponentPreview`'s prop. */
   viewport?: "auto" | "menu" | "overlay";
   /** Frame title, for the accessibility tree. Defaults to the wrapped component's name. */
   label?: string;
@@ -57,7 +57,7 @@ export type FramedOverrides = Pick<
  *
  * Dev serves the real path (`…/react-demos/button.tsx?t=123` → `button`), but a BUILD serves a
  * hashed chunk (`button_vlYZB2ck.mjs`), which is why the frame matches on a prefix rather than
- * demanding an exact hit — stripping a hash whose format is Vite's to change would be guessing.
+ * demanding an exact hit: stripping a hash whose format is Vite's to change would be guessing.
  * This only has to get the stem right; `resolveDemoLoader` in the frame owns the matching.
  */
 function moduleKey(moduleUrl: string): string {
@@ -69,8 +69,8 @@ function moduleKey(moduleUrl: string): string {
 /**
  * Bind `framed` to the file calling it: `const framed = framedIn(import.meta.url)`.
  *
- * One line per demo file rather than an argument on each of the 131 demos, and — the reason it is
- * shaped this way at all — the PAGES never change. A page still writes `<ButtonBasicDemo
+ * One line per demo file rather than an argument on each of the 131 demos, and (the reason it is
+ * shaped this way at all) the PAGES never change. A page still writes `<ButtonBasicDemo
  * client:load />`, so isolation is a property of the demo itself, not something 262 call sites have
  * to remember to ask for.
  *
@@ -122,10 +122,19 @@ export function framedIn(moduleUrl: string) {
         [props],
       );
 
+      /*
+       * No `data-sk-component-preview-binding` here: the wrapping `.sk-component-preview__react-stage`
+       * div already carries it for `ComponentPreview.astro`'s toggle script, which does
+       * `querySelectorAll("[data-sk-component-preview-binding]")` and sets `.hidden` on every match
+       * before React hydrates. Putting the same attribute on THIS element (the React island's own
+       * root) made that script match it too, so the live DOM gained a `hidden` this component never
+       * renders, and React's hydration diffed against it and warned. No CSS rule needs it here either:
+       * every selector for this attribute is `.sk-component-preview > […]`, which the nested iframe
+       * fails by structure.
+       */
       return (
         <iframe
           className={componentPreviewParts.stage}
-          data-sk-component-preview-binding="react"
           data-sk-component-preview-flush={flush ? "" : undefined}
           data-sk-component-preview-viewport={
             viewport && viewport !== "auto" ? viewport : undefined
@@ -142,7 +151,7 @@ export function framedIn(moduleUrl: string) {
     /*
      * The unwrapped component, hung off the wrapper.
      *
-     * The frame imports the demo module by its EXPORT name, and that export is this wrapper — so
+     * The frame imports the demo module by its EXPORT name, and that export is this wrapper, so
      * without a way back to the original, the frame rendered another `framed()` and nested a
      * preview inside the preview, forever. The frame reads this property instead.
      *

@@ -20,17 +20,17 @@ describe("content component contracts", () => {
     const screen = within(ui.container);
     expect(ui.container.querySelector(".sk-toast-region")?.getAttribute("aria-live")).toBe("polite");
     const toast = screen.getByRole("alert");
-    expect(toast.classList.contains("sk-alert")).toBe(true);
+    expect(toast.classList.contains("sk-callout")).toBe(true);
     expect(toast.getAttribute("aria-live")).toBe("assertive");
     expect(toast.getAttribute("data-tone")).toBe("danger");
-    expect(toast.querySelector(".sk-alert__description")?.textContent).toBe("Deployment failed.");
+    expect(toast.querySelector(".sk-callout__description")?.textContent).toBe("Deployment failed.");
 
     expect(screen.getByRole("button", { name: "Dismiss notification" }).getAttribute("type")).toBe("button");
     fireEvent.click(screen.getByRole("button", { name: "Dismiss notification" }));
     expect(onDismiss).toHaveBeenCalledWith({ reason: "dismiss" });
   });
 
-  it("renders alert anatomy for title, icon and actions", () => {
+  it("renders callout anatomy for title, icon and actions", () => {
     const ui = render(
       <Toast actions={<a href="/logs">View logs</a>} icon="!" title="Deploy failed" tone="danger">
         Check the pipeline.
@@ -38,9 +38,9 @@ describe("content component contracts", () => {
     );
 
     const toast = within(ui.container).getByRole("alert");
-    expect(toast.querySelector(".sk-alert__icon")).not.toBeNull();
-    expect(toast.querySelector(".sk-alert__title")?.textContent).toBe("Deploy failed");
-    expect(toast.querySelector(".sk-alert__actions")?.textContent).toContain("View logs");
+    expect(toast.querySelector(".sk-callout__icon")).not.toBeNull();
+    expect(toast.querySelector(".sk-callout__title")?.textContent).toBe("Deploy failed");
+    expect(toast.querySelector(".sk-callout__actions")?.textContent).toContain("View logs");
   });
 
   it("requests timeout dismissal only when configured and clears it on unmount", () => {

@@ -9,7 +9,7 @@ const weekdayLetterPattern = /\p{L}\p{M}*/gu;
  * `min`/`max` on the Zag machine are `DateValue` objects, but the vanilla enhancers only have an
  * authored HTML attribute (`data-min="2026-07-01"`) to read. One parse, shared by every enhancer
  * that needs it, rather than each reimplementing the "attribute absent → undefined" branch.
- * Malformed input throws `parseDate`'s own descriptive error — the same "loud, not swallowed"
+ * Malformed input throws `parseDate`'s own descriptive error, the same "loud, not swallowed"
  * contract the icon-only Button check uses for a missing accessible name.
  */
 export function parseCalendarDate(value: string | null | undefined) {
@@ -58,17 +58,17 @@ export const calendarParts = {
 } as const;
 
 /*
- * CALENDAR, the contract — and the shortest template in the repo, for a reason worth stating.
+ * CALENDAR, the contract, and the shortest template in the repo, for a reason worth stating.
  *
  * Everything a calendar draws is DERIVED: which weeks are in the visible month, which cell is today,
- * which is out of range. None of it is authorable, and none of it is stable — the grid changes by
+ * which is out of range. None of it is authorable, and none of it is stable: the grid changes by
  * itself as the month turns. So both bindings generate the whole body from the machine (the Svelte
  * enhancer mounts `CalendarView` into the authored root, React renders `CalendarBody`), and what a
  * composition can actually say is the host and its configuration. The template says exactly that,
  * plus the one thing that IS authored content: the label naming the grid.
  *
  * `value` is new to the enhancer. It read `min`, `max` and `selectionMode` and no initial date at
- * all, so authored markup could not express a preselected day — a calendar could only ever open on
+ * all, so authored markup could not express a preselected day: a calendar could only ever open on
  * today, while the React binding accepted a value the other half quietly dropped.
  */
 export const calendarContract = {
@@ -79,7 +79,7 @@ export const calendarContract = {
   options: {
     /**
      * The selected date, ISO. Space-separated names both ends of a range. React spells it
-     * `defaultValue` — `value` there is the CONTROLLED prop, and emitting it freezes the grid.
+     * `defaultValue`: `value` there is the CONTROLLED prop, and emitting it freezes the grid.
      */
     value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
     /** Earliest selectable date, ISO. Everything before it renders unavailable. */

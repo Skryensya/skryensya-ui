@@ -5,7 +5,7 @@ import type { Translate } from "../i18n";
  * The three calendar demos, from the contract published for it.
  *
  * The authored HTML on both pages drew `<div class="sk-calendar" data-sk-calendar>` with NO label
- * while the React half passed `label="Disponibilidad"` — one demo documenting two components, which
+ * while the React half passed `label="Disponibilidad"`, one demo documenting two components, which
  * is the whole reason these moved here.
  *
  * `demo.calendar.locale` is a BCP-47 tag rather than a word, and it is still a translated key: it is

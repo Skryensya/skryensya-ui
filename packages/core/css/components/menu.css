@@ -1,4 +1,4 @@
-/* TIER 3, MENU — application commands, never navigation links. */
+/* TIER 3, MENU: application commands, never navigation links. */
 @layer components {
   .sk-menu {
     --sk-menu-bg: var(--color-bg-surface-raised);
@@ -74,7 +74,7 @@
   /*
    * A SUBMENU STANDS WHERE AN ITEM STANDS, and until both bindings were rendered side by side
    * nothing said so. The vanilla layer needs a nested `[data-sk-menu]` root to mount a second
-   * machine on, so a submenu's trigger sits inside one — and `.sk-menu` is `inline-flex`, which
+   * machine on, so a submenu's trigger sits inside one, and `.sk-menu` is `inline-flex`, which
    * shrink-wrapped that row while its siblings filled the panel. React composes components and
    * never had the wrapper, so the two bindings looked different and only one looked right.
    */
@@ -122,7 +122,7 @@
   }
   /*
    * The check means CHECKED, and nothing used to enforce that. The markup always carries the
-   * indicator and the machine writes `data-state` onto it, but no rule read that state — so an
+   * indicator and the machine writes `data-state` onto it, but no rule read that state: so an
    * unchecked checkbox item painted a blue tick anyway. React never showed it (Zag hides the
    * indicator when unchecked), which is how the two bindings disagreed about whether "Favorito" was
    * on. Hidden unless checked: a tick that appears when it should not is a lie, where one that

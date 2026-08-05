@@ -5,7 +5,7 @@ import type { Recipe } from "./recipe.js";
  *
  * The interesting state is `error`, and it is interesting because the error lives in TWO places at
  * once and neither is optional: the Field whose value is wrong carries the message that invalidates
- * it, and the Alert above the form says the submission did not go through. Only one of those tells
+ * it, and the Callout above the form says the submission did not go through. Only one of those tells
  * a screen reader which control to go back to, and only the other one is visible without scrolling.
  */
 export const formRecipe: Recipe = {
@@ -13,7 +13,7 @@ export const formRecipe: Recipe = {
   intent: "Un formulario corto que se envía, puede fallar, y lo dice donde falló.",
   notes: [
     "El error del campo es lo que lo invalida: no hay una opción `invalid` aparte que pueda quedar desfasada del mensaje.",
-    "El Alert de arriba no reemplaza al error del campo, lo acompaña — uno se ve sin scrollear, el otro dice a qué control volver.",
+    "El Callout de arriba no reemplaza al error del campo, lo acompaña: uno se ve sin scrollear, el otro dice a qué control volver.",
     "El estado de envío apaga los controles en vez de esconderlos: un formulario que desaparece mientras guarda pierde el contexto de lo que se escribió.",
   ],
 
@@ -103,8 +103,8 @@ export const formRecipe: Recipe = {
       children: [
         { contract: "typography", signature: "Heading", children: "Crear proyecto" },
         {
-          contract: "alert",
-          signature: "Alert",
+          contract: "callout",
+          signature: "Callout",
           options: { tone: "danger" },
           slots: { title: "No pudimos crear el proyecto" },
           children: "Revisá el nombre y volvé a intentar.",
@@ -148,15 +148,15 @@ export const formRecipe: Recipe = {
       children: [
         { contract: "typography", signature: "Heading", children: "Crear proyecto" },
         {
-          contract: "alert",
-          signature: "Alert",
+          contract: "callout",
+          signature: "Callout",
           options: { tone: "success" },
           slots: {
             title: "Proyecto creado",
             actions: {
               contract: "button",
               signature: "Button.navigation",
-              options: { href: "/proyectos/atlas" },
+              options: { href: "/proyectos/atlas", variant: "subtle" },
               children: "Ver el proyecto",
             },
           },

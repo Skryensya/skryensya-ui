@@ -7,7 +7,7 @@
  * roots inside that realm and keeps the parent theme dimensions in sync.
  *
  * The React demo, when the caller provides a `react` slot, renders as a real `@astrojs/react`
- * island (`client:load`) sitting next to the iframe in the parent document — an actual
+ * island (`client:load`) sitting next to the iframe in the parent document: an actual
  * `@skryensya/react` component, not a source string. The `react` prop stays the source shown
  * below it; a page may supply either alone.
  *
@@ -39,7 +39,7 @@ interface Props {
    * A USAGE TREE, and the preferred way to write a demo.
    *
    * One authoring, both stages: the markup, the TSX and the live React island are all EMITTED from
-   * it, so a page cannot show a snippet that differs from what it renders — which is the whole
+   * it, so a page cannot show a snippet that differs from what it renders, which is the whole
    * failure mode hand-written examples have. The same tree shape the MCP validates and the gates
    * measure; when a tree is given, `html` and `react` are ignored rather than merged, because two
    * sources of truth is exactly what this replaces.
@@ -82,7 +82,7 @@ interface Props {
   /**
    * Cap the specimen's width on the STAGE only, as a CSS length (`measure="34rem"`).
    *
-   * For components that only read correctly at a realistic column — a settings List across the full
+   * For components that only read correctly at a realistic column: a settings List across the full
    * stage looks like nothing anyone ships. The cap never reaches the snippet, because that width is
    * the consumer's layout, not the component's. This is what lets such a demo be a single `tree`
    * instead of a wrapper `<div>` in the slot plus a separate `code` string.
@@ -92,7 +92,7 @@ interface Props {
    * Offer the screen presets (Libre | Tablet | Móvil) in the header.
    *
    * ON by default, on every preview: "does this hold up on a phone" is a question a reader can ask
-   * of any component, not only of the ones whose layout is obviously the subject — a button's label
+   * of any component, not only of the ones whose layout is obviously the subject: a button's label
    * can wrap, a table can overflow, a dialog can outgrow the viewport. Leaving it to the author of
    * each page to remember would mean the answer is available on the demos someone already thought
    * about, which are exactly the ones that were already fine.
@@ -123,7 +123,7 @@ const t = useTranslations(getLocale(Astro.url));
 
 /*
  * Both sources from the one tree. Emitted at BUILD time: the compiler is data in, strings out, so
- * there is nothing to ship to the reader — the page carries the same bytes it would have carried if
+ * there is nothing to ship to the reader: the page carries the same bytes it would have carried if
  * someone had typed them, minus the chance that they typed something else.
  */
 const treeHtml = tree ? emitMarkup(tree) : undefined;
@@ -134,7 +134,7 @@ const hasJs = Boolean(js);
 /*
  * The `react` slot carries the LIVE demo (an actual `@skryensya/react` component, `client:load`);
  * the `react` string prop stays the source shown under it. Either alone still counts as "there is a
- * React binding" — a page can render a live demo before it has bothered to also show its source.
+ * React binding": a page can render a live demo before it has bothered to also show its source.
  */
 const reactSlotHtml = Astro.slots.has("react") ? await Astro.slots.render("react") : undefined;
 const hasReact = Boolean(tree) || Boolean(treeReact ?? react) || Boolean(reactSlotHtml);
@@ -158,15 +158,15 @@ const frameDocument = buildPreviewFrameDocument({
  * A placeholder is an empty box until `mountIcons` runs on the host document, and this chrome sits
  * above the fold on every component page: the controls appeared blank, then popped. `iconMarkup`
  * writes the same `<svg data-icon="…">` the runtime would, so the icon-set switch still finds and
- * swaps them — the site keeps the swap, and loses the wait.
+ * swaps them: the site keeps the swap, and loses the wait.
  */
 const reloadIcon = iconMarkup("refresh");
 /*
  * Screen presets. The name is a stable ROLE, not a device drawing, which is why the accessible
  * name spells out the actual viewport: `screen-tablet` tells you the class of screen, `768 × 1024`
- * tells you what you are about to see. Both are needed — the glyph alone cannot say which of two
+ * tells you what you are about to see. Both are needed: the glyph alone cannot say which of two
  * tablets. Rendered as a single cycling toggle (like ThemeToggle), so the hint IS the accessible
- * name for whichever preset is current — there is no separate tooltip to carry it.
+ * name for whichever preset is current: there is no separate tooltip to carry it.
  */
 const screenOptions = [
   {
@@ -203,7 +203,7 @@ const screenToggleLabels = Object.fromEntries(
     {/*
       * ONE container, not two: the toolbar IS `.sk-component-preview__actions` (the class that
       * pins it to the header's right edge), not a wrapper around a second `sk-toolbar` div.
-      * Every action — reload, screen presets, the Vanilla/React toggle — is a group of this same
+      * Every action (reload, screen presets, the Vanilla/React toggle) is a group of this same
       * toolbar, reload included, so Home/End and arrow-roving reach across all three instead of
       * treating reload as chrome that sits outside the bar it visually belongs to.
       *
@@ -247,7 +247,7 @@ const screenToggleLabels = Object.fromEntries(
         * click, not independent choices to aim at. `data-value` (read/painted by
         * connectScreenTabs → paintScreenToggle) selects the visible stacked face in CSS, the same
         * cross-fade ThemeToggle uses for its own three faces. The accessible name carries the full
-        * hint text per preset — authored per instance as `data-sk-component-preview-screen-label-*`
+        * hint text per preset, authored per instance as `data-sk-component-preview-screen-label-*`,
         * so a page with several previews still names its own component, not a shared generic string.
         */}
       {
@@ -279,8 +279,8 @@ const screenToggleLabels = Object.fromEntries(
       {/*
         * Two plain buttons, not a boxed Segmented: the container Segmented needs (the pill, the
         * sliding indicator) added a second nested box inside a toolbar group that is already the
-        * container. `data-sk-component-preview-binding-tabs` moves onto the group div itself —
-        * one element doing both jobs — and each button toggles `aria-pressed` directly on click
+        * container. `data-sk-component-preview-binding-tabs` moves onto the group div itself
+        * (one element doing both jobs), and each button toggles `aria-pressed` directly on click
         * instead of Segmented's `sk-value-change` + roving radiogroup semantics.
         */}
       {
@@ -343,7 +343,7 @@ const screenToggleLabels = Object.fromEntries(
      * stage itself is a second srcdoc iframe rendered by the island, because the demo the page
      * authored is wrapped in `framed()` (see `react-demos/framed.tsx`). React keeps its reconciler
      * in this document and portals the painted DOM into that frame, so the React binding gets the
-     * same isolation, theme sync, auto-fit and screen presets as the Vanilla one — the two bindings
+     * same isolation, theme sync, auto-fit and screen presets as the Vanilla one: the two bindings
      * are the same component seen twice, so they get the same box.
      */
     (tree || reactSlotHtml) && (

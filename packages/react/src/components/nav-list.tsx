@@ -46,7 +46,7 @@ export type NavListGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "children">
 /*
  * The `<ul>` is why this signature exists: a `<li>` needs a list to sit inside, and NavList itself
  * only renders the landmark. So the list node is unconditional and only the label node is
- * conditional — the contract's `whenSlotFilled: "label"` — and its `labelledBySlot` is the wiring
+ * conditional (the contract's `whenSlotFilled: "label"`), and its `labelledBySlot` is the wiring
  * below.
  */
 export function NavListGroup({ children, className, label, ...props }: NavListGroupProps) {

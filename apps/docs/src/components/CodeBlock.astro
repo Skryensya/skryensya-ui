@@ -6,7 +6,7 @@ import CopyButton from "./CopyButton.astro";
 import { iconMarkup } from "../icons";
 import { getLocale, useTranslations } from "../i18n";
 
-type CodeLanguage = "bash" | "css" | "html" | "ts" | "tsx";
+type CodeLanguage = "bash" | "css" | "html" | "json" | "ts" | "tsx";
 
 interface Props {
   /** Visible source. When `full` is set, this is the condensed view. */
@@ -45,7 +45,7 @@ const collapsibleLineCount = hasDensity
 const collapsibleTargetId = hasDensity && condensedCollapsible ? condensedId : complete ? fullId : condensedId;
 
 /* The same anatomy `codePreviewContract` (`CodePreview.density`) declares, written by hand because
- * Shiki's highlighted output has to land as real markup — a usage tree has no channel for that, only
+ * Shiki's highlighted output has to land as real markup: a usage tree has no channel for that, only
  * for text or composed signatures (see `contracts/NOT-PUBLISHED.md`, the `command-palette` entry, for
  * the general shape of that limit). The classes and data-attributes below are the contract's own. */
 const rootAttrs: Record<string, string | undefined> = {
@@ -61,9 +61,34 @@ const rootAttrs: Record<string, string | undefined> = {
 
 const toggleAttrs: Record<string, string> = {
   [codePreviewAttrs.toggle]: "",
-  [codePreviewAttrs.expandedLabel]: t("code.showLess"),
-  [codePreviewAttrs.expandedAriaLabel]: t("code.showFirstLines", { count: String(previewLineCount) }),
+  [codePreviewAttrs.expandedLabel]: t("code.collapse"),
+  [codePreviewAttrs.expandedAriaLabel]: t("code.collapseTo", { count: String(previewLineCount) }),
+  /* Deliberately un-interpolated: `{count}` stays in the string so the enhancer can fill it when
+     the density switch swaps which panel — and so which line count — is on screen. */
+  [codePreviewAttrs.linesLabel]: t("code.lines"),
 };
+
+/*
+ * WHICH PANEL BECOMES A SCROLL REGION, mirroring the three selectors in code-preview.css: Condensed
+ * gets the collapsed window only under `[condensed-collapsible]`, and the single no-density panel
+ * gets it under `[collapsible]`.
+ *
+ * It matters here because a region that scrolls has to be reachable by keyboard — the same reasoning
+ * `TableScroll` records in core/src/table.ts — and a focusable region has to be named.
+ * `role="group"`, not `region`: `pre` maps to `generic`, which drops `aria-label` on the floor, so
+ * SOME role is needed to hold the name; `region` would hold it too, but it is a landmark, and a docs
+ * page with ten code blocks does not want ten more entries in a screen reader's landmark rotor.
+ */
+const condensedScrolls = hasDensity ? condensedCollapsible : isCollapsible;
+const fullScrolls = isCollapsible;
+const regionName = label ? t("code.region", { label }) : t("code.regionPlain");
+/* One shape whatever the answer, with `undefined` where an attribute does not apply — Astro drops
+   those, and a union of two different shapes is not assignable to `<Code>`'s props. */
+const scrollRegionAttrs = (scrolls: boolean) => ({
+  tabindex: scrolls ? 0 : -1,
+  role: scrolls ? ("group" as const) : undefined,
+  "aria-label": scrolls ? regionName : undefined,
+});
 
 /* The shared CodePreview CSS consumes Shiki's conventional `light`/`dark` variable names.
    `light-dark()` then follows the page color mode without a brand or docs-only selector. */
@@ -126,12 +151,12 @@ const toggleIcon = iconMarkup("chevron-down", { size: "sm" });
   }
   <div class={codePreviewParts.preview}>
     <div class={codePreviewParts.viewport} id={condensedId} {...{ [codePreviewAttrs.densityPanel]: "condensed" }}>
-      <Code code={condensed} lang={language} themes={themes} defaultColor={false} tabindex={-1} />
+      <Code code={condensed} lang={language} themes={themes} defaultColor={false} {...scrollRegionAttrs(condensedScrolls)} />
     </div>
     {
       complete && (
         <div class={codePreviewParts.viewport} id={fullId} {...{ [codePreviewAttrs.densityPanel]: "full" }}>
-          <Code code={complete} lang={language} themes={themes} defaultColor={false} tabindex={-1} />
+          <Code code={complete} lang={language} themes={themes} defaultColor={false} {...scrollRegionAttrs(fullScrolls)} />
         </div>
       )
     }
@@ -152,10 +177,10 @@ const toggleIcon = iconMarkup("chevron-down", { size: "sm" });
           type="button"
           aria-controls={collapsibleTargetId}
           aria-expanded="false"
-          aria-label={t("code.showLines", { count: String(collapsibleLineCount) })}
+          aria-label={t("code.expandTo", { count: String(collapsibleLineCount) })}
           {...toggleAttrs}
         >
-          <span {...{ [codePreviewAttrs.toggleLabel]: "" }}>{t("code.showMore")}</span>
+          <span {...{ [codePreviewAttrs.toggleLabel]: "" }}>{t("code.expand")}</span>
           <span class={codePreviewParts.toggleCount} aria-hidden="true">{t("code.lines", { count: String(collapsibleLineCount) })}</span>
           <span class={codePreviewParts.toggleIcon} aria-hidden="true">
             <Fragment set:html={toggleIcon} />

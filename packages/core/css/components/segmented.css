@@ -68,7 +68,7 @@
     appearance: none;
     border: 0;
     display: inline-grid;
-    /* Paint at control-sm; HIG hit (44px) expands via ::after — state layer owns ::before. */
+    /* Paint at control-sm; HIG hit (44px) expands via ::after. State layer owns ::before. */
     min-block-size: var(--size-control-sm);
     place-items: center;
     border-radius: max(0px, calc(var(--sk-segmented-radius) - var(--sk-segmented-padding)));

@@ -7,7 +7,7 @@ const controlsSelector =
  * A toolbar item can itself be a composite widget (Segmented's radiogroup, Tabs' tablist): it
  * already owns a roving tabindex, so only ONE of its members has tabindex="0" and the rest are
  * "-1". Filtering those out is what makes the composite a single stop for the toolbar's own
- * roving focus, instead of the toolbar visiting every one of its internal options too — the
+ * roving focus, instead of the toolbar visiting every one of its internal options too: the
  * nested-composite pattern from the ARIA APG toolbar practice, not a plain flat button row.
  */
 function isStop(element: HTMLElement): boolean {

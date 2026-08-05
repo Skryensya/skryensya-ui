@@ -15,7 +15,7 @@ function classes(base: string, className: string | undefined) {
 export type ImageFrameProps<Element extends ElementType = "div"> = PolymorphicProps<
   Element,
   {
-    /** Type over the media — a MediaCaption (and its wash). Not a second media source. */
+    /** Type over the media: a MediaCaption (and its wash). Not a second media source. */
     caption?: ReactNode;
     children?: ReactNode;
     className?: string;

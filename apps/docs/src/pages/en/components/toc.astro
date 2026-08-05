@@ -103,7 +103,7 @@ const builder = `<script is:inline>
 
   <h2 id="iconos">Icons</h2>
   <p>
-    The link accepts a decorative icon in front of the label — the label already names the
+    The link accepts a decorative icon in front of the label: the label already names the
     destination, so the icon carries no accessible name of its own.
   </p>
   <ComponentPreview tree={tocIconsTree(t)} label="With icons" flush />
@@ -111,7 +111,7 @@ const builder = `<script is:inline>
 
   <h2 id="rail-o-disclosure">Rail or disclosure</h2>
   <p>
-    The contract ships ONE shape: an interactive <code>&lt;details&gt;</code>, closed — the
+    The contract ships ONE shape: an interactive <code>&lt;details&gt;</code>, closed: the
     platform's own behaviour, free. It is a consumer with a column to spare that turns it into an
     always-open, sticky <strong>rail</strong> beside the prose, the same way <code>sidebar</code>
     never decides on its own that it becomes a drawer. On this site, that consumer is the docs
@@ -135,7 +135,7 @@ const builder = `<script is:inline>
   <CodeBlock code={markup} label="HTML" />
   <h3 id="cls">Without CLS</h3>
   <p>
-    A tree already knows its items when composed — that is the case above. This site's real shell
+    A tree already knows its items when composed: that is the case above. This site's real shell
     does not: its headings are discovered by walking <code>main</code> in the browser, so an
     <code>is:inline</code> script builds the list before the first paint. With no sections, it
     marks <code>data-empty</code>.
@@ -143,7 +143,7 @@ const builder = `<script is:inline>
   <CodeBlock code={builder} label="in the layout" lang="html" />
   <p>
     Once mounted, the same enhancer wires the rail/disclosure switch and the scroll-spy that marks
-    <code>aria-current</code> for whichever section crosses the top band of the viewport —
+    <code>aria-current</code> for whichever section crosses the top band of the viewport:
     <code>connectToc</code>, behind <code>data-sk-toc</code>.
   </p>
   <CodeBlock code={mount} label="JavaScript" lang="ts" />
@@ -158,7 +158,7 @@ const builder = `<script is:inline>
     </li>
     <li>
       Shape: one, a closed <code>&lt;details&gt;</code>. A sticky rail is a consumer's decision,
-      not the contract's — see above.
+      not the contract's (see above).
     </li>
     <li>
       Each item: <code>sk-toc__item</code> + a bottom divider (except the last). The link is

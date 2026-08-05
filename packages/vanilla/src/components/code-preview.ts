@@ -33,6 +33,11 @@ export function connectCodePreview(root: HTMLElement): Cleanup {
   const expandedAriaLabel = toggle?.getAttribute(codePreviewAttrs.expandedAriaLabel) ?? collapsedAriaLabel;
   const fullLines = Number(root.getAttribute(codePreviewAttrs.lines) ?? 0);
   const condensedLines = Number(root.getAttribute(codePreviewAttrs.condensedLines) ?? 0);
+  /* The author supplies the sentence with `{count}` still in it; substituting is all this does. The
+   * count used to be built here as `${n} líneas`, which put one hardcoded Spanish word in a package
+   * that has no language of its own — and printed it on the English site. */
+  const linesTemplate = toggle?.getAttribute(codePreviewAttrs.linesLabel) ?? "{count}";
+  const formatLines = (count: number): string => linesTemplate.replace("{count}", String(count));
 
   const setExpanded = (expanded: boolean) => {
     if (!toggle || !toggleLabel) return;
@@ -48,11 +53,11 @@ export function connectCodePreview(root: HTMLElement): Cleanup {
     const fullCanCollapse = root.hasAttribute(codePreviewAttrs.collapsible);
     if (density === "full") {
       more.hidden = !fullCanCollapse;
-      if (toggleCount && fullLines > 0) toggleCount.textContent = `${fullLines} líneas`;
+      if (toggleCount && fullLines > 0) toggleCount.textContent = formatLines(fullLines);
       if (fullPanelEl?.id) toggle.setAttribute("aria-controls", fullPanelEl.id);
     } else if (density === "condensed") {
       more.hidden = !condensedCanCollapse;
-      if (toggleCount && condensedLines > 0) toggleCount.textContent = `${condensedLines} líneas`;
+      if (toggleCount && condensedLines > 0) toggleCount.textContent = formatLines(condensedLines);
       if (condensedPanelEl?.id) toggle.setAttribute("aria-controls", condensedPanelEl.id);
     } else {
       more.hidden = !fullCanCollapse;

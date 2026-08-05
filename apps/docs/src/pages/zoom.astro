@@ -72,8 +72,8 @@ for (const route of routes) {
     deben seguir disponibles. La interfaz cambia de geometría, no de capacidades.
   </p>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
       <p>
         <strong>200% y 400% prueban contratos distintos.</strong> A 200% se comprueba que el texto
         puede crecer sin perder contenido o funcionalidad. A 400% se comprueba reflow: un viewport de
@@ -177,7 +177,7 @@ for (const route of routes) {
       </thead>
       <tbody>
         <tr>
-          <td>Texto, Alert, Tile, Card</td>
+          <td>Texto, Callout, Tile, Card</td>
           <td>Altura automática; labels y contenido pueden envolver.</td>
         </tr>
         <tr>
@@ -218,7 +218,7 @@ for (const route of routes) {
   <h2>Qué se rompe con zoom</h2>
   <ul>
     <li><code>width</code> o <code>min-width</code> fijos mayores que el viewport efectivo.</li>
-    <li><code>height</code> fija en botones, cards, alertas o campos con texto.</li>
+    <li><code>height</code> fija en botones, cards, callouts o campos con texto.</li>
     <li><code>white-space: nowrap</code> en labels que no tienen una salida responsive.</li>
     <li>Toolbars que ocultan acciones en vez de envolverlas o reorganizarlas.</li>
     <li>Contenido posicionado con offsets físicos que deja de participar en el flujo.</li>

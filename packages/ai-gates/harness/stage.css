@@ -1,7 +1,7 @@
 /*
  * The stage's own layout, not the system's. It exists so the visual baseline is readable and stable:
  * a fixed measure means a case cannot stretch to the viewport, and labels make a diff say WHICH case
- * moved. None of this styles a component — the components bring their own CSS.
+ * moved. None of this styles a component: the components bring their own CSS.
  */
 #stage {
   display: grid;
@@ -31,7 +31,7 @@
    * A CONTAINING BLOCK PER BINDING, so a case cannot position itself over its neighbours.
    *
    * An open `<dialog>` is `position: absolute` by UA style and resolves against the nearest
-   * positioned ancestor — with none, that is the whole page, so it floated across the stage and the
+   * positioned ancestor; with none, that is the whole page, so it floated across the stage and the
    * visual baseline stopped reproducing between runs. This is the same isolation the id prefixes
    * already give: every case shares one document, so anything the platform resolves against an
    * ancestor has to be scoped or the cases read each other.

@@ -69,6 +69,11 @@ button.addEventListener("click", runDeployment);`;
 
   <h2>Variantes</h2>
   <ComponentPreview tree={buttonVariantsTree(t)} label="Button" />
+  <p>
+    <code>translucent</code> tiene un fondo semi-transparente que se mezcla con fondos coloreados.
+    Úsalo en callouts, cards coloreadas, o cualquier contexto donde el botón necesita integrarse
+    visualmente con su contenedor sin competir con él.
+  </p>
 
   <h2>Tamaños</h2>
   <ComponentPreview tree={buttonSizesTree(t)} label="Button · sm / md / lg" />
@@ -80,6 +85,11 @@ button.addEventListener("click", runDeployment);`;
   />
 
   <h2>Con icono</h2>
+  <p>
+    El icono va antes o después del texto según lo que necesite decir primero: adelante para
+    anticipar el tipo de acción, atrás para señalar hacia dónde lleva. Es solo el orden en
+    <code>children</code>: el mismo <code>gap</code> entre icono y texto en los dos casos.
+  </p>
   <ComponentPreview tree={buttonIconTree(t)} label="Button con icono" />
 
   <h2>Solo icono</h2>
@@ -88,7 +98,7 @@ button.addEventListener("click", runDeployment);`;
 
   <h2>Como enlace</h2>
   <p>
-    Cualquier forma de arriba —variante, tamaño, icono, solo icono— también renderiza como enlace:
+    Cualquier forma de arriba (variante, tamaño, icono, solo icono) también renderiza como enlace:
     mismas clases, mismos atributos <code>data-*</code>, solo cambia el tag (<code>&lt;a href&gt;</code>
     en vez de <code>&lt;button&gt;</code>). En React, pasarle <code>href</code> a <code>Button</code>
     hace el cambio. Un enlace no puede ser <code>disabled</code>: renderiza contenido no enlazado en su lugar.

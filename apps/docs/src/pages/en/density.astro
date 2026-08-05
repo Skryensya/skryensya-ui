@@ -102,8 +102,8 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
     Local density is not a component variant. It is a scope that recalculates the <strong>space and control tokens at the boundary of your</strong> component, without touching its neighbors or the density chosen for the application.
   </p>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
       <p>
         <strong>The entire contract lives on the same node: </strong> <code>data-sk-density-scope</code> triggers local reprojection; <code>--sk-density-factor</code> or <code>--sk-density</code>, written in <code>style</code>, decides its value. This scope does not add classes, selectors, required presets or a prop to each component.
       </p>

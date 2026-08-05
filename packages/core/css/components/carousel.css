@@ -14,7 +14,7 @@
  * for the frame before the enhancer mounts, which is exactly what the zero-JS layer is for.
  *
  * THE ROOT IS A 3-COLUMN GRID, and that is load-bearing. `::scroll-button()` boxes are laid out as
- * siblings AFTER the scroll container, in the parent's formatting context — in a flex column they
+ * siblings AFTER the scroll container, in the parent's formatting context: in a flex column they
  * stack on top of each other down the left edge, which is what the zero-JS layer used to do. Placing
  * them (and `::scroll-marker-group`) into explicit cells of row 2 puts them exactly where the
  * enhancer's control row goes: [ icon ]  • • •  [ icon ]. The two layers are then the same carousel,
@@ -73,7 +73,7 @@
   /* THE TRACK: the native scroll container, spanning the full width of row 1.
    *
    * Everything below is also the ZERO-JS layout. When the enhancer mounts, Zag restates the scroll
-   * model inline (display, gap, snap type, overflow, scrollbar) — deliberately the same values, so
+   * model inline (display, gap, snap type, overflow, scrollbar), deliberately the same values, so
    * the track does not reflow on hydration. `position: relative` and the scrollbar suppression are
    * ours either way. */
   .sk-carousel__track {
@@ -116,8 +116,8 @@
    * controls to fall back on when `data-controls="none"`.
    *
    * The grab cursor is the whole affordance on a carousel with no chrome: it costs no pixels. It is
-   * gated on `data-sk-carousel-ready` as well as on the opt-out, because dragging is the enhancer's
-   * — on a page whose JS never ran, a grab cursor would be an offer the carousel cannot keep. */
+   * gated on `data-sk-carousel-ready` as well as on the opt-out, because dragging is the enhancer's:
+   * on a page whose JS never ran, a grab cursor would be an offer the carousel cannot keep. */
   .sk-carousel[data-sk-carousel-ready]:not([data-mouse-drag="off"]) .sk-carousel__track {
     cursor: grab;
   }
@@ -172,7 +172,7 @@
 
   /* Two bars when playing, one triangle when paused. Drawn here rather than pulled from an icon set:
    * the stable icon vocabulary names roles a whole system needs, and this glyph is one component's
-   * detail — adding it would be work for every set author, forever.
+   * detail: adding it would be work for every set author, forever.
    *
    * On `::after`, not `::before`: `sk-interactive`'s state layer already owns the `::before` of every
    * interactive element, and it is `position: absolute; inset: 0; opacity: 0` until a state raises it.
@@ -210,7 +210,7 @@
 
   /*
    * The button IS the painted mark (original optics). Hit grows on ::after with a negative
-   * block inset to the touch floor — layout and neighbours stay put, so taps don't overlap.
+   * block inset to the touch floor; layout and neighbours stay put, so taps don't overlap.
    * ::before belongs to the state layer.
    */
   .sk-carousel__dot {

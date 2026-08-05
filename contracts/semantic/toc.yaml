@@ -3,9 +3,9 @@
 Toc:
   useWhen:
     - un documento largo tiene varias secciones (h2/h3) y el lector necesita saltar entre ellas
-    - hace falta ver, mientras se lee, en qué sección se está — el "current" lo mueve el scroll-spy
+    - hace falta ver, mientras se lee, en qué sección se está: el "current" lo mueve el scroll-spy
   avoidWhen:
-    - los destinos son páginas distintas, no secciones de ESTA página — eso es NavList
-    - el documento es corto y cabe entero en una pantalla — un índice no ahorra nada ahí
+    - los destinos son páginas distintas, no secciones de ESTA página: eso es NavList
+    - el documento es corto y cabe entero en una pantalla: un índice no ahorra nada ahí
   alternatives:
     - NavList

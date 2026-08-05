@@ -37,7 +37,10 @@
 
   // El scope del CSS del tile es "tile"; Zag pondría "collapsible". Lo devolvemos después de parchear,
   // igual que hace React. Las clases `sk-tile*` las autora el consumidor (applyZagProps nunca toca
-  // class); garantizamos `sk-interactive` como hacía el enhancer viejo.
+  // class); garantizamos `sk-interactive` como hacía el enhancer viejo, pero en el TRIGGER, no en la
+  // sección: la sección es un contenedor, no el control, y el layer pintado detrás de toda la sección
+  // teñía el contenido revelado al pasar el mouse (y `sk-tile--interactive` bloqueaba seleccionar ese
+  // mismo texto vía `user-select: none`).
   const scopeTile = (el: HTMLElement) => el.setAttribute("data-scope", "tile");
 
   $effect(() => {
@@ -47,7 +50,8 @@
     scopeTile(root);
     scopeTile(trigger);
     scopeTile(content);
-    root.classList.add(tileParts.root, tileParts.interactive, tileParts.expandable, "sk-interactive");
+    root.classList.add(tileParts.root, tileParts.expandable);
+    trigger.classList.add(tileParts.interactive, "sk-interactive");
   });
 
   const cleanups: Array<() => void> = [];

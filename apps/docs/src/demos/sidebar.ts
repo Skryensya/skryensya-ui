@@ -5,7 +5,7 @@ import type { Translate } from "../i18n";
  * A collapsible shell with NavList as its guest, and enough adjacent content to make the rail legible.
  *
  * The `.app-shell` root and the `.app-shell__main` sibling are the SITE playing consumer, not part of
- * the component — but they are in the tree on purpose. Collapsing is the whole lesson of this page and
+ * the component, but they are in the tree on purpose. Collapsing is the whole lesson of this page and
  * it is invisible without a neighbour to widen: the sidebar just narrows against nothing. That framing
  * used to be a slot around the demo, and a tree REPLACES the slot
  * (`previewHtml = treeHtml ?? slotHtml ?? html` in ComponentPreview), so the choice is framing inside

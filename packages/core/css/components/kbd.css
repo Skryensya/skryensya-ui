@@ -73,8 +73,8 @@
    * Accent, because a lit key is saying "this one is active right now"; and the shadow
    * drops to flat, so the key visibly sinks under the finger. */
   .sk-kbd[data-pressed] {
-    --sk-kbd-bg: var(--color-bg-accent-subtle);
-    --sk-kbd-fg: var(--color-text-accent);
+    --sk-kbd-bg: var(--color-decorative-bg);
+    --sk-kbd-fg: var(--color-decorative-fg);
     --sk-kbd-border-color: var(--color-border-strong);
     --sk-kbd-shadow: var(--elevation-flat);
 

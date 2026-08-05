@@ -26,15 +26,15 @@ initComponents();`;
 
 /*
  * A group doesn't have to be loose buttons: it can BE a composite widget, like a Segmented (its
- * own radiogroup). This site's own component-preview header is exactly this — the screen-size
- * selector and the Vanilla/React toggle — so the example isn't hypothetical, it's this page's own
+ * own radiogroup). This site's own component-preview header is exactly this: the screen-size
+ * selector and the Vanilla/React toggle. So the example isn't hypothetical, it's this page's own
  * chrome.
  *
  * The contract that makes it work: each Segmented already has its own roving tabindex (one option
  * at tabindex="0", the rest at "-1"), so only that option is a STOP for the Toolbar. Arrows inside
  * the focused Segmented navigate its own options and consume the event (preventDefault); the
- * Toolbar sees the bubbled event, notices it was already handled, and doesn't move focus again —
- * without that check, one arrow press would jump two stops instead of one.
+ * Toolbar sees the bubbled event, notices it was already handled, and doesn't move focus again.
+ * Without that check, one arrow press would jump two stops instead of one.
  */
 ---
 
@@ -62,7 +62,7 @@ initComponents();`;
   <h2>Toolbar with composite widgets</h2>
   <p>
     A group doesn't have to be loose buttons: it can be an entire composite widget, like a
-    Segmented. The bar treats each composite widget as <strong>a single stop</strong> — Segmented's
+    Segmented. The bar treats each composite widget as <strong>a single stop</strong>: Segmented's
     own roving tabindex already leaves only one option at <code>tabindex="0"</code>, so Toolbar
     only visits that one. Inside the focused Segmented, arrows navigate its own options; they don't
     escape to the bar's next group. This is the real pattern this site's own component-preview

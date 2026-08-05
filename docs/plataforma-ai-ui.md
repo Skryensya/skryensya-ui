@@ -82,7 +82,7 @@ valor y no un tipo porque el markup es dato: se importa, se serializa y sale det
 TypeScript Program para el grueso.
 
 ```ts
-// packages/core/src/button.ts — dos firmas sobre un export, discriminadas por href
+// packages/core/src/button.ts: dos firmas sobre un export, discriminadas por href
 export const buttonContract = {
   id: "button",
   css: "@skryensya/core/components/button.css",
@@ -128,7 +128,7 @@ export const buttonContract = {
 
 Tres campos hacen el trabajo pesado, y cada uno significa **una** cosa: `options` por firma es lo que
 rechaza una opción de la firma hermana; `forbids` es sólo para atributos nativos; y `mount` está fuera
-del template porque es específico del binding — React no lo escribe, y G2 lo normaliza en vez de
+del template porque es específico del binding: React no lo escribe, y G2 lo normaliza en vez de
 reportar una diferencia falsa.
 
 `ButtonProps` se deriva: `SignatureOptionsOf<typeof buttonContract, "Button.action">`. El binding lee
@@ -141,7 +141,7 @@ Button.action:
   useWhen:
     - ejecuta una acción en la página
   avoidWhen:
-    - lleva a otra URL, aunque se vea igual — esa es Button.navigation
+    - lleva a otra URL, aunque se vea igual: esa es Button.navigation
   alternatives:
     - Button.navigation
 ```
@@ -204,8 +204,8 @@ import { NavList, NavListGroup, NavListLink } from "@skryensya/react/nav-list";
 ```
 
 El `id="espacio"` sale del texto del propio rótulo, no de un contador: el mismo árbol tiene que dar
-los mismos bytes. Y el emisor escribe **toda** opción mapeada, defaults incluidos —`data-orientation="vertical"`
-está aunque sea el default— porque React ya lo hace y G2 compara los dos árboles.
+los mismos bytes. Y el emisor escribe **toda** opción mapeada, defaults incluidos: `data-orientation="vertical"`
+está aunque sea el default, porque React ya lo hace y G2 compara los dos árboles.
 
 Que ambos lleguen al mismo DOM es el gate G2, no una esperanza.
 
@@ -244,7 +244,7 @@ validate_ui({ tree })            // G0–G3 sobre el árbol; si pasa, devuelve e
 ```
 
 Tres tools. `get_catalog` no toma query: no hay ranker (decisión 31). `validate_ui` devuelve
-`{ valid, problems[], emitted: { vanilla, react } }` — el agente pega lo emitido, nunca lo teclea.
+`{ valid, problems[], emitted: { vanilla, react } }`: el agente pega lo emitido, nunca lo teclea.
 Toda respuesta lleva `manifestVersion` y `sourceHash`.
 
 ---
@@ -255,12 +255,12 @@ Big bang: se borran del árbol activo el mismo día, con un tag de referencia qu
 
 | Artefacto | Acción |
 |---|---|
-| `docs/ai/schemas/*.json` (54 archivos) | Eliminar — la tercera transcripción del contrato |
-| `docs/ai/gate1.mjs`, `gate1-world.mjs` | Eliminar — regex con lista manual de excepciones |
-| `docs/ai/checks.mjs`, `validate.mjs` y sus tests | Eliminar — validan la coherencia interna de un formato que desaparece |
-| `docs/ai/README.md` | Eliminar — documentación paralela que ya puede contradecir a los schemas |
+| `docs/ai/schemas/*.json` (54 archivos) | Eliminar: la tercera transcripción del contrato |
+| `docs/ai/gate1.mjs`, `gate1-world.mjs` | Eliminar: regex con lista manual de excepciones |
+| `docs/ai/checks.mjs`, `validate.mjs` y sus tests | Eliminar: validan la coherencia interna de un formato que desaparece |
+| `docs/ai/README.md` | Eliminar: documentación paralela que ya puede contradecir a los schemas |
 | `packages/mcp/src/{catalog,search,check,index}.ts` | Reescribir desde cero |
-| Tests del MCP v1 | Eliminar — no se conserva compatibilidad de protocolo |
+| Tests del MCP v1 | Eliminar: no se conserva compatibilidad de protocolo |
 
 Durante la reconstrucción no hay MCP: el catálogo nuevo publica solo lo que pasa gates, empezando por
 el vertical slice. Es una decisión consciente y su costo es trabajar sin asistencia sobre el resto del
@@ -324,7 +324,7 @@ G5 (baseline visual aprobada a ojo, no a ciegas).
 >   El template ganó `options` por nodo, y `whenSlotFilled` pasó a `whenGiven` porque un nodo puede
 >   depender de una opción y no sólo de un slot.
 > - **Los tipos de ImageFrame estaban duplicados dentro de Core**: `ImageFrameAspect` y
->   `options.aspect.values`, dos listas que debían coincidir. **G1 no podía verlo** — mira bindings,
+>   `options.aspect.values`, dos listas que debían coincidir. **G1 no podía verlo**: mira bindings,
 >   y la duplicación estaba en Core. Ahora se derivan.
 > - **El harness se contaminó a sí mismo.** Una etiqueta `::before` con "vanilla"/"react" entró al
 >   árbol de accesibilidad y rompió los 8 casos de ARIA a la vez. Un harness no puede ser visible
@@ -332,7 +332,7 @@ G5 (baseline visual aprobada a ojo, no a ciegas).
 > - **La primera baseline visual era inútil** y sólo se supo mirándola: apuntaba a un `.jpg`
 >   inexistente, y las imágenes rotas la estiraban a 4500px. El fixture ahora lleva la imagen inline.
 
-### F4 · El resto del catálogo — en curso (46 familias, 85 firmas)
+### F4 · El resto del catálogo: en curso (46 familias, 85 firmas)
 Familia por familia: contract completo, overlay, árboles canónicos, gates. Una familia entra al
 manifest cuando pasa; una familia a medias no se publica.
 **Salida:** cobertura acordada, con `ai-coverage.json` diciendo qué falta y por qué.
@@ -340,7 +340,7 @@ manifest cuando pasa; una familia a medias no se publica.
 **Publicadas (46):** `accordion`, `alert`, `avatar`, `badge`, `box`, `breadcrumb`, `button`, `carousel`, `checkbox`, `content`, `empty-state`, `field`, `file-upload`, `flyout`, `icon`, `image-frame`, `input`, `kbd`, `layout`, `list`, `loader`, `media-gradient`, `nav-list`, `navbar`, `number-field`, `pagination`, `placeholder`, `process-list`, `progress`, `radio-group`, `segmented`, `sidebar`, `slider`, `stat`, `steps`, `switch`, `table`, `tabs`, `tag`, `theme-toggle`, `tile`, `time-field`, `toolbar`, `tree-view`, `typography`, `wrapper`.
 
 **Sin publicar:** las **ancladas** (tooltip, popover, menu, select, combobox, date-picker, calendar,
-split-button — ésta última porque compone un Menu) y `copy-button`, que **no tiene binding React**:
+split-button, ésta última porque compone un Menu) y `copy-button`, que **no tiene binding React**:
 una familia con un solo binding no tiene qué comparar, y publicar media es peor que no publicarla.
 
 > **Lo que el catálogo completo le hizo al modelo**
@@ -358,7 +358,7 @@ una familia con un solo binding no tiene qué comparar, y publicar media es peor
 > Y el catálogo encontró bugs del kit que ningún test tenía: un `<ul>` de slides que la máquina saca
 > de la lista (axe: serious, en **los dos** bindings), un dropzone `role=button` con el input y el
 > botón adentro (nested-interactive, en los dos), un RadioGroup que pasaba `checked` y
-> `defaultChecked` a la vez delegando `onChange` —que React renderiza de sólo lectura—, un input
+> `defaultChecked` a la vez delegando `onChange` (que React renderiza de sólo lectura), un input
 > oculto cuyo `value` era propiedad y no atributo, y dos enhancers que estampaban un `id` en una raíz
 > a la que nadie apunta.
 
@@ -377,7 +377,7 @@ una familia con un solo binding no tiene qué comparar, y publicar media es peor
 >   contrato ahora lo usa como enum, así que un `inbox` inexistente **falla validando** en vez de
 >   reventar al montar, que es lo que hizo la primera vez.
 > - **Tenía los atributos mal.** El placeholder usa `data-sk-icon-size` y `data-sk-icon-label`, no
->   `data-size` ni `aria-label` — esos son del `<svg>` resultante, no del placeholder.
+>   `data-size` ni `aria-label`: esos son del `<svg>` resultante, no del placeholder.
 > - **Enlazar un set es un paso aparte.** `initComponents()` no lo toma: elegir un set es un install
 >   (decisión 15), y hasta que el consumidor llama `mountIcons(root, set)` el placeholder no dibuja
 >   nada. El harness no lo hacía, y el gate lo mostró como una divergencia.
@@ -387,7 +387,7 @@ una familia con un solo binding no tiene qué comparar, y publicar media es peor
 
 > **Lo que frena a las ancladas: portal contra markup en su lugar**
 >
-> Las que quedan son **ancladas** — tooltip, popover, menu, select, combobox, date-picker, calendar —
+> Las que quedan son **ancladas** (tooltip, popover, menu, select, combobox, date-picker, calendar)
 > y las dos rutas difieren **estructuralmente**, no en un atributo:
 >
 > - El markup autoreado deja el positioner **siempre en el DOM**, oculto por CSS.
@@ -404,7 +404,7 @@ una familia con un solo binding no tiene qué comparar, y publicar media es peor
 > | Salida | Qué implica |
 > |---|---|
 > | Exponer `container` en los bindings anclados | `Portal` de Zag ya lo acepta; son ~8 APIs públicas tocadas para que el gate pueda medir. Lo más chico, pero cambia API para servir a un test |
-> | Que React renderice el positioner cerrado, oculto | Las dos rutas convergen de verdad y G2 compara sin trucos — al precio de que React deje de portalear, que es lo que evita que un `overflow: hidden` recorte el contenido |
+> | Que React renderice el positioner cerrado, oculto | Las dos rutas convergen de verdad y G2 compara sin trucos, al precio de que React deje de portalear, que es lo que evita que un `overflow: hidden` recorte el contenido |
 > | Que el gate abra el componente y busque el contenido donde caiga | No toca el kit, pero el DOM-diff deja de comparar un subárbol y pasa a comparar dos regiones sueltas, que es bastante más frágil |
 >
 > Hasta que esto se decida, las ancladas quedan **sin publicar**: el agente no las ve, que es
@@ -426,8 +426,8 @@ una familia con un solo binding no tiene qué comparar, y publicar media es peor
 > anuncia el nombre de la tabla *después* de su contenido.
 >
 > El slot ganó `ordered` (el orden de `of` es obligatorio) y `cardinality` (`one` / `optional` /
-> `many`). Con eso, las cinco familias del slice original del plan —Button, NavList, ImageFrame, Table
-> y Combobox— tienen cubiertas sus capacidades difíciles salvo la unión discriminada de Combobox.
+> `many`). Con eso, las cinco familias del slice original del plan (Button, NavList, ImageFrame, Table
+> y Combobox) tienen cubiertas sus capacidades difíciles salvo la unión discriminada de Combobox.
 
 > **RadioGroup: la selección es del grupo, no de la opción**
 >
@@ -441,7 +441,7 @@ una familia con un solo binding no tiene qué comparar, y publicar media es peor
 > Y dos hallazgos más:
 >
 > - **`alsoAttr`**: un radiogroup se estiliza con `data-orientation` y se anuncia con
->   `aria-orientation`. Dos atributos, un valor — y no pueden discrepar porque detrás hay una opción.
+>   `aria-orientation`. Dos atributos, un valor, y no pueden discrepar porque detrás hay una opción.
 > - **Un bug de mi harness que sólo el navegador podía mostrar.** Los cuatro radios (dos por binding)
 >   compartían documento y `name`, así que eran **un solo grupo**: el que montaba último desmarcaba al
 >   otro. Cada binding ahora se renderiza en su propio `<form>`, porque un stage que muestra los dos a
@@ -450,7 +450,7 @@ una familia con un solo binding no tiene qué comparar, y publicar media es peor
 > **Checkbox y Switch: el sistema posee más estructura que el autor**
 >
 > Un checkbox son **cinco elementos para un booleano**, y el autor escribe uno: el rótulo. El resto no
-> es una elección — el `<input>` nativo tiene que estar para que el formulario y el teclado funcionen,
+> es una elección: el `<input>` nativo tiene que estar para que el formulario y el teclado funcionen,
 > y la pintura tiene que ser `aria-hidden` para que el control se anuncie una vez y no dos.
 >
 > Y no lleva `for` ni `id` en ningún lado: **envolver ES la asociación**. Es la regla de la propia
@@ -462,14 +462,14 @@ una familia con un solo binding no tiene qué comparar, y publicar media es peor
 >   switch, pero el CSS son tres hojas distintas, y `css` es por familia. Son dos contratos que
 >   comparten archivo fuente y nada más.
 > - **Un error mío que el gate atrapó:** copié `sk-interactive` de checkbox al switch. Ni React ni el
->   markup autoreado lo llevan ahí, y `switch.css` no pinta estado propio — el gate lo marcó antes de
+>   markup autoreado lo llevan ahí, y `switch.css` no pinta estado propio: el gate lo marcó antes de
 >   que llegara a ningún lado.
 
 > **Compuesto y dirigido-por-datos son dos estilos legítimos, no una inconsistencia a corregir**
 >
 > Medido: **16 familias compuestas** (varios exports: nav-list, table, sidebar, list…) y **6 dirigidas
 > por datos** (prop `items`: tabs, combobox, menu, breadcrumb…). Forzar todo a un estilo sería un
-> refactor enorme del kit sin beneficio claro, y el modelo ya cubre los dos — compuesto son varias
+> refactor enorme del kit sin beneficio claro, y el modelo ya cubre los dos: compuesto son varias
 > firmas, dirigido-por-datos es una colección. Accordion resultó **compuesto**, no colección; leerlo
 > al revés fue un error mío, no una carencia del modelo.
 
@@ -477,7 +477,7 @@ una familia con un solo binding no tiene qué comparar, y publicar media es peor
 >
 > Un tab no es hijo de la lista de tabs: su rótulo va en el trigger, su cuerpo en un panel que es el
 > *tío* del trigger, y lo que los empareja es una clave. Compuesto como hijos, el autor tendría que
-> escribir ese emparejamiento dos veces — el enhancer literalmente descarta un trigger cuyo panel no
+> escribir ese emparejamiento dos veces: el enhancer literalmente descarta un trigger cuyo panel no
 > encuentra. Así que un tab es una **entrada de colección**, y el template se repite sobre ella desde
 > dos lugares del árbol. Eso desbloquea la mitad del catálogo que tiene forma de lista: accordion,
 > select, steps, breadcrumb, carousel.
@@ -486,19 +486,19 @@ una familia con un solo binding no tiene qué comparar, y publicar media es peor
 >
 > | Bug | Qué pasaba |
 > |---|---|
-> | `sk-tabs__indicator` | React renderizaba un elemento que **ningún CSS selecciona** — el indicador real es `.sk-tabs__trigger::after`. Elemento muerto, eliminado |
+> | `sk-tabs__indicator` | React renderizaba un elemento que **ningún CSS selecciona**: el indicador real es `.sk-tabs__trigger::after`. Elemento muerto, eliminado |
 > | `sk-interactive` ausente en React | El markup autoreado lo tenía y React no: **el state layer no pintaba** hover ni press en la ruta React |
 > | `Tabs` sin `aria-label` | El markup podía nombrar la tablist y el binding React no. Las dos rutas no eran equivalentes |
 >
 > Y una distinción que el modelo no tenía: **`machineInput`**. `data-activation-mode` y `data-value`
-> configuran la máquina, no la apariencia — el markup autoreado no tiene otro canal que un atributo,
+> configuran la máquina, no la apariencia: el markup autoreado no tiene otro canal que un atributo,
 > React pasa una prop y Zag nunca la escribe de vuelta. Están en un solo lado por construcción, igual
 > que el mount. Lo verifiqué contra el CSS: selecciona sobre `data-orientation` (que **no** es
 > machineInput) y no sobre los otros dos.
 
 > **El cableado de ids: decidido, y por qué así**
 >
-> **La opción elegida: el padre computa los ids y el hijo los recibe.** No por gusto de diseño —
+> **La opción elegida: el padre computa los ids y el hijo los recibe.** No por gusto de diseño:
 > el binding React *ya funciona así* (`FieldContext` calcula `controlId`, `describedBy` e `invalid`).
 > Si el contrato hubiera dicho que el autor escribe los ids, el markup llevaría los suyos y React
 > generaría los propios con `useId`, y **G2 marcaría divergencia en todos los formularios**. Es la
@@ -529,7 +529,7 @@ una familia con un solo binding no tiene qué comparar, y publicar media es peor
 > - **`false` no es lo mismo que ausente.** `whenGiven` trataba un booleano en `false` como "dado", y
 >   emitía el asterisco de un campo no requerido.
 >
-> El caso que lo justificaba: un Field escribe **seis ids a mano** —
+> El caso que lo justificaba: un Field escribe **seis ids a mano**:
 >
 > ```html
 > <label class="sk-field__label" for="email">…</label>
@@ -539,7 +539,7 @@ una familia con un solo binding no tiene qué comparar, y publicar media es peor
 > ```
 >
 > Es lo más frágil del kit: equivocarse en `aria-describedby` es invisible y rompe lectores de
-> pantalla. Y es exactamente donde el emisor se gana el sueldo — las seis relaciones salen de un
+> pantalla. Y es exactamente donde el emisor se gana el sueldo: las seis relaciones salen de un
 > nombre.
 >
 ### F5 · El MCP nuevo ✅
@@ -553,13 +553,13 @@ publicado. Verificado extremo a extremo: catálogo → contrato → árbol → c
 >
 > Con el servidor ya conectado a una sesión real, la primera composición de Tabs que intenté fue
 > **rechazada en la puerta**: el schema zod de `validate_ui` no conocía las colecciones. Y detrás de
-> eso había algo peor — **el validador tampoco**. Un slot de colección siempre se leía vacío, así que
+> eso había algo peor: **el validador tampoco**. Un slot de colección siempre se leía vacío, así que
 > un `items` lleno reportaba "falta", y las opciones de cada entrada **no se validaban en absoluto**.
 >
 > Agregué colecciones al emisor y al tipo, y olvidé las otras dos mitades. Los 39 tests del compilador
 > y los 12 del MCP pasaban, porque ninguno componía un tab set a través de la tool.
 >
-> Lo que faltaba, y ahora existe: la clave de cada entrada es **obligatoria y única** — dos tabs con
+> Lo que faltaba, y ahora existe: la clave de cada entrada es **obligatoria y única**: dos tabs con
 > el mismo `value` colapsan en uno, porque la clave es lo que empareja un trigger con su panel.
 >
 > El riesgo de fondo sigue ahí y está nombrado: el árbol se declara **dos veces**, en TypeScript en el
@@ -578,7 +578,7 @@ publicado. Verificado extremo a extremo: catálogo → contrato → árbol → c
 >   plausible, y ante una opción ajena la descarta en silencio. Código sacado de un árbol inválido se
 >   ve bien y está mal.
 
-### F6 · El sitio y los recipes — en curso
+### F6 · El sitio y los recipes: en curso
 `ComponentPreview` recibe usage trees ✅. Los recipes están escritos, validados y renderizados ✅. Falta el
 grueso de la conversión de páginas.
 **Salida:** una página completa se construye desde el catálogo publicado, se renderiza y pasa G2–G5.
@@ -589,7 +589,7 @@ que es el modo de fallar que tiene por construcción cualquier ejemplo escrito a
 
 El renderer de usage tree → React se mudó del harness de los gates a
 `@skryensya/react/render-tree`. Pertenece al binding: ese paquete ya tiene todos los componentes, y
-una segunda copia en el sitio habría significado un segundo mapa de módulos — la duplicación contra
+una segunda copia en el sitio habría significado un segundo mapa de módulos: la duplicación contra
 la que argumenta todo esto. Ahora el demo que mira un lector y la evidencia que junta G2 son la
 misma llamada.
 
@@ -603,8 +603,8 @@ distintas que conviene no mezclar:
 
 **Los recipes** viven en `contracts/recipes/` como datos, no como prosa, y son un paquete del
 workspace para que el compilador, los gates y el sitio importen el MISMO módulo: nueve pantallas
-—`app-shell`, `browse`, `detail`, `form`, `checkout`, `upload`, `data-table`, `settings`,
-`destructive-confirm`— cada una en sus cuatro estados. `checkRecipes` pasa los veinte árboles por el mismo validador que `validate_ui`, y el build
+(`app-shell`, `browse`, `detail`, `form`, `checkout`, `upload`, `data-table`, `settings`,
+`destructive-confirm`), cada una en sus cuatro estados. `checkRecipes` pasa los veinte árboles por el mismo validador que `validate_ui`, y el build
 **no emite nada** si uno falla. `/recetas` los renderiza todos, en los dos bindings.
 
 > **Escribir los recipes encontró cuatro bugs de contrato**
@@ -612,7 +612,7 @@ workspace para que el compilador, los gates y el sitio importen el MISMO módulo
 > - `Button.action` **no se podía deshabilitar**. El binding React escribe `disabled` y
 >   `aria-disabled`; el contrato nunca declaró la opción, así que todo estado «guardando…» era
 >   inexpresable.
-> - El único padre legal de `SidebarTrigger` era `Sidebar` — el único lugar donde nadie lo pone.
+> - El único padre legal de `SidebarTrigger` era `Sidebar`: el único lugar donde nadie lo pone.
 > - `Field` declaraba `required` y `disabled` y no listaba ninguna de las dos en su firma.
 > - Breadcrumb y Steps nombraban un **slot** como clave de su colección. La clave existe para
 >   emparejar las partes en que se convierte una entrada; una entrada que se convierte en un solo
@@ -628,12 +628,12 @@ workspace para que el compilador, los gates y el sitio importen el MISMO módulo
 
 **Las nueve recetas** cubren **71 de 86 firmas (83%)**. No es el objetivo: una receta existe porque
 una **pantalla** vale la pena enseñarse, no porque a un componente le falte salida. Pero la cobertura
-sí dice qué pantallas reales no se están enseñando — así aparecieron `browse`, `detail`, `checkout` y
+sí dice qué pantallas reales no se están enseñando: así aparecieron `browse`, `detail`, `checkout` y
 `upload`.
 
 Los **36 árboles pasan por G2, G4 y G5**, derivados de `recipes` en vez de copiados: 72 casos nuevos
 sin un gate nuevo. Más dos chequeos que sólo tienen sentido en una receta, porque un contrato no
-puede pedirlos —un Alert sin acciones es válido, y debe serlo— y sólo son defectos a escala de pantalla:
+puede pedirlos (un Alert sin acciones es válido, y debe serlo) y sólo son defectos a escala de pantalla:
 
 | Chequeo | Dónde | Qué atrapa |
 |---|---|---|
@@ -644,8 +644,8 @@ puede pedirlos —un Alert sin acciones es válido, y debe serlo— y sólo son 
 >
 > Tres defectos que un fixture de una sola firma no podía ver:
 >
-> - **Los ids generados no eran únicos por emisión.** Dos Fields con el mismo rótulo —un «Nombre» de
->   facturación y un «Nombre» de envío— recibían `id="nombre"` los dos, así que la segunda etiqueta
+> - **Los ids generados no eran únicos por emisión.** Dos Fields con el mismo rótulo (un «Nombre» de
+>   facturación y un «Nombre» de envío) recibían `id="nombre"` los dos, así que la segunda etiqueta
 >   apuntaba al primer input. Silencioso, con pinta de válido, y roto justo para quien depende de esa
 >   asociación.
 > - **`attrsWhen` comparaba estrictamente contra un literal de atributo**, así que ninguna opción
@@ -656,14 +656,14 @@ puede pedirlos —un Alert sin acciones es válido, y debe serlo— y sólo son 
 >
 > Y turbo encontró un ciclo: las recetas importaban el compilador para `UsageTree` mientras el
 > compilador importaba las recetas para validarlas. **Un dato no depende de su consumidor**, así que la
-> forma se mudó a `@skryensya/core/usage-tree` —al lado del contrato contra el que está escrita— y las
+> forma se mudó a `@skryensya/core/usage-tree` (al lado del contrato contra el que está escrita) y las
 > funciones que recorren un árbol se quedaron en el compilador, que reexporta los tipos para que nadie
 > cambie un import. Romper el ciclo además hizo que **TypeScript chequee las recetas por primera vez**.
 
 > **Un hueco nombrado y sin tapar: el esqueleto no se anuncia**
 >
 > El estado `loading` de `browse` son Placeholders, que es lo correcto en pantalla: la forma de lo que
-> viene ya se conoce. Pero un esqueleto **no dice nada** a quien no lo ve — no hay región viva, así que
+> viene ya se conoce. Pero un esqueleto **no dice nada** a quien no lo ve: no hay región viva, así que
 > un lector de pantalla encuentra una página quieta.
 >
 > La pieza que falta es un **status visualmente oculto**, y el catálogo no la tiene: `Loader` con
@@ -671,7 +671,7 @@ puede pedirlos —un Alert sin acciones es válido, y debe serlo— y sólo son 
 > nombrarlo que agregar un spinner arriba de los esqueletos para que un chequeo pase.
 
 **Convertidas hasta ahora (38 de 349 llamadas a `ComponentPreview`):** `tag`, `kbd`, `pagination`,
-`theme-toggle`, `box`, `progress`, `empty-state`, `segmented`, `button` y `list` — cada una en los dos
+`theme-toggle`, `box`, `progress`, `empty-state`, `segmented`, `button` y `list`, cada una en los dos
 idiomas. Las conversiones dejaron sin consumidor a siete `react-demos/*.tsx` enteros, al
 `BoxBasicDemo` de `layout.tsx`, a seis de los siete demos de `button.tsx` y a cinco de los seis de
 `list.tsx`: un demo por página deja de existir cuando el árbol ES el demo.
@@ -688,7 +688,7 @@ idiomas. Las conversiones dejaron sin consumidor a siete `react-demos/*.tsx` ent
 >   enlace deshabilitado no tiene expresión. El demo quedó con cuatro filas en vez de cinco.
 
 **`measure`, una prop nueva de `ComponentPreview`.** Los demos de List se veían mal a lo ancho del
-escenario entero —una lista de preferencias de 700px no se parece a nada que alguien publique—, así
+escenario entero (una lista de preferencias de 700px no se parece a nada que alguien publique), así
 que la página los envolvía en un `<div>` de 34rem y pasaba el `code` por separado: dos fuentes para
 un demo, exactamente lo que el árbol viene a borrar. Ahora `measure="34rem"` limita **el escenario y
 no el snippet**, porque ese ancho es del layout del consumidor y no del componente. Medido: 544px en
@@ -698,7 +698,7 @@ los dos bindings, y el wrapper no aparece en el código que el lector copia.
 escritos como función del traductor; las dos páginas importan el mismo y le pasan su `t`. Las
 palabras son claves `demo.*` en `i18n/ui.ts`, y una palabra que es nombre propio (`react`, `tokens`,
 `⌘`) se queda escrita en el árbol: no se traduce, y una clave para ella sería una entrada identidad
-que se puede podrir. Un demo sin palabras se exporta como constante, no como función — ver `kbd.ts`.
+que se puede podrir. Un demo sin palabras se exporta como constante, no como función: ver `kbd.ts`.
 
 Un árbol por página habría sido la misma duplicación que el árbol vino a borrar, un idioma después, y
 ya había derivado: el demo inglés de Box decía `<h3>` en su HTML y `<h2>` en su TSX, con otra frase
@@ -708,7 +708,7 @@ lado de `label-light="Mode: clear"`); Tag y Progress en inglés seguían diciend
 documentaban componentes ligeramente distintos.
 
 Medido después de compartir: los ocho demos emiten **estructura idéntica** en los dos idiomas y en
-los dos bindings —mismo esqueleto de tags, clases y `data-*`— y difieren sólo en texto y en atributos
+los dos bindings (mismo esqueleto de tags, clases y `data-*`) y difieren sólo en texto y en atributos
 de label. Que es la propiedad entera, y ahora se cumple por construcción y no por revisión.
 
 **El censo, por dificultad de conversión.** Cada `ComponentPreview` pendiente, clasificado leyendo el markup
@@ -724,12 +724,12 @@ que enseña y preguntándole al manifiesto si ese markup es expresable:
 > **«Es una parte» no es «se puede escribir»**
 >
 > El primer censo dio 194 fáciles y estaba mal. Preguntaba si cada clase del demo era una **parte**
-> declarada por algún contrato — y `sk-tile__title` lo es, y **ninguna firma la emite**: la plantilla
+> declarada por algún contrato, y `sk-tile__title` lo es, y **ninguna firma la emite**: la plantilla
 > de `TileButton` es un host con un slot `children`, y no existe `TileTitle` ni `TileDescription` que
 > anidar adentro. El demo de TileButton es inexpresable, y el censo lo llamaba trivial.
 >
 > Lo que hace alcanzable a una clase es una **plantilla que la pinta**, no un contrato que la nombra.
-> Recontado así: 136 fáciles, no 194. Y salieron **29 partes declaradas que ninguna firma emite** —
+> Recontado así: 136 fáciles, no 194. Y salieron **29 partes declaradas que ninguna firma emite**:
 > `sk-avatar-group`, los cinco de `carousel`, ocho de `file-upload`, `sk-icon`, cuatro de
 > `time-field`, `sk-tile__title` / `__description` / `__chevron`, `sk-table-scroll`, `sk-tile-grid`.
 > Cada una es un pedazo de CSS publicado que un agente no puede componer.
@@ -737,14 +737,14 @@ que enseña y preguntándole al manifiesto si ese markup es expresable:
 Lo bloqueado tiene dos causas distintas. Familias sin publicar: `calendar`, `card`, `combobox`,
 `command-palette`, `component-preview`, `copy-button`, `date-picker`, `dialog`, `drawer`, `menu`,
 `popover`, `popup`, `select`, `split-button`, `toc`, `tooltip`, `scrollbar`, `vaul`. Y familias
-publicadas a las que les falta una opción: `data-dot` en Badge —que declara `tone` y nada más—,
+publicadas a las que les falta una opción: `data-dot` en Badge (que declara `tone` y nada más),
 `data-multicol` en Grid, `data-level`, `data-expanded-value`, `data-state`.
 
 > **Un árbol con layout arriba colapsa en el escenario**
 >
 > La conversión de `progress` dejó la etapa **vacía en los dos idiomas**, válida y renderizada: el
 > escenario es una **fila flex** que envuelve, así que cada hijo de nivel superior se dimensiona por
-> su contenido — y Progress no tiene contenido que lo dimensione, declara `inline-size: 100%`, que es
+> su contenido, y Progress no tiene contenido que lo dimensione, declara `inline-size: 100%`, que es
 > 100% de nada dentro de un Stack que se encoge. Las barras medían **0px de ancho**.
 >
 > Es la trampa de convertir a árbol, no de Progress: el markup a mano ponía tres `.sk-progress`
@@ -753,7 +753,7 @@ publicadas a las que les falta una opción: `data-dot` en Badge —que declara `
 >
 > El arreglo está en `component-preview.css`, y está **keyed en el hijo** (`:has(> .sk-progress)`) a
 > propósito: las ~46 etapas que ya nacen en un Stack o un Grid se encogen a su contenido a propósito
-> —un Select mide 192px, no 699— así que estirar todo demo de layout es una decisión más ancha que la
+> (un Select mide 192px, no 699) así que estirar todo demo de layout es una decisión más ancha que la
 > que toma esta regla. Lleva dos selectores porque los dos bindings anidan distinto por un nivel:
 > React monta en su `[data-sk-react-demo-root]`, cuyo `display: contents` lo saca del layout pero no
 > del selector. Con uno solo, las barras pintaban en Vanilla y seguían colapsadas en React.

@@ -3,11 +3,11 @@ num: 28
 title: El contrato vive en core y los frameworks son bindings
 short: "Core es el contrato"
 summary: >-
-  El kit se consume por dos rutas —React y markup autoreado— y hasta ahora ninguna autoridad las
+  El kit se consume por dos rutas (React y markup autoreado) y hasta ahora ninguna autoridad las
   cubría a las dos: core exportaba las clases pero casi ninguna opción, React redeclaraba sus props
   y `docs/ai/schemas/*.json` transcribía todo a mano por tercera vez. Esta decisión hace de core la
-  única autoría del contrato de un componente —firmas, opciones, parts, el mapeo de opción a
-  atributo y la accesibilidad debida— y convierte a React y a Vanilla en bindings que lo *realizan*.
+  única autoría del contrato de un componente (firmas, opciones, parts, el mapeo de opción a
+  atributo y la accesibilidad debida) y convierte a React y a Vanilla en bindings que lo *realizan*.
   Una opción que un binding redeclara deja de ser una opción: es drift, y rompe el build.
 ---
 
@@ -20,7 +20,7 @@ cosa dicha dos veces, y hasta hoy nada lo garantizaba.
 
 Lo que había, medido:
 
-- **56 de 62** módulos de core exportan `*Parts` — las clases, o sea el esqueleto del markup contract.
+- **56 de 62** módulos de core exportan `*Parts`: las clases, o sea el esqueleto del markup contract.
 - **14 de 62** exportan `*Options`, y React las importa en **8** componentes.
 - `packages/react/src/components/button.tsx` **redeclara** `variant`, `size` e `iconOnly` en su propio
   `ButtonAppearanceProps` en vez de usar `ButtonOptions`, que existe en
@@ -47,8 +47,8 @@ nombrar la causa.
   template es lo que hace que esas dos cosas sean *la misma estructura* y no dos.
 - **Constraints y ARIA**: `requires`, `forbids`, `exactlyOneOf`, padres válidos, cardinalidad, y el
   nombre accesible que una firma debe cobrar (`iconOnly` exige `aria-label`). Estructurado, nunca en
-  prosa: la regla de composición de `nav-list` —un link siempre dentro de un group, o el markup queda
-  inválido— era un párrafo en un JSON y pasa a ser `parents: [NavListGroup]`.
+  prosa: la regla de composición de `nav-list` (un link siempre dentro de un group, o el markup queda
+  inválido) era un párrafo en un JSON y pasa a ser `parents: [NavListGroup]`.
 
 **React y Vanilla son bindings.** Un binding realiza el contract y no lo repite. `ButtonProps` deja de
 declarar `variant?: ButtonVariant` y pasa a derivarse de `ButtonOptions`. Redeclarar una opción no es
@@ -63,7 +63,7 @@ Dos gates, porque son dos afirmaciones distintas:
    afirmación, que es lo único que solo ella puede probar. No extrae el catálogo: el contract ya es
    un valor, se importa y se serializa.
 2. **Simetría (G2).** Se renderizan las dos rutas desde el mismo usage tree y se comparan los árboles
-   DOM normalizados —parts, atributos mapeados, árbol ARIA. Si difieren, rompe. Este gate no existía
+   DOM normalizados: parts, atributos mapeados, árbol ARIA. Si difieren, rompe. Este gate no existía
    de ninguna forma y es el que hace que "dos bindings" signifique algo verificable.
 
 ## Lo que se rechazó
@@ -88,5 +88,5 @@ tabla de excepciones habría sido la verdad real.
 Aproximadamente 48 módulos de core que hoy solo exportan `*Parts` necesitan contract completo, y unos
 50 componentes React tienen que dejar de redeclarar sus props. Es mecánico y el typecheck actual lo
 verifica paso a paso, pero es la fase más larga de la reconstrucción y no produce nada visible
-mientras dura. Se acepta porque la alternativa —seguir manteniendo tres copias— ya demostró su costo
+mientras dura. Se acepta porque la alternativa, seguir manteniendo tres copias, ya demostró su costo
 en cada bug de drift que este repo arrastró.

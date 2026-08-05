@@ -77,7 +77,7 @@ export function paginationRange(page: number, total: number, siblings = 1): Pagi
  *
  * Which page numbers are visible is COMPUTED, not authored: it follows from the current page, the
  * total and how many siblings stay on each side. An author who typed the window could type one that
- * skips a page, and holding that invariant is exactly what a contract is for — so the template names
+ * skips a page, and holding that invariant is exactly what a contract is for, so the template names
  * `paginationRange` above and the entries come out of it.
  *
  * A gap is an entry with no page. That is what tells the two shapes apart in the template, the same
@@ -96,7 +96,7 @@ export const paginationContract = {
     siblings: { type: "number", default: 1, attr: "data-siblings", computedInput: true },
     /** The landmark's accessible name. A page can hold more than one nav, so it needs one. */
     label: { type: "string", default: "Pagination", attr: "aria-label" },
-    /* The two arrows are icon-only, so these ARE their accessible names — each lands on its own
+    /* The two arrows are icon-only, so these ARE their accessible names: each lands on its own
        node, which is why one attribute can serve both. */
     previousLabel: { type: "string", default: "Previous page", attr: "aria-label" },
     nextLabel: { type: "string", default: "Next page", attr: "aria-label" },
@@ -126,7 +126,7 @@ export const paginationContract = {
             children: [{ element: "span", attrs: { "data-sk-icon": "chevron-left", "data-sk-icon-size": "sm" } }],
           },
           /*
-           * One entry, two shapes, and they have to interleave — 1 … 3 4 5 … 12 is the window, not
+           * One entry, two shapes, and they have to interleave: 1 … 3 4 5 … 12 is the window, not
            * every gap followed by every page. So the window is walked ONCE by a node that adds no
            * box, and the two shapes sit inside it: a gap carries no page, so exactly one of them
            * renders per entry.
@@ -159,7 +159,7 @@ export const paginationContract = {
             also: ["sk-interactive"],
             options: ["nextLabel"],
             attrs: { type: "button" },
-            // And none after the last, which is `page === total` — a comparison between two options.
+            // And none after the last, which is `page === total`: a comparison between two options.
             attrsWhen: [{ option: "page", equalsOption: "total", attrs: { disabled: "" } }],
             children: [{ element: "span", attrs: { "data-sk-icon": "chevron-right", "data-sk-icon-size": "sm" } }],
           },

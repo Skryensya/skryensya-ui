@@ -5,7 +5,7 @@ short: "Sin ranker"
 summary: >-
   El plan de reconstrucción pedía un ranker léxico ponderado, un corpus versionado y thresholds de
   Recall@1, Recall@3 y MRR para un catálogo de 52 familias. Esta decisión elimina el ranking: el
-  índice completo —id, firmas, intent, avoidWhen, deprecaciones— cabe entero en el contexto del
+  índice completo (id, firmas, intent, avoidWhen, deprecaciones) cabe entero en el contexto del
   modelo, y el modelo elige mejor que la superposición léxica. Los evals dejan de medir la posición
   de un resultado y miden lo único que decide algo: si la composición final fue correcta.
 ---
@@ -28,8 +28,8 @@ Para 52 entradas.
 
 ## La decisión
 
-**No hay ranker.** Una tool devuelve el índice completo y compacto —por familia: id, firmas con su
-intent y su host, `useWhen`, `avoidWhen`, alternativas y deprecaciones— y el modelo elige. El problema
+**No hay ranker.** Una tool devuelve el índice completo y compacto, por familia: id, firmas con su
+intent y su host, `useWhen`, `avoidWhen`, alternativas y deprecaciones, y el modelo elige. El problema
 que BM25 resuelve no existe a esta escala, y un modelo resuelve "necesito que el usuario elija una
 fecha" sin que nadie le tokenice nada.
 
@@ -48,12 +48,12 @@ un modelo lee español e inglés sin que nadie le enumere sinónimos. Eliminarlo
 **Los evals miden la elección final, no la posición.** Un caso de eval no es *"esta query debe traer
 `date-picker` en el top 3"*: es *"esta intención de producto debe terminar en una composición que
 pasa los gates"*. Recall@k medía la calidad de un intermediario que ya no existe. Lo que se mide es el
-resultado, con las regresiones históricas del repo como casos permanentes —la contradicción
+resultado, con las regresiones históricas del repo como casos permanentes: la contradicción
 Button/ButtonLink, el link de nav fuera de su group, el ImageFrame sin contenido.
 
 **El umbral para revisar esto está declarado, no es intuición:** cuando el índice completo deje de
-caber cómodamente —del orden de varios cientos de familias, o cuando el índice pase a dominar el
-presupuesto de contexto de una tarea típica— vuelve a hacer falta un intermediario, y entonces se
+caber cómodamente (del orden de varios cientos de familias, o cuando el índice pase a dominar el
+presupuesto de contexto de una tarea típica) vuelve a hacer falta un intermediario, y entonces se
 construye contra los evals que para ese momento ya existen.
 
 ## Lo que se rechazó

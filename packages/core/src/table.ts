@@ -24,7 +24,7 @@ export type TablePartClass = (typeof tableParts)[TablePart];
  * the table's name after its contents.
  *
  * The scroll wrapper is separate on purpose: a table that overflows needs a scrolling ancestor, and
- * that ancestor needs `tabindex` to be reachable by keyboard — which is a property of the wrapper,
+ * that ancestor needs `tabindex` to be reachable by keyboard, which is a property of the wrapper,
  * not of the table, so it is its own signature rather than an option.
  */
 export const tableContract = {
@@ -37,7 +37,7 @@ export const tableContract = {
     scope: { type: "enum", values: ["col", "row"], default: "col", attr: "scope" },
     /**
      * The first column stays put while the rest scrolls sideways. For a table whose rows are
-     * identified by that column — a service name, a plan — where losing it mid-scroll leaves a row
+     * identified by that column (a service name, a plan), where losing it mid-scroll leaves a row
      * of numbers about nothing.
      */
     stickyColumn: { type: "boolean", default: false, attr: "data-sticky-column", trueValue: "" },
@@ -63,7 +63,7 @@ export const tableContract = {
      *
      * A flex or grid parent defaults to `min-size: auto`, so a table wider than its column pushes
      * that column open and blows the surface it sits in. This is the element that shrinks instead
-     * and owns the sideways scroll — which is why every table on the docs site already had one, in
+     * and owns the sideways scroll, which is why every table on the docs site already had one, in
      * hand-written markup, while the catalogue published a bare `<table>` that would overflow.
      *
      * The overflow lives here and NOT on `.sk-table`: browsers clip `<caption>` under
@@ -71,7 +71,7 @@ export const tableContract = {
      * model. The border and the radius stay on the table for the same reason.
      *
      * A region that scrolls has to be reachable by keyboard, so a scrolling table wants
-     * `tabindex="0"` and a name — but WHETHER it scrolls depends on the data and the viewport, and
+     * `tabindex="0"` and a name, but WHETHER it scrolls depends on the data and the viewport, and
      * the name has to point at the caption's generated id. Both are the author's, through `attrs`.
      */
     TableScroll: {

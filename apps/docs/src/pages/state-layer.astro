@@ -288,8 +288,8 @@ const ladder = [
     label="DOM resultante · conexión proyectada"
     note="lo escribe el adapter; no se copia"
   />
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
       <p>
         <strong>El consumidor no elige entre dos clases.</strong> Usa <code>sk-interactive</code>
         para un target DOM propio. Al consumir un widget compuesto, su adapter y su stylesheet ya
@@ -352,8 +352,8 @@ const ladder = [
     </table>
   </div>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
     <p>
       <strong>La escalera no usa selectores combinados.</strong> Cada regla de estado asigna el
       <em>mismo</em> <code>--state-layer-opacity</code>, y todos los selectores tienen la misma
@@ -414,8 +414,8 @@ const ladder = [
     para estados de máquina, consume el componente en lugar de duplicar sus selectores internos.
   </p>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
     <p>
       Un consumidor con un selector más específico que <code>.sk-interactive:hover</code> puede romper
       la escalera. Es una limitación de CSS, la misma que acepta

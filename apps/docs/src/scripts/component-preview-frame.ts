@@ -44,7 +44,7 @@ function readerSized(): boolean {
 /**
  * A screen preset is on, so the stage is a device: both axes are the preset's, and the document
  * scrolls inside them exactly as it would on the real thing. Measuring here would be worse than
- * useless — fitting the frame to its content is precisely what a device does not do.
+ * useless: fitting the frame to its content is precisely what a device does not do.
  */
 function screened(): boolean {
   return frame?.hasAttribute("data-sk-component-preview-screen") ?? false;
@@ -76,8 +76,8 @@ function applyOverflow(): void {
 }
 
 /**
- * An auto-fit frame (`!scrolls()`) has nothing to scroll internally — `overflow: hidden` sees to
- * that — but a wheel gesture over it does not reliably chain up to the PARENT page's scroll either:
+ * An auto-fit frame (`!scrolls()`) has nothing to scroll internally (`overflow: hidden` sees to
+ * that), but a wheel gesture over it does not reliably chain up to the PARENT page's scroll either:
  * cross-frame scroll chaining is not something browsers do consistently once the local document
  * has nowhere to go, so the frame just swallows the gesture and the reader's scroll appears to
  * stop dead the moment their pointer crosses into a preview. Forward it to the parent explicitly
@@ -140,7 +140,7 @@ function injectFrameChrome(): void {
 /**
  * A preview nested in a preview (the ComponentPreview page documents itself) boots against a parent
  * whose head is still empty: the parent clones its own styles asynchronously. Cloning then would
- * copy nothing. Wait for the parent frame to declare itself ready — top-level pages never do, and
+ * copy nothing. Wait for the parent frame to declare itself ready: top-level pages never do, and
  * are never waited on.
  */
 async function waitForParentFrame(): Promise<void> {
@@ -205,7 +205,7 @@ declare global {
  *
  * A glob, not a hand-kept registry: the map is derived from the directory at build time, so adding
  * a demo file cannot forget to register it. The loaders are lazy, so a preview pays only for the
- * one module it names — and, critically, these imports resolve in THIS realm, giving the frame its
+ * one module it names, and, critically, these imports resolve in THIS realm, giving the frame its
  * own React instance and its own `document`. That is the entire point of mounting here instead of
  * from the parent (see `react-demos/framed.tsx` for the two shapes that failed first).
  */
@@ -250,7 +250,7 @@ async function installRefreshPreamble(): Promise<void> {
  * Match the name the island reported against the glob's source-file keys.
  *
  * Dev reports the file stem and hits exactly. A BUILD reports the hashed chunk stem
- * (`button_vlYZB2ck`), so fall back to the LONGEST key it starts with — longest because
+ * (`button_vlYZB2ck`), so fall back to the LONGEST key it starts with: longest because
  * `select-menu_HASH` starts with both `select` and `select-menu`, and only the longer one is the
  * module actually asked for.
  */
@@ -327,13 +327,32 @@ async function mountReactDemo(): Promise<void> {
 
   await installRefreshPreamble();
 
-  const [module, { createRoot }, { createElement }, { flushSync }] =
+  /*
+   * `@skryensya/react/icon` joins the other React modules here, AFTER the preamble, not as a
+   * static top-level import. A static import evaluates at frame-script load, before
+   * `installRefreshPreamble()` has run, and this file is `.tsx`: Vite's Fast Refresh transform
+   * registers it at module-evaluation time, which is exactly what threw "can't detect preamble"
+   * on every tree-driven demo the moment this import was hoisted to the top.
+   */
+  const [module, { createRoot }, { createElement }, { flushSync }, { IconSetProvider }] =
     await Promise.all([
       load(),
       import("react-dom/client"),
       import("react"),
       import("react-dom"),
+      import("@skryensya/react/icon"),
     ]);
+
+  /*
+   * A demo module may export an async `preload()` for a dependency it loads lazily on its own
+   * side (`react-demos/tree.tsx` defers `render-tree`'s ~60-component graph this way so the PARENT
+   * document never pays for it). Awaiting it here, before `flushSync` renders anything, is what
+   * keeps that laziness invisible: the alternative (a `Suspense` boundary inside the demo) commits
+   * an empty fallback first, `fitFrame()`'s first passes measure that emptiness, and the real
+   * content then lands after the stage already left its loading state, so the resize transition
+   * animates a visible jump instead of the frame simply appearing at its final size.
+   */
+  if (typeof module.preload === "function") await module.preload();
 
   const exported = module[exportName];
   if (typeof exported !== "function") {
@@ -357,7 +376,7 @@ async function mountReactDemo(): Promise<void> {
    * A container of its own rather than `document.body`: React owns everything inside its root, and
    * the body is shared with the authored-script demos and the enhancers' own insertions. The
    * `display: contents` keeps it out of layout, so the demo's children sit directly in the frame
-   * body's padded, wrapping row — the same box the Vanilla markup gets, which is what makes the two
+   * body's padded, wrapping row: the same box the Vanilla markup gets, which is what makes the two
    * bindings line up instead of the React one sitting in a nested block.
    */
   const host = document.createElement("div");
@@ -365,9 +384,21 @@ async function mountReactDemo(): Promise<void> {
   host.style.display = "contents";
   document.body.append(host);
 
+  /*
+   * Bound here, not left to `Icon`'s own default: the frame's icon-mounted Vanilla stage always
+   * draws `siteIcons` (see the note atop this file), and an unwrapped React demo falls back to
+   * `Icon`'s module default (Phosphor) instead: same tree, two geometries, side by side. A demo
+   * that binds its own set (`ToolbarDemo`'s `<IconSetProvider set={lucideIcons}>`) still wins for
+   * its own subtree; nesting just re-affirms the same set for everyone else.
+   */
   const root = createRoot(host);
   flushSync(() => {
-    root.render(createElement(Component as never, props as never));
+    root.render(
+      createElement(IconSetProvider, {
+        set: siteIcons,
+        children: createElement(Component as never, props as never),
+      }),
+    );
   });
   await mountReactEnhancers(host);
   mountIcons(host, siteIcons);
@@ -401,7 +432,7 @@ function measureContentHeight(): number {
 
   /*
    * `display: contents` has no box of its own, so its rect is empty and measuring it would report
-   * nothing — which is exactly what happened to the React binding, whose mount host is `contents`
+   * nothing: which is exactly what happened to the React binding, whose mount host is `contents`
    * so the demo's children join the body's flex row like the Vanilla markup does. Descend through
    * such wrappers and measure the real boxes underneath.
    */
@@ -423,8 +454,31 @@ function measureContentHeight(): number {
   return Math.max(1, Math.ceil(height));
 }
 
+/*
+ * `data-sk-component-preview-binding` toggling hides the OTHER binding's panel (this iframe
+ * itself for Vanilla, an ancestor `<div>` for React), and while hidden, `measureContentHeight()`
+ * reads every child's `getBoundingClientRect()` as empty and reports its 1px floor. THAT used to
+ * land in `frame.style.height` regardless: real height overwritten with garbage nobody asked for.
+ * The stage popped back at 1px the moment a reader toggled to it, then grew to its real size over
+ * the next few frames, animated, because `frame-ready` had long since turned the resize
+ * transition back on.
+ *
+ * `window.innerWidth === 0` looked like the right signal and was not: it only holds for a frame
+ * that has NEVER yet been laid out (a fresh island whose ancestor started hidden). A frame that
+ * WAS visible and got hidden afterward (Vanilla, toggling away from the default) keeps reporting
+ * its last real `innerWidth` even while suspended, so that check let every later write through.
+ * `frame.offsetParent` is the one query that reads the PARENT document's actual box for this
+ * element right now: `null` the instant `display: none` applies to it OR an ancestor, restored the
+ * instant it does not, for either DOM shape. Skipping the write while it is null leaves whatever
+ * height was last measured while actually visible, so a toggle reveals the right size immediately:
+ * nothing to correct, so nothing to see move.
+ */
+function frameCollapsed(): boolean {
+  return !frame || frame.offsetParent === null;
+}
+
 function fitFrame(): void {
-  if (!frame || allowScroll || readerSized() || screened()) return;
+  if (!frame || allowScroll || readerSized() || screened() || frameCollapsed()) return;
   const next = `${measureContentHeight()}px`;
   if (frame.style.height !== next) frame.style.height = next;
 }
@@ -473,7 +527,7 @@ async function boot(): Promise<void> {
   await mountFrameComponents(document);
   /*
    * The documentation surfaces are opt-in, and this realm opts in: a preview of ComponentPreview
-   * has to behave like one — its own tabs, reload, resizer and code disclosure. Both mounts are
+   * has to behave like one: its own tabs, reload, resizer and code disclosure. Both mounts are
    * no-ops when the demo has neither surface, which is every other preview on the site.
    */
   mountCodePreview(document);
@@ -484,7 +538,7 @@ async function boot(): Promise<void> {
   if (frame) {
     /*
      * The resizer and the screen tabs both live in the parent document: watch their verdict on who
-     * owns the height. Leaving a preset is the case that needs the re-fit — the stage goes back to
+     * owns the height. Leaving a preset is the case that needs the re-fit: the stage goes back to
      * content height, and nothing else would ever ask for that measurement again.
      */
     const sizingObserver = new MutationObserver(() => {
@@ -541,7 +595,7 @@ async function boot(): Promise<void> {
     });
     /*
      * `subtree`, not just the body's own children: the React demo mounts into a `display: contents`
-     * host, so its nodes are appended INSIDE that host and a childList-only watch never sees them —
+     * host, so its nodes are appended INSIDE that host and a childList-only watch never sees them:
      * the frame stayed at its empty-body height. Watching the subtree also covers a demo that grows
      * a menu or a row deeper in its own tree.
      */

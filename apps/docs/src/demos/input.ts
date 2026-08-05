@@ -4,7 +4,7 @@ import type { Translate } from "../i18n";
 /*
  * One email field, already invalid: the demo exists to show that the error message's presence is
  * what marks the control, and that Field owns the six ids that bind label, hint, error and input.
- * "Email" stays written — it is the same word in both languages.
+ * "Email" stays written: it is the same word in both languages.
  */
 export const inputTree = (t: Translate): UsageTree => ({
   contract: "field",

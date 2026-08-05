@@ -95,7 +95,7 @@ export type ThemeToggleChangeDetail = { value: ColorMode };
  * current one would have nothing to cross-fade between.
  *
  * `data-scheme` is state, not authorship. Whatever the author writes is read once as the initial
- * mode, and from then on both bindings read the value off `<html>` — so two toggles on one page
+ * mode, and from then on both bindings read the value off `<html>`, so two toggles on one page
  * cannot disagree.
  */
 export const themeToggleContract = {

@@ -4,7 +4,7 @@ import type { Translate } from "../i18n";
 /*
  * The two sizes, md and sm.
  *
- * The three face labels reuse `prefs.mode*` — the same strings the site's own toggle announces in the
+ * The three face labels reuse `prefs.mode*`: the same strings the site's own toggle announces in the
  * navbar. A demo of the color mode should say what the reader has already read on the real control,
  * not a second translation of it.
  */

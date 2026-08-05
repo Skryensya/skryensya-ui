@@ -89,7 +89,7 @@ export function probeProp(value: string): string {
  *
  * Tier answers "which layer owns this", which is the architecture but not the shelf: every spacing
  * step, every ramp and every duration lands in the same `primitive` bucket. The family is the
- * shelf. Tiers 1 and 2 take it from the name — the prefix IS the family, and the validator keeps
+ * shelf. Tiers 1 and 2 take it from the name: the prefix IS the family, and the validator keeps
  * those prefixes honest. Tier 3 takes it from the FILE, which is stronger than a prefix: a token is
  * a Button token because it is authored in button.css, and that is also what scopes it.
  */

@@ -24,7 +24,7 @@ export type SegmentedPartClass = (typeof segmentedParts)[SegmentedPart];
 
 /*
  * A small exclusive choice, shown as one bar. Radios by role (`radiogroup` of `radio`) rather than by
- * element, because the options are buttons — which is what gives them a shared indicator to slide.
+ * element, because the options are buttons, which is what gives them a shared indicator to slide.
  *
  * ONE tab stop: only the selected option is reachable, the arrows move between them. That roving
  * tabindex is why a Toolbar counts a Segmented as one stop and not N (decision 27).
@@ -41,7 +41,7 @@ export const segmentedContract = {
      * React spells it `defaultValue`. Emitting `value` there hands React its CONTROLLED prop with no
      * `onValueChange` beside it, which freezes the control: measured on /componentes/segmented,
      * clicking the second option moved the Vanilla stage and left React on the first. The markup's
-     * `data-value` is a starting point the machine then owns — that is what `defaultValue` means.
+     * `data-value` is a starting point the machine then owns: that is what `defaultValue` means.
      * Slider, Tabs, RadioGroup and TimeField all carry this line; Segmented never got it.
      */
     value: { type: "string", attr: "data-value", prop: "defaultValue" },

@@ -107,7 +107,7 @@ export function Combobox({
    *
    * DOM focus never leaves the input: `aria-activedescendant` points at the highlighted option, so
    * nothing on screen says where the arrow keys have landed unless the option says it. It carries a
-   * real focus ring, and while it does, the control drops its own — one ring at a time, so the ring
+   * real focus ring, and while it does, the control drops its own; one ring at a time, so the ring
    * *moves* into the list and back out instead of stacking a box inside a box.
    *
    * Both attributes are gated on which device moved the highlight last, because the machine also
@@ -159,7 +159,7 @@ export function Combobox({
     allowCustomValue,
     placeholder,
     // A search that was never resolved into a selection is still the user's work: leaving the field
-    // — blur, click outside, Escape — must not throw it away and leave them retyping. `preserve` is
+    // (blur, click outside, Escape) must not throw it away and leave them retyping. `preserve` is
     // the only selectionBehavior that keeps it, because the machine reverts the input on every one
     // of those exits. The cost is that CHOOSING no longer writes the label either, so `onValueChange`
     // below does that write itself: preserve on leave, replace on select (mirrors the vanilla layer).
@@ -169,8 +169,8 @@ export function Combobox({
       triggerLabel,
     },
     onInputValueChange(details) {
-      // Only what the user TYPED is a filter. The machine writes this input too — the label after a
-      // select, "" after clear — and filtering on that would leave the list showing the single row
+      // Only what the user TYPED is a filter. The machine writes this input too (the label after a
+      // select, "" after clear), and filtering on that would leave the list showing the single row
       // you just picked the next time it opens. Any non-typed write resets to the full set.
       setQuery(details.reason === "input-change" ? details.inputValue : "");
       onInputValueChange?.({ inputValue: details.inputValue });
@@ -178,7 +178,7 @@ export function Combobox({
     onValueChange(details) {
       onValueChange?.({ value: details.value });
       // The other half of `selectionBehavior: "preserve"`. Single: the input shows what was chosen.
-      // Multiple: the chip already shows it, so the query is spent — clear it so the next search
+      // Multiple: the chip already shows it, so the query is spent; clear it so the next search
       // starts from the whole list instead of the one match that produced this chip.
       queueMicrotask(() => {
         const next = multiple ? "" : (details.items.at(-1)?.label ?? "");
@@ -200,8 +200,8 @@ export function Combobox({
     ]
       .filter(Boolean)
       .join(" ") || undefined;
-  // Show the clear ✕ whenever there is something to clear — a chosen value OR text still in the
-  // input — and hide it when the field is truly empty (mirrors the vanilla layer).
+  // Show the clear ✕ whenever there is something to clear (a chosen value OR text still in the
+  // input), and hide it when the field is truly empty (mirrors the vanilla layer).
   const showClear = api.hasSelectedItems || api.inputValue.length > 0;
 
   return (

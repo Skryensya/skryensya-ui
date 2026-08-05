@@ -2,7 +2,7 @@
  * STORAGE, the contract, and the only part with no browser in it.
  *
  * A design system persists preferences: color mode, contrast, density, whatever a product adds. That
- * is not a component, it is plumbing every consumer re-invents — and re-invented four times inside
+ * is not a component, it is plumbing every consumer re-invents, and re-invented four times inside
  * this repo alone, each copy with its own try/catch, its own key, and its own hand-rolled guard. So it
  * ships like every other behaviour with no platform equivalent (decision 14): the pure codec here, the
  * imperative binding in @skryensya/vanilla, the hook in @skryensya/react. This file knows how to READ
@@ -16,13 +16,13 @@
  *      site" is one `removeItem`.
  *
  *   2. A PREFERENCE IS DECLARED, never ad-hoc. `definePreference` takes a slot, a fallback and a
- *      PARSER, and the parser is mandatory. Stored data is untrusted input — the reader can edit it,
+ *      PARSER, and the parser is mandatory. Stored data is untrusted input: the reader can edit it,
  *      and a version you shipped last month can leave a shape this one has never seen. Every existing
  *      call site already hand-wrote an `isBinding` / `isColorMode` guard next to its read; making the
  *      guard part of the declaration is what removes the duplication instead of relocating it.
  *
  *   3. READING NEVER FAILS. An unparseable store, an unknown value, a `localStorage` that throws
- *      because the reader is in private mode — every one of them yields the fallback. A preference is
+ *      because the reader is in private mode, every one of them yields the fallback. A preference is
  *      a nicety; nothing about it justifies taking the page down.
  */
 
@@ -55,7 +55,7 @@ export interface Preference<Value> {
 }
 
 /**
- * Declare a preference. The identity function with a type — the point is that the three facts travel
+ * Declare a preference. The identity function with a type: the point is that the three facts travel
  * together, so nothing can read a slot without also saying how to validate it.
  *
  *   export const colorModePreference = definePreference({
@@ -120,7 +120,7 @@ export function clearPreference(store: StorageStore, preference: Preference<unkn
 /**
  * Parse helper for the common case: a preference whose values are a closed set of strings.
  *
- * `oneOf(colorModes)` is the whole parser for scheme, contrast, binding and screen — which is every
+ * `oneOf(colorModes)` is the whole parser for scheme, contrast, binding and screen, which is every
  * preference in this repo, because a preference with an open-ended value is usually a setting that
  * wanted to be state.
  */

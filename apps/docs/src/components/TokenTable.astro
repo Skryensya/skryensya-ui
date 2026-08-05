@@ -37,8 +37,8 @@ const tierLabel = {
 
 /*
  * The corpus, shelved by family (lib/tokens.ts). One Table per family rather than one table with
- * invented section rows: a family is then a real, self-contained table — captioned, with its own
- * column headers — built from the component's documented anatomy and nothing else.
+ * invented section rows: a family is then a real, self-contained table (captioned, with its own
+ * column headers) built from the component's documented anatomy and nothing else.
  */
 const sections = groupedTokens.map(({ group, tokens: groupTokens }) => ({
   group,
@@ -114,7 +114,7 @@ const counts = {
 </div>
 
 {/*
- * One family, one Table — the documented anatomy, nothing invented: caption, head, body, row,
+ * One family, one Table (the documented anatomy, nothing invented): caption, head, body, row,
  * header, cell, plus `data-layout="fixed"` so 90 separate tables agree on their column tracks.
  * The family title is the table's own <caption>, which the component already renders outside the
  * frame; the tier is a real heading in the document, above the tables it owns.
@@ -202,7 +202,7 @@ const counts = {
   const groupMany = count.dataset.groupMany ?? "{count} groups";
 
   /* One table per family: filtering works block by block, so a family with no matching row hides
-     as a unit — caption and column header included — instead of leaving a title over nothing. */
+     as a unit (caption and column header included) instead of leaving a title over nothing. */
   const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-group]")).map(
     (block) => ({
       block,

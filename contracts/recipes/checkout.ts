@@ -6,8 +6,8 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
  *
  * The Steps bar is not decoration and it is not a progress bar. A progress bar says how much is
  * left; Steps says what the remaining work IS, which is the only way someone can decide whether to
- * finish now or come back. That is why it stays on screen in every state, including the failing one
- * — losing your place is the expensive part of a flow, not losing the form.
+ * finish now or come back. That is why it stays on screen in every state, including the failing one:
+ * losing your place is the expensive part of a flow, not losing the form.
  *
  * The other decision worth copying: "guardar mis datos" is a Checkbox, not a Switch. It applies when
  * the flow is submitted, and a Switch would promise it already took effect.
@@ -16,7 +16,7 @@ export const checkoutRecipe: Recipe = {
   id: "checkout",
   intent: "Un flujo en pasos: elegir, ajustar y confirmar sin perder de vista cuánto falta.",
   notes: [
-    "Steps no es una barra de progreso: una barra dice cuánto falta, Steps dice **qué** falta — que es lo único que permite decidir entre terminar ahora o volver después.",
+    "Steps no es una barra de progreso: una barra dice cuánto falta, Steps dice **qué** falta, que es lo único que permite decidir entre terminar ahora o volver después.",
     "La barra de pasos se queda en los cuatro estados. Perder el lugar es lo caro de un flujo; perder el formulario no.",
     "«Guardar mis datos» es un Checkbox y no un Switch: se aplica al enviar, y un Switch prometería que ya tuvo efecto.",
     "El paso actual se marca en la entrada (`current`), no se deduce de la posición: una lista donde el lugar se infiere se desincroniza en cuanto un paso se salta.",
@@ -97,8 +97,8 @@ export const checkoutRecipe: Recipe = {
           options: { gap: "md" },
           children: [
             {
-              contract: "alert",
-              signature: "Alert",
+              contract: "callout",
+              signature: "Callout",
               options: { tone: "danger" },
               slots: { title: "No hay envíos express a tu zona" },
               children: "Elegí otra opción para continuar.",
@@ -132,15 +132,15 @@ export const checkoutRecipe: Recipe = {
       children: [
         steps("complete"),
         {
-          contract: "alert",
-          signature: "Alert",
+          contract: "callout",
+          signature: "Callout",
           options: { tone: "success" },
           slots: {
             title: "Pedido confirmado",
             actions: {
               contract: "button",
               signature: "Button.navigation",
-              options: { href: "/pedidos/4821" },
+              options: { href: "/pedidos/4821", variant: "subtle" },
               children: "Seguir el envío",
             },
           },

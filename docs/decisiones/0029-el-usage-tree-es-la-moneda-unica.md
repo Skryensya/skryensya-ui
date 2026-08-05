@@ -3,8 +3,8 @@ num: 29
 title: El usage tree es la moneda única
 short: "Un árbol, cuatro usos"
 summary: >-
-  Un ejemplo se escribía tres veces —el snippet del schema JSON, el string `html` de la página de
-  docs y el componente en `react-demos/`— y ninguna de las tres era la que el agente terminaba
+  Un ejemplo se escribía tres veces (el snippet del schema JSON, el string `html` de la página de
+  docs y el componente en `react-demos/`) y ninguna de las tres era la que el agente terminaba
   escribiendo. Esta decisión define el **usage tree**: una composición escrita como dato
   (firma, opciones, hijos) que se autorea una vez y que ambos bindings renderizan. El mismo árbol es
   el ejemplo, el snippet, el plan que el agente propone y el caso que corren los gates; y
@@ -43,7 +43,7 @@ De ese único árbol salen cuatro cosas que antes eran cuatro artefactos:
 | Los gates | El caso que se renderiza dos veces y se compara (G2) |
 
 **El emisor vive en el compilador, nunca en la capa vanilla.** Un enhancer no renderiza markup ni
-escribe una clase —eso es lo que un enhancer *es* en este sistema—, así que emitir HTML desde un árbol
+escribe una clase (eso es lo que un enhancer *es* en este sistema), así que emitir HTML desde un árbol
 es codegen de build-time. El consumidor sigue siendo dueño del markup que escribe, exactamente como
 cuando lo copia de la documentación.
 

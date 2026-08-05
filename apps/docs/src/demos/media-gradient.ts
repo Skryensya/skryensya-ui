@@ -8,7 +8,7 @@ export const DEMO_MEDIA_GRADIENT_SRC = "/demos/media-gradient.svg";
  * Both demos convert once ImageFrame grew a `caption` slot: the wash is not a second media source,
  * so `src` and MediaCaption can sit together without breaking `exactlyOneOf`.
  *
- * Edge labels (`bottom`, `top`, …) stay written — they are the option values the page is teaching.
+ * Edge labels (`bottom`, `top`, …) stay written: they are the option values the page is teaching.
  */
 
 /** Box + ImageFrame + caption wash: a card with type on the photo and body below. */
@@ -84,7 +84,7 @@ function edgeFrame(edge: "top" | "bottom" | "start" | "end"): UsageTree {
   };
 }
 
-/** Same wash, four edges — the band follows the caption box, not a percentage of the photo. */
+/** Same wash, four edges: the band follows the caption box, not a percentage of the photo. */
 export const mediaGradientEdgesTree = (): UsageTree => ({
   contract: "layout",
   signature: "Grid",

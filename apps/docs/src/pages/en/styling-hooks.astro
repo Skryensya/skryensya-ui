@@ -41,8 +41,8 @@ const consumer = `/* Your CSS reads it once and never branches. */
     styling hooks contract Import <code>components/button.css</code> gives you a <em>button and</em> {buttonHooks.length} styling hooks. Class is what you see; hooks are how you change it without touching a selector. That is the contract.
   </p>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
     <p>
       This <strong>changed</strong>. For a long time the system sent the hooks and nothing more: the structure was written by each consumer. It was reversed, because it was not sustained, <a href="/decisiones/0008-que-envia-tier-3">decision 8</a> tells what was measured. What hasn't changed is why a hook exists: it is not a replacement for the missing structure, it is the knob.
     </p>

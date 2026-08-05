@@ -452,7 +452,7 @@ import { Heading, Text } from "@skryensya/react/typography";
 
 /* The Box carries NO padding: its overflow already clips, so an ImageFrame at radius "none"
  * fills the top edge and inherits the corner. The text block gets its inset back from
- * .sk-card-body { padding: var(--space-inset-lg) } — padding on the root would inset the photo. */
+ * .sk-card-body { padding: var(--space-inset-lg) }: padding on the root would inset the photo. */
 
 ${reactData(c.media)}
 
@@ -552,7 +552,7 @@ import { Grid, Inline } from "@skryensya/react/layout";
 import { TileLink } from "@skryensya/react/tile-link";
 
 /* Interactive AND media AND wash. Padding "none" so the photo reaches the edge; every element
- * inside the anchor is a span, because an <a> may not contain block-level interactive content —
+ * inside the anchor is a span, because an <a> may not contain block-level interactive content,
  * and the title is what names the link, so there is no second link inside. */
 
 ${reactData(c.mediaLink)}
@@ -614,7 +614,7 @@ import { Button } from "@skryensya/react/button";
 import { Box, Grid, Inline, Stack } from "@skryensya/react/layout";
 import { Heading, Link, Text } from "@skryensya/react/typography";
 
-/* TWO independent decisions live in this card — see details, and add — so the root cannot be a
+/* TWO independent decisions live in this card (see details, and add), so the root cannot be a
  * Tile: a link and a button nested inside an anchor is invalid HTML, and a whole-surface click
  * could only ever mean one of the two. This is the case Box exists for. */
 

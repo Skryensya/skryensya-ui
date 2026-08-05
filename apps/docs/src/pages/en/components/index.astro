@@ -1,21 +1,28 @@
 ---
+import "@skryensya/core/components/tile.css";
 import Base from "../../../layouts/Base.astro";
 import { getLocale, useTranslations } from "../../../i18n";
 import { iconMarkup } from "../../../icons";
-import { componentNavigation, componentStatus } from "../../../lib/navigation";
+import { getComponentDescription } from "../../../lib/component-catalog";
+import { componentStatus, getNavigation } from "../../../lib/navigation";
+
+const locale = getLocale(Astro.url);
+const componentSection = getNavigation(locale).find((section) => section.id === "components");
+if (!componentSection) throw new Error("Missing components navigation section");
 
 const searchIcon = iconMarkup("search");
-const items = componentNavigation.flatMap((group) => group.items);
-const t = useTranslations(getLocale(Astro.url));
+const t = useTranslations(locale);
 ---
 
 <Base
-  title="Explorar componentes"
-  description="A–Z catalog of system parts: components, patterns and usage primitives."
+  title="Explore components"
+  description="Components, patterns, and primitives organized by the task they solve."
 >
   <h1>Explore components</h1>
   <p class="lede">
-    A–Z list. Includes product parts, patterns (scrollbar, vaul, nav list) and the use of <a href="/en/components/icon">Icon</a>. Iconography—roles, sets, rules—lives in <a href="/en/icons">Fundamentals → Iconography</a>.
+    Start with the task: capture data, provide orientation, present content, or communicate status.
+    Each card explains when to use the piece. For icon roles, sets, and rules, go to
+    <a href="/en/icons">Fundamentals → Iconography</a>.
   </p>
 
   <button
@@ -32,22 +39,53 @@ const t = useTranslations(getLocale(Astro.url));
     <kbd class="sk-kbd" data-sk-command-palette-hint aria-hidden="true">⌘K</kbd>
   </button>
 
-  <section class="docs-catalog-section" aria-label="Components">
-    <ul class="docs-catalog">
-      {
-        items.map((item) => (
-          <li>
-            <a class="docs-catalog__link sk-interactive" href={item.href}>
-              {item.label}
-              {componentStatus(item) === "wip" && (
-                <span class="sk-badge" data-tone="warning">
-                  {t("status.wip")}
-                </span>
-              )}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
+  <div class="docs-catalog-groups">
+    {
+      componentSection.groups.map((group, groupIndex) => {
+        const headingId = `catalog-group-${groupIndex}`;
+
+        return (
+          <section class="docs-catalog-section" aria-labelledby={headingId}>
+            <header class="docs-catalog-section__header">
+              <div>
+                <h2 class="docs-catalog-section__title" id={headingId} data-flush>
+                  {group.group}
+                </h2>
+                {group.blurb && <p class="docs-catalog-section__blurb">{group.blurb}</p>}
+              </div>
+              <span class="docs-catalog-section__count">
+                {group.items.length} components
+              </span>
+            </header>
+
+            <ul class="docs-catalog">
+              {group.items.map((item) => (
+                <li class="docs-catalog__item">
+                  <a
+                    class="docs-catalog__link sk-tile sk-tile--interactive sk-interactive"
+                    data-padding="md"
+                    href={item.href}
+                    data-scope="tile"
+                    data-part="root"
+                  >
+                    <span class="sk-tile__content" data-part="content">
+                      <span class="sk-tile__title">{item.label}</span>
+                      <span class="sk-tile__description">
+                        {getComponentDescription(item.href, locale)}
+                      </span>
+                    </span>
+                    {componentStatus(item) === "wip" && (
+                      <span class="sk-badge" data-tone="warning">
+                        {t("status.wip")}
+                      </span>
+                    )}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        );
+      })
+    }
+  </div>
 </Base>

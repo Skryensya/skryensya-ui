@@ -7,17 +7,36 @@
  * it ships.
  */
 import CodeBlock from "./CodeBlock.astro";
-import { getLocale, useTranslations } from "../i18n";
+import { getLocale, localizePath, useTranslations } from "../i18n";
 
 interface Props {
   name: string;
   entrypoint: string;
   mount: string;
   selector: string;
+  /**
+   * Every OTHER page has this land as a page-level section, `<h2>`/`<h3>`. The accordion pilot
+   * composes it INSIDE a tab panel instead (`hideVanillaMount` on `Base`, see the note there),
+   * one level deeper than a normal top-of-page section: "h3" shifts both headings down a step
+   * so the outline still nests correctly under that panel's own `<h2>`.
+   */
+  headingLevel?: "h2" | "h3";
 }
 
-const { name, entrypoint, mount, selector } = Astro.props;
-const t = useTranslations(getLocale(Astro.url));
+const { name, entrypoint, mount, selector, headingLevel = "h2" } = Astro.props;
+const Title = headingLevel === "h3" ? "h3" : "h2";
+const Section = headingLevel === "h3" ? "h4" : "h3";
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+
+/*
+ * The full explanation of `initComponents()` (the map-not-a-list-of-imports shape, idempotence,
+ * scoping the scan to a root) used to be repeated inline on every page that mounts this component
+ * (copy paste, ~17 places at last count). It now lives once at `/montaje-automatico`
+ * (`/en/automatic-mounting`), and this paragraph only orients the reader toward it; the same
+ * `{link}` splice `accordion.intro` already used for its own cross-reference.
+ */
+const autoLink = `<a href="${localizePath("/montaje-automatico", locale)}">${t("vanilla.autoLinkLabel")}</a>`;
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -37,15 +56,15 @@ const root = document.querySelector<HTMLElement>("${selector}");
 if (root) ${mount}(root);`;
 ---
 
-<h2>{t("vanilla.title")}</h2>
+<Title>{t("vanilla.title")}</Title>
 <p>{t("vanilla.intro")}</p>
 <CodeBlock code={install} label="terminal" />
 
-<h3>{t("vanilla.autoTitle")}</h3>
-<p>{t("vanilla.autoBody")}</p>
+<Section>{t("vanilla.autoTitle")}</Section>
+<p set:html={t("vanilla.autoBody", { autoLink })} />
 <CodeBlock code={auto} label="JavaScript" />
 
-<h3>{t("vanilla.onlyTitle", { name })}</h3>
+<Section>{t("vanilla.onlyTitle", { name })}</Section>
 <p>{t("vanilla.onlyBody", { name })}</p>
 <CodeBlock code={component} label="JavaScript" />
 <CodeBlock code={instance} label={t("vanilla.instance")} />

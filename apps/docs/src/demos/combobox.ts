@@ -6,7 +6,7 @@ import { countries, slug } from "./countries";
  * One combobox over the whole country list, from the contract published for it.
  *
  * The list is filtered client-side by both bindings, so "every country" costs no more markup logic
- * than the four rows this demo used to ship — only more entries. That is the point of the demo: a
+ * than the four rows this demo used to ship, only more entries. That is the point of the demo: a
  * combobox earns its place exactly when the list is too long to scan.
  *
  * The names come from `./countries` rather than from `demo.*` keys: 194 keys pairing two proper

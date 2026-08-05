@@ -1,4 +1,4 @@
-/* TIER 3, TIME FIELD — a segmented time input: hour, minute, and AM/PM as independently
+/* TIER 3, TIME FIELD. A segmented time input: hour, minute, and AM/PM as independently
  * steppable/typeable segments in one field, no popover and no wheel behind it. Each segment is a
  * real `role="spinbutton"`, so this file only needs to skin one focusable row, not place a floating
  * panel (compare DatePicker/Combobox, which both carry the Anclaje pattern for exactly that). */
@@ -66,7 +66,7 @@
     cursor: not-allowed;
   }
 
-  /* One editable piece — hour, minute, or the AM/PM toggle. A `role="spinbutton"` div, not an
+  /* One editable piece: hour, minute, or the AM/PM toggle. A `role="spinbutton"` div, not an
    * `<input>`: its value is one whole number or one of two named states, never free text, and the
    * digit-by-digit typing/auto-advance behaviour has no native HTML control that already gives it
    * for free either way. */

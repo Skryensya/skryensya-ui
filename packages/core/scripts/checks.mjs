@@ -67,7 +67,9 @@ export function runChecks({ files, declaredTier, baseSemantic, hcByName, rampMap
 
   // every light-dark() must have exactly two color args
   for (const [name, value] of baseSemantic) {
-    const ld = value.match(/light-dark\((.*)\)/);
+    /* `[\s\S]`, not `.`: token values can span lines, and `.` stops at the newline — this check
+     * would silently skip exactly the multi-line values most worth checking. */
+    const ld = value.match(/light-dark\(([\s\S]*)\)/);
     if (ld && splitTopLevel(ld[1]).length !== 2) {
       fail("mode-complete", name, `light-dark() must take exactly two colors, got: ${value}`);
     }

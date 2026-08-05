@@ -16,16 +16,16 @@ const t = useTranslations(getLocale(Astro.url));
 
 <Base
   title="TimeField"
-  description="A segmented time field — hour, minute and AM/PM as independently editable parts, operable from the keyboard."
+  description="A segmented time field: hour, minute and AM/PM as independently editable parts, operable from the keyboard."
 >
   <h1>TimeField</h1>
   <p class="lede">
-    A field for a local wall-clock time — no date, no time zone. Hour, minute and (in a 12-hour
+    A field for a local wall-clock time, no date, no time zone. Hour, minute and (in a 12-hour
     locale) AM/PM are three independently editable segments in one field, instead of the chrome of
     a plain <code>&lt;input type="time"&gt;</code>, which differs enough across Chrome, Firefox and
     Safari that it cannot be styled or trusted to look the same twice. There is no
     <code>@zag-js/time-picker</code> machine, so this component owns its state by hand, like Slider
-    and Segmented — and there is no popover either: an earlier design put a scroll-wheel picker
+    and Segmented, and there is no popover either: an earlier design put a scroll-wheel picker
     behind a trigger, and it turned out to be neither simpler nor more accessible than building the
     segments directly.
   </p>
@@ -39,8 +39,8 @@ const t = useTranslations(getLocale(Astro.url));
   <p>
     Segment order and separators come from <code>Intl.DateTimeFormat.formatToParts</code>, not from
     assumptions: some locales put the day period before the time, and the separator is not always
-    <code>":"</code>. The public value is still the canonical <code>HH:mm</code> string — the same
-    shape a plain <code>&lt;input type="time"&gt;</code> submits — carried on a hidden input, so a
+    <code>":"</code>. The public value is still the canonical <code>HH:mm</code> string (the same
+    shape a plain <code>&lt;input type="time"&gt;</code> submits), carried on a hidden input, so a
     form behind TimeField never has to parse a locale-dependent string. React holds this as
     component state (<code>value</code>/<code>defaultValue</code>, an <code>onValueChange</code>
     callback). Vanilla hydrates the authored <code>data-sk-time-field</code>: the consumer only
@@ -51,7 +51,7 @@ const t = useTranslations(getLocale(Astro.url));
   <h2>Editing a segment</h2>
   <p>
     Typing a digit fills the focused segment and advances as soon as no further digit could keep it
-    valid — typing <kbd class="sk-kbd">1</kbd> in a 12-hour hour segment waits briefly for a possible
+    valid: typing <kbd class="sk-kbd">1</kbd> in a 12-hour hour segment waits briefly for a possible
     second digit (<code>10</code>–<code>12</code>); typing <kbd class="sk-kbd">9</kbd> advances at
     once, because no second digit could follow it and stay ≤ 12. Arrow up/down steps the value and
     wraps at the ends; <kbd class="sk-kbd">Backspace</kbd> clears the segment;
@@ -63,7 +63,7 @@ const t = useTranslations(getLocale(Astro.url));
   <p>
     A plain <code>&lt;input type="time"&gt;</code> still works, needs no CSS or JavaScript, and brings
     the OS's own keyboard and picker for free. Reach for TimeField only once that picker's
-    inconsistency across browsers, or the total lack of styling hooks, actually costs you something —
+    inconsistency across browsers, or the total lack of styling hooks, actually costs you something,
     the same decision DatePicker makes against a plain <code>type="date"</code>.
   </p>
   <ComponentPreview tree={timeFieldNativeTree(t, { name: "departure" })} label="Native time input" />
@@ -73,7 +73,7 @@ const t = useTranslations(getLocale(Astro.url));
     Each segment is <code>role="spinbutton"</code> inside a <code>role="group"</code> named by the
     field's label: <code>aria-valuenow</code>/<code>aria-valuetext</code> carry its current value (a
     friendly placeholder like "hh" before anything is set, not an empty string), and
-    <code>aria-valuemin</code>/<code>aria-valuemax</code> its real range — 1–12 for an hour segment
+    <code>aria-valuemin</code>/<code>aria-valuemax</code> its real range: 1–12 for an hour segment
     in a 12-hour locale, 0–23 in a 24-hour one. Each segment is its own tab stop, the way a native
     multi-part date input already works, so keyboard use needs nothing beyond Tab and the arrows
     documented above.

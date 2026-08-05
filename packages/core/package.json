@@ -31,9 +31,9 @@
       "types": "./src/badge.ts",
       "default": "./src/badge.ts"
     },
-    "./alert": {
-      "types": "./src/alert.ts",
-      "default": "./src/alert.ts"
+    "./callout": {
+      "types": "./src/callout.ts",
+      "default": "./src/callout.ts"
     },
     "./avatar": {
       "types": "./src/avatar.ts",
@@ -86,6 +86,10 @@
     "./carousel": {
       "types": "./src/carousel.ts",
       "default": "./src/carousel.ts"
+    },
+    "./changelog": {
+      "types": "./src/changelog.ts",
+      "default": "./src/changelog.ts"
     },
     "./button": {
       "types": "./src/button.ts",

@@ -39,8 +39,8 @@ export type SelectionPartClass = (typeof selectionParts)[SelectionPart];
  * author does.
  *
  * A checkbox is five elements for one boolean: a `<label>` wrapping a real `<input>`, a painted
- * control beside it, two indicator spans inside that, and the text. The author supplies one thing —
- * the label — and the contract supplies the rest, because none of it is a choice: the native input
+ * control beside it, two indicator spans inside that, and the text. The author supplies one thing,
+ * the label, and the contract supplies the rest, because none of it is a choice: the native input
  * has to be there for form participation and keyboard, and the paint has to be `aria-hidden` so the
  * control is announced once, not twice.
  *
@@ -180,7 +180,7 @@ export const switchContract = {
  * A radio is not a checkbox that happens to be exclusive: what makes it exclusive is the shared
  * `name` on every input, which is the platform's own mechanism and belongs to the GROUP, not to any
  * one option. Composing radios as loose children would leave that name to the author to repeat
- * correctly on each one — the same class of invariant a tab's key is, and the same answer: entries.
+ * correctly on each one, the same class of invariant a tab's key is, and the same answer: entries.
  *
  * `required` is likewise the group's: a set where one option is required means the SET is required.
  */
@@ -204,7 +204,7 @@ export const radioGroupContract = {
     value: { type: "string", attr: "data-value", machineInput: true, prop: "defaultValue" },
     /**
      * Two attributes, one value: the CSS reads `data-orientation` and the accessibility tree reads
-     * `aria-orientation`, and a radiogroup owes the second one — arrow keys move along the axis it
+     * `aria-orientation`, and a radiogroup owes the second one: arrow keys move along the axis it
      * announces. The template writes both from this single option.
      */
     orientation: {

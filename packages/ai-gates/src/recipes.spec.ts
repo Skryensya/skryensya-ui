@@ -4,7 +4,7 @@ import { expect, test } from "./fixtures.js";
 /*
  * The one thing a recipe claims that no single tree can: that its four states are FOUR STATES.
  *
- * Every other gate asks whether a composition is right. This one asks whether the set is coherent —
+ * Every other gate asks whether a composition is right. This one asks whether the set is coherent:
  * because the whole reason a recipe carries `loading`, `empty`, `error` and `success` is that they
  * are different screens, and the failure mode is not that one of them is malformed. It is that two
  * of them are the same screen with a different string in it, which every static check calls fine and
@@ -16,7 +16,7 @@ import { expect, test } from "./fixtures.js";
  */
 
 for (const recipe of recipes) {
-  test(`${recipe.id} — its four states are four different screens`, async ({ stagePage: page }) => {
+  test(`${recipe.id}: its four states are four different screens`, async ({ stagePage: page }) => {
     const snapshots = new Map<string, string>();
 
     for (const state of Object.keys(recipe.states)) {

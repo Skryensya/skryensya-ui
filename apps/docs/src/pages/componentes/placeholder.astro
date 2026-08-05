@@ -7,7 +7,7 @@ import { publicationPlaceholderTree, publicationSwapScript, publicationSwapTree 
 import { getLocale, useTranslations } from "../../i18n";
 // The CSS block below documents this import; the page never actually made it. Without the base
 // `.sk-placeholder` rule nothing sets `block-size`, so every text-shaped line measured 0px and the
-// skeleton painted only its media block — the one thing this page exists to show.
+// skeleton painted only its media block: the one thing this page exists to show.
 import "@skryensya/core/components/placeholder.css";
 import "../../examples/placeholder.css";
 
@@ -34,9 +34,9 @@ const styles = `@import "@skryensya/core/components/placeholder.css";
     una señal visual breve; el contenedor conserva la responsabilidad de explicar qué está cargando.
   </p>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
-      <div class="sk-alert__description">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <div class="sk-callout__description">
         Placeholder siempre es decorativo. Usa <code>aria-busy="true"</code> y un mensaje de estado en
         la región que espera los datos.
       </div>

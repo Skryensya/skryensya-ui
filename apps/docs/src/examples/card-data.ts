@@ -3,8 +3,8 @@
  *
  * Card is not a component, so the docs teach it with a LADDER of compositions: each example is a
  * grid of three cards, and the ladder runs from a bare Box to a media Tile that navigates. The copy
- * lives here, once per locale, because three consumers need the same strings — the Spanish page, the
- * English page, and the React island that renders next to both — and a card whose demo says one
+ * lives here, once per locale, because three consumers need the same strings (the Spanish page, the
+ * English page, and the React island that renders next to both), and a card whose demo says one
  * thing while its source says another teaches nothing.
  *
  * The images are `dummyimage.com` placeholders and not files in `public/`: a card example is about
@@ -24,7 +24,7 @@ export function dummyImage(width: number, height: number, bg: string, fg: string
 /*
  * The same placeholder with NO label, for the two examples that print a caption over the photo.
  * dummyimage centres its text vertically, so a labelled placeholder collides with the caption and
- * the wash ends up demonstrating the opposite of what it is for — a real photograph would put its
+ * the wash ends up demonstrating the opposite of what it is for: a real photograph would put its
  * subject there, not a word. A single space is how the service is asked for a blank panel.
  */
 export function blankImage(width: number, height: number, bg: string) {
@@ -75,7 +75,7 @@ const media = {
  * LIGHT tints, and only for the two examples that put a caption on the image.
  *
  * The wash exists to hold white text over a photograph that might be bright. Demonstrated over the
- * dark tints above, it was invisible — dark ink fading into dark blue — and the example argued
+ * dark tints above, it was invisible (dark ink fading into dark blue), and the example argued
  * against itself: a reader would conclude the gradient does nothing. A pale panel is the honest
  * stand-in for the bright photo the wash is actually for.
  */

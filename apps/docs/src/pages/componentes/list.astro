@@ -31,12 +31,12 @@ const styles = `@import "@skryensya/core/components/list.css";`;
 
 <Base
   title="List"
-  description="List: colección semántica de filas (ul/ol) con anatomía real —leading, contenido, trailing— divisores, filas interactivas y orden."
+  description="List: colección semántica de filas (ul/ol) con anatomía real (leading, contenido, trailing), divisores, filas interactivas y orden."
 >
   <h1>List</h1>
   <p class="lede">
     Una <strong>lista con UI</strong>, no un <code>&lt;li&gt;</code> con tipografía. Por debajo es un
-    <code>&lt;ul&gt;</code> o <code>&lt;ol&gt;</code> real —el lector oye una lista de N ítems—, y
+    <code>&lt;ul&gt;</code> o <code>&lt;ol&gt;</code> real (el lector oye una lista de N ítems), y
     encima aporta la anatomía de fila: <strong>leading</strong> (icono, avatar, número),
     <strong>contenido</strong> (título y descripción) y <strong>trailing</strong> (meta, badge,
     acción), con divisores. Es composable por partes y funcional: una fila que actúa es un
@@ -70,7 +70,7 @@ const styles = `@import "@skryensya/core/components/list.css";`;
   <h3>3 · Media al inicio</h3>
   <p>
     Entra <code>sk-list__leading</code>: un icono, un avatar o un número. Es
-    <strong>decorativo</strong>, no nombra la fila — quien la nombra es el título. Un slot vacío no
+    <strong>decorativo</strong>, no nombra la fila: quien la nombra es el título. Un slot vacío no
     existe para el layout, así que las filas sin icono no arrastran padding fantasma.
   </p>
   <ComponentPreview tree={listLeadingTree(t)} label="3 · Media al inicio" note="+ leading (Icon)" measure="34rem" />

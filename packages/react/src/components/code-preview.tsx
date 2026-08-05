@@ -42,10 +42,10 @@ export function CodePreview({
   rootAttrs,
   children,
   collapsible = false,
-  lessLabel = "Ver menos",
+  lessLabel = "Contraer",
   lines,
   label,
-  moreLabel = "Ver todo",
+  moreLabel = "Expandir",
   note,
   previewLines,
 }: CodePreviewProps) {

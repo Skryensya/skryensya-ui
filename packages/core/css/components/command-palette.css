@@ -2,7 +2,7 @@
  * TIER 3, COMMAND PALETTE
  *
  * A searchable listbox hosted in a native Dialog. Compose with `.sk-dialog` for the modal shell
- * (ADR-11). This file owns the search row, results list, empty state and footer — not the dialog
+ * (ADR-11). This file owns the search row, results list, empty state and footer, not the dialog
  * chrome. Close is a real icon-only Button in a `method="dialog"` form, same contract as Dialog.
  */
 @layer components {
@@ -94,7 +94,7 @@
     cursor: pointer;
   }
 
-  /* aria-selected is the highlight — keyboard-driven, so pointer and arrows never fight.
+  /* aria-selected is the highlight: keyboard-driven, so pointer and arrows never fight.
    * It stands in for FOCUS (the options are not tabbable; aria-activedescendant keeps DOM focus
    * in the input), so it is held to the focus bar, not the selection one: the tint alone is
    * 1.35:1 on the dialog surface and 1.00:1 in hc-dark, where it vanishes outright. The ring is

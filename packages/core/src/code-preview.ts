@@ -42,13 +42,21 @@ export const codePreviewAttrs = {
   toggleLabel: "data-sk-code-preview-toggle-label",
   expandedLabel: "data-sk-code-preview-expanded-label",
   expandedAriaLabel: "data-sk-code-preview-expanded-aria-label",
+  /**
+   * How to say "{count} lines" in the page's language. The enhancer rewrites the count when the
+   * density switch flips panels, and it cannot know the language: this carries the sentence with
+   * `{count}` still in it, so the substitution stays the enhancer's job and the wording stays the
+   * author's. Without it the count could only be hardcoded, which is how it ended up Spanish on
+   * the English site.
+   */
+  linesLabel: "data-sk-code-preview-lines-label",
 } as const;
 
 export type CodePreviewAttr = keyof typeof codePreviewAttrs;
 export type CodePreviewAttrName = (typeof codePreviewAttrs)[CodePreviewAttr];
 
 /*
- * CODE PREVIEW, the contract — a block of code with a window over it.
+ * CODE PREVIEW, the contract: a block of code with a window over it.
  *
  * The enhancer shipped with no React counterpart, so this could not be a contract: one binding is
  * not a contract, it is a script. Writing the missing half is what made it publishable, the same as
@@ -57,7 +65,7 @@ export type CodePreviewAttrName = (typeof codePreviewAttrs)[CodePreviewAttr];
  * HIGHLIGHTING IS NOT THIS COMPONENT'S JOB. Shiki runs at build or on the server and never in the
  * browser, so the code arrives already marked up and `children` is whatever the author produced.
  * What this owns is the chrome: the label row, the disclosure, and the LINE COUNTS that turn
- * "show 40 more lines" into a real number. Those counts are machine input in the strict sense —
+ * "show 40 more lines" into a real number. Those counts are machine input in the strict sense:
  * they are measured where the code is highlighted and authored markup has no other channel for them.
  *
  * ONE SIGNATURE, NOT TWO, for now. The docs' own `CodeBlock` also renders a DENSITY variant: two
@@ -75,9 +83,16 @@ export const codePreviewContract = {
     /** Total lines, and how many the collapsed window shows. Counted where the code is made. */
     lines: { type: "string", attr: codePreviewAttrs.lines, machineInput: true },
     previewLines: { type: "string", attr: codePreviewAttrs.previewLines, machineInput: true },
-    /** What the disclosure says while collapsed, and once open. */
-    moreLabel: { type: "string", default: "Ver todo", attr: "data-more-label", machineInput: true },
-    lessLabel: { type: "string", default: "Ver menos", attr: codePreviewAttrs.expandedLabel, machineInput: true },
+    /**
+     * What the disclosure says while collapsed, and once open.
+     *
+     * Expand/collapse, not "see all"/"see less": the collapsed window SCROLLS (see
+     * components/code-preview.css), so every line is already reachable either way. What the control
+     * changes is how much room the block takes on the page, and the words have to say that much and
+     * no more, or they promise content that was never withheld.
+     */
+    moreLabel: { type: "string", default: "Expandir", attr: "data-more-label", machineInput: true },
+    lessLabel: { type: "string", default: "Contraer", attr: codePreviewAttrs.expandedLabel, machineInput: true },
     /**
      * What the density switch announces. An option, not a slot: it lands on `aria-label`, and a
      * slot would need a way to copy its text onto an attribute of a node it does not render.
@@ -97,7 +112,7 @@ export const codePreviewContract = {
         children: { accepts: "node", required: true },
         /** What this snippet is: a filename, a language, a step. */
         label: { accepts: "text" },
-        /** A second line beside the label — a caveat, a version. */
+        /** A second line beside the label: a caveat, a version. */
         note: { accepts: "text" },
       },
       template: {
@@ -163,7 +178,7 @@ export const codePreviewContract = {
     },
 
     /*
-     * THE DENSITY VARIANT — two panels and a switch between them.
+     * THE DENSITY VARIANT: two panels and a switch between them.
      *
      * A second signature rather than an option on the first, because the anatomy genuinely differs:
      * one panel becomes two, each addressable, and a control appears that has no meaning without
@@ -171,7 +186,7 @@ export const codePreviewContract = {
      * the flag is set and forbidden when it is not, which is a signature wearing a disguise.
      *
      * The switch is a real `sk-switch`, not a pair of buttons: one binary choice with two named
-     * ends. The ends are labels BESIDE it, not its accessible name — the name says what the switch
+     * ends. The ends are labels BESIDE it, not its accessible name: the name says what the switch
      * does, which is what a screen reader needs when the words beside it are out of reach.
      */
     "CodePreview.density": {

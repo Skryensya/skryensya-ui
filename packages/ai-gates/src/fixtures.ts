@@ -5,16 +5,16 @@ import { test as base, expect, type BrowserContext, type Page } from "@playwrigh
 /*
  * Every gate in this suite reads the same static stage: ninety canonical trees, both bindings,
  * rendered once and never mutated by any test that shares it. Re-navigating per test bought
- * isolation nothing here was exercising, and cost a full render of the whole stage per assertion —
+ * isolation nothing here was exercising, and cost a full render of the whole stage per assertion:
  * 360+ full navigations where one per worker says the same thing.
  *
  * `stagePage`/`axePage` are worker-scoped: one context, one navigation, reused by every test the
  * worker runs. Playwright instruments `browser.newContext()` for `trace: "retain-on-failure"`
- * regardless of which fixture calls it, so the config's tracing still lands per test — nothing
+ * regardless of which fixture calls it, so the config's tracing still lands per test; nothing
  * extra to wire up here.
  *
  * Tests that MUTATE the page (rendered.spec.ts's empty-frame check and its screenshot baseline)
- * stay on Playwright's own per-test `page` — sharing is only sound for pure readers.
+ * stay on Playwright's own per-test `page`: sharing is only sound for pure readers.
  */
 
 type WorkerFixtures = {

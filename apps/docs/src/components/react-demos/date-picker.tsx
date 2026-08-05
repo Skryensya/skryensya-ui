@@ -5,7 +5,7 @@
 import { DatePicker } from "@skryensya/react/date-picker";
 import { framedIn } from "./framed";
 
-/** Every demo below runs inside its own preview frame — see `framed.tsx`. */
+/** Every demo below runs inside its own preview frame. See `framed.tsx`. */
 const framed = framedIn(import.meta.url);
 
 export const DatePickerCustomDemo = framed(function DatePickerCustomDemo() {

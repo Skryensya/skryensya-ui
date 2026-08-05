@@ -3,7 +3,7 @@ import "@skryensya/core/components/list.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
-import { dialogConfirmScript, dialogConfirmTree } from "../../demos/dialog";
+import { dialogConfirmScript, dialogConfirmTree, dialogVaulScript, dialogVaulTree } from "../../demos/dialog";
 import { getLocale, useTranslations } from "../../i18n";
 import StylingHooks from "../../components/StylingHooks.astro";
 
@@ -38,103 +38,6 @@ const vaulStyles = `@import "@skryensya/core/components/dialog.css";
 const vaulJs = `import { initComponents } from "@skryensya/vanilla/auto";
 
 await initComponents();`;
-
-const vaulHtml = `<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-sk-dialog-vaul-open="demo-dialog"
-  type="button"
->
-  Abrir dialog
-</button>
-
-<dialog
-  class="sk-dialog"
-  id="demo-dialog"
-  data-sk-dialog-vaul
-  data-edge="block-end"
-  aria-labelledby="demo-dialog-title"
->
-  <div data-part="handle" aria-hidden="true"></div>
-  <header class="sk-dialog__header">
-    <h3
-      class="sk-heading sk-dialog__title"
-      data-size="h3"
-      data-flush
-      id="demo-dialog-title"
-    >
-      Caja centrada, Vaul en móvil
-    </h3>
-    <form method="dialog">
-      <button
-        class="sk-button sk-interactive sk-dialog__close"
-        data-sk-button
-        data-variant="ghost"
-        data-icon-only
-        data-sk-dialog-vaul-close
-        type="submit"
-        value="cancel"
-        aria-label="Cerrar"
-      >
-        <span data-sk-icon="close"></span>
-      </button>
-    </form>
-  </header>
-  <div class="sk-dialog__body">
-    <p>
-      Angosta la ventana debajo de 52rem y este mismo dialog gana
-      un Vaul block-end. El markup del dialog no cambia.
-    </p>
-    <ul class="sk-list" data-density="compact" aria-label="Qué cambia">
-      <li class="sk-list__item">
-        <span class="sk-list__leading" data-sk-icon="check"></span>
-        <span class="sk-list__content">
-          <span class="sk-list__title">Llega desde el borde</span>
-          <span class="sk-list__description">
-            Slide block-end en vez de escala centrada.
-          </span>
-        </span>
-      </li>
-      <li class="sk-list__item">
-        <span class="sk-list__leading" data-sk-icon="check"></span>
-        <span class="sk-list__content">
-          <span class="sk-list__title">Se arrastra para cerrar</span>
-          <span class="sk-list__description">
-            Con handle, y sólo abajo del breakpoint.
-          </span>
-        </span>
-      </li>
-      <li class="sk-list__item">
-        <span class="sk-list__leading" data-sk-icon="check"></span>
-        <span class="sk-list__content">
-          <span class="sk-list__title">Sigue siendo el dialog</span>
-          <span class="sk-list__description">
-            Foco, Escape y página inerte son de la plataforma.
-          </span>
-        </span>
-      </li>
-    </ul>
-  </div>
-  <footer class="sk-dialog__footer">
-    <button
-      class="sk-button sk-interactive"
-      data-sk-button
-      data-variant="ghost"
-      data-sk-dialog-vaul-close
-      type="button"
-    >
-      Ahora no
-    </button>
-    <button
-      class="sk-button sk-interactive"
-      data-sk-button
-      data-sk-dialog-vaul-close
-      type="button"
-    >
-      Entendido
-    </button>
-  </footer>
-</dialog>`;
 ---
 
 <Base
@@ -247,7 +150,7 @@ const vaulHtml = `<button
     light-dismiss y drag-to-dismiss. La modalidad (foco, Escape, inert) sigue siendo de
     <code>showModal()</code>.
   </p>
-  <ComponentPreview html={vaulHtml} label="Dialog Vaul" viewport="overlay" />
+  <ComponentPreview tree={dialogVaulTree(t)} previewScript={dialogVaulScript} label="Dialog Vaul" viewport="overlay" />
 
   <h3>Qué añade</h3>
   <ul>

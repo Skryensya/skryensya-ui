@@ -1,4 +1,4 @@
-/* TIER 3, SPLIT BUTTON — primary action plus a Menu trigger. */
+/* TIER 3, SPLIT BUTTON: primary action plus a Menu trigger. */
 @layer components {
   .sk-split-button {
     --sk-split-button-radius: var(--radius-control);
@@ -16,7 +16,7 @@
   }
   /*
    * The composed case: a Menu dropped inside a split button brings its own trigger, and a
-   * composition has no way to hand it our class — the class belongs to whoever renders the button,
+   * composition has no way to hand it our class; the class belongs to whoever renders the button,
    * and that is Menu. Reaching it by structure is what lets the tree compose the two instead of
    * SplitButton having to build the menu itself from a flat prop.
    */

@@ -18,7 +18,7 @@ import { phosphorIcons } from "@skryensya/icons-phosphor";
  *
  * `siteIcons` es la geometría que el sitio serializa en build (`iconMarkup`); `siteIconSet` es el id
  * que el guard de Base re-pinta sobre `svg[data-icon]` antes del primer paint. Mientras los dos
- * dijeron cosas distintas —la geometría era Lucide, el guard pintaba Phosphor— cada icono del chrome
+ * dijeron cosas distintas (la geometría era Lucide, el guard pintaba Phosphor), cada icono del chrome
  * se escribía dos veces: salía Lucide en el HTML y el guard lo reemplazaba. Se veía como un icono que
  * CAMBIA al cargar, porque eso era. Con los dos alineados el guard queda idempotente.
  */

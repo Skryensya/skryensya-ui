@@ -27,14 +27,14 @@ initComponents();`;
 /*
  * Un grupo puede SER un widget compuesto en vez de botones sueltos: dos Segmented (cada uno su
  * propio radiogroup) como los dos grupos de una barra. El header del component preview de este
- * sitio es exactamente esto — el selector de tamaño de pantalla y el toggle Vanilla/React — así
+ * sitio es exactamente esto: el selector de tamaño de pantalla y el toggle Vanilla/React. Así
  * que el ejemplo no es hipotético, es el propio chrome de esta página.
  *
  * El contrato que hace que funcione: cada Segmented ya tiene su propio roving tabindex (una sola
  * opción en tabindex="0", el resto en "-1"), así que sólo esa opción es una PARADA para el
  * Toolbar. Flechas dentro del Segmented seleccionado navegan sus opciones y consumen el evento
  * (preventDefault); el Toolbar ve el evento burbujeado, nota que ya fue consumido y no vuelve a
- * moverlo — sin esa comprobación, una flecha saltaría dos posiciones en vez de una.
+ * moverlo: sin esa comprobación, una flecha saltaría dos posiciones en vez de una.
  */
 ---
 
@@ -62,7 +62,7 @@ initComponents();`;
   <h2>Toolbar con widgets compuestos</h2>
   <p>
     Un grupo no tiene que ser botones sueltos: puede ser un widget compuesto entero, como un
-    Segmented. La barra trata cada widget compuesto como <strong>una sola parada</strong> — el
+    Segmented. La barra trata cada widget compuesto como <strong>una sola parada</strong>: el
     roving tabindex del Segmented ya deja una sola opción en <code>tabindex="0"</code>, así que
     Toolbar sólo visita esa. Adentro del Segmented, las flechas navegan sus propias opciones; no
     escapan hacia el siguiente grupo de la barra. Este es el patrón real que usa el propio header

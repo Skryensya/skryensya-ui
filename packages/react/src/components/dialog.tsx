@@ -3,12 +3,12 @@ import type { DialogHTMLAttributes, ReactNode } from "react";
 import { Icon } from "./icon.js";
 
 /*
- * DIALOG — the centred modal box, and a binding that is markup and nothing else.
+ * DIALOG: the centred modal box, and a binding that is markup and nothing else.
  *
  * No state and no machine, on purpose: the behaviour is the platform's. The consumer calls
  * `showModal()` and the browser owns the top layer, the backdrop, focus trapping and Escape. What
  * the system contributes is the anatomy, which is what makes this a contract both bindings derive
- * from rather than a component one of them implements — the same reason `Select.native` is one.
+ * from rather than a component one of them implements, the same reason `Select.native` is one.
  *
  * The close control is a `<form method="dialog">` rather than an onClick: that is the platform's own
  * way to close a dialog, it works before any script runs, and its `value` lets the opener tell a
@@ -19,11 +19,33 @@ export type DialogProps = DialogHTMLAttributes<HTMLDialogElement> & {
   children?: ReactNode;
   footer?: ReactNode;
   closeLabel?: string;
+  /**
+   * Opts into Dialog Vaul: the same box slides from `block-end` and gains a drag handle below the
+   * desktop breakpoint (`patterns/dialog-vaul.css`). Dragging itself is the Vanilla enhancer's,
+   * same asymmetry as `Vaul`'s own `drawer`: this binding renders markup, never the gesture.
+   */
+  vaul?: boolean;
 };
 
-export function Dialog({ children, className, closeLabel = "Cerrar", footer, title, ...props }: DialogProps) {
+export function Dialog({
+  children,
+  className,
+  closeLabel = "Cerrar",
+  footer,
+  title,
+  vaul = false,
+  ...props
+}: DialogProps) {
   return (
-    <dialog {...props} className={className ? `${dialogParts.root} ${className}` : dialogParts.root}>
+    <dialog
+      {...props}
+      className={className ? `${dialogParts.root} ${className}` : dialogParts.root}
+      data-sk-dialog-vaul={vaul ? "" : undefined}
+      // The enhancer's drag axis is generic and defaults to `inline-start` with nothing to read;
+      // `dialog-vaul.css` only ever slides from the bottom, so this is not a choice: see core.
+      data-edge={vaul ? "block-end" : undefined}
+    >
+      {vaul ? <div aria-hidden="true" data-part="handle" /> : null}
       <header className={dialogParts.header}>
         <h2 className={dialogParts.title}>{title}</h2>
         <form method="dialog">

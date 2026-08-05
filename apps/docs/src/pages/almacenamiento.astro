@@ -96,7 +96,7 @@ const PREPAINT = {
   <h1>Almacenamiento</h1>
   <p class="lede">
     Un design system guarda preferencias: modo de color, contraste, densidad, lo que el producto
-    agregue. No es un componente, es plomería que cada consumidor reinventa — y que este repo había
+    agregue. No es un componente, es plomería que cada consumidor reinventa, y que este repo había
     reinventado <strong>cuatro veces</strong>, cada copia con su propio <code>try/catch</code>, su
     propia clave y su propia guarda escrita a mano. Por eso se envía como todo comportamiento sin
     equivalente en la plataforma (<a href="/decisiones">decisión 14</a>): el códec puro en
@@ -146,7 +146,7 @@ const PREPAINT = {
   <h2>Vanilla</h2>
   <p>
     <code>subscribePreference</code> es el que justifica el módulo más allá de ahorrar líneas: se
-    llama <strong>ya</strong> con el valor actual, y después en cada cambio —incluido el de
+    llama <strong>ya</strong> con el valor actual, y después en cada cambio, incluido el de
     <strong>otra pestaña</strong>. Nada de lo escrito a mano se suscribía al evento
     <code>storage</code>, así que dos pestañas abiertas derivaban hasta que recargabas. Eso es lo que
     hace que una preferencia sea una preferencia y no una variable por pestaña.
@@ -180,7 +180,7 @@ const PREPAINT = {
 
   <h2>La única excepción: antes del primer pintado</h2>
   <p>
-    Un script que corre <strong>antes que cualquier módulo</strong> —el que evita el flash de tema— no
+    Un script que corre <strong>antes que cualquier módulo</strong> (el que evita el flash de tema) no
     puede importar el primitivo: importar es exactamente lo que existe para ocurrir después. Ese script
     toca <code>localStorage</code> directo, y es el único lugar del repo que lo hace.
   </p>
@@ -198,8 +198,8 @@ const PREPAINT = {
     Junto al módulo que es dueño del <em>tipo</em>. <code>colorModePreference</code> vive con
     ThemeToggle, las dos de ComponentPreview con ComponentPreview: el nombre del slot y la guarda son
     parte del contrato que un segundo consumidor tendría que igualar, y un slot re-tipeado en dos apps
-    es un slot que en alguna va a diferir. Lo que es del producto —una paleta de docs es un
-    inquilino— lo declara la app: en este sitio, todas juntas en
+    es un slot que en alguna va a diferir. Lo que es del producto (una paleta de docs es un
+    inquilino) lo declara la app: en este sitio, todas juntas en
     <code>src/lib/preferences.ts</code>.
   </p>
   <p>

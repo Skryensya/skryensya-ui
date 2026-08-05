@@ -13,11 +13,11 @@ import type { Recipe } from "./recipe.js";
  * Every recipe, in the order a reader meets them: the frame first, then what goes inside it.
  *
  * The compiler validates all four states of each against the contracts, so this list is not a
- * catalogue of good intentions — a recipe naming a signature that changed fails the build.
+ * catalogue of good intentions: a recipe naming a signature that changed fails the build.
  */
 /*
  * Reading order, not alphabetical: the frame first, then the screens that sit inside it, roughly in
- * the order a person meets them — find something, look at it, act on it, deal with the consequences.
+ * the order a person meets them: find something, look at it, act on it, deal with the consequences.
  */
 export const recipes: readonly Recipe[] = [
   appShellRecipe,

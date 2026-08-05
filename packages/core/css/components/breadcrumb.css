@@ -1,4 +1,4 @@
-/* TIER 3, BREADCRUMB — hierarchical navigation. */
+/* TIER 3, BREADCRUMB: hierarchical navigation. */
 @layer components {
   /* The hooks live on the root and inherit to every part; the markup wraps the list in
    * `.sk-breadcrumb`, so re-declaring one of these on that element re-themes the whole trail. */

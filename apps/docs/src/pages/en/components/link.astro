@@ -39,8 +39,8 @@ link.textContent = "Usege details";`;
   <p>
     The second way is fragile: you have to re-measure that 3:1 in each brand and each mode, and whoever reads the page still, or cannot hover, does not receive any signal until touching the link. An underline that appears only on hover leaves the text at rest without a clue, and without an underline the flat criterion is failed. So <code>sk-link</code> has <strong>a</strong> form, always underlined, and not a hook to turn it off: offering <code>hover</code> or <code>none</code> would be offering a way to fail 1.4.1.
   </p>
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
     <p>
       <strong>What about the links that are not underlined? </strong> A navigation item, a breadcrumb, the prev/next footer, those are distinguished by <em>location</em>, not by color, so 1.4.1 does not ask for underlining. But they are not <code>sk-link</code>: they use the <code>nav-list</code> pattern or a <code>ghost</code> button. <code>sk-link</code> is, by definition, the <em>link within the</em> text.
     </p>

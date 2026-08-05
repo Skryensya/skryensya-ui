@@ -7,7 +7,7 @@
  *
  * THE TWO LISTS HAD DRIFTED when they were lifted out of the pages: 194 names in Spanish and 195 in
  * English, no duplicates on either side. Neither page could notice, because each rendered only its
- * own copy — which is the same failure the shared tree exists to remove, one level down in the data
+ * own copy, which is the same failure the shared tree exists to remove, one level down in the data
  * rather than in the composition. They are left as found rather than silently reconciled: picking
  * which country to add or drop is an editorial call, not a refactor.
  *
@@ -15,7 +15,7 @@
  * pages already did, and it is honest for a demo whose subject is filtering, not identity.
  */
 
-/** Accents stripped, punctuation and spaces collapsed — so the data stays a plain list of names. */
+/** Accents stripped, punctuation and spaces collapsed, so the data stays a plain list of names. */
 export const slug = (name: string) =>
   name
     .normalize("NFD")

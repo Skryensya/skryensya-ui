@@ -26,15 +26,15 @@ export function checkRecipes(): readonly string[] {
       /*
        * And one rule that is a RECIPE's alone: a failing state has to offer a way forward.
        *
-       * Nothing in a contract can ask for this — an Alert is perfectly valid with no actions, and
-       * should be, because most alerts are not dead ends. It only becomes a defect at the scale of a
+       * Nothing in a contract can ask for this: a Callout is perfectly valid with no actions, and
+       * should be, because most callouts are not dead ends. It only becomes a defect at the scale of a
        * screen: an error state with no action is a page whose only exit is the Back button, and that
        * is the shape a generated UI falls into by default.
        */
       /*
        * A loading state has to ANNOUNCE itself. Nothing in a contract can ask for this either: a
        * Placeholder is valid on its own and should be, it is paint. It only becomes a defect at the
-       * scale of a screen — a skeleton with no live region is a still page to anyone who cannot see
+       * scale of a screen: a skeleton with no live region is a still page to anyone who cannot see
        * it, with nothing saying to wait.
        */
       if (state === "loading" && !announcesItself(tree)) {
@@ -59,7 +59,7 @@ export function checkRecipes(): readonly string[] {
 /**
  * Whether anything in this tree tells assistive tech that a wait is happening.
  *
- * All three of these carry a name that lands in a live region — which is why `Loader.status` had to
+ * All three of these carry a name that lands in a live region, which is why `Loader.status` had to
  * exist before this check could be written: the only honest way to satisfy it beside a skeleton was
  * a spinner nobody wanted.
  */
@@ -69,7 +69,7 @@ function announcesItself(node: unknown): boolean {
 
   const tree = node as Record<string, unknown>;
   if (typeof tree.signature === "string" && ANNOUNCING.has(tree.signature)) {
-    // A Loader with no label is decoration, not a status — the contract says so, and so does this.
+    // A Loader with no label is decoration, not a status: the contract says so, and so does this.
     const label = (tree.options as Record<string, unknown> | undefined)?.label;
     if (typeof label === "string" && label !== "") return true;
   }
@@ -89,7 +89,7 @@ function offersAWayForward(node: unknown): boolean {
 }
 
 /*
- * The SIGNATURES that give someone something to do — not the families.
+ * The SIGNATURES that give someone something to do, not the families.
  *
  * The first version keyed on the family and silently passed everything: `typography` holds both
  * `Link` and `Heading`, so every recipe with a title counted as offering a way out. A check that

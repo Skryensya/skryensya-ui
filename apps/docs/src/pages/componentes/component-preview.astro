@@ -29,7 +29,7 @@ button?.addEventListener("click", saveChanges);`;
 
 /* Multicol, because its lanes are keyed to the system's OWN named breakpoints: one lane below
    compact (36rem), two at compact, three at desktop (52rem). Each preset therefore lands in a
-   different band — mobile 1, tablet 2, libre 3 — which is the claim the prose makes, shown instead
+   different band (mobile 1, tablet 2, libre 3), which is the claim the prose makes, shown instead
    of asserted. The media queries resolve against the FRAME's viewport, which is the preset width;
    that is what the iframe buys over a container query on a plain div. */
 const screensHtml = `<div class="sk-grid" data-multicol data-columns="3">
@@ -415,8 +415,8 @@ await initComponents(document);`;
   </p>
   <p>
     Con un preset activo el stage es un dispositivo: el runtime deja de auto-ajustar y el documento
-    scrollea adentro, igual que en el aparato real. El resizer se esconde —el preset ya es dueño del
-    alto, y dos dueños del mismo alto es el bug—; volver a <em>Libre</em> devuelve el arrastre. El
+    scrollea adentro, igual que en el aparato real. El resizer se esconde (el preset ya es dueño del
+    alto, y dos dueños del mismo alto es el bug); volver a <em>Libre</em> devuelve el arrastre. El
     alto se topa en <code>80svh</code> para que el código de abajo siga alcanzable: el frame
     scrollea, así que lo único que se pierde es la fidelidad de las unidades <code>vh</code> del
     propio ejemplo.
@@ -449,8 +449,8 @@ await initComponents(document);`;
     tercer valor.
   </p>
   <p>
-    Los tres controles son iconos del vocabulario estable —<code>screen-desktop</code>,
-    <code>screen-tablet</code> y <code>screen-mobile</code>—, así que los tres sets homologados los
+    Los tres controles son iconos del vocabulario estable (<code>screen-desktop</code>,
+    <code>screen-tablet</code> y <code>screen-mobile</code>), así que los tres sets homologados los
     dibujan. Sin texto visible, cada opción lleva su nombre en <code>aria-label</code> y en
     <code>title</code>: el glifo es decorativo, exactamente como en un Button icon-only.
   </p>
@@ -462,7 +462,7 @@ await initComponents(document);`;
   <h2>El ejemplo completo</h2>
   <p>
     La superficie entera, también anidada: cabecera con nota, recarga y tabs de binding, stage,
-    resizer y un CodePreview por binding. Los tabs de adentro son independientes de los de afuera —
+    resizer y un CodePreview por binding. Los tabs de adentro son independientes de los de afuera:
     la preferencia Vanilla | React se comparte por documento, y el frame es su propio documento.
   </p>
   <ComponentPreview
@@ -562,13 +562,13 @@ await initComponents(document);`;
 
   <h2 id="bare">La parte portable</h2>
   <p>
-    Todo lo de arriba — el selector Vanilla/React, los presets de pantalla, el compilador de
-    árboles que arma cada stage — es la maquinaria de ESTE sitio para comparar dos bindings de
+    Todo lo de arriba (el selector Vanilla/React, los presets de pantalla, el compilador de
+    árboles que arma cada stage) es la maquinaria de ESTE sitio para comparar dos bindings de
     OTRO componente. Ninguna parte de eso es algo que un consumidor compondría en su producto.
   </p>
   <p>
     Lo que sí es portable: un título con su nota, un stage con lo que se muestra, y su código
-    debajo — compuesto desde <code>CodePreview</code>, no reimplementado. Eso es
+    debajo, compuesto desde <code>CodePreview</code>, no reimplementado. Eso es
     <code>ComponentPreview.bare</code>, la misma raíz y las mismas parts con menos anatomía, igual
     que <code>Popover.bare</code>.
   </p>

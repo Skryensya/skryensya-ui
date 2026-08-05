@@ -10,12 +10,12 @@ function mount(html: string) {
 }
 
 function markup(timeout?: number) {
-  return `<div class="sk-toast-region"><div class="sk-alert" data-sk-toast data-tone="danger"${timeout ? ` data-timeout="${timeout}"` : ""}>
-    <div class="sk-alert__content">
-      <div class="sk-alert__description">Deployment failed.</div>
+  return `<div class="sk-toast-region"><div class="sk-callout" data-sk-toast data-tone="danger"${timeout ? ` data-timeout="${timeout}"` : ""}>
+    <div class="sk-callout__content">
+      <div class="sk-callout__description">Deployment failed.</div>
     </div>
-    <div class="sk-alert__actions">
-      <button class="sk-alert__dismiss" aria-label="Dismiss notification">×</button>
+    <div class="sk-callout__actions">
+      <button class="sk-toast__dismiss" aria-label="Dismiss notification">×</button>
     </div>
   </div></div>`;
 }

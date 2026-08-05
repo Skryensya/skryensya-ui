@@ -4,7 +4,7 @@ import frameRuntimeUrl from "../scripts/component-preview-frame.ts?worker&url";
  * The srcdoc document every preview stage renders.
  *
  * Shared because the stage nests: the ComponentPreview page documents itself with a preview inside
- * a preview, and the inner frame has to be the same document as the outer one — same runtime, same
+ * a preview, and the inner frame has to be the same document as the outer one: same runtime, same
  * theme sync, same fit. The runtime clones styles from `window.parent`, so each level inherits the
  * level above it.
  */
@@ -19,7 +19,7 @@ export interface PreviewFrameOptions {
    * Cap how wide the specimen gets, as a CSS length (`"34rem"`).
    *
    * Stage-only, and that is the whole point: some components only read correctly at a realistic
-   * measure — a settings List across 700px of stage looks like nothing anyone ships — but that width
+   * measure (a settings List across 700px of stage looks like nothing anyone ships), but that width
    * belongs to the CONSUMER's layout, not to the component, so it must not appear in the snippet the
    * reader copies. Before this, a page bought the same effect by authoring a wrapper `<div>` in the
    * slot and passing `code=` separately, which is two sources of truth for one demo.
@@ -34,10 +34,10 @@ export interface PreviewFrameOptions {
    * The frame owning the mount is what makes the React binding isolated rather than
    * isolated-looking: the component's code then runs in the frame's realm, where `document` is the
    * frame's document. Mounted from the parent it would render into the frame but still execute
-   * against the DOCS document — a `ThemeToggle` demo re-themed the whole site that way.
+   * against the DOCS document: a `ThemeToggle` demo re-themed the whole site that way.
    */
   reactDemo?: {
-    /** Demo file basename, e.g. `button` — the key of the frame runtime's glob map. */
+    /** Demo file basename, e.g. `button`: the key of the frame runtime's glob map. */
     module: string;
     /** Named export within that module, e.g. `ButtonBasicDemo`. */
     export: string;

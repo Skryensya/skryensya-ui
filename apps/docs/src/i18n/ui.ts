@@ -67,11 +67,16 @@ export const ui = {
     "code.condensed": "Condensado",
     "code.full": "Completo",
     "code.showFull": "Mostrar código completo",
-    "code.showLines": "Mostrar las {count} líneas de código",
-    "code.showLess": "Mostrar menos",
-    "code.showFirstLines": "Mostrar sólo las primeras {count} líneas de código",
-    "code.showMore": "Mostrar más",
+    /* Expandir/contraer, no "mostrar más/menos": colapsado ya muestra todo el código, con scroll
+     * dentro de su ventana. Lo que cambia el botón es cuánto espacio ocupa el bloque en la página,
+     * no cuánto se puede leer. */
+    "code.expand": "Expandir",
+    "code.expandTo": "Expandir el bloque a sus {count} líneas",
+    "code.collapse": "Contraer",
+    "code.collapseTo": "Contraer el bloque a {count} líneas",
     "code.lines": "{count} líneas",
+    "code.region": "Bloque de código, {label}",
+    "code.regionPlain": "Bloque de código",
 
     "copy.code": "Copiar código",
     "copy.copied": "Copiado",
@@ -98,7 +103,7 @@ export const ui = {
     /*
      * THE CONTENT OF THE DEMOS, so a usage tree can be written ONCE and read in either language.
      *
-     * A demo's tree is its composition — which signature, nested how, with which options — and none
+     * A demo's tree is its composition (which signature, nested how, with which options), and none
      * of that is Spanish or English. Only the words inside it are, so only the words live here: the
      * two pages import the same tree factory from `src/demos/` and hand it their translator. Before
      * this, each page carried its own copy of the tree, which is the same duplication the tree came
@@ -117,6 +122,8 @@ export const ui = {
     "demo.box.title": "Resumen",
     "demo.box.body": "Una sección semántica con superficie, borde y padding.",
     "demo.box.action": "Administrar",
+    "demo.wrapper.title": "Columna",
+    "demo.wrapper.body": "El contenido se centra y deja de crecer al llegar al techo.",
     "demo.stack.title": "Resumen",
     "demo.stack.body": "La solicitud está lista para revisar.",
     "demo.stack.action": "Ver detalles",
@@ -141,17 +148,17 @@ export const ui = {
       "Migración del layer vanilla a componentes Svelte",
     "demo.breadcrumb.longCurrent":
       "Máquinas Zag compartidas entre el layer vanilla y los componentes Svelte",
-    "demo.alert.dismiss": "Cerrar alerta",
-    "demo.alert.neutral.title": "Mantenimiento programado",
-    "demo.alert.neutral.body":
+    "demo.callout.neutral.title": "Mantenimiento programado",
+    "demo.callout.neutral.body":
       "El domingo de 02:00 a 04:00 UTC el panel estará en solo lectura.",
-    "demo.alert.banner.title": "Nueva versión",
-    "demo.alert.banner.body": "Una actualización está disponible.",
-    "demo.alert.accent.title": "Tu plan expira en 3 días",
-    "demo.alert.accent.body":
+    "demo.callout.info.title": "Nueva versión",
+    "demo.callout.info.body": "Una actualización está disponible.",
+    "demo.callout.warning.title": "Tu plan expira en 3 días",
+    "demo.callout.warning.body":
       "Elige un plan para no interrumpir los despliegues.",
-    "demo.alert.accent.action": "Ver planes",
-    "demo.alert.inline.body": "Tus cambios se guardaron.",
+    "demo.callout.warning.action": "Ver planes",
+    "demo.callout.success.body": "Tus cambios se guardaron.",
+    "demo.callout.success.action": "Ver detalle",
     "demo.slider.volume": "Volumen",
     "demo.slider.brightness": "Brillo",
     "demo.select.label": "Plan",
@@ -182,12 +189,39 @@ export const ui = {
     "demo.processList.render.body": "El contador conserva la numeración sin estado adicional.",
     "demo.processList.done": "Instalación lista",
     "demo.processList.docs": "Abrir documentación",
+    /* Las fechas se escriben acá, no se formatean en el demo: el árbol tiene un `Translate` y no un
+       locale, e `Intl` necesita el locale. Cada idioma escribe la fecha como la escribe ese idioma. */
+    "demo.changelog.label": "Cambios de Accordion",
+    "demo.changelog.kind.added": "nuevo",
+    "demo.changelog.kind.changed": "cambió",
+    "demo.changelog.kind.fixed": "corregido",
+    "demo.changelog.kind.breaking": "rompe",
+    "demo.changelog.breaking.date": "4 de agosto de 2026",
+    "demo.changelog.breaking.body": "El evento pasó a llamarse sk:accordionvaluechange. El anterior ya no se emite.",
+    "demo.changelog.fixed.date": "1 de agosto de 2026",
+    "demo.changelog.fixed.body": "El enhancer buscaba la parte en cualquier descendiente, así que una sección anidada ataba su propio título como panel.",
+    "demo.changelog.changed.date": "30 de julio de 2026",
+    "demo.changelog.changed.body": "collapsible pasa a ser false por defecto, que es como se comportaba el acordeón de una sola sección.",
+    "demo.changelog.added.date": "29 de julio de 2026",
+    "demo.changelog.added.body": "Primera publicación del contrato, con sus tres firmas.",
     "demo.accordion.detailsLabel": "Configuración de despliegue",
     "demo.dialog.open": "Borrar proyecto",
     "demo.dialog.title": "¿Borrar este proyecto?",
     "demo.dialog.body": "Se elimina el proyecto y todo su historial. Esta acción no se puede deshacer.",
     "demo.dialog.cancel": "Cancelar",
     "demo.dialog.confirm": "Borrar",
+    "demo.dialogVaul.open": "Abrir dialog",
+    "demo.dialogVaul.title": "Caja centrada, Vaul en móvil",
+    "demo.dialogVaul.body": "Angosta la ventana debajo de 52rem y este mismo dialog gana un Vaul block-end. El markup del dialog no cambia.",
+    "demo.dialogVaul.whatChanges": "Qué cambia",
+    "demo.dialogVaul.edgeTitle": "Llega desde el borde",
+    "demo.dialogVaul.edgeBody": "Slide block-end en vez de escala centrada.",
+    "demo.dialogVaul.dragTitle": "Se arrastra para cerrar",
+    "demo.dialogVaul.dragBody": "Con handle, y sólo abajo del breakpoint.",
+    "demo.dialogVaul.sameTitle": "Sigue siendo el dialog",
+    "demo.dialogVaul.sameBody": "Foco, Escape y página inerte son de la plataforma.",
+    "demo.dialogVaul.later": "Ahora no",
+    "demo.dialogVaul.understood": "Entendido",
     "demo.drawer.label": "Navegación",
     "demo.drawer.brand": "Estudio",
     "demo.drawer.close": "Cerrar",
@@ -376,14 +410,18 @@ export const ui = {
     "demo.button.cancel": "Cancelar",
     "demo.button.delete": "Borrar",
     "demo.button.download": "Descargar",
+    "demo.button.continue": "Continuar",
     "demo.button.settings": "Configuración",
     "demo.button.edit": "Editar",
     "demo.button.add": "Añadir",
+    "demo.button.copy": "Copiar",
     "demo.button.moreActions": "Más acciones",
     "demo.button.goFirstComponent": "Ir a primer componente",
     "demo.button.small": "Chico",
     "demo.button.large": "Grande",
     "demo.button.withIcon": "Con icono",
+    "demo.button.retry": "Reintentar",
+    "demo.button.dismiss": "Descartar",
     "demo.list.preferences": "Preferencias",
     "demo.list.resources": "Recursos del proyecto",
     "demo.list.team": "Equipo",
@@ -618,6 +656,110 @@ export const ui = {
     "demo.tree.selection": "Selección",
     "demo.tree.expansion": "Expansión",
 
+    /*
+     * The Accordion page's own copy: one shared component (AccordionPage.astro) renders both
+     * locales, so every string it needs a `t()` key rather than a hand-copied twin in a second
+     * .astro file. Grouped here as its own block, the same shape `demo.*` already uses per demo.
+     */
+    "accordion.description": "Una o varias divulgaciones Tile coordinadas en un solo marco.",
+    "accordion.tabUsage": "Uso",
+    "accordion.tabInstall": "Instalación",
+    "accordion.tabStyle": "Style hooks",
+    "accordion.tabA11y": "Accesibilidad",
+    "architecture.title": "Cómo se construyen los componentes",
+    "architecture.lede":
+      "Todos siguen el mismo modelo: una base compartida para que se vean y se comporten igual, más el binding que elegís para tu aplicación. Esta página usa Accordion como ejemplo.",
+    "architecture.layersTitle": "El modelo, en cuatro piezas",
+    "architecture.layer1":
+      '<strong>Contrato.</strong> Define las partes, opciones y reglas del componente. Es el plano que comparten la documentación y todas las implementaciones.',
+    "architecture.layer2":
+      '<strong>Estilos.</strong> Un stylesheet publicado aplica los tokens y los estados visuales. Podés ajustarlo con style hooks sin copiar el componente.',
+    "architecture.layer3":
+      '<strong>Comportamiento.</strong> Sólo los componentes interactivos agregan una máquina que gestiona estado, teclado y atributos accesibles.',
+    "architecture.layer4":
+      '<strong>Binding.</strong> Elegís cómo usarlo: HTML con Vanilla, componentes declarativos con React o sólo CSS cuando no hace falta interacción.',
+    "architecture.flowTitle": "Qué pasa cuando alguien interactúa",
+    "architecture.flow1":
+      '<strong>La persona actúa.</strong> Hace click, toca o usa el teclado sobre un control nativo.',
+    "architecture.flow2":
+      '<strong>El componente decide.</strong> Su comportamiento aplica la regla correspondiente: abrir, seleccionar, validar o cambiar de vista.',
+    "architecture.flow3":
+      '<strong>La interfaz se actualiza.</strong> El estado, los atributos accesibles y los estilos cambian juntos.',
+    "architecture.flow4":
+      '<strong>Tu aplicación se entera.</strong> React llama el callback; Vanilla emite un evento. Sólo conectás ese dato si lo necesitás.',
+    "architecture.useTitle": "Cómo elegir qué usar",
+    "architecture.use1":
+      '<strong>Necesitás apariencia.</strong> Importá el stylesheet del componente.',
+    "architecture.use2":
+      '<strong>Necesitás interacción en HTML.</strong> Escribí el markup del contrato y montá el enhancer Vanilla.',
+    "architecture.use3":
+      '<strong>Usás React.</strong> Importá el componente React y pasá props; el binding resuelve el markup y el comportamiento.',
+    "architecture.exampleTitle": "Ejemplo: Accordion",
+    "architecture.exampleBody":
+      'Accordion usa las cuatro piezas: su contrato nombra raíz, item, trigger y contenido; sus estilos reutilizan Tile; su comportamiento coordina qué secciones están abiertas; y React o Vanilla te entregan el valor cuando cambia. El detalle de sus opciones está en la pestaña <strong>Referencia</strong> de cada componente, generada desde el contrato.',
+    "accordion.tabsAriaLabel": "Referencia de Accordion",
+    "accordion.intro":
+      'Si el estado puede vivir en el HTML y te alcanza con un grupo exclusivo nativo, la opción más simple es {detailsLink}, al final de esta página. Elige Accordion cuando necesites valor controlado, <code>multiple</code> o escuchar los cambios de estado.',
+    "accordion.detailsNativoLabel": "Details nativo",
+    "accordion.iconsNote":
+      'Los chevrons son placeholders (<code>&lt;span data-sk-icon="chevron-*"&gt;</code>): ningún componente monta un set de iconos por vos, así que hace falta esta línea además.',
+    "accordion.oneItemTitle": "Accordion de un solo item",
+    "accordion.oneItemBody":
+      'Para una divulgación aislada (antes "ExpandableTile"), usa Accordion con un único item: la raíz aporta el marco y el Tile conserva la superficie y el state layer.',
+    "accordion.oneItemLabel": "Accordion de un item",
+    "accordion.exclusiveTitle": "Accordion de grupo exclusivo",
+    "accordion.exclusiveBody":
+      '<code>data-type="single"</code> en HTML, <code>type="single"</code> en React, mantiene como máximo un item abierto. Con <code>data-collapsible="false"</code> o <code>collapsible={false}</code>, el item abierto no puede cerrarse.',
+    "accordion.exclusiveLabel": "Accordion single",
+    "accordion.multipleTitle": "Accordion de grupo múltiple",
+    "accordion.multipleBody":
+      '<code>type="multiple"</code> conserva cada disclosure de forma independiente.',
+    "accordion.multipleLabel": "Accordion multiple",
+    "accordion.contractTitle": "Contrato",
+    "accordion.contractSelection":
+      'Abrir un item no pinta el borde de selección: eso queda para checkbox y radio.',
+    "accordion.contractRest": "El resto del contrato (partes, opciones, valores por defecto y qué acepta cada slot) sale del contrato compilado y vive en {reference}.",
+    "accordion.contractEvent":
+      'El estado se escucha por evento sobre la raíz, no por callback: <code>sk:accordionvaluechange</code>, con el valor en <code>event.detail.value</code>.',
+    "accordion.nativeLede":
+      '<code>&lt;details&gt;</code> y <code>&lt;summary&gt;</code> ya son una divulgación accesible de la plataforma. Comparte un atributo <code>name</code> entre siblings para que el navegador mantenga un único item abierto: un accordion nativo, sin máquina ni <code>@skryensya/vanilla</code>.',
+    "accordion.decisionHeadNeed": "Necesitas",
+    "accordion.decisionHeadUse": "Usa",
+    "accordion.decisionRow1Need": "Que funcione antes de que cargue cualquier script, o sin JavaScript",
+    "accordion.decisionRow1Use": "Details nativo",
+    "accordion.decisionRow2Need": "Un grupo exclusivo simple: alcanza con compartir <code>name</code>",
+    "accordion.decisionRow2Use": "Details nativo",
+    "accordion.decisionRow3Need": "Mantener varias secciones abiertas a la vez",
+    "accordion.decisionRow3Use": "Accordion (<code>multiple</code>)",
+    "accordion.decisionRow4Need": "Fijar o leer el valor abierto desde afuera: estado, props, otro componente",
+    "accordion.decisionRow4Use": "Accordion",
+    "accordion.decisionRow5Need": "Escuchar cuándo cambia, para sincronizar con el resto de la UI",
+    "accordion.decisionRow5Use": "Accordion",
+    "accordion.decisionRow6Need": "Garantizar la misma transición animada en cualquier navegador",
+    "accordion.decisionRow6Use": "Accordion",
+    "accordion.nativeBody":
+      'Comparte los mismos tokens que Tile (título, descripción, chevron), así el grupo se ve igual sin componer un Tile adentro.',
+    "accordion.nativePreviewLabel": "Details con name compartido",
+    "accordion.nativeInstallTitle": "Instalar sólo Details",
+    "accordion.nativeContractTitle": "Contrato nativo",
+    "accordion.nativeContractItem1":
+      'El primer hijo interactivo de cada <code>&lt;details&gt;</code> es su <code>&lt;summary&gt;</code>.',
+    "accordion.nativeContractItem2":
+      'El atributo <code>open</code> declara el estado inicial en HTML.',
+    "accordion.nativeContractItem3":
+      'El mismo <code>name</code> entre siblings hace exclusivo el grupo; sin <code>name</code>, cada disclosure es independiente.',
+    "accordion.nativeContractItem4":
+      'El navegador cambia <code>open</code>; no hay un valor controlado ni evento del sistema que escuchar.',
+    "accordion.nativeContractItem5":
+      'El chevron se pinta solo dentro de <code>&lt;summary&gt;</code>: reemplaza la marca nativa (<code>&lt;summary&gt;</code> apaga el triángulo del navegador) y alterna con CSS puro sobre <code>details[open]</code>, sin script propio.',
+    "accordion.a11yTitle": "Accesibilidad",
+    "accordion.a11yP1":
+      'Cada trigger es un <code>&lt;button&gt;</code> nativo: Enter y Espacio lo activan sin script propio, y su <code>aria-expanded</code> (escrito por la máquina, nunca a mano) es lo único que anuncia el estado. El chevron es <code>aria-hidden="true"</code>: es la misma información dicha dos veces, y solo una debe llegar al lector de pantalla.',
+    "accordion.a11yP2":
+      'Flecha abajo y flecha arriba mueven el foco entre triggers del mismo grupo, <kbd>Home</kbd> salta al primero y <kbd>End</kbd> al último: el patrón de teclado que la APG de ARIA describe para un accordion, no una convención propia. Abrir un item no le quita el foco a su trigger ni se lo da al contenido: el recorrido con teclado sigue siendo entre triggers, igual que con el mouse.',
+    "accordion.a11yP3":
+      '{detailsLink} no tiene nada de esto porque no lo necesita: un <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> es una divulgación accesible de la plataforma, con su propio manejo de foco y teclado ya resuelto por el navegador.',
+
     "hooks.intro":
       "Los valores autorales salen del CSS publicado. Los valores usados se resuelven en vivo contra el elemento real del componente y cambian con las dimensiones elegidas arriba.",
     "hooks.authored": "Valor autoral",
@@ -638,7 +780,8 @@ export const ui = {
       "Esta ruta no necesita React. Instala Core para los estilos y Vanilla para el enhancer; después elige una estrategia de montaje para cada raíz. Ambas son idempotentes.",
     "vanilla.autoTitle": "Auto, sólo los enhancers presentes",
     "vanilla.autoBody":
-      "Úsalo cuando la página contiene varios componentes del sistema. Escanea los roots data-sk-* y hace import() únicamente de los tipos presentes; un selector ausente no descarga ni ejecuta su módulo.",
+      "Úsalo cuando la página contiene varios componentes del sistema: escanea los roots data-sk-* presentes e importa sólo esos tipos. Más sobre cómo funciona en {autoLink}.",
+    "vanilla.autoLinkLabel": "Montaje automático",
     "vanilla.onlyTitle": "Sólo {name}",
     "vanilla.onlyBody":
       "Este entry point importa sólo el enhancer de {name}. Sin argumento monta sus instancias en el documento; al pasar una raíz, monta exclusivamente esa instancia.",
@@ -659,6 +802,73 @@ export const ui = {
     "group.explore": "Explorar",
     "group.layout": "Layout",
     "group.global": "Global",
+    "group.componentActions": "Acciones y entrada",
+    "group.componentActions.blurb": "Para capturar datos, elegir opciones y ejecutar tareas.",
+    "group.componentNavigation": "Navegación y orientación",
+    "group.componentNavigation.blurb": "Para moverse entre páginas, vistas y jerarquías.",
+    "group.componentContent": "Contenido y datos",
+    "group.componentContent.blurb": "Para presentar información, medios y colecciones.",
+    "group.componentFeedback": "Estado y comunicación",
+    "group.componentFeedback.blurb": "Para explicar qué ocurre, qué falta y qué sigue.",
+    "group.componentLayers": "Capas y revelación",
+    "group.componentLayers.blurb": "Para mostrar detalle o tareas sin perder el contexto.",
+    "group.componentLayout": "Layout y utilidades",
+    "group.componentLayout.blurb": "Para componer, espaciar y sostener la interfaz.",
+
+    /*
+     * The reference and changes tabs. Keyed generically, not under `accordion.*`, because both
+     * components render from the compiled contract and take the id as a prop: the copy is the same
+     * sentence on every component page, exactly like `hooks.*`.
+     */
+    "contract.tab": "Referencia",
+    "contract.title": "Referencia",
+    "contract.intro":
+      "Todo lo que sigue sale del contrato compilado, el mismo que responde el servidor MCP. No hay una copia escrita a mano de esta tabla que pueda quedar atrás.",
+    "contract.partsTitle": "Partes y hoja de estilos",
+    "contract.partsBody": "Cada parte es una clase que el sistema envía junto con sus styling hooks. Importá {css}.",
+    "contract.headPart": "Parte",
+    "contract.headClass": "Clase",
+    "contract.host": "Elemento:",
+    "contract.parents": "Va dentro de:",
+    "contract.parentsTop": "nada, es raíz",
+    "contract.mount": "Monta en:",
+    "contract.react": "React:",
+    "contract.requires": "Exige:",
+    "contract.eventsTitle": "Eventos",
+    "contract.eventsBody":
+      "El markup autorado no tiene callback que pasar, así que el evento es la única forma de escuchar el estado desde ese lado. Se escucha sobre la raíz, y el valor viaja en <code>event.detail</code>.",
+    "contract.headEvent": "Evento",
+    "contract.headEventName": "Nombre en el DOM",
+    "contract.optionsTitle": "Opciones",
+    "contract.noOptions": "Ninguna. Esta firma es estructura, no configuración.",
+    "contract.headOption": "Opción",
+    "contract.headType": "Valores",
+    "contract.headDefault": "Por defecto",
+    "contract.headAttr": "Atributo",
+    "contract.slotsTitle": "Contenido",
+    "contract.noSlots": "Ninguno. No lleva contenido adentro.",
+    "contract.headSlot": "Slot",
+    "contract.headAccepts": "Acepta",
+    "contract.headAllowed": "Qué puede ir",
+    "contract.slotRequired": "obligatorio",
+    "contract.slotOrdered": "en este orden",
+    "contract.jsonTitle": "El contrato completo",
+    "contract.jsonBody":
+      "Las tablas de arriba son este mismo objeto, leído. Acá está entero y sin editar, tal como sale de {artifact}: es exactamente lo que el servidor MCP devuelve al responder {call}, así que lo que ves acá es lo que ve un agente.",
+    "contract.jsonNote": "incluye template y wiring, que las tablas omiten",
+    "contract.catalogue": "Catálogo {hash}",
+
+    /* "Changelog" y no "Cambios": es el nombre del componente y de la sección, y se deja igual en
+       los dos idiomas. La palabra ya se usa así acá; traducirla sólo de un lado hacía que la misma
+       sección se llamara distinto según la URL. */
+    "changelog.tab": "Changelog",
+    "changelog.title": "Changelog",
+    "changelog.empty": "Nada todavía. El contrato no se movió desde su primera publicación.",
+    "changelog.kind.added": "nuevo",
+    "changelog.kind.changed": "cambió",
+    "changelog.kind.fixed": "corregido",
+    "changelog.kind.removed": "quitado",
+    "changelog.kind.breaking": "rompe",
 
     "footer.body":
       "Este sitio consume {core} y los paquetes de componentes por sus exports maps, con bundler, el mismo camino que documenta. Cada píxel sale de un token.",
@@ -703,11 +913,13 @@ export const ui = {
     "code.condensed": "Condensed",
     "code.full": "Full",
     "code.showFull": "Show full code",
-    "code.showLines": "Show all {count} lines of code",
-    "code.showLess": "Show less",
-    "code.showFirstLines": "Show only the first {count} lines of code",
-    "code.showMore": "Show more",
+    "code.expand": "Expand",
+    "code.expandTo": "Expand the block to all {count} lines",
+    "code.collapse": "Collapse",
+    "code.collapseTo": "Collapse the block to {count} lines",
     "code.lines": "{count} lines",
+    "code.region": "Code block, {label}",
+    "code.regionPlain": "Code block",
 
     "copy.code": "Copy code",
     "copy.copied": "Copied",
@@ -731,7 +943,7 @@ export const ui = {
     "preview.screenMobileHint":
       "Mobile · 390 × 844 px, where every layout finishes stacking",
 
-    /* The demos' words. The composition they sit in is shared — see the Spanish block above. */
+    /* The demos' words. The composition they sit in is shared: see the Spanish block above. */
     "demo.tag.design": "design",
     "demo.tag.active": "active",
     "demo.tag.deprecated": "deprecated",
@@ -742,6 +954,8 @@ export const ui = {
     "demo.box.title": "Summary",
     "demo.box.body": "A semantic section with surface, border and padding.",
     "demo.box.action": "Manage",
+    "demo.wrapper.title": "Column",
+    "demo.wrapper.body": "Content centres and stops growing once it reaches the ceiling.",
     "demo.stack.title": "Summary",
     "demo.stack.body": "The request is ready for review.",
     "demo.stack.action": "See details",
@@ -766,17 +980,17 @@ export const ui = {
       "Migration from vanilla layer to Svelte components",
     "demo.breadcrumb.longCurrent":
       "Zag machines shared between vanilla layer and Svelte components",
-    "demo.alert.dismiss": "Dismiss alert",
-    "demo.alert.neutral.title": "Scheduled maintenance",
-    "demo.alert.neutral.body":
+    "demo.callout.neutral.title": "Scheduled maintenance",
+    "demo.callout.neutral.body":
       "On Sunday from 02:00 to 04:00 UTC the panel will be read-only.",
-    "demo.alert.banner.title": "New version",
-    "demo.alert.banner.body": "An update is available.",
-    "demo.alert.accent.title": "Your plan expires in 3 days",
-    "demo.alert.accent.body":
+    "demo.callout.info.title": "New version",
+    "demo.callout.info.body": "An update is available.",
+    "demo.callout.warning.title": "Your plan expires in 3 days",
+    "demo.callout.warning.body":
       "Choose a plan so your deployments are not interrupted.",
-    "demo.alert.accent.action": "View plans",
-    "demo.alert.inline.body": "Your changes have been saved.",
+    "demo.callout.warning.action": "View plans",
+    "demo.callout.success.body": "Your changes have been saved.",
+    "demo.callout.success.action": "View details",
     "demo.slider.volume": "Volume",
     "demo.slider.brightness": "Brightness",
     "demo.select.label": "Plan",
@@ -807,12 +1021,39 @@ export const ui = {
     "demo.processList.render.body": "The counter keeps the numbering with no extra state.",
     "demo.processList.done": "Install complete",
     "demo.processList.docs": "Open the documentation",
+    /* The dates are written here rather than formatted in the demo: the tree has a `Translate` and
+       not a locale, and `Intl` needs the locale. Each language writes a date the way it writes dates. */
+    "demo.changelog.label": "Accordion changes",
+    "demo.changelog.kind.added": "new",
+    "demo.changelog.kind.changed": "changed",
+    "demo.changelog.kind.fixed": "fixed",
+    "demo.changelog.kind.breaking": "breaking",
+    "demo.changelog.breaking.date": "4 August 2026",
+    "demo.changelog.breaking.body": "The event is now called sk:accordionvaluechange. The old one is no longer emitted.",
+    "demo.changelog.fixed.date": "1 August 2026",
+    "demo.changelog.fixed.body": "The enhancer looked for the part on any descendant, so a nested section bound its own title as the panel.",
+    "demo.changelog.changed.date": "30 July 2026",
+    "demo.changelog.changed.body": "collapsible now defaults to false, which is how a single-section accordion already behaved.",
+    "demo.changelog.added.date": "29 July 2026",
+    "demo.changelog.added.body": "First published contract, with its three signatures.",
     "demo.accordion.detailsLabel": "Deployment settings",
     "demo.dialog.open": "Delete project",
     "demo.dialog.title": "Delete this project?",
     "demo.dialog.body": "The project and all its history are removed. This cannot be undone.",
     "demo.dialog.cancel": "Cancel",
     "demo.dialog.confirm": "Delete",
+    "demo.dialogVaul.open": "Open dialog",
+    "demo.dialogVaul.title": "Centred box, Vaul on mobile",
+    "demo.dialogVaul.body": "Narrow the window below 52rem and this same dialog gains a block-end Vaul. The dialog's markup does not change.",
+    "demo.dialogVaul.whatChanges": "What changes",
+    "demo.dialogVaul.edgeTitle": "Arrives from the edge",
+    "demo.dialogVaul.edgeBody": "Block-end slide instead of a centred scale.",
+    "demo.dialogVaul.dragTitle": "Drags to dismiss",
+    "demo.dialogVaul.dragBody": "With a handle, only below the breakpoint.",
+    "demo.dialogVaul.sameTitle": "Still the same dialog",
+    "demo.dialogVaul.sameBody": "Focus, Escape and an inert page are the platform's.",
+    "demo.dialogVaul.later": "Not now",
+    "demo.dialogVaul.understood": "Got it",
     "demo.drawer.label": "Navigation",
     "demo.drawer.brand": "Estudio",
     "demo.drawer.close": "Close",
@@ -998,14 +1239,18 @@ export const ui = {
     "demo.button.cancel": "Cancel",
     "demo.button.delete": "Delete",
     "demo.button.download": "Download",
+    "demo.button.continue": "Continue",
     "demo.button.settings": "Settings",
     "demo.button.edit": "Edit",
     "demo.button.add": "Add",
+    "demo.button.copy": "Copy",
     "demo.button.moreActions": "More actions",
     "demo.button.goFirstComponent": "Go to first component",
     "demo.button.small": "Small",
     "demo.button.large": "Large",
     "demo.button.withIcon": "With icon",
+    "demo.button.retry": "Retry",
+    "demo.button.dismiss": "Dismiss",
     "demo.list.preferences": "Preferences",
     "demo.list.resources": "Project resources",
     "demo.list.team": "Team",
@@ -1240,6 +1485,105 @@ export const ui = {
     "demo.tree.selection": "Selection",
     "demo.tree.expansion": "Expansion",
 
+    "accordion.description": "One or more Tile disclosures coordinated into a single frame.",
+    "accordion.tabUsage": "Usage",
+    "accordion.tabStyle": "Style hooks",
+    "accordion.tabInstall": "Installation",
+    "accordion.tabA11y": "Accessibility",
+    "architecture.title": "How components are built",
+    "architecture.lede":
+      "Every component follows the same model: a shared base so it looks and behaves consistently, plus the binding you choose for your application. This page uses Accordion as the example.",
+    "architecture.layersTitle": "The model in four pieces",
+    "architecture.layer1":
+      '<strong>Contract.</strong> Defines the component parts, options, and rules. It is the blueprint shared by the documentation and every implementation.',
+    "architecture.layer2":
+      '<strong>Styles.</strong> A published stylesheet applies tokens and visual states. You can adjust it with style hooks without copying the component.',
+    "architecture.layer3":
+      '<strong>Behavior.</strong> Only interactive components add a machine that manages state, keyboard input, and accessibility attributes.',
+    "architecture.layer4":
+      '<strong>Binding.</strong> Choose how to use it: HTML with Vanilla, declarative components with React, or CSS alone when no interaction is needed.',
+    "architecture.flowTitle": "What happens when someone interacts",
+    "architecture.flow1":
+      '<strong>The person acts.</strong> They click, tap, or use the keyboard on a native control.',
+    "architecture.flow2":
+      '<strong>The component decides.</strong> Its behavior applies the relevant rule: open, select, validate, or change views.',
+    "architecture.flow3":
+      '<strong>The interface updates.</strong> State, accessibility attributes, and styles change together.',
+    "architecture.flow4":
+      '<strong>Your application hears about it.</strong> React calls the callback; Vanilla emits an event. Connect that data only when you need it.',
+    "architecture.useTitle": "How to choose what to use",
+    "architecture.use1":
+      '<strong>You need appearance.</strong> Import the component stylesheet.',
+    "architecture.use2":
+      '<strong>You need interaction in HTML.</strong> Write the contract markup and mount the Vanilla enhancer.',
+    "architecture.use3":
+      '<strong>You use React.</strong> Import the React component and pass props; the binding handles markup and behavior.',
+    "architecture.exampleTitle": "Example: Accordion",
+    "architecture.exampleBody":
+      "Accordion uses all four pieces: its contract names the root, item, trigger, and content; its styles reuse Tile; its behavior coordinates which sections are open; and React or Vanilla give you the value when it changes. Its options are listed in each component's <strong>Reference</strong> tab, generated from the contract.",
+    "accordion.tabsAriaLabel": "Accordion reference",
+    "accordion.intro":
+      'If the state can live in HTML and a native exclusive group is enough, the simplest option is {detailsLink}, at the end of this page. Choose Accordion when you need a controlled value, <code>multiple</code>, or to listen for state changes.',
+    "accordion.detailsNativoLabel": "Native details",
+    "accordion.iconsNote":
+      'Chevrons are placeholders (<code>&lt;span data-sk-icon="chevron-*"&gt;</code>): no component mounts an icon set for you, so this line is needed too.',
+    "accordion.oneItemTitle": "Accordion with a single item",
+    "accordion.oneItemBody":
+      'For an isolated disclosure (formerly "ExpandableTile"), use Accordion with a single item: the root provides the frame and the Tile keeps the surface and state layer.',
+    "accordion.oneItemLabel": "Accordion of one item",
+    "accordion.exclusiveTitle": "Accordion as an exclusive group",
+    "accordion.exclusiveBody":
+      '<code>data-type="single"</code> in HTML, <code>type="single"</code> in React, keeps at most one item open. With <code>data-collapsible="false"</code> or <code>collapsible={false}</code>, the open item cannot be closed.',
+    "accordion.exclusiveLabel": "Accordion single",
+    "accordion.multipleTitle": "Accordion as a multiple group",
+    "accordion.multipleBody":
+      '<code>type="multiple"</code> keeps each disclosure independent.',
+    "accordion.multipleLabel": "Accordion multiple",
+    "accordion.contractTitle": "Contract",
+    "accordion.contractSelection":
+      "Opening an item does not paint the selection border: that is for checkbox and radio.",
+    "accordion.contractRest": "The rest of the contract (parts, options, defaults, and what each slot accepts) comes from the compiled contract and lives in {reference}.",
+    "accordion.contractEvent":
+      'State is heard through an event on the root, not a callback: <code>sk:accordionvaluechange</code>, with the value on <code>event.detail.value</code>.',
+    "accordion.nativeLede":
+      '<code>&lt;details&gt;</code> and <code>&lt;summary&gt;</code> are already an accessible platform disclosure. Share a <code>name</code> attribute between siblings so the browser keeps a single item open: a native accordion, with no machine and no <code>@skryensya/vanilla</code>.',
+    "accordion.decisionHeadNeed": "You need",
+    "accordion.decisionHeadUse": "Use",
+    "accordion.decisionRow1Need": "It has to work before any script loads, or without JavaScript at all",
+    "accordion.decisionRow1Use": "Native details",
+    "accordion.decisionRow2Need": "A simple exclusive group: sharing <code>name</code> is enough",
+    "accordion.decisionRow2Use": "Native details",
+    "accordion.decisionRow3Need": "Keep several sections open at once",
+    "accordion.decisionRow3Use": "Accordion (<code>multiple</code>)",
+    "accordion.decisionRow4Need": "Set or read the open value from outside: state, props, another component",
+    "accordion.decisionRow4Use": "Accordion",
+    "accordion.decisionRow5Need": "Listen for when it changes, to sync with the rest of the UI",
+    "accordion.decisionRow5Use": "Accordion",
+    "accordion.decisionRow6Need": "Guarantee the same animated transition in every browser",
+    "accordion.decisionRow6Use": "Accordion",
+    "accordion.nativeBody":
+      'It shares the same tokens as Tile (title, description, chevron), so the group looks the same without composing a Tile inside it.',
+    "accordion.nativePreviewLabel": "Details with a shared name",
+    "accordion.nativeInstallTitle": "Install only Details",
+    "accordion.nativeContractTitle": "Native contract",
+    "accordion.nativeContractItem1":
+      'The first interactive child of each <code>&lt;details&gt;</code> is its <code>&lt;summary&gt;</code>.',
+    "accordion.nativeContractItem2":
+      'The <code>open</code> attribute declares the initial state in HTML.',
+    "accordion.nativeContractItem3":
+      'The same <code>name</code> between siblings makes the group exclusive; without <code>name</code>, each disclosure is independent.',
+    "accordion.nativeContractItem4":
+      'The browser changes <code>open</code>; there is no controlled value or system event to listen to.',
+    "accordion.nativeContractItem5":
+      "The chevron paints only inside <code>&lt;summary&gt;</code>: it replaces the native marker (<code>&lt;summary&gt;</code> turns off the browser's own triangle) and toggles with plain CSS keyed on <code>details[open]</code>, with no script of its own.",
+    "accordion.a11yTitle": "Accessibility",
+    "accordion.a11yP1":
+      'Each trigger is a native <code>&lt;button&gt;</code>: Enter and Space activate it with no script of its own, and its <code>aria-expanded</code> (written by the machine, never by hand) is the only thing that announces the state. The chevron is <code>aria-hidden="true"</code>: it is the same information said twice, and only one should reach the screen reader.',
+    "accordion.a11yP2":
+      'Arrow down and arrow up move focus between triggers in the same group, <kbd>Home</kbd> jumps to the first and <kbd>End</kbd> to the last: the keyboard pattern the ARIA APG describes for an accordion, not a convention of its own. Opening an item does not take focus from its trigger or hand it to the content: keyboard traversal stays between triggers, same as with the mouse.',
+    "accordion.a11yP3":
+      '{detailsLink} has none of this because it does not need it: a <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> is an accessible platform disclosure, with its own focus and keyboard handling already solved by the browser.',
+
     "hooks.intro":
       "Authored values come from the published CSS. Used values resolve live against the real component element and change with the dimensions selected above.",
     "hooks.authored": "Authored value",
@@ -1260,7 +1604,8 @@ export const ui = {
       "This route does not need React. Install Core for styles and Vanilla for the enhancer, then choose one mounting strategy for each root. Both are idempotent.",
     "vanilla.autoTitle": "Auto, only the enhancers present",
     "vanilla.autoBody":
-      "Use this when the page contains several system components. It scans data-sk-* roots and import()s only the types present; a missing selector neither downloads nor runs its module.",
+      "Use this when the page contains several system components: it scans the data-sk-* roots present and imports only those types. More on how it works at {autoLink}.",
+    "vanilla.autoLinkLabel": "Automatic mounting",
     "vanilla.onlyTitle": "Only {name}",
     "vanilla.onlyBody":
       "This entry point imports only the {name} enhancer. With no argument it mounts every instance in the document; pass a root to mount only that instance.",
@@ -1281,9 +1626,68 @@ export const ui = {
     "group.explore": "Browse",
     "group.layout": "Layout",
     "group.global": "Global",
+    "group.componentActions": "Actions and input",
+    "group.componentActions.blurb": "Capture data, choose options, and run tasks.",
+    "group.componentNavigation": "Navigation and orientation",
+    "group.componentNavigation.blurb": "Move between pages, views, and hierarchies.",
+    "group.componentContent": "Content and data",
+    "group.componentContent.blurb": "Present information, media, and collections.",
+    "group.componentFeedback": "Status and communication",
+    "group.componentFeedback.blurb": "Explain what is happening, missing, or next.",
+    "group.componentLayers": "Layers and disclosure",
+    "group.componentLayers.blurb": "Reveal detail or focused tasks without losing context.",
+    "group.componentLayout": "Layout and utilities",
+    "group.componentLayout.blurb": "Compose, space, and support the interface.",
+
+    "contract.tab": "Reference",
+    "contract.title": "Reference",
+    "contract.intro":
+      "Everything below comes from the compiled contract, the same one the MCP server answers with. There is no hand-written copy of this table that could fall behind.",
+    "contract.partsTitle": "Parts and stylesheet",
+    "contract.partsBody": "Each part is a class the system ships along with its styling hooks. Import {css}.",
+    "contract.headPart": "Part",
+    "contract.headClass": "Class",
+    "contract.host": "Element:",
+    "contract.parents": "Goes inside:",
+    "contract.parentsTop": "nothing, it is a root",
+    "contract.mount": "Mounts on:",
+    "contract.react": "React:",
+    "contract.requires": "Requires:",
+    "contract.eventsTitle": "Events",
+    "contract.eventsBody":
+      "Authored markup has no callback to pass, so an event is the only way to hear about state from that side. Listen on the root; the value travels on <code>event.detail</code>.",
+    "contract.headEvent": "Event",
+    "contract.headEventName": "DOM name",
+    "contract.optionsTitle": "Options",
+    "contract.noOptions": "None. This signature is structure, not configuration.",
+    "contract.headOption": "Option",
+    "contract.headType": "Values",
+    "contract.headDefault": "Default",
+    "contract.headAttr": "Attribute",
+    "contract.slotsTitle": "Content",
+    "contract.noSlots": "None. It holds no content of its own.",
+    "contract.headSlot": "Slot",
+    "contract.headAccepts": "Accepts",
+    "contract.headAllowed": "What can go in",
+    "contract.slotRequired": "required",
+    "contract.slotOrdered": "in this order",
+    "contract.jsonTitle": "The whole contract",
+    "contract.jsonBody":
+      "The tables above are this same object, read out. Here it is whole and unedited, straight from {artifact}: exactly what the MCP server returns for {call}, so what you see here is what an agent sees.",
+    "contract.jsonNote": "includes template and wiring, which the tables leave out",
+    "contract.catalogue": "Catalogue {hash}",
+
+    "changelog.tab": "Changelog",
+    "changelog.title": "Changelog",
+    "changelog.empty": "Nothing yet. The contract has not moved since it was first published.",
+    "changelog.kind.added": "new",
+    "changelog.kind.changed": "changed",
+    "changelog.kind.fixed": "fixed",
+    "changelog.kind.removed": "removed",
+    "changelog.kind.breaking": "breaking",
 
     "footer.body":
-      "This site consumes {core} and the component packages through their exports maps, with a bundler — the same path it documents. Every pixel comes from a token.",
+      "This site consumes {core} and the component packages through their exports maps, with a bundler: the same path it documents. Every pixel comes from a token.",
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 
@@ -1302,6 +1706,8 @@ export const navLabel: Record<Locale, Partial<Record<string, string>>> = {
     "/": "Installation",
     "/prerrequisitos": "Prerequisites",
     "/primer-componente": "Your first component",
+    "/montaje-automatico": "Automatic mounting",
+    "/arquitectura": "Architecture",
     "/referencia": "Tokens",
     "/dimensiones": "Dimensions",
     "/zoom": "Zoom and reflow",

@@ -50,7 +50,10 @@ describe("Accordion React contracts", () => {
 
     expect(root?.classList).toContain("sk-accordion");
     expect(item?.classList).toContain("sk-tile--expandable");
-    expect(item?.classList).toContain("sk-tile--interactive");
+    // The state layer lives on the trigger, not the section: hovering the revealed content must
+    // not tint it too.
+    expect(item?.classList).not.toContain("sk-tile--interactive");
+    expect(trigger.classList).toContain("sk-interactive");
 
 
     expect(trigger.getAttribute("aria-expanded")).toBe("true");

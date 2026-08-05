@@ -5,7 +5,7 @@ import type { UsageTree } from "./usage-tree.js";
 
 /*
  * F2's exit gate: the emitter has to produce, from the canonical trees, the markup a human wrote by
- * hand in apps/docs. Compared as DOM rather than as bytes — the hand-written strings were formatted
+ * hand in apps/docs. Compared as DOM rather than as bytes, since the hand-written strings were formatted
  * by an editor, and matching a formatter's line-breaking is not evidence of anything.
  */
 
@@ -51,24 +51,24 @@ const navigation: UsageTree = {
   ],
 };
 
-/** Structure, classes and attributes — what G2 will compare, minus a formatter's opinions. */
+/** Structure, classes and attributes: what G2 will compare, minus a formatter's opinions. */
 function normalize(markup: string): string {
   return markup
-    .replace(/>\s+</g, "><")
     .replace(/\s+/g, " ")
+    .replace(/\s*([<>])\s*/g, "$1")
     .replace(/\s*=\s*/g, "=")
     .trim();
 }
 
 describe("emitMarkup", () => {
   it("writes the action signature onto its native host", () => {
-    expect(emitMarkup(saveButton)).toBe(
+    expect(normalize(emitMarkup(saveButton))).toBe(
       '<button class="sk-button sk-interactive" data-sk-button data-variant="primary" data-size="md">Guardar</button>',
     );
   });
 
   it("switches host on the discriminant, and drops nothing else", () => {
-    expect(emitMarkup(docsLink)).toBe(
+    expect(normalize(emitMarkup(docsLink))).toBe(
       '<a class="sk-button sk-interactive" data-sk-button data-variant="primary" data-size="md" href="/docs">Documentación</a>',
     );
   });
@@ -138,7 +138,7 @@ describe("emitMarkup", () => {
 
   /*
    * A slot whose default is MARKUP, which is what `whenMissing` exists for. A breadcrumb separator is
-   * the case: text or an Icon when the author fills it, and the system's `/` when they do not — two
+   * the case: text or an Icon when the author fills it, and the system's `/` when they do not, two
    * nodes with one condition each, so no precedence rule has to live in this file.
    */
   it("falls back to the template's own separator, and steps aside when the slot is filled", () => {
@@ -171,6 +171,28 @@ describe("emitMarkup", () => {
 
   it("is deterministic: same tree, same bytes", () => {
     expect(emitMarkup(navigation)).toBe(emitMarkup(navigation));
+  });
+
+  it("keeps a short opening tag on one line", () => {
+    expect(
+      emitMarkup({ contract: "kbd", signature: "Kbd", children: "⌘K" }),
+    ).toBe('<kbd class="sk-kbd">⌘K</kbd>');
+  });
+
+  it("wraps a long opening tag one attribute per line, same as JSX", () => {
+    expect(emitMarkup(docsLink)).toBe(
+      [
+        "<a",
+        '  class="sk-button sk-interactive"',
+        "  data-sk-button",
+        '  data-variant="primary"',
+        '  data-size="md"',
+        '  href="/docs"',
+        ">",
+        "  Documentación",
+        "</a>",
+      ].join("\n"),
+    );
   });
 });
 
@@ -314,7 +336,7 @@ describe("the two bindings agree on what the tree says", () => {
   });
 });
 
-describe("wiring — six ids from one name", () => {
+describe("wiring: six ids from one name", () => {
   const field = (extra: Record<string, unknown> = {}): UsageTree =>
     ({
       contract: "field",
@@ -348,7 +370,7 @@ describe("wiring — six ids from one name", () => {
     const markup = emitMarkup(field({ slots: { hint: "Sólo para boletas." } }));
 
     expect(markup).toContain('aria-describedby="email-hint"');
-    // No error, so nothing claims the field is invalid — colour is never the only cue, and neither
+    // No error, so nothing claims the field is invalid: colour is never the only cue, and neither
     // is an attribute pointing at a message that was never written.
     expect(markup).not.toContain("aria-invalid");
     expect(markup).not.toContain("email-error");

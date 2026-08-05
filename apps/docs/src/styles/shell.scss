@@ -11,7 +11,7 @@
 
 /* ── responsive shell ─────────────────────────────────────────────────────────
  * Below `wide` there is no third column, so the toc stops being a rail and becomes a DISCLOSURE:
- * in normal flow above the prose, closed, one row tall. Sticky is dropped on purpose — an index
+ * in normal flow above the prose, closed, one row tall. Sticky is dropped on purpose: an index
  * pinned over the document is worse than one that costs its space once and scrolls away. Measured
  * on a 390px viewport, the old sticky version stood 510px tall: 60% of the screen, permanently.
  *
@@ -155,5 +155,29 @@
 
   .docs-page-nav__link--next {
     margin-inline-start: 0;
+  }
+
+  /*
+   * THE HERO TAB STRIP RUNS EDGE TO EDGE on the mobile side of this line.
+   *
+   * Inside the document column it is a scrollport as wide as the prose, and on a 390px viewport
+   * that measured 331px against 665px of tabs: the last label is sliced mid-word 35px shy of the
+   * screen, which reads as a rendering fault rather than as "there is more this way", and a third
+   * of the available travel is spent before the gesture starts. A scrolling strip is the one thing
+   * on a page that wants the whole screen.
+   *
+   * The pair of declarations is the point. The negative margin cancels the column's inline padding,
+   * so the scrollport spans the full width; the equal padding INSIDE the scroller then puts the
+   * first tab back on the prose's own inline edge. At rest it lines up with the text above it, and
+   * it still scrolls all the way to the screen edge, which a plain full-bleed would trade away.
+   *
+   * `--sk-wrapper-padding-inline` and not a literal: it is the column's own hook, inherited from
+   * `main`, so this cannot drift from whatever inset the wrapper is actually using.
+   */
+  .docs-component-hero-tabs {
+    margin-inline: calc(-1 * var(--sk-wrapper-padding-inline));
+    padding-inline: var(--sk-wrapper-padding-inline);
+    /* Keyboard focus lands a tab clear of the bleed rather than flush against the screen edge. */
+    scroll-padding-inline: var(--sk-wrapper-padding-inline);
   }
 }

@@ -17,12 +17,12 @@ export type MediaGradientPartClass = (typeof mediaGradientParts)[MediaGradientPa
 /** Which edge of the media the caption (and its wash) sits on. */
 export type MediaGradientEdge = "top" | "bottom" | "start" | "end";
 
-/** How opaque / tinted the wash is behind the type — not how much of the image it covers. */
+/** How opaque / tinted the wash is behind the type, not how much of the image it covers. */
 export type MediaGradientStrength = "sm" | "md" | "lg";
 
 /*
  * A wash so type stays readable over a photo. Always `aria-hidden`: it is paint, and the caption it
- * sits behind is the content. Named for what it is and never for where it is used (`hero`, `card`) —
+ * sits behind is the content. Named for what it is and never for where it is used (`hero`, `card`):
  * a name that says who uses it becomes a lie the moment a second thing needs it.
  */
 export const mediaGradientContract = {
@@ -39,7 +39,7 @@ export const mediaGradientContract = {
   signatures: {
     /*
      * The caption is the MEASURE. The wash sizes to it, not to a percentage of the media, which is
-     * the whole idea of the pattern — and it is why publishing the gradient without this was
+     * the whole idea of the pattern, and it is why publishing the gradient without this was
      * publishing something that paints nothing: absolutely positioned with no box to fill.
      */
     MediaCaption: {

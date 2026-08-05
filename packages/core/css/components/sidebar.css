@@ -27,8 +27,13 @@
     /* ONE gutter, on every region rather than on the root. The rail's arithmetic depends on it:
      * a control, plus this either side. Two paddings nested inside each other would make the rail
      * wider than the thing it is sized to hold, and the icons would sit off-centre by the
-     * difference. */
-    --sk-sidebar-padding: var(--space-inset-sm);
+     * difference.
+     *
+     * `inset-md`, not `inset-sm`: at sm the gutter was 8px, and a nav link adds only its own 8px, so
+     * every label in an expanded sidebar started 16px from the panel edge. Against a 216px rail that
+     * reads as text shoved against the border rather than a panel with an inside. The collapsed rail
+     * keeps the tight value (see the state rule below), which is what stops this from inflating it. */
+    --sk-sidebar-padding: var(--space-inset-md);
 
     /* Block padding is its own hook so the regions can breathe top-and-bottom without touching the
      * inline gutter above, that one is load-bearing for the rail's arithmetic, this one is free to
@@ -37,7 +42,11 @@
 
     /* the one width hook, plus the two widths the state chooses between */
     --sk-sidebar-inline-size: var(--sk-sidebar-expanded-inline-size);
-    --sk-sidebar-expanded-inline-size: 13.5rem;
+    /* 15rem, not 13.5: the gutter above went from 8px to 16px a side, and that width was chosen for
+     * the old one, so the extra air came straight out of the label. Measured on the docs rail, the
+     * longest entry ("Densidad de componente") started truncating at 13.5rem. The panel grows by the
+     * 16px it now spends on padding, so labels keep exactly the room they had. */
+    --sk-sidebar-expanded-inline-size: 15rem;
     --sk-sidebar-collapsed-inline-size: calc(
       var(--size-control-sm) + var(--sk-sidebar-padding) * 2 + var(--sk-sidebar-border-width)
     );
@@ -87,6 +96,19 @@
     --sk-sidebar-inline-size: var(--sk-sidebar-collapsed-inline-size);
     --sk-sidebar-duration: var(--motion-collapse-duration);
     --sk-sidebar-easing: var(--motion-collapse-easing);
+
+    /*
+     * THE GUTTER GOES BACK TO TIGHT when there is nothing but an icon to frame. A collapsed rail is
+     * sized as "one control plus this either side", so the expanded value would carry straight into
+     * `--sk-sidebar-collapsed-inline-size` and give a 65px rail around a 32px control: a wide, mostly
+     * empty column instead of a rail. The expanded sidebar has a label to keep off the border and
+     * wants the air; the rail has a centred glyph and does not.
+     *
+     * This re-declaration is what makes that arithmetic follow: `--sk-sidebar-collapsed-inline-size`
+     * is declared in the base rule but SUBSTITUTED on this element, so it resolves against whichever
+     * `--sk-sidebar-padding` won the cascade here, not against the one written beside it.
+     */
+    --sk-sidebar-padding: var(--space-inset-sm);
   }
 
   /*

@@ -14,7 +14,7 @@ import { recipes } from "@skryensya/recipes";
  *
  * The first version of this fixture pointed at `/media/plaza.jpg`, which does not exist: the browser
  * drew a broken-image box that stretched the visual baseline to 4500px and made it evidence of
- * nothing. A gate's fixture cannot depend on an asset that may or may not be served — inline it, and
+ * nothing. A gate's fixture cannot depend on an asset that may or may not be served: inline it, and
  * the image is the same pixels on every machine.
  */
 const SAMPLE_MEDIA =
@@ -87,7 +87,7 @@ const signatureTrees: readonly Canonical[] = [
   },
   {
     /*
-     * The other source: authored content. Exactly one of the two, never neither — with neither, the
+     * The other source: authored content. Exactly one of the two, never neither: with neither, the
      * frame renders an empty box that every static check calls valid.
      *
      * KNOWN LIMIT, and worth naming rather than hiding: the real case here is an authored
@@ -101,7 +101,7 @@ const signatureTrees: readonly Canonical[] = [
       contract: "image-frame",
       signature: "ImageFrame",
       options: { aspect: "1/1", fit: "contain", radius: "none" },
-      children: "—",
+      children: "Foto",
     },
   },
   {
@@ -138,7 +138,7 @@ const signatureTrees: readonly Canonical[] = [
      * error, and each target carries the id it is pointed at by.
      *
      * G2 here is checking the thing that is invisible on screen and breaks every screen reader when
-     * it is wrong — and the ids differ between bindings (React's `useId` vs the emitter's slug), so
+     * it is wrong, and the ids differ between bindings (React's `useId` vs the emitter's slug), so
      * what is compared is the RELATIONSHIP, not the string.
      */
     name: "field/with-hint-and-error",
@@ -193,7 +193,7 @@ const signatureTrees: readonly Canonical[] = [
     /*
      * A collection whose entries share something: the `name` on every input is what makes the choice
      * exclusive, and it belongs to the group. Composed as loose children, repeating it correctly on
-     * each option would be the author's job — the same invariant a tab's key is.
+     * each option would be the author's job, the same invariant a tab's key is.
      */
     name: "radio-group/two-plans",
     enhanced: false,
@@ -223,7 +223,7 @@ const signatureTrees: readonly Canonical[] = [
     /*
      * Order and cardinality, which nothing else in the catalogue needed. HTML fixes both: the caption
      * comes first and there is at most one, the body is required, and a footer written before the body
-     * is markup the parser silently moves — while the page still looks right.
+     * is markup the parser silently moves, while the page still looks right.
      */
     name: "table/captioned",
     enhanced: false,
@@ -418,11 +418,11 @@ const signatureTrees: readonly Canonical[] = [
   },
   {
     // Tone changes the ACCESSIBILITY here, not just the colour: danger is an assertive live region.
-    name: "alert/danger",
+    name: "callout/danger",
     enhanced: false,
     tree: {
-      contract: "alert",
-      signature: "Alert",
+      contract: "callout",
+      signature: "Callout",
       options: { tone: "danger" },
       slots: {
         icon: { contract: "icon", signature: "Icon", options: { name: "danger" } },
@@ -465,6 +465,37 @@ const signatureTrees: readonly Canonical[] = [
           signature: "ProcessListItem",
           slots: { title: "Importar los tokens" },
           children: "Una vez, en el entry de la app.",
+        },
+      ],
+    },
+  },
+  {
+    /*
+     * A dated history: neither the progress Steps reports nor the plain order a ProcessList counts.
+     * Both of this entry's dates are here twice on purpose, once as the machine's `YYYY-MM-DD` and
+     * once as the words a reader sees, which is the one thing about this contract that a binding
+     * could most easily get half right. The last entry omits `target`, so the optional node is
+     * exercised in the same tree as the one that supplies it.
+     */
+    name: "changelog/dated-history",
+    enhanced: false,
+    tree: {
+      contract: "changelog",
+      signature: "Changelog",
+      children: [
+        {
+          contract: "changelog",
+          signature: "ChangelogEntry",
+          options: { date: "2026-08-04", kind: "breaking" },
+          slots: { date: "4 de agosto de 2026", kind: "Ruptura", target: "valueChange" },
+          children: "El evento cambió de nombre.",
+        },
+        {
+          contract: "changelog",
+          signature: "ChangelogEntry",
+          options: { date: "2026-07-29", kind: "added" },
+          slots: { date: "29 de julio de 2026", kind: "Añadido" },
+          children: "Primera publicación del contrato.",
         },
       ],
     },
@@ -575,7 +606,7 @@ const signatureTrees: readonly Canonical[] = [
   /*
    * Caption wash over a photo. ImageFrame's `caption` slot is not a second media source, so `src`
    * and MediaCaption can coexist without breaking `exactlyOneOf`. Alone, MediaGradient paints
-   * nothing — its CSS says so — which is why the canonical tree is this composition, not the wash.
+   * nothing (its CSS says so), which is why the canonical tree is this composition, not the wash.
    */
   {
     name: "media-gradient/caption-on-frame",
@@ -602,7 +633,7 @@ const signatureTrees: readonly Canonical[] = [
     },
   },
   /*
-   * SELECT and MENU were published without fixtures, and G2 only compares what is listed here — so
+   * SELECT and MENU were published without fixtures, and G2 only compares what is listed here, so
    * for a while the two newest families were the only ones nobody was checking. Menu's divergences
    * (a `<div>` where the markup emitted a `<button>`, three indicators React drew only on request,
    * a tick that showed while unchecked) were all found by opening the page and looking, which is
@@ -643,7 +674,7 @@ const signatureTrees: readonly Canonical[] = [
   /*
    * A FIXED month, deliberately. Everything a calendar draws is derived from the date it opens on,
    * so a tree with no value would render a different grid every day and mark a different cell as
-   * today — the visual baseline would rot on its own, monthly. March 2026 contains no today.
+   * today: the visual baseline would rot on its own, monthly. March 2026 contains no today.
    */
   {
     name: "calendar/month",
@@ -688,7 +719,7 @@ const signatureTrees: readonly Canonical[] = [
   },
   /*
    * The last published contract whose two bindings had never been compared. Six signatures, and the
-   * page window is COMPUTED rather than authored — `repeatComputed` is what makes the emitted nav
+   * page window is COMPUTED rather than authored: `repeatComputed` is what makes the emitted nav
    * agree with React's about which pages are visible.
    */
   {
@@ -744,7 +775,7 @@ const signatureTrees: readonly Canonical[] = [
       children: "Copiar",
     },
   },
-  /** A literal inside a sentence — the signature the accordion prose had to do without. */
+  /** A literal inside a sentence: the signature the accordion prose had to do without. */
   {
     name: "typography/code-in-a-sentence",
     enhanced: false,
@@ -769,6 +800,24 @@ const signatureTrees: readonly Canonical[] = [
       slots: {
         title: "Borrar el despliegue",
         children: "Esto quita las tres réplicas y no se puede deshacer.",
+      },
+    },
+  },
+  /*
+   * The same `<dialog>` opting into Dialog Vaul: the handle only exists because `vaul` is on, and
+   * `data-edge="block-end"` only exists because the pattern only ever slides from the bottom; both
+   * are what `attrsWhen`/`whenGiven` in the contract are there to prove hold for both bindings.
+   */
+  {
+    name: "dialog/vaul",
+    enhanced: true,
+    tree: {
+      contract: "dialog",
+      signature: "Dialog",
+      options: { open: true, vaul: true },
+      slots: {
+        title: "Filtros",
+        children: "El mismo dialog, como hoja desde abajo en móvil.",
       },
     },
   },
@@ -824,7 +873,7 @@ const signatureTrees: readonly Canonical[] = [
   },
   /*
    * No real headings on this page, so the scroll-spy's own `IntersectionObserver` finds nothing to
-   * observe and never writes — what is compared is the seeded `current`, identical in both bindings
+   * observe and never writes: what is compared is the seeded `current`, identical in both bindings
    * whether or not the machine ever runs.
    */
   {
@@ -883,7 +932,7 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
-  /* The same component with less anatomy — what the docs call "popup". */
+  /* The same component with less anatomy: what the docs call "popup". */
   {
     name: "popover/bare",
     enhanced: false,
@@ -894,7 +943,7 @@ const signatureTrees: readonly Canonical[] = [
       slots: { trigger: "Filtros", children: "Cualquier cosa cabe acá." },
     },
   },
-  /* Two panels and a switch — a second anatomy, not a flag on the first. */
+  /* Two panels and a switch: a second anatomy, not a flag on the first. */
   {
     name: "code-preview/density",
     enhanced: true,
@@ -935,13 +984,19 @@ const signatureTrees: readonly Canonical[] = [
           contract: "details",
           signature: "Details",
           options: { name: "deployment" },
-          slots: { summary: "Runtime", children: "Node 22 sobre el pool compartido." },
+          children: [
+            { contract: "details", signature: "Details.Summary", children: "Runtime" },
+            { contract: "details", signature: "Details.Content", children: "Node 22 sobre el pool compartido." },
+          ],
         },
         {
           contract: "details",
           signature: "Details",
           options: { name: "deployment" },
-          slots: { summary: "Rollout", children: "Canary en tres tramos." },
+          children: [
+            { contract: "details", signature: "Details.Summary", children: "Rollout" },
+            { contract: "details", signature: "Details.Content", children: "Canary en tres tramos." },
+          ],
         },
       ],
     },
@@ -958,7 +1013,7 @@ const signatureTrees: readonly Canonical[] = [
       children: "Trabajo, Personal, Archivo",
     },
   },
-  /* One modifier class away from the Vaul above — which is why it is a signature, not a family. */
+  /* One modifier class away from the Vaul above, which is why it is a signature, not a family. */
   {
     name: "vaul/drawer",
     enhanced: true,
@@ -989,7 +1044,7 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
-  /** A command, a checkbox and a submenu — the three item shapes, including the recursive one. */
+  /** A command, a checkbox and a submenu: the three item shapes, including the recursive one. */
   {
     name: "menu/with-submenu",
     enhanced: true,
@@ -1051,7 +1106,7 @@ const signatureTrees: readonly Canonical[] = [
     /*
      * Icons, and the sharpest case of the two bindings meeting at different depths: React renders the
      * `<svg>`, authored markup writes a placeholder the enhancer replaces once a set is bound. The
-     * system ships no geometry, so the drawing cannot exist in the markup — and this is the gate that
+     * system ships no geometry, so the drawing cannot exist in the markup, and this is the gate that
      * proves the two still land on the same element.
      */
     name: "nav-list/with-icons",
@@ -1127,7 +1182,7 @@ const signatureTrees: readonly Canonical[] = [
   {
     /*
      * Composition where the child is the point: a Toast alone has nowhere to be, so `parents` says
-     * so and this tree is the pair. The dismiss control is structure the contract owns — declared
+     * so and this tree is the pair. The dismiss control is structure the contract owns, declared
      * here as `dismissible`, wired to a handler by whoever renders it.
      */
     name: "content/toast-region",
@@ -1156,7 +1211,7 @@ const signatureTrees: readonly Canonical[] = [
   },
   {
     /*
-     * The first COMPUTED collection: the tree says page 4 of 12, and the window — 1 … 3 4 5 … 12 —
+     * The first COMPUTED collection: the tree says page 4 of 12, and the window (1 … 3 4 5 … 12)
      * comes from the contract, not from the author. What G2 checks is that both bindings arrive at
      * the same window, which they do because both go through `paginationRange`.
      */
@@ -1177,7 +1232,7 @@ const signatureTrees: readonly Canonical[] = [
   {
     /*
      * Three signatures composed in the author's order, paired by a machine both bindings run. The
-     * trigger and the content are separate because each carries arbitrary markup — a slot would have
+     * trigger and the content are separate because each carries arbitrary markup: a slot would have
      * flattened them into two strings.
      */
     name: "tile/expandable",
@@ -1194,7 +1249,7 @@ const signatureTrees: readonly Canonical[] = [
   {
     /*
      * A coordinator over two composed sections, and the first signature reached through a compound
-     * binding — React spells "only inside that one" as `Accordion.Item`, and the contract points at
+     * binding: React spells "only inside that one" as `Accordion.Item`, and the contract points at
      * it by the same path.
      */
     name: "accordion/two-sections",
@@ -1240,7 +1295,7 @@ const signatureTrees: readonly Canonical[] = [
   {
     /*
      * Six signatures composed as a shell. The trigger points at the content with `aria-controls`
-     * and NEITHER binding's markup carries the pair — the id is generated at runtime, so both write
+     * and NEITHER binding's markup carries the pair: the id is generated at runtime, so both write
      * it themselves. G2 compares the relationship, which is the only part that has to hold.
      */
     name: "sidebar/collapsible-shell",
@@ -1268,8 +1323,8 @@ const signatureTrees: readonly Canonical[] = [
   {
     /*
      * The recursive case, and the only one in the catalogue: an entry's children are entries of the
-     * same shape, three levels deep here. What G2 proves is that a template written once — named,
-     * and pointed back at from inside — lands on the same DOM as React's recursive component.
+     * same shape, three levels deep here. What G2 proves is that a template written once (named,
+     * and pointed back at from inside) lands on the same DOM as React's recursive component.
      */
     name: "tree-view/nested-folders",
     enhanced: true,
@@ -1304,7 +1359,7 @@ const signatureTrees: readonly Canonical[] = [
     /*
      * The rare family where symmetry is free: React renders the same markup and writes the mount
      * mark itself, so BOTH bindings are the same enhanced carousel. What the contract adds is the
-     * vocabulary — which knobs exist and what each one costs.
+     * vocabulary: which knobs exist and what each one costs.
      */
     name: "carousel/three-slides",
     enhanced: true,
@@ -1322,7 +1377,7 @@ const signatureTrees: readonly Canonical[] = [
   {
     /*
      * The shell, which is all an author writes. The list of chosen files is runtime state the two
-     * bindings meet differently — React renders it, the enhancer never renders markup — and the
+     * bindings meet differently (React renders it, the enhancer never renders markup), and the
      * contract says so rather than pretending the gap is not there.
      */
     name: "file-upload/attach-documents",
@@ -1342,7 +1397,7 @@ const signatureTrees: readonly Canonical[] = [
     /*
      * The CalendarView case: both bindings RENDER the control, because the segments and the
      * separators come from the locale and are not knowable when the markup is written. What the tree
-     * carries is the shell — and what G2 proves is that two independent renderers of the same
+     * carries is the shell, and what G2 proves is that two independent renderers of the same
      * `Intl` output land on the same DOM.
      */
     name: "time-field/appointment",
@@ -1376,8 +1431,8 @@ const signatureTrees: readonly Canonical[] = [
   },
   {
     /*
-     * A collection whose entries are whole surfaces. The `name` belongs to the GROUP — that is what
-     * makes the choice exclusive — and the tile paint belongs to each option, which is why the root
+     * A collection whose entries are whole surfaces. The `name` belongs to the GROUP: that is what
+     * makes the choice exclusive, and the tile paint belongs to each option, which is why the root
      * carries no part class on either side.
      */
     name: "tile/radio-group",
@@ -1398,7 +1453,7 @@ const signatureTrees: readonly Canonical[] = [
     /*
      * The one floating family that is not anchored: the panel is a CHILD of the root and placement is
      * fixed coordinates from the trigger's rect. Nothing is portalled, so both bindings land on the
-     * same subtree — which is exactly why this one is published and tooltip, popover and menu are not.
+     * same subtree, which is exactly why this one is published and tooltip, popover and menu are not.
      */
     name: "flyout/pick-a-status",
     enhanced: true,
@@ -1417,7 +1472,7 @@ const signatureTrees: readonly Canonical[] = [
   },
   {
     /*
-     * The other control a Field can wrap. Same six ids, same wiring, a different element — which is
+     * The other control a Field can wrap. Same six ids, same wiring, a different element: which is
      * the point: the field derives its ids from whatever signature is slotted into it, and never
      * asks what that is.
      */
@@ -1450,7 +1505,7 @@ const signatureTrees: readonly Canonical[] = [
   {
     /*
      * The pattern only exists as a pair. The wash is `position: absolute` and sizes to the caption
-     * it protects, so on its own it paints NOTHING — which is what the render gate caught the first
+     * it protects, so on its own it paints NOTHING, which is what the render gate caught the first
      * time this was published standalone. The caption is the measure, and that is the composition.
      */
     name: "media-gradient/caption-over-a-frame",
@@ -1573,7 +1628,7 @@ const signatureTrees: readonly Canonical[] = [
   {
     /*
      * The signature that draws nothing, which makes it the one case G5 cannot judge: there is no
-     * box to measure. What G2 and G4 CAN say is the whole point of it — that both bindings put the
+     * box to measure. What G2 and G4 CAN say is the whole point of it: that both bindings put the
      * same name in the same live region, and that a screen reader finds it.
      */
     name: "loader/status-only",
@@ -1590,11 +1645,11 @@ const signatureTrees: readonly Canonical[] = [
  * The recipes, as gate cases.
  *
  * DERIVED, not copied. A recipe is already a usage tree per state, and the gates already know how to
- * render, diff and photograph a usage tree — so writing them out again here would be the duplication
+ * render, diff and photograph a usage tree, so writing them out again here would be the duplication
  * this whole system argues against, and the copy would be the one that goes stale.
  *
  * They earn their place because a recipe exercises what a single-signature fixture cannot: a Field
- * inside a Stack inside a shell, a Toast inside its region, an Alert whose actions are two buttons.
+ * inside a Stack inside a shell, a Toast inside its region, a Callout whose actions are two buttons.
  * The composition is where the two bindings have room to disagree, and until now nothing was looking.
  *
  * All marked `enhanced`: a recipe usually contains something machine-backed, and running the

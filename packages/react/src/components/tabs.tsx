@@ -16,7 +16,7 @@ export type TabsProps = TabsOptions & {
    * Names the tab list. It lands on the element that IS the tablist, not on the box around it, so a
    * page with two sets of tabs can tell them apart.
    *
-   * It exists because authored markup could always put it there and this binding could not — the two
+   * It exists because authored markup could always put it there and this binding could not: the two
    * paths were not equivalent, which the symmetry gate is what surfaced.
    */
   "aria-label"?: string;
@@ -53,7 +53,7 @@ export function Tabs({
           <button
             {...api.getTriggerProps({ value: item.value, disabled: item.disabled })}
             // `sk-interactive` is the state layer, and it was missing here while authored markup had
-            // it — the React path simply did not paint hover or press. The symmetry gate is what saw it.
+            // it: the React path simply did not paint hover or press. The symmetry gate is what saw it.
             className={`${tabsParts.trigger} sk-interactive`}
             data-sk-tabs-trigger=""
             key={item.value}

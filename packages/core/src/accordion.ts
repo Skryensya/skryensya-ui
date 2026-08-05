@@ -39,9 +39,9 @@ export const accordionEvents = {
 /**
  * A stack of expandable tiles that agree on how many can be open.
  *
- * The coordination is the whole component: each item runs its own collapsible machine (ADR-24 — one
+ * The coordination is the whole component: each item runs its own collapsible machine (ADR-24: one
  * accordion machine hid the content the moment it closed, killing the animation), and what the root
- * owns is the RULE — single or multiple, and whether the open one may close again.
+ * owns is the RULE: single or multiple, and whether the open one may close again.
  *
  * Its items are ExpandableTiles wearing a different `data-part`. That is not a shortcut: an
  * accordion section IS an expandable surface, and giving it its own anatomy would mean two
@@ -51,6 +51,7 @@ export const accordionContract = {
   id: "accordion",
   css: "@skryensya/core/components/accordion.css",
   parts: { ...accordionParts, item: "sk-tile", trigger: "sk-tile__trigger", content: "sk-tile__expandable-content" },
+  events: accordionEvents,
 
   options: {
     /** How many sections may be open. `single` is the default because it is what keeps a page short. */
@@ -98,11 +99,17 @@ export const accordionContract = {
           cardinality: { "Accordion.Trigger": "one", "Accordion.Content": "one" },
         },
       },
+      /*
+       * `sk-interactive` lives on the trigger, not here: same fix as `ExpandableTile` (which this
+       * section shares its whole anatomy with): the section is the container, its trigger button
+       * is the only clickable thing, and the state layer painting behind the whole section made
+       * hovering the revealed answer tint it too.
+       */
       template: {
         element: "section",
         part: "item",
         host: true,
-        also: ["sk-tile--interactive", "sk-tile--expandable", "sk-interactive"],
+        also: ["sk-tile--expandable"],
         // `item`, not `root`: the coordinator finds its sections by this, and the tile paint is the same.
         attrs: { "data-scope": "tile", "data-part": "item" },
         slot: "children",
@@ -120,6 +127,7 @@ export const accordionContract = {
         element: "button",
         part: "trigger",
         host: true,
+        also: ["sk-tile--interactive", "sk-interactive"],
         attrs: { type: "button", "data-scope": "tile", "data-part": "trigger" },
         slot: "children",
       },

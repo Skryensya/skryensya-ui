@@ -27,7 +27,7 @@ export const selectTree = (t: Translate): UsageTree => ({
  *
  * A visible label is the FIELD's job, not the select's: a `<select>` host cannot contain its own
  * label, and Field already owns the id wiring that ties the two together. The authored version
- * hand-rolled that as a Stack plus a matching `for`/`id` pair — two things to keep in sync by hand,
+ * hand-rolled that as a Stack plus a matching `for`/`id` pair: two things to keep in sync by hand,
  * which is the class of bug this whole port exists to remove.
  */
 export const selectNativeTree = (t: Translate): UsageTree => ({

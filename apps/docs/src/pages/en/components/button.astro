@@ -80,6 +80,11 @@ button.addEventListener("click", runDeployment);`;
   />
 
   <h2>With icon</h2>
+  <p>
+    The icon sits before or after the label depending on what needs saying first: leading to
+    signal the kind of action, trailing to point where it goes. It is only the order in
+    <code>children</code>: the same <code>gap</code> between icon and text either way.
+  </p>
   <ComponentPreview tree={buttonIconTree(t)} label="Button with icon" />
 
   <h2>Icon only</h2>
@@ -88,7 +93,7 @@ button.addEventListener("click", runDeployment);`;
 
   <h2>As a link</h2>
   <p>
-    Any shape above — variant, size, icon, icon-only — also renders as a link: same classes, same
+    Any shape above (variant, size, icon, icon-only) also renders as a link: same classes, same
     <code>data-*</code> attributes, only the tag changes (<code>&lt;a href&gt;</code> instead of
     <code>&lt;button&gt;</code>). In React, passing <code>href</code> to <code>Button</code> does the
     switch. A link cannot be <code>disabled</code>: render unbound content instead.

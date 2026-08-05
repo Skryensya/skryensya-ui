@@ -7,7 +7,7 @@ import type { Recipe } from "./recipe.js";
  * carry: a switch says "this is on now", a checkbox says "this will be true when you submit". A
  * settings page with checkboxes and no save button is a promise it does not keep.
  *
- * The tiles are surfaces because each preference needs a sentence explaining it — a bare label in a
+ * The tiles are surfaces because each preference needs a sentence explaining it: a bare label in a
  * list has nowhere to put the reason.
  */
 export const settingsRecipe: Recipe = {
@@ -60,12 +60,17 @@ export const settingsRecipe: Recipe = {
       children: [
         { contract: "typography", signature: "Heading", children: "Notificaciones" },
         {
-          contract: "alert",
-          signature: "Alert",
+          contract: "callout",
+          signature: "Callout",
           options: { tone: "danger" },
           slots: {
             title: "No pudimos guardar el cambio",
-            actions: { contract: "button", signature: "Button.action", children: "Reintentar" },
+            actions: {
+              contract: "button",
+              signature: "Button.action",
+              options: { variant: "subtle" },
+              children: "Reintentar",
+            },
           },
           children: "El resumen semanal quedó como estaba.",
         },

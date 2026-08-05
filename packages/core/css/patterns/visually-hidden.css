@@ -2,7 +2,7 @@
  * VISUALLY HIDDEN, text that is announced and not drawn.
  *
  * In the base bundle, beside the state layer, for the same reason: it is universal. An icon-only
- * control, a live region that reports a count, a status beside a skeleton — every one of them needs
+ * control, a live region that reports a count, a status beside a skeleton: every one of them needs
  * a name that exists for a screen reader and takes no space on screen, and a kit that does not ship
  * this forces each component to re-derive it or, worse, to reference a class it hopes the app defined.
  *
@@ -11,7 +11,7 @@
  * app happened to define it the text was hidden; where it did not, the accessible name was simply
  * visible text in the middle of a control. Nothing failed loudly.
  *
- * NOT `display: none`, and not `visibility: hidden` — both remove the element from the accessibility
+ * NOT `display: none`, and not `visibility: hidden`: both remove the element from the accessibility
  * tree, which is the opposite of the point. Clipped to a 1px box instead, which every screen reader
  * still reads.
  *

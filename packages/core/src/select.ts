@@ -46,7 +46,7 @@ export type SelectPartClass = (typeof selectParts)[SelectPart];
 
 
 /*
- * SELECT, the contract — two signatures for two genuinely different components.
+ * SELECT, the contract: two signatures for two genuinely different components.
  *
  * `Select.native` is a real `<select>`: the browser owns selection, keyboard, form submission and
  * accessibility, and the system contributes one class. `Select` is the enhanced one, which exists
@@ -55,11 +55,11 @@ export type SelectPartClass = (typeof selectParts)[SelectPart];
  *
  * Writing this contract turned up a divergence the docs had been carrying quietly: React renders a
  * `control` wrapper around the label and trigger, and the hand-authored markup on the docs page has
- * none. The CSS has zero rules for `__control`, so it was tempting to call React wrong — but the
+ * none. The CSS has zero rules for `__control`, so it was tempting to call React wrong, but the
  * vanilla enhancer already looks for `[data-sk-select-control]` and spreads Zag's props onto it when
  * it exists. Both bindings support the fuller shape; only the authored markup was short. So the
  * template below is the fuller one, and the page's markup was the incomplete source of truth all
- * along — which is the entire argument for emitting it instead of typing it.
+ * along, which is the entire argument for emitting it instead of typing it.
  */
 export const selectContract = {
   id: "select",
@@ -72,7 +72,7 @@ export const selectContract = {
     /**
      * The selected value. React spells it `defaultValue`: `value` there is the CONTROLLED prop, and
      * emitting it freezes the control. Same line Slider, Tabs, RadioGroup, TimeField and Segmented
-     * carry — Segmented's absence was measured as a demo nobody could click.
+     * carry: Segmented's absence was measured as a demo nobody could click.
      */
     value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
     /** Shown in the trigger while nothing is selected. */
@@ -87,7 +87,7 @@ export const selectContract = {
       host: { element: "select" },
       options: ["name", "disabled", "required"],
       slots: {
-        /** The choices. A native `<option>` each — no item markup, which is the tradeoff. */
+        /** The choices. A native `<option>` each, no item markup, which is the tradeoff. */
         items: {
           accepts: "items",
           required: true,
@@ -152,7 +152,7 @@ export const selectContract = {
            *
            * This was left out at first, on the theory that form participation is the binding's job.
            * G2 disagreed and was right twice over: React renders one through Zag, so omitting it
-           * made the two bindings produce different DOM — and the vanilla enhancer only ADOPTS an
+           * made the two bindings produce different DOM, and the vanilla enhancer only ADOPTS an
            * authored hidden select, it never creates one, so markup without it silently submitted
            * nothing. `itemOptionAttrs` exists because of this node: the same entry value is
            * `data-value` on the listbox row and `value` here.

@@ -40,12 +40,12 @@ const install = `@import "@skryensya/core/components/calendar.css";`;
     El encabezado no tiene dos <code>&lt;select&gt;</code> de mes y año: es un solo botón,
     <code>sk-calendar__view-trigger</code>, que muestra la fecha visible («marzo 2026» en vista de día,
     «2026» en vista de mes, «2020–2029» en vista de año) y al hacer clic <strong>escala</strong> un
-    nivel — día → mes → año — en vez de forzar a desplazarse mes por mes hasta una fecha lejana.
+    nivel (día → mes → año) en vez de forzar a desplazarse mes por mes hasta una fecha lejana.
   </p>
   <p>
     Elegir un mes o un año en su grilla <strong>desciende</strong> un nivel: tocar «Ene» en la vista de
     mes vuelve a la vista de día ya parada en enero; tocar un año en la vista de año vuelve a la vista de
-    mes de ese año. Ir y volver — escalar para elegir la década, descender tocando la celda — reemplaza
+    mes de ese año. Ir y volver (escalar para elegir la década, descender tocando la celda) reemplaza
     lo que antes hacían dos selects nativos, sin perder la navegación por teclado del grid (roles
     <code>grid</code>/<code>gridcell</code>, foco administrado por Zag).
   </p>
@@ -55,14 +55,14 @@ const install = `@import "@skryensya/core/components/calendar.css";`;
     <code>data-selection-mode="range"</code> cambia el criterio de selección: el primer clic fija el
     inicio, el segundo el fin. Zag marca cada día intermedio <code>data-in-range</code> (no
     <code>data-selected</code>, que queda solo para los dos extremos) y, mientras se está eligiendo el
-    fin, el mismo estado aparece como <code>data-in-hover-range</code> a medida que el mouse se mueve —
+    fin, el mismo estado aparece como <code>data-in-hover-range</code> a medida que el mouse se mueve,
     sin JS propio: el <code>onPointerMove</code> que lo alimenta solo se activa cuando el modo es
     <code>range</code>.
   </p>
   <p>
     Ese atributo vive en el <em>trigger</em>, no en la celda, así que un relleno limitado a su propio
     botón dejaría un espacio entre cada día. <code>sk-calendar__cell:has(...)</code> alcanza el estado
-    del trigger desde la celda — la misma técnica que ya usa el anillo de foco de Combobox — para pintar
+    del trigger desde la celda (la misma técnica que ya usa el anillo de foco de Combobox) para pintar
     la celda completa y que la franja se vea continua bajo <code>border-collapse</code>.
   </p>
   <ComponentPreview tree={calendarRangeTree(t)} label="Calendar (rango)" viewport="auto" />
@@ -76,7 +76,7 @@ const install = `@import "@skryensya/core/components/calendar.css";`;
   <p>
     Min/max llega igual a mes y año: <code>getMonthsGrid</code>/<code>getYearsGrid</code> resuelven su
     propio <code>disabled</code> nativo por celda, comparando contra min/max la fecha enfocada
-    <em>llevada a ese mes o año</em> (no «¿tiene este mes algún día válido?» — un matiz que puede
+    <em>llevada a ese mes o año</em> (no «¿tiene este mes algún día válido?»: un matiz que puede
     deshabilitar un mes que sí toca el rango si el día enfocado, trasladado a ese mes, cae fuera).
     Ninguna de las dos vistas necesitó CSS nuevo: ambas ya pasan por <code>.sk-button:disabled</code>.
   </p>

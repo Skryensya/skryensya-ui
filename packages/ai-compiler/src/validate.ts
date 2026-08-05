@@ -17,7 +17,7 @@ import {
 /*
  * Gates G0 and G3 over a usage tree: shape, options, requires/forbids, slots, parents and the
  * accessibility a contract declares. Everything checked here is checked against a structured field,
- * never against prose — a rule written as a paragraph could not fail a build, which is why the
+ * never against prose: a rule written as a paragraph could not fail a build, which is why the
  * contract stopped holding any.
  */
 
@@ -241,7 +241,7 @@ function checkAccessibility(
 
     /*
      * A rule keyed on something that is not an option of this signature is about page context, not
-     * about this node — "a second nav on the page". Nothing static can settle it, so it is reported
+     * about this node: "a second nav on the page". Nothing static can settle it, so it is reported
      * as advisory rather than silently dropped: an unverifiable rule the agent never sees is the
      * same as no rule.
      */
@@ -258,7 +258,7 @@ function checkAccessibility(
         path,
         rule: "unverifiable-a11y",
         severity: "advisory",
-        message: `${rule.because} Requires one of: ${rule.requiresOneOf.join(", ")}. Not decidable from the tree alone — verify it in the render.`,
+        message: `${rule.because} Requires one of: ${rule.requiresOneOf.join(", ")}. Not decidable from the tree alone; verify it in the render.`,
       });
       continue;
     }
@@ -357,14 +357,56 @@ function checkSlots(
         });
       }
 
+      if (slot.restrictOptions) {
+        checkRestrictedOptions(name, slot.restrictOptions, item, `${path} > ${item.signature}`, problems);
+      }
+
       walk(item, { contract, signature, id: tree.signature }, trail, problems);
     }
   }
 }
 
 /**
- * The entries of a collection: each one is checked like a miniature signature — its own options
- * against the item shape, its own slots for content — plus the one rule a collection has that nothing
+ * A slot's `restrictOptions` narrows one of the ITEM's own options to a subset of its usual values.
+ * Silent when the item's signature does not have that option at all — a Link has no `variant`, so a
+ * slot that restricts `variant` says nothing about it, the same way `checkAccessibility` skips a rule
+ * keyed on an option this signature never declared.
+ *
+ * Checked against the item's own contract default when the option is omitted from the tree: leaving
+ * `variant` unset does not exempt it, because the rendered button still has SOME variant, the
+ * default one, and that default is exactly what most of these restrictions exist to rule out.
+ */
+function checkRestrictedOptions(
+  slotName: string,
+  restrictions: Readonly<Record<string, readonly string[]>>,
+  item: UsageTree,
+  path: string,
+  problems: Problem[],
+): void {
+  const itemContract = getContract(item.contract);
+  const itemSignature = itemContract && getSignature(itemContract, item.signature);
+  if (!itemContract || !itemSignature) return;
+
+  for (const [optionName, allowed] of Object.entries(restrictions)) {
+    if (!itemSignature.options.includes(optionName)) continue;
+
+    const declared = itemContract.options[optionName];
+    const value = (item.options ?? {})[optionName] ?? declared?.default;
+
+    if (typeof value === "string" && !allowed.includes(value)) {
+      problems.push({
+        path,
+        rule: "restricted-option-value",
+        severity: "error",
+        message: `Slot "${slotName}" restricts "${optionName}" on ${item.signature} to ${allowed.join(" or ")}; got ${JSON.stringify(value)}.`,
+      });
+    }
+  }
+}
+
+/**
+ * The entries of a collection: each one is checked like a miniature signature: its own options
+ * against the item shape, its own slots for content, plus the one rule a collection has that nothing
  * else does: **the key must be unique**. Two tabs with the same value silently collapse into one,
  * because the key is what pairs a trigger with its panel.
  */
@@ -445,7 +487,7 @@ function checkCollection(
 
       /*
        * A recursive slot holds entries of the shape that CONTAINS it, so it is checked against the
-       * same shape, one level down. Without this a folder's children were accepted unread — every
+       * same shape, one level down. Without this a folder's children were accepted unread: every
        * rule the entries above owe, they owe at every depth.
        */
       if (itemSlot.recursive) {
@@ -468,7 +510,7 @@ function checkCollection(
 }
 
 /**
- * Order and cardinality inside a slot — the two rules a list of allowed signatures cannot state.
+ * Order and cardinality inside a slot: the two rules a list of allowed signatures cannot state.
  *
  * A table is the reason both exist: its caption must come first and there may be at most one, its
  * body is required, and a `<tfoot>` written before `<tbody>` is markup the parser silently moves.

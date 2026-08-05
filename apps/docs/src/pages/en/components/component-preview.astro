@@ -28,7 +28,7 @@ button?.addEventListener("click", saveChanges);`;
 
 /* Multicol, because its lanes are keyed to the system's OWN named breakpoints: one lane below
    compact (36rem), two at compact, three at desktop (52rem). Each preset therefore lands in a
-   different band — mobile 1, tablet 2, libre 3 — which is the claim the prose makes, shown instead
+   different band (mobile 1, tablet 2, libre 3), which is the claim the prose makes, shown instead
    of asserted. The media queries resolve against the FRAME's viewport, which is the preset width;
    that is what the iframe buys over a container query on a plain div. */
 const screensHtml = `<div class="sk-grid" data-multicol data-columns="3">
@@ -366,7 +366,7 @@ await initComponents(document);`;
   </p>
   <p>
     The <code>resizer</code> is the stage's lower edge, like a <code>textarea</code> handle. Dragging
-    it—or pressing <kbd class="sk-kbd">↑</kbd> / <kbd class="sk-kbd">↓</kbd> while it has focus—sets
+    it (or pressing <kbd class="sk-kbd">↑</kbd> / <kbd class="sk-kbd">↓</kbd> while it has focus) sets
     <code>data-sk-component-preview-resized</code>. From then on, the reader owns the height: the
     frame runtime stops auto-sizing and gives its document <code>overflow: auto</code>, so shrinking
     the frame reveals scrolling instead of clipping the example. Double-clicking it, or pressing
@@ -414,7 +414,7 @@ await initComponents(document);`;
     value.
   </p>
   <p>
-    The three controls are icons of the stable vocabulary —<code>screen-desktop</code>, <code>screen-tablet</code> and <code>screen-mobile</code>—, so the three approved sets draw them. With no visible text, each option has its name in <code>aria-label</code> and in <code>title</code>: the glyph is decorative, exactly like in an icon-only Button.
+    The three controls are icons of the stable vocabulary (<code>screen-desktop</code>, <code>screen-tablet</code> and <code>screen-mobile</code>), so the three approved sets draw them. With no visible text, each option has its name in <code>aria-label</code> and in <code>title</code>: the glyph is decorative, exactly like in an icon-only Button.
   </p>
   <p>
     It is turned off by preview with <code>screens={false}</code>, for cases where the preset deceives more than it reports.
@@ -422,7 +422,7 @@ await initComponents(document);`;
 
   <h2>The complete example</h2>
   <p>
-    The entire surface, also nested: header with note, reload and binding tabs, stage, resizer and a CodePreview per binding. The inside tabs are independent of the outside ones — the Vanilla preference |React is shared per document, and the frame is its own document.
+    The entire surface, also nested: header with note, reload and binding tabs, stage, resizer and a CodePreview per binding. The inside tabs are independent of the outside ones: the Vanilla preference |React is shared per document, and the frame is its own document.
   </p>
   <ComponentPreview
     label="ComponentPreview"
@@ -521,13 +521,13 @@ await initComponents(document);`;
 
   <h2 id="bare">The portable part</h2>
   <p>
-    Everything above — the Vanilla/React switch, the screen presets, the tree compiler that builds
-    each stage — is THIS SITE's own machinery for comparing two bindings of ANOTHER component. None
+    Everything above (the Vanilla/React switch, the screen presets, the tree compiler that builds
+    each stage) is THIS SITE's own machinery for comparing two bindings of ANOTHER component. None
     of it is something a consumer would compose into their product.
   </p>
   <p>
     What is portable: a title with its note, a stage with whatever is shown, and its code
-    underneath — composed from <code>CodePreview</code>, not reimplemented. That is
+    underneath, composed from <code>CodePreview</code>, not reimplemented. That is
     <code>ComponentPreview.bare</code>, the same root and the same parts with less anatomy, the
     same way <code>Popover.bare</code> is.
   </p>

@@ -98,8 +98,8 @@ export const carouselAutoplayTree = (t: Translate): UsageTree => ({
 });
 
 /*
- * The people track. Names are written here rather than translated — a name reads the same in every
- * language — while the roles beside them are words and come from the dictionary, keyed by POSITION
+ * The people track. Names are written here rather than translated (a name reads the same in every
+ * language) while the roles beside them are words and come from the dictionary, keyed by POSITION
  * so renaming a person never touches a key. The initials are the names' own, which is why they are
  * written beside them instead of derived: two words do not always give two letters.
  */
@@ -164,7 +164,7 @@ function personSlide(
  *
  * It runs at the default slide size instead of the narrower one its hand-written version set inline,
  * because that width is the knob no tree can reach (see the header). Nothing of the lesson goes with
- * it — the peek, the drag and the snap are all still there — which is exactly why this demo converts
+ * it (the peek, the drag and the snap are all still there), which is exactly why this demo converts
  * and its multi-up neighbour does not.
  */
 export const carouselBareTree = (t: Translate): UsageTree => ({

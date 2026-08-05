@@ -137,7 +137,7 @@ describe("expanded Vanilla inventory", () => {
     expect(root.querySelector("[data-sk-combobox-status]")?.textContent).toBe(
       "Sin resultados",
     );
-    // Typed text with no selection yet still offers the clear ✕ — there is something to wipe.
+    // Typed text with no selection yet still offers the clear ✕: there is something to wipe.
     expect(clear.hidden).toBe(false);
     // Emptying the input with nothing selected hides it again: no text, no ✕.
     fireEvent.input(input, { target: { value: "" } });

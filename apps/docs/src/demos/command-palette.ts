@@ -3,7 +3,7 @@ import type { Translate } from "../i18n";
 
 /*
  * A button and a dialog, composed under one marker the way `tabsAdvancedTree` composes tabs and a
- * status line — the same escape hatch, applied to the case `contracts/NOT-PUBLISHED.md` names for
+ * status line: the same escape hatch, applied to the case `contracts/NOT-PUBLISHED.md` names for
  * `command-palette`: the tree can emit the trigger AND the dialog, it just cannot emit the CALL that
  * opens one. `commandPaletteDemoScript` supplies exactly that call, nothing else.
  */
@@ -40,7 +40,7 @@ export const commandPaletteDemoTree = (t: Translate): UsageTree => ({
 
 /*
  * The dialog is found by `paletteId` rather than a marker attribute: `CommandPalette` (React) takes
- * named props and does not forward unknown ones onto its host, unlike `Button`/`Stack`, which do —
+ * named props and does not forward unknown ones onto its host, unlike `Button`/`Stack`, which do:
  * the id is the one identifier the contract already guarantees lands on the element either way.
  */
 export const commandPaletteDemoScript = `

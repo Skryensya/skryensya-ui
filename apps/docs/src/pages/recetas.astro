@@ -4,7 +4,7 @@
  *
  * Nothing on this page is written twice. The trees live in `contracts/recipes/`, the compiler
  * validates all four states of each against the contracts before it will emit a catalogue, and this
- * page hands the same trees to `ComponentPreview` — which emits the markup, the TSX and the live React
+ * page hands the same trees to `ComponentPreview`, which emits the markup, the TSX and the live React
  * island from them.
  *
  * So a recipe cannot rot into prose that no longer works: the build fails first.
@@ -13,7 +13,7 @@ import Base from "../layouts/Base.astro";
 import ComponentPreview from "../components/ComponentPreview.astro";
 import { recipes, type RecipeState } from "@skryensya/recipes";
 
-import "@skryensya/core/components/alert.css";
+import "@skryensya/core/components/callout.css";
 import "@skryensya/core/components/accordion.css";
 import "@skryensya/core/components/empty-state.css";
 import "@skryensya/core/components/loader.css";
@@ -54,8 +54,8 @@ const stateBlurb: Record<RecipeState, string> = {
   <h1>Recetas</h1>
   <p class="lede">
     El catálogo contesta <em>qué componente</em>. Una receta contesta <em>cómo se ve una pantalla
-    entera</em>, y sobre todo cómo se ve cuando todavía no cargó, cuando volvió vacía y cuando falló
-    — que es donde una interfaz generada suele estar mal.
+    entera</em>, y sobre todo cómo se ve cuando todavía no cargó, cuando volvió vacía y cuando falló,
+    que es donde una interfaz generada suele estar mal.
   </p>
   <p>
     Cada receta es un <a href="/plataforma-ai">usage tree</a> por estado, guardado en

@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsx src/cli.ts ../..",
     "check": "tsc -p tsconfig.json --noEmit && vitest run && tsx src/cli.ts ../..",
-    "lint": "tsc -p tsconfig.json --noEmit"
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "seed": "tsx src/seed-changelogs.ts ../.."
   },
   "dependencies": {
     "@skryensya/core": "workspace:*",

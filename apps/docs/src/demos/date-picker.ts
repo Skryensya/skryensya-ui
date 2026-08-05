@@ -4,7 +4,7 @@ import type { Translate } from "../i18n";
 /*
  * The date picker three ways: native, enhanced, and disabled.
  *
- * The native one has its own signature now — `DatePicker.native` — for the reason `Select.native`
+ * The native one has its own signature now (`DatePicker.native`) for the reason `Select.native`
  * has one: choosing between them is choosing WHO OWNS the behaviour, the browser or an enhancer, and
  * no flag should be able to stand in for that decision.
  *

@@ -55,11 +55,11 @@ export type ComboboxValueChangeDetails = { value: string[] };
 export type ComboboxInputChangeDetails = { inputValue: string };
 
 /*
- * COMBOBOX, the contract — a text field that filters a list, with the list positioned against it.
+ * COMBOBOX, the contract: a text field that filters a list, with the list positioned against it.
  *
  * Publishing this one turned up the same class of divergence three times, and it is worth naming
  * because it is structural rather than accidental. React renders the clear control, the empty
- * message and the chip row CONDITIONALLY — they are absent from the DOM until there is something to
+ * message and the chip row CONDITIONALLY: they are absent from the DOM until there is something to
  * clear, no results, or a selection. The enhancer cannot work that way: it takes the markup it is
  * given and toggles `hidden`, because authored markup is static by definition. So the two bindings
  * disagreed about how many elements exist in the resting state, and only one of them can be what a
@@ -71,7 +71,7 @@ export type ComboboxInputChangeDetails = { inputValue: string };
  * assuming the node is gone.
  *
  * `data-value-text` is the other thing this needs and Select did not. The enhancer builds its
- * collection by reading each row, and a row here holds a label, a description and an indicator — so
+ * collection by reading each row, and a row here holds a label, a description and an indicator, so
  * `textContent` is three strings glued together, not the label. `attrsFromItemSlot` copies the label
  * slot into the attribute the enhancer actually reads, which means the two can never disagree.
  */
@@ -84,7 +84,7 @@ export const comboboxContract = {
     /** Submitted under this name. Lives on the input, like every other form attribute here. */
     name: { type: "string", attr: "name" },
     /**
-     * The chosen value. React spells it `defaultValue` — `value` there is the CONTROLLED prop, and
+     * The chosen value. React spells it `defaultValue`: `value` there is the CONTROLLED prop, and
      * emitting it freezes the field. The same line Select, Slider, Tabs, RadioGroup, TimeField and
      * Segmented carry.
      */

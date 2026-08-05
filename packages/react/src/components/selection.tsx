@@ -103,7 +103,7 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
 
   /*
    * On each input rather than delegated on the group. A change event does bubble, so one handler on
-   * the wrapper would fire — but React checks per element whether a `checked` input can be typed
+   * the wrapper would fire, but React checks per element whether a `checked` input can be typed
    * into, sees no handler of its own, and renders every option read-only.
    */
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {

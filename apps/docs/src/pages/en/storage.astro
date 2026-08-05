@@ -95,7 +95,7 @@ const PREPAINT = {
 >
   <h1>Storage</h1>
   <p class="lede">
-    A design system saves preferences: color mode, contrast, density, whatever the product adds. It is not a component, it is plumbing that every consumer reinvents — and that this repo had reinvented <strong>four times</strong>, each copy with its own <code>try/catch</code>, its own key, and its own handwritten save. That is why it is sent as any behavior without an equivalent on the platform ( <a href="/decisiones">decision 14</a> ): the pure codec in <code>@skryensya/core/storage</code>, the imperative binding in <code>@skryensya/vanilla/storage</code>, and the hook in <code>@skryensya/react/storage</code>.
+    A design system saves preferences: color mode, contrast, density, whatever the product adds. It is not a component, it is plumbing that every consumer reinvents, and that this repo had reinvented <strong>four times</strong>, each copy with its own <code>try/catch</code>, its own key, and its own handwritten save. That is why it is sent as any behavior without an equivalent on the platform ( <a href="/decisiones">decision 14</a> ): the pure codec in <code>@skryensya/core/storage</code>, the imperative binding in <code>@skryensya/vanilla/storage</code>, and the hook in <code>@skryensya/react/storage</code>.
   </p>
 
   <h2>Three rules</h2>
@@ -124,7 +124,7 @@ const PREPAINT = {
 
   <h2>Vanilla</h2>
   <p>
-    <code>subscribePreference</code> is what justifies the module beyond saving lines: it calls <strong>and</strong> with the current value, and then with each change—including that of <strong>another tab</strong>. Nothing written by hand subscribed to the <code>storage</code> event, so two open tabs drifted until you reloaded. That is what makes a preference a preference and not a per-tab variable.
+    <code>subscribePreference</code> is what justifies the module beyond saving lines: it calls <strong>and</strong> with the current value, and then with each change, including that of <strong>another tab</strong>. Nothing written by hand subscribed to the <code>storage</code> event, so two open tabs drifted until you reloaded. That is what makes a preference a preference and not a per-tab variable.
   </p>
   <CodeBlock code={vanilla} lang="ts" />
 
@@ -144,7 +144,7 @@ const PREPAINT = {
 
   <h2>The only exception: before the first paint</h2>
   <p>
-    A script that runs <strong>before any</strong> module—the one that prevents theme flash—cannot import the primitive: importing is exactly what exists to happen after. That script touches <code>localStorage</code> directly, and is the only place in the repo that does so.
+    A script that runs <strong>before any</strong> module (the one that prevents theme flash) cannot import the primitive: importing is exactly what exists to happen after. That script touches <code>localStorage</code> directly, and is the only place in the repo that does so.
   </p>
   <p>
     What <strong>no</strong> does is rewrite the key or the slot names: it passes them to you
@@ -157,7 +157,7 @@ const PREPAINT = {
 
   <h2>Where</h2>
   <p>
-    are declared Next to the module that owns the <em>type</em>. <code>colorModePreference</code> lives with ThemeToggle, both of ComponentPreview with ComponentPreview: the slot name and guard are part of the contract that a second consumer would have to match, and a slot re-typed in two apps is a slot that in some will differ. What is of the product—a palette of docs is a tenant—is declared by the app: on this site, all together in <code>src/lib/preferences.ts</code>.
+    are declared Next to the module that owns the <em>type</em>. <code>colorModePreference</code> lives with ThemeToggle, both of ComponentPreview with ComponentPreview: the slot name and guard are part of the contract that a second consumer would have to match, and a slot re-typed in two apps is a slot that in some will differ. What is of the product (a palette of docs is a tenant) is declared by the app: on this site, all together in <code>src/lib/preferences.ts</code>.
   </p>
   <p>
     That is the rule that makes this verifiable: look for <code>localStorage</code> outside of that file and the only result should be the prepaint script.

@@ -42,8 +42,8 @@ export type SidebarPartClass = (typeof sidebarParts)[SidebarPart];
  * The navigation shell down the side of an application.
  *
  * Collapsing NARROWS it; it never hides it (decision 8). The content stays mounted, reachable and
- * in the accessibility tree at both widths — the labels go visually quiet but keep naming the icons
- * — which is why this is not a disclosure and has no `hidden` anywhere.
+ * in the accessibility tree at both widths: the labels go visually quiet but keep naming the icons,
+ * which is why this is not a disclosure and has no `hidden` anywhere.
  *
  * What goes inside is the caller's, usually a NavList, which the sidebar HOSTS rather than owns
  * (decision 17). There is no link or item part here for the same reason.
@@ -67,7 +67,7 @@ export const sidebarContract = {
       machineInput: true,
     },
     /**
-     * The trigger's accessible name. It is icon-sized, so this is never painted — and an icon on
+     * The trigger's accessible name. It is icon-sized, so this is never painted, and an icon on
      * its own names nothing.
      */
     label: { type: "string", attr: "aria-label" },
@@ -140,7 +140,7 @@ export const sidebarContract = {
       intent: ["collapse-sidebar", "rail-toggle", "hamburger"],
       host: { element: "button" },
       /*
-       * The header is where a sidebar actually puts it, beside the brand — and the footer is the
+       * The header is where a sidebar actually puts it, beside the brand, and the footer is the
        * other real answer. `Sidebar` alone said the only legal place was loose in the shell, which
        * is the one place nobody puts it.
        */

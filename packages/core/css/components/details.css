@@ -93,9 +93,17 @@
     display: inline-grid;
     place-items: center;
     flex: none;
-    inline-size: 1rem;
-    block-size: 1rem;
+    inline-size: var(--size-control-md);
+    block-size: var(--size-control-md);
+    border-radius: var(--radius-control);
     color: var(--sk-details-indicator-fg);
+  }
+
+  /* Icon-button proportions, same reason `tile.css` scales `.sk-tile__chevron`'s glyph: a control
+   * face is bigger than a bare inline icon. */
+  .sk-details__indicator .sk-icon,
+  .sk-details__summary .sk-tile__chevron .sk-icon {
+    --sk-icon-size: var(--size-icon-lg);
   }
 
   .sk-details__indicator > [data-state],

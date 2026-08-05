@@ -31,7 +31,7 @@ function specimen(loader: UsageTree, name: string, description: string): UsageTr
   };
 }
 
-/** sm · md · lg — decorative until the large one, which owns the status announcement. */
+/** sm · md · lg: decorative until the large one, which owns the status announcement. */
 export const loaderSizesTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "Grid",

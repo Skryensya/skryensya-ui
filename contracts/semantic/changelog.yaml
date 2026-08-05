@@ -1,0 +1,20 @@
+# La estructura vive en packages/core/src/changelog.ts. Acá sólo por qué se elige.
+
+Changelog:
+  useWhen:
+    - "hay un historial fechado de algo que cambió: release notes, el changelog de un contrato"
+    - "la fecha es lo que el lector busca; viene a ver qué pasó y cuándo"
+  avoidWhen:
+    - "son instrucciones para leer y hacer, en orden pero sin fechas; eso es un ProcessList"
+    - "importa en qué etapa está alguien, qué ya hizo y qué le falta; eso es Steps"
+    - "es una sola novedad suelta; una entrada sin historial alrededor no es un historial"
+  alternatives:
+    - ProcessList
+    - Steps
+
+ChangelogEntry:
+  useWhen:
+    - "un cambio, con su día, su tipo y a qué parte del contrato le pegó"
+  avoidWhen:
+    - "fuera de un Changelog: la entrada sola no dibuja el riel ni se lee como historia"
+  alternatives: []

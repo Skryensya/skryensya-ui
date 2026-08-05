@@ -1,4 +1,4 @@
-/* TIER 3, FILE UPLOAD — native file input enhanced with drop and file rows. */
+/* TIER 3, FILE UPLOAD: native file input enhanced with drop and file rows. */
 @layer components {
   .sk-file-upload {
     --sk-file-upload-gap: var(--space-stack-sm);

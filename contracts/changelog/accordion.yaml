@@ -1,0 +1,38 @@
+# Qué cambió en accordion, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# hash nuevo.
+surface: "f9127df5c1467f9f"
+entries:
+  - date: 2026-08-04
+    kind: added
+    target: valueChange
+    es: >-
+      El contrato declara el evento <code>sk:accordionvaluechange</code>, así que ahora sale
+      publicado en la referencia. El evento no es nuevo ni cambió de nombre: lo que cambió es que
+      antes había que encontrarlo en la prosa.
+    en: >-
+      The contract now declares the <code>sk:accordionvaluechange</code> event, so the reference
+      publishes it. The event is neither new nor renamed; what changed is that finding it used to
+      mean reading the prose.
+  - date: 2026-08-01
+    kind: fixed
+    target: content
+    es: >-
+      El enhancer buscaba la parte <code>content</code> en cualquier descendiente, así que una
+      sección construida con <code>TileContent</code> ataba su propio título como panel: la sección
+      no se plegaba y su contenido quedaba expuesto al lector de pantalla. Ahora la busca sólo como
+      hija directa.
+    en: >-
+      The enhancer looked for the <code>content</code> part on any descendant, so a section built
+      with <code>TileContent</code> bound its own title as the panel: the section never collapsed
+      and its content stayed exposed to a screen reader. It is now scoped to a direct child.
+  - date: 2026-07-29
+    kind: added
+    es: >-
+      Primera publicación del contrato: <code>Accordion</code> con <code>type</code> y
+      <code>collapsible</code>, y las tres firmas que lo componen.
+    en: >-
+      First published contract: <code>Accordion</code> with <code>type</code> and
+      <code>collapsible</code>, plus the three signatures that compose it.

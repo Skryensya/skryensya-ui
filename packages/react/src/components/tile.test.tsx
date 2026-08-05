@@ -218,7 +218,11 @@ describe("Tile React contracts", () => {
     await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith({ open: true }));
   });
 
-  it("puts the disclosure state layer on the Tile surface, not its trigger", () => {
+  it("puts the disclosure state layer on the trigger, not the Tile surface", () => {
+    // The surface is a container, not the control: it wraps the trigger AND the revealed
+    // content, so a state layer painted behind the whole section tinted the content on hover
+    // too, and blocked selecting its text (`sk-tile--interactive` also carries `user-select:
+    // none`). Only the trigger is clickable, so only it gets the interaction classes.
     const ui = render(
       <ExpandableTile>
         <ExpandableTile.Trigger>Summary</ExpandableTile.Trigger>
@@ -228,8 +232,10 @@ describe("Tile React contracts", () => {
     const trigger = ui.getByRole("button", { name: "Summary" });
     const root = trigger.closest<HTMLElement>(".sk-tile");
 
-    expect(root?.classList.contains("sk-interactive")).toBe(true);
-    expect(trigger.classList.contains("sk-interactive")).toBe(false);
+    expect(root?.classList.contains("sk-interactive")).toBe(false);
+    expect(root?.classList.contains("sk-tile--interactive")).toBe(false);
+    expect(trigger.classList.contains("sk-interactive")).toBe(true);
+    expect(trigger.classList.contains("sk-tile--interactive")).toBe(true);
   });
 
   it("SSR hydrates without mounting Vanilla", () => {

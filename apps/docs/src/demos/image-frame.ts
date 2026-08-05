@@ -7,16 +7,16 @@ export const DEMO_IMAGE_FRAME_SRC = "/demos/image-frame.svg";
 /*
  * The whole page converts.
  *
- * The three comparison grids were authored because of docs-only `demo-grid` / `demo-shot` chrome —
+ * The three comparison grids were authored because of docs-only `demo-grid` / `demo-shot` chrome:
  * a `<figure>` per specimen with a `<figcaption><code>` under it. None of that is ImageFrame: it is
  * the page saying "here are four of these, and this one is called `16/9`". Grid + Stack + Text says
  * the same thing out of published parts, the way `loader.ts` already writes its own specimens. The
  * old `.demo-shot figcaption` rule set `--font-size-caption` and `--color-text-tertiary`, which are
- * exactly Text's `caption` / `tertiary` — the chrome was reachable vocabulary spelled by hand.
+ * exactly Text's `caption` / `tertiary`: the chrome was reachable vocabulary spelled by hand.
  *
  * One thing does NOT survive: the `<code>` around each label. The catalogue publishes no inline-code
  * signature (Kbd is keystrokes, not literals), so `1/1` and `top-left` now read as prose. That is a
- * real hole and a cheap one — it costs a typeface, not the demo. Everything else is unchanged.
+ * real hole and a cheap one: it costs a typeface, not the demo. Everything else is unchanged.
  *
  * The media is decorative in the grids, so `alt=""` on all ten frames: the label under each one is
  * what identifies the specimen, and ten copies of the same sentence is noise to read past.
@@ -28,7 +28,7 @@ export const DEMO_IMAGE_FRAME_SRC = "/demos/image-frame.svg";
 /**
  * One specimen: the frame, and under it the option value it is set to.
  *
- * `xs` and centred is the old `.demo-shot` verbatim — a stack of two things, tight, the label
+ * `xs` and centred is the old `.demo-shot` verbatim: a stack of two things, tight, the label
  * centred under the picture.
  */
 function specimen(frame: UsageTree, value: string): UsageTree {
@@ -57,7 +57,7 @@ function frame(options: Record<string, string>): UsageTree {
   };
 }
 
-/** One frame, cover crop, subtle border — the vocabulary the page opens with. */
+/** One frame, cover crop, subtle border: the vocabulary the page opens with. */
 export const imageFrameTree = (t: Translate): UsageTree => ({
   contract: "image-frame",
   signature: "ImageFrame",
@@ -73,7 +73,7 @@ export const imageFrameTree = (t: Translate): UsageTree => ({
 });
 
 /**
- * Four boxes, one photo. `data-aspect` is the frame, never the file — the asset is 800×500 in all
+ * Four boxes, one photo. `data-aspect` is the frame, never the file: the asset is 800×500 in all
  * four and the crop is what changes.
  */
 export const imageFrameAspectTree = (t: Translate): UsageTree => ({

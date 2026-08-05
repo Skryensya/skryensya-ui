@@ -35,9 +35,9 @@ const src = cardSources(copy);
     Card is a <strong>composition result of</strong>, not a system component. The content decides its structure; the interaction decides whether the surface is born from <a href="/en/components/box">Box</a> or from <a href="/en/components/tile">Tile</a>.
   </p>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
-      <div class="sk-alert__description">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <div class="sk-callout__description">
         There are no <code>sk-card</code>, <code>@skryensya/react/card</code>, or
         <code>components/card.css</code>. Import the pieces the card actually uses.
       </div>
@@ -69,7 +69,7 @@ const src = cardSources(copy);
 
   <h2 id="basic">Basic card</h2>
   <p>
-    The floor of the ladder: a surface, a title, a paragraph. Nothing here is interactive, so the root is <a href="/en/components/box">Box</a> on an <code>article</code>. No <code>card</code> class is involved — only the surface, the subtle border and padding <code>lg</code>.
+    The floor of the ladder: a surface, a title, a paragraph. Nothing here is interactive, so the root is <a href="/en/components/box">Box</a> on an <code>article</code>. No <code>card</code> class is involved: only the surface, the subtle border and padding <code>lg</code>.
   </p>
   <ComponentPreview
     html={src.basic.html}
@@ -99,7 +99,7 @@ const src = cardSources(copy);
 
   <h2 id="accent-soft">Soft accent</h2>
   <p>
-    The accent background is asked for by rewriting the hooks Box already publishes — <code>--sk-box-bg</code> to <code>--color-bg-accent-subtle</code> and the border to <code>--color-border-accent</code> — never with a raw <code>background</code> on <code>.sk-box</code>, which would bypass the surface the pattern owns. The fill is subtle, so the text keeps using the normal tokens.
+    The accent background is asked for by rewriting the hooks Box already publishes: <code>--sk-box-bg</code> to <code>--color-bg-accent-subtle</code> and the border to <code>--color-border-accent</code>; never with a raw <code>background</code> on <code>.sk-box</code>, which would bypass the surface the pattern owns. The fill is subtle, so the text keeps using the normal tokens.
   </p>
   <ComponentPreview
     html={src.accentSoft.html}
@@ -204,7 +204,7 @@ const src = cardSources(copy);
 
   <h2 id="gradient">Card with gradient</h2>
   <p>
-    The wash that keeps text readable over a photo. It sizes itself to the <strong>type</strong> it protects and not to a percentage of the image: the caption is the box and the gradient fills it, fading toward the photo. The three cards show the three <code>data-strength</code> values — <code>sm</code>, <code>md</code> and <code>lg</code> — over the same pale panel, because strength is opacity and tint and never how much of the image is covered. The images are deliberately light: over an already-dark background the wash would be invisible and the example would argue against itself.
+    The wash that keeps text readable over a photo. It sizes itself to the <strong>type</strong> it protects and not to a percentage of the image: the caption is the box and the gradient fills it, fading toward the photo. The three cards show the three <code>data-strength</code> values (<code>sm</code>, <code>md</code> and <code>lg</code>) over the same pale panel, because strength is opacity and tint and never how much of the image is covered. The images are deliberately light: over an already-dark background the wash would be invisible and the example would argue against itself.
   </p>
   <ComponentPreview
     html={src.gradient.html}
@@ -234,7 +234,7 @@ const src = cardSources(copy);
 
   <h2 id="product">Product card</h2>
   <p>
-    The top of the ladder, and the example that proves the rule. <strong>Two</strong> independent decisions live here — see details and add — so the root cannot be a Tile: a link and a button nested inside an <code>a</code> is invalid HTML, and a whole-surface click could only ever mean one of the two. This is what Box is for.
+    The top of the ladder, and the example that proves the rule. <strong>Two</strong> independent decisions live here (see details and add), so the root cannot be a Tile: a link and a button nested inside an <code>a</code> is invalid HTML, and a whole-surface click could only ever mean one of the two. This is what Box is for.
   </p>
   <ComponentPreview
     html={src.product.html}

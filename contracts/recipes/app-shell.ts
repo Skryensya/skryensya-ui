@@ -5,7 +5,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
  * The frame every screen inside an application sits in: a navbar across the top, a sidebar of
  * destinations down the side, and the column of content between them.
  *
- * The four states are the SHELL's, not the page's — which is the distinction worth carrying. The
+ * The four states are the SHELL's, not the page's, which is the distinction worth carrying. The
  * navigation is the last thing to go: a shell that replaces itself with a spinner takes away the
  * only way out of a page that is failing, and the reader is left with a screen they cannot leave.
  * So loading, empty and error all keep the navbar and the sidebar; only the column changes.
@@ -15,7 +15,7 @@ export const appShellRecipe: Recipe = {
   intent: "El marco de una aplicación: navbar arriba, sidebar al costado, contenido en el medio.",
   notes: [
     "La navegación es lo último que se va: un shell que se reemplaza por un spinner le saca a la persona la única salida de una página que está fallando.",
-    "El sidebar hospeda la NavList, no la define — la misma lista sirve en un navbar o en un drawer (decisión 17).",
+    "El sidebar hospeda la NavList, no la define: la misma lista sirve en un navbar o en un drawer (decisión 17).",
     "El destino actual se marca con `current`, que escribe `aria-current`: sin eso la barra dice dónde se puede ir, pero no dónde se está.",
   ],
 
@@ -42,12 +42,17 @@ export const appShellRecipe: Recipe = {
     }),
 
     error: shell({
-      contract: "alert",
-      signature: "Alert",
+      contract: "callout",
+      signature: "Callout",
       options: { tone: "danger" },
       slots: {
         title: "No pudimos cargar el proyecto",
-        actions: { contract: "button", signature: "Button.action", children: "Reintentar" },
+        actions: {
+          contract: "button",
+          signature: "Button.action",
+          options: { variant: "subtle" },
+          children: "Reintentar",
+        },
       },
       children: "Volvé a intentar en unos segundos.",
     }),
@@ -80,7 +85,7 @@ export const appShellRecipe: Recipe = {
 
 /*
  * The shell around whatever the column holds. A local helper rather than four copies: the navbar and
- * the sidebar are IDENTICAL in every state — that is the claim the recipe is making — and writing
+ * the sidebar are IDENTICAL in every state (that is the claim the recipe is making), and writing
  * them out four times would let one of them drift and quietly stop making it.
  */
 function shell(content: UsageTree): UsageTree {
@@ -107,7 +112,7 @@ function shell(content: UsageTree): UsageTree {
         /*
          * `wrap: false`: the shell is a rail beside a column, and the default (items fall to a
          * second line) put the content UNDER the sidebar instead of next to it. It rendered, it
-         * validated, and it was the wrong screen — which is why a recipe has to be looked at.
+         * validated, and it was the wrong screen, which is why a recipe has to be looked at.
          */
         options: { gap: "lg", inlineAlign: "start", wrap: false },
         children: [

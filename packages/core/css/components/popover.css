@@ -1,5 +1,5 @@
 /*
- * TIER 3, POPOVER — native Popover API, no machine.
+ * TIER 3, POPOVER: native Popover API, no machine.
  *
  * La colocación es del pattern Anclaje (ADR-25): el trigger lleva además `sk-anchor` y el positioner
  * además `sk-anchored`, y de ahí salen los lados, el volteo, el hueco, el z-index y el
@@ -17,8 +17,8 @@
      * A STATIC anchor name, made safe by scoping it rather than by generating one per instance.
      *
      * The pattern reads the name from `--sk-anchored-name`, and every other anchored component has
-     * a binding that writes a unique one inline. A popover has no enhancer at all — the browser owns
-     * light-dismiss, Escape and the top layer — so nothing could write it into authored markup, and
+     * a binding that writes a unique one inline. A popover has no enhancer at all: the browser owns
+     * light-dismiss, Escape and the top layer, so nothing could write it into authored markup, and
      * a template is the same text every time. `anchor-scope` is the answer the platform already
      * has: it limits the name to this subtree, so any number of popovers on a page can share it.
      */

@@ -11,7 +11,7 @@
  *
  * It is a GRID and not just a padding box: inside a Tile the body is a `span`, so its children would
  * otherwise lay out inline and the title would run straight into the description with no space
- * between them. The Tile's own gap cannot help — the body is one grid item, not three. */
+ * between them. The Tile's own gap cannot help: the body is one grid item, not three. */
 .sk-card-body {
   display: grid;
   align-content: start;
@@ -19,7 +19,7 @@
   padding: var(--space-inset-lg);
 }
 
-/* A Badge sitting directly in a grid — the card body, or a Stack, which is also a grid — is a grid
+/* A Badge sitting directly in a grid (the card body, or a Stack, which is also a grid) is a grid
  * item, and a grid item stretches: left alone it grew to the full card width and stopped reading as
  * a badge. Only the badge is pinned; pinning the whole container with `justify-items` would
  * shrink-wrap the paragraphs and change where the text wraps. (A Badge inside an Inline is a flex
@@ -47,10 +47,10 @@
 
 /* Resource / shortcut card: an icon well and its chevron on one row ABOVE the text, not beside it.
  * Beside it, three of these in a grid gave the title about eight characters per line. Consumer
- * anatomy, not a Tile API — the Tile only owns the interactive surface, and `sk-tile__content`
+ * anatomy, not a Tile API: the Tile only owns the interactive surface, and `sk-tile__content`
  * below this row is already a grid, so the title and description keep their own rhythm. */
 /* The Tile root is a grid with auto rows, and auto rows STRETCH to fill a card made taller by its
- * siblings — so in a three-up collection each card pushed its icon row and its text apart by a
+ * siblings, so in a three-up collection each card pushed its icon row and its text apart by a
  * different amount, and the titles stopped sharing a line. Pin the rows to the top instead. */
 .sk-tile:has(.sk-card-link-head) {
   align-content: start;
@@ -80,10 +80,10 @@
 }
 
 /*
- * ACCENT SURFACES. Both are Box with its published hooks rewritten — never a second card recipe and
+ * ACCENT SURFACES. Both are Box with its published hooks rewritten: never a second card recipe and
  * never a raw `background` on `.sk-box`, which would bypass the surface the pattern owns.
  *
- * They share ONE anatomy — icon, eyebrow, title, body, call to action — deliberately: the pair is
+ * They share ONE anatomy (icon, eyebrow, title, body, call to action) deliberately: the pair is
  * here to teach that the difference between them is the INTENSITY of the surface and the text token
  * that intensity forces, not a different card. A colored rectangle with a paragraph in it does not
  * make that point, and does not look like anything either.
@@ -135,7 +135,7 @@
 /*
  * SOLID fills with the accent ACTION color, so its text must come from `--color-text-on-accent` and
  * not from the text ramp: in dark mode primary is a light blue and the on-accent token flips to
- * near-black. That is also why the typography inside is forced to `inherit` — a `data-tone` on a
+ * near-black. That is also why the typography inside is forced to `inherit`: a `data-tone` on a
  * Text would resolve against the page, not against this fill, and land unreadable in one mode.
  */
 .sk-card-accent-solid {

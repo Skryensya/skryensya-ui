@@ -112,7 +112,7 @@
     /*
      * Center the title's FIRST LINE on the marker's center. The marker is a fixed
      * `--marker-size` box starting at the content edge, so the first line has to come down by
-     * half the difference between that box and its own line box — `1lh` here resolves against
+     * half the difference between that box and its own line box: `1lh` here resolves against
      * this element's own font-size/line-height, so the offset follows density and type scale
      * without restating either. Padding (not centering the whole block) keeps the alignment
      * exact when the title wraps: later lines run on below, the first stays on the circle.

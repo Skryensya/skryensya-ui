@@ -33,7 +33,7 @@ export type Binding = "vanilla" | "react";
 export class EmitError extends Error {}
 
 /**
- * Elements whose content the HTML parser never treats as markup — no entity decoding happens
+ * Elements whose content the HTML parser never treats as markup: no entity decoding happens
  * inside them, so escaping `&`/`<`/`>` before writing their text would corrupt it instead of
  * protecting it (a JSON index with `&` in an href, escaped, comes back out of `.textContent` as
  * literal `&amp;`). Literal text elsewhere in a template IS markup and still needs `escapeText`.
@@ -57,13 +57,22 @@ const VOID_ELEMENTS = new Set([
   "wbr",
 ]);
 
+/**
+ * The column both emitters wrap an opening tag AND a run of text against. One number, because a
+ * reader comparing the two snippets side by side should see the SAME reason a line broke, not two
+ * unrelated widths. ~75ch is the classic measure for a readable line, and it is close enough to
+ * what the docs' own code column fits (measured at 72 monospace characters) that it does not
+ * reintroduce the horizontal scroll this exists to remove.
+ */
+const PRINT_WIDTH = 75;
+
 /* ------------------------------------------------------------------ markup (the vanilla binding) */
 
 /**
  * One tree, as authored markup.
  *
  * `idPrefix` namespaces every generated id. Only needed when several INDEPENDENT trees land in the
- * same document — the gates' stage does that, a real page does not (each preview is its own srcdoc
+ * same document: the gates' stage does that, a real page does not (each preview is its own srcdoc
  * document). Absent, the ids read as the author would have written them.
  */
 export function emitMarkup(
@@ -73,7 +82,7 @@ export function emitMarkup(
   /*
    * Ids are unique per emit, and the counter below is what makes them so.
    *
-   * The base is derived from the label so the same tree keeps producing the same bytes — but two
+   * The base is derived from the label so the same tree keeps producing the same bytes, but two
    * fields can legitimately share a label (a billing "Nombre" and a shipping "Nombre"), and
    * before this the second label pointed at the FIRST input. Silent, valid-looking, and wrong for
    * exactly the person who depends on the association.
@@ -131,7 +140,7 @@ function renderSignature(
 
 /**
  * Attributes a parent computed for the child it slots. A field's control gets its `id`, its
- * `aria-describedby` and its `aria-invalid` this way — the parent knows the ids because it owns them.
+ * `aria-describedby` and its `aria-invalid` this way: the parent knows the ids because it owns them.
  */
 type Wiring = {
   readonly base: string;
@@ -168,7 +177,7 @@ function wiringFor(
     if (rule.whenGiven !== undefined && !present(rule.whenGiven)) continue;
 
     /*
-     * A literal value is written as given — including `""`, which is how a boolean attribute is
+     * A literal value is written as given, including `""`, which is how a boolean attribute is
      * spelled (`required`, not `required="true"`). Only a REFERENCE list that resolved to nothing is
      * dropped: an `aria-describedby` pointing at absent nodes would describe nothing.
      */
@@ -272,7 +281,7 @@ function renderTemplate(
   /*
    * Back to a shape written once and named, with whatever entry is current. AFTER the repeat above,
    * never before: recursion has to consume a level of data to reach a bottom, and a `recurse` that
-   * fired first would re-render the same entry until the stack ran out — which is exactly what it
+   * fired first would re-render the same entry until the stack ran out, which is exactly what it
    * did the first time these two were in the wrong order.
    */
   if (node.recurse !== undefined) {
@@ -307,11 +316,11 @@ function renderTemplate(
 
   /*
    * Asked of the entry's CONTENT: a node with children is a branch, one without is a leaf, and
-   * nobody sets that — it is whether the slot was filled.
+   * nobody sets that: it is whether the slot was filled.
    *
    * "Filled" has to ask BOTH helpers, because they are complements, not one being broader:
    * `slotItems` drops collection entries and `collectionItems` drops everything that is not one. So
-   * `collectionItems` alone answered "no" for every TEXT slot — which is how Steps' description
+   * `collectionItems` alone answered "no" for every TEXT slot, which is how Steps' description
    * span, guarded on a text slot, never emitted while React rendered it from the same tree.
    */
   const itemSlotFilled = (slot: string): boolean => {
@@ -350,29 +359,26 @@ function renderTemplate(
 
   const pad = "  ".repeat(depth);
   const attrs = attributesFor(node, ctx);
-  const open = `<${node.element}${attrs.map((a) => ` ${a}`).join("")}>`;
+  const openLines = htmlOpening(node.element, attrs, pad);
 
   /*
    * A node's content, in order: its own literal text, then its slot, then its child nodes. A label
-   * needs two of these at once — the author's text and the required mark after it — so these are
+   * needs two of these at once (the author's text and the required mark after it), so these are
    * additive rather than a chain of alternatives.
    */
   const raw = RAW_TEXT_ELEMENTS.has(node.element);
   const children = [
-    ...(node.text !== undefined
-      ? [`${"  ".repeat(depth + 1)}${raw ? node.text : escapeText(node.text)}`]
-      : []),
+    ...(node.text !== undefined ? textLines(node.text, depth + 1, raw) : []),
     ...(node.textFromOption !== undefined
-      ? [
-          (() => {
-            const text = String(
-              ctx.tree.options?.[node.textFromOption] ??
-                ctx.contract.options[node.textFromOption]?.default ??
-                "",
-            );
-            return `${"  ".repeat(depth + 1)}${raw ? text : escapeText(text)}`;
-          })(),
-        ]
+      ? textLines(
+          String(
+            ctx.tree.options?.[node.textFromOption] ??
+              ctx.contract.options[node.textFromOption]?.default ??
+              "",
+          ),
+          depth + 1,
+          raw,
+        )
       : []),
     ...(node.itemSlot
       ? renderSlot(ctx.item?.slots[node.itemSlot], depth + 1)
@@ -391,21 +397,85 @@ function renderTemplate(
 
   if (children.length === 0) {
     // A void element closes itself; writing </input> is markup no browser accepts as written.
-    return VOID_ELEMENTS.has(node.element)
-      ? [`${pad}${open}`]
-      : [`${pad}${open}</${node.element}>`];
+    if (VOID_ELEMENTS.has(node.element)) return openLines;
+    const last = openLines.length - 1;
+    return [
+      ...openLines.slice(0, last),
+      `${openLines[last]}</${node.element}>`,
+    ];
   }
 
-  // A single line of text stays on the element's own line; anything else gets its own lines.
-  if (children.length === 1 && !children[0]!.trimStart().startsWith("<")) {
-    return [`${pad}${open}${children[0]!.trim()}</${node.element}>`];
+  // A single line of text stays on the element's own line, but only when the tag ITSELF stayed on
+  // one line, and only when the text does not push the line back past PRINT_WIDTH on its own (a
+  // wrapped attribute list already solved the tag; a long sentence is the same problem again).
+  if (
+    openLines.length === 1 &&
+    children.length === 1 &&
+    !children[0]!.trimStart().startsWith("<")
+  ) {
+    const text = children[0]!.trim();
+    const inline = `${openLines[0]}${text}</${node.element}>`;
+    if (inline.length <= PRINT_WIDTH) return [inline];
+    return [openLines[0]!, ...wrapText(text, depth + 1), `${pad}</${node.element}>`];
   }
 
-  return [`${pad}${open}`, ...children, `${pad}</${node.element}>`];
+  return [...openLines, ...children, `${pad}</${node.element}>`];
 }
 
 /**
- * Whether the author supplied ANY of these, as an option or as slot content — the one question both
+ * An opening tag, wrapped one attribute per line past `PRINT_WIDTH`: the HTML half of what
+ * `jsxOpening` already does for JSX, so a snippet with many `data-*` attributes reads the same way
+ * on both sides of the binding toggle instead of one wrapping and the other running off the edge.
+ *
+ * Returns the CLOSING `>` as the last line rather than leaving it to the caller: a void element's
+ * only line, an empty element's line to append `</tag>` to, and a parent element's line to follow
+ * with children are the same three shapes either way, wrapped or not.
+ */
+function htmlOpening(
+  element: string,
+  attrs: readonly string[],
+  pad: string,
+): string[] {
+  const inline = `<${element}${attrs.map((a) => ` ${a}`).join("")}>`;
+  if (attrs.length === 0 || `${pad}${inline}`.length <= PRINT_WIDTH) {
+    return [`${pad}${inline}`];
+  }
+
+  return [
+    `${pad}<${element}`,
+    ...attrs.map((a) => `${pad}  ${a}`),
+    `${pad}>`,
+  ];
+}
+
+/**
+ * A run of text, word-wrapped at `PRINT_WIDTH`. Shared by both emitters: a browser and a JSX runtime
+ * both collapse the whitespace a line break leaves behind, so breaking a sentence across lines is
+ * safe on either side, not a JSX-only trick.
+ */
+function wrapText(text: string, depth: number): string[] {
+  const pad = "  ".repeat(depth);
+  const width = Math.max(1, PRINT_WIDTH - pad.length);
+  const words = text.trim().split(/\s+/);
+  const lines: string[] = [];
+  let line = "";
+
+  for (const word of words) {
+    if (line === "") {
+      line = word;
+    } else if (line.length + 1 + word.length <= width) {
+      line += ` ${word}`;
+    } else {
+      lines.push(`${pad}${line}`);
+      line = word;
+    }
+  }
+  if (line !== "") lines.push(`${pad}${line}`);
+  return lines;
+}
+
+/**
+ * Whether the author supplied ANY of these, as an option or as slot content: the one question both
  * `whenGiven` and `whenMissing` ask. `false` is the author saying no, which is not saying nothing.
  */
 function supplied(
@@ -541,11 +611,11 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
       out.push(attr(option.alsoAttr, String(value)));
   }
 
-  // The one entry the group selected. Asked of the group, marked on the entry — which is what makes
+  // The one entry the group selected. Asked of the group, marked on the entry, which is what makes
   // "only one can be selected" a fact of the structure rather than a hope about the data.
   if (node.selectedBy && ctx.item) {
-    // The key comes from the collection's declared shape, or — for a computed window, which has no
-    // authored slot to declare one — from the computation itself.
+    // The key comes from the collection's declared shape, or, for a computed window, which has no
+    // authored slot to declare one, from the computation itself.
     const keyName = itemShapeOf(signature)?.key ?? computedKeyOf(signature);
     const key = keyName ? ctx.item.options?.[keyName] : undefined;
     if (key !== undefined && tree.options?.[node.selectedBy.option] === key) {
@@ -568,7 +638,7 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
       /*
        * The same entry datum can need two spellings in one template. A Select's listbox row is a
        * `<li data-value>` the enhancer reads, and the hidden `<select>` beside it needs
-       * `<option value>` for the browser to submit — one value, two attributes, decided by WHERE it
+       * `<option value>` for the browser to submit: one value, two attributes, decided by WHERE it
        * lands rather than by what it means. `itemOptionAttrs` renames it for this node only.
        */
       const attrName = node.itemOptionAttrs?.[name] ?? option.attr;
@@ -622,7 +692,7 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
       continue;
     /*
      * Compared as STRINGS, because the rule is written in the vocabulary of attributes and an
-     * attribute value is a string. Strict equality silently skipped every numeric option — a
+     * attribute value is a string. Strict equality silently skipped every numeric option: a
      * pagination on page `1` never matched `equals: "1"`, so the first page shipped an enabled
      * "previous" button that announces itself as available and does nothing.
      */
@@ -727,6 +797,19 @@ function slotId(ctx: NodeContext, slot: string): string | undefined {
   return slug || undefined;
 }
 
+/**
+ * A literal line of text, wrapped past `PRINT_WIDTH`: a long sentence baked into a template
+ * (`node.text`) or authored into a slot (`renderSlot`) is the same problem `wrapText` already
+ * solves for a child that arrived as markup instead. `raw` (script/style body) is never wrapped:
+ * reflowing JS or CSS on whitespace would change what it says, not just how it is laid out.
+ */
+function textLines(text: string, depth: number, raw: boolean): string[] {
+  const content = raw ? text : escapeText(text);
+  const line = `${"  ".repeat(depth)}${content}`;
+  if (raw || line.length <= PRINT_WIDTH) return [line];
+  return wrapText(content, depth);
+}
+
 function renderSlot(
   content: SlotContent | undefined,
   depth: number,
@@ -735,7 +818,7 @@ function renderSlot(
   return slotItems(content).flatMap((item) =>
     isUsageTree(item)
       ? renderSignature(item, depth, wiring)
-      : [`${"  ".repeat(depth)}${escapeText(item)}`],
+      : textLines(item, depth, false),
   );
 }
 
@@ -755,8 +838,6 @@ export function emitReact(tree: UsageTree): string {
   return [...lines, "", ...body].join("\n");
 }
 
-const JSX_PRINT_WIDTH = 72;
-
 function jsxOpening(
   name: string,
   props: readonly string[],
@@ -769,34 +850,13 @@ function jsxOpening(
     props.length > 0
       ? `${pad}<${name} ${props.join(" ")}${end}`
       : `${pad}<${name}${end}`;
-  if (inline.length <= JSX_PRINT_WIDTH || props.length === 0) return [inline];
+  if (inline.length <= PRINT_WIDTH || props.length === 0) return [inline];
 
   return [
     `${pad}<${name}`,
     ...props.map((prop) => `${pad}  ${prop}`),
     `${pad}${selfClosing ? "/>" : ">"}`,
   ];
-}
-
-function wrapJsxText(text: string, depth: number): string[] {
-  const pad = "  ".repeat(depth);
-  const width = Math.max(1, JSX_PRINT_WIDTH - pad.length);
-  const words = text.trim().split(/\s+/);
-  const lines: string[] = [];
-  let line = "";
-
-  for (const word of words) {
-    if (line === "") {
-      line = word;
-    } else if (line.length + 1 + word.length <= width) {
-      line += ` ${word}`;
-    } else {
-      lines.push(`${pad}${line}`);
-      line = word;
-    }
-  }
-  if (line !== "") lines.push(`${pad}${line}`);
-  return lines;
 }
 
 function renderJsx(
@@ -810,7 +870,7 @@ function renderJsx(
 
   const from = signature.react.from;
   if (!imports.has(from)) imports.set(from, new Set());
-  // A compound binding is reached through its root — `Accordion.Item` is written that way and
+  // A compound binding is reached through its root: `Accordion.Item` is written that way and
   // imported as `Accordion`, which is the whole point of the namespace.
   imports.get(from)!.add(name.split(".")[0]!);
 
@@ -841,7 +901,7 @@ function renderJsx(
     }
     /*
      * A number goes in braces, because that is what the binding receives. The live island passes the
-     * tree's own value — a number — while this string said `defaultValue="65"`, so the snippet on the
+     * tree's own value (a number) while this string said `defaultValue="65"`, so the snippet on the
      * page and the component beside it were taking different types. Small, and exactly the drift one
      * authoring is supposed to make impossible.
      */
@@ -880,7 +940,7 @@ function renderJsx(
 
     const items = slotItems(content);
 
-    // A slot can hold another signature — a nav link's decorative icon — and on this side it becomes
+    // A slot can hold another signature (a nav link's decorative icon) and on this side it becomes
     // an element in a prop. Emitting only the text ones silently dropped it.
     const composed = items.filter(isUsageTree);
     if (composed.length > 0) {
@@ -912,9 +972,9 @@ function renderJsx(
     const inlineOpen =
       props.length > 0 ? `<${name} ${props.join(" ")}>` : `<${name}>`;
     const inline = `${pad}${inlineOpen}${text}</${name}>`;
-    if (inline.length <= JSX_PRINT_WIDTH) return [inline];
+    if (inline.length <= PRINT_WIDTH) return [inline];
 
-    return [...opening, ...wrapJsxText(text, depth + 1), `${pad}</${name}>`];
+    return [...opening, ...wrapText(text, depth + 1), `${pad}</${name}>`];
   }
 
   return [...opening, ...children, `${pad}</${name}>`];
@@ -956,7 +1016,7 @@ function flattenItem(
 /*
  * `attrs` reach the host element untouched, which is right for markup and wrong for JSX: React
  * spells a handful of HTML attributes in camelCase and warns on the hyphenated form. The snippet a
- * page shows is meant to be pasted, so it has to be the React spelling — `tabindex="0"` on a
+ * page shows is meant to be pasted, so it has to be the React spelling: `tabindex="0"` on a
  * TableScroll printed a console warning in every table demo.
  */
 const JSX_PROP_NAMES: Record<string, string> = {
@@ -988,7 +1048,7 @@ const JSX_PROP_NAMES: Record<string, string> = {
 
 /**
  * The React spelling of a passthrough attribute name. Exported because the live island renders the
- * same tree through `renderTree` — if only the emitter renamed, the snippet and the thing beside it
+ * same tree through `renderTree`; if only the emitter renamed, the snippet and the thing beside it
  * would disagree, which is the one failure this whole shape exists to prevent.
  */
 export function jsxPropName(attr: string): string {

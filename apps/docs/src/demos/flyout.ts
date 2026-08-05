@@ -9,7 +9,7 @@ import type { Translate } from "../i18n";
 /** One option of a Flyout: the value the contract keys on, and the words the reader sees. */
 type Choice = { value: string; label: string; disabled?: boolean };
 
-/** The `items` collection, which stays DATA on both sides — React repeats it, the template expands it. */
+/** The `items` collection, which stays DATA on both sides: React repeats it, the template expands it. */
 const items = (choices: readonly Choice[]) =>
   choices.map(({ value, label, disabled }) => ({
     options: disabled ? { value, disabled: true } : { value },
@@ -37,7 +37,7 @@ export const flyoutTree: UsageTree = {
  * The narrow-rail case, and the only demo whose WIDTH is the subject.
  *
  * That width comes from the rail the control sits in, not from the component, so it is
- * `measure="13.5rem"` on the page and not a wrapper in the tree — the snippet a reader copies must
+ * `measure="13.5rem"` on the page and not a wrapper in the tree: the snippet a reader copies must
  * not carry the consumer's layout.
  */
 export const flyoutRailTree = (t: Translate): UsageTree => ({
@@ -56,7 +56,7 @@ export const flyoutRailTree = (t: Translate): UsageTree => ({
 });
 
 /**
- * Two pickers, one open at a time — the exclusivity is a document event, so it needs two real
+ * Two pickers, one open at a time: the exclusivity is a document event, so it needs two real
  * Flyouts and nothing else.
  *
  * The first one IS the rail demo, reused. The two hand-written copies this replaced had already

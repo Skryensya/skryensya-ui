@@ -18,7 +18,7 @@ function repoWith(replacement: (source: string) => string): string {
   return root;
 }
 
-describe("G1 — the bindings realize their contracts", () => {
+describe("G1: the bindings realize their contracts", () => {
   it("passes the bindings this repo ships", () => {
     expect(checkBindingConformance(REPO)).toEqual([]);
   });
@@ -42,7 +42,7 @@ describe("G1 — the bindings realize their contracts", () => {
 
   it("allows the discriminant a union has to write in both branches", () => {
     // `href?: undefined` / `href: string` is how the tag switch is typed. It restates no value set,
-    // so it is narrowing, not drift — the distinction this gate exists to make.
+    // so it is narrowing, not drift: the distinction this gate exists to make.
     const root = repoWith((source) => source);
 
     expect(checkBindingConformance(root).filter((p) => p.option === "href")).toEqual([]);

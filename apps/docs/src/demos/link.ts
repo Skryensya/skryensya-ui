@@ -3,7 +3,7 @@ import type { Translate } from "../i18n";
 
 /* Link demos shared by both locales. Locale-owned hrefs come from the pages. */
 
-/** Two links in a paragraph — underline always, tone optional. */
+/** Two links in a paragraph: underline always, tone optional. */
 export const linkTree = (t: Translate, href: string): UsageTree => ({
   contract: "typography",
   signature: "Text",

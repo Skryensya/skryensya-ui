@@ -1,5 +1,6 @@
+import { anchorNameFor, bindAnchor, supportsAnchorPositioning } from "@skryensya/core/anchored";
 import { copyButtonAttrs } from "@skryensya/core/copy-button";
-import { createConnectMount } from "../runtime/svelte-hydrate.js";
+import { createConnectMount, uniqueId } from "../runtime/svelte-hydrate.js";
 
 const FEEDBACK_DURATION = 1800;
 const rootSelector = `[${copyButtonAttrs.root}]`;
@@ -44,6 +45,21 @@ export function connectCopyButton(root: HTMLElement): Cleanup {
   }
 
   const label = root.querySelector<HTMLElement>(`[${copyButtonAttrs.label}]`);
+  const flag = root.querySelector<HTMLElement>(`[${copyButtonAttrs.feedback}]`);
+
+  /*
+   * THE ONLY POSITIONING THIS ENHANCER DOES, and it is not positioning: it writes the dashed-ident
+   * that ties this button to its own flag, and the browser lays the rest out (decision 25). Unique
+   * per instance rather than a static name scoped with `anchor-scope`, because a page of docs holds
+   * a copy button per code block and every flag has to find ITS button.
+   *
+   * Skipped where the API is absent: there is no machine here to take over, so the stylesheet
+   * chooses not to render the flag at all rather than place it wrongly.
+   */
+  const unbindAnchor =
+    flag && supportsAnchorPositioning()
+      ? bindAnchor(root, flag, anchorNameFor(root.id || uniqueId("sk-copy-button")))
+      : undefined;
   const idleLabel = label?.textContent ?? "Copy";
   const idleAriaLabel = root.getAttribute("aria-label") ?? idleLabel;
   const successLabel = root.getAttribute(copyButtonAttrs.successLabel) ?? "Copied";
@@ -58,12 +74,18 @@ export function connectCopyButton(root: HTMLElement): Cleanup {
     root.removeAttribute(copyButtonAttrs.state);
     root.setAttribute("aria-label", idleAriaLabel);
     if (label) label.textContent = idleLabel;
+    /* Removed rather than set to "closed": the pattern reads the absence as closed, which is what
+       keeps un-mounted markup and un-scripted markup looking the same as a settled button. */
+    flag?.removeAttribute("data-state");
   };
 
   const paint = (state: CopyState) => {
     root.setAttribute(copyButtonAttrs.state, state);
     root.setAttribute("aria-label", state === "copied" ? successAriaLabel : errorAriaLabel);
     if (label) label.textContent = state === "copied" ? successLabel : errorLabel;
+    /* The pattern's own word for open, which is also what reveals the arrow. Which SENTENCE the
+       flag shows is the stylesheet's business, off the state attribute already on the root. */
+    flag?.setAttribute("data-state", "open");
 
     if (resetTimer !== undefined) window.clearTimeout(resetTimer);
     resetTimer = window.setTimeout(() => {
@@ -91,6 +113,7 @@ export function connectCopyButton(root: HTMLElement): Cleanup {
     root.removeEventListener("click", onClick);
     if (resetTimer !== undefined) window.clearTimeout(resetTimer);
     reset();
+    unbindAnchor?.();
   };
 }
 

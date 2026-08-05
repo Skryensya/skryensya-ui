@@ -1,7 +1,32 @@
 {
   "contracts": {
     "accordion": {
+      "changelog": [
+        {
+          "date": "2026-08-04",
+          "en": "The contract now declares the <code>sk:accordionvaluechange</code> event, so the reference publishes it. The event is neither new nor renamed; what changed is that finding it used to mean reading the prose.",
+          "es": "El contrato declara el evento <code>sk:accordionvaluechange</code>, así que ahora sale publicado en la referencia. El evento no es nuevo ni cambió de nombre: lo que cambió es que antes había que encontrarlo en la prosa.",
+          "kind": "added",
+          "target": "valueChange"
+        },
+        {
+          "date": "2026-08-01",
+          "en": "The enhancer looked for the <code>content</code> part on any descendant, so a section built with <code>TileContent</code> bound its own title as the panel: the section never collapsed and its content stayed exposed to a screen reader. It is now scoped to a direct child.",
+          "es": "El enhancer buscaba la parte <code>content</code> en cualquier descendiente, así que una sección construida con <code>TileContent</code> ataba su propio título como panel: la sección no se plegaba y su contenido quedaba expuesto al lector de pantalla. Ahora la busca sólo como hija directa.",
+          "kind": "fixed",
+          "target": "content"
+        },
+        {
+          "date": "2026-07-29",
+          "en": "First published contract: <code>Accordion</code> with <code>type</code> and <code>collapsible</code>, plus the three signatures that compose it.",
+          "es": "Primera publicación del contrato: <code>Accordion</code> con <code>type</code> y <code>collapsible</code>, y las tres firmas que lo componen.",
+          "kind": "added"
+        }
+      ],
       "css": "@skryensya/core/components/accordion.css",
+      "events": {
+        "valueChange": "sk:accordionvaluechange"
+      },
       "id": "accordion",
       "options": {
         "collapsible": {
@@ -204,9 +229,7 @@
           },
           "template": {
             "also": [
-              "sk-tile--interactive",
-              "sk-tile--expandable",
-              "sk-interactive"
+              "sk-tile--expandable"
             ],
             "attrs": {
               "data-part": "item",
@@ -241,6 +264,10 @@
             }
           },
           "template": {
+            "also": [
+              "sk-tile--interactive",
+              "sk-interactive"
+            ],
             "attrs": {
               "data-part": "trigger",
               "data-scope": "tile",
@@ -254,208 +281,8 @@
         }
       }
     },
-    "alert": {
-      "css": "@skryensya/core/components/alert.css",
-      "id": "alert",
-      "options": {
-        "dismissible": {
-          "attr": "data-dismissible",
-          "default": false,
-          "trueValue": "",
-          "type": "boolean"
-        },
-        "dismissLabel": {
-          "attr": "aria-label",
-          "default": "Dismiss alert",
-          "type": "string"
-        },
-        "presentation": {
-          "attr": "data-presentation",
-          "default": "banner",
-          "type": "enum",
-          "values": [
-            "banner",
-            "accent",
-            "inline"
-          ]
-        },
-        "tone": {
-          "attr": "data-tone",
-          "default": "neutral",
-          "type": "enum",
-          "values": [
-            "neutral",
-            "info",
-            "success",
-            "warning",
-            "danger"
-          ]
-        }
-      },
-      "parts": {
-        "actions": "sk-alert__actions",
-        "content": "sk-alert__content",
-        "description": "sk-alert__description",
-        "dismiss": "sk-alert__dismiss",
-        "icon": "sk-alert__icon",
-        "root": "sk-alert",
-        "title": "sk-alert__title"
-      },
-      "semantics": {
-        "Alert": {
-          "alternatives": [
-            "EmptyState"
-          ],
-          "avoidWhen": [
-            "el mensaje es efímero y se va solo; eso es un Toast",
-            "la región está vacía por no tener datos; eso es un EmptyState"
-          ],
-          "useWhen": [
-            "hay que contar algo que pasó: un error, una confirmación, una advertencia",
-            "el mensaje queda en la página, no desaparece solo"
-          ]
-        }
-      },
-      "signatures": {
-        "Alert": {
-          "host": {
-            "element": "div"
-          },
-          "intent": [
-            "message",
-            "something-went-wrong",
-            "confirmation",
-            "warning-notice"
-          ],
-          "options": [
-            "tone",
-            "presentation",
-            "dismissible",
-            "dismissLabel"
-          ],
-          "react": {
-            "from": "@skryensya/react/alert",
-            "name": "Alert"
-          },
-          "slots": {
-            "actions": {
-              "accepts": "signature",
-              "of": [
-                "Button.action",
-                "Button.navigation",
-                "Link"
-              ]
-            },
-            "children": {
-              "accepts": "node",
-              "required": true
-            },
-            "icon": {
-              "accepts": "signature",
-              "of": [
-                "Icon"
-              ]
-            },
-            "title": {
-              "accepts": "text"
-            }
-          },
-          "template": {
-            "attrsWhen": [
-              {
-                "attrs": {
-                  "aria-live": "assertive",
-                  "role": "alert"
-                },
-                "equals": "danger",
-                "option": "tone"
-              },
-              {
-                "attrs": {
-                  "aria-live": "polite",
-                  "role": "status"
-                },
-                "notEquals": "danger",
-                "option": "tone"
-              }
-            ],
-            "children": [
-              {
-                "attrs": {
-                  "aria-hidden": "true"
-                },
-                "element": "span",
-                "part": "icon",
-                "slot": "icon",
-                "whenGiven": "icon"
-              },
-              {
-                "children": [
-                  {
-                    "element": "p",
-                    "part": "title",
-                    "slot": "title",
-                    "whenGiven": "title"
-                  },
-                  {
-                    "element": "div",
-                    "part": "description",
-                    "slot": "children"
-                  }
-                ],
-                "element": "div",
-                "part": "content"
-              },
-              {
-                "children": [
-                  {
-                    "slot": "actions"
-                  },
-                  {
-                    "also": [
-                      "sk-button",
-                      "sk-interactive"
-                    ],
-                    "attrs": {
-                      "data-icon-only": "",
-                      "data-size": "sm",
-                      "data-variant": "ghost",
-                      "type": "button"
-                    },
-                    "children": [
-                      {
-                        "attrs": {
-                          "data-sk-icon": "close",
-                          "data-sk-icon-size": "md"
-                        },
-                        "element": "span"
-                      }
-                    ],
-                    "element": "button",
-                    "mount": "data-sk-button",
-                    "options": [
-                      "dismissLabel"
-                    ],
-                    "part": "dismiss",
-                    "whenGiven": "dismissible"
-                  }
-                ],
-                "element": "div",
-                "part": "actions",
-                "whenGiven": [
-                  "actions",
-                  "dismissible"
-                ]
-              }
-            ],
-            "element": "div",
-            "host": true,
-            "part": "root"
-          }
-        }
-      }
-    },
     "avatar": {
+      "changelog": [],
       "css": "@skryensya/core/components/avatar.css",
       "id": "avatar",
       "options": {
@@ -686,6 +513,7 @@
       }
     },
     "badge": {
+      "changelog": [],
       "css": "@skryensya/core/components/badge.css",
       "id": "badge",
       "options": {
@@ -836,6 +664,7 @@
       }
     },
     "box": {
+      "changelog": [],
       "css": "@skryensya/core/patterns/box.css",
       "id": "box",
       "options": {
@@ -926,6 +755,7 @@
       }
     },
     "breadcrumb": {
+      "changelog": [],
       "css": "@skryensya/core/components/breadcrumb.css",
       "id": "breadcrumb",
       "options": {
@@ -1083,6 +913,7 @@
           }
         }
       ],
+      "changelog": [],
       "css": "@skryensya/core/components/button.css",
       "id": "button",
       "options": {
@@ -1118,6 +949,8 @@
           "type": "enum",
           "values": [
             "neutral",
+            "subtle",
+            "translucent",
             "primary",
             "danger",
             "ghost"
@@ -1134,8 +967,12 @@
             "Button.navigation"
           ],
           "avoidWhen": [
-            "lleva a otra URL, aunque se vea igual — esa es Button.navigation",
-            "la acción es secundaria dentro de un texto — eso es un Link"
+            {
+              "lleva a otra URL, aunque se vea igual": "esa es Button.navigation"
+            },
+            {
+              "la acción es secundaria dentro de un texto": "eso es un Link"
+            }
           ],
           "useWhen": [
             "ejecuta una acción en la página",
@@ -1148,8 +985,12 @@
             "Button.action"
           ],
           "avoidWhen": [
-            "el destino no está disponible — un enlace no se deshabilita, se renderiza contenido no enlazable",
-            "el enlace vive dentro de un párrafo — eso es un Link"
+            {
+              "el destino no está disponible": "un enlace no se deshabilita, se renderiza contenido no enlazable"
+            },
+            {
+              "el enlace vive dentro de un párrafo": "eso es un Link"
+            }
           ],
           "useWhen": [
             "lleva a una URL y tiene que verse como un botón",
@@ -1254,6 +1095,7 @@
       }
     },
     "calendar": {
+      "changelog": [],
       "css": "@skryensya/core/components/calendar.css",
       "id": "calendar",
       "options": {
@@ -1389,7 +1231,161 @@
         }
       }
     },
+    "callout": {
+      "changelog": [],
+      "css": "@skryensya/core/components/callout.css",
+      "id": "callout",
+      "options": {
+        "tone": {
+          "attr": "data-tone",
+          "default": "neutral",
+          "type": "enum",
+          "values": [
+            "neutral",
+            "info",
+            "success",
+            "warning",
+            "danger"
+          ]
+        }
+      },
+      "parts": {
+        "actions": "sk-callout__actions",
+        "content": "sk-callout__content",
+        "description": "sk-callout__description",
+        "icon": "sk-callout__icon",
+        "root": "sk-callout",
+        "title": "sk-callout__title"
+      },
+      "semantics": {
+        "Callout": {
+          "alternatives": [
+            "EmptyState"
+          ],
+          "avoidWhen": [
+            "el mensaje es efímero y se va solo; eso es un Toast",
+            "la región está vacía por no tener datos; eso es un EmptyState"
+          ],
+          "useWhen": [
+            "hay que contar algo que pasó: un error, una confirmación, una advertencia, o simplemente una nota al margen",
+            "el mensaje queda en la página, no desaparece solo"
+          ]
+        }
+      },
+      "signatures": {
+        "Callout": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "message",
+            "something-went-wrong",
+            "confirmation",
+            "warning-notice",
+            "aside-note"
+          ],
+          "options": [
+            "tone"
+          ],
+          "react": {
+            "from": "@skryensya/react/callout",
+            "name": "Callout"
+          },
+          "slots": {
+            "actions": {
+              "accepts": "signature",
+              "of": [
+                "Button.action",
+                "Button.navigation",
+                "Link"
+              ],
+              "restrictOptions": {
+                "variant": [
+                  "translucent",
+                  "danger"
+                ]
+              }
+            },
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "icon": {
+              "accepts": "signature",
+              "of": [
+                "Icon"
+              ]
+            },
+            "title": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "aria-live": "assertive",
+                  "role": "alert"
+                },
+                "equals": "danger",
+                "option": "tone"
+              },
+              {
+                "attrs": {
+                  "aria-live": "polite",
+                  "role": "status"
+                },
+                "notEquals": "danger",
+                "option": "tone"
+              }
+            ],
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "span",
+                "part": "icon",
+                "slot": "icon",
+                "whenGiven": "icon"
+              },
+              {
+                "children": [
+                  {
+                    "element": "p",
+                    "part": "title",
+                    "slot": "title",
+                    "whenGiven": "title"
+                  },
+                  {
+                    "element": "div",
+                    "part": "description",
+                    "slot": "children"
+                  }
+                ],
+                "element": "div",
+                "part": "content"
+              },
+              {
+                "children": [
+                  {
+                    "slot": "actions"
+                  }
+                ],
+                "element": "div",
+                "part": "actions",
+                "whenGiven": "actions"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "carousel": {
+      "changelog": [],
       "css": "@skryensya/core/components/carousel.css",
       "id": "carousel",
       "options": {
@@ -1560,6 +1556,7 @@
       }
     },
     "checkbox": {
+      "changelog": [],
       "css": "@skryensya/core/components/checkbox.css",
       "id": "checkbox",
       "options": {
@@ -1744,6 +1741,7 @@
       }
     },
     "code-preview": {
+      "changelog": [],
       "css": "@skryensya/core/components/code-preview.css",
       "id": "code-preview",
       "options": {
@@ -1756,7 +1754,7 @@
         },
         "lessLabel": {
           "attr": "data-sk-code-preview-expanded-label",
-          "default": "Ver menos",
+          "default": "Contraer",
           "machineInput": true,
           "type": "string"
         },
@@ -1767,7 +1765,7 @@
         },
         "moreLabel": {
           "attr": "data-more-label",
-          "default": "Ver todo",
+          "default": "Expandir",
           "machineInput": true,
           "type": "string"
         },
@@ -2107,6 +2105,7 @@
       }
     },
     "combobox": {
+      "changelog": [],
       "css": "@skryensya/core/components/combobox.css",
       "id": "combobox",
       "options": {
@@ -2463,6 +2462,7 @@
       }
     },
     "command-palette": {
+      "changelog": [],
       "css": "@skryensya/core/components/command-palette.css",
       "id": "command-palette",
       "options": {
@@ -2669,6 +2669,7 @@
       }
     },
     "component-preview": {
+      "changelog": [],
       "css": "@skryensya/core/components/component-preview.css",
       "id": "component-preview",
       "options": {},
@@ -2695,11 +2696,15 @@
             "CodePreview"
           ],
           "avoidWhen": [
-            "hace falta comparar Vanilla y React del MISMO componente — eso es la maquinaria de este sitio, no un contrato publicado",
-            "el bloque es sólo código, sin nada que mostrar arriba — eso es CodePreview solo"
+            "hace falta comparar Vanilla y React del MISMO componente: eso es la maquinaria de este sitio, no un contrato publicado",
+            {
+              "el bloque es sólo código, sin nada que mostrar arriba": "eso es CodePreview solo"
+            }
           ],
           "useWhen": [
-            "hay que mostrar algo junto a su código fuente — un ejemplo, una demo, un caso de uso",
+            {
+              "hay que mostrar algo junto a su código fuente": "un ejemplo, una demo, un caso de uso"
+            },
             "la superficie de docs no necesita comparar dos bindings ni presets de pantalla"
           ]
         }
@@ -2781,6 +2786,7 @@
       }
     },
     "content": {
+      "changelog": [],
       "css": "@skryensya/core/components/toast.css",
       "id": "content",
       "options": {
@@ -2794,16 +2800,6 @@
           "attr": "aria-label",
           "default": "Dismiss notification",
           "type": "string"
-        },
-        "presentation": {
-          "attr": "data-presentation",
-          "default": "banner",
-          "type": "enum",
-          "values": [
-            "banner",
-            "accent",
-            "inline"
-          ]
         },
         "timeout": {
           "attr": "data-timeout",
@@ -2824,22 +2820,22 @@
         }
       },
       "parts": {
-        "toast": "sk-alert",
-        "toastActions": "sk-alert__actions",
-        "toastContent": "sk-alert__content",
-        "toastDescription": "sk-alert__description",
-        "toastDismiss": "sk-alert__dismiss",
-        "toastIcon": "sk-alert__icon",
+        "toast": "sk-callout",
+        "toastActions": "sk-callout__actions",
+        "toastContent": "sk-callout__content",
+        "toastDescription": "sk-callout__description",
+        "toastDismiss": "sk-toast__dismiss",
+        "toastIcon": "sk-callout__icon",
         "toastRegion": "sk-toast-region",
-        "toastTitle": "sk-alert__title"
+        "toastTitle": "sk-callout__title"
       },
       "semantics": {
         "Toast": {
           "alternatives": [
-            "Alert"
+            "Callout"
           ],
           "avoidWhen": [
-            "el mensaje es parte del contenido y tiene que quedarse; eso es un Alert",
+            "el mensaje es parte del contenido y tiene que quedarse; eso es un Callout",
             "hay que leerlo sí o sí antes de seguir; eso es un Dialog",
             "es un error de un campo; eso va en el Field, pegado al control"
           ],
@@ -2851,10 +2847,10 @@
         },
         "ToastRegion": {
           "alternatives": [
-            "Alert"
+            "Callout"
           ],
           "avoidWhen": [
-            "hay un solo mensaje y es parte de la página; eso es un Alert en su lugar"
+            "hay un solo mensaje y es parte de la página; eso es un Callout en su lugar"
           ],
           "useWhen": [
             "la página va a mostrar toasts: son suyos, y sin región no hay dónde ponerlos",
@@ -2887,7 +2883,6 @@
           "mount": "data-sk-toast",
           "options": [
             "tone",
-            "presentation",
             "dismissible",
             "dismissLabel",
             "timeout"
@@ -3078,6 +3073,7 @@
       }
     },
     "copy-button": {
+      "changelog": [],
       "css": "@skryensya/core/components/copy-button.css",
       "id": "copy-button",
       "options": {
@@ -3119,6 +3115,7 @@
           "type": "enum",
           "values": [
             "neutral",
+            "subtle",
             "primary",
             "danger",
             "ghost"
@@ -3126,6 +3123,7 @@
         }
       },
       "parts": {
+        "feedback": "sk-copy-button__feedback",
         "icon": "sk-copy-button__icon",
         "label": "sk-copy-button__label",
         "root": "sk-copy-button"
@@ -3175,7 +3173,8 @@
           "template": {
             "also": [
               "sk-button",
-              "sk-interactive"
+              "sk-interactive",
+              "sk-anchor"
             ],
             "attrs": {
               "type": "button"
@@ -3223,6 +3222,43 @@
                 "mount": "data-sk-copy-button-label",
                 "part": "label",
                 "slot": "children"
+              },
+              {
+                "also": [
+                  "sk-anchored"
+                ],
+                "attrs": {
+                  "aria-hidden": "true",
+                  "data-sk-placement": "inline-start"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-copy-button-feedback-text": "copied"
+                    },
+                    "element": "span",
+                    "textFromOption": "successLabel"
+                  },
+                  {
+                    "attrs": {
+                      "data-sk-copy-button-feedback-text": "error"
+                    },
+                    "element": "span",
+                    "textFromOption": "errorLabel"
+                  },
+                  {
+                    "also": [
+                      "sk-anchored-arrow"
+                    ],
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "span",
+                "mount": "data-sk-copy-button-feedback",
+                "part": "feedback"
               }
             ],
             "element": "button",
@@ -3233,6 +3269,7 @@
       }
     },
     "date-picker": {
+      "changelog": [],
       "css": "@skryensya/core/components/date-picker.css",
       "id": "date-picker",
       "options": {
@@ -3524,6 +3561,7 @@
       }
     },
     "details": {
+      "changelog": [],
       "css": "@skryensya/core/components/details.css",
       "id": "details",
       "options": {
@@ -3541,6 +3579,7 @@
       "parts": {
         "content": "sk-details__content",
         "group": "sk-details-group",
+        "indicator": "sk-details__indicator",
         "root": "sk-details",
         "summary": "sk-details__summary"
       },
@@ -3555,6 +3594,24 @@
           "useWhen": [
             "una sección que se despliega y no necesita nada de JavaScript",
             "importa que funcione antes de que cargue cualquier script"
+          ]
+        },
+        "Details.Content": {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Details; no tiene quién lo abra"
+          ],
+          "useWhen": [
+            "es lo que la apertura revela"
+          ]
+        },
+        "Details.Summary": {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Details; no tiene qué abrir"
+          ],
+          "useWhen": [
+            "es lo que el estado cerrado muestra y lo que abre la sección"
           ]
         },
         "DetailsGroup": {
@@ -3593,33 +3650,128 @@
           },
           "slots": {
             "children": {
-              "accepts": "node",
+              "accepts": "signature",
+              "cardinality": {
+                "Details.Content": "one",
+                "Details.Summary": "one"
+              },
+              "of": [
+                "Details.Summary",
+                "Details.Content"
+              ],
+              "ordered": true,
               "required": true
-            },
-            "summary": {
+            }
+          },
+          "template": {
+            "element": "details",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "Details.Content": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "disclosure-body",
+            "what-opening-reveals"
+          ],
+          "options": [],
+          "parents": [
+            "Details"
+          ],
+          "react": {
+            "from": "@skryensya/react/details",
+            "name": "Details.Content"
+          },
+          "slots": {
+            "children": {
               "accepts": "node",
               "required": true
             }
           },
           "template": {
+            "element": "div",
+            "host": true,
+            "part": "content",
+            "slot": "children"
+          }
+        },
+        "Details.Summary": {
+          "host": {
+            "element": "summary"
+          },
+          "intent": [
+            "disclosure-trigger",
+            "what-the-closed-state-shows"
+          ],
+          "options": [],
+          "parents": [
+            "Details"
+          ],
+          "react": {
+            "from": "@skryensya/react/details",
+            "name": "Details.Summary"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-interactive"
+            ],
             "children": [
               {
-                "also": [
-                  "sk-interactive"
-                ],
-                "element": "summary",
-                "part": "summary",
-                "slot": "summary"
+                "slot": "children"
               },
               {
-                "element": "div",
-                "part": "content",
-                "slot": "children"
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-state": "closed"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "chevron-down",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span"
+                  },
+                  {
+                    "attrs": {
+                      "data-state": "open"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "chevron-up",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span"
+                  }
+                ],
+                "element": "span",
+                "part": "indicator"
               }
             ],
-            "element": "details",
+            "element": "summary",
             "host": true,
-            "part": "root"
+            "part": "summary"
           }
         },
         "DetailsGroup": {
@@ -3655,6 +3807,7 @@
       }
     },
     "dialog": {
+      "changelog": [],
       "css": "@skryensya/core/components/dialog.css",
       "id": "dialog",
       "options": {
@@ -3666,6 +3819,12 @@
         },
         "open": {
           "attr": "open",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "vaul": {
+          "attr": "data-sk-dialog-vaul",
           "default": false,
           "trueValue": "",
           "type": "boolean"
@@ -3708,7 +3867,8 @@
           ],
           "options": [
             "closeLabel",
-            "open"
+            "open",
+            "vaul"
           ],
           "react": {
             "from": "@skryensya/react/dialog",
@@ -3728,7 +3888,24 @@
             }
           },
           "template": {
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "data-edge": "block-end"
+                },
+                "given": true,
+                "option": "vaul"
+              }
+            ],
             "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "data-part": "handle"
+                },
+                "element": "div",
+                "whenGiven": "vaul"
+              },
               {
                 "children": [
                   {
@@ -3801,6 +3978,7 @@
       }
     },
     "empty-state": {
+      "changelog": [],
       "css": "@skryensya/core/components/empty-state.css",
       "id": "empty-state",
       "options": {},
@@ -3814,11 +3992,11 @@
       "semantics": {
         "EmptyState": {
           "alternatives": [
-            "Alert"
+            "Callout"
           ],
           "avoidWhen": [
             "los datos están cargando; eso es un Loader o Placeholder",
-            "hubo un error; ahí el mensaje es un Alert, no un vacío"
+            "hubo un error; ahí el mensaje es un Callout, no un vacío"
           ],
           "useWhen": [
             "una lista o una región no tiene nada que mostrar, y hay que decir por qué",
@@ -3901,6 +4079,7 @@
       }
     },
     "field": {
+      "changelog": [],
       "css": "@skryensya/core/components/field.css",
       "id": "field",
       "options": {
@@ -4052,6 +4231,7 @@
       }
     },
     "file-upload": {
+      "changelog": [],
       "css": "@skryensya/core/components/file-upload.css",
       "id": "file-upload",
       "options": {
@@ -4220,6 +4400,7 @@
       }
     },
     "flyout": {
+      "changelog": [],
       "css": "@skryensya/core/components/flyout.css",
       "id": "flyout",
       "options": {
@@ -4438,6 +4619,7 @@
       }
     },
     "icon": {
+      "changelog": [],
       "css": "@skryensya/core/patterns/icon.css",
       "id": "icon",
       "options": {
@@ -4560,6 +4742,7 @@
           }
         }
       ],
+      "changelog": [],
       "css": "@skryensya/core/patterns/image-frame.css",
       "id": "image-frame",
       "options": {
@@ -4647,7 +4830,9 @@
             "Avatar.initials"
           ],
           "avoidWhen": [
-            "es la identidad circular de una persona — eso es un Avatar",
+            {
+              "es la identidad circular de una persona": "eso es un Avatar"
+            },
             "no hay medio que mostrar, ni src ni contenido autoreado; el marco vacío es una caja vacía, no un placeholder"
           ],
           "useWhen": [
@@ -4725,6 +4910,7 @@
       }
     },
     "input": {
+      "changelog": [],
       "css": "@skryensya/core/components/input.css",
       "id": "input",
       "options": {
@@ -4887,6 +5073,7 @@
       }
     },
     "kbd": {
+      "changelog": [],
       "css": "@skryensya/core/components/kbd.css",
       "id": "kbd",
       "options": {},
@@ -4934,6 +5121,7 @@
       }
     },
     "layout": {
+      "changelog": [],
       "css": "@skryensya/core/patterns/layout.css",
       "id": "layout",
       "options": {
@@ -5202,6 +5390,7 @@
       }
     },
     "list": {
+      "changelog": [],
       "css": "@skryensya/core/components/list.css",
       "id": "list",
       "options": {
@@ -5548,6 +5737,7 @@
       }
     },
     "loader": {
+      "changelog": [],
       "css": "@skryensya/core/components/loader.css",
       "id": "loader",
       "options": {
@@ -5614,7 +5804,7 @@
             "el progreso es medible; eso es un Progress, que ya se anuncia solo"
           ],
           "useWhen": [
-            "la espera ya se ve —hay esqueletos, o una barra— y falta que además se anuncie",
+            "la espera ya se ve (hay esqueletos, o una barra) y falta que además se anuncie",
             "el estado de carga tiene que existir para un lector de pantalla sin dibujar nada"
           ]
         }
@@ -5696,6 +5886,7 @@
       }
     },
     "media-gradient": {
+      "changelog": [],
       "css": "@skryensya/core/patterns/media-gradient.css",
       "id": "media-gradient",
       "options": {
@@ -5816,6 +6007,7 @@
       }
     },
     "menu": {
+      "changelog": [],
       "css": "@skryensya/core/components/menu.css",
       "id": "menu",
       "options": {
@@ -6113,6 +6305,7 @@
           }
         }
       ],
+      "changelog": [],
       "css": "@skryensya/core/patterns/nav-list.css",
       "id": "nav-list",
       "options": {
@@ -6149,8 +6342,12 @@
       "semantics": {
         "NavList": {
           "avoidWhen": [
-            "son acciones de una aplicación, no destinos — eso es un menú, con role=\"menu\"",
-            "es una ruta jerárquica hasta la página actual — eso es un Breadcrumb"
+            {
+              "son acciones de una aplicación, no destinos": "eso es un menú, con role=\"menu\""
+            },
+            {
+              "es una ruta jerárquica hasta la página actual": "eso es un Breadcrumb"
+            }
           ],
           "useWhen": [
             "la lista de destinos de un sidebar, un navbar o un drawer",
@@ -6159,7 +6356,9 @@
         },
         "NavListGroup": {
           "avoidWhen": [
-            "hay un solo destino y ningún rótulo — el grupo sigue siendo obligatorio, no es opcional"
+            {
+              "hay un solo destino y ningún rótulo": "el grupo sigue siendo obligatorio, no es opcional"
+            }
           ],
           "useWhen": [
             "agrupa destinos bajo un rótulo",
@@ -6171,7 +6370,9 @@
             "Button.navigation"
           ],
           "avoidWhen": [
-            "dispara una acción en vez de navegar — eso es Button.action"
+            {
+              "dispara una acción en vez de navegar": "eso es Button.action"
+            }
           ],
           "useWhen": [
             "un destino de la lista",
@@ -6331,6 +6532,7 @@
       }
     },
     "navbar": {
+      "changelog": [],
       "css": "@skryensya/core/components/navbar.css",
       "id": "navbar",
       "options": {},
@@ -6454,6 +6656,7 @@
       }
     },
     "number-field": {
+      "changelog": [],
       "css": "@skryensya/core/components/number-field.css",
       "id": "number-field",
       "options": {
@@ -6684,6 +6887,7 @@
       }
     },
     "pagination": {
+      "changelog": [],
       "css": "@skryensya/core/components/pagination.css",
       "id": "pagination",
       "options": {
@@ -6879,6 +7083,7 @@
       }
     },
     "placeholder": {
+      "changelog": [],
       "css": "@skryensya/core/components/placeholder.css",
       "id": "placeholder",
       "options": {
@@ -6940,6 +7145,7 @@
       }
     },
     "popover": {
+      "changelog": [],
       "css": "@skryensya/core/components/popover.css",
       "id": "popover",
       "options": {
@@ -7236,6 +7442,7 @@
       }
     },
     "process-list": {
+      "changelog": [],
       "css": "@skryensya/core/components/process-list.css",
       "id": "process-list",
       "options": {},
@@ -7344,6 +7551,7 @@
       }
     },
     "progress": {
+      "changelog": [],
       "css": "@skryensya/core/components/progress.css",
       "id": "progress",
       "options": {
@@ -7442,6 +7650,7 @@
       }
     },
     "radio-group": {
+      "changelog": [],
       "css": "@skryensya/core/components/radio-group.css",
       "id": "radio-group",
       "options": {
@@ -7621,6 +7830,7 @@
       }
     },
     "segmented": {
+      "changelog": [],
       "css": "@skryensya/core/components/segmented.css",
       "id": "segmented",
       "options": {
@@ -7742,6 +7952,7 @@
       }
     },
     "select": {
+      "changelog": [],
       "css": "@skryensya/core/components/select.css",
       "id": "select",
       "options": {
@@ -8101,6 +8312,7 @@
       }
     },
     "sidebar": {
+      "changelog": [],
       "css": "@skryensya/core/components/sidebar.css",
       "id": "sidebar",
       "options": {
@@ -8386,6 +8598,7 @@
       }
     },
     "slider": {
+      "changelog": [],
       "css": "@skryensya/core/components/slider.css",
       "id": "slider",
       "options": {
@@ -8483,6 +8696,7 @@
       }
     },
     "split-button": {
+      "changelog": [],
       "css": "@skryensya/core/components/split-button.css",
       "id": "split-button",
       "options": {},
@@ -8562,6 +8776,7 @@
       }
     },
     "stat": {
+      "changelog": [],
       "css": "@skryensya/core/components/stat.css",
       "id": "stat",
       "options": {
@@ -8697,6 +8912,7 @@
       }
     },
     "steps": {
+      "changelog": [],
       "css": "@skryensya/core/components/steps.css",
       "id": "steps",
       "options": {},
@@ -8819,6 +9035,7 @@
       }
     },
     "switch": {
+      "changelog": [],
       "css": "@skryensya/core/components/switch.css",
       "id": "switch",
       "options": {
@@ -8939,6 +9156,7 @@
       }
     },
     "table": {
+      "changelog": [],
       "css": "@skryensya/core/components/table.css",
       "id": "table",
       "options": {
@@ -9358,6 +9576,7 @@
       }
     },
     "table-pager": {
+      "changelog": [],
       "css": "@skryensya/core/patterns/table-pager.css",
       "id": "table-pager",
       "options": {
@@ -9684,6 +9903,7 @@
           }
         }
       ],
+      "changelog": [],
       "css": "@skryensya/core/components/tabs.css",
       "id": "tabs",
       "options": {
@@ -9725,13 +9945,17 @@
             "NavList"
           ],
           "avoidWhen": [
-            "el contenido de cada sección es largo y el usuario querría verlo todo junto — eso es un Accordion o una página con secciones",
-            "cada pestaña navega a otra URL — eso es un NavList",
+            "el contenido de cada sección es largo y el usuario querría verlo todo junto: eso es un Accordion o una página con secciones",
+            {
+              "cada pestaña navega a otra URL": "eso es un NavList"
+            },
             "hay una sola sección; una pestaña sola no es una elección"
           ],
           "useWhen": [
             "varias secciones comparten una región y sólo una se ve a la vez",
-            "el contenido es hermano, no una jerarquía — todas las pestañas están al mismo nivel",
+            {
+              "el contenido es hermano, no una jerarquía": "todas las pestañas están al mismo nivel"
+            },
             "el usuario alterna entre vistas del mismo objeto (resumen, actividad, ajustes)"
           ]
         }
@@ -9842,6 +10066,7 @@
       }
     },
     "tag": {
+      "changelog": [],
       "css": "@skryensya/core/components/tag.css",
       "id": "tag",
       "options": {
@@ -9957,6 +10182,7 @@
       }
     },
     "theme-toggle": {
+      "changelog": [],
       "css": "@skryensya/core/components/theme-toggle.css",
       "id": "theme-toggle",
       "options": {
@@ -10083,6 +10309,7 @@
       }
     },
     "tile": {
+      "changelog": [],
       "css": "@skryensya/core/components/tile.css",
       "id": "tile",
       "options": {
@@ -10323,9 +10550,7 @@
           },
           "template": {
             "also": [
-              "sk-tile--interactive",
-              "sk-tile--expandable",
-              "sk-interactive"
+              "sk-tile--expandable"
             ],
             "attrs": {
               "data-part": "root",
@@ -10395,6 +10620,10 @@
             }
           },
           "template": {
+            "also": [
+              "sk-tile--interactive",
+              "sk-interactive"
+            ],
             "attrs": {
               "data-part": "trigger",
               "data-scope": "tile",
@@ -10907,6 +11136,7 @@
       }
     },
     "time-field": {
+      "changelog": [],
       "css": "@skryensya/core/components/time-field.css",
       "id": "time-field",
       "options": {
@@ -11064,6 +11294,7 @@
       }
     },
     "toc": {
+      "changelog": [],
       "css": "@skryensya/core/components/toc.css",
       "id": "toc",
       "options": {
@@ -11091,12 +11322,18 @@
             "NavList"
           ],
           "avoidWhen": [
-            "los destinos son páginas distintas, no secciones de ESTA página — eso es NavList",
-            "el documento es corto y cabe entero en una pantalla — un índice no ahorra nada ahí"
+            {
+              "los destinos son páginas distintas, no secciones de ESTA página": "eso es NavList"
+            },
+            {
+              "el documento es corto y cabe entero en una pantalla": "un índice no ahorra nada ahí"
+            }
           ],
           "useWhen": [
             "un documento largo tiene varias secciones (h2/h3) y el lector necesita saltar entre ellas",
-            "hace falta ver, mientras se lee, en qué sección se está — el \"current\" lo mueve el scroll-spy"
+            {
+              "hace falta ver, mientras se lee, en qué sección se está": "el \"current\" lo mueve el scroll-spy"
+            }
           ]
         }
       },
@@ -11245,6 +11482,7 @@
       }
     },
     "toolbar": {
+      "changelog": [],
       "css": "@skryensya/core/components/toolbar.css",
       "id": "toolbar",
       "options": {
@@ -11396,6 +11634,7 @@
       }
     },
     "tooltip": {
+      "changelog": [],
       "css": "@skryensya/core/components/tooltip.css",
       "id": "tooltip",
       "options": {
@@ -11518,6 +11757,7 @@
       }
     },
     "tree-view": {
+      "changelog": [],
       "css": "@skryensya/core/components/tree-view.css",
       "id": "tree-view",
       "options": {
@@ -11758,6 +11998,7 @@
       }
     },
     "typography": {
+      "changelog": [],
       "css": "@skryensya/core/components/typography.css",
       "id": "typography",
       "options": {
@@ -12085,6 +12326,7 @@
       }
     },
     "vaul": {
+      "changelog": [],
       "css": "@skryensya/core/patterns/vaul.css",
       "id": "vaul",
       "options": {
@@ -12231,6 +12473,7 @@
       }
     },
     "wrapper": {
+      "changelog": [],
       "css": "@skryensya/core/patterns/wrapper.css",
       "id": "wrapper",
       "options": {
@@ -12298,5 +12541,5 @@
     }
   },
   "schemaVersion": "2.0",
-  "sourceHash": "3e50a2a874f00562"
+  "sourceHash": "1f0709f22b6fcaf9"
 }

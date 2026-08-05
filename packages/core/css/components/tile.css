@@ -207,15 +207,30 @@
     color: var(--sk-color-text-disabled);
   }
 
-  /* A disclosure changes between two named icon roles. It never rotates a typographic glyph: the
-   * set supplies chevron-down and chevron-up, and the trigger state chooses the visible icon. */
+  /*
+   * A disclosure changes between two named icon roles. It never rotates a typographic glyph: the
+   * set supplies chevron-down and chevron-up, and the trigger state chooses the visible icon.
+   *
+   * Sized and shaped like an icon-only BUTTON: `--size-control-md` square, `--radius-control`
+   * corners, the glyph at `--size-icon-lg` the same way `.sk-button[data-size="md"] .sk-icon`
+   * scales up (a control face is bigger than a bare inline icon, ADR at button.css). It stays a
+   * `<span>`, never a nested `<button>`: the whole trigger already IS the control, and the mark
+   * is `aria-hidden` on purpose, because a second announced control would say "expanded" twice. What it
+   * borrows from a button is only the box, not the semantics or a second hover fill: the state
+   * layer already paints the row it sits inside.
+   */
   .sk-tile__chevron {
     display: inline-grid;
     place-items: center;
     flex: none;
-    inline-size: 1rem;
-    block-size: 1rem;
+    inline-size: var(--size-control-md);
+    block-size: var(--size-control-md);
+    border-radius: var(--radius-control);
     color: var(--sk-color-text-secondary);
+  }
+
+  .sk-tile__chevron .sk-icon {
+    --sk-icon-size: var(--size-icon-lg);
   }
 
   .sk-tile__chevron > [data-state] { display: none; }

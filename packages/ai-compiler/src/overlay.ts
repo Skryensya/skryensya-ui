@@ -70,9 +70,9 @@ export function readOverlays(dir: string): OverlayReadResult {
 
     /*
      * `alternatives` is a POINTER, not prose: an agent reads "use X instead" and asks for X. Four of
-     * these named something no signature declares — `Avatar` where the signature is
+     * these named something no signature declares: `Avatar` where the signature is
      * `Avatar.initials`, `Button` where it is `Button.action`, and two families that are not
-     * published at all — so following the advice meant asking for a signature that does not exist.
+     * published at all, so following the advice meant asking for a signature that does not exist.
      *
      * Nothing was checking, because a dangling pointer costs nothing until an agent follows it.
      */

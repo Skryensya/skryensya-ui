@@ -92,11 +92,11 @@ const manualReduction = `.legacy-glass {
 >
   <h1>Transparency</h1>
   <p class="lede">
-    A translucent surface allows the context to be seen without giving it contrast. The <code>sk-translucent</code> class composes alpha and backdrop blur on known components, but always starts from an opaque surface. If the browser does not understand the preference—or the person asks to reduce transparency—the content retains exactly the same box and reading.
+    A translucent surface allows the context to be seen without giving it contrast. The <code>sk-translucent</code> class composes alpha and backdrop blur on known components, but always starts from an opaque surface. If the browser does not understand the preference, or the person asks to reduce transparency, the content retains exactly the same box and reading.
   </p>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
       <p>
         <strong><code>prefers-reduced-transparency</code> remains experimental. </strong> That is why the system does not depend on the <code>reduce</code> branch to be secure: transparency and blur are only enabled under <code>no-preference</code>. Without support, the fallback is opaque.
       </p>

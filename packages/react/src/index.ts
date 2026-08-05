@@ -1,4 +1,4 @@
-export { Alert } from "./components/alert.js";
+export { Callout } from "./components/callout.js";
 export { Accordion } from "./components/accordion.js";
 export type {
   AccordionContentProps,
@@ -6,7 +6,7 @@ export type {
   AccordionProps,
   AccordionTriggerProps,
 } from "./components/accordion.js";
-export type { AlertProps } from "./components/alert.js";
+export type { CalloutProps } from "./components/callout.js";
 export { Avatar, AvatarGroup } from "./components/avatar.js";
 export type { AvatarGroupProps, AvatarProps } from "./components/avatar.js";
 export { Badge } from "./components/badge.js";
@@ -43,6 +43,8 @@ export type {
   ProcessListItemProps,
   ProcessListProps,
 } from "./components/process-list.js";
+export { Changelog, ChangelogEntry } from "./components/changelog.js";
+export type { ChangelogEntryProps, ChangelogProps } from "./components/changelog.js";
 export { Carousel, CarouselSlide } from "./components/carousel.js";
 export type {
   CarouselHandle,

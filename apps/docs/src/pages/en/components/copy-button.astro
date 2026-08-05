@@ -11,7 +11,8 @@ const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
 
-const css = `@import "@skryensya/core/components/button.css";
+const css = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/copy-button.css";`;
 
 const js = `import { mountIcons } from "@skryensya/vanilla/icon";
@@ -49,6 +50,17 @@ await initComponents();`;
     </li>
     <li>
       The <code>copied</code> state lasts briefly and is announced as <strong>Copied</strong> (or whatever label you authorize in <code>data-sk-copy-button-success-label</code>).
+    </li>
+    <li>
+      That same label shows beside the button as a small flag with an arrow, for exactly as long as
+      the check icon, in the success tone (or danger when the copy failed). It is not a tooltip: it
+      never takes the pointer, so a second click still lands on the button.
+    </li>
+    <li>
+      The flag is placed by the <a href="/en/anchoring">Anchoring</a> pattern: the root also carries
+      <code>sk-anchor</code> and the flag <code>sk-anchored</code> with
+      <code>data-sk-placement="inline-start"</code>. Where the browser has no anchor positioning it
+      does not render, since nothing here would place it; the icon and the live region are unchanged.
     </li>
     <li>
       Icons are placeholders <code>data-sk-icon</code>; The set is linked by <code>mountIcons</code> (ADR-15).

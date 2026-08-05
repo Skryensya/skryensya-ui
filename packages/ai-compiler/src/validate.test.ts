@@ -37,7 +37,7 @@ describe("signatures over one export", () => {
 });
 
 describe("composition", () => {
-  it("catches the link that skips its group — the invalid markup a paragraph used to warn about", () => {
+  it("catches the link that skips its group, the invalid markup a paragraph used to warn about", () => {
     const tree: UsageTree = {
       contract: "nav-list",
       signature: "NavList",
@@ -122,7 +122,7 @@ describe("accessibility", () => {
   });
 });
 
-describe("the empty frame — the bug a static check used to bless", () => {
+describe("the empty frame: the bug a static check used to bless", () => {
   it("rejects a frame with no source of content at all", () => {
     // This exact tree passed every requires/forbids/enum check the old system had, and rendered an
     // empty box. `exactlyOneOf` is what makes it an error instead of a clean result.
@@ -177,13 +177,13 @@ describe("advisories stay signal", () => {
       },
     };
 
-    // The landmark rule cannot be settled from a tree, so it is advisory — but firing it at someone
+    // The landmark rule cannot be settled from a tree, so it is advisory, but firing it at someone
     // who already passed aria-label is how an agent learns to ignore advisories.
     expect(validateUsageTree(named).problems).toEqual([]);
   });
 });
 
-describe("collections — entries are checked, not just counted", () => {
+describe("collections: entries are checked, not just counted", () => {
   const tabs = (items: unknown): UsageTree =>
     ({ contract: "tabs", signature: "Tabs", attrs: { "aria-label": "X" }, slots: { items } }) as UsageTree;
 
@@ -222,7 +222,7 @@ describe("collections — entries are checked, not just counted", () => {
   });
 });
 
-describe("order and cardinality — what a list of allowed signatures cannot say", () => {
+describe("order and cardinality: what a list of allowed signatures cannot say", () => {
   const table = (children: unknown): UsageTree =>
     ({ contract: "table", signature: "Table", children }) as UsageTree;
 

@@ -19,7 +19,7 @@
     --sk-component-preview-mat-bg: var(--color-bg-surface-sunken);
     /* The halftone. The dots are the accent, heavily diluted: the mat has to be recognisable as
      * the system's own chrome without competing with the specimen sitting on it. Dot, gap and
-     * color are hooks — set the color to `transparent` for a flat mat. */
+     * color are hooks: set the color to `transparent` for a flat mat. */
     --sk-component-preview-mat-dot-color: color-mix(
       in oklab,
       var(--color-border-accent) 55%,
@@ -44,9 +44,18 @@
     --sk-component-preview-grip-fg: var(--color-border-default);
     --sk-component-preview-grip-active-fg: var(--color-border-accent);
 
+    /*
+     * NOT `overflow: hidden`: that clipped the card's square-cornered sections (header, code) to
+     * the outer rounded border, and it is exactly what breaks `position: sticky` for anything
+     * inside (the code block's copy button, `code-preview.css`): sticky positions against the
+     * nearest ancestor whose `overflow` is not `visible`, and this container never scrolls on its
+     * own, so the button would stay bolted to the top of a box that just slides away with the
+     * page. Same fix as the standalone `.sk-code-preview`: move the clip DOWN to the sections
+     * that actually need rounded corners (the header below, the nested code-preview's viewport in
+     * `code-preview.css`) and leave this box `visible`, so sticky reaches through to the page.
+     */
     display: grid;
     min-inline-size: 0;
-    overflow: hidden;
     border: 1px solid var(--sk-component-preview-border-color);
     border-radius: var(--radius-surface);
     background: var(--sk-component-preview-bg);
@@ -72,7 +81,7 @@
    * The React STAGE host is the one panel this rule must not turn into a block: it is a slot host
    * with no box of its own, and the iframe inside it is the real stage that the preview grid places
    * in row 2. Forced to `block` it became a grid item itself, so the stage landed in a row of its
-   * own BELOW the resizer — the grip drew above the demo instead of on its bottom edge, and the
+   * own BELOW the resizer: the grip drew above the demo instead of on its bottom edge, and the
    * React binding sat 12px lower than the Vanilla one it is supposed to match exactly.
    */
   :root[data-sk-component-preview-pref="react"]
@@ -100,6 +109,10 @@
     gap: var(--space-inline-sm);
     padding: var(--space-inset-sm) var(--space-inset-md);
     border-block-end: 1px solid var(--sk-component-preview-border-color);
+    /* Always the card's first section (the Astro template renders it unconditionally): this is
+       what used to be the outer overflow:hidden clip's job for this one corner. */
+    border-start-start-radius: var(--radius-surface);
+    border-start-end-radius: var(--radius-surface);
     background: var(--sk-component-preview-header-bg);
   }
 
@@ -145,7 +158,6 @@
     --sk-component-preview-screen-max-block-size: 80svh;
 
     display: block;
-    visibility: hidden;
     /* min() so a preset wider than the docs column degrades to the column instead of overflowing. */
     inline-size: min(var(--sk-component-preview-screen-inline-size), 100%);
     min-inline-size: 0;
@@ -160,8 +172,17 @@
   }
 
   /*
+   * Hidden until ready is an IFRAME concern: its content loads asynchronously, so there is a real
+   * instant with nothing to show. `ComponentPreview.bare`'s stage is a plain element: its content
+   * is there at first paint, same as any other composed signature, so this never applies to it.
+   */
+  iframe.sk-component-preview__stage {
+    visibility: hidden;
+  }
+
+  /*
    * JS owns the number in these three states (the reader's drag, the keyboard nudge it leaves
-   * behind, and fitFrame's initial auto-fit) — a CSS transition would either lag visibly behind
+   * behind, and fitFrame's initial auto-fit): a CSS transition would either lag visibly behind
    * the pointer or animate the very first paint instead of snapping to the measured height. Only
    * a screen PRESET switch is a pure attribute/custom-property change with no JS writing `height`
    * itself, so that is the one case left free to transition.
@@ -217,14 +238,14 @@
    *
    * It is a HALFTONE, not a flat fill: at a preset the frame no longer fills the card, and a flat
    * mat in a near-surface tone reads as more demo rather than as the wall behind it. A sparse dot
-   * grid in the accent is unmistakably chrome — no component in the system paints one — and points
+   * grid in the accent is unmistakably chrome (no component in the system paints one) and points
    * stay quiet at any width: nothing lines up with the demo's own edges, and there is no diagonal
    * for the renderer to alias into ropes.
    *
    * The grid is even; the TONE ramps. A mask was the obvious way to do that and the wrong one: it
    * cannot tell a dot from a fill, so it punched a hole in the mat itself and the frame ended up
    * sitting in a void. Veiling with the mat's own color ramps only what is drawn on the wall, and
-   * never all the way to nothing — the grid stays legible under the frame, just quieter.
+   * never all the way to nothing: the grid stays legible under the frame, just quieter.
    */
   .sk-component-preview:has(
     > .sk-component-preview__stage[data-sk-component-preview-screen]
@@ -289,7 +310,7 @@
   }
 
   /*
-   * Reserved viewports still need a floor after fitFrame writes an explicit content height —
+   * Reserved viewports still need a floor after fitFrame writes an explicit content height,
    * except once the height stops being the content's: a reader drag or a screen preset both own
    * both axes, and the floor would fight either. These selectors are the most specific in the file,
    * so a preset that is deliberately shorter than the reserve needs the exclusion here, not a
@@ -306,16 +327,35 @@
     min-block-size: var(--sk-component-preview-stage-min-block-size);
   }
 
-  .sk-component-preview__stage:is(
-    [data-sk-component-preview-frame-ready],
-    [data-sk-component-preview-frame-error]
-  ) ~ .sk-component-preview__loading {
+  /*
+   * The loader hides once the VISIBLE stage is ready: not "the Vanilla one", which a plain `~`
+   * sibling rule would say by accident. The React stage is not a sibling of the loader: it is
+   * `.sk-component-preview__react-stage > iframe`, one level deeper, because that wrapper is the
+   * island's mount host. A `~` selector can never reach through it, so with binding tabs the loader
+   * tracked Vanilla's readiness alone: on a page where Vanilla settles first and React is the
+   * bound preference, the spinner vanished while the reader was looking at an empty React stage
+   * still loading behind it. `:has()` reaches into either shape, and `:not([hidden])` is what makes
+   * this the ACTIVE stage's readiness rather than "both, always": the hidden one is background
+   * work the reader is not looking at yet, so its own timing should never hold the loader up.
+   */
+  .sk-component-preview:has(
+    > .sk-component-preview__stage[data-sk-component-preview-binding="vanilla"]:not([hidden]):is(
+        [data-sk-component-preview-frame-ready],
+        [data-sk-component-preview-frame-error]
+      )
+  ) .sk-component-preview__loading,
+  .sk-component-preview:has(
+    > .sk-component-preview__react-stage:not([hidden]) iframe:is(
+        [data-sk-component-preview-frame-ready],
+        [data-sk-component-preview-frame-error]
+      )
+  ) .sk-component-preview__loading {
     display: none;
   }
 
   /*
    * The stage's bottom edge is the handle, textarea-style: it straddles the border instead of
-   * adding a rail, so a short demo card stays short. Hidden until the frame paints — during
+   * adding a rail, so a short demo card stays short. Hidden until the frame paints: during
    * loading there is nothing to size, and the grip would float over the spinner.
    */
   .sk-component-preview__resizer {
@@ -341,8 +381,8 @@
   }
 
   /*
-   * A screen preset stays grabbable rather than vanishing. It used to hide outright — "a preset
-   * owns the height, so the grip would be a second, contradicting owner" — but the preset is a
+   * A screen preset stays grabbable rather than vanishing. It used to hide outright ("a preset
+   * owns the height, so the grip would be a second, contradicting owner") but the preset is a
    * SHARED, PERSISTED preference: choosing one anywhere on the site leaves every other preview's
    * grip invisible with no visible cause, which reads as "resize is broken" rather than "a device
    * preset is on". The grip's own pointerdown now clears the preset back to free before it starts
@@ -409,7 +449,7 @@
    * and neither is a box: `display: contents` erases them so the iframe is placed by the preview
    * grid directly, exactly as the Vanilla stage is.
    *
-   * `:not([hidden])` matters — `display: contents` would otherwise beat the UA's `[hidden]` rule
+   * `:not([hidden])` matters: `display: contents` would otherwise beat the UA's `[hidden]` rule
    * and the React stage would keep painting under the Vanilla one when the binding toggle hides it.
    */
   .sk-component-preview__react-stage:not([hidden]),
@@ -418,7 +458,7 @@
   }
 
   .sk-component-preview__frame-body {
-    /* One inset on every side — axis-asymmetric padding makes the specimen look top-heavy. */
+    /* One inset on every side: axis-asymmetric padding makes the specimen look top-heavy. */
     --sk-component-preview-stage-padding: var(--space-inset-lg);
 
     display: flex;
@@ -456,7 +496,7 @@
    * A layout whose content cannot size it takes the whole line.
    *
    * The stage is a wrapping ROW of specimens, so each top-level child is a flex item sized by its
-   * content — and Progress has no content to be sized by: it declares `inline-size: 100%`, which is
+   * content, and Progress has no content to be sized by: it declares `inline-size: 100%`, which is
    * 100% of nothing inside a shrink-to-fit Stack. The bars measured 0 wide and the stage painted
    * empty, which is what a usage tree that wraps its demo in a layout primitive gets by default.
    *
@@ -483,8 +523,8 @@
   /*
    * A realistic measure for the specimen, without putting it in the snippet.
    *
-   * Some components only read correctly at a real column width — a settings List stretched across the
-   * whole stage looks like nothing anyone ships — but that width comes from the CONSUMER's layout, so
+   * Some components only read correctly at a real column width: a settings List stretched across the
+   * whole stage looks like nothing anyone ships, but that width comes from the CONSUMER's layout, so
    * it must not appear in the markup a reader copies. Capping here keeps the demo honest and the
    * snippet clean; the alternative (a wrapper `<div>` authored into the slot, with `code=` passed
    * separately) is two sources of truth for one demo, which is what the usage tree exists to end.
@@ -534,7 +574,7 @@
 
   /*
    * Screen-size toggle: one icon-only button that cycles free → tablet → mobile → free on click,
-   * the same stacked-faces cross-fade as ThemeToggle (components/theme-toggle.css) — three glyphs
+   * the same stacked-faces cross-fade as ThemeToggle (components/theme-toggle.css): three glyphs
    * share one grid cell, `data-value` on the button picks which is opaque. Composes onto
    * `.sk-button` (ghost + icon-only); this rule only owns the face cross-fade. The `display: grid`
    * override that stacks the faces lives unlayered below, same reason ThemeToggle's does: `.sk-button

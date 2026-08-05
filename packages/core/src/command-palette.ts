@@ -92,7 +92,7 @@ export function commandPaletteOptionContext(entry: CommandPaletteEntry): string 
 }
 
 /*
- * COMMAND PALETTE, the contract — the last of the ten pages that had none.
+ * COMMAND PALETTE, the contract: the last of the ten pages that had none.
  *
  * The enhancer shipped with no React counterpart, so this could not be a contract at all: one
  * binding is not a contract, it is a script. Writing the missing half is what made it possible, the
@@ -103,7 +103,7 @@ export function commandPaletteOptionContext(entry: CommandPaletteEntry): string 
  * INDEX, and the enhancer reads that from a JSON script the way authored markup has to.
  *
  * `aria-expanded` is NOT written here, and that is a fix rather than an omission. The authored
- * markup on the docs page hardcoded `aria-expanded="true"` — a combobox announcing an expanded
+ * markup on the docs page hardcoded `aria-expanded="true"`, a combobox announcing an expanded
  * popup over an empty listbox, which axe reports and a screen reader would act on. Both bindings set
  * it when there is something to expand; neither claims it at rest.
  */
@@ -122,10 +122,10 @@ export const commandPaletteContract = {
     placeholder: { type: "string", default: "Buscar…", attr: "placeholder" },
     /** What the empty state says once a filter matches nothing. */
     emptyLabel: { type: "string", default: "Sin resultados.", attr: "data-empty-label", machineInput: true },
-    /** Rendered already open, non-modally — the platform's attribute, same as `Dialog.open`. */
+    /** Rendered already open, non-modally: the platform's attribute, same as `Dialog.open`. */
     open: { type: "boolean", default: false, attr: "open", trueValue: "" },
     /**
-     * The index, JSON-encoded — a demo's ONLY way to seed one, since a usage tree names contracts
+     * The index, JSON-encoded: a demo's ONLY way to seed one, since a usage tree names contracts
      * and signatures and has no channel for a literal `<script>`. No `attr`: it never lands on an
      * element as a value, only as the JSON script's text (below) or, renamed to `items`, as
      * React's own prop — machine input on both sides, same as `emptyLabel`.
@@ -214,7 +214,7 @@ export const commandPaletteContract = {
           },
           /*
            * A demo's index, authored the only way a usage tree can: as this signature's own JSON
-           * island. Absent unless `entries` was given — a composition with a real, page-owned index
+           * island. Absent unless `entries` was given: a composition with a real, page-owned index
            * still authors its own script the way it always has.
            */
           {

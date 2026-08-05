@@ -6,11 +6,11 @@ export const splitButtonParts = {
 } as const;
 
 /*
- * SPLIT BUTTON, the contract — a primary action and a Menu, welded into one control.
+ * SPLIT BUTTON, the contract: a primary action and a Menu, welded into one control.
  *
  * There is no enhancer and no machine of its own, and that is the point: everything that behaves
- * here belongs to the Menu beside it. What this component contributes is the weld — the shared
- * radius, the hairline between the halves — so it is a COMPOSITION, and the template says so by
+ * here belongs to the Menu beside it. What this component contributes is the weld: the shared
+ * radius, the hairline between the halves. So it is a COMPOSITION, and the template says so by
  * taking a Menu in a slot rather than rebuilding one from a list.
  *
  * That was the blocker until now. The React binding built its menu from a flat `menuItems` prop
@@ -31,7 +31,7 @@ export const splitButtonContract = {
       host: { element: "div" },
       options: [],
       slots: {
-        /** The default action's label — the one most people want. */
+        /** The default action's label: the one most people want. */
         children: { accepts: "text", required: true },
         /** The alternatives, as a Menu. */
         menu: { accepts: "signature", of: ["Menu"], required: true },

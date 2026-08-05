@@ -12,7 +12,7 @@ Loader:
 
 Loader.status:
   useWhen:
-    - "la espera ya se ve —hay esqueletos, o una barra— y falta que además se anuncie"
+    - "la espera ya se ve (hay esqueletos, o una barra) y falta que además se anuncie"
     - "el estado de carga tiene que existir para un lector de pantalla sin dibujar nada"
   avoidWhen:
     - "no hay nada más que indique la espera; entonces se necesita un Loader visible"

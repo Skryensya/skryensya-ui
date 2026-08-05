@@ -16,7 +16,7 @@ export type SelectProps = Omit<SelectOptions, "options"> & {
   options: readonly SelectOption[];
   /**
    * Where the floating listbox is portalled. Defaults to `document.body`, which is right whenever
-   * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead — a preview
+   * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead: a preview
    * frame, or a scoped harness.
    *
    * The contract declares `portals: true` so `renderTree` hands this down, and for a while nothing
@@ -103,7 +103,7 @@ export function Select({
           <span {...api.getIndicatorProps()} aria-hidden="true" className={selectParts.indicator}>
             {/*
               * The template paints all three of these, so authored markup always had them and React
-              * only did when a caller remembered to pass one. Defaults, not opt-ins — pass null to
+              * only did when a caller remembered to pass one. Defaults, not opt-ins: pass null to
               * suppress one deliberately.
               */}
             <span data-state="closed">{indicator ?? <Icon name="chevron-down" />}</span>

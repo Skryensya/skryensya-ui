@@ -41,10 +41,34 @@ interface Props {
 }
 
 const { nav, path, idPrefix } = Astro.props;
-const t = useTranslations(getLocale(Astro.url));
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
 
 /** `item.status`, defaulted: an entry with no status is "wip" until deliberately marked "stable". */
 const status = (item: NavigationItem) => item.status ?? "wip";
+
+/*
+ * The rail and the catalog page (`/componentes`) read the SAME task-grouped source
+ * (`componentNavigation` in `lib/navigation.ts`) on purpose: one inventory, so a new component
+ * cannot land in the catalog without also landing in the rail. But they answer different
+ * questions: the catalog helps someone who does not know the name yet pick by what they need to
+ * DO ("capturar datos", "orientar"); the rail is for someone who already knows the name and wants
+ * it fast, where six unlabeled task headers just add scanning cost. So only the rail flattens the
+ * groups back into one alphabetical list, a presentation choice made here, not a second data
+ * source to keep in sync.
+ */
+const groupsForSection = (section: NavigationSection): readonly NavigationGroup[] =>
+  section.id === "components"
+    ? [
+        {
+          group: "",
+          items: section.groups
+            .flatMap((group) => group.items)
+            .slice()
+            .sort((a, b) => a.label.localeCompare(b.label, locale)),
+        },
+      ]
+    : section.groups;
 ---
 
 {
@@ -61,7 +85,7 @@ const status = (item: NavigationItem) => item.status ?? "wip";
         <p class="docs-nav-section__blurb">{section.blurb}</p>
       </header>
       <nav class="sk-nav-list" aria-label={section.section}>
-        {section.groups.map((group, groupIndex) => (
+        {groupsForSection(section).map((group, groupIndex) => (
           <div class="sk-nav-list__group" data-secondary={group.secondary ? "" : undefined}>
             {
               group.group ? (

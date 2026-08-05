@@ -2,7 +2,7 @@ import { expect, test } from "./fixtures.js";
 
 /*
  * `Loader.status` is the one signature whose correctness is that it draws NOTHING while still being
- * announced. G5 cannot judge it — there is no box — and G2 only proves the two bindings agree, which
+ * announced. G5 cannot judge it (there is no box), and G2 only proves the two bindings agree, which
  * they would even if the class did nothing. So the claim gets its own check.
  *
  * It is not a test of CSS for its own sake: a visually-hidden recipe that stops hiding is invisible
@@ -20,7 +20,7 @@ for (const binding of ["vanilla", "react"] as const) {
     expect(box!.width, "a visually-hidden status must take no visible width").toBeLessThanOrEqual(1);
     expect(box!.height, "a visually-hidden status must take no visible height").toBeLessThanOrEqual(1);
 
-    // And still be a live region with a name — `display: none` would pass the box check and fail here.
+    // And still be a live region with a name: `display: none` would pass the box check and fail here.
     await expect(status).toHaveAttribute("role", "status");
     await expect(status).toHaveAttribute("aria-label", "Cargando el catálogo");
   });

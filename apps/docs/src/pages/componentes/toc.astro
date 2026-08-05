@@ -104,7 +104,7 @@ const builder = `<script is:inline>
 
   <h2 id="iconos">Iconos</h2>
   <p>
-    El enlace admite un ícono decorativo delante de la etiqueta — la etiqueta ya nombra el
+    El enlace admite un ícono decorativo delante de la etiqueta: la etiqueta ya nombra el
     destino, así que el ícono no lleva accesible name propio.
   </p>
   <ComponentPreview tree={tocIconsTree(t)} label="Con iconos" flush />
@@ -112,7 +112,7 @@ const builder = `<script is:inline>
 
   <h2 id="rail-o-disclosure">Rail o disclosure</h2>
   <p>
-    El contrato publica UNA forma: un <code>&lt;details&gt;</code> interactivo, cerrado — el
+    El contrato publica UNA forma: un <code>&lt;details&gt;</code> interactivo, cerrado: el
     comportamiento de la plataforma, gratis. Es un consumidor con columna de sobra el que lo
     convierte en un <strong>rail</strong> siempre abierto y sticky junto a la prosa, igual que
     <code>sidebar</code> nunca decide por sí mismo que se vuelve un drawer. En este sitio, ese
@@ -136,7 +136,7 @@ const builder = `<script is:inline>
   <CodeBlock code={markup} label="HTML" />
   <h3 id="cls">Sin CLS</h3>
   <p>
-    Un árbol ya conoce sus ítems al componerse — es el caso de arriba. El shell real de este
+    Un árbol ya conoce sus ítems al componerse: es el caso de arriba. El shell real de este
     sitio no: sus encabezados se descubren recorriendo <code>main</code> en el navegador, así que
     un script <code>is:inline</code> construye la lista antes del primer paint. Sin secciones,
     marca <code>data-empty</code>.
@@ -144,7 +144,7 @@ const builder = `<script is:inline>
   <CodeBlock code={builder} label="en el layout" lang="html" />
   <p>
     Montado, el mismo enhancer conecta el switch rail/disclosure y el scroll-spy que marca
-    <code>aria-current</code> según la sección que cruza la banda superior del viewport —
+    <code>aria-current</code> según la sección que cruza la banda superior del viewport:
     <code>connectToc</code>, detrás de <code>data-sk-toc</code>.
   </p>
   <CodeBlock code={mount} label="JavaScript" lang="ts" />
@@ -159,7 +159,7 @@ const builder = `<script is:inline>
     </li>
     <li>
       Forma: una sola, un <code>&lt;details&gt;</code> cerrado. Rail sticky es una decisión del
-      consumidor, no del contrato — ver arriba.
+      consumidor, no del contrato (ver arriba).
     </li>
     <li>
       Cada ítem: <code>sk-toc__item</code> + divisor inferior (salvo el último). El enlace es

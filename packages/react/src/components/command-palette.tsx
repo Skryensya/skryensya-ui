@@ -8,7 +8,7 @@ import { useMemo, useRef, useState, type ReactNode } from "react";
 import { Icon } from "./icon.js";
 
 /*
- * COMMAND PALETTE — the React half, which did not exist.
+ * COMMAND PALETTE: the React half, which did not exist.
  *
  * The enhancer shipped for a while with no counterpart here, so this could not be a contract: one
  * binding is not a contract, it is a script. As with `copy-button` and `dialog`, writing the missing
@@ -19,7 +19,7 @@ import { Icon } from "./icon.js";
  * and filling it here would make the two halves disagree about the state every reader sees first.
  *
  * `aria-expanded` follows that, and it is the reason this component was worth writing twice. The
- * authored markup hardcoded `aria-expanded="true"` — a combobox announcing an expanded popup over
+ * authored markup hardcoded `aria-expanded="true"`, a combobox announcing an expanded popup over
  * an empty listbox, which axe reports and a screen reader would act on. The enhancer sets it on
  * open; so does this. Neither claims it at rest.
  */
@@ -28,7 +28,7 @@ export type CommandPaletteProps = {
   label: string;
   /**
    * The index. An array for a hand-written composition; a JSON string for a usage tree, which has
-   * no channel for anything but an option's own value — the same string the Vanilla binding reads
+   * no channel for anything but an option's own value: the same string the Vanilla binding reads
    * off its authored `<script type="application/json">`.
    */
   items?: readonly CommandPaletteEntry[] | string;

@@ -22,7 +22,7 @@ export type TooltipProps = TooltipOptions & {
   arrow?: boolean;
   /**
    * Where the floating content is portalled. Defaults to `document.body`, which is right whenever
-   * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead — a preview
+   * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead: a preview
    * frame, a scoped test harness, or a dialog that owns its own stacking context.
    */
   container?: RefObject<HTMLElement>;
@@ -72,7 +72,7 @@ export function Tooltip({
   /*
    * On the browser path the arrow gets nothing: the sheet places it against the same anchor and reads
    * its open state off the content. On the fallback the machine places it, so it gets the machine's
-   * props — they mark it `[data-part=arrow]`, which is how `@zag-js/popper` finds it to move it — plus
+   * props: they mark it `[data-part=arrow]`, which is how `@zag-js/popper` finds it to move it, plus
    * `data-side`, the side the machine RESOLVED, which is what the sheet reads to rotate it. That side
    * is only trustworthy here: on the other path the browser decides where the box landed and the
    * machine's opinion may differ.
@@ -94,14 +94,14 @@ export function Tooltip({
 
   return (
     /*
-     * A ROOT ELEMENT, not a fragment. The enhancer's whole scan is scoped to `[data-sk-anchor]` — it
-     * finds the trigger, the positioner and the content by querying inside it — so authored markup
+     * A ROOT ELEMENT, not a fragment. The enhancer's whole scan is scoped to `[data-sk-anchor]`: it
+     * finds the trigger, the positioner and the content by querying inside it, so authored markup
      * cannot omit it, which means the template cannot either, which means this binding owes the same
      * element. Rendering a fragment made the two bindings disagree about the outermost node of the
      * component, and nothing compared them until a canonical tree existed.
      */
     /*
-     * The root carries the MACHINE's id, as the enhancer's root does — Zag points `data-ownedby` at
+     * The root carries the MACHINE's id, as the enhancer's root does: Zag points `data-ownedby` at
      * it from the trigger, so without it that attribute referenced an element this binding never
      * rendered. A dangling reference, identical in shape to a mistyped `aria-describedby`.
      */
@@ -115,7 +115,7 @@ export function Tooltip({
         {children}
       </span>
       {/*
-       * Rendered whether or not it is open, and hidden by the machine's own `hidden` prop — the same
+       * Rendered whether or not it is open, and hidden by the machine's own `hidden` prop: the same
        * rendered-and-hidden rule the combobox and the date picker follow. The enhancer patches
        * authored markup that is always present, so "closed" has to mean hidden rather than absent
        * for the two bindings to describe one component.

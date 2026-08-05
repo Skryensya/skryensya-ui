@@ -1,0 +1,353 @@
+/*
+ * TIER 3, CHANGELOG
+ *
+ * A dated history down a rail, newest first. The rail is the same drawing ProcessList and Steps each
+ * make for themselves, and it is drawn a third time here rather than borrowed, because what those two
+ * MEAN is wrong for a history: ProcessList numbers its markers with a `counter()`, which counts a
+ * newest-first list backwards through time, and Steps colours its connector to say how much work is
+ * behind the reader, which of a shipped change is not a claim anyone can make.
+ *
+ * IT IS A TEXT DOCUMENT WITH A RAIL DOWN THE SIDE, and every choice below follows from that. The dot
+ * is punctuation, not a badge: 6px, flat, no halo. The connector is a hairline. The kind is a word in
+ * the sentence rather than a pill, separated by a middot, because a changelog is READ and a row of
+ * chrome is skimmed past. What carries the hierarchy is type, not decoration: one weight and one
+ * colour step between the date and everything trailing it.
+ *
+ * ALIGNMENT IS THE OTHER HALF. There is one vertical line the whole component hangs off: the meta
+ * line and the prose under it start at the same inline edge, and the dot centres on the date's first
+ * line rather than on the entry's top, so the rail reads as ticks against the dates and not as a
+ * decoration running beside them.
+ */
+@layer components {
+  .sk-changelog {
+    /* Punctuation-sized, and the hairline to match. Bigger dots turned the rail into the loudest
+       thing in a block whose whole content is words. */
+    --sk-changelog-marker-size: 4px;
+    --sk-changelog-connector-size: 1px;
+    /*
+     * THE RING, which is what makes the dot read as a bead threaded on the line rather than as a
+     * dot parked beside it: the line runs THROUGH the dot's centre and this is the air around it.
+     *
+     * IT IS A HOLE, NOT A COLOUR, and that is the whole trick. The obvious build is a `box-shadow`
+     * ring painted in the background colour, which is what `steps.css` does
+     * (`0 0 0 3px var(--color-bg-surface)`). It is a bet on where the component is sitting, and the
+     * bet is wrong here: measured inside the docs preview, the surface token is pure white against a
+     * frame body of oklab(0.934), so the "invisible" ring was a visible white halo, and darker than
+     * its backdrop in dark mode. A component cannot ask CSS what is behind it.
+     *
+     * So nothing is painted. The connector is MASKED away for this distance at each of its ends,
+     * where the two dots are, and the gap is real transparency, which is the background's colour on
+     * any surface, in any mode, by construction rather than by guessing.
+     */
+    --sk-changelog-marker-gap: 3px;
+    /*
+     * THE OPTICAL NUDGE, and it is a hook because it is the one number here that depends on the
+     * font rather than on the design.
+     *
+     * Centring the dot in the LINE BOX puts it visibly high, because a line box is not symmetric
+     * about the text inside it: measured on the system's own type at 14px/21px, the baseline sits
+     * 16px down, so the text's optical centre (about half an x-height above that) is at 12.4px
+     * while the line box's centre is at 10.5px. Two pixels, which on a 4px dot is half a dot, and
+     * it reads as a dot floating above its own date.
+     *
+     * There is no way to ask CSS for a baseline offset in a calculation, so this is that difference
+     * expressed against the type: swap in a font with very different metrics and this is the one
+     * value to retune. `align-self: baseline` would get it exactly and for free, but the connector
+     * below has to start where the dot ends, and a baseline-aligned dot's position is not a number
+     * any other rule can read.
+     */
+    --sk-changelog-marker-shift: 0.115em;
+    --sk-changelog-connector-color: var(--color-border-subtle);
+    /* The rail's width: the dot plus the air the text keeps from it. One value, so the meta line and
+       the prose below it can never drift apart, which is the alignment this whole component is. */
+    --sk-changelog-rail: calc(var(--sk-changelog-marker-size) + var(--space-inline-sm));
+    --sk-changelog-entry-gap: var(--space-stack-md);
+
+    /* One neutral tick for every kind but `breaking`. See the note down by the kinds. */
+    --sk-changelog-marker-color: var(--color-border-strong);
+
+    --sk-changelog-date-fg: var(--color-text-primary);
+    --sk-changelog-kind-fg: var(--color-text-secondary);
+    --sk-changelog-target-fg: var(--color-text-secondary);
+    --sk-changelog-text-fg: var(--color-text-secondary);
+
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-changelog-entry-gap);
+    min-inline-size: 0;
+    /*
+     * THE RAIL HANGS IN THE MARGIN. Without this the rail is part of the box, so every date and
+     * every paragraph starts one rail-width to the right of the heading above them: measured on the
+     * docs page, prose at 325.3 against a heading at 313.3. Twelve pixels is too small to read as an
+     * indent and too big to read as aligned, so it just reads as broken.
+     *
+     * Pulled left by exactly the rail, the SECOND column lands on the container's own inline edge:
+     * the entries' text lines up with the prose around them and the dots sit out in the margin.
+     * That is what a `<ul>` does with its bullets, and the reason its indent is 40px rather than 12
+     * is that a bullet list is meant to look indented. A history is not; it is prose with dates.
+     *
+     * THE COST, SAID: the component now paints one rail-width outside its container. Every place a
+     * changelog goes has that much room, because it goes in a reading column and reading columns
+     * have margins. Somewhere that does not, set `--sk-changelog-rail: 0px` and the dots tuck back
+     * inside, on top of the text's inline edge.
+     */
+    margin: 0;
+    margin-inline-start: calc(-1 * var(--sk-changelog-rail));
+    padding: 0;
+    list-style: none;
+  }
+
+  .sk-changelog,
+  .sk-changelog *,
+  .sk-changelog *::before,
+  .sk-changelog *::after {
+    box-sizing: border-box;
+  }
+
+  /*
+   * THE ENTRY IS THE GRID, which is what let the old `body` wrapper go: two columns, the marker in
+   * the first and the meta and the prose stacked in the second. Both rows in column two start at the
+   * same inline edge by construction rather than by two elements agreeing on a number.
+   */
+  .sk-changelog__entry {
+    /*
+     * THE TYPE IS SET HERE, on the entry, and that is load-bearing rather than tidiness. Everything
+     * inside is one size, so `1lh` on this element IS the date's line box, and the offset below can
+     * be computed once here and read by both the dot and the connector. Declared on the marker
+     * instead, it was invisible to the connector: custom properties inherit DOWN, and the connector
+     * is the entry's own `::before`, a sibling of the box that declared it. It silently took the
+     * `0px` fallback and drew a line through the dot it was supposed to stop at.
+     */
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body);
+
+    /* Where the dot sits: centred in the date's first LINE BOX, then nudged down onto the text's
+       optical centre (see the hook above). `1lh` follows the density and type scales without
+       restating either; floored at 0 for the case where the line box is smaller than the dot. */
+    --sk-changelog-marker-offset: max(
+      0px,
+      calc(
+        (1lh - var(--sk-changelog-marker-size)) / 2 + var(--sk-changelog-marker-shift)
+      )
+    );
+
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--sk-changelog-rail) minmax(0, 1fr);
+    align-items: start;
+    row-gap: var(--space-stack-xs);
+    min-inline-size: 0;
+  }
+
+  .sk-changelog__marker,
+  .sk-changelog__meta {
+    /* One row, so the dot has the date's own line box to centre against. */
+    grid-row: 1;
+  }
+
+  .sk-changelog__text {
+    grid-column: 2;
+  }
+
+  /*
+   * THE CONNECTOR IS THE ENTRY'S OUTGOING SEGMENT, which is what makes it stop on its own at the
+   * last one. Drawn on the entry rather than as one line behind the whole list so that it spans the
+   * flex gap too, from this entry's dot down to the next one's, with no second element to keep in
+   * sync and nothing to measure.
+   */
+  .sk-changelog__entry:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    /*
+     * CENTRE TO CENTRE. The line starts at this dot's middle and ends at the next one's, running
+     * behind both, and the ring on the dot opens the gap that makes it a bead on a thread. Butted
+     * against the dot's edge instead, the line and the dot were two shapes touching; through the
+     * middle they are one object.
+     *
+     * The length is just `100% + gap`, and that is not a simplification, it is the offset
+     * CANCELLING: the next dot sits the same distance below its own entry's top as this one does,
+     * so the two offsets subtract out and what is left is the entry plus the gap to the next.
+     */
+    inset-block-start: calc(
+      var(--sk-changelog-marker-offset) + var(--sk-changelog-marker-size) / 2
+    );
+    inset-inline-start: calc(
+      var(--sk-changelog-marker-size) / 2 - var(--sk-changelog-connector-size) / 2
+    );
+    inline-size: var(--sk-changelog-connector-size);
+    block-size: calc(100% + var(--sk-changelog-entry-gap));
+    background: var(--sk-changelog-connector-color);
+
+    /*
+     * THE TWO HOLES, one at each end, each exactly over a dot. Because the line runs centre to
+     * centre, the dots are at its very ends, so the distance to cut is the same at both: half a dot
+     * plus the air around it. Everything between stays opaque.
+     */
+    --sk-changelog-bead: calc(
+      var(--sk-changelog-marker-size) / 2 + var(--sk-changelog-marker-gap)
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0 var(--sk-changelog-bead),
+      #000 var(--sk-changelog-bead) calc(100% - var(--sk-changelog-bead)),
+      transparent calc(100% - var(--sk-changelog-bead))
+    );
+  }
+
+  .sk-changelog__marker {
+    /*
+     * POSITIONED, and it is belt-and-braces rather than habit. The mask above already removes the
+     * line where the dot is, so in principle nothing overlaps; but both are built from `calc()` on
+     * fractional pixels, and a rounding disagreement between them would show as a hairline of
+     * connector crossing the dot. The connector is an absolutely positioned box and would otherwise
+     * paint above an ordinary grid item, so this settles the order rather than trusting the rounding.
+     */
+    position: relative;
+    z-index: 1;
+
+    grid-column: 1;
+    inline-size: var(--sk-changelog-marker-size);
+    block-size: var(--sk-changelog-marker-size);
+    margin-block-start: var(--sk-changelog-marker-offset);
+    border-radius: var(--radius-pill);
+    background: var(--sk-changelog-marker-color);
+  }
+
+  .sk-changelog__meta {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    /* The gap the middots sit in. Half the usual inline step, because the separator is doing the
+       separating now and a full one would read as three columns instead of one sentence. */
+    gap: var(--space-inline-xs);
+    grid-column: 2;
+    min-inline-size: 0;
+  }
+
+  /*
+   * THE DATE LEADS, and it is the only thing here that is not secondary: a reader scanning a history
+   * is looking for a day, and everything trailing it is what that day was about. One weight and one
+   * colour step is the entire hierarchy of this component.
+   *
+   * `tabular-nums` so "4" and "29" take the same width and a column of dates lines up down the rail
+   * instead of shimmering.
+   */
+  .sk-changelog__date {
+    color: var(--sk-changelog-date-fg);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-emphasis);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /*
+   * The kind and the target are text in the same line, not chips. Both are `.sk-changelog__kind`'s
+   * and `__target`'s own colour, both at the size of the prose below, so the meta line reads as one
+   * sentence rather than as a toolbar.
+   */
+  .sk-changelog__kind {
+    color: var(--sk-changelog-kind-fg);
+    font-size: var(--font-size-body-sm);
+  }
+
+  .sk-changelog__target {
+    color: var(--sk-changelog-target-fg);
+    font-family: var(--font-family-code);
+    font-size: var(--font-size-body-sm);
+  }
+
+  /*
+   * The separators, generated rather than authored: an author writing "·" between two slots would be
+   * writing punctuation whose job is layout, and would then have to remember not to write the second
+   * one when there is no target. `::before` on each trailing item asks exactly the right question,
+   * because the target's node is not emitted at all when the slot is empty.
+   */
+  .sk-changelog__kind::before,
+  .sk-changelog__target::before {
+    content: "·";
+    /* Its own margin rather than relying on the flex gap alone, so the dot sits BETWEEN the two
+       words rather than hugging the one it belongs to. */
+    margin-inline-end: var(--space-inline-xs);
+    /* The body font, even on the target, which is mono: a pseudo-element inherits its host's family,
+       and a monospace middot is visibly bigger than a proportional one. Two separators on one line
+       that are not the same mark is exactly the kind of thing that reads as sloppy without anyone
+       being able to say why. */
+    font-family: var(--font-family-body);
+    color: var(--color-text-tertiary);
+  }
+
+  .sk-changelog__text {
+    color: var(--sk-changelog-text-fg);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body);
+    text-wrap: pretty;
+  }
+
+  /* The trim for authored prose lives OUTSIDE this layer, at the bottom of the file: a consumer's
+     paragraph margins are what it has to beat, and those are unlayered. */
+
+  /* ── The kinds ───────────────────────────────────────────────────────────────
+   * ONE COLOUR, and the restraint is the point. Painting each kind its status colour gave a rail of
+   * green, blue, amber and grey down a page whose content is prose, and green won by sheer count:
+   * most entries in most changelogs are additions, so the "sober history" read as a success report.
+   *
+   * The kind is a WORD, right there in the line. It does not need to be a colour as well, and a dot
+   * that means five things is a legend a reader has to learn before the rail tells them anything.
+   * So the dot is one neutral tick that says WHEN, and the word says WHAT.
+   *
+   * BREAKING IS THE EXCEPTION, and it is the only one, because it is the only kind whose cost of
+   * being skimmed past is a consumer's build. It takes the dot and the word together, so the signal
+   * survives at a glance and at reading distance both.
+   *
+   * `--sk-changelog-marker-color` stays a hook: a consumer who wants the status palette back has
+   * one declaration per kind to write, and now it is their decision rather than the default.
+   */
+  .sk-changelog__entry[data-kind="breaking"] {
+    --sk-changelog-marker-color: var(--color-text-danger);
+    --sk-changelog-kind-fg: var(--color-text-danger);
+  }
+
+  /*
+   * Forced colors discards every background, so the dots would all vanish and the rail would be a
+   * line of nothing. Border is geometry and survives, so each dot becomes a ring; they stop being
+   * distinguishable from one another, which is the correct loss, because in this mode the kind is
+   * carried entirely by the word beside it.
+   */
+  @media (forced-colors: active) {
+    .sk-changelog__marker {
+      border: 1px solid CanvasText;
+      background: Canvas;
+    }
+
+    .sk-changelog__entry:not(:last-child)::before {
+      background: CanvasText;
+    }
+  }
+}
+
+/*
+ * OUTSIDE THE LAYER, and that is the whole point of these rules.
+ *
+ * An entry's body is AUTHORED prose and its target is authored code, and every site that renders
+ * prose styles `p` and `code` itself. Those site-level styles are unlayered, so they beat anything
+ * `@layer components` says no matter how specific it is. Layered, the trims below simply did not
+ * apply: measured, a docs page put 12px of its own paragraph spacing on top of this component's gap,
+ * and dressed the target as a filled chip in a block that is meant to read as text.
+ *
+ * Scoped to these two parts alone, so they trim the edges of the authored block and touch nothing
+ * inside it: a consumer's spacing BETWEEN their own paragraphs is theirs to decide, and only the
+ * outer edges belong to the component doing the spacing around them.
+ */
+.sk-changelog__text > :first-child {
+  margin-block-start: 0;
+}
+
+.sk-changelog__text > :last-child {
+  margin-block-end: 0;
+}
+
+.sk-changelog__target {
+  padding: 0;
+  border: 0;
+  background: none;
+}

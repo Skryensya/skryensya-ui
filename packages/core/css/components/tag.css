@@ -63,7 +63,7 @@
     box-sizing: border-box;
   }
 
-  .sk-tag[data-tone="accent"] { --sk-tag-bg: var(--color-bg-accent-subtle); --sk-tag-fg: var(--color-text-accent); }
+  .sk-tag[data-tone="accent"] { --sk-tag-bg: var(--color-decorative-bg); --sk-tag-fg: var(--color-decorative-fg); }
   .sk-tag[data-tone="success"] { --sk-tag-bg: var(--color-bg-success-subtle); --sk-tag-fg: var(--color-text-success); }
   .sk-tag[data-tone="warning"] { --sk-tag-bg: var(--color-bg-warning-subtle); --sk-tag-fg: var(--color-text-warning); }
   .sk-tag[data-tone="danger"] { --sk-tag-bg: var(--color-bg-danger-subtle); --sk-tag-fg: var(--color-text-danger); }

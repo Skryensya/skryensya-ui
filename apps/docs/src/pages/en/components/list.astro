@@ -35,7 +35,7 @@ const styles = `@import "@skryensya/core/components/list.css";`;
 >
   <h1>List</h1>
   <p class="lede">
-    A ready <strong>with UI</strong>, not a <code>&lt;li&gt;</code> with typography. Below is a real <code>&lt;ul&gt;</code> or <code>&lt;ol&gt;</code> —the reader hears a list of N items—, and above it provides the row anatomy: <strong>leading</strong> (icon, avatar, number), <strong>content</strong> (title and description) and <strong>trailing</strong> (meta, badge, action), with dividers. It is piecewise composable and functional: an acting row is a real <code>&lt;a&gt;</code>/<code>&lt;button&gt;</code>, never a <code>onClick</code> in the <code>&lt;li&gt;</code>.
+    A ready <strong>with UI</strong>, not a <code>&lt;li&gt;</code> with typography. Below is a real <code>&lt;ul&gt;</code> or <code>&lt;ol&gt;</code> (the reader hears a list of N items), and above it provides the row anatomy: <strong>leading</strong> (icon, avatar, number), <strong>content</strong> (title and description) and <strong>trailing</strong> (meta, badge, action), with dividers. It is piecewise composable and functional: an acting row is a real <code>&lt;a&gt;</code>/<code>&lt;button&gt;</code>, never a <code>onClick</code> in the <code>&lt;li&gt;</code>.
   </p>
 
   <h2>The row, one slot at a time</h2>
@@ -57,7 +57,7 @@ const styles = `@import "@skryensya/core/components/list.css";`;
 
   <h3>3 · Media at start</h3>
   <p>
-    Enter <code>sk-list__leading</code>: an icon, an avatar or a number. It is <strong>decorative</strong>, it does not name the row — it is the title that names it. An empty slot does not exist for the layout, so rows without an icon do not carry ghost padding.
+    Enter <code>sk-list__leading</code>: an icon, an avatar or a number. It is <strong>decorative</strong>, it does not name the row: it is the title that names it. An empty slot does not exist for the layout, so rows without an icon do not carry ghost padding.
   </p>
   <ComponentPreview tree={listLeadingTree(t)} label="3 · Average at the beginning" note="+ leading (Icon)" measure="34rem" />
 

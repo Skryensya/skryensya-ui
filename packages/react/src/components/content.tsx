@@ -1,5 +1,4 @@
 import { contentParts, getToastLiveRegion, hasToastTimeout, toastLiveRegions, type ToastOptions, type ToastTone } from "@skryensya/core/content";
-import { type AlertPresentation } from "@skryensya/core/alert";
 import { Button } from "./button.js";
 import { Icon } from "./icon.js";
 import { useCallback, useEffect, useRef, type HTMLAttributes, type ReactNode } from "react";
@@ -14,7 +13,7 @@ export type ToastProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "titl
     actions?: ReactNode;
     children: ReactNode;
     /**
-     * Whether the toast carries a dismiss control. Structure, not behaviour — the same split Tag
+     * Whether the toast carries a dismiss control. Structure, not behaviour: the same split Tag
      * makes: the contract owns whether the control EXISTS, `onDismiss` owns what it does. Defaults
      * to whether a handler was passed, so callers written before this prop keep their button.
      */
@@ -23,12 +22,11 @@ export type ToastProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "titl
     dismissLabel?: string;
     /** Optional decorative leading glyph. It is marked aria-hidden, meaning lives in the text. */
     icon?: ReactNode;
-    presentation?: AlertPresentation;
     title?: ReactNode;
     tone?: ToastTone;
   };
 
-/** Transient Alert: same anatomy, owned by a floating region and optional timeout. */
+/** Transient Callout: same anatomy, owned by a floating region and optional timeout. */
 export function Toast({
   actions,
   children,
@@ -37,7 +35,6 @@ export function Toast({
   dismissible,
   icon,
   onDismiss,
-  presentation = "banner",
   timeout,
   title,
   tone = "neutral",
@@ -69,7 +66,6 @@ export function Toast({
       aria-live={liveRegion.ariaLive}
       className={cx(contentParts.toast, className)}
       data-dismissible={hasDismiss ? "" : undefined}
-      data-presentation={presentation}
       data-tone={tone}
       data-sk-toast=""
       role={liveRegion.role}

@@ -164,7 +164,7 @@ const stageCss = semScopedCss;
 /*
  * The playground's share code is a SLOT in the one shared entry, not a key of its own. The inline
  * script below cannot import the storage primitive, so the key and the slot travel in from the real
- * declaration — the same arrangement, and the same reason, as `PREPAINT` in Base.astro.
+ * declaration, the same arrangement, and the same reason, as `PREPAINT` in Base.astro.
  */
 const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
 ---
@@ -242,7 +242,7 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
 
       {/* The whole footer is the preset: a ten-character code that IS the theme (it round-trips
           through the URL hash), so copying it copies the link that reproduces this configuration.
-          The two icon buttons beside it are the audit and the reset — no export, nothing else. */}
+          The two icon buttons beside it are the audit and the reset, no export, nothing else. */}
       <div class="sk-sidebar__footer sk-config__footer">
         <button class="sk-preset sk-interactive" id="sk-preset" type="button" title="Copy preset link" aria-label="Copy preset link">
           <code class="sk-preset__code" id="sk-preset-code">··········</code>
@@ -301,7 +301,7 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
           </div>
         </section>
 
-        <!-- chart (decorative) — tall companion to the ramps hero -->
+        <!-- chart (decorative): tall companion to the ramps hero -->
         <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
           <header><Fragment set:html={iconMarkup("calendar")} /><strong>Visits per day</strong></header>
           <div class="sk-flow sk-flow--fill">
@@ -459,14 +459,14 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
           </div>
         </section>
 
-        <!-- Alert ×4 -->
+        <!-- Callout ×4 -->
         <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
           <header><Fragment set:html={iconMarkup("info")} /><strong>Notificaciones</strong></header>
           <div class="sk-flow">
-            <div class="sk-alert" data-tone="info" role="status" aria-live="polite"><span class="sk-alert__icon" aria-hidden="true"><Fragment set:html={iconMarkup("info")} /></span><div class="sk-alert__content"><div class="sk-alert__description"><strong>Info.</strong> A new version is available.</div></div></div>
-            <div class="sk-alert" data-tone="success" role="status" aria-live="polite"><span class="sk-alert__icon" aria-hidden="true"><Fragment set:html={iconMarkup("success")} /></span><div class="sk-alert__content"><div class="sk-alert__description"><strong>Ready.</strong> Your changes have been saved.</div></div></div>
-            <div class="sk-alert" data-tone="warning" role="status" aria-live="polite"><span class="sk-alert__icon" aria-hidden="true"><Fragment set:html={iconMarkup("warning")} /></span><div class="sk-alert__content"><div class="sk-alert__description"><strong>Attention.</strong> Your plan expires in 3 days.</div></div></div>
-            <div class="sk-alert" data-tone="danger" role="alert" aria-live="assertive"><span class="sk-alert__icon" aria-hidden="true"><Fragment set:html={iconMarkup("danger")} /></span><div class="sk-alert__content"><div class="sk-alert__description"><strong>Error.</strong> Could not connect to the server.</div></div></div>
+            <div class="sk-callout" data-tone="info" role="status" aria-live="polite"><span class="sk-callout__icon" aria-hidden="true"><Fragment set:html={iconMarkup("info")} /></span><div class="sk-callout__content"><div class="sk-callout__description"><strong>Info.</strong> A new version is available.</div></div></div>
+            <div class="sk-callout" data-tone="success" role="status" aria-live="polite"><span class="sk-callout__icon" aria-hidden="true"><Fragment set:html={iconMarkup("success")} /></span><div class="sk-callout__content"><div class="sk-callout__description"><strong>Ready.</strong> Your changes have been saved.</div></div></div>
+            <div class="sk-callout" data-tone="warning" role="status" aria-live="polite"><span class="sk-callout__icon" aria-hidden="true"><Fragment set:html={iconMarkup("warning")} /></span><div class="sk-callout__content"><div class="sk-callout__description"><strong>Attention.</strong> Your plan expires in 3 days.</div></div></div>
+            <div class="sk-callout" data-tone="danger" role="alert" aria-live="assertive"><span class="sk-callout__icon" aria-hidden="true"><Fragment set:html={iconMarkup("danger")} /></span><div class="sk-callout__content"><div class="sk-callout__description"><strong>Error.</strong> Could not connect to the server.</div></div></div>
           </div>
         </section>
 
@@ -916,8 +916,8 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
        viewport below it while the preview scrolls past. */
     position: sticky;
     top: var(--docs-navbar-h, var(--docs-header-block-size));
-    /* Sticky creates a stacking context, so the rail's Flyout panels — `position: fixed` at
-       `--z-popover` — are trapped inside it and can only rise as high as the rail itself. At
+    /* Sticky creates a stacking context, so the rail's Flyout panels (`position: fixed` at
+       `--z-popover`) are trapped inside it and can only rise as high as the rail itself. At
        `auto` the rail sits at 0 with the stage's positioned tab triggers, which come LATER in the
        DOM and win the tie, so an open panel had the view switcher printed through it. Same token
        as the navbar (`.dimensions`, site.css): this is pinned chrome that content scrolls under. */
@@ -953,7 +953,7 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
   }
 
   /* Not a framed window any more: the tabs sit ABOVE the card and `.sk-canvas` IS the card. This is
-     only the column that stacks them, so it clips nothing and opens no scrollport — the document
+     only the column that stacks them, so it clips nothing and opens no scrollport: the document
      scrolls. (`overflow: clip` + `contain: paint` used to live here precisely to keep the tall canvas
      out of the document's scrollable overflow; that is now exactly what we want it to do.) */
   .sk-preview {
@@ -984,7 +984,7 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
     /* -1px so the selected trigger's underline paints OVER the frame's top border instead of
        stacking a second line above it: the tab and the card read as one piece. The trigger is
        positioned, the frame is not, so the underline wins the paint order without a z-index. */
-    /* Height comes from padding, not a floor — otherwise pt/pb never show. */
+    /* Height comes from padding, not a floor; otherwise pt/pb never show. */
     min-block-size: 0;
     padding-block: 14px;
     padding-inline: 8px;
@@ -998,7 +998,7 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
   .sk-views .sk-tabs__trigger[data-selected] { color: var(--color-text-primary); }
   .sk-views .sk-tabs__trigger[data-selected]::after { content: ""; position: absolute; inset-inline: 6px; inset-block-end: 0; block-size: 2px; border-radius: 2px 2px 0 0; background: var(--color-action-primary); }
   .sk-views .sk-tabs__trigger:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: calc(-1 * var(--focus-ring-width)); }
-  /* Product pages (dashboard, landing, store) own the full frame — no block gutter.
+  /* Product pages (dashboard, landing, store) own the full frame: no block gutter.
      Showcase is a component shelf: it needs equal inset on every side, so it must win
      after the tabs content reset. */
   .sk-canvas .sk-tabs__content { padding-block: 0; }
@@ -1045,7 +1045,7 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
   /* Both lists are the same thing: one Field per row, each wrapping a Flyout. Each row STACKS the
      label over the trigger (the Flyout's own default): a caption on its own line, then the
      value-carrying button below it. Stacked, not side-by-side, so the Material set's wider glyph
-     never meets the label. The trigger keeps its box — it is always a visible, bordered button. */
+     never meets the label. The trigger keeps its box: it is always a visible, bordered button. */
   .sk-ramps,
   .sk-dimensions { display: grid; gap: var(--space-stack-lg); }
 
@@ -1087,7 +1087,7 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
   #sk-audit :global(.sk-badge2.bad) { background: var(--color-bg-danger-subtle); color: var(--color-text-danger); }
 
   /* The preset chip: the code reads as data, so it is monospace on a sunken well, and the copy
-     glyph is the only affordance. `is-copied` swaps the glyph for a check — no label swap, so the
+     glyph is the only affordance. `is-copied` swaps the glyph for a check: no label swap, so the
      lane never resizes. */
   .sk-preset {
     display: grid;
@@ -1157,7 +1157,7 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
     box-shadow: var(--elevation-raised);
   }
 
-  /* Inside the frame: the themed surface. Sizes to its content — no scrollport, the document scrolls. */
+  /* Inside the frame: the themed surface. Sizes to its content, no scrollport, the document scrolls. */
   .sk-canvas {
     background: var(--color-bg-canvas);
     padding: 0;
@@ -1223,7 +1223,7 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
       grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: var(--space-stack-md);
     }
-    /* 1 · 2 · 3 — never 4+. Combinations always tile: 3+3, 2+2+2, 2+2+1+1, 3+2+1. */
+    /* 1 · 2 · 3, never 4+. Combinations always tile: 3+3, 2+2+2, 2+2+1+1, 3+2+1. */
     .sk-bento > [data-bento="cell"] { grid-column: span 1; }
     .sk-bento > [data-bento="kpi"],
     .sk-bento > [data-bento="trio"],
@@ -1428,7 +1428,7 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
   .sk-validation-list span { display: grid; gap: 2px; min-inline-size: 0; }
   .sk-validation-list strong { color: var(--color-text-primary); font-size: 12px; }
   .sk-validation-list small { color: var(--color-text-secondary); font-size: 11px; line-height: 1.4; overflow-wrap: anywhere; }
-  .sk-form .sk-alert { margin-block-start: 2px; }
+  .sk-form .sk-callout { margin-block-start: 2px; }
   @media (max-width: 640px) {
     .sk-sitebar.sk-sitebar > div { flex-wrap: wrap; }
     .sk-shop-nav { display: none; }
@@ -1496,7 +1496,7 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
     var probeD = document.getElementById("sk-probe-dark");
 
     /*
-     * Storage. This script is `is:inline` and so cannot import the storage primitive — the same
+     * Storage. This script is `is:inline` and so cannot import the storage primitive, the same
      * exception, and for the same reason, as the pre-paint script in Base.astro. What it must not do
      * is keep its own top-level key: this used to be `localStorage["sk-playground"]`, a second entry
      * to find, clear and forget. It is now a slot inside the one shared entry, so "reset the site" is

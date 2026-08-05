@@ -3,7 +3,7 @@ import type { Translate } from "../i18n";
 
 /*
  * The deepest composition the catalogue has: eight signatures, nested four levels, with two rules
- * HTML fixes and nothing else in the model does — the caption comes first and there is at most one,
+ * HTML fixes and nothing else in the model does: the caption comes first and there is at most one,
  * the body is required.
  *
  * Every table here is wrapped in a `TableScroll`, and that is not decoration this file added for
@@ -28,7 +28,7 @@ const headerRow = (t: Translate, keys: readonly string[]): UsageTree => ({
  * A body row whose FIRST cell is a header.
  *
  * `scope="row"` is what makes the row's own name available to a screen reader when it reads a cell
- * further along — without it, "Activo" is announced as a word in a grid rather than as the status of
+ * further along: without it, "Activo" is announced as a word in a grid rather than as the status of
  * the Starter plan. It is the reason `scope` is an option at all.
  */
 const labelledRow = (label: string, cells: readonly string[]): UsageTree => ({
@@ -41,7 +41,7 @@ const labelledRow = (label: string, cells: readonly string[]): UsageTree => ({
 });
 
 /**
- * The whole anatomy: caption, head, body, foot — in the order HTML requires and the contract
+ * The whole anatomy: caption, head, body, foot, in the order HTML requires and the contract
  * enforces. A `<tfoot>` written before the body is markup the parser silently moves, and the page
  * still looks right while a screen reader reads it out of sequence.
  */
@@ -68,7 +68,7 @@ export const tableTree = (t: Translate): UsageTree => ({
       },
       /*
        * The note belongs across all three columns, not stranded in the first one where it reads as a
-       * value of that column. `colspan` is the one place a table's structure is a number — and it
+       * value of that column. `colspan` is the one place a table's structure is a number, and it
        * did not exist until this demo needed it, which is the useful half of converting a page.
        */
       {
@@ -136,7 +136,7 @@ export const tableStickyColumnTree = (t: Translate): UsageTree => ({
 });
 
 /**
- * The header row stays put while the body scrolls down — the other axis, and the other reason to
+ * The header row stays put while the body scrolls down, the other axis, and the other reason to
  * lose your place: a long table whose column names have scrolled away is a grid of numbers.
  */
 export const tableStickyHeaderTree = (t: Translate): UsageTree => ({

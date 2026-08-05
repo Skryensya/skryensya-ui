@@ -37,7 +37,7 @@ export type ListPartClass = (typeof listParts)[ListPart];
  * Rows of things, and three ways a row can behave: inert, navigating, or acting.
  *
  * The interactive ones put the ANCHOR or the BUTTON around the whole row rather than a link inside
- * it, so the focus target and the click target are the row itself — which is what a pointer already
+ * it, so the focus target and the click target are the row itself, which is what a pointer already
  * suggests and a keyboard otherwise cannot reach.
  */
 export const listContract = {
@@ -48,7 +48,7 @@ export const listContract = {
   options: {
     /**
      * Only `compact` means anything: the CSS selects on it and the comfortable default is the bare
-     * class. So this has no default to serialize — writing one would be an attribute nothing reads.
+     * class. So this has no default to serialize: writing one would be an attribute nothing reads.
      */
     density: { type: "enum", values: ["compact"], attr: "data-density" },
     /** Dividers are the default; this turns them off, which is why the attribute reads `none`. */

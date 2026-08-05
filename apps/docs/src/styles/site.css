@@ -280,27 +280,32 @@ html:has(dialog:modal) .docs-drawer__content {
   align-items: start;
 }
 
-/* The docs use the sidebar shell without its optional collapse behavior. The nav-list remains a
-   text-first documentation index, so the auto track simply follows the expanded width hook. */
+/*
+ * The docs use the sidebar shell without its optional collapse behavior. The nav-list remains a
+ * text-first documentation index, so the auto track simply follows the expanded width hook.
+ *
+ * ONLY THE DOCS-SPECIFIC DELTA lives here now. This block used to restate the component's own rules
+ * as well — `display: flex`, the inline size, the border, `background: var(--sk-sidebar-bg)`, the
+ * elevation — alongside copies of its `__separator` and `__footer`. None of it did anything: every
+ * one of those declarations reads a `--sk-sidebar-*` hook, the hooks are declared by
+ * `components/sidebar.css`, and `Base.astro` never imported that file. They all resolved to nothing,
+ * which is why the rail painted transparent and borderless with no padding, indistinguishable from
+ * the page beside it. Importing the component is the fix; the copies are deleted rather than
+ * repaired, because the component already says all of it (decision 17: a shell knows the pattern it
+ * hosts, never the reverse).
+ */
 .docs-sidebar {
-  display: flex;
-  position: sticky;
   /* Stick flush under the navbar and fill exactly the viewport below it. Both the offset and the
      height read the navbar's MEASURED height (`--docs-navbar-h`, written by the script in Base.astro),
      falling back to the token estimate until that runs, the estimate is a pixel shy of the rendered
      box and drifts further if density or wrapping change it, so measuring is what makes "viewport minus
-     navbar" exact rather than approximate. */
+     navbar" exact rather than approximate.
+
+     This IS the delta: the component sizes itself to its container (`block-size: 100%`), and a
+     sticky rail has to size itself to the viewport instead. Everything else it already brings. */
+  position: sticky;
   top: var(--docs-navbar-h, var(--docs-header-block-size));
-  flex-direction: column;
-  inline-size: var(--sk-sidebar-inline-size);
   block-size: calc(100dvh - var(--docs-navbar-h, var(--docs-header-block-size)));
-  /* No top inset here: it would hold a FIXED gap above the scroll area, with the nav sliding under it.
-     The inset lives on the scroll container instead (below) so it scrolls away with the first items. */
-  border-inline-end: var(--sk-sidebar-border-width) solid var(--sk-sidebar-border-color);
-  background: var(--sk-sidebar-bg);
-  color: var(--sk-sidebar-fg);
-  box-shadow: var(--sk-sidebar-elevation);
-  overflow: hidden;
 }
 
 /* The rail surface runs from the header's underside to the bottom of the viewport. Its own top
@@ -311,32 +316,11 @@ main {
 }
 
 .docs-sidebar .sk-sidebar__content {
-  flex: 1;
-  min-block-size: 0;
-  padding: var(--sk-sidebar-padding);
   /* The rail's top inset lives INSIDE the scroll container, so it is part of the scrollable area: the
-     gap shows at rest and scrolls away with the nav, instead of a fixed band the list slides beneath. */
-  padding-block-start: calc(var(--sk-sidebar-padding) + var(--space-inset-lg));
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.docs-sidebar .sk-sidebar__separator {
-  flex: none;
-  block-size: 1px;
-  margin: 0;
-  border: 0;
-  background: var(--sk-sidebar-separator-color);
-}
-
-.docs-sidebar .sk-sidebar__footer {
-  display: flex;
-  flex: none;
-  align-items: center;
-  padding: var(--sk-sidebar-padding);
-  color: var(--sk-sidebar-footer-fg);
-  font-size: var(--sk-sidebar-footer-font-size);
-  white-space: nowrap;
+     gap shows at rest and scrolls away with the nav, instead of a fixed band the list slides beneath.
+     Added ON TOP of the component's own block padding rather than replacing it, which is why it reads
+     `--sk-sidebar-padding-block` (the component's vertical gutter) and not the inline one. */
+  padding-block-start: calc(var(--sk-sidebar-padding-block) + var(--space-inset-lg));
 }
 
 .docs-sidebar .sk-nav-list__link[aria-disabled="true"],
@@ -345,14 +329,14 @@ main {
 }
 
 /* The readiness dot rides the item's top-right corner (Badge's own `sk-badge-holder` contract,
- * `.sk-nav-list__item` opts in directly), a SIBLING of the link rather than content inside it —
+ * `.sk-nav-list__item` opts in directly), a SIBLING of the link rather than content inside it:
  * the link's own `overflow: hidden` would otherwise clip a corner-riding dot. Ring color matches
  * `--sk-sidebar-bg` for free: both default to `--color-bg-surface`. */
 
 /* Not a wall of identical dots: every entry reads "wip" today, so painting it unconditionally
  * down the whole rail would be forty amber dots saying nothing a reader didn't already know.
  * Reveal it on hover/focus of the row, or once the row IS the current page. A screen reader still
- * always hears it (the dot's own aria-label), since hover carries no meaning there — this opacity
+ * always hears it (the dot's own aria-label), since hover carries no meaning there: this opacity
  * is a SIGHTED-mouse restraint only. `:has()` reaches sideways from the link's state to its
  * sibling dot, since the dot is no longer the link's descendant. */
 .docs-sidebar .sk-nav-list__item .sk-badge[data-dot],
@@ -494,10 +478,10 @@ main {
 
 /*
  * Sidebar type ladder (quiet → loud):
- *   section title  — caption / uppercase / tertiary
- *   blurb          — caption / tertiary, softer than the title
- *   group label    — caption / uppercase / tertiary (sub-index)
- *   link           — body-sm / secondary; current page takes the accent
+ *   section title  : caption / uppercase / tertiary
+ *   blurb          : caption / tertiary, softer than the title
+ *   group label    : caption / uppercase / tertiary (sub-index)
+ *   link           : body-sm / secondary; current page takes the accent
  *
  * Spec on the h2 form must beat the unlayered prose `h2:not([data-flush])` rule.
  */
@@ -564,59 +548,151 @@ h2.docs-nav-section__title {
   margin-inline-end: auto;
 }
 
-/* The catalog is a direct map of the navigation: short, tappable destinations beat a second
- * component taxonomy with stale summaries. */
-/* The secondary catalog follows the same hierarchy as the rail: one quiet divider is enough to
- * explain that these are platform paths, not equally capable variants of the primary components. */
-.docs-catalog-section + .docs-catalog-section {
-  margin-block-start: var(--space-stack-xl);
+/*
+ * Browse by job, not alphabet. The rail and this catalog read the same navigation groups; the page
+ * adds the explanation and square TileLink treatment that make those groups useful for discovery.
+ */
+.docs-catalog-groups {
+  display: grid;
+  gap: var(--space-stack-xl);
 }
 
-.docs-catalog-section[data-secondary] {
+.docs-catalog-section {
+  min-inline-size: 0;
+}
+
+.docs-catalog-section + .docs-catalog-section {
   padding-block-start: var(--space-stack-xl);
   border-block-start: 1px solid var(--color-border-subtle);
 }
 
+.docs-catalog-section__header {
+  display: flex;
+  gap: var(--space-inline-md);
+  align-items: end;
+  justify-content: space-between;
+  margin-block-end: var(--space-stack-md);
+}
+
+.docs-catalog-section__title,
+h2.docs-catalog-section__title {
+  margin: 0;
+  font-size: var(--font-size-heading-md);
+  line-height: var(--font-line-height-heading);
+  text-wrap: balance;
+}
+
+.docs-catalog-section__blurb {
+  margin: var(--space-stack-xs) 0 0;
+  max-inline-size: 52ch;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body-sm);
+  text-wrap: pretty;
+}
+
+.docs-catalog-section__count {
+  flex: none;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-caption);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
 
 .docs-catalog {
   display: grid;
+  /* Wide enough that the longest real labels ("SegmentedControl", "CommandPalette") stay one line:
+     narrower and `.sk-tile`'s own `overflow-wrap: anywhere` (a real overflow guard, not a bug) starts
+     breaking them mid-word. */
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
-  gap: var(--space-stack-sm);
+  gap: var(--space-stack-md);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-/* Column, not a row: a tile now carries the label AND a readiness badge (nearly every entry today,
- * see ADR on component status), and a row layout squeezed "Work in progress" against short labels
- * at the grid's 12rem minimum width. Stacking keeps every tile legible regardless of label length. */
-.docs-catalog__link {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: var(--space-stack-xs);
-  min-block-size: var(--size-touch-target);
-  padding-inline: var(--space-inset-md);
-  padding-block: var(--space-inset-sm);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-control);
-  background: var(--color-bg-surface);
-  color: var(--color-text-primary);
-  font-weight: var(--font-weight-label);
-  text-decoration: none;
+.docs-catalog__item {
+  min-inline-size: 0;
 }
 
-.docs-catalog-section[data-secondary] .docs-catalog__link {
-  background: var(--color-bg-surface-sunken);
-  color: var(--color-text-secondary);
-  font-weight: var(--font-weight-body);
+/*
+ * TileLink owns the interaction and anatomy. The catalog gives every card the SAME square
+ * footprint (`aspect-ratio: 1` off the grid's own equal-width columns) rather than sizing each to
+ * its own content: a grid of visibly different-sized cards reads as a ranking, and nothing here
+ * ranks one component over another. A long description clips under the tile's own `overflow: hidden`
+ * instead of stretching its card taller than its neighbours.
+ *
+ * The badge sits in ITS OWN row at the top, right-aligned, not beside the title in a second
+ * column. A column was tried first and cost the title its width: at this card size a two-column
+ * split left barely enough room for the label, so "SegmentedControl" and "CommandPalette" broke
+ * mid-word (`.sk-tile`'s own `overflow-wrap: anywhere`, a real overflow guard reacting to a track
+ * that was actually too narrow). A row costs nothing (the badge is short) and the title keeps the
+ * card's full width below it. `order: -1` puts the badge first visually despite the DOM (title,
+ * then status) so a screen reader still meets the component's name before its maturity.
+ */
+.docs-catalog__link {
+  grid-template-rows: auto minmax(0, 1fr);
+  aspect-ratio: 1;
+  gap: var(--space-stack-sm);
+  transition-property: border-color, box-shadow;
+  transition-duration: var(--motion-feedback-duration);
+  transition-timing-function: var(--motion-feedback-easing);
+}
+
+.docs-catalog__link .sk-tile__content {
+  align-content: start;
+}
+
+.docs-catalog__link .sk-tile__title {
+  text-wrap: balance;
+}
+
+.docs-catalog__link .sk-tile__description {
+  text-wrap: pretty;
+}
+
+.docs-catalog__link > .sk-badge {
+  order: -1;
+  justify-self: end;
+}
+
+@media (any-hover: hover) {
+  .docs-catalog__link:hover {
+    --sk-tile-border-color: var(--color-border-strong);
+
+    box-shadow: var(--elevation-raised);
+  }
+}
+
+@media (max-width: 36rem) {
+  .docs-catalog-section__header {
+    align-items: start;
+  }
+
+  .docs-catalog {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    gap: var(--space-stack-sm);
+  }
+
+  .docs-catalog__link {
+    --sk-tile-padding: var(--space-inset-sm);
+  }
+
+  .docs-catalog__link .sk-tile__description {
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .docs-catalog__link {
+    transition-duration: 1ms;
+  }
 }
 
 /* ── "En esta página", the index of the document ─────────────────────────── */
 /* The component (`@skryensya/core/components/toc.css`) owns the anatomy; this is only what makes
  * THIS shell's instance a rail rather than the disclosure it ships as. Built client-side, because
- * .astro pages have no build-time heading list — the rail ALWAYS occupies its column (grid track +
+ * .astro pages have no build-time heading list: the rail ALWAYS occupies its column (grid track +
  * min-inline-size) before the list fills, so revealing links never shifts the prose. */
 .shell .sk-toc {
   /* Same sticky-under-navbar contract as the sidebar, read the measured navbar height (fallback to
@@ -627,7 +703,7 @@ h2.docs-nav-section__title {
 
 /* Before the inline builder runs, keep the column and a stable list band so links appearing
    cannot grow the sticky rail into the prose (vertical) or shift tracks (horizontal). Specific to
-   this shell's runtime-discovered headings — a tree-authored Toc already knows its items. */
+   this shell's runtime-discovered headings: a tree-authored Toc already knows its items. */
 .sk-toc:not([data-ready]) .sk-toc__list {
   visibility: hidden;
   min-block-size: calc(var(--size-control-sm) * 4);
@@ -641,6 +717,67 @@ h2.docs-nav-section__title {
    never stops a pixel short. */
 main > :where(h2, h3) {
   scroll-margin-top: calc(var(--docs-navbar-h, var(--docs-header-block-size)) + var(--space-stack-md));
+}
+
+/*
+ * Same contract, one tab-panel level deep: the hero tabs bar (pilot: /componentes/accordion) is
+ * ALSO sticky chrome a jump has to clear, on top of the navbar, or the target lands right under it
+ * the same way the code preview's copy button used to. `main > :where(h2, h3)` above never matched
+ * these anyway (they are not `main`'s direct children), so this was never double-applying.
+ */
+/* The hero tab strip's own rules live in one block further down, with the sticky ones. */
+
+/*
+ * THE OPEN TAB, BEFORE ANY JAVASCRIPT RUNS.
+ *
+ * The tabs enhancer is a Svelte+Zag island: until it hydrates, every panel is just a `<div>` with
+ * no `hidden` on it, so the browser laid out and painted ALL of them and then threw six sevenths of
+ * that away when the machine collapsed them. Measured on /componentes/accordion: the document
+ * reached 11950px before settling at 5112px, ~6800px of full layout done for content nobody asked
+ * to see, and it settled 1.4s in.
+ *
+ * This closes them in CSS instead, at parse time, with no script involved. `~` means "every panel
+ * after the first", so the rule needs no per-page list of values and no build step: it encodes the
+ * convention these pages already follow, that the panel the page opens on is the one authored
+ * first. A page that authors its default somewhere else opts out by not using this class.
+ *
+ * THREE GUARDS, each turning the rule off the moment someone better owns the answer:
+ *   [data-js]              the prepaint script in Base.astro. Absent with scripting off, so a no-JS
+ *                          reader gets every panel, which is the whole document rather than a
+ *                          seventh of it with no way to reach the rest.
+ *   :not([data-sk-hero-tab])  the same prepaint script sets this on <html> when the URL carries a
+ *                          `?tab=`, and emits its own rule naming that value. "First panel" is then
+ *                          the wrong answer, so this one stands down rather than fighting it.
+ *   :not([data-scope])     Zag stamps `data-scope="tabs"` when it hydrates. From then on `hidden` is
+ *                          the machine's to manage and this rule must be out of the way.
+ *
+ * `display: none`, matching what `hidden` does, so hydration is a swap between two identical
+ * paints rather than a reflow.
+ */
+[data-js]:not([data-sk-hero-tab])
+  .sk-tabs:has(> .docs-component-hero-tabs):not([data-scope])
+  > [data-sk-tabs-content] ~ [data-sk-tabs-content] {
+  display: none;
+}
+
+.docs-component-hero-tabs ~ [data-sk-tabs-content] :where(h2, h3, h4) {
+  scroll-margin-top: calc(
+    var(--docs-navbar-h, var(--docs-header-block-size)) + var(--docs-hero-tabs-h, 0px) + var(--space-stack-md)
+  );
+}
+
+/*
+ * A code preview's sticky copy button (`packages/core/css/components/code-preview.css`) has to
+ * clear THIS SHELL's own stacked sticky chrome (the navbar always, and the hero tabs bar too on
+ * the pilot page that has one), or it sticks to the viewport's very top edge and ends up hidden
+ * under whichever of those is opaque there. `--docs-hero-tabs-h` is unset (and so 0px) on every
+ * page without a `.docs-component-hero-tabs`, which is what lets one rule cover both cases instead
+ * of a page-specific override.
+ */
+.shell .sk-code-preview {
+  --sk-code-preview-copy-sticky-top: calc(
+    var(--docs-navbar-h, var(--docs-header-block-size)) + var(--docs-hero-tabs-h, 0px)
+  );
 }
 
 /* The width-driven shell switches (toc at `wide`, sidebar↔drawer↔navbar at `desktop`) moved to
@@ -696,8 +833,153 @@ h3:not([data-flush]) {
   font-weight: var(--font-weight-heading);
 }
 
+/* No "sm/md/lg" alias exists past h3 (the docs never needed a fourth prose level before the hero
+   tabs pilot demoted a whole tier of headings by one step): `--font-size-heading-h4` is the type
+   scale's own floor for h4 and up, so this reads it directly instead of inventing a new alias. */
+h4:not([data-flush]) {
+  margin: var(--space-stack-md) 0 var(--space-stack-xs);
+  font-size: var(--font-size-heading-h4);
+  line-height: var(--font-line-height-heading);
+  font-weight: var(--font-weight-heading);
+}
+
 p {
   margin: 0 0 var(--space-stack-sm);
+}
+
+/* ── component hero (pilot: /componentes/accordion) ──────────────────────────
+   A generic page h1 uses the document scale (heading-lg, same as any h1 anywhere). A component
+   page is the thing a reader landed on, so its h1 gets the size the type scale set aside for
+   exactly this: display-sm, "marketing / hero chrome" per semantic/_type.scss, and an eyebrow
+   that repeats the sidebar section this page lives under, the same orientation a breadcrumb gives.
+
+   Tinted with the system's one "accent wash" role (`--color-bg-accent-subtle`, the same fill a
+   current nav-list item and the current toc link already use), rather than a bespoke color, so a
+   brand swap re-tints the hero for free. Full-bleed to `<main>`'s own edges (negative margin
+   cancelling its `--space-inset-lg` padding, `sk-wrapper`'s default) and re-padded by that exact
+   amount, so the title lines up with the prose directly below it instead of sitting indented
+   inside a second inset.
+
+   The text sits at the BOTTOM of the block, not centred in it: almost all the block's height is
+   padding-top, and padding-bottom is only what separates the title from the tabs immediately
+   below: the same "hero settles onto the content that follows it" rhythm a magazine masthead
+   uses, rather than a title floating in the middle of a colored rectangle. */
+.docs-component-hero {
+  margin-inline: calc(var(--space-inset-lg) * -1);
+  padding: calc(var(--space-section) * 1.5) var(--space-inset-lg) var(--space-stack-lg);
+  background: var(--color-bg-accent-subtle);
+}
+
+.docs-component-hero__eyebrow {
+  margin: 0 0 var(--space-stack-xs);
+  color: var(--color-text-accent);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.docs-component-hero h1:not([data-flush]) {
+  margin-block-end: 0;
+  font-size: var(--font-size-display-lg);
+  line-height: var(--font-line-height-display-lg);
+}
+
+/* ── component hero tabs (pilot: /componentes/accordion) ─────────────────────
+   A real <Tabs>, Zag-backed, its own component, deliberately NOT the <Toc>: the two answer
+   different questions (which layer of the reference am I in, vs. where am I in this one document)
+   and fusing them made the toc's scroll-spy the tabs' selection state, which is a second, silent
+   owner of `aria-current` the moment they disagree. Sticky, so switching layers never costs a
+   scroll back to the top: the reader can be three screens into "Uso" and still reach "A11y". */
+/* Goes on `.sk-tabs__list` itself, not a wrapper: only the trigger row should pin, the panels
+   still need to scroll out normally underneath it.
+
+   ONE ROW THAT SCROLLS SIDEWAYS, never two rows. Wrapping was tried and is worse HERE, and the
+   reason is that this bar is `position: sticky`: a wrapped bar grows to two and then three rows as
+   the column narrows, and every one of those rows is pinned to the top of the viewport for the whole
+   page. On a phone that is a third of the screen permanently spent on navigation. A sideways scroll
+   costs no vertical space at any width.
+
+   `flex: none` because the triggers would otherwise squeeze themselves to fit and never overflow at
+   all, which is how a scroll container ends up scrolling nothing while the labels turn to ellipsis.
+
+   THE SCROLLBAR SITS BELOW THE RULE, and getting it there is the whole reason the rule is not a
+   border. A scrollbar is always laid inside the scroll container's PADDING box, which is inside its
+   border, so on a bordered scroll container the bar can only ever appear ABOVE the line. There is no
+   property that moves it; the line has to stop being a border.
+
+   So `.sk-tabs__list`'s own border is dropped and the same 1px is painted as a background image
+   instead, held one lane-height off the bottom. A background on a scroll container does not scroll
+   with its content (`background-attachment: scroll` is attached to the box, not the content), so the
+   rule stays put while the tabs slide under it, and it cannot be the thing that scrolls away.
+
+   The lane below it is exactly the scrollbar's height, which puts the triggers' bottom edge on the
+   rule itself: the selected tab's underline (`::after`, `inset-block-end: -1px`) straddles it the
+   way it did when the line was a real border, and the bar runs underneath, flush.
+
+   `overflow-y` IS SET EXPLICITLY and that is the subtle part: `overflow-x: auto` on its own does not
+   leave the other axis alone. A `visible` computes to `auto` the moment its partner is not visible,
+   so the bar quietly became a VERTICAL scroll container too, over that same 1px of underline. A
+   one-pixel scrollport under the pointer, eating trackpad gestures meant for the page. `clip` never
+   creates a scrollport at all, which `hidden` still does. */
+.docs-component-hero-tabs {
+  --docs-hero-tabs-scrollbar-size: 6px;
+
+  position: sticky;
+  top: var(--docs-navbar-h, var(--docs-header-block-size));
+  z-index: 2;
+  padding-block: var(--space-inset-xs) var(--docs-hero-tabs-scrollbar-size);
+  border-block-end: 0;
+  background-color: var(--color-bg-canvas);
+  background-image: linear-gradient(
+    var(--sk-tabs-list-border-color),
+    var(--sk-tabs-list-border-color)
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: left 0 bottom var(--docs-hero-tabs-scrollbar-size);
+  overflow-x: auto;
+  overflow-y: clip;
+  overscroll-behavior-inline: contain;
+}
+
+/*
+ * THE SCROLLBAR, PER ENGINE, and the two ways of asking are mutually exclusive rather than additive.
+ *
+ * Setting `scrollbar-width` or `scrollbar-color` makes Chromium ignore every `::-webkit-scrollbar`
+ * rule below and fall back to an OVERLAY bar, which on macOS is invisible until the reader is
+ * already mid-gesture. So the pseudo-elements are used alone here: styling them is also what opts
+ * Chromium and WebKit out of overlay scrollbars, which is what makes the bar a standing affordance
+ * rather than a reward for guessing there is more.
+ *
+ * Firefox reads only the standard properties and none of the below, so it gets them behind a
+ * feature test on the very selector that divides the two engines. Not a UA sniff: the question
+ * asked is exactly the question that matters, "is the pseudo-element path available here", and an
+ * engine that grows support for it later moves to the branch that already styles it.
+ */
+@supports not selector(::-webkit-scrollbar) {
+  .docs-component-hero-tabs {
+    /* The track stays transparent so the lane reads as empty until there is somewhere to go. */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-strong) transparent;
+  }
+}
+
+.docs-component-hero-tabs::-webkit-scrollbar {
+  height: var(--docs-hero-tabs-scrollbar-size);
+}
+
+.docs-component-hero-tabs::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.docs-component-hero-tabs::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-pill);
+  background: var(--color-border-strong);
+}
+
+.docs-component-hero-tabs > .sk-tabs__trigger {
+  flex: none;
 }
 
 
@@ -707,9 +989,21 @@ p {
   color: var(--color-text-secondary);
 }
 
-/* Bare anchors in prose (ADRs, etc.). `.sk-link` owns its own tones, leave it alone or an
- * unlayered `a { color }` rule paints every link accent and kills the text-colored default. */
-a:not(.sk-link) {
+/*
+ * Bare anchors IN PROSE (ADRs, etc.). `.sk-link` owns its own tones, leave it alone or an
+ * unlayered `a { color }` rule paints every link accent and kills the text-colored default.
+ *
+ * SCOPED TO THE DOCUMENT COLUMN, and the scope is the whole point. Unqualified, this rule matched
+ * every anchor on the page — including `.sk-nav-list__link` in the sidebar, the drawer and the ToC,
+ * which the nav-list pattern deliberately paints `--color-text-secondary`. Being unlayered, it beat
+ * the component every time, so the entire navigation rail rendered brand-blue and the accent stopped
+ * meaning anything: forty links competing with the one thing on the page worth pointing at. That is
+ * chrome the accent-reach dimension would otherwise have had to dial back down, for a colour the
+ * component never asked for.
+ *
+ * `main` is the document column; the rail, the ToC and the navbar all sit outside it.
+ */
+main a:not(.sk-link) {
   color: var(--color-text-accent);
 }
 
@@ -798,7 +1092,7 @@ a:not(.sk-link) {
  * The reference is one Table per family, in the component's documented anatomy: the family title is
  * the table's own <caption>, which Table already renders outside the frame, and the tier is a real
  * heading in the document above the tables it owns. Nothing here invents a row type or reaches into
- * the component — this file only spaces the blocks and sizes the columns, which is the page's job.
+ * the component: this file only spaces the blocks and sizes the columns, which is the page's job.
  */
 .token-tier {
   margin-block-start: var(--space-section);
@@ -843,7 +1137,7 @@ a:not(.sk-link) {
 
 /*
  * One column ruler for every family. With the documented data-layout="fixed", the tracks come from
- * these widths instead of from each table's own longest cell — which is what keeps ninety separate
+ * these widths instead of from each table's own longest cell: which is what keeps ninety separate
  * tables from stepping out of line with one another.
  */
 .token-group .sk-table__head th:nth-child(1) {

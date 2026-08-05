@@ -5,6 +5,8 @@
  */
 import { iconMarkup } from "../icons";
 import "@skryensya/core/components/copy-button.css";
+/* The feedback flag is an anchored box: the pattern is where its placement and its arrow live. */
+import "@skryensya/core/patterns/anchored.css";
 import { getLocale, useTranslations } from "../i18n";
 
 interface Props {
@@ -18,8 +20,8 @@ const copiedIcon = iconMarkup("check");
 ---
 
 <button
-  class="sk-button sk-interactive sk-copy-button"
-  data-variant="ghost"
+  class="sk-button sk-interactive sk-copy-button sk-anchor"
+  data-variant="subtle"
   data-size="sm"
   data-icon-only
   data-sk-copy-button
@@ -34,5 +36,15 @@ const copiedIcon = iconMarkup("check");
   <span class="sk-copy-button__icon" data-sk-copy-button-icon="idle" aria-hidden="true"><Fragment set:html={copyIcon} /></span>
   <span class="sk-copy-button__icon" data-sk-copy-button-icon="copied" aria-hidden="true"><Fragment set:html={copiedIcon} /></span>
   <span class="sk-copy-button__label" data-sk-copy-button-label aria-live="polite">{t("copy.action")}</span>
+  <span
+    class="sk-copy-button__feedback sk-anchored"
+    data-sk-copy-button-feedback
+    data-sk-placement="inline-start"
+    aria-hidden="true"
+  >
+    <span data-sk-copy-button-feedback-text="copied">{t("copy.copied")}</span>
+    <span data-sk-copy-button-feedback-text="error">{t("copy.error")}</span>
+    <span class="sk-anchored-arrow" aria-hidden="true"></span>
+  </span>
 </button>
 

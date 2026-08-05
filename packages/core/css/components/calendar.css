@@ -1,4 +1,4 @@
-/* TIER 3, CALENDAR — month/day grid with month, year and decade views.
+/* TIER 3, CALENDAR: month/day grid with month, year and decade views.
  *
  * Stands on its own (no input, no popover): DatePicker imports this file and nests `.sk-calendar`
  * inside its positioner, but a page can also mount `data-sk-calendar` directly wherever an inline
@@ -92,8 +92,8 @@
   }
   /* A day cell is a ghost sm Button, SQUARE (width pinned to the same cell-size as its height)
    * rather than stretched to the width of its `<td>`: seven columns of small circular "bubbles"
-   * is the shape every calendar UI trains people to expect. Month/year cells are the opposite —
-   * only 4 wide, `<td>`s with much more room to give — and stretch to fill that room instead
+   * is the shape every calendar UI trains people to expect. Month/year cells are the opposite:
+   * only 4 wide, `<td>`s with much more room to give, and stretch to fill that room instead
    * (below), so escalating a view doesn't strand a 32px square in a much bigger box. Hover/press/
    * focus feedback is still `sk-interactive`'s state layer (ADR-8), never a hand-rolled `::before`. */
   .sk-calendar__cell-trigger.sk-button {
@@ -109,7 +109,7 @@
     font-variant-numeric: tabular-nums;
   }
   /* Month/year tables have no weekday header row and only 3 rows of cells (12 months ÷ 4 cols,
-   * or a decade ÷ 4 cols), so at the day-cell row height they'd render as a short, wide strip —
+   * or a decade ÷ 4 cols), so at the day-cell row height they'd render as a short, wide strip:
    * measured 288×148 (ratio 0.51) against day view's 288×278 (ratio 0.97). Pinning the table to
    * SEVEN row-units (the day grid's weekday row + 6 week rows) makes every view occupy roughly
    * the same square footprint, and lets each cell's own trigger stretch into the extra room
@@ -119,7 +119,7 @@
   .sk-calendar__year-grid {
     min-block-size: calc(var(--sk-calendar-row-size) * 7);
   }
-  /* `height: 100%` on the trigger won't resolve here — a `<td>`'s height comes out of the table's
+  /* `height: 100%` on the trigger won't resolve here: a `<td>`'s height comes out of the table's
    * row-distribution pass, which percentage-height children can't see. Absolutely positioning the
    * trigger against its own (now `position: relative`) `<td>` sidesteps that: an inset fill is
    * resolved against the cell's actual laid-out box, the same mechanism button.css already uses
@@ -162,11 +162,11 @@
   }
   /* ── range fill ─────────────────────────────────────────────────────────────
    * `selectionMode: "range"` marks the two picked days `data-selected` (the solid pill above
-   * already covers them) but marks everything BETWEEN them `data-in-range` instead — a plain day,
+   * already covers them) but marks everything BETWEEN them `data-in-range` instead: a plain day,
    * not a selected one. That attribute lives on the TRIGGER (Zag's cell-state, not the `<td>`), and
    * a fill on just the trigger's own inset box would leave a gap between consecutive days instead
-   * of one continuous band. `:has()` reaches from the cell into its trigger's state — the same
-   * technique Combobox's control already uses to react to its input's focus — so the tint can
+   * of one continuous band. `:has()` reaches from the cell into its trigger's state, the same
+   * technique Combobox's control already uses to react to its input's focus, so the tint can
    * paint the whole `<td>`, edge-to-edge under `border-collapse`. `data-in-hover-range` is the SAME
    * band while a range is still being picked (Zag tracks pointer movement automatically once
    * range mode is on): the two never overlap in practice, so one rule covers both. */

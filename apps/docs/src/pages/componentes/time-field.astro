@@ -16,16 +16,16 @@ const t = useTranslations(getLocale(Astro.url));
 
 <Base
   title="TimeField"
-  description="Un campo de hora segmentado — hora, minuto y AM/PM como partes editables e independientes, operables por teclado."
+  description="Un campo de hora segmentado: hora, minuto y AM/PM como partes editables e independientes, operables por teclado."
 >
   <h1>TimeField</h1>
   <p class="lede">
-    Un campo para una hora de reloj local — sin fecha, sin zona horaria. Hora, minuto y (en un
+    Un campo para una hora de reloj local, sin fecha, sin zona horaria. Hora, minuto y (en un
     locale de 12 horas) AM/PM son tres segmentos editables independientes en un solo campo, en vez
     del chrome del propio <code>&lt;input type="time"&gt;</code>, que difiere lo suficiente entre
     Chrome, Firefox y Safari como para no poder estilarse ni confiar en que se vea igual dos veces.
     No existe una machine <code>@zag-js/time-picker</code>, así que este componente es estado a
-    mano, como Slider y Segmented — pero tampoco hay popover: una versión anterior ponía un selector
+    mano, como Slider y Segmented, pero tampoco hay popover: una versión anterior ponía un selector
     de ruedas detrás de un trigger, y resultó no ser ni más simple ni más accesible que construir
     los segmentos directamente.
   </p>
@@ -41,7 +41,7 @@ const t = useTranslations(getLocale(Astro.url));
     <code>formatToParts</code> de <code>Intl.DateTimeFormat</code>, no se asumen: algunos locales
     ponen el periodo del día antes de la hora, y el separador no siempre es <code>":"</code>. El
     valor público sigue siendo el string canónico <code>HH:mm</code>, la misma forma que envía un
-    <code>&lt;input type="time"&gt;</code> plano — llevado en un input oculto, así que un
+    <code>&lt;input type="time"&gt;</code> plano, llevado en un input oculto, así que un
     formulario detrás de TimeField nunca tiene que parsear un string dependiente del locale. React
     lo guarda como estado del componente (<code>value</code>/<code>defaultValue</code>, un callback
     <code>onValueChange</code>). Vanilla hidrata el <code>data-sk-time-field</code> autorado: el
@@ -52,7 +52,7 @@ const t = useTranslations(getLocale(Astro.url));
   <h2>Editar un segmento</h2>
   <p>
     Escribir un dígito llena el segmento enfocado y avanza en cuanto ningún otro dígito podría
-    mantenerlo válido — escribir <kbd class="sk-kbd">1</kbd> en el segmento de hora de un campo de
+    mantenerlo válido: escribir <kbd class="sk-kbd">1</kbd> en el segmento de hora de un campo de
     12 horas espera brevemente un posible segundo dígito (<code>10</code>–<code>12</code>), escribir
     <kbd class="sk-kbd">9</kbd> avanza de inmediato, porque ningún segundo dígito podría seguirlo y
     seguir siendo ≤ 12. Las flechas arriba/abajo suben o bajan el valor y dan la vuelta en los
@@ -66,7 +66,7 @@ const t = useTranslations(getLocale(Astro.url));
     Un <code>&lt;input type="time"&gt;</code> plano sigue funcionando, no necesita CSS ni
     JavaScript, y trae gratis el teclado y selector del sistema operativo. Sube a TimeField sólo
     cuando la inconsistencia de ese selector entre navegadores, o la ausencia total de hooks de
-    estilo, realmente te cuesta algo — la misma decisión que DatePicker toma contra un
+    estilo, realmente te cuesta algo, la misma decisión que DatePicker toma contra un
     <code>type="date"</code> plano.
   </p>
   <ComponentPreview tree={timeFieldNativeTree(t, { name: "inicio" })} label="Input de hora nativo" />
@@ -76,7 +76,7 @@ const t = useTranslations(getLocale(Astro.url));
     Cada segmento es <code>role="spinbutton"</code> dentro de un <code>role="group"</code> nombrado
     por el label del campo: <code>aria-valuenow</code>/<code>aria-valuetext</code> llevan su valor
     actual (un placeholder amistoso como «hh» antes de fijar nada, no un string vacío), y
-    <code>aria-valuemin</code>/<code>aria-valuemax</code> su rango real — 1–12 para un segmento de
+    <code>aria-valuemin</code>/<code>aria-valuemax</code> su rango real: 1–12 para un segmento de
     hora en un locale de 12 horas, 0–23 en uno de 24. Cada segmento es su propia parada de
     tabulación, igual que ya funciona un input de fecha nativo de varias partes, así que el uso por
     teclado no necesita nada más que Tab y las flechas documentadas arriba.

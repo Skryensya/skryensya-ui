@@ -2,7 +2,7 @@
  * THE LOCALE HELPERS: which language is this page, what does a string say in it, and where does a
  * given page live in the other one.
  *
- * The site is static and multi-page, so a locale is a URL PREFIX and nothing else — no runtime
+ * The site is static and multi-page, so a locale is a URL PREFIX and nothing else: no runtime
  * negotiation, no cookie, no client state. `/componentes/avatar` is Spanish, `/en/components/avatar`
  * is English, and both are real files on disk. That is deliberate: every dimension this site already
  * has (brand, mode, contrast, density) resolves in the browser from custom properties, but language
@@ -37,7 +37,7 @@ export function isLocale(value: string | undefined | null): value is Locale {
 /**
  * The locale of a URL, from its first segment.
  *
- * Astro exposes `Astro.currentLocale`, and it is derived from exactly this — but it is `undefined`
+ * Astro exposes `Astro.currentLocale`, and it is derived from exactly this, but it is `undefined`
  * on the default locale's unprefixed routes, which is most of the site. Reading the path ourselves
  * gives one answer with one shape everywhere, so no caller has to remember the hole.
  */
@@ -51,7 +51,7 @@ export function getLocale(url: URL | string): Locale {
  * Translator bound to a locale. Missing keys fall back to Spanish rather than rendering the key:
  * a half-translated page in the wrong language is readable, `search.placeholder` on screen is not.
  *
- * `vars` interpolates `{name}` placeholders — used by the strings that carry a value the caller owns
+ * `vars` interpolates `{name}` placeholders: used by the strings that carry a value the caller owns
  * (the palette name, the package name in the footer).
  */
 /**
@@ -85,6 +85,7 @@ export function useTranslations(locale: Locale): Translate {
  */
 const routeSegments: Record<string, Partial<Record<Locale, string>>> = {
   componentes: { en: "components" },
+  arquitectura: { en: "architecture" },
   referencia: { en: "reference" },
   primitivas: { en: "primitives" },
   almacenamiento: { en: "storage" },
@@ -96,6 +97,7 @@ const routeSegments: Record<string, Partial<Record<Locale, string>>> = {
   personalizar: { en: "customize" },
   prerrequisitos: { en: "prerequisites" },
   "primer-componente": { en: "first-component" },
+  "montaje-automatico": { en: "automatic-mounting" },
   transparencias: { en: "transparency" },
 };
 
@@ -115,8 +117,8 @@ const stripLocale = (pathname: string): string => {
 /**
  * A path in its Spanish (canonical) form, whatever locale it arrived in.
  *
- * This is the KEY every locale-independent lookup uses — `vanillaMounts`, `navLabel`, the
- * "am I the current page" check in the nav — so those tables stay keyed one way instead of gaining a
+ * This is the KEY every locale-independent lookup uses (`vanillaMounts`, `navLabel`, the
+ * "am I the current page" check in the nav), so those tables stay keyed one way instead of gaining a
  * column each time a language is added.
  */
 export function canonicalPath(pathname: string): string {
@@ -151,13 +153,33 @@ export function localizePath(pathname: string, locale: Locale): string {
  * The site is translated one page at a time, so for most of it the other language is simply not
  * there. A language switcher that links to it anyway is worse than no switcher: it turns every page
  * into a trapdoor onto a 404. This asks the page directory instead of trusting a hand-kept list,
- * which means the answer cannot go stale — drop in `pages/en/components/button.astro` and the
+ * which means the answer cannot go stale: drop in `pages/en/components/button.astro` and the
  * control lights up on the Spanish Button page with no second edit.
  *
- * `import.meta.glob` is resolved statically by Vite: no page module is executed or bundled by this,
- * only their paths are collected.
+ * ONLY THE KEYS ARE USED. `Object.keys` below is the whole point; the values are never read.
+ *
+ * `?raw` IS LOAD-BEARING, and it is the difference between this file costing nothing and costing
+ * every page 147 kB of someone else's CSS. Ask Vite for the page MODULES and you hand it an import
+ * edge from this module — which `Base.astro` pulls in, so, every page — to all ~200 pages. Astro
+ * then resolves each route's styles through that graph and concludes that every page's stylesheet
+ * belongs on every page. Measured before this query was added: `/componentes/accordion` shipped 15
+ * stylesheets totalling 298 kB, among them `customize.css` and `personalizar.css`, two OTHER routes'
+ * page styles, 39 kB each; 180 of 198 built pages carried that same freight. With `?raw` the same
+ * page ships 4 stylesheets and 154 kB, and the leak is down to the 2 pages that own those styles.
+ *
+ * The multiplier is what makes it matter: every ComponentPreview stage clones the parent's whole
+ * `<head>` into its frame (`scripts/component-preview-frame.ts`), so on a page with 8 previews that
+ * 147 kB is parsed into a CSSOM nine times over.
+ *
+ * `eager` because the values are strings, not modules: nothing is fetched at runtime, and the page
+ * sources it inlines land in the SERVER bundle, which never reaches a reader. If you find yourself
+ * dropping the query to "clean this up", read the paragraph above first.
  */
-const pageModules = import.meta.glob("../pages/**/*.astro");
+const pageModules = import.meta.glob("../pages/**/*.astro", {
+  eager: true,
+  query: "?raw",
+  import: "default",
+});
 
 /** `../pages/en/components/avatar.astro` → `/en/components/avatar` (and `index` → its directory). */
 function routeFromModulePath(modulePath: string): string {

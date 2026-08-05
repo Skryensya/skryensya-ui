@@ -99,7 +99,7 @@ export type TileChevronProps = HTMLAttributes<HTMLSpanElement>;
 
 /**
  * The disclosure mark on an expandable tile. Both children are always rendered and the stylesheet
- * shows one, off the trigger's `data-state` — on the authored path there is no runtime to swap an
+ * shows one, off the trigger's `data-state`: on the authored path there is no runtime to swap an
  * icon with. Decorative on purpose: the trigger's `aria-expanded` already announces the state.
  */
 export const TileChevron = forwardRef<HTMLSpanElement, TileChevronProps>(function TileChevron(
@@ -278,7 +278,10 @@ const ExpandableTileRoot = forwardRef<HTMLElement, ExpandableTileProps>(function
   const service = useMachine(collapsible.machine, { id: id ?? generatedId, open, defaultOpen, disabled, onOpenChange });
   const api = collapsible.connect(service, normalizeProps);
   const Component = (as ?? "section") as ElementType;
-  const classes = tileRootClasses(className, tileParts.interactive, tileParts.expandable, "sk-interactive");
+  // `sk-interactive` lives on the trigger (below), not the section: the section is a container,
+  // not the control, and painting the state layer behind it made hovering the revealed content
+  // tint too (see the contract note in `@skryensya/core/tile`).
+  const classes = tileRootClasses(className, tileParts.expandable);
 
   return (
     <ExpandableTileContext.Provider value={api}>
@@ -299,7 +302,9 @@ export const ExpandableTileTrigger = forwardRef<HTMLButtonElement, ExpandableTil
 ) {
   const api = useContext(ExpandableTileContext);
   if (!api) throw new Error("ExpandableTile.Trigger must be rendered inside ExpandableTile.");
-  const classes = className ? `${tileParts.trigger} ${className}` : tileParts.trigger;
+  // Not `tileRootClasses`: that helper always prepends `sk-tile` (the SECTION's class), which does
+  // not belong on this button.
+  const classes = [tileParts.trigger, tileParts.interactive, "sk-interactive", className].filter(Boolean).join(" ");
 
   return (
     <button {...api.getTriggerProps()} {...props} className={classes} data-scope="tile" ref={ref} type={type}>

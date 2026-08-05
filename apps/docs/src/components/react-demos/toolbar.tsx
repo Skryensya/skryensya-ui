@@ -11,19 +11,19 @@ import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@skryensya/react/toolba
 import { Tooltip } from "@skryensya/react/tooltip";
 import { framedIn } from "./framed";
 
-/** Every demo below runs inside its own preview frame — see `framed.tsx`. */
+/** Every demo below runs inside its own preview frame. See `framed.tsx`. */
 const framed = framedIn(import.meta.url);
 
 /*
  * `Icon`'s `name` is typed to the STABLE vocabulary on purpose: it is set-independent, which is what
  * makes swapping icon sets a no-op at every call site (decision 15). A glyph that only one set draws
- * therefore has no type to name it, even when — as here — the set that draws it is bound two lines
+ * therefore has no type to name it, even when, as here, the set that draws it is bound two lines
  * up. The vanilla demo on this page has the same requirement and meets it the same way, by binding
  * lucide explicitly (`mountIcons(document, lucideIcons)`), and an untyped `data-sk-icon` attribute.
  *
  * So this is one named seam rather than three scattered casts: it is only sound while the enclosing
  * IconSetProvider binds a set that actually draws these. Widening `Icon` globally is the thing NOT to
- * do — it would let any call site name a glyph the next set has never heard of.
+ * do: it would let any call site name a glyph the next set has never heard of.
  */
 const lucideOnly = (name: "bold" | "italic" | "link") => name as StableIconName;
 

@@ -24,7 +24,7 @@ export type TagPartClass = (typeof tagParts)[TagPart];
 
 /*
  * A label the user can act on, and the reason it is not a Badge: a tag can be removed, and the
- * control that removes it is a REAL Button — the state layer, the focus ring and the hit target come
+ * control that removes it is a REAL Button: the state layer, the focus ring and the hit target come
  * with it, which a chip-shaped lookalike would have to reinvent and get wrong.
  */
 export const tagContract = {
@@ -62,7 +62,7 @@ export const tagContract = {
           { element: "span", part: "label", slot: "children" },
           /*
            * A real Button, not a chip-shaped lookalike: the state layer, the focus ring and the hit
-           * target come with it, and `close` is the system's icon for dismissing — never a literal ×.
+           * target come with it, and `close` is the system's icon for dismissing, never a literal ×.
            * System-owned structure, like a checkbox's indicators, so it lives in the template.
            */
           {

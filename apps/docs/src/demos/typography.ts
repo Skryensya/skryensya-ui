@@ -69,7 +69,7 @@ export const headingDocumentTree = (t: Translate): UsageTree => {
   };
 };
 
-/** Eyebrow + display title + lede — the page-open pattern. */
+/** Eyebrow + display title + lede: the page-open pattern. */
 export const headingPageTitleTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "Stack",
@@ -223,7 +223,7 @@ export const textReadingTree = (t: Translate): UsageTree => ({
   ],
 });
 
-/** Validation message — tone paints, `role="alert"` is the live region. */
+/** Validation message: tone paints, `role="alert"` is the live region. */
 export const textFeedbackTree = (t: Translate): UsageTree => ({
   contract: "typography",
   signature: "Text",

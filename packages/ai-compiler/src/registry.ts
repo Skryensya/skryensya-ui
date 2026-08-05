@@ -3,8 +3,9 @@ import { typographyContract } from "@skryensya/core/typography";
 import { breadcrumbContract } from "@skryensya/core/breadcrumb";
 import { emptyStateContract } from "@skryensya/core/empty-state";
 import { statContract } from "@skryensya/core/stat";
-import { alertContract } from "@skryensya/core/alert";
+import { calloutContract } from "@skryensya/core/callout";
 import { processListContract } from "@skryensya/core/process-list";
+import { changelogContract } from "@skryensya/core/changelog";
 import { stepsContract } from "@skryensya/core/steps";
 import { listContract } from "@skryensya/core/list";
 import { mediaGradientContract } from "@skryensya/core/media-gradient";
@@ -68,15 +69,15 @@ import type {
  * hold, which is the whole reason the three can never drift apart.
  *
  * A family joins this list when its contract passes the gates, never because it exists in the kit.
- * A half-described family is worse than an absent one — the agent would compose against it.
+ * A half-described family is worse than an absent one: the agent would compose against it.
  */
 export const contracts = {
-  alert: alertContract,
   avatar: avatarContract,
   badge: badgeContract,
   box: boxContract,
   breadcrumb: breadcrumbContract,
   button: buttonContract,
+  callout: calloutContract,
   checkbox: checkboxContract,
   "empty-state": emptyStateContract,
   field: fieldContract,
@@ -105,6 +106,7 @@ export const contracts = {
   "number-field": numberFieldContract,
   placeholder: placeholderContract,
   "process-list": processListContract,
+  changelog: changelogContract,
   progress: progressContract,
   "radio-group": radioGroupContract,
   segmented: segmentedContract,

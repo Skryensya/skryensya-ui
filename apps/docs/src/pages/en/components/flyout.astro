@@ -52,7 +52,7 @@ function remountFlyout(root, value) {
 >
   <h1>Flyout</h1>
   <p class="lede">
-    A value selector like <a href="/en/components/select">Select</a>, but the panel opens to the <strong>inline-end</strong> of the trigger (not below it). Intended for narrow rails — for example the <a href="/en/customize">Customize</a> sidebar — where a downward menu does not fit.
+    A value selector like <a href="/en/components/select">Select</a>, but the panel opens to the <strong>inline-end</strong> of the trigger (not below it). Intended for narrow rails (for example the <a href="/en/customize">Customize</a> sidebar) where a downward menu does not fit.
   </p>
 
   <p>
@@ -64,10 +64,10 @@ function remountFlyout(root, value) {
   <h2>When to use it</h2>
   <ul>
     <li>
-      <strong>Flyout</strong> — the space under the control is limited (sidebar, toolbar, rail) and the panel must open to the side.
+      <strong>Flyout</strong>: the space under the control is limited (sidebar, toolbar, rail) and the panel must open to the side.
     </li>
     <li>
-      <strong>Select</strong> — there is room below, you want typeahead / Zag positioning, or it is a standard form. For a platform-native choice, use the <a href="/en/components/select#native-select">native Select</a>.
+      <strong>Select</strong>: there is room below, you want typeahead / Zag positioning, or it is a standard form. For a platform-native choice, use the <a href="/en/components/select#native-select">native Select</a>.
     </li>
   </ul>
 
@@ -158,13 +158,13 @@ function remountFlyout(root, value) {
 
   <h2>Placeholder</h2>
   <p>
-    If no <code>data-value</code> matches an item — for example an external “custom” value — the trigger shows the placeholder.
+    If no <code>data-value</code> matches an item (for example an external “custom” value) the trigger shows the placeholder.
   </p>
   <ComponentPreview tree={flyoutPlaceholderTree(t)} label="Placeholder" viewport="menu" />
 
   <h2>Remount with another value</h2>
   <p>
-    The enhancer owns the trigger text. To force a value from outside (reset, URL, repair), unmount, write <code>data-value</code>, and mount again — the same pattern <a href="/en/customize">Customize</a> uses.
+    The enhancer owns the trigger text. To force a value from outside (reset, URL, repair), unmount, write <code>data-value</code>, and mount again, the same pattern <a href="/en/customize">Customize</a> uses.
   </p>
   <CodeBlock code={remount} label="JavaScript" />
 

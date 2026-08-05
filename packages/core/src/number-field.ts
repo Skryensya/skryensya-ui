@@ -29,8 +29,8 @@ export const numberFieldAttrs = {
 /**
  * A number input that is a composition, not an `<input type="number">`.
  *
- * The native control is unusable in practice — its spinners are unstyleable, its wheel behaviour is
- * hostile, and it silently accepts text that is not a number — so this is `type="text"` with
+ * The native control is unusable in practice: its spinners are unstyleable, its wheel behaviour is
+ * hostile, and it silently accepts text that is not a number. So this is `type="text"` with
  * `inputmode="decimal"` and a machine that owns parsing, clamping and locale formatting. The two
  * triggers are real Buttons: the shape, the state layer and the hit target come with them, and Zag
  * writes their accessible names from `translations`.

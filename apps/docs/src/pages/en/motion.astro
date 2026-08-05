@@ -104,8 +104,8 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
     component.
   </p>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
     <p>
       <strong>Motion is not an opt-in pattern. </strong> Lives in <code>primitives.scss</code> and <code>semantic.scss</code>, meaning it comes in the base bundle: if <code>tokens.scss</code> is imported, it is already included. There is nothing to import.
     </p>
@@ -216,7 +216,7 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
                     <span class="intents__used"><Used token={`--motion-${i.key}-distance`} /></span>
                   </>
                 ) : (
-                  <span class="intents__none">—</span>
+                  <span class="intents__none">N/A</span>
                 )}
               </td>
               <td>

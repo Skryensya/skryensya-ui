@@ -4,7 +4,7 @@ import type { Translate } from "../i18n";
 /**
  * File actions: a plain command, a checkbox that shows its state, and a submenu.
  *
- * The submenu is the point — it is a whole Menu standing where an item would, and in the tree that
+ * The submenu is the point: it is a whole Menu standing where an item would, and in the tree that
  * is just an entry whose `children` are entries. Format names stay written: PDF and CSV read the
  * same in every language.
  */

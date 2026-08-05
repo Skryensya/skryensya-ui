@@ -6,6 +6,6 @@ EmptyState:
     - "es la primera vez y conviene ofrecer la acción que la llena"
   avoidWhen:
     - "los datos están cargando; eso es un Loader o Placeholder"
-    - "hubo un error; ahí el mensaje es un Alert, no un vacío"
+    - "hubo un error; ahí el mensaje es un Callout, no un vacío"
   alternatives:
-    - Alert
+    - Callout

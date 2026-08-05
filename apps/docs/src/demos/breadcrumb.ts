@@ -3,7 +3,7 @@ import type { Translate } from "../i18n";
 
 /*
  * Four trails, all four converted. The icon separator did not until `separator` stopped being a
- * string option and became a slot that takes text or an Icon — the stylesheet already had a rule for
+ * string option and became a slot that takes text or an Icon: the stylesheet already had a rule for
  * a chevron there (`.sk-breadcrumb__separator .sk-icon`), so the markup was the only thing missing.
  *
  * Locale-owned paths come from the page: the crumbs are demo destinations, not real docs routes.

@@ -2,7 +2,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /*
- * The bare surface — `Popover.bare`, which is what this page calls a popup.
+ * The bare surface, `Popover.bare`, which is what this page calls a popup.
  *
  * It is not a second component and this file is the proof: the same contract, one signature down,
  * with the title, the description and the close control left out. What goes inside is the
@@ -18,10 +18,10 @@ export const popupTree = (t: Translate): UsageTree => ({
   slots: {
     trigger: t("demo.popup.trigger"),
     children: {
-      contract: "selection",
+      contract: "checkbox",
       signature: "Checkbox",
       options: { name: "active" },
-      slots: { label: t("demo.popup.onlyActive") },
+      children: t("demo.popup.onlyActive"),
     },
   },
 });

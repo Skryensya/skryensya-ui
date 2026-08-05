@@ -13,7 +13,7 @@ import "@skryensya/core/components/copy-button.css";
 import "@skryensya/core/components/theme-toggle.css";
 import "@skryensya/core/components/kbd.css";
 import "@skryensya/core/components/field.css";
-import "@skryensya/core/components/alert.css";
+import "@skryensya/core/components/callout.css";
 import "@skryensya/core/components/avatar.css";
 import "@skryensya/core/components/loader.css";
 import "@skryensya/core/components/segmented.css";
@@ -28,6 +28,11 @@ import "@skryensya/core/components/tooltip.css";
 import "@skryensya/core/components/switch.css";
 import "@skryensya/core/components/table.css";
 import "@skryensya/core/components/typography.css";
+import "@skryensya/core/components/toc.css"; // el rail "En esta página": Toc.astro monta [data-sk-toc]
+/* El shell del rail izquierdo. Faltaba, y el shell de docs había reescrito a mano sus reglas
+ * (fondo, borde, separador, footer) leyendo hooks `--sk-sidebar-*` que sin esta hoja no los declara
+ * nadie: todos resolvían a nada, así que el rail salía transparente y sin padding. */
+import "@skryensya/core/components/sidebar.css";
 /* icon.css NO se importa aquí: viaja en tokens.scss, como el state layer. Un icono no es un extra al
  * que un componente opta (decisión 15). */
 import "@skryensya/core/patterns/nav-list.css"; // opt-in: una app puede no tener navegación (decisión 17)
@@ -83,15 +88,21 @@ interface Props {
   description?: string;
   /** Full-width tool layout: drop the docs rail, toc, page-nav and footer, render the slot alone. */
   fullBleed?: boolean;
+  /**
+   * The page authors its own `<VanillaMount>` inside `<slot />` (inside a tab panel, say) instead
+   * of getting one appended after it for free. Nothing in the shell may sit outside whatever
+   * structure the page chose; a page with tabs cannot have content the tabs don't own.
+   */
+  hideVanillaMount?: boolean;
 }
 
-const { title, description, fullBleed = false } = Astro.props;
+const { title, description, fullBleed = false, hideVanillaMount = false } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 
 /*
  * `path` is what the reader's URL says; `canonical` is the same page named in Spanish, the site's
- * locale-independent identity for a document. Anything keyed by page — the mount catalogue, the
- * alternate-language links — looks up `canonical`; anything compared against a rendered href
+ * locale-independent identity for a document. Anything keyed by page (the mount catalogue, the
+ * alternate-language links) looks up `canonical`; anything compared against a rendered href
  * compares `path`, because the rail is already rendered in this locale.
  */
 const locale = getLocale(Astro.url);
@@ -242,7 +253,7 @@ const PALETTE_PRESETS = [
       default blue and then re-tint.
 
       THE ONE PLACE THAT TOUCHES localStorage DIRECTLY, and it has to: this runs before any module
-      loads, so it cannot import the storage primitive — importing is the entire thing it exists to
+      loads, so it cannot import the storage primitive: importing is the entire thing it exists to
       happen before. What it does NOT do is re-type the key and the slot names: `PREPAINT` carries
       them in from the real declarations, so renaming a slot cannot leave this script reading a slot
       nobody writes any more. The value guards stay duplicated here, because a parser is a function
@@ -251,6 +262,33 @@ const PALETTE_PRESETS = [
     <script is:inline define:vars={{ PALETTE_PRESETS, PREPAINT, siteIconSet }}>
       (function () {
         var d = document.documentElement;
+        /* "Scripting is on", declared before first paint. Its only consumer is the pre-hydration
+         * tab rule in site.css: that rule hides panels the reader has not chosen yet, which is only
+         * safe if something is coming to give them back. Without JS the flag never lands, the rule
+         * never matches, and every panel stays readable, which is the correct no-JS docs page. */
+        d.setAttribute("data-js", "");
+        /*
+         * A `?tab=` deep link, resolved BEFORE FIRST PAINT.
+         *
+         * site.css closes every hero panel but the first with no script involved, which is the right
+         * answer for a plain visit and the wrong one for a link naming any other tab. The element
+         * itself is unreachable from here (this runs in <head>, the body is not parsed yet), so what
+         * lands is a RULE rather than an attribute: the one thing that can name a value CSS cannot
+         * compare on its own. `scripts/hero-tabs-url.ts` still fixes up the DOM afterwards; this is
+         * only what stops the first panel being painted for a frame first.
+         *
+         * The value is pattern-checked before it reaches a stylesheet: it comes from the URL, and
+         * anything else could close the rule and append declarations of its own.
+         */
+        var tab = new URLSearchParams(location.search).get("tab");
+        if (tab && /^[a-zA-Z0-9_-]{1,32}$/.test(tab)) {
+          d.setAttribute("data-sk-hero-tab", tab);
+          var tabStyle = document.createElement("style");
+          tabStyle.textContent =
+            '[data-js] .sk-tabs:has(> .docs-component-hero-tabs):not([data-scope])' +
+            ' > [data-sk-tabs-content]:not([data-value="' + tab + '"]){display:none}';
+          d.querySelector("head").appendChild(tabStyle);
+        }
         var s = {};
         try {
           s = JSON.parse(localStorage.getItem(PREPAINT.key) || "{}");
@@ -509,18 +547,18 @@ const PALETTE_PRESETS = [
 
       <main class="sk-wrapper" data-size="md">
         <slot />
-        {vanillaMount && <VanillaMount {...vanillaMount} />}
+        {!hideVanillaMount && vanillaMount && <VanillaMount {...vanillaMount} />}
         {
           currentNavIndex >= 0 && (
             <nav class="docs-page-nav" aria-label={t("nav.between")}>
               {previousNavItem && (
-                <a class="sk-button sk-interactive docs-page-nav__link" data-variant="ghost" href={previousNavItem.href} rel="prev">
+                <a class="sk-button sk-interactive docs-page-nav__link" data-variant="subtle" href={previousNavItem.href} rel="prev">
                   <Fragment set:html={previousIcon} />
                   <span>{previousNavItem.label}</span>
                 </a>
               )}
               {nextNavItem && (
-                <a class="sk-button sk-interactive docs-page-nav__link docs-page-nav__link--next" data-variant="ghost" href={nextNavItem.href} rel="next">
+                <a class="sk-button sk-interactive docs-page-nav__link docs-page-nav__link--next" data-variant="subtle" href={nextNavItem.href} rel="next">
                   <span>{nextNavItem.label}</span>
                   <Fragment set:html={nextIcon} />
                 </a>
@@ -573,6 +611,7 @@ const PALETTE_PRESETS = [
       <div class="sk-drawer" data-probe-for="sk-drawer"></div>
       <div class="sk-dialog" data-probe-for="sk-dialog"></div>
       <details class="sk-details" data-probe-for="sk-details"></details>
+      <div class="sk-accordion" data-probe-for="sk-accordion"></div>
       <header class="sk-navbar" data-probe-for="sk-navbar"></header>
       <nav class="sk-pagination" data-probe-for="sk-pagination"></nav>
       <select class="sk-select-native" data-probe-for="sk-select-native"></select>
@@ -656,23 +695,34 @@ const PALETTE_PRESETS = [
     </script>
 
     {/*
-      The navbar's REAL height → `--docs-navbar-h`. The sticky sidebar and toc read it to sit flush
-      under the navbar and fill exactly the viewport below it. It replaces the token estimate
-      `--docs-header-block-size`, which is a pixel shy of the rendered box and drifts further if density
-      or wrapping change the bar. `is:inline` so it runs before first paint (no 1px settle), and a
-      ResizeObserver keeps it current when the bar reflows. CSS falls back to the estimate until it runs.
+      The navbar's REAL height → `--docs-navbar-h`, and, only on the accordion page, the one pilot
+      that has one (see `.docs-component-hero-tabs` in site.css), the hero tabs bar's →
+      `--docs-hero-tabs-h`. One script, one observer for both: the sticky sidebar, toc and the code
+      preview's copy button all read these to sit flush under whatever sticky chrome is actually
+      above them, instead of the token estimate `--docs-header-block-size`, which is a pixel shy of
+      the rendered box and drifts further if density or wrapping change either bar. `is:inline` so
+      it runs before first paint (no 1px settle); CSS falls back to the estimate until it does.
     */}
     <script is:inline>
       (function () {
         var nav = document.querySelector(".dimensions");
         if (!nav) return;
+        var tabs = document.querySelector(".docs-component-hero-tabs");
         var root = document.documentElement;
         var sync = function () {
           root.style.setProperty("--docs-navbar-h", Math.round(nav.getBoundingClientRect().height) + "px");
+          if (tabs) {
+            root.style.setProperty("--docs-hero-tabs-h", Math.round(tabs.getBoundingClientRect().height) + "px");
+          }
         };
         sync();
-        if (window.ResizeObserver) new ResizeObserver(sync).observe(nav);
-        else window.addEventListener("resize", sync);
+        if (window.ResizeObserver) {
+          var observer = new ResizeObserver(sync);
+          observer.observe(nav);
+          if (tabs) observer.observe(tabs);
+        } else {
+          window.addEventListener("resize", sync);
+        }
       })();
     </script>
 
@@ -705,6 +755,16 @@ const PALETTE_PRESETS = [
         var main = document.querySelector("main");
         var list = toc && toc.querySelector("ul");
         if (!toc || !main || !list) return;
+
+        /*
+         * The hero tabs pilot (`.docs-component-hero-tabs`, /componentes/accordion) owns its ToC
+         * separately: `../scripts/hero-tabs-toc.ts`, a MODULE script below, because it has to
+         * rebuild the list on every tab switch, not just once before paint. Scanning `main` here
+         * too would find nothing anyway (every heading on that page lives inside a
+         * `.sk-tabs__content` panel, not as `main`'s own direct child) and race the module script
+         * that is about to fill the SAME list correctly.
+         */
+        if (document.querySelector(".docs-component-hero-tabs")) return;
 
         /* Only the page's own sections. A demo's heading lives nested inside a preview and is
          * content being demonstrated, not a section, `:scope >` excludes it with no blocklist. */
@@ -762,6 +822,28 @@ const PALETTE_PRESETS = [
       })();
     </script>
 
+    {/*
+      Which hero tab is open, in the address bar, so it can be linked to (`../scripts/hero-tabs-url.ts`).
+      FIRST of the three module scripts that touch this bar, and the order is load-bearing: it writes
+      the tab from `?tab=` onto the root's `data-value`, which is the same attribute the ToC below
+      reads to pick a panel and that `Tabs.svelte` reads at hydration to pick its default.
+    */}
+    <script>
+      import { initHeroTabsUrl } from "../scripts/hero-tabs-url";
+      initHeroTabsUrl();
+    </script>
+
+    {/*
+      The hero tabs pilot's own ToC (see the note above and `../scripts/hero-tabs-toc.ts`): one
+      section index per tab, rebuilt on every switch. A module script, not `is:inline`: it needs
+      `@skryensya/vanilla`'s enhancer runtime, and the brief settle before it fills the rail (the
+      same skeleton state every page already shows before its own ready flag lands) costs nothing
+      on the one pilot page that has this bar.
+    */}
+    <script>
+      import { initHeroTabsToc } from "../scripts/hero-tabs-toc";
+      initHeroTabsToc();
+    </script>
 
     <script>
       import { initUsedValues } from "../scripts/used-values";
@@ -905,7 +987,7 @@ const PALETTE_PRESETS = [
        * Runs BEFORE initComponents so machine enhancers patch over already-hydrated markup.
        *
        * The set is `siteIcons`, the SAME one the guard above already painted. A different set here
-       * would win — this runs after the guard — and the placeholders would land in one set while
+       * would win (this runs after the guard), and the placeholders would land in one set while
        * everything serialised at build stayed in the other. */
       import { mountIcons } from "@skryensya/vanilla/icon";
       import { initComponents } from "@skryensya/vanilla/auto";

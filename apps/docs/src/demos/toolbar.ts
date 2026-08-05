@@ -5,7 +5,7 @@
  * anyone converting the page. Both lines have landed:
  *
  *   - Tooltip's template never painted its own mount hooks, so an emitted toolbar had buttons whose
- *     tooltips could never open in Vanilla while React's worked — two stages painting the same
+ *     tooltips could never open in Vanilla while React's worked: two stages painting the same
  *     markup and only one of them having a tooltip.
  *   - Segmented's `value` had no `prop: "defaultValue"`, so the emitter wrote `value="free"`,
  *     which React reads as the CONTROLLED prop with no handler beside it: the control was frozen.

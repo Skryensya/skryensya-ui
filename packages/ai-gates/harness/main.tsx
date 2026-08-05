@@ -18,8 +18,9 @@ import "@skryensya/core/patterns/wrapper.css";
 import "@skryensya/core/components/breadcrumb.css";
 import "@skryensya/core/components/empty-state.css";
 import "@skryensya/core/components/stat.css";
-import "@skryensya/core/components/alert.css";
+import "@skryensya/core/components/callout.css";
 import "@skryensya/core/components/process-list.css";
+import "@skryensya/core/components/changelog.css";
 import "@skryensya/core/components/steps.css";
 import "@skryensya/core/components/list.css";
 import "@skryensya/core/components/navbar.css";
@@ -46,6 +47,7 @@ import "@skryensya/core/components/kbd.css";
 import "@skryensya/core/components/loader.css";
 import "@skryensya/core/components/placeholder.css";
 import "@skryensya/core/components/button.css";
+import "@skryensya/core/components/copy-button.css";
 import "@skryensya/core/patterns/nav-list.css";
 import "@skryensya/core/patterns/image-frame.css";
 import "@skryensya/core/components/checkbox.css";
@@ -60,8 +62,8 @@ import "@skryensya/core/patterns/state-layer.css";
 import "./stage.css";
 
 /*
- * The G2 stage. Every canonical tree gets rendered TWICE into the same page — once as authored markup
- * hydrated by the Vanilla enhancer, once by the React binding — and the test compares the two.
+ * The G2 stage. Every canonical tree gets rendered TWICE into the same page: once as authored markup
+ * hydrated by the Vanilla enhancer, once by the React binding, and the test compares the two.
  *
  * Both halves have to reach their FINAL state before anything is read: the enhancer patches
  * attributes after the markup lands, and React commits asynchronously unless told otherwise. So the
@@ -92,7 +94,7 @@ async function stage(): Promise<void> {
 
     /*
      * A FORM, not a div, and that is load-bearing. Radios are grouped by name within their form, or
-     * within the whole document when they have none — so the two bindings' copies of one radio group
+     * within the whole document when they have none, so the two bindings' copies of one radio group
      * were a single group, and whichever mounted last unchecked the other. A stage that renders both
      * bindings at once has to scope anything the platform groups by name.
      */
@@ -101,11 +103,11 @@ async function stage(): Promise<void> {
     /*
      * Every case shares ONE document, so the generated ids are namespaced by case name. Without
      * this, three states of the same recipe emitted the same field id and each label pointed at the
-     * first input on the page — a divergence the gate reported as real when it was the stage's own.
+     * first input on the page: a divergence the gate reported as real when it was the stage's own.
      * A real page never needs this: each preview is its own srcdoc document.
      */
     /*
-     * PARSED IN A NEUTRAL ELEMENT, then moved — not assigned to the form's own `innerHTML`.
+     * PARSED IN A NEUTRAL ELEMENT, then moved: not assigned to the form's own `innerHTML`.
      *
      * The two are not equivalent. The HTML parser drops a `<form>` that appears inside another form,
      * and the stage IS a form for the reason above, so any template containing one lost it silently:
@@ -140,7 +142,7 @@ async function stage(): Promise<void> {
   await initComponents();
 
   /*
-   * Binding an icon set is a separate, deliberate step — `initComponents` does not take one, because
+   * Binding an icon set is a separate, deliberate step: `initComponents` does not take one, because
    * the system ships no geometry and choosing a set is an install (decision 15). Until this runs, the
    * authored markup holds a `<span data-sk-icon>` placeholder and nothing draws it. React's binding
    * defaults to Phosphor, so the gate binds Phosphor here for the same reason: to compare the two

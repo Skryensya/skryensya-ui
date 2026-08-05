@@ -7,7 +7,7 @@ import { publicationPlaceholderTree, publicationSwapScript, publicationSwapTree 
 import { getLocale, useTranslations } from "../../../i18n";
 // The CSS block below documents this import; the page never actually made it. Without the base
 // `.sk-placeholder` rule nothing sets `block-size`, so every text-shaped line measured 0px and the
-// skeleton painted only its media block — the one thing this page exists to show.
+// skeleton painted only its media block: the one thing this page exists to show.
 import "@skryensya/core/components/placeholder.css";
 import "../../../examples/placeholder.css";
 
@@ -33,9 +33,9 @@ const styles = `@import "@skryensya/core/components/placeholder.css";
     Placeholder reserves the form of content that has not yet arrived. Reduces layout breaks and offers a brief visual cue; The container retains the responsibility of explaining what it is loading.
   </p>
 
-  <div class="sk-alert" data-tone="info" data-presentation="accent">
-    <div class="sk-alert__content">
-      <div class="sk-alert__description">
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <div class="sk-callout__description">
         Placeholder is always decorative. Use <code>aria-busy="true"</code> and a status message in the region waiting for the data.
       </div>
     </div>

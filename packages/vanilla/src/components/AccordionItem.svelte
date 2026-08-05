@@ -50,11 +50,15 @@
   $effect(() => {
     applyZagProps(el, api.getRootProps() as DomProps);
     asTile(el, "item");
-    el.classList.add(tileParts.root, tileParts.interactive, tileParts.expandable, "sk-interactive");
+    // `sk-interactive` va en el trigger, no en la sección (mismo arreglo que `ExpandableTile.svelte`):
+    // la sección envuelve trigger Y contenido, así que el layer pintado detrás de toda ella teñía el
+    // contenido revelado al pasar el mouse.
+    el.classList.add(tileParts.root, tileParts.expandable);
     el.dataset.value = value;
     if (trigger) {
       applyZagProps(trigger, api.getTriggerProps() as DomProps);
       asTile(trigger, "trigger");
+      trigger.classList.add(tileParts.interactive, "sk-interactive");
     }
     if (content) {
       applyZagProps(content, api.getContentProps() as DomProps);

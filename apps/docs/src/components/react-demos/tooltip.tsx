@@ -4,14 +4,14 @@
  *
  * THE WORDS COME FROM THE PAGE, as `demo.tooltip.*` keys. One island serves both locales, and while
  * it carried its own literals the Spanish page rendered an English React stage beside a Spanish HTML
- * one — the exact drift the usage-tree work exists to remove, in the one demo that cannot yet BE a
+ * one: the exact drift the usage-tree work exists to remove, in the one demo that cannot yet BE a
  * tree (see `src/demos/tooltip.ts` for which three lines of the contract are missing).
  */
 import { Icon } from "@skryensya/react/icon";
 import { Tooltip } from "@skryensya/react/tooltip";
 import { framedIn } from "./framed";
 
-/** Every demo below runs inside its own preview frame — see `framed.tsx`. */
+/** Every demo below runs inside its own preview frame. See `framed.tsx`. */
 const framed = framedIn(import.meta.url);
 
 export interface TooltipDemoProps {

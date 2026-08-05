@@ -195,7 +195,7 @@ El modelo es `tabs.astro`, con tres ejemplos numerados:
   "Actividad".
 - **`2. Estados e iconos`**: agrega iconos y un tab deshabilitado, pero no porque "hay que mostrar
   `disabled`": el ejemplo es una revisión con "Detalles", "Validación" y "Ajustes", y Ajustes está
-  deshabilitado porque el texto lo explica — "Los ajustes estarán disponibles después de aprobar la
+  deshabilitado porque el texto lo explica: "Los ajustes estarán disponibles después de aprobar la
   solicitud". El prop nuevo tiene una razón de producto, no solo una razón de API.
 - **`3. Orientación y estado`**: agrega orientación vertical y activación manual, otra vez atado a un
   escenario real (ajustes de un workspace) donde mover el foco con flechas no debe disparar el cambio de
@@ -208,9 +208,9 @@ secuencia. "Para mostrar que existe" no es un escenario.
 
 **Numerar encabezados** (`1.`, `2.`, `3.`, como en `tabs.astro`) quiere decir que la página cuenta una
 sola historia continua, cada paso construye sobre el anterior. Cuando las secciones son facetas
-independientes del componente en vez de una progresión — `button.astro` no numera `Variantes`,
+independientes del componente en vez de una progresión (`button.astro` no numera `Variantes`,
 `Tamaños`, `Con icono`, `Solo icono`, `Como enlace`, `TileButton`, porque cada una es una variante
-distinta, no un paso sobre la anterior — no se numera, pero el orden todavía va de lo más común a lo
+distinta, no un paso sobre la anterior) no se numera, pero el orden todavía va de lo más común a lo
 más especializado.
 
 **Alternativas avanzadas u opcionales se marcan como tal, explicando qué agregan.** `dialog.astro`

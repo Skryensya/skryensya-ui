@@ -80,7 +80,7 @@ describe("reconciliation", () => {
 
   it("reports an overlay for a contract that is not published", () => {
     // Deliberately a name nothing will ever publish. This read `combobox.yaml` until combobox was
-    // published, at which point the test was asserting about a contract that now exists — the
+    // published, at which point the test was asserting about a contract that now exists: the
     // example has to be fictional or it stops testing what it says.
     const files = { ...complete(), "nonesuch.yaml": "Nonesuch:\n  useWhen: [pick]\n" };
 
@@ -120,7 +120,7 @@ describe("the index is what discovery reads", () => {
  * Steps' description span said `whenItemGiven: "description"` while `description` is a SLOT, so the
  * option lookup was permanently undefined and the span never emitted. Nothing failed: the tree
  * validated, React rendered the descriptions from its `steps` prop, and only the markup lost them.
- * One tree, two bindings, two different answers — which is the one thing this compiler exists to
+ * One tree, two bindings, two different answers: the one thing this compiler exists to
  * make impossible. A misspelling would do exactly the same, silently.
  */
 describe("a conditional names something that exists", () => {

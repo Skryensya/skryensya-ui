@@ -1,12 +1,31 @@
-/* TIER 3, COPY BUTTON — declarative clipboard action with transient feedback.
+/* TIER 3, COPY BUTTON: declarative clipboard action with transient feedback.
  *
- * Compose onto `.sk-button` (typically ghost + icon-only). Face size comes from the button
- * (`data-size="sm"` paints at control-sm); the button's ::after expands the hit to the touch floor.
- * This file only owns the stacked idle/copied icons and the live label.
+ * Compose onto `.sk-button` (typically `subtle` or `ghost`, icon-only: see button.css for what
+ * `subtle` is). Face size comes from the button (`data-size="sm"` paints at control-sm); the
+ * button's ::after expands the hit to the touch floor. This file owns the stacked idle/copied
+ * icons, the live label, and the paint of the feedback flag.
+ *
+ * THE FLAG'S PLACEMENT IS NOT HERE. It is the Anclaje pattern (decision 25): the root also carries
+ * `sk-anchor`, the flag also carries `sk-anchored` and asks for `inline-start`, and the arrow is the
+ * pattern's own `sk-anchored-arrow`. Sides, flip, gap, z-index, the lost anchor and the arrow's
+ * geometry all live in `patterns/anchored.css`; this file only says what colour and what size.
  */
 @layer components {
   .sk-copy-button {
     --sk-copy-button-error-fg: var(--color-text-danger);
+
+    /*
+     * THE FLAG'S TONE, on the ROOT and not on the flag, for two reasons at once: a consumer
+     * overriding it has one place to reach, and the error swap below is a rule on the root, which
+     * is where the state attribute is. The status trio is the one Badge and Callout already use for
+     * success, so a copied flag looks like every other "that worked" surface in the system.
+     */
+    --sk-copy-button-feedback-bg: var(--color-bg-success-subtle);
+    --sk-copy-button-feedback-fg: var(--color-text-success);
+    --sk-copy-button-feedback-border-color: var(--color-border-success);
+    --sk-copy-button-feedback-radius: var(--radius-control);
+    --sk-copy-button-feedback-padding: var(--space-inset-xs) var(--space-inset-sm);
+    --sk-copy-button-feedback-font-size: var(--font-size-body-sm);
 
     display: inline-grid;
     place-items: center;
@@ -36,7 +55,13 @@
     filter: blur(4px);
   }
 
+  /* One rule for the two things a failed copy changes: the button's own colour, and the tone the
+     flag inherits from here. Danger's trio, the same shape as success's above. */
   .sk-copy-button[data-sk-copy-button-state="error"] {
+    --sk-copy-button-feedback-bg: var(--color-bg-danger-subtle);
+    --sk-copy-button-feedback-fg: var(--color-text-danger);
+    --sk-copy-button-feedback-border-color: var(--color-border-danger);
+
     color: var(--sk-copy-button-error-fg);
   }
 
@@ -50,16 +75,114 @@
     white-space: nowrap;
   }
 
+  /*
+   * THE FEEDBACK FLAG: what the click just did, said beside the button for one beat.
+   *
+   * Positioner and painted box are the SAME element, as in Popover: there is one word in here, and
+   * a positioner whose only child was a content box would be anatomy with nothing in it. That is
+   * also why the arrow can be a child, which is what lets its fill cover the border it enters.
+   *
+   * Never `pointer-events: auto`. A tooltip needs it (WCAG 1.4.13 wants the pointer to be able to
+   * travel to it); this one sits a few pixels from the button the pointer is already on, so a flag
+   * that took events would swallow the second click of anyone copying twice.
+   */
+  .sk-copy-button__feedback {
+    /* The pattern's hooks, said in this component's terms. The gap is the tooltip's, being the same
+     * question: how far a small floating label stands off the control it is talking about. */
+    --sk-anchored-offset: var(--space-stack-xs);
+    /* The arrow IS this surface, border and all, so the seam where it meets the box disappears. */
+    --sk-anchored-arrow-bg: var(--sk-copy-button-feedback-bg);
+    --sk-anchored-arrow-border-color: var(--sk-copy-button-feedback-border-color);
+    /* Smaller than the pattern's default, and so is the clearance it keeps from the corners. A flag
+     * is one line tall: at the default 8px the arrow's two edge margins plus the arrow itself come
+     * to more than the box's own height, and an over-constrained `anchor-center` stops centring. */
+    --sk-anchored-arrow-size: 6px;
+    --sk-anchored-arrow-inset: var(--sk-anchored-arrow-size);
+
+    box-sizing: border-box;
+    padding: var(--sk-copy-button-feedback-padding);
+    border: 1px solid var(--sk-copy-button-feedback-border-color);
+    border-radius: var(--sk-copy-button-feedback-radius);
+    background: var(--sk-copy-button-feedback-bg);
+    color: var(--sk-copy-button-feedback-fg);
+    font-size: var(--sk-copy-button-feedback-font-size);
+    font-weight: var(--font-weight-label);
+    line-height: var(--font-line-height-body);
+    /* Two or three words. Wrapping them would make the flag taller than the button beside it. */
+    white-space: nowrap;
+    box-shadow: var(--elevation-raised);
+    pointer-events: none;
+
+    /* Closed is the resting state, and the ABSENCE of `data-state` counts as closed: before the
+     * enhancer mounts, or without JS at all, there is no flag. `visibility` and not opacity alone,
+     * because a transparent box still answers find-in-page; it interpolates discretely and in the
+     * useful direction, showing at once on the way in and only after the fade on the way out. */
+    visibility: hidden;
+    opacity: 0;
+    /* Fade only. NOT `translate`, which would make this box the containing block for its own fixed
+     * descendants: the arrow is fixed precisely so it can anchor to the button, and it would lose
+     * the anchor for the length of the animation. `tooltip.css` records the same measurement. */
+    transition-property: opacity, visibility;
+    transition-duration: var(--motion-state-change-duration);
+    transition-timing-function: var(--motion-state-change-easing);
+  }
+
+  /* The flag lasts exactly as long as the check icon: one enhancer, one timer, both attributes
+     cleared in the same call. */
+  .sk-copy-button__feedback[data-state="open"] {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  /* The arrow rides the box's fade for free, `opacity` being a group: everything inside a box at
+     0.4 is drawn at 0.4, fixed descendants included. What it does NOT get for free is the closing,
+     because the pattern turns its `visibility` off the instant `data-state` goes, and the diamond
+     would vanish while its box was still fading. The same discrete interpolation that holds the box
+     visible for the duration holds the arrow. */
+  .sk-copy-button__feedback > .sk-anchored-arrow {
+    transition: visibility var(--motion-state-change-duration);
+  }
+
+  /* Both sentences are in the markup and the state picks one, exactly like the two icons. Copied is
+     what shows by default, so an authored flag reads right before anything has run. */
+  .sk-copy-button [data-sk-copy-button-feedback-text="error"] {
+    display: none;
+  }
+
+  .sk-copy-button[data-sk-copy-button-state="error"] [data-sk-copy-button-feedback-text="copied"] {
+    display: none;
+  }
+
+  .sk-copy-button[data-sk-copy-button-state="error"] [data-sk-copy-button-feedback-text="error"] {
+    display: inline;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .sk-copy-button__icon {
+    .sk-copy-button__icon,
+    .sk-copy-button__feedback,
+    .sk-copy-button__feedback > .sk-anchored-arrow {
       transition: none;
+    }
+  }
+
+  /* ── THE DEGRADED STATE, CHOSEN ──────────────────────────────────────────────
+   * Without anchor positioning nothing here places this flag: it is an anchored box with no
+   * machine, the one thing it shares with Popover, so there is no JS fallback to hand it to. Left
+   * alone it would land at its static position, on top of the button it is describing.
+   *
+   * So it does not render. Nothing is lost that is not said twice already: the icon still swaps to
+   * a check, and `__label` still announces the result to a screen reader. A flag drawn over its own
+   * button would be the only reading that was actually wrong. */
+  @supports not (anchor-name: --a) {
+    .sk-copy-button__feedback {
+      display: none;
     }
   }
 }
 
 /*
  * Consumer button skins set `display: inline-flex` unlayered. That beats the layered
- * `inline-grid` above and lays the idle/copied icons in a row — the hidden one still
+ * `inline-grid` above and lays the idle/copied icons in a row: the hidden one still
  * eats width. Re-assert grid outside the layer so the icons stack in one cell.
  */
 .sk-button.sk-copy-button {

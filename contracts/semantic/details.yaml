@@ -17,3 +17,17 @@ Details:
     - "hay que animar el panel o saber desde afuera si está abierto: eso es Accordion.Item"
   alternatives:
     - Accordion.Item
+
+Details.Summary:
+  useWhen:
+    - "es lo que el estado cerrado muestra y lo que abre la sección"
+  avoidWhen:
+    - "está fuera de un Details; no tiene qué abrir"
+  alternatives: []
+
+Details.Content:
+  useWhen:
+    - "es lo que la apertura revela"
+  avoidWhen:
+    - "está fuera de un Details; no tiene quién lo abra"
+  alternatives: []

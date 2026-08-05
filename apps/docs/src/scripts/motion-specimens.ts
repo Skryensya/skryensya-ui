@@ -7,7 +7,7 @@
  *
  * Playback is a TRANSPORT, not a trigger. A duration is a length of time, and a length is only
  * legible next to another one, so the reader needs the set running side by side for as long as
- * they want to look at it — not one flash per click, and not a replay every time the pointer
+ * they want to look at it, not one flash per click, and not a replay every time the pointer
  * happens to cross a card. Play keeps the group cycling until pause, and pause drops every tile
  * back on the start line: at rest the lanes are identical, which is what makes them comparable
  * the moment they move.
@@ -132,7 +132,7 @@ export function initMotionSpecimens() {
   if (calm.matches) return;
 
   /* First sight: the set introduces itself once and then clears back to the start line. The
-   * transport is what makes it run again — a page that never stops moving is harder to read, not
+   * transport is what makes it run again: a page that never stops moving is harder to read, not
    * easier. A continuous group is the exception: its tracks have no end to stop at, so introducing
    * it means starting the transport for real, button and all, and the reader can pause it. */
   const seen = new IntersectionObserver(

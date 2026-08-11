@@ -84,6 +84,7 @@ export function useTranslations(locale: Locale): Translate {
  * Keys are Spanish segments; a segment with no entry is emitted as-is.
  */
 const routeSegments: Record<string, Partial<Record<Locale, string>>> = {
+  acento: { en: "accent" },
   componentes: { en: "components" },
   arquitectura: { en: "architecture" },
   referencia: { en: "reference" },

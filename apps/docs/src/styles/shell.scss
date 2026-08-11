@@ -20,6 +20,9 @@
 @include bp.down("wide") {
   .shell {
     grid-template-columns: auto minmax(0, 1fr);
+    /* Two tracks, so the gutter goes back to being a gap: above `wide` it is a flexible track of
+     * the five-track layout (site.css) and this grid has none. */
+    column-gap: var(--space-inline-lg);
   }
 
   .shell .docs-sidebar {
@@ -54,7 +57,6 @@
    * container instead leaves the state layer stopping at the text and the list's scrollbar sitting on
    * top of the last character. */
   .sk-toc__inner {
-    border-inline-start: 0;
     padding: 0;
   }
 
@@ -63,10 +65,23 @@
     padding-inline: var(--space-inset-lg);
   }
 
-  /* The h3 indent moves from the item to the link: on the item it would push the row's divider in
-   * with the text, and a list whose separators jog in and out per level reads as broken, not nested. */
-  .sk-toc__item {
-    padding-inline-start: 0;
+  /* Caption type is right for a rail read from the corner of the eye at arm's length. Here the row
+   * is a control you TAP, at reading distance, with nothing beside it to be quieter than: it takes
+   * back body type and the minimum height a control has whatever its label measures. */
+  .sk-toc__link {
+    min-block-size: var(--size-control-md);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body-sm);
+  }
+
+  /* The marker is the rail's mark: here the row is already full-bleed and its own state layer says
+   * which one it is, so a 2px bar on the screen edge would only be a fleck of accent. */
+  .sk-toc__link::after {
+    content: none;
+  }
+
+  .sk-toc__link[aria-current="true"] {
+    background: var(--color-nav-current-bg);
   }
 
   .sk-toc__item[data-level="h3"] .sk-toc__link {
@@ -131,6 +146,23 @@
   }
 
   .shell .docs-sidebar {
+    display: none;
+  }
+
+  /*
+   * And with the rail gone, so is the skip link that pointed INTO it: its destination is inside that
+   * rail, and a link to a `display: none` element is a promise the reader hears and cannot follow.
+   *
+   * Only that one. The skip-to-content link above it is untouched, because the content is exactly
+   * where it always was and the chrome above the content is, if anything, more worth skipping on a
+   * small screen.
+   *
+   * Nothing is lost by dropping the navigation one here, because the block it exists to bypass is
+   * not there either: the drawer trigger below is the FIRST control in the header at this width, so
+   * the index is one Tab away already. That is the same pivot the rail, the drawer and the trigger
+   * all turn on, which is why this rule lives beside them rather than carrying its own breakpoint.
+   */
+  .docs-skip-link--nav {
     display: none;
   }
 

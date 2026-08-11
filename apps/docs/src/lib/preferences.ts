@@ -28,6 +28,20 @@ export const contrastPreference = definePreference<"normal" | "high">({
   parse: oneOf(["normal", "high"]),
 });
 
+/**
+ * Accent reach: how far the loaded brand spreads (`dimensions/accent.scss`, `data-accent`).
+ *
+ * A dimension like contrast, so it is the site's to store for the same reason: core declares the
+ * levels, the tenant decides which one it runs at. "3" is the baseline the stylesheet already is
+ * without the attribute, and it is written out anyway, an explicit level is what lets the reader
+ * come BACK to full reach after dialling down.
+ */
+export const accentReachPreference = definePreference<"1" | "2" | "3">({
+  slot: "accent",
+  fallback: "3",
+  parse: oneOf(["1", "2", "3"]),
+});
+
 /** The /personalizar brand playground: the id of the chosen palette preset. */
 export const palettePreference = definePreference<string>({
   slot: "palette",

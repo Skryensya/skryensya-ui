@@ -1,0 +1,908 @@
+---
+/*
+ * The ACCENT REACH dimension, explained and, above all, shown. English twin of `pages/acento.astro`;
+ * keep the two in step.
+ *
+ * THE SPECIMEN IS AN APP, NOT A GRID OF PARTS. Every reach token appears where it actually lives:
+ * the current item in a sidebar, the counter in a navbar, the tags and the link in a content panel.
+ * A row of loose badges proves the colour changes; a whole interface proves what the dimension
+ * claims, which is how much of a SCREEN ends up dressed in the brand, and that is the question
+ * someone arrives on this page with.
+ *
+ * Everything inside is contract markup, written the way a consumer writes it (ADR-8), with not one
+ * class from this page: the dimension's whole argument is that no component knows it exists, so
+ * demonstrating it with hand-rolled markup would demonstrate something else. What is local is the
+ * frame (the window, its ratio, its two columns) and the level picker.
+ *
+ * THE PICKER IS THIS WINDOW'S, NOT THE SITE'S. It writes `data-accent` on the frame its
+ * `aria-controls` names and nowhere else, for two reasons that point the same way: a control buried
+ * in a figure has no business re-theming the page around it, and a subtree at its own level inside a
+ * document at another IS the composition rule this page explains two sections further down. Shown
+ * rather than asserted. The header meter stays the site's, and that the two can sit at different
+ * levels is the proof, not an oversight.
+ */
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import "@skryensya/core/components/tile.css";
+/* The mock uses pieces the docs shell does not load: each brings its own sheet, which is exactly the
+ * import this page would tell a consumer to write. */
+import "@skryensya/core/components/tag.css";
+import "@skryensya/core/components/checkbox.css";
+import "@skryensya/core/components/navbar.css";
+import "@skryensya/core/components/list.css";
+import "@skryensya/core/components/process-list.css";
+import "@skryensya/core/patterns/box.css";
+import "@skryensya/core/patterns/image-frame.css";
+
+const enable = `/* An opt-in import, like high contrast or radius. */
+@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/dimensions/accent.scss";
+
+/* No toolchain? The bundle already ships it:
+   <link rel="stylesheet" href="@skryensya/core/skryensya.css"> */`;
+
+const activate = `<!-- The whole document, one level down. -->
+<html data-accent="2">
+
+<!-- Or a subtree: inside a dialled-down zone, a section
+     can come back to full reach. -->
+<section data-accent="3">…</section>`;
+
+const optIn = `/* A component never reads the raw accent: it names the REASON
+   something is brand-coloured, and the dimension does the rest. */
+.sk-badge[data-tone="accent"] {
+  --sk-badge-bg: var(--color-decorative-bg);
+  --sk-badge-fg: var(--color-decorative-fg);
+  --sk-badge-dot-color: var(--color-decorative-border);
+}
+
+/* Same shape, other reason: this is navigation, not decoration. */
+.sk-nav-list__link[aria-current="page"] {
+  --sk-nav-list-link-current-bg: var(--color-nav-current-bg);
+  --sk-nav-list-link-current-fg: var(--color-nav-current-fg);
+}`;
+---
+
+<Base
+  title="Accent reach"
+  description="A dimension over how many things wear the brand: the accent never changes colour, it changes how many places reach for it."
+>
+  <h1>Accent reach</h1>
+  <p class="lede">
+    An axis over the accent's <strong>spread</strong>, not its colour. At every level the accent is
+    the same colour, the same ramp, exactly as saturated. What changes is how many places reach for
+    it. A product whose sidebar, table of contents, badges, shortcuts and every link are all
+    brand-blue is not more branded than one where only its primary action is; it is just louder, and
+    the loudness costs it the ability to point at anything.
+  </p>
+
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <p>
+        <strong>It is live, at two different scopes.</strong> The three-bar meter in the header moves
+        the whole site: the rail on the left, the index on the right, the badges and the links in this
+        prose. The mock below has its own picker and its own level. They are the same dimension applied
+        to two subtrees, not one real and one simulated.
+      </p>
+    </div>
+  </div>
+
+  <h2>Three levels</h2>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>Level</th>
+          <th>The accent appears on</th>
+          <th>Goes neutral</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">3</td>
+          <td>Everything that uses it today. The baseline, the stylesheet without the attribute.</td>
+          <td>Nothing.</td>
+        </tr>
+        <tr>
+          <td class="mono">2</td>
+          <td>The primary action, state, and prose links.</td>
+          <td>Navigation chrome and decoration.</td>
+        </tr>
+        <tr>
+          <td class="mono">1</td>
+          <td>The primary action and state. The brand shows up where you act, nowhere else.</td>
+          <td>The above, plus prose links.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="reach-demo">Watch it move</h2>
+  <p>
+    A whole app, at screen proportions, every piece written the way a consumer writes it. The picker
+    below moves <strong>this window only</strong>, not the site: it is the same attribute on a subtree,
+    which is exactly what the dimension promises you can do. The header button still moves the rest of
+    the page, so you can leave them at different levels and compare.
+  </p>
+
+  <figure class="reach-app">
+    {/*
+      The header stays compact because chrome only needs to advance between states. Here each level
+      is described in a selectable Tile: comparing and jumping straight to one is worth more than
+      saving width.
+
+      THEY RUN 3 TO 1, like the table above: 3 is the baseline, the sheet with no attribute, and each
+      following tile switches off one more group. Read in that order the descriptions subtract from
+      one another, which is the axis; reversed they read as three unrelated options. 3 is also the
+      default level, so the selected one comes first.
+
+      `aria-controls` names the boundary: the script writes `data-accent` on that region and nowhere
+      else.
+    */}
+    <div class="reach-app__control">
+      <p class="reach-app__control-label" aria-hidden="true">Accent reach in the preview</p>
+      <div
+        class="sk-tile-grid reach-app__accent-options"
+        data-sk-tile-radio-group
+        data-name="accent-reach"
+        data-default-value="3"
+        data-orientation="horizontal"
+        data-scope="tile"
+        aria-label="Accent reach in the preview"
+        aria-controls="reach-window"
+        data-docs-accent-choice
+      >
+        <label
+          class="sk-tile sk-tile--interactive sk-interactive"
+          data-padding="md"
+          data-scope="tile"
+          data-part="item"
+        >
+          <input value="3" type="radio" data-part="input">
+          <span class="sk-tile__content" data-part="content">
+            <span class="sk-tile__content" data-part="content">
+              <span class="sk-tile__title">Level 3</span>
+              <span class="sk-tile__description">
+                Brand colour on the primary button, the links, the current menu
+                item and the tags. This is the baseline.
+              </span>
+            </span>
+          </span>
+          <span
+            class="sk-tile__selection-indicator"
+            aria-hidden="true"
+            data-part="indicator"
+          ></span>
+        </label>
+        <label
+          class="sk-tile sk-tile--interactive sk-interactive"
+          data-padding="md"
+          data-scope="tile"
+          data-part="item"
+        >
+          <input value="2" type="radio" data-part="input">
+          <span class="sk-tile__content" data-part="content">
+            <span class="sk-tile__content" data-part="content">
+              <span class="sk-tile__title">Level 2</span>
+              <span class="sk-tile__description">
+                Brand colour on the primary button and the links. The menu item
+                and the tags go neutral.
+              </span>
+            </span>
+          </span>
+          <span
+            class="sk-tile__selection-indicator"
+            aria-hidden="true"
+            data-part="indicator"
+          ></span>
+        </label>
+        <label
+          class="sk-tile sk-tile--interactive sk-interactive"
+          data-padding="md"
+          data-scope="tile"
+          data-part="item"
+        >
+          <input value="1" type="radio" data-part="input">
+          <span class="sk-tile__content" data-part="content">
+            <span class="sk-tile__content" data-part="content">
+              <span class="sk-tile__title">Level 1</span>
+              <span class="sk-tile__description">
+                Brand colour on the primary button and on state, like a ticked
+                checkbox. The links go neutral too.
+              </span>
+            </span>
+          </span>
+          <span
+            class="sk-tile__selection-indicator"
+            aria-hidden="true"
+            data-part="indicator"
+          ></span>
+        </label>
+      </div>
+    </div>
+
+    {/*
+      The mock. Everything inside is contract markup, with not one class from this page.
+
+      `scripts/accent-showcase.ts` moves it into a srcdoc iframe on init: the mock becomes a DOCUMENT
+      of its own, so the documentation's prose CSS stops reaching it (measured: a `p { margin }` rule
+      was landing on its paragraphs) and nothing the docs add tomorrow can either. With no JS this
+      renders as-is, slightly leakier and perfectly readable: the markup is written once and MOVED,
+      never duplicated.
+    */}
+    <div
+      class="reach-app__frame"
+      id="reach-window"
+      data-accent="3"
+      data-docs-accent-frame
+      data-frame-title="Atlas, the example app"
+    >
+      <header class="sk-navbar reach-app__navbar">
+        <div class="sk-navbar__brand">Atlas</div>
+
+        {/*
+          The nav-list in the bar too, horizontal. It is a SECOND instance of the chrome token
+          (`--color-nav-current-*`), and that is why it is here: level 2 quiets chrome and decoration,
+          and with a single current item in the whole mock that dimming barely registered. That the
+          same pattern serves top and side is not a shortcut of this page, it is ADR-17: the nav-list
+          is a guest, and orientation is a variant, not a second structure.
+        */}
+        <nav class="sk-nav-list" data-orientation="horizontal" aria-label="Atlas views">
+          <div class="sk-nav-list__group">
+            <ul class="sk-nav-list__list">
+              <li class="sk-nav-list__item">
+                <a class="sk-nav-list__link sk-interactive" href="#alcance-demo" aria-current="page">
+                  <span class="sk-nav-list__label">Dashboard</span>
+                </a>
+              </li>
+              <li class="sk-nav-list__item">
+                <a class="sk-nav-list__link sk-interactive" href="#alcance-demo">
+                  <span class="sk-nav-list__label">Reports</span>
+                </a>
+              </li>
+              <li class="sk-nav-list__item">
+                <a class="sk-nav-list__link sk-interactive" href="#alcance-demo">
+                  <span class="sk-nav-list__label">Calendar</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        {/*
+          Search only. There used to be a loose badge reading "3" and an avatar here, and both had to
+          go for different reasons: the number hung off nothing, so it meant nothing (a counter is
+          "3 of what"; the contract ships `sk-badge-holder` precisely to hang one off a control, and
+          with no bell in the stable icon vocabulary there is no control to hang it off), and the
+          bar's flex row stretched it to 26×32, an oval rather than a pill. The avatar was the same
+          account already sitting in the rail's footer: an app says who you are ONCE, and this rail
+          says it there, the same as this documentation's own.
+        */}
+        <div class="sk-navbar__actions">
+          {/* A resting key IS decoration and dials with the labels: `kbd.css` now reads the decorative
+              tokens at rest and the action colour only under `[data-pressed]`, where "this key is
+              active" is information and never dials. It is here because this is where a real ⌘K
+              lives. */}
+          <button class="sk-button sk-interactive" data-sk-button data-variant="ghost" data-size="sm">
+            Search
+            <kbd class="sk-kbd">⌘K</kbd>
+          </button>
+        </div>
+      </header>
+
+      <div class="reach-app__body">
+        {/* No `sk-sidebar__header`: the brand is already in the navbar, and saying it twice in a
+            window this size reads as two apps glued together. The nav-list's group labels are what
+            give the rail its structure, the same as this documentation's own. */}
+        <aside class="sk-sidebar reach-app__sidebar">
+          <div class="sk-sidebar__content sk-scrollbar">
+            <nav class="sk-nav-list" data-orientation="vertical" aria-label="Atlas sections">
+              <div class="sk-nav-list__group">
+                <div class="sk-nav-list__group-label" id="reach-g-project">Project</div>
+                <ul class="sk-nav-list__list" aria-labelledby="reach-g-project">
+                  <li class="sk-nav-list__item">
+                    <a class="sk-nav-list__link sk-interactive" href="#alcance-demo" aria-current="page">
+                      <span class="sk-nav-list__label">Overview</span>
+                    </a>
+                  </li>
+                  <li class="sk-nav-list__item">
+                    <a class="sk-nav-list__link sk-interactive" href="#alcance-demo">
+                      <span class="sk-nav-list__label">Activity</span>
+                      <span class="sk-nav-list__trailing">
+                        <span class="sk-badge" data-tone="accent">12</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li class="sk-nav-list__item">
+                    <a class="sk-nav-list__link sk-interactive" href="#alcance-demo">
+                      <span class="sk-nav-list__label">Files</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="sk-nav-list__group">
+                <div class="sk-nav-list__group-label" id="reach-g-team">Team</div>
+                <ul class="sk-nav-list__list" aria-labelledby="reach-g-team">
+                  <li class="sk-nav-list__item">
+                    <a class="sk-nav-list__link sk-interactive" href="#alcance-demo">
+                      <span class="sk-nav-list__label">Members</span>
+                    </a>
+                  </li>
+                  <li class="sk-nav-list__item">
+                    <a class="sk-nav-list__link sk-interactive" href="#alcance-demo">
+                      <span class="sk-nav-list__label">Permissions</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </nav>
+          </div>
+          {/* An account block, not a loose disc next to a name: the avatar at its base size (`md`)
+              with the name and the role stacked beside it, which is the shape this has in any app and
+              the one that gives the disc something to align to. At `sm` it came out smaller than the
+              line of text it sat next to. */}
+          <div class="sk-sidebar__footer">
+            <div class="sk-inline" data-gap="sm" data-align="center" data-justify="start" data-wrap="true">
+              <span class="sk-avatar" data-size="md" aria-label="Ada Lovelace" role="img">
+                <span class="sk-avatar__fallback" aria-hidden="true">AL</span>
+              </span>
+              <div class="sk-stack" data-gap="none">
+                <p class="sk-text" data-tone="primary" data-size="sm" data-weight="label">Ada Lovelace</p>
+                <p class="sk-text" data-tone="tertiary" data-size="caption" data-weight="body">Editor</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <main class="reach-app__main sk-scrollbar">
+          <div class="sk-stack" data-gap="lg">
+            <div class="sk-stack" data-gap="xs">
+              <div class="sk-inline" data-gap="xs" data-align="center" data-justify="start" data-wrap="true">
+                <h2 class="sk-heading" data-size="h3" data-flush>Overview</h2>
+                <span class="sk-badge" data-tone="accent">In progress</span>
+              </div>
+              {/* Several links, not one. Level 2 differs from level 1 ONLY through `--color-text-link`,
+                  and with a single loose link in the whole mock that step was a three-word colour
+                  change: measured, exactly one node changed between level 2 and level 1. With the
+                  links spread out, level 2 reads as what it is, the brand cut back to the action and
+                  to whatever you can press in the text. */}
+              <p class="sk-text" data-tone="secondary" data-size="sm" data-weight="body">
+                Q3 quarter, closing 30 September. Check the <a class="sk-link sk-interactive"
+                href="#alcance-demo" data-tone="primary">publishing guide</a> and the <a
+                class="sk-link sk-interactive" href="#alcance-demo" data-tone="primary">launch
+                plan</a> before you send.
+              </p>
+              <div class="sk-inline" data-gap="xs" data-align="center" data-justify="start" data-wrap="true">
+                <span class="sk-tag" data-tone="accent"><span class="sk-tag__label">design</span></span>
+                <span class="sk-tag" data-tone="accent"><span class="sk-tag__label">q3</span></span>
+                <span class="sk-tag" data-tone="neutral"><span class="sk-tag__label">internal</span></span>
+              </div>
+            </div>
+
+            {/*
+              THE LIST GOES IN A CARD, and that is not decoration: the panel is the frame's `canvas`
+              and Avatar paints itself `surface-sunken` while publishing no colour hook, so on canvas
+              it sat one rung away and the discs read as smudges. On `surface` they get back the
+              contrast the component assumes. It also stops the content being one flat pile: a header
+              on the background and a panel holding the records, which is how an app groups this.
+            */}
+            <div class="sk-box" data-padding="none" data-surface="surface" data-border="subtle">
+              <ul class="sk-list" data-density="compact">
+                <li class="sk-list__item">
+                  <span class="sk-list__leading">
+                    <span class="sk-avatar" data-size="md" aria-label="Ada Lovelace" role="img">
+                      <span class="sk-avatar__fallback" aria-hidden="true">AL</span>
+                    </span>
+                  </span>
+                  <span class="sk-list__content">
+                    <span class="sk-list__title">Ada published the closing report</span>
+                    <span class="sk-list__description">Q3 report · 2 hours ago</span>
+                  </span>
+                  <span class="sk-list__trailing">
+                    <span class="sk-badge" data-tone="success">On track</span>
+                  </span>
+                </li>
+                <li class="sk-list__item">
+                  <span class="sk-list__leading">
+                    <span class="sk-avatar" data-size="md" aria-label="Rita Levi" role="img">
+                      <span class="sk-avatar__fallback" aria-hidden="true">RL</span>
+                    </span>
+                  </span>
+                  <span class="sk-list__content">
+                    <span class="sk-list__title">Rita commented on the draft</span>
+                    <span class="sk-list__description">Launch plan · yesterday</span>
+                  </span>
+                  <span class="sk-list__trailing">
+                    <span class="sk-badge" data-tone="accent">3</span>
+                  </span>
+                </li>
+                <li class="sk-list__item">
+                  <span class="sk-list__leading">
+                    <span class="sk-avatar" data-size="md" aria-label="Grace Hopper" role="img">
+                      <span class="sk-avatar__fallback" aria-hidden="true">GH</span>
+                    </span>
+                  </span>
+                  <span class="sk-list__content">
+                    <span class="sk-list__title">Legal review pending</span>
+                    <span class="sk-list__description">Master agreement · due Friday</span>
+                  </span>
+                  <span class="sk-list__trailing">
+                    <span class="sk-badge" data-tone="danger">Overdue</span>
+                  </span>
+                </li>
+                <li class="sk-list__item">
+                  <span class="sk-list__leading">
+                    <span class="sk-avatar" data-size="md" aria-label="Leo Ferrer" role="img">
+                      <span class="sk-avatar__fallback" aria-hidden="true">LF</span>
+                    </span>
+                  </span>
+                  <span class="sk-list__content">
+                    <span class="sk-list__title">Leo uploaded three files</span>
+                    <span class="sk-list__description">Brand assets · 3 days ago</span>
+                  </span>
+                  <span class="sk-list__trailing">
+                    <span class="sk-badge" data-tone="neutral">New</span>
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            {/*
+              The two new decoration consumers, each where it would really appear: the onboarding
+              steps (a numbered marker is trim on a static sequence, the same kind of thing as a
+              Badge) and the wash over the cover photo. Both read reach tokens now, so both dial at
+              level 2 along with the labels and the chrome.
+            */}
+            <div class="sk-grid" data-gap="md" data-columns="2">
+              <div class="sk-box" data-padding="md" data-surface="surface" data-border="subtle">
+                <div class="sk-stack" data-gap="sm">
+                  <p class="sk-text" data-tone="tertiary" data-size="caption" data-weight="label">
+                    Getting started
+                  </p>
+                  <ol class="sk-process-list">
+                    <li class="sk-process-list__item">
+                      <div class="sk-process-list__content">
+                        <span class="sk-process-list__title">Connect the repository</span>
+                      </div>
+                    </li>
+                    <li class="sk-process-list__item">
+                      <div class="sk-process-list__content">
+                        <span class="sk-process-list__title">Invite your team</span>
+                      </div>
+                    </li>
+                    <li class="sk-process-list__item">
+                      <div class="sk-process-list__content">
+                        <span class="sk-process-list__title">Publish the first report</span>
+                      </div>
+                    </li>
+                  </ol>
+                </div>
+              </div>
+              <div class="sk-box" data-padding="none" data-surface="surface" data-border="subtle">
+                <div
+                  class="sk-image-frame"
+                  data-aspect="16/9"
+                  data-fit="cover"
+                  data-position="center"
+                  data-radius="top"
+                  data-border="none"
+                >
+                  <img class="sk-image-frame__media" src="/demos/media-gradient.svg" alt="" />
+                  <div class="sk-media-caption" data-edge="bottom">
+                    <div class="sk-media-gradient" data-strength="lg" aria-hidden="true"></div>
+                    <h2 class="sk-heading" data-size="h4" data-flush>Q3 closing report</h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* The feed's footer: the link that in a real app opens the full listing. A third consumer
+                of `--color-text-link`, and the one that makes level 2 visible below the panel. */}
+            <div class="sk-inline" data-gap="sm" data-align="center" data-justify="between" data-wrap="true">
+              <p class="sk-text" data-tone="tertiary" data-size="caption" data-weight="body">4 of 27 events</p>
+              <a class="sk-link sk-interactive" href="#alcance-demo" data-tone="primary">See all activity</a>
+            </div>
+
+            {/* The actions and their option on one row, which is where a "notify on publish" lives:
+                floating above as a loose paragraph, it did not read as part of publishing. */}
+            <div class="sk-inline" data-gap="sm" data-align="center" data-justify="start" data-wrap="true">
+              <button class="sk-button sk-interactive" data-sk-button data-variant="primary" data-size="md">
+                Publish
+              </button>
+              <button class="sk-button sk-interactive" data-sk-button data-variant="ghost" data-size="md">
+                Discard
+              </button>
+              <label class="sk-checkbox">
+                <input class="sk-checkbox__input" checked type="checkbox" />
+                <span class="sk-checkbox__control sk-interactive" aria-hidden="true">
+                  <span class="sk-checkbox__indicator" data-state="checked">
+                    <span data-sk-icon="check" data-sk-icon-size="sm"></span>
+                  </span>
+                  <span class="sk-checkbox__indicator" data-state="indeterminate">
+                    <span data-sk-icon="remove" data-sk-icon-size="sm"></span>
+                  </span>
+                </span>
+                <span class="sk-checkbox__label">Notify the team</span>
+              </label>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <figcaption>
+      <strong>These dial at level 2:</strong> the current item in the navbar and the sidebar, the
+      Activity counter, the "In progress" badge on the title, the brand tags, the
+      <kbd class="sk-kbd">⌘K</kbd> key, the <em>ghost</em> buttons (Search, Discard), the numbered
+      markers in Getting started, and the tint of the wash over the cover.
+      <strong>These dial at level 1:</strong> the three links in the prose, which go last and only
+      because they keep their underline.
+      <strong>These never dial:</strong> Publish, the checked box and the "On track" / "Overdue"
+      badges, which are the action, state and the feedback roles.
+    </figcaption>
+  </figure>
+
+  <h2>Why the cut falls where it does</h2>
+  <p>
+    <strong>"Uses the accent" is not one thing.</strong> A checked checkbox is accent because the
+    colour is <em>information</em>; a badge is accent because it is decoration; a sidebar link is
+    accent because of navigation chrome. Turning the brand down should quiet the decoration and the
+    chrome and leave the information alone, and no single token can express that. The levels sort the
+    uses by their reason:
+  </p>
+
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>Reason</th>
+          <th>Where</th>
+          <th>Goes quiet at</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Information</strong></td>
+          <td>
+            Checked checkbox, selected day, active tab, current step, and a key while it is held
+            down: "this one is active right now" is a fact, not trim.
+          </td>
+          <td>Never. Quieting it would be deleting information, not decoration.</td>
+        </tr>
+        <tr>
+          <td><strong>The action</strong></td>
+          <td>The primary button, and only that one.</td>
+          <td>Never. The one thing a screen most needs to point at.</td>
+        </tr>
+        <tr>
+          <td><strong>The secondary action</strong></td>
+          <td>A <em>ghost</em> button's label.</td>
+          <td>
+            Level 2. A screen carries many of them, and in brand colour they upstaged the very CTA
+            the rule above protects. It falls to primary text, never secondary: quieting the accent
+            may not cost a control its affordance.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Chrome</strong></td>
+          <td>Current item in the sidebar, the navbar and the page index.</td>
+          <td>Level 2. Navigation you have already found: the accent here is habit, not help.</td>
+        </tr>
+        <tr>
+          <td><strong>Decoration</strong></td>
+          <td>
+            Badge, Tag, a resting key, a Process list's numbered marker and the Media gradient's
+            tint.
+          </td>
+          <td>Level 2. Coloured trim; the first thing that can go quiet.</td>
+        </tr>
+        <tr>
+          <td><strong>Prose links</strong></td>
+          <td><code>.sk-link</code> and the bare anchors in the text.</td>
+          <td>Level 1, and only because the underline survives the colour.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sk-callout" data-tone="warning">
+    <div class="sk-callout__content">
+      <p>
+        <strong>The link goes last for a concrete reason.</strong> WCAG 1.4.1 forbids colour from
+        being the only signal that something is a link, so level 1 is only legal where the underline
+        stays. If your CSS strips the underline from prose links, it has to bring another affordance
+        before dialling down to 1.
+      </p>
+    </div>
+  </div>
+
+  <h2>What never dials</h2>
+  <p>
+    The mock already shows it: Publish, the checked box and the feedback badges stay coloured at
+    every level, because they are the action, state and the feedback roles, and none of them has a
+    reach token. A held-down key is in that group for the same reason. Two more invariants a
+    screenshot cannot show matter as much:
+  </p>
+  <ul>
+    <li>
+      <strong>The focus ring.</strong> It reads the accent directly and has no reach token, so no
+      level can take the colour off it. Turning the brand down is an aesthetic choice and "where is
+      my keyboard focus" is not one.
+    </li>
+    <li>
+      <strong>The feedback roles.</strong> Danger, success, warning and info appear at no level: a
+      warning does not get quieter because the brand did.
+    </li>
+  </ul>
+
+  <h2>The mechanism: a handful of tier-2 tokens</h2>
+  <p>
+    The dimension has no per-component rules. <code>semantic/_color.scss</code> declares a handful of
+    tokens that resolve to the accent by default, the components read those instead of the raw accent
+    tokens, and <code>dimensions/accent.scss</code> re-points them per level. That is why the
+    dimension owns exactly one layer of the token graph and knows nothing about any component: adding
+    a component to the axis is a one-line change in that component, never a change to the dimension.
+  </p>
+
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th>Level 3</th>
+          <th>Level 2</th>
+          <th>Level 1</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">--color-nav-current-bg</td>
+          <td class="mono">bg-accent-subtle</td>
+          <td class="mono">bg-surface-sunken</td>
+          <td class="mono">bg-surface-sunken</td>
+        </tr>
+        <tr>
+          <td class="mono">--color-nav-current-fg</td>
+          <td class="mono">text-accent</td>
+          <td class="mono">text-primary</td>
+          <td class="mono">text-primary</td>
+        </tr>
+        <tr>
+          <td class="mono">--color-decorative-bg</td>
+          <td class="mono">bg-accent-subtle</td>
+          <td class="mono">bg-surface-sunken</td>
+          <td class="mono">bg-surface-sunken</td>
+        </tr>
+        <tr>
+          <td class="mono">--color-decorative-fg</td>
+          <td class="mono">text-accent</td>
+          <td class="mono">text-secondary</td>
+          <td class="mono">text-secondary</td>
+        </tr>
+        <tr>
+          <td class="mono">--color-decorative-border</td>
+          <td class="mono">border-accent</td>
+          <td class="mono">border-default</td>
+          <td class="mono">border-default</td>
+        </tr>
+        <tr>
+          <td class="mono">--color-decorative-wash</td>
+          <td class="mono">action-primary</td>
+          <td class="mono">text-primary</td>
+          <td class="mono">text-primary</td>
+        </tr>
+        <tr>
+          <td class="mono">--color-action-quiet-fg</td>
+          <td class="mono">text-accent</td>
+          <td class="mono">text-primary</td>
+          <td class="mono">text-primary</td>
+        </tr>
+        <tr>
+          <td class="mono">--color-text-link</td>
+          <td class="mono">text-accent</td>
+          <td class="mono">text-accent</td>
+          <td class="mono">text-primary</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    A component opts in by naming the token that matches its reason. That is all it takes for the
+    dimension to reach it:
+  </p>
+  <CodeBlock code={optIn} label="CSS" />
+
+  <h2>Turning it on</h2>
+  <CodeBlock code={enable} label="CSS" />
+  <CodeBlock code={activate} label="HTML" />
+  <p>
+    Level 3 restates the baseline values rather than declaring nothing, because a token cannot reset
+    itself to its own inherited value: writing it out is what lets a subtree return to full reach
+    inside a dialled-down ancestor.
+  </p>
+
+  <h2>It composes with the other dimensions</h2>
+  <p>
+    It is orthogonal to which brand is loaded, to colour mode, high contrast, density and radius. The
+    reach tokens reference semantic tokens, and high contrast re-declares those, not these,
+    which is why high contrast and level 1 combine without fighting. This dimension does not choose a
+    brand either, that is tier 1, the ramp a product declares in
+    <a href="/en/dimensions">Four dimensions</a>. It only decides how far the brand you already
+    loaded spreads.
+  </p>
+
+  <script>
+    import { initAccentShowcase } from "../../scripts/accent-showcase";
+    initAccentShowcase();
+  </script>
+</Base>
+
+<style>
+  /* A query container: the window needs its AVAILABLE width, not the viewport's, because what
+     constrains it is the document column (which changes with the rail and the index, not with the
+     screen). `cqw` is the only way to write "16/10 of whatever there is". */
+  .reach-app {
+    container-type: inline-size;
+    display: grid;
+    gap: var(--space-stack-sm);
+    margin: var(--space-stack-md) 0 var(--space-section);
+  }
+
+  /* Cards name what every reach level does before the reader picks it. */
+  .reach-app__control {
+    display: grid;
+    gap: var(--space-stack-xs);
+  }
+
+  /* The visible caption names the three choices; the radiogroup carries the same name for assistive
+     technology, while the caption itself stays out of the reading order to avoid repetition. */
+  .reach-app__control-label {
+    margin: 0;
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /*
+   * THE WINDOW, at 16/10: the proportion of an ordinary monitor, not whatever height the content
+   * happened to make. It matters for what the page claims, because "how much brand is on screen" is a
+   * ratio of colour to surface, and a box cropped to its content always overstates the count. With the
+   * proportion held, the emptiness around the content counts towards the neutral side, exactly as it
+   * does in a real app.
+   *
+   * `overflow: clip` so the navbar and the sidebar end against a real edge: without it, a loose shell
+   * in the middle of prose reads as dropped parts rather than as a screen.
+   *
+   * THE HEIGHT IS THE PROPORTION, WITH A FLOOR AND A CEILING, and content that does not fit SCROLLS
+   * inside. That is what a real screen does: it does not grow when you add a row, it scrolls. The
+   * previous version grew with its content, and with Getting started and the cover in there it was up
+   * to 846px, a "screen" taller than it was wide that looked like no monitor at all. The ceiling in
+   * `rem` also keeps the window from eating the whole page in a very wide column.
+   */
+  .reach-app__frame {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    block-size: calc(100cqw / 1.6);
+    min-block-size: 20rem;
+    max-block-size: 34rem;
+    overflow: clip;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-surface);
+    background: var(--color-bg-canvas);
+    isolation: isolate;
+  }
+
+  /* As an iframe the box no longer holds the content, so it no longer holds the grid either: that
+     moves inside, onto `.reach-app__screen`. What stays here is what only the parent document can
+     know, the height, because `cqw` resolves against `.reach-app` and that container does not exist
+     inside the frame. An `iframe` also arrives as `display: inline`; that has to be said too. */
+  iframe.reach-app__frame {
+    display: block;
+    inline-size: 100%;
+  }
+
+  /* The mock's grid, now inside the frame. The same rule the box had, moved down one level.
+     `minmax(0, …)` and not `min-content`: the body row has to be allowed to be SHORTER than its
+     content, which is the condition for the panel inside to scroll rather than stretch the window. */
+  .reach-app__screen {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    block-size: 100%;
+  }
+
+  /* Nothing here. The Navbar already ships its background and its bottom border, and declares no
+     `position`, so the page has nothing to re-declare: as the ceiling of this box it behaves exactly
+     as it does at the top of an app. What used to be here (a `position: static` that overrode nothing
+     and a border the component already paints) was the page rewriting the component over itself. */
+
+  /*
+   * `auto` FOR THE RAIL, NEVER A NUMBER. The column said `13rem` and the Sidebar measured its own,
+   * `--sk-sidebar-expanded-inline-size`, then 15rem: the rail overflowed its own column by
+   * exactly 32px and sat ON TOP of the content, with the title and the buttons running underneath it.
+   * Same mistake as the background and the borders, the page restating a number the component already
+   * owns, so the fix is the same: stop restating it. (That hook is 13rem today, the very number the
+   * page had copied: the two matching is an accident, not a repair.) With `auto` the track is
+   * measured by the rail,
+   * and if its width changes tomorrow (or it collapses to a rail) the grid follows with no edit here.
+   */
+  .reach-app__body {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  /*
+   * There is nothing to re-declare on the Sidebar either, and that is the point.
+   *
+   * What used to be here (`position: static`, `block-size: auto`, a `border-inline-end`) overrode the
+   * component for no reason: the Sidebar declares no `position`, its `block-size: 100%` is exactly
+   * what you want inside a stretching grid cell, and it paints its own border through
+   * `--sk-sidebar-border-*`. Worse, `block-size: auto` broke its footer's pin to the bottom, which is
+   * half of what this shell does. The page had reimplemented the component on top of the component,
+   * which is precisely what ADR-8 says not to do.
+   */
+
+  /*
+   * NO BACKGROUND OF ITS OWN, and that was the bug that made the rail vanish: this panel painted
+   * `--color-bg-surface`, which is exactly the background the Sidebar and the Navbar already paint
+   * themselves. Three regions in one colour with a `subtle` border between them: the shell read as a
+   * single flat surface and the sidebar looked like it was not there.
+   *
+   * The right layering already came from the components: navbar and sidebar are CHROME and live on
+   * `surface`; the content is the screen's well and stays on the frame's `canvas`. The page picks
+   * neither colour, it just stops covering the one the component picked.
+   *
+   * IT SCROLLS, like the panel of a real app, and now it can: while the window sized itself by
+   * measuring this content, a scroll container here contributed 0 to the intrinsic height and
+   * flattened the window to nothing. With the height fixed nothing is measured any more, so scrolling
+   * goes back to being what it always should have been, how a screen holds more than fits.
+   */
+  .reach-app__main {
+    min-block-size: 0;
+    padding: var(--space-inset-md);
+    overflow-y: auto;
+  }
+
+  /* Below ~40rem the window stops pretending to be a monitor: on a phone the mock is one column and
+     the sidebar moves above. */
+  @media (max-width: 40rem) {
+    /* Portrait, the window stops being a monitor and becomes a phone: a fixed height, tall and
+       narrow. Still an EXPLICIT height rather than `auto`, because an iframe has no intrinsic height:
+       with `auto` it collapsed to the user agent's 150px and the mock was reduced to a strip. The
+       content inside still scrolls exactly the same. */
+    .reach-app__frame,
+    iframe.reach-app__frame {
+      block-size: 36rem;
+      min-block-size: 0;
+      max-block-size: none;
+    }
+
+    .reach-app__body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* Stacked, the rail is a full-width band and its border moves to the bottom. Both are said
+       through the hooks the Sidebar publishes, `--sk-sidebar-inline-size` and `--sk-sidebar-border-*`,
+       rather than by overriding properties: the bottom border is the only thing the page has to add,
+       because the component only knows about the inline side. */
+    .reach-app__sidebar {
+      --sk-sidebar-inline-size: 100%;
+      --sk-sidebar-border-width: 0;
+      border-block-end: 1px solid var(--color-border-subtle);
+    }
+  }
+
+  .reach-app figcaption {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
+    text-wrap: pretty;
+  }
+
+  /* The key quoted in the caption aligns with the text instead of stretching it. */
+  .reach-app figcaption .sk-kbd {
+    vertical-align: baseline;
+  }
+</style>

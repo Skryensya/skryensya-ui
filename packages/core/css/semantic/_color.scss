@@ -101,7 +101,7 @@
     --elevation-modal: 0 8px 10px -6px var(--shadow-lg), 0 20px 25px -5px var(--shadow-lg);
 
     /*
-     * ACCENT REACH, by KIND OF USE. Four tokens that all resolve to the accent by default, so
+     * ACCENT REACH, by KIND OF USE. Tokens that all resolve to the accent by default, so
      * nothing changes until a product opts in, and that each name a different REASON something is
      * accent-coloured. `dimensions/accent.scss` re-points them per level: that is the whole
      * mechanism, and it is why the dimension needs no knowledge of any component.
@@ -113,6 +113,8 @@
      *
      * State (checkbox, switch, tab, selected day) and the primary CTA deliberately have no token
      * here: they read `--color-action-primary` / `--color-text-accent` directly and never dial.
+     * A HELD-DOWN Kbd is in that group too: a lit key says "this one is active right now", which is
+     * information, so it reads the action colour straight while the resting key is decoration below.
      */
     --color-nav-current-bg: var(--color-bg-accent-subtle);
     --color-nav-current-fg: var(--color-text-accent);
@@ -123,4 +125,18 @@
     /* Prose links. The last to go, and when it does the underline in typography.css is what keeps
      * the link recognisable without colour (WCAG 1.4.1: colour can never be the only signal). */
     --color-text-link: var(--color-text-accent);
+    /* THE QUIET ACTION: a ghost button's label. Its own token because a ghost button is not the
+     * thing "the action never dials" is about: that rule protects the ONE primary CTA a screen most
+     * needs to point at, and a screen has many ghosts (a Search, a Discard, every icon-only control
+     * in a toolbar). Left on the raw accent they were the loudest thing on a dialled-down screen,
+     * competing with the very CTA the rule exists to protect. It lands on `text-primary` rather than
+     * `text-secondary` because a button still has to read as pressable after the colour leaves. */
+    --color-action-quiet-fg: var(--color-text-accent);
+    /* A SATURATED decorative wash: the media gradient's tint, mixed into a scrim over a photo.
+     * Separate from `--color-decorative-bg` because that one is a near-white fill (accent-50) and a
+     * wash needs a colour with body; both are decoration, they just work at different strengths.
+     * Dialled down it becomes plain ink, so the scrim keeps doing its contrast job with no brand in
+     * it, which is the whole point: the wash guarantees the caption's legibility, the tint was only
+     * ever the branding on top of that. */
+    --color-decorative-wash: var(--color-action-primary);
 }

@@ -151,8 +151,14 @@
 
   .sk-button[data-variant="ghost"] {
     --sk-button-bg: transparent;
-    /* text-accent, not action-primary: this is colored TEXT on canvas (4.5:1), not a fill (3:1). */
-    --sk-button-fg: var(--color-text-accent);
+    /* `action-quiet-fg`, the accent-reach token for a SECONDARY action, not the raw `text-accent`.
+     * Still colored TEXT on canvas (4.5:1) rather than a fill (3:1), which is why it is a text token
+     * at all; what changed is that it now dials. The rule "the action never dials" protects the ONE
+     * primary CTA a screen most needs to point at, and a ghost is not that: a screen carries many of
+     * them, and left on the raw accent they were the loudest thing on a dialled-down screen,
+     * competing with the CTA the rule exists to protect. It falls back to `text-primary`, never
+     * `text-secondary`, so the button still reads as pressable once the colour is gone. */
+    --sk-button-fg: var(--color-action-quiet-fg);
     --sk-button-border-color: transparent;
   }
 

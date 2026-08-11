@@ -4,4 +4,26 @@
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
 surface: "a19cff7b187cd6fa"
-entries: []
+entries:
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: FileUpload se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>FileUpload</code>: los dos bindings lo realizan, y la referencia de
+        esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla
+        monta sobre <code>data-sk-file-upload</code>: el markup se autora y el enhancer lo hidrata, así
+        que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones:
+        <code>name</code>, <code>multiple</code>, <code>accept</code>, <code>disabled</code>,
+        <code>required</code>, <code>maxFiles</code>, <code>maxFileSize</code>. La hoja es
+        <code>components/file-upload.css</code>.
+    en:
+      title: FileUpload is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>FileUpload</code>: both bindings realize it, and this page's
+        reference is rendered from the compiled contract rather than from prose written beside it. The
+        Vanilla binding mounts on <code>data-sk-file-upload</code>: the markup is authored and the
+        enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options:
+        <code>name</code>, <code>multiple</code>, <code>accept</code>, <code>disabled</code>,
+        <code>required</code>, <code>maxFiles</code>, <code>maxFileSize</code>. Its stylesheet is
+        <code>components/file-upload.css</code>.

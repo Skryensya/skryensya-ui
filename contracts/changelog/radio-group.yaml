@@ -4,4 +4,23 @@
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
 surface: "75eebbac81a95497"
-entries: []
+entries:
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: RadioGroup se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>RadioGroup</code>: los dos bindings lo realizan, y la referencia de
+        esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el
+        markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces.
+        Opciones: <code>name</code>, <code>value</code>, <code>orientation</code>,
+        <code>disabled</code>, <code>required</code>. La hoja es
+        <code>components/radio-group.css</code>.
+    en:
+      title: RadioGroup is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>RadioGroup</code>: both bindings realize it, and this page's
+        reference is rendered from the compiled contract rather than from prose written beside it. There
+        is no enhancer: the markup is complete on its own, so both bindings are the same markup twice.
+        Options: <code>name</code>, <code>value</code>, <code>orientation</code>, <code>disabled</code>,
+        <code>required</code>. Its stylesheet is <code>components/radio-group.css</code>.

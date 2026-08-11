@@ -121,7 +121,7 @@ The matrix records shipped public surfaces and behavior coverage.
 | Tile family | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | PageHeader, Toolbar, and EmptyState | ✓ | ✓ | ✓ |, | ✓ | ✓ |
 | Toast | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Box, Stack, Inline, and Grid | ✓ | ✓ | ✓ |, | ✓ | ✓ |
+| Box, Stack, Inline, Grid, Layout Grid, and Wrapper | ✓ | ✓ | ✓ |, | ✓ | ✓ |
 | Text, Heading, and Link | ✓ | ✓ | ✓ |, | ✓ | ✓ |
 | Icon | ✓ | ✓ | ✓ |, | ✓ | ✓ |
 | State layer |, | ✓ |, |, | ✓ |, |

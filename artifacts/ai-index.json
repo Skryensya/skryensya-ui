@@ -1253,6 +1253,29 @@
         },
         {
           "alternatives": [
+            "Wrapper",
+            "Grid"
+          ],
+          "avoidWhen": [
+            "todos los hijos comparten un único techo de ancho; Wrapper es más simple",
+            "se distribuyen tarjetas en columnas iguales; eso es Grid"
+          ],
+          "host": "div",
+          "id": "LayoutGrid",
+          "intent": [
+            "page-flow",
+            "named-content-measures",
+            "breakout-content",
+            "full-bleed-section"
+          ],
+          "parents": [],
+          "useWhen": [
+            "una página necesita una medida de lectura y algunos hijos deben ser angostos, abrirse o sangrar de borde a borde",
+            "una sección full-width debe conservar su contenido centrado sin un wrapper adicional"
+          ]
+        },
+        {
+          "alternatives": [
             "Stack",
             "Inline",
             "Grid"
@@ -3215,5 +3238,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "d1ecc1938ebf1f47"
+  "sourceHash": "7ea435030a0ebd97"
 }

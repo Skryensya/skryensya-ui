@@ -4,4 +4,26 @@
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
 surface: "4ef7b77e8a56db0c"
-entries: []
+entries:
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: Combobox se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>Combobox</code>: los dos bindings lo realizan, y la referencia de
+        esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla
+        monta sobre <code>data-sk-combobox</code>: el markup se autora y el enhancer lo hidrata, así que
+        lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>name</code>,
+        <code>value</code>, <code>placeholder</code>, <code>disabled</code>, <code>required</code>,
+        <code>readOnly</code>, <code>multiple</code>, <code>allowCustomValue</code>. La hoja es
+        <code>components/combobox.css</code>.
+    en:
+      title: Combobox is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>Combobox</code>: both bindings realize it, and this page's
+        reference is rendered from the compiled contract rather than from prose written beside it. The
+        Vanilla binding mounts on <code>data-sk-combobox</code>: the markup is authored and the enhancer
+        hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>name</code>,
+        <code>value</code>, <code>placeholder</code>, <code>disabled</code>, <code>required</code>,
+        <code>readOnly</code>, <code>multiple</code>, <code>allowCustomValue</code>. Its stylesheet is
+        <code>components/combobox.css</code>.

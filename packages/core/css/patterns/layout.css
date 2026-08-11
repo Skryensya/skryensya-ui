@@ -14,7 +14,8 @@
 @layer components {
   .sk-stack,
   .sk-inline,
-  .sk-grid {
+  .sk-grid,
+  .sk-layout-grid {
     min-inline-size: 0;
   }
 
@@ -77,6 +78,68 @@
   .sk-grid[data-gap="sm"] { --sk-grid-gap: var(--space-stack-sm); }
   .sk-grid[data-gap="lg"] { --sk-grid-gap: var(--space-stack-lg); }
   .sk-grid[data-gap="xl"] { --sk-grid-gap: var(--space-stack-xl); }
+
+  /*
+   * LAYOUT GRID, one page flow with named reading measures.
+   *
+   * Direct children stay at `content` unless they opt into a named span. A full-width child repeats
+   * this grid, so its own direct children return to the same content measure without another wrapper.
+   * `data-width` belongs to the child: it keeps semantics with the element that actually needs more
+   * (or less) room. The named spans map onto Wrapper's size scale, so page grids and single columns
+   * share the same ceilings: narrow → sm, content → md, breakout → lg.
+   */
+  .sk-layout-grid {
+    --sk-layout-gutter: var(--space-inset-lg);
+    --sk-layout-narrow: var(--size-wrapper-sm);
+    --sk-layout-content: var(--size-wrapper-md);
+    --sk-layout-breakout: var(--size-wrapper-lg);
+
+    --sk-layout-narrow-track: calc((var(--sk-layout-content) - var(--sk-layout-narrow)) / 2);
+    --sk-layout-breakout-track: calc((var(--sk-layout-breakout) - var(--sk-layout-content)) / 2);
+
+    display: grid;
+    grid-template-columns:
+      [full-width-start]
+        minmax(var(--sk-layout-gutter), 1fr)
+      [breakout-start]
+        minmax(0, var(--sk-layout-breakout-track))
+      [content-start]
+        minmax(0, var(--sk-layout-narrow-track))
+      [narrow-start]
+        min(100% - (var(--sk-layout-gutter) * 2), var(--sk-layout-narrow))
+      [narrow-end]
+        minmax(0, var(--sk-layout-narrow-track))
+      [content-end]
+        minmax(0, var(--sk-layout-breakout-track))
+      [breakout-end]
+        minmax(var(--sk-layout-gutter), 1fr)
+      [full-width-end];
+  }
+
+  .sk-layout-grid > * {
+    grid-column: content;
+    min-inline-size: 0;
+  }
+
+  .sk-layout-grid > [data-width="narrow"] { grid-column: narrow; }
+  .sk-layout-grid > [data-width="content"] { grid-column: content; }
+  .sk-layout-grid > [data-width="breakout"] { grid-column: breakout; }
+
+  .sk-layout-grid > [data-width="full-width"] {
+    display: grid;
+    grid-column: full-width;
+    grid-template-columns: inherit;
+  }
+
+  .sk-layout-grid > [data-width="full-width"] > * {
+    grid-column: content;
+    min-inline-size: 0;
+  }
+
+  .sk-layout-grid > [data-width="full-width"] > [data-width="narrow"] { grid-column: narrow; }
+  .sk-layout-grid > [data-width="full-width"] > [data-width="content"] { grid-column: content; }
+  .sk-layout-grid > [data-width="full-width"] > [data-width="breakout"] { grid-column: breakout; }
+  .sk-layout-grid > [data-width="full-width"] > [data-width="full-width"] { grid-column: full-width; }
 
   /*
    * MULTI-COLUMN LAYOUT, CSS Multi-column Layout Module Level 1, shortened to multicol in CSS.

@@ -4,4 +4,22 @@
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
 surface: "448d1f011b752bfe"
-entries: []
+entries:
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: ProcessList se publica como contrato, con 2 signatures
+      body: >-
+        Entra al catálogo con <code>ProcessList</code>, <code>ProcessListItem</code>: los dos bindings
+        lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita
+        al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el
+        mismo markup dos veces. No tiene opciones: el elemento ES el significado. La hoja es
+        <code>components/process-list.css</code>.
+    en:
+      title: ProcessList is published as a contract, with 2 signatures
+      body: >-
+        It joins the catalogue with <code>ProcessList</code>, <code>ProcessListItem</code>: both
+        bindings realize it, and this page's reference is rendered from the compiled contract rather
+        than from prose written beside it. There is no enhancer: the markup is complete on its own, so
+        both bindings are the same markup twice. It has no options: the element IS the meaning. Its
+        stylesheet is <code>components/process-list.css</code>.

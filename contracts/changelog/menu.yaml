@@ -4,4 +4,22 @@
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
 surface: "44e7b5422ad0bb3b"
-entries: []
+entries:
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: Menu se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>Menu</code>: los dos bindings lo realizan, y la referencia de esta
+        página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta
+        sobre <code>data-sk-menu</code>: el markup se autora y el enhancer lo hidrata, así que lo que no
+        necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>label</code>,
+        <code>disabled</code>. La hoja es <code>components/menu.css</code>.
+    en:
+      title: Menu is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>Menu</code>: both bindings realize it, and this page's
+        reference is rendered from the compiled contract rather than from prose written beside it. The
+        Vanilla binding mounts on <code>data-sk-menu</code>: the markup is authored and the enhancer
+        hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>label</code>,
+        <code>disabled</code>. Its stylesheet is <code>components/menu.css</code>.

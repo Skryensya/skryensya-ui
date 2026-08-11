@@ -1,5 +1,6 @@
 import {
   layoutParts,
+  layoutGridParts,
   type BoxBorder,
   type BoxSurface,
   type GridColumns,
@@ -107,6 +108,22 @@ export function Grid<Element extends ElementType = "div">({
       data-multicol={multicol === true ? "" : multicol === false ? undefined : rawMulticol}
     />
   );
+}
+
+/**
+ * A page flow with content, narrow, breakout and full-width spans.
+ *
+ * The span stays on the semantic direct child as `data-width`; this root only owns the grid.
+ */
+export type LayoutGridProps<Element extends ElementType = "div"> = PolymorphicProps<Element, LayoutChildren>;
+
+export function LayoutGrid<Element extends ElementType = "div">({
+  as,
+  className,
+  ...props
+}: LayoutGridProps<Element>) {
+  const Component = as ?? "div";
+  return <Component {...props} className={classes(layoutGridParts.layoutGrid, className)} />;
 }
 
 export type DensityScopeProps<Element extends ElementType = "div"> = PolymorphicProps<

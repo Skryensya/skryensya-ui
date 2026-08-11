@@ -7,6 +7,12 @@ export type LayoutAlign = "start" | "center" | "end" | "stretch";
 export type InlineAlign = "start" | "center" | "end" | "baseline" | "stretch";
 export type InlineJustify = "start" | "center" | "end" | "between";
 export type GridColumns = 1 | 2 | 3 | 4;
+/**
+ * Named spans a direct LayoutGrid child may request with `data-width`.
+ *
+ * Omitting the attribute keeps the child in the content span.
+ */
+export type LayoutGridWidth = "narrow" | "content" | "breakout" | "full-width";
 /** Page-column max measure on a size scale, see patterns/wrapper.css. */
 export type WrapperSize = "sm" | "md" | "lg" | "full";
 
@@ -23,21 +29,28 @@ export const layoutParts = {
   wrapper: "sk-wrapper",
 } as const;
 
+/*
+ * LayoutGrid belongs only to the flow-layout family. Keeping it out of the shared parts object
+ * prevents Box and Wrapper from publishing a part their own contracts do not realize.
+ */
+export const layoutGridParts = {
+  ...layoutParts,
+  layoutGrid: "sk-layout-grid",
+} as const;
+
 export type LayoutPart = keyof typeof layoutParts;
 export type LayoutPartClass = (typeof layoutParts)[LayoutPart];
 
 /*
- * The five ways of arranging things, as five signatures of one family.
- *
- * They are a family and not five because the choice between them is one decision: how does this
- * group of things sit together; an agent picking a layout should see all five side by side.
- * Every one of them is `as`-polymorphic in React; the contract fixes a sensible host and leaves the
- * element to the author, because a Stack that is really a `<ul>` is still a Stack.
+ * The flow-layout signatures share a family because choosing one answers the same question: how does
+ * this group occupy space? Stack, Inline, Grid and LayoutGrid differ in flow; DensityScope changes
+ * that flow's semantic spacing. Each is `as`-polymorphic in React, so the author keeps the element
+ * semantics: a Stack that is really a `<ul>` is still a Stack.
  */
 /*
- * Three stylesheets, so three families; the same lesson checkbox and switch taught: a core module is
- * a source file, and `css` is per family. Box, the flow layouts and Wrapper share a parts object and
- * nothing else.
+ * Three stylesheets, so three families. Box and Wrapper keep only their own public parts; the flow
+ * family extends those shared constants with LayoutGrid. Code stays co-located because a core module
+ * is a source file, while `css` stays per family.
  */
 export const boxContract = {
   id: "box",
@@ -66,7 +79,7 @@ export const boxContract = {
 export const layoutContract = {
   id: "layout",
   css: "@skryensya/core/patterns/layout.css",
-  parts: layoutParts,
+  parts: layoutGridParts,
 
   options: {
     gap: { type: "enum", values: ["none", "xs", "sm", "md", "lg", "xl"], default: "md", attr: "data-gap" },
@@ -111,6 +124,19 @@ export const layoutContract = {
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "grid", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Grid" },
+    },
+
+    /*
+     * A page flow with four named measures. Width is intentionally an attribute of a direct child:
+     * a heading, figure or section owns its own semantics and can opt into the span it needs.
+     */
+    LayoutGrid: {
+      intent: ["page-flow", "named-content-measures", "breakout-content", "full-bleed-section"],
+      host: { element: "div" },
+      options: [],
+      slots: { children: { accepts: "node", required: true } },
+      template: { element: "div", part: "layoutGrid", host: true, slot: "children" },
+      react: { from: "@skryensya/react/layout", name: "LayoutGrid" },
     },
 
     DensityScope: {

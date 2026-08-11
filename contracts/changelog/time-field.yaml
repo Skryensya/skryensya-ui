@@ -4,4 +4,28 @@
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
 surface: "936b51e994fa3268"
-entries: []
+entries:
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: TimeField se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>TimeField</code>: los dos bindings lo realizan, y la referencia de
+        esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla
+        monta sobre <code>data-sk-time-field</code>: el markup se autora y el enhancer lo hidrata, así
+        que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones:
+        <code>name</code>, <code>locale</code>, <code>value</code>, <code>minuteStep</code>,
+        <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>hourLabel</code>,
+        <code>minuteLabel</code>, <code>periodLabel</code>, <code>clearLabel</code>. La hoja es
+        <code>components/time-field.css</code>.
+    en:
+      title: TimeField is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>TimeField</code>: both bindings realize it, and this page's
+        reference is rendered from the compiled contract rather than from prose written beside it. The
+        Vanilla binding mounts on <code>data-sk-time-field</code>: the markup is authored and the
+        enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options:
+        <code>name</code>, <code>locale</code>, <code>value</code>, <code>minuteStep</code>,
+        <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>hourLabel</code>,
+        <code>minuteLabel</code>, <code>periodLabel</code>, <code>clearLabel</code>. Its stylesheet is
+        <code>components/time-field.css</code>.

@@ -4,4 +4,26 @@
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
 surface: "7019d451b0f09a5a"
-entries: []
+entries:
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: CopyButton se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>CopyButton</code>: los dos bindings lo realizan, y la referencia de
+        esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla
+        monta sobre <code>data-sk-copy-button</code>: el markup se autora y el enhancer lo hidrata, así
+        que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones:
+        <code>variant</code>, <code>size</code>, <code>iconOnly</code>, <code>target</code>,
+        <code>successLabel</code>, <code>errorLabel</code>. La hoja es
+        <code>components/copy-button.css</code>.
+    en:
+      title: CopyButton is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>CopyButton</code>: both bindings realize it, and this page's
+        reference is rendered from the compiled contract rather than from prose written beside it. The
+        Vanilla binding mounts on <code>data-sk-copy-button</code>: the markup is authored and the
+        enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options:
+        <code>variant</code>, <code>size</code>, <code>iconOnly</code>, <code>target</code>,
+        <code>successLabel</code>, <code>errorLabel</code>. Its stylesheet is
+        <code>components/copy-button.css</code>.

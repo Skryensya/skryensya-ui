@@ -108,6 +108,10 @@
       "types": "./src/components/layout.tsx",
       "default": "./src/components/layout.tsx"
     },
+    "./layout-grid": {
+      "types": "./src/components/layout.tsx",
+      "default": "./src/components/layout.tsx"
+    },
     "./wrapper": {
       "types": "./src/components/layout.tsx",
       "default": "./src/components/layout.tsx"

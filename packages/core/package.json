@@ -151,6 +151,10 @@
       "types": "./src/layout.ts",
       "default": "./src/layout.ts"
     },
+    "./layout-grid": {
+      "types": "./src/layout.ts",
+      "default": "./src/layout.ts"
+    },
     "./wrapper": {
       "types": "./src/layout.ts",
       "default": "./src/layout.ts"
@@ -334,11 +338,15 @@
     "./parse": "./scripts/parse.mjs",
     "./emit-icon-set": "./scripts/emit-icon-set.mjs",
     "./skryensya.css": "./dist/skryensya.css",
+    "./tokens.css": "./dist/tokens.css",
     "./tokens.scss": "./css/tokens.scss",
     "./primitives.scss": "./css/primitives.scss",
     "./semantic.scss": "./css/semantic.scss",
     "./breakpoints": "./css/semantic/_breakpoints.scss",
+    "./modes/hc.css": "./dist/modes/hc.css",
     "./modes/*": "./css/modes/*",
+    "./dimensions/radius.css": "./dist/dimensions/radius.css",
+    "./dimensions/accent.css": "./dist/dimensions/accent.css",
     "./dimensions/*": "./css/dimensions/*",
     "./components/*": "./css/components/*",
     "./patterns/*": "./css/patterns/*",
@@ -374,6 +382,7 @@
     "lint": "node scripts/lint.mjs && node --test scripts/*.test.mjs && vitest run && tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
+    "lightningcss": "^1.33.0",
     "sass": "^1.83.0",
     "typescript": "^5.9.3",
     "vitest": "^4.1.10"

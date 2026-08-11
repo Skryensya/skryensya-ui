@@ -195,6 +195,19 @@ const componentItems = [
     aliases: ["flyout", "picker lateral", "panel al lado"],
   },
   { href: "/componentes/grid", label: "Grid", aliases: ["grilla", "cuadrícula", "cuadricula"] },
+  {
+    href: "/componentes/layout-grid",
+    label: "Layout Grid",
+    aliases: [
+      "layout grid",
+      "ancho de contenido",
+      "content width",
+      "breakout",
+      "full-width",
+      "full bleed",
+      "sangrado",
+    ],
+  },
   { href: "/componentes/heading", label: "Heading", aliases: ["encabezado", "título", "titulo"] },
   { href: "/hotkey", label: "Hotkey", aliases: ["atajo", "atajos", "keyboard shortcut"] },
   {
@@ -557,6 +570,7 @@ export const componentNavigation = [
     items: componentGroupItems(
       "/componentes/box",
       "/componentes/grid",
+      "/componentes/layout-grid",
       "/hotkey",
       "/componentes/inline",
       "/scrollbar",

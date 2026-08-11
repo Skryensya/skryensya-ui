@@ -8,6 +8,7 @@
  */
 import CodeBlock from "./CodeBlock.astro";
 import { getLocale, localizePath, useTranslations } from "../i18n";
+import { vanillaMountSections } from "../lib/vanilla-mount-sections";
 
 interface Props {
   name: string;
@@ -28,6 +29,14 @@ const Title = headingLevel === "h3" ? "h3" : "h2";
 const Section = headingLevel === "h3" ? "h4" : "h3";
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
+
+/*
+ * The same three sections `Base.astro` puts in the rail, from the same list (`../lib/
+ * vanilla-mount-sections.ts`), so the anchors it links to are the ids rendered here. They used to
+ * be assigned in the browser by the layout's heading scan, which is exactly the runtime work the
+ * build-time index removed.
+ */
+const [titleSection, autoSection, onlySection] = vanillaMountSections(t, name);
 
 /*
  * The full explanation of `initComponents()` (the map-not-a-list-of-imports shape, idempotence,
@@ -56,15 +65,15 @@ const root = document.querySelector<HTMLElement>("${selector}");
 if (root) ${mount}(root);`;
 ---
 
-<Title>{t("vanilla.title")}</Title>
+<Title id={titleSection.id}>{titleSection.label}</Title>
 <p>{t("vanilla.intro")}</p>
 <CodeBlock code={install} label="terminal" />
 
-<Section>{t("vanilla.autoTitle")}</Section>
+<Section id={autoSection.id}>{autoSection.label}</Section>
 <p set:html={t("vanilla.autoBody", { autoLink })} />
 <CodeBlock code={auto} label="JavaScript" />
 
-<Section>{t("vanilla.onlyTitle", { name })}</Section>
+<Section id={onlySection.id}>{onlySection.label}</Section>
 <p>{t("vanilla.onlyBody", { name })}</p>
 <CodeBlock code={component} label="JavaScript" />
 <CodeBlock code={instance} label={t("vanilla.instance")} />

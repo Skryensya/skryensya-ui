@@ -1,0 +1,80 @@
+---
+import "@skryensya/core/components/changelog.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { changelogTree } from "../../demos/changelog";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/changelog.yaml?raw";
+import coreSource from "@core/src/changelog.ts?raw";
+import cssSource from "@core/css/components/changelog.css?raw";
+import reactSource from "@react/src/components/changelog.tsx?raw";
+import reactTestSource from "@react/src/components/changelog.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core`;
+const styles = `@import "@skryensya/core/components/changelog.css";`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/changelog.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/changelog.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/changelog.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/changelog.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/changelog.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Changelog"
+  description={t("changelogPage.description")}
+  contractId="changelog"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/changelog.css", probe: "sk-changelog" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/changelog.test.tsx",
+      tests: [
+        { name: "renders a reversed ordered list of releases", description: t("changelogPage.test1") },
+        {
+          name: "marks a release with no date as unreleased and renders no time at all",
+          description: t("changelogPage.test2"),
+        },
+        { name: "draws the kind as a Badge", description: t("changelogPage.test3") },
+        {
+          name: "renders the title and the description as separate parts",
+          description: t("changelogPage.test4"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("changelogPage.lede")} />
+    <ComponentPreview tree={changelogTree(t)} label="Changelog" note={t("changelogPage.previewNote")} />
+
+    <h3>{t("changelogPage.whenTitle")}</h3>
+    <ul>
+      <li set:html={t("changelogPage.whenItem1")} />
+      <li set:html={t("changelogPage.whenItem2")} />
+      <li set:html={t("changelogPage.whenItem3")} />
+    </ul>
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("changelogPage.contractItem1")} />
+      <li set:html={t("changelogPage.contractItem2")} />
+      <li set:html={t("changelogPage.contractItem3")} />
+      <li set:html={t("changelogPage.contractItem4")} />
+      <li set:html={t("changelogPage.contractItem5")} />
+    </ul>
+
+    <h3>{t("changelogPage.datesTitle")}</h3>
+    <p set:html={t("changelogPage.datesBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+</ComponentPageShell>

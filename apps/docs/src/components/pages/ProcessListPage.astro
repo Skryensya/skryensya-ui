@@ -1,0 +1,73 @@
+---
+import "@skryensya/core/components/process-list.css";
+import "@skryensya/core/components/code-preview.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { processListTree } from "../../demos/process-list";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/process-list.yaml?raw";
+import coreSource from "@core/src/process-list.ts?raw";
+import cssSource from "@core/css/components/process-list.css?raw";
+import reactSource from "@react/src/components/process-list.tsx?raw";
+import reactTestSource from "@react/src/components/process-list.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/process-list.css";
+@import "@skryensya/core/components/code-preview.css";`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/process-list.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/process-list.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/process-list.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/process-list.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/process-list.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="ProcessList"
+  description={t("processListPage.description")}
+  contractId="process-list"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/process-list.css", probe: "sk-process-list" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/process-list.test.tsx",
+      tests: [
+        { name: "renders a native ordered sequence of instructions", description: t("processListPage.test1") },
+        {
+          name: "keeps each title and arbitrary step content inside its item",
+          description: t("processListPage.test2"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("processListPage.lede")} />
+    <ComponentPreview tree={processListTree(t)} label="ProcessList" />
+
+    <h3>{t("processListPage.whenTitle")}</h3>
+    <ul>
+      <li set:html={t("processListPage.whenItem1")} />
+      <li set:html={t("processListPage.whenItem2")} />
+      <li set:html={t("processListPage.whenItem3")} />
+    </ul>
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("processListPage.contractItem1")} />
+      <li set:html={t("processListPage.contractItem2")} />
+      <li set:html={t("processListPage.contractItem3")} />
+      <li set:html={t("processListPage.contractItem4")} />
+      <li set:html={t("processListPage.contractItem5")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" />
+  </Fragment>
+</ComponentPageShell>

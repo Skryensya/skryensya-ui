@@ -1,0 +1,73 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { navbarTree } from "../../demos/navbar";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/navbar.yaml?raw";
+import coreSource from "@core/src/navbar.ts?raw";
+import cssSource from "@core/css/components/navbar.css?raw";
+import reactSource from "@react/src/components/navbar.tsx?raw";
+import reactTestSource from "@react/src/components/navbar.test.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
+
+const css = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/navbar.css";
+@import "@skryensya/core/patterns/nav-list.css";`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/navbar.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/navbar.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/navbar.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/navbar.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/navbar.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Navbar"
+  description={t("navbarPage.description")}
+  contractId="navbar"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/navbar.css", probe: "sk-navbar" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/navbar.test.tsx",
+      tests: [
+        {
+          name: "uses a header landmark while leaving navigation to its NavList child",
+          description: t("navbarPage.test1"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("navbarPage.lede")} />
+
+    <h3>{t("navbarPage.linksTitle")}</h3>
+    <p set:html={t("navbarPage.linksBody")} />
+    <ComponentPreview
+      tree={navbarTree(t, {
+        home: "/",
+        projects: "/proyectos",
+        reports: "/reportes",
+        team: "/equipo",
+      })}
+      label="Navbar"
+      flush
+    />
+
+    <h3>{t("navbarPage.currentTitle")}</h3>
+    <p set:html={t("navbarPage.currentBody")} />
+
+    <p set:html={t("component.reactNote")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={css} label="CSS" />
+  </Fragment>
+</ComponentPageShell>

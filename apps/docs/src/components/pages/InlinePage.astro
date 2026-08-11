@@ -1,0 +1,62 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { inlineTree } from "../../demos/layout";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/layout.yaml?raw";
+import coreSource from "@core/src/layout.ts?raw";
+import cssSource from "@core/css/patterns/layout.css?raw";
+import reactSource from "@react/src/components/layout.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/layout.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/layout.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/patterns/layout.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/layout.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Inline"
+  description={t("inlinePage.description")}
+  contractId="layout"
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/layout.test.tsx",
+      tests: [
+        {
+          name: "renders Stack, Inline and Grid as the documented layout contracts",
+          description: t("inlinePage.test1"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("inlinePage.lede")} />
+    <ComponentPreview tree={inlineTree(t)} label={t("inlinePage.previewLabel")} note={t("inlinePage.previewNote")} />
+
+    <h3>{t("inlinePage.htmlTitle")}</h3>
+    <p set:html={t("inlinePage.htmlBody")} />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("inlinePage.contractItem1")} />
+      <li set:html={t("inlinePage.contractItem2")} />
+      <li set:html={t("inlinePage.contractItem3")} />
+      <li set:html={t("inlinePage.contractItem4")} />
+      <li set:html={t("inlinePage.contractItem5")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

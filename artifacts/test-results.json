@@ -1,0 +1,450 @@
+{
+  "generatedAt": "2026-08-08T22:23:54.820Z",
+  "results": {
+    "packages/react/src/components/accordion.test.tsx": {
+      "keeps exactly one item open in single mode": "passed",
+      "allows independent open items in multiple mode": "passed",
+      "renders and closes a single Accordion item": "passed"
+    },
+    "packages/vanilla/src/components/accordion.svelte.test.ts": {
+      "keeps exactly one item open in single mode and emits": "passed",
+      "allows independent open items in multiple mode": "passed"
+    },
+    "packages/react/src/components/skip-link.test.tsx": {
+      "is a real link, not a scripted jump": "passed",
+      "is reachable at rest, because hidden here means clipped and not removed": "passed",
+      "carries the part class and the shared interactive paint": "passed",
+      "joins a consumer's className instead of replacing the part's": "passed",
+      "forwards the anchor attributes a consumer may still need": "passed",
+      "hands the destination its own requirement as a value": "passed"
+    },
+    "packages/react/src/components/avatar.test.tsx": {
+      "derives initials from the name when there is no image": "passed",
+      "uses the first two characters of a single-word username": "passed",
+      "renders the image inside ImageFrame when src is given": "passed",
+      "caps visible avatars and collapses the rest into a +N counter": "passed"
+    },
+    "packages/react/src/components/badge.test.tsx": {
+      "renders its accessible label and forwards semantic attributes": "passed",
+      "anchors an accessible status dot without adding visible content": "passed"
+    },
+    "packages/react/src/components/button.test.tsx": {
+      "renders a native button that does not submit forms by default": "passed",
+      "encodes both default appearance axes and the interaction contract": "passed",
+      "exposes disabled state to both native controls and assistive technology": "passed",
+      "carries a leading icon alongside its label": "passed",
+      "renders an icon-only button as a named square": "passed",
+      "warns in development when an icon-only button has no accessible name": "passed",
+      "renders navigation with Button appearance and anchor attributes": "passed"
+    },
+    "packages/vanilla/src/components/button.test.ts": {
+      "enhances authored buttons with a safe type and idempotent mounting": "passed",
+      "refuses a root without the required interaction class": "passed",
+      "reflects authored disabled state without changing its button semantics": "passed",
+      "accepts an icon-only button named by aria-label": "passed",
+      "refuses an icon-only button with no accessible name": "passed",
+      "accepts an icon-only button named by visually-hidden text": "passed",
+      "enhances an authored anchor without changing its navigation semantics": "passed",
+      "refuses an anchor without href": "passed",
+      "refuses a disabled link that could still navigate": "passed"
+    },
+    "packages/react/src/components/callout.test.tsx": {
+      "announces danger assertively and everything else politely": "passed",
+      "renders no dismiss control, ever": "passed",
+      "renders an icon and optional actions through explicit parts": "passed"
+    },
+    "packages/react/src/components/carousel.test.tsx": {
+      "renders a section region with a scroll-snap track of slides": "passed",
+      "maps style-backed tree options onto the Carousel host": "passed",
+      "exposes a snapTo handle that dispatches the goto command the enhancer listens for": "passed"
+    },
+    "packages/vanilla/src/components/carousel.svelte.test.ts": {
+      "names the region and every slide for assistive tech": "passed",
+      "keeps the authored inline styling hooks when the machine patches its own styles in": "passed",
+      "draws one dot per MEASURED page, not one per slide": "passed",
+      "disables the ends and moves a page at a time": "passed",
+      "snaps to a dot and reports the page on the change event": "passed",
+      "accepts sk-carousel-goto as the snap command": "passed",
+      "gives an autoplaying carousel a pause control, and none to a carousel that does not move on its own": "passed",
+      "draws no controls at all when asked for none, and still snaps per slide": "passed",
+      "drags with a mouse by default, because a vertical wheel scrolls the page and not the track": "passed",
+      "opts out of mouse drag with data-mouse-drag=off, for slides whose text is selectable": "passed",
+      "draws no controls for a single slide: that is a track, not a carousel": "passed"
+    },
+    "packages/react/src/components/changelog.test.tsx": {
+      "renders a reversed ordered list of releases": "passed",
+      "carries both halves of the date: the machine one and the readable one": "passed",
+      "marks a release with no date as unreleased and renders no time at all": "passed",
+      "does not mark a dated release as unreleased": "passed",
+      "renders the title and the description as separate parts": "passed",
+      "draws the kind as a Badge": "passed",
+      "colours a breaking entry danger": "passed",
+      "colours a feature entry success": "passed",
+      "colours a bugfix entry accent": "passed",
+      "colours a rework entry warning": "passed",
+      "colours a chore entry neutral": "passed",
+      "defaults an unmarked entry to the same kind the contract declares": "passed",
+      "omits the target when the entry is about the whole contract": "passed"
+    },
+    "packages/vanilla/src/components/tile-checkbox.svelte.test.ts": {
+      "toggles checked state and root data-state on click, emitting sk:checkedchange": "passed",
+      "is form-associated and honours its default-checked": "passed"
+    },
+    "packages/vanilla/src/components/code-preview.test.ts": {
+      "switches density, expands, collapses and mounts idempotently": "passed",
+      "keeps disclosure available when Condensed itself is long": "passed",
+      "says the count in the author's language, and only the number without one": "passed"
+    },
+    "packages/react/src/components/combobox.test.tsx": {
+      "keeps the typed search when the field is left without a selection": "passed",
+      "writes the chosen label and reopens on the whole list": "passed",
+      "spends the query on each chip when multiple": "passed",
+      "marks the highlight as keyboard-driven so the option can carry the focus ring": "passed"
+    },
+    "packages/vanilla/src/components/combobox.test.ts": {
+      "keeps the typed search when the field is left without a selection": "passed",
+      "writes the chosen label and reopens on the whole list": "passed",
+      "hands the filtered collection to the machine before it renders": "passed",
+      "spends the query on each chip when multiple": "passed",
+      "marks the highlight as keyboard-driven so the option can carry the focus ring": "passed"
+    },
+    "packages/vanilla/src/components/component-preview.test.ts": {
+      "switches binding and nested Vanilla source panels idempotently": "passed",
+      "shares Vanilla | React across every preview on the page": "passed",
+      "hands the stage height to the reader on drag and back to the content on double click": "passed",
+      "keeps a reader-set height across a stage reload": "passed",
+      "reloads the srcdoc stage from the authored document": "passed",
+      "cycles free → tablet → mobile → free on click, marking the stage and clearing it for free": "passed",
+      "paints the toggle's accessible name from its per-instance label attributes": "passed",
+      "takes the height back from a reader drag, inline style included": "passed",
+      "honours a preset authored as the initial value": "passed",
+      "mounts a preview that offers no presets": "passed",
+      "shares one preset across every preview on the page": "passed",
+      "records the shared preset on the document element, free as an absence": "passed",
+      "adopts a preset the document already carries, which is what FOUC writes": "passed",
+      "applies the shared preset to a preview that has no toggle of its own": "passed"
+    },
+    "packages/vanilla/src/components/copy-button.test.ts": {
+      "copies its authored target, announces success and resets": "passed",
+      "names the anchor tying one button to its own flag": "passed",
+      "names no anchor where the browser cannot place one": "passed",
+      "reports an authored target that does not exist": "passed"
+    },
+    "packages/vanilla/src/components/flyout.test.ts": {
+      "opens on click and keeps ARIA + value text in sync": "passed",
+      "emits sk-value-change on item click and closes": "passed",
+      "closes on Escape": "passed",
+      "keeps only one flyout open at a time": "passed",
+      "flips the panel to inline-start when the end side overflows the viewport": "passed",
+      "mounts from authored data attributes, and mounting twice is idempotent": "passed"
+    },
+    "packages/react/src/components/image-frame.test.tsx": {
+      "maps geometry props to data attributes on the authored root": "passed",
+      "renders a media img from src/alt when children are omitted": "passed",
+      "keeps a caption beside the src media": "passed"
+    },
+    "packages/react/src/components/input.test.tsx": {
+      "wires the label, hint and error to the control it wraps": "passed",
+      "treats the error message as what makes the field invalid": "passed",
+      "passes required and disabled down to the native control": "passed",
+      "stays a valid control outside a Field": "passed",
+      "gives a textarea the same appearance contract as an input": "passed",
+      "passes axe on a field with a hint and an error": "passed"
+    },
+    "packages/react/src/components/kbd.test.tsx": {
+      "renders a native <kbd> carrying the part class": "passed",
+      "keeps a consumer className alongside the part": "passed",
+      "passes through native attributes": "passed"
+    },
+    "packages/react/src/components/list.test.tsx": {
+      "renders a semantic list with static, link and button rows": "passed",
+      "renders an ordered list when order is meaningful": "passed"
+    },
+    "packages/react/src/components/loader.test.tsx": {
+      "exposes labelled indeterminate work as a polite status": "passed",
+      "writes orthogonal variant and speed axes onto the root": "passed",
+      "stays decorative when the surrounding control already carries the status meaning": "passed",
+      "has no serious accessibility violations in labelled and decorative uses": "passed"
+    },
+    "packages/react/src/components/navbar.test.tsx": {
+      "uses a header landmark while leaving navigation to its NavList child": "passed"
+    },
+    "packages/react/src/components/pagination.test.tsx": {
+      "marks the current page and disables prev/next at the bounds": "passed",
+      "collapses far pages behind an ellipsis and reports clicks clamped to range": "passed"
+    },
+    "packages/react/src/components/placeholder.test.tsx": {
+      "renders decorative geometry and forwards layout classes": "passed",
+      "has no serious accessibility violations inside a labelled busy region": "passed"
+    },
+    "packages/react/src/components/process-list.test.tsx": {
+      "renders a native ordered sequence of instructions": "passed",
+      "keeps each title and arbitrary step content inside its item": "passed"
+    },
+    "packages/react/src/components/progress.test.tsx": {
+      "exposes the value on the progressbar role and paints the matching fill": "passed",
+      "clamps an out-of-range value so the paint and aria-valuenow agree": "passed"
+    },
+    "packages/vanilla/src/components/tile-radio-group.svelte.test.ts": {
+      "is a radiogroup, honours the default, and keeps values mutually exclusive + emits": "passed",
+      "marks the selected item's data-state": "passed"
+    },
+    "packages/vanilla/src/components/segmented.test.ts": {
+      "patches the authored parts into one roving radiogroup": "passed",
+      "selects on click and arrow navigation, skipping disabled options": "passed"
+    },
+    "packages/react/src/components/sidebar.test.tsx": {
+      "collapses uncontrolled and reports the change": "passed",
+      "lets a controlled caller own the state": "passed",
+      "points the trigger at the content it controls": "passed",
+      "names the icon-only trigger without painting the label": "passed",
+      "keeps the links reachable and named once collapsed": "passed",
+      "hosts the nav list without owning it": "passed",
+      "passes axe expanded and collapsed": "passed"
+    },
+    "packages/vanilla/src/components/sidebar.test.ts": {
+      "writes collapsed state, emits the change, and cleanup removes listeners": "passed",
+      "points the trigger at the content it controls": "passed",
+      "lets a controlled caller refuse the collapse": "passed",
+      "mounts from authored data attributes, and mounting twice is idempotent": "passed",
+      "enhances a sidebar that has a handle and no trigger": "passed",
+      "still refuses a sidebar with neither control": "passed",
+      "writes the width property while dragging, and only while dragging": "passed",
+      "a press that never travels is not a resize": "passed",
+      "moves with the arrow keys and announces the change": "passed",
+      "remembers the width under its storage key, and forgets it on reset": "passed",
+      "restores a stored width on mount, and leaves an unkeyed sidebar alone": "passed",
+      "refuses a stored width that is not one": "passed",
+      "reads the storage key off the markup when it mounts itself": "passed"
+    },
+    "packages/react/src/components/steps.test.tsx": {
+      "derives complete / current / upcoming from the current index": "passed",
+      "lets a step override its status explicitly": "passed"
+    },
+    "packages/vanilla/src/components/tile-switch.svelte.test.ts": {
+      "toggles checked state and root data-state on click, emitting sk:checkedchange": "passed",
+      "is form-associated and honours its default-checked": "passed"
+    },
+    "packages/react/src/components/table.test.tsx": {
+      "renders the native table structure with every stable part class": "passed",
+      "defaults headers to columns while preserving explicit row scope": "passed"
+    },
+    "packages/react/src/components/tabs.test.tsx": {
+      "connects the selected tab with its labelled panel": "passed",
+      "mirrors selection on the root data attribute": "passed",
+      "maps tree defaults to the uncontrolled Tabs API": "passed",
+      "moves roving focus with ArrowRight without changing manual selection": "passed"
+    },
+    "packages/react/src/components/tag.test.tsx": {
+      "carries its tone and label": "passed",
+      "exposes a named remove control only when onRemove is given": "passed",
+      "removes with a real small icon-only button, not a lookalike": "passed"
+    },
+    "packages/vanilla/src/components/theme-toggle.test.ts": {
+      "mounts once and cycles system → light → dark on click": "passed",
+      "dispatches sk-theme-toggle-change with the new mode": "passed",
+      "keeps every ThemeToggle in sync when one cycles": "passed"
+    },
+    "packages/vanilla/src/components/toast.test.ts": {
+      "applies the shared live-region semantics and reports native button dismissal": "passed",
+      "only schedules authored timeouts and clears them during cleanup": "passed",
+      "mounts authored toast markup through the registry enhancer": "passed"
+    },
+    "packages/react/src/components/tooltip.test.tsx": {
+      "describes the trigger rather than naming it": "passed",
+      "stays closed while disabled": "passed"
+    },
+    "packages/react/src/components/layout.test.tsx": {
+      "keeps semantic ownership with the caller while applying Box defaults": "passed",
+      "renders Stack, Inline and Grid as the documented layout contracts": "passed",
+      "renders Wrapper as a page column on the size scale": "passed"
+    },
+    "packages/react/src/components/typography.test.tsx": {
+      "separates heading hierarchy from its visual size": "passed",
+      "opts into flush with an explicit attribute, not by position": "passed",
+      "floors h5 and h6 visual size at h4": "passed",
+      "keeps Text semantic and applies its named reading role": "passed",
+      "renders a native link with the shared state layer for hover/press/focus": "passed"
+    },
+    "packages/vanilla/src/components/calendar.svelte.test.ts": {
+      "generates the whole grid from an empty authored root, once": "passed",
+      "names the weekdays in the authored locale": "passed",
+      "opens on the authored date rather than on today": "passed",
+      "reports a picked day as the locale's own string": "passed",
+      "keeps days outside the authored range unpickable": "passed",
+      "collects both ends of a range": "passed",
+      "escalates the view instead of offering two selects": "passed",
+      "turns the month with the header's own triggers": "passed",
+      "marks a disabled calendar as one": "passed"
+    },
+    "packages/vanilla/src/components/date-picker.svelte.test.ts": {
+      "refuses markup that is missing a part it must patch": "passed",
+      "patches the authored control and renders the popover around a calendar": "passed",
+      "keeps the placeholder the author wrote": "passed",
+      "opens the calendar from the trigger and closes it again": "passed",
+      "fills the field with the day the reader picked": "passed",
+      "shows the clear control only once there is a date to clear": "passed",
+      "works with no clear control authored at all": "passed",
+      "respects the authored range and flags": "passed",
+      "names the field for a form under the name the markup gave it": "passed"
+    },
+    "packages/vanilla/src/components/time-field.svelte.test.ts": {
+      "mounts once and names the group from the authored label": "passed",
+      "derives the segments from the locale, not from the markup": "passed",
+      "starts empty, with placeholders instead of a made-up time": "passed",
+      "reads an authored value into its segments": "passed",
+      "steps a segment with the arrow keys and wraps at either end": "passed",
+      "honours the authored minute step": "passed",
+      "types digits and moves on once the segment cannot take another": "passed",
+      "picks the period from its first letter": "passed",
+      "walks between segments with the horizontal arrows": "passed",
+      "empties a segment with Backspace and drops the whole value with it": "passed",
+      "reports every change on the root": "passed",
+      "offers a clear control only while there is something to clear": "passed",
+      "stays out of the way when disabled, and still serializes under its name": "passed",
+      "takes no keys while read-only, but keeps its value": "passed",
+      "describes itself with an authored hint and marks required segments": "passed"
+    },
+    "packages/react/src/components/dialog.test.tsx": {
+      "closes through the platform's own form rather than a handler": "passed",
+      "renders the anatomy the stylesheet contracts against": "passed",
+      "omits the footer form when there is nothing to put in it": "passed",
+      "opts into Dialog Vaul with the enhancer's own mount point": "passed",
+      "keeps a plain dialog free of the sheet's attributes": "passed",
+      "forwards the platform's own open attribute": "passed"
+    },
+    "packages/react/src/components/vaul.test.tsx": {
+      "carries the enhancer's scope markers at rest": "passed",
+      "draws the handle as decoration, always": "passed",
+      "takes a logical edge and the consumer's own className": "passed",
+      "adds the drawer modifier only for the drawer signature": "passed",
+      "forwards native dialog attributes untouched": "passed"
+    },
+    "packages/vanilla/src/components/vaul-gesture.test.ts": {
+      "dismisses a far-enough slow drag (distance alone)": "passed",
+      "keeps a too-short slow drag (springs back)": "passed",
+      "dismisses a fast short flick even when the distance is small": "passed",
+      "a flick BACK home overrules a far drag, direction beats distance": "passed",
+      "a gentle release below the velocity threshold does not count as a flick": "passed",
+      "a single sample (no movement) never dismisses": "passed",
+      "an empty sample list is a no-op, not a crash": "passed",
+      "a zero-size panel can't be dismissed by distance (no division by zero)": "passed",
+      "leaves the fingertip at 1∶1 for the first pixel (no dead zone)": "passed",
+      "never exceeds the cap, however hard you pull": "passed",
+      "is monotonic, pulling further always gives a little more": "passed",
+      "block-end drags along y, positive": "passed",
+      "inline-start closes leftward (negative x) in LTR": "passed",
+      "RTL mirrors only the inline edges": "passed"
+    },
+    "packages/react/src/components/select.test.tsx": {
+      "uses the Zag select machine for popup selection and form value": "passed"
+    },
+    "packages/vanilla/src/components/select.test.ts": {
+      "drives the machine over authored markup: ARIA, selection and the value text": "passed",
+      "emits sk-value-change, and cleanup stops the machine": "passed",
+      "never writes a class: the consumer's stay exactly as authored": "passed",
+      "keeps the id the consumer authored, rather than renaming it": "passed",
+      "keeps an authored hidden select in sync for forms": "passed",
+      "refuses a hidden select that drifted from the items": "passed",
+      "mounts from authored data attributes, and mounting twice is idempotent": "passed"
+    },
+    "packages/react/src/components/slider.test.tsx": {
+      "stays a native range input and reports value changes as numbers": "passed"
+    },
+    "packages/vanilla/src/components/slider.test.ts": {
+      "paints the initial fill from value within [min, max] on mount": "passed",
+      "tracks the value on input, and honours a non-zero min": "passed",
+      "falls back to the platform default range (0–100) when min/max are unset": "passed",
+      "stops updating after cleanup": "passed",
+      "auto-mounts via the enhancer and refuses a non-range root": "passed"
+    },
+    "packages/react/src/components/stat.test.tsx": {
+      "colors the change by trend, not by sign": "passed",
+      "omits the change element when no change is given": "passed",
+      "leaves non-numeric values static even when animate is set": "passed",
+      "counts a numeric value up when animate is on": "passed",
+      "accepts animate options without requiring a click path": "passed",
+      "reserves the final value width while counting": "passed"
+    },
+    "packages/react/src/components/tile.test.tsx": {
+      "satisfies the core shared checkbox state contract": "passed",
+      "satisfies the core shared switch state contract": "passed",
+      "satisfies the core shared radioGroup state contract": "passed",
+      "satisfies the core shared expandable state contract": "passed",
+      "satisfies the core shared link accessibility contract": "passed",
+      "satisfies the core shared button accessibility contract": "passed",
+      "satisfies the core shared checkbox accessibility contract": "passed",
+      "satisfies the core shared switch accessibility contract": "passed",
+      "satisfies the core shared radioGroup accessibility contract": "passed",
+      "satisfies the core shared expandable accessibility contract": "passed",
+      "renders every React Tile root with an explicit interactive or disclosure variant": "passed",
+      "renders the shared title and description anatomy for selectable tiles": "passed",
+      "emits requested Tile padding while leaving the default inset implicit": "passed",
+      "supports uncontrolled checkbox changes": "passed",
+      "supports radio group value changes": "passed",
+      "supports ExpandableTile callbacks": "passed",
+      "puts the disclosure state layer on the trigger, not the Tile surface": "passed",
+      "SSR hydrates without mounting Vanilla": "passed",
+      "passes axe on the default button tile": "passed"
+    },
+    "packages/react/src/components/toc.test.tsx": {
+      "names the nav after the caption and levels each item": "passed",
+      "seeds aria-current from the composition before the spy reports": "passed",
+      "moves aria-current as headings enter the band": "passed",
+      "keeps the last answer when nothing is in the band": "passed",
+      "does not spy on a single-entry index": "passed",
+      "opens as a rail and takes the summary out of the tab order where there is room": "passed",
+      "disconnects the spy on unmount": "passed",
+      "renders an item icon as decoration beside its label": "passed"
+    },
+    "packages/vanilla/src/components/tree-view.test.ts": {
+      "patches tree semantics onto authored markup and mounts once": "passed",
+      "expands a branch from its control and says so": "passed",
+      "seeds the open branches from the authored value": "passed",
+      "selects a leaf and reports the value the composition wrote": "passed",
+      "replaces the selection in single mode": "passed",
+      "extends the selection in multiple mode with the platform's own modifier": "passed",
+      "leaves a disabled node out of the selection": "passed",
+      "does nothing without an authored tree to scan": "passed",
+      "stops the machine when the mount is destroyed": "passed"
+    },
+    "packages/react/src/components/command-palette.test.tsx": {
+      "claims nothing at rest: no options and no expanded popup": "passed",
+      "filters as the reader types and points at the first hit": "passed",
+      "shows the empty sentence only once a query has failed": "passed",
+      "labels each option with its own context line": "passed",
+      "reads the index from a JSON string, the way a usage tree passes it": "passed",
+      "closes through the dialog form and names itself for the reader": "passed"
+    },
+    "packages/vanilla/src/components/command-palette.test.ts": {
+      "requires the platform's dialog and the authored parts": "passed",
+      "opens from its trigger and fills the list only then": "passed",
+      "filters as the reader types, and says when nothing matched": "passed",
+      "gives each option the context line the entry asked for": "passed",
+      "walks the list with the keyboard and stops at both ends": "passed",
+      "goes where Enter and a click point": "passed",
+      "dismisses on the backdrop and drops the trigger's claim": "passed",
+      "starts each opening from a clean query": "passed",
+      "survives an index that is missing or not JSON": "passed",
+      "binds a hotkey only when the markup opts in, and badges it": "passed",
+      "leaves the hotkey alone when nothing asked for one": "passed",
+      "unbinds everything it wired": "passed"
+    },
+    "packages/react/src/components/icon.test.tsx": {
+      "resolves a stable name against the bound set": "passed",
+      "renders project geometry without any binding": "passed",
+      "falls back to the default set (Phosphor) with no provider bound": "passed",
+      "is decorative without a label, and content with one": "passed",
+      "never makes the svg a tab stop": "passed",
+      "carries the set's own fill and stroke, so an outline set stays outline": "passed",
+      "writes size as data-size and keeps the class, so one hook does the sizing": "passed",
+      "defaults to md rather than leaving the size unset": "passed",
+      "lets a set's attrs never override the contract": "passed",
+      "passes axe decorative inside a labelled control, and standalone with a label": "passed",
+      "keeps an icon-only button named by the button, not the svg": "passed",
+      "covers every stable role with real geometry": "passed",
+      "renders every role through the same call site, whatever the drawing": "passed",
+      "never lets the browser's default black win over the container's color": "passed"
+    }
+  }
+}

@@ -22,6 +22,10 @@ const rootAttributes = [
   "data-scheme",
   "data-contrast",
   "data-radius",
+  /* Accent reach. A preview is a second document, so the dimension does not inherit into it: without
+   * this the header's control would quiet the page chrome and leave every demo inside a frame at full
+   * reach, which is precisely backwards, the demos are what the reader is trying to judge. */
+  "data-accent",
   "data-icon-set",
 ] as const;
 const allowScroll = document.body.hasAttribute(

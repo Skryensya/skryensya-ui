@@ -1,0 +1,50 @@
+---
+import "@skryensya/core/components/popover.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { popupTree } from "../../demos/popup";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/popover.yaml?raw";
+import coreSource from "@core/src/popover.ts?raw";
+import cssSource from "@core/css/components/popover.css?raw";
+import reactSource from "@react/src/components/popover.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+const styles = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/popover.css";`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/popover.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/popover.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/popover.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/popover.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Popup"
+  description={t("popupPage.description")}
+  contractId="popover"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/popover.css", probe: "sk-popover", title: "Popup" },
+    { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("popupPage.description")} />
+    <ComponentPreview tree={popupTree(t)} label="Popup" viewport="menu" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("popupPage.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("popupPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

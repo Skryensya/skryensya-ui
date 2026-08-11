@@ -1,0 +1,62 @@
+---
+import "@skryensya/core/components/toolbar.css";
+import "@skryensya/core/components/segmented.css";
+import "@skryensya/core/patterns/anchored.css";
+import "@skryensya/core/components/tooltip.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { nestedToolbarTree, toolbarTree } from "../../demos/toolbar";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/toolbar.yaml?raw";
+import coreSource from "@core/src/toolbar.ts?raw";
+import cssSource from "@core/css/components/toolbar.css?raw";
+import vanillaMountSource from "@vanilla/src/components/toolbar.ts?raw";
+import reactSource from "@react/src/components/toolbar.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const styles = `@import "@skryensya/core/components/toolbar.css";`;
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+initComponents();`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/toolbar.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/toolbar.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/toolbar.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/toolbar.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/toolbar.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Toolbar"
+  description={t("toolbarPage.description")}
+  contractId="toolbar"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/toolbar.css", probe: "sk-toolbar", title: "Toolbar" }]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("toolbarPage.description")} />
+    <ComponentPreview tree={toolbarTree(t)} js={js} label="Toolbar" viewport="auto" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("toolbarPage.contractBody")} />
+
+    <h3>{t("toolbarPage.compositeTitle")}</h3>
+    <p set:html={t("toolbarPage.compositeBody")} />
+    <ComponentPreview tree={nestedToolbarTree(t)} js={js} label={t("toolbarPage.compositeLabel")} viewport="auto" />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("toolbarPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

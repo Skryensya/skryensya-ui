@@ -1,0 +1,40 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { emptyStateTree } from "../../demos/empty-state";
+import { getLocale, useTranslations } from "../../i18n";
+import "@skryensya/core/components/empty-state.css";
+import contractSource from "@contracts/semantic/empty-state.yaml?raw";
+import coreSource from "@core/src/empty-state.ts?raw";
+import cssSource from "@core/css/components/empty-state.css?raw";
+import reactSource from "@react/src/components/empty-state.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/empty-state.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/empty-state.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/empty-state.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/empty-state.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="EmptyState"
+  description={t("emptyState.description")}
+  contractId="empty-state"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/empty-state.css", probe: "sk-empty-state", title: "EmptyState" }]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("emptyState.description")} />
+    <ComponentPreview tree={emptyStateTree(t)} label="Empty State" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("emptyState.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("emptyState.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

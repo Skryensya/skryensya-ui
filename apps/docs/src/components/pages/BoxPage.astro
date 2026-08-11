@@ -1,0 +1,64 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { boxTree } from "../../demos/layout";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/box.yaml?raw";
+import coreSource from "@core/src/layout.ts?raw";
+import cssSource from "@core/css/patterns/box.css?raw";
+/* The sheet itself, not only its source: the Style hooks table resolves each hook
+   against a real element, and a page that never loads `patterns/box.css` would show every
+   value blank. */
+import "@skryensya/core/patterns/box.css";
+import reactSource from "@react/src/components/layout.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/box.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/layout.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/patterns/box.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/layout.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Box"
+  description={t("box.description")}
+  contractId="box"
+  styleGroups={[{ file: "patterns/box.css", probe: "sk-box" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/layout.test.tsx",
+      tests: [
+        {
+          name: "keeps semantic ownership with the caller while applying Box defaults",
+          description: t("box.test1"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("box.lede")} />
+
+    <h3>{t("box.whenTitle")}</h3>
+    <p set:html={t("box.whenBody1")} />
+    <p set:html={t("box.whenBody2")} />
+    <p set:html={t("box.whenBody3")} />
+
+    <h3>{t("box.htmlTitle")}</h3>
+    <ComponentPreview tree={boxTree(t)} label="Box" />
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("box.contractItem1")} />
+      <li set:html={t("box.contractItem2")} />
+      <li set:html={t("box.contractItem3")} />
+      <li set:html={t("box.contractItem4")} />
+      <li set:html={t("box.contractItem5")} />
+    </ul>
+  </Fragment>
+</ComponentPageShell>

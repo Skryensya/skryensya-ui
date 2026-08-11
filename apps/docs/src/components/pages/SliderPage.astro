@@ -1,0 +1,64 @@
+---
+import "@skryensya/core/components/slider.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { sliderTree } from "../../demos/slider";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/slider.yaml?raw";
+import coreSource from "@core/src/slider.ts?raw";
+import cssSource from "@core/css/components/slider.css?raw";
+import vanillaMountSource from "@vanilla/src/components/slider.ts?raw";
+import reactSource from "@react/src/components/slider.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/slider.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/slider.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/slider.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/slider.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/slider.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Slider"
+  description={t("sliderPage.description")}
+  contractId="slider"
+  styleGroups={[{ file: "components/slider.css", probe: "sk-slider" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/slider.test.tsx",
+      tests: [
+        {
+          name: "stays a native range input and reports value changes as numbers",
+          description: t("sliderPage.test1"),
+        },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/slider.test.ts",
+      tests: [
+        {
+          name: "paints the initial fill from value within [min, max] on mount",
+          description: t("sliderPage.test2"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("sliderPage.lede")} />
+    <ComponentPreview tree={sliderTree(t)} label="Slider" />
+    <p set:html={t("sliderPage.body1")} />
+    <p set:html={t("sliderPage.body2")} />
+    <p set:html={t("component.reactNote")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

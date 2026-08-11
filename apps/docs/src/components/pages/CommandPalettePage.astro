@@ -1,0 +1,87 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { commandPaletteDemoScript, commandPaletteDemoTree } from "../../demos/command-palette";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/command-palette.yaml?raw";
+import coreSource from "@core/src/command-palette.ts?raw";
+import cssSource from "@core/css/components/command-palette.css?raw";
+import vanillaMountSource from "@vanilla/src/components/command-palette.ts?raw";
+import reactSource from "@react/src/components/command-palette.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const styles = `@import "@skryensya/core/components/dialog.css";
+@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/command-palette.css";
+@import "@skryensya/core/patterns/scroll-lock.css";`;
+
+const hotkeyHint = `<kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd>`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/command-palette.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/command-palette.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/command-palette.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/command-palette.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/command-palette.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="CommandPalette"
+  description={t("commandPalette.description")}
+  contractId="command-palette"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/command-palette.css", probe: "sk-command-palette" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/command-palette.test.tsx",
+      tests: [
+        {
+          name: "claims nothing at rest: no options and no expanded popup",
+          description: t("commandPalette.test1"),
+        },
+        {
+          name: "filters as the reader types and points at the first hit",
+          description: t("commandPalette.test2"),
+        },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/command-palette.test.ts",
+      tests: [
+        { name: "opens from its trigger and fills the list only then", description: t("commandPalette.test3") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("commandPalette.lede", { hotkey: hotkeyHint })} />
+
+    <ComponentPreview
+      tree={commandPaletteDemoTree(t)}
+      js={commandPaletteDemoScript}
+      previewScript={commandPaletteDemoScript}
+      label="CommandPalette"
+      viewport="overlay"
+    />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("commandPalette.contractItem1")} />
+      <li set:html={t("commandPalette.contractItem2")} />
+      <li set:html={t("commandPalette.contractItem3")} />
+      <li set:html={t("commandPalette.contractItem4")} />
+      <li set:html={t("commandPalette.contractItem5")} />
+      <li set:html={t("commandPalette.contractItem6")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" />
+  </Fragment>
+</ComponentPageShell>

@@ -10,6 +10,10 @@
  * extends it to the page ITSELF. The two route files that remain are shells: they exist because
  * the site's URLs differ per locale (`/componentes/accordion` vs `/en/components/accordion`,
  * folder name translated, English prefixed); see `i18n/index.ts`; not because the content does.
+ *
+ * The hero, the tablist and the Referencia/Style hooks/Cambios wiring now live in
+ * `ComponentPageShell`, the piece this page piloted and every other component page is meant to
+ * reuse; only the hand-written Uso, Instalación and Accesibilidad prose stay here, as named slots.
  */
 import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/accordion.css";
@@ -17,12 +21,9 @@ import "@skryensya/core/components/accordion.css";
    styles ITS page loaded; a page that never imports this sheet gets a bare <details> with the
    browser's own marker on that stage. */
 import "@skryensya/core/components/details.css";
-import Base from "../../layouts/Base.astro";
 import CodeBlock from "../CodeBlock.astro";
+import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import ContractChangelog from "../ContractChangelog.astro";
-import ContractReference from "../ContractReference.astro";
-import StylingHooks from "../StylingHooks.astro";
 import VanillaMount from "../VanillaMount.astro";
 import { vanillaMounts } from "../../lib/vanilla-mounts";
 import {
@@ -31,8 +32,16 @@ import {
   accordionSingleTree,
   detailsGroupTree,
 } from "../../demos/accordion";
-import { contractDoc } from "../../lib/contract-reference";
 import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/accordion.yaml?raw";
+import coreSource from "@core/src/accordion.ts?raw";
+import cssSource from "@core/css/components/accordion.css?raw";
+import vanillaMountSource from "@vanilla/src/components/accordion.ts?raw";
+import vanillaCoordinatorSource from "@vanilla/src/components/Accordion.svelte?raw";
+import vanillaItemSource from "@vanilla/src/components/AccordionItem.svelte?raw";
+import vanillaTestSource from "@vanilla/src/components/accordion.svelte.test.ts?raw";
+import reactSource from "@react/src/components/accordion.tsx?raw";
+import reactTestSource from "@react/src/components/accordion.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -55,163 +64,126 @@ const nativeStyles = `@import "@skryensya/core/components/details.css";`;
    those strings as {detailsLink}, the same `set:html` + var pattern the footer uses for `{core}`. */
 const detailsLink = `<a href="#details-nativo">${t("accordion.detailsNativoLabel")}</a>`;
 
-/*
- * The Changes tab exists only when there is something to say. Sixty component pages each opening a
- * tab that reads "nothing yet" would teach a reader to stop clicking it, and by the time one of
- * them had a breaking change they would not be looking.
- */
-const hasChanges = contractDoc("accordion").changelog.length > 0;
+const sourceFiles = [
+  { id: "contracts/semantic/accordion.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/accordion.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/accordion.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/accordion.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/Accordion.svelte", source: vanillaCoordinatorSource, language: "svelte" },
+  { id: "packages/vanilla/src/components/AccordionItem.svelte", source: vanillaItemSource, language: "svelte" },
+  { id: "packages/vanilla/src/components/accordion.svelte.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/accordion.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/accordion.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
 ---
 
-<Base title="Accordion" description={t("accordion.description")} hideVanillaMount>
-  <header class="docs-component-hero">
-    <p class="docs-component-hero__eyebrow">{t("section.components")}</p>
-    <h1>Accordion</h1>
-  </header>
-
-  <div
-    class="sk-tabs"
-    data-orientation="horizontal"
-    data-activation-mode="automatic"
-    data-value="usage"
-    data-sk-tabs
-  >
-    <div class="sk-tabs__list docs-component-hero-tabs" data-sk-tabs-list aria-label={t("accordion.tabsAriaLabel")}>
-      <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="usage" type="button">{t("accordion.tabUsage")}</button>
-      <button
-        class="sk-tabs__trigger sk-interactive"
-        data-value="install"
-        data-sk-tabs-trigger
-        type="button"
-      >
-        {t("accordion.tabInstall")}
-      </button>
-      <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="contract" type="button">{t("contract.tab")}</button>
-      <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="style" type="button">{t("accordion.tabStyle")}</button>
-      <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="a11y" type="button">{t("accordion.tabA11y")}</button>
-      {
-        hasChanges && (
-          <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="changes" type="button">
-            {t("changelog.tab")}
-          </button>
-        )
-      }
-    </div>
-
-    <div class="sk-tabs__content" data-sk-tabs-content data-value="usage">
-      {/*
-        * Visually hidden: the tab strip right above already says "Uso"/"Usage" out loud. This
-        * exists purely so the document OUTLINE has a real h2 to hang the sections below off of;
-        * without it a heading-based reader jumps straight from the tablist to the first h3 with no
-        * indication it belongs to a group. See `apps/docs/src/scripts/hero-tabs-toc.ts` for the
-        * ToC half of this: it skips this heading on purpose and starts the rail one level down.
-        */}
-      <h2 class="sk-visually-hidden">{t("accordion.tabUsage")}</h2>
-      <div class="sk-callout" data-tone="info">
-        <div class="sk-callout__content">
-          <p set:html={t("accordion.intro", { detailsLink })} />
-        </div>
-      </div>
-
-
-      <h3>{t("accordion.oneItemTitle")}</h3>
-      <p set:html={t("accordion.oneItemBody")} />
-      <ComponentPreview tree={accordionSingleTree(t)} label={t("accordion.oneItemLabel")} />
-
-      <h3>{t("accordion.exclusiveTitle")}</h3>
-      <p set:html={t("accordion.exclusiveBody")} />
-      <ComponentPreview tree={accordionExclusiveTree(t)} label={t("accordion.exclusiveLabel")} />
-
-      <h3>{t("accordion.multipleTitle")}</h3>
-      <p set:html={t("accordion.multipleBody")} />
-      <ComponentPreview tree={accordionMultipleTree(t)} label={t("accordion.multipleLabel")} />
-
-      {/*
-        * Two bullets, where there were seven. The other five said what the Reference tab now
-        * renders from `accordionContract` itself: the mount attribute, the part classes, the
-        * options and their defaults, and that an item needs a `value`. Restating those here meant
-        * two statements of one truth, and only the contract's fails a build when it is wrong.
-        *
-        * These two survive because they are not IN the contract. The first is a design rule about
-        * what opening a section must not look like; the second is where the event's payload lands,
-        * which the contract names the event for but says nothing about the shape of.
-        */}
-      <h3>{t("accordion.contractTitle")}</h3>
-      <ul>
-        <li set:html={t("accordion.contractSelection")} />
-        <li set:html={t("accordion.contractEvent")} />
-      </ul>
-      <p set:html={t("accordion.contractRest", { reference: `<strong>${t("contract.tab")}</strong>` })} />
-
-      <h3 id="details-nativo">{t("accordion.detailsNativoLabel")}</h3>
-      <p class="lede" set:html={t("accordion.nativeLede")} />
-      <table class="sk-table">
-        <thead>
-          <tr>
-            <th>{t("accordion.decisionHeadNeed")}</th>
-            <th>{t("accordion.decisionHeadUse")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td set:html={t("accordion.decisionRow1Need")} /><td set:html={t("accordion.decisionRow1Use")} /></tr>
-          <tr><td set:html={t("accordion.decisionRow2Need")} /><td set:html={t("accordion.decisionRow2Use")} /></tr>
-          <tr><td set:html={t("accordion.decisionRow3Need")} /><td set:html={t("accordion.decisionRow3Use")} /></tr>
-          <tr><td set:html={t("accordion.decisionRow4Need")} /><td set:html={t("accordion.decisionRow4Use")} /></tr>
-          <tr><td set:html={t("accordion.decisionRow5Need")} /><td set:html={t("accordion.decisionRow5Use")} /></tr>
-          <tr><td set:html={t("accordion.decisionRow6Need")} /><td set:html={t("accordion.decisionRow6Use")} /></tr>
-        </tbody>
-      </table>
-      <p set:html={t("accordion.nativeBody")} />
-      <ComponentPreview tree={detailsGroupTree(t)} label={t("accordion.nativePreviewLabel")} />
-
-
-      <h4>{t("accordion.nativeContractTitle")}</h4>
-      <ul>
-        <li set:html={t("accordion.nativeContractItem1")} />
-        <li set:html={t("accordion.nativeContractItem2")} />
-        <li set:html={t("accordion.nativeContractItem3")} />
-        <li set:html={t("accordion.nativeContractItem4")} />
-        <li set:html={t("accordion.nativeContractItem5")} />
-      </ul>
-    </div>
-
-    <div class="sk-tabs__content" data-value="install" data-sk-tabs-content>
-      <h2>{t("accordion.tabInstall")}</h2>
-      <VanillaMount {...vanillaMounts["/componentes/accordion"]} headingLevel="h3" />
-      <p set:html={t("accordion.iconsNote")} />
-      <CodeBlock code={iconsSetup} label="JavaScript" />
-
-      <h3>{t("accordion.nativeInstallTitle")}</h3>
-      <CodeBlock code={nativeInstall} label="terminal" />
-      <CodeBlock code={nativeStyles} label="CSS" lang="css" />
-    </div>
-
-    <div class="sk-tabs__content" data-sk-tabs-content data-value="contract">
-      <ContractReference id="accordion" />
-    </div>
-
-    <div class="sk-tabs__content" data-sk-tabs-content data-value="style">
-      <StylingHooks
-        groups={[
-          { file: "components/accordion.css", probe: "sk-accordion", title: "Accordion" },
-          { file: "components/details.css", probe: "sk-details", title: t("accordion.detailsNativoLabel") },
-        ]}
-      />
-    </div>
-
-    <div class="sk-tabs__content" data-sk-tabs-content data-value="a11y">
-      <h2>{t("accordion.a11yTitle")}</h2>
-      <p set:html={t("accordion.a11yP1")} />
-      <p set:html={t("accordion.a11yP2")} />
-      <p set:html={t("accordion.a11yP3", { detailsLink })} />
-    </div>
-
+<ComponentPageShell
+  title="Accordion"
+  description={t("accordion.description")}
+  contractId="accordion"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/accordion.css", probe: "sk-accordion", title: "Accordion" },
+    { file: "components/details.css", probe: "sk-details", title: t("accordion.detailsNativoLabel") },
+  ]}
+  tests={[
     {
-      hasChanges && (
-        <div class="sk-tabs__content" data-sk-tabs-content data-value="changes">
-          <ContractChangelog id="accordion" />
-        </div>
-      )
-    }
-  </div>
-</Base>
+      file: "packages/react/src/components/accordion.test.tsx",
+      tests: [
+        { name: "keeps exactly one item open in single mode", description: t("accordion.testReact1") },
+        { name: "allows independent open items in multiple mode", description: t("accordion.testReact2") },
+        { name: "renders and closes a single Accordion item", description: t("accordion.testReact3") },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/accordion.svelte.test.ts",
+      tests: [
+        { name: "keeps exactly one item open in single mode and emits", description: t("accordion.testVanilla1") },
+        { name: "allows independent open items in multiple mode", description: t("accordion.testVanilla2") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <div class="sk-callout" data-tone="info">
+      <div class="sk-callout__content">
+        <p set:html={t("accordion.intro", { detailsLink })} />
+      </div>
+    </div>
+
+    <h3>{t("accordion.oneItemTitle")}</h3>
+    <p set:html={t("accordion.oneItemBody")} />
+    <ComponentPreview tree={accordionSingleTree(t)} label={t("accordion.oneItemLabel")} />
+
+    <h3>{t("accordion.exclusiveTitle")}</h3>
+    <p set:html={t("accordion.exclusiveBody")} />
+    <ComponentPreview tree={accordionExclusiveTree(t)} label={t("accordion.exclusiveLabel")} />
+
+    <h3>{t("accordion.multipleTitle")}</h3>
+    <p set:html={t("accordion.multipleBody")} />
+    <ComponentPreview tree={accordionMultipleTree(t)} label={t("accordion.multipleLabel")} />
+
+    {/*
+      * Two bullets, where there were seven. The other five said what the Referencia tab now
+      * renders from the compiled contract itself: the mount attribute, the part classes, the
+      * options and their defaults, and that an item needs a `value`. Restating those here meant
+      * two statements of one truth, and only the contract's fails a build when it is wrong.
+      *
+      * These two survive because they are not IN the contract. The first is a design rule about
+      * what opening a section must not look like; the second is where the event's payload lands,
+      * which the contract names the event for but says nothing about the shape of.
+      */}
+    <h3>{t("accordion.contractTitle")}</h3>
+    <ul>
+      <li set:html={t("accordion.contractSelection")} />
+      <li set:html={t("accordion.contractEvent")} />
+    </ul>
+    <p set:html={t("accordion.contractRest", { reference: `<strong>${t("contract.tab")}</strong>` })} />
+
+    <h3 id="details-nativo">{t("accordion.detailsNativoLabel")}</h3>
+    <p class="lede" set:html={t("accordion.nativeLede")} />
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>{t("accordion.decisionHeadNeed")}</th>
+          <th>{t("accordion.decisionHeadUse")}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td set:html={t("accordion.decisionRow1Need")} /><td set:html={t("accordion.decisionRow1Use")} /></tr>
+        <tr><td set:html={t("accordion.decisionRow2Need")} /><td set:html={t("accordion.decisionRow2Use")} /></tr>
+        <tr><td set:html={t("accordion.decisionRow3Need")} /><td set:html={t("accordion.decisionRow3Use")} /></tr>
+        <tr><td set:html={t("accordion.decisionRow4Need")} /><td set:html={t("accordion.decisionRow4Use")} /></tr>
+        <tr><td set:html={t("accordion.decisionRow5Need")} /><td set:html={t("accordion.decisionRow5Use")} /></tr>
+        <tr><td set:html={t("accordion.decisionRow6Need")} /><td set:html={t("accordion.decisionRow6Use")} /></tr>
+      </tbody>
+    </table>
+    <p set:html={t("accordion.nativeBody")} />
+    <ComponentPreview tree={detailsGroupTree(t)} label={t("accordion.nativePreviewLabel")} />
+
+    <h4>{t("accordion.nativeContractTitle")}</h4>
+    <ul>
+      <li set:html={t("accordion.nativeContractItem1")} />
+      <li set:html={t("accordion.nativeContractItem2")} />
+      <li set:html={t("accordion.nativeContractItem3")} />
+      <li set:html={t("accordion.nativeContractItem4")} />
+      <li set:html={t("accordion.nativeContractItem5")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <VanillaMount {...vanillaMounts["/componentes/accordion"]} headingLevel="h3" />
+    <p set:html={t("accordion.iconsNote")} />
+    <CodeBlock code={iconsSetup} label="JavaScript" />
+
+    <h3>{t("accordion.nativeInstallTitle")}</h3>
+    <CodeBlock code={nativeInstall} label="terminal" />
+    <CodeBlock code={nativeStyles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("accordion.a11yP1")} />
+    <p set:html={t("accordion.a11yP2")} />
+    <p set:html={t("accordion.a11yP3", { detailsLink })} />
+  </Fragment>
+</ComponentPageShell>

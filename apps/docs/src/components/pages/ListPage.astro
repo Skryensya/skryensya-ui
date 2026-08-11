@@ -1,0 +1,113 @@
+---
+/* Without this the preview frame copies zero `.sk-list*` rules (a preview frame only ever inherits
+   the stylesheets ITS OWN page loaded), so every demo below fell back to a bare, bulleted `<ul>`. */
+import "@skryensya/core/components/list.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  listFullTree,
+  listLeadingTree,
+  listLinksTree,
+  listTitledTree,
+  listTrailingTree,
+  listPlainTree,
+} from "../../demos/list";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/list.yaml?raw";
+import coreSource from "@core/src/list.ts?raw";
+import cssSource from "@core/css/components/list.css?raw";
+import reactSource from "@react/src/components/list.tsx?raw";
+import reactTestSource from "@react/src/components/list.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+/* Both link demos point at real docs routes, and a docs route differs per locale. */
+const LINK_HREFS = ["/prerrequisitos", "/primer-componente", "/personalizar", "/referencia", "/tiers"];
+const TEAM_HREFS = ["/equipo/john-doe", "/equipo/jane-doe", "/equipo/richard-roe", "/equipo/mary-major"];
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+const styles = `@import "@skryensya/core/components/list.css";`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/list.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/list.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/list.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/list.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/list.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="List"
+  description={t("listPage.description")}
+  contractId="list"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/list.css", probe: "sk-list" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/list.test.tsx",
+      tests: [
+        { name: "renders a semantic list with static, link and button rows", description: t("listPage.test1") },
+        { name: "renders an ordered list when order is meaningful", description: t("listPage.test2") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("listPage.lede")} />
+
+    <h3>{t("listPage.stepsTitle")}</h3>
+    <p set:html={t("listPage.stepsBody")} />
+
+    <h4>{t("listPage.step1Title")}</h4>
+    <p set:html={t("listPage.step1Body")} />
+    <ComponentPreview tree={listPlainTree(t)} label={t("listPage.step1Title")} note={t("listPage.step1Note")} />
+
+    <h4>{t("listPage.step2Title")}</h4>
+    <p set:html={t("listPage.step2Body")} />
+    <ComponentPreview tree={listTitledTree(t)} label={t("listPage.step2Title")} note={t("listPage.step2Note")} measure="34rem" />
+
+    <h4>{t("listPage.step3Title")}</h4>
+    <p set:html={t("listPage.step3Body")} />
+    <ComponentPreview tree={listLeadingTree(t)} label={t("listPage.step3Title")} note={t("listPage.step3Note")} measure="34rem" />
+
+    <h4>{t("listPage.step4Title")}</h4>
+    <p set:html={t("listPage.step4Body")} />
+    <ComponentPreview tree={listTrailingTree(t)} label={t("listPage.step4Title")} note={t("listPage.step4Note")} measure="34rem" />
+
+    <h4>{t("listPage.step5Title")}</h4>
+    <p set:html={t("listPage.step5Body")} />
+    <ComponentPreview tree={listLinksTree(t, LINK_HREFS)} label={t("listPage.step5Title")} note={t("listPage.step5Note")} measure="34rem" />
+
+    <h4>{t("listPage.step6Title")}</h4>
+    <p set:html={t("listPage.step6Body")} />
+    <ComponentPreview tree={listFullTree(t, TEAM_HREFS)} label={t("listPage.step6Title")} note={t("listPage.step6Note")} measure="34rem" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("listPage.contractItem1")} />
+      <li set:html={t("listPage.contractItem2")} />
+      <li set:html={t("listPage.contractItem3")} />
+      <li set:html={t("listPage.contractItem4")} />
+      <li set:html={t("listPage.contractItem5")} />
+      <li set:html={t("listPage.contractItem6")} />
+      <li set:html={t("listPage.contractItem7")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" />
+  </Fragment>
+</ComponentPageShell>
+
+<style is:global>
+  /* Una lista la dimensiona su host: sin ancho, el stage es flex y cada `<ul>` se encoge al ancho de
+     su fila más larga, así que los seis ejemplos salían de anchos distintos y el paso 1 quedaba en
+     77px. El demo le presta el ancho que tendría una columna real; el código enseña el markup sin
+     ese ancho, que es del consumidor.
+     `is:global`: el HTML autorado vive dentro del srcdoc y no lleva el atributo de scope de Astro. */
+  .sk-list-demo {
+    inline-size: min(100%, 34rem);
+  }
+</style>

@@ -1,0 +1,78 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { wrapperTree } from "../../demos/wrapper";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/wrapper.yaml?raw";
+import coreSource from "@core/src/layout.ts?raw";
+import cssSource from "@core/css/patterns/wrapper.css?raw";
+/* The sheet itself, not only its source: the Style hooks table resolves each hook
+   against a real element, and a page that never loads `patterns/wrapper.css` would show every
+   value blank. */
+import "@skryensya/core/patterns/wrapper.css";
+import reactSource from "@react/src/components/layout.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/wrapper.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/layout.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/patterns/wrapper.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/layout.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Wrapper"
+  description={t("wrapperPage.description")}
+  contractId="wrapper"
+  styleGroups={[{ file: "patterns/wrapper.css", probe: "sk-wrapper" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/layout.test.tsx",
+      tests: [
+        { name: "renders Wrapper as a page column on the size scale", description: t("wrapperPage.test1") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("wrapperPage.lede")} />
+
+    <h3>{t("wrapperPage.ceilingTitle")}</h3>
+    <p set:html={t("wrapperPage.ceilingBody")} />
+    <ComponentPreview tree={wrapperTree(t)} label="Wrapper" flush />
+    <p set:html={t("wrapperPage.belowBody")} />
+
+    <h3>{t("wrapperPage.tableTitle")}</h3>
+    <table class="sk-table">
+      <thead><tr><th>{t("wrapperPage.tableHeadSize")}</th><th>{t("wrapperPage.tableHeadCeiling")}</th></tr></thead>
+      <tbody>
+        <tr><td><code>sm</code></td><td>{t("wrapperPage.tableRow1")}</td></tr>
+        <tr><td><code>md</code></td><td>{t("wrapperPage.tableRow2")}</td></tr>
+        <tr><td><code>lg</code></td><td>{t("wrapperPage.tableRow3")}</td></tr>
+        <tr><td><code>full</code></td><td>{t("wrapperPage.tableRow4")}</td></tr>
+      </tbody>
+    </table>
+
+    <h3>{t("wrapperPage.siteTitle")}</h3>
+    <p set:html={t("wrapperPage.siteBody")} />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("wrapperPage.contractItem1")} />
+      <li set:html={t("wrapperPage.contractItem2")} />
+      <li set:html={t("wrapperPage.contractItem3")} />
+      <li set:html={t("wrapperPage.contractItem4")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

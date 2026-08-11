@@ -14,8 +14,10 @@
  * a11y are the platform's. The only script is the one line that forces it open where it is a rail
  * (see Base.astro), because `open` is an attribute and no media query can write one.
  *
- * The list starts empty and is filled by the layout's synchronous inline script before first paint.
- * The aside itself is always in the grid so the document column never shifts when links appear.
+ * The list arrives FILLED: the layout reads the document's own headings while the page is built
+ * (`../lib/document-index.ts`) and hands them here as items, so there is no list to build, no id to
+ * assign and nothing that appears after first paint. The aside is always in the grid regardless, so
+ * the document column holds still on the one page that still fills its list in the browser.
  */
 import { tocParts } from "@skryensya/core/toc";
 import type { StableIconName } from "@skryensya/core/icon";
@@ -33,17 +35,24 @@ type TocItem = {
 interface Props {
   items?: readonly TocItem[];
   title?: string;
+  /**
+   * A script will fill this list, so hold the reserved column in its skeleton state instead of
+   * declaring an empty document. The hero-tabs pilot is the only page that asks for it: its index
+   * is per tab, which is a fact about a reader and not about the document.
+   */
+  pending?: boolean;
 }
 
 const t = useTranslations(getLocale(Astro.url));
-const { items = [], title = t("toc.title") } = Astro.props;
+const { items = [], title = t("toc.title"), pending = false } = Astro.props;
 const chevron = iconMarkup("chevron-down", { size: "sm" });
 ---
 
 <aside
   class={`${tocParts.root} sk-scrollbar`}
   data-sk-toc
-  data-ready={items.length > 0 ? "" : undefined}
+  data-ready={pending ? undefined : ""}
+  data-empty={!pending && items.length === 0 ? "" : undefined}
 >
   <details class={tocParts.disclosure} data-sk-toc-disclosure>
     <summary class={`${tocParts.summary} sk-interactive`}>

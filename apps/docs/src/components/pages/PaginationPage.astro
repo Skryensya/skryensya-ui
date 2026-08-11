@@ -1,0 +1,68 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { paginationTree } from "../../demos/pagination";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/pagination.yaml?raw";
+import coreSource from "@core/src/pagination.ts?raw";
+import cssSource from "@core/css/components/pagination.css?raw";
+import reactSource from "@react/src/components/pagination.tsx?raw";
+import reactTestSource from "@react/src/components/pagination.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const rangeExample = `import { paginationRange } from "@skryensya/core/pagination";
+
+paginationRange(5, 20);
+// → [1, "ellipsis", 4, 5, 6, "ellipsis", 20]`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/pagination.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/pagination.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/pagination.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/pagination.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/pagination.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Pagination"
+  description={t("paginationPage.description")}
+  contractId="pagination"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/pagination.css", probe: "sk-pagination" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/pagination.test.tsx",
+      tests: [
+        {
+          name: "marks the current page and disables prev/next at the bounds",
+          description: t("paginationPage.test1"),
+        },
+        {
+          name: "collapses far pages behind an ellipsis and reports clicks clamped to range",
+          description: t("paginationPage.test2"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("paginationPage.lede")} />
+    <ComponentPreview tree={paginationTree(t)} label="Pagination" />
+    <p set:html={t("paginationPage.body")} />
+
+    <h3>{t("paginationPage.rangeTitle")}</h3>
+    <p set:html={t("paginationPage.rangeBody")} />
+    <CodeBlock code={rangeExample} lang="ts" label="@skryensya/core/pagination" />
+
+    <p set:html={t("component.reactNote")} />
+    <p set:html={t("paginationPage.reactBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

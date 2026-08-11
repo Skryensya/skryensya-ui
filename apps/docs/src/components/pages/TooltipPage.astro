@@ -1,0 +1,76 @@
+---
+// El preview clona las hojas del <head> de la página, así que lo que use el demo tiene que estar
+// importado acá: `.sk-truncate` es del demo, no del paquete.
+import "../../examples/tooltip.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { tooltipTree } from "../../demos/tooltip";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/tooltip.yaml?raw";
+import coreSource from "@core/src/tooltip.ts?raw";
+import cssSource from "@core/css/components/tooltip.css?raw";
+import vanillaMountSource from "@vanilla/src/components/tooltip.ts?raw";
+import vanillaCoordinatorSource from "@vanilla/src/components/Tooltip.svelte?raw";
+import reactSource from "@react/src/components/tooltip.tsx?raw";
+import reactTestSource from "@react/src/components/tooltip.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/tooltip.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/tooltip.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/tooltip.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/tooltip.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/Tooltip.svelte", source: vanillaCoordinatorSource, language: "svelte" },
+  { id: "packages/react/src/components/tooltip.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/tooltip.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Tooltip"
+  description={t("tooltipPage.description")}
+  contractId="tooltip"
+  styleGroups={[{ file: "components/tooltip.css", probe: "sk-tooltip" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/tooltip.test.tsx",
+      tests: [
+        { name: "describes the trigger rather than naming it", description: t("tooltipPage.test1") },
+        { name: "stays closed while disabled", description: t("tooltipPage.test2") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("tooltipPage.lede")} />
+
+    {/* `menu`: el tooltip pinta fuera del flujo, y en un stage al alto del contenido no tendría a
+        dónde ir, así que la colocación real nunca se vería. */}
+    <ComponentPreview tree={tooltipTree(t)} label="Tooltip" viewport="menu" />
+
+    <h3>{t("tooltipPage.ruleTitle")}</h3>
+    <p set:html={t("tooltipPage.ruleBody1")} />
+    <p set:html={t("tooltipPage.ruleBody2")} />
+
+    <h3>{t("tooltipPage.wcagTitle")}</h3>
+    <p set:html={t("tooltipPage.wcagBody1")} />
+    <p set:html={t("tooltipPage.wcagBody2")} />
+
+    <h3>{t("tooltipPage.placementTitle")}</h3>
+    <p set:html={t("tooltipPage.placementBody")} />
+
+    <h3>{t("tooltipPage.positioningTitle")}</h3>
+    <p set:html={t("tooltipPage.positioningBody1")} />
+    <p set:html={t("tooltipPage.positioningBody2")} />
+
+    <p set:html={t("component.reactNote")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

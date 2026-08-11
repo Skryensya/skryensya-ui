@@ -1,0 +1,82 @@
+---
+import "@skryensya/core/components/breadcrumb.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  breadcrumbIconTree,
+  breadcrumbLongTree,
+  breadcrumbMultiTree,
+  breadcrumbTwoTree,
+} from "../../demos/breadcrumb";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/breadcrumb.yaml?raw";
+import coreSource from "@core/src/breadcrumb.ts?raw";
+import cssSource from "@core/css/components/breadcrumb.css?raw";
+import reactSource from "@react/src/components/breadcrumb.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/breadcrumb.css";`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/breadcrumb.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/breadcrumb.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/breadcrumb.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/breadcrumb.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Breadcrumb"
+  description={t("breadcrumb.description")}
+  contractId="breadcrumb"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/breadcrumb.css", probe: "sk-breadcrumb", title: "Breadcrumb" }]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("breadcrumb.description")} />
+
+    <h3>{t("breadcrumb.examplesTitle")}</h3>
+
+    <h4>{t("breadcrumb.twoTitle")}</h4>
+    <p set:html={t("breadcrumb.twoBody")} />
+    <ComponentPreview tree={breadcrumbTwoTree(t)} label={t("breadcrumb.twoLabel")} viewport="auto" />
+
+    <h4>{t("breadcrumb.multiTitle")}</h4>
+    <p set:html={t("breadcrumb.multiBody")} />
+    <ComponentPreview
+      tree={breadcrumbMultiTree(t, {
+        projects: "/proyectos",
+        kit: "/proyectos/kit-digital",
+      })}
+      label={t("breadcrumb.multiLabel")}
+      viewport="auto"
+    />
+
+    <h4>{t("breadcrumb.iconTitle")}</h4>
+    <p set:html={t("breadcrumb.iconBody")} />
+    <ComponentPreview tree={breadcrumbIconTree(t, "/proyectos")} label={t("breadcrumb.iconLabel")} viewport="auto" />
+
+    <h4>{t("breadcrumb.longTitle")}</h4>
+    <p set:html={t("breadcrumb.longBody")} />
+    <ul>
+      <li set:html={t("breadcrumb.longItem1")} />
+      <li set:html={t("breadcrumb.longItem2")} />
+    </ul>
+    <ComponentPreview tree={breadcrumbLongTree(t, "/proyectos")} label={t("breadcrumb.longLabel")} viewport="auto" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("breadcrumb.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("breadcrumb.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

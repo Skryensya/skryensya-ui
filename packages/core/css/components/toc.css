@@ -10,6 +10,19 @@
   .sk-toc {
     --sk-toc-inline-size: 14rem;
     --sk-toc-sticky-top: 0px;
+    /*
+     * ONE GUTTER, THREE JOBS, so they cannot drift: the row's inline-start padding, the origin the
+     * caption aligns to, and the strip the current marker fills. Text sits after it, the marker
+     * inside it, and the caption on the same line as the text.
+     */
+    --sk-toc-gutter: var(--space-inline-md);
+    /* How far an `h3` sits under its `h2`. Its own step, not the gutter again: the indent says
+     * "nested", the gutter says "this column starts here", and tying them makes changing one a
+     * change to the other. */
+    --sk-toc-indent: var(--space-inline-md);
+    /* The "you are here" bar. 2px is the smallest width that still reads as a deliberate mark
+     * rather than a hairline of the border color. */
+    --sk-toc-marker-inline-size: 2px;
 
     position: sticky;
     top: var(--sk-toc-sticky-top);
@@ -21,10 +34,19 @@
     overscroll-behavior: contain;
   }
 
+  /*
+   * NO RULE DOWN THE SIDE. The column used to carry a full-height border, and it read as a frame
+   * around nothing: a line the height of the viewport beside a list eight rows long, drawn in the
+   * same color as the marker beside the current row, so the eye had to sort out which of the two
+   * vertical lines meant something. The one that means something is the marker. What separates the
+   * index from the prose is the space between them, which the layout already spends.
+   *
+   * The top inset matches the document's own (`--space-inset-lg`), so the caption starts on the
+   * line the page starts on.
+   */
   .sk-toc__inner {
     min-inline-size: 0;
-    padding: var(--space-stack-md) var(--space-inset-md);
-    border-inline-start: 1px solid var(--color-border-subtle);
+    padding: var(--space-inset-lg) var(--space-inset-md);
   }
 
   /* As a rail it is not a control: the column is always open, so it paints as the caption it used
@@ -35,7 +57,10 @@
     align-items: center;
     gap: var(--space-inline-sm);
     min-inline-size: 0;
-    margin-block-end: var(--space-stack-sm);
+    /* On the rows' own text origin, not on the container's: the caption and every label below it
+     * share one inline-start edge, and the gutter to their left belongs to the marker. */
+    padding-inline-start: var(--sk-toc-gutter);
+    margin-block-end: var(--space-stack-xs);
     pointer-events: none;
     list-style: none;
   }
@@ -81,28 +106,64 @@
     min-inline-size: 0;
   }
 
-  .sk-toc__item[data-level="h3"] {
-    padding-inline-start: var(--space-inset-sm);
-  }
-
-  /* Same row shape as nav-list's link: rounded, filled when current. State layer paints
-   * hover/press on top; this is the persistent "you are here" background, not feedback. */
+  /*
+   * CAPTION TYPE, NOT BODY TYPE, and this is the size decision of the whole component.
+   *
+   * The index is read by scanning, never by reading: a reader looks at it to find a section and
+   * looks away. At body-sm the entries competed with the prose beside them, a title of six words
+   * took two lines at 14px in a 14rem column, and eight sections stood taller than the first screen
+   * of the document they index. `--font-size-caption` (the scale's 12) is the rung the scale already
+   * reserves for text that labels rather than reads, and it is what makes rows fit on one line, so
+   * the list reads as a list rather than as a paragraph with links in it.
+   *
+   * The gutter carries the current marker, so the row's own box still starts at the column edge:
+   * the state layer paints the full row, the text starts after the marker's strip.
+   */
   .sk-toc__link {
+    position: relative;
     display: flex;
     align-items: center;
     gap: var(--space-inline-sm);
     inline-size: 100%;
     min-inline-size: 0;
-    min-block-size: var(--size-control-sm);
-    padding-block: var(--space-inset-sm);
-    padding-inline: var(--space-inset-sm);
+    padding-block: var(--space-inset-xs);
+    padding-inline: var(--sk-toc-gutter) var(--space-inline-sm);
     border-radius: var(--radius-control);
     color: var(--color-text-secondary);
-    font-size: var(--font-size-body-sm);
-    line-height: var(--font-line-height-body);
-    overflow-wrap: anywhere;
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
+    overflow-wrap: break-word;
     text-decoration: none;
     text-wrap: pretty;
+    transition: color var(--motion-feedback-duration) var(--motion-feedback-easing);
+  }
+
+  /* The indent lives on the LINK, never on the item: on the item it would move the row's own
+   * inline-start edge, and with it the marker's column, so the "you are here" bar would jog in and
+   * out by level instead of tracking one line down the rail. */
+  .sk-toc__item[data-level="h3"] .sk-toc__link {
+    padding-inline-start: calc(var(--sk-toc-gutter) + var(--sk-toc-indent));
+  }
+
+  /*
+   * THE MARKER, always present, painted only when current.
+   *
+   * Declared on every row rather than added to the current one: a bar that only exists while
+   * current can only animate by appearing, and the transition here is a color arriving on a strip
+   * that was already there. It also means the box never changes size as the scroll-spy moves.
+   *
+   * `::after`, because `::before` is the state layer's (patterns/state-layer.css).
+   */
+  .sk-toc__link::after {
+    content: "";
+    position: absolute;
+    inset-block: var(--space-inset-xs);
+    inset-inline-start: 0;
+    inline-size: var(--sk-toc-marker-inline-size);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    transition: background-color var(--motion-feedback-duration)
+      var(--motion-feedback-easing);
   }
 
   .sk-toc__icon {
@@ -111,15 +172,38 @@
     color: var(--color-text-tertiary);
   }
 
-  /* The section you're reading (written by the scroll-spy) gets nav-list's own current
-   * treatment: a filled pill, not just a color change. */
+  @media (any-hover: hover) {
+    .sk-toc__link:hover {
+      color: var(--color-text-primary);
+    }
+  }
+
+  /*
+   * The section you're reading, written by the scroll-spy.
+   *
+   * A MARK AND A WEIGHT, not the filled pill nav-list uses. The pill is right where the row IS the
+   * navigation (the site index in the sidebar, one filled row on a surface of its own); here the
+   * rail sits inches from the prose, and a block of accent background that size pulls the eye off
+   * the document the index exists to serve. The accent bar reads at a glance from the corner of the
+   * eye, which is the only way this state is ever read.
+   */
   .sk-toc__link[aria-current="true"] {
-    background: var(--color-nav-current-bg);
     color: var(--color-nav-current-fg);
     font-weight: var(--font-weight-label);
   }
 
+  .sk-toc__link[aria-current="true"]::after {
+    background: var(--color-border-accent);
+  }
+
   .sk-toc__link[aria-current="true"] .sk-toc__icon {
     color: var(--color-nav-current-fg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-toc__link,
+    .sk-toc__link::after {
+      transition: none;
+    }
   }
 }

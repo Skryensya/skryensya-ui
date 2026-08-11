@@ -199,6 +199,10 @@
       "types": "./src/sidebar.ts",
       "default": "./src/sidebar.ts"
     },
+    "./skip-link": {
+      "types": "./src/skip-link.ts",
+      "default": "./src/skip-link.ts"
+    },
     "./tabs": {
       "types": "./src/tabs.ts",
       "default": "./src/tabs.ts"
@@ -366,12 +370,13 @@
   "scripts": {
     "build": "node scripts/build-css.mjs && tsc -p tsconfig.json",
     "build:css": "node scripts/build-css.mjs",
-    "check": "node scripts/lint.mjs && node --test scripts/*.test.mjs && tsc -p tsconfig.json --noEmit",
-    "lint": "node scripts/lint.mjs && node --test scripts/*.test.mjs && tsc -p tsconfig.json --noEmit"
+    "check": "node scripts/lint.mjs && node --test scripts/*.test.mjs && vitest run && tsc -p tsconfig.json --noEmit",
+    "lint": "node scripts/lint.mjs && node --test scripts/*.test.mjs && vitest run && tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "sass": "^1.83.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
   },
   "dependencies": {
     "@internationalized/date": "^3.12.2",

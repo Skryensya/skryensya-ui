@@ -1,0 +1,16 @@
+# La estructura vive en packages/core/src/skip-link.ts. Acá sólo por qué se elige.
+
+SkipLink:
+  useWhen:
+    - "la página empieza con chrome que se repite en todas: marca, navegación global, buscador"
+    - "hay que cumplir WCAG 2.4.1: quien navega con teclado necesita saltear ese bloque"
+    - "va primero en el documento y no se ve hasta que recibe el foco"
+    - "puede haber más de uno; el primero apunta al contenido, que es lo que casi todo el mundo vino a leer"
+  avoidWhen:
+    - "el destino no es enfocable: sin tabindex=\"-1\" el Tab siguiente vuelve al chrome que se quiso saltear"
+    - "hay algo enfocable antes: entonces ese algo es el bloque que nadie puede saltear"
+    - "el destino puede no estar en la página: un enlace a algo que no existe es una promesa que no se puede seguir"
+    - "es un enlace visible dentro del texto; eso es Link"
+    - "se quiere esconder texto que nadie va a enfocar: eso es la clase sk-visually-hidden"
+  alternatives:
+    - Link

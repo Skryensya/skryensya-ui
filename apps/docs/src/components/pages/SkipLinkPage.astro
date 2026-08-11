@@ -1,0 +1,121 @@
+---
+/* The skin is already global (Base.astro imports it: this site's own skip link is the first thing in
+ * every page), so this page needs no import of its own. */
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { skipLinkPairTree, skipLinkTree } from "../../demos/skip-link";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/skip-link.yaml?raw";
+import coreSource from "@core/src/skip-link.ts?raw";
+import cssSource from "@core/css/components/skip-link.css?raw";
+import reactSource from "@react/src/components/skip-link.tsx?raw";
+import reactTestSource from "@react/src/components/skip-link.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/skip-link.css";`;
+
+/* The destination, which is the half nobody remembers and the half that decides whether the link
+ * works at all. Shown as markup rather than described, because "make it focusable" is the sentence
+ * everyone reads and nobody implements. */
+const target = `<a class="sk-skip-link sk-interactive" href="#main-content">Ir al contenido</a>
+…
+<main id="main-content" tabindex="-1">…</main>`;
+
+const targetReact = `import { SkipLink, skipLinkTarget } from "@skryensya/react/skip-link";
+
+<SkipLink href="#main-content">Ir al contenido</SkipLink>
+…
+<main id="main-content" {...skipLinkTarget}>…</main>`;
+
+/* Both, in the order they are offered. Loose at the top of the body: they are not a group, they are
+ * two links that happen to be the first two things in the document. */
+const pair = `<body>
+  <a class="sk-skip-link sk-interactive" href="#main-content">Ir al contenido</a>
+  <a class="sk-skip-link sk-interactive" href="#main-nav">Ir a la navegación</a>
+  …
+  <nav id="main-nav" tabindex="-1" aria-label="Principal">…</nav>
+  <main id="main-content" tabindex="-1">…</main>
+</body>`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/skip-link.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/skip-link.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/skip-link.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/skip-link.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/skip-link.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="SkipLink"
+  description={t("skipLink.description")}
+  contractId="skip-link"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/skip-link.css", probe: "sk-skip-link", title: "SkipLink" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/skip-link.test.tsx",
+      tests: [
+        { name: "is a real link, not a scripted jump", description: t("skipLink.test1") },
+        {
+          name: "is reachable at rest, because hidden here means clipped and not removed",
+          description: t("skipLink.test2"),
+        },
+        {
+          name: "hands the destination its own requirement as a value",
+          description: t("skipLink.test3"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("skipLink.lede")} />
+
+    <p set:html={t("skipLink.tryItBody")} />
+
+    <ComponentPreview tree={skipLinkTree(t)} label="SkipLink" viewport="auto" />
+
+    <h3>{t("skipLink.targetTitle")}</h3>
+    <p set:html={t("skipLink.targetBody1")} />
+    <p set:html={t("skipLink.targetBody2")} />
+    <CodeBlock code={target} label="HTML" lang="html" />
+    <CodeBlock code={targetReact} label="React" lang="tsx" />
+
+    <h3>{t("skipLink.severalTitle")}</h3>
+    <p set:html={t("skipLink.severalBody1")} />
+    <p set:html={t("skipLink.severalBody2")} />
+    <ComponentPreview tree={skipLinkPairTree(t)} label={t("skipLink.severalLabel")} viewport="auto" />
+    <CodeBlock code={pair} label="HTML" lang="html" />
+    <p set:html={t("skipLink.severalBody3")} />
+
+    <h3>{t("skipLink.hiddenTitle")}</h3>
+    <p set:html={t("skipLink.hiddenBody1")} />
+    <p set:html={t("skipLink.hiddenBody2")} />
+
+    <h3>{t("skipLink.firstTitle")}</h3>
+    <p set:html={t("skipLink.firstBody")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("skipLink.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("skipLink.a11yIntro")} />
+    <ul>
+      <li set:html={t("skipLink.a11yItem1")} />
+      <li set:html={t("skipLink.a11yItem2")} />
+      <li set:html={t("skipLink.a11yItem3")} />
+      <li set:html={t("skipLink.a11yItem4")} />
+      <li set:html={t("skipLink.a11yItem5")} />
+    </ul>
+  </Fragment>
+</ComponentPageShell>

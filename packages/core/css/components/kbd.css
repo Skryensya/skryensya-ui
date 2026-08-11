@@ -7,15 +7,22 @@
  *
  * Every hook resolves to a TIER-2 token, never a ramp or a raw color, scripts/lint.mjs enforces it.
  *
- * IT HAS NO COLOUR OF ITS OWN BEYOND THESE HOOKS: surface-sunken so a key reads as pressed into the
- * page, secondary text so a shortcut hint stays quiet next to the label it annotates. Correct across
- * both color modes with zero mode-specific overrides.
+ * IT HAS NO COLOUR OF ITS OWN BEYOND THESE HOOKS. A key at rest is DECORATION and reads the
+ * accent-reach tokens for it, so it dials with Badge and Tag; a key being held down is INFORMATION
+ * and reads the action colour, which never dials. Correct across both color modes with zero
+ * mode-specific overrides.
  */
 @layer components {
   .sk-kbd {
-    --sk-kbd-bg: var(--color-bg-surface-sunken);
-    --sk-kbd-fg: var(--color-text-secondary);
-    --sk-kbd-border-color: var(--color-border-subtle);
+    /* THE RESTING KEY IS DECORATION, and reads the accent-reach tokens for it. It used to be
+     * hard-wired to `surface-sunken` / `text-secondary`, which made this file disagree with
+     * `dimensions/accent.scss`, whose own comment listed Kbd beside Badge and Tag: the dimension
+     * documented a reach it did not have. Now a key is an accent-toned label like the other two, and
+     * goes quiet with them at level 2. At the dialled-down levels these resolve back to exactly the
+     * sunken/secondary pair this used to hard-code, so the quiet look is preserved, not lost. */
+    --sk-kbd-bg: var(--color-decorative-bg);
+    --sk-kbd-fg: var(--color-decorative-fg);
+    --sk-kbd-border-color: var(--color-decorative-border);
     --sk-kbd-border-width: 1px;
     --sk-kbd-radius: var(--radius-control);
     /* Inline padding only, at the floor of the scale, a multi-glyph key ("Esc") gets a little air on
@@ -71,11 +78,18 @@
    * machine's `data-state`. So it is a data attribute, set by whoever is watching the keyboard, and
    * here it re-declares the appearance hooks plus the one-pixel sink.
    * Accent, because a lit key is saying "this one is active right now"; and the shadow
-   * drops to flat, so the key visibly sinks under the finger. */
+   * drops to flat, so the key visibly sinks under the finger.
+   *
+   * THAT SENTENCE IS WHY THIS NOW READS THE ACTION COLOUR DIRECTLY, not the decorative pair it used
+   * to share with the resting key. "Active right now" is INFORMATION, which the accent-reach
+   * dimension never dials, exactly like a checked checkbox or the current step. Sharing the
+   * decorative tokens also left the two states the same colour once the resting key became
+   * decoration: a key that is being held would have looked identical to one that is not, with only
+   * the one-pixel sink left to tell them apart. A filled key is unmistakable at every level. */
   .sk-kbd[data-pressed] {
-    --sk-kbd-bg: var(--color-decorative-bg);
-    --sk-kbd-fg: var(--color-decorative-fg);
-    --sk-kbd-border-color: var(--color-border-strong);
+    --sk-kbd-bg: var(--color-action-primary);
+    --sk-kbd-fg: var(--color-text-on-accent);
+    --sk-kbd-border-color: var(--color-action-primary);
     --sk-kbd-shadow: var(--elevation-flat);
 
     /* Apretada: además del color (que re-declaran los hooks en core) la

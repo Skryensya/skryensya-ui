@@ -103,6 +103,19 @@ export const sparkle: IconData = {
   body: `<path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z" />`,
 };
 
+/*
+ * Accent reach is the distance from a brand-coloured centre into the rest of an interface. Three
+ * concentric marks show that spread more directly than a numeric meter: the toggle lights the
+ * centre, middle, and outer rings as its reach rises from action to links to all chrome.
+ */
+export const accentReach: IconData = {
+  viewBox: "0 0 24 24",
+  attrs: strokeAttrs,
+  body: `<circle data-accent-reach-ring="3" cx="12" cy="12" r="8.5" />
+<circle data-accent-reach-ring="2" cx="12" cy="12" r="5.5" />
+<circle data-accent-reach-ring="1" cx="12" cy="12" r="2.25" fill="currentColor" stroke="none" />`,
+};
+
 /* Lucide Sun / Moon / Monitor lived here for the docs theme toggle; they are now the stable
  * roles mode-light / mode-dark / mode-system in the published sets. */
 

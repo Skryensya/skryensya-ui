@@ -28,15 +28,18 @@
  *   the action    the primary CTA. Never dials either: the one thing a screen most needs to point at.
  *   chrome        sidebar and ToC current-item. Navigation you have already found; the accent here
  *                 is habit, not help. First to go, at level 2.
- *   decoration    Badge, Tag, Kbd. Accent-toned labels. Also first to go.
+ *   decoration    Badge, Tag, a resting Kbd, a Process list's step marker, and the Media gradient's
+ *                 tint. Accent-toned trim. Also first to go.
+ *   quiet action  a ghost button's label. Actionable, so it keeps a text colour rather than going
+ *                 secondary, but it is not the one CTA the rule above protects. Goes at level 2.
  *   prose links   last to go, at level 1, and only because `.sk-link` carries a permanent underline
  *                 (components/typography.css): the affordance survives the colour leaving, which
  *                 WCAG 1.4.1 requires — colour may never be the only signal that something is a link.
  *
- * THE MECHANISM IS FOUR TIER-2 TOKENS, not per-component rules. `semantic/_color.scss` declares
- * `--color-nav-current-*`, `--color-decorative-*` and `--color-text-link`, all resolving to the
- * accent by default; the components read those instead of the raw accent tokens; this file re-points
- * them per level. So the dimension owns exactly one layer of the token graph and knows nothing about
+ * THE MECHANISM IS A HANDFUL OF TIER-2 TOKENS, not per-component rules. `semantic/_color.scss`
+ * declares `--color-nav-current-*`, `--color-decorative-*` (including `-wash`),
+ * `--color-action-quiet-fg` and `--color-text-link`, all resolving to the accent by default; the
+ * components read those instead of the raw accent tokens; this file re-points them per level. So the dimension owns exactly one layer of the token graph and knows nothing about
  * any component, and a component opts in simply by naming the reach token that matches its reason.
  *
  * The focus ring and the feedback roles (danger/success/warning/info) appear at no level here: the
@@ -56,6 +59,12 @@
     --color-decorative-bg: var(--color-bg-surface-sunken);
     --color-decorative-fg: var(--color-text-secondary);
     --color-decorative-border: var(--color-border-default);
+    /* The wash keeps doing its job, it just stops carrying the brand: mixed over the scrim's black
+     * base, `text-primary` reads as plain ink, so the caption's contrast is untouched. */
+    --color-decorative-wash: var(--color-text-primary);
+    /* `text-primary`, not `text-secondary`: a ghost button that goes as quiet as a caption stops
+     * looking pressable, and quieting the brand may never cost a control its affordance. */
+    --color-action-quiet-fg: var(--color-text-primary);
   }
 
   /* Only at 1 does coloured text go. The underline keeps the link a link. */
@@ -74,6 +83,8 @@
     --color-decorative-bg: var(--color-bg-accent-subtle);
     --color-decorative-fg: var(--color-text-accent);
     --color-decorative-border: var(--color-border-accent);
+    --color-decorative-wash: var(--color-action-primary);
+    --color-action-quiet-fg: var(--color-text-accent);
     --color-text-link: var(--color-text-accent);
   }
 }

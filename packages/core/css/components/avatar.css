@@ -9,6 +9,19 @@
 @layer components {
   .sk-avatar {
     --sk-avatar-size: var(--size-control-md);
+    /*
+     * COLOUR IS A STYLING HOOK, like every other tier-3 component's. This one used to hard-code its
+     * surface and its ink, so an avatar was the one part of the system a consumer could not re-tint
+     * without overriding properties — which the tier-3 contract exists to make unnecessary. Tinting
+     * avatars per person is the most ordinary thing an app does with them.
+     *
+     * The ink is `text-primary`, not `text-secondary`: the initials are the avatar's CONTENT, the
+     * one thing it exists to show, and content is text-primary everywhere else. At secondary they
+     * came out grey-on-grey against the sunken disc and the whole avatar read as a placeholder
+     * rather than a person. The pair is in `contrast-pairs.json` and the validator checks it.
+     */
+    --sk-avatar-bg: var(--color-bg-surface-sunken);
+    --sk-avatar-fg: var(--color-text-primary);
 
     position: relative;
     display: inline-grid;
@@ -18,8 +31,8 @@
     flex: none;
     overflow: hidden;
     border-radius: var(--radius-pill);
-    background: var(--color-bg-surface-sunken);
-    color: var(--color-text-secondary);
+    background: var(--sk-avatar-bg);
+    color: var(--sk-avatar-fg);
     font-size: var(--font-size-caption);
     font-weight: var(--font-weight-label);
     line-height: 1;
@@ -42,5 +55,7 @@
   .sk-avatar-group > .sk-avatar,
   .sk-avatar-group > .sk-avatar-group__overflow { box-shadow: 0 0 0 2px var(--color-bg-surface); }
   .sk-avatar-group > * + * { margin-inline-start: calc(var(--size-control-md) / -3); }
-  .sk-avatar-group__overflow { position: relative; display: inline-grid; place-items: center; inline-size: var(--size-control-md); block-size: var(--size-control-md); flex: none; border-radius: var(--radius-pill); background: var(--color-bg-surface-sunken); color: var(--color-text-secondary); font-size: var(--font-size-caption); font-weight: var(--font-weight-label); }
+  /* The "+3" chip reads the same hooks as the discs it caps, so re-tinting a group tints its
+     overflow with it instead of leaving one odd grey circle at the end of the stack. */
+  .sk-avatar-group__overflow { position: relative; display: inline-grid; place-items: center; inline-size: var(--size-control-md); block-size: var(--size-control-md); flex: none; border-radius: var(--radius-pill); background: var(--sk-avatar-bg, var(--color-bg-surface-sunken)); color: var(--sk-avatar-fg, var(--color-text-primary)); font-size: var(--font-size-caption); font-weight: var(--font-weight-label); }
 }

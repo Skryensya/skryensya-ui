@@ -15,7 +15,10 @@ export const commandPaletteDemoTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "secondary" },
+      /* `neutral`, not `secondary`: the Button contract has no such variant, so this demo emitted
+         `data-variant="secondary"`, matched no rule in button.css and fell back to looking like the
+         default anyway. Caught by running every demo tree through the validator for the playground. */
+      options: { variant: "neutral" },
       attrs: { "data-cmdk-demo-open": "" },
       children: [
         { contract: "icon", signature: "Icon", options: { name: "search", size: "sm" } },

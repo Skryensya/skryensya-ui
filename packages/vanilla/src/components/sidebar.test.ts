@@ -1,5 +1,7 @@
 import { fireEvent, getByRole } from "@testing-library/dom";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { SIDEBAR_WIDTH_PROPERTY, sidebarWidthPreference } from "@skryensya/core/sidebar";
+import { getPreference, resetStorageForTests, setPreference } from "../storage.js";
 import { connectSidebar, mountSidebar } from "./sidebar.js";
 
 function mount(html: string) {
@@ -65,5 +67,152 @@ describe("Sidebar Vanilla contracts", () => {
     expect(mountSidebar(document)).toBe(1);
     expect(mountSidebar(document)).toBe(0);
     expect(document.querySelector(".sk-sidebar")?.getAttribute("data-state")).toBe("collapsed");
+  });
+});
+
+/*
+ * The width itself is the stylesheet's: jsdom has no layout, so `clamp()` resolves to nothing and
+ * every measurement here is zero. What these cover is the part this module actually owns, which is
+ * everything around the number: which property gets written, when the drag state is on the root,
+ * what reaches storage, and what a reset forgets.
+ */
+const resizableMarkup = `<aside class="sk-sidebar" data-sk-sidebar>
+  <div class="sk-sidebar__content" data-sk-sidebar-content>Proyectos</div>
+  <div class="sk-sidebar__resize-handle" data-sk-sidebar-resize role="separator" tabindex="0"
+       aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"
+       aria-label="Cambiar el ancho"></div>
+</aside>`;
+
+function pointer(type: string, init: { clientX?: number; button?: number; pointerId?: number } = {}) {
+  return new MouseEvent(type, { bubbles: true, cancelable: true, ...init }) as MouseEvent & { pointerId: number };
+}
+
+describe("Sidebar resizing", () => {
+  beforeEach(() => {
+    resetStorageForTests();
+    localStorage.clear();
+  });
+
+  it("enhances a sidebar that has a handle and no trigger", () => {
+    const root = mount(resizableMarkup);
+    expect(() => connectSidebar(root)).not.toThrow();
+    expect(root.dataset.state).toBe("expanded");
+  });
+
+  it("still refuses a sidebar with neither control", () => {
+    const root = mount(`<aside class="sk-sidebar" data-sk-sidebar><div class="sk-sidebar__content">x</div></aside>`);
+    expect(() => connectSidebar(root)).toThrow(/trigger.*resize/i);
+  });
+
+  /** A press, then whatever moves the caller asks for, then the release. Returns the handle. */
+  function gesture(root: HTMLElement, xs: number[], { release = true } = {}) {
+    const handle = root.querySelector<HTMLElement>("[data-sk-sidebar-resize]")!;
+    handle.setPointerCapture = vi.fn();
+    handle.hasPointerCapture = vi.fn(() => true);
+    handle.releasePointerCapture = vi.fn();
+
+    const send = (type: string, clientX: number, extra = {}) => {
+      const event = pointer(type, { clientX, ...extra });
+      event.pointerId = 1;
+      handle.dispatchEvent(event);
+    };
+
+    send("pointerdown", xs[0], { button: 0 });
+    for (const x of xs.slice(1)) send("pointermove", x);
+    if (release) send("pointerup", xs[xs.length - 1]);
+    return handle;
+  }
+
+  it("writes the width property while dragging, and only while dragging", () => {
+    const root = mount(resizableMarkup);
+    connectSidebar(root);
+
+    gesture(root, [200, 260], { release: false });
+    expect(root.hasAttribute("data-resizing")).toBe(true);
+    // Measured from where the threshold was crossed, so the width never jumps by the slop.
+    expect(root.style.getPropertyValue(SIDEBAR_WIDTH_PROPERTY)).toBe("0px");
+
+    gesture(root, [200, 260, 300], { release: false });
+    expect(root.style.getPropertyValue(SIDEBAR_WIDTH_PROPERTY)).toBe("40px");
+
+    gesture(root, [200, 260, 300]);
+    expect(root.hasAttribute("data-resizing")).toBe(false);
+  });
+
+  it("a press that never travels is not a resize", () => {
+    const root = mount(resizableMarkup);
+    const handler = vi.fn();
+    root.addEventListener("sk-resize-change", handler);
+    connectSidebar(root, { storageKey: "docs" });
+
+    // Down and up on the same pixel: a click on the panel edge.
+    gesture(root, [200]);
+    expect(root.hasAttribute("data-resizing")).toBe(false);
+    expect(root.style.getPropertyValue(SIDEBAR_WIDTH_PROPERTY)).toBe("");
+    expect(handler).not.toHaveBeenCalled();
+    // Nothing reached storage either: a stray click must not freeze today's width into the browser.
+    expect(getPreference(sidebarWidthPreference("docs"))).toBe(null);
+
+    // A hand that shifts by less than the threshold is still a click.
+    gesture(root, [200, 203]);
+    expect(root.style.getPropertyValue(SIDEBAR_WIDTH_PROPERTY)).toBe("");
+    expect(handler).not.toHaveBeenCalled();
+  });
+
+  it("moves with the arrow keys and announces the change", () => {
+    const root = mount(resizableMarkup);
+    const handler = vi.fn();
+    root.addEventListener("sk-resize-change", handler);
+    connectSidebar(root);
+    const handle = root.querySelector<HTMLElement>("[data-sk-sidebar-resize]")!;
+
+    fireEvent.keyDown(handle, { key: "ArrowRight" });
+    expect(root.style.getPropertyValue(SIDEBAR_WIDTH_PROPERTY)).toBe("16px");
+    fireEvent.keyDown(handle, { key: "ArrowRight", shiftKey: true });
+    expect(root.style.getPropertyValue(SIDEBAR_WIDTH_PROPERTY)).toBe("64px");
+    expect(handler).toHaveBeenCalledTimes(2);
+  });
+
+  it("remembers the width under its storage key, and forgets it on reset", () => {
+    const root = mount(resizableMarkup);
+    connectSidebar(root, { storageKey: "docs" });
+    const handle = root.querySelector<HTMLElement>("[data-sk-sidebar-resize]")!;
+
+    fireEvent.keyDown(handle, { key: "End" });
+    // jsdom has no layout, so what is stored is a real 0: what matters here is that a key WAS written.
+    expect(getPreference(sidebarWidthPreference("docs"))).toBe(0);
+
+    fireEvent.dblClick(handle);
+    expect(root.style.getPropertyValue(SIDEBAR_WIDTH_PROPERTY)).toBe("");
+    expect(getPreference(sidebarWidthPreference("docs"))).toBe(null);
+  });
+
+  it("restores a stored width on mount, and leaves an unkeyed sidebar alone", () => {
+    setPreference(sidebarWidthPreference("docs"), 260);
+
+    const keyed = mount(resizableMarkup);
+    connectSidebar(keyed, { storageKey: "docs" });
+    expect(keyed.style.getPropertyValue(SIDEBAR_WIDTH_PROPERTY)).toBe("260px");
+
+    const anonymous = mount(resizableMarkup);
+    connectSidebar(anonymous);
+    expect(anonymous.style.getPropertyValue(SIDEBAR_WIDTH_PROPERTY)).toBe("");
+  });
+
+  it("refuses a stored width that is not one", () => {
+    setPreference(sidebarWidthPreference("docs"), -1 as number);
+
+    const root = mount(resizableMarkup);
+    connectSidebar(root, { storageKey: "docs" });
+    expect(root.style.getPropertyValue(SIDEBAR_WIDTH_PROPERTY)).toBe("");
+  });
+
+  it("reads the storage key off the markup when it mounts itself", () => {
+    document.body.innerHTML = resizableMarkup.replace("data-sk-sidebar>", 'data-sk-sidebar data-storage-key="rail">');
+    expect(mountSidebar(document)).toBe(1);
+
+    const handle = document.querySelector<HTMLElement>("[data-sk-sidebar-resize]")!;
+    fireEvent.keyDown(handle, { key: "ArrowRight" });
+    expect(getPreference(sidebarWidthPreference("rail"))).toBe(0);
   });
 });

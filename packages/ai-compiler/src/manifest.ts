@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import type { ComponentContract } from "@skryensya/core/contract";
 import { contracts } from "./registry.js";
 import { readOverlays, type ContractSemantics } from "./overlay.js";
-import { readChangelogs, type ContractChangelog } from "./changelog.js";
+import { readChangelogs, type ContractChangelog, type ReleaseLedger } from "./changelog.js";
 
 /*
  * The compiled artifact. Two files, because they answer two questions and an agent should not pay
@@ -35,7 +35,11 @@ export function buildManifest(overlayDir: string, changelogDir?: string): Manife
   const { semantics, conflicts } = readOverlays(overlayDir);
   const changes = changelogDir
     ? readChangelogs(changelogDir)
-    : { changelog: {} as Record<string, ContractChangelog>, conflicts: [] };
+    : {
+        changelog: {} as Record<string, ContractChangelog>,
+        ledger: { working: "0.0.0", releases: [] } as ReleaseLedger,
+        conflicts: [],
+      };
 
   const index = {
     schemaVersion: SCHEMA_VERSION,
@@ -44,15 +48,33 @@ export function buildManifest(overlayDir: string, changelogDir?: string): Manife
       .map(([id, contract]) => indexEntry(id, contract, semantics[id] ?? {})),
   };
 
+  /*
+   * TWO MAPS, NOT ONE. A contract is what a component IS; a changelog is what happened to it. They
+   * were one object here, so `get_contract` handed an agent a component's history along with its
+   * shape, the reference page's JSON view opened on twenty-two lines of changelog before saying
+   * which component it described, and a contract's serialised form changed every time someone wrote
+   * a note about it while the component itself had not moved.
+   *
+   * Keyed the same way, so the pairing is still one lookup, and every id appears in both maps even
+   * with nothing to report: a caller reads `changelogs[id]` and gets an array, never `undefined`,
+   * which is the difference between "nothing changed" and "this component is unknown".
+   *
+   * A changelog is a list of RELEASES, each holding its entries, because the question an agent asks
+   * of a history is which version it can depend on something from. `releases` beside them is the
+   * timeline those versions come from, written once rather than restated in sixty-four histories.
+   */
   const manifest = {
     schemaVersion: SCHEMA_VERSION,
+    releases: changes.ledger,
     contracts: Object.fromEntries(
       Object.entries(contracts)
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([id, contract]) => [
-          id,
-          manifestEntry(contract, semantics[id] ?? {}, changes.changelog[id]),
-        ]),
+        .map(([id, contract]) => [id, manifestEntry(contract, semantics[id] ?? {})]),
+    ),
+    changelogs: Object.fromEntries(
+      Object.entries(contracts)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([id]) => [id, changes.changelog[id]?.releases ?? []]),
     ),
   };
 
@@ -81,12 +103,14 @@ function indexEntry(id: string, contract: ComponentContract, semantics: Contract
   };
 }
 
-function manifestEntry(
-  contract: ComponentContract,
-  semantics: ContractSemantics,
-  changelog: ContractChangelog | undefined,
-) {
-  return { ...contract, semantics, changelog: changelog?.entries ?? [] };
+/*
+ * `semantics` stays folded in and `changelog` no longer is, and the line between them is what each
+ * one describes. Semantics say when to reach for a signature and what to reach for instead: they
+ * describe the contract as it stands, so they belong to it. A changelog describes the contract's
+ * past, which is a different subject that happens to share a key.
+ */
+function manifestEntry(contract: ComponentContract, semantics: ContractSemantics) {
+  return { ...contract, semantics };
 }
 
 /** Content hash over the canonical form, so the same sources always produce the same id. */

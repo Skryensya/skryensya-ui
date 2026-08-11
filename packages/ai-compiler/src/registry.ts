@@ -15,6 +15,7 @@ import { fileUploadContract } from "@skryensya/core/file-upload";
 import { carouselContract } from "@skryensya/core/carousel";
 import { treeViewContract } from "@skryensya/core/tree-view";
 import { sidebarContract } from "@skryensya/core/sidebar";
+import { skipLinkContract } from "@skryensya/core/skip-link";
 import { accordionContract } from "@skryensya/core/accordion";
 import { tileContract } from "@skryensya/core/tile";
 import { paginationContract, tablePagerContract } from "@skryensya/core/pagination";
@@ -96,6 +97,7 @@ export const contracts = {
   "table-pager": tablePagerContract,
   accordion: accordionContract,
   sidebar: sidebarContract,
+  "skip-link": skipLinkContract,
   carousel: carouselContract,
   "file-upload": fileUploadContract,
   flyout: flyoutContract,

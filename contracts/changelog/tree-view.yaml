@@ -3,5 +3,37 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "7bdb2e7b64469903"
-entries: []
+surface: "51c660a65ce96d0b"
+entries:
+  - date: 2026-08-06
+    kind: rework
+    es:
+      title: TreeView se estrecha, un paso de sangría más corto y tipografía de 12px
+      body: >-
+        Un árbol paga la sangría una vez por nivel, así que era lo que más ancho costaba: el paso
+        baja de 16px a 12px, el inset de cada fila de 8px a 4px y las etiquetas pasan a
+        <code>--font-size-caption</code> (12px), la misma tipografía que ya hablan Menu y NavList
+        al lado. La altura de fila no se mueve. Si tenías un árbol calibrado al ancho anterior,
+        <code>--sk-tree-indent</code> y el nuevo <code>--sk-tree-row-inset</code> lo devuelven a
+        donde estaba.
+    en:
+      title: TreeView gets narrower, a shorter indent step and 12px type
+      body: >-
+        A tree pays its indent once per level, so that is where the width went: the step drops
+        from 16px to 12px, each row's inset from 8px to 4px, and labels move to
+        <code>--font-size-caption</code> (12px), the type Menu and NavList beside it already
+        speak. Row height is unchanged. If you had a tree tuned to the old width,
+        <code>--sk-tree-indent</code> and the new <code>--sk-tree-row-inset</code> put it back.
+  - date: 2026-08-05
+    kind: feature
+    target: branchIcon
+    es:
+      title: TreeView diferencia carpetas y archivos con iconos estructurales
+      body: >-
+        <code>branchIcon</code> se renderiza en las ramas y <code>leafIcon</code> en las hojas. Un
+        explorador puede usar una carpeta y un archivo para toda la jerarquía, sin iconos por extensión.
+    en:
+      title: TreeView distinguishes folders and files with structural icons
+      body: >-
+        <code>branchIcon</code> renders on branches and <code>leafIcon</code> on leaves. A file browser
+        can use one folder and one file icon throughout the hierarchy, without extension-specific icons.

@@ -15,7 +15,8 @@ export type TreeViewProps = {
   expandedValue?: string[];
   defaultExpandedValue?: string[] | string;
   branchIndicator?: ReactNode;
-  leafIndicator?: ReactNode;
+  branchIcon?: ReactNode;
+  leafIcon?: ReactNode;
   onSelectionChange?: (details: { selectedValue: string[] }) => void;
   onExpandedChange?: (details: { expandedValue: string[] }) => void;
 };
@@ -24,15 +25,17 @@ type TreeApi = ReturnType<typeof treeView.connect>;
 
 function NodeView({
   api,
+  branchIcon,
   branchIndicator,
   indexPath,
-  leafIndicator,
+  leafIcon,
   node,
 }: {
   api: TreeApi;
+  branchIcon?: ReactNode;
   branchIndicator?: ReactNode;
   indexPath: number[];
-  leafIndicator?: ReactNode;
+  leafIcon?: ReactNode;
   node: TreeNode;
 }) {
   const nodeProps = { indexPath, node };
@@ -52,6 +55,11 @@ function NodeView({
           >
             {branchIndicator ?? "›"}
           </span>
+          {branchIcon ? (
+            <span className={treeViewParts.branchIcon} aria-hidden="true">
+              {branchIcon}
+            </span>
+          ) : null}
           <span
             {...api.getBranchTextProps(nodeProps)}
             className={treeViewParts.branchText}
@@ -67,9 +75,10 @@ function NodeView({
             <NodeView
               api={api}
               branchIndicator={branchIndicator}
+              branchIcon={branchIcon}
               indexPath={[...indexPath, index]}
               key={child.id}
-              leafIndicator={leafIndicator}
+              leafIcon={leafIcon}
               node={child}
             />
           ))}
@@ -82,9 +91,13 @@ function NodeView({
       {...api.getItemProps(nodeProps)}
       className={`${treeViewParts.item} sk-interactive`}
     >
-      {/* La columna del chevron, reservada también en la hoja (vacía si no hay
-          leafIndicator): sin ella los labels de un nivel no alinean. */}
-      <span aria-hidden="true">{leafIndicator}</span>
+      {/* The disclosure column stays empty on a leaf so labels align with sibling branches. */}
+      <span className={treeViewParts.itemIndicator} aria-hidden="true" />
+      {leafIcon ? (
+        <span className={treeViewParts.itemIcon} aria-hidden="true">
+          {leafIcon}
+        </span>
+      ) : null}
       <span
         {...api.getItemTextProps(nodeProps)}
         className={treeViewParts.itemText}
@@ -96,13 +109,14 @@ function NodeView({
 }
 
 export function TreeView({
+  branchIcon,
   branchIndicator,
   defaultExpandedValue: defaultExpandedValueProp,
   defaultSelectedValue: defaultSelectedValueProp,
   expandedValue,
   id,
   label,
-  leafIndicator,
+  leafIcon,
   nodes,
   onExpandedChange,
   onSelectionChange,
@@ -152,10 +166,11 @@ export function TreeView({
         {nodes.map((node, index) => (
           <NodeView
             api={api}
+            branchIcon={branchIcon}
             branchIndicator={branchIndicator}
             indexPath={[index]}
             key={node.id}
-            leafIndicator={leafIndicator}
+            leafIcon={leafIcon}
             node={node}
           />
         ))}

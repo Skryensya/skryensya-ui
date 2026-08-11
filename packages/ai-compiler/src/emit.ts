@@ -908,7 +908,7 @@ function renderJsx(
     props.push(
       declared.type === "number" && typeof value === "number"
         ? `${name}={${value}}`
-        : `${name}=${JSON.stringify(String(value))}`,
+        : jsxAttribute(name, String(value)),
     );
   }
   if (optionStyles.length > 0) {
@@ -917,7 +917,7 @@ function renderJsx(
     props.push(`style={{ ${optionStyles.join(", ")} } as CSSProperties}`);
   }
   for (const [attrName, value] of Object.entries(tree.attrs ?? {})) {
-    props.push(`${jsxPropName(attrName)}=${JSON.stringify(value)}`);
+    props.push(jsxAttribute(jsxPropName(attrName), value));
   }
 
   const filled = slotsOf(tree);
@@ -954,8 +954,7 @@ function renderJsx(
     }
 
     const text = items.find((item) => !isUsageTree(item));
-    if (typeof text === "string")
-      props.push(`${propName}=${JSON.stringify(text)}`);
+    if (typeof text === "string") props.push(jsxAttribute(propName, text));
   }
 
   const children = slotItems(filled.children).flatMap((item) =>
@@ -1051,6 +1050,26 @@ const JSX_PROP_NAMES: Record<string, string> = {
  * same tree through `renderTree`; if only the emitter renamed, the snippet and the thing beside it
  * would disagree, which is the one failure this whole shape exists to prevent.
  */
+/**
+ * One JSX attribute, in the form JSX can actually parse.
+ *
+ * `JSON.stringify` is the obvious way to quote a string and the wrong one here: JSX attribute values
+ * are NOT JavaScript string literals and do not process backslash escapes. A value containing a
+ * double quote came out as `items="[{\"label\":…}]"`, where the first `\"` ends the attribute and
+ * everything after it is garbage — invalid JSX, which Babel refuses with "Unexpected backslash in
+ * JSX element". CommandPalette hits this on every render: a usage tree hands it its index as a JSON
+ * STRING, because a tree has no channel for anything else.
+ *
+ * So a value with a quote in it goes in an expression container, where it IS a JavaScript string
+ * literal and `JSON.stringify` is exactly right. Everything else keeps the plain attribute form,
+ * which is what a person would write and what the docs have always shown.
+ */
+export function jsxAttribute(name: string, value: string): string {
+  return value.includes('"')
+    ? `${name}={${JSON.stringify(value)}}`
+    : `${name}=${JSON.stringify(value)}`;
+}
+
 export function jsxPropName(attr: string): string {
   // `aria-*` and `data-*` keep their hyphens in JSX; everything else may need the camelCase name.
   if (attr.startsWith("aria-") || attr.startsWith("data-")) return attr;

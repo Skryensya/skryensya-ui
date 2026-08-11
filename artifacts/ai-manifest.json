@@ -1,28 +1,362 @@
 {
+  "changelogs": {
+    "accordion": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-04",
+            "en": {
+              "body": "The contract declares <code>sk:accordionvaluechange</code>. The event is neither new nor renamed; what changed is that finding it used to mean reading the prose.",
+              "title": "The value-change event is published in the reference"
+            },
+            "es": {
+              "body": "El contrato declara <code>sk:accordionvaluechange</code>. El evento no es nuevo ni cambió de nombre: lo que cambió es que antes había que encontrarlo en la prosa.",
+              "title": "El evento de cambio sale publicado en la referencia"
+            },
+            "kind": "feature",
+            "target": "valueChange"
+          },
+          {
+            "date": "2026-08-01",
+            "en": {
+              "body": "The enhancer looked for it on any descendant, so a section built with <code>TileContent</code> bound its own title as the panel: the section never collapsed and its content stayed exposed to a screen reader.",
+              "title": "The content part is scoped to a direct child"
+            },
+            "es": {
+              "body": "El enhancer la buscaba en cualquier descendiente, así que una sección construida con <code>TileContent</code> ataba su propio título como panel: la sección no se plegaba y su contenido quedaba expuesto al lector de pantalla.",
+              "title": "La parte content se busca sólo como hija directa"
+            },
+            "kind": "bugfix",
+            "target": "content"
+          },
+          {
+            "date": "2026-07-29",
+            "en": {
+              "body": "<code>Accordion</code> with <code>type</code> and <code>collapsible</code>, plus the three signatures that compose it.",
+              "title": "First published contract"
+            },
+            "es": {
+              "body": "<code>Accordion</code> con <code>type</code> y <code>collapsible</code>, y las tres firmas que lo componen.",
+              "title": "Primera publicación del contrato"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "avatar": [],
+    "badge": [],
+    "box": [],
+    "breadcrumb": [],
+    "button": [],
+    "calendar": [],
+    "callout": [],
+    "carousel": [],
+    "changelog": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-05",
+            "en": {
+              "body": "<code>added</code>, <code>changed</code>, <code>fixed</code> and <code>removed</code> no longer validate. The vocabulary is now <code>breaking</code>, <code>feature</code>, <code>bugfix</code>, <code>rework</code> and <code>chore</code>: the old words named what happened to the FILE, these name what happens to the consumer, which is the only reader a changelog has. <code>removed</code> is written as <code>breaking</code>, because a published option that stops existing is a thing someone has to act on, and that is what the red badge means. Every kind also wears its own tone now —<code>danger</code>, <code>success</code>, <code>accent</code>, <code>warning</code>, <code>neutral</code>, in that order— derived from the option exactly as before, so the badge column answers \"is any of this for me\" before a word of it is read. The default moves from <code>changed</code> to <code>chore</code>: an entry whose kind was forgotten should read as not being addressed to you, never as a feature nobody announced.",
+              "title": "The change kinds were renamed, and each one now carries its own colour"
+            },
+            "es": {
+              "body": "<code>added</code>, <code>changed</code>, <code>fixed</code> y <code>removed</code> ya no validan. El vocabulario pasa a ser <code>breaking</code>, <code>feature</code>, <code>bugfix</code>, <code>rework</code> y <code>chore</code>: los anteriores nombraban lo que le pasó al ARCHIVO, éstos nombran lo que le pasa a quien consume el paquete, que es el único lector que tiene un changelog. <code>removed</code> se escribe <code>breaking</code>, porque una opción publicada que deja de existir es algo sobre lo que hay que actuar, y ése es el significado del badge rojo. Además cada tipo lleva ahora su propio tono —<code>danger</code>, <code>success</code>, <code>accent</code>, <code>warning</code>, <code>neutral</code>, en ese orden— derivado igual que antes desde la opción, así que la columna de badges contesta \"¿algo de esto es para mí?\" antes de que se lea una palabra. El default pasa de <code>changed</code> a <code>chore</code>: una entrada a la que se le olvidó el tipo debe leerse como que no es para vos, nunca como una novedad que nadie anunció.",
+              "title": "Los tipos de cambio se renombraron y ahora cada uno tiene su color"
+            },
+            "kind": "breaking",
+            "target": "kind"
+          },
+          {
+            "date": "2026-08-05",
+            "en": {
+              "body": "<code>ChangelogEntry</code> takes a new <code>title</code> slot, and <code>children</code> becomes the explanation. A reader scanning a release wants the list of what moved; a reader who stopped on one line wants the reasoning. As one blob, the first had to read the second one's paragraph to find out which they were. On the data side, each YAML's <code>es</code> and <code>en</code> go from a string to <code>{title, body}</code>.",
+              "title": "An entry is a headline and an explanation"
+            },
+            "es": {
+              "body": "<code>ChangelogEntry</code> pide un slot <code>title</code> nuevo, y <code>children</code> pasa a ser la explicación. Quien escanea un release quiere la lista de lo que se movió; quien se detuvo en una línea quiere el razonamiento. En un solo bloque, el primero tenía que leer el párrafo del segundo para averiguar si era el primero. Del lado de los datos, los campos <code>es</code> y <code>en</code> de cada YAML pasan de ser un texto a <code>{title, body}</code>.",
+              "title": "Una entrada es un titular y una explicación"
+            },
+            "kind": "breaking",
+            "target": "title"
+          },
+          {
+            "date": "2026-08-05",
+            "en": {
+              "body": "The <code>kind</code> part composes <code>sk-badge</code> instead of redrawing a pill here, the same way Avatar composes <code>sk-image-frame</code>. Its tone is DERIVED from the <code>kind</code> option through <code>attrsWhen</code>, never passed: there is no way to file a <code>breaking</code> change under a calm badge. It is still one tone, <code>danger</code> for <code>breaking</code> and <code>neutral</code> for everything else, because a colour per kind makes a page of green that reads as a success report.",
+              "title": "The kind is drawn as a Badge"
+            },
+            "es": {
+              "body": "La parte <code>kind</code> compone <code>sk-badge</code> en vez de volver a dibujar una píldora acá, igual que Avatar compone <code>sk-image-frame</code>. El tono se DERIVA de la opción <code>kind</code> con <code>attrsWhen</code>, nunca se pasa: no hay forma de archivar un cambio <code>breaking</code> bajo un badge tranquilo. Sigue siendo un tono solo, <code>danger</code> para <code>breaking</code> y <code>neutral</code> para todo lo demás, porque un color por tipo hace una página verde que se lee como reporte de logros.",
+              "title": "El tipo de cambio se dibuja como Badge"
+            },
+            "kind": "rework",
+            "target": "kind"
+          },
+          {
+            "date": "2026-08-05",
+            "en": {
+              "body": "Changes step in one level under the release they belong to, so a history reads as groups rather than one undifferentiated column. The component also caps itself at <code>85ch</code> (<code>--sk-changelog-measure</code>) and declares <code>word-break: normal</code>, because a site that breaks long URLs inherited into here and split ordinary words mid-letter. Only code may break, being the one thing with no spaces to break at.",
+              "title": "Entries indent under their version, and the measure caps at 85ch"
+            },
+            "es": {
+              "body": "Los cambios se escalonan un paso bajo el release al que pertenecen, así que un historial se lee como grupos y no como una columna sola. El componente además se limita a <code>85ch</code> (<code>--sk-changelog-measure</code>) y declara <code>word-break: normal</code>, porque un sitio que corta URLs largas heredaba acá y partía palabras comunes a la mitad. Sólo el código puede partirse, que es lo único sin espacios donde cortar.",
+              "title": "Las entradas se indentan bajo su versión y la medida se corta en 85ch"
+            },
+            "kind": "rework"
+          },
+          {
+            "date": "2026-08-05",
+            "en": {
+              "body": "There is a new signature between <code>Changelog</code> and its entries, <code>ChangelogRelease</code>, and entries now hang off it. Someone reading a changelog came to find out whether they already have the change they are reading about, and a version answers that where a date cannot. A tree that put <code>ChangelogEntry</code> straight under <code>Changelog</code> no longer validates: wrap it in a release.",
+              "title": "The history groups by version"
+            },
+            "es": {
+              "body": "Entre <code>Changelog</code> y sus entradas hay una firma nueva, <code>ChangelogRelease</code>, y las entradas ahora cuelgan de ella. Quien lee un changelog viene a saber si ya tiene el cambio que está leyendo, y eso lo contesta una versión, no una fecha. Un árbol que ponía <code>ChangelogEntry</code> directo bajo <code>Changelog</code> ya no valida: envolvelo en un release.",
+              "title": "El historial se agrupa por versión"
+            },
+            "kind": "breaking",
+            "target": "ChangelogRelease"
+          },
+          {
+            "date": "2026-08-05",
+            "en": {
+              "body": "The <code>date</code> option and its slot moved up to the release, which is where a date means something: the day that version shipped. Repeating it on every change was writing the same date four times down the side of a page.",
+              "title": "An entry no longer carries a date"
+            },
+            "es": {
+              "body": "La opción <code>date</code> y su slot se mudaron al release, que es donde la fecha significa algo: el día en que se publicó esa versión. Repetirla en cada cambio era escribir la misma fecha cuatro veces al costado de una página.",
+              "title": "La entrada ya no lleva fecha"
+            },
+            "kind": "breaking",
+            "target": "date"
+          },
+          {
+            "date": "2026-08-05",
+            "en": {
+              "body": "That is everything the contract says about unpublished work: no <code>status</code> option, no second vocabulary, so there is no way to write a release that claims a ship date and denies it. The template derives <code>data-unreleased</code> from the absence so the rail's dot draws hollow. On the authoring side the convention is to name the version <code>0.1.0-dev</code>: the number it will carry when it ships, marked as not having got there.",
+              "title": "A version with no date is one that has not shipped"
+            },
+            "es": {
+              "body": "Eso es todo lo que el contrato dice del trabajo sin publicar: no hay opción <code>status</code> ni segundo vocabulario, así que no hay forma de escribir un release que declare fecha de salida y a la vez la niegue. La plantilla deriva <code>data-unreleased</code> de esa ausencia para que el punto del riel se dibuje hueco. Del lado de quien escribe, la convención es nombrar la versión <code>0.1.0-dev</code>: el número que va a llevar cuando salga, marcado como que no salió.",
+              "title": "Una versión sin fecha es una que todavía no salió"
+            },
+            "kind": "feature",
+            "target": "ChangelogRelease"
+          },
+          {
+            "date": "2026-08-05",
+            "en": {
+              "body": "The rail's dot moved up to the release, so there is nothing left inside to align. The <code>meta</code> part is gone, which existed only so two children could share one cell, and the per-entry masks and optical shift went with it.",
+              "title": "The entry stopped being a grid"
+            },
+            "es": {
+              "body": "El punto del riel subió al release, así que adentro no queda nada que alinear. Se fue la parte <code>meta</code>, que existía sólo para que dos hijos compartieran una celda, y con ella las máscaras y el corrimiento óptico por entrada.",
+              "title": "La entrada dejó de ser una grilla"
+            },
+            "kind": "rework",
+            "target": "entry"
+          },
+          {
+            "date": "2026-08-04",
+            "en": {
+              "body": "The ENTRY was the grid: the dot in the first column, the meta and the prose stacked in the second. The wrapper existed only so a two-column grid would have two children, and with both rows placed by name it did not. If you were styling against it, the hook is <code>sk-changelog__entry</code>.",
+              "title": "The body part is gone"
+            },
+            "es": {
+              "body": "La ENTRADA era la grilla: el punto en la primera columna, la meta y la prosa apiladas en la segunda. El envoltorio existía sólo para que una grilla de dos columnas tuviera dos hijos, y con las dos filas puestas por nombre no hacía falta. Si lo estabas usando para estilar, el ancla es <code>sk-changelog__entry</code>.",
+              "title": "Se fue la parte body"
+            },
+            "kind": "breaking"
+          },
+          {
+            "date": "2026-08-04",
+            "en": {
+              "body": "The option is what a reference table can badge, and the slot is the WORD, so the kind is never colour alone. It is the same split <code>Steps</code> makes between its <code>status</code> option and its <code>marker</code> slot, for the same reason.",
+              "title": "The kind is two fields"
+            },
+            "es": {
+              "body": "La opción es lo que la tabla de referencia puede marcar, y el slot es la PALABRA, así que el tipo nunca queda sólo en el color. Es el mismo corte que hace <code>Steps</code> entre su opción <code>status</code> y su slot <code>marker</code>, por la misma razón.",
+              "title": "El tipo de cambio son dos campos"
+            },
+            "kind": "feature",
+            "target": "kind"
+          },
+          {
+            "date": "2026-08-04",
+            "en": {
+              "body": "The <code>date</code> option is the machine-readable day, <code>YYYY-MM-DD</code>, and it lands on <code>&lt;time datetime&gt;</code>; the visible one is a slot, because a formatted date is copy in a language and Core ships none. A binding formats it with <code>Intl</code> and fills the slot.",
+              "title": "The date is two as well"
+            },
+            "es": {
+              "body": "La opción <code>date</code> es el día legible por una máquina, <code>YYYY-MM-DD</code>, y aterriza en <code>&lt;time datetime&gt;</code>; el texto visible es un slot, porque una fecha formateada es copy en un idioma y Core no envía ninguno. El binding formatea con <code>Intl</code> y llena el slot.",
+              "title": "La fecha también son dos"
+            },
+            "kind": "feature",
+            "target": "date"
+          },
+          {
+            "date": "2026-08-04",
+            "en": {
+              "body": "<code>Changelog</code> and <code>ChangelogEntry</code>, a history on a rail. It is not a repainted <code>ProcessList</code>: that one numbers its markers with a CSS <code>counter()</code>, so a newest-first list would number itself backwards through time. Nor is it <code>Steps</code>, whose connector says how much work is behind the reader, which of a shipped change is not a claim anyone can make.",
+              "title": "First published contract"
+            },
+            "es": {
+              "body": "<code>Changelog</code> y <code>ChangelogEntry</code>, un historial con riel. No es un <code>ProcessList</code> con otra pintura: ése numera sus marcadores con un <code>counter()</code> de CSS, así que una lista con lo más nuevo arriba se numeraría al revés del tiempo. Tampoco es un <code>Steps</code>, cuyo conector dice cuánto trabajo queda atrás, que de un cambio ya publicado no es una afirmación que nadie pueda hacer.",
+              "title": "Primera publicación del contrato"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "checkbox": [],
+    "code-preview": [],
+    "combobox": [],
+    "command-palette": [],
+    "component-preview": [],
+    "content": [],
+    "copy-button": [],
+    "date-picker": [],
+    "details": [],
+    "dialog": [],
+    "empty-state": [],
+    "field": [],
+    "file-upload": [],
+    "flyout": [],
+    "icon": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-05",
+            "en": {
+              "body": "<code>file</code> and <code>folder</code> name file-browser structure without classifying every extension. All three published sets cover them.",
+              "title": "File and folder roles are linked by every icon set"
+            },
+            "es": {
+              "body": "<code>file</code> y <code>folder</code> nombran la estructura de un explorador sin clasificar cada extensión. Los tres sets publicados los cubren.",
+              "title": "Los roles file y folder se enlazan en todos los sets"
+            },
+            "kind": "feature",
+            "target": "name"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "image-frame": [],
+    "input": [],
+    "kbd": [],
+    "layout": [],
+    "list": [],
+    "loader": [],
+    "media-gradient": [],
+    "menu": [],
+    "nav-list": [],
+    "navbar": [],
+    "number-field": [],
+    "pagination": [],
+    "placeholder": [],
+    "popover": [],
+    "process-list": [],
+    "progress": [],
+    "radio-group": [],
+    "segmented": [],
+    "select": [],
+    "sidebar": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-06",
+            "en": {
+              "body": "<code>SidebarResizeHandle</code> adds the drag edge. Authoring it is what makes the sidebar resizable: there is no separate <code>resizable</code> option, and the stylesheet reads the same fact with <code>:has()</code>. The travel is bounded by <code>--sk-sidebar-min-inline-size</code> and <code>--sk-sidebar-max-inline-size</code>, so the clamp lives in CSS and neither binding does the arithmetic. With <code>storageKey</code> the width outlives a reload; without it, the session. It is a full splitter: arrow keys move it, <code>Home</code> and <code>End</code> go to the ends, and double-click or <code>Enter</code> restores the default. It resizes on a held click: a plain click on the edge moves nothing and writes nothing. <code>minInlineSize</code> and <code>maxInlineSize</code> write those two hooks from the markup or from props, for a sidebar that needs its own travel without opening a stylesheet; both take any CSS length. Anyone with many identical sidebars still sets the hook once instead of passing the prop fifty times.",
+              "title": "The Sidebar can be dragged to a new width, and remembers it"
+            },
+            "es": {
+              "body": "<code>SidebarResizeHandle</code> agrega el borde que se arrastra. Autorarlo es lo que vuelve redimensionable a la barra: no hay una opción <code>resizable</code> aparte, y la hoja de estilos lee el mismo hecho con <code>:has()</code>. El recorrido lo acotan <code>--sk-sidebar-min-inline-size</code> y <code>--sk-sidebar-max-inline-size</code>, así que el clamp vive en el CSS y ninguna de las dos bindings hace la cuenta. Con <code>storageKey</code> el ancho sobrevive a la recarga; sin él dura la sesión. Es un splitter completo: se mueve con las flechas, <code>Home</code> y <code>End</code> van a los extremos, y doble clic o <code>Enter</code> vuelven al ancho por defecto. Redimensiona con el clic mantenido: un clic suelto en el borde no mueve nada ni escribe nada. <code>minInlineSize</code> y <code>maxInlineSize</code> escriben esos dos hooks desde el markup o desde las props, para una barra que necesita un recorrido propio sin abrir una hoja de estilos; aceptan cualquier largo de CSS. Quien tenga muchas barras iguales sigue poniendo el hook una vez y no la prop cincuenta veces.",
+              "title": "El Sidebar se puede arrastrar para cambiarle el ancho, y lo recuerda"
+            },
+            "kind": "feature",
+            "target": "SidebarResizeHandle"
+          },
+          {
+            "date": "2026-08-06",
+            "en": {
+              "body": "The default width drops from 15rem to 13rem. It had been sized so the longest label in the docs rail never truncated, which is measuring the panel against one consumer's content; a label that does not fit now ellipses, and the width is a design choice again. On top of that <code>sk-sidebar__content</code> takes <code>overscroll-behavior: contain</code>, so reaching the end of a long index no longer hands the scroll to the page, and it never scrolls horizontally.",
+              "title": "The Sidebar starts at 13rem, and its scroll stays inside it"
+            },
+            "es": {
+              "body": "El ancho por defecto baja de 15rem a 13rem. Estaba dimensionado para que la etiqueta más larga del riel de docs nunca se cortara, que es medir el panel contra el contenido de un consumidor; ahora la etiqueta que no entra se corta con puntos suspensivos y el ancho vuelve a ser una decisión de diseño. Además <code>sk-sidebar__content</code> lleva <code>overscroll-behavior: contain</code>, así llegar al final del índice ya no le pasa el scroll a la página, y nunca scrollea en horizontal.",
+              "title": "El Sidebar arranca en 13rem y el scroll se queda adentro"
+            },
+            "kind": "rework"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "skip-link": [],
+    "slider": [],
+    "split-button": [],
+    "stat": [],
+    "steps": [],
+    "switch": [],
+    "table": [],
+    "table-pager": [],
+    "tabs": [],
+    "tag": [],
+    "theme-toggle": [],
+    "tile": [],
+    "time-field": [],
+    "toc": [],
+    "toolbar": [],
+    "tooltip": [],
+    "tree-view": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-06",
+            "en": {
+              "body": "A tree pays its indent once per level, so that is where the width went: the step drops from 16px to 12px, each row's inset from 8px to 4px, and labels move to <code>--font-size-caption</code> (12px), the type Menu and NavList beside it already speak. Row height is unchanged. If you had a tree tuned to the old width, <code>--sk-tree-indent</code> and the new <code>--sk-tree-row-inset</code> put it back.",
+              "title": "TreeView gets narrower, a shorter indent step and 12px type"
+            },
+            "es": {
+              "body": "Un árbol paga la sangría una vez por nivel, así que era lo que más ancho costaba: el paso baja de 16px a 12px, el inset de cada fila de 8px a 4px y las etiquetas pasan a <code>--font-size-caption</code> (12px), la misma tipografía que ya hablan Menu y NavList al lado. La altura de fila no se mueve. Si tenías un árbol calibrado al ancho anterior, <code>--sk-tree-indent</code> y el nuevo <code>--sk-tree-row-inset</code> lo devuelven a donde estaba.",
+              "title": "TreeView se estrecha, un paso de sangría más corto y tipografía de 12px"
+            },
+            "kind": "rework"
+          },
+          {
+            "date": "2026-08-05",
+            "en": {
+              "body": "<code>branchIcon</code> renders on branches and <code>leafIcon</code> on leaves. A file browser can use one folder and one file icon throughout the hierarchy, without extension-specific icons.",
+              "title": "TreeView distinguishes folders and files with structural icons"
+            },
+            "es": {
+              "body": "<code>branchIcon</code> se renderiza en las ramas y <code>leafIcon</code> en las hojas. Un explorador puede usar una carpeta y un archivo para toda la jerarquía, sin iconos por extensión.",
+              "title": "TreeView diferencia carpetas y archivos con iconos estructurales"
+            },
+            "kind": "feature",
+            "target": "branchIcon"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "typography": [],
+    "vaul": [],
+    "wrapper": []
+  },
   "contracts": {
     "accordion": {
-      "changelog": [
-        {
-          "date": "2026-08-04",
-          "en": "The contract now declares the <code>sk:accordionvaluechange</code> event, so the reference publishes it. The event is neither new nor renamed; what changed is that finding it used to mean reading the prose.",
-          "es": "El contrato declara el evento <code>sk:accordionvaluechange</code>, así que ahora sale publicado en la referencia. El evento no es nuevo ni cambió de nombre: lo que cambió es que antes había que encontrarlo en la prosa.",
-          "kind": "added",
-          "target": "valueChange"
-        },
-        {
-          "date": "2026-08-01",
-          "en": "The enhancer looked for the <code>content</code> part on any descendant, so a section built with <code>TileContent</code> bound its own title as the panel: the section never collapsed and its content stayed exposed to a screen reader. It is now scoped to a direct child.",
-          "es": "El enhancer buscaba la parte <code>content</code> en cualquier descendiente, así que una sección construida con <code>TileContent</code> ataba su propio título como panel: la sección no se plegaba y su contenido quedaba expuesto al lector de pantalla. Ahora la busca sólo como hija directa.",
-          "kind": "fixed",
-          "target": "content"
-        },
-        {
-          "date": "2026-07-29",
-          "en": "First published contract: <code>Accordion</code> with <code>type</code> and <code>collapsible</code>, plus the three signatures that compose it.",
-          "es": "Primera publicación del contrato: <code>Accordion</code> con <code>type</code> y <code>collapsible</code>, y las tres firmas que lo componen.",
-          "kind": "added"
-        }
-      ],
       "css": "@skryensya/core/components/accordion.css",
       "events": {
         "valueChange": "sk:accordionvaluechange"
@@ -282,7 +616,6 @@
       }
     },
     "avatar": {
-      "changelog": [],
       "css": "@skryensya/core/components/avatar.css",
       "id": "avatar",
       "options": {
@@ -513,7 +846,6 @@
       }
     },
     "badge": {
-      "changelog": [],
       "css": "@skryensya/core/components/badge.css",
       "id": "badge",
       "options": {
@@ -664,7 +996,6 @@
       }
     },
     "box": {
-      "changelog": [],
       "css": "@skryensya/core/patterns/box.css",
       "id": "box",
       "options": {
@@ -755,7 +1086,6 @@
       }
     },
     "breadcrumb": {
-      "changelog": [],
       "css": "@skryensya/core/components/breadcrumb.css",
       "id": "breadcrumb",
       "options": {
@@ -913,7 +1243,6 @@
           }
         }
       ],
-      "changelog": [],
       "css": "@skryensya/core/components/button.css",
       "id": "button",
       "options": {
@@ -1095,7 +1424,6 @@
       }
     },
     "calendar": {
-      "changelog": [],
       "css": "@skryensya/core/components/calendar.css",
       "id": "calendar",
       "options": {
@@ -1232,7 +1560,6 @@
       }
     },
     "callout": {
-      "changelog": [],
       "css": "@skryensya/core/components/callout.css",
       "id": "callout",
       "options": {
@@ -1385,7 +1712,6 @@
       }
     },
     "carousel": {
-      "changelog": [],
       "css": "@skryensya/core/components/carousel.css",
       "id": "carousel",
       "options": {
@@ -1555,8 +1881,303 @@
         }
       }
     },
+    "changelog": {
+      "css": "@skryensya/core/components/changelog.css",
+      "id": "changelog",
+      "options": {
+        "date": {
+          "attr": "datetime",
+          "type": "string"
+        },
+        "kind": {
+          "attr": "data-kind",
+          "default": "chore",
+          "type": "enum",
+          "values": [
+            "breaking",
+            "feature",
+            "bugfix",
+            "rework",
+            "chore"
+          ]
+        }
+      },
+      "parts": {
+        "date": "sk-changelog__date",
+        "entries": "sk-changelog__entries",
+        "entry": "sk-changelog__entry",
+        "kind": "sk-changelog__kind",
+        "marker": "sk-changelog__marker",
+        "release": "sk-changelog__release",
+        "root": "sk-changelog",
+        "target": "sk-changelog__target",
+        "text": "sk-changelog__text",
+        "title": "sk-changelog__title",
+        "version": "sk-changelog__version"
+      },
+      "semantics": {
+        "Changelog": {
+          "alternatives": [
+            "ProcessList",
+            "Steps"
+          ],
+          "avoidWhen": [
+            "son instrucciones para leer y hacer, en orden pero sin versiones; eso es un ProcessList",
+            "importa en qué etapa está alguien, qué ya hizo y qué le falta; eso es Steps",
+            "es una sola novedad suelta; una entrada sin historial alrededor no es un historial"
+          ],
+          "useWhen": [
+            "hay un historial de versiones de algo: release notes, el changelog de un contrato",
+            "quien lee viene a saber si ya tiene el cambio que está leyendo, y eso lo contesta una versión"
+          ]
+        },
+        "ChangelogEntry": {
+          "alternatives": [],
+          "avoidWhen": [
+            "fuera de un ChangelogRelease: un cambio que no está bajo una versión no dice desde cuándo se puede contar con él"
+          ],
+          "useWhen": [
+            "un cambio, con su tipo y a qué parte del contrato le pegó"
+          ]
+        },
+        "ChangelogRelease": {
+          "alternatives": [],
+          "avoidWhen": [
+            "fuera de un Changelog: el riel y el orden los dibuja la lista, no el release suelto",
+            "querés marcar 'sin publicar' con una opción aparte; la ausencia de fecha ya lo dice, y dos campos que dicen lo mismo se pueden contradecir"
+          ],
+          "useWhen": [
+            "una versión y todo lo que salió en ella",
+            "hay trabajo sin publicar: se escribe la versión con sufijo -dev y se omite la fecha"
+          ]
+        }
+      },
+      "signatures": {
+        "Changelog": {
+          "host": {
+            "element": "ol"
+          },
+          "intent": [
+            "changelog",
+            "release-notes",
+            "what-changed",
+            "version-history"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/changelog",
+            "name": "Changelog"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "ChangelogRelease"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "reversed": ""
+            },
+            "element": "ol",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "ChangelogEntry": {
+          "host": {
+            "element": "li"
+          },
+          "intent": [
+            "one-change",
+            "changelog-entry",
+            "release-note"
+          ],
+          "options": [
+            "kind"
+          ],
+          "parents": [
+            "ChangelogRelease"
+          ],
+          "react": {
+            "from": "@skryensya/react/changelog",
+            "name": "ChangelogEntry"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "kind": {
+              "accepts": "text",
+              "prop": "kindLabel",
+              "required": true
+            },
+            "target": {
+              "accepts": "text"
+            },
+            "title": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-badge"
+                ],
+                "attrsWhen": [
+                  {
+                    "attrs": {
+                      "data-tone": "danger"
+                    },
+                    "equals": "breaking",
+                    "option": "kind"
+                  },
+                  {
+                    "attrs": {
+                      "data-tone": "success"
+                    },
+                    "equals": "feature",
+                    "option": "kind"
+                  },
+                  {
+                    "attrs": {
+                      "data-tone": "accent"
+                    },
+                    "equals": "bugfix",
+                    "option": "kind"
+                  },
+                  {
+                    "attrs": {
+                      "data-tone": "warning"
+                    },
+                    "equals": "rework",
+                    "option": "kind"
+                  },
+                  {
+                    "attrs": {
+                      "data-tone": "neutral"
+                    },
+                    "equals": "chore",
+                    "option": "kind"
+                  }
+                ],
+                "element": "span",
+                "part": "kind",
+                "slot": "kind"
+              },
+              {
+                "element": "code",
+                "part": "target",
+                "slot": "target",
+                "whenGiven": "target"
+              },
+              {
+                "element": "span",
+                "part": "title",
+                "slot": "title"
+              },
+              {
+                "element": "div",
+                "part": "text",
+                "slot": "children"
+              }
+            ],
+            "element": "li",
+            "host": true,
+            "options": [
+              "kind"
+            ],
+            "part": "entry"
+          }
+        },
+        "ChangelogRelease": {
+          "host": {
+            "element": "li"
+          },
+          "intent": [
+            "one-version",
+            "release",
+            "version-heading"
+          ],
+          "options": [
+            "date"
+          ],
+          "parents": [
+            "Changelog"
+          ],
+          "react": {
+            "from": "@skryensya/react/changelog",
+            "name": "ChangelogRelease"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "ChangelogEntry"
+              ],
+              "required": true
+            },
+            "date": {
+              "accepts": "text",
+              "prop": "dateLabel"
+            },
+            "version": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "data-unreleased": ""
+                },
+                "given": false,
+                "option": "date"
+              }
+            ],
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "span",
+                "part": "marker"
+              },
+              {
+                "element": "span",
+                "part": "version",
+                "slot": "version"
+              },
+              {
+                "element": "time",
+                "options": [
+                  "date"
+                ],
+                "part": "date",
+                "slot": "date",
+                "whenGiven": "date"
+              },
+              {
+                "element": "ol",
+                "part": "entries",
+                "slot": "children"
+              }
+            ],
+            "element": "li",
+            "host": true,
+            "part": "release"
+          }
+        }
+      }
+    },
     "checkbox": {
-      "changelog": [],
       "css": "@skryensya/core/components/checkbox.css",
       "id": "checkbox",
       "options": {
@@ -1741,7 +2362,6 @@
       }
     },
     "code-preview": {
-      "changelog": [],
       "css": "@skryensya/core/components/code-preview.css",
       "id": "code-preview",
       "options": {
@@ -2105,7 +2725,6 @@
       }
     },
     "combobox": {
-      "changelog": [],
       "css": "@skryensya/core/components/combobox.css",
       "id": "combobox",
       "options": {
@@ -2462,7 +3081,6 @@
       }
     },
     "command-palette": {
-      "changelog": [],
       "css": "@skryensya/core/components/command-palette.css",
       "id": "command-palette",
       "options": {
@@ -2669,7 +3287,6 @@
       }
     },
     "component-preview": {
-      "changelog": [],
       "css": "@skryensya/core/components/component-preview.css",
       "id": "component-preview",
       "options": {},
@@ -2786,7 +3403,6 @@
       }
     },
     "content": {
-      "changelog": [],
       "css": "@skryensya/core/components/toast.css",
       "id": "content",
       "options": {
@@ -3073,7 +3689,6 @@
       }
     },
     "copy-button": {
-      "changelog": [],
       "css": "@skryensya/core/components/copy-button.css",
       "id": "copy-button",
       "options": {
@@ -3269,7 +3884,6 @@
       }
     },
     "date-picker": {
-      "changelog": [],
       "css": "@skryensya/core/components/date-picker.css",
       "id": "date-picker",
       "options": {
@@ -3561,7 +4175,6 @@
       }
     },
     "details": {
-      "changelog": [],
       "css": "@skryensya/core/components/details.css",
       "id": "details",
       "options": {
@@ -3807,7 +4420,6 @@
       }
     },
     "dialog": {
-      "changelog": [],
       "css": "@skryensya/core/components/dialog.css",
       "id": "dialog",
       "options": {
@@ -3978,7 +4590,6 @@
       }
     },
     "empty-state": {
-      "changelog": [],
       "css": "@skryensya/core/components/empty-state.css",
       "id": "empty-state",
       "options": {},
@@ -4079,7 +4690,6 @@
       }
     },
     "field": {
-      "changelog": [],
       "css": "@skryensya/core/components/field.css",
       "id": "field",
       "options": {
@@ -4231,7 +4841,6 @@
       }
     },
     "file-upload": {
-      "changelog": [],
       "css": "@skryensya/core/components/file-upload.css",
       "id": "file-upload",
       "options": {
@@ -4400,7 +5009,6 @@
       }
     },
     "flyout": {
-      "changelog": [],
       "css": "@skryensya/core/components/flyout.css",
       "id": "flyout",
       "options": {
@@ -4619,7 +5227,6 @@
       }
     },
     "icon": {
-      "changelog": [],
       "css": "@skryensya/core/patterns/icon.css",
       "id": "icon",
       "options": {
@@ -4660,6 +5267,8 @@
             "clock",
             "upload",
             "download",
+            "file",
+            "folder",
             "settings",
             "user",
             "visibility",
@@ -4742,7 +5351,6 @@
           }
         }
       ],
-      "changelog": [],
       "css": "@skryensya/core/patterns/image-frame.css",
       "id": "image-frame",
       "options": {
@@ -4910,7 +5518,6 @@
       }
     },
     "input": {
-      "changelog": [],
       "css": "@skryensya/core/components/input.css",
       "id": "input",
       "options": {
@@ -5073,7 +5680,6 @@
       }
     },
     "kbd": {
-      "changelog": [],
       "css": "@skryensya/core/components/kbd.css",
       "id": "kbd",
       "options": {},
@@ -5121,7 +5727,6 @@
       }
     },
     "layout": {
-      "changelog": [],
       "css": "@skryensya/core/patterns/layout.css",
       "id": "layout",
       "options": {
@@ -5390,7 +5995,6 @@
       }
     },
     "list": {
-      "changelog": [],
       "css": "@skryensya/core/components/list.css",
       "id": "list",
       "options": {
@@ -5737,7 +6341,6 @@
       }
     },
     "loader": {
-      "changelog": [],
       "css": "@skryensya/core/components/loader.css",
       "id": "loader",
       "options": {
@@ -5886,7 +6489,6 @@
       }
     },
     "media-gradient": {
-      "changelog": [],
       "css": "@skryensya/core/patterns/media-gradient.css",
       "id": "media-gradient",
       "options": {
@@ -6007,7 +6609,6 @@
       }
     },
     "menu": {
-      "changelog": [],
       "css": "@skryensya/core/components/menu.css",
       "id": "menu",
       "options": {
@@ -6305,7 +6906,6 @@
           }
         }
       ],
-      "changelog": [],
       "css": "@skryensya/core/patterns/nav-list.css",
       "id": "nav-list",
       "options": {
@@ -6532,7 +7132,6 @@
       }
     },
     "navbar": {
-      "changelog": [],
       "css": "@skryensya/core/components/navbar.css",
       "id": "navbar",
       "options": {},
@@ -6656,7 +7255,6 @@
       }
     },
     "number-field": {
-      "changelog": [],
       "css": "@skryensya/core/components/number-field.css",
       "id": "number-field",
       "options": {
@@ -6887,7 +7485,6 @@
       }
     },
     "pagination": {
-      "changelog": [],
       "css": "@skryensya/core/components/pagination.css",
       "id": "pagination",
       "options": {
@@ -7083,7 +7680,6 @@
       }
     },
     "placeholder": {
-      "changelog": [],
       "css": "@skryensya/core/components/placeholder.css",
       "id": "placeholder",
       "options": {
@@ -7145,7 +7741,6 @@
       }
     },
     "popover": {
-      "changelog": [],
       "css": "@skryensya/core/components/popover.css",
       "id": "popover",
       "options": {
@@ -7442,7 +8037,6 @@
       }
     },
     "process-list": {
-      "changelog": [],
       "css": "@skryensya/core/components/process-list.css",
       "id": "process-list",
       "options": {},
@@ -7551,7 +8145,6 @@
       }
     },
     "progress": {
-      "changelog": [],
       "css": "@skryensya/core/components/progress.css",
       "id": "progress",
       "options": {
@@ -7650,7 +8243,6 @@
       }
     },
     "radio-group": {
-      "changelog": [],
       "css": "@skryensya/core/components/radio-group.css",
       "id": "radio-group",
       "options": {
@@ -7830,7 +8422,6 @@
       }
     },
     "segmented": {
-      "changelog": [],
       "css": "@skryensya/core/components/segmented.css",
       "id": "segmented",
       "options": {
@@ -7952,7 +8543,6 @@
       }
     },
     "select": {
-      "changelog": [],
       "css": "@skryensya/core/components/select.css",
       "id": "select",
       "options": {
@@ -8312,7 +8902,6 @@
       }
     },
     "sidebar": {
-      "changelog": [],
       "css": "@skryensya/core/components/sidebar.css",
       "id": "sidebar",
       "options": {
@@ -8326,12 +8915,25 @@
         "label": {
           "attr": "aria-label",
           "type": "string"
+        },
+        "maxInlineSize": {
+          "styleProperty": "--sk-sidebar-max-inline-size",
+          "type": "string"
+        },
+        "minInlineSize": {
+          "styleProperty": "--sk-sidebar-min-inline-size",
+          "type": "string"
+        },
+        "storageKey": {
+          "attr": "data-storage-key",
+          "type": "string"
         }
       },
       "parts": {
         "content": "sk-sidebar__content",
         "footer": "sk-sidebar__footer",
         "header": "sk-sidebar__header",
+        "resizeHandle": "sk-sidebar__resize-handle",
         "root": "sk-sidebar",
         "separator": "sk-sidebar__separator",
         "trigger": "sk-sidebar__trigger"
@@ -8377,6 +8979,19 @@
             "arriba va la marca, el nombre del espacio de trabajo o el trigger"
           ]
         },
+        "SidebarResizeHandle": {
+          "alternatives": [
+            "SidebarTrigger"
+          ],
+          "avoidWhen": [
+            "la lista de destinos es fija y conocida; ahí el ancho es una decisión de diseño, no de quien lee",
+            "lo que se busca es sacarla del medio; para eso está SidebarTrigger, que angosta a un riel"
+          ],
+          "useWhen": [
+            "el ancho correcto lo decide el contenido de cada persona: rutas largas, un árbol profundo, nombres de archivo",
+            "hace falta un ancho intermedio, no sólo angosta o ancha"
+          ]
+        },
         "SidebarSeparator": {
           "alternatives": [],
           "avoidWhen": [
@@ -8409,7 +9024,10 @@
           ],
           "mount": "data-sk-sidebar",
           "options": [
-            "defaultCollapsed"
+            "defaultCollapsed",
+            "storageKey",
+            "minInlineSize",
+            "maxInlineSize"
           ],
           "react": {
             "from": "@skryensya/react/sidebar",
@@ -8423,7 +9041,8 @@
                 "SidebarContent",
                 "SidebarFooter",
                 "SidebarSeparator",
-                "SidebarTrigger"
+                "SidebarTrigger",
+                "SidebarResizeHandle"
               ],
               "required": true
             }
@@ -8526,6 +9145,45 @@
             "slot": "children"
           }
         },
+        "SidebarResizeHandle": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "resize-sidebar",
+            "drag-the-rail-wider",
+            "splitter",
+            "drag-handle"
+          ],
+          "mount": "data-sk-sidebar-resize",
+          "options": [
+            "label"
+          ],
+          "parents": [
+            "Sidebar"
+          ],
+          "react": {
+            "from": "@skryensya/react/sidebar",
+            "name": "SidebarResizeHandle"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {},
+          "template": {
+            "attrs": {
+              "aria-orientation": "vertical",
+              "aria-valuemax": "100",
+              "aria-valuemin": "0",
+              "aria-valuenow": "50",
+              "role": "separator",
+              "tabindex": "0"
+            },
+            "element": "div",
+            "host": true,
+            "part": "resizeHandle"
+          }
+        },
         "SidebarSeparator": {
           "host": {
             "element": "hr"
@@ -8597,8 +9255,79 @@
         }
       }
     },
+    "skip-link": {
+      "css": "@skryensya/core/components/skip-link.css",
+      "id": "skip-link",
+      "options": {
+        "href": {
+          "attr": "href",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "root": "sk-skip-link"
+      },
+      "semantics": {
+        "SkipLink": {
+          "alternatives": [
+            "Link"
+          ],
+          "avoidWhen": [
+            "el destino no es enfocable: sin tabindex=\"-1\" el Tab siguiente vuelve al chrome que se quiso saltear",
+            "hay algo enfocable antes: entonces ese algo es el bloque que nadie puede saltear",
+            "el destino puede no estar en la página: un enlace a algo que no existe es una promesa que no se puede seguir",
+            "es un enlace visible dentro del texto; eso es Link",
+            "se quiere esconder texto que nadie va a enfocar: eso es la clase sk-visually-hidden"
+          ],
+          "useWhen": [
+            "la página empieza con chrome que se repite en todas: marca, navegación global, buscador",
+            "hay que cumplir WCAG 2.4.1: quien navega con teclado necesita saltear ese bloque",
+            "va primero en el documento y no se ve hasta que recibe el foco",
+            "puede haber más de uno; el primero apunta al contenido, que es lo que casi todo el mundo vino a leer"
+          ]
+        }
+      },
+      "signatures": {
+        "SkipLink": {
+          "host": {
+            "element": "a"
+          },
+          "intent": [
+            "skip-link",
+            "bypass-blocks",
+            "skip-to-content",
+            "skip-to-navigation",
+            "wcag-2-4-1"
+          ],
+          "options": [
+            "href"
+          ],
+          "react": {
+            "from": "@skryensya/react/skip-link",
+            "name": "SkipLink"
+          },
+          "requires": [
+            "href"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-interactive"
+            ],
+            "element": "a",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        }
+      }
+    },
     "slider": {
-      "changelog": [],
       "css": "@skryensya/core/components/slider.css",
       "id": "slider",
       "options": {
@@ -8696,7 +9425,6 @@
       }
     },
     "split-button": {
-      "changelog": [],
       "css": "@skryensya/core/components/split-button.css",
       "id": "split-button",
       "options": {},
@@ -8776,7 +9504,6 @@
       }
     },
     "stat": {
-      "changelog": [],
       "css": "@skryensya/core/components/stat.css",
       "id": "stat",
       "options": {
@@ -8912,7 +9639,6 @@
       }
     },
     "steps": {
-      "changelog": [],
       "css": "@skryensya/core/components/steps.css",
       "id": "steps",
       "options": {},
@@ -9035,7 +9761,6 @@
       }
     },
     "switch": {
-      "changelog": [],
       "css": "@skryensya/core/components/switch.css",
       "id": "switch",
       "options": {
@@ -9156,7 +9881,6 @@
       }
     },
     "table": {
-      "changelog": [],
       "css": "@skryensya/core/components/table.css",
       "id": "table",
       "options": {
@@ -9576,7 +10300,6 @@
       }
     },
     "table-pager": {
-      "changelog": [],
       "css": "@skryensya/core/patterns/table-pager.css",
       "id": "table-pager",
       "options": {
@@ -9903,7 +10626,6 @@
           }
         }
       ],
-      "changelog": [],
       "css": "@skryensya/core/components/tabs.css",
       "id": "tabs",
       "options": {
@@ -10066,7 +10788,6 @@
       }
     },
     "tag": {
-      "changelog": [],
       "css": "@skryensya/core/components/tag.css",
       "id": "tag",
       "options": {
@@ -10182,7 +10903,6 @@
       }
     },
     "theme-toggle": {
-      "changelog": [],
       "css": "@skryensya/core/components/theme-toggle.css",
       "id": "theme-toggle",
       "options": {
@@ -10309,7 +11029,6 @@
       }
     },
     "tile": {
-      "changelog": [],
       "css": "@skryensya/core/components/tile.css",
       "id": "tile",
       "options": {
@@ -11136,7 +11855,6 @@
       }
     },
     "time-field": {
-      "changelog": [],
       "css": "@skryensya/core/components/time-field.css",
       "id": "time-field",
       "options": {
@@ -11294,7 +12012,6 @@
       }
     },
     "toc": {
-      "changelog": [],
       "css": "@skryensya/core/components/toc.css",
       "id": "toc",
       "options": {
@@ -11482,7 +12199,6 @@
       }
     },
     "toolbar": {
-      "changelog": [],
       "css": "@skryensya/core/components/toolbar.css",
       "id": "toolbar",
       "options": {
@@ -11634,7 +12350,6 @@
       }
     },
     "tooltip": {
-      "changelog": [],
       "css": "@skryensya/core/components/tooltip.css",
       "id": "tooltip",
       "options": {
@@ -11757,7 +12472,6 @@
       }
     },
     "tree-view": {
-      "changelog": [],
       "css": "@skryensya/core/components/tree-view.css",
       "id": "tree-view",
       "options": {
@@ -11791,9 +12505,12 @@
         "branch": "sk-tree-view__branch",
         "branchContent": "sk-tree-view__branch-content",
         "branchControl": "sk-tree-view__branch-control",
+        "branchIcon": "sk-tree-view__branch-icon",
         "branchIndicator": "sk-tree-view__branch-indicator",
         "branchText": "sk-tree-view__branch-text",
         "item": "sk-tree-view__item",
+        "itemIcon": "sk-tree-view__item-icon",
+        "itemIndicator": "sk-tree-view__item-indicator",
         "itemText": "sk-tree-view__item-text",
         "root": "sk-tree-view",
         "tree": "sk-tree-view__tree"
@@ -11843,6 +12560,9 @@
             "label"
           ],
           "slots": {
+            "branchIcon": {
+              "accepts": "node"
+            },
             "branchIndicator": {
               "accepts": "node"
             },
@@ -11876,7 +12596,7 @@
               "prop": "nodes",
               "required": true
             },
-            "leafIndicator": {
+            "leafIcon": {
               "accepts": "node"
             }
           },
@@ -11917,6 +12637,15 @@
                                     "part": "branchIndicator",
                                     "text": "›",
                                     "whenMissing": "branchIndicator"
+                                  },
+                                  {
+                                    "attrs": {
+                                      "aria-hidden": "true"
+                                    },
+                                    "element": "span",
+                                    "part": "branchIcon",
+                                    "slot": "branchIcon",
+                                    "whenGiven": "branchIcon"
                                   },
                                   {
                                     "element": "span",
@@ -11960,7 +12689,16 @@
                                   "aria-hidden": "true"
                                 },
                                 "element": "span",
-                                "slot": "leafIndicator"
+                                "part": "itemIndicator"
+                              },
+                              {
+                                "attrs": {
+                                  "aria-hidden": "true"
+                                },
+                                "element": "span",
+                                "part": "itemIcon",
+                                "slot": "leafIcon",
+                                "whenGiven": "leafIcon"
                               },
                               {
                                 "element": "span",
@@ -11998,7 +12736,6 @@
       }
     },
     "typography": {
-      "changelog": [],
       "css": "@skryensya/core/components/typography.css",
       "id": "typography",
       "options": {
@@ -12326,7 +13063,6 @@
       }
     },
     "vaul": {
-      "changelog": [],
       "css": "@skryensya/core/patterns/vaul.css",
       "id": "vaul",
       "options": {
@@ -12473,7 +13209,6 @@
       }
     },
     "wrapper": {
-      "changelog": [],
       "css": "@skryensya/core/patterns/wrapper.css",
       "id": "wrapper",
       "options": {
@@ -12540,6 +13275,10 @@
       }
     }
   },
+  "releases": {
+    "releases": [],
+    "working": "0.1.0"
+  },
   "schemaVersion": "2.0",
-  "sourceHash": "1f0709f22b6fcaf9"
+  "sourceHash": "d1ecc1938ebf1f47"
 }

@@ -42,14 +42,45 @@
 
     /* the one width hook, plus the two widths the state chooses between */
     --sk-sidebar-inline-size: var(--sk-sidebar-expanded-inline-size);
-    /* 15rem, not 13.5: the gutter above went from 8px to 16px a side, and that width was chosen for
-     * the old one, so the extra air came straight out of the label. Measured on the docs rail, the
-     * longest entry ("Densidad de componente") started truncating at 13.5rem. The panel grows by the
-     * 16px it now spends on padding, so labels keep exactly the room they had. */
-    --sk-sidebar-expanded-inline-size: 15rem;
+    /*
+     * 13rem. It was 15rem, sized so the longest entry in the docs rail ("Densidad de componente")
+     * never truncated: the panel was made to fit its worst label. That is backwards for a rail whose
+     * job is to spend as little width as possible on chrome, and it only worked because one
+     * consumer's longest string was known. A label that does not fit now ELLIPSES (the nav-list
+     * label and the tree-view label both do), which is the mechanism that makes the width a design
+     * choice again instead of a measurement of somebody's content.
+     *
+     * Someone who wants the old behaviour has two better answers than a wider default: raise this
+     * hook, or author a SidebarResizeHandle and let the reader decide.
+     */
+    --sk-sidebar-expanded-inline-size: 13rem;
     --sk-sidebar-collapsed-inline-size: calc(
       var(--size-control-sm) + var(--sk-sidebar-padding) * 2 + var(--sk-sidebar-border-width)
     );
+
+    /*
+     * THE TRAVEL OF A RESIZE, and the reason the width arithmetic lives in CSS.
+     *
+     * A drag writes exactly one property, `--sk-sidebar-resize-inline-size`, and the `clamp()` below
+     * is what keeps it honest: no binding has to know the bounds, re-read them when a brand moves
+     * them, or agree with the other binding about rounding. Unset (nobody has dragged, nothing was
+     * restored) the clamp falls back to the expanded width, so a resizable sidebar and a fixed one
+     * start life at exactly the same size.
+     *
+     * Neither end is arbitrary. Below roughly 11rem an expanded rail holds a chevron, an icon and
+     * three characters of label, which is a worse rail than the collapsed one, and the collapsed
+     * state is the control that already exists for "I want it out of the way". Above 20rem it has
+     * stopped being a rail: at that width it is a second column competing with the content it
+     * exists to navigate, and every extra pixel is spent on the end of labels rather than on the
+     * thing the reader came for. 20rem is still half again the width it opens at, which is real
+     * travel, not a token gesture.
+     *
+     * A consumer whose content genuinely needs more (deep paths, long filenames) raises the hook,
+     * the same way they raise the expanded width. That is the difference between a default and a
+     * limit: this one is a default about what a rail IS.
+     */
+    --sk-sidebar-min-inline-size: 11rem;
+    --sk-sidebar-max-inline-size: 20rem;
 
     --sk-sidebar-duration: var(--motion-expand-duration);
     --sk-sidebar-easing: var(--motion-expand-easing);
@@ -66,6 +97,13 @@
 
     --sk-sidebar-separator-color: var(--color-border-subtle);
 
+    /* The grab strip. `hit` is the pointer target and stays finger-sized; `line` is the hairline it
+     * paints once the pointer is on it, so the edge is quiet until it is useful. */
+    --sk-sidebar-resize-hit: var(--space-inset-sm);
+    --sk-sidebar-resize-line: 2px;
+    --sk-sidebar-resize-color: var(--color-border-strong);
+    --sk-sidebar-resize-active-color: var(--color-border-accent);
+
     /*
      * The shell, and nothing about the list inside it, that structure ships with the `nav-list`
      * pattern, so there is no rule here for a link, an item or a group. The sidebar only has to be a
@@ -80,8 +118,13 @@
     /* The gutter goes on each region, never on the root: the rail is sized to hold one control plus
      * that gutter, and a second padding around it would push the icons off-centre by the difference. */
     display: flex;
+    position: relative; /* the containing block for the resize handle, which rides the inner edge */
     flex-direction: column;
     inline-size: var(--sk-sidebar-inline-size);
+    /* A rail is never wider than its own width hook, whatever is inside it. Without this a long
+     * unbreakable label (a path, a filename) makes the flex column's automatic minimum size win and
+     * the panel quietly grows past the width it was told to be. */
+    max-inline-size: var(--sk-sidebar-inline-size);
     block-size: 100%;
     border-inline-end: var(--sk-sidebar-border-width) solid var(--sk-sidebar-border-color);
     background: var(--sk-sidebar-bg);
@@ -90,6 +133,37 @@
     /* the rail clips the labels it no longer has room for */
     overflow: hidden;
     transition: inline-size var(--sk-sidebar-duration) var(--sk-sidebar-easing);
+  }
+
+  /*
+   * RESIZABLE IS A COMPOSITION, not an option: it is true when the consumer authored the handle.
+   * `:has()` is what lets the stylesheet read that instead of a `data-resizable` the bindings would
+   * have to keep in sync with the markup that already says it.
+   */
+  .sk-sidebar:has(.sk-sidebar__resize-handle) {
+    /*
+     * The dragged width replaces the WIDTH, not the expanded hook, so `--sk-sidebar-expanded-
+     * inline-size` keeps meaning "the size this sidebar was designed at" and stays the thing a
+     * consumer overrides. Unset, the clamp falls through to it and a resizable sidebar opens at
+     * exactly the same width as a fixed one. Declared BEFORE the collapsed rule on purpose: both
+     * land on this property at the same specificity, and a collapsed rail has to beat a remembered
+     * width, not negotiate with it.
+     */
+    --sk-sidebar-inline-size: clamp(
+      var(--sk-sidebar-min-inline-size),
+      var(--sk-sidebar-resize-inline-size, var(--sk-sidebar-expanded-inline-size)),
+      var(--sk-sidebar-max-inline-size)
+    );
+  }
+
+  /*
+   * A drag has to feel attached to the pointer, and an animated width cannot: the transition exists
+   * so COLLAPSING reads as a movement, and during a drag it turns the same property into lag. The
+   * binding writes this attribute for the length of the gesture and nothing else.
+   */
+  .sk-sidebar[data-resizing] {
+    transition: none;
+    user-select: none;
   }
 
   .sk-sidebar[data-state="collapsed"] {
@@ -151,10 +225,23 @@
    * lets a flex child actually shrink enough to scroll instead of pushing the footer out. */
   .sk-sidebar__content {
     flex: 1;
+    /* Both axes have to be allowed to shrink, and for different reasons: the block one is what lets
+     * this scroll instead of pushing the footer out of the panel, the inline one is what lets a
+     * guest that would rather be wide (a deep tree, a long path) be narrowed to the rail instead of
+     * widening it. A flex child's automatic minimum size is `auto` on both. */
     min-block-size: 0;
+    min-inline-size: 0;
     padding: var(--sk-sidebar-padding-block) var(--sk-sidebar-padding);
+    /*
+     * ONE scrollport, and it is this one. Vertical scrolls, horizontal never does: a rail that
+     * scrolls sideways is a rail whose content refused to be narrowed, and the fix is always at the
+     * content (ellipsis, `minmax(0, 1fr)`), never a second scrollbar to chase it with.
+     */
     overflow-x: hidden;
     overflow-y: auto;
+    /* The scroll stops here. Without it, reaching the end of a long index hands the gesture to the
+     * page and the reader watches the document scroll away under a rail they were still reading. */
+    overscroll-behavior: contain;
   }
 
   .sk-sidebar__separator {
@@ -173,6 +260,72 @@
     color: var(--sk-sidebar-footer-fg);
     font-size: var(--sk-sidebar-footer-font-size);
     white-space: nowrap;
+  }
+
+  /*
+   * THE RESIZE HANDLE, a window splitter that lives INSIDE the panel.
+   *
+   * Inside, and not straddling the border, because the root clips (`overflow: hidden`, which is what
+   * makes the collapsed rail cut its labels): half a handle hanging past the edge would simply not
+   * be there. It rides over the panel's own inline gutter, so the strip it covers is padding rather
+   * than content, and nothing underneath it is unreachable.
+   *
+   * Quiet at rest: the hairline only paints on hover, focus or drag. An always-visible grab bar is
+   * chrome the reader has to look past on every page, for an affordance most of them use once.
+   */
+  .sk-sidebar__resize-handle {
+    position: absolute;
+    z-index: 1;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: var(--sk-sidebar-resize-hit);
+    cursor: col-resize;
+    /* The gesture is ours. Without this a drag on a touch screen scrolls the page instead. */
+    touch-action: none;
+  }
+
+  .sk-sidebar__resize-handle::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: var(--sk-sidebar-resize-line);
+    background: transparent;
+    transition: background-color var(--motion-feedback-duration) var(--motion-feedback-easing);
+  }
+
+  .sk-sidebar__resize-handle:hover::before {
+    background: var(--sk-sidebar-resize-color);
+  }
+
+  .sk-sidebar__resize-handle:focus-visible {
+    /* Inset, for the same clipping reason as the handle itself: an outline drawn outside a strip
+     * flush with the panel edge is cut in half by the root's `overflow: hidden`. */
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(var(--focus-ring-offset) * -1);
+  }
+
+  .sk-sidebar__resize-handle:focus-visible::before,
+  .sk-sidebar[data-resizing] .sk-sidebar__resize-handle::before {
+    background: var(--sk-sidebar-resize-active-color);
+  }
+
+  /* A collapsed rail has no width to negotiate: the trigger is what widens it again. */
+  .sk-sidebar[data-state="collapsed"] .sk-sidebar__resize-handle {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-sidebar__resize-handle::before {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    /* The state layer and the accent both drop out, so the edge needs a real border to exist at all. */
+    .sk-sidebar__resize-handle::before {
+      background: CanvasText;
+    }
   }
 
   .sk-sidebar__trigger {

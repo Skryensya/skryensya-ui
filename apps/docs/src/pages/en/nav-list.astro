@@ -4,7 +4,8 @@ import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import { navListTree } from "../../demos/nav-list";
 import { getLocale, useTranslations } from "../../i18n";
-import { probeProp, tokens } from "../../lib/tokens";
+import { probeProp, slugId, tokens } from "../../lib/tokens";
+import CopyCells from "../../components/CopyCells.astro";
 
 const hooks = tokens
   .filter((t) => t.file === "patterns/nav-list.css")
@@ -61,26 +62,39 @@ const t = useTranslations(getLocale(Astro.url));
   <CodeBlock code={import_} label="CSS" />
 
   <h2>All styling hooks</h2>
+  <CopyCells />
+
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead>
         <tr>
           <th>Hook</th>
-          <th>Valor autoral <span class="count">· build</span></th>
-          <th>Valor usado <span class="count">· runtime</span></th>
+          <th>{t("hooks.definition")} <span class="count">build</span></th>
+          <th>{t("hooks.resolvedValue")} <span class="count">runtime</span></th>
         </tr>
       </thead>
       <tbody>
         {
-          hooks.map((h) => (
-            <tr>
-              <td class="mono">{h.name}</td>
-              <td class="mono">{h.value}</td>
-              <td class="mono" data-token={h.name} data-prop={h.prop} data-probe="sk-nav-list">
-                …
-              </td>
-            </tr>
-          ))
+          hooks.map((h) => {
+            const nameId = slugId("navhook-name", h.name);
+            const defId = slugId("navhook-def", h.name);
+            const valId = slugId("navhook-val", h.name);
+            return (
+              <tr>
+                <td class="sk-table__cell mono sk-table__cell--copy">
+                  <span id={nameId}>{h.name}</span>
+                </td>
+                <td class="sk-table__cell mono sk-table__cell--copy">
+                  <span id={defId} data-authored>{h.value}</span>
+                </td>
+                <td class="sk-table__cell mono sk-table__cell--copy">
+                  <span id={valId} data-token={h.name} data-prop={h.prop} data-probe="sk-nav-list">
+                    …
+                  </span>
+                </td>
+              </tr>
+            );
+          })
         }
       </tbody>
     </table>

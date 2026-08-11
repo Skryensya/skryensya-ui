@@ -96,7 +96,7 @@ export const dataTableRecipe: Recipe = {
             actions: {
               contract: "button",
               signature: "Button.action",
-              options: { variant: "subtle" },
+              options: { variant: "translucent" },
               children: "Reintentar",
             },
           },

@@ -156,7 +156,7 @@ export const formRecipe: Recipe = {
             actions: {
               contract: "button",
               signature: "Button.navigation",
-              options: { href: "/proyectos/atlas", variant: "subtle" },
+              options: { href: "/proyectos/atlas", variant: "translucent" },
               children: "Ver el proyecto",
             },
           },

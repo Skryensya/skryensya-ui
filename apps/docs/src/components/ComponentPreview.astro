@@ -14,9 +14,8 @@
  * Binding tabs (header): Vanilla | React via segmented, toggling which stage is visible. Preference
  * is shared across every preview on the page (`data-sk-component-preview-pref` on `<html>`,
  * persisted in docs).
- * Source tabs (below the stage, under Vanilla only): HTML | JS as Tabs at local density 0.72
- * when the demo needs app composition beyond `data-sk-*` enhancers. Those sit under Vanilla,
- * never beside React.
+ * Source tabs (below the stage, under Vanilla only): HTML plus optional CSS and JS. They sit
+ * under Vanilla, never beside React.
  */
 import CodeBlock from "./CodeBlock.astro";
 import { emitMarkup, emitReact } from "@skryensya/ai-compiler/emit";
@@ -52,6 +51,8 @@ interface Props {
    * Shown as a JS tab under Vanilla, next to HTML, never as a peer of React.
    */
   js?: string;
+  /** App CSS shown beside HTML under Vanilla. The live frame inherits it from the page stylesheet. */
+  css?: string;
   /** The React source. Shown under the React binding's stage. Pair with the `react` slot for a live demo. */
   react?: string;
   /** Explicit Vanilla/HTML source when the live markup isn't what you want to teach. */
@@ -106,6 +107,7 @@ const {
   tree,
   html,
   js,
+  css,
   react,
   code,
   codeFull,
@@ -130,7 +132,6 @@ const treeHtml = tree ? emitMarkup(tree) : undefined;
 const treeReact = tree ? emitReact(tree) : undefined;
 
 const vanillaCode = code ?? treeHtml ?? html;
-const hasJs = Boolean(js);
 /*
  * The `react` slot carries the LIVE demo (an actual `@skryensya/react` component, `client:load`);
  * the `react` string prop stays the source shown under it. Either alone still counts as "there is a
@@ -139,7 +140,7 @@ const hasJs = Boolean(js);
 const reactSlotHtml = Astro.slots.has("react") ? await Astro.slots.render("react") : undefined;
 const hasReact = Boolean(tree) || Boolean(treeReact ?? react) || Boolean(reactSlotHtml);
 const hasBindingTabs = Boolean(vanillaCode && hasReact);
-const hasSourceTabs = Boolean(vanillaCode && js);
+const hasSourceTabs = Boolean(vanillaCode && (js || css));
 const slotHtml = Astro.slots.has("default") ? await Astro.slots.render("default") : undefined;
 const previewHtml = treeHtml ?? slotHtml ?? html ?? "";
 const encodedPreviewScript = previewScript ? encodeURIComponent(previewScript) : "";
@@ -406,14 +407,30 @@ const screenToggleLabels = Object.fromEntries(
                 >
                   HTML
                 </button>
-                <button
-                  class="sk-tabs__trigger sk-interactive"
-                  data-sk-tabs-trigger
-                  data-value="js"
-                  type="button"
-                >
-                  JS
-                </button>
+                {
+                  css && (
+                    <button
+                      class="sk-tabs__trigger sk-interactive"
+                      data-sk-tabs-trigger
+                      data-value="css"
+                      type="button"
+                    >
+                      CSS
+                    </button>
+                  )
+                }
+                {
+                  js && (
+                    <button
+                      class="sk-tabs__trigger sk-interactive"
+                      data-sk-tabs-trigger
+                      data-value="js"
+                      type="button"
+                    >
+                      JS
+                    </button>
+                  )
+                }
               </div>
               <div
                 class="sk-tabs__content sk-component-preview__code"
@@ -423,14 +440,30 @@ const screenToggleLabels = Object.fromEntries(
               >
                 <CodeBlock code={vanillaCode} full={codeFull} lang={lang} />
               </div>
-              <div
-                class="sk-tabs__content sk-component-preview__code"
-                data-sk-tabs-content
-                data-value="js"
-                data-sk-component-preview-source="js"
-              >
-                <CodeBlock code={js ?? ""} lang="ts" />
-              </div>
+              {
+                css && (
+                  <div
+                    class="sk-tabs__content sk-component-preview__code"
+                    data-sk-tabs-content
+                    data-value="css"
+                    data-sk-component-preview-source="css"
+                  >
+                    <CodeBlock code={css} lang="css" />
+                  </div>
+                )
+              }
+              {
+                js && (
+                  <div
+                    class="sk-tabs__content sk-component-preview__code"
+                    data-sk-tabs-content
+                    data-value="js"
+                    data-sk-component-preview-source="js"
+                  >
+                    <CodeBlock code={js} lang="ts" />
+                  </div>
+                )
+              }
             </div>
           ) : (
             <div class="sk-component-preview__code" data-sk-component-preview-source="html">

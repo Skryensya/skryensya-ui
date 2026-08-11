@@ -140,6 +140,20 @@ two bindings meet a contract at different depths, React writes three elements wh
 writes five, so the template is what makes those the same structure rather than two.
 _Avoid_: markup template, skeleton, scaffold
 
+**Surface**:
+The part of a Contract a consumer can depend on: its options and their defaults, what each slot
+accepts, which signatures exist and what they require. Deliberately narrower than the Contract —
+a template rewrite or a reworded `because` changes nothing anyone wrote, so it is outside. Hashed,
+so "did the promise move" is a question with a mechanical answer.
+_Avoid_: API, shape, public interface
+
+**Changelog entry**:
+One dated, consumer-facing statement of what changed in one Contract, in both languages, under one
+of five kinds (`breaking`, `feature`, `bugfix`, `rework`, `chore`). Append-only: an entry is never
+rewritten, because it describes a moment. Its date is when it was WRITTEN; the release ledger is
+what turns that into the version a consumer can ask for.
+_Avoid_: release note, history, commit message
+
 **Usage tree**:
 A composition written as data: signatures, the options given to each, and their children. Authored
 once and rendered by both bindings, so it is simultaneously the example, the snippet, the thing an
@@ -394,6 +408,13 @@ component's own guide.
 _Avoid_: bootstrap, setup, boilerplate, starter, font provisioning
 
 ## Enforcement
+
+**The surface gate**:
+The check that refuses to emit anything when a Contract's Surface no longer matches the hash its
+changelog recorded. It is what makes "add an entry when a component changes" a rule rather than a
+habit: the build stops and names the new hash to paste. Nothing enforces the entry's WORDS, so the
+gate buys the moment, not the quality.
+_Avoid_: the changelog check, the version bump
 
 **The validator**:
 The dependency-free checker that reads the CSS and fails on a broken rule. It is what makes the

@@ -4,4 +4,25 @@
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
 surface: "3171cff025fbcb94"
-entries: []
+entries:
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: Toast se publica como contrato, con 3 signatures
+      body: >-
+        Entra al catálogo con <code>ToastRegion</code>, <code>ToastTemplate</code>, <code>Toast</code>:
+        los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez
+        de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-toast</code>: el markup
+        se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que
+        corra ninguno. Opciones: <code>tone</code>, <code>dismissible</code>, <code>dismissLabel</code>,
+        <code>timeout</code>. La hoja es <code>components/toast.css</code>.
+    en:
+      title: Toast is published as a contract, with 3 signatures
+      body: >-
+        It joins the catalogue with <code>ToastRegion</code>, <code>ToastTemplate</code>,
+        <code>Toast</code>: both bindings realize it, and this page's reference is rendered from the
+        compiled contract rather than from prose written beside it. The Vanilla binding mounts on
+        <code>data-sk-toast</code>: the markup is authored and the enhancer hydrates it, so whatever
+        needs no JavaScript works before any runs. Options: <code>tone</code>, <code>dismissible</code>,
+        <code>dismissLabel</code>, <code>timeout</code>. Its stylesheet is
+        <code>components/toast.css</code>.

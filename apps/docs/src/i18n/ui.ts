@@ -1603,6 +1603,48 @@ export const ui = {
       "<code>data-multicol</code> activa el muro de tarjetas por columnas. <code>data-columns</code> define su máximo de carriles: 1 → 2 → 3 → 4 en los breakpoints <code>36rem</code>, <code>52rem</code> y <code>72rem</code>. En React se pasa como <code>data-multicol</code>.",
     "grid.contractItem4": "En React, <code>Grid</code> recibe <code>as</code>, <code>columns</code> y <code>gap</code>; <code>columns</code> tiene por defecto <code>1</code>.",
     "grid.test1": "Renderiza Stack, Inline y Grid según los contratos de layout documentados.",
+    "layoutGridPage.description":
+      "Layout Grid: un flujo de página con medidas narrow, content, breakout y full-width.",
+    "layoutGridPage.lede":
+      "Layout Grid da cuatro anchos nombrados a un único flujo de contenido. El elemento raíz conserva su semántica —puede ser <code>main</code>, <code>article</code> o una sección— y cada hijo directo decide si necesita otra medida con <code>data-width</code>.",
+    "layoutGridPage.exampleKicker": "Guía de publicación",
+    "layoutGridPage.exampleTitle": "Una guía que se lee de principio a fin",
+    "layoutGridPage.exampleIntro":
+      "Una página clara convierte una decisión compleja en un recorrido que se puede seguir.",
+    "layoutGridPage.exampleFirstSectionTitle": "Primero, define la historia",
+    "layoutGridPage.exampleFirstSectionBody":
+      "La jerarquía y el ritmo hacen que cada sección llegue en el momento indicado.",
+    "layoutGridPage.exampleHeroKicker": "Actualización de producto",
+    "layoutGridPage.exampleHeroTitle": "Una decisión necesita espacio para respirar",
+    "layoutGridPage.exampleHeroBody":
+      "El fondo cambia el contexto sin soltar el hilo de lectura.",
+    "layoutGridPage.exampleSecondSectionTitle": "Después, acompaña la decisión",
+    "layoutGridPage.exampleSecondSectionBody":
+      "La misma medida mantiene la lectura estable mientras el contenido gana importancia.",
+    "layoutGridPage.exampleFooter":
+      "Skryensya UI · Un sistema para interfaces cuidadas.",
+    "layoutGridPage.levelsTitle": "Cuatro anchos, un flujo",
+    "layoutGridPage.levelsBody":
+      "Sin atributo, cada hijo directo vive en <code>content</code>. Sólo agrega <code>data-width</code> cuando el elemento necesita una medida distinta; no hace falta un wrapper por nivel.",
+    "layoutGridPage.levelNarrow": "Prosa, resúmenes o formularios de lectura concentrada.",
+    "layoutGridPage.levelContent": "La medida por defecto para el contenido principal.",
+    "layoutGridPage.levelBreakout": "Figuras, tablas o grupos que necesitan más aire lateral.",
+    "layoutGridPage.levelFullWidth": "Fondos, bordes o medios que llegan al borde de la grilla.",
+    "layoutGridPage.fullWidthTitle": "Full-width sin soltar el contenido",
+    "layoutGridPage.fullWidthBody":
+      "Un hijo directo <code>full-width</code> se vuelve una grilla con las mismas columnas. Sus hijos directos vuelven a <code>content</code> por defecto, y pueden usar <code>narrow</code>, <code>breakout</code> o <code>full-width</code> otra vez.",
+    "layoutGridPage.htmlTitle": "HTML semántico",
+    "layoutGridPage.htmlBody":
+      "La clase sólo define la geometría. Elige <code>main</code>, <code>section</code>, <code>figure</code> y los demás elementos por lo que significan; <code>data-width</code> sólo acepta <code>narrow</code>, <code>content</code>, <code>breakout</code> o <code>full-width</code>.",
+    "layoutGridPage.reactBody":
+      "En React, <code>LayoutGrid</code> sólo imprime <code>sk-layout-grid</code>; los hijos conservan sus elementos y el mismo <code>data-width</code>.",
+    "layoutGridPage.configTitle": "Configuración pública",
+    "layoutGridPage.configBody1":
+      "Los cuatro custom properties públicos viven en el root y se pueden sobrescribir por página o sección.",
+    "layoutGridPage.configBody2":
+      "Conserva <code>narrow ≤ content ≤ breakout</code>. Los tracks intermedios se calculan a partir de esas diferencias; invertir el orden no describe una medida válida.",
+    "layoutGridPage.test1":
+      "Renderiza LayoutGrid sin apropiarse de la semántica ni de data-width de sus hijos.",
 
     "heading.description": "Heading: jerarquía semántica y tamaño visual independientes.",
     "heading.lede":
@@ -4274,6 +4316,48 @@ export const ui = {
       "<code>data-multicol</code> turns on the column-flowing card wall. <code>data-columns</code> sets its lane ceiling: 1 → 2 → 3 → 4 at the <code>36rem</code>, <code>52rem</code>, and <code>72rem</code> breakpoints. In React it is passed as <code>data-multicol</code>.",
     "grid.contractItem4": "In React, <code>Grid</code> takes <code>as</code>, <code>columns</code>, and <code>gap</code>; <code>columns</code> defaults to <code>1</code>.",
     "grid.test1": "Renders Stack, Inline and Grid as the documented layout contracts.",
+    "layoutGridPage.description":
+      "Layout Grid: one page flow with narrow, content, breakout, and full-width measures.",
+    "layoutGridPage.lede":
+      "Layout Grid gives one content flow four named widths. The root keeps its semantics —it can be <code>main</code>, <code>article</code>, or a section— and each direct child chooses another measure only when it needs one with <code>data-width</code>.",
+    "layoutGridPage.exampleKicker": "Publishing guide",
+    "layoutGridPage.exampleTitle": "A guide that reads from start to finish",
+    "layoutGridPage.exampleIntro":
+      "A clear page turns a complex decision into a path readers can follow.",
+    "layoutGridPage.exampleFirstSectionTitle": "First, define the story",
+    "layoutGridPage.exampleFirstSectionBody":
+      "Hierarchy and rhythm bring each section forward at the right moment.",
+    "layoutGridPage.exampleHeroKicker": "Product update",
+    "layoutGridPage.exampleHeroTitle": "A decision needs room to breathe",
+    "layoutGridPage.exampleHeroBody":
+      "The background changes context without releasing the reading flow.",
+    "layoutGridPage.exampleSecondSectionTitle": "Then, support the decision",
+    "layoutGridPage.exampleSecondSectionBody":
+      "The same measure keeps reading steady while the content gains importance.",
+    "layoutGridPage.exampleFooter":
+      "Skryensya UI · A system for thoughtful interfaces.",
+    "layoutGridPage.levelsTitle": "Four widths, one flow",
+    "layoutGridPage.levelsBody":
+      "Without an attribute, every direct child lives in <code>content</code>. Add <code>data-width</code> only when an element needs another measure; there is no wrapper per level.",
+    "layoutGridPage.levelNarrow": "Prose, summaries, or forms with a concentrated reading measure.",
+    "layoutGridPage.levelContent": "The default measure for primary content.",
+    "layoutGridPage.levelBreakout": "Figures, tables, or groups that need more inline room.",
+    "layoutGridPage.levelFullWidth": "Backgrounds, borders, or media that reach the grid edge.",
+    "layoutGridPage.fullWidthTitle": "Full width without releasing content",
+    "layoutGridPage.fullWidthBody":
+      "A direct <code>full-width</code> child becomes a grid with the same columns. Its direct children return to <code>content</code> by default and may use <code>narrow</code>, <code>breakout</code>, or <code>full-width</code> again.",
+    "layoutGridPage.htmlTitle": "Semantic HTML",
+    "layoutGridPage.htmlBody":
+      "The class defines geometry only. Choose <code>main</code>, <code>section</code>, <code>figure</code>, and every other element for its meaning; <code>data-width</code> accepts only <code>narrow</code>, <code>content</code>, <code>breakout</code>, or <code>full-width</code>.",
+    "layoutGridPage.reactBody":
+      "In React, <code>LayoutGrid</code> only renders <code>sk-layout-grid</code>; children keep their elements and the same <code>data-width</code>.",
+    "layoutGridPage.configTitle": "Public configuration",
+    "layoutGridPage.configBody1":
+      "The four public custom properties live on the root and can be overridden per page or section.",
+    "layoutGridPage.configBody2":
+      "Keep <code>narrow ≤ content ≤ breakout</code>. Intermediate tracks are calculated from those differences; reversing their order does not describe a valid measure.",
+    "layoutGridPage.test1":
+      "Renders LayoutGrid without taking over its children's semantics or data-width.",
 
     "heading.description": "Heading: semantic hierarchy and visual size, independent of each other.",
     "heading.lede":

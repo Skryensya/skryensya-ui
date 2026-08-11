@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Box, Grid, Inline, Stack, Wrapper } from "./layout.js";
+import { Box, Grid, Inline, LayoutGrid, Stack, Wrapper } from "./layout.js";
 
 describe("layout primitives", () => {
   it("keeps semantic ownership with the caller while applying Box defaults", () => {
@@ -32,6 +32,20 @@ describe("layout primitives", () => {
     expect(ui.container.querySelector(".sk-inline")?.hasAttribute("data-equal")).toBe(true);
     expect(ui.container.querySelector(".sk-grid")?.getAttribute("data-columns")).toBe("3");
     expect(ui.container.querySelector(".sk-grid")?.hasAttribute("data-multicol")).toBe(true);
+  });
+
+  it("renders LayoutGrid while leaving width on its semantic children", () => {
+    const ui = render(
+      <LayoutGrid as="main" className="document">
+        <p data-width="narrow">Summary</p>
+        <section data-width="full-width">Hero</section>
+      </LayoutGrid>,
+    );
+
+    const grid = ui.container.querySelector("main.sk-layout-grid.document");
+    expect(grid).not.toBeNull();
+    expect(grid?.querySelector("p")?.getAttribute("data-width")).toBe("narrow");
+    expect(grid?.querySelector("section")?.getAttribute("data-width")).toBe("full-width");
   });
 
   it("renders Wrapper as a page column on the size scale", () => {

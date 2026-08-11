@@ -20,6 +20,17 @@ Grid:
     - "los anchos son distintos entre sí; eso es un Inline"
   alternatives:
     - Inline
+
+LayoutGrid:
+  useWhen:
+    - "una página necesita una medida de lectura y algunos hijos deben ser angostos, abrirse o sangrar de borde a borde"
+    - "una sección full-width debe conservar su contenido centrado sin un wrapper adicional"
+  avoidWhen:
+    - "todos los hijos comparten un único techo de ancho; Wrapper es más simple"
+    - "se distribuyen tarjetas en columnas iguales; eso es Grid"
+  alternatives:
+    - Wrapper
+    - Grid
 DensityScope:
   useWhen:
     - "un subárbol completo necesita escalar el espaciado semántico sin cambiar cada componente"

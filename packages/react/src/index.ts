@@ -73,11 +73,12 @@ export type {
   InputProps,
   TextareaProps,
 } from "./components/input.js";
-export { Box, Grid, Inline, Stack, Wrapper } from "./components/layout.js";
+export { Box, Grid, Inline, LayoutGrid, Stack, Wrapper } from "./components/layout.js";
 export type {
   BoxProps,
   GridProps,
   InlineProps,
+  LayoutGridProps,
   StackProps,
   WrapperProps,
 } from "./components/layout.js";

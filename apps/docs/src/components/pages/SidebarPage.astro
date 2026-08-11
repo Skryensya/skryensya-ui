@@ -1,0 +1,129 @@
+---
+/* The resizable demo hosts a TreeView, and a component's CSS is opt-in (decision 17): the frame
+   copies THIS page's styles, so a stylesheet the page never imports is a stylesheet the demo never
+   gets. */
+import "@skryensya/core/components/tree-view.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { sidebarResizableTree, sidebarTree } from "../../demos/sidebar";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/sidebar.yaml?raw";
+import coreSource from "@core/src/sidebar.ts?raw";
+import cssSource from "@core/css/components/sidebar.css?raw";
+import vanillaMountSource from "@vanilla/src/components/sidebar.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/sidebar.test.ts?raw";
+import reactSource from "@react/src/components/sidebar.tsx?raw";
+import reactTestSource from "@react/src/components/sidebar.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const css = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/sidebar.css";
+@import "@skryensya/core/patterns/nav-list.css";
+@import "@skryensya/core/patterns/icon.css";
+@import "@skryensya/core/patterns/state-layer.css";`;
+
+const js = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// ${t("sidebarPage.iconsComment").split("\n").join("\n// ")}
+mountIcons(document, lucideIcons);
+
+await initComponents();`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/sidebar.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/sidebar.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/sidebar.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/sidebar.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/sidebar.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/sidebar.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/sidebar.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Sidebar"
+  description={t("sidebarPage.description")}
+  contractId="sidebar"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/sidebar.css", probe: "sk-sidebar" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/sidebar.test.tsx",
+      tests: [
+        { name: "collapses uncontrolled and reports the change", description: t("sidebarPage.test1") },
+        { name: "points the trigger at the content it controls", description: t("sidebarPage.test2") },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/sidebar.test.ts",
+      tests: [
+        {
+          name: "writes collapsed state, emits the change, and cleanup removes listeners",
+          description: t("sidebarPage.test3"),
+        },
+        {
+          name: "writes the width property while dragging, and only while dragging",
+          description: t("sidebarPage.test4"),
+        },
+        {
+          name: "restores a stored width on mount, and leaves an unkeyed sidebar alone",
+          description: t("sidebarPage.test5"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("sidebarPage.lede")} />
+
+    <h3>{t("sidebarPage.contentTitle")}</h3>
+    <p set:html={t("sidebarPage.contentBody")} />
+
+    <p set:html={t("sidebarPage.collapseBody")} />
+    {/* El `.app-shell` que envuelve al Sidebar está DENTRO del árbol, no en un slot alrededor de él.
+        Un sidebar sólo se lee al lado de la cosa junto a la que se sienta: sin un main que se ensanche,
+        contraer no muestra nada. */}
+    <ComponentPreview tree={sidebarTree(t, { home: "/", reports: "/reportes" })} label="Sidebar" flush />
+
+    <h3>{t("sidebarPage.widthTitle")}</h3>
+    <p set:html={t("sidebarPage.widthBody1")} />
+    <p set:html={t("sidebarPage.widthBody2")} />
+    <p set:html={t("sidebarPage.widthBody3")} />
+    <p set:html={t("sidebarPage.widthBody4")} />
+    <p set:html={t("sidebarPage.widthBody5")} />
+    <p set:html={t("sidebarPage.widthBody6")} />
+    <ComponentPreview tree={sidebarResizableTree(t)} label={t("sidebarPage.resizableLabel")} flush />
+
+    <h3 set:html={t("sidebarPage.detailsTitle")} />
+    <p set:html={t("sidebarPage.detailsBody1")} />
+    <p set:html={t("sidebarPage.detailsBody2")} />
+
+    <h3>{t("sidebarPage.widthStatesTitle")}</h3>
+    <p set:html={t("sidebarPage.widthStatesBody1")} />
+    <p set:html={t("sidebarPage.widthStatesBody2")} />
+    <p set:html={t("sidebarPage.widthStatesBody3")} />
+
+    <h3>{t("sidebarPage.triggerTitle")}</h3>
+    <p set:html={t("sidebarPage.triggerBody")} />
+
+    <h3>{t("sidebarPage.htmlTitle")}</h3>
+    <p set:html={t("sidebarPage.htmlBody1")} />
+    <p set:html={t("sidebarPage.htmlBody2")} />
+
+    <p set:html={t("sidebarPage.reactBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={css} label="CSS" />
+
+    <h3>{t("sidebarPage.vanillaInitTitle")}</h3>
+    <CodeBlock code={js} label="JavaScript" />
+  </Fragment>
+</ComponentPageShell>

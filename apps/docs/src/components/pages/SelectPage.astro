@@ -1,0 +1,146 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { selectNativeTree, selectTree } from "../../demos/select";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/select.yaml?raw";
+import coreSource from "@core/src/select.ts?raw";
+import cssSource from "@core/css/components/select.css?raw";
+import vanillaMountSource from "@vanilla/src/components/select.ts?raw";
+import reactSource from "@react/src/components/select.tsx?raw";
+import reactNativeSource from "@react/src/components/select-native.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+const t = useTranslations(getLocale(Astro.url));
+
+const styles = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/select.css";`;
+
+const nativeInstall = `pnpm add @skryensya/core`;
+
+const js = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// ${t("selectPage.iconsComment").split("\n").join("\n// ")}
+mountIcons(document, lucideIcons);
+
+await initComponents();`;
+
+const listen = `document
+  .getElementById("plan")
+  .addEventListener("sk-value-change", (event) => {
+    console.log(event.detail.value); // ["pro"]
+  });`;
+
+const forms = `<div
+  class="sk-select"
+  data-sk-select
+  id="plan"
+>
+  <!-- ${t("selectPage.formsComment")} -->
+  <select data-sk-select-hidden name="plan">
+    <option value="starter">Starter</option>
+    <option value="pro">Pro</option>
+  </select>
+  …
+</div>`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/select.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/select.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/select.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/select.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/select.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/select-native.tsx", source: reactNativeSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Select"
+  description={t("selectPage.description")}
+  contractId="select"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/select.css", probe: "sk-select" },
+    { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+    { file: "components/select.css", probe: "sk-select-native" },
+  ]}
+  tests={[
+    {
+      file: "packages/react/src/components/select.test.tsx",
+      tests: [
+        {
+          name: "uses the Zag select machine for popup selection and form value",
+          description: t("selectPage.test1"),
+        },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/select.test.ts",
+      tests: [
+        {
+          name: "drives the machine over authored markup: ARIA, selection and the value text",
+          description: t("selectPage.test2"),
+        },
+        {
+          name: "emits sk-value-change, and cleanup stops the machine",
+          description: t("selectPage.test3"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("selectPage.lede")} />
+    <p set:html={t("selectPage.nativeLinkBody")} />
+    <ComponentPreview tree={selectTree(t)} label={t("selectPage.enhancedLabel")} viewport="menu" />
+    <p set:html={t("selectPage.densityBody")} />
+
+    <h3>{t("selectPage.htmlTitle")}</h3>
+    <p set:html={t("selectPage.htmlBody")} />
+
+    <h3>{t("selectPage.formsTitle")}</h3>
+    <CodeBlock code={forms} label="HTML" />
+
+    <h3>{t("selectPage.enhancedContractTitle")}</h3>
+    <ul>
+      <li set:html={t("selectPage.enhancedContractItem1")} />
+      <li set:html={t("selectPage.enhancedContractItem2")} />
+      <li set:html={t("selectPage.enhancedContractItem3")} />
+      <li set:html={t("selectPage.enhancedContractItem4")} />
+    </ul>
+
+    <h3>{t("selectPage.nativeTitle")}</h3>
+    <p class="lede" set:html={t("selectPage.nativeLede")} />
+    <p set:html={t("selectPage.nativeBody")} />
+    <ComponentPreview tree={selectNativeTree(t)} label={t("selectPage.nativeLabel")} viewport="menu" />
+
+    <h4>{t("selectPage.progressiveTitle")}</h4>
+    <p set:html={t("selectPage.progressiveBody")} />
+
+    <h4>{t("selectPage.nativeContractTitle")}</h4>
+    <ul>
+      <li set:html={t("selectPage.nativeContractItem1")} />
+      <li set:html={t("selectPage.nativeContractItem2")} />
+      <li set:html={t("selectPage.nativeContractItem3")} />
+      <li set:html={t("selectPage.nativeContractItem4")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+
+    <h3>{t("selectPage.vanillaInitTitle")}</h3>
+    <CodeBlock code={js} label="JavaScript" />
+
+    <h3>{t("selectPage.listenTitle")}</h3>
+    <CodeBlock code={listen} label="JavaScript" />
+
+    <h3>{t("selectPage.nativeInstallTitle")}</h3>
+    <CodeBlock code={nativeInstall} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+</ComponentPageShell>

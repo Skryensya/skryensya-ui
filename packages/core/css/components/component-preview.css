@@ -567,9 +567,35 @@
 
   .sk-component-preview > .sk-code-preview,
   .sk-component-preview__code > .sk-code-preview {
+    /*
+     * The source footer exposes this root at its lower curve. Share the outer surface there so
+     * its concentric radius reveals ComponentPreview's paint, never CodePreview's dark backing.
+     * Shiki paints the highlighted `<pre>` separately, so its code theme remains unchanged.
+     */
+    --sk-code-preview-bg: var(--sk-component-preview-bg);
+    --sk-code-preview-footer-bg: var(--sk-component-preview-bg);
     margin-block: 0;
     border: 0;
     border-radius: 0;
+  }
+
+  /*
+   * A standalone CodePreview owns all four corners. Inside this composite surface, its source
+   * begins against the stage or source-tab strip, so a rounded top edge opens a visible seam.
+   * The final source edge sits inside ComponentPreview's 1px border: use the concentric inner
+   * radius there. The root deliberately stays overflow-visible so the copy action can remain
+   * sticky; its lower curve is visually continuous because both source surfaces above share
+   * ComponentPreview's background.
+   */
+  .sk-component-preview .sk-code-preview__preview:first-child > .sk-code-preview__viewport {
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+  }
+
+  .sk-component-preview .sk-code-preview__preview:last-child > .sk-code-preview__viewport,
+  .sk-component-preview .sk-code-preview__more:last-child {
+    border-end-start-radius: max(0px, calc(var(--radius-surface) - 1px));
+    border-end-end-radius: max(0px, calc(var(--radius-surface) - 1px));
   }
 
   /*

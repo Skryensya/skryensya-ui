@@ -1,0 +1,98 @@
+---
+/* The markup below is `.sk-list`; the opt-in sheet lives here rather than in every consuming page,
+   the same reasoning `patterns/vaul.css` already gets in Base.astro (§ dialog/drawer comment): an
+   opt-in stylesheet is imported where the markup that uses it lives. Every page that hands this
+   component a `tests` prop gets the real list styling for free, with nothing to remember to import. */
+import "@skryensya/core/components/list.css";
+import { getLocale, useTranslations } from "../i18n";
+import { testStatus } from "../lib/test-results";
+
+export type TestGroup = {
+  /** Test file path, shown as the group's aria-label and looked up in test-results.json. */
+  file: string;
+  tests: readonly {
+    /** The real it() title, verbatim: the key test-results.json was written under. */
+    name: string;
+    /** One short line: what it checks, already translated by the caller. */
+    description: string;
+  }[];
+};
+
+interface Props {
+  groups: readonly TestGroup[];
+}
+
+const { groups } = Astro.props;
+const t = useTranslations(getLocale(Astro.url));
+
+/** Only "passed"/"failed" get their own icon and tone; a skipped, todo, or missing result all read
+ *  the same to a reader ("nothing to show yet"), so they collapse into one neutral "unknown". */
+function statusDisplay(file: string, name: string) {
+  const status = testStatus(file, name);
+  if (status === "passed") return { tone: "passed", icon: "success", labelKey: "tests.statusPassed" } as const;
+  if (status === "failed") return { tone: "failed", icon: "danger", labelKey: "tests.statusFailed" } as const;
+  return { tone: "unknown", icon: "clock", labelKey: "tests.statusUnknown" } as const;
+}
+---
+
+<h2>{t("tests.title")}</h2>
+<p>{t("tests.intro")}</p>
+
+{
+  groups.map((group) => (
+    <>
+      <p class="docs-tests__file">
+        <span data-sk-icon="file" data-sk-icon-size="sm" aria-hidden="true"></span>
+        <span class="mono">{group.file}</span>
+      </p>
+      <ul class="sk-list" aria-label={group.file}>
+        {group.tests.map(({ name, description }) => {
+          const display = statusDisplay(group.file, name);
+          return (
+            <li class="sk-list__item">
+              <span class="sk-list__leading" data-tone={display.tone} role="img" aria-label={t(display.labelKey)}>
+                <span data-sk-icon={display.icon} data-sk-icon-size="sm" aria-hidden="true" />
+              </span>
+              {/* `.sk-list__item` is a flex row: a description handed to it directly would scatter its
+                  text runs and `<code>` chips as separate flex children (each one flex-centered with a
+                  row gap between it), instead of flowing as one sentence. `.sk-list__title` is plain
+                  inline text, so wrapping the mixed content there keeps the code chips inline with the
+                  words around them, and gives the row its single flex child. */}
+              <span class="sk-list__content">
+                <span class="sk-list__title" set:html={description} />
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </>
+  ))
+}
+
+<style>
+  .docs-tests__file {
+    display: flex;
+    align-items: center;
+    gap: var(--space-inline-xs);
+    padding-block-start: var(--space-stack-lg);
+    margin-block-end: var(--space-stack-xs);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+  }
+
+  .docs-tests__file [data-sk-icon] {
+    flex: none;
+  }
+
+  .sk-list__leading[data-tone="passed"] {
+    color: var(--color-text-success);
+  }
+
+  .sk-list__leading[data-tone="failed"] {
+    color: var(--color-text-danger);
+  }
+
+  .sk-list__leading[data-tone="unknown"] {
+    color: var(--color-text-tertiary);
+  }
+</style>

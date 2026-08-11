@@ -1,0 +1,196 @@
+---
+/*
+ * A composition guide, not a component page: there is no `sk-card`, no `@skryensya/react/card` and
+ * no compiled contract to publish, on purpose (see the callout below). The shell runs with no
+ * `contractId`, so Referencia and Cambios drop out and only Uso/Instalación remain, same as any
+ * component page with nothing to report there.
+ */
+import "../../examples/card.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { cardCopy } from "../../examples/card-data";
+import { cardSources } from "../../examples/card-sources";
+import {
+  CardAccentSoftDemo,
+  CardAccentSolidDemo,
+  CardActionDemo,
+  CardBasicDemo,
+  CardGradientDemo,
+  CardLinkDemo,
+  CardMediaDemo,
+  CardMediaLinkDemo,
+  CardMetaDemo,
+  CardProductDemo,
+  CardSelectDemo,
+  CardStatDemo,
+} from "../react-demos/card";
+import { getLocale, useTranslations } from "../../i18n";
+
+/* The twelve examples are a LADDER: each rung adds one decision to the one before it, and every
+ * rung is shown as a grid of three, because a card that only looks right on its own is a card whose
+ * height, media and footer were never tested against its siblings. */
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+const copy = cardCopy[locale];
+const src = cardSources(copy);
+---
+
+<ComponentPageShell title="Card" description={t("cardPage.description")}>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("cardPage.lede")} />
+
+    <div class="sk-callout" data-tone="info">
+      <div class="sk-callout__content">
+        <div class="sk-callout__description" set:html={t("cardPage.calloutBody")} />
+      </div>
+    </div>
+
+    <h3>{t("cardPage.chooseTitle")}</h3>
+    <p set:html={t("cardPage.chooseBody")} />
+    <div class="sk-table-scroll">
+      <table class="sk-table">
+        <thead>
+          <tr><th>{t("cardPage.tableHeadSurface")}</th><th>{t("cardPage.tableHeadUses")}</th><th>{t("cardPage.tableHeadElement")}</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>{t("cardPage.tableRow1Surface")}</td><td><a href="/componentes/box">Box</a></td><td set:html={t("cardPage.tableRow1Element")} /></tr>
+          <tr><td>{t("cardPage.tableRow2Surface")}</td><td><a href="/componentes/link">TileLink</a></td><td set:html={t("cardPage.tableRow2Element")} /></tr>
+          <tr><td>{t("cardPage.tableRow3Surface")}</td><td><a href="/componentes/button">TileButton</a></td><td set:html={t("cardPage.tableRow3Element")} /></tr>
+          <tr><td>{t("cardPage.tableRow4Surface")}</td><td><a href="/componentes/checkbox">TileCheckbox</a></td><td set:html={t("cardPage.tableRow4Element")} /></tr>
+          <tr><td>{t("cardPage.tableRow5Surface")}</td><td><a href="/componentes/radio-group">TileRadioGroup</a></td><td set:html={t("cardPage.tableRow5Element")} /></tr>
+          <tr><td>{t("cardPage.tableRow6Surface")}</td><td><a href="/componentes/accordion">Accordion</a></td><td set:html={t("cardPage.tableRow6Element")} /></tr>
+        </tbody>
+      </table>
+    </div>
+    <p set:html={t("cardPage.geometryBody")} />
+
+    <h3 id="basic">{t("cardPage.basicTitle")}</h3>
+    <p set:html={t("cardPage.basicBody")} />
+    <ComponentPreview html={src.basic.html} react={src.basic.react} label={copy.labels.basic} note={t("cardPage.basicNote")}>
+      <Fragment slot="react">
+        <CardBasicDemo client:load lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="meta">{t("cardPage.metaTitle")}</h3>
+    <p set:html={t("cardPage.metaBody")} />
+    <ComponentPreview html={src.meta.html} react={src.meta.react} label={copy.labels.meta} note={t("cardPage.metaNote")}>
+      <Fragment slot="react">
+        <CardMetaDemo client:load lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="acento-suave">{t("cardPage.accentSoftTitle")}</h3>
+    <p set:html={t("cardPage.accentSoftBody")} />
+    <ComponentPreview html={src.accentSoft.html} react={src.accentSoft.react} label={copy.labels.accentSoft} note={t("cardPage.accentSoftNote")}>
+      <Fragment slot="react">
+        <CardAccentSoftDemo client:load lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="acento-solido">{t("cardPage.accentSolidTitle")}</h3>
+    <p set:html={t("cardPage.accentSolidBody")} />
+    <ComponentPreview html={src.accentSolid.html} react={src.accentSolid.react} label={copy.labels.accentSolid} note={t("cardPage.accentSolidNote")}>
+      <Fragment slot="react">
+        <CardAccentSolidDemo client:load lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="stat-card">{t("cardPage.statTitle")}</h3>
+    <p set:html={t("cardPage.statBody")} />
+    <ComponentPreview html={src.stat.html} react={src.stat.react} label={copy.labels.stat} note={t("cardPage.statNote")}>
+      <Fragment slot="react">
+        <CardStatDemo client:load lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="enlace">{t("cardPage.linkTitle")}</h3>
+    <p set:html={t("cardPage.linkBody")} />
+    <ComponentPreview html={src.link.html} react={src.link.react} label={copy.labels.link} note={t("cardPage.linkNote")}>
+      <Fragment slot="react">
+        <CardLinkDemo client:load lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="accion">{t("cardPage.actionTitle")}</h3>
+    <p set:html={t("cardPage.actionBody")} />
+    <ComponentPreview html={src.action.html} react={src.action.react} label={copy.labels.action} note={t("cardPage.actionNote")}>
+      <Fragment slot="react">
+        <CardActionDemo client:load lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="seleccion">{t("cardPage.selectTitle")}</h3>
+    <p set:html={t("cardPage.selectBody")} />
+    <ComponentPreview html={src.select.html} react={src.select.react} label={copy.labels.select} note={t("cardPage.selectNote")}>
+      <Fragment slot="react">
+        <CardSelectDemo client:load lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="imagen">{t("cardPage.mediaTitle")}</h3>
+    <p set:html={t("cardPage.mediaBody")} />
+    <ComponentPreview html={src.media.html} react={src.media.react} label={copy.labels.media} note={t("cardPage.mediaNote")}>
+      <Fragment slot="react">
+        <CardMediaDemo client:load lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="gradiente">{t("cardPage.gradientTitle")}</h3>
+    <p set:html={t("cardPage.gradientBody")} />
+    <ComponentPreview html={src.gradient.html} react={src.gradient.react} label={copy.labels.gradient} note={t("cardPage.gradientNote")}>
+      <Fragment slot="react">
+        <CardGradientDemo client:load lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="imagen-enlace">{t("cardPage.mediaLinkTitle")}</h3>
+    <p set:html={t("cardPage.mediaLinkBody")} />
+    <ComponentPreview html={src.mediaLink.html} react={src.mediaLink.react} label={copy.labels.mediaLink} note={t("cardPage.mediaLinkNote")}>
+      <Fragment slot="react">
+        <CardMediaLinkDemo client:load lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="producto">{t("cardPage.productTitle")}</h3>
+    <p set:html={t("cardPage.productBody")} />
+    <ComponentPreview html={src.product.html} react={src.product.react} label={copy.labels.product} note={t("cardPage.productNote")}>
+      <Fragment slot="react">
+        <CardProductDemo client:load lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3>Do &amp; Don't</h3>
+    <div class="sk-grid" data-columns="2" data-gap="md" data-multicol>
+      <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="lg">
+        <div class="sk-stack" data-gap="sm">
+          <span class="sk-badge" data-tone="success">{t("cardPage.doTitle")}</span>
+          <h4 class="sk-heading" data-size="h4">{t("cardPage.doHeading")}</h4>
+          <ul>
+            <li set:html={t("cardPage.doItem1")} />
+            <li set:html={t("cardPage.doItem2")} />
+            <li set:html={t("cardPage.doItem3")} />
+            <li set:html={t("cardPage.doItem4")} />
+            <li set:html={t("cardPage.doItem5")} />
+          </ul>
+        </div>
+      </section>
+      <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="lg">
+        <div class="sk-stack" data-gap="sm">
+          <span class="sk-badge" data-tone="danger">{t("cardPage.dontTitle")}</span>
+          <h4 class="sk-heading" data-size="h4">{t("cardPage.dontHeading")}</h4>
+          <ul>
+            <li set:html={t("cardPage.dontItem1")} />
+            <li set:html={t("cardPage.dontItem2")} />
+            <li set:html={t("cardPage.dontItem3")} />
+            <li set:html={t("cardPage.dontItem4")} />
+            <li set:html={t("cardPage.dontItem5")} />
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <h3>{t("cardPage.implTitle")}</h3>
+    <p set:html={t("cardPage.implBody")} />
+  </Fragment>
+</ComponentPageShell>

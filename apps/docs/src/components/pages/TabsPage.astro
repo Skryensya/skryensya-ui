@@ -1,0 +1,105 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  tabsAdvancedScript,
+  tabsAdvancedTree,
+  tabsBasicTree,
+  tabsStatesTree,
+} from "../../demos/tabs";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/tabs.yaml?raw";
+import coreSource from "@core/src/tabs.ts?raw";
+import cssSource from "@core/css/components/tabs.css?raw";
+import vanillaMountSource from "@vanilla/src/components/tabs.ts?raw";
+import vanillaCoordinatorSource from "@vanilla/src/components/Tabs.svelte?raw";
+import vanillaTestSource from "@vanilla/src/components/tabs.test.ts?raw";
+import reactSource from "@react/src/components/tabs.tsx?raw";
+import reactTestSource from "@react/src/components/tabs.test.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const css = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/tabs.css";
+@import "@skryensya/core/patterns/state-layer.css";
+@import "@skryensya/core/patterns/layout.css";`;
+
+const vanillaJs = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+mountIcons(document, lucideIcons);
+await initComponents();`;
+
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/tabs.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/tabs.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/tabs.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/tabs.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/Tabs.svelte", source: vanillaCoordinatorSource, language: "svelte" },
+  { id: "packages/vanilla/src/components/tabs.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/tabs.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/tabs.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Tabs"
+  description={t("tabsPage.description")}
+  contractId="tabs"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/tabs.css", probe: "sk-tabs", title: "Tabs" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/tabs.test.tsx",
+      tests: [
+        { name: "connects the selected tab with its labelled panel", description: t("tabsPage.test1") },
+        { name: "mirrors selection on the root data attribute", description: t("tabsPage.test2") },
+        {
+          name: "moves roving focus with ArrowRight without changing manual selection",
+          description: t("tabsPage.test3"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("tabsPage.lede")} />
+
+    <h3>{t("tabsPage.basicTitle")}</h3>
+    <p set:html={t("tabsPage.basicBody")} />
+    <ComponentPreview tree={tabsBasicTree(t)} label={t("tabsPage.basicLabel")} />
+
+    <h3>{t("tabsPage.statesTitle")}</h3>
+    <p set:html={t("tabsPage.statesBody")} />
+    <ComponentPreview tree={tabsStatesTree(t)} label={t("tabsPage.statesLabel")} />
+
+    <h3>{t("tabsPage.advancedTitle")}</h3>
+    <p set:html={t("tabsPage.advancedBody")} />
+    <ComponentPreview tree={tabsAdvancedTree(t)} js={tabsAdvancedScript} previewScript={tabsAdvancedScript} label={t("tabsPage.advancedLabel")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("tabsPage.contractItem1")} />
+      <li set:html={t("tabsPage.contractItem2")} />
+      <li set:html={t("tabsPage.contractItem3")} />
+      <li set:html={t("tabsPage.contractItem4")} />
+      <li set:html={t("tabsPage.contractItem5")} />
+      <li set:html={t("tabsPage.contractItem6")} />
+    </ul>
+
+    <p set:html={t("tabsPage.reactBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={css} label="CSS" lang="css" />
+
+    <h3>{t("tabsPage.vanillaInitTitle")}</h3>
+    <p set:html={t("tabsPage.vanillaInitBody")} />
+    <CodeBlock code={vanillaJs} label="JavaScript" />
+  </Fragment>
+</ComponentPageShell>

@@ -1,0 +1,182 @@
+---
+/*
+ * THE hero-tabs shell every component page is meant to take: Uso / Instalación / Referencia /
+ * Style hooks / Accesibilidad / Cambios, over one `<h1>`. Pulled out of `AccordionPage.astro`,
+ * which piloted the shape, so a second component page does not have to re-copy ~150 lines of
+ * hero, tablist and `hasChanges` wiring to get it (see `apps/docs/src/scripts/hero-tabs-toc.ts`
+ * for the ToC half of this contract: it skips each panel's own first heading and starts the rail
+ * one level down, which is why `usage` gets a heading here but `install` and `a11y` bring their
+ * own visible one, matching the tab strip word for word — see that file's own comment for why).
+ *
+ * Referencia and Cambios are wired automatically from `contractId`: a page cannot describe an
+ * option the compiled contract does not also carry, because both are the one artifact
+ * `contract-reference.ts` reads (see `ContractReference`, `ContractChangelog`). `usage`, `install`
+ * and `a11y` stay named slots because their content is prose only a person can write.
+ *
+ * Install, Style hooks and Accesibilidad are OPTIONAL, the same reasoning `hasChanges` already
+ * used for Cambios: most of the smaller primitives (Box, Badge…) have nothing to install beyond
+ * the package, no styling hooks published yet, or no accessibility note beyond what their contract
+ * already states, and a tab that always opens on "nothing yet" trains a reader to stop clicking it.
+ *
+ * `contractId` is ALSO optional, for the handful of pages that survey several components at once
+ * (Primitivas) or that document a composition pattern with no contract of its own (Card): there is
+ * no single compiled artifact for "Box + Wrapper + ImageFrame + Stack + Inline + Grid" to read a
+ * Referencia tab from, so that tab (and Cambios, which reads the same manifest) simply does not
+ * render. The contract-level prose these pages already carried stays exactly where every other
+ * page keeps ITS un-compiled contract notes: inside the Uso slot, under `component.contractNotesTitle`.
+ */
+import Base from "../../layouts/Base.astro";
+import ContractChangelog from "../ContractChangelog.astro";
+import ContractReference from "../ContractReference.astro";
+import StylingHooks, { type HookGroup } from "../StylingHooks.astro";
+import SourceViewer, { type SourceFile } from "../SourceViewer.astro";
+import TestCoverage, { type TestGroup } from "../TestCoverage.astro";
+import { changelogFor } from "../../lib/contract-reference";
+import { getLocale, useTranslations } from "../../i18n";
+
+interface Props {
+  title: string;
+  description: string;
+  /** The contract id, as `packages/core` declares it and the manifest keys it. Omit for a page that
+   *  surveys several contracts at once or documents a pattern with none of its own: Referencia and
+   *  Cambios drop out rather than reading a contract that does not describe the page. */
+  contractId?: string;
+  styleGroups?: readonly HookGroup[];
+  /** Files for the "browse the source" panel under Referencia. Omit while a component has none wired. */
+  sourceFiles?: readonly SourceFile[];
+  /** One-line-per-test summaries, grouped by test file. Omit while a component has none curated yet. */
+  tests?: readonly TestGroup[];
+  hideVanillaMount?: boolean;
+}
+
+const { title, description, contractId, styleGroups = [], sourceFiles, tests = [], hideVanillaMount = true } = Astro.props;
+const t = useTranslations(getLocale(Astro.url));
+const hasContract = Boolean(contractId);
+const hasChanges = contractId ? changelogFor(contractId).length > 0 : false;
+const hasInstall = Astro.slots.has("install");
+const hasStyle = styleGroups.length > 0 || Astro.slots.has("style");
+const hasA11y = Astro.slots.has("a11y");
+const hasTests = tests.length > 0;
+---
+
+<Base title={title} description={description} hideVanillaMount={hideVanillaMount}>
+  <header class="docs-component-hero">
+    <p class="docs-component-hero__eyebrow">{t("section.components")}</p>
+    <h1>{title}</h1>
+  </header>
+
+  <div class="sk-tabs" data-orientation="horizontal" data-activation-mode="automatic" data-value="usage" data-sk-tabs>
+    <div class="sk-tabs__list docs-component-hero-tabs" data-sk-tabs-list aria-label={t("component.tabsAriaLabel", { name: title })}>
+      <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="usage" type="button">{t("component.tabUsage")}</button>
+      {
+        hasInstall && (
+          <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="install" type="button">
+            {t("component.tabInstall")}
+          </button>
+        )
+      }
+      {
+        hasContract && (
+          <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="contract" type="button">
+            {t("contract.tab")}
+          </button>
+        )
+      }
+      {
+        hasStyle && (
+          <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="style" type="button">
+            {t("component.tabStyle")}
+          </button>
+        )
+      }
+      {
+        hasA11y && (
+          <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="a11y" type="button">
+            {t("component.tabA11y")}
+          </button>
+        )
+      }
+      {
+        hasTests && (
+          <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="tests" type="button">
+            {t("component.tabTests")}
+          </button>
+        )
+      }
+      {
+        hasChanges && (
+          <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="changes" type="button">
+            {t("changelog.tab")}
+          </button>
+        )
+      }
+    </div>
+
+    <div class="sk-tabs__content" data-sk-tabs-content data-value="usage">
+      {/* Visually hidden: the tab strip right above already says "Uso"/"Usage" out loud. Exists so
+          the document outline has a real h2 to hang the slot's h3s off of. */}
+      <h2 class="sk-visually-hidden">{t("component.tabUsage")}</h2>
+      <slot name="usage" />
+    </div>
+
+    {
+      hasInstall && (
+        <div class="sk-tabs__content" data-value="install" data-sk-tabs-content>
+          <h2>{t("component.tabInstall")}</h2>
+          <slot name="install" />
+        </div>
+      )
+    }
+
+    {
+      hasContract && contractId && (
+        <div class="sk-tabs__content" data-sk-tabs-content data-value="contract">
+          <ContractReference id={contractId} />
+          {
+            sourceFiles && sourceFiles.length > 0 && (
+              <>
+                <h3>{t("sourceViewer.title")}</h3>
+                <p>{t("sourceViewer.intro", { name: title })}</p>
+                <SourceViewer id={contractId} title={title} files={sourceFiles} />
+              </>
+            )
+          }
+        </div>
+      )
+    }
+
+    {
+      hasStyle && (
+        <div class="sk-tabs__content" data-sk-tabs-content data-value="style">
+          {styleGroups.length > 0 && <StylingHooks groups={styleGroups} />}
+          <slot name="style" />
+        </div>
+      )
+    }
+
+    {
+      hasA11y && (
+        <div class="sk-tabs__content" data-sk-tabs-content data-value="a11y">
+          <h2>{t("component.tabA11y")}</h2>
+          <slot name="a11y" />
+        </div>
+      )
+    }
+
+    {
+      hasTests && (
+        <div class="sk-tabs__content" data-sk-tabs-content data-value="tests">
+          <TestCoverage groups={tests} />
+        </div>
+      )
+    }
+
+    {
+      hasChanges && contractId && (
+        <div class="sk-tabs__content" data-sk-tabs-content data-value="changes">
+          <ContractChangelog id={contractId} />
+        </div>
+      )
+    }
+  </div>
+</Base>

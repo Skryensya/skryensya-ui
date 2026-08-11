@@ -1,0 +1,166 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  carouselAutoplayTree,
+  carouselBareTree,
+  carouselCardsTree,
+  carouselNativeTree,
+} from "../../demos/carousel";
+import { getLocale, useTranslations } from "../../i18n";
+import "@skryensya/core/components/carousel.css";
+import "@skryensya/icons-lucide/carousel.css";
+import "../../examples/carousel.css";
+import contractSource from "@contracts/semantic/carousel.yaml?raw";
+import coreSource from "@core/src/carousel.ts?raw";
+import cssSource from "@core/css/components/carousel.css?raw";
+import vanillaMountSource from "@vanilla/src/components/carousel.ts?raw";
+import vanillaCoordinatorSource from "@vanilla/src/components/Carousel.svelte?raw";
+import vanillaTestSource from "@vanilla/src/components/carousel.svelte.test.ts?raw";
+import reactSource from "@react/src/components/carousel.tsx?raw";
+import reactTestSource from "@react/src/components/carousel.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla \\
+  @skryensya/icons-lucide`;
+
+const styles = `@import "@skryensya/core/components/carousel.css";
+@import "@skryensya/icons-lucide/carousel.css";
+@import "@skryensya/core/patterns/image-frame.css";
+@import "@skryensya/core/patterns/media-gradient.css";`;
+
+const bootstrap = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+mountIcons(document, lucideIcons);
+await initComponents(); // ${t("carousel.bootstrapComment")}`;
+
+const nativeCss = `@import "@skryensya/icons-lucide/carousel.css";
+
+/* ${t("carousel.nativeCssComment1")} */
+.sk-carousel__track { scroll-marker-group: after; }
+.sk-carousel__track::scroll-button(inline-start) {
+  content: var(--sk-carousel-native-previous-icon) / "${t("carousel.nativeCssComment2")}";
+  grid-column: 1;
+}
+.sk-carousel__track::scroll-button(inline-end) {
+  content: var(--sk-carousel-native-next-icon) / "${t("carousel.nativeCssComment3")}";
+  grid-column: 3;
+}
+.sk-carousel__track::scroll-marker-group {
+  grid-column: 2; /* ${t("carousel.nativeCssComment4")} */
+}
+.sk-carousel__slide::scroll-marker { content: ""; }
+.sk-carousel__slide::scroll-marker:target-current { /* activo */ }
+
+/* ${t("carousel.nativeCssComment5")} */`;
+
+const api = `const carousel = document.querySelector("[data-sk-carousel]");
+
+// ${t("carousel.apiComment1")}
+carousel.dispatchEvent(new CustomEvent("sk-carousel-goto", { detail: { index: 2 } }));
+
+// ${t("carousel.apiComment2")}
+carousel.addEventListener("sk-carousel-change", (event) => {
+  console.log(event.detail); // ${t("carousel.apiComment3")}
+});`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/carousel.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/carousel.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/carousel.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/carousel.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/Carousel.svelte", source: vanillaCoordinatorSource, language: "svelte" },
+  { id: "packages/vanilla/src/components/carousel.svelte.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/carousel.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/carousel.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Carousel"
+  description={t("carousel.description")}
+  contractId="carousel"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/carousel.css", probe: "sk-carousel" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/carousel.test.tsx",
+      tests: [
+        {
+          name: "renders a section region with a scroll-snap track of slides",
+          description: t("carousel.test1"),
+        },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/carousel.svelte.test.ts",
+      tests: [
+        { name: "names the region and every slide for assistive tech", description: t("carousel.test2") },
+        { name: "draws one dot per MEASURED page, not one per slide", description: t("carousel.test3") },
+        {
+          name: "snaps to a dot and reports the page on the change event",
+          description: t("carousel.test4"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("carousel.lede")} />
+
+    <h3>{t("carousel.cardsTitle")}</h3>
+    <p set:html={t("carousel.cardsBody")} />
+    <ComponentPreview
+      tree={carouselCardsTree(t)}
+      js={bootstrap}
+      label={t("carousel.cardsLabel")}
+      note="ImageFrame + layout + typography · scroll-snap + Zag"
+    />
+
+    <h3>{t("carousel.dotsTitle")}</h3>
+    <p set:html={t("carousel.dotsBody")} />
+
+    <h3>{t("carousel.multiTitle")}</h3>
+    <p set:html={t("carousel.multiBody1")} />
+    <p set:html={t("carousel.multiBody2")} />
+    <ComponentPreview tree={carouselAutoplayTree(t)} label={t("carousel.multiLabel")} note={t("carousel.multiNote")} />
+
+    <h3>{t("carousel.bareTitle")}</h3>
+    <p set:html={t("carousel.bareBody1")} />
+    <p set:html={t("carousel.bareBody2")} />
+    <p set:html={t("carousel.bareBody3")} />
+    <ComponentPreview tree={carouselBareTree(t)} label={t("carousel.bareLabel")} note={t("carousel.bareNote")} />
+
+    <h3>{t("carousel.nativeTitle")}</h3>
+    <p set:html={t("carousel.nativeBody")} />
+    <ComponentPreview tree={carouselNativeTree(t)} label={t("carousel.nativeLabel")} note={t("carousel.nativeNote")} />
+    <CodeBlock code={nativeCss} label={t("carousel.nativeCssLabel")} lang="css" />
+
+    <h3>{t("carousel.apiTitle")}</h3>
+    <p set:html={t("carousel.apiBody")} />
+    <CodeBlock code={api} label="JS" lang="ts" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("carousel.contractItem1")} />
+      <li set:html={t("carousel.contractItem2")} />
+      <li set:html={t("carousel.contractItem3")} />
+      <li set:html={t("carousel.contractItem4")} />
+      <li set:html={t("carousel.contractItem5")} />
+      <li set:html={t("carousel.contractItem6")} />
+      <li set:html={t("carousel.contractItem7")} />
+      <li set:html={t("carousel.contractItem8")} />
+      <li set:html={t("carousel.contractItem9")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" />
+    <CodeBlock code={bootstrap} label="JavaScript" lang="ts" />
+  </Fragment>
+</ComponentPageShell>

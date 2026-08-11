@@ -1,0 +1,58 @@
+---
+import "@skryensya/core/components/tag.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { tagTree } from "../../demos/tag";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/tag.yaml?raw";
+import coreSource from "@core/src/tag.ts?raw";
+import cssSource from "@core/css/components/tag.css?raw";
+import reactSource from "@react/src/components/tag.tsx?raw";
+import reactTestSource from "@react/src/components/tag.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/tag.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/tag.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/tag.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/tag.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/tag.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Tag"
+  description={t("tagPage.description")}
+  contractId="tag"
+  styleGroups={[{ file: "components/tag.css", probe: "sk-tag" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/tag.test.tsx",
+      tests: [
+        { name: "carries its tone and label", description: t("tagPage.test1") },
+        { name: "exposes a named remove control only when onRemove is given", description: t("tagPage.test2") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("tagPage.lede")} />
+    <ComponentPreview tree={tagTree(t)} label="Tag" />
+    <p set:html={t("tagPage.body")} />
+
+    <h3>{t("tagPage.xTitle")}</h3>
+    <p set:html={t("tagPage.xBody1")} />
+    <p set:html={t("tagPage.xBody2")} />
+    <p set:html={t("tagPage.xBody3")} />
+
+    <p set:html={t("tagPage.reactBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

@@ -1,0 +1,88 @@
+---
+/* The skin is already global (Base.astro imports it for the ⌘K badge), so this page needs no import. */
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { kbdTree } from "../../demos/kbd";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/kbd.yaml?raw";
+import coreSource from "@core/src/kbd.ts?raw";
+import cssSource from "@core/css/components/kbd.css?raw";
+import reactSource from "@react/src/components/kbd.tsx?raw";
+import reactTestSource from "@react/src/components/kbd.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/kbd.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/kbd.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/kbd.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/kbd.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/kbd.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Kbd"
+  description={t("kbdPage.description")}
+  contractId="kbd"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/kbd.css", probe: "sk-kbd" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/kbd.test.tsx",
+      tests: [
+        { name: "renders a native <kbd> carrying the part class", description: t("kbdPage.test1") },
+        { name: "keeps a consumer className alongside the part", description: t("kbdPage.test2") },
+        { name: "passes through native attributes", description: t("kbdPage.test3") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("kbdPage.lede")} />
+    <ComponentPreview tree={kbdTree} label="Kbd" />
+
+    <h3>{t("kbdPage.squareTitle")}</h3>
+    <p set:html={t("kbdPage.squareBody")} />
+
+    <h3>{t("kbdPage.pressedTitle")}</h3>
+    <p set:html={t("kbdPage.pressedBody1")} />
+    <p set:html={t("kbdPage.pressedBody2")} />
+    <div class="key-echo" role="group" aria-label={t("kbdPage.echoAriaLabel")}>
+      <kbd class="sk-kbd" data-key="meta">⌘</kbd>
+      <kbd class="sk-kbd" data-key="control">Ctrl</kbd>
+      <kbd class="sk-kbd" data-key="shift">⇧</kbd>
+      <kbd class="sk-kbd" data-key="k">K</kbd>
+      <kbd class="sk-kbd" data-key="escape">Esc</kbd>
+      <kbd class="sk-kbd" data-key="enter">↵</kbd>
+      <kbd class="sk-kbd" data-key="arrowup">↑</kbd>
+      <kbd class="sk-kbd" data-key="arrowdown">↓</kbd>
+      <kbd class="sk-kbd" data-key="/">/</kbd>
+    </div>
+    <p set:html={t("kbdPage.chordBody")} />
+    <p set:html={t("kbdPage.scriptBody")} />
+
+    <p set:html={t("component.reactNote")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>
+
+<style>
+  .key-echo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-sm);
+    align-items: center;
+    margin-block: var(--space-stack-md);
+  }
+</style>
+
+<script>
+  import { initKeyEcho } from "../../scripts/key-echo";
+  initKeyEcho();
+</script>

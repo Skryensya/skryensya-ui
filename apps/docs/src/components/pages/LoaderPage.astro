@@ -1,0 +1,113 @@
+---
+import "../../examples/loader.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  loaderContextsTree,
+  loaderSimulationScript,
+  loaderSimulationTree,
+  loaderSizesTree,
+  loaderSpeedsTree,
+} from "../../demos/loader";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/loader.yaml?raw";
+import coreSource from "@core/src/loader.ts?raw";
+import cssSource from "@core/css/components/loader.css?raw";
+import reactSource from "@react/src/components/loader.tsx?raw";
+import reactTestSource from "@react/src/components/loader.test.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/loader.css";`;
+const t = useTranslations(getLocale(Astro.url));
+
+const customSpeed = `.sk-loader.mi-loader {
+  --sk-loader-duration: 2s;
+}`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/loader.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/loader.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/loader.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/loader.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/loader.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Loader"
+  description={t("loaderPage.description")}
+  contractId="loader"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/loader.css", probe: "sk-loader" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/loader.test.tsx",
+      tests: [
+        { name: "exposes labelled indeterminate work as a polite status", description: t("loaderPage.test1") },
+        { name: "writes orthogonal variant and speed axes onto the root", description: t("loaderPage.test2") },
+        {
+          name: "stays decorative when the surrounding control already carries the status meaning",
+          description: t("loaderPage.test3"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("loaderPage.lede")} />
+
+    <div class="sk-callout" data-tone="info">
+      <div class="sk-callout__content">
+        <div class="sk-callout__description" set:html={t("loaderPage.calloutBody")} />
+      </div>
+    </div>
+
+    <h3>{t("loaderPage.simTitle")}</h3>
+    <p set:html={t("loaderPage.simBody")} />
+    <ComponentPreview
+      tree={loaderSimulationTree(t)}
+      js={loaderSimulationScript}
+      previewScript={loaderSimulationScript}
+      label={t("loaderPage.simLabel")}
+      note={t("loaderPage.simNote")}
+    />
+    <p set:html={t("loaderPage.simBody2")} />
+
+    <h3>{t("loaderPage.contextsTitle")}</h3>
+    <p set:html={t("loaderPage.contextsBody")} />
+    <ComponentPreview tree={loaderContextsTree(t)} label={t("loaderPage.contextsLabel")} note={t("loaderPage.contextsNote")} />
+    <ul>
+      <li set:html={t("loaderPage.contextsItem1")} />
+      <li set:html={t("loaderPage.contextsItem2")} />
+      <li set:html={t("loaderPage.contextsItem3")} />
+    </ul>
+
+    <h3>{t("loaderPage.sizeTitle")}</h3>
+    <p set:html={t("loaderPage.sizeBody")} />
+    <ComponentPreview tree={loaderSizesTree(t)} label={t("loaderPage.sizeLabel")} />
+
+    <h3>{t("loaderPage.speedTitle")}</h3>
+    <p set:html={t("loaderPage.speedBody")} />
+    <ComponentPreview tree={loaderSpeedsTree(t)} label={t("loaderPage.speedLabel")} />
+    <CodeBlock code={customSpeed} label={t("loaderPage.speedOverrideLabel")} lang="css" />
+
+    <h3>{t("loaderPage.semanticsTitle")}</h3>
+    <ul>
+      <li set:html={t("loaderPage.semanticsItem1")} />
+      <li set:html={t("loaderPage.semanticsItem2")} />
+      <li set:html={t("loaderPage.semanticsItem3")} />
+      <li set:html={t("loaderPage.semanticsItem4")} />
+    </ul>
+
+    <h3>{t("loaderPage.reducedTitle")}</h3>
+    <p set:html={t("loaderPage.reducedBody")} />
+
+    <p set:html={t("loaderPage.reactBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+</ComponentPageShell>

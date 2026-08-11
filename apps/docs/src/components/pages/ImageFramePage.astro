@@ -1,0 +1,87 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  imageFrameAspectTree,
+  imageFrameFitTree,
+  imageFramePositionTree,
+  imageFrameTree,
+} from "../../demos/image-frame";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/image-frame.yaml?raw";
+import coreSource from "@core/src/image-frame.ts?raw";
+import cssSource from "@core/css/patterns/image-frame.css?raw";
+import reactSource from "@react/src/components/image-frame.tsx?raw";
+import reactTestSource from "@react/src/components/image-frame.test.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/patterns/image-frame.css";
+/* o patterns/layout.css, que ya lo incluye */`;
+
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/image-frame.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/image-frame.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/patterns/image-frame.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/image-frame.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/image-frame.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="ImageFrame"
+  description={t("imageFrame.description")}
+  contractId="image-frame"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "patterns/image-frame.css", probe: "sk-image-frame" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/image-frame.test.tsx",
+      tests: [
+        { name: "maps geometry props to data attributes on the authored root", description: t("imageFrame.test1") },
+        {
+          name: "renders a media img from src/alt when children are omitted",
+          description: t("imageFrame.test2"),
+        },
+        { name: "keeps a caption beside the src media", description: t("imageFrame.test3") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("imageFrame.lede")} />
+    <ComponentPreview tree={imageFrameTree(t)} label="ImageFrame" />
+
+    <h3>{t("imageFrame.aspectTitle")}</h3>
+    <p set:html={t("imageFrame.aspectBody")} />
+    <ComponentPreview tree={imageFrameAspectTree(t)} label={t("imageFrame.aspectTitle")} />
+
+    <h3>{t("imageFrame.fitTitle")}</h3>
+    <p set:html={t("imageFrame.fitBody")} />
+    <ComponentPreview tree={imageFrameFitTree(t)} label={t("imageFrame.fitTitle")} />
+
+    <h3>{t("imageFrame.positionTitle")}</h3>
+    <p set:html={t("imageFrame.positionBody")} />
+    <ComponentPreview tree={imageFramePositionTree(t)} label={t("imageFrame.positionTitle")} />
+
+    <p set:html={t("imageFrame.reactBody")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("imageFrame.contractItem1")} />
+      <li set:html={t("imageFrame.contractItem2")} />
+      <li set:html={t("imageFrame.contractItem3")} />
+      <li set:html={t("imageFrame.contractItem4")} />
+      <li set:html={t("imageFrame.contractItem5")} />
+      <li set:html={t("imageFrame.contractItem6")} />
+      <li set:html={t("imageFrame.contractItem7")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" />
+  </Fragment>
+</ComponentPageShell>

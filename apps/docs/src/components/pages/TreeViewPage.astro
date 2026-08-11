@@ -1,0 +1,116 @@
+---
+import "@skryensya/core/components/select.css";
+import "@skryensya/core/components/tree-view.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  treeViewDisabledTree,
+  treeViewEventsScript,
+  treeViewEventsTree,
+  treeViewInitialTree,
+  treeViewMinimalTree,
+  treeViewMultipleTree,
+} from "../../demos/tree-view";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/tree-view.yaml?raw";
+import coreSource from "@core/src/tree-view.ts?raw";
+import cssSource from "@core/css/components/tree-view.css?raw";
+import vanillaMountSource from "@vanilla/src/components/tree-view.ts?raw";
+import reactSource from "@react/src/components/tree-view.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `@import "@skryensya/core/components/tree-view.css";`;
+
+const indentHook = `.sk-tree-view {
+  /* Un nivel más ancho y filas más holgadas, y sin las guías verticales. */
+  --sk-tree-indent: var(--space-inset-xl);
+  --sk-tree-row-inset: var(--space-inset-sm);
+  --sk-tree-guide-color: transparent;
+}`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/tree-view.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/tree-view.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/tree-view.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/tree-view.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/tree-view.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="TreeView"
+  description={t("treeViewPage.description")}
+  contractId="tree-view"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/tree-view.css", probe: "sk-tree-view", title: "TreeView" },
+    { file: "patterns/state-layer.css", probe: "sk-interactive", title: "Heredados de State layer" },
+  ]}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/tree-view.test.ts",
+      tests: [
+        {
+          name: "patches tree semantics onto authored markup and mounts once",
+          description: t("treeViewPage.test1"),
+        },
+        { name: "expands a branch from its control and says so", description: t("treeViewPage.test2") },
+        {
+          name: "selects a leaf and reports the value the composition wrote",
+          description: t("treeViewPage.test3"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("treeViewPage.lede")} />
+
+    <h3>{t("treeViewPage.minimalTitle")}</h3>
+    <p set:html={t("treeViewPage.minimalBody")} />
+    <ComponentPreview tree={treeViewMinimalTree(t)} label={t("treeViewPage.minimalLabel")} />
+
+    <h3>{t("treeViewPage.initialTitle")}</h3>
+    <p set:html={t("treeViewPage.initialBody")} />
+    <ComponentPreview tree={treeViewInitialTree(t)} label={t("treeViewPage.initialLabel")} />
+
+    <h3>{t("treeViewPage.multipleTitle")}</h3>
+    <p set:html={t("treeViewPage.multipleBody")} />
+    <ComponentPreview tree={treeViewMultipleTree(t)} label={t("treeViewPage.multipleLabel")} />
+
+    <h3>{t("treeViewPage.disabledTitle")}</h3>
+    <p set:html={t("treeViewPage.disabledBody")} />
+    <ComponentPreview tree={treeViewDisabledTree(t)} label={t("treeViewPage.disabledLabel")} />
+
+    <h3>{t("treeViewPage.eventsTitle")}</h3>
+    <p set:html={t("treeViewPage.eventsBody")} />
+    <ComponentPreview
+      tree={treeViewEventsTree(t)}
+      js={treeViewEventsScript}
+      previewScript={treeViewEventsScript}
+      label={t("treeViewPage.eventsLabel")}
+    />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("treeViewPage.contractItem1")} />
+      <li set:html={t("treeViewPage.contractItem2")} />
+      <li set:html={t("treeViewPage.contractItem3")} />
+      <li set:html={t("treeViewPage.contractItem4")} />
+      <li set:html={t("treeViewPage.contractItem5")} />
+      <li set:html={t("treeViewPage.contractItem6")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="CSS" lang="css" />
+    <p set:html={t("treeViewPage.hooksBody")} />
+    <CodeBlock code={indentHook} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("treeViewPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

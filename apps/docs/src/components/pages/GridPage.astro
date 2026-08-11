@@ -1,0 +1,101 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { gridMulticolTree, gridTree } from "../../demos/layout";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/layout.yaml?raw";
+import coreSource from "@core/src/layout.ts?raw";
+import cssSource from "@core/css/patterns/layout.css?raw";
+import reactSource from "@react/src/components/layout.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
+
+const multicolCss = `/* data-columns="4": 1 carril → 2 → 3 → 4,
+   según el viewport. */
+.sk-grid[data-multicol] {
+  column-count: 1;
+  column-gap: var(--sk-grid-gap);
+}
+
+.sk-grid[data-multicol] > * {
+  break-inside: avoid;
+  margin-block-end: var(--sk-grid-gap);
+}
+
+@media (min-width: 36rem) {
+  .sk-grid[data-multicol][data-columns="2"],
+  .sk-grid[data-multicol][data-columns="3"],
+  .sk-grid[data-multicol][data-columns="4"] {
+    column-count: 2;
+  }
+}
+
+@media (min-width: 52rem) {
+  .sk-grid[data-multicol][data-columns="3"],
+  .sk-grid[data-multicol][data-columns="4"] {
+    column-count: 3;
+  }
+}
+
+@media (min-width: 72rem) {
+  .sk-grid[data-multicol][data-columns="4"] {
+    column-count: 4;
+  }
+}`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/layout.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/layout.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/patterns/layout.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/layout.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Grid"
+  description={t("grid.description")}
+  contractId="layout"
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/layout.test.tsx",
+      tests: [
+        {
+          name: "renders Stack, Inline and Grid as the documented layout contracts",
+          description: t("grid.test1"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("grid.lede")} />
+    <ComponentPreview tree={gridTree(t)} label="Grid" />
+
+    <h3>{t("grid.multicolTitle")}</h3>
+    <p set:html={t("grid.multicolBody1")} />
+    <p set:html={t("grid.multicolBody2")} />
+    <CodeBlock code={multicolCss} label="patterns/layout.css" />
+    <ComponentPreview tree={gridMulticolTree(t)} label={t("grid.multicolLabel")} />
+    <p set:html={t("grid.multicolBody3")} />
+
+    <h3>{t("grid.htmlTitle")}</h3>
+    <p set:html={t("grid.htmlBody")} />
+    <p set:html={t("grid.reactBody")} />
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("grid.contractItem1")} />
+      <li set:html={t("grid.contractItem2")} />
+      <li set:html={t("grid.contractItem3")} />
+      <li set:html={t("grid.contractItem4")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

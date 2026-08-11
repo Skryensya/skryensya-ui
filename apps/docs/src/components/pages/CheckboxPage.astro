@@ -1,0 +1,107 @@
+---
+import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/checkbox.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  checkboxGroupScript,
+  checkboxGroupTree,
+  checkboxTree,
+  tileCheckboxTree,
+} from "../../demos/checkbox";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/checkbox.yaml?raw";
+import cssSource from "@core/css/components/checkbox.css?raw";
+import reactSource from "@react/src/components/selection.tsx?raw";
+import vanillaMountSource from "@vanilla/src/components/tile-checkbox.ts?raw";
+import vanillaCoordinatorSource from "@vanilla/src/components/TileCheckbox.svelte?raw";
+import vanillaTestSource from "@vanilla/src/components/tile-checkbox.svelte.test.ts?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const tileCheckboxVanilla = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// ${t("checkbox.iconsComment1")}
+// ${t("checkbox.iconsComment2")}
+mountIcons(document, lucideIcons);
+
+// ${t("checkbox.iconsComment3").split("\n").join("\n// ")}
+// ${t("checkbox.iconsComment4")}
+await initComponents();
+
+for (const root of document.querySelectorAll(
+  "[data-sk-tile-checkbox]",
+)) {
+  root.addEventListener("sk:checkedchange", (event) => {
+    console.log(root.dataset.value, event.detail.checked);
+  });
+}`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/checkbox.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/css/components/checkbox.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/selection.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/vanilla/src/components/tile-checkbox.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/TileCheckbox.svelte", source: vanillaCoordinatorSource, language: "svelte" },
+  { id: "packages/vanilla/src/components/tile-checkbox.svelte.test.ts", source: vanillaTestSource, language: "ts" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Checkbox"
+  description={t("checkbox.description")}
+  contractId="checkbox"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/checkbox.css", probe: "sk-checkbox" }]}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/tile-checkbox.svelte.test.ts",
+      tests: [
+        {
+          name: "toggles checked state and root data-state on click, emitting sk:checkedchange",
+          description: t("checkbox.test1"),
+        },
+        { name: "is form-associated and honours its default-checked", description: t("checkbox.test2") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("checkbox.lede")} />
+    <ComponentPreview tree={checkboxTree(t)} label="Checkbox" />
+    <p set:html={t("checkbox.body")} />
+
+    <h3>{t("checkbox.groupTitle")}</h3>
+    <p set:html={t("checkbox.groupBody1")} />
+    <ComponentPreview
+      tree={checkboxGroupTree(t)}
+      js={checkboxGroupScript}
+      previewScript={checkboxGroupScript}
+      label={t("checkbox.groupLabel")}
+      note={t("checkbox.groupNote")}
+    />
+    <p set:html={t("checkbox.groupBody2")} />
+
+    <h3>{t("checkbox.tileTitle")}</h3>
+    <p set:html={t("checkbox.tileBody1")} />
+    <ComponentPreview tree={tileCheckboxTree(t)} label="TileCheckbox" />
+    <p set:html={t("checkbox.tileBody2")} />
+    <CodeBlock code={tileCheckboxVanilla} label="JavaScript" />
+
+    <p set:html={`${t("component.reactNote")} ${t("checkbox.reactBody")}`} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("checkbox.contractItem1")} />
+      <li set:html={t("checkbox.contractItem2")} />
+      <li set:html={t("checkbox.contractItem3")} />
+      <li set:html={t("checkbox.contractItem4")} />
+      <li set:html={t("checkbox.contractItem5")} />
+      <li set:html={t("checkbox.contractItem6")} />
+      <li set:html={t("checkbox.contractItem7")} />
+    </ul>
+  </Fragment>
+</ComponentPageShell>

@@ -54,13 +54,49 @@ function paint(target: HTMLElement) {
 }
 
 export function initUsedValues() {
-  const targets = () =>
-    Array.from(document.querySelectorAll("[data-token]")) as HTMLElement[];
+  /*
+   * A Set, not a WeakSet, because this is also the repaint list below, and a repaint has to be able
+   * to enumerate what it already painted.
+   */
+  const painted = new Set<HTMLElement>();
 
-  const run = () => targets().forEach(paint);
+  const paintOnce = (target: HTMLElement) => {
+    if (painted.has(target)) return;
+    paint(target);
+    painted.add(target);
+  };
 
-  // Re-read whenever a dimension moves. That IS the demonstration: nothing on disk changed,
-  // the browser recomputed the system from the cascade.
-  document.addEventListener("sk:dimensions-changed", run);
-  run();
+  /*
+   * Reading a used value costs a style recalculation each (the probe is written, then read back),
+   * and the token reference alone has a thousand of them. So only what a reader can see gets paid
+   * for: the rest stay as their placeholder until they scroll into range.
+   */
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting && entry.target instanceof HTMLElement) {
+          paintOnce(entry.target);
+          /* Its value is now correct until a dimension moves, and that case is handled below by
+             repainting, not by observing. Nothing more to learn about this element. */
+          observer.unobserve(entry.target);
+        }
+      }
+    },
+    { rootMargin: "100px" },
+  );
+
+  for (const el of document.querySelectorAll<HTMLElement>("[data-token]")) observer.observe(el);
+
+  /*
+   * A dimension moving (density, mode, contrast, brand) makes every value ALREADY on screen wrong,
+   * so those are repainted, and only those: the ones still showing a placeholder will be painted
+   * with the new dimensions when they scroll in, which is the same work either way.
+   *
+   * This used to call the paint-once path, whose entire job is to skip elements that were already
+   * painted, so the repaint repainted nothing: the reference kept showing values from the density
+   * the reader had left. Same listener, right function.
+   */
+  document.addEventListener("sk:dimensions-changed", () => {
+    for (const el of painted) paint(el);
+  });
 }

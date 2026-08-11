@@ -1,0 +1,112 @@
+#!/usr/bin/env node
+/*
+ * Runs the real test files the docs' "Tests" tab quotes, and writes their pass/fail per-test to
+ * `artifacts/test-results.json`. `TestCoverage.astro` reads that artifact and keys into it by
+ * `[file][it-title]`; the it() title in each entry below has to match the real one verbatim, or the
+ * lookup misses and the docs page falls back to a "not run" clock icon (see test-results.ts).
+ *
+ * Not wired into `turbo check`/`build`: unlike `ai-compiler`'s manifest (which every doc read
+ * depends on), a stale test-results.json only degrades one tab's icons, not the page, so failing the
+ * whole build over it would be the wrong trade. Run it by hand after touching a tracked test file:
+ *
+ *   node scripts/build-test-report.mjs
+ */
+import { execFileSync } from "node:child_process";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+
+/** Every test file a `*Page.astro` currently quotes via `tests={[...]}`. Add a line here when a
+ *  second page adopts the Tests tab. */
+const TARGETS = [
+  { pkg: "packages/react", file: "src/components/accordion.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/accordion.svelte.test.ts" },
+  { pkg: "packages/react", file: "src/components/skip-link.test.tsx" },
+  { pkg: "packages/react", file: "src/components/avatar.test.tsx" },
+  { pkg: "packages/react", file: "src/components/badge.test.tsx" },
+  { pkg: "packages/react", file: "src/components/button.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/button.test.ts" },
+  { pkg: "packages/react", file: "src/components/callout.test.tsx" },
+  { pkg: "packages/react", file: "src/components/carousel.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/carousel.svelte.test.ts" },
+  { pkg: "packages/react", file: "src/components/changelog.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/tile-checkbox.svelte.test.ts" },
+  { pkg: "packages/vanilla", file: "src/components/code-preview.test.ts" },
+  { pkg: "packages/react", file: "src/components/combobox.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/combobox.test.ts" },
+  { pkg: "packages/vanilla", file: "src/components/component-preview.test.ts" },
+  { pkg: "packages/vanilla", file: "src/components/copy-button.test.ts" },
+  { pkg: "packages/vanilla", file: "src/components/flyout.test.ts" },
+  { pkg: "packages/react", file: "src/components/image-frame.test.tsx" },
+  { pkg: "packages/react", file: "src/components/input.test.tsx" },
+  { pkg: "packages/react", file: "src/components/kbd.test.tsx" },
+  { pkg: "packages/react", file: "src/components/list.test.tsx" },
+  { pkg: "packages/react", file: "src/components/loader.test.tsx" },
+  { pkg: "packages/react", file: "src/components/navbar.test.tsx" },
+  { pkg: "packages/react", file: "src/components/pagination.test.tsx" },
+  { pkg: "packages/react", file: "src/components/placeholder.test.tsx" },
+  { pkg: "packages/react", file: "src/components/process-list.test.tsx" },
+  { pkg: "packages/react", file: "src/components/progress.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/tile-radio-group.svelte.test.ts" },
+  { pkg: "packages/vanilla", file: "src/components/segmented.test.ts" },
+  { pkg: "packages/react", file: "src/components/sidebar.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/sidebar.test.ts" },
+  { pkg: "packages/react", file: "src/components/steps.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/tile-switch.svelte.test.ts" },
+  { pkg: "packages/react", file: "src/components/table.test.tsx" },
+  { pkg: "packages/react", file: "src/components/tabs.test.tsx" },
+  { pkg: "packages/react", file: "src/components/tag.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/theme-toggle.test.ts" },
+  { pkg: "packages/vanilla", file: "src/components/toast.test.ts" },
+  { pkg: "packages/react", file: "src/components/tooltip.test.tsx" },
+  { pkg: "packages/react", file: "src/components/layout.test.tsx" },
+  { pkg: "packages/react", file: "src/components/typography.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/calendar.svelte.test.ts" },
+  { pkg: "packages/vanilla", file: "src/components/date-picker.svelte.test.ts" },
+  { pkg: "packages/vanilla", file: "src/components/time-field.svelte.test.ts" },
+  { pkg: "packages/react", file: "src/components/dialog.test.tsx" },
+  { pkg: "packages/react", file: "src/components/vaul.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/vaul-gesture.test.ts" },
+  { pkg: "packages/react", file: "src/components/select.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/select.test.ts" },
+  { pkg: "packages/react", file: "src/components/slider.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/slider.test.ts" },
+  { pkg: "packages/react", file: "src/components/stat.test.tsx" },
+  { pkg: "packages/react", file: "src/components/tile.test.tsx" },
+  { pkg: "packages/react", file: "src/components/toc.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/tree-view.test.ts" },
+  { pkg: "packages/react", file: "src/components/command-palette.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/command-palette.test.ts" },
+  { pkg: "packages/react", file: "src/components/icon.test.tsx" },
+];
+
+const results = {};
+
+for (const { pkg, file } of TARGETS) {
+  const cwd = join(root, pkg);
+  const stdout = execFileSync("npx", ["vitest", "run", file, "--reporter=json"], {
+    cwd,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "inherit"],
+  });
+  const report = JSON.parse(stdout);
+  const repoPath = `${pkg}/${file}`;
+  const byTitle = {};
+  for (const suite of report.testResults) {
+    for (const assertion of suite.assertionResults) {
+      byTitle[assertion.title] = assertion.status;
+    }
+  }
+  results[repoPath] = byTitle;
+  const passed = Object.values(byTitle).filter((s) => s === "passed").length;
+  console.log(`  ${repoPath}: ${passed}/${Object.keys(byTitle).length} passed`);
+}
+
+mkdirSync(join(root, "artifacts"), { recursive: true });
+writeFileSync(
+  join(root, "artifacts", "test-results.json"),
+  `${JSON.stringify({ generatedAt: new Date().toISOString(), results }, null, 2)}\n`,
+);
+console.log(`\n  artifacts/test-results.json written.`);

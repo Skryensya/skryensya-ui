@@ -3,6 +3,7 @@ import { tileSharedAccessibilityContract } from "@skryensya/core/tile-contracts"
 import { describe, expect, it } from "vitest";
 import { createTileButton } from "./tile-button.js";
 import { createTileLink } from "./tile-link.js";
+import { expandableTileClass, interactiveTileClass } from "./tile.js";
 
 /*
  * Tile factories (link + button). Los tiles con estado, checkbox, radio-group, expandable, accordion, 
@@ -48,5 +49,24 @@ describe("Tile factories", () => {
     expect(button.dataset.padding).toBe("xl");
     expect(defaultLink.dataset.padding).toBeUndefined();
     expect(createTileButton().dataset.padding).toBeUndefined();
+  });
+});
+
+describe("Tile class helpers", () => {
+  it("composes the interactive Tile's classes in the order the sheet expects", () => {
+    // `sk-interactive` is the shared paint, and it composes with the Tile's own parts rather than
+    // replacing them: one string, so the factories and the enhancers cannot drift apart.
+    expect(interactiveTileClass()).toBe("sk-tile sk-tile--interactive sk-interactive");
+    expect(interactiveTileClass("docs-card")).toBe(
+      "sk-tile sk-tile--interactive sk-interactive docs-card",
+    );
+  });
+
+  it("keeps the expandable Tile out of the interactive paint", () => {
+    // The expandable shape carries its own trigger, so the ROOT is not the interactive surface.
+    expect(expandableTileClass()).toBe("sk-tile sk-tile--interactive sk-tile--expandable");
+    expect(expandableTileClass("docs-card")).toBe(
+      "sk-tile sk-tile--interactive sk-tile--expandable docs-card",
+    );
   });
 });

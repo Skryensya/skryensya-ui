@@ -1,0 +1,191 @@
+---
+import "@skryensya/core/components/toast.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  toastActionTree,
+  toastEmitScript,
+  toastEmitTree,
+  toastSimpleTree,
+  toastStackScript,
+  toastStackTree,
+  toastStatusScript,
+  toastStatusTree,
+} from "../../demos/toast";
+import { getLocale, useTranslations } from "../../i18n";
+import cssSource from "@core/css/components/toast.css?raw";
+import vanillaMountSource from "@vanilla/src/components/toast.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/toast.test.ts?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
+
+const stackCss = `/* Ya viene en components/toast.css: está acá porque
+   es la única parte del componente que lee el DOM
+   desde CSS, y conviene saber de dónde sale. */
+
+/* Sólo el más nuevo queda en flujo, así la región
+   mide lo que mide ÉL. Los de atrás salen de flujo
+   estirados a esa misma caja: por eso la pila se lee
+   como un objeto y no como cartas descuadradas. */
+.sk-toast-region:not([data-stack="off"]) > .sk-callout:not(:last-child) {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+}
+
+.sk-toast-region:not([data-stack="off"]) > .sk-callout {
+  /* 0 para el más nuevo (el último hijo), +1 por
+     cada uno que quedó atrás. Sin contadores en JS. */
+  --sk-toast-depth: calc(sibling-count() - sibling-index());
+
+  transform-origin: bottom center;
+  translate: 0 calc(
+    var(--sk-toast-depth) * var(--sk-toast-peek) * -1
+  );
+  scale: calc(1 - (var(--sk-toast-depth) * var(--sk-toast-shrink)));
+  opacity: calc(3 - var(--sk-toast-depth));
+
+  /* La profundidad otra vez, ahora en el tiempo: el de
+     adelante sale primero, cada uno detrás lo sigue. */
+  transition-delay: calc(
+    var(--sk-toast-depth) * var(--sk-toast-cascade)
+  );
+}
+
+.sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within)
+  > .sk-callout {
+  position: static;
+  overflow: visible;
+  translate: none;
+  scale: none;
+  opacity: 1;
+}
+
+/* El layout no transiciona: al dejar de ser absolutos ya
+   están en su fila. En vez de animar el salto, se lo tapa
+   con una llegada. El más nuevo no participa: no se movió. */
+.sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within)
+  > .sk-callout:not(:last-child) {
+  animation: sk-toast-fan var(--motion-expand-duration)
+    var(--motion-expand-easing)
+    calc(var(--sk-toast-depth) * var(--sk-toast-cascade))
+    backwards;
+}
+
+@keyframes sk-toast-fan {
+  from {
+    opacity: 0;
+    translate: 0 var(--sk-toast-peek);
+  }
+}`;
+
+const vanilla = `import {
+  initComponents,
+} from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// ${t("toastPage.vanillaComment").split("\n").join("\n// ")}
+mountIcons(document, lucideIcons);
+
+await initComponents();`;
+
+const sourceFiles = [
+  { id: "packages/core/css/components/toast.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/toast.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/toast.test.ts", source: vanillaTestSource, language: "ts" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Toast"
+  description={t("toastPage.description")}
+  contractId="content"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/toast.css", probe: "sk-toast" }]}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/toast.test.ts",
+      tests: [
+        {
+          name: "applies the shared live-region semantics and reports native button dismissal",
+          description: t("toastPage.test1"),
+        },
+        {
+          name: "only schedules authored timeouts and clears them during cleanup",
+          description: t("toastPage.test2"),
+        },
+        { name: "mounts authored toast markup through the registry enhancer", description: t("toastPage.test3") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("toastPage.lede")} />
+
+    <h3>{t("toastPage.emitTitle")}</h3>
+    <p set:html={t("toastPage.emitBody")} />
+    <ComponentPreview
+      tree={toastEmitTree(t)}
+      js={toastEmitScript}
+      previewScript={toastEmitScript}
+      label={t("toastPage.emitLabel")}
+      note={t("toastPage.emitNote")}
+      viewport="menu"
+    />
+
+    <h3>{t("toastPage.simpleTitle")}</h3>
+    <p set:html={t("toastPage.simpleBody")} />
+    <ComponentPreview tree={toastSimpleTree(t)} label={t("toastPage.simpleLabel")} viewport="menu" />
+
+    <h3>{t("toastPage.statusTitle")}</h3>
+    <p set:html={t("toastPage.statusBody1")} />
+    <p set:html={t("toastPage.statusBody2")} />
+    <ComponentPreview
+      tree={toastStatusTree(t)}
+      js={toastStatusScript}
+      previewScript={toastStatusScript}
+      label={t("toastPage.statusLabel")}
+      viewport="overlay"
+    />
+
+    <h3>{t("toastPage.actionTitle")}</h3>
+    <p set:html={t("toastPage.actionBody")} />
+    <ComponentPreview tree={toastActionTree(t)} label={t("toastPage.actionLabel")} viewport="menu" />
+
+    <h3>{t("toastPage.stackTitle")}</h3>
+    <p set:html={t("toastPage.stackBody1")} />
+    <p set:html={t("toastPage.stackBody2")} />
+    <p set:html={t("toastPage.stackBody3")} />
+    <p set:html={t("toastPage.stackBody4")} />
+    <p set:html={t("toastPage.stackBody5")} />
+    <ComponentPreview
+      tree={toastStackTree(t)}
+      js={toastStackScript}
+      previewScript={toastStackScript}
+      label={t("toastPage.stackLabel")}
+      note={t("toastPage.stackNote")}
+      viewport="overlay"
+    />
+    <p set:html={t("toastPage.stackBody6")} />
+    <CodeBlock code={stackCss} lang="css" label="components/toast.css" />
+
+    <h3>{t("toastPage.closeTitle")}</h3>
+    <p set:html={t("toastPage.closeBody1")} />
+    <p set:html={t("toastPage.closeBody2")} />
+
+    <h3>{t("toastPage.lifecycleTitle")}</h3>
+    <p set:html={t("toastPage.lifecycleBody1")} />
+    <p set:html={t("toastPage.lifecycleBody2")} />
+    <CodeBlock code={vanilla} label="JavaScript" />
+
+    <p set:html={t("toastPage.reactBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

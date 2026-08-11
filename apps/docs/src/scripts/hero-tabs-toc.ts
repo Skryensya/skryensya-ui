@@ -1,9 +1,10 @@
 /*
  * The ToC for pages piloting `.docs-component-hero-tabs` (currently only /componentes/accordion):
- * one section INDEX PER TAB, not per document. `Base.astro`'s own inline heading-scan skips these
- * pages entirely (see its own early return) because it only ever reads `main > :scope > h2, h3`;
- * direct children of `<main>`; every heading here lives inside a `.sk-tabs__content` panel,
- * several levels deeper.
+ * one section INDEX PER TAB, not per document. Every other page has its index read at build time
+ * (`../lib/document-index.ts`) and ships it in the HTML; this one cannot, because which tab is open
+ * is a fact about a reader. The build finds nothing to list here anyway: it reads the document's own
+ * top-level headings, and every heading on this page lives inside a `.sk-tabs__content` panel,
+ * several levels deeper. It marks the rail `pending` instead and leaves the list to this file.
  *
  * Each panel's OWN first heading (an `h2`) is the panel's outline title; visually hidden where
  * the tab strip already says it out loud ("Uso"), or real prose where it doubles as one (Style
@@ -38,7 +39,7 @@ function panelFor(tabsRoot: Element, value: string): HTMLElement | null {
   );
 }
 
-/** A stable id from the heading's own text; mirrors Base.astro's own slugger exactly. */
+/** A stable id from the heading's own text; mirrors the build-time slugger exactly. */
 function ensureId(heading: HTMLElement): string {
   if (heading.id) return heading.id;
   const base =
@@ -85,7 +86,7 @@ function buildList(tocRoot: Element, panel: HTMLElement): void {
     list.append(item);
   }
 
-  // Same "land at top" convention as Base.astro's own scan: a hash in the URL means the browser
+  // Same "land at top" convention the build-time index seeds: a hash in the URL means the browser
   // is about to scroll somewhere specific, so guessing "first" here would be a wrong answer the
   // spy would have to correct on screen a frame later.
   if (!window.location.hash) {

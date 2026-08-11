@@ -1,0 +1,96 @@
+---
+import "@skryensya/core/components/flyout.css";
+import "@skryensya/core/components/select.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  tableInBoxTree,
+  tableStickyColumnTree,
+  tableStickyHeaderTree,
+  tableTree,
+  tableDensityTree,
+  tablePagerTree,
+} from "../../demos/table";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/table.yaml?raw";
+import pagerContractSource from "@contracts/semantic/table-pager.yaml?raw";
+import coreSource from "@core/src/table.ts?raw";
+import cssSource from "@core/css/components/table.css?raw";
+import pagerCssSource from "@core/css/patterns/table-pager.css?raw";
+import vanillaPagerSource from "@vanilla/src/components/table-pager.ts?raw";
+import reactSource from "@react/src/components/table.tsx?raw";
+import reactTestSource from "@react/src/components/table.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/table.yaml", source: contractSource, language: "yaml" },
+  { id: "contracts/semantic/table-pager.yaml", source: pagerContractSource, language: "yaml" },
+  { id: "packages/core/src/table.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/table.css", source: cssSource, language: "css" },
+  { id: "packages/core/css/patterns/table-pager.css", source: pagerCssSource, language: "css" },
+  { id: "packages/vanilla/src/components/table-pager.ts", source: vanillaPagerSource, language: "ts" },
+  { id: "packages/react/src/components/table.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/table.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Table"
+  description={t("tablePage.description")}
+  contractId="table"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/table.css", probe: "sk-table" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/table.test.tsx",
+      tests: [
+        {
+          name: "renders the native table structure with every stable part class",
+          description: t("tablePage.test1"),
+        },
+        {
+          name: "defaults headers to columns while preserving explicit row scope",
+          description: t("tablePage.test2"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("tablePage.lede")} />
+    <ComponentPreview tree={tableTree(t)} label="Table" />
+
+    <h3>{t("tablePage.scrollTitle")}</h3>
+    <p set:html={t("tablePage.scrollBody")} />
+
+    <h3>{t("tablePage.stickyColTitle")}</h3>
+    <p set:html={t("tablePage.stickyColBody")} />
+    <ComponentPreview tree={tableStickyColumnTree(t)} label={t("tablePage.stickyColLabel")} />
+
+    <h3>{t("tablePage.stickyHeadTitle")}</h3>
+    <p set:html={t("tablePage.stickyHeadBody")} />
+    <ComponentPreview tree={tableStickyHeaderTree(t)} label={t("tablePage.stickyHeadLabel")} />
+
+    <h3>{t("tablePage.pagerTitle")}</h3>
+    <p set:html={t("tablePage.pagerBody")} />
+    <ComponentPreview tree={tablePagerTree(t)} label={t("tablePage.pagerLabel")} />
+
+    <h3>{t("tablePage.boxTitle")}</h3>
+    <p set:html={t("tablePage.boxBody")} />
+    <ComponentPreview tree={tableInBoxTree(t)} label={t("tablePage.boxLabel")} />
+
+    <h3>{t("tablePage.densityTitle")}</h3>
+    <p set:html={t("tablePage.densityBody")} />
+    <ComponentPreview tree={tableDensityTree(t, 1.2)} label={t("tablePage.densityWideLabel")} />
+    <ComponentPreview tree={tableDensityTree(t, 0.6)} label={t("tablePage.densityCompactLabel")} />
+
+    <p set:html={t("tablePage.reactBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

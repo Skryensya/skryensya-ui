@@ -1,0 +1,76 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/tile.yaml?raw";
+import coreSource from "@core/src/tile.ts?raw";
+import coreContractsSource from "@core/src/tile-contracts.ts?raw";
+import cssSource from "@core/css/components/tile.css?raw";
+import reactSource from "@react/src/components/tile.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/tile.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/tile.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/src/tile-contracts.ts", source: coreContractsSource, language: "ts" },
+  { id: "packages/core/css/components/tile.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/tile.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Tile"
+  description={t("tilePage.description")}
+  contractId="tile"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/tile.css", probe: "sk-tile" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/tile.test.tsx",
+      tests: [
+        {
+          name: "renders every React Tile root with an explicit interactive or disclosure variant",
+          description: t("tilePage.test1"),
+        },
+        {
+          name: "renders the shared title and description anatomy for selectable tiles",
+          description: t("tilePage.test2"),
+        },
+        { name: "supports uncontrolled checkbox changes", description: t("tilePage.test3") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("tilePage.lede")} />
+    <p set:html={t("tilePage.body1")} />
+    <p set:html={t("tilePage.body2")} />
+
+    <h3>{t("tilePage.chooseTitle")}</h3>
+    <div class="sk-table-scroll">
+      <table class="sk-table">
+        <thead>
+          <tr><th>{t("tilePage.headNeed")}</th><th>{t("tilePage.headComponent")}</th><th>{t("tilePage.headNative")}</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>{t("tilePage.row1Need")}</td><td><a href="/componentes/box">Box</a></td><td set:html={t("tilePage.row1Native")} /></tr>
+          <tr><td>{t("tilePage.row2Need")}</td><td><a href="/componentes/link">Link</a></td><td set:html={t("tilePage.row2Native")} /></tr>
+          <tr><td>{t("tilePage.row3Need")}</td><td><a href="/componentes/button">Button</a></td><td set:html={t("tilePage.row3Native")} /></tr>
+          <tr><td>{t("tilePage.row4Need")}</td><td><a href="/componentes/checkbox">Checkbox</a></td><td set:html={t("tilePage.row4Native")} /></tr>
+          <tr><td>{t("tilePage.row5Need")}</td><td><a href="/componentes/switch">Switch</a></td><td set:html={t("tilePage.row5Native")} /></tr>
+          <tr><td>{t("tilePage.row6Need")}</td><td><a href="/componentes/radio-group">RadioGroup</a></td><td set:html={t("tilePage.row6Native")} /></tr>
+          <tr><td>{t("tilePage.row7Need")}</td><td><a href="/componentes/accordion">Accordion</a></td><td set:html={t("tilePage.row7Native")} /></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>{t("tilePage.contractsTitle")}</h3>
+    <ul>
+      <li set:html={t("tilePage.contractItem1")} />
+      <li set:html={t("tilePage.contractItem2")} />
+      <li set:html={t("tilePage.contractItem3")} />
+      <li set:html={t("tilePage.contractItem4")} />
+      <li set:html={t("tilePage.contractItem5")} />
+    </ul>
+  </Fragment>
+</ComponentPageShell>

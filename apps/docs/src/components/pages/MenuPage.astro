@@ -1,0 +1,60 @@
+---
+import "@skryensya/core/components/menu.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { menuTree } from "../../demos/menu";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/menu.yaml?raw";
+import coreSource from "@core/src/menu.ts?raw";
+import cssSource from "@core/css/components/menu.css?raw";
+import vanillaMountSource from "@vanilla/src/components/menu.ts?raw";
+import reactSource from "@react/src/components/menu.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const styles = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/menu.css";`;
+
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+initComponents();`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/menu.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/menu.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/menu.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/menu.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/menu.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Menu"
+  description={t("menuPage.description")}
+  contractId="menu"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/menu.css", probe: "sk-menu", title: "Menu" },
+    { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("menuPage.description")} />
+    <ComponentPreview tree={menuTree(t)} js={js} label="Menu" viewport="menu" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("menuPage.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("menuPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

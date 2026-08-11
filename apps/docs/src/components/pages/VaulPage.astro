@@ -1,0 +1,364 @@
+---
+/* La hoja del pattern que el shell no carga, y la misma que el bloque de instalación de más abajo le
+ * pide al consumidor. Sin ella el `<dialog>` de la demo cae en el estilo por defecto del navegador. */
+import "@skryensya/core/patterns/vaul.css";
+import "@skryensya/core/components/list.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/vaul.yaml?raw";
+import coreSource from "@core/src/vaul.ts?raw";
+import cssSource from "@core/css/patterns/vaul.css?raw";
+import vanillaMountSource from "@vanilla/src/components/vaul.ts?raw";
+import vanillaGestureSource from "@vanilla/src/components/vaul-gesture.ts?raw";
+import reactSource from "@react/src/components/vaul.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const import_ = `@import "@skryensya/core/patterns/vaul.css";
+@import "@skryensya/core/patterns/scroll-lock.css";`;
+
+const html = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-sk-vaul-open="demo-vaul"
+  type="button"
+>
+  ${t("vaulPage.demoOpenLabel")}
+</button>
+
+<dialog
+  class="sk-vaul demo-vaul"
+  id="demo-vaul"
+  data-sk-vaul
+  data-edge="block-end"
+  aria-labelledby="demo-vaul-title"
+>
+  <div
+    class="sk-vaul__handle"
+    data-part="handle"
+    aria-hidden="true"
+  ></div>
+
+  <header class="demo-vaul__header">
+    <span class="demo-vaul__heading">
+      <h2 class="demo-vaul__title" id="demo-vaul-title" data-flush>
+        ${t("vaulPage.demoTitle")}
+      </h2>
+      <span class="demo-vaul__meta">
+        ${t("vaulPage.demoMeta")}
+      </span>
+    </span>
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="ghost"
+      data-icon-only
+      data-sk-vaul-close
+      type="button"
+      aria-label="${t("vaulPage.demoClose")}"
+    >
+      <span data-sk-icon="close"></span>
+    </button>
+  </header>
+
+  <label class="sk-switch demo-vaul__link">
+    <input
+      class="sk-switch__input"
+      type="checkbox"
+      role="switch"
+      checked
+    />
+    <span class="sk-switch__control" aria-hidden="true">
+      <span class="sk-switch__thumb"></span>
+    </span>
+    <span class="sk-switch__label">
+      ${t("vaulPage.demoShareToggle")}
+    </span>
+  </label>
+
+  <ul
+    class="sk-list demo-vaul__people"
+    data-density="compact"
+    aria-label="${t("vaulPage.demoPeopleLabel")}"
+  >
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">AK</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Ada Kovač</span>
+        <span class="sk-list__description">ada@estudio.cl</span>
+      </span>
+      <span class="sk-list__trailing">
+        <span class="sk-badge">${t("vaulPage.demoOwner")}</span>
+      </span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">RM</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Renzo Molina</span>
+        <span class="sk-list__description">renzo@estudio.cl</span>
+      </span>
+      <span class="sk-list__trailing">${t("vaulPage.demoCanEdit")}</span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">NS</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Nadia Sepúlveda</span>
+        <span class="sk-list__description">nadia@estudio.cl</span>
+      </span>
+      <span class="sk-list__trailing">${t("vaulPage.demoCanComment")}</span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">TB</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Tomás Bahamondes</span>
+        <span class="sk-list__description">tomas@estudio.cl</span>
+      </span>
+      <span class="sk-list__trailing">${t("vaulPage.demoCanComment")}</span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">+6</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">${t("vaulPage.demoDesignTeam")}</span>
+        <span class="sk-list__description">${t("vaulPage.demoDesignTeamMeta")}</span>
+      </span>
+      <span class="sk-list__trailing">${t("vaulPage.demoReadOnly")}</span>
+    </li>
+    <li class="sk-list__item">
+      <span class="sk-list__leading">
+        <span class="sk-avatar" data-size="sm" aria-hidden="true">
+          <span class="sk-avatar__fallback">LV</span>
+        </span>
+      </span>
+      <span class="sk-list__content">
+        <span class="sk-list__title">Lucía Vergara</span>
+        <span class="sk-list__description">lucia@cliente.cl</span>
+      </span>
+      <span class="sk-list__trailing">${t("vaulPage.demoInviteSent")}</span>
+    </li>
+  </ul>
+
+  <footer class="demo-vaul__actions">
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="ghost"
+      data-sk-vaul-close
+      type="button"
+    >
+      ${t("vaulPage.demoCancel")}
+    </button>
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-sk-vaul-close
+      type="button"
+    >
+      ${t("vaulPage.demoShare")}
+    </button>
+  </footer>
+</dialog>`;
+
+const edges = `
+<dialog class="sk-vaul" data-edge="inline-start">…</dialog>
+<dialog class="sk-vaul" data-edge="inline-end">…</dialog>
+<dialog class="sk-vaul" data-edge="block-end">…</dialog>`;
+
+const vanilla = `import { connectVaul } from "@skryensya/vanilla/vaul";
+
+// ${t("vaulPage.vanillaComment1")}
+// ${t("vaulPage.vanillaComment2")}
+const cleanup = connectVaul(document.querySelector("#demo-vaul"), {
+  // ${t("vaulPage.vanillaComment3")}
+  dismissThreshold: 0.4,
+  // ${t("vaulPage.vanillaComment4")}
+  dismissVelocity: 0.5,
+  onOpenChange(details) {
+    console.log(details.open);
+  },
+});`;
+
+const noDrag = `<dialog
+  class="sk-vaul"
+  data-sk-vaul
+  data-draggable="false"
+  data-edge="block-end"
+>
+  <!-- ${t("vaulPage.noDragComment")} -->
+</dialog>`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/vaul.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/vaul.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/patterns/vaul.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/vaul.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/vaul-gesture.ts", source: vanillaGestureSource, language: "ts" },
+  { id: "packages/react/src/components/vaul.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Vaul"
+  description={t("vaulPage.description")}
+  contractId="vaul"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "patterns/vaul.css", probe: "sk-vaul" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/vaul.test.tsx",
+      tests: [
+        { name: "carries the enhancer's scope markers at rest", description: t("vaulPage.test1") },
+        { name: "draws the handle as decoration, always", description: t("vaulPage.test2") },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/vaul-gesture.test.ts",
+      tests: [
+        {
+          name: "dismisses a far-enough slow drag (distance alone)",
+          description: t("vaulPage.test3"),
+        },
+        {
+          name: "dismisses a fast short flick even when the distance is small",
+          description: t("vaulPage.test4"),
+        },
+        {
+          name: "a flick BACK home overrules a far drag, direction beats distance",
+          description: t("vaulPage.test5"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("vaulPage.lede")} />
+    <ComponentPreview html={html} label="HTML" viewport="overlay" />
+
+    <h3>{t("vaulPage.whyPatternTitle")}</h3>
+    <p set:html={t("vaulPage.whyPatternBody1")} />
+    <p set:html={t("vaulPage.whyPatternBody2")} />
+
+    <h3>{t("vaulPage.edgeTitle")}</h3>
+    <p set:html={t("vaulPage.edgeBody")} />
+    <CodeBlock code={edges} label="HTML" />
+
+    <h3 set:html={t("vaulPage.nativeTitle")} />
+    <p set:html={t("vaulPage.nativeBody")} />
+
+    <h3>{t("vaulPage.zagTitle")}</h3>
+    <p set:html={t("vaulPage.zagBody")} />
+
+    <h3>{t("vaulPage.dragTitle")}</h3>
+    <p set:html={t("vaulPage.dragBody1")} />
+    <CodeBlock code={vanilla} label="JavaScript" />
+    <p set:html={t("vaulPage.dragBody2")} />
+    <CodeBlock code={noDrag} label={t("vaulPage.noDragLabel")} />
+
+    <h3>{t("vaulPage.resistTitle")}</h3>
+    <p set:html={t("vaulPage.resistBody1")} />
+    <p set:html={t("vaulPage.resistBody2")} />
+    <p set:html={t("vaulPage.resistBody3")} />
+
+    <h3>{t("vaulPage.handleTitle")}</h3>
+    <p set:html={t("vaulPage.handleBody")} />
+
+    <h3>{t("vaulPage.desktopTitle")}</h3>
+    <p set:html={t("vaulPage.desktopBody")} />
+
+    <h3>{t("vaulPage.motionTitle")}</h3>
+    <p set:html={t("vaulPage.motionBody1")} />
+    <p set:html={t("vaulPage.motionBody2")} />
+    <p set:html={t("vaulPage.motionBody3")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={import_} label="CSS" />
+  </Fragment>
+</ComponentPageShell>
+
+<style is:global>
+  /* La piel del demo es del consumidor, como siempre: el pattern trae hooks y estructura, no pintura.
+     El ancho lo decide el clamp del pattern; el alto lo da el contenido hasta el techo del sheet.
+     `is:global`: el HTML autorado vive dentro del srcdoc y no lleva el atributo de scope de Astro;
+     el adapter copia esta regla global al frame, una regla scopeada no podría alcanzarlo. */
+  .demo-vaul {
+    --sk-vaul-radius: var(--radius-surface) var(--radius-surface) 0 0;
+    min-block-size: min(64dvh, 32rem);
+    --demo-vaul-inset: calc(var(--space-inset-md) + var(--space-inset-xs));
+  }
+
+  .demo-vaul[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .demo-vaul__header {
+    display: flex;
+    gap: var(--space-inline-md);
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: var(--space-inset-sm) var(--demo-vaul-inset);
+  }
+
+  .demo-vaul__heading {
+    display: grid;
+    gap: 2px;
+    min-inline-size: 0;
+  }
+
+  .demo-vaul__title {
+    margin: 0;
+    font-size: var(--font-size-heading-sm);
+    line-height: var(--font-line-height-heading);
+    font-weight: var(--font-weight-heading);
+  }
+
+  .demo-vaul__meta {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+  }
+
+  .demo-vaul__link {
+    flex: none;
+    padding: var(--space-inset-sm) var(--demo-vaul-inset);
+    border-block: 1px solid var(--color-border-subtle);
+  }
+
+  .demo-vaul__people {
+    --sk-list-row-padding-x: var(--demo-vaul-inset);
+
+    flex: 1;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .demo-vaul__actions {
+    display: flex;
+    gap: var(--space-inline-sm);
+    justify-content: flex-end;
+    padding: var(--space-inset-sm) var(--demo-vaul-inset);
+    border-block-start: 1px solid var(--color-border-subtle);
+  }
+</style>

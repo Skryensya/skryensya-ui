@@ -1,0 +1,91 @@
+---
+import "@skryensya/core/components/dialog.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  headingCompactTree,
+  headingDisplayTree,
+  headingDocumentTree,
+  headingOutlineTree,
+  headingPageTitleTree,
+  headingFlushTree,
+} from "../../demos/typography";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/typography.yaml?raw";
+import coreSource from "@core/src/typography.ts?raw";
+import cssSource from "@core/css/components/typography.css?raw";
+import reactSource from "@react/src/components/typography.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/typography.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/typography.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/typography.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/typography.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Heading"
+  description={t("heading.description")}
+  contractId="typography"
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/typography.test.tsx",
+      tests: [
+        { name: "separates heading hierarchy from its visual size", description: t("heading.test1") },
+        { name: "opts into flush with an explicit attribute, not by position", description: t("heading.test2") },
+        { name: "floors h5 and h6 visual size at h4", description: t("heading.test3") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("heading.lede")} />
+
+    <h3>{t("heading.sizesTitle")}</h3>
+    <p set:html={t("heading.sizesBody")} />
+
+    <h4>{t("heading.displayTitle")}</h4>
+    <ComponentPreview tree={headingDisplayTree(t)} label={t("heading.displayLabel")} />
+
+    <h4>{t("heading.documentTitle")}</h4>
+    <ComponentPreview tree={headingDocumentTree(t)} label={t("heading.documentLabel")} />
+
+    <h3>{t("heading.pageTitleTitle")}</h3>
+    <p set:html={t("heading.pageTitleBody")} />
+    <ComponentPreview tree={headingPageTitleTree(t)} label={t("heading.pageTitleLabel")} />
+
+    <h3>{t("heading.outlineTitle")}</h3>
+    <p set:html={t("heading.outlineBody")} />
+    <ComponentPreview tree={headingOutlineTree(t)} label={t("heading.outlineLabel")} />
+
+    <h3>{t("heading.compactTitle")}</h3>
+    <p set:html={t("heading.compactBody")} />
+    <ComponentPreview tree={headingCompactTree(t)} label={t("heading.compactLabel")} />
+
+    <h3>{t("heading.flushTitle")}</h3>
+    <p set:html={t("heading.flushBody")} />
+    <ComponentPreview tree={headingFlushTree(t)} label={t("heading.flushLabel")} />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("heading.contractItem1")} />
+      <li set:html={t("heading.contractItem2")} />
+      <li set:html={t("heading.contractItem3")} />
+      <li set:html={t("heading.contractItem4")} />
+      <li set:html={t("heading.contractItem5")} />
+      <li set:html={t("heading.contractItem6")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

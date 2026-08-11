@@ -1,0 +1,150 @@
+---
+/*
+ * THE Dialog page: one component, both locales, on `ComponentPageShell` — the shape
+ * `AccordionPage` piloted. The two route files that remain (`pages/componentes/dialog.astro`,
+ * `pages/en/components/dialog.astro`) are shells for the same reason Accordion's are: the URLs
+ * differ per locale, the content does not.
+ *
+ * The old per-locale copies had drifted (the English one hardcoded its own prose instead of going
+ * through `t()`, and was missing the hero, the tabs, and the Referencia/Style hooks/Cambios
+ * panels), which is exactly the failure mode `t()` + one shell exists to close off.
+ */
+import "@skryensya/core/components/dialog.css";
+import "@skryensya/core/patterns/dialog-vaul.css";
+import "@skryensya/core/components/list.css";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { dialogConfirmScript, dialogConfirmTree, dialogVaulScript, dialogVaulTree } from "../../demos/dialog";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/dialog.yaml?raw";
+import coreSource from "@core/src/dialog.ts?raw";
+import cssSource from "@core/css/components/dialog.css?raw";
+import vaulCssSource from "@core/css/patterns/dialog-vaul.css?raw";
+import vaulMountSource from "@vanilla/src/components/vaul.ts?raw";
+import vaulGestureSource from "@vanilla/src/components/vaul-gesture.ts?raw";
+import reactSource from "@react/src/components/dialog.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const confirmJs = `const dialog = document.getElementById("confirm-borrar");
+const trigger = document.querySelector(
+  '[data-dialog-open="confirm-borrar"]',
+);
+
+trigger?.addEventListener("click", () => {
+  if (dialog instanceof HTMLDialogElement) dialog.showModal();
+});
+
+// ${t("dialog.confirmJsComment")}
+dialog?.addEventListener("close", () => {
+  console.log(dialog.returnValue); // "cancel" | "confirm"
+});`;
+
+const install = `pnpm add @skryensya/core`;
+const styles = `@import "@skryensya/core/components/dialog.css";
+@import "@skryensya/core/patterns/scroll-lock.css";`;
+
+const vaulInstall = `pnpm add @skryensya/core @skryensya/vanilla`;
+const vaulStyles = `@import "@skryensya/core/components/dialog.css";
+@import "@skryensya/core/patterns/dialog-vaul.css";
+@import "@skryensya/core/patterns/scroll-lock.css";`;
+const vaulJs = `import { initComponents } from "@skryensya/vanilla/auto";
+
+await initComponents();`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/dialog.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/dialog.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/dialog.css", source: cssSource, language: "css" },
+  { id: "packages/core/css/patterns/dialog-vaul.css", source: vaulCssSource, language: "css" },
+  { id: "packages/vanilla/src/components/vaul.ts", source: vaulMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/vaul-gesture.ts", source: vaulGestureSource, language: "ts" },
+  { id: "packages/react/src/components/dialog.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Dialog"
+  description={t("dialog.description")}
+  contractId="dialog"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/dialog.css", probe: "sk-dialog", title: "Dialog" },
+    { file: "patterns/dialog-vaul.css", probe: "data-sk-dialog-vaul", title: "Dialog Vaul" },
+  ]}
+  tests={[
+    {
+      file: "packages/react/src/components/dialog.test.tsx",
+      tests: [
+        {
+          name: "closes through the platform's own form rather than a handler",
+          description: t("dialog.test1"),
+        },
+        { name: "renders the anatomy the stylesheet contracts against", description: t("dialog.test2") },
+        { name: "omits the footer form when there is nothing to put in it", description: t("dialog.test3") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("dialog.lede")} />
+
+    <h3>{t("dialog.confirmTitle")}</h3>
+    <p set:html={t("dialog.confirmAnatomy")} />
+    <ComponentPreview tree={dialogConfirmTree(t)} previewScript={dialogConfirmScript} label="Confirm" viewport="overlay" />
+
+    <h3>{t("dialog.openingTitle")}</h3>
+    <CodeBlock code={confirmJs} label="JavaScript" />
+
+    <h3>{t("dialog.contractTitle")}</h3>
+    <ul>
+      <li set:html={t("dialog.contractItem1")} />
+      <li set:html={t("dialog.contractItem2")} />
+      <li set:html={t("dialog.contractItem3")} />
+      <li set:html={t("dialog.contractItem4")} />
+      <li set:html={t("dialog.contractItem5")} />
+      <li set:html={t("dialog.contractItem6")} />
+      <li set:html={t("dialog.contractItem7")} />
+    </ul>
+
+    <h3>{t("dialog.vaulTitle")}</h3>
+    <p set:html={t("dialog.vaulIntro")} />
+    <ComponentPreview tree={dialogVaulTree(t)} previewScript={dialogVaulScript} label="Dialog Vaul" viewport="overlay" />
+
+    <h4>{t("dialog.vaulAddsTitle")}</h4>
+    <ul>
+      <li set:html={t("dialog.vaulAddsItem1")} />
+      <li set:html={t("dialog.vaulAddsItem2")} />
+      <li set:html={t("dialog.vaulAddsItem3")} />
+      <li set:html={t("dialog.vaulAddsItem4")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+
+    <h3>{t("dialog.vaulInstallTitle")}</h3>
+    <CodeBlock code={vaulInstall} label="terminal" />
+    <CodeBlock code={vaulStyles} label="CSS" lang="css" />
+    <CodeBlock code={vaulJs} label="JavaScript" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("dialog.a11yIntro")} />
+    <ul>
+      <li set:html={t("dialog.a11yItem1")} />
+      <li set:html={t("dialog.a11yItem2")} />
+      <li set:html={t("dialog.a11yItem3")} />
+      <li set:html={t("dialog.a11yItem4")} />
+      <li set:html={t("dialog.a11yItem5")} />
+      <li set:html={t("dialog.a11yItem6")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="style">
+    <h3>{t("dialog.borderTitle")}</h3>
+    <p set:html={t("dialog.borderBody")} />
+  </Fragment>
+</ComponentPageShell>

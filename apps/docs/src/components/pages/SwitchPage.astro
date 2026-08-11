@@ -1,0 +1,81 @@
+---
+import "@skryensya/core/components/tile.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { switchTree, tileSwitchTree } from "../../demos/switch";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/switch.yaml?raw";
+import cssSource from "@core/css/components/switch.css?raw";
+import reactSource from "@react/src/components/selection.tsx?raw";
+import vanillaMountSource from "@vanilla/src/components/tile-switch.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/tile-switch.svelte.test.ts?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const tileSwitchVanilla = `import { initComponents } from "@skryensya/vanilla/auto";
+
+// Cada label se autora con data-sk-tile-switch (data-name, data-value,
+// data-default-checked) más su input role="switch" y su indicador.
+// initComponents las hidrata con la máquina @zag-js/checkbox.
+await initComponents();
+
+for (const root of document.querySelectorAll(
+  "[data-sk-tile-switch]",
+)) {
+  root.addEventListener("sk:checkedchange", (event) => {
+    console.log(root.dataset.value, event.detail.checked);
+  });
+}`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/switch.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/css/components/switch.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/selection.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/vanilla/src/components/tile-switch.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/tile-switch.svelte.test.ts", source: vanillaTestSource, language: "ts" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Switch"
+  description={t("switchPage.description")}
+  contractId="switch"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/switch.css", probe: "sk-switch" }]}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/tile-switch.svelte.test.ts",
+      tests: [
+        {
+          name: "toggles checked state and root data-state on click, emitting sk:checkedchange",
+          description: t("switchPage.test1"),
+        },
+        { name: "is form-associated and honours its default-checked", description: t("switchPage.test2") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("switchPage.lede")} />
+    <ComponentPreview tree={switchTree(t)} label="Switch" />
+    <p set:html={t("switchPage.body")} />
+
+    <h3>{t("switchPage.tileTitle")}</h3>
+    <p set:html={t("switchPage.tileBody1")} />
+    <ComponentPreview tree={tileSwitchTree(t)} label="TileSwitch" />
+    <p set:html={t("switchPage.tileBody2")} />
+    <CodeBlock code={tileSwitchVanilla} label="JavaScript" />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("switchPage.contractItem1")} />
+      <li set:html={t("switchPage.contractItem2")} />
+      <li set:html={t("switchPage.contractItem3")} />
+      <li set:html={t("switchPage.contractItem4")} />
+      <li set:html={t("switchPage.contractItem5")} />
+    </ul>
+  </Fragment>
+</ComponentPageShell>

@@ -1,0 +1,61 @@
+---
+import "@skryensya/core/components/stat.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { statAnimatedTree, statCardsTree } from "../../demos/stat";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/stat.yaml?raw";
+import coreSource from "@core/src/stat.ts?raw";
+import cssSource from "@core/css/components/stat.css?raw";
+import vanillaMountSource from "@vanilla/src/components/stat.ts?raw";
+import reactSource from "@react/src/components/stat.tsx?raw";
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/stat.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/stat.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/stat.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/stat.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/stat.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Stat"
+  description={t("statPage.description")}
+  contractId="stat"
+  styleGroups={[{ file: "components/stat.css", probe: "sk-stat" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/stat.test.tsx",
+      tests: [
+        { name: "colors the change by trend, not by sign", description: t("statPage.test1") },
+        { name: "omits the change element when no change is given", description: t("statPage.test2") },
+        { name: "counts a numeric value up when animate is on", description: t("statPage.test3") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("statPage.lede")} />
+
+    <h3>{t("statPage.cardTitle")}</h3>
+    <p set:html={t("statPage.cardBody")} />
+    <ComponentPreview tree={statCardsTree(t, locale)} label="Stat" />
+
+    <h3 id="animar">{t("statPage.animateTitle")}</h3>
+    <p set:html={t("statPage.animateBody")} />
+    <ComponentPreview tree={statAnimatedTree(t, locale)} label={t("statPage.animateLabel")} note={t("statPage.animateNote")} />
+
+    <p set:html={t("component.reactNote")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

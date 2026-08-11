@@ -60,6 +60,35 @@ runs it to check the rules; the site runs it to generate the token reference. A 
 from a different reading of the source than the one the rules are checked against would describe a system
 nobody validates.
 
+## The docs "Tests" tab shows real pass/fail
+
+A component page can carry a "Tests" tab (`ComponentPageShell`'s `tests` prop, rendered by
+`apps/docs/src/components/TestCoverage.astro`): one short, hand-translated line per test, with a
+success/danger/clock icon that reflects what the test **actually did on its last run**, not a
+decorative or hand-typed status. Wired for 57 component pages so far — effectively every page with a
+real test file behind it (see `TARGETS` in `scripts/build-test-report.mjs` for the current list).
+
+The chain: `scripts/build-test-report.mjs` runs the real Vitest files listed in its `TARGETS` array
+with `--reporter=json` and writes `artifacts/test-results.json`, keyed
+`[repo-relative test file][it() title] -> "passed" | "failed" | …`. `apps/docs/src/lib/test-results.ts`
+reads that artifact (same `@artifacts/*`-alias pattern `contract-reference.ts` uses for
+`ai-manifest.json`) and exposes `testStatus(file, name)`. Each `*Page.astro` that uses the tab passes
+`tests={[{ file, tests: [{ name, description }] }]}`, where `name` must match the real `it()` title
+**verbatim** — that's the lookup key.
+
+A drift (renamed test, typo in `name`) does not lie or crash: `testStatus` falls back to a neutral
+"not run" clock icon and logs a `console.warn` in the dev-server terminal. The report is not part of
+`turbo check`/`build` on purpose — a stale `test-results.json` should only degrade one tab, not fail
+the whole build. Regenerate it by hand after touching a tracked test file:
+
+```bash
+node scripts/build-test-report.mjs
+```
+
+To extend the tab to another component: add its test file(s) to `TARGETS` in
+`scripts/build-test-report.mjs`, run the script, then pass `tests` to that component's `*Page.astro`
+with `name` copied verbatim from the real `it(...)` call.
+
 ## Tasks (Turborepo)
 
 | Task | What it does | Where |

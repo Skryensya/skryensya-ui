@@ -1,0 +1,60 @@
+---
+import "@skryensya/core/components/steps.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { stepsTree, stepsVerticalTree } from "../../demos/steps";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/steps.yaml?raw";
+import coreSource from "@core/src/steps.ts?raw";
+import cssSource from "@core/css/components/steps.css?raw";
+import reactSource from "@react/src/components/steps.tsx?raw";
+import reactTestSource from "@react/src/components/steps.test.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/steps.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/steps.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/steps.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/steps.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/steps.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Steps"
+  description={t("stepsPage.description")}
+  contractId="steps"
+  styleGroups={[{ file: "components/steps.css", probe: "sk-steps" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/steps.test.tsx",
+      tests: [
+        { name: "derives complete / current / upcoming from the current index", description: t("stepsPage.test1") },
+        { name: "lets a step override its status explicitly", description: t("stepsPage.test2") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("stepsPage.lede")} />
+    <ComponentPreview tree={stepsTree(t)} label="Steps" />
+    <p set:html={t("stepsPage.body")} />
+
+    <h3>{t("stepsPage.mobileTitle")}</h3>
+    <p set:html={t("stepsPage.mobileBody")} />
+
+    <h3>{t("stepsPage.verticalTitle")}</h3>
+    <p set:html={t("stepsPage.verticalBody")} />
+    <ComponentPreview tree={stepsVerticalTree(t)} label={t("stepsPage.verticalLabel")} />
+
+    <p set:html={t("component.reactNote")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

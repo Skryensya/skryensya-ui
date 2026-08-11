@@ -1,0 +1,136 @@
+---
+import "@skryensya/core/components/tile.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  buttonAsLinkTree,
+  buttonIconOnlySmTree,
+  buttonIconOnlyTree,
+  buttonIconTree,
+  buttonSizesTree,
+  buttonVariantsTree,
+  tileButtonTree,
+} from "../../demos/button";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/button.yaml?raw";
+import coreSource from "@core/src/button.ts?raw";
+import cssSource from "@core/css/components/button.css?raw";
+import vanillaMountSource from "@vanilla/src/components/button.ts?raw";
+import vanillaTileButtonSource from "@vanilla/src/components/tile-button.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/button.test.ts?raw";
+import reactSource from "@react/src/components/button.tsx?raw";
+import reactTestSource from "@react/src/components/button.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+/* The link demo points at a real docs page, and that page's path differs per locale. */
+const LINK_HREF = "/primer-componente";
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+const js = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+// ${t("button.iconsComment").split("\n").join("\n// ")}
+mountIcons(document, lucideIcons);
+
+await initComponents();`;
+
+const sizeHit = `/* ${t("button.sizeHitComment").split("\n").join("\n   ")} */
+.sk-button::after {
+  content: "";
+  position: absolute;
+  inset-block: min(
+    0px,
+    calc((100% - var(--size-touch-target)) / 2)
+  );
+  inset-inline: min(
+    0px,
+    calc((100% - var(--size-touch-target)) / 2)
+  );
+}`;
+
+const tileButtonVanilla = `import { createTileButton } from "@skryensya/vanilla/tile-button";
+
+const button = createTileButton();
+button.textContent = "Run deployment";
+button.addEventListener("click", runDeployment);`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/button.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/button.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/button.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/button.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/tile-button.ts", source: vanillaTileButtonSource, language: "ts" },
+  { id: "packages/vanilla/src/components/button.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/button.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/button.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Button"
+  description={t("button.description")}
+  contractId="button"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/button.css", probe: "sk-button" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/button.test.tsx",
+      tests: [
+        { name: "renders a native button that does not submit forms by default", description: t("button.test1") },
+        {
+          name: "exposes disabled state to both native controls and assistive technology",
+          description: t("button.test2"),
+        },
+        { name: "renders navigation with Button appearance and anchor attributes", description: t("button.test3") },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/button.test.ts",
+      tests: [
+        {
+          name: "enhances authored buttons with a safe type and idempotent mounting",
+          description: t("button.test4"),
+        },
+        { name: "refuses an icon-only button with no accessible name", description: t("button.test5") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("button.lede")} />
+
+    <h3>{t("button.variantsTitle")}</h3>
+    <ComponentPreview tree={buttonVariantsTree(t)} label="Button" />
+    <p set:html={t("button.translucentBody")} />
+
+    <h3>{t("button.sizesTitle")}</h3>
+    <ComponentPreview tree={buttonSizesTree(t)} label={t("button.sizesLabel")} />
+    <CodeBlock code={sizeHit} label="components/button.css" lang="css" note={t("button.sizeHitNote")} />
+
+    <h3>{t("button.iconTitle")}</h3>
+    <p set:html={t("button.iconBody")} />
+    <ComponentPreview tree={buttonIconTree(t)} label={t("button.iconLabel")} />
+
+    <h3>{t("button.iconOnlyTitle")}</h3>
+    <ComponentPreview tree={buttonIconOnlyTree(t)} label={t("button.iconOnlyLabel")} />
+    <ComponentPreview tree={buttonIconOnlySmTree(t)} label={t("button.iconOnlySmLabel")} />
+
+    <h3>{t("button.linkTitle")}</h3>
+    <p set:html={t("button.linkBody")} />
+    <ComponentPreview tree={buttonAsLinkTree(t, LINK_HREF)} label={t("button.linkLabel")} />
+
+    <h3>{t("button.tileTitle")}</h3>
+    <p set:html={t("button.tileBody")} />
+    <ComponentPreview tree={tileButtonTree(t)} label={t("button.tileLabel")} />
+    <CodeBlock code={tileButtonVanilla} label="JavaScript" />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+
+    <h3>{t("button.vanillaInitTitle")}</h3>
+    <CodeBlock code={js} label="JavaScript" />
+  </Fragment>
+</ComponentPageShell>

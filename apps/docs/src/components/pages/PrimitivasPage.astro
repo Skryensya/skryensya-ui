@@ -1,0 +1,45 @@
+---
+/*
+ * A survey page, not a single component's page: Box, Wrapper, ImageFrame, Stack, Inline, Grid,
+ * Text, Heading and Link each already have their own contract and their own migrated page under
+ * `componentes/*`. There is no ninth compiled artifact for "all of them at once" to hang a
+ * Referencia tab off of, so this one runs the shell with no `contractId`: Uso and Instalación
+ * only, same as any component page that has nothing to report on Referencia/Style hooks/Cambios.
+ */
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { primitivesTree } from "../../demos/layout";
+import { getLocale, useTranslations } from "../../i18n";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+const path = locale === "en" ? "/en/components/primitives" : "/componentes/primitivas";
+---
+
+<ComponentPageShell title={t("primitivasPage.title")} description={t("primitivasPage.description")}>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("primitivasPage.lede")} />
+    <ComponentPreview tree={primitivesTree(t, path)} label={t("primitivasPage.previewLabel")} />
+
+    <h3>{t("primitivasPage.htmlTitle")}</h3>
+    <p set:html={t("primitivasPage.htmlBody")} />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("primitivasPage.contractsTitle")}</h3>
+    <ul>
+      <li set:html={t("primitivasPage.contractItem1")} />
+      <li set:html={t("primitivasPage.contractItem2")} />
+      <li set:html={t("primitivasPage.contractItem3")} />
+      <li set:html={t("primitivasPage.contractItem4")} />
+      <li set:html={t("primitivasPage.contractItem5")} />
+      <li set:html={t("primitivasPage.contractItem6")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

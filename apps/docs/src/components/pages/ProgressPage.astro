@@ -1,0 +1,58 @@
+---
+import "@skryensya/core/components/progress.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { progressTree } from "../../demos/progress";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/progress.yaml?raw";
+import coreSource from "@core/src/progress.ts?raw";
+import cssSource from "@core/css/components/progress.css?raw";
+import reactSource from "@react/src/components/progress.tsx?raw";
+import reactTestSource from "@react/src/components/progress.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/progress.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/progress.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/progress.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/progress.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/progress.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Progress"
+  description={t("progressPage.description")}
+  contractId="progress"
+  styleGroups={[{ file: "components/progress.css", probe: "sk-progress" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/progress.test.tsx",
+      tests: [
+        {
+          name: "exposes the value on the progressbar role and paints the matching fill",
+          description: t("progressPage.test1"),
+        },
+        {
+          name: "clamps an out-of-range value so the paint and aria-valuenow agree",
+          description: t("progressPage.test2"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("progressPage.lede")} />
+    <ComponentPreview tree={progressTree(t)} label="Progress" />
+    <p set:html={t("progressPage.body")} />
+    <p set:html={t("component.reactNote")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

@@ -11,12 +11,24 @@ import { getLocale, useTranslations } from "../i18n";
 
 interface Props {
   target: string;
+  /**
+   * Overrides the "copy code" wording for a button that copies something other than a code
+   * block, a table cell's own value for instance: without this every such button would announce
+   * itself identically as "Copy code", indistinguishable from its neighbours to a screen reader
+   * moving button to button.
+   */
+  label?: string;
 }
 
-const { target } = Astro.props;
+const { target, label } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
 const copyIcon = iconMarkup("copy");
 const copiedIcon = iconMarkup("check");
+const idleLabel = label ?? t("copy.code");
+/* "Code copied" only makes sense for the code-block default; a custom label gets the generic
+   success/error wording instead. */
+const successAriaLabel = label ? t("copy.copied") : t("copy.codeCopied");
+const errorAriaLabel = label ? t("copy.error") : t("copy.failed");
 ---
 
 <button
@@ -27,11 +39,11 @@ const copiedIcon = iconMarkup("check");
   data-sk-copy-button
   data-sk-copy-button-target={target}
   type="button"
-  aria-label={t("copy.code")}
+  aria-label={idleLabel}
   data-sk-copy-button-success-label={t("copy.copied")}
   data-sk-copy-button-error-label={t("copy.error")}
-  data-sk-copy-button-success-aria-label={t("copy.codeCopied")}
-  data-sk-copy-button-error-aria-label={t("copy.failed")}
+  data-sk-copy-button-success-aria-label={successAriaLabel}
+  data-sk-copy-button-error-aria-label={errorAriaLabel}
 >
   <span class="sk-copy-button__icon" data-sk-copy-button-icon="idle" aria-hidden="true"><Fragment set:html={copyIcon} /></span>
   <span class="sk-copy-button__icon" data-sk-copy-button-icon="copied" aria-hidden="true"><Fragment set:html={copiedIcon} /></span>

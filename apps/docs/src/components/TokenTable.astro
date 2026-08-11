@@ -2,21 +2,22 @@
 /*
  * The token reference, both forms of every token, from the two places that actually know.
  *
- * BUILD TIME (this frontmatter): the parser reads the .css and gives the AUTHORED form, 
+ * BUILD TIME (this frontmatter): the parser reads the .css and gives the TOKEN,
  * `round(calc(var(--scale-space-4) * var(--sk-density)), 2px)`, plus the tier. The var() chain
  * IS the tier architecture; showing only a resolved literal would hide the thing the system is
  * about. It is the same parser the validator runs, so the reference cannot describe a system
  * the rules aren't checking.
  *
- * RUNTIME (scripts/used-values.ts, via the [data-token] cells): the USED value, in whatever
+ * RUNTIME (scripts/used-values.ts, via the [data-token] cells): the VALUE, in whatever
  * dimensions the reader has set. It must be the browser, density tokens are round()/calc()/
  * max() expressions (ADR-6), and light-dark() only picks a slot against a real color-scheme.
  *
  * Together: ADR-7's "we need both forms per token", which outlived the build system that
  * prompted it.
  */
-import { groupedTokens, PROBES, probeProp, tokens } from "../lib/tokens";
+import { groupedTokens, PROBES, probeProp, slugId, tokens } from "../lib/tokens";
 import { getLocale, useTranslations } from "../i18n";
+import CopyCells from "./CopyCells.astro";
 /* The sk-input + sk-field STRUCTURE (field.css/input.css ship only hooks). The select is already
  * painted in site.css; this is what the search field and the field labels were missing here, which is
  * why the input rendered as a bare native box next to the styled select. */
@@ -49,6 +50,26 @@ const sections = groupedTokens.map(({ group, tokens: groupTokens }) => ({
   })),
 }));
 
+/*
+ * The rows are one line each now (site.css: the token cells do not wrap), so a family's height is
+ * its row count, and that is what `content-visibility: auto` needs to guess right for the tables it
+ * is skipping. A constant guess would make the scrollbar jump on a page whose families run from two
+ * rows to sixty; this is off by nothing but the caption's own wrapping.
+ */
+const ROW_BLOCK_SIZE = 2.6;
+const TABLE_CHROME_BLOCK_SIZE = 6.5;
+const groupBlockSize = (rows: number) =>
+  `${(rows * ROW_BLOCK_SIZE + TABLE_CHROME_BLOCK_SIZE).toFixed(1)}rem`;
+
+/*
+ * A value longer than its track ends in an ellipsis, so the full string moves to `title`, and only
+ * where it is actually needed: a `title` on all 1045 rows would be the same information twice in
+ * the HTML for the ~10% of rows that get cut. The threshold is the narrowest the column gets at the
+ * document's own width, in characters of the mono face.
+ */
+const TRUNCATES_AT = 30;
+const fullText = (value: string) => (value.length > TRUNCATES_AT ? value : undefined);
+
 /** The group picker is itself grouped: families under the tier that owns them. */
 const tiers = (["primitive", "semantic", "component"] as const).map((tier) => ({
   tier,
@@ -63,6 +84,12 @@ const counts = {
   component: tiers[2].count,
 };
 ---
+
+{/*
+ * The one copy button this page has, for all 3.135 copyable cells (`./CopyCells.astro`). It used to
+ * be one per cell, which was 76% of this document's bytes and every one of its tab stops.
+ */}
+<CopyCells />
 
 <div class="filters">
   <div class="sk-field filters__search">
@@ -137,6 +164,7 @@ const counts = {
           class="sk-table-scroll token-group"
           data-group={s.group.id}
           data-group-tier={s.group.tier}
+          style={`--token-group-block-size: ${groupBlockSize(s.rows.length)}`}
         >
           <table class="sk-table" data-layout="fixed">
             <caption class="sk-table__caption">
@@ -153,38 +181,40 @@ const counts = {
                   Tier
                 </th>
                 <th class="sk-table__header" scope="col">
-                  Valor autoral <span class="count">· build</span>
+                  {tr("tokens.definition")} <span class="count">build</span>
                 </th>
                 <th class="sk-table__header" scope="col">
-                  Valor usado <span class="count">· runtime</span>
+                  {tr("tokens.resolvedValue")} <span class="count">runtime</span>
                 </th>
               </tr>
             </thead>
             <tbody class="sk-table__body">
-              {s.rows.map((r) => (
-                <tr class="sk-table__row" data-row-tier={r.tier} data-row-name={r.name}>
-                  {/* The name identifies the row, so it is the row's header, not a cell. */}
-                  <th class="sk-table__header mono" scope="row">
-                    {r.name}
-                  </th>
-                  <td class="sk-table__cell">
-                    <span class="sk-badge" data-tone={toneByTier[r.tier]}>
-                      {r.tier}
-                    </span>
-                  </td>
-                  <td class="sk-table__cell mono" data-authored>
-                    {r.value}
-                  </td>
-                  <td
-                    class="sk-table__cell mono"
-                    data-token={r.name}
-                    data-prop={r.prop}
-                    data-probe={r.probe}
-                  >
-                    …
-                  </td>
-                </tr>
-              ))}
+              {s.rows.map((r) => {
+                const nameId = slugId("tok-name", s.group.id, r.name);
+                const defId = slugId("tok-def", s.group.id, r.name);
+                const valId = slugId("tok-val", s.group.id, r.name);
+                return (
+                  <tr class="sk-table__row" data-row-tier={r.tier} data-row-name={r.name}>
+                    {/* The name identifies the row, so it is the row's header, not a cell. */}
+                    <th class="sk-table__header mono sk-table__header--copy" scope="row">
+                      <span id={nameId} title={fullText(r.name)}>{r.name}</span>
+                    </th>
+                    <td class="sk-table__cell">
+                      <span class="sk-badge" data-tone={toneByTier[r.tier]}>
+                        {r.tier}
+                      </span>
+                    </td>
+                    <td class="sk-table__cell mono sk-table__cell--copy">
+                      <span id={defId} data-authored title={fullText(r.value)}>{r.value}</span>
+                    </td>
+                    <td class="sk-table__cell mono sk-table__cell--copy">
+                      <span id={valId} data-token={r.name} data-prop={r.prop} data-probe={r.probe}>
+                        …
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -194,6 +224,8 @@ const counts = {
 }
 
 <script>
+  import { revalidateCopyCells } from "../scripts/copy-cells";
+
   const search = document.getElementById("token-filter") as HTMLInputElement;
   const tierSel = document.getElementById("tier-filter") as HTMLSelectElement;
   const groupSel = document.getElementById("group-filter") as HTMLSelectElement;
@@ -201,22 +233,49 @@ const counts = {
   const groupOne = count.dataset.groupOne ?? "{count} group";
   const groupMany = count.dataset.groupMany ?? "{count} groups";
 
-  /* One table per family: filtering works block by block, so a family with no matching row hides
-     as a unit (caption and column header included) instead of leaving a title over nothing. */
-  const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-group]")).map(
-    (block) => ({
-      block,
-      rows: Array.from(block.querySelectorAll<HTMLTableRowElement>("tr[data-row-name]")),
-    }),
-  );
+  /*
+   * One table per family: filtering works block by block, so a family with no matching row hides
+   * as a unit (caption and column header included) instead of leaving a title over nothing.
+   *
+   * READ ONCE, AT STARTUP. The haystack used to be built inside the loop, so every keystroke walked
+   * a thousand rows, queried a `[data-authored]` child in each and read its `textContent`, which is
+   * a layout-safe but not free tree walk, and then wrote `hidden` on all thousand whether or not the
+   * value had changed. Measured on this page, one keystroke cost ~900ms. Both halves are fixed here:
+   * the text is read a single time into a plain array of strings, and `hidden` is only assigned when
+   * it actually flips, so a filter that leaves a row where it was touches nothing.
+   */
+  type Row = { el: HTMLTableRowElement; text: string; hidden: boolean };
+  type Section = { block: HTMLElement; tier: string; id: string; rows: Row[]; hidden: boolean };
+
+  /* Name + token value, read by data attribute rather than column index: a column added or moved
+     turns an index-based lookup into a silent search over the tier badge. */
+  const sections: Section[] = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-group]"),
+  ).map((block) => ({
+    block,
+    tier: block.dataset.groupTier ?? "",
+    id: block.dataset.group ?? "",
+    hidden: false,
+    rows: Array.from(block.querySelectorAll<HTMLTableRowElement>("tr[data-row-name]")).map(
+      (el) => ({
+        el,
+        text: (
+          el.dataset.rowName +
+          " " +
+          (el.querySelector("[data-authored]")?.textContent ?? "")
+        ).toLowerCase(),
+        hidden: false,
+      }),
+    ),
+  }));
 
   const tierSections = Array.from(document.querySelectorAll<HTMLElement>("[data-tier-section]"));
+  const tierHidden = new Map<HTMLElement, boolean>(tierSections.map((el) => [el, false]));
 
-  /* Name + authored value, read by data attribute rather than column index: a column added or moved
-     turns an index-based lookup into a silent search over the tier badge. */
-  const haystack = (row: HTMLTableRowElement) =>
-    (row.dataset.rowName + " " + (row.querySelector("[data-authored]")?.textContent ?? ""))
-      .toLowerCase();
+  function show(el: HTMLElement, hidden: boolean, was: boolean): boolean {
+    if (hidden !== was) el.hidden = hidden;
+    return hidden;
+  }
 
   function filter() {
     const q = search.value.trim().toLowerCase();
@@ -225,29 +284,29 @@ const counts = {
     let shown = 0;
 
     for (const section of sections) {
-      const groupOk =
-        (!tier || section.block.dataset.groupTier === tier) &&
-        (!group || section.block.dataset.group === group);
+      const groupOk = (!tier || section.tier === tier) && (!group || section.id === group);
 
       let visibleHere = 0;
       for (const row of section.rows) {
-        const ok = groupOk && (!q || haystack(row).includes(q));
-        row.hidden = !ok;
+        const ok = groupOk && (!q || row.text.includes(q));
+        row.hidden = show(row.el, !ok, row.hidden);
         if (ok) visibleHere++;
       }
 
-      section.block.hidden = visibleHere === 0;
+      section.hidden = show(section.block, visibleHere === 0, section.hidden);
       shown += visibleHere;
     }
 
     // A tier heading with every family below it filtered away is a title over nothing.
     for (const tierSection of tierSections) {
-      tierSection.hidden = !sections.some(
-        (s) => !s.block.hidden && s.block.dataset.groupTier === tierSection.dataset.tierSection,
-      );
+      const empty = !sections.some((s) => !s.hidden && s.tier === tierSection.dataset.tierSection);
+      tierHidden.set(tierSection, show(tierSection, empty, tierHidden.get(tierSection) ?? false));
     }
 
-    const groups = sections.filter((s) => !s.block.hidden).length;
+    /* The travelling copy button may have been standing in a row this filter just hid. */
+    revalidateCopyCells();
+
+    const groups = sections.filter((s) => !s.hidden).length;
     const groupLabel = (groups === 1 ? groupOne : groupMany).replace("{count}", String(groups));
     count.textContent =
       `${shown} token${shown === 1 ? "" : "s"}` +
@@ -257,14 +316,14 @@ const counts = {
   /* Picking a family implies its tier: leaving a contradictory tier selected would filter to zero
      rows and read as a broken table rather than as two filters disagreeing. */
   groupSel.addEventListener("change", () => {
-    const selected = sections.find((s) => s.block.dataset.group === groupSel.value);
-    if (selected) tierSel.value = selected.block.dataset.groupTier ?? "";
+    const selected = sections.find((s) => s.id === groupSel.value);
+    if (selected) tierSel.value = selected.tier;
     filter();
   });
 
   tierSel.addEventListener("change", () => {
-    const selected = sections.find((s) => s.block.dataset.group === groupSel.value);
-    if (selected && selected.block.dataset.groupTier !== tierSel.value) groupSel.value = "";
+    const selected = sections.find((s) => s.id === groupSel.value);
+    if (selected && selected.tier !== tierSel.value) groupSel.value = "";
     filter();
   });
 

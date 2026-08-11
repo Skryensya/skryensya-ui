@@ -6,7 +6,7 @@ import CopyButton from "./CopyButton.astro";
 import { iconMarkup } from "../icons";
 import { getLocale, useTranslations } from "../i18n";
 
-type CodeLanguage = "bash" | "css" | "html" | "json" | "ts" | "tsx";
+export type CodeLanguage = "bash" | "css" | "html" | "json" | "svelte" | "ts" | "tsx" | "yaml";
 
 interface Props {
   /** Visible source. When `full` is set, this is the condensed view. */
@@ -19,9 +19,17 @@ interface Props {
   label?: string;
   note?: string;
   lang?: CodeLanguage;
+  /**
+   * Show the whole thing, however long it is, with no Expand control.
+   *
+   * Disclosure is right when the code is an EXAMPLE beside prose, where a hundred lines would bury
+   * the paragraph after it. It is wrong when the code IS the page: a reference whose one job is to
+   * show a contract should not open showing a sixth of it behind a button.
+   */
+  open?: boolean;
 }
 
-const { code, full, label, note, lang } = Astro.props;
+const { code, full, label, note, lang, open = false } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
 const condensed = code.trim();
 const complete = full?.trim();
@@ -34,8 +42,10 @@ const fullLines = complete ? complete.split(/\r\n|\r|\n/).length : 0;
 const previewLineCount = 15;
 const lineThreshold = 20;
 /* Condensed can still be long (shell + a few rows). Disclose it the same way as Full. */
-const condensedCollapsible = hasDensity && condensedLines > lineThreshold;
-const fullCollapsible = complete ? fullLines > lineThreshold : condensedLines > lineThreshold;
+/* `open` short-circuits BOTH, not just the flag below: they are what the collapsed-window CSS keys
+   on, and leaving either set would size a scroll region for a block that no longer has a toggle. */
+const condensedCollapsible = !open && hasDensity && condensedLines > lineThreshold;
+const fullCollapsible = !open && (complete ? fullLines > lineThreshold : condensedLines > lineThreshold);
 const isCollapsible = condensedCollapsible || fullCollapsible;
 const collapsibleLineCount = hasDensity
   ? condensedCollapsible

@@ -1,0 +1,221 @@
+---
+/* Las dos hojas que el shell no carga, y las mismas que el bloque de instalación de más abajo le
+ * pide al consumidor. Sin ellas el `<dialog>` de la demo cae en el estilo por defecto del navegador:
+ * caja centrada con borde negro de 3px en vez de un panel pegado al borde inline. */
+import "@skryensya/core/patterns/vaul.css";
+import "@skryensya/core/components/drawer.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { drawerScript, drawerTree } from "../../demos/drawer";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/vaul.yaml?raw";
+import coreSource from "@core/src/vaul.ts?raw";
+import cssSource from "@core/css/components/drawer.css?raw";
+import vaulCssSource from "@core/css/patterns/vaul.css?raw";
+import vanillaMountSource from "@vanilla/src/components/vaul.ts?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const import_ = `/* ${t("drawer.compositionComment")} */
+@import "@skryensya/core/patterns/vaul.css";
+@import "@skryensya/core/components/drawer.css";
+@import "@skryensya/core/patterns/scroll-lock.css";`;
+
+const composition = `/* El drawer no declara panel, borde, slide ni
+   backdrop: los re-declara desde sus hooks. */
+.sk-drawer {
+  --sk-vaul-size: var(--sk-drawer-inline-size);
+  --sk-vaul-bg: var(--sk-drawer-bg);
+  /* ${t("drawer.compositionComment2")} */
+  --sk-vaul-radius: 0;
+}`;
+
+const tuning = `.mi-drawer {
+  --sk-drawer-inline-size: 24rem;
+  --sk-drawer-bg: var(--color-bg-surface-raised);
+}`;
+
+const nativeHtml = `<button
+  class="sk-button sk-interactive"
+  data-native-drawer-open="native-drawer"
+  type="button"
+>
+  ${t("drawer.demoOpenLabel")}
+</button>
+
+<dialog
+  class="sk-vaul sk-drawer demo-drawer"
+  id="native-drawer"
+  data-edge="inline-start"
+  aria-label="${t("drawer.demoAriaLabel")}"
+>
+  <div class="demo-drawer__body">
+    <strong>${t("drawer.demoPanelTitle")}</strong>
+    <p>${t("drawer.demoPanelBody")}</p>
+    <form method="dialog">
+      <button
+        class="sk-button sk-interactive"
+        data-variant="ghost"
+        type="submit"
+      >
+        ${t("drawer.demoCloseLabel")}
+      </button>
+    </form>
+  </div>
+</dialog>`;
+
+const nativeJs = `const trigger = document.querySelector(
+  '[data-native-drawer-open="native-drawer"]',
+);
+const drawer = document.getElementById("native-drawer");
+
+trigger?.addEventListener("click", () => {
+  if (drawer instanceof HTMLDialogElement) drawer.showModal();
+});`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/vaul.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/vaul.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/drawer.css", source: cssSource, language: "css" },
+  { id: "packages/core/css/patterns/vaul.css", source: vaulCssSource, language: "css" },
+  { id: "packages/vanilla/src/components/vaul.ts", source: vanillaMountSource, language: "ts" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Drawer"
+  description={t("drawer.description")}
+  contractId="vaul"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/drawer.css", probe: "sk-drawer", title: "Drawer" },
+    { file: "patterns/vaul.css", probe: "sk-vaul", title: "Heredados de Vaul" },
+  ]}
+  tests={[
+    {
+      file: "packages/react/src/components/vaul.test.tsx",
+      tests: [
+        {
+          name: "adds the drawer modifier only for the drawer signature",
+          description: t("drawer.test1"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("drawer.lede")} />
+    <ComponentPreview tree={drawerTree(t)} previewScript={drawerScript} label="HTML" viewport="overlay" />
+
+    <h3>{t("drawer.hooksTitle")}</h3>
+    <p set:html={t("drawer.hooksBody1")} />
+    <CodeBlock code={composition} label="components/drawer.css" lang="css" />
+    <p set:html={t("drawer.hooksBody2")} />
+    <CodeBlock code={tuning} label="CSS" lang="css" />
+
+    <h3>{t("drawer.whenTitle")}</h3>
+    <table class="sk-table">
+      <thead><tr><th>{t("drawer.whenHeadNeed")}</th><th>{t("drawer.whenHeadUse")}</th></tr></thead>
+      <tbody>
+        <tr><td>{t("drawer.whenRow1Need")}</td><td set:html={t("drawer.whenRow1Use")} /></tr>
+        <tr><td>{t("drawer.whenRow2Need")}</td><td set:html={t("drawer.whenRow2Use")} /></tr>
+        <tr><td>{t("drawer.whenRow3Need")}</td><td set:html={t("drawer.whenRow3Use")} /></tr>
+        <tr><td>{t("drawer.whenRow4Need")}</td><td set:html={t("drawer.whenRow4Use")} /></tr>
+      </tbody>
+    </table>
+    <p set:html={t("drawer.whenBody")} />
+
+    <h3>{t("drawer.markupTitle")}</h3>
+    <p set:html={t("drawer.markupBody")} />
+
+    <h3>{t("drawer.nativeTitle")}</h3>
+    <p class="lede" set:html={t("drawer.nativeLede")} />
+    <p set:html={t("drawer.nativeBody")} />
+    <ComponentPreview html={nativeHtml} previewScript={nativeJs} label={t("drawer.nativeLabel")} viewport="overlay" />
+
+    <h4>{t("drawer.openTitle")}</h4>
+    <CodeBlock code={nativeJs} label="JavaScript" />
+
+    <h4>{t("drawer.nativeContractTitle")}</h4>
+    <ul>
+      <li set:html={t("drawer.nativeContractItem1")} />
+      <li set:html={t("drawer.nativeContractItem2")} />
+      <li set:html={t("drawer.nativeContractItem3")} />
+      <li set:html={t("drawer.nativeContractItem4")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={import_} label="CSS" />
+  </Fragment>
+</ComponentPageShell>
+
+<style is:global>
+  /* El drawer ES la columna: cabecera fija, navegación que scrollea, cuenta abajo. Es la misma
+     anatomía que el riel de este sitio, que es el punto del componente. */
+  .demo-drawer[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Inset `md`, no `lg`: un drawer es angosto por definición, y el padding que se lleva es ancho que
+     los rótulos no tienen. Las bandas se separan con una línea, que cuesta 1px. */
+  .demo-drawer__header {
+    display: flex;
+    gap: var(--space-inline-md);
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-inset-sm) var(--space-inset-md);
+    border-block-end: 1px solid var(--color-border-subtle);
+  }
+
+  .demo-drawer__brand {
+    font-weight: var(--font-weight-heading);
+  }
+
+  .demo-drawer__nav {
+    flex: 1;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: var(--space-inset-sm);
+  }
+
+  .demo-drawer__footer {
+    display: flex;
+    gap: var(--space-inline-sm);
+    align-items: center;
+    padding: var(--space-inset-sm) var(--space-inset-md);
+    border-block-start: 1px solid var(--color-border-subtle);
+  }
+
+  .demo-drawer__user {
+    display: grid;
+    gap: 2px;
+    min-inline-size: 0;
+  }
+
+  .demo-drawer__user-name {
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+  }
+
+  .demo-drawer__user-meta {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+  }
+
+  /* El demo nativo de más abajo es deliberadamente mínimo: enseña que sin enhancer el drawer sigue
+     completo, así que no le sobra contenido que distraiga de eso. */
+  .demo-drawer__body {
+    display: grid;
+    gap: var(--space-stack-md);
+    justify-items: start;
+    padding: var(--space-inset-md);
+  }
+
+  .demo-drawer__body p {
+    margin: 0;
+  }
+</style>

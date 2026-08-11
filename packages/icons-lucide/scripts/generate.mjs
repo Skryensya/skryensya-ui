@@ -53,6 +53,8 @@ const MAP = {
   clock: "Clock",
   upload: "Upload",
   download: "Download",
+  file: "File",
+  folder: "Folder",
   settings: "Settings",
   user: "User",
   visibility: "Eye",

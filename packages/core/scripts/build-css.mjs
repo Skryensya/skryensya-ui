@@ -19,11 +19,18 @@ const DIST = join(ROOT, "dist");
 
 // Token tiers already include root ramps; optional dimensions follow. The layer statement fixes priority
 // regardless of source order.
+//
+// EVERY dimension ships here, radius AND accent reach. The bundle is the no-toolchain path, so a
+// dimension missing from this list is a dimension that does not exist for that consumer: `data-radius`
+// worked and `data-accent` was silently inert, an attribute the documentation promises and the
+// stylesheet never declares. The Sass path stays opt-in per dimension; the bundle is batteries-included
+// by definition, and an unused `[data-accent]` block costs seven declarations.
 const ENTRY = `
 @use "primitives";
 @use "semantic";
 @use "modes/hc";
 @use "dimensions/radius";
+@use "dimensions/accent";
 @layer primitives, semantic, components, overrides;
 `;
 

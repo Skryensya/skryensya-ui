@@ -42,6 +42,7 @@ export * from "./navbar.js";
 export * from "./select.js";
 export * from "./selection.js";
 export * from "./sidebar.js";
+export * from "./skip-link.js";
 export * from "./tabs.js";
 export * from "./table.js";
 export * from "./typography.js";

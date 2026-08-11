@@ -50,6 +50,8 @@ const MAP = {
   clock: "clock",
   upload: "upload",
   download: "download",
+  file: "file",
+  folder: "folder",
   settings: "gear",
   user: "user",
   visibility: "eye",

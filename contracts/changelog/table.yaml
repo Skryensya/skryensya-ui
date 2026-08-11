@@ -4,4 +4,29 @@
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
 surface: "ae391224708ef6db"
-entries: []
+entries:
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: Table se publica como contrato, con 9 signatures
+      body: >-
+        Entra al catálogo con <code>TableScroll</code>, <code>Table</code>, <code>TableCaption</code>,
+        <code>TableHead</code>, <code>TableBody</code>, <code>TableFooter</code>, <code>TableRow</code>,
+        <code>TableHeader</code>, <code>TableCell</code>: los dos bindings lo realizan, y la referencia
+        de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer:
+        el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces.
+        Opciones: <code>scope</code>, <code>stickyColumn</code>, <code>stickyHeader</code>,
+        <code>density</code>, <code>densityFactor</code>, <code>colspan</code>. La hoja es
+        <code>components/table.css</code>.
+    en:
+      title: Table is published as a contract, with 9 signatures
+      body: >-
+        It joins the catalogue with <code>TableScroll</code>, <code>Table</code>,
+        <code>TableCaption</code>, <code>TableHead</code>, <code>TableBody</code>,
+        <code>TableFooter</code>, <code>TableRow</code>, <code>TableHeader</code>,
+        <code>TableCell</code>: both bindings realize it, and this page's reference is rendered from the
+        compiled contract rather than from prose written beside it. There is no enhancer: the markup is
+        complete on its own, so both bindings are the same markup twice. Options: <code>scope</code>,
+        <code>stickyColumn</code>, <code>stickyHeader</code>, <code>density</code>,
+        <code>densityFactor</code>, <code>colspan</code>. Its stylesheet is
+        <code>components/table.css</code>.

@@ -46,14 +46,166 @@
         "version": "0.1.0-dev"
       }
     ],
-    "avatar": [],
-    "badge": [],
-    "box": [],
-    "breadcrumb": [],
-    "button": [],
-    "calendar": [],
-    "callout": [],
-    "carousel": [],
+    "avatar": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Avatar.initials</code>, <code>Avatar.image</code>, <code>AvatarGroup</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>size</code>, <code>name</code>, <code>imageName</code>, <code>src</code>. Its stylesheet is <code>components/avatar.css</code>.",
+              "title": "Avatar is published as a contract, with 3 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Avatar.initials</code>, <code>Avatar.image</code>, <code>AvatarGroup</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>size</code>, <code>name</code>, <code>imageName</code>, <code>src</code>. La hoja es <code>components/avatar.css</code>.",
+              "title": "Avatar se publica como contrato, con 3 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "badge": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Badge</code>, <code>BadgeDot</code>, <code>BadgeHolder</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>tone</code>. Its stylesheet is <code>components/badge.css</code>.",
+              "title": "Badge is published as a contract, with 3 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Badge</code>, <code>BadgeDot</code>, <code>BadgeHolder</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>tone</code>. La hoja es <code>components/badge.css</code>.",
+              "title": "Badge se publica como contrato, con 3 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "box": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Box</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>padding</code>, <code>surface</code>, <code>border</code>. Its stylesheet is <code>patterns/box.css</code>.",
+              "title": "Box is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Box</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>padding</code>, <code>surface</code>, <code>border</code>. La hoja es <code>patterns/box.css</code>.",
+              "title": "Box se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "breadcrumb": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Breadcrumb</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>label</code>. Its stylesheet is <code>components/breadcrumb.css</code>.",
+              "title": "Breadcrumb is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Breadcrumb</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>label</code>. La hoja es <code>components/breadcrumb.css</code>.",
+              "title": "Breadcrumb se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "button": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Button.action</code>, <code>Button.navigation</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-button</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>variant</code>, <code>size</code>, <code>iconOnly</code>, <code>href</code>, <code>disabled</code>. Its stylesheet is <code>components/button.css</code>.",
+              "title": "Button is published as a contract, with 2 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Button.action</code>, <code>Button.navigation</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-button</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>variant</code>, <code>size</code>, <code>iconOnly</code>, <code>href</code>, <code>disabled</code>. La hoja es <code>components/button.css</code>.",
+              "title": "Button se publica como contrato, con 2 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "calendar": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Calendar</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-calendar</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>value</code>, <code>min</code>, <code>max</code>, <code>selectionMode</code>, <code>locale</code>, <code>timeZone</code>, <code>disabled</code>, <code>readOnly</code>. Its stylesheet is <code>components/calendar.css</code>.",
+              "title": "Calendar is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Calendar</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-calendar</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>value</code>, <code>min</code>, <code>max</code>, <code>selectionMode</code>, <code>locale</code>, <code>timeZone</code>, <code>disabled</code>, <code>readOnly</code>. La hoja es <code>components/calendar.css</code>.",
+              "title": "Calendar se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "callout": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Callout</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>tone</code>. Its stylesheet is <code>components/callout.css</code>.",
+              "title": "Callout is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Callout</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>tone</code>. La hoja es <code>components/callout.css</code>.",
+              "title": "Callout se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "carousel": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Carousel</code>, <code>CarouselSlide</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>loop</code>, <code>autoplay</code>, <code>autoplayDelay</code>, <code>mounted</code>, <code>slideSize</code>, <code>orientation</code>, <code>controls</code>, <code>mouseDrag</code>. Its stylesheet is <code>components/carousel.css</code>.",
+              "title": "Carousel is published as a contract, with 2 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Carousel</code>, <code>CarouselSlide</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>loop</code>, <code>autoplay</code>, <code>autoplayDelay</code>, <code>mounted</code>, <code>slideSize</code>, <code>orientation</code>, <code>controls</code>, <code>mouseDrag</code>. La hoja es <code>components/carousel.css</code>.",
+              "title": "Carousel se publica como contrato, con 2 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "changelog": [
       {
         "date": null,
@@ -215,20 +367,286 @@
         "version": "0.1.0-dev"
       }
     ],
-    "checkbox": [],
-    "code-preview": [],
-    "combobox": [],
-    "command-palette": [],
-    "component-preview": [],
-    "content": [],
-    "copy-button": [],
-    "date-picker": [],
-    "details": [],
-    "dialog": [],
-    "empty-state": [],
-    "field": [],
-    "file-upload": [],
-    "flyout": [],
+    "checkbox": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Checkbox</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>name</code>, <code>value</code>, <code>checked</code>, <code>defaultChecked</code>, <code>defaultIndeterminate</code>, <code>disabled</code>, <code>required</code>, <code>orientation</code>. Its stylesheet is <code>components/checkbox.css</code>.",
+              "title": "Checkbox is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Checkbox</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>name</code>, <code>value</code>, <code>checked</code>, <code>defaultChecked</code>, <code>defaultIndeterminate</code>, <code>disabled</code>, <code>required</code>, <code>orientation</code>. La hoja es <code>components/checkbox.css</code>.",
+              "title": "Checkbox se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "code-preview": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>CodePreview</code>, <code>CodePreview.density</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-code-preview</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>collapsible</code>, <code>lines</code>, <code>previewLines</code>, <code>moreLabel</code>, <code>lessLabel</code>, <code>switchLabel</code>. Its stylesheet is <code>components/code-preview.css</code>.",
+              "title": "CodePreview is published as a contract, with 2 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>CodePreview</code>, <code>CodePreview.density</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-code-preview</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>collapsible</code>, <code>lines</code>, <code>previewLines</code>, <code>moreLabel</code>, <code>lessLabel</code>, <code>switchLabel</code>. La hoja es <code>components/code-preview.css</code>.",
+              "title": "CodePreview se publica como contrato, con 2 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "combobox": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Combobox</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-combobox</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>name</code>, <code>value</code>, <code>placeholder</code>, <code>disabled</code>, <code>required</code>, <code>readOnly</code>, <code>multiple</code>, <code>allowCustomValue</code>. Its stylesheet is <code>components/combobox.css</code>.",
+              "title": "Combobox is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Combobox</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-combobox</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>name</code>, <code>value</code>, <code>placeholder</code>, <code>disabled</code>, <code>required</code>, <code>readOnly</code>, <code>multiple</code>, <code>allowCustomValue</code>. La hoja es <code>components/combobox.css</code>.",
+              "title": "Combobox se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "command-palette": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>CommandPalette</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-command-palette</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>label</code>, <code>paletteId</code>, <code>placeholder</code>, <code>emptyLabel</code>, <code>open</code>, <code>entries</code>. Its stylesheet is <code>components/command-palette.css</code>.",
+              "title": "CommandPalette is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>CommandPalette</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-command-palette</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>label</code>, <code>paletteId</code>, <code>placeholder</code>, <code>emptyLabel</code>, <code>open</code>, <code>entries</code>. La hoja es <code>components/command-palette.css</code>.",
+              "title": "CommandPalette se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "component-preview": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>ComponentPreview.bare</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-component-preview</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. It has no options: the element IS the meaning. Its stylesheet is <code>components/component-preview.css</code>.",
+              "title": "ComponentPreview is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>ComponentPreview.bare</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-component-preview</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. No tiene opciones: el elemento ES el significado. La hoja es <code>components/component-preview.css</code>.",
+              "title": "ComponentPreview se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "content": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>ToastRegion</code>, <code>ToastTemplate</code>, <code>Toast</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-toast</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>tone</code>, <code>dismissible</code>, <code>dismissLabel</code>, <code>timeout</code>. Its stylesheet is <code>components/toast.css</code>.",
+              "title": "Toast is published as a contract, with 3 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>ToastRegion</code>, <code>ToastTemplate</code>, <code>Toast</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-toast</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>tone</code>, <code>dismissible</code>, <code>dismissLabel</code>, <code>timeout</code>. La hoja es <code>components/toast.css</code>.",
+              "title": "Toast se publica como contrato, con 3 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "copy-button": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>CopyButton</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-copy-button</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>variant</code>, <code>size</code>, <code>iconOnly</code>, <code>target</code>, <code>successLabel</code>, <code>errorLabel</code>. Its stylesheet is <code>components/copy-button.css</code>.",
+              "title": "CopyButton is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>CopyButton</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-copy-button</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>variant</code>, <code>size</code>, <code>iconOnly</code>, <code>target</code>, <code>successLabel</code>, <code>errorLabel</code>. La hoja es <code>components/copy-button.css</code>.",
+              "title": "CopyButton se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "date-picker": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>DatePicker</code>, <code>DatePicker.native</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-date-picker</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>name</code>, <code>value</code>, <code>min</code>, <code>max</code>, <code>selectionMode</code>, <code>locale</code>, <code>timeZone</code>, <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>placeholder</code>, <code>clearLabel</code>. Its stylesheet is <code>components/date-picker.css</code>.",
+              "title": "DatePicker is published as a contract, with 2 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>DatePicker</code>, <code>DatePicker.native</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-date-picker</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>name</code>, <code>value</code>, <code>min</code>, <code>max</code>, <code>selectionMode</code>, <code>locale</code>, <code>timeZone</code>, <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>placeholder</code>, <code>clearLabel</code>. La hoja es <code>components/date-picker.css</code>.",
+              "title": "DatePicker se publica como contrato, con 2 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "details": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>DetailsGroup</code>, <code>Details</code>, <code>Details.Summary</code>, <code>Details.Content</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>name</code>, <code>open</code>. Its stylesheet is <code>components/details.css</code>.",
+              "title": "Details is published as a contract, with 4 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>DetailsGroup</code>, <code>Details</code>, <code>Details.Summary</code>, <code>Details.Content</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>name</code>, <code>open</code>. La hoja es <code>components/details.css</code>.",
+              "title": "Details se publica como contrato, con 4 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "dialog": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Dialog</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>closeLabel</code>, <code>open</code>, <code>vaul</code>. Its stylesheet is <code>components/dialog.css</code>.",
+              "title": "Dialog is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Dialog</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>closeLabel</code>, <code>open</code>, <code>vaul</code>. La hoja es <code>components/dialog.css</code>.",
+              "title": "Dialog se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "empty-state": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>EmptyState</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. It has no options: the element IS the meaning. Its stylesheet is <code>components/empty-state.css</code>.",
+              "title": "EmptyState is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>EmptyState</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. No tiene opciones: el elemento ES el significado. La hoja es <code>components/empty-state.css</code>.",
+              "title": "EmptyState se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "field": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Field</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>required</code>, <code>disabled</code>. Its stylesheet is <code>components/field.css</code>.",
+              "title": "Field is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Field</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>required</code>, <code>disabled</code>. La hoja es <code>components/field.css</code>.",
+              "title": "Field se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "file-upload": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>FileUpload</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-file-upload</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>name</code>, <code>multiple</code>, <code>accept</code>, <code>disabled</code>, <code>required</code>, <code>maxFiles</code>, <code>maxFileSize</code>. Its stylesheet is <code>components/file-upload.css</code>.",
+              "title": "FileUpload is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>FileUpload</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-file-upload</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>name</code>, <code>multiple</code>, <code>accept</code>, <code>disabled</code>, <code>required</code>, <code>maxFiles</code>, <code>maxFileSize</code>. La hoja es <code>components/file-upload.css</code>.",
+              "title": "FileUpload se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "flyout": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Flyout</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-flyout</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>placeholder</code>, <code>disabled</code>, <code>defaultValue</code>. Its stylesheet is <code>components/flyout.css</code>.",
+              "title": "Flyout is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Flyout</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-flyout</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>placeholder</code>, <code>disabled</code>, <code>defaultValue</code>. La hoja es <code>components/flyout.css</code>.",
+              "title": "Flyout se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "icon": [
       {
         "date": null,
@@ -250,25 +668,398 @@
         "version": "0.1.0-dev"
       }
     ],
-    "image-frame": [],
-    "input": [],
-    "kbd": [],
-    "layout": [],
-    "list": [],
-    "loader": [],
-    "media-gradient": [],
-    "menu": [],
-    "nav-list": [],
-    "navbar": [],
-    "number-field": [],
-    "pagination": [],
-    "placeholder": [],
-    "popover": [],
-    "process-list": [],
-    "progress": [],
-    "radio-group": [],
-    "segmented": [],
-    "select": [],
+    "image-frame": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>ImageFrame</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>aspect</code>, <code>fit</code>, <code>position</code>, <code>radius</code>, <code>border</code>, <code>src</code>, <code>alt</code>. Its stylesheet is <code>patterns/image-frame.css</code>.",
+              "title": "ImageFrame is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>ImageFrame</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>aspect</code>, <code>fit</code>, <code>position</code>, <code>radius</code>, <code>border</code>, <code>src</code>, <code>alt</code>. La hoja es <code>patterns/image-frame.css</code>.",
+              "title": "ImageFrame se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "input": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Input</code>, <code>NativeInput</code>, <code>Textarea</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>controlSize</code>, <code>type</code>, <code>name</code>, <code>placeholder</code>, <code>disabled</code>. Its stylesheet is <code>components/input.css</code>.",
+              "title": "Input is published as a contract, with 3 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Input</code>, <code>NativeInput</code>, <code>Textarea</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>controlSize</code>, <code>type</code>, <code>name</code>, <code>placeholder</code>, <code>disabled</code>. La hoja es <code>components/input.css</code>.",
+              "title": "Input se publica como contrato, con 3 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "kbd": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Kbd</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. It has no options: the element IS the meaning. Its stylesheet is <code>components/kbd.css</code>.",
+              "title": "Kbd is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Kbd</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. No tiene opciones: el elemento ES el significado. La hoja es <code>components/kbd.css</code>.",
+              "title": "Kbd se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "layout": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Stack</code>, <code>Inline</code>, <code>Grid</code>, <code>DensityScope</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>gap</code>, <code>align</code>, <code>inlineAlign</code>, <code>justify</code>, <code>equal</code>, <code>wrap</code>, <code>columns</code>, <code>multicol</code>, <code>densityFactor</code>. Its stylesheet is <code>patterns/layout.css</code>.",
+              "title": "Layout is published as a contract, with 4 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Stack</code>, <code>Inline</code>, <code>Grid</code>, <code>DensityScope</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>gap</code>, <code>align</code>, <code>inlineAlign</code>, <code>justify</code>, <code>equal</code>, <code>wrap</code>, <code>columns</code>, <code>multicol</code>, <code>densityFactor</code>. La hoja es <code>patterns/layout.css</code>.",
+              "title": "Layout se publica como contrato, con 4 signatures"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "<code>LayoutGrid</code> adds a page grid with <code>narrow</code>, <code>content</code>, <code>breakout</code>, and <code>full-width</code> columns. Every direct child defaults to content and can choose another column with <code>data-width</code>; a full-width child inherits the grid so its content returns to content automatically. It has no enhancer: <code>@skryensya/core/patterns/layout.css</code> supplies all behavior and React only renders the same class.",
+              "title": "LayoutGrid adds content measures and full bleed"
+            },
+            "es": {
+              "body": "<code>LayoutGrid</code> suma una grilla de página con columnas <code>narrow</code>, <code>content</code>, <code>breakout</code> y <code>full-width</code>. Cada hijo directo queda en content por defecto y puede elegir otra columna con <code>data-width</code>; un hijo full-width hereda la grilla para que su contenido vuelva a content automáticamente. No tiene enhancer: <code>@skryensya/core/patterns/layout.css</code> resuelve todo el comportamiento y React sólo imprime la misma clase.",
+              "title": "LayoutGrid agrega medidas de contenido y full bleed"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "list": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>List</code>, <code>OrderedList</code>, <code>ListItemPlain</code>, <code>ListItem</code>, <code>ListItemLink</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>density</code>, <code>dividers</code>, <code>href</code>, <code>disabled</code>. Its stylesheet is <code>components/list.css</code>.",
+              "title": "List is published as a contract, with 5 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>List</code>, <code>OrderedList</code>, <code>ListItemPlain</code>, <code>ListItem</code>, <code>ListItemLink</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>density</code>, <code>dividers</code>, <code>href</code>, <code>disabled</code>. La hoja es <code>components/list.css</code>.",
+              "title": "List se publica como contrato, con 5 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "loader": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Loader</code>, <code>Loader.status</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>size</code>, <code>variant</code>, <code>speed</code>, <code>label</code>. Its stylesheet is <code>components/loader.css</code>.",
+              "title": "Loader is published as a contract, with 2 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Loader</code>, <code>Loader.status</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>size</code>, <code>variant</code>, <code>speed</code>, <code>label</code>. La hoja es <code>components/loader.css</code>.",
+              "title": "Loader se publica como contrato, con 2 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "media-gradient": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>MediaCaption</code>, <code>MediaGradient</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>edge</code>, <code>strength</code>. Its stylesheet is <code>patterns/media-gradient.css</code>.",
+              "title": "MediaGradient is published as a contract, with 2 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>MediaCaption</code>, <code>MediaGradient</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>edge</code>, <code>strength</code>. La hoja es <code>patterns/media-gradient.css</code>.",
+              "title": "MediaGradient se publica como contrato, con 2 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "menu": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Menu</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-menu</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>label</code>, <code>disabled</code>. Its stylesheet is <code>components/menu.css</code>.",
+              "title": "Menu is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Menu</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-menu</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>label</code>, <code>disabled</code>. La hoja es <code>components/menu.css</code>.",
+              "title": "Menu se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "nav-list": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>NavList</code>, <code>NavListGroup</code>, <code>NavListLink</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>orientation</code>, <code>href</code>, <code>current</code>. Its stylesheet is <code>patterns/nav-list.css</code>.",
+              "title": "NavList is published as a contract, with 3 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>NavList</code>, <code>NavListGroup</code>, <code>NavListLink</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>orientation</code>, <code>href</code>, <code>current</code>. La hoja es <code>patterns/nav-list.css</code>.",
+              "title": "NavList se publica como contrato, con 3 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "navbar": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Navbar</code>, <code>NavbarBrand</code>, <code>NavbarActions</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. It has no options: the element IS the meaning. Its stylesheet is <code>components/navbar.css</code>.",
+              "title": "Navbar is published as a contract, with 3 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Navbar</code>, <code>NavbarBrand</code>, <code>NavbarActions</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. No tiene opciones: el elemento ES el significado. La hoja es <code>components/navbar.css</code>.",
+              "title": "Navbar se publica como contrato, con 3 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "number-field": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>NumberField</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-number-field</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>name</code>, <code>defaultValue</code>, <code>locale</code>, <code>min</code>, <code>max</code>, <code>step</code>, <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>decrementLabel</code>, <code>incrementLabel</code>. Its stylesheet is <code>components/number-field.css</code>.",
+              "title": "NumberField is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>NumberField</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-number-field</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>name</code>, <code>defaultValue</code>, <code>locale</code>, <code>min</code>, <code>max</code>, <code>step</code>, <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>decrementLabel</code>, <code>incrementLabel</code>. La hoja es <code>components/number-field.css</code>.",
+              "title": "NumberField se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "pagination": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Pagination</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>page</code>, <code>total</code>, <code>siblings</code>, <code>label</code>, <code>previousLabel</code>, <code>nextLabel</code>. Its stylesheet is <code>components/pagination.css</code>.",
+              "title": "Pagination is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Pagination</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>page</code>, <code>total</code>, <code>siblings</code>, <code>label</code>, <code>previousLabel</code>, <code>nextLabel</code>. La hoja es <code>components/pagination.css</code>.",
+              "title": "Pagination se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "placeholder": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Placeholder</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>shape</code>. Its stylesheet is <code>components/placeholder.css</code>.",
+              "title": "Placeholder is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Placeholder</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>shape</code>. La hoja es <code>components/placeholder.css</code>.",
+              "title": "Placeholder se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "popover": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Popover</code>, <code>Popover.bare</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>panelId</code>, <code>placement</code>, <code>arrow</code>, <code>bare</code>, <code>closeLabel</code>. Its stylesheet is <code>components/popover.css</code>.",
+              "title": "Popover is published as a contract, with 2 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Popover</code>, <code>Popover.bare</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>panelId</code>, <code>placement</code>, <code>arrow</code>, <code>bare</code>, <code>closeLabel</code>. La hoja es <code>components/popover.css</code>.",
+              "title": "Popover se publica como contrato, con 2 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "process-list": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>ProcessList</code>, <code>ProcessListItem</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. It has no options: the element IS the meaning. Its stylesheet is <code>components/process-list.css</code>.",
+              "title": "ProcessList is published as a contract, with 2 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>ProcessList</code>, <code>ProcessListItem</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. No tiene opciones: el elemento ES el significado. La hoja es <code>components/process-list.css</code>.",
+              "title": "ProcessList se publica como contrato, con 2 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "progress": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Progress</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>value</code>, <code>max</code>, <code>tone</code>, <code>label</code>. Its stylesheet is <code>components/progress.css</code>.",
+              "title": "Progress is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Progress</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>value</code>, <code>max</code>, <code>tone</code>, <code>label</code>. La hoja es <code>components/progress.css</code>.",
+              "title": "Progress se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "radio-group": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>RadioGroup</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>name</code>, <code>value</code>, <code>orientation</code>, <code>disabled</code>, <code>required</code>. Its stylesheet is <code>components/radio-group.css</code>.",
+              "title": "RadioGroup is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>RadioGroup</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>name</code>, <code>value</code>, <code>orientation</code>, <code>disabled</code>, <code>required</code>. La hoja es <code>components/radio-group.css</code>.",
+              "title": "RadioGroup se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "segmented": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Segmented</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-segmented</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>value</code>. Its stylesheet is <code>components/segmented.css</code>.",
+              "title": "Segmented is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Segmented</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-segmented</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>value</code>. La hoja es <code>components/segmented.css</code>.",
+              "title": "Segmented se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "select": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Select.native</code>, <code>Select</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-select</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>name</code>, <code>value</code>, <code>placeholder</code>, <code>disabled</code>, <code>required</code>. Its stylesheet is <code>components/select.css</code>.",
+              "title": "Select is published as a contract, with 2 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Select.native</code>, <code>Select</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-select</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>name</code>, <code>value</code>, <code>placeholder</code>, <code>disabled</code>, <code>required</code>. La hoja es <code>components/select.css</code>.",
+              "title": "Select se publica como contrato, con 2 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "sidebar": [
       {
         "date": null,
@@ -302,22 +1093,326 @@
         "version": "0.1.0-dev"
       }
     ],
-    "skip-link": [],
-    "slider": [],
-    "split-button": [],
-    "stat": [],
-    "steps": [],
-    "switch": [],
-    "table": [],
-    "table-pager": [],
-    "tabs": [],
-    "tag": [],
-    "theme-toggle": [],
-    "tile": [],
-    "time-field": [],
-    "toc": [],
-    "toolbar": [],
-    "tooltip": [],
+    "skip-link": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>SkipLink</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>href</code>. Its stylesheet is <code>components/skip-link.css</code>.",
+              "title": "SkipLink is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>SkipLink</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>href</code>. La hoja es <code>components/skip-link.css</code>.",
+              "title": "SkipLink se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "slider": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Slider</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-slider</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>value</code>, <code>min</code>, <code>max</code>, <code>step</code>, <code>name</code>, <code>disabled</code>. Its stylesheet is <code>components/slider.css</code>.",
+              "title": "Slider is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Slider</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-slider</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>value</code>, <code>min</code>, <code>max</code>, <code>step</code>, <code>name</code>, <code>disabled</code>. La hoja es <code>components/slider.css</code>.",
+              "title": "Slider se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "split-button": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>SplitButton</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. It has no options: the element IS the meaning. Its stylesheet is <code>components/split-button.css</code>.",
+              "title": "SplitButton is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>SplitButton</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. No tiene opciones: el elemento ES el significado. La hoja es <code>components/split-button.css</code>.",
+              "title": "SplitButton se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "stat": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Stat</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-stat</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>trend</code>, <code>animate</code>, <code>count</code>, <code>locale</code>, <code>suffix</code>, <code>fractionDigits</code>. Its stylesheet is <code>components/stat.css</code>.",
+              "title": "Stat is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Stat</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-stat</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>trend</code>, <code>animate</code>, <code>count</code>, <code>locale</code>, <code>suffix</code>, <code>fractionDigits</code>. La hoja es <code>components/stat.css</code>.",
+              "title": "Stat se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "steps": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Steps</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. It has no options: the element IS the meaning. Its stylesheet is <code>components/steps.css</code>.",
+              "title": "Steps is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Steps</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. No tiene opciones: el elemento ES el significado. La hoja es <code>components/steps.css</code>.",
+              "title": "Steps se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "switch": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Switch</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>name</code>, <code>value</code>, <code>checked</code>, <code>disabled</code>. Its stylesheet is <code>components/switch.css</code>.",
+              "title": "Switch is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Switch</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>name</code>, <code>value</code>, <code>checked</code>, <code>disabled</code>. La hoja es <code>components/switch.css</code>.",
+              "title": "Switch se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "table": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>TableScroll</code>, <code>Table</code>, <code>TableCaption</code>, <code>TableHead</code>, <code>TableBody</code>, <code>TableFooter</code>, <code>TableRow</code>, <code>TableHeader</code>, <code>TableCell</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>scope</code>, <code>stickyColumn</code>, <code>stickyHeader</code>, <code>density</code>, <code>densityFactor</code>, <code>colspan</code>. Its stylesheet is <code>components/table.css</code>.",
+              "title": "Table is published as a contract, with 9 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>TableScroll</code>, <code>Table</code>, <code>TableCaption</code>, <code>TableHead</code>, <code>TableBody</code>, <code>TableFooter</code>, <code>TableRow</code>, <code>TableHeader</code>, <code>TableCell</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>scope</code>, <code>stickyColumn</code>, <code>stickyHeader</code>, <code>density</code>, <code>densityFactor</code>, <code>colspan</code>. La hoja es <code>components/table.css</code>.",
+              "title": "Table se publica como contrato, con 9 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "table-pager": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>TablePager</code>, <code>TablePagerBar</code>, <code>TablePagerSize</code>, <code>TablePagerEnd</code>, <code>TablePagerStatus</code>, <code>TablePagerNav</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-table-pager</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>pageSize</code>, <code>page</code>, <code>siblings</code>, <code>statusTemplate</code>, <code>previousLabel</code>, <code>nextLabel</code>, <code>pageLabel</code>, <code>navLabel</code>. Its stylesheet is <code>patterns/table-pager.css</code>.",
+              "title": "TablePager is published as a contract, with 6 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>TablePager</code>, <code>TablePagerBar</code>, <code>TablePagerSize</code>, <code>TablePagerEnd</code>, <code>TablePagerStatus</code>, <code>TablePagerNav</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-table-pager</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>pageSize</code>, <code>page</code>, <code>siblings</code>, <code>statusTemplate</code>, <code>previousLabel</code>, <code>nextLabel</code>, <code>pageLabel</code>, <code>navLabel</code>. La hoja es <code>patterns/table-pager.css</code>.",
+              "title": "TablePager se publica como contrato, con 6 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "tabs": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Tabs</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>orientation</code>, <code>activationMode</code>, <code>value</code>. Its stylesheet is <code>components/tabs.css</code>.",
+              "title": "Tabs is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Tabs</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>orientation</code>, <code>activationMode</code>, <code>value</code>. La hoja es <code>components/tabs.css</code>.",
+              "title": "Tabs se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "tag": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Tag</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>tone</code>, <code>removable</code>, <code>removeLabel</code>. Its stylesheet is <code>components/tag.css</code>.",
+              "title": "Tag is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Tag</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>tone</code>, <code>removable</code>, <code>removeLabel</code>. La hoja es <code>components/tag.css</code>.",
+              "title": "Tag se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "theme-toggle": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>ThemeToggle</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-theme-toggle</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>defaultValue</code>, <code>size</code>, <code>labelSystem</code>, <code>labelLight</code>, <code>labelDark</code>. Its stylesheet is <code>components/theme-toggle.css</code>.",
+              "title": "ThemeToggle is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>ThemeToggle</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-theme-toggle</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>defaultValue</code>, <code>size</code>, <code>labelSystem</code>, <code>labelLight</code>, <code>labelDark</code>. La hoja es <code>components/theme-toggle.css</code>.",
+              "title": "ThemeToggle se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "tile": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>TileLink</code>, <code>TileButton</code>, <code>TileContent</code>, <code>TileChevron</code>, <code>TileCheckbox</code>, <code>TileSwitch</code>, <code>TileRadioGroup</code>, <code>ExpandableTile</code>, <code>ExpandableTileTrigger</code>, <code>ExpandableTileContent</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-tile-checkbox</code>, <code>data-sk-tile-switch</code>, <code>data-sk-tile-radio-group</code>, <code>data-sk-expandable-tile</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>padding</code>, <code>href</code>, <code>name</code>, <code>value</code>, <code>defaultChecked</code>, <code>required</code>, <code>defaultValue</code>, <code>orientation</code>, <code>disabled</code>, <code>defaultOpen</code>. Its stylesheet is <code>components/tile.css</code>.",
+              "title": "Tile is published as a contract, with 10 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>TileLink</code>, <code>TileButton</code>, <code>TileContent</code>, <code>TileChevron</code>, <code>TileCheckbox</code>, <code>TileSwitch</code>, <code>TileRadioGroup</code>, <code>ExpandableTile</code>, <code>ExpandableTileTrigger</code>, <code>ExpandableTileContent</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-tile-checkbox</code>, <code>data-sk-tile-switch</code>, <code>data-sk-tile-radio-group</code>, <code>data-sk-expandable-tile</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>padding</code>, <code>href</code>, <code>name</code>, <code>value</code>, <code>defaultChecked</code>, <code>required</code>, <code>defaultValue</code>, <code>orientation</code>, <code>disabled</code>, <code>defaultOpen</code>. La hoja es <code>components/tile.css</code>.",
+              "title": "Tile se publica como contrato, con 10 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "time-field": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>TimeField</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-time-field</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>name</code>, <code>locale</code>, <code>value</code>, <code>minuteStep</code>, <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>hourLabel</code>, <code>minuteLabel</code>, <code>periodLabel</code>, <code>clearLabel</code>. Its stylesheet is <code>components/time-field.css</code>.",
+              "title": "TimeField is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>TimeField</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-time-field</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>name</code>, <code>locale</code>, <code>value</code>, <code>minuteStep</code>, <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>hourLabel</code>, <code>minuteLabel</code>, <code>periodLabel</code>, <code>clearLabel</code>. La hoja es <code>components/time-field.css</code>.",
+              "title": "TimeField se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "toc": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Toc</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-toc</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>title</code>. Its stylesheet is <code>components/toc.css</code>.",
+              "title": "Toc is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Toc</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-toc</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>title</code>. La hoja es <code>components/toc.css</code>.",
+              "title": "Toc se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "toolbar": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Toolbar</code>, <code>ToolbarGroup</code>, <code>ToolbarSeparator</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-toolbar</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>orientation</code>, <code>label</code>, <code>loopFocus</code>. Its stylesheet is <code>components/toolbar.css</code>.",
+              "title": "Toolbar is published as a contract, with 3 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Toolbar</code>, <code>ToolbarGroup</code>, <code>ToolbarSeparator</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-toolbar</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>orientation</code>, <code>label</code>, <code>loopFocus</code>. La hoja es <code>components/toolbar.css</code>.",
+              "title": "Toolbar se publica como contrato, con 3 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "tooltip": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Tooltip</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-anchor</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>placement</code>, <code>arrow</code>. Its stylesheet is <code>components/tooltip.css</code>.",
+              "title": "Tooltip is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Tooltip</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-anchor</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>placement</code>, <code>arrow</code>. La hoja es <code>components/tooltip.css</code>.",
+              "title": "Tooltip se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "tree-view": [
       {
         "date": null,
@@ -351,9 +1446,66 @@
         "version": "0.1.0-dev"
       }
     ],
-    "typography": [],
-    "vaul": [],
-    "wrapper": []
+    "typography": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Text</code>, <code>Strong</code>, <code>Output</code>, <code>Code</code>, <code>Heading</code>, <code>Link</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>tone</code>, <code>size</code>, <code>weight</code>, <code>headingSize</code>, <code>flush</code>, <code>href</code>, <code>linkTone</code>. Its stylesheet is <code>components/typography.css</code>.",
+              "title": "Typography is published as a contract, with 6 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Text</code>, <code>Strong</code>, <code>Output</code>, <code>Code</code>, <code>Heading</code>, <code>Link</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>tone</code>, <code>size</code>, <code>weight</code>, <code>headingSize</code>, <code>flush</code>, <code>href</code>, <code>linkTone</code>. La hoja es <code>components/typography.css</code>.",
+              "title": "Typography se publica como contrato, con 6 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "vaul": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Vaul</code>, <code>Vaul.drawer</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-vaul</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>edge</code>, <code>open</code>. Its stylesheet is <code>patterns/vaul.css</code>.",
+              "title": "Vaul is published as a contract, with 2 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Vaul</code>, <code>Vaul.drawer</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-vaul</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>edge</code>, <code>open</code>. La hoja es <code>patterns/vaul.css</code>.",
+              "title": "Vaul se publica como contrato, con 2 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "wrapper": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Wrapper</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>wrapperSize</code>. Its stylesheet is <code>patterns/wrapper.css</code>.",
+              "title": "Wrapper is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Wrapper</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>wrapperSize</code>. La hoja es <code>patterns/wrapper.css</code>.",
+              "title": "Wrapper se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ]
   },
   "contracts": {
     "accordion": {
@@ -5817,6 +6969,7 @@
         "box": "sk-box",
         "grid": "sk-grid",
         "inline": "sk-inline",
+        "layoutGrid": "sk-layout-grid",
         "stack": "sk-stack",
         "wrapper": "sk-wrapper"
       },
@@ -5854,6 +7007,20 @@
           ],
           "useWhen": [
             "las cosas van una al lado de otra: una fila de botones, un rótulo con su valor"
+          ]
+        },
+        "LayoutGrid": {
+          "alternatives": [
+            "Wrapper",
+            "Grid"
+          ],
+          "avoidWhen": [
+            "todos los hijos comparten un único techo de ancho; Wrapper es más simple",
+            "se distribuyen tarjetas en columnas iguales; eso es Grid"
+          ],
+          "useWhen": [
+            "una página necesita una medida de lectura y algunos hijos deben ser angostos, abrirse o sangrar de borde a borde",
+            "una sección full-width debe conservar su contenido centrado sin un wrapper adicional"
           ]
         },
         "Stack": {
@@ -5959,6 +7126,34 @@
             "element": "div",
             "host": true,
             "part": "inline",
+            "slot": "children"
+          }
+        },
+        "LayoutGrid": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "page-flow",
+            "named-content-measures",
+            "breakout-content",
+            "full-bleed-section"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/layout",
+            "name": "LayoutGrid"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "layoutGrid",
             "slot": "children"
           }
         },
@@ -13280,5 +14475,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "d1ecc1938ebf1f47"
+  "sourceHash": "7ea435030a0ebd97"
 }

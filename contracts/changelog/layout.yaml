@@ -3,5 +3,47 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "11a3d51a3f5d343c"
-entries: []
+surface: "d8864878ba57d279"
+entries:
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: Layout se publica como contrato, con 4 signatures
+      body: >-
+        Entra al catálogo con <code>Stack</code>, <code>Inline</code>, <code>Grid</code>,
+        <code>DensityScope</code>: los dos bindings lo realizan, y la referencia de esta página sale del
+        contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo
+        por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>gap</code>,
+        <code>align</code>, <code>inlineAlign</code>, <code>justify</code>, <code>equal</code>,
+        <code>wrap</code>, <code>columns</code>, <code>multicol</code>, <code>densityFactor</code>. La
+        hoja es <code>patterns/layout.css</code>.
+    en:
+      title: Layout is published as a contract, with 4 signatures
+      body: >-
+        It joins the catalogue with <code>Stack</code>, <code>Inline</code>, <code>Grid</code>,
+        <code>DensityScope</code>: both bindings realize it, and this page's reference is rendered from
+        the compiled contract rather than from prose written beside it. There is no enhancer: the markup
+        is complete on its own, so both bindings are the same markup twice. Options: <code>gap</code>,
+        <code>align</code>, <code>inlineAlign</code>, <code>justify</code>, <code>equal</code>,
+        <code>wrap</code>, <code>columns</code>, <code>multicol</code>, <code>densityFactor</code>. Its
+        stylesheet is <code>patterns/layout.css</code>.
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: LayoutGrid agrega medidas de contenido y full bleed
+      body: >-
+        <code>LayoutGrid</code> suma una grilla de página con columnas <code>narrow</code>,
+        <code>content</code>, <code>breakout</code> y <code>full-width</code>. Cada hijo directo queda
+        en content por defecto y puede elegir otra columna con <code>data-width</code>; un hijo full-width
+        hereda la grilla para que su contenido vuelva a content automáticamente. No tiene enhancer:
+        <code>@skryensya/core/patterns/layout.css</code> resuelve todo el comportamiento y React sólo
+        imprime la misma clase.
+    en:
+      title: LayoutGrid adds content measures and full bleed
+      body: >-
+        <code>LayoutGrid</code> adds a page grid with <code>narrow</code>, <code>content</code>,
+        <code>breakout</code>, and <code>full-width</code> columns. Every direct child defaults to
+        content and can choose another column with <code>data-width</code>; a full-width child inherits
+        the grid so its content returns to content automatically. It has no enhancer:
+        <code>@skryensya/core/patterns/layout.css</code> supplies all behavior and React only renders the
+        same class.

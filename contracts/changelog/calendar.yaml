@@ -4,4 +4,26 @@
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
 surface: "11eeeae913a34a91"
-entries: []
+entries:
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: Calendar se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>Calendar</code>: los dos bindings lo realizan, y la referencia de
+        esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla
+        monta sobre <code>data-sk-calendar</code>: el markup se autora y el enhancer lo hidrata, así que
+        lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>value</code>,
+        <code>min</code>, <code>max</code>, <code>selectionMode</code>, <code>locale</code>,
+        <code>timeZone</code>, <code>disabled</code>, <code>readOnly</code>. La hoja es
+        <code>components/calendar.css</code>.
+    en:
+      title: Calendar is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>Calendar</code>: both bindings realize it, and this page's
+        reference is rendered from the compiled contract rather than from prose written beside it. The
+        Vanilla binding mounts on <code>data-sk-calendar</code>: the markup is authored and the enhancer
+        hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>value</code>,
+        <code>min</code>, <code>max</code>, <code>selectionMode</code>, <code>locale</code>,
+        <code>timeZone</code>, <code>disabled</code>, <code>readOnly</code>. Its stylesheet is
+        <code>components/calendar.css</code>.

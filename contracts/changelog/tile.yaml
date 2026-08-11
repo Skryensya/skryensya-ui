@@ -4,4 +4,37 @@
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
 surface: "36acaa8ff122da65"
-entries: []
+entries:
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: Tile se publica como contrato, con 10 signatures
+      body: >-
+        Entra al catálogo con <code>TileLink</code>, <code>TileButton</code>, <code>TileContent</code>,
+        <code>TileChevron</code>, <code>TileCheckbox</code>, <code>TileSwitch</code>,
+        <code>TileRadioGroup</code>, <code>ExpandableTile</code>, <code>ExpandableTileTrigger</code>,
+        <code>ExpandableTileContent</code>: los dos bindings lo realizan, y la referencia de esta página
+        sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre
+        <code>data-sk-tile-checkbox</code>, <code>data-sk-tile-switch</code>,
+        <code>data-sk-tile-radio-group</code>, <code>data-sk-expandable-tile</code>: el markup se autora
+        y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra
+        ninguno. Opciones: <code>padding</code>, <code>href</code>, <code>name</code>,
+        <code>value</code>, <code>defaultChecked</code>, <code>required</code>,
+        <code>defaultValue</code>, <code>orientation</code>, <code>disabled</code>,
+        <code>defaultOpen</code>. La hoja es <code>components/tile.css</code>.
+    en:
+      title: Tile is published as a contract, with 10 signatures
+      body: >-
+        It joins the catalogue with <code>TileLink</code>, <code>TileButton</code>,
+        <code>TileContent</code>, <code>TileChevron</code>, <code>TileCheckbox</code>,
+        <code>TileSwitch</code>, <code>TileRadioGroup</code>, <code>ExpandableTile</code>,
+        <code>ExpandableTileTrigger</code>, <code>ExpandableTileContent</code>: both bindings realize
+        it, and this page's reference is rendered from the compiled contract rather than from prose
+        written beside it. The Vanilla binding mounts on <code>data-sk-tile-checkbox</code>,
+        <code>data-sk-tile-switch</code>, <code>data-sk-tile-radio-group</code>,
+        <code>data-sk-expandable-tile</code>: the markup is authored and the enhancer hydrates it, so
+        whatever needs no JavaScript works before any runs. Options: <code>padding</code>,
+        <code>href</code>, <code>name</code>, <code>value</code>, <code>defaultChecked</code>,
+        <code>required</code>, <code>defaultValue</code>, <code>orientation</code>,
+        <code>disabled</code>, <code>defaultOpen</code>. Its stylesheet is
+        <code>components/tile.css</code>.

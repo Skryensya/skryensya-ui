@@ -1,0 +1,175 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/layout.yaml?raw";
+import coreSource from "@core/src/layout.ts?raw";
+import cssSource from "@core/css/patterns/layout.css?raw";
+import reactSource from "@react/src/components/layout.tsx?raw";
+/* The preview frame clones styles from this page, so load the public sheet the example teaches. */
+import "@skryensya/core/patterns/layout.css";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const configurationCss = `.sk-layout-grid {
+  --sk-layout-gutter: var(--space-inset-lg);
+  --sk-layout-narrow: var(--size-wrapper-sm);
+  --sk-layout-content: var(--size-wrapper-md);
+  --sk-layout-breakout: var(--size-wrapper-lg);
+}`;
+
+const heroCss = `.sk-page {
+  row-gap: var(--space-section);
+}
+
+.sk-hero {
+  background: var(--color-action-primary);
+  color: var(--color-text-on-accent);
+  padding-block: 4rem;
+  row-gap: var(--space-stack-md);
+}
+
+.sk-page-footer {
+  background: var(--color-bg-accent-subtle);
+  border-block-start: 1px solid var(--color-border-accent);
+  padding-block: var(--space-section);
+}`;
+
+const exampleHtml = `<main class="sk-layout-grid sk-page">
+  <header>
+    <p>${t("layoutGridPage.exampleKicker")}</p>
+    <h1>${t("layoutGridPage.exampleTitle")}</h1>
+    <p>${t("layoutGridPage.exampleIntro")}</p>
+  </header>
+
+  <section>
+    <h2>${t("layoutGridPage.exampleFirstSectionTitle")}</h2>
+    <p>${t("layoutGridPage.exampleFirstSectionBody")}</p>
+  </section>
+
+  <section class="sk-hero" data-width="full-width">
+    <p>${t("layoutGridPage.exampleHeroKicker")}</p>
+    <h2>${t("layoutGridPage.exampleHeroTitle")}</h2>
+    <p>${t("layoutGridPage.exampleHeroBody")}</p>
+  </section>
+
+  <section>
+    <h2>${t("layoutGridPage.exampleSecondSectionTitle")}</h2>
+    <p>${t("layoutGridPage.exampleSecondSectionBody")}</p>
+  </section>
+
+  <footer class="sk-page-footer" data-width="full-width">
+    <p>${t("layoutGridPage.exampleFooter")}</p>
+  </footer>
+</main>`;
+
+const reactExample = `import "@skryensya/core/patterns/layout.css";
+import { LayoutGrid } from "@skryensya/react/layout";
+
+<LayoutGrid as="main" className="sk-page">
+  <header>
+    <p>${t("layoutGridPage.exampleKicker")}</p>
+    <h1>${t("layoutGridPage.exampleTitle")}</h1>
+    <p>${t("layoutGridPage.exampleIntro")}</p>
+  </header>
+
+  <section>
+    <h2>${t("layoutGridPage.exampleFirstSectionTitle")}</h2>
+    <p>${t("layoutGridPage.exampleFirstSectionBody")}</p>
+  </section>
+
+  <section className="sk-hero" data-width="full-width">
+    <p>${t("layoutGridPage.exampleHeroKicker")}</p>
+    <h2>${t("layoutGridPage.exampleHeroTitle")}</h2>
+    <p>${t("layoutGridPage.exampleHeroBody")}</p>
+  </section>
+
+  <section>
+    <h2>${t("layoutGridPage.exampleSecondSectionTitle")}</h2>
+    <p>${t("layoutGridPage.exampleSecondSectionBody")}</p>
+  </section>
+
+  <footer className="sk-page-footer" data-width="full-width">
+    <p>${t("layoutGridPage.exampleFooter")}</p>
+  </footer>
+</LayoutGrid>;`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/layout.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/layout.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/patterns/layout.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/layout.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Layout Grid"
+  description={t("layoutGridPage.description")}
+  contractId="layout"
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/layout.test.tsx",
+      tests: [
+        {
+          name: "renders LayoutGrid while leaving width on its semantic children",
+          description: t("layoutGridPage.test1"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("layoutGridPage.lede")} />
+    <ComponentPreview html={exampleHtml} css={heroCss} label="Layout Grid" flush />
+
+    <h3>{t("layoutGridPage.levelsTitle")}</h3>
+    <p set:html={t("layoutGridPage.levelsBody")} />
+    <ul>
+      <li><code>narrow</code> — {t("layoutGridPage.levelNarrow")}</li>
+      <li><code>content</code> — {t("layoutGridPage.levelContent")}</li>
+      <li><code>breakout</code> — {t("layoutGridPage.levelBreakout")}</li>
+      <li><code>full-width</code> — {t("layoutGridPage.levelFullWidth")}</li>
+    </ul>
+
+    <h3>{t("layoutGridPage.fullWidthTitle")}</h3>
+    <p set:html={t("layoutGridPage.fullWidthBody")} />
+
+    <h3>{t("layoutGridPage.htmlTitle")}</h3>
+    <p set:html={t("layoutGridPage.htmlBody")} />
+    <p set:html={t("layoutGridPage.reactBody")} />
+    <CodeBlock code={reactExample} label="TSX" lang="tsx" />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+
+  <Fragment slot="style">
+    <h2>{t("layoutGridPage.configTitle")}</h2>
+    <p set:html={t("layoutGridPage.configBody1")} />
+    <CodeBlock code={configurationCss} label="app.css" />
+    <p set:html={t("layoutGridPage.configBody2")} />
+  </Fragment>
+</ComponentPageShell>
+
+<style is:global>
+  .sk-page {
+    row-gap: var(--space-section);
+  }
+
+  .sk-hero {
+    background: var(--color-action-primary);
+    color: var(--color-text-on-accent);
+    padding-block: 4rem;
+    row-gap: var(--space-stack-md);
+  }
+
+  .sk-page-footer {
+    background: var(--color-bg-accent-subtle);
+    border-block-start: 1px solid var(--color-border-accent);
+    padding-block: var(--space-section);
+  }
+</style>

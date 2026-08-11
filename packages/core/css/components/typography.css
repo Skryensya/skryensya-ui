@@ -44,8 +44,7 @@
    *     <p class="sk-text" data-role="subtitle">Copia el CSS y pégalo en tu proyecto.</p>
    *   </header>
    *
-   * Spacing between roles is owned by the LOWER sibling (heading / subtitle padding-block-start), not
-   * by the eyebrow's line box, so a title stack uses gap="none" and lets the roles place themselves.
+   * Roles define type only. Their parent owns any space between the title and its surrounding content.
    */
 
   /* SUBTITLE, the supporting line UNDER a heading: larger than body, quieter, a relaxed measure so a
@@ -61,7 +60,7 @@
    * properties. One role now. The tracking and the upper-casing are the letterform of the role itself,
    * not layout, so they are direct values like the link's underline-offset, not tokens being sidestepped.
    * Line-height is the tight display measure: caption's body 1.5 left a dead band under the glyphs that
-   * read as padding-bottom on the eyebrow; the intentional gap lives on the heading below. */
+   * read as padding-bottom on the eyebrow. */
   .sk-text[data-role="eyebrow"] {
     --sk-text-font-size: var(--font-size-caption);
     --sk-text-line-height: var(--font-line-height-display);
@@ -69,11 +68,6 @@
     --sk-text-fg: var(--color-text-tertiary);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-  }
-
-  /* The title owns the air after its kicker; the deck owns the air after the title. */
-  .sk-text[data-role="eyebrow"] + .sk-heading {
-    padding-block-start: var(--space-stack-xs);
   }
 
   .sk-heading + .sk-text[data-role="subtitle"] {
@@ -105,13 +99,9 @@
     text-wrap: balance;
   }
 
-  /* FLUSH, explicit opt-in: no block air, top OR bottom. Use when the heading is the first (or last)
-   * thing in its container (a dialog title, a card header) and inherited / sibling spacing would push
-   * it off the edge. Zeroes the whole block axis, not just block-start, so a trailing heading sits
-   * flush against the container floor too. Not automatic on :first-child, the author names the intent.
-   * Beats the eyebrow adjacency rule. */
-  .sk-heading[data-flush],
-  .sk-text[data-role="eyebrow"] + .sk-heading[data-flush] {
+  /* FLUSH, explicit opt-in for a heading that must discard contextual block air. Use when it is the
+   * first or last thing in its container (a dialog title or card header). */
+  .sk-heading[data-flush] {
     margin-block: 0;
     padding-block: 0;
   }

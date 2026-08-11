@@ -23,3 +23,7 @@ apps/docs/check-trees.mts
 # The dev server writes its own PID and port here on every run. Tracked once by accident, and
 # stripped out of every commit by hand since, which is a chore that only ever ends one way.
 apps/docs/.astro/dev.json
+
+# Generated for /playground: the kit compiled into files the Sandpack sandbox can import.
+# Rebuilt by apps/docs/scripts/build-sandbox-bundles.mjs on every dev start and build.
+apps/docs/public/sandbox/

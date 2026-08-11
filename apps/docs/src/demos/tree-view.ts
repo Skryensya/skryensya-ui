@@ -107,7 +107,7 @@ export const treeViewEventsTree = (t: Translate): UsageTree => ({
       contract: "tree-view",
       signature: "TreeView",
       options: {
-        label: t("demo.tree.settingsLabel"),
+        label: t("demo.tree.filesLabel"),
         defaultExpandedValue: "src",
       },
       slots: {
@@ -116,10 +116,15 @@ export const treeViewEventsTree = (t: Translate): UsageTree => ({
           signature: "Icon",
           options: { name: "chevron-right", size: "sm" },
         },
-        leafIndicator: {
+        branchIcon: {
           contract: "icon",
           signature: "Icon",
-          options: { name: "settings", size: "sm" },
+          options: { name: "folder", size: "sm" },
+        },
+        leafIcon: {
+          contract: "icon",
+          signature: "Icon",
+          options: { name: "file", size: "sm" },
         },
         items: projectItems(t),
       },

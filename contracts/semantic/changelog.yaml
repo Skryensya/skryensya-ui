@@ -2,19 +2,28 @@
 
 Changelog:
   useWhen:
-    - "hay un historial fechado de algo que cambió: release notes, el changelog de un contrato"
-    - "la fecha es lo que el lector busca; viene a ver qué pasó y cuándo"
+    - "hay un historial de versiones de algo: release notes, el changelog de un contrato"
+    - "quien lee viene a saber si ya tiene el cambio que está leyendo, y eso lo contesta una versión"
   avoidWhen:
-    - "son instrucciones para leer y hacer, en orden pero sin fechas; eso es un ProcessList"
+    - "son instrucciones para leer y hacer, en orden pero sin versiones; eso es un ProcessList"
     - "importa en qué etapa está alguien, qué ya hizo y qué le falta; eso es Steps"
     - "es una sola novedad suelta; una entrada sin historial alrededor no es un historial"
   alternatives:
     - ProcessList
     - Steps
 
+ChangelogRelease:
+  useWhen:
+    - "una versión y todo lo que salió en ella"
+    - "hay trabajo sin publicar: se escribe la versión con sufijo -dev y se omite la fecha"
+  avoidWhen:
+    - "fuera de un Changelog: el riel y el orden los dibuja la lista, no el release suelto"
+    - "querés marcar 'sin publicar' con una opción aparte; la ausencia de fecha ya lo dice, y dos campos que dicen lo mismo se pueden contradecir"
+  alternatives: []
+
 ChangelogEntry:
   useWhen:
-    - "un cambio, con su día, su tipo y a qué parte del contrato le pegó"
+    - "un cambio, con su tipo y a qué parte del contrato le pegó"
   avoidWhen:
-    - "fuera de un Changelog: la entrada sola no dibuja el riel ni se lee como historia"
+    - "fuera de un ChangelogRelease: un cambio que no está bajo una versión no dice desde cuándo se puede contar con él"
   alternatives: []

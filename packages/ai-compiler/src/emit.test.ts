@@ -413,3 +413,40 @@ describe("wiring: six ids from one name", () => {
     expect(emitMarkup(field())).not.toContain("</input>");
   });
 });
+
+describe("a string option that contains a quote", () => {
+  /*
+   * CommandPalette's index arrives as a JSON STRING, because a usage tree has no channel for an
+   * array of objects. Quoted with `JSON.stringify` straight into the attribute, the first escaped
+   * quote ended the attribute and Babel refused the file: the snippet on the docs page did not
+   * compile, and neither did the playground's copy of it.
+   */
+  it("goes in an expression container so the JSX still parses", () => {
+    const source = emitReact({
+      contract: "command-palette",
+      signature: "CommandPalette",
+      options: {
+        paletteId: "cmdk",
+        label: "Buscar",
+        entries: '[{"label":"Button","href":"/componentes/button"}]',
+      },
+    } as never);
+
+    // `entries` is the option; `items` is the prop the contract maps it to.
+    expect(source).toContain(
+      'items={"[{\\"label\\":\\"Button\\",\\"href\\":\\"/componentes/button\\"}]"}',
+    );
+    expect(source).not.toContain('items="[{\\"');
+  });
+
+  it("leaves a quote-free value as the plain attribute a person would write", () => {
+    const source = emitReact({
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "primary" },
+      children: "Guardar",
+    } as never);
+
+    expect(source).toContain('variant="primary"');
+  });
+});

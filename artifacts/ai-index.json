@@ -430,6 +430,76 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/changelog.css",
+      "id": "changelog",
+      "signatures": [
+        {
+          "alternatives": [
+            "ProcessList",
+            "Steps"
+          ],
+          "avoidWhen": [
+            "son instrucciones para leer y hacer, en orden pero sin versiones; eso es un ProcessList",
+            "importa en qué etapa está alguien, qué ya hizo y qué le falta; eso es Steps",
+            "es una sola novedad suelta; una entrada sin historial alrededor no es un historial"
+          ],
+          "host": "ol",
+          "id": "Changelog",
+          "intent": [
+            "changelog",
+            "release-notes",
+            "what-changed",
+            "version-history"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay un historial de versiones de algo: release notes, el changelog de un contrato",
+            "quien lee viene a saber si ya tiene el cambio que está leyendo, y eso lo contesta una versión"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "fuera de un Changelog: el riel y el orden los dibuja la lista, no el release suelto",
+            "querés marcar 'sin publicar' con una opción aparte; la ausencia de fecha ya lo dice, y dos campos que dicen lo mismo se pueden contradecir"
+          ],
+          "host": "li",
+          "id": "ChangelogRelease",
+          "intent": [
+            "one-version",
+            "release",
+            "version-heading"
+          ],
+          "parents": [
+            "Changelog"
+          ],
+          "useWhen": [
+            "una versión y todo lo que salió en ella",
+            "hay trabajo sin publicar: se escribe la versión con sufijo -dev y se omite la fecha"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "fuera de un ChangelogRelease: un cambio que no está bajo una versión no dice desde cuándo se puede contar con él"
+          ],
+          "host": "li",
+          "id": "ChangelogEntry",
+          "intent": [
+            "one-change",
+            "changelog-entry",
+            "release-note"
+          ],
+          "parents": [
+            "ChangelogRelease"
+          ],
+          "useWhen": [
+            "un cambio, con su tipo y a qué parte del contrato le pegó"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/checkbox.css",
       "id": "checkbox",
       "signatures": [
@@ -1989,6 +2059,64 @@
           "useWhen": [
             "la persona tiene que poder angostar la barra para ganar ancho de contenido"
           ]
+        },
+        {
+          "alternatives": [
+            "SidebarTrigger"
+          ],
+          "avoidWhen": [
+            "la lista de destinos es fija y conocida; ahí el ancho es una decisión de diseño, no de quien lee",
+            "lo que se busca es sacarla del medio; para eso está SidebarTrigger, que angosta a un riel"
+          ],
+          "host": "div",
+          "id": "SidebarResizeHandle",
+          "intent": [
+            "resize-sidebar",
+            "drag-the-rail-wider",
+            "splitter",
+            "drag-handle"
+          ],
+          "parents": [
+            "Sidebar"
+          ],
+          "useWhen": [
+            "el ancho correcto lo decide el contenido de cada persona: rutas largas, un árbol profundo, nombres de archivo",
+            "hace falta un ancho intermedio, no sólo angosta o ancha"
+          ]
+        }
+      ]
+    },
+    {
+      "css": "@skryensya/core/components/skip-link.css",
+      "id": "skip-link",
+      "signatures": [
+        {
+          "alternatives": [
+            "Link"
+          ],
+          "avoidWhen": [
+            "el destino no es enfocable: sin tabindex=\"-1\" el Tab siguiente vuelve al chrome que se quiso saltear",
+            "hay algo enfocable antes: entonces ese algo es el bloque que nadie puede saltear",
+            "el destino puede no estar en la página: un enlace a algo que no existe es una promesa que no se puede seguir",
+            "es un enlace visible dentro del texto; eso es Link",
+            "se quiere esconder texto que nadie va a enfocar: eso es la clase sk-visually-hidden"
+          ],
+          "host": "a",
+          "id": "SkipLink",
+          "intent": [
+            "skip-link",
+            "bypass-blocks",
+            "skip-to-content",
+            "skip-to-navigation",
+            "wcag-2-4-1"
+          ],
+          "parents": [],
+          "useWhen": [
+            "la página empieza con chrome que se repite en todas: marca, navegación global, buscador",
+            "hay que cumplir WCAG 2.4.1: quien navega con teclado necesita saltear ese bloque",
+            "va primero en el documento y no se ve hasta que recibe el foco",
+            "puede haber más de uno; el primero apunta al contenido, que es lo que casi todo el mundo vino a leer"
+          ]
         }
       ]
     },
@@ -3087,5 +3215,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "1f0709f22b6fcaf9"
+  "sourceHash": "d1ecc1938ebf1f47"
 }

@@ -1,8 +1,14 @@
 /* TIER 3, TREE VIEW: hierarchical disclosure and selection. */
 @layer components {
   .sk-tree-view {
-    /* Indent per level, measured from the row's own inline start. */
-    --sk-tree-indent: var(--space-inset-lg);
+    /* Indent per level, measured from the row's own inline start. A tree pays this once per
+     * level, so it is the token that decides how much width a deep hierarchy costs: at four
+     * levels the difference between the 16px inset step and this 12px inline step is a whole
+     * chevron column. */
+    --sk-tree-indent: var(--space-inline-md);
+    /* Inset on both edges of a row. The guide below hangs off it, so the indent math reads it
+     * back instead of repeating the token: lower the inset and the guide follows. */
+    --sk-tree-row-inset: var(--space-inset-xs);
     /* The vertical rule that ties a branch to its children. Set it to `transparent`
      * to turn the guides off without touching the indent. */
     --sk-tree-guide-color: var(--color-border-subtle);
@@ -10,6 +16,8 @@
     /* Column reserved for the branch chevron. Leaves keep it EMPTY instead of
      * collapsing it, so every label on a level starts at the same x. */
     --sk-tree-indicator-size: var(--size-icon-sm);
+    /* Column reserved for the folder/file icon when a consumer provides one. */
+    --sk-tree-node-icon-size: var(--size-icon-sm);
     color: var(--color-text-primary);
   }
 
@@ -26,10 +34,27 @@
   .sk-tree-view__tree,
   .sk-tree-view__branch-content {
     display: grid;
+    /*
+     * `minmax(0, 1fr)`, never a bare grid. A grid track sized `auto` takes its MINIMUM from the
+     * min-content of its items, and a row whose label is `nowrap` has a min-content the width of
+     * the whole filename: the tree then refuses to be narrower than its longest name, and a host
+     * that clips (a sidebar) hides the tail of every deep row with no scrollbar to reach it. This
+     * is what makes the ellipsis below actually able to fire.
+     *
+     * The same rule the nav-list pattern states for the same reason: a guest is narrowed by its
+     * host, it does not hold the host open.
+     */
+    grid-template-columns: minmax(0, 1fr);
     gap: 1px;
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  /* And one level down: `<li>` is the grid item, and its own automatic minimum is `auto` too. */
+  .sk-tree-view__branch,
+  .sk-tree-view__tree > li {
+    min-inline-size: 0;
   }
 
   /* `display: grid` above is an AUTHOR rule, so it beats the UA stylesheet's `[hidden] {
@@ -40,26 +65,36 @@
   }
 
   /* The guide hangs from the centre of the parent's chevron, so the rule points back at
-   * the control the children descend from; the rest of the indent is their padding. */
+   * the control the children descend from; the rest of the indent is their padding.
+   *
+   * The guide alone already costs `inset + indicator / 2`, so an indent smaller than that
+   * leaves nothing to pad with. `max()` clamps the remainder at zero: a consumer who tightens
+   * --sk-tree-indent past the floor gets rows flush against the guide, never rows pulled back
+   * across it. */
   .sk-tree-view__branch-content {
     margin-inline-start: calc(
-      var(--space-inset-sm) + var(--sk-tree-indicator-size) / 2
+      var(--sk-tree-row-inset) + var(--sk-tree-indicator-size) / 2
     );
-    padding-inline-start: calc(
-      var(--sk-tree-indent) - var(--space-inset-sm) - var(
-          --sk-tree-indicator-size
-        ) / 2
+    padding-inline-start: max(
+      0px,
+      calc(
+        var(--sk-tree-indent) - var(--sk-tree-row-inset) - var(
+            --sk-tree-indicator-size
+          ) / 2
+      )
     );
     border-inline-start: var(--sk-tree-guide-width) solid
       var(--sk-tree-guide-color);
   }
 
   /*
-   * A row, painted like a `sk-button[data-size="sm"]`: same --size-control-sm height and
-   * --font-size-body-sm type, so a tree sitting next to small buttons (a sidebar, a panel
-   * toolbar) reads as one density instead of the tree rows looming taller than everything
-   * beside them. `sk-interactive` (patterns/state-layer.css) owns hover / focus / pressed /
-   * selected and the focus ring; this only lays the row out.
+   * A row keeps the --size-control-sm height it shares with a small button, so a tree sitting
+   * next to one (a sidebar, a panel toolbar) reads as one density instead of the tree rows
+   * looming taller than everything beside them. The TYPE is --font-size-caption, not the
+   * button's body-sm: a tree is navigation chrome that pays for its own width once per level,
+   * and 12px is what the rest of the chrome that lives beside it already speaks (Menu items,
+   * NavList group labels, the Sidebar footer). `sk-interactive` (patterns/state-layer.css) owns
+   * hover / focus / pressed / selected and the focus ring; this only lays the row out.
    *
    * The HIG hit target doesn't shrink with the paint: `::after` below expands it to
    * --size-touch-target the same way Button's own `::after` does, absolutely positioned against
@@ -68,31 +103,49 @@
   .sk-tree-view__item,
   .sk-tree-view__branch-control {
     display: grid;
-    grid-template-columns: var(--sk-tree-indicator-size) minmax(0, 1fr);
+    grid-template-columns:
+      var(--sk-tree-indicator-size) var(--sk-tree-node-icon-size) minmax(0, 1fr);
     gap: var(--space-inline-xs);
     align-items: center;
     min-block-size: var(--size-control-sm);
     padding-block: 0;
-    padding-inline: var(--space-inset-sm);
+    padding-inline: var(--sk-tree-row-inset);
     border: 0;
     border-radius: var(--radius-control);
     background: transparent;
     color: inherit;
-    font-size: var(--font-size-body-sm);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
     text-align: start;
     cursor: pointer;
   }
 
   /*
-   * The gutter aligns a leaf's label with a SIBLING branch's chevron. A tree that has no branch
-   * anywhere (a plain flat list) has no chevron to align with anywhere in it either, so every
-   * item reserving the column is dead space with nothing on the other end of the alignment. Scoped
-   * to the whole tree (`:has()` on the root list), not per-row: a single branch anywhere still means
-   * every item at every level keeps the reservation, so nested mixed content never loses alignment.
+   * A TreeView that does not render a node icon has no middle column to reserve. Scoped to the
+   * whole tree so branches and leaves stay aligned when a consumer omits both icon slots.
+   */
+  .sk-tree-view__tree:not(:has(.sk-tree-view__branch-icon, .sk-tree-view__item-icon))
+    .sk-tree-view__item,
+  .sk-tree-view__tree:not(:has(.sk-tree-view__branch-icon, .sk-tree-view__item-icon))
+    .sk-tree-view__branch-control {
+    grid-template-columns: var(--sk-tree-indicator-size) minmax(0, 1fr);
+  }
+
+  /*
+   * A flat tree has no disclosure affordance to align with. Keep only its authored file icon; if
+   * it has none, the label starts directly at the row inset.
    */
   .sk-tree-view__tree:not(:has(.sk-tree-view__branch)) .sk-tree-view__item {
     grid-template-columns: minmax(0, 1fr);
     gap: 0;
+  }
+  .sk-tree-view__tree:not(:has(.sk-tree-view__branch))
+    .sk-tree-view__item:has(.sk-tree-view__item-icon) {
+    grid-template-columns: var(--sk-tree-node-icon-size) minmax(0, 1fr);
+    gap: var(--space-inline-xs);
+  }
+  .sk-tree-view__tree:not(:has(.sk-tree-view__branch)) .sk-tree-view__item-indicator {
+    display: none;
   }
 
   .sk-tree-view__item::after,
@@ -103,10 +156,30 @@
     inset-inline: min(0px, calc((100% - var(--size-touch-target)) / 2));
   }
 
+  /*
+   * A NAME THAT DOES NOT FIT IS TRUNCATED, never wrapped.
+   *
+   * These are filenames, folders, paths: identifiers read left to right, where the beginning is what
+   * identifies them and the tail is usually an extension. Wrapping one turns a row into two and
+   * breaks the alignment the indent exists to create, so a deep tree in a narrow rail becomes a
+   * paragraph. It also makes the row heights disagree, which is what the guides are drawn against.
+   *
+   * The full name is still in the accessibility tree, and the element it is on is the natural place
+   * for a consumer's `title` when the tree is dense enough to need one.
+   */
   .sk-tree-view__item-text,
   .sk-tree-view__branch-text {
     min-inline-size: 0;
-    overflow-wrap: anywhere;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sk-tree-view__branch-icon,
+  .sk-tree-view__item-icon {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--sk-tree-node-icon-size);
   }
 
   /* ── state layer bridge ────────────────────────────────────────────────────

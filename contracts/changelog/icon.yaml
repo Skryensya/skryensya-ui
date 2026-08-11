@@ -3,5 +3,18 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "e5b8b55bef384359"
-entries: []
+surface: "572033b0c72fd2bb"
+entries:
+  - date: 2026-08-05
+    kind: feature
+    target: name
+    es:
+      title: Los roles file y folder se enlazan en todos los sets
+      body: >-
+        <code>file</code> y <code>folder</code> nombran la estructura de un explorador sin clasificar
+        cada extensión. Los tres sets publicados los cubren.
+    en:
+      title: File and folder roles are linked by every icon set
+      body: >-
+        <code>file</code> and <code>folder</code> name file-browser structure without classifying
+        every extension. All three published sets cover them.

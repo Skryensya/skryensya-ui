@@ -43,8 +43,8 @@ export type {
   ProcessListItemProps,
   ProcessListProps,
 } from "./components/process-list.js";
-export { Changelog, ChangelogEntry } from "./components/changelog.js";
-export type { ChangelogEntryProps, ChangelogProps } from "./components/changelog.js";
+export { Changelog, ChangelogEntry, ChangelogRelease } from "./components/changelog.js";
+export type { ChangelogEntryProps, ChangelogProps, ChangelogReleaseProps } from "./components/changelog.js";
 export { Carousel, CarouselSlide } from "./components/carousel.js";
 export type {
   CarouselHandle,
@@ -122,6 +122,7 @@ export {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarResizeHandle,
   SidebarSeparator,
   SidebarTrigger,
 } from "./components/sidebar.js";
@@ -130,9 +131,12 @@ export type {
   SidebarFooterProps,
   SidebarHeaderProps,
   SidebarProps,
+  SidebarResizeHandleProps,
   SidebarSeparatorProps,
   SidebarTriggerProps,
 } from "./components/sidebar.js";
+export { SkipLink, skipLinkTarget } from "./components/skip-link.js";
+export type { SkipLinkProps, SkipLinkTargetProps } from "./components/skip-link.js";
 export { Tabs } from "./components/tabs.js";
 export type { TabsItem, TabsProps } from "./components/tabs.js";
 export {

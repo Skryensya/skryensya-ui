@@ -44,3 +44,13 @@ SidebarTrigger:
   avoidWhen:
     - "se espera que oculte la barra; angosta, nunca esconde"
   alternatives: []
+
+SidebarResizeHandle:
+  useWhen:
+    - "el ancho correcto lo decide el contenido de cada persona: rutas largas, un árbol profundo, nombres de archivo"
+    - "hace falta un ancho intermedio, no sólo angosta o ancha"
+  avoidWhen:
+    - "la lista de destinos es fija y conocida; ahí el ancho es una decisión de diseño, no de quien lee"
+    - "lo que se busca es sacarla del medio; para eso está SidebarTrigger, que angosta a un riel"
+  alternatives:
+    - SidebarTrigger

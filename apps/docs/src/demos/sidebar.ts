@@ -91,3 +91,88 @@ export const sidebarTree = (
     },
   ],
 });
+
+/*
+ * The resizable case, and the one that puts a TreeView in the rail.
+ *
+ * The pairing is the point. A tree is the guest whose right width nobody can know in advance, since
+ * it depends on how deep the reader's own hierarchy goes and how long their filenames are, and it is
+ * exactly the guest that would otherwise force the panel open or scroll it sideways. So this demo
+ * carries a deliberately overlong filename: what has to be visible is that it ELLIPSES, and that the
+ * fix for "I cannot read it" is dragging the edge rather than a horizontal scrollbar.
+ *
+ * `storageKey` is deliberately absent here: a documentation preview that remembered its width would
+ * come back resized for every later reader of the page, having stored a decision one of them made.
+ */
+export const sidebarResizableTree = (t: Translate): UsageTree => ({
+  contract: "box",
+  signature: "Box",
+  attrs: { class: "app-shell" },
+  children: [
+    {
+      contract: "sidebar",
+      signature: "Sidebar",
+      attrs: { id: "explorer-sidebar" },
+      children: [
+        {
+          contract: "sidebar",
+          signature: "SidebarHeader",
+          children: { contract: "typography", signature: "Text", children: t("demo.sidebar.explorer") },
+        },
+        {
+          contract: "sidebar",
+          signature: "SidebarContent",
+          children: {
+            contract: "tree-view",
+            signature: "TreeView",
+            options: { label: t("demo.sidebar.files"), defaultExpandedValue: "src,src/components" },
+            slots: {
+              branchIcon: { contract: "icon", signature: "Icon", options: { name: "folder", size: "sm" } },
+              leafIcon: { contract: "icon", signature: "Icon", options: { name: "file", size: "sm" } },
+              items: [
+                {
+                  options: { id: "src" },
+                  slots: {
+                    label: "src",
+                    children: [
+                      {
+                        options: { id: "src/components" },
+                        slots: {
+                          label: "components",
+                          children: [
+                            { options: { id: "src/components/button.tsx" }, slots: { label: "button.tsx" } },
+                            {
+                              options: { id: "src/components/long" },
+                              slots: { label: t("demo.sidebar.longFile") },
+                            },
+                          ],
+                        },
+                      },
+                      { options: { id: "src/index.ts" }, slots: { label: "index.ts" } },
+                    ],
+                  },
+                },
+                { options: { id: "README.md" }, slots: { label: "README.md" } },
+              ],
+            },
+          },
+        },
+        {
+          contract: "sidebar",
+          signature: "SidebarResizeHandle",
+          options: { label: t("demo.sidebar.resize") },
+        },
+      ],
+    },
+    {
+      contract: "box",
+      signature: "Box",
+      attrs: { class: "app-shell__main" },
+      children: {
+        contract: "typography",
+        signature: "Text",
+        children: t("demo.sidebar.resizeContent"),
+      },
+    },
+  ],
+});

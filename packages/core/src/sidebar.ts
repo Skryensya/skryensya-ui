@@ -1,7 +1,13 @@
 import type { ComponentContract } from "./contract.js";
+import { definePreference, numberValue, type Preference } from "./storage.js";
 
 export type SidebarCollapsedChangeDetails = {
   collapsed: boolean;
+};
+
+export type SidebarResizeChangeDetails = {
+  /** The width the sidebar settled at, in CSS pixels, already clamped to the min/max hooks. */
+  inlineSize: number;
 };
 
 export type SidebarOptions = {
@@ -11,11 +17,79 @@ export type SidebarOptions = {
   /** Uncontrolled: initializes the state once, then interaction owns it. */
   defaultCollapsed?: boolean;
   onCollapsedChange?: (details: SidebarCollapsedChangeDetails) => void;
+  /**
+   * Where a dragged width is remembered. Omit it and the resize lasts the session: the width is
+   * state either way, this only says whether it outlives the tab.
+   */
+  storageKey?: string;
+  onResizeChange?: (details: SidebarResizeChangeDetails) => void;
+  /**
+   * How far a drag may travel, as CSS lengths. They are the `clamp()` arguments, so anything CSS
+   * accepts works: `"18rem"`, `"30%"`, `"min(24rem, 40vw)"`.
+   *
+   * The bounds are per-INSTANCE where the expanded width is not, and the split is not arbitrary:
+   * the expanded width is the size the sidebar was designed at, which is a system decision and
+   * belongs in a stylesheet; the travel is about this reader's screen and this rail's content, and
+   * two sidebars in one app can honestly want different answers. Both still resolve to the same
+   * hooks, so a consumer with fifty of them sets `--sk-sidebar-max-inline-size` once in CSS instead
+   * of passing the same prop fifty times.
+   */
+  minInlineSize?: string;
+  maxInlineSize?: string;
 };
 
 export const sidebarEvents = {
   collapsedChange: "sk-collapsed-change",
+  resizeChange: "sk-resize-change",
 } as const;
+
+/*
+ * ── RESIZING, the part both bindings share ────────────────────────────────────────────────────
+ *
+ * The width lives in CSS, not in JavaScript. A drag writes ONE custom property, and the stylesheet
+ * clamps it between `--sk-sidebar-min-inline-size` and `--sk-sidebar-max-inline-size`. That split is
+ * the whole design, and it buys three things a JS-owned width does not:
+ *
+ *   - The bounds stay overridable by the consumer, in the same place every other dimension of this
+ *     component is overridable, instead of being constants compiled into two bindings.
+ *   - A brand or a density that moves those hooks moves the resize with them, with nothing to
+ *     re-run.
+ *   - The two bindings cannot drift, because neither one owns the arithmetic.
+ *
+ * What JavaScript still owns is the pointer, the keyboard and the storage, which is exactly the part
+ * CSS has no answer for.
+ */
+
+/** The custom property a drag writes. The stylesheet clamps it; nothing here does. */
+export const SIDEBAR_WIDTH_PROPERTY = "--sk-sidebar-resize-inline-size";
+
+/**
+ * A stored sidebar width, one slot per key, so two sidebars on one origin do not fight over one
+ * number. Bounded at parse time: see {@link numberValue}. The ceiling is deliberately far above any
+ * sane `--sk-sidebar-max-inline-size`, since the real clamp is the stylesheet's and this only has to
+ * reject values that are not a width at all.
+ */
+export function sidebarWidthPreference(storageKey: string): Preference<number | null> {
+  return definePreference<number | null>({
+    slot: `sidebar-width:${storageKey}`,
+    fallback: null,
+    parse: (raw) => numberValue(0, 10000)(raw),
+  });
+}
+
+/**
+ * Where a width sits between the two bounds, 0 to 100.
+ *
+ * This is what a focusable `role="separator"` reports as `aria-valuenow`: a splitter's position is
+ * only meaningful RELATIVE to how far it can travel, and a screen reader saying "208" tells nobody
+ * anything, while "40%" says the rail is nearer its narrowest than its widest. Returns 100 for a
+ * degenerate range rather than dividing by zero.
+ */
+export function sidebarWidthPercent(inlineSize: number, min: number, max: number): number {
+  if (!(max > min)) return 100;
+  const clamped = Math.min(Math.max(inlineSize, min), max);
+  return Math.round(((clamped - min) / (max - min)) * 100);
+}
 
 /*
  * The shell only. There is no `link`, `item` or `list` part here on purpose: the list of
@@ -33,6 +107,8 @@ export const sidebarParts = {
   footer: "sk-sidebar__footer",
   separator: "sk-sidebar__separator",
   trigger: "sk-sidebar__trigger",
+  /** The drag edge. Authoring it is what makes a sidebar resizable; there is no second switch. */
+  resizeHandle: "sk-sidebar__resize-handle",
 } as const;
 
 export type SidebarPart = keyof typeof sidebarParts;
@@ -71,17 +147,41 @@ export const sidebarContract = {
      * its own names nothing.
      */
     label: { type: "string", attr: "aria-label" },
+
+    /**
+     * The slot a dragged width is remembered under. Absent, the resize still works and simply does
+     * not outlive the tab: persistence is opt-in because a width is a preference, and a product
+     * that renders two different sidebars needs to say which one it is remembering.
+     */
+    storageKey: { type: "string", attr: "data-storage-key" },
+
+    /**
+     * The ends of the resize, written straight onto the hooks the `clamp()` reads. A style property
+     * and not a `data-` attribute because a length is not a state: CSS is what has to consume it,
+     * and routing it through an attribute would mean a stylesheet rule per value a consumer might
+     * pick. It also means the bound is in the markup the emitter produces, so it holds before any
+     * JavaScript runs.
+     */
+    minInlineSize: { type: "string", styleProperty: "--sk-sidebar-min-inline-size" },
+    maxInlineSize: { type: "string", styleProperty: "--sk-sidebar-max-inline-size" },
   },
 
   signatures: {
     Sidebar: {
       intent: ["sidebar", "side-navigation", "app-shell-rail", "left-nav"],
       host: { element: "aside" },
-      options: ["defaultCollapsed"],
+      options: ["defaultCollapsed", "storageKey", "minInlineSize", "maxInlineSize"],
       slots: {
         children: {
           accepts: "signature",
-          of: ["SidebarHeader", "SidebarContent", "SidebarFooter", "SidebarSeparator", "SidebarTrigger"],
+          of: [
+            "SidebarHeader",
+            "SidebarContent",
+            "SidebarFooter",
+            "SidebarSeparator",
+            "SidebarTrigger",
+            "SidebarResizeHandle",
+          ],
           required: true,
         },
       },
@@ -158,6 +258,41 @@ export const sidebarContract = {
         slot: "icon",
       },
       react: { from: "@skryensya/react/sidebar", name: "SidebarTrigger" },
+    },
+
+    /**
+     * The drag edge, and the switch: a sidebar is resizable when one of these is authored inside it,
+     * with no `resizable` option beside it. Two ways to say the same thing is two ways to disagree,
+     * and the stylesheet needs the answer anyway, which it reads as `:has()` on this part.
+     *
+     * It is a WINDOW SPLITTER, so the whole ARIA pattern applies and none of it is optional: a
+     * focusable `separator` reports where it sits with `aria-valuenow`, which is why arrow keys move
+     * it and why the value is a PERCENTAGE of the travel rather than a pixel count (see
+     * `sidebarWidthPercent`). The static `50` here is the pre-JavaScript state; both bindings
+     * overwrite it with the real position as they mount.
+     */
+    SidebarResizeHandle: {
+      intent: ["resize-sidebar", "drag-the-rail-wider", "splitter", "drag-handle"],
+      host: { element: "div" },
+      parents: ["Sidebar"],
+      options: ["label"],
+      requires: ["label"],
+      slots: {},
+      mount: "data-sk-sidebar-resize",
+      template: {
+        element: "div",
+        part: "resizeHandle",
+        host: true,
+        attrs: {
+          role: "separator",
+          "aria-orientation": "vertical",
+          "aria-valuemin": "0",
+          "aria-valuemax": "100",
+          "aria-valuenow": "50",
+          tabindex: "0",
+        },
+      },
+      react: { from: "@skryensya/react/sidebar", name: "SidebarResizeHandle" },
     },
   },
 } as const satisfies ComponentContract;

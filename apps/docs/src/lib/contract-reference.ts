@@ -1,5 +1,5 @@
-import type { ComponentContract, ContractOption, ContractSignature } from "@skryensya/core/contract";
-import manifest from "../../../../artifacts/ai-manifest.json";
+import type { ComponentContract } from "@skryensya/core/contract";
+import manifest from "@artifacts/ai-manifest.json";
 import type { Locale } from "../i18n";
 
 /*
@@ -16,15 +16,31 @@ import type { Locale } from "../i18n";
  * rebuilt artifact hot-reloads the page in dev instead of needing the server restarted.
  */
 
-export type ChangeKind = "added" | "changed" | "fixed" | "removed" | "breaking";
+/** The five kinds, ordered loudest first. Why these words rather than Keep a Changelog's is argued
+ *  in `packages/core/src/changelog.ts`, next to the tone each one wears. */
+export type ChangeKind = "breaking" | "feature" | "bugfix" | "rework" | "chore";
+
+/** One entry in one language: the headline a reader scans for, and the reasoning under it. */
+export type ChangeText = {
+  readonly title: string;
+  /** HTML the compiler validated, so it lands as real markup rather than escaped text. */
+  readonly body: string;
+};
 
 export type ChangeEntry = {
   readonly date: string;
   readonly kind: ChangeKind;
   /** An option, part or signature name. The compiler already refused any other value. */
   readonly target?: string;
-  readonly es: string;
-  readonly en: string;
+  readonly es: ChangeText;
+  readonly en: ChangeText;
+};
+
+/** One version and everything that shipped in it. `date` is `null` on a version that has not. */
+export type Release = {
+  readonly version: string;
+  readonly date: string | null;
+  readonly entries: readonly ChangeEntry[];
 };
 
 export type SignatureSemantics = {
@@ -35,13 +51,14 @@ export type SignatureSemantics = {
 
 export type ContractDoc = ComponentContract & {
   readonly semantics: Readonly<Record<string, SignatureSemantics>>;
-  readonly changelog: readonly ChangeEntry[];
 };
 
 type Manifest = {
   readonly schemaVersion: string;
   readonly sourceHash: string;
   readonly contracts: Readonly<Record<string, ContractDoc>>;
+  /** Keyed like `contracts`, and separate from it: a component's history is not its shape. */
+  readonly changelogs: Readonly<Record<string, readonly Release[]>>;
 };
 
 const compiled = manifest as unknown as Manifest;
@@ -63,105 +80,57 @@ export function contractDoc(id: string): ContractDoc {
   return entry;
 }
 
-/** Stamped under the reference so a reader can tell which build of the catalogue they are looking at. */
-export const catalogueHash = compiled.sourceHash;
-
-/** One signature, flattened into what a reference row needs. Order follows the contract's own. */
-export type SignatureRow = {
-  readonly id: string;
-  readonly signature: ContractSignature;
-  readonly options: readonly (readonly [string, ContractOption])[];
-};
-
 /**
- * Signatures in the order someone writes them, which is neither the order they are stored in nor
- * the order they arrive.
+ * A component's history, by version, which the manifest keeps beside the contract rather than
+ * inside it.
  *
- * The manifest is canonicalized with its keys sorted, so reading it back hands over
- * `Accordion, Accordion.Content, Accordion.Item, Accordion.Trigger`: a reader meets Content two
- * sections before the Item it goes inside. So the order is REBUILT from the contract's own
- * structure: a root first, then its children, and siblings in the order the parent's slot lists
- * them, which for an ordered slot is exactly the order the markup has to be written in.
+ * Always an array. A component with nothing to report and a component that does not exist are
+ * different failures, and only the second one should be loud: `contractDoc` already throws for an
+ * unknown id, so by the time a page asks for its changelog the id is known good and an empty list
+ * means exactly "nothing recorded yet".
  */
-export function signatureRows(contract: ContractDoc): readonly SignatureRow[] {
-  const ids = Object.keys(contract.signatures);
-  const roots = ids.filter((id) => !contract.signatures[id]!.parents?.length);
-
-  /** Where a parent's slots say this child goes; `Infinity` for one no slot names. */
-  const positionUnder = (parentId: string, childId: string): number => {
-    const slots = Object.values(contract.signatures[parentId]!.slots);
-    for (const slot of slots) {
-      const at = slot.of?.indexOf(childId) ?? -1;
-      if (at >= 0) return at;
-    }
-    return Number.POSITIVE_INFINITY;
-  };
-
-  const ordered: string[] = [];
-  const seen = new Set<string>();
-
-  const visit = (id: string): void => {
-    if (seen.has(id)) return;
-    seen.add(id);
-    ordered.push(id);
-
-    ids
-      .filter((child) => contract.signatures[child]!.parents?.includes(id))
-      .sort((a, b) => positionUnder(id, a) - positionUnder(id, b))
-      .forEach(visit);
-  };
-
-  roots.forEach(visit);
-  // A signature whose only parent is itself unreachable would otherwise vanish from the page.
-  ids.forEach(visit);
-
-  return ordered.map((id) => {
-    const signature = contract.signatures[id]!;
-    return {
-      id,
-      signature,
-      options: signature.options
-        .map((name) => [name, contract.options[name]] as const)
-        .filter((pair): pair is readonly [string, ContractOption] => Boolean(pair[1])),
-    };
-  });
+export function changelogFor(id: string): readonly Release[] {
+  return compiled.changelogs[id] ?? [];
 }
 
 /**
- * The newest change per target, so a table can badge the exact row that moved.
+ * An entry's title and body in the page's language.
  *
- * Newest only: a row that says both "added" and "changed" is telling a reader to reconstruct a
- * history from two words. The date belongs to the changelog tab; what the table owes is "this one
- * is not what it was".
+ * Both languages and both halves are always present; the compiler refuses an entry missing any of
+ * the four, so a page never has to decide what to show in place of a missing one.
  */
-export function latestByTarget(contract: ContractDoc): ReadonlyMap<string, ChangeEntry> {
-  const latest = new Map<string, ChangeEntry>();
-  for (const entry of contract.changelog) {
-    if (!entry.target) continue;
-    const held = latest.get(entry.target);
-    if (!held || held.date < entry.date) latest.set(entry.target, entry);
-  }
-  return latest;
-}
-
-/** An entry's prose in the page's language. Both are always present; the compiler refuses one alone. */
-export function entryText(entry: ChangeEntry, locale: Locale): string {
+export function entryText(entry: ChangeEntry, locale: Locale): ChangeText {
   return locale === "en" ? entry.en : entry.es;
 }
 
-/**
- * What an option admits, as one printable string.
- *
- * An enum prints its values because that IS the type; a boolean prints `true` / `false` for the
- * same reason. Only string and number have nothing to enumerate.
- */
-export function optionType(option: ContractOption): string {
-  if (option.type === "enum") return (option.values ?? []).join(" · ");
-  if (option.type === "boolean") return "true · false";
-  return option.type;
-}
 
-/** Where the value lands in the DOM, which is what makes the two bindings comparable. */
-export function optionAttr(option: ContractOption): string | undefined {
-  return option.styleProperty ?? option.attr;
+
+/**
+ * The contract as JSON: the artifact itself, rather than a rendering of it.
+ *
+ * A contract is a VALUE (decision 28), so the honest reference for one is the value. This is the
+ * same object the validator, both bindings and the MCP server consume, and the same shape
+ * `get_contract` answers with, so a reader here and an agent there are looking at one thing. A
+ * table would be a second description of it, and a second description is a thing that can be wrong.
+ *
+ * `semantics` is dropped, and it is the reason this is not just the manifest entry printed whole.
+ * It is not part of the contract: it is a docs overlay the compiler merges in from
+ * `contracts/semantic`, and it already has its own tab. Leaving it in would make "the contract" mean
+ * something different here than it means in Core. The changelog needs no dropping; the manifest
+ * keeps histories in their own map (`changelogFor`), never on the contract.
+ *
+ * ONLY THE KEY ORDER IS OURS. The manifest canonicalizes with its keys sorted, which opens the
+ * object on `css` and buries `id` between `events` and `options`: alphabetical is a fine way to
+ * store a thing and a poor way to read one. Order carries no meaning in a JSON object, so
+ * re-ordering costs the reader nothing and buys a document that starts by saying what it is. `rest`
+ * catches every key this list does not name, so a field added to the contract later still prints.
+ */
+export function contractJson(contract: ContractDoc): string {
+  const { semantics: _semantics, id, css, parts, events, options, signatures, ...rest } = contract;
+  return JSON.stringify(
+    { id, css, parts, events, options, signatures, ...rest },
+    /* Drop keys the contract does not carry (a component with no events) instead of printing `null`. */
+    (_key, value) => (value === undefined ? undefined : value),
+    2,
+  );
 }

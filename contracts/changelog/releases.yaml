@@ -1,0 +1,29 @@
+# EL REGISTRO DE RELEASES. Un archivo, para todos los contratos.
+#
+# Cada entrada de cada changelog cae en una versión, y esto es lo único que decide en cuál: una
+# entrada pertenece al release más viejo cuya fecha la alcanza. Lo que quedó después del último
+# release todavía no salió, y se agrupa bajo la versión de trabajo.
+#
+# CORTAR UNA VERSIÓN ES UNA LÍNEA ACÁ, y ésa es toda la razón por la que el ledger existe en vez de
+# un campo `version:` en cada entrada. Con el campo, publicar significaría abrir los 64 changelogs y
+# sellar a mano cada entrada suelta, que es un trabajo que nadie hace dos veces y que ningún gate
+# puede exigir: no hay forma de que el compilador sepa que te olvidaste de una. Con el ledger no hay
+# nada que olvidarse, porque no hay nada que repetir.
+#
+# LAS VERSIONES SON DE LOS CONTRATOS, no de un paquete. Un contrato lo realizan Core, React y
+# Vanilla a la vez, así que la versión de `@skryensya/core` no es la respuesta a "¿desde cuándo
+# puedo contar con esto?" para nadie que use el kit. Esto sí.
+
+# La versión que se está escribiendo ahora mismo, todavía sin publicar. Lo que no entró en ningún
+# release se muestra como `<working>-dev`, que es lo que es: el número que va a llevar cuando salga,
+# marcado como que no salió. Al cortar un release se agrega abajo y este número sube.
+working: "0.1.0"
+
+# Vacío a propósito: nada de esto se publicó todavía. Al cortar el primer release esto se vuelve
+#
+#   releases:
+#     - version: "0.1.0"
+#       date: 2026-08-05
+#
+# y todas las entradas fechadas hasta ese día se agrupan solas bajo `0.1.0`, sin tocar un changelog.
+releases: []

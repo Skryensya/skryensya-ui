@@ -1,30 +1,26 @@
 ---
 /*
- * The reference tab: every option, slot and part a component publishes, read off the compiled
- * contract.
+ * The reference tab: the contract itself, as JSON.
  *
- * It replaces prose. The Accordion page used to carry seven hand-written bullets describing its own
- * contract, next to a `packages/core/src/accordion.ts` that declares the same facts in a form the
- * validator, both bindings and the MCP server all consume. Two statements of one truth, and only
- * one of them fails a build when it is wrong. This renders the one that does.
+ * It used to be tables. Every option, slot and part was read off the compiled contract and laid out
+ * in six of them, plus a per-signature list, plus the same object again as JSON at the foot of the
+ * page: one truth stated twice on one screen, with the reader scrolling past the reading to reach
+ * the thing being read.
  *
- * Deliberately NOT rendered IN THE TABLES: `template` and `wiring`. They are how a binding realizes
- * the contract, the emitter writes that markup (decision 29), and a reader who has to know the
- * template to use the component is a reader the emitter failed. They do appear in the raw JSON at the
- * foot of the page, which is a different promise: the tables are the reading, that is the source.
+ * A CONTRACT IS A VALUE (decision 28), which is exactly why this can be so short. The object below
+ * is the one the validator, both bindings and the MCP server consume, with no extraction step
+ * between it and them, and it is the same shape `get_contract` answers with, so a reader here and an
+ * agent there are looking at one thing. There is nothing a table could add that the value does not
+ * already say, and nothing a table could get wrong that a build would catch.
+ *
+ * `template` and `wiring` come along now, and that is a change of promise rather than an oversight.
+ * The tables deliberately hid them: they are how a binding realizes the contract, the emitter writes
+ * that markup (decision 29), and a reader who needs the template to use the component is a reader
+ * the emitter failed. But this is no longer a reading with things left out of it, it is the artifact.
  */
-import "@skryensya/core/components/badge.css";
 import CodeBlock from "./CodeBlock.astro";
-import {
-  catalogueHash,
-  contractDoc,
-  latestByTarget,
-  optionAttr,
-  optionType,
-  signatureRows,
-  type ChangeKind,
-} from "../lib/contract-reference";
-import { getLocale, useTranslations, type UIKey } from "../i18n";
+import { contractDoc, contractJson } from "../lib/contract-reference";
+import { getLocale, useTranslations } from "../i18n";
 
 interface Props {
   /** The contract id, as `packages/core` declares it and the manifest keys it. */
@@ -36,256 +32,11 @@ const { id, heading } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
 
 const contract = contractDoc(id);
-const rows = signatureRows(contract);
-const badges = latestByTarget(contract);
-
-/* Roles, not hues: a removal and a break are both bad news, and only one of them is recoverable. */
-const badgeTone: Record<ChangeKind, string> = {
-  added: "success",
-  changed: "accent",
-  fixed: "neutral",
-  removed: "warning",
-  breaking: "danger",
-};
-
-const kindLabel = (kind: ChangeKind): string => t(`changelog.kind.${kind}` as UIKey);
-
-/*
- * The contract as JSON, which is the artifact itself rather than a rendering of it.
- *
- * `contractDoc()` returns the manifest entry unchanged, so this is a serialisation and not a second
- * description: nothing here can disagree with the tables above, because both read the same object.
- *
- * ONLY THE KEY ORDER IS OURS. The manifest stores keys alphabetically, which put `changelog` first:
- * twenty-two lines of history before the JSON got round to saying which component this is, with `id`
- * and `parts` buried under it. Order carries no meaning in a JSON object, so re-ordering costs the
- * reader nothing and buys them a document that opens with what the thing IS. The sequence below is
- * the one the tables already walk (identity → parts → events → options → signatures), with the two
- * meta blocks last because both have a tab of their own. Any key added to the manifest later still
- * appears; `rest` catches whatever this list does not name, so this cannot silently drop a field.
- */
-const { id: contractId, css, parts, events, options, signatures, semantics, changelog, ...rest } = contract;
-const contractJson = JSON.stringify(
-  { id: contractId, css, parts, events, options, signatures, ...rest, semantics, changelog },
-  /* Drop keys the contract does not carry (a component with no events) instead of printing `null`. */
-  (_key, value) => (value === undefined ? undefined : value),
-  2,
-);
 ---
 
 <h2>{heading ?? t("contract.title")}</h2>
-<p class="lede">{t("contract.intro")}</p>
 
-<h3>{t("contract.partsTitle")}</h3>
-<p set:html={t("contract.partsBody", { css: `<code>${contract.css}</code>` })} />
-<div class="sk-table-scroll">
-  <table class="sk-table">
-    <thead>
-      <tr>
-        <th>{t("contract.headPart")}</th>
-        <th>{t("contract.headClass")}</th>
-      </tr>
-    </thead>
-    <tbody>
-      {
-        Object.entries(contract.parts).map(([part, className]) => (
-          <tr>
-            <td class="mono">
-              {part}
-              {badges.has(part) && (
-                <span class="sk-badge" data-tone={badgeTone[badges.get(part)!.kind]}>
-                  {kindLabel(badges.get(part)!.kind)}
-                </span>
-              )}
-            </td>
-            <td class="mono">.{className}</td>
-          </tr>
-        ))
-      }
-    </tbody>
-  </table>
-</div>
-
-{
-  contract.events && (
-    <>
-      <h3>{t("contract.eventsTitle")}</h3>
-      <p set:html={t("contract.eventsBody")} />
-      <div class="sk-table-scroll">
-        <table class="sk-table">
-          <thead>
-            <tr>
-              <th>{t("contract.headEvent")}</th>
-              <th>{t("contract.headEventName")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(contract.events).map(([name, type]) => (
-              <tr>
-                <td class="mono">
-                  {name}
-                  {badges.has(name) && (
-                    <span class="sk-badge" data-tone={badgeTone[badges.get(name)!.kind]}>
-                      {kindLabel(badges.get(name)!.kind)}
-                    </span>
-                  )}
-                </td>
-                <td class="mono">{type}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </>
-  )
-}
-
-{
-  rows.map(({ id: signatureId, signature, options }) => (
-    <>
-      <h3>
-        {signatureId}
-        {badges.has(signatureId) && (
-          <span class="sk-badge" data-tone={badgeTone[badges.get(signatureId)!.kind]}>
-            {kindLabel(badges.get(signatureId)!.kind)}
-          </span>
-        )}
-      </h3>
-
-      <ul>
-        <li>
-          <strong>{t("contract.host")}</strong> <code>&lt;{signature.host.element}&gt;</code>
-        </li>
-        <li>
-          <strong>{t("contract.parents")}</strong>{" "}
-          {signature.parents?.length ? (
-            signature.parents.map((parent, index) => (
-              <>
-                {index > 0 && ", "}
-                <code>{parent}</code>
-              </>
-            ))
-          ) : (
-            <span>{t("contract.parentsTop")}</span>
-          )}
-        </li>
-        {signature.mount && (
-          <li>
-            <strong>{t("contract.mount")}</strong> <code>{signature.mount}</code>
-          </li>
-        )}
-        {/*
-          * The NAME, not an import line. A compound binding exports one symbol for a whole family,
-          * so printing the import under each of four signatures printed `import { Accordion }`
-          * four times, which says nothing about the signature it sits under. What a reader needs
-          * here is what to write; where it comes from is the same module for all of them and is
-          * said once, in the Install tab.
-          */}
-        <li>
-          <strong>{t("contract.react")}</strong> <code>&lt;{signature.react.name}&gt;</code>
-        </li>
-        {signature.requires?.length && (
-          <li>
-            <strong>{t("contract.requires")}</strong>{" "}
-            {signature.requires.map((name, index) => (
-              <>
-                {index > 0 && ", "}
-                <code>{name}</code>
-              </>
-            ))}
-          </li>
-        )}
-      </ul>
-
-      <h4>{t("contract.optionsTitle")}</h4>
-      {options.length === 0 ? (
-        <p>{t("contract.noOptions")}</p>
-      ) : (
-        <div class="sk-table-scroll">
-          <table class="sk-table">
-            <thead>
-              <tr>
-                <th>{t("contract.headOption")}</th>
-                <th>{t("contract.headType")}</th>
-                <th>{t("contract.headDefault")}</th>
-                <th>{t("contract.headAttr")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {options.map(([name, option]) => (
-                <tr>
-                  <td class="mono">
-                    {option.prop ?? name}
-                    {badges.has(name) && (
-                      <span class="sk-badge" data-tone={badgeTone[badges.get(name)!.kind]}>
-                        {kindLabel(badges.get(name)!.kind)}
-                      </span>
-                    )}
-                  </td>
-                  <td class="mono">{optionType(option)}</td>
-                  <td class="mono">{option.default === undefined ? "" : String(option.default)}</td>
-                  <td class="mono">{optionAttr(option) ?? ""}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <h4>{t("contract.slotsTitle")}</h4>
-      {Object.keys(signature.slots).length === 0 ? (
-        <p>{t("contract.noSlots")}</p>
-      ) : (
-        <div class="sk-table-scroll">
-          <table class="sk-table">
-            <thead>
-              <tr>
-                <th>{t("contract.headSlot")}</th>
-                <th>{t("contract.headAccepts")}</th>
-                <th>{t("contract.headAllowed")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(signature.slots).map(([slot, shape]) => (
-                <tr>
-                  <td class="mono">
-                    {shape.prop ?? slot}
-                    {shape.required && <span class="count"> · {t("contract.slotRequired")}</span>}
-                  </td>
-                  <td class="mono">{shape.accepts}</td>
-                  <td>
-                    {shape.of?.length
-                      ? shape.of.map((allowed, index) => (
-                          <>
-                            {index > 0 && ", "}
-                            <code>{allowed}</code>
-                            {shape.cardinality?.[allowed] && (
-                              <span class="count"> · {shape.cardinality[allowed]}</span>
-                            )}
-                          </>
-                        ))
-                      : ""}
-                    {shape.ordered && <span class="count"> · {t("contract.slotOrdered")}</span>}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </>
-  ))
-}
-
-<h3>{t("contract.jsonTitle")}</h3>
-<p
-  set:html={t("contract.jsonBody", {
-    artifact: "<code>artifacts/ai-manifest.json</code>",
-    call: `<code>get_contract("${contract.id}")</code>`,
-  })}
-/>
-{/* Long enough to disclose, so it opens as a scrollable window with an Expand control rather than
-    281 lines of JSON pushing the catalogue stamp off the screen. */}
-<CodeBlock code={contractJson} label={`${contract.id}.json`} lang="json" note={t("contract.jsonNote")} />
-
-<p class="count" set:html={t("contract.catalogue", { hash: `<code>${catalogueHash}</code>` })} />
+{/* `open`, because here the code IS the page. Disclosure earns its place when a long block would
+    bury the prose after it; this tab has no prose after it, so a toggle would only hide five sixths
+    of the one thing the reader came for. */}
+<CodeBlock code={contractJson(contract)} label={`${contract.id}.json`} lang="json" open />

@@ -107,6 +107,8 @@ export const stableIconNames = [
   "clock",
   "upload",
   "download",
+  "file",
+  "folder",
   "settings",
   "user",
   "visibility",

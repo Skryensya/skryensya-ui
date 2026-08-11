@@ -139,3 +139,16 @@ export function stringValue(maxLength = 1024): (raw: unknown) => string | undefi
 export function booleanValue(): (raw: unknown) => boolean | undefined {
   return (raw) => (typeof raw === "boolean" ? raw : undefined);
 }
+
+/**
+ * Parse helper for a numeric slot, bounded.
+ *
+ * The bounds are part of the PARSER and not a later clamp, for the reason rule 2 gives: a stored
+ * number is untrusted input. A width of `-1` or `1e9` restored out of a hand-edited store would
+ * otherwise be written straight onto an element. Out of range rejects, so the reader gets the
+ * fallback rather than a layout nobody can undo without clearing storage. NaN and Infinity reject
+ * for the same reason.
+ */
+export function numberValue(min = -Infinity, max = Infinity): (raw: unknown) => number | undefined {
+  return (raw) => (typeof raw === "number" && Number.isFinite(raw) && raw >= min && raw <= max ? raw : undefined);
+}

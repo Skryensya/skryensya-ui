@@ -23,6 +23,7 @@ import * as fileUploadModule from "./components/file-upload.js";
 import * as carouselModule from "./components/carousel.js";
 import * as treeViewModule from "./components/tree-view.js";
 import * as sidebarModule from "./components/sidebar.js";
+import * as skipLinkModule from "./components/skip-link.js";
 import * as accordionModule from "./components/accordion.js";
 import * as tileModule from "./components/tile.js";
 import * as paginationModule from "./components/pagination.js";
@@ -119,6 +120,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/pagination": paginationModule,
   "@skryensya/react/accordion": accordionModule,
   "@skryensya/react/sidebar": sidebarModule,
+  "@skryensya/react/skip-link": skipLinkModule,
   "@skryensya/react/carousel": carouselModule,
   "@skryensya/react/file-upload": fileUploadModule,
   "@skryensya/react/flyout": flyoutModule,

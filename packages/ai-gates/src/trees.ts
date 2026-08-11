@@ -471,13 +471,23 @@ const signatureTrees: readonly Canonical[] = [
   },
   {
     /*
-     * A dated history: neither the progress Steps reports nor the plain order a ProcessList counts.
-     * Both of this entry's dates are here twice on purpose, once as the machine's `YYYY-MM-DD` and
-     * once as the words a reader sees, which is the one thing about this contract that a binding
-     * could most easily get half right. The last entry omits `target`, so the optional node is
-     * exercised in the same tree as the one that supplies it.
+     * A version history: neither the progress Steps reports nor the plain order a ProcessList
+     * counts. BOTH RELEASE STATES ARE HERE, and that is the point of the tree: the dated one carries
+     * its day twice on purpose, once as the machine's `YYYY-MM-DD` and once as the words a reader
+     * sees, which is the one thing about this contract a binding could most easily get half right;
+     * the undated one is a version that has not shipped, where the two bindings have to agree that
+     * no `<time>` is emitted at all and `data-unreleased` is. The last entry omits `target`, so the
+     * optional node is exercised in the same tree as the one that supplies it.
+     *
+     * EVERY BADGE TONE IS HERE, and not one of them is written in the tree: `data-tone` is derived
+     * from `kind`, by five `attrsWhen` branches on the contract side and by a lookup into
+     * `changeKindTones` on React's. Those are two different mechanisms reaching the same table, so
+     * every kind has to appear or a mistyped branch ships a badge with no tone at all and nothing
+     * fails. The LAST entry names no `kind`, which is the case neither mechanism can fake: the
+     * emitter has to fall back to the contract's default and React to its own, and a disagreement
+     * about what an unmarked entry is shows up here rather than on a page.
      */
-    name: "changelog/dated-history",
+    name: "changelog/version-history",
     enhanced: false,
     tree: {
       contract: "changelog",
@@ -485,17 +495,52 @@ const signatureTrees: readonly Canonical[] = [
       children: [
         {
           contract: "changelog",
-          signature: "ChangelogEntry",
-          options: { date: "2026-08-04", kind: "breaking" },
-          slots: { date: "4 de agosto de 2026", kind: "Ruptura", target: "valueChange" },
-          children: "El evento cambió de nombre.",
+          signature: "ChangelogRelease",
+          slots: { version: "0.2.0-dev" },
+          children: [
+            {
+              contract: "changelog",
+              signature: "ChangelogEntry",
+              options: { kind: "breaking" },
+              slots: { kind: "breaking", title: "El evento cambió de nombre", target: "valueChange" },
+              children: "El anterior ya no se emite.",
+            },
+            {
+              contract: "changelog",
+              signature: "ChangelogEntry",
+              options: { kind: "rework" },
+              slots: { kind: "rework", title: "collapsible pasa a ser false por defecto", target: "collapsible" },
+              children: "Es como se comportaba un acordeón de una sola sección.",
+            },
+          ],
         },
         {
           contract: "changelog",
-          signature: "ChangelogEntry",
-          options: { date: "2026-07-29", kind: "added" },
-          slots: { date: "29 de julio de 2026", kind: "Añadido" },
-          children: "Primera publicación del contrato.",
+          signature: "ChangelogRelease",
+          options: { date: "2026-07-29" },
+          slots: { version: "0.1.0", date: "29 de julio de 2026" },
+          children: [
+            {
+              contract: "changelog",
+              signature: "ChangelogEntry",
+              options: { kind: "bugfix" },
+              slots: { kind: "bugfix", title: "La parte se busca sólo como hija directa", target: "content" },
+              children: "El enhancer la buscaba en cualquier descendiente.",
+            },
+            {
+              contract: "changelog",
+              signature: "ChangelogEntry",
+              options: { kind: "feature" },
+              slots: { kind: "feature", title: "Primera publicación del contrato" },
+              children: "Sale con sus tres firmas.",
+            },
+            {
+              contract: "changelog",
+              signature: "ChangelogEntry",
+              slots: { kind: "chore", title: "El enhancer se publica con el resto del paquete" },
+              children: "Ni el markup ni las opciones se mueven.",
+            },
+          ],
         },
       ],
     },
@@ -895,6 +940,23 @@ const signatureTrees: readonly Canonical[] = [
           },
         ],
       },
+    },
+  },
+  /*
+   * The first thing on a page and the only case here whose rendered state is "invisible". That is
+   * the point of running it through the gates anyway: hidden must mean CLIPPED, never removed, so
+   * the a11y gate can see a link with an accessible name and the symmetry gate can prove both
+   * bindings produce the same reachable anchor. A `display: none` regression would fail here rather
+   * than in production, where nobody sees a skip link either way.
+   */
+  {
+    name: "skip-link/to-content",
+    enhanced: false,
+    tree: {
+      contract: "skip-link",
+      signature: "SkipLink",
+      options: { href: "#main-content" },
+      children: "Ir al contenido",
     },
   },
   /* The chrome, not the highlighting: Shiki runs where the code is made, never in the browser. */
@@ -1297,13 +1359,27 @@ const signatureTrees: readonly Canonical[] = [
      * Six signatures composed as a shell. The trigger points at the content with `aria-controls`
      * and NEITHER binding's markup carries the pair: the id is generated at runtime, so both write
      * it themselves. G2 compares the relationship, which is the only part that has to hold.
+     *
+     * The resize handle is here for a second reason: it is the one part whose ARIA both bindings
+     * COMPUTE rather than author. `aria-valuenow` starts at the contract's 50 and each binding
+     * replaces it with the position it measured, so this case is what proves the two measurements
+     * agree, and keeps agreeing.
      */
     name: "sidebar/collapsible-shell",
     enhanced: true,
     tree: {
       contract: "sidebar",
       signature: "Sidebar",
+      /* A `styleProperty` option, which is the one mapping that lands in `style` rather than an
+       * attribute: the emitter writes it into the markup and React assigns it through CSSOM, so
+       * this is where the gate proves those two spellings of one declaration still compare equal. */
+      options: { maxInlineSize: "18rem" },
       children: [
+        {
+          contract: "sidebar",
+          signature: "SidebarResizeHandle",
+          options: { label: "Cambiar el ancho de la barra" },
+        },
         {
           contract: "sidebar",
           signature: "SidebarHeader",
@@ -1333,6 +1409,16 @@ const signatureTrees: readonly Canonical[] = [
       signature: "TreeView",
       options: { label: "Archivos del proyecto" },
       slots: {
+        branchIcon: {
+          contract: "icon",
+          signature: "Icon",
+          options: { name: "folder", size: "sm" },
+        },
+        leafIcon: {
+          contract: "icon",
+          signature: "Icon",
+          options: { name: "file", size: "sm" },
+        },
         items: [
           {
             options: { id: "src" },

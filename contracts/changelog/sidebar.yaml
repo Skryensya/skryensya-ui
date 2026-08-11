@@ -3,5 +3,60 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "77d94669a7b062e9"
-entries: []
+surface: "96bef4967c70d653"
+entries:
+  - date: 2026-08-06
+    kind: feature
+    target: SidebarResizeHandle
+    es:
+      title: El Sidebar se puede arrastrar para cambiarle el ancho, y lo recuerda
+      body: >-
+        <code>SidebarResizeHandle</code> agrega el borde que se arrastra. Autorarlo es lo que
+        vuelve redimensionable a la barra: no hay una opción <code>resizable</code> aparte, y la
+        hoja de estilos lee el mismo hecho con <code>:has()</code>. El recorrido lo acotan
+        <code>--sk-sidebar-min-inline-size</code> y <code>--sk-sidebar-max-inline-size</code>, así
+        que el clamp vive en el CSS y ninguna de las dos bindings hace la cuenta. Con
+        <code>storageKey</code> el ancho sobrevive a la recarga; sin él dura la sesión. Es un
+        splitter completo: se mueve con las flechas, <code>Home</code> y <code>End</code> van a los
+        extremos, y doble clic o <code>Enter</code> vuelven al ancho por defecto. Redimensiona con el
+        clic mantenido: un clic suelto en el borde no mueve nada ni escribe nada.
+        <code>minInlineSize</code> y <code>maxInlineSize</code> escriben esos dos hooks desde el
+        markup o desde las props, para una barra que necesita un recorrido propio sin abrir una hoja
+        de estilos; aceptan cualquier largo de CSS. Quien tenga muchas barras iguales sigue
+        poniendo el hook una vez y no la prop cincuenta veces.
+    en:
+      title: The Sidebar can be dragged to a new width, and remembers it
+      body: >-
+        <code>SidebarResizeHandle</code> adds the drag edge. Authoring it is what makes the sidebar
+        resizable: there is no separate <code>resizable</code> option, and the stylesheet reads the
+        same fact with <code>:has()</code>. The travel is bounded by
+        <code>--sk-sidebar-min-inline-size</code> and <code>--sk-sidebar-max-inline-size</code>, so
+        the clamp lives in CSS and neither binding does the arithmetic. With
+        <code>storageKey</code> the width outlives a reload; without it, the session. It is a full
+        splitter: arrow keys move it, <code>Home</code> and <code>End</code> go to the ends, and
+        double-click or <code>Enter</code> restores the default. It resizes on a held click: a plain
+        click on the edge moves nothing and writes nothing. <code>minInlineSize</code> and
+        <code>maxInlineSize</code> write those two hooks from the markup or from props, for a
+        sidebar that needs its own travel without opening a stylesheet; both take any CSS length.
+        Anyone with many identical sidebars still sets the hook once instead of passing the prop
+        fifty times.
+  - date: 2026-08-06
+    kind: rework
+    es:
+      title: El Sidebar arranca en 13rem y el scroll se queda adentro
+      body: >-
+        El ancho por defecto baja de 15rem a 13rem. Estaba dimensionado para que la etiqueta más
+        larga del riel de docs nunca se cortara, que es medir el panel contra el contenido de un
+        consumidor; ahora la etiqueta que no entra se corta con puntos suspensivos y el ancho vuelve
+        a ser una decisión de diseño. Además <code>sk-sidebar__content</code> lleva
+        <code>overscroll-behavior: contain</code>, así llegar al final del índice ya no le pasa el
+        scroll a la página, y nunca scrollea en horizontal.
+    en:
+      title: The Sidebar starts at 13rem, and its scroll stays inside it
+      body: >-
+        The default width drops from 15rem to 13rem. It had been sized so the longest label in the
+        docs rail never truncated, which is measuring the panel against one consumer's content; a
+        label that does not fit now ellipses, and the width is a design choice again. On top of
+        that <code>sk-sidebar__content</code> takes <code>overscroll-behavior: contain</code>, so
+        reaching the end of a long index no longer hands the scroll to the page, and it never
+        scrolls horizontally.

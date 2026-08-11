@@ -192,6 +192,10 @@ const componentDescriptions = {
     es: "Aloja navegación o herramientas persistentes junto al contenido.",
     en: "Holds persistent navigation or tools beside the content.",
   },
+  "/componentes/skip-link": {
+    es: "Saltea el chrome repetido: el primer enlace, invisible hasta que recibe el foco.",
+    en: "Bypasses the repeated chrome: the first link, invisible until it is focused.",
+  },
   "/componentes/slider": {
     es: "Ajusta un valor continuo dentro de un rango.",
     en: "Adjusts a continuous value within a range.",

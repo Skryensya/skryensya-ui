@@ -180,6 +180,10 @@
       "types": "./src/components/sidebar.tsx",
       "default": "./src/components/sidebar.tsx"
     },
+    "./skip-link": {
+      "types": "./src/components/skip-link.tsx",
+      "default": "./src/components/skip-link.tsx"
+    },
     "./tabs": {
       "types": "./src/components/tabs.tsx",
       "default": "./src/components/tabs.tsx"

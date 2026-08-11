@@ -1,0 +1,20 @@
+{
+  "name": "@skryensya/evals",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "F7: a corpus of product intents in Spanish and English, each paired with a hand-composed, MCP-validated usage tree. Re-validates every tree against G0-G3 on every run, so a contract change that breaks a known-good composition fails here first.",
+  "scripts": {
+    "check": "tsc -p tsconfig.json --noEmit && tsx run.ts",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@skryensya/ai-compiler": "workspace:*",
+    "@skryensya/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.3"
+  }
+}

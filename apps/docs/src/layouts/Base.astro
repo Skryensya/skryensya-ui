@@ -7,6 +7,10 @@
 import "@skryensya/core/tokens.scss"; // trae el state layer en base, no es un import aparte
 import "@skryensya/core/modes/hc.scss";
 import "@skryensya/core/dimensions/radius.scss";
+/* El alcance del acento (`data-accent`): la dimensión que decide CUÁNTAS cosas visten la marca. El
+ * sitio la trae porque el control del header la mueve en vivo, y porque una dimensión que la
+ * documentación explica y la hoja de estilos nunca declara es una promesa vacía. */
+import "@skryensya/core/dimensions/accent.scss";
 import "@skryensya/core/components/badge.css";
 import "@skryensya/core/components/button.css";
 import "@skryensya/core/components/copy-button.css";
@@ -19,6 +23,25 @@ import "@skryensya/core/components/loader.css";
 import "@skryensya/core/components/segmented.css";
 import "@skryensya/core/components/pagination.css";
 import "@skryensya/core/components/input.css";
+/* La paleta se compone sobre `.sk-dialog` (decisión 11), y su hoja lo dice en la primera línea: es
+ * dueña de la fila de búsqueda, la lista y el pie, no del marco modal. Sin esta hoja el ⌘K salía con
+ * el borde negro y las esquinas rectas del navegador. Va antes por eso: es la base, no un extra. */
+import "@skryensya/core/components/dialog.css";
+/*
+ * El cajón móvil, y las dos hojas que lo hacen existir. Sin ellas el <dialog> del rail chico salía
+ * exactamente como lo pinta el navegador: una caja de 300px centrada en la pantalla, con borde negro
+ * de 3px y márgenes automáticos. No es un cajón mal estilado, es un dialog crudo.
+ *
+ * Es el mismo agujero que ya tuvieron `sidebar.css` (el rail transparente) y `dialog.css` (el ⌘K con
+ * borde negro): las tres se sacaron de acá en el mismo commit de "component CSS scoping", y el cajón
+ * fue el que nadie volvió a buscar. La regla que las tres confirman: una hoja opt-in se importa donde
+ * vive el markup que la usa, y este markup vive en el layout, así que va acá.
+ *
+ * El patrón antes que el componente: `drawer.css` no trae estructura, sólo re-declara los hooks de
+ * Vaul (decisión 8), así que sin `vaul.css` no hay panel que ajustar.
+ */
+import "@skryensya/core/patterns/vaul.css";
+import "@skryensya/core/components/drawer.css";
 import "@skryensya/core/components/command-palette.css";
 import "@skryensya/core/components/tabs.css";
 /* Anclaje: la colocación compartida por tooltip, popover, popup, menu, select, combobox, date picker
@@ -33,6 +56,9 @@ import "@skryensya/core/components/toc.css"; // el rail "En esta página": Toc.a
  * (fondo, borde, separador, footer) leyendo hooks `--sk-sidebar-*` que sin esta hoja no los declara
  * nadie: todos resolvían a nada, así que el rail salía transparente y sin padding. */
 import "@skryensya/core/components/sidebar.css";
+/* El enlace de salto, primero en el documento y escondido hasta que recibe el foco. Va acá y no en
+ * una página: es chrome del layout, como el rail y el cajón. */
+import "@skryensya/core/components/skip-link.css";
 /* icon.css NO se importa aquí: viaja en tokens.scss, como el state layer. Un icono no es un extra al
  * que un componente opta (decisión 15). */
 import "@skryensya/core/patterns/nav-list.css"; // opt-in: una app puede no tener navegación (decisión 17)
@@ -51,17 +77,22 @@ import "../styles/site.css";
 import "../styles/shell.scss";
 
 import LanguageToggle from "../components/LanguageToggle.astro";
+import AccentReachToggle from "../components/AccentReachToggle.astro";
 import SidebarNav from "../components/SidebarNav.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import Toc from "../components/Toc.astro";
+import { indexDocument } from "../lib/document-index";
+import { vanillaMountSections } from "../lib/vanilla-mount-sections";
 import VanillaMount from "../components/VanillaMount.astro";
 import { vanillaMounts } from "../lib/vanilla-mounts";
 import { allSets, contrastHigh, contrastNormal, iconDataMarkup, iconMarkup, siteIconSet } from "../icons";
 import { getGlobalNavigation, getNavigation, type NavigationSection } from "../lib/navigation";
 import { availableLocales, canonicalPath, getLocale, localizePath, useTranslations } from "../i18n";
 import { createRamp } from "../lib/ramps";
+import { skipLinkParts } from "@skryensya/core/skip-link";
 import { STORAGE_KEY } from "@skryensya/core/storage";
 import {
+  accentReachPreference,
   colorModePreference,
   componentPreviewBindingPreference,
   componentPreviewScreenPreference,
@@ -81,6 +112,7 @@ const PREPAINT = {
   binding: componentPreviewBindingPreference.slot,
   screen: componentPreviewScreenPreference.slot,
   palette: palettePreference.slot,
+  accent: accentReachPreference.slot,
 };
 
 interface Props {
@@ -152,6 +184,48 @@ const currentSection =
     : canonical.startsWith("/referencia/")
       ? systemSection ?? navigation[0]
       : navigation.find((section) => section.groups.some((group) => group.items.some((item) => item.href === path))) ?? navigation[0];
+
+/*
+ * THE DOCUMENT, RENDERED HERE, so its own index can be read before the page is sent.
+ *
+ * `Astro.slots.render("default")` is the page's body as HTML, which is what lets `indexDocument`
+ * answer at build the question the browser used to answer on every load: which headings are this
+ * page's sections. The string is then written back out with `set:html`, so `<main>` holds exactly
+ * what `<slot />` would have put there, plus an `id` on any section heading that lacked one.
+ *
+ * The full-bleed layout has no toc and no page furniture, so it keeps the plain `<slot />`: nothing
+ * would read the index, and rendering the slot twice is the one way to get this wrong.
+ */
+const documentIndex = fullBleed ? null : indexDocument(await Astro.slots.render("default"));
+
+/*
+ * ONE PAGE STILL BUILDS ITS INDEX IN THE BROWSER, and it is the pilot with the hero tab strip
+ * (`/componentes/accordion`). Its sections live inside tab panels, one index per tab, and which tab
+ * is open is a fact about a reader, not about the document: `../scripts/hero-tabs-toc.ts` owns that
+ * one. Detected the same way the old inline script detected it, by the strip's own class, only now
+ * in the rendered string rather than through `document.querySelector`.
+ */
+const tocPending = documentIndex?.html.includes("docs-component-hero-tabs") ?? false;
+
+/*
+ * The section a reader lands on IS the first one, so the rail says so in the HTML rather than
+ * lighting up a frame later when the spy's first IntersectionObserver callback arrives. A URL with a
+ * hash is the exception, and the only part of this the page cannot know while it is being built:
+ * a fragment never reaches the server. `toc-hash-seed.ts` is the three lines that clear the seed.
+ */
+const tocItems = [
+  ...(documentIndex?.headings ?? []),
+  /* The installation block this layout appends after the document, which is therefore not in the
+   * document's own HTML; it declares its own sections (`../lib/vanilla-mount-sections.ts`). */
+  ...(documentIndex && !hideVanillaMount && vanillaMount
+    ? vanillaMountSections(t, vanillaMount.name)
+    : []),
+].map((heading, index) => ({
+  href: `#${heading.id}`,
+  label: heading.label,
+  level: heading.level,
+  current: index === 0,
+}));
 
 /* Prev/next stays within the current task area rather than crossing from a component into an ADR. */
 const navItems = currentSection.groups.flatMap((group) => group.items);
@@ -234,7 +308,7 @@ const PALETTE_PRESETS = [
 ---
 
 <!doctype html>
-<html lang={locale} class="sk-scrollbar" data-scheme="system" data-icon-set={siteIconSet} data-radius="md" style="--sk-density: 1">
+<html lang={locale} class="sk-scrollbar" data-scheme="system" data-icon-set={siteIconSet} data-radius="md" data-accent="3" style="--sk-density: 1">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -248,9 +322,9 @@ const PALETTE_PRESETS = [
 
     {/*
       Docs has a fixed visual contract: Phosphor icons, medium density and medium rounding. The reader
-      preferences are scheme, contrast, the color palette and the two ComponentPreview ones, so apply
-      those saved values before first paint, the palette especially, or the page would flash the
-      default blue and then re-tint.
+      preferences are scheme, contrast, the color palette, the accent reach and the two ComponentPreview
+      ones, so apply those saved values before first paint, the palette especially, or the page would
+      flash the default blue and then re-tint.
 
       THE ONE PLACE THAT TOUCHES localStorage DIRECTLY, and it has to: this runs before any module
       loads, so it cannot import the storage primitive: importing is the entire thing it exists to
@@ -302,6 +376,14 @@ const PALETTE_PRESETS = [
         d.style.colorScheme = scheme === "system" ? "light dark" : scheme;
         if (stored(PREPAINT.contrast) === "high") d.setAttribute("data-contrast", "high");
         else d.removeAttribute("data-contrast");
+        /* Accent reach. Always an explicit level, never the absence of the attribute: level 3 is what
+         * the baseline stylesheet already is, but `[data-accent="3"]` is also what lets a reader who
+         * dialled down come back up, and the control reads the attribute to know where it stands. */
+        var accentValue = stored(PREPAINT.accent);
+        d.setAttribute(
+          "data-accent",
+          accentValue === "1" || accentValue === "2" ? accentValue : "3",
+        );
         d.style.setProperty("--sk-density", "1");
         d.setAttribute("data-radius", "md");
         d.setAttribute("data-icon-set", siteIconSet);
@@ -336,6 +418,39 @@ const PALETTE_PRESETS = [
   </head>
 
   <body>
+    {/*
+      THE FIRST THINGS IN THE DOCUMENT, and the only elements here whose job is to be invisible.
+
+      Every page of this site opens with the same chrome: the drawer trigger, the brand, four global
+      links, the ⌘K trigger, the scheme and contrast controls. Reading with a keyboard, that is nine
+      stops before anything this page is actually about, on every page, forever. WCAG 2.4.1 calls
+      that a block to bypass; these links are the bypass, and they are the platform's own (an in-page
+      href), so they work before any script on this page has run.
+
+      TWO OF THEM, AND THE ORDER IS THE DECISION. Content comes first because it is what almost
+      everyone arriving here wants: they followed a link to READ something, and the index is how you
+      get somewhere else. A reader who does want the index is one more Tab away; a reader who wants
+      the page would otherwise be several. Offering only the index would answer the rarer question
+      first and make the common one cost more than it did before.
+
+      The NAVIGATION one is conditional twice over, because a skip link pointing at something that is
+      not on the page is worse than none: it is a promise the reader hears and cannot follow.
+      `fullBleed` pages (/personalizar) have no index column at all, and below `desktop` the rail is
+      `display: none` (shell.scss drops the link there to match). In both cases nothing is lost: the
+      drawer trigger is the first control in the header at those widths, so the index is already one
+      Tab away.
+    */}
+    <a class={`${skipLinkParts.root} sk-interactive docs-skip-link`} href="#docs-content">
+      {t("nav.skipToContent")}
+    </a>
+    {!fullBleed && (
+      <a
+        class={`${skipLinkParts.root} sk-interactive docs-skip-link docs-skip-link--nav`}
+        href="#docs-nav"
+      >
+        {t("nav.skipToNav")}
+      </a>
+    )}
     <div class="docs-canvas">
     <header class="dimensions">
       <div class="dimensions__content sk-wrapper" data-size="lg">
@@ -386,10 +501,11 @@ const PALETTE_PRESETS = [
         </button>
 
         {/*
-          The reader-preference icon controls (palette + mode + contrast) are one cluster: a tighter gap
-          than the header's own, so the icon-to-icon whitespace optically matches the search field's edge
-          to the first icon, the icons carry ~one glyph of internal padding on each side, which the
-          bordered field does not, so an equal flex gap would read as looser between the two icons.
+          The reader-preference icon controls (palette + reach + mode + contrast) are one cluster: a
+          tighter gap than the header's own, so the icon-to-icon whitespace optically matches the search
+          field's edge to the first icon, the icons carry ~one glyph of internal padding on each side,
+          which the bordered field does not, so an equal flex gap would read as looser between the two
+          icons.
         */}
         <div class="dimensions__prefs">
           {/*
@@ -410,6 +526,14 @@ const PALETTE_PRESETS = [
           >
             <span class="dimensions__palette-dot" aria-hidden="true"></span>
           </button>
+
+          {/*
+            Accent reach is a compact, three-state cycle like the other header preferences. The
+            concentric icon reads as reach spreading outward; its accessible name says which layer is
+            currently coloured. The /acento specimen keeps the three choices visible, where comparison
+            is useful and a one-click jump matters more than conserving chrome width.
+          */}
+          <AccentReachToggle />
 
           {/* One-click mode cycle: system → claro → oscuro. */}
           <ThemeToggle />
@@ -529,24 +653,69 @@ const PALETTE_PRESETS = [
       </div>
     </dialog>
 
+    {/* Both `<main>`s below carry the skip link's destination: the same id, because a page has one
+        main region and only one of these two ever renders. `tabindex="-1"` is what makes an element
+        a focus target without adding a tab stop; see the rail's own copy of this comment. */}
     {fullBleed ? (
-      <main class="sk-main">
+      <main class="sk-main" id="docs-content" tabindex="-1">
         <slot />
       </main>
     ) : (
     <Fragment>
     <div class="shell sk-wrapper" data-size="lg">
-      <aside class="sk-sidebar docs-sidebar">
-        <div class="sk-sidebar__content sk-scrollbar sk-scrollbar--reveal">
+      {/*
+        The rail is the component, enhanced: `data-sk-sidebar` is what runs the resize behaviour over
+        the authored markup. It has no trigger and does not want one, the index is the page's
+        furniture and collapsing it to a rail of icons would leave nothing readable; the enhancer
+        accepts either control, so a resize-only sidebar is a legal one.
+
+        `data-storage-key` is what makes the width outlive the reload, which matters more here than
+        in most consumers: every link is a full navigation, so a width that reset on each page would
+        be a width nobody could keep.
+      */}
+      <aside
+        class="sk-sidebar docs-sidebar"
+        data-sk-sidebar
+        data-storage-key="docs-rail"
+      >
+      {/*
+        THE SKIP LINK'S DESTINATION, and `tabindex="-1"` is what makes it one.
+
+        Following an in-page link scrolls in every browser but moves FOCUS in only some of them.
+        Where it does not, the next Tab resumes from the link, which lands the reader back in the
+        header they just asked to skip: a skip link that silently does nothing is worse than no skip
+        link, because the reader was told it worked. `-1` takes it out of the tab ORDER while making
+        it a focus target, so nothing else about tabbing changes.
+
+        On the scroll container rather than on an inner `<nav>`: the index is several `<nav>`s, one
+        per section, and landing on the first of them would skip the rest. This is the box that holds
+        all of them, so the next Tab from here is the first link in the index.
+      */}
+        <div
+          class="sk-sidebar__content sk-scrollbar sk-scrollbar--reveal"
+          id="docs-nav"
+          tabindex="-1"
+        >
           <SidebarNav nav={navigation} path={path} idPrefix="docs-nav" />
         </div>
 
         <hr class="sk-sidebar__separator" />
         <div class="sk-sidebar__footer">skryensya/ui</div>
+        <div
+          class="sk-sidebar__resize-handle"
+          data-sk-sidebar-resize
+          role="separator"
+          aria-orientation="vertical"
+          aria-label={t("nav.resizeRail")}
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="50"
+          tabindex="0"
+        ></div>
       </aside>
 
-      <main class="sk-wrapper" data-size="md">
-        <slot />
+      <main class="sk-wrapper" data-size="md" id="docs-content" tabindex="-1">
+        <Fragment set:html={documentIndex!.html} />
         {!hideVanillaMount && vanillaMount && <VanillaMount {...vanillaMount} />}
         {
           currentNavIndex >= 0 && (
@@ -574,7 +743,7 @@ const PALETTE_PRESETS = [
         <footer class="docs-footer" set:html={t("footer.body", { core: "<code>@skryensya/core</code>" })} />
       </main>
 
-      <Toc />
+      <Toc items={tocItems} pending={tocPending} />
     </div>
 
     </Fragment>
@@ -643,6 +812,22 @@ const PALETTE_PRESETS = [
       <div class="sk-time-field" data-probe-for="sk-time-field"></div>
       <div class="sk-toolbar" data-probe-for="sk-toolbar"></div>
       <div class="sk-tree-view" data-probe-for="sk-tree-view"></div>
+      {/* Added with their pages' Styling hooks tables: the table's "used value" column reads each
+          hook off one of these, so a hooks table with no probe here renders every value as
+          ", sin elemento donde existir" — which is what these fourteen pages did before. */}
+      <span class="sk-avatar" data-probe-for="sk-avatar"></span>
+      <div class="sk-box" data-probe-for="sk-box"></div>
+      <div class="sk-callout" data-probe-for="sk-callout"></div>
+      <div class="sk-code-preview" data-probe-for="sk-code-preview"></div>
+      <div class="sk-component-preview" data-probe-for="sk-component-preview"></div>
+      <div class="sk-progress" data-probe-for="sk-progress"></div>
+      <div class="sk-slider" data-probe-for="sk-slider"></div>
+      <div class="sk-stat" data-probe-for="sk-stat"></div>
+      <ol class="sk-steps" data-probe-for="sk-steps"></ol>
+      <span class="sk-tag" data-probe-for="sk-tag"></span>
+      <button class="sk-theme-toggle" data-probe-for="sk-theme-toggle"></button>
+      <div class="sk-tooltip" data-probe-for="sk-tooltip"></div>
+      <div class="sk-wrapper" data-probe-for="sk-wrapper"></div>
     </div>
 
     {/*
@@ -749,77 +934,36 @@ const PALETTE_PRESETS = [
       })();
     </script>
 
+    {/*
+      SMOOTH IN-PAGE SCROLLING, ARMED ONCE THE PAGE HAS STOPPED MOVING.
+
+      The rule lives in `site.css` behind this attribute, and the reason it waits is written there:
+      a smooth scroll to a fragment aims at where the section was when the animation began and never
+      re-aims, so on a page still loading its previews it overshoots and buries the heading under the
+      header. Until `load`, jumps are instant and the browser re-anchors them as content arrives;
+      after it, every scroll is one the reader asked for, and those travel.
+    */}
     <script is:inline>
-      (function () {
-        var toc = document.querySelector("[data-sk-toc]");
-        var main = document.querySelector("main");
-        var list = toc && toc.querySelector("ul");
-        if (!toc || !main || !list) return;
+      addEventListener("load", function () {
+        document.documentElement.setAttribute("data-scroll-smooth", "");
+      });
+    </script>
 
-        /*
-         * The hero tabs pilot (`.docs-component-hero-tabs`, /componentes/accordion) owns its ToC
-         * separately: `../scripts/hero-tabs-toc.ts`, a MODULE script below, because it has to
-         * rebuild the list on every tab switch, not just once before paint. Scanning `main` here
-         * too would find nothing anyway (every heading on that page lives inside a
-         * `.sk-tabs__content` panel, not as `main`'s own direct child) and race the module script
-         * that is about to fill the SAME list correctly.
-         */
-        if (document.querySelector(".docs-component-hero-tabs")) return;
+    {/*
+      ALL THAT IS LEFT OF THE HEADING SCAN, which used to be seventy lines here and now happens
+      while the page is built (`../lib/document-index.ts`, called from this file's frontmatter):
+      the rail arrives filled, with its ids already on the headings.
 
-        /* Only the page's own sections. A demo's heading lives nested inside a preview and is
-         * content being demonstrated, not a section, `:scope >` excludes it with no blocklist. */
-        var headings = main.querySelectorAll(":scope > h2, :scope > h3");
-        /* A single section is still worth indexing. Zero: mark ready anyway so the reserved
-         * column does not stay in the pre-fill skeleton state forever. */
-        if (headings.length < 1) {
-          toc.setAttribute("data-empty", "");
-          toc.setAttribute("data-ready", "");
-          return;
-        }
-
-        for (var i = 0; i < headings.length; i++) {
-          var heading = headings[i];
-          if (!heading.id) {
-            /* Accent-stripping: the headings are Spanish, so "Navegación" must not slug to
-             * "navegaci-n". */
-            var base =
-              (heading.textContent || "")
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/[^a-z0-9]+/g, "-")
-                .replace(/(^-|-$)/g, "") || "seccion";
-            var id = base;
-            var n = 2;
-            while (document.getElementById(id)) id = base + "-" + n++;
-            heading.id = id;
-          }
-
-          var item = document.createElement("li");
-          item.className = "sk-toc__item";
-          item.setAttribute("data-level", heading.tagName.toLowerCase());
-
-          var link = document.createElement("a");
-          link.className = "sk-toc__link sk-interactive";
-          link.href = "#" + heading.id;
-          link.textContent = heading.textContent;
-
-          item.appendChild(link);
-          list.appendChild(item);
-        }
-
-        /* The spy runs on IntersectionObserver, which cannot report before layout exists, so the
-         * rail would paint with nothing marked and light up the first section a frame later. Landing
-         * at the top means the first section IS the current one, so say so now and let the spy take
-         * over. Skipped when the URL carries a hash: the browser is about to scroll somewhere else,
-         * and guessing "first" there would be a wrong answer that has to be corrected on screen. */
-        if (!window.location.hash) {
-          var first = list.querySelector("a");
-          if (first) first.setAttribute("aria-current", "true");
-        }
-
-        toc.setAttribute("data-ready", "");
-      })();
+      This is the one part of it a static page cannot answer, because a URL fragment never reaches
+      the server: the build seeds the FIRST section as current, which is right for a reader who
+      landed at the top and wrong for one who followed a link INTO a section. `is:inline`, so the
+      seed is gone before first paint rather than corrected on screen a frame later.
+    */}
+    <script is:inline>
+      if (window.location.hash) {
+        var seeded = document.querySelector('[data-sk-toc] [aria-current="true"]');
+        if (seeded) seeded.removeAttribute("aria-current");
+      }
     </script>
 
     {/*
@@ -848,6 +992,19 @@ const PALETTE_PRESETS = [
     <script>
       import { initUsedValues } from "../scripts/used-values";
       initUsedValues();
+    </script>
+
+    {/*
+      Accent reach: 3 (todo) → 2 (sin cromo ni decoración) → 1 (solo la acción y el estado).
+
+      El módulo maneja el medidor del header Y cualquier selector en la página (el showcase de
+      /acento), porque el estado es `data-accent` en :root y todos los controles son vistas de ese
+      atributo. Las previews son iframes y lo siguen por su cuenta
+      (`scripts/component-preview-frame.ts` refleja los atributos del root).
+    */}
+    <script>
+      import { initAccentReach } from "../scripts/accent-reach";
+      initAccentReach();
     </script>
 
     <script>

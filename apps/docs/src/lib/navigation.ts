@@ -306,6 +306,21 @@ const componentItems = [
     ],
   },
   { href: "/componentes/sidebar", label: "Sidebar", aliases: ["barra lateral"] },
+  {
+    href: "/componentes/skip-link",
+    label: "SkipLink",
+    aliases: [
+      "saltar",
+      "salto",
+      "enlace de salto",
+      "skip link",
+      "skip to content",
+      "skip navigation",
+      "bypass blocks",
+      "wcag 2.4.1",
+      "accesibilidad teclado",
+    ],
+  },
   { href: "/componentes/slider", label: "Slider", aliases: ["deslizador"] },
   { href: "/componentes/stack", label: "Stack", aliases: ["pila"] },
   { href: "/componentes/stat", label: "Stat", aliases: ["estadística", "estadistica", "métrica", "metrica"] },
@@ -480,6 +495,7 @@ export const componentNavigation = [
       "/componentes/navbar",
       "/componentes/pagination",
       "/componentes/sidebar",
+      "/componentes/skip-link",
       "/componentes/tabs",
       "/componentes/toc",
       "/componentes/tree-view",
@@ -569,6 +585,7 @@ if (
  */
 export const globalNavigation = [
   { href: "/", label: "nav.docs" },
+  { href: "/playground", label: "nav.playground" },
   { href: "/personalizar", label: "nav.customize" },
 ] satisfies readonly NavigationItem[];
 
@@ -630,6 +647,25 @@ export const documentationNavigation = [
             href: "/densidad",
             label: "Densidad de componente",
             aliases: ["density", "densidad local", "scope de densidad", "custom density", "compactar componente"],
+          },
+          {
+            href: "/acento",
+            label: "Alcance del acento",
+            aliases: [
+              "accent",
+              "accent reach",
+              "alcance",
+              "acento",
+              "data-accent",
+              "marca",
+              "brand",
+              "cuánta marca",
+              "cuanta marca",
+              "quitar color",
+              "bajar la marca",
+              "decoración",
+              "decoracion",
+            ],
           },
           { href: "/tiers", label: "Tiers" },
           {

@@ -140,7 +140,7 @@ export const checkoutRecipe: Recipe = {
             actions: {
               contract: "button",
               signature: "Button.navigation",
-              options: { href: "/pedidos/4821", variant: "subtle" },
+              options: { href: "/pedidos/4821", variant: "translucent" },
               children: "Seguir el envío",
             },
           },

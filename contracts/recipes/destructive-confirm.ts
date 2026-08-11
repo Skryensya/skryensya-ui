@@ -68,7 +68,7 @@ export const destructiveConfirmRecipe: Recipe = {
               {
                 contract: "button",
                 signature: "Button.action",
-                options: { variant: "subtle" },
+                options: { variant: "translucent" },
                 children: "Cancelar",
               },
               {
@@ -111,7 +111,7 @@ export const destructiveConfirmRecipe: Recipe = {
         actions: {
           contract: "button",
           signature: "Button.navigation",
-          options: { href: "/proyectos", variant: "subtle" },
+          options: { href: "/proyectos", variant: "translucent" },
           children: "Volver a proyectos",
         },
       },

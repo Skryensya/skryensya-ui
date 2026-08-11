@@ -1,0 +1,59 @@
+---
+import "@skryensya/core/components/split-button.css";
+import "@skryensya/core/components/menu.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { splitButtonTree } from "../../demos/split-button";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/split-button.yaml?raw";
+import coreSource from "@core/src/split-button.ts?raw";
+import cssSource from "@core/css/components/split-button.css?raw";
+import reactSource from "@react/src/components/split-button.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const styles = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/split-button.css";
+@import "@skryensya/core/components/menu.css";`;
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+initComponents();`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/split-button.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/split-button.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/split-button.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/split-button.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="SplitButton"
+  description={t("splitButtonPage.description")}
+  contractId="split-button"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/split-button.css", probe: "sk-split-button", title: "SplitButton" },
+    { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("splitButtonPage.description")} />
+    <ComponentPreview tree={splitButtonTree(t)} js={js} label="SplitButton" viewport="menu" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("splitButtonPage.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("splitButtonPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

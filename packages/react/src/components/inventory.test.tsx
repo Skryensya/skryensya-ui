@@ -6,6 +6,7 @@ import { Calendar } from "./calendar.js";
 import { DatePicker } from "./date-picker.js";
 import { EmptyState } from "./empty-state.js";
 import { FileUpload } from "./file-upload.js";
+import { Icon } from "./icon.js";
 import { Menu } from "./menu.js";
 import { NumberField } from "./number-field.js";
 import { SplitButton } from "./split-button.js";
@@ -310,6 +311,8 @@ describe("expanded component inventory", () => {
       <TreeView
         defaultExpandedValue={["src"]}
         label="Archivos"
+        branchIcon={<Icon name="folder" size="sm" />}
+        leafIcon={<Icon name="file" size="sm" />}
         nodes={[
           {
             id: "src",
@@ -320,6 +323,8 @@ describe("expanded component inventory", () => {
         onSelectionChange={onSelectionChange}
       />,
     );
+    expect(ui.container.querySelectorAll('[data-icon="folder"]')).toHaveLength(1);
+    expect(ui.container.querySelectorAll('[data-icon="file"]')).toHaveLength(1);
     fireEvent.click(ui.getByRole("treeitem", { name: "index.ts" }));
     await waitFor(() =>
       expect(onSelectionChange).toHaveBeenCalledWith({

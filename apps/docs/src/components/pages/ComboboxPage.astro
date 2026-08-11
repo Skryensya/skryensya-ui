@@ -1,0 +1,96 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { comboboxTree } from "../../demos/combobox";
+import { getLocale, useTranslations } from "../../i18n";
+import "@skryensya/core/components/combobox.css";
+import "@skryensya/core/components/field.css";
+import "@skryensya/core/patterns/scrollbar.css";
+import contractSource from "@contracts/semantic/combobox.yaml?raw";
+import coreSource from "@core/src/combobox.ts?raw";
+import cssSource from "@core/css/components/combobox.css?raw";
+import vanillaMountSource from "@vanilla/src/components/combobox.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/combobox.test.ts?raw";
+import reactSource from "@react/src/components/combobox.tsx?raw";
+import reactTestSource from "@react/src/components/combobox.test.tsx?raw";
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+
+const styles = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/field.css";
+@import "@skryensya/core/components/combobox.css";
+/* La lista hace scroll: el riel lo pinta el pattern, marcado con sk-scrollbar. */
+@import "@skryensya/core/patterns/scrollbar.css";`;
+
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+initComponents();`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/combobox.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/combobox.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/combobox.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/combobox.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/combobox.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/combobox.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/combobox.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Combobox"
+  description={t("combobox.description")}
+  contractId="combobox"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/combobox.css", probe: "sk-combobox", title: "Combobox" },
+    { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+    { file: "components/button.css", probe: "sk-button", title: "Heredados de Button" },
+  ]}
+  tests={[
+    {
+      file: "packages/react/src/components/combobox.test.tsx",
+      tests: [
+        {
+          name: "keeps the typed search when the field is left without a selection",
+          description: t("combobox.test1"),
+        },
+        { name: "writes the chosen label and reopens on the whole list", description: t("combobox.test2") },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/combobox.test.ts",
+      tests: [
+        { name: "spends the query on each chip when multiple", description: t("combobox.test3") },
+        {
+          name: "hands the filtered collection to the machine before it renders",
+          description: t("combobox.test4"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("combobox.lede")} />
+    <ComponentPreview tree={comboboxTree(t, locale)} js={js} label="Combobox" viewport="menu" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("combobox.contractBody1")} />
+    <p set:html={t("combobox.contractBody2")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("combobox.a11yBody1")} />
+    <p set:html={t("combobox.a11yBody2")} />
+  </Fragment>
+</ComponentPageShell>

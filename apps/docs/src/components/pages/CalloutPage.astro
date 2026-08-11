@@ -1,0 +1,85 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  calloutInfoTree,
+  calloutNeutralTree,
+  calloutSuccessTree,
+  calloutWarningTree,
+} from "../../demos/callout";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/callout.yaml?raw";
+import coreSource from "@core/src/callout.ts?raw";
+import cssSource from "@core/css/components/callout.css?raw";
+import reactSource from "@react/src/components/callout.tsx?raw";
+import reactTestSource from "@react/src/components/callout.test.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/callout.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/callout.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/callout.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/callout.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/callout.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Callout"
+  description={t("callout.description")}
+  contractId="callout"
+  styleGroups={[{ file: "components/callout.css", probe: "sk-callout" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/callout.test.tsx",
+      tests: [
+        { name: "announces danger assertively and everything else politely", description: t("callout.test1") },
+        { name: "renders no dismiss control, ever", description: t("callout.test2") },
+        { name: "renders an icon and optional actions through explicit parts", description: t("callout.test3") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("callout.lede1")} />
+    <p class="lede" set:html={t("callout.lede2")} />
+
+    <h3>{t("callout.tonesTitle")}</h3>
+    <p set:html={t("callout.tonesBody1")} />
+    <p set:html={t("callout.tonesBody2")} />
+
+    <h4>{t("callout.neutralTitle")}</h4>
+    <p set:html={t("callout.neutralBody")} />
+    <ComponentPreview tree={calloutNeutralTree(t)} label={t("callout.neutralLabel")} />
+
+    <h4>{t("callout.infoTitle")}</h4>
+    <p set:html={t("callout.infoBody")} />
+    <ComponentPreview tree={calloutInfoTree(t)} label={t("callout.infoLabel")} />
+
+    <h4>{t("callout.warningTitle")}</h4>
+    <p set:html={t("callout.warningBody")} />
+    <ComponentPreview tree={calloutWarningTree(t)} label={t("callout.warningLabel")} />
+
+    <h4>{t("callout.successTitle")}</h4>
+    <p set:html={t("callout.successBody")} />
+    <ComponentPreview tree={calloutSuccessTree(t)} label={t("callout.successLabel")} />
+
+    <h3>{t("callout.anatomyTitle")}</h3>
+    <ul>
+      <li set:html={t("callout.anatomyItem1")} />
+      <li set:html={t("callout.anatomyItem2")} />
+      <li set:html={t("callout.anatomyItem3")} />
+      <li set:html={t("callout.anatomyItem4")} />
+    </ul>
+
+    <p set:html={t("callout.reactBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

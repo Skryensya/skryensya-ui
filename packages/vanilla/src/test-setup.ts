@@ -1,3 +1,33 @@
+/* jsdom parses `<dialog>` and reflects `open`, but ships none of its METHODS, and Vaul and the
+ * Command Palette are both built on the platform owning the modality. Just enough of it to test the
+ * wiring around it: the attribute the CSS reads, and the `close` event both enhancers listen for. */
+const dialogProto = globalThis.HTMLDialogElement?.prototype as
+  | (HTMLDialogElement & { showModal?: () => void })
+  | undefined;
+if (dialogProto && typeof dialogProto.showModal !== "function") {
+  const show = function show(this: HTMLDialogElement) {
+    this.setAttribute("open", "");
+  };
+  dialogProto.show = show;
+  dialogProto.showModal = show;
+  dialogProto.close = function close(this: HTMLDialogElement, returnValue?: string) {
+    if (!this.hasAttribute("open")) return;
+    if (returnValue !== undefined) this.returnValue = returnValue;
+    this.removeAttribute("open");
+    this.dispatchEvent(new Event("close"));
+  };
+}
+
+/* Pointer capture, which Vaul's drag asks for on the handle. A no-op is the honest stub: jsdom has
+ * no compositor to retarget events with, and the gesture already tracks on the window regardless. */
+if (!Element.prototype.setPointerCapture) {
+  Element.prototype.setPointerCapture = function setPointerCapture() {};
+  Element.prototype.releasePointerCapture = function releasePointerCapture() {};
+  Element.prototype.hasPointerCapture = function hasPointerCapture() {
+    return false;
+  };
+}
+
 /* jsdom ships neither of these, and the select's popper reaches for both the moment it opens. */
 class ResizeObserverStub {
   observe() {}

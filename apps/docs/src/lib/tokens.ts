@@ -73,6 +73,16 @@ export function literalOf(value: string, depth = 0): string {
   return trimmed;
 }
 
+/**
+ * A DOM id for a piece of token text, so a CopyButton beside it can target it directly.
+ * Content-derived rather than an incrementing counter: two cells that would otherwise collide
+ * always carry different source text (a file path, a token name), and a build-time counter reset
+ * on every component invocation cannot tell two `<StylingHooks>` calls on the same page apart.
+ */
+export function slugId(...parts: string[]): string {
+  return parts.join("-").replace(/[^a-zA-Z0-9_-]+/g, "-");
+}
+
 /** Which real CSS property will evaluate this token, judged from the literal it bottoms out at. */
 export function probeProp(value: string): string {
   const v = literalOf(value).trim();

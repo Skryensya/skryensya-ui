@@ -1,0 +1,42 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { fileUploadTree } from "../../demos/file-upload";
+import { getLocale, useTranslations } from "../../i18n";
+import "@skryensya/core/components/file-upload.css";
+import contractSource from "@contracts/semantic/file-upload.yaml?raw";
+import coreSource from "@core/src/file-upload.ts?raw";
+import cssSource from "@core/css/components/file-upload.css?raw";
+import vanillaMountSource from "@vanilla/src/components/file-upload.ts?raw";
+import reactSource from "@react/src/components/file-upload.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/file-upload.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/file-upload.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/file-upload.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/file-upload.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/file-upload.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="FileUpload"
+  description={t("fileUploadPage.description")}
+  contractId="file-upload"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/file-upload.css", probe: "sk-file-upload", title: "FileUpload" }]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("fileUploadPage.description")} />
+    <ComponentPreview tree={fileUploadTree(t)} label="FileUpload" viewport="auto" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("fileUploadPage.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("fileUploadPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

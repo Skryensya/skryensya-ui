@@ -1,5 +1,33 @@
 {
   "extends": "astro/tsconfigs/base",
+  "compilerOptions": {
+    "baseUrl": ".",
+    /*
+     * IMPORT ALIASES, and Astro reads them from here: `paths` in this file is what configures Vite's
+     * resolver, so a specifier below works in .astro frontmatter, in .ts, and in the type checker
+     * from ONE declaration. There is no matching list in astro.config.mjs on purpose; two lists is
+     * how the two drift.
+     *
+     * `@/*` is this app. The other four are the repo the docs document, and they exist because the
+     * source viewer reads real files with `?raw`: a page showing you `stat.css` has to reach the
+     * actual stylesheet, not the package's export map, and from `src/components/pages/` that was
+     * five levels of `../` per import, 412 of them, where a miscounted `../` fails at build time
+     * with a path nobody can read.
+     *
+     * They are deliberately NOT named `@skryensya/*`: that specifier already means something else
+     * here, the package's published surface through its exports map, which is what every runtime
+     * import uses. These reach around it, into the file tree, and the different prefix is what says
+     * so at the call site.
+     */
+    "paths": {
+      "@/*": ["src/*"],
+      "@core/*": ["../../packages/core/*"],
+      "@vanilla/*": ["../../packages/vanilla/*"],
+      "@react/*": ["../../packages/react/*"],
+      "@contracts/*": ["../../contracts/*"],
+      "@artifacts/*": ["../../artifacts/*"]
+    }
+  },
   "include": [".astro/types.d.ts", "src/**/*", "scripts/**/*", "astro.config.mjs"],
   "exclude": ["dist"]
 }

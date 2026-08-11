@@ -1,0 +1,64 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { segmentedTree } from "../../demos/segmented";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/segmented.yaml?raw";
+import coreSource from "@core/src/segmented.ts?raw";
+import cssSource from "@core/css/components/segmented.css?raw";
+import vanillaMountSource from "@vanilla/src/components/segmented.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/segmented.test.ts?raw";
+import reactSource from "@react/src/components/segmented.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
+const js = `import { initComponents } from "@skryensya/vanilla/auto";
+
+await initComponents();`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/segmented.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/segmented.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/segmented.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/segmented.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/segmented.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/segmented.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="SegmentedControl"
+  description={t("segmentedPage.description")}
+  contractId="segmented"
+  styleGroups={[{ file: "components/segmented.css", probe: "sk-segmented" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/segmented.test.ts",
+      tests: [
+        { name: "patches the authored parts into one roving radiogroup", description: t("segmentedPage.test1") },
+        {
+          name: "selects on click and arrow navigation, skipping disabled options",
+          description: t("segmentedPage.test2"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("segmentedPage.lede")} />
+    <ComponentPreview tree={segmentedTree(t)} label="Segmented" />
+    <p set:html={t("segmentedPage.body")} />
+    <p set:html={t("component.reactNote")} />
+    <p set:html={t("segmentedPage.reactBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+
+    <h3>{t("segmentedPage.vanillaInitTitle")}</h3>
+    <CodeBlock code={js} label="JavaScript" />
+  </Fragment>
+</ComponentPageShell>

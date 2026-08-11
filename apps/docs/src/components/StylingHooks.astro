@@ -1,8 +1,9 @@
 ---
-import { probeProp, tokens } from "../lib/tokens";
+import { probeProp, slugId, tokens } from "../lib/tokens";
 import { getLocale, useTranslations } from "../i18n";
+import CopyCells from "./CopyCells.astro";
 
-type HookGroup = {
+export type HookGroup = {
   /** CSS file path as emitted by @skryensya/core. */
   file: string;
   /** The real element that scopes each hook at runtime. */
@@ -24,6 +25,8 @@ const resolvedGroups = groups.map((group) => ({
 }));
 ---
 
+<CopyCells />
+
 <h2>{heading}</h2>
 <p>
   {t("hooks.intro")}
@@ -39,24 +42,35 @@ const resolvedGroups = groups.map((group) => ({
             <tr>
               <th>Hook</th>
               <th>
-                {t("hooks.authored")} <span class="count">· build</span>
+                {t("hooks.definition")} <span class="count">build</span>
               </th>
               <th>
-                {t("hooks.used")} <span class="count">· runtime</span>
+                {t("hooks.resolvedValue")} <span class="count">runtime</span>
               </th>
             </tr>
           </thead>
           <tbody>
             {
-              group.hooks.map((hook) => (
-                <tr>
-                  <td class="mono">{hook.name}</td>
-                  <td class="mono">{hook.value}</td>
-                  <td class="mono" data-token={hook.name} data-prop={hook.prop} data-probe={group.probe}>
-                    …
-                  </td>
-                </tr>
-              ))
+              group.hooks.map((hook) => {
+                const nameId = slugId("hook-name", group.file, hook.name);
+                const defId = slugId("hook-def", group.file, hook.name);
+                const valId = slugId("hook-val", group.file, hook.name);
+                return (
+                  <tr>
+                    <td class="sk-table__cell mono sk-table__cell--copy">
+                      <span id={nameId}>{hook.name}</span>
+                    </td>
+                    <td class="sk-table__cell mono sk-table__cell--copy">
+                      <span id={defId} data-authored>{hook.value}</span>
+                    </td>
+                    <td class="sk-table__cell mono sk-table__cell--copy">
+                      <span id={valId} data-token={hook.name} data-prop={hook.prop} data-probe={group.probe}>
+                        …
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })
             }
           </tbody>
         </table>

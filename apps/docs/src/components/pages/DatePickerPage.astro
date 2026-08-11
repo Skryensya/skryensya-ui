@@ -1,0 +1,90 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { datePickerDisabledTree, datePickerTree, nativeDatePickerTree } from "../../demos/date-picker";
+import { getLocale, useTranslations } from "../../i18n";
+import "@skryensya/core/components/date-picker.css";
+import contractSource from "@contracts/semantic/date-picker.yaml?raw";
+import coreSource from "@core/src/date-picker.ts?raw";
+import cssSource from "@core/css/components/date-picker.css?raw";
+import vanillaMountSource from "@vanilla/src/components/date-picker.ts?raw";
+import reactSource from "@react/src/components/date-picker.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const styles = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/date-picker.css";`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/date-picker.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/date-picker.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/date-picker.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/date-picker.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/date-picker.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="DatePicker"
+  description={t("datePicker.description")}
+  contractId="date-picker"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/date-picker.css", probe: "sk-date-picker", title: "DatePicker" },
+    { file: "components/calendar.css", probe: "sk-calendar", title: "Heredados de Calendar" },
+    { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+    { file: "components/button.css", probe: "sk-button", title: "Heredados de Button" },
+  ]}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/date-picker.svelte.test.ts",
+      tests: [
+        {
+          name: "refuses markup that is missing a part it must patch",
+          description: t("datePicker.test1"),
+        },
+        {
+          name: "patches the authored control and renders the popover around a calendar",
+          description: t("datePicker.test2"),
+        },
+        { name: "fills the field with the day the reader picked", description: t("datePicker.test3") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("datePicker.lede")} />
+
+    <h3>{t("datePicker.nativeTitle")}</h3>
+    <p set:html={t("datePicker.nativeBody")} />
+    <ComponentPreview tree={nativeDatePickerTree(t)} label={t("datePicker.nativeLabel")} />
+
+    <h3>{t("datePicker.customTitle")}</h3>
+    <p set:html={t("datePicker.customBody")} />
+    {/* `overlay` (~24rem): el calendario reserva la altura de sus seis filas dentro del frame. */}
+    <ComponentPreview tree={datePickerTree(t)} label={t("datePicker.customLabel")} viewport="overlay" />
+
+    <h3>{t("datePicker.disabledTitle")}</h3>
+    <p set:html={t("datePicker.disabledBody")} />
+    <ComponentPreview tree={datePickerDisabledTree(t)} label={t("datePicker.disabledLabel")} />
+
+    <h3>{t("datePicker.whichTitle")}</h3>
+    <p set:html={t("datePicker.whichBody")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("datePicker.contractBody")} />
+
+    <h3>{t("datePicker.mobileTitle")}</h3>
+    <p set:html={t("datePicker.mobileBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={styles} label="CSS" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("datePicker.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

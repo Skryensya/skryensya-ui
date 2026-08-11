@@ -1,0 +1,52 @@
+---
+import "@skryensya/core/patterns/state-layer.css";
+import "@skryensya/core/components/button.css";
+import "@skryensya/core/components/number-field.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { numberFieldTree } from "../../demos/number-field";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/number-field.yaml?raw";
+import coreSource from "@core/src/number-field.ts?raw";
+import cssSource from "@core/css/components/number-field.css?raw";
+import vanillaMountSource from "@vanilla/src/components/number-field.ts?raw";
+import reactSource from "@react/src/components/number-field.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+const styles = `@import "@skryensya/core/patterns/state-layer.css";
+@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/number-field.css";`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/number-field.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/number-field.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/number-field.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/number-field.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/number-field.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="NumberField"
+  description={t("numberFieldPage.description")}
+  contractId="number-field"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/number-field.css", probe: "sk-number-field", title: "NumberField" }]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("numberFieldPage.description")} />
+    <ComponentPreview tree={numberFieldTree(t)} label="NumberField" viewport="auto" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("numberFieldPage.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("numberFieldPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

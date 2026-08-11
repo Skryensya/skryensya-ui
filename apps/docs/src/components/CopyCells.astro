@@ -1,0 +1,27 @@
+---
+/*
+ * The single CopyButton that serves every copyable table cell on a page (`../scripts/copy-cells.ts`,
+ * where the why is written), plus the parking spot it lives in until a pointer or the keyboard puts
+ * it somewhere.
+ *
+ * Rendered ONCE per page, by whoever renders the cells: `TokenTable`, `StylingHooks`, and the
+ * nav-list hook tables. It is the real component, not a copy of it, which is also why nothing here
+ * describes what the button looks like.
+ *
+ * `target` is empty on purpose: the button is retargeted per cell at runtime, and the enhancer
+ * reads that attribute when it is clicked, never at mount.
+ */
+import CopyButton from "./CopyButton.astro";
+import { getLocale, useTranslations } from "../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+---
+
+<div class="docs-copy-cells" data-docs-copy-cells data-copy-word={t("copy.action")}>
+  <CopyButton target="" label={t("copy.action")} />
+</div>
+
+<script>
+  import { initCopyCells } from "../scripts/copy-cells";
+  initCopyCells();
+</script>

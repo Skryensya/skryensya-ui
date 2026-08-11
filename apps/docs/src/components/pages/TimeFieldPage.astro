@@ -1,0 +1,76 @@
+---
+import "@skryensya/core/components/time-field.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { timeFieldNativeTree, timeFieldTree } from "../../demos/time-field";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/time-field.yaml?raw";
+import coreSource from "@core/src/time-field.ts?raw";
+import cssSource from "@core/css/components/time-field.css?raw";
+import vanillaMountSource from "@vanilla/src/components/time-field.ts?raw";
+import reactSource from "@react/src/components/time-field.tsx?raw";
+
+const styles = `@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/time-field.css";`;
+
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/time-field.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/time-field.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/time-field.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/time-field.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/time-field.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="TimeField"
+  description={t("timeFieldPage.description")}
+  contractId="time-field"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/time-field.css", probe: "sk-time-field", title: "TimeField" },
+    { file: "components/button.css", probe: "sk-button", title: "Heredados de Button" },
+  ]}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/time-field.svelte.test.ts",
+      tests: [
+        {
+          name: "mounts once and names the group from the authored label",
+          description: t("timeFieldPage.test1"),
+        },
+        { name: "derives the segments from the locale, not from the markup", description: t("timeFieldPage.test2") },
+        {
+          name: "starts empty, with placeholders instead of a made-up time",
+          description: t("timeFieldPage.test3"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("timeFieldPage.lede")} />
+    <ComponentPreview tree={timeFieldTree(t, { locale: "es-DO", name: "salida" })} label="TimeField" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("timeFieldPage.contractBody")} />
+
+    <h3>{t("timeFieldPage.editTitle")}</h3>
+    <p set:html={t("timeFieldPage.editBody")} />
+
+    <h3>{t("timeFieldPage.nativeTitle")}</h3>
+    <p set:html={t("timeFieldPage.nativeBody")} />
+    <ComponentPreview tree={timeFieldNativeTree(t, { name: "inicio" })} label={t("timeFieldPage.nativeLabel")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("timeFieldPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

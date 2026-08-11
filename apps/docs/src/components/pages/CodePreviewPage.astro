@@ -1,0 +1,106 @@
+---
+import "@skryensya/core/components/select.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/code-preview.yaml?raw";
+import coreSource from "@core/src/code-preview.ts?raw";
+import cssSource from "@core/css/components/code-preview.css?raw";
+import vanillaMountSource from "@vanilla/src/components/code-preview.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/code-preview.test.ts?raw";
+import reactSource from "@react/src/components/code-preview.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add shiki @skryensya/core @skryensya/vanilla`;
+
+const styles = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/copy-button.css";
+@import "@skryensya/core/components/switch.css";
+@import "@skryensya/core/components/code-preview.css";`;
+
+const highlight = `import { codeToHtml } from "shiki";
+
+// ${t("codePreview.highlightComment")}
+const highlighted = await codeToHtml(source, {
+  lang: "ts",
+  themes: {
+    light: "github-light",
+    dark: "github-dark",
+  },
+});`;
+
+const mount = `import { initComponents } from "@skryensya/vanilla/auto";
+import { mountCodePreview } from "@skryensya/vanilla/code-preview";
+
+// ${t("codePreview.mountComment1")}
+await initComponents();
+
+// ${t("codePreview.mountComment2")}
+mountCodePreview();`;
+
+const example = `const registrations = [
+  { selector: "[data-sk-button]", load: () => import("./button.js") },
+  { selector: "[data-sk-select]", load: () => import("./select.js") },
+];`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/code-preview.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/code-preview.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/code-preview.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/code-preview.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/code-preview.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/code-preview.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="CodePreview"
+  description={t("codePreview.description")}
+  contractId="code-preview"
+  styleGroups={[{ file: "components/code-preview.css", probe: "sk-code-preview" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/code-preview.test.ts",
+      tests: [
+        {
+          name: "switches density, expands, collapses and mounts idempotently",
+          description: t("codePreview.test1"),
+        },
+        { name: "keeps disclosure available when Condensed itself is long", description: t("codePreview.test2") },
+        {
+          name: "says the count in the author's language, and only the number without one",
+          description: t("codePreview.test3"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("codePreview.lede")} />
+
+    <CodeBlock code={example} label="TypeScript" lang="ts" />
+    <p set:html={t("codePreview.exampleNote")} />
+
+    <h3>{t("codePreview.contractTitle")}</h3>
+    <ul>
+      <li set:html={t("codePreview.contractItem1")} />
+      <li set:html={t("codePreview.contractItem2")} />
+      <li set:html={t("codePreview.contractItem3")} />
+    </ul>
+
+    <h3>{t("codePreview.highlightTitle")}</h3>
+    <CodeBlock code={highlight} label="TypeScript" lang="ts" />
+
+    <h3>{t("codePreview.mountTitle")}</h3>
+    <p set:html={t("codePreview.mountBody")} />
+    <CodeBlock code={mount} label="TypeScript" lang="ts" />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+</ComponentPageShell>

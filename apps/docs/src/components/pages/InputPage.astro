@@ -1,0 +1,73 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { inputTree } from "../../demos/input";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/input.yaml?raw";
+import coreSource from "@core/src/input.ts?raw";
+import cssSource from "@core/css/components/input.css?raw";
+import fieldCssSource from "@core/css/components/field.css?raw";
+import reactSource from "@react/src/components/input.tsx?raw";
+import reactTestSource from "@react/src/components/input.test.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
+
+const css = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/input.css";
+@import "@skryensya/core/components/field.css";`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/input.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/input.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/input.css", source: cssSource, language: "css" },
+  { id: "packages/core/css/components/field.css", source: fieldCssSource, language: "css" },
+  { id: "packages/react/src/components/input.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/input.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title={t("inputPage.title")}
+  description={t("inputPage.description")}
+  contractId="input"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/input.css", probe: "sk-input", title: "Input" },
+    { file: "components/field.css", probe: "sk-field", title: "Field" },
+  ]}
+  tests={[
+    {
+      file: "packages/react/src/components/input.test.tsx",
+      tests: [
+        { name: "wires the label, hint and error to the control it wraps", description: t("inputPage.test1") },
+        { name: "treats the error message as what makes the field invalid", description: t("inputPage.test2") },
+        { name: "stays a valid control outside a Field", description: t("inputPage.test3") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("inputPage.lede")} />
+    <ComponentPreview tree={inputTree(t)} label="Input" />
+    <p set:html={t("inputPage.densityBody")} />
+
+    <h3>{t("inputPage.oneClassTitle")}</h3>
+    <p set:html={t("inputPage.oneClassBody")} />
+
+    <h3>{t("inputPage.fieldTitle")}</h3>
+    <p set:html={t("inputPage.fieldBody")} />
+
+    <h3>{t("inputPage.errorTitle")}</h3>
+    <p set:html={t("inputPage.errorBody")} />
+
+    <p set:html={t("inputPage.reactBody")} />
+    <p set:html={t("component.reactNote")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={css} label="CSS" />
+  </Fragment>
+</ComponentPageShell>

@@ -1,0 +1,114 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { avatarTree } from "../../demos/avatar";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/avatar.yaml?raw";
+import coreSource from "@core/src/avatar.ts?raw";
+import cssSource from "@core/css/components/avatar.css?raw";
+import reactSource from "@react/src/components/avatar.tsx?raw";
+import reactTestSource from "@react/src/components/avatar.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+/*
+ * Demo photos, as dummyimage.com placeholders painted in the accent fill.
+ *
+ * The hexes are the DEFAULT brand's `--color-action-primary` / `--color-text-on-accent`: a URL is a
+ * string and cannot hold a var(). `previewScript` re-resolves both tokens inside the frame and
+ * rewrites `src`, so the demo follows the reader's mode and brand while the source stays a URL
+ * anyone can paste.
+ */
+const ACCENT_HEX = "1f5fc3";
+const ON_ACCENT_HEX = "ffffff";
+
+const previewScript = `
+const probe = document.createElement("span");
+probe.hidden = true;
+document.body.append(probe);
+
+const canvas = document.createElement("canvas");
+canvas.width = 1;
+canvas.height = 1;
+const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+function hexOf(token, fallback) {
+  if (!ctx) return fallback;
+  probe.style.removeProperty("color");
+  probe.style.setProperty("color", "var(" + token + ")");
+  const used = getComputedStyle(probe).color;
+  if (!used) return fallback;
+  ctx.clearRect(0, 0, 1, 1);
+  ctx.fillStyle = "#000";
+  ctx.fillStyle = used;
+  ctx.fillRect(0, 0, 1, 1);
+  const pixel = ctx.getImageData(0, 0, 1, 1).data;
+  if (pixel[3] === 0) return fallback;
+  return [pixel[0], pixel[1], pixel[2]]
+    .map((channel) => channel.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function retint() {
+  const bg = hexOf("--color-action-primary", "${ACCENT_HEX}");
+  const fg = hexOf("--color-text-on-accent", "${ON_ACCENT_HEX}");
+  for (const img of document.querySelectorAll('img[src*="dummyimage.com"]')) {
+    // The authored src is the template; keep it, the first repaint would otherwise consume it.
+    const template = (img.dataset.skTintTemplate ||= img.getAttribute("src"));
+    const url = new URL(template);
+    const segments = url.pathname.split("/");
+    if (segments.length !== 4) continue;
+    segments[2] = bg;
+    segments[3] = fg;
+    url.pathname = segments.join("/");
+    if (img.getAttribute("src") !== url.href) img.setAttribute("src", url.href);
+  }
+}
+
+retint();
+const observer = new MutationObserver(retint);
+observer.observe(document.documentElement, { attributes: true });
+window.addEventListener("pagehide", () => observer.disconnect(), { once: true });
+`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/avatar.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/avatar.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/avatar.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/avatar.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/avatar.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Avatar"
+  description={t("avatar.description")}
+  contractId="avatar"
+  styleGroups={[{ file: "components/avatar.css", probe: "sk-avatar" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/avatar.test.tsx",
+      tests: [
+        { name: "derives initials from the name when there is no image", description: t("avatar.test1") },
+        { name: "uses the first two characters of a single-word username", description: t("avatar.test2") },
+        { name: "renders the image inside ImageFrame when src is given", description: t("avatar.test3") },
+        { name: "caps visible avatars and collapses the rest into a +N counter", description: t("avatar.test4") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("avatar.lede")} />
+    <ComponentPreview tree={avatarTree(t)} previewScript={previewScript} label="Avatar" />
+    <p set:html={t("avatar.body")} />
+    <p set:html={t("component.reactNote")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

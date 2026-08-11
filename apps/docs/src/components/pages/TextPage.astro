@@ -1,0 +1,78 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  textFeedbackTree,
+  textReadingTree,
+  textTitleTree,
+  textInlineTree,
+} from "../../demos/typography";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/typography.yaml?raw";
+import coreSource from "@core/src/typography.ts?raw";
+import cssSource from "@core/css/components/typography.css?raw";
+import reactSource from "@react/src/components/typography.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/typography.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/typography.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/typography.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/typography.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Text"
+  description={t("textPage.description")}
+  contractId="typography"
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/typography.test.tsx",
+      tests: [
+        { name: "keeps Text semantic and applies its named reading role", description: t("textPage.test1") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("textPage.lede")} />
+
+    <h3>{t("textPage.titleBlockTitle")}</h3>
+    <p set:html={t("textPage.titleBlockBody")} />
+    <ComponentPreview tree={textTitleTree(t)} label={t("textPage.titleBlockLabel")} />
+
+    <h3>{t("textPage.readingTitle")}</h3>
+    <p set:html={t("textPage.readingBody")} />
+    <ComponentPreview tree={textReadingTree(t)} label={t("textPage.readingLabel")} />
+
+    <h3>{t("textPage.inlineTitle")}</h3>
+    <p set:html={t("textPage.inlineBody")} />
+    <ComponentPreview tree={textInlineTree(t)} label={t("textPage.inlineLabel")} />
+
+    <h3>{t("textPage.feedbackTitle")}</h3>
+    <p set:html={t("textPage.feedbackBody")} />
+    <ComponentPreview tree={textFeedbackTree(t)} label={t("textPage.feedbackLabel")} />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("textPage.contractItem1")} />
+      <li set:html={t("textPage.contractItem2")} />
+      <li set:html={t("textPage.contractItem3")} />
+      <li set:html={t("textPage.contractItem4")} />
+      <li set:html={t("textPage.contractItem5")} />
+      <li set:html={t("textPage.contractItem6")} />
+      <li set:html={t("textPage.contractItem7")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

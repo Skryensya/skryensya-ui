@@ -1,0 +1,83 @@
+---
+import "@skryensya/core/components/tile.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { linkTree, tileLinkTree } from "../../demos/link";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/typography.yaml?raw";
+import coreSource from "@core/src/typography.ts?raw";
+import cssSource from "@core/css/components/typography.css?raw";
+import reactSource from "@react/src/components/typography.tsx?raw";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
+
+const tileLinkVanilla = `import { createTileLink } from "@skryensya/vanilla/tile-link";
+
+const link = createTileLink({ href: "/usage" });
+link.textContent = "Usage details";`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/typography.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/typography.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/typography.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/typography.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Link"
+  description={t("linkPage.description")}
+  contractId="typography"
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/typography.test.tsx",
+      tests: [
+        {
+          name: "renders a native link with the shared state layer for hover/press/focus",
+          description: t("linkPage.test1"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("linkPage.lede")} />
+    <ComponentPreview tree={linkTree(t, "/componentes/link")} label="Link" />
+
+    <h3>{t("linkPage.tileTitle")}</h3>
+    <p set:html={t("linkPage.tileBody1")} />
+    <ComponentPreview tree={tileLinkTree(t, "/componentes/link")} label="TileLink" />
+    <p set:html={t("linkPage.tileBody2")} />
+    <CodeBlock code={tileLinkVanilla} label="JavaScript" />
+
+    <h3>{t("linkPage.whyTitle")}</h3>
+    <p set:html={t("linkPage.whyBody1")} />
+    <p set:html={t("linkPage.whyBody2")} />
+    <div class="sk-callout" data-tone="info">
+      <div class="sk-callout__content">
+        <p set:html={t("linkPage.calloutBody")} />
+      </div>
+    </div>
+
+    <h3>{t("linkPage.toneTitle")}</h3>
+    <p set:html={t("linkPage.toneBody")} />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("linkPage.contractItem1")} />
+      <li set:html={t("linkPage.contractItem2")} />
+      <li set:html={t("linkPage.contractItem3")} />
+      <li set:html={t("linkPage.contractItem4")} />
+      <li set:html={t("linkPage.contractItem5")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

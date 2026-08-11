@@ -288,11 +288,14 @@
     animation: sk-tile-collapse var(--motion-collapse-duration) var(--motion-collapse-easing) forwards;
   }
 
+  /* The gutter reads the design token directly. The `--sk-space-*` aliases live on `.sk-tile`, and the
+   * grid is the tile's PARENT, so it never inherited them: the gap resolved to `normal` and the cards
+   * sat flush against each other. */
   .sk-tile-grid {
     box-sizing: border-box;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-    gap: var(--sk-space-4);
+    gap: var(--space-inset-md);
     min-inline-size: 0;
   }
 

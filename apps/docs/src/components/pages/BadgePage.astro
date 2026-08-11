@@ -1,0 +1,81 @@
+---
+import type { UsageTree } from "@skryensya/core/usage-tree";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { badgeDotsTree, badgeHoldersTree } from "../../demos/badge";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/badge.yaml?raw";
+import coreSource from "@core/src/badge.ts?raw";
+import cssSource from "@core/css/components/badge.css?raw";
+import reactSource from "@react/src/components/badge.tsx?raw";
+import reactTestSource from "@react/src/components/badge.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+/*
+ * The demo, as a USAGE TREE. The markup below the stage, the TSX beside it and the live React
+ * island are all emitted from this, so the snippet a reader copies is what they just saw render.
+ */
+const tree = {
+  contract: "layout",
+  signature: "Inline",
+  options: { gap: "sm" },
+  children: [
+    { contract: "badge", signature: "Badge", options: { tone: "neutral" }, children: "Neutral" },
+    { contract: "badge", signature: "Badge", options: { tone: "accent" }, children: "Accent" },
+    { contract: "badge", signature: "Badge", options: { tone: "success" }, children: "Success" },
+    { contract: "badge", signature: "Badge", options: { tone: "warning" }, children: "Warning" },
+    { contract: "badge", signature: "Badge", options: { tone: "danger" }, children: "Danger" },
+  ],
+} as const satisfies UsageTree;
+
+const sourceFiles = [
+  { id: "contracts/semantic/badge.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/badge.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/badge.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/badge.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/badge.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Badge"
+  description={t("badge.description")}
+  contractId="badge"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/badge.css", probe: "sk-badge" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/badge.test.tsx",
+      tests: [
+        { name: "renders its accessible label and forwards semantic attributes", description: t("badge.test1") },
+        { name: "anchors an accessible status dot without adding visible content", description: t("badge.test2") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("badge.lede")} />
+
+    <h3>{t("badge.tagTitle")}</h3>
+    <p set:html={t("badge.tagBody")} />
+    <ComponentPreview tree={tree} label={t("badge.tagLabel")} />
+
+    <h3>{t("badge.dotTitle")}</h3>
+    <p set:html={t("badge.dotBody")} />
+    <ComponentPreview tree={badgeDotsTree(t)} label={t("badge.dotLabel")} />
+
+    <h4>{t("badge.cornerTitle")}</h4>
+    <p set:html={t("badge.cornerBody")} />
+    <ComponentPreview tree={badgeHoldersTree(t)} label={t("badge.cornerLabel")} />
+
+    <p set:html={t("component.reactNote")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

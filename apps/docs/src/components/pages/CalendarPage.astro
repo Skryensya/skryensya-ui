@@ -1,0 +1,89 @@
+---
+import "@skryensya/core/components/calendar.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { calendarMinMaxTree, calendarRangeTree, calendarTree } from "../../demos/calendar";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/calendar.yaml?raw";
+import coreSource from "@core/src/calendar.ts?raw";
+import cssSource from "@core/css/components/calendar.css?raw";
+import vanillaMountSource from "@vanilla/src/components/calendar.ts?raw";
+import vanillaCoordinatorSource from "@vanilla/src/components/Calendar.svelte?raw";
+import vanillaViewSource from "@vanilla/src/components/CalendarView.svelte?raw";
+import reactSource from "@react/src/components/calendar.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+const styles = `@import "@skryensya/core/components/calendar.css";`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/calendar.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/calendar.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/calendar.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/calendar.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/Calendar.svelte", source: vanillaCoordinatorSource, language: "svelte" },
+  { id: "packages/vanilla/src/components/CalendarView.svelte", source: vanillaViewSource, language: "svelte" },
+  { id: "packages/react/src/components/calendar.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Calendar"
+  description={t("calendar.description")}
+  contractId="calendar"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/calendar.css", probe: "sk-calendar", title: "Calendar" }]}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/calendar.svelte.test.ts",
+      tests: [
+        {
+          name: "generates the whole grid from an empty authored root, once",
+          description: t("calendar.test1"),
+        },
+        { name: "names the weekdays in the authored locale", description: t("calendar.test2") },
+        { name: "opens on the authored date rather than on today", description: t("calendar.test3") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("calendar.lede")} />
+
+    <h3>{t("calendar.gridTitle")}</h3>
+    <p set:html={t("calendar.gridBody")} />
+    <ComponentPreview tree={calendarTree(t)} label={t("calendar.gridLabel")} viewport="auto" />
+
+    <h3>{t("calendar.viewTitle")}</h3>
+    <p set:html={t("calendar.viewBody1")} />
+    <p set:html={t("calendar.viewBody2")} />
+
+    <h3>{t("calendar.rangeTitle")}</h3>
+    <p set:html={t("calendar.rangeBody1")} />
+    <p set:html={t("calendar.rangeBody2")} />
+    <ComponentPreview tree={calendarRangeTree(t)} label={t("calendar.rangeLabel")} viewport="auto" />
+
+    <h3>{t("calendar.minMaxTitle")}</h3>
+    <p set:html={t("calendar.minMaxBody1")} />
+    <p set:html={t("calendar.minMaxBody2")} />
+    <ComponentPreview tree={calendarMinMaxTree(t)} label={t("calendar.minMaxLabel")} viewport="auto" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("calendar.contractItem1")} />
+      <li set:html={t("calendar.contractItem2")} />
+      <li set:html={t("calendar.contractItem3")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("calendar.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

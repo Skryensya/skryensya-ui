@@ -10,6 +10,42 @@
  */
 
 /* ── page ─────────────────────────────────────────────────────────────────── */
+/*
+ * IN-PAGE JUMPS TRAVEL. Nearly every link on this site that does not navigate is a jump inside the
+ * document: the toc's ten entries, the anchors in the prose, the styling-hooks cross-references. A
+ * jump teleports, and the reader has to work out afterwards where they landed and whether the page
+ * changed at all; the same jump scrolled shows the distance and lands them somewhere they can place.
+ *
+ * ON `html`, WHICH IS EXACTLY THE ROOT SCROLLER AND NOTHING ELSE. `scroll-behavior` does not
+ * inherit, so this reaches the page's own scrolling and no other scroll container: the rail's saved
+ * position (`docs-sidebar-scroll`, restored by assigning `scrollTop` in Base.astro) still lands
+ * instantly, which it has to, or every page load would open with the index visibly sliding down
+ * from the top.
+ *
+ * BEHIND AN ATTRIBUTE `Base.astro` WRITES ON `load`, AND THIS IS NOT A PREFERENCE, IT IS A BUG FIX.
+ * Landing on a deep link (`/componentes/toc#contrato`) is a scroll too, so plain `smooth` animates
+ * it, and an animated fragment scroll runs against a page that is still settling: the browser aims
+ * at where the section was when the animation started and never re-aims, while fonts, previews and
+ * iframes keep moving it. Measured on the built site: the target landed 124px ABOVE the viewport
+ * (198px past its own `scroll-margin`), under the header, with the rail marking the wrong section.
+ * Instant lands it exactly on the margin, because the browser re-anchors as content arrives.
+ *
+ * So the page loads with jumps instant and turns travel on once there is nothing left to shift,
+ * which is also exactly the line between the scrolls the reader did not ask for and the ones
+ * they did.
+ */
+html[data-scroll-smooth] {
+  scroll-behavior: smooth;
+}
+
+/* Same shape the carousel's track uses (components/carousel.css): the setting asks not to be moved
+ * through the distance, so the jump goes back to being a jump. */
+@media (prefers-reduced-motion: reduce) {
+  html[data-scroll-smooth] {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   margin: 0;
   background: var(--color-bg-canvas);
@@ -37,6 +73,19 @@ body {
   --docs-shell-max: 120rem;
   --docs-document-max: var(--size-wrapper-md);
   --docs-toc-inline-size: 14rem;
+  /*
+   * ONE RAIL WIDTH FOR THE WHOLE SITE, and this is the only place it is written.
+   *
+   * The site has two of them: the navigation rail down the left of every page, and the file tree in
+   * the accordion source viewer. They are the same furniture at two scales, and they looked like
+   * two unrelated decisions because each carried its own number (the viewer's was `23rem`, a third
+   * again as wide as the rail beside it).
+   *
+   * A little wider than the component's own 13rem default, which is what the Sidebar ships and what
+   * a consumer with shorter labels should keep. Raising the hook is the documented way to want more
+   * (components/sidebar.css); restating a width the component owns is not.
+   */
+  --docs-rail-inline-size: 14rem;
 }
 
 .dimensions {
@@ -140,6 +189,47 @@ body {
   border-radius: var(--radius-pill);
   background: var(--swatch, var(--color-action-primary));
   box-shadow: inset 0 0 0 1px var(--color-border-subtle);
+}
+
+/*
+ * Accent reach: a compact three-state button rather than another miniature segmented control in
+ * chrome. Its concentric marks read from the brand-coloured centre outward: action, links, then the
+ * surrounding chrome. The full picker belongs on /acento, where all three choices need comparison.
+ *
+ * The button itself never inherits a reach token. It controls that dimension, so its active rings
+ * always retain the action colour even when the rest of the page is deliberately quiet.
+ */
+.dimensions__accent-toggle {
+  display: inline-grid;
+  place-items: center;
+  color: var(--color-text-secondary);
+}
+
+.dimensions__accent-icon {
+  inline-size: 1.15rem;
+  block-size: 1.15rem;
+}
+
+.dimensions__accent-icon [data-accent-reach-ring] {
+  color: var(--color-border-default);
+  transition-property: color;
+  transition-duration: var(--motion-state-change-duration);
+  transition-timing-function: var(--motion-state-change-easing);
+}
+
+.dimensions__accent-toggle[data-level="1"] [data-accent-reach-ring="1"],
+.dimensions__accent-toggle[data-level="2"] [data-accent-reach-ring="1"],
+.dimensions__accent-toggle[data-level="2"] [data-accent-reach-ring="2"],
+.dimensions__accent-toggle[data-level="3"] [data-accent-reach-ring="1"],
+.dimensions__accent-toggle[data-level="3"] [data-accent-reach-ring="2"],
+.dimensions__accent-toggle[data-level="3"] [data-accent-reach-ring="3"] {
+  color: var(--color-action-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dimensions__accent-icon [data-accent-reach-ring] {
+    transition: none;
+  }
 }
 
 /* Icon-only, the same square as the theme toggle beside it (sizing comes from sk-button[data-icon-only]).
@@ -262,22 +352,55 @@ html:has(dialog:modal) .docs-drawer__content {
 }
 
 /* ── layout ───────────────────────────────────────────────────────────────── */
-/* Three columns: the site index (sidebar), a capped document measure, and the document index (toc).
-   The broad Docs canvas keeps the rail edge-aligned at ordinary desktop widths; only very wide
-   displays centre it. `space-between` spends any spare width between columns, never by widening prose. */
+/*
+ * Three columns of content, five tracks: the site index (sidebar), a capped document measure, and
+ * the document index (toc), with the spare width held in two flexible tracks AROUND that pair
+ * rather than between them.
+ *
+ * WHY NOT `space-between`, which is what this was. Spare width went into the gaps, so the toc rode
+ * the right edge of the canvas and the further the display widened the further it drifted from the
+ * prose: at 1600px the index of the document sat 64px off the document and 0px off the viewport,
+ * which is the wrong thing to be attached to. An index belongs to the text it indexes.
+ *
+ * The two `1fr` tracks are the fix and also the gutters: their `min` is the gap this grid used to
+ * declare, so nothing narrows at the widths where the columns already fill the canvas, and every
+ * pixel past that is split evenly between the sidebar's side and the far edge, which lands the
+ * document column centred with its index alongside it. The document/toc boundary keeps no track of
+ * its own: `<main>`'s wrapper inset and the toc's own column rule are the separation there, and a
+ * third gap between them would only push the index away again.
+ */
 .shell {
   --sk-wrapper-padding-inline: 0;
 
   display: grid;
-  /* Third track is the toc width itself, not `auto`: the column exists before the list fills,
+  /* The toc track is the toc width itself, not `auto`: the column exists before the list fills,
      so the document measure never jumps when data-ready lands. */
-  grid-template-columns: auto minmax(0, var(--docs-document-max)) var(--docs-toc-inline-size);
-  justify-content: space-between;
-  gap: var(--space-inline-lg);
+  grid-template-columns:
+    auto
+    minmax(var(--space-inline-lg), 1fr)
+    minmax(0, var(--docs-document-max))
+    var(--docs-toc-inline-size)
+    minmax(var(--space-inline-lg), 1fr);
+  column-gap: 0;
+  row-gap: var(--space-inline-lg);
   /* No block padding: the rail has to MEET the header, not float below it. The document and the toc
      pad themselves instead, so only the columns that want air get it. */
   padding-block: 0;
   align-items: start;
+}
+
+/* Explicit, because the flexible tracks are not skippable by auto-placement: the three children
+   would otherwise land in tracks 1, 2 and 3 and the document would sit in a gutter. */
+.shell > .docs-sidebar {
+  grid-column: 1;
+}
+
+.shell > main {
+  grid-column: 3;
+}
+
+.shell > .sk-toc {
+  grid-column: 4;
 }
 
 /*
@@ -306,6 +429,26 @@ html:has(dialog:modal) .docs-drawer__content {
   position: sticky;
   top: var(--docs-navbar-h, var(--docs-header-block-size));
   block-size: calc(100dvh - var(--docs-navbar-h, var(--docs-header-block-size)));
+
+  /* The site's rail width, not the component's default: this index carries long entries
+     ("Densidad de componente") and its own tree in the accordion viewer reads the same token, so
+     the two rails on the site stay one decision. It is the STARTING width; the resize handle and
+     the two bounds below own the rest. */
+  --sk-sidebar-expanded-inline-size: var(--docs-rail-inline-size);
+
+  /*
+   * A LOWER CEILING THAN THE COMPONENT'S, because this rail has nothing more to reveal.
+   *
+   * Measured, not guessed: at 240px the longest entry in the index ("Densidad de componente") stops
+   * truncating, and every entry after that width is the same list with more air around it. 16rem
+   * leaves room for an entry longer than today's without ever letting the index become a column
+   * that competes with the document.
+   *
+   * The component's own 20rem stays right for a sidebar whose content the system cannot see, which
+   * is why this is written here and not there. The accordion source viewer keeps that wider
+   * ceiling, and needs it: its deepest filename is only fully readable near 320px.
+   */
+  --sk-sidebar-max-inline-size: 16rem;
 }
 
 /* The rail surface runs from the header's underside to the bottom of the viewport. Its own top
@@ -427,12 +570,29 @@ main {
 }
 
 
+/*
+ * The same gutter the drawer's own header uses, as a token.
+ *
+ * It used to read `--sk-sidebar-padding`, a hook the Sidebar declares ON `.sk-sidebar` elements: in
+ * here there is no such ancestor, so it resolved to nothing, the declaration was dropped, and the
+ * list sat at whatever inset the nav-list's own links happen to carry (8px) while the header beside
+ * it kept its 16px. Two gutters down one panel, from a hook that was never in scope. Neither Vaul
+ * nor Drawer ships a padding hook to borrow instead, on purpose: the panel is theirs and what goes
+ * inside it is the consumer's, which makes this the consumer's line to write.
+ */
 .docs-drawer__content {
   flex: 1;
+  /* Both axes, and the inline one matters here: a flex child's automatic minimum is its content, so
+     a long label would make the list wider than the panel and the panel would clip it with no way
+     to reach it. */
   min-block-size: 0;
-  padding: var(--sk-sidebar-padding);
+  min-inline-size: 0;
+  padding: var(--space-inset-md);
   overflow-x: hidden;
   overflow-y: auto;
+  /* The scroll stops here, the same rule the rail follows: reaching the end of the index must not
+     hand the gesture to the document behind the backdrop. */
+  overscroll-behavior: contain;
 }
 
 /* The global `a` color (accent) is meant for prose links. Unlayered, it also beat the nav-list's
@@ -853,9 +1013,11 @@ p {
    exactly this: display-sm, "marketing / hero chrome" per semantic/_type.scss, and an eyebrow
    that repeats the sidebar section this page lives under, the same orientation a breadcrumb gives.
 
-   Tinted with the system's one "accent wash" role (`--color-bg-accent-subtle`, the same fill a
-   current nav-list item and the current toc link already use), rather than a bespoke color, so a
-   brand swap re-tints the hero for free. Full-bleed to `<main>`'s own edges (negative margin
+   Tinted with the DECORATIVE reach role (`--color-decorative-bg`, which resolves to the same accent
+   wash a current nav-list item and the current toc link use), rather than a bespoke color or the raw
+   `--color-bg-accent-subtle`, so a brand swap re-tints the hero for free AND turning the accent's reach
+   down takes it with the rest of the decoration. A tinted band behind a page title is the textbook case
+   of the dimension's "decoration" bucket: it is not telling you anything, it is dressing. Full-bleed to `<main>`'s own edges (negative margin
    cancelling its `--space-inset-lg` padding, `sk-wrapper`'s default) and re-padded by that exact
    amount, so the title lines up with the prose directly below it instead of sitting indented
    inside a second inset.
@@ -865,14 +1027,26 @@ p {
    below: the same "hero settles onto the content that follows it" rhythm a magazine masthead
    uses, rather than a title floating in the middle of a colored rectangle. */
 .docs-component-hero {
-  margin-inline: calc(var(--space-inset-lg) * -1);
+  /*
+   * IN THE COLUMN, not bled out of it. This used to cancel `<main>`'s inline padding with a negative
+   * margin and re-add it as its own, which put the tinted block's edges on main's padding box while
+   * everything under it — the tab strip, the prose — stayed inside that padding. Measured at 1400px:
+   * the hero started at 256 against tabs at 280, so it read as a band sticking out from under the
+   * page rather than as part of it. Sitting in normal flow, its edges line up with the tab strip's.
+   *
+   * Rounded for the same reason: a tinted rectangle running to a hard edge reads as bleed that got
+   * clipped. With a radius it reads as a panel that was always meant to end there.
+   */
   padding: calc(var(--space-section) * 1.5) var(--space-inset-lg) var(--space-stack-lg);
-  background: var(--color-bg-accent-subtle);
+  border-radius: var(--radius-surface);
+  background: var(--color-decorative-bg);
 }
 
 .docs-component-hero__eyebrow {
   margin: 0 0 var(--space-stack-xs);
-  color: var(--color-text-accent);
+  /* The eyebrow travels with the band it sits in: both are the decorative pair, so a dialled-down
+     accent cannot leave brand-coloured text floating on a neutral wash. */
+  color: var(--color-decorative-fg);
   font-size: var(--font-size-caption);
   font-weight: var(--font-weight-label);
   letter-spacing: 0.08em;
@@ -903,19 +1077,22 @@ p {
    `flex: none` because the triggers would otherwise squeeze themselves to fit and never overflow at
    all, which is how a scroll container ends up scrolling nothing while the labels turn to ellipsis.
 
-   THE SCROLLBAR SITS BELOW THE RULE, and getting it there is the whole reason the rule is not a
-   border. A scrollbar is always laid inside the scroll container's PADDING box, which is inside its
-   border, so on a bordered scroll container the bar can only ever appear ABOVE the line. There is no
-   property that moves it; the line has to stop being a border.
+   THE RULE IS THE COMPONENT'S OWN BORDER, and letting it be one is what keeps it flush.
 
-   So `.sk-tabs__list`'s own border is dropped and the same 1px is painted as a background image
-   instead, held one lane-height off the bottom. A background on a scroll container does not scroll
-   with its content (`background-attachment: scroll` is attached to the box, not the content), so the
-   rule stays put while the tabs slide under it, and it cannot be the thing that scrolls away.
+   This used to drop `.sk-tabs__list`'s border and repaint the same 1px as a background image held a
+   lane-height off the bottom, with `padding-block-end` reserving that lane, so the scrollbar could
+   run BELOW the rule. It bought that at the price of an unconditional 6px of dead space under the
+   line: measured across 1600 → 390px, the strip only actually overflows at some widths, and at every
+   other one the component ended 6px after its last visible pixel.
 
-   The lane below it is exactly the scrollbar's height, which puts the triggers' bottom edge on the
-   rule itself: the selected tab's underline (`::after`, `inset-block-end: -1px`) straddles it the
-   way it did when the line was a real border, and the bar runs underneath, flush.
+   A border needs no lane. On a scroll container the bar is laid between the inner border edge and the
+   outer padding edge, so the border is drawn BELOW it: the rule is the last thing in the box whether
+   or not a bar exists, and the lane appears only when the browser actually draws one. The trade is
+   deliberate and is the inverse of the old one, the bar now sits above the rule rather than under it,
+   which is the arrangement that costs nothing when there is nothing to scroll.
+
+   The selected tab's underline (`::after`, `inset-block-end: -1px`) straddles the line again for
+   free: that offset was written against a real border and is what it was always sized for.
 
    `overflow-y` IS SET EXPLICITLY and that is the subtle part: `overflow-x: auto` on its own does not
    leave the other axis alone. A `visible` computes to `auto` the moment its partner is not visible,
@@ -928,16 +1105,11 @@ p {
   position: sticky;
   top: var(--docs-navbar-h, var(--docs-header-block-size));
   z-index: 2;
-  padding-block: var(--space-inset-xs) var(--docs-hero-tabs-scrollbar-size);
-  border-block-end: 0;
+  /* Only the top inset is ours. The bottom is the scrollbar's, and it takes it only when it exists;
+     `.sk-tabs__list`'s own `border-block-end` closes the box under either. */
+  padding-block-start: var(--space-inset-xs);
+  /* Opaque because it is sticky: the panels scroll underneath it. */
   background-color: var(--color-bg-canvas);
-  background-image: linear-gradient(
-    var(--sk-tabs-list-border-color),
-    var(--sk-tabs-list-border-color)
-  );
-  background-repeat: no-repeat;
-  background-size: 100% 1px;
-  background-position: left 0 bottom var(--docs-hero-tabs-scrollbar-size);
   overflow-x: auto;
   overflow-y: clip;
   overscroll-behavior-inline: contain;
@@ -1001,10 +1173,27 @@ p {
  * chrome the accent-reach dimension would otherwise have had to dial back down, for a colour the
  * component never asked for.
  *
- * `main` is the document column; the rail, the ToC and the navbar all sit outside it.
+ * `main` is the document column; the rail, the ToC and the navbar normally sit outside it.
+ *
+ * BUT THE COLUMN IS NOT A SAFE FENCE, which is why the exclusion list is not just `.sk-link`. A page
+ * that DOCUMENTS a navigation component renders one inside the prose, and there this rule beat
+ * `.sk-nav-list__link` on specificity ((0,1,2) against (0,1,0)) and repainted the whole thing: every
+ * item accent at rest, and the current item's `--color-nav-current-fg` bypassed entirely, so the
+ * accent-reach page showed its own chrome refusing to dial. The fence that actually holds is "is this
+ * anchor a component part", so every component anchor names itself here. Anything that ships as a part
+ * belongs in this list; what is left is what this rule was always about, a bare `<a>` someone typed in
+ * a sentence.
+ *
+ * `--color-text-link`, not `--color-text-accent`: this rule paints PROSE LINKS, the exact use the reach
+ * dimension's last level turns off, and reading the raw accent here made the docs the one place on the
+ * site where `data-accent="1"` did nothing, while `.sk-link` beside it went quiet. What keeps these
+ * links recognisable once the colour leaves is an underline, exactly as for `.sk-link`, except that a
+ * bare `<a>` gets its underline from the user agent and nothing here removes it. That is what makes
+ * dialling this one safe under WCAG 1.4.1: colour is not the only signal. Any future rule that strips
+ * the underline from prose anchors has to bring its own affordance with it.
  */
-main a:not(.sk-link) {
-  color: var(--color-text-accent);
+main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile) {
+  color: var(--color-text-link);
 }
 
 :is(p, li) > code {
@@ -1157,10 +1346,90 @@ main a:not(.sk-link) {
   inline-size: 28%;
 }
 
-/* Fixed tracks clip rather than widen, so a long value has to wrap inside its own cell. */
+/*
+ * ONE LINE PER VALUE. A token is one string; broken across three lines mid-identifier
+ * (`--sk-anchored-arrow-` / `size`) it stops being one string on screen, and a column of them stops
+ * being scannable at all, which is the whole job of a reference table. Anything longer than its
+ * track ends in an ellipsis and keeps its full text in `title` (and in the copy button beside it,
+ * which never copied the truncation).
+ */
 .token-group .sk-table__cell,
 .token-group .sk-table__body .sk-table__header {
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+}
+
+.token-group .sk-table__cell > span,
+.token-group .sk-table__body .sk-table__header > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*
+ * NINETY-SIX TABLES, AND THE READER LOOKS AT ONE. Each family is its own containment root, so
+ * layout, style and paint stop at its edge: the browser skips the work for every table that is off
+ * screen, and a keystroke in the filter only relayouts the tables in view instead of all of them.
+ * The size estimate keeps the scrollbar honest while a table is skipped, and it is a per-row
+ * estimate rather than a constant because a family holds anywhere from two rows to sixty.
+ */
+.token-group {
+  content-visibility: auto;
+  contain-intrinsic-size: auto var(--token-group-block-size, 20rem);
+}
+
+/*
+ * COPYABLE TOKEN CELLS: the real CopyButton (components/CopyButton.astro), one per cell, sitting
+ * beside the value it copies rather than swallowing the whole cell's click. `target` points at the
+ * cell's own text, in an id'd <span> next to it, so the button copies only that text and never its
+ * own (icon-only, sr-only label) or the row's other columns.
+ *
+ * A ghost button is already invisible at rest, so this is what shows the cell is interactive
+ * before anyone clicks: the button's own icon sits there from the start, the state layer on it
+ * answers hover, nothing here has to fake that separately.
+ *
+ * THE CELL STAYS A CELL, and this is the bug this block used to BE. It declared `display: flex` on
+ * the `<th>`/`<td>` itself, which does not make a table cell a flex row: it stops the element from
+ * generating a table cell at all. The browser then wraps the run of non-cell boxes into ONE
+ * anonymous cell, so on every row of this reference the definition and the resolved value shared a
+ * single 321px box, stacked, while the fourth declared track sat empty at the end of the row. The
+ * "wrapping" this table was accused of was two columns living inside one.
+ *
+ * So the layout is done WITHOUT taking the cell out of the table model: the text is a block that
+ * reserves the button's width, and the button is absolutely positioned into that reserved strip.
+ * `position: relative` on a table cell is what makes the strip its own containing block, and it
+ * also costs nothing per row, which matters on a page that renders three thousand of these.
+ */
+.sk-table__header--copy,
+.sk-table__cell--copy {
+  position: relative;
+  /* The strip the button sits in, measured the way the button is placed: the cell's own inline
+     padding (where the button's trailing edge lands), the button, and a gap before the text. */
+  padding-inline-end: calc(
+    var(--sk-table-cell-padding-x) + var(--size-control-sm) + var(--space-inline-sm)
+  );
+}
+
+.sk-table__header--copy > span,
+.sk-table__cell--copy > span {
+  display: block;
+  min-inline-size: 0;
+}
+
+.sk-table__header--copy .sk-copy-button,
+.sk-table__cell--copy .sk-copy-button {
+  position: absolute;
+  inset-inline-end: var(--sk-table-cell-padding-x);
+  inset-block-start: var(--sk-table-cell-padding-y);
+  flex-shrink: 0;
+}
+
+/*
+ * Where the page's single copy button waits between cells (components/CopyCells.astro,
+ * scripts/copy-cells.ts). The strip it lands in is reserved above whether or not it is there, so a
+ * cell does not change width when the button arrives; this is only the parking spot, and it holds
+ * nothing a reader should see.
+ */
+.docs-copy-cells {
+  display: none;
 }
 
 /* ── filter row ───────────────────────────────────────────────────────────── */

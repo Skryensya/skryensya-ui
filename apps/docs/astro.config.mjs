@@ -83,7 +83,37 @@ export default defineConfig({
       dedupe: ["react", "react-dom"],
     },
     optimizeDeps: {
-      include: ["react", "react-dom", "react/jsx-runtime", "react-dom/client", "@zag-js/react"],
+      include: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        /*
+         * The DEV runtime, and it is not a duplicate of the line above: dev compiles JSX to
+         * `jsx-dev-runtime` while a build compiles it to `jsx-runtime`, so pinning only the second
+         * leaves the one dev actually loads to on-demand discovery. That is precisely the
+         * re-optimize + mid-session reload this comment already warns about, and it lands as
+         * `dispatcher.getOwner is not a function` thrown from `framed.tsx`'s own `<iframe>`: the
+         * island's React and the pre-bundled react-dom end up holding different
+         * `ReactSharedInternals`, so the React preview never appears.
+         */
+        "react/jsx-dev-runtime",
+        "react-dom/client",
+        "@zag-js/react",
+        /*
+         * The playground's editor, and the third time this list has grown for the same reason. It
+         * takes `react` and `react-dom` as PEERS, so it is one more package that must reach the
+         * shared pre-bundle rather than resolve its own copy — and, being a direct dependency of
+         * apps/docs, it is one this list can actually pin (unlike the per-machine `@zag-js/<name>`
+         * packages above).
+         *
+         * Left off, Vite only discovers it when someone first opens /playground: it re-optimizes
+         * mid-session, and the island that already mounted comes back holding a different React
+         * than `react-dom`. That lands as "Invalid hook call" / `Cannot read properties of null
+         * (reading 'useState')` thrown from `Playground.tsx`'s own first `useState` — the ISLAND
+         * failing, with nothing wrong inside the sandbox at all.
+         */
+        "@codesandbox/sandpack-react",
+      ],
     },
     plugins: [svelte()],
     worker: {

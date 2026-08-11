@@ -4,3 +4,5 @@ packages:
   # The recipes are a package so the compiler, the gates and the site all import the SAME module
   # instead of three relative paths into a directory that is not one.
   - "contracts/recipes"
+  # Same reason: the evals runner imports the corpus as a module, not a directory of loose files.
+  - "evals"

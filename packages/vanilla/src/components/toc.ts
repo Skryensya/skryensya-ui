@@ -5,8 +5,10 @@ const rootSelector = `[${tocAttrs.root}]`;
 
 type Cleanup = () => void;
 
-/** Keeps the disclosure closed below `wide` and forces it open, inert, as a rail from `wide` up. */
+/** Keeps a consumer-declared rail open and inert where its layout has room. */
 function connectDisclosure(root: HTMLElement): Cleanup {
+  if (!root.hasAttribute("data-sk-toc-rail")) return () => {};
+
   const disclosure = root.querySelector<HTMLDetailsElement>(
     `[${tocAttrs.disclosure}]`,
   );

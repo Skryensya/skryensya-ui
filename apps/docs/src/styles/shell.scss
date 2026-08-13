@@ -34,95 +34,6 @@
     grid-row: 1;
   }
 
-  .sk-toc {
-    position: static;
-    inline-size: 100%;
-    min-inline-size: 0;
-    max-inline-size: 100%;
-    max-block-size: none;
-    overflow: visible;
-    border-block-end: 1px solid var(--color-border-subtle);
-  }
-
-  /* An index of nothing takes no row here: `visibility: hidden` would leave the summary's gap in
-   * the flow, which on the rail was a reserved column and here is just a blank band. */
-  .sk-toc[data-empty] {
-    display: none;
-  }
-
-  /* The container goes full-bleed and the ROWS carry the gutter, which is the opposite of the rail.
-   * A rail is a block of text in a padded column, so padding the column is enough. A disclosure is a
-   * list of tap targets: the target has to reach both screen edges while its text stays on the
-   * document's own margin, and the row's own padding is the only thing that gives both. Padding the
-   * container instead leaves the state layer stopping at the text and the list's scrollbar sitting on
-   * top of the last character. */
-  .sk-toc__inner {
-    padding: 0;
-  }
-
-  .sk-toc__summary,
-  .sk-toc__link {
-    padding-inline: var(--space-inset-lg);
-  }
-
-  /* Caption type is right for a rail read from the corner of the eye at arm's length. Here the row
-   * is a control you TAP, at reading distance, with nothing beside it to be quieter than: it takes
-   * back body type and the minimum height a control has whatever its label measures. */
-  .sk-toc__link {
-    min-block-size: var(--size-control-md);
-    font-size: var(--font-size-body-sm);
-    line-height: var(--font-line-height-body-sm);
-  }
-
-  /* The marker is the rail's mark: here the row is already full-bleed and its own state layer says
-   * which one it is, so a 2px bar on the screen edge would only be a fleck of accent. */
-  .sk-toc__link::after {
-    content: none;
-  }
-
-  .sk-toc__link[aria-current="true"] {
-    background: var(--color-nav-current-bg);
-  }
-
-  .sk-toc__item[data-level="h3"] .sk-toc__link {
-    padding-inline-start: calc(var(--space-inset-lg) + var(--space-inset-md));
-  }
-
-  /* Now a real control: a full-width row you tap, with the marker the rail suppressed. */
-  .sk-toc__summary {
-    justify-content: space-between;
-    min-block-size: var(--size-control-md);
-    margin-block-end: 0;
-    padding-block: var(--space-inset-sm);
-    cursor: pointer;
-    pointer-events: auto;
-  }
-
-  .sk-toc__summary::before {
-    display: block;
-  }
-
-  .sk-toc__chevron {
-    display: inline-grid;
-    place-items: center;
-    flex: none;
-    color: var(--color-text-tertiary);
-    transition: rotate var(--motion-state-change-duration) var(--motion-state-change-easing);
-  }
-
-  .sk-toc__inner[open] .sk-toc__chevron {
-    rotate: 180deg;
-  }
-
-  /* Opening it must not turn the top of the page into a mile of links either: past half the
-   * viewport the list scrolls on its own. Auto-fit previews mirror the reader viewport through the
-   * custom property; using their content-sized `dvh` here would keep an opened list one row tall. */
-  .sk-toc__inner[open] .sk-toc__list {
-    max-block-size: calc(var(--sk-component-preview-viewport-block-size, 100dvh) * 0.5);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    padding-block-end: var(--space-stack-sm);
-  }
 
   .shell main {
     grid-column: 2;
@@ -130,11 +41,7 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .sk-toc__chevron {
-    transition: none;
-  }
-}
+
 
 /* Below `desktop`, the rail has no room, so the same nav MOVES into the drawer (never restacks into a
  * mile of links above the document), and the header grows the button that opens it. This is the one

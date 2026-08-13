@@ -3,7 +3,8 @@ import "@skryensya/core/components/menu.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { menuTree } from "../../demos/menu";
+import { menuTree, menuMultilevelTree, menuCompactTree, menuSafetyTree, menuContextCss } from "../../demos/menu";
+import { MenuContextDemo } from "../react-demos/menu-context";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/menu.yaml?raw";
 import coreSource from "@core/src/menu.ts?raw";
@@ -22,6 +23,68 @@ import { initComponents } from "@skryensya/vanilla/auto";
 
 mountIcons(document, lucideIcons);
 initComponents();`;
+
+/*
+ * The context-menu shape has no `contextTarget`/`data-sk-menu-context-trigger` slot in the
+ * contract (menu.ts's `Menu` signature only ever renders a `trigger` button), so it cannot come
+ * from a `tree`: this is hand-authored markup on the Vanilla side (the same escape hatch
+ * CodeBlock's `code`/`html` props exist for) and a hand-authored React island
+ * (`react-demos/menu-context.tsx`) on the other. The area itself is the demo: `Item actions` is a
+ * real `data-sk-menu-context-trigger` over a marked box, so a reader can see exactly where a
+ * right-click (or a long-press) is caught, not just read that it would be somewhere on the page.
+ *
+ * The CSS (corner marks, centering, hover) is `menuContextCss` from `demos/menu.ts`, one string
+ * injected into BOTH bindings' own stage, so this is one demo painted twice rather than two that
+ * could quietly drift apart.
+ *
+ * Positioning is the MACHINE's job, not this page's: `getContextTriggerProps()` forwards the
+ * click's point to the shared `@zag-js/menu` machine (both bindings run the same one), which
+ * computes a real floating-ui placement from it with the SAME `bottom-start` default a trigger
+ * button gets — below the pointer, growing toward the inline-end, with automatic flip near a
+ * screen edge. Neither binding's own menu.ts/menu.tsx adds a line of positioning for this route
+ * (see the comment beside `anchorEl = trigger` in each): the native-anchor pattern anchors to an
+ * ELEMENT's box, and a context trigger is not a point, so both bindings skip that route entirely
+ * for this shape and let the machine's own inline style stand.
+ */
+const contextMenuHtml = `<div class="sk-menu menu-context-demo" data-sk-menu data-density="compact" aria-label="${t("demo.menu.context.label")}">
+  <div class="menu-context-demo__area" data-sk-menu-context-trigger>
+    <p>${t("demo.menu.context.area")}</p>
+  </div>
+  <div class="sk-menu__positioner sk-anchored" data-sk-menu-positioner data-density="compact">
+    <div class="sk-menu__content" data-sk-menu-content>
+      <div class="sk-menu__item sk-interactive" data-sk-menu-item data-value="copy">
+        <span class="sk-menu__item-label">${t("demo.menu.context.copy")}</span>
+      </div>
+      <div class="sk-menu__item sk-interactive" data-sk-menu-item data-value="paste">
+        <span class="sk-menu__item-label">${t("demo.menu.context.paste")}</span>
+      </div>
+      <div class="sk-menu__separator" data-sk-menu-separator></div>
+      <div class="sk-menu__item sk-interactive" data-sk-menu-item data-value="delete" data-tone="danger">
+        <span class="sk-menu__item-label">${t("demo.menu.context.delete")}</span>
+      </div>
+    </div>
+  </div>
+</div>`;
+
+/*
+ * The React tab's SOURCE, shown beside the live island above it. `kind: "separator"` (core/src/
+ * menu.ts) reproduces the Vanilla markup's divider between Paste and Delete.
+ */
+const contextMenuReact = `<Menu
+  label="${t("demo.menu.context.label")}"
+  density="compact"
+  contextTarget={
+    <div className="menu-context-demo__area">
+      <p>${t("demo.menu.context.area")}</p>
+    </div>
+  }
+  items={[
+    { value: "copy", label: "${t("demo.menu.context.copy")}" },
+    { value: "paste", label: "${t("demo.menu.context.paste")}" },
+    { value: "menu-context-separator", kind: "separator" },
+    { value: "delete", label: "${t("demo.menu.context.delete")}", tone: "danger" },
+  ]}
+/>`;
 
 const sourceFiles = [
   { id: "contracts/semantic/menu.yaml", source: contractSource, language: "yaml" },
@@ -48,6 +111,56 @@ const sourceFiles = [
 
     <h3>{t("component.contractNotesTitle")}</h3>
     <p set:html={t("menuPage.contractBody")} />
+
+    <h3>{t("menuPage.multilevelTitle")}</h3>
+    <p set:html={t("menuPage.multilevelBody")} />
+    <ComponentPreview
+      tree={menuMultilevelTree(t)}
+      js={js}
+      label={t("menuPage.multilevelTitle")}
+      viewport="menu"
+    />
+
+    <h3>{t("menuPage.compactTitle")}</h3>
+    <p set:html={t("menuPage.compactBody")} />
+    <ComponentPreview
+      tree={menuCompactTree(t)}
+      js={js}
+      label={t("menuPage.compactTitle")}
+      viewport="menu"
+    />
+
+    <h3>{t("menuPage.contextTitle")}</h3>
+    <p set:html={t("menuPage.contextBody")} />
+    <ComponentPreview
+      html={contextMenuHtml}
+      css={menuContextCss}
+      react={contextMenuReact}
+      js={js}
+      label={t("menuPage.contextTitle")}
+      viewport="menu"
+      screens={false}
+    >
+      <Fragment slot="react">
+        <MenuContextDemo
+          client:load
+          ariaLabel={t("demo.menu.context.label")}
+          area={t("demo.menu.context.area")}
+          copyLabel={t("demo.menu.context.copy")}
+          pasteLabel={t("demo.menu.context.paste")}
+          deleteLabel={t("demo.menu.context.delete")}
+        />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3>{t("menuPage.safetyTitle")}</h3>
+    <p set:html={t("menuPage.safetyBody")} />
+    <ComponentPreview
+      tree={menuSafetyTree(t)}
+      js={js}
+      label={t("menuPage.safetyTitle")}
+      viewport="menu"
+    />
   </Fragment>
 
   <Fragment slot="install">

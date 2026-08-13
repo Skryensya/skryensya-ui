@@ -16,10 +16,9 @@ import type { ComponentContract } from "./contract.js";
  * a value an author picks, which is exactly the line that already separates every contract that owns a
  * Zag machine from the CSS-only patterns beside it.
  *
- * The disclosure/rail switch is a SEPARATE fact, and deliberately not a breakpoint baked in here: a
- * consumer's own layout decides whether it has a column to spare, same as `sidebar` never decides for
- * itself that it becomes a drawer. This contract ships one shape, an interactive `<details>`, and a
- * consumer's stylesheet is what turns it into an always-open rail where there is room.
+ * A consumer's layout may opt into `data-sk-toc-rail`; only then does the shared stylesheet turn
+ * this disclosure into an always-open rail at `wide`. Plain consumers keep the native disclosure at
+ * every width, so the component never guesses that its host has a column to spare.
  */
 export const tocParts = {
   root: "sk-toc",

@@ -16,52 +16,35 @@
      * inside it, and the caption on the same line as the text.
      */
     --sk-toc-gutter: var(--space-inline-md);
-    /* How far an `h3` sits under its `h2`. Its own step, not the gutter again: the indent says
-     * "nested", the gutter says "this column starts here", and tying them makes changing one a
-     * change to the other. */
     --sk-toc-indent: var(--space-inline-md);
-    /* The "you are here" bar. 2px is the smallest width that still reads as a deliberate mark
-     * rather than a hairline of the border color. */
     --sk-toc-marker-inline-size: 2px;
 
-    position: sticky;
-    top: var(--sk-toc-sticky-top);
     display: block;
-    inline-size: var(--sk-toc-inline-size);
-    min-inline-size: var(--sk-toc-inline-size);
-    max-block-size: calc(100dvh - var(--sk-toc-sticky-top));
-    overflow-y: auto;
-    overscroll-behavior: contain;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    border-block-end: 1px solid var(--color-border-subtle);
   }
 
   /*
-   * NO RULE DOWN THE SIDE. The column used to carry a full-height border, and it read as a frame
-   * around nothing: a line the height of the viewport beside a list eight rows long, drawn in the
-   * same color as the marker beside the current row, so the eye had to sort out which of the two
-   * vertical lines meant something. The one that means something is the marker. What separates the
-   * index from the prose is the space between them, which the layout already spends.
-   *
-   * The top inset matches the document's own (`--space-inset-lg`), so the caption starts on the
-   * line the page starts on.
+   * The published default is a native disclosure: it must work before an enhancer runs and in any
+   * consumer that does not have room for a document rail. `data-sk-toc-rail` is the consumer's
+   * layout opt-in; its wide-screen treatment lives below, in this same component stylesheet.
    */
   .sk-toc__inner {
     min-inline-size: 0;
-    padding: var(--space-inset-lg) var(--space-inset-md);
+    padding: 0;
   }
 
-  /* As a rail it is not a control: the column is always open, so it paints as the caption it used
-   * to be: no marker, no chevron, no state layer. A consumer's breakpoint gives these back once
-   * this becomes a real disclosure below its own column width. */
   .sk-toc__summary {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: var(--space-inline-sm);
     min-inline-size: 0;
-    /* On the rows' own text origin, not on the container's: the caption and every label below it
-     * share one inline-start edge, and the gutter to their left belongs to the marker. */
-    padding-inline-start: var(--sk-toc-gutter);
-    margin-block-end: var(--space-stack-xs);
-    pointer-events: none;
+    min-block-size: var(--size-control-md);
+    margin-block-end: 0;
+    padding: var(--space-inset-sm) var(--space-inset-lg);
+    cursor: pointer;
     list-style: none;
   }
 
@@ -74,12 +57,35 @@
   }
 
   .sk-toc__summary::before {
-    /* the state layer of `sk-interactive`, off while the summary is a caption */
-    display: none;
+    display: block;
   }
 
   .sk-toc__chevron {
-    display: none;
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    color: var(--color-text-tertiary);
+    transition: rotate var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  /*
+   * The contract's chevron part is intentionally geometry-free markup. Drawing this small,
+   * decorative mark in CSS keeps HTML and React consumers on the same contract without requiring
+   * an icon-set binding merely to open a native `<details>`.
+   */
+  .sk-toc__chevron::before {
+    content: "";
+    box-sizing: border-box;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-inline-end: 1.5px solid currentColor;
+    border-block-end: 1.5px solid currentColor;
+    rotate: 45deg;
+    translate: 0 -0.125rem;
+  }
+
+  .sk-toc__inner[open] .sk-toc__chevron {
+    rotate: 180deg;
   }
 
   /* Caption label, not a prose section title. */
@@ -106,19 +112,6 @@
     min-inline-size: 0;
   }
 
-  /*
-   * CAPTION TYPE, NOT BODY TYPE, and this is the size decision of the whole component.
-   *
-   * The index is read by scanning, never by reading: a reader looks at it to find a section and
-   * looks away. At body-sm the entries competed with the prose beside them, a title of six words
-   * took two lines at 14px in a 14rem column, and eight sections stood taller than the first screen
-   * of the document they index. `--font-size-caption` (the scale's 12) is the rung the scale already
-   * reserves for text that labels rather than reads, and it is what makes rows fit on one line, so
-   * the list reads as a list rather than as a paragraph with links in it.
-   *
-   * The gutter carries the current marker, so the row's own box still starts at the column edge:
-   * the state layer paints the full row, the text starts after the marker's strip.
-   */
   .sk-toc__link {
     position: relative;
     display: flex;
@@ -126,44 +119,28 @@
     gap: var(--space-inline-sm);
     inline-size: 100%;
     min-inline-size: 0;
-    padding-block: var(--space-inset-xs);
-    padding-inline: var(--sk-toc-gutter) var(--space-inline-sm);
+    min-block-size: var(--size-control-md);
+    padding: var(--space-inset-xs) var(--space-inset-lg);
     border-radius: var(--radius-control);
     color: var(--color-text-secondary);
-    font-size: var(--font-size-caption);
-    line-height: var(--font-line-height-caption);
-    overflow-wrap: break-word;
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body-sm);
+    overflow-wrap: anywhere;
     text-decoration: none;
     text-wrap: pretty;
     transition: color var(--motion-feedback-duration) var(--motion-feedback-easing);
   }
 
-  /* The indent lives on the LINK, never on the item: on the item it would move the row's own
-   * inline-start edge, and with it the marker's column, so the "you are here" bar would jog in and
-   * out by level instead of tracking one line down the rail. */
-  .sk-toc__item[data-level="h3"] .sk-toc__link {
-    padding-inline-start: calc(var(--sk-toc-gutter) + var(--sk-toc-indent));
+  .sk-toc__label {
+    min-inline-size: 0;
   }
 
-  /*
-   * THE MARKER, always present, painted only when current.
-   *
-   * Declared on every row rather than added to the current one: a bar that only exists while
-   * current can only animate by appearing, and the transition here is a color arriving on a strip
-   * that was already there. It also means the box never changes size as the scroll-spy moves.
-   *
-   * `::after`, because `::before` is the state layer's (patterns/state-layer.css).
-   */
+  .sk-toc__item[data-level="h3"] .sk-toc__link {
+    padding-inline-start: calc(var(--space-inset-lg) + var(--space-inset-md));
+  }
+
   .sk-toc__link::after {
-    content: "";
-    position: absolute;
-    inset-block: var(--space-inset-xs);
-    inset-inline-start: 0;
-    inline-size: var(--sk-toc-marker-inline-size);
-    border-radius: var(--radius-pill);
-    background: transparent;
-    transition: background-color var(--motion-feedback-duration)
-      var(--motion-feedback-easing);
+    content: none;
   }
 
   .sk-toc__icon {
@@ -178,29 +155,108 @@
     }
   }
 
-  /*
-   * The section you're reading, written by the scroll-spy.
-   *
-   * A MARK AND A WEIGHT, not the filled pill nav-list uses. The pill is right where the row IS the
-   * navigation (the site index in the sidebar, one filled row on a surface of its own); here the
-   * rail sits inches from the prose, and a block of accent background that size pulls the eye off
-   * the document the index exists to serve. The accent bar reads at a glance from the corner of the
-   * eye, which is the only way this state is ever read.
-   */
   .sk-toc__link[aria-current="true"] {
+    background: var(--color-nav-current-bg);
     color: var(--color-nav-current-fg);
     font-weight: var(--font-weight-label);
-  }
-
-  .sk-toc__link[aria-current="true"]::after {
-    background: var(--color-border-accent);
   }
 
   .sk-toc__link[aria-current="true"] .sk-toc__icon {
     color: var(--color-nav-current-fg);
   }
 
+  .sk-toc__inner[open] .sk-toc__list {
+    max-block-size: calc(var(--sk-component-preview-viewport-block-size, 100dvh) * 0.5);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-block-end: var(--space-stack-sm);
+  }
+
+  /*
+   * A rail is a consumer's layout choice, not a second component. This opt-in restores the compact,
+   * sticky form only when the consumer declares the column and the viewport can hold it. The
+   * enhancer mirrors this attribute: without it, a Toc remains a keyboard-accessible disclosure at
+   * every width.
+   */
+  @media (min-width: 72rem) {
+    .sk-toc[data-sk-toc-rail] {
+      position: sticky;
+      top: var(--sk-toc-sticky-top);
+      inline-size: var(--sk-toc-inline-size);
+      min-inline-size: var(--sk-toc-inline-size);
+      max-block-size: calc(100dvh - var(--sk-toc-sticky-top));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      border: 0;
+    }
+
+    .sk-toc[data-sk-toc-rail] .sk-toc__inner {
+      padding: var(--space-inset-lg) var(--space-inset-md);
+    }
+
+    .sk-toc[data-sk-toc-rail] .sk-toc__summary {
+      justify-content: start;
+      min-block-size: auto;
+      margin-block-end: var(--space-stack-xs);
+      padding: 0 0 0 var(--sk-toc-gutter);
+      pointer-events: none;
+    }
+
+    .sk-toc[data-sk-toc-rail] .sk-toc__summary::before,
+    .sk-toc[data-sk-toc-rail] .sk-toc__chevron {
+      display: none;
+    }
+
+    .sk-toc[data-sk-toc-rail] .sk-toc__link {
+      min-block-size: 0;
+      padding: var(--space-inset-xs) var(--space-inline-sm) var(--space-inset-xs)
+        var(--sk-toc-gutter);
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-caption);
+      line-height: var(--font-line-height-caption);
+    }
+
+    .sk-toc[data-sk-toc-rail] .sk-toc__item[data-level="h3"] .sk-toc__link {
+      padding-inline-start: calc(var(--sk-toc-gutter) + var(--sk-toc-indent));
+    }
+
+    .sk-toc[data-sk-toc-rail] .sk-toc__link::after {
+      content: "";
+      position: absolute;
+      inset-block: var(--space-inset-xs);
+      inset-inline-start: 0;
+      inline-size: var(--sk-toc-marker-inline-size);
+      border-radius: var(--radius-pill);
+      background: transparent;
+      transition: background-color var(--motion-feedback-duration)
+        var(--motion-feedback-easing);
+    }
+
+    .sk-toc[data-sk-toc-rail] .sk-toc__link[aria-current="true"] {
+      background: transparent;
+    }
+
+    .sk-toc[data-sk-toc-rail] .sk-toc__link[aria-current="true"]::after {
+      background: var(--color-border-accent);
+    }
+
+    .sk-toc[data-sk-toc-rail] .sk-toc__inner[open] .sk-toc__list {
+      max-block-size: none;
+      overflow: visible;
+      padding-block-end: 0;
+    }
+
+    /*
+     * The visual rail must not wait for deferred JavaScript to add `open`. JavaScript still writes
+     * it immediately for assistive technology and manages the breakpoint transition.
+     */
+    .sk-toc[data-sk-toc-rail] .sk-toc__inner:not([open]) > .sk-toc__nav {
+      display: block;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
+    .sk-toc__chevron,
     .sk-toc__link,
     .sk-toc__link::after {
       transition: none;

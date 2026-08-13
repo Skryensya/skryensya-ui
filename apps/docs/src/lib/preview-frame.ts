@@ -11,6 +11,13 @@ import frameRuntimeUrl from "../scripts/component-preview-frame.ts?worker&url";
 export interface PreviewFrameOptions {
   /** Authored markup for the frame body. */
   body: string;
+  /**
+   * App CSS the demo needs beyond the system's own stylesheet (`ComponentPreview`'s `css` prop).
+   * Injected as a `<style>` in the frame's own `<head>`, the same way the standalone Playground
+   * document embeds it: without this the CSS tab shown to the reader described a box the live
+   * stage never actually painted.
+   */
+  css?: string;
   /** No stage padding: some components ARE a layout and must reach the edges. */
   flush?: boolean;
   /** Let the frame scroll instead of growing to its content. */
@@ -51,6 +58,7 @@ const escapeAttribute = (value: string): string =>
 
 export function buildPreviewFrameDocument({
   body,
+  css,
   flush = false,
   scroll = false,
   measure,
@@ -75,6 +83,7 @@ export function buildPreviewFrameDocument({
     <meta name="color-scheme" content="light dark">
     <base target="_top">
     <script type="module" src="${escapeAttribute(frameRuntimeUrl)}" fetchpriority="high"><\/script>
+    ${css ? `<style>\n${css}\n    </style>` : ""}
   </head>
   <body
     class="sk-component-preview__frame-body"

@@ -120,6 +120,8 @@ interface Props {
   description?: string;
   /** Full-width tool layout: drop the docs rail, toc, page-nav and footer, render the slot alone. */
   fullBleed?: boolean;
+  /** Content geometry inside the docs shell. Grid keeps the shell rails but exposes named content spans. */
+  documentLayout?: "column" | "grid";
   /**
    * The page authors its own `<VanillaMount>` inside `<slot />` (inside a tab panel, say) instead
    * of getting one appended after it for free. Nothing in the shell may sit outside whatever
@@ -128,7 +130,7 @@ interface Props {
   hideVanillaMount?: boolean;
 }
 
-const { title, description, fullBleed = false, hideVanillaMount = false } = Astro.props;
+const { title, description, fullBleed = false, documentLayout = "column", hideVanillaMount = false } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 
 /*
@@ -662,7 +664,7 @@ const PALETTE_PRESETS = [
       </main>
     ) : (
     <Fragment>
-    <div class="shell sk-wrapper" data-size="lg">
+    <div class="shell sk-wrapper" data-document-layout={documentLayout} data-size="lg">
       {/*
         The rail is the component, enhanced: `data-sk-sidebar` is what runs the resize behaviour over
         the authored markup. It has no trigger and does not want one, the index is the page's
@@ -714,7 +716,13 @@ const PALETTE_PRESETS = [
         ></div>
       </aside>
 
-      <main class="sk-wrapper" data-size="md" id="docs-content" tabindex="-1">
+      <main
+        class={documentLayout === "grid" ? "sk-layout-grid" : "sk-wrapper"}
+        data-document-layout={documentLayout}
+        data-size={documentLayout === "column" ? "md" : undefined}
+        id="docs-content"
+        tabindex="-1"
+      >
         <Fragment set:html={documentIndex!.html} />
         {!hideVanillaMount && vanillaMount && <VanillaMount {...vanillaMount} />}
         {
@@ -744,6 +752,85 @@ const PALETTE_PRESETS = [
       </main>
 
       <Toc items={tocItems} pending={tocPending} />
+
+      {/*
+        The hero-tabs ToC's fill, `is:inline` and RIGHT HERE on purpose. The deferred/module version
+        this replaced sat near the end of `<body>` (after the footer, the search dialog, every other
+        script) and a `type="module"` script never runs until the WHOLE document has parsed, wherever
+        it sits in the DOM — so it was never really waiting on `@skryensya/vanilla` (splitting that
+        import out only bought ~15ms), it was waiting on the parser to finish everything AFTER the
+        toc too. `is:inline` runs the instant the parser reaches it, and the panels this reads are
+        already above it in source, so it can fill the list before the parser has even reached the
+        footer, let alone before the deferred scripts' turn.
+
+        `data-sk-hero-tab` (set in `<head>`, before body) rather than the tabs root's own `data-value`:
+        this needs the READER'S requested tab, and `hero-tabs-url.ts` (which corrects `data-value`
+        from `?tab=`) is itself deferred, later than this. Reading the same pre-paint answer that
+        already told the stylesheet which panel to show keeps this in sync without waiting on it.
+
+        A hand-written copy of `buildHeroTabsToc`/`panelForHeroTab` (`../scripts/hero-tabs-toc-seed.ts`),
+        because `is:inline` cannot `import`; the same duplication `document-index.ts` already accepts
+        for this page's slugger, and for the same reason. `hero-tabs-toc.ts` still owns every tab
+        switch AFTER this one, via the real module.
+      */}
+      <script is:inline>
+        (function () {
+          var heroTabs = document.querySelector(".docs-component-hero-tabs");
+          var tocRoot = document.querySelector("[data-sk-toc]");
+          if (!heroTabs || !tocRoot) return;
+          var tabsRoot = heroTabs.closest("[data-sk-tabs]");
+          if (!tabsRoot) return;
+
+          var value = document.documentElement.getAttribute("data-sk-hero-tab") || tabsRoot.getAttribute("data-value");
+          if (!value) return;
+          var panel = tabsRoot.querySelector(':scope > [data-sk-tabs-content][data-value="' + value + '"]');
+          if (!panel) return;
+          var list = tocRoot.querySelector("ul");
+          if (!list) return;
+
+          var headings = panel.querySelectorAll(":scope > h3, :scope > h4");
+          if (headings.length < 1) {
+            tocRoot.setAttribute("data-empty", "");
+            tocRoot.setAttribute("data-ready", "");
+            return;
+          }
+
+          var frag = document.createDocumentFragment();
+          for (var i = 0; i < headings.length; i++) {
+            var heading = headings[i];
+            if (!heading.id) {
+              var base =
+                (heading.textContent || "")
+                  .toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[̀-ͯ]/g, "")
+                  .replace(/[^a-z0-9]+/g, "-")
+                  .replace(/(^-|-$)/g, "") || "seccion";
+              var id = base;
+              var n = 2;
+              while (document.getElementById(id)) id = base + "-" + n++;
+              heading.id = id;
+            }
+            var item = document.createElement("li");
+            item.className = "sk-toc__item";
+            item.setAttribute("data-level", heading.tagName === "H3" ? "h2" : "h3");
+            var link = document.createElement("a");
+            link.className = "sk-toc__link sk-interactive";
+            link.href = "#" + heading.id;
+            link.textContent = heading.textContent;
+            item.appendChild(link);
+            frag.appendChild(item);
+          }
+          list.replaceChildren(frag);
+
+          if (!window.location.hash) {
+            var first = list.querySelector("a");
+            if (first) first.setAttribute("aria-current", "true");
+          }
+
+          tocRoot.setAttribute("data-ready", "");
+        })();
+      </script>
     </div>
 
     </Fragment>
@@ -968,9 +1055,10 @@ const PALETTE_PRESETS = [
 
     {/*
       Which hero tab is open, in the address bar, so it can be linked to (`../scripts/hero-tabs-url.ts`).
-      FIRST of the three module scripts that touch this bar, and the order is load-bearing: it writes
-      the tab from `?tab=` onto the root's `data-value`, which is the same attribute the ToC below
-      reads to pick a panel and that `Tabs.svelte` reads at hydration to pick its default.
+      Writes the tab from `?tab=` onto the root's `data-value`, which `Tabs.svelte` reads at hydration
+      to pick its default. The ToC's own fill no longer waits on this one (see the `is:inline` script
+      right after `<Toc>` above, which reads the same `data-sk-hero-tab` this was itself resolved
+      from, set in `<head>` before either of these runs).
     */}
     <script>
       import { initHeroTabsUrl } from "../scripts/hero-tabs-url";
@@ -978,11 +1066,10 @@ const PALETTE_PRESETS = [
     </script>
 
     {/*
-      The hero tabs pilot's own ToC (see the note above and `../scripts/hero-tabs-toc.ts`): one
-      section index per tab, rebuilt on every switch. A module script, not `is:inline`: it needs
-      `@skryensya/vanilla`'s enhancer runtime, and the brief settle before it fills the rail (the
-      same skeleton state every page already shows before its own ready flag lands) costs nothing
-      on the one pilot page that has this bar.
+      The hero tabs ToC's reactive half (`../scripts/hero-tabs-toc.ts`): rebuilding the list and its
+      scroll-spy on every tab switch. The initial fill already happened, `is:inline`, right after
+      `<Toc>`; this only has to be ready by the reader's first click, which is never before first
+      paint, so a module script (needs `@skryensya/vanilla`'s enhancer runtime) is fine here.
     */}
     <script>
       import { initHeroTabsToc } from "../scripts/hero-tabs-toc";

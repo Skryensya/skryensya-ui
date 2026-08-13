@@ -3,8 +3,25 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "44e7b5422ad0bb3b"
+surface: "332a522297f66cbc"
 entries:
+  - date: 2026-08-13
+    kind: feature
+    target: density
+    es:
+      title: Menu acepta density compact y un flag de debug del triángulo de intención
+      body: >-
+        <code>density</code> comprime las filas (<code>data-density="compact"</code>), el mismo idioma
+        que List. Como el contenido se porta a <code>body</code>, el binding React lo vuelve a estampar
+        en cada positioner. <code>debugSafetyTriangle</code> no cambia el comportamiento: sólo dibuja
+        la geometría de intención que la machine ya aplica al cruzar un sibling hacia un submenu.
+    en:
+      title: Menu accepts compact density and a debug flag for the intent triangle
+      body: >-
+        <code>density</code> tightens the rows (<code>data-density="compact"</code>), the same idiom as
+        List. Because the content portals to <code>body</code>, the React binding re-stamps it on every
+        positioner. <code>debugSafetyTriangle</code> does not change behaviour: it only draws the intent
+        geometry the machine already applies when crossing a sibling toward a submenu.
   - date: 2026-08-11
     kind: feature
     es:

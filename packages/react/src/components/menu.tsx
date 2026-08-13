@@ -1,5 +1,7 @@
 import { anchoredParts } from "@skryensya/core/anchored";
+import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import {
+  menuContract,
   menuParts,
   type MenuApi,
   type MenuItem,
@@ -25,7 +27,10 @@ const cx = (...classes: Array<string | undefined>) =>
   classes.filter(Boolean).join(" ");
 type CheckedState = Record<string, boolean>;
 
-export type MenuProps = {
+export type MenuProps = Pick<
+  SignatureOptionsOf<typeof menuContract, "Menu">,
+  "density"
+> & {
   id?: string;
   disabled?: boolean;
   trigger?: ReactNode;
@@ -36,15 +41,6 @@ export type MenuProps = {
   indicator?: ReactNode;
   itemIndicator?: ReactNode;
   submenuIndicator?: ReactNode;
-  /**
-   * A tighter row for a dense command menu (menu.css's `[data-density="compact"]`, same idiom as
-   * List's). Every submenu, at any depth, inherits it: threaded down and re-stamped on each level's
-   * own positioner rather than relied on through inheritance, because the TOP-level positioner still
-   * portals to `<body>` and breaks the chain there; a submenu's own positioner stays nested (see the
-   * comment on `Submenu`'s return) and would inherit it either way, but re-stamping is what already
-   * covers the portalled case and costs nothing extra to keep doing at every depth.
-   */
-  density?: "compact";
   /**
    * Draws @zag-js/menu's OWN pointer-intent polygon live over every submenu this Menu owns, plus a
    * status badge for `context.pointerRoutingMode`. Not a feature this binding adds: the machine

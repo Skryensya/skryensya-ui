@@ -48,15 +48,20 @@ function publishBinding(binding: ComponentPreviewBinding): void {
   );
 }
 
-/** Paint the two plain binding buttons: `data-value` on the group, `aria-pressed` on each option. */
-function paintBindingTabs(tabs: HTMLElement | null, binding: ComponentPreviewBinding): void {
-  if (!tabs) return;
-  tabs.setAttribute("data-value", binding);
-  tabs
-    .querySelectorAll<HTMLElement>(selector(componentPreviewAttrs.bindingOption))
-    .forEach((option) => {
-      option.setAttribute("aria-pressed", option.getAttribute("data-value") === binding ? "true" : "false");
-    });
+/**
+ * Move a Segmented widget to `value` from the OUTSIDE: another preview's own change, or the
+ * document preference this preview just adopted. Segmented owns its own state (aria-checked, the
+ * sliding indicator, roving tabindex) and exposes no external setter, so the one lever this module
+ * has is the same one a reader has — clicking the matching option — which lets Segmented's own
+ * `connectSegmented` do the actual painting instead of a second implementation of it here.
+ *
+ * A no-op when already correct: without this guard, syncing the instance that INITIATED the
+ * change would re-click its own already-current option, which is at best redundant and at worst a
+ * second `sk-value-change` in the middle of handling the first.
+ */
+function selectSegmentedOption(tabs: HTMLElement | null, optionAttr: string, value: string): void {
+  if (!tabs || tabs.getAttribute("data-value") === value) return;
+  tabs.querySelector<HTMLElement>(`${selector(optionAttr)}[data-value="${value}"]`)?.click();
 }
 
 /**
@@ -136,30 +141,11 @@ function publishScreen(screen: ComponentPreviewScreen): void {
   );
 }
 
-const screenOrder: readonly ComponentPreviewScreen[] = ["free", "tablet", "mobile"];
-
-function nextScreen(current: ComponentPreviewScreen): ComponentPreviewScreen {
-  return screenOrder[(screenOrder.indexOf(current) + 1) % screenOrder.length]!;
-}
-
 /**
- * Paint the toggle button: which of its stacked icon faces is visible (CSS keys off `data-value`,
- * same mechanism as ThemeToggle's stacked faces) and its accessible name. The three names are
- * authored per instance as `data-sk-component-preview-screen-label-{screen}`; same pattern as
- * ThemeToggle's `data-sk-theme-toggle-label-*`; each preview's toggle names its own
- * component ("Screen size (Button): Tablet"), not a generic string shared by every preview.
- */
-function paintScreenToggle(toggle: HTMLElement, screen: ComponentPreviewScreen): void {
-  toggle.setAttribute("data-value", screen);
-  const label = toggle.getAttribute(`data-sk-component-preview-screen-label-${screen}`);
-  if (label) toggle.setAttribute("aria-label", label);
-}
-
-/**
- * Screen presets for the stage: a single icon-only button that cycles free → tablet → mobile →
- * free on click, exactly like ThemeToggle cycles system → light → dark. Three options in a row are
- * one decision ("what does this look like smaller"), not three independent choices, so one button
- * that advances beats a radiogroup that makes the reader aim at a specific option.
+ * Screen presets for the stage: a real Segmented (Libre | Tablet | Móvil), the site's global
+ * enhancer already knows how to run — this module only reacts to the `sk-value-change` it
+ * dispatches on itself, the same way `sourceTabs` below reacts to Tabs' own event, rather than
+ * re-implementing Segmented's click handling, aria-checked painting or sliding indicator.
  *
  * The preset takes over BOTH axes, so choosing one drops any height the reader had dragged: two
  * owners of the same height is the bug, and the preset is the one the reader just asked for. The
@@ -173,7 +159,7 @@ function paintScreenToggle(toggle: HTMLElement, screen: ComponentPreviewScreen):
  * preview with no toggle of its own (or one mounted later) still follows the page.
  */
 function connectScreenTabs(root: HTMLElement): Cleanup {
-  const toggle = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.screenTabs));
+  const tabs = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.screenTabs));
   if (!stagesOf(root).length) return () => {};
 
   const applyScreen = (screen: ComponentPreviewScreen) => {
@@ -189,34 +175,34 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
     }
   };
 
-  const onClick = () => {
-    const current = readDocumentScreen() ?? sharedScreen ?? "free";
-    const next = nextScreen(current);
-    publishScreen(next);
-    applyScreen(next);
-    if (toggle) paintScreenToggle(toggle, next);
+  const onValueChange = (event: Event) => {
+    const value = (event as ValueChangeEvent).detail?.value;
+    if (!isScreen(value)) return;
+    publishScreen(value);
+    applyScreen(value);
   };
 
   const onSharedScreen = (event: Event) => {
     const value = (event as ValueChangeEvent).detail?.value;
     if (!isScreen(value)) return;
     applyScreen(value);
-    if (toggle) paintScreenToggle(toggle, value);
+    selectSegmentedOption(tabs, componentPreviewAttrs.screenOption, value);
   };
 
-  toggle?.addEventListener("click", onClick);
+  tabs?.addEventListener("sk-value-change", onValueChange);
   document.addEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
 
-  const fromToggle = toggle?.getAttribute("data-value");
-  const initial =
-    readDocumentScreen() ?? sharedScreen ?? (isScreen(fromToggle) ? fromToggle : "free");
+  const fromTabs = tabs?.getAttribute("data-value");
+  const initial = readDocumentScreen() ?? sharedScreen ?? (isScreen(fromTabs) ? fromTabs : "free");
   sharedScreen = initial;
   writeDocumentScreen(initial);
   applyScreen(initial);
-  if (toggle) paintScreenToggle(toggle, initial);
+  // Segmented reads this SAME attribute as ITS OWN initial value once it mounts; a plain write is
+  // enough here, no click needed, because nothing has rendered a selection to correct yet.
+  tabs?.setAttribute("data-value", initial);
 
   return () => {
-    toggle?.removeEventListener("click", onClick);
+    tabs?.removeEventListener("sk-value-change", onValueChange);
     document.removeEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
   };
 }
@@ -398,16 +384,8 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
     });
   };
 
-  const applyBinding = (binding: ComponentPreviewBinding) => {
-    showBinding(binding);
-    paintBindingTabs(bindingTabs, binding);
-  };
-
-  const onBindingOptionClick = (event: Event) => {
-    const target = event.target;
-    const option =
-      target instanceof Element ? target.closest<HTMLElement>(selector(componentPreviewAttrs.bindingOption)) : null;
-    const value = option?.getAttribute("data-value");
+  const onBindingValueChange = (event: Event) => {
+    const value = (event as ValueChangeEvent).detail?.value;
     if (!isBinding(value)) return;
     publishBinding(value);
     showBinding(value);
@@ -421,14 +399,15 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
   const onSharedBinding = (event: Event) => {
     const value = (event as ValueChangeEvent).detail?.value;
     if (!isBinding(value)) return;
-    applyBinding(value);
+    showBinding(value);
+    selectSegmentedOption(bindingTabs, componentPreviewAttrs.bindingOption, value);
   };
 
   const onReload = () => reloadComponentPreviewStage(root);
   const disconnectResizer = connectStageResizer(root);
   const disconnectScreenTabs = connectScreenTabs(root);
 
-  bindingTabs?.addEventListener("click", onBindingOptionClick);
+  bindingTabs?.addEventListener("sk-value-change", onBindingValueChange);
   sourceTabs?.addEventListener("sk-value-change", onSourceChange);
   document.addEventListener(componentPreviewBindingChangeEvent, onSharedBinding);
   reload?.addEventListener("click", onReload);
@@ -440,13 +419,16 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
     (isBinding(fromTabs) ? fromTabs : "vanilla");
   sharedBinding = initial;
   writeDocumentBinding(initial);
-  applyBinding(initial);
+  showBinding(initial);
+  // Segmented reads this SAME attribute as ITS OWN initial value once it mounts; see the matching
+  // note in connectScreenTabs.
+  bindingTabs?.setAttribute("data-value", initial);
 
   const initialSource = sourceTabs?.getAttribute("data-value");
   if (initialSource === "html" || initialSource === "js") showSource(initialSource);
 
   return () => {
-    bindingTabs?.removeEventListener("click", onBindingOptionClick);
+    bindingTabs?.removeEventListener("sk-value-change", onBindingValueChange);
     sourceTabs?.removeEventListener("sk-value-change", onSourceChange);
     document.removeEventListener(componentPreviewBindingChangeEvent, onSharedBinding);
     reload?.removeEventListener("click", onReload);

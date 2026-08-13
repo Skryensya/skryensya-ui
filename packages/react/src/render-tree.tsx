@@ -61,7 +61,7 @@ import * as tocModule from "./components/toc.js";
 import * as componentPreviewModule from "./components/component-preview.js";
 import type { ContractSlot } from "@skryensya/core/contract";
 import { getContract, getSignature } from "@skryensya/ai-compiler/registry";
-import { jsxPropName } from "@skryensya/ai-compiler/emit";
+import { jsxPropName, parseInlineStyle } from "@skryensya/ai-compiler/emit";
 import {
   collectionItems,
   isUsageTree,
@@ -184,7 +184,17 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
   // `attrs` are written in HTML spelling; React wants its own for a handful of them, and it has to
   // be the SAME handful the emitter renames or the snippet stops describing the stage beside it.
   const props: Record<string, unknown> = { key };
-  for (const [attr, value] of Object.entries(tree.attrs ?? {})) props[jsxPropName(attr)] = value;
+  for (const [attr, value] of Object.entries(tree.attrs ?? {})) {
+    // `style` is CSS text (the only shape a flat `Record<string, string>` can hold), never a plain
+    // string prop: React's `style` takes an object and throws at runtime on anything else. Parsed
+    // here rather than assigned raw, same reason `emit.ts`'s React emitter parses it into the
+    // `style={{…}}` object it prints instead of printing the string as a prop.
+    if (attr === "style") {
+      props.style = Object.fromEntries(parseInlineStyle(value));
+      continue;
+    }
+    props[jsxPropName(attr)] = value;
+  }
   // Only the signatures that portal take a container; the rest would pass it to a DOM element.
   if (portalContainer && signature.portals) props.container = portalContainer;
   const optionStyle: Record<string, string | number> = {};

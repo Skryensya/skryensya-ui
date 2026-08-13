@@ -1,14 +1,22 @@
 /* TIER 3, TREE VIEW: hierarchical disclosure and selection. */
 @layer components {
   .sk-tree-view {
-    /* Indent per level, measured from the row's own inline start. A tree pays this once per
-     * level, so it is the token that decides how much width a deep hierarchy costs: at four
-     * levels the difference between the 16px inset step and this 12px inline step is a whole
-     * chevron column. */
-    --sk-tree-indent: var(--space-inline-md);
+    /* Indent per level, measured from the row's own inline start. Large enough that a child's own
+     * row-inset clears the parent's full indicator-plus-icon column (`--sk-tree-row-inset +
+     * --sk-tree-indicator-size + --sk-tree-item-gap`), so a nested icon lines up under the
+     * parent's rather than floating to the left of it, under the parent's chevron. */
+    --sk-tree-indent: var(--space-inset-lg);
     /* Inset on both edges of a row. The guide below hangs off it, so the indent math reads it
-     * back instead of repeating the token: lower the inset and the guide follows. */
-    --sk-tree-row-inset: var(--space-inset-xs);
+     * back instead of repeating the token: lower the inset and the guide follows. Matches
+     * nav-list's own `--sk-nav-list-link-padding-x`, the sidebar's other row of this same height. */
+    --sk-tree-row-inset: var(--space-inset-sm);
+    /* Space between a row's own columns (indicator, icon, label) — not to be confused with the
+     * gap below it, which is between ROWS. Same `sm` tier as nav-list's `--sk-nav-list-link-gap`. */
+    --sk-tree-item-gap: var(--space-inline-sm);
+    /* Gap between sibling rows. `stack-xs`, matching nav-list's `--sk-nav-list-gap`: a tree row and
+     * a nav-list row already share a height (`--size-control-sm`), so they read as one density when
+     * they sit side by side instead of the tree's rows looking glued together. */
+    --sk-tree-row-gap: var(--space-stack-xs);
     /* The vertical rule that ties a branch to its children. Set it to `transparent`
      * to turn the guides off without touching the indent. */
     --sk-tree-guide-color: var(--color-border-subtle);
@@ -16,19 +24,21 @@
     /* Column reserved for the branch chevron. Leaves keep it EMPTY instead of
      * collapsing it, so every label on a level starts at the same x. */
     --sk-tree-indicator-size: var(--size-icon-sm);
-    /* Column reserved for the folder/file icon when a consumer provides one. */
-    --sk-tree-node-icon-size: var(--size-icon-sm);
+    /* Column reserved for the folder/file icon when a consumer provides one. One size up from the
+     * indicator: the chevron is a structural glyph, the folder/file icon is content and reads as
+     * an afterthought at the same size, lost in the row's now-roomier gaps. */
+    --sk-tree-node-icon-size: var(--size-icon-md);
     color: var(--color-text-primary);
   }
 
   /*
-   * `.sk-icon` defaults to --size-icon-md (icon/patterns/icon.css); the column reserved for it
-   * here is --sk-tree-indicator-size (sm). Left unscoped, an authored icon overflows its column
-   * by the difference and eats the row's own `gap` doing it: the icon and the label end up
-   * touching with no visible space between them, even though `gap` is declared and non-zero.
+   * `.sk-icon` defaults to --size-icon-md (icon/patterns/icon.css), same as the column reserved
+   * for it here (--sk-tree-node-icon-size). Scoped anyway, rather than left to that shared
+   * default: a consumer who passes an explicit `size` on their folder/file icon (the Playground's
+   * does) must not be able to drift the glyph out of the column the row actually laid out for it.
    */
   .sk-tree-view .sk-icon {
-    --sk-icon-size: var(--size-icon-sm);
+    --sk-icon-size: var(--sk-tree-node-icon-size);
   }
 
   .sk-tree-view__tree,
@@ -45,7 +55,7 @@
      * host, it does not hold the host open.
      */
     grid-template-columns: minmax(0, 1fr);
-    gap: 1px;
+    gap: var(--sk-tree-row-gap);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -105,7 +115,7 @@
     display: grid;
     grid-template-columns:
       var(--sk-tree-indicator-size) var(--sk-tree-node-icon-size) minmax(0, 1fr);
-    gap: var(--space-inline-xs);
+    gap: var(--sk-tree-item-gap);
     align-items: center;
     min-block-size: var(--size-control-sm);
     padding-block: 0;
@@ -142,7 +152,7 @@
   .sk-tree-view__tree:not(:has(.sk-tree-view__branch))
     .sk-tree-view__item:has(.sk-tree-view__item-icon) {
     grid-template-columns: var(--sk-tree-node-icon-size) minmax(0, 1fr);
-    gap: var(--space-inline-xs);
+    gap: var(--sk-tree-item-gap);
   }
   .sk-tree-view__tree:not(:has(.sk-tree-view__branch)) .sk-tree-view__item-indicator {
     display: none;

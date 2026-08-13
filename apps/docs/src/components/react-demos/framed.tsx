@@ -41,6 +41,14 @@ export interface FramedOptions {
   viewport?: "auto" | "menu" | "overlay";
   /** Frame title, for the accessibility tree. Defaults to the wrapped component's name. */
   label?: string;
+  /**
+   * App CSS the demo needs beyond the system's own stylesheet, same job as `ComponentPreview`'s
+   * `css` prop and injected the same way (a `<style>` in the frame's own `<head>`, see
+   * `buildPreviewFrameDocument`). A demo whose Vanilla binding gets custom CSS and whose React one
+   * does not is two different demos wearing the same label; passing the SAME string both places
+   * (see `demos/menu.ts`'s `menuContextCss`) is what keeps them one demo painted twice.
+   */
+  css?: string;
 }
 
 /** Per-call overrides for shared demo wrappers such as the usage-tree renderer. */
@@ -113,6 +121,7 @@ export function framedIn(moduleUrl: string) {
         () =>
           buildPreviewFrameDocument({
             body: "",
+            css: options.css,
             flush,
             scroll,
             measure,

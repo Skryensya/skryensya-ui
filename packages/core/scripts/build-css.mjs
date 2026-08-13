@@ -95,6 +95,18 @@ results.push([
   `tokens + ${patterns.length} patterns + ${components.length} components`,
 ]);
 
+// The foundation alone, no patterns or components: everything a consumer needs before it links even
+// one component — same ENTRY as the full bundle above (so it stays in lockstep with it), just without
+// the two `section(...)` calls that append patterns and components. Built for the docs playground
+// sandbox (`apps/docs/scripts/build-sandbox-bundles.mjs`), which links this once and then only the
+// component CSS a given example actually uses, instead of shipping every component's CSS unconditionally.
+const foundationCss = `@charset "UTF-8";\n` + strip(tokensCss) + `\n`;
+results.push([
+  "foundation.css",
+  writeDist("foundation.css", foundationCss, "foundation.css"),
+  "tokens + modes/hc + dimensions/radius + dimensions/accent, no patterns or components",
+]);
+
 // The a-la-carte path: tokens compiled standalone, so a page can link just the components it uses
 // instead of the whole bundle. Primitives + semantic only, matching what a bare `@use
 // "@skryensya/core/tokens"` gives a Sass consumer before it opts into modes/dimensions. The three

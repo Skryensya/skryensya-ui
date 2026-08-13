@@ -1106,7 +1106,7 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
-  /** A command, a checkbox and a submenu: the three item shapes, including the recursive one. */
+  /** A command, a checkbox, a separator and a submenu: the four item shapes, including the recursive one. */
   {
     name: "menu/with-submenu",
     enhanced: true,
@@ -1119,6 +1119,7 @@ const signatureTrees: readonly Canonical[] = [
         items: [
           { options: { value: "rename" }, slots: { label: "Renombrar" } },
           { options: { value: "favorite", kind: "checkbox" }, slots: { label: "Favorito" } },
+          { options: { value: "divider", kind: "separator" }, slots: {} },
           {
             options: { value: "export" },
             slots: {

@@ -1,3 +1,4 @@
+import { anchoredParts } from "@skryensya/core/anchored";
 import {
   menuParts,
   type MenuApi,
@@ -5,8 +6,18 @@ import {
   type MenuService,
 } from "@skryensya/core/menu";
 import { menu } from "@skryensya/core/machines";
+import {
+  createAdjacentGraceController,
+  hasOpenSubmenuSibling,
+  type AdjacentGraceController,
+} from "@skryensya/core/menu-adjacent-grace";
+import {
+  createIntentOverlay,
+  type IntentOverlayHandle,
+  type IntentPoint,
+} from "@skryensya/core/menu-intent-overlay";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
-import { useEffect, useId, useState, type ReactNode, type RefObject } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
 import { Icon } from "./icon.js";
 
@@ -25,6 +36,23 @@ export type MenuProps = {
   indicator?: ReactNode;
   itemIndicator?: ReactNode;
   submenuIndicator?: ReactNode;
+  /**
+   * A tighter row for a dense command menu (menu.css's `[data-density="compact"]`, same idiom as
+   * List's). Every submenu, at any depth, inherits it: threaded down and re-stamped on each level's
+   * own positioner rather than relied on through inheritance, because the TOP-level positioner still
+   * portals to `<body>` and breaks the chain there; a submenu's own positioner stays nested (see the
+   * comment on `Submenu`'s return) and would inherit it either way, but re-stamping is what already
+   * covers the portalled case and costs nothing extra to keep doing at every depth.
+   */
+  density?: "compact";
+  /**
+   * Draws @zag-js/menu's OWN pointer-intent polygon live over every submenu this Menu owns, plus a
+   * status badge for `context.pointerRoutingMode`. Not a feature this binding adds: the machine
+   * already computes and enforces this ("crossing a sibling on a diagonal path toward an open
+   * submenu does not steal highlight"); the flag only makes that already-real geometry visible, for
+   * teaching or debugging. See `@skryensya/core/menu-intent-overlay`.
+   */
+  debugSafetyTriangle?: boolean;
   defaultOpen?: boolean;
   open?: boolean;
   onOpenChange?: (details: { open: boolean }) => void;
@@ -39,10 +67,10 @@ export type MenuProps = {
 };
 
 type MenuListProps = {
-  /** Inherited from the Menu, so every level portals to the same place. */
-  container?: RefObject<HTMLElement>;
   api: MenuApi;
   checkedState: CheckedState;
+  density?: MenuProps["density"];
+  debugSafetyTriangle?: MenuProps["debugSafetyTriangle"];
   service: MenuService;
   items: readonly MenuItem[];
   itemIndicator?: ReactNode;
@@ -63,8 +91,9 @@ function initialCheckedState(items: readonly MenuItem[]): CheckedState {
 
 function MenuList({
   api,
-  container,
   checkedState,
+  density,
+  debugSafetyTriangle,
   itemIndicator,
   items,
   onCheckedChange,
@@ -73,11 +102,27 @@ function MenuList({
   setCheckedState,
   submenuIndicator,
 }: MenuListProps) {
+  /*
+   * One controller per rendered list, not per item: the hold is keyed by item value internally, so
+   * a single instance already tracks "which candidate, if any, is currently being held" for this
+   * whole list. `useRef` rather than `useState` because starting or clearing a hold is never
+   * something this component itself needs to re-render for; only the DEFERRED `machineProps.
+   * onPointerMove` call (which Zag's own state update re-renders for on its own) does.
+   */
+  const graceRef = useRef<AdjacentGraceController | null>(null);
+  const grace = () => (graceRef.current ??= createAdjacentGraceController());
+  useEffect(() => () => graceRef.current?.reset(), []);
+
   return items.map((item) => {
+    if (item.kind === "separator") {
+      return <div className={menuParts.separator} key={item.value} role="separator" />;
+    }
+
     if (item.children?.length) {
       return (
         <Submenu
-          container={container}
+          density={density}
+          debugSafetyTriangle={debugSafetyTriangle}
           item={item}
           itemIndicator={itemIndicator}
           key={item.value}
@@ -115,11 +160,35 @@ function MenuList({
       <div
         {...machineProps}
         className={cx(menuParts.item, "sk-interactive")}
+        data-tone={item.tone}
         key={item.value}
         onClick={(event) => {
           machineProps.onClick?.(event);
           if (kind === "item" && !item.disabled)
             onSelect?.({ value: item.value });
+        }}
+        onPointerMove={(event) => {
+          /*
+           * `hasOpenSubmenuSibling` is the ONLY thing gating this: with nothing open, every hold
+           * would just be 200ms of nothing happening, so plain items behave exactly as before.
+           *
+           * NOT `() => machineProps.onPointerMove?.(event)`: a PointerEvent's `currentTarget` goes
+           * back to `null` the instant dispatch finishes (React 17+ stopped POOLING synthetic
+           * events, but never stopped this — it mirrors the native event it wraps), so replaying
+           * the SAME event once the hold elapses hands Zag's real handler a `target` it can no
+           * longer resolve to an item (measured: `highlightedValue` never left the trigger, the
+           * hold "elapsed" but nothing ever committed). `setHighlightedValue` is the public,
+           * event-free path for exactly this — committing a value with no event object to go stale.
+           */
+          if (event.pointerType === "mouse" && hasOpenSubmenuSibling(event.currentTarget)) {
+            grace().hold(item.value, () => api.setHighlightedValue(item.value));
+            return;
+          }
+          machineProps.onPointerMove?.(event);
+        }}
+        onPointerLeave={(event) => {
+          grace().cancel(item.value);
+          machineProps.onPointerLeave?.(event);
         }}
       >
         {/*
@@ -158,7 +227,8 @@ function MenuList({
 }
 
 function Submenu({
-  container,
+  density,
+  debugSafetyTriangle,
   item,
   itemIndicator,
   onCheckedChange,
@@ -167,8 +237,8 @@ function Submenu({
   parentService,
   submenuIndicator,
 }: {
-  /** Inherited from the Menu that owns this submenu, so both portal to the same place. */
-  container?: RefObject<HTMLElement>;
+  density?: MenuProps["density"];
+  debugSafetyTriangle?: MenuProps["debugSafetyTriangle"];
   item: MenuItem;
   itemIndicator?: ReactNode;
   onCheckedChange?: MenuProps["onCheckedChange"];
@@ -195,6 +265,33 @@ function Submenu({
     parentApi.setChild(service);
   }, [parentService, service]);
 
+  /*
+   * `context.get(...)` below is read fresh on every render, and a `useEffect` with no dependency
+   * array runs after every one of them: cheap here (three DOM writes, no allocation Zag itself
+   * would not already have caused), and simpler than hand-picking which of `open`/highlight/pointer
+   * events should count as "the polygon might have changed" when the honest answer is "any of
+   * them, and only Zag knows which fired." Destroying the handle on unmount is the only cleanup
+   * this needs; `update()` itself removes the DOM when the polygon goes empty (submenu closed or
+   * pointer left it), so there is no separate "close" branch to keep in sync.
+   */
+  const debugOverlay = useRef<IntentOverlayHandle | null>(null);
+  useEffect(() => {
+    if (!debugSafetyTriangle) {
+      debugOverlay.current?.destroy();
+      debugOverlay.current = null;
+      return;
+    }
+    debugOverlay.current ??= createIntentOverlay();
+    debugOverlay.current.update({
+      polygon: service.context.get("intentPolygon") as readonly IntentPoint[] | null,
+      locked: parentService.context.get("pointerRoutingMode") === "locked",
+      label: "Pointer routing",
+      lockedText: "locked",
+      freeText: "free",
+    });
+  });
+  useEffect(() => () => debugOverlay.current?.destroy(), []);
+
   const setCheckedState = (changedItem: MenuItem, checked: boolean) => {
     setChecked((current) => {
       if (changedItem.kind !== "radio" || !checked) {
@@ -215,15 +312,33 @@ function Submenu({
   };
 
   return (
-    <>
-      {/*
-        * Wrapped in a menu root, like the markup emits. Vanilla needs this element because it is
-        * where the submenu machine mounts; React has no such need, and for a while that was the
-        * excuse for the two producing different DOM. It is only an excuse: `.sk-menu` inside a
-        * content panel is now laid out as a full-width row, so the wrapper costs nothing here and
-        * the two bindings finally nest the same.
-        */}
-      <div className={menuParts.root}>
+    /*
+     * Wrapped in a menu root, like the markup emits, and NOT portalled: a submenu's trigger and its
+     * own positioner stay siblings under this one `.sk-menu`, same as Vanilla's nested markup.
+     *
+     * Portalling here (the old approach) put the positioner ahead of its own trigger in DOM order
+     * once a THIRD level was involved: React commits a nested `<Portal>` before the parent's own
+     * portal finishes, so `document.body`'s children came out child-first — the deepest submenu's
+     * positioner landed on the page before the ancestor tree that contains its trigger button. CSS
+     * anchor positioning silently drops a `position-anchor` reference to an anchor that appears
+     * LATER in tree order than the query element (measured with a two-node repro: swapping which of
+     * two `position: fixed` siblings comes first in markup was the only variable, and the one whose
+     * anchor came after it always fell back to the UA default top-left corner, `position-anchor`
+     * still reading back the right custom ident and `position-area` still reading back the right
+     * keywords — the computed values lie, only the rendered rect tells the truth). Every submenu
+     * beyond the first level shared this exact ordering bug, and "el placement de los segundos
+     * niveles" was that: not a wrong `position-area`, an anchor the browser refused to use because
+     * of DOM order alone.
+     *
+     * Staying nested keeps trigger-before-positioner true AT EVERY DEPTH by construction: each
+     * `Submenu` is one self-contained tree, so there is no portal commit order to fight. `position:
+     * fixed` still escapes an ancestor's `overflow: auto` (patterns/anchored.css), so the panel does
+     * not need `document.body` for that either — Vanilla never portals anything and needs none of
+     * this. The top-level `Menu` keeps its own `<Portal>`: single level, its trigger renders inline
+     * and its positioner reaches `document.body` afterward, so trigger already precedes positioner
+     * there and the ordering bug never applied to it.
+     */
+    <div className={menuParts.root}>
       {/*
         * A BUTTON, like the markup emits. The contract describes one shape; two elements for one
         * node is the divergence this whole arrangement exists to prevent, and a submenu trigger is
@@ -251,37 +366,36 @@ function Submenu({
           {submenuIndicator ?? <Icon name="chevron-right" />}
         </span>
       </button>
-      </div>
-      <Portal container={container}>
-        {/* Un submenú sale al COSTADO y alineado arriba, que no está en el juego de cuatro; se pide
-          * por el hook de escape del pattern (menu.css), no agrandando el vocabulario público. */}
-        <div
-          {...anchor.positioner(api.getPositionerProps(), menuParts.positioner)}
-          data-sk-submenu=""
-        >
-          <div {...api.getContentProps()} className={menuParts.content}>
-            <MenuList
-              api={api}
-              container={container}
-              checkedState={checkedState}
-              itemIndicator={itemIndicator}
-              items={children}
-              onCheckedChange={onCheckedChange}
-              onSelect={onSelect}
-              service={service}
-              setCheckedState={setCheckedState}
-              submenuIndicator={submenuIndicator}
-            />
-          </div>
+      <div
+        {...anchor.positioner(api.getPositionerProps(), menuParts.positioner)}
+        data-density={density}
+        data-sk-submenu=""
+      >
+        <div {...api.getContentProps()} className={menuParts.content}>
+          <MenuList
+            api={api}
+            checkedState={checkedState}
+            density={density}
+            debugSafetyTriangle={debugSafetyTriangle}
+            itemIndicator={itemIndicator}
+            items={children}
+            onCheckedChange={onCheckedChange}
+            onSelect={onSelect}
+            service={service}
+            setCheckedState={setCheckedState}
+            submenuIndicator={submenuIndicator}
+          />
         </div>
-      </Portal>
-    </>
+      </div>
+    </div>
   );
 }
 
 export function Menu({
   container,
   contextTarget,
+  density,
+  debugSafetyTriangle,
   disabled,
   defaultOpen,
   id,
@@ -331,10 +445,29 @@ export function Menu({
     });
   };
 
+  /*
+   * A CONTEXT trigger never takes the native-anchor route (see the matching comment in
+   * `packages/vanilla/src/components/menu.ts`): the pattern anchors to an ELEMENT, and what matters
+   * here is WHERE INSIDE that (possibly page-wide) element the right-click landed, not the element's
+   * own box. The machine already solves exactly this — `getContextTriggerProps` forwards the click's
+   * point, the machine stores it and hands floating-ui a zero-size anchor rect at that point, so
+   * `getPositionerProps()` comes back with a real `style` placing the menu at the pointer with the
+   * SAME `bottom-start` default as a trigger button (below, growing toward the inline-end). Both
+   * bindings read this off the one shared machine; neither has positioning logic of its own to keep
+   * in sync.
+   */
+  const isContextMenu = Boolean(contextTarget);
+  const positionerProps = isContextMenu
+    ? {
+        ...api.getPositionerProps(),
+        className: cx(menuParts.positioner, anchoredParts.positioner),
+      }
+    : anchor.positioner(api.getPositionerProps(), menuParts.positioner);
+
   return (
-    <div className={menuParts.root}>
+    <div className={menuParts.root} data-density={density}>
       {contextTarget ? (
-        <div {...api.getContextTriggerProps()} {...anchor.anchor("")}>{contextTarget}</div>
+        <div {...api.getContextTriggerProps()}>{contextTarget}</div>
       ) : (
         <button
           {...api.getTriggerProps()}
@@ -355,12 +488,16 @@ export function Menu({
         </button>
       )}
       <Portal container={container}>
-        <div {...anchor.positioner(api.getPositionerProps(), menuParts.positioner)}>
+        {/* `data-density` re-stamped here, not inherited from the root above: this positioner just
+          * portalled to `<body>`, a different DOM subtree, same reason menu.css re-declares the
+          * appearance hooks on `.sk-menu__positioner`. */}
+        <div {...positionerProps} data-density={density}>
           <div {...api.getContentProps()} className={menuParts.content}>
             <MenuList
               api={api}
-              container={container}
               checkedState={checkedState}
+              density={density}
+              debugSafetyTriangle={debugSafetyTriangle}
               itemIndicator={itemIndicator}
               items={items}
               onCheckedChange={onCheckedChange}

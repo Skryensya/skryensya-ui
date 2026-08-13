@@ -1,12 +1,15 @@
 export type { Api as MenuApi, Service as MenuService } from "@zag-js/menu";
 
-export type MenuItemKind = "item" | "checkbox" | "radio";
+export type MenuItemKind = "item" | "checkbox" | "radio" | "separator";
 
 export type MenuItem = {
   value: string;
-  label: string;
+  /** Every kind but `"separator"` needs one; a divider has nothing to announce. */
+  label?: string;
   disabled?: boolean;
   kind?: MenuItemKind;
+  /** Marks a destructive command (Delete, Remove, …). See the `tone` item option below for why. */
+  tone?: "danger";
   checked?: boolean;
   group?: string;
   children?: readonly MenuItem[];
@@ -23,6 +26,16 @@ export const menuParts = {
   separator: "sk-menu__separator",
   group: "sk-menu__group",
   groupLabel: "sk-menu__group-label",
+  /*
+   * Not template parts: the compiler never emits these, `menu-intent-overlay.ts` creates them
+   * imperatively, only while `debugSafetyTriangle` is on and a submenu is open. Named here anyway,
+   * same as every other class in this file, so the overlay module and menu.css share ONE source for
+   * the string instead of a hand-typed copy in each.
+   */
+  intentOverlay: "sk-menu__intent-overlay",
+  intentPolygon: "sk-menu__intent-polygon",
+  intentBadge: "sk-menu__intent-badge",
+  intentBadgeDot: "sk-menu__intent-badge-dot",
 } as const;
 
 export const menuAttrs = {
@@ -36,6 +49,7 @@ export const menuAttrs = {
   separator: "data-sk-menu-separator",
   group: "data-sk-menu-group",
   groupLabel: "data-sk-menu-group-label",
+  debugSafetyTriangle: "data-sk-menu-debug-intent",
 } as const;
 
 export type MenuOpenChangeDetails = { open: boolean };
@@ -98,6 +112,31 @@ export const menuContract = {
       trueValue: "",
       machineInput: true,
     },
+    /**
+     * A tighter row for a dense command menu, same idiom as List's own `data-density="compact"`.
+     * Only the root carries this in the tree; the React binding also has to copy it onto the
+     * (portalled) positioner by hand, the same reason it re-declares `.sk-menu`'s appearance hooks
+     * there in menu.css.
+     */
+    density: { type: "enum", values: ["compact"], attr: "data-density" },
+    /*
+     * Draws @zag-js/menu's OWN pointer-intent geometry live, over every submenu this Menu owns
+     * (menu-intent-overlay.ts): the "safety triangle" that lets a reader cross a sibling item on a
+     * diagonal path toward an open submenu without it stealing highlight. This is not new behavior,
+     * it is already how every submenu in the system behaves (menu.machine's `setIntentPolygon` /
+     * `pointerRoutingMode`); the flag only turns on SEEING it, for teaching or debugging.
+     *
+     * Only the root carries this in the tree. Vanilla needs nothing further: nested submenu roots
+     * are real DOM descendants, and `root.closest(…)` finds the flag on an ancestor. React portals,
+     * so it re-threads the boolean down through every `Submenu` level and re-stamps it there, the
+     * same reason `density` does.
+     */
+    debugSafetyTriangle: {
+      type: "boolean",
+      default: false,
+      attr: menuAttrs.debugSafetyTriangle,
+      trueValue: "",
+    },
   },
 
   signatures: {
@@ -105,7 +144,7 @@ export const menuContract = {
       intent: ["a-list-of-commands", "actions-behind-a-trigger", "submenu"],
       host: { element: "div" },
       mount: menuAttrs.root,
-      options: ["label", "disabled"],
+      options: ["label", "disabled", "density", "debugSafetyTriangle"],
       portals: true,
       slots: {
         /** What opens it. Text, or a composed control. */
@@ -119,11 +158,27 @@ export const menuContract = {
             options: {
               value: { type: "string", attr: "data-value" },
               disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "" },
-              /** `checkbox` or `radio`. Absent means a plain command, which shows no indicator. */
-              kind: { type: "enum", values: ["checkbox", "radio"], attr: "data-type" },
+              /**
+               * `checkbox` or `radio`. Absent means a plain command, which shows no indicator.
+               * `separator` is a third, unrelated shape: a divider between commands, not a command
+               * with a variant, so the item template below excludes it explicitly rather than
+               * folding it into "any kind given" the way the indicator does for the other two.
+               */
+              kind: { type: "enum", values: ["checkbox", "radio", "separator"], attr: "data-type" },
+              /**
+               * Marks a destructive command (Delete, Remove, …). The ONLY value is `"danger"`, the
+               * same one-value-enum shape `disabled` and `kind` already use elsewhere in this system
+               * for "there is exactly one alternate state, and its absence is the default": a second
+               * value would be a different concept (a general-purpose "tone" axis), not this one.
+               * Sets `color` alone; the shared state layer (`sk-interactive`, already `also`'d onto
+               * every item) reads `currentColor` for its own hover/press tint, so a danger item's
+               * hover wash comes out red for free, the same mechanism a danger Button uses.
+               */
+              tone: { type: "enum", values: ["danger"], attr: "data-tone" },
             },
             slots: {
-              label: { accepts: "text", required: true },
+              /** Every entry but a `kind: "separator"` needs one; a divider announces nothing. */
+              label: { accepts: "text" },
               /** Entries of its own make this one a submenu rather than a command. */
               children: { accepts: "items", recursive: true },
             },
@@ -172,8 +227,9 @@ export const menuContract = {
                             part: "item",
                             also: ["sk-interactive"],
                             mount: menuAttrs.item,
-                            itemOptions: ["value", "disabled", "kind"],
+                            itemOptions: ["value", "disabled", "kind", "tone"],
                             whenItemSlotMissing: "children",
+                            whenItemNotEquals: { option: "kind", equals: "separator" },
                             children: [
                               { element: "span", part: "itemLabel", itemSlot: "label" },
                               {
@@ -184,6 +240,18 @@ export const menuContract = {
                                 children: [{ element: "span", attrs: { "data-sk-icon": "check", "data-sk-icon-size": "md" } }],
                               },
                             ],
+                          },
+                          /*
+                           * A divider between commands, not a command: no label, no click, no
+                           * indicator. `role="separator"` is what tells assistive tech that too, the
+                           * ARIA menu role for exactly this shape.
+                           */
+                          {
+                            element: "div",
+                            part: "separator",
+                            mount: menuAttrs.separator,
+                            attrs: { role: "separator" },
+                            whenItemEquals: { option: "kind", equals: "separator" },
                           },
                           {
                             element: "div",

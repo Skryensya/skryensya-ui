@@ -151,12 +151,25 @@ describe("Toc", () => {
     expect(observers).toHaveLength(0);
   });
 
-  it("opens as a rail and takes the summary out of the tab order where there is room", () => {
+  it("stays a native disclosure unless its consumer opts into a rail", () => {
     const ui = render(<Toc items={items} title="En esta página" />);
     const details = ui.container.querySelector("details")!;
     const summary = ui.container.querySelector("summary")!;
 
-    // Narrow: a real disclosure, closed, and its own tab stop.
+    expect(details.open).toBe(false);
+    expect(summary.tabIndex).toBe(0);
+
+    setRail(true);
+
+    expect(details.open).toBe(false);
+    expect(summary.tabIndex).toBe(0);
+  });
+
+  it("opens as an inert rail when its consumer opts in", () => {
+    const ui = render(<Toc data-sk-toc-rail="" items={items} title="En esta página" />);
+    const details = ui.container.querySelector("details")!;
+    const summary = ui.container.querySelector("summary")!;
+
     expect(details.open).toBe(false);
     expect(summary.tabIndex).toBe(0);
 

@@ -389,6 +389,31 @@ html:has(dialog:modal) .docs-drawer__content {
   align-items: start;
 }
 
+/* A page with no headings renders `.sk-toc[data-empty]` (`Toc.astro`, computed at build time from
+ * `documentIndex`, so this is known before first paint, no FOUC to guard against). The toc TRACK is
+ * a fixed length (`--docs-toc-inline-size`), not `auto`: a content-sized track would otherwise
+ * still claim a slice of any leftover grid space even with nothing placed in it (measured: an empty
+ * `max-content` track absorbed ~650px, since only `fr` tracks are excluded from that redistribution).
+ * Zeroing the length itself, gated on the page actually having no toc, is what collapses the column
+ * to genuinely 0px instead of an empty reserved slot. */
+.shell:has(> .sk-toc[data-empty]) {
+  --docs-toc-inline-size: 0px;
+}
+
+/* The content grid needs room for its lg span PLUS its own inline gutters. The docs chrome
+ * remains outside that canvas, so only component pages widen the shell; ordinary prose pages retain
+ * the md document track. */
+.shell[data-document-layout="grid"] {
+  --docs-layout-grid-canvas: calc(var(--size-wrapper-lg) + var(--space-inset-lg) * 2);
+  --docs-document-max: var(--docs-layout-grid-canvas);
+  --sk-wrapper-max: calc(
+    var(--docs-layout-grid-canvas)
+    + var(--docs-rail-inline-size)
+    + var(--docs-toc-inline-size)
+    + var(--space-inline-lg) * 2
+  );
+}
+
 /* Explicit, because the flexible tracks are not skippable by auto-placement: the three children
    would otherwise land in tracks 1, 2 and 3 and the document would sit in a gutter. */
 .shell > .docs-sidebar {
@@ -924,6 +949,29 @@ main > :where(h2, h3) {
   scroll-margin-top: calc(
     var(--docs-navbar-h, var(--docs-header-block-size)) + var(--docs-hero-tabs-h, 0px) + var(--space-stack-md)
   );
+}
+
+/* A demo needs room for controls and code, not the whole lg canvas. Give it one medium
+ * inset beyond prose on each side, while still deriving its ceiling from the Wrapper scale. */
+main[data-document-layout="grid"],
+main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid {
+  --sk-layout-breakout: min(
+    var(--size-wrapper-lg),
+    calc(var(--size-wrapper-md) + var(--space-inset-md) * 2)
+  );
+}
+
+main[data-document-layout="grid"] {
+  overflow-x: clip;
+}
+
+/* The panel is already sitting at the page's `content` measure (it's a plain child of `main`'s own
+ * grid, same as the tab strip above it). Left at the base rule's default, its own unlabeled children
+ * would read `content` a SECOND time at this nested grid's smaller sub-scale, indenting every
+ * heading and paragraph under a tab strip that spans the panel's full box. Filling it instead keeps
+ * prose flush with the tabs; `data-width="narrow"` still opts a specific child back in. */
+main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid > *:not([data-width]) {
+  grid-column: full-width-start / full-width-end;
 }
 
 /*

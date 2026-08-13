@@ -59,7 +59,7 @@ const hasA11y = Astro.slots.has("a11y");
 const hasTests = tests.length > 0;
 ---
 
-<Base title={title} description={description} hideVanillaMount={hideVanillaMount}>
+<Base title={title} description={description} documentLayout="grid" hideVanillaMount={hideVanillaMount}>
   <header class="docs-component-hero">
     <p class="docs-component-hero__eyebrow">{t("section.components")}</p>
     <h1>{title}</h1>
@@ -112,7 +112,7 @@ const hasTests = tests.length > 0;
       }
     </div>
 
-    <div class="sk-tabs__content" data-sk-tabs-content data-value="usage">
+    <div class="sk-tabs__content sk-layout-grid" data-sk-tabs-content data-value="usage">
       {/* Visually hidden: the tab strip right above already says "Uso"/"Usage" out loud. Exists so
           the document outline has a real h2 to hang the slot's h3s off of. */}
       <h2 class="sk-visually-hidden">{t("component.tabUsage")}</h2>
@@ -121,7 +121,7 @@ const hasTests = tests.length > 0;
 
     {
       hasInstall && (
-        <div class="sk-tabs__content" data-value="install" data-sk-tabs-content>
+        <div class="sk-tabs__content sk-layout-grid" data-value="install" data-sk-tabs-content>
           <h2>{t("component.tabInstall")}</h2>
           <slot name="install" />
         </div>
@@ -130,7 +130,7 @@ const hasTests = tests.length > 0;
 
     {
       hasContract && contractId && (
-        <div class="sk-tabs__content" data-sk-tabs-content data-value="contract">
+        <div class="sk-tabs__content sk-layout-grid" data-sk-tabs-content data-value="contract">
           <ContractReference id={contractId} />
           {
             sourceFiles && sourceFiles.length > 0 && (
@@ -147,7 +147,7 @@ const hasTests = tests.length > 0;
 
     {
       hasStyle && (
-        <div class="sk-tabs__content" data-sk-tabs-content data-value="style">
+        <div class="sk-tabs__content sk-layout-grid" data-sk-tabs-content data-value="style">
           {styleGroups.length > 0 && <StylingHooks groups={styleGroups} />}
           <slot name="style" />
         </div>
@@ -156,7 +156,7 @@ const hasTests = tests.length > 0;
 
     {
       hasA11y && (
-        <div class="sk-tabs__content" data-sk-tabs-content data-value="a11y">
+        <div class="sk-tabs__content sk-layout-grid" data-sk-tabs-content data-value="a11y">
           <h2>{t("component.tabA11y")}</h2>
           <slot name="a11y" />
         </div>
@@ -165,7 +165,7 @@ const hasTests = tests.length > 0;
 
     {
       hasTests && (
-        <div class="sk-tabs__content" data-sk-tabs-content data-value="tests">
+        <div class="sk-tabs__content sk-layout-grid" data-sk-tabs-content data-value="tests">
           <TestCoverage groups={tests} />
         </div>
       )
@@ -173,7 +173,7 @@ const hasTests = tests.length > 0;
 
     {
       hasChanges && contractId && (
-        <div class="sk-tabs__content" data-sk-tabs-content data-value="changes">
+        <div class="sk-tabs__content sk-layout-grid" data-sk-tabs-content data-value="changes">
           <ContractChangelog id={contractId} />
         </div>
       )

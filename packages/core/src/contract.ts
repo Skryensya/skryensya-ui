@@ -297,6 +297,16 @@ export type ContractTemplate = {
   readonly whenItemGiven?: string;
   readonly whenItemMissing?: string;
   /**
+   * The same question, asked of a specific VALUE rather than mere presence. `whenItemGiven` cannot
+   * tell a menu's checkbox entry from its separator: both merely have `kind` set, so a plain
+   * presence check collapses every non-default value into one. A menu separator is a third shape
+   * with nothing in common with a command row (no label, no click), which is why it needs to name
+   * the value rather than just the option, the same way `attrsWhen`'s `equals` does for a host
+   * option one level up.
+   */
+  readonly whenItemEquals?: { readonly option: string; readonly equals: string };
+  readonly whenItemNotEquals?: { readonly option: string; readonly equals: string };
+  /**
    * The same question asked of the entry's CONTENT rather than its options: a tree node with
    * children is a branch and gets a control that opens it, one without is a leaf. Whether it has
    * children is not an option anyone sets; it is whether the slot was filled.

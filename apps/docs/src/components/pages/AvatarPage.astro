@@ -2,7 +2,7 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { avatarTree } from "../../demos/avatar";
+import { avatarImageTree, avatarSizesTree, avatarColorsTree, avatarGroupTree } from "../../demos/avatar";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/avatar.yaml?raw";
 import coreSource from "@core/src/avatar.ts?raw";
@@ -103,7 +103,27 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("avatar.lede")} />
-    <ComponentPreview tree={avatarTree(t)} previewScript={previewScript} label="Avatar" />
+
+    <h3>{t("avatar.imagesTitle")}</h3>
+    <p set:html={t("avatar.imagesBody")} />
+    <ComponentPreview
+      tree={avatarImageTree(t)}
+      previewScript={previewScript}
+      label={t("avatar.imagesTitle")}
+    />
+
+    <h3>{t("avatar.sizesTitle")}</h3>
+    <p set:html={t("avatar.sizesBody")} />
+    <ComponentPreview tree={avatarSizesTree(t)} label={t("avatar.sizesTitle")} />
+
+    <h3>{t("avatar.colorsTitle")}</h3>
+    <p set:html={t("avatar.colorsBody")} />
+    <ComponentPreview tree={avatarColorsTree(t)} label={t("avatar.colorsTitle")} />
+
+    <h3>{t("avatar.groupTitle")}</h3>
+    <p set:html={t("avatar.groupBody")} />
+    <ComponentPreview tree={avatarGroupTree(t)} label={t("avatar.groupTitle")} />
+
     <p set:html={t("avatar.body")} />
     <p set:html={t("component.reactNote")} />
   </Fragment>

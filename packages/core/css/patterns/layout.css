@@ -116,30 +116,38 @@
       [full-width-end];
   }
 
+  /* An ancestor that toggles this element via the native `hidden` attribute (a tab panel, say)
+   * needs it to actually disappear. `display: grid` above is an author rule, so it beats the UA
+   * stylesheet's `[hidden] { display: none }` on source order alone; this raises the specificity
+   * instead of depending on import order. */
+  .sk-layout-grid[hidden] {
+    display: none;
+  }
+
   .sk-layout-grid > * {
-    grid-column: content;
+    grid-column: content-start / content-end;
     min-inline-size: 0;
   }
 
-  .sk-layout-grid > [data-width="narrow"] { grid-column: narrow; }
-  .sk-layout-grid > [data-width="content"] { grid-column: content; }
-  .sk-layout-grid > [data-width="breakout"] { grid-column: breakout; }
+  .sk-layout-grid > [data-width="narrow"] { grid-column: narrow-start / narrow-end; }
+  .sk-layout-grid > [data-width="content"] { grid-column: content-start / content-end; }
+  .sk-layout-grid > [data-width="breakout"] { grid-column: breakout-start / breakout-end; }
 
   .sk-layout-grid > [data-width="full-width"] {
     display: grid;
-    grid-column: full-width;
+    grid-column: full-width-start / full-width-end;
     grid-template-columns: inherit;
   }
 
   .sk-layout-grid > [data-width="full-width"] > * {
-    grid-column: content;
+    grid-column: content-start / content-end;
     min-inline-size: 0;
   }
 
-  .sk-layout-grid > [data-width="full-width"] > [data-width="narrow"] { grid-column: narrow; }
-  .sk-layout-grid > [data-width="full-width"] > [data-width="content"] { grid-column: content; }
-  .sk-layout-grid > [data-width="full-width"] > [data-width="breakout"] { grid-column: breakout; }
-  .sk-layout-grid > [data-width="full-width"] > [data-width="full-width"] { grid-column: full-width; }
+  .sk-layout-grid > [data-width="full-width"] > [data-width="narrow"] { grid-column: narrow-start / narrow-end; }
+  .sk-layout-grid > [data-width="full-width"] > [data-width="content"] { grid-column: content-start / content-end; }
+  .sk-layout-grid > [data-width="full-width"] > [data-width="breakout"] { grid-column: breakout-start / breakout-end; }
+  .sk-layout-grid > [data-width="full-width"] > [data-width="full-width"] { grid-column: full-width-start / full-width-end; }
 
   /*
    * MULTI-COLUMN LAYOUT, CSS Multi-column Layout Module Level 1, shortened to multicol in CSS.

@@ -314,6 +314,19 @@ function renderTemplate(
   )
     return [];
 
+  // The value-specific pair: presence is not enough to tell a checkbox entry from a separator,
+  // both merely have `kind` set.
+  if (
+    node.whenItemEquals !== undefined &&
+    ctx.item?.options?.[node.whenItemEquals.option] !== node.whenItemEquals.equals
+  )
+    return [];
+  if (
+    node.whenItemNotEquals !== undefined &&
+    ctx.item?.options?.[node.whenItemNotEquals.option] === node.whenItemNotEquals.equals
+  )
+    return [];
+
   /*
    * Asked of the entry's CONTENT: a node with children is a branch, one without is a leaf, and
    * nobody sets that: it is whether the slot was filled.
@@ -911,12 +924,30 @@ function renderJsx(
         : jsxAttribute(name, String(value)),
     );
   }
+  /*
+   * `attrs.style` is authored as one CSS-text string, the only shape `attrs` (a flat
+   * `Record<string, string>`) can hold, and the ONLY shape vanilla's emission wants: `attr("style",
+   * value)` writes it straight into `style="…"`, valid HTML as-is. React's `style` prop is not a
+   * string, it is an object, so that same string, spread in with the same generic
+   * `jsxAttribute(name, value)` every other attr uses below, used to come out as
+   * `style="--sk-avatar-bg: …;"` — a JSX prop React throws on at runtime ("the `style` prop expects
+   * a mapping … not a string"). Parsed into declarations and folded into `optionStyles` instead, it
+   * joins whatever `styleProperty` options already contributed there and rides the SAME
+   * `style={{…}} as CSSProperties` object below, so authoring an inline style on a tree node works
+   * the same way in both bindings instead of only in one.
+   */
+  if (tree.attrs?.style) {
+    for (const [property, value] of parseInlineStyle(tree.attrs.style)) {
+      optionStyles.push(`${JSON.stringify(property)}: ${JSON.stringify(value)}`);
+    }
+  }
   if (optionStyles.length > 0) {
     if (!imports.has("react")) imports.set("react", new Set());
     imports.get("react")!.add("type CSSProperties");
     props.push(`style={{ ${optionStyles.join(", ")} } as CSSProperties}`);
   }
   for (const [attrName, value] of Object.entries(tree.attrs ?? {})) {
+    if (attrName === "style") continue;
     props.push(jsxAttribute(jsxPropName(attrName), value));
   }
 
@@ -1074,6 +1105,38 @@ export function jsxPropName(attr: string): string {
   // `aria-*` and `data-*` keep their hyphens in JSX; everything else may need the camelCase name.
   if (attr.startsWith("aria-") || attr.startsWith("data-")) return attr;
   return JSX_PROP_NAMES[attr.toLowerCase()] ?? attr;
+}
+
+/**
+ * `"--sk-avatar-bg: red; color: white"` → `[["--sk-avatar-bg", "red"], ["color", "white"]]`. A CSS
+ * custom property's name is kept verbatim (`--sk-avatar-bg` stays hyphenated: React only recognizes
+ * it as one if the object key is written exactly that way, never `camelCase`d); an ordinary property
+ * is camelCased, the form the `style` object expects for everything else. Splits each declaration on
+ * the FIRST `:` only, so a value that itself contains a colon (`url(http://…)`, a time, a ratio)
+ * survives intact.
+ *
+ * Exported because this same string → `style` object gap exists in TWO places, not one:
+ * `render-tree.tsx` (`@skryensya/react`) builds the SAME props at runtime for the live island, and
+ * used to hit the identical React crash from its own copy of this problem. One parser, imported by
+ * both, so the fix (and any future one) cannot land in only one of them again.
+ */
+export function parseInlineStyle(css: string): Array<[string, string]> {
+  return css
+    .split(";")
+    .map((declaration) => declaration.trim())
+    .filter(Boolean)
+    .map((declaration) => {
+      const colon = declaration.indexOf(":");
+      if (colon === -1) return null;
+      const property = declaration.slice(0, colon).trim();
+      const value = declaration.slice(colon + 1).trim();
+      if (!property || !value) return null;
+      const jsProperty = property.startsWith("--")
+        ? property
+        : property.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
+      return [jsProperty, value] as [string, string];
+    })
+    .filter((pair): pair is [string, string] => pair !== null);
 }
 
 /* ------------------------------------------------------------------------------------- shared */

@@ -4,22 +4,61 @@
     --sk-menu-bg: var(--color-bg-surface-raised);
     --sk-menu-fg: var(--color-text-primary);
     --sk-menu-border-color: var(--color-border-subtle);
-    --sk-menu-radius: var(--radius-surface);
+    /* Matches the trigger's OWN radius (`--radius-control`, the same token `.sk-button` and
+     * `.sk-select` round with), not `--radius-surface`: the panel is an extension of the control
+     * that opened it, not an unrelated card floating near it, and `select.css` already sets this
+     * precedent for its own listbox. */
+    --sk-menu-radius: var(--radius-control);
+    /* A group divider has to read as a RULE, not as unexplained whitespace: `--color-border-subtle`
+     * (the panel's own outer edge, one step lighter) nearly disappears at 1px against the panel's
+     * surface, measured — the margin around it was the only thing a reader saw. `--color-border-
+     * default`, one step darker, is the same strength menu.css already reaches for wherever a divider
+     * has to be found on purpose rather than merely delimit a surface (see the state layer's own
+     * keyline). */
+    --sk-menu-separator-color: var(--color-border-default);
+    /* Half of `--space-stack-xs`: the token scale's own smallest STACK step was still the full
+     * margin a reader read as a gap (see the color fix above, same finding). There is no smaller
+     * named stack token to step down to, so this halves the one that exists rather than reaching
+     * for `--space-inline-xs`, a token from the wrong axis that only happens to be the same size. */
+    --sk-menu-separator-margin: calc(var(--space-stack-xs) / 2);
     display: inline-flex;
   }
 
   /* La colocación es del pattern Anclaje (ADR-25): el trigger lleva además `sk-anchor` y el
-   * positioner además `sk-anchored`. El default del pattern, debajo y centrado, es el de un menú, así
-   * que de COLOCACIÓN acá no hay nada que re-declarar. */
-
-  /* De APARIENCIA sí: React portea el positioner al `<body>`, así que lo que declara `.sk-menu` no le
-   * llega por herencia y cada hook que se lea de acá para abajo resuelve vacío. Ver la nota
+   * positioner además `sk-anchored`. Pero el default del PATTERN es centrado bajo el ancla, que es lo
+   * que quiere un tooltip o un popover hablando DE un control puntual; un menú de comandos no: abre
+   * pegado a un borde, como cualquier dropdown nativo (el `<select>` del navegador, un menú de
+   * escritorio, el kebab de GitHub). El borde de arranque del panel queda alineado con el borde de
+   * arranque del trigger y el panel crece en el sentido de lectura, nunca repartido a los dos lados de
+   * un trigger angosto. Esta es la única colocación que el menú redeclara: la del pattern es para
+   * quien mide contra un punto, no contra un borde.
+   *
+   * `inline-start` A SECAS (sin `span-`) NO alinea: selecciona la CELDA del grid de 3×3 que queda
+   * completamente afuera, a la izquierda del ancla (medido: el borde DERECHO del panel termina
+   * pegado al borde IZQUIERDO del trigger — el panel flota al costado, no abajo). `span-inline-end`
+   * en cambio arranca la región en la propia columna del ancla y la extiende hacia el final, así que
+   * `justify-self: start` sí pega el borde de arranque del panel con el de arranque del trigger y lo
+   * deja crecer en el sentido de lectura.
+   *
+   * `--sk-anchored-offset` es el `margin` del positioner ENTERO (los cuatro lados a la vez, ADR-25),
+   * y el default del pattern es un solo valor: el mismo hueco en bloque Y en línea. Eso es lo que
+   * quiere un tooltip centrado, pero acá deja el panel 8px adentro de la columna del trigger en vez
+   * de pegado a su borde (medido). Un PAR de valores en el hook parte el margin en dos ejes (mismo
+   * truco que usa el submenú más abajo, al revés): el primero es el hueco en bloque, que sigue
+   * siendo el mismo; el segundo es el margen en línea, que va a CERO para que el borde de arranque
+   * del panel quede exactamente sobre el borde de arranque del trigger.
+   *
+   * De APARIENCIA también: React portea el positioner al `<body>`, así que lo que declara `.sk-menu`
+   * no le llega por herencia y cada hook que se lea de acá para abajo resuelve vacío. Ver la nota
    * equivalente en `select.css`. */
   .sk-menu__positioner {
+    --sk-anchored-position-area: block-end span-inline-end;
+    --sk-anchored-justify: start;
+    --sk-anchored-offset: var(--space-stack-xs) 0;
     --sk-menu-bg: var(--color-bg-surface-raised);
     --sk-menu-fg: var(--color-text-primary);
     --sk-menu-border-color: var(--color-border-subtle);
-    --sk-menu-radius: var(--radius-surface);
+    --sk-menu-radius: var(--radius-control);
   }
 
   /* Un SUBMENÚ sale al costado y alineado por arriba con el item del que cuelga, que no es ninguna
@@ -33,6 +72,33 @@
     --sk-anchored-align: start;
     --sk-anchored-position-try: flip-inline;
     --sk-anchored-offset: 0 var(--space-inline-xs);
+  }
+
+  /* ── density ─────────────────────────────────────────────────────────────────
+   * A tighter row for a menu with a lot of commands, same idiom and hook names as List's own
+   * `[data-density="compact"]`. UNLIKE the appearance hooks above, `--sk-menu-item-min-height` and
+   * `--sk-menu-item-gap` are declared ONLY here, never as an unconditional default on `.sk-menu` or
+   * `.sk-menu__positioner`: a value set directly on an element always wins over one it would
+   * otherwise inherit, no matter the specificity, so a default re-declared on the positioner (the
+   * one Vanilla ALSO has, undodged, since it never portals) would have silently overridden the
+   * compact value inherited from the root before this rule ever got a chance to compete for it
+   * (measured: item stayed 44px tall with `data-density="compact"` on the root alone). `.sk-menu__item`
+   * below instead reads these two through a `var(…, fallback)`, so "not compact" needs nothing
+   * declared anywhere and "compact" is the only state that ever writes the property, on whichever
+   * element the density attribute actually lands on: the root for Vanilla (ordinary inheritance
+   * carries it to every item, no portal in the way) and the positioner for React, which is spelled
+   * out explicitly in menu.tsx (and once per submenu level: each one portals separately, so `density`
+   * is threaded down and re-stamped rather than assumed to still be an ancestor).
+   *
+   * `--size-control-sm` floors at 24px (WCAG 2.2's minimum target size, not the 44px enhanced one
+   * `--size-touch-target` floors at): compact is an explicit, opt-in trade of hit area for row
+   * count, not a silent violation. Padding is untouched: `--space-inset-xs`, the system's smallest
+   * inset token, is already the row's default here (unlike List, which steps DOWN to it from
+   * `--space-inset-sm`), so the height comes off the floor, not off the token scale. */
+  .sk-menu[data-density="compact"],
+  .sk-menu__positioner[data-density="compact"] {
+    --sk-menu-item-min-height: var(--size-control-sm);
+    --sk-menu-item-gap: var(--space-inline-xs);
   }
 
   .sk-menu__content {
@@ -61,14 +127,26 @@
     isolation: isolate;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: var(--space-inline-sm);
+    /* Fallback, not a declared default: see the density block below for why these two read
+       through `var(…, fallback)` instead of a hook re-declared on `.sk-menu`/`.sk-menu__positioner`. */
+    gap: var(--sk-menu-item-gap, var(--space-inline-sm));
     align-items: center;
-    min-block-size: var(--size-touch-target);
+    min-block-size: var(--sk-menu-item-min-height, var(--size-touch-target));
     padding: var(--space-inset-xs) var(--space-inset-sm);
     border-radius: var(--radius-control);
     color: var(--sk-menu-fg);
     cursor: pointer;
     outline: none;
+  }
+
+  /*
+   * A destructive command reads danger through its TEXT, not a fill: a menu item has no background
+   * of its own to swap (unlike a danger Button), and `--state-layer-color` already defaults to
+   * `currentColor` (patterns/state-layer.css), so setting `color` alone is enough to also tint this
+   * item's own hover/press wash red — the shared mechanism, not a second one for menus.
+   */
+  .sk-menu__item[data-tone="danger"] {
+    color: var(--color-text-danger);
   }
 
   /*
@@ -96,25 +174,39 @@
     text-align: start;
   }
 
-  .sk-menu__item::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: var(--z-below);
-    border-radius: inherit;
-    background: var(--state-layer-color);
-    opacity: 0;
+  /* And an item may be a link: one that navigates instead of firing an action (an entry that
+   * hands off to another page rather than acting in place). Only `<div>` and `<button>` ever
+   * carried this class, so nothing reset an anchor's own chrome: underline and the visited/link
+   * palette, the same gap `button.sk-menu__item` closed for buttons. */
+  a.sk-menu__item {
+    text-decoration: none;
+    color: inherit;
   }
 
-  .sk-menu__item[data-highlighted]::before {
-    opacity: var(--state-layer-hover-opacity);
+  /* ── state layer bridge ────────────────────────────────────────────────────
+   * `.sk-menu__item` (and the submenu trigger) already carry `sk-interactive` (menu.ts's
+   * `also: ["sk-interactive"]`), so patterns/state-layer.css already paints a `::before` here.
+   * A SECOND, hand-rolled `::before` used to sit on top of it, so the two fought over `background`
+   * at equal specificity while the shared one's box-shadow keyline and transition kept coming
+   * through underneath — two systems half-applied instead of one working. Bridging into the shared
+   * `--state-layer-opacity` slot, the same idiom tree-view.css uses, is the fix: one `::before`,
+   * one opacity, the pattern's own transition and forced-colors keyline for free.
+   *
+   * Zag marks the roving highlight with a bare `data-highlighted`, which the pattern's own
+   * `:hover`/`:focus-visible` rungs never see (arrow-key navigation highlights an item without
+   * moving real DOM focus there), so it needs this bridge to reach the layer at all. At (0,2,0),
+   * same as the pattern's real rungs and loaded after them, it lands exactly where "hover" sits on
+   * the priority ladder: above a checkbox/radio item's `aria-checked` selected tint (hover > selected,
+   * per the ladder) and below disabled. */
+  .sk-menu__item[data-highlighted] {
+    --state-layer-opacity: var(--state-layer-hover-opacity);
   }
+  /* Disabled, same specificity, declared after: wins the tie against the highlighted bridge above,
+   * which is the priority ladder's own order (disabled > hover). */
   .sk-menu__item[data-disabled] {
+    --state-layer-opacity: var(--state-layer-disabled-opacity);
     color: var(--color-text-disabled);
     cursor: not-allowed;
-  }
-  .sk-menu__item[data-disabled]::before {
-    opacity: var(--state-layer-disabled-opacity);
   }
   .sk-menu__item-label {
     min-inline-size: 0;
@@ -129,6 +221,14 @@
    * arrives a frame late is only late.
    */
   .sk-menu__item-indicator {
+    /* Centers the glyph on the flex axis instead of leaving it to `vertical-align`: `.sk-icon`'s own
+     * `-0.125em` (icon.css) is tuned for an icon sitting inline NEXT TO text, nudged down against a
+     * text baseline it shares the line with. This span has no such sibling text of its own to share
+     * a baseline with (the item's LABEL is a separate grid cell, not on the same line), so that nudge
+     * just pushed the glyph 2px above true center, measured, against the wrapping span. */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     visibility: hidden;
     color: var(--color-text-accent);
   }
@@ -136,10 +236,23 @@
   .sk-menu__item-indicator[data-state="checked"] {
     visibility: visible;
   }
+
+  /*
+   * The SAME part name also paints the submenu trigger's chevron (menu.ts's contract: a submenu
+   * button's `itemIndicator` is a bare `chevron-right`, no `kind`, so it never carries
+   * `data-state="checked"`). The rule above hid it along with every unchecked tick, so a submenu
+   * gave no visual sign it opened another level. A submenu trigger is always a `<button>`
+   * (`button.sk-menu__item`, the shape menu.css already resets below); a plain command or
+   * checkbox/radio item is always a `<div>`. That element type is what tells the two apart, so the
+   * chevron shows unconditionally on the button and the check logic above is untouched for the div. */
+  button.sk-menu__item > .sk-menu__item-indicator {
+    visibility: visible;
+    color: var(--sk-menu-fg);
+  }
   .sk-menu__separator {
     block-size: 1px;
-    margin: var(--space-stack-xs) 0;
-    background: var(--color-border-subtle);
+    margin: var(--sk-menu-separator-margin) 0;
+    background: var(--sk-menu-separator-color);
   }
   .sk-menu__group-label {
     padding: var(--space-inset-xs) var(--space-inset-sm);
@@ -164,5 +277,73 @@
     .sk-menu__content {
       border-color: CanvasText;
     }
+  }
+
+  /*
+   * ── pointer-intent overlay (`data-sk-menu-debug-intent`) ────────────────────
+   * Not part of the template: menu-intent-overlay.ts creates these two elements directly on
+   * `<body>`, only while a submenu with the flag on is open, one pair per open submenu. `fixed` +
+   * `--z-popover` matches the pattern's own anchored boxes (patterns/anchored.css), so the overlay
+   * never sits under the very panel it is explaining. `pointer-events: none` on both: this is
+   * READOUT, and must never itself be what a real pointermove hits.
+   */
+  .sk-menu__intent-overlay {
+    position: fixed;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    pointer-events: none;
+    z-index: var(--z-popover);
+  }
+
+  .sk-menu__intent-polygon {
+    fill: var(--color-border-accent);
+    fill-opacity: 0.08;
+    stroke: var(--color-border-accent);
+    stroke-opacity: 0.25;
+    stroke-width: 1.5;
+    transition:
+      fill-opacity var(--motion-feedback-duration) var(--motion-feedback-easing),
+      stroke-opacity var(--motion-feedback-duration) var(--motion-feedback-easing);
+  }
+
+  /* Locked is the state that MATTERS (it is the one keeping a sibling from stealing highlight), so
+   * it is the one that reads as more than decoration once the pointer actually earns it. */
+  .sk-menu__intent-polygon[data-locked="true"] {
+    fill-opacity: 0.22;
+    stroke-opacity: 0.6;
+  }
+
+  .sk-menu__intent-badge {
+    position: fixed;
+    inset-block-start: var(--space-inset-sm);
+    inset-inline-start: var(--space-inset-sm);
+    z-index: var(--z-popover);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-inline-xs);
+    padding: var(--space-inset-xs) var(--space-inset-sm);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-surface-raised);
+    color: var(--color-text-tertiary);
+    font-family: var(--font-family-code);
+    font-size: var(--font-size-caption);
+    pointer-events: none;
+  }
+
+  .sk-menu__intent-badge[data-locked="true"] {
+    color: var(--color-text-accent);
+  }
+
+  .sk-menu__intent-badge-dot {
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 50%;
+    background: var(--color-border-subtle);
+  }
+
+  .sk-menu__intent-badge[data-locked="true"] .sk-menu__intent-badge-dot {
+    background: var(--color-border-accent);
   }
 }

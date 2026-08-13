@@ -1,23 +1,13 @@
 ---
 /*
- * "En esta página", the index of the document.
+ * "En esta página", rendered from the same TOC contract used in every consumer:
  *
- * ONE element, two shapes, and the shape is a function of whether there is a column for it:
+ *   - The design-system default is a native disclosure, closed and keyboard-accessible.
+ *   - The docs shell has a third column at `wide`, so it opts into `data-sk-toc-rail`, which turns
+ *     that same markup into its compact, always-open sticky rail.
  *
- *   - At `wide` and up it is the RAIL, the third column of the docs layout: always open, its summary
- *     inert and painted as a quiet caption, sticky beside the prose.
- *   - Below `wide` there is no third column, so it is a DISCLOSURE in normal flow, closed. A phone
- *     screen cannot spend 60% of itself on an index of the thing you came to read, and pinning that
- *     index over the document is worse than spending the space once.
- *
- * `<details>` is what makes that switch cheap: the open state, the toggle, the keyboard and the
- * a11y are the platform's. The only script is the one line that forces it open where it is a rail
- * (see Base.astro), because `open` is an attribute and no media query can write one.
- *
- * The list arrives FILLED: the layout reads the document's own headings while the page is built
- * (`../lib/document-index.ts`) and hands them here as items, so there is no list to build, no id to
- * assign and nothing that appears after first paint. The aside is always in the grid regardless, so
- * the document column holds still on the one page that still fills its list in the browser.
+ * The list is compiled with the page from `document-index.ts`; only hero-tab pages leave it pending
+ * because their headings depend on the reader-selected tab.
  */
 import { tocParts } from "@skryensya/core/toc";
 import type { StableIconName } from "@skryensya/core/icon";
@@ -45,23 +35,21 @@ interface Props {
 
 const t = useTranslations(getLocale(Astro.url));
 const { items = [], title = t("toc.title"), pending = false } = Astro.props;
-const chevron = iconMarkup("chevron-down", { size: "sm" });
 ---
 
 <aside
   class={`${tocParts.root} sk-scrollbar`}
   data-sk-toc
+  data-sk-toc-rail
   data-ready={pending ? undefined : ""}
   data-empty={!pending && items.length === 0 ? "" : undefined}
 >
   <details class={tocParts.disclosure} data-sk-toc-disclosure>
     <summary class={`${tocParts.summary} sk-interactive`}>
       <h2 class={tocParts.title} data-flush>{title}</h2>
-      <span class={tocParts.chevron} aria-hidden="true">
-        <Fragment set:html={chevron} />
-      </span>
+      <span class={tocParts.chevron} aria-hidden="true"></span>
     </summary>
-    <nav aria-label={title}>
+    <nav class={tocParts.nav} aria-label={title}>
       <ul class={tocParts.list}>
         {
           items.map((item) => (

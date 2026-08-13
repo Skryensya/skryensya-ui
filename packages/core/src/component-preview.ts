@@ -58,6 +58,10 @@ export const componentPreviewAttrs = {
   bindingTabs: "data-sk-component-preview-binding-tabs",
   /** One of the two plain buttons inside `bindingTabs`; its `data-value` is "vanilla" | "react". */
   bindingOption: "data-sk-component-preview-binding-option",
+  /** The group wrapping the three plain screen-preset buttons; carries the current `data-value`. */
+  screenTabs: "data-sk-component-preview-screen-tabs",
+  /** One of the three plain buttons inside `screenTabs`; its `data-value` is "free" | "tablet" | "mobile". */
+  screenOption: "data-sk-component-preview-screen-option",
   binding: "data-sk-component-preview-binding",
   /** Document-level shared Vanilla | React preference (`<html>`). */
   documentBinding: "data-sk-component-preview-pref",
@@ -77,7 +81,6 @@ export const componentPreviewAttrs = {
   viewport: "data-sk-component-preview-viewport",
   scroll: "data-sk-component-preview-scroll",
   reload: "data-sk-component-preview-reload",
-  screenTabs: "data-sk-component-preview-screen-tabs",
   /**
    * On the stage, and only for a preset: `free` is the absence of the attribute, not a value, so
    * every rule that reserves, fits or scrolls keeps working unchanged when no preset is chosen.

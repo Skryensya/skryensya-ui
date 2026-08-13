@@ -11,9 +11,9 @@
  * `@skryensya/react` component, not a source string. The `react` prop stays the source shown
  * below it; a page may supply either alone.
  *
- * Binding tabs (header): Vanilla | React via segmented, toggling which stage is visible. Preference
- * is shared across every preview on the page (`data-sk-component-preview-pref` on `<html>`,
- * persisted in docs).
+ * Binding tabs (header): Vanilla | React as a Segmented control, toggling which stage is visible.
+ * Preference is shared across every preview on the page (`data-sk-component-preview-pref` on
+ * `<html>`, persisted in docs).
  * Source tabs (below the stage, under Vanilla only): HTML plus optional CSS and JS. They sit
  * under Vanilla, never beside React.
  */
@@ -25,9 +25,9 @@ import { iconMarkup } from "../icons";
 import "@skryensya/core/components/component-preview.css";
 import "@skryensya/core/components/loader.css";
 import "@skryensya/core/components/tabs.css";
-import "@skryensya/core/components/toolbar.css";
 import "@skryensya/core/patterns/anchored.css";
 import "@skryensya/core/components/tooltip.css";
+import "@skryensya/core/components/menu.css";
 import { buildPreviewFrameDocument } from "../lib/preview-frame";
 import { getLocale, useTranslations } from "../i18n";
 
@@ -101,6 +101,13 @@ interface Props {
    * Pass `screens={false}` where the presets would mislead rather than inform.
    */
   screens?: boolean;
+  /**
+   * Named span on the page's `.sk-layout-grid` (`packages/core/css/patterns/layout.css`). Each tab
+   * panel is its own layout grid, so a preview sits at `content` measure by default and only reaches
+   * for `breakout` (or narrower) when the demo itself needs the room — a settings List does, a Badge
+   * does not. Omit to inherit the panel's default.
+   */
+  width?: "narrow" | "content" | "breakout" | "full-width";
 }
 
 const {
@@ -120,8 +127,10 @@ const {
   scroll = false,
   measure,
   screens = true,
+  width,
 } = Astro.props;
-const t = useTranslations(getLocale(Astro.url));
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
 
 /*
  * Both sources from the one tree. Emitted at BUILD time: the compiler is data in, strings out, so
@@ -143,11 +152,32 @@ const hasBindingTabs = Boolean(vanillaCode && hasReact);
 const hasSourceTabs = Boolean(vanillaCode && (js || css));
 const slotHtml = Astro.slots.has("default") ? await Astro.slots.render("default") : undefined;
 const previewHtml = treeHtml ?? slotHtml ?? html ?? "";
+const playgroundVanilla = `<!doctype html>
+<html lang="${locale}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>${label}</title>
+    <link rel="stylesheet" href="./skryensya.css" />
+${css ? `    <style>\n${css}\n    </style>\n` : ""}  </head>
+  <body>
+${previewHtml}
+
+    <script type="module">
+      import { initComponents, mountIcons, phosphorIcons } from "./skryensya-vanilla.js";
+
+      await initComponents();
+      mountIcons(document, phosphorIcons);
+${js ? `\n${js}\n` : ""}    </script>
+  </body>
+</html>`;
+const playgroundPayload = encodeURIComponent(JSON.stringify({ label, vanilla: playgroundVanilla }));
 const encodedPreviewScript = previewScript ? encodeURIComponent(previewScript) : "";
 /** Unique id so the FOUC inline script can target this preview (Astro may dedupe identical scripts). */
 const previewId = `sk-cp-${Math.random().toString(36).slice(2, 10)}`;
 const frameDocument = buildPreviewFrameDocument({
   body: previewHtml,
+  css,
   flush,
   scroll,
   measure,
@@ -161,32 +191,39 @@ const frameDocument = buildPreviewFrameDocument({
  * writes the same `<svg data-icon="…">` the runtime would, so the icon-set switch still finds and
  * swaps them: the site keeps the swap, and loses the wait.
  */
-const reloadIcon = iconMarkup("refresh");
+const moreIcon = iconMarkup("more");
 /*
  * Screen presets. The name is a stable ROLE, not a device drawing, which is why the accessible
  * name spells out the actual viewport: `screen-tablet` tells you the class of screen, `768 × 1024`
- * tells you what you are about to see. Both are needed: the glyph alone cannot say which of two
- * tablets. Rendered as a single cycling toggle (like ThemeToggle), so the hint IS the accessible
- * name for whichever preset is current: there is no separate tooltip to carry it.
+ * tells you what you are about to see. Rendered as a single cycling toggle (like ThemeToggle), so
+ * the hint IS the accessible name for whichever preset is current.
+ *
+ * `tooltipLabel` is a SEPARATE, visible hint on top of that: the literal device word (Desktop /
+ * Tablet / Mobile), always in English regardless of page locale. It names the glyph for a sighted
+ * reader who is not going to open a screen reader to learn what an icon-only button does; the
+ * accessible name above already carries the full sentence for anyone who does.
  */
 const screenOptions = [
   {
     value: "free",
-    icon: iconMarkup("screen-desktop"),
+    icon: iconMarkup("screen-desktop", { size: "sm" }),
     label: t("preview.screenFree"),
     hint: t("preview.screenFreeHint"),
+    tooltipLabel: "Desktop",
   },
   {
     value: "tablet",
-    icon: iconMarkup("screen-tablet"),
+    icon: iconMarkup("screen-tablet", { size: "sm" }),
     label: t("preview.screenTablet"),
     hint: t("preview.screenTabletHint"),
+    tooltipLabel: "Tablet",
   },
   {
     value: "mobile",
-    icon: iconMarkup("screen-mobile"),
+    icon: iconMarkup("screen-mobile", { size: "sm" }),
     label: t("preview.screenMobile"),
     hint: t("preview.screenMobileHint"),
+    tooltipLabel: "Mobile",
   },
 ] as const;
 const screenToggleLabels = Object.fromEntries(
@@ -197,127 +234,160 @@ const screenToggleLabels = Object.fromEntries(
 ) as Record<(typeof screenOptions)[number]["value"], string>;
 ---
 
-<div class="sk-component-preview" data-sk-component-preview id={previewId}>
+<div class="sk-component-preview" data-sk-component-preview data-width={width} id={previewId}>
   <header class="sk-component-preview__header">
     <span class="sk-component-preview__title">{label}</span>
     {note && <span class="sk-component-preview__note">{note}</span>}
     {/*
-      * ONE container, not two: the toolbar IS `.sk-component-preview__actions` (the class that
-      * pins it to the header's right edge), not a wrapper around a second `sk-toolbar` div.
-      * Every action (reload, screen presets, the Vanilla/React toggle) is a group of this same
-      * toolbar, reload included, so Home/End and arrow-roving reach across all three instead of
-      * treating reload as chrome that sits outside the bar it visually belongs to.
-      *
-      * Screen presets and the binding toggle are composite widgets (each a Segmented radiogroup),
-      * so they are ONE stop each: Segmented already owns a roving tabindex (only its selected
-      * option is a stop, see connectSegmented's `tabindex: selected ? 0 : -1`), and the Toolbar
-      * enhancer only visits that stop, never the options inside. That pairing is the documented
-      * pattern: see /componentes/toolbar, "Toolbar con widgets compuestos".
+      * THREE separate, self-contained controls in a row — not one boxed toolbar holding all of
+      * them. The binding toggle and the screen presets are each a real `Segmented` (see
+      * /componentes/segmented): a boxed radiogroup with its own border and sliding indicator, so
+      * each already reads as its own control. Wrapping them (plus the overflow menu) in a bordered
+      * `sk-toolbar` on top of that made the whole cluster read as a single composite with three
+      * unrelated questions crammed inside it. Plain inline-flex with a gap keeps each control's own
+      * chrome as the only chrome it has.
       */}
-    <div
-      class="sk-toolbar sk-component-preview__actions"
-      data-sk-toolbar
-      data-loop-focus
-      aria-label={t("preview.toolbarLabel", { name: label })}
-    >
-      <div class="sk-toolbar__group" role="group">
-        <span class="sk-tooltip" data-sk-anchor>
-          <button
-            class="sk-button sk-interactive sk-component-preview__reload sk-tooltip__trigger sk-anchor"
-            data-sk-component-preview-reload
-            data-sk-anchor-trigger
-            data-variant="ghost"
-            data-size="sm"
-            data-icon-only
-            type="button"
-            aria-label={t("preview.reload", { name: label })}
-          >
-            <Fragment set:html={reloadIcon} />
-          </button>
-          <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-            <span class="sk-anchored-arrow" aria-hidden="true" />
-            <span class="sk-tooltip__content" data-sk-anchor-content>
-              {t("preview.reloadHint")}
-            </span>
-          </span>
-        </span>
-      </div>
-      {(screens || hasBindingTabs) && <span class="sk-toolbar__separator" aria-hidden="true" />}
+    <div class="sk-component-preview__actions">
       {/*
-        * One button, not three: like ThemeToggle, the three presets are one dimension advancing on
-        * click, not independent choices to aim at. `data-value` (read/painted by
-        * connectScreenTabs → paintScreenToggle) selects the visible stacked face in CSS, the same
-        * cross-fade ThemeToggle uses for its own three faces. The accessible name carries the full
-        * hint text per preset, authored per instance as `data-sk-component-preview-screen-label-*`,
-        * so a page with several previews still names its own component, not a shared generic string.
-        */}
-      {
-        screens && (
-          <div class="sk-toolbar__group" role="group">
-            <button
-              class="sk-button sk-interactive sk-component-preview__screen-toggle"
-              data-sk-component-preview-screen-tabs
-              data-value="free"
-              data-variant="ghost"
-              data-size="sm"
-              data-icon-only
-              type="button"
-              aria-label={screenToggleLabels.free}
-              data-sk-component-preview-screen-label-free={screenToggleLabels.free}
-              data-sk-component-preview-screen-label-tablet={screenToggleLabels.tablet}
-              data-sk-component-preview-screen-label-mobile={screenToggleLabels.mobile}
-            >
-              {screenOptions.map((option) => (
-                <span data-sk-component-preview-screen-icon={option.value}>
-                  <Fragment set:html={option.icon} />
-                </span>
-              ))}
-            </button>
-          </div>
-        )
-      }
-      {screens && hasBindingTabs && <span class="sk-toolbar__separator" aria-hidden="true" />}
-      {/*
-        * Two plain buttons, not a boxed Segmented: the container Segmented needs (the pill, the
-        * sliding indicator) added a second nested box inside a toolbar group that is already the
-        * container. `data-sk-component-preview-binding-tabs` moves onto the group div itself
-        * (one element doing both jobs), and each button toggles `aria-pressed` directly on click
-        * instead of Segmented's `sk-value-change` + roving radiogroup semantics.
+        * FIRST: which binding you are reading is the choice a reader reaches for before anything
+        * else here. `data-sk-component-preview-binding-tabs` and `data-sk-segmented` both live on
+        * the same element: one node is the component-preview's own mount hook AND the Segmented the
+        * site's global enhancer already knows how to run (indicator, aria-checked, keyboard). The
+        * opt-in ComponentPreview enhancer only listens for the `sk-value-change` Segmented dispatches
+        * on itself; it never re-paints the widget's own state.
         */}
       {
         hasBindingTabs && (
           <div
-            class="sk-toolbar__group"
-            role="group"
+            class="sk-segmented"
+            data-sk-segmented
             data-sk-component-preview-binding-tabs
             data-value="vanilla"
+            role="radiogroup"
             aria-label={t("preview.bindingGroup", { name: label })}
           >
+            <span class="sk-segmented__indicator" aria-hidden="true" />
             <button
-              class="sk-button sk-interactive sk-component-preview__binding-option"
+              class="sk-segmented__option sk-interactive"
+              data-sk-segmented-option
               data-sk-component-preview-binding-option
               data-value="vanilla"
-              data-variant="ghost"
-              data-size="sm"
               type="button"
-              aria-pressed="true"
+              role="radio"
             >
               Vanilla
             </button>
             <button
-              class="sk-button sk-interactive sk-component-preview__binding-option"
+              class="sk-segmented__option sk-interactive"
+              data-sk-segmented-option
               data-sk-component-preview-binding-option
               data-value="react"
-              data-variant="ghost"
-              data-size="sm"
               type="button"
-              aria-pressed="false"
+              role="radio"
             >
               React
             </button>
           </div>
         )
       }
+      {/*
+        * Each option's accessible name carries the full hint text for its preset
+        * (`screenToggleLabels`), so a page with several previews still names its own component, not
+        * a shared generic string; Segmented's own `label` slot only ever needed text, and an
+        * icon-only radio still needs a name from somewhere.
+        */}
+      {
+        screens && (
+          <div
+            class="sk-segmented"
+            data-sk-segmented
+            data-sk-component-preview-screen-tabs
+            data-value="free"
+            role="radiogroup"
+            aria-label={t("preview.screenGroup", { name: label })}
+          >
+            <span class="sk-segmented__indicator" aria-hidden="true" />
+            {/*
+              * Each option is ALSO a Tooltip root (`data-sk-anchor`), wrapping the option button
+              * (the trigger) and a positioner/content pair, so the literal device word shows up on
+              * hover/focus next to the sentence-length `aria-label` above. The wrapper stays
+              * `display: contents` (component-preview.css) so it never becomes a box of its own:
+              * the button is what `.sk-segmented`'s indicator math measures, and the positioner is
+              * `position: fixed` (patterns/anchored.css), so neither counts as a flex item — the
+              * track's layout is exactly what it would be without the tooltip.
+              */}
+            {screenOptions.map((option) => (
+              <span class="sk-tooltip" data-sk-anchor>
+                <button
+                  class="sk-segmented__option sk-interactive sk-anchor"
+                  data-sk-segmented-option
+                  data-sk-component-preview-screen-option
+                  data-value={option.value}
+                  data-icon-only
+                  data-sk-anchor-trigger
+                  type="button"
+                  role="radio"
+                  aria-label={screenToggleLabels[option.value]}
+                >
+                  <Fragment set:html={option.icon} />
+                </button>
+                <div class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+                  <div class="sk-tooltip__content" data-sk-anchor-content role="tooltip">
+                    {option.tooltipLabel}
+                  </div>
+                </div>
+              </span>
+            ))}
+          </div>
+        )
+      }
+      {/*
+        * LAST, in an overflow menu: neither action here changes what the reader is looking at (one
+        * hands off to another page, the other re-runs the same demo), so neither earns a permanent
+        * seat next to the controls that do. Menu is the published contract for "actions behind a
+        * trigger" (see /componentes/menu); the Playground link stays a real `<a>` (it navigates,
+        * so it keeps middle-click/open-in-new-tab). `target="_blank"` opens it in a new tab by
+        * default too: this preview is what the reader was looking at, and it should still be there
+        * when the Playground tab closes. `rel="noopener"` only severs `window.opener`, not session
+        * storage — the handoff below still clones into the new tab. Reload stays the plain command
+        * it always was.
+        */}
+      <div class="sk-menu" data-sk-menu data-density="compact">
+        <button
+          class="sk-menu__trigger sk-button sk-interactive sk-anchor"
+          data-sk-menu-trigger
+          data-variant="neutral"
+          data-size="sm"
+          data-icon-only
+          type="button"
+          aria-label={t("preview.moreActions", { name: label })}
+        >
+          <Fragment set:html={moreIcon} />
+        </button>
+        <div class="sk-menu__positioner sk-anchored" data-sk-menu-positioner data-density="compact">
+          <div class="sk-menu__content" data-sk-menu-content>
+            <a
+              class="sk-menu__item sk-interactive"
+              data-sk-menu-item
+              data-value="playground"
+              data-sk-component-preview-playground
+              href="/playground"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="sk-menu__item-label">{t("preview.openInPlayground")}</span>
+            </a>
+            <div
+              class="sk-menu__item sk-interactive"
+              data-sk-menu-item
+              data-value="reload"
+              data-sk-component-preview-reload
+            >
+              <span class="sk-menu__item-label">{t("preview.reloadAction")}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -496,20 +566,28 @@ const screenToggleLabels = Object.fromEntries(
    * flipping pressed state Vanilla → React on load, and stops a persisted preset from painting
    * full-width first and snapping to phone size once the enhancer arrives.
    */
-  (hasBindingTabs || screens) && (
-    <script is:inline define:vars={{ previewId, hasBindingTabs, screens }}>
+  (hasBindingTabs || screens || playgroundPayload) && (
+    <script is:inline define:vars={{ previewId, hasBindingTabs, screens, playgroundPayload }}>
       (function () {
         var d = document.documentElement;
         var root = document.getElementById(previewId);
         if (!root) return;
 
+        var playgroundLink = root.querySelector("[data-sk-component-preview-playground]");
+        if (playgroundLink) {
+          playgroundLink.addEventListener("click", function () {
+            sessionStorage.setItem("skryensya-playground-handoff", playgroundPayload);
+          });
+        }
         if (hasBindingTabs) {
           var pref = d.getAttribute("data-sk-component-preview-pref") || "vanilla";
           var tabs = root.querySelector("[data-sk-component-preview-binding-tabs]");
-          if (tabs) tabs.setAttribute("data-value", pref);
-          root.querySelectorAll("[data-sk-component-preview-binding-option]").forEach(function (option) {
-            option.setAttribute("aria-pressed", option.getAttribute("data-value") === pref ? "true" : "false");
-          });
+          if (tabs) {
+            tabs.setAttribute("data-value", pref);
+            tabs.querySelectorAll("[data-sk-component-preview-binding-option]").forEach(function (option) {
+              option.setAttribute("aria-checked", option.getAttribute("data-value") === pref ? "true" : "false");
+            });
+          }
           root.querySelectorAll("[data-sk-component-preview-binding]").forEach(function (panel) {
             var name = panel.getAttribute("data-sk-component-preview-binding");
             if (name === "vanilla" || name === "react") panel.hidden = name !== pref;
@@ -520,7 +598,12 @@ const screenToggleLabels = Object.fromEntries(
           var screen = d.getAttribute("data-sk-component-preview-screen-pref");
           if (screen !== "tablet" && screen !== "mobile") screen = "free";
           var screenTabs = root.querySelector("[data-sk-component-preview-screen-tabs]");
-          if (screenTabs) screenTabs.setAttribute("data-value", screen);
+          if (screenTabs) {
+            screenTabs.setAttribute("data-value", screen);
+            screenTabs.querySelectorAll("[data-sk-component-preview-screen-option]").forEach(function (option) {
+              option.setAttribute("aria-checked", option.getAttribute("data-value") === screen ? "true" : "false");
+            });
+          }
           // Both bindings are iframe stages, and the preset is one control above both of them.
           // `free` is the absence of the attribute, so nothing is written for it.
           if (screen !== "free") {

@@ -124,6 +124,10 @@ const componentDescriptions = {
     es: "Representa teclas y combinaciones de teclado dentro del contenido.",
     en: "Represents keys and keyboard combinations inside content.",
   },
+  "/componentes/layout-grid": {
+    es: "Organiza una página con anchos de lectura, breakout y borde a borde.",
+    en: "Organizes a page with reading, breakout, and edge-to-edge widths.",
+  },
   "/componentes/link": {
     es: "Navega a otro destino desde texto en línea.",
     en: "Navigates to another destination from inline text.",

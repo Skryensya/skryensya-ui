@@ -26,18 +26,29 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties }
  * one thing it is not.
  */
 
-export type PlaygroundExample = {
-  readonly id: string;
-  readonly label: string;
-  readonly react: string;
-  readonly vanilla: string;
-};
-
-export type PlaygroundComponent = {
+/**
+ * The rail's own view of a component: labels only, no source. What `nodes` (below) needs to draw
+ * the tree, and nothing more — fetching this for every component up front costs a few KB total.
+ */
+export type PlaygroundIndexExample = { readonly id: string; readonly label: string };
+export type PlaygroundIndexComponent = {
   readonly id: string;
   readonly label: string;
   readonly docs: string;
-  readonly examples: readonly PlaygroundExample[];
+  readonly examples: readonly PlaygroundIndexExample[];
+};
+
+/**
+ * One component's real source, in both bindings. Fetched only once a reader selects that component
+ * (`useComponentDetail`, below) — this is the ~500KB-for-59-components part the index used to carry
+ * unconditionally.
+ */
+export type PlaygroundDetailExample = PlaygroundIndexExample & {
+  readonly react: string;
+  readonly vanilla: string;
+};
+export type PlaygroundDetailComponent = Omit<PlaygroundIndexComponent, "examples"> & {
+  readonly examples: readonly PlaygroundDetailExample[];
 };
 
 export type PlaygroundStrings = {
@@ -56,29 +67,89 @@ export type PlaygroundStrings = {
 };
 
 type Props = {
-  /** URL of the built catalogue for this locale. Fetched, not inlined: see the endpoint for why. */
+  /** URL of the built catalogue INDEX for this locale. Fetched, not inlined: see the endpoint for why. */
   readonly catalogue: string;
   readonly strings: PlaygroundStrings;
 };
 
+/**
+ * A one-navigation handoff from a docs preview. The document source stays in session storage rather
+ * than the URL: examples routinely exceed a safe, readable query string and the next tab should
+ * open the code itself, not an encoded transport.
+ */
+type PlaygroundHandoff = {
+  readonly label: string;
+  readonly vanilla: string;
+};
+
+const handoffStorageKey = "skryensya-playground-handoff";
+const handoffComponentId = "preview";
+
+function readPlaygroundHandoff(): PlaygroundHandoff | null {
+  if (typeof window === "undefined") return null;
+
+  const encoded = sessionStorage.getItem(handoffStorageKey);
+  if (!encoded) return null;
+  sessionStorage.removeItem(handoffStorageKey);
+
+  try {
+    const value = JSON.parse(decodeURIComponent(encoded)) as Partial<PlaygroundHandoff>;
+    return typeof value.label === "string" && typeof value.vanilla === "string"
+      ? { label: value.label, vanilla: value.vanilla }
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+/** The handoff, reshaped as the one-component detail it stands in for — no fetch needed, it already
+ * carries its own source. The only entry whose Vanilla binding has no React counterpart (see the
+ * binding switch below, which keys off this same id rather than an empty string). */
+function handoffDetail(handoff: PlaygroundHandoff): PlaygroundDetailComponent {
+  return {
+    id: handoffComponentId,
+    label: handoff.label,
+    docs: "",
+    examples: [{ id: handoffComponentId, label: handoff.label, react: "", vanilla: handoff.vanilla }],
+  };
+}
+
 /** What the sandbox is handed. All of it built by `scripts/build-sandbox-bundles.mjs`. */
 const BUNDLES = {
-  css: "/sandbox/skryensya.css",
+  /** Tokens, semantic layer, high-contrast mode, the two dimensions — everything a component's own
+   * CSS assumes is already there. No patterns, no components: those are fetched per part, below. */
+  foundation: "/sandbox/foundation.css",
   react: "/sandbox/skryensya-react.js",
   vanilla: "/sandbox/skryensya-vanilla.js",
   subpaths: "/sandbox/react-subpaths.json",
+  /** Filename stem → the CSS files it needs (itself plus whatever it `@import`s), resolved at build
+   * time so the client never has to parse CSS to find out. See `useComponentCss` for how a name is
+   * detected from an example's source in the first place. */
+  cssManifest: "/sandbox/css-manifest.json",
 } as const;
+
+/** Where a name from `cssManifest` resolves to an actual file. */
+const CSS_BASE = "/sandbox/css/";
 
 /** The package name the sandbox resolves, and the folder it is mounted at. */
 const REACT_PACKAGE = "@skryensya/react";
 
 /*
- * The kit ships no page background or inset of its own — those are the app's to set, not a
- * component's. Every docs preview sits against `--color-bg-canvas` with `--space-inset-lg` of
- * breathing room around the specimen (`.sk-component-preview__frame-body` in
- * `component-preview.css`, copied into each `ComponentPreview` iframe along with the rest of the
- * page's stylesheets); the sandbox is the same kind of stage showing the same kit, so it gets the
- * same two rules instead of Sandpack's own white, edge-to-edge default.
+ * The kit ships no page background, inset or baseline typography of its own — those are the app's
+ * to set, not a component's. Every docs preview sits against `--color-bg-canvas` with
+ * `--space-inset-lg` of breathing room and the site's own body type (`body` in `site.css`:
+ * `--font-family-body`, `--font-size-body`, `--font-line-height-body`, antialiased smoothing),
+ * copied into each `ComponentPreview` iframe along with the rest of the page's stylesheets; the
+ * sandbox is the same kind of stage showing the same kit, so it gets the same rules instead of
+ * Sandpack's own edge-to-edge default with no body font at all.
+ *
+ * THE FONT MISMATCH THIS FIXES: a component's own CSS sets `font-family` on ITS OWN class
+ * (`.sk-text`, `.sk-heading`, …), never on bare `body` — that line is `site.css`'s alone, and the
+ * sandbox never carried it. Any text not wrapped in one of the kit's typography parts fell back to
+ * the browser's own default serif, and `-webkit-font-smoothing` being unset meant even text that
+ * WAS wearing `--font-family-body` rendered heavier/rougher than the same font on the docs page,
+ * which sets `antialiased` at `body` and lets it inherit. Same font, different smoothing, reads as
+ * a different font.
  *
  * `color-scheme` is the reason this is a function of the reader's mode rather than a constant. The
  * preview runs as a document on a DIFFERENT origin (Sandpack's own bundler, not this page), so it
@@ -98,6 +169,11 @@ body {
   margin: 0;
   padding: var(--space-inset-lg);
   background: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  line-height: var(--font-line-height-body);
+  -webkit-font-smoothing: antialiased;
 }
 `;
 }
@@ -287,20 +363,20 @@ function reactPackageFiles(bundle: string, subpaths: readonly string[]) {
 const BUNDLER_ORIGIN = "https://2-19-8-sandpack.codesandbox.io/";
 
 type Bundles = {
-  css: string;
-  react: string;
-  vanilla: string;
-  subpaths: readonly string[];
-  components: readonly PlaygroundComponent[];
+  readonly foundation: string;
+  readonly react: string;
+  readonly vanilla: string;
+  readonly subpaths: readonly string[];
+  readonly cssManifest: Readonly<Record<string, readonly string[]>>;
+  readonly components: readonly PlaygroundIndexComponent[];
 };
 
 type Blocked = "assets" | "bundler";
 
 /*
- * FETCHED, NOT INLINED, and the difference is the whole page's weight. These three files are about
- * 1.8MB of kit; inlined into the island's props they would be 1.8MB of HTML on a route most readers
- * open once. Fetched, they are ordinary static assets: the browser caches them, a second visit pays
- * nothing, and the page itself stays small.
+ * FETCHED, NOT INLINED, and the difference is the whole page's weight. Even trimmed to the index
+ * plus the two compiled kit bundles, this is still real weight; it is an ordinary static asset
+ * either way, so the browser caches it and a second visit pays nothing.
  */
 function useBundles(catalogue: string): { bundles: Bundles | null; blocked: Blocked | null } {
   const [bundles, setBundles] = useState<Bundles | null>(null);
@@ -310,11 +386,13 @@ function useBundles(catalogue: string): { bundles: Bundles | null; blocked: Bloc
     let cancelled = false;
 
     const assets = Promise.all(
-      [BUNDLES.css, BUNDLES.react, BUNDLES.vanilla, BUNDLES.subpaths, catalogue].map(async (url) => {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`${url}: ${response.status}`);
-        return response.text();
-      }),
+      [BUNDLES.foundation, BUNDLES.react, BUNDLES.vanilla, BUNDLES.subpaths, BUNDLES.cssManifest, catalogue].map(
+        async (url) => {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error(`${url}: ${response.status}`);
+          return response.text();
+        },
+      ),
     );
 
     /*
@@ -325,7 +403,7 @@ function useBundles(catalogue: string): { bundles: Bundles | null; blocked: Bloc
     const bundler = fetch(BUNDLER_ORIGIN, { mode: "no-cors" });
 
     assets
-      .then(async ([css, react, vanilla, subpaths, components]) => {
+      .then(async ([foundation, react, vanilla, subpaths, cssManifest, components]) => {
         try {
           await bundler;
         } catch {
@@ -334,11 +412,12 @@ function useBundles(catalogue: string): { bundles: Bundles | null; blocked: Bloc
         }
         if (!cancelled) {
           setBundles({
-            css,
+            foundation,
             react,
             vanilla,
             subpaths: JSON.parse(subpaths) as string[],
-            components: JSON.parse(components) as PlaygroundComponent[],
+            cssManifest: JSON.parse(cssManifest) as Record<string, readonly string[]>,
+            components: JSON.parse(components) as PlaygroundIndexComponent[],
           });
         }
       })
@@ -352,6 +431,114 @@ function useBundles(catalogue: string): { bundles: Bundles | null; blocked: Bloc
   }, [catalogue]);
 
   return { bundles, blocked };
+}
+
+/**
+ * One component's real source, fetched only once it is selected. `catalogue` is the INDEX url
+ * (`/playground-catalogue-es.json`); the detail route sits one hop away
+ * (`playground-catalogue-[locale]-[component].json.ts`), named by inserting the id before `.json`.
+ *
+ * A ref, not the returned cache itself, tracks which ids have been requested: the effect must not
+ * re-fire just because a sibling fetch resolved and replaced the cache with a new `Map`, only when
+ * `componentId` genuinely changes to one that has never been asked for.
+ */
+function useComponentDetail(
+  catalogue: string,
+  componentId: string,
+): Map<string, PlaygroundDetailComponent> {
+  const [cache, setCache] = useState<Map<string, PlaygroundDetailComponent>>(new Map());
+  const requested = useRef(new Set<string>());
+
+  useEffect(() => {
+    if (!componentId || componentId === handoffComponentId) return;
+    if (requested.current.has(componentId)) return;
+    requested.current.add(componentId);
+
+    let cancelled = false;
+    const url = catalogue.replace(/\.json$/, `-${componentId}.json`);
+
+    fetch(url)
+      .then((response) => (response.ok ? (response.json() as Promise<PlaygroundDetailComponent>) : null))
+      .then((detail) => {
+        if (cancelled || !detail) return;
+        setCache((previous) => new Map(previous).set(componentId, detail));
+      })
+      .catch(() => {
+        // Left uncached on purpose: the render path's `!files` branch already reads as "loading"
+        // forever, which is the same honest state a slow network leaves it in.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [catalogue, componentId]);
+
+  return cache;
+}
+
+/**
+ * Which CSS parts an example's own source names, read from the source itself rather than assumed
+ * from the component id — a composed example can reach for a part its own top-level component's CSS
+ * never `@import`s (Calendar's demo of a bare Button inside it, say), so the id alone would
+ * undercount. React names come from the import lines the emitter always writes
+ * (`@skryensya/react/accordion`); Vanilla has no such line — its markup carries `data-sk-*` roots
+ * and `.sk-*` classes directly, so every `sk-<name>` token in the document is the same signal.
+ */
+const REACT_SUBPATH_RE = /from ["']@skryensya\/react\/([a-z0-9-]+)["']/g;
+const SK_NAME_RE = /\bsk-([a-z0-9]+(?:-[a-z0-9]+)*)\b/g;
+
+function detectPartNames(binding: "react" | "vanilla", code: string): readonly string[] {
+  if (!code) return [];
+  const re = binding === "react" ? REACT_SUBPATH_RE : SK_NAME_RE;
+  return [...new Set([...code.matchAll(re)].map((match) => match[1]))];
+}
+
+/**
+ * The CSS `names` (above) resolve to, fetched and cached per file so switching between components
+ * already visited costs nothing. `cssManifest[name]` is a name's transitive `@import` closure
+ * (`build-sandbox-bundles.mjs`), so a name with cross-file dependencies (Calendar needing Button's
+ * CSS) still resolves to every file it needs, not just its own.
+ *
+ * Same "cache is state, requests are a ref" split as `useComponentDetail`, for the same reason: a
+ * completed fetch must not make the effect below re-evaluate `files` and re-request them.
+ */
+function useComponentCss(
+  cssManifest: Readonly<Record<string, readonly string[]>> | null,
+  names: readonly string[],
+): { css: string; ready: boolean } {
+  const [cache, setCache] = useState<Map<string, string>>(new Map());
+  const requested = useRef(new Set<string>());
+
+  const files = useMemo(() => {
+    if (!cssManifest) return [];
+    return [...new Set(names.flatMap((name) => cssManifest[name] ?? []))].sort();
+  }, [cssManifest, names]);
+
+  useEffect(() => {
+    const missing = files.filter((file) => !requested.current.has(file));
+    if (missing.length === 0) return;
+    for (const file of missing) requested.current.add(file);
+
+    let cancelled = false;
+    Promise.all(
+      missing.map(async (file) => [file, await (await fetch(`${CSS_BASE}${file}`)).text()] as const),
+    ).then((entries) => {
+      if (cancelled) return;
+      setCache((previous) => {
+        const next = new Map(previous);
+        for (const [file, text] of entries) next.set(file, text);
+        return next;
+      });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [files]);
+
+  const ready = files.every((file) => cache.has(file));
+  const css = ready ? files.map((file) => cache.get(file)).join("\n\n") : "";
+  return { css, ready };
 }
 
 /**
@@ -377,12 +564,24 @@ const leafId = (componentId: string, exampleId: string) => `${componentId}/${exa
  */
 function FileSync({ code, path }: { readonly code: string; readonly path: string }) {
   const { sandpack } = useSandpack();
+  /*
+   * WHAT WE LAST PUSHED, not what the file currently holds. `sandpack` (from `useSandpack()`)
+   * hands back a new object on every keystroke — the reader's own edits count as a sandpack state
+   * change — so this effect re-runs on every character typed. Comparing against
+   * `sandpack.files[path].code` (the ORIGINAL guard) compares against the reader's live edits, which
+   * differ from `code` the instant they type anything, and "differs" read as "needs pushing": every
+   * keystroke was immediately overwritten back to the original source. Tracking what WE last wrote
+   * here instead answers the right question — has the PROP changed, i.e. did the reader pick a
+   * different example — and ignores edits made through the editor itself.
+   */
+  const pushedRef = useRef<{ path: string; code: string } | null>(null);
 
   useEffect(() => {
     if (!code) return;
-    if (sandpack.files[path]?.code === code) return;
+    if (pushedRef.current?.path === path && pushedRef.current?.code === code) return;
     sandpack.updateFile(path, code);
     sandpack.setActiveFile(path);
+    pushedRef.current = { path, code };
   }, [code, path, sandpack]);
 
   return null;
@@ -393,16 +592,49 @@ export default function Playground({ catalogue, strings }: Props) {
    * Empty until the catalogue lands, and the ids are held rather than the objects: the selection is
    * the reader's and must survive the fetch resolving, which replaces every object it points at.
    */
-  const [componentId, setComponentId] = useState("");
-  const [exampleId, setExampleId] = useState("");
-  const [binding, setBinding] = useState<"react" | "vanilla">("react");
+  const [handoff, setHandoff] = useState<PlaygroundHandoff | null>(readPlaygroundHandoff);
+  const [componentId, setComponentId] = useState(() => (handoff ? handoffComponentId : ""));
+  const [exampleId, setExampleId] = useState(() => (handoff ? handoffComponentId : ""));
+  const [binding, setBinding] = useState<"react" | "vanilla">(() => (handoff ? "vanilla" : "react"));
   const [railHidden, setRailHidden] = useState(false);
   const { bundles, blocked } = useBundles(catalogue);
-  const components = bundles?.components ?? [];
+  const components = useMemo(() => {
+    const catalogueComponents = bundles?.components ?? [];
+    if (!handoff) return catalogueComponents;
+
+    return [
+      {
+        id: handoffComponentId,
+        label: handoff.label,
+        docs: "",
+        examples: [{ id: handoffComponentId, label: handoff.label }],
+      },
+      ...catalogueComponents,
+    ];
+  }, [bundles, handoff]);
   const { sandpack: sandpackTheme, colorScheme } = useThemeState();
 
   const component = components.find((entry) => entry.id === componentId) ?? components[0];
   const example = component?.examples.find((entry) => entry.id === exampleId) ?? component?.examples[0];
+
+  /*
+   * THE REAL SOURCE, one hop behind the selection. `component`/`example` above are the INDEX's —
+   * enough to draw the rail and the header — and arrive with the catalogue on mount. This is the
+   * detail fetch (`useComponentDetail`) resolved for whichever component is currently selected; it
+   * lags behind a fresh selection by exactly one request, which is what the `!files` loading branch
+   * near the bottom of this component is for.
+   *
+   * Keyed by `component.id` (the FALLBACK-resolved id `components[0]` defaults to before the reader
+   * has clicked anything), not the raw `componentId` state — that state starts empty and stays empty
+   * until a selection happens, while the rail and header already show `components[0]`. Keying the
+   * fetch off the raw state would leave the very first component's detail — and its CSS — never
+   * requested.
+   */
+  const selectedId = component?.id ?? "";
+  const detailCache = useComponentDetail(catalogue, selectedId);
+  const detail =
+    selectedId === handoffComponentId && handoff ? handoffDetail(handoff) : detailCache.get(selectedId);
+  const sourceExample = detail?.examples.find((entry) => entry.id === example?.id);
 
   /* The catalogue, as the tree sees it: a component is a branch, its examples are the leaves. */
   const nodes = useMemo(
@@ -426,6 +658,7 @@ export default function Playground({ catalogue, strings }: Props) {
   const select = (details: { selectedValue: string[] }) => {
     const [componentPart, examplePart] = (details.selectedValue[0] ?? "").split("/");
     if (!componentPart || !examplePart) return;
+    if (componentPart !== handoffComponentId) setHandoff(null);
     setComponentId(componentPart);
     setExampleId(examplePart);
   };
@@ -457,15 +690,18 @@ export default function Playground({ catalogue, strings }: Props) {
 
   /** The one file that changes when the reader picks another example. */
   const entryPath = binding === "react" ? "/App.tsx" : "/index.html";
-  const entryCode = binding === "react" ? example?.react : example?.vanilla;
+  const entryCode = binding === "react" ? sourceExample?.react : sourceExample?.vanilla;
+
+  const names = useMemo(() => detectPartNames(binding, entryCode ?? ""), [binding, entryCode]);
+  const { css: componentCss, ready: cssReady } = useComponentCss(bundles?.cssManifest ?? null, names);
 
   const files = useMemo(() => {
-    if (!bundles || !example) return null;
-    const previewCss = bundles.css + previewBodyCss(colorScheme);
+    if (!bundles || !sourceExample || !cssReady) return null;
+    const previewCss = `${bundles.foundation}\n\n${componentCss}` + previewBodyCss(colorScheme);
 
     return binding === "react"
       ? {
-          "/App.tsx": { code: example.react },
+          "/App.tsx": { code: sourceExample.react },
           ...reactPackageFiles(bundles.react, bundles.subpaths),
           "/styles.css": { code: previewCss, hidden: true },
           // The template's entry, rewritten only to pull the kit's stylesheet in beside React's own.
@@ -485,11 +721,11 @@ createRoot(document.getElementById("root")).render(
           },
         }
       : {
-          "/index.html": { code: example.vanilla },
+          "/index.html": { code: sourceExample.vanilla },
           "/skryensya-vanilla.js": { code: bundles.vanilla, hidden: true },
           "/skryensya.css": { code: previewCss, hidden: true },
         };
-  }, [bundles, binding, example, colorScheme]);
+  }, [bundles, binding, sourceExample, colorScheme, componentCss, cssReady]);
 
   /*
    * "Has the reader typed anything since this sandbox mounted", tracked coarsely rather than by
@@ -684,21 +920,27 @@ createRoot(document.getElementById("root")).render(
               which is also why it needs no confirmation of its own (see the `beforeunload` guard
               below) — the reader's edits are still sitting right there when they come back.
             */}
-            <a
-              className="sk-link sk-interactive"
-              href={`${component.docs}#${example.id}`}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {strings.docsLink}
-            </a>
+            {component.docs && (
+              <a
+                className="sk-link sk-interactive"
+                href={`${component.docs}#${example.id}`}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                {strings.docsLink}
+              </a>
+            )}
             <SegmentedControl
               aria-label={strings.bindingLabel}
               onValueChange={(next) => setBinding(next as "react" | "vanilla")}
-              options={[
-                { label: strings.react, value: "react" },
-                { label: strings.vanilla, value: "vanilla" },
-              ]}
+              options={
+                component.id !== handoffComponentId
+                  ? [
+                      { label: strings.react, value: "react" },
+                      { label: strings.vanilla, value: "vanilla" },
+                    ]
+                  : [{ label: strings.vanilla, value: "vanilla" }]
+              }
               value={binding}
             />
           </div>

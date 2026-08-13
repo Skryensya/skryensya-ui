@@ -49,7 +49,7 @@ function intersect(entries: Array<{ id: string; isIntersecting: boolean }>) {
 
 function markup(hrefs: readonly string[]): HTMLElement {
   document.body.innerHTML = `
-    <aside class="sk-toc" data-sk-toc>
+    <aside class="sk-toc" data-sk-toc data-sk-toc-rail>
       <details class="sk-toc__inner" data-sk-toc-disclosure>
         <summary class="sk-toc__summary sk-interactive"><h2 class="sk-toc__title">En esta página</h2></summary>
         <nav aria-label="En esta página">
@@ -120,6 +120,19 @@ describe("Toc Vanilla contracts", () => {
     expect(summary.tabIndex).toBe(-1);
 
     setRail(false);
+    expect(details.open).toBe(false);
+    expect(summary.tabIndex).toBe(0);
+  });
+
+  it("keeps a plain authored Toc as a native disclosure", () => {
+    const root = markup(["instalacion", "uso"]);
+    root.removeAttribute("data-sk-toc-rail");
+    connectToc(root);
+    const details = root.querySelector("details")!;
+    const summary = root.querySelector("summary")!;
+
+    setRail(true);
+
     expect(details.open).toBe(false);
     expect(summary.tabIndex).toBe(0);
   });

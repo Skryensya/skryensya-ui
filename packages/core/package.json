@@ -311,6 +311,14 @@
       "types": "./src/menu.ts",
       "default": "./src/menu.ts"
     },
+    "./menu-intent-overlay": {
+      "types": "./src/menu-intent-overlay.ts",
+      "default": "./src/menu-intent-overlay.ts"
+    },
+    "./menu-adjacent-grace": {
+      "types": "./src/menu-adjacent-grace.ts",
+      "default": "./src/menu-adjacent-grace.ts"
+    },
     "./number-field": {
       "types": "./src/number-field.ts",
       "default": "./src/number-field.ts"

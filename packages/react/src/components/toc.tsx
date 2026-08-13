@@ -39,8 +39,9 @@ export function Toc({ className, items, title, ...props }: TocProps) {
   );
 
   useEffect(() => {
+    const root = rootRef.current;
     const details = detailsRef.current;
-    if (!details) return;
+    if (!root?.hasAttribute("data-sk-toc-rail") || !details) return;
 
     const wide =
       getComputedStyle(document.documentElement)
@@ -95,9 +96,10 @@ export function Toc({ className, items, title, ...props }: TocProps) {
     <aside
       {...props}
       className={className ? `${tocParts.root} ${className}` : tocParts.root}
+      data-sk-toc=""
       ref={rootRef}
     >
-      <details className={tocParts.disclosure} ref={detailsRef}>
+      <details className={tocParts.disclosure} data-sk-toc-disclosure="" ref={detailsRef}>
         <summary className={`${tocParts.summary} sk-interactive`}>
           <h2 className={tocParts.title}>{title}</h2>
           <span aria-hidden="true" className={tocParts.chevron} />

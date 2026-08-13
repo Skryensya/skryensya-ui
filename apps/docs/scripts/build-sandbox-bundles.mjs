@@ -20,7 +20,16 @@
  */
 import { build } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
-import { copyFileSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -218,9 +227,105 @@ await bundle({
  * a consumer exists in the sandbox, including for code the reader writes themselves after opening it.
  */
 /*
- * The stylesheet, copied rather than rebuilt: `@skryensya/core` already publishes exactly this file
- * for the no-toolchain path, and a second recipe for "all of the CSS" would be a second answer that
- * can disagree with the first.
+ * THE FOUNDATION, copied rather than rebuilt: `@skryensya/core` already publishes exactly this file
+ * (built above, in `build-css.mjs`) for the no-toolchain path, and a second recipe for "everything
+ * before a component" would be a second answer that can disagree with the first.
  */
-copyFileSync(join(repo, "packages", "core", "dist", "skryensya.css"), join(out, "skryensya.css"));
-console.log(`  skryensya.css  ${size("skryensya.css")}`);
+copyFileSync(join(repo, "packages", "core", "dist", "foundation.css"), join(out, "foundation.css"));
+console.log(`  foundation.css  ${size("foundation.css")}`);
+
+/*
+ * PER-COMPONENT CSS, copied file-for-file rather than bundled, so the sandbox can link only what a
+ * given example uses instead of every component's stylesheet unconditionally (the previous
+ * `skryensya.css` bundle, 250KB regardless of whether the reader opened Accordion or Table).
+ *
+ * `css/components/*.css` and `css/patterns/*.css` already declare their own cross-file dependencies
+ * via native `@import url("./sibling.css")` — always to a sibling in the SAME directory (calendar
+ * imports button, date-picker imports calendar, layout imports box/wrapper/image-frame; nothing
+ * crosses between components and patterns). Copied here as-is — still readable CSS; minifying them
+ * is an easy follow-up, not required for the size win — alongside a manifest resolving each file's
+ * transitive `@import` closure, so `Playground.tsx` can fetch exactly the files a name it detects in
+ * an example's source actually needs.
+ */
+const IMPORT_RE = /@import\s+url\(["']\.\/([\w-]+\.css)["']\)\s*;/g;
+
+/*
+ * CROSS-CUTTING DEPENDENCIES, invisible to `@import` AND to the compiled CSS itself. `copy-button.ts`
+ * composes onto `"sk-button"` and borrows `patterns/anchored.css`'s positioning (via `anchoredParts`)
+ * for its feedback flag, the same way `menu.ts`, `tooltip.ts`, `popover.ts`, `select.ts` and
+ * `combobox.ts` do — and none of their CSS files `@import` either one: a real page imports both once
+ * for every floating/button-shaped component on it (`CopyButtonPage.astro`, `ComponentPreview.astro`),
+ * so a per-file `@import` would just be the same two files copy-pasted into a dozen components.
+ *
+ * Nor does the COMPILED CSS reliably say so either: `menu.css` and `select.css` only set the custom
+ * properties `patterns/anchored.css`'s own selectors read (`--sk-anchored-position-area`, …) and
+ * never write a `.sk-anchor` selector themselves, so grepping the stylesheet under-detects. The
+ * CONTRACT (`packages/core/src/<name>.ts`) is where the composition is actually decided — its
+ * template's `also` list names `"sk-button"` or `anchoredParts` — so that is the source read here.
+ *
+ * The sandbox has no page to do this importing for it: each example gets only what
+ * `Playground.tsx`'s `detectPartNames` resolves through THIS manifest, so a component whose contract
+ * reaches for one of these without its demo happening to also import Button (or a name that resolves
+ * to `patterns/anchored.css`) rendered with no `.sk-button` chrome and no anchor positioning at all —
+ * a bare unstyled `<button>`.
+ */
+const coreSrcDir = join(repo, "packages", "core", "src");
+const CROSS_CUTTING = [
+  { rule: /"sk-button"/, provides: "components/button.css" },
+  { rule: /anchoredParts|"sk-anchor(?:ed)?"/, provides: "patterns/anchored.css" },
+];
+
+function contractCrossDeps(stem) {
+  const file = join(coreSrcDir, `${stem}.ts`);
+  if (!existsSync(file)) return [];
+  const code = readFileSync(file, "utf8");
+  return CROSS_CUTTING.filter(({ rule }) => rule.test(code)).map(({ provides }) => provides);
+}
+
+function readCssGroup(group) {
+  const srcDir = join(repo, "packages", "core", "css", group);
+  const destDir = join(out, "css", group);
+  mkdirSync(destDir, { recursive: true });
+
+  const files = readdirSync(srcDir).filter((f) => f.endsWith(".css"));
+  const entries = new Map();
+
+  for (const file of files) {
+    const css = readFileSync(join(srcDir, file), "utf8");
+    copyFileSync(join(srcDir, file), join(destDir, file));
+    const key = `${group}/${file}`;
+    const deps = new Set([...css.matchAll(IMPORT_RE)].map((m) => `${group}/${m[1]}`));
+    for (const provides of contractCrossDeps(file.replace(/\.css$/, ""))) {
+      if (provides !== key) deps.add(provides);
+    }
+    entries.set(key, deps);
+  }
+
+  return { group, files, entries };
+}
+
+const componentsCss = readCssGroup("components");
+const patternsCss = readCssGroup("patterns");
+
+/* One graph across both groups: a cross-cutting edge from `components/copy-button.css` points at
+   `patterns/anchored.css`, so the closure below has to walk both at once. */
+const depsOf = new Map([...componentsCss.entries, ...patternsCss.entries]);
+
+function closure(key, seen = new Set()) {
+  if (seen.has(key)) return seen;
+  seen.add(key);
+  for (const dep of depsOf.get(key) ?? []) closure(dep, seen);
+  return seen;
+}
+
+const cssManifest = {};
+for (const { group, files } of [componentsCss, patternsCss]) {
+  for (const file of files) {
+    cssManifest[file.replace(/\.css$/, "")] = [...closure(`${group}/${file}`)].sort();
+  }
+}
+
+writeFileSync(join(out, "css-manifest.json"), JSON.stringify(cssManifest));
+console.log(
+  `  css/  ${componentsCss.files.length} components + ${patternsCss.files.length} patterns, css-manifest.json  ${Object.keys(cssManifest).length} entries`,
+);

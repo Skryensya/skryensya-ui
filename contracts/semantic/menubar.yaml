@@ -1,0 +1,24 @@
+# La estructura vive en packages/core/src/menubar.ts. Acá sólo por qué se elige.
+
+Menubar:
+  useWhen:
+    - "una barra persistente de comandos de aplicación, algunos con submenú desplegable — un editor (Archivo/Editar/Ver)"
+    - "navegación de sitio con secciones que despliegan sub-destinos"
+  avoidWhen:
+    - "es un solo botón que abre un menú de comandos; eso es Menu"
+    - "son destinos de navegación sin desplegables ni comandos; eso es NavList"
+  alternatives:
+    - Menu
+    - NavList
+
+MenubarItem:
+  useWhen:
+    - "un ítem de la barra — con MenubarMenu adentro es un desplegable, sin él es un comando directo"
+
+MenubarMenu:
+  useWhen:
+    - "el desplegable de un MenubarItem — un solo nivel; para submenús anidados dentro de un desplegable, usa Menu en su lugar"
+
+MenubarMenuItem:
+  useWhen:
+    - "un comando dentro de un desplegable de la barra"

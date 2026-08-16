@@ -1,7 +1,7 @@
 import { calloutWithRetryCase } from "./cases/callout-with-retry.js";
 import { checkboxNoForIdCase } from "./cases/checkbox-no-for-id.js";
 import { confirmationDialogCase } from "./cases/confirmation-dialog.js";
-import { fieldWithHintCase } from "./cases/field-with-hint.js";
+import { formFieldWithHintCase } from "./cases/form-field-with-hint.js";
 import { iconOnlyButtonLabelledCase } from "./cases/icon-only-button-labelled.js";
 import { paginatedDataTableCase } from "./cases/paginated-data-table.js";
 import { progressInLayoutCase } from "./cases/progress-in-layout.js";
@@ -27,7 +27,7 @@ export const evalCases: readonly EvalCase[] = [
   tooltipAnchoredPublishedCase,
   confirmationDialogCase,
   paginatedDataTableCase,
-  fieldWithHintCase,
+  formFieldWithHintCase,
   calloutWithRetryCase,
   settingsToggleRowCase,
 ];

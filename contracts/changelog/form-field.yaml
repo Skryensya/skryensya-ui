@@ -1,0 +1,46 @@
+# Qué cambió en form-field, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# hash nuevo.
+surface: "5e8b6c44e3c195d2"
+entries:
+  - date: 2026-08-14
+    kind: breaking
+    es:
+      title: Field pasa a llamarse FormField
+      body: >-
+        El contrato es <code>form-field</code>, la signature es <code>FormField</code> y la clase raíz es
+        <code>sk-form-field</code>, con sus partes y sus custom properties
+        (<code>--sk-form-field-error-fg</code> y compañía) renombradas igual. En React se importa desde
+        <code>@skryensya/react/form-field</code>, su propio módulo: la separación deja de ser sólo un
+        nombre y pasa a ser un archivo, un test y una página aparte de Input. «Field» a secas es una
+        palabra que todo modelo de dominio ya usa para otra cosa; el nombre largo dice cuál de todas es.
+        La hoja pasa a ser <code>components/form-field.css</code>.
+    en:
+      title: Field is renamed to FormField
+      body: >-
+        The contract is <code>form-field</code>, the signature is <code>FormField</code>, and the root
+        class is <code>sk-form-field</code>, with its parts and custom properties
+        (<code>--sk-form-field-error-fg</code> and friends) renamed to match. In React it is imported
+        from <code>@skryensya/react/form-field</code>, its own module: the separation stops being only a
+        name and becomes a file, a test and a page apart from Input. A bare "field" is a word every
+        domain model already uses for something else; the longer name says which one this is. Its
+        stylesheet is now <code>components/form-field.css</code>.
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: Field se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>Field</code>: los dos bindings lo realizan, y la referencia de esta
+        página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup
+        está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones:
+        <code>required</code>, <code>disabled</code>. La hoja es <code>components/field.css</code>.
+    en:
+      title: Field is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>Field</code>: both bindings realize it, and this page's
+        reference is rendered from the compiled contract rather than from prose written beside it. There
+        is no enhancer: the markup is complete on its own, so both bindings are the same markup twice.
+        Options: <code>required</code>, <code>disabled</code>. Its stylesheet is
+        <code>components/field.css</code>.

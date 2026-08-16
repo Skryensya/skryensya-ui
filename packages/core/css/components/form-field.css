@@ -1,0 +1,62 @@
+/*
+ * TIER 3, FORM FIELD
+ *
+ * The chrome around a control: label, hint, error. Independent of input.css on purpose, a form field
+ * wraps a select or a checkbox group just as readily, and the association between label, hint and
+ * control is the platform's (`<label for>`, `aria-describedby`), authored by the consumer.
+ *
+ * The error is text, not a color: `--sk-form-field-error-fg` tints a message that must exist anyway,
+ * which is what keeps the error legible when color is unavailable (WCAG 1.4.1).
+ */
+@layer components {
+  .sk-form-field {
+    --sk-form-field-gap: var(--space-stack-xs);
+    --sk-form-field-label-fg: var(--color-text-primary);
+    --sk-form-field-label-font-size: var(--font-size-body-sm);
+    --sk-form-field-label-font-weight: var(--font-weight-label);
+    --sk-form-field-hint-fg: var(--color-text-secondary);
+    --sk-form-field-hint-font-size: var(--font-size-caption);
+    --sk-form-field-hint-line-height: var(--font-line-height-caption);
+    --sk-form-field-error-fg: var(--color-text-danger);
+    --sk-form-field-error-font-size: var(--font-size-caption);
+    --sk-form-field-error-line-height: var(--font-line-height-caption);
+    --sk-form-field-error-gap: var(--space-inline-xs);
+    --sk-form-field-required-fg: var(--color-text-danger);
+    --sk-form-field-disabled-fg: var(--color-text-disabled);
+
+    /* A stack: label, control, then hint or error. Nothing here positions the control, a form field
+     * wraps whatever it is given, which is why the gap is the only geometry it owns. */
+    display: grid;
+    gap: var(--sk-form-field-gap);
+  }
+
+  .sk-form-field__label {
+    color: var(--sk-form-field-label-fg);
+    font-size: var(--sk-form-field-label-font-size);
+    font-weight: var(--sk-form-field-label-font-weight);
+  }
+
+  /* The required mark rides after the label text, not in place of it: "required" has to survive
+   * being read aloud, so the asterisk is decoration over an accessible name the consumer authors. */
+  .sk-form-field__required {
+    margin-inline-start: var(--sk-form-field-error-gap);
+    color: var(--sk-form-field-required-fg);
+  }
+
+  .sk-form-field__hint {
+    color: var(--sk-form-field-hint-fg);
+    font-size: var(--sk-form-field-hint-font-size);
+    line-height: var(--sk-form-field-hint-line-height);
+  }
+
+  .sk-form-field__error {
+    color: var(--sk-form-field-error-fg);
+    font-size: var(--sk-form-field-error-font-size);
+    line-height: var(--sk-form-field-error-line-height);
+  }
+
+  .sk-form-field[data-disabled] {
+    --sk-form-field-label-fg: var(--sk-form-field-disabled-fg);
+    --sk-form-field-hint-fg: var(--sk-form-field-disabled-fg);
+  }
+}

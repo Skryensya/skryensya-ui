@@ -4,12 +4,7 @@ import "@skryensya/core/components/checkbox.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import {
-  checkboxGroupScript,
-  checkboxGroupTree,
-  checkboxTree,
-  tileCheckboxTree,
-} from "../../demos/checkbox";
+import { checkboxGroupTree, checkboxTree, tileCheckboxTree } from "../../demos/checkbox";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/checkbox.yaml?raw";
 import cssSource from "@core/css/components/checkbox.css?raw";
@@ -17,6 +12,8 @@ import reactSource from "@react/src/components/selection.tsx?raw";
 import vanillaMountSource from "@vanilla/src/components/tile-checkbox.ts?raw";
 import vanillaCoordinatorSource from "@vanilla/src/components/TileCheckbox.svelte?raw";
 import vanillaTestSource from "@vanilla/src/components/tile-checkbox.svelte.test.ts?raw";
+import groupSource from "@vanilla/src/components/checkbox-group.ts?raw";
+import groupTestSource from "@vanilla/src/components/checkbox-group.svelte.test.ts?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -44,6 +41,8 @@ const sourceFiles = [
   { id: "contracts/semantic/checkbox.yaml", source: contractSource, language: "yaml" },
   { id: "packages/core/css/components/checkbox.css", source: cssSource, language: "css" },
   { id: "packages/react/src/components/selection.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/vanilla/src/components/checkbox-group.ts", source: groupSource, language: "ts" },
+  { id: "packages/vanilla/src/components/checkbox-group.svelte.test.ts", source: groupTestSource, language: "ts" },
   { id: "packages/vanilla/src/components/tile-checkbox.ts", source: vanillaMountSource, language: "ts" },
   { id: "packages/vanilla/src/components/TileCheckbox.svelte", source: vanillaCoordinatorSource, language: "svelte" },
   { id: "packages/vanilla/src/components/tile-checkbox.svelte.test.ts", source: vanillaTestSource, language: "ts" },
@@ -57,6 +56,31 @@ const sourceFiles = [
   sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/checkbox.css", probe: "sk-checkbox" }]}
   tests={[
+    {
+      file: "packages/vanilla/src/components/checkbox-group.svelte.test.ts",
+      tests: [
+        {
+          name: "derives the parent's three states from its children on mount and on every change",
+          description: t("checkbox.groupTest1"),
+        },
+        {
+          name: "checks and unchecks every child from the parent, and reports what changed",
+          description: t("checkbox.groupTest2"),
+        },
+        {
+          name: "leaves a disabled child alone and does not let it hold the parent back from 'all'",
+          description: t("checkbox.groupTest3"),
+        },
+        {
+          name: "counts only its own children, never a nested group's",
+          description: t("checkbox.groupTest4"),
+        },
+        {
+          name: "re-derives the parent after a form reset, which restores the children silently",
+          description: t("checkbox.groupTest5"),
+        },
+      ],
+    },
     {
       file: "packages/vanilla/src/components/tile-checkbox.svelte.test.ts",
       tests: [
@@ -78,12 +102,11 @@ const sourceFiles = [
     <p set:html={t("checkbox.groupBody1")} />
     <ComponentPreview
       tree={checkboxGroupTree(t)}
-      js={checkboxGroupScript}
-      previewScript={checkboxGroupScript}
-      label={t("checkbox.groupLabel")}
+      label="CheckboxGroup"
       note={t("checkbox.groupNote")}
     />
     <p set:html={t("checkbox.groupBody2")} />
+    <p set:html={t("checkbox.groupBody3")} />
 
     <h3>{t("checkbox.tileTitle")}</h3>
     <p set:html={t("checkbox.tileBody1")} />

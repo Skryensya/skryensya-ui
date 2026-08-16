@@ -197,6 +197,47 @@
     cursor: not-allowed;
   }
 
+  /*
+   * THE GROUP: a parent row, then its children indented under it.
+   *
+   * The indent is computed from the checkbox's own hooks rather than typed as a spacing token, so
+   * the children's controls line up under the parent's LABEL TEXT: one control plus one gap is
+   * exactly where the parent's words start. A literal `--space-inset-md` would land near it at the
+   * default size and drift the moment `--sk-checkbox-control-size` is overridden, which is a hook
+   * the component publishes and therefore expects to be moved.
+   *
+   * `--sk-checkbox-group-indent` is itself a hook: a group inside a dense table header wants the
+   * children flush, and that should not require rewriting the rule.
+   */
+  .sk-checkbox-group {
+    --sk-checkbox-group-indent: calc(var(--size-icon-md) + var(--space-inline-sm));
+    --sk-checkbox-group-gap: var(--space-stack-xs);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-checkbox-group-gap);
+    /* `start`, not `stretch`: a checkbox is as wide as its words, and a stretched label would put
+       the pointer's target on empty space to the right of the text it is supposed to be labelling. */
+    align-items: start;
+  }
+
+  .sk-checkbox-group__items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-checkbox-group-gap);
+    align-items: start;
+    margin-inline-start: var(--sk-checkbox-group-indent);
+  }
+
+  /* Horizontal is about the CHILDREN only. The parent stays on its own line above them either way:
+     it is a summary of the row below, and a summary that sits inside the row it summarises reads as
+     one more sibling. `wrap` because a row of labels is text, and text that cannot wrap overflows. */
+  .sk-checkbox-group[data-orientation="horizontal"] .sk-checkbox-group__items {
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: var(--space-inline-md);
+  }
+
   @media (forced-colors: active) {
     .sk-checkbox__control {
       border-color: CanvasText;

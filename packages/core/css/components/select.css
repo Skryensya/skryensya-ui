@@ -35,7 +35,7 @@
     min-inline-size: 12rem;
   }
 
-  /* Field geometry is one recipe. The native element and the enhanced trigger only differ in
+  /* Form field geometry is one recipe. The native element and the enhanced trigger only differ in
    * anatomy: the former lets the platform lay out its value and picker icon; the latter owns a grid. */
   .sk-select-native,
   .sk-select__trigger {

@@ -5,7 +5,7 @@ import ComponentPreview from "../ComponentPreview.astro";
 import { comboboxTree } from "../../demos/combobox";
 import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/combobox.css";
-import "@skryensya/core/components/field.css";
+import "@skryensya/core/components/form-field.css";
 import "@skryensya/core/patterns/scrollbar.css";
 import contractSource from "@contracts/semantic/combobox.yaml?raw";
 import coreSource from "@core/src/combobox.ts?raw";
@@ -20,7 +20,7 @@ const t = useTranslations(locale);
 
 const styles = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/button.css";
-@import "@skryensya/core/components/field.css";
+@import "@skryensya/core/components/form-field.css";
 @import "@skryensya/core/components/combobox.css";
 /* La lista hace scroll: el riel lo pinta el pattern, marcado con sk-scrollbar. */
 @import "@skryensya/core/patterns/scrollbar.css";`;

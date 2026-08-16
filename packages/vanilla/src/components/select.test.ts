@@ -127,4 +127,39 @@ describe("Select Vanilla contracts", () => {
     expect(mountSelect(document)).toBe(1);
     expect(mountSelect(document)).toBe(0);
   });
+
+  it("moves aria-selected onto the highlighted option before Enter commits anything", async () => {
+    const root = mount(markup({ value: "" }));
+    connectSelect(root);
+    const trigger = root.querySelector("[data-sk-select-trigger]") as HTMLElement;
+    const content = root.querySelector("[data-sk-select-content]") as HTMLElement;
+    const itemAt = (value: string) =>
+      root.querySelector(`[data-sk-select-item][data-value="${value}"]`) as HTMLElement;
+
+    fireEvent.click(trigger);
+    await waitFor(() => expect(trigger.getAttribute("aria-expanded")).toBe("true"));
+
+    // Nothing chosen yet, nothing highlighted yet: no option should claim to be "selected".
+    for (const item of items) expect(itemAt(item.value).hasAttribute("aria-selected")).toBe(false);
+
+    // Unlike Combobox's virtual-focus-on-input model, Select moves REAL DOM focus into the
+    // listbox on open (`setInitialFocus`, deferred to `raf`) — arrow keys are dispatched wherever
+    // focus actually landed. Waiting for the exact target (not just "not the trigger") matters:
+    // `document.activeElement` passes through `<body>` first, which would vacuously satisfy a
+    // weaker check before the `raf` callback actually lands the focus on the content.
+    await waitFor(() => expect(document.activeElement).toBe(content));
+    fireEvent.keyDown(document.activeElement!, { key: "ArrowDown" });
+
+    // Matches the WAI reference implementation (`combobox-autocomplete.js`,
+    // `setCurrentOptionStyle`), and the same fix already applied to Combobox: the option under
+    // `aria-activedescendant` carries `aria-selected="true"` while merely previewed, not just the
+    // previously chosen value.
+    await waitFor(() => expect(itemAt("default").getAttribute("aria-selected")).toBe("true"));
+    expect(itemAt("dusk").hasAttribute("aria-selected")).toBe(false);
+
+    fireEvent.keyDown(document.activeElement!, { key: "ArrowDown" });
+
+    await waitFor(() => expect(itemAt("dusk").getAttribute("aria-selected")).toBe("true"));
+    expect(itemAt("default").hasAttribute("aria-selected")).toBe(false);
+  });
 });

@@ -82,4 +82,69 @@ describe("Combobox", () => {
       ui.container.querySelector(".sk-combobox")?.hasAttribute("data-virtual-focus"),
     ).toBe(false);
   });
+
+  it("moves aria-selected onto the highlighted option before Enter commits anything", async () => {
+    const { ui, input } = setup();
+
+    fireEvent.click(input);
+    await ui.findAllByRole("option");
+
+    // Nothing chosen yet, nothing highlighted yet: no option should claim to be "selected".
+    for (const option of ui.getAllByRole("option"))
+      expect(option.hasAttribute("aria-selected")).toBe(false);
+
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+
+    // Matches the WAI reference implementation (`combobox-autocomplete.js`,
+    // `setCurrentOptionStyle`): the option under `aria-activedescendant` carries
+    // `aria-selected="true"` while the user is only previewing it, not the previously chosen value.
+    await waitFor(() =>
+      expect(
+        ui.getByRole("option", { name: "Argelia" }).getAttribute("aria-selected"),
+      ).toBe("true"),
+    );
+    expect(
+      ui.getByRole("option", { name: "Argentina" }).hasAttribute("aria-selected"),
+    ).toBe(false);
+
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+
+    await waitFor(() =>
+      expect(
+        ui.getByRole("option", { name: "Argentina" }).getAttribute("aria-selected"),
+      ).toBe("true"),
+    );
+    expect(
+      ui.getByRole("option", { name: "Argelia" }).hasAttribute("aria-selected"),
+    ).toBe(false);
+  });
+
+  it("keeps aria-selected tied to the chosen chips when multiple, not the highlight", async () => {
+    const { ui, input } = setup({ multiple: true });
+
+    fireEvent.click(input);
+    await ui.findAllByRole("option");
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+
+    // Nothing chosen yet: the highlight alone must not produce aria-selected in multiple mode
+    // either — only single-select borrows the highlight for it.
+    await waitFor(() =>
+      expect(
+        ui.getByRole("option", { name: "Argelia" }).hasAttribute("data-highlighted"),
+      ).toBe(true),
+    );
+    expect(
+      ui.getByRole("option", { name: "Argelia" }).hasAttribute("aria-selected"),
+    ).toBe(false);
+
+    fireEvent.click(ui.getByRole("option", { name: "Argelia" }));
+
+    // Choosing it as a chip is what turns aria-selected on: with chips, it means "part of the
+    // chosen set" (`aria-multiselectable="true"`), not "currently previewed".
+    await waitFor(() =>
+      expect(
+        ui.getByRole("option", { name: "Argelia" }).getAttribute("aria-selected"),
+      ).toBe("true"),
+    );
+  });
 });

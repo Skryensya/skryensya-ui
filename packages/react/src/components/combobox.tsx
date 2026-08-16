@@ -1,5 +1,5 @@
 import { comboboxParts, type ComboboxItem } from "@skryensya/core/combobox";
-import { fieldParts } from "@skryensya/core/field";
+import { formFieldParts } from "@skryensya/core/form-field";
 import { combobox } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
 import { useId, useMemo, useState, type ReactNode, type RefObject } from "react";
@@ -207,7 +207,7 @@ export function Combobox({
   return (
     <div
       {...api.getRootProps()}
-      className={cx(fieldParts.root, comboboxParts.root)}
+      className={cx(formFieldParts.root, comboboxParts.root)}
       data-disabled={disabled ? "" : undefined}
       data-virtual-focus={
         highlightSource === "keyboard" && api.open && api.highlightedValue
@@ -221,17 +221,17 @@ export function Combobox({
     >
       <label
         {...api.getLabelProps()}
-        className={cx(fieldParts.label, comboboxParts.label)}
+        className={cx(formFieldParts.label, comboboxParts.label)}
       >
         {label}
         {required ? (
-          <span aria-hidden="true" className={fieldParts.requiredIndicator}>
+          <span aria-hidden="true" className={formFieldParts.requiredIndicator}>
             *
           </span>
         ) : null}
       </label>
       {hint ? (
-        <div className={fieldParts.hint} id={hintId}>
+        <div className={formFieldParts.hint} id={hintId}>
           {hint}
         </div>
       ) : null}
@@ -312,7 +312,7 @@ export function Combobox({
         </button>
       </div>
       {error ? (
-        <div className={fieldParts.error} id={errorId}>
+        <div className={formFieldParts.error} id={errorId}>
           {error}
         </div>
       ) : null}
@@ -339,6 +339,26 @@ export function Combobox({
             {filteredItems.map((item) => (
               <div
                 {...api.getItemProps({ item })}
+                /*
+                 * Zag's `aria-selected` tracks the COMMITTED value, not the row under
+                 * `aria-activedescendant`. The WAI reference implementation
+                 * (`combobox-autocomplete.js`, `setCurrentOptionStyle`) does the opposite for
+                 * single-select: it moves `aria-selected="true"` onto whichever option is highlighted
+                 * as you arrow through the list, before Enter commits anything — that is what
+                 * "visually indicated as the currently selected value" means in the APG's
+                 * roles/states table. Multiple stays on Zag's default: with chips, `aria-selected`
+                 * genuinely means "part of the chosen set" (aria-multiselectable="true"), a state the
+                 * base combobox pattern does not cover. Placed after the spread so it wins.
+                 */
+                aria-selected={
+                  multiple
+                    ? api.getItemState({ item }).selected
+                      ? "true"
+                      : undefined
+                    : item.value === api.highlightedValue
+                      ? "true"
+                      : undefined
+                }
                 className={`${comboboxParts.item} sk-interactive`}
                 /* What the enhancer reads to build its collection: a row's `textContent` is label +
                    description + indicator glued together, which is not the label. Written here too

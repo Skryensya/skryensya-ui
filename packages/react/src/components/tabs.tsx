@@ -52,6 +52,13 @@ export function Tabs({
         {items.map((item) => (
           <button
             {...api.getTriggerProps({ value: item.value, disabled: item.disabled })}
+            // Zag only writes `aria-controls` on the SELECTED trigger (confirmed reading
+            // tabs.connect.js) — the WAI-ARIA Tabs pattern is explicit that EVERY tab has it
+            // ("Each element with role tab has the property aria-controls referring to its
+            // associated tabpanel element"), selected or not. `getContentProps` already computes
+            // each panel's real id regardless of selection, so this overrides with the real one
+            // rather than leaving it unset on every unselected tab.
+            aria-controls={api.getContentProps({ value: item.value }).id}
             // `sk-interactive` is the state layer, and it was missing here while authored markup had
             // it: the React path simply did not paint hover or press. The symmetry gate is what saw it.
             className={`${tabsParts.trigger} sk-interactive`}

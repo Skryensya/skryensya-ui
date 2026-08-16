@@ -26,6 +26,14 @@ describe("Tabs", () => {
     expect(panel?.getAttribute("role")).toBe("tabpanel");
     expect(panel?.getAttribute("aria-labelledby")).toBe(activity.id);
     expect(panel?.textContent).toBe("Activity panel");
+
+    // WAI-ARIA Tabs: "Each element with role tab has the property aria-controls referring to
+    // its associated tabpanel element" — Zag itself only writes this on the SELECTED trigger
+    // (confirmed reading tabs.connect.js), so an UNSELECTED one is corrected here too.
+    const overview = ui.getByRole("tab", { name: "Overview" });
+    const overviewPanelId = overview.getAttribute("aria-controls");
+    expect(overviewPanelId).not.toBeNull();
+    expect(document.getElementById(overviewPanelId!)?.textContent).toBe("Overview panel");
   });
 
   it("mirrors selection on the root data attribute", async () => {

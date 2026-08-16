@@ -3,6 +3,12 @@ import type { ComponentContract } from "./contract.js";
 export type BreadcrumbItem = {
   label: string;
   href?: string;
+  /**
+   * The page you are on. When true, this item is NEVER a link, even if `href` is also given: it
+   * is the one label the trail exists to answer "where am I" (never truncated or muted the way an
+   * ancestor crumb is, see breadcrumb.css), matching WAI-ARIA's Breadcrumb pattern, which allows
+   * the current item to be plain text rather than a link.
+   */
   current?: boolean;
 };
 
@@ -82,6 +88,7 @@ export const breadcrumbContract = {
                     element: "a",
                     part: "link",
                     whenItemGiven: "href",
+                    whenItemMissing: "current",
                     itemOptions: ["href"],
                     attrsFromItemSlot: { title: "label" },
                     itemSlot: "label",
@@ -90,6 +97,22 @@ export const breadcrumbContract = {
                     element: "span",
                     part: "current",
                     whenItemMissing: "href",
+                    itemOptions: ["current"],
+                    itemSlot: "label",
+                  },
+                  /*
+                   * The current page keeps its `href` as authored data, but it is never rendered as
+                   * a link: it is the one label the trail exists to answer "where am I", never
+                   * truncated or muted like an ancestor crumb (see breadcrumb.css), and WAI-ARIA's
+                   * Breadcrumb pattern explicitly allows the current item to be plain text — only a
+                   * LINK to the current page needs `aria-current="page"`, non-links get it for free
+                   * either way. Same `part` as the href-less span above; together the two cover
+                   * "not a link" whether or not the author happened to also give it a destination.
+                   */
+                  {
+                    element: "span",
+                    part: "current",
+                    whenItemAllGiven: ["href", "current"],
                     itemOptions: ["current"],
                     itemSlot: "label",
                   },

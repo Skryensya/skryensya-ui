@@ -139,4 +139,39 @@ describe("Calendar Vanilla contracts", () => {
     const root = markup('data-locale="es-DO" data-value="2024-03-15" data-disabled');
     expect(root.getAttribute("data-disabled")).toBe("");
   });
+
+  it("names every accessible string in Spanish by default, not Zag's own English", () => {
+    markup('data-locale="es-DO" data-value="2024-03-15"');
+
+    // Zag's `defaultTranslations` (`@zag-js/date-picker`) is English-only, unconditionally — a day
+    // cell was announced "Choose miércoles, 20 de marzo..." (English verb, Spanish date) before this.
+    expect(dayLabelled("20 de marzo de 2024").getAttribute("aria-label")).toMatch(/^Elegir /);
+    const next = document.querySelector<HTMLButtonElement>(".sk-calendar__next")!;
+    const previous = document.querySelector<HTMLButtonElement>(".sk-calendar__previous")!;
+    expect(next.getAttribute("aria-label")).toBe("Mes siguiente");
+    expect(previous.getAttribute("aria-label")).toBe("Mes anterior");
+  });
+
+  it("switches every accessible string to English when the locale says so", () => {
+    markup('data-locale="en-US" data-value="2024-03-15"');
+
+    expect(dayLabelled("March 20, 2024").getAttribute("aria-label")).toMatch(/^Choose /);
+    const next = document.querySelector<HTMLButtonElement>(".sk-calendar__next")!;
+    const previous = document.querySelector<HTMLButtonElement>(".sk-calendar__previous")!;
+    expect(next.getAttribute("aria-label")).toBe("Switch to next month");
+    expect(previous.getAttribute("aria-label")).toBe("Switch to previous month");
+  });
+
+  it("names the year-view cancel trigger in the authored locale too", async () => {
+    markup('data-locale="en-US" data-value="2024-03-15"');
+
+    fireEvent.click(viewTrigger());
+    await waitFor(() => expect(document.querySelector(".sk-calendar__month-grid")).toBeTruthy());
+    fireEvent.click(viewTrigger());
+    await waitFor(() => expect(document.querySelector(".sk-calendar__year-grid")).toBeTruthy());
+
+    // This one is authored directly in `CalendarView.svelte`, not sourced from Zag's `translations`
+    // at all — it had the exact same English-locale gap, just hardcoded the other language.
+    expect(viewTrigger().getAttribute("aria-label")).toBe("Back to current month");
+  });
 });

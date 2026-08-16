@@ -2,13 +2,21 @@ import { calendarContract } from "@skryensya/core/calendar";
 import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import {
   calendarParts,
+  defaultDayLabel,
+  defaultNextTriggerLabel,
+  defaultPrevTriggerLabel,
+  defaultViewTriggerLabel,
   getTwoLetterWeekdayLabel,
   parseCalendarDate,
+  unusedIntlTranslations,
   type DateValue,
+  type DateView,
+  type DayTableCellState,
 } from "@skryensya/core/calendar";
 import { datePicker } from "@skryensya/core/machines";
 import { normalizeProps, useMachine, type PropTypes } from "@zag-js/react";
 import { useId, type MouseEvent, type ReactNode } from "react";
+import { Button } from "./button.js";
 import { Icon } from "./icon.js";
 
 // Sin depender de `@zag-js/date-picker` directamente (react no lo trae como dependencia propia,
@@ -67,7 +75,9 @@ export function CalendarBody({
     api.view === "year"
       ? {
           ...defaultViewTriggerProps,
-          "aria-label": "Volver al mes actual",
+          "aria-label": locale.toLocaleLowerCase().startsWith("en")
+            ? "Back to current month"
+            : "Volver al mes actual",
           onClick: (event: MouseEvent<HTMLButtonElement>) => {
             event.preventDefault();
             goToCurrentMonth();
@@ -75,39 +85,44 @@ export function CalendarBody({
         }
       : defaultViewTriggerProps;
 
+  /*
+   * Every trigger below IS the real `Button` component (ADR-1/8), not a hand-authored `<button>`
+   * copying its classes/attrs — a rename in Button's shape shows up here for free. Prev/next and
+   * the day cell share the SAME `iconOnly` shape: a control-sized square holding one piece of
+   * content, a glyph for prev/next, a day number for the cell, rather than a second "icon button"
+   * for what is one shape wearing two kinds of content. Month/year cells stay plain Buttons: their
+   * label is a word, not a single glyph, and they stretch to fill their `<td>` (calendar.css).
+   */
   return (
     <>
       <div className={calendarParts.header}>
-        <button
+        <Button
           {...api.getPrevTriggerProps()}
-          className={`${calendarParts.previous} sk-button sk-interactive`}
-          data-icon-only=""
-          data-size="sm"
-          data-variant="ghost"
-          type="button"
+          className={calendarParts.previous}
+          iconOnly
+          size="sm"
+          variant="ghost"
         >
           {previousIcon ?? <Icon name="chevron-left" size="sm" />}
-        </button>
-        <button
+        </Button>
+        <Button
           {...viewTriggerProps}
-          className={`${calendarParts.viewTrigger} sk-button sk-interactive`}
-          data-size="sm"
-          data-variant="ghost"
-          type="button"
+          className={calendarParts.viewTrigger}
+          size="sm"
+          variant="ghost"
         >
           {headingLabel}
           {viewIcon ?? <Icon name="chevron-down" size="sm" />}
-        </button>
-        <button
+        </Button>
+        <Button
           {...api.getNextTriggerProps()}
-          className={`${calendarParts.next} sk-button sk-interactive`}
-          data-icon-only=""
-          data-size="sm"
-          data-variant="ghost"
-          type="button"
+          className={calendarParts.next}
+          iconOnly
+          size="sm"
+          variant="ghost"
         >
           {nextIcon ?? <Icon name="chevron-right" size="sm" />}
-        </button>
+        </Button>
       </div>
 
       {api.view === "day" ? (
@@ -140,15 +155,15 @@ export function CalendarBody({
                       className={calendarParts.cell}
                       key={day.toString()}
                     >
-                      <button
+                      <Button
                         {...api.getDayTableCellTriggerProps(props)}
-                        className={`${calendarParts.cellTrigger} sk-button sk-interactive`}
-                        data-size="sm"
-                        data-variant="ghost"
-                        type="button"
+                        className={calendarParts.cellTrigger}
+                        iconOnly
+                        size="sm"
+                        variant="ghost"
                       >
                         {day.day}
-                      </button>
+                      </Button>
                     </td>
                   );
                 })}
@@ -173,16 +188,15 @@ export function CalendarBody({
                     className={calendarParts.cell}
                     key={month.value}
                   >
-                    <button
+                    <Button
                       {...api.getMonthTableCellTriggerProps({ value: month.value })}
-                      className={`${calendarParts.cellTrigger} sk-button sk-interactive`}
-                      data-size="sm"
-                      data-variant="ghost"
+                      className={calendarParts.cellTrigger}
                       disabled={month.disabled}
-                      type="button"
+                      size="sm"
+                      variant="ghost"
                     >
                       {month.label}
-                    </button>
+                    </Button>
                   </td>
                 ))}
               </tr>
@@ -206,16 +220,15 @@ export function CalendarBody({
                     className={calendarParts.cell}
                     key={year.value}
                   >
-                    <button
+                    <Button
                       {...api.getYearTableCellTriggerProps({ value: year.value })}
-                      className={`${calendarParts.cellTrigger} sk-button sk-interactive`}
-                      data-size="sm"
-                      data-variant="ghost"
+                      className={calendarParts.cellTrigger}
                       disabled={year.disabled}
-                      type="button"
+                      size="sm"
+                      variant="ghost"
                     >
                       {year.label}
-                    </button>
+                    </Button>
                   </td>
                 ))}
               </tr>
@@ -251,6 +264,14 @@ export type CalendarProps = Pick<
   previousIcon?: ReactNode;
   nextIcon?: ReactNode;
   viewIcon?: ReactNode;
+  /** Accessible name for a day cell, by state. Default is locale-aware (`locale`), not just Spanish. */
+  dayLabel?: (state: DayTableCellState) => string;
+  /** Accessible name for the day/month/year view-switch button. */
+  viewTriggerLabel?: (view: DateView) => string;
+  /** Accessible name for "go back" — previous month/year/decade depending on the open view. */
+  prevTriggerLabel?: (view: DateView) => string;
+  /** Accessible name for "go forward" — next month/year/decade depending on the open view. */
+  nextTriggerLabel?: (view: DateView) => string;
   onValueChange?: (details: { value: string[] }) => void;
 };
 
@@ -266,6 +287,7 @@ export const asDates = (value: readonly (DateValue | string)[] | string | undefi
 
 /** Standalone calendar grid: no field, no popover — the same machine as DatePicker, `inline: true`. */
 export function Calendar({
+  dayLabel,
   defaultValue,
   disabled,
   id,
@@ -274,13 +296,16 @@ export function Calendar({
   max,
   min,
   nextIcon,
+  nextTriggerLabel,
   onValueChange,
+  prevTriggerLabel,
   previousIcon,
   readOnly,
   selectionMode = "single",
   timeZone = "UTC",
   value,
   viewIcon,
+  viewTriggerLabel,
 }: CalendarProps) {
   const generatedId = useId();
   const service = useMachine(datePicker.machine, {
@@ -293,6 +318,18 @@ export function Calendar({
     min: asDate(min),
     max: asDate(max),
     disabled,
+    translations: {
+      // `trigger`/`content` name a popover this component never renders (`inline: true`, no
+      // `getTriggerProps()`/`getContentProps()` call in `CalendarBody`) — required by the type,
+      // dead in practice.
+      ...unusedIntlTranslations(),
+      trigger: () => "",
+      content: "",
+      dayCell: dayLabel ?? defaultDayLabel(locale),
+      viewTrigger: viewTriggerLabel ?? defaultViewTriggerLabel(locale),
+      prevTrigger: prevTriggerLabel ?? defaultPrevTriggerLabel(locale),
+      nextTrigger: nextTriggerLabel ?? defaultNextTriggerLabel(locale),
+    },
     readOnly,
     inline: true,
     fixedWeeks: true,

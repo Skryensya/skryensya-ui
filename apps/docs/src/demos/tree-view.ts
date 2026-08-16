@@ -1,52 +1,20 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import {
+  treeViewDisabledNodes,
+  treeViewMinimalNodes,
+  treeViewProjectNodes,
+} from "./data/tree-view";
 
-/* TreeView state, hierarchy, disabled nodes and event feedback share one node model. */
+/* TreeView state, hierarchy, disabled nodes and event feedback share one node model, which is data:
+ * see `data/tree-view.ts`. */
+
 export const treeViewMinimalTree = (t: Translate): UsageTree => ({
   contract: "tree-view",
   signature: "TreeView",
   options: { label: t("demo.treeView.label") },
-  slots: {
-    items: [
-      {
-        options: { id: "src" },
-        slots: {
-          label: "src",
-          children: [
-            { options: { id: "index.ts" }, slots: { label: "index.ts" } },
-            { options: { id: "app.ts" }, slots: { label: "app.ts" } },
-          ],
-        },
-      },
-      { options: { id: "README.md" }, slots: { label: "README.md" } },
-    ],
-  },
+  slots: { items: treeViewMinimalNodes },
 });
-
-const projectItems = (t: Translate) => [
-  {
-    options: { id: "src" },
-    slots: {
-      label: t("demo.tree.source"),
-      children: [
-        {
-          options: { id: "src/components" },
-          slots: {
-            label: t("demo.tree.components"),
-            children: [
-              {
-                options: { id: "src/components/button.tsx" },
-                slots: { label: t("demo.tree.buttonFile") },
-              },
-            ],
-          },
-        },
-        { options: { id: "src/index.ts" }, slots: { label: t("demo.tree.indexFile") } },
-      ],
-    },
-  },
-  { options: { id: "README.md" }, slots: { label: "README.md" } },
-];
 
 export const treeViewInitialTree = (t: Translate): UsageTree => ({
   contract: "tree-view",
@@ -56,7 +24,7 @@ export const treeViewInitialTree = (t: Translate): UsageTree => ({
     defaultExpandedValue: "src,src/components",
     defaultSelectedValue: "src/components/button.tsx",
   },
-  slots: { items: projectItems(t) },
+  slots: { items: treeViewProjectNodes(t) },
 });
 
 export const treeViewMultipleTree = (t: Translate): UsageTree => ({
@@ -68,7 +36,7 @@ export const treeViewMultipleTree = (t: Translate): UsageTree => ({
     defaultExpandedValue: "src,src/components",
     defaultSelectedValue: "src/components/button.tsx,README.md",
   },
-  slots: { items: projectItems(t) },
+  slots: { items: treeViewProjectNodes(t) },
 });
 
 export const treeViewDisabledTree = (t: Translate): UsageTree => ({
@@ -78,23 +46,7 @@ export const treeViewDisabledTree = (t: Translate): UsageTree => ({
     label: t("demo.tree.disabledLabel"),
     defaultExpandedValue: "src",
   },
-  slots: {
-    items: [
-      {
-        options: { id: "src" },
-        slots: {
-          label: t("demo.tree.source"),
-          children: [
-            {
-              options: { id: "src/legacy", disabled: true },
-              slots: { label: t("demo.tree.disabledFolder") },
-            },
-            { options: { id: "src/index.ts" }, slots: { label: t("demo.tree.indexFile") } },
-          ],
-        },
-      },
-    ],
-  },
+  slots: { items: treeViewDisabledNodes(t) },
 });
 
 export const treeViewEventsTree = (t: Translate): UsageTree => ({
@@ -126,7 +78,7 @@ export const treeViewEventsTree = (t: Translate): UsageTree => ({
           signature: "Icon",
           options: { name: "file", size: "sm" },
         },
-        items: projectItems(t),
+        items: treeViewProjectNodes(t),
       },
     },
     {
@@ -153,17 +105,4 @@ export const treeViewEventsTree = (t: Translate): UsageTree => ({
   ],
 });
 
-export const treeViewEventsScript = `
-const demo = document.querySelector("[data-tree-events]");
-demo?.addEventListener("click", (event) => {
-  const branch = event.target.closest("[data-sk-tree-view-branch]");
-  const item = event.target.closest("[data-sk-tree-view-item]");
-  if (branch) {
-    const output = demo.querySelector("[data-tree-expansion]");
-    output.textContent = output.textContent.split(":")[0] + ": " + branch.dataset.value;
-  } else if (item) {
-    const output = demo.querySelector("[data-tree-selection]");
-    output.textContent = output.textContent.split(":")[0] + ": " + item.dataset.value;
-  }
-});
-`;
+export { default as treeViewEventsScript } from "./scripts/tree-view-events.ts?raw";

@@ -1,27 +1,19 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import {
+  flyoutDensityItems,
+  flyoutLanguageItems,
+  flyoutPlanItems,
+  flyoutRadiusItems,
+  flyoutRegionItems,
+} from "./data/flyout";
 
 /*
  * Every Flyout demo is now a tree. The contract owns closed/open/item indicators and its
  * `defaultValue` maps to the machine value in Vanilla and the array-shaped React prop.
+ *
+ * The lists themselves are data: see `data/flyout.ts`.
  */
-
-/** One option of a Flyout: the value the contract keys on, and the words the reader sees. */
-type Choice = { value: string; label: string; disabled?: boolean };
-
-/** The `items` collection, which stays DATA on both sides: React repeats it, the template expands it. */
-const items = (choices: readonly Choice[]) =>
-  choices.map(({ value, label, disabled }) => ({
-    options: disabled ? { value, disabled: true } : { value },
-    slots: { label },
-  }));
-
-/** Tier names, written rather than translated: `Starter`, `Pro` and `Enterprise` are product names. */
-const plans: readonly Choice[] = [
-  { value: "starter", label: "Starter" },
-  { value: "pro", label: "Pro" },
-  { value: "enterprise", label: "Enterprise" },
-];
 
 /**
  * The plain picker. A constant, not a factory: `Plan` is spelled the same in both languages and the
@@ -30,7 +22,7 @@ const plans: readonly Choice[] = [
 export const flyoutTree: UsageTree = {
   contract: "flyout",
   signature: "Flyout",
-  slots: { label: "Plan", items: items(plans) },
+  slots: { label: "Plan", items: flyoutPlanItems },
 };
 
 /**
@@ -43,16 +35,7 @@ export const flyoutTree: UsageTree = {
 export const flyoutRailTree = (t: Translate): UsageTree => ({
   contract: "flyout",
   signature: "Flyout",
-  slots: {
-    label: t("demo.flyout.density"),
-    items: items([
-      { value: "0.5", label: t("demo.flyout.densityCondensed") },
-      { value: "0.6", label: t("demo.flyout.densityDense") },
-      { value: "0.8", label: t("demo.flyout.densityCompact") },
-      { value: "1", label: t("demo.flyout.densityComfortable") },
-      { value: "1.2", label: t("demo.flyout.densitySpacious") },
-    ]),
-  },
+  slots: { label: t("demo.flyout.density"), items: flyoutDensityItems(t) },
 });
 
 /**
@@ -71,16 +54,7 @@ export const flyoutExclusiveTree = (t: Translate): UsageTree => ({
     {
       contract: "flyout",
       signature: "Flyout",
-      slots: {
-        label: t("demo.flyout.radius"),
-        items: items([
-          { value: "0", label: t("demo.flyout.radiusSquare") },
-          { value: "0.5", label: t("demo.flyout.radiusSubtle") },
-          { value: "1", label: t("demo.flyout.radiusSoft") },
-          { value: "1.5", label: t("demo.flyout.radiusStrong") },
-          { value: "2", label: t("demo.flyout.radiusRound") },
-        ]),
-      },
+      slots: { label: t("demo.flyout.radius"), items: flyoutRadiusItems(t) },
     },
   ],
 });
@@ -89,15 +63,7 @@ export const flyoutExclusiveTree = (t: Translate): UsageTree => ({
 export const flyoutDisabledItemTree = (t: Translate): UsageTree => ({
   contract: "flyout",
   signature: "Flyout",
-  slots: {
-    label: t("demo.flyout.region"),
-    items: items([
-      { value: "eu", label: t("demo.flyout.regionEurope") },
-      { value: "us", label: t("demo.flyout.regionAmericas") },
-      { value: "apac", label: t("demo.flyout.regionApac"), disabled: true },
-      { value: "latam", label: t("demo.flyout.regionLatam") },
-    ]),
-  },
+  slots: { label: t("demo.flyout.region"), items: flyoutRegionItems(t) },
 });
 
 /** The same picker with `disabled` on the ROOT: it neither opens nor changes value. */
@@ -105,34 +71,14 @@ export const flyoutDisabledTree: UsageTree = {
   contract: "flyout",
   signature: "Flyout",
   options: { disabled: true },
-  slots: { label: "Plan", items: items(plans) },
+  slots: { label: "Plan", items: flyoutPlanItems },
 };
 
-/**
- * Ten options, so the panel hits its max height and scrolls.
- *
- * The languages are written as ENDONYMS and never translated: `Português` is `Português` on both
- * pages, and a list of language names that changes with the page's own language is a list that has
- * to be maintained twice. The English page used to say `Spanish` for `es`.
- */
+/** Ten options, so the panel hits its max height and scrolls. */
 export const flyoutLongTree = (t: Translate): UsageTree => ({
   contract: "flyout",
   signature: "Flyout",
-  slots: {
-    label: t("demo.flyout.language"),
-    items: items([
-      { value: "es", label: "Español" },
-      { value: "en", label: "English" },
-      { value: "pt", label: "Português" },
-      { value: "fr", label: "Français" },
-      { value: "de", label: "Deutsch" },
-      { value: "it", label: "Italiano" },
-      { value: "nl", label: "Nederlands" },
-      { value: "pl", label: "Polski" },
-      { value: "sv", label: "Svenska" },
-      { value: "ja", label: "日本語" },
-    ]),
-  },
+  slots: { label: t("demo.flyout.language"), items: flyoutLanguageItems },
 });
 
 export const flyoutPlaceholderTree = (t: Translate): UsageTree => ({
@@ -142,8 +88,5 @@ export const flyoutPlaceholderTree = (t: Translate): UsageTree => ({
     placeholder: t("demo.flyout.placeholder"),
     defaultValue: "__no-selection__",
   },
-  slots: {
-    label: t("demo.flyout.plan"),
-    items: items(plans),
-  },
+  slots: { label: t("demo.flyout.plan"), items: flyoutPlanItems },
 });

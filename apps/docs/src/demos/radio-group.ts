@@ -1,21 +1,16 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { radioGroupItems, tileRadioGroupItems } from "./data/radio-group";
 
-/* Native and tile radio groups share one authored choice model. */
+/* Native and tile radio groups share one authored choice model: see `data/radio-group.ts`. */
 
-/** An exclusive choice between three plans. Plan names are product nouns and stay written. */
+/** An exclusive choice between three plans. */
 export const radioGroupTree = (t: Translate): UsageTree => ({
   contract: "radio-group",
   signature: "RadioGroup",
   options: { name: "plan", value: "pro", orientation: "vertical" },
   attrs: { "aria-label": t("demo.radioGroup.label") },
-  slots: {
-    items: [
-      { options: { value: "basic" }, slots: { label: "Basic" } },
-      { options: { value: "pro" }, slots: { label: "Professional" } },
-      { options: { value: "enterprise" }, slots: { label: "Enterprise" } },
-    ],
-  },
+  slots: { items: radioGroupItems },
 });
 
 export const tileRadioGroupTree = (t: Translate): UsageTree => ({
@@ -23,34 +18,5 @@ export const tileRadioGroupTree = (t: Translate): UsageTree => ({
   signature: "TileRadioGroup",
   options: { name: "plan-tile", defaultValue: "pro", orientation: "horizontal" },
   attrs: { "aria-label": t("demo.radioGroup.label") },
-  slots: {
-    items: [
-      {
-        options: { value: "starter" },
-        slots: {
-          label: {
-            contract: "tile",
-            signature: "TileContent",
-            slots: {
-              title: t("demo.radioGroup.starter.title"),
-              description: t("demo.radioGroup.starter.body"),
-            },
-          },
-        },
-      },
-      {
-        options: { value: "pro" },
-        slots: {
-          label: {
-            contract: "tile",
-            signature: "TileContent",
-            slots: {
-              title: t("demo.radioGroup.pro.title"),
-              description: t("demo.radioGroup.pro.body"),
-            },
-          },
-        },
-      },
-    ],
-  },
+  slots: { items: tileRadioGroupItems(t) },
 });

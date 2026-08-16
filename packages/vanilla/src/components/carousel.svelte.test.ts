@@ -174,6 +174,152 @@ describe("Carousel Vanilla contracts", () => {
     expect(toggle.getAttribute("aria-label")).toBe("Reanudar la rotación");
   });
 
+  /*
+   * WCAG 2.2.2 / WAI-ARIA Carousel: hover and keyboard focus must pause an autoplaying carousel, and
+   * resume it on leave/blur — but never override an EXPLICIT stop the user made via the trigger. Zag
+   * 1.42.0 implements neither by itself (confirmed by reading its source directly): this file's own
+   * `$effect` + root listeners are what actually deliver it.
+   */
+  it("pauses autoplay on hover and resumes it when the mouse leaves", () => {
+    const root = mount(4, "data-autoplay");
+    mountCarousel(root);
+    flushSync();
+
+    // `aria-live` on the track is Zag's own, driven purely by whether it is ACTUALLY rotating
+    // ("off" while it moves on its own, so mid-rotation DOM changes are not announced; "polite"
+    // once paused, so an intentional navigation still gets read out) — unlike `data-pressed`, hover
+    // and focus DO move it, since neither reflects a promise made to the user.
+    const track = root.querySelector<HTMLElement>(".sk-carousel__track")!;
+    const toggle = root.querySelector<HTMLButtonElement>(".sk-carousel__autoplay")!;
+    expect(track.getAttribute("aria-live")).toBe("off");
+
+    fireEvent.mouseEnter(root);
+    flushSync();
+    expect(track.getAttribute("aria-live")).toBe("polite");
+    // The button still promises "Pausar": the user never asked for anything, hover is temporary.
+    expect(toggle.getAttribute("data-pressed")).toBe("");
+
+    fireEvent.mouseLeave(root);
+    flushSync();
+    expect(track.getAttribute("aria-live")).toBe("off");
+  });
+
+  it("pauses autoplay on keyboard focus and resumes it on blur", () => {
+    const root = mount(4, "data-autoplay");
+    mountCarousel(root);
+    flushSync();
+
+    const track = root.querySelector<HTMLElement>(".sk-carousel__track")!;
+    const [next] = buttons(root);
+
+    fireEvent.focusIn(next);
+    flushSync();
+    expect(track.getAttribute("aria-live")).toBe("polite");
+
+    fireEvent.focusOut(next, { relatedTarget: document.body });
+    flushSync();
+    expect(track.getAttribute("aria-live")).toBe("off");
+  });
+
+  it("does not resume on mouse leave while focus is still inside", () => {
+    const root = mount(4, "data-autoplay");
+    mountCarousel(root);
+    flushSync();
+
+    const track = root.querySelector<HTMLElement>(".sk-carousel__track")!;
+    const [next] = buttons(root);
+
+    fireEvent.mouseEnter(root);
+    fireEvent.focusIn(next);
+    flushSync();
+    expect(track.getAttribute("aria-live")).toBe("polite");
+
+    fireEvent.mouseLeave(root);
+    flushSync();
+    // Still focused: must stay paused.
+    expect(track.getAttribute("aria-live")).toBe("polite");
+
+    fireEvent.focusOut(next, { relatedTarget: document.body });
+    flushSync();
+    expect(track.getAttribute("aria-live")).toBe("off");
+  });
+
+  it("never lets hover or focus override an explicit stop from the trigger", () => {
+    const root = mount(4, "data-autoplay");
+    mountCarousel(root);
+    flushSync();
+
+    const track = root.querySelector<HTMLElement>(".sk-carousel__track")!;
+    const toggle = root.querySelector<HTMLButtonElement>(".sk-carousel__autoplay")!;
+
+    fireEvent.click(toggle);
+    flushSync();
+    expect(toggle.getAttribute("data-pressed")).toBeNull();
+    expect(track.getAttribute("aria-live")).toBe("polite");
+
+    fireEvent.mouseEnter(root);
+    flushSync();
+    fireEvent.mouseLeave(root);
+    flushSync();
+    // Hovering and leaving must not resume a carousel the user explicitly stopped.
+    expect(toggle.getAttribute("data-pressed")).toBeNull();
+    expect(track.getAttribute("aria-live")).toBe("polite");
+  });
+
+  it("cancels a pending hover-resume when the user explicitly stops mid-hover", () => {
+    const root = mount(4, "data-autoplay");
+    mountCarousel(root);
+    flushSync();
+
+    const track = root.querySelector<HTMLElement>(".sk-carousel__track")!;
+    const toggle = root.querySelector<HTMLButtonElement>(".sk-carousel__autoplay")!;
+
+    fireEvent.mouseEnter(root);
+    flushSync();
+    expect(track.getAttribute("aria-live")).toBe("polite");
+
+    // The user clicks stop WHILE still hovering.
+    fireEvent.click(toggle);
+    flushSync();
+    expect(toggle.getAttribute("data-pressed")).toBeNull();
+
+    fireEvent.mouseLeave(root);
+    flushSync();
+    // Must stay stopped: the explicit click, not the hover, is what the user asked for last.
+    expect(toggle.getAttribute("data-pressed")).toBeNull();
+    expect(track.getAttribute("aria-live")).toBe("polite");
+  });
+
+  it("pauses on focus landing INSIDE a slide's own content, not only on the prev/next chrome", () => {
+    // A real case the other focus test does not cover: a card slide with its own link. `focusin`
+    // bubbles from ANY descendant to the root listener, so this should need no code of its own —
+    // this test is here to prove that, not to add behaviour.
+    document.body.innerHTML = `<section class="sk-carousel" data-sk-carousel data-autoplay aria-label="Novedades">
+      <div class="sk-carousel__track">
+        <div class="sk-carousel__slide"><a href="/uno">Leer más — Uno</a></div>
+        <div class="sk-carousel__slide"><a href="/dos">Leer más — Dos</a></div>
+        <div class="sk-carousel__slide"><a href="/tres">Leer más — Tres</a></div>
+        <div class="sk-carousel__slide"><a href="/cuatro">Leer más — Cuatro</a></div>
+      </div>
+    </section>`;
+    const root = document.body.firstElementChild as HTMLElement;
+    layout(root);
+    mountCarousel(root);
+    flushSync();
+
+    const track = root.querySelector<HTMLElement>(".sk-carousel__track")!;
+    const slideLink = root.querySelector<HTMLAnchorElement>(".sk-carousel__slide a")!;
+    expect(track.getAttribute("aria-live")).toBe("off");
+
+    fireEvent.focusIn(slideLink);
+    flushSync();
+    expect(track.getAttribute("aria-live")).toBe("polite");
+
+    fireEvent.focusOut(slideLink, { relatedTarget: document.body });
+    flushSync();
+    expect(track.getAttribute("aria-live")).toBe("off");
+  });
+
   it("draws no controls at all when asked for none, and still snaps per slide", async () => {
     const root = mount(4, 'data-controls="none"');
     mountCarousel(root);

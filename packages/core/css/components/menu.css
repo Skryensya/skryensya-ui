@@ -280,48 +280,68 @@
   }
 
   /*
-   * ── pointer-intent overlay (`data-sk-menu-debug-intent`) ────────────────────
-   * Not part of the template: menu-intent-overlay.ts creates these two elements directly on
-   * `<body>`, only while a submenu with the flag on is open, one pair per open submenu. `fixed` +
-   * `--z-popover` matches the pattern's own anchored boxes (patterns/anchored.css), so the overlay
-   * never sits under the very panel it is explaining. `pointer-events: none` on both: this is
-   * READOUT, and must never itself be what a real pointermove hits.
+   * ── safe area ───────────────────────────────────────────────────────────────
+   * REAL MACHINERY, not decoration: menu-safe-area.ts explains at length what this element is and
+   * what measurement forced it. Everything load-bearing about it is in this rule.
+   *
+   * `fixed` is what escapes `.sk-menu__content`'s `overflow: auto` — the shape reaches across the
+   * panel's edge toward a submenu that is outside it, and an `absolute` box would be clipped at the
+   * first scroll container. Being out of flow it is also NOT a grid item, so living inside the
+   * trigger's own `display: grid` costs that trigger no column and no row.
+   *
+   * `pointer-events: auto` is the entire point: this element has to be what a real pointermove
+   * hits, so that the hit counts as the TRIGGER (its parent) and no `pointerleave` fires. It is the
+   * one element in this file that must never be transparent to the pointer.
+   *
+   * `clip-path` is set inline, per move, by the module — and it clips hit testing, not just paint,
+   * which is what keeps this a triangle aimed at the submenu instead of a blanket over the rows
+   * below it. Without a clip the element still covers its whole box, so there is deliberately no
+   * fallback shape here: the module always writes one before the element is appended.
    */
-  .sk-menu__intent-overlay {
+  .sk-menu__safe-area {
     position: fixed;
-    inset: 0;
-    inline-size: 100%;
-    block-size: 100%;
-    pointer-events: none;
-    z-index: var(--z-popover);
+    pointer-events: auto;
   }
 
-  .sk-menu__intent-polygon {
-    fill: var(--color-border-accent);
-    fill-opacity: 0.08;
-    stroke: var(--color-border-accent);
-    stroke-opacity: 0.25;
-    stroke-width: 1.5;
-    transition:
-      fill-opacity var(--motion-feedback-duration) var(--motion-feedback-easing),
-      stroke-opacity var(--motion-feedback-duration) var(--motion-feedback-easing);
+  /*
+   * `.sk-menu__item` is `isolation: isolate`, so the safe area is trapped inside the TRIGGER's own
+   * stacking context, and the sibling rows it has to cover are later positioned siblings — they
+   * would paint (and hit-test) over it. Raising the trigger raises the shape with it. Scoped to the
+   * attribute the module adds and removes, so a trigger with no safe area mounted keeps the exact
+   * stacking it has always had.
+   */
+  .sk-menu__item[data-sk-menu-safe-area] {
+    z-index: 1;
   }
 
-  /* Locked is the state that MATTERS (it is the one keeping a sibling from stealing highlight), so
-   * it is the one that reads as more than decoration once the pointer actually earns it. */
-  .sk-menu__intent-polygon[data-locked="true"] {
-    fill-opacity: 0.22;
-    stroke-opacity: 0.6;
+  /* ── pointer-intent readout (`data-sk-menu-debug-intent`) ────────────────────
+   * The flag paints the safe area rather than drawing a second picture of it: what a reader sees is
+   * the same element the pointer is actually hitting, so the explanation cannot drift from the
+   * mechanism the way a redrawn overlay could. */
+  .sk-menu__safe-area[data-debug] {
+    background: color-mix(in oklab, var(--color-border-accent) 18%, transparent);
+    outline: 1px solid color-mix(in oklab, var(--color-border-accent) 45%, transparent);
   }
 
-  .sk-menu__intent-badge {
-    position: fixed;
-    inset-block-start: var(--space-inset-sm);
-    inset-inline-start: var(--space-inset-sm);
-    z-index: var(--z-popover);
+  /*
+   * The status line, laid out instead of floated. It used to be a `position: fixed` badge on
+   * `<body>` pinned to the top-inline-start corner, which in a preview frame is exactly where the
+   * menu's own trigger sits: it covered the button it was explaining. A flagged root becomes a
+   * column so the trigger keeps its own size and the readout gets its own space underneath —
+   * `align-items: start` because `.sk-menu` is `inline-flex` and a column would otherwise stretch
+   * the trigger to the readout's width.
+   */
+  .sk-menu[data-sk-menu-debug-intent] {
+    flex-direction: column;
+    align-items: start;
+    gap: var(--space-stack-xs);
+  }
+
+  .sk-menu__intent-readout {
     display: inline-flex;
     align-items: center;
     gap: var(--space-inline-xs);
+    margin: 0;
     padding: var(--space-inset-xs) var(--space-inset-sm);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-pill);
@@ -329,21 +349,23 @@
     color: var(--color-text-tertiary);
     font-family: var(--font-family-code);
     font-size: var(--font-size-caption);
-    pointer-events: none;
   }
 
-  .sk-menu__intent-badge[data-locked="true"] {
+  /* Holding is the state that MATTERS (it is the one keeping the submenu open while the reader
+   * crosses), so it is the one that reads as more than chrome once the pointer actually earns it. */
+  .sk-menu__intent-readout[data-locked="true"] {
+    border-color: var(--color-border-accent);
     color: var(--color-text-accent);
   }
 
-  .sk-menu__intent-badge-dot {
+  .sk-menu__intent-readout-dot {
     inline-size: 0.5rem;
     block-size: 0.5rem;
     border-radius: 50%;
     background: var(--color-border-subtle);
   }
 
-  .sk-menu__intent-badge[data-locked="true"] .sk-menu__intent-badge-dot {
+  .sk-menu__intent-readout[data-locked="true"] .sk-menu__intent-readout-dot {
     background: var(--color-border-accent);
   }
 }

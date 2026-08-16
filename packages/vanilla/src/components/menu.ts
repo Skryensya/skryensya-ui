@@ -5,16 +5,12 @@ import {
   supportsAnchorPositioning,
 } from "@skryensya/core/anchored";
 import { menu } from "@skryensya/core/machines";
-import {
-  createAdjacentGraceController,
-  hasOpenSubmenuSibling,
-} from "@skryensya/core/menu-adjacent-grace";
 import { menuAttrs, type MenuApi, type MenuItemKind, type MenuService } from "@skryensya/core/menu";
 import {
-  createIntentOverlay,
-  type IntentOverlayHandle,
-  type IntentPoint,
-} from "@skryensya/core/menu-intent-overlay";
+  getIntentReadout,
+  type IntentReadoutHandle,
+} from "@skryensya/core/menu-intent-readout";
+import { createMenuSafeArea, type MenuSafeAreaHandle } from "@skryensya/core/menu-safe-area";
 import { normalizeProps, VanillaMachine } from "@zag-js/vanilla";
 import {
   applyZagProps,
@@ -118,25 +114,57 @@ function connect(root: HTMLElement): () => void {
   }
 
   /*
-   * Vanilla never portals (packages/core/src/menu-intent-overlay.ts's own header explains WHY this
-   * exists at all): every submenu root stays a real DOM descendant of the one that carries the
-   * flag, so `closest()` alone finds it, on this root or any ancestor, no threading needed the way
-   * React's `debugSafetyTriangle` prop has to be. Only meaningful with a `parent`: the overlay
-   * always concerns the safety triangle BETWEEN a submenu and the parent it hangs off, and the
-   * top-level menu is never itself the subject of one.
+   * Vanilla never portals: every submenu root stays a real DOM descendant of the one that carries
+   * the flag, so `closest()` alone finds it — on this root or any ancestor, no threading needed the
+   * way React's `debugSafetyTriangle` prop has to be. It matches THIS root too when this root is
+   * the flagged one, which is what makes both bindings agree: the readout belongs to the flagged
+   * root itself, not to whichever submenu happened to mount first, so a flagged menu shows it with
+   * or without submenus (React's `Menu` creates it unconditionally for the same reason). The
+   * WeakMap inside `getIntentReadout` is what keeps that one element to one root no matter how many
+   * levels ask for it.
    */
-  const debugSafetyTriangle = parent && root.closest(`[${menuAttrs.debugSafetyTriangle}]`) != null;
-  let debugOverlay: IntentOverlayHandle | null = null;
-  const syncDebugOverlay = () => {
-    if (!debugSafetyTriangle || !parent) return;
-    debugOverlay ??= createIntentOverlay();
-    debugOverlay.update({
-      polygon: machine.service.context.get("intentPolygon") as readonly IntentPoint[] | null,
-      locked: parent.service.context.get("pointerRoutingMode") === "locked",
-      label: "Pointer routing",
-      lockedText: "locked",
-      freeText: "free",
+  const flaggedRoot = root.closest<HTMLElement>(`[${menuAttrs.debugSafetyTriangle}]`);
+  const readout: IntentReadoutHandle | null = flaggedRoot
+    ? getIntentReadout(flaggedRoot, {
+        label: "Pointer routing",
+        lockedText: "locked",
+        freeText: "free",
+      })
+    : null;
+  /* Only the root that OWNS the element tears it down; a submenu just stops reporting into it. */
+  const ownsReadout = flaggedRoot === root;
+
+  /*
+   * The safe area (core/src/menu-safe-area.ts) belongs to the SUBMENU, mounted on the trigger it
+   * hangs off: it is what keeps the pointer counting as that trigger while the reader crosses the
+   * rows between them. A top-level menu has no such corridor, hence the `parent` guard.
+   *
+   * A plain `addEventListener` rather than a wrapped Zag prop: this only ADDS a handler, it never
+   * has to replace Zag's own, so none of the duplicate-key care `applyZagProps` needs elsewhere
+   * applies. Aiming happens while the pointer is still ON the trigger — an element created in
+   * response to `pointerleave` would already be one event too late.
+   */
+  const cleanups: Array<() => void> = [];
+  let safeArea: MenuSafeAreaHandle | null = null;
+  if (parent && trigger) {
+    safeArea = createMenuSafeArea(trigger, {
+      debug: flaggedRoot != null,
+      onHoldChange: (holding) => readout?.report(menuId, holding),
     });
+    const aim = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      if (content.dataset.state !== "open") return;
+      safeArea?.aim(
+        { x: event.clientX, y: event.clientY },
+        content.getBoundingClientRect(),
+      );
+    };
+    trigger.addEventListener("pointermove", aim);
+    cleanups.push(() => trigger.removeEventListener("pointermove", aim));
+  }
+  /* Closed submenu, no corridor: the shape has to go, or it keeps intercepting the rows it covers. */
+  const syncSafeArea = () => {
+    if (content.dataset.state !== "open") safeArea?.clear();
   };
 
   const triggerProps = () =>
@@ -144,13 +172,13 @@ function connect(root: HTMLElement): () => void {
       ? parent.getApi().getTriggerItemProps(getApi())
       : getApi().getTriggerProps();
   /*
-   * One controller for this whole item list: `menu-adjacent-grace.ts` explains what it holds and
-   * why (Zag's own `intentPolygon` protects a diagonal approach, not a pointer leaving the trigger
-   * straight onto the very next row). `selector.item` never matches a submenu's own trigger (that
-   * is `selector.trigger` on a nested root), so every entry here really is "some OTHER item," the
-   * only case this hold should ever apply to.
+   * Items take Zag's props untouched. They used to be wrapped in a 200ms timed hold that delayed a
+   * sibling's highlight while a submenu was open, standing in for a safe area the system did not
+   * have; with a real one (menu-safe-area.ts) the pointer never reaches these rows during a
+   * crossing at all, so the hold protected nothing and only made a DELIBERATE move to the next row
+   * arrive late — measured, it still committed that highlight 200ms after the submenu had already
+   * closed underneath it, which is the worst of both.
    */
-  const adjacentGrace = createAdjacentGraceController();
   const itemProps = (item: AuthoredItem): DomProps => {
     const api = getApi();
     const base: DomProps =
@@ -178,48 +206,7 @@ function connect(root: HTMLElement): () => void {
               sync();
             },
           });
-    /*
-     * `@zag-js/vanilla`'s `normalizeProps` names these `onpointermove`/`onpointerleave`, all
-     * lowercase (the plain-HTML-attribute convention), NOT the `onPointerMove` casing React's own
-     * normalizer uses. Spreading `base` and adding `onPointerMove` alongside it does not override
-     * anything: they are two DIFFERENT keys, `bindZagEvents` finds both (its `isEventKey`/
-     * `eventName` fold either casing to the same "pointermove" DOM event), and both end up
-     * `addEventListener`'d — Zag's own untouched handler running right alongside the wrapped one,
-     * which is what let a sibling's highlight commit immediately no matter how this hold was
-     * written (measured: two "pointermove" listeners on one item node, one of them always the
-     * original). Deleting every casing of the two keys before adding a single lowercase one back
-     * is what actually makes this the only handler `bindZagEvents` ever finds.
-     */
-    const realOnPointerMove = (base.onpointermove ?? base.onPointerMove) as
-      | ((event: Event) => void)
-      | undefined;
-    const realOnPointerLeave = (base.onpointerleave ?? base.onPointerLeave) as
-      | ((event: Event) => void)
-      | undefined;
-    const wrapped: DomProps = { ...base };
-    for (const key of Object.keys(wrapped)) {
-      if (/^onpointermove$/i.test(key) || /^onpointerleave$/i.test(key)) delete wrapped[key];
-    }
-    wrapped.onpointermove = (event: PointerEvent) => {
-      if (event.pointerType === "mouse" && hasOpenSubmenuSibling(item.node)) {
-        /*
-         * NOT `() => realOnPointerMove?.(event)`: a native `PointerEvent`'s `currentTarget` goes
-         * back to `null` the instant dispatch finishes, so replaying the SAME event object once
-         * the hold elapses hands Zag's real handler a `target` it can no longer resolve to an item
-         * (measured: `highlightedValue` never left the trigger, the hold "elapsed" but nothing
-         * ever committed). `setHighlightedValue` is the public, event-free path for exactly this —
-         * committing a value with no event object to go stale.
-         */
-        adjacentGrace.hold(item.value, () => getApi().setHighlightedValue(item.value));
-        return;
-      }
-      realOnPointerMove?.(event);
-    };
-    wrapped.onpointerleave = (event: Event) => {
-      adjacentGrace.cancel(item.value);
-      realOnPointerLeave?.(event);
-    };
-    return wrapped;
+    return base;
   };
   const sync = () => {
     const api = getApi();
@@ -253,9 +240,9 @@ function connect(root: HTMLElement): () => void {
         );
       }
     }
-    syncDebugOverlay();
+    syncSafeArea();
   };
-  const cleanups: Array<() => void> = [
+  cleanups.push(
     ...(trigger
       ? [bindZagEvents(trigger, () => triggerProps() as DomProps)]
       : []),
@@ -269,7 +256,7 @@ function connect(root: HTMLElement): () => void {
       : []),
     bindZagEvents(content, () => getApi().getContentProps() as DomProps),
     ...items.map((item) => bindZagEvents(item.node, () => itemProps(item))),
-  ];
+  );
   if (parent && trigger) {
     const openSubmenu = (event: KeyboardEvent) => {
       const direction =
@@ -294,8 +281,9 @@ function connect(root: HTMLElement): () => void {
     unsubscribe();
     for (const cleanup of cleanups) cleanup();
     unbindAnchor?.();
-    debugOverlay?.destroy();
-    adjacentGrace.reset();
+    safeArea?.destroy();
+    if (ownsReadout) readout?.destroy();
+    else readout?.release(menuId);
     instances.delete(root);
     machine.stop();
   };

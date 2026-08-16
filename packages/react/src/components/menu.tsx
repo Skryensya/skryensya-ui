@@ -1,6 +1,7 @@
 import { anchoredParts } from "@skryensya/core/anchored";
 import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import {
+  menuAttrs,
   menuContract,
   menuParts,
   type MenuApi,
@@ -9,15 +10,10 @@ import {
 } from "@skryensya/core/menu";
 import { menu } from "@skryensya/core/machines";
 import {
-  createAdjacentGraceController,
-  hasOpenSubmenuSibling,
-  type AdjacentGraceController,
-} from "@skryensya/core/menu-adjacent-grace";
-import {
-  createIntentOverlay,
-  type IntentOverlayHandle,
-  type IntentPoint,
-} from "@skryensya/core/menu-intent-overlay";
+  getIntentReadout,
+  type IntentReadoutHandle,
+} from "@skryensya/core/menu-intent-readout";
+import { createMenuSafeArea, type MenuSafeAreaHandle } from "@skryensya/core/menu-safe-area";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
 import { useEffect, useId, useRef, useState, type ReactNode, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
@@ -42,11 +38,10 @@ export type MenuProps = Pick<
   itemIndicator?: ReactNode;
   submenuIndicator?: ReactNode;
   /**
-   * Draws @zag-js/menu's OWN pointer-intent polygon live over every submenu this Menu owns, plus a
-   * status badge for `context.pointerRoutingMode`. Not a feature this binding adds: the machine
-   * already computes and enforces this ("crossing a sibling on a diagonal path toward an open
-   * submenu does not steal highlight"); the flag only makes that already-real geometry visible, for
-   * teaching or debugging. See `@skryensya/core/menu-intent-overlay`.
+   * Paints the SAFE AREA (`@skryensya/core/menu-safe-area`) over every submenu this Menu owns, plus
+   * a status line saying whether it is currently holding the pointer. Not a feature this binding
+   * adds and not a drawing OF one: the safe area is a real element on every submenu either way, and
+   * the flag only gives it a fill, for teaching or debugging.
    */
   debugSafetyTriangle?: boolean;
   defaultOpen?: boolean;
@@ -67,6 +62,8 @@ type MenuListProps = {
   checkedState: CheckedState;
   density?: MenuProps["density"];
   debugSafetyTriangle?: MenuProps["debugSafetyTriangle"];
+  /** The one readout for the whole menu, threaded down the same way `debugSafetyTriangle` is. */
+  readout?: IntentReadoutHandle | null;
   service: MenuService;
   items: readonly MenuItem[];
   itemIndicator?: ReactNode;
@@ -94,21 +91,11 @@ function MenuList({
   items,
   onCheckedChange,
   onSelect,
+  readout,
   service,
   setCheckedState,
   submenuIndicator,
 }: MenuListProps) {
-  /*
-   * One controller per rendered list, not per item: the hold is keyed by item value internally, so
-   * a single instance already tracks "which candidate, if any, is currently being held" for this
-   * whole list. `useRef` rather than `useState` because starting or clearing a hold is never
-   * something this component itself needs to re-render for; only the DEFERRED `machineProps.
-   * onPointerMove` call (which Zag's own state update re-renders for on its own) does.
-   */
-  const graceRef = useRef<AdjacentGraceController | null>(null);
-  const grace = () => (graceRef.current ??= createAdjacentGraceController());
-  useEffect(() => () => graceRef.current?.reset(), []);
-
   return items.map((item) => {
     if (item.kind === "separator") {
       return <div className={menuParts.separator} key={item.value} role="separator" />;
@@ -126,6 +113,7 @@ function MenuList({
           onSelect={onSelect}
           parentApi={api}
           parentService={service}
+          readout={readout}
           submenuIndicator={submenuIndicator}
         />
       );
@@ -162,29 +150,6 @@ function MenuList({
           machineProps.onClick?.(event);
           if (kind === "item" && !item.disabled)
             onSelect?.({ value: item.value });
-        }}
-        onPointerMove={(event) => {
-          /*
-           * `hasOpenSubmenuSibling` is the ONLY thing gating this: with nothing open, every hold
-           * would just be 200ms of nothing happening, so plain items behave exactly as before.
-           *
-           * NOT `() => machineProps.onPointerMove?.(event)`: a PointerEvent's `currentTarget` goes
-           * back to `null` the instant dispatch finishes (React 17+ stopped POOLING synthetic
-           * events, but never stopped this — it mirrors the native event it wraps), so replaying
-           * the SAME event once the hold elapses hands Zag's real handler a `target` it can no
-           * longer resolve to an item (measured: `highlightedValue` never left the trigger, the
-           * hold "elapsed" but nothing ever committed). `setHighlightedValue` is the public,
-           * event-free path for exactly this — committing a value with no event object to go stale.
-           */
-          if (event.pointerType === "mouse" && hasOpenSubmenuSibling(event.currentTarget)) {
-            grace().hold(item.value, () => api.setHighlightedValue(item.value));
-            return;
-          }
-          machineProps.onPointerMove?.(event);
-        }}
-        onPointerLeave={(event) => {
-          grace().cancel(item.value);
-          machineProps.onPointerLeave?.(event);
         }}
       >
         {/*
@@ -231,6 +196,7 @@ function Submenu({
   onSelect,
   parentApi,
   parentService,
+  readout,
   submenuIndicator,
 }: {
   density?: MenuProps["density"];
@@ -241,6 +207,7 @@ function Submenu({
   onSelect?: MenuProps["onSelect"];
   parentApi: MenuApi;
   parentService: MenuService;
+  readout?: IntentReadoutHandle | null;
   submenuIndicator?: ReactNode;
 }) {
   const id = useId();
@@ -262,31 +229,32 @@ function Submenu({
   }, [parentService, service]);
 
   /*
-   * `context.get(...)` below is read fresh on every render, and a `useEffect` with no dependency
-   * array runs after every one of them: cheap here (three DOM writes, no allocation Zag itself
-   * would not already have caused), and simpler than hand-picking which of `open`/highlight/pointer
-   * events should count as "the polygon might have changed" when the honest answer is "any of
-   * them, and only Zag knows which fired." Destroying the handle on unmount is the only cleanup
-   * this needs; `update()` itself removes the DOM when the polygon goes empty (submenu closed or
-   * pointer left it), so there is no separate "close" branch to keep in sync.
+   * The safe area (core/src/menu-safe-area.ts) belongs to this submenu, mounted on the trigger it
+   * hangs off. Created once per mounted trigger rather than per render: it owns a real element and
+   * four listeners, and none of that depends on anything React re-renders for. Both refs below are
+   * `useRef` for the same reason — nothing this holds is ever read during render.
    */
-  const debugOverlay = useRef<IntentOverlayHandle | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const safeArea = useRef<MenuSafeAreaHandle | null>(null);
   useEffect(() => {
-    if (!debugSafetyTriangle) {
-      debugOverlay.current?.destroy();
-      debugOverlay.current = null;
-      return;
-    }
-    debugOverlay.current ??= createIntentOverlay();
-    debugOverlay.current.update({
-      polygon: service.context.get("intentPolygon") as readonly IntentPoint[] | null,
-      locked: parentService.context.get("pointerRoutingMode") === "locked",
-      label: "Pointer routing",
-      lockedText: "locked",
-      freeText: "free",
+    const trigger = triggerRef.current;
+    if (!trigger) return;
+    safeArea.current = createMenuSafeArea(trigger, {
+      debug: debugSafetyTriangle,
+      onHoldChange: (holding) => readout?.report(id, holding),
     });
-  });
-  useEffect(() => () => debugOverlay.current?.destroy(), []);
+    return () => {
+      safeArea.current?.destroy();
+      safeArea.current = null;
+      readout?.release(id);
+    };
+  }, [debugSafetyTriangle, id, readout]);
+
+  /* Closed submenu, no corridor: the shape has to go, or it keeps intercepting the rows it covers. */
+  useEffect(() => {
+    if (!api.open) safeArea.current?.clear();
+  }, [api.open]);
 
   const setCheckedState = (changedItem: MenuItem, checked: boolean) => {
     setChecked((current) => {
@@ -350,6 +318,22 @@ function Submenu({
             document.documentElement.dir === "rtl" ? "ArrowLeft" : "ArrowRight";
           if (event.key === direction) api.setOpen(true);
         }}
+        onPointerMove={(event) => {
+          parentApi.getTriggerItemProps(api).onPointerMove?.(event);
+          /*
+           * Aiming while the pointer is still ON the trigger is the whole trick: an element created
+           * in response to `pointerleave` arrives one event too late, with Zag's 100ms close fuse
+           * already lit. The submenu's own content element is the far side of the corridor, which is
+           * why it needs a ref rather than a query.
+           */
+          const content = contentRef.current;
+          if (event.pointerType !== "mouse" || !content || !api.open) return;
+          safeArea.current?.aim(
+            { x: event.clientX, y: event.clientY },
+            content.getBoundingClientRect(),
+          );
+        }}
+        ref={triggerRef}
         type="button"
       >
         <span className={menuParts.itemLabel}>{item.label}</span>
@@ -367,7 +351,7 @@ function Submenu({
         data-density={density}
         data-sk-submenu=""
       >
-        <div {...api.getContentProps()} className={menuParts.content}>
+        <div {...api.getContentProps()} className={menuParts.content} ref={contentRef}>
           <MenuList
             api={api}
             checkedState={checkedState}
@@ -377,6 +361,7 @@ function Submenu({
             items={children}
             onCheckedChange={onCheckedChange}
             onSelect={onSelect}
+            readout={readout}
             service={service}
             setCheckedState={setCheckedState}
             submenuIndicator={submenuIndicator}
@@ -452,6 +437,32 @@ export function Menu({
    * bindings read this off the one shared machine; neither has positioning logic of its own to keep
    * in sync.
    */
+  /*
+   * ONE readout for the whole menu, owned by the root and handed down to every `Submenu`: the
+   * question it answers ("is the pointer protected right now") is about the menu, not about one
+   * level, and the old badge was created per open submenu — two levels open stacked two of them on
+   * the same fixed coordinates. It mounts into this root, in flow (menu-intent-readout.ts), so a
+   * `useState` holding the element is what makes the effect run once the root actually exists.
+   */
+  const [rootEl, setRootEl] = useState<HTMLDivElement | null>(null);
+  const [readout, setReadout] = useState<IntentReadoutHandle | null>(null);
+  useEffect(() => {
+    if (!debugSafetyTriangle || !rootEl) {
+      setReadout(null);
+      return;
+    }
+    const handle = getIntentReadout(rootEl, {
+      label: "Pointer routing",
+      lockedText: "locked",
+      freeText: "free",
+    });
+    setReadout(handle);
+    return () => {
+      handle.destroy();
+      setReadout(null);
+    };
+  }, [debugSafetyTriangle, rootEl]);
+
   const isContextMenu = Boolean(contextTarget);
   const positionerProps = isContextMenu
     ? {
@@ -461,7 +472,15 @@ export function Menu({
     : anchor.positioner(api.getPositionerProps(), menuParts.positioner);
 
   return (
-    <div className={menuParts.root} data-density={density}>
+    /* The debug attribute is STAMPED here, not just threaded as a prop: menu.css keys the flagged
+     * root's own column layout off it (so the readout gets its own space instead of covering the
+     * trigger), and Vanilla has carried it in markup all along. */
+    <div
+      className={menuParts.root}
+      data-density={density}
+      {...(debugSafetyTriangle ? { [menuAttrs.debugSafetyTriangle]: "" } : {})}
+      ref={setRootEl}
+    >
       {contextTarget ? (
         <div {...api.getContextTriggerProps()}>{contextTarget}</div>
       ) : (
@@ -498,6 +517,7 @@ export function Menu({
               items={items}
               onCheckedChange={onCheckedChange}
               onSelect={onSelect}
+              readout={readout}
               service={service}
               setCheckedState={setCheckedState}
               submenuIndicator={submenuIndicator}

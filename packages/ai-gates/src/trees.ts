@@ -141,11 +141,11 @@ const signatureTrees: readonly Canonical[] = [
      * it is wrong, and the ids differ between bindings (React's `useId` vs the emitter's slug), so
      * what is compared is the RELATIONSHIP, not the string.
      */
-    name: "field/with-hint-and-error",
+    name: "form-field/with-hint-and-error",
     enhanced: false,
     tree: {
-      contract: "field",
-      signature: "Field",
+      contract: "form-field",
+      signature: "FormField",
       options: { required: true },
       slots: {
         label: "Email",
@@ -162,11 +162,11 @@ const signatureTrees: readonly Canonical[] = [
   {
     // The same contract with nothing optional filled: no `aria-describedby`, no `aria-invalid`, no
     // asterisk. A field that invents those would be describing something that is not there.
-    name: "field/bare",
+    name: "form-field/bare",
     enhanced: false,
     tree: {
-      contract: "field",
-      signature: "Field",
+      contract: "form-field",
+      signature: "FormField",
       slots: { label: "Nombre" },
       children: { contract: "input", signature: "Input", options: { name: "nombre" } },
     },
@@ -178,7 +178,7 @@ const signatureTrees: readonly Canonical[] = [
      * so the choice is announced once rather than twice, and two indicators the CSS switches between.
      *
      * No `for` and no `id` anywhere: wrapping IS the association, which is why this contract has no
-     * wiring while Field is made of it.
+     * wiring while FormField is made of it.
      */
     name: "checkbox/labelled",
     enhanced: false,
@@ -187,6 +187,32 @@ const signatureTrees: readonly Canonical[] = [
       signature: "Checkbox",
       options: { name: "terms", required: true },
       children: "Acepto los términos",
+    },
+  },
+  {
+    /*
+     * The one selection signature whose state is DERIVED. The parent holds no name and no value: it
+     * reads its children (all / none / some) and a click on it makes them agree. Which children
+     * start checked is per-entry data, not a group `value`, because nothing here is exclusive and
+     * so no entry's state is the group's to hold.
+     *
+     * Enhanced, unlike every other tree in this family: `indeterminate` is a DOM property with no
+     * attribute behind it, so the third state cannot exist in authored markup until something runs.
+     */
+    name: "checkbox/group",
+    enhanced: true,
+    tree: {
+      contract: "checkbox",
+      signature: "CheckboxGroup",
+      options: { name: "permissions" },
+      slots: {
+        label: "Permisos del repositorio",
+        items: [
+          { options: { value: "read", defaultChecked: true }, slots: { label: "Lectura" } },
+          { options: { value: "write" }, slots: { label: "Escritura" } },
+          { options: { value: "admin" }, slots: { label: "Administración" } },
+        ],
+      },
     },
   },
   {
@@ -1559,15 +1585,15 @@ const signatureTrees: readonly Canonical[] = [
   },
   {
     /*
-     * The other control a Field can wrap. Same six ids, same wiring, a different element: which is
+     * The other control a FormField can wrap. Same six ids, same wiring, a different element: which is
      * the point: the field derives its ids from whatever signature is slotted into it, and never
      * asks what that is.
      */
-    name: "input/textarea-in-a-field",
+    name: "input/textarea-in-a-form-field",
     enhanced: false,
     tree: {
-      contract: "field",
-      signature: "Field",
+      contract: "form-field",
+      signature: "FormField",
       slots: { label: "Comentario", hint: "Contanos qué te pasó, con el detalle que puedas." },
       children: {
         contract: "input",
@@ -1735,7 +1761,7 @@ const signatureTrees: readonly Canonical[] = [
  * render, diff and photograph a usage tree, so writing them out again here would be the duplication
  * this whole system argues against, and the copy would be the one that goes stale.
  *
- * They earn their place because a recipe exercises what a single-signature fixture cannot: a Field
+ * They earn their place because a recipe exercises what a single-signature fixture cannot: a FormField
  * inside a Stack inside a shell, a Toast inside its region, a Callout whose actions are two buttons.
  * The composition is where the two bindings have room to disagree, and until now nothing was looking.
  *

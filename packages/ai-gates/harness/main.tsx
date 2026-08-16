@@ -54,7 +54,7 @@ import "@skryensya/core/patterns/image-frame.css";
 import "@skryensya/core/components/checkbox.css";
 import "@skryensya/core/components/radio-group.css";
 import "@skryensya/core/components/switch.css";
-import "@skryensya/core/components/field.css";
+import "@skryensya/core/components/form-field.css";
 import "@skryensya/core/components/input.css";
 import "@skryensya/core/components/table.css";
 import "@skryensya/core/components/tabs.css";

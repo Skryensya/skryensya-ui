@@ -28,7 +28,7 @@ export function connectToast(root: HTMLElement, options: ToastOptions = {}): Cle
 
   const liveRegion = toastLiveRegions[getToastLiveRegion(getToastTone(root))];
   const region = root.closest<HTMLElement>(`.${contentParts.toastRegion}`);
-  applyAttrs(root, { "aria-live": liveRegion.ariaLive, role: liveRegion.role });
+  applyAttrs(root, { "aria-live": liveRegion.ariaLive, "aria-atomic": "true", role: liveRegion.role });
   if (region) applyAttrs(region, { "aria-live": "polite" });
   if (dismiss) applyAttrs(dismiss, { type: "button" });
 

@@ -1,0 +1,66 @@
+---
+import "@skryensya/core/components/feed.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { feedTree } from "../../demos/feed";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/feed.yaml?raw";
+import coreSource from "@core/src/feed.ts?raw";
+import cssSource from "@core/css/components/feed.css?raw";
+import reactSource from "@react/src/components/feed.tsx?raw";
+import reactTestSource from "@react/src/components/feed.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/feed.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/feed.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/feed.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/feed.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/feed.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Feed"
+  description={t("feedPage.description")}
+  contractId="feed"
+  styleGroups={[{ file: "components/feed.css", probe: "sk-feed" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/feed.test.tsx",
+      tests: [
+        {
+          name: "sets role=feed, names it, and reflects aria-busy",
+          description: t("feedPage.test1"),
+        },
+        {
+          name: "each article gets role=article with aria-posinset/aria-setsize and a real labelled name",
+          description: t("feedPage.test2"),
+        },
+        {
+          name: "allows setSize=-1 for an undetermined total, per WAI's own allowance",
+          description: t("feedPage.test3"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("feedPage.lede")} />
+    <ComponentPreview tree={feedTree(t)} label="Feed" />
+    <p set:html={t("feedPage.body")} />
+    <p set:html={t("component.reactNote")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("feedPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

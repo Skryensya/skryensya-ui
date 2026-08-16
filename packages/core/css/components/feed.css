@@ -1,0 +1,31 @@
+/*
+ * TIER 3, FEED
+ *
+ * A vertical stream of independent content units. No interaction model of its own (see feed.ts's
+ * own banner) — this file is purely the stack + the article boundary, with hooks for a consumer's
+ * own density.
+ */
+@layer components {
+  .sk-feed {
+    --sk-feed-gap: var(--space-stack-lg);
+    --sk-feed-article-padding: var(--space-inset-md);
+    --sk-feed-article-label-gap: var(--space-stack-xs);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-feed-gap);
+  }
+
+  .sk-feed__article {
+    padding: var(--sk-feed-article-padding);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-surface);
+    background: var(--color-bg-surface);
+  }
+
+  .sk-feed__article-label {
+    margin-block-end: var(--sk-feed-article-label-gap);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+  }
+}

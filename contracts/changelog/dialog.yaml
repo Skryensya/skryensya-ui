@@ -3,8 +3,38 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "c1e7cfd3cabe80f5"
+surface: "88b75e89f4f07519"
 entries:
+  - date: 2026-08-14
+    kind: feature
+    target: alert
+    es:
+      title: Nueva opción alert para el patrón Alert Dialog
+      body: >-
+        <code>alert</code> pone <code>role="alertdialog"</code>, <code>aria-modal="true"</code> y
+        <code>aria-describedby</code> apuntando al body, para una confirmación destructiva o un
+        error bloqueante que necesita atención inmediata. El foco sigue siendo del consumidor:
+        poné <code>autofocus</code> en la acción menos destructiva.
+    en:
+      title: New alert option for the Alert Dialog pattern
+      body: >-
+        <code>alert</code> sets <code>role="alertdialog"</code>, <code>aria-modal="true"</code> and
+        <code>aria-describedby</code> pointing at the body, for a destructive confirmation or a
+        blocking error that needs immediate attention. Focus is still the consumer's: put
+        <code>autofocus</code> on the least destructive action.
+  - date: 2026-08-14
+    kind: bugfix
+    target: title
+    es:
+      title: El título ahora nombra el diálogo por aria-labelledby
+      body: >-
+        Sin esto, un lector de pantalla anunciaba "dialog" en vez del título: <code>&lt;dialog&gt;</code>
+        no obtiene nombre accesible de un <code>&lt;h2&gt;</code> anidado por sí solo.
+    en:
+      title: The title now names the dialog via aria-labelledby
+      body: >-
+        Without this, a screen reader announced "dialog" instead of the title: <code>&lt;dialog&gt;</code>
+        gets no accessible name from a nested <code>&lt;h2&gt;</code> on its own.
   - date: 2026-08-11
     kind: feature
     es:

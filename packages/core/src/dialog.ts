@@ -47,13 +47,28 @@ export const dialogContract = {
      * writing it is what recruits drag-to-dismiss and light-dismiss; a plain Dialog keeps neither.
      */
     vaul: { type: "boolean", default: false, attr: "data-sk-dialog-vaul", trueValue: "" },
+    /**
+     * Renders as an Alert Dialog: `role="alertdialog"`, `aria-modal` authored explicitly rather
+     * than left to the platform's implicit mapping (an explicit `role` overriding `<dialog>`'s own
+     * is not guaranteed to keep the implicit value that role would have carried on its own — the
+     * same reasoning `aria-atomic` got on Toast), and `aria-describedby` pointing at the body, so
+     * the prompt is read together with the name instead of requiring a second Tab press to reach
+     * it. For a message needing the user's IMMEDIATE attention (a destructive confirmation, a
+     * blocking error) rather than a dialog that merely contains one.
+     *
+     * Focus is not this option's to give: the platform focuses the dialog's first autofocusable
+     * descendant on its own, so putting `autofocus` on the least destructive action (see the
+     * confirm demo) is what the pattern actually asks for, and it already works with no option
+     * here — an alert dialog only ever differs from a plain one in how it is ANNOUNCED.
+     */
+    alert: { type: "boolean", default: false, attr: "role", trueValue: "alertdialog" },
   },
 
   signatures: {
     Dialog: {
       intent: ["modal-dialog", "blocking-confirmation", "focused-task"],
       host: { element: "dialog" },
-      options: ["closeLabel", "open", "vaul"],
+      options: ["closeLabel", "open", "vaul", "alert"],
       slots: {
         /** Names the dialog. Required: a modal with no title is a box with no reason. */
         title: { accepts: "text", required: true },
@@ -61,10 +76,18 @@ export const dialogContract = {
         /** The actions row, when there is one. */
         footer: { accepts: "node" },
       },
+      // `body` is the target `alert` describes the root by; both need a name for `wiring` to
+      // point one at the other, the same relationship `FormField` fixes between its own nodes.
+      wiring: [{ on: "root", attr: "aria-describedby", references: ["body"], whenGiven: "alert" }],
       template: {
         element: "dialog",
         part: "root",
         host: true,
+        name: "root",
+        // Every other root/label pairing in this codebase does this (Calendar, DatePicker, NavList,
+        // CheckboxGroup): without it, an AT with no visible-text fallback announces "dialog", not
+        // the title, because `<dialog>` gets no accessible name from a nested heading on its own.
+        labelledBySlot: "title",
         /*
          * `data-edge="block-end"` is not a choice here; `dialog-vaul.css` only ever slides from
          * the bottom, which is why `vaul` carries no `edge` option of its own. But the Vanilla
@@ -72,7 +95,10 @@ export const dialogContract = {
          * with a handle, `sk-vaul` or not), and defaults to `inline-start` when it finds nothing.
          * Leaving the attribute off would silently hand a bottom sheet a horizontal drag.
          */
-        attrsWhen: [{ option: "vaul", given: true, attrs: { "data-edge": "block-end" } }],
+        attrsWhen: [
+          { option: "vaul", given: true, attrs: { "data-edge": "block-end" } },
+          { option: "alert", given: true, attrs: { "aria-modal": "true" } },
+        ],
         children: [
           {
             /*
@@ -116,7 +142,7 @@ export const dialogContract = {
               },
             ],
           },
-          { element: "div", part: "body", slot: "children" },
+          { element: "div", part: "body", name: "body", slot: "children" },
           {
             /*
              * A FORM, not a <footer>, and `method="dialog"` is the reason. A modal's footer is

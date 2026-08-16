@@ -59,13 +59,7 @@ export const dialogConfirmTree = (t: Translate): UsageTree => ({
  * unknown ones onto its host, so a marker attribute would survive in one binding and vanish in the
  * other: the same reason the command palette's script reaches for `paletteId`.
  */
-export const dialogConfirmScript = `
-const trigger = document.querySelector("[data-dialog-demo-open]");
-const dialog = document.getElementById("demo-confirm");
-trigger?.addEventListener("click", () => {
-  if (dialog instanceof HTMLDialogElement) dialog.showModal();
-});
-`;
+export { default as dialogConfirmScript } from "./scripts/dialog-confirm.ts?raw";
 
 /*
  * The same trick, for the second demo on this page: `NOT-PUBLISHED.md` filed "Dialog Vaul" as
@@ -159,10 +153,4 @@ export const dialogVaulTree = (t: Translate): UsageTree => ({
   ],
 });
 
-export const dialogVaulScript = `
-const trigger = document.querySelector("[data-dialog-vaul-demo-open]");
-const dialog = document.getElementById("demo-dialog-vaul");
-trigger?.addEventListener("click", () => {
-  if (dialog instanceof HTMLDialogElement) dialog.showModal();
-});
-`;
+export { default as dialogVaulScript } from "./scripts/dialog-vaul.ts?raw";

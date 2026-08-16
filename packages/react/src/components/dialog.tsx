@@ -1,5 +1,5 @@
 import { dialogParts } from "@skryensya/core/dialog";
-import type { DialogHTMLAttributes, ReactNode } from "react";
+import { useId, type DialogHTMLAttributes, type ReactNode } from "react";
 import { Icon } from "./icon.js";
 
 /*
@@ -25,9 +25,17 @@ export type DialogProps = DialogHTMLAttributes<HTMLDialogElement> & {
    * same asymmetry as `Vaul`'s own `drawer`: this binding renders markup, never the gesture.
    */
   vaul?: boolean;
+  /**
+   * Renders as an Alert Dialog: `role="alertdialog"`, `aria-modal` authored explicitly, and
+   * `aria-describedby` pointing at the body — for a message needing the user's IMMEDIATE
+   * attention (a destructive confirmation, a blocking error), not a dialog that merely contains
+   * one. Focus is still the platform's: put `autofocus` on the least destructive action yourself.
+   */
+  alert?: boolean;
 };
 
 export function Dialog({
+  alert = false,
   children,
   className,
   closeLabel = "Cerrar",
@@ -36,18 +44,27 @@ export function Dialog({
   vaul = false,
   ...props
 }: DialogProps) {
+  const titleId = useId();
+  const bodyId = useId();
+
   return (
     <dialog
       {...props}
+      aria-describedby={alert ? bodyId : undefined}
+      aria-labelledby={titleId}
+      aria-modal={alert ? "true" : undefined}
       className={className ? `${dialogParts.root} ${className}` : dialogParts.root}
       data-sk-dialog-vaul={vaul ? "" : undefined}
       // The enhancer's drag axis is generic and defaults to `inline-start` with nothing to read;
       // `dialog-vaul.css` only ever slides from the bottom, so this is not a choice: see core.
       data-edge={vaul ? "block-end" : undefined}
+      role={alert ? "alertdialog" : undefined}
     >
       {vaul ? <div aria-hidden="true" data-part="handle" /> : null}
       <header className={dialogParts.header}>
-        <h2 className={dialogParts.title}>{title}</h2>
+        <h2 className={dialogParts.title} id={titleId}>
+          {title}
+        </h2>
         <form method="dialog">
           <button
             aria-label={closeLabel}
@@ -62,7 +79,9 @@ export function Dialog({
           </button>
         </form>
       </header>
-      <div className={dialogParts.body}>{children}</div>
+      <div className={dialogParts.body} id={alert ? bodyId : undefined}>
+        {children}
+      </div>
       {/* A form, not a <footer>: `method="dialog"` closes and reports which button did it. */}
       {footer ? (
         <form className={dialogParts.footer} method="dialog">

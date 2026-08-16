@@ -52,7 +52,11 @@ describe("Dialog", () => {
     expect(dialog.classList.contains("sk-dialog")).toBe(true);
     // A className from the consumer joins the part class, it does not replace it.
     expect(dialog.classList.contains("extra")).toBe(true);
-    expect(ui.getByRole("heading", { name: "Confirmar" }).classList).toContain("sk-dialog__title");
+    const heading = ui.getByRole("heading", { name: "Confirmar" });
+    expect(heading.classList).toContain("sk-dialog__title");
+    // `<dialog>` gets no accessible name from a nested heading on its own; the box is only
+    // announced as "Confirmar" and not "dialog" because this id relationship exists.
+    expect(dialog.getAttribute("aria-labelledby")).toBe(heading.id);
     expect(dialog.querySelector(".sk-dialog__body")?.textContent).toBe("Contenido");
 
     // The footer is a second dialog form, so its buttons report which one closed the box.
@@ -84,6 +88,31 @@ describe("Dialog", () => {
     expect(dialog.hasAttribute("data-sk-dialog-vaul")).toBe(false);
     expect(dialog.hasAttribute("data-edge")).toBe(false);
     expect(dialog.querySelector('[data-part="handle"]')).toBeNull();
+  });
+
+  it("becomes an alert dialog with role, aria-modal and aria-describedby wired to the body", () => {
+    const ui = render(
+      <Dialog alert open title="Eliminar cuenta">
+        Esta acción no se puede deshacer.
+      </Dialog>,
+    );
+
+    const dialog = ui.container.querySelector("dialog")!;
+    expect(dialog.getAttribute("role")).toBe("alertdialog");
+    expect(dialog.getAttribute("aria-modal")).toBe("true");
+    const body = dialog.querySelector(".sk-dialog__body")!;
+    expect(dialog.getAttribute("aria-describedby")).toBe(body.id);
+    expect(body.textContent).toBe("Esta acción no se puede deshacer.");
+  });
+
+  it("keeps a plain dialog free of the alert dialog's role and description wiring", () => {
+    const ui = render(<Dialog title="Confirmar">Contenido</Dialog>);
+    const dialog = ui.container.querySelector("dialog")!;
+
+    expect(dialog.hasAttribute("role")).toBe(false);
+    expect(dialog.hasAttribute("aria-modal")).toBe(false);
+    expect(dialog.hasAttribute("aria-describedby")).toBe(false);
+    expect(dialog.querySelector(".sk-dialog__body")?.hasAttribute("id")).toBe(false);
   });
 
   it("forwards the platform's own open attribute", () => {

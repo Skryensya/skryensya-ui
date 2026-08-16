@@ -17,7 +17,7 @@ Toast:
   avoidWhen:
     - "el mensaje es parte del contenido y tiene que quedarse; eso es un Callout"
     - "hay que leerlo sí o sí antes de seguir; eso es un Dialog"
-    - "es un error de un campo; eso va en el Field, pegado al control"
+    - "es un error de un campo; eso va en el FormField, pegado al control"
   alternatives:
     - Callout
 ToastTemplate:

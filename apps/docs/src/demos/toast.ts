@@ -1,5 +1,8 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import dismissScript from "./scripts/toast-dismiss.ts?raw";
+import emitScript from "./scripts/toast-emit.ts?raw";
+import stackScript from "./scripts/toast-stack.ts?raw";
 
 /* Static and runtime Toast compositions share the same emitted anatomy. */
 export const toastSimpleTree = (t: Translate): UsageTree => ({
@@ -39,11 +42,6 @@ export const toastActionTree = (t: Translate): UsageTree => ({
   },
 });
 
-const dismissScript = `
-document.querySelectorAll(".sk-toast-region").forEach((region) => {
-  region.addEventListener("sk-dismiss", (event) => event.target.remove());
-});
-`;
 
 export const toastEmitTree = (t: Translate): UsageTree => ({
   contract: "layout",
@@ -76,17 +74,8 @@ export const toastEmitTree = (t: Translate): UsageTree => ({
   ],
 });
 
-export const toastEmitScript = `
-const region = document.querySelector("[data-emit-region]");
-const template = document.querySelector("[data-toast-template]");
-document.querySelector("[data-emit-toast]")?.addEventListener("click", async () => {
-  const toast = template.content.firstElementChild?.cloneNode(true);
-  if (!toast) return;
-  region.append(toast);
-  await window.skMount?.(toast);
-});
-${dismissScript}
-`;
+/* Two files, joined: emitting a toast and dismissing one are separate concerns the demo needs both of. */
+export const toastEmitScript = `${emitScript}\n${dismissScript}`;
 
 export const toastStatusTree = (t: Translate): UsageTree => ({
   contract: "content",
@@ -158,13 +147,4 @@ export const toastStackTree = (t: Translate): UsageTree => ({
   ],
 });
 
-export const toastStackScript = `
-const stack = document.querySelector("[data-stack-region]");
-document.querySelector("[data-stack-add]")?.addEventListener("click", async () => {
-  const toast = stack.lastElementChild?.cloneNode(true);
-  if (!toast) return;
-  stack.append(toast);
-  await window.skMount?.(toast);
-});
-${dismissScript}
-`;
+export const toastStackScript = `${stackScript}\n${dismissScript}`;

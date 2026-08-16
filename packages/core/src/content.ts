@@ -137,8 +137,16 @@ export const contentContract = {
         host: true,
         // Tone decides the announcement, not just the paint: the same rule Callout states.
         attrsWhen: [
-          { option: "tone", equals: "danger", attrs: { role: "alert", "aria-live": "assertive" } },
-          { option: "tone", notEquals: "danger", attrs: { role: "status", "aria-live": "polite" } },
+          {
+            option: "tone",
+            equals: "danger",
+            attrs: { role: "alert", "aria-live": "assertive", "aria-atomic": "true" },
+          },
+          {
+            option: "tone",
+            notEquals: "danger",
+            attrs: { role: "status", "aria-live": "polite", "aria-atomic": "true" },
+          },
         ],
         children: [
           { element: "span", part: "toastIcon", whenGiven: "icon", attrs: { "aria-hidden": "true" }, slot: "icon" },

@@ -1,29 +1,52 @@
 ---
 /*
- * Header chrome: cycles color mode system → light → dark. Preference lives in localStorage["sk"]
- * under `scheme` (FOUC + persistence listener). Markup is the ThemeToggle contract from the DS.
+ * Header chrome: cycles color mode. Preference lives in localStorage["sk"] under `scheme`
+ * (FOUC + persistence listener). Markup is the ThemeToggle contract from the DS.
  *
- * The three labels are ATTRIBUTES, read by the vanilla enhancer when it swaps state, so they are
+ * The labels are ATTRIBUTES, read by the vanilla enhancer when it swaps state, so they are
  * translated here at build rather than by the enhancer: the DS component has no business knowing
  * what language its host speaks.
+ *
+ * `cycle="scheme"` (default) is system → light → dark and mounts on `<html>`. `cycle="appearance"`
+ * is light ↔ dark only: no system face, and `scoped` so the host paints a local root.
  */
 import { getLocale, useTranslations } from "../i18n";
 
+interface Props {
+  size?: "sm" | "md" | "lg";
+  /**
+   * Do not mount on `<html>`. The host applies `applyColorMode` to a local root (a preview stage).
+   * The visual contract is the same; only the enhancer attribute is omitted.
+   */
+  scoped?: boolean;
+  /**
+   * `scheme` cycles system → light → dark (site chrome). `appearance` is light ↔ dark, no
+   * system face — a scoped preview that follows the site's current paint without offering
+   * "follow the OS" as a third state.
+   */
+  cycle?: "scheme" | "appearance";
+}
+
+const { size, scoped = false, cycle = "scheme" } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
+const appearance = cycle === "appearance";
 ---
 
 <button
-  class="sk-button sk-interactive sk-theme-toggle"
+  class="sk-button sk-interactive sk-icon-toggle sk-theme-toggle"
   data-variant="ghost"
   data-icon-only
-  data-sk-theme-toggle
-  data-sk-theme-toggle-label-system={t("prefs.modeSystem")}
+  data-size={size}
+  data-cycle={appearance ? "appearance" : undefined}
+  data-sk-theme-toggle={scoped || appearance ? undefined : ""}
+  data-theme-toggle-scoped={scoped || appearance ? "" : undefined}
+  data-sk-theme-toggle-label-system={appearance ? undefined : t("prefs.modeSystem")}
   data-sk-theme-toggle-label-light={t("prefs.modeLight")}
   data-sk-theme-toggle-label-dark={t("prefs.modeDark")}
   type="button"
-  aria-label={t("prefs.modeSystem")}
+  aria-label={appearance ? t("prefs.modeLight") : t("prefs.modeSystem")}
 >
-  <span data-sk-icon="mode-system" data-sk-theme-toggle-icon="system"></span>
-  <span data-sk-icon="mode-light" data-sk-theme-toggle-icon="light"></span>
-  <span data-sk-icon="mode-dark" data-sk-theme-toggle-icon="dark"></span>
+  {appearance ? null : <span data-sk-icon="mode-system" data-sk-theme-toggle-icon="system" data-face="system"></span>}
+  <span data-sk-icon="mode-light" data-sk-theme-toggle-icon="light" data-face="light"></span>
+  <span data-sk-icon="mode-dark" data-sk-theme-toggle-icon="dark" data-face="dark"></span>
 </button>

@@ -108,6 +108,7 @@ describe("CopyButton", () => {
 
     expect(button.getAttribute("type")).toBe("button");
     expect(button.classList.contains("sk-copy-button")).toBe(true);
+    expect(button.classList.contains("sk-icon-toggle")).toBe(true);
     expect(button.classList.contains("sk-button")).toBe(true);
     expect(button.classList.contains("sk-interactive")).toBe(true);
     expect(button.getAttribute("data-size")).toBe("md");
@@ -115,9 +116,9 @@ describe("CopyButton", () => {
     expect(button.hasAttribute("data-icon-only")).toBe(false);
     expect(button.getAttribute("data-sk-copy-button-target")).toBe("snippet");
 
-    // Both icons ship and the stylesheet reveals one: authored markup has no runtime to swap them.
-    expect(button.querySelector('[data-sk-copy-button-icon="idle"] svg')).toBeTruthy();
-    expect(button.querySelector('[data-sk-copy-button-icon="copied"] svg')).toBeTruthy();
+    // Both faces ship and Icon Toggle reveals one: authored markup has no runtime to swap them.
+    expect(button.querySelector('[data-face="idle"][data-sk-copy-button-icon="idle"] svg')).toBeTruthy();
+    expect(button.querySelector('[data-face="copied"][data-sk-copy-button-icon="copied"] svg')).toBeTruthy();
   });
 
   it("wires the flag through the Anclaje pattern's classes", () => {

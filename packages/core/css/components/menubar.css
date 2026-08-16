@@ -1,0 +1,76 @@
+/*
+ * TIER 3, MENUBAR
+ *
+ * A horizontal roving-tabindex bar, each item's dropdown positioned under its own trigger. Plain
+ * `position: absolute` under a `position: relative` item — v1 scope, decided before building:
+ * `Menu`'s own CSS-anchor-positioning machinery (`patterns/anchored.css`) is for ITS recursive,
+ * arbitrarily-placed submenus; a menubar dropdown only ever opens directly below its trigger, the
+ * simplest case anchor positioning exists to generalize past.
+ */
+@layer components {
+  .sk-menubar {
+    --sk-menubar-gap: var(--space-inline-xs);
+    --sk-menubar-item-padding-x: var(--space-inset-md);
+
+    display: flex;
+    align-items: center;
+    gap: var(--sk-menubar-gap);
+  }
+
+  .sk-menubar__item-wrapper {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .sk-menubar__item {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--size-control-sm);
+    padding-inline: var(--sk-menubar-item-padding-x);
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    border-radius: var(--radius-control);
+    cursor: pointer;
+  }
+
+  .sk-menubar__positioner {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-start: 0;
+    z-index: var(--z-popover);
+    padding-block-start: var(--space-stack-xs);
+  }
+
+  .sk-menubar__menu {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 12rem;
+    padding: var(--space-inset-xs);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-surface);
+    background: var(--color-bg-surface);
+    box-shadow: var(--elevation-raised);
+  }
+
+  .sk-menubar__menu-item {
+    display: flex;
+    align-items: center;
+    min-block-size: var(--size-control-sm);
+    padding-inline: var(--space-inset-sm);
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    border-radius: var(--radius-control);
+    cursor: pointer;
+  }
+
+  @media (forced-colors: active) {
+    .sk-menubar__menu {
+      border-color: CanvasText;
+    }
+  }
+}

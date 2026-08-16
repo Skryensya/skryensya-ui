@@ -1,0 +1,22 @@
+# La estructura vive en packages/core/src/data-grid.ts. Acá sólo por qué se elige.
+
+DataGrid:
+  useWhen:
+    - "un conjunto de celdas necesita navegación 2D por teclado — flechas se mueven entre filas y columnas"
+    - "es una grilla de widgets (chips, tarjetas, enlaces) y se quiere UNA sola parada de tabulación en vez de una por widget — el caso 'layout grid' de WAI"
+    - "es una grilla de datos interactiva (editable, con celdas que reciben foco) — el caso 'data grid' de WAI"
+  avoidWhen:
+    - "los datos son tabulares pero ESTÁTICOS, sin necesidad de navegar con flechas; eso es Table"
+    - "hay jerarquía además de columnas; eso es Treegrid"
+    - "es una cuadrícula puramente visual (CSS Grid) sin navegación por teclado; eso es Grid/LayoutGrid en layout.ts"
+  alternatives:
+    - Table
+    - Treegrid
+
+DataGridRow:
+  useWhen:
+    - "una fila lógica de celdas — no necesariamente una fila visual; puede envolver varias líneas físicas"
+
+DataGridCell:
+  useWhen:
+    - "un valor o un widget dentro de una fila de la grilla; el rol interactivo del contenido (botón, enlace) se preserva, nunca se reinterpreta"

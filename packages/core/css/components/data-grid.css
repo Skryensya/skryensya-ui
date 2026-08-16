@@ -1,0 +1,52 @@
+/*
+ * TIER 3, DATA GRID
+ *
+ * A 2D keyboard-navigable grid — WAI's own pattern overview covers both a data grid and a layout
+ * grid (grouping arbitrary widgets) with the identical roles, so this file stays deliberately
+ * unopinionated about what a row LOOKS like: a data grid's rows read as table-ish stripes, a layout
+ * grid's rows might wrap a pill list across several physical lines. `.sk-data-grid__row` only sets
+ * the flex row + wrap every WAI layout-grid example actually needs; a consumer overrides via the
+ * hooks below rather than fighting hardcoded values.
+ */
+@layer components {
+  .sk-data-grid {
+    --sk-data-grid-row-gap: var(--space-stack-xs);
+    --sk-data-grid-cell-gap: var(--space-inline-sm);
+    --sk-data-grid-cell-padding-x: var(--space-inset-sm);
+    --sk-data-grid-cell-min-block-size: var(--size-control-sm);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-data-grid-row-gap);
+  }
+
+  .sk-data-grid__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sk-data-grid-cell-gap);
+  }
+
+  .sk-data-grid__cell {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--sk-data-grid-cell-min-block-size);
+    padding-inline: var(--sk-data-grid-cell-padding-x);
+    border-radius: var(--radius-control);
+    cursor: default;
+  }
+
+  /* A cell holding its own interactive widget (a button, a link) shouldn't ALSO look clickable
+   * itself — the state layer belongs to the real control, not the cell around it. */
+  .sk-data-grid__cell:has(button, a[href], input, select, textarea) {
+    padding-inline: 0;
+    cursor: auto;
+  }
+
+  @media (forced-colors: active) {
+    .sk-data-grid__cell:focus-visible {
+      outline: 2px solid Highlight;
+      outline-offset: 2px;
+    }
+  }
+}

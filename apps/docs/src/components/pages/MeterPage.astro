@@ -1,0 +1,62 @@
+---
+import "@skryensya/core/components/meter.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { meterTree } from "../../demos/meter";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/meter.yaml?raw";
+import coreSource from "@core/src/meter.ts?raw";
+import cssSource from "@core/css/components/meter.css?raw";
+import reactSource from "@react/src/components/meter.tsx?raw";
+import reactTestSource from "@react/src/components/meter.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/meter.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/meter.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/meter.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/meter.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/meter.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Meter"
+  description={t("meterPage.description")}
+  contractId="meter"
+  styleGroups={[{ file: "components/meter.css", probe: "sk-meter" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/meter.test.tsx",
+      tests: [
+        {
+          name: "sets role=meter with the three required aria-value attributes",
+          description: t("meterPage.test1"),
+        },
+        {
+          name: "honors a non-zero min when painting the fill, unlike Progress",
+          description: t("meterPage.test2"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("meterPage.lede")} />
+    <ComponentPreview tree={meterTree(t)} label="Meter" />
+    <p set:html={t("meterPage.body")} />
+    <p set:html={t("component.reactNote")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("meterPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

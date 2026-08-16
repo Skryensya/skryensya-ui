@@ -83,6 +83,70 @@
 
   .sk-slider:disabled { cursor: not-allowed; opacity: 0.5; }
 
+  /*
+   * MULTI-THUMB: two `.sk-slider` inputs stacked in one wrapper — track/thumb/focus-ring styling
+   * comes free from the rules above (`also: ["sk-slider"]` in `slider.ts`); this is only the
+   * delta a two-input overlay needs. The classic technique: both inputs cover the full box,
+   * their OWN track becomes fully transparent so nothing paints twice, and `pointer-events: none`
+   * on the input with `pointer-events: auto` restored on just the thumb lets a click pass through
+   * empty track to whichever thumb sits on top, while both remain independently draggable.
+   */
+  .sk-slider-range {
+    position: relative;
+    inline-size: 100%;
+    block-size: var(--sk-slider-thumb-hit);
+  }
+
+  .sk-slider-range__track {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    block-size: var(--sk-slider-track-size);
+    border-radius: var(--radius-pill);
+    background: var(--sk-slider-track);
+  }
+
+  .sk-slider-range__fill {
+    position: absolute;
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    inset-inline-start: calc(var(--sk-slider-range-fill-start, 0) * 100%);
+    inline-size: calc((var(--sk-slider-range-fill-end, 1) - var(--sk-slider-range-fill-start, 0)) * 100%);
+    block-size: var(--sk-slider-track-size);
+    border-radius: var(--radius-pill);
+    background: var(--sk-slider-fill-color);
+  }
+
+  .sk-slider-range__low,
+  .sk-slider-range__high {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    pointer-events: none;
+  }
+
+  .sk-slider-range__low::-webkit-slider-runnable-track,
+  .sk-slider-range__high::-webkit-slider-runnable-track,
+  .sk-slider-range__low::-moz-range-track,
+  .sk-slider-range__high::-moz-range-track {
+    background: transparent;
+  }
+
+  .sk-slider-range__low::-webkit-slider-thumb,
+  .sk-slider-range__high::-webkit-slider-thumb {
+    pointer-events: auto;
+  }
+  .sk-slider-range__low::-moz-range-thumb,
+  .sk-slider-range__high::-moz-range-thumb {
+    pointer-events: auto;
+  }
+
+  @media (forced-colors: active) {
+    .sk-slider-range__track { background: GrayText; }
+    .sk-slider-range__fill { background: Highlight; }
+  }
+
   @media (forced-colors: active) {
     .sk-slider {
       --sk-slider-track: GrayText;

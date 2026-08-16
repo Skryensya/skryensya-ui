@@ -6,5 +6,16 @@ Slider:
   avoidWhen:
     - "hace falta precisión; ahí un campo numérico se escribe más rápido"
     - "son opciones discretas y pocas; eso es un RadioGroup o un Segmented"
+    - "el usuario elige DOS valores, un mínimo y un máximo; eso es SliderRange"
   alternatives:
     - Segmented
+    - SliderRange
+
+SliderRange:
+  useWhen:
+    - "el usuario acota un rango entre un mínimo y un máximo — un filtro de precio, una franja de fechas por posición"
+  avoidWhen:
+    - "es un solo valor; eso es Slider"
+    - "hace falta precisión exacta en cada extremo; ahí dos campos numéricos (uno de mínimo, uno de máximo) se escriben más rápido"
+  alternatives:
+    - Slider

@@ -1,0 +1,99 @@
+---
+import "@skryensya/core/components/menubar.css";
+import "@skryensya/core/patterns/state-layer.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { menubarTree } from "../../demos/menubar";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/menubar.yaml?raw";
+import coreSource from "@core/src/menubar.ts?raw";
+import coreTestSource from "@core/src/menubar.test.ts?raw";
+import cssSource from "@core/css/components/menubar.css?raw";
+import vanillaMountSource from "@vanilla/src/components/menubar.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/menubar.test.ts?raw";
+import reactSource from "@react/src/components/menubar.tsx?raw";
+import reactTestSource from "@react/src/components/menubar.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `@import "@skryensya/core/components/menubar.css";
+@import "@skryensya/core/patterns/state-layer.css";`;
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+initComponents();`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/menubar.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/menubar.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/src/menubar.test.ts", source: coreTestSource, language: "ts" },
+  { id: "packages/core/css/components/menubar.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/menubar.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/menubar.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/menubar.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/menubar.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Menubar"
+  description={t("menubarPage.description")}
+  contractId="menubar"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/menubar.css", probe: "sk-menubar", title: "Menubar" },
+    { file: "patterns/state-layer.css", probe: "sk-interactive", title: "Heredados de State layer" },
+  ]}
+  tests={[
+    {
+      file: "packages/core/src/menubar.test.ts",
+      tests: [
+        {
+          name: "keeps the NEXT item's dropdown open when the current one was open — the detail a plain roving tabindex misses",
+          description: t("menubarPage.testCore1"),
+        },
+      ],
+    },
+    {
+      file: "packages/react/src/components/menubar.test.tsx",
+      tests: [
+        {
+          name: "moving Right while a dropdown is open closes it and opens the adjacent item's dropdown",
+          description: t("menubarPage.testReact1"),
+        },
+        {
+          name: "Escape closes the open dropdown and returns focus to its trigger",
+          description: t("menubarPage.testReact2"),
+        },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/menubar.test.ts",
+      tests: [
+        {
+          name: "clicking outside the menubar closes any open dropdown",
+          description: t("menubarPage.testVanilla1"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("menubarPage.lede")} />
+    <ComponentPreview tree={menubarTree(t)} js={js} label={t("menubarPage.label")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("menubarPage.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("menubarPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

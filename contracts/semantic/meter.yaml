@@ -1,0 +1,11 @@
+# La estructura vive en packages/core/src/meter.ts. Acá sólo por qué se elige.
+
+Meter:
+  useWhen:
+    - "hay que mostrar una MEDICIÓN dentro de un rango conocido, ya con un valor actual: uso de disco, nivel de batería, una calificación sobre una escala"
+  avoidWhen:
+    - "es el avance de una tarea que empieza en 0 y termina en un 100% conocido; eso es Progress"
+    - "el avance no tiene un largo conocido; eso es un Loader indeterminado"
+  alternatives:
+    - Progress
+    - Loader

@@ -1,0 +1,73 @@
+/*
+ * PATTERN, ICON TOGGLE
+ *
+ * An icon-only button whose faces occupy one cell and morph between states. ThemeToggle
+ * (system / light / dark), ContrastToggle (normal / high) and CopyButton (idle / copied)
+ * are the same control with different faces: the stack and the cross-fade live here, not
+ * in each component.
+ *
+ * Compose onto `.sk-button` (ghost + icon-only), the way `sk-interactive` composes with
+ * `sk-button`:
+ *
+ *   <button class="sk-button sk-interactive sk-icon-toggle" data-icon-only>
+ *     <span data-face="light"></span>
+ *     <span data-face="dark" data-active></span>
+ *   </button>
+ *
+ * This file does not know the states. `[data-active]` on a face is the generic "this one
+ * is current". A component that can name the current face before JS (scheme or contrast
+ * on `:root`) lights the matching face by setting `--sk-icon-toggle-on: 1`, so FOUC and
+ * runtime share one morph.
+ */
+
+@property --sk-icon-toggle-on {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@layer components {
+  .sk-icon-toggle {
+    --sk-icon-toggle-transition-duration: var(--motion-state-change-duration);
+    --sk-icon-toggle-transition-easing: var(--motion-state-change-easing);
+    --sk-icon-toggle-rest-scale: 0.25;
+    --sk-icon-toggle-rest-blur: 4px;
+
+    display: inline-grid;
+    place-items: center;
+    padding-inline: 0;
+  }
+
+  .sk-icon-toggle > [data-face] {
+    --sk-icon-toggle-on: 0;
+
+    grid-area: 1 / 1;
+    opacity: var(--sk-icon-toggle-on);
+    transform: scale(
+      calc(
+        var(--sk-icon-toggle-rest-scale) + (1 - var(--sk-icon-toggle-rest-scale)) *
+          var(--sk-icon-toggle-on)
+      )
+    );
+    filter: blur(calc(var(--sk-icon-toggle-rest-blur) * (1 - var(--sk-icon-toggle-on))));
+    transition: --sk-icon-toggle-on var(--sk-icon-toggle-transition-duration)
+      var(--sk-icon-toggle-transition-easing);
+  }
+
+  .sk-icon-toggle > [data-face][data-active] {
+    --sk-icon-toggle-on: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-icon-toggle > [data-face] {
+      transition: none;
+    }
+  }
+}
+
+/* Consumer button skins set `display: inline-flex` unlayered; re-assert grid so faces stack. */
+.sk-button.sk-icon-toggle {
+  display: inline-grid;
+  place-items: center;
+  padding-inline: 0;
+}

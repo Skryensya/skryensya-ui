@@ -1,0 +1,44 @@
+---
+/*
+ * Header chrome: toggles high contrast. Preference lives in localStorage["sk"] under `contrast`
+ * (FOUC + persistence listener). Faces and the morph are the Icon Toggle pattern.
+ *
+ * Global chrome uses `data-docs-contrast-toggle` and `:root[data-contrast]` (site.css). Lab
+ * previews pass `scoped` so only a local root (the example stage) gets `data-contrast`.
+ */
+import { contrastHigh, contrastNormal, iconDataMarkup } from "../icons";
+import { getLocale, useTranslations } from "../i18n";
+
+interface Props {
+  size?: "sm" | "md" | "lg";
+  /** Do not write `:root`. The host toggles `data-contrast` on a local preview root. */
+  scoped?: boolean;
+}
+
+const { size, scoped = false } = Astro.props;
+const t = useTranslations(getLocale(Astro.url));
+const contrastNormalIcon = iconDataMarkup("contrast-normal", contrastNormal, {
+  attrs: { "data-face": "normal", "data-contrast-icon": "normal" },
+});
+const contrastHighIcon = iconDataMarkup("contrast-high", contrastHigh, {
+  attrs: { "data-face": "high", "data-contrast-icon": "high" },
+});
+---
+
+<button
+  class="sk-button sk-interactive sk-icon-toggle dimensions__contrast-toggle"
+  data-variant="ghost"
+  data-icon-only
+  data-size={size}
+  type="button"
+  aria-pressed="false"
+  aria-label={t("prefs.contrastNormal")}
+  title={t("prefs.contrastNormal")}
+  data-docs-contrast-toggle={scoped ? undefined : ""}
+  data-contrast-toggle-scoped={scoped ? "" : undefined}
+  data-label-normal={t("prefs.contrastNormal")}
+  data-label-high={t("prefs.contrastHigh")}
+>
+  <Fragment set:html={contrastNormalIcon} />
+  <Fragment set:html={contrastHighIcon} />
+</button>

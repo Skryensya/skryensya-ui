@@ -16,7 +16,7 @@ import "@skryensya/core/components/button.css";
 import "@skryensya/core/components/copy-button.css";
 import "@skryensya/core/components/theme-toggle.css";
 import "@skryensya/core/components/kbd.css";
-import "@skryensya/core/components/field.css";
+import "@skryensya/core/components/form-field.css";
 import "@skryensya/core/components/callout.css";
 import "@skryensya/core/components/avatar.css";
 import "@skryensya/core/components/loader.css";
@@ -67,6 +67,7 @@ import "@skryensya/core/patterns/scroll-lock.css";
 import "@skryensya/core/patterns/media-gradient.css";
 import "@skryensya/core/patterns/layout.css";
 import "@skryensya/core/patterns/table-pager.css";
+import "@skryensya/core/patterns/icon-toggle.css";
 
 /* kbd is in the global chrome (the ⌘K search badge, the palette footer), so its consumer skin loads
  * here rather than per-page, the same reason the button skin above does. */
@@ -78,6 +79,7 @@ import "../styles/shell.scss";
 
 import LanguageToggle from "../components/LanguageToggle.astro";
 import AccentReachToggle from "../components/AccentReachToggle.astro";
+import ContrastToggle from "../components/ContrastToggle.astro";
 import SidebarNav from "../components/SidebarNav.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import Toc from "../components/Toc.astro";
@@ -85,7 +87,7 @@ import { indexDocument } from "../lib/document-index";
 import { vanillaMountSections } from "../lib/vanilla-mount-sections";
 import VanillaMount from "../components/VanillaMount.astro";
 import { vanillaMounts } from "../lib/vanilla-mounts";
-import { allSets, contrastHigh, contrastNormal, iconDataMarkup, iconMarkup, siteIconSet } from "../icons";
+import { allSets, iconMarkup, siteIconSet } from "../icons";
 import { getGlobalNavigation, getNavigation, type NavigationSection } from "../lib/navigation";
 import { availableLocales, canonicalPath, getLocale, localizePath, useTranslations } from "../i18n";
 import { createRamp } from "../lib/ramps";
@@ -281,9 +283,6 @@ const closeIcon = iconMarkup("close");
 const menuIcon = iconMarkup("menu");
 const previousIcon = iconMarkup("arrow-left");
 const nextIcon = iconMarkup("arrow-right");
-/* Out-of-set glyphs for the contrast toggle: two states that cross-fade in place. */
-const contrastNormalIcon = iconDataMarkup("contrast-normal", contrastNormal, { attrs: { "data-contrast-icon": "normal" } });
-const contrastHighIcon = iconDataMarkup("contrast-high", contrastHigh, { attrs: { "data-contrast-icon": "high" } });
 
 /*
  * A FEW curated palette presets, not the whole customiser. Each preset carries the complete accent
@@ -540,21 +539,7 @@ const PALETTE_PRESETS = [
           {/* One-click mode cycle: system → claro → oscuro. */}
           <ThemeToggle />
 
-          <button
-            class="sk-button sk-interactive dimensions__contrast-toggle"
-            data-variant="ghost"
-            data-icon-only
-            type="button"
-            aria-pressed="false"
-            aria-label={t("prefs.contrastNormal")}
-            title={t("prefs.contrastNormal")}
-            data-docs-contrast-toggle
-            data-label-normal={t("prefs.contrastNormal")}
-            data-label-high={t("prefs.contrastHigh")}
-          >
-            <Fragment set:html={contrastNormalIcon} />
-            <Fragment set:html={contrastHighIcon} />
-          </button>
+          <ContrastToggle />
 
           <LanguageToggle />
         </div>
@@ -853,7 +838,7 @@ const PALETTE_PRESETS = [
       <span class="sk-badge" data-probe-for="sk-badge"></span>
       <kbd class="sk-kbd" data-probe-for="sk-kbd"></kbd>
       <button class="sk-button sk-interactive" data-sk-button data-probe-for="sk-button"></button>
-      <div class="sk-field" data-probe-for="sk-field"></div>
+      <div class="sk-form-field" data-probe-for="sk-form-field"></div>
       <input class="sk-input" data-probe-for="sk-input" />
       <label class="sk-checkbox" data-probe-for="sk-checkbox"></label>
       <div class="sk-radio-group" data-probe-for="sk-radio-group"></div>
@@ -1022,17 +1007,29 @@ const PALETTE_PRESETS = [
     </script>
 
     {/*
-      SMOOTH IN-PAGE SCROLLING, ARMED ONCE THE PAGE HAS STOPPED MOVING.
+      SMOOTH SCROLL, ONLY FOR AN ANCHOR CLICK.
 
-      The rule lives in `site.css` behind this attribute, and the reason it waits is written there:
-      a smooth scroll to a fragment aims at where the section was when the animation began and never
-      re-aims, so on a page still loading its previews it overshoots and buries the heading under the
-      header. Until `load`, jumps are instant and the browser re-anchors them as content arrives;
-      after it, every scroll is one the reader asked for, and those travel.
+      `scroll-behavior: smooth` on `html` used to do this, but that rule can't tell an anchor click
+      apart from any other programmatic scroll on the page: Tab landing on an off-screen control,
+      `:focus()` calls, `scrollIntoView()` elsewhere all travel too, which reads as the site holding
+      the scrollbar rather than a page reacting to a click. So there is no CSS rule and no attribute;
+      `html` stays at the default `auto`, and every scroll the reader didn't click for — including
+      the initial load of a deep link — lands the same way the platform always lands it, instantly.
+
+      This listens for clicks on same-page anchors only (`href="#id"` resolving to an element in this
+      document) and animates just that one scroll by calling `scrollIntoView` directly.
     */}
     <script is:inline>
-      addEventListener("load", function () {
-        document.documentElement.setAttribute("data-scroll-smooth", "");
+      document.addEventListener("click", function (event) {
+        var link = event.target.closest && event.target.closest('a[href^="#"]');
+        if (!link) return;
+        var hash = link.getAttribute("href");
+        if (!hash || hash.length < 2) return;
+        var target = document.getElementById(hash.slice(1));
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        history.pushState(null, "", hash);
       });
     </script>
 
@@ -1098,9 +1095,11 @@ const PALETTE_PRESETS = [
       import { setPreference } from "@skryensya/vanilla/storage";
       import { contrastPreference } from "../lib/preferences";
 
-      const contrastToggle = document.querySelector<HTMLButtonElement>("[data-docs-contrast-toggle]");
+      const contrastToggles = document.querySelectorAll<HTMLButtonElement>(
+        "[data-docs-contrast-toggle]:not([data-contrast-toggle-scoped])",
+      );
 
-      if (contrastToggle) {
+      if (contrastToggles.length > 0) {
         const root = document.documentElement;
         let high = root.getAttribute("data-contrast") === "high";
 
@@ -1111,26 +1110,25 @@ const PALETTE_PRESETS = [
           // until a reload ran the FOUC script's setAttribute. Mirror that script exactly here.
           if (high) root.setAttribute("data-contrast", "high");
           else root.removeAttribute("data-contrast");
-          // Icon-only button: the state lives in aria-pressed (drives the active fill in CSS) and the
-          // tooltip, not in visible text.
-          //
-          // Both labels are rendered onto the element at build, because this is a module script: it
-          // cannot see `t()`, and a template literal here would hard-code Spanish into every locale.
-          const text =
-            (high
-              ? contrastToggle.dataset.labelHigh
-              : contrastToggle.dataset.labelNormal) ?? "";
-          contrastToggle.setAttribute("aria-pressed", String(high));
-          contrastToggle.setAttribute("aria-label", text);
-          contrastToggle.setAttribute("title", text);
+          contrastToggles.forEach((contrastToggle) => {
+            const text =
+              (high
+                ? contrastToggle.dataset.labelHigh
+                : contrastToggle.dataset.labelNormal) ?? "";
+            contrastToggle.setAttribute("aria-pressed", String(high));
+            contrastToggle.setAttribute("aria-label", text);
+            contrastToggle.setAttribute("title", text);
+          });
         };
 
         paint();
-        contrastToggle.addEventListener("click", () => {
-          high = !high;
-          paint();
-          setPreference(contrastPreference, high ? "high" : "normal");
-          document.dispatchEvent(new CustomEvent("sk:dimensions-changed"));
+        contrastToggles.forEach((contrastToggle) => {
+          contrastToggle.addEventListener("click", () => {
+            high = !high;
+            paint();
+            setPreference(contrastPreference, high ? "high" : "normal");
+            document.dispatchEvent(new CustomEvent("sk:dimensions-changed"));
+          });
         });
       }
     </script>

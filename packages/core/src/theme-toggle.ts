@@ -1,18 +1,22 @@
 /*
  * THEME TOGGLE, cycles the color-mode dimension: system → light → dark → system.
  *
- * Appearance is CSS (stacked faces on an icon-only button). Applying the mode flips
+ * Paint is CSS (Icon Toggle faces on an icon-only button). Applying the mode flips
  * `color-scheme` on a root element so `light-dark()` re-themes; `data-scheme` mirrors the
  * preference for glyph paint and FOUC. WHERE it persists is still the app's call (a cookie, a user
  * record on a server); `colorModePreference` below is the declaration for the localStorage case, so
  * an app that takes the default does not hand-roll the slot name and the guard.
  */
 import type { ComponentContract } from "./contract.js";
+import { iconToggleParts } from "./icon-toggle.js";
 import { definePreference, oneOf } from "./storage.js";
 
 export type ColorMode = "system" | "light" | "dark";
+/** Light or dark as painted, after resolving `system` against the OS. */
+export type Appearance = "light" | "dark";
 
 export const colorModes = ["system", "light", "dark"] as const;
+export const appearances = ["light", "dark"] as const;
 
 /**
  * The color mode as a stored preference.
@@ -66,8 +70,25 @@ export function isColorMode(value: string | null | undefined): value is ColorMod
   return value === "system" || value === "light" || value === "dark";
 }
 
+export function isAppearance(value: string | null | undefined): value is Appearance {
+  return value === "light" || value === "dark";
+}
+
 export function nextColorMode(current: ColorMode): ColorMode {
   return colorModes[(colorModes.indexOf(current) + 1) % colorModes.length]!;
+}
+
+export function nextAppearance(current: Appearance): Appearance {
+  return current === "light" ? "dark" : "light";
+}
+
+/**
+ * Collapse a color-mode preference to what actually paints. `light` and `dark` pass through;
+ * `system` follows `prefersDark` (pass `matchMedia("(prefers-color-scheme: dark)").matches`).
+ */
+export function resolveAppearance(mode: ColorMode, prefersDark: boolean): Appearance {
+  if (mode === "light" || mode === "dark") return mode;
+  return prefersDark ? "dark" : "light";
 }
 
 /**
@@ -77,6 +98,19 @@ export function nextColorMode(current: ColorMode): ColorMode {
 export function applyColorMode(root: HTMLElement, mode: ColorMode): void {
   root.setAttribute("data-scheme", mode);
   root.style.colorScheme = mode === "system" ? "light dark" : mode;
+}
+
+/** Paint light or dark on a root — never `system`. */
+export function applyAppearance(root: HTMLElement, mode: Appearance): void {
+  root.setAttribute("data-scheme", mode);
+  root.style.colorScheme = mode;
+}
+
+/** Read light or dark from a root; `system` and missing values resolve against the OS. */
+export function readAppearance(root: HTMLElement, prefersDark: boolean): Appearance {
+  const value = root.getAttribute("data-scheme");
+  if (isAppearance(value)) return value;
+  return resolveAppearance(isColorMode(value) ? value : "system", prefersDark);
 }
 
 /** Read the preference from a root; missing or unknown → `system`. */
@@ -90,9 +124,8 @@ export type ThemeToggleChangeDetail = { value: ColorMode };
 /**
  * The color-mode control: one icon-only button that cycles system → light → dark.
  *
- * Three faces are always in the markup and CSS shows one, which is why they are template structure
- * rather than a slot: which face is lit follows `data-scheme`, and a binding that rendered only the
- * current one would have nothing to cross-fade between.
+ * Faces are Icon Toggle structure rather than a slot: which face is lit follows `data-scheme`,
+ * and a binding that rendered only the current one would have nothing to cross-fade between.
  *
  * `data-scheme` is state, not authorship. Whatever the author writes is read once as the initial
  * mode, and from then on both bindings read the value off `<html>`, so two toggles on one page
@@ -133,7 +166,7 @@ export const themeToggleContract = {
         element: "button",
         part: "root",
         host: true,
-        also: ["sk-button", "sk-interactive"],
+        also: ["sk-button", "sk-interactive", iconToggleParts.root],
         /*
          * A name before the JavaScript runs. Both bindings replace it with the live mode's label on
          * their first paint, but an icon-only button that ships nameless is nameless for as long as
@@ -146,9 +179,9 @@ export const themeToggleContract = {
           "aria-label": "Color mode: system",
         },
         children: [
-          { element: "span", attrs: { "data-sk-icon": "mode-system", "data-sk-icon-size": "md", "data-sk-theme-toggle-icon": "system" } },
-          { element: "span", attrs: { "data-sk-icon": "mode-light", "data-sk-icon-size": "md", "data-sk-theme-toggle-icon": "light" } },
-          { element: "span", attrs: { "data-sk-icon": "mode-dark", "data-sk-icon-size": "md", "data-sk-theme-toggle-icon": "dark" } },
+          { element: "span", attrs: { "data-sk-icon": "mode-system", "data-sk-icon-size": "md", "data-sk-theme-toggle-icon": "system", "data-face": "system" } },
+          { element: "span", attrs: { "data-sk-icon": "mode-light", "data-sk-icon-size": "md", "data-sk-theme-toggle-icon": "light", "data-face": "light" } },
+          { element: "span", attrs: { "data-sk-icon": "mode-dark", "data-sk-icon-size": "md", "data-sk-theme-toggle-icon": "dark", "data-face": "dark" } },
         ],
       },
       react: { from: "@skryensya/react/theme-toggle", name: "ThemeToggle" },

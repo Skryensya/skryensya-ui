@@ -1,6 +1,7 @@
 import { anchoredAttrs, anchoredParts } from "@skryensya/core/anchored";
 import { copyButtonAttrs, copyButtonContract, copyButtonParts } from "@skryensya/core/copy-button";
 import type { SignatureOptionsOf } from "@skryensya/core/contract";
+import { iconToggleParts } from "@skryensya/core/icon-toggle";
 import { useEffect, useId, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { useAnchored } from "./anchored.js";
 import { Icon } from "./icon.js";
@@ -89,7 +90,7 @@ export function CopyButton({
    */
   const anchored = useAnchored(useId());
   const host = anchored.anchor(
-    [copyButtonParts.root, "sk-button", "sk-interactive", className].filter(Boolean).join(" "),
+    [copyButtonParts.root, iconToggleParts.root, "sk-button", "sk-interactive", className].filter(Boolean).join(" "),
     props.style,
   );
   const flag = anchored.positioner({}, copyButtonParts.feedback);
@@ -131,12 +132,12 @@ export function CopyButton({
       type="button"
       {...{ [copyButtonAttrs.target]: target, [copyButtonAttrs.state]: state }}
     >
-      {/* BOTH icons are always rendered and the stylesheet shows one, off the root's state
+      {/* BOTH icons are always rendered and Icon Toggle shows one, off the root's state
           attribute: the enhancer has no runtime to swap an icon with, so neither does this. */}
-      <span aria-hidden="true" className={copyButtonParts.icon} {...{ [copyButtonAttrs.icon]: "idle" }}>
+      <span aria-hidden="true" className={copyButtonParts.icon} data-face="idle" {...{ [copyButtonAttrs.icon]: "idle" }}>
         <Icon name="copy" />
       </span>
-      <span aria-hidden="true" className={copyButtonParts.icon} {...{ [copyButtonAttrs.icon]: "copied" }}>
+      <span aria-hidden="true" className={copyButtonParts.icon} data-face="copied" {...{ [copyButtonAttrs.icon]: "copied" }}>
         <Icon name="check" />
       </span>
       <span aria-live="polite" className={copyButtonParts.label} {...{ [copyButtonAttrs.label]: "" }}>

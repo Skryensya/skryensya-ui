@@ -4,7 +4,7 @@ import { mountThemeToggle } from "./theme-toggle.js";
 
 function mount() {
   document.body.innerHTML = `<button
-      class="sk-button sk-interactive sk-theme-toggle"
+      class="sk-button sk-interactive sk-icon-toggle sk-theme-toggle"
       data-sk-theme-toggle
       data-variant="ghost"
       data-icon-only
@@ -14,9 +14,9 @@ function mount() {
       data-sk-theme-toggle-label-light="Color mode: light"
       data-sk-theme-toggle-label-dark="Color mode: dark"
     >
-      <span data-sk-theme-toggle-icon="system"></span>
-      <span data-sk-theme-toggle-icon="light"></span>
-      <span data-sk-theme-toggle-icon="dark"></span>
+      <span data-sk-theme-toggle-icon="system" data-face="system"></span>
+      <span data-sk-theme-toggle-icon="light" data-face="light"></span>
+      <span data-sk-theme-toggle-icon="dark" data-face="dark"></span>
     </button>`;
   const root = document.querySelector<HTMLButtonElement>(`[${themeToggleAttrs.root}]`);
   if (!root) throw new Error("Expected ThemeToggle root.");
@@ -63,7 +63,7 @@ describe("ThemeToggle Vanilla contracts", () => {
 
   it("keeps every ThemeToggle in sync when one cycles", () => {
     document.body.innerHTML = `<button
-      class="sk-button sk-interactive sk-theme-toggle"
+      class="sk-button sk-interactive sk-icon-toggle sk-theme-toggle"
       data-sk-theme-toggle
       data-variant="ghost"
       data-icon-only
@@ -73,12 +73,12 @@ describe("ThemeToggle Vanilla contracts", () => {
       data-sk-theme-toggle-label-light="Color mode: light"
       data-sk-theme-toggle-label-dark="Color mode: dark"
     >
-      <span data-sk-theme-toggle-icon="system"></span>
-      <span data-sk-theme-toggle-icon="light"></span>
-      <span data-sk-theme-toggle-icon="dark"></span>
+      <span data-sk-theme-toggle-icon="system" data-face="system"></span>
+      <span data-sk-theme-toggle-icon="light" data-face="light"></span>
+      <span data-sk-theme-toggle-icon="dark" data-face="dark"></span>
     </button>
     <button
-      class="sk-button sk-interactive sk-theme-toggle"
+      class="sk-button sk-interactive sk-icon-toggle sk-theme-toggle"
       data-sk-theme-toggle
       data-variant="ghost"
       data-icon-only
@@ -88,9 +88,9 @@ describe("ThemeToggle Vanilla contracts", () => {
       data-sk-theme-toggle-label-light="Color mode: light"
       data-sk-theme-toggle-label-dark="Color mode: dark"
     >
-      <span data-sk-theme-toggle-icon="system"></span>
-      <span data-sk-theme-toggle-icon="light"></span>
-      <span data-sk-theme-toggle-icon="dark"></span>
+      <span data-sk-theme-toggle-icon="system" data-face="system"></span>
+      <span data-sk-theme-toggle-icon="light" data-face="light"></span>
+      <span data-sk-theme-toggle-icon="dark" data-face="dark"></span>
     </button>`;
     const [first, second] = Array.from(
       document.querySelectorAll<HTMLButtonElement>(`[${themeToggleAttrs.root}]`),

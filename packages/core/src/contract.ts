@@ -297,12 +297,27 @@ export type ContractTemplate = {
   readonly whenItemGiven?: string;
   readonly whenItemMissing?: string;
   /**
+   * The same presence question, asked of MULTIPLE item options at once, ALL of which must be
+   * supplied. A breadcrumb crumb that is both `current` and carries an `href` is still not a link:
+   * the current page is the one label the trail exists to answer "where am I", never truncated or
+   * muted the way an ancestor link is, so it renders as `Breadcrumb.Current` even though it has
+   * a destination — one entry, a THIRD shape neither `whenItemGiven` (single option) nor a second
+   * node with its own `whenItemGiven` (fields do not compose across two calls to the same key on
+   * one node) can express. `whenGiven` has the equivalent array at the composition level, meaning
+   * ANY of them; this is the item-level, ALL-of-them counterpart the plain singular could not say.
+   */
+  readonly whenItemAllGiven?: readonly string[];
+  /**
    * The same question, asked of a specific VALUE rather than mere presence. `whenItemGiven` cannot
    * tell a menu's checkbox entry from its separator: both merely have `kind` set, so a plain
    * presence check collapses every non-default value into one. A menu separator is a third shape
    * with nothing in common with a command row (no label, no click), which is why it needs to name
    * the value rather than just the option, the same way `attrsWhen`'s `equals` does for a host
    * option one level up.
+   *
+   * Only meaningful for a STRING or ENUM item option: a boolean's stored value is the literal JS
+   * `true`/`false`, and `equals` is typed `string`, so it can never match one by strict equality —
+   * use `whenItemGiven`/`whenItemMissing` (or `whenItemAllGiven`) for a boolean instead.
    */
   readonly whenItemEquals?: { readonly option: string; readonly equals: string };
   readonly whenItemNotEquals?: { readonly option: string; readonly equals: string };

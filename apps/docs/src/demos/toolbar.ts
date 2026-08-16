@@ -17,6 +17,7 @@
  */
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { toolbarBindingItems, toolbarScreenItems } from "./data/toolbar";
 
 const iconButton = (
   label: string,
@@ -30,7 +31,9 @@ const iconButton = (
     children: {
       contract: "button",
       signature: "Button.action",
-      options: { iconOnly: true, size: "sm" },
+      // `ghost`: no fill, no border, matching the bar's own chrome instead of drawing a second
+      // box inside it — Button's own variant, not a toolbar-specific reinterpretation of it.
+      options: { iconOnly: true, size: "sm", variant: "ghost" },
       attrs: { "aria-label": label },
       children: { contract: "icon", signature: "Icon", options: { name: icon } },
     },
@@ -42,6 +45,15 @@ export const toolbarTree = (t: Translate): UsageTree => ({
   contract: "toolbar",
   signature: "Toolbar",
   options: { label: t("demo.toolbar.actions") },
+  /*
+   * `data-accent="2"`: the published accent-reach dimension (dimensions/accent.scss), not a
+   * toolbar-specific rule. Level 3 (the page's own default) is where a ghost button's label
+   * reads the brand accent; level 2 is where "quiet action" is the first thing the dimension
+   * dials back, same as chrome and decoration, while the actual CTA (primary/danger) never
+   * dials at any level. A toolbar's icon row is exactly that "quiet action" case: three
+   * commands, none of them the one thing the page most wants a reader's eye drawn to.
+   */
+  attrs: { "data-accent": "2" },
   children: [
     {
       contract: "toolbar",
@@ -71,13 +83,7 @@ export const nestedToolbarTree = (t: Translate): UsageTree => ({
         signature: "Segmented",
         options: { value: "free" },
         attrs: { "aria-label": t("demo.toolbar.screenSize") },
-        slots: {
-          items: [
-            { options: { value: "free" }, slots: { label: t("demo.toolbar.free") } },
-            { options: { value: "tablet" }, slots: { label: t("demo.toolbar.tablet") } },
-            { options: { value: "mobile" }, slots: { label: t("demo.toolbar.mobile") } },
-          ],
-        },
+        slots: { items: toolbarScreenItems(t) },
       },
     },
     { contract: "toolbar", signature: "ToolbarSeparator" },
@@ -90,12 +96,7 @@ export const nestedToolbarTree = (t: Translate): UsageTree => ({
         signature: "Segmented",
         options: { value: "vanilla" },
         attrs: { "aria-label": t("demo.toolbar.binding") },
-        slots: {
-          items: [
-            { options: { value: "vanilla" }, slots: { label: "Vanilla" } },
-            { options: { value: "react" }, slots: { label: "React" } },
-          ],
-        },
+        slots: { items: toolbarBindingItems },
       },
     },
   ],

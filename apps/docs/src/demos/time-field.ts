@@ -22,8 +22,8 @@ export const timeFieldNativeTree = (
   t: Translate,
   opts: { name: string },
 ): UsageTree => ({
-  contract: "field",
-  signature: "Field",
+  contract: "form-field",
+  signature: "FormField",
   slots: { label: t("demo.timeField.label") },
   children: {
     contract: "input",

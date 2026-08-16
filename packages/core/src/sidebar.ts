@@ -1,4 +1,5 @@
 import type { ComponentContract } from "./contract.js";
+import { splitterValuePercent } from "./splitter.js";
 import { definePreference, numberValue, type Preference } from "./storage.js";
 
 export type SidebarCollapsedChangeDetails = {
@@ -78,18 +79,12 @@ export function sidebarWidthPreference(storageKey: string): Preference<number | 
 }
 
 /**
- * Where a width sits between the two bounds, 0 to 100.
- *
- * This is what a focusable `role="separator"` reports as `aria-valuenow`: a splitter's position is
- * only meaningful RELATIVE to how far it can travel, and a screen reader saying "208" tells nobody
- * anything, while "40%" says the rail is nearer its narrowest than its widest. Returns 100 for a
- * degenerate range rather than dividing by zero.
+ * Where a width sits between the two bounds, 0 to 100 — Sidebar's own name for
+ * `splitterValuePercent` (`core/splitter.ts`, the shared "Window Splitter" primitive Treegrid's
+ * column resizer now uses too), kept as its own export since it is Sidebar's public, documented,
+ * tested API and a rename would be a breaking one for no behavioural reason.
  */
-export function sidebarWidthPercent(inlineSize: number, min: number, max: number): number {
-  if (!(max > min)) return 100;
-  const clamped = Math.min(Math.max(inlineSize, min), max);
-  return Math.round(((clamped - min) / (max - min)) * 100);
-}
+export const sidebarWidthPercent = splitterValuePercent;
 
 /*
  * The shell only. There is no `link`, `item` or `list` part here on purpose: the list of
@@ -282,6 +277,10 @@ export const sidebarContract = {
       template: {
         element: "div",
         part: "resizeHandle",
+        // The shared "Window Splitter" visual language (`patterns/splitter.css`) — the hairline,
+        // hover/focus/active colour, hit region, cursor. `core/splitter.ts` is the matching shared
+        // behaviour both bindings drive this element with (see `connectSidebar`/`SidebarResizeHandle`).
+        also: ["sk-splitter"],
         host: true,
         attrs: {
           role: "separator",

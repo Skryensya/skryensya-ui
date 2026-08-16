@@ -1,0 +1,71 @@
+/*
+ * PATTERN, SPLITTER — the shared "Window Splitter" (WAI-ARIA APG) visual language: a quiet hit
+ * region holding a hairline that only paints on hover, focus or drag. Compose it onto whatever
+ * element already carries `role="separator"` and its own drag/keyboard wiring (`core/splitter.ts`
+ * is the shared behaviour those two write against) — Sidebar's own resize handle, Treegrid's column
+ * resizer, any Table that wants the same:
+ *
+ *   <div class="sk-sidebar__resize-handle sk-splitter" role="separator" ...>
+ *
+ * This file draws the BAR only — size, position (the near edge of its own containing block, full
+ * block-size), cursor, hover/focus/active colour, reduced motion, forced colors. It does not know
+ * what it is resizing: the consumer's own CSS gives the handle its CONTAINING BLOCK (Sidebar floats
+ * it inside the panel edge; Treegrid puts one inside each `<th>`), and the consumer's own binding
+ * sets `data-dragging` on the handle for the length of a gesture, the one state this file reads.
+ */
+@layer components {
+  .sk-splitter {
+    --sk-splitter-hit: var(--space-inset-sm);
+    --sk-splitter-line: 2px;
+    --sk-splitter-color: var(--color-border-strong);
+    --sk-splitter-active-color: var(--color-border-accent);
+
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: var(--sk-splitter-hit);
+    cursor: col-resize;
+    /* The gesture is ours. Without this a drag on a touch screen scrolls the page instead. */
+    touch-action: none;
+  }
+
+  .sk-splitter::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: var(--sk-splitter-line);
+    background: transparent;
+    transition: background-color var(--motion-feedback-duration) var(--motion-feedback-easing);
+  }
+
+  .sk-splitter:hover::before {
+    background: var(--sk-splitter-color);
+  }
+
+  .sk-splitter:focus-visible {
+    /* Inset: a handle flush with its container's edge has an outline drawn outside it clipped by
+     * that container's own `overflow: hidden` (Sidebar's case) — inset works whether or not the
+     * consumer clips, so the pattern does not need to know which. */
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(var(--focus-ring-offset) * -1);
+  }
+
+  .sk-splitter:focus-visible::before,
+  .sk-splitter[data-dragging]::before {
+    background: var(--sk-splitter-active-color);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-splitter::before {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    /* The state layer and the accent both drop out, so the edge needs a real border to exist at all. */
+    .sk-splitter::before {
+      background: CanvasText;
+    }
+  }
+}

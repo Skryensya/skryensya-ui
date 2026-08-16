@@ -31,11 +31,21 @@ const successAriaLabel = label ? t("copy.copied") : t("copy.codeCopied");
 const errorAriaLabel = label ? t("copy.error") : t("copy.failed");
 ---
 
+{/*
+ * `data-sk-density-scope` WITH NO FACTOR, which is the published way of saying "the system's
+ * density, whatever this container's is". The source panels this button floats over sit in a 0.72
+ * scope (ComponentPreview.astro) so their CODE reads dense, and a density scope shrinks a control
+ * but deliberately never its glyph (core `semantic/_size.scss`). At 0.72 the sm box lands on the
+ * 24px WCAG floor while the icon stays 20px: under 2px of air, and visibly smaller than every
+ * other sm icon button on the page. The compaction is for the text; the one control sitting on top
+ * of it opts back out.
+ */}
 <button
-  class="sk-button sk-interactive sk-copy-button sk-anchor"
+  class="sk-button sk-interactive sk-icon-toggle sk-copy-button sk-anchor"
   data-variant="subtle"
   data-size="sm"
   data-icon-only
+  data-sk-density-scope
   data-sk-copy-button
   data-sk-copy-button-target={target}
   type="button"
@@ -45,8 +55,8 @@ const errorAriaLabel = label ? t("copy.error") : t("copy.failed");
   data-sk-copy-button-success-aria-label={successAriaLabel}
   data-sk-copy-button-error-aria-label={errorAriaLabel}
 >
-  <span class="sk-copy-button__icon" data-sk-copy-button-icon="idle" aria-hidden="true"><Fragment set:html={copyIcon} /></span>
-  <span class="sk-copy-button__icon" data-sk-copy-button-icon="copied" aria-hidden="true"><Fragment set:html={copiedIcon} /></span>
+  <span class="sk-copy-button__icon" data-sk-copy-button-icon="idle" data-face="idle" aria-hidden="true"><Fragment set:html={copyIcon} /></span>
+  <span class="sk-copy-button__icon" data-sk-copy-button-icon="copied" data-face="copied" aria-hidden="true"><Fragment set:html={copiedIcon} /></span>
   <span class="sk-copy-button__label" data-sk-copy-button-label aria-live="polite">{t("copy.action")}</span>
   <span
     class="sk-copy-button__feedback sk-anchored"

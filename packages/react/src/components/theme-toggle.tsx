@@ -1,3 +1,4 @@
+import { iconToggleParts } from "@skryensya/core/icon-toggle";
 import {
   applyColorMode,
   colorModeLabel,
@@ -82,7 +83,7 @@ export function ThemeToggle({
     <button
       {...props}
       aria-label={colorModeLabel(mode, labels)}
-      className={cx(`${themeToggleParts.root} sk-button sk-interactive`, className)}
+      className={cx(`${themeToggleParts.root} ${iconToggleParts.root} sk-button sk-interactive`, className)}
       data-sk-theme-toggle=""
       data-icon-only=""
       data-scheme={mode}
@@ -103,9 +104,9 @@ export function ThemeToggle({
         );
       }}
     >
-      <Icon name="mode-system" data-sk-theme-toggle-icon="system" />
-      <Icon name="mode-light" data-sk-theme-toggle-icon="light" />
-      <Icon name="mode-dark" data-sk-theme-toggle-icon="dark" />
+      <Icon name="mode-system" data-sk-theme-toggle-icon="system" data-face="system" />
+      <Icon name="mode-light" data-sk-theme-toggle-icon="light" data-face="light" />
+      <Icon name="mode-dark" data-sk-theme-toggle-icon="dark" data-face="dark" />
     </button>
   );
 }

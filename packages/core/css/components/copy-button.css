@@ -1,15 +1,19 @@
 /* TIER 3, COPY BUTTON: declarative clipboard action with transient feedback.
  *
  * Compose onto `.sk-button` (typically `subtle` or `ghost`, icon-only: see button.css for what
- * `subtle` is). Face size comes from the button (`data-size="sm"` paints at control-sm); the
- * button's ::after expands the hit to the touch floor. This file owns the stacked idle/copied
- * icons, the live label, and the paint of the feedback flag.
+ * `subtle` is) and `.sk-icon-toggle`. Face size comes from the button (`data-size="sm"` paints
+ * at control-sm); the button's ::after expands the hit to the touch floor. The idle/copied morph
+ * is the Icon Toggle pattern; this file maps `data-sk-copy-button-state` onto those faces, owns
+ * the live label, and paints the feedback flag.
  *
  * THE FLAG'S PLACEMENT IS NOT HERE. It is the Anclaje pattern (decision 25): the root also carries
  * `sk-anchor`, the flag also carries `sk-anchored` and asks for `inline-start`, and the arrow is the
  * pattern's own `sk-anchored-arrow`. Sides, flip, gap, z-index, the lost anchor and the arrow's
  * geometry all live in `patterns/anchored.css`; this file only says what colour and what size.
  */
+
+@import url("../patterns/icon-toggle.css");
+
 @layer components {
   .sk-copy-button {
     --sk-copy-button-error-fg: var(--color-text-danger);
@@ -26,33 +30,15 @@
     --sk-copy-button-feedback-radius: var(--radius-control);
     --sk-copy-button-feedback-padding: var(--space-inset-xs) var(--space-inset-sm);
     --sk-copy-button-feedback-font-size: var(--font-size-body-sm);
-
-    display: inline-grid;
-    place-items: center;
-    padding-inline: 0;
   }
 
-  .sk-copy-button__icon {
-    grid-area: 1 / 1;
-    opacity: 0;
-    transform: scale(0.25);
-    filter: blur(4px);
-    transition-property: opacity, transform, filter;
-    transition-duration: var(--motion-state-change-duration);
-    transition-timing-function: var(--motion-state-change-easing);
-  }
-
-  .sk-copy-button [data-sk-copy-button-icon="idle"],
-  .sk-copy-button[data-sk-copy-button-state="copied"] [data-sk-copy-button-icon="copied"] {
-    opacity: 1;
-    transform: scale(1);
-    filter: blur(0);
-  }
-
-  .sk-copy-button[data-sk-copy-button-state="copied"] [data-sk-copy-button-icon="idle"] {
-    opacity: 0;
-    transform: scale(0.25);
-    filter: blur(4px);
+  /*
+   * Idle unless the copy just succeeded. Error keeps the copy glyph and only retones the button:
+   * a failed copy is not a check.
+   */
+  .sk-copy-button:not([data-sk-copy-button-state="copied"]) > [data-face="idle"],
+  .sk-copy-button[data-sk-copy-button-state="copied"] > [data-face="copied"] {
+    --sk-icon-toggle-on: 1;
   }
 
   /* One rule for the two things a failed copy changes: the button's own colour, and the tone the
@@ -158,7 +144,6 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .sk-copy-button__icon,
     .sk-copy-button__feedback,
     .sk-copy-button__feedback > .sk-anchored-arrow {
       transition: none;
@@ -178,15 +163,4 @@
       display: none;
     }
   }
-}
-
-/*
- * Consumer button skins set `display: inline-flex` unlayered. That beats the layered
- * `inline-grid` above and lays the idle/copied icons in a row: the hidden one still
- * eats width. Re-assert grid outside the layer so the icons stack in one cell.
- */
-.sk-button.sk-copy-button {
-  display: inline-grid;
-  place-items: center;
-  padding-inline: 0;
 }

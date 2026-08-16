@@ -1,5 +1,6 @@
 import { anchoredAttrs, anchoredParts } from "./anchored.js";
 import type { ComponentContract } from "./contract.js";
+import { iconToggleParts } from "./icon-toggle.js";
 
 /** Stable anatomy for the declarative CopyButton enhancer. */
 export const copyButtonParts = {
@@ -43,7 +44,7 @@ export type CopyButtonAttrName = (typeof copyButtonAttrs)[CopyButtonAttr];
  * what gets copied is whatever is on screen at click time. Passing the string would let the button
  * copy something the reader is not looking at.
  *
- * Both icons are always emitted and the stylesheet shows one, off `data-sk-copy-button-state`.
+ * Both icons are always emitted and Icon Toggle shows one, off `data-sk-copy-button-state`.
  * Authored markup has no runtime to swap an icon with, so neither binding does.
  *
  * THE FEEDBACK FLAG IS NOT A TOOLTIP, and the difference is not cosmetic. A tooltip is opened by the
@@ -124,20 +125,20 @@ export const copyButtonContract = {
         part: "root",
         /* `sk-anchor` is what the flag measures itself against. It costs nothing until a name is
            written on it: `anchor-name: var(--sk-anchored-name)` with no name is `none`. */
-        also: ["sk-button", "sk-interactive", anchoredParts.anchor],
+        also: ["sk-button", "sk-interactive", iconToggleParts.root, anchoredParts.anchor],
         host: true,
         attrs: { type: "button" },
         children: [
           {
             element: "span",
             part: "icon",
-            attrs: { "aria-hidden": "true", [copyButtonAttrs.icon]: "idle" },
+            attrs: { "aria-hidden": "true", [copyButtonAttrs.icon]: "idle", "data-face": "idle" },
             children: [{ element: "span", attrs: { "data-sk-icon": "copy", "data-sk-icon-size": "md" } }],
           },
           {
             element: "span",
             part: "icon",
-            attrs: { "aria-hidden": "true", [copyButtonAttrs.icon]: "copied" },
+            attrs: { "aria-hidden": "true", [copyButtonAttrs.icon]: "copied", "data-face": "copied" },
             children: [{ element: "span", attrs: { "data-sk-icon": "check", "data-sk-icon-size": "md" } }],
           },
           {

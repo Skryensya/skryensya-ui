@@ -1,7 +1,19 @@
-import { datePickerContract, datePickerParts } from "@skryensya/core/date-picker";
+import {
+  datePickerContract,
+  datePickerParts,
+  defaultContentLabel,
+  defaultTriggerLabel,
+} from "@skryensya/core/date-picker";
 import type { SignatureOptionsOf } from "@skryensya/core/contract";
-import { calendarParts } from "@skryensya/core/calendar";
-import type { DateValue } from "@skryensya/core/calendar";
+import {
+  calendarParts,
+  defaultDayLabel,
+  defaultNextTriggerLabel,
+  defaultPrevTriggerLabel,
+  defaultViewTriggerLabel,
+  unusedIntlTranslations,
+} from "@skryensya/core/calendar";
+import type { DateValue, DateView, DayTableCellState } from "@skryensya/core/calendar";
 import { datePicker } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
 import { useId, type ReactNode, type RefObject } from "react";
@@ -35,6 +47,18 @@ export type DatePickerProps = Pick<
   previousIcon?: ReactNode;
   nextIcon?: ReactNode;
   clearLabel?: string;
+  /** Accessible name for the calendar-icon trigger, by open state. Default is locale-aware. */
+  triggerLabel?: (open: boolean) => string;
+  /** Accessible name for the popover holding the calendar. Default is locale-aware. */
+  contentLabel?: string;
+  /** Accessible name for a day cell, by state. Default is locale-aware. */
+  dayLabel?: (state: DayTableCellState) => string;
+  /** Accessible name for the day/month/year view-switch button. */
+  viewTriggerLabel?: (view: DateView) => string;
+  /** Accessible name for "go back" — previous month/year/decade depending on the open view. */
+  prevTriggerLabel?: (view: DateView) => string;
+  /** Accessible name for "go forward" — next month/year/decade depending on the open view. */
+  nextTriggerLabel?: (view: DateView) => string;
   onValueChange?: (details: { value: string[] }) => void;
 };
 
@@ -47,6 +71,8 @@ export type DatePickerProps = Pick<
 export function DatePicker({
   clearLabel = "Limpiar",
   container,
+  contentLabel,
+  dayLabel,
   defaultValue,
   disabled,
   id,
@@ -57,15 +83,19 @@ export function DatePicker({
   min,
   name,
   nextIcon,
+  nextTriggerLabel,
   onValueChange,
   placeholder,
+  prevTriggerLabel,
   previousIcon,
   readOnly,
   required,
   selectionMode = "single",
   timeZone = "UTC",
   triggerIcon,
+  triggerLabel,
   value,
+  viewTriggerLabel,
 }: DatePickerProps) {
   const generatedId = useId();
   const service = useMachine(datePicker.machine, {
@@ -83,6 +113,15 @@ export function DatePicker({
     required,
     invalid,
     fixedWeeks: true,
+    translations: {
+      ...unusedIntlTranslations(),
+      trigger: triggerLabel ?? defaultTriggerLabel(locale),
+      content: contentLabel ?? defaultContentLabel(locale),
+      dayCell: dayLabel ?? defaultDayLabel(locale),
+      viewTrigger: viewTriggerLabel ?? defaultViewTriggerLabel(locale),
+      prevTrigger: prevTriggerLabel ?? defaultPrevTriggerLabel(locale),
+      nextTrigger: nextTriggerLabel ?? defaultNextTriggerLabel(locale),
+    },
     onValueChange(details) {
       onValueChange?.({ value: details.valueAsString });
     },

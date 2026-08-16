@@ -1,6 +1,14 @@
 <script lang="ts">
   import { datePicker } from "@skryensya/core/machines";
-  import { calendarParts, parseCalendarDate } from "@skryensya/core/calendar";
+  import {
+    calendarParts,
+    defaultDayLabel,
+    defaultNextTriggerLabel,
+    defaultPrevTriggerLabel,
+    defaultViewTriggerLabel,
+    parseCalendarDate,
+    unusedIntlTranslations,
+  } from "@skryensya/core/calendar";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onMount } from "svelte";
   import { applyZagProps, type DomProps } from "../runtime/apply";
@@ -38,6 +46,20 @@
     readOnly: root.hasAttribute("data-readonly"),
     inline: true,
     fixedWeeks: true,
+    /*
+     * Zag's own `defaultTranslations` is English-only, unconditionally — a Spanish-locale calendar
+     * announced "Choose 15 de agosto" in English otherwise, matching the same gap fixed in the React
+     * binding. `trigger`/`content` name a popover this component never renders (`inline: true`).
+     */
+    translations: {
+      ...unusedIntlTranslations(),
+      trigger: () => "",
+      content: "",
+      dayCell: defaultDayLabel(locale),
+      viewTrigger: defaultViewTriggerLabel(locale),
+      prevTrigger: defaultPrevTriggerLabel(locale),
+      nextTrigger: defaultNextTriggerLabel(locale),
+    },
     onValueChange(details: { valueAsString: string[] }) {
       root.dispatchEvent(
         new CustomEvent("sk-value-change", { bubbles: true, detail: { value: details.valueAsString } }),

@@ -7,8 +7,15 @@
     supportsAnchorPositioning,
   } from "@skryensya/core/anchored";
   import { datePicker } from "@skryensya/core/machines";
-  import { parseCalendarDate } from "@skryensya/core/calendar";
-  import { datePickerParts } from "@skryensya/core/date-picker";
+  import {
+    defaultDayLabel,
+    defaultNextTriggerLabel,
+    defaultPrevTriggerLabel,
+    defaultViewTriggerLabel,
+    parseCalendarDate,
+    unusedIntlTranslations,
+  } from "@skryensya/core/calendar";
+  import { datePickerParts, defaultContentLabel, defaultTriggerLabel } from "@skryensya/core/date-picker";
   import { calendarParts } from "@skryensya/core/calendar";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
@@ -66,6 +73,19 @@
     required: root.hasAttribute("data-required"),
     // Alto de calendario estable entre meses: seis filas siempre, así abrir no reflowea la página.
     fixedWeeks: true,
+    /*
+     * Zag's own `defaultTranslations` es sólo en inglés, sin condición de idioma — un date picker en
+     * español anunciaba "Choose 15 de agosto" en inglés, mismo gap que se corrigió en el binding React.
+     */
+    translations: {
+      ...unusedIntlTranslations(),
+      trigger: defaultTriggerLabel(locale),
+      content: defaultContentLabel(locale),
+      dayCell: defaultDayLabel(locale),
+      viewTrigger: defaultViewTriggerLabel(locale),
+      prevTrigger: defaultPrevTriggerLabel(locale),
+      nextTrigger: defaultNextTriggerLabel(locale),
+    },
     onValueChange(details: { valueAsString: string[] }) {
       root.dispatchEvent(
         new CustomEvent("sk-value-change", { bubbles: true, detail: { value: details.valueAsString } }),

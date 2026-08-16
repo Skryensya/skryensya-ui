@@ -132,4 +132,23 @@ describe("DatePicker Vanilla contracts", () => {
     markup('data-locale="es-DO" data-name="llegada" data-value="2024-03-15"');
     expect(document.querySelector<HTMLInputElement>('input[name="llegada"]')).toBeTruthy();
   });
+
+  it("names the trigger and the popover in Spanish by default, not Zag's own English", async () => {
+    markup('data-locale="es-DO" data-value="2024-03-15"');
+
+    // Zag's `defaultTranslations` (`@zag-js/date-picker`) is English-only, unconditionally.
+    expect(trigger().getAttribute("aria-label")).toBe("Abrir calendario");
+    expect(content().getAttribute("aria-label")).toBe("calendario");
+
+    fireEvent.click(trigger());
+    await waitFor(() => expect(trigger().getAttribute("aria-expanded")).toBe("true"));
+    expect(trigger().getAttribute("aria-label")).toBe("Cerrar calendario");
+  });
+
+  it("switches the trigger and popover names to English when the locale says so", () => {
+    markup('data-locale="en-US" data-value="2024-03-15"');
+
+    expect(trigger().getAttribute("aria-label")).toBe("Open calendar");
+    expect(content().getAttribute("aria-label")).toBe("calendar");
+  });
 });

@@ -8,7 +8,9 @@
  * day/month/year cell carry `sk-button sk-interactive data-size="sm"`, never a bespoke box that
  * re-derives padding, height or state-layer feedback the button pattern already gives for free.
  * This file only re-declares the handful of `--sk-button-*` hooks each shape needs (icon-only
- * square for prev/next, full-width pill for a cell), the same mechanism a themed instance uses. */
+ * square for prev/next AND the day cell — a day number is one piece of content in a square, same
+ * shape as a glyph — full-width pill for month/year cells), the same mechanism a themed instance
+ * uses. */
 @import url("./button.css");
 
 @layer components {

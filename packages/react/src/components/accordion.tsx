@@ -49,6 +49,13 @@ export type AccordionItemProps = Omit<HTMLAttributes<HTMLElement>, "onChange"> &
 
 export type AccordionTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode;
+  /**
+   * The page-outline heading level this section announces itself at, on a `role="heading"`
+   * wrapper around the button rather than the button itself — a control cannot also claim the
+   * heading role its own interactive one already fills. Defaults to 3, the level every demo in
+   * this codebase already uses for the same sections rendered as `<details>`.
+   */
+  headingLevel?: number;
 };
 
 export type AccordionContentProps = HTMLAttributes<HTMLDivElement> & {
@@ -126,10 +133,16 @@ const AccordionItem = forwardRef<HTMLElement, AccordionItemProps>(function Accor
 });
 
 const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerProps>(function AccordionTrigger(
-  { children, ...props },
+  { children, headingLevel = 3, ...props },
   ref,
 ) {
-  return <ExpandableTileTrigger {...props} data-part={accordionDataParts.trigger} ref={ref}>{children}</ExpandableTileTrigger>;
+  return (
+    <div aria-level={headingLevel} className={accordionParts.triggerHeading} data-part={accordionDataParts.triggerHeading} role="heading">
+      <ExpandableTileTrigger {...props} data-part={accordionDataParts.trigger} ref={ref}>
+        {children}
+      </ExpandableTileTrigger>
+    </div>
+  );
 });
 
 const AccordionContent = forwardRef<HTMLDivElement, AccordionContentProps>(function AccordionContent(

@@ -60,4 +60,29 @@ describe("Accordion React contracts", () => {
     fireEvent.click(trigger);
     await waitFor(() => expect(trigger.getAttribute("aria-expanded")).toBe("false"));
   });
+
+  it("wraps each trigger in a heading so it is reachable by heading navigation", () => {
+    const ui = render(
+      <Accordion defaultValue="runtime">
+        <Accordion.Item value="runtime">
+          <Accordion.Trigger>Runtime</Accordion.Trigger>
+          <Accordion.Content>Node 22</Accordion.Content>
+        </Accordion.Item>
+        <Accordion.Item value="rollout">
+          <Accordion.Trigger headingLevel={4}>Rollout</Accordion.Trigger>
+          <Accordion.Content>10%, then 100%</Accordion.Content>
+        </Accordion.Item>
+      </Accordion>,
+    );
+
+    const trigger = ui.getByRole("button", { name: "Runtime" });
+    const heading = ui.getByRole("heading", { name: "Runtime" });
+    // Defaults to 3, the level the same sections use rendered as `<details>` elsewhere in the docs.
+    expect(heading.getAttribute("aria-level")).toBe("3");
+    expect(heading.classList).toContain("sk-accordion__trigger-heading");
+    // The heading wraps the button; it does not replace it, and the button keeps its own role.
+    expect(heading.contains(trigger)).toBe(true);
+
+    expect(ui.getByRole("heading", { name: "Rollout" }).getAttribute("aria-level")).toBe("4");
+  });
 });

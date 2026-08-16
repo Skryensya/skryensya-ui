@@ -1,6 +1,23 @@
 import type { ComponentContract } from "./contract.js";
 export type { DateValue } from "@zag-js/date-picker";
 
+/*
+ * The two DatePicker-only strings that Zag's `defaultTranslations` also hardcodes in English: the
+ * trigger button's open/close label and the popover's own accessible name. See `calendar.ts` for
+ * the shared day/view/prev/next ones — this file only adds what `Calendar` never renders.
+ */
+const isEnglishLocale = (locale: string) => locale.toLocaleLowerCase().startsWith("en");
+
+export function defaultTriggerLabel(locale: string) {
+  const en = isEnglishLocale(locale);
+  return (open: boolean) =>
+    open ? (en ? "Close calendar" : "Cerrar calendario") : en ? "Open calendar" : "Abrir calendario";
+}
+
+export function defaultContentLabel(locale: string) {
+  return isEnglishLocale(locale) ? "calendar" : "calendario";
+}
+
 export type DatePickerSelectionMode = "single" | "range";
 
 // El chrome del calendario (encabezado, grillas, vistas, `getTwoLetterWeekdayLabel`) vive en

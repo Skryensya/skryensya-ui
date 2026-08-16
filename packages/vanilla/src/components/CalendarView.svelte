@@ -1,5 +1,6 @@
 <script lang="ts">
   import { calendarParts, getTwoLetterWeekdayLabel } from "@skryensya/core/calendar";
+  import { buttonContract, buttonParts } from "@skryensya/core/button";
   import { datePicker } from "@skryensya/core/machines";
   import type { PropTypes } from "@zag-js/svelte";
 
@@ -19,6 +20,22 @@
    * drop the two selects.
    */
   const { api, locale }: { api: DatePickerApi; locale: string } = $props();
+
+  /*
+   * Every trigger below IS a real sm ghost Button (ADR-1/8): the class list and the variant/size/
+   * icon-only attrs come straight from `buttonContract`, not a copy of its values, so a rename in
+   * Button's shape shows up here for free instead of drifting out of four hand-typed literals.
+   *
+   * Prev/next and the day cell share the SAME `iconOnly` shape — a control-sized square holding one
+   * piece of content, a glyph for prev/next, a day number for the cell — rather than a second "icon
+   * button" contract for what is one shape wearing two kinds of content. Month/year cells stay plain
+   * Buttons: their label is a word, not a single glyph, and they stretch to fill their `<td>` instead
+   * of collapsing to a square (calendar.css).
+   */
+  const buttonClass = `${buttonParts.root} ${buttonParts.interactive}`;
+  const { variant: variantOption, size: sizeOption, iconOnly: iconOnlyOption } = buttonContract.options;
+  const smGhost = { [variantOption.attr]: "ghost", [sizeOption.attr]: "sm" } as const;
+  const iconOnly = { [iconOnlyOption.attr]: iconOnlyOption.trueValue } as const;
 
   const headingLabel = $derived.by(() => {
     if (api.view === "day") {
@@ -50,7 +67,11 @@
   }
 
   const viewTriggerLabel = $derived(
-    api.view === "year" ? "Volver al mes actual" : api.getViewTriggerProps()["aria-label"],
+    api.view === "year"
+      ? locale.toLocaleLowerCase().startsWith("en")
+        ? "Back to current month"
+        : "Volver al mes actual"
+      : api.getViewTriggerProps()["aria-label"],
   );
   const viewTriggerClick = $derived(
     api.view === "year"
@@ -65,10 +86,9 @@
 <div class={calendarParts.header}>
   <button
     {...api.getPrevTriggerProps({ view: api.view })}
-    class="{calendarParts.previous} sk-button sk-interactive"
-    data-icon-only=""
-    data-size="sm"
-    data-variant="ghost"
+    {...smGhost}
+    {...iconOnly}
+    class="{calendarParts.previous} {buttonClass}"
     type="button"
   >
     <span data-sk-icon="chevron-left" data-sk-icon-size="sm"></span>
@@ -77,9 +97,8 @@
     {...api.getViewTriggerProps()}
     onclick={viewTriggerClick}
     aria-label={viewTriggerLabel}
-    class="{calendarParts.viewTrigger} sk-button sk-interactive"
-    data-size="sm"
-    data-variant="ghost"
+    {...smGhost}
+    class="{calendarParts.viewTrigger} {buttonClass}"
     type="button"
   >
     {headingLabel}
@@ -87,10 +106,9 @@
   </button>
   <button
     {...api.getNextTriggerProps({ view: api.view })}
-    class="{calendarParts.next} sk-button sk-interactive"
-    data-icon-only=""
-    data-size="sm"
-    data-variant="ghost"
+    {...smGhost}
+    {...iconOnly}
+    class="{calendarParts.next} {buttonClass}"
     type="button"
   >
     <span data-sk-icon="chevron-right" data-sk-icon-size="sm"></span>
@@ -113,9 +131,9 @@
             <td {...api.getDayTableCellProps({ value: day, visibleRange: api.visibleRange })} class={calendarParts.cell}>
               <button
                 {...api.getDayTableCellTriggerProps({ value: day, visibleRange: api.visibleRange })}
-                class="{calendarParts.cellTrigger} sk-button sk-interactive"
-                data-size="sm"
-                data-variant="ghost"
+                {...smGhost}
+                {...iconOnly}
+                class="{calendarParts.cellTrigger} {buttonClass}"
                 type="button"
               >
                 {day.day}
@@ -135,9 +153,8 @@
             <td {...api.getMonthTableCellProps({ value: month.value, columns: 4 })} class={calendarParts.cell}>
               <button
                 {...api.getMonthTableCellTriggerProps({ value: month.value })}
-                class="{calendarParts.cellTrigger} sk-button sk-interactive"
-                data-size="sm"
-                data-variant="ghost"
+                {...smGhost}
+                class="{calendarParts.cellTrigger} {buttonClass}"
                 type="button"
                 disabled={month.disabled}
               >
@@ -158,9 +175,8 @@
             <td {...api.getYearTableCellProps({ value: year.value, columns: 4 })} class={calendarParts.cell}>
               <button
                 {...api.getYearTableCellTriggerProps({ value: year.value })}
-                class="{calendarParts.cellTrigger} sk-button sk-interactive"
-                data-size="sm"
-                data-variant="ghost"
+                {...smGhost}
+                class="{calendarParts.cellTrigger} {buttonClass}"
                 type="button"
                 disabled={year.disabled}
               >

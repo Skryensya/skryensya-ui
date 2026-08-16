@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { deploymentRows, pageSizeItems } from "./data/table";
 
 /*
  * The deepest composition the catalogue has: eight signatures, nested four levels, with two rules
@@ -136,6 +137,45 @@ export const tableStickyColumnTree = (t: Translate): UsageTree => ({
 });
 
 /**
+ * `resizableColumns`, opt-in: a real WAI-ARIA APG "Window Splitter" separator between every pair of
+ * column headers — the same shared `@skryensya/core/splitter` primitive Sidebar's own resize handle
+ * and Treegrid's own column resizer already use. Requires `resizeLabel`, an a11y gate: a
+ * binding-inserted separator has no author-supplied `label` slot to draw its own accessible name
+ * from, unlike `SidebarResizeHandle`.
+ */
+export const tableResizableColumnsTree = (t: Translate): UsageTree => ({
+  contract: "table",
+  signature: "TableScroll",
+  children: {
+    contract: "table",
+    signature: "Table",
+    options: { resizableColumns: true, resizeLabel: t("demo.table.resizeLabel") },
+    children: [
+      { contract: "table", signature: "TableCaption", children: t("demo.table.regions") },
+      {
+        contract: "table",
+        signature: "TableHead",
+        children: headerRow(t, [
+          "demo.table.service",
+          "demo.table.latency",
+          "demo.table.errors",
+          "demo.table.uptime",
+        ]),
+      },
+      {
+        contract: "table",
+        signature: "TableBody",
+        children: [
+          labelledRow("API", ["82 ms", "0,1 %", "99,98 %"]),
+          labelledRow("Worker", ["140 ms", "0,4 %", "99,90 %"]),
+          labelledRow("Gateway", ["61 ms", "0,0 %", "99,99 %"]),
+        ],
+      },
+    ],
+  },
+});
+
+/**
  * The header row stays put while the body scrolls down, the other axis, and the other reason to
  * lose your place: a long table whose column names have scrolled away is a grid of numbers.
  */
@@ -186,17 +226,6 @@ export const tableInBoxTree = (t: Translate): UsageTree => ({
   children: tableTree(t),
 });
 
-const pagerRows = [
-  ["dep-1040", "API", "production", "succeeded", "minutes", "4"],
-  ["dep-1039", "Worker", "production", "running", "minutes", "12"],
-  ["dep-1038", "Gateway", "staging", "succeeded", "minutes", "27"],
-  ["dep-1037", "Billing", "production", "failed", "hours", "1"],
-  ["dep-1036", "Auth", "staging", "succeeded", "hours", "2"],
-  ["dep-1035", "Search", "production", "succeeded", "hours", "3"],
-  ["dep-1034", "API", "staging", "running", "hours", "4"],
-  ["dep-1033", "Worker", "production", "succeeded", "hours", "5"],
-] as const;
-
 function deploymentsTable(t: Translate, markPagerRows = false): UsageTree {
   return {
     contract: "table",
@@ -220,7 +249,7 @@ function deploymentsTable(t: Translate, markPagerRows = false): UsageTree {
         {
           contract: "table",
           signature: "TableBody",
-          children: pagerRows.map(([id, service, environment, status, unit, amount]) => ({
+          children: deploymentRows.map(([id, service, environment, status, unit, amount]) => ({
             contract: "table",
             signature: "TableRow",
             attrs: markPagerRows ? { "data-sk-table-pager-row": "" } : {},
@@ -277,13 +306,7 @@ export const tablePagerTree = (t: Translate): UsageTree => ({
             contract: "flyout",
             signature: "Flyout",
             options: { defaultValue: "5" },
-            slots: {
-              label: t("demo.table.rowsPerPage"),
-              items: ["5", "10", "25"].map((value) => ({
-                options: { value },
-                slots: { label: value },
-              })),
-            },
+            slots: { label: t("demo.table.rowsPerPage"), items: pageSizeItems },
           },
         },
         {

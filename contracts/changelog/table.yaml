@@ -3,8 +3,40 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "ae391224708ef6db"
+surface: "27debbbce4ce2686"
 entries:
+  - date: 2026-08-16
+    kind: feature
+    target: Table
+    es:
+      title: Nueva opción resizableColumns, columnas redimensionables por arrastre
+      body: >-
+        Se agrega <code>resizableColumns</code> (opt-in, apagada por defecto). Encendida, el
+        binding inserta un separador WAI-ARIA APG "Window Splitter" real
+        (<code>role="separator"</code>, <code>aria-orientation="vertical"</code>,
+        flechas/Shift+flecha/Home/End/Enter) entre cada par de encabezados de columna — el mismo
+        primitivo compartido (<code>@skryensya/core/splitter</code>) que ya usan el separador de
+        <code>Sidebar</code> y el redimensionador de columnas de <code>Treegrid</code>. Requiere
+        <code>resizeLabel</code> (nueva opción, gate de a11y): el separador es binding-insertado,
+        nunca autorado, así que nada más lo nombra para un lector de pantalla. La primera entrada
+        de este archivo decía "no tiene enhancer: el markup está completo por sí solo" — eso sigue
+        siendo la regla por defecto: el binding Vanilla solo enhancea un <code>&lt;table&gt;</code>
+        que trae <code>data-resizable-columns</code>, así que cualquier tabla que no la pida sigue
+        sin JavaScript, exactamente como antes.
+    en:
+      title: New resizableColumns option, drag-to-resize columns
+      body: >-
+        Adds <code>resizableColumns</code> (opt-in, off by default). Turned on, the binding
+        inserts a real WAI-ARIA APG "Window Splitter" separator (<code>role="separator"</code>,
+        <code>aria-orientation="vertical"</code>, arrows/Shift+arrow/Home/End/Enter) between every
+        pair of column headers — the same shared primitive
+        (<code>@skryensya/core/splitter</code>) Sidebar's own separator and Treegrid's own column
+        resizer already use. Requires <code>resizeLabel</code> (a new option, an a11y gate): the
+        separator is binding-inserted, never authored, so nothing else names it for a screen
+        reader. This file's first entry said "no enhancer: the markup is complete on its own" —
+        that stays the default: the vanilla binding only ever enhances a
+        <code>&lt;table&gt;</code> that carries <code>data-resizable-columns</code>, so any table
+        that never asks for it stays exactly as JavaScript-free as before.
   - date: 2026-08-11
     kind: feature
     es:

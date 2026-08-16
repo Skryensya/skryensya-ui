@@ -248,8 +248,18 @@ async function shapeOf(
         hoist(child);
       }
     };
+    /*
+     * Every direct child is walked, anchored or not: `hoist` only ever touches a node's
+     * DESCENDANTS, never the node itself, so calling it on a top-level anchored child cannot
+     * double-add that child — it only reaches whatever is nested INSIDE it. Skipping anchored
+     * children here (the previous shape of this loop) meant a portalled top-level positioner's own
+     * nested submenu positioner — buried in its content, since only React portals the ROOT and
+     * leaves submenus nested (menu.tsx) — was never pulled out, while vanilla's fully inline tree
+     * always found it. One binding's `anchored` list came out one element short of the other's for
+     * every canonical tree with a nested submenu, which read as a content divergence when the two
+     * trees actually agreed.
+     */
     for (const child of [...host.children]) {
-      if (child.classList.contains("sk-anchored")) continue;
       hoist(child);
     }
 

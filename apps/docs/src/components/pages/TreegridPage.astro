@@ -1,0 +1,117 @@
+---
+import "@skryensya/core/components/table.css";
+import "@skryensya/core/components/treegrid.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { treegridInboxTree, treegridStressTree } from "../../demos/treegrid";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/treegrid.yaml?raw";
+import coreSource from "@core/src/treegrid.ts?raw";
+import cssSource from "@core/css/components/treegrid.css?raw";
+import vanillaMountSource from "@vanilla/src/components/treegrid.ts?raw";
+import reactSource from "@react/src/components/treegrid.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+/*
+ * `TreegridScroll` reuses `.sk-table-scroll` and `Treegrid`/its rows reuse `.sk-table`/
+ * `.sk-table__*` (the contract's `also`, see `treegrid.ts`) — border, striping, sticky header/column
+ * all come from `table.css` for free, so a consumer imports BOTH stylesheets, never `treegrid.css`
+ * alone.
+ */
+const install = `@import "@skryensya/core/components/table.css";
+@import "@skryensya/core/components/treegrid.css";`;
+
+const indentHook = `.sk-treegrid {
+  /* Un nivel más ancho, y una columna de apertura más chica. */
+  --sk-treegrid-indent: var(--space-inset-xl);
+  --sk-treegrid-indicator-size: var(--size-icon-sm);
+}`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/treegrid.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/treegrid.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/treegrid.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/treegrid.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/treegrid.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Treegrid"
+  description={t("treegridPage.description")}
+  contractId="treegrid"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/table.css", probe: "sk-table", title: "Heredados de Table" },
+    { file: "components/treegrid.css", probe: "sk-treegrid", title: "Treegrid" },
+    { file: "patterns/state-layer.css", probe: "sk-interactive", title: "Heredados de State layer" },
+  ]}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/treegrid.test.ts",
+      tests: [
+        {
+          name: "mounts once and hides the collapsed branch's descendant on connect",
+          description: t("treegridPage.testVanilla1"),
+        },
+        {
+          name: "Right Arrow on a collapsed branch's row expands it and reveals its child, without moving focus",
+          description: t("treegridPage.testVanilla2"),
+        },
+        {
+          name: "clicking a branch's first cell toggles it and moves focus to the row",
+          description: t("treegridPage.testVanilla3"),
+        },
+      ],
+    },
+    {
+      file: "packages/react/src/components/treegrid.test.tsx",
+      tests: [
+        {
+          name: "honors each row's own initial `expanded`, and hides only a collapsed branch's descendant",
+          description: t("treegridPage.testReact1"),
+        },
+        {
+          name: "Left Arrow on an expanded branch collapses it and hides its children",
+          description: t("treegridPage.testReact2"),
+        },
+        { name: "Enter activates a focused leaf row", description: t("treegridPage.testReact3") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("treegridPage.lede")} />
+
+    <h3>{t("treegridPage.minimalTitle")}</h3>
+    <p set:html={t("treegridPage.minimalBody")} />
+    <ComponentPreview tree={treegridInboxTree(t)} label={t("treegridPage.minimalLabel")} />
+
+    <h3>{t("treegridPage.stressTitle")}</h3>
+    <p set:html={t("treegridPage.stressBody")} />
+    <ComponentPreview tree={treegridStressTree(t)} label={t("treegridPage.stressLabel")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("treegridPage.contractItem1")} />
+      <li set:html={t("treegridPage.contractItem2")} />
+      <li set:html={t("treegridPage.contractItem3")} />
+      <li set:html={t("treegridPage.contractItem4")} />
+      <li set:html={t("treegridPage.contractItem5")} />
+      <li set:html={t("treegridPage.contractItem6")} />
+      <li set:html={t("treegridPage.contractItem7")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="CSS" lang="css" />
+    <p set:html={t("treegridPage.hooksBody")} />
+    <CodeBlock code={indentHook} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("treegridPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

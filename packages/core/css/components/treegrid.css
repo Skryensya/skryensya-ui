@@ -1,0 +1,271 @@
+/*
+ * TIER 3, TREEGRID: `.sk-treegrid`/`.sk-treegrid-scroll` are additive over `.sk-table`/
+ * `.sk-table-scroll` (the contract's `also`, see `treegrid.ts`) — this file states only the DELTA a
+ * plain table does not have: per-level indent, a hierarchy guide line, the branch/leaf disclosure
+ * glyph, hiding a collapsed branch's descendants, no-wrap labels, and the roving-tabindex focus ring
+ * on the row/cell that currently owns it. Border, sticky header/column, padding all come free from
+ * `table.css` — zebra striping does too, but gets turned back off below (see that rule's own note).
+ */
+
+@import url("../patterns/splitter.css");
+
+@layer components {
+  .sk-treegrid {
+    /* Indent per `aria-level`. Bounded (see the `[aria-level]` rules below) rather than computed:
+     * an option can write an ATTRIBUTE or a CSS custom property, never both onto one node (the
+     * compiler's `emit.ts`), and `aria-level` has to stay the real ARIA attribute — so a second,
+     * JS-set custom property just to multiply it would need the enhancer running before first
+     * paint to avoid a flash, for a component that is inert without JS anyway. A handful of
+     * plain selectors costs nothing and works even before the enhancer attaches. */
+    --sk-treegrid-indent: var(--space-inset-lg);
+    /* The disclosure BUTTON's own footprint (what the padding below reserves and the guide line
+     * centers on) — a real control size, not just the glyph, now that a real `<button>` sits
+     * here (see the row's own `also` comment in `treegrid.ts`). */
+    --sk-treegrid-indicator-size: var(--size-control-sm);
+    /* The chevron drawn INSIDE that button — kept at the glyph's original weight so this reads
+     * the same as every other icon in the system, just now inside a properly-sized hit target. */
+    --sk-treegrid-glyph-size: var(--size-icon-sm);
+    --sk-treegrid-guide-color: var(--color-border-subtle);
+    /*
+     * `table-layout: auto` (`table.css`'s default) sizes each COLUMN from the widest cell in it —
+     * and measured `thead` against `tbody` independently in testing (Chromium 1.42): the header's
+     * two columns came back [190.8px, 286.3px] while the first body row's came back [286.3px,
+     * 190.8px] — exactly swapped, not just different — so the header visibly stopped short of the
+     * body's real width. `fixed` computes column widths ONCE, from the table's own width divided
+     * among columns, so header and body always share identical tracks — the header spans exactly as
+     * far as the body does, and expanding or collapsing a branch (rows entering/leaving `tbody`)
+     * can no longer change what's already been laid out.
+     */
+    table-layout: fixed;
+  }
+
+  /*
+   * One rule per supported depth, indent AND the disclosure column folded into the SAME
+   * `padding-inline-start` — two separate rules setting one property on one element would just
+   * race on source order. A row past the bound keeps the deepest indent instead of overflowing
+   * off the edge, degrading gracefully rather than breaking. The disclosure column is reserved on
+   * every row, leaf or branch, so labels at one level start at one x (`tree-view.css`'s reasoning
+   * for the same alignment).
+   */
+  .sk-treegrid tbody tr[aria-level="1"] > :first-child { padding-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indicator-size)); }
+  .sk-treegrid tbody tr[aria-level="2"] > :first-child { padding-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indicator-size) + var(--sk-treegrid-indent) * 1); }
+  .sk-treegrid tbody tr[aria-level="3"] > :first-child { padding-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indicator-size) + var(--sk-treegrid-indent) * 2); }
+  .sk-treegrid tbody tr[aria-level="4"] > :first-child { padding-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indicator-size) + var(--sk-treegrid-indent) * 3); }
+  .sk-treegrid tbody tr[aria-level="5"] > :first-child { padding-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indicator-size) + var(--sk-treegrid-indent) * 4); }
+  /* Level 6 and anything deeper share the same ceiling — CSS attribute selectors have no
+   * "greater than", so the bound is: not any of the levels already handled above. */
+  .sk-treegrid tbody tr:not([aria-level="1"], [aria-level="2"], [aria-level="3"], [aria-level="4"], [aria-level="5"]) > :first-child {
+    padding-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indicator-size) + var(--sk-treegrid-indent) * 5);
+  }
+
+  /*
+   * The hierarchy guide: a vertical rule hanging from each row's PARENT chevron, giving the eye a
+   * line to follow instead of reading indentation as loose whitespace. `tree-view.css` draws this
+   * with one `border-inline-start` per nesting `<div>`; a treegrid has no such wrapper (a `<tr>`
+   * cannot contain another `<tr>`, the whole reason rows are authored flat), so this fakes the same
+   * line one row at a time — landing at the SAME x on every row of the same level, so consecutive
+   * segments read as one continuous rule down the column, the border-bottom hairline between rows
+   * the only interruption. The x per level is the PARENT's chevron center: level 2's guide hangs
+   * where level 1's own chevron sits (padding-x + indicator/2, no indent added), level 3's where
+   * level 2's chevron sits, and so on — one indent step behind the padding rules above.
+   */
+  .sk-treegrid tbody tr[aria-level]:not([aria-level="1"]) > :first-child::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inline-size: 1px;
+    background: var(--sk-treegrid-guide-color);
+  }
+  .sk-treegrid tbody tr[aria-level="2"] > :first-child::after { inset-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indicator-size) / 2); }
+  .sk-treegrid tbody tr[aria-level="3"] > :first-child::after { inset-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indicator-size) / 2 + var(--sk-treegrid-indent) * 1); }
+  .sk-treegrid tbody tr[aria-level="4"] > :first-child::after { inset-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indicator-size) / 2 + var(--sk-treegrid-indent) * 2); }
+  .sk-treegrid tbody tr[aria-level="5"] > :first-child::after { inset-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indicator-size) / 2 + var(--sk-treegrid-indent) * 3); }
+  .sk-treegrid tbody tr:not([aria-level="1"], [aria-level="2"], [aria-level="3"], [aria-level="4"], [aria-level="5"]) > :first-child::after {
+    inset-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indicator-size) / 2 + var(--sk-treegrid-indent) * 4);
+  }
+
+  /* Collapsed branches: `hidden` already removes a `<tr>` from layout AND the accessibility tree
+   * (the UA stylesheet's `[hidden] { display: none }`), with nothing here to override it — unlike
+   * `.sk-tree-view__branch-content`, no author rule on `.sk-treegrid__row` sets a competing
+   * `display`, so the native behaviour just applies. */
+
+  /*
+   * Zebra striping is `table.css`'s own default, tuned for flat data where alternating rows help
+   * the eye return to the same record. Here it fights the thing the indent+guide are trying to
+   * say: a striped row reads as "this record", not "this branch", and the two grouping cues
+   * disagree with each other. The guide line already does striping's job (helping the eye track a
+   * row) without contradicting the hierarchy, so this turns the inherited stripe back off.
+   */
+  .sk-treegrid tbody tr:nth-child(even) > :is(th, td) {
+    background: var(--sk-table-bg);
+  }
+
+  /*
+   * A treegrid label is an identifier — a subject line, a filename — the same case `tree-view.css`
+   * already argues for its own item text: wrapping turns one row into two, breaks the alignment the
+   * indent exists to create, and makes row heights disagree with the guide line drawn against them.
+   * `table.css` already keeps its OWN header this way (thead th { white-space: nowrap }); this is
+   * that same rule for the body, which table.css leaves to wrap by default. Ellipsis is the fallback
+   * for whenever something narrows a column past its content — nothing here does today, the table's
+   * own `width: 100%` combined with `table-layout: auto` used to WRAP first and only scroll once
+   * nothing left could break, which is what made a two-word subject split across three lines on a
+   * narrow viewport. Forcing `nowrap` removes that option, so the table grows past 100% instead and
+   * `.sk-table-scroll` does what it already exists to do.
+   */
+  .sk-treegrid tbody :is(th, td) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /*
+   * The disclosure BUTTON. A real `<button class="sk-treegrid__disclosure">`, the binding inserts
+   * one as the first child of a branch row's first cell (never authored — see `treegrid.ts`'s
+   * `disclosure` part and each binding's own insertion point). `aria-hidden` + `tabindex="-1"`: the
+   * row's OWN `aria-expanded` is already what a screen reader announces, so this stays out of the
+   * accessibility tree and out of the roving tab sequence — this scope (`treegrid-1`) never puts an
+   * interactive widget inside a cell, so the keyboard model does not gain one either.
+   *
+   * DELIBERATELY NOT `sk-interactive`. It was, briefly — and the state layer it paints reads as a
+   * SECOND, independently-hoverable control living inside the row, its own little rounded highlight
+   * competing with the CELL's own (`TreegridCell` still carries `sk-interactive`, unchanged) for the
+   * exact same click. Clicking the row already toggles it (`onClick`/`onCellClick` in each binding
+   * check `column === 0`, never whether the click landed on this button specifically), so two state
+   * layers were answering one action — confusing, not informative. The glyph still visibly responds
+   * to the ROW's hover/focus below, just as one layer, not two.
+   */
+  .sk-treegrid tbody tr[aria-expanded] > :first-child {
+    position: relative;
+    cursor: pointer;
+  }
+  .sk-treegrid tbody tr:not([aria-expanded]) > :first-child {
+    position: relative;
+  }
+  .sk-treegrid__disclosure {
+    position: absolute;
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    display: block;
+    inline-size: var(--sk-treegrid-indicator-size);
+    block-size: var(--sk-treegrid-indicator-size);
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+  }
+  /*
+   * The chevron. The SAME glyph the icon set ships as `chevron-right` (`packages/icons-lucide`:
+   * viewBox 0 0 24 24, `m9 18 6-6-6-6`, 2px round-joined stroke) — a bare `content: "›"` character
+   * depends on whatever glyph the reader's font ships for that code point, which varies enough
+   * across system fonts to read as a thin, slightly-off mark next to every OTHER chevron in this
+   * system, all real icons. `mask-image` instead of `background-image`: a mask paints with
+   * `background-color`, so it inherits theme color the way a real icon would, where a
+   * background-image SVG would need its stroke color baked in and frozen.
+   */
+  .sk-treegrid__disclosure::after {
+    content: "";
+    position: absolute;
+    inset: calc((var(--sk-treegrid-indicator-size) - var(--sk-treegrid-glyph-size)) / 2);
+    background-color: var(--color-text-secondary);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: 100% 100%;
+    rotate: 0deg;
+    transition:
+      rotate var(--motion-state-change-duration) var(--motion-state-change-easing),
+      background-color var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+  .sk-treegrid tbody tr[aria-expanded="true"] .sk-treegrid__disclosure::after {
+    rotate: 90deg;
+  }
+  /* One layer, not two: the glyph darkens with the ROW's own hover/press feedback (the cell's
+   * `sk-interactive`), rather than owning a second, independent state of its own. `:focus-within`,
+   * not `:focus`: the roving stop can land on the row OR its cell (`treegrid.ts`), either way the
+   * branch it belongs to should read as current. */
+  .sk-treegrid tbody tr[aria-expanded]:hover .sk-treegrid__disclosure::after,
+  .sk-treegrid tbody tr[aria-expanded]:focus-within .sk-treegrid__disclosure::after {
+    background-color: var(--color-text-primary);
+  }
+
+  /*
+   * The button's own x, level-aware — a branch is not always at level 1 (a folder inside a
+   * folder is still a branch), and `position: absolute` measures `inset-inline-start` from the
+   * cell's padding box, which the row's OWN `padding-inline-start` above does not shift. Without
+   * this, every branch's button would stack at level 1's x regardless of its real depth. Same
+   * cascade as the padding/guide rules, minus the indicator-size step: the button opens the
+   * column the padding rule reserves, so it sits at the column's start, not its center.
+   */
+  .sk-treegrid tbody tr[aria-level="1"] > :first-child > .sk-treegrid__disclosure { inset-inline-start: var(--sk-table-cell-padding-x); }
+  .sk-treegrid tbody tr[aria-level="2"] > :first-child > .sk-treegrid__disclosure { inset-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indent) * 1); }
+  .sk-treegrid tbody tr[aria-level="3"] > :first-child > .sk-treegrid__disclosure { inset-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indent) * 2); }
+  .sk-treegrid tbody tr[aria-level="4"] > :first-child > .sk-treegrid__disclosure { inset-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indent) * 3); }
+  .sk-treegrid tbody tr[aria-level="5"] > :first-child > .sk-treegrid__disclosure { inset-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indent) * 4); }
+  .sk-treegrid tbody tr:not([aria-level="1"], [aria-level="2"], [aria-level="3"], [aria-level="4"], [aria-level="5"]) > :first-child > .sk-treegrid__disclosure {
+    inset-inline-start: calc(var(--sk-table-cell-padding-x) + var(--sk-treegrid-indent) * 5);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-treegrid__disclosure::after {
+      transition: none;
+    }
+  }
+
+  /* Roving tabindex: exactly one row or cell is a stop at a time (`tabindex="0"`, set by the
+   * enhancer/binding, never by static markup — see `treegrid.ts`). `sk-interactive` on `<td>`
+   * already gives a focused/hovered CELL both the state layer and the ring; the `<tr>` itself
+   * cannot carry `sk-interactive` (its `<tr>`-breaks-table-layout comment in `treegrid.ts`), so it
+   * gets the ring alone, restated below, with no state-layer `::before` to go with it.
+   * `position: relative` on a table row/cell is standard CSS, not a quirk needing a fallback here. */
+  .sk-treegrid tbody tr,
+  .sk-treegrid tbody td {
+    cursor: default;
+  }
+
+  .sk-treegrid tbody tr:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  @media (forced-colors: active) {
+    .sk-treegrid__disclosure::after {
+      forced-color-adjust: none;
+      background-color: CanvasText;
+    }
+    .sk-treegrid tbody tr[aria-level]:not([aria-level="1"]) > :first-child::after {
+      forced-color-adjust: none;
+      background: CanvasText;
+    }
+  }
+
+  /*
+   * RESIZABLE COLUMNS, opt-in (`resizableColumns` — see `treegrid.ts`'s option doc). A binding
+   * inserts one `.sk-treegrid__column-resizer.sk-splitter` (the shared "Window Splitter" pattern,
+   * `patterns/splitter.css`) into every column header but the last — the last column has no NEXT
+   * column to redistribute width with, `resolveColumnResize` only ever touches a pair.
+   *
+   * `inline-size: auto` here, not the base rule's implicit `width: 100%` (`.sk-table`): a resized
+   * table's real width is the SUM of its own column widths, which the reader chose, not a fraction
+   * of the container. The binding ALSO writes an explicit pixel `width` straight onto the table
+   * (`applyColumnGroup`/`Treegrid`'s own seeding effect) rather than leaving it at this `auto` — a
+   * `table-layout: fixed` table sized `auto` still compares its `<col>` sum against its CONTAINING
+   * BLOCK's own width and used the GREATER of the two (CSS2.1 §17.5.2.1); measured with this exact
+   * fixture, that pushed the table wider than its columns summed to, and Chromium's real fixed-
+   * layout algorithm handed the surplus to whichever columns had the most unbreakable
+   * `white-space: nowrap` content instead of leaving every column at its authored width — one
+   * column rendered 685px against an authored 155px `<col>`, with its own resizer dragged
+   * off past the scrollable edge, nothing to grab. An explicit inline `width` (a definite length,
+   * never `auto`) sidesteps that comparison entirely: the table's used width is unambiguous, so
+   * every `<col>` keeps exactly what it was told.
+   */
+  .sk-treegrid[data-resizable-columns] {
+    inline-size: auto;
+  }
+
+  /* The resizer's containing block — `.sk-splitter` positions itself `inset-block: 0; inset-inline-end:
+   * 0`, full header height at the column's near edge, against WHATEVER ancestor is `position:
+   * relative`, which a plain `<th>` (`table.css`) is not. */
+  .sk-treegrid thead th {
+    position: relative;
+  }
+}

@@ -273,6 +273,7 @@ const coreSrcDir = join(repo, "packages", "core", "src");
 const CROSS_CUTTING = [
   { rule: /"sk-button"/, provides: "components/button.css" },
   { rule: /anchoredParts|"sk-anchor(?:ed)?"/, provides: "patterns/anchored.css" },
+  { rule: /iconToggleParts|"sk-icon-toggle"/, provides: "patterns/icon-toggle.css" },
 ];
 
 function contractCrossDeps(stem) {

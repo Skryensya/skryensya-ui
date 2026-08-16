@@ -16,6 +16,8 @@ type NavigationItem = {
   aliases?: readonly string[];
   todo?: boolean;
   status?: "wip" | "stable";
+  /** Separate axis from `status`: see the ariaReviewed dot below. */
+  ariaReviewed?: boolean;
 };
 
 type NavigationGroup = {
@@ -115,16 +117,32 @@ const groupsForSection = (section: NavigationSection): readonly NavigationGroup[
                   {
                     /* A sibling of the link, not content inside it: `sk-badge-holder` (Badge's own
                      * corner-riding contract) needs the dot as its DIRECT child to place it, and the
-                     * link's `overflow: hidden` would clip a corner-riding dot were it nested inside. */
-                    section.id === "components" && status(item) === "wip" && (
-                      <span
-                        class="sk-badge"
-                        data-dot
-                        data-tone="warning"
-                        aria-label={t("status.wip")}
-                        title={t("status.wip")}
-                      />
-                    )
+                     * link's `overflow: hidden` would clip a corner-riding dot were it nested inside.
+                     *
+                     * `ariaReviewed` is a different axis from `status` (contract maturity, see
+                     * `componentStatus`): a "wip" contract can still be ARIA-reviewed, so a reviewed
+                     * entry gets the success tone INSTEAD of the warning one rather than losing its
+                     * dot outright — the sidebar keeps saying something about it either way. */
+                    section.id === "components" &&
+                      (item.ariaReviewed ? (
+                        <span
+                          class="sk-badge"
+                          data-dot
+                          data-tone="success"
+                          aria-label={t("status.ariaReviewed")}
+                          title={t("status.ariaReviewed")}
+                        />
+                      ) : (
+                        status(item) === "wip" && (
+                          <span
+                            class="sk-badge"
+                            data-dot
+                            data-tone="warning"
+                            aria-label={t("status.wip")}
+                            title={t("status.wip")}
+                          />
+                        )
+                      ))
                   }
                 </li>
               ))}

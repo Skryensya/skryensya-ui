@@ -13,6 +13,9 @@
  * Expanding and collapsing are opposite intents with their own tokens (decision 10), so the motion
  * hooks are re-declared per state rather than averaged into one.
  */
+
+@import url("../patterns/splitter.css");
+
 @layer components {
   .sk-sidebar {
     --sk-sidebar-bg: var(--color-bg-surface);
@@ -265,47 +268,24 @@
   /*
    * THE RESIZE HANDLE, a window splitter that lives INSIDE the panel.
    *
-   * Inside, and not straddling the border, because the root clips (`overflow: hidden`, which is what
-   * makes the collapsed rail cut its labels): half a handle hanging past the edge would simply not
-   * be there. It rides over the panel's own inline gutter, so the strip it covers is padding rather
-   * than content, and nothing underneath it is unreachable.
-   *
-   * Quiet at rest: the hairline only paints on hover, focus or drag. An always-visible grab bar is
-   * chrome the reader has to look past on every page, for an affordance most of them use once.
+   * The bar itself — hit region, hairline, hover/focus/active colour, cursor, touch-action, reduced
+   * motion, forced colors — is `patterns/splitter.css`'s `.sk-splitter` (the contract composes it,
+   * `sidebar.ts`'s `also`), the same class Treegrid's column resizer and any Table that wants one
+   * now share. What is sidebar-specific, and stays here, is PLACEMENT: inside the panel and not
+   * straddling its border, because the root clips (`overflow: hidden`, which is what makes the
+   * collapsed rail cut its labels) — half a handle hanging past the edge would simply not be there.
+   * It rides over the panel's own inline gutter, so the strip it covers is padding rather than
+   * content, and nothing underneath it is unreachable. Its hooks (`--sk-splitter-hit` etc.) are
+   * re-declared below at the sidebar's own values, the same override surface every pattern hook uses.
    */
   .sk-sidebar__resize-handle {
-    position: absolute;
+    --sk-splitter-hit: var(--sk-sidebar-resize-hit);
+    --sk-splitter-line: var(--sk-sidebar-resize-line);
+    --sk-splitter-color: var(--sk-sidebar-resize-color);
+    --sk-splitter-active-color: var(--sk-sidebar-resize-active-color);
     z-index: 1;
-    inset-block: 0;
-    inset-inline-end: 0;
-    inline-size: var(--sk-sidebar-resize-hit);
-    cursor: col-resize;
-    /* The gesture is ours. Without this a drag on a touch screen scrolls the page instead. */
-    touch-action: none;
   }
 
-  .sk-sidebar__resize-handle::before {
-    content: "";
-    position: absolute;
-    inset-block: 0;
-    inset-inline-end: 0;
-    inline-size: var(--sk-sidebar-resize-line);
-    background: transparent;
-    transition: background-color var(--motion-feedback-duration) var(--motion-feedback-easing);
-  }
-
-  .sk-sidebar__resize-handle:hover::before {
-    background: var(--sk-sidebar-resize-color);
-  }
-
-  .sk-sidebar__resize-handle:focus-visible {
-    /* Inset, for the same clipping reason as the handle itself: an outline drawn outside a strip
-     * flush with the panel edge is cut in half by the root's `overflow: hidden`. */
-    outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: calc(var(--focus-ring-offset) * -1);
-  }
-
-  .sk-sidebar__resize-handle:focus-visible::before,
   .sk-sidebar[data-resizing] .sk-sidebar__resize-handle::before {
     background: var(--sk-sidebar-resize-active-color);
   }
@@ -313,19 +293,6 @@
   /* A collapsed rail has no width to negotiate: the trigger is what widens it again. */
   .sk-sidebar[data-state="collapsed"] .sk-sidebar__resize-handle {
     display: none;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .sk-sidebar__resize-handle::before {
-      transition: none;
-    }
-  }
-
-  @media (forced-colors: active) {
-    /* The state layer and the accent both drop out, so the edge needs a real border to exist at all. */
-    .sk-sidebar__resize-handle::before {
-      background: CanvasText;
-    }
   }
 
   .sk-sidebar__trigger {

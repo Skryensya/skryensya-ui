@@ -6,6 +6,7 @@ import {
   type SidebarOptions,
   type SidebarResizeChangeDetails,
 } from "@skryensya/core/sidebar";
+import { hasCrossedDragThreshold, resolveSplitterKey, splitterDirectionSign } from "@skryensya/core/splitter";
 import {
   createContext,
   forwardRef,
@@ -27,12 +28,6 @@ import {
 import { useStoredPreference } from "./storage.js";
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
-
-/** Kept in step with the vanilla binding: one arrow of travel, and the coarse one Shift asks for. */
-const KEYBOARD_STEP = 16;
-const KEYBOARD_STEP_COARSE = 64;
-/** How far a press has to travel before it counts as a drag rather than a click. */
-const DRAG_THRESHOLD = 4;
 
 type SidebarContextValue = {
   collapsed: boolean;
@@ -270,7 +265,10 @@ export const SidebarResizeHandle = forwardRef<HTMLDivElement, SidebarResizeHandl
     }, []);
 
     const towardWider = useCallback(
-      () => (rootRef.current && getComputedStyle(rootRef.current).direction === "rtl" ? -1 : 1),
+      () =>
+        splitterDirectionSign(
+          rootRef.current && getComputedStyle(rootRef.current).direction === "rtl" ? "rtl" : "ltr",
+        ),
       [rootRef],
     );
 
@@ -316,44 +314,42 @@ export const SidebarResizeHandle = forwardRef<HTMLDivElement, SidebarResizeHandl
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={percent}
-        className={cx(sidebarParts.resizeHandle, className)}
+        className={cx(`${sidebarParts.resizeHandle} sk-splitter`, className)}
         onDoubleClick={reset}
         onKeyDown={(event: ReactKeyboardEvent<HTMLDivElement>) => {
           onKeyDown?.(event);
           if (event.defaultPrevented) return;
 
-          const step = event.shiftKey ? KEYBOARD_STEP_COARSE : KEYBOARD_STEP;
+          const action = resolveSplitterKey(event);
 
-          switch (event.key) {
-            case "ArrowLeft":
-              adjust((from) => from - step * towardWider());
-              break;
-            case "ArrowRight":
-              adjust((from) => from + step * towardWider());
+          switch (action.kind) {
+            case "delta":
+              adjust((from) => from + action.delta * towardWider());
               break;
             // The ends of the travel: overshoot and let `clamp()` land it, so neither binding needs
             // to know where the ends are.
-            case "Home":
+            case "home":
               adjust(() => 0);
               break;
-            case "End":
+            case "end":
               adjust(() => 100000);
               break;
-            case "Enter":
+            case "reset":
               event.preventDefault();
               reset();
               return;
-            default:
+            case "none":
               return;
           }
 
           event.preventDefault();
           commit();
         }}
-        onLostPointerCapture={() => {
+        onLostPointerCapture={(event: ReactPointerEvent<HTMLDivElement>) => {
           const drag = dragRef.current;
           if (!drag) return;
           dragRef.current = null;
+          event.currentTarget.removeAttribute("data-dragging");
           // A press that never became a drag ends here: nothing moved, so there is nothing to
           // announce and nothing to remember.
           if (!drag.dragging) return;
@@ -379,13 +375,14 @@ export const SidebarResizeHandle = forwardRef<HTMLDivElement, SidebarResizeHandl
           if (!drag || !root || drag.pointerId !== event.pointerId) return;
 
           if (!drag.dragging) {
-            if (Math.abs(event.clientX - drag.startX) < DRAG_THRESHOLD) return;
+            if (!hasCrossedDragThreshold(drag.startX, event.clientX)) return;
             // The gesture is a drag. Measure from HERE, so the width does not jump by the slop.
             boundsRef.current = measureBounds(root);
             drag.dragging = true;
             drag.startX = event.clientX;
             drag.startWidth = settled();
             root.setAttribute("data-resizing", "");
+            event.currentTarget.setAttribute("data-dragging", "");
           }
 
           apply(drag.startWidth + (event.clientX - drag.startX) * towardWider());

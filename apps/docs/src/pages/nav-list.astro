@@ -2,7 +2,7 @@
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import ComponentPreview from "../components/ComponentPreview.astro";
-import { navListTree } from "../demos/nav-list";
+import { navListCollapsibleTree, navListTree } from "../demos/nav-list";
 import { getLocale, useTranslations } from "../i18n";
 import { probeProp, slugId, tokens } from "../lib/tokens";
 import CopyCells from "../components/CopyCells.astro";
@@ -75,6 +75,26 @@ const t = useTranslations(getLocale(Astro.url));
     <em>state-change</em>, y el sidebar los re-declara con su intención de collapse: así los labels se
     desvanecen en el mismo tiempo en que se mueve el ancho. Re-declarar el hook de un pattern es
     exactamente para lo que existe un hook, el host nunca toca su markup.
+  </p>
+
+  <h2>Grupo colapsable</h2>
+  <p>
+    <code>NavListGroup</code> acepta <code>collapsible</code>: la etiqueta pasa de <code>&lt;div&gt;</code>
+    (nada que activar) a <code>&lt;button&gt;</code> con <code>aria-expanded</code>/<code>aria-controls</code>.
+    No es <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> nativo — a diferencia del resto de los
+    disclosures de este sistema — porque el propio ejemplo de referencia de WAI-ARIA para el patrón de
+    <strong>navegación</strong> colapsable usa un botón con ARIA, no el elemento nativo.
+  </p>
+  <ComponentPreview
+    tree={navListCollapsibleTree(t, { settings: "/ajustes", billing: "/facturacion" })}
+    label={t("demo.navList.collapsibleLabel")}
+    measure="14rem"
+  />
+  <p>
+    <kbd class="sk-kbd">Enter</kbd>/<kbd class="sk-kbd">Espacio</kbd> alternan el grupo — gratis, es un
+    botón nativo. <kbd class="sk-kbd">Escape</kbd> lo cierra y devuelve el foco al trigger, sin importar
+    en qué link de adentro esté el foco: es el único requisito de teclado que el patrón exige, el resto
+    (flechas, Home/End) queda explícitamente opcional según el propio texto normativo de WAI.
   </p>
 
   <h2>Instalar</h2>

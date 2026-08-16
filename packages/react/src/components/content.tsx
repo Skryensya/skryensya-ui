@@ -63,6 +63,7 @@ export function Toast({
   return (
     <div
       {...props}
+      aria-atomic="true"
       aria-live={liveRegion.ariaLive}
       className={cx(contentParts.toast, className)}
       data-dismissible={hasDismiss ? "" : undefined}

@@ -29,6 +29,7 @@ describe("Toast Vanilla contracts", () => {
 
     expect(root.getAttribute("role")).toBe("alert");
     expect(root.getAttribute("aria-live")).toBe("assertive");
+    expect(root.getAttribute("aria-atomic")).toBe("true");
     expect(root.parentElement?.getAttribute("aria-live")).toBe("polite");
     const dismiss = getByRole(root, "button", { name: "Dismiss notification" });
     expect(dismiss.getAttribute("type")).toBe("button");

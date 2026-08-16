@@ -148,19 +148,19 @@ export const comboboxContract = {
       template: {
         element: "div",
         part: "root",
-        also: ["sk-field"],
+        also: ["sk-form-field"],
         host: true,
         children: [
           {
             element: "label",
             part: "label",
-            also: ["sk-field__label"],
+            also: ["sk-form-field__label"],
             mount: "data-sk-combobox-label",
             slot: "label",
           },
           {
             element: "div",
-            also: ["sk-field__hint"],
+            also: ["sk-form-field__hint"],
             mount: "data-sk-combobox-hint",
             slot: "hint",
             whenGiven: "hint",
@@ -216,7 +216,7 @@ export const comboboxContract = {
           },
           {
             element: "div",
-            also: ["sk-field__error"],
+            also: ["sk-form-field__error"],
             mount: "data-sk-combobox-error",
             slot: "error",
             whenGiven: "error",

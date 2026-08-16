@@ -414,10 +414,20 @@ function connect(root: HTMLElement): () => void {
     if (status.textContent !== announcement) status.textContent = announcement;
     renderSelectedItems();
     for (const candidate of dirtyItems(api)) {
-      applyZagProps(
-        candidate.node,
-        api.getItemProps({ item: candidate.item }) as DomProps,
-      );
+      const itemProps = api.getItemProps({ item: candidate.item }) as DomProps;
+      /*
+       * Zag's `aria-selected` tracks the COMMITTED value, not the row under `aria-activedescendant`.
+       * The WAI reference implementation (`combobox-autocomplete.js`, `setCurrentOptionStyle`) does
+       * the opposite for single-select: it moves `aria-selected="true"` onto whichever option is
+       * highlighted as you arrow through the list, before Enter commits anything — that is what
+       * "visually indicated as the currently selected value" means in the APG's roles/states table.
+       * Multiple stays on Zag's default: with chips, `aria-selected` genuinely means "part of the
+       * chosen set" (aria-multiselectable="true"), a state the base combobox pattern does not cover.
+       */
+      if (!multiple)
+        itemProps["aria-selected"] =
+          candidate.item.value === api.highlightedValue ? "true" : undefined;
+      applyZagProps(candidate.node, itemProps);
       if (candidate.text)
         applyZagProps(
           candidate.text,

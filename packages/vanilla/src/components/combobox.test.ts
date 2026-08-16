@@ -127,4 +127,45 @@ describe("Combobox Vanilla contracts", () => {
     expect(content.dataset.highlightSource).toBe("pointer");
     expect(root.hasAttribute("data-virtual-focus")).toBe(false);
   });
+
+  it("moves aria-selected onto the highlighted option before Enter commits anything", async () => {
+    const root = mount(markup);
+    const { input, items } = parts(root);
+
+    fireEvent.click(input);
+    // Nothing chosen yet, nothing highlighted yet: no option should claim to be "selected".
+    for (const option of items) expect(option.hasAttribute("aria-selected")).toBe(false);
+
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+
+    // Matches the WAI reference implementation (`combobox-autocomplete.js`,
+    // `setCurrentOptionStyle`): the option under `aria-activedescendant` carries
+    // `aria-selected="true"` while the user is only previewing it, not the previously chosen value.
+    await waitFor(() => expect(items[0].getAttribute("aria-selected")).toBe("true"));
+    expect(items[1].hasAttribute("aria-selected")).toBe(false);
+
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+
+    await waitFor(() => expect(items[1].getAttribute("aria-selected")).toBe("true"));
+    expect(items[0].hasAttribute("aria-selected")).toBe(false);
+  });
+
+  it("keeps aria-selected tied to the chosen chips when multiple, not the highlight", async () => {
+    const root = mount(markup.replace("data-sk-combobox>", "data-sk-combobox data-multiple>"));
+    const { input, items } = parts(root);
+
+    fireEvent.click(input);
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+
+    // Nothing chosen yet: the highlight alone must not produce aria-selected in multiple mode
+    // either — only single-select borrows the highlight for it.
+    await waitFor(() => expect(items[0].hasAttribute("data-highlighted")).toBe(true));
+    expect(items[0].hasAttribute("aria-selected")).toBe(false);
+
+    fireEvent.click(items[0]);
+
+    // Choosing it as a chip is what turns aria-selected on: with chips, it means "part of the
+    // chosen set" (`aria-multiselectable="true"`), not "currently previewed".
+    await waitFor(() => expect(items[0].getAttribute("aria-selected")).toBe("true"));
+  });
 });

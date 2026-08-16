@@ -7,8 +7,25 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "f9127df5c1467f9f"
+surface: "4956b78cd51d4ebd"
 entries:
+  - date: 2026-08-14
+    kind: feature
+    target: headingLevel
+    es:
+      title: Cada trigger se anuncia en el outline de la página
+      body: >-
+        <code>Accordion.Trigger</code> tiene una nueva opción <code>headingLevel</code> (por
+        defecto <code>3</code>): envuelve el botón en un nodo <code>role="heading"</code> con
+        <code>aria-level</code>, para que un lector de pantalla que navega por encabezados
+        encuentre cada sección. El WAI-ARIA APG lo pide; ningún trigger lo tenía hasta ahora.
+    en:
+      title: Every trigger announces itself on the page outline
+      body: >-
+        <code>Accordion.Trigger</code> has a new <code>headingLevel</code> option (default
+        <code>3</code>): it wraps the button in a <code>role="heading"</code> node with
+        <code>aria-level</code>, so a screen reader navigating by heading finds each section. The
+        WAI-ARIA APG asks for this; no trigger had it before.
   - date: 2026-08-04
     kind: feature
     target: valueChange

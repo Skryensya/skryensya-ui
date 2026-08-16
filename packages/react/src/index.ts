@@ -15,14 +15,22 @@ export { Pagination } from "./components/pagination.js";
 export type { PaginationProps } from "./components/pagination.js";
 export { Progress } from "./components/progress.js";
 export type { ProgressProps } from "./components/progress.js";
+export { Meter } from "./components/meter.js";
+export type { MeterProps } from "./components/meter.js";
+export { DataGrid, DataGridRow, DataGridCell } from "./components/data-grid.js";
+export type { DataGridProps, DataGridRowProps, DataGridCellProps } from "./components/data-grid.js";
+export { Feed, FeedArticle } from "./components/feed.js";
+export type { FeedProps, FeedArticleProps } from "./components/feed.js";
+export { Menubar, MenubarItem, MenubarMenu, MenubarMenuItem } from "./components/menubar.js";
+export type { MenubarProps, MenubarItemProps, MenubarMenuProps, MenubarMenuItemProps } from "./components/menubar.js";
 export { Loader } from "./components/loader.js";
 export type { LoaderProps } from "./components/loader.js";
 export { Placeholder } from "./components/placeholder.js";
 export type { PlaceholderProps } from "./components/placeholder.js";
 export { SegmentedControl } from "./components/segmented.js";
 export type { SegmentedControlProps } from "./components/segmented.js";
-export { Slider } from "./components/slider.js";
-export type { SliderProps } from "./components/slider.js";
+export { Slider, SliderRange } from "./components/slider.js";
+export type { SliderProps, SliderRangeProps } from "./components/slider.js";
 export { Stat } from "./components/stat.js";
 export type { StatProps } from "./components/stat.js";
 export {
@@ -67,12 +75,10 @@ export { useHotkey } from "./components/hotkey.js";
 export type { UseHotkeyOptions } from "./components/hotkey.js";
 export { Kbd } from "./components/kbd.js";
 export type { KbdProps } from "./components/kbd.js";
-export { Field, Input, Textarea } from "./components/input.js";
-export type {
-  FieldProps,
-  InputProps,
-  TextareaProps,
-} from "./components/input.js";
+export { FormField } from "./components/form-field.js";
+export type { FormFieldProps } from "./components/form-field.js";
+export { Input, Textarea } from "./components/input.js";
+export type { InputProps, TextareaProps } from "./components/input.js";
 export { Box, Grid, Inline, LayoutGrid, Stack, Wrapper } from "./components/layout.js";
 export type {
   BoxProps,

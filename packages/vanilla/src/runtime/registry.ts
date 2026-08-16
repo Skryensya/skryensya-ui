@@ -82,6 +82,11 @@ const registrations: readonly Registration[] = [
       (await import("../components/expandable-tile.js")).mountExpandableTile,
   },
   {
+    selector: "[data-sk-checkbox-group]",
+    load: async () =>
+      (await import("../components/checkbox-group.js")).mountCheckboxGroup,
+  },
+  {
     selector: "[data-sk-tile-checkbox]",
     load: async () =>
       (await import("../components/tile-checkbox.js")).mountTileCheckbox,
@@ -152,6 +157,38 @@ const registrations: readonly Registration[] = [
   {
     selector: "[data-sk-toc]",
     load: async () => (await import("../components/toc.js")).mountToc,
+  },
+  {
+    selector: "[data-sk-treegrid]",
+    load: async () => (await import("../components/treegrid.js")).mountTreegrid,
+  },
+  {
+    // Scoped to the option's own attribute, not a `data-sk-table` marker every table would carry —
+    // see `components/table.ts`'s own banner comment for why. `:not([data-sk-treegrid])` matters: a
+    // resizable Treegrid is ALSO a `.sk-table` with `data-resizable-columns` (Treegrid's `also:
+    // ["sk-table"]`), and without this both selectors would match it and mount it twice.
+    selector: "table.sk-table[data-resizable-columns]:not([data-sk-treegrid])",
+    load: async () => (await import("../components/table.js")).mountTable,
+  },
+  {
+    selector: "[data-sk-slider-range]",
+    load: async () => (await import("../components/slider-range.js")).mountSliderRange,
+  },
+  {
+    selector: "[data-sk-data-grid]",
+    load: async () => (await import("../components/data-grid.js")).mountDataGrid,
+  },
+  {
+    selector: "[data-sk-nav-list-group-trigger]",
+    load: async () => (await import("../components/nav-list.js")).mountNavListGroup,
+  },
+  {
+    selector: "[data-sk-menubar]",
+    load: async () => (await import("../components/menubar.js")).mountMenubar,
+  },
+  {
+    selector: "[data-sk-meter]",
+    load: async () => (await import("../components/meter.js")).mountMeter,
   },
 ];
 

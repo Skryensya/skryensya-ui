@@ -27,6 +27,10 @@
       "types": "./src/anchored.ts",
       "default": "./src/anchored.ts"
     },
+    "./icon-toggle": {
+      "types": "./src/icon-toggle.ts",
+      "default": "./src/icon-toggle.ts"
+    },
     "./badge": {
       "types": "./src/badge.ts",
       "default": "./src/badge.ts"
@@ -123,9 +127,9 @@
       "types": "./src/machines.ts",
       "default": "./src/machines.ts"
     },
-    "./field": {
-      "types": "./src/field.ts",
-      "default": "./src/field.ts"
+    "./form-field": {
+      "types": "./src/form-field.ts",
+      "default": "./src/form-field.ts"
     },
     "./input": {
       "types": "./src/input.ts",
@@ -203,6 +207,10 @@
       "types": "./src/sidebar.ts",
       "default": "./src/sidebar.ts"
     },
+    "./splitter": {
+      "types": "./src/splitter.ts",
+      "default": "./src/splitter.ts"
+    },
     "./skip-link": {
       "types": "./src/skip-link.ts",
       "default": "./src/skip-link.ts"
@@ -222,6 +230,10 @@
     "./table": {
       "types": "./src/table.ts",
       "default": "./src/table.ts"
+    },
+    "./treegrid": {
+      "types": "./src/treegrid.ts",
+      "default": "./src/treegrid.ts"
     },
     "./tile": {
       "types": "./src/tile.ts",
@@ -311,13 +323,29 @@
       "types": "./src/menu.ts",
       "default": "./src/menu.ts"
     },
-    "./menu-intent-overlay": {
-      "types": "./src/menu-intent-overlay.ts",
-      "default": "./src/menu-intent-overlay.ts"
+    "./menu-safe-area": {
+      "types": "./src/menu-safe-area.ts",
+      "default": "./src/menu-safe-area.ts"
     },
-    "./menu-adjacent-grace": {
-      "types": "./src/menu-adjacent-grace.ts",
-      "default": "./src/menu-adjacent-grace.ts"
+    "./menu-intent-readout": {
+      "types": "./src/menu-intent-readout.ts",
+      "default": "./src/menu-intent-readout.ts"
+    },
+    "./menubar": {
+      "types": "./src/menubar.ts",
+      "default": "./src/menubar.ts"
+    },
+    "./meter": {
+      "types": "./src/meter.ts",
+      "default": "./src/meter.ts"
+    },
+    "./data-grid": {
+      "types": "./src/data-grid.ts",
+      "default": "./src/data-grid.ts"
+    },
+    "./feed": {
+      "types": "./src/feed.ts",
+      "default": "./src/feed.ts"
     },
     "./number-field": {
       "types": "./src/number-field.ts",

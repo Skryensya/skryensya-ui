@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { splitButtonMenuItems } from "./data/split-button";
 
 /*
  * The default action plus its variants, and the Menu half is a real Menu, composed rather than
@@ -17,10 +18,7 @@ export const splitButtonTree = (t: Translate): UsageTree => ({
       options: { label: t("demo.splitButton.menuLabel") },
       slots: {
         trigger: { contract: "icon", signature: "Icon", options: { name: "chevron-down" } },
-        items: [
-          { options: { value: "save-copy" }, slots: { label: t("demo.splitButton.copy") } },
-          { options: { value: "save-template" }, slots: { label: t("demo.splitButton.template") } },
-        ],
+        items: splitButtonMenuItems(t),
       },
     },
   },

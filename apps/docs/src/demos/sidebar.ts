@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { sidebarFileNodes } from "./data/sidebar";
 
 /*
  * A collapsible shell with NavList as its guest, and enough adjacent content to make the rail legible.
@@ -129,31 +130,7 @@ export const sidebarResizableTree = (t: Translate): UsageTree => ({
             slots: {
               branchIcon: { contract: "icon", signature: "Icon", options: { name: "folder", size: "sm" } },
               leafIcon: { contract: "icon", signature: "Icon", options: { name: "file", size: "sm" } },
-              items: [
-                {
-                  options: { id: "src" },
-                  slots: {
-                    label: "src",
-                    children: [
-                      {
-                        options: { id: "src/components" },
-                        slots: {
-                          label: "components",
-                          children: [
-                            { options: { id: "src/components/button.tsx" }, slots: { label: "button.tsx" } },
-                            {
-                              options: { id: "src/components/long" },
-                              slots: { label: t("demo.sidebar.longFile") },
-                            },
-                          ],
-                        },
-                      },
-                      { options: { id: "src/index.ts" }, slots: { label: "index.ts" } },
-                    ],
-                  },
-                },
-                { options: { id: "README.md" }, slots: { label: "README.md" } },
-              ],
+              items: sidebarFileNodes(t),
             },
           },
         },

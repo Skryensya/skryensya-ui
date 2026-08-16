@@ -1,10 +1,11 @@
 {
-  "generatedAt": "2026-08-11T16:01:41.300Z",
+  "generatedAt": "2026-08-16T22:23:45.773Z",
   "results": {
     "packages/react/src/components/accordion.test.tsx": {
       "keeps exactly one item open in single mode": "passed",
       "allows independent open items in multiple mode": "passed",
-      "renders and closes a single Accordion item": "passed"
+      "renders and closes a single Accordion item": "passed",
+      "wraps each trigger in a heading so it is reachable by heading navigation": "passed"
     },
     "packages/vanilla/src/components/accordion.svelte.test.ts": {
       "keeps exactly one item open in single mode and emits": "passed",
@@ -66,6 +67,12 @@
       "snaps to a dot and reports the page on the change event": "passed",
       "accepts sk-carousel-goto as the snap command": "passed",
       "gives an autoplaying carousel a pause control, and none to a carousel that does not move on its own": "passed",
+      "pauses autoplay on hover and resumes it when the mouse leaves": "passed",
+      "pauses autoplay on keyboard focus and resumes it on blur": "passed",
+      "does not resume on mouse leave while focus is still inside": "passed",
+      "never lets hover or focus override an explicit stop from the trigger": "passed",
+      "cancels a pending hover-resume when the user explicitly stops mid-hover": "passed",
+      "pauses on focus landing INSIDE a slide's own content, not only on the prev/next chrome": "passed",
       "draws no controls at all when asked for none, and still snaps per slide": "passed",
       "drags with a mouse by default, because a vertical wheel scrolls the page and not the track": "passed",
       "opts out of mouse drag with data-mouse-drag=off, for slides whose text is selectable": "passed",
@@ -99,14 +106,18 @@
       "keeps the typed search when the field is left without a selection": "passed",
       "writes the chosen label and reopens on the whole list": "passed",
       "spends the query on each chip when multiple": "passed",
-      "marks the highlight as keyboard-driven so the option can carry the focus ring": "passed"
+      "marks the highlight as keyboard-driven so the option can carry the focus ring": "passed",
+      "moves aria-selected onto the highlighted option before Enter commits anything": "passed",
+      "keeps aria-selected tied to the chosen chips when multiple, not the highlight": "passed"
     },
     "packages/vanilla/src/components/combobox.test.ts": {
       "keeps the typed search when the field is left without a selection": "passed",
       "writes the chosen label and reopens on the whole list": "passed",
       "hands the filtered collection to the machine before it renders": "passed",
       "spends the query on each chip when multiple": "passed",
-      "marks the highlight as keyboard-driven so the option can carry the focus ring": "passed"
+      "marks the highlight as keyboard-driven so the option can carry the focus ring": "passed",
+      "moves aria-selected onto the highlighted option before Enter commits anything": "passed",
+      "keeps aria-selected tied to the chosen chips when multiple, not the highlight": "passed"
     },
     "packages/vanilla/src/components/component-preview.test.ts": {
       "switches binding and nested Vanilla source panels idempotently": "passed",
@@ -114,8 +125,7 @@
       "hands the stage height to the reader on drag and back to the content on double click": "passed",
       "keeps a reader-set height across a stage reload": "passed",
       "reloads the srcdoc stage from the authored document": "passed",
-      "cycles free → tablet → mobile → free on click, marking the stage and clearing it for free": "passed",
-      "paints the toggle's accessible name from its per-instance label attributes": "passed",
+      "selects a preset directly on click, marking the stage and clearing it for free": "passed",
       "takes the height back from a reader drag, inline style included": "passed",
       "honours a preset authored as the initial value": "passed",
       "mounts a preview that offers no presets": "passed",
@@ -144,11 +154,15 @@
       "keeps a caption beside the src media": "passed"
     },
     "packages/react/src/components/input.test.tsx": {
+      "stays a valid control outside a FormField": "passed",
+      "gives a textarea the same appearance contract as an input": "passed",
+      "writes the control height to data-size, leaving the native size attribute alone": "passed"
+    },
+    "packages/react/src/components/form-field.test.tsx": {
       "wires the label, hint and error to the control it wraps": "passed",
       "treats the error message as what makes the field invalid": "passed",
       "passes required and disabled down to the native control": "passed",
-      "stays a valid control outside a Field": "passed",
-      "gives a textarea the same appearance contract as an input": "passed",
+      "wires a textarea exactly as it wires an input": "passed",
       "passes axe on a field with a hint and an error": "passed"
     },
     "packages/react/src/components/kbd.test.tsx": {
@@ -227,7 +241,14 @@
     },
     "packages/react/src/components/table.test.tsx": {
       "renders the native table structure with every stable part class": "passed",
-      "defaults headers to columns while preserving explicit row scope": "passed"
+      "defaults headers to columns while preserving explicit row scope": "passed",
+      "never renders a column resizer unless `resizableColumns` is on": "passed",
+      "renders one resizer per column boundary — never after the last column, never on a body row-header": "passed",
+      "names each resizer from the shared label plus its OWN column header": "passed",
+      "Left/Right resize by a step, Shift+Left/Right by the coarse step": "passed",
+      "Home/End jump to the resized pair's min/max extent, total conserved": "passed",
+      "Enter (and double-click) resets the pair to an even split": "passed",
+      "reports its position as a percentage of the pair's travel, not a raw pixel count": "passed"
     },
     "packages/react/src/components/tabs.test.tsx": {
       "connects the selected tab with its labelled panel": "passed",
@@ -276,7 +297,10 @@
       "collects both ends of a range": "passed",
       "escalates the view instead of offering two selects": "passed",
       "turns the month with the header's own triggers": "passed",
-      "marks a disabled calendar as one": "passed"
+      "marks a disabled calendar as one": "passed",
+      "names every accessible string in Spanish by default, not Zag's own English": "passed",
+      "switches every accessible string to English when the locale says so": "passed",
+      "names the year-view cancel trigger in the authored locale too": "passed"
     },
     "packages/vanilla/src/components/date-picker.svelte.test.ts": {
       "refuses markup that is missing a part it must patch": "passed",
@@ -287,7 +311,9 @@
       "shows the clear control only once there is a date to clear": "passed",
       "works with no clear control authored at all": "passed",
       "respects the authored range and flags": "passed",
-      "names the field for a form under the name the markup gave it": "passed"
+      "names the field for a form under the name the markup gave it": "passed",
+      "names the trigger and the popover in Spanish by default, not Zag's own English": "passed",
+      "switches the trigger and popover names to English when the locale says so": "passed"
     },
     "packages/vanilla/src/components/time-field.svelte.test.ts": {
       "mounts once and names the group from the authored label": "passed",
@@ -312,6 +338,8 @@
       "omits the footer form when there is nothing to put in it": "passed",
       "opts into Dialog Vaul with the enhancer's own mount point": "passed",
       "keeps a plain dialog free of the sheet's attributes": "passed",
+      "becomes an alert dialog with role, aria-modal and aria-describedby wired to the body": "passed",
+      "keeps a plain dialog free of the alert dialog's role and description wiring": "passed",
       "forwards the platform's own open attribute": "passed"
     },
     "packages/react/src/components/vaul.test.tsx": {
@@ -338,7 +366,8 @@
       "RTL mirrors only the inline edges": "passed"
     },
     "packages/react/src/components/select.test.tsx": {
-      "uses the Zag select machine for popup selection and form value": "passed"
+      "uses the Zag select machine for popup selection and form value": "passed",
+      "moves aria-selected onto the highlighted option before Enter commits anything": "passed"
     },
     "packages/vanilla/src/components/select.test.ts": {
       "drives the machine over authored markup: ARIA, selection and the value text": "passed",
@@ -347,7 +376,8 @@
       "keeps the id the consumer authored, rather than renaming it": "passed",
       "keeps an authored hidden select in sync for forms": "passed",
       "refuses a hidden select that drifted from the items": "passed",
-      "mounts from authored data attributes, and mounting twice is idempotent": "passed"
+      "mounts from authored data attributes, and mounting twice is idempotent": "passed",
+      "moves aria-selected onto the highlighted option before Enter commits anything": "passed"
     },
     "packages/react/src/components/slider.test.tsx": {
       "stays a native range input and reports value changes as numbers": "passed"
@@ -394,7 +424,8 @@
       "moves aria-current as headings enter the band": "passed",
       "keeps the last answer when nothing is in the band": "passed",
       "does not spy on a single-entry index": "passed",
-      "opens as a rail and takes the summary out of the tab order where there is room": "passed",
+      "stays a native disclosure unless its consumer opts into a rail": "passed",
+      "opens as an inert rail when its consumer opts in": "passed",
       "disconnects the spy on unmount": "passed",
       "renders an item icon as decoration beside its label": "passed"
     },
@@ -408,6 +439,143 @@
       "leaves a disabled node out of the selection": "passed",
       "does nothing without an authored tree to scan": "passed",
       "stops the machine when the mount is destroyed": "passed"
+    },
+    "packages/vanilla/src/components/treegrid.test.ts": {
+      "mounts once and hides the collapsed branch's descendant on connect": "passed",
+      "gives exactly one row a tab stop on mount — the first visible row": "passed",
+      "Right Arrow on a collapsed branch's row expands it and reveals its child, without moving focus": "passed",
+      "Left Arrow on an expanded branch's row collapses it and hides its child": "passed",
+      "Right Arrow on an already-expanded row enters its first cell; Left Arrow returns to the row": "passed",
+      "Down Arrow skips a hidden (collapsed-away) row entirely": "passed",
+      "Enter toggles a focused branch row and activates a focused leaf row": "passed",
+      "clicking a branch's first cell toggles it and moves focus to the row": "passed",
+      "clicking a non-first cell just moves focus there, without toggling": "passed",
+      "Home/End (row focus) jump to the first/last VISIBLE row": "passed",
+      "never puts `sk-interactive` on the <tr> itself — its state layer breaks table column alignment": "passed",
+      "inserts a decorative disclosure button into a branch row's first cell, never a leaf's": "passed",
+      "clicking the disclosure button itself toggles the row, same as clicking the cell": "passed",
+      "never inserts a column resizer unless `data-resizable-columns` is authored": "passed",
+      "inserts one resizer per column boundary — never after the last column": "passed",
+      "names each resizer from the shared label plus its OWN column header": "passed",
+      "a press that never travels resizes nothing": "passed",
+      "dragging redistributes width between exactly the resized pair, total conserved": "passed",
+      "marks the resizer `data-dragging` for the length of the gesture only": "passed",
+      "Left/Right resize by a step, Shift+Left/Right by the coarse step": "passed",
+      "Home/End jump to the resized pair's min/max extent": "passed",
+      "Enter (and double-click) resets the pair to an even split": "passed",
+      "reports its position as a percentage of the pair's travel, not a raw pixel count": "passed"
+    },
+    "packages/react/src/components/treegrid.test.tsx": {
+      "names the grid, sets role=treegrid, and reads each row's authored hierarchy attributes": "passed",
+      "honors each row's own initial `expanded`, and hides only a collapsed branch's descendant": "passed",
+      "gives exactly one row a tab stop initially — the first row": "passed",
+      "Right Arrow on a collapsed branch expands it and reveals the child, without moving focus": "passed",
+      "Left Arrow on an expanded branch collapses it and hides its children": "passed",
+      "Down Arrow from a collapsed branch's row skips its hidden child entirely": "passed",
+      "Enter activates a focused leaf row": "passed",
+      "clicking a branch's first cell toggles it and reports the row's own value": "passed",
+      "clicking a non-first cell just moves focus, without toggling": "passed",
+      "never puts `sk-interactive` on the <tr> itself — its state layer breaks table column alignment": "passed",
+      "renders a decorative disclosure button in a branch row's first cell, never a leaf's": "passed",
+      "clicking the disclosure button itself toggles the row, same as clicking the cell": "passed",
+      "never renders a column resizer unless `resizableColumns` is on": "passed",
+      "renders one resizer per column boundary — never after the last column": "passed",
+      "names each resizer from the shared label plus its OWN column header": "passed",
+      "Left/Right resize by a step, Shift+Left/Right by the coarse step": "passed",
+      "Home/End jump to the resized pair's min/max extent, total conserved": "passed",
+      "Enter (and double-click) resets the pair to an even split": "passed",
+      "reports its position as a percentage of the pair's travel, not a raw pixel count": "passed"
+    },
+    "packages/vanilla/src/components/toolbar.test.ts": {
+      "sets role and aria-orientation on mount": "passed",
+      "Right/Left move between controls, skipping a NATIVELY disabled one (the browser refuses it focus regardless)": "passed",
+      "loops from the last control back to the first when data-loop-focus is set": "passed",
+      "does not loop when data-loop-focus is absent": "passed",
+      "Home/End jump to the first/last control": "passed",
+      "treats a nested composite (radiogroup) as a SINGLE stop, landing on whichever member currently owns tabindex=0": "passed",
+      "defers to a composite child that already handled the key itself (defaultPrevented)": "passed"
+    },
+    "packages/react/src/components/toolbar.test.tsx": {
+      "sets role and aria-orientation": "passed",
+      "forwards arbitrary attrs to the root, same as ToolbarGroup already did — vanilla always had this via the emitted template": "passed",
+      "Right/Left move between controls, skipping a NATIVELY disabled one": "passed",
+      "loops by default from the last control back to the first": "passed",
+      "does not loop when loopFocus is false": "passed",
+      "Home/End jump to the first/last control": "passed",
+      "treats a nested composite (radiogroup) as a SINGLE stop — the bug this session found and fixed": "passed",
+      "defers to a composite child that already handled the key itself (defaultPrevented) — the other half of the bug": "passed"
+    },
+    "packages/vanilla/src/components/slider-range.test.ts": {
+      "bounds each thumb's max/min at the other's CURRENT value on mount": "passed",
+      "paints the fill bar's start/end fractions from each thumb's value": "passed",
+      "re-narrows the OTHER thumb's bound after a real drag, without losing the true range ends": "passed",
+      "never lets one thumb's value exceed the other — native min/max clamps a direct value write past the bound": "passed"
+    },
+    "packages/react/src/components/slider-range.test.tsx": {
+      "names each thumb distinctly and starts at the authored defaults": "passed",
+      "bounds each thumb's max/min at the other's CURRENT value": "passed",
+      "re-bounds the OTHER thumb after a value changes, reporting both values on change": "passed"
+    },
+    "packages/react/src/components/meter.test.tsx": {
+      "sets role=meter with the three required aria-value attributes": "passed",
+      "honors a non-zero min when painting the fill, unlike Progress": "passed",
+      "passes through aria-valuetext when given": "passed",
+      "applies the tone data attribute, defaulting to accent": "passed",
+      "paints label and valueText beside the bar, not just announces them": "passed",
+      "paints no value text when valueText is omitted, unlike the label": "passed"
+    },
+    "packages/vanilla/src/components/data-grid.test.ts": {
+      "gives exactly one unit a tab stop on mount — the first cell": "passed",
+      "hands the roving stop to a cell's OWN interactive descendant, not the cell div around it": "passed",
+      "Down Arrow clamps into a shorter row's last real cell (ragged grid)": "passed",
+      "does not wrap past the grid's edges by default": "passed",
+      "wraps columns into the next row when data-wrap-cols is set": "passed",
+      "Home/End move within the row; Ctrl+Home/End jump the whole grid": "passed",
+      "clicking a cell moves the roving stop there": "passed"
+    },
+    "packages/react/src/components/data-grid.test.tsx": {
+      "sets role=grid/row/gridcell and names the grid": "passed",
+      "hands the roving stop to a cell's OWN interactive descendant, not the cell div": "passed",
+      "clamps into a shorter row's last real cell on vertical movement (ragged grid)": "passed",
+      "does not wrap by default": "passed",
+      "wraps columns into the next row when wrapCols is set": "passed",
+      "Home/End move within the row; Ctrl+Home/End jump the whole grid": "passed"
+    },
+    "packages/vanilla/src/components/nav-list.test.ts": {
+      "generates an id and wires aria-controls to the list, on mount": "passed",
+      "preserves an authored id instead of generating a second one": "passed",
+      "toggles aria-expanded and the list's hidden state on click": "passed",
+      "starts hidden when authored with aria-expanded=false": "passed",
+      "Enter/Space toggle it — native <button> behavior, nothing this enhancer has to wire itself": "passed",
+      "Escape closes the open dropdown from anywhere inside it and returns focus to the trigger": "passed",
+      "Escape does nothing when the dropdown is already closed": "passed"
+    },
+    "packages/react/src/components/feed.test.tsx": {
+      "sets role=feed, names it, and reflects aria-busy": "passed",
+      "each article gets role=article with aria-posinset/aria-setsize and a real labelled name": "passed",
+      "allows setSize=-1 for an undetermined total, per WAI's own allowance": "passed"
+    },
+    "packages/vanilla/src/components/menubar.test.ts": {
+      "gives exactly one top-level item a tab stop on mount, wires aria-haspopup/expanded/controls": "passed",
+      "Right/Left move between top-level items, wrapping, without opening anything": "passed",
+      "Down Arrow opens the dropdown and focuses its first item": "passed",
+      "Up Arrow opens the dropdown and focuses its LAST item": "passed",
+      "Down/Up move within an open dropdown, wrapping": "passed",
+      "moving Right/Left while a dropdown is open closes it and opens the adjacent item's dropdown": "passed",
+      "moving to the leaf item (no dropdown) while one was open just closes it — no dropdown to open": "passed",
+      "Escape closes the open dropdown and returns focus to its trigger": "passed",
+      "clicking a top-level trigger toggles its dropdown; clicking again closes it": "passed",
+      "clicking a dropdown item activates it (emits sk-menubar-activate) and closes the menu": "passed",
+      "clicking outside the menubar closes any open dropdown": "passed"
+    },
+    "packages/react/src/components/menubar.test.tsx": {
+      "sets role=menubar/menuitem, one tab stop, aria-haspopup only on dropdown items": "passed",
+      "Right/Left move between top-level items, wrapping, without opening anything": "passed",
+      "Down Arrow opens the dropdown and focuses its first item; Up focuses the last": "passed",
+      "moving Right while a dropdown is open closes it and opens the adjacent item's dropdown": "passed",
+      "Escape closes the open dropdown and returns focus to its trigger": "passed",
+      "clicking a dropdown item activates it and closes the menu, returning focus to the trigger": "passed",
+      "clicking a leaf item (no dropdown) activates it directly": "passed"
     },
     "packages/react/src/components/command-palette.test.tsx": {
       "claims nothing at rest: no options and no expanded popup": "passed",

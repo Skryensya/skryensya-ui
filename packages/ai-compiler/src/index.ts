@@ -1,4 +1,14 @@
-export { emit, emitMarkup, emitReact, EmitError, type Binding } from "./emit.js";
+export {
+  emit,
+  emitMarkup,
+  emitReact,
+  emitReactSource,
+  EmitError,
+  type Binding,
+  type ReactDataModule,
+  type ReactEmitOptions,
+  type ReactSource,
+} from "./emit.js";
 export { buildManifest, canonical, SCHEMA_VERSION, type ManifestBuild } from "./manifest.js";
 export { readOverlays, type ContractSemantics, type SignatureSemantics } from "./overlay.js";
 export { checkBindingConformance, type ConformanceProblem } from "./conformance.js";

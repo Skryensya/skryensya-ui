@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { emitMarkup, emitReact } from "./emit.js";
+import { emitMarkup, emitReact, emitReactSource } from "./emit.js";
 import { validateUsageTree } from "./validate.js";
 import type { UsageTree } from "./usage-tree.js";
 
@@ -169,6 +169,40 @@ describe("emitMarkup", () => {
     expect(chevron).not.toContain(">/<");
   });
 
+  /*
+   * The current page is never a link, even when the author gives it an `href` alongside `current`:
+   * it is the one label the trail exists to answer "where am I", never truncated or muted like an
+   * ancestor crumb. `whenItemAllGiven` is the primitive this needs — a node whose visibility
+   * depends on TWO item options both being supplied, which `whenItemGiven` (one option per node)
+   * cannot express and `whenItemEquals` cannot either (a boolean's stored value is a literal JS
+   * `true`, never the string `"true"` `equals` compares against).
+   */
+  it("keeps the current crumb as text, with aria-current, even when it also carries an href", () => {
+    const currentWithHref = emitMarkup({
+      contract: "breadcrumb",
+      signature: "Breadcrumb",
+      slots: {
+        items: [{ options: { href: "/settings", current: true }, slots: { label: "Settings" } }],
+      },
+    });
+
+    expect(currentWithHref).toContain('<span class="sk-breadcrumb__current" aria-current="page">');
+    expect(currentWithHref).not.toContain("<a");
+  });
+
+  it("keeps an ordinary linked crumb as a link, with no stray aria-current", () => {
+    const linkOnly = emitMarkup({
+      contract: "breadcrumb",
+      signature: "Breadcrumb",
+      slots: {
+        items: [{ options: { href: "/" }, slots: { label: "Home" } }],
+      },
+    });
+
+    expect(linkOnly).toContain('<a class="sk-breadcrumb__link"');
+    expect(linkOnly).not.toContain("aria-current");
+  });
+
   it("is deterministic: same tree, same bytes", () => {
     expect(emitMarkup(navigation)).toBe(emitMarkup(navigation));
   });
@@ -194,6 +228,33 @@ describe("emitMarkup", () => {
       ].join("\n"),
     );
   });
+
+  /*
+   * A slot's items each get their own line, and HTML collapses the newline between two of them into
+   * a rendered space — which is correct everywhere a text neighbour already wanted one, and wrong at
+   * a boundary that wanted none: a link glued to the comma right after it would otherwise float a
+   * space in front of the punctuation that neither side of the source wrote.
+   */
+  it("puts no space between an element and text that touches it, and keeps every space that is written", () => {
+    const paragraph: UsageTree = {
+      contract: "typography",
+      signature: "Text",
+      children: [
+        "Un párrafo con un ",
+        { contract: "typography", signature: "Link", options: { href: "/link" }, children: "enlace" },
+        ", pegado a la coma.",
+      ],
+    };
+
+    expect(emitMarkup(paragraph)).toBe(
+      [
+        '<p class="sk-text" data-tone="primary" data-size="body" data-weight="body">',
+        "  Un párrafo con un ",
+        '  <a class="sk-link sk-interactive" href="/link">enlace</a>, pegado a la coma.',
+        "</p>",
+      ].join("\n"),
+    );
+  });
 });
 
 describe("emitReact", () => {
@@ -202,9 +263,23 @@ describe("emitReact", () => {
       [
         'import { Button } from "@skryensya/react/button";',
         "",
-        '<Button variant="primary">Guardar</Button>',
+        "export function ButtonExample() {",
+        '  return <Button variant="primary">Guardar</Button>;',
+        "}",
       ].join("\n"),
     );
+  });
+
+  /*
+   * Every snippet, not only the ones with data to import. A bare expression is not a file: nothing
+   * declares it and nothing renders it, and the reader is left to know that a component goes around
+   * it — which is the thing the page is meant to be showing.
+   */
+  it("is always a component, even with nothing to hold", () => {
+    const tsx = emitReact(saveButton);
+
+    expect(tsx).toContain("export function ButtonExample() {");
+    expect(tsx).toContain("  return ");
   });
 
   it("keeps a composition three elements deep, because React renders the rest", () => {
@@ -259,19 +334,181 @@ describe("emitReact", () => {
     const tsx = emitReact(toast);
     expect(tsx).toContain(
       [
-        "<ToastRegion>",
-        "  <Toast",
-        "    dismissible",
-        '    dismissLabel="Descartar"',
-        '    title="Documento archivado"',
-        '    actions={<Button variant="neutral" size="sm">Deshacer</Button>}',
-        "  >",
-        "    Se movió a Archivados.",
-        "  </Toast>",
-        "</ToastRegion>",
+        "    <ToastRegion>",
+        "      <Toast",
+        "        dismissible",
+        '        dismissLabel="Descartar"',
+        '        title="Documento archivado"',
+        '        actions={<Button variant="neutral" size="sm">Deshacer</Button>}',
+        "      >",
+        "        Se movió a Archivados.",
+        "      </Toast>",
+        "    </ToastRegion>",
       ].join("\n"),
     );
-    expect(tsx.split("\n").every((line) => line.length <= 72)).toBe(true);
+    // 80, the width JSX is printed at: four columns of it are the component wrapper's indentation.
+    expect(tsx.split("\n").every((line) => line.length <= 80)).toBe(true);
+  });
+
+  /*
+   * A word sandwiched between two tags on its own indented line is exactly the shape Babel and
+   * TypeScript's JSX transform trims BOTH edges of, silently: the source still reads as though the
+   * space survived, and only the rendered page shows it did not. `{" "}` is the only child JSX keeps
+   * regardless of the newline beside it, which is why a needed space becomes one and a boundary with
+   * none — the comma glued straight to the second link — gets none either.
+   */
+  it("keeps every space prose needs around an element, and adds none where the source has none", () => {
+    const paragraph: UsageTree = {
+      contract: "typography",
+      signature: "Text",
+      children: [
+        "Un párrafo con un ",
+        { contract: "typography", signature: "Link", options: { href: "/link" }, children: "enlace" },
+        " y otro ",
+        { contract: "typography", signature: "Link", options: { href: "/link" }, children: "más" },
+        ", el segundo pegado a la coma.",
+      ],
+    };
+
+    expect(emitReact(paragraph)).toContain(
+      [
+        "    <Text>",
+        '      Un párrafo con un{" "}',
+        '      <Link href="/link">enlace</Link>{" "}',
+        '      y otro{" "}',
+        '      <Link href="/link">más</Link>, el segundo pegado a la coma.',
+        "    </Text>",
+      ].join("\n"),
+    );
+  });
+});
+
+describe("a collection is data, and data lives in a file of its own", () => {
+  const menu: UsageTree = {
+    contract: "menu",
+    signature: "Menu",
+    options: { label: "Archivo" },
+    slots: {
+      trigger: "Archivo",
+      items: [
+        { options: { value: "new" }, slots: { label: "Nuevo" } },
+        {
+          options: { value: "share" },
+          slots: {
+            label: "Compartir",
+            children: [
+              { options: { value: "email" }, slots: { label: "Por correo" } },
+              { options: { value: "link" }, slots: { label: "Copiar enlace" } },
+            ],
+          },
+        },
+      ],
+    },
+  } as never;
+
+  it("moves it to a module named after it, one entry per line", () => {
+    const { data } = emitReactSource(menu);
+
+    expect(data?.file).toBe("menu-items.ts");
+    expect(data?.specifier).toBe("./menu-items");
+    expect(data?.source).toBe(
+      [
+        "export const items = [",
+        '  { value: "new", label: "Nuevo" },',
+        "  {",
+        '    value: "share",',
+        '    label: "Compartir",',
+        "    children: [",
+        '      { value: "email", label: "Por correo" },',
+        '      { value: "link", label: "Copiar enlace" },',
+        "    ],",
+        "  },",
+        "];",
+        "",
+      ].join("\n"),
+    );
+  });
+
+  it("leaves the component file with nothing but the composition", () => {
+    expect(emitReactSource(menu).component).toBe(
+      [
+        'import { Menu } from "@skryensya/react/menu";',
+        'import { items } from "./menu-items";',
+        "",
+        "export function MenuExample() {",
+        // The tag fits on one line now that the data is not inside it, which is the whole point.
+        '  return <Menu label="Archivo" trigger="Archivo" items={items} />;',
+        "}",
+      ].join("\n"),
+    );
+  });
+
+  it("keys are unquoted and a row that fits stays on one line", () => {
+    const { data } = emitReactSource(menu);
+
+    expect(data?.source).not.toContain('"value":');
+    expect(data?.source).not.toContain('[{"value"');
+  });
+
+  it("names the second collection apart from the first, in one shared module", () => {
+    const select = (name: string): UsageTree =>
+      ({
+        contract: "select",
+        signature: "Select",
+        options: { name, label: "Plan" },
+        slots: { options: [{ options: { value: "pro" }, slots: { label: "Pro" } }] },
+      }) as never;
+
+    const { component, data } = emitReactSource({
+      contract: "toolbar",
+      signature: "Toolbar",
+      children: [select("uno"), select("dos")],
+    } as never);
+
+    /*
+     * Two collections, so no single entry's name would be honest about the file — and named for the
+     * contract that OWNS them, not for the Toolbar they happen to sit in.
+     */
+    expect(data?.file).toBe("select-data.ts");
+    expect(data?.source).toContain("export const options = [");
+    expect(data?.source).toContain("export const options2 = [");
+    expect(component).toContain(
+      'import { options, options2 } from "./select-data";',
+    );
+    expect(component).toContain('<Select name="uno" options={options} />');
+    expect(component).toContain('<Select name="dos" options={options2} />');
+  });
+
+  it("does not name a file after a contract twice", () => {
+    // Steps' collection is called `steps`, and `steps-steps.ts` is a stutter rather than a name.
+    const { data } = emitReactSource({
+      contract: "steps",
+      signature: "Steps",
+      slots: {
+        items: [{ options: { status: "current" }, slots: { label: "Marca" } }],
+      },
+    } as never);
+
+    expect(data?.file).toBe("steps-data.ts");
+  });
+
+  it("writes no data module for a composition that carries no collection", () => {
+    const { component, data } = emitReactSource(saveButton);
+
+    expect(data).toBeUndefined();
+    expect(component).not.toContain("import {  }");
+    // The component is still a component; it just has nothing to import beside the binding.
+    expect(component.match(/^import /gm)).toHaveLength(1);
+  });
+
+  it("takes the caller's name and export, for a sandbox entry file", () => {
+    const source = emitReact(saveButton, {
+      component: "App",
+      export: "default",
+    });
+
+    expect(source).toContain("export default function App() {");
+    expect(source).toContain('  return <Button variant="primary">Guardar</Button>;');
   });
 });
 
@@ -339,8 +576,8 @@ describe("the two bindings agree on what the tree says", () => {
 describe("wiring: six ids from one name", () => {
   const field = (extra: Record<string, unknown> = {}): UsageTree =>
     ({
-      contract: "field",
-      signature: "Field",
+      contract: "form-field",
+      signature: "FormField",
       slots: { label: "Email", ...(extra.slots as object) },
       options: extra.options as Record<string, string | boolean>,
       children: {
@@ -393,7 +630,7 @@ describe("wiring: six ids from one name", () => {
       '<input class="sk-input" type="text" name="email" id="email" required>',
     );
     expect(markup).toContain(
-      '<span class="sk-field__required" aria-hidden="true">*</span>',
+      '<span class="sk-form-field__required" aria-hidden="true">*</span>',
     );
   });
 

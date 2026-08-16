@@ -5,6 +5,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-14",
+            "en": {
+              "body": "<code>Accordion.Trigger</code> has a new <code>headingLevel</code> option (default <code>3</code>): it wraps the button in a <code>role=\"heading\"</code> node with <code>aria-level</code>, so a screen reader navigating by heading finds each section. The WAI-ARIA APG asks for this; no trigger had it before.",
+              "title": "Every trigger announces itself on the page outline"
+            },
+            "es": {
+              "body": "<code>Accordion.Trigger</code> tiene una nueva opción <code>headingLevel</code> (por defecto <code>3</code>): envuelve el botón en un nodo <code>role=\"heading\"</code> con <code>aria-level</code>, para que un lector de pantalla que navega por encabezados encuentre cada sección. El WAI-ARIA APG lo pide; ningún trigger lo tenía hasta ahora.",
+              "title": "Cada trigger se anuncia en el outline de la página"
+            },
+            "kind": "feature",
+            "target": "headingLevel"
+          },
+          {
             "date": "2026-08-04",
             "en": {
               "body": "The contract declares <code>sk:accordionvaluechange</code>. The event is neither new nor renamed; what changed is that finding it used to mean reading the prose.",
@@ -191,6 +204,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-14",
+            "en": {
+              "body": "<code>role=\"region\"</code> and <code>aria-roledescription=\"carousel\"</code> come from the machine, but neither NAMES the carousel. Same landmark rule <code>nav-list</code> and <code>tabs</code> already enforce on themselves: <code>aria-label</code> or <code>aria-labelledby</code>.",
+              "title": "The carousel requires an accessible name for its region"
+            },
+            "es": {
+              "body": "<code>role=\"region\"</code> y <code>aria-roledescription=\"carousel\"</code> los pone la máquina, pero ninguno de los dos NOMBRA el carrusel. La misma regla de landmark que <code>nav-list</code> y <code>tabs</code> ya se exigen a sí mismos: <code>aria-label</code> o <code>aria-labelledby</code>.",
+              "title": "El carrusel exige un nombre accesible para su región"
+            },
+            "kind": "bugfix",
+            "target": "root"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>Carousel</code>, <code>CarouselSlide</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>loop</code>, <code>autoplay</code>, <code>autoplayDelay</code>, <code>mounted</code>, <code>slideSize</code>, <code>orientation</code>, <code>controls</code>, <code>mouseDrag</code>. Its stylesheet is <code>components/carousel.css</code>.",
@@ -372,6 +398,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-13",
+            "en": {
+              "body": "The second signature: a group with a parent that checks and unchecks them all, and shows <code>indeterminate</code> when its children disagree. Until now that was a <code>&lt;script&gt;</code> copied into every page that needed it; it is now <code>CheckboxGroup</code>, with its own enhancer (<code>data-sk-checkbox-group</code>) and React component. The parent's state is <strong>derived</strong>: it takes no <code>checked</code>, and which children start checked is per-entry data (<code>defaultChecked</code>), not the group's. A <code>disabled</code> child is not a vote, and a form <code>reset</code> re-derives. It emits <code>sk:checkboxgroupvaluechange</code> with <code>{ value, checked }</code>. Options: <code>name</code> (required), <code>orientation</code>, <code>disabled</code>, <code>required</code>. New classes: <code>sk-checkbox-group</code> and <code>sk-checkbox-group__items</code>.",
+              "title": "CheckboxGroup, the tri-state parent, joins the contract"
+            },
+            "es": {
+              "body": "La segunda signature: un grupo con un padre que marca y desmarca a todos, y que muestra <code>indeterminate</code> cuando sus hijos no coinciden. Hasta ahora eso era un <code>&lt;script&gt;</code> copiado en cada página que lo necesitaba; ahora es <code>CheckboxGroup</code> con enhancer propio (<code>data-sk-checkbox-group</code>) y componente de React. El estado del padre es <strong>derivado</strong>: no acepta <code>checked</code>, y cuáles hijos arrancan marcados es dato de cada entrada (<code>defaultChecked</code>), no del grupo. Un hijo <code>disabled</code> no cuenta como voto, y un <code>reset</code> del formulario vuelve a derivar. Emite <code>sk:checkboxgroupvaluechange</code> con <code>{ value, checked }</code>. Opciones: <code>name</code> (obligatoria), <code>orientation</code>, <code>disabled</code>, <code>required</code>. Clases nuevas: <code>sk-checkbox-group</code> y <code>sk-checkbox-group__items</code>.",
+              "title": "CheckboxGroup, el padre de tres estados, entra al contrato"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>Checkbox</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>name</code>, <code>value</code>, <code>checked</code>, <code>defaultChecked</code>, <code>defaultIndeterminate</code>, <code>disabled</code>, <code>required</code>, <code>orientation</code>. Its stylesheet is <code>components/checkbox.css</code>.",
@@ -507,6 +545,7 @@
         "version": "0.1.0-dev"
       }
     ],
+    "data-grid": [],
     "date-picker": [
       {
         "date": null,
@@ -552,6 +591,32 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-14",
+            "en": {
+              "body": "<code>alert</code> sets <code>role=\"alertdialog\"</code>, <code>aria-modal=\"true\"</code> and <code>aria-describedby</code> pointing at the body, for a destructive confirmation or a blocking error that needs immediate attention. Focus is still the consumer's: put <code>autofocus</code> on the least destructive action.",
+              "title": "New alert option for the Alert Dialog pattern"
+            },
+            "es": {
+              "body": "<code>alert</code> pone <code>role=\"alertdialog\"</code>, <code>aria-modal=\"true\"</code> y <code>aria-describedby</code> apuntando al body, para una confirmación destructiva o un error bloqueante que necesita atención inmediata. El foco sigue siendo del consumidor: poné <code>autofocus</code> en la acción menos destructiva.",
+              "title": "Nueva opción alert para el patrón Alert Dialog"
+            },
+            "kind": "feature",
+            "target": "alert"
+          },
+          {
+            "date": "2026-08-14",
+            "en": {
+              "body": "Without this, a screen reader announced \"dialog\" instead of the title: <code>&lt;dialog&gt;</code> gets no accessible name from a nested <code>&lt;h2&gt;</code> on its own.",
+              "title": "The title now names the dialog via aria-labelledby"
+            },
+            "es": {
+              "body": "Sin esto, un lector de pantalla anunciaba \"dialog\" en vez del título: <code>&lt;dialog&gt;</code> no obtiene nombre accesible de un <code>&lt;h2&gt;</code> anidado por sí solo.",
+              "title": "El título ahora nombra el diálogo por aria-labelledby"
+            },
+            "kind": "bugfix",
+            "target": "title"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>Dialog</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>closeLabel</code>, <code>open</code>, <code>vaul</code>. Its stylesheet is <code>components/dialog.css</code>.",
@@ -587,26 +652,7 @@
         "version": "0.1.0-dev"
       }
     ],
-    "field": [
-      {
-        "date": null,
-        "entries": [
-          {
-            "date": "2026-08-11",
-            "en": {
-              "body": "It joins the catalogue with <code>Field</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>required</code>, <code>disabled</code>. Its stylesheet is <code>components/field.css</code>.",
-              "title": "Field is published as a contract, with one signature"
-            },
-            "es": {
-              "body": "Entra al catálogo con <code>Field</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>required</code>, <code>disabled</code>. La hoja es <code>components/field.css</code>.",
-              "title": "Field se publica como contrato, con una signature"
-            },
-            "kind": "feature"
-          }
-        ],
-        "version": "0.1.0-dev"
-      }
-    ],
+    "feed": [],
     "file-upload": [
       {
         "date": null,
@@ -640,6 +686,38 @@
             "es": {
               "body": "Entra al catálogo con <code>Flyout</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-flyout</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>placeholder</code>, <code>disabled</code>, <code>defaultValue</code>. La hoja es <code>components/flyout.css</code>.",
               "title": "Flyout se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "form-field": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-14",
+            "en": {
+              "body": "The contract is <code>form-field</code>, the signature is <code>FormField</code>, and the root class is <code>sk-form-field</code>, with its parts and custom properties (<code>--sk-form-field-error-fg</code> and friends) renamed to match. In React it is imported from <code>@skryensya/react/form-field</code>, its own module: the separation stops being only a name and becomes a file, a test and a page apart from Input. A bare \"field\" is a word every domain model already uses for something else; the longer name says which one this is. Its stylesheet is now <code>components/form-field.css</code>.",
+              "title": "Field is renamed to FormField"
+            },
+            "es": {
+              "body": "El contrato es <code>form-field</code>, la signature es <code>FormField</code> y la clase raíz es <code>sk-form-field</code>, con sus partes y sus custom properties (<code>--sk-form-field-error-fg</code> y compañía) renombradas igual. En React se importa desde <code>@skryensya/react/form-field</code>, su propio módulo: la separación deja de ser sólo un nombre y pasa a ser un archivo, un test y una página aparte de Input. «Field» a secas es una palabra que todo modelo de dominio ya usa para otra cosa; el nombre largo dice cuál de todas es. La hoja pasa a ser <code>components/form-field.css</code>.",
+              "title": "Field pasa a llamarse FormField"
+            },
+            "kind": "breaking"
+          },
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>Field</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>required</code>, <code>disabled</code>. Its stylesheet is <code>components/field.css</code>.",
+              "title": "Field is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Field</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>required</code>, <code>disabled</code>. La hoja es <code>components/field.css</code>.",
+              "title": "Field se publica como contrato, con una signature"
             },
             "kind": "feature"
           }
@@ -692,6 +770,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-14",
+            "en": {
+              "body": "The parent both signatures declare moves from <code>Field</code> to <code>FormField</code>, the same contract under its new name. A tree nesting <code>Input</code> under <code>Field</code> no longer validates: change the <code>contract</code> to <code>form-field</code> and the <code>signature</code> to <code>FormField</code>. The control itself is unchanged — it still has no <code>invalid</code> and no <code>id</code> of its own, because both arrive from the parent's wiring.",
+              "title": "Input and Textarea now nest under FormField"
+            },
+            "es": {
+              "body": "El padre que ambas signatures declaran pasa de <code>Field</code> a <code>FormField</code>, que es el mismo contrato con su nombre nuevo. Un árbol que anide <code>Input</code> bajo <code>Field</code> deja de validar: cambiá el <code>contract</code> a <code>form-field</code> y la <code>signature</code> a <code>FormField</code>. El control en sí no cambió, sigue sin <code>invalid</code> y sin <code>id</code> propios porque los dos llegan del cableado del padre.",
+              "title": "Input y Textarea ahora se anidan bajo FormField"
+            },
+            "kind": "breaking"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -827,6 +917,19 @@
           {
             "date": "2026-08-13",
             "en": {
+              "body": "Crossing diagonally toward an open submenu no longer closes it or highlights the row below. <code>@zag-js/menu</code>'s polygon was not enough: it can only veto an early close during <code>waitForCloseDelay</code>'s 100ms, never extend them, so a pointer parked motionless inside the polygon still lost the submenu at ~90ms. There is now a real element — a <code>clip-path</code> triangle inside the trigger — so the browser fires no <code>pointerleave</code> during the crossing and the timer is never lit. It holds at any depth. New parts: <code>sk-menu__safe-area</code>, <code>sk-menu__intent-readout</code>. <code>debugSafetyTriangle</code> now paints that very element instead of drawing a separate SVG, and its status moved out of a floating badge that covered the trigger into its own space above it.",
+              "title": "A submenu's safe area now actually holds it open"
+            },
+            "es": {
+              "body": "Cruzar en diagonal hacia un submenú abierto ya no lo cierra ni resalta la fila de abajo. El polígono de <code>@zag-js/menu</code> no alcanzaba: sólo puede vetar un cierre temprano durante los 100ms de <code>waitForCloseDelay</code>, no extenderlos, así que con el puntero quieto adentro del polígono el submenú igual se cerraba a los ~90ms. Ahora hay un elemento real —un triángulo recortado con <code>clip-path</code> dentro del trigger— así que el navegador nunca dispara <code>pointerleave</code> mientras se cruza y el temporizador ni se enciende. Vale para cualquier profundidad. Nuevas partes: <code>sk-menu__safe-area</code>, <code>sk-menu__intent-readout</code>. <code>debugSafetyTriangle</code> ahora pinta ese mismo elemento en vez de dibujar un SVG aparte, y su estado dejó de ser un badge flotante encima del trigger para ocupar su propio lugar arriba de él.",
+              "title": "El safe area de un submenú ahora lo sostiene de verdad"
+            },
+            "kind": "bugfix",
+            "target": "debugSafetyTriangle"
+          },
+          {
+            "date": "2026-08-13",
+            "en": {
               "body": "<code>density</code> tightens the rows (<code>data-density=\"compact\"</code>), the same idiom as List. Because the content portals to <code>body</code>, the React binding re-stamps it on every positioner. <code>debugSafetyTriangle</code> does not change behaviour: it only draws the intent geometry the machine already applies when crossing a sibling toward a submenu.",
               "title": "Menu accepts compact density and a debug flag for the intent triangle"
             },
@@ -853,10 +956,25 @@
         "version": "0.1.0-dev"
       }
     ],
+    "menubar": [],
+    "meter": [],
     "nav-list": [
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-15",
+            "en": {
+              "body": "Covers the WAI-ARIA APG \"Disclosure (Navigation)\" pattern. New <code>collapsible</code> and <code>defaultOpen</code> options (open by default, unlike <code>Accordion</code>): with <code>collapsible</code>, the group's static label becomes a <code>&lt;button&gt;</code> with <code>aria-expanded</code>/<code>aria-controls</code> toggling its list of links. Deliberately NOT <code>role=\"menu\"</code> — the same reason <code>NavList</code> already documents for itself. It now has a Vanilla enhancer (<code>data-sk-nav-list-group-trigger</code>), only for the collapsible case — the static group still needs no JavaScript at all.",
+              "title": "NavListGroup can be a collapsible section"
+            },
+            "es": {
+              "body": "Cubre el patrón WAI-ARIA APG \"Disclosure (Navigation)\". Nuevas opciones <code>collapsible</code> y <code>defaultOpen</code> (por defecto abierta, a diferencia de <code>Accordion</code>): con <code>collapsible</code>, la etiqueta estática del grupo se convierte en un <code>&lt;button&gt;</code> con <code>aria-expanded</code>/ <code>aria-controls</code> que alterna la lista de enlaces. Deliberadamente NO <code>role=\"menu\"</code> — misma razón que ya documenta <code>NavList</code> para sí mismo. Ahora sí tiene un enhancer Vanilla (<code>data-sk-nav-list-group-trigger</code>), solo para el caso colapsable — el grupo estático sigue sin necesitar JavaScript.",
+              "title": "NavListGroup puede ser una sección colapsable"
+            },
+            "kind": "feature",
+            "target": "collapsible"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -1130,6 +1248,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-15",
+            "en": {
+              "body": "Covers the WAI-ARIA APG \"Slider (Multi-Thumb)\" pattern with two native <code>&lt;input type=\"range\"&gt;</code> elements instead of the custom SVG widget the WAI example documents — the pattern itself warns a hand-rolled widget can be difficult for touch-based screen reader users, and two native inputs already get keyboard, form participation and the accessibility tree from the platform. Options: <code>lowValue</code>/ <code>highValue</code> (each end's starting position), <code>lowLabel</code>/ <code>highLabel</code> (required, name each end separately), plus shared <code>min</code>/<code>max</code>/<code>step</code>/<code>disabled</code>. Neither end can be dragged past the other.",
+              "title": "New SliderRange signature, a two-ended range"
+            },
+            "es": {
+              "body": "Cubre el patrón WAI-ARIA APG \"Slider (Multi-Thumb)\" con dos <code>&lt;input type=\"range\"&gt;</code> nativos en vez del widget SVG a medida que documenta el ejemplo de WAI — el propio patrón advierte que un widget custom puede dar problemas con lectores de pantalla táctiles, y dos inputs nativos ya traen teclado, formulario y árbol de accesibilidad de la plataforma. Opciones: <code>lowValue</code>/<code>highValue</code> (posición inicial de cada extremo), <code>lowLabel</code>/<code>highLabel</code> (obligatorias, nombran cada extremo por separado), más <code>min</code>/<code>max</code>/ <code>step</code>/<code>disabled</code> compartidos. Ningún extremo puede arrastrarse más allá del otro.",
+              "title": "Nueva signature SliderRange, un rango de dos extremos"
+            },
+            "kind": "feature",
+            "target": "SliderRange"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -1459,6 +1590,7 @@
         "version": "0.1.0-dev"
       }
     ],
+    "treegrid": [],
     "typography": [
       {
         "date": null,
@@ -1548,6 +1680,11 @@
           "trueValue": "",
           "type": "boolean"
         },
+        "headingLevel": {
+          "attr": "aria-level",
+          "default": 3,
+          "type": "number"
+        },
         "type": {
           "attr": "data-type",
           "default": "single",
@@ -1566,7 +1703,8 @@
         "content": "sk-tile__expandable-content",
         "item": "sk-tile",
         "root": "sk-accordion",
-        "trigger": "sk-tile__trigger"
+        "trigger": "sk-tile__trigger",
+        "triggerHeading": "sk-accordion__trigger-heading"
       },
       "semantics": {
         "Accordion": {
@@ -1742,13 +1880,15 @@
         },
         "Accordion.Trigger": {
           "host": {
-            "element": "button"
+            "element": "div"
           },
           "intent": [
             "accordion-header",
             "section-toggle"
           ],
-          "options": [],
+          "options": [
+            "headingLevel"
+          ],
           "parents": [
             "Accordion.Item"
           ],
@@ -1763,19 +1903,32 @@
             }
           },
           "template": {
-            "also": [
-              "sk-tile--interactive",
-              "sk-interactive"
-            ],
             "attrs": {
-              "data-part": "trigger",
-              "data-scope": "tile",
-              "type": "button"
+              "data-part": "trigger-heading",
+              "role": "heading"
             },
-            "element": "button",
+            "children": [
+              {
+                "also": [
+                  "sk-tile--interactive",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "data-part": "trigger",
+                  "data-scope": "tile",
+                  "type": "button"
+                },
+                "element": "button",
+                "part": "trigger",
+                "slot": "children"
+              }
+            ],
+            "element": "div",
             "host": true,
-            "part": "trigger",
-            "slot": "children"
+            "optionAttrs": {
+              "headingLevel": "aria-level"
+            },
+            "part": "triggerHeading"
           }
         }
       }
@@ -2347,7 +2500,8 @@
                         ],
                         "itemSlot": "label",
                         "part": "link",
-                        "whenItemGiven": "href"
+                        "whenItemGiven": "href",
+                        "whenItemMissing": "current"
                       },
                       {
                         "element": "span",
@@ -2357,6 +2511,18 @@
                         "itemSlot": "label",
                         "part": "current",
                         "whenItemMissing": "href"
+                      },
+                      {
+                        "element": "span",
+                        "itemOptions": [
+                          "current"
+                        ],
+                        "itemSlot": "label",
+                        "part": "current",
+                        "whenItemAllGiven": [
+                          "href",
+                          "current"
+                        ]
                       },
                       {
                         "attrs": {
@@ -2877,6 +3043,19 @@
       }
     },
     "carousel": {
+      "a11y": [
+        {
+          "because": "The machine gives the root role=\"region\" and aria-roledescription=\"carousel\", but neither names it: WAI-ARIA's Carousel pattern asks for a label naming the CONTENT (\"Featured products\", not \"carousel\", which the roledescription already says), the same landmark-naming rule `nav-list`/`tabs` already enforce for themselves.",
+          "requiresOneOf": [
+            "aria-label",
+            "aria-labelledby"
+          ],
+          "signatures": [
+            "Carousel"
+          ],
+          "when": {}
+        }
+      ],
       "css": "@skryensya/core/components/carousel.css",
       "id": "carousel",
       "options": {
@@ -3344,6 +3523,9 @@
     },
     "checkbox": {
       "css": "@skryensya/core/components/checkbox.css",
+      "events": {
+        "valueChange": "sk:checkboxgroupvaluechange"
+      },
       "id": "checkbox",
       "options": {
         "checked": {
@@ -3399,6 +3581,8 @@
       "parts": {
         "checkbox": "sk-checkbox",
         "checkboxControl": "sk-checkbox__control",
+        "checkboxGroup": "sk-checkbox-group",
+        "checkboxGroupItems": "sk-checkbox-group__items",
         "checkboxIndicator": "sk-checkbox__indicator",
         "checkboxInput": "sk-checkbox__input",
         "checkboxLabel": "sk-checkbox__label",
@@ -3417,7 +3601,8 @@
       "semantics": {
         "Checkbox": {
           "alternatives": [
-            "Switch"
+            "Switch",
+            "CheckboxGroup"
           ],
           "avoidWhen": [
             "el cambio surte efecto de inmediato, sin enviar nada; eso es un Switch",
@@ -3427,6 +3612,22 @@
             "una decisión de sí o no que se envía con el formulario",
             "varias opciones independientes donde cada una se marca por su cuenta",
             "aceptar términos, suscribirse, activar una preferencia que se guarda al enviar"
+          ]
+        },
+        "CheckboxGroup": {
+          "alternatives": [
+            "Checkbox",
+            "RadioGroup"
+          ],
+          "avoidWhen": [
+            "las opciones no tienen nada en común; ahí son Checkbox sueltos",
+            "se elige UNA; eso es un RadioGroup",
+            "el padre debería poder quedarse en indeterminate por su cuenta: ese estado se DERIVA de los hijos, no se elige"
+          ],
+          "useWhen": [
+            "un conjunto de opciones que además se marca o desmarca entero",
+            "hace falta mostrar que la selección es parcial: algunos sí, otros no",
+            "seleccionar todo en una tabla, permisos, filtros con un maestro arriba"
           ]
         }
       },
@@ -3522,6 +3723,224 @@
             ],
             "element": "label",
             "part": "checkbox"
+          }
+        },
+        "CheckboxGroup": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "select-all",
+            "check-many-at-once",
+            "partial-selection",
+            "parent-checkbox"
+          ],
+          "mount": "data-sk-checkbox-group",
+          "options": [
+            "name",
+            "orientation",
+            "disabled",
+            "required"
+          ],
+          "react": {
+            "from": "@skryensya/react/selection",
+            "name": "CheckboxGroup"
+          },
+          "requires": [
+            "name"
+          ],
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "value",
+                "options": {
+                  "defaultChecked": {
+                    "attr": "checked",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "disabled": {
+                    "attr": "disabled",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "value": {
+                    "attr": "value",
+                    "type": "string"
+                  }
+                },
+                "slots": {
+                  "label": {
+                    "accepts": "node",
+                    "required": true
+                  }
+                }
+              },
+              "required": true
+            },
+            "label": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "group"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "type": "checkbox"
+                    },
+                    "element": "input",
+                    "mount": "data-sk-checkbox-group-all",
+                    "options": [
+                      "disabled"
+                    ],
+                    "part": "checkboxInput"
+                  },
+                  {
+                    "also": [
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-state": "checked"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "check",
+                              "data-sk-icon-size": "sm"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "span",
+                        "part": "checkboxIndicator"
+                      },
+                      {
+                        "attrs": {
+                          "data-state": "indeterminate"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "remove",
+                              "data-sk-icon-size": "sm"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "span",
+                        "part": "checkboxIndicator"
+                      }
+                    ],
+                    "element": "span",
+                    "part": "checkboxControl"
+                  },
+                  {
+                    "element": "span",
+                    "part": "checkboxLabel",
+                    "slot": "label"
+                  }
+                ],
+                "element": "label",
+                "part": "checkbox"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "attrs": {
+                          "type": "checkbox"
+                        },
+                        "element": "input",
+                        "itemOptions": [
+                          "value",
+                          "defaultChecked",
+                          "disabled"
+                        ],
+                        "mount": "data-sk-checkbox-group-item",
+                        "options": [
+                          "name",
+                          "required"
+                        ],
+                        "part": "checkboxInput"
+                      },
+                      {
+                        "also": [
+                          "sk-interactive"
+                        ],
+                        "attrs": {
+                          "aria-hidden": "true"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-state": "checked"
+                            },
+                            "children": [
+                              {
+                                "attrs": {
+                                  "data-sk-icon": "check",
+                                  "data-sk-icon-size": "sm"
+                                },
+                                "element": "span"
+                              }
+                            ],
+                            "element": "span",
+                            "part": "checkboxIndicator"
+                          },
+                          {
+                            "attrs": {
+                              "data-state": "indeterminate"
+                            },
+                            "children": [
+                              {
+                                "attrs": {
+                                  "data-sk-icon": "remove",
+                                  "data-sk-icon-size": "sm"
+                                },
+                                "element": "span"
+                              }
+                            ],
+                            "element": "span",
+                            "part": "checkboxIndicator"
+                          }
+                        ],
+                        "element": "span",
+                        "part": "checkboxControl"
+                      },
+                      {
+                        "element": "span",
+                        "itemSlot": "label",
+                        "part": "checkboxLabel"
+                      }
+                    ],
+                    "element": "label",
+                    "part": "checkbox",
+                    "repeat": "items"
+                  }
+                ],
+                "element": "div",
+                "part": "checkboxGroupItems"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "labelledBySlot": "label",
+            "part": "checkboxGroup"
           }
         }
       }
@@ -4046,12 +4465,12 @@
           },
           "template": {
             "also": [
-              "sk-field"
+              "sk-form-field"
             ],
             "children": [
               {
                 "also": [
-                  "sk-field__label"
+                  "sk-form-field__label"
                 ],
                 "element": "label",
                 "mount": "data-sk-combobox-label",
@@ -4060,7 +4479,7 @@
               },
               {
                 "also": [
-                  "sk-field__hint"
+                  "sk-form-field__hint"
                 ],
                 "element": "div",
                 "mount": "data-sk-combobox-hint",
@@ -4146,7 +4565,7 @@
               },
               {
                 "also": [
-                  "sk-field__error"
+                  "sk-form-field__error"
                 ],
                 "element": "div",
                 "mount": "data-sk-combobox-error",
@@ -4618,7 +5037,7 @@
           "avoidWhen": [
             "el mensaje es parte del contenido y tiene que quedarse; eso es un Callout",
             "hay que leerlo sí o sí antes de seguir; eso es un Dialog",
-            "es un error de un campo; eso va en el Field, pegado al control"
+            "es un error de un campo; eso va en el FormField, pegado al control"
           ],
           "useWhen": [
             "confirmar algo que ya pasó y no requiere respuesta: se guardó, se envió, se copió",
@@ -4702,6 +5121,7 @@
             "attrsWhen": [
               {
                 "attrs": {
+                  "aria-atomic": "true",
                   "aria-live": "assertive",
                   "role": "alert"
                 },
@@ -4710,6 +5130,7 @@
               },
               {
                 "attrs": {
+                  "aria-atomic": "true",
                   "aria-live": "polite",
                   "role": "status"
                 },
@@ -4954,6 +5375,7 @@
             "also": [
               "sk-button",
               "sk-interactive",
+              "sk-icon-toggle",
               "sk-anchor"
             ],
             "attrs": {
@@ -4963,6 +5385,7 @@
               {
                 "attrs": {
                   "aria-hidden": "true",
+                  "data-face": "idle",
                   "data-sk-copy-button-icon": "idle"
                 },
                 "children": [
@@ -4980,6 +5403,7 @@
               {
                 "attrs": {
                   "aria-hidden": "true",
+                  "data-face": "copied",
                   "data-sk-copy-button-icon": "copied"
                 },
                 "children": [
@@ -5044,6 +5468,174 @@
             "element": "button",
             "host": true,
             "part": "root"
+          }
+        }
+      }
+    },
+    "data-grid": {
+      "css": "@skryensya/core/components/data-grid.css",
+      "id": "data-grid",
+      "options": {
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "wrapCols": {
+          "attr": "data-wrap-cols",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "wrapRows": {
+          "attr": "data-wrap-rows",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        }
+      },
+      "parts": {
+        "cell": "sk-data-grid__cell",
+        "root": "sk-data-grid",
+        "row": "sk-data-grid__row"
+      },
+      "semantics": {
+        "DataGrid": {
+          "alternatives": [
+            "Table",
+            "Treegrid"
+          ],
+          "avoidWhen": [
+            "los datos son tabulares pero ESTÁTICOS, sin necesidad de navegar con flechas; eso es Table",
+            "hay jerarquía además de columnas; eso es Treegrid",
+            "es una cuadrícula puramente visual (CSS Grid) sin navegación por teclado; eso es Grid/LayoutGrid en layout.ts"
+          ],
+          "useWhen": [
+            "un conjunto de celdas necesita navegación 2D por teclado — flechas se mueven entre filas y columnas",
+            "es una grilla de widgets (chips, tarjetas, enlaces) y se quiere UNA sola parada de tabulación en vez de una por widget — el caso 'layout grid' de WAI",
+            "es una grilla de datos interactiva (editable, con celdas que reciben foco) — el caso 'data grid' de WAI"
+          ]
+        },
+        "DataGridCell": {
+          "useWhen": [
+            "un valor o un widget dentro de una fila de la grilla; el rol interactivo del contenido (botón, enlace) se preserva, nunca se reinterpreta"
+          ]
+        },
+        "DataGridRow": {
+          "useWhen": [
+            "una fila lógica de celdas — no necesariamente una fila visual; puede envolver varias líneas físicas"
+          ]
+        }
+      },
+      "signatures": {
+        "DataGrid": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "2d-keyboard-navigable-grid",
+            "data-grid",
+            "layout-grid",
+            "widget-grouping"
+          ],
+          "mount": "data-sk-data-grid",
+          "options": [
+            "label",
+            "wrapCols",
+            "wrapRows"
+          ],
+          "react": {
+            "from": "@skryensya/react/data-grid",
+            "name": "DataGrid"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "DataGridRow"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "grid"
+            },
+            "element": "div",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "DataGridCell": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "grid-cell"
+          ],
+          "options": [],
+          "parents": [
+            "DataGridRow"
+          ],
+          "react": {
+            "from": "@skryensya/react/data-grid",
+            "name": "DataGridCell"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-interactive"
+            ],
+            "attrs": {
+              "role": "gridcell"
+            },
+            "element": "div",
+            "host": true,
+            "part": "cell",
+            "slot": "children"
+          }
+        },
+        "DataGridRow": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "grid-row",
+            "logical-row"
+          ],
+          "options": [],
+          "parents": [
+            "DataGrid"
+          ],
+          "react": {
+            "from": "@skryensya/react/data-grid",
+            "name": "DataGridRow"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "DataGridCell"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "row"
+            },
+            "element": "div",
+            "host": true,
+            "part": "row",
+            "slot": "children"
           }
         }
       }
@@ -5588,6 +6180,12 @@
       "css": "@skryensya/core/components/dialog.css",
       "id": "dialog",
       "options": {
+        "alert": {
+          "attr": "role",
+          "default": false,
+          "trueValue": "alertdialog",
+          "type": "boolean"
+        },
         "closeLabel": {
           "attr": "data-close-label",
           "default": "Cerrar",
@@ -5645,7 +6243,8 @@
           "options": [
             "closeLabel",
             "open",
-            "vaul"
+            "vaul",
+            "alert"
           ],
           "react": {
             "from": "@skryensya/react/dialog",
@@ -5672,6 +6271,13 @@
                 },
                 "given": true,
                 "option": "vaul"
+              },
+              {
+                "attrs": {
+                  "aria-modal": "true"
+                },
+                "given": true,
+                "option": "alert"
               }
             ],
             "children": [
@@ -5734,6 +6340,7 @@
               },
               {
                 "element": "div",
+                "name": "body",
                 "part": "body",
                 "slot": "children"
               },
@@ -5749,8 +6356,20 @@
             ],
             "element": "dialog",
             "host": true,
+            "labelledBySlot": "title",
+            "name": "root",
             "part": "root"
-          }
+          },
+          "wiring": [
+            {
+              "attr": "aria-describedby",
+              "on": "root",
+              "references": [
+                "body"
+              ],
+              "whenGiven": "alert"
+            }
+          ]
         }
       }
     },
@@ -5854,72 +6473,122 @@
         }
       }
     },
-    "field": {
-      "css": "@skryensya/core/components/field.css",
-      "id": "field",
+    "feed": {
+      "css": "@skryensya/core/components/feed.css",
+      "id": "feed",
       "options": {
-        "disabled": {
-          "attr": "data-disabled",
+        "busy": {
+          "attr": "aria-busy",
           "default": false,
-          "trueValue": "",
+          "trueValue": "true",
           "type": "boolean"
         },
-        "required": {
-          "attr": "required",
-          "default": false,
-          "trueValue": "",
-          "type": "boolean"
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "posInset": {
+          "attr": "aria-posinset",
+          "type": "number"
+        },
+        "setSize": {
+          "attr": "aria-setsize",
+          "type": "number"
         }
       },
       "parts": {
-        "error": "sk-field__error",
-        "hint": "sk-field__hint",
-        "label": "sk-field__label",
-        "requiredIndicator": "sk-field__required",
-        "root": "sk-field"
+        "article": "sk-feed__article",
+        "articleLabel": "sk-feed__article-label",
+        "root": "sk-feed"
       },
       "semantics": {
-        "Field": {
+        "Feed": {
+          "alternatives": [
+            "List"
+          ],
           "avoidWhen": [
-            "el control no lleva rótulo visible; entonces el control mismo lleva aria-label y no hay Field",
-            "se quiere marcar inválido sin decir por qué; la presencia del error es lo que invalida, el color nunca es la única señal"
+            "es una lista de opciones para elegir; eso es un Listbox o un List",
+            "el orden importa por posición fija, no por publicación; eso es una Table o un List simple"
           ],
           "useWhen": [
-            "un control necesita rótulo, y casi siempre lo necesita",
-            "hay que mostrar un mensaje de validación junto al control",
-            "hace falta una ayuda breve antes de que el usuario escriba"
+            "un stream de unidades de contenido independientes que se puede cargar en tandas — posts, comentarios, actividad"
+          ]
+        },
+        "FeedArticle": {
+          "useWhen": [
+            "una unidad de contenido dentro del feed — un post, un comentario"
           ]
         }
       },
       "signatures": {
-        "Field": {
+        "Feed": {
           "host": {
             "element": "div"
           },
           "intent": [
-            "labelled-control",
-            "form-field",
-            "input-with-label",
-            "validation-message"
+            "content-stream",
+            "infinite-scroll",
+            "activity-feed",
+            "comment-stream"
           ],
           "options": [
-            "required",
-            "disabled"
+            "label",
+            "busy"
           ],
           "react": {
-            "from": "@skryensya/react/input",
-            "name": "Field"
+            "from": "@skryensya/react/feed",
+            "name": "Feed"
           },
+          "requires": [
+            "label"
+          ],
           "slots": {
             "children": {
               "accepts": "signature",
+              "of": [
+                "FeedArticle"
+              ],
               "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "feed"
             },
-            "error": {
-              "accepts": "node"
-            },
-            "hint": {
-              "accepts": "node"
+            "element": "div",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "FeedArticle": {
+          "host": {
+            "element": "article"
+          },
+          "intent": [
+            "feed-item",
+            "post",
+            "comment"
+          ],
+          "options": [
+            "posInset",
+            "setSize"
+          ],
+          "parents": [
+            "Feed"
+          ],
+          "react": {
+            "from": "@skryensya/react/feed",
+            "name": "FeedArticle"
+          },
+          "requires": [
+            "posInset",
+            "setSize"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
             },
             "label": {
               "accepts": "node",
@@ -5927,81 +6596,24 @@
             }
           },
           "template": {
+            "attrs": {
+              "role": "article"
+            },
             "children": [
               {
-                "children": [
-                  {
-                    "attrs": {
-                      "aria-hidden": "true"
-                    },
-                    "element": "span",
-                    "part": "requiredIndicator",
-                    "text": "*",
-                    "whenGiven": "required"
-                  }
-                ],
-                "element": "label",
-                "name": "label",
-                "part": "label",
+                "element": "div",
+                "part": "articleLabel",
                 "slot": "label"
               },
               {
-                "element": "div",
-                "name": "hint",
-                "part": "hint",
-                "slot": "hint",
-                "whenGiven": "hint"
-              },
-              {
                 "slot": "children"
-              },
-              {
-                "element": "div",
-                "name": "error",
-                "part": "error",
-                "slot": "error",
-                "whenGiven": "error"
               }
             ],
-            "element": "div",
+            "element": "article",
             "host": true,
-            "part": "root"
-          },
-          "wiring": [
-            {
-              "attr": "for",
-              "on": "label",
-              "references": [
-                "control"
-              ]
-            },
-            {
-              "attr": "required",
-              "on": "control",
-              "value": "",
-              "whenGiven": "required"
-            },
-            {
-              "attr": "disabled",
-              "on": "control",
-              "value": "",
-              "whenGiven": "disabled"
-            },
-            {
-              "attr": "aria-describedby",
-              "on": "control",
-              "references": [
-                "hint",
-                "error"
-              ]
-            },
-            {
-              "attr": "aria-invalid",
-              "on": "control",
-              "value": "true",
-              "whenGiven": "error"
-            }
-          ]
+            "labelledBySlot": "label",
+            "part": "article"
+          }
         }
       }
     },
@@ -6391,6 +7003,158 @@
         }
       }
     },
+    "form-field": {
+      "css": "@skryensya/core/components/form-field.css",
+      "id": "form-field",
+      "options": {
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "required": {
+          "attr": "required",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        }
+      },
+      "parts": {
+        "error": "sk-form-field__error",
+        "hint": "sk-form-field__hint",
+        "label": "sk-form-field__label",
+        "requiredIndicator": "sk-form-field__required",
+        "root": "sk-form-field"
+      },
+      "semantics": {
+        "FormField": {
+          "avoidWhen": [
+            "el control no lleva rótulo visible; entonces el control mismo lleva aria-label y no hay FormField",
+            "se quiere marcar inválido sin decir por qué; la presencia del error es lo que invalida, el color nunca es la única señal",
+            "el control ya trae su propio rótulo cableado por su máquina, como NumberField o Combobox; envolverlo agregaría un segundo `for` que compite con el primero"
+          ],
+          "useWhen": [
+            "un control necesita rótulo, y casi siempre lo necesita",
+            "hay que mostrar un mensaje de validación junto al control",
+            "hace falta una ayuda breve antes de que el usuario escriba"
+          ]
+        }
+      },
+      "signatures": {
+        "FormField": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "labelled-control",
+            "form-field",
+            "input-with-label",
+            "validation-message"
+          ],
+          "options": [
+            "required",
+            "disabled"
+          ],
+          "react": {
+            "from": "@skryensya/react/form-field",
+            "name": "FormField"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "required": true
+            },
+            "error": {
+              "accepts": "node"
+            },
+            "hint": {
+              "accepts": "node"
+            },
+            "label": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "span",
+                    "part": "requiredIndicator",
+                    "text": "*",
+                    "whenGiven": "required"
+                  }
+                ],
+                "element": "label",
+                "name": "label",
+                "part": "label",
+                "slot": "label"
+              },
+              {
+                "element": "div",
+                "name": "hint",
+                "part": "hint",
+                "slot": "hint",
+                "whenGiven": "hint"
+              },
+              {
+                "slot": "children"
+              },
+              {
+                "element": "div",
+                "name": "error",
+                "part": "error",
+                "slot": "error",
+                "whenGiven": "error"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          },
+          "wiring": [
+            {
+              "attr": "for",
+              "on": "label",
+              "references": [
+                "control"
+              ]
+            },
+            {
+              "attr": "required",
+              "on": "control",
+              "value": "",
+              "whenGiven": "required"
+            },
+            {
+              "attr": "disabled",
+              "on": "control",
+              "value": "",
+              "whenGiven": "disabled"
+            },
+            {
+              "attr": "aria-describedby",
+              "on": "control",
+              "references": [
+                "hint",
+                "error"
+              ]
+            },
+            {
+              "attr": "aria-invalid",
+              "on": "control",
+              "value": "true",
+              "whenGiven": "error"
+            }
+          ]
+        }
+      }
+    },
     "icon": {
       "css": "@skryensya/core/patterns/icon.css",
       "id": "icon",
@@ -6737,7 +7501,7 @@
             "Input"
           ],
           "avoidWhen": [
-            "es entrada de texto con la apariencia del sistema; eso es Input dentro de Field"
+            "es entrada de texto con la apariencia del sistema; eso es Input dentro de FormField"
           ],
           "useWhen": [
             "la plataforma ya ofrece el control correcto y se quiere enseñar su comportamiento nativo sin la apariencia de Input"
@@ -6775,7 +7539,7 @@
             "disabled"
           ],
           "parents": [
-            "Field"
+            "FormField"
           ],
           "react": {
             "from": "@skryensya/react/input",
@@ -6829,7 +7593,7 @@
             "disabled"
           ],
           "parents": [
-            "Field"
+            "FormField"
           ],
           "react": {
             "from": "@skryensya/react/input",
@@ -7849,15 +8613,14 @@
         "content": "sk-menu__content",
         "group": "sk-menu__group",
         "groupLabel": "sk-menu__group-label",
-        "intentBadge": "sk-menu__intent-badge",
-        "intentBadgeDot": "sk-menu__intent-badge-dot",
-        "intentOverlay": "sk-menu__intent-overlay",
-        "intentPolygon": "sk-menu__intent-polygon",
+        "intentReadout": "sk-menu__intent-readout",
+        "intentReadoutDot": "sk-menu__intent-readout-dot",
         "item": "sk-menu__item",
         "itemIndicator": "sk-menu__item-indicator",
         "itemLabel": "sk-menu__item-label",
         "positioner": "sk-menu__positioner",
         "root": "sk-menu",
+        "safeArea": "sk-menu__safe-area",
         "separator": "sk-menu__separator",
         "trigger": "sk-menu__trigger"
       },
@@ -8141,6 +8904,329 @@
         }
       }
     },
+    "menubar": {
+      "css": "@skryensya/core/components/menubar.css",
+      "id": "menubar",
+      "options": {
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "item": "sk-menubar__item",
+        "itemWrapper": "sk-menubar__item-wrapper",
+        "menu": "sk-menubar__menu",
+        "menuItem": "sk-menubar__menu-item",
+        "positioner": "sk-menubar__positioner",
+        "root": "sk-menubar"
+      },
+      "semantics": {
+        "Menubar": {
+          "alternatives": [
+            "Menu",
+            "NavList"
+          ],
+          "avoidWhen": [
+            "es un solo botón que abre un menú de comandos; eso es Menu",
+            "son destinos de navegación sin desplegables ni comandos; eso es NavList"
+          ],
+          "useWhen": [
+            "una barra persistente de comandos de aplicación, algunos con submenú desplegable — un editor (Archivo/Editar/Ver)",
+            "navegación de sitio con secciones que despliegan sub-destinos"
+          ]
+        },
+        "MenubarItem": {
+          "useWhen": [
+            "un ítem de la barra — con MenubarMenu adentro es un desplegable, sin él es un comando directo"
+          ]
+        },
+        "MenubarMenu": {
+          "useWhen": [
+            "el desplegable de un MenubarItem — un solo nivel; para submenús anidados dentro de un desplegable, usa Menu en su lugar"
+          ]
+        },
+        "MenubarMenuItem": {
+          "useWhen": [
+            "un comando dentro de un desplegable de la barra"
+          ]
+        }
+      },
+      "signatures": {
+        "Menubar": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "application-menu-bar",
+            "editor-menubar",
+            "site-navigation-with-dropdowns"
+          ],
+          "mount": "data-sk-menubar",
+          "options": [
+            "label"
+          ],
+          "react": {
+            "from": "@skryensya/react/menubar",
+            "name": "Menubar"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "MenubarItem"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "menubar"
+            },
+            "element": "div",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "MenubarItem": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "menubar-command",
+            "menubar-dropdown-trigger"
+          ],
+          "options": [],
+          "parents": [
+            "Menubar"
+          ],
+          "react": {
+            "from": "@skryensya/react/menubar",
+            "name": "MenubarItem"
+          },
+          "slots": {
+            "children": {
+              "accepts": "text",
+              "required": true
+            },
+            "items": {
+              "accepts": "signature",
+              "of": [
+                "MenubarMenu"
+              ]
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "role": "menuitem",
+                  "type": "button"
+                },
+                "element": "button",
+                "mount": "data-sk-menubar-item",
+                "part": "item",
+                "slot": "children"
+              },
+              {
+                "slot": "items",
+                "whenGiven": "items"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "itemWrapper"
+          }
+        },
+        "MenubarMenu": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "menubar-dropdown"
+          ],
+          "options": [],
+          "parents": [
+            "MenubarItem"
+          ],
+          "react": {
+            "from": "@skryensya/react/menubar",
+            "name": "MenubarMenu"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "MenubarMenuItem"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "attrs": {
+                  "role": "menu"
+                },
+                "element": "div",
+                "part": "menu",
+                "slot": "children"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "mount": "data-sk-menubar-menu",
+            "part": "positioner"
+          }
+        },
+        "MenubarMenuItem": {
+          "host": {
+            "element": "button"
+          },
+          "intent": [
+            "menubar-dropdown-command"
+          ],
+          "options": [],
+          "parents": [
+            "MenubarMenu"
+          ],
+          "react": {
+            "from": "@skryensya/react/menubar",
+            "name": "MenubarMenuItem"
+          },
+          "slots": {
+            "children": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-interactive"
+            ],
+            "attrs": {
+              "role": "menuitem",
+              "tabindex": "-1",
+              "type": "button"
+            },
+            "element": "button",
+            "host": true,
+            "mount": "data-sk-menubar-menu-item",
+            "part": "menuItem",
+            "slot": "children"
+          }
+        }
+      }
+    },
+    "meter": {
+      "css": "@skryensya/core/components/meter.css",
+      "id": "meter",
+      "options": {
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "max": {
+          "attr": "aria-valuemax",
+          "default": 100,
+          "type": "number"
+        },
+        "min": {
+          "attr": "aria-valuemin",
+          "default": 0,
+          "type": "number"
+        },
+        "tone": {
+          "attr": "data-tone",
+          "default": "accent",
+          "type": "enum",
+          "values": [
+            "accent",
+            "success",
+            "warning",
+            "danger"
+          ]
+        },
+        "value": {
+          "attr": "aria-valuenow",
+          "default": 0,
+          "type": "number"
+        },
+        "valueText": {
+          "attr": "aria-valuetext",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "bar": "sk-meter__bar",
+        "root": "sk-meter"
+      },
+      "semantics": {
+        "Meter": {
+          "alternatives": [
+            "Progress",
+            "Loader"
+          ],
+          "avoidWhen": [
+            "es el avance de una tarea que empieza en 0 y termina en un 100% conocido; eso es Progress",
+            "el avance no tiene un largo conocido; eso es un Loader indeterminado"
+          ],
+          "useWhen": [
+            "hay que mostrar una MEDICIÓN dentro de un rango conocido, ya con un valor actual: uso de disco, nivel de batería, una calificación sobre una escala"
+          ]
+        }
+      },
+      "signatures": {
+        "Meter": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "measurement-in-a-range",
+            "disk-usage",
+            "battery-level",
+            "rating-out-of-a-scale"
+          ],
+          "options": [
+            "value",
+            "min",
+            "max",
+            "valueText",
+            "tone",
+            "label"
+          ],
+          "react": {
+            "from": "@skryensya/react/meter",
+            "name": "Meter"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {},
+          "template": {
+            "attrs": {
+              "role": "meter"
+            },
+            "children": [
+              {
+                "element": "div",
+                "part": "bar"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "nav-list": {
       "a11y": [
         {
@@ -8160,10 +9246,23 @@
       "css": "@skryensya/core/patterns/nav-list.css",
       "id": "nav-list",
       "options": {
+        "collapsible": {
+          "attr": "data-collapsible",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
         "current": {
           "attr": "aria-current",
           "default": false,
           "trueValue": "page",
+          "type": "boolean"
+        },
+        "defaultOpen": {
+          "attr": "data-default-open",
+          "machineInput": true,
+          "trueValue": "",
           "type": "boolean"
         },
         "href": {
@@ -8209,11 +9308,13 @@
           "avoidWhen": [
             {
               "hay un solo destino y ningún rótulo": "el grupo sigue siendo obligatorio, no es opcional"
-            }
+            },
+            "collapsible sin label: el botón necesita el texto del rótulo para tener algo que mostrar"
           ],
           "useWhen": [
             "agrupa destinos bajo un rótulo",
-            "hace falta el <ul> aunque el grupo no lleve rótulo visible"
+            "hace falta el <ul> aunque el grupo no lleve rótulo visible",
+            "con collapsible: la sección se puede ocultar/mostrar — el patrón WAI 'Disclosure (Navigation)'"
           ]
         },
         "NavListLink": {
@@ -8271,9 +9372,13 @@
           },
           "intent": [
             "group-of-destinations",
-            "labeled-navigation-section"
+            "labeled-navigation-section",
+            "collapsible-navigation-section"
           ],
-          "options": [],
+          "options": [
+            "collapsible",
+            "defaultOpen"
+          ],
           "parents": [
             "NavList"
           ],
@@ -8299,13 +9404,60 @@
                 "element": "div",
                 "part": "groupLabel",
                 "slot": "label",
-                "whenGiven": "label"
+                "whenGiven": "label",
+                "whenMissing": "collapsible"
+              },
+              {
+                "also": [
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "type": "button"
+                },
+                "attrsWhen": [
+                  {
+                    "attrs": {
+                      "aria-expanded": "true"
+                    },
+                    "notEquals": "false",
+                    "option": "defaultOpen"
+                  },
+                  {
+                    "attrs": {
+                      "aria-expanded": "false"
+                    },
+                    "equals": "false",
+                    "option": "defaultOpen"
+                  }
+                ],
+                "element": "button",
+                "mount": "data-sk-nav-list-group-trigger",
+                "part": "groupLabel",
+                "slot": "label",
+                "whenGiven": "collapsible"
               },
               {
                 "element": "ul",
                 "labelledBySlot": "label",
                 "part": "list",
-                "slot": "children"
+                "slot": "children",
+                "whenMissing": "collapsible"
+              },
+              {
+                "attrsWhen": [
+                  {
+                    "attrs": {
+                      "hidden": ""
+                    },
+                    "equals": "false",
+                    "option": "defaultOpen"
+                  }
+                ],
+                "element": "ul",
+                "mount": "data-sk-nav-list-group-list",
+                "part": "list",
+                "slot": "children",
+                "whenGiven": "collapsible"
               }
             ],
             "element": "div",
@@ -10588,6 +11740,26 @@
           "trueValue": "",
           "type": "boolean"
         },
+        "highLabel": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "highValue": {
+          "attr": "value",
+          "default": 100,
+          "prop": "defaultValue",
+          "type": "number"
+        },
+        "lowLabel": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "lowValue": {
+          "attr": "value",
+          "default": 0,
+          "prop": "defaultValue",
+          "type": "number"
+        },
         "max": {
           "attr": "max",
           "default": 100,
@@ -10614,19 +11786,38 @@
         }
       },
       "parts": {
+        "rangeFill": "sk-slider-range__fill",
+        "rangeHigh": "sk-slider-range__high",
+        "rangeLow": "sk-slider-range__low",
+        "rangeRoot": "sk-slider-range",
+        "rangeTrack": "sk-slider-range__track",
         "root": "sk-slider"
       },
       "semantics": {
         "Slider": {
           "alternatives": [
-            "Segmented"
+            "Segmented",
+            "SliderRange"
           ],
           "avoidWhen": [
             "hace falta precisión; ahí un campo numérico se escribe más rápido",
-            "son opciones discretas y pocas; eso es un RadioGroup o un Segmented"
+            "son opciones discretas y pocas; eso es un RadioGroup o un Segmented",
+            "el usuario elige DOS valores, un mínimo y un máximo; eso es SliderRange"
           ],
           "useWhen": [
             "el valor es aproximado y verlo moverse ayuda: volumen, brillo, un rango de precio"
+          ]
+        },
+        "SliderRange": {
+          "alternatives": [
+            "Slider"
+          ],
+          "avoidWhen": [
+            "es un solo valor; eso es Slider",
+            "hace falta precisión exacta en cada extremo; ahí dos campos numéricos (uno de mínimo, uno de máximo) se escriben más rápido"
+          ],
+          "useWhen": [
+            "el usuario acota un rango entre un mínimo y un máximo — un filtro de precio, una franja de fechas por posición"
           ]
         }
       },
@@ -10671,6 +11862,115 @@
                 "property": "--sk-slider-fill"
               }
             ]
+          }
+        },
+        "SliderRange": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "range-in-a-range",
+            "min-max-filter",
+            "price-range",
+            "two-thumb-slider"
+          ],
+          "mount": "data-sk-slider-range",
+          "options": [
+            "lowValue",
+            "highValue",
+            "lowLabel",
+            "highLabel",
+            "min",
+            "max",
+            "step",
+            "disabled"
+          ],
+          "react": {
+            "from": "@skryensya/react/slider",
+            "name": "SliderRange"
+          },
+          "requires": [
+            "lowLabel",
+            "highLabel"
+          ],
+          "slots": {},
+          "template": {
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "div",
+                "part": "rangeTrack"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "div",
+                "mount": "data-sk-slider-range-fill",
+                "part": "rangeFill",
+                "style": [
+                  {
+                    "as": "fraction",
+                    "percentOf": [
+                      "lowValue",
+                      "max"
+                    ],
+                    "property": "--sk-slider-range-fill-start"
+                  },
+                  {
+                    "as": "fraction",
+                    "percentOf": [
+                      "highValue",
+                      "max"
+                    ],
+                    "property": "--sk-slider-range-fill-end"
+                  }
+                ]
+              },
+              {
+                "also": [
+                  "sk-slider"
+                ],
+                "attrs": {
+                  "type": "range"
+                },
+                "element": "input",
+                "mount": "data-sk-slider-range-low",
+                "options": [
+                  "lowValue",
+                  "lowLabel",
+                  "min",
+                  "max",
+                  "step",
+                  "disabled"
+                ],
+                "part": "rangeLow"
+              },
+              {
+                "also": [
+                  "sk-slider"
+                ],
+                "attrs": {
+                  "type": "range"
+                },
+                "element": "input",
+                "mount": "data-sk-slider-range-high",
+                "options": [
+                  "highValue",
+                  "highLabel",
+                  "min",
+                  "max",
+                  "step",
+                  "disabled"
+                ],
+                "part": "rangeHigh"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "rangeRoot"
           }
         }
       }
@@ -12238,7 +13538,8 @@
           "template": {
             "also": [
               "sk-button",
-              "sk-interactive"
+              "sk-interactive",
+              "sk-icon-toggle"
             ],
             "attrs": {
               "aria-label": "Color mode: system",
@@ -12249,6 +13550,7 @@
             "children": [
               {
                 "attrs": {
+                  "data-face": "system",
                   "data-sk-icon": "mode-system",
                   "data-sk-icon-size": "md",
                   "data-sk-theme-toggle-icon": "system"
@@ -12257,6 +13559,7 @@
               },
               {
                 "attrs": {
+                  "data-face": "light",
                   "data-sk-icon": "mode-light",
                   "data-sk-icon-size": "md",
                   "data-sk-theme-toggle-icon": "light"
@@ -12265,6 +13568,7 @@
               },
               {
                 "attrs": {
+                  "data-face": "dark",
                   "data-sk-icon": "mode-dark",
                   "data-sk-icon-size": "md",
                   "data-sk-theme-toggle-icon": "dark"
@@ -13986,6 +15290,415 @@
         }
       }
     },
+    "treegrid": {
+      "css": "@skryensya/core/components/treegrid.css",
+      "id": "treegrid",
+      "options": {
+        "expanded": {
+          "attr": "aria-expanded",
+          "falseValue": "false",
+          "trueValue": "true",
+          "type": "boolean"
+        },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "level": {
+          "attr": "aria-level",
+          "type": "number"
+        },
+        "posInset": {
+          "attr": "aria-posinset",
+          "type": "number"
+        },
+        "setSize": {
+          "attr": "aria-setsize",
+          "type": "number"
+        },
+        "value": {
+          "attr": "data-value",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "body": "sk-treegrid__body",
+        "cell": "sk-treegrid__cell",
+        "columnHeader": "sk-treegrid__column-header",
+        "head": "sk-treegrid__head",
+        "headRow": "sk-treegrid__head-row",
+        "root": "sk-treegrid",
+        "row": "sk-treegrid__row",
+        "scroll": "sk-treegrid-scroll"
+      },
+      "semantics": {
+        "Treegrid": {
+          "alternatives": [
+            "Table",
+            "TreeView"
+          ],
+          "avoidWhen": [
+            "hay columnas pero ninguna jerarquía; eso es una Table",
+            "hay jerarquía pero una sola columna de texto; eso es un TreeView"
+          ],
+          "useWhen": [
+            "los datos tienen jerarquía Y columnas a la vez — un explorador de archivos con tamaño/fecha, un org chart con cargo/área",
+            "cada fila necesita expandirse o colapsarse sin perder el resto de sus columnas"
+          ]
+        },
+        "TreegridBody": {
+          "useWhen": [
+            "siempre: es donde viven las filas de la grilla, y la grilla no está completa sin él"
+          ]
+        },
+        "TreegridCell": {
+          "avoidWhen": [
+            "el contenido necesita su propio control interactivo (un botón, un link); esta versión del contrato es fiel al ejemplo WAI `treegrid-1` — celdas de solo texto, ver docs/aria-apg-audit.md"
+          ],
+          "useWhen": [
+            "un valor dentro de una fila de la grilla"
+          ]
+        },
+        "TreegridColumnHeader": {
+          "useWhen": [
+            "la celda nombra su columna"
+          ]
+        },
+        "TreegridHead": {
+          "useWhen": [
+            "las columnas tienen encabezado, que es casi siempre"
+          ]
+        },
+        "TreegridHeadRow": {
+          "useWhen": [
+            "siempre que hay TreegridHead: es la fila que contiene los TreegridColumnHeader"
+          ]
+        },
+        "TreegridRow": {
+          "avoidWhen": [
+            "la fila es una hoja sin hijos; ahí no se pasa `expanded` en absoluto — su ausencia es lo que la marca hoja, no un valor `false`"
+          ],
+          "useWhen": [
+            "un registro de la grilla, en el mismo orden que un lector de pantalla lo recorre — nunca anidado dentro de otro TreegridRow, un <tr> no puede contener otro <tr>",
+            "la fila tiene descendientes: pasa `expanded` (true o false) y escríbelos a continuación, en orden, con un `level` mayor"
+          ]
+        },
+        "TreegridScroll": {
+          "alternatives": [
+            "Treegrid"
+          ],
+          "useWhen": [
+            "casi siempre: mismo motivo que TableScroll — la grilla no debe reventar un flex o un grid al ser más ancha que su espacio"
+          ]
+        }
+      },
+      "signatures": {
+        "Treegrid": {
+          "host": {
+            "element": "table"
+          },
+          "intent": [
+            "hierarchical-data-grid",
+            "file-explorer-table",
+            "expandable-rows-table"
+          ],
+          "mount": "data-sk-treegrid",
+          "options": [
+            "label"
+          ],
+          "react": {
+            "from": "@skryensya/react/treegrid",
+            "name": "Treegrid"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "cardinality": {
+                "TreegridBody": "one",
+                "TreegridHead": "optional"
+              },
+              "of": [
+                "TreegridHead",
+                "TreegridBody"
+              ],
+              "ordered": true,
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-table"
+            ],
+            "attrs": {
+              "role": "treegrid"
+            },
+            "element": "table",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "TreegridBody": {
+          "host": {
+            "element": "tbody"
+          },
+          "intent": [
+            "treegrid-rows"
+          ],
+          "options": [],
+          "parents": [
+            "Treegrid"
+          ],
+          "react": {
+            "from": "@skryensya/react/treegrid",
+            "name": "TreegridBody"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "TreegridRow"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-table__body"
+            ],
+            "element": "tbody",
+            "host": true,
+            "part": "body",
+            "slot": "children"
+          }
+        },
+        "TreegridCell": {
+          "host": {
+            "element": "td"
+          },
+          "intent": [
+            "treegrid-cell"
+          ],
+          "options": [],
+          "parents": [
+            "TreegridRow"
+          ],
+          "react": {
+            "from": "@skryensya/react/treegrid",
+            "name": "TreegridCell"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-table__cell",
+              "sk-interactive"
+            ],
+            "attrs": {
+              "role": "gridcell",
+              "tabindex": "-1"
+            },
+            "element": "td",
+            "host": true,
+            "part": "cell",
+            "slot": "children"
+          }
+        },
+        "TreegridColumnHeader": {
+          "host": {
+            "element": "th"
+          },
+          "intent": [
+            "column-header"
+          ],
+          "options": [],
+          "parents": [
+            "TreegridHeadRow"
+          ],
+          "react": {
+            "from": "@skryensya/react/treegrid",
+            "name": "TreegridColumnHeader"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-table__header"
+            ],
+            "attrs": {
+              "scope": "col"
+            },
+            "element": "th",
+            "host": true,
+            "part": "columnHeader",
+            "slot": "children"
+          }
+        },
+        "TreegridHead": {
+          "host": {
+            "element": "thead"
+          },
+          "intent": [
+            "column-headers"
+          ],
+          "options": [],
+          "parents": [
+            "Treegrid"
+          ],
+          "react": {
+            "from": "@skryensya/react/treegrid",
+            "name": "TreegridHead"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "TreegridHeadRow"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-table__head"
+            ],
+            "element": "thead",
+            "host": true,
+            "part": "head",
+            "slot": "children"
+          }
+        },
+        "TreegridHeadRow": {
+          "host": {
+            "element": "tr"
+          },
+          "intent": [
+            "column-header-row"
+          ],
+          "options": [],
+          "parents": [
+            "TreegridHead"
+          ],
+          "react": {
+            "from": "@skryensya/react/treegrid",
+            "name": "TreegridHeadRow"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "TreegridColumnHeader"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-table__row"
+            ],
+            "element": "tr",
+            "host": true,
+            "part": "headRow",
+            "slot": "children"
+          }
+        },
+        "TreegridRow": {
+          "host": {
+            "element": "tr"
+          },
+          "intent": [
+            "treegrid-row",
+            "hierarchical-row"
+          ],
+          "mount": "data-sk-treegrid-row",
+          "options": [
+            "level",
+            "setSize",
+            "posInset",
+            "expanded",
+            "value"
+          ],
+          "parents": [
+            "TreegridBody"
+          ],
+          "react": {
+            "from": "@skryensya/react/treegrid",
+            "name": "TreegridRow"
+          },
+          "requires": [
+            "level",
+            "setSize",
+            "posInset"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "TreegridCell"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-table__row",
+              "sk-interactive"
+            ],
+            "attrs": {
+              "role": "row",
+              "tabindex": "-1"
+            },
+            "element": "tr",
+            "host": true,
+            "part": "row",
+            "slot": "children"
+          }
+        },
+        "TreegridScroll": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "scrollable-treegrid",
+            "wide-treegrid"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/treegrid",
+            "name": "TreegridScroll"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "Treegrid"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-table-scroll"
+            ],
+            "element": "div",
+            "host": true,
+            "part": "scroll",
+            "slot": "children"
+          }
+        }
+      }
+    },
     "typography": {
       "css": "@skryensya/core/components/typography.css",
       "id": "typography",
@@ -14531,5 +16244,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "35b425f30b65f00c"
+  "sourceHash": "9e2b050888da3f57"
 }

@@ -3,6 +3,7 @@ import { initComponents } from "@skryensya/vanilla/auto";
 import { mountButton } from "@skryensya/vanilla/button";
 import { mountCalendar } from "@skryensya/vanilla/calendar";
 import { mountCarousel } from "@skryensya/vanilla/carousel";
+import { mountCheckboxGroup } from "@skryensya/vanilla/checkbox-group";
 import { mountCodePreview } from "@skryensya/vanilla/code-preview";
 import { mountCommandPalette } from "@skryensya/vanilla/command-palette";
 import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
@@ -34,6 +35,7 @@ const mounts = [
   mountButton,
   mountCalendar,
   mountCarousel,
+  mountCheckboxGroup,
   mountCommandPalette,
   mountCopyButton,
   mountDatePicker,
@@ -60,7 +62,7 @@ const mounts = [
 describe("Vanilla public entry points", () => {
   it("publishes the lazy auto-loader and one mount for every regular enhanced module", () => {
     expect(initComponents).toBeTypeOf("function");
-    expect(mounts).toHaveLength(25);
+    expect(mounts).toHaveLength(26);
     expect(mounts.every((mount) => typeof mount === "function")).toBe(true);
   });
 

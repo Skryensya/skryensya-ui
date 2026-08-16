@@ -116,6 +116,10 @@
       "types": "./src/components/expandable-tile.ts",
       "default": "./src/components/expandable-tile.ts"
     },
+    "./checkbox-group": {
+      "types": "./src/components/checkbox-group.ts",
+      "default": "./src/components/checkbox-group.ts"
+    },
     "./tile-checkbox": {
       "types": "./src/components/tile-checkbox.ts",
       "default": "./src/components/tile-checkbox.ts"

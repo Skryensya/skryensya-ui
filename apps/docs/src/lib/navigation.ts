@@ -15,6 +15,14 @@ export type NavigationItem = {
    * once it has shipped as settled.
    */
   status?: ComponentStatus;
+  /**
+   * Whether this component's behaviour has been checked against its WAI-ARIA APG pattern (see
+   * `docs/aria-apg-audit.md`) — a DIFFERENT axis from {@link status}: a component can be
+   * ARIA-reviewed while its contract is still "wip", or vice versa. When true, the sidebar dot
+   * turns from the "wip" warning to a success tone instead of disappearing, so a reviewed
+   * component still reads as "here" rather than "nothing to say about this one".
+   */
+  ariaReviewed?: boolean;
 };
 
 /** `item.status`, defaulted: every catalog entry reads "wip" until deliberately marked "stable". */
@@ -66,11 +74,13 @@ const componentItems = [
       "acordeon nativo",
       "disclosure",
     ],
+    ariaReviewed: true,
   },
   { href: "/componentes/avatar", label: "Avatar", aliases: ["perfil"] },
   { href: "/componentes/badge", label: "Badge", aliases: ["insignia"] },
   { href: "/componentes/box", label: "Box", aliases: ["caja"] },
   {
+    ariaReviewed: true,
     href: "/componentes/button",
     label: "Button",
     aliases: [
@@ -102,6 +112,7 @@ const componentItems = [
     ],
   },
   {
+    ariaReviewed: true,
     href: "/componentes/carousel",
     label: "Carousel",
     aliases: [
@@ -121,6 +132,7 @@ const componentItems = [
     ],
   },
   {
+    ariaReviewed: true,
     href: "/componentes/checkbox",
     label: "Checkbox",
     aliases: [
@@ -184,15 +196,48 @@ const componentItems = [
   },
   { href: "/componentes/copy-button", label: "CopyButton", aliases: ["copiar", "copy", "portapapeles"] },
   {
+    href: "/componentes/data-grid",
+    label: "Data Grid",
+    aliases: ["grilla de datos", "layout grid", "grilla de layout", "navegación 2d", "navegacion 2d"],
+    ariaReviewed: true,
+  },
+  {
     href: "/componentes/dialog",
     label: "Dialog",
     aliases: ["diálogo", "dialogo", "modal", "confirm", "dialog vaul", "dialog enhanced"],
   },
   { href: "/componentes/drawer", label: "Drawer", aliases: ["panel lateral", "cajón", "cajon"] },
   {
+    href: "/componentes/feed",
+    label: "Feed",
+    aliases: ["stream", "feed de actividad", "publicaciones", "posts"],
+    ariaReviewed: true,
+  },
+  {
     href: "/componentes/flyout",
     label: "Flyout",
     aliases: ["flyout", "picker lateral", "panel al lado"],
+  },
+  {
+    href: "/componentes/form-field",
+    label: "FormField",
+    aliases: [
+      "form field",
+      "field",
+      "campo",
+      "campo de formulario",
+      "rótulo",
+      "rotulo",
+      "label",
+      "hint",
+      "ayuda",
+      "error",
+      "mensaje de error",
+      "validación",
+      "validacion",
+      "required",
+      "requerido",
+    ],
   },
   { href: "/componentes/grid", label: "Grid", aliases: ["grilla", "cuadrícula", "cuadricula"] },
   {
@@ -263,6 +308,12 @@ const componentItems = [
     href: "/componentes/loader",
     label: "Loader",
     aliases: ["carga", "cargando", "spinner", "indicador de carga"],
+  },
+  {
+    href: "/componentes/meter",
+    label: "Meter",
+    aliases: ["medidor", "medición", "medicion", "batería", "bateria", "uso de disco"],
+    ariaReviewed: true,
   },
   { href: "/nav-list", label: "Nav list", aliases: ["lista de navegación", "lista de navegacion"] },
   { href: "/componentes/navbar", label: "Navbar", aliases: ["barra de navegación", "barra de navegacion"] },
@@ -340,6 +391,12 @@ const componentItems = [
   { href: "/componentes/steps", label: "Steps", aliases: ["pasos"] },
   { href: "/componentes/switch", label: "Switch", aliases: ["interruptor"] },
   { href: "/componentes/table", label: "Table", aliases: ["tabla"] },
+  {
+    href: "/componentes/treegrid",
+    label: "Treegrid",
+    aliases: ["grilla jerárquica", "grilla jerarquica", "tabla jerárquica", "tabla jerarquica", "explorador de archivos"],
+    ariaReviewed: true,
+  },
   { href: "/componentes/tabs", label: "Tabs", aliases: ["pestañas", "pestanas"] },
   { href: "/componentes/tag", label: "Tag", aliases: ["etiqueta"] },
   { href: "/componentes/text", label: "Text", aliases: ["texto"] },
@@ -357,7 +414,12 @@ const componentItems = [
       "theme",
     ],
   },
-  { href: "/componentes/toast", label: "Toast", aliases: ["notificación", "notificacion", "aviso transitorio"] },
+  {
+    href: "/componentes/toast",
+    label: "Toast",
+    aliases: ["notificación", "notificacion", "aviso transitorio"],
+    ariaReviewed: true,
+  },
   { href: "/componentes/tooltip", label: "Tooltip", aliases: ["globo", "ayuda contextual", "descripción", "descripcion", "hint"] },
   {
     href: "/componentes/toc",
@@ -378,6 +440,7 @@ const componentItems = [
   { href: "/vaul", label: "Vaul", aliases: ["drawer pattern", "sheet"] },
   { href: "/componentes/wrapper", label: "Wrapper", aliases: ["container", "contenedor", "envoltorio"] },
   {
+    ariaReviewed: true,
     href: "/componentes/breadcrumb",
     label: "Breadcrumb",
     aliases: ["migas de pan", "ruta jerárquica", "ruta jerarquica"],
@@ -411,6 +474,12 @@ const componentItems = [
     href: "/componentes/menu",
     label: "Menu",
     aliases: ["menú", "menu de acciones", "context menu"],
+  },
+  {
+    href: "/componentes/menubar",
+    label: "Menubar",
+    aliases: ["barra de menú", "barra de menu", "menubar-editor"],
+    ariaReviewed: true,
   },
   {
     href: "/componentes/number-field",
@@ -484,6 +553,7 @@ export const componentNavigation = [
       "/componentes/copy-button",
       "/componentes/date-picker",
       "/componentes/file-upload",
+      "/componentes/form-field",
       "/componentes/input",
       "/componentes/number-field",
       "/componentes/radio-group",
@@ -504,6 +574,7 @@ export const componentNavigation = [
       "/componentes/command-palette",
       "/componentes/link",
       "/componentes/menu",
+      "/componentes/menubar",
       "/nav-list",
       "/componentes/navbar",
       "/componentes/pagination",
@@ -525,6 +596,8 @@ export const componentNavigation = [
       "/componentes/changelog",
       "/componentes/code-preview",
       "/componentes/component-preview",
+      "/componentes/data-grid",
+      "/componentes/feed",
       "/componentes/heading",
       "/componentes/icon",
       "/componentes/image-frame",
@@ -533,6 +606,7 @@ export const componentNavigation = [
       "/componentes/process-list",
       "/componentes/stat",
       "/componentes/table",
+      "/componentes/treegrid",
       "/componentes/tag",
       "/componentes/text",
     ),
@@ -544,6 +618,7 @@ export const componentNavigation = [
       "/componentes/callout",
       "/componentes/empty-state",
       "/componentes/loader",
+      "/componentes/meter",
       "/componentes/placeholder",
       "/componentes/progress",
       "/componentes/steps",
@@ -598,7 +673,7 @@ if (
  * overridden per locale in `i18n/ui.ts` (`navLabel`), keyed by href.
  */
 export const globalNavigation = [
-  { href: "/", label: "nav.docs" },
+  { href: "/componentes", label: "nav.docs" },
   { href: "/playground", label: "nav.playground" },
   { href: "/personalizar", label: "nav.customize" },
 ] satisfies readonly NavigationItem[];
@@ -617,7 +692,11 @@ export const documentationNavigation = [
             label: "Prerrequisitos",
             aliases: ["conceptos", "fundamentos externos", "css variables", "custom properties", "antes de empezar"],
           },
-          { href: "/", label: "Instalación", aliases: ["installation", "instalar"] },
+          {
+            href: "/instalacion",
+            label: "Instalación",
+            aliases: ["installation", "instalar", "install"],
+          },
           {
             href: "/primer-componente",
             label: "Tu primer componente",

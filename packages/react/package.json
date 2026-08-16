@@ -84,9 +84,9 @@
       "types": "./src/components/button.tsx",
       "default": "./src/components/button.tsx"
     },
-    "./field": {
-      "types": "./src/components/input.tsx",
-      "default": "./src/components/input.tsx"
+    "./form-field": {
+      "types": "./src/components/form-field.tsx",
+      "default": "./src/components/form-field.tsx"
     },
     "./layout": {
       "types": "./src/components/layout.tsx",
@@ -204,6 +204,10 @@
       "types": "./src/components/table.tsx",
       "default": "./src/components/table.tsx"
     },
+    "./treegrid": {
+      "types": "./src/components/treegrid.tsx",
+      "default": "./src/components/treegrid.tsx"
+    },
     "./tile": {
       "types": "./src/components/tile.tsx",
       "default": "./src/components/tile.tsx"
@@ -295,6 +299,22 @@
     "./menu": {
       "types": "./src/components/menu.tsx",
       "default": "./src/components/menu.tsx"
+    },
+    "./menubar": {
+      "types": "./src/components/menubar.tsx",
+      "default": "./src/components/menubar.tsx"
+    },
+    "./meter": {
+      "types": "./src/components/meter.tsx",
+      "default": "./src/components/meter.tsx"
+    },
+    "./data-grid": {
+      "types": "./src/components/data-grid.tsx",
+      "default": "./src/components/data-grid.tsx"
+    },
+    "./feed": {
+      "types": "./src/components/feed.tsx",
+      "default": "./src/components/feed.tsx"
     },
     "./number-field": {
       "types": "./src/components/number-field.tsx",

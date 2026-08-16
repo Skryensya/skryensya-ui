@@ -27,15 +27,16 @@ export const menuParts = {
   group: "sk-menu__group",
   groupLabel: "sk-menu__group-label",
   /*
-   * Not template parts: the compiler never emits these, `menu-intent-overlay.ts` creates them
-   * imperatively, only while `debugSafetyTriangle` is on and a submenu is open. Named here anyway,
-   * same as every other class in this file, so the overlay module and menu.css share ONE source for
-   * the string instead of a hand-typed copy in each.
+   * Not template parts: the compiler never emits these, they are created imperatively. `safeArea`
+   * exists while a submenu is open and the pointer is near its trigger (`menu-safe-area.ts`, and it
+   * is real machinery, not decoration — see that file); the two `intentReadout` parts exist only
+   * while `debugSafetyTriangle` is on (`menu-intent-readout.ts`). Named here anyway, same as every
+   * other class in this file, so those modules and menu.css share ONE source for the string
+   * instead of a hand-typed copy in each.
    */
-  intentOverlay: "sk-menu__intent-overlay",
-  intentPolygon: "sk-menu__intent-polygon",
-  intentBadge: "sk-menu__intent-badge",
-  intentBadgeDot: "sk-menu__intent-badge-dot",
+  safeArea: "sk-menu__safe-area",
+  intentReadout: "sk-menu__intent-readout",
+  intentReadoutDot: "sk-menu__intent-readout-dot",
 } as const;
 
 export const menuAttrs = {
@@ -46,6 +47,8 @@ export const menuAttrs = {
   content: "data-sk-menu-content",
   item: "data-sk-menu-item",
   optionItem: "data-sk-menu-option-item",
+  /** On the TRIGGER while its safe area is mounted; menu.css raises the trigger for exactly that long. */
+  safeArea: "data-sk-menu-safe-area",
   separator: "data-sk-menu-separator",
   group: "data-sk-menu-group",
   groupLabel: "data-sk-menu-group-label",
@@ -120,11 +123,11 @@ export const menuContract = {
      */
     density: { type: "enum", values: ["compact"], attr: "data-density" },
     /*
-     * Draws @zag-js/menu's OWN pointer-intent geometry live, over every submenu this Menu owns
-     * (menu-intent-overlay.ts): the "safety triangle" that lets a reader cross a sibling item on a
-     * diagonal path toward an open submenu without it stealing highlight. This is not new behavior,
-     * it is already how every submenu in the system behaves (menu.machine's `setIntentPolygon` /
-     * `pointerRoutingMode`); the flag only turns on SEEING it, for teaching or debugging.
+     * Paints the SAFE AREA (menu-safe-area.ts) live over every submenu this Menu owns, plus a
+     * status line saying whether it is currently holding the pointer. This is not new behavior and
+     * not a drawing OF the behavior: the safe area is a real element that exists on every submenu
+     * whether or not this flag is on, and the flag only gives it a fill so it can be seen, for
+     * teaching or debugging.
      *
      * Only the root carries this in the tree. Vanilla needs nothing further: nested submenu roots
      * are real DOM descendants, and `root.closest(…)` finds the flag on an ancestor. React portals,

@@ -6,11 +6,21 @@ import {
   useSandpack,
 } from "@codesandbox/sandpack-react";
 import type { SandpackTheme } from "@codesandbox/sandpack-react";
+import { Button } from "@skryensya/react/button";
+import { Dialog } from "@skryensya/react/dialog";
 import { Icon } from "@skryensya/react/icon";
 import { SegmentedControl } from "@skryensya/react/segmented";
 import { Sidebar, SidebarContent, SidebarResizeHandle } from "@skryensya/react/sidebar";
 import { TreeView } from "@skryensya/react/tree-view";
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type SyntheticEvent,
+} from "react";
 
 /*
  * THE PLAYGROUND, and the one thing it exists to prove: this code runs.
@@ -45,6 +55,12 @@ export type PlaygroundIndexComponent = {
  */
 export type PlaygroundDetailExample = PlaygroundIndexExample & {
   readonly react: string;
+  /**
+   * The module `/App.tsx` imports its collections from, for the examples that have one. A second
+   * file rather than a `const` in the entry, because that is what the component page shows and the
+   * two have to be the same code.
+   */
+  readonly reactData?: { readonly path: string; readonly code: string };
   readonly vanilla: string;
 };
 export type PlaygroundDetailComponent = Omit<PlaygroundIndexComponent, "examples"> & {
@@ -64,6 +80,10 @@ export type PlaygroundStrings = {
   readonly hideRail: string;
   readonly showRail: string;
   readonly resizeRail: string;
+  readonly discardTitle: string;
+  readonly discardBody: string;
+  readonly discardCancel: string;
+  readonly discardConfirm: string;
 };
 
 type Props = {
@@ -85,6 +105,11 @@ type PlaygroundHandoff = {
 const handoffStorageKey = "skryensya-playground-handoff";
 const handoffComponentId = "preview";
 
+/** Static, not `useId()`: one `Playground` mounts per page (`client:only`), so nothing here ever
+ *  collides, and a plain string is what `document.getElementById` (the platform's own way to reach
+ *  a `<dialog>`, the same one every other demo in this kit uses) needs to find it. */
+const discardDialogId = "playground-discard-dialog";
+
 function readPlaygroundHandoff(): PlaygroundHandoff | null {
   if (typeof window === "undefined") return null;
 
@@ -100,6 +125,61 @@ function readPlaygroundHandoff(): PlaygroundHandoff | null {
   } catch {
     return null;
   }
+}
+
+/*
+ * WHICH EXAMPLE IS OPEN, LIVES IN THE URL, the same trade `hero-tabs-url.ts` already makes for a
+ * component page's own tabs: a reader who wants to point someone at "the Ghost variant of Button in
+ * the Playground" should be able to send a link, not a link plus "then click Button, then Ghost".
+ *
+ * Two params rather than one `leafId(...)` string: readable in an address bar (`?component=button
+ * &example=ghost`) instead of `?leaf=button%2Fghost`, and each survives a reload independently of
+ * the other ever validating.
+ *
+ * NOT the handoff's business. The handoff is a one-navigation transfer through session storage (see
+ * above) precisely because its source routinely exceeds a safe query string; it is read once, at
+ * mount, and wins over the URL when both are present — the reader who just clicked "Ver en
+ * Playground" gets the demo they clicked, not whatever this tab's address bar happened to hold from
+ * a previous visit.
+ */
+const COMPONENT_PARAM = "component";
+const EXAMPLE_PARAM = "example";
+const BINDING_PARAM = "binding";
+
+type PlaygroundUrlSelection = {
+  readonly componentId: string;
+  readonly exampleId: string;
+  readonly binding: "react" | "vanilla" | null;
+};
+
+function readPlaygroundUrlSelection(): PlaygroundUrlSelection | null {
+  if (typeof window === "undefined") return null;
+  const params = new URL(window.location.href).searchParams;
+  const componentId = params.get(COMPONENT_PARAM);
+  const exampleId = params.get(EXAMPLE_PARAM);
+  if (!componentId || !exampleId) return null;
+  const bindingParam = params.get(BINDING_PARAM);
+  const binding = bindingParam === "react" || bindingParam === "vanilla" ? bindingParam : null;
+  return { componentId, exampleId, binding };
+}
+
+/**
+ * Mirrors the current selection into the address bar. `replaceState`, not `push`: picking through
+ * examples is browsing one tool, not travelling to a new place, so Back should leave the Playground
+ * rather than walk backwards through every example the reader opened (the same call `hero-tabs-url.ts`
+ * makes for a component page's tabs).
+ *
+ * Skipped entirely for the handoff's synthetic id: `preview` names no real catalogue entry, so a URL
+ * built from it would 404 the moment anyone reloaded or shared it. The address bar is left holding
+ * whatever it already had — nothing to reload back into is exactly correct for a one-shot handoff.
+ */
+function writePlaygroundUrlSelection(componentId: string, exampleId: string, binding: "react" | "vanilla"): void {
+  if (componentId === handoffComponentId) return;
+  const url = new URL(window.location.href);
+  url.searchParams.set(COMPONENT_PARAM, componentId);
+  url.searchParams.set(EXAMPLE_PARAM, exampleId);
+  url.searchParams.set(BINDING_PARAM, binding);
+  window.history.replaceState(window.history.state, "", url);
 }
 
 /** The handoff, reshaped as the one-component detail it stands in for — no fetch needed, it already
@@ -562,7 +642,21 @@ const leafId = (componentId: string, exampleId: string) => `${componentId}/${exa
  * already there when each example remounted: asking for another example means asking for that
  * example, not for the last one patched.
  */
-function FileSync({ code, path }: { readonly code: string; readonly path: string }) {
+function FileSync({
+  code,
+  path,
+  data,
+}: {
+  readonly code: string;
+  readonly path: string;
+  /**
+   * The entry's data module, when this example has one. Pushed BEFORE the entry (which imports it)
+   * and never made the active file, and the PREVIOUS example's module is deleted rather than left
+   * behind: the file names come from the emitter, so they differ per example and a stale one would
+   * sit in the editor's tab strip as a file nothing imports.
+   */
+  readonly data?: { readonly path: string; readonly code: string };
+}) {
   const { sandpack } = useSandpack();
   /*
    * WHAT WE LAST PUSHED, not what the file currently holds. `sandpack` (from `useSandpack()`)
@@ -574,15 +668,36 @@ function FileSync({ code, path }: { readonly code: string; readonly path: string
    * here instead answers the right question — has the PROP changed, i.e. did the reader pick a
    * different example — and ignores edits made through the editor itself.
    */
-  const pushedRef = useRef<{ path: string; code: string } | null>(null);
+  const pushedRef = useRef<{
+    path: string;
+    code: string;
+    data?: { path: string; code: string };
+  } | null>(null);
+
+  const dataPath = data?.path;
+  const dataCode = data?.code;
 
   useEffect(() => {
     if (!code) return;
-    if (pushedRef.current?.path === path && pushedRef.current?.code === code) return;
+    const pushed = pushedRef.current;
+    if (
+      pushed?.path === path &&
+      pushed.code === code &&
+      pushed.data?.path === dataPath &&
+      pushed.data?.code === dataCode
+    )
+      return;
+
+    if (pushed?.data && pushed.data.path !== dataPath) sandpack.deleteFile(pushed.data.path);
+    if (dataPath && dataCode !== undefined) sandpack.updateFile(dataPath, dataCode);
     sandpack.updateFile(path, code);
     sandpack.setActiveFile(path);
-    pushedRef.current = { path, code };
-  }, [code, path, sandpack]);
+    pushedRef.current = {
+      path,
+      code,
+      ...(dataPath && dataCode !== undefined ? { data: { path: dataPath, code: dataCode } } : {}),
+    };
+  }, [code, path, dataPath, dataCode, sandpack]);
 
   return null;
 }
@@ -593,9 +708,16 @@ export default function Playground({ catalogue, strings }: Props) {
    * the reader's and must survive the fetch resolving, which replaces every object it points at.
    */
   const [handoff, setHandoff] = useState<PlaygroundHandoff | null>(readPlaygroundHandoff);
-  const [componentId, setComponentId] = useState(() => (handoff ? handoffComponentId : ""));
-  const [exampleId, setExampleId] = useState(() => (handoff ? handoffComponentId : ""));
-  const [binding, setBinding] = useState<"react" | "vanilla">(() => (handoff ? "vanilla" : "react"));
+  /* The handoff wins when both are present: it is the demo the reader just clicked "Ver en
+     Playground" on, which outranks whatever this tab's address bar held from a previous visit. */
+  const [urlSelection] = useState<PlaygroundUrlSelection | null>(() => (handoff ? null : readPlaygroundUrlSelection()));
+  const [componentId, setComponentId] = useState(() =>
+    handoff ? handoffComponentId : (urlSelection?.componentId ?? ""),
+  );
+  const [exampleId, setExampleId] = useState(() => (handoff ? handoffComponentId : (urlSelection?.exampleId ?? "")));
+  const [binding, setBinding] = useState<"react" | "vanilla">(() =>
+    handoff ? "vanilla" : (urlSelection?.binding ?? "react"),
+  );
   const [railHidden, setRailHidden] = useState(false);
   const { bundles, blocked } = useBundles(catalogue);
   const components = useMemo(() => {
@@ -654,14 +776,61 @@ export default function Playground({ catalogue, strings }: Props) {
    * Only a LEAF is a selection. Clicking a component's own row expands it, which is what a branch
    * control is for, and the machine reports that as a selection all the same — acting on it would
    * swap the sandbox for whatever example happened to be first, which nobody asked for.
+   *
+   * A DIRTY EDITOR GETS A KIT DIALOG FIRST, not the switch itself. `hasEditsRef` (below) already knew
+   * whether the reader had typed anything; until now it only fed the tab-close warning, so picking a
+   * different example silently threw away those edits with no chance to say no. The confirmation is
+   * `Dialog` (the same contract `/componentes/dialog`'s own "delete this project?" demo uses), never
+   * `window.confirm`: this fires from inside the tool itself, nothing here forces the platform's own
+   * unstyled prompt the way an actual page unload does (see the `beforeunload` guard's own comment).
+   * The pending pair sits in a ref rather than being applied straight away — `select()` may run again
+   * before the reader answers, and the LATEST click is the one the dialog should resolve.
    */
   const select = (details: { selectedValue: string[] }) => {
     const [componentPart, examplePart] = (details.selectedValue[0] ?? "").split("/");
     if (!componentPart || !examplePart) return;
+    if (componentPart === componentId && examplePart === exampleId) return;
+
+    if (hasEditsRef.current) {
+      pendingSelectionRef.current = { componentId: componentPart, exampleId: examplePart };
+      const dialog = document.getElementById(discardDialogId);
+      if (dialog instanceof HTMLDialogElement) dialog.showModal();
+      return;
+    }
+
     if (componentPart !== handoffComponentId) setHandoff(null);
     setComponentId(componentPart);
     setExampleId(examplePart);
   };
+
+  /**
+   * Runs once the discard dialog closes, however it closed: the confirm button, cancel, Escape or a
+   * light-dismiss click on the backdrop all end up here, and `returnValue` is the platform's own way
+   * to tell them apart (set by whichever `<button type="submit" value="…">` inside the `method="dialog"`
+   * form actually submitted it; Escape and light-dismiss leave it empty, which reads as "cancel").
+   */
+  const handleDiscardDialogClose = (event: SyntheticEvent<HTMLDialogElement>) => {
+    const pending = pendingSelectionRef.current;
+    pendingSelectionRef.current = null;
+    if (!pending || event.currentTarget.returnValue !== "confirm") return;
+
+    hasEditsRef.current = false;
+    if (pending.componentId !== handoffComponentId) setHandoff(null);
+    setComponentId(pending.componentId);
+    setExampleId(pending.exampleId);
+  };
+
+  /*
+   * THE ADDRESS BAR, KEPT IN SYNC — keyed off `component`/`example` (the FALLBACK-resolved values),
+   * not the raw `componentId`/`exampleId` state, for the same reason `useComponentDetail` above is:
+   * the reader sees `components[0]` before ever clicking anything, and a link copied at that moment
+   * should reproduce what is actually on screen rather than a blank selection that resolves
+   * differently once the catalogue reloads in whatever order it happens to arrive in.
+   */
+  useEffect(() => {
+    if (!component || !example) return;
+    writePlaygroundUrlSelection(component.id, example.id, binding);
+  }, [component?.id, example?.id, binding]);
 
   /*
    * Keyed by everything that changes what the sandbox IS. Sandpack keeps its own copy of the files
@@ -702,6 +871,11 @@ export default function Playground({ catalogue, strings }: Props) {
     return binding === "react"
       ? {
           "/App.tsx": { code: sourceExample.react },
+          // Visible, not hidden: the entry imports it by name and the reader should be able to edit
+          // the data as readily as the composition — it is half of what the example is.
+          ...(sourceExample.reactData
+            ? { [sourceExample.reactData.path]: { code: sourceExample.reactData.code } }
+            : {}),
           ...reactPackageFiles(bundles.react, bundles.subpaths),
           "/styles.css": { code: previewCss, hidden: true },
           // The template's entry, rewritten only to pull the kit's stylesheet in beside React's own.
@@ -742,6 +916,9 @@ createRoot(document.getElementById("root")).render(
    */
   const hasEditsRef = useRef(false);
   const editorListenerCleanupRef = useRef<(() => void) | null>(null);
+  /** The selection `select()` stashed while the discard dialog decides its fate. See `select()` and
+   *  `handleDiscardDialogClose`, above. */
+  const pendingSelectionRef = useRef<{ componentId: string; exampleId: string } | null>(null);
 
   useEffect(() => {
     hasEditsRef.current = false;
@@ -978,7 +1155,11 @@ createRoot(document.getElementById("root")).render(
               template={binding === "react" ? "react-ts" : "static"}
               theme={sandpackTheme}
             >
-              <FileSync code={entryCode ?? ""} path={entryPath} />
+              <FileSync
+                code={entryCode ?? ""}
+                path={entryPath}
+                data={binding === "react" ? sourceExample?.reactData : undefined}
+              />
               <SandpackLayout>
                 <SandpackCodeEditor
                   showLineNumbers
@@ -991,6 +1172,34 @@ createRoot(document.getElementById("root")).render(
           </div>
         )}
       </div>
+
+      {/*
+        THE DISCARD CONFIRMATION, opened by `select()` above and never rendered inline in the rail:
+        a reader picking a sibling example is the one in-tool action that can throw away typed edits
+        with no browser navigation involved at all, so it is the one place this screen owns a
+        confirmation of its own rather than leaning on the platform's `beforeunload` prompt (which
+        cannot be skinned — see that guard's own comment). `Dialog` is the same contract
+        `/componentes/dialog`'s own confirmation demo composes; this is not a second implementation
+        of "are you sure", it is that one, reused.
+      */}
+      <Dialog
+        closeLabel={strings.discardCancel}
+        footer={
+          <>
+            <Button autoFocus type="submit" value="cancel" variant="ghost">
+              {strings.discardCancel}
+            </Button>
+            <Button type="submit" value="confirm" variant="danger">
+              {strings.discardConfirm}
+            </Button>
+          </>
+        }
+        id={discardDialogId}
+        onClose={handleDiscardDialogClose}
+        title={strings.discardTitle}
+      >
+        {strings.discardBody}
+      </Dialog>
     </div>
   );
 }

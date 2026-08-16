@@ -14,11 +14,12 @@
  * Binding tabs (header): Vanilla | React as a Segmented control, toggling which stage is visible.
  * Preference is shared across every preview on the page (`data-sk-component-preview-pref` on
  * `<html>`, persisted in docs).
- * Source tabs (below the stage, under Vanilla only): HTML plus optional CSS and JS. They sit
- * under Vanilla, never beside React.
+ * Source tabs (below the stage, under Vanilla only): HTML plus optional CSS and TS. They sit
+ * under Vanilla, never beside React. The TS is authored in `demos/scripts/*.ts` and type-stripped
+ * on its way into the frame: shown as written, run as JavaScript.
  */
 import CodeBlock from "./CodeBlock.astro";
-import { emitMarkup, emitReact } from "@skryensya/ai-compiler/emit";
+import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
 import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
 import { TreeDemo } from "./react-demos/tree";
 import { iconMarkup } from "../icons";
@@ -29,6 +30,8 @@ import "@skryensya/core/patterns/anchored.css";
 import "@skryensya/core/components/tooltip.css";
 import "@skryensya/core/components/menu.css";
 import { buildPreviewFrameDocument } from "../lib/preview-frame";
+import { exampleComponentName } from "../lib/example-component-name";
+import { compileDemoScript, indentScript } from "../lib/demo-script";
 import { getLocale, useTranslations } from "../i18n";
 
 type CodeLanguage = "bash" | "css" | "html" | "ts" | "tsx";
@@ -102,6 +105,11 @@ interface Props {
    */
   screens?: boolean;
   /**
+   * Skip the source panels under the stage. Marketing surfaces (the landing page) want the live
+   * specimen without the teaching HTML/TSX that every component page pairs with it.
+   */
+  hideSource?: boolean;
+  /**
    * Named span on the page's `.sk-layout-grid` (`packages/core/css/patterns/layout.css`). Each tab
    * panel is its own layout grid, so a preview sits at `content` measure by default and only reaches
    * for `breakout` (or narrower) when the demo itself needs the room — a settings List does, a Badge
@@ -127,6 +135,7 @@ const {
   scroll = false,
   measure,
   screens = true,
+  hideSource = false,
   width,
 } = Astro.props;
 const locale = getLocale(Astro.url);
@@ -137,8 +146,22 @@ const t = useTranslations(locale);
  * there is nothing to ship to the reader: the page carries the same bytes it would have carried if
  * someone had typed them, minus the chance that they typed something else.
  */
-const treeHtml = tree ? emitMarkup(tree) : undefined;
-const treeReact = tree ? emitReact(tree) : undefined;
+const treeHtml = tree ? emitMarkup(tree, { fillDefaults: false }) : undefined;
+/*
+ * React arrives as up to TWO files: the component, and the module its collections were moved to.
+ * `data` is what the second tab shows — a `<Menu>` whose items were serialized into the tag buried
+ * the composition the page is about under a wall of entries, so the entries live where a real
+ * project would have put them and the component file is left saying only how it is composed.
+ *
+ * The component is named after the PAGE, not after the tree's root: the Placeholder demos are
+ * composed inside a Box, and `BoxExample` on the Placeholder page names the wrapper instead of the
+ * subject. The route's last segment is the subject, and it is the same word in both locales.
+ */
+const reactSource = tree
+  ? emitReactSource(tree, { component: exampleComponentName(Astro.url) })
+  : undefined;
+const treeReact = reactSource?.component;
+const reactData = reactSource?.data;
 
 const vanillaCode = code ?? treeHtml ?? html;
 /*
@@ -168,11 +191,19 @@ ${previewHtml}
 
       await initComponents();
       mountIcons(document, phosphorIcons);
-${js ? `\n${js}\n` : ""}    </script>
+${js ? `\n${indentScript(compileDemoScript(js))}\n` : ""}    </script>
   </body>
 </html>`;
 const playgroundPayload = encodeURIComponent(JSON.stringify({ label, vanilla: playgroundVanilla }));
-const encodedPreviewScript = previewScript ? encodeURIComponent(previewScript) : "";
+/*
+ * Authored in TypeScript (`demos/scripts/*.ts`, type-checked with the rest of the app) and run as
+ * JavaScript, because both places it runs — this frame and the Playground's `index.html` above — are
+ * a browser with no compiler in front of it. The `js`/`previewScript` props are the SOURCE; every
+ * execution path strips it first, and the tab below shows what was written.
+ */
+const encodedPreviewScript = previewScript
+  ? encodeURIComponent(compileDemoScript(previewScript))
+  : "";
 /** Unique id so the FOUC inline script can target this preview (Astro may dedupe identical scripts). */
 const previewId = `sk-cp-${Math.random().toString(36).slice(2, 10)}`;
 const frameDocument = buildPreviewFrameDocument({
@@ -456,7 +487,7 @@ const screenToggleLabels = Object.fromEntries(
   </div>
 
   {
-    vanillaCode && (
+    vanillaCode && !hideSource && (
       <div class="sk-component-preview__binding" data-sk-component-preview-binding="vanilla">
         {
           hasSourceTabs ? (
@@ -497,7 +528,7 @@ const screenToggleLabels = Object.fromEntries(
                       data-value="js"
                       type="button"
                     >
-                      JS
+                      TS
                     </button>
                   )
                 }
@@ -546,15 +577,64 @@ const screenToggleLabels = Object.fromEntries(
   }
 
   {
-    (treeReact ?? react) && (
+    (treeReact ?? react) && !hideSource && (
       <div
         class="sk-component-preview__binding"
         data-sk-component-preview-binding="react"
         hidden={hasBindingTabs ? true : undefined}
       >
-        <div class="sk-component-preview__code">
-          <CodeBlock code={(treeReact ?? react)!} lang="tsx" />
-        </div>
+        {
+          reactData ? (
+            <div
+              class="sk-tabs sk-component-preview__source-tabs"
+              data-sk-tabs
+              data-sk-component-preview-source-tabs
+              data-sk-density-scope
+              data-value="component"
+              style="--sk-density-factor: 0.72"
+            >
+              <div class="sk-tabs__list" data-sk-tabs-list aria-label={t("preview.reactSource")}>
+                <button
+                  class="sk-tabs__trigger sk-interactive"
+                  data-sk-tabs-trigger
+                  data-value="component"
+                  type="button"
+                >
+                  {t("preview.sourceComponent")}
+                </button>
+                {/* Labelled with the file name, because that is what the import in the tab beside it says. */}
+                <button
+                  class="sk-tabs__trigger sk-interactive"
+                  data-sk-tabs-trigger
+                  data-value="data"
+                  type="button"
+                >
+                  {reactData.file}
+                </button>
+              </div>
+              <div
+                class="sk-tabs__content sk-component-preview__code"
+                data-sk-tabs-content
+                data-value="component"
+                data-sk-component-preview-source="react"
+              >
+                <CodeBlock code={treeReact!} lang="tsx" />
+              </div>
+              <div
+                class="sk-tabs__content sk-component-preview__code"
+                data-sk-tabs-content
+                data-value="data"
+                data-sk-component-preview-source="react-data"
+              >
+                <CodeBlock code={reactData.source} lang="ts" />
+              </div>
+            </div>
+          ) : (
+            <div class="sk-component-preview__code" data-sk-component-preview-source="react">
+              <CodeBlock code={(treeReact ?? react)!} lang="tsx" />
+            </div>
+          )
+        }
       </div>
     )
   }

@@ -19,6 +19,8 @@ export type CatalogueIndexComponent = {
 
 export type CatalogueDetailExample = CatalogueIndexExample & {
   readonly react: string;
+  /** The module the React entry imports its collections from, for the examples that have one. */
+  readonly reactData?: { readonly path: string; readonly code: string };
   readonly vanilla: string;
 };
 export type CatalogueDetailComponent = Omit<CatalogueIndexComponent, "examples"> & {
@@ -65,11 +67,15 @@ export function catalogueDetail(
     id: component.id,
     label: component.label,
     docs: component.docs,
-    examples: component.examples.map((example) => ({
-      id: example.id,
-      label: example.label,
-      react: reactSandboxSource(example.tree),
-      vanilla: vanillaSandboxSource(example.tree, `${component.label} · ${example.label}`),
-    })),
+    examples: component.examples.map((example) => {
+      const react = reactSandboxSource(example.tree);
+      return {
+        id: example.id,
+        label: example.label,
+        react: react.code,
+        ...(react.data ? { reactData: react.data } : {}),
+        vanilla: vanillaSandboxSource(example.tree, `${component.label} · ${example.label}`),
+      };
+    }),
   };
 }

@@ -1,13 +1,13 @@
-import { emitMarkup, emitReact } from "@skryensya/ai-compiler/emit";
+import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 
 /*
  * A usage tree, turned into something a sandbox can RUN.
  *
- * `emitReact` and `emitMarkup` produce a snippet, not a program: an import line and a JSX
- * expression, or a fragment of markup. That is exactly right for a docs page, which shows the part
- * worth reading and provides the rest. A sandbox has no rest, so this file is the difference: the
- * component, plus the smallest honest program around it.
+ * `emitReactSource` and `emitMarkup` produce a snippet, not a program: a component and the module
+ * its data lives in, or a fragment of markup. That is exactly right for a docs page, which shows the
+ * part worth reading and provides the rest. A sandbox has no rest, so this file is the difference:
+ * the component, plus the smallest honest program around it.
  *
  * It runs at BUILD time. The emitters are the compiler's, the trees are the docs', and the browser
  * receives four strings per example rather than a tree, an emitter and a catalogue to run them
@@ -27,28 +27,19 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
  * resolves and the snippet needs no apology. See `Playground.tsx` for the mount.
  */
 
-/** Splits an emitted snippet into its import lines and everything after them. */
-function splitSnippet(source: string): { imports: string; body: string } {
-  const lines = source.split("\n");
-  const lastImport = lines.reduce(
-    (found, line, index) => (line.startsWith("import ") ? index : found),
-    -1,
-  );
-  return {
-    imports: lines.slice(0, lastImport + 1).join("\n"),
-    body: lines
-      .slice(lastImport + 1)
-      .join("\n")
-      .trim(),
-  };
-}
-
-/** Indents a JSX body so it reads correctly inside the `return (…)` it is being placed in. */
+/** Indents a body so it reads correctly inside the block it is being placed in. */
 const indent = (body: string, by = "    ") =>
   body
     .split("\n")
     .map((line) => (line.trim() === "" ? line : by + line))
     .join("\n");
+
+/** The React half of one example: the entry, and the data module it imports when it has one. */
+export type ReactSandbox = {
+  readonly code: string;
+  /** Sandpack addresses files by absolute path, so this is `/menu-items.ts`, not `menu-items.ts`. */
+  readonly data?: { readonly path: string; readonly code: string };
+};
 
 /**
  * The React entry: a component, because that is what the React template mounts.
@@ -56,18 +47,22 @@ const indent = (body: string, by = "    ") =>
  * `export default function App()` and not a bare expression: the emitted snippet is JSX in the
  * middle of a sentence the docs page finishes. Here the reader can edit anything, including turning
  * this into two components, so it starts as the thing they would edit.
+ *
+ * The emitter builds that wrapper itself rather than this file pasting one around it, and it hands
+ * back the DATA MODULE beside it. Both go into the sandbox under the names the emitter chose: the
+ * page shows `import { items } from "./menu-items"` and the sandbox has to be able to run exactly
+ * that, or the playground is back to showing code that is nearly the code.
  */
-export function reactSandboxSource(tree: UsageTree): string {
-  const { imports, body } = splitSnippet(emitReact(tree));
+export function reactSandboxSource(tree: UsageTree): ReactSandbox {
+  const { component, data } = emitReactSource(tree, {
+    component: "App",
+    export: "default",
+  });
 
-  return `${imports}
-
-export default function App() {
-  return (
-${indent(body)}
-  );
-}
-`;
+  return {
+    code: `${component}\n`,
+    ...(data ? { data: { path: `/${data.file}`, code: data.source } } : {}),
+  };
 }
 
 /**
@@ -88,7 +83,7 @@ export function vanillaSandboxSource(tree: UsageTree, title: string): string {
     <link rel="stylesheet" href="./skryensya.css" />
   </head>
   <body>
-${indent(emitMarkup(tree), "    ")}
+${indent(emitMarkup(tree, { fillDefaults: false }), "    ")}
 
     <script type="module">
       // The two calls a no-build consumer makes: mount every authored [data-sk-*] root, then bind
@@ -106,6 +101,6 @@ ${indent(emitMarkup(tree), "    ")}
 export type PlaygroundSources = {
   readonly id: string;
   readonly label: string;
-  readonly react: string;
+  readonly react: ReactSandbox;
   readonly vanilla: string;
 };

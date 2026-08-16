@@ -30,6 +30,7 @@ import * as paginationModule from "./components/pagination.js";
 import * as themeToggleModule from "./components/theme-toggle.js";
 import * as contentModule from "./components/content.js";
 import * as numberFieldModule from "./components/number-field.js";
+import * as formFieldModule from "./components/form-field.js";
 import * as tooltipModule from "./components/tooltip.js";
 import * as selectModule from "./components/select.js";
 import * as menuModule from "./components/menu.js";
@@ -56,6 +57,11 @@ import * as inputModule from "./components/input.js";
 import * as navListModule from "./components/nav-list.js";
 import * as selectionModule from "./components/selection.js";
 import * as tableModule from "./components/table.js";
+import * as treegridModule from "./components/treegrid.js";
+import * as meterModule from "./components/meter.js";
+import * as dataGridModule from "./components/data-grid.js";
+import * as feedModule from "./components/feed.js";
+import * as menubarModule from "./components/menubar.js";
 import * as tabsModule from "./components/tabs.js";
 import * as tocModule from "./components/toc.js";
 import * as componentPreviewModule from "./components/component-preview.js";
@@ -137,10 +143,16 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/button": buttonModule,
   "@skryensya/react/icon": iconModule,
   "@skryensya/react/image-frame": imageFrameModule,
+  "@skryensya/react/form-field": formFieldModule,
   "@skryensya/react/input": inputModule,
   "@skryensya/react/nav-list": navListModule,
   "@skryensya/react/selection": selectionModule,
   "@skryensya/react/table": tableModule,
+  "@skryensya/react/treegrid": treegridModule,
+  "@skryensya/react/meter": meterModule,
+  "@skryensya/react/data-grid": dataGridModule,
+  "@skryensya/react/feed": feedModule,
+  "@skryensya/react/menubar": menubarModule,
   "@skryensya/react/tabs": tabsModule,
   "@skryensya/react/toc": tocModule,
   "@skryensya/react/component-preview": componentPreviewModule,

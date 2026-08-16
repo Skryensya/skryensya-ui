@@ -214,7 +214,17 @@ export const publicationSwapTree = (t: Translate): UsageTree => ({
       contract: "typography",
       signature: "Text",
       options: { size: "sm", tone: "secondary" },
-      attrs: { "aria-live": "polite", "data-placeholder-status": "", role: "status" },
+      /*
+       * BOTH words, on the node that shows them: the script swaps the text after five seconds and
+       * reads the second one from `data-loaded` rather than carrying it. A script that carried it
+       * would have to be built once per language, which is what it used to be.
+       */
+      attrs: {
+        "aria-live": "polite",
+        "data-placeholder-status": "",
+        "data-loaded": t("demo.placeholder.loaded"),
+        role: "status",
+      },
       children: t("demo.placeholder.loading"),
     },
     {
@@ -239,16 +249,4 @@ export const publicationSwapTree = (t: Translate): UsageTree => ({
   ],
 });
 
-export const publicationSwapScript = (t: Translate): string => `const root = document.querySelector(".placeholder-example");
-const status = root?.querySelector("[data-placeholder-status]");
-const swap = root?.querySelector(".placeholder-example__swap");
-const loading = root?.querySelector("[data-placeholder-loading]");
-const content = root?.querySelector("[data-placeholder-content]");
-
-window.setTimeout(() => {
-  root?.setAttribute("aria-busy", "false");
-  swap?.setAttribute("data-state", "loaded");
-  loading?.setAttribute("aria-hidden", "true");
-  content?.setAttribute("aria-hidden", "false");
-  if (status) status.textContent = ${JSON.stringify(t("demo.placeholder.loaded"))};
-}, 5000);`;
+export { default as publicationSwapScript } from "./scripts/placeholder-swap.ts?raw";

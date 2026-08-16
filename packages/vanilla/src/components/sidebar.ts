@@ -7,6 +7,7 @@ import {
   type SidebarOptions,
   type SidebarResizeChangeDetails,
 } from "@skryensya/core/sidebar";
+import { hasCrossedDragThreshold, resolveSplitterKey, splitterDirectionSign } from "@skryensya/core/splitter";
 import { applyAttrs, bindEvents } from "../runtime/apply.js";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 import { clearPreference, getPreference, setPreference } from "../storage.js";
@@ -15,13 +16,6 @@ const rootSelector = "[data-sk-sidebar]";
 const triggerSelector = "[data-sk-sidebar-trigger]";
 const contentSelector = "[data-sk-sidebar-content]";
 const resizeSelector = "[data-sk-sidebar-resize]";
-
-/** One arrow key of travel. A splitter that moved by 1px would need two hundred presses to cross. */
-const KEYBOARD_STEP = 16;
-/** Shift is the coarse gesture, the same relationship a slider has between arrow and page keys. */
-const KEYBOARD_STEP_COARSE = 64;
-/** How far a press has to travel before it counts as a drag rather than a click. */
-const DRAG_THRESHOLD = 4;
 
 type Cleanup = () => void;
 
@@ -207,7 +201,7 @@ function connectResize(root: HTMLElement, handle: HTMLElement, options: SidebarO
 
   /* The handle sits on the inline END of the panel, so in RTL a drag toward the reader's start is a
    * drag toward larger x. Read per gesture rather than cached: a document can flip direction. */
-  const towardWider = () => (getComputedStyle(root).direction === "rtl" ? -1 : 1);
+  const towardWider = () => splitterDirectionSign(getComputedStyle(root).direction === "rtl" ? "rtl" : "ltr");
 
   /*
    * ── PRESSED IS NOT DRAGGING ───────────────────────────────────────────────────────────────────
@@ -252,13 +246,14 @@ function connectResize(root: HTMLElement, handle: HTMLElement, options: SidebarO
     if (pointerId === null || pointer.pointerId !== pointerId) return;
 
     if (!dragging) {
-      if (Math.abs(pointer.clientX - startX) < DRAG_THRESHOLD) return;
+      if (!hasCrossedDragThreshold(startX, pointer.clientX)) return;
       // The gesture is a drag. Measure from HERE, so the width does not jump by the slop.
       dragging = true;
       bounds = measureBounds(root);
       startX = pointer.clientX;
       startWidth = settled();
       root.setAttribute("data-resizing", "");
+      handle.setAttribute("data-dragging", "");
     }
 
     apply(startWidth + (pointer.clientX - startX) * towardWider());
@@ -275,33 +270,31 @@ function connectResize(root: HTMLElement, handle: HTMLElement, options: SidebarO
     if (!dragging) return;
     dragging = false;
     root.removeAttribute("data-resizing");
+    handle.removeAttribute("data-dragging");
     commit();
   };
 
   const onKeyDown = (event: Event) => {
     const key = event as KeyboardEvent;
-    const step = key.shiftKey ? KEYBOARD_STEP_COARSE : KEYBOARD_STEP;
+    const action = resolveSplitterKey(key);
 
-    switch (key.key) {
-      case "ArrowLeft":
-        adjust((from) => from - step * towardWider());
+    switch (action.kind) {
+      case "delta":
+        adjust((from) => from + action.delta * towardWider());
         break;
-      case "ArrowRight":
-        adjust((from) => from + step * towardWider());
-        break;
-      case "Home":
+      case "home":
         // The ends of the travel, which `clamp()` resolves for us: overshoot and let CSS land it.
         adjust(() => 0);
         break;
-      case "End":
+      case "end":
         adjust(() => 100000);
         break;
-      case "Enter":
+      case "reset":
         // The keyboard's answer to double-click: one key that undoes every adjustment.
         key.preventDefault();
         reset();
         return;
-      default:
+      case "none":
         return;
     }
 
@@ -321,6 +314,7 @@ function connectResize(root: HTMLElement, handle: HTMLElement, options: SidebarO
   return () => {
     cleanup();
     root.removeAttribute("data-resizing");
+    handle.removeAttribute("data-dragging");
   };
 }
 

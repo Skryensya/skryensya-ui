@@ -10,3 +10,17 @@ Checkbox:
     - "se elige UNA opción de un conjunto; eso es un RadioGroup"
   alternatives:
     - Switch
+    - CheckboxGroup
+
+CheckboxGroup:
+  useWhen:
+    - "un conjunto de opciones que además se marca o desmarca entero"
+    - "hace falta mostrar que la selección es parcial: algunos sí, otros no"
+    - "seleccionar todo en una tabla, permisos, filtros con un maestro arriba"
+  avoidWhen:
+    - "las opciones no tienen nada en común; ahí son Checkbox sueltos"
+    - "se elige UNA; eso es un RadioGroup"
+    - "el padre debería poder quedarse en indeterminate por su cuenta: ese estado se DERIVA de los hijos, no se elige"
+  alternatives:
+    - Checkbox
+    - RadioGroup

@@ -10,6 +10,22 @@ export type RadioValueChangeDetails = {
   value: string | null;
 };
 
+/**
+ * What a CheckboxGroup reports: which children are checked, and the state that leaves the parent in.
+ *
+ * Both, and not just the values, because `checked` is the part a consumer cannot cheaply recompute
+ * without also knowing how many children there are — which is the group's business, not the
+ * listener's.
+ */
+export type CheckboxGroupValueChangeDetails = {
+  value: readonly string[];
+  checked: CheckedState;
+};
+
+export const checkboxGroupEvents = {
+  valueChange: "sk:checkboxgroupvaluechange",
+} as const;
+
 export type RadioGroupOrientation = "horizontal" | "vertical";
 
 export const selectionParts = {
@@ -34,6 +50,22 @@ export const selectionParts = {
 export type SelectionPart = keyof typeof selectionParts;
 export type SelectionPartClass = (typeof selectionParts)[SelectionPart];
 
+/**
+ * The checkbox family's parts: everything the three controls share, plus the two boxes only the
+ * GROUP has.
+ *
+ * They are here and not in `selectionParts` because that map is the `parts` of all three contracts
+ * at once, and a contract's parts are part of its published surface: adding a checkbox-group class
+ * to the shared map moved the surface hash of Switch and RadioGroup, which had gained nothing and
+ * had no entry to write about it. A family that grows a part should be the only family that
+ * changes.
+ */
+export const checkboxParts = {
+  ...selectionParts,
+  checkboxGroup: "sk-checkbox-group",
+  checkboxGroupItems: "sk-checkbox-group__items",
+} as const;
+
 /*
  * The two native selection controls, and the one place the system owns MORE structure than the
  * author does.
@@ -45,12 +77,12 @@ export type SelectionPartClass = (typeof selectionParts)[SelectionPart];
  * control is announced once, not twice.
  *
  * The label needs no `for` and the input needs no `id`: wrapping IS the association. That is the
- * platform's own rule, and it is why this contract has no wiring while Field is made of it.
+ * platform's own rule, and it is why this contract has no wiring while FormField is made of it.
  */
 export const checkboxContract = {
   id: "checkbox",
   css: "@skryensya/core/components/checkbox.css",
-  parts: selectionParts,
+  parts: checkboxParts,
 
   options: {
     name: { type: "string", attr: "name" },
@@ -129,7 +161,142 @@ export const checkboxContract = {
       react: { from: "@skryensya/react/selection", name: "Checkbox" },
     },
 
+    /*
+     * Many checkboxes and one that speaks for them, and the only signature here whose state is
+     * DERIVED rather than authored.
+     *
+     * The parent is not a fourth option: it holds no `name` and no `value`, submits nothing, and
+     * cannot be set to a value of its own. What it shows is a reading of its children — all, none,
+     * or some — and what a click on it means is "make every child agree with me". That is why
+     * `defaultIndeterminate` is absent from its options while Checkbox has it: on a lone checkbox
+     * indeterminate is a state an author can assert, and here asserting it would be asserting
+     * something the children may be about to contradict.
+     *
+     * Which children start checked is per-child data (`defaultChecked` on the entry), NOT a group
+     * `value` the way RadioGroup has one. Exclusivity is what makes a radio group's selection the
+     * group's; a checkbox group has no such claim, so the fact stays with the entry it is about.
+     *
+     * `role="group"` and not `radiogroup`: nothing here is exclusive, and the group is named by the
+     * parent's own label, which is the one piece of text that already describes the whole set.
+     */
+    CheckboxGroup: {
+      intent: ["select-all", "check-many-at-once", "partial-selection", "parent-checkbox"],
+      host: { element: "div" },
+      options: ["name", "orientation", "disabled", "required"],
+      requires: ["name"],
+      mount: "data-sk-checkbox-group",
+      slots: {
+        /** The parent's text, and the group's accessible name via `labelledBySlot` below. */
+        label: { accepts: "node", required: true },
+        items: {
+          accepts: "items",
+          required: true,
+          item: {
+            key: "value",
+            options: {
+              value: { type: "string", attr: "value" },
+              defaultChecked: { type: "boolean", default: false, attr: "checked", trueValue: "" },
+              disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "" },
+            },
+            slots: { label: { accepts: "node", required: true } },
+          },
+        },
+      },
+      template: {
+        element: "div",
+        part: "checkboxGroup",
+        host: true,
+        attrs: { role: "group" },
+        labelledBySlot: "label",
+        children: [
+          {
+            element: "label",
+            part: "checkbox",
+            children: [
+              /*
+               * No `name`, no `value`, and that absence is the contract: a form that submits this
+               * group gets the children's values and nothing standing for "all of them", which
+               * would be a fourth value the server never asked for.
+               */
+              {
+                element: "input",
+                part: "checkboxInput",
+                mount: "data-sk-checkbox-group-all",
+                attrs: { type: "checkbox" },
+                options: ["disabled"],
+              },
+              {
+                element: "span",
+                part: "checkboxControl",
+                also: ["sk-interactive"],
+                attrs: { "aria-hidden": "true" },
+                children: [
+                  {
+                    element: "span",
+                    part: "checkboxIndicator",
+                    attrs: { "data-state": "checked" },
+                    children: [{ element: "span", attrs: { "data-sk-icon": "check", "data-sk-icon-size": "sm" } }],
+                  },
+                  {
+                    element: "span",
+                    part: "checkboxIndicator",
+                    attrs: { "data-state": "indeterminate" },
+                    children: [{ element: "span", attrs: { "data-sk-icon": "remove", "data-sk-icon-size": "sm" } }],
+                  },
+                ],
+              },
+              { element: "span", part: "checkboxLabel", slot: "label" },
+            ],
+          },
+          {
+            element: "div",
+            part: "checkboxGroupItems",
+            children: [
+              {
+                element: "label",
+                part: "checkbox",
+                repeat: "items",
+                children: [
+                  {
+                    element: "input",
+                    part: "checkboxInput",
+                    mount: "data-sk-checkbox-group-item",
+                    attrs: { type: "checkbox" },
+                    options: ["name", "required"],
+                    itemOptions: ["value", "defaultChecked", "disabled"],
+                  },
+                  {
+                    element: "span",
+                    part: "checkboxControl",
+                    also: ["sk-interactive"],
+                    attrs: { "aria-hidden": "true" },
+                    children: [
+                      {
+                        element: "span",
+                        part: "checkboxIndicator",
+                        attrs: { "data-state": "checked" },
+                        children: [{ element: "span", attrs: { "data-sk-icon": "check", "data-sk-icon-size": "sm" } }],
+                      },
+                      {
+                        element: "span",
+                        part: "checkboxIndicator",
+                        attrs: { "data-state": "indeterminate" },
+                        children: [{ element: "span", attrs: { "data-sk-icon": "remove", "data-sk-icon-size": "sm" } }],
+                      },
+                    ],
+                  },
+                  { element: "span", part: "checkboxLabel", itemSlot: "label" },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/selection", name: "CheckboxGroup" },
+    },
   },
+
+  events: checkboxGroupEvents,
 } as const satisfies ComponentContract;
 
 /*

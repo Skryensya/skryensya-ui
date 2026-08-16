@@ -115,7 +115,24 @@ export function Select({
         <div {...anchor.positioner(api.getPositionerProps(), selectParts.positioner)}>
           <ul {...api.getContentProps()} className={selectParts.content}>
             {options.map((option) => (
-              <li {...api.getItemProps({ item: option })} className={`${selectParts.item} sk-interactive`} key={option.value}>
+              <li
+                {...api.getItemProps({ item: option })}
+                /*
+                 * Zag's `aria-selected` tracks the COMMITTED value, not the row under
+                 * `aria-activedescendant` — same gap fixed in Combobox (`combobox.tsx`), a
+                 * different Zag package (`@zag-js/select`, not `@zag-js/combobox`) with the
+                 * identical divergence (confirmed reading `select.connect.js`: `"aria-selected":
+                 * itemState.selected`). The WAI reference implementation
+                 * (`combobox-autocomplete.js`, `setCurrentOptionStyle`) moves `aria-selected="true"`
+                 * onto whichever option is highlighted as you arrow through the list, before Enter
+                 * commits anything. Select has no multi-select mode, so this applies unconditionally
+                 * — unlike Combobox, there is no "chosen set" reading to preserve. Placed after the
+                 * spread so it wins.
+                 */
+                aria-selected={option.value === api.highlightedValue ? "true" : undefined}
+                className={`${selectParts.item} sk-interactive`}
+                key={option.value}
+              >
                 <span {...api.getItemTextProps({ item: option })} className={selectParts.itemText}>
                   {option.label}
                 </span>

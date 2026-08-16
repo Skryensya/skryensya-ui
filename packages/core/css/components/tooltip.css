@@ -61,14 +61,24 @@
     --sk-anchored-arrow-bg: var(--sk-tooltip-bg, var(--color-bg-inverse));
   }
 
+  /*
+   * FALLBACKS ON EVERY HOOK HERE, same reason `--sk-anchored-offset` and `--sk-anchored-arrow-bg`
+   * have them above: in React this element is portalled to `document.body` (no `container` passed),
+   * so it renders outside `.sk-tooltip`'s subtree and cannot inherit the hooks it defines. Without a
+   * fallback each `var()` is invalid there and the property drops to its initial value, i.e. an
+   * unstyled box — background, radius and padding all silently gone, only in the one binding that
+   * portals. Vanilla nests content inside `.sk-tooltip` and keeps inheriting the hook normally, so
+   * the fallback never overrides an author's own `--sk-tooltip-*` there; it only fires where
+   * inheritance was already broken.
+   */
   .sk-tooltip__content {
     display: none;
     box-sizing: border-box;
-    padding: var(--sk-tooltip-padding);
-    border-radius: var(--sk-tooltip-radius);
-    background: var(--sk-tooltip-bg);
-    color: var(--sk-tooltip-fg);
-    font-size: var(--sk-tooltip-font-size);
+    padding: var(--sk-tooltip-padding, var(--space-inset-sm));
+    border-radius: var(--sk-tooltip-radius, var(--radius-control));
+    background: var(--sk-tooltip-bg, var(--color-bg-inverse));
+    color: var(--sk-tooltip-fg, var(--color-text-inverse));
+    font-size: var(--sk-tooltip-font-size, var(--font-size-body-sm));
     line-height: var(--font-line-height-body);
     box-shadow: var(--elevation-raised);
     /* El texto de un tooltip es corto por definición; envolver está bien, cortar no. */

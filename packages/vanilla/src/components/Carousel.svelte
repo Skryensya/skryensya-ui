@@ -107,6 +107,29 @@
   const api = $derived(carousel.connect(service, normalizeProps));
 
   /*
+   * WCAG 2.2.2 (Pause, Stop, Hide) y el patrón WAI-ARIA de Carousel piden que la rotación automática
+   * se detenga apenas el mouse pasa por encima O el teclado entra con foco, y se reanude al salir —
+   * salvo que la OTRA condición siga activa. La máquina de Zag (1.42.0) no implementa ninguna de las
+   * dos: su estado `autoplay` no reacciona en absoluto a `VIEWPORT.FOCUS` (confirmado leyendo
+   * `carousel.machine.js`), y no existe manejo de mouseenter/mouseleave en todo el paquete.
+   *
+   * `desiredPlaying` es la intención explícita del usuario — lo que el botón de pausa/play pidió por
+   * última vez — independiente de la pausa TEMPORAL que hover/foco imponen. Sin esa separación, salir
+   * con el mouse reanudaría un carrusel que el usuario detuvo a propósito con el botón.
+   */
+  let hovering = $state(false);
+  let focused = $state(false);
+  let desiredPlaying = $state(Boolean(autoplay));
+
+  $effect(() => {
+    if (!wantsAutoplay) return;
+    const shouldPlay = desiredPlaying && !hovering && !focused;
+    if (shouldPlay === api.isPlaying) return;
+    if (shouldPlay) api.play();
+    else api.pause();
+  });
+
+  /*
    * Tres razones para no dibujar controles, y las tres son la misma: no hay nada que controlar.
    *   - `data-controls="none"`, el consumidor lo pidió: la pista queda como scroller con snap, se
    *     arrastra o se desliza, y el peek del siguiente slide es lo único que lo anuncia.
@@ -173,6 +196,35 @@
     root.addEventListener(carouselEvents.goto, onGoto);
     cleanups.push(() => root.removeEventListener(carouselEvents.goto, onGoto));
 
+    // Root-level: "hovering" es cualquier punto del carrusel, no sólo la pista, y `focusin`/`focusout`
+    // (a diferencia de `focus`/`blur`) burbujean, así que un único listener detecta foco en CUALQUIER
+    // descendiente (un slide, el prev/next, un dot) sin necesidad de capturar en cada uno por separado.
+    if (wantsAutoplay) {
+      const onMouseEnter = () => {
+        hovering = true;
+      };
+      const onMouseLeave = () => {
+        hovering = false;
+      };
+      const onFocusIn = () => {
+        focused = true;
+      };
+      const onFocusOut = (event: FocusEvent) => {
+        if (root.contains(event.relatedTarget as Node | null)) return;
+        focused = false;
+      };
+      root.addEventListener("mouseenter", onMouseEnter);
+      root.addEventListener("mouseleave", onMouseLeave);
+      root.addEventListener("focusin", onFocusIn);
+      root.addEventListener("focusout", onFocusOut);
+      cleanups.push(() => {
+        root.removeEventListener("mouseenter", onMouseEnter);
+        root.removeEventListener("mouseleave", onMouseLeave);
+        root.removeEventListener("focusin", onFocusIn);
+        root.removeEventListener("focusout", onFocusOut);
+      });
+    }
+
     // Los chevrones se autoran como placeholders `data-sk-icon` y los hidrata el set que la app ya
     // registró con `mountIcons` (ADR-15: el set sigue siendo explícito del lado de la app).
     remountIcons(root);
@@ -209,9 +261,23 @@
     <!-- El glifo lo dibuja el CSS a partir de `data-pressed`, no un icono: pausa/reproducir no están
          en el vocabulario estable de roles, y esto no es motivo para obligar a cada set a dibujarlos. -->
     {#if wantsAutoplay}
+      <!--
+        `data-pressed` y `aria-label` NO vienen del spread de Zag (que los deriva de `api.isPlaying`,
+        el estado MOMENTÁNEO — suprimido mientras el mouse o el foco están encima). Vienen de
+        `desiredPlaying`, la última elección EXPLÍCITA del usuario: si el botón mostrara "Reanudar"
+        sólo porque el hover ya pausó la rotación, un click ahí haría lo contrario de lo que promete
+        (reiniciaría en vez de detener). El `onclick` tampoco delega en el de Zag por la misma razón:
+        sólo alterna `desiredPlaying`, y el efecto de arriba es el único que llama a play()/pause().
+      -->
       <button
         {...api.getAutoplayTriggerProps()}
         class="{carouselParts.button} {carouselParts.autoplay} sk-interactive"
+        data-pressed={desiredPlaying ? "" : undefined}
+        aria-label={desiredPlaying ? "Pausar la rotación" : "Reanudar la rotación"}
+        onclick={(event) => {
+          if (event.defaultPrevented) return;
+          desiredPlaying = !desiredPlaying;
+        }}
       ></button>
     {/if}
   </div>

@@ -23,6 +23,8 @@ function featureSlide(
   t: Translate,
   feature: Feature,
   position: Position,
+  /** Adds a real, focusable "Read more" link inside the card — see `carouselFocusableTree` below. */
+  href?: string,
 ): UsageTree {
   return {
     contract: "carousel",
@@ -70,7 +72,15 @@ function featureSlide(
                 options: { size: "sm", tone: "secondary" },
                 children: t(`demo.carousel.${feature}.body` as never),
               },
-            ],
+              href
+                ? {
+                    contract: "typography",
+                    signature: "Link",
+                    options: { href },
+                    children: t("demo.carousel.readMore"),
+                  }
+                : undefined,
+            ].filter((node): node is Exclude<typeof node, undefined> => node !== undefined),
           },
         },
       ],
@@ -95,6 +105,23 @@ export const carouselAutoplayTree = (t: Translate): UsageTree => ({
   options: { autoplayDelay: 3500, slideSize: "min(65%, 22rem)" },
   attrs: { "aria-label": t("demo.carousel.label") },
   children: features.map(([feature, position]) => featureSlide(t, feature, position)),
+});
+
+/*
+ * Every card is ALSO its own destination: WAI-ARIA's Carousel pattern says focus anywhere inside
+ * the carousel pauses rotation, "including the next and previous slide elements" — that phrasing
+ * is easy to read as "only the chrome", so this demo is the case that proves it also covers a
+ * slide's OWN content. Tab into "Leer más" on any card and the rotation stops; Tab or Shift+Tab
+ * back out and it resumes (unless the mouse happens to be hovering too).
+ */
+export const carouselFocusableTree = (t: Translate): UsageTree => ({
+  contract: "carousel",
+  signature: "Carousel",
+  options: { autoplayDelay: 3500, slideSize: "min(65%, 22rem)" },
+  attrs: { "aria-label": t("demo.carousel.focusLabel") },
+  children: features.map(([feature, position]) =>
+    featureSlide(t, feature, position, `#${feature}`),
+  ),
 });
 
 /*

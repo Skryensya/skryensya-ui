@@ -155,4 +155,17 @@ export const carouselContract = {
       react: { from: "@skryensya/react/carousel", name: "CarouselSlide" },
     },
   },
+
+  a11y: [
+    {
+      signatures: ["Carousel"],
+      when: {},
+      requiresOneOf: ["aria-label", "aria-labelledby"],
+      because:
+        "The machine gives the root role=\"region\" and aria-roledescription=\"carousel\", but neither " +
+        "names it: WAI-ARIA's Carousel pattern asks for a label naming the CONTENT (\"Featured products\", " +
+        "not \"carousel\", which the roledescription already says), the same landmark-naming rule " +
+        "`nav-list`/`tabs` already enforce for themselves.",
+    },
+  ],
 } as const satisfies ComponentContract;

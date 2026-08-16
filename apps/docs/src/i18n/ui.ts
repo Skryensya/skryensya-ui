@@ -57,9 +57,14 @@ export const ui = {
     "playground.hideRail": "Ocultar la lista de componentes",
     "playground.showRail": "Mostrar la lista de componentes",
     "playground.resizeRail": "Cambiar el ancho de la lista",
+    "playground.discardTitle": "¿Descartar los cambios?",
+    "playground.discardBody": "Hay ediciones sin guardar en este ejemplo. Cambiar de ejemplo las descarta.",
+    "playground.discardCancel": "Seguir editando",
+    "playground.discardConfirm": "Descartar",
     "nav.skipToNav": "Ir a la navegación",
 
     "status.wip": "En progreso",
+    "status.ariaReviewed": "Revisado contra WAI-ARIA APG",
 
     "search.label": "Buscar",
     "search.dialog": "Buscar en la documentación",
@@ -130,6 +135,8 @@ export const ui = {
     "preview.screenMobile": "Móvil",
     "preview.screenMobileHint":
       "Móvil · 390 × 844 px, el ancho donde todo termina apilado",
+    "preview.reactSource": "Fuente React",
+    "preview.sourceComponent": "Componente",
 
     /*
      * THE CONTENT OF THE DEMOS, so a usage tree can be written ONCE and read in either language.
@@ -190,8 +197,13 @@ export const ui = {
     "demo.primitives.cell.first": "Uno",
     "demo.primitives.cell.second": "Dos",
     "demo.primitives.cell.third": "Tres",
-    "demo.input.hint": "Sólo la usamos para las boletas.",
-    "demo.input.error": "Ingresa una dirección laboral.",
+    "demo.input.hint": "Te escribimos acá si algo sale mal.",
+    "demo.input.notesLabel": "Notas",
+    "demo.input.notesHint": "Contanos qué te pasó, con el detalle que puedas.",
+    "demo.input.notesPlaceholder": "Escribí acá",
+    "demo.formField.hint": "Sólo la usamos para las boletas.",
+    "demo.formField.error": "Ingresa una dirección laboral.",
+    "demo.formField.planHint": "Lo vas a poder cambiar después.",
     "demo.breadcrumb.label": "Migas de pan",
     "demo.breadcrumb.home": "Inicio",
     "demo.breadcrumb.projects": "Proyectos",
@@ -276,6 +288,8 @@ export const ui = {
 
     "demo.slider.volume": "Volumen",
     "demo.slider.brightness": "Brillo",
+    "demo.slider.priceMin": "Precio mínimo",
+    "demo.slider.priceMax": "Precio máximo",
     "demo.select.label": "Plan",
     "demo.calendar.locale": "es-DO",
     "demo.calendar.availability": "Disponibilidad",
@@ -516,6 +530,11 @@ export const ui = {
     "demo.navList.group": "Espacio",
     "demo.navList.home": "Inicio",
     "demo.navList.reports": "Reportes",
+    "demo.navList.collapsibleNavLabel": "Cuenta",
+    "demo.navList.collapsibleLabel": "Grupo colapsable",
+    "demo.navList.account": "Mi cuenta",
+    "demo.navList.settings": "Ajustes",
+    "demo.navList.billing": "Facturación",
     "demo.navbar.nav": "Principal",
     "demo.navbar.home": "Inicio",
     "demo.navbar.projects": "Proyectos",
@@ -606,6 +625,8 @@ export const ui = {
     "demo.carousel.collaboration.title": "Equipo",
     "demo.carousel.collaboration.body":
       "Invita, asigna roles y comparte espacios sin salir del flujo.",
+    "demo.carousel.readMore": "Leer más",
+    "demo.carousel.focusLabel": "Novedades, con enlace en cada tarjeta",
     "demo.carousel.team.label": "Equipo",
     "demo.carousel.person.first.role": "Plataforma",
     "demo.carousel.person.second.role": "Compiladores",
@@ -761,6 +782,7 @@ export const ui = {
     "demo.table.trial": "En prueba",
     "demo.table.taxNote": "Los precios no incluyen impuestos.",
     "demo.table.regions": "Rendimiento por región",
+    "demo.table.resizeLabel": "Redimensionar columna",
     "demo.table.service": "Servicio",
     "demo.table.latency": "Latencia",
     "demo.table.errors": "Errores",
@@ -1088,7 +1110,7 @@ export const ui = {
     "accordion.a11yP1":
       'Cada trigger es un <code>&lt;button&gt;</code> nativo: Enter y Espacio lo activan sin script propio, y su <code>aria-expanded</code> (escrito por la máquina, nunca a mano) es lo único que anuncia el estado. El chevron es <code>aria-hidden="true"</code>: es la misma información dicha dos veces, y solo una debe llegar al lector de pantalla.',
     "accordion.a11yP2":
-      'Flecha abajo y flecha arriba mueven el foco entre triggers del mismo grupo, <kbd>Home</kbd> salta al primero y <kbd>End</kbd> al último: el patrón de teclado que la APG de ARIA describe para un accordion, no una convención propia. Abrir un item no le quita el foco a su trigger ni se lo da al contenido: el recorrido con teclado sigue siendo entre triggers, igual que con el mouse.',
+      "<kbd>Tab</kbd> y <kbd>Shift</kbd>+<kbd>Tab</kbd> mueven el foco entre triggers en el orden normal de la página: el patrón base que la APG de ARIA describe para un accordion no exige más que eso — flechas, <kbd>Home</kbd> y <kbd>End</kbd> entre triggers son una mejora opcional que este componente no implementa hoy. Abrir un item no le quita el foco a su trigger ni se lo da al contenido: el recorrido con teclado sigue siendo el mismo, igual que con el mouse.",
     "accordion.a11yP3":
       '{detailsLink} no tiene nada de esto porque no lo necesita: un <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> es una divulgación accesible de la plataforma, con su propio manejo de foco y teclado ya resuelto por el navegador.',
 
@@ -1098,6 +1120,8 @@ export const ui = {
       "En modo multiple, abrir un ítem no cierra los demás abiertos.",
     "accordion.testReact3":
       'Un ítem trae las clases correctas (<code class="sk-code">sk-tile--expandable</code>, sin <code class="sk-code">--interactive</code>) y <code class="sk-code">aria-expanded</code> alterna al hacer click en el trigger.',
+    "accordion.testReact4":
+      'Cada trigger queda envuelto en un <code class="sk-code">role="heading"</code> con <code class="sk-code">aria-level</code> (3 por defecto, configurable), para que un lector de pantalla que navega por headings encuentre las secciones.',
     "accordion.testVanilla1":
       "En modo single, abrir un ítem cierra el anterior (animado) y emite el evento sk:accordionvaluechange.",
     "accordion.testVanilla2":
@@ -1228,11 +1252,18 @@ export const ui = {
       "Es la razón concreta por la que acá hay una máquina y no un contador. Las posiciones de anclaje <strong>alcanzables</strong> no son una por slide: cuando un slide asoma, los últimos se recortan todos contra el scroll máximo y colapsan en la misma posición. Un carrusel hecho a mano dibuja ahí un dot por slide y termina con dots que <em>nunca</em> se pueden activar y un botón «siguiente» que nunca se deshabilita. La máquina deriva las páginas de <code>getScrollSnapPositions</code> (medidas, recortadas y deduplicadas), así que los dots y el scroll coinciden por construcción. Se ve achicando la ventana sobre cualquiera de los ejemplos: cambian los slides que entran, cambia la cantidad de dots, y el último siempre se puede alcanzar.",
     "carousel.multiTitle": "Multi-up, loop y autoplay",
     "carousel.multiBody1":
-      "Slides más angostos entran de a varios por página, y la máquina las cuenta midiendo. Con <code>data-loop</code> el carrusel da la vuelta, con <code>data-autoplay</code> avanza solo (vacío para los 4000 ms por defecto, o un retardo en ms). El autoplay se pausa solo cuando la pestaña deja de estar visible.",
+      "Slides más angostos entran de a varios por página, y la máquina las cuenta midiendo. Con <code>data-loop</code> el carrusel da la vuelta, con <code>data-autoplay</code> avanza solo (vacío para los 4000 ms por defecto, o un retardo en ms).",
     "carousel.multiBody2":
-      "Con <code>data-autoplay</code> aparece además un <strong>botón de pausa</strong>: algo que se mueve solo tiene que poder detenerse (WCAG 2.2.2), así que la opción y el control son una sola cosa. Y a quien declara <code>prefers-reduced-motion</code> no se le arranca: el carrusel queda quieto y el botón ofrece reproducir.",
+      "Con <code>data-autoplay</code> aparece además un <strong>botón de pausa</strong>: algo que se mueve solo tiene que poder detenerse (WCAG 2.2.2), así que la opción y el control son una sola cosa. El botón siempre dice lo que va a hacer según lo último que el usuario pidió: pasar el mouse por encima o llevar el foco de teclado a cualquier parte del carrusel — no sólo a los botones — pausa la rotación mientras dure, y la retoma al salir, salvo que la otra condición siga activa. Un click en el botón manda por encima de todo eso hasta el próximo click. A quien declara <code>prefers-reduced-motion</code> no se le arranca: el carrusel queda quieto y el botón ofrece reproducir. También se pausa solo cuando la pestaña deja de estar visible.",
     "carousel.multiLabel": "Multi-up + autoplay",
     "carousel.multiNote": "Avatar + meta · data-loop · data-autoplay",
+    "carousel.focusTitle": "Foco dentro de una tarjeta",
+    "carousel.focusLabel": "Foco dentro de una tarjeta",
+    "carousel.focusBody1":
+      "El patrón de WAI-ARIA dice que el foco de teclado pausa la rotación \"en cualquier parte del carrusel, incluyendo los elementos de siguiente y anterior slide\" — una frase fácil de leer como \"sólo los botones\". Esta tarjeta agrega un enlace real (\"Leer más\") adentro de cada slide para probar que también cuenta: Tab hacia el enlace pausa el autoplay, Tab o Shift+Tab hacia afuera lo retoma.",
+    "carousel.focusBody2":
+      "No hizo falta código nuevo para esto: el listener de foco vive en la raíz del carrusel, y <code>focusin</code>/<code>focusout</code> burbujean desde cualquier descendiente, así que un enlace, un botón o cualquier control dentro de una tarjeta ya queda cubierto.",
+    "carousel.focusNote": "Link real por tarjeta · Tab para probar la pausa",
     "carousel.bareTitle": "Sin controles",
     "carousel.bareBody1":
       "<code>data-controls=\"none\"</code> apaga las <strong>dos</strong> capas: ni botones y dots del enhancer, ni <code>::scroll-button</code> y <code>::scroll-marker</code> nativos. Queda la pista desnuda, que sigue siendo un scroller con snap: cada slide es una parada (<code>scroll-snap-stop: always</code>), así que deslizar nunca se saltea una card.",
@@ -1282,6 +1313,8 @@ export const ui = {
     "carousel.test2": "Nombra la región y cada slide para la tecnología de asistencia.",
     "carousel.test3": "Dibuja un punto por página MEDIDA, no uno por slide.",
     "carousel.test4": "Se ancla a un punto y reporta la página en el evento de cambio.",
+    "carousel.test5":
+      "El foco en el ENLACE de una tarjeta (no sólo en los botones prev/next) pausa el autoplay, y lo retoma al perderlo.",
 
     "changelogPage.description":
       "Changelog: historial fechado con riel, donde la fecha es lo que se busca y el punto dice qué tipo de cambio fue.",
@@ -1317,13 +1350,14 @@ export const ui = {
     "checkbox.lede": 'Una elección independiente. Conserva un <code>input type="checkbox"</code>: submit, reset, teclado y validación pertenecen al browser.',
     "checkbox.body":
       "El control usa los roles <code>check</code> y <code>remove</code> del set de iconos, no un trazo CSS. Importa <code>@skryensya/core/components/checkbox.css</code> y llama <code>initComponents()</code> una vez.",
-    "checkbox.groupTitle": "Un checkbox que agrupa a otros",
+    "checkbox.groupTitle": "Un checkbox que agrupa a otros: CheckboxGroup",
     "checkbox.groupBody1":
       "<code>indeterminate</code> no es un tercer valor que alguien pueda elegir: es lo que un padre dice cuando <strong>sus hijos no se ponen de acuerdo</strong>. Por eso el glifo es <code>remove</code> y no un check a medias, y por eso el padre no envía nada al formulario, los que tienen <code>name</code> y <code>value</code> son los hijos.",
-    "checkbox.groupLabel": "Seleccionar todo",
     "checkbox.groupNote": "tres estados a partir de dos booleanos",
     "checkbox.groupBody2":
-      "El estado del padre es <strong>derivado</strong>, nunca autorado: se recalcula desde los hijos en cada cambio. Al revés, un padre con estado propio empieza a mentir en cuanto alguien marca un hijo. Son quince líneas sin máquina ni componente nuevo, así que el sistema no lo envuelve: la agrupación es una regla del formulario, no del control.",
+      "El estado del padre es <strong>derivado</strong>, nunca escrito a mano: se recalcula desde los hijos en cada cambio. Al revés, un padre con estado propio empieza a mentir en cuanto alguien marca un hijo. Por eso el contrato no le da un <code>checked</code> que se pueda fijar: cuáles hijos arrancan marcados es dato de cada entrada (<code>defaultChecked</code>), no del grupo.",
+    "checkbox.groupBody3":
+      "Un hijo <code>disabled</code> no cuenta como voto: una casilla que nadie puede alcanzar no debería impedir que el padre diga «todos». Y un <code>reset</code> del formulario devuelve los hijos a sus atributos <strong>sin disparar ningún evento</strong>, así que el enhancer vuelve a derivar después del reset; sin eso el padre quedaría contradiciendo a sus propios hijos hasta el siguiente click.",
     "checkbox.tileTitle": "Checkbox de superficie: TileCheckbox",
     "checkbox.tileBody1":
       "Cuando la elección necesita título, descripción y toda la superficie como target, usa <code>TileCheckbox</code>. Es el mismo control (<code>sk-checkbox__control</code> + iconos); solo cambia el contenedor.",
@@ -1335,12 +1369,12 @@ export const ui = {
     "checkbox.contractItem3":
       '<code>"indeterminate"</code> es visual: no envía un valor hasta que la persona elige checked o unchecked. El glifo es <code>remove</code>.',
     "checkbox.contractItem4":
-      "Un padre que agrupa hijos <strong>deriva</strong> su estado de ellos, nunca lo guarda: <code>checked</code> cuando están todos, <code>indeterminate</code> cuando no coinciden. Los dos son flags independientes del input, así que apaga <code>indeterminate</code> al salir de ese estado o el guion se queda pegado.",
+      "<code>CheckboxGroup</code> <strong>deriva</strong> el estado del padre, nunca lo guarda: <code>checked</code> cuando están todos, <code>indeterminate</code> cuando no coinciden. <code>checked</code> e <code>indeterminate</code> son flags independientes del input y pueden estar los dos encendidos a la vez; el enhancer apaga el segundo al salir de ese estado, y el CSS le da prioridad al guion por si acaso.",
     "checkbox.contractItem5": 'El texto vive dentro del <code>label</code>; si no hay texto, proporciona <code>aria-label</code>.',
     "checkbox.contractItem6":
       "El state layer va en <code>sk-checkbox__control</code>, no en el label: la selección es el relleno del control, y el texto no hereda el color on-accent.",
     "checkbox.contractItem7": "TileCheckbox reutiliza <code>sk-checkbox__control</code> y los mismos indicadores; no inventa otro glifo.",
-    "checkbox.iconsComment1": "Los indicadores check/remove se autoran como placeholders",
+    "checkbox.iconsComment1": "Los indicadores check/remove se escriben a mano como placeholders",
     "checkbox.iconsComment2": "<span data-sk-icon>; mountIcons los reemplaza por el <svg> del set.",
     "checkbox.iconsComment3":
       "Cada label se autora con data-sk-tile-checkbox (data-name, data-value,\ndata-default-checked) más su input y su indicador.",
@@ -1348,6 +1382,15 @@ export const ui = {
     "checkbox.test1":
       "Alterna el estado marcado y el <code>data-state</code> de la raíz al hacer click, emitiendo <code>sk:checkedchange</code>.",
     "checkbox.test2": "Está asociado al formulario y respeta su <code>default-checked</code>.",
+    "checkbox.groupTest1":
+      "Deriva los tres estados del padre a partir de los hijos, al montar y en cada cambio.",
+    "checkbox.groupTest2":
+      "Marca y desmarca a todos los hijos desde el padre, y reporta qué cambió en <code>sk:checkboxgroupvaluechange</code>.",
+    "checkbox.groupTest3":
+      "Deja en paz al hijo <code>disabled</code> y no deja que impida al padre decir «todos».",
+    "checkbox.groupTest4": "Cuenta solo a sus propios hijos, nunca a los de un grupo anidado.",
+    "checkbox.groupTest5":
+      "Vuelve a derivar el padre tras un <code>reset</code> del formulario, que restaura a los hijos en silencio.",
 
     "codePreview.description": "Preview de código Shiki con resaltado en build/SSR y comportamiento Vanilla opt-in.",
     "codePreview.lede":
@@ -1796,25 +1839,50 @@ export const ui = {
     "imageFrame.test2": "Renderiza un <code>img</code> desde <code>src</code>/<code>alt</code> cuando no se pasan hijos.",
     "imageFrame.test3": "Mantiene un caption junto al medio de <code>src</code>.",
 
-    "inputPage.description": "Input: control nativo, field con label/hint/error y styling hooks.",
-    "inputPage.title": "Input y Field",
+    "inputPage.description": "Input: el control de texto nativo, con una clase para el input y el textarea.",
+    "inputPage.title": "Input",
     "inputPage.lede":
       "El control de texto nativo se queda nativo: no hay máquina, y no hay un <code>div</code> con borde haciéndose pasar por input. La plataforma se queda con la validación, el autofill, el IME y la asociación al formulario.",
     "inputPage.densityBody": 'La densidad compacta el espacio alrededor del campo, no su área de interacción: Input conserva un mínimo de <code>44px</code> de alto, incluso con <code>data-size="sm"</code>.',
     "inputPage.oneClassTitle": "Una clase para todo control de texto",
     "inputPage.oneClassBody":
       "<code>sk-input</code> va en el <code>&lt;input&gt;</code> y en el <code>&lt;textarea&gt;</code>: es el mismo control visual, así que es un solo set de hooks. Una segunda clase sería un segundo set que mantener sincronizado con el primero.",
-    "inputPage.fieldTitle": "Field es independiente de Input",
-    "inputPage.fieldBody":
-      "<code>sk-field</code> es el cromo alrededor de <em>cualquier</em> control, envuelve un select o un grupo de checkboxes igual de bien. Nombrarlo por el control que más veces sostiene lo volvería mentira la primera vez que sostenga otro.",
-    "inputPage.errorTitle": "El error es texto, no un color",
-    "inputPage.errorBody":
-      "<code>--sk-field-error-fg</code> tiñe un mensaje que igual tiene que existir, y <code>aria-invalid</code>, que ya escribes para los lectores de pantalla, es lo que sigue el hook <code>--sk-input-border-color</code>. Un <code>data-invalid</code> aparte dejaría que los dos no coincidan, y el color nunca es la única señal de error (WCAG 1.4.1).",
-    "inputPage.reactBody":
-      "En React el <code>Field</code> hace el cableado que arriba escribes a mano: genera el <code>id</code>, arma el <code>aria-describedby</code> del hint y del error, y pasa <code>required</code> y <code>disabled</code> al control nativo. La presencia de <code>error</code> es lo que vuelve inválido al campo. Un <code>Input</code> fuera de un <code>Field</code> sigue siendo un control válido.",
-    "inputPage.test1": "Cablea label, hint y error al control que envuelve.",
-    "inputPage.test2": "El mensaje de error es lo que vuelve inválido al campo.",
-    "inputPage.test3": "Sigue siendo un control válido fuera de un Field.",
+    "inputPage.formFieldTitle": "El rótulo no es del Input",
+    "inputPage.formFieldBody":
+      'Los dos demos de arriba están envueltos en un <a href="/componentes/form-field">FormField</a>, y no por costumbre: el rótulo, la ayuda, el mensaje de error y los seis ids que los atan viven ahí. Por eso este contrato no tiene <code>invalid</code> ni <code>id</code> propios — un control que trajera su propio <code>aria-invalid</code> podría contradecir al mensaje que tiene al lado. Un <code>Input</code> fuera de un <code>FormField</code> igual es un control válido, siempre que lleve su <code>aria-label</code>.',
+    "inputPage.nativeTitle": "NativeInput: el control sin la apariencia",
+    "inputPage.nativeBody":
+      'La tercera signature del contrato es <code>NativeInput</code>: el mismo elemento sin <code>sk-input</code>, para cuando lo que querés enseñar es el comportamiento que trae el navegador y no la apariencia del sistema. Es lo que usa el demo del <code>&lt;input type="time"&gt;</code> plano en TimeField.',
+    "inputPage.test1": "Sigue siendo un control válido fuera de un FormField.",
+    "inputPage.test2": "Le da al textarea el mismo contrato de apariencia que al input.",
+    "inputPage.test3": "Escribe el alto en data-size y deja en paz al atributo size nativo.",
+
+    "formFieldPage.description":
+      "FormField: el cromo alrededor de cualquier control — rótulo, ayuda, error — y los seis ids que los atan.",
+    "formFieldPage.title": "FormField",
+    "formFieldPage.lede":
+      "Un campo es cromo más un control, y lo que los une son seis ids. Escritos a mano, cada uno es una oportunidad de estar mal en silencio: un <code>aria-describedby</code> con un typo no se ve en pantalla y rompe a todos los lectores de pantalla que leen el formulario.",
+    "formFieldPage.wiringTitle": "Seis ids a partir de un nombre",
+    "formFieldPage.wiringBody":
+      "El rótulo apunta al control, el control apunta de vuelta a la ayuda y al error, y cada uno de esos carga el id al que lo apuntan. El contrato los deriva todos del id del campo: ningún binding se inventa uno propio, y por eso los ids de React (<code>useId</code>) y los del emisor (un slug) pueden ser distintos sin que la relación cambie.",
+    "formFieldPage.independentTitle": "Independiente de Input, a propósito",
+    "formFieldPage.independentBody":
+      "<code>sk-form-field</code> es el cromo alrededor de <em>cualquier</em> control: envuelve un select o un textarea igual de bien, como acá abajo. Nombrarlo por el control que más veces sostiene lo volvería mentira la primera vez que sostenga otro — y por eso su slot <code>children</code> acepta cualquier signature y el cableado apunta a <code>\"control\"</code> en vez de a un input.",
+    "formFieldPage.errorTitle": "El error es texto, no un color",
+    "formFieldPage.errorBody":
+      "La <em>presencia</em> del mensaje es lo que invalida el campo: no hay una opción <code>invalid</code> aparte que pueda quedar desfasada de él. <code>--sk-form-field-error-fg</code> tiñe un mensaje que igual tiene que existir, y <code>aria-invalid</code>, que ya escribís para los lectores de pantalla, es lo que sigue el hook <code>--sk-input-border-color</code>. El color nunca es la única señal de error (WCAG 1.4.1).",
+    "formFieldPage.avoidTitle": "Cuándo no usarlo",
+    "formFieldPage.avoidBody":
+      "Cuando el control no lleva rótulo visible: ahí el control mismo lleva su <code>aria-label</code> y no hay campo. Y cuando el control ya trae su propio rótulo cableado por su máquina — NumberField, TimeField, Combobox — envolverlo agregaría un segundo <code>for</code> compitiendo con el primero.",
+    "formFieldPage.reactBody":
+      "En React, <code>FormField</code> hace el cableado que en markup escribís a mano: genera el <code>id</code>, arma el <code>aria-describedby</code> de la ayuda y del error, y pasa <code>required</code> y <code>disabled</code> al control nativo. Se importa desde <code>@skryensya/react/form-field</code>, su propio módulo, y cualquier control puede leer ese contexto — que es la alternativa a que cada uno se haga su copia del cableado.",
+    "formFieldPage.a11yBody":
+      "El asterisco de <code>required</code> es decorativo (<code>aria-hidden</code>): lo que de verdad lo dice es el atributo <code>required</code> del control, porque «requerido» tiene que sobrevivir a ser leído en voz alta. La ayuda y el error se anuncian por <code>aria-describedby</code> en ese orden, y sólo se apunta a lo que existe: sin error escrito no hay <code>aria-invalid</code>, porque un atributo que apunta a un mensaje que nadie escribió describe algo que no está.",
+    "formFieldPage.test1": "Cablea label, hint y error al control que envuelve.",
+    "formFieldPage.test2": "El mensaje de error es lo que vuelve inválido al campo.",
+    "formFieldPage.test3": "Pasa required y disabled al control nativo.",
+    "formFieldPage.test4": "Cablea un textarea igual que un input.",
+    "formFieldPage.test5": "Pasa axe con ayuda y error a la vez.",
 
     "skipLink.description":
       "SkipLink: el primer enlace del documento, invisible hasta que recibe el foco, para saltear el chrome que se repite.",
@@ -2015,7 +2083,7 @@ export const ui = {
       "<code>data-sk-menu-context-trigger</code> (o <code>contextTarget</code> en React) reemplaza al trigger: el elemento absorbe el evento <code>contextmenu</code> del botón derecho y abre el menú, en vez de necesitar un botón visible.",
     "menuPage.safetyTitle": "Intención del puntero (safety triangle)",
     "menuPage.safetyBody":
-      "Cuando un submenú está abierto, cruzar en diagonal sobre otro item del menú padre no lo resalta ni cierra el submenú: <code>@zag-js/menu</code> ya calcula un polígono de intención (<code>context.intentPolygon</code>, desde el <code>DOMRect</code> real del submenú y su <code>placement</code> resuelto) y bloquea el hover mientras el puntero se mueva dentro de él (<code>context.pointerRoutingMode</code>). No es nada que este sistema agregue: es el comportamiento nativo de la máquina, hecho visible acá con una superposición SVG que dibuja ese mismo polígono y ese mismo estado en vivo. Abrí «Compartir» y cruzá diagonalmente hacia el submenú.",
+      "Cuando un submenú está abierto, cruzar en diagonal sobre otro item del menú padre no lo resalta ni cierra el submenú. Lo que lo sostiene es un elemento real: el <em>safe area</em>, un triángulo recortado con <code>clip-path</code> que vive DENTRO del trigger y va del puntero al borde cercano del submenú. Mientras el puntero está sobre él, el navegador no dispara <code>pointerleave</code> en el trigger —un descendiente cuenta como el elemento— así que la máquina nunca entra en <code>closing</code> y los items de abajo nunca reciben el <code>pointermove</code> con el que robarían el resaltado. El polígono propio de <code>@zag-js/menu</code> no alcanzaba: sólo puede vetar un cierre temprano durante los 100ms de <code>waitForCloseDelay</code>, no extenderlos, y con el puntero quieto adentro del polígono el submenú igual se cerraba a los ~90ms. Abrí «Compartir» y cruzá diagonalmente hacia el submenú: el triángulo pintado es el mismo elemento que estás tocando, no un dibujo aparte.",
 
     "navbarPage.description": "Navbar: la barra, con la lista de navegación como pattern horizontal.",
     "navbarPage.lede":
@@ -2232,6 +2300,16 @@ export const ui = {
       "El <code>value</code> del contrato es <strong>dónde arranca el pulgar</strong>, y cada binding lo escribe con su nombre: <code>value</code> en el markup, <code>defaultValue</code> en React. No es cosmético: <code>value</code> en React significa controlado, así que emitirlo entregaba un slider que no se podía mover.",
     "sliderPage.test1": "Sigue siendo un <code>&lt;input type=\"range\"&gt;</code> nativo y reporta los cambios de valor como números.",
     "sliderPage.test2": "Pinta el relleno inicial desde el valor dentro de [min, max] al montar.",
+    "sliderPage.rangeTitle": "Dos pulgares",
+    "sliderPage.rangeBody":
+      'Dos <code>&lt;input type="range"&gt;</code> nativos, no el widget SVG a mano que la propia APG de WAI-ARIA publica como único ejemplo para este patrón — cada input ya trae teclado, foco y árbol de accesibilidad gratis de la plataforma, y la propia guía WAI advierte que un widget hecho a mano puede fallar con lectores de pantalla táctiles. Ningún pulgar puede arrastrarse más allá del otro: <code>sliderRangeBounds</code> calcula el límite de cada uno contra dónde está el OTRO en ese momento, nunca contra un mínimo o máximo fijo.',
+    "sliderPage.rangeLabel": "Rango de precio",
+    "sliderPage.testRange1":
+      "El máximo del pulgar bajo queda acotado por el valor actual del pulgar alto, y viceversa.",
+    "sliderPage.testRange2":
+      "Al cambiar un valor, reacota el OTRO pulgar y reporta ambos valores en el cambio.",
+    "sliderPage.testRange3":
+      "Ningún pulgar puede superar al otro — el min/max nativo recorta incluso una escritura directa de valor que se pase del límite.",
 
     "splitButtonPage.description": "Acción principal estable y menú adyacente con acciones alternativas.",
     "splitButtonPage.contractBody": "La acción principal no cambia silenciosamente al elegir el menú. Si no hay una acción dominante, usa Menu.",
@@ -2312,6 +2390,10 @@ export const ui = {
     "tablePage.stickyHeadBody":
       "Usa <code>data-sticky-header</code> o <code>stickyHeader</code>. El wrapper gana scroll vertical y un alto máximo de <code>20rem</code>, que puedes sobrescribir como en este ejemplo. El encabezado queda visible tanto en desktop como en móvil; si combinas ambos modifiers, la celda de la esquina queda sobre las dos capas.",
     "tablePage.stickyHeadLabel": "Fila de encabezado sticky",
+    "tablePage.resizableTitle": "Columnas redimensionables",
+    "tablePage.resizableBody":
+      'Usa <code>data-resizable-columns</code> en HTML o <code>resizableColumns</code> en React, junto con <code>resizeLabel</code> (obligatoria). El binding inserta un separador real (<code>role="separator"</code>) entre cada par de encabezados — el mismo primitivo compartido, <code>@skryensya/core/splitter</code>, que ya usan el separador de <a href="/componentes/sidebar">Sidebar</a> y el redimensionador de columnas de <a href="/componentes/treegrid">Treegrid</a>. Arrastra el borde de un encabezado, o enfócalo y usa las flechas (Shift para el paso grueso), Home/End para los extremos, Enter o doble click para restablecer el par a un reparto parejo.',
+    "tablePage.resizableLabel": "Rendimiento por región, redimensionable",
     "tablePage.pagerTitle": "Con paginación",
     "tablePage.pagerBody":
       '<code>data-sk-table-pager</code> es el enhancer vanilla; <code>sk-table-pager</code> es el pattern de layout (tabla + barra). Marcas las filas, dejas el <code>nav</code> vacío y (opcional) un status y un <a class="sk-link sk-interactive" href="/componentes/select"><code>Select</code></a> de tamaño de página. El tamaño va al inicio de la barra; status y <a class="sk-link sk-interactive" href="/componentes/pagination"><code>Pagination</code></a> van juntos en <code>sk-table-pager__end</code>. Usa <code>data-layout="fixed"</code> para que no bailen los anchos de columna.',
@@ -2654,6 +2736,200 @@ export const ui = {
     "treeViewPage.test2": "Expande una rama desde su control y lo comunica.",
     "treeViewPage.test3": "Selecciona una hoja y reporta el valor que escribió la composición.",
 
+    "treegridPage.description": "Filas jerárquicas con columnas: expande o colapsa una sin perder el resto de sus valores.",
+    "treegridPage.lede":
+      'Combina jerarquía y columnas a la vez — el patrón WAI-ARIA <code>treegrid</code>. Úsalo cuando cada fila necesita varios valores independientes ADEMÁS de su lugar en la jerarquía (un mensaje con remitente, un archivo con tamaño y fecha). Para una sola columna de texto jerárquico usa <a href="/componentes/tree-view">TreeView</a>; para columnas sin jerarquía, <a href="/componentes/table">Table</a>.',
+    "treegridPage.minimalTitle": "Bandeja de entrada",
+    "treegridPage.minimalBody":
+      "El ejemplo que la propia especificación WAI-ARIA usa: dos columnas (Asunto, De), una carpeta abierta con dos mensajes, una carpeta colapsada cuyo único mensaje queda oculto, y un mensaje suelto en la raíz.",
+    "treegridPage.minimalLabel": "Bandeja de entrada de ejemplo",
+    "treegridPage.contractItem1":
+      "Casi siempre envuelto en <code>TreegridScroll</code> — misma razón que <code>TableScroll</code>: un flex o un grid le da <code>min-size: auto</code>, y una grilla más ancha que su espacio revienta la superficie si nadie la envuelve.",
+    "treegridPage.contractItem2":
+      '<code>Treegrid</code> es un <code>&lt;table role="treegrid"&gt;</code> que EXIGE <code>label</code>: ese <code>role</code> no trae nombre accesible implícito, a diferencia de una tabla nativa.',
+    "treegridPage.contractItem3":
+      "<code>TreegridHead</code> / <code>TreegridHeadRow</code> / <code>TreegridColumnHeader</code> son encabezados de columna comunes — la misma forma que ya tiene <code>Table</code>.",
+    "treegridPage.contractItem4":
+      "Cada <code>TreegridRow</code> se autora PLANA, en el orden del documento — nunca anidada dentro de otra fila, un <code>&lt;tr&gt;</code> no puede contener otro <code>&lt;tr&gt;</code>. <code>level</code>, <code>setSize</code> y <code>posInset</code> son hechos propios que el autor ya conoce por escribir la fila en ese orden, no algo que el componente deriva.",
+    "treegridPage.contractItem5":
+      "<code>expanded</code> sólo se autoría en una fila que TIENE hijos — su ausencia, no un valor <code>false</code>, es lo que marca una fila como hoja. <code>true</code>/<code>false</code> controla si sus descendientes están visibles en este momento.",
+    "treegridPage.contractItem6":
+      'Cada <code>TreegridCell</code> es un <code>&lt;td role="gridcell"&gt;</code> común; la primera celda de una fila con hijos gana la sangría por CSS y un botón de apertura real que el binding inserta — nunca autorado, y decorativo para el lector de pantalla (<code>aria-expanded</code> en la fila ya anuncia el estado).',
+    "treegridPage.contractItem7":
+      '<code>resizableColumns</code> (apagada por defecto) inserta un separador <code>role="separator"</code> real entre cada par de encabezados — el mismo primitivo compartido de <code>@skryensya/core/splitter</code> que usa el separador de <code>Sidebar</code>. Exige <code>resizeLabel</code>: el separador es binding-insertado, así que nada más lo nombra para un lector de pantalla.',
+    "treegridPage.hooksBody":
+      "La sangría por nivel y el ancho reservado para el glyph de apertura son hooks: <code>--sk-treegrid-indent</code> y <code>--sk-treegrid-indicator-size</code>.",
+    "treegridPage.a11yBody":
+      'Cada fila lleva <code>role="row"</code> con <code>aria-level</code>/<code>aria-setsize</code>/<code>aria-posinset</code> — hechos ESTÁTICOS que no cambian al colapsar un hermano, sólo la visibilidad cambia — y <code>aria-expanded</code> únicamente si tiene hijos. Cada celda lleva <code>role="gridcell"</code>. El foco es roving: una sola fila o celda es la parada de tabulación en toda la grilla. <kbd class="sk-kbd">→</kbd> expande una rama colapsada o entra a su primera celda; <kbd class="sk-kbd">←</kbd> colapsa una rama abierta o sube a la fila padre; <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> mueven entre filas visibles; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> y <kbd class="sk-kbd">Ctrl</kbd>+<kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> saltan al principio/final; <kbd class="sk-kbd">Enter</kbd> alterna una rama con foco de fila o activa cualquier otro foco. Esta versión es fiel al ejemplo base de WAI (<code>treegrid-1</code>): celdas de solo texto, sin control interactivo propio dentro de una celda — por eso <kbd class="sk-kbd">Tab</kbd> siempre sale de la grilla, sin nada que interceptar.',
+    "treegridPage.testVanilla1":
+      "Al montar, esconde el único hijo de la rama que arranca colapsada.",
+    "treegridPage.testVanilla2":
+      "Flecha derecha sobre una rama colapsada la expande y revela su hijo, sin mover el foco de la fila.",
+    "treegridPage.testVanilla3":
+      "Clickear la primera celda de una rama la alterna y mueve el foco a la fila.",
+    "treegridPage.testReact1":
+      "Respeta el <code>expanded</code> inicial de cada fila, y esconde solo el descendiente de la rama colapsada.",
+    "treegridPage.testReact2":
+      "Flecha izquierda sobre una rama abierta la colapsa y esconde a sus hijos.",
+    "treegridPage.testReact3": "Enter activa una fila hoja con foco.",
+
+    "treegridPage.stressTitle": "Explorador de archivos (stress test)",
+    "treegridPage.stressBody":
+      "Cuatro columnas en vez de dos, contenido largo que fuerza el elipsis en más de una columna, siete niveles de profundidad (los cinco primeros con regla CSS propia, el sexto y el séptimo cayendo al tope compartido), ramas colapsadas en más de un nivel a la vez — incluida una en la raíz — y <code>resizableColumns</code>: arrastra o usa las flechas sobre el borde de un encabezado para redimensionar el par de columnas a los lados.",
+    "treegridPage.stressLabel": "Explorador de archivos de ejemplo",
+
+    "demo.treegrid.label": "Mensajes",
+    "demo.treegrid.subject": "Asunto",
+    "demo.treegrid.from": "De",
+    "demo.treegrid.inbox": "Recibidos",
+    "demo.treegrid.meeting": "Reunión de equipo",
+    "demo.treegrid.lunch": "Almuerzo",
+    "demo.treegrid.drafts": "Borradores",
+    "demo.treegrid.untitled": "Sin título",
+    "demo.treegrid.me": "Yo",
+    "demo.treegrid.sent": "Enviados",
+
+    "demo.treegridStress.label": "Explorador de archivos",
+    "demo.treegridStress.resizeLabel": "Redimensionar columna",
+    "demo.treegridStress.colName": "Nombre",
+    "demo.treegridStress.colType": "Tipo",
+    "demo.treegridStress.colSize": "Tamaño",
+    "demo.treegridStress.colModified": "Modificado",
+    "demo.treegridStress.typeFolder": "Carpeta",
+    "demo.treegridStress.typeTs": "Archivo TypeScript",
+    "demo.treegridStress.typeTest": "Archivo de test",
+    "demo.treegridStress.typeStyle": "Hoja de estilos",
+    "demo.treegridStress.typeConfig": "Configuración",
+    "demo.treegridStress.typeMarkdown": "Documento Markdown",
+    "demo.treegridStress.typeText": "Documento de texto",
+    "demo.treegridStress.projectAlpha": "proyecto-alpha",
+    "demo.treegridStress.src": "src",
+    "demo.treegridStress.components": "components",
+    "demo.treegridStress.buttonFolder": "Button",
+    "demo.treegridStress.buttonTsx": "Button.tsx",
+    "demo.treegridStress.internalTypesFolder": "tipos-internos-del-componente-con-props-extendidas",
+    "demo.treegridStress.buttonPropsTs": "ButtonProps.ts",
+    "demo.treegridStress.buttonTestTsx": "Button.test.tsx",
+    "demo.treegridStress.buttonModuleCss": "Button.module.css",
+    "demo.treegridStress.modalTsx": "Modal.tsx",
+    "demo.treegridStress.utilsFolder": "utils",
+    "demo.treegridStress.formatUtil": "format-currency-and-long-date-strings-for-every-supported-locale.ts",
+    "demo.treegridStress.packageJson": "package.json",
+    "demo.treegridStress.readme":
+      "README-instrucciones-de-instalación-configuración-y-despliegue-para-todo-el-equipo.md",
+    "demo.treegridStress.readmeModified": "Hace 3 semanas por Alice Fernández del equipo de Diseño",
+    "demo.treegridStress.projectBeta": "proyecto-beta",
+    "demo.treegridStress.indexTs": "index.ts",
+    "demo.treegridStress.license": "licencia.txt",
+    "demo.treegridStress.modified2d": "Hace 2 días",
+    "demo.treegridStress.modified3d": "Hace 3 días",
+    "demo.treegridStress.modified4d": "Hace 4 días",
+    "demo.treegridStress.modified1h": "Hace 1 hora",
+    "demo.treegridStress.modified5h": "Hace 5 horas",
+    "demo.treegridStress.modified1day": "Hace 1 día",
+    "demo.treegridStress.modified1week": "Hace 1 semana",
+    "demo.treegridStress.modified1month": "Hace 1 mes",
+    "demo.treegridStress.modified6months": "Hace 6 meses",
+
+    "meterPage.description":
+      "Meter: una medición dentro de un rango conocido, nunca el avance de una tarea.",
+    "meterPage.lede":
+      'Un valor medido ahora, no una tarea en curso — el rol WAI-ARIA <code>meter</code>, distinto de <code>progressbar</code>. Úsalo para uso de disco, nivel de batería, una calificación sobre una escala. Para el avance de una tarea con inicio y fin, usa <a href="/componentes/progress">Progress</a>.',
+    "meterPage.body":
+      "A diferencia de Progress, <code>min</code> es un parámetro real y con frecuencia distinto de cero — una calificación de 1 a 5, una temperatura. El relleno se calcula con <code>meterFraction(value, min, max)</code>, no con <code>value / max</code>.",
+    "meterPage.test1": "Aplica role=meter con los tres atributos aria-value obligatorios.",
+    "meterPage.test2":
+      "Respeta un min distinto de cero al pintar el relleno, a diferencia de Progress.",
+    "meterPage.a11yBody":
+      'El rol <code>meter</code> lleva <code>aria-valuenow</code>/<code>aria-valuemin</code>/<code>aria-valuemax</code> siempre presentes, y <code>aria-valuetext</code> opcional para cuando el número solo no alcanza ("50% (6 horas) restantes"). Sin interacción de teclado: es una medición, no un control.',
+
+    "demo.meter.rating": "Calificación",
+    "demo.meter.ratingText": "4 de 5 estrellas",
+    "demo.meter.disk": "Uso de disco",
+    "demo.meter.diskText": "92% usado",
+    "demo.meter.battery": "Batería",
+    "demo.meter.batteryText": "68% restante",
+
+    "feedPage.description":
+      "Feed: un stream de publicaciones independientes, cada una anunciada con su posición.",
+    "feedPage.lede":
+      'Un stream desplazable de unidades de contenido independientes (posts, comentarios) — el rol WAI-ARIA <code>feed</code>. Cada <code>FeedArticle</code> declara su propia posición (<code>aria-posinset</code>/<code>aria-setsize</code>), así un lector de pantalla anuncia "2 de 3" sin tener que leer el resto del stream primero.',
+    "feedPage.body":
+      'WAI-ARIA es explícito: el rol <code>feed</code> "no está asociado a ninguna convención de teclado bien establecida" — Page Up/Page Down/Ctrl+Home/Ctrl+End son recomendaciones, no requisitos. Esta versión se queda puramente estática: sin máquina, sin manejo de teclado propio.',
+    "feedPage.test1": "Aplica role=feed, lo nombra, y refleja aria-busy.",
+    "feedPage.test2":
+      "Cada artículo recibe role=article con aria-posinset/aria-setsize y un nombre real enlazado.",
+    "feedPage.test3":
+      "Permite setSize=-1 para un total indeterminado, por la propia licencia de WAI.",
+    "feedPage.a11yBody":
+      'La raíz lleva <code>role="feed"</code> con <code>aria-label</code> (obligatorio, el rol no trae nombre implícito) y <code>aria-busy</code> mientras carga más contenido. Cada <code>FeedArticle</code> es un <code>role="article"</code> con <code>aria-posinset</code>/<code>aria-setsize</code>, nombrado por su propio slot de etiqueta vía <code>aria-labelledby</code> — nunca solo referenciado, siempre renderizado.',
+
+    "demo.feed.label": "Actividad reciente",
+    "demo.feed.author1": "María — hace 2 horas",
+    "demo.feed.body1": "Publicó el resumen del sprint.",
+    "demo.feed.author2": "Diego — hace 5 horas",
+    "demo.feed.body2": "Comentó en el issue #482.",
+    "demo.feed.author3": "Lucía — ayer",
+    "demo.feed.body3": "Cerró tres tickets del backlog.",
+
+    "dataGridPage.description":
+      "Data Grid: navegación 2D con roving tabindex para datos tabulares o widgets agrupados.",
+    "dataGridPage.lede":
+      'La propia especificación WAI-ARIA trata "data grids" y "layout grids" como el mismo patrón — mismos roles, misma mecánica de roving tabindex — así que este es UN contrato, no dos. Úsalo cuando una grilla de celdas necesita navegación 2D: <a href="/componentes/table">Table</a> ya cubre el caso de datos tabulares ESTÁTICOS, sin modelo de teclado propio.',
+    "dataGridPage.dataTitle": "Datos tabulares",
+    "dataGridPage.dataBody": "Celdas de solo texto: la parada de foco es la celda misma.",
+    "dataGridPage.dataLabel": "Puntajes por ronda",
+    "dataGridPage.layoutTitle": "Widgets agrupados",
+    "dataGridPage.layoutBody":
+      "Cada celda contiene su propio botón: la parada de foco se la cede a ESE elemento, la celda nunca compite con su propio contenido interactivo por el roving tabindex.",
+    "dataGridPage.layoutLabel": "Acciones rápidas",
+    "dataGridPage.contractBody":
+      'Sin máquina <code>@zag-js/*</code> propia — igual que <code>Treegrid</code>, el modelo de teclado está escrito a mano y es puro, compartido por ambos bindings. <code>wrapCols</code>/<code>wrapRows</code> controlan si las flechas envuelven al borde de la grilla; ambos son <code>false</code> por defecto.',
+    "dataGridPage.a11yBody":
+      'La raíz lleva <code>role="grid"</code> con <code>aria-label</code> (obligatorio). Cada fila es <code>role="row"</code>, cada celda <code>role="gridcell"</code>. El foco es roving — una sola celda (o su descendiente interactivo) es la parada de tabulación en toda la grilla. <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> mueven entre celdas, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> dentro de la fila, <kbd class="sk-kbd">Ctrl</kbd>+<kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> saltan al principio/final de la grilla entera.',
+    "dataGridPage.testReact1":
+      "Le cede la parada de foco al descendiente interactivo PROPIO de la celda, no al div de la celda.",
+    "dataGridPage.testReact2":
+      "En movimiento vertical, se ajusta a la última celda real de una fila más corta (grilla irregular).",
+    "dataGridPage.testVanilla1":
+      "Envuelve columnas a la fila siguiente cuando se autora data-wrap-cols.",
+    "dataGridPage.testVanilla2": "Clickear una celda mueve la parada de foco ahí.",
+
+    "demo.dataGrid.scoresLabel": "Puntajes por ronda",
+    "demo.dataGrid.player": "Jugador",
+    "demo.dataGrid.round1": "Ronda 1",
+    "demo.dataGrid.round2": "Ronda 2",
+    "demo.dataGrid.actionsLabel": "Acciones rápidas",
+    "demo.dataGrid.edit": "Editar",
+    "demo.dataGrid.copy": "Copiar",
+    "demo.dataGrid.delete": "Eliminar",
+    "demo.dataGrid.more": "Más opciones",
+
+    "menubarPage.description":
+      "Menubar: una barra horizontal persistente de comandos, algunos con desplegable.",
+    "menubarPage.lede":
+      'El patrón WAI-ARIA <code>menubar</code>: <code>menubar-editor</code>, el ejemplo que le da nombre. No es <a href="/componentes/menu">Menu</a> (un solo trigger, un solo popup) — acá son VARIOS ítems en una sola fila de roving tabindex, donde flecha izquierda/derecha mueve entre ellos, y el detalle que una implementación ingenua se pierde: moverse a un ítem adyacente mientras un desplegable está abierto cierra el viejo y abre el nuevo, no solo mueve un resaltado.',
+    "menubarPage.contractBody":
+      'Sin máquina <code>@zag-js/*</code> propia — igual que <code>Treegrid</code>/<code>DataGrid</code>, escrito a mano y compartido por ambos bindings. Alcance de v1: UN nivel de desplegable por ítem, sin submenús anidados — <code>Menu</code> ya cubre el caso de submenús arbitrariamente anidados con un solo trigger, y los propios ejemplos de WAI (<code>menubar-editor</code>, <code>menubar-navigation</code>) tampoco necesitan un segundo nivel.',
+    "menubarPage.label": "Barra de menú",
+    "menubarPage.a11yBody":
+      'La raíz lleva <code>role="menubar"</code> con <code>aria-label</code> (obligatorio). Cada ítem de nivel superior es <code>role="menuitem"</code>, con <code>aria-haspopup="menu"</code>/<code>aria-expanded</code> solo si abre un desplegable. El foco es roving — una sola parada en toda la barra. <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> mueven entre ítems (y si un desplegable estaba abierto, abren el del ítem nuevo en vez de solo mover el resaltado); <kbd class="sk-kbd">↓</kbd> abre el desplegable y enfoca su primer ítem, <kbd class="sk-kbd">↑</kbd> el último; dentro de un desplegable abierto, <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> mueven entre sus comandos; <kbd class="sk-kbd">Escape</kbd> lo cierra y devuelve el foco a su trigger; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> saltan al primer/último ítem (o al primer/último comando si el desplegable está abierto).',
+    "menubarPage.testCore1":
+      "Al moverse mientras un desplegable estaba abierto, mantiene abierto el del ítem SIGUIENTE — el detalle que un roving tabindex plano se pierde.",
+    "menubarPage.testReact1":
+      "Moverse a la derecha mientras un desplegable está abierto lo cierra y abre el del ítem adyacente.",
+    "menubarPage.testReact2": "Escape cierra el desplegable abierto y devuelve el foco a su trigger.",
+    "menubarPage.testVanilla1": "Clickear afuera de la barra cierra cualquier desplegable abierto.",
+
+    "demo.menubar.label": "Barra de menú",
+    "demo.menubar.file": "Archivo",
+    "demo.menubar.new": "Nuevo",
+    "demo.menubar.open": "Abrir",
+    "demo.menubar.save": "Guardar",
+    "demo.menubar.edit": "Editar",
+    "demo.menubar.undo": "Deshacer",
+    "demo.menubar.redo": "Rehacer",
+
     "inlinePage.description": "Inline, el pattern de layout horizontal y adaptable.",
     "inlinePage.lede":
       "Organiza elementos en horizontal y los devuelve a otra línea cuando el espacio se agota. Úsalo para barras de acciones y pares label–control; la semántica pertenece al elemento que eliges.",
@@ -2850,6 +3126,239 @@ export const ui = {
     "vaulPage.test4": "Un flick rápido y corto cierra aunque la distancia sea chica.",
     "vaulPage.test5": "Un flick de vuelta a casa le gana a un drag largo: la dirección le gana a la distancia.",
 
+    "landing.title": "skryensya/ui",
+    "landing.description":
+      "Componentes, primitives y fundamentos para construir interfaces que funcionan como un sistema.",
+    "landing.brand": "skryensya/ui",
+    "landing.hero.title": "Piezas para construir interfaces que funcionan como un sistema.",
+    "landing.hero.lede":
+      "Componentes, primitives y fundamentos que puedes usar por separado o combinar para construir interfaces completas. Basados en la plataforma web, con contratos compartidos para HTML, JavaScript y React.",
+    "landing.hero.ctaComponents": "Explorar componentes",
+    "landing.hero.ctaPlayground": "Abrir Playground",
+
+    "landing.start.title": "Empieza por cualquier parte.",
+    "landing.start.lede": "No necesitas adoptar un sistema entero para resolver un problema.",
+    "landing.start.body":
+      "Usa un componente. Construye con primitives. Adopta los fundamentos. Explora un patrón completo.",
+    "landing.start.meet": "Todas las piezas están diseñadas para encontrarse cuando las necesitas.",
+    "landing.start.components.title": "Componentes",
+    "landing.start.components.body":
+      "Controles y elementos de interfaz listos para formar parte de algo mayor.",
+    "landing.start.components.items": "Button · Input · Select · Combobox · Dialog · Tabs",
+    "landing.start.components.cta": "Explorar componentes →",
+    "landing.start.primitives.title": "Primitives",
+    "landing.start.primitives.body":
+      "Piezas pequeñas para definir estructura, composición e interacción sin empezar desde cero.",
+    "landing.start.primitives.items": "Box · Stack · Inline · Grid · Popover",
+    "landing.start.primitives.cta": "Explorar primitives →",
+    "landing.start.foundations.title": "Fundamentos",
+    "landing.start.foundations.body":
+      "Las decisiones compartidas que mantienen coherente el sistema a medida que crece.",
+    "landing.start.foundations.items": "Color · Space · Type · Dimensions · Density · Motion",
+    "landing.start.foundations.cta": "Explorar fundamentos →",
+    "landing.start.patterns.title": "Patrones",
+    "landing.start.patterns.body":
+      "Componentes y primitives trabajando juntos para resolver interacciones recurrentes.",
+    "landing.start.patterns.items": "Forms · Search · Navigation · Selection · Application UI",
+    "landing.start.patterns.cta": "Explorar patrones →",
+
+    "landing.composition.title": "De una pieza a una interfaz.",
+    "landing.composition.lede": "Empieza con algo pequeño.",
+    "landing.composition.caption.input": "Empieza con algo pequeño.",
+    "landing.composition.caption.input-button": "Añade una acción.",
+    "landing.composition.caption.input-button-listbox": "Introduce selección.",
+    "landing.composition.caption.combobox": "Define cómo se relacionan.",
+    "landing.composition.caption.form-dialog": "Añade estructura alrededor.",
+    "landing.composition.caption.full":
+      "Y termina construyendo una interfaz completa con las mismas reglas.",
+    "landing.composition.stage.input": "Input",
+    "landing.composition.stage.input-button": "Input + Button",
+    "landing.composition.stage.input-button-listbox": "Input + Button + Listbox",
+    "landing.composition.stage.combobox": "Combobox",
+    "landing.composition.stage.form-dialog": "Combobox + Form + Dialog",
+    "landing.composition.stage.full": "Interfaz completa",
+    "landing.composition.stagesLabel": "Etapas de composición",
+    "landing.composition.inputLabel": "Búsqueda",
+    "landing.composition.searchPlaceholder": "Buscar…",
+    "landing.composition.searchAction": "Buscar",
+    "landing.composition.listboxLabel": "Plan",
+    "landing.composition.notesLabel": "Notas",
+    "landing.composition.notesPlaceholder": "Añade contexto…",
+    "landing.composition.openDialog": "Confirmar",
+    "landing.composition.dialogTitle": "¿Guardar selección?",
+    "landing.composition.dialogBody":
+      "La selección y las notas se guardarán con las mismas reglas del sistema.",
+    "landing.composition.dialogCancel": "Cancelar",
+    "landing.composition.dialogConfirm": "Guardar",
+    "landing.composition.after":
+      "No son piezas aisladas que casualmente se ven parecidas. Comparten fundamentos, estados y comportamiento para poder componerse sin redefinir el sistema cada vez.",
+    "landing.composition.cta": "Ver cómo se componen →",
+
+    "landing.rules.title": "Las mismas reglas, desde abajo.",
+    "landing.rules.lede":
+      "Una interfaz coherente no empieza en Button o Dialog. Empieza en las decisiones que todos ellos comparten.",
+    "landing.rules.color.title": "Color",
+    "landing.rules.color.body":
+      "Roles semánticos que pueden responder al tema, contexto y accent.",
+    "landing.rules.color.cta": "Explorar color →",
+    "landing.rules.dimensions.title": "Dimensions",
+    "landing.rules.dimensions.body":
+      "Una escala común para que componentes distintos compartan proporciones.",
+    "landing.rules.dimensions.cta": "Explorar dimensions →",
+    "landing.rules.density.title": "Density",
+    "landing.rules.density.body":
+      "Cambia cuánto espacio necesita la interfaz sin rediseñar cada pieza.",
+    "landing.rules.density.cta": "Explorar density →",
+    "landing.rules.motion.title": "Motion",
+    "landing.rules.motion.body":
+      "Transiciones y movimiento definidos como parte del lenguaje del sistema.",
+    "landing.rules.motion.cta": "Explorar motion →",
+    "landing.rules.states.title": "State layers",
+    "landing.rules.states.body":
+      "Hover, focus, pressed y otros estados responden a un modelo común de interacción.",
+    "landing.rules.states.cta": "Explorar states →",
+
+    "landing.lab.title": "Cambia una regla. Observa el sistema.",
+    "landing.lab.theme": "Theme",
+    "landing.lab.themeLight": "Light",
+    "landing.lab.themeDark": "Dark",
+    "landing.lab.accent": "Accent",
+    "landing.lab.density": "Density",
+    "landing.lab.densityCompact": "Compacto",
+    "landing.lab.densityDefault": "Predeterminado",
+    "landing.lab.densityComfortable": "Cómodo",
+    "landing.lab.densityPresets": "Presets de densidad",
+    "landing.lab.contrast": "Contrast",
+    "landing.lab.contrastLow": "Low",
+    "landing.lab.contrastHigh": "High",
+    "landing.lab.radius": "Radio",
+    "landing.lab.radiusPresets": "Presets de radio",
+    "landing.lab.after":
+      "Los componentes no mantienen copias independientes de estas decisiones. Consumen los mismos fundamentos. Cambia el sistema y la interfaz responde.",
+    "landing.lab.ctaTheming": "Explorar theming →",
+    "landing.lab.ctaPlayground": "Abrir en Playground →",
+    "landing.lab.previewTitle": "Crear proyecto",
+    "landing.lab.nameLabel": "Nombre",
+    "landing.lab.namePlaceholder": "Mi proyecto",
+    "landing.lab.planLabel": "Plan",
+    "landing.lab.submit": "Continuar",
+    "landing.lab.cancel": "Cancelar",
+
+    "landing.platform.title": "La plataforma web también es una pieza.",
+    "landing.platform.lede":
+      "skryensya/ui no intenta reemplazar HTML y CSS con una abstracción propia. Construye sobre ellos.",
+    "landing.platform.html.title": "Cuando HTML es suficiente",
+    "landing.platform.html.body": "La estructura permanece como HTML.",
+    "landing.platform.css.title": "Cuando CSS es suficiente",
+    "landing.platform.css.body": "El sistema visual permanece en CSS.",
+    "landing.platform.js.title": "Cuando aparece interacción",
+    "landing.platform.js.body": "JavaScript añade el comportamiento necesario.",
+    "landing.platform.closing":
+      "Usa la plataforma cuando la plataforma sea suficiente. Añade comportamiento cuando la interacción lo requiera.",
+    "landing.platform.cta": "Entender la arquitectura →",
+
+    "landing.behavior.title": "El comportamiento también se compone.",
+    "landing.behavior.lede":
+      "Combinar elementos visuales es fácil. Conseguir que su interacción siga siendo correcta es otra cosa.",
+    "landing.behavior.body":
+      "Un Combobox, Menu o Dialog necesita coordinar estructura, estado, teclado, focus y semántica. En skryensya/ui esas relaciones también forman parte del componente.",
+    "landing.behavior.comboboxTitle": "Combobox",
+    "landing.behavior.keyboard": "Keyboard",
+    "landing.behavior.keyNav": "Navigate",
+    "landing.behavior.keySelect": "Select",
+    "landing.behavior.keyClose": "Close",
+    "landing.behavior.state": "State",
+    "landing.behavior.states": "open · focused · invalid · disabled",
+    "landing.behavior.semantics": "Semantics",
+    "landing.behavior.semanticsChain": "combobox → listbox → option",
+    "landing.behavior.after":
+      "La apariencia es una parte del componente. Su comportamiento también.",
+    "landing.behavior.ctaCombobox": "Explorar Combobox →",
+    "landing.behavior.ctaInteractive": "Ver componentes interactivos →",
+
+    "landing.bindings.title": "Una pieza. Dos formas de usarla.",
+    "landing.bindings.lede":
+      "La forma de renderizar una interfaz no debería cambiar el modelo del componente.",
+    "landing.bindings.vanilla.title": "HTML + JavaScript",
+    "landing.bindings.vanilla.body":
+      "Escribe la estructura y añade comportamiento donde lo necesites.",
+    "landing.bindings.vanilla.cta": "Empezar con Vanilla →",
+    "landing.bindings.react.title": "React",
+    "landing.bindings.react.body": "Renderiza el mismo concepto desde React.",
+    "landing.bindings.react.cta": "Empezar con React →",
+    "landing.bindings.after":
+      "Debajo hay un contrato compartido. Estados, semántica, comportamiento y styling hooks siguen perteneciendo al mismo sistema.",
+    "landing.bindings.ctaContracts": "Entender los contratos →",
+
+    "landing.needs.title": "Componentes que llevan a otros componentes.",
+    "landing.needs.lede":
+      "No siempre sabes el nombre de la pieza que necesitas. A veces sabes solamente qué quieres construir.",
+    "landing.needs.forms.title": "Necesito recoger información",
+    "landing.needs.forms.items":
+      "Input · Checkbox · Select · Radio Group · Date Picker · File Upload",
+    "landing.needs.forms.cta": "Explorar formularios →",
+    "landing.needs.selection.title": "Necesito presentar opciones",
+    "landing.needs.selection.items":
+      "Select · Combobox · Listbox · Menu · Command Palette",
+    "landing.needs.selection.cta": "Explorar selección →",
+    "landing.needs.overlays.title": "Necesito mostrar algo sobre la interfaz",
+    "landing.needs.overlays.items": "Popover · Tooltip · Dialog · Drawer · Toast",
+    "landing.needs.overlays.cta": "Explorar overlays →",
+    "landing.needs.nav.title": "Necesito estructurar una aplicación",
+    "landing.needs.nav.items": "Navbar · Sidebar · Breadcrumb · Tabs · Pagination",
+    "landing.needs.nav.cta": "Explorar navegación →",
+    "landing.needs.data.title": "Necesito mostrar información",
+    "landing.needs.data.items": "Table · List · Tree View · Stat · Badge · Avatar",
+    "landing.needs.data.cta": "Explorar data display →",
+
+    "landing.patterns.title": "No busques solamente componentes. Explora soluciones.",
+    "landing.patterns.lede":
+      "Un componente resuelve una parte del problema. Un patrón muestra cómo varias partes pueden trabajar juntas.",
+    "landing.patterns.search.title": "Search",
+    "landing.patterns.search.body":
+      "Input + Combobox + Keyboard navigation + Empty state",
+    "landing.patterns.search.cta": "Explorar Search →",
+    "landing.patterns.settings.title": "Settings",
+    "landing.patterns.settings.body": "Forms + Sections + Validation + Actions",
+    "landing.patterns.settings.cta": "Explorar Settings →",
+    "landing.patterns.command.title": "Command palette",
+    "landing.patterns.command.body": "Dialog + Search + Listbox + Commands",
+    "landing.patterns.command.cta": "Explorar Command palette →",
+    "landing.patterns.appNav.title": "Application navigation",
+    "landing.patterns.appNav.body":
+      "Sidebar + Navigation + Disclosure + Responsive behavior",
+    "landing.patterns.appNav.cta": "Explorar Application navigation →",
+    "landing.patterns.allCta": "Explorar todos los patrones →",
+
+    "landing.growth.title": "Diseñado usándolo.",
+    "landing.growth.lede":
+      "skryensya/ui no intenta anticipar cada interfaz posible. El sistema crece a partir de problemas reales.",
+    "landing.growth.body":
+      "Una necesidad produce una solución. La solución revela una pieza. La pieza revela una regla. Y cuando esa regla puede servir más allá del problema que la originó, pasa a formar parte del sistema.",
+    "landing.growth.chain": "Necesidad → Solución → Pieza → Sistema",
+    "landing.growth.closing": "Así evoluciona skryensya/ui.",
+    "landing.growth.ctaProject": "Conocer el proyecto →",
+    "landing.growth.ctaChangelog": "Ver el changelog →",
+
+    "landing.playground.title": "Explora. Combina. Cambia.",
+    "landing.playground.lede":
+      "El Playground es un espacio para entender el sistema construyendo con él.",
+    "landing.playground.body":
+      "Prueba componentes. Combina piezas. Cambia sus estados. Modifica los fundamentos. Compara HTML y React. Observa qué permanece igual.",
+    "landing.playground.cta": "Abrir Playground",
+
+    "landing.close.title": "Construye desde donde quieras.",
+    "landing.close.lede":
+      "Empieza con un componente o utiliza el sistema como fundamento de una interfaz completa.",
+    "landing.close.ctaStart": "Empezar →",
+    "landing.close.ctaComponents": "Explorar componentes →",
+    "landing.close.ctaDocs": "Leer la documentación →",
+    "landing.close.linkGithub": "GitHub",
+    "landing.close.linkChangelog": "Changelog",
+    "landing.close.linkPlayground": "Playground",
+    "landing.close.linkComponents": "Components",
+    "landing.close.linkFoundations": "Foundations",
+
     "footer.body":
       "Este sitio consume {core} y los paquetes de componentes por sus exports maps, con bundler, el mismo camino que documenta. Cada píxel sale de un token.",
   },
@@ -2880,9 +3389,14 @@ export const ui = {
     "playground.hideRail": "Hide the component list",
     "playground.showRail": "Show the component list",
     "playground.resizeRail": "Resize the component list",
+    "playground.discardTitle": "Discard your changes?",
+    "playground.discardBody": "This example has unsaved edits. Switching examples discards them.",
+    "playground.discardCancel": "Keep editing",
+    "playground.discardConfirm": "Discard",
     "nav.skipToNav": "Go to navigation",
 
     "status.wip": "Work in progress",
+    "status.ariaReviewed": "Reviewed against WAI-ARIA APG",
 
     "search.label": "Search",
     "search.dialog": "Search the documentation",
@@ -2948,6 +3462,8 @@ export const ui = {
     "preview.screenMobile": "Mobile",
     "preview.screenMobileHint":
       "Mobile · 390 × 844 px, where every layout finishes stacking",
+    "preview.reactSource": "React source",
+    "preview.sourceComponent": "Component",
 
     /* The demos' words. The composition they sit in is shared: see the Spanish block above. */
     "demo.tag.design": "design",
@@ -2998,8 +3514,13 @@ export const ui = {
     "demo.primitives.cell.first": "One",
     "demo.primitives.cell.second": "Two",
     "demo.primitives.cell.third": "Three",
-    "demo.input.hint": "We only use it for ballots.",
-    "demo.input.error": "Enter a work address.",
+    "demo.input.hint": "We write here if something goes wrong.",
+    "demo.input.notesLabel": "Notes",
+    "demo.input.notesHint": "Tell us what happened, in as much detail as you can.",
+    "demo.input.notesPlaceholder": "Write here",
+    "demo.formField.hint": "We only use it for receipts.",
+    "demo.formField.error": "Enter a work address.",
+    "demo.formField.planHint": "You can change it later.",
     "demo.breadcrumb.label": "Breadcrumbs",
     "demo.breadcrumb.home": "Home",
     "demo.breadcrumb.projects": "Projects",
@@ -3084,6 +3605,8 @@ export const ui = {
 
     "demo.slider.volume": "Volume",
     "demo.slider.brightness": "Brightness",
+    "demo.slider.priceMin": "Minimum price",
+    "demo.slider.priceMax": "Maximum price",
     "demo.select.label": "Plan",
     "demo.calendar.locale": "en-US",
     "demo.calendar.availability": "Availability",
@@ -3319,6 +3842,11 @@ export const ui = {
     "demo.navList.group": "Space",
     "demo.navList.home": "Home",
     "demo.navList.reports": "Reports",
+    "demo.navList.collapsibleNavLabel": "Account",
+    "demo.navList.collapsibleLabel": "Collapsible group",
+    "demo.navList.account": "My account",
+    "demo.navList.settings": "Settings",
+    "demo.navList.billing": "Billing",
     "demo.navbar.nav": "Primary",
     "demo.navbar.home": "Home",
     "demo.navbar.projects": "Projects",
@@ -3406,6 +3934,8 @@ export const ui = {
     "demo.carousel.collaboration.title": "Team",
     "demo.carousel.collaboration.body":
       "Invite, assign roles, and share spaces without leaving the flow.",
+    "demo.carousel.readMore": "Read more",
+    "demo.carousel.focusLabel": "What's new, with a link on every card",
     "demo.carousel.team.label": "Team",
     "demo.carousel.person.first.role": "Platform",
     "demo.carousel.person.second.role": "Compilers",
@@ -3561,6 +4091,7 @@ export const ui = {
     "demo.table.trial": "Trialling",
     "demo.table.taxNote": "Prices do not include tax.",
     "demo.table.regions": "Performance by region",
+    "demo.table.resizeLabel": "Resize column",
     "demo.table.service": "Service",
     "demo.table.latency": "Latency",
     "demo.table.errors": "Errors",
@@ -3883,7 +4414,7 @@ export const ui = {
     "accordion.a11yP1":
       'Each trigger is a native <code>&lt;button&gt;</code>: Enter and Space activate it with no script of its own, and its <code>aria-expanded</code> (written by the machine, never by hand) is the only thing that announces the state. The chevron is <code>aria-hidden="true"</code>: it is the same information said twice, and only one should reach the screen reader.',
     "accordion.a11yP2":
-      'Arrow down and arrow up move focus between triggers in the same group, <kbd>Home</kbd> jumps to the first and <kbd>End</kbd> to the last: the keyboard pattern the ARIA APG describes for an accordion, not a convention of its own. Opening an item does not take focus from its trigger or hand it to the content: keyboard traversal stays between triggers, same as with the mouse.',
+      "<kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> move focus between triggers in the page's normal order: the base keyboard pattern the ARIA APG describes for an accordion asks for nothing more — arrow keys, <kbd>Home</kbd> and <kbd>End</kbd> between triggers are an optional enhancement this component does not implement today. Opening an item does not take focus from its trigger or hand it to the content: keyboard traversal stays the same, same as with the mouse.",
     "accordion.a11yP3":
       '{detailsLink} has none of this because it does not need it: a <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> is an accessible platform disclosure, with its own focus and keyboard handling already solved by the browser.',
 
@@ -3893,6 +4424,8 @@ export const ui = {
       "In multiple mode, opening an item does not close the others that are open.",
     "accordion.testReact3":
       'An item carries the right classes (<code class="sk-code">sk-tile--expandable</code>, no <code class="sk-code">--interactive</code>) and <code class="sk-code">aria-expanded</code> toggles on trigger click.',
+    "accordion.testReact4":
+      'Each trigger is wrapped in a <code class="sk-code">role="heading"</code> with <code class="sk-code">aria-level</code> (defaults to 3, configurable), so a screen reader navigating by heading finds the sections.',
     "accordion.testVanilla1":
       "In single mode, opening an item closes the previous one (animated) and emits the sk:accordionvaluechange event.",
     "accordion.testVanilla2":
@@ -4001,11 +4534,18 @@ export const ui = {
       "This is the concrete reason there is a machine here and not a counter. The <strong>reachable</strong> anchor positions are not one per slide: once a slide starts to peek through, the trailing ones all clip against the maximum scroll and collapse onto the same position. A hand-rolled carousel draws one dot per slide there and ends up with dots that can <em>never</em> be activated and a \"next\" button that never disables. The machine derives pages from <code>getScrollSnapPositions</code> (measured, clipped and deduplicated), so the dots and the scroll agree by construction. You can see it by shrinking the window over any of the examples: the slides that fit change, the dot count changes, and the last one is always reachable.",
     "carousel.multiTitle": "Multi-up, loop and autoplay",
     "carousel.multiBody1":
-      "Narrower slides fit several per page, and the machine counts them by measuring. With <code>data-loop</code> the carousel wraps around; with <code>data-autoplay</code> it advances on its own (empty for the default 4000ms, or a delay in ms). Autoplay pauses on its own once the tab is no longer visible.",
+      "Narrower slides fit several per page, and the machine counts them by measuring. With <code>data-loop</code> the carousel wraps around; with <code>data-autoplay</code> it advances on its own (empty for the default 4000ms, or a delay in ms).",
     "carousel.multiBody2":
-      "<code>data-autoplay</code> also brings a <strong>pause button</strong>: anything that moves on its own has to be stoppable (WCAG 2.2.2), so the option and the control are one and the same thing. And for anyone who declares <code>prefers-reduced-motion</code>, it never starts: the carousel stays still and the button offers to play.",
+      "<code>data-autoplay</code> also brings a <strong>pause button</strong>: anything that moves on its own has to be stoppable (WCAG 2.2.2), so the option and the control are one and the same thing. The button always says what it will do based on what the user last asked for: hovering the mouse over the carousel or moving keyboard focus anywhere inside it — not just the buttons — pauses rotation for as long as that lasts, and resumes it on leaving, unless the other condition is still active. A click on the button overrides all of that until the next click. For anyone who declares <code>prefers-reduced-motion</code>, it never starts: the carousel stays still and the button offers to play. It also pauses on its own once the tab is no longer visible.",
     "carousel.multiLabel": "Multi-up + autoplay",
     "carousel.multiNote": "Avatar + meta · data-loop · data-autoplay",
+    "carousel.focusTitle": "Focus inside a card",
+    "carousel.focusLabel": "Focus inside a card",
+    "carousel.focusBody1":
+      "The WAI-ARIA pattern says keyboard focus pauses rotation \"anywhere in the carousel content, including the next and previous slide elements\" — easy to read as \"only the buttons\". This card adds a real link (\"Read more\") inside every slide to prove it also counts: Tab onto the link pauses autoplay, Tab or Shift+Tab away resumes it.",
+    "carousel.focusBody2":
+      "No new code was needed for this: the focus listener lives on the carousel's root, and <code>focusin</code>/<code>focusout</code> bubble from any descendant, so a link, a button, or any control inside a card is already covered.",
+    "carousel.focusNote": "A real link per card · Tab to test the pause",
     "carousel.bareTitle": "No controls",
     "carousel.bareBody1":
       "<code>data-controls=\"none\"</code> turns off <strong>both</strong> layers: neither the enhancer's buttons and dots, nor the native <code>::scroll-button</code> and <code>::scroll-marker</code>. What is left is the bare track, still a scroller with snap: every slide is a stop (<code>scroll-snap-stop: always</code>), so swiping never skips a card.",
@@ -4055,6 +4595,8 @@ export const ui = {
     "carousel.test2": "Names the region and every slide for assistive tech.",
     "carousel.test3": "Draws one dot per MEASURED page, not one per slide.",
     "carousel.test4": "Snaps to a dot and reports the page on the change event.",
+    "carousel.test5":
+      "Focus landing on a card's LINK (not just the prev/next buttons) pauses autoplay, and resumes it on blur.",
 
     "changelogPage.description":
       "Changelog: a dated history with a rail, where the date is what a reader is looking for and the marker says what kind of change it was.",
@@ -4090,13 +4632,14 @@ export const ui = {
     "checkbox.lede": 'An independent choice. It keeps an <code>input type="checkbox"</code>: submit, reset, keyboard and validation belong to the browser.',
     "checkbox.body":
       "The control uses the icon set's <code>check</code> and <code>remove</code> roles, not a CSS stroke. Import <code>@skryensya/core/components/checkbox.css</code> and call <code>initComponents()</code> once.",
-    "checkbox.groupTitle": "A checkbox that groups others",
+    "checkbox.groupTitle": "A checkbox that groups others: CheckboxGroup",
     "checkbox.groupBody1":
       "<code>indeterminate</code> is not a third value someone can pick: it is what a parent says when <strong>its children disagree</strong>. That is why the glyph is <code>remove</code> rather than a half check, and why the parent submits nothing to the form — the children, which carry <code>name</code> and <code>value</code>, are the ones that do.",
-    "checkbox.groupLabel": "Select all",
     "checkbox.groupNote": "three states from two booleans",
     "checkbox.groupBody2":
-      "The parent's state is <strong>derived</strong>, never authored: it is recalculated from the children on every change. The other way around, a parent with its own state starts lying the moment someone checks a child. It is fifteen lines with no machine and no new component, so the system does not wrap it: grouping is a rule of the form, not of the control.",
+      "The parent's state is <strong>derived</strong>, never hand-written: it is recalculated from the children on every change. The other way around, a parent with its own state starts lying the moment someone checks a child. That is why the contract gives it no settable <code>checked</code>: which children start checked is per-entry data (<code>defaultChecked</code>), not the group's.",
+    "checkbox.groupBody3":
+      "A <code>disabled</code> child is not a vote: a box nobody can reach should not keep the parent from saying “all”. And a form <code>reset</code> restores the children from their attributes <strong>without firing a single event</strong>, so the enhancer re-derives after it; without that the parent would sit contradicting its own children until the next click.",
     "checkbox.tileTitle": "A surface checkbox: TileCheckbox",
     "checkbox.tileBody1":
       "When the choice needs a title, a description, and the whole surface as its target, use <code>TileCheckbox</code>. It is the same control (<code>sk-checkbox__control</code> + icons); only the container changes.",
@@ -4108,7 +4651,7 @@ export const ui = {
     "checkbox.contractItem3":
       '<code>"indeterminate"</code> is visual: it submits no value until the person picks checked or unchecked. The glyph is <code>remove</code>.',
     "checkbox.contractItem4":
-      "A parent grouping children <strong>derives</strong> its state from them, never stores it: <code>checked</code> when they all are, <code>indeterminate</code> when they disagree. The two are independent flags off the input, so turn <code>indeterminate</code> off when leaving that state, or the dash stays stuck.",
+      "<code>CheckboxGroup</code> <strong>derives</strong> the parent's state, never stores it: <code>checked</code> when they all are, <code>indeterminate</code> when they disagree. <code>checked</code> and <code>indeterminate</code> are independent flags off the input and can both be on at once; the enhancer turns the second off when leaving that state, and the CSS gives the dash priority in case it is not.",
     "checkbox.contractItem5": 'The text lives inside the <code>label</code>; with no text, provide an <code>aria-label</code>.',
     "checkbox.contractItem6":
       "The state layer sits on <code>sk-checkbox__control</code>, not the label: selection is the control's own fill, and the text never inherits the on-accent color.",
@@ -4121,6 +4664,15 @@ export const ui = {
     "checkbox.test1":
       "Toggles checked state and the root's <code>data-state</code> on click, emitting <code>sk:checkedchange</code>.",
     "checkbox.test2": "Is form-associated and honours its <code>default-checked</code>.",
+    "checkbox.groupTest1":
+      "Derives the parent's three states from its children, on mount and on every change.",
+    "checkbox.groupTest2":
+      "Checks and unchecks every child from the parent, and reports what changed on <code>sk:checkboxgroupvaluechange</code>.",
+    "checkbox.groupTest3":
+      "Leaves a <code>disabled</code> child alone and does not let it hold the parent back from “all”.",
+    "checkbox.groupTest4": "Counts only its own children, never a nested group's.",
+    "checkbox.groupTest5":
+      "Re-derives the parent after a form <code>reset</code>, which restores the children silently.",
 
     "codePreview.description": "Shiki code preview with build/SSR highlighting and opt-in Vanilla behavior.",
     "codePreview.lede":
@@ -4568,25 +5120,50 @@ export const ui = {
     "imageFrame.test2": "Renders a media img from src/alt when children are omitted.",
     "imageFrame.test3": "Keeps a caption beside the src media.",
 
-    "inputPage.description": "Input: native control, a field with label/hint/error, and styling hooks.",
-    "inputPage.title": "Input and Field",
+    "inputPage.description": "Input: the native text control, with one class for the input and the textarea.",
+    "inputPage.title": "Input",
     "inputPage.lede":
       "The native text control stays native: there is no machine, and no bordered <code>div</code> pretending to be an input. The platform keeps validation, autofill, IME, and form association.",
     "inputPage.densityBody": 'Density compacts the space around the field, not its interaction area: Input keeps a minimum height of <code>44px</code>, even with <code>data-size="sm"</code>.',
     "inputPage.oneClassTitle": "One class for every text control",
     "inputPage.oneClassBody":
       "<code>sk-input</code> goes on both the <code>&lt;input&gt;</code> and the <code>&lt;textarea&gt;</code>: it is the same visual control, so it is one set of hooks. A second class would be a second set to keep in sync with the first.",
-    "inputPage.fieldTitle": "Field is independent of Input",
-    "inputPage.fieldBody":
-      "<code>sk-field</code> is the chrome around <em>any</em> control — it wraps a select or a group of checkboxes just as well. Naming it after whichever control it most often holds would turn into a lie the first time it holds another.",
-    "inputPage.errorTitle": "The error is text, not a color",
-    "inputPage.errorBody":
-      "<code>--sk-field-error-fg</code> tints a message that has to exist anyway, and <code>aria-invalid</code>, which you already write for screen readers, is what the <code>--sk-input-border-color</code> hook follows. A separate <code>data-invalid</code> would let the two drift apart, and color is never the only error signal (WCAG 1.4.1).",
-    "inputPage.reactBody":
-      "In React, <code>Field</code> does the wiring you write by hand above: it generates the <code>id</code>, assembles the <code>aria-describedby</code> for the hint and the error, and passes <code>required</code> and <code>disabled</code> to the native control. The presence of <code>error</code> is what makes the field invalid. An <code>Input</code> outside a <code>Field</code> is still a valid control.",
-    "inputPage.test1": "Wires the label, hint and error to the control it wraps.",
-    "inputPage.test2": "The error message is what makes the field invalid.",
-    "inputPage.test3": "Stays a valid control outside a Field.",
+    "inputPage.formFieldTitle": "The label is not the Input's",
+    "inputPage.formFieldBody":
+      'Both demos above are wrapped in a <a href="/en/components/form-field">FormField</a>, and not out of habit: the label, the hint, the error message and the six ids that tie them together all live there. That is why this contract has no <code>invalid</code> and no <code>id</code> of its own — a control carrying its own <code>aria-invalid</code> could contradict the message sitting next to it. An <code>Input</code> outside a <code>FormField</code> is still a valid control, as long as it carries its own <code>aria-label</code>.',
+    "inputPage.nativeTitle": "NativeInput: the control without the appearance",
+    "inputPage.nativeBody":
+      'The contract\'s third signature is <code>NativeInput</code>: the same element without <code>sk-input</code>, for when what you are teaching is the behaviour the browser ships rather than the system\'s appearance. It is what the plain <code>&lt;input type="time"&gt;</code> demo on TimeField uses.',
+    "inputPage.test1": "Stays a valid control outside a FormField.",
+    "inputPage.test2": "Gives a textarea the same appearance contract as an input.",
+    "inputPage.test3": "Writes the height to data-size and leaves the native size attribute alone.",
+
+    "formFieldPage.description":
+      "FormField: the chrome around any control — label, hint, error — and the six ids that tie them together.",
+    "formFieldPage.title": "FormField",
+    "formFieldPage.lede":
+      "A field is chrome plus a control, and what binds them is six ids. Written by hand, every one of them is a chance to be silently wrong: a mistyped <code>aria-describedby</code> shows nothing on screen and breaks every screen reader that reads the form.",
+    "formFieldPage.wiringTitle": "Six ids from one name",
+    "formFieldPage.wiringBody":
+      "The label points at the control, the control points back at the hint and the error, and each of those carries the id being pointed at. The contract derives all of them from the field's own id: neither binding invents one, which is why React's ids (<code>useId</code>) and the emitter's (a slug) can differ without the relationship changing.",
+    "formFieldPage.independentTitle": "Independent of Input, on purpose",
+    "formFieldPage.independentBody":
+      "<code>sk-form-field</code> is the chrome around <em>any</em> control: it wraps a select or a textarea just as well, as below. Naming it after whichever control it most often holds would turn into a lie the first time it holds another — which is why its <code>children</code> slot accepts any signature and the wiring points at <code>\"control\"</code> rather than at an input.",
+    "formFieldPage.errorTitle": "The error is text, not a color",
+    "formFieldPage.errorBody":
+      "The <em>presence</em> of the message is what makes the field invalid: there is no separate <code>invalid</code> option that could fall out of step with it. <code>--sk-form-field-error-fg</code> tints a message that has to exist anyway, and <code>aria-invalid</code>, which you already write for screen readers, is what the <code>--sk-input-border-color</code> hook follows. Color is never the only error signal (WCAG 1.4.1).",
+    "formFieldPage.avoidTitle": "When not to use it",
+    "formFieldPage.avoidBody":
+      "When the control carries no visible label: there the control itself carries its <code>aria-label</code> and there is no field. And when the control already brings its own label wired by its machine — NumberField, TimeField, Combobox — wrapping it would add a second <code>for</code> competing with the first.",
+    "formFieldPage.reactBody":
+      "In React, <code>FormField</code> does the wiring you write by hand in markup: it generates the <code>id</code>, assembles the <code>aria-describedby</code> for the hint and the error, and passes <code>required</code> and <code>disabled</code> to the native control. It is imported from <code>@skryensya/react/form-field</code>, its own module, and any control can read that context — which is the alternative to each of them growing its own copy of the wiring.",
+    "formFieldPage.a11yBody":
+      "The <code>required</code> asterisk is decorative (<code>aria-hidden</code>): what actually says it is the control's <code>required</code> attribute, because \"required\" has to survive being read aloud. The hint and the error are announced through <code>aria-describedby</code> in that order, and only what exists is pointed at: with no error written there is no <code>aria-invalid</code>, because an attribute pointing at a message nobody wrote describes something that is not there.",
+    "formFieldPage.test1": "Wires the label, hint and error to the control it wraps.",
+    "formFieldPage.test2": "The error message is what makes the field invalid.",
+    "formFieldPage.test3": "Passes required and disabled to the native control.",
+    "formFieldPage.test4": "Wires a textarea exactly as it wires an input.",
+    "formFieldPage.test5": "Passes axe with a hint and an error at once.",
 
     "skipLink.description":
       "SkipLink: the first link in the document, invisible until it is focused, for bypassing the chrome that repeats.",
@@ -4787,7 +5364,7 @@ export const ui = {
       "<code>data-sk-menu-context-trigger</code> (or <code>contextTarget</code> in React) replaces the trigger: the element absorbs the right-click <code>contextmenu</code> event and opens the menu, instead of needing a visible button.",
     "menuPage.safetyTitle": "Pointer intent (safety triangle)",
     "menuPage.safetyBody":
-      "When a submenu is open, crossing another parent-menu item on a diagonal path does not highlight it or close the submenu: <code>@zag-js/menu</code> already computes an intent polygon (<code>context.intentPolygon</code>, from the submenu's real <code>DOMRect</code> and its resolved <code>placement</code>) and suppresses hover while the pointer stays inside it (<code>context.pointerRoutingMode</code>). None of this is added by this system: it is the machine's native behaviour, made visible here with an SVG overlay drawing that same polygon and that same state live. Open \"Share\" and cross diagonally toward the submenu.",
+      "When a submenu is open, crossing another parent-menu item on a diagonal path does not highlight it or close the submenu. What holds it is a real element: the <em>safe area</em>, a <code>clip-path</code> triangle living INSIDE the trigger and reaching from the pointer to the submenu's near edge. While the pointer is over it the browser fires no <code>pointerleave</code> on the trigger — a descendant counts as the element — so the machine never enters <code>closing</code> and the rows underneath never get the <code>pointermove</code> they would steal the highlight with. <code>@zag-js/menu</code>'s own polygon was not enough: it can only veto an early close during <code>waitForCloseDelay</code>'s 100ms, never extend them, and a pointer parked motionless inside the polygon still lost the submenu at ~90ms. Open \"Share\" and cross diagonally toward the submenu: the painted triangle is the very element you are touching, not a separate drawing of it.",
 
     "navbarPage.description": "Navbar: the bar, with the navigation list as a horizontal pattern.",
     "navbarPage.lede":
@@ -5003,6 +5580,16 @@ export const ui = {
       "The contract's <code>value</code> is <strong>where the thumb starts</strong>, and each binding writes it under its own name: <code>value</code> in the markup, <code>defaultValue</code> in React. It is not cosmetic: <code>value</code> in React means controlled, so emitting it produced a slider that could not move.",
     "sliderPage.test1": "Stays a native <code>&lt;input type=\"range\"&gt;</code> and reports value changes as numbers.",
     "sliderPage.test2": "Paints the initial fill from the value within [min, max] on mount.",
+    "sliderPage.rangeTitle": "Two thumbs",
+    "sliderPage.rangeBody":
+      'Two native <code>&lt;input type="range"&gt;</code> elements, not the hand-rolled SVG widget the WAI-ARIA APG itself publishes as the only example for this pattern — each input already gets keyboard, focus, and an accessibility tree for free from the platform, and WAI\'s own guidance warns that a hand-rolled widget can fail for touch-based screen reader users. Neither thumb can be dragged past the other: <code>sliderRangeBounds</code> computes each one\'s bound against where the OTHER sits right now, never against a fixed min/max.',
+    "sliderPage.rangeLabel": "Price range",
+    "sliderPage.testRange1":
+      "The low thumb's max is bounded by the high thumb's current value, and vice versa.",
+    "sliderPage.testRange2":
+      "Changing one value re-bounds the OTHER thumb and reports both values on the change.",
+    "sliderPage.testRange3":
+      "Neither thumb can exceed the other — native min/max clamps even a direct value write past the bound.",
 
     "splitButtonPage.description": "A stable primary action with an adjacent menu of alternative actions.",
     "splitButtonPage.contractBody": "The primary action never silently changes when the menu is chosen. If there is no dominant action, use Menu.",
@@ -5067,6 +5654,10 @@ export const ui = {
     "tablePage.stickyHeadBody":
       "Use <code>data-sticky-header</code> or <code>stickyHeader</code>. The wrapper gains vertical scroll and a max height of <code>20rem</code>, which you can override as in this example. The header stays visible on both desktop and mobile; if you combine both modifiers, the corner cell sits above both layers.",
     "tablePage.stickyHeadLabel": "Sticky header row",
+    "tablePage.resizableTitle": "Resizable columns",
+    "tablePage.resizableBody":
+      'Use <code>data-resizable-columns</code> in HTML or <code>resizableColumns</code> in React, together with <code>resizeLabel</code> (required). The binding inserts a real separator (<code>role="separator"</code>) between every pair of headers — the same shared primitive, <code>@skryensya/core/splitter</code>, that <a href="/en/components/sidebar">Sidebar</a>\'s own resize handle and <a href="/en/components/treegrid">Treegrid</a>\'s own column resizer already use. Drag a header\'s edge, or focus it and use the arrow keys (Shift for the coarse step), Home/End for the extremes, Enter or double-click to reset the pair to an even split.',
+    "tablePage.resizableLabel": "Performance by region, resizable",
     "tablePage.pagerTitle": "With pagination",
     "tablePage.pagerBody":
       '<code>data-sk-table-pager</code> is the vanilla enhancer; <code>sk-table-pager</code> is the layout pattern (table + bar). You mark the rows, leave the <code>nav</code> empty and, optionally, a status and a page-size <a class="sk-link sk-interactive" href="/en/components/select"><code>Select</code></a>. Page size sits at the start of the bar; status and <a class="sk-link sk-interactive" href="/en/components/pagination"><code>Pagination</code></a> sit together in <code>sk-table-pager__end</code>. Use <code>data-layout="fixed"</code> so column widths do not shift.',
@@ -5416,6 +6007,197 @@ export const ui = {
     "treeViewPage.test2": "Expands a branch from its control and says so.",
     "treeViewPage.test3": "Selects a leaf and reports the value the composition wrote.",
 
+    "treegridPage.description": "Hierarchical rows with columns: expand or collapse one without losing the rest of its values.",
+    "treegridPage.lede":
+      'Combines hierarchy and columns at once — the WAI-ARIA <code>treegrid</code> pattern. Use it when every row needs several independent values IN ADDITION to its place in the hierarchy (a message with a sender, a file with a size and a date). For a single column of hierarchical text use <a href="/en/components/tree-view">TreeView</a>; for columns with no hierarchy, <a href="/en/components/table">Table</a>.',
+    "treegridPage.minimalTitle": "Inbox",
+    "treegridPage.minimalBody":
+      "The exact example the WAI-ARIA spec itself uses: two columns (Subject, From), a folder that starts open with two messages, a collapsed folder whose one message stays hidden, and a loose message at the root.",
+    "treegridPage.minimalLabel": "Sample inbox",
+    "treegridPage.contractItem1":
+      "Almost always wrapped in <code>TreegridScroll</code> — the same reason as <code>TableScroll</code>: a flex or grid parent gives it <code>min-size: auto</code>, and a grid wider than its space blows the surface open if nothing wraps it.",
+    "treegridPage.contractItem2":
+      '<code>Treegrid</code> is a <code>&lt;table role="treegrid"&gt;</code> that REQUIRES <code>label</code> — that role carries no implicit accessible name, unlike a native table.',
+    "treegridPage.contractItem3":
+      "<code>TreegridHead</code> / <code>TreegridHeadRow</code> / <code>TreegridColumnHeader</code> are plain column headers — the same shape <code>Table</code> already has.",
+    "treegridPage.contractItem4":
+      "Each <code>TreegridRow</code> is authored FLAT, in document order — never nested inside another row, a <code>&lt;tr&gt;</code> cannot contain a <code>&lt;tr&gt;</code>. <code>level</code>, <code>setSize</code>, and <code>posInset</code> are facts the author already knows from writing the row in that order, not something the component derives.",
+    "treegridPage.contractItem5":
+      "<code>expanded</code> is only authored on a row that HAS children — its absence, not a <code>false</code> value, is what marks a row a leaf. <code>true</code>/<code>false</code> controls whether its descendants are currently visible.",
+    "treegridPage.contractItem6":
+      'Each <code>TreegridCell</code> is a plain <code>&lt;td role="gridcell"&gt;</code>; the first cell of a row with children gets the indent from CSS and a real disclosure button the binding inserts — never authored, and decorative to a screen reader (the row\'s own <code>aria-expanded</code> already announces the state).',
+    "treegridPage.contractItem7":
+      '<code>resizableColumns</code> (off by default) inserts a real <code>role="separator"</code> between every pair of column headers — the same shared <code>@skryensya/core/splitter</code> primitive Sidebar\'s own separator uses. Requires <code>resizeLabel</code>: the separator is binding-inserted, so nothing else names it for a screen reader.',
+    "treegridPage.hooksBody":
+      "Per-level indent and the width reserved for the disclosure glyph are hooks: <code>--sk-treegrid-indent</code> and <code>--sk-treegrid-indicator-size</code>.",
+    "treegridPage.a11yBody":
+      'Every row carries <code>role="row"</code> with <code>aria-level</code>/<code>aria-setsize</code>/<code>aria-posinset</code> — STATIC facts that never change when a sibling collapses, only visibility does — plus <code>aria-expanded</code> only when it has children. Every cell carries <code>role="gridcell"</code>. Focus is roving: a single row or cell is the tab stop for the whole grid. <kbd class="sk-kbd">→</kbd> expands a collapsed branch or enters its first cell; <kbd class="sk-kbd">←</kbd> collapses an open branch or moves up to the parent row; <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> move between visible rows; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> and <kbd class="sk-kbd">Ctrl</kbd>+<kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> jump to the start/end; <kbd class="sk-kbd">Enter</kbd> toggles a branch with row focus, or activates any other focus. This version is faithful to WAI\'s base example (<code>treegrid-1</code>): text-only cells, no interactive control of its own inside a cell — which is why <kbd class="sk-kbd">Tab</kbd> always just leaves the grid, with nothing to intercept.',
+    "treegridPage.testVanilla1":
+      "On mount, hides the one child of the branch that starts collapsed.",
+    "treegridPage.testVanilla2":
+      "Right Arrow on a collapsed branch expands it and reveals its child, without moving the row's focus.",
+    "treegridPage.testVanilla3":
+      "Clicking a branch's first cell toggles it and moves focus to the row.",
+    "treegridPage.testReact1":
+      "Honors each row's initial <code>expanded</code>, and hides only the collapsed branch's own descendant.",
+    "treegridPage.testReact2":
+      "Left Arrow on an open branch collapses it and hides its children.",
+    "treegridPage.testReact3": "Enter activates a focused leaf row.",
+
+    "treegridPage.stressTitle": "File explorer (stress test)",
+    "treegridPage.stressBody":
+      "Four columns instead of two, long content that forces ellipsis in more than one column, seven levels deep (the first five with their own CSS rule, the sixth and seventh falling back to the shared ceiling), collapsed branches at more than one level at once — including one at the root — and <code>resizableColumns</code>: drag or use the arrow keys on a header's edge to resize the pair of columns on either side.",
+    "treegridPage.stressLabel": "Sample file explorer",
+
+    "demo.treegrid.label": "Messages",
+    "demo.treegrid.subject": "Subject",
+    "demo.treegrid.from": "From",
+    "demo.treegrid.inbox": "Inbox",
+    "demo.treegrid.meeting": "Team meeting",
+    "demo.treegrid.lunch": "Lunch",
+    "demo.treegrid.drafts": "Drafts",
+    "demo.treegrid.untitled": "Untitled",
+    "demo.treegrid.me": "Me",
+    "demo.treegrid.sent": "Sent",
+
+    "demo.treegridStress.label": "File explorer",
+    "demo.treegridStress.resizeLabel": "Resize column",
+    "demo.treegridStress.colName": "Name",
+    "demo.treegridStress.colType": "Type",
+    "demo.treegridStress.colSize": "Size",
+    "demo.treegridStress.colModified": "Modified",
+    "demo.treegridStress.typeFolder": "Folder",
+    "demo.treegridStress.typeTs": "TypeScript file",
+    "demo.treegridStress.typeTest": "Test file",
+    "demo.treegridStress.typeStyle": "Stylesheet",
+    "demo.treegridStress.typeConfig": "Config",
+    "demo.treegridStress.typeMarkdown": "Markdown document",
+    "demo.treegridStress.typeText": "Text document",
+    "demo.treegridStress.projectAlpha": "project-alpha",
+    "demo.treegridStress.src": "src",
+    "demo.treegridStress.components": "components",
+    "demo.treegridStress.buttonFolder": "Button",
+    "demo.treegridStress.buttonTsx": "Button.tsx",
+    "demo.treegridStress.internalTypesFolder": "internal-types-for-the-component-with-extended-props",
+    "demo.treegridStress.buttonPropsTs": "ButtonProps.ts",
+    "demo.treegridStress.buttonTestTsx": "Button.test.tsx",
+    "demo.treegridStress.buttonModuleCss": "Button.module.css",
+    "demo.treegridStress.modalTsx": "Modal.tsx",
+    "demo.treegridStress.utilsFolder": "utils",
+    "demo.treegridStress.formatUtil": "format-currency-and-long-date-strings-for-every-supported-locale.ts",
+    "demo.treegridStress.packageJson": "package.json",
+    "demo.treegridStress.readme":
+      "README-install-configure-and-deploy-instructions-for-the-whole-team.md",
+    "demo.treegridStress.readmeModified": "3 weeks ago by Alice Fernández from the Design team",
+    "demo.treegridStress.projectBeta": "project-beta",
+    "demo.treegridStress.indexTs": "index.ts",
+    "demo.treegridStress.license": "license.txt",
+    "demo.treegridStress.modified2d": "2 days ago",
+    "demo.treegridStress.modified3d": "3 days ago",
+    "demo.treegridStress.modified4d": "4 days ago",
+    "demo.treegridStress.modified1h": "1 hour ago",
+    "demo.treegridStress.modified5h": "5 hours ago",
+    "demo.treegridStress.modified1day": "1 day ago",
+    "demo.treegridStress.modified1week": "1 week ago",
+    "demo.treegridStress.modified1month": "1 month ago",
+    "demo.treegridStress.modified6months": "6 months ago",
+
+    "meterPage.description":
+      "Meter: a measurement within a known range, never a task's completion.",
+    "meterPage.lede":
+      'A value measured right now, not a task in progress — the WAI-ARIA <code>meter</code> role, distinct from <code>progressbar</code>. Use it for disk usage, battery level, a rating on a scale. For a task\'s progress with a start and an end, use <a href="/en/components/progress">Progress</a>.',
+    "meterPage.body":
+      "Unlike Progress, <code>min</code> is a real parameter and often non-zero — a 1-to-5 rating, a temperature. The fill is computed with <code>meterFraction(value, min, max)</code>, not <code>value / max</code>.",
+    "meterPage.test1": "Sets role=meter with the three required aria-value attributes.",
+    "meterPage.test2": "Honors a non-zero min when painting the fill, unlike Progress.",
+    "meterPage.a11yBody":
+      'The <code>meter</code> role carries <code>aria-valuenow</code>/<code>aria-valuemin</code>/<code>aria-valuemax</code> always present, and an optional <code>aria-valuetext</code> for when the raw number alone is not enough ("50% (6 hours) remaining"). No keyboard interaction: it is a measurement, not a control.',
+
+    "demo.meter.rating": "Rating",
+    "demo.meter.ratingText": "4 out of 5 stars",
+    "demo.meter.disk": "Disk usage",
+    "demo.meter.diskText": "92% used",
+    "demo.meter.battery": "Battery",
+    "demo.meter.batteryText": "68% remaining",
+
+    "feedPage.description":
+      "Feed: a stream of independent posts, each announced with its own position.",
+    "feedPage.lede":
+      'A scrollable stream of independent content units (posts, comments) — the WAI-ARIA <code>feed</code> role. Each <code>FeedArticle</code> states its own position (<code>aria-posinset</code>/<code>aria-setsize</code>), so a screen reader announces "2 of 3" without reading the rest of the stream first.',
+    "feedPage.body":
+      'WAI-ARIA is explicit: the <code>feed</code> role "is not associated with any well-established keyboard conventions" — Page Up/Page Down/Ctrl+Home/Ctrl+End are recommendations, not requirements. This version stays purely static: no machine, no keyboard handling of its own.',
+    "feedPage.test1": "Sets role=feed, names it, and reflects aria-busy.",
+    "feedPage.test2":
+      "Each article gets role=article with aria-posinset/aria-setsize and a real labelled name.",
+    "feedPage.test3": "Allows setSize=-1 for an undetermined total, per WAI's own allowance.",
+    "feedPage.a11yBody":
+      'The root carries <code>role="feed"</code> with <code>aria-label</code> (required, the role has no implicit name) and <code>aria-busy</code> while more content loads. Each <code>FeedArticle</code> is a <code>role="article"</code> with <code>aria-posinset</code>/<code>aria-setsize</code>, named by its own label slot via <code>aria-labelledby</code> — never just referenced, always rendered.',
+
+    "demo.feed.label": "Recent activity",
+    "demo.feed.author1": "María — 2 hours ago",
+    "demo.feed.body1": "Posted the sprint summary.",
+    "demo.feed.author2": "Diego — 5 hours ago",
+    "demo.feed.body2": "Commented on issue #482.",
+    "demo.feed.author3": "Lucía — yesterday",
+    "demo.feed.body3": "Closed three backlog tickets.",
+
+    "dataGridPage.description":
+      "Data Grid: 2D roving-tabindex navigation for tabular data or grouped widgets.",
+    "dataGridPage.lede":
+      'The WAI-ARIA spec itself treats "data grids" and "layout grids" as the same pattern — identical roles, identical roving-tabindex mechanics — so this is ONE contract, not two. Use it when a grid of cells needs 2D navigation: <a href="/en/components/table">Table</a> already covers STATIC tabular data with no keyboard model of its own.',
+    "dataGridPage.dataTitle": "Tabular data",
+    "dataGridPage.dataBody": "Plain text cells: the focus stop is the cell itself.",
+    "dataGridPage.dataLabel": "Scores by round",
+    "dataGridPage.layoutTitle": "Grouped widgets",
+    "dataGridPage.layoutBody":
+      "Each cell holds its own button: the focus stop hands off to THAT element instead — the cell never competes with its own interactive content for the roving tabindex.",
+    "dataGridPage.layoutLabel": "Quick actions",
+    "dataGridPage.contractBody":
+      'No <code>@zag-js/*</code> machine of its own — same as <code>Treegrid</code>, the keyboard model is hand-rolled and pure, shared by both bindings. <code>wrapCols</code>/<code>wrapRows</code> control whether the arrows wrap at the grid\'s edge; both default to <code>false</code>.',
+    "dataGridPage.a11yBody":
+      'The root carries <code>role="grid"</code> with <code>aria-label</code> (required). Each row is <code>role="row"</code>, each cell <code>role="gridcell"</code>. Focus is roving — a single cell (or its interactive descendant) is the tab stop for the whole grid. <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> move between cells, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> within the row, <kbd class="sk-kbd">Ctrl</kbd>+<kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> jump to the start/end of the whole grid.',
+    "dataGridPage.testReact1":
+      "Hands the roving stop to a cell's OWN interactive descendant, not the cell div.",
+    "dataGridPage.testReact2":
+      "Clamps into a shorter row's last real cell on vertical movement (ragged grid).",
+    "dataGridPage.testVanilla1": "Wraps columns into the next row when data-wrap-cols is set.",
+    "dataGridPage.testVanilla2": "Clicking a cell moves the roving stop there.",
+
+    "demo.dataGrid.scoresLabel": "Scores by round",
+    "demo.dataGrid.player": "Player",
+    "demo.dataGrid.round1": "Round 1",
+    "demo.dataGrid.round2": "Round 2",
+    "demo.dataGrid.actionsLabel": "Quick actions",
+    "demo.dataGrid.edit": "Edit",
+    "demo.dataGrid.copy": "Copy",
+    "demo.dataGrid.delete": "Delete",
+    "demo.dataGrid.more": "More options",
+
+    "menubarPage.description":
+      "Menubar: a persistent horizontal bar of commands, some opening a dropdown.",
+    "menubarPage.lede":
+      'The WAI-ARIA <code>menubar</code> pattern: <code>menubar-editor</code>, the example it is named after. Not <a href="/en/components/menu">Menu</a> (one trigger, one popup) — here there are SEVERAL items in a single roving-tabindex row, where Left/Right moves between them, and the detail a naive implementation misses: moving to an adjacent item while a dropdown is open closes the old one and opens the new one too, not just moves a highlight.',
+    "menubarPage.contractBody":
+      'No <code>@zag-js/*</code> machine of its own — same as <code>Treegrid</code>/<code>DataGrid</code>, hand-rolled and shared by both bindings. v1 scope: ONE level of dropdown per item, no nested submenus — <code>Menu</code> already covers arbitrarily-nested submenus for a single trigger, and WAI\'s own examples (<code>menubar-editor</code>, <code>menubar-navigation</code>) do not need a second level either.',
+    "menubarPage.label": "Menu bar",
+    "menubarPage.a11yBody":
+      'The root carries <code>role="menubar"</code> with <code>aria-label</code> (required). Each top-level item is <code>role="menuitem"</code>, with <code>aria-haspopup="menu"</code>/<code>aria-expanded</code> only if it opens a dropdown. Focus is roving — a single stop for the whole bar. <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> move between items (and if a dropdown was open, open the new item\'s instead of just moving the highlight); <kbd class="sk-kbd">↓</kbd> opens the dropdown and focuses its first item, <kbd class="sk-kbd">↑</kbd> the last; inside an open dropdown, <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> move between its commands; <kbd class="sk-kbd">Escape</kbd> closes it and returns focus to its trigger; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> jump to the first/last item (or the first/last command if a dropdown is open).',
+    "menubarPage.testCore1":
+      "Moving while a dropdown was open keeps the NEXT item's dropdown open — the detail a plain roving tabindex misses.",
+    "menubarPage.testReact1":
+      "Moving right while a dropdown is open closes it and opens the adjacent item's dropdown.",
+    "menubarPage.testReact2": "Escape closes the open dropdown and returns focus to its trigger.",
+    "menubarPage.testVanilla1": "Clicking outside the bar closes any open dropdown.",
+
+    "demo.menubar.label": "Menu bar",
+    "demo.menubar.file": "File",
+    "demo.menubar.new": "New",
+    "demo.menubar.open": "Open",
+    "demo.menubar.save": "Save",
+    "demo.menubar.edit": "Edit",
+    "demo.menubar.undo": "Undo",
+    "demo.menubar.redo": "Redo",
+
     "inlinePage.description": "Inline, the horizontal, wrapping layout pattern.",
     "inlinePage.lede":
       "Lays out elements horizontally and wraps them onto another line once space runs out. Use it for action bars and label–control pairs; the semantics belong to whichever element you choose.",
@@ -5611,6 +6393,239 @@ export const ui = {
     "vaulPage.test3": "Dismisses on a slow drag that travels far enough (distance alone).",
     "vaulPage.test4": "A fast, short flick closes it even when the distance is small.",
     "vaulPage.test5": "A flick back home overrules a far drag: direction beats distance.",
+
+    "landing.title": "skryensya/ui",
+    "landing.description":
+      "Components, primitives and foundations for building interfaces that work as a system.",
+    "landing.brand": "skryensya/ui",
+    "landing.hero.title": "Pieces for building interfaces that work as a system.",
+    "landing.hero.lede":
+      "Components, primitives and foundations you can use alone or combine to build complete interfaces. Built on the web platform, with shared contracts for HTML, JavaScript and React.",
+    "landing.hero.ctaComponents": "Explore components",
+    "landing.hero.ctaPlayground": "Open Playground",
+
+    "landing.start.title": "Start anywhere.",
+    "landing.start.lede": "You do not need to adopt an entire system to solve one problem.",
+    "landing.start.body":
+      "Use a component. Build with primitives. Adopt the foundations. Explore a full pattern.",
+    "landing.start.meet": "Every piece is designed to meet the others when you need them.",
+    "landing.start.components.title": "Components",
+    "landing.start.components.body":
+      "Controls and interface elements ready to become part of something larger.",
+    "landing.start.components.items": "Button · Input · Select · Combobox · Dialog · Tabs",
+    "landing.start.components.cta": "Explore components →",
+    "landing.start.primitives.title": "Primitives",
+    "landing.start.primitives.body":
+      "Small pieces for structure, composition and interaction without starting from scratch.",
+    "landing.start.primitives.items": "Box · Stack · Inline · Grid · Popover",
+    "landing.start.primitives.cta": "Explore primitives →",
+    "landing.start.foundations.title": "Foundations",
+    "landing.start.foundations.body":
+      "Shared decisions that keep the system coherent as it grows.",
+    "landing.start.foundations.items": "Color · Space · Type · Dimensions · Density · Motion",
+    "landing.start.foundations.cta": "Explore foundations →",
+    "landing.start.patterns.title": "Patterns",
+    "landing.start.patterns.body":
+      "Components and primitives working together to solve recurring interactions.",
+    "landing.start.patterns.items": "Forms · Search · Navigation · Selection · Application UI",
+    "landing.start.patterns.cta": "Explore patterns →",
+
+    "landing.composition.title": "From one piece to an interface.",
+    "landing.composition.lede": "Start with something small.",
+    "landing.composition.caption.input": "Start with something small.",
+    "landing.composition.caption.input-button": "Add an action.",
+    "landing.composition.caption.input-button-listbox": "Introduce selection.",
+    "landing.composition.caption.combobox": "Define how they relate.",
+    "landing.composition.caption.form-dialog": "Add structure around them.",
+    "landing.composition.caption.full":
+      "And finish by building a complete interface with the same rules.",
+    "landing.composition.stage.input": "Input",
+    "landing.composition.stage.input-button": "Input + Button",
+    "landing.composition.stage.input-button-listbox": "Input + Button + Listbox",
+    "landing.composition.stage.combobox": "Combobox",
+    "landing.composition.stage.form-dialog": "Combobox + Form + Dialog",
+    "landing.composition.stage.full": "Full interface",
+    "landing.composition.stagesLabel": "Composition stages",
+    "landing.composition.inputLabel": "Search",
+    "landing.composition.searchPlaceholder": "Search…",
+    "landing.composition.searchAction": "Search",
+    "landing.composition.listboxLabel": "Plan",
+    "landing.composition.notesLabel": "Notes",
+    "landing.composition.notesPlaceholder": "Add context…",
+    "landing.composition.openDialog": "Confirm",
+    "landing.composition.dialogTitle": "Save selection?",
+    "landing.composition.dialogBody":
+      "The selection and notes will be saved with the same system rules.",
+    "landing.composition.dialogCancel": "Cancel",
+    "landing.composition.dialogConfirm": "Save",
+    "landing.composition.after":
+      "These are not isolated pieces that happen to look alike. They share foundations, states and behaviour so they can compose without reinventing the system each time.",
+    "landing.composition.cta": "See how they compose →",
+
+    "landing.rules.title": "The same rules, from the bottom up.",
+    "landing.rules.lede":
+      "A coherent interface does not start at Button or Dialog. It starts in the decisions they all share.",
+    "landing.rules.color.title": "Color",
+    "landing.rules.color.body":
+      "Semantic roles that can respond to theme, context and accent.",
+    "landing.rules.color.cta": "Explore color →",
+    "landing.rules.dimensions.title": "Dimensions",
+    "landing.rules.dimensions.body":
+      "A shared scale so different components share proportions.",
+    "landing.rules.dimensions.cta": "Explore dimensions →",
+    "landing.rules.density.title": "Density",
+    "landing.rules.density.body":
+      "Change how much space the interface needs without redesigning each piece.",
+    "landing.rules.density.cta": "Explore density →",
+    "landing.rules.motion.title": "Motion",
+    "landing.rules.motion.body":
+      "Transitions and movement defined as part of the system language.",
+    "landing.rules.motion.cta": "Explore motion →",
+    "landing.rules.states.title": "State layers",
+    "landing.rules.states.body":
+      "Hover, focus, pressed and other states respond to a shared interaction model.",
+    "landing.rules.states.cta": "Explore states →",
+
+    "landing.lab.title": "Change one rule. Watch the system.",
+    "landing.lab.theme": "Theme",
+    "landing.lab.themeLight": "Light",
+    "landing.lab.themeDark": "Dark",
+    "landing.lab.accent": "Accent",
+    "landing.lab.density": "Density",
+    "landing.lab.densityCompact": "Compact",
+    "landing.lab.densityDefault": "Default",
+    "landing.lab.densityComfortable": "Comfortable",
+    "landing.lab.densityPresets": "Density presets",
+    "landing.lab.contrast": "Contrast",
+    "landing.lab.contrastLow": "Low",
+    "landing.lab.contrastHigh": "High",
+    "landing.lab.radius": "Radius",
+    "landing.lab.radiusPresets": "Radius presets",
+    "landing.lab.after":
+      "Components do not keep independent copies of these decisions. They consume the same foundations. Change the system and the interface responds.",
+    "landing.lab.ctaTheming": "Explore theming →",
+    "landing.lab.ctaPlayground": "Open in Playground →",
+    "landing.lab.previewTitle": "Create project",
+    "landing.lab.nameLabel": "Name",
+    "landing.lab.namePlaceholder": "My project",
+    "landing.lab.planLabel": "Plan",
+    "landing.lab.submit": "Continue",
+    "landing.lab.cancel": "Cancel",
+
+    "landing.platform.title": "The web platform is a piece too.",
+    "landing.platform.lede":
+      "skryensya/ui does not try to replace HTML and CSS with its own abstraction. It builds on them.",
+    "landing.platform.html.title": "When HTML is enough",
+    "landing.platform.html.body": "Structure stays as HTML.",
+    "landing.platform.css.title": "When CSS is enough",
+    "landing.platform.css.body": "The visual system stays in CSS.",
+    "landing.platform.js.title": "When interaction appears",
+    "landing.platform.js.body": "JavaScript adds the behaviour that is needed.",
+    "landing.platform.closing":
+      "Use the platform when the platform is enough. Add behaviour when interaction requires it.",
+    "landing.platform.cta": "Understand the architecture →",
+
+    "landing.behavior.title": "Behaviour composes too.",
+    "landing.behavior.lede":
+      "Combining visual elements is easy. Keeping their interaction correct is another matter.",
+    "landing.behavior.body":
+      "A Combobox, Menu or Dialog has to coordinate structure, state, keyboard, focus and semantics. In skryensya/ui those relationships are part of the component too.",
+    "landing.behavior.comboboxTitle": "Combobox",
+    "landing.behavior.keyboard": "Keyboard",
+    "landing.behavior.keyNav": "Navigate",
+    "landing.behavior.keySelect": "Select",
+    "landing.behavior.keyClose": "Close",
+    "landing.behavior.state": "State",
+    "landing.behavior.states": "open · focused · invalid · disabled",
+    "landing.behavior.semantics": "Semantics",
+    "landing.behavior.semanticsChain": "combobox → listbox → option",
+    "landing.behavior.after":
+      "Appearance is one part of the component. Its behaviour is too.",
+    "landing.behavior.ctaCombobox": "Explore Combobox →",
+    "landing.behavior.ctaInteractive": "See interactive components →",
+
+    "landing.bindings.title": "One piece. Two ways to use it.",
+    "landing.bindings.lede":
+      "How you render an interface should not change the component model.",
+    "landing.bindings.vanilla.title": "HTML + JavaScript",
+    "landing.bindings.vanilla.body":
+      "Write the structure and add behaviour where you need it.",
+    "landing.bindings.vanilla.cta": "Start with Vanilla →",
+    "landing.bindings.react.title": "React",
+    "landing.bindings.react.body": "Render the same concept from React.",
+    "landing.bindings.react.cta": "Start with React →",
+    "landing.bindings.after":
+      "Underneath sits a shared contract. States, semantics, behaviour and styling hooks still belong to the same system.",
+    "landing.bindings.ctaContracts": "Understand the contracts →",
+
+    "landing.needs.title": "Components that lead to other components.",
+    "landing.needs.lede":
+      "You do not always know the name of the piece you need. Sometimes you only know what you want to build.",
+    "landing.needs.forms.title": "I need to collect information",
+    "landing.needs.forms.items":
+      "Input · Checkbox · Select · Radio Group · Date Picker · File Upload",
+    "landing.needs.forms.cta": "Explore forms →",
+    "landing.needs.selection.title": "I need to present options",
+    "landing.needs.selection.items":
+      "Select · Combobox · Listbox · Menu · Command Palette",
+    "landing.needs.selection.cta": "Explore selection →",
+    "landing.needs.overlays.title": "I need to show something over the interface",
+    "landing.needs.overlays.items": "Popover · Tooltip · Dialog · Drawer · Toast",
+    "landing.needs.overlays.cta": "Explore overlays →",
+    "landing.needs.nav.title": "I need to structure an application",
+    "landing.needs.nav.items": "Navbar · Sidebar · Breadcrumb · Tabs · Pagination",
+    "landing.needs.nav.cta": "Explore navigation →",
+    "landing.needs.data.title": "I need to display information",
+    "landing.needs.data.items": "Table · List · Tree View · Stat · Badge · Avatar",
+    "landing.needs.data.cta": "Explore data display →",
+
+    "landing.patterns.title": "Do not only look for components. Explore solutions.",
+    "landing.patterns.lede":
+      "A component solves one part of the problem. A pattern shows how several parts can work together.",
+    "landing.patterns.search.title": "Search",
+    "landing.patterns.search.body":
+      "Input + Combobox + Keyboard navigation + Empty state",
+    "landing.patterns.search.cta": "Explore Search →",
+    "landing.patterns.settings.title": "Settings",
+    "landing.patterns.settings.body": "Forms + Sections + Validation + Actions",
+    "landing.patterns.settings.cta": "Explore Settings →",
+    "landing.patterns.command.title": "Command palette",
+    "landing.patterns.command.body": "Dialog + Search + Listbox + Commands",
+    "landing.patterns.command.cta": "Explore Command palette →",
+    "landing.patterns.appNav.title": "Application navigation",
+    "landing.patterns.appNav.body":
+      "Sidebar + Navigation + Disclosure + Responsive behavior",
+    "landing.patterns.appNav.cta": "Explore Application navigation →",
+    "landing.patterns.allCta": "Explore all patterns →",
+
+    "landing.growth.title": "Designed by using it.",
+    "landing.growth.lede":
+      "skryensya/ui does not try to anticipate every possible interface. The system grows from real problems.",
+    "landing.growth.body":
+      "A need produces a solution. The solution reveals a piece. The piece reveals a rule. And when that rule can serve beyond the problem that created it, it becomes part of the system.",
+    "landing.growth.chain": "Need → Solution → Piece → System",
+    "landing.growth.closing": "That is how skryensya/ui evolves.",
+    "landing.growth.ctaProject": "About the project →",
+    "landing.growth.ctaChangelog": "See the changelog →",
+
+    "landing.playground.title": "Explore. Combine. Change.",
+    "landing.playground.lede":
+      "The Playground is a space to understand the system by building with it.",
+    "landing.playground.body":
+      "Try components. Combine pieces. Change their states. Modify foundations. Compare HTML and React. Watch what stays the same.",
+    "landing.playground.cta": "Open Playground",
+
+    "landing.close.title": "Build from wherever you are.",
+    "landing.close.lede":
+      "Start with a component or use the system as the foundation of a complete interface.",
+    "landing.close.ctaStart": "Get started →",
+    "landing.close.ctaComponents": "Explore components →",
+    "landing.close.ctaDocs": "Read the documentation →",
+    "landing.close.linkGithub": "GitHub",
+    "landing.close.linkChangelog": "Changelog",
+    "landing.close.linkPlayground": "Playground",
+    "landing.close.linkComponents": "Components",
+    "landing.close.linkFoundations": "Foundations",
 
     "footer.body":
       "This site consumes {core} and the component packages through their exports maps, with a bundler: the same path it documents. Every pixel comes from a token.",

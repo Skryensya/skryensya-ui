@@ -2,7 +2,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { emitMarkup, emitReact } from "@skryensya/ai-compiler/emit";
+import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
 import { validateUsageTree } from "@skryensya/ai-compiler/validate";
 import type { OptionInput, UsageTree } from "@skryensya/ai-compiler/usage-tree";
 import { catalogueIndex, manifest, provenance } from "./manifest.js";
@@ -177,7 +177,9 @@ server.registerTool(
     description:
       "Checks a usage tree against its contracts; signatures, option values, requires / forbids / " +
       "exactlyOneOf, valid parents, slots and declared accessibility; when it is valid, returns " +
-      "the emitted markup AND the emitted TSX. Use the returned code; it is the only way what you " +
+      "the emitted markup AND the emitted TSX — which is `react` plus, when the composition carries " +
+      "a collection, `reactData`: a second file the component imports, to be written beside it. " +
+      "Use the returned code; it is the only way what you " +
       "write and what was validated stay the same artifact. Problems come back with a path into the " +
       "tree, a rule and a severity: an `advisory` is something no static check can settle (a page " +
       "with two navs) and does not make the tree invalid.",
@@ -203,10 +205,23 @@ server.registerTool(
       });
     }
 
+    /*
+     * React comes back as up to TWO files: the component, and the module its collections were moved
+     * to. Both are returned under their own names because both have to be WRITTEN — a component
+     * importing `./menu-items` from a caller that never received `menu-items.ts` does not build.
+     */
+    const react = emitReactSource(tree);
+
     return ok({
       valid,
       problems,
-      emitted: { vanilla: emitMarkup(tree), react: emitReact(tree) },
+      emitted: {
+        vanilla: emitMarkup(tree),
+        react: react.component,
+        reactData: react.data
+          ? { file: react.data.file, source: react.data.source }
+          : null,
+      },
       css: cssFor(tree),
     });
   },

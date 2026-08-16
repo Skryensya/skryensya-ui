@@ -72,6 +72,10 @@ const componentDescriptions = {
     es: "Copia un valor o fragmento al portapapeles.",
     en: "Copies a value or snippet to the clipboard.",
   },
+  "/componentes/data-grid": {
+    es: "Navegación 2D por celdas: datos tabulares o widgets agrupados.",
+    en: "2D cell navigation: tabular data or grouped widgets.",
+  },
   "/componentes/date-picker": {
     es: "Captura una fecha con un campo y un calendario emergente.",
     en: "Captures a date with a field and a popup calendar.",
@@ -88,6 +92,10 @@ const componentDescriptions = {
     es: "Explica por qué no hay contenido y orienta el siguiente paso.",
     en: "Explains why content is absent and points to the next step.",
   },
+  "/componentes/feed": {
+    es: "Stream de publicaciones independientes, cada una con su posición anunciada.",
+    en: "A stream of independent posts, each announced with its own position.",
+  },
   "/componentes/file-upload": {
     es: "Selecciona o arrastra archivos y muestra su progreso.",
     en: "Selects or drops files and reports their progress.",
@@ -95,6 +103,10 @@ const componentDescriptions = {
   "/componentes/flyout": {
     es: "Muestra un panel contextual junto al control que lo activa.",
     en: "Shows a contextual panel beside the control that opens it.",
+  },
+  "/componentes/form-field": {
+    es: "Rotula un control y le adjunta ayuda y mensaje de validación.",
+    en: "Labels a control and attaches its guidance and validation message.",
   },
   "/componentes/grid": {
     es: "Distribuye contenido en columnas y filas responsivas.",
@@ -117,8 +129,8 @@ const componentDescriptions = {
     en: "Aligns related elements in a wrapping row.",
   },
   "/componentes/input": {
-    es: "Captura texto con etiqueta, ayuda y estado de validación.",
-    en: "Captures text with a label, guidance, and validation state.",
+    es: "Captura una línea de texto con el control nativo del navegador.",
+    en: "Captures a line of text with the browser's native control.",
   },
   "/componentes/kbd": {
     es: "Representa teclas y combinaciones de teclado dentro del contenido.",
@@ -143,6 +155,14 @@ const componentDescriptions = {
   "/componentes/menu": {
     es: "Presenta una lista compacta de acciones contextuales.",
     en: "Presents a compact list of contextual actions.",
+  },
+  "/componentes/menubar": {
+    es: "Barra horizontal persistente de comandos, algunos con desplegable.",
+    en: "A persistent horizontal bar of commands, some opening a dropdown.",
+  },
+  "/componentes/meter": {
+    es: "Muestra una medición dentro de un rango conocido, no el avance de una tarea.",
+    en: "Shows a measurement within a known range, not a task's progress.",
   },
   "/componentes/navbar": {
     es: "Reúne marca, navegación y acciones globales en la cabecera.",
@@ -227,6 +247,10 @@ const componentDescriptions = {
   "/componentes/table": {
     es: "Compara datos estructurados en filas y columnas.",
     en: "Compares structured data across rows and columns.",
+  },
+  "/componentes/treegrid": {
+    es: "Combina jerarquía y columnas: filas expandibles con varios valores cada una.",
+    en: "Combines hierarchy and columns: expandable rows, each with several values.",
   },
   "/componentes/tabs": {
     es: "Alterna vistas relacionadas dentro del mismo espacio.",

@@ -101,6 +101,33 @@ describe("accessibility", () => {
     expect(validateUsageTree(tree).valid).toBe(true);
   });
 
+  it("rejects an unconditional rule (when: {}) as a hard error, not an advisory", () => {
+    // Carousel's root gets role="region" + aria-roledescription="carousel" from the machine, but
+    // neither NAMES it — unlike nav-list's landmark rule (gated on `landmarkCount`, a page-scoped
+    // signal no static check can settle), this one applies to EVERY Carousel, so it is decidable
+    // from the tree alone and must fail loud, not just advise.
+    const tree: UsageTree = {
+      contract: "carousel",
+      signature: "Carousel",
+      children: { contract: "carousel", signature: "CarouselSlide", children: "Uno" },
+    };
+
+    expect(rules(tree)).toContain("missing-accessible-name");
+    expect(validateUsageTree(tree).valid).toBe(false);
+  });
+
+  it("passes an unconditional rule once the root is named", () => {
+    const tree: UsageTree = {
+      contract: "carousel",
+      signature: "Carousel",
+      attrs: { "aria-label": "Productos destacados" },
+      children: { contract: "carousel", signature: "CarouselSlide", children: "Uno" },
+    };
+
+    expect(rules(tree)).not.toContain("missing-accessible-name");
+    expect(validateUsageTree(tree).valid).toBe(true);
+  });
+
   it("reports a page-scoped rule as advisory, on the signature it is about and no other", () => {
     const list: UsageTree = {
       contract: "nav-list",

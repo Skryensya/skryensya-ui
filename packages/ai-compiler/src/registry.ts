@@ -27,6 +27,10 @@ import { toolbarContract } from "@skryensya/core/toolbar";
 import { tooltipContract } from "@skryensya/core/tooltip";
 import { selectContract } from "@skryensya/core/select";
 import { menuContract } from "@skryensya/core/menu";
+import { menubarContract } from "@skryensya/core/menubar";
+import { meterContract } from "@skryensya/core/meter";
+import { dataGridContract } from "@skryensya/core/data-grid";
+import { feedContract } from "@skryensya/core/feed";
 import { comboboxContract } from "@skryensya/core/combobox";
 import { calendarContract } from "@skryensya/core/calendar";
 import { datePickerContract } from "@skryensya/core/date-picker";
@@ -47,12 +51,13 @@ import { loaderContract } from "@skryensya/core/loader";
 import { placeholderContract } from "@skryensya/core/placeholder";
 import { buttonContract } from "@skryensya/core/button";
 import { checkboxContract, radioGroupContract, switchContract } from "@skryensya/core/selection";
-import { fieldContract } from "@skryensya/core/field";
+import { formFieldContract } from "@skryensya/core/form-field";
 import { iconContract } from "@skryensya/core/icon";
 import { inputContract } from "@skryensya/core/input";
 import { imageFrameContract } from "@skryensya/core/image-frame";
 import { navListContract } from "@skryensya/core/nav-list";
 import { tableContract } from "@skryensya/core/table";
+import { treegridContract } from "@skryensya/core/treegrid";
 import { tabsContract } from "@skryensya/core/tabs";
 import { tocContract } from "@skryensya/core/toc";
 import { componentPreviewContract } from "@skryensya/core/component-preview";
@@ -81,7 +86,7 @@ export const contracts = {
   callout: calloutContract,
   checkbox: checkboxContract,
   "empty-state": emptyStateContract,
-  field: fieldContract,
+  "form-field": formFieldContract,
   icon: iconContract,
   "image-frame": imageFrameContract,
   kbd: kbdContract,
@@ -117,11 +122,16 @@ export const contracts = {
   steps: stepsContract,
   switch: switchContract,
   table: tableContract,
+  treegrid: treegridContract,
   tag: tagContract,
   toolbar: toolbarContract,
   tooltip: tooltipContract,
   select: selectContract,
   menu: menuContract,
+  menubar: menubarContract,
+  meter: meterContract,
+  "data-grid": dataGridContract,
+  feed: feedContract,
   combobox: comboboxContract,
   calendar: calendarContract,
   "date-picker": datePickerContract,

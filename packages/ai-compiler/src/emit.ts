@@ -58,13 +58,27 @@ const VOID_ELEMENTS = new Set([
 ]);
 
 /**
- * The column both emitters wrap an opening tag AND a run of text against. One number, because a
- * reader comparing the two snippets side by side should see the SAME reason a line broke, not two
- * unrelated widths. ~75ch is the classic measure for a readable line, and it is close enough to
- * what the docs' own code column fits (measured at 72 monospace characters) that it does not
+ * The column an emitter wraps an opening tag AND a run of text against. ~75ch is the classic measure
+ * for a readable line, and it is close to what the docs' own code column fits (72 monospace
+ * characters at the narrowest layout that still shows one, 82 from 1024px up), so it does not
  * reintroduce the horizontal scroll this exists to remove.
+ *
+ * Markup starts at column zero and gets the measure itself.
  */
 const PRINT_WIDTH = 75;
+
+/**
+ * JSX gets five columns more, and the reason is the wrapper rather than a change of mind about what
+ * is readable: every React snippet is a component now, so its body starts four columns in, and
+ * measuring it against the same 75 would leave it with 71 columns of actual code and break lines its
+ * markup twin keeps whole. 80 is also the printer's conventional width, so the result is what
+ * Prettier would have produced for the same file.
+ *
+ * Measured, not guessed: at 75 the Placeholder demo split two of four sibling `<Placeholder>` tags
+ * onto three lines each — one prop, one line of its own — while their shorter siblings stayed inline.
+ * The breaks came from four characters of indentation, not from anything about the code.
+ */
+const JSX_PRINT_WIDTH = 80;
 
 /* ------------------------------------------------------------------ markup (the vanilla binding) */
 
@@ -77,7 +91,7 @@ const PRINT_WIDTH = 75;
  */
 export function emitMarkup(
   tree: UsageTree,
-  options: { idPrefix?: string } = {},
+  options: { idPrefix?: string; fillDefaults?: boolean } = {},
 ): string {
   /*
    * Ids are unique per emit, and the counter below is what makes them so.
@@ -89,10 +103,16 @@ export function emitMarkup(
    */
   usedIds.clear();
   idPrefix = options.idPrefix;
+  // Defaults filled unless a caller says otherwise. The G2 gate and every other consumer need the
+  // FULL DOM (React resolves its own defaults at render time, so a silent option here would read
+  // as a divergence that does not exist); only the human-facing docs snippet asks to see just what
+  // the tree actually authored, the same restraint `renderJsx` already gives the React tab.
+  fillOptionDefaults = options.fillDefaults ?? true;
   try {
     return renderSignature(tree, 0).join("\n");
   } finally {
     idPrefix = undefined;
+    fillOptionDefaults = true;
   }
 }
 
@@ -103,6 +123,7 @@ export function emitMarkup(
  */
 const usedIds = new Set<string>();
 let idPrefix: string | undefined;
+let fillOptionDefaults = true;
 
 /** A base nobody else in this emit is using, prefixed when the caller shares a document. */
 function uniqueBase(candidate: string): string {
@@ -157,7 +178,7 @@ function wiringFor(
   if (!rules || rules.length === 0) return undefined;
 
   // An author-given id is theirs and is used verbatim; a derived one is made unique for this emit.
-  const base = tree.attrs?.id ?? uniqueBase(slugOf(tree) ?? "sk-field");
+  const base = tree.attrs?.id ?? uniqueBase(slugOf(tree) ?? "sk-form-field");
   const filled = slotsOf(tree);
 
   // "Supplied by the author" covers both channels: `error` is a slot, `required` is an option, and a
@@ -314,6 +335,15 @@ function renderTemplate(
   )
     return [];
 
+  // The ALL-of-them counterpart: `whenItemGiven` names one option, and a node cannot repeat that
+  // key to ask for a second — a breadcrumb crumb that is both `current` and linked still is not a
+  // link, and that shape needs both presence checks on the SAME node.
+  if (
+    node.whenItemAllGiven !== undefined &&
+    node.whenItemAllGiven.some((option) => ctx.item?.options?.[option] === undefined)
+  )
+    return [];
+
   // The value-specific pair: presence is not enough to tell a checkbox entry from a separator,
   // both merely have `kind` set.
   if (
@@ -462,13 +492,13 @@ function htmlOpening(
 }
 
 /**
- * A run of text, word-wrapped at `PRINT_WIDTH`. Shared by both emitters: a browser and a JSX runtime
- * both collapse the whitespace a line break leaves behind, so breaking a sentence across lines is
- * safe on either side, not a JSX-only trick.
+ * A run of text, word-wrapped at the caller's own measure. Shared by both emitters: a browser and a
+ * JSX runtime both collapse the whitespace a line break leaves behind, so breaking a sentence across
+ * lines is safe on either side, not a JSX-only trick.
  */
-function wrapText(text: string, depth: number): string[] {
+function wrapText(text: string, depth: number, measure = PRINT_WIDTH): string[] {
   const pad = "  ".repeat(depth);
-  const width = Math.max(1, PRINT_WIDTH - pad.length);
+  const width = Math.max(1, measure - pad.length);
   const words = text.trim().split(/\s+/);
   const lines: string[] = [];
   let line = "";
@@ -575,8 +605,9 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   if (classes.length > 0) out.push(`class="${classes.join(" ")}"`);
 
   // Options a non-host node claims (a frame's `src`/`alt` belong to its `<img>`), and everything
-  // else on the host. Every mapped option is written, DEFAULTS INCLUDED: React serializes its
-  // defaults, so a silent one here would read as a divergence at G2 that does not exist.
+  // else on the host. Every mapped option is written, DEFAULTS INCLUDED (unless the caller asked
+  // for authored-only output, see `fillOptionDefaults`): React serializes its defaults, so a
+  // silent one here would otherwise read as a divergence at G2 that does not exist.
   const claimed = new Set(
     claimedElsewhere(signature.template, node).flatMap(
       (other) => other.options ?? [],
@@ -598,7 +629,7 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   }
 
   for (const [name, option] of mine) {
-    const value = tree.options?.[name] ?? option.default;
+    const value = tree.options?.[name] ?? (fillOptionDefaults ? option.default : undefined);
     // An option that only feeds a computation has already done its work in the structure above.
     if (value === undefined || option.computedInput) continue;
     if (option.styleProperty) {
@@ -828,27 +859,303 @@ function renderSlot(
   depth: number,
   wiring?: Wiring,
 ): string[] {
-  return slotItems(content).flatMap((item) =>
+  const items = slotItems(content);
+  const rendered = items.map((item) =>
     isUsageTree(item)
       ? renderSignature(item, depth, wiring)
       : textLines(item, depth, false),
   );
+  return joinInlineItems(items, rendered);
+}
+
+type InlineBoundary = {
+  /** Neither neighbour is text: an unrelated case — a Stack's children — where the gap between two
+   *  elements was never a string's to own, so neither emitter touches it. */
+  readonly bothElements: boolean;
+  /** Neither neighbour wrote a space at this boundary: nothing may render there, in either binding. */
+  readonly glue: boolean;
+};
+
+/**
+ * What a boundary between two adjacent slot items asks of it, read from the SOURCE strings rather
+ * than from how they get printed. Shared by both emitters because they agree on every input: whether
+ * a boundary is between two elements with nothing textual nearby, and whether either text neighbour
+ * already carries a space. They only disagree on what to DO with a boundary that is neither of those
+ * — see `joinInlineItems` and `joinJsxInlineItems`.
+ */
+function inlineBoundary(
+  items: readonly (string | UsageTree)[],
+  index: number,
+): InlineBoundary {
+  const prev = items[index - 1];
+  const item = items[index];
+  const prevIsText = typeof prev === "string";
+  const isText = typeof item === "string";
+  const bothElements = !prevIsText && !isText;
+  const prevHasTrailingSpace = prevIsText && /\s$/.test(prev as string);
+  const hasLeadingSpace = isText && /^\s/.test(item as string);
+  return { bothElements, glue: !bothElements && !prevHasTrailingSpace && !hasLeadingSpace };
+}
+
+/**
+ * Adjacent slot items that carry no whitespace of their own — a link glued straight to the comma
+ * that follows it, say — land on ONE line with nothing between them. A newline the pretty-printer
+ * would otherwise put at that boundary is still whitespace, and HTML collapses it into a rendered
+ * space exactly like a typed one: the comma ends up floating a space off the word before it, which
+ * neither side of the source wrote. A boundary stays safe to break across lines whenever a text
+ * neighbour already carries the space HTML would render there anyway — which is every OTHER boundary
+ * in a paragraph, so most items keep one line each. Two elements with nothing textual between them
+ * are left alone: there the gap was never a string's to own, it is the layout's, and an unrelated
+ * array of components (a Stack's children) still reads one per line.
+ */
+function joinInlineItems(
+  items: readonly (string | UsageTree)[],
+  rendered: readonly (readonly string[])[],
+): string[] {
+  const out: string[] = [];
+  items.forEach((item, index) => {
+    const lines = rendered[index]!;
+    const glue = index > 0 && inlineBoundary(items, index).glue;
+
+    if (glue && out.length > 0 && lines.length > 0) {
+      out[out.length - 1] += lines[0]!.trimStart();
+      out.push(...lines.slice(1));
+    } else {
+      out.push(...lines);
+    }
+  });
+  return out;
+}
+
+/**
+ * The same boundaries `joinInlineItems` reads, printed for JSX instead of HTML — where a bare
+ * newline is not a substitute for a space, it is whitespace the JSX transform throws away. Babel and
+ * TypeScript trim every line of a text run that isn't the FIRST or LAST line of its own run of source
+ * text, so a word sandwiched between two tags on its own indented line loses the space on both sides,
+ * silently: `Un párrafo con un` and `y otro` came out of a real build with no space before the link
+ * that follows, in a snippet that looked, to the eye reading the source, exactly like the one that
+ * renders correctly. `{" "}` is not a stylistic choice, it is the only child JSX renders unconditionally
+ * regardless of the newlines and indentation around it — the same trick Prettier reaches for on any
+ * JSX line broken between two children that need a space. Every text item arrives here pre-trimmed
+ * (see the caller): the boundary is the only place a space gets decided, never a string's own edge.
+ */
+function joinJsxInlineItems(
+  items: readonly (string | UsageTree)[],
+  rendered: readonly (readonly string[])[],
+): string[] {
+  const out: string[] = [];
+  items.forEach((item, index) => {
+    const lines = rendered[index]!;
+    if (index === 0) {
+      out.push(...lines);
+      return;
+    }
+
+    const { bothElements, glue } = inlineBoundary(items, index);
+    if (glue) {
+      if (out.length > 0 && lines.length > 0) {
+        out[out.length - 1] += lines[0]!.trimStart();
+        out.push(...lines.slice(1));
+      } else {
+        out.push(...lines);
+      }
+      return;
+    }
+    if (!bothElements && out.length > 0) {
+      out[out.length - 1] += '{" "}';
+    }
+    out.push(...lines);
+  });
+  return out;
 }
 
 /* ------------------------------------------------------------------------- TSX (the React binding) */
 
-export function emitReact(tree: UsageTree): string {
-  const imports = new Map<string, Set<string>>();
-  const body = renderJsx(tree, 0, imports);
+/** One collection, moved out of the tag: what to call it, what it says, and whose data it is. */
+type DataConst = {
+  readonly name: string;
+  readonly literal: string;
+  /** The contract the collection belongs to, which is not always the tree's root — see `dataModule`. */
+  readonly contract: string;
+};
 
+/** What one emit accumulates besides the JSX itself: the imports it needs and the data it lifted. */
+type JsxContext = {
+  readonly imports: Map<string, Set<string>>;
+  readonly data: DataConst[];
+};
+
+export type ReactEmitOptions = {
+  /**
+   * The component to wrap the JSX in. Given, the snippet is ALWAYS a component (the playground's
+   * entry file needs one whether or not there is data); absent, one is derived from the root
+   * signature and used only when there is data to hold.
+   */
+  readonly component?: string;
+  /** `default` for a sandbox entry file, `named` (the default) for something pasted into an app. */
+  readonly export?: "default" | "named";
+};
+
+/** The module a component's data was moved to, and the two names needed to write it down. */
+export type ReactDataModule = {
+  /** What the file is called: `menu-items.ts`. */
+  readonly file: string;
+  /** What the component imports it by: `./menu-items`. */
+  readonly specifier: string;
+  readonly source: string;
+};
+
+/** One tree as React sees it: the component, and the data file it reads from when it has one. */
+export type ReactSource = {
+  readonly component: string;
+  readonly data?: ReactDataModule;
+};
+
+/**
+ * One tree, as the TSX a person would have written — WHICH IS MORE THAN ONE FILE.
+ *
+ * A collection is data, and data is not written inside a tag. Serialized into the prop, a menu's
+ * items came out as one unreadable line of JSON that nobody would type and nobody can edit, and the
+ * component it belonged to was invisible underneath it. So the entries move out entirely: their own
+ * module, `export const items = […]`, imported by name. What is left in the component file is the
+ * composition, which is the thing the page is about.
+ *
+ * And it is ALWAYS a component, whether or not it has data to import. A bare JSX expression is not
+ * a file: nothing declares it, nothing renders it, and a reader who copies it has to know to wrap it
+ * — which is exactly what the page is supposed to be showing them. One shape for every example on
+ * the site also means the eye learns it once: imports, then the component, then its `return`.
+ */
+export function emitReactSource(
+  tree: UsageTree,
+  options: ReactEmitOptions = {},
+): ReactSource {
+  // Rendered at the depth the wrapper puts it at, so every line wraps against the column it actually
+  // lands in rather than against where it would have sat without a component around it.
+  const { body, context } = renderReact(tree, 2);
+  const name = options.component ?? `${rootName(tree)}Example`;
+  const keyword = options.export === "default" ? "export default" : "export";
+
+  /*
+   * A one-line body reads better returned as it stands; anything taller needs the parens to hold it.
+   * The measure is taken on the RETURN, not on the body: `return ` and the semicolon cost ten
+   * columns, which is what pushed `<Checkbox name="alerts" …>` four characters past the width it had
+   * just been laid out to fit.
+   */
+  const single = body.length === 1 ? `  return ${body[0]!.trim()};` : undefined;
+  const returned =
+    single !== undefined && single.length <= JSX_PRINT_WIDTH
+      ? [single]
+      : ["  return (", ...body, "  );"];
+
+  const data = dataModule(tree, context.data);
+
+  return {
+    component: joinReact(
+      context.imports,
+      data
+        ? [
+            `import { ${context.data
+              .map(({ name: constName }) => constName)
+              .join(", ")} } from "${data.specifier}";`,
+          ]
+        : [],
+      [`${keyword} function ${name}() {`, ...returned, "}"],
+    ),
+    ...(data ? { data } : {}),
+  };
+}
+
+/**
+ * The same tree as ONE string: the component file. Kept because most callers want exactly that (a
+ * docs tab, a test), and because the data file is addressed separately wherever it is shown.
+ */
+export function emitReact(
+  tree: UsageTree,
+  options: ReactEmitOptions = {},
+): string {
+  return emitReactSource(tree, options).component;
+}
+
+/**
+ * The data file, named for what it holds.
+ *
+ * One collection is called after it (`menu-items.ts`, `select-options.ts`), which is what a person
+ * would have typed; several share a `-data` file, because no single entry's name would be honest
+ * about the rest.
+ *
+ * Named after the contract that OWNS the collection rather than the tree's root, which are often not
+ * the same: a Tabs demo wrapped in a Stack would otherwise have shipped `layout-items.ts`, a file
+ * named after the box its subject happens to sit in.
+ */
+function dataModule(
+  tree: UsageTree,
+  data: readonly DataConst[],
+): ReactDataModule | undefined {
+  if (data.length === 0) return undefined;
+
+  const owners = new Set(data.map((entry) => entry.contract));
+  const owner = owners.size === 1 ? [...owners][0]! : tree.contract;
+  // `-data` also covers the contract whose collection is named after itself: Steps takes `steps`,
+  // and `steps-steps.ts` is a stutter, not a name.
+  const stem =
+    data.length === 1 && data[0]!.name !== owner
+      ? `${owner}-${data[0]!.name}`
+      : `${owner}-data`;
+
+  return {
+    file: `${stem}.ts`,
+    specifier: `./${stem}`,
+    source: `${data
+      .map(({ name, literal }) => `export const ${name} = ${literal};`)
+      .join("\n\n")}\n`,
+  };
+}
+
+function renderReact(
+  tree: UsageTree,
+  depth: number,
+): { body: string[]; context: JsxContext } {
+  const context: JsxContext = { imports: new Map(), data: [] };
+  return { body: renderJsx(tree, depth, context), context };
+}
+
+/**
+ * Package imports, then the relative one, then the code. Sorting them all together would have put
+ * `./menu-items` above `@skryensya/react/menu` on some collators and below it on others; every
+ * codebase writes what it depends on first and what it owns second, so that order is written here
+ * rather than left to `localeCompare`.
+ */
+function joinReact(
+  imports: Map<string, Set<string>>,
+  relative: readonly string[],
+  body: readonly string[],
+): string {
   const lines = [...imports.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(
-      ([from, names]) =>
-        `import { ${[...names].sort().join(", ")} } from "${from}";`,
-    );
+    .flatMap(([from, names]) => importLines([...names].sort(), from));
 
-  return [...lines, "", ...body].join("\n");
+  return [...lines, ...relative, "", ...body].join("\n");
+}
+
+/**
+ * One import, wrapped one name per line once it passes the measure. A Table demo reaches for eight
+ * signatures and its import line ran to 143 characters — three times the width of anything under it,
+ * and the first thing a reader sees. Every formatter breaks this the same way; so does this one.
+ */
+function importLines(names: readonly string[], from: string): string[] {
+  const inline = `import { ${names.join(", ")} } from "${from}";`;
+  if (inline.length <= JSX_PRINT_WIDTH) return [inline];
+
+  return [
+    "import {",
+    ...names.map((name) => `  ${name},`),
+    `} from "${from}";`,
+  ];
+}
+
+/** The root binding's own name, which is the half of a derived component name that means anything. */
+function rootName(tree: UsageTree): string {
+  return resolve(tree).signature.react.name.split(".")[0]!;
 }
 
 function jsxOpening(
@@ -859,24 +1166,108 @@ function jsxOpening(
 ): string[] {
   const pad = "  ".repeat(depth);
   const end = selfClosing ? " />" : ">";
+  // A prop that is itself several lines (a composed element, laid out) can only be written on lines
+  // of its own, whatever the tag's length says.
+  const block = props.some((prop) => prop.includes("\n"));
   const inline =
     props.length > 0
       ? `${pad}<${name} ${props.join(" ")}${end}`
       : `${pad}<${name}${end}`;
-  if (inline.length <= PRINT_WIDTH || props.length === 0) return [inline];
+  if (props.length === 0 || (!block && inline.length <= JSX_PRINT_WIDTH)) {
+    return [inline];
+  }
 
   return [
     `${pad}<${name}`,
-    ...props.map((prop) => `${pad}  ${prop}`),
+    // Only the first line of a multi-line prop is indented here; the rest arrived already placed,
+    // because whoever built it knew the depth it was going to sit at.
+    ...props.flatMap((prop) => {
+      const [first, ...rest] = prop.split("\n");
+      return [`${pad}  ${first}`, ...rest];
+    }),
     `${pad}${selfClosing ? "/>" : ">"}`,
   ];
+}
+
+/**
+ * The `style` object, on one line while it fits and one declaration per line once it does not. An
+ * Avatar demo setting four custom properties reached 172 characters, all of it inside one prop.
+ *
+ * The outer braces stay a container of their own (`style={` … `}`) rather than the usual `{{`,
+ * because the object carries an `as CSSProperties` and the assertion has to sit beside the closing
+ * brace it applies to.
+ */
+function styleProp(declarations: readonly string[], depth: number): string {
+  const inline = `style={{ ${declarations.join(", ")} } as CSSProperties}`;
+  if (`${"  ".repeat(depth + 1)}${inline}`.length <= JSX_PRINT_WIDTH) {
+    return inline;
+  }
+
+  const padProp = "  ".repeat(depth + 1);
+  return [
+    "style={",
+    `${padProp}  {`,
+    ...declarations.map((declaration) => `${padProp}    ${declaration},`),
+    `${padProp}  } as CSSProperties`,
+    `${padProp}}`,
+  ].join("\n");
+}
+
+/**
+ * A slot filled with elements, as the prop React takes.
+ *
+ * Written on one line while it fits, and as a block once it does not:
+ *
+ *     footer={
+ *       <>
+ *         <Button variant="ghost">Cancelar</Button>
+ *         <Button variant="primary">Archivar</Button>
+ *       </>
+ *     }
+ *
+ * Flattened, those two buttons were a 202-character line — the composition was there, and unreadable.
+ * The layout depth is decided BEFORE anything is rendered (a lone element sits one level in, several
+ * sit inside a fragment two levels in) because rendering is what collects the data modules: doing it
+ * twice to measure would collect them twice.
+ */
+function composedProp(
+  propName: string,
+  composed: readonly UsageTree[],
+  depth: number,
+  ctx: JsxContext,
+): string {
+  const lone = composed.length === 1;
+  const rendered = composed.map((item) =>
+    renderJsx(item, depth + (lone ? 2 : 3), ctx),
+  );
+
+  // Inline needs every element to have come back as a single line; the join stays empty, because
+  // whitespace between two elements on ONE line is a text node React would render as a space.
+  if (rendered.every((lines) => lines.length === 1)) {
+    const jsx = rendered.map((lines) => lines[0]!.trim());
+    const inline = `${propName}={${lone ? jsx[0] : `<>${jsx.join("")}</>`}}`;
+    if (`${"  ".repeat(depth + 1)}${inline}`.length <= JSX_PRINT_WIDTH) {
+      return inline;
+    }
+  }
+
+  const padProp = "  ".repeat(depth + 1);
+  const padFragment = "  ".repeat(depth + 2);
+  const inner = rendered.flat();
+
+  return [
+    `${propName}={`,
+    ...(lone ? inner : [`${padFragment}<>`, ...inner, `${padFragment}</>`]),
+    `${padProp}}`,
+  ].join("\n");
 }
 
 function renderJsx(
   tree: UsageTree,
   depth: number,
-  imports: Map<string, Set<string>>,
+  ctx: JsxContext,
 ): string[] {
+  const { imports } = ctx;
   const { contract, signature } = resolve(tree);
   const pad = "  ".repeat(depth);
   const name = signature.react.name;
@@ -944,7 +1335,7 @@ function renderJsx(
   if (optionStyles.length > 0) {
     if (!imports.has("react")) imports.set("react", new Set());
     imports.get("react")!.add("type CSSProperties");
-    props.push(`style={{ ${optionStyles.join(", ")} } as CSSProperties}`);
+    props.push(styleProp(optionStyles, depth));
   }
   for (const [attrName, value] of Object.entries(tree.attrs ?? {})) {
     if (attrName === "style") continue;
@@ -963,9 +1354,22 @@ function renderJsx(
 
     const entries = collectionItems(content);
     if (entries.length > 0) {
-      props.push(
-        `${propName}={${JSON.stringify(entries.map((entry) => flattenItem(entry, declaredSlot?.item)))}}`,
-      );
+      const rows = entries.map((entry) => flattenItem(entry, declaredSlot?.item));
+      // Moved out of the tag and named, so the prop says WHICH data it takes and the data itself
+      // stays readable in a file of its own. A prop whose name is not an identifier could not be a
+      // `const`, so it keeps the serialized form rather than inventing a name nobody wrote.
+      if (IDENTIFIER.test(propName)) {
+        const constName = uniqueDataName(ctx, propName);
+        ctx.data.push({
+          name: constName,
+          // Printed for the data module, where it sits at the top level of its own file.
+          literal: jsLiteral(rows, 0, `export const ${constName} = `.length),
+          contract: tree.contract,
+        });
+        props.push(`${propName}={${constName}}`);
+      } else {
+        props.push(`${propName}={${JSON.stringify(rows)}}`);
+      }
       continue;
     }
 
@@ -975,12 +1379,7 @@ function renderJsx(
     // an element in a prop. Emitting only the text ones silently dropped it.
     const composed = items.filter(isUsageTree);
     if (composed.length > 0) {
-      const jsx = composed.map((item) =>
-        renderJsx(item, 0, imports).join("").trim(),
-      );
-      props.push(
-        `${propName}={${jsx.length === 1 ? jsx[0] : `<>${jsx.join("")}</>`}}`,
-      );
+      props.push(composedProp(propName, composed, depth, ctx));
       continue;
     }
 
@@ -988,11 +1387,13 @@ function renderJsx(
     if (typeof text === "string") props.push(jsxAttribute(propName, text));
   }
 
-  const children = slotItems(filled.children).flatMap((item) =>
+  const childItems = slotItems(filled.children);
+  const childRendered = childItems.map((item) =>
     isUsageTree(item)
-      ? renderJsx(item, depth + 1, imports)
-      : [`${"  ".repeat(depth + 1)}${item}`],
+      ? renderJsx(item, depth + 1, ctx)
+      : [`${"  ".repeat(depth + 1)}${item.trim()}`],
   );
+  const children = joinJsxInlineItems(childItems, childRendered);
 
   if (children.length === 0) return jsxOpening(name, props, depth, true);
 
@@ -1002,9 +1403,13 @@ function renderJsx(
     const inlineOpen =
       props.length > 0 ? `<${name} ${props.join(" ")}>` : `<${name}>`;
     const inline = `${pad}${inlineOpen}${text}</${name}>`;
-    if (inline.length <= PRINT_WIDTH) return [inline];
+    if (inline.length <= JSX_PRINT_WIDTH) return [inline];
 
-    return [...opening, ...wrapText(text, depth + 1), `${pad}</${name}>`];
+    return [
+      ...opening,
+      ...wrapText(text, depth + 1, JSX_PRINT_WIDTH),
+      `${pad}</${name}>`,
+    ];
   }
 
   return [...opening, ...children, `${pad}</${name}>`];
@@ -1041,6 +1446,86 @@ function flattenItem(
   }
 
   return flat;
+}
+
+/** A name that can be written both as a `const` and as an object key without quotes around it. */
+const IDENTIFIER = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
+
+/**
+ * The prop's own name, which is what a person would have called the data. Two collections in one
+ * snippet can share it (a menu inside a menu, both taking `items`), and the second one numbering
+ * itself is the smallest honest way to keep them apart.
+ */
+function uniqueDataName(ctx: JsxContext, propName: string): string {
+  const taken = new Set(ctx.data.map((entry) => entry.name));
+  if (!taken.has(propName)) return propName;
+  for (let n = 2; ; n++) {
+    if (!taken.has(`${propName}${n}`)) return `${propName}${n}`;
+  }
+}
+
+/**
+ * A value as the JavaScript literal a person writes: identifier keys unquoted, one line while it
+ * fits `JSX_PRINT_WIDTH` (the data module is part of the React snippet) and one entry per line once
+ * it does not.
+ *
+ * `JSON.stringify` with an indent argument would be close, and wrong in the two ways that matter:
+ * it quotes every key (`"label"`, which nobody types in a `.tsx`) and it explodes EVERY object,
+ * so a three-field row that reads perfectly on one line becomes five. `used` is what the first line
+ * already spent (`const items = `), so the decision is made against the column the text lands in.
+ */
+function jsLiteral(value: unknown, depth: number, used = 0): string {
+  const pad = "  ".repeat(depth);
+  const inline = inlineLiteral(value);
+  // `+ 1` for the comma or semicolon that always follows a value, wherever it sits.
+  if (pad.length + used + inline.length + 1 <= JSX_PRINT_WIDTH) return inline;
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) return inline;
+    return [
+      "[",
+      ...value.map((entry) => `${pad}  ${jsLiteral(entry, depth + 1)},`),
+      `${pad}]`,
+    ].join("\n");
+  }
+
+  if (isRecord(value)) {
+    const entries = Object.entries(value);
+    if (entries.length === 0) return inline;
+    return [
+      "{",
+      ...entries.map(([key, entry]) => {
+        const name = literalKey(key);
+        return `${pad}  ${name}: ${jsLiteral(entry, depth + 1, name.length + 2)},`;
+      }),
+      `${pad}}`,
+    ].join("\n");
+  }
+
+  return inline;
+}
+
+/** The same literal on one line, which is also how the wrapped form decides it does not fit. */
+function inlineLiteral(value: unknown): string {
+  if (Array.isArray(value)) {
+    return value.length === 0 ? "[]" : `[${value.map(inlineLiteral).join(", ")}]`;
+  }
+  if (isRecord(value)) {
+    const entries = Object.entries(value);
+    if (entries.length === 0) return "{}";
+    return `{ ${entries
+      .map(([key, entry]) => `${literalKey(key)}: ${inlineLiteral(entry)}`)
+      .join(", ")} }`;
+  }
+  return JSON.stringify(value) ?? "undefined";
+}
+
+function literalKey(key: string): string {
+  return IDENTIFIER.test(key) ? key : JSON.stringify(key);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /*
@@ -1141,6 +1626,10 @@ export function parseInlineStyle(css: string): Array<[string, string]> {
 
 /* ------------------------------------------------------------------------------------- shared */
 
+/**
+ * One tree in whichever binding was asked for, as ONE string. React's data module is not in it:
+ * a caller that needs the whole React source calls `emitReactSource` and gets both files.
+ */
 export function emit(tree: UsageTree, binding: Binding): string {
   return binding === "vanilla" ? emitMarkup(tree) : emitReact(tree);
 }

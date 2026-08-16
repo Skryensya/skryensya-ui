@@ -244,7 +244,7 @@ export const changelogContract = {
      * paragraph to find out whether they were the first reader.
      *
      * THE KIND IS A BADGE, composed rather than restated: `also` carries `sk-badge`, the same way
-     * Avatar carries `sk-image-frame` and Combobox carries `sk-field`. Badge already owns what a
+     * Avatar carries `sk-image-frame` and Combobox carries `sk-form-field`. Badge already owns what a
      * status pill looks like, and a second pill drawn here would be a copy that drifts.
      *
      * ITS TONE IS DERIVED, never passed. `kind` is the fact and the tone is a rendering of it, so

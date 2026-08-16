@@ -1,0 +1,83 @@
+/*
+ * TIER 3, METER
+ *
+ * A measurement bar: same track/fill anatomy as `Progress`, same tone hook — the two differ in what
+ * they MEAN (a measurement vs. a task's completion), and now also in how they paint. `meter.ts`'s own
+ * file banner has the reasoning: a visible label + value row sits above the track, painted from the
+ * same `label`/`valueText` strings the track's `aria-label`/`aria-valuetext` already carry, so a
+ * reader scanning the page (not just a screen reader) can tell a Meter from a Progress bar without
+ * hovering for a tooltip. The fill width comes from --sk-meter-fill, which the binding sets from the
+ * min/max-aware fraction, so the paint and aria-valuenow/min/max can never diverge.
+ */
+@layer components {
+  .sk-meter-group {
+    display: grid;
+    gap: var(--space-stack-xs);
+    inline-size: 100%;
+  }
+
+  .sk-meter-group__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-inline-sm);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body);
+    color: var(--color-text-secondary);
+  }
+
+  .sk-meter-group__label {
+    /* The bar itself is the measurement; the label just names it, so it never outweighs the number. */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sk-meter-group__value {
+    flex: none;
+    font-weight: var(--font-weight-label);
+    color: var(--color-text-primary);
+    /* Digits that don't reflow the header as the value ticks between "8%" and "92%". */
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sk-meter {
+    /* Falls back to 0% only for the brief window before a binding sets the real fraction — see
+     * meter.ts's own comment on why this contract has no static `percentOf` shortcut. */
+    --sk-meter-fill: 0%;
+    --sk-meter-color: var(--color-action-primary);
+
+    display: block;
+    inline-size: 100%;
+    block-size: var(--space-inset-sm);
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-surface-sunken);
+  }
+  .sk-meter[data-tone="success"] { --sk-meter-color: var(--color-text-success); }
+  .sk-meter[data-tone="warning"] { --sk-meter-color: var(--color-text-warning); }
+  .sk-meter[data-tone="danger"] { --sk-meter-color: var(--color-text-danger); }
+
+  .sk-meter__bar {
+    display: block;
+    block-size: 100%;
+    inline-size: var(--sk-meter-fill);
+    border-radius: inherit;
+    background: var(--sk-meter-color);
+    transition: inline-size var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sk-meter__bar { transition: none; }
+  }
+
+  @media (forced-colors: active) {
+    .sk-meter {
+      background: Canvas;
+      border: 1px solid CanvasText;
+    }
+
+    .sk-meter__bar {
+      background: Highlight;
+    }
+  }
+}

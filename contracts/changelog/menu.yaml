@@ -3,8 +3,37 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "332a522297f66cbc"
+surface: "d0671cae0f5a7f7a"
 entries:
+  - date: 2026-08-13
+    kind: bugfix
+    target: debugSafetyTriangle
+    es:
+      title: El safe area de un submenú ahora lo sostiene de verdad
+      body: >-
+        Cruzar en diagonal hacia un submenú abierto ya no lo cierra ni resalta la fila de abajo. El
+        polígono de <code>@zag-js/menu</code> no alcanzaba: sólo puede vetar un cierre temprano
+        durante los 100ms de <code>waitForCloseDelay</code>, no extenderlos, así que con el puntero
+        quieto adentro del polígono el submenú igual se cerraba a los ~90ms. Ahora hay un elemento
+        real —un triángulo recortado con <code>clip-path</code> dentro del trigger— así que el
+        navegador nunca dispara <code>pointerleave</code> mientras se cruza y el temporizador ni se
+        enciende. Vale para cualquier profundidad. Nuevas partes: <code>sk-menu__safe-area</code>,
+        <code>sk-menu__intent-readout</code>. <code>debugSafetyTriangle</code> ahora pinta ese mismo
+        elemento en vez de dibujar un SVG aparte, y su estado dejó de ser un badge flotante encima
+        del trigger para ocupar su propio lugar arriba de él.
+    en:
+      title: A submenu's safe area now actually holds it open
+      body: >-
+        Crossing diagonally toward an open submenu no longer closes it or highlights the row below.
+        <code>@zag-js/menu</code>'s polygon was not enough: it can only veto an early close during
+        <code>waitForCloseDelay</code>'s 100ms, never extend them, so a pointer parked motionless
+        inside the polygon still lost the submenu at ~90ms. There is now a real element — a
+        <code>clip-path</code> triangle inside the trigger — so the browser fires no
+        <code>pointerleave</code> during the crossing and the timer is never lit. It holds at any
+        depth. New parts: <code>sk-menu__safe-area</code>, <code>sk-menu__intent-readout</code>.
+        <code>debugSafetyTriangle</code> now paints that very element instead of drawing a separate
+        SVG, and its status moved out of a floating badge that covered the trigger into its own space
+        above it.
   - date: 2026-08-13
     kind: feature
     target: density

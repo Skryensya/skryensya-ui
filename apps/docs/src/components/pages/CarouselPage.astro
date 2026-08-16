@@ -6,6 +6,7 @@ import {
   carouselAutoplayTree,
   carouselBareTree,
   carouselCardsTree,
+  carouselFocusableTree,
   carouselNativeTree,
 } from "../../demos/carousel";
 import { getLocale, useTranslations } from "../../i18n";
@@ -105,6 +106,10 @@ const sourceFiles = [
           name: "snaps to a dot and reports the page on the change event",
           description: t("carousel.test4"),
         },
+        {
+          name: "pauses on focus landing INSIDE a slide's own content, not only on the prev/next chrome",
+          description: t("carousel.test5"),
+        },
       ],
     },
   ]}
@@ -128,6 +133,11 @@ const sourceFiles = [
     <p set:html={t("carousel.multiBody1")} />
     <p set:html={t("carousel.multiBody2")} />
     <ComponentPreview tree={carouselAutoplayTree(t)} label={t("carousel.multiLabel")} note={t("carousel.multiNote")} />
+
+    <h3>{t("carousel.focusTitle")}</h3>
+    <p set:html={t("carousel.focusBody1")} />
+    <p set:html={t("carousel.focusBody2")} />
+    <ComponentPreview tree={carouselFocusableTree(t)} label={t("carousel.focusLabel")} note={t("carousel.focusNote")} />
 
     <h3>{t("carousel.bareTitle")}</h3>
     <p set:html={t("carousel.bareBody1")} />

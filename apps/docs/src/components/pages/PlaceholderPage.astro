@@ -17,7 +17,7 @@ import reactTestSource from "@react/src/components/placeholder.test.tsx?raw";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
-const swapScript = publicationSwapScript(t);
+const swapScript = publicationSwapScript;
 const styles = `@import "@skryensya/core/components/placeholder.css";
 @import "@skryensya/core/patterns/layout.css";
 @import "@skryensya/core/components/badge.css";

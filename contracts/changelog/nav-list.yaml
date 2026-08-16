@@ -3,8 +3,33 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "af34bac9c05b089a"
+surface: "da4beab9e019ff2b"
 entries:
+  - date: 2026-08-15
+    kind: feature
+    target: collapsible
+    es:
+      title: NavListGroup puede ser una sección colapsable
+      body: >-
+        Cubre el patrón WAI-ARIA APG "Disclosure (Navigation)". Nuevas opciones
+        <code>collapsible</code> y <code>defaultOpen</code> (por defecto abierta, a diferencia de
+        <code>Accordion</code>): con <code>collapsible</code>, la etiqueta estática del grupo se
+        convierte en un <code>&lt;button&gt;</code> con <code>aria-expanded</code>/
+        <code>aria-controls</code> que alterna la lista de enlaces. Deliberadamente NO
+        <code>role="menu"</code> — misma razón que ya documenta <code>NavList</code> para sí mismo.
+        Ahora sí tiene un enhancer Vanilla (<code>data-sk-nav-list-group-trigger</code>), solo para
+        el caso colapsable — el grupo estático sigue sin necesitar JavaScript.
+    en:
+      title: NavListGroup can be a collapsible section
+      body: >-
+        Covers the WAI-ARIA APG "Disclosure (Navigation)" pattern. New <code>collapsible</code> and
+        <code>defaultOpen</code> options (open by default, unlike <code>Accordion</code>): with
+        <code>collapsible</code>, the group's static label becomes a <code>&lt;button&gt;</code>
+        with <code>aria-expanded</code>/<code>aria-controls</code> toggling its list of links.
+        Deliberately NOT <code>role="menu"</code> — the same reason <code>NavList</code> already
+        documents for itself. It now has a Vanilla enhancer
+        (<code>data-sk-nav-list-group-trigger</code>), only for the collapsible case — the static
+        group still needs no JavaScript at all.
   - date: 2026-08-11
     kind: feature
     es:

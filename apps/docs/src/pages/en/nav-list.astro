@@ -2,7 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
-import { navListTree } from "../../demos/nav-list";
+import { navListCollapsibleTree, navListTree } from "../../demos/nav-list";
 import { getLocale, useTranslations } from "../../i18n";
 import { probeProp, slugId, tokens } from "../../lib/tokens";
 import CopyCells from "../../components/CopyCells.astro";
@@ -56,6 +56,26 @@ const t = useTranslations(getLocale(Astro.url));
   <h2>The host sends its motion</h2>
   <p>
     <code>--sk-nav-list-duration</code> and <code>--sk-nav-list-easing</code> start in the intent <em>state-change</em>, and the sidebar re-declares them with its collapse intent: so the labels fade out at the same time as the width moves. Re-declaring a pattern hook is exactly what a hook exists for, the host never touches its markup.
+  </p>
+
+  <h2>Collapsible group</h2>
+  <p>
+    <code>NavListGroup</code> accepts <code>collapsible</code>: the label goes from a <code>&lt;div&gt;</code>
+    (nothing to activate) to a <code>&lt;button&gt;</code> with <code>aria-expanded</code>/<code>aria-controls</code>.
+    Not native <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> — unlike every other disclosure in
+    this system — because the WAI-ARIA reference example for the collapsible <strong>navigation</strong>
+    pattern itself uses a button with ARIA, not the native element.
+  </p>
+  <ComponentPreview
+    tree={navListCollapsibleTree(t, { settings: "/settings", billing: "/billing" })}
+    label={t("demo.navList.collapsibleLabel")}
+    measure="14rem"
+  />
+  <p>
+    <kbd class="sk-kbd">Enter</kbd>/<kbd class="sk-kbd">Space</kbd> toggle the group — free, it is a
+    native button. <kbd class="sk-kbd">Escape</kbd> closes it and returns focus to the trigger, no
+    matter which link inside currently has focus: it is the only keyboard requirement the pattern
+    demands, everything else (arrows, Home/End) is explicitly optional per WAI's own normative text.
   </p>
 
   <h2>Install</h2>

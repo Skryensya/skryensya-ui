@@ -53,7 +53,7 @@
           "avoidWhen": [
             "está fuera de un Accordion.Item; no tiene qué abrir"
           ],
-          "host": "button",
+          "host": "div",
           "id": "Accordion.Trigger",
           "intent": [
             "accordion-header",
@@ -505,7 +505,8 @@
       "signatures": [
         {
           "alternatives": [
-            "Switch"
+            "Switch",
+            "CheckboxGroup"
           ],
           "avoidWhen": [
             "el cambio surte efecto de inmediato, sin enviar nada; eso es un Switch",
@@ -524,6 +525,31 @@
             "una decisión de sí o no que se envía con el formulario",
             "varias opciones independientes donde cada una se marca por su cuenta",
             "aceptar términos, suscribirse, activar una preferencia que se guarda al enviar"
+          ]
+        },
+        {
+          "alternatives": [
+            "Checkbox",
+            "RadioGroup"
+          ],
+          "avoidWhen": [
+            "las opciones no tienen nada en común; ahí son Checkbox sueltos",
+            "se elige UNA; eso es un RadioGroup",
+            "el padre debería poder quedarse en indeterminate por su cuenta: ese estado se DERIVA de los hijos, no se elige"
+          ],
+          "host": "div",
+          "id": "CheckboxGroup",
+          "intent": [
+            "select-all",
+            "check-many-at-once",
+            "partial-selection",
+            "parent-checkbox"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un conjunto de opciones que además se marca o desmarca entero",
+            "hace falta mostrar que la selección es parcial: algunos sí, otros no",
+            "seleccionar todo en una tabla, permisos, filtros con un maestro arriba"
           ]
         }
       ]
@@ -715,7 +741,7 @@
           "avoidWhen": [
             "el mensaje es parte del contenido y tiene que quedarse; eso es un Callout",
             "hay que leerlo sí o sí antes de seguir; eso es un Dialog",
-            "es un error de un campo; eso va en el Field, pegado al control"
+            "es un error de un campo; eso va en el FormField, pegado al control"
           ],
           "host": "div",
           "id": "Toast",
@@ -758,6 +784,68 @@
           "useWhen": [
             "hay un valor en pantalla que la gente va a querer pegar en otro lado: un comando, un token, un id",
             "copiar a mano es propenso a error: cadenas largas, sin espacios, sensibles a mayúsculas"
+          ]
+        }
+      ]
+    },
+    {
+      "css": "@skryensya/core/components/data-grid.css",
+      "id": "data-grid",
+      "signatures": [
+        {
+          "alternatives": [
+            "Table",
+            "Treegrid"
+          ],
+          "avoidWhen": [
+            "los datos son tabulares pero ESTÁTICOS, sin necesidad de navegar con flechas; eso es Table",
+            "hay jerarquía además de columnas; eso es Treegrid",
+            "es una cuadrícula puramente visual (CSS Grid) sin navegación por teclado; eso es Grid/LayoutGrid en layout.ts"
+          ],
+          "host": "div",
+          "id": "DataGrid",
+          "intent": [
+            "2d-keyboard-navigable-grid",
+            "data-grid",
+            "layout-grid",
+            "widget-grouping"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un conjunto de celdas necesita navegación 2D por teclado — flechas se mueven entre filas y columnas",
+            "es una grilla de widgets (chips, tarjetas, enlaces) y se quiere UNA sola parada de tabulación en vez de una por widget — el caso 'layout grid' de WAI",
+            "es una grilla de datos interactiva (editable, con celdas que reciben foco) — el caso 'data grid' de WAI"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [],
+          "host": "div",
+          "id": "DataGridRow",
+          "intent": [
+            "grid-row",
+            "logical-row"
+          ],
+          "parents": [
+            "DataGrid"
+          ],
+          "useWhen": [
+            "una fila lógica de celdas — no necesariamente una fila visual; puede envolver varias líneas físicas"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [],
+          "host": "div",
+          "id": "DataGridCell",
+          "intent": [
+            "grid-cell"
+          ],
+          "parents": [
+            "DataGridRow"
+          ],
+          "useWhen": [
+            "un valor o un widget dentro de una fila de la grilla; el rol interactivo del contenido (botón, enlace) se preserva, nunca se reinterpreta"
           ]
         }
       ]
@@ -953,28 +1041,45 @@
       ]
     },
     {
-      "css": "@skryensya/core/components/field.css",
-      "id": "field",
+      "css": "@skryensya/core/components/feed.css",
+      "id": "feed",
       "signatures": [
         {
-          "alternatives": [],
+          "alternatives": [
+            "List"
+          ],
           "avoidWhen": [
-            "el control no lleva rótulo visible; entonces el control mismo lleva aria-label y no hay Field",
-            "se quiere marcar inválido sin decir por qué; la presencia del error es lo que invalida, el color nunca es la única señal"
+            "es una lista de opciones para elegir; eso es un Listbox o un List",
+            "el orden importa por posición fija, no por publicación; eso es una Table o un List simple"
           ],
           "host": "div",
-          "id": "Field",
+          "id": "Feed",
           "intent": [
-            "labelled-control",
-            "form-field",
-            "input-with-label",
-            "validation-message"
+            "content-stream",
+            "infinite-scroll",
+            "activity-feed",
+            "comment-stream"
           ],
           "parents": [],
           "useWhen": [
-            "un control necesita rótulo, y casi siempre lo necesita",
-            "hay que mostrar un mensaje de validación junto al control",
-            "hace falta una ayuda breve antes de que el usuario escriba"
+            "un stream de unidades de contenido independientes que se puede cargar en tandas — posts, comentarios, actividad"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [],
+          "host": "article",
+          "id": "FeedArticle",
+          "intent": [
+            "feed-item",
+            "post",
+            "comment"
+          ],
+          "parents": [
+            "Feed"
+          ],
+          "useWhen": [
+            "una unidad de contenido dentro del feed — un post, un comentario"
           ]
         }
       ]
@@ -1035,6 +1140,34 @@
             "se elige un valor de una lista y el panel tiene que abrirse al lado, no ocupar la página",
             "son más opciones de las que conviene mostrar siempre, pero pocas para buscar",
             "hace falta que el panel escape del recorte de un contenedor con overflow"
+          ]
+        }
+      ]
+    },
+    {
+      "css": "@skryensya/core/components/form-field.css",
+      "id": "form-field",
+      "signatures": [
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "el control no lleva rótulo visible; entonces el control mismo lleva aria-label y no hay FormField",
+            "se quiere marcar inválido sin decir por qué; la presencia del error es lo que invalida, el color nunca es la única señal",
+            "el control ya trae su propio rótulo cableado por su máquina, como NumberField o Combobox; envolverlo agregaría un segundo `for` que compite con el primero"
+          ],
+          "host": "div",
+          "id": "FormField",
+          "intent": [
+            "labelled-control",
+            "form-field",
+            "input-with-label",
+            "validation-message"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un control necesita rótulo, y casi siempre lo necesita",
+            "hay que mostrar un mensaje de validación junto al control",
+            "hace falta una ayuda breve antes de que el usuario escriba"
           ]
         }
       ]
@@ -1120,7 +1253,7 @@
             "search-field"
           ],
           "parents": [
-            "Field"
+            "FormField"
           ],
           "useWhen": [
             "el usuario escribe una línea de texto: email, nombre, búsqueda",
@@ -1132,7 +1265,7 @@
             "Input"
           ],
           "avoidWhen": [
-            "es entrada de texto con la apariencia del sistema; eso es Input dentro de Field"
+            "es entrada de texto con la apariencia del sistema; eso es Input dentro de FormField"
           ],
           "host": "input",
           "id": "NativeInput",
@@ -1162,7 +1295,7 @@
             "description-entry"
           ],
           "parents": [
-            "Field"
+            "FormField"
           ],
           "useWhen": [
             "el texto ocupa varias líneas: una descripción, un comentario"
@@ -1524,6 +1657,108 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/menubar.css",
+      "id": "menubar",
+      "signatures": [
+        {
+          "alternatives": [
+            "Menu",
+            "NavList"
+          ],
+          "avoidWhen": [
+            "es un solo botón que abre un menú de comandos; eso es Menu",
+            "son destinos de navegación sin desplegables ni comandos; eso es NavList"
+          ],
+          "host": "div",
+          "id": "Menubar",
+          "intent": [
+            "application-menu-bar",
+            "editor-menubar",
+            "site-navigation-with-dropdowns"
+          ],
+          "parents": [],
+          "useWhen": [
+            "una barra persistente de comandos de aplicación, algunos con submenú desplegable — un editor (Archivo/Editar/Ver)",
+            "navegación de sitio con secciones que despliegan sub-destinos"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [],
+          "host": "div",
+          "id": "MenubarItem",
+          "intent": [
+            "menubar-command",
+            "menubar-dropdown-trigger"
+          ],
+          "parents": [
+            "Menubar"
+          ],
+          "useWhen": [
+            "un ítem de la barra — con MenubarMenu adentro es un desplegable, sin él es un comando directo"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [],
+          "host": "div",
+          "id": "MenubarMenu",
+          "intent": [
+            "menubar-dropdown"
+          ],
+          "parents": [
+            "MenubarItem"
+          ],
+          "useWhen": [
+            "el desplegable de un MenubarItem — un solo nivel; para submenús anidados dentro de un desplegable, usa Menu en su lugar"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [],
+          "host": "button",
+          "id": "MenubarMenuItem",
+          "intent": [
+            "menubar-dropdown-command"
+          ],
+          "parents": [
+            "MenubarMenu"
+          ],
+          "useWhen": [
+            "un comando dentro de un desplegable de la barra"
+          ]
+        }
+      ]
+    },
+    {
+      "css": "@skryensya/core/components/meter.css",
+      "id": "meter",
+      "signatures": [
+        {
+          "alternatives": [
+            "Progress",
+            "Loader"
+          ],
+          "avoidWhen": [
+            "es el avance de una tarea que empieza en 0 y termina en un 100% conocido; eso es Progress",
+            "el avance no tiene un largo conocido; eso es un Loader indeterminado"
+          ],
+          "host": "div",
+          "id": "Meter",
+          "intent": [
+            "measurement-in-a-range",
+            "disk-usage",
+            "battery-level",
+            "rating-out-of-a-scale"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay que mostrar una MEDICIÓN dentro de un rango conocido, ya con un valor actual: uso de disco, nivel de batería, una calificación sobre una escala"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/patterns/nav-list.css",
       "id": "nav-list",
       "signatures": [
@@ -1556,20 +1791,23 @@
           "avoidWhen": [
             {
               "hay un solo destino y ningún rótulo": "el grupo sigue siendo obligatorio, no es opcional"
-            }
+            },
+            "collapsible sin label: el botón necesita el texto del rótulo para tener algo que mostrar"
           ],
           "host": "div",
           "id": "NavListGroup",
           "intent": [
             "group-of-destinations",
-            "labeled-navigation-section"
+            "labeled-navigation-section",
+            "collapsible-navigation-section"
           ],
           "parents": [
             "NavList"
           ],
           "useWhen": [
             "agrupa destinos bajo un rótulo",
-            "hace falta el <ul> aunque el grupo no lleve rótulo visible"
+            "hace falta el <ul> aunque el grupo no lleve rótulo visible",
+            "con collapsible: la sección se puede ocultar/mostrar — el patrón WAI 'Disclosure (Navigation)'"
           ]
         },
         {
@@ -2149,11 +2387,13 @@
       "signatures": [
         {
           "alternatives": [
-            "Segmented"
+            "Segmented",
+            "SliderRange"
           ],
           "avoidWhen": [
             "hace falta precisión; ahí un campo numérico se escribe más rápido",
-            "son opciones discretas y pocas; eso es un RadioGroup o un Segmented"
+            "son opciones discretas y pocas; eso es un RadioGroup o un Segmented",
+            "el usuario elige DOS valores, un mínimo y un máximo; eso es SliderRange"
           ],
           "host": "input",
           "id": "Slider",
@@ -2165,6 +2405,27 @@
           "parents": [],
           "useWhen": [
             "el valor es aproximado y verlo moverse ayuda: volumen, brillo, un rango de precio"
+          ]
+        },
+        {
+          "alternatives": [
+            "Slider"
+          ],
+          "avoidWhen": [
+            "es un solo valor; eso es Slider",
+            "hace falta precisión exacta en cada extremo; ahí dos campos numéricos (uno de mínimo, uno de máximo) se escriben más rápido"
+          ],
+          "host": "div",
+          "id": "SliderRange",
+          "intent": [
+            "range-in-a-range",
+            "min-max-filter",
+            "price-range",
+            "two-thumb-slider"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el usuario acota un rango entre un mínimo y un máximo — un filtro de precio, una franja de fechas por posición"
           ]
         }
       ]
@@ -3046,6 +3307,146 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/treegrid.css",
+      "id": "treegrid",
+      "signatures": [
+        {
+          "alternatives": [
+            "Treegrid"
+          ],
+          "avoidWhen": [],
+          "host": "div",
+          "id": "TreegridScroll",
+          "intent": [
+            "scrollable-treegrid",
+            "wide-treegrid"
+          ],
+          "parents": [],
+          "useWhen": [
+            "casi siempre: mismo motivo que TableScroll — la grilla no debe reventar un flex o un grid al ser más ancha que su espacio"
+          ]
+        },
+        {
+          "alternatives": [
+            "Table",
+            "TreeView"
+          ],
+          "avoidWhen": [
+            "hay columnas pero ninguna jerarquía; eso es una Table",
+            "hay jerarquía pero una sola columna de texto; eso es un TreeView"
+          ],
+          "host": "table",
+          "id": "Treegrid",
+          "intent": [
+            "hierarchical-data-grid",
+            "file-explorer-table",
+            "expandable-rows-table"
+          ],
+          "parents": [],
+          "useWhen": [
+            "los datos tienen jerarquía Y columnas a la vez — un explorador de archivos con tamaño/fecha, un org chart con cargo/área",
+            "cada fila necesita expandirse o colapsarse sin perder el resto de sus columnas"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [],
+          "host": "thead",
+          "id": "TreegridHead",
+          "intent": [
+            "column-headers"
+          ],
+          "parents": [
+            "Treegrid"
+          ],
+          "useWhen": [
+            "las columnas tienen encabezado, que es casi siempre"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [],
+          "host": "tr",
+          "id": "TreegridHeadRow",
+          "intent": [
+            "column-header-row"
+          ],
+          "parents": [
+            "TreegridHead"
+          ],
+          "useWhen": [
+            "siempre que hay TreegridHead: es la fila que contiene los TreegridColumnHeader"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [],
+          "host": "th",
+          "id": "TreegridColumnHeader",
+          "intent": [
+            "column-header"
+          ],
+          "parents": [
+            "TreegridHeadRow"
+          ],
+          "useWhen": [
+            "la celda nombra su columna"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [],
+          "host": "tbody",
+          "id": "TreegridBody",
+          "intent": [
+            "treegrid-rows"
+          ],
+          "parents": [
+            "Treegrid"
+          ],
+          "useWhen": [
+            "siempre: es donde viven las filas de la grilla, y la grilla no está completa sin él"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "la fila es una hoja sin hijos; ahí no se pasa `expanded` en absoluto — su ausencia es lo que la marca hoja, no un valor `false`"
+          ],
+          "host": "tr",
+          "id": "TreegridRow",
+          "intent": [
+            "treegrid-row",
+            "hierarchical-row"
+          ],
+          "parents": [
+            "TreegridBody"
+          ],
+          "useWhen": [
+            "un registro de la grilla, en el mismo orden que un lector de pantalla lo recorre — nunca anidado dentro de otro TreegridRow, un <tr> no puede contener otro <tr>",
+            "la fila tiene descendientes: pasa `expanded` (true o false) y escríbelos a continuación, en orden, con un `level` mayor"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "el contenido necesita su propio control interactivo (un botón, un link); esta versión del contrato es fiel al ejemplo WAI `treegrid-1` — celdas de solo texto, ver docs/aria-apg-audit.md"
+          ],
+          "host": "td",
+          "id": "TreegridCell",
+          "intent": [
+            "treegrid-cell"
+          ],
+          "parents": [
+            "TreegridRow"
+          ],
+          "useWhen": [
+            "un valor dentro de una fila de la grilla"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/typography.css",
       "id": "typography",
       "signatures": [
@@ -3238,5 +3639,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "35b425f30b65f00c"
+  "sourceHash": "9e2b050888da3f57"
 }

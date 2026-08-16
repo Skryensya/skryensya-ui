@@ -9,6 +9,11 @@ import type { ComponentContract } from "./contract.js";
  */
 export const sliderParts = {
   root: "sk-slider",
+  rangeRoot: "sk-slider-range",
+  rangeTrack: "sk-slider-range__track",
+  rangeFill: "sk-slider-range__fill",
+  rangeLow: "sk-slider-range__low",
+  rangeHigh: "sk-slider-range__high",
 } as const;
 
 export type SliderPart = keyof typeof sliderParts;
@@ -21,6 +26,34 @@ export const sliderFillProperty = "--sk-slider-fill";
 export function sliderFill(value: number, min: number, max: number): number {
   if (!Number.isFinite(value) || !Number.isFinite(min) || !Number.isFinite(max) || max <= min) return 0;
   return Math.min(Math.max((value - min) / (max - min), 0), 1);
+}
+
+/*
+ * MULTI-THUMB — two native range inputs, not WAI's own custom `role="slider"` SVG widget (the one
+ * example the APG publishes for this pattern). Chosen deliberately: two `<input type="range">`
+ * already get keyboard, touch, form participation and the accessibility tree from the platform for
+ * free — WAI's own custom-widget example carries an explicit caveat that "some users of touch-based
+ * assistive technologies may experience difficulty" with a hand-rolled slider, exactly the class of
+ * problem a native element never has. The one thing native does NOT give for free is stopping one
+ * thumb from being dragged past the other; `sliderRangeBounds` is that, and nothing else.
+ */
+
+/** Each thumb's runtime `min`/`max`, bounded by where the OTHER thumb currently sits — the low
+ *  thumb can never be dragged past the high one, or vice versa, without either input's native
+ *  clamping ever needing to know about the other. */
+export function sliderRangeBounds(
+  low: number,
+  high: number,
+  min: number,
+  max: number,
+): { lowMin: number; lowMax: number; highMin: number; highMax: number } {
+  return { lowMin: min, lowMax: high, highMin: low, highMax: max };
+}
+
+/** Defensive only: an author who sets `lowValue` above `highValue` gets a valid range back, low
+ *  and high swapped, rather than an inverted one no CSS gradient or bound math accounted for. */
+export function clampSliderRange(low: number, high: number): { low: number; high: number } {
+  return low <= high ? { low, high } : { low: high, high: low };
 }
 
 /*
@@ -52,6 +85,16 @@ export const sliderContract = {
     step: { type: "number", attr: "step" },
     name: { type: "string", attr: "name" },
     disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "" },
+
+    /** Where each thumb of `SliderRange` starts — same `value`/`defaultValue` split as `value`
+     *  above, and for the same reason: a composition is data, never state to lock a thumb to. */
+    lowValue: { type: "number", default: 0, attr: "value", prop: "defaultValue" },
+    highValue: { type: "number", default: 100, attr: "value", prop: "defaultValue" },
+    /** A range input carries no implicit name, and here there are TWO thumbs to tell apart — WAI's
+     *  own multi-thumb example names them distinctly ("Hotel Minimum Price" / "...Maximum Price"),
+     *  never just "value", so both are required rather than defaulted. */
+    lowLabel: { type: "string", attr: "aria-label" },
+    highLabel: { type: "string", attr: "aria-label" },
   },
 
   signatures: {
@@ -76,6 +119,62 @@ export const sliderContract = {
        * painted its starting fraction and then kept it while the thumb moved away.
        */
       mount: "data-sk-slider",
+    },
+
+    /*
+     * Two native `<input type="range">`, not one — see the file's own "MULTI-THUMB" banner above
+     * for why this is the chosen shape over WAI's custom SVG widget. The wrapper is the host so a
+     * consumer's own `id`/`class`/`data-*` land in the one place a two-input control has to carry
+     * them; the low/high inputs are internal structure, never composed by the author, the same way
+     * `NumberField`'s own increment/decrement buttons are.
+     */
+    SliderRange: {
+      intent: ["range-in-a-range", "min-max-filter", "price-range", "two-thumb-slider"],
+      host: { element: "div" },
+      options: ["lowValue", "highValue", "lowLabel", "highLabel", "min", "max", "step", "disabled"],
+      requires: ["lowLabel", "highLabel"],
+      slots: {},
+      template: {
+        element: "div",
+        part: "rangeRoot",
+        host: true,
+        children: [
+          { element: "div", part: "rangeTrack", attrs: { "aria-hidden": "true" } },
+          {
+            element: "div",
+            part: "rangeFill",
+            attrs: { "aria-hidden": "true" },
+            mount: "data-sk-slider-range-fill",
+            // Initial paint only — same caveat `Slider`'s own `style` entry documents: static,
+            // ignorant of `min`, corrected for real by the enhancer/React on mount.
+            style: [
+              { property: "--sk-slider-range-fill-start", percentOf: ["lowValue", "max"], as: "fraction" },
+              { property: "--sk-slider-range-fill-end", percentOf: ["highValue", "max"], as: "fraction" },
+            ],
+          },
+          {
+            // `also: ["sk-slider"]` — the single Slider's thumb/track/focus-ring styling is
+            // reused wholesale, not restated; `slider.css`'s own `.sk-slider-range` rules are only
+            // the DELTA a two-input overlay needs (position, a transparent track, pointer-events).
+            element: "input",
+            part: "rangeLow",
+            also: ["sk-slider"],
+            options: ["lowValue", "lowLabel", "min", "max", "step", "disabled"],
+            attrs: { type: "range" },
+            mount: "data-sk-slider-range-low",
+          },
+          {
+            element: "input",
+            part: "rangeHigh",
+            also: ["sk-slider"],
+            options: ["highValue", "highLabel", "min", "max", "step", "disabled"],
+            attrs: { type: "range" },
+            mount: "data-sk-slider-range-high",
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/slider", name: "SliderRange" },
+      mount: "data-sk-slider-range",
     },
   },
 } as const satisfies ComponentContract;

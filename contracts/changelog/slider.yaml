@@ -3,8 +3,35 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "1979ef5ec1571067"
+surface: "0b4972f40c402cc5"
 entries:
+  - date: 2026-08-15
+    kind: feature
+    target: SliderRange
+    es:
+      title: Nueva signature SliderRange, un rango de dos extremos
+      body: >-
+        Cubre el patrón WAI-ARIA APG "Slider (Multi-Thumb)" con dos <code>&lt;input
+        type="range"&gt;</code> nativos en vez del widget SVG a medida que documenta el ejemplo de
+        WAI — el propio patrón advierte que un widget custom puede dar problemas con lectores de
+        pantalla táctiles, y dos inputs nativos ya traen teclado, formulario y árbol de
+        accesibilidad de la plataforma. Opciones: <code>lowValue</code>/<code>highValue</code>
+        (posición inicial de cada extremo), <code>lowLabel</code>/<code>highLabel</code>
+        (obligatorias, nombran cada extremo por separado), más <code>min</code>/<code>max</code>/
+        <code>step</code>/<code>disabled</code> compartidos. Ningún extremo puede arrastrarse más
+        allá del otro.
+    en:
+      title: New SliderRange signature, a two-ended range
+      body: >-
+        Covers the WAI-ARIA APG "Slider (Multi-Thumb)" pattern with two native <code>&lt;input
+        type="range"&gt;</code> elements instead of the custom SVG widget the WAI example
+        documents — the pattern itself warns a hand-rolled widget can be difficult for touch-based
+        screen reader users, and two native inputs already get keyboard, form participation and
+        the accessibility tree from the platform. Options: <code>lowValue</code>/
+        <code>highValue</code> (each end's starting position), <code>lowLabel</code>/
+        <code>highLabel</code> (required, name each end separately), plus shared
+        <code>min</code>/<code>max</code>/<code>step</code>/<code>disabled</code>. Neither end can
+        be dragged past the other.
   - date: 2026-08-11
     kind: feature
     es:

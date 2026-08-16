@@ -26,3 +26,21 @@ export const sliderTree = (t: Translate): UsageTree => ({
     },
   ],
 });
+
+/*
+ * Two native `<input type="range">` under one host, not WAI's own custom SVG widget — see
+ * `sliderRangeBounds` in `slider.ts` for why. Neither thumb can be dragged past the other; the
+ * bound comes from where the OTHER thumb sits, not a static min/max either input owns alone.
+ */
+export const sliderRangeTree = (t: Translate): UsageTree => ({
+  contract: "slider",
+  signature: "SliderRange",
+  options: {
+    lowValue: 20,
+    highValue: 80,
+    min: 0,
+    max: 100,
+    lowLabel: t("demo.slider.priceMin"),
+    highLabel: t("demo.slider.priceMax"),
+  },
+});

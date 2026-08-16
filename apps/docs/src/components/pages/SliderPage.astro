@@ -3,13 +3,17 @@ import "@skryensya/core/components/slider.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { sliderTree } from "../../demos/slider";
+import { sliderRangeTree, sliderTree } from "../../demos/slider";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/slider.yaml?raw";
 import coreSource from "@core/src/slider.ts?raw";
+import coreRangeTestSource from "@core/src/slider-range.test.ts?raw";
 import cssSource from "@core/css/components/slider.css?raw";
 import vanillaMountSource from "@vanilla/src/components/slider.ts?raw";
+import vanillaRangeSource from "@vanilla/src/components/slider-range.ts?raw";
+import vanillaRangeTestSource from "@vanilla/src/components/slider-range.test.ts?raw";
 import reactSource from "@react/src/components/slider.tsx?raw";
+import reactRangeTestSource from "@react/src/components/slider-range.test.tsx?raw";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
@@ -17,9 +21,21 @@ const t = useTranslations(getLocale(Astro.url));
 const sourceFiles = [
   { id: "contracts/semantic/slider.yaml", source: contractSource, language: "yaml" },
   { id: "packages/core/src/slider.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/src/slider-range.test.ts", source: coreRangeTestSource, language: "ts" },
   { id: "packages/core/css/components/slider.css", source: cssSource, language: "css" },
   { id: "packages/vanilla/src/components/slider.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/slider-range.ts", source: vanillaRangeSource, language: "ts" },
+  {
+    id: "packages/vanilla/src/components/slider-range.test.ts",
+    source: vanillaRangeTestSource,
+    language: "ts",
+  },
   { id: "packages/react/src/components/slider.tsx", source: reactSource, language: "tsx" },
+  {
+    id: "packages/react/src/components/slider-range.test.tsx",
+    source: reactRangeTestSource,
+    language: "tsx",
+  },
 ] as const;
 ---
 
@@ -48,6 +64,33 @@ const sourceFiles = [
         },
       ],
     },
+    {
+      file: "packages/core/src/slider-range.test.ts",
+      tests: [
+        {
+          name: "bounds the low thumb's max at the high thumb's current value, and vice versa",
+          description: t("sliderPage.testRange1"),
+        },
+      ],
+    },
+    {
+      file: "packages/react/src/components/slider-range.test.tsx",
+      tests: [
+        {
+          name: "re-bounds the OTHER thumb after a value changes, reporting both values on change",
+          description: t("sliderPage.testRange2"),
+        },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/slider-range.test.ts",
+      tests: [
+        {
+          name: "never lets one thumb's value exceed the other — native min/max clamps a direct value write past the bound",
+          description: t("sliderPage.testRange3"),
+        },
+      ],
+    },
   ]}
 >
   <Fragment slot="usage">
@@ -56,6 +99,10 @@ const sourceFiles = [
     <p set:html={t("sliderPage.body1")} />
     <p set:html={t("sliderPage.body2")} />
     <p set:html={t("component.reactNote")} />
+
+    <h3>{t("sliderPage.rangeTitle")}</h3>
+    <p set:html={t("sliderPage.rangeBody")} />
+    <ComponentPreview tree={sliderRangeTree(t)} label={t("sliderPage.rangeLabel")} />
   </Fragment>
 
   <Fragment slot="install">

@@ -46,10 +46,4 @@ export const commandPaletteDemoTree = (t: Translate): UsageTree => ({
  * named props and does not forward unknown ones onto its host, unlike `Button`/`Stack`, which do:
  * the id is the one identifier the contract already guarantees lands on the element either way.
  */
-export const commandPaletteDemoScript = `
-const trigger = document.querySelector("[data-cmdk-demo-open]");
-const dialog = document.getElementById("demo-cmdk-tree");
-trigger?.addEventListener("click", () => {
-  if (dialog && !dialog.open) dialog.showModal();
-});
-`;
+export { default as commandPaletteDemoScript } from "./scripts/command-palette-open.ts?raw";

@@ -134,26 +134,7 @@ export const loaderSimulationTree = (t: Translate): UsageTree => ({
   ],
 });
 
-export const loaderSimulationScript = `
-const root = document.querySelector("[data-loader-demo]");
-if (root) {
-  const busy = root.querySelector("[data-loader-busy]");
-  const ready = root.querySelector("[data-loader-ready]");
-  const start = root.querySelector("[data-loader-start]");
-  const run = () => {
-    busy.hidden = false;
-    ready.hidden = true;
-    start.hidden = true;
-    window.setTimeout(() => {
-      busy.hidden = true;
-      ready.hidden = false;
-      start.hidden = false;
-    }, 1400);
-  };
-  start.addEventListener("click", run);
-  run();
-}
-`;
+export { default as loaderSimulationScript } from "./scripts/loader-simulation.ts?raw";
 
 export const loaderContextsTree = (t: Translate): UsageTree => ({
   contract: "layout",

@@ -22,6 +22,7 @@ export const accordionDataParts = {
   root: "root",
   item: "item",
   trigger: "trigger",
+  triggerHeading: "trigger-heading",
   content: "content",
 } as const;
 
@@ -30,6 +31,8 @@ export const accordionScope = "accordion";
 /** Class on the coordinating root, joins expandable Tiles into one framed stack. */
 export const accordionParts = {
   root: "sk-accordion",
+  /** The trigger's `role="heading"` wrapper. `display: contents` in accordion.css: see the contract. */
+  triggerHeading: "sk-accordion__trigger-heading",
 } as const;
 
 export const accordionEvents = {
@@ -50,7 +53,12 @@ export const accordionEvents = {
 export const accordionContract = {
   id: "accordion",
   css: "@skryensya/core/components/accordion.css",
-  parts: { ...accordionParts, item: "sk-tile", trigger: "sk-tile__trigger", content: "sk-tile__expandable-content" },
+  parts: {
+    ...accordionParts,
+    item: "sk-tile",
+    trigger: "sk-tile__trigger",
+    content: "sk-tile__expandable-content",
+  },
   events: accordionEvents,
 
   options: {
@@ -63,6 +71,16 @@ export const accordionContract = {
     value: { type: "string", attr: "data-value" },
     /** Starts expanded. Read once; after that the machine owns it. */
     defaultOpen: { type: "boolean", default: false, attr: "data-default-open", trueValue: "", machineInput: true },
+    /**
+     * The page-outline heading level a trigger announces itself at (`aria-level`, on a wrapper
+     * carrying `role="heading"`, never on the button — a control cannot also claim the heading
+     * role its own interactive one already fills). WAI's Accordion pattern wants this so a
+     * screen-reader user navigating by heading lands on every section; without it, sections are
+     * reachable only by Tab. Defaults to 3, the level every demo in this codebase already uses for
+     * the same sections rendered as `<details>` (`apps/docs/src/demos/accordion.ts`) — a page that
+     * needs a different depth overrides it, but "no heading at all" was never the right default.
+     */
+    headingLevel: { type: "number", default: 3, attr: "aria-level" },
   },
 
   signatures: {
@@ -119,17 +137,31 @@ export const accordionContract = {
 
     "Accordion.Trigger": {
       intent: ["accordion-header", "section-toggle"],
-      host: { element: "button" },
+      // The host is the HEADING, not the button: `role="heading"` and `aria-level` name what this
+      // is on the page outline, and a control cannot also claim the heading role its own
+      // interactive one already fills, so the two live on separate elements. The wrapper is
+      // `display: contents` (accordion.css), so it never becomes a real box between the section
+      // and its button — the grid gap `.sk-tile` already sets between trigger and content reads
+      // exactly as before.
+      host: { element: "div" },
       parents: ["Accordion.Item"],
-      options: [],
+      options: ["headingLevel"],
       slots: { children: { accepts: "node", required: true } },
       template: {
-        element: "button",
-        part: "trigger",
+        element: "div",
+        part: "triggerHeading",
         host: true,
-        also: ["sk-tile--interactive", "sk-interactive"],
-        attrs: { type: "button", "data-scope": "tile", "data-part": "trigger" },
-        slot: "children",
+        attrs: { role: "heading", "data-part": accordionDataParts.triggerHeading },
+        optionAttrs: { headingLevel: "aria-level" },
+        children: [
+          {
+            element: "button",
+            part: "trigger",
+            also: ["sk-tile--interactive", "sk-interactive"],
+            attrs: { type: "button", "data-scope": "tile", "data-part": "trigger" },
+            slot: "children",
+          },
+        ],
       },
       react: { from: "@skryensya/react/accordion", name: "Accordion.Trigger" },
     },

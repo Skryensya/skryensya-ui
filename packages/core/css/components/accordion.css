@@ -25,6 +25,15 @@
     overflow: hidden;
   }
 
+  /*
+   * The trigger's `role="heading"` wrapper exists only so a screen reader can navigate to it by
+   * heading; it must never become a real box between the section and its button, or the grid gap
+   * `.sk-tile` sets between trigger and content would double up on one side.
+   */
+  .sk-accordion__trigger-heading {
+    display: contents;
+  }
+
   /* The root owns the outer frame; items keep Tile anatomy without a second border or radius. */
   .sk-accordion > .sk-tile--expandable {
     inline-size: 100%;

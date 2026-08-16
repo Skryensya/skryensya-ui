@@ -1,6 +1,6 @@
 import { navListContract, navListParts } from "@skryensya/core/nav-list";
 import type { SignatureOptionsOf } from "@skryensya/core/contract";
-import { forwardRef, useId, type AnchorHTMLAttributes, type HTMLAttributes, type ReactNode } from "react";
+import { forwardRef, useId, useState, type AnchorHTMLAttributes, type HTMLAttributes, type ReactNode } from "react";
 
 /*
  * A BINDING (decision 28). The three exports below are three signatures of one contract, and the
@@ -41,6 +41,14 @@ export function NavList({
 export type NavListGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children: ReactNode;
   label?: ReactNode;
+  /**
+   * Turns the static label into a disclosure button toggling the list — the WAI-ARIA APG
+   * "Disclosure (Navigation)" pattern. Requires `label`: a button needs the text to click on.
+   */
+  collapsible?: boolean;
+  /** Starts expanded — hiding navigation by default is the wrong default. Uncontrolled: read once,
+   *  then this component owns it, the same as `Accordion`'s own `defaultOpen`. */
+  defaultOpen?: boolean;
 };
 
 /*
@@ -49,17 +57,56 @@ export type NavListGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "children">
  * conditional (the contract's `whenSlotFilled: "label"`), and its `labelledBySlot` is the wiring
  * below.
  */
-export function NavListGroup({ children, className, label, ...props }: NavListGroupProps) {
+export function NavListGroup({
+  children,
+  className,
+  collapsible = false,
+  defaultOpen = true,
+  label,
+  ...props
+}: NavListGroupProps) {
   const labelId = useId();
+  const listId = useId();
+  const [open, setOpen] = useState(defaultOpen);
+  const expanded = collapsible ? open : true;
 
   return (
-    <div {...props} className={cx(navListParts.group, className)}>
-      {label ? (
+    <div
+      {...props}
+      className={cx(navListParts.group, className)}
+      onKeyDown={(event) => {
+        props.onKeyDown?.(event);
+        // The one keyboard requirement WAI's Disclosure (Navigation) pattern does NOT mark
+        // optional (unlike arrow keys/Home/End, confirmed fetching the example page): Escape
+        // closes an open dropdown from anywhere focus is inside it, and returns focus to the
+        // trigger — "point of regard", same reasoning `Dialog`'s own Escape handling serves.
+        if (!collapsible || !open || event.key !== "Escape") return;
+        event.preventDefault();
+        setOpen(false);
+        (event.currentTarget.querySelector(`[aria-controls="${listId}"]`) as HTMLElement | null)?.focus();
+      }}
+    >
+      {label && collapsible ? (
+        <button
+          aria-controls={listId}
+          aria-expanded={expanded}
+          className={`${navListParts.groupLabel} sk-interactive`}
+          onClick={() => setOpen((previous) => !previous)}
+          type="button"
+        >
+          {label}
+        </button>
+      ) : label ? (
         <div className={navListParts.groupLabel} id={labelId}>
           {label}
         </div>
       ) : null}
-      <ul aria-labelledby={label ? labelId : undefined} className={navListParts.list}>
+      <ul
+        aria-labelledby={label ? (collapsible ? undefined : labelId) : undefined}
+        className={navListParts.list}
+        hidden={collapsible && !expanded}
+        id={collapsible ? listId : undefined}
+      >
         {children}
       </ul>
     </div>

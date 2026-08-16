@@ -3,8 +3,40 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "fb96ac087f1f53f6"
+surface: "2019f3908019da9b"
 entries:
+  - date: 2026-08-13
+    kind: feature
+    es:
+      title: CheckboxGroup, el padre de tres estados, entra al contrato
+      body: >-
+        La segunda signature: un grupo con un padre que marca y desmarca a todos, y que muestra
+        <code>indeterminate</code> cuando sus hijos no coinciden. Hasta ahora eso era un
+        <code>&lt;script&gt;</code> copiado en cada página que lo necesitaba; ahora es
+        <code>CheckboxGroup</code> con enhancer propio (<code>data-sk-checkbox-group</code>) y
+        componente de React. El estado del padre es <strong>derivado</strong>: no acepta
+        <code>checked</code>, y cuáles hijos arrancan marcados es dato de cada entrada
+        (<code>defaultChecked</code>), no del grupo. Un hijo <code>disabled</code> no cuenta como
+        voto, y un <code>reset</code> del formulario vuelve a derivar. Emite
+        <code>sk:checkboxgroupvaluechange</code> con <code>{ value, checked }</code>. Opciones:
+        <code>name</code> (obligatoria), <code>orientation</code>, <code>disabled</code>,
+        <code>required</code>. Clases nuevas: <code>sk-checkbox-group</code> y
+        <code>sk-checkbox-group__items</code>.
+    en:
+      title: CheckboxGroup, the tri-state parent, joins the contract
+      body: >-
+        The second signature: a group with a parent that checks and unchecks them all, and shows
+        <code>indeterminate</code> when its children disagree. Until now that was a
+        <code>&lt;script&gt;</code> copied into every page that needed it; it is now
+        <code>CheckboxGroup</code>, with its own enhancer (<code>data-sk-checkbox-group</code>) and
+        React component. The parent's state is <strong>derived</strong>: it takes no
+        <code>checked</code>, and which children start checked is per-entry data
+        (<code>defaultChecked</code>), not the group's. A <code>disabled</code> child is not a vote,
+        and a form <code>reset</code> re-derives. It emits
+        <code>sk:checkboxgroupvaluechange</code> with <code>{ value, checked }</code>. Options:
+        <code>name</code> (required), <code>orientation</code>, <code>disabled</code>,
+        <code>required</code>. New classes: <code>sk-checkbox-group</code> and
+        <code>sk-checkbox-group__items</code>.
   - date: 2026-08-11
     kind: feature
     es:

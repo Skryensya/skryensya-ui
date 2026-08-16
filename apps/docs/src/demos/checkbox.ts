@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { checkboxGroupItems } from "./data/checkbox";
 
 const tileContent = (title: string, description: string): UsageTree => ({
   contract: "tile",
@@ -14,68 +15,11 @@ export const checkboxTree = (t: Translate): UsageTree => ({
 });
 
 export const checkboxGroupTree = (t: Translate): UsageTree => ({
-  contract: "layout",
-  signature: "Stack",
-  options: { gap: "sm" },
-  attrs: {
-    role: "group",
-    "aria-label": t("demo.checkbox.group"),
-    "data-demo-checkbox-group": "",
-  },
-  children: [
-    {
-      contract: "checkbox",
-      signature: "Checkbox",
-      options: { name: "all-permissions", defaultIndeterminate: true },
-      children: t("demo.checkbox.group"),
-    },
-    {
-      contract: "layout",
-      signature: "Stack",
-      options: { gap: "xs" },
-      children: [
-        {
-          contract: "checkbox",
-          signature: "Checkbox",
-          options: { name: "permissions", value: "read", defaultChecked: true },
-          children: t("demo.checkbox.read"),
-        },
-        {
-          contract: "checkbox",
-          signature: "Checkbox",
-          options: { name: "permissions", value: "write" },
-          children: t("demo.checkbox.write"),
-        },
-        {
-          contract: "checkbox",
-          signature: "Checkbox",
-          options: { name: "permissions", value: "admin" },
-          children: t("demo.checkbox.admin"),
-        },
-      ],
-    },
-  ],
+  contract: "checkbox",
+  signature: "CheckboxGroup",
+  options: { name: "permissions" },
+  slots: { label: t("demo.checkbox.group"), items: checkboxGroupItems(t) },
 });
-
-export const checkboxGroupScript = `
-const root = document.querySelector("[data-demo-checkbox-group]");
-if (root) {
-  const inputs = [...root.querySelectorAll('input[type="checkbox"]')];
-  const parent = inputs[0];
-  const children = inputs.slice(1);
-  const sync = () => {
-    const checked = children.filter((input) => input.checked).length;
-    parent.checked = checked === children.length;
-    parent.indeterminate = checked > 0 && checked < children.length;
-  };
-  children.forEach((input) => input.addEventListener("change", sync));
-  parent.addEventListener("change", () => {
-    parent.indeterminate = false;
-    children.forEach((input) => { input.checked = parent.checked; });
-  });
-  sync();
-}
-`;
 
 export const tileCheckboxTree = (t: Translate): UsageTree => ({
   contract: "layout",

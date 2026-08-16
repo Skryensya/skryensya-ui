@@ -6,6 +6,7 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
   tableInBoxTree,
+  tableResizableColumnsTree,
   tableStickyColumnTree,
   tableStickyHeaderTree,
   tableTree,
@@ -73,6 +74,10 @@ const sourceFiles = [
     <h3>{t("tablePage.stickyHeadTitle")}</h3>
     <p set:html={t("tablePage.stickyHeadBody")} />
     <ComponentPreview tree={tableStickyHeaderTree(t)} label={t("tablePage.stickyHeadLabel")} />
+
+    <h3>{t("tablePage.resizableTitle")}</h3>
+    <p set:html={t("tablePage.resizableBody")} />
+    <ComponentPreview tree={tableResizableColumnsTree(t)} label={t("tablePage.resizableLabel")} />
 
     <h3>{t("tablePage.pagerTitle")}</h3>
     <p set:html={t("tablePage.pagerBody")} />

@@ -1,0 +1,110 @@
+import { tableParts } from "@skryensya/core/table";
+import { SPLITTER_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH } from "@skryensya/core/splitter";
+import { createConnectMount } from "../runtime/svelte-hydrate.js";
+import { attachColumnResizer, watchColumnLayout } from "../splitter.js";
+
+/*
+ * TABLE, opt-in resizable columns only — a plain table needs no JavaScript at all otherwise
+ * (`table.css`'s own header comment: "native table semantics stay native"), and this file exists
+ * to keep that true. The root selector is scoped to `[data-resizable-columns]` itself, not a
+ * separate `data-sk-table` mount marker every table would carry: the option's own attribute already
+ * says whether to enhance, and a second marker restating that fact is the same "two ways to say one
+ * thing" `treegrid.ts`'s own `SidebarResizeHandle` doc warns against. The rest — seeding `<col>`
+ * widths, wiring one resizer per column boundary — is the identical mechanism Treegrid's own
+ * `applyColumnGroup`/`connectColumnResize` use, minus the hierarchy: `readRows`/`ensureDisclosureButtons`
+ * have no equivalent here, there is no tree to read.
+ *
+ * `:not([data-sk-treegrid])` matters: a resizable Treegrid is ALSO a `.sk-table` with
+ * `data-resizable-columns` (Treegrid's own `also: ["sk-table"]`), and without this exclusion this
+ * enhancer would try to mount a SECOND time onto the same `<table>` `mountTreegrid` already owns.
+ */
+const rootSelector = "table.sk-table[data-resizable-columns]:not([data-sk-treegrid])";
+
+function connect(root: HTMLElement): () => void {
+  if (!(root instanceof HTMLTableElement)) return () => {};
+  const headerCells = Array.from(root.querySelectorAll<HTMLTableCellElement>(":scope > thead > tr > th"));
+  const colCount = headerCells.length;
+  // Nothing to resize with fewer than two columns — `resolveColumnResize` needs a pair.
+  if (colCount < 2) return () => {};
+
+  root.querySelector(":scope > colgroup[data-sk-table-colgroup]")?.remove();
+  const colgroup = root.ownerDocument.createElement("colgroup");
+  colgroup.setAttribute("data-sk-table-colgroup", "");
+  /*
+   * Measure the SCROLL WRAPPER, not the table itself — same reasoning, same fix, as Treegrid's own
+   * `applyColumnGroup`: at this exact moment no colgroup exists yet, so `table-layout: fixed` has
+   * no column widths to size against and the table reports its own unconstrained CONTENT width
+   * instead. A table authored without `TableScroll` (against this component's own convention) falls
+   * back to measuring itself.
+   */
+  const measured = root.parentElement instanceof HTMLElement ? root.parentElement : root;
+  const pxWidth = Math.max(MIN_COLUMN_WIDTH, measured.getBoundingClientRect().width / colCount);
+  const cols: HTMLTableColElement[] = [];
+  for (let i = 0; i < colCount; i++) {
+    const col = root.ownerDocument.createElement("col");
+    col.style.width = `${pxWidth}px`;
+    colgroup.append(col);
+    cols.push(col);
+  }
+  root.insertBefore(colgroup, root.firstChild);
+  /*
+   * An explicit pixel WIDTH on the table itself, not left at `table.css`'s implicit `width: 100%`
+   * — see `treegrid.css`'s own note on why `auto`/`100%` is not safe for a `table-layout: fixed`
+   * table sized against its containing block: Chromium's real redistribution algorithm hands any
+   * surplus to whichever columns have the most unbreakable `nowrap` content instead of leaving
+   * every column at its authored width. Resizing never has to touch this again: `resolveColumnResize`
+   * conserves the touched pair's own total, so the table's OWN total is an invariant of every
+   * resize, set correctly exactly once, here.
+   */
+  root.style.width = `${pxWidth * colCount}px`;
+  /*
+   * That measurement can still be wrong, though: a table mounted while its own ancestor is
+   * `display: none` (a docs preview panel not yet the selected binding tab, a closed accordion, an
+   * inactive tab panel) measures 0 the whole time it stays hidden, and the floor above stands in
+   * forever unless something re-measures once real layout exists — `watchColumnLayout`
+   * (`../splitter.ts`, shared with `treegrid.ts`) is that one re-measurement, a no-op if this read
+   * already succeeded.
+   */
+  const cleanupLayoutWatch = watchColumnLayout({
+    measured,
+    colCount,
+    min: MIN_COLUMN_WIDTH,
+    apply: (width) => {
+      cols.forEach((col) => (col.style.width = `${width}px`));
+      root.style.width = `${width * colCount}px`;
+    },
+  });
+
+  const resizeLabel = root.getAttribute("data-resize-label") ?? "";
+  const widths = () => cols.map((col) => Number.parseFloat(col.style.width) || 0);
+  const setWidths = (next: readonly number[]) => next.forEach((w, i) => (cols[i]!.style.width = `${w}px`));
+
+  const cleanups: (() => void)[] = [cleanupLayoutWatch];
+  headerCells.forEach((th, index) => {
+    // The LAST column has no next neighbor to redistribute width with.
+    if (index >= headerCells.length - 1) return;
+    if (th.querySelector(":scope > [data-sk-column-resizer]")) return;
+
+    const headerText = th.textContent?.trim() ?? "";
+    cleanups.push(
+      attachColumnResizer({
+        th,
+        index,
+        getWidths: widths,
+        setWidths,
+        min: MIN_COLUMN_WIDTH,
+        ariaLabel: resizeLabel ? `${resizeLabel}: ${headerText}` : headerText,
+        direction: () => (getComputedStyle(root).direction === "rtl" ? "rtl" : "ltr"),
+        className: tableParts.columnResizer,
+      }),
+    );
+  });
+
+  return () => cleanups.forEach((cleanup) => cleanup());
+}
+
+export const mountTable = createConnectMount({
+  key: "table",
+  rootSelector,
+  connect,
+});

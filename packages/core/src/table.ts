@@ -10,6 +10,11 @@ export const tableParts = {
   row: "sk-table__row",
   header: "sk-table__header",
   cell: "sk-table__cell",
+  /** The drag handle a binding inserts between each pair of HEAD-ROW column headers when
+   * `resizableColumns` is on — see `resolveColumnResize` and each binding's own insertion point.
+   * The same shared "Window Splitter" primitive (`@skryensya/core/splitter`) Sidebar's own resize
+   * handle and Treegrid's column resizer both already use. */
+  columnResizer: "sk-table__column-resizer",
 } as const;
 
 export type TablePart = keyof typeof tableParts;
@@ -55,7 +60,34 @@ export const tableContract = {
      * The DOM spells it `colspan` and React spells it `colSpan`, which is exactly what `prop` is for.
      */
     colspan: { type: "number", attr: "colspan", prop: "colSpan" },
+    /**
+     * Opt-in: a binding-inserted drag handle between each pair of column headers, WAI-ARIA APG's
+     * "Window Splitter" pattern (`role="separator"`, `aria-orientation="vertical"`,
+     * Left/Right/Home/End resize) — the same shared `@skryensya/core/splitter` primitive Sidebar's
+     * own resize handle and Treegrid's own column resizer already use. Off by default: a plain
+     * table needs no JavaScript at all today (`table.css`'s own header comment — "native table
+     * semantics stay native"), and this stays true unless a consumer explicitly asks for more.
+     * This is also the mount switch: the vanilla binding only ever enhances a `<table>` that
+     * carries this attribute, so the many tables that never opt in stay exactly as inert as before.
+     */
+    resizableColumns: { type: "boolean", default: false, attr: "data-resizable-columns", trueValue: "" },
+    /**
+     * The shared PREFIX every column resizer's accessible name is built from — see `treegrid.ts`'s
+     * identical option for the full reasoning (a binding-inserted separator has no author-supplied
+     * `label` slot to draw from, so this plus the column header it sits beside builds the name).
+     * Required whenever `resizableColumns` is on — see the `a11y` entry below.
+     */
+    resizeLabel: { type: "string", attr: "data-resize-label" },
   },
+
+  a11y: [
+    {
+      when: { resizableColumns: true },
+      requiresOneOf: ["resizeLabel"],
+      because:
+        "Each column resizer is a real, focusable role=\"separator\" a binding inserts — never authored — so nothing else names it for a screen reader; the column header it sits beside says WHICH column, not that the control resizes it.",
+    },
+  ],
 
   signatures: {
     /*
@@ -86,7 +118,7 @@ export const tableContract = {
     Table: {
       intent: ["tabular-data", "rows-and-columns", "data-table", "comparison"],
       host: { element: "table" },
-      options: [],
+      options: ["resizableColumns", "resizeLabel"],
       slots: {
         children: {
           accepts: "signature",

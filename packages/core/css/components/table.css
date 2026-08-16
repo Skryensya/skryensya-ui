@@ -14,6 +14,9 @@
  * The header rule uses `--color-border-default` for the same reason, subtle borders wash out when
  * contrast is the point.
  */
+
+@import url("../patterns/splitter.css");
+
 @layer components {
   .sk-table {
     --sk-table-container-border-color: var(--color-border-default);
@@ -342,5 +345,32 @@
   .sk-table:has(tfoot) tbody tr:last-child :is(th, td),
   .sk-table:has(.sk-table__foot) .sk-table__body .sk-table__row:last-child :is(.sk-table__header.sk-table__cell) {
     border-bottom: 1px solid var(--sk-table-border-color);
+  }
+
+  /*
+   * RESIZABLE COLUMNS, opt-in (`resizableColumns` — see `table.ts`'s own option doc). A binding
+   * inserts one `.sk-table__column-resizer.sk-splitter` (the shared "Window Splitter" pattern,
+   * `patterns/splitter.css` — the same primitive Sidebar's own resize handle and Treegrid's own
+   * column resizer already use) into every column header but the last.
+   *
+   * `table-layout: fixed` is unconditional here, not the opt-in `[data-layout="fixed"]` above: a
+   * `<col>`-driven resize needs it regardless of whether the consumer separately asked for it.
+   * `inline-size: auto`, not the base rule's `width: 100%`: a resized table's real width is the SUM
+   * of its own column widths, which the reader chose, not a fraction of the container — the binding
+   * also writes an explicit pixel `width` straight onto the table for the same reason
+   * `treegrid.css` documents at length (a `table-layout: fixed` table sized `auto` still compares
+   * its columns' sum against its containing block and redistributes any surplus by content, not by
+   * what was authored).
+   */
+  .sk-table[data-resizable-columns] {
+    table-layout: fixed;
+    inline-size: auto;
+  }
+
+  /* The resizer's containing block — `.sk-splitter` positions itself `inset-block: 0; inset-inline-end:
+   * 0`, full header height at the column's near edge, against WHATEVER ancestor is `position:
+   * relative`, which a plain `<th>` is not by default. */
+  .sk-table[data-resizable-columns] thead th {
+    position: relative;
   }
 }

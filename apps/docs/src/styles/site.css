@@ -11,40 +11,12 @@
 
 /* ── page ─────────────────────────────────────────────────────────────────── */
 /*
- * IN-PAGE JUMPS TRAVEL. Nearly every link on this site that does not navigate is a jump inside the
- * document: the toc's ten entries, the anchors in the prose, the styling-hooks cross-references. A
- * jump teleports, and the reader has to work out afterwards where they landed and whether the page
- * changed at all; the same jump scrolled shows the distance and lands them somewhere they can place.
- *
- * ON `html`, WHICH IS EXACTLY THE ROOT SCROLLER AND NOTHING ELSE. `scroll-behavior` does not
- * inherit, so this reaches the page's own scrolling and no other scroll container: the rail's saved
- * position (`docs-sidebar-scroll`, restored by assigning `scrollTop` in Base.astro) still lands
- * instantly, which it has to, or every page load would open with the index visibly sliding down
- * from the top.
- *
- * BEHIND AN ATTRIBUTE `Base.astro` WRITES ON `load`, AND THIS IS NOT A PREFERENCE, IT IS A BUG FIX.
- * Landing on a deep link (`/componentes/toc#contrato`) is a scroll too, so plain `smooth` animates
- * it, and an animated fragment scroll runs against a page that is still settling: the browser aims
- * at where the section was when the animation started and never re-aims, while fonts, previews and
- * iframes keep moving it. Measured on the built site: the target landed 124px ABOVE the viewport
- * (198px past its own `scroll-margin`), under the header, with the rail marking the wrong section.
- * Instant lands it exactly on the margin, because the browser re-anchors as content arrives.
- *
- * So the page loads with jumps instant and turns travel on once there is nothing left to shift,
- * which is also exactly the line between the scrolls the reader did not ask for and the ones
- * they did.
+ * `html` has no `scroll-behavior` rule on purpose: that property can't distinguish an anchor click
+ * from any other programmatic scroll on the page (Tab landing on an off-screen control, a `focus()`
+ * call, `scrollIntoView()` elsewhere), so setting it site-wide would animate scrolls the reader
+ * never asked for. The one scroll that should travel — clicking an in-page anchor — is handled by a
+ * `scrollIntoView({ behavior: "smooth" })` call scoped to that click, in Base.astro.
  */
-html[data-scroll-smooth] {
-  scroll-behavior: smooth;
-}
-
-/* Same shape the carousel's track uses (components/carousel.css): the setting asks not to be moved
- * through the distance, so the jump goes back to being a jump. */
-@media (prefers-reduced-motion: reduce) {
-  html[data-scroll-smooth] {
-    scroll-behavior: auto;
-  }
-}
 
 body {
   margin: 0;
@@ -233,38 +205,21 @@ body {
 }
 
 /* Icon-only, the same square as the theme toggle beside it (sizing comes from sk-button[data-icon-only]).
-   Two glyphs stack in one cell and cross-fade on the contrast mode, exactly like the theme toggle: the
-   half fills in place the moment high contrast turns on, so the change reads in the icon itself. */
+   Faces and the morph are the Icon Toggle pattern; this mapping lights the matching face from the
+   same `[data-contrast="high"]` the tokens key on, so the icon cannot disagree with the mode. */
 .dimensions__contrast-toggle {
-  display: inline-grid;
-  place-items: center;
   color: var(--color-text-secondary);
 }
 
-.dimensions__contrast-toggle .sk-icon {
-  grid-area: 1 / 1;
-  transition-property: opacity, transform, filter;
-  transition-duration: var(--motion-state-change-duration);
-  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
-  opacity: 0;
-  transform: scale(0.25);
-  filter: blur(4px);
+:root:not([data-contrast="high"]) .dimensions__contrast-toggle:not([data-contrast-toggle-scoped]) > [data-face="normal"],
+:root[data-contrast="high"] .dimensions__contrast-toggle:not([data-contrast-toggle-scoped]) > [data-face="high"] {
+  --sk-icon-toggle-on: 1;
 }
 
-/* Normal glyph whenever contrast isn't high (attribute absent or removed), high glyph when it is, the
-   same [data-contrast="high"] the tokens key on, so the icon can never disagree with the mode, and the
-   FOUC script sets it before paint so there is no wrong-glyph flash on load. */
-:root:not([data-contrast="high"]) .dimensions__contrast-toggle [data-contrast-icon="normal"],
-:root[data-contrast="high"] .dimensions__contrast-toggle [data-contrast-icon="high"] {
-  opacity: 1;
-  transform: scale(1);
-  filter: blur(0);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dimensions__contrast-toggle .sk-icon {
-    transition: none;
-  }
+/* Lab preview: the toggle paints from its own pressed state, not from :root. */
+.dimensions__contrast-toggle[data-contrast-toggle-scoped][aria-pressed="false"] > [data-face="normal"],
+.dimensions__contrast-toggle[data-contrast-toggle-scoped][aria-pressed="true"] > [data-face="high"] {
+  --sk-icon-toggle-on: 1;
 }
 
 /* The global links move into the drawer on narrow screens; contrast remains available beside mode. */
@@ -947,7 +902,8 @@ main > :where(h2, h3) {
 
 .docs-component-hero-tabs ~ [data-sk-tabs-content] :where(h2, h3, h4) {
   scroll-margin-top: calc(
-    var(--docs-navbar-h, var(--docs-header-block-size)) + var(--docs-hero-tabs-h, 0px) + var(--space-stack-md)
+    var(--docs-navbar-h, var(--docs-header-block-size)) + var(--docs-hero-bar-h, 0px) +
+      var(--docs-hero-tabs-h, 0px) + var(--space-stack-md)
   );
 }
 
@@ -981,10 +937,16 @@ main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid > *:not([data
  * under whichever of those is opaque there. `--docs-hero-tabs-h` is unset (and so 0px) on every
  * page without a `.docs-component-hero-tabs`, which is what lets one rule cover both cases instead
  * of a page-specific override.
+ *
+ * `--docs-hero-bar-h` is the third box in that stack and follows the same idiom: it is declared only
+ * inside the `@supports`/reduced-motion pair that makes the hero collapse into a pinned bar, so it
+ * is 0px wherever that bar does not exist — including a browser with no scroll-driven animations,
+ * where the hero is not sticky at all.
  */
 .shell .sk-code-preview {
   --sk-code-preview-copy-sticky-top: calc(
-    var(--docs-navbar-h, var(--docs-header-block-size)) + var(--docs-hero-tabs-h, 0px)
+    var(--docs-navbar-h, var(--docs-header-block-size)) + var(--docs-hero-bar-h, 0px) +
+      var(--docs-hero-tabs-h, 0px)
   );
 }
 
@@ -1061,11 +1023,16 @@ p {
    exactly this: display-sm, "marketing / hero chrome" per semantic/_type.scss, and an eyebrow
    that repeats the sidebar section this page lives under, the same orientation a breadcrumb gives.
 
-   Tinted with the DECORATIVE reach role (`--color-decorative-bg`, which resolves to the same accent
-   wash a current nav-list item and the current toc link use), rather than a bespoke color or the raw
-   `--color-bg-accent-subtle`, so a brand swap re-tints the hero for free AND turning the accent's reach
-   down takes it with the rest of the decoration. A tinted band behind a page title is the textbook case
-   of the dimension's "decoration" bucket: it is not telling you anything, it is dressing. Full-bleed to `<main>`'s own edges (negative margin
+   Tinted with the RAW `--color-bg-accent-subtle`, not the DECORATIVE reach role. This used to be
+   `--color-decorative-bg` on the theory that a tinted band behind a page title is the textbook case
+   of the dimension's "decoration" bucket, so it should dial down with the rest of the chrome. Measured
+   against the reach toggle in the header (the three-bar meter, cycling `data-accent` 3 → 2 → 1) and it
+   reads wrong: at 1 or 2 the band goes the same flat `--color-bg-surface-sunken` grey every OTHER
+   panel on the page uses, so the one piece of chrome telling the reader "this is the page's identity"
+   loses the only thing that made it that — while the title text right on top of it (fixed to
+   `--color-text-primary`, see the h1 rule below, for its own reason) stays put regardless. A brand
+   swap still re-tints it for free, since `--color-bg-accent-subtle` still resolves through the loaded
+   ramp; only the reach dial no longer touches it. Full-bleed to `<main>`'s own edges (negative margin
    cancelling its `--space-inset-lg` padding, `sk-wrapper`'s default) and re-padded by that exact
    amount, so the title lines up with the prose directly below it instead of sitting indented
    inside a second inset.
@@ -1074,6 +1041,40 @@ p {
    padding-top, and padding-bottom is only what separates the title from the tabs immediately
    below: the same "hero settles onto the content that follows it" rhythm a magazine masthead
    uses, rather than a title floating in the middle of a colored rectangle. */
+/*
+ * THE TWO ENDS OF THE COLLAPSE, declared even on pages that never collapse, because
+ * `--docs-hero-collapse` is a registered `<number>` whose initial value is 0: every calc that reads
+ * them resolves to the `-max` end until something drives it. A page with no scroll-driven animation
+ * — and `/componentes`, which takes this hero without the collapsing shell around it — therefore
+ * paints the band it always painted, off these declarations rather than a second copy of them.
+ *
+ * ON BOTH BOXES, and that is not redundancy. The header sizes itself from these; the SHELL derives
+ * the collapse range and the bar height from them, for the spacer's height and the tab strip's
+ * pinned top. A custom property only ever travels DOWNWARD, so declaring them on the header alone
+ * left the shell's two calcs referencing nothing. That fails quietly in the worst way: an invalid
+ * `animation-range` falls back to `normal`, which hands the animation the entire page to scrub
+ * over. Measured that way first — the title took 900px of scroll to shed 7px.
+ */
+.docs-component-head,
+.docs-component-hero {
+  --docs-hero-pad-start-max: calc(var(--space-section) * 1.5);
+  --docs-hero-pad-start-min: var(--space-inset-md);
+  --docs-hero-pad-end-max: var(--space-stack-lg);
+  --docs-hero-pad-end-min: var(--space-inset-md);
+  /* Inline padding used to be a constant 24px whether the band was full-height or a small pinned
+     bar, which at the collapsed end read as generous side margins around type that had nowhere
+     near that much air above or below it. Animated on the SAME `--docs-hero-collapse` progress as
+     the block axis rather than a fixed value, so a small bar gets a small inset on every side, not
+     just the two it already had. All three settle on `--space-inset-md`, one step down from the
+     expanded `-lg`: tighter than the full band, still enough air that the type does not crowd the
+     bar's own edges. */
+  --docs-hero-pad-inline-max: var(--space-inset-lg);
+  --docs-hero-pad-inline-min: var(--space-inset-md);
+  --docs-hero-title-max: var(--font-size-display-lg);
+  --docs-hero-title-min: var(--font-size-heading-h2);
+  --docs-hero-eyebrow-line: calc(var(--font-size-caption) * var(--font-line-height-caption));
+}
+
 .docs-component-hero {
   /*
    * IN THE COLUMN, not bled out of it. This used to cancel `<main>`'s inline padding with a negative
@@ -1085,13 +1086,49 @@ p {
    * Rounded for the same reason: a tinted rectangle running to a hard edge reads as bleed that got
    * clipped. With a radius it reads as a panel that was always meant to end there.
    */
-  padding: calc(var(--space-section) * 1.5) var(--space-inset-lg) var(--space-stack-lg);
-  border-radius: var(--radius-surface);
-  background: var(--color-decorative-bg);
+  padding-block-start: calc(
+    var(--docs-hero-pad-start-max) +
+      (var(--docs-hero-pad-start-min) - var(--docs-hero-pad-start-max)) * var(--docs-hero-collapse)
+  );
+  padding-block-end: calc(
+    var(--docs-hero-pad-end-max) +
+      (var(--docs-hero-pad-end-min) - var(--docs-hero-pad-end-max)) * var(--docs-hero-collapse)
+  );
+  padding-inline: calc(
+    var(--docs-hero-pad-inline-max) +
+      (var(--docs-hero-pad-inline-min) - var(--docs-hero-pad-inline-max)) * var(--docs-hero-collapse)
+  );
+  /* Square at the collapsed end. Rounded reads as "a panel that meant to end there" while the band
+     sits in the column; pinned under the navbar with the page sliding beneath it, the same corners
+     would be two notches showing scrolling content through them. */
+  border-radius: calc(var(--radius-surface) * (1 - var(--docs-hero-collapse)));
+  background: var(--color-bg-accent-subtle);
 }
 
+/*
+ * CLOSES COMPLETELY, driven straight off `--docs-hero-collapse` rather than gated behind the
+ * `@supports` door further down: the registered property's own initial value is 0, so a browser that
+ * never animates this hero renders the same full-height, fully-opaque eyebrow it always did, with no
+ * separate base-case rule to keep in sync.
+ *
+ * A real "Breadcrumb" — a `nav`/`ol`/`li` trail that flipped into an inline "Componentes / Accordion"
+ * row once collapsed — was tried here and undone: the row it settled into read as a second, competing
+ * bit of navigation appearing mid-scroll, not as the same title getting out of the way. Hiding the
+ * label outright is the simpler read: the band keeps its accent tint (that part never depended on
+ * this text — see `.docs-component-hero`'s own `background` above), and the eyebrow just isn't part
+ * of what a reader is here for once they have scrolled past it.
+ *
+ * All three properties reach zero at the same instant collapse finishes (`--docs-hero-collapse: 1`),
+ * so nothing is left floating in a bar sized for text that is no longer there:
+ *   margin      the air it left under it
+ *   block-size  its own line box
+ *   opacity     the ink itself, so a reader tabbing through mid-scroll never focuses invisible text
+ */
 .docs-component-hero__eyebrow {
-  margin: 0 0 var(--space-stack-xs);
+  margin: 0 0 calc(var(--space-stack-xs) * (1 - var(--docs-hero-collapse)));
+  block-size: calc(var(--docs-hero-eyebrow-line) * (1 - var(--docs-hero-collapse)));
+  overflow: hidden;
+  opacity: calc(1 - var(--docs-hero-collapse));
   /* The eyebrow travels with the band it sits in: both are the decorative pair, so a dialled-down
      accent cannot leave brand-coloured text floating on a neutral wash. */
   color: var(--color-decorative-fg);
@@ -1101,9 +1138,32 @@ p {
   text-transform: uppercase;
 }
 
+/* Colour is its own rule, outside the `:not([data-flush])` the typography needs: `data-flush` is an
+   opt-out from block space, and a hero title that took it would still belong to this band.
+ *
+ * PLAIN TEXT COLOUR, DELIBERATELY NOT THE ACCENT. This used to read `--color-decorative-fg`, the
+ * same pair the eyebrow above takes, on the theory that the title belongs to the tinted band rather
+ * than to the prose under it. Measured against the palette switcher (the header's brand-preset dot,
+ * `dimensions__palette-toggle`) and it does not hold: on the Violeta preset the accent ramp IS
+ * violet, so a 60px bold "Accordion" rendered in fully saturated purple — legible as "purple", not
+ * as "this brand's blue". A caption-sized eyebrow can carry that; 60px display type reads as a
+ * colour choice, not a brand cue. The eyebrow keeps the decorative pair (small text, an established
+ * pattern elsewhere: current nav item, badges); the title does not repeat its mistake.
+ */
+.docs-component-hero h1 {
+  color: var(--color-text-primary);
+}
+
 .docs-component-hero h1:not([data-flush]) {
   margin-block-end: 0;
-  font-size: var(--font-size-display-lg);
+  font-size: calc(
+    var(--docs-hero-title-max) +
+      (var(--docs-hero-title-min) - var(--docs-hero-title-max)) * var(--docs-hero-collapse)
+  );
+  /* ONE ratio across the whole range, not display-lg's at the top and a heading's at the bottom.
+     Interpolating both would make the line box the product of two moving numbers, and the collapse
+     distance below is a sum of linear terms — the two ends would still land right and every frame
+     between them would drift. A single ratio keeps the height exactly linear in the scroll. */
   line-height: var(--font-line-height-display-lg);
 }
 
@@ -1200,6 +1260,163 @@ p {
 
 .docs-component-hero-tabs > .sk-tabs__trigger {
   flex: none;
+}
+
+/* ── the hero collapsing onto the tab strip ──────────────────────────────────
+ *
+ * Scroll down and the masthead becomes a small bar pinned above the tabs: a smaller heading, no
+ * eyebrow (it closed with the rest of the band — see its own rule above), the accent band at a
+ * fraction of its height. One title, one element — nothing is duplicated into the bar and then
+ * cross-faded, so there is no second copy for a screen reader to meet and no `aria-hidden` to keep
+ * honest.
+ *
+ * THE HEADER'S LAYOUT HEIGHT NEVER CHANGES, and that is the whole trick. Animating its real height
+ * was tried and measured: the tab strip underneath rises at the scroll's rate PLUS every pixel the
+ * header gives back, so it hits its own pinned top about twice as fast as the band closes, and the
+ * opaque band then covers it for the rest of the range — at 1400px the strip pinned at 100px with
+ * the band's edge still down at 173. Solving `s_pin = range` for that geometry gives a range of 24px,
+ * which is not a collapse, it is a snap.
+ *
+ * So the height that disappears is a SPACER above the header, a box that only ever scrolls off, and
+ * the header itself is always the small bar. Nothing above the strip changes size in layout, so the
+ * strip rises at exactly the scroll's rate and is never overtaken.
+ *
+ * THE SPACER IS EXACTLY AS TALL AS THE COLLAPSE RANGE, one number doing both jobs: the distance the
+ * reader scrolls to close the band is the distance of band there was to close. That is why the title
+ * appears to settle rather than to jump — it is anchored to the bar's bottom edge (`flex-end`, with
+ * the tall type simply overflowing upward over the spacer), so only its SIZE changes while its
+ * baseline stays put.
+ *
+ * PROGRESSIVE, and the default is today's page. Everything here lives behind
+ * `@supports (animation-timeline: scroll())`: without it there is no way to drive the collapse, and a
+ * hero that pinned at full height would sit on a third of the viewport forever. Reduced motion opts
+ * out through the same door — text that rescales under the reader's own scroll is motion, and the
+ * page it falls back to is the one that shipped before this block existed.
+ */
+@property --docs-hero-collapse {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes docs-hero-collapse {
+  to {
+    --docs-hero-collapse: 1;
+  }
+}
+
+.docs-component-head {
+  /* A plain BLOCK container, and it has to stay one. Its whole job is to be the tall containing
+     block the sticky hero never had as a direct child of `<main class="sk-layout-grid">` (see the
+     comment in ComponentPageShell.astro). Turn this into a grid or a flex box and every child is
+     back in its own area, which is the exact bug it exists to fix. */
+  min-inline-size: 0;
+}
+
+/* Nothing to stand in for until the collapse is on: without it the header is the whole band again. */
+.docs-component-hero__spacer {
+  display: none;
+}
+
+/* Every selector below is scoped under `.docs-component-head`, and that is load-bearing rather than
+   tidiness: `/componentes` renders a `.docs-component-hero` of its own with no collapsing shell
+   around it, and unscoped these rules reached it too — pinning a catalogue masthead that has nothing
+   to pin under, squaring its top corners, and dropping it from 212px to 90px because
+   `padding-block-start: 0` landed on a box that still wanted its padding. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .docs-component-head {
+      /*
+       * THE TWO MEASUREMENTS THE WHOLE THING HANGS OFF, declared on the shell because three
+       * different boxes need them and custom properties only travel downward: the header sizes
+       * itself with them, the spacer takes the range as its height, and the tab strip pins against
+       * the bar height.
+       *
+       * Restated from the hero's own `-min` ends rather than read off them — those live on
+       * `.docs-component-hero` so a hero with no shell around it (`/componentes`) is still
+       * self-contained. Keep the two in step.
+       *
+       * NO EYEBROW TERM in the bar height: by the time collapse reaches 1 the eyebrow's margin,
+       * line box and opacity have all closed to zero (see its own rule), so the collapsed bar is
+       * just the title's line box between the two minimum paddings — read off the `-min` tokens
+       * themselves rather than a value restated a third time, so retuning either one keeps this
+       * in step automatically.
+       */
+      --docs-hero-bar-h: calc(
+        var(--docs-hero-pad-start-min) + var(--docs-hero-pad-end-min) +
+          var(--font-size-heading-h2) * var(--font-line-height-display-lg)
+      );
+      /* Expanded minus collapsed, term by term: the two paddings, the eyebrow's whole block (line
+         box plus the margin under it — both close to zero together), and what the title's line box
+         loses. */
+      --docs-hero-collapse-range: calc(
+        (var(--docs-hero-pad-start-max) - var(--docs-hero-pad-start-min)) +
+          (var(--docs-hero-pad-end-max) - var(--docs-hero-pad-end-min)) +
+          (var(--docs-hero-eyebrow-line) + var(--space-stack-xs)) +
+          (var(--docs-hero-title-max) - var(--docs-hero-title-min)) *
+          var(--font-line-height-display-lg)
+      );
+    }
+
+    /* The half of the band that scrolls away. Carries the top corners, because the header below it
+       is now only the bottom edge of the same panel. */
+    .docs-component-head .docs-component-hero__spacer {
+      display: block;
+      block-size: var(--docs-hero-collapse-range);
+      border-start-start-radius: var(--radius-surface);
+      border-start-end-radius: var(--radius-surface);
+      background: var(--color-bg-accent-subtle);
+    }
+
+    .docs-component-head .docs-component-hero {
+      position: sticky;
+      top: var(--docs-navbar-h, var(--docs-header-block-size));
+      /* Over the tab strip's 2: the bar is opaque and the strip slides up behind it. */
+      z-index: 3;
+      /*
+       * CONSTANT, and always the small bar. The expanded look is the spacer above plus type that
+       * simply overflows this box upward onto it: `flex-end` pins the content to the bottom edge, so
+       * a 66px title in a 42px bar hangs over the top rather than pushing the box open. That
+       * overflow is only ever drawn over the spacer — by the time the bar pins under the navbar the
+       * title is down to its collapsed size and fits inside.
+       */
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      block-size: var(--docs-hero-bar-h);
+      /* Constant, and the collapsed end's value: with the content anchored to the bottom edge this is
+         only ever the air above whatever sits at the top of the stack once collapsed (the title alone,
+         the eyebrow having closed to nothing), and at the expanded end the type overflows past it
+         anyway. Zero here would let the title touch the bar's top edge once pinned. */
+      padding-block-start: var(--docs-hero-pad-start-min);
+      border-radius: 0;
+      border-end-start-radius: calc(var(--radius-surface) * (1 - var(--docs-hero-collapse)));
+      border-end-end-radius: calc(var(--radius-surface) * (1 - var(--docs-hero-collapse)));
+      animation-name: docs-hero-collapse;
+      animation-fill-mode: both;
+      animation-timing-function: linear;
+      /* `root` and not `nearest`: the sidebar rail is its own `overflow-y: auto` scroller, and
+         `nearest` would be a coin flip about which box this element is measured against. */
+      animation-timeline: scroll(root block);
+      animation-range: 0 var(--docs-hero-collapse-range);
+    }
+
+    /*
+     * OVERFLOW, NOT SHRINK. A flex item defaults to `flex-shrink: 1`, and this container is
+     * deliberately shorter than its own content for most of the range: left alone, the eyebrow was
+     * squeezed to a 0px box and the title's line box crushed with it, so the band read as empty
+     * while the font-size said otherwise. `none` makes the column keep its natural height and hang
+     * over the top edge, which is the effect this is built on.
+     */
+    .docs-component-head .docs-component-hero > * {
+      flex: none;
+    }
+
+    /* Pinned under the collapsed band rather than under the navbar alone. */
+    .docs-component-head .docs-component-hero-tabs {
+      top: calc(var(--docs-navbar-h, var(--docs-header-block-size)) + var(--docs-hero-bar-h));
+    }
+  }
 }
 
 
@@ -1481,7 +1698,7 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile) {
 }
 
 /* ── filter row ───────────────────────────────────────────────────────────── */
-/* The token filter is two sk-fields (search + tier) and a live count. `align-items: end` lines the
+/* The token filter is two sk-form-fields (search + tier) and a live count. `align-items: end` lines the
    controls up along one baseline while their labels sit above, so the two fields read as one row even
    though each owns its own label. The search grows, the tier holds a comfortable width, the count sits
    at the trailing edge on the control line. */

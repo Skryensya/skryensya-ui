@@ -1,0 +1,357 @@
+/*
+ * Marketing landing page chrome. Layout, type, cards, lists and surfaces come from the kit
+ * (Wrapper, Stack, Inline, Grid, Box, Heading, Text, Link, List, ProcessList, Tabs).
+ *
+ * What remains here is page-level: section rhythm, hero viewport, hiding ComponentPreview chrome
+ * inside marketing stages, theme-lab isolation, and accent swatches (the kit has no swatch control).
+ */
+
+.landing {
+  color: var(--color-text-primary);
+  background:
+    radial-gradient(
+      90% 50% at 8% -8%,
+      color-mix(in oklab, var(--color-bg-accent-subtle) 42%, transparent),
+      transparent 58%
+    ),
+    var(--color-bg-canvas);
+}
+
+.landing__section {
+  padding-block: clamp(var(--space-section), 9vw, 8rem);
+}
+
+/*
+ * `min-block-size` is a FLOOR, not a target: at a common 900px-tall laptop viewport the old
+ * `min(78vh, 40rem)` (640px) left the title+lede+CTA stack (~560px) short of it, and
+ * `align-content: end` spent that difference as dead air above the content — on top of which the
+ * hero's OWN `padding-block-end` (inherited from `.landing__section`, ~115px) and the NEXT
+ * section's `padding-block-start` (another ~115px) stack with nothing between them to read as
+ * intentional, not accidental. Measured: ~230px of unbroken canvas between the CTA row and the
+ * following heading, with no divider or colour change to explain it.
+ *
+ * Lowered so content decides the box's real height on ordinary viewports (`min-block-size` only
+ * takes over when the title is short or the viewport is unusually tall), which removes the
+ * `align-content: end` gap at its source rather than only trimming the padding around it.
+ */
+.landing__hero {
+  display: grid;
+  align-content: end;
+  min-block-size: min(58vh, 30rem);
+  padding-block-start: clamp(4rem, 10vw, 7rem);
+}
+
+.landing__hero .sk-heading {
+  max-inline-size: 14ch;
+}
+
+.landing__intro .sk-heading {
+  max-inline-size: 16ch;
+}
+
+@media (max-width: 51.99rem) {
+  .landing .sk-grid[data-columns="2"]:not([data-multicol]) {
+    --sk-grid-columns: 1;
+  }
+}
+
+/*
+ * THE "PROOF" SECTIONS get a shared tint. Composition, Behavior and Bindings are the three places
+ * the page stops describing the system and shows it running (a live ComponentPreview or real code),
+ * as opposed to the menu-shaped sections either side of them (Start, Rules, Needs, Patterns) that
+ * are lists of links out. Without some visual break, all seven read as the same repeating unit —
+ * heading, lede, white boxes — and the distinction between "here is a menu" and "here is it working"
+ * is only legible if you read the copy. The hairline top/bottom border is the same device
+ * `.landing__footer` already uses for "a seam exists here", so the page has one consistent way of
+ * saying "new region," not two.
+ */
+.landing__section--proof {
+  background: var(--color-bg-surface-sunken);
+  border-block: 1px solid var(--color-border-subtle);
+}
+
+/*
+ * THE COMPOSITION SCROLLY. Two columns: a tall, ordinary-flow list of captions on the inline-start
+ * side (each one dedicating real scroll distance to its stage), and a STICKY preview on the
+ * inline-end side that stays pinned while the reader scrolls past them. `[data-landing-scrolly].js`
+ * (the enhancer, in the `<script>` at the end of this file) toggles which caption and which preview
+ * carry `data-active` as each caption crosses the viewport's centre — see that script for why
+ * IntersectionObserver and not a CSS scroll-timeline.
+ */
+.landing__scrolly {
+  display: grid;
+  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+  gap: var(--space-inset-xl);
+  align-items: start;
+}
+
+.landing__scrolly-steps {
+  display: grid;
+}
+
+/*
+ * The scroll distance a stage "owns": tall enough that the reader spends a real beat on each one
+ * instead of the sticky preview flickering past.
+ *
+ * THE LAST STEP KEEPS THE SAME HEIGHT — a zero-height last step was tried, on the theory that
+ * nothing has to stay pinned once it is the one showing. Measured, and it does not work: the
+ * IntersectionObserver's `rootMargin` band has real height (a slice of the viewport), but a target
+ * with none has no intersection AREA to overlap it with, so it never reported `isIntersecting` and
+ * "Interfaz completa" was unreachable — the scrolly got stuck on the previous stage forever. The
+ * side effect of matching heights is a small one, and a welcome one: the reader also gets a full
+ * beat with the finished interface pinned in view before the section ends, instead of it flashing
+ * past the instant it appears.
+ */
+/*
+ * DE-EMPHASIS IS A BORDER AND A COLOUR SWAP, NOT OPACITY. `opacity: 0.4` was tried on the whole
+ * step (text included) and measured with axe: the caption's already-AA `--color-text-secondary`
+ * fell to a 1.83:1 ratio, the heading's to 2.23:1, both well under the 4.5:1 / 3:1 floors — fading
+ * inactive text down far enough to read as "de-emphasized" and staying legible turn out to be
+ * mutually exclusive. Every step's text stays at its normal, already-compliant tone at all times;
+ * only the marker border and the heading's colour change, both additions on top of full contrast
+ * rather than a reduction of it. The accent border also means the current stage does not depend on
+ * colour perception alone to read as current (WCAG 1.4.1) — a person who cannot distinguish the
+ * heading's tint from the default still sees which border is filled in.
+ */
+.landing__scrolly-step {
+  display: grid;
+  align-content: center;
+  gap: var(--space-stack-xs);
+  min-block-size: min(70vh, 32rem);
+  padding-inline-start: var(--space-inset-md);
+  border-inline-start: 2px solid var(--color-border-subtle);
+  transition: border-color var(--motion-state-change-duration) var(--motion-state-change-easing);
+}
+
+.landing__scrolly-step[data-active] {
+  border-inline-start-color: var(--color-border-accent);
+}
+
+.landing__scrolly-step[data-active] .sk-heading {
+  color: var(--color-text-accent);
+}
+
+.landing__scrolly-stage {
+  position: sticky;
+  top: calc(var(--docs-navbar-h, var(--docs-header-block-size)) + var(--space-inset-lg));
+  display: grid;
+}
+
+/* All six frames share the same grid cell; only the active one is painted. `visibility`, not
+   opacity alone: opacity 0 would leave the other five invisible but still focusable, so a keyboard
+   user tabbing through would land inside an iframe nobody can see. `visibility: hidden` removes an
+   element (and its focusable descendants, real iframes included) from both the tab order and the
+   accessibility tree; the browser resolves the two states' opposite timing on its own — a fade to
+   `hidden` flips visibility at the END of the transition, a fade to `visible` flips it at the START —
+   so no explicit `transition-delay` is needed for the "fade out, then truly hide" reveal below. */
+.landing__scrolly-frame {
+  grid-area: 1 / 1;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--motion-state-change-duration) var(--motion-state-change-easing),
+    visibility var(--motion-state-change-duration);
+}
+
+.landing__scrolly-frame[data-active] {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing__scrolly-step,
+  .landing__scrolly-frame {
+    transition: none;
+  }
+}
+
+/*
+ * MOBILE DROPS THE CHOREOGRAPHY, not the content. Pinning a preview beside a column of six
+ * near-full-height captions needs the width a phone does not have — stacked, the two columns would
+ * read as "six captions, then, far below, one swapping preview," disconnected from whichever caption
+ * triggered it. Simpler and still honest: single column, no sticky, no per-stage scroll distance,
+ * every preview shown. The reader scans six short captions and then six previews in the same order
+ * — not the scroll-driven reveal, but not broken either.
+ */
+@media (max-width: 51.99rem) {
+  .landing__scrolly {
+    grid-template-columns: 1fr;
+  }
+
+  .landing__scrolly-step {
+    min-block-size: 0;
+    opacity: 1;
+  }
+
+  .landing__scrolly-stage {
+    position: static;
+    display: contents;
+  }
+
+  .landing__scrolly-frame {
+    grid-area: auto;
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Box clips to radius by default; composition stages and code blocks opt out when overlays sit outside the pad. */
+.landing__stage,
+.landing .sk-box:has(.sk-code-preview) {
+  overflow: visible;
+}
+
+.landing__stage .sk-component-preview {
+  margin: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.landing__stage .sk-component-preview__header,
+.landing__stage .sk-component-preview__resizer,
+.landing__stage .sk-component-preview__loading {
+  display: none;
+}
+
+/* The one full-bleed pause before the close: raw `--color-bg-accent-subtle`, not the neutral
+   surface token this used to read. At `--color-bg-surface-sunken` it was one shade off the page's
+   own canvas — after thirteen sections of the same near-white background, the band that is supposed
+   to be a highlight before the final CTA read as more of the same. The raw accent wash (not the
+   reach-aware `--color-decorative-bg`) matches the choice already made for the docs component hero:
+   a marketing moment stays branded regardless of the site's accent-reach dial. */
+.landing__band {
+  background: var(--color-bg-accent-subtle);
+}
+
+.landing__footer {
+  padding-block-start: var(--space-stack-lg);
+  border-block-start: 1px solid var(--color-border-subtle);
+}
+
+.landing-lab__grid {
+  align-items: start;
+}
+
+/* Controls stay on site tokens and do not stretch with the preview column. */
+.landing-lab__controls {
+  align-self: start;
+  inline-size: 100%;
+}
+
+.landing-lab__swatches {
+  flex-wrap: wrap;
+}
+
+.landing-lab__presets {
+  display: grid;
+  gap: var(--space-stack-xs);
+  inline-size: 100%;
+  margin-block-start: var(--space-stack-xs);
+}
+
+.landing-lab__presets--density {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.landing-lab__presets--radius {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.landing-lab__preset.sk-button {
+  inline-size: 100%;
+  justify-content: center;
+  font-weight: var(--font-weight-label);
+}
+
+.landing-lab__preset.sk-button[aria-pressed="true"] {
+  --sk-button-bg: var(--color-bg-surface-sunken);
+  --sk-button-fg: var(--color-text-primary);
+  box-shadow: inset 0 0 0 1px var(--color-border-subtle);
+}
+
+.landing-lab__preset--token {
+  font-family: var(--font-family-code);
+  font-size: var(--font-size-body-sm);
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+}
+
+.landing-lab__preview {
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface-raised);
+}
+
+.landing-lab__header {
+  padding: var(--space-inset-sm) var(--space-inset-md);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  border-block-end: 1px solid var(--color-border-subtle);
+}
+
+.landing-lab__stage {
+  display: grid;
+  place-items: center;
+  min-block-size: 22rem;
+  padding: var(--space-inset-xl);
+  background: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+}
+
+.landing-lab__stage > .sk-box {
+  inline-size: min(100%, 22rem);
+}
+
+.landing-lab__swatch {
+  position: relative;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.landing-lab__swatch::before {
+  content: "";
+  position: absolute;
+  inset: 0.4rem;
+  border-radius: var(--radius-pill);
+  background: var(--swatch);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-border-default) 25%, transparent);
+}
+
+.landing-lab__swatch[aria-pressed="true"]::before {
+  inset: 0.28rem;
+  box-shadow:
+    0 0 0 2px var(--color-bg-surface),
+    0 0 0 4px var(--color-border-focus);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .landing__hero .sk-heading,
+  .landing__hero .sk-text[data-role="subtitle"],
+  .landing__hero .sk-inline {
+    animation: landing-rise 520ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+
+  .landing__hero .sk-text[data-role="subtitle"] {
+    animation-delay: 140ms;
+  }
+
+  .landing__hero .sk-inline {
+    animation-delay: 210ms;
+  }
+}
+
+@keyframes landing-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

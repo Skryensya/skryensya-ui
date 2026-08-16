@@ -1,0 +1,101 @@
+---
+import "@skryensya/core/components/data-grid.css";
+import "@skryensya/core/patterns/state-layer.css";
+import "@skryensya/core/components/button.css";
+import "@skryensya/core/patterns/icon.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { dataGridActionsTree, dataGridScoresTree } from "../../demos/data-grid";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/data-grid.yaml?raw";
+import coreSource from "@core/src/data-grid.ts?raw";
+import cssSource from "@core/css/components/data-grid.css?raw";
+import vanillaMountSource from "@vanilla/src/components/data-grid.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/data-grid.test.ts?raw";
+import reactSource from "@react/src/components/data-grid.tsx?raw";
+import reactTestSource from "@react/src/components/data-grid.test.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `@import "@skryensya/core/components/data-grid.css";
+@import "@skryensya/core/patterns/state-layer.css";`;
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+initComponents();`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/data-grid.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/data-grid.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/data-grid.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/data-grid.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/data-grid.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/data-grid.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/data-grid.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Data Grid"
+  description={t("dataGridPage.description")}
+  contractId="data-grid"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/data-grid.css", probe: "sk-data-grid", title: "Data Grid" },
+    { file: "patterns/state-layer.css", probe: "sk-interactive", title: "Heredados de State layer" },
+  ]}
+  tests={[
+    {
+      file: "packages/react/src/components/data-grid.test.tsx",
+      tests: [
+        {
+          name: "hands the roving stop to a cell's OWN interactive descendant, not the cell div",
+          description: t("dataGridPage.testReact1"),
+        },
+        {
+          name: "clamps into a shorter row's last real cell on vertical movement (ragged grid)",
+          description: t("dataGridPage.testReact2"),
+        },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/data-grid.test.ts",
+      tests: [
+        {
+          name: "wraps columns into the next row when data-wrap-cols is set",
+          description: t("dataGridPage.testVanilla1"),
+        },
+        {
+          name: "clicking a cell moves the roving stop there",
+          description: t("dataGridPage.testVanilla2"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("dataGridPage.lede")} />
+
+    <h3>{t("dataGridPage.dataTitle")}</h3>
+    <p set:html={t("dataGridPage.dataBody")} />
+    <ComponentPreview tree={dataGridScoresTree(t)} js={js} label={t("dataGridPage.dataLabel")} />
+
+    <h3>{t("dataGridPage.layoutTitle")}</h3>
+    <p set:html={t("dataGridPage.layoutBody")} />
+    <ComponentPreview tree={dataGridActionsTree(t)} js={js} label={t("dataGridPage.layoutLabel")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("dataGridPage.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("dataGridPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

@@ -4,7 +4,21 @@ import { useRef, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
-export type ToolbarProps = {
+const controlsSelector = "button:not([disabled]), a[href], input:not([disabled]), select:not([disabled])";
+
+/*
+ * A toolbar item can itself be a composite widget (Segmented's radiogroup, Tabs' tablist): it
+ * already owns a roving tabindex, so only ONE of its members has tabindex="0" and the rest are
+ * "-1". Filtering those out is what makes the composite a single stop for the toolbar's own
+ * roving focus, instead of the toolbar visiting every one of its internal options too — decision
+ * 27, and the vanilla enhancer's own `isStop`/`controlsSelector` this mirrors exactly, so the two
+ * bindings can never disagree about what counts as one stop.
+ */
+function isStop(element: HTMLElement): boolean {
+  return element.getAttribute("tabindex") !== "-1";
+}
+
+export type ToolbarProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
   label: string;
   children: ReactNode;
   // Derived: Core owns the axis, and a copy here would go stale the day a third one appears.
@@ -14,20 +28,24 @@ export type ToolbarProps = {
 
 export function Toolbar({
   children,
+  className,
   label,
   loopFocus = true,
   orientation = "horizontal",
+  ...rest
 }: ToolbarProps) {
   const ref = useRef<HTMLDivElement>(null);
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    // A composite child (Segmented, Tabs) that already moved focus itself calls
+    // preventDefault() before this listener sees the bubbled event; skip so its own arrow-key
+    // handling isn't re-applied a second time by the ancestor toolbar.
+    if (event.defaultPrevented) return;
     const previous = orientation === "horizontal" ? "ArrowLeft" : "ArrowUp";
     const next = orientation === "horizontal" ? "ArrowRight" : "ArrowDown";
     if (![previous, next, "Home", "End"].includes(event.key)) return;
     const controls = Array.from(
-      ref.current?.querySelectorAll<HTMLElement>(
-        "button:not([disabled]), a[href], input:not([disabled]), select:not([disabled])",
-      ) ?? [],
-    );
+      ref.current?.querySelectorAll<HTMLElement>(controlsSelector) ?? [],
+    ).filter(isStop);
     if (!controls.length) return;
     const active = controls.indexOf(document.activeElement as HTMLElement);
     let target =
@@ -43,9 +61,10 @@ export function Toolbar({
   };
   return (
     <div
+      {...rest}
       aria-label={label}
       aria-orientation={orientation}
-      className={toolbarParts.root}
+      className={cx(toolbarParts.root, className)}
       data-orientation={orientation}
       onKeyDown={onKeyDown}
       ref={ref}

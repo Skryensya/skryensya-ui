@@ -109,7 +109,7 @@ The matrix records shipped public surfaces and behavior coverage.
 | Badge | ✓ | ✓ | ✓ |, | ✓ | ✓ |
 | Kbd | ✓ | ✓ | ✓ |, | ✓ | ✓ |
 | Button | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Field and Input | ✓ | ✓ | ✓ | Native | ✓ | ✓ |
+| FormField and Input | ✓ | ✓ | ✓ | Native | ✓ | ✓ |
 | Checkbox, RadioGroup, and Switch | ✓ | ✓ | ✓ | Native | ✓ | ✓ |
 | Navbar | ✓ | ✓ | ✓ |, | ✓ | ✓ |
 | Sidebar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

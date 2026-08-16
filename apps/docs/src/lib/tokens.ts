@@ -36,7 +36,7 @@ export const byName = new Map(tokens.map((t) => [t.name, t] as const));
 export const PROBES: Record<string, string> = {
   "components/badge.css": "sk-badge",
   "components/button.css": "sk-button",
-  "components/field.css": "sk-field",
+  "components/form-field.css": "sk-form-field",
   "components/input.css": "sk-input",
   "components/details.css": "sk-details",
   "components/navbar.css": "sk-navbar",

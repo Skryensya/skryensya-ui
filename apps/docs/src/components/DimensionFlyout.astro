@@ -13,7 +13,7 @@ interface Props {
   prop?: string;
   /** Shown when the current value matches no option (e.g. an externally-set custom value). */
   placeholder?: string;
-  /** One line under the control: what the choice reaches. Field's hint, tied by aria-describedby. */
+  /** One line under the control: what the choice reaches. FormField's hint, tied by aria-describedby. */
   hint?: string;
   /** Marks the row for a page script that tracks which ones carry an override. */
   row?: string;
@@ -30,7 +30,7 @@ const current = options.find((o) => o.value === value) ?? options[0];
 const hintId = hint ? `${id}-hint` : undefined;
 ---
 
-<div class="sk-field" data-row={row}>
+<div class="sk-form-field" data-row={row}>
   <div
     class="sk-flyout"
     data-sk-flyout
@@ -70,5 +70,5 @@ const hintId = hint ? `${id}-hint` : undefined;
     </ul>
   </div>
 
-  {hint && <span class="sk-field__hint" id={hintId}>{hint}</span>}
+  {hint && <span class="sk-form-field__hint" id={hintId}>{hint}</span>}
 </div>

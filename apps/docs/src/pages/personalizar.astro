@@ -360,17 +360,17 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
           </div>
         </section>
 
-        <!-- form: Field + Input + Select + Checkbox + Button -->
+        <!-- form: FormField + Input + Select + Checkbox + Button -->
         <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="none" data-bento="wide">
           <header><Fragment set:html={iconMarkup("user")} /><strong>Crear cuenta</strong></header>
           <div class="sk-flow">
             <p class="sk-panel__desc">Empieza con tu correo. Es gratis por 14 días.</p>
-            <div class="sk-field">
-              <label class="sk-field__label" for="cs-name">Nombre</label>
+            <div class="sk-form-field">
+              <label class="sk-form-field__label" for="cs-name">Nombre</label>
               <input class="sk-input" id="cs-name" value="Ada Lovelace" />
             </div>
-            <div class="sk-field">
-              <label class="sk-field__label" for="cs-mail">Correo</label>
+            <div class="sk-form-field">
+              <label class="sk-form-field__label" for="cs-mail">Correo</label>
               <input class="sk-input" id="cs-mail" type="email" value="ada@example.com" />
             </div>
             <DimensionSelect
@@ -495,8 +495,8 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
               <label class="sk-radio"><input class="sk-radio__input" type="radio" name="cs-bill" value="a" /><span class="sk-radio__control" aria-hidden="true"><span class="sk-radio__indicator" /></span><span class="sk-radio__label">Anual</span></label>
             </div>
             <label class="sk-switch"><input class="sk-switch__input" type="checkbox" role="switch" checked /><span class="sk-switch__control" aria-hidden="true"><span class="sk-switch__thumb" /></span><span class="sk-switch__label">Activar 2FA</span></label>
-            <div class="sk-field">
-              <label class="sk-field__label" for="cs-vol">Volumen</label>
+            <div class="sk-form-field">
+              <label class="sk-form-field__label" for="cs-vol">Volumen</label>
               <input class="sk-slider" id="cs-vol" type="range" min="0" max="100" value="65" data-sk-slider style="--sk-slider-fill: 0.65" />
             </div>
             <div class="sk-progress" role="progressbar" aria-label="Uso" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="--sk-progress-fill: 68%"><div class="sk-progress__bar" /></div>
@@ -1056,7 +1056,7 @@ const STORAGE = { key: STORAGE_KEY, slot: playgroundPreference.slot };
     text-transform: uppercase;
   }
 
-  /* Both lists are the same thing: one Field per row, each wrapping a Flyout. Each row STACKS the
+  /* Both lists are the same thing: one FormField per row, each wrapping a Flyout. Each row STACKS the
      label over the trigger (the Flyout's own default): a caption on its own line, then the
      value-carrying button below it. Stacked, not side-by-side, so the Material set's wider glyph
      never meets the label. The trigger keeps its box: it is always a visible, bordered button. */

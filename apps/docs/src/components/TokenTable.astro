@@ -18,7 +18,7 @@
 import { groupedTokens, PROBES, probeProp, slugId, tokens } from "../lib/tokens";
 import { getLocale, useTranslations } from "../i18n";
 import CopyCells from "./CopyCells.astro";
-/* The sk-input + sk-field STRUCTURE (field.css/input.css ship only hooks). The select is already
+/* The sk-input + sk-form-field STRUCTURE (field.css/input.css ship only hooks). The select is already
  * painted in site.css; this is what the search field and the field labels were missing here, which is
  * why the input rendered as a bare native box next to the styled select. */
 
@@ -92,8 +92,8 @@ const counts = {
 <CopyCells />
 
 <div class="filters">
-  <div class="sk-field filters__search">
-    <label class="sk-field__label" for="token-filter">{tr("tokens.search")}</label>
+  <div class="sk-form-field filters__search">
+    <label class="sk-form-field__label" for="token-filter">{tr("tokens.search")}</label>
     <input
       class="sk-input"
       type="search"
@@ -103,8 +103,8 @@ const counts = {
     />
   </div>
 
-  <div class="sk-field filters__tier">
-    <label class="sk-field__label" for="tier-filter">Tier</label>
+  <div class="sk-form-field filters__tier">
+    <label class="sk-form-field__label" for="tier-filter">Tier</label>
     <select class="sk-select-native" id="tier-filter">
       <option value="">{tr("tokens.all")}</option>
       <option value="primitive">primitive · {counts.primitive}</option>
@@ -113,8 +113,8 @@ const counts = {
     </select>
   </div>
 
-  <div class="sk-field filters__group">
-    <label class="sk-field__label" for="group-filter">{tr("tokens.group")}</label>
+  <div class="sk-form-field filters__group">
+    <label class="sk-form-field__label" for="group-filter">{tr("tokens.group")}</label>
     <select class="sk-select-native" id="group-filter">
       <option value="">{tr("tokens.all")}</option>
       {

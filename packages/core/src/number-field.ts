@@ -35,7 +35,7 @@ export const numberFieldAttrs = {
  * triggers are real Buttons: the shape, the state layer and the hit target come with them, and Zag
  * writes their accessible names from `translations`.
  *
- * Its label is a slot rather than a Field, because the machine has to own the `for`/`id` pair to
+ * Its label is a slot rather than a FormField, because the machine has to own the `for`/`id` pair to
  * keep the announced value in sync with the formatted one.
  */
 export const numberFieldContract = {

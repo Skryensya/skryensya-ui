@@ -1,45 +1,46 @@
 import type { ComponentContract } from "./contract.js";
 
-export type FieldOptions = {
+export type FormFieldOptions = {
   invalid?: boolean;
   required?: boolean;
   disabled?: boolean;
 };
 
 /*
- * The chrome around any control, label, hint, error. Deliberately independent of `input`: a
- * field wraps a select, a group of checkboxes or a textarea just as readily, and naming it for
- * the control it most often holds would make the name a lie the first time it holds another.
+ * The chrome around any control, label, hint, error. Deliberately independent of `input`: a form
+ * field wraps a select, a group of checkboxes or a textarea just as readily, and naming it for the
+ * control it most often holds would make the name a lie the first time it holds another.
  */
-export const fieldParts = {
-  root: "sk-field",
-  label: "sk-field__label",
-  hint: "sk-field__hint",
-  error: "sk-field__error",
-  requiredIndicator: "sk-field__required",
+export const formFieldParts = {
+  root: "sk-form-field",
+  label: "sk-form-field__label",
+  hint: "sk-form-field__hint",
+  error: "sk-form-field__error",
+  requiredIndicator: "sk-form-field__required",
 } as const;
 
-export type FieldPart = keyof typeof fieldParts;
-export type FieldPartClass = (typeof fieldParts)[FieldPart];
+export type FormFieldPart = keyof typeof formFieldParts;
+export type FormFieldPartClass = (typeof formFieldParts)[FormFieldPart];
 
 /*
  * The contract, and the case that wiring exists for.
  *
- * A field is chrome plus a control, and what binds them is six ids: the label points at the control,
- * the control points back at the hint and the error, and each of those carries the id being pointed
- * at. Written by hand — which is what authored markup does today — every one of them is a chance to
- * be silently wrong: a mistyped `aria-describedby` shows nothing on screen and breaks every screen
- * reader that reads the form.
+ * A form field is chrome plus a control, and what binds them is six ids: the label points at the
+ * control, the control points back at the hint and the error, and each of those carries the id being
+ * pointed at. Written by hand — which is what authored markup does today — every one of them is a
+ * chance to be silently wrong: a mistyped `aria-describedby` shows nothing on screen and breaks every
+ * screen reader that reads the form.
  *
- * Deliberately independent of `input`: a field wraps a select, a group of checkboxes or a textarea
- * just as readily, and naming it for the control it most often holds would make the name a lie the
- * first time it holds another. That is why `children` accepts any signature and the wiring points at
- * `"control"` rather than at an input.
+ * Deliberately independent of `input`: it wraps a select, a group of checkboxes or a textarea just as
+ * readily, and naming it for the control it most often holds would make the name a lie the first time
+ * it holds another. That is why `children` accepts any signature and the wiring points at `"control"`
+ * rather than at an input. `FormField` rather than `Field` for the same reason the rest of the name
+ * is literal: a bare "field" is a word every domain model already uses for something else.
  */
-export const fieldContract = {
-  id: "field",
-  css: "@skryensya/core/components/field.css",
-  parts: fieldParts,
+export const formFieldContract = {
+  id: "form-field",
+  css: "@skryensya/core/components/form-field.css",
+  parts: formFieldParts,
 
   options: {
     /**
@@ -51,7 +52,7 @@ export const fieldContract = {
   },
 
   signatures: {
-    Field: {
+    FormField: {
       intent: ["labelled-control", "form-field", "input-with-label", "validation-message"],
       host: { element: "div" },
       // Neither lands on the field box: both are the control's, delivered by the wiring below.
@@ -100,7 +101,7 @@ export const fieldContract = {
           { element: "div", part: "error", name: "error", whenGiven: "error", slot: "error" },
         ],
       },
-      react: { from: "@skryensya/react/input", name: "Field" },
+      react: { from: "@skryensya/react/form-field", name: "FormField" },
     },
   },
 } as const satisfies ComponentContract;

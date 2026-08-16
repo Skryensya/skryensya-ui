@@ -4,7 +4,7 @@ import type { Recipe } from "./recipe.js";
  * A form that is submitted, can fail, and says so where the failure happened.
  *
  * The interesting state is `error`, and it is interesting because the error lives in TWO places at
- * once and neither is optional: the Field whose value is wrong carries the message that invalidates
+ * once and neither is optional: the FormField whose value is wrong carries the message that invalidates
  * it, and the Callout above the form says the submission did not go through. Only one of those tells
  * a screen reader which control to go back to, and only the other one is visible without scrolling.
  */
@@ -25,8 +25,8 @@ export const formRecipe: Recipe = {
       children: [
         { contract: "typography", signature: "Heading", children: "Crear proyecto" },
         {
-          contract: "field",
-          signature: "Field",
+          contract: "form-field",
+          signature: "FormField",
           slots: { label: "Nombre del proyecto" },
           children: {
             contract: "input",
@@ -35,8 +35,8 @@ export const formRecipe: Recipe = {
           },
         },
         {
-          contract: "field",
-          signature: "Field",
+          contract: "form-field",
+          signature: "FormField",
           slots: { label: "Descripción" },
           children: {
             contract: "input",
@@ -68,14 +68,14 @@ export const formRecipe: Recipe = {
       children: [
         { contract: "typography", signature: "Heading", children: "Crear proyecto" },
         {
-          contract: "field",
-          signature: "Field",
+          contract: "form-field",
+          signature: "FormField",
           slots: { label: "Nombre del proyecto", hint: "Lo vas a poder cambiar después." },
           children: { contract: "input", signature: "Input", options: { name: "nombre" } },
         },
         {
-          contract: "field",
-          signature: "Field",
+          contract: "form-field",
+          signature: "FormField",
           slots: { label: "Descripción" },
           children: { contract: "input", signature: "Textarea", options: { name: "descripcion" } },
         },
@@ -110,8 +110,8 @@ export const formRecipe: Recipe = {
           children: "Revisá el nombre y volvé a intentar.",
         },
         {
-          contract: "field",
-          signature: "Field",
+          contract: "form-field",
+          signature: "FormField",
           slots: {
             label: "Nombre del proyecto",
             error: "Ya existe un proyecto con ese nombre.",
@@ -119,8 +119,8 @@ export const formRecipe: Recipe = {
           children: { contract: "input", signature: "Input", options: { name: "nombre" } },
         },
         {
-          contract: "field",
-          signature: "Field",
+          contract: "form-field",
+          signature: "FormField",
           slots: { label: "Descripción" },
           children: { contract: "input", signature: "Textarea", options: { name: "descripcion" } },
         },

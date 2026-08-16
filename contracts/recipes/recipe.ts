@@ -5,7 +5,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
  *
  * A catalogue answers "which component"; it does not answer "what does a form look like when it is
  * saving, and what does it look like when it failed". Those are the compositions an agent is
- * actually asked for, and they are where the catalogue's constraints meet each other: a Field's
+ * actually asked for, and they are where the catalogue's constraints meet each other: a FormField's
  * error slot is what makes the form invalid, an EmptyState is not a Loader, a destructive action is
  * a variant AND a confirmation.
  *

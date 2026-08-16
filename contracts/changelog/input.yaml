@@ -3,8 +3,27 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "d8ab5e35627948bf"
+surface: "75f1964a79df6785"
 entries:
+  - date: 2026-08-14
+    kind: breaking
+    es:
+      title: Input y Textarea ahora se anidan bajo FormField
+      body: >-
+        El padre que ambas signatures declaran pasa de <code>Field</code> a <code>FormField</code>, que
+        es el mismo contrato con su nombre nuevo. Un árbol que anide <code>Input</code> bajo
+        <code>Field</code> deja de validar: cambiá el <code>contract</code> a <code>form-field</code> y
+        la <code>signature</code> a <code>FormField</code>. El control en sí no cambió, sigue sin
+        <code>invalid</code> y sin <code>id</code> propios porque los dos llegan del cableado del padre.
+    en:
+      title: Input and Textarea now nest under FormField
+      body: >-
+        The parent both signatures declare moves from <code>Field</code> to <code>FormField</code>, the
+        same contract under its new name. A tree nesting <code>Input</code> under <code>Field</code> no
+        longer validates: change the <code>contract</code> to <code>form-field</code> and the
+        <code>signature</code> to <code>FormField</code>. The control itself is unchanged — it still has
+        no <code>invalid</code> and no <code>id</code> of its own, because both arrive from the parent's
+        wiring.
   - date: 2026-08-11
     kind: feature
     es:

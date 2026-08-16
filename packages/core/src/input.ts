@@ -21,11 +21,11 @@ export type InputPart = keyof typeof inputParts;
 export type InputPartClass = (typeof inputParts)[InputPart];
 
 /*
- * The control a Field wraps. Two signatures over one appearance: `sk-input` goes on `<input>` and on
- * `<textarea>` alike, because visually they are the same control and a second class would be a second
- * set of hooks to keep in step.
+ * The control a FormField wraps. Two signatures over one appearance: `sk-input` goes on `<input>` and
+ * on `<textarea>` alike, because visually they are the same control and a second class would be a
+ * second set of hooks to keep in step.
  *
- * There is no `invalid` option and no `id`: both arrive from the Field's wiring. A control that
+ * There is no `invalid` option and no `id`: both arrive from the FormField's wiring. A control that
  * carried its own `aria-invalid` could disagree with the error message beside it, and an id the
  * author typed would not be the one the label points at.
  */
@@ -52,7 +52,7 @@ export const inputContract = {
       intent: ["text-entry", "single-line-input", "email", "password", "search-field"],
       host: { element: "input" },
       options: ["controlSize", "type", "name", "placeholder", "disabled"],
-      parents: ["Field"],
+      parents: ["FormField"],
       slots: {},
       template: { element: "input", part: "root", host: true },
       react: { from: "@skryensya/react/input", name: "Input" },
@@ -71,7 +71,7 @@ export const inputContract = {
       intent: ["multi-line-input", "long-text", "comment", "description-entry"],
       host: { element: "textarea" },
       options: ["controlSize", "name", "placeholder", "disabled"],
-      parents: ["Field"],
+      parents: ["FormField"],
       slots: {},
       template: { element: "textarea", part: "root", host: true },
       react: { from: "@skryensya/react/input", name: "Textarea" },

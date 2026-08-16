@@ -1,0 +1,80 @@
+# Qué cambió en treegrid, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# hash nuevo.
+surface: "516ea2fb128a4b3f"
+entries:
+  - date: 2026-08-16
+    kind: feature
+    target: Treegrid
+    es:
+      title: Nueva opción resizableColumns, columnas redimensionables por arrastre
+      body: >-
+        Se agrega <code>resizableColumns</code> (opt-in, apagada por defecto — el alcance auditado
+        de <code>treegrid-1</code> sigue siendo texto plano sin chrome extra a menos que el
+        consumidor lo pida). Encendida, el binding inserta un separador WAI-ARIA APG "Window
+        Splitter" real (<code>role="separator"</code>, <code>aria-orientation="vertical"</code>,
+        flechas/Shift+flecha/Home/End/Enter) entre cada par de encabezados de columna — nunca el
+        último, no tiene vecino siguiente con quien redistribuir ancho. Es el mismo primitivo
+        compartido que ya usa el separador de <code>Sidebar</code>
+        (<code>@skryensya/core/splitter</code>, publicado esta sesión: el emparejador de teclado y
+        el umbral de arrastre puro en un solo lugar, en vez de reescritos en cada consumidor), con
+        la diferencia real documentada en <code>resolveColumnResize</code>: <code>Sidebar</code>
+        pinza UN valor contra un límite fijo vía CSS <code>clamp()</code>; una columna redistribuye
+        ancho entre un PAR de vecinos cuya suma se mantiene fija, así que ninguna otra columna se
+        mueve. Requiere <code>resizeLabel</code> (nueva opción, gate de a11y) — el separador es
+        binding-insertado, nunca autorado, así que nada más lo nombra para un lector de pantalla.
+    en:
+      title: New resizableColumns option, drag-to-resize columns
+      body: >-
+        Adds <code>resizableColumns</code> (opt-in, off by default — `treegrid-1`'s own audited
+        scope stays plain text with no extra chrome unless a consumer asks for it). Turned on, the
+        binding inserts a real WAI-ARIA APG "Window Splitter" separator
+        (<code>role="separator"</code>, <code>aria-orientation="vertical"</code>,
+        arrows/Shift+arrow/Home/End/Enter) between every pair of column headers — never the last,
+        which has no next neighbor to redistribute width with. It is the same shared primitive
+        Sidebar's own separator now uses too (<code>@skryensya/core/splitter</code>, published this
+        session: the keyboard matcher and drag threshold live in one pure place instead of being
+        rewritten per consumer), with the real difference documented on
+        <code>resolveColumnResize</code>: Sidebar clamps ONE value against a fixed bound via a CSS
+        <code>clamp()</code>; a column redistributes width between a PAIR of neighbors whose sum
+        stays fixed, so no other column ever moves. Requires <code>resizeLabel</code> (a new
+        option, an a11y gate) — the separator is binding-inserted, never authored, so nothing else
+        names it for a screen reader.
+  - date: 2026-08-15
+    kind: bugfix
+    target: TreegridRow
+    es:
+      title: Corrige el desalineado de columnas y el chevron pasa a ser un botón real
+      body: >-
+        <code>sk-interactive</code> en el <code>&lt;tr&gt;</code> pintaba su capa de estado con un
+        <code>::before</code>: un hijo generado de una fila entra al algoritmo de layout de tabla
+        igual que cualquier otro, así que el navegador lo envolvía en una celda anónima y corría
+        cada <code>&lt;td&gt;</code> real una columna a la derecha (medido: Chromium 140, la
+        última celda de cada fila terminaba con ancho 0) — el <code>&lt;th&gt;</code> y el
+        <code>&lt;td&gt;</code> dejaban de alinear y el grid se leía roto. Se quita esa clase del
+        <code>&lt;tr&gt;</code>; cada <code>TreegridCell</code> ya la lleva y sigue dando su propio
+        estado de hover/press. El chevron, que era un <code>::before</code> puramente decorativo
+        sin elemento real, ahora es un <code>&lt;button&gt;</code> de verdad que el binding inserta
+        en la primera celda de una fila rama — visible al puntero, con su propio estado
+        hover/press, pero <code>aria-hidden</code> y fuera del tabindex propio: el
+        <code>aria-expanded</code> de la fila sigue siendo lo único que anuncia un lector de
+        pantalla, así que este alcance (treegrid-1) no gana un control enfocable dentro de una
+        celda.
+    en:
+      title: Fixes column misalignment; the chevron becomes a real button
+      body: >-
+        <code>sk-interactive</code> on the <code>&lt;tr&gt;</code> painted its state layer with a
+        <code>::before</code>: a row's generated child enters the table layout algorithm the same
+        as any other, so the browser wrapped it into an anonymous table-cell and pushed every real
+        <code>&lt;td&gt;</code> one column right (measured: Chromium 140, each row's last cell
+        ended up at width 0) — the <code>&lt;th&gt;</code> and <code>&lt;td&gt;</code> stopped
+        lining up and the grid read as broken. That class is removed from the <code>&lt;tr&gt;</code>;
+        each <code>TreegridCell</code> already carries it and still gives its own hover/press
+        state. The chevron, previously a purely decorative <code>::before</code> with no real
+        element, is now a genuine <code>&lt;button&gt;</code> the binding inserts into a branch
+        row's first cell — visible to a pointer, with its own hover/press state, but
+        <code>aria-hidden</code> and out of the tab order: the row's own <code>aria-expanded</code>
+        remains the only thing a screen reader announces, so this scope (treegrid-1) does not gain
+        a focusable control inside a cell.

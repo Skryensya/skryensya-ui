@@ -1,0 +1,47 @@
+# La estructura vive en packages/core/src/treegrid.ts. Acá sólo por qué se elige.
+
+Treegrid:
+  useWhen:
+    - "los datos tienen jerarquía Y columnas a la vez — un explorador de archivos con tamaño/fecha, un org chart con cargo/área"
+    - "cada fila necesita expandirse o colapsarse sin perder el resto de sus columnas"
+  avoidWhen:
+    - "hay columnas pero ninguna jerarquía; eso es una Table"
+    - "hay jerarquía pero una sola columna de texto; eso es un TreeView"
+  alternatives:
+    - Table
+    - TreeView
+
+TreegridScroll:
+  useWhen:
+    - "casi siempre: mismo motivo que TableScroll — la grilla no debe reventar un flex o un grid al ser más ancha que su espacio"
+  alternatives:
+    - Treegrid
+
+TreegridHead:
+  useWhen:
+    - "las columnas tienen encabezado, que es casi siempre"
+
+TreegridHeadRow:
+  useWhen:
+    - "siempre que hay TreegridHead: es la fila que contiene los TreegridColumnHeader"
+
+TreegridColumnHeader:
+  useWhen:
+    - "la celda nombra su columna"
+
+TreegridBody:
+  useWhen:
+    - "siempre: es donde viven las filas de la grilla, y la grilla no está completa sin él"
+
+TreegridRow:
+  useWhen:
+    - "un registro de la grilla, en el mismo orden que un lector de pantalla lo recorre — nunca anidado dentro de otro TreegridRow, un <tr> no puede contener otro <tr>"
+    - "la fila tiene descendientes: pasa `expanded` (true o false) y escríbelos a continuación, en orden, con un `level` mayor"
+  avoidWhen:
+    - "la fila es una hoja sin hijos; ahí no se pasa `expanded` en absoluto — su ausencia es lo que la marca hoja, no un valor `false`"
+
+TreegridCell:
+  useWhen:
+    - "un valor dentro de una fila de la grilla"
+  avoidWhen:
+    - "el contenido necesita su propio control interactivo (un botón, un link); esta versión del contrato es fiel al ejemplo WAI `treegrid-1` — celdas de solo texto, ver docs/aria-apg-audit.md"

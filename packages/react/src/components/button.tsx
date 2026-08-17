@@ -7,7 +7,13 @@ import { type AnchorHTMLAttributes, type ButtonHTMLAttributes, type ReactNode } 
  * the variant and size unions, their defaults, the attributes they land on, the classes, and the
  * accessible-name rule — is read from `buttonContract`. Adding a variant is one edit, in Core.
  */
-const { variant: variantOption, size: sizeOption, iconOnly: iconOnlyOption } = buttonContract.options;
+const {
+  variant: variantOption,
+  size: sizeOption,
+  iconOnly: iconOnlyOption,
+  squareStart: squareStartOption,
+  squareEnd: squareEndOption,
+} = buttonContract.options;
 const actionTemplate = buttonContract.signatures["Button.action"].template;
 const iconOnlyRule = buttonContract.a11y[0];
 
@@ -56,6 +62,8 @@ export function Button({
   children,
   className,
   iconOnly,
+  squareStart,
+  squareEnd,
   variant = variantOption.default,
   size = sizeOption.default,
   ...props
@@ -65,6 +73,8 @@ export function Button({
   const shared = {
     className: buttonClasses(className),
     [iconOnlyOption.attr]: iconOnly ? iconOnlyOption.trueValue : undefined,
+    [squareStartOption.attr]: squareStart ? squareStartOption.trueValue : undefined,
+    [squareEndOption.attr]: squareEnd ? squareEndOption.trueValue : undefined,
     [sizeOption.attr]: size,
     [variantOption.attr]: variant,
   } as const;

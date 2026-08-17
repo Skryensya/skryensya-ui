@@ -23,6 +23,13 @@ const cx = (...classes: Array<string | undefined>) =>
   classes.filter(Boolean).join(" ");
 type CheckedState = Record<string, boolean>;
 
+const {
+  triggerSquareStart: triggerSquareStartOption,
+  triggerSquareEnd: triggerSquareEndOption,
+  triggerVariant: triggerVariantOption,
+  triggerSize: triggerSizeOption,
+} = menuContract.options;
+
 export type MenuProps = Pick<
   SignatureOptionsOf<typeof menuContract, "Menu">,
   "density"
@@ -38,6 +45,16 @@ export type MenuProps = Pick<
    *  icon-only trigger (leave `trigger` unset): the chevron below is painted either way, and this
    *  is what makes the button announce something instead of nothing. */
   triggerLabel?: string;
+  /** Removes the trigger button's own start/end corner rounding — see `menu.ts`'s identical
+   *  option doc. The same attribute (`data-square-start`/`-end`) `Button`'s own `squareStart`/
+   *  `squareEnd` options write; button.css owns the rule, this only reaches the same attribute. */
+  triggerSquareStart?: boolean;
+  triggerSquareEnd?: boolean;
+  /** Passed straight to the trigger's own `data-variant`/`data-size` — see `menu.ts`'s identical
+   *  option doc. `Button`'s own `[data-variant="…"]`/`[data-size="…"]` rules (button.css) apply to
+   *  the trigger directly once these are set; nothing here repeats their CSS. */
+  triggerVariant?: string;
+  triggerSize?: string;
   indicator?: ReactNode;
   itemIndicator?: ReactNode;
   submenuIndicator?: ReactNode;
@@ -396,6 +413,10 @@ export function Menu({
   trigger,
   triggerClassName,
   triggerLabel,
+  triggerSquareStart,
+  triggerSquareEnd,
+  triggerVariant,
+  triggerSize,
 }: MenuProps) {
   const generatedId = useId();
   const [checkedState, setChecked] = useState<CheckedState>(() =>
@@ -493,6 +514,14 @@ export function Menu({
           {...api.getTriggerProps()}
           {...anchor.anchor(cx("sk-button", "sk-interactive", menuParts.trigger, triggerClassName))}
           aria-label={triggerLabel}
+          {...{
+            [triggerSquareStartOption.attr]: triggerSquareStart
+              ? triggerSquareStartOption.trueValue
+              : undefined,
+            [triggerSquareEndOption.attr]: triggerSquareEnd ? triggerSquareEndOption.trueValue : undefined,
+            [triggerVariantOption.attr]: triggerVariant,
+            [triggerSizeOption.attr]: triggerSize,
+          }}
           disabled={disabled}
           type="button"
         >

@@ -3,8 +3,43 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "20ef55911e9a836e"
+surface: "5220b8586e8cdc58"
 entries:
+  - date: 2026-08-17
+    kind: feature
+    target: triggerVariant
+    es:
+      title: Nuevas opciones triggerSquareStart/End, triggerVariant, triggerSize
+      body: >-
+        Se agregan <code>triggerSquareStart</code>/<code>triggerSquareEnd</code> (booleanas) y
+        <code>triggerVariant</code>/<code>triggerSize</code> (string, sin validar — Menu no es dueño
+        de ese vocabulario, <code>Button</code> sí), las cuatro escribiendo a las MISMAS
+        <code>data-square-start</code>/<code>data-square-end</code>/<code>data-variant</code>/
+        <code>data-size</code> que las opciones homónimas de <code>Button</code>
+        (<code>squareStart</code>/<code>squareEnd</code>/<code>variant</code>/<code>size</code>).
+        El trigger ya carga la clase <code>sk-button</code>, así que las reglas de button.css se
+        aplican directo, sin que este archivo repita ni una línea de esa hoja. Pensado para cuando
+        un Menu se compone como el segmento adjunto de otro control — el caso que lo motivó es
+        <code>SplitButton</code>, cuyo trigger necesitaba coincidir en relleno, tamaño y esquina
+        soldada con el botón primario de al lado, y hasta ahora lo hacía con un selector de
+        hermanos en CSS propio de split-button en vez de pedirle al trigger que cargue los mismos
+        atributos que cualquier Button ya usa.
+    en:
+      title: New triggerSquareStart/End, triggerVariant, triggerSize options
+      body: >-
+        Adds <code>triggerSquareStart</code>/<code>triggerSquareEnd</code> (boolean) and
+        <code>triggerVariant</code>/<code>triggerSize</code> (plain string, unvalidated — Menu does
+        not own that vocabulary, <code>Button</code> does), all four writing to the SAME
+        <code>data-square-start</code>/<code>data-square-end</code>/<code>data-variant</code>/
+        <code>data-size</code> attributes as <code>Button</code>'s own identically-named options
+        (<code>squareStart</code>/<code>squareEnd</code>/<code>variant</code>/<code>size</code>).
+        The trigger already carries the <code>sk-button</code> class, so button.css's own rules
+        apply directly, with not one line of that stylesheet restated here. Built for when a Menu
+        is composed as another control's attached segment — the motivating case is
+        <code>SplitButton</code>, whose trigger needed to match the neighboring primary button's
+        fill, size, and welded corner, and until now did it with a sibling selector in
+        split-button's own CSS instead of asking the trigger to simply carry the same attributes
+        any Button already uses.
   - date: 2026-08-16
     kind: feature
     target: triggerLabel

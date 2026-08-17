@@ -428,9 +428,10 @@ describe("expanded component inventory", () => {
     expect(
       ui.getByRole("button", { name: "Más opciones" }).hasAttribute("disabled"),
     ).toBe(true);
-    expect(
-      ui.getByRole("button", { name: "Más opciones" }).classList,
-    ).toContain("sk-split-button__trigger");
+    const trigger = ui.getByRole("button", { name: "Más opciones" });
+    expect(trigger.hasAttribute("data-square-start")).toBe(true);
+    expect(trigger.hasAttribute("data-icon-only")).toBe(true);
+    expect(trigger.getAttribute("data-variant")).toBe("primary");
   });
 
   it("forwards multiple native files through FileUpload", async () => {

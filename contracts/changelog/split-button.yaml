@@ -3,8 +3,40 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "7b0a4a72edc909ca"
+surface: "41142fdfc5c3d259"
 entries:
+  - date: 2026-08-17
+    kind: feature
+    target: SplitButton
+    es:
+      title: El segmento primario ya es un Button compuesto, no una parte propia del contrato
+      body: >-
+        El slot que hasta ahora era texto plano (<code>children</code>, con <code>variant</code>/
+        <code>size</code> como opciones de este mismo contrato) pasa a llamarse
+        <code>primary</code> y acepta una signature <code>Button.action</code> compuesta —
+        exactamente lo mismo que <code>menu</code> ya hacía con <code>Menu</code>. El template ya
+        no tiene una parte "primary" propia: la renderiza el `<button>` real que compone el
+        autor, con `sk-button` como cualquier otro Button de la página, ninguna clase propia de
+        split-button encima. `squareEnd` no es una opción — es un hecho estático de este contrato
+        (la mitad primaria siempre tiene un trigger pegado a su lado), así que el autor lo pasa
+        él mismo al componer su propio Button, la misma responsabilidad que ya tenía con
+        `triggerLabel` en el Menu compuesto. El binding de React conserva una capa de conveniencia
+        con props planas (`children`/`variant`/`size` directo en `<SplitButton>`), que por dentro
+        arma un `<Button>` real — nunca un `<button>` a mano imitándolo.
+    en:
+      title: The primary segment is now a composed Button, not the contract's own part
+      body: >-
+        The slot that used to be plain text (`children`, with `variant`/`size` as this same
+        contract's own options) is renamed `primary` and takes a composed `Button.action`
+        signature instead — exactly what `menu` already did with `Menu`. The template no longer
+        has a "primary" part of its own: it is rendered by the real `<button>` the author
+        composes, carrying `sk-button` like any other Button on the page, no split-button-specific
+        class on top. `squareEnd` is not an option — it is a static fact of this contract (the
+        primary half always has a trigger glued to its side), so the author sets it themselves
+        when composing their own Button, the same responsibility they already had for
+        `triggerLabel` on the composed Menu. The React binding keeps a flat-prop convenience layer
+        (`children`/`variant`/`size` directly on `<SplitButton>`), which internally builds a real
+        `<Button>` — never a hand-rolled `<button>` imitating one.
   - date: 2026-08-17
     kind: bugfix
     target: label
@@ -53,7 +85,6 @@ entries:
         source of identity.
   - date: 2026-08-16
     kind: feature
-    target: variant
     es:
       title: Nuevas opciones variant y size; los dos segmentos ya escalan juntos
       body: >-

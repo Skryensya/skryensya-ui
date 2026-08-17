@@ -147,6 +147,15 @@ export const menuContract = {
      */
     triggerVariant: { type: "string", attr: "data-variant" },
     triggerSize: { type: "string", attr: "data-size" },
+    /**
+     * The SAME attribute `Button`'s own `iconOnly` option writes (`data-icon-only`) — a trigger
+     * with no visible `trigger` content (paired with `triggerLabel` for its accessible name) is
+     * exactly the icon-only SHAPE Button already has a name for: a control-sized square holding
+     * one glyph, zero inline padding. The only thing that still makes it a split-button trigger
+     * and not a bare icon button is `triggerSquareStart` — everything else about its shape comes
+     * from this, unchanged from any other icon-only Button on the page.
+     */
+    triggerIconOnly: { type: "boolean", default: false, attr: "data-icon-only", trueValue: "" },
     disabled: {
       type: "boolean",
       default: false,
@@ -193,6 +202,7 @@ export const menuContract = {
         "triggerSquareEnd",
         "triggerVariant",
         "triggerSize",
+        "triggerIconOnly",
         "disabled",
         "density",
         "debugSafetyTriangle",
@@ -260,6 +270,7 @@ export const menuContract = {
               "triggerSquareEnd",
               "triggerVariant",
               "triggerSize",
+              "triggerIconOnly",
             ],
             attrs: { type: "button" },
             slot: "trigger",

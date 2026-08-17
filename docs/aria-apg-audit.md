@@ -436,6 +436,8 @@ El usuario pidió agregarlo. Alcance de v1 acordado explícitamente antes de esc
 
 **Tercera ampliación — sin parte "primary" propia, el trigger es un icon button real, a pedido explícito del usuario (2026-08-17):** el usuario fue más lejos todavía: "no quiero que nada sea sk-split-button__primary, ni tener el split button como contenedor... el boton del chevron debe ser un icon button, cuyo unico cambio sea el radius." El slot que renderizaba un `<button>` propio del template (con `class="sk-split-button__primary"`, aunque ya sin CSS propio tras la ampliación anterior) se renombra a `primary` y pasa a aceptar una signature `Button.action` compuesta — igual que `menu` ya hacía con `Menu`. La clase desaparece por completo, no solo el CSS que la apuntaba: el HTML compilado ahora dice `class="sk-button sk-interactive"`, idéntico a cualquier otro Button de la página. `squareEnd` deja de ser una opción reenviada; es un hecho estático que el autor pasa directo a su propio `<Button>` al componerlo. Se agrega `triggerIconOnly` a Menu (mismo mecanismo que `triggerSquareStart`, escribe al mismo `data-icon-only` que `Button`), así que el trigger ES la forma de ícono-solo de Button, con una sola diferencia real: la esquina soldada. Bug real encontrado al hacer el cambio, no anticipado: el compilador de React genera el prop `primary={<Button .../>}` a partir del nuevo slot del contrato, pero el binding de React seguía exponiendo solo `children`/`variant`/`size` planos — el botón primario salía vacío y con `data-variant="neutral"` (el default de Button, no el de split-button) en la vista previa React, silenciosamente, sin error de tipos porque el árbol se compila a JSX en runtime, fuera del alcance de `tsc`. Corregido agregando un prop `primary?: ReactNode` que espeja `menu`, con el mismo patrón `??` de respaldo. Un test existente (`inventory.test.tsx`) afirmaba la clase `sk-split-button__trigger`, que ya no existe — se corrigió para afirmar los atributos reales (`data-square-start`, `data-icon-only`, `data-variant="primary"`) en su lugar. Verificado en vivo de nuevo: las 18 combinaciones, ambas bindings, HTML sin ninguna clase `sk-split-button__*` salvo la raíz. 911 tests verdes.
 
+**Cuarta ampliación — dos ejemplos nuevos (tamaño small, menú primero), a pedido explícito del usuario (2026-08-17):** también pidió que el trigger cargue `variant="primary"` (el único elemento con color) y el botón principal `variant="neutral"` — invertido respecto al demo original, decisión de diseño del usuario, confirmada por pregunta directa (¿reusar `neutral` o agregar una variante `secondary` nueva a Button? Eligió `neutral`). El ejemplo "menú primero" se compone con `Inline` (`gap:"none"`, `inlineAlign:"stretch"`, reusando la clase `.sk-split-button` vía `attrs.class` en vez de pasar por el contrato de SplitButton, que siempre ordena `primary` antes de `menu`) en vez de a través de `SplitButton` — demuestra que `squareStart`/`squareEnd`/`triggerSquareStart`/`triggerSquareEnd` sirven para cualquier orden, no solo el que arma el contrato. La línea divisoria (`split-button.css`) se generalizó de `.sk-split-button > .sk-menu > button` (asumía Menu siempre segundo) a `:not(:first-child)` — agnóstico al orden, cubre ambos ejemplos con la misma regla. Verificado en vivo: los 3 ejemplos × 2 bindings, sin cambios de comportamiento fuera de split-button.css/demos/i18n — sin conflicto de contrato, `ai-compiler` emite limpio sin nueva entrada de changelog. 911 tests verdes, `astro check` limpio.
+
 ### Listbox — revisado ✅ (2026-08-15), corregido (2026-08-15)
 
 **Contra el patrón WAI** (`listbox-collapsible`: botón con `aria-haspopup="listbox"`/`aria-expanded`; `role="listbox"` con `aria-activedescendant` (foco DOM se queda en el listbox, el resaltado es virtual); `role="option"` con `aria-selected` — en single-select siempre igual al `aria-activedescendant`; Flechas/Enter/Down abren y navegan, Home/End, typeahead, Escape cierra):
@@ -548,3 +550,36 @@ El usuario pidió agregarlo. Alcance de v1 acordado explícitamente antes de esc
 - **Gates del proyecto:** `contracts/semantic/menubar.yaml` nuevo, `contracts/changelog/menubar.yaml` sembrado, hook `--sk-menubar-*` real desde el primer intento (la lección de `DataGrid` ya aplicada). **Suites verdes: core (12 tests nuevos), vanilla (11 nuevos), react (7 nuevos), ai-compiler 101/101 + build limpio.**
 
 **Veredicto:** el último patrón sin cubrir de toda la tabla — implementado a mano tras descartar deliberadamente la reutilización de `Menu`/Zag por el riesgo real de coordinar múltiples máquinas independientes, con el detalle más fácil de pasar por alto del patrón (el hand-off de foco entre desplegables adyacentes) modelado explícitamente y cubierto por tests dedicados en las tres capas. Con esto, las 31 filas de la tabla de cobertura están en ✅.
+
+---
+
+## Ronda 2 — el resto del catálogo de docs (a pedido explícito del usuario, 2026-08-17)
+
+Las 31 filas de arriba son el índice de ejemplos oficial de la APG, no el catálogo completo de `apps/docs` (78 páginas de componente). El usuario pidió extender la misma disciplina — leer el patrón real, comparar contra la implementación, corregir gaps en el momento — al resto del catálogo, uno por uno, incluidos los de puro contenido/layout que probablemente no tengan un rol ARIA que auditar.
+
+**Paso 0 — sincronización de flags, sin investigación nueva:** 16 páginas del catálogo ya estaban cubiertas en la tabla de arriba bajo OTRO nombre (la página de docs y la fila de la tabla documentan el mismo contrato/componente), pero nunca habían recibido `ariaReviewed: true` en `navigation.ts` — el punto del sidebar seguía en advertencia para un componente ya revisado. Confirmado 1:1 por archivo de contrato citado en cada fila, no por nombre solamente:
+
+| Página de docs | Fila de la tabla ya revisada |
+|---|---|
+| `/componentes/radio-group` | Radio Group |
+| `/componentes/select` | Listbox (`core/select.ts`) |
+| `/componentes/switch` | Switch |
+| `/componentes/table` | Table |
+| `/componentes/tabs` | Tabs |
+| `/componentes/slider` | Slider + Slider (Multi-Thumb) |
+| `/componentes/link` | Link |
+| `/componentes/dialog` | Dialog (Modal) |
+| `/componentes/combobox` | Combobox |
+| `/componentes/date-picker` | Combobox (datepicker) |
+| `/componentes/calendar` | Combobox (datepicker) |
+| `/componentes/menu` | Menu Button |
+| `/componentes/number-field` | Spinbutton |
+| `/componentes/toolbar` | Toolbar |
+| `/componentes/tree-view` | Tree View |
+| `/nav-list` | Disclosure (navigation) |
+
+`ariaReviewed: true` agregado a las 16 en `navigation.ts`. Sin cambios de código — son relecturas de filas que ya existen arriba, no revisiones nuevas.
+
+**Quedan ~51 páginas sin flag.** De esas, un subconjunto tiene semántica ARIA real que nunca pasó por esta auditoría (Tooltip, Popover, Popup, CommandPalette, SplitButton, Drawer, Flyout, Vaul, FileUpload, SegmentedControl, Pagination, SkipLink, TimeField, Progress, FormField, Input, Navbar, Sidebar, Loader, CopyButton, Theme Toggle, Table of contents, Hotkey) y el resto es contenido/layout puro (Avatar, Badge, Box, Callout, Card, Changelog, CodePreview, ComponentPreview, Grid, Layout Grid, Heading, Icon, ImageFrame, Inline, Kbd, List, ProcessList, Scrollbar, Stack, Stat, Steps, Tag, Text, Wrapper, EmptyState, Placeholder, Tile) donde se espera, pero se verifica, que no aplique ningún rol de widget.
+
+Progreso registrado por componente abajo a medida que se completa cada uno.

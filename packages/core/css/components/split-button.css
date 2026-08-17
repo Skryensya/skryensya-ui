@@ -19,18 +19,30 @@
     align-items: stretch;
   }
   /*
-   * Only the START edge of the trigger carries the hairline — the seam between the two halves,
-   * not a border AROUND either one; `squareStart`/`squareEnd` (button.css) already erase the
-   * touching corner on both sides, and every OTHER edge stays exactly whatever that button's own
-   * variant painted. Reached by structure, not a class: a composition has no way to hand a class
-   * to a control it does not render, the class would belong to Menu, and this file does not own
-   * Menu's own template.
+   * Only the START edge of whichever child is NOT first carries the hairline — the seam between
+   * the two halves, not a border AROUND either one; `squareStart`/`squareEnd` (button.css) already
+   * erase the touching corner on both sides, and every OTHER edge stays exactly whatever that
+   * button's own variant painted. `:not(:first-child)` rather than "the second child is always
+   * Menu": the usual composition is `<Button squareEnd>` then a Menu, but nothing requires that
+   * order — a Menu composed FIRST (`triggerSquareEnd` instead of `triggerSquareStart`) with a
+   * trailing `<Button squareStart>` welds exactly as well, and this rule does not need to know
+   * which shape it is looking at, only that it is not the leading one.
    */
-  .sk-split-button > .sk-menu > button {
+  .sk-split-button > *:not(:first-child) {
     /* `border-inline-start-color`, a LOGICAL property, not a hardcoded physical side: it already
      * flips to the correct edge under `dir="rtl"` on its own — the corner squaring it pairs with
      * (button.css's `squareStart`/`squareEnd`) uses the same logical family for the identical
      * reason, so this file needs no `[dir="rtl"]` rule of its own for either concern. */
+    border-inline-start-color: var(--sk-split-button-divider-color);
+  }
+  /*
+   * A composed Menu is a `<div class="sk-menu">` wrapping its own trigger `<button>` — the rule
+   * above reaches the WRAPPER, which paints no border of its own, so this reaches one level
+   * deeper into the actual button whenever Menu is not the leading child. Reached by structure,
+   * not a class: a composition has no way to hand a class to a control it does not render, the
+   * class would belong to Menu, and this file does not own Menu's own template.
+   */
+  .sk-split-button > .sk-menu:not(:first-child) > button {
     border-inline-start-color: var(--sk-split-button-divider-color);
   }
 }

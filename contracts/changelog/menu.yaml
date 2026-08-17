@@ -3,8 +3,31 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "5220b8586e8cdc58"
+surface: "f730e7d011acaab9"
 entries:
+  - date: 2026-08-17
+    kind: feature
+    target: triggerIconOnly
+    es:
+      title: Nueva opción triggerIconOnly
+      body: >-
+        Se agrega <code>triggerIconOnly</code>, escribiendo al mismo <code>data-icon-only</code>
+        que la opción homónima de <code>Button</code>. Un trigger sin contenido visible (emparejado
+        con <code>triggerLabel</code> para su nombre accesible) es exactamente la forma de ícono
+        solo que Button ya tenía un nombre para — un cuadrado del tamaño del control con un solo
+        glifo, cero padding inline — así que este trigger reusa esa forma directo en vez de que
+        Menu inventara la suya. Lo único que sigue siendo específico de un trigger soldado a otro
+        control (no de cualquier botón de solo-ícono) es <code>triggerSquareStart</code>.
+    en:
+      title: New triggerIconOnly option
+      body: >-
+        Adds <code>triggerIconOnly</code>, writing to the same <code>data-icon-only</code> as
+        <code>Button</code>'s own identically-named option. A trigger with no visible content
+        (paired with <code>triggerLabel</code> for its accessible name) is exactly the icon-only
+        SHAPE Button already had a name for — a control-sized square holding one glyph, zero
+        inline padding — so this trigger reuses that shape directly instead of Menu inventing its
+        own. The only thing that stays specific to a trigger welded against another control (not
+        to any icon-only button) is <code>triggerSquareStart</code>.
   - date: 2026-08-17
     kind: feature
     target: triggerVariant

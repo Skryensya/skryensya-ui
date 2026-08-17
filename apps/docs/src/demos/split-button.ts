@@ -3,24 +3,31 @@ import type { Translate } from "../i18n";
 import { splitButtonMenuItems } from "./data/split-button";
 
 /*
- * The default action plus its variants, and the Menu half is a real Menu, composed rather than
- * described by a flat list. That is what the contract takes, and what the stylesheet now reaches by
- * structure instead of through a class the composition could never pass.
+ * Both halves are composed, real signatures — a real `Button.action` for the primary, a real
+ * `Menu` for the alternatives — not described by a flat prop. That is what the contract takes:
+ * `split-button.ts`'s own template has no "primary" part of its own anymore, only a slot a real
+ * Button fills, so this tree is what actually decides its fill/size/squared corner, the same way
+ * it already decided the trigger's.
  */
 export const splitButtonTree = (t: Translate): UsageTree => ({
   contract: "split-button",
   signature: "SplitButton",
-  /*
-   * `variant`/`size` restated explicitly even though `"primary"`/`"md"` are their own defaults —
-   * the compiler never serializes an option's value when it equals that option's own default
-   * (confirmed live: a plain `Button` demo carries no `data-size` either), so the primary segment's
-   * `data-variant` would go unwritten and `.sk-button[data-variant="primary"]` (button.css) would
-   * simply never match. Same reasoning as `triggerVariant`/`triggerSize` below, restated for the
-   * primary half instead of the trigger.
-   */
-  options: { variant: "primary", size: "md" },
   slots: {
-    children: t("demo.splitButton.primary"),
+    primary: {
+      contract: "button",
+      signature: "Button.action",
+      /*
+       * `squareEnd`: the primary half of a split button always has a trigger glued to its end
+       * side — never left to a default, the same reasoning `split-button.ts`'s own contract doc
+       * gives for why this option is not exposed as author-configurable at all there. `variant`/
+       * `size` restated explicitly even though `"primary"`/`"md"` are their own defaults — the
+       * compiler never serializes an option's value when it equals that option's own default
+       * (confirmed live: a plain `Button` demo carries no `data-size` either), so leaving them out
+       * would mean `.sk-button[data-variant="primary"]` (button.css) simply never matches.
+       */
+      options: { variant: "primary", size: "md", squareEnd: true },
+      slots: { children: t("demo.splitButton.primary") },
+    },
     menu: {
       contract: "menu",
       signature: "Menu",
@@ -36,21 +43,22 @@ export const splitButtonTree = (t: Translate): UsageTree => ({
        * construction: the chevron stays the only visible content, and the button announces a real
        * name — matching this page's own a11y tab, "two independent buttons: one runs the action, the
        * other announces and opens the alternatives."
-       */
-      /*
-       * `triggerVariant`/`triggerSize`/`triggerSquareStart` pair this trigger with the primary
-       * button above — the SAME `variant`/`size` this tree gives `SplitButton` itself (both
-       * default to `"primary"`/`"md"`, restated explicitly here since composing the `menu` slot by
-       * hand means this tree, not `SplitButton`'s own React binding, is the one responsible for
-       * keeping the two in sync; see `split-button.ts`'s own contract doc). `Button`'s existing
-       * `[data-variant]`/`[data-size]`/`[data-square-start]` rules (button.css) do the rest —
-       * nothing split-button-specific left to set here.
+       *
+       * `triggerVariant`/`triggerSize`/`triggerIconOnly`/`triggerSquareStart` pair this trigger
+       * with the primary `Button` above: same variant, same size, the icon-only SHAPE any bare
+       * icon Button already has (button.css's own `[data-icon-only]`), and the one delta that
+       * makes it a split-button trigger instead of a bare icon button — its own start corner
+       * squared flat against the primary's end corner. Restated explicitly here, matching the
+       * primary's own values, since composing the `menu` slot by hand means this tree — not
+       * `SplitButton`'s own React binding — is the one responsible for keeping the two in sync
+       * (see `split-button.ts`'s own contract doc).
        */
       options: {
         label: t("demo.splitButton.menuLabel"),
         triggerLabel: t("demo.splitButton.menuLabel"),
         triggerVariant: "primary",
         triggerSize: "md",
+        triggerIconOnly: true,
         triggerSquareStart: true,
       },
       slots: {

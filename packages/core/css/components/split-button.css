@@ -1,11 +1,11 @@
 /*
- * TIER 3, SPLIT BUTTON: primary action plus a Menu trigger, welded flush.
+ * TIER 3, SPLIT BUTTON: a real Button plus a real Menu trigger, welded flush.
  *
- * Deliberately almost empty. Fill, size, and the squared seam corner are `Button`'s own vocabulary
- * (`[data-variant]`/`[data-size]`/`[data-square-start]`/`[data-square-end]`, button.css) — the
- * primary segment reads those rules directly (it IS a `.sk-button`), and the trigger reaches the
- * exact same rules through Menu's own `triggerVariant`/`triggerSize`/`triggerSquareStart`
- * (menu.ts), which write to the identical attributes. Nothing here restates any of that CSS. The
+ * Deliberately almost empty, and owns no part class of its own beyond the root — the primary
+ * segment is whatever the author's own composed `<Button squareEnd>` renders (`.sk-button`, its
+ * own `[data-variant]`/`[data-size]`, nothing split-button-specific), and the trigger is Menu's
+ * own trigger with `triggerVariant`/`triggerSize`/`triggerSquareStart`/`triggerIconOnly` set
+ * (menu.ts) — the same attributes, reached by structure below, never restated as CSS here. The
  * only thing genuinely specific to a SPLIT BUTTON — not to either button alone — is the layout
  * that holds the two flush, and the hairline seam between them.
  */
@@ -19,15 +19,14 @@
     align-items: stretch;
   }
   /*
-   * Only the START edge carries the hairline — the seam between the two halves, not a border
-   * AROUND either one; `squareStart`/`squareEnd` (button.css) already erase the touching corner on
-   * both sides, and every OTHER edge stays exactly whatever that button's own variant painted.
-   * Reaches the composed Menu's trigger by structure (`.sk-split-button > .sk-menu > button`): a
-   * composition has no way to hand it a class of its own, the class belongs to whoever renders
-   * that button, and that is Menu.
+   * Only the START edge of the trigger carries the hairline — the seam between the two halves,
+   * not a border AROUND either one; `squareStart`/`squareEnd` (button.css) already erase the
+   * touching corner on both sides, and every OTHER edge stays exactly whatever that button's own
+   * variant painted. Reached by structure, not a class: a composition has no way to hand a class
+   * to a control it does not render, the class would belong to Menu, and this file does not own
+   * Menu's own template.
    */
-  .sk-split-button > .sk-menu > button,
-  .sk-split-button > .sk-split-button__trigger {
+  .sk-split-button > .sk-menu > button {
     /* `border-inline-start-color`, a LOGICAL property, not a hardcoded physical side: it already
      * flips to the correct edge under `dir="rtl"` on its own — the corner squaring it pairs with
      * (button.css's `squareStart`/`squareEnd`) uses the same logical family for the identical

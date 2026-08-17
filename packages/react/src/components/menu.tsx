@@ -28,6 +28,7 @@ const {
   triggerSquareEnd: triggerSquareEndOption,
   triggerVariant: triggerVariantOption,
   triggerSize: triggerSizeOption,
+  triggerIconOnly: triggerIconOnlyOption,
 } = menuContract.options;
 
 export type MenuProps = Pick<
@@ -55,6 +56,9 @@ export type MenuProps = Pick<
    *  the trigger directly once these are set; nothing here repeats their CSS. */
   triggerVariant?: string;
   triggerSize?: string;
+  /** The SAME attribute `Button`'s own `iconOnly` option writes — see `menu.ts`'s identical
+   *  option doc. */
+  triggerIconOnly?: boolean;
   indicator?: ReactNode;
   itemIndicator?: ReactNode;
   submenuIndicator?: ReactNode;
@@ -417,6 +421,7 @@ export function Menu({
   triggerSquareEnd,
   triggerVariant,
   triggerSize,
+  triggerIconOnly,
 }: MenuProps) {
   const generatedId = useId();
   const [checkedState, setChecked] = useState<CheckedState>(() =>
@@ -521,6 +526,7 @@ export function Menu({
             [triggerSquareEndOption.attr]: triggerSquareEnd ? triggerSquareEndOption.trueValue : undefined,
             [triggerVariantOption.attr]: triggerVariant,
             [triggerSizeOption.attr]: triggerSize,
+            [triggerIconOnlyOption.attr]: triggerIconOnly ? triggerIconOnlyOption.trueValue : undefined,
           }}
           disabled={disabled}
           type="button"

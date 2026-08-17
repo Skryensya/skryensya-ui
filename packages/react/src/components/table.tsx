@@ -1,6 +1,13 @@
 import { tableParts } from "@skryensya/core/table";
-import { resolveColumnResize, SPLITTER_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH } from "@skryensya/core/splitter";
-import { hasCrossedDragThreshold, resolveSplitterKey, splitterDirectionSign, splitterValuePercent } from "@skryensya/core/splitter";
+import {
+  hasCrossedDragThreshold,
+  resolveColumnResize,
+  resolveSplitterKey,
+  resolveWeightedColumnWidths,
+  splitterDirectionSign,
+  splitterValuePercent,
+  SPLITTER_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH,
+} from "@skryensya/core/splitter";
 import {
   Children,
   cloneElement,
@@ -63,6 +70,13 @@ export type TableProps = Omit<TableHTMLAttributes<HTMLTableElement>, "children">
   resizableColumns?: boolean;
   /** Required whenever `resizableColumns` is on — see `table.ts`'s `resizeLabel` option doc. */
   resizeLabel?: string;
+  /**
+   * The INITIAL share of the table's width each column claims before any drag, one positive number
+   * per column — see `table.ts`'s identical `columnWeights` option and
+   * `resolveWeightedColumnWidths` (`@skryensya/core/splitter`). Omitted, every column starts equal,
+   * the behaviour before this prop existed.
+   */
+  columnWeights?: readonly number[];
 };
 export type TableCaptionProps = WithChildren<HTMLAttributes<HTMLTableCaptionElement>>;
 export type TableHeadProps = WithChildren<HTMLAttributes<HTMLTableSectionElement>>;
@@ -115,7 +129,14 @@ function readHeadColumnCount(children: ReactNode): number {
   return firstRow ? Children.count(firstRow.props.children) : 0;
 }
 
-export function Table({ children, className, resizableColumns = false, resizeLabel, ...props }: TableProps) {
+export function Table({
+  children,
+  className,
+  resizableColumns = false,
+  resizeLabel,
+  columnWeights,
+  ...props
+}: TableProps) {
   const tableRef = useRef<HTMLTableElement | null>(null);
   const [columnWidths, setColumnWidths] = useState<readonly number[]>([]);
 
@@ -137,6 +158,9 @@ export function Table({ children, className, resizableColumns = false, resizeLab
      * until the FIRST real, nonzero width arrives, seeds from it, and disconnects.
      */
     const measured = table.parentElement instanceof HTMLElement ? table.parentElement : table;
+    // `columnWeights`, falling back to an equal split — `resolveWeightedColumnWidths`'s own doc
+    // (`@skryensya/core/splitter`) explains why an equal split is not always the right seed.
+    const weights = columnWeights ?? Array.from({ length: colCount }, () => 1);
 
     // Guards against a callback already in flight the instant `disconnect()` is called — a real
     // race, not a hypothetical one, since `ResizeObserver` batches and delivers on the next frame.
@@ -144,15 +168,15 @@ export function Table({ children, className, resizableColumns = false, resizeLab
     const seedFrom = (width: number): boolean => {
       if (seeded || width <= 0) return false;
       seeded = true;
-      const seed = Math.max(MIN_COLUMN_WIDTH, width / colCount);
-      setColumnWidths(Array.from({ length: colCount }, () => seed));
+      const seeds = resolveWeightedColumnWidths({ total: width, weights, min: MIN_COLUMN_WIDTH });
+      setColumnWidths(seeds);
       /*
        * An explicit pixel WIDTH on the table itself — see `treegrid.tsx`'s identical write for why
        * `table-layout: fixed` sized `auto`/`100%` is not safe: Chromium's real redistribution
        * algorithm hands any surplus to whichever columns have the most unbreakable `nowrap` content
        * rather than leaving every column at its authored width.
        */
-      table.style.width = `${seed * colCount}px`;
+      table.style.width = `${seeds.reduce((sum, w) => sum + w, 0)}px`;
       return true;
     };
 

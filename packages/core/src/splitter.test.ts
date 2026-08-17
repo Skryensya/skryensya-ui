@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   hasCrossedDragThreshold,
+  parseColumnWeights,
   resolveColumnResize,
   resolveSplitterKey,
+  resolveWeightedColumnWidths,
   splitterDirectionSign,
   splitterValuePercent,
 } from "./splitter.js";
@@ -110,5 +112,53 @@ describe("resolveColumnResize", () => {
     const widths = [100, 100];
     expect(resolveColumnResize({ widths, index: 1, delta: 20, min: 20 })).toBe(widths);
     expect(resolveColumnResize({ widths, index: -1, delta: 20, min: 20 })).toBe(widths);
+  });
+});
+
+describe("resolveWeightedColumnWidths", () => {
+  it("reduces to an even split when every weight is equal", () => {
+    expect(resolveWeightedColumnWidths({ total: 400, weights: [1, 1, 1, 1], min: 20 })).toEqual([
+      100, 100, 100, 100,
+    ]);
+  });
+
+  it("gives a heavier-weighted column a bigger share of the total, total conserved", () => {
+    const widths = resolveWeightedColumnWidths({ total: 400, weights: [2, 1, 1], min: 20 });
+    expect(widths[0]).toBeGreaterThan(widths[1]!);
+    expect(widths[1]).toBe(widths[2]);
+    expect(widths.reduce((sum, w) => sum + w, 0)).toBe(400);
+  });
+
+  it("floors every column at `min` before handing out the rest by weight", () => {
+    // floor alone (20*4=80) already exceeds the total (60): every column gets exactly `min`.
+    expect(resolveWeightedColumnWidths({ total: 60, weights: [10, 1, 1, 1], min: 20 })).toEqual([
+      20, 20, 20, 20,
+    ]);
+  });
+
+  it("returns an empty array for zero columns", () => {
+    expect(resolveWeightedColumnWidths({ total: 400, weights: [], min: 20 })).toEqual([]);
+  });
+});
+
+describe("parseColumnWeights", () => {
+  it("parses a comma-separated list of positive numbers", () => {
+    expect(parseColumnWeights("2,1,1,1", 4)).toEqual([2, 1, 1, 1]);
+    expect(parseColumnWeights("2, 1, 1, 1", 4)).toEqual([2, 1, 1, 1]);
+  });
+
+  it("returns null when the count does not match", () => {
+    expect(parseColumnWeights("2,1,1", 4)).toBeNull();
+  });
+
+  it("returns null for a missing or empty value", () => {
+    expect(parseColumnWeights(null, 4)).toBeNull();
+    expect(parseColumnWeights("", 4)).toBeNull();
+  });
+
+  it("returns null when any weight is not a positive number", () => {
+    expect(parseColumnWeights("2,0,1,1", 4)).toBeNull();
+    expect(parseColumnWeights("2,-1,1,1", 4)).toBeNull();
+    expect(parseColumnWeights("2,abc,1,1", 4)).toBeNull();
   });
 });

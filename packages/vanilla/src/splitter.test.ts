@@ -149,7 +149,7 @@ describe("watchColumnLayout", () => {
     el.getBoundingClientRect = () => ({ width: 300 }) as DOMRect;
     const apply = vi.fn();
     const cleanup = watchColumnLayout({ measured: el, colCount: 3, min: 20, apply });
-    expect(apply).toHaveBeenCalledExactlyOnceWith(100);
+    expect(apply).toHaveBeenCalledExactlyOnceWith([100, 100, 100]);
     cleanup();
   });
 
@@ -183,7 +183,7 @@ describe("watchColumnLayout", () => {
     expect(apply).not.toHaveBeenCalled();
 
     capturedCallback!([{ contentRect: { width: 400 } }] as ResizeObserverEntry[], {} as ResizeObserver);
-    expect(apply).toHaveBeenCalledExactlyOnceWith(200);
+    expect(apply).toHaveBeenCalledExactlyOnceWith([200, 200]);
     expect(disconnected).toBe(true);
 
     // A second layout change after the first real seed must not reseed again.
@@ -191,5 +191,16 @@ describe("watchColumnLayout", () => {
     expect(apply).toHaveBeenCalledOnce();
 
     globalThis.ResizeObserver = OriginalResizeObserver;
+  });
+
+  it("seeds proportionally to `weights` when given, instead of an even split", () => {
+    const el = document.createElement("div");
+    el.getBoundingClientRect = () => ({ width: 400 }) as DOMRect;
+    const apply = vi.fn();
+    watchColumnLayout({ measured: el, colCount: 3, min: 20, weights: [2, 1, 1], apply });
+    const [widths] = apply.mock.calls[0]!;
+    expect(widths[0]).toBeGreaterThan(widths[1]);
+    expect(widths[1]).toBe(widths[2]);
+    expect(widths[0] + widths[1] + widths[2]).toBe(400);
   });
 });

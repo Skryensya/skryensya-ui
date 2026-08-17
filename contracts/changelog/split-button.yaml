@@ -5,6 +5,39 @@
 # hash nuevo.
 surface: "9e81a9851dcd9779"
 entries:
+  - date: 2026-08-16
+    kind: bugfix
+    es:
+      title: El segmento de menú ya no muestra un chevron duplicado ni pierde su nombre
+      body: >-
+        La página componía el <code>trigger</code> del <code>Menu</code> con un ícono chevron
+        propio — pero el template de <code>Menu</code> ya pinta su propio chevron en el trigger,
+        siempre, para cualquier consumidor: el segundo salía visible al lado del primero. Ese
+        trigger de solo-ícono además dejaba el botón sin nombre accesible (su único contenido era
+        un svg <code>aria-hidden</code>). El patrón real de un split button — el de GitHub, el
+        <code>dropdown-toggle-split</code> de Bootstrap, el <code>SplitButton</code> de Fluent — es
+        exactamente esto: un segmento de solo-ícono, sin texto visible, nombrado por
+        <code>aria-label</code>. La nueva opción <code>triggerLabel</code> de Menu hace eso posible
+        correctamente: un chevron, un nombre real, sin inventar un segundo control de solo-lectura
+        visual. El estilo también cambió: el segmento del menú ahora comparte el relleno del
+        primario (antes era un botón gris neutro pegado al lado, dos controles que no leían como
+        uno) con una sola línea divisoria entre los dos, en vez de un borde completo alrededor del
+        segmento del menú.
+    en:
+      title: The menu segment no longer shows a doubled chevron or loses its name
+      body: >-
+        The page composed <code>Menu</code>'s <code>trigger</code> with its own chevron icon — but
+        <code>Menu</code>'s own template already paints a chevron on the trigger, always, for every
+        consumer: the second one rendered visibly beside the first. That icon-only trigger also
+        left the button with no accessible name at all (its only content was an
+        <code>aria-hidden</code> svg). The real split-button pattern — GitHub's, Bootstrap's
+        <code>dropdown-toggle-split</code>, Fluent's <code>SplitButton</code> — is exactly this: an
+        icon-only segment, no visible text, named by <code>aria-label</code>. Menu's new
+        <code>triggerLabel</code> option makes that possible correctly: one chevron, a real name,
+        no second visual-only control invented to carry it. The styling changed too: the menu
+        segment now shares the primary half's own fill (it used to be a plain neutral gray button
+        parked beside it, two controls that did not read as one) with a single hairline divider
+        between the two, instead of a full border around the menu segment.
   - date: 2026-08-11
     kind: feature
     es:

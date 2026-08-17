@@ -957,7 +957,27 @@
       }
     ],
     "menubar": [],
-    "meter": [],
+    "meter": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-16",
+            "en": {
+              "body": "It joins the catalogue with one signature, <code>Meter</code>: <code>role=\"meter\"</code> on a styled <code>&lt;div&gt;</code>, the same choice <code>Progress</code> already made over the native <code>&lt;meter&gt;</code> element (its <code>::-webkit-meter-*</code> pseudo-elements are as inconsistent cross-browser as <code>&lt;progress&gt;</code>'s own). The distinction from <code>Progress</code> is the whole reason this is a separate contract: <code>Progress</code> reports how much of a known-length TASK has finished (always starting at 0, sometimes indeterminate); <code>Meter</code> reports a MEASUREMENT that already has a value right now (disk usage, battery level, a rating out of five) and is never indeterminate — WAI-ARIA gives them different roles (<code>meter</code> vs <code>progressbar</code>) for exactly this reason. Painted differently from <code>Progress</code> on purpose: it grows a header row with <code>label</code> and <code>valueText</code> painted, not just announced, following industry precedent (Adobe Spectrum's <code>sp-meter</code>) of always showing a visible label and value beside the bar. Options: <code>value</code>, <code>min</code>, <code>max</code>, <code>valueText</code>, <code>tone</code> (<code>accent</code>/<code>success</code>/<code>warning</code>/<code>danger</code>), <code>label</code> (required — an unnamed meter announces a number about nothing). Its stylesheet is <code>components/meter.css</code>.",
+              "title": "Meter is published as a contract, a measurement within a known range"
+            },
+            "es": {
+              "body": "Entra al catálogo con una sola signature, <code>Meter</code>: <code>role=\"meter\"</code> en un <code>&lt;div&gt;</code> con estilo, la misma elección que ya hizo <code>Progress</code> sobre el <code>&lt;meter&gt;</code> nativo (sus pseudo-elementos <code>::-webkit-meter-*</code> son tan inconsistentes entre navegadores como los de <code>&lt;progress&gt;</code>). La distinción con <code>Progress</code> es la razón de ser de este contrato aparte: <code>Progress</code> reporta cuánto de una TAREA de duración conocida terminó (siempre arranca en 0, a veces indeterminada); <code>Meter</code> reporta una MEDICIÓN que ya tiene un valor ahora mismo (uso de disco, nivel de batería, una calificación sobre cinco) y nunca es indeterminada — WAI-ARIA les da roles distintos (<code>meter</code> vs <code>progressbar</code>) por esta misma razón. Pintado distinto de <code>Progress</code> a propósito: agrega una fila de encabezado con <code>label</code> y <code>valueText</code> pintados (no solo anunciados), siguiendo el precedente de la industria (Adobe Spectrum <code>sp-meter</code>) de mostrar siempre etiqueta y valor junto a la barra. Opciones: <code>value</code>, <code>min</code>, <code>max</code>, <code>valueText</code>, <code>tone</code> (<code>accent</code>/<code>success</code>/<code>warning</code>/<code>danger</code>), <code>label</code> (requerida — un medidor sin nombre anuncia un número sobre nada). La hoja es <code>components/meter.css</code>.",
+              "title": "Meter se publica como contrato, una medición dentro de un rango conocido"
+            },
+            "kind": "feature",
+            "target": "Meter"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "nav-list": [
       {
         "date": null,
@@ -1362,6 +1382,32 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-16",
+            "en": {
+              "body": "Adds <code>columnWeights</code>: one positive number per column, comma-separated (<code>\"2,1,1,1\"</code>), that decides the table's INITIAL width split before any drag — only meaningful alongside <code>resizableColumns</code>. Omitted, every column starts equal, the prior behaviour; equal weights reduce to the exact same split. Dragging itself is unchanged: <code>resolveColumnResize</code> still only redistributes the touched pair, the weight only decides the seed.",
+              "title": "New columnWeights option, a weighted initial split instead of an even one"
+            },
+            "es": {
+              "body": "Se agrega <code>columnWeights</code>: un número positivo por columna, separado por comas (<code>\"2,1,1,1\"</code>), que decide el reparto INICIAL del ancho de la tabla antes de cualquier arrastre — sólo tiene efecto junto a <code>resizableColumns</code>. Sin ella, cada columna arranca igual, el comportamiento de siempre; con pesos iguales el reparto es exactamente el mismo. El arrastre en sí no cambia: <code>resolveColumnResize</code> sigue redistribuyendo sólo el par de columnas tocado, el peso únicamente decide la semilla.",
+              "title": "Nueva opción columnWeights, reparto inicial por peso en vez de parejo"
+            },
+            "kind": "feature",
+            "target": "Table"
+          },
+          {
+            "date": "2026-08-16",
+            "en": {
+              "body": "Adds <code>resizableColumns</code> (opt-in, off by default). Turned on, the binding inserts a real WAI-ARIA APG \"Window Splitter\" separator (<code>role=\"separator\"</code>, <code>aria-orientation=\"vertical\"</code>, arrows/Shift+arrow/Home/End/Enter) between every pair of column headers — the same shared primitive (<code>@skryensya/core/splitter</code>) Sidebar's own separator and Treegrid's own column resizer already use. Requires <code>resizeLabel</code> (a new option, an a11y gate): the separator is binding-inserted, never authored, so nothing else names it for a screen reader. This file's first entry said \"no enhancer: the markup is complete on its own\" — that stays the default: the vanilla binding only ever enhances a <code>&lt;table&gt;</code> that carries <code>data-resizable-columns</code>, so any table that never asks for it stays exactly as JavaScript-free as before.",
+              "title": "New resizableColumns option, drag-to-resize columns"
+            },
+            "es": {
+              "body": "Se agrega <code>resizableColumns</code> (opt-in, apagada por defecto). Encendida, el binding inserta un separador WAI-ARIA APG \"Window Splitter\" real (<code>role=\"separator\"</code>, <code>aria-orientation=\"vertical\"</code>, flechas/Shift+flecha/Home/End/Enter) entre cada par de encabezados de columna — el mismo primitivo compartido (<code>@skryensya/core/splitter</code>) que ya usan el separador de <code>Sidebar</code> y el redimensionador de columnas de <code>Treegrid</code>. Requiere <code>resizeLabel</code> (nueva opción, gate de a11y): el separador es binding-insertado, nunca autorado, así que nada más lo nombra para un lector de pantalla. La primera entrada de este archivo decía \"no tiene enhancer: el markup está completo por sí solo\" — eso sigue siendo la regla por defecto: el binding Vanilla solo enhancea un <code>&lt;table&gt;</code> que trae <code>data-resizable-columns</code>, así que cualquier tabla que no la pida sigue sin JavaScript, exactamente como antes.",
+              "title": "Nueva opción resizableColumns, columnas redimensionables por arrastre"
+            },
+            "kind": "feature",
+            "target": "Table"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>TableScroll</code>, <code>Table</code>, <code>TableCaption</code>, <code>TableHead</code>, <code>TableBody</code>, <code>TableFooter</code>, <code>TableRow</code>, <code>TableHeader</code>, <code>TableCell</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>scope</code>, <code>stickyColumn</code>, <code>stickyHeader</code>, <code>density</code>, <code>densityFactor</code>, <code>colspan</code>. Its stylesheet is <code>components/table.css</code>.",
@@ -1590,7 +1636,53 @@
         "version": "0.1.0-dev"
       }
     ],
-    "treegrid": [],
+    "treegrid": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-16",
+            "en": {
+              "body": "Adds <code>columnWeights</code>: one positive number per column, comma-separated, that decides the width's INITIAL split before any drag — same mechanism as <code>Table</code>'s own option of the same name. Omitted, a resizable treegrid no longer splits width evenly across columns: column 0 (the one carrying per-level indentation, the disclosure button, and the row's own label) starts with double the weight of the rest by default, so it does not get squeezed as hard as a flat metadata column beside it. Dragging itself is unchanged: the weight only decides the initial seed.",
+              "title": "New columnWeights option; the hierarchy column starts wider by default"
+            },
+            "es": {
+              "body": "Se agrega <code>columnWeights</code>: un número positivo por columna, separado por comas, que decide el reparto INICIAL del ancho antes de cualquier arrastre — mismo mecanismo que la opción homónima de <code>Table</code>. Sin ella, un treegrid redimensionable ya no reparte el ancho parejo entre columnas: la columna 0 (la que lleva la indentación por nivel, el botón de expandir/colapsar y la etiqueta de la fila) arranca con el doble de peso que las demás por defecto, así que no se aprieta tanto como una columna de metadata plana al lado. El arrastre en sí no cambia: el peso sólo decide la semilla inicial.",
+              "title": "Nueva opción columnWeights; la columna de jerarquía arranca más ancha por defecto"
+            },
+            "kind": "feature",
+            "target": "Treegrid"
+          },
+          {
+            "date": "2026-08-16",
+            "en": {
+              "body": "Adds <code>resizableColumns</code> (opt-in, off by default — `treegrid-1`'s own audited scope stays plain text with no extra chrome unless a consumer asks for it). Turned on, the binding inserts a real WAI-ARIA APG \"Window Splitter\" separator (<code>role=\"separator\"</code>, <code>aria-orientation=\"vertical\"</code>, arrows/Shift+arrow/Home/End/Enter) between every pair of column headers — never the last, which has no next neighbor to redistribute width with. It is the same shared primitive Sidebar's own separator now uses too (<code>@skryensya/core/splitter</code>, published this session: the keyboard matcher and drag threshold live in one pure place instead of being rewritten per consumer), with the real difference documented on <code>resolveColumnResize</code>: Sidebar clamps ONE value against a fixed bound via a CSS <code>clamp()</code>; a column redistributes width between a PAIR of neighbors whose sum stays fixed, so no other column ever moves. Requires <code>resizeLabel</code> (a new option, an a11y gate) — the separator is binding-inserted, never authored, so nothing else names it for a screen reader.",
+              "title": "New resizableColumns option, drag-to-resize columns"
+            },
+            "es": {
+              "body": "Se agrega <code>resizableColumns</code> (opt-in, apagada por defecto — el alcance auditado de <code>treegrid-1</code> sigue siendo texto plano sin chrome extra a menos que el consumidor lo pida). Encendida, el binding inserta un separador WAI-ARIA APG \"Window Splitter\" real (<code>role=\"separator\"</code>, <code>aria-orientation=\"vertical\"</code>, flechas/Shift+flecha/Home/End/Enter) entre cada par de encabezados de columna — nunca el último, no tiene vecino siguiente con quien redistribuir ancho. Es el mismo primitivo compartido que ya usa el separador de <code>Sidebar</code> (<code>@skryensya/core/splitter</code>, publicado esta sesión: el emparejador de teclado y el umbral de arrastre puro en un solo lugar, en vez de reescritos en cada consumidor), con la diferencia real documentada en <code>resolveColumnResize</code>: <code>Sidebar</code> pinza UN valor contra un límite fijo vía CSS <code>clamp()</code>; una columna redistribuye ancho entre un PAR de vecinos cuya suma se mantiene fija, así que ninguna otra columna se mueve. Requiere <code>resizeLabel</code> (nueva opción, gate de a11y) — el separador es binding-insertado, nunca autorado, así que nada más lo nombra para un lector de pantalla.",
+              "title": "Nueva opción resizableColumns, columnas redimensionables por arrastre"
+            },
+            "kind": "feature",
+            "target": "Treegrid"
+          },
+          {
+            "date": "2026-08-15",
+            "en": {
+              "body": "<code>sk-interactive</code> on the <code>&lt;tr&gt;</code> painted its state layer with a <code>::before</code>: a row's generated child enters the table layout algorithm the same as any other, so the browser wrapped it into an anonymous table-cell and pushed every real <code>&lt;td&gt;</code> one column right (measured: Chromium 140, each row's last cell ended up at width 0) — the <code>&lt;th&gt;</code> and <code>&lt;td&gt;</code> stopped lining up and the grid read as broken. That class is removed from the <code>&lt;tr&gt;</code>; each <code>TreegridCell</code> already carries it and still gives its own hover/press state. The chevron, previously a purely decorative <code>::before</code> with no real element, is now a genuine <code>&lt;button&gt;</code> the binding inserts into a branch row's first cell — visible to a pointer, with its own hover/press state, but <code>aria-hidden</code> and out of the tab order: the row's own <code>aria-expanded</code> remains the only thing a screen reader announces, so this scope (treegrid-1) does not gain a focusable control inside a cell.",
+              "title": "Fixes column misalignment; the chevron becomes a real button"
+            },
+            "es": {
+              "body": "<code>sk-interactive</code> en el <code>&lt;tr&gt;</code> pintaba su capa de estado con un <code>::before</code>: un hijo generado de una fila entra al algoritmo de layout de tabla igual que cualquier otro, así que el navegador lo envolvía en una celda anónima y corría cada <code>&lt;td&gt;</code> real una columna a la derecha (medido: Chromium 140, la última celda de cada fila terminaba con ancho 0) — el <code>&lt;th&gt;</code> y el <code>&lt;td&gt;</code> dejaban de alinear y el grid se leía roto. Se quita esa clase del <code>&lt;tr&gt;</code>; cada <code>TreegridCell</code> ya la lleva y sigue dando su propio estado de hover/press. El chevron, que era un <code>::before</code> puramente decorativo sin elemento real, ahora es un <code>&lt;button&gt;</code> de verdad que el binding inserta en la primera celda de una fila rama — visible al puntero, con su propio estado hover/press, pero <code>aria-hidden</code> y fuera del tabindex propio: el <code>aria-expanded</code> de la fila sigue siendo lo único que anuncia un lector de pantalla, así que este alcance (treegrid-1) no gana un control enfocable dentro de una celda.",
+              "title": "Corrige el desalineado de columnas y el chevron pasa a ser un botón real"
+            },
+            "kind": "bugfix",
+            "target": "TreegridRow"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "typography": [
       {
         "date": null,
@@ -9166,7 +9258,11 @@
       },
       "parts": {
         "bar": "sk-meter__bar",
-        "root": "sk-meter"
+        "header": "sk-meter-group__header",
+        "label": "sk-meter-group__label",
+        "root": "sk-meter-group",
+        "track": "sk-meter",
+        "value": "sk-meter-group__value"
       },
       "semantics": {
         "Meter": {
@@ -9194,6 +9290,7 @@
             "battery-level",
             "rating-out-of-a-scale"
           ],
+          "mount": "data-sk-meter",
           "options": [
             "value",
             "min",
@@ -9211,17 +9308,40 @@
           ],
           "slots": {},
           "template": {
-            "attrs": {
-              "role": "meter"
-            },
             "children": [
               {
+                "children": [
+                  {
+                    "element": "span",
+                    "part": "label",
+                    "textFromOption": "label"
+                  },
+                  {
+                    "element": "span",
+                    "part": "value",
+                    "textFromOption": "valueText",
+                    "whenGiven": "valueText"
+                  }
+                ],
                 "element": "div",
-                "part": "bar"
+                "part": "header"
+              },
+              {
+                "attrs": {
+                  "role": "meter"
+                },
+                "children": [
+                  {
+                    "element": "div",
+                    "part": "bar"
+                  }
+                ],
+                "element": "div",
+                "host": true,
+                "part": "track"
               }
             ],
             "element": "div",
-            "host": true,
             "part": "root"
           }
         }
@@ -11574,6 +11694,9 @@
           ],
           "slots": {},
           "template": {
+            "also": [
+              "sk-splitter"
+            ],
             "attrs": {
               "aria-orientation": "vertical",
               "aria-valuemax": "100",
@@ -12432,6 +12555,17 @@
       }
     },
     "table": {
+      "a11y": [
+        {
+          "because": "Each column resizer is a real, focusable role=\"separator\" a binding inserts — never authored — so nothing else names it for a screen reader; the column header it sits beside says WHICH column, not that the control resizes it.",
+          "requiresOneOf": [
+            "resizeLabel"
+          ],
+          "when": {
+            "resizableColumns": true
+          }
+        }
+      ],
       "css": "@skryensya/core/components/table.css",
       "id": "table",
       "options": {
@@ -12440,6 +12574,10 @@
           "prop": "colSpan",
           "type": "number"
         },
+        "columnWeights": {
+          "attr": "data-column-weights",
+          "type": "string"
+        },
         "density": {
           "styleProperty": "--sk-density",
           "type": "number"
@@ -12447,6 +12585,16 @@
         "densityFactor": {
           "styleProperty": "--sk-density-factor",
           "type": "number"
+        },
+        "resizableColumns": {
+          "attr": "data-resizable-columns",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "resizeLabel": {
+          "attr": "data-resize-label",
+          "type": "string"
         },
         "scope": {
           "attr": "scope",
@@ -12474,6 +12622,7 @@
         "body": "sk-table__body",
         "caption": "sk-table__caption",
         "cell": "sk-table__cell",
+        "columnResizer": "sk-table__column-resizer",
         "foot": "sk-table__foot",
         "head": "sk-table__head",
         "header": "sk-table__header",
@@ -12561,7 +12710,11 @@
             "data-table",
             "comparison"
           ],
-          "options": [],
+          "options": [
+            "resizableColumns",
+            "resizeLabel",
+            "columnWeights"
+          ],
           "react": {
             "from": "@skryensya/react/table",
             "name": "Table"
@@ -15291,9 +15444,24 @@
       }
     },
     "treegrid": {
+      "a11y": [
+        {
+          "because": "Each column resizer is a real, focusable role=\"separator\" a binding inserts — never authored — so nothing else names it for a screen reader; the column header it sits beside says WHICH column, not that the control resizes it.",
+          "requiresOneOf": [
+            "resizeLabel"
+          ],
+          "when": {
+            "resizableColumns": true
+          }
+        }
+      ],
       "css": "@skryensya/core/components/treegrid.css",
       "id": "treegrid",
       "options": {
+        "columnWeights": {
+          "attr": "data-column-weights",
+          "type": "string"
+        },
         "expanded": {
           "attr": "aria-expanded",
           "falseValue": "false",
@@ -15312,6 +15480,16 @@
           "attr": "aria-posinset",
           "type": "number"
         },
+        "resizableColumns": {
+          "attr": "data-resizable-columns",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "resizeLabel": {
+          "attr": "data-resize-label",
+          "type": "string"
+        },
         "setSize": {
           "attr": "aria-setsize",
           "type": "number"
@@ -15325,6 +15503,8 @@
         "body": "sk-treegrid__body",
         "cell": "sk-treegrid__cell",
         "columnHeader": "sk-treegrid__column-header",
+        "columnResizer": "sk-treegrid__column-resizer",
+        "disclosure": "sk-treegrid__disclosure",
         "head": "sk-treegrid__head",
         "headRow": "sk-treegrid__head-row",
         "root": "sk-treegrid",
@@ -15404,7 +15584,10 @@
           ],
           "mount": "data-sk-treegrid",
           "options": [
-            "label"
+            "label",
+            "resizableColumns",
+            "resizeLabel",
+            "columnWeights"
           ],
           "react": {
             "from": "@skryensya/react/treegrid",
@@ -15652,8 +15835,7 @@
           },
           "template": {
             "also": [
-              "sk-table__row",
-              "sk-interactive"
+              "sk-table__row"
             ],
             "attrs": {
               "role": "row",
@@ -16244,5 +16426,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "9e2b050888da3f57"
+  "sourceHash": "d924b748bae5aed5"
 }

@@ -3,5 +3,48 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "2d01a7dbe05adf7c"
-entries: []
+surface: "10aa9a8494bebb9e"
+entries:
+  - date: 2026-08-16
+    kind: feature
+    target: Meter
+    es:
+      title: Meter se publica como contrato, una medición dentro de un rango conocido
+      body: >-
+        Entra al catálogo con una sola signature, <code>Meter</code>: <code>role="meter"</code> en
+        un <code>&lt;div&gt;</code> con estilo, la misma elección que ya hizo <code>Progress</code>
+        sobre el <code>&lt;meter&gt;</code> nativo (sus pseudo-elementos <code>::-webkit-meter-*</code>
+        son tan inconsistentes entre navegadores como los de <code>&lt;progress&gt;</code>). La
+        distinción con <code>Progress</code> es la razón de ser de este contrato aparte:
+        <code>Progress</code> reporta cuánto de una TAREA de duración conocida terminó (siempre
+        arranca en 0, a veces indeterminada); <code>Meter</code> reporta una MEDICIÓN que ya tiene
+        un valor ahora mismo (uso de disco, nivel de batería, una calificación sobre cinco) y nunca
+        es indeterminada — WAI-ARIA les da roles distintos (<code>meter</code> vs
+        <code>progressbar</code>) por esta misma razón. Pintado distinto de <code>Progress</code> a
+        propósito: agrega una fila de encabezado con <code>label</code> y <code>valueText</code>
+        pintados (no solo anunciados), siguiendo el precedente de la industria (Adobe Spectrum
+        <code>sp-meter</code>) de mostrar siempre etiqueta y valor junto a la barra. Opciones:
+        <code>value</code>, <code>min</code>, <code>max</code>, <code>valueText</code>,
+        <code>tone</code> (<code>accent</code>/<code>success</code>/<code>warning</code>/<code>danger</code>),
+        <code>label</code> (requerida — un medidor sin nombre anuncia un número sobre nada). La hoja
+        es <code>components/meter.css</code>.
+    en:
+      title: Meter is published as a contract, a measurement within a known range
+      body: >-
+        It joins the catalogue with one signature, <code>Meter</code>: <code>role="meter"</code> on
+        a styled <code>&lt;div&gt;</code>, the same choice <code>Progress</code> already made over
+        the native <code>&lt;meter&gt;</code> element (its <code>::-webkit-meter-*</code>
+        pseudo-elements are as inconsistent cross-browser as <code>&lt;progress&gt;</code>'s own).
+        The distinction from <code>Progress</code> is the whole reason this is a separate contract:
+        <code>Progress</code> reports how much of a known-length TASK has finished (always starting
+        at 0, sometimes indeterminate); <code>Meter</code> reports a MEASUREMENT that already has a
+        value right now (disk usage, battery level, a rating out of five) and is never
+        indeterminate — WAI-ARIA gives them different roles (<code>meter</code> vs
+        <code>progressbar</code>) for exactly this reason. Painted differently from
+        <code>Progress</code> on purpose: it grows a header row with <code>label</code> and
+        <code>valueText</code> painted, not just announced, following industry precedent (Adobe
+        Spectrum's <code>sp-meter</code>) of always showing a visible label and value beside the
+        bar. Options: <code>value</code>, <code>min</code>, <code>max</code>, <code>valueText</code>,
+        <code>tone</code> (<code>accent</code>/<code>success</code>/<code>warning</code>/<code>danger</code>),
+        <code>label</code> (required — an unnamed meter announces a number about nothing). Its
+        stylesheet is <code>components/meter.css</code>.

@@ -45,25 +45,30 @@ export const buttonContract = {
       trueValue: "",
     },
     /*
-     * Removes the START (leading) corner's own rounding — for a button that has ANOTHER control
+     * Welds the START (leading) edge flat against a neighbor — a button that has ANOTHER control
      * glued to that side (a split button's primary half beside its menu trigger, a segmented
-     * group's middle members), where a round corner there would read as a gap between two
-     * separate controls instead of a seam in one welded shape. Orthogonal to every other axis:
-     * any variant, any size, can be grouped. Presence-only, like `iconOnly`. See `squareEnd` for
-     * the opposite edge — a control glued on BOTH sides (a segmented group's middle member) sets
-     * both at once.
+     * group's middle members). Removes BOTH things a round, bordered corner there would get
+     * wrong: the corner's own rounding (reads as a gap between two separate controls instead of
+     * a seam in one welded shape) AND the edge's own border color (for any variant that paints
+     * one — `neutral`, `subtle`, `translucent` — a visible border sitting right next to whatever
+     * the neighbor paints on ITS OWN touching edge doubles the seam into two competing lines;
+     * `primary`/`danger`/`ghost` never had this problem, their own border is already transparent,
+     * which is exactly why the bug stayed hidden until an example paired two `neutral` halves).
+     * Orthogonal to every other axis: any variant, any size, can be welded. Presence-only, like
+     * `iconOnly`. See `weldEnd` for the opposite edge — a control welded on BOTH sides (a
+     * segmented group's middle member) sets both at once.
      */
-    squareStart: {
+    weldStart: {
       type: "boolean",
       default: false,
-      attr: "data-square-start",
+      attr: "data-weld-start",
       trueValue: "",
     },
-    /** Same idea, the opposite edge — see `squareStart`'s own doc. */
-    squareEnd: {
+    /** Same idea, the opposite edge — see `weldStart`'s own doc. */
+    weldEnd: {
       type: "boolean",
       default: false,
-      attr: "data-square-end",
+      attr: "data-weld-end",
       trueValue: "",
     },
     href: {
@@ -87,7 +92,7 @@ export const buttonContract = {
     "Button.action": {
       intent: ["action", "submit", "destructive-action"],
       host: { element: "button", when: { href: "absent" } },
-      options: ["variant", "size", "iconOnly", "squareStart", "squareEnd", "disabled"],
+      options: ["variant", "size", "iconOnly", "weldStart", "weldEnd", "disabled"],
       slots: { children: { accepts: "node", required: true } },
       template: {
         element: "button",
@@ -106,7 +111,7 @@ export const buttonContract = {
     "Button.navigation": {
       intent: ["navigation", "single-destination"],
       host: { element: "a", when: { href: "present" } },
-      options: ["variant", "size", "iconOnly", "squareStart", "squareEnd", "href"],
+      options: ["variant", "size", "iconOnly", "weldStart", "weldEnd", "href"],
       requires: ["href"],
       forbids: ["disabled", "type"],
       slots: { children: { accepts: "node", required: true } },

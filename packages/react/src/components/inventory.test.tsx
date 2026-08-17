@@ -429,7 +429,7 @@ describe("expanded component inventory", () => {
       ui.getByRole("button", { name: "Más opciones" }).hasAttribute("disabled"),
     ).toBe(true);
     const trigger = ui.getByRole("button", { name: "Más opciones" });
-    expect(trigger.hasAttribute("data-square-start")).toBe(true);
+    expect(trigger.hasAttribute("data-weld-start")).toBe(true);
     expect(trigger.hasAttribute("data-icon-only")).toBe(true);
     expect(trigger.getAttribute("data-variant")).toBe("primary");
   });

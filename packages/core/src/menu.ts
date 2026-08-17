@@ -124,17 +124,18 @@ export const menuContract = {
      */
     triggerLabel: { type: "string", attr: "aria-label" },
     /**
-     * Removes the trigger button's own START (leading) corner rounding — for when this Menu is
-     * welded to a neighbor on that side, a split button's own dropdown segment being the case that
-     * motivated it. The SAME attribute `Button`'s own `squareStart` option writes
-     * (`data-square-start`) — see `button.ts`'s doc for the mechanism (button.css owns the rule; a
-     * trigger already carries the `.sk-button` class this template composes, so nothing here has to
-     * repeat the CSS, only the option that reaches the same attribute). See `squareStart` also for
-     * the general "why a class, not a specific component deciding another's radius" reasoning.
+     * Welds the trigger button's own START (leading) edge flat against a neighbor — for when this
+     * Menu sits beside another control on that side, a split button's own dropdown segment being
+     * the case that motivated it. The SAME attribute `Button`'s own `weldStart` option writes
+     * (`data-weld-start`) — see `button.ts`'s doc for the mechanism (button.css owns the rule,
+     * radius AND border color both; a trigger already carries the `.sk-button` class this template
+     * composes, so nothing here has to repeat the CSS, only the option that reaches the same
+     * attribute). See `weldStart` also for the general "why a class, not a specific component
+     * deciding another's radius" reasoning.
      */
-    triggerSquareStart: { type: "boolean", default: false, attr: "data-square-start", trueValue: "" },
-    /** Same idea, the opposite edge — see `triggerSquareStart`'s own doc. */
-    triggerSquareEnd: { type: "boolean", default: false, attr: "data-square-end", trueValue: "" },
+    triggerWeldStart: { type: "boolean", default: false, attr: "data-weld-start", trueValue: "" },
+    /** Same idea, the opposite edge — see `triggerWeldStart`'s own doc. */
+    triggerWeldEnd: { type: "boolean", default: false, attr: "data-weld-end", trueValue: "" },
     /**
      * Passed straight to the trigger's own `data-variant`/`data-size` — the SAME attributes
      * `Button`'s own `variant`/`size` options write (`button.ts`), so `button.css`'s existing
@@ -152,7 +153,7 @@ export const menuContract = {
      * with no visible `trigger` content (paired with `triggerLabel` for its accessible name) is
      * exactly the icon-only SHAPE Button already has a name for: a control-sized square holding
      * one glyph, zero inline padding. The only thing that still makes it a split-button trigger
-     * and not a bare icon button is `triggerSquareStart` — everything else about its shape comes
+     * and not a bare icon button is `triggerWeldStart` — everything else about its shape comes
      * from this, unchanged from any other icon-only Button on the page.
      */
     triggerIconOnly: { type: "boolean", default: false, attr: "data-icon-only", trueValue: "" },
@@ -198,8 +199,8 @@ export const menuContract = {
       options: [
         "label",
         "triggerLabel",
-        "triggerSquareStart",
-        "triggerSquareEnd",
+        "triggerWeldStart",
+        "triggerWeldEnd",
         "triggerVariant",
         "triggerSize",
         "triggerIconOnly",
@@ -266,8 +267,8 @@ export const menuContract = {
             // same "one option, one element" split `label` (root) already keeps clean.
             options: [
               "triggerLabel",
-              "triggerSquareStart",
-              "triggerSquareEnd",
+              "triggerWeldStart",
+              "triggerWeldEnd",
               "triggerVariant",
               "triggerSize",
               "triggerIconOnly",

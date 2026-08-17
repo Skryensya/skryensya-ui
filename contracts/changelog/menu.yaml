@@ -3,8 +3,27 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "f730e7d011acaab9"
+surface: "8a06d58d86d099e9"
 entries:
+  - date: 2026-08-17
+    kind: feature
+    target: triggerWeldStart
+    es:
+      title: triggerSquareStart/triggerSquareEnd pasan a llamarse triggerWeldStart/triggerWeldEnd
+      body: >-
+        Renombradas junto con las opciones homónimas de <code>Button</code>
+        (<code>squareStart</code>/<code>squareEnd</code> → <code>weldStart</code>/<code>weldEnd</code>,
+        ver el changelog de Button) — siguen escribiendo a los mismos atributos
+        (<code>data-weld-start</code>/<code>data-weld-end</code>), ahora el nombre también refleja
+        que quitan el borde del trigger en ese lado, no solo el redondeo.
+    en:
+      title: triggerSquareStart/triggerSquareEnd rename to triggerWeldStart/triggerWeldEnd
+      body: >-
+        Renamed together with Button's own identically-shaped options
+        (<code>squareStart</code>/<code>squareEnd</code> → <code>weldStart</code>/<code>weldEnd</code>,
+        see Button's own changelog) — still writing to the same attributes
+        (<code>data-weld-start</code>/<code>data-weld-end</code>), the name now also reflects that
+        they clear the trigger's own border on that side, not only the rounding.
   - date: 2026-08-17
     kind: feature
     target: triggerIconOnly

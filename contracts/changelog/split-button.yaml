@@ -3,8 +3,37 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "9e81a9851dcd9779"
+surface: "efe82c420bcdf739"
 entries:
+  - date: 2026-08-16
+    kind: feature
+    target: variant
+    es:
+      title: Nuevas opciones variant y size; los dos segmentos ya escalan juntos
+      body: >-
+        Se agregan <code>variant</code> (<code>primary</code>/<code>danger</code>/<code>ghost</code>,
+        default <code>primary</code>) y <code>size</code> (<code>sm</code>/<code>md</code>/<code>lg</code>,
+        default <code>md</code>) — el vocabulario de <code>Button</code>, restringido a las tres
+        variantes que tienen sentido para una acción DOMINANTE (el propio contrato ya lo dice:
+        "acción principal estable"; <code>neutral</code>/<code>subtle</code>/<code>translucent</code>
+        de Button son para un control que NO es lo único que la pantalla más necesita señalar). El
+        segmento del menú siempre combina: <code>split-button.css</code> lee el mismo
+        <code>data-variant</code>/<code>data-size</code> del botón primario mediante un selector de
+        hermanos y re-deriva el relleno y las proporciones del trigger desde ahí — un solo control
+        en cualquier combinación, nunca una acción llena de un color en un tamaño y un menú de otro.
+    en:
+      title: New variant and size options; the two segments now scale together
+      body: >-
+        Adds <code>variant</code> (<code>primary</code>/<code>danger</code>/<code>ghost</code>,
+        default <code>primary</code>) and <code>size</code> (<code>sm</code>/<code>md</code>/<code>lg</code>,
+        default <code>md</code>) — <code>Button</code>'s own vocabulary, restricted to the three
+        variants that make sense for a DOMINANT action (the contract's own doc already says so:
+        "a stable primary action"; Button's own <code>neutral</code>/<code>subtle</code>/
+        <code>translucent</code> are for a control that is NOT the one thing a screen most needs to
+        point at). The menu segment always matches: <code>split-button.css</code> reads the SAME
+        <code>data-variant</code>/<code>data-size</code> off the primary button via a sibling
+        selector and re-derives the trigger's own fill and proportions from it — one control at
+        every combination, never a full-color, full-size action beside a mismatched dropdown.
   - date: 2026-08-16
     kind: bugfix
     es:

@@ -15,21 +15,21 @@ export const splitButtonTree = (t: Translate): UsageTree => ({
     menu: {
       contract: "menu",
       signature: "Menu",
-      options: { label: t("demo.splitButton.menuLabel") },
       /*
-       * `trigger` is text, the same shape every other Menu demo uses (`menu.ts`'s own trees) — NOT
-       * a composed chevron `Icon`, which is what this tree authored until now. Menu's own template
-       * (`core/menu.ts`) always paints a chevron indicator on the trigger button, unconditionally,
-       * for every consumer; a second chevron passed as `trigger` content painted a visible SECOND
-       * one right beside it (confirmed live: two `▾` glyphs on the same button). It also left the
-       * button with no accessible name at all — its only content was an `aria-hidden` icon, so a
-       * screen reader announced nothing on the second half of a control this page's own a11y tab
-       * describes as "two independent buttons: one runs the action, the other announces and opens
-       * the alternatives." Plain text fixes both: one chevron (Menu's own), and a real name from
-       * the button's own content, exactly like every other Menu trigger in this catalogue.
+       * `triggerLabel`, not `label` alone, is what names the TRIGGER BUTTON itself — the real
+       * split-button pattern industry-wide (GitHub's `...` button, Bootstrap's `dropdown-toggle-
+       * split`, Fluent's `SplitButton`) is an icon-only dropdown segment, no visible text at all,
+       * named for a screen reader by `aria-label`. `trigger` (the slot) is left UNSET on purpose:
+       * Menu's own template (`core/menu.ts`) always paints a chevron on the trigger, unconditionally,
+       * so there is nothing left for a second, composed chevron to add — passing one used to paint a
+       * visible SECOND `▾` right beside the first (confirmed live) and STILL left the button with no
+       * accessible name (its only content was an `aria-hidden` icon). `triggerLabel` fixes both by
+       * construction: the chevron stays the only visible content, and the button announces a real
+       * name — matching this page's own a11y tab, "two independent buttons: one runs the action, the
+       * other announces and opens the alternatives."
        */
+      options: { label: t("demo.splitButton.menuLabel"), triggerLabel: t("demo.splitButton.menuLabel") },
       slots: {
-        trigger: t("demo.splitButton.menuLabel"),
         items: splitButtonMenuItems(t),
       },
     },

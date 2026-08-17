@@ -22,8 +22,29 @@
    */
   .sk-split-button > .sk-menu > button,
   .sk-split-button__trigger {
+    /*
+     * Matches the primary half's own FILL, not `.sk-button`'s neutral default: two segments of one
+     * welded control, not a primary button with an unrelated gray button parked beside it. Safe to
+     * hard-code (never a hook the trigger side re-derives from `--variant`): the contract's own
+     * `primary` part is statically `data-variant="primary"`, never configurable
+     * (`split-button.ts`'s `options: []` — there is no variant to match against). Re-declaring the
+     * SAME hooks `.sk-button[data-variant="primary"]` sets is exactly the mechanism this file's own
+     * header comment (`button.css`) describes for "reskin one instance without a specificity
+     * fight" — this is that reskin, aimed at the composed trigger's structural selector instead of
+     * an instance's own class.
+     */
+    --sk-button-bg: var(--color-action-primary);
+    --sk-button-fg: var(--color-text-on-accent);
+    --sk-button-border-color: transparent;
+    --sk-button-shadow: var(--elevation-raised);
+
     min-inline-size: var(--sk-split-button-trigger-inline-size);
     padding-inline: var(--space-inset-sm);
+    /*
+     * The only border either half has left: `--sk-button-border-color: transparent` above erases
+     * the other three sides (still 1px, just invisible), and this one edge alone carries the
+     * hairline — the seam between the two halves, not a border AROUND the trigger.
+     */
     border-inline-start-color: var(--sk-split-button-divider-color);
     border-start-start-radius: 0;
     border-end-start-radius: 0;

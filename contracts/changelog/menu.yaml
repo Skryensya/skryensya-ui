@@ -3,8 +3,38 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "d0671cae0f5a7f7a"
+surface: "20ef55911e9a836e"
 entries:
+  - date: 2026-08-16
+    kind: feature
+    target: triggerLabel
+    es:
+      title: Nueva opción triggerLabel; el trigger ya no exige contenido visible
+      body: >-
+        Se agrega <code>triggerLabel</code>: el nombre accesible del BOTÓN trigger en sí, distinto
+        de <code>label</code> a propósito. <code>label</code> es una descripción más completa del
+        menú como un todo ("Acciones del archivo" contra un trigger visible más corto, "Acciones");
+        reusarla en el botón habría pisado su propio texto visible con una cadena DISTINTA, un
+        desajuste "Label in Name" (WCAG 2.5.3) entre lo que lee una persona y lo que anuncia un
+        lector de pantalla. Pensada para el trigger de solo-ícono — el patrón real de un split
+        button (el segmento del menú es sólo el chevron, sin texto) o el botón "más acciones" de
+        una barra de herramientas — que hasta ahora no tenía forma correcta de anunciar un nombre.
+        El slot <code>trigger</code> deja de ser obligatorio: se puede omitir del todo y dejar que
+        el chevron que el template ya pinta sea el único contenido visible, nombrado por esta
+        opción en vez de por su propio texto.
+    en:
+      title: New triggerLabel option; the trigger no longer requires visible content
+      body: >-
+        Adds <code>triggerLabel</code>: the TRIGGER BUTTON's own accessible name, deliberately
+        separate from <code>label</code>. <code>label</code> is a fuller description of the menu
+        as a whole ("File actions" against a shorter visible trigger, "Actions"); reusing it on the
+        button would have overwritten its own visible text with a DIFFERENT string, a "Label in
+        Name" mismatch (WCAG 2.5.3) between what a sighted user reads and what a screen reader
+        announces. Built for the icon-only trigger — the real split-button pattern (the menu half
+        is just a chevron, no text) or a toolbar's "more actions" button — which had no correct way
+        to announce a name until now. The <code>trigger</code> slot is no longer required: it can
+        be left empty entirely, letting the chevron the template already paints be the only visible
+        content, named by this option instead of by its own text.
   - date: 2026-08-13
     kind: bugfix
     target: debugSafetyTriangle

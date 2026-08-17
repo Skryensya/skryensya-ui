@@ -34,6 +34,10 @@ export type MenuProps = Pick<
   contextTarget?: ReactNode;
   items: readonly MenuItem[];
   label?: string;
+  /** The TRIGGER button's own accessible name — see `menu.ts`'s identical option doc. For an
+   *  icon-only trigger (leave `trigger` unset): the chevron below is painted either way, and this
+   *  is what makes the button announce something instead of nothing. */
+  triggerLabel?: string;
   indicator?: ReactNode;
   itemIndicator?: ReactNode;
   submenuIndicator?: ReactNode;
@@ -391,6 +395,7 @@ export function Menu({
   submenuIndicator,
   trigger,
   triggerClassName,
+  triggerLabel,
 }: MenuProps) {
   const generatedId = useId();
   const [checkedState, setChecked] = useState<CheckedState>(() =>
@@ -487,6 +492,7 @@ export function Menu({
         <button
           {...api.getTriggerProps()}
           {...anchor.anchor(cx("sk-button", "sk-interactive", menuParts.trigger, triggerClassName))}
+          aria-label={triggerLabel}
           disabled={disabled}
           type="button"
         >

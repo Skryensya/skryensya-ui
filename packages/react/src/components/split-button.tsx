@@ -43,14 +43,17 @@ export function SplitButton({
       </button>
       {menu ?? (
         <Menu
-        disabled={disabled}
-        indicator={menuIndicator}
-        itemIndicator={itemIndicator}
-        items={menuItems ?? []}
-        label={menuLabel ?? ""}
-        onSelect={onSelect}
-        trigger={<span className="sk-visually-hidden">{menuLabel}</span>}
-        triggerClassName={splitButtonParts.trigger}
+          disabled={disabled}
+          indicator={menuIndicator}
+          itemIndicator={itemIndicator}
+          items={menuItems ?? []}
+          label={menuLabel ?? ""}
+          onSelect={onSelect}
+          // No `trigger`: this is the real split-button pattern — an icon-only dropdown segment,
+          // the chevron `Menu` already paints and nothing else, named for a screen reader by
+          // `triggerLabel` instead of by visible text (`menu.ts`'s own option doc has the reasoning).
+          triggerLabel={menuLabel}
+          triggerClassName={splitButtonParts.trigger}
         />
       )}
     </div>

@@ -915,6 +915,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-16",
+            "en": {
+              "body": "Adds <code>triggerLabel</code>: the TRIGGER BUTTON's own accessible name, deliberately separate from <code>label</code>. <code>label</code> is a fuller description of the menu as a whole (\"File actions\" against a shorter visible trigger, \"Actions\"); reusing it on the button would have overwritten its own visible text with a DIFFERENT string, a \"Label in Name\" mismatch (WCAG 2.5.3) between what a sighted user reads and what a screen reader announces. Built for the icon-only trigger — the real split-button pattern (the menu half is just a chevron, no text) or a toolbar's \"more actions\" button — which had no correct way to announce a name until now. The <code>trigger</code> slot is no longer required: it can be left empty entirely, letting the chevron the template already paints be the only visible content, named by this option instead of by its own text.",
+              "title": "New triggerLabel option; the trigger no longer requires visible content"
+            },
+            "es": {
+              "body": "Se agrega <code>triggerLabel</code>: el nombre accesible del BOTÓN trigger en sí, distinto de <code>label</code> a propósito. <code>label</code> es una descripción más completa del menú como un todo (\"Acciones del archivo\" contra un trigger visible más corto, \"Acciones\"); reusarla en el botón habría pisado su propio texto visible con una cadena DISTINTA, un desajuste \"Label in Name\" (WCAG 2.5.3) entre lo que lee una persona y lo que anuncia un lector de pantalla. Pensada para el trigger de solo-ícono — el patrón real de un split button (el segmento del menú es sólo el chevron, sin texto) o el botón \"más acciones\" de una barra de herramientas — que hasta ahora no tenía forma correcta de anunciar un nombre. El slot <code>trigger</code> deja de ser obligatorio: se puede omitir del todo y dejar que el chevron que el template ya pinta sea el único contenido visible, nombrado por esta opción en vez de por su propio texto.",
+              "title": "Nueva opción triggerLabel; el trigger ya no exige contenido visible"
+            },
+            "kind": "feature",
+            "target": "triggerLabel"
+          },
+          {
             "date": "2026-08-13",
             "en": {
               "body": "Crossing diagonally toward an open submenu no longer closes it or highlights the row below. <code>@zag-js/menu</code>'s polygon was not enough: it can only veto an early close during <code>waitForCloseDelay</code>'s 100ms, never extend them, so a pointer parked motionless inside the polygon still lost the submenu at ~90ms. There is now a real element — a <code>clip-path</code> triangle inside the trigger — so the browser fires no <code>pointerleave</code> during the crossing and the timer is never lit. It holds at any depth. New parts: <code>sk-menu__safe-area</code>, <code>sk-menu__intent-readout</code>. <code>debugSafetyTriangle</code> now paints that very element instead of drawing a separate SVG, and its status moved out of a floating badge that covered the trigger into its own space above it.",
@@ -1301,6 +1314,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-16",
+            "en": {
+              "body": "The page composed <code>Menu</code>'s <code>trigger</code> with its own chevron icon — but <code>Menu</code>'s own template already paints a chevron on the trigger, always, for every consumer: the second one rendered visibly beside the first. That icon-only trigger also left the button with no accessible name at all (its only content was an <code>aria-hidden</code> svg). The real split-button pattern — GitHub's, Bootstrap's <code>dropdown-toggle-split</code>, Fluent's <code>SplitButton</code> — is exactly this: an icon-only segment, no visible text, named by <code>aria-label</code>. Menu's new <code>triggerLabel</code> option makes that possible correctly: one chevron, a real name, no second visual-only control invented to carry it. The styling changed too: the menu segment now shares the primary half's own fill (it used to be a plain neutral gray button parked beside it, two controls that did not read as one) with a single hairline divider between the two, instead of a full border around the menu segment.",
+              "title": "The menu segment no longer shows a doubled chevron or loses its name"
+            },
+            "es": {
+              "body": "La página componía el <code>trigger</code> del <code>Menu</code> con un ícono chevron propio — pero el template de <code>Menu</code> ya pinta su propio chevron en el trigger, siempre, para cualquier consumidor: el segundo salía visible al lado del primero. Ese trigger de solo-ícono además dejaba el botón sin nombre accesible (su único contenido era un svg <code>aria-hidden</code>). El patrón real de un split button — el de GitHub, el <code>dropdown-toggle-split</code> de Bootstrap, el <code>SplitButton</code> de Fluent — es exactamente esto: un segmento de solo-ícono, sin texto visible, nombrado por <code>aria-label</code>. La nueva opción <code>triggerLabel</code> de Menu hace eso posible correctamente: un chevron, un nombre real, sin inventar un segundo control de solo-lectura visual. El estilo también cambió: el segmento del menú ahora comparte el relleno del primario (antes era un botón gris neutro pegado al lado, dos controles que no leían como uno) con una sola línea divisoria entre los dos, en vez de un borde completo alrededor del segmento del menú.",
+              "title": "El segmento de menú ya no muestra un chevron duplicado ni pierde su nombre"
+            },
+            "kind": "bugfix"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -8699,6 +8724,10 @@
         "label": {
           "attr": "aria-label",
           "type": "string"
+        },
+        "triggerLabel": {
+          "attr": "aria-label",
+          "type": "string"
         }
       },
       "parts": {
@@ -8746,6 +8775,7 @@
           "mount": "data-sk-menu",
           "options": [
             "label",
+            "triggerLabel",
             "disabled",
             "density",
             "debugSafetyTriangle"
@@ -8802,8 +8832,7 @@
               "required": true
             },
             "trigger": {
-              "accepts": "node",
-              "required": true
+              "accepts": "node"
             }
           },
           "template": {
@@ -8836,6 +8865,9 @@
                 ],
                 "element": "button",
                 "mount": "data-sk-menu-trigger",
+                "options": [
+                  "triggerLabel"
+                ],
                 "part": "trigger",
                 "slot": "trigger"
               },
@@ -16426,5 +16458,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "d924b748bae5aed5"
+  "sourceHash": "bd7deaf2706aea03"
 }

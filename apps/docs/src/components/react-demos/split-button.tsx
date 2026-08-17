@@ -1,7 +1,6 @@
 /*
  * Live React demo for /components/split-button.
  */
-import { Icon } from "@skryensya/react/icon";
 import { SplitButton } from "@skryensya/react/split-button";
 import { framedIn } from "./framed";
 
@@ -10,12 +9,7 @@ const framed = framedIn(import.meta.url);
 
 export const SplitButtonDemo = framed(function SplitButtonDemo() {
   return (
-    <SplitButton
-      menuLabel="More options"
-      menuIndicator={<Icon name="chevron-down" />}
-      menuItems={[{ label: "Save a copy", value: "save-copy" }]}
-      onClick={() => {}}
-    >
+    <SplitButton menuLabel="More options" menuItems={[{ label: "Save a copy", value: "save-copy" }]} onClick={() => {}}>
       Save
     </SplitButton>
   );

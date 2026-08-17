@@ -108,6 +108,21 @@ export const menuContract = {
   options: {
     /** The menu's accessible name: the root's own. An item's name is its label. */
     label: { type: "string", attr: "aria-label" },
+    /**
+     * The TRIGGER BUTTON's own accessible name — separate from `label` on purpose. `trigger`
+     * (the slot) is usually visible text, and a button's accessible name already comes from its
+     * own content for free; `label` is deliberately a MORE DESCRIPTIVE string for the menu as a
+     * whole ("File actions" vs. a terser visible "Actions"), and reusing it here would overwrite
+     * the trigger's own visible text with a DIFFERENT string — a WCAG 2.5.3 "Label in Name"
+     * mismatch between what a sighted user reads and what a screen reader announces.
+     *
+     * This exists for the case `label` cannot cover: an ICON-ONLY trigger (a real split-button's
+     * dropdown segment, a toolbar's "more actions" `…` button — the pattern industry-wide, no
+     * visible text at all, `aria-label` alone). Leave `trigger` empty and set this instead; the
+     * chevron this template always paints stays the only visible content, and the button still
+     * announces a real name.
+     */
+    triggerLabel: { type: "string", attr: "aria-label" },
     disabled: {
       type: "boolean",
       default: false,
@@ -147,11 +162,15 @@ export const menuContract = {
       intent: ["a-list-of-commands", "actions-behind-a-trigger", "submenu"],
       host: { element: "div" },
       mount: menuAttrs.root,
-      options: ["label", "disabled", "density", "debugSafetyTriangle"],
+      options: ["label", "triggerLabel", "disabled", "density", "debugSafetyTriangle"],
       portals: true,
       slots: {
-        /** What opens it. Text, or a composed control. */
-        trigger: { accepts: "node", required: true },
+        /**
+         * What opens it. Text, or a composed control — or nothing at all: an icon-only trigger (the
+         * real split-button / toolbar-overflow pattern) leaves this empty and names the button with
+         * `triggerLabel` instead, since the chevron below is painted either way.
+         */
+        trigger: { accepts: "node" },
         items: {
           accepts: "items",
           required: true,
@@ -198,6 +217,10 @@ export const menuContract = {
             part: "trigger",
             also: ["sk-button", "sk-interactive", "sk-anchor"],
             mount: menuAttrs.trigger,
+            // Claims `triggerLabel` for ITSELF (the `attr: "aria-label"` on the option already says
+            // where — no `optionAttrs` rename needed): the root above never sees this option at all,
+            // the same "one option, one element" split `label` (root) already keeps clean.
+            options: ["triggerLabel"],
             attrs: { type: "button" },
             slot: "trigger",
             children: [

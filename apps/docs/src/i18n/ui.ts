@@ -2314,6 +2314,12 @@ export const ui = {
     "splitButtonPage.description": "Acción principal estable y menú adyacente con acciones alternativas.",
     "splitButtonPage.contractBody": "La acción principal no cambia silenciosamente al elegir el menú. Si no hay una acción dominante, usa Menu.",
     "splitButtonPage.a11yBody": "Son dos botones independientes: uno ejecuta y el otro anuncia y abre las alternativas.",
+    "splitButtonPage.smallTitle": "Tamaño small",
+    "splitButtonPage.smallBody": "Las dos mitades escalan juntas — <code>size</code> en el Button primario, <code>triggerSize</code> en el trigger del Menu.",
+    "splitButtonPage.smallLabel": "SplitButton, tamaño small",
+    "splitButtonPage.menuFirstTitle": "El menú primero",
+    "splitButtonPage.menuFirstBody": "Compuesto a mano con <code>Inline</code> en vez del contrato de SplitButton — que siempre ordena la acción antes que el menú, el patrón real de un split button (el trigger va después, y solo pasa a la izquierda por espejado <code>dir=\"rtl\"</code>, nunca como elección autorada en el mismo idioma). Esto demuestra que <code>squareStart</code>/<code>squareEnd</code> funcionan en cualquier orden, no solo en el que arma SplitButton.",
+    "splitButtonPage.menuFirstLabel": "SplitButton, menú primero",
 
     "stackPage.description": "Stack: primitive de layout vertical con separación y alineación transversal.",
     "stackPage.lede":
@@ -5594,6 +5600,12 @@ export const ui = {
     "splitButtonPage.description": "A stable primary action with an adjacent menu of alternative actions.",
     "splitButtonPage.contractBody": "The primary action never silently changes when the menu is chosen. If there is no dominant action, use Menu.",
     "splitButtonPage.a11yBody": "They are two independent buttons: one runs the action, and the other announces and opens the alternatives.",
+    "splitButtonPage.smallTitle": "Small size",
+    "splitButtonPage.smallBody": "Both halves scale together — <code>size</code> on the primary Button, <code>triggerSize</code> on the Menu's own trigger.",
+    "splitButtonPage.smallLabel": "SplitButton, small size",
+    "splitButtonPage.menuFirstTitle": "The menu, first",
+    "splitButtonPage.menuFirstBody": "Composed by hand with <code>Inline</code> instead of SplitButton's own contract — which always orders the action before the menu, the real split-button pattern (the trigger comes after, and only moves to the left through <code>dir=\"rtl\"</code> mirroring, never as an authored choice in the same language direction). This shows <code>squareStart</code>/<code>squareEnd</code> work in either order, not only the one SplitButton itself assembles.",
+    "splitButtonPage.menuFirstLabel": "SplitButton, menu first",
 
     "stackPage.description": "Stack: a vertical layout primitive with gap and cross-axis alignment.",
     "stackPage.lede":

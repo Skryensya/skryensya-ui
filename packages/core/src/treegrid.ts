@@ -76,6 +76,15 @@ export const treegridContract = {
      * columna: Asunto"`). Required whenever `resizableColumns` is on — see the `a11y` entry below.
      */
     resizeLabel: { type: "string", attr: "data-resize-label" },
+    /**
+     * The INITIAL share of the table's width each column claims before any drag, one positive number
+     * per column, comma-separated (`"2,1,1,1"`) — see `table.ts`'s identical option and
+     * `resolveWeightedColumnWidths` (`@skryensya/core/splitter`). Omitted, a resizable Treegrid falls
+     * back to {@link defaultTreegridColumnWeights} rather than an equal split: the hierarchy column
+     * carries per-level indentation, a disclosure button, and the row's own label, so it earns a
+     * bigger default share than a flat metadata column next to it.
+     */
+    columnWeights: { type: "string", attr: "data-column-weights" },
   },
 
   a11y: [
@@ -100,7 +109,7 @@ export const treegridContract = {
     Treegrid: {
       intent: ["hierarchical-data-grid", "file-explorer-table", "expandable-rows-table"],
       host: { element: "table" },
-      options: ["label", "resizableColumns", "resizeLabel"],
+      options: ["label", "resizableColumns", "resizeLabel", "columnWeights"],
       requires: ["label"],
       slots: {
         children: {
@@ -378,3 +387,15 @@ export function resolveTreegridKey(params: {
  * keep working.
  */
 export { resolveColumnResize, SPLITTER_MIN_COLUMN_WIDTH as TREEGRID_MIN_COLUMN_WIDTH } from "./splitter.js";
+
+/**
+ * The `columnWeights` a resizable Treegrid seeds from when the option itself is not authored — the
+ * hierarchy column (index 0: every row's disclosure button and label, indented one step per level)
+ * earns a bigger starting share than a flat metadata column beside it, the same reasoning
+ * `columnWeights`'s own doc gives. An authored `columnWeights` (`data-column-weights` / the React
+ * `columnWeights` prop) always overrides this; this is only ever the fallback.
+ */
+export function defaultTreegridColumnWeights(colCount: number): readonly number[] {
+  if (colCount < 1) return [];
+  return Array.from({ length: colCount }, (_, index) => (index === 0 ? 2 : 1));
+}

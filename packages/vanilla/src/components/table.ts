@@ -1,5 +1,9 @@
 import { tableParts } from "@skryensya/core/table";
-import { SPLITTER_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH } from "@skryensya/core/splitter";
+import {
+  parseColumnWeights,
+  resolveWeightedColumnWidths,
+  SPLITTER_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH,
+} from "@skryensya/core/splitter";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 import { attachColumnResizer, watchColumnLayout } from "../splitter.js";
 
@@ -38,11 +42,23 @@ function connect(root: HTMLElement): () => void {
    * back to measuring itself.
    */
   const measured = root.parentElement instanceof HTMLElement ? root.parentElement : root;
-  const pxWidth = Math.max(MIN_COLUMN_WIDTH, measured.getBoundingClientRect().width / colCount);
+  /*
+   * `columnWeights` (`data-column-weights`) lets a consumer give a content-heavy column a bigger
+   * INITIAL share than a flat one — `resolveWeightedColumnWidths`'s own doc
+   * (`@skryensya/core/splitter`) has the arithmetic. Missing or malformed, every column starts
+   * equal, the behaviour before this option existed.
+   */
+  const weights = parseColumnWeights(root.getAttribute("data-column-weights"), colCount) ??
+    Array.from({ length: colCount }, () => 1);
+  const seedWidths = resolveWeightedColumnWidths({
+    total: measured.getBoundingClientRect().width,
+    weights,
+    min: MIN_COLUMN_WIDTH,
+  });
   const cols: HTMLTableColElement[] = [];
   for (let i = 0; i < colCount; i++) {
     const col = root.ownerDocument.createElement("col");
-    col.style.width = `${pxWidth}px`;
+    col.style.width = `${seedWidths[i]}px`;
     colgroup.append(col);
     cols.push(col);
   }
@@ -56,7 +72,7 @@ function connect(root: HTMLElement): () => void {
    * conserves the touched pair's own total, so the table's OWN total is an invariant of every
    * resize, set correctly exactly once, here.
    */
-  root.style.width = `${pxWidth * colCount}px`;
+  root.style.width = `${seedWidths.reduce((sum, width) => sum + width, 0)}px`;
   /*
    * That measurement can still be wrong, though: a table mounted while its own ancestor is
    * `display: none` (a docs preview panel not yet the selected binding tab, a closed accordion, an
@@ -69,9 +85,10 @@ function connect(root: HTMLElement): () => void {
     measured,
     colCount,
     min: MIN_COLUMN_WIDTH,
-    apply: (width) => {
-      cols.forEach((col) => (col.style.width = `${width}px`));
-      root.style.width = `${width * colCount}px`;
+    weights,
+    apply: (nextWidths) => {
+      cols.forEach((col, i) => (col.style.width = `${nextWidths[i]}px`));
+      root.style.width = `${nextWidths.reduce((sum, width) => sum + width, 0)}px`;
     },
   });
 

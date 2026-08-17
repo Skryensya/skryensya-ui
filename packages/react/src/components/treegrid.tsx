@@ -1,12 +1,19 @@
 import {
   computeTreegridVisibility,
+  defaultTreegridColumnWeights,
   resolveColumnResize,
   resolveTreegridKey,
   treegridParts,
   TREEGRID_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH,
   type TreegridFocus,
 } from "@skryensya/core/treegrid";
-import { hasCrossedDragThreshold, resolveSplitterKey, splitterDirectionSign, splitterValuePercent } from "@skryensya/core/splitter";
+import {
+  hasCrossedDragThreshold,
+  resolveSplitterKey,
+  resolveWeightedColumnWidths,
+  splitterDirectionSign,
+  splitterValuePercent,
+} from "@skryensya/core/splitter";
 import {
   Children,
   cloneElement,
@@ -122,6 +129,13 @@ export type TreegridProps = Omit<HTMLAttributes<HTMLTableElement>, "onChange"> &
   resizableColumns?: boolean;
   /** Required whenever `resizableColumns` is on — see `treegrid.ts`'s `resizeLabel` option doc. */
   resizeLabel?: string;
+  /**
+   * The INITIAL share of the table's width each column claims before any drag, one positive number
+   * per column — see `treegrid.ts`'s identical `columnWeights` option and
+   * `resolveWeightedColumnWidths` (`@skryensya/core/splitter`). Omitted, falls back to
+   * {@link defaultTreegridColumnWeights} rather than an equal split.
+   */
+  columnWeights?: readonly number[];
 };
 
 export function Treegrid({
@@ -132,6 +146,7 @@ export function Treegrid({
   onExpandedChange,
   resizableColumns = false,
   resizeLabel,
+  columnWeights,
   ...props
 }: TreegridProps) {
   // Lazy initializer: seeded from each row's OWN authored `expanded`, read once — a branch that
@@ -185,6 +200,14 @@ export function Treegrid({
     const table = tableRef.current;
     if (!table) return;
     const measured = table.parentElement instanceof HTMLElement ? table.parentElement : table;
+    /*
+     * `columnWeights`, falling back to `defaultTreegridColumnWeights` — the hierarchy column (index
+     * 0) carries per-level indentation, a disclosure button, and the row's own label, so it earns a
+     * bigger default share than a flat metadata column beside it. `resolveWeightedColumnWidths`
+     * (`@skryensya/core/splitter`) has the arithmetic; an equal `columnWeights` reduces to the exact
+     * `width / colCount` split this used before weights existed.
+     */
+    const weights = columnWeights ?? defaultTreegridColumnWeights(colCount);
 
     // Guards against a callback already in flight the instant `disconnect()` is called — a real
     // race, not a hypothetical one, since `ResizeObserver` batches and delivers on the next frame.
@@ -192,8 +215,8 @@ export function Treegrid({
     const seedFrom = (width: number): boolean => {
       if (seeded || width <= 0) return false;
       seeded = true;
-      const seed = Math.max(MIN_COLUMN_WIDTH, width / colCount);
-      setColumnWidths(Array.from({ length: colCount }, () => seed));
+      const seeds = resolveWeightedColumnWidths({ total: width, weights, min: MIN_COLUMN_WIDTH });
+      setColumnWidths(seeds);
       /*
        * An explicit pixel WIDTH on the table itself, not left at the stylesheet's `inline-size:
        * auto` — see `treegrid.css`'s own note on why `auto` is not safe here: a `table-layout:
@@ -206,7 +229,7 @@ export function Treegrid({
        * imperative write, not a `style` prop, since nothing else on this element owns `style` for
        * React to fight over.
        */
-      table.style.width = `${seed * colCount}px`;
+      table.style.width = `${seeds.reduce((sum, w) => sum + w, 0)}px`;
       return true;
     };
 
@@ -217,8 +240,8 @@ export function Treegrid({
     observer.observe(measured);
     return () => observer.disconnect();
     // A mount concern, like the vanilla enhancer's own one-time measurement — re-running on every
-    // `colCount` change would blow away a reader's own drag the moment authored content changed
-    // the count for an unrelated reason.
+    // `colCount`/`columnWeights` change would blow away a reader's own drag the moment authored
+    // content changed for an unrelated reason.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resizableColumns]);
 

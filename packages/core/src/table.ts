@@ -78,6 +78,14 @@ export const tableContract = {
      * Required whenever `resizableColumns` is on — see the `a11y` entry below.
      */
     resizeLabel: { type: "string", attr: "data-resize-label" },
+    /**
+     * The INITIAL share of the table's width each column claims before any drag, one positive number
+     * per column, comma-separated (`"2,1,1,1"`) — `resolveWeightedColumnWidths`'s own doc
+     * (`@skryensya/core/splitter`) explains why an equal split is not always the right default. Only
+     * meaningful alongside `resizableColumns`; omitted, every column starts equal, the prior
+     * behaviour.
+     */
+    columnWeights: { type: "string", attr: "data-column-weights" },
   },
 
   a11y: [
@@ -118,7 +126,7 @@ export const tableContract = {
     Table: {
       intent: ["tabular-data", "rows-and-columns", "data-table", "comparison"],
       host: { element: "table" },
-      options: ["resizableColumns", "resizeLabel"],
+      options: ["resizableColumns", "resizeLabel", "columnWeights"],
       slots: {
         children: {
           accepts: "signature",

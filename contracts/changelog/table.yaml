@@ -3,8 +3,29 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "27debbbce4ce2686"
+surface: "ae07e635407d118c"
 entries:
+  - date: 2026-08-16
+    kind: feature
+    target: Table
+    es:
+      title: Nueva opción columnWeights, reparto inicial por peso en vez de parejo
+      body: >-
+        Se agrega <code>columnWeights</code>: un número positivo por columna, separado por comas
+        (<code>"2,1,1,1"</code>), que decide el reparto INICIAL del ancho de la tabla antes de
+        cualquier arrastre — sólo tiene efecto junto a <code>resizableColumns</code>. Sin ella,
+        cada columna arranca igual, el comportamiento de siempre; con pesos iguales el reparto es
+        exactamente el mismo. El arrastre en sí no cambia: <code>resolveColumnResize</code> sigue
+        redistribuyendo sólo el par de columnas tocado, el peso únicamente decide la semilla.
+    en:
+      title: New columnWeights option, a weighted initial split instead of an even one
+      body: >-
+        Adds <code>columnWeights</code>: one positive number per column, comma-separated
+        (<code>"2,1,1,1"</code>), that decides the table's INITIAL width split before any drag —
+        only meaningful alongside <code>resizableColumns</code>. Omitted, every column starts
+        equal, the prior behaviour; equal weights reduce to the exact same split. Dragging itself
+        is unchanged: <code>resolveColumnResize</code> still only redistributes the touched pair,
+        the weight only decides the seed.
   - date: 2026-08-16
     kind: feature
     target: Table

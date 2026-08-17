@@ -2,6 +2,7 @@ import {
   hasCrossedDragThreshold,
   resolveColumnResize,
   resolveSplitterKey,
+  resolveWeightedColumnWidths,
   splitterDirectionSign,
   splitterValuePercent,
 } from "@skryensya/core/splitter";
@@ -48,16 +49,21 @@ export function watchColumnLayout(options: {
   readonly measured: HTMLElement;
   readonly colCount: number;
   readonly min: number;
-  readonly apply: (widthPerColumn: number) => void;
+  /** One positive weight per column — `resolveWeightedColumnWidths`'s own doc
+   * (`@skryensya/core/splitter`) explains why an equal split is not always the seed a consumer
+   * wants. Omitted, every column starts equal, the prior behaviour. */
+  readonly weights?: readonly number[];
+  readonly apply: (widths: readonly number[]) => void;
 }): () => void {
   const { measured, colCount, min, apply } = options;
+  const weights = options.weights ?? Array.from({ length: colCount }, () => 1);
   // Guards against a callback already in flight the instant `disconnect()` is called — a real race,
   // not a hypothetical one, since `ResizeObserver` batches and delivers on the next frame.
   let seeded = false;
-  const seedFrom = (width: number): boolean => {
-    if (seeded || width <= 0) return false;
+  const seedFrom = (total: number): boolean => {
+    if (seeded || total <= 0) return false;
     seeded = true;
-    apply(Math.max(min, width / colCount));
+    apply(resolveWeightedColumnWidths({ total, weights, min }));
     return true;
   };
   if (seedFrom(measured.getBoundingClientRect().width)) return () => {};

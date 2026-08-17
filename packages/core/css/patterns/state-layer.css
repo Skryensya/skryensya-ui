@@ -113,6 +113,19 @@
   .sk-interactive:has(:focus-visible) {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: var(--focus-ring-offset);
+    /*
+     * `--z-focus`, not left at the implicit stacking of DOM order: the outline's own positive
+     * offset bleeds past this element's border box, and a WELDED neighbor (Button's own
+     * `weldStart`/`weldEnd`, a split button's own seam) sits flush against that exact edge with
+     * zero gap. `.sk-interactive` already establishes its own stacking context
+     * (`position: relative` + `isolation: isolate`, above), so without an explicit z-index here
+     * the LATER sibling in the DOM — same stacking level, painted second — covers the ring where
+     * the two overlap. This element only needs to win against its OWN siblings while focused, not
+     * escape the page's real layers, which is exactly what `--z-focus` is for: it sits between
+     * `--z-base` and `--z-sticky`, high enough to clear a neighbor at the same normal-flow level,
+     * nowhere near the popover/overlay/toast layers above it.
+     */
+    z-index: var(--z-focus);
   }
   .sk-interactive[aria-disabled="true"] {
     outline: none;

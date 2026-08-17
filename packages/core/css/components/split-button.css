@@ -10,22 +10,33 @@
     display: inline-flex;
     align-items: stretch;
   }
-  .sk-split-button__primary {
+  /*
+   * EVERY selector below that overrides `.sk-button`'s own base rule is written scoped under
+   * `.sk-split-button >` (or deeper), NEVER as a bare `.sk-split-button__primary`/`__trigger`
+   * class alone — not a style preference, a correctness requirement. `.sk-button`'s own base rule
+   * (button.css) is itself a single class, specificity (0,1,0); a bare `.sk-split-button__primary`
+   * is ALSO (0,1,0), a genuine TIE, and a tie is decided by which of the two files' `<style>` tags
+   * the page happens to insert second — order this file has no control over and the docs preview
+   * got backwards in practice (confirmed live: `.sk-button`'s own rule was winning, painting the
+   * primary segment as a plain neutral button, no fill, and leaving BOTH corners at the primary
+   * button's own full radius, not squared, because the shorthand `border-radius` in that base rule
+   * rewon the corner longhands too). Every selector here is at minimum TWO classes deep
+   * (`.sk-split-button` plus the part class), specificity (0,2,0) or higher — always strictly
+   * greater than `.sk-button`'s (0,1,0), so which file loads first never again decides the outcome.
+   */
+
+  /* RADIUS — squares the seam corner on both halves, unconditionally: true regardless of variant,
+   * size or direction (the `[dir="rtl"]` blocks further down are the one axis this DOES flip on). */
+  .sk-split-button > .sk-split-button__primary {
     border-start-end-radius: 0;
     border-end-end-radius: 0;
   }
-  /*
-   * The composed case: a Menu dropped inside a split button brings its own trigger, and a
-   * composition has no way to hand it our class; the class belongs to whoever renders the button,
-   * and that is Menu. Reaching it by structure is what lets the tree compose the two instead of
-   * SplitButton having to build the menu itself from a flat prop.
-   */
   .sk-split-button > .sk-menu > button,
-  .sk-split-button__trigger {
+  .sk-split-button > .sk-split-button__trigger {
     min-inline-size: var(--sk-split-button-trigger-inline-size);
     padding-inline: var(--space-inset-sm);
     /*
-     * The only border either half has left: the variant blocks below set
+     * The only border either half has left: the color blocks below set
      * `--sk-button-border-color: transparent`, erasing the other three sides (still 1px, just
      * invisible), and this one edge alone carries the hairline — the seam between the two halves,
      * not a border AROUND the trigger.
@@ -34,40 +45,62 @@
     border-start-start-radius: 0;
     border-end-start-radius: 0;
   }
-  [dir="rtl"] .sk-split-button__primary {
+  [dir="rtl"] .sk-split-button > .sk-split-button__primary {
     border-radius: 0 var(--sk-split-button-radius) var(--sk-split-button-radius) 0;
   }
-  [dir="rtl"] .sk-split-button__trigger {
+  [dir="rtl"] .sk-split-button > .sk-split-button__trigger {
     border-radius: var(--sk-split-button-radius) 0 0 var(--sk-split-button-radius);
     border-inline-start-color: var(--sk-split-button-divider-color);
   }
 
   /*
-   * VARIANT — the trigger re-derives its own fill from the PRIMARY button's own `data-variant`,
-   * via a sibling selector, rather than either half carrying a fill of its own that could drift
-   * out of sync. There is no other way to reach it: Menu's own contract has no idea what a
-   * "variant" is (it is a `Button` vocabulary word), so nothing OTHER than this structural read of
-   * the primary's own attribute can keep the two halves matched. Re-declares the exact hooks
-   * `.sk-button[data-variant="…"]` (button.css) already sets for the primary half itself — that
-   * rule reaches the primary directly (`options: ["variant"]` in `split-button.ts` puts the real
-   * attribute there), so only the trigger needs restating here.
+   * VARIANT — three blocks, mutually exclusive by `:not()`/attribute, one for each `Button` color
+   * this contract allows. `primary` is the DEFAULT and gets no attribute-gated block of its own:
+   * the compiled/vanilla markup never writes an option's value equal to that option's own default
+   * (confirmed live: a plain `Button` demo carries no `data-size` either, `md` being its default),
+   * so a rule gated on `[data-variant="primary"]` would simply never match unless a consumer
+   * authors the value explicitly. Instead `primary`'s own block matches whenever the OTHER two
+   * variants are NOT explicitly present — true both when the attribute is absent (the default,
+   * the common case) and when it is literally `"primary"` (this component's own React binding
+   * always serializes SOME literal value). `danger`/`ghost` need no such trick: neither is ever a
+   * default, so whoever picks one always writes the attribute explicitly, and `.sk-button
+   * [data-variant="…"]` (button.css) already paints the primary half correctly once it is present
+   * — only the TRIGGER needs restating here, since Menu's own contract has no idea what a
+   * "variant" even is, and re-derives its fill from the primary's own attribute via a sibling
+   * selector instead.
+   *
+   * Each block sets ALL FOUR hooks explicitly, `ghost` included, rather than leaving one to fall
+   * through from a broader rule — `ghost`'s own flat shadow (`none`, not `.sk-button`'s raised
+   * default) is exactly the property an unconditional block would have clobbered, and did, until
+   * this was three exclusive blocks instead of one default plus two overrides.
    */
-  .sk-split-button__primary[data-variant="primary"] ~ .sk-menu > button,
-  .sk-split-button__primary[data-variant="primary"] ~ .sk-split-button__trigger {
+  .sk-split-button > .sk-split-button__primary:not([data-variant="danger"]):not([data-variant="ghost"]) {
     --sk-button-bg: var(--color-action-primary);
     --sk-button-fg: var(--color-text-on-accent);
     --sk-button-border-color: transparent;
     --sk-button-shadow: var(--elevation-raised);
   }
-  .sk-split-button__primary[data-variant="danger"] ~ .sk-menu > button,
-  .sk-split-button__primary[data-variant="danger"] ~ .sk-split-button__trigger {
+  .sk-split-button
+    > .sk-split-button__primary:not([data-variant="danger"]):not([data-variant="ghost"])
+    ~ .sk-menu
+    > button,
+  .sk-split-button
+    > .sk-split-button__primary:not([data-variant="danger"]):not([data-variant="ghost"])
+    ~ .sk-split-button__trigger {
+    --sk-button-bg: var(--color-action-primary);
+    --sk-button-fg: var(--color-text-on-accent);
+    --sk-button-border-color: transparent;
+    --sk-button-shadow: var(--elevation-raised);
+  }
+  .sk-split-button > .sk-split-button__primary[data-variant="danger"] ~ .sk-menu > button,
+  .sk-split-button > .sk-split-button__primary[data-variant="danger"] ~ .sk-split-button__trigger {
     --sk-button-bg: var(--color-action-danger);
     --sk-button-fg: var(--color-text-on-accent);
     --sk-button-border-color: transparent;
     --sk-button-shadow: var(--elevation-raised);
   }
-  .sk-split-button__primary[data-variant="ghost"] ~ .sk-menu > button,
-  .sk-split-button__primary[data-variant="ghost"] ~ .sk-split-button__trigger {
+  .sk-split-button > .sk-split-button__primary[data-variant="ghost"] ~ .sk-menu > button,
+  .sk-split-button > .sk-split-button__primary[data-variant="ghost"] ~ .sk-split-button__trigger {
     --sk-button-bg: transparent;
     --sk-button-fg: var(--color-action-quiet-fg);
     --sk-button-border-color: transparent;
@@ -80,17 +113,21 @@
    * (a small split button with a full-size dropdown reads as two mismatched controls, not one).
    * `sm` intentionally paints BELOW touch-target height, same as `.sk-button[data-size="sm"]`
    * itself — the shared `.sk-button::after` rule still expands the hit area, so nothing here needs
-   * to repeat that guarantee.
+   * to repeat that guarantee. `md` needs no block: it is `size`'s own default, and `.sk-button`'s
+   * own unattributed base rule already paints md-equivalent dimensions with no attribute needed —
+   * the one axis in this file where the default genuinely does not need restating (unlike variant,
+   * whose default, "primary", differs from Button's own base variant, "neutral", and whose
+   * `--sk-button-shadow` differs by variant too, which size's hooks never do).
    */
-  .sk-split-button__primary[data-size="sm"] ~ .sk-menu > button,
-  .sk-split-button__primary[data-size="sm"] ~ .sk-split-button__trigger {
+  .sk-split-button > .sk-split-button__primary[data-size="sm"] ~ .sk-menu > button,
+  .sk-split-button > .sk-split-button__primary[data-size="sm"] ~ .sk-split-button__trigger {
     --sk-button-height: var(--size-control-sm);
     --sk-button-padding-x: var(--space-inset-sm);
     --sk-button-font-size: var(--font-size-body-sm);
     --sk-split-button-trigger-inline-size: var(--size-control-sm);
   }
-  .sk-split-button__primary[data-size="lg"] ~ .sk-menu > button,
-  .sk-split-button__primary[data-size="lg"] ~ .sk-split-button__trigger {
+  .sk-split-button > .sk-split-button__primary[data-size="lg"] ~ .sk-menu > button,
+  .sk-split-button > .sk-split-button__primary[data-size="lg"] ~ .sk-split-button__trigger {
     --sk-button-height: max(var(--size-control-lg), var(--size-touch-target));
     --sk-button-padding-x: var(--space-inset-lg);
     --sk-button-font-size: var(--font-size-body-lg);

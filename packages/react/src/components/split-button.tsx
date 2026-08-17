@@ -1,9 +1,18 @@
-import { splitButtonParts } from "@skryensya/core/split-button";
+import { splitButtonContract, splitButtonParts } from "@skryensya/core/split-button";
+import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import type { MenuItem } from "@skryensya/core/menu";
 import type { ReactNode } from "react";
 import { Menu } from "./menu.js";
 
-export type SplitButtonProps = {
+/*
+ * A BINDING, not a second declaration (decision 28, `button.tsx`'s own precedent): `variant`/
+ * `size`'s unions and defaults are read from `splitButtonContract`, never restated. Adding a
+ * variant is one edit, in Core — this file, and `split-button.css`'s sibling-selector rules that
+ * key off the SAME `data-variant`/`data-size` attributes, pick it up for free.
+ */
+const { variant: variantOption, size: sizeOption } = splitButtonContract.options;
+
+export type SplitButtonProps = SignatureOptionsOf<typeof splitButtonContract, "SplitButton"> & {
   children: ReactNode;
   /**
    * A composed Menu. Preferred over `menuItems`: it is what lets one tree describe both halves,
@@ -29,12 +38,15 @@ export function SplitButton({
   menuLabel,
   onClick,
   onSelect,
+  variant = variantOption.default,
+  size = sizeOption.default,
 }: SplitButtonProps) {
   return (
     <div className={splitButtonParts.root}>
       <button
         className={`sk-button sk-interactive ${splitButtonParts.primary}`}
-        data-variant="primary"
+        data-variant={variant}
+        data-size={size}
         disabled={disabled}
         onClick={onClick}
         type="button"

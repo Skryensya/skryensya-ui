@@ -22,28 +22,13 @@
    */
   .sk-split-button > .sk-menu > button,
   .sk-split-button__trigger {
-    /*
-     * Matches the primary half's own FILL, not `.sk-button`'s neutral default: two segments of one
-     * welded control, not a primary button with an unrelated gray button parked beside it. Safe to
-     * hard-code (never a hook the trigger side re-derives from `--variant`): the contract's own
-     * `primary` part is statically `data-variant="primary"`, never configurable
-     * (`split-button.ts`'s `options: []` — there is no variant to match against). Re-declaring the
-     * SAME hooks `.sk-button[data-variant="primary"]` sets is exactly the mechanism this file's own
-     * header comment (`button.css`) describes for "reskin one instance without a specificity
-     * fight" — this is that reskin, aimed at the composed trigger's structural selector instead of
-     * an instance's own class.
-     */
-    --sk-button-bg: var(--color-action-primary);
-    --sk-button-fg: var(--color-text-on-accent);
-    --sk-button-border-color: transparent;
-    --sk-button-shadow: var(--elevation-raised);
-
     min-inline-size: var(--sk-split-button-trigger-inline-size);
     padding-inline: var(--space-inset-sm);
     /*
-     * The only border either half has left: `--sk-button-border-color: transparent` above erases
-     * the other three sides (still 1px, just invisible), and this one edge alone carries the
-     * hairline — the seam between the two halves, not a border AROUND the trigger.
+     * The only border either half has left: the variant blocks below set
+     * `--sk-button-border-color: transparent`, erasing the other three sides (still 1px, just
+     * invisible), and this one edge alone carries the hairline — the seam between the two halves,
+     * not a border AROUND the trigger.
      */
     border-inline-start-color: var(--sk-split-button-divider-color);
     border-start-start-radius: 0;
@@ -55,5 +40,60 @@
   [dir="rtl"] .sk-split-button__trigger {
     border-radius: var(--sk-split-button-radius) 0 0 var(--sk-split-button-radius);
     border-inline-start-color: var(--sk-split-button-divider-color);
+  }
+
+  /*
+   * VARIANT — the trigger re-derives its own fill from the PRIMARY button's own `data-variant`,
+   * via a sibling selector, rather than either half carrying a fill of its own that could drift
+   * out of sync. There is no other way to reach it: Menu's own contract has no idea what a
+   * "variant" is (it is a `Button` vocabulary word), so nothing OTHER than this structural read of
+   * the primary's own attribute can keep the two halves matched. Re-declares the exact hooks
+   * `.sk-button[data-variant="…"]` (button.css) already sets for the primary half itself — that
+   * rule reaches the primary directly (`options: ["variant"]` in `split-button.ts` puts the real
+   * attribute there), so only the trigger needs restating here.
+   */
+  .sk-split-button__primary[data-variant="primary"] ~ .sk-menu > button,
+  .sk-split-button__primary[data-variant="primary"] ~ .sk-split-button__trigger {
+    --sk-button-bg: var(--color-action-primary);
+    --sk-button-fg: var(--color-text-on-accent);
+    --sk-button-border-color: transparent;
+    --sk-button-shadow: var(--elevation-raised);
+  }
+  .sk-split-button__primary[data-variant="danger"] ~ .sk-menu > button,
+  .sk-split-button__primary[data-variant="danger"] ~ .sk-split-button__trigger {
+    --sk-button-bg: var(--color-action-danger);
+    --sk-button-fg: var(--color-text-on-accent);
+    --sk-button-border-color: transparent;
+    --sk-button-shadow: var(--elevation-raised);
+  }
+  .sk-split-button__primary[data-variant="ghost"] ~ .sk-menu > button,
+  .sk-split-button__primary[data-variant="ghost"] ~ .sk-split-button__trigger {
+    --sk-button-bg: transparent;
+    --sk-button-fg: var(--color-action-quiet-fg);
+    --sk-button-border-color: transparent;
+    --sk-button-shadow: none;
+  }
+
+  /*
+   * SIZE — same mechanism as variant, one sibling-selector block per `Button` size so the trigger
+   * scales with the primary half instead of staying pinned to a single touch-target-sized square
+   * (a small split button with a full-size dropdown reads as two mismatched controls, not one).
+   * `sm` intentionally paints BELOW touch-target height, same as `.sk-button[data-size="sm"]`
+   * itself — the shared `.sk-button::after` rule still expands the hit area, so nothing here needs
+   * to repeat that guarantee.
+   */
+  .sk-split-button__primary[data-size="sm"] ~ .sk-menu > button,
+  .sk-split-button__primary[data-size="sm"] ~ .sk-split-button__trigger {
+    --sk-button-height: var(--size-control-sm);
+    --sk-button-padding-x: var(--space-inset-sm);
+    --sk-button-font-size: var(--font-size-body-sm);
+    --sk-split-button-trigger-inline-size: var(--size-control-sm);
+  }
+  .sk-split-button__primary[data-size="lg"] ~ .sk-menu > button,
+  .sk-split-button__primary[data-size="lg"] ~ .sk-split-button__trigger {
+    --sk-button-height: max(var(--size-control-lg), var(--size-touch-target));
+    --sk-button-padding-x: var(--space-inset-lg);
+    --sk-button-font-size: var(--font-size-body-lg);
+    --sk-split-button-trigger-inline-size: max(var(--size-control-lg), var(--size-touch-target));
   }
 }

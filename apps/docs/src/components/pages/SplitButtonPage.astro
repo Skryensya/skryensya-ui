@@ -4,7 +4,7 @@ import "@skryensya/core/components/menu.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { splitButtonTree } from "../../demos/split-button";
+import { splitButtonTree, splitButtonSmallTree, splitButtonMenuFirstTree } from "../../demos/split-button";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/split-button.yaml?raw";
 import coreSource from "@core/src/split-button.ts?raw";
@@ -15,7 +15,9 @@ const t = useTranslations(getLocale(Astro.url));
 
 const styles = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/split-button.css";
-@import "@skryensya/core/components/menu.css";`;
+@import "@skryensya/core/components/menu.css";
+@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/patterns/layout.css";`;
 const js = `import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 import { initComponents } from "@skryensya/vanilla/auto";
@@ -44,6 +46,24 @@ const sourceFiles = [
   <Fragment slot="usage">
     <p class="lede" set:html={t("splitButtonPage.description")} />
     <ComponentPreview tree={splitButtonTree(t)} js={js} label="SplitButton" viewport="menu" />
+
+    <h3>{t("splitButtonPage.smallTitle")}</h3>
+    <p set:html={t("splitButtonPage.smallBody")} />
+    <ComponentPreview
+      tree={splitButtonSmallTree(t)}
+      js={js}
+      label={t("splitButtonPage.smallLabel")}
+      viewport="menu"
+    />
+
+    <h3>{t("splitButtonPage.menuFirstTitle")}</h3>
+    <p set:html={t("splitButtonPage.menuFirstBody")} />
+    <ComponentPreview
+      tree={splitButtonMenuFirstTree(t)}
+      js={js}
+      label={t("splitButtonPage.menuFirstLabel")}
+      viewport="menu"
+    />
 
     <h3>{t("component.contractNotesTitle")}</h3>
     <p set:html={t("splitButtonPage.contractBody")} />

@@ -149,3 +149,50 @@ export function resolveColumnResize(params: {
   result[index + 1] = total - nextBefore;
   return result;
 }
+
+/*
+ * ------------------------------------------------------------------------------------------------
+ * COLUMN WEIGHTS — the INITIAL split of a resizable table's width across its columns, distinct from
+ * `resolveColumnResize` above (which only ever touches one adjacent pair, after the fact). An equal
+ * `total / colCount` split treats a content-heavy column — Treegrid's own hierarchy column, carrying
+ * per-level indentation, a disclosure button, AND the row's label — exactly like a flat metadata
+ * column next to it, so the heavy column gets squeezed just as hard and truncates first. This is
+ * ONLY ever a seed: once mounted, every later drag stays on `resolveColumnResize`'s own adjacent-pair
+ * arithmetic, which does not need to know about weights at all.
+ * ------------------------------------------------------------------------------------------------
+ */
+
+/**
+ * Per-column width weights, encoded as one comma-separated attribute value (`columnWeights`'s own
+ * `data-column-weights`) since the option system's `type` union has no array member — see
+ * `contract.ts`. Returns `null` on anything that cannot become exactly `count` positive weights (a
+ * missing attribute, a bad number, the wrong count), the two bindings' own cue to fall back to their
+ * own default rather than seed from a half-parsed, possibly wrong-length array.
+ */
+export function parseColumnWeights(raw: string | null | undefined, count: number): readonly number[] | null {
+  if (!raw) return null;
+  const weights = raw.split(",").map((part) => Number.parseFloat(part.trim()));
+  if (weights.length !== count) return null;
+  if (weights.some((weight) => !Number.isFinite(weight) || weight <= 0)) return null;
+  return weights;
+}
+
+/**
+ * Splits `total` px across `weights.length` columns proportionally to `weights`, every column
+ * floored at `min` first: `extra` (whatever is left once every column's floor is paid) is the only
+ * part handed out by weight, so a heavily-weighted column can never starve a lighter neighbor below
+ * the same floor `resolveColumnResize` itself enforces on every later drag. Equal weights reduce to
+ * the exact `total / count` split every consumer used before this existed — `min + (total - min *
+ * count) / count` simplifies to `total / count` for any `count`.
+ */
+export function resolveWeightedColumnWidths(params: {
+  readonly total: number;
+  readonly weights: readonly number[];
+  readonly min: number;
+}): readonly number[] {
+  const { total, weights, min } = params;
+  if (weights.length === 0) return [];
+  const extra = Math.max(0, total - min * weights.length);
+  const weightSum = weights.reduce((sum, weight) => sum + weight, 0) || weights.length;
+  return weights.map((weight) => min + (extra * weight) / weightSum);
+}

@@ -3,8 +3,31 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "516ea2fb128a4b3f"
+surface: "14f8e5c988b4c5ba"
 entries:
+  - date: 2026-08-16
+    kind: feature
+    target: Treegrid
+    es:
+      title: Nueva opción columnWeights; la columna de jerarquía arranca más ancha por defecto
+      body: >-
+        Se agrega <code>columnWeights</code>: un número positivo por columna, separado por comas,
+        que decide el reparto INICIAL del ancho antes de cualquier arrastre — mismo mecanismo que
+        la opción homónima de <code>Table</code>. Sin ella, un treegrid redimensionable ya no
+        reparte el ancho parejo entre columnas: la columna 0 (la que lleva la indentación por
+        nivel, el botón de expandir/colapsar y la etiqueta de la fila) arranca con el doble de
+        peso que las demás por defecto, así que no se aprieta tanto como una columna de metadata
+        plana al lado. El arrastre en sí no cambia: el peso sólo decide la semilla inicial.
+    en:
+      title: New columnWeights option; the hierarchy column starts wider by default
+      body: >-
+        Adds <code>columnWeights</code>: one positive number per column, comma-separated, that
+        decides the width's INITIAL split before any drag — same mechanism as <code>Table</code>'s
+        own option of the same name. Omitted, a resizable treegrid no longer splits width evenly
+        across columns: column 0 (the one carrying per-level indentation, the disclosure button,
+        and the row's own label) starts with double the weight of the rest by default, so it does
+        not get squeezed as hard as a flat metadata column beside it. Dragging itself is
+        unchanged: the weight only decides the initial seed.
   - date: 2026-08-16
     kind: feature
     target: Treegrid

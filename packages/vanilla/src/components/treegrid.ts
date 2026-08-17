@@ -1,5 +1,6 @@
 import {
   computeTreegridVisibility,
+  defaultTreegridColumnWeights,
   resolveTreegridKey,
   treegridEvents,
   treegridParts,
@@ -7,6 +8,7 @@ import {
   type TreegridFocus,
   type TreegridRowMeta,
 } from "@skryensya/core/treegrid";
+import { parseColumnWeights, resolveWeightedColumnWidths } from "@skryensya/core/splitter";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 import { attachColumnResizer, watchColumnLayout } from "../splitter.js";
 
@@ -102,11 +104,24 @@ function applyColumnGroup(root: HTMLElement, rows: readonly RowEntry[]): HTMLTab
    * `describe()` documents, applied here to the SEED instead of a report.
    */
   const measured = root.parentElement instanceof HTMLElement ? root.parentElement : root;
-  const pxWidth = resizable ? Math.max(MIN_COLUMN_WIDTH, measured.getBoundingClientRect().width / colCount) : null;
+  /*
+   * `columnWeights` (`data-column-weights`) lets a consumer give a content-heavy column a bigger
+   * INITIAL share than a flat one — see `columnWeights`'s own doc (`core/treegrid.ts`). Missing or
+   * malformed, this falls back to `defaultTreegridColumnWeights`: the hierarchy column (index 0)
+   * carries per-level indentation, a disclosure button, and the row's own label, so it earns a
+   * bigger default share than a flat metadata column beside it — see that function's own doc.
+   */
+  const widths = resizable
+    ? resolveWeightedColumnWidths({
+        total: measured.getBoundingClientRect().width,
+        weights: readColumnWeights(root, colCount),
+        min: MIN_COLUMN_WIDTH,
+      })
+    : null;
   const cols: HTMLTableColElement[] = [];
   for (let i = 0; i < colCount; i++) {
     const col = root.ownerDocument.createElement("col");
-    col.style.width = pxWidth !== null ? `${pxWidth}px` : `${100 / colCount}%`;
+    col.style.width = widths !== null ? `${widths[i]}px` : `${100 / colCount}%`;
     colgroup.append(col);
     cols.push(col);
   }
@@ -122,8 +137,15 @@ function applyColumnGroup(root: HTMLElement, rows: readonly RowEntry[]): HTMLTab
    * `resolveColumnResize` conserves the touched pair's own total, so the table's OWN total is an
    * invariant of every resize, set correctly exactly once, here.
    */
-  if (pxWidth !== null) root.style.width = `${pxWidth * colCount}px`;
+  if (widths !== null) root.style.width = `${widths.reduce((sum, width) => sum + width, 0)}px`;
   return cols;
+}
+
+/** `columnWeights` off the table's own `data-column-weights`, falling back to
+ * `defaultTreegridColumnWeights` — the one place both `applyColumnGroup` and `watchTreegridLayout`
+ * read it from, so neither can drift from the other's idea of a table's weights mid-mount. */
+function readColumnWeights(root: HTMLElement, colCount: number): readonly number[] {
+  return parseColumnWeights(root.getAttribute("data-column-weights"), colCount) ?? defaultTreegridColumnWeights(colCount);
 }
 
 /*
@@ -183,9 +205,10 @@ function watchTreegridLayout(root: HTMLElement, cols: readonly HTMLTableColEleme
     measured,
     colCount: cols.length,
     min: MIN_COLUMN_WIDTH,
-    apply: (width) => {
-      cols.forEach((col) => (col.style.width = `${width}px`));
-      root.style.width = `${width * cols.length}px`;
+    weights: readColumnWeights(root, cols.length),
+    apply: (widths) => {
+      cols.forEach((col, i) => (col.style.width = `${widths[i]}px`));
+      root.style.width = `${widths.reduce((sum, width) => sum + width, 0)}px`;
     },
   });
 }

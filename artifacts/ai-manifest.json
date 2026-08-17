@@ -144,6 +144,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-17",
+            "en": {
+              "body": "Adds <code>squareStart</code>/<code>squareEnd</code> (boolean, presence-only): they remove a button's own leading/trailing corner rounding, a third axis orthogonal to <code>variant</code>/<code>size</code>/<code>iconOnly</code> — any variant, any size, can be welded to a neighbor. Born out of <code>SplitButton</code>, which until now solved this with its own CSS pointed at its own class (<code>.sk-split-button__primary</code>), tied in specificity with <code>.sk-button</code>'s own base rule — a tie that whichever stylesheet loaded second silently decided, and decided wrong in practice (confirmed live). The welded radius is now the button's own responsibility, with the same two classes any consumer can reach for to build their own button group, with no dependency on <code>SplitButton</code> at all.",
+              "title": "New squareStart/squareEnd options, to weld two buttons with no rounded seam"
+            },
+            "es": {
+              "body": "Se agregan <code>squareStart</code>/<code>squareEnd</code> (booleanas, presencia-only): le quitan a un botón el redondeo de su esquina inicial/final, un tercer eje ortogonal a <code>variant</code>/<code>size</code>/<code>iconOnly</code> — cualquier variante, cualquier tamaño, puede soldarse a un vecino. Nacen de <code>SplitButton</code>, que hasta ahora resolvía esto con CSS propio apuntando a su propia clase (<code>.sk-split-button__primary</code>), empatada en especificidad con la propia regla base de <code>.sk-button</code> — un empate que el orden de carga de las hojas de estilo decidía en silencio, y lo decidió mal en la práctica (confirmado en vivo). Ahora el radio soldado es responsabilidad del propio botón, con las mismas dos clases que cualquier consumidor puede usar para armar su propio grupo de botones, sin depender de <code>SplitButton</code> en absoluto.",
+              "title": "Nuevas opciones squareStart/squareEnd, para soldar dos botones sin costura redondeada"
+            },
+            "kind": "feature",
+            "target": "squareStart"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>Button.action</code>, <code>Button.navigation</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-button</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>variant</code>, <code>size</code>, <code>iconOnly</code>, <code>href</code>, <code>disabled</code>. Its stylesheet is <code>components/button.css</code>.",
@@ -915,6 +928,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-17",
+            "en": {
+              "body": "Adds <code>triggerSquareStart</code>/<code>triggerSquareEnd</code> (boolean) and <code>triggerVariant</code>/<code>triggerSize</code> (plain string, unvalidated — Menu does not own that vocabulary, <code>Button</code> does), all four writing to the SAME <code>data-square-start</code>/<code>data-square-end</code>/<code>data-variant</code>/ <code>data-size</code> attributes as <code>Button</code>'s own identically-named options (<code>squareStart</code>/<code>squareEnd</code>/<code>variant</code>/<code>size</code>). The trigger already carries the <code>sk-button</code> class, so button.css's own rules apply directly, with not one line of that stylesheet restated here. Built for when a Menu is composed as another control's attached segment — the motivating case is <code>SplitButton</code>, whose trigger needed to match the neighboring primary button's fill, size, and welded corner, and until now did it with a sibling selector in split-button's own CSS instead of asking the trigger to simply carry the same attributes any Button already uses.",
+              "title": "New triggerSquareStart/End, triggerVariant, triggerSize options"
+            },
+            "es": {
+              "body": "Se agregan <code>triggerSquareStart</code>/<code>triggerSquareEnd</code> (booleanas) y <code>triggerVariant</code>/<code>triggerSize</code> (string, sin validar — Menu no es dueño de ese vocabulario, <code>Button</code> sí), las cuatro escribiendo a las MISMAS <code>data-square-start</code>/<code>data-square-end</code>/<code>data-variant</code>/ <code>data-size</code> que las opciones homónimas de <code>Button</code> (<code>squareStart</code>/<code>squareEnd</code>/<code>variant</code>/<code>size</code>). El trigger ya carga la clase <code>sk-button</code>, así que las reglas de button.css se aplican directo, sin que este archivo repita ni una línea de esa hoja. Pensado para cuando un Menu se compone como el segmento adjunto de otro control — el caso que lo motivó es <code>SplitButton</code>, cuyo trigger necesitaba coincidir en relleno, tamaño y esquina soldada con el botón primario de al lado, y hasta ahora lo hacía con un selector de hermanos en CSS propio de split-button en vez de pedirle al trigger que cargue los mismos atributos que cualquier Button ya usa.",
+              "title": "Nuevas opciones triggerSquareStart/End, triggerVariant, triggerSize"
+            },
+            "kind": "feature",
+            "target": "triggerVariant"
+          },
+          {
             "date": "2026-08-16",
             "en": {
               "body": "Adds <code>triggerLabel</code>: the TRIGGER BUTTON's own accessible name, deliberately separate from <code>label</code>. <code>label</code> is a fuller description of the menu as a whole (\"File actions\" against a shorter visible trigger, \"Actions\"); reusing it on the button would have overwritten its own visible text with a DIFFERENT string, a \"Label in Name\" mismatch (WCAG 2.5.3) between what a sighted user reads and what a screen reader announces. Built for the icon-only trigger — the real split-button pattern (the menu half is just a chevron, no text) or a toolbar's \"more actions\" button — which had no correct way to announce a name until now. The <code>trigger</code> slot is no longer required: it can be left empty entirely, letting the chevron the template already paints be the only visible content, named by this option instead of by its own text.",
@@ -1314,6 +1340,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-17",
+            "en": {
+              "body": "The rule that gave `.sk-split-button__primary` its own fill had EXACTLY the same specificity as `.sk-button`'s own base rule (one class against one class) — a genuine tie that whichever stylesheet the page inserted second silently decided, and decided backwards in practice (confirmed live: the primary segment rendered unstyled, gray, with all FOUR corners rounded instead of the one squared at the seam). That whole architecture is retired: the primary segment is now a genuinely plain <code>&lt;button&gt;</code>, painted by the same <code>[data-variant]</code>/<code>[data-size]</code> rules any other <code>Button</code> on the page reads, with the welded corner resolved by Button's own new <code>squareStart</code>/<code>squareEnd</code> options (a static <code>data-square-end</code> on the primary, always on — never configurable, the alternative makes no sense for this contract). The trigger reaches the same place through Menu's identically-named new options (<code>triggerVariant</code>/<code>triggerSize</code>/<code>triggerSquareStart</code>). This file, and its stylesheet, are left with only what genuinely belongs to a split button and no other control: the layout that welds the two, and the divider line between them. Also adds <code>role=\"group\"</code> to the root (ARIA17 — WAI-ARIA has no dedicated \"split button\" pattern) with a new, optional <code>label</code> option — each half already announces its own name, so the group's own name is a bonus, not either button's only source of identity.",
+              "title": "The primary segment's fill and welded corner no longer depend on this file"
+            },
+            "es": {
+              "body": "La regla que le daba color a <code>.sk-split-button__primary</code> tenía EXACTAMENTE la misma especificidad que la propia regla base de <code>.sk-button</code> (una clase contra una clase) — un empate genuino que decidía en silencio cuál de las dos hojas de estilo la página insertaba segunda, y en la práctica lo decidía al revés (confirmado en vivo: el segmento primario salía sin relleno, gris, con las CUATRO esquinas redondeadas en vez de la esquina cuadrada del empalme). Esa arquitectura completa se retira: el segmento primario ahora ES un <code>&lt;button&gt;</code> normal, pintado por las mismas reglas <code>[data-variant]</code>/<code>[data-size]</code> de cualquier otro <code>Button</code> de la página, con la esquina soldada resuelta por las nuevas opciones <code>squareStart</code>/<code>squareEnd</code> de Button (opción estática <code>data-square-end</code> en el primario, siempre encendida — nunca configurable, la alternativa no tiene sentido para este contrato). El trigger llega al mismo lugar por las nuevas opciones homónimas de Menu (<code>triggerVariant</code>/<code>triggerSize</code>/ <code>triggerSquareStart</code>). Este archivo, y su hoja de estilo, se quedan solo con lo que genuinamente es de un split button y de ningún otro control: el layout que suelda los dos y la línea divisoria entre ellos. También se agrega <code>role=\"group\"</code> al raíz (ARIA17, WAI-ARIA no tiene un patrón dedicado de \"split button\") con una nueva opción <code>label</code>, opcional — cada mitad ya anuncia su propio nombre, así que el nombre del grupo es un plus, no la única fuente de identidad de ninguno de los dos botones.",
+              "title": "El relleno y la esquina soldada del primario ya no dependen de este archivo"
+            },
+            "kind": "bugfix",
+            "target": "label"
+          },
           {
             "date": "2026-08-16",
             "en": {
@@ -2733,6 +2772,18 @@
             "lg"
           ]
         },
+        "squareEnd": {
+          "attr": "data-square-end",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "squareStart": {
+          "attr": "data-square-start",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
         "variant": {
           "attr": "data-variant",
           "default": "neutral",
@@ -2806,6 +2857,8 @@
             "variant",
             "size",
             "iconOnly",
+            "squareStart",
+            "squareEnd",
             "disabled"
           ],
           "react": {
@@ -2857,6 +2910,8 @@
             "variant",
             "size",
             "iconOnly",
+            "squareStart",
+            "squareEnd",
             "href"
           ],
           "react": {
@@ -8741,6 +8796,26 @@
         "triggerLabel": {
           "attr": "aria-label",
           "type": "string"
+        },
+        "triggerSize": {
+          "attr": "data-size",
+          "type": "string"
+        },
+        "triggerSquareEnd": {
+          "attr": "data-square-end",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "triggerSquareStart": {
+          "attr": "data-square-start",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "triggerVariant": {
+          "attr": "data-variant",
+          "type": "string"
         }
       },
       "parts": {
@@ -8789,6 +8864,10 @@
           "options": [
             "label",
             "triggerLabel",
+            "triggerSquareStart",
+            "triggerSquareEnd",
+            "triggerVariant",
+            "triggerSize",
             "disabled",
             "density",
             "debugSafetyTriangle"
@@ -8879,7 +8958,11 @@
                 "element": "button",
                 "mount": "data-sk-menu-trigger",
                 "options": [
-                  "triggerLabel"
+                  "triggerLabel",
+                  "triggerSquareStart",
+                  "triggerSquareEnd",
+                  "triggerVariant",
+                  "triggerSize"
                 ],
                 "part": "trigger",
                 "slot": "trigger"
@@ -12147,6 +12230,10 @@
       "css": "@skryensya/core/components/split-button.css",
       "id": "split-button",
       "options": {
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
         "size": {
           "attr": "data-size",
           "default": "md",
@@ -12201,7 +12288,8 @@
           ],
           "options": [
             "variant",
-            "size"
+            "size",
+            "label"
           ],
           "react": {
             "from": "@skryensya/react/split-button",
@@ -12221,6 +12309,9 @@
             }
           },
           "template": {
+            "attrs": {
+              "role": "group"
+            },
             "children": [
               {
                 "also": [
@@ -12228,6 +12319,7 @@
                   "sk-interactive"
                 ],
                 "attrs": {
+                  "data-square-end": "",
                   "type": "button"
                 },
                 "element": "button",
@@ -16498,5 +16590,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "e957e99bab0296c1"
+  "sourceHash": "208f887685232e51"
 }

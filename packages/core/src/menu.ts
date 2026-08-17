@@ -123,6 +123,30 @@ export const menuContract = {
      * announces a real name.
      */
     triggerLabel: { type: "string", attr: "aria-label" },
+    /**
+     * Removes the trigger button's own START (leading) corner rounding — for when this Menu is
+     * welded to a neighbor on that side, a split button's own dropdown segment being the case that
+     * motivated it. The SAME attribute `Button`'s own `squareStart` option writes
+     * (`data-square-start`) — see `button.ts`'s doc for the mechanism (button.css owns the rule; a
+     * trigger already carries the `.sk-button` class this template composes, so nothing here has to
+     * repeat the CSS, only the option that reaches the same attribute). See `squareStart` also for
+     * the general "why a class, not a specific component deciding another's radius" reasoning.
+     */
+    triggerSquareStart: { type: "boolean", default: false, attr: "data-square-start", trueValue: "" },
+    /** Same idea, the opposite edge — see `triggerSquareStart`'s own doc. */
+    triggerSquareEnd: { type: "boolean", default: false, attr: "data-square-end", trueValue: "" },
+    /**
+     * Passed straight to the trigger's own `data-variant`/`data-size` — the SAME attributes
+     * `Button`'s own `variant`/`size` options write (`button.ts`), so `button.css`'s existing
+     * `[data-variant="…"]`/`[data-size="…"]` rules apply to the trigger directly; nothing here
+     * repeats their CSS. Untyped (plain string) on purpose: Menu does not own that vocabulary,
+     * `Button` does — whoever composes a Menu as another control's attached segment (a split
+     * button's own dropdown half being the motivating case) is responsible for passing a value
+     * `Button` itself would recognize, the same way `SplitButton`'s own `variant`/`size` options
+     * already validate against Button's real enum before handing it down here.
+     */
+    triggerVariant: { type: "string", attr: "data-variant" },
+    triggerSize: { type: "string", attr: "data-size" },
     disabled: {
       type: "boolean",
       default: false,
@@ -162,7 +186,17 @@ export const menuContract = {
       intent: ["a-list-of-commands", "actions-behind-a-trigger", "submenu"],
       host: { element: "div" },
       mount: menuAttrs.root,
-      options: ["label", "triggerLabel", "disabled", "density", "debugSafetyTriangle"],
+      options: [
+        "label",
+        "triggerLabel",
+        "triggerSquareStart",
+        "triggerSquareEnd",
+        "triggerVariant",
+        "triggerSize",
+        "disabled",
+        "density",
+        "debugSafetyTriangle",
+      ],
       portals: true,
       slots: {
         /**
@@ -217,10 +251,16 @@ export const menuContract = {
             part: "trigger",
             also: ["sk-button", "sk-interactive", "sk-anchor"],
             mount: menuAttrs.trigger,
-            // Claims `triggerLabel` for ITSELF (the `attr: "aria-label"` on the option already says
-            // where — no `optionAttrs` rename needed): the root above never sees this option at all,
-            // the same "one option, one element" split `label` (root) already keeps clean.
-            options: ["triggerLabel"],
+            // Claims every `trigger*` option for ITSELF (each option's own `attr` already says
+            // where — no `optionAttrs` rename needed): the root above never sees any of these, the
+            // same "one option, one element" split `label` (root) already keeps clean.
+            options: [
+              "triggerLabel",
+              "triggerSquareStart",
+              "triggerSquareEnd",
+              "triggerVariant",
+              "triggerSize",
+            ],
             attrs: { type: "button" },
             slot: "trigger",
             children: [

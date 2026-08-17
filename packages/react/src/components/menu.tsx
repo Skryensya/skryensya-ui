@@ -24,8 +24,8 @@ const cx = (...classes: Array<string | undefined>) =>
 type CheckedState = Record<string, boolean>;
 
 const {
-  triggerSquareStart: triggerSquareStartOption,
-  triggerSquareEnd: triggerSquareEndOption,
+  triggerWeldStart: triggerWeldStartOption,
+  triggerWeldEnd: triggerWeldEndOption,
   triggerVariant: triggerVariantOption,
   triggerSize: triggerSizeOption,
   triggerIconOnly: triggerIconOnlyOption,
@@ -46,11 +46,12 @@ export type MenuProps = Pick<
    *  icon-only trigger (leave `trigger` unset): the chevron below is painted either way, and this
    *  is what makes the button announce something instead of nothing. */
   triggerLabel?: string;
-  /** Removes the trigger button's own start/end corner rounding — see `menu.ts`'s identical
-   *  option doc. The same attribute (`data-square-start`/`-end`) `Button`'s own `squareStart`/
-   *  `squareEnd` options write; button.css owns the rule, this only reaches the same attribute. */
-  triggerSquareStart?: boolean;
-  triggerSquareEnd?: boolean;
+  /** Welds the trigger button's own start/end edge flat against a neighbor (radius AND border
+   *  color both) — see `menu.ts`'s identical option doc. The same attribute (`data-weld-start`/
+   *  `-end`) `Button`'s own `weldStart`/`weldEnd` options write; button.css owns the rule, this
+   *  only reaches the same attribute. */
+  triggerWeldStart?: boolean;
+  triggerWeldEnd?: boolean;
   /** Passed straight to the trigger's own `data-variant`/`data-size` — see `menu.ts`'s identical
    *  option doc. `Button`'s own `[data-variant="…"]`/`[data-size="…"]` rules (button.css) apply to
    *  the trigger directly once these are set; nothing here repeats their CSS. */
@@ -417,8 +418,8 @@ export function Menu({
   trigger,
   triggerClassName,
   triggerLabel,
-  triggerSquareStart,
-  triggerSquareEnd,
+  triggerWeldStart,
+  triggerWeldEnd,
   triggerVariant,
   triggerSize,
   triggerIconOnly,
@@ -520,10 +521,10 @@ export function Menu({
           {...anchor.anchor(cx("sk-button", "sk-interactive", menuParts.trigger, triggerClassName))}
           aria-label={triggerLabel}
           {...{
-            [triggerSquareStartOption.attr]: triggerSquareStart
-              ? triggerSquareStartOption.trueValue
+            [triggerWeldStartOption.attr]: triggerWeldStart
+              ? triggerWeldStartOption.trueValue
               : undefined,
-            [triggerSquareEndOption.attr]: triggerSquareEnd ? triggerSquareEndOption.trueValue : undefined,
+            [triggerWeldEndOption.attr]: triggerWeldEnd ? triggerWeldEndOption.trueValue : undefined,
             [triggerVariantOption.attr]: triggerVariant,
             [triggerSizeOption.attr]: triggerSize,
             [triggerIconOnlyOption.attr]: triggerIconOnly ? triggerIconOnlyOption.trueValue : undefined,

@@ -11,8 +11,8 @@ const {
   variant: variantOption,
   size: sizeOption,
   iconOnly: iconOnlyOption,
-  squareStart: squareStartOption,
-  squareEnd: squareEndOption,
+  weldStart: weldStartOption,
+  weldEnd: weldEndOption,
 } = buttonContract.options;
 const actionTemplate = buttonContract.signatures["Button.action"].template;
 const iconOnlyRule = buttonContract.a11y[0];
@@ -62,8 +62,8 @@ export function Button({
   children,
   className,
   iconOnly,
-  squareStart,
-  squareEnd,
+  weldStart,
+  weldEnd,
   variant = variantOption.default,
   size = sizeOption.default,
   ...props
@@ -73,8 +73,8 @@ export function Button({
   const shared = {
     className: buttonClasses(className),
     [iconOnlyOption.attr]: iconOnly ? iconOnlyOption.trueValue : undefined,
-    [squareStartOption.attr]: squareStart ? squareStartOption.trueValue : undefined,
-    [squareEndOption.attr]: squareEnd ? squareEndOption.trueValue : undefined,
+    [weldStartOption.attr]: weldStart ? weldStartOption.trueValue : undefined,
+    [weldEndOption.attr]: weldEnd ? weldEndOption.trueValue : undefined,
     [sizeOption.attr]: size,
     [variantOption.attr]: variant,
   } as const;

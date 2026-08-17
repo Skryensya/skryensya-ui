@@ -44,6 +44,28 @@ export const buttonContract = {
       attr: "data-icon-only",
       trueValue: "",
     },
+    /*
+     * Removes the START (leading) corner's own rounding — for a button that has ANOTHER control
+     * glued to that side (a split button's primary half beside its menu trigger, a segmented
+     * group's middle members), where a round corner there would read as a gap between two
+     * separate controls instead of a seam in one welded shape. Orthogonal to every other axis:
+     * any variant, any size, can be grouped. Presence-only, like `iconOnly`. See `squareEnd` for
+     * the opposite edge — a control glued on BOTH sides (a segmented group's middle member) sets
+     * both at once.
+     */
+    squareStart: {
+      type: "boolean",
+      default: false,
+      attr: "data-square-start",
+      trueValue: "",
+    },
+    /** Same idea, the opposite edge — see `squareStart`'s own doc. */
+    squareEnd: {
+      type: "boolean",
+      default: false,
+      attr: "data-square-end",
+      trueValue: "",
+    },
     href: {
       type: "string",
       attr: "href",
@@ -65,7 +87,7 @@ export const buttonContract = {
     "Button.action": {
       intent: ["action", "submit", "destructive-action"],
       host: { element: "button", when: { href: "absent" } },
-      options: ["variant", "size", "iconOnly", "disabled"],
+      options: ["variant", "size", "iconOnly", "squareStart", "squareEnd", "disabled"],
       slots: { children: { accepts: "node", required: true } },
       template: {
         element: "button",
@@ -84,7 +106,7 @@ export const buttonContract = {
     "Button.navigation": {
       intent: ["navigation", "single-destination"],
       host: { element: "a", when: { href: "present" } },
-      options: ["variant", "size", "iconOnly", "href"],
+      options: ["variant", "size", "iconOnly", "squareStart", "squareEnd", "href"],
       requires: ["href"],
       forbids: ["disabled", "type"],
       slots: { children: { accepts: "node", required: true } },

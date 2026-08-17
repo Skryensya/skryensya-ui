@@ -10,6 +10,15 @@ import { splitButtonMenuItems } from "./data/split-button";
 export const splitButtonTree = (t: Translate): UsageTree => ({
   contract: "split-button",
   signature: "SplitButton",
+  /*
+   * `variant`/`size` restated explicitly even though `"primary"`/`"md"` are their own defaults —
+   * the compiler never serializes an option's value when it equals that option's own default
+   * (confirmed live: a plain `Button` demo carries no `data-size` either), so the primary segment's
+   * `data-variant` would go unwritten and `.sk-button[data-variant="primary"]` (button.css) would
+   * simply never match. Same reasoning as `triggerVariant`/`triggerSize` below, restated for the
+   * primary half instead of the trigger.
+   */
+  options: { variant: "primary", size: "md" },
   slots: {
     children: t("demo.splitButton.primary"),
     menu: {
@@ -28,7 +37,22 @@ export const splitButtonTree = (t: Translate): UsageTree => ({
        * name — matching this page's own a11y tab, "two independent buttons: one runs the action, the
        * other announces and opens the alternatives."
        */
-      options: { label: t("demo.splitButton.menuLabel"), triggerLabel: t("demo.splitButton.menuLabel") },
+      /*
+       * `triggerVariant`/`triggerSize`/`triggerSquareStart` pair this trigger with the primary
+       * button above — the SAME `variant`/`size` this tree gives `SplitButton` itself (both
+       * default to `"primary"`/`"md"`, restated explicitly here since composing the `menu` slot by
+       * hand means this tree, not `SplitButton`'s own React binding, is the one responsible for
+       * keeping the two in sync; see `split-button.ts`'s own contract doc). `Button`'s existing
+       * `[data-variant]`/`[data-size]`/`[data-square-start]` rules (button.css) do the rest —
+       * nothing split-button-specific left to set here.
+       */
+      options: {
+        label: t("demo.splitButton.menuLabel"),
+        triggerLabel: t("demo.splitButton.menuLabel"),
+        triggerVariant: "primary",
+        triggerSize: "md",
+        triggerSquareStart: true,
+      },
       slots: {
         items: splitButtonMenuItems(t),
       },

@@ -182,6 +182,24 @@
     flex: none;
   }
 
+  /*
+   * GROUPING — a button glued to a neighbor on one (or both) sides loses that edge's own rounding,
+   * a THIRD axis again, orthogonal to variant/size/icon-only: any button can be grouped. This is
+   * what a split button's primary half and its menu trigger are welded with (`squareEnd` on the
+   * primary, `squareStart` on the trigger), and equally what a 3+-segment group's own middle
+   * members need (both at once) — the mechanism lives here, once, rather than as bespoke CSS in
+   * whatever composes the group: a split button's own root has no fill or radius logic of its own
+   * to write, because the two buttons it welds already carry it themselves.
+   */
+  .sk-button[data-square-start] {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+  .sk-button[data-square-end] {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+
   /* Sizes key off data-size, an ORTHOGONAL axis to data-variant, so a primary button can also
    * be small. (The old build collapsed these onto data-variant, which silently broke sizing.) */
   /* React serializes its md default explicitly. Keep this rule explicit too; the base declarations

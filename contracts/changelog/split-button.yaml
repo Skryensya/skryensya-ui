@@ -3,8 +3,54 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "efe82c420bcdf739"
+surface: "7b0a4a72edc909ca"
 entries:
+  - date: 2026-08-17
+    kind: bugfix
+    target: label
+    es:
+      title: El relleno y la esquina soldada del primario ya no dependen de este archivo
+      body: >-
+        La regla que le daba color a <code>.sk-split-button__primary</code> tenía EXACTAMENTE la
+        misma especificidad que la propia regla base de <code>.sk-button</code> (una clase contra
+        una clase) — un empate genuino que decidía en silencio cuál de las dos hojas de estilo la
+        página insertaba segunda, y en la práctica lo decidía al revés (confirmado en vivo: el
+        segmento primario salía sin relleno, gris, con las CUATRO esquinas redondeadas en vez de la
+        esquina cuadrada del empalme). Esa arquitectura completa se retira: el segmento primario
+        ahora ES un <code>&lt;button&gt;</code> normal, pintado por las mismas reglas
+        <code>[data-variant]</code>/<code>[data-size]</code> de cualquier otro <code>Button</code>
+        de la página, con la esquina soldada resuelta por las nuevas opciones
+        <code>squareStart</code>/<code>squareEnd</code> de Button (opción estática
+        <code>data-square-end</code> en el primario, siempre encendida — nunca configurable, la
+        alternativa no tiene sentido para este contrato). El trigger llega al mismo lugar por las
+        nuevas opciones homónimas de Menu (<code>triggerVariant</code>/<code>triggerSize</code>/
+        <code>triggerSquareStart</code>). Este archivo, y su hoja de estilo, se quedan solo con lo
+        que genuinamente es de un split button y de ningún otro control: el layout que suelda los
+        dos y la línea divisoria entre ellos. También se agrega <code>role="group"</code> al raíz
+        (ARIA17, WAI-ARIA no tiene un patrón dedicado de "split button") con una nueva opción
+        <code>label</code>, opcional — cada mitad ya anuncia su propio nombre, así que el nombre del
+        grupo es un plus, no la única fuente de identidad de ninguno de los dos botones.
+    en:
+      title: The primary segment's fill and welded corner no longer depend on this file
+      body: >-
+        The rule that gave `.sk-split-button__primary` its own fill had EXACTLY the same
+        specificity as `.sk-button`'s own base rule (one class against one class) — a genuine tie
+        that whichever stylesheet the page inserted second silently decided, and decided backwards
+        in practice (confirmed live: the primary segment rendered unstyled, gray, with all FOUR
+        corners rounded instead of the one squared at the seam). That whole architecture is
+        retired: the primary segment is now a genuinely plain <code>&lt;button&gt;</code>, painted
+        by the same <code>[data-variant]</code>/<code>[data-size]</code> rules any other
+        <code>Button</code> on the page reads, with the welded corner resolved by Button's own new
+        <code>squareStart</code>/<code>squareEnd</code> options (a static <code>data-square-end</code>
+        on the primary, always on — never configurable, the alternative makes no sense for this
+        contract). The trigger reaches the same place through Menu's identically-named new options
+        (<code>triggerVariant</code>/<code>triggerSize</code>/<code>triggerSquareStart</code>).
+        This file, and its stylesheet, are left with only what genuinely belongs to a split button
+        and no other control: the layout that welds the two, and the divider line between them.
+        Also adds <code>role="group"</code> to the root (ARIA17 — WAI-ARIA has no dedicated "split
+        button" pattern) with a new, optional <code>label</code> option — each half already
+        announces its own name, so the group's own name is a bonus, not either button's only
+        source of identity.
   - date: 2026-08-16
     kind: feature
     target: variant

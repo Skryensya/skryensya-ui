@@ -3,8 +3,37 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "fe56b80f1df6c751"
+surface: "9afb84163a741bc4"
 entries:
+  - date: 2026-08-17
+    kind: feature
+    target: squareStart
+    es:
+      title: Nuevas opciones squareStart/squareEnd, para soldar dos botones sin costura redondeada
+      body: >-
+        Se agregan <code>squareStart</code>/<code>squareEnd</code> (booleanas, presencia-only): le
+        quitan a un botón el redondeo de su esquina inicial/final, un tercer eje ortogonal a
+        <code>variant</code>/<code>size</code>/<code>iconOnly</code> — cualquier variante, cualquier
+        tamaño, puede soldarse a un vecino. Nacen de <code>SplitButton</code>, que hasta ahora
+        resolvía esto con CSS propio apuntando a su propia clase (<code>.sk-split-button__primary</code>),
+        empatada en especificidad con la propia regla base de <code>.sk-button</code> — un empate que
+        el orden de carga de las hojas de estilo decidía en silencio, y lo decidió mal en la práctica
+        (confirmado en vivo). Ahora el radio soldado es responsabilidad del propio botón, con las
+        mismas dos clases que cualquier consumidor puede usar para armar su propio grupo de botones,
+        sin depender de <code>SplitButton</code> en absoluto.
+    en:
+      title: New squareStart/squareEnd options, to weld two buttons with no rounded seam
+      body: >-
+        Adds <code>squareStart</code>/<code>squareEnd</code> (boolean, presence-only): they remove a
+        button's own leading/trailing corner rounding, a third axis orthogonal to
+        <code>variant</code>/<code>size</code>/<code>iconOnly</code> — any variant, any size, can be
+        welded to a neighbor. Born out of <code>SplitButton</code>, which until now solved this with
+        its own CSS pointed at its own class (<code>.sk-split-button__primary</code>), tied in
+        specificity with <code>.sk-button</code>'s own base rule — a tie that whichever stylesheet
+        loaded second silently decided, and decided wrong in practice (confirmed live). The welded
+        radius is now the button's own responsibility, with the same two classes any consumer can
+        reach for to build their own button group, with no dependency on <code>SplitButton</code> at
+        all.
   - date: 2026-08-11
     kind: feature
     es:

@@ -3,11 +3,37 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "9afb84163a741bc4"
+surface: "9e8ae2adcb009125"
 entries:
   - date: 2026-08-17
     kind: feature
-    target: squareStart
+    target: weldStart
+    es:
+      title: squareStart/squareEnd pasan a llamarse weldStart/weldEnd y también quitan el borde
+      body: >-
+        Renombradas de <code>squareStart</code>/<code>squareEnd</code>: el nombre anterior solo
+        describía lo que hacían con el RADIO, pero un botón <code>neutral</code>/<code>subtle</code>/
+        <code>translucent</code> también pinta un borde propio, y quitar solo la esquina dejaba ese
+        borde intacto justo en la costura — dos líneas compitiendo, la del botón y la del vecino, en
+        vez de una. Pasó desapercibido mientras todos los ejemplos usaban <code>primary</code>/
+        <code>danger</code>/<code>ghost</code> (esas tres ya pintan el borde transparente), hasta que
+        un ejemplo emparejó dos mitades <code>neutral</code>. Las nuevas opciones quitan las dos
+        cosas — el redondeo Y el color del borde en ese mismo lado — y el nombre ahora lo dice.
+    en:
+      title: squareStart/squareEnd rename to weldStart/weldEnd, and also clear the border there
+      body: >-
+        Renamed from <code>squareStart</code>/<code>squareEnd</code>: the old name only described
+        what they did to the RADIUS, but a <code>neutral</code>/<code>subtle</code>/
+        <code>translucent</code> button also paints a border of its own, and clearing only the
+        corner left that border intact right at the seam — two competing lines, the button's own
+        and the neighbor's, instead of one. This went unnoticed while every example used
+        <code>primary</code>/<code>danger</code>/<code>ghost</code> (those three already paint a
+        transparent border), until an example paired two <code>neutral</code> halves. The new
+        options clear both things — the rounding AND the border color on that same edge — and the
+        name now says so.
+  - date: 2026-08-17
+    kind: feature
+    target: weldStart
     es:
       title: Nuevas opciones squareStart/squareEnd, para soldar dos botones sin costura redondeada
       body: >-

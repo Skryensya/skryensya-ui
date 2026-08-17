@@ -11,11 +11,11 @@ export const splitButtonParts = {
  * hairline seam, the layout that holds two independent controls flush against each other — and
  * nothing else. Not even a "primary" part of its own: the `primary` slot takes a composed
  * `Button.action` signature directly, the same way `menu` already took a composed `Menu` rather
- * than being rebuilt from a flat prop. An author writes a REAL `<Button squareEnd>`, not a
+ * than being rebuilt from a flat prop. An author writes a REAL `<Button weldEnd>`, not a
  * `<button class="sk-split-button__primary">` this contract used to render on its own — the fill,
  * the size, the squared seam corner are `Button`'s own vocabulary end to end
- * (`variant`/`size`/`squareEnd`, `button.ts`), never restated here. The trigger reaches the exact
- * same rules through Menu's own `triggerVariant`/`triggerSize`/`triggerSquareStart`/
+ * (`variant`/`size`/`weldEnd`, `button.ts`), never restated here. The trigger reaches the exact
+ * same rules through Menu's own `triggerVariant`/`triggerSize`/`triggerWeldStart`/
  * `triggerIconOnly` (menu.ts), which write to the identical attribute names Button itself uses —
  * a Menu trigger with those four set IS an icon-only Button in every way but one (the squared
  * corner), not a look-alike this component paints separately.
@@ -28,8 +28,8 @@ export const splitButtonParts = {
  * Composing a real `Button` removes even the CLASS that bug needed to exist, not just the CSS.
  *
  * Both halves are the AUTHOR's own composition now, in vanilla/compiled markup — this contract
- * cannot reach INTO an authored slot's own options to pair `primary`'s `variant`/`squareEnd` with
- * the composed Menu's `triggerVariant`/`triggerSquareStart`; an author sets both by hand, the same
+ * cannot reach INTO an authored slot's own options to pair `primary`'s `variant`/`weldEnd` with
+ * the composed Menu's `triggerVariant`/`triggerWeldStart`; an author sets both by hand, the same
  * way `triggerLabel` was already the author's own responsibility. The React binding below keeps a
  * flat-prop convenience surface (`variant`/`size`/`onClick` directly on `<SplitButton>`) for the
  * common case, and internally renders a real `<Button>` and pairs its own Menu automatically — but
@@ -60,11 +60,11 @@ export const splitButtonContract = {
       host: { element: "div" },
       options: ["label"],
       slots: {
-        /** The default action, a real composed `Button.action` — the author sets `squareEnd` (and
+        /** The default action, a real composed `Button.action` — the author sets `weldEnd` (and
          *  whatever `variant`/`size` this control's dominant action calls for) on it directly. */
         primary: { accepts: "signature", of: ["Button.action"], required: true },
         /** The alternatives, as a Menu — the author pairs `triggerVariant`/`triggerSize`/
-         *  `triggerSquareStart`/`triggerIconOnly` with the primary's own values by hand. */
+         *  `triggerWeldStart`/`triggerIconOnly` with the primary's own values by hand. */
         menu: { accepts: "signature", of: ["Menu"], required: true },
       },
       template: {

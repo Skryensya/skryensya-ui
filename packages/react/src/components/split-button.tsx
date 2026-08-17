@@ -21,7 +21,7 @@ export type SplitButtonProps = {
    * A composed `<Button>`. Preferred over the flat `children`/`variant`/`size` below: it is what
    * lets one tree describe both halves, and it keeps Button's own contract in charge of Button
    * instead of this component reassembling one from flat props. Composing one by hand means also
-   * setting `squareEnd` on it directly — this component only sets that automatically for its OWN
+   * setting `weldEnd` on it directly — this component only sets that automatically for its OWN
    * fallback Button below, the one built from `children`/`variant`/`size`. Compose `menu` by hand
    * too, at the same time: `variant`/`size` below only pair the FALLBACK Button with the FALLBACK
    * Menu trigger, and have no way to read a hand-composed `primary`'s own variant back out to
@@ -38,7 +38,7 @@ export type SplitButtonProps = {
    * A composed Menu. Preferred over `menuItems`: it is what lets one tree describe both halves,
    * and it keeps the menu's own contract in charge of the menu instead of this component
    * reassembling it from a flat list. Composing one by hand means also setting `triggerVariant`/
-   * `triggerSize`/`triggerSquareStart`/`triggerIconOnly` on it directly — this component only
+   * `triggerSize`/`triggerWeldStart`/`triggerIconOnly` on it directly — this component only
    * pairs those automatically for its OWN fallback Menu below, the one built from `menuItems`.
    */
   menu?: ReactNode;
@@ -71,9 +71,9 @@ export function SplitButton({
   return (
     <div className={splitButtonParts.root} role="group" {...{ [labelOption.attr]: label }}>
       {primary ?? (
-        // `squareEnd`: the primary half of a split button always has a trigger glued to its end
+        // `weldEnd`: the primary half of a split button always has a trigger glued to its end
         // side — never author-configurable, unlike `variant`/`size` above.
-        <Button variant={variant} size={size} squareEnd disabled={disabled} onClick={onClick} type="button">
+        <Button variant={variant} size={size} weldEnd disabled={disabled} onClick={onClick} type="button">
           {children}
         </Button>
       )}
@@ -92,11 +92,11 @@ export function SplitButton({
           // Pairs the trigger with the primary `<Button>` above: same variant, same size, the
           // icon-only SHAPE any bare icon Button already has (button.css's own `[data-icon-only]`),
           // and the one delta that makes it a split-button trigger instead of a bare icon button —
-          // its own start corner squared flat against the primary's end corner.
+          // its own start edge welded flat against the primary's end edge.
           triggerVariant={variant}
           triggerSize={size}
           triggerIconOnly
-          triggerSquareStart
+          triggerWeldStart
         />
       )}
     </div>

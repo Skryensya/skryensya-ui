@@ -50,12 +50,19 @@ export const inputContract = {
       react: { from: "@skryensya/react/input", name: "Input" },
     },
 
+    /*
+     * "Native" names the CONTROL (a real `<input type="time">`, `<input type="color">`), never
+     * its APPEARANCE: this still carries `sk-input`, the one appearance contract for every native
+     * text control, the same class `Input`/`Textarea` carry. A native time input with no border,
+     * no shared height and a focus ring the browser invented is not what "native" was meant to
+     * buy here, only the platform owning selection/keyboard/validation/IME is.
+     */
     NativeInput: {
-      intent: ["unstyled-native-input", "platform-control", "native-time-input"],
+      intent: ["styled-native-input", "platform-control", "native-time-input"],
       host: { element: "input" },
       options: ["type", "name", "disabled"],
       slots: {},
-      template: { element: "input", host: true },
+      template: { element: "input", part: "root", host: true },
       react: { from: "@skryensya/react/input", name: "NativeInput" },
     },
 

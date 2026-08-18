@@ -5,6 +5,27 @@
 # hash nuevo.
 surface: "75f1964a79df6785"
 entries:
+  - date: 2026-08-18
+    kind: bugfix
+    target: NativeInput
+    es:
+      title: NativeInput ahora carga sk-input, no queda sin estilo
+      body: >-
+        "Nativo" nombra el CONTROL, un `<input type="time">`/`type="color"` real que la plataforma
+        sigue gobernando, nunca su apariencia — pero la plantilla no le ponía ninguna clase, así que
+        salía con el borde/alto/radio por defecto del navegador en vez del contrato de apariencia
+        compartido que <code>Input</code>/<code>Textarea</code> ya tienen. Ambos bindings ahora
+        cargan <code>sk-input</code>, la misma clase, y un <code>className</code> propio de quien
+        compone se conserva junto a ella.
+    en:
+      title: NativeInput now carries sk-input, no longer unstyled
+      body: >-
+        "Native" names the CONTROL, a real <code>&lt;input type="time"&gt;</code>/<code>type="color"</code>
+        the platform still owns, never its appearance — but the template gave it no class at all, so
+        it rendered with the browser's own default border/height/radius instead of the shared
+        appearance contract <code>Input</code>/<code>Textarea</code> already carry. Both bindings now
+        load <code>sk-input</code>, the same class, and a consumer's own <code>className</code> is
+        kept alongside it.
   - date: 2026-08-14
     kind: breaking
     es:

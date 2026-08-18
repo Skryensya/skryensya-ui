@@ -92,6 +92,20 @@
    * empty track to whichever thumb sits on top, while both remain independently draggable.
    */
   .sk-slider-range {
+    /*
+     * Defined HERE, not only on `.sk-slider` (`also: ["sk-slider"]` puts that class on the two
+     * CHILD inputs, `__low`/`__high`, never on this wrapper). Custom properties inherit downward,
+     * never up, so `.sk-slider-range` and its `__track`/`__fill` children — which read these same
+     * four names below — never saw a value: `block-size` fell back to its initial `auto`, and with
+     * every child absolutely positioned nothing in normal flow gave the wrapper a height to be
+     * `auto`, so the whole control rendered at 0×100% with an invisible track. First caught by a
+     * canonical tree that actually laid this signature out in a browser — no jsdom test could.
+     */
+    --sk-slider-track: var(--color-bg-surface-sunken);
+    --sk-slider-fill-color: var(--color-action-primary);
+    --sk-slider-track-size: var(--space-inset-xs);
+    --sk-slider-thumb-hit: var(--size-control-sm);
+
     position: relative;
     inline-size: 100%;
     block-size: var(--sk-slider-thumb-hit);

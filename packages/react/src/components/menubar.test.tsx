@@ -7,19 +7,27 @@ import { Menubar, MenubarItem, MenubarMenu, MenubarMenuItem } from "./menubar.js
 function Fixture(props: { onHelp?: () => void; onNew?: () => void }) {
   return (
     <Menubar label="Editor">
-      <MenubarItem label="Archivo">
-        <MenubarMenu>
-          <MenubarMenuItem onActivate={props.onNew}>Nuevo</MenubarMenuItem>
-          <MenubarMenuItem>Abrir</MenubarMenuItem>
-        </MenubarMenu>
+      <MenubarItem
+        items={
+          <MenubarMenu>
+            <MenubarMenuItem onActivate={props.onNew}>Nuevo</MenubarMenuItem>
+            <MenubarMenuItem>Abrir</MenubarMenuItem>
+          </MenubarMenu>
+        }
+      >
+        Archivo
       </MenubarItem>
-      <MenubarItem label="Editar">
-        <MenubarMenu>
-          <MenubarMenuItem>Cortar</MenubarMenuItem>
-          <MenubarMenuItem>Pegar</MenubarMenuItem>
-        </MenubarMenu>
+      <MenubarItem
+        items={
+          <MenubarMenu>
+            <MenubarMenuItem>Cortar</MenubarMenuItem>
+            <MenubarMenuItem>Pegar</MenubarMenuItem>
+          </MenubarMenu>
+        }
+      >
+        Editar
       </MenubarItem>
-      <MenubarItem label="Ayuda" onActivate={props.onHelp} />
+      <MenubarItem onActivate={props.onHelp}>Ayuda</MenubarItem>
     </Menubar>
   );
 }
@@ -36,6 +44,32 @@ describe("Menubar React contracts", () => {
     expect(ayuda!.tabIndex).toBe(-1);
     expect(archivo!.getAttribute("aria-haspopup")).toBe("menu");
     expect(ayuda!.hasAttribute("aria-haspopup")).toBe(false);
+  });
+
+  it("finds its dropdown when `items` arrives array-wrapped, the shape a tree-driven render produces", () => {
+    // `renderTree`'s generic single-signature-slot handling never special-cases a count of one the
+    // way it does a plain string, so a tree-composed `MenubarItem` receives `items` as a ONE-ELEMENT
+    // ARRAY, not the bare element hand-written JSX passes above. `SidebarTrigger`'s `icon` slot
+    // tolerates this by rendering `{icon}` directly; `MenubarItem` also has to CLONE the element to
+    // inject `topIndex`/`open`, which needs it unwrapped first — this is the regression the fully
+    // rendered gate stage caught and the fixture above, being hand-written, never could.
+    const ui = render(
+      <Menubar label="Editor">
+        <MenubarItem
+          items={[
+            <MenubarMenu key="menu">
+              <MenubarMenuItem>Abrir</MenubarMenuItem>
+            </MenubarMenu>,
+          ]}
+        >
+          Archivo
+        </MenubarItem>
+      </Menubar>,
+    );
+    const archivo = ui.getByRole("menuitem", { name: "Archivo" });
+    expect(archivo.getAttribute("aria-haspopup")).toBe("menu");
+    fireEvent.click(archivo);
+    expect(ui.getByRole("menuitem", { name: "Abrir" })).toBeTruthy();
   });
 
   it("Right/Left move between top-level items, wrapping, without opening anything", () => {

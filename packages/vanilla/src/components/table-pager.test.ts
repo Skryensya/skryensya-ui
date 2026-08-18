@@ -80,4 +80,36 @@ describe("TablePager Vanilla contracts", () => {
     expect(rows.every((row) => !row.hidden)).toBe(true);
     expect(root.querySelector("[data-sk-table-pager-status]")?.textContent).toBe("1–5 de 5");
   });
+
+  it("keeps focus on the control the reader just activated, across the render it triggers", () => {
+    const root = mount(markup);
+    mountTablePager(root);
+
+    const nav = root.querySelector<HTMLElement>("[data-sk-table-pager-nav]")!;
+    const next = nav.querySelector<HTMLButtonElement>(".sk-pagination__next")!;
+    next.focus();
+    expect(document.activeElement).toBe(next);
+
+    // Clicking "next" runs `render()` from inside this very button's own click handler. A full
+    // rebuild would destroy `next` mid-click and drop focus to <body>; reusing it is what keeps
+    // the reader's position on the control they just used.
+    fireEvent.click(next);
+
+    expect(document.activeElement).toBe(next);
+    expect(document.body.contains(next)).toBe(true);
+  });
+
+  it("reuses the same element for a page number across renders instead of rebuilding it", () => {
+    const root = mount(markup);
+    mountTablePager(root);
+
+    const nav = root.querySelector<HTMLElement>("[data-sk-table-pager-nav]")!;
+    const page2Before = nav.querySelector<HTMLButtonElement>('[aria-label="Página 2"]')!;
+
+    fireEvent.click(nav.querySelector<HTMLButtonElement>('[aria-label="Página 2"]')!);
+    fireEvent.click(nav.querySelector<HTMLButtonElement>('[aria-label="Página 1"]')!);
+
+    const page2After = nav.querySelector<HTMLButtonElement>('[aria-label="Página 2"]');
+    expect(page2After).toBe(page2Before);
+  });
 });

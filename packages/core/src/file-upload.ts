@@ -5,6 +5,30 @@ export type FileUploadChangeDetails = {
   rejectedFiles: File[];
 };
 
+/**
+ * A rejected file's own reason, in prose, keyed by Zag's own error codes (`@zag-js/file-utils`'
+ * `FileError`). Shared here so neither binding invents its own wording, and so a vanilla consumer
+ * — the one binding that never renders this contract's markup itself (see the KNOWN GAP note above)
+ * — can still turn `sk-file-change`'s `rejectedFiles` into a real sentence without guessing Zag's
+ * vocabulary.
+ */
+export function fileUploadErrorMessage(error: string): string {
+  switch (error) {
+    case "FILE_TOO_LARGE":
+      return "el archivo pesa demasiado";
+    case "FILE_TOO_SMALL":
+      return "el archivo pesa muy poco";
+    case "FILE_INVALID_TYPE":
+      return "el tipo de archivo no está permitido";
+    case "TOO_MANY_FILES":
+      return "hay más archivos de los permitidos";
+    case "FILE_EXISTS":
+      return "ese archivo ya fue elegido";
+    default:
+      return "el archivo no es válido";
+  }
+}
+
 export const fileUploadParts = {
   root: "sk-file-upload",
   label: "sk-file-upload__label",

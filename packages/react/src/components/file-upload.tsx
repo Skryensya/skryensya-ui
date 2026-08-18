@@ -1,7 +1,7 @@
-import { fileUploadParts } from "@skryensya/core/file-upload";
+import { fileUploadErrorMessage, fileUploadParts } from "@skryensya/core/file-upload";
 import { fileUpload } from "@skryensya/core/machines";
 import { normalizeProps, useMachine } from "@zag-js/react";
-import { useId, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 
 export type FileUploadProps = {
   id?: string;
@@ -50,6 +50,7 @@ export function FileUpload({
   triggerLabel = "Elegir archivos",
 }: FileUploadProps) {
   const generatedId = useId();
+  const [rejected, setRejected] = useState<Array<{ file: File; errors: string[] }>>([]);
   const service = useMachine(fileUpload.machine, {
     id: id ?? generatedId,
     name,
@@ -64,13 +65,14 @@ export function FileUpload({
     maxFiles: maxFiles ?? (multiple ? Number.POSITIVE_INFINITY : 1),
     minFileSize,
     onFileChange(details) {
-      onFileChange?.({
-        acceptedFiles: details.acceptedFiles,
-        rejectedFiles: details.rejectedFiles.map(({ file, errors }) => ({
-          file,
-          errors,
-        })),
-      });
+      const rejectedFiles = details.rejectedFiles.map(({ file, errors }) => ({
+        file,
+        errors,
+      }));
+      // Selecting a valid batch after a rejected one clears the old message: it is feedback about
+      // the LAST selection, never a running log of every attempt this session.
+      setRejected(rejectedFiles);
+      onFileChange?.({ acceptedFiles: details.acceptedFiles, rejectedFiles });
     },
   });
   const api = fileUpload.connect(service, normalizeProps);
@@ -96,6 +98,18 @@ export function FileUpload({
       >
         {triggerLabel}
       </button>
+      {rejected.length ? (
+        // `role="alert"`: unlike the accepted list below, this is new, unexpected feedback about
+        // the choice the reader just made, not a persistent state a screen reader can visit at
+        // will — the same reasoning `Callout`'s own `danger` tone already carries.
+        <div className={fileUploadParts.rejection} role="alert">
+          {rejected.map(({ file, errors }) => (
+            <p key={`${file.name}-${file.lastModified}`}>
+              {file.name}: {errors.map((error) => fileUploadErrorMessage(error)).join(", ")}
+            </p>
+          ))}
+        </div>
+      ) : null}
       {api.acceptedFiles.length ? (
         <>
           <ul

@@ -34,6 +34,7 @@ export function Loader({
   return (
     <span
       {...props}
+      aria-atomic={decorative ? undefined : "true"}
       aria-hidden={decorative ? true : undefined}
       aria-label={label}
       className={cx(loaderParts.root, className)}
@@ -54,6 +55,6 @@ export function Loader({
  */
 export function LoaderStatus({ label }: { label: string }) {
   return (
-    <span aria-label={label} className="sk-visually-hidden" role="status" />
+    <span aria-atomic="true" aria-label={label} className="sk-visually-hidden" role="status" />
   );
 }

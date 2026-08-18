@@ -47,6 +47,10 @@ type TableContextValue = {
   resizeLabel?: string;
   columnWidths: readonly number[];
   setColumnWidths: (widths: readonly number[]) => void;
+  /** `TableColumnResizer`'s own access to the whole table, not just its column pair — measuring
+   * "what does THIS column's content need" (`measureColumnContentWidth`, below) reads every row,
+   * something the width-pair state alone can never answer. */
+  tableRef: RefObject<HTMLTableElement | null>;
 };
 
 const TableContext = createContext<TableContextValue | null>(null);
@@ -129,6 +133,55 @@ function readHeadColumnCount(children: ReactNode): number {
   return firstRow ? Children.count(firstRow.props.children) : 0;
 }
 
+/**
+ * The natural, single-line width column `columnIndex` needs to show EVERY currently-rendered cell
+ * in it without wrapping or truncating — the spreadsheet double-click-the-border convention.
+ * Verbatim port of `@skryensya/vanilla/splitter`'s `measureColumnContentWidth` — same technique,
+ * same reasoning, ported line for line rather than shared, because React and vanilla never share
+ * DOM-touching code (only `core/splitter.ts` is common ground between them, see that file's own
+ * banner). Two things confirmed against a real table before landing on this approach, not assumed:
+ *   - The real cell's own `scrollWidth`, even under `white-space: nowrap`, never moves — a
+ *     `table-layout: fixed` cell is held at its `<col>`'s width regardless of its content, so
+ *     reading it can only ever answer "what is this column right now", never "what does the
+ *     content need" (the very thing this gesture is about to overwrite).
+ *   - `overflow: hidden` does not rescue that read: `scrollWidth` is SPECIFIED as
+ *     `max(clientWidth, content width)`, so it can reveal content WIDER than the box but can never
+ *     report NARROWER — a column already too generous for its content has nothing to "scroll", so
+ *     `scrollWidth` just echoes `clientWidth` back. Auto-fit needs the shrinking direction too.
+ * A clone in a throwaway `table-layout: auto` table (off-screen, `visibility: hidden`, batched —
+ * every clone built and attached in ONE pass, only THEN read, one forced layout for the whole
+ * column instead of one per cell) sidesteps both: nothing there is held to any `<col>`, so its
+ * rendered width is simply what the content needs, either direction. `className` carries over so
+ * ancestor selectors like `.sk-table :is(th, td)` still match, and the resizer handle itself is
+ * stripped first — `cloneNode(true)` would otherwise duplicate that `position: absolute` child too.
+ */
+function measureColumnContentWidth(table: HTMLTableElement, columnIndex: number, min: number): number {
+  const cells = Array.from(table.querySelectorAll<HTMLTableRowElement>(":scope > * > tr"))
+    .map((row) => row.children[columnIndex])
+    .filter((cell): cell is HTMLTableCellElement => cell instanceof HTMLTableCellElement);
+  if (cells.length === 0) return min;
+
+  const doc = table.ownerDocument;
+  const ruler = doc.createElement("table");
+  ruler.className = table.className;
+  ruler.style.cssText = "position:absolute;visibility:hidden;inset-inline-start:-9999px;top:-9999px;table-layout:auto;width:auto;";
+  const clones = cells.map((cell) => {
+    const clone = cell.cloneNode(true) as HTMLTableCellElement;
+    clone.querySelectorAll("[data-sk-column-resizer]").forEach((handle) => handle.remove());
+    clone.removeAttribute("id");
+    clone.style.whiteSpace = "nowrap";
+    const row = doc.createElement("tr");
+    row.appendChild(clone);
+    ruler.appendChild(row);
+    return clone;
+  });
+
+  doc.body.appendChild(ruler);
+  const natural = clones.reduce((max, clone) => Math.max(max, clone.getBoundingClientRect().width), min);
+  doc.body.removeChild(ruler);
+  return natural;
+}
+
 export function Table({
   children,
   className,
@@ -190,7 +243,40 @@ export function Table({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resizableColumns]);
 
-  const context: TableContextValue = { resizableColumns, resizeLabel, columnWidths, setColumnWidths };
+  /*
+   * `--sk-splitter-block-size` (the splitter pattern's own opt-in hook, `patterns/splitter.css`),
+   * kept matched to the table's own rendered height for as long as `resizableColumns` stays on —
+   * verbatim port of `@skryensya/vanilla/splitter`'s `watchSplitterExtent`. Unlike the width effect
+   * above, this never disconnects on its own: resizing a column can change how many lines a cell
+   * WRAPS to, which changes the table's own height mid-gesture, so the column line every
+   * `.sk-splitter` draws has to keep tracking a moving target for the whole lifetime, not just once.
+   */
+  useEffect(() => {
+    if (!resizableColumns) return;
+    const table = tableRef.current;
+    if (!table) return;
+    const apply = () => {
+      /*
+       * A `<caption>` renders OUTSIDE the table's own grid (`table.css`'s own note) but still
+       * inside the `<table>` element's own rendered box, so the table's own full height over-counts
+       * by the caption's — the resizer itself starts at the header row (it lives inside a `<th>`),
+       * not the caption above it. Measured from the first row down instead, matching the vanilla
+       * enhancer's identical `watchSplitterExtent` call verbatim (`@skryensya/vanilla/splitter`).
+       */
+      const firstRow = table.querySelector(":scope > * > tr");
+      const height =
+        firstRow instanceof HTMLElement
+          ? table.getBoundingClientRect().bottom - firstRow.getBoundingClientRect().top
+          : table.getBoundingClientRect().height;
+      table.style.setProperty("--sk-splitter-block-size", `${height}px`);
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(table);
+    return () => observer.disconnect();
+  }, [resizableColumns]);
+
+  const context: TableContextValue = { resizableColumns, resizeLabel, columnWidths, setColumnWidths, tableRef };
 
   return (
     <TableContext.Provider value={context}>
@@ -334,7 +420,13 @@ function TableColumnResizer({
     context.setColumnWidths(resolveColumnResize({ widths: context.columnWidths, index: columnIndex, delta, min: MIN_COLUMN_WIDTH }));
   };
 
-  const reset = () => resize(total / 2 - before);
+  // Fits the column to its own content — the spreadsheet double-click convention, distinct from
+  // Treegrid's own even-split reset (see `measureColumnContentWidth`'s own doc, above).
+  const reset = () => {
+    const table = context.tableRef.current;
+    const target = table ? measureColumnContentWidth(table, columnIndex, MIN_COLUMN_WIDTH) : total / 2;
+    resize(target - before);
+  };
 
   return (
     <div

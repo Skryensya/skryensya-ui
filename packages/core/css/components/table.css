@@ -367,10 +367,42 @@
     inline-size: auto;
   }
 
-  /* The resizer's containing block — `.sk-splitter` positions itself `inset-block: 0; inset-inline-end:
-   * 0`, full header height at the column's near edge, against WHATEVER ancestor is `position:
-   * relative`, which a plain `<th>` is not by default. */
+  /* The resizer's containing block — `.sk-splitter` positions itself `inset-block-start: 0;
+   * inset-inline-end: 0`, full header height at the column's near edge by default, against
+   * WHATEVER ancestor is `position: relative`, which a plain `<th>` is not by default. */
   .sk-table[data-resizable-columns] thead th {
     position: relative;
+  }
+
+  /*
+   * FULL-HEIGHT COLUMN LINE, Table's own opt-in use of the splitter pattern's generic
+   * `--sk-splitter-block-size` hook (`patterns/splitter.css`): a spreadsheet-style divider that
+   * runs the whole table, not a header-only drag handle a reader has to go looking for. The
+   * binding (`table.ts`'s `watchSplitterExtent`) keeps the variable matched to the table's own
+   * rendered height for the resizable table's whole lifetime — a resize can change how many lines
+   * a cell WRAPS to, which changes that height mid-gesture, so this is a live `ResizeObserver`, not
+   * a one-time seed.
+   *
+   * `z-index` has to clear the sticky header/column combo's own highest level (3, the corner cell,
+   * above) or the line would vanish under whichever sticky plane currently paints on top while
+   * scrolling. Treegrid excluded (`:not([data-sk-treegrid])`): it shares this same option/attribute
+   * (`resizableColumns`) but owns its own row/indent geometry, and gets this treatment separately
+   * if/when it asks for it.
+   */
+  .sk-table[data-resizable-columns]:not([data-sk-treegrid]) thead th > .sk-splitter {
+    z-index: 4;
+    /*
+     * ALWAYS-VISIBLE COLUMN LINE, opting the splitter pattern's `--sk-splitter-rest-color` hook
+     * (`patterns/splitter.css` — transparent by default, so Sidebar and Treegrid stay exactly as
+     * quiet as before) into a real color: on a resizable table, the column boundary IS structure —
+     * a reader reads it as a grid line, the same way the horizontal row dividers already read, not
+     * as a hover affordance to go looking for. Same color and width as those row dividers
+     * (`--sk-table-border-color`, `1px`, both already declared on `.sk-table` above) so the two axes
+     * of the grid read as one system, not a thicker vertical rule fighting a thinner horizontal one.
+     * Hover/focus/drag still escalate past this: the pattern's own rules set `background` directly,
+     * never through this variable, so they always win once a reader actually reaches for the handle.
+     */
+    --sk-splitter-rest-color: var(--sk-table-border-color);
+    --sk-splitter-line: 1px;
   }
 }

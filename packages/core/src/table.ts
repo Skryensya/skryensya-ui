@@ -10,10 +10,19 @@ export const tableParts = {
   row: "sk-table__row",
   header: "sk-table__header",
   cell: "sk-table__cell",
-  /** The drag handle a binding inserts between each pair of HEAD-ROW column headers when
+  /**
+   * The drag handle a binding inserts between each pair of HEAD-ROW column headers when
    * `resizableColumns` is on — see `resolveColumnResize` and each binding's own insertion point.
    * The same shared "Window Splitter" primitive (`@skryensya/core/splitter`) Sidebar's own resize
-   * handle and Treegrid's column resizer both already use. */
+   * handle and Treegrid's column resizer both already use, with two things unique to a plain
+   * Table: Enter/double-click FITS the column to its own content instead of resetting to an even
+   * split (each binding's own `measureColumnContentWidth`/`resetWidth` — the spreadsheet
+   * convention, and the useful default for a column of actual data, where "the same width as its
+   * neighbor" answers nothing); and the drawn line runs the table's FULL rendered height, not just
+   * this header cell's own box (`--sk-splitter-block-size`, `patterns/splitter.css`'s own opt-in
+   * hook, kept live by each binding's own `ResizeObserver`) — a header-only line is easy to miss
+   * entirely on a table with more than a couple of rows.
+   */
   columnResizer: "sk-table__column-resizer",
 } as const;
 
@@ -63,12 +72,14 @@ export const tableContract = {
     /**
      * Opt-in: a binding-inserted drag handle between each pair of column headers, WAI-ARIA APG's
      * "Window Splitter" pattern (`role="separator"`, `aria-orientation="vertical"`,
-     * Left/Right/Home/End resize) — the same shared `@skryensya/core/splitter` primitive Sidebar's
-     * own resize handle and Treegrid's own column resizer already use. Off by default: a plain
-     * table needs no JavaScript at all today (`table.css`'s own header comment — "native table
-     * semantics stay native"), and this stays true unless a consumer explicitly asks for more.
-     * This is also the mount switch: the vanilla binding only ever enhances a `<table>` that
-     * carries this attribute, so the many tables that never opt in stay exactly as inert as before.
+     * Left/Right/Home/End resize, Enter/double-click fits the column to its own content — see
+     * `tableParts.columnResizer`'s own doc for why that differs from Treegrid's even-split reset) —
+     * the same shared `@skryensya/core/splitter` primitive Sidebar's own resize handle and
+     * Treegrid's own column resizer already use. Off by default: a plain table needs no JavaScript
+     * at all today (`table.css`'s own header comment — "native table semantics stay native"), and
+     * this stays true unless a consumer explicitly asks for more. This is also the mount switch:
+     * the vanilla binding only ever enhances a `<table>` that carries this attribute, so the many
+     * tables that never opt in stay exactly as inert as before.
      */
     resizableColumns: { type: "boolean", default: false, attr: "data-resizable-columns", trueValue: "" },
     /**

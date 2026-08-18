@@ -97,9 +97,21 @@ export const calloutContract = {
          * Tone decides the accessibility here, not just the paint: danger is assertive because it
          * interrupts, everything else is polite because it can wait.
          */
+        /*
+         * `aria-atomic`, explicit rather than left to the implicit default: the same fix already
+         * applied to Toast (`content.ts`), which shares this exact role/aria-live-by-tone mechanism.
+         */
         attrsWhen: [
-          { option: "tone", equals: "danger", attrs: { role: "alert", "aria-live": "assertive" } },
-          { option: "tone", notEquals: "danger", attrs: { role: "status", "aria-live": "polite" } },
+          {
+            option: "tone",
+            equals: "danger",
+            attrs: { role: "alert", "aria-live": "assertive", "aria-atomic": "true" },
+          },
+          {
+            option: "tone",
+            notEquals: "danger",
+            attrs: { role: "status", "aria-live": "polite", "aria-atomic": "true" },
+          },
         ],
         children: [
           { element: "span", part: "icon", whenGiven: "icon", attrs: { "aria-hidden": "true" }, slot: "icon" },

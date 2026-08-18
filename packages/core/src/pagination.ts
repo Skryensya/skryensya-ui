@@ -282,6 +282,11 @@ export const tablePagerContract = {
       react: { from: "@skryensya/react/pagination", name: "TablePagerEnd" },
     },
 
+    /*
+     * `role="status"`, unconditional: the enhancer rewrites this node's text on every page change
+     * (`table-pager.ts`'s own `status.textContent = ...`), and nothing announced that until now —
+     * the same live-region gap Combobox's own result counter already had and fixed, applied here.
+     */
     TablePagerStatus: {
       intent: ["visible-row-range", "table-page-status"],
       host: { element: "div" },
@@ -293,6 +298,7 @@ export const tablePagerContract = {
         part: "status",
         host: true,
         mount: tablePagerAttrs.status,
+        attrs: { role: "status", "aria-live": "polite", "aria-atomic": "true" },
         slot: "children",
       },
       react: { from: "@skryensya/react/pagination", name: "TablePagerStatus" },

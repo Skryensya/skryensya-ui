@@ -18,6 +18,11 @@ describe("Callout", () => {
     danger.unmount();
   });
 
+  it("marks the live region atomic, same fix already applied to Toast", () => {
+    const ui = render(<Callout tone="danger">Broke</Callout>);
+    expect(ui.getByRole("alert").getAttribute("aria-atomic")).toBe("true");
+  });
+
   /*
    * Purely informational: no dismiss exists anywhere in the binding to test for, unlike Toast.
    */

@@ -16,7 +16,7 @@ describe("Badge", () => {
     const ui = render(
       <BadgeHolder>
         <button type="button">Settings</button>
-        <BadgeDot aria-label="Unread updates" role="status" tone="danger" />
+        <BadgeDot label="Unread updates" tone="danger" />
       </BadgeHolder>,
     );
 

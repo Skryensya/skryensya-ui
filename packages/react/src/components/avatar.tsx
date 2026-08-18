@@ -44,16 +44,25 @@ export type AvatarGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> 
   max?: number;
   /** Explicit overflow label for a composition that already supplies its visible avatars. */
   overflow?: ReactNode;
+  /** The group's own accessible name. Optional: each avatar already announces its own name. */
+  label?: string;
 };
 
-export function AvatarGroup({ children, className, max, overflow: overflowLabel, ...props }: AvatarGroupProps) {
+export function AvatarGroup({
+  children,
+  className,
+  label,
+  max,
+  overflow: overflowLabel,
+  ...props
+}: AvatarGroupProps) {
   const items = Children.toArray(children);
   const visible = max && items.length > max ? items.slice(0, max) : items;
   const overflowCount = items.length - visible.length;
   const overflow = overflowCount > 0 ? `+${overflowCount}` : overflowLabel;
 
   return (
-    <div {...props} className={cx(avatarParts.group, className)}>
+    <div {...props} aria-label={label} className={cx(avatarParts.group, className)} role="group">
       {visible}
       {overflow != null ? <span className={avatarParts.groupOverflow}>{overflow}</span> : null}
     </div>

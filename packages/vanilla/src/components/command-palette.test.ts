@@ -75,6 +75,9 @@ describe("CommandPalette Vanilla contracts", () => {
     expect(root.open).toBe(true);
     expect(options()).toHaveLength(3);
     expect(trigger().getAttribute("aria-expanded")).toBe("true");
+    // The combobox itself, not just the external trigger: `input` carries `role="combobox"`, so
+    // it is what a screen reader questions about expansion — it used to stay stuck at "false".
+    expect(input().getAttribute("aria-expanded")).toBe("true");
     // The first hit is pointed at, not focused: the input keeps focus while the list is walked.
     expect(input().getAttribute("aria-activedescendant")).toBe("cmd-option-0");
     expect(selected()).toBe(0);

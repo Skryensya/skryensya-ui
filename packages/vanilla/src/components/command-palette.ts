@@ -77,6 +77,9 @@ export function connectCommandPalette(root: HTMLElement): Cleanup {
   const optionId = (i: number) => `${root.id || "sk-command-palette"}-option-${i}`;
 
   const setExpanded = (expanded: boolean) => {
+    // The combobox itself, not just the external open-buttons: `input` is what carries
+    // `role="combobox"`, so it is what a screen reader actually questions about expansion.
+    input.setAttribute("aria-expanded", expanded ? "true" : "false");
     for (const trigger of uniqueTriggers) {
       trigger.setAttribute("aria-expanded", expanded ? "true" : "false");
     }

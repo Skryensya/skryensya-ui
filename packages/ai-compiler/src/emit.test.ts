@@ -91,7 +91,7 @@ describe("emitMarkup", () => {
       <nav class="sk-nav-list" aria-label="Principal">
         <div class="sk-nav-list__group">
           <div class="sk-nav-list__group-label" id="espacio">Espacio</div>
-          <ul class="sk-nav-list__list" aria-labelledby="espacio">
+          <ul class="sk-nav-list__list" role="list" aria-labelledby="espacio">
             <li class="sk-nav-list__item">
               <a class="sk-nav-list__link sk-interactive" href="/" aria-current="page">
                 <span class="sk-nav-list__label">Inicio</span>
@@ -133,7 +133,7 @@ describe("emitMarkup", () => {
 
     // The label goes, the <ul> stays: a <li> still needs a list to sit inside.
     expect(markup).not.toContain("sk-nav-list__group-label");
-    expect(markup).toContain('<ul class="sk-nav-list__list">');
+    expect(markup).toContain('<ul class="sk-nav-list__list" role="list">');
   });
 
   /*

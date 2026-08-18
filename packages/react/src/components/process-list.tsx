@@ -10,7 +10,7 @@ export type ProcessListProps = OlHTMLAttributes<HTMLOListElement> & {
 /** A static ordered sequence of instructions. Progress state belongs to Steps. */
 export function ProcessList({ children, className, ...props }: ProcessListProps) {
   return (
-    <ol {...props} className={cx(processListParts.root, className)}>
+    <ol {...props} className={cx(processListParts.root, className)} role="list">
       {children}
     </ol>
   );

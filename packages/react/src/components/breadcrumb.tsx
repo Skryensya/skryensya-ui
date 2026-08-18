@@ -17,7 +17,7 @@ export function Breadcrumb({
 }: BreadcrumbProps) {
   return (
     <nav aria-label={label} className={breadcrumbParts.root}>
-      <ol className={breadcrumbParts.list}>
+      <ol className={breadcrumbParts.list} role="list">
         {items.map((item, index) => {
           const current = item.current ?? index === items.length - 1;
           return (

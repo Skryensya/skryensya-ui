@@ -174,11 +174,16 @@ export const changelogContract = {
        * renders the numbers, but the accessibility tree reads them, and there they should count
        * backwards.
        */
+      /*
+       * `role="list"` alongside `reversed`: `list-style: none` (changelog.css) drops the implicit
+       * list role in Safari/VoiceOver specifically, which would silence the very numbering this
+       * component depends on to read backwards.
+       */
       template: {
         element: "ol",
         part: "root",
         host: true,
-        attrs: { reversed: "" },
+        attrs: { reversed: "", role: "list" },
         slot: "children",
       },
       react: { from: "@skryensya/react/changelog", name: "Changelog" },
@@ -227,7 +232,7 @@ export const changelogContract = {
            */
           { element: "span", part: "version", slot: "version" },
           { element: "time", part: "date", options: ["date"], whenGiven: "date", slot: "date" },
-          { element: "ol", part: "entries", slot: "children" },
+          { element: "ol", part: "entries", attrs: { role: "list" }, slot: "children" },
         ],
       },
       react: { from: "@skryensya/react/changelog", name: "ChangelogRelease" },

@@ -145,7 +145,7 @@ export const avatarColorsTree = (t: Translate): UsageTree => ({
 export const avatarGroupTree = (t: Translate): UsageTree => ({
   contract: "avatar",
   signature: "AvatarGroup",
-  attrs: { "aria-label": t("demo.avatar.groupLabel") },
+  options: { label: t("demo.avatar.groupLabel") },
   slots: {
     children: [
       {

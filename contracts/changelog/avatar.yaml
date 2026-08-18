@@ -3,8 +3,28 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "eac55c790ba36cba"
+surface: "182d3f2ac51d9034"
 entries:
+  - date: 2026-08-17
+    kind: bugfix
+    es:
+      title: AvatarGroup se expone como grupo accesible
+      body: >-
+        <code>AvatarGroup</code> ahora autoría <code>role="group"</code> y suma la opción
+        <code>label</code> (→ <code>aria-label</code>), el mismo par que <code>SplitButton</code> ya
+        usa para nombrar un contenedor de controles relacionados. Antes el nombre solo llegaba si
+        quien componía la pieza pasaba <code>aria-label</code> por fuera del contrato, y sin
+        <code>role="group"</code> un <code>&lt;div&gt;</code> genérico con nombre no garantiza
+        anunciarse como una unidad para tecnología de asistencia.
+    en:
+      title: AvatarGroup exposes itself as an accessible group
+      body: >-
+        <code>AvatarGroup</code> now authors <code>role="group"</code> and gains a <code>label</code>
+        option (→ <code>aria-label</code>), the same pair <code>SplitButton</code> already uses to
+        name a container of related controls. Before, the name only arrived if whoever composed the
+        piece passed <code>aria-label</code> outside the contract, and without <code>role="group"</code>
+        a generic named <code>&lt;div&gt;</code> is not guaranteed to announce itself as one unit to
+        assistive technology.
   - date: 2026-08-11
     kind: feature
     es:

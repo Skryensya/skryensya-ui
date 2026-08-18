@@ -16,13 +16,15 @@ export function Badge({ children, className, tone = "neutral", ...props }: Badge
   );
 }
 
-export type BadgeDotProps = HTMLAttributes<HTMLSpanElement> & {
+export type BadgeDotProps = Omit<HTMLAttributes<HTMLSpanElement>, "aria-label"> & {
   tone?: BadgeTone;
+  /** What the dot means ("Unread", "Online") — its only accessible content. */
+  label: string;
 };
 
-export function BadgeDot({ className, tone = "neutral", ...props }: BadgeDotProps) {
+export function BadgeDot({ className, label, tone = "neutral", ...props }: BadgeDotProps) {
   const classes = className ? `${badgeParts.root} ${className}` : badgeParts.root;
-  return <span {...props} className={classes} data-dot="" data-tone={tone} />;
+  return <span {...props} aria-label={label} className={classes} data-dot="" data-tone={tone} role="status" />;
 }
 
 export type BadgeHolderProps = HTMLAttributes<HTMLSpanElement> & {

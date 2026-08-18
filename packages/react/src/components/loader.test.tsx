@@ -1,7 +1,7 @@
 import { render, within } from "@testing-library/react";
 import axe from "axe-core";
 import { describe, expect, it } from "vitest";
-import { Loader } from "./loader.js";
+import { Loader, LoaderStatus } from "./loader.js";
 
 describe("Loader", () => {
   it("exposes labelled indeterminate work as a polite status", () => {
@@ -14,6 +14,7 @@ describe("Loader", () => {
     expect(loader.getAttribute("data-variant")).toBe("ring");
     expect(loader.getAttribute("data-speed")).toBe("normal");
     expect(loader.getAttribute("aria-hidden")).toBeNull();
+    expect(loader.getAttribute("aria-atomic")).toBe("true");
   });
 
   it("writes orthogonal variant and speed axes onto the root", () => {
@@ -36,6 +37,14 @@ describe("Loader", () => {
     expect(loader?.getAttribute("aria-hidden")).toBe("true");
     expect(loader?.getAttribute("role")).toBeNull();
     expect(within(ui.container).getByRole("button", { name: "Guardando" })).toBeTruthy();
+  });
+
+  it("announces a skeleton screen's wait without drawing anything", () => {
+    const ui = render(<LoaderStatus label="Cargando artículos" />);
+    const status = ui.getByRole("status", { name: "Cargando artículos" });
+
+    expect(status.classList).toContain("sk-visually-hidden");
+    expect(status.getAttribute("aria-atomic")).toBe("true");
   });
 
   it("has no serious accessibility violations in labelled and decorative uses", async () => {

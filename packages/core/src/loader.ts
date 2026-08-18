@@ -56,8 +56,10 @@ export const loaderContract = {
         part: "root",
         host: true,
         // The label decides the semantics: named is a status, unnamed is decoration beside one.
+        // `aria-atomic`, explicit: the same fix already applied to Toast and Callout, both of
+        // which share this exact `role="status"` live-region shape.
         attrsWhen: [
-          { option: "label", given: true, attrs: { role: "status" } },
+          { option: "label", given: true, attrs: { role: "status", "aria-atomic": "true" } },
           { option: "label", given: false, attrs: { "aria-hidden": "true" } },
         ],
       },
@@ -88,7 +90,7 @@ export const loaderContract = {
         // No part class: this draws nothing, so it has no anatomy, only the hiding and the role.
         also: ["sk-visually-hidden"],
         host: true,
-        attrs: { role: "status" },
+        attrs: { role: "status", "aria-atomic": "true" },
       },
       react: { from: "@skryensya/react/loader", name: "LoaderStatus" },
     },

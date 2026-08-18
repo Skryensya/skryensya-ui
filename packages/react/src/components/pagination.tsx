@@ -150,8 +150,11 @@ export function TablePagerStatus({ children, className, ...props }: TablePagerSt
   return (
     <div
       {...props}
+      aria-atomic="true"
+      aria-live="polite"
       className={cx(tablePagerParts.status, className)}
       data-sk-table-pager-status=""
+      role="status"
     >
       {children}
     </div>

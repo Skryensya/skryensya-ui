@@ -20,6 +20,18 @@ export function connectCodePreview(root: HTMLElement): Cleanup {
     `[${codePreviewAttrs.densityPanel}="condensed"]`,
   );
   const fullPanelEl = root.querySelector<HTMLElement>(`[${codePreviewAttrs.densityPanel}="full"]`);
+  // The single-panel case (no density switch): the one viewport this preview has.
+  const plainPanelEl = condensedPanelEl || fullPanelEl ? null : root.querySelector<HTMLElement>(`.${codePreviewParts.viewport}`);
+
+  /*
+   * `aria-controls` needs SOME id to point at, and authored/compiled markup never assigns one —
+   * the panel is anonymous content the author supplies. Assigned here, once, only if the panel
+   * does not already have one, so an author who DID give it an id keeps their own.
+   */
+  const baseId = root.id || "sk-code-preview";
+  if (condensedPanelEl && !condensedPanelEl.id) condensedPanelEl.id = `${baseId}-condensed`;
+  if (fullPanelEl && !fullPanelEl.id) fullPanelEl.id = `${baseId}-full`;
+  if (plainPanelEl && !plainPanelEl.id) plainPanelEl.id = `${baseId}-viewport`;
 
   if (root.hasAttribute(codePreviewAttrs.collapsible) && (!toggle || !toggleLabel)) {
     throw new Error(
@@ -61,6 +73,10 @@ export function connectCodePreview(root: HTMLElement): Cleanup {
       if (condensedPanelEl?.id) toggle.setAttribute("aria-controls", condensedPanelEl.id);
     } else {
       more.hidden = !fullCanCollapse;
+      // No density switch here, so `fullLines` is the only count this preview has — the same
+      // reasoning as the `density === "full"` branch above, minus the density condition.
+      if (toggleCount && fullLines > 0) toggleCount.textContent = formatLines(fullLines);
+      if (plainPanelEl?.id) toggle.setAttribute("aria-controls", plainPanelEl.id);
     }
   };
 
@@ -80,6 +96,9 @@ export function connectCodePreview(root: HTMLElement): Cleanup {
 
   if (densityInput) {
     showDensity(root.getAttribute(codePreviewAttrs.density) === "full" ? "full" : "condensed");
+  } else {
+    // No switch, one panel: still needs its `more.hidden`/`aria-controls` set once at rest.
+    syncDisclosureChrome(null);
   }
 
   return () => {

@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
 import { emitMarkup } from "@skryensya/ai-compiler/emit";
 import { initComponents } from "@skryensya/vanilla/auto";
+import { mountCodePreview } from "@skryensya/vanilla/code-preview";
 import { mountIcons } from "@skryensya/vanilla/icon";
 import { phosphorIcons } from "@skryensya/icons-phosphor";
 import { canonicalTrees } from "../src/trees.js";
@@ -150,6 +151,11 @@ async function stage(): Promise<void> {
    * paths, both have to have made the same choice.
    */
   mountIcons(document.body, phosphorIcons);
+
+  // Another opt-in mount `initComponents` deliberately excludes (`code-preview.ts`'s own doc):
+  // without this, the vanilla side of every code-preview canonical tree never enhances at all, so
+  // React and Vanilla only LOOK symmetric because neither's dynamic behavior ever ran.
+  mountCodePreview(document.body);
 
   document.body.dataset.ready = "true";
 }

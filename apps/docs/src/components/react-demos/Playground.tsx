@@ -1108,7 +1108,7 @@ createRoot(document.getElementById("root")).render(
               </a>
             )}
             <SegmentedControl
-              aria-label={strings.bindingLabel}
+              label={strings.bindingLabel}
               onValueChange={(next) => setBinding(next as "react" | "vanilla")}
               options={
                 component.id !== handoffComponentId

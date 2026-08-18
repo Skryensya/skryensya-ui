@@ -1,6 +1,6 @@
 import { codePreviewAttrs, codePreviewParts } from "@skryensya/core/code-preview";
 import { selectionParts } from "@skryensya/core/selection";
-import { useState, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { Icon } from "./icon.js";
 
 /*
@@ -34,10 +34,17 @@ export type CodePreviewProps = {
    * per panel: each has to be addressable on its own for the enhancer to show and hide them.
    */
   ownViewports?: boolean;
+  /**
+   * Id of the panel the disclosure toggle controls, per WAI's own Disclosure pattern
+   * (`aria-controls` on the trigger). Only meaningful together with `ownViewports`: this component
+   * generates and owns its own viewport's id otherwise, since it is the one rendering it.
+   */
+  controlsId?: string;
 };
 
 export function CodePreview({
   aside,
+  controlsId,
   ownViewports = false,
   rootAttrs,
   children,
@@ -50,6 +57,8 @@ export function CodePreview({
   previewLines,
 }: CodePreviewProps) {
   const [expanded, setExpanded] = useState(false);
+  const generatedViewportId = useId();
+  const viewportId = controlsId ?? generatedViewportId;
 
   return (
     <div
@@ -74,11 +83,12 @@ export function CodePreview({
         </div>
       ) : null}
       <div className={codePreviewParts.preview}>
-        {ownViewports ? children : <div className={codePreviewParts.viewport}>{children}</div>}
+        {ownViewports ? children : <div className={codePreviewParts.viewport} id={viewportId}>{children}</div>}
       </div>
       {collapsible ? (
         <div className={codePreviewParts.more} {...{ [codePreviewAttrs.more]: "" }}>
           <button
+            aria-controls={viewportId}
             aria-expanded={expanded}
             className={`${codePreviewParts.toggle} sk-button sk-interactive`}
             data-size="sm"
@@ -132,11 +142,20 @@ export function CodePreviewDensity({
   switchLabel = "Mostrar la versión completa",
   ...rest
 }: CodePreviewDensityProps) {
+  // Single source of truth for which panel shows, same as the Vanilla enhancer's
+  // `data-sk-code-preview-density` on the root — the stylesheet keys visibility off that one
+  // attribute (`code-preview.css`), so this state is what actually makes the switch DO something,
+  // not just report a `checked` value nobody reads.
+  const [density, setDensity] = useState<"condensed" | "full">("condensed");
+  const condensedId = useId();
+  const fullId = useId();
+
   return (
     <CodePreview
       {...rest}
+      controlsId={density === "full" ? fullId : condensedId}
       ownViewports
-      rootAttrs={{ "data-sk-code-preview-density": "condensed" }}
+      rootAttrs={{ [codePreviewAttrs.density]: density }}
       aside={
         <div className={codePreviewParts.density}>
             <span className={codePreviewParts.densityEdge} data-density="condensed">
@@ -145,7 +164,9 @@ export function CodePreviewDensity({
             <label className={selectionParts.switch}>
               <input
                 aria-label={switchLabel}
+                checked={density === "full"}
                 className={selectionParts.switchInput}
+                onChange={(event) => setDensity(event.target.checked ? "full" : "condensed")}
                 role="switch"
                 type="checkbox"
                 {...{ [codePreviewAttrs.densityInput]: "" }}
@@ -160,10 +181,14 @@ export function CodePreviewDensity({
         </div>
       }
     >
-      <div className={codePreviewParts.viewport} {...{ [codePreviewAttrs.densityPanel]: "condensed" }}>
+      <div
+        className={codePreviewParts.viewport}
+        id={condensedId}
+        {...{ [codePreviewAttrs.densityPanel]: "condensed" }}
+      >
         {condensed}
       </div>
-      <div className={codePreviewParts.viewport} {...{ [codePreviewAttrs.densityPanel]: "full" }}>
+      <div className={codePreviewParts.viewport} id={fullId} {...{ [codePreviewAttrs.densityPanel]: "full" }}>
         {full}
       </div>
     </CodePreview>

@@ -58,6 +58,19 @@ describe("CodePreview", () => {
     expect(toggle.querySelector("[data-sk-code-preview-toggle-label]")?.textContent).toBe("Ver menos");
   });
 
+  it("points aria-controls at the panel it discloses", () => {
+    const ui = render(
+      <CodePreview collapsible>
+        <pre>código</pre>
+      </CodePreview>,
+    );
+    const toggle = ui.container.querySelector(".sk-code-preview__toggle")!;
+    const viewport = ui.container.querySelector(".sk-code-preview__viewport")!;
+
+    expect(viewport.id).toBeTruthy();
+    expect(toggle.getAttribute("aria-controls")).toBe(viewport.id);
+  });
+
   it("puts the aside beside the meta block, not inside it", () => {
     const ui = render(
       <CodePreview aside={<span data-testid="aside">switch</span>} label="button.tsx" note="React">
@@ -112,6 +125,35 @@ describe("CodePreviewDensity", () => {
       ["condensed", "Corto"],
       ["full", "Todo"],
     ]);
+  });
+
+  it("actually flips which panel shows when the switch is used", () => {
+    const ui = render(<CodePreviewDensity condensed={<pre>corto</pre>} full={<pre>completo</pre>} />);
+    const root = ui.container.querySelector(".sk-code-preview")!;
+    const control = ui.getByRole("switch");
+
+    expect(root.getAttribute("data-sk-code-preview-density")).toBe("condensed");
+
+    fireEvent.click(control);
+
+    expect(root.getAttribute("data-sk-code-preview-density")).toBe("full");
+    expect((control as HTMLInputElement).checked).toBe(true);
+  });
+
+  it("points aria-controls at whichever panel is current", () => {
+    const ui = render(
+      <CodePreviewDensity collapsible condensed={<pre>corto</pre>} full={<pre>completo</pre>} />,
+    );
+    const toggle = ui.container.querySelector(".sk-code-preview__toggle")!;
+    const control = ui.getByRole("switch");
+    const condensedPanel = ui.container.querySelector('[data-sk-code-preview-density-panel="condensed"]')!;
+    const fullPanel = ui.container.querySelector('[data-sk-code-preview-density-panel="full"]')!;
+
+    expect(toggle.getAttribute("aria-controls")).toBe(condensedPanel.id);
+
+    fireEvent.click(control);
+
+    expect(toggle.getAttribute("aria-controls")).toBe(fullPanel.id);
   });
 });
 

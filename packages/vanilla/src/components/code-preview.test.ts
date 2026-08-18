@@ -131,4 +131,48 @@ describe("CodePreview opt-in enhancer", () => {
     expect(mountCodePreview(document)).toBe(1);
     expect(count.textContent).toBe("48");
   });
+
+  /*
+   * The single-panel case (no density switch): `syncDisclosureChrome` used to run only from inside
+   * `showDensity`, which only ever fired when a density `<input>` existed — so a plain collapsible
+   * preview never got its line count filled in, and its toggle never got `aria-controls`, in the
+   * entire time this enhancer has shipped.
+   */
+  it("fills the count and aria-controls even with no density switch at all", () => {
+    document.body.innerHTML = `
+      <div
+        class="sk-code-preview"
+        data-sk-code-preview
+        data-sk-code-preview-collapsible
+        data-sk-code-preview-expanded="false"
+        data-sk-code-preview-lines="42"
+      >
+        <div class="sk-code-preview__viewport"></div>
+        <div data-sk-code-preview-more></div>
+        <button
+          type="button"
+          data-sk-code-preview-toggle
+          aria-expanded="false"
+          aria-label="Mostrar todas las líneas"
+          data-sk-code-preview-lines-label="{count} líneas"
+        >
+          <span data-sk-code-preview-toggle-label>Mostrar más</span>
+          <span class="sk-code-preview__toggle-count"></span>
+        </button>
+      </div>
+    `;
+    const root = document.querySelector<HTMLElement>("[data-sk-code-preview]");
+    const viewport = root?.querySelector<HTMLElement>(".sk-code-preview__viewport");
+    const more = root?.querySelector<HTMLElement>("[data-sk-code-preview-more]");
+    const toggle = root?.querySelector<HTMLButtonElement>("[data-sk-code-preview-toggle]");
+    const count = toggle?.querySelector<HTMLElement>(".sk-code-preview__toggle-count");
+    if (!root || !viewport || !more || !toggle || !count) throw new Error("Invalid test markup.");
+
+    expect(mountCodePreview(document)).toBe(1);
+
+    expect(more.hidden).toBe(false);
+    expect(count.textContent).toBe("42 líneas");
+    expect(viewport.id).toBeTruthy();
+    expect(toggle.getAttribute("aria-controls")).toBe(viewport.id);
+  });
 });

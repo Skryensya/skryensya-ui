@@ -105,11 +105,11 @@ export function Toc({ className, items, title, ...props }: TocProps) {
           <span aria-hidden="true" className={tocParts.chevron} />
         </summary>
         <nav aria-label={title} className={tocParts.nav}>
-          <ul className={tocParts.list}>
+          <ul className={tocParts.list} role="list">
             {items.map((item) => (
               <li className={tocParts.item} data-level={item.level ?? "h2"} key={item.href}>
                 <a
-                  aria-current={current === item.href ? "true" : undefined}
+                  aria-current={current === item.href ? "location" : undefined}
                   className={`${tocParts.link} sk-interactive`}
                   href={item.href}
                 >

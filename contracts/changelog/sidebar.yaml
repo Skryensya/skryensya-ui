@@ -3,8 +3,26 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "96bef4967c70d653"
+surface: "9329b6ac3d757ee1"
 entries:
+  - date: 2026-08-17
+    kind: feature
+    target: landmarkLabel
+    es:
+      title: Nueva opción landmarkLabel para nombrar el aside cuando hay más de uno
+      body: >-
+        El contrato no tenía forma de nombrar el propio <code>&lt;aside&gt;</code> — <code>label</code>
+        ya estaba tomado por el nombre accesible del trigger, un target distinto. WAI-ARIA exige un
+        nombre en cuanto una página tiene más de una región <code>complementary</code>; ahora
+        <code>landmarkLabel</code> lo cubre, opcional porque un único Sidebar en la página no lo
+        necesita para ser inequívoco.
+    en:
+      title: New landmarkLabel option to name the aside once there is more than one
+      body: >-
+        The contract had no way to name the `<aside>` itself — `label` was already taken by the
+        trigger's own accessible name, a different target. WAI-ARIA requires a name the moment a
+        page has more than one `complementary` region; `landmarkLabel` now covers that, optional
+        because a single Sidebar on the page needs none to be unambiguous.
   - date: 2026-08-06
     kind: feature
     target: SidebarResizeHandle

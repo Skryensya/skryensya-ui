@@ -55,6 +55,13 @@ describe("Sidebar React contracts", () => {
     expect(ui.state()).toBe("collapsed");
   });
 
+  it("names the complementary landmark when a consumer supplies one", () => {
+    const ui = renderSidebar({ landmarkLabel: "Explorador de archivos" });
+    expect(ui.container.querySelector(".sk-sidebar")?.getAttribute("aria-label")).toBe(
+      "Explorador de archivos",
+    );
+  });
+
   it("lets a controlled caller own the state", () => {
     const ui = renderSidebar({ collapsed: false });
     fireEvent.click(ui.trigger());

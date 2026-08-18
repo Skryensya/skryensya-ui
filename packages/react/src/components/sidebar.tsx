@@ -69,6 +69,7 @@ export function Sidebar({
   className,
   collapsed: collapsedProp,
   defaultCollapsed = false,
+  landmarkLabel,
   maxInlineSize,
   minInlineSize,
   onCollapsedChange,
@@ -111,6 +112,7 @@ export function Sidebar({
     >
       <aside
         {...props}
+        aria-label={landmarkLabel}
         className={cx(sidebarParts.root, className)}
         data-state={collapsed ? "collapsed" : "expanded"}
         id={id}

@@ -1,0 +1,223 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
+import { sidebarResizableTree } from "../../demos/sidebar";
+import { getLocale, useTranslations } from "../../i18n";
+
+import "@skryensya/core/components/tree-view.css";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const import_ = `@import "@skryensya/core/patterns/splitter.css";`;
+
+/*
+ * Hardcoded, not pulled from lib/tokens.ts's corpus: `--sk-splitter-*` is declared here in
+ * patterns/splitter.css AND redeclared as an override inside components/sidebar.css (its resize
+ * handle's own hook). The corpus dedupes by name, first file wins, and `components/` sorts before
+ * `patterns/` — so every one of these four would attribute to sidebar.css instead, and Used.astro's
+ * probe would read them off a bare `.sk-sidebar`, not `.sk-splitter`. Wrong file, wrong value.
+ */
+const hooks = [
+  ["--sk-splitter-hit", "var(--space-inset-sm)", "Width of the grab zone; the hairline lives inside it, narrower."],
+  ["--sk-splitter-line", "2px", "Thickness of the visible hairline."],
+  ["--sk-splitter-color", "var(--color-border-strong)", "Hairline colour on hover."],
+  ["--sk-splitter-active-color", "var(--color-border-accent)", "Hairline colour on focus or while dragging."],
+] as const;
+
+const handleHtml = `<!-- Sidebar: clamps ONE value against a fixed bound -->
+<div
+  class="sk-sidebar__resize-handle sk-splitter"
+  role="separator"
+  aria-orientation="vertical"
+  aria-label="Resize panel"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="38"
+  tabindex="0"
+></div>`;
+
+const columnHtml = `<!-- Table / Treegrid: redistributes between a PAIR of neighboring columns -->
+<th>
+  Name
+  <div
+    class="sk-table__column-resizer sk-splitter"
+    role="separator"
+    aria-orientation="vertical"
+    aria-label="Resize Name column"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="52"
+    tabindex="0"
+  ></div>
+</th>`;
+
+const keyboard = [
+  ["←", "One step (16px by default) toward the start edge."],
+  ["→", "One step toward the end edge."],
+  ["Shift + ←/→", "Coarse step (64px by default): the same key, four times farther."],
+  ["Home", "Jumps to the minimum of its travel."],
+  ["End", "Jumps to the maximum of its travel."],
+  ["Enter", "Resets to the default value. By convention, double-click does the same."],
+];
+---
+
+<Base
+  title="Splitter"
+  description="The shared drag-to-resize handle: role=separator, one value model per consumer, the same visual bar across Sidebar, Table and Treegrid."
+>
+  <h1>Splitter</h1>
+  <p class="lede">
+    WAI-ARIA's <strong>Window Splitter</strong> pattern: a thin bar, draggable with pointer or
+    keyboard, that resizes whatever sits next to it. <code>Sidebar</code> uses it for its panel
+    width; <code>Table</code> and <code>Treegrid</code> use it between every pair of columns. All
+    three share one primitive — <code>@skryensya/core/splitter.ts</code> for the behaviour,
+    <code>.sk-splitter</code> for the visual bar — instead of reimplementing drag and keyboard
+    handling each time.
+  </p>
+
+  <h2>One primitive, two value models</h2>
+  <p>
+    Both are "a splitter", but they move different quantities. The primitive stays ignorant of
+    which: it only ever hands back a <code>delta</code> (or a <code>home</code>/<code>end</code>/
+    <code>reset</code> intent) and leaves "what moving it means" to whoever consumes it.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>Consumer</th>
+          <th>What it moves</th>
+          <th>Arithmetic</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Sidebar</strong></td>
+          <td>One value against a fixed bound</td>
+          <td>
+            A CSS <code>clamp()</code> — there is no "other pane" to conserve a total width with.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Table / Treegrid</strong></td>
+          <td>A pair of neighboring columns</td>
+          <td>
+            <code>resolveColumnResize</code> — the pair's combined width stays fixed, so no other
+            column moves.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Mark the separator</h2>
+  <p>
+    <code>.sk-splitter</code> only draws the bar: size, position, cursor, hover/focus/drag colour.
+    It does not know what it is resizing — the containing block comes from the consumer (Sidebar
+    floats it against the panel edge; Treegrid puts one inside each <code>th</code>), and the
+    consumer's own binding sets <code>data-dragging</code> for the length of a gesture, the one
+    state this file reads.
+  </p>
+  <CodeBlock code={handleHtml} label="HTML · Sidebar" note="one value, CSS clamp" />
+  <CodeBlock code={columnHtml} label="HTML · Table / Treegrid" note="pair of neighboring columns" />
+
+  <h2>Live</h2>
+  <p>
+    The same demo as <a href="/en/components/sidebar">Sidebar</a>: drag the panel edge with the
+    pointer, or focus it and use the arrow keys.
+  </p>
+  <ComponentPreview
+    tree={sidebarResizableTree(t)}
+    label={t("sidebarPage.resizableLabel")}
+    flush
+  />
+
+  <h2>Keyboard</h2>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          keyboard.map(([key, action]) => (
+            <tr>
+              <td class="mono">{key}</td>
+              <td>{action}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Accessibility</h2>
+  <ul>
+    <li>
+      <code>role="separator"</code> + <code>aria-orientation</code> identify it as the Window
+      Splitter pattern, not a <code>slider</code> or a <code>scrollbar</code>.
+    </li>
+    <li>
+      <code>aria-valuemin</code>/<code>aria-valuemax</code>/<code>aria-valuenow</code> report the
+      position as a percentage of its own travel (<code>splitterValuePercent</code>), never a raw
+      pixel count: a screen reader learns nothing from a number with no range framing it.
+    </li>
+    <li>
+      <code>aria-label</code> is required, not optional: the separator is binding-inserted, never
+      authored by the consumer, so nothing else names it for a screen reader. The contract's
+      accessibility gate (<code>resizeLabel</code> on Table/Treegrid) enforces it.
+    </li>
+    <li>
+      The focus ring is <code>inset</code>: a handle flush with its container's edge would have its
+      outline drawn outside it, clipped by that container's own <code>overflow: hidden</code>
+      (Sidebar's case) — inset works whether or not the consumer clips.
+    </li>
+    <li>
+      Under <code>forced-colors</code>, the bar is drawn with <code>CanvasText</code>: the state
+      layer and the accent both drop out there, so the edge needs to exist as a real border.
+    </li>
+  </ul>
+
+  <h2>Install</h2>
+  <CodeBlock code={import_} label="CSS" />
+
+  <h2>Styling hooks</h2>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>Hook</th>
+          <th>Default value</th>
+          <th>What it controls</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          hooks.map(([name, value, note]) => (
+            <tr>
+              <td class="mono">{name}</td>
+              <td class="mono">{value}</td>
+              <td>{note}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Sidebar re-declares these four against its own <code>--sk-sidebar-resize-*</code> (see
+    <a href="/en/components/sidebar">Sidebar</a>), the same way any host re-declares a pattern's
+    hook without touching its markup.
+  </p>
+
+  <h2>Where it lives</h2>
+  <ul>
+    <li><a href="/en/components/sidebar">Sidebar</a> — <code>SidebarResizeHandle</code>, single value.</li>
+    <li><a href="/en/components/table">Table</a> — <code>resizableColumns</code>/<code>resizeLabel</code>, opt-in.</li>
+    <li><a href="/en/components/treegrid">Treegrid</a> — same <code>resizableColumns</code>/<code>resizeLabel</code> pair, plus <code>columnWeights</code> for the initial split.</li>
+  </ul>
+</Base>

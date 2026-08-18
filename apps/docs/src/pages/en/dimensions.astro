@@ -161,6 +161,32 @@ const radiusUse = `<!-- A multiplier preset… -->
     Typography (scaling font-size without correcting line-height reads worse, density is a spacing issue, not type), corner radius (it is its own dimension, a concern of roundness, not spacing), focus ring width (a shrinking ring disappears), and touch area (can be painted small and respond large).
   </p>
 
+  <h3>Touch target, 44px no matter how small it paints</h3>
+  <p>
+    <code>--size-touch-target</code> is a fixed value, <strong>44px</strong> (iOS HIG), that does not
+    respond to density. Button and Input consume it with
+    <code>max(control-size, size-touch-target)</code>: the control can never end up smaller than 44px
+    no matter how compact the size scale gets, but it can still paint larger when its own visual size
+    already clears that floor (<code>lg</code>, for instance).
+  </p>
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <p>
+        <strong>Painted small, hit area large.</strong> An icon-only button at <code>sm</code> paints
+        at its real visual size, smaller than 44px — but an invisible <code>::after</code> extends the
+        clickable area up to the touch floor without growing the control on screen. It's the same
+        pattern RadioGroup uses (<code>--sk-radio-hit-size</code>, a capture circle larger than the
+        visible dot), and Switch solves it differently: there, the whole label is the touch area, so
+        the visual track doesn't need to carry the floor on its own.
+      </p>
+    </div>
+  </div>
+  <p>
+    17 components under <code>packages/core/css/components</code> consume the token today, among them
+    Combobox, Select, DatePicker and CommandPalette — any new interactive control should join that
+    list rather than invent its own minimum.
+  </p>
+
   <h2>Radius, roundness as an axis, not as a brand value</h2>
   <p>
     A <strong>multiplier</strong>, not a flat value the same for everything: <code>--radius-multiplier</code> scales a radius scale where each role retains its place, <code>control</code> and <code>surface</code> remain distinct at any level. Use the density mechanism, not the high contrast one. Five presets under <code>data-radius</code>, <code>none 0 · sm.5 · md 1 ·

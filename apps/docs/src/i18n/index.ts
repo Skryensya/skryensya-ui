@@ -98,6 +98,7 @@ const routeSegments: Record<string, Partial<Record<Locale, string>>> = {
   personalizar: { en: "customize" },
   instalacion: { en: "installation" },
   prerrequisitos: { en: "prerequisites" },
+  teclado: { en: "keyboard" },
   "primer-componente": { en: "first-component" },
   "montaje-automatico": { en: "automatic-mounting" },
   transparencias: { en: "transparency" },

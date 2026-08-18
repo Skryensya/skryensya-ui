@@ -28,9 +28,15 @@ export const feedContract = {
   options: {
     /** The feed's accessible name. `role="feed"` carries no implicit one. */
     label: { type: "string", attr: "aria-label" },
-    /** Set while more articles are loading (e.g. an infinite-scroll fetch in flight) — WAI's own
-     *  wording: "aria-busy is set to true before a DOM change... set to false immediately after". */
-    busy: { type: "boolean", default: false, attr: "aria-busy", trueValue: "true" },
+    /**
+     * Set while more articles are loading (e.g. an infinite-scroll fetch in flight) — WAI's own
+     * wording: "aria-busy is set to true before a DOM change... set to false immediately after".
+     * That "set to false", not omitted, is why `falseValue` is explicit: unlike a presence-only
+     * boolean, this is a tri-state ARIA attribute meant to always be readable, and the React
+     * binding already writes `aria-busy={busy}` unconditionally — omitting it here would have made
+     * every non-busy feed a divergence from the binding that was never wrong.
+     */
+    busy: { type: "boolean", default: false, attr: "aria-busy", trueValue: "true", falseValue: "false" },
     /** This article's 1-based position in the feed. */
     posInset: { type: "number", attr: "aria-posinset" },
     /** Total articles currently loaded (or the whole feed's length, if known) — WAI allows `-1`

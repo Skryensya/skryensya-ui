@@ -5,6 +5,7 @@ import {
   createContext,
   isValidElement,
   useContext,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -45,16 +46,31 @@ function useMenubarContext(component: string): MenubarContextValue {
 
 type TopShape = { hasMenu: boolean; subCount: number };
 
+/**
+ * The tree-driven `items` slot arrives as `ReactNode` — a bare element when authored directly in
+ * JSX, but a ONE-ELEMENT ARRAY when it came from `renderTree`'s generic single-signature-slot
+ * handling (`slotItems(content).map(renderItem)`, which never special-cases a count of one the way
+ * it does a plain string). Rendering it as `{items}` works either way — React flattens an array of
+ * children the same as siblings — but finding the actual `MenubarMenu` element to clone props onto
+ * needs the array unwrapped first.
+ */
+function asMenuElement(items: ReactNode): ReactElement<Record<string, unknown>> | null {
+  const candidate = Array.isArray(items) ? items[0] : items;
+  return isValidElement(candidate) && candidate.type === MenubarMenu
+    ? (candidate as ReactElement<Record<string, unknown>>)
+    : null;
+}
+
 /** `Menubar`'s own children → each `MenubarItem`'s shape — a plain, synchronous read of props: does
- *  it carry a `MenubarMenu`, and if so, how many `MenubarMenuItem`s does that menu have. */
+ *  it carry a `MenubarMenu` (its own `items` prop, the contract's `items` slot), and if so, how many
+ *  `MenubarMenuItem`s does that menu have. */
 function readTops(children: ReactNode): TopShape[] {
   return Children.toArray(children)
     .filter((child): child is ReactElement<MenubarItemProps> => isValidElement(child) && child.type === MenubarItem)
     .map((item) => {
-      const menu = Children.toArray(item.props.children).find(
-        (child): child is ReactElement<{ children?: ReactNode }> => isValidElement(child) && child.type === MenubarMenu,
-      );
-      return { hasMenu: Boolean(menu), subCount: menu ? Children.count(menu.props.children) : 0 };
+      const menu = asMenuElement(item.props.items);
+      const subCount = menu ? Children.count((menu.props as { children?: ReactNode }).children) : 0;
+      return { hasMenu: menu !== null, subCount };
     });
 }
 
@@ -180,9 +196,13 @@ export function Menubar({ children, className, label, ...props }: MenubarProps) 
 }
 
 export type MenubarItemProps = {
-  label: string;
-  children?: ReactNode;
-  /** Fires when a LEAF item (no `MenubarMenu` child) is activated — a dropdown item's own
+  /** The command's own name — the contract's `children` slot, matching every other item-shaped
+   *  signature in this catalogue (`MenubarMenuItem` below takes its text the same way). */
+  children: ReactNode;
+  /** The dropdown this item opens, if it is a trigger rather than a plain command — the contract's
+   *  own `items` slot, a `MenubarMenu` element, never searched for inside `children`. */
+  items?: ReactNode;
+  /** Fires when a LEAF item (no dropdown) is activated — a dropdown item's own
    *  `MenubarMenuItem.onActivate` is what fires for a command inside a menu instead. */
   onActivate?: () => void;
 };
@@ -191,17 +211,19 @@ export type MenubarItemProps = {
 type InjectedMenubarItemProps = MenubarItemProps & { topIndex: number };
 
 export function MenubarItem(publicProps: MenubarItemProps) {
-  const { children, label, onActivate, topIndex } = publicProps as InjectedMenubarItemProps;
+  const { children, items, onActivate, topIndex } = publicProps as InjectedMenubarItemProps;
   const context = useMenubarContext("Item");
-  const menu = Children.toArray(children).find(
-    (child): child is ReactElement<{ children?: ReactNode }> => isValidElement(child) && child.type === MenubarMenu,
-  );
-  const hasMenu = Boolean(menu);
+  const menu = asMenuElement(items);
+  const hasMenu = menu !== null;
   const open = context.isOpen(topIndex);
+  // Same relationship the vanilla enhancer wires by hand (`menubar.ts`'s own `entry.positioner.id`
+  // / `aria-controls`): the trigger names the dropdown it owns, whether or not it is currently open.
+  const menuId = useId();
 
   return (
     <div className={menubarParts.itemWrapper}>
       <button
+        aria-controls={hasMenu ? menuId : undefined}
         aria-expanded={hasMenu ? open : undefined}
         aria-haspopup={hasMenu ? "menu" : undefined}
         className={cx(menubarParts.item, "sk-interactive")}
@@ -214,27 +236,28 @@ export function MenubarItem(publicProps: MenubarItemProps) {
         tabIndex={context.isTriggerStop(topIndex) ? 0 : -1}
         type="button"
       >
-        {label}
+        {children}
       </button>
-      {menu ? cloneElement(menu as ReactElement<Record<string, unknown>>, { topIndex, open }) : null}
+      {menu ? cloneElement(menu, { id: menuId, topIndex, open }) : null}
     </div>
   );
 }
 
 export type MenubarMenuProps = { children: ReactNode };
 
-/** `topIndex`/`open` are injected by the parent `MenubarItem` — never author-set. */
-type InjectedMenubarMenuProps = MenubarMenuProps & { topIndex: number; open: boolean };
+/** `id`/`topIndex`/`open` are injected by the parent `MenubarItem` — never author-set. `id` is what
+ *  the trigger's own `aria-controls` points at, the same pairing the vanilla enhancer wires by hand. */
+type InjectedMenubarMenuProps = MenubarMenuProps & { id: string; topIndex: number; open: boolean };
 
 export function MenubarMenu(publicProps: MenubarMenuProps) {
-  const { children, open, topIndex } = publicProps as InjectedMenubarMenuProps;
+  const { children, id, open, topIndex } = publicProps as InjectedMenubarMenuProps;
   const items = Children.map(children, (child, index) =>
     isValidElement(child) && child.type === MenubarMenuItem
       ? cloneElement(child as ReactElement<Record<string, unknown>>, { topIndex, subIndex: index })
       : child,
   );
   return (
-    <div className={menubarParts.positioner} hidden={!open}>
+    <div className={menubarParts.positioner} hidden={!open} id={id}>
       <div className={menubarParts.menu} role="menu">
         {items}
       </div>

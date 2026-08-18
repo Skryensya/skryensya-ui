@@ -4,7 +4,7 @@
  * geometría que los del chrome que lo rodea. El set se nombra en UN lugar y este realm lo lee.
  */
 import { siteIcons } from "../icons";
-import { initComponents } from "@skryensya/vanilla/auto";
+import { mountComponentsWithIcons } from "@skryensya/vanilla/auto";
 import { mountCodePreview } from "@skryensya/vanilla/code-preview";
 import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
 import { mountIcons } from "@skryensya/vanilla/icon";
@@ -271,18 +271,9 @@ function resolveDemoLoader(
   return bestKey ? reactDemoLoaders.get(bestKey) : undefined;
 }
 
-/**
- * Mount authored placeholders first, then hydrate placeholders injected by async enhancers.
- *
- * Svelte enhancers can finish their DOM commit after `initComponents()` resolves. Waiting one frame
- * makes the second icon pass deterministic instead of leaving newly injected controls blank.
- */
-async function mountFrameComponents(root: Document | Element): Promise<void> {
-  mountIcons(root, siteIcons);
-  await initComponents(root);
-  await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-  mountIcons(root, siteIcons);
-}
+/** This frame's icon set, bound: see `mountComponentsWithIcons` for the sequence and why. */
+const mountFrameComponents = (root: Document | Element): Promise<void> =>
+  mountComponentsWithIcons(root, siteIcons);
 
 /** Import and mount the demo this frame was told to render, in this frame's own realm. */
 /*

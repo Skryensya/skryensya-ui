@@ -1,9 +1,8 @@
 import { createRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
 import { emitMarkup } from "@skryensya/ai-compiler/emit";
-import { initComponents } from "@skryensya/vanilla/auto";
+import { mountComponentsWithIcons } from "@skryensya/vanilla/auto";
 import { mountCodePreview } from "@skryensya/vanilla/code-preview";
-import { mountIcons } from "@skryensya/vanilla/icon";
 import { phosphorIcons } from "@skryensya/icons-phosphor";
 import { canonicalTrees } from "../src/trees.js";
 import { renderTree, setPortalContainer } from "./react-render.js";
@@ -140,17 +139,19 @@ async function stage(): Promise<void> {
     flushSync(() => createRoot(react).render(renderTree(tree)));
   }
 
-  // One pass over the whole document: the enhancers find every authored root at once.
-  await initComponents();
-
   /*
-   * Binding an icon set is a separate, deliberate step: `initComponents` does not take one, because
-   * the system ships no geometry and choosing a set is an install (decision 15). Until this runs, the
-   * authored markup holds a `<span data-sk-icon>` placeholder and nothing draws it. React's binding
-   * defaults to Phosphor, so the gate binds Phosphor here for the same reason: to compare the two
-   * paths, both have to have made the same choice.
+   * One pass over the whole document: the enhancers find every authored root at once, and the icon
+   * set binds alongside them (`initComponents` never binds one itself, choosing a set is an install,
+   * decision 15). React's binding defaults to Phosphor, so the gate binds Phosphor here for the same
+   * reason: to compare the two paths, both have to have made the same choice.
+   *
+   * `mountComponentsWithIcons` is the SAME sequence the docs preview frame boots with (icons, mount,
+   * wait a frame, icons again) — not a second, adjacent implementation of it. A Svelte enhancer that
+   * finishes its DOM commit after `initComponents()`'s own await resolves used to be a race the docs
+   * frame defended against and this gate could not see at all; sharing the sequence is what makes a
+   * regression in that race show up here too.
    */
-  mountIcons(document.body, phosphorIcons);
+  await mountComponentsWithIcons(document, phosphorIcons);
 
   // Another opt-in mount `initComponents` deliberately excludes (`code-preview.ts`'s own doc):
   // without this, the vanilla side of every code-preview canonical tree never enhances at all, so

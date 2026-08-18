@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import ts from "typescript";
 import type { ComponentContract } from "@skryensya/core/contract";
@@ -9,8 +9,17 @@ import { contracts } from "./registry.js";
  * rather than restating it (decision 28).
  *
  * The contract is a value, so the catalogue needs no extraction: this file does not read shapes out
- * of the type system. It asks one question the type system alone can answer: does the React binding
+ * of the type system. It asks one question the type system alone can answer: does a binding
  * re-declare an option Core already owns?
+ *
+ * "A binding" used to mean only the React `.tsx` file, which left a one-hop blind spot: a hand-copied
+ * enum lived one file upstream, inside the contract's OWN file in core, with the react binding merely
+ * importing it by name (fine, by this file's own rule — a `TypeReferenceNode` cannot drift). Core is
+ * a source, not a binding, but it can still restate itself: `AccordionType = "single" | "multiple"`
+ * sitting beside `accordionContract.options.type` is the same copy this file exists to catch, just
+ * with the contract and its restatement in one file instead of two. So every contract's own file is
+ * scanned too, with the identical check: core is allowed to name an option's type, never to write its
+ * values out a second time.
  *
  * Drift is not *naming* an option; it is restating its VALUE SET, because that is the thing that can
  * go stale. So the check looks for literal types written by hand:
@@ -33,20 +42,24 @@ export type ConformanceProblem = {
 
 export function checkBindingConformance(repoRoot: string): readonly ConformanceProblem[] {
   const problems: ConformanceProblem[] = [];
+  const coreFiles = coreContractFiles(repoRoot);
 
   for (const [id, contract] of Object.entries(contracts)) {
-    const file = bindingFile(repoRoot, contract);
-    if (!file) continue;
-
-    const source = ts.createSourceFile(
-      file.path,
-      file.text,
-      ts.ScriptTarget.ES2022,
-      /* setParentNodes */ true,
-      ts.ScriptKind.TSX,
+    const files = [bindingFile(repoRoot, contract), coreFiles.get(`${camel(id)}Contract`)].filter(
+      (file): file is { path: string; text: string } => file !== undefined,
     );
 
-    problems.push(...redeclaredOptions(source, id, contract, file.path));
+    for (const file of files) {
+      const source = ts.createSourceFile(
+        file.path,
+        file.text,
+        ts.ScriptTarget.ES2022,
+        /* setParentNodes */ true,
+        ts.ScriptKind.TSX,
+      );
+
+      problems.push(...redeclaredOptions(source, id, contract, file.path));
+    }
   }
 
   return problems;
@@ -69,6 +82,36 @@ function bindingFile(
   } catch {
     return undefined;
   }
+}
+
+/**
+ * Every contract's own file in core, indexed by its exported symbol (`buttonContract`,
+ * `accordionContract`, …). Read once, not once per contract: several contracts share one file
+ * (`selection.ts` declares three), so a plain `join(repoRoot, "packages/core/src", id + ".ts")`
+ * would miss those and silently skip the check for them.
+ */
+function coreContractFiles(repoRoot: string): Map<string, { path: string; text: string }> {
+  const dir = join(repoRoot, "packages", "core", "src");
+  const index = new Map<string, { path: string; text: string }>();
+
+  let entries: readonly string[];
+  try {
+    entries = readdirSync(dir);
+  } catch {
+    return index;
+  }
+
+  for (const name of entries) {
+    if (!name.endsWith(".ts") || name.endsWith(".test.ts")) continue;
+    const path = join(dir, name);
+    const text = readFileSync(path, "utf8");
+
+    for (const match of text.matchAll(/export const (\w+Contract)\s*=/g)) {
+      index.set(match[1], { path, text });
+    }
+  }
+
+  return index;
 }
 
 /**

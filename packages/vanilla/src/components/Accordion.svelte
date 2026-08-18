@@ -1,5 +1,6 @@
 <script lang="ts">
   import { accordionDataParts, accordionEvents, accordionParts, accordionScope } from "@skryensya/core/accordion";
+  import { ensureClasses } from "../runtime/apply";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
   import AccordionItem from "./AccordionItem.svelte";
 
@@ -18,7 +19,7 @@
 
   // No id on the root: nothing points at it. Each item gets one because its trigger and content
   // point at each other, and the coordinator has no such pair.
-  root.classList.add(accordionParts.root);
+  ensureClasses(root, accordionParts.root);
   root.setAttribute("data-part", accordionDataParts.root);
   root.setAttribute("data-scope", accordionScope);
 

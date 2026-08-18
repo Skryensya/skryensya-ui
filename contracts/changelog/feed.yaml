@@ -3,5 +3,25 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "877d507a78cf9aa9"
-entries: []
+surface: "0b118735cc1130ed"
+entries:
+  - date: 2026-08-18
+    kind: bugfix
+    target: Feed
+    es:
+      title: Feed.busy ahora escribe aria-busy="false" en vez de omitirlo
+      body: >-
+        El binding React siempre escribe <code>aria-busy={busy}</code>, la lectura tri-state que
+        WAI-ARIA pide ("aria-busy se pone en true antes de un cambio... en false inmediatamente
+        después"); la opción del contrato no tenía <code>falseValue</code>, así que markup autorado
+        con <code>busy</code> en falso omitía el atributo por completo en vez de escribirlo como
+        <code>"false"</code>. Invisible hasta que un árbol canónico existió para comparar los dos
+        bindings.
+    en:
+      title: Feed.busy now writes aria-busy="false" instead of omitting it
+      body: >-
+        The React binding always writes <code>aria-busy={busy}</code>, the tri-state reading
+        WAI-ARIA asks for ("aria-busy is set to true before a DOM change... set to false
+        immediately after"); the contract's option had no <code>falseValue</code>, so authored
+        markup with <code>busy</code> false omitted the attribute entirely instead of writing
+        <code>"false"</code>. Invisible until a canonical tree existed to compare the two bindings.

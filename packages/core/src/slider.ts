@@ -88,8 +88,8 @@ export const sliderContract = {
 
     /** Where each thumb of `SliderRange` starts — same `value`/`defaultValue` split as `value`
      *  above, and for the same reason: a composition is data, never state to lock a thumb to. */
-    lowValue: { type: "number", default: 0, attr: "value", prop: "defaultValue" },
-    highValue: { type: "number", default: 100, attr: "value", prop: "defaultValue" },
+    lowValue: { type: "number", default: 0, attr: "value", prop: "defaultLowValue" },
+    highValue: { type: "number", default: 100, attr: "value", prop: "defaultHighValue" },
     /** A range input carries no implicit name, and here there are TWO thumbs to tell apart — WAI's
      *  own multi-thumb example names them distinctly ("Hotel Minimum Price" / "...Maximum Price"),
      *  never just "value", so both are required rather than defaulted. */

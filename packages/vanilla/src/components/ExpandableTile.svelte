@@ -3,7 +3,7 @@
   import { tileEvents, tileParts } from "@skryensya/core/tile";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { applyZagProps, bindZagEvents, ensureClasses, type DomProps } from "../runtime/apply";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
@@ -50,8 +50,8 @@
     scopeTile(root);
     scopeTile(trigger);
     scopeTile(content);
-    root.classList.add(tileParts.root, tileParts.expandable);
-    trigger.classList.add(tileParts.interactive, "sk-interactive");
+    ensureClasses(root, tileParts.root, tileParts.expandable);
+    ensureClasses(trigger, tileParts.interactive, "sk-interactive");
   });
 
   const cleanups: Array<() => void> = [];

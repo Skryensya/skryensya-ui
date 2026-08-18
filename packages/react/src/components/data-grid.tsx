@@ -113,6 +113,14 @@ export function DataGrid({ children, className, label, wrapCols = false, wrapRow
     },
   };
 
+  // Each row's own index, so `DataGridRow` can hand it down to a cell that did not author its own
+  // `row` — the structural default `readRows` above already derives the same way.
+  const injectedChildren = Children.map(children, (child, index) =>
+    isValidElement(child) && child.type === DataGridRow
+      ? cloneElement(child as ReactElement<Record<string, unknown>>, { rowIndex: index })
+      : child,
+  );
+
   return (
     <DataGridContext.Provider value={context}>
       <div
@@ -122,7 +130,7 @@ export function DataGrid({ children, className, label, wrapCols = false, wrapRow
         onKeyDown={onKeyDown}
         role="grid"
       >
-        {children}
+        {injectedChildren}
       </div>
     </DataGridContext.Provider>
   );
@@ -130,15 +138,25 @@ export function DataGrid({ children, className, label, wrapCols = false, wrapRow
 
 export type DataGridRowProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & { children: ReactNode };
 
-export function DataGridRow({ children, className, ...props }: DataGridRowProps) {
+/** Injected by `DataGrid`, see the comment there — never author-set. */
+type InjectedDataGridRowProps = DataGridRowProps & { rowIndex: number };
+
+export function DataGridRow(publicProps: DataGridRowProps) {
+  const { children, className, rowIndex, ...props } = publicProps as InjectedDataGridRowProps;
   useDataGridContext("Row");
-  /** Injects each cell's own column index — a cell states its content, nothing else, the same
-   *  reasoning `treegrid.tsx`'s own `TreegridRow` documents for `TreegridCell`. The ROW index a
-   *  cell needs comes from `GridCell`'s own required `row` prop instead (unlike Treegrid, a plain
-   *  grid has no single owning parent row component threading it through). */
+  /*
+   * Injects each cell's own column index, and — unless the cell already authored its OWN `row` —
+   * this row's index too, the same reasoning `treegrid.tsx`'s own `TreegridRow` documents for
+   * `TreegridCell`. A cell only needs to author `row` itself for the case this structural default
+   * cannot cover: WAI's own layout-grid example wraps ONE logical row across several PHYSICAL
+   * lines, so a "row" is not always the direct parent a plain nested composition would assume.
+   */
   const cells = Children.map(children, (child, index) =>
     isValidElement(child) && child.type === DataGridCell
-      ? cloneElement(child as ReactElement<Record<string, unknown>>, { column: index })
+      ? cloneElement(child as ReactElement<Record<string, unknown>>, {
+          column: index,
+          row: (child.props as { row?: number }).row ?? rowIndex,
+        })
       : child,
   );
   return (
@@ -150,14 +168,18 @@ export function DataGridRow({ children, className, ...props }: DataGridRowProps)
 
 export type DataGridCellProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children: ReactNode;
-  /** Which row this cell belongs to — a plain grid has no single parent threading this the way
-   *  `TreegridRow` can for its own cells, so it's authored directly, the one exception to "a cell
-   *  states its content, nothing else". */
-  row: number;
+  /**
+   * Which row this cell belongs to. Computed automatically from nesting (the containing
+   * `DataGridRow`'s own position) for the common case; author it directly only for the case that
+   * structural default cannot cover — WAI's own layout-grid example wraps one logical row across
+   * several physical lines, so a cell's row membership is not always its direct parent.
+   */
+  row?: number;
 };
 
-/** `column` is injected by the parent `GridRow`, see the comment there — never author-set. */
-type InjectedDataGridCellProps = DataGridCellProps & { column: number };
+/** `column`/`row` are injected by the parent `GridRow`, see the comment there — never author-set
+ *  for the common case; `row` only when a cell needs to override the structural default. */
+type InjectedDataGridCellProps = DataGridCellProps & { column: number; row: number };
 
 export function DataGridCell(publicProps: DataGridCellProps) {
   const { children, className, column, row, ...props } = publicProps as InjectedDataGridCellProps;
@@ -166,7 +188,7 @@ export function DataGridCell(publicProps: DataGridCellProps) {
   return (
     <div
       {...props}
-      className={cx(dataGridParts.cell, className)}
+      className={cx(`${dataGridParts.cell} sk-interactive`, className)}
       onClick={(event) => {
         props.onClick?.(event);
         context.onCellClick(row, column);

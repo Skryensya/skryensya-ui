@@ -3,7 +3,7 @@
   import { collapsible } from "@skryensya/core/machines";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { applyZagProps, bindZagEvents, ensureClasses, type DomProps } from "../runtime/apply";
 
   /*
    * ACCORDION ITEM, un `@zag-js/collapsible` por item, igual que React compone su accordion (ver
@@ -53,12 +53,12 @@
     // `sk-interactive` va en el trigger, no en la sección (mismo arreglo que `ExpandableTile.svelte`):
     // la sección envuelve trigger Y contenido, así que el layer pintado detrás de toda ella teñía el
     // contenido revelado al pasar el mouse.
-    el.classList.add(tileParts.root, tileParts.expandable);
+    ensureClasses(el, tileParts.root, tileParts.expandable);
     el.dataset.value = value;
     if (trigger) {
       applyZagProps(trigger, api.getTriggerProps() as DomProps);
       asTile(trigger, "trigger");
-      trigger.classList.add(tileParts.interactive, "sk-interactive");
+      ensureClasses(trigger, tileParts.interactive, "sk-interactive");
     }
     if (content) {
       applyZagProps(content, api.getContentProps() as DomProps);

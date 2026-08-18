@@ -1,6 +1,12 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { splitButtonMenuItems } from "./data/split-button";
+import {
+  splitButtonMenuItems,
+  splitButtonSubtleMenuItems,
+  splitButtonTranslucentMenuItems,
+  splitButtonGhostMenuItems,
+  splitButtonDangerMenuItems,
+} from "./data/split-button";
 
 /*
  * Both halves are composed, real signatures — a real `Button.action` for the primary, a real
@@ -98,6 +104,130 @@ export const splitButtonSmallTree = (t: Translate): UsageTree => ({
       },
       slots: {
         items: splitButtonMenuItems(t),
+      },
+    },
+  },
+});
+
+/** Same pairing as `splitButtonTree`, `variant: "subtle"` on both halves — the deliberate choice
+ *  this file's top comment argues for: one variant across the WHOLE control, never split
+ *  between the two halves. Content swapped to Archive: a lower-emphasis action than Save, the
+ *  kind `subtle` (visible but quiet background) actually fits. */
+export const splitButtonSubtleTree = (t: Translate): UsageTree => ({
+  contract: "split-button",
+  signature: "SplitButton",
+  slots: {
+    primary: {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "subtle", size: "md", weldEnd: true },
+      slots: { children: t("demo.splitButton.subtlePrimary") },
+    },
+    menu: {
+      contract: "menu",
+      signature: "Menu",
+      options: {
+        label: t("demo.splitButton.subtleMenuLabel"),
+        triggerLabel: t("demo.splitButton.subtleMenuLabel"),
+        triggerVariant: "subtle",
+        triggerSize: "md",
+        triggerIconOnly: true,
+        triggerWeldStart: true,
+      },
+      slots: {
+        items: splitButtonSubtleMenuItems(t),
+      },
+    },
+  },
+});
+
+/** Same pairing as `splitButtonTree`, `variant: "translucent"` on both halves. Content swapped
+ *  to Download: `translucent` reads as glass over media, and a download action over a photo or
+ *  hero backdrop is the case it was built for. */
+export const splitButtonTranslucentTree = (t: Translate): UsageTree => ({
+  contract: "split-button",
+  signature: "SplitButton",
+  slots: {
+    primary: {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "translucent", size: "md", weldEnd: true },
+      slots: { children: t("demo.splitButton.translucentPrimary") },
+    },
+    menu: {
+      contract: "menu",
+      signature: "Menu",
+      options: {
+        label: t("demo.splitButton.translucentMenuLabel"),
+        triggerLabel: t("demo.splitButton.translucentMenuLabel"),
+        triggerVariant: "translucent",
+        triggerSize: "md",
+        triggerIconOnly: true,
+        triggerWeldStart: true,
+      },
+      slots: {
+        items: splitButtonTranslucentMenuItems(t),
+      },
+    },
+  },
+});
+
+/** Same pairing as `splitButtonTree`, `variant: "ghost"` on both halves. Content swapped to
+ *  Share: chromeless and optional, the register `ghost`'s own near-invisible resting state
+ *  matches. */
+export const splitButtonGhostTree = (t: Translate): UsageTree => ({
+  contract: "split-button",
+  signature: "SplitButton",
+  slots: {
+    primary: {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "ghost", size: "md", weldEnd: true },
+      slots: { children: t("demo.splitButton.ghostPrimary") },
+    },
+    menu: {
+      contract: "menu",
+      signature: "Menu",
+      options: {
+        label: t("demo.splitButton.ghostMenuLabel"),
+        triggerLabel: t("demo.splitButton.ghostMenuLabel"),
+        triggerVariant: "ghost",
+        triggerSize: "md",
+        triggerIconOnly: true,
+        triggerWeldStart: true,
+      },
+      slots: {
+        items: splitButtonGhostMenuItems(t),
+      },
+    },
+  },
+});
+
+/** Same pairing as `splitButtonTree`, `variant: "danger"` on both halves. Content swapped to
+ *  Delete: the one action `danger`'s coloring exists to warn about. */
+export const splitButtonDangerTree = (t: Translate): UsageTree => ({
+  contract: "split-button",
+  signature: "SplitButton",
+  slots: {
+    primary: {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "danger", size: "md", weldEnd: true },
+      slots: { children: t("demo.splitButton.dangerPrimary") },
+    },
+    menu: {
+      contract: "menu",
+      signature: "Menu",
+      options: {
+        label: t("demo.splitButton.dangerMenuLabel"),
+        triggerLabel: t("demo.splitButton.dangerMenuLabel"),
+        triggerVariant: "danger",
+        triggerSize: "md",
+        triggerIconOnly: true,
+        triggerWeldStart: true,
+      },
+      slots: {
+        items: splitButtonDangerMenuItems(t),
       },
     },
   },

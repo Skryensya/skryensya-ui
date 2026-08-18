@@ -150,8 +150,7 @@ function filters(): UsageTree {
       {
         contract: "segmented",
         signature: "Segmented",
-        options: { value: "todos" },
-        attrs: { "aria-label": "Disponibilidad" },
+        options: { value: "todos", label: "Disponibilidad" },
         slots: {
           items: [
             { options: { value: "todos" }, slots: { label: "Todos" } },

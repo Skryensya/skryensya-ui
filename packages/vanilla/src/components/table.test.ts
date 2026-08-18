@@ -1,5 +1,5 @@
 import { fireEvent } from "@testing-library/dom";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { destroyMount } from "../runtime/svelte-hydrate.js";
 import { mountTable } from "./table.js";
 
@@ -110,5 +110,53 @@ describe("Table vanilla enhancer", () => {
     expect(mountTable(document)).toBe(0);
     expect(document.querySelectorAll("colgroup")).toHaveLength(1);
     expect(resizers()).toHaveLength(2);
+  });
+
+  it("double-click (and Enter) fits the column to its own content, not an even split", () => {
+    const root = resizableMarkup();
+    mountTable(document);
+    for (const col of cols()) col.style.width = "200px";
+    // `measureColumnContentWidth` measures a detached CLONE, never the real cell (its own suite
+    // covers that in full) — this stub answers by text content, the one thing a clone still
+    // carries faithfully, so "Nombre" (header) and "index.ts" (body) both resolve to 130 here.
+    const spy = vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function (this: Element) {
+      const width = this.textContent === "Nombre" || this.textContent === "index.ts" ? 130 : 0;
+      return { width, height: 0, top: 0, left: 0, right: 0, bottom: 0, x: 0, y: 0, toJSON: () => ({}) } as DOMRect;
+    });
+    const handle = resizers()[0]!;
+
+    fireEvent.dblClick(handle);
+    expect(Number.parseFloat(cols()[0]!.style.width)).toBeCloseTo(130);
+    // The pair's total stays conserved — the neighbor absorbs exactly what column 0 gave up.
+    expect(Number.parseFloat(cols()[0]!.style.width) + Number.parseFloat(cols()[1]!.style.width)).toBeCloseTo(400);
+
+    fireEvent.keyDown(handle, { key: "End" });
+    fireEvent.keyDown(handle, { key: "Enter" });
+    expect(Number.parseFloat(cols()[0]!.style.width)).toBeCloseTo(130);
+    spy.mockRestore();
+  });
+
+  it("keeps --sk-splitter-block-size matched to the table's height measured from its first row", () => {
+    const root = resizableMarkup();
+    root.getBoundingClientRect = () => ({ bottom: 240, height: 240 }) as DOMRect;
+    // jsdom's own default rect (all-zero) stands in for the first row's top here — the height above
+    // is deliberately NOT what the table itself would report if it had a caption, see the next test.
+    mountTable(document);
+    expect(root.style.getPropertyValue("--sk-splitter-block-size")).toBe("240px");
+  });
+
+  it("excludes a <caption>'s own height — the resizer starts at the header row, not the caption", () => {
+    document.body.innerHTML = `<table class="sk-table" data-resizable-columns data-resize-label="x">
+      <caption>Archivos</caption>
+      <thead><tr><th scope="col">Nombre</th><th scope="col">Tipo</th></tr></thead>
+      <tbody><tr><td>index.ts</td><td>Archivo</td></tr></tbody>
+    </table>`;
+    const root = document.querySelector<HTMLElement>(".sk-table")!;
+    const firstRow = root.querySelector<HTMLElement>("tr")!;
+    // The table's OWN box includes the caption (`table.css`'s own note); the first row's does not.
+    root.getBoundingClientRect = () => ({ top: 0, bottom: 300 }) as DOMRect;
+    firstRow.getBoundingClientRect = () => ({ top: 40 }) as DOMRect; // 40px of caption above it
+    mountTable(document);
+    expect(root.style.getPropertyValue("--sk-splitter-block-size")).toBe("260px"); // 300 - 40, not 300
   });
 });

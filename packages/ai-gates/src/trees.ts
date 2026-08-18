@@ -892,7 +892,8 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
-  /* A composition, not a component with a list: the Menu half is a Menu. */
+  /* A composition, not a component with a list: both halves are real signatures, `primary` a
+   * Button.action and `menu` a Menu — split-button.ts's own contract, since ae244c7. */
   {
     name: "split-button/save-and-more",
     enhanced: true,
@@ -900,13 +901,23 @@ const signatureTrees: readonly Canonical[] = [
       contract: "split-button",
       signature: "SplitButton",
       slots: {
-        children: "Guardar",
+        primary: {
+          contract: "button",
+          signature: "Button.action",
+          options: { variant: "primary", weldEnd: true },
+          slots: { children: "Guardar" },
+        },
         menu: {
           contract: "menu",
           signature: "Menu",
-          options: { label: "Otras formas de guardar" },
+          options: {
+            label: "Otras formas de guardar",
+            triggerLabel: "Más",
+            triggerVariant: "primary",
+            triggerIconOnly: true,
+            triggerWeldStart: true,
+          },
           slots: {
-            trigger: "Más",
             items: [
               { options: { value: "copy" }, slots: { label: "Guardar una copia" } },
               { options: { value: "template" }, slots: { label: "Guardar como plantilla" } },
@@ -1096,8 +1107,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "vaul",
       signature: "Vaul",
-      options: { edge: "inline-start", open: true },
-      attrs: { "aria-label": "Navegación" },
+      options: { edge: "inline-start", open: true, label: "Navegación" },
       children: "Trabajo, Personal, Archivo",
     },
   },
@@ -1108,8 +1118,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "vaul",
       signature: "Vaul.drawer",
-      options: { edge: "inline-start", open: true },
-      attrs: { "aria-label": "Navegación" },
+      options: { edge: "inline-start", open: true, label: "Navegación" },
       children: "Trabajo, Personal, Archivo",
     },
   },

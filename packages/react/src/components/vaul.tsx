@@ -14,8 +14,17 @@ import type { DialogHTMLAttributes, ReactNode } from "react";
  * exists where the enhancer runs, and announcing a grip that may do nothing is worse than silence:
  * the panel is dismissible by Escape and by its own close control in every case.
  */
-export type VaulProps = Omit<DialogHTMLAttributes<HTMLDialogElement>, "children"> & {
+export type VaulProps = Omit<DialogHTMLAttributes<HTMLDialogElement>, "aria-label" | "children"> & {
   children: ReactNode;
+  /**
+   * Names the panel. Required: `showModal()` gives the root an implicit `role="dialog"` whether or
+   * not the composition thinks about it, and Vaul has no header of its own to source a name from
+   * the way `Dialog`'s required `title` slot does — this is that same requirement, as a plain
+   * option instead of a slot. Named `label`, not `aria-label`, the same as every other option this
+   * binding maps to an `aria-*` attribute internally (see `Feed`'s own `label`) — the contract's
+   * key, not the DOM spelling, is the binding's own prop name.
+   */
+  label: string;
   /** Which edge it arrives from. Logical, so the inline edges follow writing direction. */
   edge?: VaulEdge;
   /**
@@ -26,10 +35,11 @@ export type VaulProps = Omit<DialogHTMLAttributes<HTMLDialogElement>, "children"
   drawer?: boolean;
 };
 
-export function Vaul({ children, className, drawer = false, edge = "block-end", ...props }: VaulProps) {
+export function Vaul({ children, className, drawer = false, edge = "block-end", label, ...props }: VaulProps) {
   return (
     <dialog
       {...props}
+      aria-label={label}
       className={[vaulParts.root, drawer ? "sk-drawer" : undefined, className].filter(Boolean).join(" ")}
       data-edge={edge}
       /* The scope markers the enhancer writes at runtime, so both bindings carry them at rest,

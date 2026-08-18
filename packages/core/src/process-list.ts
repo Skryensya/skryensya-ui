@@ -34,7 +34,9 @@ export const processListContract = {
       host: { element: "ol" },
       options: [],
       slots: { children: { accepts: "signature", required: true, of: ["ProcessListItem"] } },
-      template: { element: "ol", part: "root", host: true, slot: "children" },
+      /* `role="list"`: `list-style: none` (process-list.css) drops the implicit list role in
+       * Safari/VoiceOver. */
+      template: { element: "ol", part: "root", host: true, attrs: { role: "list" }, slot: "children" },
       react: { from: "@skryensya/react/process-list", name: "ProcessList" },
     },
 

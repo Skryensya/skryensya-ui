@@ -75,10 +75,13 @@ export const stepsContract = {
           },
         },
       },
+      /* `role="list"`: `list-style: none` (steps.css) drops the implicit list role in Safari/
+       * VoiceOver, which would silence "step 2 of 5" along with it. */
       template: {
         element: "ol",
         part: "root",
         host: true,
+        attrs: { role: "list" },
         children: [
           {
             element: "li",

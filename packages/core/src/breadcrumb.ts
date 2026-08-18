@@ -78,6 +78,8 @@ export const breadcrumbContract = {
           {
             element: "ol",
             part: "list",
+            /* `list-style: none` (breadcrumb.css) drops the implicit list role in Safari/VoiceOver. */
+            attrs: { role: "list" },
             children: [
               {
                 element: "li",

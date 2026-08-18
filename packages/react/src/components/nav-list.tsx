@@ -106,6 +106,7 @@ export function NavListGroup({
         className={navListParts.list}
         hidden={collapsible && !expanded}
         id={collapsible ? listId : undefined}
+        role="list"
       >
         {children}
       </ul>

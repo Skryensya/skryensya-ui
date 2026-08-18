@@ -1,7 +1,7 @@
 import { render, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { FormField } from "./form-field.js";
-import { Input, Textarea } from "./input.js";
+import { Input, NativeInput, Textarea } from "./input.js";
 
 /* Queries are scoped to each render's own container: this suite renders more than one control, and
  * the default queries are bound to document.body. */
@@ -34,5 +34,25 @@ describe("Input contract", () => {
 
     expect(input.getAttribute("data-size")).toBe("sm");
     expect(input.getAttribute("size")).toBeNull();
+  });
+
+  /*
+   * "Native" names the CONTROL, never the appearance: a plain `<input type="time">`/`type="color"`
+   * still gets the shared field border/height/radius/focus-ring, the same class `Input` carries.
+   * Without it the control fell back to raw browser chrome next to every other styled field.
+   */
+  it("gives NativeInput the same appearance contract as Input, whatever its type", () => {
+    const ui = render(<NativeInput aria-label="Salida" name="inicio" type="time" />);
+    const input = controlIn(ui).getByLabelText("Salida") as HTMLInputElement;
+
+    expect(input.className).toContain("sk-input");
+    expect(input.type).toBe("time");
+  });
+
+  it("keeps an author-supplied className alongside NativeInput's own", () => {
+    const ui = render(<NativeInput aria-label="Salida" className="custom" name="inicio" type="time" />);
+    const input = controlIn(ui).getByLabelText("Salida") as HTMLInputElement;
+
+    expect(input.className.split(" ")).toEqual(expect.arrayContaining(["sk-input", "custom"]));
   });
 });

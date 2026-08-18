@@ -3,8 +3,25 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "7f08ba9e45e99483"
+surface: "f3879bdff8a5352d"
 entries:
+  - date: 2026-08-17
+    kind: bugfix
+    target: current
+    es:
+      title: El item actual ahora anuncia "location", no "true"
+      body: >-
+        <code>aria-current</code> del item activo pasaba <code>"true"</code>, el token genérico.
+        Ahora pasa <code>"location"</code>, el que ARIA reserva para "un ítem que representa la
+        posición actual dentro del entorno del usuario" — exactamente el caso de un TOC con
+        scroll-spy. Auditoría ARIA APG extendida al resto del catálogo de docs.
+    en:
+      title: The current item now announces "location", not "true"
+      body: >-
+        The active item's <code>aria-current</code> used to pass the generic <code>"true"</code>.
+        It now passes <code>"location"</code>, the token ARIA reserves for "an item representing
+        the current position within a reader's environment" — exactly the scroll-spy TOC case.
+        Extended ARIA APG audit over the rest of the docs catalogue.
   - date: 2026-08-11
     kind: feature
     es:

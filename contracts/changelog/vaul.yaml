@@ -3,8 +3,29 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "1b32a610f1a25794"
+surface: "93faa03d2c205edb"
 entries:
+  - date: 2026-08-17
+    kind: breaking
+    target: label
+    es:
+      title: label ahora es obligatoria en Vaul y Vaul.drawer
+      body: >-
+        <code>showModal()</code> le da a la raíz un <code>role="dialog"</code> implícito, la
+        piense o no la composición, y Vaul no tenía ningún header propio del que sacar un nombre
+        (a diferencia de <code>Dialog</code>, cuyo <code>title</code> ya es obligatorio) — la
+        misma regla de WAI, aplicada al mismo mecanismo de plataforma. La demo de Drawer, que
+        hasta ahora pasaba <code>aria-label</code> a mano como <code>attrs</code> crudo porque no
+        había otra forma, ahora usa la opción real.
+    en:
+      title: label is now required on Vaul and Vaul.drawer
+      body: >-
+        <code>showModal()</code> gives the root an implicit <code>role="dialog"</code> whether or
+        not the composition thinks about it, and Vaul had no header of its own to source a name
+        from (unlike <code>Dialog</code>, whose <code>title</code> is already required) — the same
+        WAI rule, applied to the same platform mechanism. The Drawer demo, which used to pass
+        <code>aria-label</code> by hand as a raw <code>attrs</code> escape hatch because there was
+        no other way, now uses the real option.
   - date: 2026-08-11
     kind: feature
     es:

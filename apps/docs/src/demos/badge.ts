@@ -10,8 +10,7 @@ export const badgeDotsTree = (_t: Translate): UsageTree => ({
   children: tones.map((tone) => ({
     contract: "badge",
     signature: "BadgeDot",
-    options: { tone },
-    attrs: { role: "status", "aria-label": tone },
+    options: { tone, label: tone },
   })),
 });
 
@@ -34,8 +33,7 @@ export const badgeHoldersTree = (t: Translate): UsageTree => ({
         {
           contract: "badge",
           signature: "BadgeDot",
-          options: { tone: "danger" },
-          attrs: { role: "status", "aria-label": t("demo.badge.unread") },
+          options: { tone: "danger", label: t("demo.badge.unread") },
         },
       ],
     },
@@ -52,8 +50,7 @@ export const badgeHoldersTree = (t: Translate): UsageTree => ({
         {
           contract: "badge",
           signature: "BadgeDot",
-          options: { tone: "success" },
-          attrs: { role: "status", "aria-label": t("demo.badge.online") },
+          options: { tone: "success", label: t("demo.badge.online") },
         },
       ],
     },

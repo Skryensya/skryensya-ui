@@ -38,4 +38,22 @@ describe("AvatarGroup", () => {
     expect(ui.getAllByRole("img")).toHaveLength(2);
     expect(ui.getByText("+2")).toBeTruthy();
   });
+
+  it("exposes itself as a named group when a label is given", () => {
+    const ui = render(
+      <AvatarGroup label="Reviewers">
+        <Avatar name="A A" />
+      </AvatarGroup>,
+    );
+    expect(ui.getByRole("group", { name: "Reviewers" })).toBeTruthy();
+  });
+
+  it("is still a group without a label", () => {
+    const ui = render(
+      <AvatarGroup>
+        <Avatar name="A A" />
+      </AvatarGroup>,
+    );
+    expect(ui.getByRole("group")).toBeTruthy();
+  });
 });

@@ -28,6 +28,8 @@ export const badgeContract = {
       default: "neutral",
       attr: "data-tone",
     },
+    /** What the dot means ("Unread", "Online") — its only accessible content, see `BadgeDot`'s own doc. */
+    label: { type: "string", attr: "aria-label" },
   },
 
   signatures: {
@@ -40,16 +42,24 @@ export const badgeContract = {
       react: { from: "@skryensya/react/badge", name: "Badge" },
     },
 
+    /*
+     * `label` is required, not optional: unlike `Avatar.initials` (which has visible fallback text
+     * too) a dot has NO content of its own — no `label`, no accessible name at all, an unread/online
+     * signal only a sighted user gets. `role="status"`, unconditional: what the dot means changes
+     * over time (unread → read, online → away), the same reasoning every real usage of this
+     * signature had already reached by hand before this option existed.
+     */
     BadgeDot: {
       intent: ["unread-dot", "presence-dot", "status-dot"],
       host: { element: "span" },
-      options: ["tone"],
+      options: ["tone", "label"],
+      requires: ["label"],
       slots: {},
       template: {
         element: "span",
         part: "root",
         host: true,
-        attrs: { "data-dot": "" },
+        attrs: { "data-dot": "", role: "status" },
       },
       react: { from: "@skryensya/react/badge", name: "BadgeDot" },
     },

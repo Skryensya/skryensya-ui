@@ -81,8 +81,7 @@ export const nestedToolbarTree = (t: Translate): UsageTree => ({
       children: {
         contract: "segmented",
         signature: "Segmented",
-        options: { value: "free" },
-        attrs: { "aria-label": t("demo.toolbar.screenSize") },
+        options: { value: "free", label: t("demo.toolbar.screenSize") },
         slots: { items: toolbarScreenItems(t) },
       },
     },
@@ -94,8 +93,7 @@ export const nestedToolbarTree = (t: Translate): UsageTree => ({
       children: {
         contract: "segmented",
         signature: "Segmented",
-        options: { value: "vanilla" },
-        attrs: { "aria-label": t("demo.toolbar.binding") },
+        options: { value: "vanilla", label: t("demo.toolbar.binding") },
         slots: { items: toolbarBindingItems },
       },
     },

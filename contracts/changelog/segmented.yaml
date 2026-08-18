@@ -3,8 +3,26 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "b89c4c7661b1d241"
+surface: "4bde761dff14be1e"
 entries:
+  - date: 2026-08-17
+    kind: breaking
+    target: label
+    es:
+      title: label ahora es obligatoria — el radiogroup necesita un nombre
+      body: >-
+        El patrón Radio Group de WAI espera que <code>role="radiogroup"</code> tenga un nombre
+        accesible, y este contrato no tenía forma de dárselo — las tres instancias reales del
+        catálogo ya pasaban <code>aria-label</code> por fuera, a mano, un comentario propio de la
+        demo lo admitía explícitamente ("Segmented's contract does not map it"). Ahora
+        <code>label</code> es una opción real y obligatoria.
+    en:
+      title: label is now required — the radiogroup needs a name
+      body: >-
+        WAI's Radio Group pattern expects `role="radiogroup"` to carry an accessible name, and this
+        contract had no way to give it one — the catalogue's three real instances already passed
+        `aria-label` outside the contract, by hand, one demo's own comment admitted it explicitly
+        ("Segmented's contract does not map it"). `label` is now a real, required option.
   - date: 2026-08-11
     kind: feature
     es:

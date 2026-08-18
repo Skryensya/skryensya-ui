@@ -5,6 +5,27 @@
 # hash nuevo.
 surface: "ee5395d301b35705"
 entries:
+  - date: 2026-08-17
+    kind: bugfix
+    es:
+      title: El input ya anuncia aria-controls y su propio aria-expanded real
+      body: >-
+        Dos gaps del patrón Combobox de WAI: <code>aria-controls</code> nunca apuntaba al listbox
+        (obligatorio esté o no visible el popup, lo mismo que ya exige la sección Combobox de esta
+        auditoría) — ahora el listbox lleva un id estable y el input lo referencia. Y en Vanilla,
+        <code>aria-expanded</code> del input se actualizaba solo en los triggers externos, nunca en
+        el propio combobox: quedaba permanentemente en <code>"false"</code> mientras el listbox ya
+        tenía resultados. React ya lo hacía bien; ahora ambos bindings coinciden.
+    en:
+      title: The input now announces aria-controls and its own real aria-expanded
+      body: >-
+        Two gaps against WAI's Combobox pattern: <code>aria-controls</code> never pointed at the
+        listbox (required whether or not the popup is visible, the same rule this audit's own
+        Combobox section already enforces) — the listbox now carries a stable id and the input
+        references it. And in Vanilla, <code>aria-expanded</code> on the input only ever updated on
+        the external open-triggers, never on the combobox itself: it stayed permanently
+        <code>"false"</code> while the listbox already had results. React already got this right;
+        both bindings now agree.
   - date: 2026-08-11
     kind: feature
     es:

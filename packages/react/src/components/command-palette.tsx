@@ -72,6 +72,7 @@ export function CommandPalette({
         <input
           aria-activedescendant={active >= 0 ? optionId(active) : undefined}
           aria-autocomplete="list"
+          aria-controls="sk-command-palette-listbox"
           aria-expanded={expanded}
           autoComplete="off"
           className={commandPaletteParts.input}
@@ -100,7 +101,12 @@ export function CommandPalette({
           </button>
         </form>
       </div>
-      <ul aria-label="Resultados" className={`${commandPaletteParts.list} sk-scrollbar`} role="listbox">
+      <ul
+        aria-label="Resultados"
+        className={`${commandPaletteParts.list} sk-scrollbar`}
+        id="sk-command-palette-listbox"
+        role="listbox"
+      >
         {results.map((entry, i) => {
           const context = commandPaletteOptionContext(entry);
           return (

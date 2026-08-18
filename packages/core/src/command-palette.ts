@@ -170,6 +170,9 @@ export const commandPaletteContract = {
                   spellcheck: "false",
                   "aria-expanded": "false",
                   "aria-autocomplete": "list",
+                  /* Always points at the listbox, visible or not — WAI's combobox pattern requires
+                   * this whether or not the popup happens to be open right now. */
+                  "aria-controls": "sk-command-palette-listbox",
                 },
               },
               {
@@ -202,7 +205,7 @@ export const commandPaletteContract = {
             part: "list",
             also: ["sk-scrollbar"],
             mount: commandPaletteAttrs.list,
-            attrs: { role: "listbox", "aria-label": "Resultados" },
+            attrs: { role: "listbox", "aria-label": "Resultados", id: "sk-command-palette-listbox" },
           },
           {
             element: "p",

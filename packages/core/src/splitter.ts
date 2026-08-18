@@ -7,13 +7,18 @@
  *
  * WAI's pattern: `role="separator"`, `aria-orientation`, Left/Right move it, Shift+Left/Right moves
  * it FARTHER per keystroke, Home/End jump to the ends of its travel, Enter (and convention, though
- * not the spec: double-click) resets to the default. What "moving it" MEANS is the consumer's own
+ * not the spec: double-click) resets it — to WHAT is the consumer's own choice, same as "moving it"
+ * below: Sidebar and Treegrid both reset to an even/default split, a resizable Table instead fits
+ * the column to its own content (`@skryensya/vanilla/splitter`'s `measureColumnContentWidth`, the
+ * spreadsheet convention), because "the neighbor happens to be the same width" and "this column can
+ * show what's in it" are different questions, and only the second one is what a reader actually
+ * expects from double-clicking a data column's edge. What "moving it" MEANS is the consumer's own
  * value model, never this file's: Sidebar redistributes one pane against a fixed bound via a CSS
- * `clamp()`; Treegrid redistributes width between two ADJACENT columns whose sum stays fixed. Both
- * are "a splitter", but the arithmetic those two need is genuinely different (one clamps a single
- * value, the other keeps a pair summing to a constant) — this file stays ignorant of which, and only
- * ever hands back a `delta` (or a `home`/`end`/`reset` intent) for the caller to apply however its
- * own value model requires.
+ * `clamp()`; Treegrid and Table redistribute width between two ADJACENT columns whose sum stays
+ * fixed. All are "a splitter", but the arithmetic differs (one clamps a single value, the other two
+ * keep a pair summing to a constant) — this file stays ignorant of which, and only ever hands back a
+ * `delta` (or a `home`/`end`/`reset` intent) for the caller to apply however its own value model
+ * requires.
  */
 
 /** The one splitter every consumer starts from unless it has a reason not to — Sidebar and Treegrid

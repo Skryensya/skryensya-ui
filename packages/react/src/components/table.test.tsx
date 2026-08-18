@@ -162,21 +162,49 @@ describe("Table column resize", () => {
     restore();
   });
 
-  it("Enter (and double-click) resets the pair to an even split", () => {
-    const restore = stubTableWidth(600);
+  /** `measureColumnContentWidth` reads a detached CLONE's `getBoundingClientRect().width`, never
+   * the real cell's — a clone still carries the real cell's `textContent` faithfully, which jsdom
+   * (no real layout) can key a stub off of. Everything else — the width-seeding effect's own
+   * `measured` wrapper, the height effect's table/row reads — falls back to `fallbackWidth`,
+   * replacing `stubTableWidth` for these two tests instead of composing with it: both mock the same
+   * prototype method, and only one implementation can win. */
+  function mockRectByText(cellWidths: Record<string, number>, fallbackWidth = 600) {
+    return vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function (this: Element) {
+      const text = this.textContent ?? "";
+      const width = text in cellWidths ? cellWidths[text]! : fallbackWidth;
+      return { width, height: 0, top: 0, left: 0, right: 0, bottom: 0, x: 0, y: 0, toJSON: () => ({}) } as DOMRect;
+    });
+  }
+
+  it("Enter (and double-click) fits the column to its own content, not an even split", () => {
+    // Column 0's cells are "Nombre" (header) and "index.ts" (body) — both report 220 here; real
+    // content varies per cell, `measureColumnContentWidth`'s own suite covers taking the max.
+    const spy = mockRectByText({ Nombre: 220, "index.ts": 220 });
     const ui = render(<ResizableFixture />);
     const handle = resizers(ui.container)[0]!;
 
-    fireEvent.keyDown(handle, { key: "End" });
+    fireEvent.keyDown(handle, { key: "End" }); // move it away from content-width first
     fireEvent.keyDown(handle, { key: "Enter" });
     const [w0, w1] = colWidths(ui.container);
-    expect(w0).toBeCloseTo(w1!);
+    expect(w0).toBeCloseTo(220);
+    expect(w0! + w1!).toBeCloseTo(400); // the pair's total stays conserved
 
     fireEvent.keyDown(handle, { key: "End" });
     fireEvent.dblClick(handle);
-    const [r0, r1] = colWidths(ui.container);
-    expect(r0).toBeCloseTo(r1!);
-    restore();
+    const [r0] = colWidths(ui.container);
+    expect(r0).toBeCloseTo(220);
+    spy.mockRestore();
+  });
+
+  it("fitting a column floors at the minimum when its content measures narrower", () => {
+    const spy = mockRectByText({ Nombre: 10, "index.ts": 10 });
+    const ui = render(<ResizableFixture />);
+    const handle = resizers(ui.container)[0]!;
+
+    fireEvent.dblClick(handle);
+    const [w0] = colWidths(ui.container);
+    expect(w0).toBeCloseTo(60); // SPLITTER_MIN_COLUMN_WIDTH
+    spy.mockRestore();
   });
 
   it("reports its position as a percentage of the pair's travel, not a raw pixel count", () => {
@@ -190,5 +218,40 @@ describe("Table column resize", () => {
     fireEvent.keyDown(handle, { key: "Home" });
     expect(handle.getAttribute("aria-valuenow")).toBe("0");
     restore();
+  });
+
+  it("--sk-splitter-block-size excludes a <caption>'s own height, measured from the header row down", () => {
+    // The mount effect reads geometry SYNCHRONOUSLY as part of `render()`, so the rects have to be
+    // stubbed before it, not patched onto the elements afterward (there is no live ResizeObserver
+    // in this test environment — see `test-setup.ts`'s own stub — to re-fire `apply` on a later
+    // patch). Per-tag-name, one spy: TABLE gets a box that includes a caption's own height (300px,
+    // `table.css`'s own note on why); TR reports where the header row itself actually starts (40px
+    // down, i.e. the caption's height); everything else (the render container `measured` reads
+    // width against) gets a plain nonzero box so the width-seeding effect still seeds normally.
+    const spy = vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function (this: Element) {
+      if (this.tagName === "TABLE") return { width: 600, top: 0, bottom: 300, height: 300 } as DOMRect;
+      if (this.tagName === "TR") return { top: 40 } as DOMRect;
+      return { width: 600, top: 0, bottom: 0, height: 0 } as DOMRect;
+    });
+    const ui = render(
+      <Table resizableColumns resizeLabel="Redimensionar columna">
+        <TableCaption>Archivos</TableCaption>
+        <TableHead>
+          <TableRow>
+            <TableHeader>Nombre</TableHeader>
+            <TableHeader>Tipo</TableHeader>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableHeader scope="row">index.ts</TableHeader>
+            <TableCell>Archivo</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+    const table = ui.container.querySelector("table")!;
+    expect(table.style.getPropertyValue("--sk-splitter-block-size")).toBe("260px"); // 300 - 40, not 300
+    spy.mockRestore();
   });
 });

@@ -5,7 +5,7 @@ import {
   SPLITTER_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH,
 } from "@skryensya/core/splitter";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
-import { attachColumnResizer, watchColumnLayout } from "../splitter.js";
+import { attachColumnResizer, measureColumnContentWidth, watchColumnLayout, watchSplitterExtent } from "../splitter.js";
 
 /*
  * TABLE, opt-in resizable columns only — a plain table needs no JavaScript at all otherwise
@@ -96,7 +96,21 @@ function connect(root: HTMLElement): () => void {
   const widths = () => cols.map((col) => Number.parseFloat(col.style.width) || 0);
   const setWidths = (next: readonly number[]) => next.forEach((w, i) => (cols[i]!.style.width = `${w}px`));
 
-  const cleanups: (() => void)[] = [cleanupLayoutWatch];
+  const cleanups: (() => void)[] = [
+    cleanupLayoutWatch,
+    /*
+     * A `<caption>` renders OUTSIDE the table's own grid (`table.css`'s own note) but still inside
+     * the `<table>` element's own rendered box, so measuring the table's own full height would
+     * over-count by the caption's — the resizer itself starts at the header row (it lives inside a
+     * `<th>`), not the caption above it. Measured from the first row down instead, so the line
+     * matches exactly what the resizer can actually reach.
+     */
+    watchSplitterExtent(root, (table) => {
+      const firstRow = table.querySelector(":scope > * > tr");
+      if (!(firstRow instanceof HTMLElement)) return table.getBoundingClientRect().height;
+      return table.getBoundingClientRect().bottom - firstRow.getBoundingClientRect().top;
+    }),
+  ];
   headerCells.forEach((th, index) => {
     // The LAST column has no next neighbor to redistribute width with.
     if (index >= headerCells.length - 1) return;
@@ -113,6 +127,9 @@ function connect(root: HTMLElement): () => void {
         ariaLabel: resizeLabel ? `${resizeLabel}: ${headerText}` : headerText,
         direction: () => (getComputedStyle(root).direction === "rtl" ? "rtl" : "ltr"),
         className: tableParts.columnResizer,
+        // Double-click/Enter fits the column to its own content — a plain table's data-driven
+        // default, distinct from Treegrid's own even-split reset (`splitter.ts`'s own doc).
+        resetWidth: () => measureColumnContentWidth({ table: root, columnIndex: index, min: MIN_COLUMN_WIDTH }),
       }),
     );
   });

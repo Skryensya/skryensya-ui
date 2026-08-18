@@ -20,7 +20,14 @@ export function Callout({ actions, children, className, icon, title, tone = "neu
   const live = calloutLiveRegionFor(tone);
 
   return (
-    <div {...props} aria-live={live.ariaLive} className={cx(calloutParts.root, className)} data-tone={tone} role={live.role}>
+    <div
+      {...props}
+      aria-atomic="true"
+      aria-live={live.ariaLive}
+      className={cx(calloutParts.root, className)}
+      data-tone={tone}
+      role={live.role}
+    >
       {icon ? <span aria-hidden="true" className={calloutParts.icon}>{icon}</span> : null}
       <div className={calloutParts.content}>
         {title ? <p className={calloutParts.title}>{title}</p> : null}

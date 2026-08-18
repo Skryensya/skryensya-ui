@@ -147,7 +147,7 @@ describe("Toc Vanilla contracts", () => {
     ]);
 
     // Document order decides: marking both would light up half the list on a short page.
-    expect(linkTo("uso").getAttribute("aria-current")).toBe("true");
+    expect(linkTo("uso").getAttribute("aria-current")).toBe("location");
     expect(linkTo("api").hasAttribute("aria-current")).toBe(false);
   });
 
@@ -159,7 +159,7 @@ describe("Toc Vanilla contracts", () => {
     intersect([{ id: "uso", isIntersecting: false }]);
 
     // Between sections is not nowhere.
-    expect(linkTo("uso").getAttribute("aria-current")).toBe("true");
+    expect(linkTo("uso").getAttribute("aria-current")).toBe("location");
   });
 
   it("moves the mark from one section to the next", () => {
@@ -167,13 +167,13 @@ describe("Toc Vanilla contracts", () => {
     connectToc(root);
 
     intersect([{ id: "instalacion", isIntersecting: true }]);
-    expect(linkTo("instalacion").getAttribute("aria-current")).toBe("true");
+    expect(linkTo("instalacion").getAttribute("aria-current")).toBe("location");
 
     intersect([
       { id: "instalacion", isIntersecting: false },
       { id: "uso", isIntersecting: true },
     ]);
-    expect(linkTo("uso").getAttribute("aria-current")).toBe("true");
+    expect(linkTo("uso").getAttribute("aria-current")).toBe("location");
     expect(linkTo("instalacion").hasAttribute("aria-current")).toBe(false);
   });
 

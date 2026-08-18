@@ -59,7 +59,7 @@ function connectSpy(root: HTMLElement): Cleanup {
       if (!current) return;
 
       for (const [id, link] of byId) {
-        if (id === current) link.setAttribute("aria-current", "true");
+        if (id === current) link.setAttribute("aria-current", "location");
         else link.removeAttribute("aria-current");
       }
     },

@@ -153,6 +153,9 @@ export const navListContract = {
           {
             element: "ul",
             part: "list",
+            /* `list-style: none` (patterns/nav-list.css) drops the implicit list role in Safari/
+             * VoiceOver. */
+            attrs: { role: "list" },
             labelledBySlot: "label",
             whenMissing: "collapsible",
             slot: "children",
@@ -162,6 +165,7 @@ export const navListContract = {
             part: "list",
             whenGiven: "collapsible",
             mount: "data-sk-nav-list-group-list",
+            attrs: { role: "list" },
             attrsWhen: [{ option: "defaultOpen", equals: "false", attrs: { hidden: "" } }],
             slot: "children",
           },

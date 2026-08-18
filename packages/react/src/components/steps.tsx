@@ -15,7 +15,7 @@ export type StepsProps = Omit<HTMLAttributes<HTMLOListElement>, "children"> & {
 
 export function Steps({ className, current = 0, steps, ...props }: StepsProps) {
   return (
-    <ol {...props} className={cx(stepsParts.root, className)}>
+    <ol {...props} className={cx(stepsParts.root, className)} role="list">
       {steps.map((step, index) => {
         const status = step.status ?? deriveStatus(index, current);
         return (

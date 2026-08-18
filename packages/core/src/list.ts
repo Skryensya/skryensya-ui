@@ -63,7 +63,13 @@ export const listContract = {
       host: { element: "ul" },
       options: ["density"],
       slots: { children: { accepts: "signature", required: true, of: ["ListItemPlain", "ListItem", "ListItemLink"] } },
-      template: { element: "ul", part: "root", host: true, slot: "children" },
+      /*
+       * `role="list"` compensates for `list-style: none` (list.css): WebKit drops the implicit
+       * `list`/`listitem` role from VoiceOver the moment list-style is removed, a real, documented
+       * Safari bug unrelated to this system's own CSS choices. Every other engine already keeps the
+       * native role; the explicit role is a no-op there and the fix everywhere else.
+       */
+      template: { element: "ul", part: "root", host: true, attrs: { role: "list" }, slot: "children" },
       react: { from: "@skryensya/react/list", name: "List" },
     },
 
@@ -72,7 +78,7 @@ export const listContract = {
       host: { element: "ol" },
       options: ["density"],
       slots: { children: { accepts: "signature", required: true, of: ["ListItemPlain", "ListItem", "ListItemLink"] } },
-      template: { element: "ol", part: "root", host: true, slot: "children" },
+      template: { element: "ol", part: "root", host: true, attrs: { role: "list" }, slot: "children" },
       react: { from: "@skryensya/react/list", name: "OrderedList" },
     },
 

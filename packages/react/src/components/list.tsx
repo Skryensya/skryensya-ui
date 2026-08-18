@@ -42,6 +42,7 @@ export function List({
       className={cx(listParts.root, className)}
       data-density={density === "compact" ? "compact" : undefined}
       data-dividers={dividers ? undefined : "none"}
+      role="list"
     >
       {children}
     </Tag>
@@ -130,7 +131,11 @@ export function ListItem({
   );
 }
 
-export type ListItemLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "title"> & RowSlots;
+export type ListItemLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "title"> &
+  RowSlots & {
+    /** Required: a row that navigates needs a destination — an `<a>` with no `href` is not one. */
+    href: string;
+  };
 
 /** A functional row that navigates: the whole row is a real anchor, with native focus + keyboard. */
 export const ListItemLink = forwardRef<HTMLAnchorElement, ListItemLinkProps>(function ListItemLink(

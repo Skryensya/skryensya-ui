@@ -17,7 +17,7 @@ export type ChangelogProps = OlHTMLAttributes<HTMLOListElement> & {
  */
 export function Changelog({ children, className, ...props }: ChangelogProps) {
   return (
-    <ol {...props} className={cx(changelogParts.root, className)} reversed>
+    <ol {...props} className={cx(changelogParts.root, className)} reversed role="list">
       {children}
     </ol>
   );
@@ -69,7 +69,7 @@ export function ChangelogRelease({
           {dateLabel}
         </time>
       )}
-      <ol className={changelogParts.entries}>{children}</ol>
+      <ol className={changelogParts.entries} role="list">{children}</ol>
     </li>
   );
 }

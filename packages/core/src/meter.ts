@@ -83,8 +83,17 @@ export const meterContract = {
         part: "root",
         children: [
           {
+            /*
+             * Decorative: this row is PAINTED, and the track below carries its own `aria-label`/
+             * `aria-valuetext` independently (the file banner above says so explicitly). Without
+             * `aria-hidden`, a screen reader read the same name and value TWICE, once from this
+             * row's own text and once from the track's ARIA — and read them differently besides,
+             * since the two bindings do not agree on whitespace between the label and value spans.
+             * Hiding the row is what makes that inconsistency moot rather than a divergence to chase.
+             */
             element: "div",
             part: "header",
+            attrs: { "aria-hidden": "true" },
             children: [
               { element: "span", part: "label", textFromOption: "label" },
               // Only when the author gave one: `valueText` is recommended, not required (WAI), and

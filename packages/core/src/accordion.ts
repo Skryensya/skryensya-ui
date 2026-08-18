@@ -1,6 +1,4 @@
-import type { ComponentContract } from "./contract.js";
-
-export type AccordionType = "single" | "multiple";
+import type { ComponentContract, OptionValue } from "./contract.js";
 
 export type AccordionValue = string | readonly string[] | null;
 
@@ -183,3 +181,6 @@ export const accordionContract = {
     },
   },
 } as const satisfies ComponentContract;
+
+/** Derived, never restated: adding a value to the contract's `type` enum is the only edit. */
+export type AccordionType = OptionValue<typeof accordionContract.options.type>;

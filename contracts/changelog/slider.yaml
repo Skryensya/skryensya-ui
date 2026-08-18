@@ -3,8 +3,59 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "0b4972f40c402cc5"
+surface: "6f8d9fb4bbb1991e"
 entries:
+  - date: 2026-08-18
+    kind: bugfix
+    target: SliderRange
+    es:
+      title: SliderRange no pintaba nada, en ningún binding
+      body: >-
+        <code>--sk-slider-track</code>, <code>--sk-slider-fill-color</code>,
+        <code>--sk-slider-track-size</code> y <code>--sk-slider-thumb-hit</code> sólo estaban
+        definidas en <code>.sk-slider</code>, la clase que <code>also</code> pone en los DOS
+        <code>&lt;input&gt;</code> hijos, nunca en <code>.sk-slider-range</code> mismo. Las custom
+        properties heredan hacia abajo, nunca hacia arriba, así que el wrapper y su propio track/
+        fill nunca vieron ningún valor: <code>block-size</code> caía al <code>auto</code> inicial y,
+        con todos los hijos en <code>position: absolute</code>, nada en flujo normal le daba altura
+        al wrapper — el control entero salía a 0×100%, con el track invisible. Invisible en jsdom
+        (que nunca calcula layout real) y sólo detectable con un layout de navegador de verdad; el
+        primer árbol canónico de <code>SliderRange</code> es lo que finalmente lo hizo evidente.
+    en:
+      title: SliderRange painted nothing, in either binding
+      body: >-
+        <code>--sk-slider-track</code>, <code>--sk-slider-fill-color</code>,
+        <code>--sk-slider-track-size</code> and <code>--sk-slider-thumb-hit</code> were only ever
+        defined on <code>.sk-slider</code>, the class <code>also</code> puts on the TWO child
+        <code>&lt;input&gt;</code>s, never on <code>.sk-slider-range</code> itself. Custom properties
+        inherit downward, never up, so the wrapper and its own track/fill never saw a value:
+        <code>block-size</code> fell back to its initial <code>auto</code>, and with every child
+        absolutely positioned, nothing in normal flow gave the wrapper a height — the whole control
+        rendered at 0×100%, with an invisible track. Invisible in jsdom (which never computes real
+        layout) and only catchable with a real browser layout; the first canonical tree
+        <code>SliderRange</code> ever had is what finally surfaced it.
+  - date: 2026-08-18
+    kind: bugfix
+    target: SliderRange
+    es:
+      title: SliderRange.lowValue/highValue llegaban a React como un solo defaultValue
+      body: >-
+        Las dos opciones apuntaban al mismo nombre de prop, <code>defaultValue</code>, y el binding
+        React en realidad espera <code>defaultLowValue</code>/<code>defaultHighValue</code>: ninguno
+        de los dos extremos llegaba nunca al componente, que se quedaba en sus propios valores por
+        defecto (0 y 100) sin importar qué autorara el árbol. Invisible hasta ahora porque ningún
+        árbol canónico había puesto <code>lowValue</code>/<code>highValue</code> en algo distinto del
+        default — el chequeo de cobertura que exige un árbol por cada signature publicada fue lo que
+        lo hizo evidente.
+    en:
+      title: SliderRange.lowValue/highValue reached React as one shared defaultValue
+      body: >-
+        Both options pointed at the same prop name, <code>defaultValue</code>, and the React binding
+        actually expects <code>defaultLowValue</code>/<code>defaultHighValue</code>: neither end ever
+        reached the component, which stayed at its own defaults (0 and 100) no matter what a tree
+        authored. Invisible until now because no canonical tree had ever set
+        <code>lowValue</code>/<code>highValue</code> to anything but the default — the coverage check
+        that requires one tree per published signature is what surfaced it.
   - date: 2026-08-15
     kind: feature
     target: SliderRange

@@ -1,12 +1,4 @@
-import type { ComponentContract } from "./contract.js";
-
-export type InputSize = "sm" | "md" | "lg";
-
-export type InputOptions = {
-  size?: InputSize;
-  invalid?: boolean;
-  disabled?: boolean;
-};
+import type { ComponentContract, OptionValue } from "./contract.js";
 
 /*
  * One appearance contract for every native text control: `sk-input` goes on `<input>`,
@@ -78,3 +70,6 @@ export const inputContract = {
     },
   },
 } as const satisfies ComponentContract;
+
+/** Derived, never restated: adding a size to the contract's `controlSize` enum is the only edit. */
+export type InputSize = OptionValue<typeof inputContract.options.controlSize>;

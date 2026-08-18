@@ -8,6 +8,7 @@ import type {
 import { getContract, getSignature, signatureOptions } from "./registry.js";
 import {
   collectionItems,
+  flattenCollectionEntry,
   isUsageTree,
   slotItems,
   slotsOf,
@@ -1293,7 +1294,14 @@ function renderJsx(
             : JSON.stringify(String(value))
         }`,
       );
-      continue;
+      /*
+       * ALSO the named prop, under the option's own key — see `render-tree.tsx`'s identical fix
+       * for why: a `styleProperty` option says where the value lands in markup, not how a React
+       * component wants it, and a component that takes it as an ordinary prop (Sidebar's
+       * `minInlineSize`, DensityScope's `densityFactor`) never saw it here either. The live island
+       * and this printed snippet have to pass the same props for the same reason ADR-29 gives:
+       * the demo a reader watches and the evidence G2 collects are the same call.
+       */
     }
     if (value === false) {
       if (declared.default === true) props.push(`${name}={false}`);
@@ -1419,33 +1427,17 @@ function renderJsx(
  * One entry, as the flat object a React binding takes. The split between an entry's options and its
  * slots exists so the markup emitter knows what is an attribute and what is content; React takes one
  * object and decides that itself.
+ *
+ * Source-text emission (this is JSX text, not a live element) keeps only a slot's plain text and
+ * leaves any tree content out: a tree child in `label` here would have to print AS a JSX element,
+ * which is a second emitter this function has no business becoming. `renderJsx`'s own walk is what
+ * emits that content, one level up, as children rather than as a prop value.
  */
-function flattenItem(
-  item: ItemInput,
-  shape?: ContractSlot["item"],
-): Record<string, unknown> {
-  const flat: Record<string, unknown> = { ...item.options };
-
-  for (const [field, content] of Object.entries(item.slots)) {
-    // The binding's own name for this field, when the contract keyed it differently.
-    const name = shape?.slots[field]?.prop ?? field;
-    /*
-     * A slot that holds MORE ENTRIES is flattened the same way, one level down: a folder's children
-     * are folders. Reading only the text of an entry's slots dropped them silently, and a tree with
-     * no branches passed every check there was.
-     */
-    const nested = collectionItems(content);
-    if (nested.length > 0) {
-      flat[name] = nested.map((child) => flattenItem(child, shape));
-      continue;
-    }
-
-    const values = slotItems(content);
+function flattenItem(item: ItemInput, shape?: ContractSlot["item"]): Record<string, unknown> {
+  return flattenCollectionEntry(item, shape, (values) => {
     const text = values.find((value) => !isUsageTree(value));
-    if (typeof text === "string") flat[name] = text;
-  }
-
-  return flat;
+    return typeof text === "string" ? text : undefined;
+  });
 }
 
 /** A name that can be written both as a `const` and as an object key without quotes around it. */

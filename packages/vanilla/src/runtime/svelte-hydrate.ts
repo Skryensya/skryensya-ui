@@ -96,13 +96,21 @@ export function createSvelteEnhancer(options: SvelteEnhancerOptions): Enhancer {
     target.removeAttribute(mountingAttr);
     target.setAttribute(readyAttr, "true");
 
-    return {
-      root: target,
-      destroy: () => {
-        void unmount(app);
-        target.removeAttribute(readyAttr);
-      },
+    const destroy = () => {
+      // Sin `options.outro`, `component_root()` destruye el efecto de forma SÍNCRONA dentro del
+      // propio executor de la Promise que devuelve: el `void` no deja nada pendiente, el teardown
+      // (los `onDestroy` de cada `.svelte`, que sueltan sus listeners) ya corrió cuando esta línea
+      // retorna.
+      void unmount(app);
+      target.removeAttribute(readyAttr);
+      mountedApps.delete(target);
     };
+    // El mismo registro que lee `destroyMount()` para el camino imperativo (`createConnectMount`),
+    // así un enhancer machine-backed se puede desmontar igual sin que el caller sepa cuál de las dos
+    // implementaciones lo montó.
+    mountedApps.set(target, destroy);
+
+    return { root: target, destroy };
   };
 
   const mountAll = (target: Document | Element = document): EnhancerController[] => {

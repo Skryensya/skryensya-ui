@@ -3,11 +3,10 @@ export { mountButton } from "./components/button.js";
 export { mountCopyButton } from "./components/copy-button.js";
 export { mountThemeToggle } from "./components/theme-toggle.js";
 export { mountExpandableTile } from "./components/expandable-tile.js";
-export { connectSelect, mountSelect } from "./components/select.js";
+export { mountSelect } from "./components/select.js";
 export { connectFlyout, mountFlyout } from "./components/flyout.js";
 export { mountSegmented } from "./components/segmented.js";
 export { mountStat } from "./components/stat.js";
-export type { SelectEnhancerOptions } from "./components/select.js";
 export { connectSidebar, mountSidebar } from "./components/sidebar.js";
 export { connectSlider, mountSlider } from "./components/slider.js";
 export {

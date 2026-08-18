@@ -1,9 +1,9 @@
 <script lang="ts">
   import { radioGroup as radio } from "@skryensya/core/machines";
-  import { tileEvents } from "@skryensya/core/tile";
+  import { tileEvents, type TileRadioOrientation } from "@skryensya/core/tile";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { applyZagProps, bindZagEvents, ensureClasses, type DomProps } from "../runtime/apply";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
@@ -38,7 +38,7 @@
     .filter((item): item is Item => item !== null);
 
   if (!root.id) root.id = uniqueId("sk-tile-radio");
-  const orientation: "horizontal" | "vertical" =
+  const orientation: TileRadioOrientation =
     root.getAttribute("data-orientation") === "horizontal" ? "horizontal" : "vertical";
   const defaultValue = root.getAttribute("data-default-value");
 
@@ -80,7 +80,7 @@
       scopeTile(item.label);
       item.label.setAttribute("data-part", "item");
       item.input.setAttribute("data-part", "input");
-      item.label.classList.add("sk-interactive");
+      ensureClasses(item.label, "sk-interactive");
     }
   });
 

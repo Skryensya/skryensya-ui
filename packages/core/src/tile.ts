@@ -1,4 +1,4 @@
-import type { ComponentContract } from "./contract.js";
+import type { ComponentContract, OptionValue } from "./contract.js";
 import type { Space } from "./layout.js";
 
 export type TileElement = "div" | "article" | "section" | "li";
@@ -51,7 +51,7 @@ export type TileRadioGroupOptions = TileSurfaceOptions & {
   defaultValue?: string | null;
   disabled?: boolean;
   required?: boolean;
-  orientation?: "horizontal" | "vertical";
+  orientation?: TileRadioOrientation;
   onValueChange?: (details: TileRadioValueChangeDetails) => void;
 };
 
@@ -459,3 +459,6 @@ export const tileContract = {
     },
   },
 } as const satisfies ComponentContract;
+
+/** Derived, never restated: adding a value to the contract's `orientation` enum is the only edit. */
+export type TileRadioOrientation = OptionValue<typeof tileContract.options.orientation>;

@@ -70,6 +70,7 @@ import { getContract, getSignature } from "@skryensya/ai-compiler/registry";
 import { jsxPropName, parseInlineStyle } from "@skryensya/ai-compiler/emit";
 import {
   collectionItems,
+  flattenCollectionEntry,
   isUsageTree,
   slotItems,
   slotsOf,
@@ -213,8 +214,19 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
   for (const [option, value] of Object.entries(tree.options ?? {})) {
     const declared = contract.options[option];
     if (declared?.styleProperty) {
-      optionStyle[declared.styleProperty] =
-        typeof value === "number" ? value : String(value);
+      optionStyle[declared.styleProperty] = typeof value === "number" ? value : String(value);
+      /*
+       * ALSO the named prop, under the option's own key: a `styleProperty` option says where the
+       * value lands in MARKUP (an inline custom property, for the vanilla emitter and the static
+       * fallback), not how a React component wants to receive it, and some components (Sidebar's
+       * `minInlineSize`/`maxInlineSize`, DensityScope's `densityFactor`) take it as an ordinary
+       * named prop and build their OWN style entry from it rather than reading a caller-supplied
+       * `style`. Passing both costs nothing for a component that only reads `style` (Carousel), and
+       * is the only way one that reads the named prop instead ever sees the value at all — DensityScope
+       * silently fell back to its own default here until a canonical tree finally set `densityFactor`
+       * to something other than that default.
+       */
+      props[option] = value;
       continue;
     }
     props[declared?.prop ?? option] = value;
@@ -252,26 +264,16 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
 /**
  * One entry as the flat object a React binding takes; a slot holding MORE ENTRIES flattened
  * the same way, one level down, because a folder's children are folders.
+ *
+ * Unlike the compiler's own `flattenItem` (source-text emission, which leaves tree content for a
+ * separate JSX-children emission), this is a LIVE render: every value in a slot, text or tree,
+ * has to become the actual prop value React takes, so a tree gets rendered through `renderItem`
+ * right here rather than left for a caller to emit separately.
  */
 function flattenEntry(entry: ItemInput, shape?: ContractSlot["item"]): Record<string, unknown> {
-  const flat: Record<string, unknown> = { ...entry.options };
-
-  for (const [field, value] of Object.entries(entry.slots)) {
-    // The binding's own name for this field, when the contract keyed it differently; a tile
-    // option's content is `label` in the contract and `children` in React.
-    const name = shape?.slots[field]?.prop ?? field;
-
-    const nested = collectionItems(value);
-    if (nested.length > 0) {
-      flat[name] = nested.map((child) => flattenEntry(child, shape));
-      continue;
-    }
-
-    const values = slotItems(value);
-    flat[name] = values.length === 1 && !isUsageTree(values[0]!) ? values[0] : values.map(renderItem);
-  }
-
-  return flat;
+  return flattenCollectionEntry(entry, shape, (values) =>
+    values.length === 1 && !isUsageTree(values[0]!) ? values[0] : values.map(renderItem),
+  );
 }
 
 function renderItem(item: string | UsageTree, index: number): ReactNode {

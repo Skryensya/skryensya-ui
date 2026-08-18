@@ -1,7 +1,15 @@
 import { expect, test } from "@playwright/test";
 import { validateUsageTree } from "@skryensya/ai-compiler/validate";
 import { emitMarkup } from "@skryensya/ai-compiler/emit";
-import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import { contracts } from "@skryensya/ai-compiler/registry";
+import {
+  collectionItems,
+  isUsageTree,
+  slotItems,
+  slotsOf,
+  type SlotContent,
+  type UsageTree,
+} from "@skryensya/ai-compiler/usage-tree";
 import { canonicalTrees } from "./trees.js";
 
 /*
@@ -39,8 +47,52 @@ test("every canonical tree is valid against its contract", () => {
   expect(problems, "a fixture the contract rejects proves nothing about the contract").toEqual([]);
 });
 
-/** Cases whose whole purpose is to render no box. Exempt from the paint check, never from G2/G4. */
-const DRAWS_NOTHING = new Set(["loader/status-only"]);
+/**
+ * Every `contract.signature` a tree touches, root or nested — a `Menu` whose "Exportar" item opens
+ * a submenu references `menu.Menu` twice, once for itself and once for the nested one, and both
+ * count. Walks the same `slotItems`/`collectionItems` shape every emitter already walks, so a
+ * signature only reachable through a collection entry (a select item, a tree-view node) is not
+ * missed just because it never gets its own top-level `Canonical`.
+ */
+function walkSignatures(content: SlotContent | undefined, into: Set<string>): void {
+  for (const item of slotItems(content)) {
+    if (!isUsageTree(item)) continue;
+    into.add(`${item.contract}.${item.signature}`);
+    for (const nested of Object.values(slotsOf(item))) walkSignatures(nested, into);
+  }
+  for (const entry of collectionItems(content)) {
+    for (const nested of Object.values(entry.slots)) walkSignatures(nested, into);
+  }
+}
+
+/**
+ * The list this list and the published catalogue are supposed to grow together (this file's own
+ * header, above `signatureTrees`). That was a comment, never a check: select, menu, table-pager and
+ * tooltip were each published and went uncompared by G2 for a while, and nothing failed until
+ * someone opened the page and looked. This is the check — every signature the registry publishes
+ * has to be reachable from at least one canonical tree, root or nested, or the build fails naming
+ * it, instead of a family quietly shipping with nobody watching.
+ */
+test("every published signature is reachable from a canonical tree", () => {
+  const touched = new Set<string>();
+  for (const { tree } of canonicalTrees) walkSignatures(tree, touched);
+
+  const missing = Object.entries(contracts).flatMap(([contractId, contract]) =>
+    Object.keys(contract.signatures)
+      .map((signatureId) => `${contractId}.${signatureId}`)
+      .filter((key) => !touched.has(key)),
+  );
+
+  expect(missing, "a signature no canonical tree reaches is one G2 has never compared").toEqual([]);
+});
+
+/**
+ * Cases whose whole purpose is to render no box. Exempt from the paint check, never from G2/G4.
+ *
+ * `content/toast-template` joins for a different reason than `loader/status-only`: a `<template>`'s
+ * content is inert by the HTML spec, never part of the rendered tree at all, in EITHER binding.
+ */
+const DRAWS_NOTHING = new Set(["loader/status-only", "content/toast-template"]);
 
 test("every canonical tree paints something", async ({ page }) => {
   await page.goto("/");

@@ -1761,6 +1761,303 @@ const signatureTrees: readonly Canonical[] = [
       options: { label: "Cargando el catálogo" },
     },
   },
+  /*
+   * ── Coverage gate additions ──────────────────────────────────────────────────────────────────
+   *
+   * `every published signature is reachable from a canonical tree` (rendered.spec.ts) found these
+   * 31 signatures with no canonical tree anywhere — some missing individually from an otherwise
+   * covered family, four (menubar, data-grid, feed, treegrid) with no fixture at all. The same
+   * class of gap the file's own header already names for select/menu/table-pager/tooltip, just not
+   * caught until the check existed to catch it.
+   */
+  {
+    name: "avatar/image",
+    enhanced: false,
+    tree: {
+      contract: "avatar",
+      signature: "Avatar.image",
+      options: { imageName: "Foto de perfil de Ada Lovelace", src: SAMPLE_MEDIA },
+    },
+  },
+  {
+    name: "avatar/group",
+    enhanced: false,
+    tree: {
+      contract: "avatar",
+      signature: "AvatarGroup",
+      options: { label: "Revisores" },
+      slots: {
+        children: [
+          { contract: "avatar", signature: "Avatar.initials", options: { name: "Ada Lovelace" }, children: "AL" },
+          { contract: "avatar", signature: "Avatar.initials", options: { name: "Grace Hopper" }, children: "GH" },
+        ],
+        overflow: "+3",
+      },
+    },
+  },
+  {
+    name: "badge/dot",
+    enhanced: false,
+    tree: {
+      contract: "badge",
+      signature: "BadgeDot",
+      options: { tone: "success", label: "En línea" },
+    },
+  },
+  {
+    // A control PLUS its badge, positioned as siblings: `of` lists both because a holder pairs
+    // one (an avatar, a button) with one BadgeDot, not a list of either.
+    name: "badge/holder",
+    enhanced: false,
+    tree: {
+      contract: "badge",
+      signature: "BadgeHolder",
+      children: [
+        { contract: "avatar", signature: "Avatar.initials", options: { name: "Ada Lovelace" }, children: "AL" },
+        { contract: "badge", signature: "BadgeDot", options: { tone: "success", label: "En línea" } },
+      ],
+    },
+  },
+  {
+    name: "layout/grid",
+    enhanced: false,
+    tree: {
+      contract: "layout",
+      signature: "LayoutGrid",
+      children: { contract: "typography", signature: "Text", children: "Contenido con medida por defecto." },
+    },
+  },
+  {
+    name: "layout/density-scope",
+    enhanced: false,
+    tree: {
+      contract: "layout",
+      signature: "DensityScope",
+      options: { densityFactor: 0.75 },
+      children: { contract: "typography", signature: "Text", children: "Más compacto en este subárbol." },
+    },
+  },
+  {
+    // Also the only fixture for `list.ListItemPlain`: an ordered list's rows are the same three
+    // item signatures a plain `List` takes, and this is the plain one.
+    name: "list/ordered",
+    enhanced: false,
+    tree: {
+      contract: "list",
+      signature: "OrderedList",
+      children: [
+        { contract: "list", signature: "ListItemPlain", children: "Primero, crear la rama." },
+        { contract: "list", signature: "ListItemPlain", children: "Segundo, abrir el PR." },
+      ],
+    },
+  },
+  {
+    // `NativeInput` has no `label`/`aria-label` OPTION (it is the raw platform control, meant to
+    // sit inside whatever gives it a name — a FormField, an authored sibling `<label>`); `attrs`
+    // still reaches the host regardless, same as any consumer would supply one by hand.
+    name: "input/native",
+    enhanced: false,
+    tree: {
+      contract: "input",
+      signature: "NativeInput",
+      options: { type: "color", name: "accent" },
+      attrs: { "aria-label": "Color de acento" },
+    },
+  },
+  {
+    /*
+     * A blueprint, not a rendered toast: `<template>` content is inert, cloned by script per
+     * notification, so this is the one Toast tree that never appears live as authored — its
+     * CLONE does, which `content/toast-region` already covers. What this proves is that both
+     * bindings agree on the blueprint's own shape. Draws nothing for the same reason
+     * `loader/status-only` does: template content is never part of the rendered tree.
+     */
+    name: "content/toast-template",
+    enhanced: true,
+    tree: {
+      contract: "content",
+      signature: "ToastTemplate",
+      children: {
+        contract: "content",
+        signature: "Toast",
+        options: { tone: "neutral", dismissible: true },
+        slots: { title: "Nueva notificación" },
+        children: "Contenido de ejemplo.",
+      },
+    },
+  },
+  {
+    name: "slider/range",
+    enhanced: true,
+    tree: {
+      contract: "slider",
+      signature: "SliderRange",
+      options: { lowValue: 20, highValue: 80, lowLabel: "Precio mínimo", highLabel: "Precio máximo" },
+    },
+  },
+  {
+    name: "typography/strong",
+    enhanced: false,
+    tree: {
+      contract: "typography",
+      signature: "Strong",
+      children: "importante",
+    },
+  },
+  {
+    name: "typography/output",
+    enhanced: false,
+    tree: {
+      contract: "typography",
+      signature: "Output",
+      children: "42",
+    },
+  },
+  {
+    name: "meter/labelled",
+    enhanced: true,
+    tree: {
+      contract: "meter",
+      signature: "Meter",
+      options: { value: 68, min: 0, max: 100, valueText: "68%", label: "Uso de disco" },
+    },
+  },
+  {
+    // One plain command, one dropdown: exercises MenubarItem's two shapes (`items` given or not)
+    // and, through the dropdown, MenubarMenu and MenubarMenuItem.
+    name: "menubar/with-dropdown",
+    enhanced: true,
+    tree: {
+      contract: "menubar",
+      signature: "Menubar",
+      options: { label: "Barra de comandos" },
+      children: [
+        { contract: "menubar", signature: "MenubarItem", children: "Guardar" },
+        {
+          contract: "menubar",
+          signature: "MenubarItem",
+          slots: {
+            children: "Archivo",
+            items: {
+              contract: "menubar",
+              signature: "MenubarMenu",
+              children: [
+                { contract: "menubar", signature: "MenubarMenuItem", children: "Abrir" },
+                { contract: "menubar", signature: "MenubarMenuItem", children: "Exportar" },
+              ],
+            },
+          },
+        },
+      ],
+    },
+  },
+  {
+    // WAI's own layout-grid example: a row is a logical grouping, not necessarily one visual line.
+    name: "data-grid/recipient-pills",
+    enhanced: true,
+    tree: {
+      contract: "data-grid",
+      signature: "DataGrid",
+      options: { label: "Destinatarios" },
+      children: {
+        contract: "data-grid",
+        signature: "DataGridRow",
+        children: [
+          { contract: "data-grid", signature: "DataGridCell", children: "ana@ejemplo.cl" },
+          { contract: "data-grid", signature: "DataGridCell", children: "bruno@ejemplo.cl" },
+        ],
+      },
+    },
+  },
+  {
+    name: "feed/comments",
+    enhanced: false,
+    tree: {
+      contract: "feed",
+      signature: "Feed",
+      options: { label: "Comentarios" },
+      children: [
+        {
+          contract: "feed",
+          signature: "FeedArticle",
+          options: { posInset: 1, setSize: 2 },
+          slots: { label: "Ana, hace 2 horas", children: "El deploy quedó bien, gracias por revisar." },
+        },
+        {
+          contract: "feed",
+          signature: "FeedArticle",
+          options: { posInset: 2, setSize: 2 },
+          slots: { label: "Bruno, hace 1 hora", children: "Encontré un caso borde en el filtro." },
+        },
+      ],
+    },
+  },
+  {
+    /*
+     * FLAT rows, `level`/`setSize`/`posInset` authored, never derived — the contract's own file
+     * banner is explicit that a treegrid has no nesting structure of its own. "Documentos" is a
+     * branch (authors `expanded`), "informe.pdf" is its child; "Fotos" is a second top-level
+     * branch left collapsed, so this case exercises `expanded: false` too.
+     */
+    name: "treegrid/file-explorer",
+    enhanced: true,
+    tree: {
+      contract: "treegrid",
+      signature: "TreegridScroll",
+      children: {
+        contract: "treegrid",
+        signature: "Treegrid",
+        options: { label: "Archivos" },
+        children: [
+          {
+            contract: "treegrid",
+            signature: "TreegridHead",
+            children: {
+              contract: "treegrid",
+              signature: "TreegridHeadRow",
+              children: [
+                { contract: "treegrid", signature: "TreegridColumnHeader", children: "Nombre" },
+                { contract: "treegrid", signature: "TreegridColumnHeader", children: "Tamaño" },
+              ],
+            },
+          },
+          {
+            contract: "treegrid",
+            signature: "TreegridBody",
+            children: [
+              {
+                contract: "treegrid",
+                signature: "TreegridRow",
+                options: { level: 1, setSize: 2, posInset: 1, expanded: true, value: "documentos" },
+                children: [
+                  { contract: "treegrid", signature: "TreegridCell", children: "Documentos" },
+                  { contract: "treegrid", signature: "TreegridCell", children: "—" },
+                ],
+              },
+              {
+                contract: "treegrid",
+                signature: "TreegridRow",
+                options: { level: 2, setSize: 1, posInset: 1, value: "documentos/informe" },
+                children: [
+                  { contract: "treegrid", signature: "TreegridCell", children: "informe.pdf" },
+                  { contract: "treegrid", signature: "TreegridCell", children: "2.1 MB" },
+                ],
+              },
+              {
+                contract: "treegrid",
+                signature: "TreegridRow",
+                options: { level: 1, setSize: 2, posInset: 2, expanded: false, value: "fotos" },
+                children: [
+                  { contract: "treegrid", signature: "TreegridCell", children: "Fotos" },
+                  { contract: "treegrid", signature: "TreegridCell", children: "—" },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
 ];
 
 /*

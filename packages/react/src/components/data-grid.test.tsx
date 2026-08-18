@@ -47,6 +47,22 @@ describe("DataGrid React contracts", () => {
     expect(document.activeElement).toBe(removeButtons(ui)[0]);
   });
 
+  it("derives a cell's row from its own DataGridRow's position when none is authored", () => {
+    // No `row` prop anywhere: the common, contract-driven composition, where a cell states only
+    // its content. Without the structural default, no cell can ever be the roving-tabindex stop.
+    const ui = render(
+      <DataGrid label="Destinatarios">
+        <DataGridRow>
+          <DataGridCell>ana@ejemplo.cl</DataGridCell>
+          <DataGridCell>bruno@ejemplo.cl</DataGridCell>
+        </DataGridRow>
+      </DataGrid>,
+    );
+    const first = cellText(ui, "ana@ejemplo.cl");
+    expect(first.tabIndex).toBe(0);
+    expect(cellText(ui, "bruno@ejemplo.cl").tabIndex).toBe(-1);
+  });
+
   it("clamps into a shorter row's last real cell on vertical movement (ragged grid)", () => {
     const ui = render(<Fixture />);
     removeButtons(ui)[0]!.focus(); // row 0, col 1

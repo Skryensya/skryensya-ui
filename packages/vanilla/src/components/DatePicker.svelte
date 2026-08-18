@@ -19,7 +19,7 @@
   import { calendarParts } from "@skryensya/core/calendar";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { applyZagProps, bindZagEvents, ensureClasses, type DomProps } from "../runtime/apply";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
   import { remountIcons } from "../icon.js";
   import CalendarView from "./CalendarView.svelte";
@@ -113,7 +113,7 @@
     applyZagProps(root, api.getRootProps() as DomProps);
     if (label) applyZagProps(label, api.getLabelProps() as DomProps);
     applyZagProps(control, api.getControlProps() as DomProps);
-    control.classList.add(anchoredParts.anchor);
+    ensureClasses(control, anchoredParts.anchor);
     applyZagProps(input, api.getInputProps({ index: 0 }) as DomProps);
     if (authoredPlaceholder !== null) input.placeholder = authoredPlaceholder;
     applyZagProps(trigger, api.getTriggerProps() as DomProps);

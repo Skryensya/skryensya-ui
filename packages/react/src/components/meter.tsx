@@ -36,7 +36,7 @@ export function Meter({
     // screen reader. The track below still carries its own `aria-label`/`aria-valuetext` independently
     // of what's painted here — spoken and painted never have to agree on layout to both be correct.
     <div className={cx(meterParts.root, className)}>
-      <div className={meterParts.header}>
+      <div aria-hidden="true" className={meterParts.header}>
         <span className={meterParts.label}>{label}</span>
         {valueText && <span className={meterParts.value}>{valueText}</span>}
       </div>

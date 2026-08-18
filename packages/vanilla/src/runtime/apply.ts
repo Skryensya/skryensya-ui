@@ -208,6 +208,21 @@ export function applyZagProps(
   appliedAttrs.set(node, owned);
 }
 
+/*
+ * `applyZagProps` nunca pisa `class`: las clases BEM las autora el consumidor. Varios enhancers
+ * necesitan una excepción puntual a esa regla — no para RENDERIZAR nada, sino para GARANTIZAR que
+ * una clase estructural o del state layer (`sk-interactive`, `sk-tile--expandable`, `sk-anchor`)
+ * está puesta incluso si el autor la olvidó, el mismo respaldo que daba el enhancer viejo antes de
+ * esta migración. Antes esa excepción se reabría con un `classList.add` suelto en cada componente
+ * que la necesitaba (nueve sitios, en siete archivos), cada uno con su propio comentario
+ * reexplicando por qué. `ensureClasses` es el único lugar donde esa excepción existe: la regla de
+ * `applyZagProps` sigue siendo "nunca clase" salvo por esta función nombrada, buscable, y las clases
+ * que garantiza quedan documentadas en el call site, no reinventadas.
+ */
+export function ensureClasses(node: HTMLElement, ...classes: readonly string[]): void {
+  node.classList.add(...classes);
+}
+
 /** Nombre de evento DOM a partir de keys Svelte (`onclick`) o Vanilla (`onPointerDown`). */
 const eventName = (key: string) => key.slice(2).toLowerCase();
 

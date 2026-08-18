@@ -665,7 +665,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "segmented",
       signature: "Segmented",
-      options: { value: "lista" },
+      options: { value: "lista", label: "Vista" },
       slots: {
         items: [
           { options: { value: "lista" }, slots: { label: "Lista" } },

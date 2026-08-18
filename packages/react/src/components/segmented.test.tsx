@@ -10,15 +10,20 @@ const options = [
 
 describe("SegmentedControl", () => {
   it("is a radiogroup with exactly one checked option", () => {
-    const ui = render(<SegmentedControl defaultValue="week" options={options} />);
+    const ui = render(<SegmentedControl defaultValue="week" label="Range" options={options} />);
     expect(ui.getByRole("radiogroup")).toBeTruthy();
     const selected = ui.getByRole("radio", { checked: true });
     expect(selected.textContent).toBe("Week");
     expect(selected.classList.contains("sk-interactive")).toBe(true);
   });
 
+  it("names the radiogroup, per WAI's Radio Group pattern", () => {
+    const ui = render(<SegmentedControl defaultValue="week" label="Range" options={options} />);
+    expect(ui.getByRole("radiogroup", { name: "Range" })).toBeTruthy();
+  });
+
   it("moves its selection indicator to the newly checked option", () => {
-    const ui = render(<SegmentedControl defaultValue="day" options={options} />);
+    const ui = render(<SegmentedControl defaultValue="day" label="Range" options={options} />);
     const month = ui.getByRole("radio", { name: "Month" });
     Object.defineProperties(month, {
       offsetHeight: { configurable: true, value: 32 },
@@ -38,14 +43,22 @@ describe("SegmentedControl", () => {
 
   it("reports the selected value when uncontrolled", () => {
     const onValueChange = vi.fn();
-    const ui = render(<SegmentedControl defaultValue="day" onValueChange={onValueChange} options={options} />);
+    const ui = render(
+      <SegmentedControl defaultValue="day" label="Range" onValueChange={onValueChange} options={options} />,
+    );
     fireEvent.click(ui.getByText("Month"));
     expect(onValueChange).toHaveBeenCalledWith("month");
     expect(ui.getByRole("radio", { checked: true }).textContent).toBe("Month");
   });
 
   it("selects the next enabled option with an arrow key", () => {
-    const ui = render(<SegmentedControl defaultValue="day" options={[...options, { value: "year", label: "Year", disabled: true }]} />);
+    const ui = render(
+      <SegmentedControl
+        defaultValue="day"
+        label="Range"
+        options={[...options, { value: "year", label: "Year", disabled: true }]}
+      />,
+    );
     const day = ui.getByRole("radio", { name: "Day" });
     const week = ui.getByRole("radio", { name: "Week" });
 

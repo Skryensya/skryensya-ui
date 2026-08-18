@@ -10,8 +10,11 @@ export type MeterProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   /** For when the raw number alone is not user-friendly: "50% (6 hours) remaining". */
   valueText?: string;
   tone?: MeterTone;
-  /** Accessible name for the bar. Falls back to aria-labelledby / an ambient label when omitted. */
-  label?: string;
+  /**
+   * Accessible name for the bar, also painted in the header row. Required: `core/meter.ts` requires
+   * it too — without one the `meter` role announces a bare number about nothing.
+   */
+  label: string;
 };
 
 export function Meter({

@@ -7,8 +7,11 @@ export type ProgressProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   value: number;
   max?: number;
   tone?: ProgressTone;
-  /** Accessible name for the bar. Falls back to aria-labelledby / an ambient label when omitted. */
-  label?: string;
+  /**
+   * Accessible name for the bar. Required: `core/progress.ts` requires it too — without one the
+   * `progressbar` role announces a bare number about nothing.
+   */
+  label: string;
 };
 
 export function Progress({ className, label, max = 100, tone = "accent", value, ...props }: ProgressProps) {

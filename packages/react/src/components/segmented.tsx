@@ -3,16 +3,22 @@ import { useLayoutEffect, useRef, useState, type HTMLAttributes, type KeyboardEv
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
-export type SegmentedControlProps = Omit<HTMLAttributes<HTMLDivElement>, "onChange" | "defaultValue"> & {
+export type SegmentedControlProps = Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "onChange" | "defaultValue" | "aria-label"
+> & {
   options: readonly SegmentedOption[];
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
+  /** The group's own accessible name — WAI's Radio Group pattern expects one on `role="radiogroup"`. */
+  label: string;
 };
 
 export function SegmentedControl({
   className,
   defaultValue,
+  label,
   onValueChange,
   options,
   value,
@@ -79,7 +85,14 @@ export function SegmentedControl({
   };
 
   return (
-    <div {...props} className={cx(segmentedParts.root, className)} data-value={selected} ref={rootRef} role="radiogroup">
+    <div
+      {...props}
+      aria-label={label}
+      className={cx(segmentedParts.root, className)}
+      data-value={selected}
+      ref={rootRef}
+      role="radiogroup"
+    >
       <span aria-hidden="true" className={segmentedParts.indicator} ref={indicatorRef} />
       {options.map((option) => (
         <button

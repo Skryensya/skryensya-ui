@@ -45,14 +45,18 @@ export const segmentedContract = {
      * Slider, Tabs, RadioGroup and TimeField all carry this line; Segmented never got it.
      */
     value: { type: "string", attr: "data-value", prop: "defaultValue" },
+    /** The group's own accessible name. WAI's Radio Group pattern expects one; this `role="radiogroup"`
+     *  had no way to carry it at all before this option existed — every real usage passed `aria-label`
+     *  by hand, outside the contract. */
+    label: { type: "string", attr: "aria-label" },
   },
 
   signatures: {
     Segmented: {
       intent: ["small-exclusive-choice", "view-switcher", "two-or-three-options"],
       host: { element: "div" },
-      options: ["value"],
-      requires: ["value"],
+      options: ["value", "label"],
+      requires: ["value", "label"],
       slots: {
         items: {
           accepts: "items",

@@ -117,7 +117,7 @@ describe("Toc", () => {
       <Toc items={[items[0], { ...items[1], current: true }]} title="En esta página" />,
     );
 
-    expect(ui.getByRole("link", { name: "Uso" }).getAttribute("aria-current")).toBe("true");
+    expect(ui.getByRole("link", { name: "Uso" }).getAttribute("aria-current")).toBe("location");
     expect(ui.getByRole("link", { name: "Instalación" }).hasAttribute("aria-current")).toBe(false);
   });
 
@@ -125,13 +125,13 @@ describe("Toc", () => {
     const ui = render(<Toc items={items} title="En esta página" />);
 
     intersect([{ id: "instalacion", isIntersecting: true }]);
-    expect(ui.getByRole("link", { name: "Instalación" }).getAttribute("aria-current")).toBe("true");
+    expect(ui.getByRole("link", { name: "Instalación" }).getAttribute("aria-current")).toBe("location");
 
     intersect([
       { id: "instalacion", isIntersecting: false },
       { id: "uso", isIntersecting: true },
     ]);
-    expect(ui.getByRole("link", { name: "Uso" }).getAttribute("aria-current")).toBe("true");
+    expect(ui.getByRole("link", { name: "Uso" }).getAttribute("aria-current")).toBe("location");
     expect(ui.getByRole("link", { name: "Instalación" }).hasAttribute("aria-current")).toBe(false);
   });
 
@@ -142,7 +142,7 @@ describe("Toc", () => {
     // Between sections is not nowhere, so the reader's place does not blink out.
     intersect([{ id: "uso", isIntersecting: false }]);
 
-    expect(ui.getByRole("link", { name: "Uso" }).getAttribute("aria-current")).toBe("true");
+    expect(ui.getByRole("link", { name: "Uso" }).getAttribute("aria-current")).toBe("location");
   });
 
   it("does not spy on a single-entry index", () => {

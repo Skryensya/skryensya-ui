@@ -155,13 +155,13 @@
     }
   }
 
-  .sk-toc__link[aria-current="true"] {
+  .sk-toc__link[aria-current="location"] {
     background: var(--color-nav-current-bg);
     color: var(--color-nav-current-fg);
     font-weight: var(--font-weight-label);
   }
 
-  .sk-toc__link[aria-current="true"] .sk-toc__icon {
+  .sk-toc__link[aria-current="location"] .sk-toc__icon {
     color: var(--color-nav-current-fg);
   }
 
@@ -232,11 +232,11 @@
         var(--motion-feedback-easing);
     }
 
-    .sk-toc[data-sk-toc-rail] .sk-toc__link[aria-current="true"] {
+    .sk-toc[data-sk-toc-rail] .sk-toc__link[aria-current="location"] {
       background: transparent;
     }
 
-    .sk-toc[data-sk-toc-rail] .sk-toc__link[aria-current="true"]::after {
+    .sk-toc[data-sk-toc-rail] .sk-toc__link[aria-current="location"]::after {
       background: var(--color-border-accent);
     }
 

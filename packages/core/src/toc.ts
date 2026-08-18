@@ -75,12 +75,17 @@ export const tocContract = {
                 default: "h2",
                 attr: "data-level",
               },
-              /** Written by the scroll-spy at runtime; an author may also seed the first one. */
+              /*
+               * Written by the scroll-spy at runtime; an author may also seed the first one.
+               * `"location"`, not `"true"`: ARIA reserves that token for exactly this case — "an
+               * item representing the current position within a reader's environment" — which is
+               * more precise than the generic true/false pair for a scroll-spy TOC.
+               */
               current: {
                 type: "boolean",
                 default: false,
                 attr: "aria-current",
-                trueValue: "true",
+                trueValue: "location",
                 machineInput: true,
               },
             },
@@ -123,6 +128,8 @@ export const tocContract = {
                   {
                     element: "ul",
                     part: "list",
+                    /* `list-style: none` (toc.css) drops the implicit list role in Safari/VoiceOver. */
+                    attrs: { role: "list" },
                     children: [
                       {
                         element: "li",

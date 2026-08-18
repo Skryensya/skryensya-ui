@@ -64,6 +64,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-17",
+            "en": {
+              "body": "<code>AvatarGroup</code> now authors <code>role=\"group\"</code> and gains a <code>label</code> option (→ <code>aria-label</code>), the same pair <code>SplitButton</code> already uses to name a container of related controls. Before, the name only arrived if whoever composed the piece passed <code>aria-label</code> outside the contract, and without <code>role=\"group\"</code> a generic named <code>&lt;div&gt;</code> is not guaranteed to announce itself as one unit to assistive technology.",
+              "title": "AvatarGroup exposes itself as an accessible group"
+            },
+            "es": {
+              "body": "<code>AvatarGroup</code> ahora autoría <code>role=\"group\"</code> y suma la opción <code>label</code> (→ <code>aria-label</code>), el mismo par que <code>SplitButton</code> ya usa para nombrar un contenedor de controles relacionados. Antes el nombre solo llegaba si quien componía la pieza pasaba <code>aria-label</code> por fuera del contrato, y sin <code>role=\"group\"</code> un <code>&lt;div&gt;</code> genérico con nombre no garantiza anunciarse como una unidad para tecnología de asistencia.",
+              "title": "AvatarGroup se expone como grupo accesible"
+            },
+            "kind": "bugfix"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>Avatar.initials</code>, <code>Avatar.image</code>, <code>AvatarGroup</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>size</code>, <code>name</code>, <code>imageName</code>, <code>src</code>. Its stylesheet is <code>components/avatar.css</code>.",
@@ -83,6 +95,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-17",
+            "en": {
+              "body": "<code>BadgeDot</code> has no visible content of its own — without an accessible name, a screen reader announces nothing of what the dot communicates (unread, online). Every real usage was already passing <code>aria-label</code>/<code>role=\"status\"</code> outside the contract, by hand; <code>label</code> is now a real, <b>required</b> option, and <code>role=\"status\"</code> is always authored. Composing a <code>BadgeDot</code> without naming it now fails validation instead of silently rendering with no accessible name.",
+              "title": "BadgeDot now requires a label and authors role=\"status\""
+            },
+            "es": {
+              "body": "<code>BadgeDot</code> no tiene contenido visible propio — sin nombre accesible, un lector de pantalla no anuncia nada de lo que el punto comunica (no leído, en línea). Cada uso real ya pasaba <code>aria-label</code>/<code>role=\"status\"</code> por fuera del contrato, a mano; ahora <code>label</code> es una opción real y <b>obligatoria</b>, y <code>role=\"status\"</code> se autoría siempre. Quien componía un <code>BadgeDot</code> sin nombrarlo antes ahora falla la validación en vez de renderizar en silencio sin nombre accesible.",
+              "title": "BadgeDot exige un label y autoría role=\"status\""
+            },
+            "kind": "breaking"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -146,6 +170,19 @@
           {
             "date": "2026-08-17",
             "en": {
+              "body": "Renamed from <code>squareStart</code>/<code>squareEnd</code>: the old name only described what they did to the RADIUS, but a <code>neutral</code>/<code>subtle</code>/ <code>translucent</code> button also paints a border of its own, and clearing only the corner left that border intact right at the seam — two competing lines, the button's own and the neighbor's, instead of one. This went unnoticed while every example used <code>primary</code>/<code>danger</code>/<code>ghost</code> (those three already paint a transparent border), until an example paired two <code>neutral</code> halves. The new options clear both things — the rounding AND the border color on that same edge — and the name now says so.",
+              "title": "squareStart/squareEnd rename to weldStart/weldEnd, and also clear the border there"
+            },
+            "es": {
+              "body": "Renombradas de <code>squareStart</code>/<code>squareEnd</code>: el nombre anterior solo describía lo que hacían con el RADIO, pero un botón <code>neutral</code>/<code>subtle</code>/ <code>translucent</code> también pinta un borde propio, y quitar solo la esquina dejaba ese borde intacto justo en la costura — dos líneas compitiendo, la del botón y la del vecino, en vez de una. Pasó desapercibido mientras todos los ejemplos usaban <code>primary</code>/ <code>danger</code>/<code>ghost</code> (esas tres ya pintan el borde transparente), hasta que un ejemplo emparejó dos mitades <code>neutral</code>. Las nuevas opciones quitan las dos cosas — el redondeo Y el color del borde en ese mismo lado — y el nombre ahora lo dice.",
+              "title": "squareStart/squareEnd pasan a llamarse weldStart/weldEnd y también quitan el borde"
+            },
+            "kind": "feature",
+            "target": "weldStart"
+          },
+          {
+            "date": "2026-08-17",
+            "en": {
               "body": "Adds <code>squareStart</code>/<code>squareEnd</code> (boolean, presence-only): they remove a button's own leading/trailing corner rounding, a third axis orthogonal to <code>variant</code>/<code>size</code>/<code>iconOnly</code> — any variant, any size, can be welded to a neighbor. Born out of <code>SplitButton</code>, which until now solved this with its own CSS pointed at its own class (<code>.sk-split-button__primary</code>), tied in specificity with <code>.sk-button</code>'s own base rule — a tie that whichever stylesheet loaded second silently decided, and decided wrong in practice (confirmed live). The welded radius is now the button's own responsibility, with the same two classes any consumer can reach for to build their own button group, with no dependency on <code>SplitButton</code> at all.",
               "title": "New squareStart/squareEnd options, to weld two buttons with no rounded seam"
             },
@@ -154,7 +191,7 @@
               "title": "Nuevas opciones squareStart/squareEnd, para soldar dos botones sin costura redondeada"
             },
             "kind": "feature",
-            "target": "squareStart"
+            "target": "weldStart"
           },
           {
             "date": "2026-08-11",
@@ -483,6 +520,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-17",
+            "en": {
+              "body": "Two gaps against WAI's Combobox pattern: <code>aria-controls</code> never pointed at the listbox (required whether or not the popup is visible, the same rule this audit's own Combobox section already enforces) — the listbox now carries a stable id and the input references it. And in Vanilla, <code>aria-expanded</code> on the input only ever updated on the external open-triggers, never on the combobox itself: it stayed permanently <code>\"false\"</code> while the listbox already had results. React already got this right; both bindings now agree.",
+              "title": "The input now announces aria-controls and its own real aria-expanded"
+            },
+            "es": {
+              "body": "Dos gaps del patrón Combobox de WAI: <code>aria-controls</code> nunca apuntaba al listbox (obligatorio esté o no visible el popup, lo mismo que ya exige la sección Combobox de esta auditoría) — ahora el listbox lleva un id estable y el input lo referencia. Y en Vanilla, <code>aria-expanded</code> del input se actualizaba solo en los triggers externos, nunca en el propio combobox: quedaba permanentemente en <code>\"false\"</code> mientras el listbox ya tenía resultados. React ya lo hacía bien; ahora ambos bindings coinciden.",
+              "title": "El input ya anuncia aria-controls y su propio aria-expanded real"
+            },
+            "kind": "bugfix"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>CommandPalette</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-command-palette</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>label</code>, <code>paletteId</code>, <code>placeholder</code>, <code>emptyLabel</code>, <code>open</code>, <code>entries</code>. Its stylesheet is <code>components/command-palette.css</code>.",
@@ -670,6 +719,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-17",
+            "en": {
+              "body": "<code>onFileChange</code> always received <code>rejectedFiles</code> with their errors, but neither binding ever displayed it: a file that was too large or the wrong type vanished with no visible or announced message, even though the contract already had a dedicated part (<code>rejection</code>) with its own stylesheet waiting. React now renders that part with <code>role=\"alert\"</code> when there are rejections, naming the file and the reason in prose (new shared <code>fileUploadErrorMessage</code> function, so Vanilla — which never draws its own markup, by design — can build the same message from <code>sk-file-change</code>).",
+              "title": "React now shows why a file was rejected, instead of nothing"
+            },
+            "es": {
+              "body": "<code>onFileChange</code> siempre recibió <code>rejectedFiles</code> con sus errores, pero ningún binding lo mostraba: un archivo demasiado grande o del tipo equivocado desaparecía sin ningún mensaje visible ni anunciado, aunque el contrato ya tenía una parte dedicada (<code>rejection</code>) con su propia hoja de estilo esperando. React ahora renderiza esa parte con <code>role=\"alert\"</code> cuando hay rechazos, con el nombre del archivo y el motivo en prosa (nueva función compartida <code>fileUploadErrorMessage</code>, para que Vanilla — que nunca dibuja markup propio, por diseño — pueda armar el mismo mensaje al escuchar <code>sk-file-change</code>).",
+              "title": "React ya muestra por qué se rechazó un archivo, en vez de nada"
+            },
+            "kind": "bugfix"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -927,6 +988,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-17",
+            "en": {
+              "body": "Renamed together with Button's own identically-shaped options (<code>squareStart</code>/<code>squareEnd</code> → <code>weldStart</code>/<code>weldEnd</code>, see Button's own changelog) — still writing to the same attributes (<code>data-weld-start</code>/<code>data-weld-end</code>), the name now also reflects that they clear the trigger's own border on that side, not only the rounding.",
+              "title": "triggerSquareStart/triggerSquareEnd rename to triggerWeldStart/triggerWeldEnd"
+            },
+            "es": {
+              "body": "Renombradas junto con las opciones homónimas de <code>Button</code> (<code>squareStart</code>/<code>squareEnd</code> → <code>weldStart</code>/<code>weldEnd</code>, ver el changelog de Button) — siguen escribiendo a los mismos atributos (<code>data-weld-start</code>/<code>data-weld-end</code>), ahora el nombre también refleja que quitan el borde del trigger en ese lado, no solo el redondeo.",
+              "title": "triggerSquareStart/triggerSquareEnd pasan a llamarse triggerWeldStart/triggerWeldEnd"
+            },
+            "kind": "feature",
+            "target": "triggerWeldStart"
+          },
           {
             "date": "2026-08-17",
             "en": {
@@ -1228,6 +1302,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-17",
+            "en": {
+              "body": "WAI's Radio Group pattern expects `role=\"radiogroup\"` to carry an accessible name, and this contract had no way to give it one — the catalogue's three real instances already passed `aria-label` outside the contract, by hand, one demo's own comment admitted it explicitly (\"Segmented's contract does not map it\"). `label` is now a real, required option.",
+              "title": "label is now required — the radiogroup needs a name"
+            },
+            "es": {
+              "body": "El patrón Radio Group de WAI espera que <code>role=\"radiogroup\"</code> tenga un nombre accesible, y este contrato no tenía forma de dárselo — las tres instancias reales del catálogo ya pasaban <code>aria-label</code> por fuera, a mano, un comentario propio de la demo lo admitía explícitamente (\"Segmented's contract does not map it\"). Ahora <code>label</code> es una opción real y obligatoria.",
+              "title": "label ahora es obligatoria — el radiogroup necesita un nombre"
+            },
+            "kind": "breaking",
+            "target": "label"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>Segmented</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-segmented</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>value</code>. Its stylesheet is <code>components/segmented.css</code>.",
@@ -1267,6 +1354,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-17",
+            "en": {
+              "body": "The contract had no way to name the `<aside>` itself — `label` was already taken by the trigger's own accessible name, a different target. WAI-ARIA requires a name the moment a page has more than one `complementary` region; `landmarkLabel` now covers that, optional because a single Sidebar on the page needs none to be unambiguous.",
+              "title": "New landmarkLabel option to name the aside once there is more than one"
+            },
+            "es": {
+              "body": "El contrato no tenía forma de nombrar el propio <code>&lt;aside&gt;</code> — <code>label</code> ya estaba tomado por el nombre accesible del trigger, un target distinto. WAI-ARIA exige un nombre en cuanto una página tiene más de una región <code>complementary</code>; ahora <code>landmarkLabel</code> lo cubre, opcional porque un único Sidebar en la página no lo necesita para ser inequívoco.",
+              "title": "Nueva opción landmarkLabel para nombrar el aside cuando hay más de uno"
+            },
+            "kind": "feature",
+            "target": "landmarkLabel"
+          },
           {
             "date": "2026-08-06",
             "en": {
@@ -1650,6 +1750,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-17",
+            "en": {
+              "body": "The active item's <code>aria-current</code> used to pass the generic <code>\"true\"</code>. It now passes <code>\"location\"</code>, the token ARIA reserves for \"an item representing the current position within a reader's environment\" — exactly the scroll-spy TOC case. Extended ARIA APG audit over the rest of the docs catalogue.",
+              "title": "The current item now announces \"location\", not \"true\""
+            },
+            "es": {
+              "body": "<code>aria-current</code> del item activo pasaba <code>\"true\"</code>, el token genérico. Ahora pasa <code>\"location\"</code>, el que ARIA reserva para \"un ítem que representa la posición actual dentro del entorno del usuario\" — exactamente el caso de un TOC con scroll-spy. Auditoría ARIA APG extendida al resto del catálogo de docs.",
+              "title": "El item actual ahora anuncia \"location\", no \"true\""
+            },
+            "kind": "bugfix",
+            "target": "current"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>Toc</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-toc</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>title</code>. Its stylesheet is <code>components/toc.css</code>.",
@@ -1809,6 +1922,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-17",
+            "en": {
+              "body": "<code>showModal()</code> gives the root an implicit <code>role=\"dialog\"</code> whether or not the composition thinks about it, and Vaul had no header of its own to source a name from (unlike <code>Dialog</code>, whose <code>title</code> is already required) — the same WAI rule, applied to the same platform mechanism. The Drawer demo, which used to pass <code>aria-label</code> by hand as a raw <code>attrs</code> escape hatch because there was no other way, now uses the real option.",
+              "title": "label is now required on Vaul and Vaul.drawer"
+            },
+            "es": {
+              "body": "<code>showModal()</code> le da a la raíz un <code>role=\"dialog\"</code> implícito, la piense o no la composición, y Vaul no tenía ningún header propio del que sacar un nombre (a diferencia de <code>Dialog</code>, cuyo <code>title</code> ya es obligatorio) — la misma regla de WAI, aplicada al mismo mecanismo de plataforma. La demo de Drawer, que hasta ahora pasaba <code>aria-label</code> a mano como <code>attrs</code> crudo porque no había otra forma, ahora usa la opción real.",
+              "title": "label ahora es obligatoria en Vaul y Vaul.drawer"
+            },
+            "kind": "breaking",
+            "target": "label"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -2136,6 +2262,10 @@
           "prop": "name",
           "type": "string"
         },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
         "name": {
           "attr": "aria-label",
           "type": "string"
@@ -2320,7 +2450,9 @@
             "avatar-stack",
             "group-with-overflow"
           ],
-          "options": [],
+          "options": [
+            "label"
+          ],
           "react": {
             "from": "@skryensya/react/avatar",
             "name": "AvatarGroup"
@@ -2339,6 +2471,9 @@
             }
           },
           "template": {
+            "attrs": {
+              "role": "group"
+            },
             "children": [
               {
                 "slot": "children"
@@ -2361,6 +2496,10 @@
       "css": "@skryensya/core/components/badge.css",
       "id": "badge",
       "options": {
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
         "tone": {
           "attr": "data-tone",
           "default": "neutral",
@@ -2456,16 +2595,21 @@
             "status-dot"
           ],
           "options": [
-            "tone"
+            "tone",
+            "label"
           ],
           "react": {
             "from": "@skryensya/react/badge",
             "name": "BadgeDot"
           },
+          "requires": [
+            "label"
+          ],
           "slots": {},
           "template": {
             "attrs": {
-              "data-dot": ""
+              "data-dot": "",
+              "role": "status"
             },
             "element": "span",
             "host": true,
@@ -2681,6 +2825,9 @@
           "template": {
             "children": [
               {
+                "attrs": {
+                  "role": "list"
+                },
                 "children": [
                   {
                     "children": [
@@ -2797,18 +2944,6 @@
             "lg"
           ]
         },
-        "squareEnd": {
-          "attr": "data-square-end",
-          "default": false,
-          "trueValue": "",
-          "type": "boolean"
-        },
-        "squareStart": {
-          "attr": "data-square-start",
-          "default": false,
-          "trueValue": "",
-          "type": "boolean"
-        },
         "variant": {
           "attr": "data-variant",
           "default": "neutral",
@@ -2821,6 +2956,18 @@
             "danger",
             "ghost"
           ]
+        },
+        "weldEnd": {
+          "attr": "data-weld-end",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "weldStart": {
+          "attr": "data-weld-start",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
         }
       },
       "parts": {
@@ -2882,8 +3029,8 @@
             "variant",
             "size",
             "iconOnly",
-            "squareStart",
-            "squareEnd",
+            "weldStart",
+            "weldEnd",
             "disabled"
           ],
           "react": {
@@ -2935,8 +3082,8 @@
             "variant",
             "size",
             "iconOnly",
-            "squareStart",
-            "squareEnd",
+            "weldStart",
+            "weldEnd",
             "href"
           ],
           "react": {
@@ -3192,6 +3339,7 @@
             "attrsWhen": [
               {
                 "attrs": {
+                  "aria-atomic": "true",
                   "aria-live": "assertive",
                   "role": "alert"
                 },
@@ -3200,6 +3348,7 @@
               },
               {
                 "attrs": {
+                  "aria-atomic": "true",
                   "aria-live": "polite",
                   "role": "status"
                 },
@@ -3533,7 +3682,8 @@
           },
           "template": {
             "attrs": {
-              "reversed": ""
+              "reversed": "",
+              "role": "list"
             },
             "element": "ol",
             "host": true,
@@ -3719,6 +3869,9 @@
                 "whenGiven": "date"
               },
               {
+                "attrs": {
+                  "role": "list"
+                },
                 "element": "ol",
                 "part": "entries",
                 "slot": "children"
@@ -4988,6 +5141,7 @@
                   {
                     "attrs": {
                       "aria-autocomplete": "list",
+                      "aria-controls": "sk-command-palette-listbox",
                       "aria-expanded": "false",
                       "autocomplete": "off",
                       "role": "combobox",
@@ -5045,6 +5199,7 @@
                 ],
                 "attrs": {
                   "aria-label": "Resultados",
+                  "id": "sk-command-palette-listbox",
                   "role": "listbox"
                 },
                 "element": "ul",
@@ -8286,6 +8441,9 @@
             }
           },
           "template": {
+            "attrs": {
+              "role": "list"
+            },
             "element": "ul",
             "host": true,
             "part": "root",
@@ -8514,6 +8672,9 @@
             }
           },
           "template": {
+            "attrs": {
+              "role": "list"
+            },
             "element": "ol",
             "host": true,
             "part": "root",
@@ -8619,6 +8780,7 @@
             "attrsWhen": [
               {
                 "attrs": {
+                  "aria-atomic": "true",
                   "role": "status"
                 },
                 "given": true,
@@ -8662,6 +8824,7 @@
               "sk-visually-hidden"
             ],
             "attrs": {
+              "aria-atomic": "true",
               "role": "status"
             },
             "element": "span",
@@ -8832,21 +8995,21 @@
           "attr": "data-size",
           "type": "string"
         },
-        "triggerSquareEnd": {
-          "attr": "data-square-end",
-          "default": false,
-          "trueValue": "",
-          "type": "boolean"
-        },
-        "triggerSquareStart": {
-          "attr": "data-square-start",
-          "default": false,
-          "trueValue": "",
-          "type": "boolean"
-        },
         "triggerVariant": {
           "attr": "data-variant",
           "type": "string"
+        },
+        "triggerWeldEnd": {
+          "attr": "data-weld-end",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "triggerWeldStart": {
+          "attr": "data-weld-start",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
         }
       },
       "parts": {
@@ -8895,8 +9058,8 @@
           "options": [
             "label",
             "triggerLabel",
-            "triggerSquareStart",
-            "triggerSquareEnd",
+            "triggerWeldStart",
+            "triggerWeldEnd",
             "triggerVariant",
             "triggerSize",
             "triggerIconOnly",
@@ -8991,8 +9154,8 @@
                 "mount": "data-sk-menu-trigger",
                 "options": [
                   "triggerLabel",
-                  "triggerSquareStart",
-                  "triggerSquareEnd",
+                  "triggerWeldStart",
+                  "triggerWeldEnd",
                   "triggerVariant",
                   "triggerSize",
                   "triggerIconOnly"
@@ -9718,6 +9881,9 @@
                 "whenGiven": "collapsible"
               },
               {
+                "attrs": {
+                  "role": "list"
+                },
                 "element": "ul",
                 "labelledBySlot": "label",
                 "part": "list",
@@ -9725,6 +9891,9 @@
                 "whenMissing": "collapsible"
               },
               {
+                "attrs": {
+                  "role": "list"
+                },
                 "attrsWhen": [
                   {
                     "attrs": {
@@ -10773,6 +10942,9 @@
             }
           },
           "template": {
+            "attrs": {
+              "role": "list"
+            },
             "element": "ol",
             "host": true,
             "part": "root",
@@ -11109,6 +11281,10 @@
       "css": "@skryensya/core/components/segmented.css",
       "id": "segmented",
       "options": {
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
         "value": {
           "attr": "data-value",
           "prop": "defaultValue",
@@ -11147,14 +11323,16 @@
           ],
           "mount": "data-sk-segmented",
           "options": [
-            "value"
+            "value",
+            "label"
           ],
           "react": {
             "from": "@skryensya/react/segmented",
             "name": "SegmentedControl"
           },
           "requires": [
-            "value"
+            "value",
+            "label"
           ],
           "slots": {
             "items": {
@@ -11600,6 +11778,11 @@
           "attr": "aria-label",
           "type": "string"
         },
+        "landmarkLabel": {
+          "attr": "aria-label",
+          "prop": "landmarkLabel",
+          "type": "string"
+        },
         "maxInlineSize": {
           "styleProperty": "--sk-sidebar-max-inline-size",
           "type": "string"
@@ -11711,7 +11894,8 @@
             "defaultCollapsed",
             "storageKey",
             "minInlineSize",
-            "maxInlineSize"
+            "maxInlineSize",
+            "landmarkLabel"
           ],
           "react": {
             "from": "@skryensya/react/sidebar",
@@ -12555,6 +12739,9 @@
             }
           },
           "template": {
+            "attrs": {
+              "role": "list"
+            },
             "children": [
               {
                 "children": [
@@ -13470,6 +13657,11 @@
             }
           },
           "template": {
+            "attrs": {
+              "aria-atomic": "true",
+              "aria-live": "polite",
+              "role": "status"
+            },
             "element": "div",
             "host": true,
             "mount": "data-sk-table-pager-status",
@@ -14951,7 +15143,7 @@
                     "attr": "aria-current",
                     "default": false,
                     "machineInput": true,
-                    "trueValue": "true",
+                    "trueValue": "location",
                     "type": "boolean"
                   },
                   "href": {
@@ -15009,6 +15201,9 @@
                   {
                     "children": [
                       {
+                        "attrs": {
+                          "role": "list"
+                        },
                         "children": [
                           {
                             "children": [
@@ -16384,6 +16579,10 @@
             "block-end"
           ]
         },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
         "open": {
           "attr": "open",
           "default": false,
@@ -16437,12 +16636,16 @@
           "mount": "data-sk-vaul",
           "options": [
             "edge",
-            "open"
+            "open",
+            "label"
           ],
           "react": {
             "from": "@skryensya/react/vaul",
             "name": "Vaul"
           },
+          "requires": [
+            "label"
+          ],
           "slots": {
             "children": {
               "accepts": "node",
@@ -16480,12 +16683,16 @@
           "mount": "data-sk-vaul",
           "options": [
             "edge",
-            "open"
+            "open",
+            "label"
           ],
           "react": {
             "from": "@skryensya/react/vaul",
             "name": "Drawer"
           },
+          "requires": [
+            "label"
+          ],
           "slots": {
             "children": {
               "accepts": "node",
@@ -16588,5 +16795,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "a816a5167354eba1"
+  "sourceHash": "2af87b42104f31fc"
 }

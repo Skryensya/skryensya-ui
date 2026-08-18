@@ -81,11 +81,27 @@
         }
       : api.getViewTriggerProps().onclick,
   );
+
+  /*
+   * `Button` (react.tsx) mirrors a `disabled` prop onto `aria-disabled` too, not just the native
+   * attribute — Zag's own `getPrevTriggerProps`/`getNextTriggerProps` only return `disabled`. Every
+   * trigger here already claims to BE a real Button (this file's own doc above); redone by hand
+   * since spreading Zag's props directly onto a bare `<button>` skips whatever a real Button would
+   * have added.
+   */
+  const prevTriggerProps = $derived.by(() => {
+    const props = api.getPrevTriggerProps({ view: api.view });
+    return { ...props, "aria-disabled": props.disabled ? ("true" as const) : undefined };
+  });
+  const nextTriggerProps = $derived.by(() => {
+    const props = api.getNextTriggerProps({ view: api.view });
+    return { ...props, "aria-disabled": props.disabled ? ("true" as const) : undefined };
+  });
 </script>
 
 <div class={calendarParts.header}>
   <button
-    {...api.getPrevTriggerProps({ view: api.view })}
+    {...prevTriggerProps}
     {...smGhost}
     {...iconOnly}
     class="{calendarParts.previous} {buttonClass}"
@@ -105,7 +121,7 @@
     <span aria-hidden="true" data-sk-icon="chevron-down" data-sk-icon-size="sm"></span>
   </button>
   <button
-    {...api.getNextTriggerProps({ view: api.view })}
+    {...nextTriggerProps}
     {...smGhost}
     {...iconOnly}
     class="{calendarParts.next} {buttonClass}"

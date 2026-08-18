@@ -21,6 +21,10 @@ const dayLabelled = (fragment: string) =>
   cells().find((cell) => cell.getAttribute("aria-label")?.includes(fragment))!;
 const viewTrigger = () =>
   document.querySelector<HTMLButtonElement>(".sk-calendar__view-trigger")!;
+const prevTrigger = () =>
+  document.querySelector<HTMLButtonElement>(".sk-calendar__previous")!;
+const nextTrigger = () =>
+  document.querySelector<HTMLButtonElement>(".sk-calendar__next")!;
 
 afterEach(() => {
   document.body.innerHTML = "";
@@ -91,6 +95,16 @@ describe("Calendar Vanilla contracts", () => {
       expect(dayLabelled(outside).tabIndex).toBe(-1);
     }
     expect(dayLabelled("12 de marzo de 2024").hasAttribute("aria-disabled")).toBe(false);
+  });
+
+  it("also marks the prev/next month triggers aria-disabled at the range's edge, not just native-disabled", () => {
+    // min/max both fall inside the same visible month: neither direction has anywhere left to go.
+    markup('data-locale="es-DO" data-value="2024-03-15" data-min="2024-03-01" data-max="2024-03-31"');
+
+    expect(prevTrigger().disabled).toBe(true);
+    expect(prevTrigger().getAttribute("aria-disabled")).toBe("true");
+    expect(nextTrigger().disabled).toBe(true);
+    expect(nextTrigger().getAttribute("aria-disabled")).toBe("true");
   });
 
   it("collects both ends of a range", async () => {

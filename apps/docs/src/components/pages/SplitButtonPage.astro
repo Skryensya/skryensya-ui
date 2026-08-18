@@ -4,7 +4,15 @@ import "@skryensya/core/components/menu.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { splitButtonTree, splitButtonSmallTree, splitButtonMenuFirstTree } from "../../demos/split-button";
+import {
+  splitButtonTree,
+  splitButtonSmallTree,
+  splitButtonMenuFirstTree,
+  splitButtonSubtleTree,
+  splitButtonTranslucentTree,
+  splitButtonGhostTree,
+  splitButtonDangerTree,
+} from "../../demos/split-button";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/split-button.yaml?raw";
 import coreSource from "@core/src/split-button.ts?raw";
@@ -62,6 +70,42 @@ const sourceFiles = [
       tree={splitButtonMenuFirstTree(t)}
       js={js}
       label={t("splitButtonPage.menuFirstLabel")}
+      viewport="menu"
+    />
+
+    <h3>{t("splitButtonPage.subtleTitle")}</h3>
+    <p set:html={t("splitButtonPage.subtleBody")} />
+    <ComponentPreview
+      tree={splitButtonSubtleTree(t)}
+      js={js}
+      label={t("splitButtonPage.subtleLabel")}
+      viewport="menu"
+    />
+
+    <h3>{t("splitButtonPage.translucentTitle")}</h3>
+    <p set:html={t("splitButtonPage.translucentBody")} />
+    <ComponentPreview
+      tree={splitButtonTranslucentTree(t)}
+      js={js}
+      label={t("splitButtonPage.translucentLabel")}
+      viewport="menu"
+    />
+
+    <h3>{t("splitButtonPage.ghostTitle")}</h3>
+    <p set:html={t("splitButtonPage.ghostBody")} />
+    <ComponentPreview
+      tree={splitButtonGhostTree(t)}
+      js={js}
+      label={t("splitButtonPage.ghostLabel")}
+      viewport="menu"
+    />
+
+    <h3>{t("splitButtonPage.dangerTitle")}</h3>
+    <p set:html={t("splitButtonPage.dangerBody")} />
+    <ComponentPreview
+      tree={splitButtonDangerTree(t)}
+      js={js}
+      label={t("splitButtonPage.dangerLabel")}
       viewport="menu"
     />
 

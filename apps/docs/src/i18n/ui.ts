@@ -6720,6 +6720,7 @@ export const navLabel: Record<Locale, Partial<Record<string, string>>> = {
     "/referencia": "Tokens",
     "/dimensiones": "Dimensions",
     "/zoom": "Zoom and reflow",
+    "/teclado": "Keyboard navigation",
     "/densidad": "Component density",
     "/acento": "Accent reach",
     "/gradientes": "Gradients",

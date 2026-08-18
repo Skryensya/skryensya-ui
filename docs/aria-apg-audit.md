@@ -584,4 +584,310 @@ Las 31 filas de arriba son el índice de ejemplos oficial de la APG, no el catá
 
 **Quedan ~51 páginas sin flag.** De esas, un subconjunto tiene semántica ARIA real que nunca pasó por esta auditoría (Tooltip, Popover, Popup, CommandPalette, SplitButton, Drawer, Flyout, Vaul, FileUpload, SegmentedControl, Pagination, SkipLink, TimeField, Progress, FormField, Input, Navbar, Sidebar, Loader, CopyButton, Theme Toggle, Table of contents, Hotkey) y el resto es contenido/layout puro (Avatar, Badge, Box, Callout, Card, Changelog, CodePreview, ComponentPreview, Grid, Layout Grid, Heading, Icon, ImageFrame, Inline, Kbd, List, ProcessList, Scrollbar, Stack, Stat, Steps, Tag, Text, Wrapper, EmptyState, Placeholder, Tile) donde se espera, pero se verifica, que no aplique ningún rol de widget.
 
+### Avatar — revisado ✅ (2026-08-17)
+
+Contenido puro, sin patrón WAI-ARIA propio — verificado que `Avatar.initials`/`Avatar.image` ya tenían exactamente un nodo nombrado cada uno (`role="img"` + `aria-label` sobre iniciales; `<img alt>` real sobre foto, vía `ImageFrame`), sin gap.
+
+- 🔧 **Bug real encontrado y corregido:** `AvatarGroup` (`packages/core/src/avatar.ts`) no tenía `role="group"` ni una opción `label` propia — el demo le pasaba `aria-label` por `attrs`, evadiendo el contrato, y sin `role="group"` un `<div>` genérico con nombre no está garantizado a anunciarse como una sola unidad para tecnología de asistencia (a diferencia de un elemento con rol semántico). Mismo hallazgo, mismo arreglo, que `split-button.ts` ya documenta para su propio `role="group"` — grupo de controles/identidades relacionadas, nombre opcional porque cada hijo ya anuncia el suyo.
+  - `packages/core/src/avatar.ts`: nueva opción `label` (`attr: "aria-label"`) agregada a `options` de nivel de contrato y a `AvatarGroup.options`; `attrs: { role: "group" }` en el template.
+  - `packages/react/src/components/avatar.tsx`: nuevo prop `label?: string` en `AvatarGroupProps`, aplicado como `aria-label` + `role="group"` siempre presente (con o sin label).
+  - `apps/docs/src/demos/avatar.ts`: `avatarGroupTree` pasó de `attrs: { "aria-label": ... }` a `options: { label: ... }` — usa el vocabulario real del contrato en vez del bypass.
+  - Tests nuevos en `avatar.test.tsx` (grupo con label, grupo sin label — ambos exponen `role="group"`). **Suites verdes: react 355/355, core 201/201, vanilla 362/362, ai-compiler 101/101** (changelog nuevo en `contracts/changelog/avatar.yaml`, surface hash actualizado). Verificado en vivo contra el server (`curl` sobre `/componentes/avatar`): el HTML servido ya trae `role="group"` sin reiniciar nada.
+
+**Veredicto:** un gap real (nombre de grupo no garantizado por falta de rol semántico), corregido siguiendo el mismo patrón ya establecido por `SplitButton` en este mismo repo — no una convención nueva.
+
+### Badge — revisado ✅ (2026-08-17)
+
+Contenido puro, sin patrón WAI-ARIA propio. `Badge` (texto visible, nombre por contenido) y `BadgeHolder` (envoltorio de posicionamiento puro, sin semántica propia) sin gaps.
+
+- 🔧 **Bug real y más grave que el de Avatar, mismo patrón:** `BadgeDot` no tiene contenido visible propio — es un punto de color puro. El contrato no exponía `role`/`label` en absoluto; las TRES instancias reales en `apps/docs/src/demos/badge.ts` ya pasaban `attrs: { role: "status", "aria-label": ... }` por fuera del contrato, a mano, y el propio test de React (`badge.test.tsx`) documentaba el mismo bypass vía props sueltas. Sin ese bypass, un `BadgeDot` renderiza sin ningún nombre accesible — invisible por completo para un lector de pantalla, no solo "menos ideal".
+  - `packages/core/src/badge.ts`: nueva opción `label` (`attr: "aria-label"`), agregada a `BadgeDot.options` y marcada **`requires: ["label"]`** (igual que `Avatar.initials` exige `name` — nada más nombra al nodo); `role: "status"` pasó a autorarse siempre en el template (ya era lo que las tres instancias reales elegían por su cuenta).
+  - `packages/react/src/components/badge.tsx`: `BadgeDotProps.label` pasó de no existir a **prop requerido**; `role="status"` siempre presente, ya no depende de que quien componga lo recuerde.
+  - `apps/docs/src/demos/badge.ts`: las tres instancias reales pasaron de `attrs: { role, "aria-label" }` a `options: { label }` — usan el vocabulario del contrato en vez del bypass.
+  - Tests actualizados en `badge.test.tsx` (mismo caso, ahora vía `label` en vez de props sueltas). **Suites verdes: react 355/355 (incluye badge), core (typecheck limpio, sin test dedicado — Badge no tenía archivo de test en `core`, consistente con Avatar/otros contratos "sin máquina"), ai-compiler 101/101** (changelog `breaking` nuevo en `contracts/changelog/badge.yaml` — es breaking porque un `BadgeDot` compuesto antes sin nombre ahora falla la validación en vez de renderizar en silencio). Verificado en vivo (`curl` sobre `/componentes/badge`): las tres instancias del demo sirven `role="status"` con su `aria-label` real.
+
+**Veredicto:** el gap más serio hasta ahora en esta ronda — no una inconsistencia de robustez como Avatar, sino un componente cuyo ÚNICO propósito (comunicar un estado) era completamente invisible para tecnología de asistencia sin que el contrato lo exigiera. Corregido haciendo obligatorio lo que cada uso real ya sabía que necesitaba.
+
+### Breadcrumb — addendum (2026-08-17)
+
+Pasada adicional sobre el mismo componente (ya revisado ✅ el 2026-08-14, ver arriba): `list-style: none` en `breadcrumb.css` le quita a Safari/VoiceOver el rol implícito de lista al `<ol>` — bug conocido de WebKit, no un descuido de este repo. 🔧 **Corregido:** `role="list"` autorado explícito en `core/breadcrumb.ts` (nodo `<ol>`) y en `react/breadcrumb.tsx`. Sin test nuevo dedicado (el fix es una sola línea, cubierto por los tests de estructura ya existentes que siguen en verde).
+
+### Command Palette — revisado ✅ (2026-08-17)
+
+**Contra el patrón WAI (Combobox con listbox popup)**, mismo patrón ya auditado para `combobox.ts`/`select.ts` en esta misma tabla:
+
+- 🔧 **Bug real, corregido:** `aria-controls` del input nunca apuntaba al listbox — obligatorio en el patrón Combobox esté o no visible el popup ahora mismo, la misma regla que la sección "Combobox" de esta auditoría ya dejó establecida. `packages/core/src/command-palette.ts`: el `<ul>` del listbox ganó un `id` estable (`sk-command-palette-listbox`); el input lo referencia vía `aria-controls`. Replicado en `packages/react/src/components/command-palette.tsx`.
+- 🔧 **Bug real, solo en Vanilla:** `setExpanded` actualizaba `aria-expanded` en los botones trigger EXTERNOS pero nunca en el propio `<input role="combobox">` — quedaba permanentemente `"false"` aunque el listbox ya tuviera resultados a la vista, justo el atributo que un lector de pantalla consulta sobre ESE elemento. React ya lo hacía bien; `packages/vanilla/src/components/command-palette.ts` corregido para igualar.
+- Tests nuevos: `command-palette.test.tsx` (react, `aria-controls` apunta al id real del listbox), `command-palette.test.ts` (vanilla, `aria-expanded` del input pasa a `"true"`). **Suites verdes: react 6/6, vanilla 12/12**, changelog (`contracts/changelog/command-palette.yaml`) y typecheck de `core` limpios.
+
+**Veredicto:** dos gaps reales del patrón Combobox, uno compartido entre ambos bindings (atributo nunca autorado) y uno exclusivo de Vanilla (atributo autorado en el elemento equivocado) — ambos corregidos y cubiertos por tests.
+
+### File Upload — revisado ✅ (2026-08-17)
+
+Contenido/comportamiento propio de este sistema (Zag `@zag-js/file-upload` cubre la mecánica ARIA del área de drop en sí, ya cubierto por la máquina), pero WCAG 3.3.1 (Identificación de errores) aplica igual: un error debe identificarse Y describirse al usuario.
+
+- 🔧 **Bug real, grave, corregido:** `onFileChange` siempre recibía `rejectedFiles` con sus motivos (`FILE_TOO_LARGE`, `FILE_INVALID_TYPE`, etc.), pero NINGÚN binding los mostraba — un archivo rechazado desaparecía sin mensaje visible ni anunciado, silencioso para cualquier usuario, no solo uno de lector de pantalla. El contrato ya tenía una `part` dedicada (`rejection`) con su propia hoja de estilo esperando sin usarse.
+  - `packages/core/src/file-upload.ts`: nueva función pura `fileUploadErrorMessage(code)`, un mapeo de cada código de error real de Zag a una frase — compartida a propósito para que Vanilla (que nunca dibuja su propio markup, por diseño — ver el comentario "KNOWN GAP" ya existente en este mismo archivo) pueda construir el mismo mensaje al escuchar `sk-file-change`, aunque el render en sí quede pendiente para esa capa.
+  - `packages/react/src/components/file-upload.tsx`: nuevo estado `rejected`, renderiza `<div role="alert">` con nombre de archivo + motivo cuando hay rechazos; se limpia solo cuando una selección válida sigue a una rechazada (comentario propio: "feedback about the LAST selection, never a running log").
+  - Tests nuevos: `file-upload.test.ts` (core, mapeo completo + fallback), `file-upload.test.tsx` (react, nuevo archivo — anuncia el rechazo, lo limpia tras una selección válida).
+  - **Suites verdes: core 2/2, react 2/2**, typecheck limpio en ambos, changelog (`contracts/changelog/file-upload.yaml`) y gate de `ai-compiler` 19/19 verdes.
+
+**Veredicto:** un gap real de identificación de error (WCAG 3.3.1) — la infraestructura (part, CSS, datos del error) ya existía sin conectar; el fix cierra el circuito en vez de construir algo nuevo. Vanilla queda con un gap arquitectónico ya documentado y aceptado de antes (no dibuja markup propio), no uno nuevo de este fix.
+
+### Navbar, ThemeToggle, TimeField, Tooltip — revisado ✅ (2026-08-17)
+
+Cuatro componentes leídos completos, sin gaps:
+
+- **Navbar**: `<header>` + dos regiones nombradas (`NavbarBrand`/`NavbarActions`), sin opciones — un shell deliberado (decisión 17 propia). `role="banner"` implícito correcto porque el uso real en `Base.astro` ya lo confirmó la revisión de Landmarks; un solo navbar por página no necesita nombre para ser inequívoco.
+- **ThemeToggle**: ya resuelto en la revisión de Button ("un ciclo de 3 estados, no encaja en `aria-pressed`") — confirmado que el `aria-label` dinámico ("Color mode: system/light/dark") se reescribe en cada click en AMBOS bindings (`colorModeLabel`), y que el `aria-label` estático pre-JS ("Color mode: system") ya cubre la ventana antes de que el script llegue.
+- **TimeField**: `role="group"` de tres `role="spinbutton"` (hora/minuto/período), con `aria-valuemin`/`aria-valuemax`/`aria-valuenow`/`aria-valuetext` por segmento y `aria-labelledby` de grupo vía ids que ambos bindings escriben en runtime — ya razonado explícitamente contra el patrón spinbutton de WAI en el propio archivo. El orden de segmentos y separadores se lee de `Intl.DateTimeFormat.formatToParts`, no se asume, así que un locale con AM/PM antes de la hora sigue siendo correcto.
+- **Tooltip**: WCAG 1.4.13 citado y las tres condiciones (descartable, persistente, hoverable por defecto) ya razonadas en el propio archivo; dos bugs reales ya encontrados y corregidos en una pasada anterior (`data-sk-placement` en desacuerdo entre bindings, el wrapper `trigger` ausente que dejaba Vanilla sin poder abrir el tooltip). `aria-describedby` verificado leyendo `@zag-js/tooltip@1.42.0` directamente (`getTriggerProps()` lo autoría solo cuando `open`), no asumido por el nombre del paquete.
+
+**Veredicto:** sin gaps nuevos en los cuatro — Tooltip en particular ya llevaba varias correcciones reales de sesiones anteriores, visibles en sus propios comentarios.
+
+### Popover / Popup (`Popover`, `Popover.bare`) — revisado ✅ (2026-08-17), un hallazgo anotado sin corregir
+
+**Contra la Popover API nativa** (`popover="auto"`, `popovertarget`): el navegador es dueño de light-dismiss, Escape y el top layer — mismo diseño que `Dialog` (sin máquina, sin enhancer). Ya con dos bugs reales corregidos en una pasada anterior, visibles en los propios comentarios del archivo (`placement` por defecto en desacuerdo entre bindings; el `trigger` ausente del template que dejaba Vanilla sin forma de abrir el popover).
+
+- **Hallazgo real, investigado a fondo, NO corregido — arquitectónico, no un atributo suelto:** `Popover` (la signature con chrome, no `.bare`) renderiza `title`/`description` opcionales dentro del positioner, pero nada conecta esos nodos con el contenedor `popover="auto"` — ni `role`, ni `aria-labelledby`, ni `aria-describedby`, en ninguna de las dos capas. El positioner es un `<div>` sin rol implícito (a diferencia de `<dialog>`, que ya trae `role="dialog"` de la plataforma), así que un `aria-labelledby` puesto ahí sin acompañarlo de un rol que lo consuma sería, en la práctica, ARIA inerte — la mayoría de lectores de pantalla no anuncian el nombre de un `role="generic"`. Arreglarlo bien exige `role="dialog"`, que trae su propio peso: implica cierta expectativa de foco inicial/trampa de foco que la Popover API nativa no da por sí sola, y este mismo repo ya exige `label`/`title` obligatorio en TODO lugar donde introduce un `role="dialog"` implícito (Dialog, Alert Dialog, Vaul) — pero `title` acá es un slot OPCIONAL, así que agregar el rol sin exigir el nombre reproduciría el mismo bug que esta auditoría ya corrigió tres veces (un dialog sin nombre garantizado).
+  - Se investigaron los dos caminos: (a) agregar `role="dialog"` + `labelledBySlot`/`wiring` solo cuando hay `title`, lo cual el DSL actual no puede expresar limpiamente (`attrsWhen` está atado a `options`, `title` es un `slot`); (b) hacer `title` obligatorio y agregar el rol siempre, un cambio de contrato más grande (potencialmente rompe composiciones reales que hoy omiten `title`) que no se tomó sin confirmación del usuario.
+  - **Por qué se anota en vez de corregirse a medias:** un fix parcial (solo `aria-labelledby`, sin rol) habría quedado documentado como "corregido" sin serlo en la práctica — el mismo tipo de falso arreglo que esta auditoría existe para evitar. Mejor dejarlo señalado con el razonamiento completo que fingir una solución.
+- ✅ **`Popover.bare` ("Popup"), sin cambios, correcto por diseño:** cero chrome, cero semántica propia — "sus propios semánticos son responsabilidad de la composición", la misma decisión ya validada para Vaul y EmptyState. No aplica el hallazgo de arriba porque no tiene `title`/`description` que conectar.
+
+**Veredicto:** dos bugs reales ya corregidos en sesiones previas (visibles en los comentarios propios del archivo), y un hallazgo real de esta pasada que se decidió NO tocar sin antes acordar con el usuario si `title` debería pasar a ser obligatorio — la misma disciplina que ya se aplicó en la revisión de Combobox (datepicker) para un hallazgo arquitectónico similar.
+
+### Hotkey, Scrollbar, Vaul (páginas fuera de `/componentes/`) — revisado ✅ (2026-08-17)
+
+Tres páginas del sidebar con URL propia fuera de `/componentes/`, incluidas para que la cobertura sea sobre el sidebar completo, no solo sobre el prefijo de ruta:
+
+- **Hotkey** (`core/hotkey.ts`): sin contrato, sin `ComponentContract`, sin markup — un primitivo de lógica pura (parseo/formateo/matching de combinaciones de teclado), consumido por Command Palette (ya auditado). No tiene superficie ARIA propia para revisar; `isTypingContext` ya guarda contra disparar atajos de una letra mientras el foco está en un campo de texto, que es la única preocupación de accesibilidad real que un matcher de teclado puede tener.
+- **Scrollbar** (`css/patterns/scrollbar.css`): CSS puro, sin JS ni contrato — estiliza el scrollbar nativo del navegador. Un scrollbar nativo no es un widget ARIA propio; darle estilo no cambia su semántica. Sin superficie que auditar.
+- **Vaul**: la página de patrón que documenta el mismo contrato ya auditado arriba bajo "Drawer (Vaul.drawer / Vaul)" — mismo componente, mismo fix (`label` obligatoria), sin trabajo adicional.
+
+**Veredicto:** las tres cubiertas — dos sin superficie ARIA que auditar por diseño, una ya cubierta por la revisión de Drawer.
+
+### Sidebar — revisado ✅ (2026-08-17)
+
+**Contra la regla de Landmarks ya establecida en esta misma tabla** (múltiples landmarks del mismo tipo necesitan nombres distintos): `Sidebar` renderiza un `<aside>` de nivel superior, que obtiene el rol implícito `complementary` — exactamente el caso que esa regla cubre.
+
+- 🔧 **Bug real, corregido:** el contrato no tenía forma de nombrar el `<aside>` mismo — la única opción `label` que existía ya estaba tomada por el nombre accesible del BOTÓN trigger (un target distinto). Una página con dos `Sidebar` (o un `Sidebar` junto a otro `<aside>`) no tenía forma de diferenciarlos para un lector de pantalla.
+  - `packages/core/src/sidebar.ts`: nueva opción `landmarkLabel` (`attr: "aria-label"`), opcional — un único Sidebar en la página sigue sin necesitarla para ser inequívoco, la misma razón por la que `SplitButton`/`AvatarGroup` dejan su propio `label` opcional.
+  - `packages/react/src/components/sidebar.tsx`: prop `landmarkLabel` aplicado al `<aside>`.
+  - Vanilla sin cambios necesarios: `landmarkLabel` mapea a un `attr` puro (`aria-label`), sin estado que un enhancer deba sincronizar — el mismo motivo por el que `layout.ts` no necesita uno.
+  - Test nuevo en `sidebar.test.tsx`. **Suites verdes: react 8/8**, typecheck de `core` limpio, changelog (`contracts/changelog/sidebar.yaml`) y gate de `ai-compiler` verdes.
+
+**Veredicto:** un gap real de la misma clase que Landmarks ya identificó como la regla más fácil de romper — corregido con el mismo patrón opcional ya validado dos veces antes en esta ronda (SplitButton, AvatarGroup).
+
+### Table of Contents (Toc) — revisado ✅ (2026-08-17)
+
+Sin patrón WAI dedicado — es una navegación con scroll-spy, ya cubierta en espíritu por la regla de Landmarks (`<nav aria-label>`) y por el mismo bug de lista que Breadcrumb ya destapó.
+
+- 🔧 **Bug real, corregido, mismo hallazgo que Breadcrumb (arriba):** `list-style: none` en `toc.css` (dos reglas) le quita a Safari/VoiceOver el rol implícito de lista al `<ul>`. React ya traía `role="list"` en su propio JSX escrito a mano; **`core/toc.ts` no** — el `<ul part="list">` del contrato (la fuente que Vanilla y el compilador comparten) se había quedado atrás. Corregido agregando el mismo `attrs: { role: "list" }` que `breadcrumb.ts` ya usa.
+- 🔧 **Bug real, ya corregido en el working tree antes de esta pasada:** `aria-current="true"` en el ítem activo pasó a `aria-current="location"` — ARIA reserva ese token exactamente para "un ítem que representa la posición actual dentro del entorno del usuario", el caso preciso de un TOC con scroll-spy, más específico que el `true`/`false` genérico. Corregido en las tres capas (`core/toc.ts`, `react/toc.tsx`, `vanilla/toc.ts`) con sus tests ya actualizados.
+- **Suites verdes: react 9/9, vanilla 9/9**, typecheck de `core` limpio, `ai-compiler` 101/101 (el `role="list"` nuevo no movió el hash de `surface` — no es parte de la API pública que el gate seguía —, la entrada ya existente en `contracts/changelog/toc.yaml` cubre el cambio de `current`). Verificado en vivo (`curl` sobre `/componentes/toc`): `class="sk-toc__list" role="list"` en el HTML servido.
+
+**Veredicto:** dos gaps reales, uno replicado del mismo hallazgo que Breadcrumb (con una asimetría real entre bindings que este pase cerró) y uno de precisión semántica de `aria-current` ya resuelto en las tres capas.
+
+### Drawer (Vaul.drawer / Vaul) — revisado ✅ (2026-08-17)
+
+**Contra Dialog (Modal)**, ya revisado en esta tabla: `Vaul`/`Vaul.drawer` usan `<dialog>` + `showModal()`, exactamente igual que `Dialog` — mismo mecanismo de plataforma, mismo `role="dialog"` implícito.
+
+- 🔧 **Bug real, la misma clase que el gap original de Alert Dialog:** a diferencia de `Dialog`, que tiene un `title` slot obligatorio (`labelledBySlot`), Vaul no tiene ningún header propio — "sus propios semánticos son responsabilidad de la composición", a propósito. Pero eso dejaba una laguna real: nada exigía un nombre para el `role="dialog"` implícito. La demo de Drawer ya lo sabía y pasaba `aria-label` por `attrs` crudo, evadiendo el contrato — el mismo patrón de bypass que Avatar y Badge ya mostraron esta ronda.
+  - `packages/core/src/vaul.ts`: nueva opción `label` (`attr: "aria-label"`), agregada a `options` y marcada **`requires: ["label"]`** en AMBAS signatures (`Vaul`, `Vaul.drawer`).
+  - `packages/react/src/components/vaul.tsx`: `aria-label` pasó de heredado genéricamente de `DialogHTMLAttributes` (opcional, fácil de olvidar) a **requerido explícitamente** en el tipo.
+  - `apps/docs/src/demos/drawer.ts`: pasó de `attrs: { "aria-label": ... }` a `options: { label: ... }`.
+  - Vanilla sin cambios necesarios (mismo motivo que Sidebar: `label` es un `attr` puro). Tests actualizados en `vaul.test.tsx`. **Suites verdes: react 5/5**, typecheck limpio en `core`/`react`, changelog `breaking` (`contracts/changelog/vaul.yaml`) y `ai-compiler` 19/19. Verificado en vivo tras rebuild del compilador (`curl` sobre `/componentes/drawer`): `aria-label` presente en el `<dialog>` servido.
+
+**Veredicto:** el mismo gap de fondo que Alert Dialog encontró en Dialog al principio de esta auditoría (nombre accesible no garantizado para un `role="dialog"` implícito), aquí sin la salida fácil de un `title` slot — resuelto igual que Feed resolvió el mismo problema para su propia raíz sin header: una opción `label` obligatoria.
+
+### El bug de `list-style: none` en Safari/VoiceOver — barrida completa (2026-08-17)
+
+El mismo bug real de WebKit que Breadcrumb destapó primero (`list-style: none` le quita a Safari/VoiceOR el rol implícito `list`/`listitem` a un `<ul>`/`<ol>`, un bug documentado de ese motor, no una elección de este sistema) resultó estar presente en TODA lista visualmente sin viñetas del catálogo. Barrida sobre cada `<ul>`/`<ol>` con `list-style: none` en su hoja, agregando `attrs: { role: "list" }` en `core` (la fuente que Vanilla y el compilador comparten) y `role="list"` en el JSX de React:
+
+- **List / OrderedList** (`core/list.ts`, `react/list.tsx`): ambos signatures (`ul`/`ol`).
+- **NavList** — ya revisado el 2026-08-14, addendum: el `<ul>` del grupo (colapsable y estático) en `core/nav-list.ts`, replicado en `react/nav-list.tsx`.
+- **ProcessList** (`core/process-list.ts`, `react/process-list.tsx`).
+- **Steps** (`core/steps.ts`, `react/steps.tsx`) — el más grave de los seis: sin el rol, un lector de pantalla no solo pierde la lista, pierde el conteo "paso 2 de 5" que WAI espera de una secuencia semántica.
+- **Changelog** (`core/changelog.ts`, `react/changelog.tsx`) — DOS `<ol>` (`Changelog` raíz y `ChangelogRelease.entries` anidado), ambos corregidos; el `reversed` que ya autoraba para la numeración descendente se queda, el rol es aditivo.
+
+**Suites verdes tras la barrida completa: react 355/355, core 201/201, vanilla 362/362, ai-compiler 101/101.** Ninguna de las hojas de changelog necesitó una entrada nueva — `role="list"` no mueve el hash de `surface` (no es opción pública, es un detalle de markup fijo), consistente con lo ya observado en Breadcrumb y Toc.
+
+**Veredicto:** un solo bug real, encontrado una vez y barrido sistemáticamente sobre las seis listas del catálogo que comparten la misma causa (`list-style: none` + WebKit), en vez de esperar a tropezar con cada una por separado.
+
+### Table / List families — revisado ✅ (2026-08-17)
+
+`List`, `NavList` (addendum), `ProcessList`, `Steps`, `Changelog`: cubiertos por la barrida de arriba. Sin otros gaps encontrados en sus contratos más allá del rol de lista — anatomía nativa (`<ul>`/`<ol>`/`<li>`), sin necesidad de patrón WAI dedicado más allá de "es una lista real".
+
+### Split Button — revisado ✅ (2026-08-17)
+
+Sin patrón WAI dedicado — confirmado ya contra la APG por el propio archivo (`split-button.ts`'s own doc comment: "WAI-ARIA has no dedicated split-button pattern... Menu Button and Button are the two patterns actually in play here, both audited on their own pages"). Releído `packages/core/src/split-button.ts` y `packages/react/src/components/split-button.tsx` completos con ojo de auditoría, no solo por encima:
+
+- ✅ `role="group"` unconditional en el root, `label` opcional (mismo razonamiento ya validado dos veces esta ronda para Avatar/Sidebar: cada mitad ya anuncia su propio nombre).
+- ✅ El trigger del menú (icon-only) se nombra por `triggerLabel`, nunca por un segundo chevron compuesto a mano — el propio archivo documenta que un chevron compuesto duplicaba el visible sin resolver el nombre accesible, confirmado en vivo antes de esta sesión.
+- ✅ El binding React expone `label` tipado directamente desde `SignatureOptionsOf<typeof splitButtonContract, ...>` en vez de redeclararlo — no puede driftear del contrato.
+- Sin test dedicado (`primary`/`menu` son composiciones de `Button`/`Menu`, ya cubiertos por sus propios tests); consistente con `AvatarGroup`/`BadgeHolder`, wrappers de composición pura.
+
+**Veredicto:** sin gaps — el componente ya fue diseñado con la auditoría WAI en mente desde el principio (ver sus propios comentarios citando la APG), esta pasada solo confirma que sigue siendo así.
+
+### Callout — revisado ✅ (2026-08-17)
+
+Mismo patrón Alert/Status ya auditado (ver "Alert" arriba, 2026-08-14) — `Callout` es el mensaje persistente inline, hermano de Toast (`content.ts`), formalmente separado de él en una sesión anterior ("Formerly 'Alert'", comentario propio) pero comparte exactamente el mismo mecanismo `role`/`aria-live` por `tone`.
+
+- 🔧 **Bug real, la misma clase exacta que Alert ya encontró y corrigió en Toast:** `aria-atomic="true"` se corrigió en `content.ts` (Toast) el 2026-08-14, pero `callout.ts` — un archivo DISTINTO con la misma mecánica, nunca recibió el mismo fix. Quedó dependiendo del valor implícito por defecto de `role="alert"`/`role="status"`, la misma inconsistencia real que la sección Alert ya documentó como corregible.
+  - `packages/core/src/callout.ts`: `aria-atomic: "true"` agregado a ambas ramas de `attrsWhen`.
+  - `packages/react/src/components/callout.tsx`: `aria-atomic="true"` agregado al root.
+  - Test nuevo en `callout.test.tsx`. **Suites verdes: react 4/4**, typecheck de `core` limpio, `ai-compiler` 101/101 (sin cambio de `surface`, mismo motivo que el resto de los fixes de atributo estático de esta ronda).
+
+**Veredicto:** un gap real, exactamente el mismo que Alert ya había cerrado en un archivo hermano — este componente se separó de aquel DESPUÉS del fix original y se quedó atrás.
+
+### Primitivos de layout: Box, Grid, Layout Grid, Inline, Stack, Wrapper — revisado ✅ (2026-08-17)
+
+Leído `packages/core/src/layout.ts` completo. Los seis (`Box`, `Stack`, `Inline`, `Grid`, `LayoutGrid`, `DensityScope`, `Wrapper`) renderizan un `<div>` sin ningún rol ni atributo ARIA propio — a propósito: "consumers keep control of the element and its semantics" (comentario propio del archivo), y en React son polimórficos vía `as` para que un `Stack` que en realidad es un `<ul>` siga siendo un `Stack`. Esto es la misma decisión ya validada en la sección "Landmarks" de esta tabla (un landmark es una elección de composición, no algo que un componente de layout deba imponer) — no hay patrón WAI que aplique a un contenedor de layout puro, y forzar uno sería indirection sin beneficio. Sin gaps.
+
+### Tipografía: Text, Heading, Link, Strong, Output, Code — revisado ✅ (2026-08-17)
+
+Leído `packages/core/src/typography.ts` completo. Todos elementos nativos (`p`, `h2` con `as` polimórfico h1-h6 desacoplado de `size`, `a[href]` obligatorio, `strong`, `output`, `code`) — ningún rol ARIA que agregar porque la semántica ya la da el elemento. `Link` corrige una nota desactualizada de la fila "Link" de la tabla principal (dice "sin componente dedicado" — ya no es así, pero sigue siendo `<a href>` nativo puro, el hallazgo original sigue siendo válido en espíritu). Sin gaps.
+
+### Icon — revisado ✅ (2026-08-17)
+
+Leído `packages/core/src/icon.ts` completo. Ya maduro antes de esta pasada: decorativo por defecto (`aria-hidden`), `role="img"` + `aria-label` solo cuando se pasa `label`, y `focusable="false"` explícito — el arreglo histórico para el bug de IE/Edge que hacía de cualquier `<svg>` un tab-stop. Sin gaps.
+
+### Image Frame — revisado ✅ (2026-08-17)
+
+Leído `packages/core/src/image-frame.ts` completo. Gate `a11y` ya exige `alt` (aunque sea vacío) cuando hay `src`, y `exactlyOneOf` impide el bug real que este mismo archivo documenta haber corregido antes (ni `src` ni children → caja vacía que pasaba todo chequeo). Sin gaps nuevos.
+
+### Loader — revisado ✅ (2026-08-17)
+
+Ya maduro: `role="status"` solo cuando hay `label` (lo que separa un loader-decoración de un loader-mensaje), `Loader.status` para el caso "anunciar sin dibujar" que pares con Placeholder (mismo razonamiento que Placeholder documenta: un skeleton no dice nada por sí solo).
+
+- 🔧 **Bug real, misma clase que Toast/Callout:** `aria-atomic` faltaba en ambas signatures (`Loader` con `label`, `Loader.status`), mismo motivo ya aplicado dos veces esta ronda.
+  - `packages/core/src/loader.ts`, `packages/react/src/components/loader.tsx`: `aria-atomic="true"` agregado a ambas.
+  - Tests nuevos (`aria-atomic` en `Loader`; cobertura nueva para `LoaderStatus`, que no tenía ningún test antes). **Suites verdes: react 5/5**, typecheck limpio, `ai-compiler` 101/101 (sin cambio de `surface`).
+
+**Veredicto:** el mismo gap de `aria-atomic`, tercera vez esta ronda — confirma que valía la pena barrer el resto de los `role="status"` del catálogo en vez de asumir que Toast/Callout eran los únicos.
+
+### Code Preview — revisado ✅ (2026-08-17), con un bug funcional real en la variante de densidad
+
+Sin patrón WAI dedicado, pero el botón "Expandir/Contraer" es un Disclosure clásico (`aria-expanded`, ya presente) y le faltaba la otra mitad del patrón.
+
+- 🔧 **Bug real, ambos bindings:** el botón de disclosure nunca tenía `aria-controls` apuntando al panel que expande — ni el contrato `core` ni React lo intentaban; Vanilla SÍ intentaba escribirlo (`if (fullPanelEl?.id) toggle.setAttribute("aria-controls", ...)`) pero la condición jamás era verdadera porque nada en el markup compilado o autorado le da un `id` al panel — código muerto desde que se escribió.
+  - `packages/react/src/components/code-preview.tsx`: `useId()` genera un id para el viewport (o, en la variante de densidad, para AMBOS paneles); nuevo prop `controlsId` para que `CodePreviewDensity` le diga a `CodePreview` cuál de los dos apunta el botón; `aria-controls` ahora se autoría siempre.
+  - `packages/vanilla/src/components/code-preview.ts`: el enhancer ahora ASIGNA un id (`${root.id || "sk-code-preview"}-condensed/-full/-viewport`) cuando el panel no trae uno propio, en vez de solo verificar si ya existe — la condición que nunca se cumplía ahora se cumple.
+- 🔧 **Bug real, encontrado al investigar el de arriba, más grave — la variante de densidad de React no hacía NADA:** el `<input role="switch">` de `CodePreviewDensity` no tenía `onChange` ni estado — clickearlo cambiaba el checkbox nativo pero el atributo `data-sk-code-preview-density` de la raíz (la única fuente de verdad que `code-preview.css` lee para decidir qué panel mostrar) quedaba hardcodeado en `"condensed"` para siempre. Un switch con rol y nombre accesibles correctos que no hace absolutamente nada es un bug más serio que cualquier atributo ARIA faltante.
+  - `packages/react/src/components/code-preview.tsx`: `CodePreviewDensity` ahora tiene su propio estado (`useState`), el input es controlado (`checked`/`onChange`), y `rootAttrs` refleja el estado real en cada render.
+- 🔧 **Bug real, tercero, mismo hallazgo, solo en Vanilla:** `syncDisclosureChrome` (que rellena el contador "N líneas" y decide si el botón "más" se muestra) solo se llamaba desde `showDensity`, que solo corre si existe un `<input>` de densidad — así que el caso más común, un `CodePreview` simple y colapsable SIN densidad, nunca tuvo su contador de líneas relleno ni su `more.hidden` decidido por JS, en todo el tiempo que este enhancer lleva shippeado. Corregido: se llama `syncDisclosureChrome(null)` una vez al conectar cuando no hay switch de densidad, y esa rama ahora también rellena el contador.
+- **Anotado, no corregido — fuera del alcance ARIA de esta pasada:** en React, el span `toggleCount` ("N líneas") nunca se rellena, en ninguna de las dos signatures — el comentario del propio archivo dice "the enhancer fills it; nothing claims it here", pero React NO TIENE un enhancer que lo haga. Es una brecha de paridad visual real (la anotación de líneas nunca aparece en la versión React), no una violación ARIA: la ausencia no oculta información específicamente de un lector de pantalla más de lo que ya la oculta de un usuario vidente. Se deja para una pasada de paridad de features, no de accesibilidad.
+- Tests nuevos en las tres suites: `code-preview.test.tsx` (react, 3 nuevos: `aria-controls` en el caso simple, el switch cambiando la densidad de verdad, `aria-controls` siguiendo al panel activo), `code-preview.test.ts` (vanilla, 1 nuevo: el caso sin densidad, que no tenía NINGÚN test antes de este pase). **Suites verdes: react 11/11, vanilla 4/4** (1 falla de `registry.test.ts` en la corrida completa fue timeout no relacionado, confirmado flaky al reproducirse solo), typecheck limpio en `core`/`react`/`vanilla`, `ai-compiler` 101/101.
+
+**Veredicto:** empezó como una revisión de `aria-controls` y destapó tres bugs reales en cascada — dos de comportamiento silenciosamente muerto (Vanilla) y uno de funcionalidad completamente ausente (el switch de densidad en React). El más grave de los tres no era un gap de ARIA sino una pieza de UI que parecía interactiva y no lo era.
+
+### Component Preview (`ComponentPreview.bare`) — revisado ✅ (2026-08-17)
+
+Leído `packages/core/src/component-preview.ts` completo. El propio archivo ya documenta la frontera correcta: `.bare` publica solo "una caja con título que muestra algo, con su código debajo" (`header`/`stage`/código compuesto vía `CodePreview`, ya auditado arriba) — la maquinaria real de esta doc site (tabs Vanilla/React, presets de pantalla, el iframe/portal) es deliberadamente NO parte del contrato publicado, "la misma categoría que el stage de `wrapper` o el compilador del árbol". `title`/`note` son texto plano, `stage` es contenido arbitrario del autor (su propia semántica es su responsabilidad, misma decisión que `Card`), `code` es una signature COMPUESTA, no reimplementada. Sin gaps propios — lo único con semántica dinámica real (el switch de binding, los tabs de pantalla) vive fuera del contrato exportado, en el andamiaje interno de `apps/docs`, que no es lo que audita esta tabla.
+
+**Veredicto:** sin gaps — la frontera del contrato ya excluye correctamente lo que no debía publicarse.
+
+### Kbd, Stat, Tag, Placeholder, EmptyState, CopyButton — revisado ✅ (2026-08-17)
+
+Seis contratos de contenido leídos completos, sin gaps encontrados:
+
+- **Kbd**: `<kbd>` nativo, sin opciones — el elemento ES el significado.
+- **Stat**: `label` antes que `value` en el DOM a propósito ("un lector de pantalla anunciando '1.284' sin 'usuarios activos' no dijo nada", comentario propio); el `trend` colorea el cambio pero un ícono redundante (`change` slot) evita depender solo del color. `animate`/count-up nunca toca un live region, así que no hay riesgo de anuncios parciales.
+- **Tag**: control de quitar es un `<button>` real con `removeLabel` configurable; el demo real ya arma el nombre con interpolación (`t("demo.tag.remove", {name})` → "Quitar react") en vez de confiar en el default genérico "Remove" — el propio mecanismo para evitar la ambigüedad de "Remove, Remove, Remove" en un grupo de chips ya existe y ya se usa bien.
+- **Placeholder**: `aria-hidden="true"` siempre — "un skeleton es una imagen de ausencia, anunciarla le diría a un lector de pantalla sobre algo que no está", el mismo principio que `Loader.status` existe para complementar.
+- **EmptyState**: `<h2>` real para el título (navegable por encabezados), ícono `aria-hidden` porque repite lo que el título ya dice. `<section>` sin nombre no se expone como landmark en el árbol de accesibilidad (mapeo HTML-AAM), lo cual es correcto aquí — no necesita serlo, el `<h2>` ya lo hace descubrible.
+- **CopyButton**: ya auditado en detalle contra WCAG 1.4.13 (la burbuja de feedback no es un tooltip y documenta por qué), `aria-live="polite"` en el label con un único nodo de texto que se reemplaza entero (no hay riesgo de anuncio parcial que `aria-atomic` resolvería, a diferencia de Toast/Callout/Loader).
+
+**Veredicto:** sin gaps en los seis — la disciplina de nombre accesible, decorativo-vs-contenido y semántica nativa ya estaba aplicada consistentemente antes de esta pasada.
+
+### Progress — revisado ✅ (2026-08-17)
+
+**Contra el patrón WAI** (`role="progressbar"`, `aria-valuenow`/`aria-valuemin`/`aria-valuemax`, nombre accesible obligatorio — "a progress bar with no name announces a number about nothing", comentario propio ya presente): `core/progress.ts` ya tenía todo esto, `label` ya `requires: ["label"]` a nivel de contrato — mismo patrón ya validado para `Meter` (revisado ✅ antes).
+
+- 🔧 **Bug real, mismo patrón que `BadgeDot` y `Vaul` esta ronda:** el contrato exige `label`, pero `packages/react/src/components/progress.tsx` lo tipaba `label?: string` — OPCIONAL. Nada impedía a un consumidor de React componer `<Progress value={50} />` sin nombre, silenciosamente rompiendo exactamente la garantía que el propio comentario del archivo describe, porque TypeScript nunca se quejaba y no hay enhancer Vanilla que valide en runtime (a diferencia de Icon-only Button, que sí lanza un error real).
+  - `packages/react/src/components/progress.tsx`: `label` pasó de opcional a **requerido** en `ProgressProps`.
+  - Sin cambio de comportamiento en runtime — el fix es enteramente de tipos, cierra la brecha entre lo que el contrato exige y lo que TypeScript permitía. **Suites verdes: react 2/2**, typecheck limpio.
+
+**Veredicto:** tercera vez esta ronda que se encuentra la misma clase de bug (un `requires` del contrato no reflejado como requerido en el tipo de React) — confirma que vale la pena revisar sistemáticamente cada `requires` de `core` contra su tipo de React equivalente.
+
+### Barrida sistemática: cada `requires` de core contra su tipo de React — (2026-08-17)
+
+Dado el patrón encontrado tres veces seguidas (Avatar/Badge en aislado, Vaul, Progress), se listaron TODOS los `requires:` de `packages/core/src/*.ts` (31 apariciones) y se verificó cada tipo de React equivalente:
+
+- ✅ Ya correctos, sin cambios: `avatar.ts` (`name`, `imageName`+`src`), `accordion.ts` (`value`), `button.ts` (`href`, unión discriminada), `badge.ts` (`label`, ya corregido arriba), `data-grid.ts` (`label`), `feed.ts` (`label`, `posInset`+`setSize`), `icon.ts` (`name`), `nav-list.ts` (`href`), `menubar.ts` (`label`), `sidebar.ts` (`label` ×2), `selection.ts` (`name` ×2), `segmented.ts` (`value` — ver review propio de Segmented más abajo), `skip-link.ts` (`href`), `slider.ts` (`lowLabel`+`highLabel`), `toolbar.ts` (`label`), `tile.ts` → `TileRadioGroup` (`name`), `tree-view.ts`/`treegrid.ts` (`label`, `level`+`setSize`+`posInset`).
+- 🔧 **Bug real, mismo hallazgo que Progress, encontrado en un componente YA marcado revisado ✅ (Meter, 2026-08-15):** `packages/react/src/components/meter.tsx` tenía `label?: string` — opcional, contradiciendo `requires: ["label"]` de `meter.ts`. Más grave que Progress porque `label` también se PINTA visualmente (`<span>{label}</span>` en el header) — omitirlo no solo rompe el nombre accesible, deja un `<span>` vacío en pantalla. Corregido a `label: string`.
+- 🔧 **Bug real, cuatro instancias más, la misma causa raíz:** cualquier componente `<a>` que compone `AnchorHTMLAttributes<HTMLAnchorElement>` hereda `href?: string` (opcional, del tipo nativo de HTML) — así que el `Omit`/override explícito que SÍ hicieron `Button`, `NavListGroup` y `SkipLink` es lo único que cierra la brecha, y CUATRO archivos no lo hacían pese a que su propio contrato ya exige `href`:
+  - `packages/react/src/components/list.tsx` (`ListItemLink` — `list.ts` exige `href`).
+  - `packages/react/src/components/tile.tsx` (`TileLink` — `tile.ts` exige `href`).
+  - `packages/react/src/components/typography.tsx` (`Link` — `typography.ts` exige `href`).
+  - Los tres corregidos con `href: string` explícito, `Omit<..., "href">` donde hacía falta para que el override gane.
+  - **Por qué es grave, no solo un tipo estricto de más:** un `<a>` sin `href` pierde su semántica interactiva por completo — deja de ser tabulable, deja de tener `role` de link implícito (mapeo HTML-AAM), se vuelve indistinguible de un `<span>` para cualquier tecnología de asistencia. Componer cualquiera de estos tres sin `href` producía exactamente el anti-patrón que el resto de esta auditoría evitó activamente (un elemento interactivo que no lo es).
+- **Verificación real, no solo el cambio de tipo:** `tsc --noEmit` limpio en `core`/`react` tras los seis cambios, y **`astro check` sobre TODO `apps/docs` (490 archivos) — 0 errores** — el consumidor más grande del repo ya componía los seis correctamente en cada instancia real, así que el fix es enteramente preventivo, no una corrección de un uso roto existente. Suites de test sin cambios necesarios: 42/42 verdes en los archivos tocados (`list`, `tile`, `typography`, `meter`, `progress`).
+
+**Veredicto:** una categoría completa de bug silencioso — "el contrato exige X, el tipo de React no lo refleja" — encontrada en 5 archivos (Meter, ListItemLink, TileLink, Link, más Progress ya documentado arriba) mediante una barrida sistemática en vez de esperar a tropezar con cada uno. Ninguno tenía un uso real roto en el repo, pero los seis dejaban la puerta abierta a que un consumidor nuevo la rompiera sin que TypeScript avisara.
+
+### Skip Link — revisado ✅ (2026-08-17)
+
+**Contra WCAG 2.4.1 (Bypass Blocks)**, citado explícitamente en el propio archivo: `<a href>` real, nunca un botón con `onClick` + `scrollIntoView`; `SKIP_LINK_TARGET_TABINDEX`/`skipLinkTarget` documentan y exportan como VALOR (no como prosa) la regla de que el destino necesita `tabindex="-1"` porque no todos los navegadores mueven el foco solo con el salto de ancla; "hidden until focused" sin reflow (razonamiento propio: la alternativa naive con `position: static` en `:focus-visible` mueve el layout bajo el lector justo cuando aterriza).
+- ✅ **Verificado que no es solo teoría — está realmente cableado en la página real**, no solo en el demo aislado: `apps/docs/src/layouts/Base.astro` usa `SkipLink` de verdad, con `tabindex="-1"` en AMBOS `<main>` posibles (mutuamente excluyentes, mismo `id` — el mismo patrón ya confirmado en la revisión de Landmarks), y un segundo skip link condicional al menú de navegación cuando existe.
+- `requires: ["href"]` en el contrato — correctamente reflejado como requerido en `SkipLinkProps` de React desde antes (`href: string`, con `Omit<..., "href">` para que el override gane). Uno de los pocos casos que YA estaba bien antes de la barrida sistemática de arriba, sirvió de plantilla para corregir los otros cuatro.
+
+**Veredicto:** sin gaps — cita la norma exacta que resuelve, documenta la regla que no puede aplicar (el tabindex del destino) como un valor exportado en vez de dejarla en un comentario, y está realmente en uso en la página real, no solo demostrado.
+
+### Segmented — revisado ✅ (2026-08-17)
+
+**Contra el patrón WAI Radio Group** (ya auditado antes para `selection.ts`'s `RadioGroup` nativo — Segmented es el mismo patrón, simulado con `role="radiogroup"`/`role="radio"` porque las opciones son botones, no inputs): roving tabindex de una sola parada (correcto, ya confirmado — es por lo que `Toolbar` cuenta un Segmented como un solo stop), pero el grupo mismo no tenía nombre.
+
+- 🔧 **Bug real, mismo patrón que Avatar/Badge/Sidebar/Vaul esta ronda, y el más descarado: el propio autor dejó un comentario admitiéndolo.** `core/segmented.ts` no tenía ninguna opción `label`/`aria-label` — el comentario del demo decía literalmente *"The group's name goes in `attrs`, not `options`: `aria-label` is passed to the host untouched, and Segmented's contract does not map it"*. Las TRES instancias reales del catálogo (`demos/segmented.ts`, dos en `demos/toolbar.ts`) y una del paquete `contracts/recipes/browse.ts` ya pasaban `aria-label` por `attrs`, confirmando que el nombre siempre hacía falta — WAI-ARIA espera que un `role="radiogroup"` tenga nombre accesible.
+  - `packages/core/src/segmented.ts`: nueva opción `label` (`attr: "aria-label"`), agregada a `options` y marcada **`requires: ["label", "value"]`**.
+  - `packages/react/src/components/segmented.tsx`: `label: string` **requerido** en `SegmentedControlProps`; `aria-label` ya no llega por spread genérico (`Omit<..., "aria-label">` fuerza el prop tipado).
+  - Cuatro sitios reales migrados de `attrs: {"aria-label": ...}`/prop suelto a la opción real: `apps/docs/src/demos/segmented.ts`, `apps/docs/src/demos/toolbar.ts` (×2), `apps/docs/src/components/react-demos/Playground.tsx`, `contracts/recipes/browse.ts`.
+  - Test nuevo en `segmented.test.tsx` (`getByRole("radiogroup", {name: ...})`). **Suites verdes: react 5/5**, `astro check` sobre `apps/docs` (490 archivos) 0 errores, `ai-compiler` 101/101 incluida `checkRecipes()` (que corre CADA estado de CADA receta publicada contra el validador — encontró el uso roto en `browse.ts` antes de que este informe lo hiciera), changelog `breaking` nuevo (`contracts/changelog/segmented.yaml`). Verificado en vivo (`curl` sobre `/componentes/segmented`): `aria-label="Rango" role="radiogroup"` en el HTML servido.
+
+**Veredicto:** el gap más autoconfesado de toda la ronda — el propio código documentaba el bypass en vez de solo cometerlo en silencio. `checkRecipes()` (un gate que no se había disparado hasta ahora en esta sesión) resultó ser una red de seguridad real: encontró un quinto sitio con el mismo bug que ni el grep manual había cubierto.
+
+### Flyout — revisado ✅ (2026-08-17)
+
+**Contra el patrón WAI Select-Only Combobox / Listbox** (botón trigger con `aria-haspopup="listbox"`, `aria-expanded`, `aria-controls`; panel `role="listbox"`; ítems `role="option"` con `aria-selected`; nombre del trigger vía `aria-labelledby` al `<label>` visible, ya que un `<label>` no se asocia automáticamente con un `<button>` como sí lo haría con un `<input>`): ambos bindings ya implementan el patrón completo — `aria-expanded`/`aria-controls`/`aria-labelledby` en el trigger, `aria-labelledby` también en el panel, `aria-selected` en cada opción, Escape cierra, flechas navegan y abren.
+- ✅ **Investigado un posible gap y descartado tras leer el código completo, no solo grepeado:** `label` es un slot OPCIONAL — parecía que React podía dejar un `aria-labelledby` colgante (apuntando a un id que no existe) cuando se omite. Falso: `labelId` ya se computa condicionalmente (`label ? \`${flyoutId}-label\` : undefined`), así que React omite el atributo igual que Vanilla (`label?.id ?? null`) — los dos bindings ya coinciden.
+- ✅ Cierre único (solo un flyout abierto a la vez, vía evento compartido `sk-flyout-open`) y `panel` permanece `hidden` en vez de removido del DOM, a propósito ("closed is a state, not a removal") — para que `aria-controls` nunca apunte a un nodo inexistente.
+
+**Veredicto:** sin gaps — de los tres patrones flotantes que el propio archivo menciona (`tooltip`, `popover`, `menu`), este es el único publicado precisamente porque no depende de portal ni de anclaje CSS, y la implementación ya está a la altura del resto de los patrones Combobox/Listbox ya auditados.
+
+### Tile (TileLink, TileButton, TileContent, TileChevron, TileCheckbox, TileSwitch, TileRadioGroup, ExpandableTile*) — revisado ✅ (2026-08-17)
+
+Familia base de `Card`/`Accordion` (`ExpandableTile*` es lo que Accordion compone, ya auditado con la máquina real de Zag leída línea por línea). Elementos nativos en cada signature (`a`/`button`/`label` envolviendo `input`), nunca `role` simulado sobre un `<div>`.
+
+- 🔧 **Ya corregido en la barrida sistemática de `requires` de arriba:** `TileLink` (`tile.ts` exige `href`) no lo reflejaba como requerido en `TileLinkProps` de React — mismo fix que `ListItemLink`/`Link`.
+- ✅ **`TileRadioGroup`** ya tenía `name: string` requerido en su tipo de React (`TileRadioGroupOptions`, escrito a mano, no derivado) — coincide con `requires: ["name"]` del contrato.
+- ✅ **`TileCheckbox`/`TileSwitch`** cubiertos en espíritu por las revisiones ya hechas de Checkbox/Switch (la tabla principal ya los lista como "tile-checkbox"/"tile-switch" bajo esos patrones).
+
+**Veredicto:** un gap real, ya corregido en la barrida sistemática — el resto de la familia usa elementos nativos correctamente y compone patrones ya auditados en otras filas de esta tabla.
+
+### FormField + Input/Textarea — revisado ✅ (2026-08-17)
+
+**Contra el patrón implícito de "etiqueta + control + ayuda + error"** que WAI da por sentado en cada patrón de formulario que sí tiene ejemplo dedicado (Combobox, Spinbutton, RadioGroup, todos ya auditados): seis ids derivados de uno solo (`for`, `aria-describedby` a hint+error combinados, `aria-invalid` cuya única fuente de verdad es la PRESENCIA del mensaje de error, nunca un flag `invalid` separado que pueda desincronizarse del mensaje real — el propio archivo lo señala como el bug que este diseño previene).
+
+- ✅ **Vía Context, no props manuales — la pieza que hace que esto sea difícil de romper:** `FormFieldContext` computa los seis ids una vez; `useFormFieldControl()` es el hook que CUALQUIER control (no solo `Input`) consume para heredar `id`/`aria-describedby`/`aria-invalid`/`required`/`disabled`, con fallback a sus propios props cuando no hay `FormField` alrededor — confirmado que `Input`/`Textarea` (`react/input.tsx`) ya lo usan completo, los cinco atributos presentes.
+- ✅ **Verificado con un caso real, no solo la forma:** `aria-describedby` se arma solo con los ids de hint/error que EXISTEN (`[hint ? hintId : null, error ? errorId : null].filter(Boolean).join(" ")`) — nunca una referencia colgante a un hint ausente.
+
+**Veredicto:** sin gaps — el diseño ya elimina por construcción la clase de bug que un `aria-describedby`/`for` escrito a mano introduce (un id mal tipeado, un `invalid` que no coincide con si hay mensaje de error o no).
+
+### Pagination + TablePager — revisado ✅ (2026-08-17)
+
+Sin patrón WAI dedicado, pero `<nav aria-label>` con `aria-current="page"` en el ítem activo replica exactamente la regla que Breadcrumb ya validó, y el propio código ya razona explícitamente sobre el anti-patrón que esta auditoría persigue en general: los botones prev/next se DESHABILITAN cuando no hay página anterior/siguiente en vez de dejarlos clicables sin efecto — "without this the authored markup offered a control that cannot do anything, and said so to a screen reader", comentario propio.
+
+- ✅ `Pagination`: `nav` con `label` (default "Pagination"), `aria-current="page"` computado (nunca autorado a mano, se deriva de comparar `page` contra cada entrada de la ventana), botones prev/next con `disabled` computado (`page === 1`, `page === total` vía `equalsOption`) — sin gaps.
+- 🔧 **Bug real, encontrado al investigar si esto reusaba el mismo patrón que el contador de resultados de Combobox (ya fijado en la revisión de Alert):** `TablePagerStatus` — el nodo cuyo texto el enhancer reescribe en cada cambio de página (`table-pager.ts`: `status.textContent = statusTemplate...`) — no tenía `role`/`aria-live` en NINGUNA capa. Un lector de pantalla que cambia de página no se entera de que el rango visible cambió ("1–10 de 42" → "11–20 de 42"), el mismo gap que Combobox ya había resuelto para su propio contador de resultados en otra parte de este mismo repo.
+  - `packages/core/src/pagination.ts`: `attrs: { role: "status", "aria-live": "polite", "aria-atomic": "true" }` en el template de `TablePagerStatus`.
+  - `packages/react/src/components/pagination.tsx`: mismos tres atributos agregados al componente.
+  - Vanilla sin cambios de código — el enhancer ya solo reescribe `textContent`, nunca los atributos estáticos; el compilador es quien ahora los emite.
+  - Test nuevo en `pagination.test.tsx` (no existía ningún test de `TablePagerStatus` antes). **Suites verdes: react 3/3, vanilla 2/2, ai-compiler 101/101** (sin cambio de `surface`, mismo motivo que el resto de los fixes de atributo estático). Verificado en vivo (`curl` sobre `/componentes/table`): `role="status" aria-live="polite"` en el HTML servido.
+
+**Veredicto:** un gap real y silencioso — exactamente el tipo de bug que esta auditoría fue diseñada para encontrar, porque el propio repo ya tenía la solución correcta en un componente vecino (Combobox) sin que este la heredara.
+
+### Card — revisado ✅ (2026-08-17)
+
+No es un contrato propio — la página compone primitivos ya auditados (`Box`, `Stack`, `Inline`, `Grid` de layout; `TileLink`/`TileButton`/`TileCheckbox` de la familia Tile, que se revisa aparte más abajo). Releídos los 12 demos de `apps/docs/src/components/react-demos/card.tsx` con ojo de auditoría: cada rung interactivo usa el elemento de plataforma correcto (`TileLink` para navegación, `TileButton` para acción, `TileCheckbox` para preferencia — comentario propio: "this one DOES something, so it is a button"), nunca un `onClick` sobre un `<div>`; el rung 12 evita deliberadamente envolver dos controles independientes (link + botón) en un solo elemento interactivo porque sería HTML inválido. Sin gaps — el ejemplo ya modela las decisiones correctas en vez de solo evitarlas por accidente.
+
 Progreso registrado por componente abajo a medida que se completa cada uno.

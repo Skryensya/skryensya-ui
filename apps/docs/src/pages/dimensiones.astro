@@ -186,6 +186,32 @@ const radiusUse = `<!-- Un preset del multiplicador… -->
     puede pintar pequeño y responder grande).
   </p>
 
+  <h3>Área táctil, 44px por más chico que se pinte</h3>
+  <p>
+    <code>--size-touch-target</code> es un valor fijo, <strong>44px</strong> (iOS HIG), que no
+    responde a densidad. Button e Input lo consumen con <code>max(control-size, size-touch-target)</code>:
+    el control nunca puede quedar más chico que 44px sin importar cuán compacta esté la escala de
+    tamaños, pero sí puede pintarse más grande cuando su tamaño visual ya supera ese piso (<code>lg</code>,
+    por ejemplo).
+  </p>
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <p>
+        <strong>Pintado pequeño, hit-area grande.</strong> Un botón icon-only en <code>sm</code> pinta a
+        su tamaño visual real, más chico que 44px — pero un <code>::after</code> invisible extiende el
+        área clickeable hasta el piso táctil sin agrandar el control en pantalla. Es el mismo patrón que
+        usa RadioGroup (<code>--sk-radio-hit-size</code>, un círculo de captura más grande que el punto
+        visible) y que Switch resuelve distinto: ahí toda la etiqueta es el área táctil, así que el
+        riel visual no necesita cargar el piso por su cuenta.
+      </p>
+    </div>
+  </div>
+  <p>
+    17 componentes de <code>packages/core/css/components</code> consumen el token hoy, entre ellos
+    Combobox, Select, DatePicker y CommandPalette — cualquier control interactivo nuevo debería sumarse
+    a esa lista, no inventar su propio mínimo.
+  </p>
+
   <h2>Radio, la redondez como eje, no como valor de marca</h2>
   <p>
     Un <strong>multiplicador</strong>, no un valor plano igual para todo: <code>--radius-multiplier</code>

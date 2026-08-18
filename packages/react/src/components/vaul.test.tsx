@@ -10,7 +10,7 @@ import { Drawer, Vaul } from "./vaul.js";
 describe("Vaul", () => {
   it("carries the enhancer's scope markers at rest", () => {
     const ui = render(
-      <Vaul open>
+      <Vaul label="Filtros" open>
         <p>Contenido</p>
       </Vaul>,
     );
@@ -25,7 +25,7 @@ describe("Vaul", () => {
 
   it("draws the handle as decoration, always", () => {
     const ui = render(
-      <Vaul open>
+      <Vaul label="Filtros" open>
         <p>Contenido</p>
       </Vaul>,
     );
@@ -39,7 +39,7 @@ describe("Vaul", () => {
 
   it("takes a logical edge and the consumer's own className", () => {
     const ui = render(
-      <Vaul className="filtros" edge="inline-start" open>
+      <Vaul label="Filtros" className="filtros" edge="inline-start" open>
         <p>Contenido</p>
       </Vaul>,
     );
@@ -53,7 +53,7 @@ describe("Vaul", () => {
 
   it("adds the drawer modifier only for the drawer signature", () => {
     const ui = render(
-      <Drawer open>
+      <Drawer label="Navegación" open>
         <p>Contenido</p>
       </Drawer>,
     );
@@ -68,7 +68,7 @@ describe("Vaul", () => {
 
   it("forwards native dialog attributes untouched", () => {
     const ui = render(
-      <Vaul aria-label="Filtros" id="filtros" open>
+      <Vaul label="Filtros" id="filtros" open>
         <p>Contenido</p>
       </Vaul>,
     );

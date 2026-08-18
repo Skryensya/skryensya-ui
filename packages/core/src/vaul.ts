@@ -84,6 +84,15 @@ export const vaulContract = {
     },
     /** Rendered already open, non-modally — the platform's attribute, as on `Dialog`. */
     open: { type: "boolean", default: false, attr: "open", trueValue: "" },
+    /*
+     * Required, same reasoning as `Dialog`'s own required `title` slot: `showModal()` gives the
+     * root an implicit `role="dialog"` whether or not the composition thinks about it, and WAI's
+     * Dialog (Modal) pattern requires that role to carry a name. Vaul has no header of its own to
+     * source a `labelledBySlot` from (deliberately — "its own semantics are the composition's
+     * business"), so the name is a plain option instead of a slot, the same shape `Feed`'s own
+     * required `label` already uses for a root with no title node either.
+     */
+    label: { type: "string", attr: "aria-label" },
   },
 
   signatures: {
@@ -91,7 +100,8 @@ export const vaulContract = {
       intent: ["edge-anchored-panel", "bottom-sheet", "drag-to-dismiss", "mobile-navigation"],
       host: { element: "dialog" },
       mount: "data-sk-vaul",
-      options: ["edge", "open"],
+      options: ["edge", "open", "label"],
+      requires: ["label"],
       slots: {
         /** Whatever the panel holds. Its own semantics are the composition's business. */
         children: { accepts: "node", required: true },
@@ -129,7 +139,8 @@ export const vaulContract = {
       intent: ["navigation-drawer", "side-panel", "mobile-navigation"],
       host: { element: "dialog" },
       mount: "data-sk-vaul",
-      options: ["edge", "open"],
+      options: ["edge", "open", "label"],
+      requires: ["label"],
       slots: { children: { accepts: "node", required: true } },
       template: {
         element: "dialog",

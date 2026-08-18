@@ -25,8 +25,8 @@ const link = (t: Translate, key: string, href: string, icon: string, extra?: Usa
 export const drawerTree = (t: Translate): UsageTree => ({
   contract: "vaul",
   signature: "Vaul.drawer",
-  options: { edge: "inline-start", open: true },
-  attrs: { id: "demo-drawer", "aria-label": t("demo.drawer.label") },
+  options: { edge: "inline-start", open: true, label: t("demo.drawer.label") },
+  attrs: { id: "demo-drawer" },
   children: [
     {
       contract: "layout",

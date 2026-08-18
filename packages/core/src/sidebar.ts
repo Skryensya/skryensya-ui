@@ -37,6 +37,11 @@ export type SidebarOptions = {
    */
   minInlineSize?: string;
   maxInlineSize?: string;
+  /**
+   * Names the `<aside>` landmark. Optional — required only once a page has a second
+   * `complementary` region to disambiguate from.
+   */
+  landmarkLabel?: string;
 };
 
 export const sidebarEvents = {
@@ -144,6 +149,14 @@ export const sidebarContract = {
     label: { type: "string", attr: "aria-label" },
 
     /**
+     * Names the `<aside>` itself — a different target than `label` above (the trigger's own name).
+     * Optional: a page with exactly one `complementary` landmark needs no name to be unambiguous,
+     * but WAI's own landmark practice requires one the moment a consumer renders a second `<aside>`
+     * (or a second `Sidebar`) on the same page, and the contract had no way to supply it at all.
+     */
+    landmarkLabel: { type: "string", attr: "aria-label", prop: "landmarkLabel" },
+
+    /**
      * The slot a dragged width is remembered under. Absent, the resize still works and simply does
      * not outlive the tab: persistence is opt-in because a width is a preference, and a product
      * that renders two different sidebars needs to say which one it is remembering.
@@ -165,7 +178,7 @@ export const sidebarContract = {
     Sidebar: {
       intent: ["sidebar", "side-navigation", "app-shell-rail", "left-nav"],
       host: { element: "aside" },
-      options: ["defaultCollapsed", "storageKey", "minInlineSize", "maxInlineSize"],
+      options: ["defaultCollapsed", "storageKey", "minInlineSize", "maxInlineSize", "landmarkLabel"],
       slots: {
         children: {
           accepts: "signature",

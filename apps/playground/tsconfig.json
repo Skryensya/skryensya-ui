@@ -1,0 +1,17 @@
+{
+  "extends": "astro/tsconfigs/base",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "moduleDetection": "force",
+    "paths": {
+      "@/*": ["src/*"],
+      "@core/*": ["../../packages/core/*"],
+      "@vanilla/*": ["../../packages/vanilla/*"],
+      "@react/*": ["../../packages/react/*"],
+      "@contracts/*": ["../../contracts/*"],
+      "@artifacts/*": ["../../artifacts/*"]
+    }
+  },
+  "include": [".astro/types.d.ts", "src/**/*", "scripts/**/*", "astro.config.mjs"],
+  "exclude": ["dist"]
+}

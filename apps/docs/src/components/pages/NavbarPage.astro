@@ -1,4 +1,5 @@
 ---
+import "@skryensya/core/components/navbar.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
@@ -58,6 +59,7 @@ const sourceFiles = [
       })}
       label="Navbar"
       flush
+      minHeight="10rem"
     />
 
     <h3>{t("navbarPage.currentTitle")}</h3>

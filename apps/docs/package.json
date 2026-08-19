@@ -5,14 +5,12 @@
   "type": "module",
   "description": "Documentation site for skryensya/ui. Consumes @skryensya/core through the same exports map it documents.",
   "scripts": {
-    "dev": "astro dev stop && pnpm run sandbox && astro dev --port 4173",
+    "dev": "astro dev stop && astro dev --port 4173",
     "check": "astro check",
-    "build": "pnpm run sandbox && astro build",
-    "preview": "astro preview",
-    "sandbox": "node scripts/build-sandbox-bundles.mjs"
+    "build": "astro build",
+    "preview": "astro preview"
   },
   "dependencies": {
-    "@codesandbox/sandpack-react": "^2.20.0",
     "@skryensya/ai-compiler": "workspace:*",
     "@skryensya/core": "workspace:*",
     "@skryensya/icons-lucide": "workspace:*",
@@ -21,6 +19,7 @@
     "@skryensya/react": "workspace:*",
     "@skryensya/recipes": "workspace:*",
     "@skryensya/vanilla": "workspace:*",
+    "@zag-js/react": "^1.42.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

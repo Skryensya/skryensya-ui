@@ -1,11 +1,14 @@
 import {
   computeTreegridVisibility,
   defaultTreegridColumnWeights,
+  diffTreegridVisibility,
   resolveColumnResize,
   resolveTreegridKey,
   treegridParts,
+  TREEGRID_EXIT_FALLBACK_MS,
   TREEGRID_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH,
   type TreegridFocus,
+  type TreegridRowTransition,
 } from "@skryensya/core/treegrid";
 import {
   hasCrossedDragThreshold,
@@ -56,6 +59,9 @@ type TreegridContextValue = {
   isCellStop: (id: string, col: number) => boolean;
   isHidden: (id: string) => boolean;
   isExpanded: (id: string) => boolean;
+  /** `"entering"`/`"exiting"` for one animation's worth after a toggle, `undefined` at rest — see
+   * `Treegrid`'s own effect for what drives it. */
+  transitionOf: (id: string) => TreegridRowTransition;
   /** `column === 0` on a branch row toggles instead of just moving focus — same rule the vanilla
    * enhancer's own click handler applies. */
   onCellClick: (id: string, isBranch: boolean, col: number) => void;
@@ -252,14 +258,114 @@ export function Treegrid({
   const visibleFlags = useMemo(() => computeTreegridVisibility(meta), [meta]);
   const visibleRows = useMemo(() => rows.filter((_, index) => visibleFlags[index]), [rows, visibleFlags]);
   const visibleMeta = useMemo(() => meta.filter((_, index) => visibleFlags[index]), [meta, visibleFlags]);
+
+  /*
+   * ANIMATING A TOGGLE. `visibleFlags` above stays the pure, INSTANT truth `resolveTreegridKey`'s
+   * own keyboard-navigable index space is built from (an "exiting" row is not addressable by arrow
+   * keys the instant its branch collapses, whether or not it is still painting) — nothing here
+   * touches that. What these two states add is a WINDOW between a row's logical visibility
+   * flipping and its DOM `hidden` attribute catching up:
+   *   - `exitingIds`: rows CURRENTLY `visibleFlags === false` that are kept un-hidden anyway, so
+   *     they keep painting through their own exit animation instead of vanishing in the same frame
+   *     the branch collapses. `hiddenById` below is the only thing that reads this.
+   *   - `transitionById`: `"entering"`/`"exiting"` for exactly the same window, one animation's
+   *     worth — what `TreegridRow` puts on `data-state` for `treegrid.css`'s own keyframes to key
+   *     off. An entering row needs no `exitingIds` counterpart: it is already unhidden the instant
+   *     `visibleFlags` says so (table layout grows right away), this is purely the cosmetic fade+
+   *     rise layered on top.
+   *
+   * Both are set from INSIDE `toggle()` itself, synchronously with `setExpandedById` — not reactively
+   * off a `visibleFlags`-watching `useEffect`. A passive effect fires AFTER the browser has already
+   * committed and painted the "unhidden, no `data-state` yet" frame from the `setExpandedById` commit,
+   * so `data-state="entering"` lands one commit too late for the browser to ever start
+   * `sk-treegrid-row-in` against it (confirmed live: `getAnimations()` came back empty every time).
+   * Diffing here instead — against `visibleFlags` from THIS render's closure, the state as it stood
+   * before this toggle — means `hidden` and `data-state` both change in the SAME commit, same as the
+   * vanilla binding's own two synchronous attribute writes.
+   */
+  const [exitingIds, setExitingIds] = useState<ReadonlySet<string>>(() => new Set());
+  const [transitionById, setTransitionById] = useState<Record<string, TreegridRowTransition>>({});
+  // One settle-timer per row currently mid-transition, so a SECOND toggle before the first one
+  // finishes cancels the stale timer instead of letting it fire late against whatever state the
+  // row is in by then (`animationend` is cleaned up the same way, `{ once: true }` below).
+  const settleTimersRef = useRef(new Map<string, ReturnType<typeof setTimeout>>());
+
+  useEffect(
+    () => () => {
+      for (const timer of settleTimersRef.current.values()) clearTimeout(timer);
+      settleTimersRef.current.clear();
+    },
+    [],
+  );
+
+  const settleTransition = (id: string, transition: "entering" | "exiting") => {
+    const timer = settleTimersRef.current.get(id);
+    if (timer) clearTimeout(timer);
+    settleTimersRef.current.delete(id);
+    setTransitionById((prevState) => {
+      // Only clear if STILL the transition that scheduled this settle — a rapid re-toggle may
+      // already have moved this row into the OPPOSITE transition by the time this fires.
+      if (prevState[id] !== transition) return prevState;
+      const next = { ...prevState };
+      delete next[id];
+      return next;
+    });
+    if (transition === "exiting") {
+      setExitingIds((prevSet) => {
+        if (!prevSet.has(id)) return prevSet;
+        const next = new Set(prevSet);
+        next.delete(id);
+        return next;
+      });
+    }
+  };
+
   const hiddenById = useMemo(
-    () => Object.fromEntries(rows.map((row, index) => [row.id, !visibleFlags[index]])),
-    [rows, visibleFlags],
+    () => Object.fromEntries(rows.map((row, index) => [row.id, !visibleFlags[index] && !exitingIds.has(row.id)])),
+    [rows, visibleFlags, exitingIds],
   );
 
   const toggle = (id: string, expanded: boolean) => {
-    setExpandedById((previous) => ({ ...previous, [id]: expanded }));
+    const nextExpandedById = { ...expandedById, [id]: expanded };
+    const nextMeta = rows.map((row) => ({
+      level: row.level,
+      isBranch: row.isBranch,
+      expanded: nextExpandedById[row.id] ?? false,
+    }));
+    const nextVisibleFlags = computeTreegridVisibility(nextMeta);
+    const transitions = diffTreegridVisibility(visibleFlags, nextVisibleFlags);
+    const changed = rows
+      .map((row, index) => ({ id: row.id, transition: transitions[index] }))
+      .filter((entry): entry is { id: string; transition: "entering" | "exiting" } => entry.transition !== undefined);
+
+    setExpandedById(nextExpandedById);
     onExpandedChange?.({ value: id, expanded });
+
+    if (changed.length === 0) return;
+
+    setTransitionById((prevState) => {
+      const next = { ...prevState };
+      for (const { id: rowId, transition } of changed) next[rowId] = transition;
+      return next;
+    });
+    setExitingIds((prevSet) => {
+      const next = new Set(prevSet);
+      for (const { id: rowId, transition } of changed) {
+        if (transition === "exiting") next.add(rowId);
+      }
+      return next;
+    });
+
+    for (const { id: rowId, transition } of changed) {
+      const element = elements.current.get(focusKey(rowId, null));
+      const existingTimer = settleTimersRef.current.get(rowId);
+      if (existingTimer) clearTimeout(existingTimer);
+      settleTimersRef.current.set(
+        rowId,
+        setTimeout(() => settleTransition(rowId, transition), TREEGRID_EXIT_FALLBACK_MS),
+      );
+      element?.addEventListener("animationend", () => settleTransition(rowId, transition), { once: true });
+    }
   };
 
   const visibleIndexById = useMemo(
@@ -317,6 +423,7 @@ export function Treegrid({
     isCellStop: (id, col) => focus.col === col && visibleIndexById[id] === focus.row,
     isHidden: (id) => hiddenById[id] ?? false,
     isExpanded: (id) => expandedById[id] ?? false,
+    transitionOf: (id) => transitionById[id],
     // Cells cover the row's entire clickable area in a real `<table>`, so click handling lives here
     // ONLY (never duplicated on `<tr>` too) — a `<td>`'s own click already bubbles to its row, and a
     // second handler up there would fire a second, conflicting focus/toggle for the same click.
@@ -585,6 +692,7 @@ export function TreegridRow({
       // `<td>` one column right (measured: Chromium 140). `TreegridCell` below still carries
       // `sk-interactive` for its own hover/press feedback.
       className={cx(`${treegridParts.row} sk-table__row`, className)}
+      data-state={context.transitionOf(value)}
       data-value={value}
       hidden={hidden}
       ref={(element) => context.registerElement(value, null, element)}

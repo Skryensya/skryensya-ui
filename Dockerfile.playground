@@ -1,0 +1,33 @@
+# Playground app only (@skryensya/playground). Build context must be the monorepo root.
+# Dokploy: Dockerfile path = Dockerfile.playground
+
+FROM node:22-bookworm-slim AS build
+
+RUN corepack enable && corepack prepare pnpm@10.18.2 --activate
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY apps ./apps
+COPY packages ./packages
+COPY contracts ./contracts
+COPY evals ./evals
+COPY artifacts ./artifacts
+COPY scripts ./scripts
+
+RUN pnpm install --frozen-lockfile
+
+# Core's dist/foundation.css is an input to the playground sandbox bundle. The rest of the
+# playground imports workspace package source through exports maps, so building every dependency via
+# Turbo would run compiler contract publication checks that are not required to produce this app.
+ENV NODE_OPTIONS=--max-old-space-size=4096
+RUN pnpm --filter @skryensya/core build && pnpm --filter @skryensya/playground build
+
+FROM nginx:1.27-alpine AS runtime
+
+COPY nginx.docs.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/apps/playground/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

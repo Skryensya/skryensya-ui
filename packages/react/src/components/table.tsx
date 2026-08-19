@@ -214,11 +214,27 @@ export function Table({
     // `columnWeights`, falling back to an equal split — `resolveWeightedColumnWidths`'s own doc
     // (`@skryensya/core/splitter`) explains why an equal split is not always the right seed.
     const weights = columnWeights ?? Array.from({ length: colCount }, () => 1);
+    /*
+     * CSS's separated-border table model (`border-collapse: separate`, what `.sk-table` uses)
+     * paints a table's own border OUTSIDE the width its `width` property/`<col>` sum describes,
+     * regardless of `box-sizing` — confirmed against a real render, not assumed: seeding straight
+     * off the wrapper's width rendered the table 2px wider than the wrapper itself (one border
+     * width per side), a permanent horizontal scrollbar a resizable table should never carry.
+     * Verbatim port of the vanilla enhancer's identical `borderWidth` read (`components/table.ts`).
+     */
+    const borderWidth = (() => {
+      const style = getComputedStyle(table);
+      // `|| 0`, not a bare `parseFloat`: an environment with no real stylesheet cascade (this
+      // component's own test suite) reports `borderLeftWidth` as `""`, and `parseFloat("")` is
+      // `NaN` — left unguarded, that `NaN` propagates through every width this effect computes.
+      return (Number.parseFloat(style.borderLeftWidth) || 0) + (Number.parseFloat(style.borderRightWidth) || 0);
+    })();
 
     // Guards against a callback already in flight the instant `disconnect()` is called — a real
     // race, not a hypothetical one, since `ResizeObserver` batches and delivers on the next frame.
     let seeded = false;
-    const seedFrom = (width: number): boolean => {
+    const seedFrom = (rawWidth: number): boolean => {
+      const width = Math.max(0, rawWidth - borderWidth);
       if (seeded || width <= 0) return false;
       seeded = true;
       const seeds = resolveWeightedColumnWidths({ total: width, weights, min: MIN_COLUMN_WIDTH });

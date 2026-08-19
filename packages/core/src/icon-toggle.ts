@@ -1,5 +1,6 @@
 /*
- * ICON TOGGLE, the stacked-face morph that ThemeToggle, ContrastToggle and CopyButton compose.
+ * ICON TOGGLE, the stacked-face morph that Icon State Button (`icon-state-button.ts`, decision 33)
+ * composes.
  *
  * An icon-only button whose faces occupy one cell and cross-fade. The PATTERN owns the stack
  * and the morph (`patterns/icon-toggle.css`); which face is current is the component's. Faces
@@ -7,11 +8,12 @@
  * `--sk-icon-toggle-on: 1` on the matching face so paint and runtime stay aligned.
  *
  * It is a pattern and not a component for the same reason as Anclaje (decision 8): a second
- * control already needs this exact structure. ThemeToggle, ContrastToggle and CopyButton
- * are the three that ship.
+ * control already needs this exact structure — until decision 33 that was two components
+ * (ThemeToggle, CopyButton) each hand-writing the same anatomy; now it is the one signature built
+ * on it, and whatever a consumer composes on top.
  *
  * Flat class, composed the way `sk-interactive` composes with `sk-button`:
- * `class="sk-button sk-interactive sk-icon-toggle sk-copy-button"`.
+ * `class="sk-button sk-interactive sk-icon-toggle sk-icon-state-button"`.
  */
 
 export const iconToggleParts = {

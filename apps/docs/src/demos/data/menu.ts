@@ -96,6 +96,14 @@ export const menuCompactItems = (t: Translate): readonly ItemInput[] => [
  * either one toward the submenu that opens beside it actually crosses the other one's row. The
  * arrangement IS the demo: with the submenu last, nothing would ever be crossed on the way to it and
  * the safety triangle would have nothing to protect.
+ *
+ * The same rule applies to EACH of "Compartir"'s own two triggers, not only to "Compartir" itself:
+ * "Por correo" sits second and "Exportar como PDF" sits fourth, never first, so opening either one
+ * still means crossing at least one sibling row on the way in — the case the safety area exists for.
+ * Two independent triggers at this level, not one nested three deep, is deliberate: the corridor the
+ * safety area protects is between whichever ROW is open and the panel beside it, and that shape does
+ * not change by chaining more levels under a single item, only by giving the level another one to
+ * hold open at the same time.
  */
 export const menuSafetyItems = (t: Translate): readonly ItemInput[] => [
   { options: { value: "new" }, slots: { label: t("demo.menu.safety.new") } },
@@ -104,8 +112,30 @@ export const menuSafetyItems = (t: Translate): readonly ItemInput[] => [
     slots: {
       label: t("demo.menu.safety.share"),
       children: [
-        { options: { value: "email" }, slots: { label: t("demo.menu.safety.email") } },
         { options: { value: "link" }, slots: { label: t("demo.menu.safety.link") } },
+        {
+          options: { value: "email" },
+          slots: {
+            label: t("demo.menu.safety.email"),
+            children: [
+              { options: { value: "outlook" }, slots: { label: t("demo.menu.safety.emailOutlook") } },
+              { options: { value: "gmail" }, slots: { label: t("demo.menu.safety.emailGmail") } },
+              { options: { value: "apple" }, slots: { label: t("demo.menu.safety.emailApple") } },
+              { options: { value: "yahoo" }, slots: { label: t("demo.menu.safety.emailYahoo") } },
+            ],
+          },
+        },
+        { options: { value: "print" }, slots: { label: t("demo.menu.safety.print") } },
+        {
+          options: { value: "pdf" },
+          slots: {
+            label: t("demo.menu.safety.pdf"),
+            children: [
+              { options: { value: "pdf-highres" }, slots: { label: t("demo.menu.safety.pdfHighRes") } },
+              { options: { value: "pdf-compressed" }, slots: { label: t("demo.menu.safety.pdfCompressed") } },
+            ],
+          },
+        },
       ],
     },
   },

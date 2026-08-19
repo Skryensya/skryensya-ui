@@ -6,6 +6,6 @@ Tooltip:
     - "un botón de sólo icono necesita una pista visual redundante para quien puede verla"
   avoidWhen:
     - "el texto es el único nombre o la única información disponible; debe vivir fuera del tooltip"
-    - "el contenido necesita acciones, formato o varias líneas; usa Flyout"
+    - "el contenido necesita acciones, formato o varias líneas; usa Popover"
   alternatives:
-    - Flyout
+    - Popover

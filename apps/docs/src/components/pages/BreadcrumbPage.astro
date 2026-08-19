@@ -4,6 +4,7 @@ import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  breadcrumbCollapseTree,
   breadcrumbIconTree,
   breadcrumbLongTree,
   breadcrumbMultiTree,
@@ -66,6 +67,19 @@ const sourceFiles = [
       <li set:html={t("breadcrumb.longItem2")} />
     </ul>
     <ComponentPreview tree={breadcrumbLongTree(t, "/proyectos")} label={t("breadcrumb.longLabel")} viewport="auto" />
+
+    <h4>{t("breadcrumb.collapseTitle")}</h4>
+    <p set:html={t("breadcrumb.collapseBody")} />
+    <ComponentPreview
+      tree={breadcrumbCollapseTree(t, {
+        documents: "/documentos",
+        projects: "/documentos/proyectos",
+        designSystem: "/documentos/sistema-de-diseno",
+        components: "/documentos/sistema-de-diseno/componentes",
+      })}
+      label={t("breadcrumb.collapseLabel")}
+      viewport="auto"
+    />
 
     <h3>{t("component.contractNotesTitle")}</h3>
     <p set:html={t("breadcrumb.contractBody")} />

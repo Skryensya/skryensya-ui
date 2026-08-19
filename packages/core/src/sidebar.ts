@@ -172,6 +172,16 @@ export const sidebarContract = {
      */
     minInlineSize: { type: "string", styleProperty: "--sk-sidebar-min-inline-size" },
     maxInlineSize: { type: "string", styleProperty: "--sk-sidebar-max-inline-size" },
+
+    /**
+     * Lifts the trigger out of flow and pins it just past the panel's own edge, near the top,
+     * rather than sitting inline where it was authored (a header row, say). For a shell whose
+     * header is the application's own (a navbar above, a workspace switcher), an inline trigger
+     * row is chrome the shell did not ask for; a corner control reads as the rail's own affordance
+     * instead. Purely presentational — the DOM position (and which legal parent hosts it) is
+     * unchanged, so `aria-controls` and the click handler need nothing new to find it.
+     */
+    floating: { type: "boolean", default: false, attr: "data-floating", trueValue: "" },
   },
 
   signatures: {
@@ -250,10 +260,19 @@ export const sidebarContract = {
       /*
        * The header is where a sidebar actually puts it, beside the brand, and the footer is the
        * other real answer. `Sidebar` alone said the only legal place was loose in the shell, which
-       * is the one place nobody puts it.
+       * is the one place nobody puts it — DOM position, that is. `floating` (below) still renders
+       * it wherever it was authored, just visually lifted to the panel's own corner; it is a paint
+       * decision, not a second legal parent.
+       *
+       * ONE LEVEL, EVERY ITEM ICONED — that is the whole of what collapsing can show. The rail
+       * narrows to `--sk-sidebar-collapsed-inline-size`, one icon's width, so a nested group has no
+       * row left to draw its own trigger on, and a destination with no icon collapses to nothing at
+       * all. A list with either reaches for `SidebarResizeHandle` instead: smaller, never iconified,
+       * exactly the semantic overlay's `useWhen`/`avoidWhen` for the two (contracts/semantic/
+       * sidebar.yaml).
        */
       parents: ["Sidebar", "SidebarHeader", "SidebarFooter"],
-      options: ["label"],
+      options: ["label", "floating"],
       requires: ["label"],
       slots: { icon: { accepts: "signature", of: ["Icon"] } },
       mount: "data-sk-sidebar-trigger",

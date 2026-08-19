@@ -126,6 +126,15 @@ export function LayoutGrid<Element extends ElementType = "div">({
   return <Component {...props} className={classes(layoutGridParts.layoutGrid, className)} />;
 }
 
+/**
+ * The application work-area landmark. It deliberately owns no layout styling and may be empty.
+ */
+export type MainProps = ComponentPropsWithoutRef<"main">;
+
+export function Main(props: MainProps) {
+  return <main {...props} />;
+}
+
 export type DensityScopeProps<Element extends ElementType = "div"> = PolymorphicProps<
   Element,
   LayoutChildren & { densityFactor?: number }

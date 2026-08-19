@@ -10,6 +10,16 @@
    */
   type MenuInstance = { service: MenuService; getApi: () => MenuApi };
   const instances = new WeakMap<HTMLElement, MenuInstance>();
+
+  /**
+   * The mounted `MenuApi` for a `[data-sk-menu]` root, for a consumer OUTSIDE this component that
+   * needs to drive it imperatively — Menubar's own resolver calling `setOpen()` on the dropdown
+   * beside the trigger it just moved focus to/from, the same registry `instances` already keeps for
+   * submenu parent/child linking, just made reachable from outside this file.
+   */
+  export function getMenuApi(root: HTMLElement): MenuApi | undefined {
+    return instances.get(root)?.getApi();
+  }
 </script>
 
 <script lang="ts">
@@ -86,14 +96,42 @@
    */
   const menuId = root.id || uniqueId("sk-menu");
   const anchorEl = trigger;
-  const anchorName = supportsAnchorPositioning() && anchorEl ? anchorNameFor(menuId) : null;
+  /*
+   * `!hasSubmenu`: a submenu's trigger lives INSIDE the parent menu's own anchor-positioned panel,
+   * and the browser's anchor-positioning engine cannot paint a box anchored to something inside
+   * ANOTHER anchor-positioned box — measured against a live nested Menu, the computed rect comes
+   * back correct and nothing ever paints there. So a submenu always falls back to the machine's own
+   * placement instead (the fallback this pattern already ships for browsers with no engine at all).
+   *
+   * The TOP level withholds native positioning too, whenever it HAS a submenu, not only the submenu
+   * itself: mixing engines one level apart put the two out of the same coordinate space. The
+   * submenu's `--x`/`--y` are the machine's own measurement, taken relative to the viewport; but the
+   * browser resolves the SUBMENU's `position: fixed` against the nearest ancestor that is itself
+   * anchor-positioned (the top level's OWN positioner, still carrying `anchor-name` unconditionally
+   * whether or not it is placed via `@supports`) rather than the viewport — measured against a live
+   * nested Menu: a submenu math-correct in viewport terms rendered offset by roughly the top level
+   * panel's own on-screen position. One engine for the whole tree removes the mismatch instead of
+   * chasing which ancestor property makes it a containing block.
+   */
+  const isSubmenu = Boolean(root.parentElement?.closest<HTMLElement>(selector.root));
+  const hasSubmenu = isSubmenu || Boolean(root.querySelector<HTMLElement>(selector.root));
+  const anchorName = supportsAnchorPositioning() && !hasSubmenu && anchorEl ? anchorNameFor(menuId) : null;
   let unbindAnchor: (() => void) | undefined;
 
   const service = useMachine(menu.machine, () => ({
     id: menuId,
     "aria-label": root.getAttribute("aria-label") ?? undefined,
     defaultOpen: root.hasAttribute("data-open"),
-    positioning: { placement: "bottom-start" as const },
+    /*
+     * `strategy: "fixed"`, not the machine's own default (`absolute`): irrelevant while the browser
+     * places this box (`anchorName`), but it is what the machine writes into its OWN inline style,
+     * which is what actually positions a SUBMENU now that `anchorName` is withheld from one (see the
+     * note above). `absolute`'s containing block is the nearest positioned ancestor, here the parent
+     * menu's own panel, so a submenu measuring past that panel's edge grew ITS `overflow: auto`
+     * scrollport instead of floating free — the exact failure `patterns/anchored.css` already
+     * explains choosing `fixed` over `absolute` to avoid for the browser-placed case.
+     */
+    positioning: { placement: "bottom-start" as const, strategy: "fixed" as const },
     onOpenChange(details: { open: boolean }) {
       root.dispatchEvent(new CustomEvent("sk-open-change", { bubbles: true, detail: { open: details.open } }));
     },

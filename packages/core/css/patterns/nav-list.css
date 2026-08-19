@@ -47,11 +47,20 @@
 
     --sk-nav-list-link-current-bg: var(--color-nav-current-bg);
     --sk-nav-list-link-current-fg: var(--color-nav-current-fg);
-    --sk-nav-list-link-current-font-weight: var(--font-weight-label);
+    /* A faux-bold STROKE, not a real weight step: `font-weight` changes a glyph's advance width, so
+     * swapping it on `[aria-current]` reflowed the label (and, in the horizontal navbar, every link
+     * after it) the moment a route became current — a CLS a reader never asked to see. Two hairline
+     * offsets paint the same glyphs heavier without touching layout at all. */
+    --sk-nav-list-link-current-emphasis: 0.02em;
     --sk-nav-list-link-disabled-fg: var(--color-text-disabled);
 
     --sk-nav-list-label-opacity: 1;
     --sk-nav-list-trailing-fg: var(--color-text-tertiary);
+
+    /* How far a `NavListLink`'s own nested `NavListGroup` sits from the link that introduces it —
+     * its own hook, not `--sk-nav-list-group-label-padding-x`: that one insets a label INSIDE its
+     * own row, this one has to read as "one level under the parent link" instead. */
+    --sk-nav-list-nested-indent: var(--space-inset-md);
 
     /* The host re-declares these to pull the list into its own motion, the sidebar hands over its
      * collapse intent so the labels fade on exactly the beat the width moves. */
@@ -134,6 +143,18 @@
     min-inline-size: 0;
   }
 
+  /*
+   * A destination that carries its OWN sub-destinations (`NavListLink`'s `nested` slot): the
+   * group sits inside the same `<li>`, stacked under the link by normal block flow, indented so
+   * it reads as "one level under" rather than a second, unrelated group at the same depth. Every
+   * further level of nesting (a nested link with its own `nested`) compounds the same indent, so
+   * depth stays legible without a running total anything has to compute.
+   */
+  .sk-nav-list__item > .sk-nav-list__group {
+    margin-block-start: var(--sk-nav-list-item-gap);
+    padding-inline-start: var(--sk-nav-list-nested-indent);
+  }
+
   .sk-nav-list__link {
     display: flex;
     align-items: center;
@@ -154,6 +175,18 @@
       padding-inline-start var(--sk-nav-list-duration) var(--sk-nav-list-easing),
       padding-inline-end var(--sk-nav-list-duration) var(--sk-nav-list-easing),
       background-color var(--motion-feedback-duration) var(--motion-feedback-easing);
+  }
+
+  /* And a link may BE a button — Menubar's `nav` trigger (`menubar.ts`), a real control rather
+   * than something that navigates. Only `<a>` ever carried this class before, so nothing reset
+   * native button chrome: border and appearance, the same gap `menu.css` already closed once for
+   * `button.sk-menu__item`. */
+  button.sk-nav-list__link {
+    appearance: none;
+    border: 0;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
   }
 
   .sk-nav-list__label {
@@ -198,7 +231,12 @@
   .sk-nav-list__link[aria-current="page"] {
     --sk-nav-list-link-bg: var(--sk-nav-list-link-current-bg);
     --sk-nav-list-link-fg: var(--sk-nav-list-link-current-fg);
-    --sk-nav-list-link-font-weight: var(--sk-nav-list-link-current-font-weight);
+  }
+
+  .sk-nav-list__link[aria-current="page"] .sk-nav-list__label {
+    text-shadow:
+      calc(-1 * var(--sk-nav-list-link-current-emphasis)) 0 currentcolor,
+      var(--sk-nav-list-link-current-emphasis) 0 currentcolor;
   }
 
   .sk-nav-list__link[aria-disabled="true"] {

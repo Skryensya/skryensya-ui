@@ -62,14 +62,27 @@ export function watchColumnLayout(options: {
    * (`@skryensya/core/splitter`) explains why an equal split is not always the seed a consumer
    * wants. Omitted, every column starts equal, the prior behaviour. */
   readonly weights?: readonly number[];
+  /**
+   * Corrects the raw measured width before it is split across columns — Table's own call
+   * subtracts its `<table>`'s own border width: CSS's separated-border table model
+   * (`border-collapse: separate`, what `.sk-table` uses) paints a table's border OUTSIDE the
+   * width its `width` property/`<col>` sum describes, regardless of `box-sizing` — confirmed
+   * against a real render, not assumed: a table seeded to exactly its wrapper's own width still
+   * rendered 2px wider (one border width per side), a permanent horizontal scrollbar on a table
+   * that should never need one. Omitted, the raw measured width is used as-is (Treegrid's own
+   * call never needed this, `treegrid.css`'s own width note covers its actual failure mode).
+   */
+  readonly adjustTotal?: (total: number) => number;
   readonly apply: (widths: readonly number[]) => void;
 }): () => void {
   const { measured, colCount, min, apply } = options;
   const weights = options.weights ?? Array.from({ length: colCount }, () => 1);
+  const adjustTotal = options.adjustTotal ?? ((total: number) => total);
   // Guards against a callback already in flight the instant `disconnect()` is called — a real race,
   // not a hypothetical one, since `ResizeObserver` batches and delivers on the next frame.
   let seeded = false;
-  const seedFrom = (total: number): boolean => {
+  const seedFrom = (rawTotal: number): boolean => {
+    const total = adjustTotal(rawTotal);
     if (seeded || total <= 0) return false;
     seeded = true;
     apply(resolveWeightedColumnWidths({ total, weights, min }));

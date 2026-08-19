@@ -3,8 +3,38 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "da4beab9e019ff2b"
+surface: "659e932fd041e68a"
 entries:
+  - date: 2026-08-19
+    kind: feature
+    target: NavListLink
+    es:
+      title: NavListLink puede llevar sus propios sub-destinos
+      body: >-
+        Nuevo slot <code>nested</code> en <code>NavListLink</code>, que acepta un
+        <code>NavListGroup</code>. Se renderiza adentro del mismo <code>&lt;li&gt;</code>, como
+        hermano del <code>&lt;a&gt;</code>, no adentro de la lista del grupo padre — un
+        <code>NavListGroup</code> metido directo en el <code>children</code> de otro grupo no es
+        HTML válido, porque un <code>&lt;div&gt;</code> no es hijo legal de <code>&lt;ul&gt;</code>,
+        sólo <code>&lt;li&gt;</code> lo es. <code>NavListGroup</code> ahora acepta
+        <code>NavListLink</code> como segundo padre legal (antes sólo <code>NavList</code>), pero su
+        plantilla no cambia en nada: sigue siendo el mismo <code>&lt;div&gt;</code> con rótulo
+        opcional y <code>&lt;ul&gt;</code>, colapsable o no, con exactamente el mismo enhancer. La
+        profundidad es arbitraria: un <code>NavListLink</code> anidado puede volver a llevar su
+        propio <code>nested</code>.
+    en:
+      title: NavListLink can carry its own sub-destinations
+      body: >-
+        New <code>nested</code> slot on <code>NavListLink</code>, accepting a
+        <code>NavListGroup</code>. It renders inside the SAME <code>&lt;li&gt;</code>, as a sibling
+        of the <code>&lt;a&gt;</code>, not inside the parent group's own list — a
+        <code>NavListGroup</code> nested straight inside another group's <code>children</code> is
+        not valid HTML, since a <code>&lt;div&gt;</code> is not a legal <code>&lt;ul&gt;</code>
+        child, only <code>&lt;li&gt;</code> is. <code>NavListGroup</code> now accepts
+        <code>NavListLink</code> as a second legal parent (previously only <code>NavList</code>),
+        but its template is unchanged — same <code>&lt;div&gt;</code>, optional label,
+        <code>&lt;ul&gt;</code>, collapsible or not, the identical enhancer either way. Depth is
+        unbounded: a nested <code>NavListLink</code> can carry its own <code>nested</code> again.
   - date: 2026-08-15
     kind: feature
     target: collapsible

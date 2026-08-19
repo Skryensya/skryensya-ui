@@ -41,14 +41,19 @@ SidebarSeparator:
 SidebarTrigger:
   useWhen:
     - "la persona tiene que poder angostar la barra para ganar ancho de contenido"
+    - "la lista es de UN solo nivel y cada destino tiene su propio ícono: colapsado sólo quedan los íconos, así que sin ellos (o sin ese nivel único) el riel no dice nada"
   avoidWhen:
     - "se espera que oculte la barra; angosta, nunca esconde"
-  alternatives: []
+    - "la lista tiene subniveles (grupos anidados, un árbol de archivos): no hay una fila por nivel que mostrar en un riel de íconos; angostá con SidebarResizeHandle en cambio"
+    - "algún destino no tiene ícono propio; un riel colapsado con huecos es peor que uno que no colapsa"
+  alternatives:
+    - SidebarResizeHandle
 
 SidebarResizeHandle:
   useWhen:
     - "el ancho correcto lo decide el contenido de cada persona: rutas largas, un árbol profundo, nombres de archivo"
     - "hace falta un ancho intermedio, no sólo angosta o ancha"
+    - "la lista tiene subniveles o destinos sin ícono propio: no hay riel de íconos posible, así que la única forma de ganar ancho es angostar sin esconder nada"
   avoidWhen:
     - "la lista de destinos es fija y conocida; ahí el ancho es una decisión de diseño, no de quien lee"
     - "lo que se busca es sacarla del medio; para eso está SidebarTrigger, que angosta a un riel"

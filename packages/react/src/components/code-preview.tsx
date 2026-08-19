@@ -7,7 +7,7 @@ import { Icon } from "./icon.js";
  * CODE PREVIEW: the React half, which did not exist.
  *
  * The enhancer shipped with no counterpart here, so this could not be a contract: one binding is not
- * a contract, it is a script. Same story as copy-button, dialog and command-palette.
+ * a contract, it is a script. Same story as dialog and command-palette.
  *
  * HIGHLIGHTING IS NOT THIS COMPONENT'S JOB, in either binding. The code arrives already marked up;
  * Shiki runs at build or on the server, never in the browser; `children` is whatever the author

@@ -199,7 +199,6 @@ const componentItems = [
     ],
     ariaReviewed: true,
   },
-  { href: "/componentes/copy-button", label: "CopyButton", aliases: ["copiar", "copy", "portapapeles"], ariaReviewed: true },
   {
     href: "/componentes/data-grid",
     label: "Data Grid",
@@ -217,12 +216,6 @@ const componentItems = [
     href: "/componentes/feed",
     label: "Feed",
     aliases: ["stream", "feed de actividad", "publicaciones", "posts"],
-    ariaReviewed: true,
-  },
-  {
-    href: "/componentes/flyout",
-    label: "Flyout",
-    aliases: ["flyout", "picker lateral", "panel al lado"],
     ariaReviewed: true,
   },
   {
@@ -426,21 +419,6 @@ const componentItems = [
   { href: "/componentes/tag", label: "Tag", aliases: ["etiqueta"], ariaReviewed: true },
   { href: "/componentes/text", label: "Text", aliases: ["texto"], ariaReviewed: true },
   {
-    href: "/componentes/theme-toggle",
-    label: "Theme Toggle",
-    aliases: [
-      "ThemeToggle",
-      "modo",
-      "modo de color",
-      "tema",
-      "dark mode",
-      "light mode",
-      "color-scheme",
-      "theme",
-    ],
-    ariaReviewed: true,
-  },
-  {
     href: "/componentes/toast",
     label: "Toast",
     aliases: ["notificación", "notificacion", "aviso transitorio"],
@@ -590,7 +568,6 @@ export const componentNavigation = [
       "/componentes/calendar",
       "/componentes/checkbox",
       "/componentes/combobox",
-      "/componentes/copy-button",
       "/componentes/date-picker",
       "/componentes/file-upload",
       "/componentes/form-field",
@@ -673,7 +650,6 @@ export const componentNavigation = [
       "/componentes/accordion",
       "/componentes/dialog",
       "/componentes/drawer",
-      "/componentes/flyout",
       "/componentes/popover",
       "/componentes/popup",
       "/vaul",
@@ -690,7 +666,6 @@ export const componentNavigation = [
       "/componentes/inline",
       "/scrollbar",
       "/componentes/stack",
-      "/componentes/theme-toggle",
       "/componentes/wrapper",
     ),
   },
@@ -714,8 +689,9 @@ if (
  */
 export const globalNavigation = [
   { href: "/componentes", label: "nav.docs" },
+  { href: "/templates", label: "nav.templates" },
   { href: "/playground", label: "nav.playground" },
-  { href: "/personalizar", label: "nav.customize" },
+  { href: "/presets", label: "nav.presets" },
 ] satisfies readonly NavigationItem[];
 
 export const documentationNavigation = [

@@ -21,8 +21,8 @@ export { DataGrid, DataGridRow, DataGridCell } from "./components/data-grid.js";
 export type { DataGridProps, DataGridRowProps, DataGridCellProps } from "./components/data-grid.js";
 export { Feed, FeedArticle } from "./components/feed.js";
 export type { FeedProps, FeedArticleProps } from "./components/feed.js";
-export { Menubar, MenubarItem, MenubarMenu, MenubarMenuItem } from "./components/menubar.js";
-export type { MenubarProps, MenubarItemProps, MenubarMenuProps, MenubarMenuItemProps } from "./components/menubar.js";
+export { Menubar, MenubarItem } from "./components/menubar.js";
+export type { MenubarProps, MenubarItemProps } from "./components/menubar.js";
 export { Loader } from "./components/loader.js";
 export type { LoaderProps } from "./components/loader.js";
 export { Placeholder } from "./components/placeholder.js";
@@ -63,8 +63,8 @@ export { Steps } from "./components/steps.js";
 export type { StepsProps } from "./components/steps.js";
 export { Tag } from "./components/tag.js";
 export type { TagProps } from "./components/tag.js";
-export { ThemeToggle } from "./components/theme-toggle.js";
-export type { ThemeToggleProps } from "./components/theme-toggle.js";
+export { IconStateButton } from "./components/icon-state-button.js";
+export type { IconStateButtonProps } from "./components/icon-state-button.js";
 export { Button } from "./components/button.js";
 export type { ButtonProps } from "./components/button.js";
 export { Toast, ToastRegion } from "./components/content.js";
@@ -79,12 +79,13 @@ export { FormField } from "./components/form-field.js";
 export type { FormFieldProps } from "./components/form-field.js";
 export { Input, Textarea } from "./components/input.js";
 export type { InputProps, TextareaProps } from "./components/input.js";
-export { Box, Grid, Inline, LayoutGrid, Stack, Wrapper } from "./components/layout.js";
+export { Box, Grid, Inline, LayoutGrid, Main, Stack, Wrapper } from "./components/layout.js";
 export type {
   BoxProps,
   GridProps,
   InlineProps,
   LayoutGridProps,
+  MainProps,
   StackProps,
   WrapperProps,
 } from "./components/layout.js";
@@ -109,8 +110,6 @@ export type {
 } from "./components/navbar.js";
 export { Select } from "./components/select.js";
 export type { SelectProps } from "./components/select.js";
-export { Flyout } from "./components/flyout.js";
-export type { FlyoutProps } from "./components/flyout.js";
 export { Tooltip } from "./components/tooltip.js";
 export type { TooltipProps } from "./components/tooltip.js";
 export { Popover } from "./components/popover.js";

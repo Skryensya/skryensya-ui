@@ -1,0 +1,142 @@
+/*
+ * TIER 3, PROCESS LIST
+ *
+ * A Process List is a static ordered sequence whose instructions are the primary content. The native
+ * `<ol>` owns order; CSS only paints its numbered markers and connector. It is not a progress
+ * indicator: there are no complete, current or upcoming states, which belong to Steps.
+ */
+@layer components {
+  .sk-process-list {
+    --sk-process-list-fg: var(--color-text-primary);
+    --sk-process-list-item-padding-x: var(--space-inset-md);
+    --sk-process-list-item-padding-y: var(--space-inset-md);
+    --sk-process-list-item-gap: var(--space-inline-md);
+    --sk-process-list-content-gap: var(--space-stack-xs);
+    --sk-process-list-title-fg: var(--color-text-primary);
+    --sk-process-list-title-font-size: var(--font-size-body);
+    --sk-process-list-title-font-weight: var(--font-weight-emphasis);
+    --sk-process-list-marker-size: var(--size-control-sm);
+    --sk-process-list-connector-size: 2px;
+    /* The step marker is DECORATION, so it reads the accent-reach tokens rather than the raw accent.
+     * A process list's numbers express ORDER, never progress (it has no current/done state at all,
+     * that is Steps), so their colour is trim on a static sequence, exactly like a Badge's. It used
+     * to hard-wire `bg-accent-subtle` / `border-accent` / `text-accent` and so stayed brand-blue on a
+     * screen where every other decorative thing had gone quiet. */
+    --sk-process-list-marker-bg: var(--color-decorative-bg);
+    --sk-process-list-marker-border-color: var(--color-decorative-border);
+    --sk-process-list-connector-color: color-mix(
+      in oklab,
+      var(--color-decorative-border) 55%,
+      var(--color-border-subtle)
+    );
+    --sk-process-list-marker-ring-color: color-mix(
+      in oklab,
+      var(--color-decorative-border) 18%,
+      transparent
+    );
+    --sk-process-list-marker-fg: var(--color-decorative-fg);
+
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: sk-process-list-counter;
+    color: var(--sk-process-list-fg);
+  }
+
+  .sk-process-list,
+  .sk-process-list *,
+  .sk-process-list *::before,
+  .sk-process-list *::after {
+    box-sizing: border-box;
+  }
+
+  .sk-process-list__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--sk-process-list-marker-size) minmax(0, 1fr);
+    align-items: start;
+    column-gap: var(--sk-process-list-item-gap);
+    min-inline-size: 0;
+    padding: var(--sk-process-list-item-padding-y) var(--sk-process-list-item-padding-x);
+    counter-increment: sk-process-list-counter;
+  }
+
+  .sk-process-list__item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    inset-block-start: calc(
+      var(--sk-process-list-item-padding-y) + var(--sk-process-list-marker-size)
+    );
+    inset-inline-start: calc(
+      var(--sk-process-list-item-padding-x) + var(--sk-process-list-marker-size) / 2 -
+        var(--sk-process-list-connector-size) / 2
+    );
+    inline-size: var(--sk-process-list-connector-size);
+    block-size: calc(100% - var(--sk-process-list-marker-size));
+    border-radius: var(--radius-pill);
+    background: var(--sk-process-list-connector-color);
+  }
+
+  .sk-process-list__item::before {
+    content: counter(sk-process-list-counter);
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    grid-column: 1;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--sk-process-list-marker-size);
+    block-size: var(--sk-process-list-marker-size);
+    border-radius: var(--radius-pill);
+    background: var(--sk-process-list-marker-bg);
+    box-shadow:
+      inset 0 0 0 1px var(--sk-process-list-marker-border-color),
+      0 0 0 3px var(--sk-process-list-marker-ring-color);
+    color: var(--sk-process-list-marker-fg);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-emphasis);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .sk-process-list__content {
+    display: grid;
+    grid-column: 2;
+    gap: var(--sk-process-list-content-gap);
+    min-inline-size: 0;
+  }
+
+  .sk-process-list__title {
+    display: block;
+    min-inline-size: 0;
+    margin: 0;
+    /*
+     * Center the title's FIRST LINE on the marker's center. The marker is a fixed
+     * `--marker-size` box starting at the content edge, so the first line has to come down by
+     * half the difference between that box and its own line box: `1lh` here resolves against
+     * this element's own font-size/line-height, so the offset follows density and type scale
+     * without restating either. Padding (not centering the whole block) keeps the alignment
+     * exact when the title wraps: later lines run on below, the first stays on the circle.
+     * `max()` floors it at 0 for the case where the line box outgrows the marker.
+     */
+    padding-block-start: max(0px, calc((var(--sk-process-list-marker-size) - 1lh) / 2));
+    color: var(--sk-process-list-title-fg);
+    font-size: var(--sk-process-list-title-font-size);
+    font-weight: var(--sk-process-list-title-font-weight);
+    line-height: var(--line-height-heading);
+  }
+
+  @media (forced-colors: active) {
+    .sk-process-list {
+      --sk-process-list-marker-bg: Canvas;
+      --sk-process-list-marker-border-color: CanvasText;
+      --sk-process-list-connector-color: CanvasText;
+      --sk-process-list-marker-fg: CanvasText;
+      --sk-process-list-marker-ring-color: transparent;
+    }
+  }
+}

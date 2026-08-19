@@ -95,7 +95,6 @@ const routeSegments: Record<string, Partial<Record<Locale, string>>> = {
   dimensiones: { en: "dimensions" },
   gradientes: { en: "gradients" },
   iconos: { en: "icons" },
-  personalizar: { en: "customize" },
   instalacion: { en: "installation" },
   prerrequisitos: { en: "prerequisites" },
   teclado: { en: "keyboard" },

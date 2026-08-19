@@ -6,10 +6,9 @@ CodePreview:
     - "el bloque es largo y mostrarlo entero empuja el resto de la página fuera de la vista"
   avoidWhen:
     - "es un literal dentro de una frase: eso es Code"
-    - "lo que importa es copiarlo, no leerlo: eso es un CopyButton sobre el valor"
+    - "lo que importa es copiarlo, no leerlo, no mostrarlo: eso es IconStateButton compuesto con el comportamiento de copiar, sin el bloque de código alrededor"
   alternatives:
     - Code
-    - CopyButton
 
 CodePreview.density:
   useWhen:

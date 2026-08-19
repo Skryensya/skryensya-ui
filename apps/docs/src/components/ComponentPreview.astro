@@ -74,8 +74,15 @@ interface Props {
    * Reserve stage height when the demo paints outside flow (menus, dialogs, drawers, toasts).
    * - `menu`: open listboxes / popovers (~18rem)
    * - `overlay`: dialogs, drawers, toasts (~24rem)
+   * - `menu-deep`: a menu that opens three or more levels at once (~30rem)
    */
-  viewport?: "auto" | "menu" | "overlay";
+  viewport?: "auto" | "menu" | "overlay" | "menu-deep";
+  /**
+   * Floor the stage at a CSS length, for a specimen that is simply short on its own (a navbar strip,
+   * say) and reads cramped at its natural content height. Unlike `viewport`'s presets, this reserves
+   * no room for anything painting outside flow — it just keeps the stage from hugging the content.
+   */
+  minHeight?: string;
   /** Give the stage no padding: some components ARE a layout and must reach the edges. */
   flush?: boolean;
   /**
@@ -132,6 +139,7 @@ const {
   lang = "html",
   flush = false,
   viewport = "auto",
+  minHeight,
   scroll = false,
   measure,
   screens = true,
@@ -265,7 +273,13 @@ const screenToggleLabels = Object.fromEntries(
 ) as Record<(typeof screenOptions)[number]["value"], string>;
 ---
 
-<div class="sk-component-preview" data-sk-component-preview data-width={width} id={previewId}>
+<div
+  class="sk-component-preview"
+  data-sk-component-preview
+  data-width={width}
+  id={previewId}
+  style={minHeight ? `--sk-component-preview-stage-min-block-size: ${minHeight}` : undefined}
+>
   <header class="sk-component-preview__header">
     <span class="sk-component-preview__title">{label}</span>
     {note && <span class="sk-component-preview__note">{note}</span>}
@@ -432,6 +446,7 @@ const screenToggleLabels = Object.fromEntries(
     data-sk-component-preview-binding="vanilla"
     data-sk-component-preview-flush={flush ? "" : undefined}
     data-sk-component-preview-viewport={viewport === "auto" ? undefined : viewport}
+    data-sk-component-preview-min-height={minHeight ? "" : undefined}
     data-sk-component-preview-scroll={scroll ? "" : undefined}
     aria-busy="true"
     srcdoc={frameDocument}

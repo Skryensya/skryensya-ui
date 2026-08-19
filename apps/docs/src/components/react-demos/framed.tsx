@@ -18,7 +18,7 @@
  *     inside the frame), but the component's CODE still executes in the parent's realm, where the
  *     `document` global is the DOCS document. `ThemeToggle` does `applyColorMode(document
  *     .documentElement, …)`, so clicking the toggle inside a preview re-themed the whole docs site.
- *     Every component that touches `document` (menu's `dir`, flyout's viewport) leaks the same way.
+ *     Every component that touches `document` (menu's `dir`, for one) leaks the same way.
  *
  * So the demo is imported and mounted BY THE FRAME, from inside it: the frame's own module graph,
  * its own React instance, its own `document`. That is what Vanilla has always done, and it is why
@@ -38,7 +38,7 @@ export interface FramedOptions {
   /** Let the frame scroll instead of growing to its content. */
   scroll?: boolean;
   /** Reserve stage height for demos that paint out of flow, same values as `ComponentPreview`'s prop. */
-  viewport?: "auto" | "menu" | "overlay";
+  viewport?: "auto" | "menu" | "overlay" | "menu-deep";
   /** Frame title, for the accessibility tree. Defaults to the wrapped component's name. */
   label?: string;
   /**

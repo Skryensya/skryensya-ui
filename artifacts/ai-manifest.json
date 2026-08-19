@@ -587,26 +587,6 @@
         "version": "0.1.0-dev"
       }
     ],
-    "copy-button": [
-      {
-        "date": null,
-        "entries": [
-          {
-            "date": "2026-08-11",
-            "en": {
-              "body": "It joins the catalogue with <code>CopyButton</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-copy-button</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>variant</code>, <code>size</code>, <code>iconOnly</code>, <code>target</code>, <code>successLabel</code>, <code>errorLabel</code>. Its stylesheet is <code>components/copy-button.css</code>.",
-              "title": "CopyButton is published as a contract, with one signature"
-            },
-            "es": {
-              "body": "Entra al catálogo con <code>CopyButton</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-copy-button</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>variant</code>, <code>size</code>, <code>iconOnly</code>, <code>target</code>, <code>successLabel</code>, <code>errorLabel</code>. La hoja es <code>components/copy-button.css</code>.",
-              "title": "CopyButton se publica como contrato, con una signature"
-            },
-            "kind": "feature"
-          }
-        ],
-        "version": "0.1.0-dev"
-      }
-    ],
     "data-grid": [],
     "date-picker": [
       {
@@ -714,7 +694,27 @@
         "version": "0.1.0-dev"
       }
     ],
-    "feed": [],
+    "feed": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-18",
+            "en": {
+              "body": "The React binding always writes <code>aria-busy={busy}</code>, the tri-state reading WAI-ARIA asks for (\"aria-busy is set to true before a DOM change... set to false immediately after\"); the contract's option had no <code>falseValue</code>, so authored markup with <code>busy</code> false omitted the attribute entirely instead of writing <code>\"false\"</code>. Invisible until a canonical tree existed to compare the two bindings.",
+              "title": "Feed.busy now writes aria-busy=\"false\" instead of omitting it"
+            },
+            "es": {
+              "body": "El binding React siempre escribe <code>aria-busy={busy}</code>, la lectura tri-state que WAI-ARIA pide (\"aria-busy se pone en true antes de un cambio... en false inmediatamente después\"); la opción del contrato no tenía <code>falseValue</code>, así que markup autorado con <code>busy</code> en falso omitía el atributo por completo en vez de escribirlo como <code>\"false\"</code>. Invisible hasta que un árbol canónico existió para comparar los dos bindings.",
+              "title": "Feed.busy ahora escribe aria-busy=\"false\" en vez de omitirlo"
+            },
+            "kind": "bugfix",
+            "target": "Feed"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "file-upload": [
       {
         "date": null,
@@ -740,26 +740,6 @@
             "es": {
               "body": "Entra al catálogo con <code>FileUpload</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-file-upload</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>name</code>, <code>multiple</code>, <code>accept</code>, <code>disabled</code>, <code>required</code>, <code>maxFiles</code>, <code>maxFileSize</code>. La hoja es <code>components/file-upload.css</code>.",
               "title": "FileUpload se publica como contrato, con una signature"
-            },
-            "kind": "feature"
-          }
-        ],
-        "version": "0.1.0-dev"
-      }
-    ],
-    "flyout": [
-      {
-        "date": null,
-        "entries": [
-          {
-            "date": "2026-08-11",
-            "en": {
-              "body": "It joins the catalogue with <code>Flyout</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-flyout</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>placeholder</code>, <code>disabled</code>, <code>defaultValue</code>. Its stylesheet is <code>components/flyout.css</code>.",
-              "title": "Flyout is published as a contract, with one signature"
-            },
-            "es": {
-              "body": "Entra al catálogo con <code>Flyout</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-flyout</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>placeholder</code>, <code>disabled</code>, <code>defaultValue</code>. La hoja es <code>components/flyout.css</code>.",
-              "title": "Flyout se publica como contrato, con una signature"
             },
             "kind": "feature"
           }
@@ -820,6 +800,26 @@
         "version": "0.1.0-dev"
       }
     ],
+    "icon-state-button": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-19",
+            "en": {
+              "body": "It joins the catalogue with <code>IconStateButton</code>: an icon button whose states are declared by whoever uses it (one <code>faces</code> entry per instance, each with its own name and icon), not the contract. It does not decide when the active state changes — the consumer writes that behavior (copy to clipboard, cycle a color mode, whatever it needs) and applies it by writing <code>current</code>. Replaces <code>CopyButton</code> and <code>ThemeToggle</code>, both retired from the catalogue.",
+              "title": "IconStateButton is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>IconStateButton</code>: un botón ícono cuyos estados los declara quien lo usa (un <code>faces</code> por instancia, cada uno con su propio nombre e ícono), no el contrato. No decide cuándo cambia el estado activo — quien lo compone escribe ese comportamiento (copiar al portapapeles, ciclar un modo de color, lo que sea) y lo aplica escribiendo <code>current</code>. Reemplaza a <code>CopyButton</code> y <code>ThemeToggle</code>, ambos retirados del catálogo.",
+              "title": "IconStateButton se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "image-frame": [
       {
         "date": null,
@@ -844,6 +844,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-18",
+            "en": {
+              "body": "\"Native\" names the CONTROL, a real <code>&lt;input type=\"time\"&gt;</code>/<code>type=\"color\"</code> the platform still owns, never its appearance — but the template gave it no class at all, so it rendered with the browser's own default border/height/radius instead of the shared appearance contract <code>Input</code>/<code>Textarea</code> already carry. Both bindings now load <code>sk-input</code>, the same class, and a consumer's own <code>className</code> is kept alongside it.",
+              "title": "NativeInput now carries sk-input, no longer unstyled"
+            },
+            "es": {
+              "body": "\"Nativo\" nombra el CONTROL, un `<input type=\"time\">`/`type=\"color\"` real que la plataforma sigue gobernando, nunca su apariencia — pero la plantilla no le ponía ninguna clase, así que salía con el borde/alto/radio por defecto del navegador en vez del contrato de apariencia compartido que <code>Input</code>/<code>Textarea</code> ya tienen. Ambos bindings ahora cargan <code>sk-input</code>, la misma clase, y un <code>className</code> propio de quien compone se conserva junto a ella.",
+              "title": "NativeInput ahora carga sk-input, no queda sin estilo"
+            },
+            "kind": "bugfix",
+            "target": "NativeInput"
+          },
           {
             "date": "2026-08-14",
             "en": {
@@ -989,6 +1002,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-19",
+            "en": {
+              "body": "Adds <code>href</code> to the item shape <code>Menu</code> and <code>Menubar</code> share (<code>menuItemShape</code>): an item with <code>href</code> renders as a real <code>&lt;a&gt;</code> instead of the usual <code>&lt;div role=\"menuitem\"&gt;</code>. <code>@zag-js/menu</code> already supports an anchor item out of the box (<code>navigate</code>, defaulting to a native click on the link), so nothing about keyboard handling or the role changes: same machine, same <code>getItemProps()</code>, only the element receiving them. Built for WAI-ARIA's own <code>menubar-navigation</code> case — a navigation bar whose dropdowns are lists of real pages, not commands.",
+              "title": "New item option href — an item can be a destination, not only a command"
+            },
+            "es": {
+              "body": "Se agrega <code>href</code> a la forma de ítem que <code>Menu</code> y <code>Menubar</code> comparten (<code>menuItemShape</code>): un ítem con <code>href</code> renderiza como <code>&lt;a&gt;</code> real en vez del <code>&lt;div role=\"menuitem\"&gt;</code> de siempre. <code>@zag-js/menu</code> ya soporta un ítem-ancla de fábrica (<code>navigate</code>, que por defecto hace click nativo en el link), así que nada del manejo de teclado ni el rol cambia: misma máquina, mismo <code>getItemProps()</code>, sólo el elemento que las recibe. Pensado para el caso <code>menubar-navigation</code> de WAI-ARIA — una barra de navegación cuyos desplegables son listas de páginas reales, no comandos.",
+              "title": "Nueva opción de ítem href — un ítem puede ser un destino, no sólo un comando"
+            },
+            "kind": "feature",
+            "target": "href"
+          },
+          {
             "date": "2026-08-17",
             "en": {
               "body": "Renamed together with Button's own identically-shaped options (<code>squareStart</code>/<code>squareEnd</code> → <code>weldStart</code>/<code>weldEnd</code>, see Button's own changelog) — still writing to the same attributes (<code>data-weld-start</code>/<code>data-weld-end</code>), the name now also reflects that they clear the trigger's own border on that side, not only the rounding.",
@@ -1082,7 +1108,39 @@
         "version": "0.1.0-dev"
       }
     ],
-    "menubar": [],
+    "menubar": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-19",
+            "en": {
+              "body": "Adds <code>nav</code> (boolean) to <code>MenubarItem</code>: when given, the trigger renders with <code>nav-list</code>'s own classes (<code>sk-nav-list__link</code>/<code>__label</code>) instead of <code>Button</code>'s (<code>sk-button</code>). Nothing about Menubar's own behavior changes — same <code>role</code>, same roving tabindex, same dropdown open/close handling — only the trigger's element and classes. Built together with <code>Menu</code>'s new <code>href</code> item option for WAI-ARIA's own <code>menubar-navigation</code> case: a bar that is genuinely navigation, built from <code>nav-list</code>'s own elements, not a command bar wearing nav-list's borrowed colors.",
+              "title": "New nav option on MenubarItem — the trigger can be nav-list's own real link"
+            },
+            "es": {
+              "body": "Se agrega <code>nav</code> (booleana) a <code>MenubarItem</code>: cuando está presente, el trigger renderiza con las clases propias de <code>nav-list</code> (<code>sk-nav-list__link</code>/<code>__label</code>) en vez de <code>Button</code> (<code>sk-button</code>). Nada del comportamiento de Menubar cambia — mismo <code>role</code>, mismo roving tabindex, mismo manejo de apertura/cierre de desplegables — sólo el elemento y las clases que pinta el trigger. Pensada junto con la nueva opción de ítem <code>href</code> de <code>Menu</code> para el caso <code>menubar-navigation</code> de WAI-ARIA: una barra que es de verdad navegación, construida con los elementos de <code>nav-list</code>, no una barra de comandos con los colores de nav-list prestados.",
+              "title": "Nueva opción nav en MenubarItem — el trigger puede ser el link real de nav-list"
+            },
+            "kind": "feature",
+            "target": "nav"
+          },
+          {
+            "date": "2026-08-19",
+            "en": {
+              "body": "<code>MenubarMenu</code> and <code>MenubarMenuItem</code> are retired from the catalogue. <code>MenubarItem</code> gains an <code>items</code> slot shaped exactly like <code>Menu</code>'s own (commands, checkbox, radio, separators, arbitrarily nested submenus), because its dropdown now IS a <code>Menu</code>, not a second, poorer description of one. The bar's own navigation (arrows between top-level items, closing one dropdown when moving to the adjacent one) stays Menubar's own, unchanged.",
+              "title": "MenubarItem's dropdown becomes a real Menu"
+            },
+            "es": {
+              "body": "<code>MenubarMenu</code> y <code>MenubarMenuItem</code> se retiran del catálogo. <code>MenubarItem</code> gana un slot <code>items</code> con la misma forma que ya tiene <code>Menu</code> (comandos, checkbox, radio, separadores, submenús anidados sin límite), porque su desplegable ahora ES un <code>Menu</code>, no una segunda descripción más pobre de uno. La navegación de la barra (flechas entre items de primer nivel, el cierre de un desplegable al moverse al adyacente) sigue siendo propia de Menubar, sin cambios.",
+              "title": "El desplegable de MenubarItem pasa a ser un Menu real"
+            },
+            "kind": "breaking"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "meter": [
       {
         "date": null,
@@ -1421,6 +1479,32 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-18",
+            "en": {
+              "body": "<code>--sk-slider-track</code>, <code>--sk-slider-fill-color</code>, <code>--sk-slider-track-size</code> and <code>--sk-slider-thumb-hit</code> were only ever defined on <code>.sk-slider</code>, the class <code>also</code> puts on the TWO child <code>&lt;input&gt;</code>s, never on <code>.sk-slider-range</code> itself. Custom properties inherit downward, never up, so the wrapper and its own track/fill never saw a value: <code>block-size</code> fell back to its initial <code>auto</code>, and with every child absolutely positioned, nothing in normal flow gave the wrapper a height — the whole control rendered at 0×100%, with an invisible track. Invisible in jsdom (which never computes real layout) and only catchable with a real browser layout; the first canonical tree <code>SliderRange</code> ever had is what finally surfaced it.",
+              "title": "SliderRange painted nothing, in either binding"
+            },
+            "es": {
+              "body": "<code>--sk-slider-track</code>, <code>--sk-slider-fill-color</code>, <code>--sk-slider-track-size</code> y <code>--sk-slider-thumb-hit</code> sólo estaban definidas en <code>.sk-slider</code>, la clase que <code>also</code> pone en los DOS <code>&lt;input&gt;</code> hijos, nunca en <code>.sk-slider-range</code> mismo. Las custom properties heredan hacia abajo, nunca hacia arriba, así que el wrapper y su propio track/ fill nunca vieron ningún valor: <code>block-size</code> caía al <code>auto</code> inicial y, con todos los hijos en <code>position: absolute</code>, nada en flujo normal le daba altura al wrapper — el control entero salía a 0×100%, con el track invisible. Invisible en jsdom (que nunca calcula layout real) y sólo detectable con un layout de navegador de verdad; el primer árbol canónico de <code>SliderRange</code> es lo que finalmente lo hizo evidente.",
+              "title": "SliderRange no pintaba nada, en ningún binding"
+            },
+            "kind": "bugfix",
+            "target": "SliderRange"
+          },
+          {
+            "date": "2026-08-18",
+            "en": {
+              "body": "Both options pointed at the same prop name, <code>defaultValue</code>, and the React binding actually expects <code>defaultLowValue</code>/<code>defaultHighValue</code>: neither end ever reached the component, which stayed at its own defaults (0 and 100) no matter what a tree authored. Invisible until now because no canonical tree had ever set <code>lowValue</code>/<code>highValue</code> to anything but the default — the coverage check that requires one tree per published signature is what surfaced it.",
+              "title": "SliderRange.lowValue/highValue reached React as one shared defaultValue"
+            },
+            "es": {
+              "body": "Las dos opciones apuntaban al mismo nombre de prop, <code>defaultValue</code>, y el binding React en realidad espera <code>defaultLowValue</code>/<code>defaultHighValue</code>: ninguno de los dos extremos llegaba nunca al componente, que se quedaba en sus propios valores por defecto (0 y 100) sin importar qué autorara el árbol. Invisible hasta ahora porque ningún árbol canónico había puesto <code>lowValue</code>/<code>highValue</code> en algo distinto del default — el chequeo de cobertura que exige un árbol por cada signature publicada fue lo que lo hizo evidente.",
+              "title": "SliderRange.lowValue/highValue llegaban a React como un solo defaultValue"
+            },
+            "kind": "bugfix",
+            "target": "SliderRange"
+          },
+          {
             "date": "2026-08-15",
             "en": {
               "body": "Covers the WAI-ARIA APG \"Slider (Multi-Thumb)\" pattern with two native <code>&lt;input type=\"range\"&gt;</code> elements instead of the custom SVG widget the WAI example documents — the pattern itself warns a hand-rolled widget can be difficult for touch-based screen reader users, and two native inputs already get keyboard, form participation and the accessibility tree from the platform. Options: <code>lowValue</code>/ <code>highValue</code> (each end's starting position), <code>lowLabel</code>/ <code>highLabel</code> (required, name each end separately), plus shared <code>min</code>/<code>max</code>/<code>step</code>/<code>disabled</code>. Neither end can be dragged past the other.",
@@ -1685,26 +1769,6 @@
         "version": "0.1.0-dev"
       }
     ],
-    "theme-toggle": [
-      {
-        "date": null,
-        "entries": [
-          {
-            "date": "2026-08-11",
-            "en": {
-              "body": "It joins the catalogue with <code>ThemeToggle</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. The Vanilla binding mounts on <code>data-sk-theme-toggle</code>: the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>defaultValue</code>, <code>size</code>, <code>labelSystem</code>, <code>labelLight</code>, <code>labelDark</code>. Its stylesheet is <code>components/theme-toggle.css</code>.",
-              "title": "ThemeToggle is published as a contract, with one signature"
-            },
-            "es": {
-              "body": "Entra al catálogo con <code>ThemeToggle</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-theme-toggle</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>defaultValue</code>, <code>size</code>, <code>labelSystem</code>, <code>labelLight</code>, <code>labelDark</code>. La hoja es <code>components/theme-toggle.css</code>.",
-              "title": "ThemeToggle se publica como contrato, con una signature"
-            },
-            "kind": "feature"
-          }
-        ],
-        "version": "0.1.0-dev"
-      }
-    ],
     "tile": [
       {
         "date": null,
@@ -1729,6 +1793,30 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-18",
+            "en": {
+              "body": "There is no more \"segments-only\" variant: every <code>TimeField</code> now paints, besides the segments, a clock button INSIDE <code>.sk-time-field__control</code> (one bordered box, the same anatomy Combobox's own control already has for its own trailing buttons) that opens a plain, search-free list of times, navigable with arrow keys — <code>@zag-js/select</code> drives that machine directly (the same one <code>Select</code> uses), without mounting the full <code>Select</code> component, which carries its own visible trigger and would have meant two clicks to reach the list. Two new contract options: <code>optionsStep</code> (minutes between each row, <code>30</code> by default — 48 rows) and <code>optionsLabel</code> (the button's own accessible name, distinct from the field's label — <code>\"Elegir de la lista\"</code> by default). <code>Alt+ArrowDown</code> from any segment opens the list without tabbing there first, the same key that already opens a native <code>&lt;select&gt;</code>; plain ArrowDown alone still leaves it untouched, decrementing the focused segment as always. The Vanilla binding no longer needs a second piece (<code>@skryensya/vanilla/time-field-options</code>, now removed): <code>data-sk-time-field</code> on its own generates the dropdown too, the same way it already generates the segments from the locale. The dropdown's own list portals out of the field (React sends it to <code>document.body</code> by default, with a new <code>container</code> prop to scope it elsewhere; Vanilla leaves it in place, positioned by CSS anchoring) — the same split Select and Combobox already have.",
+              "title": "TimeField always includes a preset-times dropdown"
+            },
+            "es": {
+              "body": "Ya no hay una variante \"sólo segmentos\": todo <code>TimeField</code> pinta, además de los segmentos, un botón de reloj DENTRO de <code>.sk-time-field__control</code> (una sola caja con borde, la misma anatomía que ya tiene el control de Combobox para sus propios botones finales) que abre una lista simple de horarios, sin buscador, navegable con flechas — <code>@zag-js/select</code> maneja esa máquina directamente (la misma que usa <code>Select</code>), sin montar el componente <code>Select</code> completo, que trae su propio trigger visible y hubiera significado dos clics para llegar a la lista. Dos opciones nuevas en el contrato: <code>optionsStep</code> (número de minutos entre cada fila, <code>30</code> por defecto — 48 filas) y <code>optionsLabel</code> (el nombre accesible del botón, distinto del label del campo — <code>\"Elegir de la lista\"</code> por defecto). <code>Alt+Flecha-abajo</code> desde cualquier segmento abre la lista sin pasar por Tab, la misma tecla que ya abre un <code>&lt;select&gt;</code> nativo; Flecha-abajo sola sigue sin tocarla, decrementa el segmento enfocado como siempre. El binding Vanilla ya no necesita una segunda pieza (<code>@skryensya/vanilla/time-field-options</code>, ahora eliminada): <code>data-sk-time-field</code> por sí solo genera el desplegable, igual que ya genera los segmentos a partir del locale. La lista del desplegable se porta afuera del campo (React la manda a <code>document.body</code> por defecto, con la nueva prop <code>container</code> para acotarla a otro elemento; Vanilla la deja donde está, ubicada por anclaje CSS) — el mismo split que ya tienen Select y Combobox.",
+              "title": "TimeField siempre incluye un desplegable de horarios preestablecidos"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-08-18",
+            "en": {
+              "body": "New <code>hourCycle</code> option (<code>\"h12\"</code> | <code>\"h24\"</code>), which overrides the locale-based auto-detection when given. That detection (<code>getHourCycle</code>) reads <code>Intl.DateTimeFormat(locale, {hour:\"numeric\"}).resolvedOptions().hourCycle</code>, and that value turned out to be inconsistent across engines: the same locale string (<code>es</code>/<code>es-AR</code>) resolves to opposite cycles in Node and in Chromium. Since the hour segment's own max comes straight from that cycle, a wrong guess did not just mislabel the hour: it advanced focus too early on an ambiguous first digit (a \"2\", which could still become \"22\"). Omitted, behavior is unchanged.",
+              "title": "TimeField gains the hourCycle option, to force 12- or 24-hour form"
+            },
+            "es": {
+              "body": "Nueva opción <code>hourCycle</code> (<code>\"h12\"</code> | <code>\"h24\"</code>), que pisa la detección automática por locale cuando se da. La detección (<code>getHourCycle</code>) lee <code>Intl.DateTimeFormat(locale, {hour:\"numeric\"}).resolvedOptions().hourCycle</code>, y ese dato resultó ser inconsistente entre motores: el mismo string de locale (<code>es</code>/<code>es-AR</code>) resuelve a ciclos opuestos en Node y en Chromium. Como el máximo del segmento de hora sale directo de ese ciclo, una detección equivocada no solo mostraba mal la hora: adelantaba el foco antes de tiempo al tipear un primer dígito ambiguo (un \"2\", que todavía podía volverse \"22\"). Omitida, el comportamiento no cambia.",
+              "title": "TimeField gana la opción hourCycle, para forzar 12 o 24 horas"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -4363,12 +4451,11 @@
       "semantics": {
         "CodePreview": {
           "alternatives": [
-            "Code",
-            "CopyButton"
+            "Code"
           ],
           "avoidWhen": [
             "es un literal dentro de una frase: eso es Code",
-            "lo que importa es copiarlo, no leerlo: eso es un CopyButton sobre el valor"
+            "lo que importa es copiarlo, no leerlo, no mostrarlo: eso es IconStateButton compuesto con el comportamiento de copiar, sin el bloque de código alrededor"
           ],
           "useWhen": [
             "hay que mostrar código y conviene que se lea como código: resaltado, con su etiqueta",
@@ -5639,204 +5726,6 @@
         }
       }
     },
-    "copy-button": {
-      "css": "@skryensya/core/components/copy-button.css",
-      "id": "copy-button",
-      "options": {
-        "errorLabel": {
-          "attr": "data-sk-copy-button-error-label",
-          "default": "No se pudo copiar",
-          "machineInput": true,
-          "type": "string"
-        },
-        "iconOnly": {
-          "attr": "data-icon-only",
-          "default": false,
-          "trueValue": "",
-          "type": "boolean"
-        },
-        "size": {
-          "attr": "data-size",
-          "default": "md",
-          "type": "enum",
-          "values": [
-            "sm",
-            "md",
-            "lg"
-          ]
-        },
-        "successLabel": {
-          "attr": "data-sk-copy-button-success-label",
-          "default": "Copiado",
-          "machineInput": true,
-          "type": "string"
-        },
-        "target": {
-          "attr": "data-sk-copy-button-target",
-          "type": "string"
-        },
-        "variant": {
-          "attr": "data-variant",
-          "default": "neutral",
-          "type": "enum",
-          "values": [
-            "neutral",
-            "subtle",
-            "primary",
-            "danger",
-            "ghost"
-          ]
-        }
-      },
-      "parts": {
-        "feedback": "sk-copy-button__feedback",
-        "icon": "sk-copy-button__icon",
-        "label": "sk-copy-button__label",
-        "root": "sk-copy-button"
-      },
-      "semantics": {
-        "CopyButton": {
-          "alternatives": [],
-          "avoidWhen": [
-            "el valor no está visible: el botón copia lo que el lector tiene delante, no un dato oculto",
-            "la acción cambia algo; esto no muta nada, sólo duplica"
-          ],
-          "useWhen": [
-            "hay un valor en pantalla que la gente va a querer pegar en otro lado: un comando, un token, un id",
-            "copiar a mano es propenso a error: cadenas largas, sin espacios, sensibles a mayúsculas"
-          ]
-        }
-      },
-      "signatures": {
-        "CopyButton": {
-          "host": {
-            "element": "button"
-          },
-          "intent": [
-            "copy-to-clipboard",
-            "copy-a-code-block",
-            "copy-a-token"
-          ],
-          "mount": "data-sk-copy-button",
-          "options": [
-            "target",
-            "variant",
-            "size",
-            "iconOnly",
-            "successLabel",
-            "errorLabel"
-          ],
-          "react": {
-            "from": "@skryensya/react/copy-button",
-            "name": "CopyButton"
-          },
-          "slots": {
-            "children": {
-              "accepts": "text",
-              "required": true
-            }
-          },
-          "template": {
-            "also": [
-              "sk-button",
-              "sk-interactive",
-              "sk-icon-toggle",
-              "sk-anchor"
-            ],
-            "attrs": {
-              "type": "button"
-            },
-            "children": [
-              {
-                "attrs": {
-                  "aria-hidden": "true",
-                  "data-face": "idle",
-                  "data-sk-copy-button-icon": "idle"
-                },
-                "children": [
-                  {
-                    "attrs": {
-                      "data-sk-icon": "copy",
-                      "data-sk-icon-size": "md"
-                    },
-                    "element": "span"
-                  }
-                ],
-                "element": "span",
-                "part": "icon"
-              },
-              {
-                "attrs": {
-                  "aria-hidden": "true",
-                  "data-face": "copied",
-                  "data-sk-copy-button-icon": "copied"
-                },
-                "children": [
-                  {
-                    "attrs": {
-                      "data-sk-icon": "check",
-                      "data-sk-icon-size": "md"
-                    },
-                    "element": "span"
-                  }
-                ],
-                "element": "span",
-                "part": "icon"
-              },
-              {
-                "attrs": {
-                  "aria-live": "polite"
-                },
-                "element": "span",
-                "mount": "data-sk-copy-button-label",
-                "part": "label",
-                "slot": "children"
-              },
-              {
-                "also": [
-                  "sk-anchored"
-                ],
-                "attrs": {
-                  "aria-hidden": "true",
-                  "data-sk-placement": "inline-start"
-                },
-                "children": [
-                  {
-                    "attrs": {
-                      "data-sk-copy-button-feedback-text": "copied"
-                    },
-                    "element": "span",
-                    "textFromOption": "successLabel"
-                  },
-                  {
-                    "attrs": {
-                      "data-sk-copy-button-feedback-text": "error"
-                    },
-                    "element": "span",
-                    "textFromOption": "errorLabel"
-                  },
-                  {
-                    "also": [
-                      "sk-anchored-arrow"
-                    ],
-                    "attrs": {
-                      "aria-hidden": "true"
-                    },
-                    "element": "span"
-                  }
-                ],
-                "element": "span",
-                "mount": "data-sk-copy-button-feedback",
-                "part": "feedback"
-              }
-            ],
-            "element": "button",
-            "host": true,
-            "part": "root"
-          }
-        }
-      }
-    },
     "data-grid": {
       "css": "@skryensya/core/components/data-grid.css",
       "id": "data-grid",
@@ -6581,11 +6470,11 @@
       "semantics": {
         "Dialog": {
           "alternatives": [
-            "Flyout",
+            "Popover",
             "Tooltip"
           ],
           "avoidWhen": [
-            "es información auxiliar que no bloquea; eso es un Tooltip o un Flyout",
+            "es información auxiliar que no bloquea; eso es un Tooltip o un Popover",
             "es una lista de acciones colgada de un botón; eso es un Menu",
             "el contenido es largo o navegable: eso pide una página, no una caja modal"
           ],
@@ -6845,6 +6734,7 @@
         "busy": {
           "attr": "aria-busy",
           "default": false,
+          "falseValue": "false",
           "trueValue": "true",
           "type": "boolean"
         },
@@ -7150,224 +7040,6 @@
         }
       }
     },
-    "flyout": {
-      "css": "@skryensya/core/components/flyout.css",
-      "id": "flyout",
-      "options": {
-        "defaultValue": {
-          "attr": "data-value",
-          "machineInput": true,
-          "type": "string"
-        },
-        "disabled": {
-          "attr": "data-disabled",
-          "default": false,
-          "machineInput": true,
-          "trueValue": "",
-          "type": "boolean"
-        },
-        "placeholder": {
-          "attr": "data-placeholder",
-          "default": "Select option",
-          "machineInput": true,
-          "type": "string"
-        }
-      },
-      "parts": {
-        "indicator": "sk-flyout__indicator",
-        "item": "sk-flyout__item",
-        "itemIndicator": "sk-flyout__item-indicator",
-        "itemText": "sk-flyout__item-text",
-        "label": "sk-flyout__label",
-        "panel": "sk-flyout__panel",
-        "root": "sk-flyout",
-        "trigger": "sk-flyout__trigger",
-        "value": "sk-flyout__value"
-      },
-      "semantics": {
-        "Flyout": {
-          "alternatives": [
-            "Segmented",
-            "RadioGroup"
-          ],
-          "avoidWhen": [
-            "son tres opciones o menos y caben a la vista; eso es un Segmented o un RadioGroup",
-            "hay que escribir para filtrar; eso es un Combobox",
-            "el panel lleva acciones, no valores; eso es un Menu"
-          ],
-          "useWhen": [
-            "se elige un valor de una lista y el panel tiene que abrirse al lado, no ocupar la página",
-            "son más opciones de las que conviene mostrar siempre, pero pocas para buscar",
-            "hace falta que el panel escape del recorte de un contenedor con overflow"
-          ]
-        }
-      },
-      "signatures": {
-        "Flyout": {
-          "host": {
-            "element": "div"
-          },
-          "intent": [
-            "value-picker",
-            "dropdown",
-            "choose-from-a-list",
-            "filter-picker"
-          ],
-          "mount": "data-sk-flyout",
-          "options": [
-            "placeholder",
-            "disabled",
-            "defaultValue"
-          ],
-          "react": {
-            "from": "@skryensya/react/flyout",
-            "name": "Flyout"
-          },
-          "slots": {
-            "indicator": {
-              "accepts": "node"
-            },
-            "itemIndicator": {
-              "accepts": "node"
-            },
-            "items": {
-              "accepts": "items",
-              "item": {
-                "key": "value",
-                "options": {
-                  "disabled": {
-                    "attr": "data-disabled",
-                    "default": false,
-                    "trueValue": "",
-                    "type": "boolean"
-                  },
-                  "value": {
-                    "attr": "data-value",
-                    "type": "string"
-                  }
-                },
-                "slots": {
-                  "label": {
-                    "accepts": "text",
-                    "required": true
-                  }
-                }
-              },
-              "prop": "options",
-              "required": true
-            },
-            "label": {
-              "accepts": "text"
-            },
-            "openIndicator": {
-              "accepts": "node"
-            }
-          },
-          "template": {
-            "children": [
-              {
-                "element": "label",
-                "mount": "data-sk-flyout-label",
-                "part": "label",
-                "slot": "label",
-                "whenGiven": "label"
-              },
-              {
-                "also": [
-                  "sk-interactive"
-                ],
-                "attrs": {
-                  "aria-haspopup": "listbox",
-                  "type": "button"
-                },
-                "children": [
-                  {
-                    "element": "span",
-                    "mount": "data-sk-flyout-value",
-                    "part": "value",
-                    "textFromOption": "placeholder"
-                  },
-                  {
-                    "attrs": {
-                      "aria-hidden": "true"
-                    },
-                    "children": [
-                      {
-                        "attrs": {
-                          "data-state": "closed"
-                        },
-                        "element": "span",
-                        "slot": "indicator"
-                      },
-                      {
-                        "attrs": {
-                          "data-state": "open"
-                        },
-                        "element": "span",
-                        "slot": "openIndicator"
-                      }
-                    ],
-                    "element": "span",
-                    "mount": "data-sk-flyout-indicator",
-                    "part": "indicator"
-                  }
-                ],
-                "element": "button",
-                "mount": "data-sk-flyout-trigger",
-                "part": "trigger"
-              },
-              {
-                "attrs": {
-                  "hidden": "",
-                  "role": "listbox"
-                },
-                "children": [
-                  {
-                    "also": [
-                      "sk-interactive"
-                    ],
-                    "attrs": {
-                      "role": "option"
-                    },
-                    "children": [
-                      {
-                        "element": "span",
-                        "itemSlot": "label",
-                        "mount": "data-sk-flyout-item-text",
-                        "part": "itemText"
-                      },
-                      {
-                        "attrs": {
-                          "aria-hidden": "true"
-                        },
-                        "element": "span",
-                        "mount": "data-sk-flyout-item-indicator",
-                        "part": "itemIndicator",
-                        "slot": "itemIndicator"
-                      }
-                    ],
-                    "element": "li",
-                    "itemOptions": [
-                      "value",
-                      "disabled"
-                    ],
-                    "mount": "data-sk-flyout-item",
-                    "part": "item",
-                    "repeat": "items"
-                  }
-                ],
-                "element": "ul",
-                "mount": "data-sk-flyout-panel",
-                "part": "panel"
-              }
-            ],
-            "element": "div",
-            "host": true,
-            "part": "root"
-          }
-        }
-      }
-    },
     "form-field": {
       "css": "@skryensya/core/components/form-field.css",
       "id": "form-field",
@@ -7629,6 +7301,151 @@
           "template": {
             "element": "span",
             "host": true
+          }
+        }
+      }
+    },
+    "icon-state-button": {
+      "css": "@skryensya/core/components/icon-state-button.css",
+      "id": "icon-state-button",
+      "options": {
+        "current": {
+          "attr": "data-current",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "root": "sk-icon-state-button"
+      },
+      "semantics": {
+        "IconStateButton": {
+          "alternatives": [
+            "Switch",
+            "Icon"
+          ],
+          "avoidWhen": [
+            "el comportamiento ya existe hecho: un ciclo de modo de color usa las funciones de @skryensya/core/theme-toggle, un copy-to-clipboard usa writeClipboard de @skryensya/core/copy-button, sobre este mismo primitivo — no hay que reinventar esa parte",
+            "hay un solo estado, o dos que se leen como on/off: eso es un Switch o un Toggle simple, no vale la pena declarar una colección de caras para dos valores",
+            "el ícono es puramente decorativo y no cambia: eso es Icon, sin la anatomía de estados"
+          ],
+          "useWhen": [
+            "el control necesita mostrar uno de N estados con nombre, cada uno con su propio ícono, y quien lo usa va a escribir el comportamiento que decide cuál está activo (copiar, ciclar un modo, lo que sea)",
+            "los estados varían según el uso: no hay un set fijo que un contrato pueda declarar de antemano"
+          ]
+        }
+      },
+      "signatures": {
+        "IconStateButton": {
+          "host": {
+            "element": "button"
+          },
+          "intent": [
+            "icon-button-with-states",
+            "multi-state-icon-button"
+          ],
+          "options": [
+            "current"
+          ],
+          "react": {
+            "from": "@skryensya/react/icon-state-button",
+            "name": "IconStateButton"
+          },
+          "slots": {
+            "faces": {
+              "accepts": "items",
+              "item": {
+                "key": "name",
+                "options": {
+                  "icon": {
+                    "attr": "data-sk-icon",
+                    "type": "enum",
+                    "values": [
+                      "chevron-up",
+                      "chevron-down",
+                      "chevron-left",
+                      "chevron-right",
+                      "arrow-up",
+                      "arrow-down",
+                      "arrow-left",
+                      "arrow-right",
+                      "external-link",
+                      "add",
+                      "remove",
+                      "close",
+                      "check",
+                      "search",
+                      "edit",
+                      "delete",
+                      "copy",
+                      "filter",
+                      "refresh",
+                      "more",
+                      "menu",
+                      "info",
+                      "success",
+                      "warning",
+                      "danger",
+                      "calendar",
+                      "clock",
+                      "upload",
+                      "download",
+                      "file",
+                      "folder",
+                      "settings",
+                      "user",
+                      "visibility",
+                      "visibility-off",
+                      "mode-system",
+                      "mode-light",
+                      "mode-dark",
+                      "screen-desktop",
+                      "screen-tablet",
+                      "screen-mobile"
+                    ]
+                  },
+                  "name": {
+                    "attr": "data-face",
+                    "type": "string"
+                  }
+                },
+                "slots": {}
+              },
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-button",
+              "sk-interactive",
+              "sk-icon-toggle"
+            ],
+            "attrs": {
+              "type": "button"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon-size": "md"
+                    },
+                    "element": "span",
+                    "itemOptions": [
+                      "name",
+                      "icon"
+                    ],
+                    "selectedBy": {
+                      "attr": "data-active",
+                      "option": "current"
+                    }
+                  }
+                ],
+                "repeat": "faces"
+              }
+            ],
+            "element": "button",
+            "host": true,
+            "part": "root"
           }
         }
       }
@@ -7922,7 +7739,7 @@
             "element": "input"
           },
           "intent": [
-            "unstyled-native-input",
+            "styled-native-input",
             "platform-control",
             "native-time-input"
           ],
@@ -7938,7 +7755,8 @@
           "slots": {},
           "template": {
             "element": "input",
-            "host": true
+            "host": true,
+            "part": "root"
           }
         },
         "Textarea": {
@@ -9031,11 +8849,11 @@
         "Menu": {
           "alternatives": [
             "Select",
-            "Flyout"
+            "Popover"
           ],
           "avoidWhen": [
             "es una elección de un valor dentro de un formulario; eso es Select",
-            "el contenido es una descripción y no una lista de acciones; eso es Tooltip o Flyout"
+            "el contenido es una descripción y no una lista de acciones; eso es Tooltip o Popover"
           ],
           "useWhen": [
             "un conjunto de comandos que actúan sobre algo, detrás de un disparador",
@@ -9083,6 +8901,10 @@
                     "default": false,
                     "trueValue": "",
                     "type": "boolean"
+                  },
+                  "href": {
+                    "attr": "href",
+                    "type": "string"
                   },
                   "kind": {
                     "attr": "data-type",
@@ -9211,6 +9033,52 @@
                                 ],
                                 "mount": "data-sk-menu-item",
                                 "part": "item",
+                                "whenItemMissing": "href",
+                                "whenItemNotEquals": {
+                                  "equals": "separator",
+                                  "option": "kind"
+                                },
+                                "whenItemSlotMissing": "children"
+                              },
+                              {
+                                "also": [
+                                  "sk-interactive"
+                                ],
+                                "children": [
+                                  {
+                                    "element": "span",
+                                    "itemSlot": "label",
+                                    "part": "itemLabel"
+                                  },
+                                  {
+                                    "attrs": {
+                                      "aria-hidden": "true"
+                                    },
+                                    "children": [
+                                      {
+                                        "attrs": {
+                                          "data-sk-icon": "check",
+                                          "data-sk-icon-size": "md"
+                                        },
+                                        "element": "span"
+                                      }
+                                    ],
+                                    "element": "span",
+                                    "part": "itemIndicator",
+                                    "whenItemGiven": "kind"
+                                  }
+                                ],
+                                "element": "a",
+                                "itemOptions": [
+                                  "value",
+                                  "disabled",
+                                  "kind",
+                                  "tone",
+                                  "href"
+                                ],
+                                "mount": "data-sk-menu-item",
+                                "part": "item",
+                                "whenItemGiven": "href",
                                 "whenItemNotEquals": {
                                   "equals": "separator",
                                   "option": "kind"
@@ -9327,14 +9195,18 @@
         "label": {
           "attr": "aria-label",
           "type": "string"
+        },
+        "nav": {
+          "attr": "data-nav",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
         }
       },
       "parts": {
         "item": "sk-menubar__item",
+        "itemIndicator": "sk-menubar__item-indicator",
         "itemWrapper": "sk-menubar__item-wrapper",
-        "menu": "sk-menubar__menu",
-        "menuItem": "sk-menubar__menu-item",
-        "positioner": "sk-menubar__positioner",
         "root": "sk-menubar"
       },
       "semantics": {
@@ -9354,17 +9226,7 @@
         },
         "MenubarItem": {
           "useWhen": [
-            "un ítem de la barra — con MenubarMenu adentro es un desplegable, sin él es un comando directo"
-          ]
-        },
-        "MenubarMenu": {
-          "useWhen": [
-            "el desplegable de un MenubarItem — un solo nivel; para submenús anidados dentro de un desplegable, usa Menu en su lugar"
-          ]
-        },
-        "MenubarMenuItem": {
-          "useWhen": [
-            "un comando dentro de un desplegable de la barra"
+            "un ítem de la barra — con `items` (el mismo shape de Menu: comandos, checkbox/radio, separadores, submenús anidados) es un desplegable, sin `items` es un comando directo"
           ]
         }
       },
@@ -9416,10 +9278,13 @@
             "menubar-command",
             "menubar-dropdown-trigger"
           ],
-          "options": [],
+          "options": [
+            "nav"
+          ],
           "parents": [
             "Menubar"
           ],
+          "portals": true,
           "react": {
             "from": "@skryensya/react/menubar",
             "name": "MenubarItem"
@@ -9430,113 +9295,359 @@
               "required": true
             },
             "items": {
-              "accepts": "signature",
-              "of": [
-                "MenubarMenu"
-              ]
+              "accepts": "items",
+              "item": {
+                "key": "value",
+                "options": {
+                  "disabled": {
+                    "attr": "data-disabled",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "href": {
+                    "attr": "href",
+                    "type": "string"
+                  },
+                  "kind": {
+                    "attr": "data-type",
+                    "type": "enum",
+                    "values": [
+                      "checkbox",
+                      "radio",
+                      "separator"
+                    ]
+                  },
+                  "tone": {
+                    "attr": "data-tone",
+                    "type": "enum",
+                    "values": [
+                      "danger"
+                    ]
+                  },
+                  "value": {
+                    "attr": "data-value",
+                    "type": "string"
+                  }
+                },
+                "slots": {
+                  "children": {
+                    "accepts": "items",
+                    "recursive": true
+                  },
+                  "label": {
+                    "accepts": "text"
+                  }
+                }
+              }
             }
           },
           "template": {
+            "also": [
+              "sk-menu"
+            ],
             "children": [
               {
                 "also": [
-                  "sk-interactive"
+                  "sk-button",
+                  "sk-interactive",
+                  "sk-anchor"
                 ],
                 "attrs": {
+                  "data-size": "sm",
+                  "data-sk-menu-trigger": "",
+                  "data-variant": "ghost",
                   "role": "menuitem",
                   "type": "button"
                 },
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "chevron-down",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span",
+                    "part": "itemIndicator",
+                    "whenGiven": "items"
+                  }
+                ],
                 "element": "button",
                 "mount": "data-sk-menubar-item",
                 "part": "item",
-                "slot": "children"
+                "slot": "children",
+                "whenMissing": "nav"
               },
               {
-                "slot": "items",
+                "also": [
+                  "sk-nav-list__link",
+                  "sk-interactive",
+                  "sk-anchor"
+                ],
+                "attrs": {
+                  "data-sk-menu-trigger": "",
+                  "role": "menuitem",
+                  "type": "button"
+                },
+                "children": [
+                  {
+                    "also": [
+                      "sk-nav-list__label"
+                    ],
+                    "element": "span",
+                    "slot": "children"
+                  },
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "chevron-down",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span",
+                    "part": "itemIndicator",
+                    "whenGiven": "items"
+                  }
+                ],
+                "element": "button",
+                "mount": "data-sk-menubar-item",
+                "part": "item",
+                "whenGiven": "nav"
+              },
+              {
+                "also": [
+                  "sk-menu__positioner",
+                  "sk-anchored"
+                ],
+                "children": [
+                  {
+                    "also": [
+                      "sk-menu__content"
+                    ],
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "also": [
+                                  "sk-menu__item",
+                                  "sk-interactive"
+                                ],
+                                "children": [
+                                  {
+                                    "also": [
+                                      "sk-menu__item-label"
+                                    ],
+                                    "element": "span",
+                                    "itemSlot": "label"
+                                  },
+                                  {
+                                    "also": [
+                                      "sk-menu__item-indicator"
+                                    ],
+                                    "attrs": {
+                                      "aria-hidden": "true"
+                                    },
+                                    "children": [
+                                      {
+                                        "attrs": {
+                                          "data-sk-icon": "check",
+                                          "data-sk-icon-size": "md"
+                                        },
+                                        "element": "span"
+                                      }
+                                    ],
+                                    "element": "span",
+                                    "whenItemGiven": "kind"
+                                  }
+                                ],
+                                "element": "div",
+                                "itemOptions": [
+                                  "value",
+                                  "disabled",
+                                  "kind",
+                                  "tone"
+                                ],
+                                "mount": "data-sk-menu-item",
+                                "whenItemMissing": "href",
+                                "whenItemNotEquals": {
+                                  "equals": "separator",
+                                  "option": "kind"
+                                },
+                                "whenItemSlotMissing": "children"
+                              },
+                              {
+                                "also": [
+                                  "sk-menu__item",
+                                  "sk-interactive"
+                                ],
+                                "children": [
+                                  {
+                                    "also": [
+                                      "sk-menu__item-label"
+                                    ],
+                                    "element": "span",
+                                    "itemSlot": "label"
+                                  },
+                                  {
+                                    "also": [
+                                      "sk-menu__item-indicator"
+                                    ],
+                                    "attrs": {
+                                      "aria-hidden": "true"
+                                    },
+                                    "children": [
+                                      {
+                                        "attrs": {
+                                          "data-sk-icon": "check",
+                                          "data-sk-icon-size": "md"
+                                        },
+                                        "element": "span"
+                                      }
+                                    ],
+                                    "element": "span",
+                                    "whenItemGiven": "kind"
+                                  }
+                                ],
+                                "element": "a",
+                                "itemOptions": [
+                                  "value",
+                                  "disabled",
+                                  "kind",
+                                  "tone",
+                                  "href"
+                                ],
+                                "mount": "data-sk-menu-item",
+                                "whenItemGiven": "href",
+                                "whenItemNotEquals": {
+                                  "equals": "separator",
+                                  "option": "kind"
+                                },
+                                "whenItemSlotMissing": "children"
+                              },
+                              {
+                                "also": [
+                                  "sk-menu__separator"
+                                ],
+                                "attrs": {
+                                  "role": "separator"
+                                },
+                                "element": "div",
+                                "mount": "data-sk-menu-separator",
+                                "whenItemEquals": {
+                                  "equals": "separator",
+                                  "option": "kind"
+                                }
+                              },
+                              {
+                                "also": [
+                                  "sk-menu"
+                                ],
+                                "children": [
+                                  {
+                                    "also": [
+                                      "sk-menu__item",
+                                      "sk-interactive",
+                                      "sk-anchor"
+                                    ],
+                                    "attrs": {
+                                      "type": "button"
+                                    },
+                                    "children": [
+                                      {
+                                        "also": [
+                                          "sk-menu__item-label"
+                                        ],
+                                        "element": "span",
+                                        "itemSlot": "label"
+                                      },
+                                      {
+                                        "also": [
+                                          "sk-menu__item-indicator"
+                                        ],
+                                        "attrs": {
+                                          "aria-hidden": "true"
+                                        },
+                                        "children": [
+                                          {
+                                            "attrs": {
+                                              "data-sk-icon": "chevron-right",
+                                              "data-sk-icon-size": "md"
+                                            },
+                                            "element": "span"
+                                          }
+                                        ],
+                                        "element": "span"
+                                      }
+                                    ],
+                                    "element": "button",
+                                    "mount": "data-sk-menu-trigger"
+                                  },
+                                  {
+                                    "also": [
+                                      "sk-menu__positioner",
+                                      "sk-anchored"
+                                    ],
+                                    "attrs": {
+                                      "data-sk-submenu": ""
+                                    },
+                                    "children": [
+                                      {
+                                        "also": [
+                                          "sk-menu__content"
+                                        ],
+                                        "children": [
+                                          {
+                                            "recurse": "entry",
+                                            "repeatItemSlot": "children"
+                                          }
+                                        ],
+                                        "element": "div",
+                                        "mount": "data-sk-menu-content"
+                                      }
+                                    ],
+                                    "element": "div",
+                                    "mount": "data-sk-menu-positioner"
+                                  }
+                                ],
+                                "element": "div",
+                                "mount": "data-sk-menu",
+                                "whenItemSlotGiven": "children"
+                              }
+                            ],
+                            "name": "entry"
+                          }
+                        ],
+                        "repeat": "items"
+                      }
+                    ],
+                    "element": "div",
+                    "mount": "data-sk-menu-content"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-menu-positioner",
                 "whenGiven": "items"
               }
             ],
             "element": "div",
             "host": true,
+            "mount": "data-sk-menu",
             "part": "itemWrapper"
-          }
-        },
-        "MenubarMenu": {
-          "host": {
-            "element": "div"
-          },
-          "intent": [
-            "menubar-dropdown"
-          ],
-          "options": [],
-          "parents": [
-            "MenubarItem"
-          ],
-          "react": {
-            "from": "@skryensya/react/menubar",
-            "name": "MenubarMenu"
-          },
-          "slots": {
-            "children": {
-              "accepts": "signature",
-              "of": [
-                "MenubarMenuItem"
-              ],
-              "required": true
-            }
-          },
-          "template": {
-            "children": [
-              {
-                "attrs": {
-                  "role": "menu"
-                },
-                "element": "div",
-                "part": "menu",
-                "slot": "children"
-              }
-            ],
-            "element": "div",
-            "host": true,
-            "mount": "data-sk-menubar-menu",
-            "part": "positioner"
-          }
-        },
-        "MenubarMenuItem": {
-          "host": {
-            "element": "button"
-          },
-          "intent": [
-            "menubar-dropdown-command"
-          ],
-          "options": [],
-          "parents": [
-            "MenubarMenu"
-          ],
-          "react": {
-            "from": "@skryensya/react/menubar",
-            "name": "MenubarMenuItem"
-          },
-          "slots": {
-            "children": {
-              "accepts": "text",
-              "required": true
-            }
-          },
-          "template": {
-            "also": [
-              "sk-interactive"
-            ],
-            "attrs": {
-              "role": "menuitem",
-              "tabindex": "-1",
-              "type": "button"
-            },
-            "element": "button",
-            "host": true,
-            "mount": "data-sk-menubar-menu-item",
-            "part": "menuItem",
-            "slot": "children"
           }
         }
       }
@@ -9634,6 +9745,9 @@
           "template": {
             "children": [
               {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
                 "children": [
                   {
                     "element": "span",
@@ -12215,7 +12329,7 @@
         "highValue": {
           "attr": "value",
           "default": 100,
-          "prop": "defaultValue",
+          "prop": "defaultHighValue",
           "type": "number"
         },
         "lowLabel": {
@@ -12225,7 +12339,7 @@
         "lowValue": {
           "attr": "value",
           "default": 0,
-          "prop": "defaultValue",
+          "prop": "defaultLowValue",
           "type": "number"
         },
         "max": {
@@ -13960,136 +14074,6 @@
         }
       }
     },
-    "theme-toggle": {
-      "css": "@skryensya/core/components/theme-toggle.css",
-      "id": "theme-toggle",
-      "options": {
-        "defaultValue": {
-          "attr": "data-scheme",
-          "machineInput": true,
-          "type": "enum",
-          "values": [
-            "system",
-            "light",
-            "dark"
-          ]
-        },
-        "labelDark": {
-          "attr": "data-sk-theme-toggle-label-dark",
-          "machineInput": true,
-          "type": "string"
-        },
-        "labelLight": {
-          "attr": "data-sk-theme-toggle-label-light",
-          "machineInput": true,
-          "type": "string"
-        },
-        "labelSystem": {
-          "attr": "data-sk-theme-toggle-label-system",
-          "machineInput": true,
-          "type": "string"
-        },
-        "size": {
-          "attr": "data-size",
-          "type": "enum",
-          "values": [
-            "sm",
-            "md",
-            "lg"
-          ]
-        }
-      },
-      "parts": {
-        "root": "sk-theme-toggle"
-      },
-      "semantics": {
-        "ThemeToggle": {
-          "alternatives": [
-            "Switch",
-            "Segmented"
-          ],
-          "avoidWhen": [
-            "sólo hay dos modos y ninguno es 'seguir al sistema'; ahí un Switch dice más",
-            "es una preferencia cualquiera dentro de un formulario; eso es un Switch o un Segmented"
-          ],
-          "useWhen": [
-            "la persona tiene que poder elegir claro, oscuro o seguir al sistema",
-            "va en el header o en un menú de preferencias, donde se busca una sola vez"
-          ]
-        }
-      },
-      "signatures": {
-        "ThemeToggle": {
-          "host": {
-            "element": "button"
-          },
-          "intent": [
-            "color-mode",
-            "dark-mode-switch",
-            "light-dark-toggle",
-            "appearance"
-          ],
-          "mount": "data-sk-theme-toggle",
-          "options": [
-            "defaultValue",
-            "size",
-            "labelSystem",
-            "labelLight",
-            "labelDark"
-          ],
-          "react": {
-            "from": "@skryensya/react/theme-toggle",
-            "name": "ThemeToggle"
-          },
-          "slots": {},
-          "template": {
-            "also": [
-              "sk-button",
-              "sk-interactive",
-              "sk-icon-toggle"
-            ],
-            "attrs": {
-              "aria-label": "Color mode: system",
-              "data-icon-only": "",
-              "data-variant": "ghost",
-              "type": "button"
-            },
-            "children": [
-              {
-                "attrs": {
-                  "data-face": "system",
-                  "data-sk-icon": "mode-system",
-                  "data-sk-icon-size": "md",
-                  "data-sk-theme-toggle-icon": "system"
-                },
-                "element": "span"
-              },
-              {
-                "attrs": {
-                  "data-face": "light",
-                  "data-sk-icon": "mode-light",
-                  "data-sk-icon-size": "md",
-                  "data-sk-theme-toggle-icon": "light"
-                },
-                "element": "span"
-              },
-              {
-                "attrs": {
-                  "data-face": "dark",
-                  "data-sk-icon": "mode-dark",
-                  "data-sk-icon-size": "md",
-                  "data-sk-theme-toggle-icon": "dark"
-                },
-                "element": "span"
-              }
-            ],
-            "element": "button",
-            "host": true,
-            "part": "root"
-          }
-        }
-      }
-    },
     "tile": {
       "css": "@skryensya/core/components/tile.css",
       "id": "tile",
@@ -14933,6 +14917,15 @@
           "trueValue": "",
           "type": "boolean"
         },
+        "hourCycle": {
+          "attr": "data-hour-cycle",
+          "machineInput": true,
+          "type": "enum",
+          "values": [
+            "h12",
+            "h24"
+          ]
+        },
         "hourLabel": {
           "attr": "data-hour-label",
           "default": "Hora",
@@ -14961,6 +14954,18 @@
           "attr": "data-name",
           "machineInput": true,
           "type": "string"
+        },
+        "optionsLabel": {
+          "attr": "data-options-label",
+          "default": "Elegir de la lista",
+          "machineInput": true,
+          "type": "string"
+        },
+        "optionsStep": {
+          "attr": "data-options-step",
+          "default": 30,
+          "machineInput": true,
+          "type": "number"
         },
         "periodLabel": {
           "attr": "data-period-label",
@@ -14996,7 +15001,8 @@
         "label": "sk-time-field__label",
         "literal": "sk-time-field__literal",
         "root": "sk-time-field",
-        "segment": "sk-time-field__segment"
+        "segment": "sk-time-field__segment",
+        "trailing": "sk-time-field__trailing"
       },
       "semantics": {
         "TimeField": {
@@ -15029,6 +15035,7 @@
           "options": [
             "name",
             "locale",
+            "hourCycle",
             "value",
             "minuteStep",
             "disabled",
@@ -15037,8 +15044,11 @@
             "hourLabel",
             "minuteLabel",
             "periodLabel",
-            "clearLabel"
+            "clearLabel",
+            "optionsStep",
+            "optionsLabel"
           ],
+          "portals": true,
           "react": {
             "from": "@skryensya/react/time-field",
             "name": "TimeField"
@@ -15446,11 +15456,11 @@
       "semantics": {
         "Tooltip": {
           "alternatives": [
-            "Flyout"
+            "Popover"
           ],
           "avoidWhen": [
             "el texto es el único nombre o la única información disponible; debe vivir fuera del tooltip",
-            "el contenido necesita acciones, formato o varias líneas; usa Flyout"
+            "el contenido necesita acciones, formato o varias líneas; usa Popover"
           ],
           "useWhen": [
             "un control ya tiene nombre accesible y necesita una descripción breve al pasar el puntero o enfocar",
@@ -16602,7 +16612,7 @@
           ],
           "avoidWhen": [
             "es una decisión corta que hay que confirmar: eso es Dialog, centrado y sin borde",
-            "no bloquea el resto de la pantalla: eso es Popover o Flyout"
+            "no bloquea el resto de la pantalla: eso es Popover"
           ],
           "useWhen": [
             "un panel llega desde un borde y se va arrastrándolo: navegación en móvil, un filtro, una hoja",
@@ -16795,5 +16805,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "2af87b42104f31fc"
+  "sourceHash": "5114dfc8a1c7a5c2"
 }

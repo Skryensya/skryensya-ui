@@ -80,7 +80,7 @@ function reconcileNav(
  *
  * Owns showing/hiding `[data-sk-table-pager-row]`, reconciling the `[data-sk-table-pager-nav]`
  * toward `paginationRange` (see {@link reconcileNav}), and filling an optional status node.
- * Page size comes from `data-page-size` on the root, or from a nested Flyout/Select via
+ * Page size comes from `data-page-size` on the root, or from a nested Select via
  * `sk-value-change`. Does not invent the table or the picker.
  *
  * The nav's own button set is genuinely computed, not authored (the contract marks `page`,
@@ -98,7 +98,7 @@ export function connectTablePager(root: HTMLElement): Cleanup {
   }
 
   const status = root.querySelector<HTMLElement>(statusSelector);
-  const sizeMenu = root.querySelector<HTMLElement>("[data-sk-select], [data-sk-flyout]");
+  const sizeMenu = root.querySelector<HTMLElement>("[data-sk-select]");
   const previousLabel = root.getAttribute("data-previous-label") || "Previous page";
   const nextLabel = root.getAttribute("data-next-label") || "Next page";
   const pageLabel = root.getAttribute("data-page-label") || "Page";

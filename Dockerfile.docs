@@ -17,9 +17,11 @@ COPY scripts ./scripts
 
 RUN pnpm install --frozen-lockfile
 
-# Filter builds docs and its workspace dependencies (core CSS, icons, compiler, …).
+# Core's built CSS is the only package build artifact docs needs at image build time. The docs app
+# imports workspace source for catalogues, demos and compilers; using Turbo here also runs compiler
+# contract publication checks, which can fail independently of whether the static docs app builds.
 ENV NODE_OPTIONS=--max-old-space-size=4096
-RUN pnpm turbo run build --filter=@skryensya/docs
+RUN pnpm --filter @skryensya/core build && pnpm --filter @skryensya/docs build
 
 FROM nginx:1.27-alpine AS runtime
 

@@ -139,6 +139,20 @@ export const layoutContract = {
       react: { from: "@skryensya/react/layout", name: "LayoutGrid" },
     },
 
+    /*
+     * The main landmark is a shell region, not a content component. Its children stay optional so a
+     * template can show chrome and an intentionally empty work area before an application decides
+     * what belongs there.
+     */
+    Main: {
+      intent: ["main-content", "application-work-area", "app-shell-main"],
+      host: { element: "main" },
+      options: [],
+      slots: { children: { accepts: "node" } },
+      template: { element: "main", host: true, slot: "children" },
+      react: { from: "@skryensya/react/layout", name: "Main" },
+    },
+
     DensityScope: {
       intent: ["local-density", "compact-subtree", "scaled-component-spacing"],
       host: { element: "div" },

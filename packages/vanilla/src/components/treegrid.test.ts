@@ -1,5 +1,6 @@
 import { fireEvent } from "@testing-library/dom";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { TREEGRID_EXIT_FALLBACK_MS } from "@skryensya/core/treegrid";
 import { destroyMount } from "../runtime/svelte-hydrate.js";
 import { mountTreegrid } from "./treegrid.js";
 
@@ -89,13 +90,20 @@ describe("Treegrid vanilla enhancer", () => {
     expect(document.activeElement).toBe(row("drafts"));
   });
 
-  it("Left Arrow on an expanded branch's row collapses it and hides its child", () => {
+  it("Left Arrow on an expanded branch's row collapses it and hides its child, after its exit animation settles", () => {
+    vi.useFakeTimers();
     const root = markup();
     row("inbox").focus();
     fireEvent.keyDown(root, { key: "ArrowLeft" });
     expect(row("inbox").getAttribute("aria-expanded")).toBe("false");
+    // Kept painting through its own exit animation, not hidden the same frame the branch collapses
+    // — jsdom never fires `animationend`, so `TREEGRID_EXIT_FALLBACK_MS` is what settles it.
+    expect(row("alice").hidden).toBe(false);
+    expect(row("bob").hidden).toBe(false);
+    vi.advanceTimersByTime(TREEGRID_EXIT_FALLBACK_MS + 1);
     expect(row("alice").hidden).toBe(true);
     expect(row("bob").hidden).toBe(true);
+    vi.useRealTimers();
   });
 
   it("Right Arrow on an already-expanded row enters its first cell; Left Arrow returns to the row", () => {

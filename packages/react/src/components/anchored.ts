@@ -59,8 +59,20 @@ const subscribeToNothing = () => () => {};
 const clientSupport = () => supportsAnchorPositioning();
 const serverSupport = () => false;
 
-export function useAnchored(id: string): Anchored {
-  const on = useSyncExternalStore(subscribeToNothing, clientSupport, serverSupport);
+/*
+ * `enabled`: an escape hatch for a caller whose anchor lives inside ANOTHER anchor-positioned box
+ * (a submenu, hanging off a trigger that is itself inside the parent menu's `.sk-anchored` panel).
+ * Measured against a live nested Menu: the browser engine lays such a box out with a valid rect and
+ * then never PAINTS it, an anchor-positioned element cannot itself be reached as an anchor from
+ * inside another anchor-positioned box. `position: fixed` widens which anchors are reachable
+ * (`anchored.css`'s own note) but does not fix this doubly-nested case. `false` here keeps the
+ * machine's own placement — the already-working fallback this pattern ships for browsers with no
+ * engine at all — for exactly the boxes the engine cannot place, instead of a box that is `on` but
+ * invisible.
+ */
+export function useAnchored(id: string, enabled = true): Anchored {
+  const browserSupport = useSyncExternalStore(subscribeToNothing, clientSupport, serverSupport);
+  const on = enabled && browserSupport;
   const anchorStyle = on
     ? ({ [anchoredHooks.name]: anchorNameFor(id) } as CSSProperties)
     : undefined;

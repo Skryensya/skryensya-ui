@@ -99,20 +99,6 @@ export default defineConfig({
         "react/jsx-dev-runtime",
         "react-dom/client",
         "@zag-js/react",
-        /*
-         * The playground's editor, and the third time this list has grown for the same reason. It
-         * takes `react` and `react-dom` as PEERS, so it is one more package that must reach the
-         * shared pre-bundle rather than resolve its own copy — and, being a direct dependency of
-         * apps/docs, it is one this list can actually pin (unlike the per-machine `@zag-js/<name>`
-         * packages above).
-         *
-         * Left off, Vite only discovers it when someone first opens /playground: it re-optimizes
-         * mid-session, and the island that already mounted comes back holding a different React
-         * than `react-dom`. That lands as "Invalid hook call" / `Cannot read properties of null
-         * (reading 'useState')` thrown from `Playground.tsx`'s own first `useState` — the ISLAND
-         * failing, with nothing wrong inside the sandbox at all.
-         */
-        "@codesandbox/sandpack-react",
       ],
     },
     plugins: [svelte()],

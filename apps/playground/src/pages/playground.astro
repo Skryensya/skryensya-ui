@@ -1,0 +1,251 @@
+---
+/*
+ * /playground, a root route beside /presets and, like it, a TOOL rather than a document.
+ *
+ * Everything a component page can tell you, it tells you about code you cannot touch. This route
+ * exists for the next question, which is always "what if I change it": the same examples the
+ * component pages render, opened in an editor that actually runs them, in both bindings.
+ *
+ * WHAT HAPPENS AT BUILD TIME AND WHAT DOES NOT. The catalogue is usage trees, and the emitters that
+ * turn a tree into React and into markup run at build time in
+ * `playground-catalogue-[locale].json.ts`. The browser gets strings; it never gets the compiler, the
+ * contracts or the trees, which is the same split every ComponentPreview on this site already makes.
+ * They arrive as a fetched asset rather than as props on this page: see that endpoint for why.
+ */
+import Base from "../../../docs/src/layouts/Base.astro";
+import Playground from "../components/react-demos/Playground.tsx";
+import { getLocale, useTranslations } from "../i18n";
+
+/* The kit's own paint for the chrome around the editor: the rail, the binding switch and the link
+ * back to the documentation are all components, not one-off markup. */
+import "@skryensya/core/components/sidebar.css";
+import "@skryensya/core/components/tree-view.css";
+import "@skryensya/core/components/segmented.css";
+import "@skryensya/core/components/typography.css";
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+
+const strings = {
+  title: t("playground.title"),
+  componentsLabel: t("playground.components"),
+  bindingLabel: t("playground.binding"),
+  react: "React",
+  vanilla: "Vanilla",
+  loading: t("playground.loading"),
+  failed: t("playground.failed"),
+  offline: t("playground.offline"),
+  docsLink: t("playground.docsLink"),
+  hideRail: t("playground.hideRail"),
+  showRail: t("playground.showRail"),
+  resizeRail: t("playground.resizeRail"),
+  discardTitle: t("playground.discardTitle"),
+  discardBody: t("playground.discardBody"),
+  discardCancel: t("playground.discardCancel"),
+  discardConfirm: t("playground.discardConfirm"),
+};
+---
+
+<Base fullBleed title={t("playground.title")} description={t("playground.description")}>
+  {/*
+    `client:only` and not `client:load`: Sandpack mounts a bundler in an iframe and reads the
+    document to size its editor, so there is no meaningful server render of it — and attempting one
+    makes the build import a browser-only dependency graph for markup that would be thrown away on
+    hydration anyway.
+  */}
+  <Playground client:only="react" catalogue={`/playground-catalogue-${locale}.json`} strings={strings} />
+</Base>
+
+<style is:global>
+  /*
+   * The tool layout: a rail of components and a stage that fills what is left. Global rather than
+   * scoped because the markup it styles is rendered by a React island, which Astro's scoped styles
+   * cannot reach.
+   */
+  /*
+   * FLEX, not grid, and the reason is the hide.
+   *
+   * As a two-track grid (`auto minmax(0, 1fr)`) this worked until the rail could disappear: a
+   * `display: none` item leaves the grid entirely, so the stage slid into the FIRST track and sized
+   * itself to `auto` — hiding the rail made the editor 794px narrower instead of wider, which is the
+   * opposite of what the control promises. A flex row has no tracks to fall into: the rail is as
+   * wide as it is, the stage takes what is left, and one of them not being there is not a special
+   * case.
+   */
+  .playground {
+    display: flex;
+    /* The header is `position: sticky`, so the tool owns exactly the rest of the viewport and the
+     * editor scrolls inside it instead of the page scrolling under it. `--docs-header-block-size`
+     * is the site's own token for that header (site.css), not a number guessed here. */
+    block-size: calc(100dvh - var(--docs-header-block-size));
+    min-block-size: 0;
+  }
+
+  .playground__rail {
+    /*
+     * The rail's first row starts level with the bar's title beside it. The component's own block
+     * padding is `md`, which is right for a rail that begins at the top of a page; here there is a
+     * strip of chrome to its right, and 16px against that strip's 4px left the two columns starting
+     * at visibly different heights. Overridden through the hook the component publishes for it, so
+     * the inline padding (and everything else) stays the component's.
+     */
+    --sk-sidebar-padding-block: var(--space-inset-xs);
+
+    border-inline-end: 1px solid var(--color-border-subtle);
+  }
+
+  /*
+   * COLLAPSED MEANS GONE HERE, not narrowed, and that is a deliberate departure from what the
+   * component does by default.
+   *
+   * The kit collapses a sidebar to a rail of ICONS and keeps it in the accessibility tree, which is
+   * right for site navigation: an icon per destination still says where each link goes. This rail
+   * holds a TREE, where the icons say "folder" and "file" and nothing else — every example would
+   * collapse to the same glyph, so the rail would be a column of identical rows. Worse, a zero-width
+   * panel with `overflow: hidden` still holds focusable rows, so a keyboard would tab into a rail
+   * nobody can see.
+   *
+   * `display: none` is the honest version of what this toggle promises: the reader asked for the
+   * editor to have the room. The state, the storage and the trigger's ARIA are all still the
+   * component's; only what "collapsed" LOOKS like is this screen's.
+   */
+  .playground__rail[data-state="collapsed"] {
+    display: none;
+  }
+
+  /*
+   * A LEAF HERE HAS NO CHEVRON TO ALIGN WITH, so it should not pay for the column.
+   *
+   * TreeView reserves the indicator column on leaves as well as branches, and that is right in the
+   * general case: a folder and a file sitting in the SAME list have to start their labels at the
+   * same x, or the list reads as ragged. This catalogue never mixes them — level one is components,
+   * level two is examples — so every example row was indented 18px past its own icon for a
+   * disclosure arrow that can never appear there.
+   *
+   * Done by re-declaring the hook the component publishes for that column, on the part that carries
+   * it, which is the override surface `tokens.scss` documents. A custom property resolves per
+   * element, so branches read their own `--sk-tree-indicator-size` and keep the chevron; only the
+   * leaves collapse it. No tree-view rule is overridden and the component is unchanged for everyone
+   * else — including the source browser under Referencia, where folders and files DO mix.
+   */
+  .playground__rail .sk-tree-view__item {
+    --sk-tree-indicator-size: 0;
+  }
+
+  .playground__stage {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    /* Both floors are load-bearing: without them a flex item refuses to shrink below its content,
+       and the editor's own scrollers would push the page into a horizontal scroll instead. */
+    min-inline-size: 0;
+    min-block-size: 0;
+  }
+
+  /*
+   * ONE ROW, and as short as a row can honestly be. This is a tool: every pixel the chrome takes is
+   * a pixel of code the reader cannot see, and the bar carries four things that all fit on a line.
+   * The block padding is the floor of the scale, so the height is the CONTROLS' height rather than
+   * padding around them, which is the same reason the kit sizes a control from its own box.
+   */
+  /*
+   * ONE GAP, AND IT IS THE KIT'S. `component-preview__header` is this exact bar one layer down — a
+   * title on the left, a binding switch on the right — and it spaces itself with a single
+   * `--space-inline-sm` and `--space-inset-md` across. This had grown three different gaps (12 / 8 /
+   * 12), which is three decisions where the system already made one.
+   *
+   * The BLOCK padding is the one deliberate departure: `--space-inset-xs` rather than the card's
+   * `sm`, because a tool's strip is denser than a card's header and every pixel here is a pixel of
+   * code the reader cannot see. The height is the segmented control's anyway, which is the floor
+   * nothing in this file can lower.
+   */
+  .playground__bar {
+    display: flex;
+    gap: var(--space-inline-sm);
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-inset-xs) var(--space-inset-md);
+    border-block-end: 1px solid var(--color-border-subtle);
+  }
+
+  .playground__heading {
+    display: flex;
+    gap: var(--space-inline-sm);
+    align-items: center;
+    min-inline-size: 0;
+  }
+
+  /*
+   * The `<h1>` at body size. It is still the page's heading and still the first thing a screen
+   * reader lands on; it just has no reason to be typeset like a document title in a strip of
+   * chrome, where the component name is a label for the panel below it.
+   *
+   * The element also carries `data-flush`: the site's global `h1:not([data-flush])` rule is a
+   * type-plus-attribute selector and outranks this class, so without it the heading stays at
+   * display size and the bar cannot get shorter no matter what is written here.
+   */
+  .playground__title {
+    margin: 0;
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-label);
+    line-height: var(--font-line-height-display);
+  }
+
+  .playground__example {
+    margin: 0;
+    overflow: hidden;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-display);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .playground__actions {
+    display: flex;
+    gap: var(--space-inline-sm);
+    align-items: center;
+  }
+
+  .playground__note,
+  .playground__state {
+    margin: 0;
+    padding: var(--space-inset-sm) var(--space-inset-lg);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+  }
+
+  /*
+   * A stable node for `Playground.tsx`'s `input` listener to bind to across Sandpack's own
+   * remounts (see `editorContainerRef` there) — invisible to layout on purpose, so it inserts
+   * nothing between `.playground__stage` and `.sp-wrapper` for the flex rules below to skip past.
+   */
+  .playground__editor {
+    display: contents;
+  }
+
+  /*
+   * Sandpack ships its own layout and sizes itself from its `editorHeight`; what it does not do is
+   * grow to fill a parent. These four rules hand it the leftover height and nothing else — the
+   * editor, the preview and the console stay Sandpack's.
+   */
+  .playground__stage .sp-wrapper {
+    display: flex;
+    flex: 1;
+    min-block-size: 0;
+  }
+
+  .playground__stage .sp-layout {
+    flex: 1;
+    min-block-size: 0;
+    /* Square against the chrome above and the viewport edges: it is the tool's surface here, not a
+     * card sitting on a page. */
+    border-radius: 0;
+    border-inline: 0;
+    border-block-end: 0;
+  }
+
+  .playground__stage .sp-stack {
+    block-size: auto;
+  }
+</style>

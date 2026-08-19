@@ -156,10 +156,6 @@
       "types": "./src/components/select.tsx",
       "default": "./src/components/select.tsx"
     },
-    "./flyout": {
-      "types": "./src/components/flyout.tsx",
-      "default": "./src/components/flyout.tsx"
-    },
     "./select-native": {
       "types": "./src/components/select-native.tsx",
       "default": "./src/components/select-native.tsx"
@@ -260,9 +256,9 @@
       "types": "./src/components/content.tsx",
       "default": "./src/components/content.tsx"
     },
-    "./theme-toggle": {
-      "types": "./src/components/theme-toggle.tsx",
-      "default": "./src/components/theme-toggle.tsx"
+    "./icon-state-button": {
+      "types": "./src/components/icon-state-button.tsx",
+      "default": "./src/components/icon-state-button.tsx"
     },
     "./tooltip": {
       "types": "./src/components/tooltip.tsx",
@@ -339,10 +335,6 @@
     "./render-tree": {
       "types": "./src/render-tree.tsx",
       "default": "./src/render-tree.tsx"
-    },
-    "./copy-button": {
-      "types": "./src/components/copy-button.tsx",
-      "default": "./src/components/copy-button.tsx"
     },
     "./dialog": {
       "types": "./src/components/dialog.tsx",

@@ -560,12 +560,11 @@
       "signatures": [
         {
           "alternatives": [
-            "Code",
-            "CopyButton"
+            "Code"
           ],
           "avoidWhen": [
             "es un literal dentro de una frase: eso es Code",
-            "lo que importa es copiarlo, no leerlo: eso es un CopyButton sobre el valor"
+            "lo que importa es copiarlo, no leerlo, no mostrarlo: eso es IconStateButton compuesto con el comportamiento de copiar, sin el bloque de código alrededor"
           ],
           "host": "div",
           "id": "CodePreview",
@@ -759,31 +758,6 @@
             "confirmar algo que ya pasó y no requiere respuesta: se guardó, se envió, se copió",
             "ofrecer deshacer una acción durante unos segundos",
             "avisar que terminó algo que corría en segundo plano"
-          ]
-        }
-      ]
-    },
-    {
-      "css": "@skryensya/core/components/copy-button.css",
-      "id": "copy-button",
-      "signatures": [
-        {
-          "alternatives": [],
-          "avoidWhen": [
-            "el valor no está visible: el botón copia lo que el lector tiene delante, no un dato oculto",
-            "la acción cambia algo; esto no muta nada, sólo duplica"
-          ],
-          "host": "button",
-          "id": "CopyButton",
-          "intent": [
-            "copy-to-clipboard",
-            "copy-a-code-block",
-            "copy-a-token"
-          ],
-          "parents": [],
-          "useWhen": [
-            "hay un valor en pantalla que la gente va a querer pegar en otro lado: un comando, un token, un id",
-            "copiar a mano es propenso a error: cadenas largas, sin espacios, sensibles a mayúsculas"
           ]
         }
       ]
@@ -989,11 +963,11 @@
       "signatures": [
         {
           "alternatives": [
-            "Flyout",
+            "Popover",
             "Tooltip"
           ],
           "avoidWhen": [
-            "es información auxiliar que no bloquea; eso es un Tooltip o un Flyout",
+            "es información auxiliar que no bloquea; eso es un Tooltip o un Popover",
             "es una lista de acciones colgada de un botón; eso es un Menu",
             "el contenido es largo o navegable: eso pide una página, no una caja modal"
           ],
@@ -1114,37 +1088,6 @@
       ]
     },
     {
-      "css": "@skryensya/core/components/flyout.css",
-      "id": "flyout",
-      "signatures": [
-        {
-          "alternatives": [
-            "Segmented",
-            "RadioGroup"
-          ],
-          "avoidWhen": [
-            "son tres opciones o menos y caben a la vista; eso es un Segmented o un RadioGroup",
-            "hay que escribir para filtrar; eso es un Combobox",
-            "el panel lleva acciones, no valores; eso es un Menu"
-          ],
-          "host": "div",
-          "id": "Flyout",
-          "intent": [
-            "value-picker",
-            "dropdown",
-            "choose-from-a-list",
-            "filter-picker"
-          ],
-          "parents": [],
-          "useWhen": [
-            "se elige un valor de una lista y el panel tiene que abrirse al lado, no ocupar la página",
-            "son más opciones de las que conviene mostrar siempre, pero pocas para buscar",
-            "hace falta que el panel escape del recorte de un contenedor con overflow"
-          ]
-        }
-      ]
-    },
-    {
       "css": "@skryensya/core/components/form-field.css",
       "id": "form-field",
       "signatures": [
@@ -1195,6 +1138,34 @@
             "refuerza una acción que ya tiene texto; sin label, decorativo",
             "es el único contenido de un control cuadrado, y entonces el CONTROL lleva el nombre accesible, no el icono",
             "el nombre es un rol que el sistema nombra: delete, visibility, chevron-down"
+          ]
+        }
+      ]
+    },
+    {
+      "css": "@skryensya/core/components/icon-state-button.css",
+      "id": "icon-state-button",
+      "signatures": [
+        {
+          "alternatives": [
+            "Switch",
+            "Icon"
+          ],
+          "avoidWhen": [
+            "el comportamiento ya existe hecho: un ciclo de modo de color usa las funciones de @skryensya/core/theme-toggle, un copy-to-clipboard usa writeClipboard de @skryensya/core/copy-button, sobre este mismo primitivo — no hay que reinventar esa parte",
+            "hay un solo estado, o dos que se leen como on/off: eso es un Switch o un Toggle simple, no vale la pena declarar una colección de caras para dos valores",
+            "el ícono es puramente decorativo y no cambia: eso es Icon, sin la anatomía de estados"
+          ],
+          "host": "button",
+          "id": "IconStateButton",
+          "intent": [
+            "icon-button-with-states",
+            "multi-state-icon-button"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el control necesita mostrar uno de N estados con nombre, cada uno con su propio ícono, y quien lo usa va a escribir el comportamiento que decide cuál está activo (copiar, ciclar un modo, lo que sea)",
+            "los estados varían según el uso: no hay un set fijo que un contrato pueda declarar de antemano"
           ]
         }
       ]
@@ -1270,7 +1241,7 @@
           "host": "input",
           "id": "NativeInput",
           "intent": [
-            "unstyled-native-input",
+            "styled-native-input",
             "platform-control",
             "native-time-input"
           ],
@@ -1634,11 +1605,11 @@
         {
           "alternatives": [
             "Select",
-            "Flyout"
+            "Popover"
           ],
           "avoidWhen": [
             "es una elección de un valor dentro de un formulario; eso es Select",
-            "el contenido es una descripción y no una lista de acciones; eso es Tooltip o Flyout"
+            "el contenido es una descripción y no una lista de acciones; eso es Tooltip o Popover"
           ],
           "host": "div",
           "id": "Menu",
@@ -1695,37 +1666,7 @@
             "Menubar"
           ],
           "useWhen": [
-            "un ítem de la barra — con MenubarMenu adentro es un desplegable, sin él es un comando directo"
-          ]
-        },
-        {
-          "alternatives": [],
-          "avoidWhen": [],
-          "host": "div",
-          "id": "MenubarMenu",
-          "intent": [
-            "menubar-dropdown"
-          ],
-          "parents": [
-            "MenubarItem"
-          ],
-          "useWhen": [
-            "el desplegable de un MenubarItem — un solo nivel; para submenús anidados dentro de un desplegable, usa Menu en su lugar"
-          ]
-        },
-        {
-          "alternatives": [],
-          "avoidWhen": [],
-          "host": "button",
-          "id": "MenubarMenuItem",
-          "intent": [
-            "menubar-dropdown-command"
-          ],
-          "parents": [
-            "MenubarMenu"
-          ],
-          "useWhen": [
-            "un comando dentro de un desplegable de la barra"
+            "un ítem de la barra — con `items` (el mismo shape de Menu: comandos, checkbox/radio, separadores, submenús anidados) es un desplegable, sin `items` es un comando directo"
           ]
         }
       ]
@@ -2881,35 +2822,6 @@
       ]
     },
     {
-      "css": "@skryensya/core/components/theme-toggle.css",
-      "id": "theme-toggle",
-      "signatures": [
-        {
-          "alternatives": [
-            "Switch",
-            "Segmented"
-          ],
-          "avoidWhen": [
-            "sólo hay dos modos y ninguno es 'seguir al sistema'; ahí un Switch dice más",
-            "es una preferencia cualquiera dentro de un formulario; eso es un Switch o un Segmented"
-          ],
-          "host": "button",
-          "id": "ThemeToggle",
-          "intent": [
-            "color-mode",
-            "dark-mode-switch",
-            "light-dark-toggle",
-            "appearance"
-          ],
-          "parents": [],
-          "useWhen": [
-            "la persona tiene que poder elegir claro, oscuro o seguir al sistema",
-            "va en el header o en un menú de preferencias, donde se busca una sola vez"
-          ]
-        }
-      ]
-    },
-    {
       "css": "@skryensya/core/components/tile.css",
       "id": "tile",
       "signatures": [
@@ -3253,11 +3165,11 @@
       "signatures": [
         {
           "alternatives": [
-            "Flyout"
+            "Popover"
           ],
           "avoidWhen": [
             "el texto es el único nombre o la única información disponible; debe vivir fuera del tooltip",
-            "el contenido necesita acciones, formato o varias líneas; usa Flyout"
+            "el contenido necesita acciones, formato o varias líneas; usa Popover"
           ],
           "host": "span",
           "id": "Tooltip",
@@ -3576,7 +3488,7 @@
           ],
           "avoidWhen": [
             "es una decisión corta que hay que confirmar: eso es Dialog, centrado y sin borde",
-            "no bloquea el resto de la pantalla: eso es Popover o Flyout"
+            "no bloquea el resto de la pantalla: eso es Popover"
           ],
           "host": "dialog",
           "id": "Vaul",
@@ -3639,5 +3551,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "2af87b42104f31fc"
+  "sourceHash": "5114dfc8a1c7a5c2"
 }

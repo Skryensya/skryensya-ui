@@ -3,8 +3,37 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "9329b6ac3d757ee1"
+surface: "8cb770292364ac26"
 entries:
+  - date: 2026-08-19
+    kind: feature
+    target: floating
+    es:
+      title: Nueva opción floating para SidebarTrigger
+      body: >-
+        Un app shell real casi nunca quiere una fila de header sólo para el hamburger: el trigger
+        ahora puede llevar <code>floating</code>, que lo saca del flujo y lo fija a la esquina
+        superior del lado final del panel, apenas afuera de su borde. Es una decisión de pintado,
+        no un padre legal nuevo — sigue siendo hijo de <code>Sidebar</code>,
+        <code>SidebarHeader</code> o <code>SidebarFooter</code>, y <code>aria-controls</code> lo
+        sigue encontrando igual. Como consecuencia, el propio <code>.sk-sidebar</code> dejó de
+        recortar con <code>overflow: hidden</code> en la raíz — el recorte ahora es de cada región
+        (<code>__header</code>, <code>__content</code>, <code>__footer</code>), que es donde
+        depende del contenido real, y es lo que deja que el trigger flotante se vea fuera del
+        panel en lugar de cortado por él.
+    en:
+      title: New floating option for SidebarTrigger
+      body: >-
+        A real app shell rarely wants a whole header row just for the hamburger: the trigger can
+        now take <code>floating</code>, which lifts it out of flow and pins it to the panel's own
+        top inline-end corner, just past its edge. It is a paint decision, not a new legal parent —
+        it is still a child of <code>Sidebar</code>, <code>SidebarHeader</code>, or
+        <code>SidebarFooter</code>, and <code>aria-controls</code> still finds it the same way. As
+        a consequence, `.sk-sidebar` itself no longer clips with a root-level
+        <code>overflow: hidden</code> — the clip now belongs to each region
+        (<code>__header</code>, <code>__content</code>, <code>__footer</code>), which is where it
+        actually depends on that region's content, and is what lets the floating trigger sit
+        visibly past the panel instead of being cut off by it.
   - date: 2026-08-17
     kind: feature
     target: landmarkLabel

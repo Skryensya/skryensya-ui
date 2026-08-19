@@ -1,0 +1,99 @@
+/*
+ * TIER 3, KBD
+ *
+ * A single keyboard key, drawn: the ⌘ in a ⌘K badge, the Esc in a palette footer. It is the semantic
+ * <kbd> element with the look of a physical key, and, like Badge, it is STATIC: no state, no
+ * machine, no vanilla enhancer.
+ *
+ * Every hook resolves to a TIER-2 token, never a ramp or a raw color, scripts/lint.mjs enforces it.
+ *
+ * IT HAS NO COLOUR OF ITS OWN BEYOND THESE HOOKS. A key at rest is DECORATION and reads the
+ * accent-reach tokens for it, so it dials with Badge and Tag; a key being held down is INFORMATION
+ * and reads the action colour, which never dials. Correct across both color modes with zero
+ * mode-specific overrides.
+ */
+@layer components {
+  .sk-kbd {
+    /* THE RESTING KEY IS DECORATION, and reads the accent-reach tokens for it. It used to be
+     * hard-wired to `surface-sunken` / `text-secondary`, which made this file disagree with
+     * `dimensions/accent.scss`, whose own comment listed Kbd beside Badge and Tag: the dimension
+     * documented a reach it did not have. Now a key is an accent-toned label like the other two, and
+     * goes quiet with them at level 2. At the dialled-down levels these resolve back to exactly the
+     * sunken/secondary pair this used to hard-code, so the quiet look is preserved, not lost. */
+    --sk-kbd-bg: var(--color-decorative-bg);
+    --sk-kbd-fg: var(--color-decorative-fg);
+    --sk-kbd-border-color: var(--color-decorative-border);
+    --sk-kbd-border-width: 1px;
+    --sk-kbd-radius: var(--radius-control);
+    /* Inline padding only, at the floor of the scale, a multi-glyph key ("Esc") gets a little air on
+     * the sides. The HEIGHT is not padding's job: it comes from the square minimum below, so the box
+     * never grows taller than it is wide. The shadow gives the depth, not bulk. */
+    --sk-kbd-padding-x: var(--space-inline-xs);
+    --sk-kbd-font-family: var(--font-family-body);
+    --sk-kbd-font-size: var(--font-size-body-sm);
+    /* Display line-height (the tightest the scale has), a key is one line, so the generous body
+     * leading only made it tall. */
+    --sk-kbd-line-height: var(--font-line-height-display);
+    /* The raised lift is what makes it read as a physical key rather than a bordered label. It drops
+     * to flat when pressed, below. */
+    --sk-kbd-shadow: var(--elevation-raised);
+    /* The square minimum, applied to BOTH axes: a single glyph is a square key, and it is
+     * also the key's height, so the box stays square-ish instead of growing into a tall pill.
+     * Self-relative on purpose, it tracks the key's own font-size and stays square at any size,
+     * with no second token. (Same reasoning as typography's em-based underline offset.) */
+    --sk-kbd-min-size: 1.6em;
+
+    /* Kbd es estático: sin estado, sin máquina, sin enhancer. Es el `<kbd>` nativo con el aspecto de
+       una tecla. El único "estado" es `[data-pressed]`, que se prende cuando alguien tiene apretada
+       la tecla física; lo escribe quien mira el teclado, no el kbd. */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* The square floor on both axes, which is where the height comes from, not from padding. */
+    min-inline-size: var(--sk-kbd-min-size);
+    min-block-size: var(--sk-kbd-min-size);
+    padding-inline: var(--sk-kbd-padding-x);
+    border: var(--sk-kbd-border-width) solid var(--sk-kbd-border-color);
+    border-radius: var(--sk-kbd-radius);
+    background: var(--sk-kbd-bg);
+    color: var(--sk-kbd-fg);
+    /* La sombra le da profundidad de tecla física, sin engordar la caja. */
+    box-shadow: var(--sk-kbd-shadow);
+    font-family: var(--sk-kbd-font-family);
+    font-size: var(--sk-kbd-font-size);
+    line-height: var(--sk-kbd-line-height);
+    /* La reacción al apretar usa la intención feedback (decisión 10):
+       rápida y discreta, nunca frena el flujo. Se transiciona el color,
+       la sombra y el desplazamiento; el resto no cambia. */
+    transition:
+      background-color var(--motion-feedback-duration) var(--motion-feedback-easing),
+      color var(--motion-feedback-duration) var(--motion-feedback-easing),
+      border-color var(--motion-feedback-duration) var(--motion-feedback-easing),
+      box-shadow var(--motion-feedback-duration) var(--motion-feedback-easing),
+      translate var(--motion-feedback-duration) var(--motion-feedback-easing);
+  }
+
+  /* Pressed, the key lit while its physical counterpart is held down. NOT interactivity of the kbd
+   * itself (it is not a control): it REFLECTS an external key event, the way a component reflects a
+   * machine's `data-state`. So it is a data attribute, set by whoever is watching the keyboard, and
+   * here it re-declares the appearance hooks plus the one-pixel sink.
+   * Accent, because a lit key is saying "this one is active right now"; and the shadow
+   * drops to flat, so the key visibly sinks under the finger.
+   *
+   * THAT SENTENCE IS WHY THIS NOW READS THE ACTION COLOUR DIRECTLY, not the decorative pair it used
+   * to share with the resting key. "Active right now" is INFORMATION, which the accent-reach
+   * dimension never dials, exactly like a checked checkbox or the current step. Sharing the
+   * decorative tokens also left the two states the same colour once the resting key became
+   * decoration: a key that is being held would have looked identical to one that is not, with only
+   * the one-pixel sink left to tell them apart. A filled key is unmistakable at every level. */
+  .sk-kbd[data-pressed] {
+    --sk-kbd-bg: var(--color-action-primary);
+    --sk-kbd-fg: var(--color-text-on-accent);
+    --sk-kbd-border-color: var(--color-action-primary);
+    --sk-kbd-shadow: var(--elevation-flat);
+
+    /* Apretada: además del color (que re-declaran los hooks en core) la
+       tecla se hunde un pixel, como una tecla física. */
+    translate: 0 1px;
+  }
+}

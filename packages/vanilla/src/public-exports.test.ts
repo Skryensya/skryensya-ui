@@ -7,11 +7,8 @@ import { mountCheckboxGroup } from "@skryensya/vanilla/checkbox-group";
 import { mountCodePreview } from "@skryensya/vanilla/code-preview";
 import { mountCommandPalette } from "@skryensya/vanilla/command-palette";
 import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
-import { mountCopyButton } from "@skryensya/vanilla/copy-button";
 import { mountDatePicker } from "@skryensya/vanilla/date-picker";
-import { mountThemeToggle } from "@skryensya/vanilla/theme-toggle";
 import { mountExpandableTile } from "@skryensya/vanilla/expandable-tile";
-import { mountFlyout } from "@skryensya/vanilla/flyout";
 import { mountSelect } from "@skryensya/vanilla/select";
 import { mountSegmented } from "@skryensya/vanilla/segmented";
 import { mountStat } from "@skryensya/vanilla/stat";
@@ -37,11 +34,8 @@ const mounts = [
   mountCarousel,
   mountCheckboxGroup,
   mountCommandPalette,
-  mountCopyButton,
   mountDatePicker,
-  mountThemeToggle,
   mountExpandableTile,
-  mountFlyout,
   mountSelect,
   mountSegmented,
   mountStat,
@@ -62,7 +56,7 @@ const mounts = [
 describe("Vanilla public entry points", () => {
   it("publishes the lazy auto-loader and one mount for every regular enhanced module", () => {
     expect(initComponents).toBeTypeOf("function");
-    expect(mounts).toHaveLength(26);
+    expect(mounts).toHaveLength(23);
     expect(mounts.every((mount) => typeof mount === "function")).toBe(true);
   });
 

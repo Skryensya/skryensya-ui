@@ -91,6 +91,41 @@ describe("NavList", () => {
     expect(document.activeElement).toBe(trigger);
   });
 
+  it("nested: a link's own sub-destinations render inside the same <li>, independent of the parent group", () => {
+    const ui = render(
+      <NavList aria-label="Primary navigation">
+        <NavListGroup collapsible label="Proyecto">
+          <NavListLink
+            href="/proyecto"
+            nested={
+              <NavListGroup collapsible label="Config">
+                <NavListLink href="/proyecto/general">General</NavListLink>
+              </NavListGroup>
+            }
+          >
+            Resumen
+          </NavListLink>
+        </NavListGroup>
+      </NavList>,
+    );
+
+    const outerLink = ui.getByRole("link", { name: "Resumen" });
+    const innerTrigger = ui.getByRole("button", { name: "Config" });
+    const innerLink = ui.getByRole("link", { name: "General" });
+    // The nested group is a SIBLING of the <a>, inside the same <li>, not inside the link itself.
+    expect(outerLink.parentElement!.contains(innerTrigger)).toBe(true);
+    expect(outerLink.contains(innerTrigger)).toBe(false);
+
+    const outerTrigger = ui.getByRole("button", { name: "Proyecto" });
+    fireEvent.click(innerTrigger);
+    expect(innerTrigger.getAttribute("aria-expanded")).toBe("false");
+    expect(document.getElementById(innerTrigger.getAttribute("aria-controls")!)!.hidden).toBe(true);
+    // Collapsing the nested group leaves the outer one (and the link introducing the nested one)
+    // untouched.
+    expect(outerTrigger.getAttribute("aria-expanded")).toBe("true");
+    expect(innerLink.isConnected).toBe(true);
+  });
+
   it("collapsible: honors defaultOpen=false", () => {
     const ui = render(
       <NavList aria-label="Primary navigation">

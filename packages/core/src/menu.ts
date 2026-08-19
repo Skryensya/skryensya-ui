@@ -12,6 +12,9 @@ export type MenuItem = {
   tone?: "danger";
   checked?: boolean;
   group?: string;
+  /** A destination rather than a command: the item renders as a real `<a href>` instead of a
+   *  `<div>`, and Zag's own `navigate` (default `clickIfLink`) handles activation. */
+  href?: string;
   children?: readonly MenuItem[];
 };
 
@@ -59,7 +62,7 @@ export type MenuOpenChangeDetails = { open: boolean };
 export type MenuSelectionDetails = { value: string };
 
 
-import type { ComponentContract } from "./contract.js";
+import type { ComponentContract, ContractSlot, ContractTemplate } from "./contract.js";
 
 /*
  * MENU, the contract: a trigger, a floating list, and submenus that nest without limit.
@@ -100,6 +103,206 @@ import type { ComponentContract } from "./contract.js";
  * its content out of. It took G2, and G2 had never run on a portalling component: menu, select and
  * tooltip are the only three, and none had a canonical tree until now.
  */
+/**
+ * One entry's shape: value, disabled, `kind` (checkbox/radio/separator), the danger `tone`, a label
+ * and — recursively — its own `children`, which is what makes an entry a submenu rather than a
+ * command. Exported so Menubar's own dropdown can compose the exact same items (decision: Menubar
+ * stopped hand-rolling a poorer parallel item shape and now shares this one, verbatim).
+ */
+export const menuItemShape: NonNullable<ContractSlot["item"]> = {
+  key: "value",
+  options: {
+    value: { type: "string", attr: "data-value" },
+    disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "" },
+    /**
+     * `checkbox` or `radio`. Absent means a plain command, which shows no indicator. `separator` is
+     * a third, unrelated shape: a divider between commands, not a command with a variant, so the
+     * item template below excludes it explicitly rather than folding it into "any kind given" the
+     * way the indicator does for the other two.
+     */
+    kind: { type: "enum", values: ["checkbox", "radio", "separator"], attr: "data-type" },
+    /**
+     * Marks a destructive command (Delete, Remove, …). The ONLY value is `"danger"`, the same
+     * one-value-enum shape `disabled` and `kind` already use elsewhere in this system for "there is
+     * exactly one alternate state, and its absence is the default": a second value would be a
+     * different concept (a general-purpose "tone" axis), not this one. Sets `color` alone; the
+     * shared state layer (`sk-interactive`, already `also`'d onto every item) reads `currentColor`
+     * for its own hover/press tint, so a danger item's hover wash comes out red for free, the same
+     * mechanism a danger Button uses.
+     */
+    tone: { type: "enum", values: ["danger"], attr: "data-tone" },
+    /**
+     * A destination rather than a command. Presence alone decides the shape — the same `href`
+     * either/or `Breadcrumb`'s own crumb template uses — so the item template below renders it as
+     * a real `<a>` instead of a `<div>` whenever this is given.
+     */
+    href: { type: "string", attr: "href" },
+  },
+  slots: {
+    /** Every entry but a `kind: "separator"` needs one; a divider announces nothing. */
+    label: { accepts: "text" },
+    /** Entries of its own make this one a submenu rather than a command. */
+    children: { accepts: "items", recursive: true },
+  },
+};
+
+/**
+ * The popup half: positioner + content + the recursive item/submenu tree, with NO trigger of its
+ * own. Menu's own template composes this beside its own trigger button (below); Menubar's
+ * `MenubarItem` composes it beside ITS trigger instead — a menubar item's own `role="menuitem"`
+ * button, wired to this same popup by also carrying `data-sk-menu-trigger` (see `menubar.ts`).
+ * Factored out so there is one popup, described once, not a second one that has to be kept in sync.
+ */
+export const menuPopupTemplate: ContractTemplate = {
+  element: "div",
+  part: "positioner",
+  also: ["sk-anchored"],
+  mount: menuAttrs.positioner,
+  children: [
+    {
+      element: "div",
+      part: "content",
+      mount: menuAttrs.content,
+      children: [
+        {
+          repeat: "items",
+          children: [
+            {
+              name: "entry",
+              children: [
+                /*
+                 * A command is a `<div>`; an entry that carries `href` is a real `<a>` instead — the
+                 * same either/or Breadcrumb's link-vs-span split already uses (`breadcrumb.ts`). Zag's
+                 * own menu machine already special-cases an anchor item on selection (`navigate`,
+                 * defaulting to `clickIfLink`), so nothing about `role`/keyboard handling changes here:
+                 * both bindings' Zag `getItemProps()` still owns those, the same as the `<div>` shape.
+                 */
+                {
+                  element: "div",
+                  part: "item",
+                  also: ["sk-interactive"],
+                  mount: menuAttrs.item,
+                  itemOptions: ["value", "disabled", "kind", "tone"],
+                  whenItemSlotMissing: "children",
+                  whenItemNotEquals: { option: "kind", equals: "separator" },
+                  whenItemMissing: "href",
+                  children: [
+                    { element: "span", part: "itemLabel", itemSlot: "label" },
+                    {
+                      element: "span",
+                      part: "itemIndicator",
+                      attrs: { "aria-hidden": "true" },
+                      whenItemGiven: "kind",
+                      children: [{ element: "span", attrs: { "data-sk-icon": "check", "data-sk-icon-size": "md" } }],
+                    },
+                  ],
+                },
+                {
+                  element: "a",
+                  part: "item",
+                  also: ["sk-interactive"],
+                  mount: menuAttrs.item,
+                  itemOptions: ["value", "disabled", "kind", "tone", "href"],
+                  whenItemSlotMissing: "children",
+                  whenItemNotEquals: { option: "kind", equals: "separator" },
+                  whenItemGiven: "href",
+                  children: [
+                    { element: "span", part: "itemLabel", itemSlot: "label" },
+                    {
+                      element: "span",
+                      part: "itemIndicator",
+                      attrs: { "aria-hidden": "true" },
+                      whenItemGiven: "kind",
+                      children: [{ element: "span", attrs: { "data-sk-icon": "check", "data-sk-icon-size": "md" } }],
+                    },
+                  ],
+                },
+                /*
+                 * A divider between commands, not a command: no label, no click, no indicator.
+                 * `role="separator"` is what tells assistive tech that too, the ARIA menu role for
+                 * exactly this shape.
+                 */
+                {
+                  element: "div",
+                  part: "separator",
+                  mount: menuAttrs.separator,
+                  attrs: { role: "separator" },
+                  whenItemEquals: { option: "kind", equals: "separator" },
+                },
+                {
+                  element: "div",
+                  part: "root",
+                  mount: menuAttrs.root,
+                  whenItemSlotGiven: "children",
+                  children: [
+                    {
+                      element: "button",
+                      part: "item",
+                      also: ["sk-interactive", "sk-anchor"],
+                      mount: menuAttrs.trigger,
+                      attrs: { type: "button" },
+                      children: [
+                        { element: "span", part: "itemLabel", itemSlot: "label" },
+                        {
+                          element: "span",
+                          part: "itemIndicator",
+                          attrs: { "aria-hidden": "true" },
+                          children: [
+                            { element: "span", attrs: { "data-sk-icon": "chevron-right", "data-sk-icon-size": "md" } },
+                          ],
+                        },
+                      ],
+                    },
+                    {
+                      element: "div",
+                      part: "positioner",
+                      also: ["sk-anchored"],
+                      mount: menuAttrs.positioner,
+                      attrs: { "data-sk-submenu": "" },
+                      children: [
+                        {
+                          element: "div",
+                          part: "content",
+                          mount: menuAttrs.content,
+                          children: [{ repeatItemSlot: "children", recurse: "entry" }],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+/**
+ * `menuPopupTemplate`, with every `part` reference pre-resolved against Menu's OWN `menuParts` and
+ * folded into `also` instead.
+ *
+ * `part` resolves against whichever contract's `parts` map the emitter is CURRENTLY rendering
+ * (`emit.ts`'s `contract.parts[node.part]`) — correct when Menu's own contract renders
+ * `menuPopupTemplate`, wrong the instant a DIFFERENT contract embeds the same node tree: Menubar's
+ * own `menubarParts` has no "positioner"/"content"/"itemLabel"/etc entries, and where a key happens
+ * to collide by name (both contracts have an "item" part) it resolves to the WRONG class silently,
+ * rather than failing loudly. Baking the resolved classes in once, here, makes the fragment portable
+ * — safe for `MenubarItem` (`menubar.ts`) to embed directly, and for whatever composes one after it.
+ */
+function withResolvedParts(node: ContractTemplate): ContractTemplate {
+  const { also, children, part, ...rest } = node;
+  const resolved = part ? menuParts[part as keyof typeof menuParts] : undefined;
+  return {
+    ...rest,
+    ...(resolved || also ? { also: [...(resolved ? [resolved] : []), ...(also ?? [])] } : {}),
+    ...(children ? { children: children.map(withResolvedParts) } : {}),
+  };
+}
+
+export const menuPopupTemplatePortable: ContractTemplate = withResolvedParts(menuPopupTemplate);
+
 export const menuContract = {
   id: "menu",
   css: "@skryensya/core/components/menu.css",
@@ -220,36 +423,7 @@ export const menuContract = {
           accepts: "items",
           required: true,
           prop: "items",
-          item: {
-            key: "value",
-            options: {
-              value: { type: "string", attr: "data-value" },
-              disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "" },
-              /**
-               * `checkbox` or `radio`. Absent means a plain command, which shows no indicator.
-               * `separator` is a third, unrelated shape: a divider between commands, not a command
-               * with a variant, so the item template below excludes it explicitly rather than
-               * folding it into "any kind given" the way the indicator does for the other two.
-               */
-              kind: { type: "enum", values: ["checkbox", "radio", "separator"], attr: "data-type" },
-              /**
-               * Marks a destructive command (Delete, Remove, …). The ONLY value is `"danger"`, the
-               * same one-value-enum shape `disabled` and `kind` already use elsewhere in this system
-               * for "there is exactly one alternate state, and its absence is the default": a second
-               * value would be a different concept (a general-purpose "tone" axis), not this one.
-               * Sets `color` alone; the shared state layer (`sk-interactive`, already `also`'d onto
-               * every item) reads `currentColor` for its own hover/press tint, so a danger item's
-               * hover wash comes out red for free, the same mechanism a danger Button uses.
-               */
-              tone: { type: "enum", values: ["danger"], attr: "data-tone" },
-            },
-            slots: {
-              /** Every entry but a `kind: "separator"` needs one; a divider announces nothing. */
-              label: { accepts: "text" },
-              /** Entries of its own make this one a submenu rather than a command. */
-              children: { accepts: "items", recursive: true },
-            },
-          },
+          item: menuItemShape,
         },
       },
       template: {
@@ -283,103 +457,7 @@ export const menuContract = {
               },
             ],
           },
-          {
-            element: "div",
-            part: "positioner",
-            also: ["sk-anchored"],
-            mount: menuAttrs.positioner,
-            children: [
-              {
-                element: "div",
-                part: "content",
-                mount: menuAttrs.content,
-                children: [
-                  {
-                    repeat: "items",
-                    children: [
-                      {
-                        name: "entry",
-                        children: [
-                          {
-                            element: "div",
-                            part: "item",
-                            also: ["sk-interactive"],
-                            mount: menuAttrs.item,
-                            itemOptions: ["value", "disabled", "kind", "tone"],
-                            whenItemSlotMissing: "children",
-                            whenItemNotEquals: { option: "kind", equals: "separator" },
-                            children: [
-                              { element: "span", part: "itemLabel", itemSlot: "label" },
-                              {
-                                element: "span",
-                                part: "itemIndicator",
-                                attrs: { "aria-hidden": "true" },
-                                whenItemGiven: "kind",
-                                children: [{ element: "span", attrs: { "data-sk-icon": "check", "data-sk-icon-size": "md" } }],
-                              },
-                            ],
-                          },
-                          /*
-                           * A divider between commands, not a command: no label, no click, no
-                           * indicator. `role="separator"` is what tells assistive tech that too, the
-                           * ARIA menu role for exactly this shape.
-                           */
-                          {
-                            element: "div",
-                            part: "separator",
-                            mount: menuAttrs.separator,
-                            attrs: { role: "separator" },
-                            whenItemEquals: { option: "kind", equals: "separator" },
-                          },
-                          {
-                            element: "div",
-                            part: "root",
-                            mount: menuAttrs.root,
-                            whenItemSlotGiven: "children",
-                            children: [
-                              {
-                                element: "button",
-                                part: "item",
-                                also: ["sk-interactive", "sk-anchor"],
-                                mount: menuAttrs.trigger,
-                                attrs: { type: "button" },
-                                children: [
-                                  { element: "span", part: "itemLabel", itemSlot: "label" },
-                                  {
-                                    element: "span",
-                                    part: "itemIndicator",
-                                    attrs: { "aria-hidden": "true" },
-                                    children: [
-                                      { element: "span", attrs: { "data-sk-icon": "chevron-right", "data-sk-icon-size": "md" } },
-                                    ],
-                                  },
-                                ],
-                              },
-                              {
-                                element: "div",
-                                part: "positioner",
-                                also: ["sk-anchored"],
-                                mount: menuAttrs.positioner,
-                                attrs: { "data-sk-submenu": "" },
-                                children: [
-                                  {
-                                    element: "div",
-                                    part: "content",
-                                    mount: menuAttrs.content,
-                                    children: [{ repeatItemSlot: "children", recurse: "entry" }],
-                                  },
-                                ],
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
+          menuPopupTemplate,
         ],
       },
       react: { from: "@skryensya/react/menu", name: "Menu" },

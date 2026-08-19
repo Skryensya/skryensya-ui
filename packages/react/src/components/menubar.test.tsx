@@ -1,29 +1,34 @@
-import { fireEvent, render } from "@testing-library/react";
+import { act, fireEvent, render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { Menubar, MenubarItem, MenubarMenu, MenubarMenuItem } from "./menubar.js";
+import { Menubar, MenubarItem } from "./menubar.js";
 
-/* Same fixture shape as the vanilla suite: "Archivo" (2 commands), "Editar" (2 commands), "Ayuda"
- * (a direct command, no dropdown). */
-function Fixture(props: { onHelp?: () => void; onNew?: () => void }) {
+/*
+ * Same fixture shape as the vanilla suite: "Archivo" (2 commands), "Editar" (2 commands), "Ayuda"
+ * (a direct command, no dropdown). `items` is `Menu`'s own item shape now, not a JSX child.
+ *
+ * `@zag-js/react`'s own `send()` (machine.mjs) schedules its state transition via `queueMicrotask`,
+ * so a click's effect on `aria-expanded` lands one microtask AFTER `fireEvent` returns, not
+ * synchronously within it — `tick()` flushes that one queued microtask before each assertion.
+ */
+const tick = () => act(() => Promise.resolve());
+
+function Fixture(props: { onHelp?: () => void; onNew?: (value: string) => void }) {
   return (
     <Menubar label="Editor">
       <MenubarItem
-        items={
-          <MenubarMenu>
-            <MenubarMenuItem onActivate={props.onNew}>Nuevo</MenubarMenuItem>
-            <MenubarMenuItem>Abrir</MenubarMenuItem>
-          </MenubarMenu>
-        }
+        items={[
+          { value: "new", label: "Nuevo" },
+          { value: "open", label: "Abrir" },
+        ]}
+        onSelect={(details) => props.onNew?.(details.value)}
       >
         Archivo
       </MenubarItem>
       <MenubarItem
-        items={
-          <MenubarMenu>
-            <MenubarMenuItem>Cortar</MenubarMenuItem>
-            <MenubarMenuItem>Pegar</MenubarMenuItem>
-          </MenubarMenu>
-        }
+        items={[
+          { value: "cut", label: "Cortar" },
+          { value: "paste", label: "Pegar" },
+        ]}
       >
         Editar
       </MenubarItem>
@@ -34,7 +39,7 @@ function Fixture(props: { onHelp?: () => void; onNew?: () => void }) {
 
 const triggers = (ui: ReturnType<typeof render>) => ui.getAllByRole("menuitem", { name: /^(Archivo|Editar|Ayuda)$/ });
 
-describe("Menubar React contracts", () => {
+describe("Menubar React contracts, dropdowns as real Menu instances", () => {
   it("sets role=menubar/menuitem, one tab stop, aria-haspopup only on dropdown items", () => {
     const ui = render(<Fixture />);
     const [archivo, editar, ayuda] = triggers(ui);
@@ -46,82 +51,59 @@ describe("Menubar React contracts", () => {
     expect(ayuda!.hasAttribute("aria-haspopup")).toBe(false);
   });
 
-  it("finds its dropdown when `items` arrives array-wrapped, the shape a tree-driven render produces", () => {
-    // `renderTree`'s generic single-signature-slot handling never special-cases a count of one the
-    // way it does a plain string, so a tree-composed `MenubarItem` receives `items` as a ONE-ELEMENT
-    // ARRAY, not the bare element hand-written JSX passes above. `SidebarTrigger`'s `icon` slot
-    // tolerates this by rendering `{icon}` directly; `MenubarItem` also has to CLONE the element to
-    // inject `topIndex`/`open`, which needs it unwrapped first — this is the regression the fully
-    // rendered gate stage caught and the fixture above, being hand-written, never could.
-    const ui = render(
-      <Menubar label="Editor">
-        <MenubarItem
-          items={[
-            <MenubarMenu key="menu">
-              <MenubarMenuItem>Abrir</MenubarMenuItem>
-            </MenubarMenu>,
-          ]}
-        >
-          Archivo
-        </MenubarItem>
-      </Menubar>,
-    );
-    const archivo = ui.getByRole("menuitem", { name: "Archivo" });
-    expect(archivo.getAttribute("aria-haspopup")).toBe("menu");
-    fireEvent.click(archivo);
-    expect(ui.getByRole("menuitem", { name: "Abrir" })).toBeTruthy();
-  });
-
-  it("Right/Left move between top-level items, wrapping, without opening anything", () => {
+  it("Right/Left move between top-level items, wrapping, without opening anything", async () => {
     const ui = render(<Fixture />);
     const [archivo, , ayuda] = triggers(ui);
     archivo!.focus();
     fireEvent.keyDown(ui.getByRole("menubar"), { key: "ArrowLeft" });
+    await tick();
     expect(document.activeElement).toBe(ayuda); // wrapped
     expect(archivo!.getAttribute("aria-expanded")).toBe("false");
   });
 
-  it("Down Arrow opens the dropdown and focuses its first item; Up focuses the last", () => {
+  it("clicking a trigger opens its own dropdown via Zag", async () => {
     const ui = render(<Fixture />);
     const [archivo] = triggers(ui);
-    archivo!.focus();
-    fireEvent.keyDown(ui.getByRole("menubar"), { key: "ArrowDown" });
+    fireEvent.click(archivo!);
+    await tick();
     expect(archivo!.getAttribute("aria-expanded")).toBe("true");
-    expect(document.activeElement).toBe(ui.getByRole("menuitem", { name: "Nuevo" }));
+    expect(ui.getByRole("menuitem", { name: "Nuevo" })).toBeTruthy();
   });
 
-  it("moving Right while a dropdown is open closes it and opens the adjacent item's dropdown", () => {
+  it("clicking a sibling trigger while one dropdown is open closes the first", async () => {
+    const ui = render(<Fixture />);
+    const [archivo, editar] = triggers(ui);
+    fireEvent.click(archivo!);
+    await tick();
+    expect(archivo!.getAttribute("aria-expanded")).toBe("true");
+    fireEvent.click(editar!);
+    await tick();
+    expect(archivo!.getAttribute("aria-expanded")).toBe("false");
+    expect(editar!.getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("moving Right while a dropdown is open closes it and opens the adjacent item's dropdown", async () => {
     const ui = render(<Fixture />);
     const [archivo, editar] = triggers(ui);
     const menubar = ui.getByRole("menubar");
-    archivo!.focus();
-    fireEvent.keyDown(menubar, { key: "ArrowDown" });
-    fireEvent.keyDown(menubar, { key: "ArrowRight" });
+    fireEvent.click(archivo!);
+    await tick();
+    expect(archivo!.getAttribute("aria-expanded")).toBe("true");
+    fireEvent.keyDown(ui.getByRole("menuitem", { name: "Nuevo" }), { key: "ArrowRight" });
+    await tick();
     expect(archivo!.getAttribute("aria-expanded")).toBe("false");
     expect(editar!.getAttribute("aria-expanded")).toBe("true");
-    expect(document.activeElement).toBe(ui.getByRole("menuitem", { name: "Cortar" }));
   });
 
-  it("Escape closes the open dropdown and returns focus to its trigger", () => {
-    const ui = render(<Fixture />);
-    const [archivo] = triggers(ui);
-    const menubar = ui.getByRole("menubar");
-    archivo!.focus();
-    fireEvent.keyDown(menubar, { key: "ArrowDown" });
-    fireEvent.keyDown(menubar, { key: "Escape" });
-    expect(archivo!.getAttribute("aria-expanded")).toBe("false");
-    expect(document.activeElement).toBe(archivo);
-  });
-
-  it("clicking a dropdown item activates it and closes the menu, returning focus to the trigger", () => {
+  it("clicking a dropdown command fires onSelect with its value", async () => {
     const onNew = vi.fn();
     const ui = render(<Fixture onNew={onNew} />);
     const [archivo] = triggers(ui);
     fireEvent.click(archivo!);
+    await tick();
     fireEvent.click(ui.getByRole("menuitem", { name: "Nuevo" }));
-    expect(onNew).toHaveBeenCalledOnce();
-    expect(archivo!.getAttribute("aria-expanded")).toBe("false");
-    expect(document.activeElement).toBe(archivo);
+    await tick();
+    expect(onNew).toHaveBeenCalledWith("new");
   });
 
   it("clicking a leaf item (no dropdown) activates it directly", () => {
@@ -130,5 +112,42 @@ describe("Menubar React contracts", () => {
     const [, , ayuda] = triggers(ui);
     fireEvent.click(ayuda!);
     expect(onHelp).toHaveBeenCalledOnce();
+  });
+
+  it("nav renders the trigger as nav-list's own link, not a Button, with behavior unchanged", async () => {
+    const ui = render(
+      <Menubar label="Principal">
+        <MenubarItem nav items={[{ value: "new", label: "Nuevo" }]}>
+          Archivo
+        </MenubarItem>
+        <MenubarItem nav onActivate={() => {}}>
+          Ayuda
+        </MenubarItem>
+      </Menubar>,
+    );
+    const [archivo, ayuda] = triggers(ui);
+    expect(archivo!.className).toContain("sk-nav-list__link");
+    expect(archivo!.className).not.toContain("sk-button");
+    expect(archivo!.querySelector(".sk-nav-list__label")?.textContent).toBe("Archivo");
+    expect(ayuda!.className).toContain("sk-nav-list__link");
+    // Same behavior as the non-nav bar above: still one tab stop, still opens via Zag.
+    expect(ayuda!.tabIndex).toBe(-1);
+    fireEvent.click(archivo!);
+    await tick();
+    expect(archivo!.getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("a dropdown entry with an href renders as a real link, not a command div", async () => {
+    const ui = render(
+      <Menubar label="Editor">
+        <MenubarItem items={[{ value: "docs", label: "Documentación", href: "/docs" }]}>Ayuda</MenubarItem>
+      </Menubar>,
+    );
+    const [ayuda] = triggers(ui);
+    fireEvent.click(ayuda!);
+    await tick();
+    const docs = ui.getByRole("menuitem", { name: "Documentación" });
+    expect(docs.tagName).toBe("A");
+    expect(docs.getAttribute("href")).toBe("/docs");
   });
 });

@@ -1,0 +1,101 @@
+---
+import { emitMarkup } from "@skryensya/ai-compiler/emit";
+import "@skryensya/core/components/navbar.css";
+import "@skryensya/core/components/sidebar.css";
+import "@skryensya/core/components/typography.css";
+import "@skryensya/core/patterns/box.css";
+import "@skryensya/core/patterns/nav-list.css";
+import "@skryensya/core/patterns/icon.css";
+import "@skryensya/core/patterns/layout.css";
+import { appShellExplorerTree, appShellTree } from "../../demos/app-shell";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+
+/*
+ * One entry per template. The page is `fullBleed` (own sidebar, no toc, no width cap): the rail
+ * on the left is this list, jumping to the matching `<section id>` in the stage. Adding a template
+ * is adding an entry here, not touching the layout around it.
+ */
+const templates = [
+  {
+    id: "app-shell",
+    title: t("templates.appShellTitle"),
+    navLabel: t("templates.appShellNavLabel"),
+    label: t("templates.appShellLabel"),
+    markup: emitMarkup(appShellTree(t), { fillDefaults: false }),
+  },
+  {
+    id: "app-shell-explorer",
+    title: t("templates.explorerTitle"),
+    navLabel: t("templates.explorerNavLabel"),
+    label: t("templates.explorerLabel"),
+    markup: emitMarkup(appShellExplorerTree(t), { fillDefaults: false }),
+  },
+];
+---
+
+<div class="templates">
+  <aside class="sk-sidebar templates__sidebar">
+    <div class="sk-sidebar__content">
+      <nav class="sk-nav-list" aria-label={t("templates.navLabel")}>
+        <div class="sk-nav-list__group">
+          <ul class="sk-nav-list__list">
+            {
+              templates.map((template) => (
+                <li class="sk-nav-list__item">
+                  <a class="sk-nav-list__link sk-interactive" href={`#${template.id}`}>
+                    <span class="sk-nav-list__label">{template.navLabel}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </aside>
+
+  <main class="templates__stage">
+    {
+      templates.map((template) => (
+        <section id={template.id} class="templates__section" aria-label={template.title}>
+          <section class="templates__example" aria-label={template.label}>
+            <Fragment set:html={template.markup} />
+          </section>
+        </section>
+      ))
+    }
+  </main>
+</div>
+
+<style>
+  .templates {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  /* Same sticky arithmetic as the docs rail (site.css `.docs-sidebar`): flush under the measured
+     navbar height, filling the rest of the viewport, so a tall list of templates still leaves the
+     nav reachable without scrolling the whole page. */
+  .templates__sidebar {
+    position: sticky;
+    top: var(--docs-navbar-h, var(--docs-header-block-size));
+    block-size: calc(100dvh - var(--docs-navbar-h, var(--docs-header-block-size)));
+    flex: none;
+  }
+
+  .templates__stage {
+    flex: 1;
+    min-inline-size: 0;
+    padding: var(--space-inset-xl);
+  }
+
+  .templates__section {
+    scroll-margin-top: calc(var(--docs-navbar-h, var(--docs-header-block-size)) + var(--space-stack-md));
+  }
+
+  .templates__section + .templates__section {
+    margin-block-start: var(--space-stack-xl);
+  }
+</style>

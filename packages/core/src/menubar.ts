@@ -1,27 +1,38 @@
 import type { ComponentContract } from "./contract.js";
+import { menuAttrs, menuItemShape, menuParts, menuPopupTemplatePortable } from "./menu.js";
 
 /*
  * MENUBAR — WAI-ARIA APG `menubar`: a persistent, horizontal bar of `menuitem`s, some of which open
- * a dropdown submenu. No `@zag-js/*` machine covers this pattern (`core/machines.ts` does not list
- * it) and it is NOT the same thing `core/menu.ts`'s `Menu` already covers — that is one trigger and
- * one popup; a menubar is SEVERAL, arranged as one roving-tabindex row, where Left/Right moves
- * between them and — the detail a naive implementation misses — moving to an adjacent item while a
- * dropdown is open closes the old one and opens the new one too, not just moves a highlight.
+ * a dropdown. No `@zag-js/*` machine covers the BAR itself (`core/machines.ts` does not list one):
+ * a menubar is SEVERAL triggers, arranged as one roving-tabindex row, where Left/Right moves between
+ * them and — the detail a naive implementation misses — moving to an adjacent item while a dropdown
+ * is open closes the old one and opens the new one too, not just moves a highlight. That part stays
+ * hand-rolled, for the same reason `Treegrid`/`DataGrid` are: real behaviour no existing machine
+ * provides.
  *
- * Scope, decided before building: ONE level of dropdown per item (a command list, optionally with
- * `href` links), no nested submenus inside a menubar's own dropdown — `core/menu.ts`'s `Menu`
- * already owns arbitrarily-nested submenus for the single-trigger case, and WAI's own menubar
- * examples (`menubar-editor`, `menubar-navigation`) do not need a second level either. Hand-rolled
- * for the same reason `Treegrid`/`DataGrid` are: the pattern has real behaviour (`Toolbar`-style
- * roving tabindex, PLUS open-state handoff between items) no existing machine provides.
+ * EACH ITEM'S DROPDOWN IS A REAL `Menu` (`core/menu.ts`), not a second, poorer description of one.
+ * `MenubarItem`'s own `items` slot is `menuItemShape` verbatim — checkbox/radio, separators,
+ * arbitrarily nested submenus, all of it, the same feature set `Menu` itself has, because it IS
+ * `Menu`'s own item shape and popup template (`menuPopupTemplate`), not a copy kept in sync by hand.
+ * `MenubarMenu`/`MenubarMenuItem`, the hand-rolled parallel signatures this used to be built from,
+ * are gone.
+ *
+ * The seam this composition needs: `MenubarItem`'s own trigger button (`role="menuitem"`, driven by
+ * Menubar's roving-tabindex resolver below) is ALSO Menu's expected trigger — it carries
+ * `data-sk-menu-trigger` alongside `data-sk-menubar-item`, and the item's wrapper carries
+ * `data-sk-menu` alongside its own `itemWrapper` part, so Menu's machine finds and attaches to a
+ * button Menubar already owns instead of rendering a second one. Zag's own trigger keys
+ * (ArrowDown/Up, Enter, Space) are a strict subset of what Menubar already wanted for that button;
+ * Menubar's resolver keeps ArrowLeft/Right/Escape/Home/End and drives the open/close handoff via
+ * Menu's own `api.setOpen()` — see the vanilla/react bindings for exactly how.
  */
 export const menubarParts = {
   root: "sk-menubar",
   itemWrapper: "sk-menubar__item-wrapper",
   item: "sk-menubar__item",
-  positioner: "sk-menubar__positioner",
-  menu: "sk-menubar__menu",
-  menuItem: "sk-menubar__menu-item",
+  /** The chevron marking a DROPDOWN item — absent on a leaf command. Same idea as Menu's own
+   *  trigger chevron (`menuParts`'s own, unrelated part of the same name); this is the bar's. */
+  itemIndicator: "sk-menubar__item-indicator",
 } as const;
 
 export type MenubarPart = keyof typeof menubarParts;
@@ -35,6 +46,15 @@ export const menubarContract = {
   options: {
     /** The bar's accessible name. `role="menubar"` carries no implicit one. */
     label: { type: "string", attr: "aria-label" },
+    /**
+     * Styles the item as `nav-list`'s own link (`sk-nav-list__link`/`__label`) instead of a
+     * Button — for a menubar used as site navigation, WAI's own `menubar-navigation` example,
+     * where the row should read as destinations rather than commands. Nothing about Menubar's
+     * OWN behavior changes: same `role`, same roving tabindex, same dropdown open/close: only
+     * the trigger's classes and DOM shape swap, the same either/or `NavListGroup`'s own
+     * collapsible-vs-static label already uses (`nav-list.ts`).
+     */
+    nav: { type: "boolean", default: false, attr: "data-nav", trueValue: "" },
   },
 
   signatures: {
@@ -65,73 +85,120 @@ export const menubarContract = {
     MenubarItem: {
       intent: ["menubar-command", "menubar-dropdown-trigger"],
       // The HOST is a wrapper, not the button: a `<button>` cannot contain another interactive
-      // element as a descendant (a `role="menu"` full of its own `menuitem`s counts), so the
-      // positioner has to be the button's SIBLING, both inside a `position: relative` common
-      // ancestor — the same shape `NavListGroup`'s own trigger-plus-content wrapper already uses.
+      // element as a descendant (Menu's own popup, full of its own `menuitem`s, counts), so the
+      // popup has to be the button's SIBLING, both inside one common ancestor — the same shape
+      // `NavListGroup`'s own trigger-plus-content wrapper already uses. That ancestor is now ALSO
+      // Menu's own root (`data-sk-menu`): see the header comment above for why.
       host: { element: "div" },
-      options: [],
+      options: ["nav"],
       parents: ["Menubar"],
+      /* Its dropdown is `Menu`'s own popup, and that portals — same reason `Menu` itself declares
+         this: React needs a container ref that keeps the floating content inside whatever subtree
+         a scoped host (a preview frame, this repo's own symmetry gate) actually measures. */
+      portals: true,
       slots: {
         children: { accepts: "text", required: true },
-        items: { accepts: "signature", of: ["MenubarMenu"] },
+        /** Menu's own item shape, verbatim — see the header comment above. */
+        items: { accepts: "items", item: menuItemShape },
       },
       template: {
         element: "div",
         part: "itemWrapper",
+        /* `sk-menu`, so `--sk-menu-bg`/`-fg`/`-border-color`/etc. — declared on that class, read by
+           every descendant via inheritance — actually get declared here too, not just the mount
+           attribute the enhancer keys on. Without it the dropdown paints with undefined custom
+           properties: structurally correct, visually blank. */
+        also: [menuParts.root],
         host: true,
+        mount: menuAttrs.root,
         children: [
+          /*
+           * TWO shapes for the same trigger, chosen by `nav` — the same either/or `NavListGroup`'s
+           * own collapsible-vs-static label uses (`nav-list.ts`): `whenMissing`/`whenGiven` on a
+           * boolean option, not a value-conditional node (the template engine has no composition-
+           * level "equals" — only `attrsWhen`/`whenItem*` reach a value, and those are for
+           * attributes or repeated item entries, not for choosing between two node shapes here).
+           */
           {
             element: "button",
             part: "item",
-            also: ["sk-interactive"],
-            attrs: { type: "button", role: "menuitem" },
+            /*
+             * `sk-button`: a bar item is a real Button, not a bespoke look `menubar.css` paints on
+             * its own — the same rule Menu's own top-level trigger already follows (`menu.tsx`'s
+             * `anchor.anchor(cx("sk-button", ...))`). `sk-anchor`, same as Menu's own trigger
+             * (`menu.ts`): what the popup measures itself against. Costs nothing until a name is
+             * written on it.
+             */
+            also: ["sk-button", "sk-interactive", "sk-anchor"],
+            /*
+             * `ghost`/`sm`: a bar item sits flush in a row of siblings, not alone the way a page's
+             * one primary action does — the same reason Menu's own top-level trigger is the one
+             * place in this system a filled default button is right and a menubar item is not.
+             * `.sk-button`'s OWN variant/size hooks paint both, so nothing here duplicates them.
+             */
+            attrs: {
+              type: "button",
+              role: "menuitem",
+              [menuAttrs.trigger]: "",
+              "data-variant": "ghost",
+              "data-size": "sm",
+            },
             mount: "data-sk-menubar-item",
             slot: "children",
+            whenMissing: "nav",
+            /*
+             * `whenGiven: "items"`: a LEAF item (a plain command, no dropdown) gets no chevron —
+             * one would promise a popup that never opens. Same glyph, same part name, as Menu's own
+             * top-level trigger (`menu.ts`), so the two read as the same affordance everywhere in
+             * this system. `menubar.css` rotates it on `[aria-expanded="true"]`, which is the
+             * second half of this: the glyph alone says "this opens something", the rotation says
+             * "and it is open right now" — a bar item has no visited/pressed look of its own to
+             * carry that fact otherwise.
+             */
+            children: [
+              {
+                element: "span",
+                part: "itemIndicator",
+                attrs: { "aria-hidden": "true" },
+                whenGiven: "items",
+                children: [{ element: "span", attrs: { "data-sk-icon": "chevron-down", "data-sk-icon-size": "md" } }],
+              },
+            ],
           },
-          { whenGiven: "items", slot: "items" },
+          /*
+           * The `nav` shape: `sk-nav-list__link`/`__label` instead of Button, literal class
+           * strings rather than a cross-contract part reference — same reason `menuPopupTemplate`
+           * bakes its own resolved classes (`withResolvedParts`) before another contract embeds it:
+           * `nav-list`'s `parts` map is not in scope here, and the two contracts stay independent.
+           * Behaviorally identical to the sibling above: same role, same mount hook, same trigger
+           * attribute, same chevron.
+           */
+          {
+            element: "button",
+            part: "item",
+            also: ["sk-nav-list__link", "sk-interactive", "sk-anchor"],
+            attrs: {
+              type: "button",
+              role: "menuitem",
+              [menuAttrs.trigger]: "",
+            },
+            mount: "data-sk-menubar-item",
+            whenGiven: "nav",
+            children: [
+              { element: "span", also: ["sk-nav-list__label"], slot: "children" },
+              {
+                element: "span",
+                part: "itemIndicator",
+                attrs: { "aria-hidden": "true" },
+                whenGiven: "items",
+                children: [{ element: "span", attrs: { "data-sk-icon": "chevron-down", "data-sk-icon-size": "md" } }],
+              },
+            ],
+          },
+          { ...menuPopupTemplatePortable, whenGiven: "items" },
         ],
       },
       react: { from: "@skryensya/react/menubar", name: "MenubarItem" },
-    },
-
-    MenubarMenu: {
-      intent: ["menubar-dropdown"],
-      host: { element: "div" },
-      options: [],
-      parents: ["MenubarItem"],
-      slots: { children: { accepts: "signature", required: true, of: ["MenubarMenuItem"] } },
-      template: {
-        element: "div",
-        part: "positioner",
-        host: true,
-        mount: "data-sk-menubar-menu",
-        children: [{ element: "div", part: "menu", attrs: { role: "menu" }, slot: "children" }],
-      },
-      react: { from: "@skryensya/react/menubar", name: "MenubarMenu" },
-    },
-
-    /*
-     * A plain command button — v1 scope, decided before building: no `href` variant (a real link
-     * inside a menubar dropdown), matching `Menu`'s own items rather than `Breadcrumb`'s link/span
-     * split. Nothing in this contract stops a later pass from adding one the same way; it just is
-     * not today's gap.
-     */
-    MenubarMenuItem: {
-      intent: ["menubar-dropdown-command"],
-      host: { element: "button" },
-      options: [],
-      parents: ["MenubarMenu"],
-      slots: { children: { accepts: "text", required: true } },
-      template: {
-        element: "button",
-        part: "menuItem",
-        also: ["sk-interactive"],
-        host: true,
-        attrs: { type: "button", role: "menuitem", tabindex: "-1" },
-        mount: "data-sk-menubar-menu-item",
-        slot: "children",
-      },
-      react: { from: "@skryensya/react/menubar", name: "MenubarMenuItem" },
     },
   },
 } as const satisfies ComponentContract;

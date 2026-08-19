@@ -4,14 +4,14 @@ import "@skryensya/core/patterns/state-layer.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { menubarTree } from "../../demos/menubar";
+import { menubarNavTree, menubarSubmenuTree, menubarTree } from "../../demos/menubar";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/menubar.yaml?raw";
 import coreSource from "@core/src/menubar.ts?raw";
 import coreTestSource from "@core/src/menubar.test.ts?raw";
 import cssSource from "@core/css/components/menubar.css?raw";
 import vanillaMountSource from "@vanilla/src/components/menubar.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/menubar.test.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/menubar.svelte.test.ts?raw";
 import reactSource from "@react/src/components/menubar.tsx?raw";
 import reactTestSource from "@react/src/components/menubar.test.tsx?raw";
 
@@ -32,7 +32,7 @@ const sourceFiles = [
   { id: "packages/core/src/menubar.test.ts", source: coreTestSource, language: "ts" },
   { id: "packages/core/css/components/menubar.css", source: cssSource, language: "css" },
   { id: "packages/vanilla/src/components/menubar.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/menubar.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/vanilla/src/components/menubar.svelte.test.ts", source: vanillaTestSource, language: "ts" },
   { id: "packages/react/src/components/menubar.tsx", source: reactSource, language: "tsx" },
   { id: "packages/react/src/components/menubar.test.tsx", source: reactTestSource, language: "tsx" },
 ] as const;
@@ -71,10 +71,10 @@ const sourceFiles = [
       ],
     },
     {
-      file: "packages/vanilla/src/components/menubar.test.ts",
+      file: "packages/vanilla/src/components/menubar.svelte.test.ts",
       tests: [
         {
-          name: "clicking outside the menubar closes any open dropdown",
+          name: "clicking a sibling trigger while one dropdown is open closes the first",
           description: t("menubarPage.testVanilla1"),
         },
       ],
@@ -83,10 +83,28 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("menubarPage.lede")} />
-    <ComponentPreview tree={menubarTree(t)} js={js} label={t("menubarPage.label")} />
+    <ComponentPreview tree={menubarTree(t)} js={js} label={t("menubarPage.label")} viewport="menu" />
 
     <h3>{t("component.contractNotesTitle")}</h3>
     <p set:html={t("menubarPage.contractBody")} />
+
+    <h3>{t("menubarPage.submenuTitle")}</h3>
+    <p set:html={t("menubarPage.submenuBody")} />
+    <ComponentPreview
+      tree={menubarSubmenuTree(t)}
+      js={js}
+      label={t("menubarPage.submenuTitle")}
+      viewport="menu-deep"
+    />
+
+    <h3>{t("menubarPage.navSkinTitle")}</h3>
+    <p set:html={t("menubarPage.navSkinBody")} />
+    <ComponentPreview
+      tree={menubarNavTree(t)}
+      js={js}
+      label={t("menubarPage.navSkinTitle")}
+      viewport="menu"
+    />
   </Fragment>
 
   <Fragment slot="install">

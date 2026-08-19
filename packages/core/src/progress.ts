@@ -7,7 +7,13 @@ import type { ComponentContract } from "./contract.js";
  * component with different semantics.) The fraction is clamped here so the rendered width and the
  * reported aria-valuenow can never disagree, whatever the caller passes.
  */
-export type ProgressTone = "accent" | "success" | "warning" | "danger";
+/** The tone vocabulary both bar-shaped controls share — `Progress`'s own and `Meter`'s (`meter.ts`),
+ *  which reuses this rather than redeclaring the identical four-value union a second time. Not the
+ *  same vocabulary Badge or Callout use (`neutral`/`info` have no meaning on a bar), so this stays
+ *  its own export rather than a system-wide "tone" type. */
+export const barTones = ["accent", "success", "warning", "danger"] as const;
+export type BarTone = (typeof barTones)[number];
+export type ProgressTone = BarTone;
 
 export const progressParts = {
   root: "sk-progress",
@@ -40,7 +46,7 @@ export const progressContract = {
     max: { type: "number", default: 100, attr: "aria-valuemax" },
     tone: {
       type: "enum",
-      values: ["accent", "success", "warning", "danger"],
+      values: barTones,
       default: "accent",
       attr: "data-tone",
     },

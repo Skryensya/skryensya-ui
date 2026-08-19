@@ -531,7 +531,11 @@ function supplied(
     const option = ctx.tree.options?.[name];
     return (
       (option !== undefined && option !== false) ||
-      slotItems(filled[name]).length > 0
+      slotItems(filled[name]).length > 0 ||
+      // A collection slot's entries are `ItemInput`s, which `slotItems` deliberately excludes (they
+      // are not children); `whenGiven` on a collection slot — MenubarItem's own `items`, gating
+      // whether it has a dropdown at all — needs the other half of the same content to count too.
+      collectionItems(filled[name]).length > 0
     );
   });
 }

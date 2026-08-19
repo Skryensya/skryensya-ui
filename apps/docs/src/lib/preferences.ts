@@ -42,23 +42,9 @@ export const accentReachPreference = definePreference<"1" | "2" | "3">({
   parse: oneOf(["1", "2", "3"]),
 });
 
-/** The /personalizar brand playground: the id of the chosen palette preset. */
+/** The /presets gallery and the header's palette toggle: the id of the chosen preset. */
 export const palettePreference = definePreference<string>({
   slot: "palette",
   fallback: "",
   parse: stringValue(64),
-});
-
-/**
- * The /personalizar share code: a fixed-width base36 string that encodes a whole theme.
- *
- * Was `localStorage["sk-playground"]`, its own top-level key. Folded in here because a second key is
- * a second thing to find, to clear and to forget: the one-entry rule exists so "reset the site" stays
- * one call. The cap is generous but finite: it is the only free-form slot, so it is the only one where
- * a hand-edited value could grow without bound.
- */
-export const playgroundPreference = definePreference<string>({
-  slot: "playground",
-  fallback: "",
-  parse: stringValue(256),
 });

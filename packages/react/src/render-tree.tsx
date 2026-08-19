@@ -17,7 +17,6 @@ import * as toolbarModule from "./components/toolbar.js";
 import * as mediaGradientModule from "./components/media-gradient.js";
 import * as segmentedModule from "./components/segmented.js";
 import * as sliderModule from "./components/slider.js";
-import * as flyoutModule from "./components/flyout.js";
 import * as timeFieldModule from "./components/time-field.js";
 import * as fileUploadModule from "./components/file-upload.js";
 import * as carouselModule from "./components/carousel.js";
@@ -27,7 +26,7 @@ import * as skipLinkModule from "./components/skip-link.js";
 import * as accordionModule from "./components/accordion.js";
 import * as tileModule from "./components/tile.js";
 import * as paginationModule from "./components/pagination.js";
-import * as themeToggleModule from "./components/theme-toggle.js";
+import * as iconStateButtonModule from "./components/icon-state-button.js";
 import * as contentModule from "./components/content.js";
 import * as numberFieldModule from "./components/number-field.js";
 import * as formFieldModule from "./components/form-field.js";
@@ -37,7 +36,6 @@ import * as menuModule from "./components/menu.js";
 import * as comboboxModule from "./components/combobox.js";
 import * as calendarModule from "./components/calendar.js";
 import * as datePickerModule from "./components/date-picker.js";
-import * as copyButtonModule from "./components/copy-button.js";
 import * as dialogModule from "./components/dialog.js";
 import * as splitButtonModule from "./components/split-button.js";
 import * as popoverModule from "./components/popover.js";
@@ -96,7 +94,6 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/combobox": comboboxModule,
   "@skryensya/react/calendar": calendarModule,
   "@skryensya/react/date-picker": datePickerModule,
-  "@skryensya/react/copy-button": copyButtonModule,
   "@skryensya/react/dialog": dialogModule,
   "@skryensya/react/split-button": splitButtonModule,
   "@skryensya/react/popover": popoverModule,
@@ -130,11 +127,10 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/skip-link": skipLinkModule,
   "@skryensya/react/carousel": carouselModule,
   "@skryensya/react/file-upload": fileUploadModule,
-  "@skryensya/react/flyout": flyoutModule,
   "@skryensya/react/time-field": timeFieldModule,
   "@skryensya/react/tree-view": treeViewModule,
   "@skryensya/react/tile": tileModule,
-  "@skryensya/react/theme-toggle": themeToggleModule,
+  "@skryensya/react/icon-state-button": iconStateButtonModule,
   "@skryensya/react/number-field": numberFieldModule,
   "@skryensya/react/tooltip": tooltipModule,
   "@skryensya/react/badge": badgeModule,

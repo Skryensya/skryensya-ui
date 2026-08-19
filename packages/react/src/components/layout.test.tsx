@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Box, Grid, Inline, LayoutGrid, Stack, Wrapper } from "./layout.js";
+import { Box, Grid, Inline, LayoutGrid, Main, Stack, Wrapper } from "./layout.js";
 
 describe("layout primitives", () => {
   it("keeps semantic ownership with the caller while applying Box defaults", () => {
@@ -46,6 +46,12 @@ describe("layout primitives", () => {
     expect(grid).not.toBeNull();
     expect(grid?.querySelector("p")?.getAttribute("data-width")).toBe("narrow");
     expect(grid?.querySelector("section")?.getAttribute("data-width")).toBe("full-width");
+  });
+
+  it("renders Main as an empty application landmark", () => {
+    const ui = render(<Main aria-label="Workspace" />);
+
+    expect(ui.getByRole("main", { name: "Workspace" }).childElementCount).toBe(0);
   });
 
   it("renders Wrapper as a page column on the size scale", () => {

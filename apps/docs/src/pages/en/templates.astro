@@ -1,0 +1,11 @@
+---
+import Base from "../../layouts/Base.astro";
+import TemplatesPage from "../../components/pages/TemplatesPage.astro";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+---
+
+<Base fullBleed title={t("templates.title")} description={t("templates.description")}>
+  <TemplatesPage />
+</Base>

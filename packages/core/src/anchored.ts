@@ -1,8 +1,8 @@
 /*
  * ANCHORED, the contract, and deliberately the smallest module in core.
  *
- * Nine components place a box against another element, tooltip, popover, popup, menu and its
- * submenus, select, combobox, date picker, flyout. The PLACEMENT of that box is not JavaScript's
+ * Eight components place a box against another element, tooltip, popover, popup, menu and its
+ * submenus, select, combobox, date picker. The PLACEMENT of that box is not JavaScript's
  * job (decision 25): where the browser has CSS Anchor Positioning it lays the box out itself, with
  * `position-try-fallbacks` doing the flip and `position-visibility` handling the lost anchor, both
  * inside the layout engine where that information already lives. Where it does not, the component's

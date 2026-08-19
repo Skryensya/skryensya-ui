@@ -1,0 +1,54 @@
+/*
+ * TIER 3, NAVBAR
+ *
+ * No machine: a navbar is `<nav>`, a list and links, all of which the platform already ships
+ * (decision 8).
+ *
+ * The bar only. The links inside are the `nav-list` pattern in its horizontal variant, the same
+ * structure the sidebar hosts, shipped once instead of twice (decision 17). Nothing below names a
+ * link, so nothing below can drift from the sidebar's.
+ */
+@layer components {
+  .sk-navbar {
+    --sk-navbar-bg: var(--color-bg-surface);
+    --sk-navbar-fg: var(--color-text-primary);
+    --sk-navbar-border-color: var(--color-border-subtle);
+    --sk-navbar-min-height: var(--size-control-lg);
+    --sk-navbar-padding-x: var(--space-inset-lg);
+    --sk-navbar-padding-y: var(--space-inset-sm);
+    --sk-navbar-gap: var(--space-inline-lg);
+    --sk-navbar-elevation: var(--elevation-raised);
+    --sk-navbar-brand-fg: var(--color-text-primary);
+    --sk-navbar-brand-font-size: var(--font-size-body-lg);
+    --sk-navbar-brand-font-weight: var(--font-weight-heading);
+    --sk-navbar-actions-gap: var(--space-inline-sm);
+
+    /*
+     * The bar, and nothing about the links inside it, those are the `nav-list` pattern, horizontal.
+     * The rules that used to live here for a list, an item and a link are gone: they were the same
+     * rules the sidebar had, which is exactly what made them a pattern (decisión 17).
+     */
+    display: flex;
+    align-items: center;
+    gap: var(--sk-navbar-gap);
+    min-block-size: var(--sk-navbar-min-height);
+    padding: var(--sk-navbar-padding-y) var(--sk-navbar-padding-x);
+    border-block-end: 1px solid var(--sk-navbar-border-color);
+    background: var(--sk-navbar-bg);
+    color: var(--sk-navbar-fg);
+    box-shadow: var(--sk-navbar-elevation);
+  }
+
+  .sk-navbar__brand {
+    color: var(--sk-navbar-brand-fg);
+    font-size: var(--sk-navbar-brand-font-size);
+    font-weight: var(--sk-navbar-brand-font-weight);
+  }
+
+  .sk-navbar__actions {
+    display: flex;
+    gap: var(--sk-navbar-actions-gap);
+    /* the actions push to the end: layout is the consumer's, not the system's */
+    margin-inline-start: auto;
+  }
+}

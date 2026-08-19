@@ -25,8 +25,9 @@ function markup({ defaultOpen = true }: { defaultOpen?: boolean } = {}) {
 const list = () => document.querySelector<HTMLElement>("[data-sk-nav-list-group-list]")!;
 
 afterEach(() => {
-  const trigger = document.querySelector<HTMLElement>("[data-sk-nav-list-group-trigger]");
-  if (trigger) destroyMount(trigger);
+  for (const trigger of document.querySelectorAll<HTMLElement>("[data-sk-nav-list-group-trigger]")) {
+    destroyMount(trigger);
+  }
   document.body.innerHTML = "";
 });
 
@@ -89,5 +90,42 @@ describe("NavListGroup collapsible enhancer", () => {
     const trigger = markup({ defaultOpen: false });
     fireEvent.keyDown(trigger, { key: "Escape" });
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("wires a NavListLink's own nested group independently of its parent group", () => {
+    // A `nested` group sits INSIDE the parent group's <li>, as a sibling of the <a> — the case
+    // `connect()`'s `group.querySelector(list-selector)` has to get right: the OUTER trigger must
+    // find its own direct <ul>, not the nested one buried inside it.
+    document.body.innerHTML = `<nav class="sk-nav-list">
+      <div class="sk-nav-list__group">
+        <button type="button" data-sk-nav-list-group-trigger aria-expanded="true">Proyecto</button>
+        <ul data-sk-nav-list-group-list>
+          <li class="sk-nav-list__item">
+            <a class="sk-nav-list__link" href="/proyecto">Resumen</a>
+            <div class="sk-nav-list__group">
+              <button type="button" data-sk-nav-list-group-trigger aria-expanded="true">Config</button>
+              <ul data-sk-nav-list-group-list>
+                <li class="sk-nav-list__item"><a class="sk-nav-list__link" href="/proyecto/general">General</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>`;
+    expect(mountNavListGroup(document)).toBe(2);
+
+    const [outerTrigger, innerTrigger] = document.querySelectorAll<HTMLButtonElement>(
+      "[data-sk-nav-list-group-trigger]",
+    );
+    const [outerList, innerList] = document.querySelectorAll<HTMLElement>("[data-sk-nav-list-group-list]");
+
+    fireEvent.click(innerTrigger);
+    expect(innerList.hidden).toBe(true);
+    // Collapsing the nested group must not touch the outer one it lives inside.
+    expect(outerList.hidden).toBe(false);
+    expect(outerTrigger.getAttribute("aria-expanded")).toBe("true");
+
+    fireEvent.click(outerTrigger);
+    expect(outerList.hidden).toBe(true);
   });
 });

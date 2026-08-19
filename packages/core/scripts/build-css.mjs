@@ -41,17 +41,18 @@ function writeDist(relPath, css, filename) {
 // Token tiers already include root ramps; optional dimensions follow. The layer statement fixes priority
 // regardless of source order.
 //
-// EVERY dimension ships here, radius AND accent reach. The bundle is the no-toolchain path, so a
-// dimension missing from this list is a dimension that does not exist for that consumer: `data-radius`
-// worked and `data-accent` was silently inert, an attribute the documentation promises and the
-// stylesheet never declares. The Sass path stays opt-in per dimension; the bundle is batteries-included
-// by definition, and an unused `[data-accent]` block costs seven declarations.
+// EVERY dimension ships here, radius, accent reach AND press scale. The bundle is the no-toolchain
+// path, so a dimension missing from this list is a dimension that does not exist for that consumer:
+// `data-radius` worked and `data-accent` was silently inert, an attribute the documentation promises
+// and the stylesheet never declares. The Sass path stays opt-in per dimension; the bundle is
+// batteries-included by definition, and an unused `[data-press-scale]` block costs one declaration.
 const ENTRY = `
 @use "primitives";
 @use "semantic";
 @use "modes/hc";
 @use "dimensions/radius";
 @use "dimensions/accent";
+@use "dimensions/press-scale";
 @layer primitives, semantic, components, overrides;
 `;
 
@@ -104,7 +105,7 @@ const foundationCss = `@charset "UTF-8";\n` + strip(tokensCss) + `\n`;
 results.push([
   "foundation.css",
   writeDist("foundation.css", foundationCss, "foundation.css"),
-  "tokens + modes/hc + dimensions/radius + dimensions/accent, no patterns or components",
+  "tokens + modes/hc + dimensions/radius + dimensions/accent + dimensions/press-scale, no patterns or components",
 ]);
 
 // The a-la-carte path: tokens compiled standalone, so a page can link just the components it uses
@@ -136,6 +137,7 @@ for (const [rel, label] of [
   ["modes/hc.scss", "modes/hc.css"],
   ["dimensions/radius.scss", "dimensions/radius.css"],
   ["dimensions/accent.scss", "dimensions/accent.css"],
+  ["dimensions/press-scale.scss", "dimensions/press-scale.css"],
 ]) {
   const css = compile(join(CSS, rel), { loadPaths: [CSS], style: "expanded" }).css;
   results.push([label, writeDist(label, css, label), "optional, opt in like the Sass path"]);

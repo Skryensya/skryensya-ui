@@ -1,10 +1,12 @@
 import { menubarParts, resolveMenubarKey, type MenubarFocus } from "@skryensya/core/menubar";
+import { menuParts, type MenuApi, type MenuItem } from "@skryensya/core/menu";
 import {
   Children,
   cloneElement,
   createContext,
   isValidElement,
   useContext,
+  useEffect,
   useId,
   useMemo,
   useRef,
@@ -13,27 +15,38 @@ import {
   type KeyboardEvent,
   type ReactElement,
   type ReactNode,
+  type RefObject,
 } from "react";
+import { useAnchored } from "./anchored.js";
+import { Icon } from "./icon.js";
+import { MenuPopup, useMenuMachine, type CheckedState } from "./menu.js";
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
 /*
- * MENUBAR, the React binding — composable, one component per `menubar.ts` signature, the same shape
- * `treegrid.tsx`/`data-grid.tsx` already use: `Menubar` (the root) reads its own children ONCE,
- * synchronously, off `children` — never a registry any child populates as it renders — to know the
- * structural facts (how many top-level items, which have a dropdown, how many entries each
- * dropdown has) `resolveMenubarKey` needs, then hands the result down through context so
- * `MenubarItem`/`MenubarMenuItem` only ever ask "am I the current stop" / "is my menu open".
+ * MENUBAR, the React binding — now that each item's dropdown is a real `Menu` instance (decision:
+ * see `menubar.ts`'s own header comment in core). `Menubar` owns only what Zag's own machine does
+ * NOT: roving tabindex between TOP-LEVEL triggers, and the handoff that closes one item's dropdown
+ * and opens the adjacent one. Everything that happens once a dropdown (or a submenu inside it) has
+ * focus — Up/Down, Enter, Escape, Home/End within that list, checkbox/radio, nested submenus — is
+ * `useMenuMachine`'s own, the same hook `Menu` itself uses, called here per item instead of a second,
+ * poorer implementation.
+ *
+ * The one seam that needs care: Zag's own content keydown handler ALSO claims ArrowLeft/Right/Home/
+ * End once a dropdown has focus (for nested-submenu navigation), and it runs on the BUBBLE phase.
+ * This binding's own keydown handler runs on the CAPTURE phase (`onKeyDownCapture`) at the bar root
+ * — capture always fires before bubble, on any ancestor — and steps aside (does nothing, lets the
+ * event continue to Zag) whenever focus is inside a NESTED submenu (`[data-sk-submenu]`), or whenever
+ * a dropdown is open and the key isn't Left/Right (Home/End inside an open list is Zag's own job,
+ * matching APG menu conventions, not the bar's).
  */
 
 type MenubarContextValue = {
   isTriggerStop: (topIndex: number) => boolean;
-  isMenuItemStop: (topIndex: number, subIndex: number) => boolean;
-  isOpen: (topIndex: number) => boolean;
-  onTriggerClick: (topIndex: number, hasMenu: boolean) => void;
-  onMenuItemClick: (topIndex: number, subIndex: number) => void;
   registerTrigger: (topIndex: number, element: HTMLElement | null) => void;
-  registerMenuItem: (topIndex: number, subIndex: number, element: HTMLElement | null) => void;
+  registerApi: (topIndex: number, api: MenuApi | null) => void;
+  /** Closes every OTHER item's dropdown — a safety net beside Zag's own outside-dismiss handling. */
+  closeSiblings: (exceptIndex: number) => void;
 };
 
 const MenubarContext = createContext<MenubarContextValue | null>(null);
@@ -44,34 +57,14 @@ function useMenubarContext(component: string): MenubarContextValue {
   return context;
 }
 
-type TopShape = { hasMenu: boolean; subCount: number };
+type TopShape = { hasMenu: boolean };
 
-/**
- * The tree-driven `items` slot arrives as `ReactNode` — a bare element when authored directly in
- * JSX, but a ONE-ELEMENT ARRAY when it came from `renderTree`'s generic single-signature-slot
- * handling (`slotItems(content).map(renderItem)`, which never special-cases a count of one the way
- * it does a plain string). Rendering it as `{items}` works either way — React flattens an array of
- * children the same as siblings — but finding the actual `MenubarMenu` element to clone props onto
- * needs the array unwrapped first.
- */
-function asMenuElement(items: ReactNode): ReactElement<Record<string, unknown>> | null {
-  const candidate = Array.isArray(items) ? items[0] : items;
-  return isValidElement(candidate) && candidate.type === MenubarMenu
-    ? (candidate as ReactElement<Record<string, unknown>>)
-    : null;
-}
-
-/** `Menubar`'s own children → each `MenubarItem`'s shape — a plain, synchronous read of props: does
- *  it carry a `MenubarMenu` (its own `items` prop, the contract's `items` slot), and if so, how many
- *  `MenubarMenuItem`s does that menu have. */
+/** `Menubar`'s own children → each `MenubarItem`'s shape: does it carry `items` (the contract's own
+ *  `items` slot, `Menu`'s own item shape, verbatim — see `menu.ts`'s `menuItemShape`). */
 function readTops(children: ReactNode): TopShape[] {
   return Children.toArray(children)
     .filter((child): child is ReactElement<MenubarItemProps> => isValidElement(child) && child.type === MenubarItem)
-    .map((item) => {
-      const menu = asMenuElement(item.props.items);
-      const subCount = menu ? Children.count((menu.props as { children?: ReactNode }).children) : 0;
-      return { hasMenu: menu !== null, subCount };
-    });
+    .map((item) => ({ hasMenu: Boolean(item.props.items?.length) }));
 }
 
 export type MenubarProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
@@ -81,97 +74,87 @@ export type MenubarProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 
 export function Menubar({ children, className, label, ...props }: MenubarProps) {
   const [focus, setFocus] = useState<MenubarFocus>({ topIndex: 0, subIndex: null });
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
   const triggers = useRef(new Map<number, HTMLElement>());
-  const menuItems = useRef(new Map<string, HTMLElement>());
-  const menuItemKey = (topIndex: number, subIndex: number) => `${topIndex}:${subIndex}`;
+  const apis = useRef(new Map<number, MenuApi>());
 
   const tops = useMemo(() => readTops(children), [children]);
   const topCount = tops.length;
   const hasMenuAt = (topIndex: number) => tops[topIndex]?.hasMenu ?? false;
-  const subCountOf = (topIndex: number) => tops[topIndex]?.subCount ?? 0;
+  // Never exercised by the keys this handler actually resolves (see the note on `onKeyDown` below),
+  // kept only because `resolveMenubarKey`'s signature requires it — its own logic isn't changing.
+  const subCountOf = () => 0;
+
+  const openTopIndex = () => {
+    for (const [topIndex, api] of apis.current) if (api.open) return topIndex;
+    return -1;
+  };
 
   const currentFocus = (): MenubarFocus => {
     const active = document.activeElement;
     for (const [topIndex, element] of triggers.current) if (element === active) return { topIndex, subIndex: null };
-    for (const [key, element] of menuItems.current) {
-      if (element !== active) continue;
-      const [topIndex, subIndex] = key.split(":").map(Number);
-      return { topIndex: topIndex!, subIndex: subIndex! };
-    }
+    const open = openTopIndex();
+    if (open !== -1) return { topIndex: open, subIndex: 0 };
     return focus;
   };
 
+  const applyTabindex = (next: MenubarFocus) => setFocus(next);
+
   const moveFocus = (next: MenubarFocus) => {
-    setFocus(next);
-    const target = next.subIndex === null ? triggers.current.get(next.topIndex) : menuItems.current.get(menuItemKey(next.topIndex, next.subIndex));
-    target?.focus();
+    applyTabindex(next);
+    if (next.subIndex === null) triggers.current.get(next.topIndex)?.focus();
+    // Focus onto an open dropdown's own content is Zag's own job as part of opening it.
   };
 
-  const openMenu = (topIndex: number, subIndex: number | null) => {
-    setOpenIndex(topIndex);
-    moveFocus({ topIndex, subIndex });
+  const closeAll = (except?: number) => {
+    for (const [topIndex, api] of apis.current) if (topIndex !== except) api.setOpen(false);
   };
 
-  const closeMenu = () => {
-    setOpenIndex(null);
-  };
-
+  /*
+   * Only ArrowLeft/Right/Home/End ever reach `resolveMenubarKey` here — ArrowDown/Up/Enter/Space are
+   * Zag's own, already wired via `getTriggerProps()` on each item's trigger, and Escape is Zag's own
+   * standard menu behavior (closes and returns focus to ITS trigger) once a dropdown has focus.
+   */
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.defaultPrevented || !topCount) return;
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+
+    const target = event.target as HTMLElement;
+    if (target.closest("[data-sk-submenu]")) return; // defer entirely to Zag
+
     const focusNow = currentFocus();
+    const dropdownOpen = focusNow.subIndex !== null;
+    if ((event.key === "Home" || event.key === "End") && dropdownOpen) return; // Zag's own list nav
+
     const action = resolveMenubarKey({ key: event.key, focus: focusNow, topCount, hasMenuAt, subCountOf });
     if (action.kind === "none") return;
     event.preventDefault();
-    if (action.kind === "move") {
-      setFocus(action.focus);
-      moveFocus(action.focus);
-    } else if (action.kind === "open") {
-      const subCount = subCountOf(action.topIndex);
-      openMenu(action.topIndex, subCount < 1 ? null : action.focusLast ? subCount - 1 : 0);
-    } else if (action.kind === "close") {
-      closeMenu();
-      moveFocus({ topIndex: focusNow.topIndex, subIndex: null });
-    } else if (action.kind === "moveTop") {
+    event.stopPropagation();
+
+    if (action.kind === "moveTop") {
       if (action.keepOpen && hasMenuAt(action.topIndex)) {
-        const subCount = subCountOf(action.topIndex);
-        openMenu(action.topIndex, subCount < 1 ? null : 0);
+        closeAll(action.topIndex);
+        apis.current.get(action.topIndex)?.setOpen(true);
+        applyTabindex({ topIndex: action.topIndex, subIndex: null });
       } else {
-        closeMenu();
+        if (action.keepOpen) closeAll();
         moveFocus({ topIndex: action.topIndex, subIndex: null });
       }
+    } else if (action.kind === "move") {
+      moveFocus(action.focus);
     }
   };
 
   const context: MenubarContextValue = {
     isTriggerStop: (topIndex) => focus.topIndex === topIndex && focus.subIndex === null,
-    isMenuItemStop: (topIndex, subIndex) => focus.topIndex === topIndex && focus.subIndex === subIndex,
-    isOpen: (topIndex) => openIndex === topIndex,
-    onTriggerClick: (topIndex, hasMenu) => {
-      if (!hasMenu) {
-        moveFocus({ topIndex, subIndex: null });
-        return;
-      }
-      if (openIndex === topIndex) {
-        closeMenu();
-        moveFocus({ topIndex, subIndex: null });
-      } else {
-        openMenu(topIndex, null);
-      }
-    },
-    onMenuItemClick: (topIndex) => {
-      closeMenu();
-      moveFocus({ topIndex, subIndex: null });
-    },
     registerTrigger: (topIndex, element) => {
       if (element) triggers.current.set(topIndex, element);
       else triggers.current.delete(topIndex);
     },
-    registerMenuItem: (topIndex, subIndex, element) => {
-      const key = menuItemKey(topIndex, subIndex);
-      if (element) menuItems.current.set(key, element);
-      else menuItems.current.delete(key);
+    registerApi: (topIndex, api) => {
+      if (api) apis.current.set(topIndex, api);
+      else apis.current.delete(topIndex);
     },
+    closeSiblings: (exceptIndex) => closeAll(exceptIndex),
   };
 
   const items = Children.map(children, (child, index) =>
@@ -186,7 +169,8 @@ export function Menubar({ children, className, label, ...props }: MenubarProps) 
         {...props}
         aria-label={label}
         className={cx(menubarParts.root, className)}
-        onKeyDown={onKeyDown}
+        onFocus={() => applyTabindex(currentFocus())}
+        onKeyDownCapture={onKeyDown}
         role="menubar"
       >
         {items}
@@ -196,99 +180,131 @@ export function Menubar({ children, className, label, ...props }: MenubarProps) 
 }
 
 export type MenubarItemProps = {
-  /** The command's own name — the contract's `children` slot, matching every other item-shaped
-   *  signature in this catalogue (`MenubarMenuItem` below takes its text the same way). */
+  /** The command's own name — the contract's `children` slot. */
   children: ReactNode;
-  /** The dropdown this item opens, if it is a trigger rather than a plain command — the contract's
-   *  own `items` slot, a `MenubarMenu` element, never searched for inside `children`. */
-  items?: ReactNode;
-  /** Fires when a LEAF item (no dropdown) is activated — a dropdown item's own
-   *  `MenubarMenuItem.onActivate` is what fires for a command inside a menu instead. */
+  /** The dropdown this item opens, if it is a trigger rather than a plain command — `Menu`'s own
+   *  item shape, verbatim (the same `MenuItem[]` its own `items` prop takes). */
+  items?: readonly MenuItem[];
+  /** Fires when a LEAF item (no dropdown) is activated. */
   onActivate?: () => void;
+  /** Fires when a command inside this item's dropdown is chosen — `Menu`'s own `onSelect`, threaded
+   *  straight through since the popup here IS `Menu`'s own. */
+  onSelect?: (details: { value: string }) => void;
+  /** Where the dropdown portals — `Menu`'s own `container`, see its identical doc. */
+  container?: RefObject<HTMLElement>;
+  /** Styles the trigger as `nav-list`'s own link instead of a Button — see `menubar.ts`'s own doc
+   *  on the contract option this mirrors. Every bit of Menubar's own behavior is unchanged. */
+  nav?: boolean;
 };
 
-/** `topIndex` is injected by the parent `Menubar`, see the comment there — never author-set. */
+/** `topIndex` is injected by the parent `Menubar` — never author-set. */
 type InjectedMenubarItemProps = MenubarItemProps & { topIndex: number };
 
+function initialCheckedState(items: readonly MenuItem[]): CheckedState {
+  return Object.fromEntries(
+    items.flatMap((item) => [
+      ...(item.checked ? [[item.value, true] as const] : []),
+      ...Object.entries(initialCheckedState(item.children ?? [])),
+    ]),
+  );
+}
+
 export function MenubarItem(publicProps: MenubarItemProps) {
-  const { children, items, onActivate, topIndex } = publicProps as InjectedMenubarItemProps;
+  const { children, container, items, nav, onActivate, onSelect, topIndex } =
+    publicProps as InjectedMenubarItemProps;
   const context = useMenubarContext("Item");
-  const menu = asMenuElement(items);
-  const hasMenu = menu !== null;
-  const open = context.isOpen(topIndex);
-  // Same relationship the vanilla enhancer wires by hand (`menubar.ts`'s own `entry.positioner.id`
-  // / `aria-controls`): the trigger names the dropdown it owns, whether or not it is currently open.
-  const menuId = useId();
+  const hasMenu = Boolean(items?.length);
+  const id = useId();
+  const { service, api } = useMenuMachine({ id, defaultOpen: false });
+  const anchor = useAnchored(id);
+  const [checkedState, setChecked] = useState<CheckedState>(() => initialCheckedState(items ?? []));
+
+  useEffect(() => {
+    context.registerApi(topIndex, hasMenu ? api : null);
+    return () => context.registerApi(topIndex, null);
+  });
+
+  // Zag's own open transition is the trigger, not the click that caused it — this also covers
+  // opening via keyboard (ArrowDown/Enter/Space), which a click-only handler would miss.
+  useEffect(() => {
+    if (hasMenu && api.open) context.closeSiblings(topIndex);
+  }, [api.open, hasMenu, topIndex]);
+
+  const setCheckedState = (changedItem: MenuItem, checked: boolean) => {
+    setChecked((current) => {
+      if (changedItem.kind !== "radio" || !checked) return { ...current, [changedItem.value]: checked };
+      const next = { ...current };
+      for (const candidate of items ?? []) {
+        if (candidate.kind === "radio" && candidate.group === changedItem.group) next[candidate.value] = false;
+      }
+      next[changedItem.value] = true;
+      return next;
+    });
+  };
+
+  const tabIndex = context.isTriggerStop(topIndex) ? 0 : -1;
+  const ref = (element: HTMLElement | null) => context.registerTrigger(topIndex, element);
 
   return (
-    <div className={menubarParts.itemWrapper}>
-      <button
-        aria-controls={hasMenu ? menuId : undefined}
-        aria-expanded={hasMenu ? open : undefined}
-        aria-haspopup={hasMenu ? "menu" : undefined}
-        className={cx(menubarParts.item, "sk-interactive")}
-        onClick={() => {
-          if (!hasMenu) onActivate?.();
-          context.onTriggerClick(topIndex, hasMenu);
-        }}
-        ref={(element) => context.registerTrigger(topIndex, element)}
-        role="menuitem"
-        tabIndex={context.isTriggerStop(topIndex) ? 0 : -1}
-        type="button"
-      >
-        {children}
-      </button>
-      {menu ? cloneElement(menu, { id: menuId, topIndex, open }) : null}
+    <div className={cx(menubarParts.itemWrapper, menuParts.root)}>
+      {hasMenu ? (
+        <button
+          {...api.getTriggerProps()}
+          {...anchor.anchor(
+            cx(menubarParts.item, nav ? "sk-nav-list__link sk-interactive" : "sk-button sk-interactive"),
+          )}
+          {...(nav ? {} : { "data-size": "sm", "data-variant": "ghost" })}
+          ref={ref}
+          role="menuitem"
+          tabIndex={tabIndex}
+          type="button"
+        >
+          {nav ? <span className="sk-nav-list__label">{children}</span> : children}
+          {/* Same glyph as Menu's own top-level trigger (`menu.tsx`), so the two read as the same
+            * affordance everywhere: this item opens something, absent on a leaf command. `menubar.css`
+            * rotates it on `[aria-expanded="true"]` — the glyph says "opens", the rotation says "is
+            * open right now", which a bar item otherwise has no pressed/visited look to say on its
+            * own. */}
+          <span aria-hidden="true" className={menubarParts.itemIndicator}>
+            <Icon name="chevron-down" />
+          </span>
+        </button>
+      ) : (
+        <button
+          // `sk-anchor` even with no popup to anchor: the contract's own shared trigger node
+          // carries it unconditionally too (`menubar.ts`) — inert without a name ever written on
+          // it (`anchored.ts`'s own doc), so matching that here is simpler than a second, leaf-only
+          // class list to keep symmetric. `sk-button`/`ghost`/`sm` mirror the core template's own
+          // attrs for the identical node — a bar item is a real Button, sized and skinned to sit
+          // flush in a row of siblings, not the filled default a lone page action wants.
+          // `nav` mirrors the core template's other sibling node instead: `sk-nav-list__link`, no
+          // Button-specific attrs, its label wrapped the same way `NavListLink` wraps its own.
+          className={cx(
+            menubarParts.item,
+            nav ? "sk-nav-list__link sk-interactive sk-anchor" : "sk-button sk-interactive sk-anchor",
+          )}
+          {...(nav ? {} : { "data-size": "sm", "data-variant": "ghost" })}
+          onClick={() => onActivate?.()}
+          ref={ref}
+          role="menuitem"
+          tabIndex={tabIndex}
+          type="button"
+        >
+          {nav ? <span className="sk-nav-list__label">{children}</span> : children}
+        </button>
+      )}
+      {hasMenu ? (
+        <MenuPopup
+          api={api}
+          checkedState={checkedState}
+          container={container}
+          items={items!}
+          onSelect={onSelect}
+          positionerProps={anchor.positioner(api.getPositionerProps(), menuParts.positioner)}
+          service={service}
+          setCheckedState={setCheckedState}
+        />
+      ) : null}
     </div>
-  );
-}
-
-export type MenubarMenuProps = { children: ReactNode };
-
-/** `id`/`topIndex`/`open` are injected by the parent `MenubarItem` — never author-set. `id` is what
- *  the trigger's own `aria-controls` points at, the same pairing the vanilla enhancer wires by hand. */
-type InjectedMenubarMenuProps = MenubarMenuProps & { id: string; topIndex: number; open: boolean };
-
-export function MenubarMenu(publicProps: MenubarMenuProps) {
-  const { children, id, open, topIndex } = publicProps as InjectedMenubarMenuProps;
-  const items = Children.map(children, (child, index) =>
-    isValidElement(child) && child.type === MenubarMenuItem
-      ? cloneElement(child as ReactElement<Record<string, unknown>>, { topIndex, subIndex: index })
-      : child,
-  );
-  return (
-    <div className={menubarParts.positioner} hidden={!open} id={id}>
-      <div className={menubarParts.menu} role="menu">
-        {items}
-      </div>
-    </div>
-  );
-}
-
-export type MenubarMenuItemProps = {
-  children: ReactNode;
-  onActivate?: () => void;
-};
-
-/** `topIndex`/`subIndex` are injected by the parent `MenubarMenu` — never author-set. */
-type InjectedMenubarMenuItemProps = MenubarMenuItemProps & { topIndex: number; subIndex: number };
-
-export function MenubarMenuItem(publicProps: MenubarMenuItemProps) {
-  const { children, onActivate, subIndex, topIndex } = publicProps as InjectedMenubarMenuItemProps;
-  const context = useMenubarContext("MenuItem");
-  return (
-    <button
-      className={cx(menubarParts.menuItem, "sk-interactive")}
-      onClick={() => {
-        onActivate?.();
-        context.onMenuItemClick(topIndex, subIndex);
-      }}
-      ref={(element) => context.registerMenuItem(topIndex, subIndex, element)}
-      role="menuitem"
-      tabIndex={context.isMenuItemStop(topIndex, subIndex) ? 0 : -1}
-      type="button"
-    >
-      {children}
-    </button>
   );
 }

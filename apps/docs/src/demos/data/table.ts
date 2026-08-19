@@ -20,7 +20,7 @@ export const deploymentRows = [
   ["dep-1033", "Worker", "production", "succeeded", "hours", "5"],
 ] as const;
 
-/** The page sizes the pager's Flyout offers. A number is its own label in every locale. */
+/** The page sizes the pager's Select offers. A number is its own label in every locale. */
 export const pageSizeItems: readonly ItemInput[] = ["5", "10", "25"].map((value) => ({
   options: { value },
   slots: { label: value },

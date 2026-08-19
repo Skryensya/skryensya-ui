@@ -203,6 +203,92 @@ describe("emitMarkup", () => {
     expect(linkOnly).not.toContain("aria-current");
   });
 
+  /*
+   * `data-sk-breadcrumb` is the vanilla enhancer's attachment point (`registry.ts`), and
+   * `collapsedLabel` is a plain host option like `label` — both are on the root regardless of trail
+   * length, since the enhancer, not the compiled markup, is what decides per-resize whether a given
+   * trail ever collapses.
+   */
+  it("marks the root for the collapse enhancer and writes collapsedLabel as a plain host option", () => {
+    const markup = emitMarkup({
+      contract: "breadcrumb",
+      signature: "Breadcrumb",
+      options: { collapsedLabel: "Mostrar niveles ocultos" },
+      slots: {
+        items: [{ options: { href: "/" }, slots: { label: "Home" } }],
+      },
+    });
+
+    expect(markup).toContain("data-sk-breadcrumb");
+    expect(markup).toContain('data-collapsed-label="Mostrar niveles ocultos"');
+  });
+
+  /*
+   * The same either/or as Breadcrumb's crumb, one level down: a menu entry with an `href` is a
+   * destination, not a command, and renders as a real `<a>` instead of the plain `<div>` every
+   * other entry gets.
+   */
+  it("renders a menu entry with an href as a link, not a command div", () => {
+    const linkItem = emitMarkup({
+      contract: "menu",
+      signature: "Menu",
+      options: { label: "Ir a" },
+      slots: {
+        trigger: "Ir a",
+        items: [
+          { options: { value: "docs", href: "/docs" }, slots: { label: "Documentación" } },
+          { options: { value: "new" }, slots: { label: "Nuevo" } },
+        ],
+      },
+    } as never);
+
+    expect(linkItem).toContain("<a\n        class=\"sk-menu__item sk-interactive\"");
+    expect(linkItem).toContain('href="/docs"');
+    expect(linkItem).toContain("<div\n        class=\"sk-menu__item sk-interactive\"");
+  });
+
+  /*
+   * A menubar item's trigger is `sk-button` by default; `nav: true` swaps it for `nav-list`'s own
+   * link/label classes instead — same either/or as `NavListGroup`'s collapsible-vs-static label.
+   */
+  it("renders a MenubarItem trigger as a real nav-list link when nav is true", () => {
+    const navItem = emitMarkup({
+      contract: "menubar",
+      signature: "Menubar",
+      options: { label: "Principal" },
+      children: [
+        {
+          contract: "menubar",
+          signature: "MenubarItem",
+          options: { nav: true },
+          children: "Inicio",
+        },
+      ],
+    } as never);
+
+    expect(navItem).toContain("sk-nav-list__link");
+    expect(navItem).toContain("sk-nav-list__label");
+    expect(navItem).not.toContain("sk-button");
+  });
+
+  it("keeps a MenubarItem trigger as a Button when nav is not given", () => {
+    const commandItem = emitMarkup({
+      contract: "menubar",
+      signature: "Menubar",
+      options: { label: "Editor" },
+      children: [
+        {
+          contract: "menubar",
+          signature: "MenubarItem",
+          children: "Archivo",
+        },
+      ],
+    } as never);
+
+    expect(commandItem).toContain("sk-button");
+    expect(commandItem).not.toContain("sk-nav-list__link");
+  });
+
   it("is deterministic: same tree, same bytes", () => {
     expect(emitMarkup(navigation)).toBe(emitMarkup(navigation));
   });

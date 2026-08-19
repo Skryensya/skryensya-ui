@@ -21,22 +21,8 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/button.js")).mountButton,
   },
   {
-    selector: "[data-sk-copy-button]",
-    load: async () =>
-      (await import("../components/copy-button.js")).mountCopyButton,
-  },
-  {
-    selector: "[data-sk-theme-toggle]",
-    load: async () =>
-      (await import("../components/theme-toggle.js")).mountThemeToggle,
-  },
-  {
     selector: "[data-sk-select]",
     load: async () => (await import("../components/select.js")).mountSelect,
-  },
-  {
-    selector: "[data-sk-flyout]",
-    load: async () => (await import("../components/flyout.js")).mountFlyout,
   },
   {
     selector: "[data-sk-segmented]",
@@ -189,6 +175,10 @@ const registrations: readonly Registration[] = [
   {
     selector: "[data-sk-meter]",
     load: async () => (await import("../components/meter.js")).mountMeter,
+  },
+  {
+    selector: "[data-sk-breadcrumb]",
+    load: async () => (await import("../components/breadcrumb.js")).mountBreadcrumb,
   },
 ];
 

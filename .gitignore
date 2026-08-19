@@ -25,5 +25,5 @@ apps/docs/check-trees.mts
 apps/docs/.astro/dev.json
 
 # Generated for /playground: the kit compiled into files the Sandpack sandbox can import.
-# Rebuilt by apps/docs/scripts/build-sandbox-bundles.mjs on every dev start and build.
-apps/docs/public/sandbox/
+# Rebuilt by apps/playground/scripts/build-sandbox-bundles.mjs on every dev start and build.
+apps/playground/public/sandbox/

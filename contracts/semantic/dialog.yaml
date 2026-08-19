@@ -5,9 +5,9 @@ Dialog:
     - "hay que decidir algo antes de seguir: confirmar un borrado, completar un paso corto"
     - "conviene que el resto de la página quede inerte mientras tanto"
   avoidWhen:
-    - "es información auxiliar que no bloquea; eso es un Tooltip o un Flyout"
+    - "es información auxiliar que no bloquea; eso es un Tooltip o un Popover"
     - "es una lista de acciones colgada de un botón; eso es un Menu"
     - "el contenido es largo o navegable: eso pide una página, no una caja modal"
   alternatives:
-    - Flyout
+    - Popover
     - Tooltip

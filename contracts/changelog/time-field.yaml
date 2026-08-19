@@ -3,8 +3,79 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "936b51e994fa3268"
+surface: "cc2ac5b80eea8a2d"
 entries:
+  - date: 2026-08-18
+    kind: feature
+    es:
+      title: TimeField siempre incluye un desplegable de horarios preestablecidos
+      body: >-
+        Ya no hay una variante "sólo segmentos": todo <code>TimeField</code> pinta, además de los
+        segmentos, un botón de reloj DENTRO de <code>.sk-time-field__control</code> (una sola caja
+        con borde, la misma anatomía que ya tiene el control de Combobox para sus propios botones
+        finales) que abre una lista simple de horarios, sin buscador, navegable con flechas —
+        <code>@zag-js/select</code> maneja esa máquina directamente (la misma que usa
+        <code>Select</code>), sin montar el componente <code>Select</code> completo, que trae su
+        propio trigger visible y hubiera significado dos clics para llegar a la lista. Dos
+        opciones nuevas en el contrato: <code>optionsStep</code> (número de minutos entre cada
+        fila, <code>30</code> por defecto — 48 filas) y <code>optionsLabel</code> (el nombre
+        accesible del botón, distinto del label del campo — <code>"Elegir de la lista"</code> por
+        defecto). <code>Alt+Flecha-abajo</code> desde cualquier segmento abre la lista sin pasar
+        por Tab, la misma tecla que ya abre un <code>&lt;select&gt;</code> nativo; Flecha-abajo
+        sola sigue sin tocarla, decrementa el segmento enfocado como siempre. El binding Vanilla ya
+        no necesita una segunda pieza (<code>@skryensya/vanilla/time-field-options</code>, ahora
+        eliminada): <code>data-sk-time-field</code> por sí solo genera el desplegable, igual que ya
+        genera los segmentos a partir del locale. La lista del desplegable se porta afuera del
+        campo (React la manda a <code>document.body</code> por defecto, con la nueva prop
+        <code>container</code> para acotarla a otro elemento; Vanilla la deja donde está, ubicada
+        por anclaje CSS) — el mismo split que ya tienen Select y Combobox.
+    en:
+      title: TimeField always includes a preset-times dropdown
+      body: >-
+        There is no more "segments-only" variant: every <code>TimeField</code> now paints, besides
+        the segments, a clock button INSIDE <code>.sk-time-field__control</code> (one bordered
+        box, the same anatomy Combobox's own control already has for its own trailing buttons)
+        that opens a plain, search-free list of times, navigable with arrow keys —
+        <code>@zag-js/select</code> drives that machine directly (the same one <code>Select</code>
+        uses), without mounting the full <code>Select</code> component, which carries its own
+        visible trigger and would have meant two clicks to reach the list. Two new contract
+        options: <code>optionsStep</code> (minutes between each row, <code>30</code> by default —
+        48 rows) and <code>optionsLabel</code> (the button's own accessible name, distinct from
+        the field's label — <code>"Elegir de la lista"</code> by default).
+        <code>Alt+ArrowDown</code> from any segment opens the list without tabbing there first, the
+        same key that already opens a native <code>&lt;select&gt;</code>; plain ArrowDown alone
+        still leaves it untouched, decrementing the focused segment as always. The Vanilla binding
+        no longer needs a second piece (<code>@skryensya/vanilla/time-field-options</code>, now
+        removed): <code>data-sk-time-field</code> on its own generates the dropdown too, the same
+        way it already generates the segments from the locale. The dropdown's own list portals out
+        of the field (React sends it to <code>document.body</code> by default, with a new
+        <code>container</code> prop to scope it elsewhere; Vanilla leaves it in place, positioned
+        by CSS anchoring) — the same split Select and Combobox already have.
+  - date: 2026-08-18
+    kind: feature
+    es:
+      title: TimeField gana la opción hourCycle, para forzar 12 o 24 horas
+      body: >-
+        Nueva opción <code>hourCycle</code> (<code>"h12"</code> | <code>"h24"</code>), que pisa la
+        detección automática por locale cuando se da. La detección (<code>getHourCycle</code>) lee
+        <code>Intl.DateTimeFormat(locale, {hour:"numeric"}).resolvedOptions().hourCycle</code>, y ese
+        dato resultó ser inconsistente entre motores: el mismo string de locale
+        (<code>es</code>/<code>es-AR</code>) resuelve a ciclos opuestos en Node y en Chromium. Como el
+        máximo del segmento de hora sale directo de ese ciclo, una detección equivocada no solo
+        mostraba mal la hora: adelantaba el foco antes de tiempo al tipear un primer dígito ambiguo
+        (un "2", que todavía podía volverse "22"). Omitida, el comportamiento no cambia.
+    en:
+      title: TimeField gains the hourCycle option, to force 12- or 24-hour form
+      body: >-
+        New <code>hourCycle</code> option (<code>"h12"</code> | <code>"h24"</code>), which overrides
+        the locale-based auto-detection when given. That detection
+        (<code>getHourCycle</code>) reads
+        <code>Intl.DateTimeFormat(locale, {hour:"numeric"}).resolvedOptions().hourCycle</code>, and
+        that value turned out to be inconsistent across engines: the same locale string
+        (<code>es</code>/<code>es-AR</code>) resolves to opposite cycles in Node and in Chromium.
+        Since the hour segment's own max comes straight from that cycle, a wrong guess did not just
+        mislabel the hour: it advanced focus too early on an ambiguous first digit (a "2", which
+        could still become "22"). Omitted, behavior is unchanged.
   - date: 2026-08-11
     kind: feature
     es:

@@ -245,6 +245,7 @@ describe("ComponentPreview opt-in enhancer", () => {
             srcdoc="<!doctype html><body>one</body>"
             ${extraStageAttrs}
           ></iframe>
+          <div data-sk-component-preview-resizer tabindex="0"></div>
         </div>
       `;
     }
@@ -266,10 +267,11 @@ describe("ComponentPreview opt-in enhancer", () => {
         '[data-sk-component-preview-screen-option][data-value="mobile"]',
       );
       const stage = root?.querySelector<HTMLIFrameElement>(".sk-component-preview__stage");
-      if (!root || !tabs || !freeOption || !tabletOption || !mobileOption || !stage) {
+      const resizer = root?.querySelector<HTMLElement>("[data-sk-component-preview-resizer]");
+      if (!root || !tabs || !freeOption || !tabletOption || !mobileOption || !stage || !resizer) {
         throw new Error("Invalid test markup.");
       }
-      return { root, tabs, freeOption, tabletOption, mobileOption, stage };
+      return { root, tabs, freeOption, tabletOption, mobileOption, stage, resizer };
     }
 
     it("selects a preset directly on click, marking the stage and clearing it for free", () => {
@@ -300,9 +302,8 @@ describe("ComponentPreview opt-in enhancer", () => {
       expect(mobileOption.getAttribute("aria-checked")).toBe("false");
     });
 
-    it("takes the height back from a reader drag, inline style included", () => {
-      // Two owners of one height is the bug: an inline height outranks the preset's rule, so a
-      // stale drag would silently win over the device height and the stage would not be a device.
+    it("keeps a reader-selected height when switching to tablet", () => {
+      // Screen modes only set width; neither is allowed to overwrite a reader's height.
       resetBindingState();
       screenMarkup('data-sk-component-preview-resized style="height: 320px"');
       const { tabletOption, stage } = parts();
@@ -310,9 +311,35 @@ describe("ComponentPreview opt-in enhancer", () => {
 
       tabletOption.click();
 
-      expect(stage.style.height).toBe("");
-      expect(stage.hasAttribute("data-sk-component-preview-resized")).toBe(false);
+      expect(stage.style.height).toBe("320px");
+      expect(stage.hasAttribute("data-sk-component-preview-resized")).toBe(true);
       expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("tablet");
+    });
+
+    it("keeps a reader-selected height when switching to mobile", () => {
+      resetBindingState();
+      screenMarkup('data-sk-component-preview-resized style="height: 320px"');
+      const { mobileOption, stage } = parts();
+      mountAll();
+
+      mobileOption.click();
+
+      expect(stage.style.height).toBe("320px");
+      expect(stage.hasAttribute("data-sk-component-preview-resized")).toBe(true);
+      expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("mobile");
+    });
+
+    it("keeps mobile selected while the reader nudges its height", () => {
+      resetBindingState();
+      screenMarkup();
+      const { mobileOption, resizer, stage } = parts();
+      mountAll();
+
+      mobileOption.click();
+      resizer.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+
+      expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("mobile");
+      expect(stage.hasAttribute("data-sk-component-preview-resized")).toBe(true);
     });
 
     it("honours a preset authored as the initial value", () => {
@@ -326,6 +353,7 @@ describe("ComponentPreview opt-in enhancer", () => {
             ${segmentedOption("mobile", "data-sk-component-preview-screen-option")}
           </div>
           <iframe class="sk-component-preview__stage" srcdoc="<!doctype html><body>one</body>"></iframe>
+          <div data-sk-component-preview-resizer tabindex="0"></div>
         </div>
       `;
       const { stage, tabs } = parts();

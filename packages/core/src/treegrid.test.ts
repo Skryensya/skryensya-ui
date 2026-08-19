@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { computeTreegridVisibility, resolveTreegridKey, type TreegridRowMeta } from "./treegrid.js";
+import {
+  computeTreegridVisibility,
+  diffTreegridVisibility,
+  resolveTreegridKey,
+  type TreegridRowMeta,
+} from "./treegrid.js";
 
 /*
  * A fixture matching WAI's own `treegrid-1` shape: two top-level branches (each with children), one
@@ -47,6 +52,51 @@ describe("computeTreegridVisibility", () => {
       { level: 1, isBranch: false, expanded: false },
     ];
     expect(computeTreegridVisibility(leaves)).toEqual([true, true]);
+  });
+});
+
+describe("diffTreegridVisibility", () => {
+  it("marks every row undefined when nothing changed", () => {
+    const before = computeTreegridVisibility(FIXTURE);
+    const after = computeTreegridVisibility(FIXTURE);
+    expect(diffTreegridVisibility(before, after)).toEqual([
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+    ]);
+  });
+
+  it("marks a newly-shown row entering and a newly-hidden row exiting, nothing else", () => {
+    // Drafts (index 3) expands: its child (index 4) goes hidden→visible, everything else unchanged.
+    const before = computeTreegridVisibility(FIXTURE);
+    const expanded = FIXTURE.map((row, index) => (index === 3 ? { ...row, expanded: true } : row));
+    const after = computeTreegridVisibility(expanded);
+    expect(diffTreegridVisibility(before, after)).toEqual([
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      "entering",
+      undefined,
+    ]);
+  });
+
+  it("marks every descendant of a newly-collapsed ancestor exiting, however deep", () => {
+    // Same nested fixture computeTreegridVisibility's own test above uses, but starting fully
+    // expanded and then collapsing the top-level branch — both its child AND grandchild exit.
+    const expanded: TreegridRowMeta[] = [
+      { level: 1, isBranch: true, expanded: true },
+      { level: 2, isBranch: true, expanded: true },
+      { level: 3, isBranch: false, expanded: false },
+      { level: 1, isBranch: false, expanded: false },
+    ];
+    const collapsed = expanded.map((row, index) => (index === 0 ? { ...row, expanded: false } : row));
+    const before = computeTreegridVisibility(expanded);
+    const after = computeTreegridVisibility(collapsed);
+    expect(diffTreegridVisibility(before, after)).toEqual([undefined, "exiting", "exiting", undefined]);
   });
 });
 

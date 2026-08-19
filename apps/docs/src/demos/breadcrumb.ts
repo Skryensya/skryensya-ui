@@ -1,6 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import {
+  breadcrumbCollapseItems,
   breadcrumbIconItems,
   breadcrumbLongItems,
   breadcrumbMultiItems,
@@ -53,4 +54,18 @@ export const breadcrumbLongTree = (t: Translate, projectsHref: string): UsageTre
   signature: "Breadcrumb",
   options: { label: t("demo.breadcrumb.label") },
   slots: { items: breadcrumbLongItems(t, projectsHref) },
+});
+
+/**
+ * Five levels deep, so the trail does not fit one line in the preview column: the enhancer moves
+ * the three ancestors between "Home" and "Settings" behind the "…" disclosure.
+ */
+export const breadcrumbCollapseTree = (
+  t: Translate,
+  hrefs: { documents: string; projects: string; designSystem: string; components: string },
+): UsageTree => ({
+  contract: "breadcrumb",
+  signature: "Breadcrumb",
+  options: { label: t("demo.breadcrumb.label"), collapsedLabel: t("breadcrumb.collapseTriggerLabel") },
+  slots: { items: breadcrumbCollapseItems(t, hrefs) },
 });

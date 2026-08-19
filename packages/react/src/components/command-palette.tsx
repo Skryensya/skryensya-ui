@@ -11,8 +11,8 @@ import { Icon } from "./icon.js";
  * COMMAND PALETTE: the React half, which did not exist.
  *
  * The enhancer shipped for a while with no counterpart here, so this could not be a contract: one
- * binding is not a contract, it is a script. As with `copy-button` and `dialog`, writing the missing
- * half is what made the contract possible.
+ * binding is not a contract, it is a script. As with `dialog`, writing the missing half is what made
+ * the contract possible.
  *
  * THE LIST IS EMPTY AT REST, in both bindings, copied deliberately rather than improved on:
  * `connectCommandPalette` only calls `render()` from `open()`, so a closed palette has no options,

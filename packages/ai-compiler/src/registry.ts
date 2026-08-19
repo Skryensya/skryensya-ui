@@ -9,7 +9,6 @@ import { changelogContract } from "@skryensya/core/changelog";
 import { stepsContract } from "@skryensya/core/steps";
 import { listContract } from "@skryensya/core/list";
 import { mediaGradientContract } from "@skryensya/core/media-gradient";
-import { flyoutContract } from "@skryensya/core/flyout";
 import { timeFieldContract } from "@skryensya/core/time-field";
 import { fileUploadContract } from "@skryensya/core/file-upload";
 import { carouselContract } from "@skryensya/core/carousel";
@@ -19,7 +18,7 @@ import { skipLinkContract } from "@skryensya/core/skip-link";
 import { accordionContract } from "@skryensya/core/accordion";
 import { tileContract } from "@skryensya/core/tile";
 import { paginationContract, tablePagerContract } from "@skryensya/core/pagination";
-import { themeToggleContract } from "@skryensya/core/theme-toggle";
+import { iconStateButtonContract } from "@skryensya/core/icon-state-button";
 import { contentContract } from "@skryensya/core/content";
 import { numberFieldContract } from "@skryensya/core/number-field";
 import { navbarContract } from "@skryensya/core/navbar";
@@ -34,7 +33,6 @@ import { feedContract } from "@skryensya/core/feed";
 import { comboboxContract } from "@skryensya/core/combobox";
 import { calendarContract } from "@skryensya/core/calendar";
 import { datePickerContract } from "@skryensya/core/date-picker";
-import { copyButtonContract } from "@skryensya/core/copy-button";
 import { dialogContract } from "@skryensya/core/dialog";
 import { splitButtonContract } from "@skryensya/core/split-button";
 import { popoverContract } from "@skryensya/core/popover";
@@ -105,11 +103,10 @@ export const contracts = {
   "skip-link": skipLinkContract,
   carousel: carouselContract,
   "file-upload": fileUploadContract,
-  flyout: flyoutContract,
   "time-field": timeFieldContract,
   "tree-view": treeViewContract,
   tile: tileContract,
-  "theme-toggle": themeToggleContract,
+  "icon-state-button": iconStateButtonContract,
   "number-field": numberFieldContract,
   placeholder: placeholderContract,
   "process-list": processListContract,
@@ -135,7 +132,6 @@ export const contracts = {
   combobox: comboboxContract,
   calendar: calendarContract,
   "date-picker": datePickerContract,
-  "copy-button": copyButtonContract,
   dialog: dialogContract,
   "split-button": splitButtonContract,
   popover: popoverContract,

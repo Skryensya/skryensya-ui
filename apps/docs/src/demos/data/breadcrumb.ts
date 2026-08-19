@@ -46,3 +46,20 @@ export const breadcrumbLongItems = (
   { options: { href: projectsHref }, slots: { label: t("demo.breadcrumb.longAncestor") } },
   { options: { current: true }, slots: { label: t("demo.breadcrumb.longCurrent") } },
 ];
+
+/**
+ * Six levels deep with full sentence-length labels — comfortably wider than the preview column at
+ * any reasonable width, so the enhancer always has real ancestors to collapse rather than a fit
+ * that depends on exactly how wide the surrounding page happens to be.
+ */
+export const breadcrumbCollapseItems = (
+  t: Translate,
+  hrefs: { documents: string; projects: string; designSystem: string; components: string },
+): readonly ItemInput[] => [
+  { options: { href: "/" }, slots: { label: t("demo.breadcrumb.home") } },
+  { options: { href: hrefs.documents }, slots: { label: t("demo.breadcrumb.documents") } },
+  { options: { href: hrefs.projects }, slots: { label: t("demo.breadcrumb.activeProjects") } },
+  { options: { href: hrefs.designSystem }, slots: { label: t("demo.breadcrumb.designSystem") } },
+  { options: { href: hrefs.components }, slots: { label: t("demo.breadcrumb.sharedComponents") } },
+  { options: { current: true }, slots: { label: t("demo.breadcrumb.settings") } },
+];

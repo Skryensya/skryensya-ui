@@ -98,7 +98,14 @@ export const navListContract = {
       intent: ["group-of-destinations", "labeled-navigation-section", "collapsible-navigation-section"],
       host: { element: "div" },
       options: ["collapsible", "defaultOpen"],
-      parents: ["NavList"],
+      /*
+       * Two legal homes, not one: `NavList` for a top-level section, `NavListLink` for a
+       * destination's own sub-destinations (its `nested` slot, below). The template stays
+       * IDENTICAL either way — this signature does not know which parent placed it — because what
+       * changes is only where the `<div>` lands (`<nav><ul>` vs. inside a `<li>`, beside the `<a>`
+       * it nests under), never what it renders.
+       */
+      parents: ["NavList", "NavListLink"],
       slots: {
         label: { accepts: "node" },
         children: { accepts: "signature", required: true, of: ["NavListLink"] },
@@ -186,6 +193,16 @@ export const navListContract = {
         children: { accepts: "text", required: true },
         /** Trailing metadata: a count, a badge. Pinned to the end, hidden when a host collapses. */
         trailing: { accepts: "node" },
+        /**
+         * This destination's OWN sub-destinations, one level of nesting at a time — a
+         * `NavListGroup` sitting inside the same `<li>`, after the link rather than the label
+         * slot NavList's own groups fill. `<li>` accepts arbitrary flow content, so `<a>` followed
+         * by a nested `<div class="group"><ul>…</ul></div>` is valid, unlike nesting a group
+         * straight inside another group's `<ul>` (a `<div>` is not a legal `<ul>` child, only
+         * `<li>` is — the reason this is a new slot on the LINK and not a widened `children` on
+         * `NavListGroup` itself).
+         */
+        nested: { accepts: "signature", of: ["NavListGroup"] },
       },
       template: {
         element: "li",
@@ -202,6 +219,7 @@ export const navListContract = {
               { element: "span", part: "trailing", whenGiven: "trailing", slot: "trailing" },
             ],
           },
+          { whenGiven: "nested", slot: "nested" },
         ],
       },
       react: { from: "@skryensya/react/nav-list", name: "NavListLink" },

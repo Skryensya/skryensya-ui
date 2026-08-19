@@ -13,12 +13,4 @@ Menubar:
 
 MenubarItem:
   useWhen:
-    - "un ítem de la barra — con MenubarMenu adentro es un desplegable, sin él es un comando directo"
-
-MenubarMenu:
-  useWhen:
-    - "el desplegable de un MenubarItem — un solo nivel; para submenús anidados dentro de un desplegable, usa Menu en su lugar"
-
-MenubarMenuItem:
-  useWhen:
-    - "un comando dentro de un desplegable de la barra"
+    - "un ítem de la barra — con `items` (el mismo shape de Menu: comandos, checkbox/radio, separadores, submenús anidados) es un desplegable, sin `items` es un comando directo"

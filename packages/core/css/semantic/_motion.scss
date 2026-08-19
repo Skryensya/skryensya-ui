@@ -13,6 +13,28 @@
     --motion-distance-md: 8px;   /* things that enter: popover, toast */
     --motion-distance-lg: 16px;  /* navigation / drill-down direction */
 
+    /* materialise, the opacity + scale + blur "solidify into place" look Popover, Menu and Tooltip
+     * all share for their float-in. Not a full intent pair (no duration/easing of its own — each of
+     * the three keeps its OWN, already-deliberate choice: Popover uses enter/exit, Menu and Tooltip
+     * use feedback): scale and blur have no existing primitive family, and inventing one for two
+     * numbers shared by three components would organise more than the values need. Named here so a
+     * retune is one edit, not three. */
+    --motion-materialize-scale: 0.98;
+    --motion-materialize-blur: 4px;
+
+    /* press, the squeeze a control gives back on `:active` (Button, Checkbox, Switch's track,
+     * Radio, Segmented's option — "the whole label is the target, pressing it answers under the
+     * finger", see any of those files for the fuller reasoning). Its own token, not a reuse of
+     * `--motion-materialize-scale` above, even though they now share a value: one is an ENTRANCE
+     * (something arriving), the other is FEEDBACK (something already there, responding to touch),
+     * and tying them together would mean retuning one on purpose moves the other by accident.
+     * Each of the five consumers used to hardcode its own literal `0.96`; softened here to `0.98`,
+     * the same size as materialize's own — a felt press, not a flinch — and named once so a further
+     * retune is one edit, not five. Overridable per-product, not just per-retune:
+     * `dimensions/press-scale.scss` opts a subtree out of the squeeze entirely
+     * (`[data-press-scale="off"]`), independent of `prefers-reduced-motion`. */
+    --motion-press-scale: 0.98;
+
     /* feedback, hover / press / toggle / state layer: fast + discreet, never blocks flow */
     --motion-feedback-duration: var(--scale-duration-fast);
     --motion-feedback-easing: var(--scale-easing-standard);

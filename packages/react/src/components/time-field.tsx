@@ -1,19 +1,24 @@
+import { select } from "@skryensya/core/machines";
+import { selectParts } from "@skryensya/core/select";
 import {
   formatTimeValue,
-  getHourCycle,
+  generateTimeOptions,
   getPeriodLabels,
   getTimeFieldTokens,
   parseTimeValue,
+  resolveHourCycle,
   segmentBounds,
   timeFieldParts,
   to12Hour,
   to24Hour,
   type HourCycle,
   type Period,
+  type TimeFieldOption,
   type TimeFieldSegmentType,
   type TimeFieldValueChangeDetails,
   type TimeValue,
 } from "@skryensya/core/time-field";
+import { normalizeProps, Portal, useMachine } from "@zag-js/react";
 import {
   useEffect,
   useId,
@@ -22,7 +27,10 @@ import {
   useState,
   type KeyboardEvent,
   type ReactNode,
+  type RefObject,
 } from "react";
+import { useAnchored } from "./anchored.js";
+import { Icon } from "./icon.js";
 
 const cx = (...classes: Array<string | undefined>) => classes.filter(Boolean).join(" ");
 
@@ -70,9 +78,17 @@ const ADVANCE_DELAY = 500;
 
 export type TimeFieldProps = {
   clearLabel?: string;
+  /**
+   * Where the picker's own floating listbox is portalled. Defaults to `document.body`, which is
+   * right whenever an ancestor might clip it. Pass a ref to keep the content inside a subtree
+   * instead: a preview frame, a dialog — the same `container` prop `Select`/`Combobox` already
+   * carry, for the same reason (`select.tsx`'s own doc on it).
+   */
+  container?: RefObject<HTMLElement>;
   defaultValue?: string;
   disabled?: boolean;
   hint?: ReactNode;
+  hourCycle?: HourCycle;
   hourLabel?: string;
   id?: string;
   invalid?: boolean;
@@ -82,6 +98,14 @@ export type TimeFieldProps = {
   minuteStep?: number;
   name?: string;
   onValueChange?: (details: TimeFieldValueChangeDetails) => void;
+  /**
+   * How far apart the picker's own listbox rows sit, in minutes. Defaults to 30 (48 rows) — enough
+   * to matter, few enough to arrow-key through without scrolling past most of them.
+   */
+  optionsStep?: number;
+  /** The picker trigger's own accessible name — distinct from the field's own label (WCAG 2.5.3),
+   * since the trigger carries no visible text of its own, only an icon. */
+  optionsLabel?: string;
   periodLabel?: string;
   readOnly?: boolean;
   required?: boolean;
@@ -90,20 +114,39 @@ export type TimeFieldProps = {
 
 /**
  * TIME FIELD: hour, minute, and (in a 12-hour locale) AM/PM as one accessible `role="group"` of
- * `role="spinbutton"` segments; no popover, no wheel. An earlier design put a scroll-wheel picker
- * behind a trigger; it turned out to be neither simpler nor more accessible than the segments
- * themselves, which is the same primitive every native segmented time control already uses.
+ * `role="spinbutton"` segments (typing), plus a trigger that opens a plain arrow-key-navigable
+ * listbox of preset times (browsing) — always both, never one without the other.
  *
  * Segment order and separators come from `Intl.DateTimeFormat.formatToParts`, not an assumption:
  * some locales place the day period before the time, and the separator is not always ":". The
  * public value is still the canonical `HH:mm` string, carried on a hidden input so a form behind
  * this field never has to parse a locale-formatted one.
+ *
+ * THE PICKER DRIVES `@zag-js/select`'S MACHINE DIRECTLY, not the `Select` component: `Select` (
+ * `./select.js`) renders its OWN visible trigger (value text + chevron), and nesting that whole
+ * widget inside a second trigger here would mean two clicks to reach the list — icon, then
+ * Select's own trigger, THEN the options — the exact "one thing opens another thing" inefficiency
+ * an earlier version of this picker had with `Combobox`'s search box (`time-field.ts`'s own banner
+ * has the fuller history). Driving the machine directly means the field's OWN compact icon button
+ * IS the trigger (`pickerApi.getTriggerProps()` spread onto it) and only the LISTBOX part renders
+ * (`selectParts.content`/`item`, `@skryensya/core/select` — confirmed self-contained: its own
+ * positioner redeclares every CSS custom property it needs, no `.sk-select` root wrapper required).
+ * Picking an item closes the listbox on its own (`@zag-js/select`'s normal single-select behavior),
+ * so nothing here has to manage that.
+ *
+ * `aria-labelledby`, CLEARED ON PURPOSE: `getTriggerProps()`/`getContentProps()` both set it,
+ * pointing at a `<label>` id that does not exist — this picker has no visible label, only the icon
+ * button's own `aria-label`. Left alone, the accessible name would resolve to nothing; explicitly
+ * unsetting it after the spread is what lets `aria-label` win (confirmed reading `@zag-js/select`'s
+ * own `connect.js`, not assumed).
  */
 export function TimeField({
   clearLabel = "Limpiar hora",
+  container,
   defaultValue,
   disabled,
   hint,
+  hourCycle: hourCycleOverride,
   hourLabel = "Hora",
   id,
   invalid,
@@ -113,6 +156,8 @@ export function TimeField({
   minuteStep = 1,
   name,
   onValueChange,
+  optionsLabel = "Elegir de la lista",
+  optionsStep = 30,
   periodLabel = "Periodo",
   readOnly,
   required,
@@ -123,7 +168,7 @@ export function TimeField({
   const labelId = `${rootId}-label`;
   const hintId = hint ? `${rootId}-hint` : undefined;
 
-  const cycle = useMemo(() => getHourCycle(locale), [locale]);
+  const cycle = useMemo(() => resolveHourCycle(locale, hourCycleOverride), [locale, hourCycleOverride]);
   const periods = useMemo(() => getPeriodLabels(locale), [locale]);
   const tokens = useMemo(() => getTimeFieldTokens(locale, cycle), [locale, cycle]);
   const segmentOrder = useMemo(
@@ -158,7 +203,35 @@ export function TimeField({
   const canonical = compose(segments, cycle);
   const hasValue = canonical !== undefined;
 
+  const pickerId = `${rootId}-options`;
+  const options = useMemo(() => generateTimeOptions(optionsStep, locale, cycle), [optionsStep, locale, cycle]);
+  const collection = useMemo(
+    () =>
+      select.collection<TimeFieldOption>({
+        items: [...options],
+        itemToString: (item) => item.label,
+        itemToValue: (item) => item.value,
+      }),
+    [options],
+  );
+  const pickerService = useMachine(select.machine, {
+    id: pickerId,
+    collection,
+    value: canonical ? [formatTimeValue(canonical)] : [],
+    onValueChange: (details) => {
+      const next = details.value[0];
+      if (next === undefined) return;
+      const parsed = parseTimeValue(next);
+      if (!parsed) return;
+      commit(decompose(parsed, cycle));
+    },
+    positioning: { sameWidth: false },
+  });
+  const pickerApi = select.connect(pickerService, normalizeProps);
+  const anchor = useAnchored(pickerId);
+
   const segmentRefs = useRef<Partial<Record<TimeFieldSegmentType, HTMLDivElement | null>>>({});
+  const controlRef = useRef<HTMLDivElement>(null);
   // Keyed by segment type: what is mid-typing right now, so a second digit can extend it and any
   // OTHER segment's keystrokes never touch it.
   const bufferRef = useRef<{ type: TimeFieldSegmentType; value: number; digits: number } | null>(null);
@@ -200,6 +273,24 @@ export function TimeField({
 
   const handleSegmentKeyDown = (type: TimeFieldSegmentType, event: KeyboardEvent<HTMLDivElement>) => {
     if (disabled || readOnly) return;
+
+    // Alt+ArrowDown, the same key `<select>` already opens with — the picker's own trigger button
+    // (rendered below, at the `trailing` part) is Zag's REAL trigger, so `.click()` on it runs the
+    // machine's normal open behavior exactly like a real click would, rather than this file
+    // reaching into the machine itself. Checked on the SEGMENT rather than the control: the
+    // control's own `role="group"` is not an interactive element, and a keydown listener there
+    // would be a real a11y smell, not just a lint one.
+    if (event.altKey) {
+      if (event.key === "ArrowDown") {
+        const trigger = controlRef.current?.querySelector<HTMLButtonElement>(`.${timeFieldParts.trailing} button`);
+        if (trigger) {
+          event.preventDefault();
+          trigger.click();
+        }
+      }
+      return;
+    }
+
     const { min, max } = segmentBounds(type, cycle);
     const current = segments[type];
 
@@ -287,8 +378,9 @@ export function TimeField({
       <div
         aria-describedby={hintId}
         aria-labelledby={labelId}
-        className={timeFieldParts.control}
+        {...anchor.anchor(timeFieldParts.control)}
         data-disabled={disabled ? "" : undefined}
+        ref={controlRef}
         role="group"
       >
         {tokens.map((token, index) =>
@@ -335,13 +427,62 @@ export function TimeField({
             }}
             type="button"
           >
-            <span aria-hidden="true">×</span>
+            <Icon name="close" size="sm" />
           </button>
         ) : null}
+        {disabled || readOnly ? null : (
+          <span className={timeFieldParts.trailing}>
+            <button
+              {...pickerApi.getTriggerProps()}
+              aria-label={optionsLabel}
+              aria-labelledby={undefined}
+              className={cx("sk-button", "sk-interactive", "sk-time-field__options-trigger")}
+              data-icon-only=""
+              data-size="sm"
+              data-variant="ghost"
+            >
+              <Icon name="clock" size="sm" />
+            </button>
+          </span>
+        )}
       </div>
       {/* The wire value, always canonical `HH:mm`; no real `<input>` composes the segments, so this
        * is the only thing a form behind TimeField ever sees. */}
       <input name={name} type="hidden" value={canonical ? formatTimeValue(canonical) : ""} />
+      {disabled || readOnly ? null : (
+        <Portal container={container}>
+          <div
+            {...anchor.positioner(
+              pickerApi.getPositionerProps(),
+              cx(selectParts.positioner, "sk-time-field__options-positioner"),
+            )}
+            data-sk-placement="block-end"
+          >
+            <ul
+              {...pickerApi.getContentProps()}
+              aria-label={optionsLabel}
+              aria-labelledby={undefined}
+              className={cx(selectParts.content, "sk-scrollbar")}
+            >
+              {options.map((option) => (
+                <li
+                  {...pickerApi.getItemProps({ item: option })}
+                  aria-selected={option.value === pickerApi.highlightedValue ? "true" : undefined}
+                  className={cx(selectParts.item, "sk-interactive")}
+                  key={option.value}
+                >
+                  <span {...pickerApi.getItemTextProps({ item: option })} className={selectParts.itemText}>
+                    {option.label}
+                  </span>
+                  <span {...pickerApi.getItemIndicatorProps({ item: option })} className={selectParts.itemIndicator}>
+                    <Icon name="check" />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Portal>
+      )}
     </div>
   );
 }

@@ -1,0 +1,72 @@
+/*
+ * TIER 3, ACCORDION
+ *
+ * Coordination lives in the runtime; chrome lives here. Each item is still an expandable Tile, this
+ * file only joins those tiles into one framed stack so a group reads as a single surface, not a pile
+ * of separate cards.
+ */
+@layer components {
+  .sk-accordion {
+    /* The frame is accordion's own theming surface; the item bodies are Tiles and read Tile's hooks. */
+    --sk-accordion-border-color: var(--color-border-subtle);
+    --sk-accordion-radius: var(--radius-surface);
+    --sk-accordion-bg: var(--color-bg-surface);
+    --sk-accordion-divider-color: var(--color-border-subtle);
+    --sk-accordion-open-bg: var(--color-bg-surface-sunken);
+
+    display: grid;
+    gap: 0;
+    /* Fill the parent (or a max-inline-size the consumer sets). Never shrink-wrap to the open item. */
+    inline-size: 100%;
+    min-inline-size: 0;
+    border: 1px solid var(--sk-accordion-border-color);
+    border-radius: var(--sk-accordion-radius);
+    background: var(--sk-accordion-bg);
+    overflow: hidden;
+  }
+
+  /*
+   * The trigger's `role="heading"` wrapper exists only so a screen reader can navigate to it by
+   * heading; it must never become a real box between the section and its button, or the grid gap
+   * `.sk-tile` sets between trigger and content would double up on one side.
+   */
+  .sk-accordion__trigger-heading {
+    display: contents;
+  }
+
+  /* The root owns the outer frame; items keep Tile anatomy without a second border or radius. */
+  .sk-accordion > .sk-tile--expandable {
+    inline-size: 100%;
+    min-inline-size: 0;
+    border: 0;
+    border-radius: 0;
+    border-block-start: 1px solid var(--sk-accordion-divider-color);
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .sk-accordion > .sk-tile--expandable:first-child {
+    border-block-start: 0;
+  }
+
+  /* Open body: equal inset; sunken so it recesses from the trigger in light and dark. Keyed on
+   * `:not([hidden]):not([data-state="closed"])` (not [data-state="open"]) so the inset survives after the
+   * collapsible machine drops data-state at rest, see the OPEN LOOK note in tile.css.
+   * (Raised shares the light fill with surface, elevation is shadow-only there.) */
+  .sk-accordion > .sk-tile--expandable > .sk-tile__expandable-content:not([hidden]):not([data-state="closed"]) {
+    padding-block: var(--sk-tile-padding);
+    background: var(--sk-accordion-open-bg);
+  }
+
+  @media (forced-colors: active) {
+    .sk-accordion {
+      border-color: CanvasText;
+      background: Canvas;
+      forced-color-adjust: none;
+    }
+
+    .sk-accordion > .sk-tile--expandable {
+      border-block-start-color: CanvasText;
+    }
+  }
+}

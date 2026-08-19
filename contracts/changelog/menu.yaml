@@ -3,8 +3,33 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "8a06d58d86d099e9"
+surface: "4490fcac2c8fc1cf"
 entries:
+  - date: 2026-08-19
+    kind: feature
+    target: href
+    es:
+      title: Nueva opción de ítem href — un ítem puede ser un destino, no sólo un comando
+      body: >-
+        Se agrega <code>href</code> a la forma de ítem que <code>Menu</code> y <code>Menubar</code>
+        comparten (<code>menuItemShape</code>): un ítem con <code>href</code> renderiza como
+        <code>&lt;a&gt;</code> real en vez del <code>&lt;div role="menuitem"&gt;</code> de siempre.
+        <code>@zag-js/menu</code> ya soporta un ítem-ancla de fábrica (<code>navigate</code>, que por
+        defecto hace click nativo en el link), así que nada del manejo de teclado ni el rol cambia:
+        misma máquina, mismo <code>getItemProps()</code>, sólo el elemento que las recibe. Pensado
+        para el caso <code>menubar-navigation</code> de WAI-ARIA — una barra de navegación cuyos
+        desplegables son listas de páginas reales, no comandos.
+    en:
+      title: New item option href — an item can be a destination, not only a command
+      body: >-
+        Adds <code>href</code> to the item shape <code>Menu</code> and <code>Menubar</code> share
+        (<code>menuItemShape</code>): an item with <code>href</code> renders as a real
+        <code>&lt;a&gt;</code> instead of the usual <code>&lt;div role="menuitem"&gt;</code>.
+        <code>@zag-js/menu</code> already supports an anchor item out of the box (<code>navigate</code>,
+        defaulting to a native click on the link), so nothing about keyboard handling or the role
+        changes: same machine, same <code>getItemProps()</code>, only the element receiving them.
+        Built for WAI-ARIA's own <code>menubar-navigation</code> case — a navigation bar whose
+        dropdowns are lists of real pages, not commands.
   - date: 2026-08-17
     kind: feature
     target: triggerWeldStart

@@ -1,0 +1,195 @@
+/*
+ * LAYOUT, structural primitives shared by many component anatomies.
+ *
+ * Stack, Inline and Grid define exact reusable arrangements while consumers choose the element
+ * that carries their semantics. Box lives in its own pattern so consumers can pull in a surface
+ * without also importing layout arrangements they do not use. Wrapper is the page-column cousin:
+ * a max measure on a size scale. ImageFrame is the media cousin: aspect, object-fit and clip for
+ * authored images and video.
+ */
+@import url("./box.css");
+@import url("./wrapper.css");
+@import url("./image-frame.css");
+
+@layer components {
+  .sk-stack,
+  .sk-inline,
+  .sk-grid,
+  .sk-layout-grid {
+    min-inline-size: 0;
+  }
+
+  .sk-stack {
+    --sk-stack-gap: var(--space-stack-md);
+
+    display: grid;
+    gap: var(--sk-stack-gap);
+  }
+
+  .sk-stack[data-align="start"] { justify-items: start; }
+  .sk-stack[data-align="center"] { justify-items: center; }
+  .sk-stack[data-align="end"] { justify-items: end; }
+  .sk-stack[data-align="stretch"] { justify-items: stretch; }
+  .sk-stack[data-gap="none"] { --sk-stack-gap: 0; }
+  .sk-stack[data-gap="xs"] { --sk-stack-gap: var(--space-stack-xs); }
+  .sk-stack[data-gap="sm"] { --sk-stack-gap: var(--space-stack-sm); }
+  .sk-stack[data-gap="lg"] { --sk-stack-gap: var(--space-stack-lg); }
+  .sk-stack[data-gap="xl"] { --sk-stack-gap: var(--space-stack-xl); }
+
+  .sk-inline {
+    --sk-inline-gap: var(--space-inline-md);
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sk-inline-gap);
+    align-items: center;
+  }
+
+  .sk-inline[data-align="start"] { align-items: flex-start; }
+  .sk-inline[data-align="end"] { align-items: flex-end; }
+  .sk-inline[data-align="baseline"] { align-items: baseline; }
+  .sk-inline[data-align="stretch"] { align-items: stretch; }
+  .sk-inline[data-wrap="false"] { flex-wrap: nowrap; }
+  .sk-inline[data-equal] > * { flex: 1 1 0; min-inline-size: 0; }
+  .sk-inline[data-justify="start"] { justify-content: flex-start; }
+  .sk-inline[data-justify="center"] { justify-content: center; }
+  .sk-inline[data-justify="end"] { justify-content: flex-end; }
+  .sk-inline[data-justify="between"] { justify-content: space-between; }
+  .sk-inline[data-gap="none"] { --sk-inline-gap: 0; }
+  .sk-inline[data-gap="xs"] { --sk-inline-gap: var(--space-inline-xs); }
+  .sk-inline[data-gap="sm"] { --sk-inline-gap: var(--space-inline-sm); }
+  .sk-inline[data-gap="lg"] { --sk-inline-gap: var(--space-inline-lg); }
+  .sk-inline[data-gap="xl"] { --sk-inline-gap: var(--space-inset-xl); }
+
+  .sk-grid {
+    --sk-grid-columns: 1;
+    --sk-grid-gap: var(--space-stack-md);
+
+    display: grid;
+    grid-template-columns: repeat(var(--sk-grid-columns), minmax(0, 1fr));
+    gap: var(--sk-grid-gap);
+  }
+
+  .sk-grid[data-columns="2"] { --sk-grid-columns: 2; }
+  .sk-grid[data-columns="3"] { --sk-grid-columns: 3; }
+  .sk-grid[data-columns="4"] { --sk-grid-columns: 4; }
+  .sk-grid[data-gap="none"] { --sk-grid-gap: 0; }
+  .sk-grid[data-gap="xs"] { --sk-grid-gap: var(--space-stack-xs); }
+  .sk-grid[data-gap="sm"] { --sk-grid-gap: var(--space-stack-sm); }
+  .sk-grid[data-gap="lg"] { --sk-grid-gap: var(--space-stack-lg); }
+  .sk-grid[data-gap="xl"] { --sk-grid-gap: var(--space-stack-xl); }
+
+  /*
+   * LAYOUT GRID, one page flow with named reading measures.
+   *
+   * Direct children stay at `content` unless they opt into a named span. A full-width child repeats
+   * this grid, so its own direct children return to the same content measure without another wrapper.
+   * `data-width` belongs to the child: it keeps semantics with the element that actually needs more
+   * (or less) room. The named spans map onto Wrapper's size scale, so page grids and single columns
+   * share the same ceilings: narrow → sm, content → md, breakout → lg.
+   */
+  .sk-layout-grid {
+    --sk-layout-gutter: var(--space-inset-lg);
+    --sk-layout-narrow: var(--size-wrapper-sm);
+    --sk-layout-content: var(--size-wrapper-md);
+    --sk-layout-breakout: var(--size-wrapper-lg);
+
+    --sk-layout-narrow-track: calc((var(--sk-layout-content) - var(--sk-layout-narrow)) / 2);
+    --sk-layout-breakout-track: calc((var(--sk-layout-breakout) - var(--sk-layout-content)) / 2);
+
+    display: grid;
+    grid-template-columns:
+      [full-width-start]
+        minmax(var(--sk-layout-gutter), 1fr)
+      [breakout-start]
+        minmax(0, var(--sk-layout-breakout-track))
+      [content-start]
+        minmax(0, var(--sk-layout-narrow-track))
+      [narrow-start]
+        min(100% - (var(--sk-layout-gutter) * 2), var(--sk-layout-narrow))
+      [narrow-end]
+        minmax(0, var(--sk-layout-narrow-track))
+      [content-end]
+        minmax(0, var(--sk-layout-breakout-track))
+      [breakout-end]
+        minmax(var(--sk-layout-gutter), 1fr)
+      [full-width-end];
+  }
+
+  /* An ancestor that toggles this element via the native `hidden` attribute (a tab panel, say)
+   * needs it to actually disappear. `display: grid` above is an author rule, so it beats the UA
+   * stylesheet's `[hidden] { display: none }` on source order alone; this raises the specificity
+   * instead of depending on import order. */
+  .sk-layout-grid[hidden] {
+    display: none;
+  }
+
+  .sk-layout-grid > * {
+    grid-column: content-start / content-end;
+    min-inline-size: 0;
+  }
+
+  .sk-layout-grid > [data-width="narrow"] { grid-column: narrow-start / narrow-end; }
+  .sk-layout-grid > [data-width="content"] { grid-column: content-start / content-end; }
+  .sk-layout-grid > [data-width="breakout"] { grid-column: breakout-start / breakout-end; }
+
+  .sk-layout-grid > [data-width="full-width"] {
+    display: grid;
+    grid-column: full-width-start / full-width-end;
+    grid-template-columns: inherit;
+  }
+
+  .sk-layout-grid > [data-width="full-width"] > * {
+    grid-column: content-start / content-end;
+    min-inline-size: 0;
+  }
+
+  .sk-layout-grid > [data-width="full-width"] > [data-width="narrow"] { grid-column: narrow-start / narrow-end; }
+  .sk-layout-grid > [data-width="full-width"] > [data-width="content"] { grid-column: content-start / content-end; }
+  .sk-layout-grid > [data-width="full-width"] > [data-width="breakout"] { grid-column: breakout-start / breakout-end; }
+  .sk-layout-grid > [data-width="full-width"] > [data-width="full-width"] { grid-column: full-width-start / full-width-end; }
+
+  /*
+   * MULTI-COLUMN LAYOUT, CSS Multi-column Layout Module Level 1, shortened to multicol in CSS.
+   *
+   * `data-columns` names the maximum lane count. A collection starts with one lane, gains a
+   * second at compact (36rem), a third at desktop (52rem), and a fourth at wide (72rem). The
+   * same named breakpoints live in semantic/_breakpoints.scss; these literals are necessary
+   * because CSS media queries cannot read custom properties.
+   *
+   * Columns flow each card down a lane before continuing into the next. Keep source order useful
+   * for reading and keyboard navigation; this pattern is for independent cards, not a sequence
+   * whose visual left-to-right order carries meaning.
+   */
+  .sk-grid[data-multicol] {
+    display: block;
+    column-count: 1;
+    column-gap: var(--sk-grid-gap);
+  }
+
+  .sk-grid[data-multicol] > * {
+    break-inside: avoid;
+    margin-block-end: var(--sk-grid-gap);
+  }
+
+  @media (min-width: 36rem) {
+    .sk-grid[data-multicol][data-columns="2"],
+    .sk-grid[data-multicol][data-columns="3"],
+    .sk-grid[data-multicol][data-columns="4"] {
+      column-count: 2;
+    }
+  }
+
+  @media (min-width: 52rem) {
+    .sk-grid[data-multicol][data-columns="3"],
+    .sk-grid[data-multicol][data-columns="4"] {
+      column-count: 3;
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .sk-grid[data-multicol][data-columns="4"] {
+      column-count: 4;
+    }
+  }
+}

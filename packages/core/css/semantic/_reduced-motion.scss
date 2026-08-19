@@ -23,6 +23,15 @@
       --motion-navigate-duration: var(--motion-reduced-duration);
       --motion-enter-easing: var(--motion-reduced-easing);
       --motion-exit-easing: var(--motion-reduced-easing);
+      /* Same "spatial → fade" treatment for the materialise pair (Popover/Menu/Tooltip/Combobox/
+       * Toast): scale and blur have no distance concept of their own to zero out, so they
+       * get overridden directly here instead. Doing it at the token means a future consumer of
+       * `--motion-materialize-*` gets the reduced-motion behaviour for free, the same way `--motion-
+       * enter-distance` already does — the earlier components each wrote their own explicit
+       * `scale: 1; filter: blur(0)` override in their own reduced-motion block because this pairing
+       * did not exist yet when they were built; still correct, just no longer the only way. */
+      --motion-materialize-scale: 1;
+      --motion-materialize-blur: 0px;
 
       /* Essential: keep a short, legible change */
       --motion-state-change-duration: var(--motion-reduced-duration);

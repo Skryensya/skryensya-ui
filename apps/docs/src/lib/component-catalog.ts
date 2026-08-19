@@ -68,10 +68,6 @@ const componentDescriptions = {
     es: "Aísla demos interactivas para documentar componentes y estados.",
     en: "Isolates interactive demos to document components and states.",
   },
-  "/componentes/copy-button": {
-    es: "Copia un valor o fragmento al portapapeles.",
-    en: "Copies a value or snippet to the clipboard.",
-  },
   "/componentes/data-grid": {
     es: "Navegación 2D por celdas: datos tabulares o widgets agrupados.",
     en: "2D cell navigation: tabular data or grouped widgets.",
@@ -99,10 +95,6 @@ const componentDescriptions = {
   "/componentes/file-upload": {
     es: "Selecciona o arrastra archivos y muestra su progreso.",
     en: "Selects or drops files and reports their progress.",
-  },
-  "/componentes/flyout": {
-    es: "Muestra un panel contextual junto al control que lo activa.",
-    en: "Shows a contextual panel beside the control that opens it.",
   },
   "/componentes/form-field": {
     es: "Rotula un control y le adjunta ayuda y mensaje de validación.",
@@ -263,10 +255,6 @@ const componentDescriptions = {
   "/componentes/text": {
     es: "Aplica jerarquía, tono y medida consistente a la prosa.",
     en: "Applies consistent hierarchy, tone, and measure to prose.",
-  },
-  "/componentes/theme-toggle": {
-    es: "Cambia el modo de color respetando la preferencia guardada.",
-    en: "Switches color modes while honoring the saved preference.",
   },
   "/componentes/time-field": {
     es: "Captura horas por segmentos según el formato local.",

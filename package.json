@@ -5,7 +5,7 @@
   "description": "Turborepo for skryensya/ui. Core contains tokens and the framework-agnostic component contract.",
   "scripts": {
     "lint": "turbo run lint",
-    "check": "turbo run check",
+    "check": "turbo run check --concurrency=1",
     "build": "turbo run build",
     "dev": "turbo run dev"
   },

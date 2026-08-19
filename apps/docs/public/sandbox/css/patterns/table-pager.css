@@ -1,0 +1,64 @@
+/*
+ * TABLE PAGER, layout for a table composed with page-size + status + pagination.
+ *
+ * Structure is the point: the same bar under many tables. Behaviour is the vanilla enhancer
+ * (`data-sk-table-pager`); this file only arranges the authored parts.
+ *
+ * Size sits at the start. Status + pagination group in `__end` and ride `margin-inline-start: auto`
+ * so they stay on the trailing edge. Status is a non-`p` box on purpose: the docs (and many apps)
+ * style bare `p` outside `@layer`, which would otherwise win over this file's margins.
+ */
+@layer components {
+  .sk-table-pager {
+    --sk-table-pager-gap: var(--space-stack-md);
+    --sk-table-pager-bar-gap: var(--space-inline-md) var(--space-inline-lg);
+    --sk-table-pager-end-gap: var(--space-inline-md);
+    --sk-table-pager-size-min: 8rem;
+    --sk-table-pager-status-fg: var(--color-text-secondary);
+    --sk-table-pager-status-font-size: var(--font-size-body-sm);
+    --sk-table-pager-status-min: 12ch;
+
+    display: grid;
+    gap: var(--sk-table-pager-gap);
+    inline-size: 100%;
+    min-inline-size: 0;
+  }
+
+  .sk-table-pager__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--sk-table-pager-bar-gap);
+  }
+
+  .sk-table-pager__size {
+    min-inline-size: var(--sk-table-pager-size-min);
+  }
+
+  .sk-table-pager__size .sk-select {
+    min-inline-size: var(--sk-table-pager-size-min);
+  }
+
+  .sk-table-pager__end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sk-table-pager-end-gap);
+    margin-inline-start: auto;
+    min-inline-size: 0;
+  }
+
+  .sk-table-pager__status {
+    margin: 0;
+    min-inline-size: var(--sk-table-pager-status-min);
+    color: var(--sk-table-pager-status-fg);
+    font-size: var(--sk-table-pager-status-font-size);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--sk-pagination-item-size, var(--size-control-md));
+    text-align: end;
+  }
+
+  .sk-table-pager__end > .sk-pagination {
+    flex: none;
+  }
+}

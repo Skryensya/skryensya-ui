@@ -1,0 +1,211 @@
+/*
+ * TIER 3, STEPS
+ *
+ * A progress rail: markers carry the sequence, labels explain it, and the connector says how much
+ * work is already behind the reader. Wide layouts keep the journey horizontal by default; narrow
+ * viewports turn it into a left-hand rail so no label gets clipped, abbreviated, or forced into a
+ * tiny column. `data-orientation="vertical"` opts into that same rail layout at any viewport size,
+ * for cases like a wizard sidebar where vertical is the point, not a mobile fallback.
+ */
+@layer components {
+  .sk-steps {
+    --sk-steps-marker-size: var(--size-control-sm);
+    --sk-steps-connector-size: 2px;
+
+    display: flex;
+    inline-size: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sk-steps__item {
+    position: relative;
+    z-index: 0;
+    flex: 1 1 0;
+    display: grid;
+    grid-template-rows: var(--sk-steps-marker-size) auto;
+    justify-items: center;
+    gap: var(--space-stack-xs);
+    min-inline-size: 0;
+    padding: var(--space-inset-xs);
+    border-radius: var(--radius-surface);
+    text-align: center;
+  }
+
+  /* The outgoing connector belongs to the completed stage: it says which work is behind us. */
+  .sk-steps__item:not(:last-child)::after {
+    position: absolute;
+    z-index: 0;
+    inset-block-start: calc(var(--sk-steps-marker-size) / 2 - var(--sk-steps-connector-size) / 2);
+    inset-inline-start: 50%;
+    inline-size: 100%;
+    block-size: var(--sk-steps-connector-size);
+    background: var(--color-border-default);
+    content: "";
+  }
+
+  .sk-steps__marker {
+    position: relative;
+    z-index: 1;
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--sk-steps-marker-size);
+    block-size: var(--sk-steps-marker-size);
+    border: 2px solid var(--color-border-default);
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-surface);
+    box-shadow: 0 0 0 3px var(--color-bg-surface);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+    line-height: 1;
+  }
+
+  .sk-steps__item > :not(.sk-steps__marker) {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 2px;
+    min-inline-size: 0;
+  }
+
+  .sk-steps__label {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+    line-height: var(--font-line-height-body);
+    text-wrap: balance;
+  }
+
+  .sk-steps__description {
+    margin: 0;
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-body);
+    text-wrap: pretty;
+  }
+
+  .sk-steps__item[data-status="complete"]::after {
+    background: var(--color-action-primary);
+  }
+
+  .sk-steps__item[data-status="complete"] .sk-steps__marker {
+    border-color: transparent;
+    background: var(--color-action-primary);
+    color: var(--color-text-on-accent);
+  }
+
+  .sk-steps__item[data-status="complete"] .sk-steps__label {
+    color: var(--color-text-primary);
+  }
+
+  /* Current is marked at the MARKER, not by filling the whole step with a card background. The marker
+   * keeps its accent fill and gains a halo: an opaque surface gap that masks the connector behind it,
+   * then a soft accent ring that reads as "you are here", the radio-selected look, without boxing the
+   * step in. The label goes accent to tie the eye to the marker and separate current from the done
+   * steps (which are primary) and the upcoming ones (which are muted). */
+  .sk-steps__item[data-status="current"] .sk-steps__marker {
+    border-color: var(--color-action-primary);
+    background: var(--color-action-primary);
+    color: var(--color-text-on-accent);
+    box-shadow:
+      0 0 0 3px var(--color-bg-surface),
+      0 0 0 5px color-mix(in oklab, var(--color-action-primary) 30%, transparent);
+  }
+
+  .sk-steps__item[data-status="current"] .sk-steps__label {
+    color: var(--color-text-accent);
+    font-weight: var(--font-weight-emphasis);
+  }
+
+  /* The rail layout applies whenever the step is explicitly vertical, and also below 40rem unless
+   * the consumer pins `data-orientation="horizontal"` (opting out of the mobile fallback). Repeated
+   * under the media query because a media condition can't join a selector list with a plain one. */
+  .sk-steps[data-orientation="vertical"] {
+    flex-direction: column;
+  }
+
+  .sk-steps[data-orientation="vertical"] .sk-steps__item {
+    grid-template-columns: var(--sk-steps-marker-size) minmax(0, 1fr);
+    grid-template-rows: auto;
+    justify-items: start;
+    align-items: start;
+    padding-block-end: var(--space-stack-md);
+    text-align: start;
+  }
+
+  .sk-steps[data-orientation="vertical"] .sk-steps__item > :not(.sk-steps__marker) {
+    padding-block-start: 2px;
+  }
+
+  .sk-steps[data-orientation="vertical"] .sk-steps__item:not(:last-child)::after {
+    inset-block-start: var(--sk-steps-marker-size);
+    inset-inline-start: calc(var(--sk-steps-marker-size) / 2 - var(--sk-steps-connector-size) / 2);
+    inline-size: var(--sk-steps-connector-size);
+    block-size: calc(100% - var(--sk-steps-marker-size));
+  }
+
+  .sk-steps[data-orientation="vertical"] .sk-steps__item:last-child {
+    padding-block-end: var(--space-inset-xs);
+  }
+
+  @media (max-width: 40rem) {
+    .sk-steps:not([data-orientation="horizontal"]) {
+      flex-direction: column;
+    }
+
+    .sk-steps:not([data-orientation="horizontal"]) .sk-steps__item {
+      grid-template-columns: var(--sk-steps-marker-size) minmax(0, 1fr);
+      grid-template-rows: auto;
+      justify-items: start;
+      align-items: start;
+      padding-block-end: var(--space-stack-md);
+      text-align: start;
+    }
+
+    .sk-steps:not([data-orientation="horizontal"]) .sk-steps__item > :not(.sk-steps__marker) {
+      padding-block-start: 2px;
+    }
+
+    .sk-steps:not([data-orientation="horizontal"]) .sk-steps__item:not(:last-child)::after {
+      inset-block-start: var(--sk-steps-marker-size);
+      inset-inline-start: calc(var(--sk-steps-marker-size) / 2 - var(--sk-steps-connector-size) / 2);
+      inline-size: var(--sk-steps-connector-size);
+      block-size: calc(100% - var(--sk-steps-marker-size));
+    }
+
+    .sk-steps:not([data-orientation="horizontal"]) .sk-steps__item:last-child {
+      padding-block-end: var(--space-inset-xs);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .sk-steps__item:not(:last-child)::after {
+      background: GrayText;
+    }
+
+    .sk-steps__marker {
+      border-color: CanvasText;
+      background: Canvas;
+      color: CanvasText;
+      box-shadow: 0 0 0 3px Canvas;
+    }
+
+    .sk-steps__item[data-status="complete"]::after {
+      background: Highlight;
+    }
+
+    .sk-steps__item[data-status="complete"] .sk-steps__marker,
+    .sk-steps__item[data-status="current"] .sk-steps__marker {
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+      box-shadow: 0 0 0 3px Canvas;
+    }
+
+    .sk-steps__item[data-status="current"] .sk-steps__label {
+      color: CanvasText;
+    }
+  }
+}

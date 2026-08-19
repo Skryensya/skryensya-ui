@@ -1,0 +1,93 @@
+/* TIER 3, FILE UPLOAD: native file input enhanced with drop and file rows. */
+@layer components {
+  .sk-file-upload {
+    --sk-file-upload-gap: var(--space-stack-sm);
+    --sk-file-upload-label-color: var(--color-text-secondary);
+    --sk-file-upload-dropzone-padding: var(--space-inset-xl);
+    --sk-file-upload-dropzone-border-color: var(--color-border-default);
+    --sk-file-upload-dropzone-radius: var(--radius-surface);
+    --sk-file-upload-dropzone-bg: var(--color-bg-surface);
+    --sk-file-upload-dropzone-accent: var(--color-border-accent);
+    --sk-file-upload-item-border-color: var(--color-border-subtle);
+    --sk-file-upload-item-radius: var(--radius-control);
+    --sk-file-upload-item-bg: var(--color-bg-surface);
+
+    display: grid;
+    gap: var(--sk-file-upload-gap);
+  }
+  .sk-file-upload__label {
+    color: var(--sk-file-upload-label-color);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+  }
+  .sk-file-upload__dropzone {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-stack-sm);
+    padding: var(--sk-file-upload-dropzone-padding);
+    border: 1px dashed var(--sk-file-upload-dropzone-border-color);
+    border-radius: var(--sk-file-upload-dropzone-radius);
+    background: var(--sk-file-upload-dropzone-bg);
+    text-align: center;
+    outline: none;
+  }
+  .sk-file-upload__dropzone[data-dragging] {
+    border-color: var(--sk-file-upload-dropzone-accent);
+    background: var(--color-bg-accent-subtle);
+  }
+  .sk-file-upload__dropzone:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+  .sk-file-upload__input {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .sk-file-upload__hint {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+  }
+  .sk-file-upload__item-group {
+    display: grid;
+    gap: var(--space-stack-xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sk-file-upload__item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: var(--space-inline-sm);
+    align-items: center;
+    min-block-size: var(--size-touch-target);
+    padding: var(--space-inset-xs) var(--space-inset-sm);
+    border: 1px solid var(--sk-file-upload-item-border-color);
+    border-radius: var(--sk-file-upload-item-radius);
+    background: var(--sk-file-upload-item-bg);
+  }
+  .sk-file-upload__item-name {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sk-file-upload__item-size {
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-caption);
+    font-variant-numeric: tabular-nums;
+  }
+  .sk-file-upload__rejection {
+    color: var(--color-text-danger);
+    font-size: var(--font-size-body-sm);
+  }
+  @media (forced-colors: active) {
+    .sk-file-upload__dropzone,
+    .sk-file-upload__item {
+      border-color: CanvasText;
+    }
+  }
+}

@@ -88,3 +88,38 @@ export const toolbarContract = {
     },
   },
 } as const satisfies ComponentContract;
+
+/* ------------------------------------------------------------------------------------------------ *
+ * Shared behaviour — the pure matcher here, the imperative binding in `@skryensya/vanilla`, the
+ * declarative one in `@skryensya/react` (the three-way split `hotkey.ts` documents, and the one this
+ * contract never adopted until now: both bindings hand-wrote the identical orientation→arrow-key
+ * index math, React's own file admitting it "mirrors exactly" vanilla's so the two "can never
+ * disagree" — a statement about discipline, not about the code actually being one copy).
+ * ------------------------------------------------------------------------------------------------ */
+
+export type ToolbarAction = { readonly kind: "move"; readonly index: number } | { readonly kind: "none" };
+
+/**
+ * Which stop a key moves to, given the bar's current shape. DOM querying and the disabled-item
+ * filter (`controlsSelector`/`isStop` in each binding) stay there — this only ever sees an
+ * already-filtered list's length and the current position within it, the same division of labor
+ * `resolveMenubarKey` (`menubar.ts`) uses between core and its bindings.
+ */
+export function resolveToolbarKey(params: {
+  readonly key: string;
+  readonly currentIndex: number;
+  readonly itemCount: number;
+  readonly orientation: ToolbarOrientation;
+  readonly loopFocus: boolean;
+}): ToolbarAction {
+  const { key, currentIndex, itemCount, orientation, loopFocus } = params;
+  if (itemCount < 1) return { kind: "none" };
+  const previous = orientation === "horizontal" ? "ArrowLeft" : "ArrowUp";
+  const next = orientation === "horizontal" ? "ArrowRight" : "ArrowDown";
+  if (![previous, next, "Home", "End"].includes(key)) return { kind: "none" };
+
+  let index =
+    key === "Home" ? 0 : key === "End" ? itemCount - 1 : currentIndex + (key === next ? 1 : -1);
+  index = loopFocus ? ((index % itemCount) + itemCount) % itemCount : Math.max(0, Math.min(index, itemCount - 1));
+  return { kind: "move", index };
+}

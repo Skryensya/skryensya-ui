@@ -11,6 +11,11 @@ import "@skryensya/core/dimensions/radius.scss";
  * sitio la trae porque el control del header la mueve en vivo, y porque una dimensión que la
  * documentación explica y la hoja de estilos nunca declara es una promesa vacía. */
 import "@skryensya/core/dimensions/accent.scss";
+/* `data-press-scale="off"`: opts a subtree out of the `:active` squeeze (Button, Checkbox, Switch,
+ * Radio, Segmented) without touching `prefers-reduced-motion`. Same reasoning as the accent import
+ * above: undocumented is untestable, and a dimension the docs cannot demonstrate is a promise the
+ * stylesheet never keeps for a reader trying it live. */
+import "@skryensya/core/dimensions/press-scale.scss";
 import "@skryensya/core/components/badge.css";
 import "@skryensya/core/components/button.css";
 import "@skryensya/core/components/copy-button.css";
@@ -44,8 +49,8 @@ import "@skryensya/core/patterns/vaul.css";
 import "@skryensya/core/components/drawer.css";
 import "@skryensya/core/components/command-palette.css";
 import "@skryensya/core/components/tabs.css";
-/* Anclaje: la colocación compartida por tooltip, popover, popup, menu, select, combobox, date picker
- * y flyout (decisión 25). Va antes que ellos porque son sus consumidores. */
+/* Anclaje: la colocación compartida por tooltip, popover, popup, menu, select, combobox y date picker
+ * (decisión 25). Va antes que ellos porque son sus consumidores. */
 import "@skryensya/core/patterns/anchored.css";
 import "@skryensya/core/components/tooltip.css";
 import "@skryensya/core/components/switch.css";
@@ -270,11 +275,11 @@ const searchIndex = [
     group: t("group.layout"),
   },
   {
-    label: t("nav.customize"),
-    aliases: ["personalizar", "marca", "brand", "playground"],
-    href: localizePath("/personalizar", locale),
+    label: t("nav.presets"),
+    aliases: ["personalizar", "marca", "brand", "uc", "theming"],
+    href: localizePath("/presets", locale),
     section: t("group.global"),
-    group: t("nav.customize"),
+    group: t("nav.presets"),
   },
 ];
 
@@ -466,7 +471,13 @@ const PALETTE_PRESETS = [
         >
           <Fragment set:html={menuIcon} />
         </button>
-        <a class="dimensions__brand" href={localizePath("/", locale)}>skryensya/ui</a>
+        <a
+          class="dimensions__brand dimensions__global-link sk-interactive"
+          href={localizePath("/", locale)}
+          aria-current={path === localizePath("/", locale) ? "page" : undefined}
+        >
+          {t("nav.home")}
+        </a>
         <nav class="dimensions__global" aria-label={t("nav.global")}>
           {
             globalNavigation.map((item) => (
@@ -870,7 +881,6 @@ const PALETTE_PRESETS = [
       <div class="sk-date-picker" data-probe-for="sk-date-picker"></div>
       <div class="sk-empty-state" data-probe-for="sk-empty-state"></div>
       <div class="sk-file-upload" data-probe-for="sk-file-upload"></div>
-      <div class="sk-flyout" data-probe-for="sk-flyout"></div>
       <div class="sk-image-frame" data-probe-for="sk-image-frame"></div>
       <ul class="sk-list" data-probe-for="sk-list"></ul>
       <div class="sk-loader" data-probe-for="sk-loader"></div>
@@ -1239,9 +1249,14 @@ const PALETTE_PRESETS = [
     </script>
 
     <script>
-      /* Mode remains the sole scheme control in the docs chrome. */
-      import { initThemeTogglePersistence } from "../scripts/theme-toggle";
+      /* Mode remains the sole scheme control in the docs chrome. Neither CopyButton nor ThemeToggle
+         is a published contract any more (decision 33): both are docs-local markup + behavior now,
+         so their mount calls live here rather than in initComponents(). */
+      import { initCopyButtons } from "../scripts/copy-button";
+      import { initThemeToggle, initThemeTogglePersistence } from "../scripts/theme-toggle";
       import { initDocsBinding } from "../scripts/docs-binding";
+      initCopyButtons();
+      initThemeToggle();
       initThemeTogglePersistence();
       initDocsBinding();
     </script>

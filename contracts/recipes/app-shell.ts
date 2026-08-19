@@ -102,7 +102,19 @@ function shell(content: UsageTree): UsageTree {
           {
             contract: "navbar",
             signature: "NavbarActions",
-            children: { contract: "theme-toggle", signature: "ThemeToggle" },
+            children: {
+              contract: "icon-state-button",
+              signature: "IconStateButton",
+              options: { current: "light" },
+              attrs: { "aria-label": "Modo: claro" },
+              slots: {
+                faces: [
+                  { options: { name: "system", icon: "mode-system" }, slots: {} },
+                  { options: { name: "light", icon: "mode-light" }, slots: {} },
+                  { options: { name: "dark", icon: "mode-dark" }, slots: {} },
+                ],
+              },
+            },
           },
         ],
       },

@@ -96,7 +96,7 @@ export function commandPaletteOptionContext(entry: CommandPaletteEntry): string 
  *
  * The enhancer shipped with no React counterpart, so this could not be a contract at all: one
  * binding is not a contract, it is a script. Writing the missing half is what made it possible, the
- * same way it did for `copy-button` and `dialog`.
+ * same way it did for `dialog`.
  *
  * THE LIST IS EMPTY IN THE MARKUP, on purpose: the enhancer only fills it when the palette opens,
  * and the React half copies that rather than improving on it. What a composition supplies is the

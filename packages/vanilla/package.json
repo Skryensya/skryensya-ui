@@ -44,14 +44,6 @@
       "types": "./src/components/component-preview.ts",
       "default": "./src/components/component-preview.ts"
     },
-    "./copy-button": {
-      "types": "./src/components/copy-button.ts",
-      "default": "./src/components/copy-button.ts"
-    },
-    "./theme-toggle": {
-      "types": "./src/components/theme-toggle.ts",
-      "default": "./src/components/theme-toggle.ts"
-    },
     "./accordion": {
       "types": "./src/components/accordion.ts",
       "default": "./src/components/accordion.ts"
@@ -59,10 +51,6 @@
     "./select": {
       "types": "./src/components/select.ts",
       "default": "./src/components/select.ts"
-    },
-    "./flyout": {
-      "types": "./src/components/flyout.ts",
-      "default": "./src/components/flyout.ts"
     },
     "./segmented": {
       "types": "./src/components/segmented.ts",

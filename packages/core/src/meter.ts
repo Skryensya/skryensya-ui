@@ -1,4 +1,5 @@
 import type { ComponentContract } from "./contract.js";
+import { barTones, type BarTone } from "./progress.js";
 
 /*
  * METER, a measurement within a known range — never a task's completion.
@@ -39,7 +40,8 @@ export const meterParts = {
 export type MeterPart = keyof typeof meterParts;
 export type MeterPartClass = (typeof meterParts)[MeterPart];
 
-export type MeterTone = "accent" | "success" | "warning" | "danger";
+/** `Progress`'s own tone vocabulary (`progress.ts`), reused rather than redeclared. */
+export type MeterTone = BarTone;
 
 /** Filled fraction (0–1) for a value within [min, max]. Guards an empty or inverted range. Unlike
  *  `progressFraction`, `min` is a real, commonly non-zero parameter here — a progress bar's task
@@ -63,7 +65,7 @@ export const meterContract = {
     valueText: { type: "string", attr: "aria-valuetext" },
     tone: {
       type: "enum",
-      values: ["accent", "success", "warning", "danger"],
+      values: barTones,
       default: "accent",
       attr: "data-tone",
     },

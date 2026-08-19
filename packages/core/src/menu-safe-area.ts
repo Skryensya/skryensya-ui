@@ -156,6 +156,42 @@ export interface MenuSafeAreaHandle {
 
 export const menuSafeAreaAttr = "data-sk-menu-safe-area";
 
+/*
+ * `position: fixed` is normally viewport-relative, which is the whole reason this module can build
+ * the shape from `getBoundingClientRect()` (always viewport coordinates) and hand it straight to
+ * `left`/`top`. That stops being true the instant an ANCESTOR gets a `transform` (also `filter`,
+ * `perspective`, `contain: paint|layout|strict|content`, `will-change: transform`, or
+ * `backdrop-filter`): CSS then makes that ancestor the containing block for every `position: fixed`
+ * descendant, this span included. A parent menu placed by the machine's own fallback (`strategy:
+ * "fixed"`, written as `transform: translate3d(var(--x), var(--y), 0)` — `@zag-js/popper` always
+ * positions this way, there is no plain-`top`/`left` mode to opt into) is exactly such an ancestor
+ * whenever this trigger's own submenu sits in a tree that fell back to it. Measured against a live
+ * nested Menu: the shape's `left`/`top` came out correct in viewport terms and rendered dozens of
+ * pixels off — the same offset as the hijacking ancestor's own on-screen position, because the
+ * browser was resolving them against ITS box, not the viewport this module assumed.
+ */
+function fixedContainingBlockOrigin(from: HTMLElement, doc: Document): SafeAreaPoint {
+  const view = doc.defaultView;
+  let node = from.parentElement;
+  while (node && node !== doc.body) {
+    const style = view?.getComputedStyle(node);
+    if (
+      style &&
+      (style.transform !== "none" ||
+        style.filter !== "none" ||
+        style.perspective !== "none" ||
+        style.backdropFilter !== "none" ||
+        style.willChange.includes("transform") ||
+        /paint|layout|strict|content/.test(style.contain))
+    ) {
+      const rect = node.getBoundingClientRect();
+      return { x: rect.left, y: rect.top };
+    }
+    node = node.parentElement;
+  }
+  return { x: 0, y: 0 };
+}
+
 export function createMenuSafeArea(
   trigger: HTMLElement,
   options: MenuSafeAreaOptions = {},
@@ -166,6 +202,12 @@ export function createMenuSafeArea(
   let holding = false;
   let dwellTimer: ReturnType<typeof setTimeout> | null = null;
   let lastClip = "";
+  /*
+   * Resolved once per mount, not per `aim()` (the highest-frequency call this module gets): the
+   * ancestor that hijacks `position: fixed` for this trigger does not change while the submenu stays
+   * open, only whether the shape itself is currently mounted.
+   */
+  let origin: SafeAreaPoint | null = null;
 
   const setHolding = (next: boolean) => {
     if (holding === next) return;
@@ -206,6 +248,7 @@ export function createMenuSafeArea(
     trigger.appendChild(node);
     trigger.setAttribute(menuSafeAreaAttr, "");
     el = node;
+    origin = fixedContainingBlockOrigin(trigger, doc);
     return node;
   }
 
@@ -215,6 +258,7 @@ export function createMenuSafeArea(
     lastClip = "";
     el?.remove();
     el = null;
+    origin = null;
     trigger.removeAttribute(menuSafeAreaAttr);
   }
 
@@ -232,8 +276,10 @@ export function createMenuSafeArea(
       const clip = `${shape.left},${shape.top},${shape.width},${shape.height},${shape.clipPath}`;
       if (clip === lastClip) return;
       lastClip = clip;
-      node.style.left = `${shape.left}px`;
-      node.style.top = `${shape.top}px`;
+      /* `shape.left`/`.top` are viewport coordinates; `origin` is where this span's ACTUAL
+       * containing block sits in the viewport, `{0,0}` when nothing hijacked it. */
+      node.style.left = `${shape.left - (origin?.x ?? 0)}px`;
+      node.style.top = `${shape.top - (origin?.y ?? 0)}px`;
       node.style.width = `${shape.width}px`;
       node.style.height = `${shape.height}px`;
       node.style.clipPath = shape.clipPath;

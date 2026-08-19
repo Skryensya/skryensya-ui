@@ -254,4 +254,44 @@ describe("Table column resize", () => {
     expect(table.style.getPropertyValue("--sk-splitter-block-size")).toBe("260px"); // 300 - 40, not 300
     spy.mockRestore();
   });
+
+  it("subtracts the table's own border width from the seeded total, not just the wrapper's raw width", () => {
+    const restore = stubTableWidth(402);
+    const ui = render(
+      <Table resizableColumns resizeLabel="x" style={{ borderLeftWidth: "1px", borderRightWidth: "1px" }}>
+        <TableHead>
+          <TableRow>
+            <TableHeader>A</TableHeader>
+            <TableHeader>B</TableHeader>
+            <TableHeader>C</TableHeader>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableCell>1</TableCell>
+            <TableCell>2</TableCell>
+            <TableCell>3</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+    const total = colWidths(ui.container).reduce((sum, width) => sum + width!, 0);
+    // CSS's separated-border table model paints the table's border OUTSIDE the width its `<col>`
+    // sum describes — seeded straight off the wrapper's 402px would render 2px past it (a
+    // permanent horizontal scrollbar); 400px leaves exactly enough room for the 1px+1px border.
+    expect(total).toBeCloseTo(400);
+    restore();
+  });
+
+  it("never produces NaN widths when the environment reports no computed border at all (an empty string, not \"0px\")", () => {
+    // `ResizableFixture` sets no border style at all — `getComputedStyle(table).borderLeftWidth`
+    // reads `""` in this environment (no real stylesheet cascade), and `parseFloat("")` is `NaN`
+    // if unguarded.
+    const restore = stubTableWidth(300);
+    const ui = render(<ResizableFixture />);
+    for (const width of colWidths(ui.container)) {
+      expect(Number.isNaN(width)).toBe(false);
+    }
+    restore();
+  });
 });

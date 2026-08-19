@@ -28,6 +28,14 @@
     min-inline-size: 0;
     gap: var(--sk-breadcrumb-gap);
   }
+  /* `[hidden]` alone would not: this rule's own unconditional `display` above is author-origin,
+   * which beats a user-agent-origin `[hidden] { display: none }` regardless of specificity — the
+   * same fix the ellipsis `<li>` needs for the identical reason (see its own rule's comment,
+   * below). The vanilla enhancer sets `.hidden = true` on whichever ancestor `<li>`s it collapses
+   * away, in place, rather than moving them into the menu it opens. */
+  .sk-breadcrumb__item[hidden] {
+    display: none;
+  }
   .sk-breadcrumb__link {
     display: inline-block;
     max-inline-size: var(--sk-breadcrumb-link-max);
@@ -60,5 +68,71 @@
   .sk-breadcrumb__separator .sk-icon {
     --sk-icon-size: var(--size-icon-sm);
     vertical-align: 0;
+  }
+
+  /*
+   * COLLAPSE, once the enhancer has decided the trail fits on one line better than it wraps to two.
+   * Before that decision lands (no JS, or the first paint before the effect runs) the list is still
+   * the plain `flex-wrap: wrap` above — the collapse is progressive enhancement, not the baseline.
+   */
+  .sk-breadcrumb[data-sk-breadcrumb-ready] .sk-breadcrumb__list {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  /* React measures the true, uncollapsed width off an invisible full-width copy of the trail
+   * (`visibility: hidden; position: absolute`), rather than the visible list, which may already be
+   * collapsed and so too narrow to answer "would the whole thing fit?" — `position: relative` here
+   * scopes that copy's containing block to the trail itself, and `overflow: hidden` is what keeps
+   * an ancestor-wide trail from padding out the PAGE's own scrollable width while it is off-screen.
+   * Harmless for the vanilla binding, which never renders one: nothing else here relies on the
+   * root's overflow being visible, and the collapse panel is a real `Menu`, always positioned
+   * `fixed` (its own machine, or CSS anchor positioning) and never a descendant this could clip. */
+  .sk-breadcrumb[data-sk-breadcrumb-ready] {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* The "…" stand-in for whichever ancestor levels the enhancer collapsed behind a real `Menu`
+   * (`menu.css` paints the dropdown itself; nothing here does). Absent from the DOM (React) or
+   * `hidden` (vanilla, which reuses the compiled `<li>` markup) until there is something to show.
+   *
+   * `display: none` is authored here rather than left to the `[hidden]` attribute's own UA rule:
+   * `.sk-breadcrumb__item` already sets its OWN `display` (author-origin), which beats a
+   * user-agent-origin `[hidden] { display: none }` regardless of selector specificity — origin
+   * outranks specificity in the cascade, so `li.hidden = true` alone would flip the IDL property
+   * without ever actually hiding the element. Owning both states as author rules sidesteps that:
+   * this is the default (also the correct no-JS/not-yet-measured state), and `:not([hidden])`
+   * below is the one positive override that turns it back on. The same compound selector is also
+   * what keeps this winning over `.sk-menu`'s own unconditional `display: inline-flex` (menu.css) —
+   * this `<li>` carries BOTH classes, since it doubles as the Menu's own root (`data-sk-menu`, for
+   * the `--sk-menu-*` custom properties every menu part below reads), and two same-origin rules on
+   * one element resolve by specificity: this compound selector outranks `.sk-menu`'s single class. */
+  .sk-breadcrumb__item.sk-breadcrumb__item--collapse {
+    display: none;
+  }
+  .sk-breadcrumb__item.sk-breadcrumb__item--collapse:not([hidden]) {
+    display: inline-flex;
+    flex: none;
+  }
+
+  .sk-breadcrumb__collapse-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: 1.5em;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-control);
+    background: none;
+    color: var(--sk-breadcrumb-link-color);
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .sk-breadcrumb__collapse-trigger:hover {
+    color: var(--sk-breadcrumb-current-color);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 }

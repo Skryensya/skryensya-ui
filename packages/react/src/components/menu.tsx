@@ -21,7 +21,7 @@ import { Icon } from "./icon.js";
 
 const cx = (...classes: Array<string | undefined>) =>
   classes.filter(Boolean).join(" ");
-type CheckedState = Record<string, boolean>;
+export type CheckedState = Record<string, boolean>;
 
 const {
   triggerWeldStart: triggerWeldStartOption,
@@ -99,6 +99,93 @@ type MenuListProps = {
   setCheckedState: (item: MenuItem, checked: boolean) => void;
 };
 
+/**
+ * The machine half of a top-level Menu, factored out so `MenubarItem` (`menubar.tsx`) can call the
+ * exact same hook for its own dropdown instead of a second, hand-copied `useMachine`/`connect` pair.
+ * `Menu` itself uses this too — its own render output is unchanged, only where the two calls live.
+ */
+export function useMenuMachine(props: {
+  id: string;
+  ariaLabel?: string;
+  defaultOpen?: boolean;
+  open?: boolean;
+  onOpenChange?: (details: { open: boolean }) => void;
+}): { service: MenuService; api: MenuApi } {
+  const service = useMachine(menu.machine, {
+    id: props.id,
+    "aria-label": props.ariaLabel,
+    defaultOpen: props.defaultOpen,
+    open: props.open,
+    onOpenChange: props.onOpenChange,
+    positioning: { placement: "bottom-start", strategy: "fixed" },
+  });
+  const api = menu.connect(service, normalizeProps);
+  return { service, api };
+}
+
+/**
+ * The popup half: positioner + content + the item list, portalled — no trigger of its own. Factored
+ * out of `Menu`'s own render for the same reason `useMenuMachine` is: `MenubarItem` composes this
+ * beside ITS OWN trigger button instead of `Menu`'s.
+ */
+export function MenuPopup({
+  api,
+  checkedState,
+  container,
+  debugSafetyTriangle,
+  density,
+  items,
+  itemIndicator,
+  onCheckedChange,
+  onSelect,
+  positionerProps,
+  readout,
+  service,
+  setCheckedState,
+  submenuIndicator,
+}: {
+  api: MenuApi;
+  checkedState: CheckedState;
+  container?: RefObject<HTMLElement>;
+  debugSafetyTriangle?: boolean;
+  density?: MenuProps["density"];
+  items: readonly MenuItem[];
+  itemIndicator?: ReactNode;
+  onCheckedChange?: MenuProps["onCheckedChange"];
+  onSelect?: MenuProps["onSelect"];
+  positionerProps: ReturnType<MenuApi["getPositionerProps"]> & { className?: string };
+  readout?: IntentReadoutHandle | null;
+  service: MenuService;
+  setCheckedState: (item: MenuItem, checked: boolean) => void;
+  submenuIndicator?: ReactNode;
+}) {
+  return (
+    <Portal container={container}>
+      {/* `data-density` re-stamped here, not inherited from the trigger's own root: this positioner
+        * just portalled to `<body>`, a different DOM subtree, same reason menu.css re-declares the
+        * appearance hooks on `.sk-menu__positioner`. */}
+      <div {...positionerProps} data-density={density}>
+        <div {...api.getContentProps()} className={menuParts.content}>
+          <MenuList
+            api={api}
+            checkedState={checkedState}
+            density={density}
+            debugSafetyTriangle={debugSafetyTriangle}
+            itemIndicator={itemIndicator}
+            items={items}
+            onCheckedChange={onCheckedChange}
+            onSelect={onSelect}
+            readout={readout}
+            service={service}
+            setCheckedState={setCheckedState}
+            submenuIndicator={submenuIndicator}
+          />
+        </div>
+      </div>
+    </Portal>
+  );
+}
+
 function initialCheckedState(items: readonly MenuItem[]): CheckedState {
   return Object.fromEntries(
     items.flatMap((item) => [
@@ -106,6 +193,11 @@ function initialCheckedState(items: readonly MenuItem[]): CheckedState {
       ...Object.entries(initialCheckedState(item.children ?? [])),
     ]),
   );
+}
+
+/** Any submenu anywhere in the tree — see the note on `useAnchored` in `Menu` below. */
+function hasSubmenu(items: readonly MenuItem[]): boolean {
+  return items.some((item) => (item.children?.length ?? 0) > 0 || hasSubmenu(item.children ?? []));
 }
 
 function MenuList({
@@ -166,9 +258,17 @@ function MenuList({
             },
           });
 
+    /*
+     * A destination, not a command: a real `<a href>` instead of a `<div>` — Zag's own selection
+     * path already special-cases an anchor item (`navigate`, defaulting to `clickIfLink`), so the
+     * SAME `machineProps` (role, keyboard handling, highlight) apply unchanged either way.
+     */
+    const ItemTag = item.href ? "a" : "div";
+
     return (
-      <div
+      <ItemTag
         {...machineProps}
+        href={item.href}
         className={cx(menuParts.item, "sk-interactive")}
         data-tone={item.tone}
         key={item.value}
@@ -208,7 +308,7 @@ function MenuList({
             {itemIndicator ?? <Icon name="check" />}
           </span>
         ) : null}
-      </div>
+      </ItemTag>
     );
   });
 }
@@ -244,10 +344,25 @@ function Submenu({
   const service = useMachine(menu.machine, {
     id,
     "aria-label": item.label,
-    positioning: { placement: "right-start", gutter: 4 },
+    /*
+     * `strategy: "fixed"`, not the machine's own default (`absolute`): irrelevant while the browser
+     * places this box, but it is what the machine writes into its own inline style, which is what
+     * actually positions THIS submenu now that `useAnchored` is called with `enabled: false` below.
+     * `absolute`'s containing block is the nearest positioned ancestor, here the parent menu's own
+     * panel, so a submenu measuring past that panel's edge grew ITS `overflow: auto` scrollport
+     * instead of floating free — the exact failure `patterns/anchored.css` already explains
+     * choosing `fixed` over `absolute` to avoid for the browser-placed case.
+     */
+    positioning: { placement: "right-start", gutter: 4, strategy: "fixed" },
   });
   const api = menu.connect(service, normalizeProps);
-  const anchor = useAnchored(id);
+  /*
+   * `false`: this trigger is itself inside the PARENT menu's anchor-positioned panel, and the
+   * browser's anchor-positioning engine cannot paint a box anchored to something inside another
+   * anchor-positioned box (see the note on `useAnchored`). The machine's own placement, already
+   * correct here, positions this level instead.
+   */
+  const anchor = useAnchored(id, false);
 
   useEffect(() => {
     api.setParent(parentService);
@@ -428,16 +543,25 @@ export function Menu({
   const [checkedState, setChecked] = useState<CheckedState>(() =>
     initialCheckedState(items),
   );
-  const service = useMachine(menu.machine, {
+  const { service, api } = useMenuMachine({
     id: id ?? generatedId,
-    "aria-label": label,
+    ariaLabel: label,
     defaultOpen,
     open,
     onOpenChange,
-    positioning: { placement: "bottom-start" },
   });
-  const api = menu.connect(service, normalizeProps);
-  const anchor = useAnchored(id ?? generatedId);
+  /*
+   * `!hasSubmenu(items)`: withheld from the WHOLE tree the moment any level of it has a submenu, not
+   * only from the submenu itself (see the matching note on `Submenu`'s own `useAnchored` call).
+   * Mixing engines one level apart put the two out of the same coordinate space: a submenu's `--x`/
+   * `--y` are the machine's own measurement relative to the viewport, but the browser resolves that
+   * submenu's `position: fixed` against the nearest ancestor that is itself anchor-positioned — this
+   * top level's own positioner, which carries `anchor-name` unconditionally whether or not it is
+   * placed via `@supports` — rather than the viewport. Measured against a live nested Menu: a
+   * submenu math-correct in viewport terms rendered offset by roughly this panel's own on-screen
+   * position. One engine for the whole tree removes the mismatch.
+   */
+  const anchor = useAnchored(id ?? generatedId, !hasSubmenu(items));
 
   const setCheckedState = (changedItem: MenuItem, checked: boolean) => {
     setChecked((current) => {
@@ -544,29 +668,22 @@ export function Menu({
           </span>
         </button>
       )}
-      <Portal container={container}>
-        {/* `data-density` re-stamped here, not inherited from the root above: this positioner just
-          * portalled to `<body>`, a different DOM subtree, same reason menu.css re-declares the
-          * appearance hooks on `.sk-menu__positioner`. */}
-        <div {...positionerProps} data-density={density}>
-          <div {...api.getContentProps()} className={menuParts.content}>
-            <MenuList
-              api={api}
-              checkedState={checkedState}
-              density={density}
-              debugSafetyTriangle={debugSafetyTriangle}
-              itemIndicator={itemIndicator}
-              items={items}
-              onCheckedChange={onCheckedChange}
-              onSelect={onSelect}
-              readout={readout}
-              service={service}
-              setCheckedState={setCheckedState}
-              submenuIndicator={submenuIndicator}
-            />
-          </div>
-        </div>
-      </Portal>
+      <MenuPopup
+        api={api}
+        checkedState={checkedState}
+        container={container}
+        debugSafetyTriangle={debugSafetyTriangle}
+        density={density}
+        items={items}
+        itemIndicator={itemIndicator}
+        onCheckedChange={onCheckedChange}
+        onSelect={onSelect}
+        positionerProps={positionerProps}
+        readout={readout}
+        service={service}
+        setCheckedState={setCheckedState}
+        submenuIndicator={submenuIndicator}
+      />
     </div>
   );
 }

@@ -60,7 +60,7 @@ export type CodePreviewAttrName = (typeof codePreviewAttrs)[CodePreviewAttr];
  *
  * The enhancer shipped with no React counterpart, so this could not be a contract: one binding is
  * not a contract, it is a script. Writing the missing half is what made it publishable, the same as
- * `copy-button`, `dialog` and `command-palette`.
+ * `dialog` and `command-palette`.
  *
  * HIGHLIGHTING IS NOT THIS COMPONENT'S JOB. Shiki runs at build or on the server and never in the
  * browser, so the code arrives already marked up and `children` is whatever the author produced.

@@ -1,0 +1,44 @@
+/*
+ * TIER 3, DRAWER (opt-in)
+ *
+ * A drawer IS a Vaul on the inline edge, running the full height. That sentence is the whole
+ * component: the edge, the slide, the backdrop, the drag and the top layer all belong to
+ * `patterns/vaul.css`, and this file only says WHICH Vaul a drawer is and what it looks like.
+ *
+ * Which is why it ships hooks and no structure (decision 8): every line of structure a drawer could
+ * have is structure a bottom sheet needs identically, and that shared structure is the pattern. A
+ * drawer that re-implemented the panel would be a second Vaul with a different name.
+ *
+ * Requires patterns/vaul.css, and the root must carry `sk-vaul sk-drawer` plus the native
+ * <dialog> the Vaul demands.
+ */
+@layer components {
+  .sk-drawer {
+    --sk-drawer-inline-size: min(20rem, 85vw);
+    --sk-drawer-bg: var(--color-bg-surface);
+    --sk-drawer-fg: var(--color-text-primary);
+    --sk-drawer-border-color: var(--color-border-subtle);
+    --sk-drawer-border-width: 1px;
+    --sk-drawer-elevation: var(--elevation-modal);
+
+    /* The drawer's hooks ARE Vaul's, re-declared. A consumer tunes `--sk-drawer-*` and never
+     * learns that Vaul is underneath; the pattern stays an implementation detail rather than a
+     * second public surface to keep in sync. */
+    --sk-vaul-size: var(--sk-drawer-inline-size);
+    --sk-vaul-bg: var(--sk-drawer-bg);
+    --sk-vaul-fg: var(--sk-drawer-fg);
+    --sk-vaul-border-color: var(--sk-drawer-border-color);
+    --sk-vaul-border-width: var(--sk-drawer-border-width);
+    --sk-vaul-elevation: var(--sk-drawer-elevation);
+    /* square: a drawer meets three viewport edges, and a radius against them reads as a mistake */
+    --sk-vaul-radius: 0;
+  }
+
+  @media (forced-colors: active) {
+    .sk-drawer {
+      --sk-drawer-border-color: CanvasText;
+      --sk-drawer-bg: Canvas;
+      --sk-drawer-fg: CanvasText;
+    }
+  }
+}

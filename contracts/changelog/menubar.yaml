@@ -3,5 +3,51 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "0a971550d4b9485d"
-entries: []
+surface: "3e96b19cf612a6f0"
+entries:
+  - date: 2026-08-19
+    kind: feature
+    target: nav
+    es:
+      title: Nueva opción nav en MenubarItem — el trigger puede ser el link real de nav-list
+      body: >-
+        Se agrega <code>nav</code> (booleana) a <code>MenubarItem</code>: cuando está presente, el
+        trigger renderiza con las clases propias de <code>nav-list</code>
+        (<code>sk-nav-list__link</code>/<code>__label</code>) en vez de <code>Button</code>
+        (<code>sk-button</code>). Nada del comportamiento de Menubar cambia — mismo <code>role</code>,
+        mismo roving tabindex, mismo manejo de apertura/cierre de desplegables — sólo el elemento y
+        las clases que pinta el trigger. Pensada junto con la nueva opción de ítem <code>href</code>
+        de <code>Menu</code> para el caso <code>menubar-navigation</code> de WAI-ARIA: una barra que
+        es de verdad navegación, construida con los elementos de <code>nav-list</code>, no una barra
+        de comandos con los colores de nav-list prestados.
+    en:
+      title: New nav option on MenubarItem — the trigger can be nav-list's own real link
+      body: >-
+        Adds <code>nav</code> (boolean) to <code>MenubarItem</code>: when given, the trigger renders
+        with <code>nav-list</code>'s own classes (<code>sk-nav-list__link</code>/<code>__label</code>)
+        instead of <code>Button</code>'s (<code>sk-button</code>). Nothing about Menubar's own
+        behavior changes — same <code>role</code>, same roving tabindex, same dropdown open/close
+        handling — only the trigger's element and classes. Built together with <code>Menu</code>'s
+        new <code>href</code> item option for WAI-ARIA's own <code>menubar-navigation</code> case: a
+        bar that is genuinely navigation, built from <code>nav-list</code>'s own elements, not a
+        command bar wearing nav-list's borrowed colors.
+  - date: 2026-08-19
+    kind: breaking
+    es:
+      title: El desplegable de MenubarItem pasa a ser un Menu real
+      body: >-
+        <code>MenubarMenu</code> y <code>MenubarMenuItem</code> se retiran del catálogo.
+        <code>MenubarItem</code> gana un slot <code>items</code> con la misma forma que ya tiene
+        <code>Menu</code> (comandos, checkbox, radio, separadores, submenús anidados sin límite),
+        porque su desplegable ahora ES un <code>Menu</code>, no una segunda descripción más pobre de
+        uno. La navegación de la barra (flechas entre items de primer nivel, el cierre de un
+        desplegable al moverse al adyacente) sigue siendo propia de Menubar, sin cambios.
+    en:
+      title: MenubarItem's dropdown becomes a real Menu
+      body: >-
+        <code>MenubarMenu</code> and <code>MenubarMenuItem</code> are retired from the catalogue.
+        <code>MenubarItem</code> gains an <code>items</code> slot shaped exactly like <code>Menu</code>'s
+        own (commands, checkbox, radio, separators, arbitrarily nested submenus), because its dropdown
+        now IS a <code>Menu</code>, not a second, poorer description of one. The bar's own navigation
+        (arrows between top-level items, closing one dropdown when moving to the adjacent one) stays
+        Menubar's own, unchanged.

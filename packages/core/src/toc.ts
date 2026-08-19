@@ -6,8 +6,8 @@ import type { ComponentContract } from "./contract.js";
  * Chrome of nothing but itself: a disclosure shell around a nested list of links to the headings
  * of whatever it sits beside. What made this NOT a component for a long time was that its markup
  * lived in the docs site and its behaviour lived beside it; one binding, no contract, exactly the
- * shape `contracts/NOT-PUBLISHED.md` names for `copy-button`/`dialog`/`command-palette` before they
- * got their missing half.
+ * shape `contracts/NOT-PUBLISHED.md` names for `dialog`/`command-palette` before they got their
+ * missing half.
  *
  * `NavList` was the other candidate shape and does not fit: its `current` is written once, statically,
  * by whoever composes the tree (the page you are ON). Here `current` moves on its own while the reader

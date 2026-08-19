@@ -7,7 +7,7 @@ Menu:
     - "un submenú: la misma lista, anidada sin límite"
   avoidWhen:
     - "es una elección de un valor dentro de un formulario; eso es Select"
-    - "el contenido es una descripción y no una lista de acciones; eso es Tooltip o Flyout"
+    - "el contenido es una descripción y no una lista de acciones; eso es Tooltip o Popover"
   alternatives:
     - Select
-    - Flyout
+    - Popover

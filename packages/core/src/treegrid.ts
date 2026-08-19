@@ -306,6 +306,43 @@ export function computeTreegridVisibility(
   return visible;
 }
 
+export type TreegridRowTransition = "entering" | "exiting" | undefined;
+
+/**
+ * Diffs two `computeTreegridVisibility` results (same shape, same order) into which rows just
+ * became visible or hidden — what either binding needs to know to ANIMATE a toggle instead of
+ * snapping straight to the new state. Pure and framework-agnostic, the same three-way split
+ * `resolveTreegridKey` already documents: this file owns the diff, each binding owns applying it
+ * (unhiding an "entering" row immediately, deferring an "exiting" one behind its own exit
+ * animation — see each binding's own `toggle`).
+ *
+ * A row absent from BOTH (same `true`/`true` or `false`/`false`) is `undefined`: most rows on most
+ * toggles do not change, and a binding that has to loop the WHOLE grid on every keystroke would
+ * rather skip those outright than branch on a transition that never happened.
+ */
+export function diffTreegridVisibility(
+  previous: readonly boolean[],
+  next: readonly boolean[],
+): readonly TreegridRowTransition[] {
+  return next.map((visible, index) => {
+    const was = previous[index] ?? false;
+    if (visible && !was) return "entering";
+    if (!visible && was) return "exiting";
+    return undefined;
+  });
+}
+
+/**
+ * The ceiling either binding waits for an "exiting" row's own animation before treating it as
+ * settled and finally setting `hidden`, if `animationend` never fires for some reason (jsdom does
+ * not reliably fire it for CSS `animation`, so this is the PRIMARY mechanism under test, not a
+ * rare fallback). Matches `--motion-collapse-duration` (`--scale-duration-slow`, `semantic/
+ * _motion.scss`) plus a small buffer — kept as a JS constant, not read off the token, because JS
+ * cannot resolve a custom property's primitive value without a live element to measure it against,
+ * and this only ever needs to be an upper bound, never exact.
+ */
+export const TREEGRID_EXIT_FALLBACK_MS = 400;
+
 /**
  * One keystroke, resolved against the CURRENTLY VISIBLE rows only — the caller has already filtered
  * with `computeTreegridVisibility`, so index 0 here is whatever visible row is first, not row 0 of

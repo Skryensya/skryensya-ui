@@ -21,7 +21,13 @@ NavListLink:
   useWhen:
     - un destino de la lista
     - marca la página actual con current
+    - "tiene sus propios sub-destinos: un NavListGroup en el slot nested, adentro del mismo <li>"
   avoidWhen:
     - dispara una acción en vez de navegar: eso es Button.action
   alternatives:
     - Button.navigation
+
+# `nested` (slot de NavListLink) es la ÚNICA forma soportada de anidar: un NavListGroup metido
+# directo en el `children` de otro grupo no es HTML válido (un `<div>` no es hijo legal de `<ul>`,
+# sólo `<li>` lo es), por eso el slot vive en el LINK y no en el grupo.
+

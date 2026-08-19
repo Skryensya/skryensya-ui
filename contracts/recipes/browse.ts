@@ -159,9 +159,9 @@ function filters(): UsageTree {
         },
       },
       {
-        contract: "flyout",
-        signature: "Flyout",
-        options: { placeholder: "Ordenar por" },
+        contract: "select",
+        signature: "Select",
+        options: { name: "orden", placeholder: "Ordenar por" },
         slots: {
           label: "Orden",
           items: [

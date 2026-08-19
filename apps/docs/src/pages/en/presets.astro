@@ -1,0 +1,198 @@
+---
+/*
+ * /en/presets replaces /en/customize (the ramp-by-ramp editor, with density, radius, icon set,
+ * live contrast audit and shareable codes). That editor exposed EVERY variable and wrote onto the
+ * whole site; this page exposes two already-resolved combinations and applies them ONLY inside a
+ * demo canvas, never onto :root. Picking "UC" does not change the navbar, the rest of this page, or
+ * any other page: it is content, not a site preference (that's why there is no localStorage here,
+ * unlike the header's palette toggle, which genuinely is the site's).
+ *
+ * The mechanism is the same re-declaration trick /personalizar used (see history): the color and
+ * radius semantic tokens are re-declared onto `.preset-canvas`, var() chain intact, so they
+ * re-resolve against whatever THAT element holds in `--ramp-*`/`--radius-multiplier`. At rest it
+ * inherits no overrides → resolves against `:root`'s values, zero visual difference.
+ * `[data-preset="uc"]` is the only rule that actually changes anything, and it only reaches the
+ * canvas's descendants.
+ */
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import { tokens } from "../../lib/tokens";
+import { createRamp } from "../../lib/ramps";
+import "@skryensya/core/patterns/box.css";
+
+/* Real colors from kitdigital.uc.cl (Pontificia Universidad Católica de Chile), converted to
+ * oklch: Celeste #0176DE (accent + info), Gris oscuro A #707070 (neutral), Rojo error #F24F4F,
+ * Verde éxito #00AA00, Amarillo advertencia #E3AE00. Typography: Roboto (their default typeface).
+ * Squarer radius (0.5×, like data-radius="sm") — their grid reads structured, not rounded. */
+const UC_ROBOTO = "'Roboto', 'Segoe UI', Helvetica, Arial, sans-serif";
+const ucRamps = {
+  ...createRamp("accent", "oklch(57.02% 0.1812 254.01)"),
+  ...createRamp("neutral", "oklch(54.52% 0 89.88)"),
+  ...createRamp("danger", "oklch(65.42% 0.1996 24.53)"),
+  ...createRamp("success", "oklch(63.94% 0.2176 142.5)"),
+  ...createRamp("warning", "oklch(77.8% 0.1592 86.47)"),
+  ...createRamp("info", "oklch(57.02% 0.1812 254.01)"),
+};
+
+/* The color and radius semantic tokens, var() chain intact (exactly as the corpus declares them),
+ * put back onto `.preset-canvas`. This is what makes "change the accent" reach the ~30
+ * --color-* tokens (text, border, focus, on-accent…) without listing them by hand. */
+const SCOPED_PREFIXES = ["--color-", "--radius-"];
+const semScopedCss =
+  ".preset-canvas {\n" +
+  tokens
+    .filter((t) => t.tier === "semantic" && SCOPED_PREFIXES.some((p) => t.name.startsWith(p)))
+    .map((t) => `  ${t.name}: ${t.value};`)
+    .join("\n") +
+  "\n}";
+
+const ucOverrideCss =
+  '.preset-canvas[data-preset="uc"] {\n' +
+  Object.entries(ucRamps)
+    .map(([name, value]) => `  ${name}: ${value};`)
+    .join("\n") +
+  `\n  --radius-multiplier: 0.5;\n  --font-family-body: ${UC_ROBOTO};\n}`;
+
+/* @import must lead the stylesheet (CSS spec: any rule before it is invalid and drops it), and it
+ * is scoped by being here at all — Roboto only loads on this page, never through Base.astro. */
+const stageCss =
+  "@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');\n\n" +
+  semScopedCss +
+  "\n\n" +
+  ucOverrideCss;
+
+/* Same rule, formatted for reading rather than for shipping — the CodeBlock below teaches the
+ * shape, `stageCss` above is what actually ships. */
+const ucCssTeaching =
+  `@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');\n\n` +
+  '.preset-canvas[data-preset="uc"] {\n' +
+  `  /* complete ramps, one per role, generated from a single color with createRamp() */\n` +
+  `  --ramp-accent-600: oklch(57.02% 0.1812 254.01); /* … 50 → 950 */\n` +
+  `  --ramp-neutral-600: oklch(54.52% 0 89.88);       /* … 50 → 950 */\n` +
+  `  --ramp-danger-600: oklch(65.42% 0.1996 24.53);\n` +
+  `  --ramp-success-600: oklch(63.94% 0.2176 142.5);\n` +
+  `  --ramp-warning-600: oklch(77.8% 0.1592 86.47);\n` +
+  `  --ramp-info-600: oklch(57.02% 0.1812 254.01);\n\n` +
+  `  --radius-multiplier: 0.5; /* like data-radius="sm" */\n` +
+  `  --font-family-body: ${UC_ROBOTO};\n` +
+  "}";
+---
+
+<Base
+  title="Presets"
+  description="Two color, roundness and typography combinations, in a demo canvas — they do not touch the rest of the site."
+>
+  <h1>Presets</h1>
+  <p class="lede">
+    There is no ramp-by-ramp editor. A preset is a curated bundle of color, roundness and
+    typography, ready to show on a real component. It lives in the canvas below: picking one does
+    not change this page or the rest of the site, it is demo content, not a preference.
+  </p>
+
+  <div class="preset-picker" role="group" aria-label="Choose a preset">
+    <button type="button" class="preset-card sk-interactive" data-preset-pick="default" aria-pressed="true">
+      <span class="preset-card__swatch" style="--swatch: oklch(50.4% 0.169 259.6)" aria-hidden="true"></span>
+      <span class="preset-card__name">Default</span>
+    </button>
+    <button type="button" class="preset-card sk-interactive" data-preset-pick="uc" aria-pressed="false">
+      <span class="preset-card__swatch" style="--swatch: oklch(57.02% 0.1812 254.01)" aria-hidden="true"></span>
+      <span class="preset-card__name">UC</span>
+    </button>
+  </div>
+
+  <div class="sk-box preset-canvas" data-preset="default" data-surface="surface" data-border="subtle" data-padding="lg">
+    <div class="sk-stack">
+      <div class="sk-inline" data-gap="sm">
+        <button class="sk-button sk-interactive" data-variant="primary" type="button">Primary</button>
+        <button class="sk-button sk-interactive" type="button">Neutral</button>
+        <button class="sk-button sk-interactive" data-variant="danger" type="button">Danger</button>
+        <button class="sk-button sk-interactive" data-variant="ghost" type="button">Ghost</button>
+      </div>
+      <div class="sk-inline" data-gap="sm">
+        <span class="sk-badge" data-tone="accent">accent</span>
+        <span class="sk-badge" data-tone="success">success</span>
+        <span class="sk-badge" data-tone="warning">warning</span>
+        <span class="sk-badge" data-tone="danger">danger</span>
+      </div>
+      <div class="sk-callout" data-tone="info" role="status">
+        <div class="sk-callout__content">
+          <p><strong>Example.</strong> This paragraph lives inside <code>--font-family-body</code>.</p>
+        </div>
+      </div>
+      <div class="sk-form-field">
+        <label class="sk-form-field__label" for="presets-demo-input">Name</label>
+        <input class="sk-input" id="presets-demo-input" value="Ada Lovelace" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.querySelector<HTMLElement>(".preset-canvas");
+    const picks = document.querySelectorAll<HTMLElement>("[data-preset-pick]");
+    if (canvas && picks.length) {
+      picks.forEach((pick) => {
+        pick.addEventListener("click", () => {
+          const id = pick.dataset.presetPick ?? "default";
+          canvas.dataset.preset = id;
+          picks.forEach((p) => p.setAttribute("aria-pressed", String(p === pick)));
+        });
+      });
+    }
+  </script>
+
+  <p>
+    <strong>UC</strong> reproduces the look of
+    <a href="https://kitdigital.uc.cl/" target="_blank" rel="noreferrer">kitdigital.uc.cl</a>:
+    Celeste accent (<code>#0176DE</code>), a squarer radius and Roboto typography — not just the
+    color, the whole character of the component.
+  </p>
+  <CodeBlock code={ucCssTeaching} label="CSS · applied only inside .preset-canvas[data-preset=&quot;uc&quot;]" lang="css" />
+
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <p>
+        <strong>Content, not a site preference.</strong> The header's palette toggle (top right) is
+        still its own thing: it changes <code>:root</code>, reaches the whole site, and is
+        remembered across visits. This is the deliberate opposite — a component on this page, with
+        its own state, that never touches <code>:root</code> or <code>localStorage</code>.
+      </p>
+    </div>
+  </div>
+</Base>
+
+<style is:global set:html={stageCss}></style>
+
+<style>
+  .preset-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-sm);
+    margin-block: var(--space-stack-md);
+  }
+
+  .preset-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-inline-xs);
+    padding: var(--space-inset-sm) var(--space-inset-md);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-control);
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .preset-card[aria-pressed="true"] {
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 1px var(--color-border-focus);
+  }
+
+  .preset-card__swatch {
+    inline-size: 1rem;
+    block-size: 1rem;
+    border-radius: var(--radius-pill);
+    background: var(--swatch);
+    flex-shrink: 0;
+  }
+</style>

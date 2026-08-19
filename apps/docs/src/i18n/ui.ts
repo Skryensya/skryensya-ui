@@ -35,14 +35,30 @@ export const ui = {
     "nav.closeDrawer": "Cerrar navegación",
     "nav.between": "Navegación entre documentos",
     "nav.notWritten": "Todavía no escrita",
+    "nav.home": "Home",
     "nav.docs": "Docs",
-    "nav.customize": "Personalizar",
+    "nav.presets": "Presets",
+    "nav.templates": "Templates",
     "nav.resizeRail": "Cambiar el ancho de la navegación",
     /* Los dos primeros enlaces del documento, invisibles hasta que reciben el foco. Nombran el
        DESTINO y no la acción, porque son lo primero que se escucha al entrar y "saltar" no dice
        adónde. El contenido va primero: es lo que casi todo el mundo vino a leer. */
     "nav.skipToContent": "Ir al contenido",
     "nav.playground": "Playground",
+    "templates.title": "Templates",
+    "templates.description":
+      "Composiciones completas de layout para copiar, adaptar y combinar con el kit.",
+    "templates.lede":
+      "Esta página reúne layouts completos, no documentación de un componente aislado. Cada template combina contratos del kit en una estructura de aplicación que podés copiar y adaptar.",
+    "templates.appShellTitle": "App shell de operaciones",
+    "templates.appShellBody":
+      "El primer template junta <code>Navbar</code> y <code>Sidebar</code> colapsable alrededor de un <code>main</code> vacío, listo para que la aplicación instale su contenido. Contraé el sidebar para ver que el <code>main</code> recupera el ancho del riel.",
+    "templates.appShellLabel": "App shell con sidebar colapsable",
+    "templates.appShellNavLabel": "App shell",
+    "templates.explorerTitle": "App shell con navegación anidada",
+    "templates.explorerLabel": "App shell con sidebar redimensionable de navegación anidada",
+    "templates.explorerNavLabel": "Navegación anidada",
+    "templates.navLabel": "Templates",
     "playground.title": "Playground",
     "playground.description":
       "Editá y ejecutá los ejemplos de cada componente, en React y en Vanilla, sin instalar nada.",
@@ -50,7 +66,7 @@ export const ui = {
     "playground.binding": "Binding",
     "playground.loading": "Cargando el kit…",
     "playground.failed":
-      "No se pudo cargar el kit. Recargá la página; si sigue, revisá que exista public/sandbox (pnpm run sandbox).",
+      "No se pudo cargar el kit. Recargá la página; si sigue, revisá que exista apps/playground/public/sandbox (pnpm --filter @skryensya/playground sandbox).",
     "playground.offline":
       "El sandbox no puede alcanzar codesandbox.io, que es donde compila y corre el código. Suele ser una VPN, un proxy o un bloqueador de contenido; el resto del sitio no lo necesita.",
     "playground.docsLink": "Ver la documentación",
@@ -131,10 +147,10 @@ export const ui = {
       "Ancho libre · el preview ocupa la columna entera y crece hasta el alto de su contenido",
     "preview.screenTablet": "Tablet",
     "preview.screenTabletHint":
-      "Tablet · 768 × 1024 px, la franja donde los layouts de dos columnas empiezan a ceder",
+      "Tablet · 768 px de ancho, la franja donde los layouts de dos columnas empiezan a ceder",
     "preview.screenMobile": "Móvil",
     "preview.screenMobileHint":
-      "Móvil · 390 × 844 px, el ancho donde todo termina apilado",
+      "Móvil · 390 px de ancho, donde todo termina apilado",
     "preview.reactSource": "Fuente React",
     "preview.sourceComponent": "Componente",
 
@@ -212,6 +228,10 @@ export const ui = {
       "Migración del layer vanilla a componentes Svelte",
     "demo.breadcrumb.longCurrent":
       "Máquinas Zag compartidas entre el layer vanilla y los componentes Svelte",
+    "demo.breadcrumb.documents": "Documentos",
+    "demo.breadcrumb.activeProjects": "Proyectos activos",
+    "demo.breadcrumb.designSystem": "Sistema de diseño",
+    "demo.breadcrumb.sharedComponents": "Componentes compartidos",
 
     "breadcrumb.description": "Ubicación jerárquica con enlaces reales y página actual explícita.",
     "breadcrumb.examplesTitle": "Ejemplos",
@@ -233,8 +253,14 @@ export const ui = {
     "breadcrumb.longItem2":
       '<code>sk-breadcrumb__current</code> nunca trunca: envuelve en varias líneas (<code>overflow-wrap: anywhere</code>) para que el título completo siga siendo legible aunque no quepa en una sola línea.',
     "breadcrumb.longLabel": "Breadcrumb con etiquetas largas",
+    "breadcrumb.collapseTitle": "Colapsa para entrar",
+    "breadcrumb.collapseBody":
+      'Cuando la senda no entra en una sola línea, un enhancer esconde los niveles ancestro — nunca el primero ni la página actual — detrás de un disclosure «…» que abre un <a href="/componentes/menu">Menu</a> real con esos mismos niveles: el patrón de teclado de un menú ARIA (flechas, Home/End, typeahead), no una lista plana. Sin JavaScript, o con menos de cuatro niveles, el markup sigue completo por sí solo.',
+    "breadcrumb.collapseLabel": "Breadcrumb que colapsa para entrar",
+    "breadcrumb.collapseTriggerLabel": "Mostrar niveles ocultos",
     "breadcrumb.contractBody": "Usa nav + ol; el último elemento lleva aria-current=page y no es un enlace.",
-    "breadcrumb.a11yBody": "El label distingue estas migas de otras navegaciones de la página.",
+    "breadcrumb.a11yBody":
+      'El label distingue estas migas de otras navegaciones de la página. El disclosure «…» de una senda colapsada lleva su propio <code>aria-label</code> (<code>collapsedLabel</code>) y abre un <a href="/componentes/menu">Menu</a> real, <code>role="menu"</code>: navegación con flechas, Home/End, typeahead y cierre con Escape son del patrón de menú, no algo que este componente reimplemente.',
 
     "demo.callout.neutral.title": "Mantenimiento programado",
     "demo.callout.neutral.body":
@@ -345,6 +371,15 @@ export const ui = {
     "demo.popover.description": "Matemática y escritora.",
     "demo.popover.body": "Escribió el primer algoritmo pensado para una máquina.",
     "demo.popover.close": "Cerrar",
+    "demo.popoverStructured.trigger": "Ver equipo",
+    "demo.popoverStructured.role": "Ingeniera de software",
+    "demo.popoverStructured.body": "Coordina el equipo de plataforma y revisa cada release antes de publicarla.",
+    "demo.popoverStructured.dismiss": "Ignorar",
+    "demo.popoverStructured.action": "Enviar mensaje",
+    "demo.popoverPlacement.blockStart": "Se abre arriba del disparador.",
+    "demo.popoverPlacement.blockEnd": "Se abre debajo del disparador.",
+    "demo.popoverPlacement.inlineStart": "Se abre al inicio en línea (izquierda en LTR).",
+    "demo.popoverPlacement.inlineEnd": "Se abre al final en línea (derecha en LTR).",
     "demo.popup.trigger": "Filtros",
     "demo.popup.onlyActive": "Solo activos",
     "demo.processList.label": "Instalar @skryensya",
@@ -539,7 +574,15 @@ export const ui = {
     "demo.menu.safety.new": "Nuevo",
     "demo.menu.safety.share": "Compartir",
     "demo.menu.safety.email": "Por correo",
+    "demo.menu.safety.emailOutlook": "Outlook",
+    "demo.menu.safety.emailGmail": "Gmail",
+    "demo.menu.safety.emailApple": "Apple Mail",
+    "demo.menu.safety.emailYahoo": "Yahoo",
     "demo.menu.safety.link": "Copiar enlace",
+    "demo.menu.safety.print": "Imprimir",
+    "demo.menu.safety.pdf": "Exportar como PDF",
+    "demo.menu.safety.pdfHighRes": "Alta resolución",
+    "demo.menu.safety.pdfCompressed": "Comprimido",
     "demo.menu.safety.delete": "Eliminar",
     "demo.radioGroup.label": "Plan",
     "demo.navList.label": "Principal",
@@ -566,6 +609,7 @@ export const ui = {
     "demo.mediaGradient.caption": "Texto legible sobre la foto.",
     "demo.mediaGradient.body": "Cuerpo de la card debajo del media.",
     "demo.timeField.label": "Salida",
+    "demo.timeField.forced24Label": "Llegada (24 horas)",
     "demo.heading.sample": "La plataforma está lista",
     "demo.heading.label.h4Floor": "h4 · 18 · piso (también h5 y h6)",
     "demo.heading.label.h5Same": "h5 · mismo que h4",
@@ -666,26 +710,6 @@ export const ui = {
     "demo.segmented.day": "Día",
     "demo.segmented.week": "Semana",
     "demo.segmented.month": "Mes",
-    "demo.flyout.density": "Densidad",
-    "demo.flyout.densityCondensed": "Condensada",
-    "demo.flyout.densityDense": "Densa",
-    "demo.flyout.densityCompact": "Compacta",
-    "demo.flyout.densityComfortable": "Cómoda",
-    "demo.flyout.densitySpacious": "Amplia",
-    "demo.flyout.radius": "Redondez",
-    "demo.flyout.radiusSquare": "Recta",
-    "demo.flyout.radiusSubtle": "Sutil",
-    "demo.flyout.radiusSoft": "Suave",
-    "demo.flyout.radiusStrong": "Marcada",
-    "demo.flyout.radiusRound": "Redonda",
-    "demo.flyout.region": "Región",
-    "demo.flyout.regionEurope": "Europa",
-    "demo.flyout.regionAmericas": "América",
-    "demo.flyout.regionApac": "Asia-Pacífico",
-    "demo.flyout.regionLatam": "Latinoamérica",
-    "demo.flyout.language": "Idioma",
-    "demo.flyout.theme": "Tema",
-    "demo.flyout.themeCustom": "Personalizado",
     "demo.toast.dismiss": "Descartar",
     "demo.toast.linkCopied": "Enlace copiado al portapapeles.",
     "demo.toast.documentArchived": "Documento archivado",
@@ -851,8 +875,6 @@ export const ui = {
     "demo.checkbox.private.body": "Incluye actividad de proyectos privados.",
     "demo.checkbox.disabled.title": "Canal heredado",
     "demo.checkbox.disabled.body": "Gestionado por la organización.",
-    "demo.flyout.plan": "Plan",
-    "demo.flyout.placeholder": "Elige un plan",
     "demo.heading.flush": "Título sin margen propio",
     "demo.list.integrations": "Integraciones",
     "demo.loader.simulation": "Simulación de carga",
@@ -989,6 +1011,19 @@ export const ui = {
     "demo.sidebar.explorer": "Explorador",
     "demo.sidebar.longFile": "informe-anual-consolidado.md",
     "demo.sidebar.resizeContent": "Arrastra el borde de la barra. El nombre que no entra se corta con puntos suspensivos; nunca aparece un scroll horizontal.",
+    "demo.appShell.collapse": "Contraer navegación",
+    "demo.appShell.navigation": "Navegación del espacio de trabajo",
+    "demo.appShell.workspace": "Espacio",
+    "demo.appShell.manage": "Administrar",
+    "demo.appShell.nav.overview": "Resumen",
+    "demo.appShell.nav.deployments": "Despliegues",
+    "demo.appShell.nav.settings": "Configuración",
+    "demo.appShell.nav.billing": "Facturación",
+    "demo.appShell.nested.header": "Proyectos",
+    "demo.appShell.nested.navigation": "Navegación de proyectos",
+    "demo.appShell.nested.resize": "Cambiar el ancho de la navegación",
+    "demo.appShell.nested.overview": "Resumen",
+    "demo.appShell.nested.settings": "Configuración",
     "demo.steps.brand.label": "Elegir marca",
     "demo.steps.brand.description": "Tu intención cromática",
     "demo.steps.ramps.label": "Ajustar rampas",
@@ -1506,14 +1541,14 @@ export const ui = {
       "El <code>resizer</code> es el borde inferior del stage, al estilo del asa de un <code>textarea</code>: arrastrarlo (o <kbd class=\"sk-kbd\">↑</kbd> / <kbd class=\"sk-kbd\">↓</kbd> con el foco puesto) fija el alto en <code>data-sk-component-preview-resized</code>. Desde ahí el alto es del lector: el runtime del frame deja de auto-ajustarlo y pasa su documento a <code>overflow: auto</code>, así achicarlo muestra scroll en vez de recortar el ejemplo. Doble clic (o <kbd class=\"sk-kbd\">Home</kbd>) devuelve el alto al contenido.",
     "componentPreview.screenTitle": "Tamaño de pantalla",
     "componentPreview.screenBody1":
-      "<code>screens</code> agrega al header un segmented <strong>Libre · Tablet · Móvil</strong>. <em>Libre</em> es el stage de siempre: ancho completo y alto ajustado al contenido. Los dos presets fijan <strong>ancho y alto</strong>, porque un dispositivo es las dos cosas: un preset de sólo ancho muestra el reflow pero nunca lo que queda bajo la línea de flotación, que es la mitad de lo que una pantalla chica le hace a un layout.",
+      "<code>screens</code> agrega al header un segmented <strong>Libre · Tablet · Móvil</strong>. <em>Libre</em> es el stage de siempre: ancho completo y alto ajustado al contenido. <em>Tablet</em> y <em>Móvil</em> sólo cambian el ancho: el alto sigue ajustándose al contenido o al resizer del lector, para que los dos presets muestren reflow sin modificarlo.",
     "componentPreview.screenBody2":
-      "Las medidas caen a propósito a cada lado de los breakpoints del sistema (<code>compact</code> 36rem, <code>desktop</code> 52rem): móvil 390×844 queda debajo de los dos, tablet 768×1024 queda en medio. Así los dos presets ejercitan las bandas donde el layout realmente cambia, en vez de ser dos anchos arbitrarios. Van en <code>px</code> y no en <code>rem</code> porque el viewport de un dispositivo es una medida física: quien sube el tamaño de fuente raíz quiere ver <em>ese</em> reflow en una pantalla de teléfono, no un teléfono que creció.",
+      "Las medidas caen a propósito a cada lado de los breakpoints del sistema (<code>compact</code> 36rem, <code>desktop</code> 52rem): móvil 390 px queda debajo de los dos, tablet 768 px queda en medio. Así los dos presets ejercitan las bandas donde el layout realmente cambia, en vez de ser dos anchos arbitrarios. Van en <code>px</code> y no en <code>rem</code> porque el viewport de un dispositivo es una medida física: quien sube el tamaño de fuente raíz quiere ver <em>ese</em> reflow en una pantalla de teléfono, no un teléfono que creció.",
     "componentPreview.screenBody3":
       "El ejemplo de abajo es un <code>Grid</code> multicol, cuyos carriles están atados justamente a esos breakpoints: uno debajo de <code>compact</code>, dos a partir de ahí, tres desde <code>desktop</code>. Cada preset cae en una banda distinta, así que los tres se ven diferentes. Las media queries resuelven contra el viewport <strong>del frame</strong>, que es el ancho del preset: eso es lo que compra el <code>iframe</code> y no compraría una container query sobre un <code>div</code>.",
     "componentPreview.screenNote": "3 carriles libre · 2 en tablet · 1 en móvil",
     "componentPreview.screenBody4":
-      "Con un preset activo el stage es un dispositivo: el runtime deja de auto-ajustar y el documento scrollea adentro, igual que en el aparato real. El resizer se esconde (el preset ya es dueño del alto, y dos dueños del mismo alto es el bug); volver a <em>Libre</em> devuelve el arrastre. El alto se topa en <code>80svh</code> para que el código de abajo siga alcanzable: el frame scrollea, así que lo único que se pierde es la fidelidad de las unidades <code>vh</code> del propio ejemplo.",
+      "Con Tablet o Móvil activo el stage conserva su alto automático y el resizer sigue disponible: el preset sólo estrecha y centra el frame. Arrastrar el resizer sigue haciendo que el alto sea del lector; doble clic o <kbd class=\"sk-kbd\">Home</kbd> lo devuelve al contenido.",
     "componentPreview.screenBody5":
       "Viene <strong>encendido en todos los previews</strong> del sitio. «¿Esto aguanta en un teléfono?» es una pregunta que se le puede hacer a cualquier componente, no sólo a los que son evidentemente un layout: la etiqueta de un botón envuelve, una tabla se desborda, un dialog no entra. Dejarlo a criterio de quien escribe cada página significaría tener la respuesta justamente en las demos que alguien ya pensó, que son las que ya estaban bien.",
     "componentPreview.screenBody6":
@@ -1622,70 +1657,6 @@ export const ui = {
     "fileUploadPage.contractBody": "Vanilla emite sk-file-change y nunca inventa una carga remota. React expone archivos aceptados y rechazados.",
     "fileUploadPage.a11yBody": "El input real permanece disponible para formularios y tecnología asistiva; la dropzone no lo sustituye.",
 
-    "flyout.description": "Flyout: elige un valor como Select, con el panel al lado del trigger.",
-    "flyout.lede1":
-      'Un selector de valor como <a href="/componentes/select">Select</a>, pero el panel abre al <strong>inline-end</strong> del trigger (no debajo). Pensado para rieles estrechos (por ejemplo el sidebar de <a href="/personalizar">Personalizar</a>) donde un menú hacia abajo no cabe.',
-    "flyout.lede2":
-      "No es un “menu” de navegación (ADR-0017): es un picker. Abre al <strong>click</strong> del trigger (y con teclado). Elegir un ítem emite <code>sk-value-change</code> y cierra. Escape o click fuera también cierran. Solo puede haber un Flyout abierto a la vez.",
-    "flyout.whenTitle": "Cuándo usarlo",
-    "flyout.whenItem1":
-      "<strong>Flyout</strong>: el espacio debajo del control es escaso (sidebar, toolbar, rail) y el panel debe abrirse al lado.",
-    "flyout.whenItem2":
-      '<strong>Select</strong>: hay sitio debajo, quieres typeahead / posicionamiento Zag, o es un formulario estándar. Para elección nativa de plataforma, usa el <a href="/componentes/select#select-nativo">Select nativo</a>.',
-    "flyout.behaviorTitle": "Comportamiento",
-    "flyout.behaviorItem1":
-      "<strong>Abrir:</strong> click en el trigger, o teclado (<code>Enter</code>, <code>Space</code>, <code>ArrowDown</code>, <code>ArrowRight</code>). No abre al hover.",
-    "flyout.behaviorItem2":
-      '<strong>Elegir:</strong> click o <code>Enter</code> / <code>Space</code> en un ítem. Emite <code>sk-value-change</code> con <code>{\'{ value: string[] }\'}</code> y cierra.',
-    "flyout.behaviorItem3": "<strong>Cerrar:</strong> Escape (devuelve el foco al trigger), click fuera, o elegir un ítem.",
-    "flyout.behaviorItem4":
-      "<strong>Exclusivo:</strong> al abrir uno, los demás escuchan <code>sk-flyout-open</code> y se cierran.",
-    "flyout.behaviorItem5":
-      "<strong>Ancho:</strong> el panel mide al menos <code>280px</code> y crece con el ítem más largo (con tope de viewport).",
-    "flyout.behaviorItem6":
-      "<strong>Viewport:</strong> si no cabe al inline-end, abre al inline-start; el top se ajusta para no salirse del viewport (también al hacer scroll o resize).",
-    "flyout.anatomyTitle": "Anatomía",
-    "flyout.anatomyBody":
-      'Los items <strong>son</strong> la colección: el enhancer los lee del DOM. Cada <code>data-sk-flyout-item</code> necesita un <code>data-value</code>. El panel vive en el root (<code>position: absolute</code> por defecto; el enhancer lo fija con <code>position: fixed</code> cuando un ancestro recorta).',
-    "flyout.vanillaInitTitle": "Inicializar Vanilla",
-    "flyout.listenTitle": "Escuchar el cambio",
-    "flyout.railTitle": "En un riel estrecho",
-    "flyout.railBody":
-      "El caso típico: un control de ~13.5rem de ancho. El panel sale al inline-end y no compite con el alto del rail.",
-    "flyout.railLabel": "Flyout en riel",
-    "flyout.exclusiveTitle": "Solo uno abierto",
-    "flyout.exclusiveBody":
-      "Abre uno y luego el otro: el primero se cierra solo. Mismo contrato en Vanilla y React vía el evento de documento <code>sk-flyout-open</code>.",
-    "flyout.exclusiveLabel": "Dos Flyouts",
-    "flyout.disabledItemTitle": "Ítem deshabilitado",
-    "flyout.disabledItemBody":
-      "Marca el ítem con <code>data-disabled</code> (o <code>disabled: true</code> en React). No se puede elegir; el resto sigue activo.",
-    "flyout.disabledItemLabel": "Ítem deshabilitado",
-    "flyout.disabledTitle": "Flyout deshabilitado",
-    "flyout.disabledBody": "<code>data-disabled</code> en la raíz (o <code>disabled</code> en React) bloquea apertura y cambio de valor.",
-    "flyout.disabledLabel": "Flyout deshabilitado",
-    "flyout.longTitle": "Lista larga",
-    "flyout.longBody":
-      "El panel limita su alto (<code>--sk-flyout-panel-max-block-size</code>, 18rem por defecto) y hace scroll cuando hace falta.",
-    "flyout.longLabel": "Lista larga",
-    "flyout.placeholderTitle": "Placeholder",
-    "flyout.placeholderBody":
-      "Si no hay <code>data-value</code> que coincida con un ítem (por ejemplo un valor externo “personalizado”) el trigger muestra el placeholder.",
-    "flyout.placeholderLabel": "Placeholder",
-    "flyout.remountTitle": "Remontar con otro valor",
-    "flyout.remountBody":
-      'El enhancer posee el texto del trigger. Para forzar un valor desde fuera (reset, URL, reparación), desmonta, escribe <code>data-value</code> y vuelve a montar, el mismo patrón que usa <a href="/personalizar">Personalizar</a>.',
-    "flyout.contractItem1": "La raíz lleva <code>data-sk-flyout</code> y la anatomía de parts documentada.",
-    "flyout.contractItem2":
-      'El evento de valor es el mismo que Select: <code>sk-value-change</code> con <code>{\'{ value: string[] }\'}</code>.',
-    "flyout.contractItem3": 'Apertura exclusiva vía <code>sk-flyout-open</code> (detalle <code>{\'{ root }\'}</code>).',
-    "flyout.contractItem4": "Sin máquina Zag en v1: enhancer propio, apertura por click/teclado.",
-    "flyout.contractItem5": "React renderiza el mismo contrato sin portal (panel en el root).",
-    "flyout.contractItem6": "El enhancer no inventa clases; solo conecta los nodos autorados.",
-    "flyout.test1": "Abre al hacer click y mantiene ARIA + el texto de valor sincronizados.",
-    "flyout.test2": "Cierra con Escape.",
-    "flyout.test3": "Mantiene abierto un solo flyout a la vez.",
-    "flyout.test4": "Voltea el panel a inline-start cuando el lado final se sale del viewport.",
 
     "grid.description": "Grid: columnas iguales con gap nombrado y semántica elegida por quien lo usa.",
     "grid.lede":
@@ -2156,6 +2127,14 @@ export const ui = {
     "placeholderPage.test2": "No tiene violaciones serias de accesibilidad dentro de una región busy nombrada.",
 
     "popoverPage.description": "Contenido no modal con título, descripción y cierre explícito sobre top layer nativo.",
+    "popoverPage.structuredTitle": "Contenido estructurado",
+    "popoverPage.structuredBody":
+      "El contrato no tiene un slot de <code>header</code> ni de <code>footer</code>, y no le hace falta: <code>children</code> acepta un nodo, así que una fila de encabezado (avatar y nombre) y una fila de acciones al final son composición, hechas con las mismas piezas publicadas (Inline, Stack, Avatar, Text, Button) — nada de marcado propio de esta página.",
+    "popoverPage.structuredLabel": "Popover con encabezado y pie",
+    "popoverPage.placementTitle": "Colocación",
+    "popoverPage.placementBody":
+      "Las cuatro colocaciones posibles, con <code>Popover.bare</code> en vez de <code>Popover</code>: aquí el punto es <code>placement</code>, no el título ni el botón de cierre. La etiqueta de cada disparador es el valor de la opción que usa.",
+    "popoverPage.placementLabel": "Popover en las cuatro colocaciones",
     "popoverPage.contractBody": "Popover describe contenido auxiliar rico. Menu contiene acciones; Tooltip solo una descripción corta.",
     "popoverPage.a11yBody": "La plataforma posee top layer, Escape y light-dismiss mediante popover=auto.",
 
@@ -2559,20 +2538,27 @@ export const ui = {
     "tilePage.test2": "Renderiza la anatomía compartida de título y descripción para los tiles seleccionables.",
     "tilePage.test3": "Soporta cambios de checkbox en modo no controlado.",
 
-    "timeFieldPage.description": "Un campo de hora segmentado: hora, minuto y AM/PM como partes editables e independientes, operables por teclado.",
+    "timeFieldPage.description": "Un campo de hora segmentado con un desplegable integrado: hora, minuto y AM/PM como partes editables, más una lista de horarios preestablecidos, todo operable por teclado.",
     "timeFieldPage.lede":
-      'Un campo para una hora de reloj local, sin fecha, sin zona horaria. Hora, minuto y (en un locale de 12 horas) AM/PM son tres segmentos editables independientes en un solo campo, en vez del chrome del propio <code>&lt;input type="time"&gt;</code>, que difiere lo suficiente entre Chrome, Firefox y Safari como para no poder estilarse ni confiar en que se vea igual dos veces. No existe una machine <code>@zag-js/time-picker</code>, así que este componente es estado a mano, como Slider y Segmented, pero tampoco hay popover: una versión anterior ponía un selector de ruedas detrás de un trigger, y resultó no ser ni más simple ni más accesible que construir los segmentos directamente.',
+      'Un campo para una hora de reloj local, sin fecha, sin zona horaria. Hora, minuto y (en un locale de 12 horas) AM/PM son tres segmentos editables independientes en un solo campo, en vez del chrome del propio <code>&lt;input type="time"&gt;</code>, que difiere lo suficiente entre Chrome, Firefox y Safari como para no poder estilarse ni confiar en que se vea igual dos veces. No existe una machine <code>@zag-js/time-picker</code> para esos segmentos, así que esa parte es estado a mano, como Slider y Segmented — pero SÍ hay un desplegable, siempre presente, con una lista simple y navegable con flechas (nada de buscador: para una lista acotada y ordenada, uno de más). Dos cosas se probaron y se descartaron antes de llegar ahí: un selector de ruedas (ni más simple ni más accesible que los segmentos mismos) y una lista con buscador tipo Combobox (demasiada máquina para una lista corta).',
     "timeFieldPage.contractBody":
       "El orden de los segmentos y el separador entre ellos se leen del propio <code>formatToParts</code> de <code>Intl.DateTimeFormat</code>, no se asumen: algunos locales ponen el periodo del día antes de la hora, y el separador no siempre es <code>\":\"</code>. El valor público sigue siendo el string canónico <code>HH:mm</code>, la misma forma que envía un <code>&lt;input type=\"time\"&gt;</code> plano, llevado en un input oculto, así que un formulario detrás de TimeField nunca tiene que parsear un string dependiente del locale. React lo guarda como estado del componente (<code>value</code>/<code>defaultValue</code>, un callback <code>onValueChange</code>). Vanilla hidrata el <code>data-sk-time-field</code> autorado: el consumidor sólo autora la raíz y su label, y el componente genera los segmentos a partir de <code>data-locale</code>.",
     "timeFieldPage.editTitle": "Editar un segmento",
     "timeFieldPage.editBody":
       'Escribir un dígito llena el segmento enfocado y avanza en cuanto ningún otro dígito podría mantenerlo válido: escribir <kbd class="sk-kbd">1</kbd> en el segmento de hora de un campo de 12 horas espera brevemente un posible segundo dígito (<code>10</code>–<code>12</code>), escribir <kbd class="sk-kbd">9</kbd> avanza de inmediato, porque ningún segundo dígito podría seguirlo y seguir siendo ≤ 12. Las flechas arriba/abajo suben o bajan el valor y dan la vuelta en los extremos; <kbd class="sk-kbd">Retroceso</kbd> limpia el segmento; <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> mueven entre segmentos; escribir la primera letra de la etiqueta AM/PM del locale en ese segmento lo fija directamente.',
+    "timeFieldPage.forced24Title": "Forzar 24 horas, sin depender del locale",
+    "timeFieldPage.forced24Body":
+      'La detección automática (<code>getHourCycle</code>) lee <code>Intl.DateTimeFormat(locale, {hour:"numeric"}).resolvedOptions().hourCycle</code>, y ese dato resultó inconsistente entre motores: el mismo string de locale (<code>es</code>/<code>es-AR</code>) resuelve a ciclos opuestos en Node y en un Chromium real. Como el máximo del segmento de hora sale directo de ese ciclo, una detección equivocada no sólo mostraba mal la hora: adelantaba el foco antes de tiempo al tipear un primer dígito ambiguo (un «2», que todavía podía volverse «22»). La opción <code>hourCycle</code> pisa la detección cuando se necesita un campo de 24 horas garantizado, sin importar el navegador.',
     "timeFieldPage.nativeTitle": "Si sólo necesitas el selector de la plataforma",
     "timeFieldPage.nativeBody":
       'Un <code>&lt;input type="time"&gt;</code> plano sigue funcionando, no necesita CSS ni JavaScript, y trae gratis el teclado y selector del sistema operativo. Sube a TimeField sólo cuando la inconsistencia de ese selector entre navegadores, o la ausencia total de hooks de estilo, realmente te cuesta algo, la misma decisión que DatePicker toma contra un <code>type="date"</code> plano.',
     "timeFieldPage.nativeLabel": "Input de hora nativo",
+    "timeFieldPage.optionsTitle": "El desplegable, con otro paso",
+    "timeFieldPage.optionsBody":
+      'El botón de reloj pinta DENTRO de <code>.sk-time-field__control</code> — una sola caja con borde, la misma anatomía que ya tiene el control de Combobox para sus propios botones finales — y abre una lista simple, sin buscador, navegable con flechas: <code>@zag-js/select</code> maneja esa máquina directamente (la misma que usa <code>Select</code>), sin montar el componente <code>Select</code> completo, que trae su propio trigger visible y hubiera significado dos clics para llegar a la lista. La opción <code>optionsStep</code> (30 minutos por defecto, 48 filas) decide cada cuánto aparece una fila; <code>Alt+Flecha-abajo</code> desde cualquier segmento la abre sin pasar por Tab, la misma tecla que ya abre un <code>&lt;select&gt;</code> nativo.',
+    "timeFieldPage.optionsQuarterHourTitle": "Cada 15 minutos",
     "timeFieldPage.a11yBody":
-      'Cada segmento es <code>role="spinbutton"</code> dentro de un <code>role="group"</code> nombrado por el label del campo: <code>aria-valuenow</code>/<code>aria-valuetext</code> llevan su valor actual (un placeholder amistoso como «hh» antes de fijar nada, no un string vacío), y <code>aria-valuemin</code>/<code>aria-valuemax</code> su rango real: 1–12 para un segmento de hora en un locale de 12 horas, 0–23 en uno de 24. Cada segmento es su propia parada de tabulación, igual que ya funciona un input de fecha nativo de varias partes, así que el uso por teclado no necesita nada más que Tab y las flechas documentadas arriba.',
+      'Cada segmento es <code>role="spinbutton"</code> dentro de un <code>role="group"</code> nombrado por el label del campo: <code>aria-valuenow</code>/<code>aria-valuetext</code> llevan su valor actual (un placeholder amistoso como «hh» antes de fijar nada, no un string vacío), y <code>aria-valuemin</code>/<code>aria-valuemax</code> su rango real: 1–12 para un segmento de hora en un locale de 12 horas, 0–23 en uno de 24. Cada segmento es su propia parada de tabulación, igual que ya funciona un input de fecha nativo de varias partes, así que el uso por teclado no necesita nada más que Tab y las flechas documentadas arriba — más <code>Alt+Flecha-abajo</code> para abrir el desplegable sin llegar hasta su botón, y las flechas/Inicio/Fin/Escape ya provistas por <code>@zag-js/select</code> una vez adentro de la lista.',
     "timeFieldPage.test1": "Monta una sola vez y nombra el grupo a partir del label autorado.",
     "timeFieldPage.test2": "Deriva los segmentos del locale, no del markup.",
     "timeFieldPage.test3": "Empieza vacío, con placeholders en vez de una hora inventada.",
@@ -2944,8 +2930,14 @@ export const ui = {
     "menubarPage.lede":
       'El patrón WAI-ARIA <code>menubar</code>: <code>menubar-editor</code>, el ejemplo que le da nombre. No es <a href="/componentes/menu">Menu</a> (un solo trigger, un solo popup) — acá son VARIOS ítems en una sola fila de roving tabindex, donde flecha izquierda/derecha mueve entre ellos, y el detalle que una implementación ingenua se pierde: moverse a un ítem adyacente mientras un desplegable está abierto cierra el viejo y abre el nuevo, no solo mueve un resaltado.',
     "menubarPage.contractBody":
-      'Sin máquina <code>@zag-js/*</code> propia — igual que <code>Treegrid</code>/<code>DataGrid</code>, escrito a mano y compartido por ambos bindings. Alcance de v1: UN nivel de desplegable por ítem, sin submenús anidados — <code>Menu</code> ya cubre el caso de submenús arbitrariamente anidados con un solo trigger, y los propios ejemplos de WAI (<code>menubar-editor</code>, <code>menubar-navigation</code>) tampoco necesitan un segundo nivel.',
+      'Sin máquina <code>@zag-js/*</code> propia — igual que <code>Treegrid</code>/<code>DataGrid</code>, escrito a mano y compartido por ambos bindings. Alcance de v1, de la BARRA misma: UN desplegable por ítem de nivel superior, y ni siquiera eso lo maneja <code>Menubar</code> a mano — moverse a un ítem vecino con el desplegable abierto cierra el viejo y abre el nuevo, todo vía la propia <code>api.setOpen()</code> de <code>Menu</code>. El CONTENIDO de un desplegable no tiene ese límite: es un <code>Menu</code> real, así que anida submenús tan profundo como <code>Menu</code> permite (ver «Desplegables con submenú» más abajo).',
     "menubarPage.label": "Barra de menú",
+    "menubarPage.submenuTitle": "Desplegables con submenú",
+    "menubarPage.submenuBody":
+      'Un ítem del desplegable puede abrir su propio submenú — «Exportar» aquí — porque el desplegable ENTERO es un <code>Menu</code> real, y los submenús arbitrariamente anidados ya son de <code>Menu</code>, no algo que <code>Menubar</code> tenga que reimplementar. El alcance propio de la barra (roving tabindex, un desplegable por ítem de nivel superior) no cambia: sólo el CONTENIDO de un desplegable puede anidar tan profundo como <code>Menu</code> permite.',
+    "menubarPage.navSkinTitle": "Como nav-list",
+    "menubarPage.navSkinBody":
+      'La opción <code>nav</code> del ítem cambia el trigger por el link real de <code>nav-list</code> (<code>sk-nav-list__link</code>/<code>__label</code>) en vez de un <code>Button</code>, y cada entrada del desplegable con <code>href</code> es un <code>&lt;a&gt;</code> real que navega — el ejemplo <code>menubar-navigation</code> de WAI-ARIA. La barra sigue siendo <code>Menubar</code>: roving tabindex, desplegables, todo el comportamiento; lo único que cambia es el elemento y las clases que pinta el trigger.',
     "menubarPage.a11yBody":
       'La raíz lleva <code>role="menubar"</code> con <code>aria-label</code> (obligatorio). Cada ítem de nivel superior es <code>role="menuitem"</code>, con <code>aria-haspopup="menu"</code>/<code>aria-expanded</code> solo si abre un desplegable. El foco es roving — una sola parada en toda la barra. <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> mueven entre ítems (y si un desplegable estaba abierto, abren el del ítem nuevo en vez de solo mover el resaltado); <kbd class="sk-kbd">↓</kbd> abre el desplegable y enfoca su primer ítem, <kbd class="sk-kbd">↑</kbd> el último; dentro de un desplegable abierto, <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> mueven entre sus comandos; <kbd class="sk-kbd">Escape</kbd> lo cierra y devuelve el foco a su trigger; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> saltan al primer/último ítem (o al primer/último comando si el desplegable está abierto).',
     "menubarPage.testCore1":
@@ -2953,16 +2945,21 @@ export const ui = {
     "menubarPage.testReact1":
       "Moverse a la derecha mientras un desplegable está abierto lo cierra y abre el del ítem adyacente.",
     "menubarPage.testReact2": "Escape cierra el desplegable abierto y devuelve el foco a su trigger.",
-    "menubarPage.testVanilla1": "Clickear afuera de la barra cierra cualquier desplegable abierto.",
+    "menubarPage.testVanilla1": "Clickear el trigger de un ítem vecino mientras un desplegable está abierto cierra el primero y abre el del vecino.",
 
     "demo.menubar.label": "Barra de menú",
     "demo.menubar.file": "Archivo",
     "demo.menubar.new": "Nuevo",
     "demo.menubar.open": "Abrir",
     "demo.menubar.save": "Guardar",
+    "demo.menubar.export": "Exportar",
+    "demo.menubar.pdf": "PDF",
+    "demo.menubar.csv": "CSV",
+    "demo.menubar.print": "Imprimir",
     "demo.menubar.edit": "Editar",
     "demo.menubar.undo": "Deshacer",
     "demo.menubar.redo": "Rehacer",
+    "demo.menubar.destinations": "Destinos",
 
     "inlinePage.description": "Inline, el pattern de layout horizontal y adaptable.",
     "inlinePage.lede":
@@ -3166,9 +3163,13 @@ export const ui = {
     "landing.brand": "skryensya/ui",
     "landing.hero.title": "Piezas para construir interfaces que funcionan como un sistema.",
     "landing.hero.lede":
-      "Componentes, primitives y fundamentos que puedes usar por separado o combinar para construir interfaces completas. Basados en la plataforma web, con contratos compartidos para HTML, JavaScript y React.",
+      "Construye interfaces web con componentes, primitives y fundamentos que se combinan entre sí. Un contrato compartido mantiene estructura, comportamiento y estilos coherentes en HTML, JavaScript y React.",
     "landing.hero.ctaComponents": "Explorar componentes",
     "landing.hero.ctaPlayground": "Abrir Playground",
+
+    "landing.showcase.title": "De una pieza a una pantalla.",
+    "landing.showcase.lede":
+      "Ejemplos reales, compuestos con el mismo catálogo que vas a usar. Esto es lo que se ve, no una maqueta.",
 
     "landing.start.title": "Empieza por cualquier parte.",
     "landing.start.lede": "No necesitas adoptar un sistema entero para resolver un problema.",
@@ -3404,11 +3405,27 @@ export const ui = {
     "nav.closeDrawer": "Close navigation",
     "nav.between": "Document navigation",
     "nav.notWritten": "Not written yet",
+    "nav.home": "Home",
     "nav.docs": "Docs",
-    "nav.customize": "Customize",
+    "nav.presets": "Presets",
+    "nav.templates": "Templates",
     "nav.resizeRail": "Resize the navigation",
     "nav.skipToContent": "Go to content",
     "nav.playground": "Playground",
+    "templates.title": "Templates",
+    "templates.description":
+      "Complete layout compositions to copy, adapt, and combine with the kit.",
+    "templates.lede":
+      "This page collects complete layouts, not documentation for one isolated component. Every template combines kit contracts into an application structure you can copy and adapt.",
+    "templates.appShellTitle": "Operations app shell",
+    "templates.appShellBody":
+      "The first template combines <code>Navbar</code> and a collapsible <code>Sidebar</code> around an empty <code>main</code>, ready for the application to populate. Collapse the sidebar to see the <code>main</code> reclaim the rail’s width.",
+    "templates.appShellLabel": "App shell with collapsible sidebar",
+    "templates.appShellNavLabel": "App shell",
+    "templates.explorerTitle": "App shell with nested navigation",
+    "templates.explorerLabel": "App shell with a resizable, nested-navigation sidebar",
+    "templates.explorerNavLabel": "Nested navigation",
+    "templates.navLabel": "Templates",
     "playground.title": "Playground",
     "playground.description":
       "Edit and run every component's examples, in React and in Vanilla, with nothing to install.",
@@ -3416,7 +3433,7 @@ export const ui = {
     "playground.binding": "Binding",
     "playground.loading": "Loading the kit…",
     "playground.failed":
-      "The kit could not be loaded. Reload the page; if it persists, check that public/sandbox exists (pnpm run sandbox).",
+      "The kit could not be loaded. Reload the page; if it persists, check that apps/playground/public/sandbox exists (pnpm --filter @skryensya/playground sandbox).",
     "playground.offline":
       "The sandbox cannot reach codesandbox.io, which is where it compiles and runs the code. Usually a VPN, a proxy or a content blocker; nothing else on this site needs it.",
     "playground.docsLink": "Read the documentation",
@@ -3492,10 +3509,10 @@ export const ui = {
       "Free width · the preview fills the column and grows to its content height",
     "preview.screenTablet": "Tablet",
     "preview.screenTabletHint":
-      "Tablet · 768 × 1024 px, where two-column layouts begin to yield",
+      "Tablet · 768 px wide, where two-column layouts begin to yield",
     "preview.screenMobile": "Mobile",
     "preview.screenMobileHint":
-      "Mobile · 390 × 844 px, where every layout finishes stacking",
+      "Mobile · 390 px wide, where every layout finishes stacking",
     "preview.reactSource": "React source",
     "preview.sourceComponent": "Component",
 
@@ -3563,6 +3580,10 @@ export const ui = {
       "Migration from vanilla layer to Svelte components",
     "demo.breadcrumb.longCurrent":
       "Zag machines shared between vanilla layer and Svelte components",
+    "demo.breadcrumb.documents": "Documents",
+    "demo.breadcrumb.activeProjects": "Active projects",
+    "demo.breadcrumb.designSystem": "Design system",
+    "demo.breadcrumb.sharedComponents": "Shared components",
 
     "breadcrumb.description": "Hierarchical location with real links and an explicit current page.",
     "breadcrumb.examplesTitle": "Examples",
@@ -3584,8 +3605,14 @@ export const ui = {
     "breadcrumb.longItem2":
       '<code>sk-breadcrumb__current</code> never truncates: it wraps across lines (<code>overflow-wrap: anywhere</code>) so the full title stays legible even when it does not fit on one line.',
     "breadcrumb.longLabel": "Breadcrumb with long labels",
+    "breadcrumb.collapseTitle": "Collapsing to fit",
+    "breadcrumb.collapseBody":
+      'When the trail does not fit on one line, an enhancer hides the ancestor levels — never the first one or the current page — behind a "…" disclosure that opens a real <a href="/en/components/menu">Menu</a> holding those same levels: an ARIA menu\'s own keyboard pattern (arrow keys, Home/End, typeahead), not a plain list. Without JavaScript, or under four levels, the markup is still complete on its own.',
+    "breadcrumb.collapseLabel": "Breadcrumb that collapses to fit",
+    "breadcrumb.collapseTriggerLabel": "Show hidden levels",
     "breadcrumb.contractBody": "Use nav + ol; the last item carries aria-current=page and is not a link.",
-    "breadcrumb.a11yBody": "The label tells these crumbs apart from other navigation on the page.",
+    "breadcrumb.a11yBody":
+      'The label tells these crumbs apart from other navigation on the page. A collapsed trail\'s "…" disclosure carries its own <code>aria-label</code> (<code>collapsedLabel</code>) and opens a real <a href="/en/components/menu">Menu</a>, <code>role="menu"</code>: arrow-key navigation, Home/End, typeahead and Escape to close all come from the menu pattern, not something this component reimplements.',
 
     "demo.callout.neutral.title": "Scheduled maintenance",
     "demo.callout.neutral.body":
@@ -3696,6 +3723,15 @@ export const ui = {
     "demo.popover.description": "Mathematician and writer.",
     "demo.popover.body": "Wrote the first algorithm intended for a machine.",
     "demo.popover.close": "Close",
+    "demo.popoverStructured.trigger": "View team",
+    "demo.popoverStructured.role": "Software engineer",
+    "demo.popoverStructured.body": "Coordinates the platform team and reviews every release before it ships.",
+    "demo.popoverStructured.dismiss": "Dismiss",
+    "demo.popoverStructured.action": "Send message",
+    "demo.popoverPlacement.blockStart": "Opens above the trigger.",
+    "demo.popoverPlacement.blockEnd": "Opens below the trigger.",
+    "demo.popoverPlacement.inlineStart": "Opens at inline-start (left in LTR).",
+    "demo.popoverPlacement.inlineEnd": "Opens at inline-end (right in LTR).",
     "demo.popup.trigger": "Filters",
     "demo.popup.onlyActive": "Active only",
     "demo.processList.label": "Install @skryensya",
@@ -3885,7 +3921,15 @@ export const ui = {
     "demo.menu.safety.new": "New",
     "demo.menu.safety.share": "Share",
     "demo.menu.safety.email": "By email",
+    "demo.menu.safety.emailOutlook": "Outlook",
+    "demo.menu.safety.emailGmail": "Gmail",
+    "demo.menu.safety.emailApple": "Apple Mail",
+    "demo.menu.safety.emailYahoo": "Yahoo",
     "demo.menu.safety.link": "Copy link",
+    "demo.menu.safety.print": "Print",
+    "demo.menu.safety.pdf": "Export as PDF",
+    "demo.menu.safety.pdfHighRes": "High resolution",
+    "demo.menu.safety.pdfCompressed": "Compressed",
     "demo.menu.safety.delete": "Delete",
     "demo.radioGroup.label": "Plan",
     "demo.navList.label": "Primary",
@@ -3912,6 +3956,7 @@ export const ui = {
     "demo.mediaGradient.caption": "Legible text on the photo.",
     "demo.mediaGradient.body": "Card body below the media.",
     "demo.timeField.label": "Departure",
+    "demo.timeField.forced24Label": "Arrival (24-hour)",
     "demo.heading.sample": "The platform is ready",
     "demo.heading.label.h4Floor": "h4 · 18 · floor (also h5 and h6)",
     "demo.heading.label.h5Same": "h5 · same as h4",
@@ -4009,26 +4054,6 @@ export const ui = {
     "demo.segmented.day": "Day",
     "demo.segmented.week": "Week",
     "demo.segmented.month": "Month",
-    "demo.flyout.density": "Density",
-    "demo.flyout.densityCondensed": "Condensed",
-    "demo.flyout.densityDense": "Dense",
-    "demo.flyout.densityCompact": "Compact",
-    "demo.flyout.densityComfortable": "Comfortable",
-    "demo.flyout.densitySpacious": "Spacious",
-    "demo.flyout.radius": "Roundness",
-    "demo.flyout.radiusSquare": "Square",
-    "demo.flyout.radiusSubtle": "Subtle",
-    "demo.flyout.radiusSoft": "Soft",
-    "demo.flyout.radiusStrong": "Strong",
-    "demo.flyout.radiusRound": "Round",
-    "demo.flyout.region": "Region",
-    "demo.flyout.regionEurope": "Europe",
-    "demo.flyout.regionAmericas": "Americas",
-    "demo.flyout.regionApac": "Asia-Pacific",
-    "demo.flyout.regionLatam": "Latin America",
-    "demo.flyout.language": "Language",
-    "demo.flyout.theme": "Theme",
-    "demo.flyout.themeCustom": "Custom",
     "demo.toast.dismiss": "Dismiss",
     "demo.toast.linkCopied": "Link copied to clipboard.",
     "demo.toast.documentArchived": "Document archived",
@@ -4194,8 +4219,6 @@ export const ui = {
     "demo.checkbox.private.body": "Include activity from private projects.",
     "demo.checkbox.disabled.title": "Inherited channel",
     "demo.checkbox.disabled.body": "Managed by the organization.",
-    "demo.flyout.plan": "Plan",
-    "demo.flyout.placeholder": "Choose a plan",
     "demo.heading.flush": "Heading without its own margin",
     "demo.list.integrations": "Integrations",
     "demo.loader.simulation": "Loading simulation",
@@ -4332,6 +4355,19 @@ export const ui = {
     "demo.sidebar.explorer": "Explorer",
     "demo.sidebar.longFile": "consolidated-annual-report.md",
     "demo.sidebar.resizeContent": "Drag the panel edge. A name that does not fit is truncated with an ellipsis; a horizontal scrollbar never appears.",
+    "demo.appShell.collapse": "Collapse navigation",
+    "demo.appShell.navigation": "Workspace navigation",
+    "demo.appShell.workspace": "Workspace",
+    "demo.appShell.manage": "Manage",
+    "demo.appShell.nav.overview": "Overview",
+    "demo.appShell.nav.deployments": "Deployments",
+    "demo.appShell.nav.settings": "Settings",
+    "demo.appShell.nav.billing": "Billing",
+    "demo.appShell.nested.header": "Projects",
+    "demo.appShell.nested.navigation": "Project navigation",
+    "demo.appShell.nested.resize": "Resize the navigation",
+    "demo.appShell.nested.overview": "Overview",
+    "demo.appShell.nested.settings": "Settings",
     "demo.steps.brand.label": "Choose brand",
     "demo.steps.brand.description": "Your chromatic intent",
     "demo.steps.ramps.label": "Adjust ramps",
@@ -4821,14 +4857,14 @@ export const ui = {
       "The <code>resizer</code> is the stage's bottom edge, styled after a <code>textarea</code>'s handle: dragging it (or pressing <kbd class=\"sk-kbd\">↑</kbd> / <kbd class=\"sk-kbd\">↓</kbd> while it has focus) sets the height in <code>data-sk-component-preview-resized</code>. From then on the height belongs to the reader: the frame runtime stops auto-sizing it and switches its document to <code>overflow: auto</code>, so shrinking it shows a scrollbar instead of clipping the example. Double-clicking (or pressing <kbd class=\"sk-kbd\">Home</kbd>) returns the height to the content.",
     "componentPreview.screenTitle": "Screen size",
     "componentPreview.screenBody1":
-      "<code>screens</code> adds a <strong>Free · Tablet · Mobile</strong> segmented control to the header. <em>Free</em> is the usual stage: full width, height fit to content. The two presets fix <strong>both width and height</strong>, because a device is both of those: a width-only preset shows the reflow but never what sits below the fold, which is half of what a small screen does to a layout.",
+      "<code>screens</code> adds a <strong>Free · Tablet · Mobile</strong> segmented control to the header. <em>Free</em> is the usual stage: full width, height fit to content. <em>Tablet</em> and <em>Mobile</em> only change width: height continues to fit content or follow the reader's resizer, so both presets show reflow without changing it.",
     "componentPreview.screenBody2":
-      "The measurements deliberately fall on either side of the system's own breakpoints (<code>compact</code> at 36rem, <code>desktop</code> at 52rem): mobile at 390×844 sits below both, tablet at 768×1024 sits between them. That way the two presets exercise the bands where the layout actually changes, instead of being two arbitrary widths. They are in <code>px</code>, not <code>rem</code>, because a device's viewport is a physical measurement: someone who bumps the root font size wants to see <em>that</em> reflow on a phone screen, not a phone that grew.",
+      "The measurements deliberately fall on either side of the system's own breakpoints (<code>compact</code> at 36rem, <code>desktop</code> at 52rem): mobile at 390 px sits below both, tablet at 768 px sits between them. That way the two presets exercise the bands where the layout actually changes, instead of being two arbitrary widths. They are in <code>px</code>, not <code>rem</code>, because a device's viewport is a physical measurement: someone who bumps the root font size wants to see <em>that</em> reflow on a phone screen, not a phone that grew.",
     "componentPreview.screenBody3":
       "The example below is a multicol <code>Grid</code> whose lanes are tied to exactly those breakpoints: one below <code>compact</code>, two from there on, three from <code>desktop</code>. Each preset lands in a different band, so all three look different. The media queries resolve against the <strong>frame's</strong> viewport, which is the preset's width: that is what the <code>iframe</code> buys that a container query on a plain <code>div</code> would not.",
     "componentPreview.screenNote": "3 free lanes · 2 on tablet · 1 on mobile",
     "componentPreview.screenBody4":
-      "With an active preset the stage becomes a device: the runtime stops auto-sizing and the document scrolls inside it, just like on a real device. The resizer hides itself (the preset already owns the height, and two owners of the same height is the bug); switching back to <em>Free</em> returns the drag handle. The height caps at <code>80svh</code> so the code below stays reachable: the frame scrolls, so the only thing lost is the fidelity of the example's own <code>vh</code> units.",
+      "With Tablet or Mobile active, the stage keeps its automatic height and the resizer remains available: the preset only narrows and centres the frame. Dragging the resizer still makes height reader-owned; double-clicking or pressing <kbd class=\"sk-kbd\">Home</kbd> returns it to content.",
     "componentPreview.screenBody5":
       'It ships <strong>on by default in every preview</strong> on the site. "Does this hold up on a phone?" is a question worth asking of any component, not only the ones that are obviously a layout: a button label wraps, a table overflows, a dialog does not fit. Leaving it to each page author\'s judgment would mean the answer lands exactly in the demos someone already thought hard about, the ones that were already fine.',
     "componentPreview.screenBody6":
@@ -4937,70 +4973,6 @@ export const ui = {
     "fileUploadPage.contractBody": "Vanilla emits sk-file-change and never invents a remote upload. React exposes accepted and rejected files.",
     "fileUploadPage.a11yBody": "The real input stays available to forms and assistive technology; the dropzone does not replace it.",
 
-    "flyout.description": "Flyout: pick a value like Select, with the panel opening beside the trigger.",
-    "flyout.lede1":
-      'A value picker like <a href="/en/components/select">Select</a>, but the panel opens at the trigger\'s <strong>inline-end</strong> (not below it). Built for narrow rails (the <a href="/en/customize">Customize</a> sidebar, say) where a menu opening downward would not fit.',
-    "flyout.lede2":
-      "It is not a navigation \"menu\" (ADR-0017): it is a picker. It opens on <strong>click</strong> of the trigger (and by keyboard). Picking an item emits <code>sk-value-change</code> and closes. Escape or a click outside also close it. Only one Flyout can be open at a time.",
-    "flyout.whenTitle": "When to use it",
-    "flyout.whenItem1":
-      "<strong>Flyout</strong>: space below the control is scarce (sidebar, toolbar, rail) and the panel needs to open to the side.",
-    "flyout.whenItem2":
-      '<strong>Select</strong>: there is room below, you want typeahead / Zag positioning, or it is a standard form. For a native platform choice, use the <a href="/en/components/select#native-select">native Select</a>.',
-    "flyout.behaviorTitle": "Behavior",
-    "flyout.behaviorItem1":
-      "<strong>Open:</strong> click on the trigger, or keyboard (<code>Enter</code>, <code>Space</code>, <code>ArrowDown</code>, <code>ArrowRight</code>). It does not open on hover.",
-    "flyout.behaviorItem2":
-      "<strong>Pick:</strong> click or <code>Enter</code> / <code>Space</code> on an item. It emits <code>sk-value-change</code> with <code>{\"{ value: string[] }\"}</code> and closes.",
-    "flyout.behaviorItem3": "<strong>Close:</strong> Escape (returns focus to the trigger), a click outside, or picking an item.",
-    "flyout.behaviorItem4":
-      "<strong>Exclusive:</strong> opening one makes the others, which listen for <code>sk-flyout-open</code>, close.",
-    "flyout.behaviorItem5":
-      "<strong>Width:</strong> the panel measures at least <code>280px</code> and grows with the longest item (capped by the viewport).",
-    "flyout.behaviorItem6":
-      "<strong>Viewport:</strong> if it does not fit at inline-end, it opens at inline-start; the top adjusts to stay inside the viewport (also on scroll or resize).",
-    "flyout.anatomyTitle": "Anatomy",
-    "flyout.anatomyBody":
-      "The items <strong>are</strong> the collection: the enhancer reads them off the DOM. Every <code>data-sk-flyout-item</code> needs a <code>data-value</code>. The panel lives on the root (<code>position: absolute</code> by default; the enhancer pins it to <code>position: fixed</code> when an ancestor clips it).",
-    "flyout.vanillaInitTitle": "Initializing Vanilla",
-    "flyout.listenTitle": "Listening for the change",
-    "flyout.railTitle": "On a narrow rail",
-    "flyout.railBody":
-      "The typical case: a control about 13.5rem wide. The panel opens at inline-end and does not compete with the rail's own height.",
-    "flyout.railLabel": "Flyout on a rail",
-    "flyout.exclusiveTitle": "Only one open",
-    "flyout.exclusiveBody":
-      "Open one and then the other: the first closes on its own. Same contract in Vanilla and React, through the document-level <code>sk-flyout-open</code> event.",
-    "flyout.exclusiveLabel": "Two Flyouts",
-    "flyout.disabledItemTitle": "Disabled item",
-    "flyout.disabledItemBody":
-      "Mark the item with <code>data-disabled</code> (or <code>disabled: true</code> in React). It cannot be picked; the rest stay active.",
-    "flyout.disabledItemLabel": "Disabled item",
-    "flyout.disabledTitle": "Disabled Flyout",
-    "flyout.disabledBody": "<code>data-disabled</code> on the root (or <code>disabled</code> in React) blocks opening and value changes.",
-    "flyout.disabledLabel": "Disabled Flyout",
-    "flyout.longTitle": "Long list",
-    "flyout.longBody":
-      "The panel caps its own height (<code>--sk-flyout-panel-max-block-size</code>, 18rem by default) and scrolls once it needs to.",
-    "flyout.longLabel": "Long list",
-    "flyout.placeholderTitle": "Placeholder",
-    "flyout.placeholderBody":
-      'With no <code>data-value</code> matching an item (an external "custom" value, say) the trigger shows the placeholder.',
-    "flyout.placeholderLabel": "Placeholder",
-    "flyout.remountTitle": "Remounting with another value",
-    "flyout.remountBody":
-      'The enhancer owns the trigger\'s text. To force a value from outside (reset, URL, repair), unmount, write <code>data-value</code>, and mount again — the same pattern <a href="/en/customize">Customize</a> uses.',
-    "flyout.contractItem1": "The root carries <code>data-sk-flyout</code> and the documented parts anatomy.",
-    "flyout.contractItem2":
-      "The value event is the same as Select's: <code>sk-value-change</code> with <code>{\"{ value: string[] }\"}</code>.",
-    "flyout.contractItem3": "Exclusive opening through <code>sk-flyout-open</code> (detail <code>{\"{ root }\"}</code>).",
-    "flyout.contractItem4": "No Zag machine in v1: its own enhancer, opening by click/keyboard.",
-    "flyout.contractItem5": "React renders the same contract with no portal (the panel stays on the root).",
-    "flyout.contractItem6": "The enhancer invents no classes; it only wires up the authored nodes.",
-    "flyout.test1": "Opens on click and keeps ARIA + the value text in sync.",
-    "flyout.test2": "Closes on Escape.",
-    "flyout.test3": "Keeps only one flyout open at a time.",
-    "flyout.test4": "Flips the panel to inline-start when the end side overflows the viewport.",
 
     "grid.description": "Grid: equal columns with a named gap and semantics chosen by whoever uses it.",
     "grid.lede":
@@ -5471,6 +5443,14 @@ export const ui = {
     "placeholderPage.test2": "Has no serious accessibility violations inside a labelled busy region.",
 
     "popoverPage.description": "Non-modal content with a title, description, and explicit close over the native top layer.",
+    "popoverPage.structuredTitle": "Structured content",
+    "popoverPage.structuredBody":
+      "The contract has no <code>header</code> or <code>footer</code> slot, and does not need one: <code>children</code> accepts a node, so a header row (avatar and name) and an action row at the end are composition, built from the same published pieces (Inline, Stack, Avatar, Text, Button) — no markup of this page's own.",
+    "popoverPage.structuredLabel": "Popover with a header and footer",
+    "popoverPage.placementTitle": "Placement",
+    "popoverPage.placementBody":
+      "All four placements, with <code>Popover.bare</code> instead of <code>Popover</code>: the point here is <code>placement</code>, not the title or the close button. Each trigger's label is the option value it uses.",
+    "popoverPage.placementLabel": "Popover in all four placements",
     "popoverPage.contractBody": "Popover describes rich auxiliary content. Menu holds actions; Tooltip holds only a short description.",
     "popoverPage.a11yBody": "The platform owns the top layer, Escape, and light-dismiss through popover=auto.",
 
@@ -5864,20 +5844,27 @@ export const ui = {
     "tilePage.test2": "Renders the shared title and description anatomy for selectable tiles.",
     "tilePage.test3": "Supports uncontrolled checkbox changes.",
 
-    "timeFieldPage.description": "A segmented time field: hour, minute, and AM/PM as independent, editable, keyboard-operable parts.",
+    "timeFieldPage.description": "A segmented time field with a built-in dropdown: hour, minute, and AM/PM as editable parts, plus a list of preset times, all keyboard-operable.",
     "timeFieldPage.lede":
-      "A field for a local clock time, no date, no timezone. Hour, minute, and (in a 12-hour locale) AM/PM are three independent editable segments in a single field, instead of the native <code>&lt;input type=\"time\"&gt;</code>'s own chrome, which differs enough between Chrome, Firefox, and Safari that it cannot be styled or trusted to look the same twice. There is no <code>@zag-js/time-picker</code> machine, so this component is hand-rolled state, like Slider and Segmented, but there is no popover either: an earlier version put a wheel picker behind a trigger, and it turned out to be neither simpler nor more accessible than building the segments directly.",
+      "A field for a local clock time, no date, no timezone. Hour, minute, and (in a 12-hour locale) AM/PM are three independent editable segments in a single field, instead of the native <code>&lt;input type=\"time\"&gt;</code>'s own chrome, which differs enough between Chrome, Firefox, and Safari that it cannot be styled or trusted to look the same twice. There is no <code>@zag-js/time-picker</code> machine for those segments, so that part is hand-rolled state, like Slider and Segmented — but there IS a dropdown, always present, a plain arrow-key-navigable list (no search box: too much machine for a short, ordered list). Two things were tried and dropped on the way there: a wheel picker (neither simpler nor more accessible than the segments themselves) and a searchable Combobox-style list (too much machine for a short list).",
     "timeFieldPage.contractBody":
       "The order of the segments and the separator between them are read from <code>Intl.DateTimeFormat</code>'s own <code>formatToParts</code>, never assumed: some locales put the period of day before the hour, and the separator is not always <code>\":\"</code>. The public value stays the canonical <code>HH:mm</code> string, the same shape a plain <code>&lt;input type=\"time\"&gt;</code> sends, carried in a hidden input, so a form behind TimeField never has to parse a locale-dependent string. React keeps it as component state (<code>value</code>/<code>defaultValue</code>, an <code>onValueChange</code> callback). Vanilla hydrates the authored <code>data-sk-time-field</code>: the consumer only authors the root and its label, and the component generates the segments from <code>data-locale</code>.",
     "timeFieldPage.editTitle": "Editing a segment",
     "timeFieldPage.editBody":
       'Typing a digit fills the focused segment and advances as soon as no other digit could keep it valid: typing <kbd class="sk-kbd">1</kbd> in a 12-hour field\'s hour segment briefly waits for a possible second digit (<code>10</code>–<code>12</code>), typing <kbd class="sk-kbd">9</kbd> advances immediately, because no second digit could follow it and stay ≤ 12. The up/down arrows raise or lower the value and wrap at the ends; <kbd class="sk-kbd">Backspace</kbd> clears the segment; <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> move between segments; typing the locale\'s AM/PM label\'s first letter in that segment sets it directly.',
+    "timeFieldPage.forced24Title": "Forcing 24-hour form, without depending on the locale",
+    "timeFieldPage.forced24Body":
+      'Auto-detection (<code>getHourCycle</code>) reads <code>Intl.DateTimeFormat(locale, {hour:"numeric"}).resolvedOptions().hourCycle</code>, and that value turned out to be inconsistent across engines: the same locale string (<code>es</code>/<code>es-AR</code>) resolves to opposite cycles in Node and in a real Chromium. Since the hour segment\'s own max comes straight from that cycle, a wrong guess did not just mislabel the hour: it advanced focus too early on an ambiguous first digit (a "2", which could still become "22"). The <code>hourCycle</code> option overrides the guess when a guaranteed 24-hour field is what you actually need, regardless of browser.',
     "timeFieldPage.nativeTitle": "If you only need the platform's own picker",
     "timeFieldPage.nativeBody":
       'A plain <code>&lt;input type="time"&gt;</code> still works, needs no CSS or JavaScript, and comes with the operating system\'s own keyboard and picker for free. Move up to TimeField only once that picker\'s cross-browser inconsistency, or the total absence of styling hooks, actually costs you something — the same decision DatePicker makes against a plain <code>type="date"</code>.',
     "timeFieldPage.nativeLabel": "Native time input",
+    "timeFieldPage.optionsTitle": "The dropdown, at another step",
+    "timeFieldPage.optionsBody":
+      'The clock button paints INSIDE <code>.sk-time-field__control</code> — one bordered box, the same anatomy Combobox\'s own control already has for its own trailing buttons — and opens a plain, search-free list, navigable with arrow keys: <code>@zag-js/select</code> drives that machine directly (the same one <code>Select</code> uses), without mounting the full <code>Select</code> component, which carries its own visible trigger and would have meant two clicks to reach the list. The <code>optionsStep</code> option (30 minutes by default, 48 rows) decides how far apart each row sits; <code>Alt+ArrowDown</code> from any segment opens it without tabbing there first, the same key that already opens a native <code>&lt;select&gt;</code>.',
+    "timeFieldPage.optionsQuarterHourTitle": "Every 15 minutes",
     "timeFieldPage.a11yBody":
-      "Every segment is a <code>role=\"spinbutton\"</code> inside a <code>role=\"group\"</code> named by the field's label: <code>aria-valuenow</code>/<code>aria-valuetext</code> carry its current value (a friendly placeholder like \"hh\" before anything is set, never an empty string), and <code>aria-valuemin</code>/<code>aria-valuemax</code> carry its real range: 1–12 for an hour segment in a 12-hour locale, 0–23 in a 24-hour one. Every segment is its own tab stop, the same way a native multi-part date input already works, so keyboard use needs nothing beyond Tab and the arrows documented above.",
+      "Every segment is a <code>role=\"spinbutton\"</code> inside a <code>role=\"group\"</code> named by the field's label: <code>aria-valuenow</code>/<code>aria-valuetext</code> carry its current value (a friendly placeholder like \"hh\" before anything is set, never an empty string), and <code>aria-valuemin</code>/<code>aria-valuemax</code> carry its real range: 1–12 for an hour segment in a 12-hour locale, 0–23 in a 24-hour one. Every segment is its own tab stop, the same way a native multi-part date input already works, so keyboard use needs nothing beyond Tab and the arrows documented above — plus <code>Alt+ArrowDown</code> to open the dropdown without reaching its own button, and the arrows/Home/End/Escape <code>@zag-js/select</code> already provides once inside the list.",
     "timeFieldPage.test1": "Mounts once and names the group from the authored label.",
     "timeFieldPage.test2": "Derives the segments from the locale, not from the markup.",
     "timeFieldPage.test3": "Starts empty, with placeholders instead of a made-up time.",
@@ -6246,8 +6233,14 @@ export const ui = {
     "menubarPage.lede":
       'The WAI-ARIA <code>menubar</code> pattern: <code>menubar-editor</code>, the example it is named after. Not <a href="/en/components/menu">Menu</a> (one trigger, one popup) — here there are SEVERAL items in a single roving-tabindex row, where Left/Right moves between them, and the detail a naive implementation misses: moving to an adjacent item while a dropdown is open closes the old one and opens the new one too, not just moves a highlight.',
     "menubarPage.contractBody":
-      'No <code>@zag-js/*</code> machine of its own — same as <code>Treegrid</code>/<code>DataGrid</code>, hand-rolled and shared by both bindings. v1 scope: ONE level of dropdown per item, no nested submenus — <code>Menu</code> already covers arbitrarily-nested submenus for a single trigger, and WAI\'s own examples (<code>menubar-editor</code>, <code>menubar-navigation</code>) do not need a second level either.',
+      'No <code>@zag-js/*</code> machine of its own — same as <code>Treegrid</code>/<code>DataGrid</code>, hand-rolled and shared by both bindings. v1 scope, of the BAR itself: ONE dropdown per top-level item, and even that is not hand-managed — moving to a neighboring item while a dropdown is open closes the old one and opens the new one through <code>Menu</code>\'s own <code>api.setOpen()</code>. A dropdown\'s own CONTENT has no such limit: it is a real <code>Menu</code>, so it nests submenus exactly as deep as <code>Menu</code> allows (see "Dropdowns with a submenu" below).',
     "menubarPage.label": "Menu bar",
+    "menubarPage.submenuTitle": "Dropdowns with a submenu",
+    "menubarPage.submenuBody":
+      'A dropdown item can open its own submenu — "Export" here — because the WHOLE dropdown is a real <code>Menu</code>, and arbitrarily-nested submenus already belong to <code>Menu</code>, not something <code>Menubar</code> has to reimplement. The bar\'s own scope (roving tabindex, one dropdown per top-level item) does not change: only a dropdown\'s own CONTENT can nest as deep as <code>Menu</code> allows.',
+    "menubarPage.navSkinTitle": "As nav-list",
+    "menubarPage.navSkinBody":
+      "The item's <code>nav</code> option swaps the trigger for <code>nav-list</code>'s own real link (<code>sk-nav-list__link</code>/<code>__label</code>) instead of a <code>Button</code>, and every dropdown entry with an <code>href</code> is a real <code>&lt;a&gt;</code> that navigates — WAI-ARIA's own <code>menubar-navigation</code> example. The bar is still a real <code>Menubar</code>: roving tabindex, dropdowns, every behavior; only the trigger's element and classes change.",
     "menubarPage.a11yBody":
       'The root carries <code>role="menubar"</code> with <code>aria-label</code> (required). Each top-level item is <code>role="menuitem"</code>, with <code>aria-haspopup="menu"</code>/<code>aria-expanded</code> only if it opens a dropdown. Focus is roving — a single stop for the whole bar. <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> move between items (and if a dropdown was open, open the new item\'s instead of just moving the highlight); <kbd class="sk-kbd">↓</kbd> opens the dropdown and focuses its first item, <kbd class="sk-kbd">↑</kbd> the last; inside an open dropdown, <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> move between its commands; <kbd class="sk-kbd">Escape</kbd> closes it and returns focus to its trigger; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> jump to the first/last item (or the first/last command if a dropdown is open).',
     "menubarPage.testCore1":
@@ -6255,16 +6248,21 @@ export const ui = {
     "menubarPage.testReact1":
       "Moving right while a dropdown is open closes it and opens the adjacent item's dropdown.",
     "menubarPage.testReact2": "Escape closes the open dropdown and returns focus to its trigger.",
-    "menubarPage.testVanilla1": "Clicking outside the bar closes any open dropdown.",
+    "menubarPage.testVanilla1": "Clicking a neighboring item's trigger while one dropdown is open closes the first and opens the neighbor's.",
 
     "demo.menubar.label": "Menu bar",
     "demo.menubar.file": "File",
     "demo.menubar.new": "New",
     "demo.menubar.open": "Open",
     "demo.menubar.save": "Save",
+    "demo.menubar.export": "Export",
+    "demo.menubar.pdf": "PDF",
+    "demo.menubar.csv": "CSV",
+    "demo.menubar.print": "Print",
     "demo.menubar.edit": "Edit",
     "demo.menubar.undo": "Undo",
     "demo.menubar.redo": "Redo",
+    "demo.menubar.destinations": "Destinations",
 
     "inlinePage.description": "Inline, the horizontal, wrapping layout pattern.",
     "inlinePage.lede":
@@ -6468,9 +6466,13 @@ export const ui = {
     "landing.brand": "skryensya/ui",
     "landing.hero.title": "Pieces for building interfaces that work as a system.",
     "landing.hero.lede":
-      "Components, primitives and foundations you can use alone or combine to build complete interfaces. Built on the web platform, with shared contracts for HTML, JavaScript and React.",
+      "Build web interfaces from components, primitives and foundations that compose together. One shared contract keeps structure, behavior and styling coherent across HTML, JavaScript and React.",
     "landing.hero.ctaComponents": "Explore components",
     "landing.hero.ctaPlayground": "Open Playground",
+
+    "landing.showcase.title": "From one piece to a screen.",
+    "landing.showcase.lede":
+      "Real examples, composed from the same catalogue you'll actually use. This is what it looks like, not a mockup.",
 
     "landing.start.title": "Start anywhere.",
     "landing.start.lede": "You do not need to adopt an entire system to solve one problem.",

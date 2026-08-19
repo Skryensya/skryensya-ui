@@ -1,4 +1,5 @@
 import type { ComponentContract } from "./contract.js";
+import { selectableItemShape } from "./select.js";
 
 export type ComboboxItem = {
   value: string;
@@ -131,14 +132,12 @@ export const comboboxContract = {
         items: {
           accepts: "items",
           required: true,
+          /* `selectableItemShape` (`select.ts`) plus one extra optional slot: the label/description
+             pair a plain choice doesn't need. */
           item: {
-            key: "value",
-            options: {
-              value: { type: "string", attr: "data-value" },
-              disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "" },
-            },
+            ...selectableItemShape,
             slots: {
-              label: { accepts: "text", required: true },
+              ...selectableItemShape.slots,
               /** A second line under the label, for when the label alone is ambiguous. */
               description: { accepts: "text" },
             },

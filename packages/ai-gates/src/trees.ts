@@ -835,15 +835,61 @@ const signatureTrees: readonly Canonical[] = [
       ],
     },
   },
-  /** The first component whose React half had to be WRITTEN before it could be published. */
+  /*
+   * Two faces, `current` set: the copy-to-clipboard shape, minus the click behavior — a consumer's
+   * own script now owns that, this only proves the anatomy both bindings agree on.
+   */
   {
-    name: "copy-button/copies-a-command",
-    enhanced: true,
+    name: "icon-state-button/copy-idle",
+    enhanced: false,
     tree: {
-      contract: "copy-button",
-      signature: "CopyButton",
-      options: { target: "install-command" },
-      children: "Copiar",
+      contract: "icon-state-button",
+      signature: "IconStateButton",
+      options: { current: "idle" },
+      // The contract itself has no `label`/`aria-label` option (decision 33: genuinely no opinion
+      // about behavior or naming, both are the consumer's) — this is the consumer's own, the same
+      // way a real one (CopyButton.astro's script, say) would author it.
+      attrs: { "aria-label": "Copiar" },
+      slots: {
+        faces: [
+          { options: { name: "idle", icon: "copy" }, slots: {} },
+          { options: { name: "copied", icon: "check" }, slots: {} },
+        ],
+      },
+    },
+  },
+  /** Three faces, so the same anatomy proves it is not hardcoded to two. */
+  {
+    name: "icon-state-button/theme-light",
+    enhanced: false,
+    tree: {
+      contract: "icon-state-button",
+      signature: "IconStateButton",
+      options: { current: "light" },
+      attrs: { "aria-label": "Modo: claro" },
+      slots: {
+        faces: [
+          { options: { name: "system", icon: "mode-system" }, slots: {} },
+          { options: { name: "light", icon: "mode-light" }, slots: {} },
+          { options: { name: "dark", icon: "mode-dark" }, slots: {} },
+        ],
+      },
+    },
+  },
+  /** `current` absent: no face carries `data-active` at all. */
+  {
+    name: "icon-state-button/no-current",
+    enhanced: false,
+    tree: {
+      contract: "icon-state-button",
+      signature: "IconStateButton",
+      attrs: { "aria-label": "Copiar" },
+      slots: {
+        faces: [
+          { options: { name: "idle", icon: "copy" }, slots: {} },
+          { options: { name: "copied", icon: "check" }, slots: {} },
+        ],
+      },
     },
   },
   /** A literal inside a sentence: the signature the accordion prose had to do without. */
@@ -1299,16 +1345,6 @@ const signatureTrees: readonly Canonical[] = [
   },
   {
     /*
-     * Three faces in the markup, one lit. The tree says nothing about which: `data-scheme` is state
-     * both bindings read off `<html>`, so what this case proves is that they agree on where the
-     * mode lives rather than each keeping their own.
-     */
-    name: "theme-toggle/default",
-    enhanced: true,
-    tree: { contract: "theme-toggle", signature: "ThemeToggle" },
-  },
-  {
-    /*
      * The first COMPUTED collection: the tree says page 4 of 12, and the window (1 … 3 4 5 … 12)
      * comes from the contract, not from the author. What G2 checks is that both bindings arrive at
      * the same window, which they do because both go through `paginationRange`.
@@ -1567,27 +1603,6 @@ const signatureTrees: readonly Canonical[] = [
         items: [
           { options: { value: "estandar" }, slots: { label: "Estándar, 3 a 5 días" } },
           { options: { value: "express" }, slots: { label: "Express, al día siguiente" } },
-        ],
-      },
-    },
-  },
-  {
-    /*
-     * The one floating family that is not anchored: the panel is a CHILD of the root and placement is
-     * fixed coordinates from the trigger's rect. Nothing is portalled, so both bindings land on the
-     * same subtree, which is exactly why this one is published and tooltip, popover and menu are not.
-     */
-    name: "flyout/pick-a-status",
-    enhanced: true,
-    tree: {
-      contract: "flyout",
-      signature: "Flyout",
-      slots: {
-        label: "Estado",
-        items: [
-          { options: { value: "abierto" }, slots: { label: "Abierto" } },
-          { options: { value: "en-curso" }, slots: { label: "En curso" } },
-          { options: { value: "cerrado" }, slots: { label: "Cerrado" } },
         ],
       },
     },
@@ -1923,8 +1938,9 @@ const signatureTrees: readonly Canonical[] = [
     },
   },
   {
-    // One plain command, one dropdown: exercises MenubarItem's two shapes (`items` given or not)
-    // and, through the dropdown, MenubarMenu and MenubarMenuItem.
+    // One plain command, one dropdown: exercises MenubarItem's two shapes (`items` given or not).
+    // The dropdown's `items` is Menu's OWN item shape now (decision: see `menubar.ts`'s header
+    // comment in core) — same shape `menu/with-submenu` above exercises, not a second description.
     name: "menubar/with-dropdown",
     enhanced: true,
     tree: {
@@ -1938,14 +1954,10 @@ const signatureTrees: readonly Canonical[] = [
           signature: "MenubarItem",
           slots: {
             children: "Archivo",
-            items: {
-              contract: "menubar",
-              signature: "MenubarMenu",
-              children: [
-                { contract: "menubar", signature: "MenubarMenuItem", children: "Abrir" },
-                { contract: "menubar", signature: "MenubarMenuItem", children: "Exportar" },
-              ],
-            },
+            items: [
+              { options: { value: "open" }, slots: { label: "Abrir" } },
+              { options: { value: "export" }, slots: { label: "Exportar" } },
+            ],
           },
         },
       ],

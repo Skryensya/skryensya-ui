@@ -1,0 +1,29 @@
+/*
+ * TIER 3, ICON STATE BUTTON
+ *
+ * A button IS an Icon Toggle with author-supplied faces (decision 33): the stack, the morph and
+ * the `[data-face][data-active]` activation all belong to `patterns/icon-toggle.css`, the same way
+ * a Drawer is a Vaul and re-declares Vaul's hooks under its own name rather than shipping a second
+ * public surface. This file's hooks ARE Icon Toggle's, so a consumer tunes `--sk-icon-state-button-*`
+ * without learning the pattern is underneath.
+ *
+ * Which face is active is not a hook: it is `data-active`, written by `selectedBy` at emit time or
+ * by whatever runs a click — see `icon-state-button.ts`. Nothing here maps a state value to a face;
+ * that mapping doesn't exist any more, on purpose (it was the CSS ThemeToggle and CopyButton each
+ * used to hand-write, one `[data-*-state="x"]` selector per value).
+ */
+@import url("../patterns/icon-toggle.css");
+
+@layer components {
+  .sk-icon-state-button {
+    --sk-icon-state-button-rest-scale: 0.25;
+    --sk-icon-state-button-rest-blur: 4px;
+    --sk-icon-state-button-transition-duration: var(--motion-state-change-duration);
+    --sk-icon-state-button-transition-easing: var(--motion-state-change-easing);
+
+    --sk-icon-toggle-rest-scale: var(--sk-icon-state-button-rest-scale);
+    --sk-icon-toggle-rest-blur: var(--sk-icon-state-button-rest-blur);
+    --sk-icon-toggle-transition-duration: var(--sk-icon-state-button-transition-duration);
+    --sk-icon-toggle-transition-easing: var(--sk-icon-state-button-transition-easing);
+  }
+}

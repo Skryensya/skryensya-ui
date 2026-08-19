@@ -1,0 +1,170 @@
+/*
+ * IMAGE FRAME, clip + aspect + object-fit for authored media.
+ *
+ * A PATTERN: cards, tiles, galleries and heroes all need the same shape, a box that holds an
+ * image (or video) to a measure, clips it, and decides how the media fills that box. Duplicating
+ * `aspect-ratio` + `object-fit` + radius clip per surface is what this exists to prevent.
+ *
+ * Sized and positioned with CSS vocabulary (`16/9`, `cover`, `top`), never by use-name (`hero`,
+ * `thumbnail`): the job of the media is the consumer's; the frame only names geometry.
+ */
+@layer components {
+  .sk-image-frame {
+    --sk-image-frame-aspect: auto;
+    --sk-image-frame-fit: cover;
+    --sk-image-frame-position: center;
+    --sk-image-frame-radius: var(--radius-surface);
+    --sk-image-frame-border-width: 0;
+    --sk-image-frame-border-color: transparent;
+    --sk-image-frame-bg: var(--color-bg-surface-sunken);
+
+    box-sizing: border-box;
+    /* Host for absolute media-gradient / caption siblings. */
+    position: relative;
+    display: block;
+    inline-size: 100%;
+    min-inline-size: 0;
+    /* clip (not only hidden): absolute washes/captions must follow the curve; clip-path
+       covers compositing cases where overflow alone leaves square corners. */
+    overflow: clip;
+    isolation: isolate;
+    aspect-ratio: var(--sk-image-frame-aspect);
+    border: var(--sk-image-frame-border-width) solid var(--sk-image-frame-border-color);
+    border-radius: var(--sk-image-frame-radius);
+    clip-path: inset(0 round var(--sk-image-frame-radius));
+    background: var(--sk-image-frame-bg);
+  }
+
+  /* Fill the frame; object-* decide crop vs letterbox. picture/video get the same paint. */
+  .sk-image-frame__media,
+  .sk-image-frame > img,
+  .sk-image-frame > video,
+  .sk-image-frame > picture > img {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    max-inline-size: none;
+    object-fit: var(--sk-image-frame-fit);
+    object-position: var(--sk-image-frame-position);
+  }
+
+  /* With no fixed aspect the media keeps its intrinsic ratio; still clipped by radius/border. */
+  .sk-image-frame[data-aspect="auto"] {
+    --sk-image-frame-aspect: auto;
+  }
+
+  .sk-image-frame[data-aspect="1/1"] {
+    --sk-image-frame-aspect: 1 / 1;
+  }
+
+  .sk-image-frame[data-aspect="4/3"] {
+    --sk-image-frame-aspect: 4 / 3;
+  }
+
+  .sk-image-frame[data-aspect="3/2"] {
+    --sk-image-frame-aspect: 3 / 2;
+  }
+
+  .sk-image-frame[data-aspect="16/9"] {
+    --sk-image-frame-aspect: 16 / 9;
+  }
+
+  .sk-image-frame[data-aspect="3/4"] {
+    --sk-image-frame-aspect: 3 / 4;
+  }
+
+  .sk-image-frame[data-aspect="2/3"] {
+    --sk-image-frame-aspect: 2 / 3;
+  }
+
+  .sk-image-frame[data-aspect="9/16"] {
+    --sk-image-frame-aspect: 9 / 16;
+  }
+
+  .sk-image-frame[data-fit="cover"] {
+    --sk-image-frame-fit: cover;
+  }
+
+  .sk-image-frame[data-fit="contain"] {
+    --sk-image-frame-fit: contain;
+  }
+
+  .sk-image-frame[data-fit="fill"] {
+    --sk-image-frame-fit: fill;
+  }
+
+  .sk-image-frame[data-fit="none"] {
+    --sk-image-frame-fit: none;
+  }
+
+  .sk-image-frame[data-fit="scale-down"] {
+    --sk-image-frame-fit: scale-down;
+  }
+
+  .sk-image-frame[data-position="center"] {
+    --sk-image-frame-position: center;
+  }
+
+  .sk-image-frame[data-position="top"] {
+    --sk-image-frame-position: top center;
+  }
+
+  .sk-image-frame[data-position="bottom"] {
+    --sk-image-frame-position: bottom center;
+  }
+
+  .sk-image-frame[data-position="left"] {
+    --sk-image-frame-position: center left;
+  }
+
+  .sk-image-frame[data-position="right"] {
+    --sk-image-frame-position: center right;
+  }
+
+  .sk-image-frame[data-position="top-left"] {
+    --sk-image-frame-position: top left;
+  }
+
+  .sk-image-frame[data-position="top-right"] {
+    --sk-image-frame-position: top right;
+  }
+
+  .sk-image-frame[data-position="bottom-left"] {
+    --sk-image-frame-position: bottom left;
+  }
+
+  .sk-image-frame[data-position="bottom-right"] {
+    --sk-image-frame-position: bottom right;
+  }
+
+  .sk-image-frame[data-radius="none"] {
+    --sk-image-frame-radius: 0;
+  }
+
+  /* Flush media on a rounded card: round only the leading block edge, square where body starts. */
+  .sk-image-frame[data-radius="top"] {
+    --sk-image-frame-radius: var(--radius-surface) var(--radius-surface) 0 0;
+  }
+
+  .sk-image-frame[data-radius="control"] {
+    --sk-image-frame-radius: var(--radius-control);
+  }
+
+  .sk-image-frame[data-radius="surface"] {
+    --sk-image-frame-radius: var(--radius-surface);
+  }
+
+  .sk-image-frame[data-radius="pill"] {
+    --sk-image-frame-radius: var(--radius-pill);
+  }
+
+  .sk-image-frame[data-border="subtle"] {
+    --sk-image-frame-border-width: 1px;
+    --sk-image-frame-border-color: var(--color-border-subtle);
+  }
+
+  .sk-image-frame[data-border="default"] {
+    --sk-image-frame-border-width: 1px;
+    --sk-image-frame-border-color: var(--color-border-default);
+  }
+}

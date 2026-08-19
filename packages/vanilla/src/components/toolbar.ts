@@ -1,3 +1,4 @@
+import { resolveToolbarKey } from "@skryensya/core/toolbar";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
 const controlsSelector =
@@ -24,25 +25,20 @@ function connect(root: HTMLElement): () => void {
     // preventDefault() before this listener sees the bubbled event; skip so its own arrow-key
     // handling isn't re-applied a second time by the ancestor toolbar.
     if (event.defaultPrevented) return;
-    const previous = orientation === "horizontal" ? "ArrowLeft" : "ArrowUp";
-    const next = orientation === "horizontal" ? "ArrowRight" : "ArrowDown";
-    if (![previous, next, "Home", "End"].includes(event.key)) return;
     const controls = Array.from(
       root.querySelectorAll<HTMLElement>(controlsSelector),
     ).filter(isStop);
-    if (!controls.length) return;
     const current = controls.indexOf(document.activeElement as HTMLElement);
-    let index =
-      event.key === "Home"
-        ? 0
-        : event.key === "End"
-          ? controls.length - 1
-          : current + (event.key === next ? 1 : -1);
-    if (root.hasAttribute("data-loop-focus"))
-      index = (index + controls.length) % controls.length;
-    else index = Math.max(0, Math.min(index, controls.length - 1));
+    const action = resolveToolbarKey({
+      key: event.key,
+      currentIndex: current,
+      itemCount: controls.length,
+      orientation,
+      loopFocus: root.hasAttribute("data-loop-focus"),
+    });
+    if (action.kind === "none") return;
     event.preventDefault();
-    controls[index]?.focus();
+    controls[action.index]?.focus();
   };
   root.addEventListener("keydown", onKeyDown);
   return () => root.removeEventListener("keydown", onKeyDown);

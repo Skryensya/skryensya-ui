@@ -8,19 +8,20 @@
  * pointer.
  *
  * So the button is a single element that travels. It is the SAME element `CopyButton.astro`
- * authors, mounted by the same `connectCopyButton` enhancer, so it is not a lookalike: it is an
- * icon-only small button because it IS the one the kit ships, and the copying, the copied/error
- * states and the anchored feedback flag are the enhancer's, untouched.
+ * authors, bound by the same `initCopyButtons` behavior (`scripts/copy-button.ts`, decision 33: no
+ * published contract owns this shape any more), so it is not a lookalike: it is an icon-only small
+ * button because it IS the one the kit ships, and the copying, the copied/error states and the
+ * anchored feedback flag are that script's, untouched.
  *
- * WHAT MAKES THAT LEGAL. `connectCopyButton` reads `data-sk-copy-button-target` at CLICK time, not
- * at mount, so retargeting a mounted button is a supported move rather than a trick: this file
- * writes the id of the cell's own value span before the click can happen.
+ * WHAT MAKES THAT LEGAL. The bound button reads `data-sk-copy-button-target` at CLICK time, not at
+ * mount, so retargeting a mounted button is a supported move rather than a trick: this file writes
+ * the id of the cell's own value span before the click can happen.
  *
  * THE KEYBOARD IS NOT AN AFTERTHOUGHT HERE, it is the part that got better. Reaching the copy
  * button of the six-hundredth token used to mean six hundred tab stops; now the tables hold exactly
  * one, and the arrow keys walk it cell by cell and row by row from wherever it is.
  */
-import { copyButtonAttrs } from "@skryensya/core/copy-button";
+import { attrs as copyButtonAttrs } from "./copy-button.js";
 
 /** The docs' own marker for "this cell holds one copyable value", from `site.css`. */
 const CELL = ".sk-table__cell--copy, .sk-table__header--copy";

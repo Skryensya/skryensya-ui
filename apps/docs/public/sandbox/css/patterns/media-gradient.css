@@ -1,0 +1,168 @@
+/*
+ * MEDIA GRADIENT, a wash that keeps text readable over a photo.
+ *
+ * A PATTERN: the wash is only as tall (top/bottom) or as wide (start/end) as the caption it
+ * protects: it sizes to the type, not to a percentage of the media. Nested inside
+ * `sk-media-caption`, absolute-filled to that box, fading toward the photo.
+ *
+ * Distinct from Backdrop (modal page scrim) and State layer (interaction paint). Named by geometry
+ * (`edge`, `strength`), never by use (`hero`, `card`).
+ *
+ * Compose as a sibling of the media inside a positioned host (ImageFrame is `position: relative`):
+ *
+ *   <div class="sk-image-frame" data-aspect="16/9">
+ *     <img class="sk-image-frame__media" src="…" alt="…" />
+ *     <div class="sk-media-caption" data-edge="bottom">
+ *       <div class="sk-media-gradient" data-strength="md" aria-hidden="true"></div>
+ *       <h3>…</h3>
+ *     </div>
+ *   </div>
+ */
+@layer components {
+  /* Caption is the measure: content + padding define the wash box. */
+  .sk-media-caption {
+    --sk-media-caption-fg: var(--color-text-on-media);
+    --sk-media-caption-gap: var(--space-stack-xs);
+    --sk-media-caption-padding: var(--space-inset-md);
+
+    position: absolute;
+    z-index: calc(var(--z-base) + 1);
+    display: grid;
+    gap: var(--sk-media-caption-gap);
+    padding: var(--sk-media-caption-padding);
+    isolation: isolate;
+    color: var(--sk-media-caption-fg);
+    pointer-events: auto;
+  }
+
+  .sk-media-caption[data-edge="bottom"],
+  .sk-media-caption:not([data-edge]) {
+    inset-block-end: 0;
+    inset-inline: 0;
+  }
+
+  .sk-media-caption[data-edge="top"] {
+    inset-block-start: 0;
+    inset-inline: 0;
+  }
+
+  /* Side bands: width follows type (capped); height follows type, not the full media. */
+  .sk-media-caption[data-edge="start"] {
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    max-inline-size: min(18rem, 70%);
+  }
+
+  .sk-media-caption[data-edge="end"] {
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    max-inline-size: min(18rem, 70%);
+  }
+
+  .sk-media-caption > :not(.sk-media-gradient) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .sk-media-caption > :where(h1, h2, h3, h4, h5, h6, p) {
+    margin: 0;
+    color: inherit;
+  }
+
+  /*
+   * Wash fills the caption box only. Direction fades toward the photo (away from the edge).
+   * `strength` is opacity / tint, never how much of the image is covered.
+   */
+  .sk-media-caption > .sk-media-gradient {
+    /* The tint is DECORATION and reads the accent-reach wash token, not the raw action colour. What
+     * makes the caption legible is `base` + `opacity`, the black scrim below, and neither of those
+     * dials: the tint was only ever the brand painted on top of a contrast guarantee. So turning the
+     * accent down takes the brand out of the wash and leaves the legibility exactly where it was.
+     * `-wash` and not `--color-decorative-bg` because that one is a near-white fill; a scrim needs a
+     * colour with body. */
+    --sk-media-gradient-tint: var(--color-decorative-wash);
+    --sk-media-gradient-base: black;
+    --sk-media-gradient-mix: 34%;
+    --sk-media-gradient-opacity: 72%;
+    --sk-media-gradient-direction: to top;
+
+    --sk-media-gradient-ink: color-mix(
+      in oklch,
+      var(--sk-media-gradient-base) var(--sk-media-gradient-opacity),
+      transparent
+    );
+    --sk-media-gradient-ink-mid: color-mix(
+      in oklch,
+      var(--sk-media-gradient-base) calc(var(--sk-media-gradient-opacity) * 0.35),
+      transparent
+    );
+    --sk-media-gradient-tint-edge: color-mix(
+      in oklch,
+      var(--sk-media-gradient-tint) calc(var(--sk-media-gradient-mix) * 1.1),
+      transparent
+    );
+    --sk-media-gradient-tint-mid: color-mix(
+      in oklch,
+      var(--sk-media-gradient-tint) calc(var(--sk-media-gradient-mix) * 0.4),
+      transparent
+    );
+
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(
+        var(--sk-media-gradient-direction),
+        var(--sk-media-gradient-ink) 0%,
+        var(--sk-media-gradient-ink-mid) 55%,
+        transparent 100%
+      ),
+      linear-gradient(
+        var(--sk-media-gradient-direction),
+        var(--sk-media-gradient-tint-edge) 0%,
+        var(--sk-media-gradient-tint-mid) 40%,
+        transparent 100%
+      );
+  }
+
+  .sk-media-caption[data-edge="bottom"] > .sk-media-gradient,
+  .sk-media-caption:not([data-edge]) > .sk-media-gradient {
+    --sk-media-gradient-direction: to top;
+  }
+
+  .sk-media-caption[data-edge="top"] > .sk-media-gradient {
+    --sk-media-gradient-direction: to bottom;
+  }
+
+  .sk-media-caption[data-edge="start"] > .sk-media-gradient {
+    --sk-media-gradient-direction: to right;
+  }
+
+  .sk-media-caption[data-edge="end"] > .sk-media-gradient {
+    --sk-media-gradient-direction: to left;
+  }
+
+  .sk-media-caption > .sk-media-gradient[data-strength="sm"] {
+    --sk-media-gradient-opacity: 55%;
+    --sk-media-gradient-mix: 26%;
+  }
+
+  .sk-media-caption > .sk-media-gradient[data-strength="md"],
+  .sk-media-caption > .sk-media-gradient:not([data-strength]) {
+    --sk-media-gradient-opacity: 72%;
+    --sk-media-gradient-mix: 34%;
+  }
+
+  .sk-media-caption > .sk-media-gradient[data-strength="lg"] {
+    --sk-media-gradient-opacity: 86%;
+    --sk-media-gradient-mix: 42%;
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .sk-media-caption > .sk-media-gradient {
+      background-color: var(--sk-media-gradient-base);
+      background-image: none;
+    }
+  }
+}

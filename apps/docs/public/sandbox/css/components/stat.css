@@ -1,0 +1,63 @@
+/*
+ * TIER 3, STAT
+ *
+ * A headline metric block: quiet label, large tabular value, and an optional change chip. The trend
+ * colors the change, up is not hard-wired to success, because the caller decides which direction is
+ * good (revenue up, churn down).
+ *
+ * Count-up (opt-in via bindings) reads `--sk-stat-count-duration` so tempo stays on the motion
+ * intent ladder. The value stacks an invisible sizer (final string) under the ticking digits so the
+ * box never grows as figures appear: mono + tabular nums keep intermediate glyphs from jittering.
+ */
+@layer components {
+  .sk-stat {
+    --sk-stat-count-duration: var(--motion-count-duration);
+    display: grid;
+    gap: var(--space-stack-xs);
+    align-content: start;
+  }
+  .sk-stat__label { font-size: var(--font-size-body-sm); color: var(--color-text-tertiary); }
+  .sk-stat__value {
+    font-family: var(--font-family-code);
+    font-size: var(--font-size-heading-md, var(--font-size-heading-sm));
+    font-weight: var(--font-weight-heading);
+    line-height: var(--font-line-height-heading);
+    color: var(--color-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Count-up slot: sizer paints the final metrics; tick overlays it. Same grid cell → no CLS. */
+  .sk-stat__value:has(.sk-stat__value-sizer) {
+    display: inline-grid;
+    justify-items: start;
+    justify-self: start;
+  }
+
+  .sk-stat__value-sizer,
+  .sk-stat__value-tick {
+    grid-area: 1 / 1;
+  }
+
+  .sk-stat__value-sizer {
+    visibility: hidden;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .sk-stat__change {
+    --sk-stat-change-fg: var(--color-text-secondary);
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-inline-xs);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+    color: var(--sk-stat-change-fg);
+  }
+  .sk-stat__change[data-trend="up"] { --sk-stat-change-fg: var(--color-text-success); }
+  .sk-stat__change[data-trend="down"] { --sk-stat-change-fg: var(--color-text-danger); }
+
+  /* A trend glyph in the change chip is an inline icon from the caller's set (arrow-up / arrow-down),
+   * not a text triangle, size it to the caption text it sits beside; color follows currentColor. */
+  .sk-stat__change .sk-icon { --sk-icon-size: 1.1em; }
+}

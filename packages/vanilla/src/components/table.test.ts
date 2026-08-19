@@ -159,4 +159,37 @@ describe("Table vanilla enhancer", () => {
     mountTable(document);
     expect(root.style.getPropertyValue("--sk-splitter-block-size")).toBe("260px"); // 300 - 40, not 300
   });
+
+  it("subtracts the table's own border width from the seeded total, not just the wrapper's raw width", () => {
+    document.body.innerHTML = `<div class="sk-table-scroll"><table class="sk-table" data-resizable-columns data-resize-label="x">
+      <thead><tr><th scope="col">A</th><th scope="col">B</th><th scope="col">C</th></tr></thead>
+      <tbody><tr><td>1</td><td>2</td><td>3</td></tr></tbody>
+    </table></div>`;
+    const wrapper = document.querySelector<HTMLElement>(".sk-table-scroll")!;
+    const root = document.querySelector<HTMLElement>(".sk-table")!;
+    wrapper.getBoundingClientRect = () => ({ width: 402 }) as DOMRect;
+    root.style.borderLeftWidth = "1px";
+    root.style.borderRightWidth = "1px";
+    mountTable(document);
+    const total = cols().reduce((sum, col) => sum + Number.parseFloat(col.style.width), 0);
+    // CSS's separated-border table model paints the table's border OUTSIDE the width its `<col>`
+    // sum describes — seeded straight off the wrapper's 402px would render 2px past it (a
+    // permanent horizontal scrollbar); 400px leaves exactly enough room for the 1px+1px border.
+    expect(total).toBeCloseTo(400);
+  });
+
+  it("never produces NaN widths when the environment reports no computed border at all (an empty string, not \"0px\")", () => {
+    // No inline border set here at all — `getComputedStyle(root).borderLeftWidth` reads `""` in
+    // this environment (no real stylesheet cascade), and `parseFloat("")` is `NaN` if unguarded.
+    document.body.innerHTML = `<div class="sk-table-scroll"><table class="sk-table" data-resizable-columns data-resize-label="x">
+      <thead><tr><th scope="col">A</th><th scope="col">B</th></tr></thead>
+      <tbody><tr><td>1</td><td>2</td></tr></tbody>
+    </table></div>`;
+    const wrapper = document.querySelector<HTMLElement>(".sk-table-scroll")!;
+    wrapper.getBoundingClientRect = () => ({ width: 300 }) as DOMRect;
+    mountTable(document);
+    for (const width of cols().map((col) => Number.parseFloat(col.style.width))) {
+      expect(Number.isNaN(width)).toBe(false);
+    }
+  });
 });

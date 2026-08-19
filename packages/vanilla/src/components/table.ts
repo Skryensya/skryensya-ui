@@ -50,8 +50,25 @@ function connect(root: HTMLElement): () => void {
    */
   const weights = parseColumnWeights(root.getAttribute("data-column-weights"), colCount) ??
     Array.from({ length: colCount }, () => 1);
+  /*
+   * CSS's separated-border table model (`border-collapse: separate`, what `.sk-table` uses) paints
+   * a table's own border OUTSIDE the width its `width` property/`<col>` sum describes, regardless
+   * of `box-sizing` — confirmed against a real render, not assumed: seeding straight off the
+   * wrapper's width rendered the table 2px wider than the wrapper itself (one border width per
+   * side), a permanent horizontal scrollbar a resizable table should never carry. Read once, off
+   * the table's own computed style rather than the design token directly, so a themed override
+   * (a consumer's own thicker border) is still accounted for correctly.
+   */
+  const borderWidth = (() => {
+    const style = getComputedStyle(root);
+    // `|| 0`, not a bare `parseFloat`: an environment with no real stylesheet cascade (this
+    // enhancer's own test suite) reports `borderLeftWidth` as `""`, and `parseFloat("")` is `NaN`
+    // — left unguarded, that `NaN` propagates through every width this function computes.
+    return (Number.parseFloat(style.borderLeftWidth) || 0) + (Number.parseFloat(style.borderRightWidth) || 0);
+  })();
+  const availableWidth = (total: number) => Math.max(0, total - borderWidth);
   const seedWidths = resolveWeightedColumnWidths({
-    total: measured.getBoundingClientRect().width,
+    total: availableWidth(measured.getBoundingClientRect().width),
     weights,
     min: MIN_COLUMN_WIDTH,
   });
@@ -86,6 +103,7 @@ function connect(root: HTMLElement): () => void {
     colCount,
     min: MIN_COLUMN_WIDTH,
     weights,
+    adjustTotal: availableWidth,
     apply: (nextWidths) => {
       cols.forEach((col, i) => (col.style.width = `${nextWidths[i]}px`));
       root.style.width = `${nextWidths.reduce((sum, width) => sum + width, 0)}px`;

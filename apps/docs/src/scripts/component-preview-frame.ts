@@ -45,17 +45,9 @@ function readerSized(): boolean {
   return frame?.hasAttribute("data-sk-component-preview-resized") ?? false;
 }
 
-/**
- * A screen preset is on, so the stage is a device: both axes are the preset's, and the document
- * scrolls inside them exactly as it would on the real thing. Measuring here would be worse than
- * useless: fitting the frame to its content is precisely what a device does not do.
- */
-function screened(): boolean {
-  return frame?.hasAttribute("data-sk-component-preview-screen") ?? false;
-}
 
 function scrolls(): boolean {
-  return allowScroll || readerSized() || screened();
+  return allowScroll || readerSized();
 }
 
 function applyOverflow(): void {
@@ -67,7 +59,7 @@ function applyOverflow(): void {
   /*
    * An auto-fit frame has no independent viewport: its height is the content's height. Mirror the
    * reader viewport so components using viewport-relative limits do not create a fit loop
-   * (short frame → short content → short frame). Fixed/resized stages own a real viewport instead.
+   * (short frame → short content → short frame). Reader-resized stages own a real viewport instead.
    */
   if (scrolling) {
     document.documentElement.style.removeProperty(previewViewportBlockSize);
@@ -80,6 +72,34 @@ function applyOverflow(): void {
 }
 
 /**
+ * Is there an element BETWEEN `target` and the frame's own `<body>` (exclusive of both) that can
+ * still move in the wheel gesture's own direction? The auto-fit frame's `<html>`/`<body>` are
+ * `overflow: hidden` (`applyOverflow`), by design, but a component can open its OWN scrollable
+ * region inside that short frame regardless — a listbox, a menu, anything a Zag/native popup
+ * portals into the frame's document (`Portal` with no `container` lands there, not on the parent
+ * page) — and that region is real, independent, internal scroll that has nothing to do with
+ * whether the FRAME itself is auto-fit. Confirmed the concrete failure against a live render, not
+ * assumed: TimeField's own picker (48 rows, `.sk-select__content`) was the first demo on the site
+ * with enough rows to actually need this — every earlier dropdown demo's item count fit inside its
+ * `max-block-size` without scrolling, so the gap between "the frame is short" and "something inside
+ * it needs its own scroll" had never been exercised before.
+ */
+function hasScrollableAncestor(target: EventTarget | null, deltaY: number): boolean {
+  let node = target instanceof Element ? target : null;
+  while (node && node !== document.body && node !== document.documentElement) {
+    const style = getComputedStyle(node);
+    const scrollableY = style.overflowY === "auto" || style.overflowY === "scroll";
+    if (scrollableY && node.scrollHeight > node.clientHeight) {
+      const atTop = node.scrollTop <= 0;
+      const atBottom = node.scrollTop + node.clientHeight >= node.scrollHeight;
+      if ((deltaY < 0 && !atTop) || (deltaY > 0 && !atBottom)) return true;
+    }
+    node = node.parentElement;
+  }
+  return false;
+}
+
+/**
  * An auto-fit frame (`!scrolls()`) has nothing to scroll internally (`overflow: hidden` sees to
  * that), but a wheel gesture over it does not reliably chain up to the PARENT page's scroll either:
  * cross-frame scroll chaining is not something browsers do consistently once the local document
@@ -87,9 +107,14 @@ function applyOverflow(): void {
  * stop dead the moment their pointer crosses into a preview. Forward it to the parent explicitly
  * instead. Once the frame legitimately owns scroll (reader-resized, screened, or a demo that opted
  * into `scroll`) this gets out of the way entirely, and the frame's own content scrolls normally.
+ *
+ * `hasScrollableAncestor` guards that forwarding: hijacking a gesture the reader aimed at a
+ * component's OWN open dropdown — scrolling the outer preview instead of the list under the
+ * pointer — is worse than the dead-stop this function exists to fix in the first place.
  */
 function forwardWheelToParent(event: WheelEvent): void {
   if (scrolls()) return;
+  if (hasScrollableAncestor(event.target, event.deltaY)) return;
   event.preventDefault();
   window.parent.scrollBy({ left: event.deltaX, top: event.deltaY });
 }
@@ -136,6 +161,15 @@ function injectFrameChrome(): void {
       height: auto !important;
       max-block-size: none !important;
       overflow: ${scrolls() ? "auto" : "hidden"} !important;
+      /*
+       * \`cloneParentStyles()\` brings in the docs site's own \`body { background: var(--color-bg-canvas) }\`
+       * (site.css, unlayered), which otherwise wins over this class's \`@layer components\` background
+       * regardless of specificity: an unlayered rule always beats a layered one. Left unforced, every
+       * previewed demo painted on canvas instead of the surface component-preview.css intends, and in
+       * dark mode canvas is exactly the depth \`--color-bg-surface-sunken\` deliberately lands on (it is
+       * meant to sit INSIDE a surface) — so a slider/progress/meter track vanished into the stage.
+       */
+      background: var(--sk-component-preview-bg) !important;
     }
   `;
   document.head.append(style);
@@ -281,7 +315,7 @@ const mountFrameComponents = (root: Document | Element): Promise<void> =>
  * Three intentionally render authored structure for a Vanilla enhancer instead: Carousel adds
  * controls and tracks the active slide; TablePager builds its navigation; Toast owns dismissal
  * through the same DOM event API in both bindings. Keep that seam narrow so React-owned machines
- * such as Tabs, Flyout and TreeView cannot race a second state owner.
+ * such as Tabs and TreeView cannot race a second state owner.
  */
 // Runtime selector registry: keep these imports lazy so ordinary frames do not ship three unused enhancers.
 const reactEnhancers = [
@@ -445,6 +479,24 @@ function measureContentHeight(): number {
 
   for (const child of body.children) consider(child);
 
+  /*
+   * An OPEN menu panel is exactly the out-of-flow content `consider()` above is right to skip for
+   * its own DIRECT box (a closed trigger must not reserve room for a menu that might never open),
+   * but skipping it forever is a different bug: `.sk-menu` is a normal, in-flow wrapper, never
+   * `display: contents`, so `consider()` never descends into it to find the panel nested inside —
+   * a `position: fixed` submenu escapes the WRAPPER's own box by design (`patterns/anchored.css`),
+   * and nothing here ever measured where it actually landed. Measured against a live nested Menu:
+   * the auto-fit frame stayed at the closed trigger's own height regardless of how many levels were
+   * open, clipping every one of them at the iframe's own edge — this is what actually broke, not
+   * how tall any preset floor was. Every open panel, at ANY depth, gets its own real screen rect
+   * folded in here; a closed one is `display: none` and contributes nothing, so this only grows the
+   * frame for what the reader can currently see.
+   */
+  for (const panel of document.querySelectorAll<HTMLElement>('.sk-menu__content[data-state="open"]')) {
+    const bottom = panel.getBoundingClientRect().bottom;
+    if (Number.isFinite(bottom)) contentBottom = Math.max(contentBottom, bottom);
+  }
+
   const height = contentBottom - bodyTop + paddingBottom + borderBottom;
   return Math.max(1, Math.ceil(height));
 }
@@ -472,9 +524,34 @@ function frameCollapsed(): boolean {
   return !frame || frame.offsetParent === null;
 }
 
+/*
+ * The same three numbers `component-preview.css` gives `--sk-component-preview-stage-min-block-size`
+ * for the LOADING flash, kept here too rather than read back off the stage: that custom property
+ * resolves to a `rem` string (density-scaled, cross-realm), and the one thing this floor has to be
+ * is a plain px number `Math.max` can use against a measurement in the SAME units. Approximate is
+ * fine, since what it buys is the placement machine's OWN room to decide "does this fit", not a
+ * final pixel: a smaller floor here at most nudges where a menu's OWN flip already lands it.
+ *
+ * The floor matters at THIS layer and not only in CSS because of a bootstrapping loop the loading
+ * floor alone cannot reach: a menu's flip logic decides which side it opens on by asking whether it
+ * fits in the CURRENT frame, and once `frame-ready` zeroes the CSS floor (before any menu has ever
+ * opened), that current frame is the closed trigger's own few px. A submenu opening into that flips
+ * upward to "fit", landing at a negative `y` — ABOVE this frame's own origin, clipped at the top
+ * instead of the bottom, and `measureContentHeight`'s open-panel pass only ever grows the BOTTOM
+ * edge. Applying the floor here keeps the frame reporting a reasonable height even before content
+ * says it needs one, so the flip decision a newly-opened menu makes is against real room from the
+ * start, not the collapsed one an empty trigger left behind.
+ */
+const viewportFloorPx: Record<string, number> = {
+  menu: 288,
+  overlay: 384,
+  "menu-deep": 480,
+};
+
 function fitFrame(): void {
-  if (!frame || allowScroll || readerSized() || screened() || frameCollapsed()) return;
-  const next = `${measureContentHeight()}px`;
+  if (!frame || allowScroll || readerSized() || frameCollapsed()) return;
+  const floor = viewportFloorPx[frame.dataset.skComponentPreviewViewport ?? ""] ?? 0;
+  const next = `${Math.max(measureContentHeight(), floor)}px`;
   if (frame.style.height !== next) frame.style.height = next;
 }
 
@@ -532,9 +609,8 @@ async function boot(): Promise<void> {
 
   if (frame) {
     /*
-     * The resizer and the screen tabs both live in the parent document: watch their verdict on who
-     * owns the height. Leaving a preset is the case that needs the re-fit: the stage goes back to
-     * content height, and nothing else would ever ask for that measurement again.
+     * The resizer and screen tabs both live in the parent document. Watching either lets a stage
+     * re-fit when the reader returns height to content or when a new frame width reflows it.
      */
     const sizingObserver = new MutationObserver(() => {
       applyOverflow();
@@ -596,6 +672,23 @@ async function boot(): Promise<void> {
      */
     childObserver.observe(document.body, { childList: true, subtree: true });
     window.addEventListener("pagehide", () => childObserver.disconnect(), {
+      once: true,
+    });
+
+    /*
+     * A menu opening/closing toggles `data-state` on an EXISTING node (Zag's own machine, not this
+     * runtime's DOM), which `childObserver` above never sees: it watches nodes being added or
+     * removed, not attributes changing on ones already there. Without this, `measureContentHeight`'s
+     * own open-panel pass (above) had the right measurement but nothing ever asked for it again once
+     * a menu opened after boot.
+     */
+    const menuStateObserver = new MutationObserver(fitFrame);
+    menuStateObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["data-state"],
+      subtree: true,
+    });
+    window.addEventListener("pagehide", () => menuStateObserver.disconnect(), {
       once: true,
     });
 

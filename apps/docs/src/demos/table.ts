@@ -303,9 +303,9 @@ export const tablePagerTree = (t: Translate): UsageTree => ({
           contract: "table-pager",
           signature: "TablePagerSize",
           children: {
-            contract: "flyout",
-            signature: "Flyout",
-            options: { defaultValue: "5" },
+            contract: "select",
+            signature: "Select",
+            options: { name: "page-size", value: "5" },
             slots: { label: t("demo.table.rowsPerPage"), items: pageSizeItems },
           },
         },

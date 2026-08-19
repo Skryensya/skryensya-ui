@@ -31,6 +31,10 @@
       "types": "./src/icon-toggle.ts",
       "default": "./src/icon-toggle.ts"
     },
+    "./icon-state-button": {
+      "types": "./src/icon-state-button.ts",
+      "default": "./src/icon-state-button.ts"
+    },
     "./badge": {
       "types": "./src/badge.ts",
       "default": "./src/badge.ts"
@@ -182,10 +186,6 @@
     "./select": {
       "types": "./src/select.ts",
       "default": "./src/select.ts"
-    },
-    "./flyout": {
-      "types": "./src/flyout.ts",
-      "default": "./src/flyout.ts"
     },
     "./selection": {
       "types": "./src/selection.ts",
@@ -383,6 +383,7 @@
     "./modes/*": "./css/modes/*",
     "./dimensions/radius.css": "./dist/dimensions/radius.css",
     "./dimensions/accent.css": "./dist/dimensions/accent.css",
+    "./dimensions/press-scale.css": "./dist/dimensions/press-scale.css",
     "./dimensions/*": "./css/dimensions/*",
     "./components/*": "./css/components/*",
     "./patterns/*": "./css/patterns/*",

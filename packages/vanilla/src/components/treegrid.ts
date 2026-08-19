@@ -1,9 +1,11 @@
 import {
   computeTreegridVisibility,
   defaultTreegridColumnWeights,
+  diffTreegridVisibility,
   resolveTreegridKey,
   treegridEvents,
   treegridParts,
+  TREEGRID_EXIT_FALLBACK_MS,
   TREEGRID_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH,
   type TreegridFocus,
   type TreegridRowMeta,
@@ -222,11 +224,67 @@ function connect(root: HTMLElement): () => void {
   /** Only visible rows are addressable — the same index space `resolveTreegridKey` expects. */
   let visible: RowEntry[] = [];
 
+  /*
+   * ANIMATING A TOGGLE — mirrors `treegrid.tsx`'s own effect (React binding), same three-way split
+   * `diffTreegridVisibility` documents, applied imperatively instead of via React state:
+   *   - `previousFlags`: the visibility array from BEFORE this call, `null` on first mount (nothing
+   *     changed yet — a branch authored collapsed must not play an exit animation for content that
+   *     was never shown).
+   *   - `exitingEntries`: rows kept un-hidden past their own `visibleFlags === false` moment so they
+   *     keep painting through `sk-treegrid-row-out` (`treegrid.css`) instead of vanishing the same
+   *     frame the branch collapses. Guards the "no transition this call, but still mid-exit from
+   *     the LAST one" case below — a second, unrelated toggle mid-animation must not clip it early.
+   *   - `settleTimers`: one `animationend`-or-`TREEGRID_EXIT_FALLBACK_MS`-timeout race per row
+   *     currently transitioning, so a repeat toggle before the first settle cancels the stale one
+   *     instead of it firing late against whatever state the row is in by then.
+   * `visible` itself stays computed straight off `flags` (the pure, INSTANT truth) either way — an
+   * exiting-but-still-painting row is correctly unreachable by arrow keys immediately, unaffected by
+   * this whole deferred-hide window.
+   */
+  let previousFlags: readonly boolean[] | null = null;
+  const exitingEntries = new Set<RowEntry>();
+  const settleTimers = new Map<RowEntry, ReturnType<typeof setTimeout>>();
+
+  const scheduleSettle = (entry: RowEntry, transition: "entering" | "exiting") => {
+    const existingTimer = settleTimers.get(entry);
+    if (existingTimer) clearTimeout(existingTimer);
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      settleTimers.delete(entry);
+      entry.element.removeEventListener("animationend", onAnimationEnd);
+      entry.element.removeAttribute("data-state");
+      if (transition === "exiting") {
+        entry.element.hidden = true;
+        exitingEntries.delete(entry);
+      }
+    };
+    const onAnimationEnd = () => finish();
+    entry.element.addEventListener("animationend", onAnimationEnd, { once: true });
+    settleTimers.set(entry, setTimeout(finish, TREEGRID_EXIT_FALLBACK_MS));
+  };
+
   const applyVisibility = () => {
     const flags = computeTreegridVisibility(rows.map((r) => r.meta));
+    const transitions = previousFlags === null ? null : diffTreegridVisibility(previousFlags, flags);
+    previousFlags = flags;
+
     rows.forEach((entry, index) => {
-      entry.element.hidden = !flags[index];
+      const transition = transitions?.[index];
+      if (transition === "entering") {
+        entry.element.hidden = false;
+        entry.element.setAttribute("data-state", "entering");
+        scheduleSettle(entry, "entering");
+      } else if (transition === "exiting") {
+        exitingEntries.add(entry);
+        entry.element.setAttribute("data-state", "exiting");
+        scheduleSettle(entry, "exiting");
+      } else if (!exitingEntries.has(entry)) {
+        entry.element.hidden = !flags[index];
+      }
     });
+
     visible = rows.filter((_, index) => flags[index]);
   };
 
@@ -337,6 +395,8 @@ function connect(root: HTMLElement): () => void {
     root.removeEventListener("click", onClick);
     cleanupLayoutWatch();
     cleanupColumnResize();
+    for (const timer of settleTimers.values()) clearTimeout(timer);
+    settleTimers.clear();
   };
 }
 

@@ -1,4 +1,4 @@
-import { toolbarContract, toolbarParts } from "@skryensya/core/toolbar";
+import { resolveToolbarKey, toolbarContract, toolbarParts } from "@skryensya/core/toolbar";
 import type { OptionValue } from "@skryensya/core/contract";
 import { useRef, type HTMLAttributes, type KeyboardEvent, type ReactNode } from "react";
 
@@ -40,24 +40,20 @@ export function Toolbar({
     // preventDefault() before this listener sees the bubbled event; skip so its own arrow-key
     // handling isn't re-applied a second time by the ancestor toolbar.
     if (event.defaultPrevented) return;
-    const previous = orientation === "horizontal" ? "ArrowLeft" : "ArrowUp";
-    const next = orientation === "horizontal" ? "ArrowRight" : "ArrowDown";
-    if (![previous, next, "Home", "End"].includes(event.key)) return;
     const controls = Array.from(
       ref.current?.querySelectorAll<HTMLElement>(controlsSelector) ?? [],
     ).filter(isStop);
-    if (!controls.length) return;
     const active = controls.indexOf(document.activeElement as HTMLElement);
-    let target =
-      event.key === "Home"
-        ? 0
-        : event.key === "End"
-          ? controls.length - 1
-          : active + (event.key === next ? 1 : -1);
-    if (loopFocus) target = (target + controls.length) % controls.length;
-    else target = Math.max(0, Math.min(target, controls.length - 1));
+    const action = resolveToolbarKey({
+      key: event.key,
+      currentIndex: active,
+      itemCount: controls.length,
+      orientation,
+      loopFocus,
+    });
+    if (action.kind === "none") return;
     event.preventDefault();
-    controls[target]?.focus();
+    controls[action.index]?.focus();
   };
   return (
     <div

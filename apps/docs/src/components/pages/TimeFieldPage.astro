@@ -1,26 +1,37 @@
 ---
 import "@skryensya/core/components/time-field.css";
+import "@skryensya/core/patterns/anchored.css";
+import "@skryensya/core/components/select.css";
+import "@skryensya/core/patterns/scrollbar.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { timeFieldNativeTree, timeFieldTree } from "../../demos/time-field";
+import { timeFieldForced24Tree, timeFieldNativeTree, timeFieldQuarterHourTree, timeFieldTree } from "../../demos/time-field";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/time-field.yaml?raw";
 import coreSource from "@core/src/time-field.ts?raw";
 import cssSource from "@core/css/components/time-field.css?raw";
 import vanillaMountSource from "@vanilla/src/components/time-field.ts?raw";
+import vanillaComponentSource from "@vanilla/src/components/TimeField.svelte?raw";
 import reactSource from "@react/src/components/time-field.tsx?raw";
 
 const styles = `@import "@skryensya/core/components/button.css";
-@import "@skryensya/core/components/time-field.css";`;
+@import "@skryensya/core/components/time-field.css";
+@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/select.css";
+/* El desplegable siempre hace scroll (48 filas al paso por defecto): el riel lo pinta el pattern,
+   marcado con sk-scrollbar en el propio listbox del picker. */
+@import "@skryensya/core/patterns/scrollbar.css";`;
 
-const t = useTranslations(getLocale(Astro.url));
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
 
 const sourceFiles = [
   { id: "contracts/semantic/time-field.yaml", source: contractSource, language: "yaml" },
   { id: "packages/core/src/time-field.ts", source: coreSource, language: "ts" },
   { id: "packages/core/css/components/time-field.css", source: cssSource, language: "css" },
   { id: "packages/vanilla/src/components/time-field.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/TimeField.svelte", source: vanillaComponentSource, language: "svelte" },
   { id: "packages/react/src/components/time-field.tsx", source: reactSource, language: "tsx" },
 ] as const;
 ---
@@ -53,7 +64,7 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("timeFieldPage.lede")} />
-    <ComponentPreview tree={timeFieldTree(t, { locale: "es-DO", name: "salida" })} label="TimeField" />
+    <ComponentPreview tree={timeFieldTree(t, { locale: "es-DO", name: "salida" })} label="TimeField" viewport="menu" />
 
     <h3>{t("component.contractNotesTitle")}</h3>
     <p set:html={t("timeFieldPage.contractBody")} />
@@ -61,9 +72,46 @@ const sourceFiles = [
     <h3>{t("timeFieldPage.editTitle")}</h3>
     <p set:html={t("timeFieldPage.editBody")} />
 
+    <h3>{t("timeFieldPage.forced24Title")}</h3>
+    <p set:html={t("timeFieldPage.forced24Body")} />
+    <ComponentPreview
+      tree={timeFieldForced24Tree(t, { locale: "es", name: "llegada" })}
+      label={t("timeFieldPage.forced24Title")}
+      viewport="menu"
+    />
+
+    <h3>{t("timeFieldPage.optionsTitle")}</h3>
+    <p set:html={t("timeFieldPage.optionsBody")} />
+    <ComponentPreview
+      tree={timeFieldQuarterHourTree(t, { locale: "es", name: "reunion" })}
+      label={t("timeFieldPage.optionsQuarterHourTitle")}
+      viewport="menu"
+    />
+
+    {/*
+      LAST, on purpose: simplest-to-most-complex top to bottom (segments alone, then a locked-in
+      option, then the full segments+picker composition), with the plain platform fallback at the
+      very end — a reader reaches for it only once everything ABOVE it turned out to be more than
+      they needed, so it reads as the exit, not a fourth variant of the same thing.
+    */}
     <h3>{t("timeFieldPage.nativeTitle")}</h3>
     <p set:html={t("timeFieldPage.nativeBody")} />
-    <ComponentPreview tree={timeFieldNativeTree(t, { name: "inicio" })} label={t("timeFieldPage.nativeLabel")} />
+    {
+      /*
+       * `measure` matches `.sk-time-field`'s own `--sk-time-field-inline-size` (`time-field.css`)
+       * exactly — the STAGE'S width, not the input's: `.sk-input` already fills its container
+       * (`inline-size: 100%`, `input.css`), so capping the stage is what narrows a reader's actual
+       * comparison target instead of the field it sits beside. Scoped to this ONE demo on purpose,
+       * not to `.sk-input` itself: most native inputs on a real form legitimately want to fill
+       * whatever column they are given, a `type="time"` field's own narrow, fixed-shape content is
+       * the exception, not the rule for every native input this contract renders.
+       */
+    }
+    <ComponentPreview
+      tree={timeFieldNativeTree(t, { name: "inicio" })}
+      label={t("timeFieldPage.nativeLabel")}
+      measure="12rem"
+    />
   </Fragment>
 
   <Fragment slot="install">

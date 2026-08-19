@@ -412,10 +412,15 @@ export type SidebarTriggerProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 
   label: string;
   /** Decorative: the label above is what names this. */
   icon?: ReactNode;
+  /**
+   * Lifts the trigger out of flow to the panel's own top-right corner instead of sitting inline
+   * where it was authored. See `sidebar.css`'s `[data-floating]` rule for the geometry.
+   */
+  floating?: boolean;
 };
 
 export const SidebarTrigger = forwardRef<HTMLButtonElement, SidebarTriggerProps>(function SidebarTrigger(
-  { className, icon, label, onClick, ...props },
+  { className, floating, icon, label, onClick, ...props },
   ref,
 ) {
   const { collapsed, contentId, toggle } = useSidebar("SidebarTrigger");
@@ -427,6 +432,7 @@ export const SidebarTrigger = forwardRef<HTMLButtonElement, SidebarTriggerProps>
       aria-expanded={!collapsed}
       aria-label={label}
       className={cx(`${sidebarParts.trigger} sk-interactive`, className)}
+      data-floating={floating ? "" : undefined}
       onClick={(event) => {
         onClick?.(event);
         if (!event.defaultPrevented) toggle();

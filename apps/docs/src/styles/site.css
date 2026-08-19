@@ -85,12 +85,6 @@ body {
   --sk-wrapper-max: var(--docs-shell-max);
 }
 
-.dimensions__brand {
-  font-weight: var(--font-weight-heading);
-  color: var(--color-text-primary);
-  text-decoration: none;
-}
-
 /* Docs and the playground are peer destinations, not categories in the documentation rail. */
 .dimensions__global {
   display: flex;
@@ -1013,7 +1007,15 @@ h4:not([data-flush]) {
   font-weight: var(--font-weight-heading);
 }
 
-p {
+/* Same unlayered-beats-`@layer components` fact as the headings above, and the same fix: this is
+ * for the docs' own prose paragraphs, not for a composed `Text` (`.sk-text`, `margin: 0` in
+ * typography.css) sitting inside a demo. Without the guard, every `Text` used to build a header or
+ * footer row inside a ComponentPreview (the preview iframe copies this stylesheet wholesale) picks
+ * up an extra `--space-stack-sm` under itself: on TOP of a Stack's own `gap`, that reads as far too
+ * much space under a name, and inflates the Stack's own measured height enough to throw off
+ * `align-items: center` against a sibling avatar. `Text` has no `flush` option the way `Heading`
+ * does — a bare class exclusion is the whole fix it needs. */
+p:not(.sk-text) {
   margin: 0 0 var(--space-stack-sm);
 }
 
@@ -1514,6 +1516,12 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile) {
   display: flex;
   inline-size: 100%;
   block-size: 22rem;
+  /* This box is the body of an application, not a card: `.sk-box`'s default radius (and the
+   * `overflow: hidden` that clips to it) rounded the Sidebar's own top corner where it meets the
+   * Navbar above, which no real app shell does. Overriding the hook rather than `border-radius`
+   * directly, so it stays the documented override surface (tokens.scss) instead of a second rule
+   * fighting the component's. */
+  --sk-box-radius: 0;
 }
 
 .app-shell__main {
@@ -1523,6 +1531,33 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile) {
   overflow: auto;
   background: var(--color-bg-canvas);
   color: var(--color-text-secondary);
+}
+
+/* Templates render in the docs' main region rather than an iframe. This quiet frame separates the
+ * consuming application from the prose without pretending it is another document or card. */
+.templates__example {
+  margin-block: var(--space-stack-sm);
+  padding: var(--space-inset-sm);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-surface);
+  background: var(--color-bg-surface-sunken);
+}
+
+.templates__example > .sk-stack {
+  min-inline-size: 0;
+}
+
+/* On the full-bleed /templates page the example IS the page, not an aside in a paragraph: at the
+ * inline component page's 22rem it reads as a letterboxed thumbnail rather than a screen. Sized to
+ * fill what the sticky navbar and the stage's own chrome leave of the viewport (`--space-inset-xl`
+ * is the stage's padding, `--space-inset-sm` and `--space-stack-sm` are this frame's own padding
+ * and margin), so it reads like the real screen it is standing in for. Scoped to this page's frame
+ * only: SidebarPage's inline demo keeps the 22rem box above, sized for sitting beside prose. */
+.templates__example .app-shell {
+  block-size: calc(
+    100dvh - var(--docs-navbar-h, var(--docs-header-block-size)) - (var(--space-inset-xl) * 2) -
+      (var(--space-inset-sm) * 2) - (var(--space-stack-sm) * 2)
+  );
 }
 
 .mono {

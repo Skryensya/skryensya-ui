@@ -1,4 +1,4 @@
-import type { ComponentContract } from "./contract.js";
+import type { ComponentContract, ContractSlot } from "./contract.js";
 
 export type SelectOption = {
   value: string;
@@ -43,6 +43,22 @@ export const selectParts = {
 
 export type SelectPart = keyof typeof selectParts;
 export type SelectPartClass = (typeof selectParts)[SelectPart];
+
+/**
+ * One choice: value, disabled, a required label. The shape `Select`'s own enhanced signature uses
+ * verbatim, `Select.native` reuses with only the `value` option's `attr` overridden (a real
+ * `<option value>` DOM attribute, not `data-value`), and `Combobox` builds on by adding its own
+ * `description` slot — the same "export once, spread where it diverges" precedent `menuItemShape`
+ * (`menu.ts`) already set, rather than three components hand-writing the same fields three times.
+ */
+export const selectableItemShape: NonNullable<ContractSlot["item"]> = {
+  key: "value",
+  options: {
+    value: { type: "string", attr: "data-value" },
+    disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "" },
+  },
+  slots: { label: { accepts: "text", required: true } },
+};
 
 
 /*
@@ -93,13 +109,15 @@ export const selectContract = {
           required: true,
           /* The contract keys it `items` like every other collection; React calls it `options`. */
           prop: "options",
+          /* `selectableItemShape`, with both attrs overridden to real DOM attributes: a native
+             `<option value disabled>` reads `value`/`disabled` directly, never `data-value`/
+             `data-disabled` — the browser's own disabling only works on the real attribute. */
           item: {
-            key: "value",
+            ...selectableItemShape,
             options: {
-              value: { type: "string", attr: "value" },
-              disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "" },
+              value: { ...selectableItemShape.options.value, attr: "value" },
+              disabled: { ...selectableItemShape.options.disabled, attr: "disabled" },
             },
-            slots: { label: { accepts: "text", required: true } },
           },
         },
       },
@@ -128,19 +146,7 @@ export const selectContract = {
       slots: {
         /** Names the control. Absent means something else nearby names it. */
         label: { accepts: "text" },
-        items: {
-          accepts: "items",
-          required: true,
-          prop: "options",
-          item: {
-            key: "value",
-            options: {
-              value: { type: "string", attr: "data-value" },
-              disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "" },
-            },
-            slots: { label: { accepts: "text", required: true } },
-          },
-        },
+        items: { accepts: "items", required: true, prop: "options", item: selectableItemShape },
       },
       template: {
         element: "div",

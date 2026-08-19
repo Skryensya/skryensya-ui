@@ -126,10 +126,16 @@ export type NavListLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> &
     icon?: ReactNode;
     /** Trailing metadata: a count, a badge. Pinned to the end, and hidden when a host collapses. */
     trailing?: ReactNode;
+    /**
+     * This destination's own sub-destinations: a `<NavListGroup>` rendered inside the same `<li>`,
+     * after the link. `<li>` accepts arbitrary flow content, so this is valid where a group nested
+     * straight inside another group's `<ul>` would not be — a `<div>` is not a legal `<ul>` child.
+     */
+    nested?: ReactNode;
   };
 
 export const NavListLink = forwardRef<HTMLAnchorElement, NavListLinkProps>(function NavListLink(
-  { children, className, current, icon, trailing, ...props },
+  { children, className, current, icon, nested, trailing, ...props },
   ref,
 ) {
   return (
@@ -144,6 +150,7 @@ export const NavListLink = forwardRef<HTMLAnchorElement, NavListLinkProps>(funct
         <span className={navListParts.label}>{children}</span>
         {trailing ? <span className={navListParts.trailing}>{trailing}</span> : null}
       </a>
+      {nested}
     </li>
   );
 });

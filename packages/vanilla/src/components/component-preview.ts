@@ -147,10 +147,8 @@ function publishScreen(screen: ComponentPreviewScreen): void {
  * dispatches on itself, the same way `sourceTabs` below reacts to Tabs' own event, rather than
  * re-implementing Segmented's click handling, aria-checked painting or sliding indicator.
  *
- * The preset takes over BOTH axes, so choosing one drops any height the reader had dragged: two
- * owners of the same height is the bug, and the preset is the one the reader just asked for. The
- * inline `height` has to go too, not only the `resized` flag; an inline style beats the preset's
- * rule, so a stale drag would silently win over the device height.
+ * Tablet and mobile only change the stage's width. Both preserve an auto-fitted or reader-chosen
+ * height exactly like free desktop, so screen selection never competes with the resizer.
  *
  * `free` is the ABSENCE of the attribute rather than a value: every rule that fits, reserves or
  * scrolls then keeps working untouched, and the frame runtime needs no third case.
@@ -169,8 +167,6 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
         stage.removeAttribute(componentPreviewAttrs.screen);
         continue;
       }
-      stage.style.removeProperty("height");
-      stage.removeAttribute(componentPreviewAttrs.resized);
       stage.setAttribute(componentPreviewAttrs.screen, screen);
     }
   };
@@ -265,21 +261,6 @@ function connectStageResizer(root: HTMLElement): Cleanup {
   const nudge = (delta: number) =>
     setHeight((visibleStage()?.getBoundingClientRect().height ?? stageMinHeight) + delta);
 
-  /*
-   * A screen preset owns both axes, so grabbing the grip while one is active would make it a
-   * SECOND owner of the height; the original reason the grip used to hide outright under a
-   * preset. Clearing the preset here resolves that conflict procedurally instead: the reader's
-   * drag is a clearer statement of intent ("I want THIS height") than a stale preset from
-   * whichever preview last touched the shared, persisted preference, on this page or another.
-   * `publishScreen` is synchronous (a plain `document.dispatchEvent`), so by the time this
-   * returns, THIS stage has already lost its `screen` attribute and reverted to auto-fit sizing;
-   * `startHeight` below reads the POST-escape box, not the device preset's.
-   */
-  const escapePresetIfActive = () => {
-    if (stagesOf(root).some((stage) => stage.hasAttribute(componentPreviewAttrs.screen))) {
-      publishScreen("free");
-    }
-  };
 
   let dragPointer: number | null = null;
   let startY = 0;
@@ -299,7 +280,6 @@ function connectStageResizer(root: HTMLElement): Cleanup {
 
   const onPointerDown = (event: PointerEvent) => {
     if (dragPointer !== null || (event.button !== 0 && event.pointerType === "mouse")) return;
-    escapePresetIfActive();
     dragPointer = event.pointerId;
     startY = event.clientY;
     startHeight = visibleStage()?.getBoundingClientRect().height ?? stageMinHeight;
@@ -334,7 +314,6 @@ function connectStageResizer(root: HTMLElement): Cleanup {
     };
     const step = steps[event.key];
     if (step !== undefined) {
-      escapePresetIfActive();
       nudge(step);
       event.preventDefault();
       return;

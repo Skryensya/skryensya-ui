@@ -19,7 +19,32 @@ export const breadcrumbParts = {
   link: "sk-breadcrumb__link",
   current: "sk-breadcrumb__current",
   separator: "sk-breadcrumb__separator",
+  /*
+   * The "…" that stands in for the crumbs a narrow trail has no room for. Ancestor levels only,
+   * never the first crumb (the trail's anchor) or the current one (the label it exists to show):
+   * see `collapsibleBreadcrumbRange` below, the one place that range is computed. What it opens is
+   * a real `Menu` (`core/menu.ts`), not a bespoke panel — there is no `collapsePanel` part here for
+   * the same reason there is no second stylesheet for it: the trigger is this component's, the
+   * dropdown is Menu's.
+   */
+  collapseTrigger: "sk-breadcrumb__collapse-trigger",
 } as const;
+
+/**
+ * Which item indices a narrow trail may hide behind the "…" disclosure: everything except the
+ * first crumb (where the trail starts) and the last one (the page you are on, the one label the
+ * trail exists to show in full). Both bindings collapse the SAME range so neither invents its own
+ * notion of "middle" — the vanilla enhancer re-derives it from the rendered `<li>` count instead of
+ * importing this directly (it works off compiled markup, not the item array), but the rule is this.
+ */
+export function collapsibleBreadcrumbRange(
+  itemCount: number,
+): { start: number; end: number } | null {
+  // Fewer than 4 items means at most one crumb sits between first and last — collapsing it would
+  // save no space worth a disclosure, so there is nothing to hide.
+  if (itemCount < 4) return null;
+  return { start: 1, end: itemCount - 2 };
+}
 
 /*
  * The trail back up. A collection, because every crumb is the same shape and the LAST one is special:
@@ -36,13 +61,22 @@ export const breadcrumbContract = {
   options: {
     /** Names the landmark. A page with a second nav needs each one told apart. */
     label: { type: "string", default: "Migas de pan", attr: "aria-label" },
+    /**
+     * What the "…" disclosure trigger is called, for the trail whose enhancer collapses ancestor
+     * levels to fit. Unused (never rendered) on a trail short enough that nothing ever collapses.
+     */
+    collapsedLabel: {
+      type: "string",
+      default: "Mostrar niveles ocultos",
+      attr: "data-collapsed-label",
+    },
   },
 
   signatures: {
     Breadcrumb: {
       intent: ["where-am-i", "path-back-up", "hierarchy-trail"],
       host: { element: "nav" },
-      options: ["label"],
+      options: ["label", "collapsedLabel"],
       slots: {
         /*
          * What sits between the crumbs, as CONTENT rather than as a string option.
@@ -74,6 +108,12 @@ export const breadcrumbContract = {
         element: "nav",
         part: "root",
         host: true,
+        /*
+         * The enhancer's attachment point (`registry.ts`'s `[data-sk-breadcrumb]`). Present on every
+         * trail, not only a long one — the enhancer itself is what decides, per resize, whether
+         * there is anything to collapse; a short trail just never grows the disclosure.
+         */
+        attrs: { "data-sk-breadcrumb": "" },
         children: [
           {
             element: "ol",

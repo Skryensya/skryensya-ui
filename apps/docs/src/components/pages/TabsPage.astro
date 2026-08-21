@@ -6,6 +6,7 @@ import {
   tabsAdvancedScript,
   tabsAdvancedTree,
   tabsBasicTree,
+  tabsSizeTree,
   tabsStatesTree,
 } from "../../demos/tabs";
 import { getLocale, useTranslations } from "../../i18n";
@@ -80,6 +81,10 @@ const sourceFiles = [
     <h3>{t("tabsPage.advancedTitle")}</h3>
     <p set:html={t("tabsPage.advancedBody")} />
     <ComponentPreview tree={tabsAdvancedTree(t)} js={tabsAdvancedScript} previewScript={tabsAdvancedScript} label={t("tabsPage.advancedLabel")} />
+
+    <h3>{t("tabsPage.sizeTitle")}</h3>
+    <p set:html={t("tabsPage.sizeBody")} />
+    <ComponentPreview tree={tabsSizeTree(t)} label={t("tabsPage.sizeLabel")} />
 
     <h3>{t("component.contractNotesTitle")}</h3>
     <ul>

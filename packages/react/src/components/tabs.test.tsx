@@ -36,6 +36,14 @@ describe("Tabs", () => {
     expect(document.getElementById(overviewPanelId!)?.textContent).toBe("Overview panel");
   });
 
+  it("defaults to size md and honors an explicit size", () => {
+    const ui = render(<Tabs defaultValue="overview" id="account-tabs" items={items} />);
+    expect(ui.container.querySelector(".sk-tabs")?.getAttribute("data-size")).toBe("md");
+
+    ui.rerender(<Tabs defaultValue="overview" id="account-tabs" items={items} size="sm" />);
+    expect(ui.container.querySelector(".sk-tabs")?.getAttribute("data-size")).toBe("sm");
+  });
+
   it("mirrors selection on the root data attribute", async () => {
     const ui = render(<Tabs defaultValue="overview" id="account-tabs" items={items} />);
     fireEvent.click(ui.getByRole("tab", { name: "Activity" }));
@@ -55,6 +63,7 @@ describe("Tabs", () => {
         activationMode: "manual",
         orientation: "vertical",
         value: "overview",
+        size: "sm",
       },
       attrs: { "aria-label": "Account" },
       slots: {
@@ -76,6 +85,7 @@ describe("Tabs", () => {
     expect(root?.getAttribute("data-activation-mode")).toBe("manual");
     expect(root?.getAttribute("data-orientation")).toBe("vertical");
     expect(root?.getAttribute("data-value")).toBe("overview");
+    expect(root?.getAttribute("data-size")).toBe("sm");
 
     fireEvent.click(ui.getByRole("tab", { name: "Activity" }));
     await waitFor(() => expect(root?.getAttribute("data-value")).toBe("activity"));

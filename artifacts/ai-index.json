@@ -1375,7 +1375,25 @@
           "parents": [],
           "useWhen": [
             "una página necesita una medida de lectura y algunos hijos deben ser angostos, abrirse o sangrar de borde a borde",
-            "una sección full-width debe conservar su contenido centrado sin un wrapper adicional"
+            "una sección full-width debe conservar su contenido centrado sin un wrapper adicional",
+            "la página lleva un rail de apoyo (TOC, navegación contextual): es un hijo directo con data-width=\"rail\" — no un span de contenido como narrow/breakout, sino una columna aparte que la grilla reserva junto al flujo principal"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "es una sección dentro de la página, no el landmark principal; usa Box, Stack o LayoutGrid según corresponda"
+          ],
+          "host": "main",
+          "id": "Main",
+          "intent": [
+            "main-content",
+            "application-work-area",
+            "app-shell-main"
+          ],
+          "parents": [],
+          "useWhen": [
+            "la región es el landmark <main> de la página: el área de trabajo de una aplicación o de una plantilla"
           ]
         },
         {
@@ -1599,6 +1617,51 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/megamenu.css",
+      "id": "megamenu",
+      "signatures": [
+        {
+          "alternatives": [
+            "Menu",
+            "Menubar",
+            "NavList"
+          ],
+          "avoidWhen": [
+            "el desplegable es una lista de comandos de aplicación, no destinos; eso es Menu",
+            "la barra es de comandos de aplicación (Archivo/Editar/Ver), algunos con desplegable; eso es Menubar",
+            "son destinos simples sin panel de varias columnas; eso es NavList"
+          ],
+          "host": "nav",
+          "id": "Megamenu",
+          "intent": [
+            "edge-to-edge-navigation-panel",
+            "marketing-site-navigation",
+            "multi-column-dropdown-navigation"
+          ],
+          "parents": [],
+          "useWhen": [
+            "navegación de sitio/marketing con categorías que despliegan un panel de varias columnas de enlaces, borde a borde bajo la barra"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [],
+          "host": "li",
+          "id": "MegamenuTrigger",
+          "intent": [
+            "megamenu-category-trigger",
+            "disclosure-navigation-trigger"
+          ],
+          "parents": [
+            "Megamenu"
+          ],
+          "useWhen": [
+            "una categoría de la barra — su panel (`columns`) son 2-4 NavListGroup, no comandos ni un solo enlace"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/menu.css",
       "id": "menu",
       "signatures": [
@@ -1743,7 +1806,8 @@
             "collapsible-navigation-section"
           ],
           "parents": [
-            "NavList"
+            "NavList",
+            "NavListLink"
           ],
           "useWhen": [
             "agrupa destinos bajo un rótulo",
@@ -1772,7 +1836,8 @@
           ],
           "useWhen": [
             "un destino de la lista",
-            "marca la página actual con current"
+            "marca la página actual con current",
+            "tiene sus propios sub-destinos: un NavListGroup en el slot nested, adentro del mismo <li>"
           ]
         }
       ]
@@ -2242,9 +2307,13 @@
           ]
         },
         {
-          "alternatives": [],
+          "alternatives": [
+            "SidebarResizeHandle"
+          ],
           "avoidWhen": [
-            "se espera que oculte la barra; angosta, nunca esconde"
+            "se espera que oculte la barra; angosta, nunca esconde",
+            "la lista tiene subniveles (grupos anidados, un árbol de archivos): no hay una fila por nivel que mostrar en un riel de íconos; angostá con SidebarResizeHandle en cambio",
+            "algún destino no tiene ícono propio; un riel colapsado con huecos es peor que uno que no colapsa"
           ],
           "host": "button",
           "id": "SidebarTrigger",
@@ -2259,7 +2328,8 @@
             "SidebarFooter"
           ],
           "useWhen": [
-            "la persona tiene que poder angostar la barra para ganar ancho de contenido"
+            "la persona tiene que poder angostar la barra para ganar ancho de contenido",
+            "la lista es de UN solo nivel y cada destino tiene su propio ícono: colapsado sólo quedan los íconos, así que sin ellos (o sin ese nivel único) el riel no dice nada"
           ]
         },
         {
@@ -2283,7 +2353,8 @@
           ],
           "useWhen": [
             "el ancho correcto lo decide el contenido de cada persona: rutas largas, un árbol profundo, nombres de archivo",
-            "hace falta un ancho intermedio, no sólo angosta o ancha"
+            "hace falta un ancho intermedio, no sólo angosta o ancha",
+            "la lista tiene subniveles o destinos sin ícono propio: no hay riel de íconos posible, así que la única forma de ganar ancho es angostar sin esconder nada"
           ]
         }
       ]
@@ -3551,5 +3622,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "5114dfc8a1c7a5c2"
+  "sourceHash": "ed3124c59ddb3790"
 }

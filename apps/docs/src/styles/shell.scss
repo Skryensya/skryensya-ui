@@ -18,10 +18,10 @@
  * Component rules are deliberately unscoped so the same `.sk-toc` inside ComponentPreview
  * becomes the same disclosure. Only grid placement stays scoped to `.shell`. */
 @include bp.down("wide") {
+  /* Same two tracks `.shell` already uses above `wide` (site.css) — this block only needs to restate
+   * them because `down("desktop")` below narrows `.shell` further and CSS cascades forward, not back. */
   .shell {
     grid-template-columns: auto minmax(0, 1fr);
-    /* Two tracks, so the gutter goes back to being a gap: above `wide` it is a flexible track of
-     * the five-track layout (site.css) and this grid has none. */
     column-gap: var(--space-inline-lg);
   }
 
@@ -29,15 +29,42 @@
     grid-row: 1 / span 2;
   }
 
-  .shell .sk-toc {
+  .shell > .docs-document-pair {
     grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  /* Column-layout pages: the fixed-track pair collapses to one flexible track, toc above main. */
+  .docs-document-pair:not([data-document-layout="grid"]) {
+    grid-template-columns: minmax(0, 1fr);
+    /* `justify-self: center` (site.css) is a desktop-only fit for the pair's fixed-width tracks;
+     * here the pair has one flexible track of its own and must fill the column, not float centered
+     * and shrink to its own content width inside it. */
+    justify-self: stretch;
+  }
+
+  .docs-document-pair:not([data-document-layout="grid"]) > .sk-toc {
+    grid-column: 1;
     grid-row: 1;
   }
 
-
-  .shell main {
-    grid-column: 2;
+  .docs-document-pair:not([data-document-layout="grid"]) > main {
+    grid-column: 1;
     grid-row: 2;
+  }
+
+  /* Grid-layout pages, the outer fit only: above `wide` (site.css) `.docs-document-pair` is fixed
+   * tracks sized to fit content + rail exactly, centered as a UNIT via `justify-self: center` — a
+   * fixed total that would overflow this breakpoint's narrower column left uncorrected. `stretch`
+   * undoes that centering back to filling the column, restated because `down("desktop")` below
+   * narrows `.shell` further and CSS cascades forward, not back.
+   *
+   * The rail's OWN placement (and the grid's track list reverting to `sk-layout-grid`'s plain fluid
+   * form) needs nothing here any more — `packages/core/css/patterns/layout.css`'s rail rules are
+   * gated behind `(min-width: 72rem)`, the exact breakpoint this mixin compiles to, so both revert
+   * to the pattern's own defaults automatically the moment this query stops matching. */
+  .docs-document-pair[data-document-layout="grid"] {
+    justify-self: stretch;
   }
 }
 
@@ -73,12 +100,18 @@
     display: none;
   }
 
-  .shell .sk-toc {
+  .shell > .docs-document-pair {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    justify-self: stretch;
+  }
+
+  .docs-document-pair > .sk-toc {
     grid-column: 1;
     grid-row: 1;
   }
 
-  .shell main {
+  .docs-document-pair > main {
     grid-column: 1;
     grid-row: 2;
   }

@@ -9,7 +9,7 @@ Las tres capas de tokens (primitivas → semántica → componente) **no son el 
 indirección es referencia en runtime, no duplicación: cuando un componente lee `var(--color-bg-surface)`
 apunta a **una** custom property, sin importar cuántas capas haya detrás. La capa semántica entera, el
 tier que existe *solo* por el diseño de tres niveles, pesa **~1.7 KB gz**, y gzipea casi a nada porque
-son patrones repetidos (`light-dark(var(--ramp-*-50), var(--ramp-*-950))`).
+son patrones repetidos (`light-dark(var(--palette-*-50), var(--palette-*-950))`).
 
 El peso real del token layer tiene dos multiplicadores, y ninguno es la indirección:
 
@@ -52,9 +52,9 @@ propio de la app, más el safelist.
 
 ### El closure es transitivo sobre los valores
 
-Un componente lee `--color-bg-surface`, cuyo valor es `light-dark(var(--ramp-neutral-0),
-var(--ramp-neutral-900))`. Entonces **los dos ramps también son alcanzables**, y no se pueden borrar,
-aunque ningún componente nombre un ramp directo (el validador prohíbe justamente eso). El tool camina el
+Un componente lee `--color-bg-surface`, cuyo valor es `light-dark(var(--palette-white),
+var(--palette-stone-900))`. Entonces **las dos paletas también son alcanzables**, y no se pueden borrar,
+aunque ningún componente nombre una paleta directa (el validador prohíbe justamente eso). El tool camina el
 grafo desde las raíces de demanda siguiendo los `var()` de cada valor.
 
 ### La unidad de poda es el nombre, no la declaración

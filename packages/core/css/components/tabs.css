@@ -12,6 +12,7 @@
     --sk-tabs-list-border-color: var(--color-border-subtle);
     --sk-tabs-trigger-height: var(--size-control-md);
     --sk-tabs-trigger-padding-x: var(--space-inset-md);
+    --sk-tabs-trigger-font-size: var(--font-size-body);
     --sk-tabs-trigger-gap: var(--space-inline-xs);
     --sk-tabs-trigger-radius: var(--radius-control);
     --sk-tabs-trigger-fg: var(--color-text-secondary);
@@ -50,7 +51,7 @@
     border-radius: var(--sk-tabs-trigger-radius) var(--sk-tabs-trigger-radius) 0 0;
     background: transparent;
     color: var(--sk-tabs-trigger-fg);
-    font: var(--font-weight-label) var(--font-size-body) / 1 var(--font-family-body);
+    font: var(--font-weight-label) var(--sk-tabs-trigger-font-size) / 1 var(--font-family-body);
     cursor: pointer;
     /* Two tempos, the same split button.css/checkbox.css/switch.css/segmented.css draw: `color` is
      * the SELECTION (state-change), `scale` is the press answering the finger (feedback, faster).
@@ -110,6 +111,21 @@
   .sk-tabs__content:focus-visible {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: var(--focus-ring-offset);
+  }
+
+  /* Sizes key off data-size, an ORTHOGONAL axis to data-orientation, so vertical tabs can also be
+   * small. React serializes its md default explicitly; keep this rule explicit too, the base
+   * declarations above remain the resilient fallback for authored HTML that omits data-size. */
+  .sk-tabs[data-size="md"] {
+    --sk-tabs-trigger-height: var(--size-control-md);
+    --sk-tabs-trigger-padding-x: var(--space-inset-md);
+    --sk-tabs-trigger-font-size: var(--font-size-body);
+  }
+
+  .sk-tabs[data-size="sm"] {
+    --sk-tabs-trigger-height: var(--size-control-sm);
+    --sk-tabs-trigger-padding-x: var(--space-inset-sm);
+    --sk-tabs-trigger-font-size: var(--font-size-body-sm);
   }
 
   /* Vertical tabs keep the same parts and indicator recipe. Only the axes change: the list becomes

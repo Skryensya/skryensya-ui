@@ -28,6 +28,7 @@ export { createTileButton } from "./components/tile-button.js";
 export { mountCombobox } from "./components/combobox.js";
 export { mountFileUpload } from "./components/file-upload.js";
 export { mountMenu } from "./components/menu.js";
+export { mountMegamenu } from "./components/megamenu.js";
 export { mountNumberField } from "./components/number-field.js";
 export { mountToolbar } from "./components/toolbar.js";
 export { mountTreeView } from "./components/tree-view.js";

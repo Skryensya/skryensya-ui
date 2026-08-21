@@ -62,6 +62,13 @@ export interface DocumentIndex {
   html: string;
   /** Its sections, in reading order. */
   headings: DocHeading[];
+  /**
+   * How many elements sit at the fragment's own top level — exactly the row count `<main>`'s content
+   * contributes once it is a `display: contents` pass-through into `.docs-document-pair`'s grid
+   * (site.css). A rail sharing that grid needs to span every one of those rows to sit beside all of
+   * them; unlike the heading count, this includes every top-level element, not only `h2`/`h3`.
+   */
+  topLevelCount: number;
 }
 
 /**
@@ -162,6 +169,7 @@ export function indexDocument(source: string): DocumentIndex {
   const taken = authoredIds(source);
 
   let depth = 0;
+  let topLevelCount = 0;
   let i = 0;
 
   while (i < source.length) {
@@ -230,6 +238,7 @@ export function indexDocument(source: string): DocumentIndex {
       continue;
     }
 
+    if (depth === 0) topLevelCount++;
     if (!closes) depth++;
     i = end;
   }
@@ -240,5 +249,5 @@ export function indexDocument(source: string): DocumentIndex {
     html = html.slice(0, insert.at) + insert.text + html.slice(insert.at);
   }
 
-  return { html, headings };
+  return { html, headings, topLevelCount };
 }

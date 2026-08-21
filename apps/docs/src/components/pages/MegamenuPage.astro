@@ -1,0 +1,64 @@
+---
+import "@skryensya/core/components/megamenu.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { megamenuTree } from "../../demos/megamenu";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/megamenu.yaml?raw";
+import coreSource from "@core/src/megamenu.ts?raw";
+import cssSource from "@core/css/components/megamenu.css?raw";
+import vanillaMountSource from "@vanilla/src/components/megamenu.ts?raw";
+import reactSource from "@react/src/components/megamenu.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const styles = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/megamenu.css";
+@import "@skryensya/core/patterns/nav-list.css";`;
+
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+import { initComponents } from "@skryensya/vanilla/auto";
+
+mountIcons(document, lucideIcons);
+initComponents();`;
+
+const hrefs = { overview: "#", pricing: "#", integrations: "#", teams: "#", enterprise: "#" };
+
+const sourceFiles = [
+  { id: "contracts/semantic/megamenu.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/megamenu.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/megamenu.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/megamenu.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/megamenu.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Megamenu"
+  description={t("megamenuPage.description")}
+  contractId="megamenu"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/megamenu.css", probe: "sk-megamenu", title: "Megamenu" },
+    { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+    { file: "patterns/nav-list.css", probe: "sk-nav-list", title: "Heredados de NavList" },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("megamenuPage.description")} />
+    <ComponentPreview tree={megamenuTree(t, hrefs)} js={js} label="Megamenu" viewport="overlay" flush />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("megamenuPage.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("megamenuPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

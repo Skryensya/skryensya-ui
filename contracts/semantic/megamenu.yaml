@@ -1,0 +1,17 @@
+# La estructura vive en packages/core/src/megamenu.ts. Acá sólo por qué se elige.
+
+Megamenu:
+  useWhen:
+    - "navegación de sitio/marketing con categorías que despliegan un panel de varias columnas de enlaces, borde a borde bajo la barra"
+  avoidWhen:
+    - "el desplegable es una lista de comandos de aplicación, no destinos; eso es Menu"
+    - "la barra es de comandos de aplicación (Archivo/Editar/Ver), algunos con desplegable; eso es Menubar"
+    - "son destinos simples sin panel de varias columnas; eso es NavList"
+  alternatives:
+    - Menu
+    - Menubar
+    - NavList
+
+MegamenuTrigger:
+  useWhen:
+    - "una categoría de la barra — su panel (`columns`) son 2-4 NavListGroup, no comandos ni un solo enlace"

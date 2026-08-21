@@ -25,12 +25,19 @@ LayoutGrid:
   useWhen:
     - "una página necesita una medida de lectura y algunos hijos deben ser angostos, abrirse o sangrar de borde a borde"
     - "una sección full-width debe conservar su contenido centrado sin un wrapper adicional"
+    - "la página lleva un rail de apoyo (TOC, navegación contextual): es un hijo directo con data-width=\"rail\" — no un span de contenido como narrow/breakout, sino una columna aparte que la grilla reserva junto al flujo principal"
   avoidWhen:
     - "todos los hijos comparten un único techo de ancho; Wrapper es más simple"
     - "se distribuyen tarjetas en columnas iguales; eso es Grid"
   alternatives:
     - Wrapper
     - Grid
+Main:
+  useWhen:
+    - "la región es el landmark <main> de la página: el área de trabajo de una aplicación o de una plantilla"
+  avoidWhen:
+    - "es una sección dentro de la página, no el landmark principal; usa Box, Stack o LayoutGrid según corresponda"
+
 DensityScope:
   useWhen:
     - "un subárbol completo necesita escalar el espaciado semántico sin cambiar cada componente"

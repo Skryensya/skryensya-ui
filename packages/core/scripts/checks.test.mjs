@@ -26,7 +26,7 @@ function corpus({ files = [], declaredTier = new Map(), baseSemantic = new Map()
     declaredTier,
     baseSemantic,
     hcByName,
-    rampMap: () => new Map(),
+    paletteMap: () => new Map(),
     resolveColor: () => null,
   };
 }
@@ -49,7 +49,7 @@ test("refs-resolve, a var() with no declaration and no fallback fails", () => {
   assert.ok(rules(problems).has("refs-resolve"));
 });
 
-test("refs-resolve, a var() with a fallback resolves and does NOT fail (ADR-22)", () => {
+test("refs-resolve, a var() with a fallback resolves and does NOT fail (ADR-19)", () => {
   const problems = runChecks(
     corpus({
       files: [{ tier: "semantic", decls: [{ name: "--color-x", value: "var(--missing, oklch(50% 0 0))" }] }],
@@ -75,10 +75,10 @@ test("tier-direction, a semantic token pointing up to a component hook fails", (
 test("tier-skip, a component hook reaching straight into a primitive fails", () => {
   const problems = runChecks(
     corpus({
-      files: [{ tier: "component", decls: [{ name: "--sk-button-bg", value: "var(--ramp-accent-600)" }] }],
+      files: [{ tier: "component", decls: [{ name: "--sk-button-bg", value: "var(--palette-blue-600)" }] }],
       declaredTier: new Map([
         ["--sk-button-bg", "component"],
-        ["--ramp-accent-600", "primitive"],
+        ["--palette-blue-600", "primitive"],
       ]),
     }),
   );
@@ -218,10 +218,10 @@ test("component-ships-hooks, a composition over another component's hooks passes
 test("a corpus that breaks nothing returns no problems", () => {
   const problems = runChecks(
     corpus({
-      files: [{ tier: "semantic", decls: [{ name: "--color-x", value: "var(--ramp-accent-600)" }] }],
+      files: [{ tier: "semantic", decls: [{ name: "--color-x", value: "var(--palette-blue-600)" }] }],
       declaredTier: new Map([
         ["--color-x", "semantic"],
-        ["--ramp-accent-600", "primitive"],
+        ["--palette-blue-600", "primitive"],
       ]),
     }),
   );

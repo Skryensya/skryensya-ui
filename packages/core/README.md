@@ -9,9 +9,9 @@ are enforced by a validator instead of by hope.
 ```
 packages/core/            ← this package (tokens + shared contract)
   css/
-    tokens.scss             core Sass bundle: all token tiers and the root ramps
-    primitives.scss         tier-1 entrypoint, ramps, scale, type and motion
-    primitives/_ramps.scss  explicit default root ramps
+    tokens.scss             core Sass bundle: all token tiers and the public palettes
+    primitives.scss         tier-1 entrypoint, palettes, scale, type and motion
+    primitives/_palettes.scss  explicit default public palettes
     semantic.scss           tier-2 purpose tokens (light-dark, density, motion, state layer)
     semantic/               tier-2 source partials (color, space, size, radius, type, motion, state)
     scripts/build-css.mjs   generates dist/*.css: the batteries-included bundle, tokens.css, and
@@ -27,8 +27,8 @@ packages/core/            ← this package (tokens + shared contract)
   scripts/lint.mjs          the stylesheet-native validator, five rules
 ```
 
-`tokens.scss` is the complete token entrypoint. It ships one root ramp set; consumers replace complete
-role ramps in their own unlayered `:root` stylesheet. Core exposes no color-generation input, brand
+`tokens.scss` is the complete token entrypoint. It ships one public palette set; consumers replace complete
+semantic bundles in their own unlayered `:root` stylesheet. Core exposes no color-generation input, brand
 selector, or HTML attribute.
 
 ```bash
@@ -38,18 +38,18 @@ pnpm --filter @skryensya/docs dev      # serve the docs site, consuming this pac
 ```
 
 Consumers import `tokens.scss`, optional dimension entrypoints, and the plain CSS hooks they use. The token
-entrypoint includes the root ramps, so no second import or selector is needed.
+entrypoint includes the public palettes, so no second import or selector is needed.
 
 ## The three tiers, and the one rule that makes them worth having
 
 | Tier | Answers | Example | May reference |
 |------|---------|---------|---------------|
-| **1 primitive** | what values exist | `--ramp-accent-600: oklch(56% .2 255)` | nothing |
-| **2 semantic** | what it means | `--color-action-primary: light-dark(var(--ramp-accent-600), …)` | tier 1, or sideways within tier 2 |
+| **1 primitive** | what values exist | `--palette-blue-600: oklch(56% .2 255)` | nothing |
+| **2 semantic** | what it means | `--color-action-primary: light-dark(var(--palette-blue-600), …)` | tier 1, or sideways within tier 2 |
 | **3 component** | where it's used | `--sk-button-bg: var(--color-action-primary)` | tier 2 only |
 
 The rule: **references point down, never up, and tier 3 may never skip to tier 1.** A component hook
-that reaches straight into a ramp bypasses the mode-switching in tier 2, so it, and only it, breaks
+that reaches straight into a palette bypasses the mode-switching in tier 2, so it, and only it, breaks
 in dark mode, which nobody notices until production. `scripts/lint.mjs` fails on it. That single
 constraint is what a three-tier system buys you; without enforcement it is just three folders.
 
@@ -58,20 +58,20 @@ that ships no buttons imports none of it.
 
 ## The cascade layer is the tier boundary
 
-`tokens.scss` declares `@layer primitives, semantic, components, overrides`. The root ramps are tier 1
+`tokens.scss` declares `@layer primitives, semantic, components, overrides`. The public palettes are tier 1
 inside `primitives`; high contrast and optional dimensions use `overrides` and beat lower layers regardless
-of source order. A consumer's unlayered CSS beats every layer, so brand tooling can emit the tier-1
+of source order. A consumer's unlayered CSS beats every layer, so brand tooling can emit the semantic
 contract directly:
 
 ```scss
 @import "@skryensya/core/tokens.scss";
-@import "./brand-ramps.css";
+@import "./brand-accent.css";
 ```
 
-`brand-ramps.css` declares every position of each role it replaces, for example
-`--ramp-accent-50` through `--ramp-accent-950`. Core performs no implicit runtime derivation.
-Semantic tokens keep referencing role positions, never hues, so `accent-600` has one meaning
-regardless of the configured identity. A complete ramp is deliberately verbose but auditable:
+`brand-accent.css` re-declares the complete semantic bundle it owns, for example
+`--color-action-primary`, `--color-text-accent`, `--color-border-accent`, and
+`--color-bg-accent-subtle`. Core performs no implicit runtime derivation. Public palettes remain
+meaning-free source material; the shipped semantic declarations are deliberately verbose but auditable:
 contrast tools validate exactly the values the application ships.
 
 ## Four dimensions that compose
@@ -102,7 +102,7 @@ shape, not a roundness setting.
 
 ## What the validator enforces (`npm run lint`)
 
-It parses the source stylesheets with a minimal regex parser and checks the one root ramp set:
+It parses the source stylesheets with a minimal regex parser and checks the one public palette set:
 
 1. **refs-resolve**, every `var(--x)` points at a declared property (or carries a fallback).
 2. **tier-direction**, references point down or sideways; a component hook never reaches a ramp.
@@ -128,17 +128,17 @@ tier-skip rule already forbids a component from hardcoding a duration, it must g
 token, so retuning a primitive restyles the whole system. **Reduced motion is a functional variant**:
 a `@media (prefers-reduced-motion: reduce)` block in `semantic.scss` redefines the intent tokens by role
 (Essential / Helpful / Decorative / Continuous) rather than zeroing them, so essential changes stay
-legible. See [decision 10](../../docs/decisiones/0010-motion-por-tokens-de-intencion.md).
+legible. See [decision 10](../../docs/decisiones/0004-motion-por-tokens-de-intencion.md).
 
-## One root brand, configured through complete ramps
+## One root brand, configured through semantic bundles
 
-The package intentionally ships one explicit default ramp configuration. The public color
-interface is the tier-1 `--ramp-{role}-{position}` set itself. A consumer replaces the complete
-roles owned by its brand:
+The package intentionally ships one explicit default palette configuration plus default semantic
+bundles. The public brand interface is the tier-2 semantic bundle itself. A consumer replaces the
+complete semantics owned by its brand:
 
 ```scss
 @import "@skryensya/core/tokens.scss";
-@import "./brand-ramps.css";
+@import "./brand-accent.css";
 ```
 
 The brand stylesheet is normally generated by design tooling, but its output is ordinary,
@@ -146,8 +146,8 @@ unlayered CSS. There is no hidden root input, computed recipe, selector, or mark
 This clean cut keeps generation policy outside the runtime contract and makes partial overrides
 visible during review.
 
-The validator measures the defaults shipped by Core. Consumers validate their generated ramps,
-just as they validate any unlayered override.
+The validator measures the defaults shipped by Core. Consumers validate their generated semantic
+bundles, just as they validate any unlayered override.
 
 ## Consuming
 
@@ -202,6 +202,6 @@ Set the color mode before first paint to avoid a flash, read `localStorage` sync
 
 ## Migration note
 
-This was a Style Dictionary + JSON pipeline until v0.2. See [decision 6](../../docs/decisiones/0006-css-puro-sin-build.md)
+This was a Style Dictionary + JSON pipeline until v0.2. See [decision 6](../../docs/decisiones/0019-paletas-publicas-y-semanticos-constantes.md)
 for why it became pure CSS, the short version: SD was reimplementing the browser's runtime at
 build time for a web-only system, so deleting the build layer removed complexity instead of moving it.

@@ -7,12 +7,11 @@
  * (scripts/lint.mjs) and the docs site's token reference. This module is the one parser they
  * share, if it drifts, both break, which is the point.
  *
- * It carries BOTH forms of every token, for the same reason ADR-7 needed both when Style
- * Dictionary was still here:
- *   - `value`    the authored form, `light-dark(var(--ramp-accent-600), …)`, what the docs
+ * It carries BOTH forms of every token:
+ *   - `value`    the authored form, `light-dark(var(--palette-blue-600), …)`, what the docs
  *                must show, because the var() chain IS the tier architecture.
- *   - resolveColor()  the literal it collapses to in a given brand + mode, what the contrast
- *                maths needs, since luminance can't be computed from a var() name.
+ *   - resolveColor()  the literal it collapses to in a given mode, what the contrast maths needs,
+ *                since luminance can't be computed from a var() name.
  *
  * The regex parser is deliberately minimal and honest about its scope: it handles OUR
  * controlled, known-shape CSS, not arbitrary stylesheets. Comments are stripped first, so
@@ -123,7 +122,7 @@ export function parseTokens(cssDir = CSS_DIR) {
     return { path, rel: relative(cssDir, path).replace(/\\/g, "/"), tier: tierOfFile(path), css, decls: declarationsOf(css) };
   });
 
-  // name → tier of the file that declares it. Ramps and scales are primitive; colors and modes are semantic.
+  // name → tier of the file that declares it. Palettes and scales are primitive; colors and modes are semantic.
   const declaredTier = new Map();
   for (const f of files) {
     if (!f.tier) continue;
@@ -141,17 +140,16 @@ export function parseTokens(cssDir = CSS_DIR) {
     if (!hcByName.has(d.name)) hcByName.set(d.name, new Set());
     hcByName.get(d.name).add(d.value);
   }
-  /** Tier-1 ramp values compiled into the primitive entrypoint. */
-  function rampMap() {
-    return new Map(declsIn("primitives.scss").filter((d) => d.name.startsWith("--ramp-")).map((d) => [d.name, d.value]));
+  /** Tier-1 palette values compiled into the primitive entrypoint. */
+  function paletteMap() {
+    return new Map(declsIn("primitives.scss").filter((d) => d.name.startsWith("--palette-")).map((d) => [d.name, d.value]));
   }
 
   /**
-   * Resolve a semantic color token to a concrete oklch(), in a color mode. `ramps` carries the
-   * root tier-1 declarations, so evalColor can chase `var(--ramp-…)` and `color-mix()` to a real
-   * color.
+   * Resolve a semantic color token to a concrete oklch(), in a color mode. `palettes` carries the
+   * root tier-1 declarations, so evalColor can chase `var(--palette-…)` to a real color.
    */
-  function resolveColor(name, mode, ramps) {
+  function resolveColor(name, mode, palettes) {
     const isHc = mode.startsWith("hc-");
     const raw = isHc ? [...(hcByName.get(name) ?? [])][0] : baseSemantic.get(name);
     if (!raw) return null;
@@ -161,18 +159,15 @@ export function parseTokens(cssDir = CSS_DIR) {
     const ld = raw.match(/light-dark\(([\s\S]*)\)/);
     const pick = ld ? splitTopLevel(ld[1])[mode.endsWith("light") ? 0 : 1] : raw;
 
-    /*
-     * The reach tokens (`--color-text-link`, `--color-nav-current-*`, `--color-decorative-*`) are
-     * semantic-to-semantic aliases, so resolving one has to be able to chase the token it points at,
-     * not just the tier-1 ramps. `ramps` alone would dead-end on the first hop.
-     */
-    const env = new Map([...ramps, ...baseSemantic]);
+    // Semantic-to-semantic aliases (for example `--color-text-link`) must resolve through base
+    // semantic tokens as well as tier-1 palettes.
+    const env = new Map([...palettes, ...baseSemantic]);
     return evalColor(pick, env);
   }
 
   // Flat, deduped token list, one entry per declared name, carrying the authored form.
   // This is what the docs reference renders; the resolved value is a runtime concern
-  // (the density tokens are calc()/round()/max() expressions, ADR-6, so only the browser
+  // (the density tokens are calc()/round()/max() expressions, ADR-19, so only the browser
   // knows the number).
   const tokens = [];
   const seen = new Set();
@@ -192,12 +187,12 @@ export function parseTokens(cssDir = CSS_DIR) {
     }
   }
 
-  return { files, tokens, declaredTier, baseSemantic, hcByName, declsIn, rampMap, resolveColor };
+  return { files, tokens, declaredTier, baseSemantic, hcByName, declsIn, paletteMap, resolveColor };
 }
 
 // ── OKLCH → WCAG relative luminance ─────────────────────────────────────────
 // No getComputedStyle in Node, so the contrast maths is ours. Implemented once, here,
-// and consumed by the validator (ADR-9/ADR-11).
+// and consumed by the validator (ADR-3/ADR-19).
 
 export function contrastRatio(a, b) {
   const la = relLuminance(a),
@@ -217,18 +212,17 @@ export function relLuminance(color) {
 
 export function parseOklch(str) {
   if (str && typeof str === "object" && "L" in str) return str; // already an evaluated color
-  const m = String(str).match(/oklch\(\s*([\d.]+)%?\s+([\d.]+)\s+([\d.]+)/i);
+  const m = String(str).match(/oklch\(\s*([\d.]+)%?\s+([\d.]+)\s+(?:([\d.]+)|none)/i);
   if (!m) return null;
   let L = parseFloat(m[1]);
   if (String(str).includes("%")) L /= 100;
-  return oklchLit(L, parseFloat(m[2]), parseFloat(m[3]));
+  return oklchLit(L, parseFloat(m[2]), m[3] ? parseFloat(m[3]) : 0);
 }
 
 // ── color EXPRESSION evaluator ──────────────────────────────────────────────
 // The contrast maths needs a concrete color, but a token's authored form can be a var() chain,
-// a named color, or a color-mix() (how a DERIVED brand, ADR-22, writes every ramp). This
-// collapses all of those to an oklch() the same way the browser would, so a recipe brand is
-// measured for real contrast, not waved through at 21:1 the way a var() hue would be (ADR-13).
+// a named color, or a local color-mix(). This collapses those to an oklch() the same way the browser
+// would, so contrast is measured against the CSS that actually ships.
 
 /** An oklch value that also prints as `oklch(…)` for validator messages. */
 function oklchLit(L, C, H) {
@@ -312,7 +306,7 @@ function evalMix(expr, env, depth) {
   if (!ca || !cb) return null;
 
   // Percent normalisation, per CSS: an omitted weight is 100 − the other; both omitted → 50/50;
-  // weights that don't sum to 100 are scaled (we ignore the transparency case, ramps sum to 100).
+  // weights that don't sum to 100 are scaled.
   let wa = a.pct,
     wb = b.pct;
   if (wa == null && wb == null) wa = wb = 50;

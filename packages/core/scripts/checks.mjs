@@ -12,10 +12,10 @@
  *
  * Checks:
  *   1. refs-resolve     every var(--x) points at a declared custom property
- *   2. tier-direction   references point down or sideways; component never skips to a ramp
+ *   2. tier-direction   references point down or sideways; component never skips to a palette
  *   3. mode-complete    base light-dark() token set == hc override set; every light-dark()
  *                       has exactly two colors; the two hc blocks don't drift
- *   4. contrast         every contrast pair clears its WCAG ratio, per brand
+ *   4. contrast         every contrast pair clears its WCAG ratio
  *   5. name-shape       declared names are lowercase kebab
  */
 
@@ -35,7 +35,7 @@ import { TIER_RANK, contrastRatio, splitTopLevel, varRefs } from "./parse.mjs";
  * @param {Array<{fg:string,bg:string,min:number,modes:string[]}> | null} [pairs]
  * @returns {Problem[]}
  */
-export function runChecks({ files, declaredTier, baseSemantic, hcByName, rampMap, resolveColor }, pairs = null) {
+export function runChecks({ files, declaredTier, baseSemantic, hcByName, paletteMap, resolveColor }, pairs = null) {
   /** @type {Problem[]} */
   const problems = [];
   const fail = (rule, where, msg) => problems.push({ rule, where, msg });
@@ -47,7 +47,7 @@ export function runChecks({ files, declaredTier, baseSemantic, hcByName, rampMap
       for (const { ref, hasFallback } of varRefs(d.value)) {
         const toTier = declaredTier.get(ref);
         if (!toTier) {
-          if (hasFallback) continue; // var(--x, fallback) resolves without --x, valid CSS (ADR-22)
+          if (hasFallback) continue; // var(--x, fallback) resolves without --x, valid CSS (ADR-19)
           fail("refs-resolve", d.name, `references undeclared ${ref}`);
           continue;
         }
@@ -57,7 +57,7 @@ export function runChecks({ files, declaredTier, baseSemantic, hcByName, rampMap
         }
         if (f.tier === "component" && toTier === "primitive") {
           fail("tier-skip", d.name,
-            `component hook reaches past the semantic layer into primitive ${ref}, bypasses mode switching, breaks dark mode for this component alone`);
+            `component hook reaches past the semantic layer into primitive ${ref}, bypasses semantic color meaning`);
         }
       }
     }
@@ -101,11 +101,11 @@ export function runChecks({ files, declaredTier, baseSemantic, hcByName, rampMap
 
   // ── 4: contrast ─────────────────────────────────────────────────────────────
   if (pairs) {
-    const ramps = rampMap();
+    const palettes = paletteMap();
     for (const pair of pairs) {
       for (const mode of pair.modes) {
-        const fg = resolveColor(pair.fg, mode, ramps);
-        const bg = resolveColor(pair.bg, mode, ramps);
+        const fg = resolveColor(pair.fg, mode, palettes);
+        const bg = resolveColor(pair.bg, mode, palettes);
         if (!fg || !bg) {
           fail("contrast", `${pair.fg} on ${pair.bg}`, `[${mode}] could not resolve to a color`);
           continue;
@@ -156,7 +156,7 @@ export function runChecks({ files, declaredTier, baseSemantic, hcByName, rampMap
 
   // ── 7: every component exposes styling hooks ────────────────────────────────
   //
-  // The inverse of rule 6, and the other half of "ship the class AND its hooks" (ADR-8). A sheet
+  // The inverse of rule 6, and the other half of "ship the class AND its hooks" (ADR-2). A sheet
   // that paints structure but declares NO `--sk-*` custom property has no public restyle surface:
   // the only way to change it from outside is to out-specify its rules, which is exactly what the
   // hook layer exists to avoid. It also shows up as an empty table on the component's docs page.

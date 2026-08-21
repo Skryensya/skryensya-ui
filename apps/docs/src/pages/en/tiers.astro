@@ -12,19 +12,20 @@ const counts = {
 
 const badExample = `/* Esto build fails. */
 .sk-button {
-  --sk-button-bg: var(--ramp-accent-600);
+  --sk-button-bg: var(--palette-blue-600);
 }`;
 
 const linterOutput = `✗ 1 problem(s):
 
   [tier-skip]
     --sk-button-bg: component hook reaches past the semantic
-    layer into primitive --ramp-accent-600, bypasses mode
+    layer into primitive --palette-blue-600, bypasses mode
     switching, breaks dark mode for this component alone`;
 ---
 
 <Base
   title="Tres tiers"
+  documentLayout="grid"
   description="Primitives, semantics and styling hooks: what each tier can reference, and why the direction of the references is what makes it a system."
 >
   <h1>Three tiers</h1>
@@ -88,7 +89,7 @@ const linterOutput = `✗ 1 problem(s):
     A semanticist can point to a primitive or sideways to another semanticist. A styling hook can point to a semantic hook. Nothing points up, and tier 3 <strong>cannot jump to tier 1</strong>.
   </p>
   <p>
-    That jump is the one that seems harmless and is not. A styling hook that takes <code>--ramp-accent-600</code> directly skips the layer where <code>light-dark()</code> lives. That component, and only that one, no longer has a dark mode. The defect is not seen until someone looks at the page in darkness.
+    That jump is the one that seems harmless and is not. A styling hook that takes <code>--palette-blue-600</code> directly skips the layer where <code>light-dark()</code> lives. That component, and only that one, no longer has a dark mode. The defect is not seen until someone looks at the page in darkness.
   </p>
 
   <CodeBlock code={badExample} label="components/button.css" note="tier 3 → tier 1" />
@@ -104,7 +105,7 @@ const linterOutput = `✗ 1 problem(s):
 
   <h2>The prefix marks the tier</h2>
   <p>
-    A primitive reads <code>--ramp-accent-600</code>; a semantic, <code>--color-action-primary</code>. The different prefix is intentional: seeing a <code>--ramp-*</code> within the CSS of a component is the visible sign, at first glance, that someone has skipped a tier. Flattening <code>--accent-600</code> would lose that signal.
+    A primitive reads <code>--palette-blue-600</code>; a semantic, <code>--color-action-primary</code>. The different prefix is intentional: seeing a <code>--palette-*</code> within the CSS of a component is the visible sign, at first glance, that someone has skipped a tier. Flattening <code>--accent-600</code> would lose that signal.
   </p>
 
   <h2>The edge of the tier is a cascade layer</h2>

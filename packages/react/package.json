@@ -296,6 +296,10 @@
       "types": "./src/components/menu.tsx",
       "default": "./src/components/menu.tsx"
     },
+    "./megamenu": {
+      "types": "./src/components/megamenu.tsx",
+      "default": "./src/components/megamenu.tsx"
+    },
     "./menubar": {
       "types": "./src/components/menubar.tsx",
       "default": "./src/components/menubar.tsx"

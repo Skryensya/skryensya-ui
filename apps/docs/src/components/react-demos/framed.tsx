@@ -39,6 +39,8 @@ export interface FramedOptions {
   scroll?: boolean;
   /** Reserve stage height for demos that paint out of flow, same values as `ComponentPreview`'s prop. */
   viewport?: "auto" | "menu" | "overlay" | "menu-deep";
+  /** Floors the stage's own box from the parent document, same as `ComponentPreview`'s prop. */
+  minHeight?: string;
   /** Frame title, for the accessibility tree. Defaults to the wrapped component's name. */
   label?: string;
   /**
@@ -54,7 +56,7 @@ export interface FramedOptions {
 /** Per-call overrides for shared demo wrappers such as the usage-tree renderer. */
 export type FramedOverrides = Pick<
   FramedOptions,
-  "flush" | "scroll" | "viewport"
+  "flush" | "scroll" | "viewport" | "minHeight"
 > & {
   /** App-only script shared by both tree-rendered bindings. */
   script?: string;
@@ -113,6 +115,7 @@ export function framedIn(moduleUrl: string) {
       const flush = frameOptions?.flush ?? options.flush;
       const scroll = frameOptions?.scroll ?? options.scroll;
       const viewport = frameOptions?.viewport ?? options.viewport;
+      const minHeight = frameOptions?.minHeight ?? options.minHeight;
       const encodedScript = frameOptions?.script
         ? encodeURIComponent(frameOptions.script)
         : undefined;
@@ -149,6 +152,7 @@ export function framedIn(moduleUrl: string) {
             viewport && viewport !== "auto" ? viewport : undefined
           }
           data-sk-component-preview-scroll={scroll ? "" : undefined}
+          data-sk-component-preview-min-height={minHeight ? "" : undefined}
           aria-busy="true"
           srcDoc={srcDoc}
           title={`Preview renderizado (React): ${title}`}

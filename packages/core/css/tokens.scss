@@ -6,11 +6,10 @@
  *
  * THE TIER BOUNDARY IS A CASCADE LAYER. The @layer order below encodes the three-tier rule natively:
  * a later layer wins, so `overrides` (high contrast and optional dimensions) beat base `semantic`,
- * which beats `primitives`, regardless of import or link order. Any unlayered consumer rule still
- * beats every layer, so an application supplies brand ramps without specificity fights.
+ * which beats `primitives`, regardless of import or link order.
  *
  * Layer order (low → high priority):
- *   primitives  tier 1, ramps + scale
+ *   primitives  tier 1, palettes + scale
  *   semantic    tier 2, purpose tokens (light-dark, density)
  *   components  tier 3, opt-in per-component hooks
  *   overrides   high contrast and optional dimensions
@@ -36,24 +35,12 @@
  * set (passing your own geometry), not having icons at all. (decision 15) */
 @import url("./patterns/icon.css");
 
-/* `tokens.scss` includes the system's default root ramps. Brand tooling should emit a complete
- * unlayered ramp stylesheet:
- *   :root {
- *     --ramp-accent-50: oklch(...);
- *     --ramp-accent-100: oklch(...);
- *     // ...every accent position through 950
- *   }
- *
- * The consumer rule wins over the primitive layer. Core exposes no root color input and performs
- * no implicit runtime derivation: the complete `--ramp-*` set is the tier-1 contract.
- *
- * Density scopes ship with semantic tokens: add `data-sk-density-scope` to a container, then set
+/* Density scopes ship with semantic tokens: add `data-sk-density-scope` to a container, then set
  * `--sk-density-factor` for a value relative to the system or `--sk-density` for an absolute value.
  *
  * Optional additions:
  *   @import "@skryensya/core/modes/hc.scss";
  *   @import "@skryensya/core/dimensions/radius.scss";
- *   @import "@skryensya/core/dimensions/accent.scss";
  *   @import "@skryensya/core/components/button.css";
  *
  * No toolchain? Link `@skryensya/core/skryensya.css`: tokens plus every component and pattern.

@@ -148,6 +148,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-19",
+            "en": {
+              "body": "A new enhancer (both bindings) measures whether the trail fits on one line; when it does not, it hides the ancestor levels — never the first one or the current page — behind a \"…\" disclosure that opens a real <a href=\"/en/components/menu\">Menu</a> holding those same levels: an ARIA menu's own keyboard pattern (arrow keys, Home/End, typeahead), not a plain list. The machine, positioning and panel styling are Menu's, composed beside Breadcrumb's own trigger — the same move every <code>MenubarItem</code>'s dropdown already makes. New option <code>collapsedLabel</code>, new part <code>collapseTrigger</code>. Without JS (or under four levels) the markup is still complete on its own, as before.",
+              "title": "Breadcrumb collapses ancestor levels into a real Menu when the width does not fit"
+            },
+            "es": {
+              "body": "Un enhancer nuevo (los dos bindings) mide si la senda entra en una sola línea; cuando no, esconde los niveles ancestro — nunca el primero ni la página actual — detrás de un disclosure «…» que abre un <a href=\"/componentes/menu\">Menu</a> real con esos mismos niveles: el patrón de teclado ARIA de un menú (flechas, Home/End, typeahead), no una lista plana. La machine, el posicionamiento y el estilo del panel son los de Menu, compuestos junto al propio trigger de Breadcrumb, el mismo movimiento que ya hace el dropdown de cada <code>MenubarItem</code>. Nueva opción <code>collapsedLabel</code>, nueva part <code>collapseTrigger</code>. Sin JS (o con menos de cuatro niveles) el markup sigue completo por sí solo, como antes.",
+              "title": "Breadcrumb colapsa los niveles intermedios en un Menu real cuando el ancho no alcanza"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>Breadcrumb</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>label</code>. Its stylesheet is <code>components/breadcrumb.css</code>.",
@@ -910,6 +922,30 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-21",
+            "en": {
+              "body": "<code>data-width=\"rail\"</code> reserves a column of its own beside the main flow — not a content span like <code>narrow</code>/<code>breakout</code>, but a direct child of a different kind, for a TOC, contextual navigation, or any other supporting element. Fixed in width (<code>--sk-layout-rail-inline-size</code>, 14rem by default) and collapses to its own row above the content below <code>wide</code> (72rem); <code>--sk-layout-rail-row-span</code> stretches it to match however many rows of content whoever composes it declares. No enhancer: <code>patterns/layout.css</code> resolves all of it.",
+              "title": "LayoutGrid publishes a rail column"
+            },
+            "es": {
+              "body": "<code>data-width=\"rail\"</code> reserva una columna aparte del flujo principal, junto a él — no un span de contenido como <code>narrow</code>/<code>breakout</code>, sino un hijo directo de otro tipo, para un TOC, navegación contextual o cualquier otro elemento de apoyo. Fijo en ancho (<code>--sk-layout-rail-inline-size</code>, 14rem por defecto) y colapsa a una fila propia sobre el contenido por debajo de <code>wide</code> (72rem); <code>--sk-layout-rail-row-span</code> lo estira para acompañar tantas filas del contenido como declare quien lo compone. No tiene enhancer: <code>patterns/layout.css</code> resuelve todo.",
+              "title": "LayoutGrid publica una columna de rail"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-08-20",
+            "en": {
+              "body": "<code>Main</code> joins the catalogue as the page's <code>&lt;main&gt;</code> landmark: a shell region, not a content component, so its children stay optional so a template can show chrome before an application decides what belongs there. It has no enhancer.",
+              "title": "Main is published as the layout landmark"
+            },
+            "es": {
+              "body": "<code>Main</code> entra al catálogo como el landmark <code>&lt;main&gt;</code> de la página: una región de shell, no un componente de contenido, así que sus hijos quedan opcionales para que una plantilla pueda mostrar el chrome antes de que la aplicación decida qué va ahí. No tiene enhancer.",
+              "title": "Main se publica como landmark de layout"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>Stack</code>, <code>Inline</code>, <code>Grid</code>, <code>DensityScope</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>gap</code>, <code>align</code>, <code>inlineAlign</code>, <code>justify</code>, <code>equal</code>, <code>wrap</code>, <code>columns</code>, <code>multicol</code>, <code>densityFactor</code>. Its stylesheet is <code>patterns/layout.css</code>.",
@@ -990,6 +1026,74 @@
             "es": {
               "body": "Entra al catálogo con <code>MediaCaption</code>, <code>MediaGradient</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>edge</code>, <code>strength</code>. La hoja es <code>patterns/media-gradient.css</code>.",
               "title": "MediaGradient se publica como contrato, con 2 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "megamenu": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-21",
+            "en": {
+              "body": "The image swap on hovering or focusing a link no longer fades through its own transparency (which exposed the frame's background for an instant): new <code>previewOutgoing</code> part, a clone of the outgoing image fading away over the incoming one, already visible underneath the whole time.",
+              "title": "The preview does a real crossfade"
+            },
+            "es": {
+              "body": "El cambio de imagen al pasar el cursor o el foco por un enlace ya no atraviesa su propia transparencia (lo que exponía el fondo del marco un instante): nueva parte <code>previewOutgoing</code>, un clon de la imagen saliente que se desvanece encima de la entrante, siempre ya visible debajo.",
+              "title": "La vista previa hace un crossfade real"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-08-20",
+            "en": {
+              "body": "<code>MegamenuTrigger.columns</code> now accepts <code>ImageFrame</code> (<code>image-frame.ts</code>), not only <code>NavListGroup</code>: a media column, reused as-is rather than described a second time.",
+              "title": "Columns can carry images"
+            },
+            "es": {
+              "body": "<code>MegamenuTrigger.columns</code> ahora acepta <code>ImageFrame</code> (<code>image-frame.ts</code>), no sólo <code>NavListGroup</code>: una columna de medios, reusada tal cual en vez de descrita una segunda vez.",
+              "title": "Columnas con imágenes"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-08-20",
+            "en": {
+              "body": "The panel no longer changes height when switching triggers: new <code>ruler</code>, <code>panel</code>, and <code>panelVisible</code> parts stack every trigger's columns in the same grid cell (the <code>ruler</code>, invisible, never focusable or in the accessibility tree), so the track always measures whatever the tallest trigger needs.",
+              "title": "Constant height, regardless of which trigger is open"
+            },
+            "es": {
+              "body": "El panel ya no cambia de alto al cambiar de trigger: nuevas partes <code>ruler</code>, <code>panel</code> y <code>panelVisible</code> apilan las columnas de CADA trigger en la misma celda de grilla (el <code>ruler</code>, invisible, nunca en foco ni en el árbol de accesibilidad), así que la pista siempre mide lo que el trigger más alto necesita.",
+              "title": "Alto constante, sin importar qué trigger está abierto"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-08-20",
+            "en": {
+              "body": "<code>MegamenuTrigger</code> no longer prints a <code>chevron-down</code> icon: the <code>triggerIndicator</code> part leaves the contract. A trigger is a plain-text button.",
+              "title": "Trigger drops its chevron"
+            },
+            "es": {
+              "body": "<code>MegamenuTrigger</code> ya no imprime un ícono <code>chevron-down</code>: la parte <code>triggerIndicator</code> sale del contrato. Un trigger es un botón de texto plano.",
+              "title": "Trigger sin chevron"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-08-20",
+            "en": {
+              "body": "A row of category triggers, each opening an edge-to-edge panel of 2-4 <code>NavListGroup</code>s (the same component NavList uses) — deliberately unlike <code>Menu</code>/<code>Menubar</code>: no <code>role=\"menu\"</code>, no arrow keys or typeahead, the WAI-ARIA \"Disclosure (Navigation)\" pattern instead. Every trigger is a plain <code>&lt;button aria-expanded&gt;</code>, never a link — it is a category, not a destination. Each trigger's panel anchors against the whole BAR (<code>Megamenu</code> itself, not the individual trigger), so it measures the same edge-to-edge width regardless of which one is open. Composes as a guest of <code>Navbar</code>, alongside <code>NavList</code>.",
+              "title": "New Megamenu contract"
+            },
+            "es": {
+              "body": "Una barra de categorías, cada una desplegando un panel borde a borde de 2-4 <code>NavListGroup</code> (mismo componente que usa NavList) — deliberadamente distinto de <code>Menu</code>/<code>Menubar</code>: sin <code>role=\"menu\"</code>, sin flechas ni typeahead, patrón WAI-ARIA \"Disclosure (Navigation)\". Cada trigger es un <code>&lt;button aria-expanded&gt;</code>, nunca un enlace: es una categoría, no un destino. El panel de cada trigger ancla contra la BARRA entera (<code>Megamenu</code>, no el trigger individual), así que mide el mismo ancho borde a borde sin importar cuál esté abierto. Compone como invitado de <code>Navbar</code>, junto a <code>NavList</code>.",
+              "title": "Nuevo contrato Megamenu"
             },
             "kind": "feature"
           }
@@ -1167,6 +1271,32 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-20",
+            "en": {
+              "body": "New <code>heading</code> option: a STATIC label (no <code>collapsible</code>) renders as an <code>&lt;h3&gt;</code> instead of a <code>&lt;div&gt;</code> — for a group living inside a large panel (<code>Megamenu</code>'s own columns being the motivating case) where a screen reader's own heading-navigation is how a reader orients among several groups at once. No effect on a collapsible label, already a real <code>&lt;button&gt;</code>, a stronger landmark than a heading would add; nor without a <code>label</code>, which it must be paired with.",
+              "title": "NavListGroup can label its section with a real heading"
+            },
+            "es": {
+              "body": "Nueva opción <code>heading</code>: una etiqueta ESTÁTICA (sin <code>collapsible</code>) se renderiza como <code>&lt;h3&gt;</code> en vez de un <code>&lt;div&gt;</code> — para un grupo que vive adentro de un panel grande (<code>Megamenu</code>'s propias columnas siendo el caso que lo motivó) donde la navegación por encabezados de un lector de pantalla es cómo alguien se orienta entre varios grupos a la vez. Sin efecto sobre una etiqueta colapsable, que ya es un <code>&lt;button&gt;</code> real, un landmark más fuerte que un encabezado; ni sin <code>label</code>, con quien debe ir de la mano.",
+              "title": "NavListGroup puede rotular su sección con un encabezado real"
+            },
+            "kind": "feature",
+            "target": "heading"
+          },
+          {
+            "date": "2026-08-19",
+            "en": {
+              "body": "New <code>nested</code> slot on <code>NavListLink</code>, accepting a <code>NavListGroup</code>. It renders inside the SAME <code>&lt;li&gt;</code>, as a sibling of the <code>&lt;a&gt;</code>, not inside the parent group's own list — a <code>NavListGroup</code> nested straight inside another group's <code>children</code> is not valid HTML, since a <code>&lt;div&gt;</code> is not a legal <code>&lt;ul&gt;</code> child, only <code>&lt;li&gt;</code> is. <code>NavListGroup</code> now accepts <code>NavListLink</code> as a second legal parent (previously only <code>NavList</code>), but its template is unchanged — same <code>&lt;div&gt;</code>, optional label, <code>&lt;ul&gt;</code>, collapsible or not, the identical enhancer either way. Depth is unbounded: a nested <code>NavListLink</code> can carry its own <code>nested</code> again.",
+              "title": "NavListLink can carry its own sub-destinations"
+            },
+            "es": {
+              "body": "Nuevo slot <code>nested</code> en <code>NavListLink</code>, que acepta un <code>NavListGroup</code>. Se renderiza adentro del mismo <code>&lt;li&gt;</code>, como hermano del <code>&lt;a&gt;</code>, no adentro de la lista del grupo padre — un <code>NavListGroup</code> metido directo en el <code>children</code> de otro grupo no es HTML válido, porque un <code>&lt;div&gt;</code> no es hijo legal de <code>&lt;ul&gt;</code>, sólo <code>&lt;li&gt;</code> lo es. <code>NavListGroup</code> ahora acepta <code>NavListLink</code> como segundo padre legal (antes sólo <code>NavList</code>), pero su plantilla no cambia en nada: sigue siendo el mismo <code>&lt;div&gt;</code> con rótulo opcional y <code>&lt;ul&gt;</code>, colapsable o no, con exactamente el mismo enhancer. La profundidad es arbitraria: un <code>NavListLink</code> anidado puede volver a llevar su propio <code>nested</code>.",
+              "title": "NavListLink puede llevar sus propios sub-destinos"
+            },
+            "kind": "feature",
+            "target": "NavListLink"
+          },
+          {
             "date": "2026-08-15",
             "en": {
               "body": "Covers the WAI-ARIA APG \"Disclosure (Navigation)\" pattern. New <code>collapsible</code> and <code>defaultOpen</code> options (open by default, unlike <code>Accordion</code>): with <code>collapsible</code>, the group's static label becomes a <code>&lt;button&gt;</code> with <code>aria-expanded</code>/<code>aria-controls</code> toggling its list of links. Deliberately NOT <code>role=\"menu\"</code> — the same reason <code>NavList</code> already documents for itself. It now has a Vanilla enhancer (<code>data-sk-nav-list-group-trigger</code>), only for the collapsible case — the static group still needs no JavaScript at all.",
@@ -1199,6 +1329,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-20",
+            "en": {
+              "body": "<code>Navbar</code>'s own <code>children</code> slot now also accepts <code>Megamenu</code> — another guest with its own navigation destinations, the same relationship it already has with <code>NavList</code>. Nothing about Navbar's own role as a SHELL changes: still no machine of its own, still never reaching into its guest's markup, only re-declaring its own styling hooks.",
+              "title": "Navbar accepts Megamenu as a guest, alongside NavList"
+            },
+            "es": {
+              "body": "El slot <code>children</code> de <code>Navbar</code> ahora también acepta <code>Megamenu</code> — otro invitado con sus propios destinos de navegación, la misma relación que ya tiene con <code>NavList</code>. Nada del rol de Navbar como SHELL cambia: sigue sin máquina propia y sin ajustar el markup de su invitado, sólo redeclara sus estilos.",
+              "title": "Navbar acepta Megamenu como invitado, junto a NavList"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -1412,6 +1554,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-19",
+            "en": {
+              "body": "A real app shell rarely wants a whole header row just for the hamburger: the trigger can now take <code>floating</code>, which lifts it out of flow and pins it to the panel's own top inline-end corner, just past its edge. It is a paint decision, not a new legal parent — it is still a child of <code>Sidebar</code>, <code>SidebarHeader</code>, or <code>SidebarFooter</code>, and <code>aria-controls</code> still finds it the same way. As a consequence, `.sk-sidebar` itself no longer clips with a root-level <code>overflow: hidden</code> — the clip now belongs to each region (<code>__header</code>, <code>__content</code>, <code>__footer</code>), which is where it actually depends on that region's content, and is what lets the floating trigger sit visibly past the panel instead of being cut off by it.",
+              "title": "New floating option for SidebarTrigger"
+            },
+            "es": {
+              "body": "Un app shell real casi nunca quiere una fila de header sólo para el hamburger: el trigger ahora puede llevar <code>floating</code>, que lo saca del flujo y lo fija a la esquina superior del lado final del panel, apenas afuera de su borde. Es una decisión de pintado, no un padre legal nuevo — sigue siendo hijo de <code>Sidebar</code>, <code>SidebarHeader</code> o <code>SidebarFooter</code>, y <code>aria-controls</code> lo sigue encontrando igual. Como consecuencia, el propio <code>.sk-sidebar</code> dejó de recortar con <code>overflow: hidden</code> en la raíz — el recorte ahora es de cada región (<code>__header</code>, <code>__content</code>, <code>__footer</code>), que es donde depende del contenido real, y es lo que deja que el trigger flotante se vea fuera del panel en lugar de cortado por él.",
+              "title": "Nueva opción floating para SidebarTrigger"
+            },
+            "kind": "feature",
+            "target": "floating"
+          },
           {
             "date": "2026-08-17",
             "en": {
@@ -1733,6 +1888,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-20",
+            "en": {
+              "body": "<code>size</code> controls the trigger row's height, its inline padding and the label size: <code>sm</code> or <code>md</code> (default). It is CSS-only, orthogonal to <code>orientation</code>: any orientation can be <code>sm</code>.",
+              "title": "Tabs gains the size option"
+            },
+            "es": {
+              "body": "<code>size</code> controla el alto de la fila de triggers, su relleno horizontal y el tamaño de la etiqueta: <code>sm</code> o <code>md</code> (por defecto). Es sólo CSS, ortogonal a <code>orientation</code>: cualquier orientación puede ser <code>sm</code>.",
+              "title": "Tabs suma la opción size"
+            },
+            "kind": "feature",
+            "target": "size"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -2833,6 +3001,11 @@
       "css": "@skryensya/core/components/breadcrumb.css",
       "id": "breadcrumb",
       "options": {
+        "collapsedLabel": {
+          "attr": "data-collapsed-label",
+          "default": "Mostrar niveles ocultos",
+          "type": "string"
+        },
         "label": {
           "attr": "aria-label",
           "default": "Migas de pan",
@@ -2840,6 +3013,7 @@
         }
       },
       "parts": {
+        "collapseTrigger": "sk-breadcrumb__collapse-trigger",
         "current": "sk-breadcrumb__current",
         "item": "sk-breadcrumb__item",
         "link": "sk-breadcrumb__link",
@@ -2872,7 +3046,8 @@
             "hierarchy-trail"
           ],
           "options": [
-            "label"
+            "label",
+            "collapsedLabel"
           ],
           "react": {
             "from": "@skryensya/react/breadcrumb",
@@ -2911,6 +3086,9 @@
             }
           },
           "template": {
+            "attrs": {
+              "data-sk-breadcrumb": ""
+            },
             "children": [
               {
                 "attrs": {
@@ -4974,10 +5152,10 @@
                     "children": [
                       {
                         "attrs": {
-                          "aria-hidden": "true"
+                          "data-sk-icon": "close",
+                          "data-sk-icon-size": "sm"
                         },
-                        "element": "span",
-                        "text": "×"
+                        "element": "span"
                       }
                     ],
                     "element": "button",
@@ -4998,10 +5176,33 @@
                     "children": [
                       {
                         "attrs": {
-                          "aria-hidden": "true"
+                          "data-state": "closed"
                         },
-                        "element": "span",
-                        "text": "⌄"
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "chevron-down",
+                              "data-sk-icon-size": "sm"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "span"
+                      },
+                      {
+                        "attrs": {
+                          "data-state": "open"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "chevron-up",
+                              "data-sk-icon-size": "sm"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "span"
                       }
                     ],
                     "element": "button",
@@ -7980,7 +8181,16 @@
           ],
           "useWhen": [
             "una página necesita una medida de lectura y algunos hijos deben ser angostos, abrirse o sangrar de borde a borde",
-            "una sección full-width debe conservar su contenido centrado sin un wrapper adicional"
+            "una sección full-width debe conservar su contenido centrado sin un wrapper adicional",
+            "la página lleva un rail de apoyo (TOC, navegación contextual): es un hijo directo con data-width=\"rail\" — no un span de contenido como narrow/breakout, sino una columna aparte que la grilla reserva junto al flujo principal"
+          ]
+        },
+        "Main": {
+          "avoidWhen": [
+            "es una sección dentro de la página, no el landmark principal; usa Box, Stack o LayoutGrid según corresponda"
+          ],
+          "useWhen": [
+            "la región es el landmark <main> de la página: el área de trabajo de una aplicación o de una plantilla"
           ]
         },
         "Stack": {
@@ -8114,6 +8324,31 @@
             "element": "div",
             "host": true,
             "part": "layoutGrid",
+            "slot": "children"
+          }
+        },
+        "Main": {
+          "host": {
+            "element": "main"
+          },
+          "intent": [
+            "main-content",
+            "application-work-area",
+            "app-shell-main"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/layout",
+            "name": "Main"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node"
+            }
+          },
+          "template": {
+            "element": "main",
+            "host": true,
             "slot": "children"
           }
         },
@@ -8767,6 +9002,169 @@
             "element": "div",
             "host": true,
             "part": "root"
+          }
+        }
+      }
+    },
+    "megamenu": {
+      "css": "@skryensya/core/components/megamenu.css",
+      "id": "megamenu",
+      "options": {
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "content": "sk-megamenu__content",
+        "item": "sk-megamenu__item",
+        "list": "sk-megamenu__list",
+        "panel": "sk-megamenu__panel",
+        "panelVisible": "sk-megamenu__panel--visible",
+        "positioner": "sk-megamenu__positioner",
+        "previewOutgoing": "sk-megamenu__preview-outgoing",
+        "root": "sk-megamenu",
+        "ruler": "sk-megamenu__ruler",
+        "trigger": "sk-megamenu__trigger"
+      },
+      "semantics": {
+        "Megamenu": {
+          "alternatives": [
+            "Menu",
+            "Menubar",
+            "NavList"
+          ],
+          "avoidWhen": [
+            "el desplegable es una lista de comandos de aplicación, no destinos; eso es Menu",
+            "la barra es de comandos de aplicación (Archivo/Editar/Ver), algunos con desplegable; eso es Menubar",
+            "son destinos simples sin panel de varias columnas; eso es NavList"
+          ],
+          "useWhen": [
+            "navegación de sitio/marketing con categorías que despliegan un panel de varias columnas de enlaces, borde a borde bajo la barra"
+          ]
+        },
+        "MegamenuTrigger": {
+          "useWhen": [
+            "una categoría de la barra — su panel (`columns`) son 2-4 NavListGroup, no comandos ni un solo enlace"
+          ]
+        }
+      },
+      "signatures": {
+        "Megamenu": {
+          "host": {
+            "element": "nav"
+          },
+          "intent": [
+            "edge-to-edge-navigation-panel",
+            "marketing-site-navigation",
+            "multi-column-dropdown-navigation"
+          ],
+          "mount": "data-sk-megamenu",
+          "options": [
+            "label"
+          ],
+          "react": {
+            "from": "@skryensya/react/megamenu",
+            "name": "Megamenu"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "MegamenuTrigger"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-anchor"
+            ],
+            "children": [
+              {
+                "attrs": {
+                  "role": "list"
+                },
+                "element": "ul",
+                "part": "list",
+                "slot": "children"
+              }
+            ],
+            "element": "nav",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "MegamenuTrigger": {
+          "host": {
+            "element": "li"
+          },
+          "intent": [
+            "megamenu-category-trigger",
+            "disclosure-navigation-trigger"
+          ],
+          "options": [],
+          "parents": [
+            "Megamenu"
+          ],
+          "portals": true,
+          "react": {
+            "from": "@skryensya/react/megamenu",
+            "name": "MegamenuTrigger"
+          },
+          "slots": {
+            "children": {
+              "accepts": "text",
+              "required": true
+            },
+            "columns": {
+              "accepts": "signature",
+              "of": [
+                "NavListGroup",
+                "ImageFrame"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "aria-expanded": "false",
+                  "type": "button"
+                },
+                "element": "button",
+                "mount": "data-sk-megamenu-trigger",
+                "part": "trigger",
+                "slot": "children"
+              },
+              {
+                "also": [
+                  "sk-anchored",
+                  "sk-megamenu"
+                ],
+                "children": [
+                  {
+                    "element": "div",
+                    "mount": "data-sk-megamenu-content",
+                    "part": "content",
+                    "slot": "columns"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-megamenu-positioner",
+                "part": "positioner"
+              }
+            ],
+            "element": "li",
+            "host": true,
+            "part": "item"
           }
         }
       }
@@ -9823,6 +10221,12 @@
           "trueValue": "",
           "type": "boolean"
         },
+        "heading": {
+          "attr": "data-heading",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
         "href": {
           "attr": "href",
           "type": "string"
@@ -9886,7 +10290,8 @@
           ],
           "useWhen": [
             "un destino de la lista",
-            "marca la página actual con current"
+            "marca la página actual con current",
+            "tiene sus propios sub-destinos: un NavListGroup en el slot nested, adentro del mismo <li>"
           ]
         }
       },
@@ -9935,10 +10340,12 @@
           ],
           "options": [
             "collapsible",
-            "defaultOpen"
+            "defaultOpen",
+            "heading"
           ],
           "parents": [
-            "NavList"
+            "NavList",
+            "NavListLink"
           ],
           "react": {
             "from": "@skryensya/react/nav-list",
@@ -9963,6 +10370,16 @@
                 "part": "groupLabel",
                 "slot": "label",
                 "whenGiven": "label",
+                "whenMissing": [
+                  "collapsible",
+                  "heading"
+                ]
+              },
+              {
+                "element": "h3",
+                "part": "groupLabel",
+                "slot": "label",
+                "whenGiven": "heading",
                 "whenMissing": "collapsible"
               },
               {
@@ -10060,6 +10477,12 @@
             "icon": {
               "accepts": "node"
             },
+            "nested": {
+              "accepts": "signature",
+              "of": [
+                "NavListGroup"
+              ]
+            },
             "trailing": {
               "accepts": "node"
             }
@@ -10090,6 +10513,10 @@
                 "element": "a",
                 "host": true,
                 "part": "link"
+              },
+              {
+                "slot": "nested",
+                "whenGiven": "nested"
               }
             ],
             "element": "li",
@@ -10148,7 +10575,8 @@
               "of": [
                 "NavbarBrand",
                 "NavbarActions",
-                "NavList"
+                "NavList",
+                "Megamenu"
               ],
               "required": true
             }
@@ -11888,6 +12316,12 @@
           "trueValue": "",
           "type": "boolean"
         },
+        "floating": {
+          "attr": "data-floating",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
         "label": {
           "attr": "aria-label",
           "type": "string"
@@ -11970,7 +12404,8 @@
           ],
           "useWhen": [
             "el ancho correcto lo decide el contenido de cada persona: rutas largas, un árbol profundo, nombres de archivo",
-            "hace falta un ancho intermedio, no sólo angosta o ancha"
+            "hace falta un ancho intermedio, no sólo angosta o ancha",
+            "la lista tiene subniveles o destinos sin ícono propio: no hay riel de íconos posible, así que la única forma de ganar ancho es angostar sin esconder nada"
           ]
         },
         "SidebarSeparator": {
@@ -11983,12 +12418,17 @@
           ]
         },
         "SidebarTrigger": {
-          "alternatives": [],
+          "alternatives": [
+            "SidebarResizeHandle"
+          ],
           "avoidWhen": [
-            "se espera que oculte la barra; angosta, nunca esconde"
+            "se espera que oculte la barra; angosta, nunca esconde",
+            "la lista tiene subniveles (grupos anidados, un árbol de archivos): no hay una fila por nivel que mostrar en un riel de íconos; angostá con SidebarResizeHandle en cambio",
+            "algún destino no tiene ícono propio; un riel colapsado con huecos es peor que uno que no colapsa"
           ],
           "useWhen": [
-            "la persona tiene que poder angostar la barra para ganar ancho de contenido"
+            "la persona tiene que poder angostar la barra para ganar ancho de contenido",
+            "la lista es de UN solo nivel y cada destino tiene su propio ícono: colapsado sólo quedan los íconos, así que sin ellos (o sin ese nivel único) el riel no dice nada"
           ]
         }
       },
@@ -12203,7 +12643,8 @@
           ],
           "mount": "data-sk-sidebar-trigger",
           "options": [
-            "label"
+            "label",
+            "floating"
           ],
           "parents": [
             "Sidebar",
@@ -13820,6 +14261,15 @@
             "vertical"
           ]
         },
+        "size": {
+          "attr": "data-size",
+          "default": "md",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md"
+          ]
+        },
         "value": {
           "attr": "data-value",
           "machineInput": true,
@@ -13867,7 +14317,8 @@
           "options": [
             "orientation",
             "activationMode",
-            "value"
+            "value",
+            "size"
           ],
           "react": {
             "from": "@skryensya/react/tabs",
@@ -16805,5 +17256,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "5114dfc8a1c7a5c2"
+  "sourceHash": "ed3124c59ddb3790"
 }

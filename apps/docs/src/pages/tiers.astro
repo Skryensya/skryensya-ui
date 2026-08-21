@@ -12,19 +12,20 @@ const counts = {
 
 const badExample = `/* Esto falla el build. */
 .sk-button {
-  --sk-button-bg: var(--ramp-accent-600);
+  --sk-button-bg: var(--palette-blue-600);
 }`;
 
 const linterOutput = `✗ 1 problem(s):
 
   [tier-skip]
     --sk-button-bg: component hook reaches past the semantic
-    layer into primitive --ramp-accent-600, bypasses mode
+    layer into primitive --palette-blue-600, bypasses mode
     switching, breaks dark mode for this component alone`;
 ---
 
 <Base
   title="Tres tiers"
+  documentLayout="grid"
   description="Primitivos, semánticos y styling hooks: qué puede referenciar cada tier, y por qué la dirección de las referencias es lo que hace que esto sea un sistema."
 >
   <h1>Tres tiers</h1>
@@ -95,7 +96,7 @@ const linterOutput = `✗ 1 problem(s):
     un semántico. Nada apunta hacia arriba, y <strong>tier 3 no puede saltar a tier 1</strong>.
   </p>
   <p>
-    Ese salto es el que parece inofensivo y no lo es. Un styling hook que toma <code>--ramp-accent-600</code>
+    Ese salto es el que parece inofensivo y no lo es. Un styling hook que toma <code>--palette-blue-600</code>
     directamente se salta la capa donde vive <code>light-dark()</code>. Ese componente, y solo ese,
     deja de tener modo oscuro. El defecto no se ve hasta que alguien mira la página en oscuro.
   </p>
@@ -116,8 +117,8 @@ const linterOutput = `✗ 1 problem(s):
 
   <h2>El prefijo marca el tier</h2>
   <p>
-    Un primitivo se lee <code>--ramp-accent-600</code>; un semántico, <code>--color-action-primary</code>.
-    El prefijo distinto es intencional: ver un <code>--ramp-*</code> dentro del CSS de un componente
+    Un primitivo se lee <code>--palette-blue-600</code>; un semántico, <code>--color-action-primary</code>.
+    El prefijo distinto es intencional: ver un <code>--palette-*</code> dentro del CSS de un componente
     es la señal visible, a simple vista, de que alguien se saltó un tier. Aplanar a <code>--accent-600</code>
     perdería esa señal.
   </p>

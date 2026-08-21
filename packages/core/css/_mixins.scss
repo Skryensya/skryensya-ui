@@ -1,73 +1,49 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// SCSS MIXINS FOR THE TOKEN LAYER
+// Shared Sass helpers. Sass is used only where CSS lacks a macro; token values remain authored as
+// runtime CSS custom properties.
 //
-// One mixin survives here, for the one shape of repetition the platform can't express:
-//
-//   hc-tokens   modes/hc.scss declared the SAME 34 tokens twice, once for
-//               [data-contrast="high"], once for @media (prefers-contrast: more), 
-//               because "CSS has no macro". This IS the macro. One body, included
-//               twice; the two blocks can no longer drift by construction.
-//
-// Root ramps live in primitives/_ramps.scss as an explicit default set. Consumers replace complete
-// ramps in unlayered CSS; the validator checks the defaults shipped by Core.
+// High contrast re-declares semantic color tokens explicitly. Palette values stay fixed; HC chooses
+// stronger semantic rungs instead of generating colors at runtime.
 //
 // Tier-3 CSS (button.css, state-layer.css) likewise stays hand-authored CSS: its repetition is
 // meaningful variance, not boilerplate, and a mixin would only hide the hand-tuning.
-// ─────────────────────────────────────────────────────────────────────────────
 
-/// The full high-contrast semantic override set, the third color mode (ADR-8).
-///
-/// Included by BOTH hc triggers (the [data-contrast="high"] opt-in and the
-/// prefers-contrast media query) so they are identical by construction. The validator's
-/// mode-complete "the two hc blocks don't drift" check now guards the compiler rather than
-/// two hand-copied bodies, kept as belt-and-suspenders, it can no longer fire.
-///
-/// Every color still sits inside light-dark(): high contrast composes with the light/dark
-/// axis (you get hc-light AND hc-dark), it is not a third light-dark() slot.
 @mixin hc-tokens {
-  --color-bg-canvas: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
-  --color-bg-surface: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
-  --color-bg-surface-raised: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-950));
-  --color-bg-surface-sunken: light-dark(var(--ramp-neutral-100), var(--ramp-neutral-1000));
-  /* the well stays the deepest floor: a strong grey in light so it still reads against the 0/100
-   * surfaces, and pure black in dark (where every surface is already at the 1000 rung). */
-  --color-bg-well: light-dark(var(--ramp-neutral-300), var(--ramp-neutral-1000));
-  --color-bg-inverse: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
-  --color-bg-accent-subtle: light-dark(var(--ramp-accent-100), var(--ramp-accent-950));
-  --color-bg-danger-subtle: light-dark(var(--ramp-danger-100), var(--ramp-danger-950));
-  --color-bg-success-subtle: light-dark(var(--ramp-success-100), var(--ramp-success-950));
-  --color-bg-warning-subtle: light-dark(var(--ramp-warning-100), var(--ramp-warning-950));
-  --color-bg-info-subtle: light-dark(var(--ramp-info-100), var(--ramp-info-950));
-  --color-text-primary: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
-  --color-text-secondary: light-dark(var(--ramp-neutral-800), var(--ramp-neutral-200));
-  --color-text-tertiary: light-dark(var(--ramp-neutral-700), var(--ramp-neutral-300));
-  --color-text-disabled: light-dark(var(--ramp-neutral-500), var(--ramp-neutral-500));
-  --color-text-inverse: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
-  --color-text-on-accent: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-1000));
-  --color-text-accent: light-dark(var(--ramp-accent-900), var(--ramp-accent-200));
-  --color-text-danger: light-dark(var(--ramp-danger-900), var(--ramp-danger-200));
-  --color-text-success: light-dark(var(--ramp-success-900), var(--ramp-success-200));
-  --color-text-warning: light-dark(var(--ramp-warning-900), var(--ramp-warning-200));
-  --color-text-info: light-dark(var(--ramp-info-900), var(--ramp-info-200));
-  --color-border-subtle: light-dark(var(--ramp-neutral-400), var(--ramp-neutral-600));
-  --color-border-default: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
-  --color-border-strong: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
-  --color-border-accent: light-dark(var(--ramp-accent-800), var(--ramp-accent-300));
-  --color-border-danger: light-dark(var(--ramp-danger-800), var(--ramp-danger-300));
-  --color-border-success: light-dark(var(--ramp-success-800), var(--ramp-success-300));
-  --color-border-warning: light-dark(var(--ramp-warning-800), var(--ramp-warning-300));
-  --color-border-info: light-dark(var(--ramp-info-800), var(--ramp-info-300));
-  --color-border-focus: light-dark(var(--ramp-neutral-1000), var(--ramp-neutral-0));
-  --color-action-primary: light-dark(var(--ramp-accent-800), var(--ramp-accent-300));
-  --color-action-neutral: light-dark(var(--ramp-neutral-200), var(--ramp-neutral-800));
-  --color-action-danger: light-dark(var(--ramp-danger-800), var(--ramp-danger-300));
-  --color-action-disabled: light-dark(var(--ramp-neutral-200), var(--ramp-neutral-800));
-  --shadow-sm: light-dark(oklch(0% 0 0 / 0.24), oklch(0% 0 0 / 0.8));
-  --shadow-md: light-dark(oklch(0% 0 0 / 0.3), oklch(0% 0 0 / 0.88));
-  --shadow-lg: light-dark(oklch(0% 0 0 / 0.38), oklch(0% 0 0 / 0.92));
-  /* More opacity would pull the surface toward currentColor and make it read dimmer.
-   * Keep the semantic ladder stable; add a crisp inset keyline proportional to each
-   * state's opacity, plus the thicker independent focus ring. */
-  --state-layer-keyline-scale: 8px;
-  --focus-ring-width: 3px;
+  --color-bg-canvas: light-dark(var(--palette-white), var(--palette-black));
+  --color-bg-surface: light-dark(var(--palette-white), var(--palette-black));
+  --color-bg-surface-raised: light-dark(var(--palette-white), var(--palette-stone-950));
+  --color-bg-surface-sunken: light-dark(var(--palette-stone-100), var(--palette-black));
+  --color-bg-well: light-dark(var(--palette-stone-300), var(--palette-black));
+  --color-bg-inverse: light-dark(var(--palette-black), var(--palette-white));
+  --color-bg-accent-subtle: light-dark(var(--palette-blue-100), var(--palette-blue-950));
+  --color-bg-danger-subtle: light-dark(var(--palette-red-100), var(--palette-red-950));
+  --color-bg-success-subtle: light-dark(var(--palette-emerald-100), var(--palette-emerald-950));
+  --color-bg-warning-subtle: light-dark(var(--palette-amber-100), var(--palette-amber-950));
+  --color-bg-info-subtle: light-dark(var(--palette-sky-100), var(--palette-sky-950));
+  --color-text-primary: light-dark(var(--palette-black), var(--palette-white));
+  --color-text-secondary: light-dark(var(--palette-stone-800), var(--palette-stone-200));
+  --color-text-tertiary: light-dark(var(--palette-stone-700), var(--palette-stone-300));
+  --color-text-disabled: light-dark(var(--palette-stone-500), var(--palette-stone-500));
+  --color-text-inverse: light-dark(var(--palette-white), var(--palette-black));
+  --color-text-on-accent: light-dark(var(--palette-white), var(--palette-stone-950));
+  --color-text-accent: light-dark(var(--palette-blue-900), var(--palette-blue-200));
+  --color-text-danger: light-dark(var(--palette-red-900), var(--palette-red-200));
+  --color-text-success: light-dark(var(--palette-emerald-900), var(--palette-emerald-200));
+  --color-text-warning: light-dark(var(--palette-amber-900), var(--palette-amber-200));
+  --color-text-info: light-dark(var(--palette-sky-900), var(--palette-sky-200));
+  --color-border-subtle: light-dark(var(--palette-stone-400), var(--palette-stone-700));
+  --color-border-default: light-dark(var(--palette-stone-600), var(--palette-stone-400));
+  --color-border-strong: light-dark(var(--palette-stone-800), var(--palette-stone-200));
+  --color-border-accent: light-dark(var(--palette-blue-700), var(--palette-blue-400));
+  --color-border-danger: light-dark(var(--palette-red-700), var(--palette-red-400));
+  --color-border-success: light-dark(var(--palette-emerald-700), var(--palette-emerald-400));
+  --color-border-warning: light-dark(var(--palette-amber-700), var(--palette-amber-400));
+  --color-border-info: light-dark(var(--palette-sky-700), var(--palette-sky-400));
+  --color-border-focus: light-dark(var(--palette-blue-700), var(--palette-blue-300));
+  --color-action-primary: light-dark(var(--palette-blue-700), var(--palette-blue-400));
+  --color-action-neutral: light-dark(var(--palette-stone-100), var(--palette-stone-900));
+  --color-action-danger: light-dark(var(--palette-red-700), var(--palette-red-400));
+  --color-action-disabled: light-dark(var(--palette-stone-300), var(--palette-stone-800));
+  --shadow-sm: light-dark(oklch(0% 0 0 / 0.12), oklch(0% 0 0 / 0.5));
+  --shadow-md: light-dark(oklch(0% 0 0 / 0.16), oklch(0% 0 0 / 0.6));
+  --shadow-lg: light-dark(oklch(0% 0 0 / 0.22), oklch(0% 0 0 / 0.7));
 }

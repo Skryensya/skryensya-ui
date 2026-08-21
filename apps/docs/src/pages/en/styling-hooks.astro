@@ -34,6 +34,7 @@ const consumer = `/* Your CSS reads it once and never branches. */
 
 <Base
   title="The styling hooks contract"
+  documentLayout="grid"
   description="A styling hook is the public knob for a component: what it means, how they are named, and how to step on them."
 >
   <h1>The</h1>
@@ -44,7 +45,7 @@ const consumer = `/* Your CSS reads it once and never branches. */
   <div class="sk-callout" data-tone="info">
     <div class="sk-callout__content">
     <p>
-      This <strong>changed</strong>. For a long time the system sent the hooks and nothing more: the structure was written by each consumer. It was reversed, because it was not sustained, <a href="/decisiones/0008-que-envia-tier-3">decision 8</a> tells what was measured. What hasn't changed is why a hook exists: it is not a replacement for the missing structure, it is the knob.
+      This <strong>changed</strong>. For a long time the system sent the hooks and nothing more: the structure was written by each consumer. It was reversed, because it was not sustained, <a href="/decisiones/0002-que-envia-tier-3">decision 8</a> tells what was measured. What hasn't changed is why a hook exists: it is not a replacement for the missing structure, it is the knob.
     </p>
     </div>
   </div>
@@ -117,6 +118,6 @@ const consumer = `/* Your CSS reads it once and never branches. */
   </div>
 
   <p>
-    Note that none point to a <code>--ramp-*</code>. It is not discipline: it is <a href="/en/tiers">the tier-skip rule</a>, and it breaks the build.
+    Note that none point to a <code>--palette-*</code>. It is not discipline: it is <a href="/en/tiers">the tier-skip rule</a>, and it breaks the build.
   </p>
 </Base>

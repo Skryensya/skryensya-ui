@@ -44,7 +44,7 @@ export type TooltipOpenChangeDetails = {
 };
 
 /**
- * De qué lado del trigger sale. El vocabulario es el del pattern Anclaje (ADR-25), no uno propio del
+ * De qué lado del trigger sale. El vocabulario es el del pattern Anclaje (ADR-11), no uno propio del
  * tooltip: son los mismos cuatro lados en ejes lógicos que pide cualquier caja anclada, y tenerlos
  * dos veces era tener dos que se podían separar. Estos alias se quedan porque son el nombre con el
  * que el contrato del tooltip ya se documentó.

@@ -4,10 +4,10 @@ import ts from "typescript";
  * A demo's script, as authored (TypeScript) and as run (JavaScript).
  *
  * The two are not the same text and cannot be: `demos/scripts/*.ts` are real source files the
- * compiler checks, and the places they run — a `<script type="module">` inside the preview's srcdoc,
- * and the Playground's no-build `index.html` — take JavaScript and nothing else. So the tab shows
- * the file and the frame runs this. That is the same bargain the React binding already makes: what a
- * page shows is TSX, what a browser executes is what a compiler made of it.
+ * compiler checks, and the preview's `<script type="module">` runs in a browser with no TypeScript
+ * compiler. So the tab shows the file and the frame runs this. That is the same bargain the React
+ * binding already makes: what a page shows is TSX, what a browser executes is what a compiler made
+ * of it.
  *
  * Stripping is all that happens. `transpileModule` compiles one file with no program and no type
  * information, which is exactly the job: types out, statements untouched, no bundling, no polyfills,

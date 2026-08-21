@@ -27,6 +27,7 @@ import { tooltipContract } from "@skryensya/core/tooltip";
 import { selectContract } from "@skryensya/core/select";
 import { menuContract } from "@skryensya/core/menu";
 import { menubarContract } from "@skryensya/core/menubar";
+import { megamenuContract } from "@skryensya/core/megamenu";
 import { meterContract } from "@skryensya/core/meter";
 import { dataGridContract } from "@skryensya/core/data-grid";
 import { feedContract } from "@skryensya/core/feed";
@@ -126,6 +127,7 @@ export const contracts = {
   select: selectContract,
   menu: menuContract,
   menubar: menubarContract,
+  megamenu: megamenuContract,
   meter: meterContract,
   "data-grid": dataGridContract,
   feed: feedContract,

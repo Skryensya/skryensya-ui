@@ -6,13 +6,12 @@
  * consumer rule, so an app reskins one instance with no specificity fight:
  *   .hero .sk-button { --sk-button-bg: rebeccapurple; }
  *
- * SHIPS THE CLASS, not just the hooks (ADR-1, ADR-8). Importing this file gives you a working
+ * SHIPS THE CLASS, not just the hooks (ADR-19, ADR-2). Importing this file gives you a working
  * button: the structure below is the same structure every consumer was writing by hand, and the
  * hooks above it are how you change it without touching a selector.
  *
- * THE INVARIANT: every hook resolves to a TIER-2 token, never a ramp, never a raw color. A
- * hook reaching into --ramp-* directly bypasses the mode layer and breaks dark mode for this
- * component alone. scripts/lint.mjs fails on it.
+ * THE INVARIANT: every hook resolves to a TIER-2 token, never a palette, never a raw color. A hook
+ * reaching into --palette-* bypasses the semantic layer. scripts/lint.mjs fails on it.
  *
  * NAMING: the group segment (primary/danger/sm) is DROPPED from the hook name. Base and every
  * variant all declare --sk-button-bg; the more specific selector wins. That is what makes these
@@ -133,7 +132,7 @@
    * without the base's `--color-border-default` ring. The base variant's mid-gray border is sized
    * for a button standing alone on canvas; a filled icon-only control sitting on a busier surface,
    * a code panel, a colored card, reads that same ring as harder than the control needs. `subtle`
-   * drops it to `--color-border-subtle`, one step down the same neutral ramp, so the button still
+   * drops it to `--color-border-subtle`, one step down the same neutral scale, so the button still
    * has an edge, just a quieter one. First use: CopyButton over highlighted code
    * (components/copy-button.css composes it as the copy button's own default look).
    */
@@ -148,12 +147,8 @@
    * surface and should feel integrated, not layered on top.
    */
   /*
-   * Both halves read TIER-2 tokens, never `--ramp-*`. An earlier version of this rule reached
-   * straight into `--ramp-neutral-200`/`300` for its light values and `scripts/lint.mjs` failed it
-   * (tier-skip): a hook that names a ramp bypasses the mode layer, so it cannot follow a brand swap
-   * and breaks dark mode for this component alone. The substitutes are exact, not approximate,
-   * `--color-bg-surface-sunken` IS `--ramp-neutral-200` in light and `--color-border-subtle` IS
-   * `--ramp-neutral-300`, so the light appearance is byte-identical to what it replaced.
+   * Both halves read TIER-2 tokens, never `--palette-*`. A hook that names a palette bypasses the
+   * semantic layer, so the mode-aware substitution has to happen through semantic tokens.
    */
   .sk-button[data-variant="translucent"] {
     --sk-button-bg: light-dark(
@@ -185,14 +180,9 @@
 
   .sk-button[data-variant="ghost"] {
     --sk-button-bg: transparent;
-    /* `action-quiet-fg`, the accent-reach token for a SECONDARY action, not the raw `text-accent`.
-     * Still colored TEXT on canvas (4.5:1) rather than a fill (3:1), which is why it is a text token
-     * at all; what changed is that it now dials. The rule "the action never dials" protects the ONE
-     * primary CTA a screen most needs to point at, and a ghost is not that: a screen carries many of
-     * them, and left on the raw accent they were the loudest thing on a dialled-down screen,
-     * competing with the CTA the rule exists to protect. It falls back to `text-primary`, never
-     * `text-secondary`, so the button still reads as pressable once the colour is gone. */
-    --sk-button-fg: var(--color-action-quiet-fg);
+    /* Ghost is intentionally neutral: it is pressable, but it is not the primary CTA the brand should
+     * point at. Keep it on primary text rather than secondary text so it still reads as a control. */
+    --sk-button-fg: var(--color-text-primary);
     --sk-button-border-color: transparent;
   }
 

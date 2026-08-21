@@ -86,7 +86,7 @@ export function CalendarBody({
       : defaultViewTriggerProps;
 
   /*
-   * Every trigger below IS the real `Button` component (ADR-1/8), not a hand-authored `<button>`
+   * Every trigger below IS the real `Button` component (ADR-19/8), not a hand-authored `<button>`
    * copying its classes/attrs — a rename in Button's shape shows up here for free. Prev/next and
    * the day cell share the SAME `iconOnly` shape: a control-sized square holding one piece of
    * content, a glyph for prev/next, a day number for the cell, rather than a second "icon button"

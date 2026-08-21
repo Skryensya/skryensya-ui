@@ -40,7 +40,7 @@ export const accordionEvents = {
 /**
  * A stack of expandable tiles that agree on how many can be open.
  *
- * The coordination is the whole component: each item runs its own collapsible machine (ADR-24: one
+ * The coordination is the whole component: each item runs its own collapsible machine (ADR-190: one
  * accordion machine hid the content the moment it closed, killing the animation), and what the root
  * owns is the RULE: single or multiple, and whether the open one may close again.
  *

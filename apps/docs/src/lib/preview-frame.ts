@@ -13,9 +13,8 @@ export interface PreviewFrameOptions {
   body: string;
   /**
    * App CSS the demo needs beyond the system's own stylesheet (`ComponentPreview`'s `css` prop).
-   * Injected as a `<style>` in the frame's own `<head>`, the same way the standalone Playground
-   * document embeds it: without this the CSS tab shown to the reader described a box the live
-   * stage never actually painted.
+   * Injected as a `<style>` in the frame's own `<head>` so the CSS tab shown to the reader describes
+   * the same box the live stage actually paints.
    */
   css?: string;
   /** No stage padding: some components ARE a layout and must reach the edges. */

@@ -1303,7 +1303,7 @@ function renderJsx(
        * for why: a `styleProperty` option says where the value lands in markup, not how a React
        * component wants it, and a component that takes it as an ordinary prop (Sidebar's
        * `minInlineSize`, DensityScope's `densityFactor`) never saw it here either. The live island
-       * and this printed snippet have to pass the same props for the same reason ADR-29 gives:
+       * and this printed snippet have to pass the same props for the same reason ADR-15 gives:
        * the demo a reader watches and the evidence G2 collects are the same call.
        */
     }

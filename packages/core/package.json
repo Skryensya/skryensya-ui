@@ -335,6 +335,10 @@
       "types": "./src/menubar.ts",
       "default": "./src/menubar.ts"
     },
+    "./megamenu": {
+      "types": "./src/megamenu.ts",
+      "default": "./src/megamenu.ts"
+    },
     "./meter": {
       "types": "./src/meter.ts",
       "default": "./src/meter.ts"
@@ -382,7 +386,6 @@
     "./modes/hc.css": "./dist/modes/hc.css",
     "./modes/*": "./css/modes/*",
     "./dimensions/radius.css": "./dist/dimensions/radius.css",
-    "./dimensions/accent.css": "./dist/dimensions/accent.css",
     "./dimensions/press-scale.css": "./dist/dimensions/press-scale.css",
     "./dimensions/*": "./css/dimensions/*",
     "./components/*": "./css/components/*",

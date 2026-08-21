@@ -2,7 +2,7 @@
  * TIER 3, COMMAND PALETTE
  *
  * A searchable listbox hosted in a native Dialog. Compose with `.sk-dialog` for the modal shell
- * (ADR-11). This file owns the search row, results list, empty state and footer, not the dialog
+ * (ADR-19). This file owns the search row, results list, empty state and footer, not the dialog
  * chrome. Close is a real icon-only Button in a `method="dialog"` form, same contract as Dialog.
  */
 @layer components {

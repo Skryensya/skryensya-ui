@@ -22,6 +22,7 @@ html:has(dialog:modal) .mi-toc {
 
 <Base
   title="Scroll lock"
+  documentLayout="grid"
   description="Pattern opt-in que congela la página detrás de un dialog:modal y reserva el gutter del scrollbar para que el layout no salte."
 >
   <h1>Scroll lock</h1>
@@ -36,7 +37,7 @@ html:has(dialog:modal) .mi-toc {
     Es la primera regla del sistema que estiliza el <strong>root del documento</strong> desde un
     archivo opt-in. Todo lo demás se scopea a su propio elemento. El import <em>es</em> el
     consentimiento: una app que ya corre su propio scroll lock no debe importarlo, o se aplica doble.
-    Eso es la decisión 11 (<code>docs/decisiones/0011-el-dialog-exige-el-elemento-nativo.md</code>).
+    Eso es la decisión 11 (<code>docs/decisiones/0005-el-dialog-exige-el-elemento-nativo.md</code>).
   </p>
 
   <h2>Importar</h2>

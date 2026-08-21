@@ -81,6 +81,8 @@ export const componentPreviewAttrs = {
   viewport: "data-sk-component-preview-viewport",
   scroll: "data-sk-component-preview-scroll",
   reload: "data-sk-component-preview-reload",
+  /** The "..." menu's fullscreen action; opens the preview alone, at its own URL (`/preview-fullscreen`). */
+  fullscreen: "data-sk-component-preview-fullscreen",
   /**
    * On the stage, and only for a preset: `free` is the absence of the attribute, not a value, so
    * every rule that reserves, fits or scrolls keeps working unchanged when no preset is chosen.

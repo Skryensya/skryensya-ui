@@ -3,8 +3,31 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "659e932fd041e68a"
+surface: "1b7a814f425d436e"
 entries:
+  - date: 2026-08-20
+    kind: feature
+    target: heading
+    es:
+      title: NavListGroup puede rotular su sección con un encabezado real
+      body: >-
+        Nueva opción <code>heading</code>: una etiqueta ESTÁTICA (sin <code>collapsible</code>) se
+        renderiza como <code>&lt;h3&gt;</code> en vez de un <code>&lt;div&gt;</code> — para un grupo
+        que vive adentro de un panel grande (<code>Megamenu</code>'s propias columnas siendo el caso
+        que lo motivó) donde la navegación por encabezados de un lector de pantalla es cómo alguien
+        se orienta entre varios grupos a la vez. Sin efecto sobre una etiqueta colapsable, que ya es
+        un <code>&lt;button&gt;</code> real, un landmark más fuerte que un encabezado; ni sin
+        <code>label</code>, con quien debe ir de la mano.
+    en:
+      title: NavListGroup can label its section with a real heading
+      body: >-
+        New <code>heading</code> option: a STATIC label (no <code>collapsible</code>) renders as an
+        <code>&lt;h3&gt;</code> instead of a <code>&lt;div&gt;</code> — for a group living inside a
+        large panel (<code>Megamenu</code>'s own columns being the motivating case) where a screen
+        reader's own heading-navigation is how a reader orients among several groups at once. No
+        effect on a collapsible label, already a real <code>&lt;button&gt;</code>, a stronger
+        landmark than a heading would add; nor without a <code>label</code>, which it must be paired
+        with.
   - date: 2026-08-19
     kind: feature
     target: NavListLink

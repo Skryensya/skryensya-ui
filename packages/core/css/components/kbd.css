@@ -5,24 +5,17 @@
  * <kbd> element with the look of a physical key, and, like Badge, it is STATIC: no state, no
  * machine, no vanilla enhancer.
  *
- * Every hook resolves to a TIER-2 token, never a ramp or a raw color, scripts/lint.mjs enforces it.
+ * Every hook resolves to a TIER-2 token, never a palette or raw color, scripts/lint.mjs enforces it.
  *
- * IT HAS NO COLOUR OF ITS OWN BEYOND THESE HOOKS. A key at rest is DECORATION and reads the
- * accent-reach tokens for it, so it dials with Badge and Tag; a key being held down is INFORMATION
- * and reads the action colour, which never dials. Correct across both color modes with zero
- * mode-specific overrides.
+ * IT HAS NO COLOUR OF ITS OWN BEYOND THESE HOOKS. A key at rest is an accent-toned label like Badge
+ * and Tag; a key being held down is INFORMATION and reads the action colour.
  */
 @layer components {
   .sk-kbd {
-    /* THE RESTING KEY IS DECORATION, and reads the accent-reach tokens for it. It used to be
-     * hard-wired to `surface-sunken` / `text-secondary`, which made this file disagree with
-     * `dimensions/accent.scss`, whose own comment listed Kbd beside Badge and Tag: the dimension
-     * documented a reach it did not have. Now a key is an accent-toned label like the other two, and
-     * goes quiet with them at level 2. At the dialled-down levels these resolve back to exactly the
-     * sunken/secondary pair this used to hard-code, so the quiet look is preserved, not lost. */
-    --sk-kbd-bg: var(--color-decorative-bg);
-    --sk-kbd-fg: var(--color-decorative-fg);
-    --sk-kbd-border-color: var(--color-decorative-border);
+    /* The resting key is an accent-toned label, matching Badge and Tag. */
+    --sk-kbd-bg: var(--color-bg-accent-subtle);
+    --sk-kbd-fg: var(--color-text-accent);
+    --sk-kbd-border-color: var(--color-border-accent);
     --sk-kbd-border-width: 1px;
     --sk-kbd-radius: var(--radius-control);
     /* Inline padding only, at the floor of the scale, a multi-glyph key ("Esc") gets a little air on

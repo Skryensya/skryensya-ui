@@ -93,6 +93,15 @@
     --sk-layout-narrow: var(--size-wrapper-sm);
     --sk-layout-content: var(--size-wrapper-md);
     --sk-layout-breakout: var(--size-wrapper-lg);
+    /* The rail's own width, and how many of the grid's rows it should span — read only by a grid
+       that actually has a `[data-width="rail"]` child (below), declared here regardless so both
+       stay overridable up front like the four measures above. `--sk-layout-rail-inline-size`
+       matches `sk-toc`'s own `--sk-toc-inline-size` default (toc.css): Toc is the flagship guest,
+       though any element can fill this slot. `--sk-layout-rail-row-span` cannot have a meaningful
+       pattern-level default beyond 1: how many rows the REST of the grid's content produces is
+       something only the consumer composing it knows. */
+    --sk-layout-rail-inline-size: 14rem;
+    --sk-layout-rail-row-span: 1;
 
     --sk-layout-narrow-track: calc((var(--sk-layout-content) - var(--sk-layout-narrow)) / 2);
     --sk-layout-breakout-track: calc((var(--sk-layout-breakout) - var(--sk-layout-content)) / 2);
@@ -115,6 +124,7 @@
         minmax(var(--sk-layout-gutter), 1fr)
       [full-width-end];
   }
+
 
   /* An ancestor that toggles this element via the native `hidden` attribute (a tab panel, say)
    * needs it to actually disappear. `display: grid` above is an author rule, so it beats the UA
@@ -148,6 +158,52 @@
   .sk-layout-grid > [data-width="full-width"] > [data-width="content"] { grid-column: content-start / content-end; }
   .sk-layout-grid > [data-width="full-width"] > [data-width="breakout"] { grid-column: breakout-start / breakout-end; }
   .sk-layout-grid > [data-width="full-width"] > [data-width="full-width"] { grid-column: full-width-start / full-width-end; }
+
+  /*
+   * RAIL, a supporting column beside the grid (a TOC, contextual navigation) rather than a section
+   * within its flow. Below `wide` there is no room for a side column: the base `.sk-layout-grid > *`
+   * rule above already places it at `content-start / content-end` like any other unlabeled child,
+   * and `order: -1` is the only addition — it reads as an index, first, above the content it indexes.
+   *
+   * `72rem`, hardcoded: media queries cannot read custom properties, so this has to be a
+   * compile-time constant. The same exception `patterns/dialog-vaul.css` and `patterns/vaul.css`
+   * already take for their own hand-written breakpoints (ADR-19, tier-3 stays CSS) — this is the
+   * "wide" step from `core/css/semantic/_breakpoints.scss`, hand-copied for the same reason theirs
+   * is: a `@media` query is the one place that file's own comment admits CSS genuinely can't reach.
+   *
+   * `:has()` scopes the rewritten track list to grids that actually carry a rail child, so every
+   * other consumer of this pattern keeps the plain fluid form above, untouched.
+   */
+  .sk-layout-grid > [data-width="rail"] {
+    order: -1;
+  }
+
+  @media (min-width: 72rem) {
+    .sk-layout-grid:has(> [data-width="rail"]) {
+      grid-template-columns:
+        [full-width-start]
+          var(--sk-layout-gutter)
+        [breakout-start]
+          minmax(0, var(--sk-layout-breakout-track))
+        [content-start]
+          minmax(0, var(--sk-layout-narrow-track))
+        [narrow-start]
+          var(--sk-layout-narrow)
+        [narrow-end]
+          minmax(0, var(--sk-layout-narrow-track))
+        [content-end]
+          minmax(0, var(--sk-layout-breakout-track))
+        [breakout-end]
+          var(--sk-layout-rail-inline-size)
+        [full-width-end];
+    }
+
+    .sk-layout-grid > [data-width="rail"] {
+      grid-column: breakout-end / full-width-end;
+      grid-row: 1 / span var(--sk-layout-rail-row-span);
+      align-self: start;
+    }
+  }
 
   /*
    * MULTI-COLUMN LAYOUT, CSS Multi-column Layout Module Level 1, shortened to multicol in CSS.

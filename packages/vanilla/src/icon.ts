@@ -1,14 +1,14 @@
 /*
  * El enlazador de iconos de vanilla.
  *
- * ADR-15 dijo que vanilla no envía nada para iconos "porque un icono no tiene comportamiento que
+ * ADR-19 dijo que vanilla no envía nada para iconos "porque un icono no tiene comportamiento que
  * hidratar", y para el `<svg>` escrito a mano sigue siendo cierto. Pero el mismo ADR define un
  * placeholder, `<svg class="sk-icon" data-icon="…">` sin geometría, que ALGO tiene que rellenar con
  * el set enlazado; en el sitio eso lo hacía código propio del docs. `mountIcons` sube ese enlace a la
  * capa vanilla, con paridad al `<Icon name>` de React: React inyecta `icon.body` del set por contexto;
  * aquí el autor escribe un placeholder con el NOMBRE del rol y el enlazador inyecta la geometría del set
  * que le pasas. No renderiza estructura propia ni inventa clases, sólo ocupa el rol con una marca,
- * que es exactamente lo que un set de iconos es (ADR-15).
+ * que es exactamente lo que un set de iconos es (ADR-19).
  *
  * Uso:
  *
@@ -37,7 +37,7 @@ const placeholderSelector = "[data-sk-icon]";
  * es) por el `<svg class="sk-icon">` del rol en `set`. Devuelve cuántos hidrató.
  *
  * Un `data-sk-icon` que el set no cubre se deja intacto (es geometría del proyecto, que se escribe como
- * `<svg>` a mano, ADR-15) y se avisa una vez por nombre, porque casi siempre es un typo del rol.
+ * `<svg>` a mano, ADR-19) y se avisa una vez por nombre, porque casi siempre es un typo del rol.
  *
  * Remembers `set` so enhancers that inject placeholders later (e.g. table pager) can call
  * `remountIcons` without the app passing the set again.
@@ -131,6 +131,6 @@ function warnUnknown(name: string): void {
   warned.add(name);
   console.warn(
     `[ds] mountIcons: el set enlazado no cubre "${name}". Si es un rol del sistema, revisa el nombre; ` +
-      "si es geometría del proyecto, escribe el <svg> a mano (ADR-15) en vez de data-sk-icon.",
+      "si es geometría del proyecto, escribe el <svg> a mano (ADR-19) en vez de data-sk-icon.",
   );
 }

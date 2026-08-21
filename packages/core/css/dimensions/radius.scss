@@ -1,5 +1,5 @@
 /*
- * DIMENSION: radius (roundness), the fifth dimension (ADR-18).
+ * DIMENSION: radius (roundness), the fifth dimension (ADR-19).
  *
  * A composable axis over CORNER ROUNDNESS, orthogonal to brand, color mode, high contrast
  * and density. Its mechanism is DENSITY's, not high contrast's: a single MULTIPLIER in the
@@ -26,7 +26,7 @@
  *   --radius-pill      lozenges (badge, pill)     INVARIANT, a pill is a shape, not a
  *                      roundness setting, so it never enters the multiplication. This is the
  *                      radius dimension's deliberate invariant, the way the WCAG floor is
- *                      density's (ADR-4).
+ *                      density's (ADR-1).
  *
  * "md" is declared explicitly too, so a subtree can reset to baseline inside a data-radius="xl"
  * (or "none") ancestor.

@@ -45,15 +45,6 @@ export const toolbarTree = (t: Translate): UsageTree => ({
   contract: "toolbar",
   signature: "Toolbar",
   options: { label: t("demo.toolbar.actions") },
-  /*
-   * `data-accent="2"`: the published accent-reach dimension (dimensions/accent.scss), not a
-   * toolbar-specific rule. Level 3 (the page's own default) is where a ghost button's label
-   * reads the brand accent; level 2 is where "quiet action" is the first thing the dimension
-   * dials back, same as chrome and decoration, while the actual CTA (primary/danger) never
-   * dials at any level. A toolbar's icon row is exactly that "quiet action" case: three
-   * commands, none of them the one thing the page most wants a reader's eye drawn to.
-   */
-  attrs: { "data-accent": "2" },
   children: [
     {
       contract: "toolbar",

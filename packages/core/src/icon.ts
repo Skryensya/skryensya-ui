@@ -4,7 +4,7 @@ import type { ComponentContract } from "./contract.js";
  *
  * Core nombra ROLES y nunca a un proveedor (decisión 2). "chevron-down" es una posición que el
  * sistema referencia; qué dibujo la ocupa lo decide el consumidor al enlazar un IconSet, exactamente
- * como una marca decide qué hue ocupa --ramp-accent-600. Un módulo de core llamado `lucide` sería un
+ * como una marca decide qué hue ocupa --palette-blue-600. Un módulo de core llamado `lucide` sería un
  * inquilino con nombre propio, y además rompería las dependencies vacías del paquete.
  *
  * Lo que NO está aquí, y por qué (decisión 15):

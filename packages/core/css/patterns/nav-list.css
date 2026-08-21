@@ -45,8 +45,8 @@
     --sk-nav-list-link-font-size: var(--font-size-body-sm);
     --sk-nav-list-link-font-weight: var(--font-weight-body);
 
-    --sk-nav-list-link-current-bg: var(--color-nav-current-bg);
-    --sk-nav-list-link-current-fg: var(--color-nav-current-fg);
+    --sk-nav-list-link-current-bg: var(--color-bg-accent-subtle);
+    --sk-nav-list-link-current-fg: var(--color-text-accent);
     /* A faux-bold STROKE, not a real weight step: `font-weight` changes a glyph's advance width, so
      * swapping it on `[aria-current]` reflowed the label (and, in the horizontal navbar, every link
      * after it) the moment a route became current — a CLS a reader never asked to see. Two hairline

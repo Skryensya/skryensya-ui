@@ -345,7 +345,7 @@
     --sk-select-item-padding: var(--space-inset-xs) var(--space-inset-sm);
     --sk-select-item-radius: var(--radius-control);
 
-    /* ── La colocación es del pattern Anclaje (ADR-25) ─────────────────────────
+    /* ── La colocación es del pattern Anclaje (ADR-11) ─────────────────────────
      * El positioner lleva además `sk-anchored` y el trigger `sk-anchor`. El z-index, el `fixed`, el
      * volteo y el `position-visibility` los pone el pattern; acá quedan sólo las decisiones que son
      * DE UN SELECT y de ninguna otra caja anclada.

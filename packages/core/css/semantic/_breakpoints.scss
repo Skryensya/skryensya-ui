@@ -4,18 +4,18 @@
  * A breakpoint is a design decision like a spacing step or a radius, so it lives in the token tier,
  * as Sass. Why Sass and not a custom property: a `@media` query cannot read `var(--x)`, the value
  * has to exist at parse time, so the single source has to be a compile-time constant. This is
- * exactly the case ADR-13 keeps Sass for: "donde CSS no tiene macro". Delete this file and the
+ * exactly the case ADR-19 keeps Sass for: "donde CSS no tiene macro". Delete this file and the
  * literal `52rem` reappears, hand-copied, in the drawer/sidebar switch, Dialog Vaul
- * and Vaul's desktop rule (ADR-6's test, if the duplication comes back, the layer did work).
+ * and Vaul's desktop rule (ADR-19's test, if the duplication comes back, the layer did work).
  *
  * TWO surfaces read it, and both come from this map so they cannot drift:
  *   • Sass `@media`, via the `up()` / `down()` mixins, in any Sass-authored stylesheet
- *     (the consumer's structure, the docs shell, per ADR-8).
+ *     (the consumer's structure, the docs shell, per ADR-2).
  *   • JavaScript, via the `--breakpoint-*` custom properties `tokens` emits, read with
  *     getComputedStyle (the Vaul enhancer builds its matchMedia query from `--breakpoint-desktop`).
  *
  * The hand-written tier-3 `@media` in `patterns/dialog-vaul.css` and `patterns/vaul.css` stay CSS
- * (ADR-13 keeps tier-3 out of Sass) and carry the literal with a pointer back here, the one place
+ * (ADR-19 keeps tier-3 out of Sass) and carry the literal with a pointer back here, the one place
  * CSS genuinely cannot reference the source.
  */
 

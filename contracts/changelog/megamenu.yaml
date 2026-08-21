@@ -1,0 +1,89 @@
+# Qué cambió en megamenu, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# hash nuevo.
+surface: "ccfd4f26c5deed0e"
+entries:
+  - date: 2026-08-21
+    kind: bugfix
+    es:
+      title: La vista previa hace un crossfade real
+      body: >-
+        El cambio de imagen al pasar el cursor o el foco por un enlace ya no atraviesa su propia
+        transparencia (lo que exponía el fondo del marco un instante): nueva parte
+        <code>previewOutgoing</code>, un clon de la imagen saliente que se desvanece encima de la
+        entrante, siempre ya visible debajo.
+    en:
+      title: The preview does a real crossfade
+      body: >-
+        The image swap on hovering or focusing a link no longer fades through its own transparency
+        (which exposed the frame's background for an instant): new <code>previewOutgoing</code>
+        part, a clone of the outgoing image fading away over the incoming one, already visible
+        underneath the whole time.
+  - date: 2026-08-20
+    kind: feature
+    es:
+      title: Columnas con imágenes
+      body: >-
+        <code>MegamenuTrigger.columns</code> ahora acepta <code>ImageFrame</code>
+        (<code>image-frame.ts</code>), no sólo <code>NavListGroup</code>: una columna de medios,
+        reusada tal cual en vez de descrita una segunda vez.
+    en:
+      title: Columns can carry images
+      body: >-
+        <code>MegamenuTrigger.columns</code> now accepts <code>ImageFrame</code>
+        (<code>image-frame.ts</code>), not only <code>NavListGroup</code>: a media column, reused
+        as-is rather than described a second time.
+  - date: 2026-08-20
+    kind: feature
+    es:
+      title: Alto constante, sin importar qué trigger está abierto
+      body: >-
+        El panel ya no cambia de alto al cambiar de trigger: nuevas partes <code>ruler</code>,
+        <code>panel</code> y <code>panelVisible</code> apilan las columnas de CADA trigger en la
+        misma celda de grilla (el <code>ruler</code>, invisible, nunca en foco ni en el árbol de
+        accesibilidad), así que la pista siempre mide lo que el trigger más alto necesita.
+    en:
+      title: Constant height, regardless of which trigger is open
+      body: >-
+        The panel no longer changes height when switching triggers: new <code>ruler</code>,
+        <code>panel</code>, and <code>panelVisible</code> parts stack every trigger's columns in the
+        same grid cell (the <code>ruler</code>, invisible, never focusable or in the accessibility
+        tree), so the track always measures whatever the tallest trigger needs.
+  - date: 2026-08-20
+    kind: bugfix
+    es:
+      title: Trigger sin chevron
+      body: >-
+        <code>MegamenuTrigger</code> ya no imprime un ícono <code>chevron-down</code>: la parte
+        <code>triggerIndicator</code> sale del contrato. Un trigger es un botón de texto plano.
+    en:
+      title: Trigger drops its chevron
+      body: >-
+        <code>MegamenuTrigger</code> no longer prints a <code>chevron-down</code> icon: the
+        <code>triggerIndicator</code> part leaves the contract. A trigger is a plain-text button.
+  - date: 2026-08-20
+    kind: feature
+    es:
+      title: Nuevo contrato Megamenu
+      body: >-
+        Una barra de categorías, cada una desplegando un panel borde a borde de 2-4
+        <code>NavListGroup</code> (mismo componente que usa NavList) — deliberadamente distinto de
+        <code>Menu</code>/<code>Menubar</code>: sin <code>role="menu"</code>, sin flechas ni
+        typeahead, patrón WAI-ARIA "Disclosure (Navigation)". Cada trigger es un
+        <code>&lt;button aria-expanded&gt;</code>, nunca un enlace: es una categoría, no un destino.
+        El panel de cada trigger ancla contra la BARRA entera (<code>Megamenu</code>, no el trigger
+        individual), así que mide el mismo ancho borde a borde sin importar cuál esté abierto.
+        Compone como invitado de <code>Navbar</code>, junto a <code>NavList</code>.
+    en:
+      title: New Megamenu contract
+      body: >-
+        A row of category triggers, each opening an edge-to-edge panel of 2-4
+        <code>NavListGroup</code>s (the same component NavList uses) — deliberately unlike
+        <code>Menu</code>/<code>Menubar</code>: no <code>role="menu"</code>, no arrow keys or
+        typeahead, the WAI-ARIA "Disclosure (Navigation)" pattern instead. Every trigger is a plain
+        <code>&lt;button aria-expanded&gt;</code>, never a link — it is a category, not a
+        destination. Each trigger's panel anchors against the whole BAR (<code>Megamenu</code>
+        itself, not the individual trigger), so it measures the same edge-to-edge width regardless of
+        which one is open. Composes as a guest of <code>Navbar</code>, alongside <code>NavList</code>.

@@ -1,5 +1,5 @@
 @mixin tokens {
-    /* ── radius: the baseline of the radius dimension (ADR-18), equal to data-radius="md".
+    /* ── radius: the baseline of the radius dimension (ADR-19), equal to data-radius="md".
      *    Density-invariant, corner radius is a roundness concern, not a spatial one.
      *
      *    The dimension is a MULTIPLIER, not a step remap: `--radius-multiplier` scales a small

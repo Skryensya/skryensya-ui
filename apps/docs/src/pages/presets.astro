@@ -8,16 +8,14 @@
  * localStorage aquí, a diferencia del selector de paleta del header, que sí es del sitio).
  *
  * El mecanismo es el mismo truco de re-declaración que usaba /personalizar (ver el historial):
- * los tokens semánticos de color y radio se vuelven a declarar sobre `.preset-canvas`, con la
- * cadena `var()` intacta, así que se re-resuelven contra lo que ESE elemento tenga en
- * `--ramp-*`/`--radius-multiplier`. En reposo no hereda overrides → resuelve contra los valores
- * de `:root`, cero diferencia visual. `[data-preset="uc"]` es la única regla que realmente cambia
- * algo, y solo alcanza a los descendientes del lienzo.
+ * los tokens semánticos de color y radio se vuelven a declarar sobre `.preset-canvas`. El preset UC
+ * reemplaza el bundle semántico de color con valores constantes, así que no necesita generar paletas privadas en runtime. En reposo no hereda overrides → resuelve contra los valores de `:root`, cero
+ * diferencia visual. `[data-preset="uc"]` es la única regla que realmente cambia algo, y solo alcanza
+ * a los descendientes del lienzo.
  */
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import { tokens } from "../lib/tokens";
-import { createRamp } from "../lib/ramps";
 import "@skryensya/core/patterns/box.css";
 
 /* Colores reales de kitdigital.uc.cl (Pontificia Universidad Católica de Chile), convertidos a
@@ -26,18 +24,16 @@ import "@skryensya/core/patterns/box.css";
  * defecto). Radio más recto (0.5×, como data-radius="sm") — su grilla se lee estructurada, no
  * redondeada. */
 const UC_ROBOTO = "'Roboto', 'Segoe UI', Helvetica, Arial, sans-serif";
-const ucRamps = {
-  ...createRamp("accent", "oklch(57.02% 0.1812 254.01)"),
-  ...createRamp("neutral", "oklch(54.52% 0 89.88)"),
-  ...createRamp("danger", "oklch(65.42% 0.1996 24.53)"),
-  ...createRamp("success", "oklch(63.94% 0.2176 142.5)"),
-  ...createRamp("warning", "oklch(77.8% 0.1592 86.47)"),
-  ...createRamp("info", "oklch(57.02% 0.1812 254.01)"),
-};
+const UC_COLORS = {
+  blue: "oklch(57.02% 0.1812 254.01)",
+  neutral: "oklch(54.52% 0 89.88)",
+  danger: "oklch(65.42% 0.1996 24.53)",
+  success: "oklch(63.94% 0.2176 142.5)",
+  warning: "oklch(77.8% 0.1592 86.47)",
+} as const;
 
-/* Los tokens semánticos de color y radio, con la cadena var() intacta (igual que el corpus los
- * declara), vueltos a poner sobre `.preset-canvas`. Es lo que hace que "cambiar el acento" alcance
- * a los ~30 tokens de --color-* (texto, borde, foco, on-accent…) sin listarlos a mano. */
+/* El preset re-declara semánticos, no paletas. Esa es la unidad de marca: action, texto, borde y
+ * feedback cambian juntos sin inventar una paleta UC pública. */
 const SCOPED_PREFIXES = ["--color-", "--radius-"];
 const semScopedCss =
   ".preset-canvas {\n" +
@@ -49,10 +45,20 @@ const semScopedCss =
 
 const ucOverrideCss =
   '.preset-canvas[data-preset="uc"] {\n' +
-  Object.entries(ucRamps)
-    .map(([name, value]) => `  ${name}: ${value};`)
-    .join("\n") +
-  `\n  --radius-multiplier: 0.5;\n  --font-family-body: ${UC_ROBOTO};\n}`;
+  `  --color-action-primary: ${UC_COLORS.blue};\n` +
+  `  --color-text-accent: ${UC_COLORS.blue};\n` +
+  `  --color-border-accent: ${UC_COLORS.blue};\n` +
+  `  --color-bg-accent-subtle: light-dark(oklch(96% 0.04 254), oklch(24% 0.08 254));\n` +
+  `  --color-text-danger: ${UC_COLORS.danger};\n` +
+  `  --color-text-success: ${UC_COLORS.success};\n` +
+  `  --color-text-warning: oklch(45% 0.13 86);\n` +
+  `  --color-bg-danger-subtle: light-dark(oklch(96% 0.04 25), oklch(26% 0.08 25));\n` +
+  `  --color-bg-success-subtle: light-dark(oklch(96% 0.05 142), oklch(24% 0.08 142));\n` +
+  `  --color-bg-warning-subtle: light-dark(oklch(96% 0.08 86), oklch(27% 0.07 86));\n` +
+  `  --color-border-danger: ${UC_COLORS.danger};\n` +
+  `  --color-border-success: ${UC_COLORS.success};\n` +
+  `  --color-border-warning: ${UC_COLORS.warning};\n` +
+  `  --radius-multiplier: 0.5;\n  --font-family-body: ${UC_ROBOTO};\n}`;
 
 /* @import must lead the stylesheet (CSS spec: any rule before it is invalid and drops it), and it
  * is scoped by being here at all — Roboto only loads on this page, never through Base.astro. */
@@ -67,13 +73,13 @@ const stageCss =
 const ucCssTeaching =
   `@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');\n\n` +
   '.preset-canvas[data-preset="uc"] {\n' +
-  `  /* rampas completas, una por rol, generadas desde un solo color con createRamp() */\n` +
-  `  --ramp-accent-600: oklch(57.02% 0.1812 254.01); /* … 50 → 950 */\n` +
-  `  --ramp-neutral-600: oklch(54.52% 0 89.88);       /* … 50 → 950 */\n` +
-  `  --ramp-danger-600: oklch(65.42% 0.1996 24.53);\n` +
-  `  --ramp-success-600: oklch(63.94% 0.2176 142.5);\n` +
-  `  --ramp-warning-600: oklch(77.8% 0.1592 86.47);\n` +
-  `  --ramp-info-600: oklch(57.02% 0.1812 254.01);\n\n` +
+  `  /* bundle semántico de acento/feedback, no bundles semánticos */\n` +
+  `  --color-action-primary: oklch(57.02% 0.1812 254.01);\n` +
+  `  --color-text-accent: oklch(57.02% 0.1812 254.01);\n` +
+  `  --color-border-accent: oklch(57.02% 0.1812 254.01);\n` +
+  `  --color-text-danger: oklch(65.42% 0.1996 24.53);\n` +
+  `  --color-text-success: oklch(63.94% 0.2176 142.5);\n` +
+  `  --color-text-warning: oklch(45% 0.13 86);\n\n` +
   `  --radius-multiplier: 0.5; /* como data-radius="sm" */\n` +
   `  --font-family-body: ${UC_ROBOTO};\n` +
   "}";

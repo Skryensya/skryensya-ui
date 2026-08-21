@@ -39,6 +39,7 @@ describe("layout primitives", () => {
       <LayoutGrid as="main" className="document">
         <p data-width="narrow">Summary</p>
         <section data-width="full-width">Hero</section>
+        <aside data-width="rail">Toc</aside>
       </LayoutGrid>,
     );
 
@@ -46,6 +47,7 @@ describe("layout primitives", () => {
     expect(grid).not.toBeNull();
     expect(grid?.querySelector("p")?.getAttribute("data-width")).toBe("narrow");
     expect(grid?.querySelector("section")?.getAttribute("data-width")).toBe("full-width");
+    expect(grid?.querySelector("aside")?.getAttribute("data-width")).toBe("rail");
   });
 
   it("renders Main as an empty application landmark", () => {

@@ -75,6 +75,17 @@ export const navListContract = {
      * non-collapsible case.
      */
     defaultOpen: { type: "boolean", attr: "data-default-open", trueValue: "", machineInput: true },
+    /**
+     * Renders a STATIC label (`collapsible` absent) as a real `<h3>` instead of a plain `<div>` —
+     * for a group sitting inside a large panel (`Megamenu`'s own columns being the motivating case)
+     * where a screen reader's own heading-navigation is how a reader orients among several groups at
+     * once, the same reason any other long region gets real headings rather than merely-bold text.
+     * Absent by default: an ordinary sidebar/navbar `NavList` group is one of very few on the page
+     * and does not need heading-navigation to be found. Has no effect on a COLLAPSIBLE group's label
+     * — that one is already a real, focusable `<button>`, a stronger landmark than a heading would
+     * add — nor without a `label`: a heading with nothing in it is worse than none, so pair the two.
+     */
+    heading: { type: "boolean", default: false, attr: "data-heading", trueValue: "" },
   },
 
   signatures: {
@@ -97,7 +108,7 @@ export const navListContract = {
     NavListGroup: {
       intent: ["group-of-destinations", "labeled-navigation-section", "collapsible-navigation-section"],
       host: { element: "div" },
-      options: ["collapsible", "defaultOpen"],
+      options: ["collapsible", "defaultOpen", "heading"],
       /*
        * Two legal homes, not one: `NavList` for a top-level section, `NavListLink` for a
        * destination's own sub-destinations (its `nested` slot, below). The template stays
@@ -115,11 +126,14 @@ export const navListContract = {
        * and NavList itself only renders the landmark. An unlabelled, non-collapsible group still
        * supplies it, which is why both label nodes below are conditional and the list node is not.
        *
-       * Two DIFFERENT label nodes, not one node with a conditional attribute: a static label is a
-       * `<div>` (nothing to activate), a collapsible one is a `<button>` (something WAI requires be
-       * a real control) — the element itself changes, which `attrsWhen` cannot say, only two
-       * template nodes gated by `whenGiven`/`whenMissing` can (same technique `Breadcrumb`'s
-       * link-vs-span split already uses for the same kind of either/or).
+       * THREE label nodes, not one node with a conditional attribute: a static label is a `<div>`
+       * (nothing to activate) or a real `<h3>` (`heading`, for a group inside a large panel that
+       * wants heading-navigation — see that option's own doc), a collapsible one is a `<button>`
+       * (something WAI requires be a real control) — the element itself changes, which `attrsWhen`
+       * cannot say, only template nodes gated by `whenGiven`/`whenMissing` can (same technique
+       * `Breadcrumb`'s link-vs-span split already uses for the same kind of either/or). The two
+       * static nodes are mutually exclusive by construction: `whenMissing` accepts a list meaning
+       * NONE of them given, so the plain `<div>` only ever appears when `heading` was NOT requested.
        */
       template: {
         element: "div",
@@ -130,6 +144,17 @@ export const navListContract = {
             element: "div",
             part: "groupLabel",
             whenGiven: "label",
+            whenMissing: ["collapsible", "heading"],
+            slot: "label",
+          },
+          {
+            // Gated on `heading` alone, not also on `label`: the composition-level condition
+            // fields (`whenGiven`/`whenMissing`) can express ANY-of within one field, never an AND
+            // across two DIFFERENT options — see `heading`'s own doc for why pairing the two is left
+            // to the author rather than enforced here.
+            element: "h3",
+            part: "groupLabel",
+            whenGiven: "heading",
             whenMissing: "collapsible",
             slot: "label",
           },

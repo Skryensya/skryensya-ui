@@ -9,8 +9,8 @@
  * while sitting visually above the bordered surface (CSS2 table model / caption-side).
  *
  * Header fill is a mix of text-on-surface, not `--color-bg-surface-sunken`: in high-contrast dark
- * sunken collapses onto the same ramp stop as surface, so a sunken header would vanish. A mix of
- * `--color-text-primary` into the table surface stays visible in every mode (light, dark, both HC).
+ * sunken collapses onto the same palette value as surface, so a sunken header would vanish. A mix
+ * of `--color-text-primary` into the table surface stays visible in every mode (light, dark, both HC).
  * The header rule uses `--color-border-default` for the same reason, subtle borders wash out when
  * contrast is the point.
  */

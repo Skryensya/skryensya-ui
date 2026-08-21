@@ -144,6 +144,10 @@ const componentDescriptions = {
     es: "Indica que una operación breve sigue en curso.",
     en: "Indicates that a short operation is still running.",
   },
+  "/componentes/megamenu": {
+    es: "Despliega un panel borde a borde con varias columnas de enlaces de navegación.",
+    en: "Opens an edge-to-edge panel with several columns of navigation links.",
+  },
   "/componentes/menu": {
     es: "Presenta una lista compacta de acciones contextuales.",
     en: "Presents a compact list of contextual actions.",

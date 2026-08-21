@@ -157,13 +157,20 @@
     margin-inline: calc((var(--size-touch-target) - var(--size-control-sm)) * 0.5);
   }
 
-  .sk-combobox__trigger > [aria-hidden="true"] {
-    transition: rotate var(--motion-feedback-duration)
-      var(--motion-feedback-easing);
+  .sk-combobox__trigger > [data-state] {
+    display: none;
   }
 
-  .sk-combobox__trigger[data-state="open"] > [aria-hidden="true"] {
-    rotate: 180deg;
+  .sk-combobox__trigger > [data-state="closed"] {
+    display: inline-grid;
+  }
+
+  .sk-combobox__trigger[data-state="open"] > [data-state="closed"] {
+    display: none;
+  }
+
+  .sk-combobox__trigger[data-state="open"] > [data-state="open"] {
+    display: inline-grid;
   }
 
   :is(.sk-combobox__trigger, .sk-combobox__clear).sk-button:is(
@@ -173,7 +180,7 @@
     --sk-button-fg: var(--color-text-disabled);
   }
 
-  /* La colocación es del pattern Anclaje (ADR-25): el control lleva además `sk-anchor` y el
+  /* La colocación es del pattern Anclaje (ADR-11): el control lleva además `sk-anchor` y el
    * positioner además `sk-anchored`. El ancla es el CONTROL entero y no el botón del chevron, porque
    * la lista se alinea con el campo que se está escribiendo.
    *
@@ -381,11 +388,8 @@
     text-wrap: pretty;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .sk-combobox__trigger > [aria-hidden="true"] {
-      transition: none;
-    }
 
+  @media (prefers-reduced-motion: reduce) {
     /* `translate` needs nothing here: `--motion-distance-sm` is not one of the enter/exit INTENT
      * distances `_reduced-motion.scss` swaps automatically, it is the raw scale value itself, same
      * situation as Menu. `scale`/`filter` never had a token-driven degrade either. What survives is

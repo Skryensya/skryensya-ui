@@ -57,13 +57,25 @@ export const tabsContract = {
      * tree has no change handler to feed it (same rename Slider and TimeField make).
      */
     value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
+    /**
+     * Paint size for the trigger row: height, inline padding, label size. CSS-only, the same
+     * axis Button's `size` is — not a machine input, the roving tabindex and selection behave
+     * identically at every size. No `lg`: a bigger tab strip has not come up as a real need, and
+     * an unused rung is one more thing the surface promises and nobody exercises.
+     */
+    size: {
+      type: "enum",
+      values: ["sm", "md"],
+      default: "md",
+      attr: "data-size",
+    },
   },
 
   signatures: {
     Tabs: {
       intent: ["tabs", "switch-between-panels", "sections-in-one-region"],
       host: { element: "div" },
-      options: ["orientation", "activationMode", "value"],
+      options: ["orientation", "activationMode", "value", "size"],
       slots: {
         items: {
           accepts: "items",
@@ -131,6 +143,7 @@ export const tabsContract = {
 } as const satisfies ComponentContract;
 
 export type TabsOrientation = OptionValue<typeof tabsContract.options.orientation>;
+export type TabsSize = OptionValue<typeof tabsContract.options.size>;
 
 /*
  * The machine's own inputs. Deliberately NOT derived from the contract: these are runtime wiring

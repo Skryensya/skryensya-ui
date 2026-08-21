@@ -16,7 +16,7 @@ import { getLocale, useTranslations } from "../../i18n";
 const t = useTranslations(getLocale(Astro.url));
 ---
 
-<Base title={t("architecture.title")} description={t("architecture.lede")}>
+<Base title={t("architecture.title")} description={t("architecture.lede")} documentLayout="grid">
   <h1>{t("architecture.title")}</h1>
   <p class="lede" set:html={t("architecture.lede")} />
 

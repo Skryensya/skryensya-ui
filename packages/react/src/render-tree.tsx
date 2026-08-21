@@ -60,6 +60,7 @@ import * as meterModule from "./components/meter.js";
 import * as dataGridModule from "./components/data-grid.js";
 import * as feedModule from "./components/feed.js";
 import * as menubarModule from "./components/menubar.js";
+import * as megamenuModule from "./components/megamenu.js";
 import * as tabsModule from "./components/tabs.js";
 import * as tocModule from "./components/toc.js";
 import * as componentPreviewModule from "./components/component-preview.js";
@@ -150,6 +151,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/data-grid": dataGridModule,
   "@skryensya/react/feed": feedModule,
   "@skryensya/react/menubar": menubarModule,
+  "@skryensya/react/megamenu": megamenuModule,
   "@skryensya/react/tabs": tabsModule,
   "@skryensya/react/toc": tocModule,
   "@skryensya/react/component-preview": componentPreviewModule,

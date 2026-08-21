@@ -40,13 +40,14 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
 
 <Base
   title="Iconografía"
+  documentLayout="grid"
   description="El vocabulario estable de roles, los sets como marca, y por qué el pattern de SVG no pinta fill ni stroke."
 >
   <h1>Iconografía</h1>
   <p class="lede">
     El sistema nombra <strong>roles</strong>, no dibujos. Un set (Lucide, Phosphor, Material) es una
     marca: elige la geometría que ocupa cada rol, igual que una marca elige el hue de
-    <code>--ramp-accent-600</code>. Cómo montas el SVG en React o vanilla está en
+    <code>--palette-blue-600</code>. Cómo montas el SVG en React o vanilla está en
     <a href="/componentes/icon">Icon</a>.
   </p>
 
@@ -62,7 +63,7 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
     icono no es un add-on al que un componente opta: apenas algo muestra un chevron, un close o un
     glifo de estado necesita esta misma caja. Las reglas son inertes hasta que un elemento lleva
     <code>sk-icon</code>, así que no pesan en una página sin iconos. La decisión está en
-    <a href="/decisiones/0015-el-icono-es-un-pattern-y-el-set-es-una-marca">ADR-15</a>.
+    <a href="/decisiones/0019-paletas-publicas-y-semanticos-constantes">ADR-19</a>.
   </p>
 
   <h2>El vocabulario estable</h2>

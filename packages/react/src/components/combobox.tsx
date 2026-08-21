@@ -4,6 +4,7 @@ import { combobox } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
 import { useId, useMemo, useState, type ReactNode, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
+import { Icon } from "./icon.js";
 const cx = (...classes: Array<string | undefined>) =>
   classes.filter(Boolean).join(" ");
 const combiningMarks = /\p{M}+/gu;
@@ -272,7 +273,7 @@ export function Combobox({
                     }}
                     type="button"
                   >
-                    <span aria-hidden="true">{removeIndicator ?? "×"}</span>
+                    {removeIndicator ?? <Icon name="close" size="sm" />}
                   </button>
                 </span>
               ))}
@@ -298,7 +299,7 @@ export function Combobox({
           tabIndex={0}
           type="button"
         >
-          <span aria-hidden="true">{clearIndicator ?? "×"}</span>
+          {clearIndicator ?? <Icon name="close" size="sm" />}
         </button>
         <button
           {...api.getTriggerProps()}
@@ -308,7 +309,16 @@ export function Combobox({
           data-variant="ghost"
           type="button"
         >
-          <span aria-hidden="true">{triggerIndicator ?? "⌄"}</span>
+          {triggerIndicator ?? (
+            <>
+              <span data-state="closed">
+                <Icon name="chevron-down" size="sm" />
+              </span>
+              <span data-state="open">
+                <Icon name="chevron-up" size="sm" />
+              </span>
+            </>
+          )}
         </button>
       </div>
       {error ? (

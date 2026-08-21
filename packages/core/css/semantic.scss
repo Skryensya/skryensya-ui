@@ -1,20 +1,18 @@
 /*
  * TIER 2, SEMANTIC
  *
- * Purpose, not appearance. Every color references a RAMP POSITION (accent-600), never a
- * hue, so brand can swap tier 1 underneath. Color tokens carry their light + dark values
- * in a single light-dark() call: the browser serves the right one based on the used
+ * Purpose, not appearance. Color tokens may reference tier-1 palettes and carry their light + dark
+ * values in a single light-dark() call: the browser serves the right one based on the used
  * color-scheme, so flipping color-scheme on <html> re-themes with no extra CSS.
  *
  * Three constraints show up as structure here:
- *   • light-dark() takes exactly TWO colors, so high contrast is NOT a third slot, it
- *     lives in modes/hc.scss and re-declares these tokens. And only COLOUR can be
- *     mode-aware, which is why a shadow's color is its own token and elevation.* is a
- *     composite that references it.
+ *   • light-dark() takes exactly TWO colors, so high contrast is NOT a third slot, it lives in
+ *     modes/hc.scss and re-declares these tokens. And only COLOUR can be mode-aware, which is why a
+ *     shadow's color is its own token and elevation.* is a composite that references it.
  *   • Density is a runtime system multiplier (--sk-density) with opt-in descendant scopes, not a
  *     second spacing scale.
- *   • Interactive sizes floor at the WCAG target via max(), so density cannot shrink a
- *     control below the minimum hit size no matter what --sk-density is set to.
+ *   • Interactive sizes floor at the WCAG target via max(), so density cannot shrink a control
+ *     below the minimum hit size no matter what --sk-density is set to.
  */
 @use "semantic/base";
 @use "semantic/density";

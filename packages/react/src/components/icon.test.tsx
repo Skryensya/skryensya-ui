@@ -44,7 +44,7 @@ describe("Icon React contracts", () => {
   });
 
   it("falls back to the default set (Phosphor) with no provider bound", () => {
-    // ADR-15 revisited: a stable name renders zero-config against the default set, the way
+    // ADR-19 revisited: a stable name renders zero-config against the default set, the way
     // brands/default.scss ships in core. Opting out is still explicit, install another set and
     // wrap the tree in <IconSetProvider set={…} />.
     const { container } = render(<Icon name="close" />);

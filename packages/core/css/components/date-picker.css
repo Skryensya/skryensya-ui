@@ -47,7 +47,7 @@
     border: 1px solid var(--sk-date-picker-border-color);
     border-radius: var(--sk-date-picker-radius);
     background: var(--sk-date-picker-bg);
-    /* El control es el ancla, pero QUIEN LO DECLARA es el pattern (`sk-anchor`, ADR-25), no esta hoja.
+    /* El control es el ancla, pero QUIEN LO DECLARA es el pattern (`sk-anchor`, ADR-11), no esta hoja.
      * Acá vivía un `anchor-name: var(--sk-date-picker-anchor)` que nadie escribía nunca: un `var()`
      * sin fallback es inválido a computed-value time, así que resolvía a `none`, y como esta hoja se
      * importa DESPUÉS del pattern y las dos reglas empatan en especificidad, ese `none` le ganaba al
@@ -122,7 +122,7 @@
   .sk-date-picker__clear[hidden] {
     display: none;
   }
-  /* La colocación es del pattern Anclaje (ADR-25): el control lleva además `sk-anchor` y el
+  /* La colocación es del pattern Anclaje (ADR-11): el control lleva además `sk-anchor` y el
    * positioner además `sk-anchored`. El ancla es el CONTROL, no el botón del calendario: el panel se
    * alinea con el campo que está editando.
    *

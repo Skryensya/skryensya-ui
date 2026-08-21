@@ -1,7 +1,7 @@
 /*
  * The shared shell every icon-set generator was copy-pasting.
  *
- * ADR-15 keeps one codegen per set, SVG/library format → IconData, because that conversion passes
+ * ADR-19 keeps one codegen per set, SVG/library format → IconData, because that conversion passes
  * the deletion test the rejected manifest generator failed. What it does NOT ask for is three copies of
  * the SAME shell around it: the `--check`/write branch, the emitted `out` template, and (for the two
  * SVG-file sets) the `<svg>` body extraction were byte-identical across icons-phosphor and

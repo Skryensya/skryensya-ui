@@ -3,17 +3,17 @@ import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import Used from "../components/Used.astro";
 import { tokens } from "../lib/tokens";
-import { createRamp } from "../lib/ramps";
+import { palettes } from "../lib/palettes";
 
 const modeAware = tokens.filter((t) => t.modeAware).length;
 
-const brandAccent = createRamp("accent", "oklch(52% 0.19 20)");
-const rootRamps =
-  `/* brand-ramps.css: reemplaza el rol completo. */\n:root {\n` +
-  Object.entries(brandAccent)
-    .map(([name, value]) => `  ${name}:\n    ${value};`)
-    .join("\n") +
-  "\n}";
+const accentBundle =
+  `/* brand-accent.css: re-declara el bundle semántico completo. */\n:root {\n` +
+  `  --color-action-primary: light-dark(${palettes.blue[700]}, ${palettes.blue[400]});\n` +
+  `  --color-text-accent: light-dark(${palettes.blue[700]}, ${palettes.blue[300]});\n` +
+  `  --color-border-accent: light-dark(${palettes.blue[600]}, ${palettes.blue[500]});\n` +
+  `  --color-bg-accent-subtle: light-dark(${palettes.blue[50]}, ${palettes.blue[950]});\n` +
+  "}";
 
 const densityUse = `/* Un multiplicador, no una segunda escala. */
 html { --sk-density: 0.8; }`;
@@ -27,7 +27,8 @@ const radiusUse = `<!-- Un preset del multiplicador… -->
 
 <Base
   title="Cuatro dimensiones"
-  description="Modo de color, alto contraste, densidad y radio: cuatro ejes que componen en la cascada. Las rampas de marca son tier 1 explícito."
+  documentLayout="grid"
+  description="Modo de color, alto contraste, densidad y radio: cuatro ejes que componen en la cascada. La marca re-declara bundles semánticos."
 >
   <h1>Cuatro dimensiones</h1>
   <p class="lede">
@@ -36,8 +37,8 @@ const radiusUse = `<!-- Un preset del multiplicador… -->
   </p>
 
   <p>
-    Las rampas tier 1 son la base configurable. Una herramienta de marca exporta sus posiciones y
-    el producto las declara en <code>:root</code>; los tokens semánticos conservan su significado.
+    Las paletas tier 1 son materia prima sin significado. La marca no elige una rampa de rol: re-declara
+    el bundle semántico de acento en <code>:root</code>; los demás tokens conservan su significado.
     No hay catálogo de marcas, selector ni atributo que mantener dentro de Core.
   </p>
 
@@ -86,27 +87,21 @@ const radiusUse = `<!-- Un preset del multiplicador… -->
   <div class="sk-callout" data-tone="info">
     <div class="sk-callout__content">
     <p>
-      <strong>La separación sigue siendo estructural:</strong> las rampas son tier 1 y los tokens
-      semánticos solo referencian posiciones como <code>accent-600</code>. Sustituir una rampa nunca
-      pisa un token semántico: modo, contraste, densidad y radio siguen siendo independientes.
+      <strong>La separación sigue siendo estructural:</strong> las paletas son tier 1 y los tokens
+      semánticos nombran significado. Sustituir el acento nunca pisa modo, contraste, densidad o radio:
+      cada eje sigue siendo independiente.
     </p>
     </div>
   </div>
 
-  <p>
-    Hay un quinto eje, opt-in, que no cambia ningún valor:
-    <a href="/acento">el alcance del acento</a> decide cuántos lugares reclaman la marca ya cargada,
-    no cuál es. Vive en su propia hoja porque un producto puede no querer moverlo nunca.
-  </p>
 
-  <h2>Rampas, un contrato explícito</h2>
+  <h2>Acento, un bundle explícito</h2>
   <p>
-    <code>tokens.scss</code> incluye las rampas por defecto. Tu herramienta de marca genera un CSS
-    sin layer que reemplaza cada rol completo; Core no recibe un color raíz ni deriva stops en
-    runtime. Este ejemplo muestra todo el rol <code>accent</code>. Neutral y feedback usan el mismo
-    contrato cuando los reemplazas.
+    <code>tokens.scss</code> incluye paletas públicas y semánticos por defecto. Tu herramienta de marca
+    genera CSS sin layer que reemplaza el bundle semántico completo; Core no recibe un color raíz ni
+    deriva combinaciones en runtime. Este ejemplo muestra una parte del bundle de acento.
   </p>
-  <CodeBlock code={rootRamps} label="brand-ramps.css" />
+  <CodeBlock code={accentBundle} label="brand-accent.css" />
 
   <h2>Modo de color, dos slots, y solo dos</h2>
   <p>

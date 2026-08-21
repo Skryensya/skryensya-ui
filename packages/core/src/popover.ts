@@ -1,7 +1,7 @@
 import type { ComponentContract } from "./contract.js";
 import { anchorPlacements, type AnchorPlacement } from "./anchored.js";
 
-/** El vocabulario de colocación es el del pattern Anclaje (ADR-25); estos son sus alias acá. */
+/** El vocabulario de colocación es el del pattern Anclaje (ADR-11); estos son sus alias acá. */
 export type PopoverPlacement = AnchorPlacement;
 
 export const popoverPlacements = anchorPlacements;

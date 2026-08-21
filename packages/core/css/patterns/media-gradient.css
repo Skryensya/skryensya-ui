@@ -74,13 +74,8 @@
    * `strength` is opacity / tint, never how much of the image is covered.
    */
   .sk-media-caption > .sk-media-gradient {
-    /* The tint is DECORATION and reads the accent-reach wash token, not the raw action colour. What
-     * makes the caption legible is `base` + `opacity`, the black scrim below, and neither of those
-     * dials: the tint was only ever the brand painted on top of a contrast guarantee. So turning the
-     * accent down takes the brand out of the wash and leaves the legibility exactly where it was.
-     * `-wash` and not `--color-decorative-bg` because that one is a near-white fill; a scrim needs a
-     * colour with body. */
-    --sk-media-gradient-tint: var(--color-decorative-wash);
+    /* The tint is brand decoration over the contrast guarantee provided by base + opacity. */
+    --sk-media-gradient-tint: var(--color-action-primary);
     --sk-media-gradient-base: black;
     --sk-media-gradient-mix: 34%;
     --sk-media-gradient-opacity: 72%;

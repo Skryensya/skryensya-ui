@@ -1,7 +1,7 @@
 /*
  * TIER 3, TOOLTIP
  *
- * Una descripción auxiliar anclada a un trigger. Envía la clase y sus styling hooks (ADR-8): importar
+ * Una descripción auxiliar anclada a un trigger. Envía la clase y sus styling hooks (ADR-2): importar
  * esta hoja da un tooltip pintado, no variables.
  *
  * CERRADO ES EL ESTADO POR DEFECTO, y eso es lo primero que hace esta hoja. El contenido vive en el
@@ -29,7 +29,7 @@
     display: inline-flex;
   }
 
-  /* LA COLOCACIÓN NO ESTÁ ACÁ. Es del pattern Anclaje (ADR-25): el trigger lleva además `sk-anchor`
+  /* LA COLOCACIÓN NO ESTÁ ACÁ. Es del pattern Anclaje (ADR-11): el trigger lleva además `sk-anchor`
    * y el positioner además `sk-anchored`, y `patterns/anchored.css` pone los lados, el volteo, el
    * `z-index` y el ancho por contenido. Esta hoja sólo dice de qué TAMAÑO y de qué COLOR es un
    * tooltip, que es lo único que no comparte con las otras ocho cajas ancladas del sistema. */
@@ -102,7 +102,7 @@
 
   /* ── El movimiento: materializar, no deslizar ────────────────────────────────
    * Un tooltip informa; la animación no debe pedir atención ni retrasar la lectura. `--motion-
-   * feedback-*` es la misma intención que usa el state layer (ADR-10): esto es feedback, no una
+   * feedback-*` es la misma intención que usa el state layer (ADR-1): esto es feedback, no una
    * entrada de overlay, así que se queda con su propio timing en vez del de Popover (`--motion-
    * enter-*`). El opacity + scale + blur suave es el mismo recipe que Popover sí usa
    * (`--motion-materialize-scale`/`-blur`, `patterns/anchored.css` comparte el nombre con Menu). La

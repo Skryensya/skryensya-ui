@@ -1,4 +1,4 @@
-import { createRamp, defaultRampColors, type RampRole } from "./ramps";
+import { palettes, type PaletteFamily } from "./palettes";
 
 /*
  * The slice of Shiki's `ThemeRegistrationRaw` this module actually produces, typed locally rather
@@ -16,25 +16,15 @@ type ShikiTheme = {
 };
 
 /*
- * THE SAME PALETTE THE PLAYGROUND ALREADY USES, computed the same way `ramps.ts` computes every
- * other derived color on this site: `createRamp` re-runs the exact `color-mix(in oklab, …)` recipe
- * `_ramps.scss` compiles, in Node, from the same `defaultRampColors` seeds — not a second, hand-typed
- * palette that can drift from the tokens.
- *
- * WHY THIS EXISTS. `CodeBlock.astro` highlights with Shiki, `Playground.tsx` highlights with
- * Sandpack's CodeMirror — two different engines, and until now two different PALETTES: Shiki ran the
- * stock `github-light`/`github-dark` themes, Sandpack's `readSandpackTheme` resolves the kit's own
- * `--color-text-*` tokens live in the browser. A reader moving from a docs code block to the same
- * example in the Playground saw the SAME code recolored. Shiki runs at BUILD TIME with no browser to
- * resolve `light-dark()`/`color-mix()` against, so it cannot do what `readSandpackTheme` does; this
- * module is the build-time equivalent — the same role → ramp-stop pairing `_color.scss` compiles,
- * walked here instead of in a browser.
+ * THE DOCS CODE PALETTE mirrors the published semantic color bundle at build time. Shiki has no
+ * browser to resolve `light-dark()` or CSS variables, so this file names the same palette families and
+ * stops `_color.scss` uses for semantic text tokens.
  *
  * EVERY PAIRING BELOW MIRRORS `_color.scss` EXACTLY: `--color-text-accent` is
- * `light-dark(var(--ramp-accent-700), var(--ramp-accent-300))`, so `keyword`/`definition` here read
- * `accent` at 700 (light) and 300 (dark), and so on for every role. `plain` is deliberately absent:
- * `code-preview.css` already falls back an untokenized span to `var(--color-text-primary)` when
- * `--shiki-light`/`--shiki-dark` are unset, so Shiki needs no default-foreground entry to land there.
+ * `light-dark(var(--palette-blue-700), var(--palette-blue-300))`, so `keyword`/`definition` here read
+ * `blue` at 700 (light) and 300 (dark). `plain` is deliberately absent: `code-preview.css` already
+ * falls back an untokenized span to `var(--color-text-primary)` when `--shiki-light`/`--shiki-dark`
+ * are unset, so Shiki needs no default-foreground entry to land there.
  */
 type SyntaxRole =
   | "comment"
@@ -46,32 +36,26 @@ type SyntaxRole =
   | "static"
   | "string";
 
-const ROLE_STOPS: Record<SyntaxRole, { role: RampRole; light: number; dark: number }> = {
-  comment: { role: "neutral", light: 600, dark: 400 },
-  keyword: { role: "accent", light: 700, dark: 300 },
-  tag: { role: "danger", light: 700, dark: 300 },
-  punctuation: { role: "neutral", light: 700, dark: 300 },
-  definition: { role: "accent", light: 700, dark: 300 },
-  property: { role: "info", light: 700, dark: 300 },
-  static: { role: "warning", light: 800, dark: 300 },
-  string: { role: "success", light: 700, dark: 300 },
+const ROLE_STOPS: Record<SyntaxRole, { family: PaletteFamily; light: number; dark: number }> = {
+  comment: { family: "stone", light: 600, dark: 400 },
+  keyword: { family: "blue", light: 700, dark: 300 },
+  tag: { family: "red", light: 700, dark: 300 },
+  punctuation: { family: "stone", light: 700, dark: 300 },
+  definition: { family: "blue", light: 700, dark: 300 },
+  property: { family: "sky", light: 700, dark: 300 },
+  static: { family: "amber", light: 800, dark: 300 },
+  string: { family: "emerald", light: 700, dark: 300 },
 };
 
-const rampRoles = [...new Set(Object.values(ROLE_STOPS).map((entry) => entry.role))];
-const ramps = Object.fromEntries(
-  rampRoles.map((role) => [role, createRamp(role, defaultRampColors[role])]),
-) as Record<RampRole, Record<string, string>>;
-
 function colorFor(syntaxRole: SyntaxRole, mode: "light" | "dark"): string {
-  const { role, light, dark } = ROLE_STOPS[syntaxRole];
-  return ramps[role][`--ramp-${role}-${mode === "light" ? light : dark}`];
+  const { family, light, dark } = ROLE_STOPS[syntaxRole];
+  return palettes[family][mode === "light" ? light : dark];
 }
 
 /*
- * SCOPE GROUPS, not a scope-for-scope port of `github-light`/`github-dark`. Sandpack's own theme
- * only ever distinguishes these eight roles (`SYNTAX_COLOR_TOKENS` in `Playground.tsx`); a Shiki
- * theme with fifty finely-graded scopes would look MORE varied than the Playground, not the same.
- * Matching the Playground's own granularity here is what makes the two read as one palette.
+ * SCOPE GROUPS, not a scope-for-scope port of `github-light`/`github-dark`. The site only needs these
+ * eight semantic roles; a Shiki theme with fifty finely-graded scopes would look more varied than
+ * the system it belongs to, not more correct.
  */
 const SCOPES: Record<SyntaxRole, string[]> = {
   comment: ["comment", "punctuation.definition.comment"],

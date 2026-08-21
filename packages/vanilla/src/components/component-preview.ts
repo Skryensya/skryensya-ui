@@ -342,11 +342,34 @@ function connectStageResizer(root: HTMLElement): Cleanup {
   };
 }
 
+/** The route that renders this preview alone: a bare page, no site nav/sidebar/footer. */
+const fullscreenPreviewPath = "/preview-fullscreen/";
+
+/**
+ * Opens this preview alone, at its own SHORT, readable URL: the docs page's path plus this card's
+ * own stable id (`ComponentPreview.astro`'s `slugify(label)`), nothing else. `/preview-fullscreen`
+ * re-fetches that same page (it is static, already built — see ADR on `output: "static"`) and pulls
+ * the matching element back out of the FRESH markup itself, rather than this module serializing the
+ * card's current DOM into the link: a page path and an id stay short regardless of how large the
+ * demo is, where shipping the rendered markup (plus its stylesheets and scripts) does not.
+ *
+ * A plain synchronous `window.open`, no pre-opened blank tab to navigate later: there is no async
+ * step here (no compression, no `fetch`) standing between the click and the URL, so the direct call
+ * already satisfies every browser's "was this a user gesture" check for a new tab.
+ */
+export function openComponentPreviewFullscreen(root: HTMLElement): void {
+  const url = new URL(fullscreenPreviewPath, location.origin);
+  url.searchParams.set("p", location.pathname);
+  url.searchParams.set("id", root.id);
+  window.open(url.toString(), "_blank");
+}
+
 /** Switches the authored source panels without owning preview rendering or highlighted code. */
 export function connectComponentPreview(root: HTMLElement): Cleanup {
   const bindingTabs = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.bindingTabs));
   const sourceTabs = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.sourceTabs));
   const reload = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.reload));
+  const fullscreen = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.fullscreen));
 
   const showBinding = (binding: ComponentPreviewBinding) => {
     root.querySelectorAll<HTMLElement>(selector(componentPreviewAttrs.binding)).forEach((panel) => {
@@ -383,6 +406,7 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
   };
 
   const onReload = () => reloadComponentPreviewStage(root);
+  const onFullscreen = () => openComponentPreviewFullscreen(root);
   const disconnectResizer = connectStageResizer(root);
   const disconnectScreenTabs = connectScreenTabs(root);
 
@@ -390,6 +414,7 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
   sourceTabs?.addEventListener("sk-value-change", onSourceChange);
   document.addEventListener(componentPreviewBindingChangeEvent, onSharedBinding);
   reload?.addEventListener("click", onReload);
+  fullscreen?.addEventListener("click", onFullscreen);
 
   const fromTabs = bindingTabs?.getAttribute("data-value");
   const initial =
@@ -411,6 +436,7 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
     sourceTabs?.removeEventListener("sk-value-change", onSourceChange);
     document.removeEventListener(componentPreviewBindingChangeEvent, onSharedBinding);
     reload?.removeEventListener("click", onReload);
+    fullscreen?.removeEventListener("click", onFullscreen);
     disconnectResizer();
     disconnectScreenTabs();
   };

@@ -111,7 +111,7 @@ partida o varias oraciones independientes:
 
 - **Lista de afirmaciones independientes** → cada ítem es su propia oración completa, con su propio
   punto final, sin `y` de cierre. Ejemplo real, la lista de alternativas rechazadas en
-  `docs/decisiones/0002-nombrar-por-rol-nunca-por-inquilino.md`:
+  `docs/decisiones/0019-paletas-publicas-y-semanticos-constantes.md`:
 
   ```
   - `palette` implica un *conjunto sin orden*; pierde que...
@@ -272,7 +272,7 @@ que tiene, incluyendo lo que se descartó. La forma es fija:
   obvia se probó y falló, eso se documenta con la misma prioridad que la decisión final. ADR 0002
   dedica media página a la versión de enforcement que se descartó y por qué.
 - **Referencias cruzadas**: a otra decisión se la nombra por número y se enlaza con ruta relativa,
-  `[decisión 12](docs/decisiones/0012-monorepo-y-el-sitio.md)`, nunca solo por título.
+  `[decisión 12](docs/decisiones/0006-monorepo-y-el-sitio.md)`, nunca solo por título.
 
 ## README y metadata de repositorio
 
@@ -298,7 +298,7 @@ Regla práctica al escribir:
 ## Mensajes de commit
 
 En inglés, breves, forma `Categoría: qué cambia`, sin prefijo de tipo estilo Conventional Commits
-(`feat:`, `fix:`). Ejemplo real del historial: `Docs: monorepo READMEs + ADR-15; bump tokens 0.3.0`,
+(`feat:`, `fix:`). Ejemplo real del historial: `Docs: monorepo READMEs + ADR-19; bump tokens 0.3.0`,
 `Turborepo: base styles in packages/tokens, demo app consumes them`. Un punto y coma encadena dos
 cambios relacionados dentro del mismo commit en vez de forzar dos oraciones separadas.
 

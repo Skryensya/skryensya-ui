@@ -32,7 +32,7 @@ const corpus = parseTokens(CSS_DIR);
 export const tokens: Token[] = corpus.tokens as Token[];
 export const byName = new Map(tokens.map((t) => [t.name, t] as const));
 
-/** Tier 3 is element-scoped, never on :root (ADR-1): its styling hooks need an element to exist in. */
+/** Tier 3 is element-scoped, never on :root (ADR-19): its styling hooks need an element to exist in. */
 export const PROBES: Record<string, string> = {
   "components/badge.css": "sk-badge",
   "components/button.css": "sk-button",
@@ -122,12 +122,9 @@ const pascal = (stem: string) =>
  * would be, and `--scale-line-height-*` joins typography rather than starting its own shelf. */
 const NAME_GROUPS: { test: RegExp; id: string; label: string }[] = [
   // Tier 1
-  { test: /^--ramp-neutral-/, id: "ramp-neutral", label: "Rampa neutral" },
-  { test: /^--ramp-accent-/, id: "ramp-accent", label: "Rampa accent" },
-  { test: /^--ramp-danger-/, id: "ramp-danger", label: "Rampa danger" },
-  { test: /^--ramp-success-/, id: "ramp-success", label: "Rampa success" },
-  { test: /^--ramp-warning-/, id: "ramp-warning", label: "Rampa warning" },
-  { test: /^--ramp-info-/, id: "ramp-info", label: "Rampa info" },
+  { test: /^--palette-(slate|gray|zinc|neutral|stone)-/, id: "palette-neutral", label: "Paletas · neutrales" },
+  { test: /^--palette-(red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-/, id: "palette-color", label: "Paletas · color" },
+  { test: /^--palette-(white|black)$/, id: "palette-absolute", label: "Paletas · absolutos" },
   { test: /^--scale-space-/, id: "scale-space", label: "Escala · espaciado" },
   { test: /^--scale-(font|line-height)-/, id: "scale-type", label: "Escala · tipografía" },
   { test: /^--scale-radius-/, id: "scale-radius", label: "Escala · radios" },
@@ -222,7 +219,7 @@ export interface ChainNode {
 /**
  * The alias chain for a token, as a TREE rather than a line.
  *
- * A line would be a lie. `light-dark(var(--ramp-accent-600), var(--ramp-accent-500))` has two
+ * A line would be a lie. `light-dark(var(--palette-blue-600), var(--palette-blue-300))` has two
  * parents, and following only the first draws the light-mode path while the reader may be in
  * dark mode, so the rungs' live values wouldn't match and the chain would look broken while
  * being merely wrong. Both slots are shown, labelled, and the reader can see which one their
@@ -233,7 +230,7 @@ export function chainOf(name: string, depth = 0, seen = new Set<string>()): Chai
   if (!token || seen.has(name) || depth > 4) return null;
   seen.add(name);
 
-  // A mode-aware token's two refs are its light and dark slots, in that order (ADR-4: light-dark()
+  // A mode-aware token's two refs are its light and dark slots, in that order (ADR-1: light-dark()
   // takes exactly two, which the validator enforces).
   const slots: (("claro" | "oscuro") | undefined)[] =
     token.modeAware && token.refs.length === 2 ? ["claro", "oscuro"] : [];

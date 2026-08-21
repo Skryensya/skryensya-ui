@@ -3,8 +3,9 @@
  *
  * A rendered component and its source form one titled surface. The stage always precedes the source;
  * binding tabs switch implementation code, while source tabs (HTML | JS) stay within the Vanilla
- * binding as a low-density Tabs list. The Vanilla | React preference is shared across every preview
- * on the page via `data-sk-component-preview-pref` on the document element.
+ * binding as an `sm` Tabs list (Tabs' own size option, not a bespoke override). The Vanilla | React
+ * preference is shared across every preview on the page via `data-sk-component-preview-pref` on the
+ * document element.
  * @skryensya/vanilla/component-preview binds those authored controls.
  */
 @layer components {
@@ -29,7 +30,7 @@
     --sk-component-preview-mat-dot-gap: 1.25rem;
     /* The falloff, painted in the mat's own color ON TOP of the dots: it dims them toward the
      * frame without ever clearing them, and the base stays solid because the veil IS the base
-     * color. Lower the percentage for a fainter ramp, `transparent` for an even grid. */
+     * color. Lower the percentage for a fainter fade, `transparent` for an even grid. */
     --sk-component-preview-mat-veil: color-mix(
       in oklab,
       var(--sk-component-preview-mat-bg) 55%,
@@ -280,9 +281,9 @@
    * stay quiet at any width: nothing lines up with the demo's own edges, and there is no diagonal
    * for the renderer to alias into ropes.
    *
-   * The grid is even; the TONE ramps. A mask was the obvious way to do that and the wrong one: it
+   * The grid is even; the tone fades. A mask was the obvious way to do that and the wrong one: it
    * cannot tell a dot from a fill, so it punched a hole in the mat itself and the frame ended up
-   * sitting in a void. Veiling with the mat's own color ramps only what is drawn on the wall, and
+   * sitting in a void. Veiling with the mat's own color fades only what is drawn on the wall, and
    * never all the way to nothing: the grid stays legible under the frame, just quieter.
    */
   .sk-component-preview:has(
@@ -586,7 +587,7 @@
     inline-size: min(100%, var(--sk-component-preview-measure));
   }
 
-  /* HTML | JS: Tabs at local low density. The list is the chrome; panels sit flush under it. */
+  /* HTML | JS: an `sm` Tabs list. The list is the chrome; panels sit flush under it. */
   .sk-component-preview__source-tabs {
     --sk-tabs-gap: 0;
     --sk-tabs-panel-padding-block: 0;

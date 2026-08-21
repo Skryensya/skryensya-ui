@@ -44,7 +44,6 @@ export const ui = {
        DESTINO y no la acción, porque son lo primero que se escucha al entrar y "saltar" no dice
        adónde. El contenido va primero: es lo que casi todo el mundo vino a leer. */
     "nav.skipToContent": "Ir al contenido",
-    "nav.playground": "Playground",
     "templates.title": "Templates",
     "templates.description":
       "Composiciones completas de layout para copiar, adaptar y combinar con el kit.",
@@ -59,28 +58,9 @@ export const ui = {
     "templates.explorerLabel": "App shell con sidebar redimensionable de navegación anidada",
     "templates.explorerNavLabel": "Navegación anidada",
     "templates.navLabel": "Templates",
-    "playground.title": "Playground",
-    "playground.description":
-      "Editá y ejecutá los ejemplos de cada componente, en React y en Vanilla, sin instalar nada.",
-    "playground.components": "Componentes",
-    "playground.binding": "Binding",
-    "playground.loading": "Cargando el kit…",
-    "playground.failed":
-      "No se pudo cargar el kit. Recargá la página; si sigue, revisá que exista apps/playground/public/sandbox (pnpm --filter @skryensya/playground sandbox).",
-    "playground.offline":
-      "El sandbox no puede alcanzar codesandbox.io, que es donde compila y corre el código. Suele ser una VPN, un proxy o un bloqueador de contenido; el resto del sitio no lo necesita.",
-    "playground.docsLink": "Ver la documentación",
-    "playground.hideRail": "Ocultar la lista de componentes",
-    "playground.showRail": "Mostrar la lista de componentes",
-    "playground.resizeRail": "Cambiar el ancho de la lista",
-    "playground.discardTitle": "¿Descartar los cambios?",
-    "playground.discardBody": "Hay ediciones sin guardar en este ejemplo. Cambiar de ejemplo las descarta.",
-    "playground.discardCancel": "Seguir editando",
-    "playground.discardConfirm": "Descartar",
     "nav.skipToNav": "Ir a la navegación",
 
     "status.wip": "En progreso",
-    "status.ariaReviewed": "Revisado contra WAI-ARIA APG",
 
     "search.label": "Buscar",
     "search.dialog": "Buscar en la documentación",
@@ -97,15 +77,6 @@ export const ui = {
 
     "prefs.palette": "Paleta de color",
     "prefs.paletteNamed": "Paleta: {name}",
-    /* Alcance del acento. El nombre del grupo dice de QUÉ eje se elige; cada opción nombra lo que
-     * ese nivel deja de color, no su número: "2" no significa nada sin la tabla de /acento al lado. */
-    "prefs.accent": "Alcance del acento",
-    "prefs.accent3.short": "Todo",
-    "prefs.accent2.short": "Enlaces",
-    "prefs.accent1.short": "Acción",
-    "prefs.accent1": "Alcance del acento: solo la acción",
-    "prefs.accent2": "Alcance del acento: acción y enlaces",
-    "prefs.accent3": "Alcance del acento: todo",
     "prefs.contrastNormal": "Contraste: normal",
     "prefs.contrastHigh": "Contraste: alto",
     "prefs.language": "Idioma",
@@ -137,7 +108,7 @@ export const ui = {
     "copy.action": "Copiar",
 
     "preview.reloadAction": "Recargar",
-    "preview.openInPlayground": "Ver en Playground",
+    "preview.fullscreenAction": "Pantalla completa",
     "preview.moreActions": "Más acciones: {name}",
     "preview.screenToggleLabel": "Tamaño de pantalla ({name}): {hint}",
     "preview.bindingGroup": "Vínculo del código: {name}",
@@ -202,6 +173,11 @@ export const ui = {
     "demo.stack.title": "Resumen",
     "demo.stack.body": "La solicitud está lista para revisar.",
     "demo.stack.action": "Ver detalles",
+    "demo.layoutGrid.narrow": "narrow — resúmenes, formularios de lectura concentrada.",
+    "demo.layoutGrid.content": "content — la medida por defecto para el flujo principal.",
+    "demo.layoutGrid.breakout": "breakout — figuras, tablas o grupos que necesitan más aire lateral.",
+    "demo.layoutGrid.fullWidth": "full-width — fondos o medios que llegan al borde de la grilla.",
+    "demo.layoutGridRail.content": "contenido — main.sk-layout-grid, el flujo principal de la página.",
     "demo.inline.title": "Proyecto Atlas",
     "demo.inline.status": "3 cambios sin publicar",
     "demo.inline.preview": "Vista previa",
@@ -284,7 +260,7 @@ export const ui = {
     "callout.tonesBody1":
       'El tono decide si el panel se pinta con color semántico. <code>info</code>, <code>success</code>, <code>warning</code> y <code>danger</code> colorean el mensaje. Solo <code>danger</code> se anuncia como <code>role="alert"</code> (assertive); el resto usa <code>role="status"</code> (polite); es la minoría de casos que de verdad interrumpe, no el nombre del componente, el que decide eso.',
     "callout.tonesBody2":
-      "Los cuatro leen un <strong>rol de feedback</strong>, nunca el acento: el tono dice qué pasó, así que no puede cambiar cuando cambia la marca. <code>info</code> tuvo su propia rampa recién en la decisión 26 (<code>docs/decisiones/0026-info-es-un-rol-de-feedback-no-el-acento.md</code>); antes leía <code>accent</code>, y una marca magenta pintaba de magenta cada aviso informativo.",
+      "Los cuatro leen un <strong>rol de feedback</strong>, nunca el acento: el tono dice qué pasó, así que no puede cambiar cuando cambia la marca. <code>info</code> tuvo su propia rampa recién en la decisión 26 (<code>docs/decisiones/0019-paletas-publicas-y-semanticos-constantes.md</code>); antes leía <code>accent</code>, y una marca magenta pintaba de magenta cada aviso informativo.",
     "callout.neutralTitle": "Neutral",
     "callout.neutralBody":
       "El default: superficie y borde, sin pintura semántica. Existe para cuando el color no debería ser la señal prominente, el texto ya carga el mensaje. Úsalo en avisos ordinarios, confirmaciones breves o cualquier caso donde pintar el panel de “éxito” o “info” añadiría urgencia que el contenido no tiene.",
@@ -647,6 +623,8 @@ export const ui = {
     "demo.tabs.basic.activity": "Actividad",
     "demo.tabs.basic.activityBody":
       "Tres cambios aprobados durante la última semana.",
+    "demo.tabs.size.smLabel": "Proyecto (sm)",
+    "demo.tabs.size.mdLabel": "Proyecto (md)",
     "demo.tabs.states.label": "Revisión",
     "demo.tabs.states.details": "Detalles",
     "demo.tabs.states.detailsTitle": "Solicitud #248",
@@ -1511,7 +1489,7 @@ export const ui = {
       "Ese mismo label aparece al lado del botón como una banderita con flecha, justo lo que dura el icono de check, en el tono de success (o de danger si falló). No es un tooltip: nunca se queda con el puntero, así que un segundo clic sigue llegando al botón.",
     "copyButton.contractItem5":
       'La banderita se coloca con el pattern <a href="/anclaje">Anclaje</a>: el root lleva además <code>sk-anchor</code> y ella <code>sk-anchored</code> con <code>data-sk-placement="inline-start"</code>. Sin anchor positioning en el navegador no se dibuja, porque acá no hay machine que la coloque; el icono y el live region siguen igual.',
-    "copyButton.contractItem6": "Los iconos son placeholders <code>data-sk-icon</code>; el set lo enlaza <code>mountIcons</code> (ADR-15).",
+    "copyButton.contractItem6": "Los iconos son placeholders <code>data-sk-icon</code>; el set lo enlaza <code>mountIcons</code> (ADR-19).",
     "copyButton.iconsComment":
       "Los iconos se autoran como placeholders <span data-sk-icon>;\nmountIcons los reemplaza por el <svg> del set enlazado.",
     "copyButton.test1": "Copia su blanco autorado, anuncia éxito y vuelve al estado inicial.",
@@ -1710,6 +1688,9 @@ export const ui = {
     "layoutGridPage.fullWidthTitle": "Full-width sin soltar el contenido",
     "layoutGridPage.fullWidthBody":
       "Un hijo directo <code>full-width</code> se vuelve una grilla con las mismas columnas. Sus hijos directos vuelven a <code>content</code> por defecto, y pueden usar <code>narrow</code>, <code>breakout</code> o <code>full-width</code> otra vez.",
+    "layoutGridPage.railTitle": "Rail y contenido centrados juntos",
+    "layoutGridPage.railBody":
+      "Un rail de apoyo —TOC, navegación contextual o metadatos— es un hijo directo con <code>data-width=\"rail\"</code>. No es un span de contenido como <code>narrow</code> o <code>breakout</code>: es una columna aparte que la grilla reserva junto al flujo, fija en ancho (<code>--sk-layout-rail-inline-size</code>) y del alto que declare <code>--sk-layout-rail-row-span</code>. Por debajo de <code>72rem</code> no hay espacio para una columna lateral, así que pasa a ser una fila propia sobre el contenido.",
     "layoutGridPage.htmlTitle": "HTML semántico",
     "layoutGridPage.htmlBody":
       "La clase sólo define la geometría. Elige <code>main</code>, <code>section</code>, <code>figure</code> y los demás elementos por lo que significan; <code>data-width</code> sólo acepta <code>narrow</code>, <code>content</code>, <code>breakout</code> o <code>full-width</code>.",
@@ -2054,6 +2035,29 @@ export const ui = {
     "loaderPage.test1": "Expone el trabajo indeterminado con nombre como un status cortés (<code>polite</code>).",
     "loaderPage.test2": "Escribe los ejes ortogonales de variante y velocidad en la raíz.",
     "loaderPage.test3": "Queda decorativo cuando el control que lo rodea ya aporta el significado de estado.",
+
+    "megamenuPage.description":
+      "Categorías de navegación que despliegan un panel borde a borde con varias columnas de enlaces.",
+    "megamenuPage.contractBody":
+      "Megamenu es distinto de Menu/Menubar: sin <code>role=\"menu\"</code>, sin flechas ni typeahead. Cada categoría es un <code>&lt;button aria-expanded&gt;</code> y su panel son 2-4 <code>NavListGroup</code> (el mismo componente que usa NavList), enlaces comunes que se recorren con Tab. El panel mide el mismo ancho que la barra entera (anclado a la barra, no al trigger).",
+    "megamenuPage.a11yBody":
+      "Tab recorre los enlaces del panel en orden normal del documento, sin trampa de foco. Escape cierra el panel abierto y devuelve el foco a su trigger. El hover con intención (~150ms) es una mejora sólo para mouse; click/Enter/Space funcionan igual en cualquier dispositivo.",
+    "demo.megamenu.label": "Navegación principal",
+    "demo.megamenu.trigger1": "Producto",
+    "demo.megamenu.trigger2": "Recursos",
+    "demo.megamenu.group1": "Plataforma",
+    "demo.megamenu.group2": "Soluciones",
+    "demo.megamenu.group3": "Aprender",
+    "demo.megamenu.group4": "Comunidad",
+    "demo.megamenu.link1": "Resumen",
+    "demo.megamenu.link2": "Precios",
+    "demo.megamenu.link3": "Integraciones",
+    "demo.megamenu.link4": "Para equipos",
+    "demo.megamenu.link5": "Para empresas",
+    "demo.megamenu.link6": "Documentación",
+    "demo.megamenu.link7": "Guías",
+    "demo.megamenu.link8": "Foro",
+    "demo.megamenu.link9": "Blog",
 
     "menuPage.description": "Acciones, checkboxes y radios con navegación por teclado y typeahead.",
     "menuPage.contractBody":
@@ -2424,9 +2428,9 @@ export const ui = {
     "tablePage.test1": "Renderiza la estructura nativa de la tabla con todas las clases de parte estables.",
     "tablePage.test2": "Los encabezados son columnas por defecto, preservando el scope de fila explícito.",
 
-    "tabsPage.description": "Tres ejemplos de Tabs, de la anatomía básica al control manual.",
+    "tabsPage.description": "Cuatro ejemplos de Tabs, de la anatomía básica al tamaño del trigger.",
     "tabsPage.lede":
-      "Empieza con dos vistas, añade estados e iconos y termina con una navegación vertical controlada. La anatomía no cambia al crecer: lista, triggers y un panel por cada valor.",
+      "Empieza con dos vistas, añade estados e iconos, sigue con una navegación vertical controlada y termina en el tamaño del trigger. La anatomía no cambia al crecer: lista, triggers y un panel por cada valor.",
     "tabsPage.basicTitle": "1. Básico",
     "tabsPage.basicBody": "Dos triggers y dos paneles. <code>data-value</code> enlaza cada opción con su contenido; el enhancer completa roles, foco y ARIA.",
     "tabsPage.basicLabel": "Tabs básicos",
@@ -2437,6 +2441,9 @@ export const ui = {
     "tabsPage.advancedBody":
       "En orientación vertical, las flechas recorren el rail. Con activación manual, mover el foco no cambia el panel: Enter o Espacio confirma la selección. El evento actualiza la región viva debajo del componente.",
     "tabsPage.advancedLabel": "Tabs verticales con control manual",
+    "tabsPage.sizeTitle": "4. Tamaño",
+    "tabsPage.sizeBody": "<code>size</code> es sólo CSS, ortogonal a la orientación y al modo de activación: <code>sm</code> reduce alto, relleno y tipografía del trigger; <code>md</code> es el valor por defecto.",
+    "tabsPage.sizeLabel": "Tabs sm y md",
     "tabsPage.vanillaInitTitle": "Inicializar vanilla",
     "tabsPage.vanillaInitBody": "<code>initComponents</code> conecta los Tabs. Los iconos se montan por separado con el set elegido por la aplicación.",
     "tabsPage.contractItem1": "La raíz usa <code>data-sk-tabs</code> y conserva el valor activo en <code>data-value</code>.",
@@ -3165,7 +3172,6 @@ export const ui = {
     "landing.hero.lede":
       "Construye interfaces web con componentes, primitives y fundamentos que se combinan entre sí. Un contrato compartido mantiene estructura, comportamiento y estilos coherentes en HTML, JavaScript y React.",
     "landing.hero.ctaComponents": "Explorar componentes",
-    "landing.hero.ctaPlayground": "Abrir Playground",
 
     "landing.showcase.title": "De una pieza a una pantalla.",
     "landing.showcase.lede":
@@ -3271,7 +3277,6 @@ export const ui = {
     "landing.lab.after":
       "Los componentes no mantienen copias independientes de estas decisiones. Consumen los mismos fundamentos. Cambia el sistema y la interfaz responde.",
     "landing.lab.ctaTheming": "Explorar theming →",
-    "landing.lab.ctaPlayground": "Abrir en Playground →",
     "landing.lab.previewTitle": "Crear proyecto",
     "landing.lab.nameLabel": "Nombre",
     "landing.lab.namePlaceholder": "Mi proyecto",
@@ -3375,12 +3380,6 @@ export const ui = {
     "landing.growth.ctaProject": "Conocer el proyecto →",
     "landing.growth.ctaChangelog": "Ver el changelog →",
 
-    "landing.playground.title": "Explora. Combina. Cambia.",
-    "landing.playground.lede":
-      "El Playground es un espacio para entender el sistema construyendo con él.",
-    "landing.playground.body":
-      "Prueba componentes. Combina piezas. Cambia sus estados. Modifica los fundamentos. Compara HTML y React. Observa qué permanece igual.",
-    "landing.playground.cta": "Abrir Playground",
 
     "landing.close.title": "Construye desde donde quieras.",
     "landing.close.lede":
@@ -3390,7 +3389,6 @@ export const ui = {
     "landing.close.ctaDocs": "Leer la documentación →",
     "landing.close.linkGithub": "GitHub",
     "landing.close.linkChangelog": "Changelog",
-    "landing.close.linkPlayground": "Playground",
     "landing.close.linkComponents": "Components",
     "landing.close.linkFoundations": "Foundations",
 
@@ -3411,7 +3409,6 @@ export const ui = {
     "nav.templates": "Templates",
     "nav.resizeRail": "Resize the navigation",
     "nav.skipToContent": "Go to content",
-    "nav.playground": "Playground",
     "templates.title": "Templates",
     "templates.description":
       "Complete layout compositions to copy, adapt, and combine with the kit.",
@@ -3426,28 +3423,9 @@ export const ui = {
     "templates.explorerLabel": "App shell with a resizable, nested-navigation sidebar",
     "templates.explorerNavLabel": "Nested navigation",
     "templates.navLabel": "Templates",
-    "playground.title": "Playground",
-    "playground.description":
-      "Edit and run every component's examples, in React and in Vanilla, with nothing to install.",
-    "playground.components": "Components",
-    "playground.binding": "Binding",
-    "playground.loading": "Loading the kit…",
-    "playground.failed":
-      "The kit could not be loaded. Reload the page; if it persists, check that apps/playground/public/sandbox exists (pnpm --filter @skryensya/playground sandbox).",
-    "playground.offline":
-      "The sandbox cannot reach codesandbox.io, which is where it compiles and runs the code. Usually a VPN, a proxy or a content blocker; nothing else on this site needs it.",
-    "playground.docsLink": "Read the documentation",
-    "playground.hideRail": "Hide the component list",
-    "playground.showRail": "Show the component list",
-    "playground.resizeRail": "Resize the component list",
-    "playground.discardTitle": "Discard your changes?",
-    "playground.discardBody": "This example has unsaved edits. Switching examples discards them.",
-    "playground.discardCancel": "Keep editing",
-    "playground.discardConfirm": "Discard",
     "nav.skipToNav": "Go to navigation",
 
     "status.wip": "Work in progress",
-    "status.ariaReviewed": "Reviewed against WAI-ARIA APG",
 
     "search.label": "Search",
     "search.dialog": "Search the documentation",
@@ -3464,13 +3442,6 @@ export const ui = {
 
     "prefs.palette": "Color palette",
     "prefs.paletteNamed": "Palette: {name}",
-    "prefs.accent": "Accent reach",
-    "prefs.accent3.short": "All",
-    "prefs.accent2.short": "Links",
-    "prefs.accent1.short": "Action",
-    "prefs.accent1": "Accent reach: action only",
-    "prefs.accent2": "Accent reach: action and links",
-    "prefs.accent3": "Accent reach: all",
     "prefs.contrastNormal": "Contrast: normal",
     "prefs.contrastHigh": "Contrast: high",
     "prefs.language": "Language",
@@ -3499,7 +3470,7 @@ export const ui = {
     "copy.action": "Copy",
 
     "preview.reloadAction": "Reload",
-    "preview.openInPlayground": "View in Playground",
+    "preview.fullscreenAction": "Full screen",
     "preview.moreActions": "More actions: {name}",
     "preview.screenToggleLabel": "Screen size ({name}): {hint}",
     "preview.bindingGroup": "Code binding: {name}",
@@ -3554,6 +3525,11 @@ export const ui = {
     "demo.stack.title": "Summary",
     "demo.stack.body": "The request is ready for review.",
     "demo.stack.action": "See details",
+    "demo.layoutGrid.narrow": "narrow — summaries, focused-reading forms.",
+    "demo.layoutGrid.content": "content — the default measure for the main flow.",
+    "demo.layoutGrid.breakout": "breakout — figures, tables or groups that need more room to breathe.",
+    "demo.layoutGrid.fullWidth": "full-width — backgrounds or media that reach the grid's edge.",
+    "demo.layoutGridRail.content": "content — main.sk-layout-grid, the page's main flow.",
     "demo.inline.title": "Project Atlas",
     "demo.inline.status": "3 unpublished changes",
     "demo.inline.preview": "Preview",
@@ -3636,7 +3612,7 @@ export const ui = {
     "callout.tonesBody1":
       'The tone decides whether the panel paints with semantic color. <code>info</code>, <code>success</code>, <code>warning</code> and <code>danger</code> color the message. Only <code>danger</code> announces as <code>role="alert"</code> (assertive); the rest use <code>role="status"</code> (polite); it is the minority of cases that truly interrupt, not the component\'s name, that decides that.',
     "callout.tonesBody2":
-      "All four read a <strong>feedback role</strong>, never the accent: tone says what happened, so it cannot change when the brand changes. <code>info</code> only got its own ramp in decision 26 (<code>docs/decisiones/0026-info-es-un-rol-de-feedback-no-el-acento.md</code>); before, it read <code>accent</code>, and a magenta brand painted every informational notice magenta.",
+      "All four read a <strong>feedback role</strong>, never the accent: tone says what happened, so it cannot change when the brand changes. <code>info</code> only got its own ramp in decision 26 (<code>docs/decisiones/0019-paletas-publicas-y-semanticos-constantes.md</code>); before, it read <code>accent</code>, and a magenta brand painted every informational notice magenta.",
     "callout.neutralTitle": "Neutral",
     "callout.neutralBody":
       "The default: surface and border, no semantic paint. It exists for when color should not be the prominent signal, because the text already carries the message. Use it for ordinary notices, short confirmations, or any case where painting the panel \"success\" or \"info\" would add urgency the content doesn't have.",
@@ -3991,6 +3967,8 @@ export const ui = {
     "demo.tabs.basic.activity": "Activity",
     "demo.tabs.basic.activityBody":
       "Three changes approved during the last week.",
+    "demo.tabs.size.smLabel": "Project (sm)",
+    "demo.tabs.size.mdLabel": "Project (md)",
     "demo.tabs.states.label": "Review",
     "demo.tabs.states.details": "Details",
     "demo.tabs.states.detailsTitle": "Request #248",
@@ -4827,7 +4805,7 @@ export const ui = {
       "That same label appears beside the button as a small flag with an arrow, for exactly as long as the check icon shows, in the success tone (or danger if it failed). It is not a tooltip: it never traps the pointer, so a second click still reaches the button.",
     "copyButton.contractItem5":
       'The flag is placed with the <a href="/en/anchoring">Anchoring</a> pattern: the root also carries <code>sk-anchor</code>, and the flag carries <code>sk-anchored</code> with <code>data-sk-placement="inline-start"</code>. With no anchor positioning in the browser it does not draw, because there is no machine here to place it; the icon and the live region stay the same.',
-    "copyButton.contractItem6": "The icons are <code>data-sk-icon</code> placeholders; <code>mountIcons</code> links the set (ADR-15).",
+    "copyButton.contractItem6": "The icons are <code>data-sk-icon</code> placeholders; <code>mountIcons</code> links the set (ADR-19).",
     "copyButton.iconsComment":
       "Icons are authored as <span data-sk-icon> placeholders;\nmountIcons replaces them with the <svg> of the linked set.",
     "copyButton.test1": "Copies its authored target, announces success and resets.",
@@ -5026,6 +5004,9 @@ export const ui = {
     "layoutGridPage.fullWidthTitle": "Full width without releasing content",
     "layoutGridPage.fullWidthBody":
       "A direct <code>full-width</code> child becomes a grid with the same columns. Its direct children return to <code>content</code> by default and may use <code>narrow</code>, <code>breakout</code>, or <code>full-width</code> again.",
+    "layoutGridPage.railTitle": "Rail and content centered together",
+    "layoutGridPage.railBody":
+      "A supporting rail —TOC, contextual navigation, or metadata— is a direct child with <code>data-width=\"rail\"</code>. It is not a content span like <code>narrow</code> or <code>breakout</code>: it is a separate column the grid reserves alongside the flow, fixed in width (<code>--sk-layout-rail-inline-size</code>) and as tall as <code>--sk-layout-rail-row-span</code> declares. Below <code>72rem</code> there's no room for a side column, so it becomes its own row above the content instead.",
     "layoutGridPage.htmlTitle": "Semantic HTML",
     "layoutGridPage.htmlBody":
       "The class defines geometry only. Choose <code>main</code>, <code>section</code>, <code>figure</code>, and every other element for its meaning; <code>data-width</code> accepts only <code>narrow</code>, <code>content</code>, <code>breakout</code>, or <code>full-width</code>.",
@@ -5370,6 +5351,29 @@ export const ui = {
     "loaderPage.test1": "Exposes labelled indeterminate work as a polite status.",
     "loaderPage.test2": "Writes orthogonal variant and speed axes onto the root.",
     "loaderPage.test3": "Stays decorative when the surrounding control already carries the status meaning.",
+
+    "megamenuPage.description":
+      "Navigation categories that open an edge-to-edge panel of several link columns.",
+    "megamenuPage.contractBody":
+      "Megamenu is deliberately unlike Menu/Menubar: no <code>role=\"menu\"</code>, no arrow keys or typeahead. Each category is a plain <code>&lt;button aria-expanded&gt;</code> and its panel is 2-4 <code>NavListGroup</code>s (the same component NavList uses), ordinary links you Tab through. The panel matches the whole bar's own width (anchored to the bar, not the trigger).",
+    "megamenuPage.a11yBody":
+      "Tab flows through a panel's links in normal document order, no focus trap. Escape closes the open panel and returns focus to its trigger. Hover-intent (~150ms) is a mouse-only enhancement; click/Enter/Space work identically on any device.",
+    "demo.megamenu.label": "Main navigation",
+    "demo.megamenu.trigger1": "Product",
+    "demo.megamenu.trigger2": "Resources",
+    "demo.megamenu.group1": "Platform",
+    "demo.megamenu.group2": "Solutions",
+    "demo.megamenu.group3": "Learn",
+    "demo.megamenu.group4": "Community",
+    "demo.megamenu.link1": "Overview",
+    "demo.megamenu.link2": "Pricing",
+    "demo.megamenu.link3": "Integrations",
+    "demo.megamenu.link4": "For teams",
+    "demo.megamenu.link5": "For enterprise",
+    "demo.megamenu.link6": "Documentation",
+    "demo.megamenu.link7": "Guides",
+    "demo.megamenu.link8": "Forum",
+    "demo.megamenu.link9": "Blog",
 
     "menuPage.description": "Actions, checkboxes, and radios with keyboard navigation and typeahead.",
     "menuPage.contractBody":
@@ -5724,9 +5728,9 @@ export const ui = {
     "tablePage.test1": "Renders the native table structure with every stable part class.",
     "tablePage.test2": "Headers default to columns while preserving explicit row scope.",
 
-    "tabsPage.description": "Three Tabs examples, from basic anatomy to manual control.",
+    "tabsPage.description": "Four Tabs examples, from basic anatomy to trigger size.",
     "tabsPage.lede":
-      "Start with two views, add states and icons, and end with controlled vertical navigation. The anatomy does not change as it grows: a list, triggers, and one panel per value.",
+      "Start with two views, add states and icons, move on to controlled vertical navigation, and end with trigger size. The anatomy does not change as it grows: a list, triggers, and one panel per value.",
     "tabsPage.basicTitle": "1. Basic",
     "tabsPage.basicBody":
       "Two triggers and two panels. <code>data-value</code> links each option to its content; the enhancer fills in roles, focus, and ARIA.",
@@ -5739,6 +5743,10 @@ export const ui = {
     "tabsPage.advancedBody":
       "In vertical orientation, the arrows move along the rail. With manual activation, moving focus does not change the panel: Enter or Space confirms the selection. The event updates the live region below the component.",
     "tabsPage.advancedLabel": "Vertical Tabs with manual control",
+    "tabsPage.sizeTitle": "4. Size",
+    "tabsPage.sizeBody":
+      "<code>size</code> is CSS-only, orthogonal to orientation and activation mode: <code>sm</code> shrinks the trigger's height, padding and type; <code>md</code> is the default.",
+    "tabsPage.sizeLabel": "sm and md Tabs",
     "tabsPage.vanillaInitTitle": "Initializing vanilla",
     "tabsPage.vanillaInitBody":
       "<code>initComponents</code> connects Tabs. Icons mount separately with the set the application chooses.",
@@ -6468,7 +6476,6 @@ export const ui = {
     "landing.hero.lede":
       "Build web interfaces from components, primitives and foundations that compose together. One shared contract keeps structure, behavior and styling coherent across HTML, JavaScript and React.",
     "landing.hero.ctaComponents": "Explore components",
-    "landing.hero.ctaPlayground": "Open Playground",
 
     "landing.showcase.title": "From one piece to a screen.",
     "landing.showcase.lede":
@@ -6574,7 +6581,6 @@ export const ui = {
     "landing.lab.after":
       "Components do not keep independent copies of these decisions. They consume the same foundations. Change the system and the interface responds.",
     "landing.lab.ctaTheming": "Explore theming →",
-    "landing.lab.ctaPlayground": "Open in Playground →",
     "landing.lab.previewTitle": "Create project",
     "landing.lab.nameLabel": "Name",
     "landing.lab.namePlaceholder": "My project",
@@ -6678,12 +6684,6 @@ export const ui = {
     "landing.growth.ctaProject": "About the project →",
     "landing.growth.ctaChangelog": "See the changelog →",
 
-    "landing.playground.title": "Explore. Combine. Change.",
-    "landing.playground.lede":
-      "The Playground is a space to understand the system by building with it.",
-    "landing.playground.body":
-      "Try components. Combine pieces. Change their states. Modify foundations. Compare HTML and React. Watch what stays the same.",
-    "landing.playground.cta": "Open Playground",
 
     "landing.close.title": "Build from wherever you are.",
     "landing.close.lede":
@@ -6693,7 +6693,6 @@ export const ui = {
     "landing.close.ctaDocs": "Read the documentation →",
     "landing.close.linkGithub": "GitHub",
     "landing.close.linkChangelog": "Changelog",
-    "landing.close.linkPlayground": "Playground",
     "landing.close.linkComponents": "Components",
     "landing.close.linkFoundations": "Foundations",
 
@@ -6724,7 +6723,6 @@ export const navLabel: Record<Locale, Partial<Record<string, string>>> = {
     "/zoom": "Zoom and reflow",
     "/teclado": "Keyboard navigation",
     "/densidad": "Component density",
-    "/acento": "Accent reach",
     "/gradientes": "Gradients",
     "/transparencias": "Transparency",
     "/iconos": "Iconography",

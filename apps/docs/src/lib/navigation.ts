@@ -15,14 +15,6 @@ export type NavigationItem = {
    * once it has shipped as settled.
    */
   status?: ComponentStatus;
-  /**
-   * Whether this component's behaviour has been checked against its WAI-ARIA APG pattern (see
-   * `docs/aria-apg-audit.md`) — a DIFFERENT axis from {@link status}: a component can be
-   * ARIA-reviewed while its contract is still "wip", or vice versa. When true, the sidebar dot
-   * turns from the "wip" warning to a success tone instead of disappearing, so a reviewed
-   * component still reads as "here" rather than "nothing to say about this one".
-   */
-  ariaReviewed?: boolean;
 };
 
 /** `item.status`, defaulted: every catalog entry reads "wip" until deliberately marked "stable". */
@@ -74,13 +66,11 @@ const componentItems = [
       "acordeon nativo",
       "disclosure",
     ],
-    ariaReviewed: true,
   },
-  { href: "/componentes/avatar", label: "Avatar", aliases: ["perfil"], ariaReviewed: true },
-  { href: "/componentes/badge", label: "Badge", aliases: ["insignia"], ariaReviewed: true },
-  { href: "/componentes/box", label: "Box", aliases: ["caja"], ariaReviewed: true },
+  { href: "/componentes/avatar", label: "Avatar", aliases: ["perfil"] },
+  { href: "/componentes/badge", label: "Badge", aliases: ["insignia"] },
+  { href: "/componentes/box", label: "Box", aliases: ["caja"] },
   {
-    ariaReviewed: true,
     href: "/componentes/button",
     label: "Button",
     aliases: [
@@ -93,7 +83,7 @@ const componentItems = [
       "tarjeta boton",
     ],
   },
-  { href: "/componentes/callout", label: "Callout", aliases: ["alerta", "nota", "aviso"], ariaReviewed: true },
+  { href: "/componentes/callout", label: "Callout", aliases: ["alerta", "nota", "aviso"] },
   {
     href: "/componentes/card",
     label: "Card",
@@ -110,10 +100,8 @@ const componentItems = [
       "tarjeta de producto",
       "tarjeta de enlace",
     ],
-    ariaReviewed: true,
   },
   {
-    ariaReviewed: true,
     href: "/componentes/carousel",
     label: "Carousel",
     aliases: [
@@ -133,7 +121,6 @@ const componentItems = [
     ],
   },
   {
-    ariaReviewed: true,
     href: "/componentes/checkbox",
     label: "Checkbox",
     aliases: [
@@ -161,13 +148,11 @@ const componentItems = [
       "línea de tiempo",
       "linea de tiempo",
     ],
-    ariaReviewed: true,
   },
   {
     href: "/componentes/code-preview",
     label: "CodePreview",
     aliases: ["shiki", "código", "codigo", "code block", "preview de código", "preview de codigo"],
-    ariaReviewed: true,
   },
   {
     href: "/componentes/command-palette",
@@ -181,7 +166,6 @@ const componentItems = [
       "⌘k",
       "ctrl+k",
     ],
-    ariaReviewed: true,
   },
   {
     href: "/componentes/component-preview",
@@ -197,26 +181,22 @@ const componentItems = [
       "documentación de componente",
       "documentacion de componente",
     ],
-    ariaReviewed: true,
   },
   {
     href: "/componentes/data-grid",
     label: "Data Grid",
     aliases: ["grilla de datos", "layout grid", "grilla de layout", "navegación 2d", "navegacion 2d"],
-    ariaReviewed: true,
   },
   {
-    ariaReviewed: true,
     href: "/componentes/dialog",
     label: "Dialog",
     aliases: ["diálogo", "dialogo", "modal", "confirm", "dialog vaul", "dialog enhanced"],
   },
-  { href: "/componentes/drawer", label: "Drawer", aliases: ["panel lateral", "cajón", "cajon"], ariaReviewed: true },
+  { href: "/componentes/drawer", label: "Drawer", aliases: ["panel lateral", "cajón", "cajon"] },
   {
     href: "/componentes/feed",
     label: "Feed",
     aliases: ["stream", "feed de actividad", "publicaciones", "posts"],
-    ariaReviewed: true,
   },
   {
     href: "/componentes/form-field",
@@ -238,9 +218,8 @@ const componentItems = [
       "required",
       "requerido",
     ],
-    ariaReviewed: true,
   },
-  { href: "/componentes/grid", label: "Grid", aliases: ["grilla", "cuadrícula", "cuadricula"], ariaReviewed: true },
+  { href: "/componentes/grid", label: "Grid", aliases: ["grilla", "cuadrícula", "cuadricula"] },
   {
     href: "/componentes/layout-grid",
     label: "Layout Grid",
@@ -253,15 +232,13 @@ const componentItems = [
       "full bleed",
       "sangrado",
     ],
-    ariaReviewed: true,
   },
-  { href: "/componentes/heading", label: "Heading", aliases: ["encabezado", "título", "titulo"], ariaReviewed: true },
-  { href: "/hotkey", label: "Hotkey", aliases: ["atajo", "atajos", "keyboard shortcut"], ariaReviewed: true },
+  { href: "/componentes/heading", label: "Heading", aliases: ["encabezado", "título", "titulo"] },
+  { href: "/hotkey", label: "Hotkey", aliases: ["atajo", "atajos", "keyboard shortcut"] },
   {
     href: "/componentes/icon",
     label: "Icon",
     aliases: ["icono", "ícono", "icono componente", "sk-icon", "mountIcons"],
-    ariaReviewed: true,
   },
   {
     href: "/componentes/image-frame",
@@ -284,13 +261,11 @@ const componentItems = [
       "aspect-ratio",
       "ratio",
     ],
-    ariaReviewed: true,
   },
-  { href: "/componentes/inline", label: "Inline", aliases: ["en línea", "en linea"], ariaReviewed: true },
-  { href: "/componentes/input", label: "Input", aliases: ["entrada", "campo"], ariaReviewed: true },
-  { href: "/componentes/kbd", label: "Kbd", aliases: ["tecla", "teclado"], ariaReviewed: true },
+  { href: "/componentes/inline", label: "Inline", aliases: ["en línea", "en linea"] },
+  { href: "/componentes/input", label: "Input", aliases: ["entrada", "campo"] },
+  { href: "/componentes/kbd", label: "Kbd", aliases: ["tecla", "teclado"] },
   {
-    ariaReviewed: true,
     href: "/componentes/link",
     label: "Link",
     aliases: ["enlace", "vínculo", "vinculo", "tile link", "enlace de superficie", "tarjeta enlace"],
@@ -308,33 +283,28 @@ const componentItems = [
       "row list",
       "filas",
     ],
-    ariaReviewed: true,
   },
   {
     href: "/componentes/loader",
     label: "Loader",
     aliases: ["carga", "cargando", "spinner", "indicador de carga"],
-    ariaReviewed: true,
   },
   {
     href: "/componentes/meter",
     label: "Meter",
     aliases: ["medidor", "medición", "medicion", "batería", "bateria", "uso de disco"],
-    ariaReviewed: true,
   },
   {
-    ariaReviewed: true,
     href: "/nav-list",
     label: "Nav list",
     aliases: ["lista de navegación", "lista de navegacion"],
   },
-  { href: "/componentes/navbar", label: "Navbar", aliases: ["barra de navegación", "barra de navegacion"], ariaReviewed: true },
-  { href: "/componentes/pagination", label: "Pagination", aliases: ["paginación", "paginacion"], ariaReviewed: true },
+  { href: "/componentes/navbar", label: "Navbar", aliases: ["barra de navegación", "barra de navegacion"] },
+  { href: "/componentes/pagination", label: "Pagination", aliases: ["paginación", "paginacion"] },
   {
     href: "/componentes/placeholder",
     label: "Placeholder",
     aliases: ["skeleton", "esqueleto", "contenido provisional", "cargando contenido"],
-    ariaReviewed: true,
   },
   {
     href: "/componentes/process-list",
@@ -349,11 +319,9 @@ const componentItems = [
       "process list",
       "ol",
     ],
-    ariaReviewed: true,
   },
-  { href: "/componentes/progress", label: "Progress", aliases: ["progreso"], ariaReviewed: true },
+  { href: "/componentes/progress", label: "Progress", aliases: ["progreso"] },
   {
-    ariaReviewed: true,
     href: "/componentes/radio-group",
     label: "RadioGroup",
     aliases: [
@@ -370,11 +338,9 @@ const componentItems = [
     href: "/scrollbar",
     label: "Scrollbar",
     aliases: ["scroll", "rail", "thumb", "sk-scrollbar", "reveal scrollbar", "scrollbar custom"],
-    ariaReviewed: true,
   },
-  { href: "/componentes/segmented", label: "SegmentedControl", aliases: ["control segmentado"], ariaReviewed: true },
+  { href: "/componentes/segmented", label: "SegmentedControl", aliases: ["control segmentado"] },
   {
-    ariaReviewed: true,
     href: "/componentes/select",
     label: "Select",
     aliases: [
@@ -386,7 +352,7 @@ const componentItems = [
       "selector nativo",
     ],
   },
-  { href: "/componentes/sidebar", label: "Sidebar", aliases: ["barra lateral"], ariaReviewed: true },
+  { href: "/componentes/sidebar", label: "Sidebar", aliases: ["barra lateral"] },
   {
     href: "/componentes/skip-link",
     label: "SkipLink",
@@ -401,30 +367,27 @@ const componentItems = [
       "wcag 2.4.1",
       "accesibilidad teclado",
     ],
-    ariaReviewed: true,
   },
-  { ariaReviewed: true, href: "/componentes/slider", label: "Slider", aliases: ["deslizador"] },
-  { href: "/componentes/stack", label: "Stack", aliases: ["pila"], ariaReviewed: true },
-  { href: "/componentes/stat", label: "Stat", aliases: ["estadística", "estadistica", "métrica", "metrica"], ariaReviewed: true },
-  { href: "/componentes/steps", label: "Steps", aliases: ["pasos"], ariaReviewed: true },
-  { ariaReviewed: true, href: "/componentes/switch", label: "Switch", aliases: ["interruptor"] },
-  { ariaReviewed: true, href: "/componentes/table", label: "Table", aliases: ["tabla"] },
+  { href: "/componentes/slider", label: "Slider", aliases: ["deslizador"] },
+  { href: "/componentes/stack", label: "Stack", aliases: ["pila"] },
+  { href: "/componentes/stat", label: "Stat", aliases: ["estadística", "estadistica", "métrica", "metrica"] },
+  { href: "/componentes/steps", label: "Steps", aliases: ["pasos"] },
+  { href: "/componentes/switch", label: "Switch", aliases: ["interruptor"] },
+  { href: "/componentes/table", label: "Table", aliases: ["tabla"] },
   {
     href: "/componentes/treegrid",
     label: "Treegrid",
     aliases: ["grilla jerárquica", "grilla jerarquica", "tabla jerárquica", "tabla jerarquica", "explorador de archivos"],
-    ariaReviewed: true,
   },
-  { ariaReviewed: true, href: "/componentes/tabs", label: "Tabs", aliases: ["pestañas", "pestanas"] },
-  { href: "/componentes/tag", label: "Tag", aliases: ["etiqueta"], ariaReviewed: true },
-  { href: "/componentes/text", label: "Text", aliases: ["texto"], ariaReviewed: true },
+  { href: "/componentes/tabs", label: "Tabs", aliases: ["pestañas", "pestanas"] },
+  { href: "/componentes/tag", label: "Tag", aliases: ["etiqueta"] },
+  { href: "/componentes/text", label: "Text", aliases: ["texto"] },
   {
     href: "/componentes/toast",
     label: "Toast",
     aliases: ["notificación", "notificacion", "aviso transitorio"],
-    ariaReviewed: true,
   },
-  { href: "/componentes/tooltip", label: "Tooltip", aliases: ["globo", "ayuda contextual", "descripción", "descripcion", "hint"], ariaReviewed: true },
+  { href: "/componentes/tooltip", label: "Tooltip", aliases: ["globo", "ayuda contextual", "descripción", "descripcion", "hint"] },
   {
     href: "/componentes/toc",
     label: "Table of contents",
@@ -440,30 +403,25 @@ const componentItems = [
       "scroll spy",
       "rail derecho",
     ],
-    ariaReviewed: true,
   },
-  { href: "/vaul", label: "Vaul", aliases: ["drawer pattern", "sheet"], ariaReviewed: true },
-  { href: "/componentes/wrapper", label: "Wrapper", aliases: ["container", "contenedor", "envoltorio"], ariaReviewed: true },
+  { href: "/vaul", label: "Vaul", aliases: ["drawer pattern", "sheet"] },
+  { href: "/componentes/wrapper", label: "Wrapper", aliases: ["container", "contenedor", "envoltorio"] },
   {
-    ariaReviewed: true,
     href: "/componentes/breadcrumb",
     label: "Breadcrumb",
     aliases: ["migas de pan", "ruta jerárquica", "ruta jerarquica"],
   },
   {
-    ariaReviewed: true,
     href: "/componentes/combobox",
     label: "Combobox",
     aliases: ["autocompletar", "autocomplete", "selector editable"],
   },
   {
-    ariaReviewed: true,
     href: "/componentes/date-picker",
     label: "DatePicker",
     aliases: ["fecha", "selector de fecha", "date range", "campo de fecha"],
   },
   {
-    ariaReviewed: true,
     href: "/componentes/calendar",
     label: "Calendar",
     aliases: ["calendario", "grid de fecha", "mes", "vista de año", "década"],
@@ -472,16 +430,18 @@ const componentItems = [
     href: "/componentes/empty-state",
     label: "EmptyState",
     aliases: ["estado vacío", "estado vacio", "sin resultados"],
-    ariaReviewed: true,
   },
   {
-    ariaReviewed: true,
     href: "/componentes/file-upload",
     label: "FileUpload",
     aliases: ["subir archivo", "carga de archivos", "dropzone"],
   },
   {
-    ariaReviewed: true,
+    href: "/componentes/megamenu",
+    label: "Megamenu",
+    aliases: ["mega menu", "megamenú", "panel de navegación", "navegación borde a borde"],
+  },
+  {
     href: "/componentes/menu",
     label: "Menu",
     aliases: ["menú", "menu de acciones", "context menu"],
@@ -490,10 +450,8 @@ const componentItems = [
     href: "/componentes/menubar",
     label: "Menubar",
     aliases: ["barra de menú", "barra de menu", "menubar-editor"],
-    ariaReviewed: true,
   },
   {
-    ariaReviewed: true,
     href: "/componentes/number-field",
     label: "NumberField",
     aliases: ["campo numérico", "campo numerico", "stepper"],
@@ -502,19 +460,16 @@ const componentItems = [
     href: "/componentes/popover",
     label: "Popover",
     aliases: ["contenido flotante", "ayuda rica", "top layer"],
-    ariaReviewed: true,
   },
   {
     href: "/componentes/popup",
     label: "Popup",
     aliases: ["superficie flotante", "popup primitivo"],
-    ariaReviewed: true,
   },
   {
     href: "/componentes/split-button",
     label: "SplitButton",
     aliases: ["botón dividido", "boton dividido", "acción con menú"],
-    ariaReviewed: true,
   },
   {
     href: "/componentes/time-field",
@@ -528,16 +483,13 @@ const componentItems = [
       "campo segmentado",
       "segmented input",
     ],
-    ariaReviewed: true,
   },
   {
-    ariaReviewed: true,
     href: "/componentes/toolbar",
     label: "Toolbar",
     aliases: ["barra de herramientas", "grupo de controles"],
   },
   {
-    ariaReviewed: true,
     href: "/componentes/tree-view",
     label: "TreeView",
     aliases: ["árbol", "arbol", "jerarquía", "jerarquia"],
@@ -590,6 +542,7 @@ export const componentNavigation = [
       "/componentes/breadcrumb",
       "/componentes/command-palette",
       "/componentes/link",
+      "/componentes/megamenu",
       "/componentes/menu",
       "/componentes/menubar",
       "/nav-list",
@@ -688,9 +641,9 @@ if (
  * overridden per locale in `i18n/ui.ts` (`navLabel`), keyed by href.
  */
 export const globalNavigation = [
+  { href: "/", label: "nav.home" },
   { href: "/componentes", label: "nav.docs" },
   { href: "/templates", label: "nav.templates" },
-  { href: "/playground", label: "nav.playground" },
   { href: "/presets", label: "nav.presets" },
 ] satisfies readonly NavigationItem[];
 
@@ -773,25 +726,6 @@ export const documentationNavigation = [
             href: "/densidad",
             label: "Densidad de componente",
             aliases: ["density", "densidad local", "scope de densidad", "custom density", "compactar componente"],
-          },
-          {
-            href: "/acento",
-            label: "Alcance del acento",
-            aliases: [
-              "accent",
-              "accent reach",
-              "alcance",
-              "acento",
-              "data-accent",
-              "marca",
-              "brand",
-              "cuánta marca",
-              "cuanta marca",
-              "quitar color",
-              "bajar la marca",
-              "decoración",
-              "decoracion",
-            ],
           },
           { href: "/tiers", label: "Tiers" },
           {
@@ -883,8 +817,7 @@ export const documentationNavigation = [
             href: "/componentes/tile",
             label: "Tile",
             aliases: ["tarjeta", "patrón de tarjeta", "patron de tarjeta"],
-            ariaReviewed: true,
-          },
+                  },
           {
             href: "/scroll-lock",
             label: "Scroll lock",

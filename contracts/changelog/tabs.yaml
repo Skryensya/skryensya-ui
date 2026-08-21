@@ -3,8 +3,23 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "22f90b9418207777"
+surface: "2d5eb200baddcd7b"
 entries:
+  - date: 2026-08-20
+    kind: feature
+    target: size
+    es:
+      title: Tabs suma la opción size
+      body: >-
+        <code>size</code> controla el alto de la fila de triggers, su relleno horizontal y el
+        tamaño de la etiqueta: <code>sm</code> o <code>md</code> (por defecto). Es sólo CSS,
+        ortogonal a <code>orientation</code>: cualquier orientación puede ser <code>sm</code>.
+    en:
+      title: Tabs gains the size option
+      body: >-
+        <code>size</code> controls the trigger row's height, its inline padding and the label
+        size: <code>sm</code> or <code>md</code> (default). It is CSS-only, orthogonal to
+        <code>orientation</code>: any orientation can be <code>sm</code>.
   - date: 2026-08-11
     kind: feature
     es:

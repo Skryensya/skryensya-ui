@@ -4,7 +4,7 @@
  * inside its positioner, but a page can also mount `data-sk-calendar` directly wherever an inline
  * date grid is the whole UI (a booking page, a dashboard filter).
  *
- * EVERY BUTTON IN HERE IS A REAL sm Button (ADR-1/8): previous, next, the view-trigger and every
+ * EVERY BUTTON IN HERE IS A REAL sm Button (ADR-19/8): previous, next, the view-trigger and every
  * day/month/year cell carry `sk-button sk-interactive data-size="sm"`, never a bespoke box that
  * re-derives padding, height or state-layer feedback the button pattern already gives for free.
  * This file only re-declares the handful of `--sk-button-*` hooks each shape needs (icon-only
@@ -97,7 +97,7 @@
    * is the shape every calendar UI trains people to expect. Month/year cells are the opposite:
    * only 4 wide, `<td>`s with much more room to give, and stretch to fill that room instead
    * (below), so escalating a view doesn't strand a 32px square in a much bigger box. Hover/press/
-   * focus feedback is still `sk-interactive`'s state layer (ADR-8), never a hand-rolled `::before`. */
+   * focus feedback is still `sk-interactive`'s state layer (ADR-2), never a hand-rolled `::before`. */
   .sk-calendar__cell-trigger.sk-button {
     --sk-button-width: var(--sk-calendar-cell-size);
     --sk-button-radius: var(--sk-calendar-cell-radius);

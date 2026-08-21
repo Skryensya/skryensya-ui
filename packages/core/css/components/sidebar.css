@@ -38,6 +38,19 @@
      * keeps the tight value (see the state rule below), which is what stops this from inflating it. */
     --sk-sidebar-padding: var(--space-inset-md);
 
+    /*
+     * THE FLOOR A FIXED PADDING WOULD OTHERWISE BE. A resizable rail (`SidebarResizeHandle`) can be
+     * dragged well below where `--sk-sidebar-padding` fits twice — a sub-level nav's own
+     * `--sk-sidebar-min-inline-size` can go as low as a bare edge (contracts/semantic/sidebar.yaml:
+     * no icon-only rail exists for it to fall back to) — and a border-box element cannot render
+     * narrower than its own horizontal padding, whatever `min-inline-size:0` says about its CONTENT.
+     * Without this, a 10px rail held a 32px region open regardless: the padding alone, not
+     * anything inside it. `min()` against a quarter of the panel's OWN current width is what makes
+     * the gutter retreat as the panel does, self-scaling with no query needed, one property both
+     * the resize drag and the width transition already recompute every frame.
+     */
+    --sk-sidebar-padding-inline: min(var(--sk-sidebar-padding), calc(var(--sk-sidebar-inline-size) / 4));
+
     /* Block padding is its own hook so the regions can breathe top-and-bottom without touching the
      * inline gutter above, that one is load-bearing for the rail's arithmetic, this one is free to
      * be larger. Split, not shared, for exactly that reason. */
@@ -246,7 +259,8 @@
     gap: var(--sk-sidebar-header-gap);
     align-items: center;
     min-block-size: var(--sk-sidebar-header-min-height);
-    padding: var(--sk-sidebar-padding-block) var(--sk-sidebar-padding);
+    padding-block: var(--sk-sidebar-padding-block);
+    padding-inline: var(--sk-sidebar-padding-inline);
     /* Now that the root no longer clips (see `.sk-sidebar`), a brand or a title that does not fit
      * a narrowed rail needs its own floor to stop at. */
     overflow: hidden;
@@ -277,7 +291,8 @@
      * widening it. A flex child's automatic minimum size is `auto` on both. */
     min-block-size: 0;
     min-inline-size: 0;
-    padding: var(--sk-sidebar-padding-block) var(--sk-sidebar-padding);
+    padding-block: var(--sk-sidebar-padding-block);
+    padding-inline: var(--sk-sidebar-padding-inline);
     /*
      * ONE scrollport, and it is this one. Vertical scrolls, horizontal never does: a rail that
      * scrolls sideways is a rail whose content refused to be narrowed, and the fix is always at the
@@ -302,7 +317,8 @@
     display: flex;
     flex: none;
     align-items: center;
-    padding: var(--sk-sidebar-padding-block) var(--sk-sidebar-padding);
+    padding-block: var(--sk-sidebar-padding-block);
+    padding-inline: var(--sk-sidebar-padding-inline);
     color: var(--sk-sidebar-footer-fg);
     font-size: var(--sk-sidebar-footer-font-size);
     white-space: nowrap;

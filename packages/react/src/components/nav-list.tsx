@@ -49,6 +49,13 @@ export type NavListGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "children">
   /** Starts expanded — hiding navigation by default is the wrong default. Uncontrolled: read once,
    *  then this component owns it, the same as `Accordion`'s own `defaultOpen`. */
   defaultOpen?: boolean;
+  /**
+   * Renders a static label (`collapsible` absent) as a real `<h3>` instead of a plain `<div>` —
+   * for a group sitting inside a large panel (`Megamenu`'s columns being the motivating case)
+   * where screen-reader heading-navigation is how a reader orients among several groups at once.
+   * Has no effect on a collapsible group's label, which is already a real `<button>`.
+   */
+  heading?: boolean;
 };
 
 /*
@@ -62,6 +69,7 @@ export function NavListGroup({
   className,
   collapsible = false,
   defaultOpen = true,
+  heading = false,
   label,
   ...props
 }: NavListGroupProps) {
@@ -96,6 +104,10 @@ export function NavListGroup({
         >
           {label}
         </button>
+      ) : label && heading ? (
+        <h3 className={navListParts.groupLabel} id={labelId}>
+          {label}
+        </h3>
       ) : label ? (
         <div className={navListParts.groupLabel} id={labelId}>
           {label}

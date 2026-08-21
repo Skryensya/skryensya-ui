@@ -47,4 +47,28 @@ export const tabsAdvancedTree = (t: Translate): UsageTree => ({
   ],
 });
 
+/** The same two panels, once at `sm` and once at the `md` default, stacked so the trigger row's
+ * height, padding and type read side by side. */
+export const tabsSizeTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "md" },
+  children: [
+    {
+      contract: "tabs",
+      signature: "Tabs",
+      options: { value: "summary", size: "sm" },
+      attrs: { "aria-label": t("demo.tabs.size.smLabel") },
+      slots: { items: tabsBasicItems(t) },
+    },
+    {
+      contract: "tabs",
+      signature: "Tabs",
+      options: { value: "summary" },
+      attrs: { "aria-label": t("demo.tabs.size.mdLabel") },
+      slots: { items: tabsBasicItems(t) },
+    },
+  ],
+});
+
 export { default as tabsAdvancedScript } from "./scripts/tabs-status.ts?raw";

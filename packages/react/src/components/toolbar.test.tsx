@@ -34,11 +34,11 @@ describe("Toolbar React contracts", () => {
 
   it("forwards arbitrary attrs to the root, same as ToolbarGroup already did — vanilla always had this via the emitted template", () => {
     const ui = render(
-      <Toolbar data-accent="2" label="Formato">
+      <Toolbar data-docs-example="true" label="Formato">
         <button type="button">B</button>
       </Toolbar>,
     );
-    expect(ui.getByRole("toolbar").getAttribute("data-accent")).toBe("2");
+    expect(ui.getByRole("toolbar").getAttribute("data-docs-example")).toBe("true");
   });
 
   it("Right/Left move between controls, skipping a NATIVELY disabled one", () => {

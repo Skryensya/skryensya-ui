@@ -5,6 +5,7 @@ import TokenTable from "../../components/TokenTable.astro";
 
 <Base
   title="Token reference"
+  documentLayout="grid"
   description="All system tokens: token read from CSS in build, value resolved read from live browser."
 >
   <h1>Token reference</h1>
@@ -16,7 +17,7 @@ import TokenTable from "../../components/TokenTable.astro";
 
   <h2>How to read the tiers</h2>
   <p>
-    References point <strong>down or sideways, never up</strong>, and tier 3 cannot jump to tier 1. That is not convention: the validator enforces it. A <code>--ramp-*</code> within a component's CSS is the visible sign that someone skipped the semantic layer and broke dark mode for that component alone.
+    References point <strong>down or sideways, never up</strong>, and tier 3 cannot jump to tier 1. That is not convention: the validator enforces it. A <code>--palette-*</code> within a component's CSS is the visible sign that someone skipped the semantic layer and broke dark mode for that component alone.
   </p>
   <p>
     The <span class="sk-badge" data-tone="success">component</span> tokens live on the element, not

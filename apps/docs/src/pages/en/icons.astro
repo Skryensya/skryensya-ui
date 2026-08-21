@@ -40,11 +40,12 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
 
 <Base
   title="Iconography"
+  documentLayout="grid"
   description="The stable vocabulary of roles, sets as a brand, and why the SVG pattern does not paint fill or stroke."
 >
   <h1>Iconography</h1>
   <p class="lede">
-    The system names <strong>roles</strong>, not drawings. A set (Lucide, Phosphor, Material) is a brand: it chooses the geometry that each role occupies, just as a brand chooses the hue of <code>--ramp-accent-600</code>. How you mount the SVG in React or vanilla is in <a href="/en/components/icon">Icon</a>.
+    The system names <strong>roles</strong>, not drawings. A set (Lucide, Phosphor, Material) is a brand: it chooses the geometry that each role occupies, just as a brand chooses the hue of <code>--palette-blue-600</code>. How you mount the SVG in React or vanilla is in <a href="/en/components/icon">Icon</a>.
   </p>
 
   <ComponentPreview html={vocabHtml} label="Vocabulario estable" />
@@ -54,7 +55,7 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
 
   <h2>A pattern, not an extra</h2>
   <p>
-    Like the <a href="/en/state-layer">state layer</a>, the pattern comes in <code>tokens.scss</code>. An icon is not an add-on that a component opts into: just something that displays a chevron, a close, or a state glyph needs this same box. The rules are inert until an element has <code>sk-icon</code>, so they do not matter on a page without icons. The decision is in <a href="/decisiones/0015-el-icono-es-un-pattern-y-el-set-es-una-marca">ADR-15</a>.
+    Like the <a href="/en/state-layer">state layer</a>, the pattern comes in <code>tokens.scss</code>. An icon is not an add-on that a component opts into: just something that displays a chevron, a close, or a state glyph needs this same box. The rules are inert until an element has <code>sk-icon</code>, so they do not matter on a page without icons. The decision is in <a href="/decisiones/0019-paletas-publicas-y-semanticos-constantes">ADR-19</a>.
   </p>
 
   <h2>The stable vocabulary</h2>

@@ -10,9 +10,11 @@ export type GridColumns = 1 | 2 | 3 | 4;
 /**
  * Named spans a direct LayoutGrid child may request with `data-width`.
  *
- * Omitting the attribute keeps the child in the content span.
+ * Omitting the attribute keeps the child in the content span. `"rail"` is not a content span —
+ * it's a supporting column (a TOC, contextual navigation) beside the grid rather than a section
+ * within its flow — but it earns a value in this same attribute rather than a second one.
  */
-export type LayoutGridWidth = "narrow" | "content" | "breakout" | "full-width";
+export type LayoutGridWidth = "narrow" | "content" | "breakout" | "full-width" | "rail";
 /** Page-column max measure on a size scale, see patterns/wrapper.css. */
 export type WrapperSize = "sm" | "md" | "lg" | "full";
 

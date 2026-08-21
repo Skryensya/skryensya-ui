@@ -24,6 +24,3 @@ apps/docs/check-trees.mts
 # stripped out of every commit by hand since, which is a chore that only ever ends one way.
 apps/docs/.astro/dev.json
 
-# Generated for /playground: the kit compiled into files the Sandpack sandbox can import.
-# Rebuilt by apps/playground/scripts/build-sandbox-bundles.mjs on every dev start and build.
-apps/playground/public/sandbox/

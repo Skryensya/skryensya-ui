@@ -3,7 +3,7 @@
  *
  * The design system is authored as CSS plus Sass where CSS has no macro, so the enforcement
  * layer reads the source stylesheets directly, via scripts/parse.mjs, the same parser the docs
- * site's token reference consumes. Sharing it is deliberate (ADR-7): a reference generated from
+ * site's token reference consumes. Sharing it is deliberate (ADR-19): a reference generated from
  * a different reading of the source than the one the rules are checked against could describe a
  * system nobody validates.
  *
@@ -22,7 +22,7 @@ const PKG_ROOT = join(import.meta.dirname, "..");
 
 const corpus = parseTokens(CSS_DIR);
 
-// The contrast contract is data (ADR-7); an absent file skips the check rather than failing.
+// The contrast contract is data (ADR-19); an absent file skips the check rather than failing.
 let pairs = null;
 try {
   pairs = JSON.parse(readFileSync(join(PKG_ROOT, "contrast-pairs.json"), "utf8")).pairs;

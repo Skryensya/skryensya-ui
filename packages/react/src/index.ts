@@ -23,6 +23,8 @@ export { Feed, FeedArticle } from "./components/feed.js";
 export type { FeedProps, FeedArticleProps } from "./components/feed.js";
 export { Menubar, MenubarItem } from "./components/menubar.js";
 export type { MenubarProps, MenubarItemProps } from "./components/menubar.js";
+export { Megamenu, MegamenuTrigger } from "./components/megamenu.js";
+export type { MegamenuProps, MegamenuTriggerProps } from "./components/megamenu.js";
 export { Loader } from "./components/loader.js";
 export type { LoaderProps } from "./components/loader.js";
 export { Placeholder } from "./components/placeholder.js";

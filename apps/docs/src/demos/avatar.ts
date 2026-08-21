@@ -24,21 +24,20 @@ const demoSrc = (initials: string) =>
  * inline is the same escape hatch a consumer reskin uses, just authored on the tree instead of in a
  * stylesheet.
  */
-const AVATAR_FALLBACK_STYLE = "--sk-avatar-bg: var(--ramp-accent-600); --sk-avatar-fg: var(--ramp-neutral-0);";
+const AVATAR_FALLBACK_STYLE = "--sk-avatar-bg: var(--palette-blue-600); --sk-avatar-fg: var(--palette-white);";
 
 /*
- * Sixteen swatches, four steps off four ramp families (accent/danger/success/info) — enough hues
+ * Sixteen swatches, four steps off four semantic families (accent/danger/success/info) — enough hues
  * that no two neighbors read as "the same person's avatar, twice", and every step dark enough for
- * the white fallback ink to stay readable (measured: below ~65% L). Not five families × ~3 steps:
- * `warning`'s own ramp runs lighter at every step than the other four (its 600 is closer to their
- * 400), so mixing it in unevenly would have made a couple of avatars look washed out next to the
+ * the white fallback ink to stay readable. Warning stays out because it runs lighter at comparable
+ * stops, so mixing it in unevenly would have made a couple of avatars look washed out next to the
  * rest for no reason a reader could see.
  */
 const AVATAR_PALETTE = [
-  "accent-400", "accent-500", "accent-600", "accent-700",
-  "danger-400", "danger-500", "danger-600", "danger-700",
-  "success-400", "success-500", "success-600", "success-700",
-  "info-400", "info-500", "info-600", "info-700",
+  "blue-400", "blue-500", "blue-600", "blue-700",
+  "red-400", "red-500", "red-600", "red-700",
+  "emerald-400", "emerald-500", "emerald-600", "emerald-700",
+  "sky-400", "sky-500", "sky-600", "sky-700",
 ] as const;
 
 /** A-P: sixteen distinct one-letter identities, so sixteen different colors read as sixteen different people, not one repeated. */
@@ -134,7 +133,7 @@ export const avatarColorsTree = (t: Translate): UsageTree => ({
       signature: "Avatar.initials",
       options: { name: t("demo.avatar.colorPersonName", { letter }), size: AVATAR_COLOR_SIZES[index] },
       attrs: {
-        style: `--sk-avatar-bg: var(--ramp-${swatch}); --sk-avatar-fg: var(--ramp-neutral-0); box-shadow: 0 0 0 2px var(--color-bg-surface);`,
+        style: `--sk-avatar-bg: var(--palette-${swatch}); --sk-avatar-fg: var(--palette-white); box-shadow: 0 0 0 2px var(--color-bg-surface);`,
       },
       children: letter,
     };

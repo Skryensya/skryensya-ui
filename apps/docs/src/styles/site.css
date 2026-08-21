@@ -1,7 +1,7 @@
 /*
  * The docs site's own structural CSS.
  *
- * The design system ships styling hooks, not components (ADR-1), so this file is the site doing what
+ * The design system ships styling hooks, not components (ADR-19), so this file is the site doing what
  * every consumer must do: writing the structure and wiring the styling hooks. It is also the honest
  * test of the token set, every rule here reaches for a semantic token, and anywhere it can't,
  * the system has a gap worth knowing about.
@@ -85,29 +85,12 @@ body {
   --sk-wrapper-max: var(--docs-shell-max);
 }
 
-/* Docs and the playground are peer destinations, not categories in the documentation rail. */
+/* Header destinations are one NavList. Home is not a logo-shaped exception; it is the first peer
+   destination, with tighter chrome than the sidebar and roomier inline padding for scanning. */
 .dimensions__global {
-  display: flex;
-  gap: var(--space-inline-xs);
-  align-items: center;
-}
-
-.dimensions__global-link {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: var(--size-touch-target);
-  padding-inline: var(--space-inset-sm);
-  border-radius: var(--radius-control);
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-body-sm);
-  font-weight: var(--font-weight-label);
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.dimensions__global-link[aria-current="page"] {
-  background: var(--color-bg-surface-sunken);
-  color: var(--color-text-primary);
+  --sk-nav-list-link-height: var(--size-control-sm);
+  --sk-nav-list-link-padding-x: var(--space-inset-md);
+  --sk-nav-list-link-font-weight: var(--font-weight-label);
 }
 
 
@@ -157,46 +140,6 @@ body {
   box-shadow: inset 0 0 0 1px var(--color-border-subtle);
 }
 
-/*
- * Accent reach: a compact three-state button rather than another miniature segmented control in
- * chrome. Its concentric marks read from the brand-coloured centre outward: action, links, then the
- * surrounding chrome. The full picker belongs on /acento, where all three choices need comparison.
- *
- * The button itself never inherits a reach token. It controls that dimension, so its active rings
- * always retain the action colour even when the rest of the page is deliberately quiet.
- */
-.dimensions__accent-toggle {
-  display: inline-grid;
-  place-items: center;
-  color: var(--color-text-secondary);
-}
-
-.dimensions__accent-icon {
-  inline-size: 1.15rem;
-  block-size: 1.15rem;
-}
-
-.dimensions__accent-icon [data-accent-reach-ring] {
-  color: var(--color-border-default);
-  transition-property: color;
-  transition-duration: var(--motion-state-change-duration);
-  transition-timing-function: var(--motion-state-change-easing);
-}
-
-.dimensions__accent-toggle[data-level="1"] [data-accent-reach-ring="1"],
-.dimensions__accent-toggle[data-level="2"] [data-accent-reach-ring="1"],
-.dimensions__accent-toggle[data-level="2"] [data-accent-reach-ring="2"],
-.dimensions__accent-toggle[data-level="3"] [data-accent-reach-ring="1"],
-.dimensions__accent-toggle[data-level="3"] [data-accent-reach-ring="2"],
-.dimensions__accent-toggle[data-level="3"] [data-accent-reach-ring="3"] {
-  color: var(--color-action-primary);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dimensions__accent-icon [data-accent-reach-ring] {
-    transition: none;
-  }
-}
 
 /* Icon-only, the same square as the theme toggle beside it (sizing comes from sk-button[data-icon-only]).
    Faces and the morph are the Icon Toggle pattern; this mapping lights the matching face from the
@@ -302,35 +245,27 @@ html:has(dialog:modal) .docs-drawer__content {
 
 /* ── layout ───────────────────────────────────────────────────────────────── */
 /*
- * Three columns of content, five tracks: the site index (sidebar), a capped document measure, and
- * the document index (toc), with the spare width held in two flexible tracks AROUND that pair
- * rather than between them.
+ * Two tracks now: the site index (sidebar), and one flexible area holding everything to its right.
+ * `.docs-document-pair` (the document + its toc, as one unit) is centered WITHIN that flexible area
+ * rather than the pair's own two columns splitting the spare width themselves — the sidebar stays a
+ * fixed-width column of its own, untouched by any of this.
  *
- * WHY NOT `space-between`, which is what this was. Spare width went into the gaps, so the toc rode
- * the right edge of the canvas and the further the display widened the further it drifted from the
- * prose: at 1600px the index of the document sat 64px off the document and 0px off the viewport,
- * which is the wrong thing to be attached to. An index belongs to the text it indexes.
- *
- * The two `1fr` tracks are the fix and also the gutters: their `min` is the gap this grid used to
- * declare, so nothing narrows at the widths where the columns already fill the canvas, and every
- * pixel past that is split evenly between the sidebar's side and the far edge, which lands the
- * document column centred with its index alongside it. The document/toc boundary keeps no track of
- * its own: `<main>`'s wrapper inset and the toc's own column rule are the separation there, and a
- * third gap between them would only push the index away again.
+ * WHY CENTER THE PAIR, not `space-between`. Spare width in the gaps drifts the toc off the prose it
+ * indexes as the display widens (measured: at 1600px the old `space-between` shape put the toc 64px
+ * off the document and 0px off the viewport, the wrong thing to be attached to). Centering the pair
+ * keeps the toc's distance from the document constant regardless of viewport width; the document/toc
+ * boundary itself keeps no track of its own, so there's no third gap pushing the two apart either.
  */
 .shell {
   --sk-wrapper-padding-inline: 0;
 
   display: grid;
-  /* The toc track is the toc width itself, not `auto`: the column exists before the list fills,
-     so the document measure never jumps when data-ready lands. */
-  grid-template-columns:
-    auto
-    minmax(var(--space-inline-lg), 1fr)
-    minmax(0, var(--docs-document-max))
-    var(--docs-toc-inline-size)
-    minmax(var(--space-inline-lg), 1fr);
-  column-gap: 0;
+  /* Two tracks: the site index (sidebar), and one flexible area for everything to its right.
+     `.docs-document-pair` owns the document + toc composition (and its own `--docs-document-max` /
+     `--docs-toc-inline-size` math) inside that area now, the same pair of tokens as before, just no
+     longer duplicated into this grid's own track list too. */
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--space-inline-lg);
   row-gap: var(--space-inline-lg);
   /* No block padding: the rail has to MEET the header, not float below it. The document and the toc
      pad themselves instead, so only the columns that want air get it. */
@@ -345,36 +280,80 @@ html:has(dialog:modal) .docs-drawer__content {
  * `max-content` track absorbed ~650px, since only `fr` tracks are excluded from that redistribution).
  * Zeroing the length itself, gated on the page actually having no toc, is what collapses the column
  * to genuinely 0px instead of an empty reserved slot. */
-.shell:has(> .sk-toc[data-empty]) {
+.shell:has(.docs-document-pair > .sk-toc[data-empty]) {
   --docs-toc-inline-size: 0px;
 }
 
-/* The content grid needs room for its lg span PLUS its own inline gutters. The docs chrome
- * remains outside that canvas, so only component pages widen the shell; ordinary prose pages retain
- * the md document track. */
-.shell[data-document-layout="grid"] {
-  --docs-layout-grid-canvas: calc(var(--size-wrapper-lg) + var(--space-inset-lg) * 2);
-  --docs-document-max: var(--docs-layout-grid-canvas);
-  --sk-wrapper-max: calc(
-    var(--docs-layout-grid-canvas)
-    + var(--docs-rail-inline-size)
-    + var(--docs-toc-inline-size)
-    + var(--space-inline-lg) * 2
-  );
+/* Component pages and prose pages center the document + TOC pair, not the left navigation rail. The
+ * docs sidebar is site chrome; the TOC belongs to the document it indexes.
+ *
+ * TWO SHAPES, ONE PER `documentLayout`. Column-layout pages (plain prose, no `sk-layout-grid`) keep
+ * the simple fixed-track pair below: main and Toc are two independent boxes side by side, no named
+ * lines to share. Grid-layout pages instead make `.docs-document-pair` itself the real
+ * `sk-layout-grid` (Base.astro adds the class): `<main>` becomes `display: contents` just below so
+ * its own children land as direct items of THIS grid, sharing its rows and named lines with Toc,
+ * rather than main staying a second, nested grid the rail sits outside of. */
+.docs-document-pair {
+  grid-column: 2;
+  align-items: start;
+  min-inline-size: 0;
 }
 
-/* Explicit, because the flexible tracks are not skippable by auto-placement: the three children
-   would otherwise land in tracks 1, 2 and 3 and the document would sit in a gutter. */
-.shell > .docs-sidebar {
+.docs-document-pair:not([data-document-layout="grid"]) {
+  display: grid;
+  grid-template-columns: minmax(0, var(--docs-document-max)) var(--docs-toc-inline-size);
+  /* Center as a unit within `.shell`'s flexible column, rather than stretching to fill it: a grid
+     item with fixed-width tracks and no trailing `1fr` of its own would otherwise stretch its BOX to
+     the full column and still hug the left edge inside it, undoing the centering entirely. */
+  justify-self: center;
+}
+
+.docs-document-pair:not([data-document-layout="grid"]) > main {
   grid-column: 1;
 }
 
-.shell > main {
-  grid-column: 3;
+.docs-document-pair:not([data-document-layout="grid"]) > .sk-toc {
+  grid-column: 2;
 }
 
-.shell > .sk-toc {
-  grid-column: 4;
+/* Grid-layout pages center the pair the same way the fixed-track pair above does, via
+   `justify-self: center` — `sk-layout-grid`'s own rail mechanism (`packages/core/css/patterns/layout.css`,
+   `[data-width="rail"]`) already gives this element FIXED tracks once a rail child is present (no
+   `1fr` to fight over), so a plain `justify-self: center` is enough; nothing here rewrites the
+   track list itself any more. Two bridge lines hand the pattern's own public hooks the site-specific
+   values it cannot know on its own: the Toc's width (zeroed when the page has no headings, same
+   `--docs-toc-inline-size` the empty-toc collapse below already drives) and how many rows `<main>`'s
+   own content occupies (`--docs-main-row-count`, computed at build in Base.astro from the same scan
+   that indexes the page's headings — the pattern has no way to know this by itself). */
+.docs-document-pair[data-document-layout="grid"] {
+  justify-self: center;
+  padding-block-start: var(--space-inset-lg);
+  overflow-x: clip;
+  --sk-layout-rail-inline-size: var(--docs-toc-inline-size);
+  --sk-layout-rail-row-span: var(--docs-main-row-count, 1);
+}
+
+/* `<main>` generates no box of its own here, so ITS children (the document's own top-level
+   elements, `data-width` and all) become direct grid items of `.docs-document-pair` — exactly the
+   nesting `[data-width="full-width"]` already does one level down (layout.css), just with `<main>`
+   as the transparent level instead of an authored wrapper. Modern engines keep the `main` landmark
+   in the accessibility tree across `display: contents` (the old Chromium/Firefox bugs that stripped
+   it are long fixed), so nothing here costs the page its landmark. */
+main[data-document-layout="grid"] {
+  display: contents;
+}
+
+.shell[data-document-layout="grid"] {
+  --docs-layout-grid-canvas: calc(var(--size-wrapper-lg) + var(--space-inset-lg) * 2);
+  --docs-document-max: var(--docs-layout-grid-canvas);
+  --sk-wrapper-max: var(--docs-shell-max);
+}
+
+/* Explicit: `.shell` has exactly two children (the sidebar, `.docs-document-pair`), auto-placement
+   would already put them in tracks 1 and 2 in source order, but the pair also needs its own
+   `justify-self` above, so both get a named column rather than leaving one implicit. */
+.shell > .docs-sidebar {
+  grid-column: 1;
 }
 
 /*
@@ -409,6 +388,10 @@ html:has(dialog:modal) .docs-drawer__content {
      the two rails on the site stay one decision. It is the STARTING width; the resize handle and
      the two bounds below own the rest. */
   --sk-sidebar-expanded-inline-size: var(--docs-rail-inline-size);
+
+  /* Pre-hydration seed written by Base.astro from the same persisted slot the Sidebar enhancer reads.
+     Scoped through a docs-only hook so other Sidebar instances never inherit the docs rail width. */
+  --sk-sidebar-resize-inline-size: var(--docs-sidebar-resize-inline-size, var(--sk-sidebar-expanded-inline-size));
 
   /*
    * A LOWER CEILING THAN THE COMPONENT'S, because this rail has nothing more to reveal.
@@ -445,38 +428,6 @@ main {
   pointer-events: none;
 }
 
-/* The readiness dot rides the item's top-right corner (Badge's own `sk-badge-holder` contract,
- * `.sk-nav-list__item` opts in directly), a SIBLING of the link rather than content inside it:
- * the link's own `overflow: hidden` would otherwise clip a corner-riding dot. Ring color matches
- * `--sk-sidebar-bg` for free: both default to `--color-bg-surface`. */
-
-/* Not a wall of identical dots: every entry reads "wip" today, so painting it unconditionally
- * down the whole rail would be forty amber dots saying nothing a reader didn't already know.
- * Reveal it on hover/focus of the row, or once the row IS the current page. A screen reader still
- * always hears it (the dot's own aria-label), since hover carries no meaning there: this opacity
- * is a SIGHTED-mouse restraint only. `:has()` reaches sideways from the link's state to its
- * sibling dot, since the dot is no longer the link's descendant. */
-.docs-sidebar .sk-nav-list__item .sk-badge[data-dot],
-.docs-drawer .sk-nav-list__item .sk-badge[data-dot] {
-  opacity: 0;
-  transition: opacity var(--motion-feedback-duration) var(--motion-feedback-easing);
-}
-
-.docs-sidebar .sk-nav-list__item:has(.sk-nav-list__link:hover) .sk-badge[data-dot],
-.docs-sidebar .sk-nav-list__item:has(.sk-nav-list__link:focus-visible) .sk-badge[data-dot],
-.docs-sidebar .sk-nav-list__item:has(.sk-nav-list__link[aria-current="page"]) .sk-badge[data-dot],
-.docs-drawer .sk-nav-list__item:has(.sk-nav-list__link:hover) .sk-badge[data-dot],
-.docs-drawer .sk-nav-list__item:has(.sk-nav-list__link:focus-visible) .sk-badge[data-dot],
-.docs-drawer .sk-nav-list__item:has(.sk-nav-list__link[aria-current="page"]) .sk-badge[data-dot] {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .docs-sidebar .sk-nav-list__item .sk-badge[data-dot],
-  .docs-drawer .sk-nav-list__item .sk-badge[data-dot] {
-    transition: none;
-  }
-}
 
 /* ── the drawer, the rail's small-screen form ────────────────────────────── */
 /* The panel, its motion and its backdrop are Vaul's; what is left for the site is
@@ -829,9 +780,23 @@ h2.docs-catalog-section__title {
  * .astro pages have no build-time heading list: the rail ALWAYS occupies its column (grid track +
  * min-inline-size) before the list fills, so revealing links never shifts the prose. */
 .shell .sk-toc {
-  /* Same sticky-under-navbar contract as the sidebar, read the measured navbar height (fallback to
-     the token) so the toc and the sidebar align on the exact same line. */
-  --sk-toc-sticky-top: var(--docs-navbar-h, var(--docs-header-block-size));
+  /*
+   * NOT the sidebar's contract, even though it looks like it should be: the sidebar sits beside the
+   * whole page and only ever has to clear the navbar. The rail sits inside the content column,
+   * exactly where a component page's hero tabs bar sticks too (`.docs-component-hero-tabs`, pinned
+   * below the navbar once scrolled) — so the rail was starting its stick at the header's own edge,
+   * under the tab strip, and riding up to sit flush against it (or briefly behind it) as the page
+   * scrolled, instead of resting below it from the top of the page onward.
+   *
+   * Same three-layer stack the code preview's copy button already clears (further down this file):
+   * navbar, the hero band's own pinned bar (scroll-driven, present only while it is collapsing), and
+   * the hero tabs strip. Each term is unset (0px) on any page without that layer, so one formula
+   * covers a plain prose page, a component page's tab strip, and the accordion pilot's extra bar.
+   */
+  --sk-toc-sticky-top: calc(
+    var(--docs-navbar-h, var(--docs-header-block-size)) + var(--docs-hero-bar-h, 0px) +
+      var(--docs-hero-tabs-h, 0px)
+  );
   --sk-toc-inline-size: var(--docs-toc-inline-size);
 }
 
@@ -902,8 +867,9 @@ main > :where(h2, h3) {
 }
 
 /* A demo needs room for controls and code, not the whole lg canvas. Give it one medium
- * inset beyond prose on each side, while still deriving its ceiling from the Wrapper scale. */
-main[data-document-layout="grid"],
+ * inset beyond prose on each side, while still deriving its ceiling from the Wrapper scale. The
+ * nested tab-panel grid two levels down (main's own content, unaffected by the rail) keeps exactly
+ * this simple form; the outer pair below needs a second, rail-aware one. */
 main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid {
   --sk-layout-breakout: min(
     var(--size-wrapper-lg),
@@ -911,8 +877,24 @@ main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid {
   );
 }
 
-main[data-document-layout="grid"] {
-  overflow-x: clip;
+/*
+ * THE OUTER PAIR'S OWN CEILING, same reduced density the tab-panel form above uses — a demo needs
+ * room for controls and code, not the whole lg canvas.
+ *
+ * This USED to also carry a hand-written `grid-template-columns` rewrite for the rail (fixed
+ * tracks, no `1fr`, keyed to `--docs-toc-inline-size` directly) — arrived at after three measured
+ * attempts (fluid gutters read as visibly asymmetric; a non-stretched item's own `calc(100% - …)`
+ * ceiling is circular). That whole shape is now `sk-layout-grid`'s own published rail capability
+ * (`packages/core/css/patterns/layout.css`, `[data-width="rail"]`) — the SAME fixed-track rewrite,
+ * gated behind `:has(> [data-width="rail"])`, reading `--sk-layout-rail-inline-size` instead of this
+ * site's token directly. All that's left here is bridging that one custom property to the site's
+ * own (just above), plus this density-only override, which has nothing to do with the rail at all.
+ */
+.docs-document-pair[data-document-layout="grid"] {
+  --sk-layout-breakout: min(
+    var(--size-wrapper-lg),
+    calc(var(--size-wrapper-md) + var(--space-inset-md) * 2)
+  );
 }
 
 /* The panel is already sitting at the page's `content` measure (it's a plain child of `main`'s own
@@ -1025,16 +1007,10 @@ p:not(.sk-text) {
    exactly this: display-sm, "marketing / hero chrome" per semantic/_type.scss, and an eyebrow
    that repeats the sidebar section this page lives under, the same orientation a breadcrumb gives.
 
-   Tinted with the RAW `--color-bg-accent-subtle`, not the DECORATIVE reach role. This used to be
-   `--color-decorative-bg` on the theory that a tinted band behind a page title is the textbook case
-   of the dimension's "decoration" bucket, so it should dial down with the rest of the chrome. Measured
-   against the reach toggle in the header (the three-bar meter, cycling `data-accent` 3 → 2 → 1) and it
-   reads wrong: at 1 or 2 the band goes the same flat `--color-bg-surface-sunken` grey every OTHER
-   panel on the page uses, so the one piece of chrome telling the reader "this is the page's identity"
-   loses the only thing that made it that — while the title text right on top of it (fixed to
-   `--color-text-primary`, see the h1 rule below, for its own reason) stays put regardless. A brand
-   swap still re-tints it for free, since `--color-bg-accent-subtle` still resolves through the loaded
-   ramp; only the reach dial no longer touches it. Full-bleed to `<main>`'s own edges (negative margin
+   Tinted with `--color-bg-accent-subtle`, because a tinted band behind a page title is a brand
+   identity cue. The background still resolves through the semantic accent bundle and changes when
+   the site palette changes; no separate reach dimension dials it back.
+   Full-bleed to `<main>`'s own edges (negative margin
    cancelling its `--space-inset-lg` padding, `sk-wrapper`'s default) and re-padded by that exact
    amount, so the title lines up with the prose directly below it instead of sitting indented
    inside a second inset.
@@ -1075,6 +1051,19 @@ p:not(.sk-text) {
   --docs-hero-title-max: var(--font-size-display-lg);
   --docs-hero-title-min: var(--font-size-heading-h2);
   --docs-hero-eyebrow-line: calc(var(--font-size-caption) * var(--font-line-height-caption));
+  /*
+   * NOT the shared `--color-bg-accent-subtle` (a step used everywhere from badges to the calendar's
+   * selected day): its light leg is `blue-50`, near-white, and reads as barely-there on a band this
+   * large. Two palette rungs up, `blue-200`, actually registers as a tinted panel next to the page's
+   * near-white canvas instead of blending into it. Dark stays on the token's own leg, unchanged.
+   *
+   * DECLARED HERE, on both boxes, for the same reason the paddings above are: the band is drawn by
+   * TWO elements once the collapsing shell is active (`.docs-component-hero__spacer` above,
+   * `.docs-component-hero` below), and painting each from its own copy of `--color-bg-accent-subtle`
+   * once split them into two visibly different blues the moment only one copy got retuned — the
+   * accent read as a small bar, not the band. One variable, read by both, keeps that impossible.
+   */
+  --docs-hero-bg: light-dark(var(--palette-blue-200), var(--palette-blue-950));
 }
 
 .docs-component-hero {
@@ -1104,7 +1093,7 @@ p:not(.sk-text) {
      sits in the column; pinned under the navbar with the page sliding beneath it, the same corners
      would be two notches showing scrolling content through them. */
   border-radius: calc(var(--radius-surface) * (1 - var(--docs-hero-collapse)));
-  background: var(--color-bg-accent-subtle);
+  background: var(--docs-hero-bg);
 }
 
 /*
@@ -1131,9 +1120,9 @@ p:not(.sk-text) {
   block-size: calc(var(--docs-hero-eyebrow-line) * (1 - var(--docs-hero-collapse)));
   overflow: hidden;
   opacity: calc(1 - var(--docs-hero-collapse));
-  /* The eyebrow travels with the band it sits in: both are the decorative pair, so a dialled-down
-     accent cannot leave brand-coloured text floating on a neutral wash. */
-  color: var(--color-decorative-fg);
+  /* The eyebrow travels with the band it sits in: both read the semantic accent bundle, while the
+     display title below stays primary text. */
+  color: var(--color-text-accent);
   font-size: var(--font-size-caption);
   font-weight: var(--font-weight-label);
   letter-spacing: 0.08em;
@@ -1143,14 +1132,8 @@ p:not(.sk-text) {
 /* Colour is its own rule, outside the `:not([data-flush])` the typography needs: `data-flush` is an
    opt-out from block space, and a hero title that took it would still belong to this band.
  *
- * PLAIN TEXT COLOUR, DELIBERATELY NOT THE ACCENT. This used to read `--color-decorative-fg`, the
- * same pair the eyebrow above takes, on the theory that the title belongs to the tinted band rather
- * than to the prose under it. Measured against the palette switcher (the header's brand-preset dot,
- * `dimensions__palette-toggle`) and it does not hold: on the Violeta preset the accent ramp IS
- * violet, so a 60px bold "Accordion" rendered in fully saturated purple — legible as "purple", not
- * as "this brand's blue". A caption-sized eyebrow can carry that; 60px display type reads as a
- * colour choice, not a brand cue. The eyebrow keeps the decorative pair (small text, an established
- * pattern elsewhere: current nav item, badges); the title does not repeat its mistake.
+ * PLAIN TEXT COLOUR, DELIBERATELY NOT THE ACCENT. A caption-sized eyebrow can carry the brand; 60px
+ * display type in fully saturated accent reads as a color choice first, not as the page title.
  */
 .docs-component-hero h1 {
   color: var(--color-text-primary);
@@ -1367,7 +1350,7 @@ p:not(.sk-text) {
       block-size: var(--docs-hero-collapse-range);
       border-start-start-radius: var(--radius-surface);
       border-start-end-radius: var(--radius-surface);
-      background: var(--color-bg-accent-subtle);
+      background: var(--docs-hero-bg);
     }
 
     .docs-component-head .docs-component-hero {
@@ -1430,34 +1413,20 @@ p:not(.sk-text) {
 
 /*
  * Bare anchors IN PROSE (ADRs, etc.). `.sk-link` owns its own tones, leave it alone or an
- * unlayered `a { color }` rule paints every link accent and kills the text-colored default.
+ * unlayered `a { color }` rule paints every link accent and kills the text-coloured default.
  *
  * SCOPED TO THE DOCUMENT COLUMN, and the scope is the whole point. Unqualified, this rule matched
  * every anchor on the page — including `.sk-nav-list__link` in the sidebar, the drawer and the ToC,
  * which the nav-list pattern deliberately paints `--color-text-secondary`. Being unlayered, it beat
- * the component every time, so the entire navigation rail rendered brand-blue and the accent stopped
- * meaning anything: forty links competing with the one thing on the page worth pointing at. That is
- * chrome the accent-reach dimension would otherwise have had to dial back down, for a colour the
- * component never asked for.
- *
- * `main` is the document column; the rail, the ToC and the navbar normally sit outside it.
+ * the component every time, so the entire navigation rail rendered brand-blue. `main` is the document
+ * column; the rail, the ToC and the navbar normally sit outside it.
  *
  * BUT THE COLUMN IS NOT A SAFE FENCE, which is why the exclusion list is not just `.sk-link`. A page
  * that DOCUMENTS a navigation component renders one inside the prose, and there this rule beat
- * `.sk-nav-list__link` on specificity ((0,1,2) against (0,1,0)) and repainted the whole thing: every
- * item accent at rest, and the current item's `--color-nav-current-fg` bypassed entirely, so the
- * accent-reach page showed its own chrome refusing to dial. The fence that actually holds is "is this
- * anchor a component part", so every component anchor names itself here. Anything that ships as a part
- * belongs in this list; what is left is what this rule was always about, a bare `<a>` someone typed in
- * a sentence.
- *
- * `--color-text-link`, not `--color-text-accent`: this rule paints PROSE LINKS, the exact use the reach
- * dimension's last level turns off, and reading the raw accent here made the docs the one place on the
- * site where `data-accent="1"` did nothing, while `.sk-link` beside it went quiet. What keeps these
- * links recognisable once the colour leaves is an underline, exactly as for `.sk-link`, except that a
- * bare `<a>` gets its underline from the user agent and nothing here removes it. That is what makes
- * dialling this one safe under WCAG 1.4.1: colour is not the only signal. Any future rule that strips
- * the underline from prose anchors has to bring its own affordance with it.
+ * `.sk-nav-list__link` on specificity ((0,1,2) against (0,1,0)) and repainted the whole thing. The
+ * fence that actually holds is "is this anchor a component part", so every component anchor names
+ * itself here. Anything that ships as a part belongs in this list; what is left is what this rule was
+ * always about, a bare `<a>` someone typed in a sentence.
  */
 main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile) {
   color: var(--color-text-link);

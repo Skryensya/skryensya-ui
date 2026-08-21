@@ -2,7 +2,7 @@
  * Material Symbols enlazado al vocabulario estable, un set de iconos es una marca (decisión 15).
  *
  * El sistema nombra el rol (`chevron-down`); este paquete dice qué dibujo lo ocupa, igual que la
- * configuración raíz dice qué tono ocupa `--ramp-accent-600`. Cambiar de set no mueve un solo call site:
+ * configuración raíz dice qué tono ocupa `--palette-blue-600`. Cambiar de set no mueve un solo call site:
  * eso es la portabilidad, funcionando.
  *
  * Vive fuera de @skryensya/core por dos razones que ya estaban decididas: core no nombra inquilinos

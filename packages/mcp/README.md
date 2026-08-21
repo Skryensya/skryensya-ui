@@ -38,7 +38,7 @@ hermana que sí la toma, porque el error casi siempre es haber elegido la firma 
 
 ## Por qué no hay búsqueda
 
-El catálogo se lee entero (ADR-31). El ranker que esto reemplaza documentaba su propio fracaso: sus
+El catálogo se lee entero (ADR-196). El ranker que esto reemplaza documentaba su propio fracaso: sus
 instrucciones le decían al cliente que listara todo cuando el ranking fallaba.
 
 ## Por qué está bundleado

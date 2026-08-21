@@ -7,7 +7,7 @@
 | **Estado** | En construcción · F0–F3 y F5 completas; F4 completa salvo las ancladas (46 familias, 86 firmas); F6 en curso (9 recetas, 16 de 349 llamadas convertidas) |
 | **Fecha** | 28 de julio de 2026 |
 | **Supersede** | `apps/docs/01_arquitectura_objetivo_skryensya_ai_ui.md` y `apps/docs/02_plan_reconstruccion_desde_cero_skryensya_ai_ui.md`, que quedan como material de origen y no dirigen el trabajo |
-| **Decisiones** | [28](./decisiones/0028-el-contrato-vive-en-core-y-los-frameworks-son-bindings.md) · [29](./decisiones/0029-el-usage-tree-es-la-moneda-unica.md) · [30](./decisiones/0030-la-evidencia-se-renderiza-en-los-dos-bindings.md) · [31](./decisiones/0031-el-catalogo-cabe-en-el-contexto.md) |
+| **Decisiones** | [28](./decisiones/0013-el-contrato-vive-en-core-y-los-frameworks-son-bindings.md) · [29](./decisiones/0014-el-usage-tree-es-la-moneda-unica.md) · [30](./decisiones/0015-la-evidencia-se-renderiza-en-los-dos-bindings.md) · [31](./decisiones/0016-el-catalogo-cabe-en-el-contexto.md) |
 | **Vocabulario** | `CONTEXT.md` → Contract, Binding, Signature, Part template, Usage tree |
 
 > **Principio rector**
@@ -318,7 +318,7 @@ G5 (baseline visual aprobada a ojo, no a ciegas).
 
 > **Lo que costó, y que ningún plan predice**
 >
-> - **`exactlyOneOf` no existía**: la ADR-28 lo prometía y el tipo no lo tenía. El frame vacío es
+> - **`exactlyOneOf` no existía**: la ADR-14 lo prometía y el tipo no lo tenía. El frame vacío es
 >   justamente lo que `requires` (pediría los dos) y `forbids` (rechazaría los dos) no pueden decir.
 > - **Una opción puede no aterrizar en el host.** `src` y `alt` van al `<img>` interno, no a la caja.
 >   El template ganó `options` por nodo, y `whenSlotFilled` pasó a `whenGiven` porque un nodo puede

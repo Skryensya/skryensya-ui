@@ -3,8 +3,44 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "d8864878ba57d279"
+surface: "1de00956bf02b97b"
 entries:
+  - date: 2026-08-21
+    kind: feature
+    es:
+      title: LayoutGrid publica una columna de rail
+      body: >-
+        <code>data-width="rail"</code> reserva una columna aparte del flujo principal, junto a él —
+        no un span de contenido como <code>narrow</code>/<code>breakout</code>, sino un hijo directo
+        de otro tipo, para un TOC, navegación contextual o cualquier otro elemento de apoyo. Fijo en
+        ancho (<code>--sk-layout-rail-inline-size</code>, 14rem por defecto) y colapsa a una fila
+        propia sobre el contenido por debajo de <code>wide</code> (72rem); <code>--sk-layout-rail-row-span</code>
+        lo estira para acompañar tantas filas del contenido como declare quien lo compone. No tiene
+        enhancer: <code>patterns/layout.css</code> resuelve todo.
+    en:
+      title: LayoutGrid publishes a rail column
+      body: >-
+        <code>data-width="rail"</code> reserves a column of its own beside the main flow — not a
+        content span like <code>narrow</code>/<code>breakout</code>, but a direct child of a
+        different kind, for a TOC, contextual navigation, or any other supporting element. Fixed in
+        width (<code>--sk-layout-rail-inline-size</code>, 14rem by default) and collapses to its own
+        row above the content below <code>wide</code> (72rem); <code>--sk-layout-rail-row-span</code>
+        stretches it to match however many rows of content whoever composes it declares. No enhancer:
+        <code>patterns/layout.css</code> resolves all of it.
+  - date: 2026-08-20
+    kind: feature
+    es:
+      title: Main se publica como landmark de layout
+      body: >-
+        <code>Main</code> entra al catálogo como el landmark <code>&lt;main&gt;</code> de la página: una
+        región de shell, no un componente de contenido, así que sus hijos quedan opcionales para que una
+        plantilla pueda mostrar el chrome antes de que la aplicación decida qué va ahí. No tiene enhancer.
+    en:
+      title: Main is published as the layout landmark
+      body: >-
+        <code>Main</code> joins the catalogue as the page's <code>&lt;main&gt;</code> landmark: a shell
+        region, not a content component, so its children stay optional so a template can show chrome
+        before an application decides what belongs there. It has no enhancer.
   - date: 2026-08-11
     kind: feature
     es:

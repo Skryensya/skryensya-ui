@@ -12,7 +12,7 @@
  * "core no tiene deps" (que sostenía, entre otras cosas, el argumento de por qué un set de iconos no
  * puede vivir en core) deja de ser cierta. Se acepta porque una machine NO es un inquilino: no nombra
  * una marca ni un proveedor, es comportamiento agnóstico de plataforma, que es exactamente lo que core
- * publica. La geometría de un icono sigue sin poder vivir acá; una máquina sí. Ver ADR-0024.
+ * publica. La geometría de un icono sigue sin poder vivir acá; una máquina sí. Ver ADR-0010.
  */
 
 export * as tabs from "@zag-js/tabs";

@@ -6,6 +6,7 @@ import TokenTable from "../components/TokenTable.astro";
 
 <Base
   title="Referencia de tokens"
+  documentLayout="grid"
   description="Todos los tokens del sistema: token leído del CSS en build, valor resuelto leído del navegador en vivo."
 >
   <h1>Referencia de tokens</h1>
@@ -20,7 +21,7 @@ import TokenTable from "../components/TokenTable.astro";
   <p>
     Las referencias apuntan <strong>hacia abajo o de costado, nunca hacia arriba</strong>, y tier 3
     no puede saltar a tier 1. Eso no es convención: el validador lo hace cumplir. Un
-    <code>--ramp-*</code> dentro del CSS de un componente es la señal visible de que alguien se
+    <code>--palette-*</code> dentro del CSS de un componente es la señal visible de que alguien se
     saltó la capa semántica y rompió el modo oscuro para ese componente solo.
   </p>
   <p>

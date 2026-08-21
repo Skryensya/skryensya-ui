@@ -15,9 +15,6 @@ type NavigationItem = {
   label: string;
   aliases?: readonly string[];
   todo?: boolean;
-  status?: "wip" | "stable";
-  /** Separate axis from `status`: see the ariaReviewed dot below. */
-  ariaReviewed?: boolean;
 };
 
 type NavigationGroup = {
@@ -45,9 +42,6 @@ interface Props {
 const { nav, path, idPrefix } = Astro.props;
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
-
-/** `item.status`, defaulted: an entry with no status is "wip" until deliberately marked "stable". */
-const status = (item: NavigationItem) => item.status ?? "wip";
 
 /*
  * The rail and the catalog page (`/componentes`) read the SAME task-grouped source
@@ -102,7 +96,7 @@ const groupsForSection = (section: NavigationSection): readonly NavigationGroup[
             >
               {group.items.map((item) => (
                 <li
-                  class="sk-nav-list__item sk-badge-holder"
+                  class="sk-nav-list__item"
                   data-todo={item.todo ? "" : undefined}
                 >
                   <a
@@ -114,36 +108,6 @@ const groupsForSection = (section: NavigationSection): readonly NavigationGroup[
                   >
                     <span class="sk-nav-list__label">{item.label}</span>
                   </a>
-                  {
-                    /* A sibling of the link, not content inside it: `sk-badge-holder` (Badge's own
-                     * corner-riding contract) needs the dot as its DIRECT child to place it, and the
-                     * link's `overflow: hidden` would clip a corner-riding dot were it nested inside.
-                     *
-                     * `ariaReviewed` is a different axis from `status` (contract maturity, see
-                     * `componentStatus`): a "wip" contract can still be ARIA-reviewed, so a reviewed
-                     * entry gets the success tone INSTEAD of the warning one rather than losing its
-                     * dot outright — the sidebar keeps saying something about it either way. */
-                    section.id === "components" &&
-                      (item.ariaReviewed ? (
-                        <span
-                          class="sk-badge"
-                          data-dot
-                          data-tone="success"
-                          aria-label={t("status.ariaReviewed")}
-                          title={t("status.ariaReviewed")}
-                        />
-                      ) : (
-                        status(item) === "wip" && (
-                          <span
-                            class="sk-badge"
-                            data-dot
-                            data-tone="warning"
-                            aria-label={t("status.wip")}
-                            title={t("status.wip")}
-                          />
-                        )
-                      ))
-                  }
                 </li>
               ))}
             </ul>

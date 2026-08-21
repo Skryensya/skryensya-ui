@@ -173,6 +173,10 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/menubar.js")).mountMenubar,
   },
   {
+    selector: "[data-sk-megamenu]",
+    load: async () => (await import("../components/megamenu.js")).mountMegamenu,
+  },
+  {
     selector: "[data-sk-meter]",
     load: async () => (await import("../components/meter.js")).mountMeter,
   },

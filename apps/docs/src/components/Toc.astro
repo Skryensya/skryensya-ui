@@ -31,16 +31,24 @@ interface Props {
    * is per tab, which is a fact about a reader and not about the document.
    */
   pending?: boolean;
+  /**
+   * Place this Toc as `sk-layout-grid`'s own published rail column (`data-width="rail"`,
+   * `packages/core/css/patterns/layout.css`) — a separate opt-in from `data-sk-toc-rail` above,
+   * which controls the component's OWN sticky/width CSS regardless of what grid it sits in. A
+   * caller only needs this when the Toc is actually a direct child of a `sk-layout-grid`.
+   */
+  rail?: boolean;
 }
 
 const t = useTranslations(getLocale(Astro.url));
-const { items = [], title = t("toc.title"), pending = false } = Astro.props;
+const { items = [], title = t("toc.title"), pending = false, rail = false } = Astro.props;
 ---
 
 <aside
   class={`${tocParts.root} sk-scrollbar`}
   data-sk-toc
   data-sk-toc-rail
+  data-width={rail ? "rail" : undefined}
   data-ready={pending ? undefined : ""}
   data-empty={!pending && items.length === 0 ? "" : undefined}
 >

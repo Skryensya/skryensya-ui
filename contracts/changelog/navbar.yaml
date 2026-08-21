@@ -3,8 +3,25 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "854dc9b8d11fc717"
+surface: "8adb7b7b651e63fe"
 entries:
+  - date: 2026-08-20
+    kind: feature
+    es:
+      title: Navbar acepta Megamenu como invitado, junto a NavList
+      body: >-
+        El slot <code>children</code> de <code>Navbar</code> ahora también acepta
+        <code>Megamenu</code> — otro invitado con sus propios destinos de navegación, la misma
+        relación que ya tiene con <code>NavList</code>. Nada del rol de Navbar como SHELL cambia:
+        sigue sin máquina propia y sin ajustar el markup de su invitado, sólo redeclara sus estilos.
+    en:
+      title: Navbar accepts Megamenu as a guest, alongside NavList
+      body: >-
+        <code>Navbar</code>'s own <code>children</code> slot now also accepts <code>Megamenu</code>
+        — another guest with its own navigation destinations, the same relationship it already has
+        with <code>NavList</code>. Nothing about Navbar's own role as a SHELL changes: still no
+        machine of its own, still never reaching into its guest's markup, only re-declaring its own
+        styling hooks.
   - date: 2026-08-11
     kind: feature
     es:

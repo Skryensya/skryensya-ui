@@ -196,7 +196,7 @@ export const comboboxContract = {
                   "data-size": "sm",
                   "data-variant": "ghost",
                 },
-                children: [{ element: "span", attrs: { "aria-hidden": "true" }, text: "×" }],
+                children: [{ element: "span", attrs: { "data-sk-icon": "close", "data-sk-icon-size": "sm" } }],
               },
               {
                 element: "button",
@@ -209,7 +209,22 @@ export const comboboxContract = {
                   "data-size": "sm",
                   "data-variant": "ghost",
                 },
-                children: [{ element: "span", attrs: { "aria-hidden": "true" }, text: "⌄" }],
+                children: [
+                  {
+                    element: "span",
+                    attrs: { "data-state": "closed" },
+                    children: [
+                      { element: "span", attrs: { "data-sk-icon": "chevron-down", "data-sk-icon-size": "sm" } },
+                    ],
+                  },
+                  {
+                    element: "span",
+                    attrs: { "data-state": "open" },
+                    children: [
+                      { element: "span", attrs: { "data-sk-icon": "chevron-up", "data-sk-icon-size": "sm" } },
+                    ],
+                  },
+                ],
               },
             ],
           },

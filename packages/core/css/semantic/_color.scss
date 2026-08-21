@@ -1,142 +1,56 @@
 @mixin tokens {
-    /* ── bg: surfaces. Light elevates with SHADOW over constant white; dark elevates by
-     *    LIGHTENING the surface (shadows vanish on dark). Not a palette invert.
-     *
-     *    Light steps are spaced so canvas / surface / sunken / well actually read as layers, 
-     *    a one-rung gap (50↔0, 100↔50) disappears on real displays; this is still soft, not HC. ── */
-    --color-bg-canvas: light-dark(var(--ramp-neutral-100), var(--ramp-neutral-950));
-    --color-bg-surface: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-900));
-    --color-bg-surface-raised: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-800));
-    /* sunken in dark is 950, NOT the 1000 rung: 1000 is pure black, the ramp's endpoint, kept for
-     * high contrast and for text, never for an everyday surface. A table header, a code block and a
-     * showcase header all read this token, and at 1000 they landed as harsh black bands. Sunken is
-     * still recessed where it matters, it sits INSIDE a surface (900), which is what "sunken" means;
-     * that it lands at canvas depth in dark is the same convention as a well/inset elsewhere.
-     * Light uses 200 (not 100): against a white surface, 100 was nearly invisible. */
-    --color-bg-surface-sunken: light-dark(var(--ramp-neutral-200), var(--ramp-neutral-950));
-    /* well: DEEPER than sunken, a background for applications that need a stronger structural well,
-     * not a surface that holds content. It earns the 1000 rung in dark (pure black) that
-     * `surface-sunken` deliberately refuses: there is nothing on it to turn into a harsh black band. */
-    --color-bg-well: light-dark(var(--ramp-neutral-300), var(--ramp-neutral-1000));
-    --color-bg-inverse: light-dark(var(--ramp-neutral-900), var(--ramp-neutral-100));
-    --color-bg-accent-subtle: light-dark(var(--ramp-accent-50), var(--ramp-accent-950));
-    --color-bg-danger-subtle: light-dark(var(--ramp-danger-50), var(--ramp-danger-950));
-    --color-bg-success-subtle: light-dark(var(--ramp-success-50), var(--ramp-success-950));
-    --color-bg-warning-subtle: light-dark(var(--ramp-warning-50), var(--ramp-warning-950));
-    /* info sits with the feedback roles, not with accent, even though both are blue by default.
-     * The tone a Callout or a Toast means by "info" must survive a brand swap: routed through accent,
-     * a magenta brand turned every informational notice magenta. */
-    --color-bg-info-subtle: light-dark(var(--ramp-info-50), var(--ramp-info-950));
+    /* ── bg: surfaces. Palette values are fixed; mode selects explicit rungs. ── */
+    --color-bg-canvas: light-dark(var(--palette-stone-100), var(--palette-stone-950));
+    --color-bg-surface: light-dark(var(--palette-white), var(--palette-stone-900));
+    --color-bg-surface-raised: light-dark(var(--palette-white), var(--palette-stone-800));
+    --color-bg-surface-sunken: light-dark(var(--palette-stone-200), var(--palette-stone-950));
+    --color-bg-well: light-dark(var(--palette-stone-300), var(--palette-black));
+    --color-bg-inverse: light-dark(var(--palette-stone-900), var(--palette-stone-100));
+    --color-bg-accent-subtle: light-dark(var(--palette-blue-50), var(--palette-blue-950));
+    --color-bg-danger-subtle: light-dark(var(--palette-red-50), var(--palette-red-950));
+    --color-bg-success-subtle: light-dark(var(--palette-emerald-50), var(--palette-emerald-950));
+    --color-bg-warning-subtle: light-dark(var(--palette-amber-50), var(--palette-amber-950));
+    --color-bg-info-subtle: light-dark(var(--palette-sky-50), var(--palette-sky-950));
 
-    /* ── text: every token here is a contrast partner of some bg, see contrast-pairs.json ── */
-    --color-text-primary: light-dark(var(--ramp-neutral-900), var(--ramp-neutral-100));
-    --color-text-secondary: light-dark(var(--ramp-neutral-700), var(--ramp-neutral-300));
-    --color-text-tertiary: light-dark(var(--ramp-neutral-600), var(--ramp-neutral-400));
-    --color-text-disabled: light-dark(var(--ramp-neutral-400), var(--ramp-neutral-600));
-    --color-text-inverse: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-950));
-    /* on-accent: text ON action.primary, NOT on canvas. In dark, primary is a light blue,
-     * so this flips to near-black. The #1 source of unreadable dark-mode buttons. */
-    --color-text-on-accent: light-dark(var(--ramp-neutral-0), var(--ramp-neutral-950));
-    /* on-media: text ON a scrim over photography. The ONLY text token here that is deliberately
-     * NOT mode-aware, and the reason is that its background is not the page: the media gradient
-     * washes toward black in light and dark alike, so a light-dark() here would flip the caption
-     * to near-black over a dark wash in dark mode, which is the exact unreadability the rest of
-     * this block exists to prevent. It has no entry in contrast-pairs.json either, for the same
-     * reason: its partner is a photograph, not a token, so the wash is what guarantees the ratio.
-     * If you find yourself wanting a second one of these, the thing you want is probably a scrim. */
-    --color-text-on-media: var(--ramp-neutral-0);
-    /* accent text sits a rung darker than the accent FILL: colored text needs 4.5:1,
-     * a fill needs only 3:1. */
-    --color-text-accent: light-dark(var(--ramp-accent-700), var(--ramp-accent-300));
-    --color-text-danger: light-dark(var(--ramp-danger-700), var(--ramp-danger-300));
-    --color-text-success: light-dark(var(--ramp-success-700), var(--ramp-success-300));
-    --color-text-warning: light-dark(var(--ramp-warning-800), var(--ramp-warning-300));
-    --color-text-info: light-dark(var(--ramp-info-700), var(--ramp-info-300));
+    /* ── text: every token here is a contrast partner of some bg, see contrast-pairs.json. ── */
+    --color-text-primary: light-dark(var(--palette-stone-900), var(--palette-stone-100));
+    --color-text-secondary: light-dark(var(--palette-stone-700), var(--palette-stone-300));
+    --color-text-tertiary: light-dark(var(--palette-stone-600), var(--palette-stone-400));
+    --color-text-disabled: light-dark(var(--palette-stone-400), var(--palette-stone-600));
+    --color-text-inverse: light-dark(var(--palette-white), var(--palette-stone-950));
+    --color-text-on-accent: light-dark(var(--palette-white), var(--palette-stone-950));
+    --color-text-on-media: var(--palette-white);
+    --color-text-accent: light-dark(var(--palette-blue-700), var(--palette-blue-300));
+    --color-text-danger: light-dark(var(--palette-red-700), var(--palette-red-300));
+    --color-text-success: light-dark(var(--palette-emerald-800), var(--palette-emerald-300));
+    --color-text-warning: light-dark(var(--palette-amber-800), var(--palette-amber-300));
+    --color-text-info: light-dark(var(--palette-sky-700), var(--palette-sky-300));
+    --color-text-link: var(--color-text-accent);
 
     /* ── border ── */
-    /* subtle at 300, not 200: decorative edges still have to *exist* on white surfaces. 200 washes
-     * out in the light root ramp; 300 stays quieter than default (500) and well under HC (400). */
-    --color-border-subtle: light-dark(var(--ramp-neutral-300), var(--ramp-neutral-800));
-    /* default sits at 500, not the prettier 300: input outlines carry meaning (1.4.11 → 3:1),
-     * and 300 measured 1.44:1 on canvas. The floor wins over the aesthetic instinct. */
-    --color-border-default: light-dark(var(--ramp-neutral-500), var(--ramp-neutral-500));
-    --color-border-strong: light-dark(var(--ramp-neutral-600), var(--ramp-neutral-400));
-    --color-border-accent: light-dark(var(--ramp-accent-600), var(--ramp-accent-500));
-    --color-border-danger: light-dark(var(--ramp-danger-600), var(--ramp-danger-500));
-    /* status borders mirror danger's rungs (600 light / 500 dark) so a toned edge, Toast, Callout,
-     * has a real token per role instead of borrowing the saturated text color. */
-    --color-border-success: light-dark(var(--ramp-success-600), var(--ramp-success-500));
-    --color-border-warning: light-dark(var(--ramp-warning-600), var(--ramp-warning-500));
-    --color-border-info: light-dark(var(--ramp-info-600), var(--ramp-info-500));
-    /* focus ring: its own token, never an alias of border-accent, it must survive a brand
-     * swap that makes accent low-contrast, and can never be tuned away for aesthetics.
-     *
-     * THE ACCENT-REACH DIMENSION'S DELIBERATE INVARIANT: it reads the accent directly and has no
-     * reach token, so no level can take the colour off it. Turning the brand down is an aesthetic
-     * choice and "where is my keyboard focus" is not one; a ring that went quiet with the decoration
-     * would be a product dialling out its own focus indicator. Same shape as the radius dimension
-     * leaving `--radius-pill` alone, and density flooring at the WCAG hit target (ADR-4). */
-    --color-border-focus: light-dark(var(--ramp-accent-600), var(--ramp-accent-400));
+    --color-border-subtle: light-dark(var(--palette-stone-300), var(--palette-stone-800));
+    --color-border-default: light-dark(var(--palette-stone-500), var(--palette-stone-500));
+    --color-border-strong: light-dark(var(--palette-stone-600), var(--palette-stone-400));
+    --color-border-accent: light-dark(var(--palette-blue-600), var(--palette-blue-500));
+    --color-border-danger: light-dark(var(--palette-red-600), var(--palette-red-500));
+    --color-border-success: light-dark(var(--palette-emerald-600), var(--palette-emerald-500));
+    --color-border-warning: light-dark(var(--palette-amber-600), var(--palette-amber-500));
+    --color-border-info: light-dark(var(--palette-sky-600), var(--palette-sky-500));
+    --color-border-focus: light-dark(var(--palette-blue-600), var(--palette-blue-400));
 
-    /* ── action: interactive FILLS. hover/press feedback is NOT a color here, it comes from
-     *    the state layer (decision 9), a currentColor overlay shared by every component. ── */
-    --color-action-primary: light-dark(var(--ramp-accent-600), var(--ramp-accent-500));
-    /* Neutral buttons sit one rung from the light canvas; their default outline, not a grey fill,
-     * defines their shape. Disabled stays deeper so the two fills remain distinct. */
-    --color-action-neutral: light-dark(var(--ramp-neutral-100), var(--ramp-neutral-800));
-    --color-action-danger: light-dark(var(--ramp-danger-600), var(--ramp-danger-500));
-    --color-action-disabled: light-dark(var(--ramp-neutral-300), var(--ramp-neutral-800));
+    /* ── action: interactive fills. Hover/press feedback comes from the state layer. ── */
+    --color-action-primary: light-dark(var(--palette-blue-600), var(--palette-blue-500));
+    --color-action-neutral: light-dark(var(--palette-stone-100), var(--palette-stone-800));
+    --color-action-danger: light-dark(var(--palette-red-600), var(--palette-red-500));
+    --color-action-disabled: light-dark(var(--palette-stone-300), var(--palette-stone-800));
 
-    /* ── shadow color is mode-aware (a shadow can't sit inside light-dark(), only its
-     *    color can). Light alphas are a notch stronger so raised surfaces read without a
-     *    border; dark stays heavy because black-on-near-black is invisible at low alpha. ── */
+    /* ── shadow color is mode-aware; elevation composites reference these. ── */
     --shadow-sm: light-dark(oklch(0% 0 0 / 0.12), oklch(0% 0 0 / 0.5));
     --shadow-md: light-dark(oklch(0% 0 0 / 0.16), oklch(0% 0 0 / 0.6));
     --shadow-lg: light-dark(oklch(0% 0 0 / 0.22), oklch(0% 0 0 / 0.7));
 
-    /* ── elevation: composites that reference the shadow-color tokens above ── */
     --elevation-flat: none;
     --elevation-raised: 0 1px 2px 0 var(--shadow-sm), 0 1px 3px 0 var(--shadow-sm);
     --elevation-overlay: 0 4px 6px -2px var(--shadow-md), 0 10px 15px -3px var(--shadow-md);
     --elevation-modal: 0 8px 10px -6px var(--shadow-lg), 0 20px 25px -5px var(--shadow-lg);
-
-    /*
-     * ACCENT REACH, by KIND OF USE. Tokens that all resolve to the accent by default, so
-     * nothing changes until a product opts in, and that each name a different REASON something is
-     * accent-coloured. `dimensions/accent.scss` re-points them per level: that is the whole
-     * mechanism, and it is why the dimension needs no knowledge of any component.
-     *
-     * The split exists because "uses the accent" is not one thing. A checked checkbox is accent
-     * because the colour is INFORMATION (this is on); a badge is accent because it is decoration; a
-     * sidebar link is accent because of navigation chrome. Turning the brand down should quiet the
-     * decoration and the chrome and leave the information alone, which no single token can express.
-     *
-     * State (checkbox, switch, tab, selected day) and the primary CTA deliberately have no token
-     * here: they read `--color-action-primary` / `--color-text-accent` directly and never dial.
-     * A HELD-DOWN Kbd is in that group too: a lit key says "this one is active right now", which is
-     * information, so it reads the action colour straight while the resting key is decoration below.
-     */
-    --color-nav-current-bg: var(--color-bg-accent-subtle);
-    --color-nav-current-fg: var(--color-text-accent);
-    /* Badge, Tag, Kbd: an accent-toned label. Decoration, so the first thing to go quiet. */
-    --color-decorative-bg: var(--color-bg-accent-subtle);
-    --color-decorative-fg: var(--color-text-accent);
-    --color-decorative-border: var(--color-border-accent);
-    /* Prose links. The last to go, and when it does the underline in typography.css is what keeps
-     * the link recognisable without colour (WCAG 1.4.1: colour can never be the only signal). */
-    --color-text-link: var(--color-text-accent);
-    /* THE QUIET ACTION: a ghost button's label. Its own token because a ghost button is not the
-     * thing "the action never dials" is about: that rule protects the ONE primary CTA a screen most
-     * needs to point at, and a screen has many ghosts (a Search, a Discard, every icon-only control
-     * in a toolbar). Left on the raw accent they were the loudest thing on a dialled-down screen,
-     * competing with the very CTA the rule exists to protect. It lands on `text-primary` rather than
-     * `text-secondary` because a button still has to read as pressable after the colour leaves. */
-    --color-action-quiet-fg: var(--color-text-accent);
-    /* A SATURATED decorative wash: the media gradient's tint, mixed into a scrim over a photo.
-     * Separate from `--color-decorative-bg` because that one is a near-white fill (accent-50) and a
-     * wash needs a colour with body; both are decoration, they just work at different strengths.
-     * Dialled down it becomes plain ink, so the scrim keeps doing its contrast job with no brand in
-     * it, which is the whole point: the wash guarantees the caption's legibility, the tint was only
-     * ever the branding on top of that. */
-    --color-decorative-wash: var(--color-action-primary);
 }

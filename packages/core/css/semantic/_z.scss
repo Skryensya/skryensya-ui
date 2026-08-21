@@ -5,7 +5,7 @@
    * component references the layer its part belongs to (`--z-popover`), so no component invents a
    * magic 999 that some other magic 1000 then has to beat.
    *
-   * Native <dialog> uses the browser's TOP LAYER (ADR-11), which sits above every z-index here by
+   * Native <dialog> uses the browser's TOP LAYER (ADR-19), which sits above every z-index here by
    * definition, so a modal needs no token, and these layers are all "within the page". */
   --z-below: var(--scale-z-behind); /* decorative, under content, the state layer's ::before */
   --z-base: var(--scale-z-0); /* normal flow */

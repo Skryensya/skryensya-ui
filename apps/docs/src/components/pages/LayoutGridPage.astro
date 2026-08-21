@@ -2,13 +2,12 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
+import { layoutGridTree, layoutGridTocTree } from "../../demos/layout";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/layout.yaml?raw";
 import coreSource from "@core/src/layout.ts?raw";
 import cssSource from "@core/css/patterns/layout.css?raw";
 import reactSource from "@react/src/components/layout.tsx?raw";
-/* The preview frame clones styles from this page, so load the public sheet the example teaches. */
-import "@skryensya/core/patterns/layout.css";
 
 const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -20,81 +19,44 @@ const configurationCss = `.sk-layout-grid {
   --sk-layout-breakout: var(--size-wrapper-lg);
 }`;
 
-const heroCss = `.sk-page {
-  row-gap: var(--space-section);
+const previewCss = `.sk-layout-grid {
+  row-gap: var(--space-stack-lg);
+  /* \`flush\` (below) drops the stage's own padding on every axis, which the full-width box needs to
+     actually reach the edge — but the block axis still wants SOME breathing room, or the first and
+     last card touch the stage's top/bottom edge flush. Block-only, so the inline edges stay bare. */
+  padding-block: var(--space-inset-lg);
 }
 
-.sk-hero {
-  background: var(--color-action-primary);
-  color: var(--color-text-on-accent);
-  padding-block: 4rem;
-  row-gap: var(--space-stack-md);
+.sk-box {
+  display: grid;
+  align-items: center;
+  min-block-size: 6rem;
 }
 
-.sk-page-footer {
-  background: var(--color-bg-accent-subtle);
-  border-block-start: 1px solid var(--color-border-accent);
-  padding-block: var(--space-section);
+/*
+ * One primitive palette hue per width, not the semantic surface tokens \`data-surface\` already
+ * painted: \`raised\`/\`surface\` read as near-identical flat white next to the page canvas in light
+ * mode (measured — the stack demo above hit the same near-invisible pairing). A palette tint makes
+ * each card legible on its own AND doubles as a second cue for which width is which, matched to the
+ * light/dark tier-1 primitives directly rather than through a semantic layer this demo doesn't need.
+ */
+.sk-box[data-width="narrow"] {
+  background: light-dark(var(--palette-blue-50), var(--palette-blue-950));
+}
+
+.sk-box:not([data-width]) {
+  background: light-dark(var(--palette-violet-50), var(--palette-violet-950));
+}
+
+.sk-box[data-width="breakout"] {
+  background: light-dark(var(--palette-teal-50), var(--palette-teal-950));
+}
+
+.sk-box[data-width="full-width"] {
+  padding-block: var(--space-inset-xl);
+  min-block-size: 8rem;
+  background: light-dark(var(--palette-orange-50), var(--palette-orange-950));
 }`;
-
-const exampleHtml = `<main class="sk-layout-grid sk-page">
-  <header>
-    <p>${t("layoutGridPage.exampleKicker")}</p>
-    <h1>${t("layoutGridPage.exampleTitle")}</h1>
-    <p>${t("layoutGridPage.exampleIntro")}</p>
-  </header>
-
-  <section>
-    <h2>${t("layoutGridPage.exampleFirstSectionTitle")}</h2>
-    <p>${t("layoutGridPage.exampleFirstSectionBody")}</p>
-  </section>
-
-  <section class="sk-hero" data-width="full-width">
-    <p>${t("layoutGridPage.exampleHeroKicker")}</p>
-    <h2>${t("layoutGridPage.exampleHeroTitle")}</h2>
-    <p>${t("layoutGridPage.exampleHeroBody")}</p>
-  </section>
-
-  <section>
-    <h2>${t("layoutGridPage.exampleSecondSectionTitle")}</h2>
-    <p>${t("layoutGridPage.exampleSecondSectionBody")}</p>
-  </section>
-
-  <footer class="sk-page-footer" data-width="full-width">
-    <p>${t("layoutGridPage.exampleFooter")}</p>
-  </footer>
-</main>`;
-
-const reactExample = `import "@skryensya/core/patterns/layout.css";
-import { LayoutGrid } from "@skryensya/react/layout";
-
-<LayoutGrid as="main" className="sk-page">
-  <header>
-    <p>${t("layoutGridPage.exampleKicker")}</p>
-    <h1>${t("layoutGridPage.exampleTitle")}</h1>
-    <p>${t("layoutGridPage.exampleIntro")}</p>
-  </header>
-
-  <section>
-    <h2>${t("layoutGridPage.exampleFirstSectionTitle")}</h2>
-    <p>${t("layoutGridPage.exampleFirstSectionBody")}</p>
-  </section>
-
-  <section className="sk-hero" data-width="full-width">
-    <p>${t("layoutGridPage.exampleHeroKicker")}</p>
-    <h2>${t("layoutGridPage.exampleHeroTitle")}</h2>
-    <p>${t("layoutGridPage.exampleHeroBody")}</p>
-  </section>
-
-  <section>
-    <h2>${t("layoutGridPage.exampleSecondSectionTitle")}</h2>
-    <p>${t("layoutGridPage.exampleSecondSectionBody")}</p>
-  </section>
-
-  <footer className="sk-page-footer" data-width="full-width">
-    <p>${t("layoutGridPage.exampleFooter")}</p>
-  </footer>
-</LayoutGrid>;`;
 
 const sourceFiles = [
   { id: "contracts/semantic/layout.yaml", source: contractSource, language: "yaml" },
@@ -123,7 +85,7 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("layoutGridPage.lede")} />
-    <ComponentPreview html={exampleHtml} css={heroCss} label="Layout Grid" flush />
+    <ComponentPreview tree={layoutGridTree(t)} css={previewCss} label="Layout Grid" flush />
 
     <h3>{t("layoutGridPage.levelsTitle")}</h3>
     <p set:html={t("layoutGridPage.levelsBody")} />
@@ -137,10 +99,23 @@ const sourceFiles = [
     <h3>{t("layoutGridPage.fullWidthTitle")}</h3>
     <p set:html={t("layoutGridPage.fullWidthBody")} />
 
+    <h3>{t("layoutGridPage.railTitle")}</h3>
+    <p set:html={t("layoutGridPage.railBody")} />
+    {/*
+      No \`width\` prop: every demo on every component page already has its own \`--sk-layout-breakout\`
+      reduced to ~67rem regardless (\`main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid\`,
+      site.css — density for CONTROLS AND CODE, not the whole lg canvas), permanently below the 72rem
+      the rail needs to show side-by-side — a ceiling no \`width\` value here can lift, since it caps the
+      TAB PANEL itself, not this preview. So this demo always renders the collapsed, disclosure-above-
+      content form, which is not a bug: it's the pattern's own honest behavior at this stage's width,
+      the same form the real page takes below 72rem. The WIDE form is already demonstrated for real —
+      unambiguously, not simulated — by the actual rail sitting beside this very page.
+    */}
+    <ComponentPreview tree={layoutGridTocTree(t)} label="Layout Grid + Toc" flush />
+
     <h3>{t("layoutGridPage.htmlTitle")}</h3>
     <p set:html={t("layoutGridPage.htmlBody")} />
     <p set:html={t("layoutGridPage.reactBody")} />
-    <CodeBlock code={reactExample} label="TSX" lang="tsx" />
   </Fragment>
 
   <Fragment slot="install">
@@ -154,22 +129,3 @@ const sourceFiles = [
     <p set:html={t("layoutGridPage.configBody2")} />
   </Fragment>
 </ComponentPageShell>
-
-<style is:global>
-  .sk-page {
-    row-gap: var(--space-section);
-  }
-
-  .sk-hero {
-    background: var(--color-action-primary);
-    color: var(--color-text-on-accent);
-    padding-block: 4rem;
-    row-gap: var(--space-stack-md);
-  }
-
-  .sk-page-footer {
-    background: var(--color-bg-accent-subtle);
-    border-block-start: 1px solid var(--color-border-accent);
-    padding-block: var(--space-section);
-  }
-</style>

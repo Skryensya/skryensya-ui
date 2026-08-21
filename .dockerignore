@@ -20,7 +20,6 @@ apps/docs/check-trees.mts
 
 # Regenerated on static app builds
 apps/docs/public/sandbox
-apps/playground/public/sandbox
 
 # Not needed to build the docs site
 docs

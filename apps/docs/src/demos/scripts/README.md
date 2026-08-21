@@ -11,8 +11,8 @@ They are read as text (`?raw`) rather than imported, because they do not run her
 source, a page hands it to `ComponentPreview`, and the preview does two things with it:
 
 - **shows it**, as authored, in the `TS` tab;
-- **runs it**, type-stripped (`lib/demo-script.ts`), inside the preview frame and in the Playground's
-  `index.html`, because a `<script type="module">` in a no-build HTML page can only be JavaScript.
+- **runs it**, type-stripped (`lib/demo-script.ts`), inside the preview frame, because a
+  `<script type="module">` in a no-build HTML document can only be JavaScript.
 
 ## Rules for a file in here
 

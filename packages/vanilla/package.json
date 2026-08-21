@@ -144,6 +144,10 @@
       "types": "./src/components/menu.ts",
       "default": "./src/components/menu.ts"
     },
+    "./megamenu": {
+      "types": "./src/components/megamenu.ts",
+      "default": "./src/components/megamenu.ts"
+    },
     "./number-field": {
       "types": "./src/components/number-field.ts",
       "default": "./src/components/number-field.ts"

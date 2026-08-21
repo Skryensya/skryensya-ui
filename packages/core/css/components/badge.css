@@ -22,10 +22,9 @@
     --sk-badge-font-weight: var(--font-weight-label);
     --sk-badge-line-height: var(--font-line-height-caption);
 
-    /* Dot: a solid indicator, no text. Its fill is a SATURATED tone (the border-tone ramp), because a
-     * few-pixel dot has to read at a glance where a soft label fill would wash out. The ring lets it sit
-     * over busy content, an icon, an avatar, without smudging into it; the consumer sets it to whatever
-     * surface the dot floats on. */
+    /* Dot: a solid indicator, no text. Its fill is a saturated border token because a few-pixel dot
+     * has to read at a glance where a soft label fill would wash out. The ring lets it sit over busy
+     * content, an icon, or an avatar without smudging into it. */
     --sk-badge-dot-size: 0.5rem;
     --sk-badge-dot-color: var(--color-text-secondary);
     --sk-badge-dot-ring-width: 2px;
@@ -45,9 +44,9 @@
   }
 
   .sk-badge[data-tone="accent"] {
-    --sk-badge-bg: var(--color-decorative-bg);
-    --sk-badge-fg: var(--color-decorative-fg);
-    --sk-badge-dot-color: var(--color-decorative-border);
+    --sk-badge-bg: var(--color-bg-accent-subtle);
+    --sk-badge-fg: var(--color-text-accent);
+    --sk-badge-dot-color: var(--color-border-accent);
   }
 
   .sk-badge[data-tone="success"] {

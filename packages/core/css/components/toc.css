@@ -156,13 +156,13 @@
   }
 
   .sk-toc__link[aria-current="location"] {
-    background: var(--color-nav-current-bg);
-    color: var(--color-nav-current-fg);
+    background: var(--color-bg-accent-subtle);
+    color: var(--color-text-accent);
     font-weight: var(--font-weight-label);
   }
 
   .sk-toc__link[aria-current="location"] .sk-toc__icon {
-    color: var(--color-nav-current-fg);
+    color: var(--color-text-accent);
   }
 
   .sk-toc__inner[open] .sk-toc__list {

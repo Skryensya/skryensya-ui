@@ -29,7 +29,16 @@ export const navbarContract = {
       intent: ["top-bar", "app-header", "page-chrome"],
       host: { element: "header" },
       options: [],
-      slots: { children: { accepts: "signature", required: true, of: ["NavbarBrand", "NavbarActions", "NavList"] } },
+      slots: {
+        children: {
+          accepts: "signature",
+          required: true,
+          /* `Megamenu`, alongside `NavList`: another guest with its own navigation destinations —
+           * see megamenu.ts's own header comment for why it is a peer, never a variant, of anything
+           * else in this catalogue. */
+          of: ["NavbarBrand", "NavbarActions", "NavList", "Megamenu"],
+        },
+      },
       template: { element: "header", part: "root", host: true, slot: "children" },
       react: { from: "@skryensya/react/navbar", name: "Navbar" },
     },

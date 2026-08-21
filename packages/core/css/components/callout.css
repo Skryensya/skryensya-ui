@@ -80,10 +80,8 @@
     --sk-callout-fg: var(--color-text-primary);
     --sk-callout-accent: var(--color-border-subtle);
   }
-  /* info reads the INFO role, not accent. It borrowed accent while no info ramp existed, which made
-   * the meaning "here is something you should know" ride on the brand: a magenta brand turned every
-   * informational notice magenta, and an accent tuned for a button fill had no say in how a note
-   * should read. Feedback roles are fixed by meaning; accent is the tenant's to swap. */
+  /* info reads the INFO feedback role, not accent. Accent is the tenant's brand meaning; feedback
+   * roles report system state and stay independently tunable in the semantic layer. */
   .sk-callout[data-tone="info"] {
     --sk-callout-bg: var(--color-bg-info-subtle);
     --sk-callout-fg: var(--color-text-info);

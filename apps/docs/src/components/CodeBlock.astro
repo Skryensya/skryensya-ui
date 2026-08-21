@@ -103,9 +103,8 @@ const scrollRegionAttrs = (scrolls: boolean) => ({
 
 /* The shared CodePreview CSS consumes Shiki's conventional `light`/`dark` variable names.
    `light-dark()` then follows the page color mode without a brand or docs-only selector.
-   The palette itself is `syntax-theme.ts`'s, not a stock Shiki theme — the same colors the
-   Playground's Sandpack editor resolves from these tokens live, computed here at build time so a
-   code block and its "open in playground" twin read as one syntax palette in both modes. */
+   The palette itself is `syntax-theme.ts`'s, derived from the same token ramps the site uses so
+   code samples stay part of the system rather than falling back to a stock Shiki theme. */
 const themes = syntaxThemes;
 
 /* Labels describe the consumer-facing artifact, so they are the most stable language signal. Neither

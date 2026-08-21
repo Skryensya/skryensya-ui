@@ -24,7 +24,7 @@
     display: inline-flex;
   }
 
-  /* La colocación es del pattern Anclaje (ADR-25): el trigger lleva además `sk-anchor` y el
+  /* La colocación es del pattern Anclaje (ADR-11): el trigger lleva además `sk-anchor` y el
    * positioner además `sk-anchored`. Pero el default del PATTERN es centrado bajo el ancla, que es lo
    * que quiere un tooltip o un popover hablando DE un control puntual; un menú de comandos no: abre
    * pegado a un borde, como cualquier dropdown nativo (el `<select>` del navegador, un menú de
@@ -40,7 +40,7 @@
    * `justify-self: start` sí pega el borde de arranque del panel con el de arranque del trigger y lo
    * deja crecer en el sentido de lectura.
    *
-   * `--sk-anchored-offset` es el `margin` del positioner ENTERO (los cuatro lados a la vez, ADR-25),
+   * `--sk-anchored-offset` es el `margin` del positioner ENTERO (los cuatro lados a la vez, ADR-11),
    * y el default del pattern es un solo valor: el mismo hueco en bloque Y en línea. Eso es lo que
    * quiere un tooltip centrado, pero acá deja el panel 8px adentro de la columna del trigger en vez
    * de pegado a su borde (medido). Un PAR de valores en el hook parte el margin en dos ejes (mismo

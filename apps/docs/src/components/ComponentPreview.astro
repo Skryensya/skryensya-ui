@@ -31,8 +31,9 @@ import "@skryensya/core/components/tooltip.css";
 import "@skryensya/core/components/menu.css";
 import { buildPreviewFrameDocument } from "../lib/preview-frame";
 import { exampleComponentName } from "../lib/example-component-name";
-import { compileDemoScript, indentScript } from "../lib/demo-script";
+import { compileDemoScript } from "../lib/demo-script";
 import { getLocale, useTranslations } from "../i18n";
+import { slugify } from "../lib/document-index";
 
 type CodeLanguage = "bash" | "css" | "html" | "ts" | "tsx";
 
@@ -183,37 +184,41 @@ const hasBindingTabs = Boolean(vanillaCode && hasReact);
 const hasSourceTabs = Boolean(vanillaCode && (js || css));
 const slotHtml = Astro.slots.has("default") ? await Astro.slots.render("default") : undefined;
 const previewHtml = treeHtml ?? slotHtml ?? html ?? "";
-const playgroundVanilla = `<!doctype html>
-<html lang="${locale}">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>${label}</title>
-    <link rel="stylesheet" href="./skryensya.css" />
-${css ? `    <style>\n${css}\n    </style>\n` : ""}  </head>
-  <body>
-${previewHtml}
-
-    <script type="module">
-      import { initComponents, mountIcons, phosphorIcons } from "./skryensya-vanilla.js";
-
-      await initComponents();
-      mountIcons(document, phosphorIcons);
-${js ? `\n${indentScript(compileDemoScript(js))}\n` : ""}    </script>
-  </body>
-</html>`;
-const playgroundPayload = encodeURIComponent(JSON.stringify({ label, vanilla: playgroundVanilla }));
 /*
  * Authored in TypeScript (`demos/scripts/*.ts`, type-checked with the rest of the app) and run as
- * JavaScript, because both places it runs — this frame and the Playground's `index.html` above — are
- * a browser with no compiler in front of it. The `js`/`previewScript` props are the SOURCE; every
- * execution path strips it first, and the tab below shows what was written.
+ * JavaScript, because the live preview frame is a browser with no compiler in front of it. The
+ * `js`/`previewScript` props are the SOURCE; every execution path strips it first, and the tab below
+ * shows what was written.
  */
 const encodedPreviewScript = previewScript
   ? encodeURIComponent(compileDemoScript(previewScript))
   : "";
-/** Unique id so the FOUC inline script can target this preview (Astro may dedupe identical scripts). */
-const previewId = `sk-cp-${Math.random().toString(36).slice(2, 10)}`;
+/**
+ * A STABLE id, not a random one: the FOUC inline script needs any unique target, and
+ * `/preview-fullscreen` needs one that survives a rebuild — it is handed this id (as a query param,
+ * from `openComponentPreviewFullscreen`, `@skryensya/vanilla/component-preview`) to find this exact
+ * card back inside the page's own re-fetched markup, which a per-load `Math.random()` value never
+ * could.
+ *
+ * `Astro.locals` resets once per page render (unlike a module-level counter, which would keep
+ * counting across every OTHER page built in the same process): slugging `label` and deduping
+ * against the other previews already rendered on THIS page is enough to keep every id on the page
+ * unique, without depending on build order or on labels being unique to begin with.
+ */
+const previewId = ((): string => {
+  const locals = Astro.locals as Record<string, Set<string> | undefined>;
+  const used = locals.componentPreviewIds ?? new Set<string>();
+  locals.componentPreviewIds = used;
+  const base = slugify(label);
+  let candidate = base;
+  let suffix = 2;
+  while (used.has(candidate)) {
+    candidate = `${base}-${suffix}`;
+    suffix += 1;
+  }
+  used.add(candidate);
+  return candidate;
+})();
 const frameDocument = buildPreviewFrameDocument({
   body: previewHtml,
   css,
@@ -386,17 +391,6 @@ const screenToggleLabels = Object.fromEntries(
           </div>
         )
       }
-      {/*
-        * LAST, in an overflow menu: neither action here changes what the reader is looking at (one
-        * hands off to another page, the other re-runs the same demo), so neither earns a permanent
-        * seat next to the controls that do. Menu is the published contract for "actions behind a
-        * trigger" (see /componentes/menu); the Playground link stays a real `<a>` (it navigates,
-        * so it keeps middle-click/open-in-new-tab). `target="_blank"` opens it in a new tab by
-        * default too: this preview is what the reader was looking at, and it should still be there
-        * when the Playground tab closes. `rel="noopener"` only severs `window.opener`, not session
-        * storage — the handoff below still clones into the new tab. Reload stays the plain command
-        * it always was.
-        */}
       <div class="sk-menu" data-sk-menu data-density="compact">
         <button
           class="sk-menu__trigger sk-button sk-interactive sk-anchor"
@@ -411,17 +405,6 @@ const screenToggleLabels = Object.fromEntries(
         </button>
         <div class="sk-menu__positioner sk-anchored" data-sk-menu-positioner data-density="compact">
           <div class="sk-menu__content" data-sk-menu-content>
-            <a
-              class="sk-menu__item sk-interactive"
-              data-sk-menu-item
-              data-value="playground"
-              data-sk-component-preview-playground
-              href="/playground"
-              target="_blank"
-              rel="noopener"
-            >
-              <span class="sk-menu__item-label">{t("preview.openInPlayground")}</span>
-            </a>
             <div
               class="sk-menu__item sk-interactive"
               data-sk-menu-item
@@ -430,6 +413,22 @@ const screenToggleLabels = Object.fromEntries(
             >
               <span class="sk-menu__item-label">{t("preview.reloadAction")}</span>
             </div>
+            <div
+              class="sk-menu__item sk-interactive"
+              data-sk-menu-item
+              data-value="fullscreen"
+              data-sk-component-preview-fullscreen
+            >
+              <span class="sk-menu__item-label">{t("preview.fullscreenAction")}</span>
+            </div>
+            {/*
+              * No "Ver en la documentación" item here: on the docs page itself, a link back to the
+              * docs page would just point at the page a reader is already reading. It is added
+              * client-side ONLY by `/preview-fullscreen` (`apps/docs/src/pages/preview-fullscreen.astro`),
+              * which is the one context that has left the docs page behind and actually needs a way
+              * back to it.
+              */
+            }
           </div>
         </div>
       </div>
@@ -473,7 +472,7 @@ const screenToggleLabels = Object.fromEntries(
           <TreeDemo
             tree={tree}
             measure={measure}
-            frameOptions={{ flush, scroll, viewport, script: previewScript }}
+            frameOptions={{ flush, scroll, viewport, minHeight, script: previewScript }}
             client:load
           />
         ) : (
@@ -510,9 +509,8 @@ const screenToggleLabels = Object.fromEntries(
               class="sk-tabs sk-component-preview__source-tabs"
               data-sk-tabs
               data-sk-component-preview-source-tabs
-              data-sk-density-scope
+              data-size="sm"
               data-value="html"
-              style="--sk-density-factor: 0.72"
             >
               <div class="sk-tabs__list" data-sk-tabs-list aria-label="Fuente vanilla">
                 <button
@@ -604,9 +602,8 @@ const screenToggleLabels = Object.fromEntries(
               class="sk-tabs sk-component-preview__source-tabs"
               data-sk-tabs
               data-sk-component-preview-source-tabs
-              data-sk-density-scope
+              data-size="sm"
               data-value="component"
-              style="--sk-density-factor: 0.72"
             >
               <div class="sk-tabs__list" data-sk-tabs-list aria-label={t("preview.reactSource")}>
                 <button
@@ -661,19 +658,13 @@ const screenToggleLabels = Object.fromEntries(
    * flipping pressed state Vanilla → React on load, and stops a persisted preset from painting
    * full-width first and snapping to phone size once the enhancer arrives.
    */
-  (hasBindingTabs || screens || playgroundPayload) && (
-    <script is:inline define:vars={{ previewId, hasBindingTabs, screens, playgroundPayload }}>
+  (hasBindingTabs || screens) && (
+    <script is:inline define:vars={{ previewId, hasBindingTabs, screens }}>
       (function () {
         var d = document.documentElement;
         var root = document.getElementById(previewId);
         if (!root) return;
 
-        var playgroundLink = root.querySelector("[data-sk-component-preview-playground]");
-        if (playgroundLink) {
-          playgroundLink.addEventListener("click", function () {
-            sessionStorage.setItem("skryensya-playground-handoff", playgroundPayload);
-          });
-        }
         if (hasBindingTabs) {
           var pref = d.getAttribute("data-sk-component-preview-pref") || "vanilla";
           var tabs = root.querySelector("[data-sk-component-preview-binding-tabs]");

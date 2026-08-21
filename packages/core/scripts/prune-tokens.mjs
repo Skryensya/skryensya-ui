@@ -10,8 +10,8 @@
  * value wins at runtime. Pruning one copy would silently break a mode for that token alone.
  *
  * Reachability is transitive over token VALUES: a component reads `--color-bg-surface`, whose value
- * is `light-dark(var(--ramp-neutral-0), var(--ramp-neutral-900))`, so both ramps are reachable too,
- * and neither may be dropped even though no component names a ramp directly (lint.mjs forbids that).
+ * is `light-dark(var(--palette-white), var(--palette-slate-900))`, so both palettes are reachable too,
+ * and neither may be dropped even though no component names a palette directly (lint.mjs forbids that).
  *
  * The static scan cannot see tokens a component reads through JS (inline style, getComputedStyle,
  * a class toggled at runtime). Those are the caller's responsibility: pass them via --safelist, or
@@ -92,7 +92,7 @@ const pruned = [...supplyNames].filter((n) => !reachable.has(n)).sort();
 
 // ── byte measurement: compile the one token bundle, full vs pruned, min + gzip ───────────────────
 function buildTokenBundle() {
-  // Mirror what an app links: primitives (including root ramps) + semantic + optional hc + radius.
+  // Mirror what an app links: primitives (including palettes) + semantic + optional hc + radius.
   // The entry lives inside CSS_DIR so its relative imports resolve; removed after.
   const imports = [
     `@use "./primitives";`,
@@ -128,7 +128,7 @@ const pBytes = size(prunedCss);
 // ── report ─────────────────────────────────────────────────────────────────────
 const pct = (a, b) => (b === 0 ? "0" : (((b - a) / b) * 100).toFixed(1));
 console.log(`\nToken prune, demand: ${usedComponents ? usedComponents.join(", ") : `ALL (${demandFiles} component/pattern files)`}`);
-console.log("root ramps: one configurable set" + (safelist.size ? `  ·  safelist: ${safelist.size}` : ""));
+console.log("palettes: Tailwind-like public set" + (safelist.size ? `  ·  safelist: ${safelist.size}` : ""));
 console.log(`\n  supply tokens : ${supplyNames.size}`);
 console.log(`  reachable     : ${kept.length}`);
 console.log(`  prunable      : ${pruned.length}  (${((pruned.length / supplyNames.size) * 100).toFixed(0)}% of names)`);

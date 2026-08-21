@@ -1,15 +1,14 @@
 /*
  * TIER 1, PRIMITIVE SCALE
  *
- * Raw tier-1 values: the foundational ramp set plus space, radius, size, type and motion. Ramps
- * live on `:root`; consumers replace complete role ramps from an unlayered brand stylesheet.
+ * Raw tier-1 values: meaning-free color palettes plus space, radius, size, type and motion.
  */
 @use "primitives/space";
 @use "primitives/radius";
 @use "primitives/size";
 @use "primitives/type";
 @use "primitives/motion";
-@use "primitives/ramps";
+@use "primitives/palettes";
 @use "primitives/z";
 
 @layer primitives {

@@ -34,6 +34,7 @@ const consumer = `/* Tu CSS lo lee una vez y nunca ramifica. */
 
 <Base
   title="El contrato de styling hooks"
+  documentLayout="grid"
   description="Un styling hook es la perilla pública de un componente: qué significa eso, cómo se nombran y cómo pisarlos."
 >
   <h1>El contrato de styling hooks</h1>
@@ -48,7 +49,7 @@ const consumer = `/* Tu CSS lo lee una vez y nunca ramifica. */
     <p>
       Esto <strong>cambió</strong>. Durante mucho tiempo el sistema enviaba los hooks y nada más: la
       estructura la escribía cada consumidor. Se revirtió, porque no se sostuvo,
-      <a href="/decisiones/0008-que-envia-tier-3">la decisión 8</a> cuenta qué se midió. Lo que no
+      <a href="/decisiones/0002-que-envia-tier-3">la decisión 8</a> cuenta qué se midió. Lo que no
       cambió es para qué existe un hook: no es un repuesto de la estructura ausente, es la perilla.
     </p>
     </div>
@@ -134,7 +135,7 @@ const consumer = `/* Tu CSS lo lee una vez y nunca ramifica. */
   </div>
 
   <p>
-    Nótese que ninguno apunta a un <code>--ramp-*</code>. No es disciplina: es
+    Nótese que ninguno apunta a un <code>--palette-*</code>. No es disciplina: es
     <a href="/tiers">la regla de tier-skip</a>, y rompe el build.
   </p>
 </Base>

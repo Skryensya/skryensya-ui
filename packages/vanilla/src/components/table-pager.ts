@@ -89,7 +89,7 @@ function reconcileNav(
  * vanilla's equivalent, done incrementally instead of by full rebuild.
  *
  * Chevron placeholders are injected as `data-sk-icon` and hydrated via `remountIcons` when the
- * app already called `mountIcons` (ADR-15: set stays explicit on the app side).
+ * app already called `mountIcons` (ADR-19: set stays explicit on the app side).
  */
 export function connectTablePager(root: HTMLElement): Cleanup {
   const nav = root.querySelector<HTMLElement>(navSelector);

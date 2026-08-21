@@ -2,7 +2,7 @@ import type { ComponentContract } from "./contract.js";
 /*
  * COMMAND PALETTE, a searchable listbox inside a native Dialog.
  *
- * Builds on Dialog (ADR-11): `<dialog class="sk-dialog sk-command-palette">` + showModal(). The
+ * Builds on Dialog (ADR-19): `<dialog class="sk-dialog sk-command-palette">` + showModal(). The
  * shell (border, radius, surface, elevation, backdrop) is Dialog's; this file owns the search row,
  * results listbox, empty state and footer chrome.
  *

@@ -1,7 +1,9 @@
-import { tabsParts, type TabsOptions } from "@skryensya/core/tabs";
+import { tabsContract, tabsParts, type TabsOptions, type TabsSize } from "@skryensya/core/tabs";
 import { tabs } from "@skryensya/core/machines";
 import { normalizeProps, useMachine } from "@zag-js/react";
 import { useId, type ReactNode } from "react";
+
+const { size: sizeOption } = tabsContract.options;
 
 export type TabsItem = {
   value: string;
@@ -21,6 +23,9 @@ export type TabsProps = TabsOptions & {
    */
   "aria-label"?: string;
   "aria-labelledby"?: string;
+  /** Paint size for the trigger row. CSS-only, so it is not one of `TabsOptions` — the Zag machine
+   * never sees it, it lands straight on `data-size`. */
+  size?: TabsSize;
 };
 
 export function Tabs({
@@ -28,6 +33,7 @@ export function Tabs({
   items,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
+  size = sizeOption.default,
   ...options
 }: TabsProps) {
   const generatedId = useId();
@@ -40,6 +46,7 @@ export function Tabs({
       className={tabsParts.root}
       data-activation-mode={options.activationMode ?? "automatic"}
       data-sk-tabs=""
+      data-size={size}
       data-value={api.value}
     >
       <div

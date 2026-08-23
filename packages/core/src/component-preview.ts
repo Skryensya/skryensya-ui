@@ -8,20 +8,20 @@ export type ComponentPreviewViewport = "auto" | "menu" | "overlay";
 /**
  * How big the stage pretends to be.
  *
- * `free` is the stage as it has always been: full width, height fitted to the content. The two
- * presets give the frame a fixed inline AND block size, because a device is both: a width-only
- * preset shows reflow but never what falls below the fold, which is half of what a small screen
- * does to a layout.
+ * `free` is the stage as it has always been: full width, height fitted to the content. The
+ * presets give the frame a chosen inline size so media queries inside the iframe resolve against
+ * that viewport, not the docs column.
  *
  * Distinct from {@link ComponentPreviewViewport}, which reserves stage headroom for things painted
  * out of flow (menus, dialogs). That one answers "how much room does this demo need"; this one
  * answers "what screen is the reader pretending to hold".
  *
- * The presets sit deliberately on either side of the system's own breakpoints (`compact` 36rem,
- * `desktop` 52rem): mobile is below both, tablet is between them, so the two settings actually
- * exercise the bands the layout switches on rather than two arbitrary widths.
+ * The small presets sit deliberately on either side of the system's own breakpoints (`compact`
+ * 36rem, `desktop` 52rem): mobile is below both, tablet is between them. `xl` sits above both
+ * (and above the 72rem layout-grid band): a large desktop, shown zoomed out so the 1440 px
+ * viewport still fits the docs column.
  */
-export type ComponentPreviewScreen = "free" | "tablet" | "mobile";
+export type ComponentPreviewScreen = "free" | "xl" | "tablet" | "mobile";
 
 /**
  * Stable anatomy for a rendered component demo followed by its implementation source.
@@ -58,9 +58,9 @@ export const componentPreviewAttrs = {
   bindingTabs: "data-sk-component-preview-binding-tabs",
   /** One of the two plain buttons inside `bindingTabs`; its `data-value` is "vanilla" | "react". */
   bindingOption: "data-sk-component-preview-binding-option",
-  /** The group wrapping the three plain screen-preset buttons; carries the current `data-value`. */
+  /** The group wrapping the screen-preset buttons; carries the current `data-value`. */
   screenTabs: "data-sk-component-preview-screen-tabs",
-  /** One of the three plain buttons inside `screenTabs`; its `data-value` is "free" | "tablet" | "mobile". */
+  /** One of the buttons inside `screenTabs`; its `data-value` is "free" | "xl" | "tablet" | "mobile". */
   screenOption: "data-sk-component-preview-screen-option",
   binding: "data-sk-component-preview-binding",
   /** Document-level shared Vanilla | React preference (`<html>`). */
@@ -81,7 +81,7 @@ export const componentPreviewAttrs = {
   viewport: "data-sk-component-preview-viewport",
   scroll: "data-sk-component-preview-scroll",
   reload: "data-sk-component-preview-reload",
-  /** The "..." menu's fullscreen action; opens the preview alone, at its own URL (`/preview-fullscreen`). */
+  /** The "..." menu's fullscreen action; opens the preview alone, at its own URL (`/f/{page}/{n}`). */
   fullscreen: "data-sk-component-preview-fullscreen",
   /**
    * On the stage, and only for a preset: `free` is the absence of the attribute, not a value, so
@@ -126,7 +126,7 @@ export const componentPreviewBindingPreference = definePreference<ComponentPrevi
 export const componentPreviewScreenPreference = definePreference<ComponentPreviewScreen>({
   slot: "screen",
   fallback: "free",
-  parse: oneOf(["free", "tablet", "mobile"]),
+  parse: oneOf(["free", "xl", "tablet", "mobile"]),
 });
 
 /*

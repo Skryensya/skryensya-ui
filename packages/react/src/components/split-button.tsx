@@ -29,7 +29,7 @@ export type SplitButtonProps = {
    */
   primary?: ReactNode;
   children?: ReactNode;
-  variant?: "neutral" | "subtle" | "translucent" | "primary" | "danger" | "ghost";
+  variant?: "neutral" | "subtle" | "translucent" | "accent" | "danger" | "ghost";
   size?: "sm" | "md" | "lg";
   /** The group's own accessible name — see `split-button.ts`'s own `role="group"` doc for why it
    *  is optional. */
@@ -62,10 +62,10 @@ export function SplitButton({
   onClick,
   onSelect,
   primary,
-  // "primary" is a split button's own opinion — a dominant, stable action — not Button's OWN
+  // "accent" is a split button's own opinion — a dominant, stable action — not Button's OWN
   // default ("neutral"): a plain `<Button>` with no variant given reads as a secondary control, the
   // opposite of what this contract names. Hardcoded here on purpose, not read off Button's contract.
-  variant = "primary",
+  variant = "accent",
   size = "md",
 }: SplitButtonProps) {
   return (

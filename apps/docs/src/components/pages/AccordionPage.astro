@@ -146,22 +146,24 @@ const sourceFiles = [
 
     <h3 id="details-nativo">{t("accordion.detailsNativoLabel")}</h3>
     <p class="lede" set:html={t("accordion.nativeLede")} />
+    <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>{t("accordion.decisionHeadNeed")}</th>
-          <th>{t("accordion.decisionHeadUse")}</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">{t("accordion.decisionHeadNeed")}</th>
+          <th class="sk-table__header">{t("accordion.decisionHeadUse")}</th>
         </tr>
       </thead>
-      <tbody>
-        <tr><td set:html={t("accordion.decisionRow1Need")} /><td set:html={t("accordion.decisionRow1Use")} /></tr>
-        <tr><td set:html={t("accordion.decisionRow2Need")} /><td set:html={t("accordion.decisionRow2Use")} /></tr>
-        <tr><td set:html={t("accordion.decisionRow3Need")} /><td set:html={t("accordion.decisionRow3Use")} /></tr>
-        <tr><td set:html={t("accordion.decisionRow4Need")} /><td set:html={t("accordion.decisionRow4Use")} /></tr>
-        <tr><td set:html={t("accordion.decisionRow5Need")} /><td set:html={t("accordion.decisionRow5Use")} /></tr>
-        <tr><td set:html={t("accordion.decisionRow6Need")} /><td set:html={t("accordion.decisionRow6Use")} /></tr>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow1Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow1Use")} class="sk-table__cell" /></tr>
+        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow2Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow2Use")} class="sk-table__cell" /></tr>
+        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow3Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow3Use")} class="sk-table__cell" /></tr>
+        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow4Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow4Use")} class="sk-table__cell" /></tr>
+        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow5Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow5Use")} class="sk-table__cell" /></tr>
+        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow6Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow6Use")} class="sk-table__cell" /></tr>
       </tbody>
     </table>
+    </div>
     <p set:html={t("accordion.nativeBody")} />
     <ComponentPreview tree={detailsGroupTree(t)} label={t("accordion.nativePreviewLabel")} />
 

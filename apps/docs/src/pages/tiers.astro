@@ -37,32 +37,32 @@ const linterOutput = `✗ 1 problem(s):
 
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Tier</th>
-          <th>Responde</th>
-          <th>Puede referenciar</th>
-          <th>Cuántos hay</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Tier</th>
+          <th class="sk-table__header">Responde</th>
+          <th class="sk-table__header">Puede referenciar</th>
+          <th class="sk-table__header">Cuántos hay</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><span class="sk-badge" data-tone="warning">primitive</span></td>
-          <td>qué valores existen</td>
-          <td>nada, es el fondo</td>
-          <td class="mono">{counts.primitive}</td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><span class="sk-badge" data-tone="warning">primitive</span></td>
+          <td class="sk-table__cell">qué valores existen</td>
+          <td class="sk-table__cell">nada, es el fondo</td>
+          <td class="sk-table__cell mono">{counts.primitive}</td>
         </tr>
-        <tr>
-          <td><span class="sk-badge" data-tone="accent">semantic</span></td>
-          <td>qué significa un valor</td>
-          <td>primitivos, y otros semánticos</td>
-          <td class="mono">{counts.semantic}</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><span class="sk-badge" data-tone="accent">semantic</span></td>
+          <td class="sk-table__cell">qué significa un valor</td>
+          <td class="sk-table__cell">primitivos, y otros semánticos</td>
+          <td class="sk-table__cell mono">{counts.semantic}</td>
         </tr>
-        <tr>
-          <td><span class="sk-badge" data-tone="success">component</span></td>
-          <td>dónde se usa un valor</td>
-          <td>solo semánticos, <strong>nunca</strong> primitivos</td>
-          <td class="mono">{counts.component}</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><span class="sk-badge" data-tone="success">component</span></td>
+          <td class="sk-table__cell">dónde se usa un valor</td>
+          <td class="sk-table__cell">solo semánticos, <strong>nunca</strong> primitivos</td>
+          <td class="sk-table__cell mono">{counts.component}</td>
         </tr>
       </tbody>
     </table>

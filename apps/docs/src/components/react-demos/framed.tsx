@@ -56,7 +56,7 @@ export interface FramedOptions {
 /** Per-call overrides for shared demo wrappers such as the usage-tree renderer. */
 export type FramedOverrides = Pick<
   FramedOptions,
-  "flush" | "scroll" | "viewport" | "minHeight"
+  "flush" | "scroll" | "viewport" | "minHeight" | "css"
 > & {
   /** App-only script shared by both tree-rendered bindings. */
   script?: string;
@@ -116,6 +116,7 @@ export function framedIn(moduleUrl: string) {
       const scroll = frameOptions?.scroll ?? options.scroll;
       const viewport = frameOptions?.viewport ?? options.viewport;
       const minHeight = frameOptions?.minHeight ?? options.minHeight;
+      const css = frameOptions?.css ?? options.css;
       const encodedScript = frameOptions?.script
         ? encodeURIComponent(frameOptions.script)
         : undefined;
@@ -124,7 +125,7 @@ export function framedIn(moduleUrl: string) {
         () =>
           buildPreviewFrameDocument({
             body: "",
-            css: options.css,
+            css,
             flush,
             scroll,
             measure,

@@ -10,11 +10,13 @@ export type GridColumns = 1 | 2 | 3 | 4;
 /**
  * Named spans a direct LayoutGrid child may request with `data-width`.
  *
- * Omitting the attribute keeps the child in the content span. `"rail"` is not a content span —
- * it's a supporting column (a TOC, contextual navigation) beside the grid rather than a section
- * within its flow — but it earns a value in this same attribute rather than a second one.
+ * Omitting the attribute keeps the child in the content span. `"rail"` and `"rail-start"` are
+ * not content spans — they are supporting columns (a TOC, contextual navigation) beside the
+ * grid rather than a section within its flow — but they earn a value in this same attribute
+ * rather than a second one. `"rail"` sits after the content; `"rail-start"` sits before it; a
+ * grid may carry both at once.
  */
-export type LayoutGridWidth = "narrow" | "content" | "breakout" | "full-width" | "rail";
+export type LayoutGridWidth = "narrow" | "content" | "breakout" | "full-width" | "rail" | "rail-start";
 /** Page-column max measure on a size scale, see patterns/wrapper.css. */
 export type WrapperSize = "sm" | "md" | "lg" | "full";
 
@@ -133,7 +135,7 @@ export const layoutContract = {
      * a heading, figure or section owns its own semantics and can opt into the span it needs.
      */
     LayoutGrid: {
-      intent: ["page-flow", "named-content-measures", "breakout-content", "full-bleed-section"],
+      intent: ["page-flow", "named-content-measures", "breakout-content", "full-bleed-section", "supporting-rail"],
       host: { element: "div" },
       options: [],
       slots: { children: { accepts: "node", required: true } },

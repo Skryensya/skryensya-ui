@@ -205,6 +205,8 @@
     color: var(--sk-menu-fg);
     cursor: pointer;
     outline: none;
+    /* State layer with subtle color, not accent */
+    --state-layer-color: var(--color-text-primary);
   }
 
   /*
@@ -277,6 +279,16 @@
    * an outward ring at the token's own width would bleed into the next row. */
   .sk-menu__item[data-highlighted] {
     --state-layer-opacity: var(--state-layer-hover-opacity);
+  }
+
+  /* Show outline only on keyboard navigation, not on mouse hover */
+  @media (any-hover: hover) {
+    .sk-menu__item[data-highlighted]:not(:focus-visible) {
+      outline: none;
+    }
+  }
+
+  .sk-menu__item[data-highlighted]:focus-visible {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: calc(-1 * var(--focus-ring-width));
   }

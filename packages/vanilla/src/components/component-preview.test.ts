@@ -52,6 +52,7 @@ function resetBindingState(): void {
   resetSharedComponentPreviewScreen();
   document.documentElement.removeAttribute("data-sk-component-preview-pref");
   document.documentElement.removeAttribute("data-sk-component-preview-screen-pref");
+  document.documentElement.removeAttribute("data-sk-fullscreen-preview");
 }
 
 describe("ComponentPreview opt-in enhancer", () => {
@@ -236,6 +237,7 @@ describe("ComponentPreview opt-in enhancer", () => {
         <div data-sk-component-preview data-test-id="${id}">
           <div class="sk-segmented" data-sk-segmented data-sk-component-preview-screen-tabs data-value="free" role="radiogroup">
             <span class="sk-segmented__indicator" aria-hidden="true"></span>
+            ${segmentedOption("xl", "data-sk-component-preview-screen-option", "XL")}
             ${segmentedOption("free", "data-sk-component-preview-screen-option", "Free")}
             ${segmentedOption("tablet", "data-sk-component-preview-screen-option", "Tablet")}
             ${segmentedOption("mobile", "data-sk-component-preview-screen-option", "Mobile")}
@@ -428,6 +430,79 @@ describe("ComponentPreview opt-in enhancer", () => {
       expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("mobile");
       expect(tabs.getAttribute("data-value")).toBe("mobile");
       expect(mobileOption.getAttribute("aria-checked")).toBe("true");
+    });
+
+    it("keeps a card without the zoomed-desktop option on free when the shared pref is xl", () => {
+      resetBindingState();
+      document.documentElement.setAttribute("data-sk-component-preview-screen-pref", "xl");
+      document.body.innerHTML = `
+        <div data-sk-component-preview>
+          <div class="sk-segmented" data-sk-segmented data-sk-component-preview-screen-tabs data-value="free" role="radiogroup">
+            <span class="sk-segmented__indicator" aria-hidden="true"></span>
+            ${segmentedOption("free", "data-sk-component-preview-screen-option", "Free")}
+            ${segmentedOption("tablet", "data-sk-component-preview-screen-option", "Tablet")}
+            ${segmentedOption("mobile", "data-sk-component-preview-screen-option", "Mobile")}
+          </div>
+          <iframe class="sk-component-preview__stage" srcdoc="<!doctype html><body>one</body>"></iframe>
+        </div>
+      `;
+      const root = document.querySelector<HTMLElement>("[data-sk-component-preview]")!;
+      const tabs = root.querySelector<HTMLElement>("[data-sk-component-preview-screen-tabs]")!;
+      const stage = root.querySelector<HTMLElement>(".sk-component-preview__stage")!;
+
+      mountComponentPreview(document);
+
+      expect(stage.hasAttribute("data-sk-component-preview-screen")).toBe(false);
+      expect(tabs.getAttribute("data-value")).toBe("free");
+      expect(document.documentElement.getAttribute("data-sk-component-preview-screen-pref")).toBe(
+        "xl",
+      );
+    });
+
+    it("applies xl only on the card that offers it when the shared pref changes", () => {
+      resetBindingState();
+      document.body.innerHTML = `${screenMarkupFor("wide")}<div data-sk-component-preview data-test-id="narrow">
+          <div class="sk-segmented" data-sk-segmented data-sk-component-preview-screen-tabs data-value="free" role="radiogroup">
+            <span class="sk-segmented__indicator" aria-hidden="true"></span>
+            ${segmentedOption("free", "data-sk-component-preview-screen-option", "Free")}
+            ${segmentedOption("tablet", "data-sk-component-preview-screen-option", "Tablet")}
+            ${segmentedOption("mobile", "data-sk-component-preview-screen-option", "Mobile")}
+          </div>
+          <iframe class="sk-component-preview__stage" srcdoc="<!doctype html><body>two</body>"></iframe>
+        </div>`;
+      const wide = document.querySelector<HTMLElement>('[data-test-id="wide"]')!;
+      const narrow = document.querySelector<HTMLElement>('[data-test-id="narrow"]')!;
+      const xlOption = wide.querySelector<HTMLElement>(
+        '[data-sk-component-preview-screen-option][data-value="xl"]',
+      )!;
+
+      expect(mountAll()).toBe(2);
+      xlOption.click();
+
+      expect(wide.querySelector(".sk-component-preview__stage")?.getAttribute("data-sk-component-preview-screen")).toBe(
+        "xl",
+      );
+      expect(
+        narrow.querySelector(".sk-component-preview__stage")?.hasAttribute("data-sk-component-preview-screen"),
+      ).toBe(false);
+      expect(narrow.querySelector("[data-sk-component-preview-screen-tabs]")?.getAttribute("data-value")).toBe(
+        "free",
+      );
+    });
+
+    it("treats xl as free inside a fullscreen preview even when the option is still in the DOM", () => {
+      resetBindingState();
+      document.documentElement.setAttribute("data-sk-fullscreen-preview", "");
+      document.documentElement.setAttribute("data-sk-component-preview-screen-pref", "xl");
+      screenMarkup();
+      const { tabs, stage } = parts();
+
+      mountAll();
+
+      expect(stage.hasAttribute("data-sk-component-preview-screen")).toBe(false);
+      expect(tabs.getAttribute("data-value")).toBe("free");
+
+      document.documentElement.removeAttribute("data-sk-fullscreen-preview");
     });
 
     it("applies the shared preset to a preview that has no toggle of its own", () => {

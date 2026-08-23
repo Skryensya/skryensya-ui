@@ -22,7 +22,7 @@ import CodeBlock from "./CodeBlock.astro";
 import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
 import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
 import { TreeDemo } from "./react-demos/tree";
-import { iconMarkup } from "../icons";
+import { iconDataMarkup, iconMarkup, screenFullscreen } from "../icons";
 import "@skryensya/core/components/component-preview.css";
 import "@skryensya/core/components/loader.css";
 import "@skryensya/core/components/tabs.css";
@@ -113,6 +113,15 @@ interface Props {
    */
   screens?: boolean;
   /**
+   * Offer the zoomed-out desktop preset (1440 px, fitted to the docs column).
+   *
+   * OFF by default. Desktop / Tablet / Mobile are a question any component can answer; this one
+   * only earns its keep on layouts that actually change past the docs column — Navbar, Layout Grid,
+   * and the same class of wide chrome. Fullscreen never shows it: that page already IS the
+   * viewport this preset pretends to be.
+   */
+  zoomedDesktop?: boolean;
+  /**
    * Skip the source panels under the stage. Marketing surfaces (the landing page) want the live
    * specimen without the teaching HTML/TSX that every component page pairs with it.
    */
@@ -144,6 +153,7 @@ const {
   scroll = false,
   measure,
   screens = true,
+  zoomedDesktop = false,
   hideSource = false,
   width,
 } = Astro.props;
@@ -195,18 +205,19 @@ const encodedPreviewScript = previewScript
   : "";
 /**
  * A STABLE id, not a random one: the FOUC inline script needs any unique target, and
- * `/preview-fullscreen` needs one that survives a rebuild — it is handed this id (as a query param,
- * from `openComponentPreviewFullscreen`, `@skryensya/vanilla/component-preview`) to find this exact
- * card back inside the page's own re-fetched markup, which a per-load `Math.random()` value never
- * could.
+ * "Ver en la documentación" hashes back to it. `/f/{page}/{n}` finds the card by its 1-based
+ * number on this page (`previewN`), not by this id.
  *
  * `Astro.locals` resets once per page render (unlike a module-level counter, which would keep
  * counting across every OTHER page built in the same process): slugging `label` and deduping
  * against the other previews already rendered on THIS page is enough to keep every id on the page
  * unique, without depending on build order or on labels being unique to begin with.
  */
+const locals = Astro.locals as {
+  componentPreviewIds?: Set<string>;
+  componentPreviewCount?: number;
+};
 const previewId = ((): string => {
-  const locals = Astro.locals as Record<string, Set<string> | undefined>;
   const used = locals.componentPreviewIds ?? new Set<string>();
   locals.componentPreviewIds = used;
   const base = slugify(label);
@@ -218,6 +229,10 @@ const previewId = ((): string => {
   }
   used.add(candidate);
   return candidate;
+})();
+const previewN = ((): number => {
+  locals.componentPreviewCount = (locals.componentPreviewCount ?? 0) + 1;
+  return locals.componentPreviewCount;
 })();
 const frameDocument = buildPreviewFrameDocument({
   body: previewHtml,
@@ -236,40 +251,53 @@ const frameDocument = buildPreviewFrameDocument({
  * swaps them: the site keeps the swap, and loses the wait.
  */
 const moreIcon = iconMarkup("more");
+const reloadIcon = iconMarkup("refresh", { size: "sm" });
+const fullscreenIcon = iconDataMarkup("screen-fullscreen", screenFullscreen, { size: "sm" });
 /*
  * Screen presets. The name is a stable ROLE, not a device drawing, which is why the accessible
  * name spells out the actual viewport: `screen-tablet` tells you the class of screen, `768 × 1024`
  * tells you what you are about to see. Rendered as a single cycling toggle (like ThemeToggle), so
  * the hint IS the accessible name for whichever preset is current.
  *
- * `tooltipLabel` is a SEPARATE, visible hint on top of that: the literal device word (Desktop /
- * Tablet / Mobile), always in English regardless of page locale. It names the glyph for a sighted
- * reader who is not going to open a screen reader to learn what an icon-only button does; the
- * accessible name above already carries the full sentence for anyone who does.
+ * `tooltipLabel` is a SEPARATE, visible hint on top of that: the English name of the preset
+ * (Desktop zoomed out / Desktop / Tablet / Mobile), regardless of page locale. It names the glyph
+ * for a sighted reader who is not going to open a screen reader to learn what an icon-only button
+ * does; the accessible name above already carries the full sentence for anyone who does.
  */
 const screenOptions = [
+  ...(zoomedDesktop
+    ? [
+        {
+          value: "xl" as const,
+          icon: iconMarkup("zoom-out", { size: "sm" }),
+          label: t("preview.screenXl"),
+          hint: t("preview.screenXlHint"),
+          tooltipLabel: "Desktop zoomed out",
+        },
+      ]
+    : []),
   {
-    value: "free",
+    value: "free" as const,
     icon: iconMarkup("screen-desktop", { size: "sm" }),
     label: t("preview.screenFree"),
     hint: t("preview.screenFreeHint"),
     tooltipLabel: "Desktop",
   },
   {
-    value: "tablet",
+    value: "tablet" as const,
     icon: iconMarkup("screen-tablet", { size: "sm" }),
     label: t("preview.screenTablet"),
     hint: t("preview.screenTabletHint"),
     tooltipLabel: "Tablet",
   },
   {
-    value: "mobile",
+    value: "mobile" as const,
     icon: iconMarkup("screen-mobile", { size: "sm" }),
     label: t("preview.screenMobile"),
     hint: t("preview.screenMobileHint"),
     tooltipLabel: "Mobile",
   },
-] as const;
+];
 const screenToggleLabels = Object.fromEntries(
   screenOptions.map((option) => [
     option.value,
@@ -281,12 +309,15 @@ const screenToggleLabels = Object.fromEntries(
 <div
   class="sk-component-preview"
   data-sk-component-preview
+  data-sk-component-preview-n={previewN}
   data-width={width}
   id={previewId}
   style={minHeight ? `--sk-component-preview-stage-min-block-size: ${minHeight}` : undefined}
 >
   <header class="sk-component-preview__header">
-    <span class="sk-component-preview__title">{label}</span>
+    <span class="sk-component-preview__title"
+      ><span class="sk-component-preview__n">{previewN}</span>{label}</span
+    >
     {note && <span class="sk-component-preview__note">{note}</span>}
     {/*
       * THREE separate, self-contained controls in a row — not one boxed toolbar holding all of
@@ -411,7 +442,9 @@ const screenToggleLabels = Object.fromEntries(
               data-value="reload"
               data-sk-component-preview-reload
             >
-              <span class="sk-menu__item-label">{t("preview.reloadAction")}</span>
+              <span class="sk-menu__item-label"
+                ><Fragment set:html={reloadIcon} />{t("preview.reloadAction")}</span
+              >
             </div>
             <div
               class="sk-menu__item sk-interactive"
@@ -419,12 +452,14 @@ const screenToggleLabels = Object.fromEntries(
               data-value="fullscreen"
               data-sk-component-preview-fullscreen
             >
-              <span class="sk-menu__item-label">{t("preview.fullscreenAction")}</span>
+              <span class="sk-menu__item-label"
+                ><Fragment set:html={fullscreenIcon} />{t("preview.fullscreenAction")}</span
+              >
             </div>
             {/*
               * No "Ver en la documentación" item here: on the docs page itself, a link back to the
               * docs page would just point at the page a reader is already reading. It is added
-              * client-side ONLY by `/preview-fullscreen` (`apps/docs/src/pages/preview-fullscreen.astro`),
+              * client-side ONLY by `/f/{page}/{n}` (`apps/docs/src/pages/f/[...path].astro`),
               * which is the one context that has left the docs page behind and actually needs a way
               * back to it.
               */
@@ -472,7 +507,7 @@ const screenToggleLabels = Object.fromEntries(
           <TreeDemo
             tree={tree}
             measure={measure}
-            frameOptions={{ flush, scroll, viewport, minHeight, script: previewScript }}
+            frameOptions={{ flush, scroll, viewport, minHeight, css, script: previewScript }}
             client:load
           />
         ) : (
@@ -659,7 +694,7 @@ const screenToggleLabels = Object.fromEntries(
    * full-width first and snapping to phone size once the enhancer arrives.
    */
   (hasBindingTabs || screens) && (
-    <script is:inline define:vars={{ previewId, hasBindingTabs, screens }}>
+    <script is:inline define:vars={{ previewId, hasBindingTabs, screens, zoomedDesktop }}>
       (function () {
         var d = document.documentElement;
         var root = document.getElementById(previewId);
@@ -682,7 +717,8 @@ const screenToggleLabels = Object.fromEntries(
 
         if (screens) {
           var screen = d.getAttribute("data-sk-component-preview-screen-pref");
-          if (screen !== "tablet" && screen !== "mobile") screen = "free";
+          if (screen === "xl" && !zoomedDesktop) screen = "free";
+          if (screen !== "xl" && screen !== "tablet" && screen !== "mobile") screen = "free";
           var screenTabs = root.querySelector("[data-sk-component-preview-screen-tabs]");
           if (screenTabs) {
             screenTabs.setAttribute("data-value", screen);
@@ -696,6 +732,16 @@ const screenToggleLabels = Object.fromEntries(
             root.querySelectorAll(".sk-component-preview__stage").forEach(function (stage) {
               stage.setAttribute("data-sk-component-preview-screen", screen);
             });
+          }
+          // XL's 1440px viewport only fits the docs column zoomed out (packages/vanilla's
+          // `syncXlZoom`, run later by the deferred enhancer). Mirrored here so the stage never
+          // paints full-width-unzoomed before that enhancer mounts.
+          if (screen === "xl") {
+            var target =
+              parseFloat(getComputedStyle(root).getPropertyValue("--sk-component-preview-screen-xl")) ||
+              1440;
+            var zoom = Math.min(1, root.clientWidth / target);
+            root.style.setProperty("--sk-component-preview-xl-zoom", String(zoom));
           }
         }
       })();

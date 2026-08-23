@@ -2,7 +2,8 @@
  * CARD EXAMPLE DATA, shared by the two locale pages and by the live React demos.
  *
  * Card is not a component, so the docs teach it with a LADDER of compositions: each example is a
- * grid of three cards, and the ladder runs from a bare Box to a media Tile that navigates. The copy
+ * grid of three cards, and the ladder runs from plain content with no container at all, through a
+ * bare Box, to a media Tile that navigates. The copy
  * lives here, once per locale, because three consumers need the same strings (the Spanish page, the
  * English page, and the React island that renders next to both), and a card whose demo says one
  * thing while its source says another teaches nothing.
@@ -31,9 +32,9 @@ export function blankImage(width: number, height: number, bg: string) {
   return dummyImage(width, height, bg, bg, " ");
 }
 
+export type PlainMediaCard = { src: string; alt: string; title: string; body: string };
 export type BasicCard = { title: string; body: string };
 export type MetaCard = { badge: string; tone: "neutral" | "accent" | "success" | "warning"; date: string; title: string; body: string };
-export type AccentCard = { icon: StableIconName; eyebrow: string; title: string; body: string; cta: string };
 export type StatCard = { label: string; value: string; change: string; trend: "up" | "down" };
 export type LinkCard = { icon: StableIconName; title: string; body: string };
 export type ActionCard = { icon: StableIconName; title: string; body: string };
@@ -47,10 +48,9 @@ export type ProductCard = { badge: string; tone: "accent" | "neutral"; title: st
 export type CardCopy = {
   /** Label rendered on the grid's accessible name, per example. */
   labels: Record<string, string>;
+  plainMedia: PlainMediaCard[];
   basic: BasicCard[];
   meta: MetaCard[];
-  accentSoft: AccentCard[];
-  accentSolid: AccentCard[];
   stat: StatCard[];
   link: LinkCard[];
   action: ActionCard[];
@@ -88,10 +88,9 @@ const lightMedia = {
 export const cardCopy: Record<CardLang, CardCopy> = {
   es: {
     labels: {
+      plainMedia: "Casos de estudio",
       basic: "Notas del equipo",
       meta: "Últimas publicaciones",
-      accentSoft: "Novedades destacadas",
-      accentSolid: "Planes recomendados",
       stat: "Resumen del negocio",
       link: "Accesos directos",
       action: "Acciones del proyecto",
@@ -108,6 +107,11 @@ export const cardCopy: Record<CardLang, CardCopy> = {
       details: "Ver detalle",
       month: "/mes",
     },
+    plainMedia: [
+      { src: dummyImage(640, 360, media.a[0], media.a[1], "Acme"), alt: "Equipo de Acme trabajando en su oficina", title: "Cómo Acme redujo su tiempo de carga", body: "Migraron a Grid y Stack y sacaron cuarenta líneas de CSS propio por vista." },
+      { src: dummyImage(640, 360, media.b[0], media.b[1], "Nimbus"), alt: "Equipo de soporte de Nimbus", title: "El soporte de Nimbus responde en minutos", body: "Un tablero compartido reemplazó tres hojas de cálculo distintas." },
+      { src: dummyImage(640, 360, media.c[0], media.c[1], "Vela"), alt: "Equipo de producto de Vela", title: "Vela cambió Slack por avisos dentro del producto", body: "Menos ruido, y la alerta llega justo donde se toma la decisión." },
+    ],
     basic: [
       { title: "Versión 2.4", body: "Mejora la búsqueda y reduce el tiempo de carga en los proyectos grandes." },
       { title: "Versión 2.3", body: "Añade historial de actividad por proyecto y filtros guardados." },
@@ -117,16 +121,6 @@ export const cardCopy: Record<CardLang, CardCopy> = {
       { badge: "Publicado", tone: "success", date: "18 de julio", title: "Cómo diseñamos la vista de actividad", body: "Las decisiones que permiten recorrer seis meses de cambios sin perder el contexto." },
       { badge: "Borrador", tone: "warning", date: "12 de julio", title: "Anatomía de una tarjeta", body: "Por qué la forma visual no alcanza para decidir el elemento que va en la raíz." },
       { badge: "Interno", tone: "neutral", date: "4 de julio", title: "Densidad y toque", body: "Cómo la densidad aprieta el layout sin tocar nunca el área de toque nativa." },
-    ],
-    accentSoft: [
-      { icon: "clock", eyebrow: "Nuevo", title: "Historial por proyecto", body: "Recorre seis meses de cambios sin salir de la vista de actividad.", cta: "Ver novedad" },
-      { icon: "filter", eyebrow: "Nuevo", title: "Filtros guardados", body: "Guarda una búsqueda y vuelve a ella desde cualquier proyecto.", cta: "Ver novedad" },
-      { icon: "search", eyebrow: "Mejorado", title: "Búsqueda instantánea", body: "Resultados mientras escribes, con teclado y lector de pantalla.", cta: "Ver novedad" },
-    ],
-    accentSolid: [
-      { icon: "success", eyebrow: "Recomendado", title: "Profesional", body: "Todo lo del plan Inicial, más historial ilimitado y roles por proyecto.", cta: "Elegir plan" },
-      { icon: "user", eyebrow: "Equipos", title: "Negocio", body: "Auditoría, inicio de sesión único y soporte con acuerdo de nivel de servicio.", cta: "Elegir plan" },
-      { icon: "settings", eyebrow: "A medida", title: "Corporativo", body: "Despliegue dedicado, retención a medida y acompañamiento técnico.", cta: "Hablar con ventas" },
     ],
     stat: [
       { label: "Ingresos", value: "48.200 €", change: "12,5%", trend: "up" },
@@ -171,10 +165,9 @@ export const cardCopy: Record<CardLang, CardCopy> = {
   },
   en: {
     labels: {
+      plainMedia: "Case studies",
       basic: "Team notes",
       meta: "Latest posts",
-      accentSoft: "Highlighted updates",
-      accentSolid: "Recommended plans",
       stat: "Business summary",
       link: "Shortcuts",
       action: "Project actions",
@@ -191,6 +184,11 @@ export const cardCopy: Record<CardLang, CardCopy> = {
       details: "See details",
       month: "/month",
     },
+    plainMedia: [
+      { src: dummyImage(640, 360, media.a[0], media.a[1], "Acme"), alt: "The Acme team working in their office", title: "How Acme cut their load time", body: "They moved to Grid and Stack and dropped forty lines of their own CSS per view." },
+      { src: dummyImage(640, 360, media.b[0], media.b[1], "Nimbus"), alt: "The Nimbus support team", title: "Nimbus support answers in minutes", body: "One shared board replaced three separate spreadsheets." },
+      { src: dummyImage(640, 360, media.c[0], media.c[1], "Vela"), alt: "The Vela product team", title: "Vela swapped Slack for in-product alerts", body: "Less noise, and the alert lands right where the decision gets made." },
+    ],
     basic: [
       { title: "Version 2.4", body: "Improves search and cuts loading time on large projects." },
       { title: "Version 2.3", body: "Adds per-project activity history and saved filters." },
@@ -200,16 +198,6 @@ export const cardCopy: Record<CardLang, CardCopy> = {
       { badge: "Published", tone: "success", date: "July 18", title: "How we designed the activity view", body: "The decisions that let you walk six months of changes without losing context." },
       { badge: "Draft", tone: "warning", date: "July 12", title: "Anatomy of a card", body: "Why the visual shape is not enough to decide which element goes at the root." },
       { badge: "Internal", tone: "neutral", date: "July 4", title: "Density and touch", body: "How density tightens the layout without ever touching the native touch target." },
-    ],
-    accentSoft: [
-      { icon: "clock", eyebrow: "New", title: "Per-project history", body: "Walk six months of changes without leaving the activity view.", cta: "See what's new" },
-      { icon: "filter", eyebrow: "New", title: "Saved filters", body: "Save a search and return to it from any project.", cta: "See what's new" },
-      { icon: "search", eyebrow: "Improved", title: "Instant search", body: "Results as you type, with keyboard and screen-reader support.", cta: "See what's new" },
-    ],
-    accentSolid: [
-      { icon: "success", eyebrow: "Recommended", title: "Professional", body: "Everything in Starter, plus unlimited history and per-project roles.", cta: "Choose plan" },
-      { icon: "user", eyebrow: "Teams", title: "Business", body: "Audit log, single sign-on and support with a service level agreement.", cta: "Choose plan" },
-      { icon: "settings", eyebrow: "Tailored", title: "Enterprise", body: "Dedicated deployment, custom retention and a named technical contact.", cta: "Talk to sales" },
     ],
     stat: [
       { label: "Revenue", value: "€48,200", change: "12.5%", trend: "up" },

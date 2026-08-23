@@ -81,7 +81,7 @@ import ContrastToggle from "../components/ContrastToggle.astro";
 import SidebarNav from "../components/SidebarNav.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import Toc from "../components/Toc.astro";
-import { indexDocument } from "../lib/document-index";
+import { indexDocument, indexHeroTabPanel } from "../lib/document-index";
 import { vanillaMountSections } from "../lib/vanilla-mount-sections";
 import VanillaMount from "../components/VanillaMount.astro";
 import { vanillaMounts } from "../lib/vanilla-mounts";
@@ -195,16 +195,18 @@ const currentSection =
  * The full-bleed layout has no toc and no page furniture, so it keeps the plain `<slot />`: nothing
  * would read the index, and rendering the slot twice is the one way to get this wrong.
  */
-const documentIndex = fullBleed ? null : indexDocument(await Astro.slots.render("default"));
-
+const scanned = fullBleed ? null : indexDocument(await Astro.slots.render("default"));
 /*
- * ONE PAGE STILL BUILDS ITS INDEX IN THE BROWSER, and it is the pilot with the hero tab strip
- * (`/componentes/accordion`). Its sections live inside tab panels, one index per tab, and which tab
- * is open is a fact about a reader, not about the document: `../scripts/hero-tabs-toc.ts` owns that
- * one. Detected the same way the old inline script detected it, by the strip's own class, only now
- * in the rendered string rather than through `document.querySelector`.
+ * Component pages put their outline inside the hero-tab panels, so a top-level heading scan sees
+ * nothing. The default tab is `usage` and is known at build: index THAT panel the same way the
+ * old browser fill did (`:scope > h3, h4`), and the rail arrives in the HTML already filled.
+ * `?tab=` to another panel is the one case that still rebuilds in the browser, after this HTML.
  */
-const tocPending = documentIndex?.html.includes("docs-component-hero-tabs") ?? false;
+const heroTabs = scanned?.html.includes("docs-component-hero-tabs") ?? false;
+const heroIndex = heroTabs && scanned ? indexHeroTabPanel(scanned.html, "usage") : null;
+const documentIndex = heroIndex && scanned
+  ? { ...scanned, html: heroIndex.html, headings: heroIndex.headings }
+  : scanned;
 
 /*
  * The section a reader lands on IS the first one, so the rail says so in the HTML rather than
@@ -305,6 +307,11 @@ const accentBundle = (hue: string) => ({
   "--color-border-accent": `light-dark(var(--palette-${hue}-600), var(--palette-${hue}-500))`,
   "--color-border-focus": `light-dark(var(--palette-${hue}-600), var(--palette-${hue}-400))`,
   "--color-action-primary": `light-dark(var(--palette-${hue}-600), var(--palette-${hue}-500))`,
+  /* The component-page hero band (site.css's `--docs-hero-bg`, default blue) rides along with the
+   * rest of the bundle: without this key it stayed blue no matter which preset was active, since
+   * `--color-bg-accent-subtle`'s own `-50` leg reads as barely-there on a band this large (see that
+   * variable's own comment in site.css). */
+  "--docs-hero-bg": `light-dark(var(--palette-${hue}-200), var(--palette-${hue}-950))`,
 });
 const palettePreset = (id: string, name: string, accent: string, hue: string) => ({
   id,
@@ -404,7 +411,7 @@ const PALETTE_PRESETS = [
         /* Shared screen preset, same shape. `free` is the ABSENCE of the attribute, so an unknown
          * or missing value removes it rather than writing a third state nothing styles. */
         var screen = stored(PREPAINT.screen);
-        if (screen === "tablet" || screen === "mobile") {
+        if (screen === "xl" || screen === "tablet" || screen === "mobile") {
           d.setAttribute("data-sk-component-preview-screen-pref", screen);
         } else {
           d.removeAttribute("data-sk-component-preview-screen-pref");
@@ -712,6 +719,29 @@ const PALETTE_PRESETS = [
         >
           <SidebarNav nav={navigation} path={path} idPrefix="docs-nav" />
         </div>
+        {/*
+          Restore as soon as `#docs-nav` exists, not at the end of the body. This is a multi-page
+          site and the rail's `overflow-y: auto` would otherwise snap back to the top on every
+          navigation. The script used to sit after `<main>`: the parser had already painted the
+          index at scroll 0 while chewing through the document, then jumped to the saved offset —
+          a layout shift of every label inside the rail, even though Chrome does not count a
+          scroll-container offset as CLS. Here the element has its children and the huge document
+          has not been parsed yet, so the restore lands before first paint.
+        */}
+        <script is:inline>
+          (function () {
+            var KEY = "docs-sidebar-scroll";
+            var rail = document.getElementById("docs-nav");
+            if (!rail) return;
+            var saved = sessionStorage.getItem(KEY);
+            if (saved) rail.scrollTop = parseInt(saved, 10) || 0;
+            var save = function () {
+              sessionStorage.setItem(KEY, String(rail.scrollTop));
+            };
+            rail.addEventListener("scroll", save, { passive: true });
+            window.addEventListener("pagehide", save);
+          })();
+        </script>
 
         <hr class="sk-sidebar__separator" />
         <div class="sk-sidebar__footer">skryensya/ui</div>
@@ -744,6 +774,13 @@ const PALETTE_PRESETS = [
         tabindex="-1"
         style={documentLayout === "grid" ? `--docs-main-row-count: ${mainRowCount}` : undefined}
       >
+      {/*
+        BEFORE `<main>`, on purpose. The rail is compiled with the page, but a first paint cannot
+        show an element the parser has not reached: sitting after the document put ~1MB of previews
+        between the reader and the list, so the column arrived after the prose. Grid placement
+        (`data-width="rail"`, named columns) does not care about source order; streaming does.
+      */}
+      <Toc items={tocItems} rail={documentLayout === "grid"} />
       <main
         class={documentLayout === "grid" ? "sk-layout-grid" : "sk-wrapper"}
         data-document-layout={documentLayout}
@@ -776,29 +813,16 @@ const PALETTE_PRESETS = [
         */}
         <footer class="docs-footer" set:html={t("footer.body", { core: "<code>@skryensya/core</code>" })} />
       </main>
-
-        <Toc items={tocItems} pending={tocPending} rail={documentLayout === "grid"} />
       </div>
 
       {/*
-        The hero-tabs ToC's fill, `is:inline` and RIGHT HERE on purpose. The deferred/module version
-        this replaced sat near the end of `<body>` (after the footer, the search dialog, every other
-        script) and a `type="module"` script never runs until the WHOLE document has parsed, wherever
-        it sits in the DOM — so it was never really waiting on `@skryensya/vanilla` (splitting that
-        import out only bought ~15ms), it was waiting on the parser to finish everything AFTER the
-        toc too. `is:inline` runs the instant the parser reaches it, and the panels this reads are
-        already above it in source, so it can fill the list before the parser has even reached the
-        footer, let alone before the deferred scripts' turn.
-
-        `data-sk-hero-tab` (set in `<head>`, before body) rather than the tabs root's own `data-value`:
-        this needs the READER'S requested tab, and `hero-tabs-url.ts` (which corrects `data-value`
-        from `?tab=`) is itself deferred, later than this. Reading the same pre-paint answer that
-        already told the stylesheet which panel to show keeps this in sync without waiting on it.
+        The usage ToC is compiled with the page. This script only runs for a `?tab=` deep link to
+        another panel, whose outline the builder cannot know. `is:inline` so it still finishes
+        before first paint once the parser reaches it; `hero-tabs-toc.ts` still owns every switch
+        AFTER this one.
 
         A hand-written copy of `buildHeroTabsToc`/`panelForHeroTab` (`../scripts/hero-tabs-toc-seed.ts`),
-        because `is:inline` cannot `import`; the same duplication `document-index.ts` already accepts
-        for this page's slugger, and for the same reason. `hero-tabs-toc.ts` still owns every tab
-        switch AFTER this one, via the real module.
+        because `is:inline` cannot `import`.
       */}
       <script is:inline>
         (function () {
@@ -808,8 +832,13 @@ const PALETTE_PRESETS = [
           var tabsRoot = heroTabs.closest("[data-sk-tabs]");
           if (!tabsRoot) return;
 
-          var value = document.documentElement.getAttribute("data-sk-hero-tab") || tabsRoot.getAttribute("data-value");
-          if (!value) return;
+          /*
+           * The usage list is already in the HTML (indexHeroTabPanel at build). Only a `?tab=`
+           * deep link to another panel has a different outline, and that value is on <html>
+           * from the head script. Anything else would replace a correct first paint.
+           */
+          var value = document.documentElement.getAttribute("data-sk-hero-tab");
+          if (!value || value === "usage") return;
           var panel = tabsRoot.querySelector(':scope > [data-sk-tabs-content][data-value="' + value + '"]');
           if (!panel) return;
           var list = tocRoot.querySelector("ul");
@@ -1021,29 +1050,6 @@ const PALETTE_PRESETS = [
         } else {
           window.addEventListener("resize", sync);
         }
-      })();
-    </script>
-
-    {/*
-      The sidebar's internal scroll SURVIVES navigation. This is a multi-page site, every link is a
-      full reload, so the rail's `overflow-y: auto` column would otherwise snap back to the top on each
-      page, losing the reader's place in a long index. Persist its scrollTop in sessionStorage (per tab,
-      one shared position because the rail is the same on every page) and restore it here, `is:inline`
-      after the markup so the element exists and the restore lands before first paint, no visible jump
-      from top to saved. Saved on scroll and on pagehide, the latter covering the click that navigates.
-    */}
-    <script is:inline>
-      (function () {
-        var KEY = "docs-sidebar-scroll";
-        var rail = document.querySelector(".docs-sidebar .sk-sidebar__content");
-        if (!rail) return;
-        var saved = sessionStorage.getItem(KEY);
-        if (saved) rail.scrollTop = parseInt(saved, 10) || 0;
-        var save = function () {
-          sessionStorage.setItem(KEY, String(rail.scrollTop));
-        };
-        rail.addEventListener("scroll", save, { passive: true });
-        window.addEventListener("pagehide", save);
       })();
     </script>
 
@@ -1278,6 +1284,21 @@ const PALETTE_PRESETS = [
       initThemeToggle();
       initThemeTogglePersistence();
       initDocsBinding();
+    </script>
+
+    {/*
+      * DEV ONLY. `import.meta.env.DEV` is statically known at build time, so Rollup's production
+      * build dead-code-eliminates this whole branch — the dynamic import is never emitted, never
+      * requested, and `@skryensya/devtools` never reaches a reader of the built site. Dynamic
+      * `import()` rather than a static one for the same reason: a static import of a DEV-only
+      * module still has to resolve to SOMETHING for the production graph to type-check against,
+      * where a dynamic one inside a branch that provably never runs is simply gone.
+      */}
+    <script>
+      if (import.meta.env.DEV) {
+        const { mountDebugPanel } = await import("@skryensya/devtools");
+        mountDebugPanel();
+      }
     </script>
   </body>
 </html>

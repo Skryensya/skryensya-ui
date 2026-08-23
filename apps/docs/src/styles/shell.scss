@@ -53,11 +53,9 @@
     grid-row: 2;
   }
 
-  /* Grid-layout pages, the outer fit only: above `wide` (site.css) `.docs-document-pair` is fixed
-   * tracks sized to fit content + rail exactly, centered as a UNIT via `justify-self: center` — a
-   * fixed total that would overflow this breakpoint's narrower column left uncorrected. `stretch`
-   * undoes that centering back to filling the column, restated because `down("desktop")` below
-   * narrows `.shell` further and CSS cascades forward, not back.
+  /* Grid-layout pages, the outer fit only: above `wide` (site.css) `.docs-document-pair` already
+   * stretches so `sk-layout-grid`'s own `1fr` gutters can center content + rail. Restated because
+   * `down("desktop")` below narrows `.shell` further and CSS cascades forward, not back.
    *
    * The rail's OWN placement (and the grid's track list reverting to `sk-layout-grid`'s plain fluid
    * form) needs nothing here any more — `packages/core/css/patterns/layout.css`'s rail rules are

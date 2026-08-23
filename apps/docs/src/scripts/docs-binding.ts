@@ -36,6 +36,13 @@ export function initDocsBinding(): void {
     persist(componentPreviewScreenPreference, (event as CustomEvent<{ value: string }>).detail?.value);
   });
 
+  /*
+   * Fullscreen reconstructs one card in a srcdoc whose `<html>` has no screen pref (XL is
+   * docs-column-only and was stripped). Writing that absence back to storage would clobber the
+   * catalogue tab's own preset. Listeners above still persist a choice made IN this frame.
+   */
+  if (document.documentElement.hasAttribute("data-sk-fullscreen-preview")) return;
+
   // If the pre-paint script already wrote the attributes, keep storage aligned (first paint, or a
   // value another tab wrote while this one was closed).
   const root = document.documentElement;

@@ -13,9 +13,10 @@
     --sk-dialog-inline-size: min(32rem, calc(100vw - var(--space-inset-lg) * 2));
     --sk-dialog-bg: var(--color-bg-surface);
     --sk-dialog-fg: var(--color-text-primary);
-    --sk-dialog-border-color: var(--color-border-default);
-    /* Always on, and not a matter of taste: in high contrast the panel and the page resolve to the
-     * same color, and softening this makes the dialog invisible without a single test failing. */
+    /* Subtle, same as Menu and Popover. `--color-border-default` is the HC-safe rung and read as a
+     * forced-colors frame in everyday light/dark; the WIDTH stays 1px because HC still collapses
+     * panel and page to one fill (see `dialog.borderBody`). HC tokens already darken `-subtle`. */
+    --sk-dialog-border-color: var(--color-border-subtle);
     --sk-dialog-border-width: 1px;
     --sk-dialog-radius: var(--radius-surface);
     --sk-dialog-elevation: var(--elevation-modal);
@@ -34,11 +35,18 @@
     background: var(--sk-dialog-bg);
     color: var(--sk-dialog-fg);
     box-shadow: var(--sk-dialog-elevation);
+    /* Same materialise as Popover/Menu: opacity + scale + blur + a short drop. Closed values are
+     * also the EXIT target (`sm` distance, faster tokens). Dialog Vaul restates `translate` for the
+     * sheet slide and wins on specificity, so this does not fight the compact composition. */
     opacity: 0;
-    scale: 0.98;
+    scale: var(--motion-materialize-scale);
+    translate: 0 calc(-1 * var(--motion-exit-distance));
+    filter: blur(var(--motion-materialize-blur));
     transition:
       opacity var(--motion-exit-duration) var(--motion-exit-easing),
       scale var(--motion-exit-duration) var(--motion-exit-easing),
+      translate var(--motion-exit-duration) var(--motion-exit-easing),
+      filter var(--motion-exit-duration) var(--motion-exit-easing),
       overlay var(--motion-exit-duration) var(--motion-exit-easing) allow-discrete,
       display var(--motion-exit-duration) var(--motion-exit-easing) allow-discrete;
   }
@@ -46,9 +54,13 @@
   .sk-dialog[open] {
     opacity: 1;
     scale: 1;
+    translate: 0;
+    filter: blur(0);
     transition:
       opacity var(--motion-enter-duration) var(--motion-enter-easing),
       scale var(--motion-enter-duration) var(--motion-enter-easing),
+      translate var(--motion-enter-duration) var(--motion-enter-easing),
+      filter var(--motion-enter-duration) var(--motion-enter-easing),
       overlay var(--motion-enter-duration) var(--motion-enter-easing) allow-discrete,
       display var(--motion-enter-duration) var(--motion-enter-easing) allow-discrete;
   }
@@ -56,19 +68,31 @@
   @starting-style {
     .sk-dialog[open] {
       opacity: 0;
-      scale: 0.98;
+      scale: var(--motion-materialize-scale);
+      translate: 0 calc(-1 * var(--motion-enter-distance));
+      filter: blur(var(--motion-materialize-blur));
     }
   }
 
   .sk-dialog::backdrop {
     background: var(--sk-dialog-backdrop-bg);
     opacity: 0;
-    transition: opacity var(--motion-exit-duration) var(--motion-exit-easing);
+    transition:
+      opacity var(--motion-exit-duration) var(--motion-exit-easing),
+      overlay var(--motion-exit-duration) var(--motion-exit-easing) allow-discrete;
   }
 
   .sk-dialog[open]::backdrop {
     opacity: 1;
-    transition: opacity var(--motion-enter-duration) var(--motion-enter-easing);
+    transition:
+      opacity var(--motion-enter-duration) var(--motion-enter-easing),
+      overlay var(--motion-enter-duration) var(--motion-enter-easing) allow-discrete;
+  }
+
+  @starting-style {
+    .sk-dialog[open]::backdrop {
+      opacity: 0;
+    }
   }
 
   /* Shared authored anatomy: native Dialog and Dialog Vaul differ in behaviour, never in the
@@ -141,15 +165,19 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    /* Distances already collapse via the intent tokens. Scale and blur are not distances, so they
+     * still need the same explicit hold Popover writes — a short opacity fade, no spatial move. */
     .sk-dialog,
     .sk-dialog[open] {
       scale: 1;
+      filter: blur(0);
     }
 
     @starting-style {
       .sk-dialog[open] {
         opacity: 0;
         scale: 1;
+        filter: blur(0);
       }
     }
   }

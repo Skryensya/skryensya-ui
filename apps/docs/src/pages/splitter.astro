@@ -85,25 +85,25 @@ const keyboard = [
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Consumidor</th>
-          <th>Qué mueve</th>
-          <th>Aritmética</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Consumidor</th>
+          <th class="sk-table__header">Qué mueve</th>
+          <th class="sk-table__header">Aritmética</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><strong>Sidebar</strong></td>
-          <td>Un valor único contra un límite fijo</td>
-          <td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Sidebar</strong></td>
+          <td class="sk-table__cell">Un valor único contra un límite fijo</td>
+          <td class="sk-table__cell">
             <code>clamp()</code> en CSS — no hay "otro panel" con el que conservar un ancho total.
           </td>
         </tr>
-        <tr>
-          <td><strong>Table / Treegrid</strong></td>
-          <td>Un par de columnas vecinas</td>
-          <td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Table / Treegrid</strong></td>
+          <td class="sk-table__cell">Un par de columnas vecinas</td>
+          <td class="sk-table__cell">
             <code>resolveColumnResize</code> — la suma del par se mantiene fija, así que ninguna
             otra columna se mueve.
           </td>
@@ -137,18 +137,18 @@ const keyboard = [
   <h2>Teclado</h2>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Tecla</th>
-          <th>Acción</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Tecla</th>
+          <th class="sk-table__header">Acción</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="sk-table__body">
         {
           keyboard.map(([key, action]) => (
-            <tr>
-              <td class="mono">{key}</td>
-              <td>{action}</td>
+            <tr class="sk-table__row">
+              <td class="sk-table__cell mono">{key}</td>
+              <td class="sk-table__cell">{action}</td>
             </tr>
           ))
         }
@@ -189,20 +189,20 @@ const keyboard = [
   <h2>Styling hooks</h2>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Hook</th>
-          <th>Valor por defecto</th>
-          <th>Qué controla</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Hook</th>
+          <th class="sk-table__header">Valor por defecto</th>
+          <th class="sk-table__header">Qué controla</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="sk-table__body">
         {
           hooks.map(([name, value, note]) => (
-            <tr>
-              <td class="mono">{name}</td>
-              <td class="mono">{value}</td>
-              <td>{note}</td>
+            <tr class="sk-table__row">
+              <td class="sk-table__cell mono">{name}</td>
+              <td class="sk-table__cell mono">{value}</td>
+              <td class="sk-table__cell">{note}</td>
             </tr>
           ))
         }

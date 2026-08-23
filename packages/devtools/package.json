@@ -1,0 +1,24 @@
+{
+  "name": "@skryensya/devtools",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Optional runtime debug overlay for skryensya/ui: hit-area visualization and other inspection aids, built from the design system's own components. No package in this repo imports it, so it costs nothing unless a consumer opts in.",
+  "files": [
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "check": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@skryensya/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

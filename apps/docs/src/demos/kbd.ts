@@ -16,3 +16,15 @@ export const kbdTree: UsageTree = {
     { contract: "kbd", signature: "Kbd", children: "↵" },
   ],
 };
+
+export const kbdAccentTree: UsageTree = {
+  contract: "layout",
+  signature: "Inline",
+  options: { gap: "sm" },
+  children: [
+    { contract: "kbd", signature: "Kbd", options: { tone: "accent" }, children: "⌘" },
+    { contract: "kbd", signature: "Kbd", options: { tone: "accent" }, children: "K" },
+    { contract: "kbd", signature: "Kbd", options: { tone: "accent" }, children: "Esc" },
+    { contract: "kbd", signature: "Kbd", options: { tone: "accent" }, children: "↵" },
+  ],
+};

@@ -30,7 +30,7 @@ import { Button } from "@skryensya/react/button";
   <NavbarBrand>Atlas</NavbarBrand>
   <NavbarActions>
     <Button variant="ghost">Search</Button>
-    <Button variant="primary">Crear</Button>
+    <Button variant="accent">Crear</Button>
   </NavbarActions>
 </Navbar>;`;
 
@@ -175,32 +175,32 @@ const manualReduction = `.legacy-glass {
 
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Strength</th>
-          <th>Surface</th>
-          <th>Blur</th>
-          <th>Recommended use</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Strength</th>
+          <th class="sk-table__header">Surface</th>
+          <th class="sk-table__header">Blur</th>
+          <th class="sk-table__header">Recommended use</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><code>sm</code></td>
-          <td>92%</td>
-          <td>8px</td>
-          <td>Navbar, Sidebar, Dialog</td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><code>sm</code></td>
+          <td class="sk-table__cell">92%</td>
+          <td class="sk-table__cell">8px</td>
+          <td class="sk-table__cell">Navbar, Sidebar, Dialog</td>
         </tr>
-        <tr>
-          <td><code>md</code></td>
-          <td>82%</td>
-          <td>16px</td>
-          <td>Box, cards y paneles flotantes</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><code>md</code></td>
+          <td class="sk-table__cell">82%</td>
+          <td class="sk-table__cell">16px</td>
+          <td class="sk-table__cell">Box, cards y paneles flotantes</td>
         </tr>
-        <tr>
-          <td><code>lg</code></td>
-          <td>70%</td>
-          <td>24px</td>
-          <td>Hero o pieza editorial; nunca UI densa</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><code>lg</code></td>
+          <td class="sk-table__cell">70%</td>
+          <td class="sk-table__cell">24px</td>
+          <td class="sk-table__cell">Hero o pieza editorial; nunca UI densa</td>
         </tr>
       </tbody>
     </table>

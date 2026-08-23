@@ -3,8 +3,42 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "f3879bdff8a5352d"
+surface: "924b1e5c442ccde9"
 entries:
+  - date: 2026-08-23
+    kind: breaking
+    es:
+      title: Toc publica una sola forma, siempre abierta
+      body: >-
+        Se van el <code>&lt;details&gt;</code>, el <code>&lt;summary&gt;</code> y el chevron: el índice
+        ya no se abre ni se cierra, se ve desde el primer paint. Con ellos se van las partes
+        <code>disclosure</code>, <code>summary</code> y <code>chevron</code>, el atributo
+        <code>data-sk-toc-disclosure</code> y el opt-in <code>data-sk-toc-rail</code> — que además
+        nunca estuvo en el contrato: era un string mágico re-tipeado en la hoja de estilos, el
+        enhancer y cada consumidor que quisiera el rail. El motivo: toda la apariencia de rail vivía
+        detrás de ese atributo Y de un <code>min-width: 72rem</code>, así que la propia página del
+        componente no podía renderizar la forma sobre la que corre el sitio de docs — un frame de
+        preview mide 1022px y la compuerta pedía 1152px. Lo único que sigue detrás de
+        <code>wide</code> son <code>position: sticky</code> y el ancho fijo. <strong>Migración:</strong>
+        borrá <code>data-sk-toc-rail</code> de tu markup y no envuelvas la lista en un
+        <code>&lt;details&gt;</code>; el emisor ya produce la forma nueva. La marca de sección actual
+        pasa de un chip de fondo a una regla en el gutter.
+    en:
+      title: Toc publishes one shape, always open
+      body: >-
+        The <code>&lt;details&gt;</code>, the <code>&lt;summary&gt;</code> and the chevron are gone:
+        the index no longer opens or closes, it is readable from first paint. With them go the
+        <code>disclosure</code>, <code>summary</code> and <code>chevron</code> parts, the
+        <code>data-sk-toc-disclosure</code> attribute, and the <code>data-sk-toc-rail</code> opt-in —
+        which was never in this contract to begin with: a magic string re-typed in the stylesheet, the
+        enhancer, and every consumer that wanted the rail. The reason: the rail's entire appearance sat
+        behind that attribute AND a <code>min-width: 72rem</code> query, so the component's own page
+        could not render the form the docs site itself runs on — a preview frame is 1022px wide and the
+        gate asked for 1152px. All that stays behind <code>wide</code> is <code>position: sticky</code>
+        and the fixed inline size. <strong>Migration:</strong> drop <code>data-sk-toc-rail</code> from
+        your markup and stop wrapping the list in a <code>&lt;details&gt;</code>; the emitter already
+        produces the new shape. The current-section mark changes from a filled chip to a rule in the
+        gutter.
   - date: 2026-08-17
     kind: bugfix
     target: current

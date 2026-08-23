@@ -16,21 +16,17 @@
     --sk-process-list-title-font-size: var(--font-size-body);
     --sk-process-list-title-font-weight: var(--font-weight-emphasis);
     --sk-process-list-marker-size: var(--size-control-sm);
-    --sk-process-list-connector-size: 2px;
-    /* The step marker is decoration, but its `accent` meaning is still brand emphasis. */
-    --sk-process-list-marker-bg: var(--color-bg-accent-subtle);
-    --sk-process-list-marker-border-color: var(--color-border-accent);
-    --sk-process-list-connector-color: color-mix(
-      in oklab,
-      var(--color-border-accent) 55%,
-      var(--color-border-subtle)
-    );
-    --sk-process-list-marker-ring-color: color-mix(
-      in oklab,
-      var(--color-border-accent) 18%,
-      transparent
-    );
-    --sk-process-list-marker-fg: var(--color-text-accent);
+    --sk-process-list-connector-size: 1px;
+    /*
+     * Markers name ORDER, not brand or progress. Accent would shout "action" on every step of a
+     * static recipe; secondary type on a sunken disc is enough to scan, and the connector is the
+     * same quiet rule the rest of the page already uses for structure.
+     */
+    --sk-process-list-marker-bg: var(--color-bg-surface-sunken);
+    --sk-process-list-marker-border-color: var(--color-border-subtle);
+    --sk-process-list-connector-color: var(--color-border-subtle);
+    --sk-process-list-marker-ring-color: transparent;
+    --sk-process-list-marker-fg: var(--color-text-secondary);
 
     box-sizing: border-box;
     display: flex;
@@ -94,7 +90,7 @@
       0 0 0 3px var(--sk-process-list-marker-ring-color);
     color: var(--sk-process-list-marker-fg);
     font-size: var(--font-size-caption);
-    font-weight: var(--font-weight-emphasis);
+    font-weight: var(--font-weight-label);
     font-variant-numeric: tabular-nums;
     line-height: 1;
   }
@@ -124,6 +120,15 @@
     font-size: var(--sk-process-list-title-font-size);
     font-weight: var(--sk-process-list-title-font-weight);
     line-height: var(--line-height-heading);
+  }
+
+  /*
+   * A CodePreview inside a step is content, not a section of the page: the surface already has
+   * `--space-stack-sm` of its own, which stacked on `__content`'s gap read as a second card
+   * floating off the instruction. Sit it flush with the copy above.
+   */
+  .sk-process-list .sk-code-preview {
+    margin-block: 0;
   }
 
   @media (forced-colors: active) {

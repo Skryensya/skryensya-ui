@@ -115,7 +115,7 @@ export function resetSharedComponentPreviewScreen(): void {
 }
 
 function isScreen(value: string | null | undefined): value is ComponentPreviewScreen {
-  return value === "free" || value === "tablet" || value === "mobile";
+  return value === "free" || value === "xl" || value === "tablet" || value === "mobile";
 }
 
 function readDocumentScreen(): ComponentPreviewScreen | null {
@@ -142,33 +142,61 @@ function publishScreen(screen: ComponentPreviewScreen): void {
 }
 
 /**
- * Screen presets for the stage: a real Segmented (Libre | Tablet | Móvil), the site's global
+ * Screen presets for the stage: a real Segmented (Libre | XL | Tablet | Móvil), the site's global
  * enhancer already knows how to run — this module only reacts to the `sk-value-change` it
  * dispatches on itself, the same way `sourceTabs` below reacts to Tabs' own event, rather than
  * re-implementing Segmented's click handling, aria-checked painting or sliding indicator.
  *
- * Tablet and mobile only change the stage's width. Both preserve an auto-fitted or reader-chosen
- * height exactly like free desktop, so screen selection never competes with the resizer.
+ * Tablet, mobile and XL only change the stage's width. They preserve an auto-fitted or reader-chosen
+ * height exactly like free desktop, so screen selection never competes with the resizer. XL is a
+ * 1440 px viewport shown zoomed out so that width still fits the docs column.
  *
  * `free` is the ABSENCE of the attribute rather than a value: every rule that fits, reserves or
- * scrolls then keeps working untouched, and the frame runtime needs no third case.
+ * scrolls then keeps working untouched, and the frame runtime needs no extra case.
  *
  * The preference is per DOCUMENT, not per preview, and every mounted preview applies it; so a
- * preview with no toggle of its own (or one mounted later) still follows the page.
+ * preview with no toggle of its own (or one mounted later) still follows the page. XL is the
+ * exception: only a card that offers the option applies it. Everyone else stays on free, and the
+ * shared pref is left alone so a later Navbar or Layout Grid can still pick it up.
  */
 function connectScreenTabs(root: HTMLElement): Cleanup {
   const tabs = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.screenTabs));
   if (!stagesOf(root).length) return () => {};
 
+  const offersXl = Boolean(
+    tabs?.querySelector(`${selector(componentPreviewAttrs.screenOption)}[data-value="xl"]`),
+  );
+
+  const resolveLocal = (screen: ComponentPreviewScreen): ComponentPreviewScreen => {
+    if (
+      screen === "xl" &&
+      (!offersXl || document.documentElement.hasAttribute("data-sk-fullscreen-preview"))
+    ) {
+      return "free";
+    }
+    return screen;
+  };
+
+  const syncXlZoom = () => {
+    const target =
+      Number.parseFloat(getComputedStyle(root).getPropertyValue("--sk-component-preview-screen-xl")) ||
+      1440;
+    const zoom = Math.min(1, root.clientWidth / target);
+    root.style.setProperty("--sk-component-preview-xl-zoom", String(zoom));
+  };
+
   const applyScreen = (screen: ComponentPreviewScreen) => {
+    const next = resolveLocal(screen);
     // Re-queried per call: the React stage is an island, so it can arrive after this mount ran.
     for (const stage of stagesOf(root)) {
-      if (screen === "free") {
+      if (next === "free") {
         stage.removeAttribute(componentPreviewAttrs.screen);
         continue;
       }
-      stage.setAttribute(componentPreviewAttrs.screen, screen);
+      stage.setAttribute(componentPreviewAttrs.screen, next);
     }
+    if (next === "xl") syncXlZoom();
+    else root.style.removeProperty("--sk-component-preview-xl-zoom");
   };
 
   const onValueChange = (event: Event) => {
@@ -182,22 +210,31 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
     const value = (event as ValueChangeEvent).detail?.value;
     if (!isScreen(value)) return;
     applyScreen(value);
-    selectSegmentedOption(tabs, componentPreviewAttrs.screenOption, value);
+    selectSegmentedOption(tabs, componentPreviewAttrs.screenOption, resolveLocal(value));
   };
 
   tabs?.addEventListener("sk-value-change", onValueChange);
   document.addEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
 
   const fromTabs = tabs?.getAttribute("data-value");
-  const initial = readDocumentScreen() ?? sharedScreen ?? (isScreen(fromTabs) ? fromTabs : "free");
+  const rawInitial = readDocumentScreen() ?? sharedScreen ?? (isScreen(fromTabs) ? fromTabs : "free");
+  const initial =
+    rawInitial === "xl" && document.documentElement.hasAttribute("data-sk-fullscreen-preview")
+      ? "free"
+      : rawInitial;
   sharedScreen = initial;
   writeDocumentScreen(initial);
   applyScreen(initial);
   // Segmented reads this SAME attribute as ITS OWN initial value once it mounts; a plain write is
   // enough here, no click needed, because nothing has rendered a selection to correct yet.
-  tabs?.setAttribute("data-value", initial);
+  tabs?.setAttribute("data-value", resolveLocal(initial));
+
+  const resizeObserver =
+    typeof ResizeObserver !== "undefined" ? new ResizeObserver(syncXlZoom) : null;
+  resizeObserver?.observe(root);
 
   return () => {
+    resizeObserver?.disconnect();
     tabs?.removeEventListener("sk-value-change", onValueChange);
     document.removeEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
   };
@@ -236,6 +273,21 @@ function connectStageResizer(root: HTMLElement): Cleanup {
   const maxHeight = () =>
     Math.max(stageMinHeight, Math.round((window.innerHeight || 0) * 0.9) || stageMinHeight);
 
+  /** XL applies CSS `zoom`; getBoundingClientRect is visual, `style.height` is layout. */
+  const stageZoom = (stage: HTMLElement): number => {
+    const fromZoom = Number.parseFloat(getComputedStyle(stage).zoom);
+    if (Number.isFinite(fromZoom) && fromZoom > 0) return fromZoom;
+    const fromVar = Number.parseFloat(
+      getComputedStyle(root).getPropertyValue("--sk-component-preview-xl-zoom"),
+    );
+    return Number.isFinite(fromVar) && fromVar > 0 ? fromVar : 1;
+  };
+
+  const layoutHeightOf = (stage: HTMLElement | null): number => {
+    if (!stage) return stageMinHeight;
+    return stage.getBoundingClientRect().height / stageZoom(stage);
+  };
+
   const setHeight = (height: number) => {
     const next = Math.round(clamp(height, stageMinHeight, maxHeight()));
     for (const stage of stagesOf(root)) {
@@ -258,13 +310,13 @@ function connectStageResizer(root: HTMLElement): Cleanup {
     }
   };
 
-  const nudge = (delta: number) =>
-    setHeight((visibleStage()?.getBoundingClientRect().height ?? stageMinHeight) + delta);
+  const nudge = (delta: number) => setHeight(layoutHeightOf(visibleStage()) + delta);
 
 
   let dragPointer: number | null = null;
   let startY = 0;
   let startHeight = 0;
+  let startZoom = 1;
 
   const endDrag = () => {
     if (dragPointer === null) return;
@@ -282,7 +334,9 @@ function connectStageResizer(root: HTMLElement): Cleanup {
     if (dragPointer !== null || (event.button !== 0 && event.pointerType === "mouse")) return;
     dragPointer = event.pointerId;
     startY = event.clientY;
-    startHeight = visibleStage()?.getBoundingClientRect().height ?? stageMinHeight;
+    const stage = visibleStage();
+    startHeight = layoutHeightOf(stage);
+    startZoom = stage ? stageZoom(stage) : 1;
     try {
       resizer.setPointerCapture(event.pointerId);
     } catch {
@@ -295,7 +349,7 @@ function connectStageResizer(root: HTMLElement): Cleanup {
 
   const onPointerMove = (event: PointerEvent) => {
     if (event.pointerId !== dragPointer) return;
-    setHeight(startHeight + (event.clientY - startY));
+    setHeight(startHeight + (event.clientY - startY) / startZoom);
   };
 
   const onPointerUp = (event: PointerEvent) => {
@@ -342,15 +396,12 @@ function connectStageResizer(root: HTMLElement): Cleanup {
   };
 }
 
-/** The route that renders this preview alone: a bare page, no site nav/sidebar/footer. */
-const fullscreenPreviewPath = "/preview-fullscreen/";
-
 /**
- * Opens this preview alone, at its own SHORT, readable URL: the docs page's path plus this card's
- * own stable id (`ComponentPreview.astro`'s `slugify(label)`), nothing else. `/preview-fullscreen`
+ * Opens this preview alone, at its own SHORT, readable URL: `/f/{docs page}/{n}`, where `n` is this
+ * card's 1-based index among `[data-sk-component-preview]` on the current page. `/f/…`
  * re-fetches that same page (it is static, already built — see ADR on `output: "static"`) and pulls
- * the matching element back out of the FRESH markup itself, rather than this module serializing the
- * card's current DOM into the link: a page path and an id stay short regardless of how large the
+ * the Nth card back out of the FRESH markup itself, rather than this module serializing the
+ * card's current DOM into the link: a page path and a number stay short regardless of how large the
  * demo is, where shipping the rendered markup (plus its stylesheets and scripts) does not.
  *
  * A plain synchronous `window.open`, no pre-opened blank tab to navigate later: there is no async
@@ -358,10 +409,10 @@ const fullscreenPreviewPath = "/preview-fullscreen/";
  * already satisfies every browser's "was this a user gesture" check for a new tab.
  */
 export function openComponentPreviewFullscreen(root: HTMLElement): void {
-  const url = new URL(fullscreenPreviewPath, location.origin);
-  url.searchParams.set("p", location.pathname);
-  url.searchParams.set("id", root.id);
-  window.open(url.toString(), "_blank");
+  const n = [...document.querySelectorAll("[data-sk-component-preview]")].indexOf(root) + 1;
+  if (n < 1) return;
+  const page = location.pathname.replace(/\/+$/, "");
+  window.open(new URL(`/f${page}/${n}`, location.origin).href, "_blank");
 }
 
 /** Switches the authored source panels without owning preview rendering or highlighted code. */

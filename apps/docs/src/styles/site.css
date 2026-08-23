@@ -279,8 +279,15 @@ html:has(dialog:modal) .docs-drawer__content {
  * still claim a slice of any leftover grid space even with nothing placed in it (measured: an empty
  * `max-content` track absorbed ~650px, since only `fr` tracks are excluded from that redistribution).
  * Zeroing the length itself, gated on the page actually having no toc, is what collapses the column
- * to genuinely 0px instead of an empty reserved slot. */
-.shell:has(.docs-document-pair > .sk-toc[data-empty]) {
+ * to genuinely 0px instead of an empty reserved slot.
+ *
+ * Excludes hero-tabs pages (`.docs-component-hero-tabs`, ComponentPageShell): there, `data-empty`
+ * is not a build-time fact about the PAGE, it is a runtime fact about whichever tab is active
+ * (`hero-tabs-toc-seed.ts` toggles it on every switch, since Uso/Referencia/Tests each index their
+ * own headings). Letting `:has()` react to that would collapse and restore the rail track on every
+ * tab click — a CLS the reader causes by clicking, not a page that genuinely has no TOC. Reserve
+ * the track for the whole session instead; an empty tab just shows an empty rail. */
+.shell:has(.docs-document-pair > .sk-toc[data-empty]):not(:has(.docs-component-hero-tabs)) {
   --docs-toc-inline-size: 0px;
 }
 
@@ -316,17 +323,17 @@ html:has(dialog:modal) .docs-drawer__content {
   grid-column: 2;
 }
 
-/* Grid-layout pages center the pair the same way the fixed-track pair above does, via
-   `justify-self: center` — `sk-layout-grid`'s own rail mechanism (`packages/core/css/patterns/layout.css`,
-   `[data-width="rail"]`) already gives this element FIXED tracks once a rail child is present (no
-   `1fr` to fight over), so a plain `justify-self: center` is enough; nothing here rewrites the
-   track list itself any more. Two bridge lines hand the pattern's own public hooks the site-specific
-   values it cannot know on its own: the Toc's width (zeroed when the page has no headings, same
+/* Grid-layout pages STRETCH the pair so `sk-layout-grid`'s own rail gutters
+   (`minmax(--sk-layout-gutter, 1fr)` on both sides of the rails, layout.css) can absorb leftover
+   width and keep start-rail + content + end-rail centered as a unit, with the same air to either
+   edge of this column. `justify-self: center` would shrink-wrap a track list that still contains
+   `1fr` and fight that centering. Two bridge lines hand the pattern the site-specific values it
+   cannot know on its own: the Toc's width (zeroed when the page has no headings, same
    `--docs-toc-inline-size` the empty-toc collapse below already drives) and how many rows `<main>`'s
    own content occupies (`--docs-main-row-count`, computed at build in Base.astro from the same scan
    that indexes the page's headings — the pattern has no way to know this by itself). */
 .docs-document-pair[data-document-layout="grid"] {
-  justify-self: center;
+  justify-self: stretch;
   padding-block-start: var(--space-inset-lg);
   overflow-x: clip;
   --sk-layout-rail-inline-size: var(--docs-toc-inline-size);
@@ -637,38 +644,57 @@ h2.docs-nav-section__title {
  * Browse by job, not alphabet. The rail and this catalog read the same navigation groups; the page
  * adds the explanation and square TileLink treatment that make those groups useful for discovery.
  */
-.docs-catalog-groups {
-  display: grid;
-  gap: var(--space-stack-xl);
-}
-
 .docs-catalog-section {
+  /*
+   * Collapses against whatever precedes it — the blurb's own bottom margin when there is one, the
+   * heading's smaller one when there is not — so the gap above the cards reads the same
+   * `--space-stack-md` either way without this rule needing to know which case it is.
+   */
+  margin-block-start: var(--space-stack-md);
   min-inline-size: 0;
 }
 
-.docs-catalog-section + .docs-catalog-section {
+/*
+ * The heading itself carries the spacing and the divider now: it sits bare at the top level of
+ * `<main>` (see `IndexPage.astro`, `indexDocument()`'s TOC scan only counts a heading with no
+ * wrapping element around it), so there is no `.docs-catalog-groups`/`.docs-catalog-section__header`
+ * wrapper left to hang a `gap` or an adjacent-sibling border on. `.docs-catalog-section` still
+ * wraps each group's `<ul>` alone, one heading downstream of it in the DOM, which is what the
+ * second rule below keys off of instead of sibling sections.
+ */
+h2.docs-catalog-section__title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-inline-md);
+  margin: var(--space-stack-xl) 0 var(--space-stack-xs);
+  font-size: var(--font-size-heading-md);
+  line-height: var(--font-line-height-heading);
+}
+
+/*
+ * BOTH HALVES OF THE DIVIDER'S AIR BELONG TO THIS RULE, because the rule sits on the heading and the
+ * line is the heading's own top border: `margin` is the space ABOVE that line, `padding` the space
+ * below it. It used to declare only the padding, which left the line flush against the last row of
+ * cards — measured: 0px above, 40px below. That reads as a lid closing on the group that just ended
+ * rather than as a break between two, and it puts the incoming title nearer to the cards it does NOT
+ * describe than to the ones it does. Matching the two puts `--space-stack-xl` on each side. The
+ * extra room comes from the side that had none, not from a bigger number: `xl` is already the top of
+ * the stack scale, so there is no step above it to reach for.
+ */
+.docs-catalog-section + h2.docs-catalog-section__title {
+  margin-block-start: var(--space-stack-xl);
   padding-block-start: var(--space-stack-xl);
   border-block-start: 1px solid var(--color-border-subtle);
 }
 
-.docs-catalog-section__header {
-  display: flex;
-  gap: var(--space-inline-md);
-  align-items: end;
-  justify-content: space-between;
-  margin-block-end: var(--space-stack-md);
-}
-
-.docs-catalog-section__title,
-h2.docs-catalog-section__title {
-  margin: 0;
-  font-size: var(--font-size-heading-md);
-  line-height: var(--font-line-height-heading);
+.docs-catalog-section__title-text {
+  min-inline-size: 0;
   text-wrap: balance;
 }
 
 .docs-catalog-section__blurb {
-  margin: var(--space-stack-xs) 0 0;
+  margin: 0 0 var(--space-stack-md);
   max-inline-size: 52ch;
   color: var(--color-text-secondary);
   font-size: var(--font-size-body-sm);
@@ -685,9 +711,9 @@ h2.docs-catalog-section__title {
 
 .docs-catalog {
   display: grid;
-  /* Wide enough that the longest real labels ("SegmentedControl", "CommandPalette") stay one line:
-     narrower and `.sk-tile`'s own `overflow-wrap: anywhere` (a real overflow guard, not a bug) starts
-     breaking them mid-word. */
+  /* Wide enough that the longest real labels ("SegmentedControl", "CommandPalette") stay one line;
+     narrower and they wrap. `text-wrap: balance` on the title below is what keeps a label that DOES
+     wrap from breaking one word onto a lonely second line. */
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
   gap: var(--space-stack-md);
   margin: 0;
@@ -700,56 +726,121 @@ h2.docs-catalog-section__title {
 }
 
 /*
- * TileLink owns the interaction and anatomy. The catalog gives every card the SAME square
- * footprint (`aspect-ratio: 1` off the grid's own equal-width columns) rather than sizing each to
- * its own content: a grid of visibly different-sized cards reads as a ranking, and nothing here
- * ranks one component over another. A long description clips under the tile's own `overflow: hidden`
- * instead of stretching its card taller than its neighbours.
+ * THE CARD IS NOT A TILE ANY MORE. It used to be `.sk-tile--interactive`, which owned the border,
+ * the fill and the hover; a catalog entry is now a picture with its name under it, so the box is
+ * gone and the image is the only thing left with edges. What that costs is precisely the hover: a
+ * bordered tile could answer a pointer by darkening its own border, and a card with no border has
+ * no border to darken.
  *
- * The badge sits in ITS OWN row at the top, right-aligned, not beside the title in a second
- * column. A column was tried first and cost the title its width: at this card size a two-column
- * split left barely enough room for the label, so "SegmentedControl" and "CommandPalette" broke
- * mid-word (`.sk-tile`'s own `overflow-wrap: anywhere`, a real overflow guard reacting to a track
- * that was actually too narrow). A row costs nothing (the badge is short) and the title keeps the
- * card's full width below it. `order: -1` puts the badge first visually despite the DOM (title,
- * then status) so a screen reader still meets the component's name before its maturity.
+ * TWO HALVES, because the card has two and neither effect can reach the other's:
+ *
+ *  1. THE PICTURE ZOOMS INSIDE ITS OWN FRAME. `overflow: hidden` below clips the `<img>`, so
+ *     `scale` grows the picture WITHOUT moving the card's own box by a pixel. That is the whole
+ *     reason it is the image that moves and not the card: in a grid of sixty equal cards, anything
+ *     that changes one card's footprint (a scale on the card, a shadow, a border that appears)
+ *     pushes or overlaps its neighbours, and sixty of them reads as the page twitching under the
+ *     pointer. A clipped zoom is the one "grow" that costs the layout nothing.
+ *  2. THE CAPTION GETS THE STATE LAYER — `sk-interactive` on the card, the system's own hover
+ *     mechanism (`patterns/state-layer.css`), NOT a background-colour transition hand-rolled here,
+ *     which is the exact thing that file's own header exists to say no component should re-invent.
+ *     The layer spans the whole card, but its `::before` sits below in-flow content (`--z-below`,
+ *     under the pattern's own `isolation: isolate`), so the `<img>` occludes the top two thirds and
+ *     what actually paints is a tint in exactly the strip the zoom cannot reach. One class, and the
+ *     focus ring, the forced-colors keyline and the tint's own reduced-motion guard arrive with it
+ *     rather than being written again here.
+ *
+ * TWO TEMPOS, the same split `button.css` draws between its own colour change and its press. The
+ * tint is FEEDBACK ("the pointer is here"), 120ms, owned by the pattern. The zoom is a reveal, and
+ * at that same 120ms it reads as a twitch instead of as a picture leaning in — `emphasize` (200ms,
+ * a front-loaded settle) is the token pair the scale already names for that.
  */
-.docs-catalog__link {
-  grid-template-rows: auto minmax(0, 1fr);
-  aspect-ratio: 1;
-  gap: var(--space-stack-sm);
-  transition-property: border-color, box-shadow;
-  transition-duration: var(--motion-feedback-duration);
-  transition-timing-function: var(--motion-feedback-easing);
+.docs-catalog__card {
+  /*
+   * Local, deliberately not a token: how far a docs page's own artwork leans in is a presentation
+   * choice for THIS page, not a system-wide motion decision. `1.04` is the smallest step that is
+   * still legible at this card size (~192px wide: ~4px of travel at each edge) — below it the
+   * picture only shimmers, above it the crop visibly loses content on every hover. If a second
+   * surface ever wants the same gesture, that is when it earns a real token.
+   */
+  --docs-catalog-zoom: 1.04;
+
+  display: flex;
+  flex-direction: column;
+  /* The picture and its caption are ONE object, not a stack of two: the gap belongs inside
+     `__content`'s own padding, so the caption plate the state layer tints starts flush against the
+     image's bottom edge instead of floating a few pixels under it. */
+  gap: 0;
+  border-radius: var(--radius-control);
+  /* Load-bearing twice over: it rounds the image's own corners to the card's radius (the `<img>`
+     has no radius of its own), and it is what clips the hover zoom to the frame. */
+  overflow: hidden;
+  color: inherit;
+  text-decoration: none;
 }
 
-.docs-catalog__link .sk-tile__content {
-  align-content: start;
+.docs-catalog__image {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  aspect-ratio: 5 / 3;
+  object-fit: cover;
+  transition: scale var(--motion-emphasize-duration) var(--motion-emphasize-easing);
 }
 
-.docs-catalog__link .sk-tile__title {
+/*
+ * EVEN INSET ON ALL FOUR SIDES. The heavier bottom step this used to carry was sized for a caption
+ * floating free under a picture: the page's own background ran straight into it, so there was no
+ * edge for the asymmetry to be measured against. The state layer now paints a real plate around this
+ * box on hover, and against that edge a bottom inset twice the top's reads as the text sitting high
+ * in its own container.
+ *
+ * No `gap`: it used to ask for `--space-stack-2xs`, which the scale does not define (`xs` is the
+ * smallest stack step). An undefined custom property is invalid at computed-value time, so the
+ * declaration was already resolving to the initial `normal` — 0 for a flex box — and the separation
+ * between the title and its description has always come from their own line boxes. Removed rather
+ * than left as a landmine: the day someone adds that token, this card would silently grow.
+ */
+.docs-catalog__content {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-inset-sm);
+}
+
+.docs-catalog__title {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-heading);
   text-wrap: balance;
 }
 
-.docs-catalog__link .sk-tile__description {
+.docs-catalog__description {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-body);
   text-wrap: pretty;
 }
 
-.docs-catalog__link > .sk-badge {
-  order: -1;
-  justify-self: end;
-}
-
+/* `any-hover`, never a bare `:hover`: WebKit leaves hover STUCK on the last-tapped element after a
+   touch, and a card frozen mid-zoom with no pointer near it reads as "this one is still loading" —
+   the same guard `patterns/state-layer.css` puts on its own hover rung, for the same reason. */
 @media (any-hover: hover) {
-  .docs-catalog__link:hover {
-    --sk-tile-border-color: var(--color-border-strong);
+  .docs-catalog__card:hover .docs-catalog__image {
+    scale: var(--docs-catalog-zoom);
+  }
 
-    box-shadow: var(--elevation-raised);
+  /* Kept from before the picture existed. Colour and motion are both cues a reader may not
+     perceive — a tint that falls under someone's contrast threshold, a zoom removed by the reduced
+     motion query right below — and the underline is the one that survives either of those being
+     missed, on the element that is actually the link's own name. */
+  .docs-catalog__card:hover .docs-catalog__title {
+    text-decoration: underline;
   }
 }
 
 @media (max-width: 36rem) {
-  .docs-catalog-section__header {
+  h2.docs-catalog-section__title {
     align-items: start;
   }
 
@@ -758,27 +849,36 @@ h2.docs-catalog-section__title {
     gap: var(--space-stack-sm);
   }
 
-  .docs-catalog__link {
-    --sk-tile-padding: var(--space-inset-sm);
-  }
-
-  .docs-catalog__link .sk-tile__description {
-    font-size: var(--font-size-caption);
-    line-height: var(--font-line-height-caption);
+  /* One step down, still even on all four sides for the same reason the desktop inset is. */
+  .docs-catalog__content {
+    padding: var(--space-inset-xs);
   }
 }
 
+/*
+ * The zoom is REMOVED here, not merely un-animated. "Reduce" is a request for less movement, and a
+ * picture that JUMPS to 104% the instant a pointer touches it is more motion at once, not less —
+ * killing only the transition would be the worse of the two outcomes. The state layer's tint (its
+ * own reduced-motion rule drops that fade) and the title's underline both still answer the pointer,
+ * so the card is not left with no hover at all.
+ *
+ * Declared after the `any-hover` block above and at equal specificity (0,3,0), which is what makes
+ * it win: same tie-break by source order the state layer's own priority ladder runs on.
+ */
 @media (prefers-reduced-motion: reduce) {
-  .docs-catalog__link {
-    transition-duration: 1ms;
+  .docs-catalog__image {
+    transition: none;
+  }
+
+  .docs-catalog__card:hover .docs-catalog__image {
+    scale: 1;
   }
 }
 
 /* ── "En esta página", the index of the document ─────────────────────────── */
 /* The component (`@skryensya/core/components/toc.css`) owns the anatomy; this is only what makes
- * THIS shell's instance a rail rather than the disclosure it ships as. Built client-side, because
- * .astro pages have no build-time heading list: the rail ALWAYS occupies its column (grid track +
- * min-inline-size) before the list fills, so revealing links never shifts the prose. */
+ * THIS shell's instance a rail rather than the disclosure it ships as. The list is compiled with
+ * the page; `data-ready` is on the markup so first paint is the filled rail, not a reserved hole. */
 .shell .sk-toc {
   /*
    * NOT the sidebar's contract, even though it looks like it should be: the sidebar sits beside the
@@ -800,16 +900,56 @@ h2.docs-catalog-section__title {
   --sk-toc-inline-size: var(--docs-toc-inline-size);
 }
 
-/* Before the inline builder runs, keep the column and a stable list band so links appearing
-   cannot grow the sticky rail into the prose (vertical) or shift tracks (horizontal). Specific to
-   this shell's runtime-discovered headings: a tree-authored Toc already knows its items. */
-.sk-toc:not([data-ready]) .sk-toc__list {
+/*
+ * Before the inline builder runs, keep the column and a stable list band so links appearing cannot
+ * grow the sticky rail into the prose (vertical) or shift tracks (horizontal).
+ *
+ * `.shell` IS LOAD-BEARING, and this rule spent its whole life without it while its own comment
+ * already said why it needed one: "specific to this shell's runtime-discovered headings, a
+ * tree-authored Toc already knows its items". A component preview clones every page stylesheet into
+ * its frame, and a previewed Toc is tree-authored — it never carries `data-ready`, which is a docs
+ * shell flag — so the unscoped selector matched it and hid its list behind `visibility: hidden`,
+ * reserving 128px of empty band where the index should be. It went unnoticed while the component
+ * shipped a closed `<details>`: the list was invisible inside something already collapsed. The
+ * moment the index became always-open (see `core/toc.ts`), every Toc preview on the page rendered
+ * as a caption over a blank space.
+ */
+.shell .sk-toc:not([data-ready]) .sk-toc__list {
   visibility: hidden;
   min-block-size: calc(var(--size-control-sm) * 4);
 }
 
 .sk-toc[data-empty] {
   visibility: hidden;
+}
+
+/*
+ * Hero-tabs pages keep the rail track reserved (see the empty-toc collapse above). The list still
+ * swaps on every tab, so hide/show is a fade instead of `visibility` flipping the whole index off.
+ * `data-toc-swap` is the out-frame of that swap (`hero-tabs-toc.ts`): opacity hits zero, the list
+ * is replaced, then the flag drops and the new index eases in. First paint has neither flag, so
+ * the seeded list does not fade on load.
+ */
+.shell:has(.docs-component-hero-tabs) .sk-toc {
+  transition:
+    opacity var(--motion-enter-duration) var(--motion-enter-easing),
+    visibility 0s;
+}
+
+.shell:has(.docs-component-hero-tabs) .sk-toc[data-empty],
+.shell:has(.docs-component-hero-tabs) .sk-toc[data-toc-swap] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--motion-exit-duration) var(--motion-exit-easing),
+    visibility 0s linear var(--motion-exit-duration);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell:has(.docs-component-hero-tabs) .sk-toc {
+    transition: none;
+  }
 }
 
 /* An anchored heading must clear the sticky header instead of hiding under it, measured height so it
@@ -957,7 +1097,24 @@ main {
  * specificity, including the package's `.sk-heading[data-flush]` margin reset. That's fine for the
  * docs' own <h2>/<h3> section titles, but a flush Heading (in a demo, a dialog header) must be able
  * to sit flush, so `:not([data-flush])` gets these element rules out of its way and lets the layered
- * flush reset win. */
+ * flush reset win.
+ *
+ * A COMPONENT'S OWN HEADING IS NOT PROSE, and naming each one here is the same fence `main a:not(…)`
+ * further down already draws for component anchors, for the same reason. These are bare element
+ * selectors: they reach every `<h2>`/`<h3>` on the page AND inside every preview frame, which clones
+ * these stylesheets — so a part that happens to be a real heading was being repainted as a section
+ * title of the document. Measured on Toc's own caption: 12px/600 as the component defines it, 24px/700
+ * with 64px of `--space-section` above it once this rule won, which is what made a previewed Toc look
+ * nothing like the one this site runs in its own rail.
+ *
+ * `data-flush` was the existing escape, and it is the wrong tool for this: it is a DOCS convention, so
+ * relying on it means every consumer of a published component has to know a docs-site attribute to get
+ * that component's own type back — exactly the coupling `data-sk-toc-rail` was just deleted for. The
+ * docs shell's own `Toc.astro` still writes `data-flush`, which is why the rail looked right while
+ * every other rendering of the same component did not.
+ *
+ * `.sk-heading` is deliberately NOT excluded: that is the Heading component, whose whole job is to BE
+ * a prose heading, and the comment above is about keeping its flush variant working. */
 h1:not([data-flush]) {
   margin: 0 0 var(--space-stack-sm);
   font-size: var(--font-size-heading-lg);
@@ -965,14 +1122,20 @@ h1:not([data-flush]) {
   font-weight: var(--font-weight-heading);
 }
 
-h2:not([data-flush]) {
+h2:not(
+    [data-flush],
+    .sk-toc__title,
+    .sk-dialog__title,
+    .sk-popover__title,
+    .sk-empty-state__title
+  ) {
   margin: var(--space-section) 0 var(--space-stack-sm);
   font-size: var(--font-size-heading-md);
   line-height: var(--font-line-height-heading);
   font-weight: var(--font-weight-heading);
 }
 
-h3:not([data-flush]) {
+h3:not([data-flush], .sk-nav-list__group-label) {
   margin: var(--space-stack-lg) 0 var(--space-stack-xs);
   font-size: var(--font-size-heading-sm);
   line-height: var(--font-line-height-heading);
@@ -1007,9 +1170,9 @@ p:not(.sk-text) {
    exactly this: display-sm, "marketing / hero chrome" per semantic/_type.scss, and an eyebrow
    that repeats the sidebar section this page lives under, the same orientation a breadcrumb gives.
 
-   Tinted with `--color-bg-accent-subtle`, because a tinted band behind a page title is a brand
-   identity cue. The background still resolves through the semantic accent bundle and changes when
-   the site palette changes; no separate reach dimension dials it back.
+   Tinted with `--docs-hero-bg`, because a tinted band behind a page title is a brand identity cue.
+   The background resolves through the semantic accent bundle (`Base.astro`'s `accentBundle()`) and
+   changes when the site palette changes; no separate reach dimension dials it back.
    Full-bleed to `<main>`'s own edges (negative margin
    cancelling its `--space-inset-lg` padding, `sk-wrapper`'s default) and re-padded by that exact
    amount, so the title lines up with the prose directly below it instead of sitting indented
@@ -1033,6 +1196,18 @@ p:not(.sk-text) {
  * `animation-range` falls back to `normal`, which hands the animation the entire page to scrub
  * over. Measured that way first — the title took 900px of scroll to shed 7px.
  */
+/*
+ * DEFAULT ONLY, at `:root`. `Base.astro`'s live palette picker sets this same custom property as an
+ * inline style on `<html>` for every non-default preset (`accentBundle()`'s `--docs-hero-bg` key);
+ * it used to be redeclared here on `.docs-component-head`/`.docs-component-hero` off a hardcoded
+ * `--palette-blue-*`, which shadowed that override on every element that matters and left the band
+ * blue regardless of which accent was active. One declaration, inherited by both boxes below, is
+ * also simpler than the "same value on two boxes" duplication the property used to need.
+ */
+:root {
+  --docs-hero-bg: light-dark(var(--palette-blue-200), var(--palette-blue-950));
+}
+
 .docs-component-head,
 .docs-component-hero {
   --docs-hero-pad-start-max: calc(var(--space-section) * 1.5);
@@ -1051,19 +1226,6 @@ p:not(.sk-text) {
   --docs-hero-title-max: var(--font-size-display-lg);
   --docs-hero-title-min: var(--font-size-heading-h2);
   --docs-hero-eyebrow-line: calc(var(--font-size-caption) * var(--font-line-height-caption));
-  /*
-   * NOT the shared `--color-bg-accent-subtle` (a step used everywhere from badges to the calendar's
-   * selected day): its light leg is `blue-50`, near-white, and reads as barely-there on a band this
-   * large. Two palette rungs up, `blue-200`, actually registers as a tinted panel next to the page's
-   * near-white canvas instead of blending into it. Dark stays on the token's own leg, unchanged.
-   *
-   * DECLARED HERE, on both boxes, for the same reason the paddings above are: the band is drawn by
-   * TWO elements once the collapsing shell is active (`.docs-component-hero__spacer` above,
-   * `.docs-component-hero` below), and painting each from its own copy of `--color-bg-accent-subtle`
-   * once split them into two visibly different blues the moment only one copy got retuned — the
-   * accent read as a small bar, not the band. One variable, read by both, keeps that impossible.
-   */
-  --docs-hero-bg: light-dark(var(--palette-blue-200), var(--palette-blue-950));
 }
 
 .docs-component-hero {
@@ -1427,8 +1589,15 @@ p:not(.sk-text) {
  * fence that actually holds is "is this anchor a component part", so every component anchor names
  * itself here. Anything that ships as a part belongs in this list; what is left is what this rule was
  * always about, a bare `<a>` someone typed in a sentence.
+ *
+ * `.docs-catalog__card` is in the list without shipping as a part, and it has to be for a reason
+ * worth spelling out: it is a whole card — a picture, a title, a description — not a phrase in a
+ * sentence, and it carries `sk-interactive`, whose state layer tints with `currentColor`. Left to
+ * match, this rule would repaint that `currentColor` brand-blue and the card's hover wash would come
+ * out accent-tinted rather than the sober neutral the catalog wants. The `:not()` list is the fence
+ * for "anchors that are their own object"; the card is one, whether or not it ships from `core`.
  */
-main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile) {
+main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .docs-catalog__card) {
   color: var(--color-text-link);
 }
 
@@ -1441,43 +1610,6 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile) {
   border-radius: var(--scale-radius-sm);
 }
 
-
-/* ── example: a bare demo stage for the custom interactive demos (state-layer list, icon galleries) that
-   are not a component + source pair. Everything that WAS a preview beside its code is a <ComponentPreview> now,
-   so the old `[data-side-by-side]` two-column rule is gone with it. */
-.example {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-inline-md);
-}
-
-
-.example__stage {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-inline-md);
-  align-items: center;
-  padding: var(--space-inset-lg);
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-surface);
-}
-
-.example__stage[data-layout-demo] {
-  align-items: stretch;
-}
-
-.example__stage[data-layout-demo] > :where(.sk-stack.sk-grid.sk-tile-grid) {
-  inline-size: 100%;
-}
-
-/* A stage the demo fills edge to edge. Some components ARE a layout, a sidebar floated in the
- * middle of a padded box reads as a column with a rule next to it, which is not what it is. */
-.example__stage--flush {
-  display: block;
-  padding: 0;
-  overflow: hidden;
-}
 
 /* The site playing the part of a consuming app: a sidebar is only legible next to the thing it
  * sits beside. This is layout, so it belongs here and not in the package. */

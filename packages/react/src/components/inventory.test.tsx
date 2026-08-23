@@ -431,7 +431,7 @@ describe("expanded component inventory", () => {
     const trigger = ui.getByRole("button", { name: "Más opciones" });
     expect(trigger.hasAttribute("data-weld-start")).toBe(true);
     expect(trigger.hasAttribute("data-icon-only")).toBe(true);
-    expect(trigger.getAttribute("data-variant")).toBe("primary");
+    expect(trigger.getAttribute("data-variant")).toBe("accent");
   });
 
   it("forwards multiple native files through FileUpload", async () => {

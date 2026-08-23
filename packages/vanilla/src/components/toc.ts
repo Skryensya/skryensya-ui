@@ -5,30 +5,14 @@ const rootSelector = `[${tocAttrs.root}]`;
 
 type Cleanup = () => void;
 
-/** Keeps a consumer-declared rail open and inert where its layout has room. */
-function connectDisclosure(root: HTMLElement): Cleanup {
-  if (!root.hasAttribute("data-sk-toc-rail")) return () => {};
-
-  const disclosure = root.querySelector<HTMLDetailsElement>(
-    `[${tocAttrs.disclosure}]`,
-  );
-  if (!disclosure) return () => {};
-
-  const wide =
-    getComputedStyle(document.documentElement)
-      .getPropertyValue("--breakpoint-wide")
-      .trim() || "72rem";
-  const rail = window.matchMedia(`(min-width: ${wide})`);
-  const sync = () => {
-    disclosure.open = rail.matches;
-    const summary = disclosure.querySelector<HTMLElement>("summary");
-    if (summary) summary.tabIndex = rail.matches ? -1 : 0;
-  };
-
-  sync();
-  rail.addEventListener("change", sync);
-  return () => rail.removeEventListener("change", sync);
-}
+/*
+ * THE SCROLL-SPY IS ALL THAT IS LEFT HERE. This used to also own a `matchMedia` that pinned the
+ * `<details>` open and took its `<summary>` out of the tab order past `wide` — machinery that existed
+ * only because the component shipped two shapes and JavaScript had to pick one per breakpoint. The
+ * index is always open now (`toc.ts`), so there is no state to sync and nothing to decide: what is
+ * left is the one thing that is genuinely behaviour rather than appearance, moving `aria-current`
+ * as the reader scrolls, which no stylesheet can express.
+ */
 
 /** Marks the section the reader is in. A no-op below two links: nothing to "spy" on one destination. */
 function connectSpy(root: HTMLElement): Cleanup {
@@ -70,14 +54,9 @@ function connectSpy(root: HTMLElement): Cleanup {
   return () => observer.disconnect();
 }
 
-/** Binds one authored Toc: the disclosure/rail switch and the scroll-spy that marks `aria-current`. */
+/** Binds one authored Toc: the scroll-spy that marks `aria-current`. */
 export function connectToc(root: HTMLElement): Cleanup {
-  const disposeDisclosure = connectDisclosure(root);
-  const disposeSpy = connectSpy(root);
-  return () => {
-    disposeDisclosure();
-    disposeSpy();
-  };
+  return connectSpy(root);
 }
 
 export const mountToc = createConnectMount({

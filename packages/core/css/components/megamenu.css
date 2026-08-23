@@ -31,6 +31,8 @@
     color: var(--color-text-primary);
     font: inherit;
     cursor: pointer;
+    /* State layer with subtle primary text color, not accent */
+    --state-layer-color: var(--color-text-primary);
   }
 
   /*

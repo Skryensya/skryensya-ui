@@ -212,7 +212,7 @@ const hasTests = tests.length > 0;
       {
         hasTests && (
           <div class="sk-tabs__content sk-layout-grid" data-sk-tabs-content data-value="tests">
-            <TestCoverage groups={tests} />
+            <TestCoverage groups={tests} hasReference={hasContract} />
           </div>
         )
       }

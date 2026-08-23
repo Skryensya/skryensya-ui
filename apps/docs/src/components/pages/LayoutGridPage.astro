@@ -2,7 +2,7 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { layoutGridTree, layoutGridTocTree } from "../../demos/layout";
+import { layoutGridTree, layoutGridRailStartTree, layoutGridRailsBothTree, layoutGridTocTree } from "../../demos/layout";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/layout.yaml?raw";
 import coreSource from "@core/src/layout.ts?raw";
@@ -17,6 +17,8 @@ const configurationCss = `.sk-layout-grid {
   --sk-layout-narrow: var(--size-wrapper-sm);
   --sk-layout-content: var(--size-wrapper-md);
   --sk-layout-breakout: var(--size-wrapper-lg);
+  --sk-layout-rail-inline-size: 14rem;
+  --sk-layout-rail-gap: var(--space-inline-lg);
 }`;
 
 const previewCss = `.sk-layout-grid {
@@ -25,6 +27,32 @@ const previewCss = `.sk-layout-grid {
      actually reach the edge — but the block axis still wants SOME breathing room, or the first and
      last card touch the stage's top/bottom edge flush. Block-only, so the inline edges stay bare. */
   padding-block: var(--space-inset-lg);
+}
+
+/* The rail demos below, singled out by the one structural thing that tells them apart from the
+   levels demo above (a rail child): main and rail read as one region split in two, not two
+   unrelated cards, so they sit closer together than the four independent width levels do —
+   tighter than any named \`space-stack-*\` step goes, a hairline rather than a real gap. */
+.sk-layout-grid:has(> [data-width="rail"]),
+.sk-layout-grid:has(> [data-width="rail-start"]) {
+  row-gap: 2px;
+}
+
+/*
+ * The tab-panel stage never reaches 72rem (see the comment above the rail previews), so the
+ * rail demos stay on the FLUID template — and \`fit-content\` on a grid with \`1fr\` tracks does
+ * not shrink in Chromium. A measure cap is the same job Wrapper does for a page column.
+ *
+ * ONLY below \`wide\`: fullscreen opens this same CSS inside a viewport that DOES pass 72rem,
+ * and the cap would keep the rails stacked there too, which is the whole reason someone
+ * opens pantalla completa on these demos.
+ */
+@media (max-width: 71.99rem) {
+  .sk-layout-grid:has(> [data-width="rail"]),
+  .sk-layout-grid:has(> [data-width="rail-start"]) {
+    max-inline-size: 30rem;
+    margin-inline: auto;
+  }
 }
 
 .sk-box {
@@ -56,6 +84,16 @@ const previewCss = `.sk-layout-grid {
   padding-block: var(--space-inset-xl);
   min-block-size: 8rem;
   background: light-dark(var(--palette-orange-50), var(--palette-orange-950));
+}
+
+/* Same palette device, for the rail demo below: the supporting column gets its own hue so its
+   card boundary reads as clearly as the four content measures above do. */
+.sk-box[data-width="rail"] {
+  background: light-dark(var(--palette-rose-50), var(--palette-rose-950));
+}
+
+.sk-box[data-width="rail-start"] {
+  background: light-dark(var(--palette-lime-50), var(--palette-lime-950));
 }`;
 
 const sourceFiles = [
@@ -85,7 +123,7 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("layoutGridPage.lede")} />
-    <ComponentPreview tree={layoutGridTree(t)} css={previewCss} label="Layout Grid" flush />
+    <ComponentPreview tree={layoutGridTree(t)} css={previewCss} label="Layout Grid" flush zoomedDesktop />
 
     <h3>{t("layoutGridPage.levelsTitle")}</h3>
     <p set:html={t("layoutGridPage.levelsBody")} />
@@ -102,16 +140,16 @@ const sourceFiles = [
     <h3>{t("layoutGridPage.railTitle")}</h3>
     <p set:html={t("layoutGridPage.railBody")} />
     {/*
-      No \`width\` prop: every demo on every component page already has its own \`--sk-layout-breakout\`
-      reduced to ~67rem regardless (\`main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid\`,
-      site.css — density for CONTROLS AND CODE, not the whole lg canvas), permanently below the 72rem
-      the rail needs to show side-by-side — a ceiling no \`width\` value here can lift, since it caps the
-      TAB PANEL itself, not this preview. So this demo always renders the collapsed, disclosure-above-
-      content form, which is not a bug: it's the pattern's own honest behavior at this stage's width,
-      the same form the real page takes below 72rem. The WIDE form is already demonstrated for real —
-      unambiguously, not simulated — by the actual rail sitting beside this very page.
+      No \`width\` prop: the tab panel itself is capped below 72rem, so the rail's wide form cannot
+      appear at the stage's free width. \`zoomedDesktop\` is what pretends a 1440 px viewport inside
+      the column; fullscreen and \`/debug/layout-grid-rail\` are the same layout at a real window.
     */}
-    <ComponentPreview tree={layoutGridTocTree(t)} label="Layout Grid + Toc" flush />
+    <h4>{t("layoutGridPage.railEndTitle")}</h4>
+    <ComponentPreview tree={layoutGridTocTree(t)} css={previewCss} label="Layout Grid + Rail" flush zoomedDesktop />
+    <h4>{t("layoutGridPage.railStartTitle")}</h4>
+    <ComponentPreview tree={layoutGridRailStartTree(t)} css={previewCss} label="Layout Grid + Rail start" flush zoomedDesktop />
+    <h4>{t("layoutGridPage.railBothTitle")}</h4>
+    <ComponentPreview tree={layoutGridRailsBothTree(t)} css={previewCss} label="Layout Grid + both rails" flush zoomedDesktop />
 
     <h3>{t("layoutGridPage.htmlTitle")}</h3>
     <p set:html={t("layoutGridPage.htmlBody")} />

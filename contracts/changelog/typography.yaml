@@ -3,8 +3,39 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "6d117bba6de32e6a"
+surface: "9382748627fb301a"
 entries:
+  - date: 2026-08-23
+    kind: breaking
+    target: linkTone
+    es:
+      title: linkTone "primary" pasa a llamarse "accent"
+      body: >-
+        Mismo cambio que <code>button</code> (misma fecha, mismo motivo): <code>linkTone</code>
+        solo tenía un valor posible, <code>primary</code>, y ese nombre describía el color como
+        una posición de jerarquía ("el tono principal") cuando en realidad es un interruptor
+        binario — el link toma el color de la marca o no lo toma, sin escala entre medio. La
+        cadena de tokens detrás (<code>--color-text-link</code> → <code>--color-text-accent</code>)
+        ya decía "accent" dos niveles abajo; el nombre de la opción ahora dice lo mismo. Distinto
+        de <code>Text</code>'s <code>tone</code> (<code>primary</code>/<code>secondary</code>/
+        <code>tertiary</code>/<code>danger</code>), que no se toca: ahí "primary" es el primer
+        peldaño de una escala de énfasis, no una afirmación de intención. Un consumidor con
+        <code>data-tone="primary"</code> en un <code>&lt;a&gt;</code> autorado a mano deja de
+        pintar el color de marca; <code>linkTone="primary"</code> deja de tipar.
+    en:
+      title: linkTone "primary" is renamed to "accent"
+      body: >-
+        Same change as <code>button</code> (same date, same reason): <code>linkTone</code> only
+        ever had one possible value, <code>primary</code>, and that name described the color as a
+        rank in a hierarchy ("the main tone") when it is really a binary switch — the link either
+        takes the brand color or it does not, no scale in between. The token chain behind it
+        (<code>--color-text-link</code> → <code>--color-text-accent</code>) already said "accent"
+        two levels down; the option's name now says the same thing. Different from
+        <code>Text</code>'s <code>tone</code> (<code>primary</code>/<code>secondary</code>/
+        <code>tertiary</code>/<code>danger</code>), which is untouched: there "primary" is the
+        first rung of an emphasis scale, not a claim about intent. A consumer with hand-authored
+        <code>data-tone="primary"</code> on an <code>&lt;a&gt;</code> stops painting the brand
+        color; <code>linkTone="primary"</code> stops type-checking.
   - date: 2026-08-11
     kind: feature
     es:

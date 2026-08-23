@@ -64,7 +64,7 @@ export const dataTableRecipe: Recipe = {
             actions: {
               contract: "button",
               signature: "Button.action",
-              options: { variant: "primary" },
+              options: { variant: "accent" },
               children: "Cargar un gasto",
             },
           },

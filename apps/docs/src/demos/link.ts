@@ -19,8 +19,8 @@ export const linkTree = (t: Translate, href: string): UsageTree => ({
     {
       contract: "typography",
       signature: "Link",
-      options: { href, linkTone: "primary" },
-      children: t("demo.link.primary"),
+      options: { href, linkTone: "accent" },
+      children: t("demo.link.accent"),
     },
     t("demo.link.after"),
   ],

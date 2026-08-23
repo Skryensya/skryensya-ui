@@ -41,7 +41,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "primary" },
+      options: { variant: "accent" },
       children: "Guardar",
     },
   },
@@ -72,7 +72,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "button",
       signature: "Button.navigation",
-      options: { variant: "primary", href: "/docs" },
+      options: { variant: "accent", href: "/docs" },
       children: "Documentación",
     },
   },
@@ -950,7 +950,7 @@ const signatureTrees: readonly Canonical[] = [
         primary: {
           contract: "button",
           signature: "Button.action",
-          options: { variant: "primary", weldEnd: true },
+          options: { variant: "accent", weldEnd: true },
           slots: { children: "Guardar" },
         },
         menu: {
@@ -959,7 +959,7 @@ const signatureTrees: readonly Canonical[] = [
           options: {
             label: "Otras formas de guardar",
             triggerLabel: "Más",
-            triggerVariant: "primary",
+            triggerVariant: "accent",
             triggerIconOnly: true,
             triggerWeldStart: true,
           },
@@ -1062,17 +1062,17 @@ const signatureTrees: readonly Canonical[] = [
       contract: "component-preview",
       signature: "ComponentPreview.bare",
       slots: {
-        title: "Botón primario",
+        title: "Botón de acento",
         stage: {
           contract: "button",
           signature: "Button.action",
-          options: { variant: "primary" },
+          options: { variant: "accent" },
           children: "Guardar",
         },
         code: {
           contract: "code-preview",
           signature: "CodePreview",
-          slots: { children: "<button class=\"sk-button\" data-variant=\"primary\">Guardar</button>" },
+          slots: { children: "<button class=\"sk-button\" data-variant=\"accent\">Guardar</button>" },
         },
       },
     },

@@ -13,7 +13,7 @@ import type { Translate } from "../i18n";
 /**
  * The six variants. `neutral` is the default, so that one declares nothing.
  * `subtle` (quiet border) and `translucent` (blends on color) group as softened neutrals.
- * `primary` for actions, `danger` for destructive, `ghost` for text-only.
+ * `accent` for actions, `danger` for destructive, `ghost` for text-only.
  */
 export const buttonVariantsTree = (t: Translate): UsageTree => ({
   contract: "layout",
@@ -22,7 +22,7 @@ export const buttonVariantsTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "primary" },
+      options: { variant: "accent" },
       children: t("demo.button.save"),
     },
     { contract: "button", signature: "Button.action", children: t("demo.button.cancel") },
@@ -61,19 +61,19 @@ export const buttonSizesTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { size: "sm", variant: "primary" },
+      options: { size: "sm", variant: "accent" },
       children: t("demo.button.save"),
     },
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "primary" },
+      options: { variant: "accent" },
       children: t("demo.button.save"),
     },
     {
       contract: "button",
       signature: "Button.action",
-      options: { size: "lg", variant: "primary" },
+      options: { size: "lg", variant: "accent" },
       children: t("demo.button.save"),
     },
     {
@@ -110,7 +110,7 @@ export const buttonIconTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "primary" },
+      options: { variant: "accent" },
       children: [
         { contract: "icon", signature: "Icon", options: { name: "download" } },
         t("demo.button.download"),
@@ -119,7 +119,7 @@ export const buttonIconTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "primary" },
+      options: { variant: "accent" },
       children: [
         t("demo.button.continue"),
         { contract: "icon", signature: "Icon", options: { name: "arrow-right" } },
@@ -185,7 +185,7 @@ export const buttonIconOnlySmTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { size: "sm", iconOnly: true, variant: "primary" },
+      options: { size: "sm", iconOnly: true, variant: "accent" },
       attrs: { "aria-label": t("demo.button.add") },
       children: { contract: "icon", signature: "Icon", options: { name: "add" } },
     },
@@ -206,7 +206,7 @@ export const buttonAsLinkTree = (t: Translate, href: string): UsageTree => ({
     {
       contract: "button",
       signature: "Button.navigation",
-      options: { variant: "primary", href },
+      options: { variant: "accent", href },
       children: t("demo.button.goFirstComponent"),
     },
     {
@@ -252,7 +252,7 @@ export const firstComponentButtonsTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "primary" },
+      options: { variant: "accent" },
       children: t("demo.button.save"),
     },
     {

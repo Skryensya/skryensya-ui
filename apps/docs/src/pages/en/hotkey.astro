@@ -31,7 +31,11 @@ formatHotkey("mod+k", false);  // "Ctrl+K"
 // the badge next to the search engine above is filled so`;
 ---
 
-<Base title="Hotkey" description="The keyboard shortcut primitive: a framework-agnostic matcher, an imperative bindHotkey, and a React useHotkey.">
+<Base
+  title="Hotkey"
+  description="The keyboard shortcut primitive: a framework-agnostic matcher, an imperative bindHotkey, and a React useHotkey."
+  documentLayout="grid"
+>
   <h1>Hotkey</h1>
   <p class="lede">
     A keyboard shortcut is behavior without an equivalent on the platform, <code>accesskey</code> exists but the browser hides it behind its own chords and never gives a ⌘K type trigger. So the system sends it, split like all behavior: the pure matcher in <code>@skryensya/core</code>, the imperative binding in <code>@skryensya/vanilla</code>, the declarative hook in <code>@skryensya/react</code>.

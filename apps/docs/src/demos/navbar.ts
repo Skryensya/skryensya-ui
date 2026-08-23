@@ -69,7 +69,7 @@ export const navbarTree = (
         {
           contract: "button",
           signature: "Button.action",
-          options: { variant: "primary" },
+          options: { variant: "accent" },
           children: t("demo.navbar.newProject"),
         },
       ],

@@ -140,6 +140,22 @@
     overflow: hidden;
   }
 
+  /*
+   * Highlighted snippets arrive as `<pre>` (padding and the code face live there). A plain string
+   * in the viewport — a one-line command composed from a usage tree — has neither, and read as
+   * an empty labelled box with type crushed to the edges. Same measures as `pre`, only when
+   * there is no pre to own them.
+   */
+  .sk-code-preview__viewport:not(:has(pre, .shiki, .astro-code)) {
+    padding: var(--space-inset-md);
+    overflow-x: auto;
+    font-family: var(--font-family-code);
+    font-size: var(--sk-code-preview-font-size);
+    line-height: var(--font-line-height-body-relaxed);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
   .sk-code-preview__preview:first-child > .sk-code-preview__viewport {
     border-start-start-radius: var(--radius-surface);
     border-start-end-radius: var(--radius-surface);

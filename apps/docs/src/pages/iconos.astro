@@ -7,19 +7,23 @@ import { stableIconNames } from "@skryensya/core/icon";
 import { allSets, iconMarkup } from "../icons";
 
 /* Los roles que se muestran lado a lado. Un puñado alcanza para ver que el dibujo cambia y el nombre
- * no; los 32 están arriba. */
+ * no; el vocabulario entero está arriba. */
 const compared = ["search", "delete", "settings", "user", "warning", "external-link"] as const;
 
-const vocabHtml = `<div
-  style="display:grid; grid-template-columns:repeat(auto-fill, minmax(6rem, 1fr)); gap:var(--space-stack-md)"
->
+const vocabCss = `.sk-grid {
+  grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+}
+
+.sk-stack > code {
+  font-size: var(--font-size-caption);
+}`;
+
+const vocabHtml = `<div class="sk-grid" data-gap="md">
 ${stableIconNames
   .map(
-    (name) => `  <span
-    style="display:flex; flex-direction:column; align-items:center; gap:var(--space-stack-xs); min-inline-size:0"
-  >
+    (name) => `  <span class="sk-stack" data-gap="xs" data-align="center">
     <span data-sk-icon="${name}" data-sk-icon-size="lg"></span>
-    <code style="font-size: var(--font-size-caption)">${name}</code>
+    <code>${name}</code>
   </span>`,
   )
   .join("\n")}
@@ -51,7 +55,7 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
     <a href="/componentes/icon">Icon</a>.
   </p>
 
-  <ComponentPreview html={vocabHtml} label="Vocabulario estable" />
+  <ComponentPreview html={vocabHtml} css={vocabCss} label="Vocabulario estable" />
   <p>
     Cambia marca, modo o contraste arriba: los iconos siguen, y no declaran un solo token de color.
     Heredan <code>currentColor</code>.
@@ -99,13 +103,13 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
   </p>
   <div class="sk-table-scroll">
   <table class="sk-table">
-    <thead>
-      <tr><th>Paquete</th><th>Librería</th><th>Trazo</th><th>viewBox</th><th>Licencia</th></tr>
+    <thead class="sk-table__head">
+      <tr class="sk-table__row"><th class="sk-table__header">Paquete</th><th class="sk-table__header">Librería</th><th class="sk-table__header">Trazo</th><th class="sk-table__header">viewBox</th><th class="sk-table__header">Licencia</th></tr>
     </thead>
-    <tbody>
-      <tr><td><code>@skryensya/icons-lucide</code></td><td>Lucide</td><td>contorno, 2px</td><td><code>0 0 24 24</code></td><td>ISC</td></tr>
-      <tr><td><code>@skryensya/icons-phosphor</code></td><td>Phosphor, peso regular</td><td>relleno</td><td><code>0 0 256 256</code></td><td>MIT</td></tr>
-      <tr><td><code>@skryensya/icons-material</code></td><td>Material Symbols, outlined 400</td><td>relleno</td><td><code>0 -960 960 960</code></td><td>Apache-2.0</td></tr>
+    <tbody class="sk-table__body">
+      <tr class="sk-table__row"><td class="sk-table__cell"><code>@skryensya/icons-lucide</code></td><td class="sk-table__cell">Lucide</td><td class="sk-table__cell">contorno, 2px</td><td class="sk-table__cell"><code>0 0 24 24</code></td><td class="sk-table__cell">ISC</td></tr>
+      <tr class="sk-table__row"><td class="sk-table__cell"><code>@skryensya/icons-phosphor</code></td><td class="sk-table__cell">Phosphor, peso regular</td><td class="sk-table__cell">relleno</td><td class="sk-table__cell"><code>0 0 256 256</code></td><td class="sk-table__cell">MIT</td></tr>
+      <tr class="sk-table__row"><td class="sk-table__cell"><code>@skryensya/icons-material</code></td><td class="sk-table__cell">Material Symbols, outlined 400</td><td class="sk-table__cell">relleno</td><td class="sk-table__cell"><code>0 -960 960 960</code></td><td class="sk-table__cell">Apache-2.0</td></tr>
     </tbody>
   </table>
   </div>
@@ -123,19 +127,19 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>rol</th>
-          {allSets.map((s) => <th>{s.label}</th>)}
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">rol</th>
+          {allSets.map((s) => <th class="sk-table__header">{s.label}</th>)}
         </tr>
       </thead>
-      <tbody>
+      <tbody class="sk-table__body">
         {
           compared.map((role) => (
-            <tr>
-              <td><code>{role}</code></td>
+            <tr class="sk-table__row">
+              <td class="sk-table__cell"><code>{role}</code></td>
               {allSets.map((s) => (
-                <td><Fragment set:html={iconMarkup(role, { size: "lg", set: s.set })} /></td>
+                <td class="sk-table__cell"><Fragment set:html={iconMarkup(role, { size: "lg", set: s.set })} /></td>
               ))}
             </tr>
           ))

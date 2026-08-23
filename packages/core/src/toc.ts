@@ -16,16 +16,23 @@ import type { ComponentContract } from "./contract.js";
  * a value an author picks, which is exactly the line that already separates every contract that owns a
  * Zag machine from the CSS-only patterns beside it.
  *
- * A consumer's layout may opt into `data-sk-toc-rail`; only then does the shared stylesheet turn
- * this disclosure into an always-open rail at `wide`. Plain consumers keep the native disclosure at
- * every width, so the component never guesses that its host has a column to spare.
+ * ONE SHAPE, ALWAYS OPEN. This used to ship a native `<details>` closed by default, which a consumer
+ * with a spare column turned into a rail by declaring `data-sk-toc-rail`. Two shapes out of one
+ * contract, and the seam showed everywhere: the rail's entire appearance sat behind BOTH that
+ * attribute and a `min-width: 72rem` query, so the component's own documentation could never render
+ * the form the docs site itself runs on — a preview frame is 1022px wide and the gate is 1152px, so
+ * the example was structurally incapable of showing it. The attribute was also never part of this
+ * contract (not in `tocAttrs`, not an option, not in the template): a magic string re-typed in the
+ * stylesheet, the enhancer and every consumer that wanted the rail.
+ *
+ * So the rail IS the component now. There is no disclosure, no `<summary>`, no chevron and nothing to
+ * open: the list is always visible, and what stays behind `wide` is only what genuinely needs a spare
+ * column — `position: sticky` and the fixed inline size (`toc.css`). A host with no room gets the same
+ * compact index in normal flow, which is a layout answer rather than a second shape of this one.
  */
 export const tocParts = {
   root: "sk-toc",
-  disclosure: "sk-toc__inner",
-  summary: "sk-toc__summary",
   title: "sk-toc__title",
-  chevron: "sk-toc__chevron",
   nav: "sk-toc__nav",
   list: "sk-toc__list",
   item: "sk-toc__item",
@@ -39,7 +46,6 @@ export type TocPartClass = (typeof tocParts)[TocPart];
 
 export const tocAttrs = {
   root: "data-sk-toc",
-  disclosure: "data-sk-toc-disclosure",
 } as const;
 
 export type TocAttr = keyof typeof tocAttrs;
@@ -103,58 +109,43 @@ export const tocContract = {
         host: true,
         children: [
           {
-            element: "details",
-            part: "disclosure",
-            mount: tocAttrs.disclosure,
+            element: "nav",
+            part: "nav",
+            options: ["title"],
             children: [
+              /* The visible caption, inside the `<nav>` it names rather than above it: with no
+               * `<summary>` left to hold it there is no reason for it to sit outside the landmark
+               * whose contents it describes. The `<nav>` still carries `title` as its `aria-label`
+               * (`options` above), so the name reaches assistive tech whether or not this renders. */
+              { element: "h2", part: "title", textFromOption: "title" },
               {
-                element: "summary",
-                part: "summary",
-                also: ["sk-interactive"],
-                children: [
-                  { element: "h2", part: "title", textFromOption: "title" },
-                  {
-                    element: "span",
-                    part: "chevron",
-                    attrs: { "aria-hidden": "true" },
-                  },
-                ],
-              },
-              {
-                element: "nav",
-                part: "nav",
-                options: ["title"],
+                element: "ul",
+                part: "list",
+                /* `list-style: none` (toc.css) drops the implicit list role in Safari/VoiceOver. */
+                attrs: { role: "list" },
                 children: [
                   {
-                    element: "ul",
-                    part: "list",
-                    /* `list-style: none` (toc.css) drops the implicit list role in Safari/VoiceOver. */
-                    attrs: { role: "list" },
+                    element: "li",
+                    part: "item",
+                    repeat: "items",
+                    itemOptions: ["level"],
                     children: [
                       {
-                        element: "li",
-                        part: "item",
-                        repeat: "items",
-                        itemOptions: ["level"],
+                        element: "a",
+                        part: "link",
+                        also: ["sk-interactive"],
+                        itemOptions: ["href", "current"],
                         children: [
                           {
-                            element: "a",
-                            part: "link",
-                            also: ["sk-interactive"],
-                            itemOptions: ["href", "current"],
-                            children: [
-                              {
-                                element: "span",
-                                part: "icon",
-                                whenItemSlotGiven: "icon",
-                                itemSlot: "icon",
-                              },
-                              {
-                                element: "span",
-                                part: "label",
-                                itemSlot: "children",
-                              },
-                            ],
+                            element: "span",
+                            part: "icon",
+                            whenItemSlotGiven: "icon",
+                            itemSlot: "icon",
+                          },
+                          {
+                            element: "span",
+                            part: "label",
+                            itemSlot: "children",
                           },
                         ],
                       },

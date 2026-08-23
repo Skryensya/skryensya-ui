@@ -206,29 +206,30 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
       <span class="specimens__title">Las {intents.length} intenciones, a la vez</span>
       <MotionTransport label="las intenciones" />
     </figcaption>
+    <div class="sk-table-scroll">
     <table class="sk-table intents">
-      <thead>
-        <tr>
-          <th>Intención</th>
-          <th>Duración</th>
-          <th>Easing</th>
-          <th>Distancia</th>
-          <th class="intents__sample">Muestra</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Intención</th>
+          <th class="sk-table__header">Duración</th>
+          <th class="sk-table__header">Easing</th>
+          <th class="sk-table__header">Distancia</th>
+          <th class="sk-table__header intents__sample">Muestra</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="sk-table__body">
         {
           intents.map((i) => (
-            <tr>
-              <td class="mono intents__name">--motion-{i.key}-*</td>
-              <td class="mono">
+            <tr class="sk-table__row">
+              <td class="sk-table__cell mono intents__name">--motion-{i.key}-*</td>
+              <td class="sk-table__cell mono">
                 <span class="intents__ref">{i.duration}</span>
                 <span class="intents__used"><Used token={`--motion-${i.key}-duration`} /></span>
               </td>
-              <td class="mono">
+              <td class="sk-table__cell mono">
                 <span class="intents__ref">{i.easing}</span>
               </td>
-              <td class="mono">
+              <td class="sk-table__cell mono">
                 {i.distance ? (
                   <>
                     <span class="intents__ref">{i.distance}</span>
@@ -238,7 +239,7 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
                   <span class="intents__none">N/D</span>
                 )}
               </td>
-              <td>
+              <td class="sk-table__cell">
                 <MotionTrack
                   duration={`var(--motion-${i.key}-duration)`}
                   easing={`var(--motion-${i.key}-easing)`}
@@ -250,6 +251,7 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
         }
       </tbody>
     </table>
+    </div>
     <p class="specimens__note">
       Las muestras leen los mismos tokens que un componente, así que si tu sistema pide
       <em>reduced motion</em> estas ya no son las duraciones de arriba: son las reducidas, que es
@@ -299,15 +301,17 @@ const reduced = `@media (prefers-reduced-motion: reduce) {
   </p>
   <CodeBlock code={reduced} label="semantic.scss" />
 
+  <div class="sk-table-scroll">
   <table class="sk-table roles">
-    <thead><tr><th>Rol</th><th>Qué le pasa</th></tr></thead>
-    <tbody>
-      <tr><td><strong>Helpful</strong> (enter, exit, reveal, navigate)</td><td>distancia a 0, queda un fade corto</td></tr>
-      <tr><td><strong>Essential</strong> (state-change, expand/collapse)</td><td>conserva una duración breve y legible</td></tr>
-      <tr><td><strong>Decorative</strong> (emphasize, count)</td><td>a 0</td></tr>
-      <tr><td><strong>Continuous</strong> (loading)</td><td>duración más suave; el componente debería cambiar a una variante no espacial</td></tr>
+    <thead class="sk-table__head"><tr class="sk-table__row"><th class="sk-table__header">Rol</th><th class="sk-table__header">Qué le pasa</th></tr></thead>
+    <tbody class="sk-table__body">
+      <tr class="sk-table__row"><td class="sk-table__cell"><strong>Helpful</strong> (enter, exit, reveal, navigate)</td><td class="sk-table__cell">distancia a 0, queda un fade corto</td></tr>
+      <tr class="sk-table__row"><td class="sk-table__cell"><strong>Essential</strong> (state-change, expand/collapse)</td><td class="sk-table__cell">conserva una duración breve y legible</td></tr>
+      <tr class="sk-table__row"><td class="sk-table__cell"><strong>Decorative</strong> (emphasize, count)</td><td class="sk-table__cell">a 0</td></tr>
+      <tr class="sk-table__row"><td class="sk-table__cell"><strong>Continuous</strong> (loading)</td><td class="sk-table__cell">duración más suave; el componente debería cambiar a una variante no espacial</td></tr>
     </tbody>
   </table>
+  </div>
 
   <p>
     Como redefine tokens que los componentes ya consumen, <strong>ningún componente cambia</strong>.

@@ -17,6 +17,9 @@
     --sk-component-preview-note-fg: var(--color-text-tertiary);
     --sk-component-preview-loader-fg: var(--color-text-accent);
     --sk-component-preview-stage-min-block-size: 12rem;
+    /* Large desktop the XL preset pretends to hold. px, like tablet/mobile: a device viewport
+       is physical, and zoom-out is how that width fits the docs column. */
+    --sk-component-preview-screen-xl: 1440px;
     --sk-component-preview-mat-bg: var(--color-bg-surface-sunken);
     /* The halftone. The dots are the accent, heavily diluted: the mat has to be recognisable as
      * the system's own chrome without competing with the specimen sitting on it. Dot, gap and
@@ -132,6 +135,12 @@
     font-weight: var(--font-weight-emphasis);
   }
 
+  .sk-component-preview__n {
+    color: var(--sk-component-preview-note-fg);
+    font-variant-numeric: tabular-nums;
+    margin-inline-end: var(--space-inline-sm);
+  }
+
   .sk-component-preview__note {
     color: var(--sk-component-preview-note-fg);
   }
@@ -164,6 +173,16 @@
    */
   .sk-component-preview__actions .sk-segmented .sk-tooltip {
     display: contents;
+  }
+
+  .sk-component-preview__actions .sk-menu__item-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-inline-sm);
+  }
+
+  .sk-component-preview__actions .sk-menu__item-label > .sk-icon {
+    flex: none;
   }
 
   /*
@@ -214,7 +233,7 @@
     border: 0;
     border-block-end: 1px solid var(--sk-component-preview-border-color);
     background: var(--sk-component-preview-bg);
-    transition-property: inline-size, block-size;
+    transition-property: inline-size, block-size, zoom;
     transition-duration: var(--motion-state-change-duration);
     transition-timing-function: var(--motion-state-change-easing);
   }
@@ -255,6 +274,18 @@
    * The sizes are px, not rem: a device viewport is a physical measure, and a reader who bumps the
    * root font size wants to see THAT reflow on a phone-sized screen, not a phone that grew.
    */
+  .sk-component-preview__stage[data-sk-component-preview-screen="xl"] {
+    /*
+     * Wider than the docs column on purpose: the frame's viewport MUST be this width so
+     * min-width queries (72rem rails, 52rem desktop) fire inside the iframe. `min(…, 100%)`
+     * on the stage would collapse it back to the column and the queries would never match.
+     * Zoom (set on the card as --sk-component-preview-xl-zoom) shrinks the box to fit.
+     */
+    --sk-component-preview-screen-inline-size: var(--sk-component-preview-screen-xl);
+    inline-size: var(--sk-component-preview-screen-inline-size);
+    zoom: var(--sk-component-preview-xl-zoom, 1);
+  }
+
   .sk-component-preview__stage[data-sk-component-preview-screen="tablet"] {
     /* Between `compact` (36rem) and `desktop` (52rem): the band nothing else makes easy to see. */
     --sk-component-preview-screen-inline-size: 768px;

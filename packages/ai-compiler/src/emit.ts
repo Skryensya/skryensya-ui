@@ -1226,7 +1226,7 @@ function styleProp(declarations: readonly string[], depth: number): string {
  *     footer={
  *       <>
  *         <Button variant="ghost">Cancelar</Button>
- *         <Button variant="primary">Archivar</Button>
+ *         <Button variant="accent">Archivar</Button>
  *       </>
  *     }
  *

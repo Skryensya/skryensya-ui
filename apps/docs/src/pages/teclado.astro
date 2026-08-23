@@ -38,23 +38,23 @@ import Base from "../layouts/Base.astro";
 
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Mecanismo</th>
-          <th>Foco de DOM</th>
-          <th>Componentes</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Mecanismo</th>
+          <th class="sk-table__header">Foco de DOM</th>
+          <th class="sk-table__header">Componentes</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><strong>Foco virtual</strong></td>
-          <td>Se queda en el input; <code>aria-activedescendant</code> apunta a la fila resaltada.</td>
-          <td>Combobox, CommandPalette, Menu (dentro del popup)</td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Foco virtual</strong></td>
+          <td class="sk-table__cell">Se queda en el input; <code>aria-activedescendant</code> apunta a la fila resaltada.</td>
+          <td class="sk-table__cell">Combobox, CommandPalette, Menu (dentro del popup)</td>
         </tr>
-        <tr>
-          <td><strong>Foco real</strong></td>
-          <td>Se mueve al elemento enfocado de verdad, diferido a veces un frame (<code>raf</code>) tras abrir.</td>
-          <td>Select, TreeView, Toolbar, Menubar, Treegrid, DataGrid, Dialog</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Foco real</strong></td>
+          <td class="sk-table__cell">Se mueve al elemento enfocado de verdad, diferido a veces un frame (<code>raf</code>) tras abrir.</td>
+          <td class="sk-table__cell">Select, TreeView, Toolbar, Menubar, Treegrid, DataGrid, Dialog</td>
         </tr>
       </tbody>
     </table>
@@ -67,28 +67,28 @@ import Base from "../layouts/Base.astro";
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Componente</th>
-          <th>Elemento</th>
-          <th>Activa</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Componente</th>
+          <th class="sk-table__header">Elemento</th>
+          <th class="sk-table__header">Activa</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Button (acción)</td>
-          <td><code>&lt;button&gt;</code></td>
-          <td><kbd class="sk-kbd">↵</kbd> y <kbd class="sk-kbd">Espacio</kbd></td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Button (acción)</td>
+          <td class="sk-table__cell"><code>&lt;button&gt;</code></td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd> y <kbd class="sk-kbd">Espacio</kbd></td>
         </tr>
-        <tr>
-          <td>Button (navegación), Breadcrumb, ítems de NavList/Sidebar</td>
-          <td><code>&lt;a href&gt;</code></td>
-          <td><kbd class="sk-kbd">↵</kbd></td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Button (navegación), Breadcrumb, ítems de NavList/Sidebar</td>
+          <td class="sk-table__cell"><code>&lt;a href&gt;</code></td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd></td>
         </tr>
-        <tr>
-          <td>Accordion, Disclosure</td>
-          <td><code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> (Disclosure) o botón envuelto en heading (Accordion)</td>
-          <td><kbd class="sk-kbd">↵</kbd> y <kbd class="sk-kbd">Espacio</kbd></td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Accordion, Disclosure</td>
+          <td class="sk-table__cell"><code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> (Disclosure) o botón envuelto en heading (Accordion)</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd> y <kbd class="sk-kbd">Espacio</kbd></td>
         </tr>
       </tbody>
     </table>
@@ -104,38 +104,38 @@ import Base from "../layouts/Base.astro";
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Componente</th>
-          <th>Mueve</th>
-          <th>Activa / cambia</th>
-          <th>Extremos</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Componente</th>
+          <th class="sk-table__header">Mueve</th>
+          <th class="sk-table__header">Activa / cambia</th>
+          <th class="sk-table__header">Extremos</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Checkbox, Switch</td>
-          <td>—</td>
-          <td><kbd class="sk-kbd">Espacio</kbd> alterna</td>
-          <td>—</td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Checkbox, Switch</td>
+          <td class="sk-table__cell">—</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">Espacio</kbd> alterna</td>
+          <td class="sk-table__cell">—</td>
         </tr>
-        <tr>
-          <td>RadioGroup</td>
-          <td><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> mueve Y marca a la vez, con loop</td>
-          <td><kbd class="sk-kbd">Espacio</kbd> marca la enfocada si no lo estaba</td>
-          <td>—</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">RadioGroup</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> mueve Y marca a la vez, con loop</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">Espacio</kbd> marca la enfocada si no lo estaba</td>
+          <td class="sk-table__cell">—</td>
         </tr>
-        <tr>
-          <td>Slider, SliderRange</td>
-          <td><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> ±1 paso (nativo, incluye PageUp/PageDown ±paso mayor)</td>
-          <td>—</td>
-          <td><kbd class="sk-kbd">Home</kbd> / <kbd class="sk-kbd">End</kbd></td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Slider, SliderRange</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> ±1 paso (nativo, incluye PageUp/PageDown ±paso mayor)</td>
+          <td class="sk-table__cell">—</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">Home</kbd> / <kbd class="sk-kbd">End</kbd></td>
         </tr>
-        <tr>
-          <td>NumberField (spinbutton)</td>
-          <td><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd> ±1 paso; <kbd class="sk-kbd">⇧</kbd>+flecha paso grande, <kbd class="sk-kbd">⌥</kbd>+flecha paso chico</td>
-          <td><kbd class="sk-kbd">↵</kbd> confirma el texto tipeado</td>
-          <td><kbd class="sk-kbd">Home</kbd> / <kbd class="sk-kbd">End</kbd></td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">NumberField (spinbutton)</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd> ±1 paso; <kbd class="sk-kbd">⇧</kbd>+flecha paso grande, <kbd class="sk-kbd">⌥</kbd>+flecha paso chico</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd> confirma el texto tipeado</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">Home</kbd> / <kbd class="sk-kbd">End</kbd></td>
         </tr>
       </tbody>
     </table>
@@ -150,38 +150,38 @@ import Base from "../layouts/Base.astro";
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Componente</th>
-          <th>Abre</th>
-          <th>Navega adentro</th>
-          <th>Elige</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Componente</th>
+          <th class="sk-table__header">Abre</th>
+          <th class="sk-table__header">Navega adentro</th>
+          <th class="sk-table__header">Elige</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Menu (Menu Button)</td>
-          <td><kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">Espacio</kbd>/<kbd class="sk-kbd">↵</kbd> (primero) · <kbd class="sk-kbd">↑</kbd> (último)</td>
-          <td><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd> con loop, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd>, typeahead por letra</td>
-          <td><kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Espacio</kbd></td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Menu (Menu Button)</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">Espacio</kbd>/<kbd class="sk-kbd">↵</kbd> (primero) · <kbd class="sk-kbd">↑</kbd> (último)</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd> con loop, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd>, typeahead por letra</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Espacio</kbd></td>
         </tr>
-        <tr>
-          <td>Combobox, CommandPalette</td>
-          <td>Se tipea o <kbd class="sk-kbd">↓</kbd>; foco nunca sale del input</td>
-          <td><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd> mueven <code>aria-activedescendant</code>; Home/End opcionales según WAI</td>
-          <td><kbd class="sk-kbd">↵</kbd></td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Combobox, CommandPalette</td>
+          <td class="sk-table__cell">Se tipea o <kbd class="sk-kbd">↓</kbd>; foco nunca sale del input</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd> mueven <code>aria-activedescendant</code>; Home/End opcionales según WAI</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd></td>
         </tr>
-        <tr>
-          <td>Select (listbox)</td>
-          <td><kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Espacio</kbd>; foco de DOM se mueve al listbox</td>
-          <td><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd>, typeahead</td>
-          <td><kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Espacio</kbd></td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Select (listbox)</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Espacio</kbd>; foco de DOM se mueve al listbox</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd>, typeahead</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Espacio</kbd></td>
         </tr>
-        <tr>
-          <td>DatePicker (calendario)</td>
-          <td>Botón trigger separado del input de texto</td>
-          <td>Flechas por día, <kbd class="sk-kbd">PgUp</kbd>/<kbd class="sk-kbd">PgDn</kbd> por mes, <kbd class="sk-kbd">⇧</kbd>+<kbd class="sk-kbd">PgUp</kbd>/<kbd class="sk-kbd">PgDn</kbd> por año</td>
-          <td><kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Espacio</kbd></td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">DatePicker (calendario)</td>
+          <td class="sk-table__cell">Botón trigger separado del input de texto</td>
+          <td class="sk-table__cell">Flechas por día, <kbd class="sk-kbd">PgUp</kbd>/<kbd class="sk-kbd">PgDn</kbd> por mes, <kbd class="sk-kbd">⇧</kbd>+<kbd class="sk-kbd">PgUp</kbd>/<kbd class="sk-kbd">PgDn</kbd> por año</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Espacio</kbd></td>
         </tr>
       </tbody>
     </table>
@@ -196,23 +196,23 @@ import Base from "../layouts/Base.astro";
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Componente</th>
-          <th>Mueve</th>
-          <th>Detalle propio</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Componente</th>
+          <th class="sk-table__header">Mueve</th>
+          <th class="sk-table__header">Detalle propio</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Toolbar</td>
-          <td>Flechas según <code>aria-orientation</code>, con loop; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> al primero/último</td>
-          <td>Un control con <code>disabled</code> nativo se salta solo, porque el navegador ya lo saca del árbol de tabulación.</td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Toolbar</td>
+          <td class="sk-table__cell">Flechas según <code>aria-orientation</code>, con loop; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> al primero/último</td>
+          <td class="sk-table__cell">Un control con <code>disabled</code> nativo se salta solo, porque el navegador ya lo saca del árbol de tabulación.</td>
         </tr>
-        <tr>
-          <td>Menubar</td>
-          <td><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> entre ítems de nivel superior; <kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Espacio</kbd> abre el desplegable (primero); <kbd class="sk-kbd">↑</kbd> lo abre en el último</td>
-          <td>Mover a un ítem adyacente con un desplegable abierto lo <strong>cierra y reabre en el nuevo</strong>, no solo mueve el resaltado — el detalle que una implementación ingenua de roving tabindex pasa por alto.</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Menubar</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> entre ítems de nivel superior; <kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Espacio</kbd> abre el desplegable (primero); <kbd class="sk-kbd">↑</kbd> lo abre en el último</td>
+          <td class="sk-table__cell">Mover a un ítem adyacente con un desplegable abierto lo <strong>cierra y reabre en el nuevo</strong>, no solo mueve el resaltado — el detalle que una implementación ingenua de roving tabindex pasa por alto.</td>
         </tr>
       </tbody>
     </table>
@@ -221,23 +221,23 @@ import Base from "../layouts/Base.astro";
   <h2>Árbol y grilla — TreeView, Treegrid, DataGrid</h2>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Componente</th>
-          <th>Mueve</th>
-          <th>Detalle propio</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Componente</th>
+          <th class="sk-table__header">Mueve</th>
+          <th class="sk-table__header">Detalle propio</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>TreeView</td>
-          <td><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd>, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd>, typeahead</td>
-          <td><kbd class="sk-kbd">*</kbd> expande todos los hermanos del mismo nivel a la vez.</td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">TreeView</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd>, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd>, typeahead</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">*</kbd> expande todos los hermanos del mismo nivel a la vez.</td>
         </tr>
-        <tr>
-          <td>Treegrid, DataGrid</td>
-          <td>Flechas en las cuatro direcciones entre celdas, roving tabindex</td>
-          <td>El separador de columna redimensionable (opt-in) usa su propio teclado: <kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> ±paso, <kbd class="sk-kbd">⇧</kbd>+flecha paso grueso, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> a los extremos, <kbd class="sk-kbd">↵</kbd>/doble-click resetea.</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Treegrid, DataGrid</td>
+          <td class="sk-table__cell">Flechas en las cuatro direcciones entre celdas, roving tabindex</td>
+          <td class="sk-table__cell">El separador de columna redimensionable (opt-in) usa su propio teclado: <kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> ±paso, <kbd class="sk-kbd">⇧</kbd>+flecha paso grueso, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> a los extremos, <kbd class="sk-kbd">↵</kbd>/doble-click resetea.</td>
         </tr>
       </tbody>
     </table>

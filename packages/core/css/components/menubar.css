@@ -36,6 +36,11 @@
     display: inline-flex;
   }
 
+  /* State layer with subtle color, not accent */
+  .sk-menubar__item {
+    --state-layer-color: var(--color-text-primary);
+  }
+
   /*
    * OPEN IS A LOOK, not only a fact `aria-expanded` carries for assistive tech: a ghost button's
    * own hover/press tint is transient (`patterns/state-layer.css`), so once the pointer or the

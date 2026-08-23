@@ -12,14 +12,14 @@ import type { UsageTree } from "./usage-tree.js";
 const saveButton: UsageTree = {
   contract: "button",
   signature: "Button.action",
-  options: { variant: "primary" },
+  options: { variant: "accent" },
   children: "Guardar",
 };
 
 const docsLink: UsageTree = {
   contract: "button",
   signature: "Button.navigation",
-  options: { variant: "primary", href: "/docs" },
+  options: { variant: "accent", href: "/docs" },
   children: "Documentación",
 };
 
@@ -63,13 +63,13 @@ function normalize(markup: string): string {
 describe("emitMarkup", () => {
   it("writes the action signature onto its native host", () => {
     expect(normalize(emitMarkup(saveButton))).toBe(
-      '<button class="sk-button sk-interactive" data-sk-button data-variant="primary" data-size="md">Guardar</button>',
+      '<button class="sk-button sk-interactive" data-sk-button data-variant="accent" data-size="md">Guardar</button>',
     );
   });
 
   it("switches host on the discriminant, and drops nothing else", () => {
     expect(normalize(emitMarkup(docsLink))).toBe(
-      '<a class="sk-button sk-interactive" data-sk-button data-variant="primary" data-size="md" href="/docs">Documentación</a>',
+      '<a class="sk-button sk-interactive" data-sk-button data-variant="accent" data-size="md" href="/docs">Documentación</a>',
     );
   });
 
@@ -296,7 +296,7 @@ describe("emitMarkup", () => {
   it("keeps a short opening tag on one line", () => {
     expect(
       emitMarkup({ contract: "kbd", signature: "Kbd", children: "⌘K" }),
-    ).toBe('<kbd class="sk-kbd">⌘K</kbd>');
+    ).toBe('<kbd class="sk-kbd" data-tone="neutral">⌘K</kbd>');
   });
 
   it("wraps a long opening tag one attribute per line, same as JSX", () => {
@@ -305,7 +305,7 @@ describe("emitMarkup", () => {
         "<a",
         '  class="sk-button sk-interactive"',
         "  data-sk-button",
-        '  data-variant="primary"',
+        '  data-variant="accent"',
         '  data-size="md"',
         '  href="/docs"',
         ">",
@@ -350,7 +350,7 @@ describe("emitReact", () => {
         'import { Button } from "@skryensya/react/button";',
         "",
         "export function ButtonExample() {",
-        '  return <Button variant="primary">Guardar</Button>;',
+        '  return <Button variant="accent">Guardar</Button>;',
         "}",
       ].join("\n"),
     );
@@ -594,7 +594,7 @@ describe("a collection is data, and data lives in a file of its own", () => {
     });
 
     expect(source).toContain("export default function App() {");
-    expect(source).toContain('  return <Button variant="primary">Guardar</Button>;');
+    expect(source).toContain('  return <Button variant="accent">Guardar</Button>;');
   });
 });
 
@@ -766,10 +766,10 @@ describe("a string option that contains a quote", () => {
     const source = emitReact({
       contract: "button",
       signature: "Button.action",
-      options: { variant: "primary" },
+      options: { variant: "accent" },
       children: "Guardar",
     } as never);
 
-    expect(source).toContain('variant="primary"');
+    expect(source).toContain('variant="accent"');
   });
 });

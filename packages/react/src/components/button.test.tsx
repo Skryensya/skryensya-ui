@@ -47,7 +47,7 @@ describe("Button", () => {
 
   it("carries a leading icon alongside its label", () => {
     const ui = render(
-      <Button variant="primary">
+      <Button variant="accent">
         <svg className="sk-icon" data-icon="check" aria-hidden="true" />
         Guardar
       </Button>,
@@ -86,7 +86,7 @@ describe("Button", () => {
 describe("Button.navigation", () => {
   it("renders navigation with Button appearance and anchor attributes", () => {
     const ui = render(
-      <Button href="/docs" rel="next" target="_self" variant="primary">
+      <Button href="/docs" rel="next" target="_self" variant="accent">
         Documentation
       </Button>,
     );
@@ -95,7 +95,7 @@ describe("Button.navigation", () => {
     expect(link.getAttribute("href")).toBe("/docs");
     expect(link.getAttribute("rel")).toBe("next");
     expect(link.getAttribute("target")).toBe("_self");
-    expect(link.getAttribute("data-variant")).toBe("primary");
+    expect(link.getAttribute("data-variant")).toBe("accent");
     expect(link.getAttribute("data-size")).toBe("md");
     expect(link.classList.contains("sk-button")).toBe(true);
     expect(link.classList.contains("sk-interactive")).toBe(true);

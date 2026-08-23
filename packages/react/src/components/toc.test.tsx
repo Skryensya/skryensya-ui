@@ -3,9 +3,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Toc } from "./toc.js";
 
 /*
- * Two browser APIs the component leans on and jsdom has neither, so the test owns them: the media
- * query that decides disclosure-vs-rail, and the observer behind the scroll-spy. Holding the
- * observer's callback is the point: it is the only way to say "this heading entered the band".
+ * One browser API the component leans on that jsdom does not have, so the test owns it: the observer
+ * behind the scroll-spy. Holding its callback is the point — it is the only way to say "this heading
+ * entered the band". The `matchMedia` stub that used to sit beside it is gone with the disclosure-vs-
+ * rail switch it existed for; the index ships one always-open shape now.
  */
 type ObserverHandle = {
   callback: IntersectionObserverCallback;
@@ -14,8 +15,6 @@ type ObserverHandle = {
 };
 
 let observers: ObserverHandle[] = [];
-let railMatches = false;
-const listeners = new Set<() => void>();
 
 class IntersectionObserverStub {
   private handle: ObserverHandle;
@@ -53,13 +52,6 @@ function intersect(entries: Array<{ id: string; isIntersecting: boolean }>) {
   });
 }
 
-function setRail(matches: boolean) {
-  railMatches = matches;
-  act(() => {
-    for (const listener of listeners) listener();
-  });
-}
-
 const items = [
   { children: "Instalación", href: "#instalacion" },
   { children: "Uso", href: "#uso", level: "h3" as const },
@@ -67,21 +59,7 @@ const items = [
 
 beforeEach(() => {
   observers = [];
-  listeners.clear();
-  railMatches = false;
   vi.stubGlobal("IntersectionObserver", IntersectionObserverStub);
-  vi.stubGlobal("matchMedia", (query: string) => ({
-    media: query,
-    get matches() {
-      return railMatches;
-    },
-    addEventListener: (_: string, listener: () => void) => listeners.add(listener),
-    removeEventListener: (_: string, listener: () => void) => listeners.delete(listener),
-    addListener: () => {},
-    removeListener: () => {},
-    onchange: null,
-    dispatchEvent: () => false,
-  }));
 
   for (const item of items) {
     const heading = document.createElement("h2");
@@ -151,32 +129,15 @@ describe("Toc", () => {
     expect(observers).toHaveLength(0);
   });
 
-  it("stays a native disclosure unless its consumer opts into a rail", () => {
+  /* The mirror of the Vanilla binding's own shape test: both halves of the contract have to agree
+   * that there is nothing to open, or the two bindings drift back into the two shapes this change
+   * collapsed. */
+  it("ships one always-open shape, with nothing to disclose", () => {
     const ui = render(<Toc items={items} title="En esta página" />);
-    const details = ui.container.querySelector("details")!;
-    const summary = ui.container.querySelector("summary")!;
 
-    expect(details.open).toBe(false);
-    expect(summary.tabIndex).toBe(0);
-
-    setRail(true);
-
-    expect(details.open).toBe(false);
-    expect(summary.tabIndex).toBe(0);
-  });
-
-  it("opens as an inert rail when its consumer opts in", () => {
-    const ui = render(<Toc data-sk-toc-rail="" items={items} title="En esta página" />);
-    const details = ui.container.querySelector("details")!;
-    const summary = ui.container.querySelector("summary")!;
-
-    expect(details.open).toBe(false);
-    expect(summary.tabIndex).toBe(0);
-
-    setRail(true);
-
-    expect(details.open).toBe(true);
-    expect(summary.tabIndex).toBe(-1);
+    expect(ui.container.querySelector("details")).toBeNull();
+    expect(ui.container.querySelector("summary")).toBeNull();
+    expect(ui.getAllByRole("link")).toHaveLength(2);
   });
 
   it("disconnects the spy on unmount", () => {

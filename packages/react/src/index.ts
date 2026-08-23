@@ -76,7 +76,7 @@ export type { IconProps, IconSetProviderProps } from "./components/icon.js";
 export { useHotkey } from "./components/hotkey.js";
 export type { UseHotkeyOptions } from "./components/hotkey.js";
 export { Kbd } from "./components/kbd.js";
-export type { KbdProps } from "./components/kbd.js";
+export type { KbdProps, KbdTone } from "./components/kbd.js";
 export { FormField } from "./components/form-field.js";
 export type { FormFieldProps } from "./components/form-field.js";
 export { Input, Textarea } from "./components/input.js";

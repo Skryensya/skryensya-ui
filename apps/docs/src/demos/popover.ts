@@ -90,7 +90,7 @@ export const popoverStructuredTree = (t: Translate): UsageTree => ({
           {
             contract: "button",
             signature: "Button.action",
-            options: { variant: "primary", size: "sm" },
+            options: { variant: "accent", size: "sm" },
             children: t("demo.popoverStructured.action"),
           },
         ],

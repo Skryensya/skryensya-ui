@@ -79,10 +79,11 @@ export function iconDataMarkup(
   icon: IconData,
   {
     className,
+    size,
     attrs: extraAttrs,
-  }: { className?: string; attrs?: Readonly<Record<string, string>> } = {},
+  }: { className?: string; size?: IconSize; attrs?: Readonly<Record<string, string>> } = {},
 ): string {
-  return svgString(icon, name, { className, extraAttrs });
+  return svgString(icon, name, { size, className, extraAttrs });
 }
 
 const strokeAttrs = {
@@ -101,6 +102,13 @@ export const sparkle: IconData = {
   viewBox: "0 0 24 24",
   attrs: { fill: "none", stroke: "currentColor", "stroke-width": "2", "stroke-linejoin": "round" },
   body: `<path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z" />`,
+};
+
+/* Four corners opening out: "ver en pantalla completa", not a device class. */
+export const screenFullscreen: IconData = {
+  viewBox: "0 0 24 24",
+  attrs: strokeAttrs,
+  body: `<path d="M8 3H5a2 2 0 0 0-2 2v3" /><path d="M16 3h3a2 2 0 0 1 2 2v3" /><path d="M8 21H5a2 2 0 0 1-2-2v-3" /><path d="M16 21h3a2 2 0 0 0 2-2v-3" />`,
 };
 
 

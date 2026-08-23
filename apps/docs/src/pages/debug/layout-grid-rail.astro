@@ -1,0 +1,141 @@
+---
+/*
+ * Diagnostic only: no ComponentPageShell, no prose, no nav/sidebar chrome. Three colored-box
+ * renders of the rail placements (`rail`, `rail-start`, both) — vanilla markup plus a React
+ * island each — so the mechanism (`packages/core/css/patterns/layout.css`,
+ * `@media (min-width: 72rem)`) can be checked at real browser width, with nothing capping
+ * the grid's measure.
+ *
+ * Not linked from the site nav. `noindex`, like the `/f/` fullscreen shell.
+ */
+import "@skryensya/core/tokens.scss";
+import "@skryensya/core/patterns/layout.css";
+import {
+  LayoutGridRailEnd,
+  LayoutGridRailStart,
+  LayoutGridRailsBoth,
+} from "../../components/react-demos/debug-layout-grid-rail";
+
+const endHtml = `<div class="sk-layout-grid" data-debug="layout-grid-rail">
+  <div class="sk-box" data-padding="lg" data-surface="surface" data-border="subtle" data-role="main">
+    MAIN CONTENT
+  </div>
+  <div class="sk-box" data-padding="lg" data-surface="surface" data-border="subtle" data-width="rail" data-role="toc">
+    TOC (rail)
+  </div>
+</div>`;
+
+const startHtml = `<div class="sk-layout-grid" data-debug="layout-grid-rail">
+  <div class="sk-box" data-padding="lg" data-surface="surface" data-border="subtle" data-width="rail-start" data-role="index">
+    INDEX (rail-start)
+  </div>
+  <div class="sk-box" data-padding="lg" data-surface="surface" data-border="subtle" data-role="main">
+    MAIN CONTENT
+  </div>
+</div>`;
+
+const bothHtml = `<div class="sk-layout-grid" data-debug="layout-grid-rail">
+  <div class="sk-box" data-padding="lg" data-surface="surface" data-border="subtle" data-width="rail-start" data-role="index">
+    INDEX (rail-start)
+  </div>
+  <div class="sk-box" data-padding="lg" data-surface="surface" data-border="subtle" data-role="main">
+    MAIN CONTENT
+  </div>
+  <div class="sk-box" data-padding="lg" data-surface="surface" data-border="subtle" data-width="rail" data-role="toc">
+    TOC (rail)
+  </div>
+</div>`;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>debug: layout-grid rail</title>
+    <style is:global>
+      body {
+        margin: 0;
+        padding: 1.5rem;
+        font-family: system-ui, sans-serif;
+        background: #f4f4f4;
+        color: #111;
+      }
+      .debug-section {
+        margin-block-end: 2.5rem;
+      }
+      .debug-section > h2 {
+        font: 700 0.875rem/1.2 monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-block-end: 0.75rem;
+      }
+      .debug-hint {
+        font: 400 0.8125rem/1.4 monospace;
+        color: #555;
+        margin: 0 0 1rem;
+      }
+
+      [data-role="main"] {
+        background: #cfe8ff;
+        border-color: #4a90d9 !important;
+        min-block-size: 12rem;
+        display: grid;
+        place-items: center;
+        font: 700 1.25rem/1 monospace;
+      }
+      [data-role="toc"] {
+        background: #ffe1b3;
+        border-color: #d98c1f !important;
+        min-block-size: 12rem;
+        display: grid;
+        place-items: center;
+        font: 700 1.25rem/1 monospace;
+      }
+      [data-role="index"] {
+        background: #d4f0c2;
+        border-color: #5a9e32 !important;
+        min-block-size: 12rem;
+        display: grid;
+        place-items: center;
+        font: 700 1.25rem/1 monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="debug-hint">
+      Rails sit beside the content only at ≥72rem (1152px) viewport width — narrower than
+      that, the boxes stack. The gap between a rail and the content is
+      --sk-layout-rail-gap (space-inline-lg), not the breakout track. Resize the window
+      to check the breakpoint.
+    </p>
+
+    <section class="debug-section">
+      <h2>After — data-width="rail" (vanilla)</h2>
+      <Fragment set:html={endHtml} />
+    </section>
+    <section class="debug-section">
+      <h2>After — React</h2>
+      <LayoutGridRailEnd client:load />
+    </section>
+
+    <section class="debug-section">
+      <h2>Before — data-width="rail-start" (vanilla)</h2>
+      <Fragment set:html={startHtml} />
+    </section>
+    <section class="debug-section">
+      <h2>Before — React</h2>
+      <LayoutGridRailStart client:load />
+    </section>
+
+    <section class="debug-section">
+      <h2>Both — rail-start + rail (vanilla)</h2>
+      <Fragment set:html={bothHtml} />
+    </section>
+    <section class="debug-section">
+      <h2>Both — React</h2>
+      <LayoutGridRailsBoth client:load />
+    </section>
+  </body>
+</html>

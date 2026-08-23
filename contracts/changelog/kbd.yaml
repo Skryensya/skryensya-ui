@@ -3,8 +3,23 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "e3a33f5a753fdf82"
+surface: "8bfde984ec3e2603"
 entries:
+  - date: 2026-08-22
+    kind: feature
+    target: tone
+    es:
+      title: Tono accent opt-in; el default es una tecla física
+      body: >-
+        <code>tone</code> tiene dos valores, <code>neutral</code> (default) y <code>accent</code>.
+        El reposo deja de ser el chip azul: superficie raised, bisel y peldaño. Accent es el mismo
+        capuchón con la marca. Apretada, neutral se hunde; accent además toma el color de acción.
+    en:
+      title: Accent tone is opt-in; the default is a physical key
+      body: >-
+        <code>tone</code> has two values, <code>neutral</code> (the default) and <code>accent</code>.
+        Rest is no longer the blue chip: a raised surface, a bevel and a ledge. Accent is the same
+        cap with the brand. Pressed, neutral sinks; accent also takes the action colour.
   - date: 2026-08-11
     kind: feature
     es:

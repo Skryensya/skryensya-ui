@@ -3,8 +3,21 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "572033b0c72fd2bb"
+surface: "85dfabef0a9255e2"
 entries:
+  - date: 2026-08-21
+    kind: feature
+    target: name
+    es:
+      title: El rol zoom-out se enlaza en todos los sets
+      body: >-
+        <code>zoom-out</code> nombra alejar la vista, no una lupa. Los tres sets publicados lo
+        cubren.
+    en:
+      title: The zoom-out role is linked by every icon set
+      body: >-
+        <code>zoom-out</code> names pulling the view back, not a magnifying glass. All three
+        published sets cover it.
   - date: 2026-08-05
     kind: feature
     target: name

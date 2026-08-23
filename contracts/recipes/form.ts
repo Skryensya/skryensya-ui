@@ -52,7 +52,7 @@ export const formRecipe: Recipe = {
             {
               contract: "button",
               signature: "Button.action",
-              options: { variant: "primary" },
+              options: { variant: "accent" },
               children: "Guardando…",
             },
             { contract: "loader", signature: "Loader", options: { size: "sm", label: "Guardando el proyecto" } },
@@ -87,7 +87,7 @@ export const formRecipe: Recipe = {
             {
               contract: "button",
               signature: "Button.action",
-              options: { variant: "primary" },
+              options: { variant: "accent" },
               children: "Crear proyecto",
             },
             { contract: "button", signature: "Button.action", children: "Cancelar" },
@@ -132,7 +132,7 @@ export const formRecipe: Recipe = {
             {
               contract: "button",
               signature: "Button.action",
-              options: { variant: "primary" },
+              options: { variant: "accent" },
               children: "Crear proyecto",
             },
             { contract: "button", signature: "Button.action", children: "Cancelar" },

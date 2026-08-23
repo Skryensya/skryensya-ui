@@ -93,14 +93,18 @@
     --sk-layout-narrow: var(--size-wrapper-sm);
     --sk-layout-content: var(--size-wrapper-md);
     --sk-layout-breakout: var(--size-wrapper-lg);
-    /* The rail's own width, and how many of the grid's rows it should span — read only by a grid
-       that actually has a `[data-width="rail"]` child (below), declared here regardless so both
-       stay overridable up front like the four measures above. `--sk-layout-rail-inline-size`
-       matches `sk-toc`'s own `--sk-toc-inline-size` default (toc.css): Toc is the flagship guest,
-       though any element can fill this slot. `--sk-layout-rail-row-span` cannot have a meaningful
-       pattern-level default beyond 1: how many rows the REST of the grid's content produces is
-       something only the consumer composing it knows. */
+    /* The rail's own width, the small gap that sits between a rail and the content (NOT the
+       breakout track — that one is a reading measure, and leaving the rail past it put ~13rem of
+       empty air between a content child and its TOC), and how many of the grid's rows a rail
+       should span. Read only by a grid that actually has a rail child (below), declared here
+       regardless so they stay overridable up front like the four measures above.
+       `--sk-layout-rail-inline-size` matches `sk-toc`'s own `--sk-toc-inline-size` default
+       (toc.css): Toc is the flagship guest, though any element can fill this slot.
+       `--sk-layout-rail-row-span` cannot have a meaningful pattern-level default beyond 1: how
+       many rows the REST of the grid's content produces is something only the consumer composing
+       it knows. */
     --sk-layout-rail-inline-size: 14rem;
+    --sk-layout-rail-gap: var(--space-inline-lg);
     --sk-layout-rail-row-span: 1;
 
     --sk-layout-narrow-track: calc((var(--sk-layout-content) - var(--sk-layout-narrow)) / 2);
@@ -161,9 +165,19 @@
 
   /*
    * RAIL, a supporting column beside the grid (a TOC, contextual navigation) rather than a section
-   * within its flow. Below `wide` there is no room for a side column: the base `.sk-layout-grid > *`
-   * rule above already places it at `content-start / content-end` like any other unlabeled child,
-   * and `order: -1` is the only addition — it reads as an index, first, above the content it indexes.
+   * within its flow. `data-width="rail"` sits AFTER the content; `data-width="rail-start"` sits
+   * BEFORE it; a grid may carry both at once, still one `sk-layout-grid`. The rail hugs the
+   * content span: the small `--sk-layout-rail-gap` is the only air between them. The same
+   * `minmax(gutter, 1fr)` tracks the un-railed grid already uses sit OUTSIDE the rails, so the
+   * whole unit (start rail, content, end rail) stays centered in its container with equal air
+   * to either viewport edge — a start rail is not flush-left while an end rail floats.
+   * Breakout coincides with content whenever a rail is present: there is no open side left to
+   * grow into without un-centering the unit.
+   *
+   * Below `wide` there is no room for a side column: the base `.sk-layout-grid > *` rule above
+   * already places every rail at `content-start / content-end` like any other unlabeled child,
+   * and `order: -1` is the only addition — both rails share that order so they keep source order
+   * relative to each other and read as an index, first, above the content they index.
    *
    * `72rem`, hardcoded: media queries cannot read custom properties, so this has to be a
    * compile-time constant. The same exception `patterns/dialog-vaul.css` and `patterns/vaul.css`
@@ -171,35 +185,84 @@
    * "wide" step from `core/css/semantic/_breakpoints.scss`, hand-copied for the same reason theirs
    * is: a `@media` query is the one place that file's own comment admits CSS genuinely can't reach.
    *
-   * `:has()` scopes the rewritten track list to grids that actually carry a rail child, so every
-   * other consumer of this pattern keeps the plain fluid form above, untouched.
+   * `:has()` scopes each rewritten track list to grids that actually carry that rail (or both),
+   * so every other consumer of this pattern keeps the plain fluid form above, untouched.
    */
-  .sk-layout-grid > [data-width="rail"] {
+  .sk-layout-grid > [data-width="rail"],
+  .sk-layout-grid > [data-width="rail-start"] {
     order: -1;
   }
 
   @media (min-width: 72rem) {
-    .sk-layout-grid:has(> [data-width="rail"]) {
+    .sk-layout-grid:has(> [data-width="rail"]):not(:has(> [data-width="rail-start"])) {
       grid-template-columns:
         [full-width-start]
-          var(--sk-layout-gutter)
-        [breakout-start]
-          minmax(0, var(--sk-layout-breakout-track))
-        [content-start]
+          minmax(var(--sk-layout-gutter), 1fr)
+        [breakout-start content-start]
           minmax(0, var(--sk-layout-narrow-track))
         [narrow-start]
-          var(--sk-layout-narrow)
+          minmax(0, var(--sk-layout-narrow))
         [narrow-end]
           minmax(0, var(--sk-layout-narrow-track))
-        [content-end]
-          minmax(0, var(--sk-layout-breakout-track))
-        [breakout-end]
+        [content-end breakout-end]
+          var(--sk-layout-rail-gap)
+        [end-rail-start]
           var(--sk-layout-rail-inline-size)
+        [end-rail-end]
+          minmax(var(--sk-layout-gutter), 1fr)
         [full-width-end];
     }
 
+    .sk-layout-grid:has(> [data-width="rail-start"]):not(:has(> [data-width="rail"])) {
+      grid-template-columns:
+        [full-width-start]
+          minmax(var(--sk-layout-gutter), 1fr)
+        [start-rail-start]
+          var(--sk-layout-rail-inline-size)
+        [start-rail-end]
+          var(--sk-layout-rail-gap)
+        [breakout-start content-start]
+          minmax(0, var(--sk-layout-narrow-track))
+        [narrow-start]
+          minmax(0, var(--sk-layout-narrow))
+        [narrow-end]
+          minmax(0, var(--sk-layout-narrow-track))
+        [content-end breakout-end]
+          minmax(var(--sk-layout-gutter), 1fr)
+        [full-width-end];
+    }
+
+    .sk-layout-grid:has(> [data-width="rail-start"]):has(> [data-width="rail"]) {
+      grid-template-columns:
+        [full-width-start]
+          minmax(var(--sk-layout-gutter), 1fr)
+        [start-rail-start]
+          var(--sk-layout-rail-inline-size)
+        [start-rail-end]
+          var(--sk-layout-rail-gap)
+        [breakout-start content-start]
+          minmax(0, var(--sk-layout-narrow-track))
+        [narrow-start]
+          minmax(0, var(--sk-layout-narrow))
+        [narrow-end]
+          minmax(0, var(--sk-layout-narrow-track))
+        [content-end breakout-end]
+          var(--sk-layout-rail-gap)
+        [end-rail-start]
+          var(--sk-layout-rail-inline-size)
+        [end-rail-end]
+          minmax(var(--sk-layout-gutter), 1fr)
+        [full-width-end];
+    }
+
+    .sk-layout-grid > [data-width="rail-start"] {
+      grid-column: start-rail-start / start-rail-end;
+      grid-row: 1 / span var(--sk-layout-rail-row-span);
+      align-self: start;
+    }
+
     .sk-layout-grid > [data-width="rail"] {
-      grid-column: breakout-end / full-width-end;
+      grid-column: end-rail-start / end-rail-end;
       grid-row: 1 / span var(--sk-layout-rail-row-span);
       align-self: start;
     }

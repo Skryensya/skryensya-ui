@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-16T22:23:45.773Z",
+  "generatedAt": "2026-08-22T20:29:15.059Z",
   "results": {
     "packages/react/src/components/accordion.test.tsx": {
       "keeps exactly one item open in single mode": "passed",
@@ -614,6 +614,14 @@
       "covers every stable role with real geometry": "passed",
       "renders every role through the same call site, whatever the drawing": "passed",
       "never lets the browser's default black win over the container's color": "passed"
+    },
+    "apps/docs/src/examples/card-sources.test.ts": {
+      "keeps every example's data array at exactly three cards": "passed",
+      "marks the select example's initial state on the label, not on the input": "passed"
+    },
+    "apps/docs/src/components/pages/CardPage.test.ts": {
+      "imports tile.css, which Base.astro never loads globally": "passed",
+      "imports checkbox.css, without which every indicator paints both the check and the dash glyph at once": "passed"
     }
   }
 }

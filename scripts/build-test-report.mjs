@@ -94,6 +94,8 @@ const TARGETS = [
   { pkg: "packages/react", file: "src/components/command-palette.test.tsx" },
   { pkg: "packages/vanilla", file: "src/components/command-palette.test.ts" },
   { pkg: "packages/react", file: "src/components/icon.test.tsx" },
+  { pkg: "apps/docs", file: "src/examples/card-sources.test.ts" },
+  { pkg: "apps/docs", file: "src/components/pages/CardPage.test.ts" },
 ];
 
 const results = {};

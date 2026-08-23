@@ -93,6 +93,9 @@ export const stableIconNames = [
   "copy",
   "filter",
   "refresh",
+  /* Aleja la vista, no nombra una lupa: un set puede dibujar un menos en un círculo o flechas
+   * hacia adentro, y el rol sigue siendo verdad. */
+  "zoom-out",
   "more",
   "menu",
 

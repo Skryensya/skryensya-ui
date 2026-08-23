@@ -2,17 +2,27 @@
 /*
  * A composition guide, not a component page: there is no `sk-card`, no `@skryensya/react/card` and
  * no compiled contract to publish, on purpose (see the callout below). The shell runs with no
- * `contractId`, so Referencia and Cambios drop out and only Uso/Instalación remain, same as any
- * component page with nothing to report there.
+ * `contractId`, so Referencia and Cambios drop out — there is no single compiled artifact for
+ * "Box + Tile + ImageFrame + Stack" to read either tab from, same as Primitivas. Instalación,
+ * Estilo, Accesibilidad and Tests are all independent of `contractId`, so they still run: Estilo
+ * reads the REAL published hooks of the pieces Card composes (Box, Tile, Checkbox, ImageFrame),
+ * and Tests reads two real files written for this page (see their own comments).
  */
+/* Box, Stack, ImageFrame and typography ride in globally through Base.astro's own
+ * `patterns/layout.css` (which itself pulls box.css and image-frame.css) and `components/typography.css`.
+ * Tile and Checkbox do not: every other page that uses TileLink/TileButton/TileCheckbox imports
+ * these explicitly, and the card examples that sit on them (link, action, select, mediaLink) need
+ * them too. Without checkbox.css, EVERY indicator painted both the check and the dash glyph at
+ * once: the state-scoped visibility rule that hides one of them never loaded. */
+import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/checkbox.css";
 import "../../examples/card.css";
+import CodeBlock from "../CodeBlock.astro";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { cardCopy } from "../../examples/card-data";
 import { cardSources } from "../../examples/card-sources";
 import {
-  CardAccentSoftDemo,
-  CardAccentSolidDemo,
   CardActionDemo,
   CardBasicDemo,
   CardGradientDemo,
@@ -20,22 +30,58 @@ import {
   CardMediaDemo,
   CardMediaLinkDemo,
   CardMetaDemo,
+  CardPlainMediaDemo,
   CardProductDemo,
   CardSelectDemo,
   CardStatDemo,
 } from "../react-demos/card";
 import { getLocale, useTranslations } from "../../i18n";
 
-/* The twelve examples are a LADDER: each rung adds one decision to the one before it, and every
+/* The eleven examples are a LADDER: each rung adds one decision to the one before it, and every
  * rung is shown as a grid of three, because a card that only looks right on its own is a card whose
  * height, media and footer were never tested against its siblings. */
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 const copy = cardCopy[locale];
 const src = cardSources(copy);
+
+/* Same snippet Primitivas installs: Card asks nothing beyond the two packages every example here
+ * already imports from. */
+const install = `pnpm add @skryensya/core @skryensya/react`;
 ---
 
-<ComponentPageShell title="Card" description={t("cardPage.description")}>
+<ComponentPageShell
+  title="Card"
+  description={t("cardPage.description")}
+  styleGroups={[
+    { file: "patterns/box.css", probe: "sk-box", title: "Box" },
+    { file: "components/tile.css", probe: "sk-tile", title: "Tile" },
+    { file: "components/checkbox.css", probe: "sk-checkbox", title: "Checkbox" },
+    { file: "patterns/image-frame.css", probe: "sk-image-frame", title: "ImageFrame" },
+  ]}
+  tests={[
+    {
+      file: "apps/docs/src/examples/card-sources.test.ts",
+      tests: [
+        { name: "keeps every example's data array at exactly three cards", description: t("cardPage.testGridOfThree") },
+        {
+          name: "marks the select example's initial state on the label, not on the input",
+          description: t("cardPage.testSelectDefaultChecked"),
+        },
+      ],
+    },
+    {
+      file: "apps/docs/src/components/pages/CardPage.test.ts",
+      tests: [
+        { name: "imports tile.css, which Base.astro never loads globally", description: t("cardPage.testImportsTile") },
+        {
+          name: "imports checkbox.css, without which every indicator paints both the check and the dash glyph at once",
+          description: t("cardPage.testImportsCheckbox"),
+        },
+      ],
+    },
+  ]}
+>
   <Fragment slot="usage">
     <p class="lede" set:html={t("cardPage.lede")} />
 
@@ -49,20 +95,28 @@ const src = cardSources(copy);
     <p set:html={t("cardPage.chooseBody")} />
     <div class="sk-table-scroll">
       <table class="sk-table">
-        <thead>
-          <tr><th>{t("cardPage.tableHeadSurface")}</th><th>{t("cardPage.tableHeadUses")}</th><th>{t("cardPage.tableHeadElement")}</th></tr>
+        <thead class="sk-table__head">
+          <tr class="sk-table__row"><th class="sk-table__header">{t("cardPage.tableHeadSurface")}</th><th class="sk-table__header">{t("cardPage.tableHeadUses")}</th><th class="sk-table__header">{t("cardPage.tableHeadElement")}</th></tr>
         </thead>
-        <tbody>
-          <tr><td>{t("cardPage.tableRow1Surface")}</td><td><a href="/componentes/box">Box</a></td><td set:html={t("cardPage.tableRow1Element")} /></tr>
-          <tr><td>{t("cardPage.tableRow2Surface")}</td><td><a href="/componentes/link">TileLink</a></td><td set:html={t("cardPage.tableRow2Element")} /></tr>
-          <tr><td>{t("cardPage.tableRow3Surface")}</td><td><a href="/componentes/button">TileButton</a></td><td set:html={t("cardPage.tableRow3Element")} /></tr>
-          <tr><td>{t("cardPage.tableRow4Surface")}</td><td><a href="/componentes/checkbox">TileCheckbox</a></td><td set:html={t("cardPage.tableRow4Element")} /></tr>
-          <tr><td>{t("cardPage.tableRow5Surface")}</td><td><a href="/componentes/radio-group">TileRadioGroup</a></td><td set:html={t("cardPage.tableRow5Element")} /></tr>
-          <tr><td>{t("cardPage.tableRow6Surface")}</td><td><a href="/componentes/accordion">Accordion</a></td><td set:html={t("cardPage.tableRow6Element")} /></tr>
+        <tbody class="sk-table__body">
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow1Surface")}</td><td class="sk-table__cell"><a href="/componentes/box">Box</a></td><td set:html={t("cardPage.tableRow1Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow2Surface")}</td><td class="sk-table__cell"><a href="/componentes/link">TileLink</a></td><td set:html={t("cardPage.tableRow2Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow3Surface")}</td><td class="sk-table__cell"><a href="/componentes/button">TileButton</a></td><td set:html={t("cardPage.tableRow3Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow4Surface")}</td><td class="sk-table__cell"><a href="/componentes/checkbox">TileCheckbox</a></td><td set:html={t("cardPage.tableRow4Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow5Surface")}</td><td class="sk-table__cell"><a href="/componentes/radio-group">TileRadioGroup</a></td><td set:html={t("cardPage.tableRow5Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow6Surface")}</td><td class="sk-table__cell"><a href="/componentes/accordion">Accordion</a></td><td set:html={t("cardPage.tableRow6Element")} class="sk-table__cell" /></tr>
         </tbody>
       </table>
     </div>
     <p set:html={t("cardPage.geometryBody")} />
+
+    <h3 id="contenido">{t("cardPage.plainMediaTitle")}</h3>
+    <p set:html={t("cardPage.plainMediaBody")} />
+    <ComponentPreview html={src.plainMedia.html} react={src.plainMedia.react} label={copy.labels.plainMedia} note={t("cardPage.plainMediaNote")}>
+      <Fragment slot="react">
+        <CardPlainMediaDemo client:load lang={locale} />
+      </Fragment>
+    </ComponentPreview>
 
     <h3 id="basic">{t("cardPage.basicTitle")}</h3>
     <p set:html={t("cardPage.basicBody")} />
@@ -77,22 +131,6 @@ const src = cardSources(copy);
     <ComponentPreview html={src.meta.html} react={src.meta.react} label={copy.labels.meta} note={t("cardPage.metaNote")}>
       <Fragment slot="react">
         <CardMetaDemo client:load lang={locale} />
-      </Fragment>
-    </ComponentPreview>
-
-    <h3 id="acento-suave">{t("cardPage.accentSoftTitle")}</h3>
-    <p set:html={t("cardPage.accentSoftBody")} />
-    <ComponentPreview html={src.accentSoft.html} react={src.accentSoft.react} label={copy.labels.accentSoft} note={t("cardPage.accentSoftNote")}>
-      <Fragment slot="react">
-        <CardAccentSoftDemo client:load lang={locale} />
-      </Fragment>
-    </ComponentPreview>
-
-    <h3 id="acento-solido">{t("cardPage.accentSolidTitle")}</h3>
-    <p set:html={t("cardPage.accentSolidBody")} />
-    <ComponentPreview html={src.accentSolid.html} react={src.accentSolid.react} label={copy.labels.accentSolid} note={t("cardPage.accentSolidNote")}>
-      <Fragment slot="react">
-        <CardAccentSolidDemo client:load lang={locale} />
       </Fragment>
     </ComponentPreview>
 
@@ -192,5 +230,17 @@ const src = cardSources(copy);
 
     <h3>{t("cardPage.implTitle")}</h3>
     <p set:html={t("cardPage.implBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("cardPage.a11yP1")} />
+    <p set:html={t("cardPage.a11yP2")} />
+    <p set:html={t("cardPage.a11yP3")} />
+    <p set:html={t("cardPage.a11yP4")} />
+    <p set:html={t("cardPage.a11yP5")} />
   </Fragment>
 </ComponentPageShell>

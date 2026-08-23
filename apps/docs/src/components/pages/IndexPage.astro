@@ -1,17 +1,16 @@
 ---
 /*
- * The component CATALOG, not a component's own page: a directory of tiles linking out to every
+ * The component CATALOG, not a component's own page: a directory of cards linking out to every
  * migrated page, so `ComponentPageShell`'s tabs (Uso/Instalación/Referencia…) do not apply — there
  * is no single "usage" to tab into. What carries over for visual consistency with the pages this
  * links to is only the hero header block itself (eyebrow + h1), used here directly rather than
  * through the shell, with no tab strip underneath it.
  */
-import "@skryensya/core/components/tile.css";
 import Base from "../../layouts/Base.astro";
 import { getLocale, useTranslations } from "../../i18n";
 import { iconMarkup } from "../../icons";
 import { getComponentDescription } from "../../lib/component-catalog";
-import { componentStatus, getNavigation } from "../../lib/navigation";
+import { getNavigation } from "../../lib/navigation";
 
 const locale = getLocale(Astro.url);
 const componentSection = getNavigation(locale).find((section) => section.id === "components");
@@ -19,9 +18,29 @@ if (!componentSection) throw new Error("Missing components navigation section");
 
 const searchIcon = iconMarkup("search");
 const t = useTranslations(locale);
+
+/*
+ * dummyimage SCALES ITS TEXT TO FIT the requested box, so the same placeholder renders "Kbd" huge
+ * and "Component preview" small — three letters and seventeen both stretched to the same 400px.
+ * Side by side in a grid that reads as inconsistent artwork, not as one placeholder repeated.
+ * Padding every label to the SAME character count (centred, so the word stays in the middle of the
+ * frame) makes the string the service measures the same width for every card, so every card comes
+ * back at the same type size. Verified against the live endpoint: the spaces are honoured, not
+ * trimmed the way some text-to-image renderers do.
+ */
+const placeholderChars = Math.max(
+  ...componentSection.groups.flatMap((group) => group.items.map((item) => item.label.length)),
+);
+
+const placeholderSrc = (label: string) => {
+  const pad = Math.max(0, placeholderChars - label.length);
+  const left = Math.floor(pad / 2);
+  const text = `${" ".repeat(left)}${label}${" ".repeat(pad - left)}`;
+  return `https://dummyimage.com/400x240/667eea/ffffff?text=${encodeURIComponent(text)}`;
+};
 ---
 
-<Base title={t("indexPage.title")} description={t("indexPage.description")}>
+<Base title={t("indexPage.title")} description={t("indexPage.description")} documentLayout="grid">
   <header class="docs-component-hero">
     <h1>{t("indexPage.title")}</h1>
   </header>
@@ -42,53 +61,56 @@ const t = useTranslations(locale);
     <kbd class="sk-kbd" data-sk-command-palette-hint aria-hidden="true">⌘K</kbd>
   </button>
 
-  <div class="docs-catalog-groups">
-    {
-      componentSection.groups.map((group, groupIndex) => {
-        const headingId = `catalog-group-${groupIndex}`;
+  {
+    /*
+     * FLAT ON PURPOSE. `indexDocument()` (the build-time TOC scan) only counts `h2`/`h3` sitting at
+     * the top level of `<main>` — a heading buried inside a wrapping `<section><header><div>` reads
+     * as content being demonstrated, the same rule that keeps a demo's own headings out of the TOC.
+     * That used to leave this page's own group titles unindexed and the rail empty. So the heading
+     * (and its count, folded INTO it rather than beside it in a sibling wrapper) sits bare at the
+     * top level; only the `<ul>` of cards is still wrapped, in a `<section aria-labelledby>` that
+     * points at the heading by id rather than containing it — `aria-labelledby` never required
+     * containment, just the reference.
+     */
+    componentSection.groups.map((group, groupIndex) => {
+      const headingId = `catalog-group-${groupIndex}`;
 
-        return (
+      return (
+        <Fragment>
+          <h2 class="docs-catalog-section__title" id={headingId} data-flush>
+            <span class="docs-catalog-section__title-text">{group.group}</span>
+            <span class="docs-catalog-section__count" data-toc-ignore>
+              {group.items.length} {t("indexPage.countSuffix")}
+            </span>
+          </h2>
+          {group.blurb && <p class="docs-catalog-section__blurb">{group.blurb}</p>}
+
           <section class="docs-catalog-section" aria-labelledby={headingId}>
-            <header class="docs-catalog-section__header">
-              <div>
-                <h2 class="docs-catalog-section__title" id={headingId} data-flush>
-                  {group.group}
-                </h2>
-                {group.blurb && <p class="docs-catalog-section__blurb">{group.blurb}</p>}
-              </div>
-              <span class="docs-catalog-section__count">
-                {group.items.length} {t("indexPage.countSuffix")}
-              </span>
-            </header>
-
             <ul class="docs-catalog">
               {group.items.map((item) => (
                 <li class="docs-catalog__item">
-                  <a
-                    class="docs-catalog__link sk-tile sk-tile--interactive sk-interactive"
-                    data-padding="md"
-                    href={item.href}
-                    data-scope="tile"
-                    data-part="root"
-                  >
-                    <span class="sk-tile__content" data-part="content">
-                      <span class="sk-tile__title">{item.label}</span>
-                      <span class="sk-tile__description">
+                  <a href={item.href} class="docs-catalog__card sk-interactive">
+                    <img
+                      class="docs-catalog__image"
+                      src={placeholderSrc(item.label)}
+                      alt=""
+                      loading="lazy"
+                    />
+                    <div class="docs-catalog__content">
+                      <h3 class="docs-catalog__title">
+                        {item.label}
+                      </h3>
+                      <p class="docs-catalog__description">
                         {getComponentDescription(item.href, locale)}
-                      </span>
-                    </span>
-                    {componentStatus(item) === "wip" && (
-                      <span class="sk-badge" data-tone="warning">
-                        {t("status.wip")}
-                      </span>
-                    )}
+                      </p>
+                    </div>
                   </a>
                 </li>
               ))}
             </ul>
           </section>
-        );
-      })
-    }
-  </div>
+        </Fragment>
+      );
+    })
+  }
 </Base>

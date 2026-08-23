@@ -180,6 +180,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-23",
+            "en": {
+              "body": "Renamed from <code>primary</code>: that name described a ROLE — \"this screen's main action\" — the button itself cannot know, it is the author who decides which of their buttons is the featured one at any given moment, and sometimes it is more than one or none. The variant only paints a saturated fill; <code>accent</code> says that, not a hierarchy the contract has no way to verify. This renames the option's VALUE only: the semantic token behind it (<code>--color-action-primary</code>) keeps its name, it is an internal detail of <code>button.css</code> and not part of what this contract promises. A consumer with hand-authored <code>data-variant=\"primary\"</code> stops painting the fill (silently falls back to <code>neutral</code>); <code>variant=\"primary\"</code> in a usage tree or in JSX stops type-checking.",
+              "title": "The \"primary\" variant is renamed to \"accent\""
+            },
+            "es": {
+              "body": "Renombrado de <code>primary</code>: ese nombre describía un ROL — \"la acción principal de esta pantalla\" — que el propio botón no puede saber, es el autor quien decide cuál de sus botones es el destacado en un momento dado, y a veces es más de uno o ninguno. El variant solo pinta un relleno saturado; <code>accent</code> dice eso, no una jerarquía que el contrato no tiene forma de verificar. Es un rename del VALOR de la opción únicamente: el token semántico detrás (<code>--color-action-primary</code>) no cambia de nombre, es un detalle interno de <code>button.css</code> y no parte de lo que este contrato promete. Un consumidor con <code>data-variant=\"primary\"</code> autorado a mano deja de pintar el relleno (cae al <code>neutral</code> por defecto en silencio); <code>variant=\"primary\"</code> en un árbol de uso o en JSX deja de tipar.",
+              "title": "El variant \"primary\" pasa a llamarse \"accent\""
+            },
+            "kind": "breaking",
+            "target": "variant"
+          },
+          {
             "date": "2026-08-17",
             "en": {
               "body": "Renamed from <code>squareStart</code>/<code>squareEnd</code>: the old name only described what they did to the RADIUS, but a <code>neutral</code>/<code>subtle</code>/ <code>translucent</code> button also paints a border of its own, and clearing only the corner left that border intact right at the seam — two competing lines, the button's own and the neighbor's, instead of one. This went unnoticed while every example used <code>primary</code>/<code>danger</code>/<code>ghost</code> (those three already paint a transparent border), until an example paired two <code>neutral</code> halves. The new options clear both things — the rounding AND the border color on that same edge — and the name now says so.",
@@ -532,6 +545,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-22",
+            "en": {
+              "body": "The <code>aria-selected</code> highlight always painted the focus ring, because the sunken surface tint vanished in hc-dark. That ring made every result look like a high-contrast target. The tint is now a mix of text on the raised surface (visible in HC too) and the ring is reserved for <code>forced-colors</code> and explicit high contrast.",
+              "title": "The active row no longer wears the focus ring in everyday mode"
+            },
+            "es": {
+              "body": "El resalte de <code>aria-selected</code> pintaba el anillo de foco siempre, porque el tint de superficie hundida desaparecía en hc-dark. Ese anillo hacía que cada resultado se viera como un target de alto contraste. El tint ahora es una mezcla de texto sobre la superficie elevada (visible también en HC) y el anillo queda para <code>forced-colors</code> y el modo de contraste alto explícito.",
+              "title": "La fila activa ya no lleva el anillo de foco en el modo cotidiano"
+            },
+            "kind": "bugfix"
+          },
+          {
             "date": "2026-08-17",
             "en": {
               "body": "Two gaps against WAI's Combobox pattern: <code>aria-controls</code> never pointed at the listbox (required whether or not the popup is visible, the same rule this audit's own Combobox section already enforces) — the listbox now carries a stable id and the input references it. And in Vanilla, <code>aria-expanded</code> on the input only ever updated on the external open-triggers, never on the combobox itself: it stayed permanently <code>\"false\"</code> while the listbox already had results. React already got this right; both bindings now agree.",
@@ -644,6 +669,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-22",
+            "en": {
+              "body": "The border used <code>--color-border-default</code>, the same rung high-contrast mode uses, so an everyday dialog looked framed. It now reads <code>--color-border-subtle</code> (like Menu and Popover); the width stays 1px because in HC the panel and the page are still the same fill. Enter materialises with the shared tokens (opacity, scale, blur and a short drop) and the backdrop no longer snaps in.",
+              "title": "The frame no longer reads as high contrast, and enter matches Popover"
+            },
+            "es": {
+              "body": "El borde usaba <code>--color-border-default</code>, el mismo peldaño que el modo HC, así que un dialog cotidiano se veía recuadrado. Ahora lee <code>--color-border-subtle</code> (como Menu y Popover); el ancho sigue en 1px porque en HC el panel y la página siguen siendo el mismo relleno. La entrada materializa con los tokens compartidos (opacidad, escala, blur y un drop corto) y el backdrop ya no aparece de golpe.",
+              "title": "El marco deja de leerse como alto contraste, y la entrada coincide con Popover"
+            },
+            "kind": "bugfix"
+          },
           {
             "date": "2026-08-14",
             "en": {
@@ -796,6 +833,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-21",
+            "en": {
+              "body": "<code>zoom-out</code> names pulling the view back, not a magnifying glass. All three published sets cover it.",
+              "title": "The zoom-out role is linked by every icon set"
+            },
+            "es": {
+              "body": "<code>zoom-out</code> nombra alejar la vista, no una lupa. Los tres sets publicados lo cubren.",
+              "title": "El rol zoom-out se enlaza en todos los sets"
+            },
+            "kind": "feature",
+            "target": "name"
+          },
+          {
             "date": "2026-08-05",
             "en": {
               "body": "<code>file</code> and <code>folder</code> name file-browser structure without classifying every extension. All three published sets cover them.",
@@ -816,6 +866,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-21",
+            "en": {
+              "body": "The <code>icon</code> enum includes <code>zoom-out</code>, the same role that just joined the stable vocabulary.",
+              "title": "IconStateButton accepts the zoom-out role"
+            },
+            "es": {
+              "body": "El enum de <code>icon</code> incluye <code>zoom-out</code>, el mismo rol que acaba de entrar al vocabulario estable.",
+              "title": "IconStateButton acepta el rol zoom-out"
+            },
+            "kind": "feature",
+            "target": "icon"
+          },
           {
             "date": "2026-08-19",
             "en": {
@@ -902,6 +965,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-22",
+            "en": {
+              "body": "<code>tone</code> has two values, <code>neutral</code> (the default) and <code>accent</code>. Rest is no longer the blue chip: a raised surface, a bevel and a ledge. Accent is the same cap with the brand. Pressed, neutral sinks; accent also takes the action colour.",
+              "title": "Accent tone is opt-in; the default is a physical key"
+            },
+            "es": {
+              "body": "<code>tone</code> tiene dos valores, <code>neutral</code> (default) y <code>accent</code>. El reposo deja de ser el chip azul: superficie raised, bisel y peldaño. Accent es el mismo capuchón con la marca. Apretada, neutral se hunde; accent además toma el color de acción.",
+              "title": "Tono accent opt-in; el default es una tecla física"
+            },
+            "kind": "feature",
+            "target": "tone"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>Kbd</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. It has no options: the element IS the meaning. Its stylesheet is <code>components/kbd.css</code>.",
@@ -921,6 +997,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-21",
+            "en": {
+              "body": "<code>data-width=\"rail\"</code> still sits after the content; <code>data-width=\"rail-start\"</code> puts it before; the same <code>sk-layout-grid</code> can carry both at once. The air between rail and content is <code>--sk-layout-rail-gap</code> (one <code>space-inline</code> step, not the breakout track, which left a reading-measure gap between the prose and its index).",
+              "title": "LayoutGrid's rail can sit before, after, or on both sides"
+            },
+            "es": {
+              "body": "<code>data-width=\"rail\"</code> sigue sentándose después del contenido; <code>data-width=\"rail-start\"</code> lo pone antes; la misma <code>sk-layout-grid</code> puede llevar los dos a la vez. El aire entre rail y contenido es <code>--sk-layout-rail-gap</code> (un paso de <code>space-inline</code>, no el track de breakout, que dejaba un hueco de lectura entre la prosa y su índice).",
+              "title": "El rail de LayoutGrid va antes, después, o en ambos lados"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-08-21",
             "en": {
@@ -1382,6 +1470,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-22",
+            "en": {
+              "body": "<code>aria-current=\"page\"</code> painted <code>--color-action-primary</code> and on-accent text, a blue Submit sitting in a row of ghosts. It is now a raised surface, primary text and the same three-layer bevel Kbd and Segmented use. No new option: the default marks the place without shouting brand.",
+              "title": "The current page is a raised key, not a primary button"
+            },
+            "es": {
+              "body": "<code>aria-current=\"page\"</code> pintaba <code>--color-action-primary</code> y texto on-accent, un Submit azul en una fila de ghosts. Ahora es superficie raised, texto primario y el mismo bisel de tres capas que Kbd y Segmented. No hay opción nueva: el default marca el lugar sin gritar marca.",
+              "title": "La página actual es una tecla raised, no un botón primary"
+            },
+            "kind": "bugfix"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>Pagination</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>page</code>, <code>total</code>, <code>siblings</code>, <code>label</code>, <code>previousLabel</code>, <code>nextLabel</code>. Its stylesheet is <code>components/pagination.css</code>.",
@@ -1501,6 +1601,30 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-22",
+            "en": {
+              "body": "The raised stone thumb and the hover wash read as the same pill. Selected now mixes a little <code>--color-bg-accent-subtle</code> into raised and takes accent text; the selected state-layer rung is muted (the thumb already is the indicator), so hover stays the shared tint alone.",
+              "title": "Selected no longer reads as hover"
+            },
+            "es": {
+              "body": "El pulgar raised de piedra y el wash de hover se leían como la misma pastilla. Selected mezcla un poco de <code>--color-bg-accent-subtle</code> sobre raised y toma texto accent; el state layer de selected se apaga (el pulgar ya es el indicador), así el hover sigue siendo sólo el tinte compartido.",
+              "title": "El selected ya no se confunde con el hover"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-08-22",
+            "en": {
+              "body": "The <code>--color-bg-accent-subtle</code> fill made every Segmented (Vanilla/React, presets, density) read as a brand toggle. The track is now a sunken well and the chosen option a raised key, with the same three-layer bevel Kbd uses: highlight, ledge and elevation. Text goes to primary. No new option: the default stops shouting so it can sit in chrome and in forms.",
+              "title": "The active option is a raised thumb, not an accent chip"
+            },
+            "es": {
+              "body": "El fill de <code>--color-bg-accent-subtle</code> hacía que cada Segmented (Vanilla/React, presets, densidad) se leyera como un toggle de marca. El riel ahora es superficie hundida y la opción elegida una tecla raised, con el mismo bisel de tres capas que Kbd: highlight, peldaño y elevación. El texto pasa a primario. No hay opción nueva: el default deja de gritar para poder sentarse en chrome y en formularios.",
+              "title": "La opción activa es un pulgar raised, no un chip de acento"
+            },
+            "kind": "bugfix"
+          },
           {
             "date": "2026-08-17",
             "en": {
@@ -2006,6 +2130,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-23",
+            "en": {
+              "body": "The <code>&lt;details&gt;</code>, the <code>&lt;summary&gt;</code> and the chevron are gone: the index no longer opens or closes, it is readable from first paint. With them go the <code>disclosure</code>, <code>summary</code> and <code>chevron</code> parts, the <code>data-sk-toc-disclosure</code> attribute, and the <code>data-sk-toc-rail</code> opt-in — which was never in this contract to begin with: a magic string re-typed in the stylesheet, the enhancer, and every consumer that wanted the rail. The reason: the rail's entire appearance sat behind that attribute AND a <code>min-width: 72rem</code> query, so the component's own page could not render the form the docs site itself runs on — a preview frame is 1022px wide and the gate asked for 1152px. All that stays behind <code>wide</code> is <code>position: sticky</code> and the fixed inline size. <strong>Migration:</strong> drop <code>data-sk-toc-rail</code> from your markup and stop wrapping the list in a <code>&lt;details&gt;</code>; the emitter already produces the new shape. The current-section mark changes from a filled chip to a rule in the gutter.",
+              "title": "Toc publishes one shape, always open"
+            },
+            "es": {
+              "body": "Se van el <code>&lt;details&gt;</code>, el <code>&lt;summary&gt;</code> y el chevron: el índice ya no se abre ni se cierra, se ve desde el primer paint. Con ellos se van las partes <code>disclosure</code>, <code>summary</code> y <code>chevron</code>, el atributo <code>data-sk-toc-disclosure</code> y el opt-in <code>data-sk-toc-rail</code> — que además nunca estuvo en el contrato: era un string mágico re-tipeado en la hoja de estilos, el enhancer y cada consumidor que quisiera el rail. El motivo: toda la apariencia de rail vivía detrás de ese atributo Y de un <code>min-width: 72rem</code>, así que la propia página del componente no podía renderizar la forma sobre la que corre el sitio de docs — un frame de preview mide 1022px y la compuerta pedía 1152px. Lo único que sigue detrás de <code>wide</code> son <code>position: sticky</code> y el ancho fijo. <strong>Migración:</strong> borrá <code>data-sk-toc-rail</code> de tu markup y no envuelvas la lista en un <code>&lt;details&gt;</code>; el emisor ya produce la forma nueva. La marca de sección actual pasa de un chip de fondo a una regla en el gutter.",
+              "title": "Toc publica una sola forma, siempre abierta"
+            },
+            "kind": "breaking"
+          },
+          {
             "date": "2026-08-17",
             "en": {
               "body": "The active item's <code>aria-current</code> used to pass the generic <code>\"true\"</code>. It now passes <code>\"location\"</code>, the token ARIA reserves for \"an item representing the current position within a reader's environment\" — exactly the scroll-spy TOC case. Extended ARIA APG audit over the rest of the docs catalogue.",
@@ -2158,6 +2294,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-23",
+            "en": {
+              "body": "Same change as <code>button</code> (same date, same reason): <code>linkTone</code> only ever had one possible value, <code>primary</code>, and that name described the color as a rank in a hierarchy (\"the main tone\") when it is really a binary switch — the link either takes the brand color or it does not, no scale in between. The token chain behind it (<code>--color-text-link</code> → <code>--color-text-accent</code>) already said \"accent\" two levels down; the option's name now says the same thing. Different from <code>Text</code>'s <code>tone</code> (<code>primary</code>/<code>secondary</code>/ <code>tertiary</code>/<code>danger</code>), which is untouched: there \"primary\" is the first rung of an emphasis scale, not a claim about intent. A consumer with hand-authored <code>data-tone=\"primary\"</code> on an <code>&lt;a&gt;</code> stops painting the brand color; <code>linkTone=\"primary\"</code> stops type-checking.",
+              "title": "linkTone \"primary\" is renamed to \"accent\""
+            },
+            "es": {
+              "body": "Mismo cambio que <code>button</code> (misma fecha, mismo motivo): <code>linkTone</code> solo tenía un valor posible, <code>primary</code>, y ese nombre describía el color como una posición de jerarquía (\"el tono principal\") cuando en realidad es un interruptor binario — el link toma el color de la marca o no lo toma, sin escala entre medio. La cadena de tokens detrás (<code>--color-text-link</code> → <code>--color-text-accent</code>) ya decía \"accent\" dos niveles abajo; el nombre de la opción ahora dice lo mismo. Distinto de <code>Text</code>'s <code>tone</code> (<code>primary</code>/<code>secondary</code>/ <code>tertiary</code>/<code>danger</code>), que no se toca: ahí \"primary\" es el primer peldaño de una escala de énfasis, no una afirmación de intención. Un consumidor con <code>data-tone=\"primary\"</code> en un <code>&lt;a&gt;</code> autorado a mano deja de pintar el color de marca; <code>linkTone=\"primary\"</code> deja de tipar.",
+              "title": "linkTone \"primary\" pasa a llamarse \"accent\""
+            },
+            "kind": "breaking",
+            "target": "linkTone"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -3218,7 +3367,7 @@
             "neutral",
             "subtle",
             "translucent",
-            "primary",
+            "accent",
             "danger",
             "ghost"
           ]
@@ -7424,6 +7573,7 @@
             "copy",
             "filter",
             "refresh",
+            "zoom-out",
             "more",
             "menu",
             "info",
@@ -7580,6 +7730,7 @@
                       "copy",
                       "filter",
                       "refresh",
+                      "zoom-out",
                       "more",
                       "menu",
                       "info",
@@ -7995,7 +8146,17 @@
     "kbd": {
       "css": "@skryensya/core/components/kbd.css",
       "id": "kbd",
-      "options": {},
+      "options": {
+        "tone": {
+          "attr": "data-tone",
+          "default": "neutral",
+          "type": "enum",
+          "values": [
+            "neutral",
+            "accent"
+          ]
+        }
+      },
       "parts": {
         "root": "sk-kbd"
       },
@@ -8019,7 +8180,9 @@
             "shortcut",
             "key-combination"
           ],
-          "options": [],
+          "options": [
+            "tone"
+          ],
           "react": {
             "from": "@skryensya/react/kbd",
             "name": "Kbd"
@@ -8182,7 +8345,7 @@
           "useWhen": [
             "una página necesita una medida de lectura y algunos hijos deben ser angostos, abrirse o sangrar de borde a borde",
             "una sección full-width debe conservar su contenido centrado sin un wrapper adicional",
-            "la página lleva un rail de apoyo (TOC, navegación contextual): es un hijo directo con data-width=\"rail\" — no un span de contenido como narrow/breakout, sino una columna aparte que la grilla reserva junto al flujo principal"
+            "la página lleva un rail de apoyo (TOC, navegación contextual): es un hijo directo con data-width=\"rail\" (después del contenido) o data-width=\"rail-start\" (antes), o ambos — no un span de contenido como narrow/breakout, sino una columna aparte que la misma grilla reserva junto al flujo, separada de él solo por --sk-layout-rail-gap"
           ]
         },
         "Main": {
@@ -8307,7 +8470,8 @@
             "page-flow",
             "named-content-measures",
             "breakout-content",
-            "full-bleed-section"
+            "full-bleed-section",
+            "supporting-rail"
           ],
           "options": [],
           "react": {
@@ -15544,8 +15708,6 @@
         }
       },
       "parts": {
-        "chevron": "sk-toc__chevron",
-        "disclosure": "sk-toc__inner",
         "icon": "sk-toc__icon",
         "item": "sk-toc__item",
         "label": "sk-toc__label",
@@ -15553,7 +15715,6 @@
         "list": "sk-toc__list",
         "nav": "sk-toc__nav",
         "root": "sk-toc",
-        "summary": "sk-toc__summary",
         "title": "sk-toc__title"
       },
       "semantics": {
@@ -15639,82 +15800,59 @@
               {
                 "children": [
                   {
-                    "also": [
-                      "sk-interactive"
-                    ],
-                    "children": [
-                      {
-                        "element": "h2",
-                        "part": "title",
-                        "textFromOption": "title"
-                      },
-                      {
-                        "attrs": {
-                          "aria-hidden": "true"
-                        },
-                        "element": "span",
-                        "part": "chevron"
-                      }
-                    ],
-                    "element": "summary",
-                    "part": "summary"
+                    "element": "h2",
+                    "part": "title",
+                    "textFromOption": "title"
                   },
                   {
+                    "attrs": {
+                      "role": "list"
+                    },
                     "children": [
                       {
-                        "attrs": {
-                          "role": "list"
-                        },
                         "children": [
                           {
+                            "also": [
+                              "sk-interactive"
+                            ],
                             "children": [
                               {
-                                "also": [
-                                  "sk-interactive"
-                                ],
-                                "children": [
-                                  {
-                                    "element": "span",
-                                    "itemSlot": "icon",
-                                    "part": "icon",
-                                    "whenItemSlotGiven": "icon"
-                                  },
-                                  {
-                                    "element": "span",
-                                    "itemSlot": "children",
-                                    "part": "label"
-                                  }
-                                ],
-                                "element": "a",
-                                "itemOptions": [
-                                  "href",
-                                  "current"
-                                ],
-                                "part": "link"
+                                "element": "span",
+                                "itemSlot": "icon",
+                                "part": "icon",
+                                "whenItemSlotGiven": "icon"
+                              },
+                              {
+                                "element": "span",
+                                "itemSlot": "children",
+                                "part": "label"
                               }
                             ],
-                            "element": "li",
+                            "element": "a",
                             "itemOptions": [
-                              "level"
+                              "href",
+                              "current"
                             ],
-                            "part": "item",
-                            "repeat": "items"
+                            "part": "link"
                           }
                         ],
-                        "element": "ul",
-                        "part": "list"
+                        "element": "li",
+                        "itemOptions": [
+                          "level"
+                        ],
+                        "part": "item",
+                        "repeat": "items"
                       }
                     ],
-                    "element": "nav",
-                    "options": [
-                      "title"
-                    ],
-                    "part": "nav"
+                    "element": "ul",
+                    "part": "list"
                   }
                 ],
-                "element": "details",
-                "mount": "data-sk-toc-disclosure",
-                "part": "disclosure"
+                "element": "nav",
+                "options": [
+                  "title"
+                ],
+                "part": "nav"
               }
             ],
             "element": "aside",
@@ -16739,7 +16877,7 @@
           "prop": "tone",
           "type": "enum",
           "values": [
-            "primary"
+            "accent"
           ]
         },
         "size": {
@@ -17256,5 +17394,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "ed3124c59ddb3790"
+  "sourceHash": "f306dc4383c08987"
 }

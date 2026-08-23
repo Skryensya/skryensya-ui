@@ -40,6 +40,7 @@ const MAP = {
   copy: "copy",
   filter: "funnel",
   refresh: "arrows-clockwise",
+  "zoom-out": "magnifying-glass-minus",
   more: "dots-three",
   menu: "list",
   info: "info",

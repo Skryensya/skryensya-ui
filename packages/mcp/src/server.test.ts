@@ -125,7 +125,7 @@ describe("validate_ui", () => {
       tree: {
         contract: "button",
         signature: "Button.navigation",
-        options: { variant: "primary", href: "/docs" },
+        options: { variant: "accent", href: "/docs" },
         children: "Documentación",
       },
     });

@@ -11,9 +11,10 @@ import {
  * TOC: the React half of the same contract the Vanilla enhancer connects to.
  *
  * Copies `connectToc` rather than improving on it (the rule `NOT-PUBLISHED.md` already states for
- * `dialog`/`command-palette`): one shape shipped (an interactive `<details>`, closed
- * by default), a scroll-spy that moves `aria-current` on its own, and a consumer's stylesheet is
- * what turns this into an always-open rail: this component does not guess a breakpoint for it.
+ * `dialog`/`command-palette`): one shape shipped — a compact, always-open index — and a scroll-spy
+ * that moves `aria-current` on its own. The `<details>`/`<summary>` pair and the `matchMedia` that
+ * pinned it open past `wide` are both gone; see `core/toc.ts`'s own header for why the disclosure
+ * stopped being a second shape of this contract.
  */
 export type TocItem = {
   href: string;
@@ -33,31 +34,9 @@ export type TocProps = Omit<HTMLAttributes<HTMLElement>, "title"> & {
 
 export function Toc({ className, items, title, ...props }: TocProps) {
   const rootRef = useRef<HTMLElement>(null);
-  const detailsRef = useRef<HTMLDetailsElement>(null);
   const [current, setCurrent] = useState<string | undefined>(
     () => items.find((item) => item.current)?.href,
   );
-
-  useEffect(() => {
-    const root = rootRef.current;
-    const details = detailsRef.current;
-    if (!root?.hasAttribute("data-sk-toc-rail") || !details) return;
-
-    const wide =
-      getComputedStyle(document.documentElement)
-        .getPropertyValue("--breakpoint-wide")
-        .trim() || "72rem";
-    const rail = window.matchMedia(`(min-width: ${wide})`);
-    const sync = () => {
-      details.open = rail.matches;
-      const summary = details.querySelector<HTMLElement>("summary");
-      if (summary) summary.tabIndex = rail.matches ? -1 : 0;
-    };
-
-    sync();
-    rail.addEventListener("change", sync);
-    return () => rail.removeEventListener("change", sync);
-  }, []);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -99,28 +78,23 @@ export function Toc({ className, items, title, ...props }: TocProps) {
       data-sk-toc=""
       ref={rootRef}
     >
-      <details className={tocParts.disclosure} data-sk-toc-disclosure="" ref={detailsRef}>
-        <summary className={`${tocParts.summary} sk-interactive`}>
-          <h2 className={tocParts.title}>{title}</h2>
-          <span aria-hidden="true" className={tocParts.chevron} />
-        </summary>
-        <nav aria-label={title} className={tocParts.nav}>
-          <ul className={tocParts.list} role="list">
-            {items.map((item) => (
-              <li className={tocParts.item} data-level={item.level ?? "h2"} key={item.href}>
-                <a
-                  aria-current={current === item.href ? "location" : undefined}
-                  className={`${tocParts.link} sk-interactive`}
-                  href={item.href}
-                >
-                  {item.icon ? <span className={tocParts.icon}>{item.icon}</span> : null}
-                  <span className={tocParts.label}>{item.children}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </details>
+      <nav aria-label={title} className={tocParts.nav}>
+        <h2 className={tocParts.title}>{title}</h2>
+        <ul className={tocParts.list} role="list">
+          {items.map((item) => (
+            <li className={tocParts.item} data-level={item.level ?? "h2"} key={item.href}>
+              <a
+                aria-current={current === item.href ? "location" : undefined}
+                className={`${tocParts.link} sk-interactive`}
+                href={item.href}
+              >
+                {item.icon ? <span className={tocParts.icon}>{item.icon}</span> : null}
+                <span className={tocParts.label}>{item.children}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </aside>
   );
 }

@@ -21,9 +21,9 @@ export type HeadingSize =
   | "md"
   | "lg"
   | "display";
-export type LinkTone = "primary";
+export type LinkTone = "accent";
 /* A text link is always underlined, the only WCAG 1.4.1-safe treatment, so there is no underline
- * option to choose. Default paint matches surrounding prose; `primary` is the brand-colored call-out.
+ * option to choose. Default paint matches surrounding prose; `accent` is the brand-colored call-out.
  * Standalone links that don't need an underline aren't `sk-link` (see typography.css). */
 
 export const typographyParts = {
@@ -71,12 +71,12 @@ export const typographyContract = {
     href: { type: "string", attr: "href" },
     /**
      * Link's accent. Spelled `linkTone` here because Text already owns `tone` over a wider enum;
-     * the binding still calls it `tone` / `data-tone`. Only `primary`; a link is either the
+     * the binding still calls it `tone` / `data-tone`. Only `accent`; a link is either the
      * surrounding text colour or the action colour, never a status colour.
      */
     linkTone: {
       type: "enum",
-      values: ["primary"],
+      values: ["accent"],
       attr: "data-tone",
       prop: "tone",
     },

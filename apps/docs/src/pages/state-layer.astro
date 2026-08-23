@@ -176,7 +176,7 @@ const labHtml = `<div class="sl-lab">
     <button
       class="sk-button sk-interactive"
       data-sk-button
-      data-variant="primary"
+      data-variant="accent"
       type="button"
     >
       Publicar
@@ -230,21 +230,21 @@ const ladder = [
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr><th>Tipo</th><th>Fuente de verdad</th><th>Úsalo cuando</th><th>Quién lo conecta</th></tr>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row"><th class="sk-table__header">Tipo</th><th class="sk-table__header">Fuente de verdad</th><th class="sk-table__header">Úsalo cuando</th><th class="sk-table__header">Quién lo conecta</th></tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><strong>Directo</strong></td>
-          <td><code>:hover</code>, <code>:focus-visible</code>, <code>:active</code>, ARIA y <code>:has()</code></td>
-          <td>El mismo button, link, tile o wrapper posee la interacción.</td>
-          <td>El consumidor añade <code>sk-interactive</code> una vez.</td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Directo</strong></td>
+          <td class="sk-table__cell"><code>:hover</code>, <code>:focus-visible</code>, <code>:active</code>, ARIA y <code>:has()</code></td>
+          <td class="sk-table__cell">El mismo button, link, tile o wrapper posee la interacción.</td>
+          <td class="sk-table__cell">El consumidor añade <code>sk-interactive</code> una vez.</td>
         </tr>
-        <tr>
-          <td><strong>Proyectado</strong></td>
-          <td><code>data-highlighted</code>, <code>data-selected</code>, <code>data-disabled</code> y otros estados de máquina.</td>
-          <td>Un widget compuesto conserva el foco en su input o raíz, pero activa un item interno.</td>
-          <td>El adapter y el CSS del componente; el consumidor no recrea el mapping.</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Proyectado</strong></td>
+          <td class="sk-table__cell"><code>data-highlighted</code>, <code>data-selected</code>, <code>data-disabled</code> y otros estados de máquina.</td>
+          <td class="sk-table__cell">Un widget compuesto conserva el foco en su input o raíz, pero activa un item interno.</td>
+          <td class="sk-table__cell">El adapter y el CSS del componente; el consumidor no recrea el mapping.</td>
         </tr>
       </tbody>
     </table>
@@ -335,17 +335,17 @@ const ladder = [
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr><th>Prioridad</th><th>Estado</th><th>Opacidad usada</th><th></th></tr>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row"><th class="sk-table__header">Prioridad</th><th class="sk-table__header">Estado</th><th class="sk-table__header">Opacidad usada</th><th class="sk-table__header"></th></tr>
       </thead>
-      <tbody>
+      <tbody class="sk-table__body">
         {
           ladder.map(([state, token, note], i) => (
-            <tr>
-              <td class="count">{i + 1}</td>
-              <td class="mono">{state}</td>
-              <td><Used token={token} /></td>
-              <td class="count">{note}</td>
+            <tr class="sk-table__row">
+              <td class="sk-table__cell count">{i + 1}</td>
+              <td class="sk-table__cell mono">{state}</td>
+              <td class="sk-table__cell"><Used token={token} /></td>
+              <td class="sk-table__cell count">{note}</td>
             </tr>
           ))
         }

@@ -48,15 +48,17 @@ const sourceFiles = [
     <p set:html={t("wrapperPage.belowBody")} />
 
     <h3>{t("wrapperPage.tableTitle")}</h3>
+    <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead><tr><th>{t("wrapperPage.tableHeadSize")}</th><th>{t("wrapperPage.tableHeadCeiling")}</th></tr></thead>
-      <tbody>
-        <tr><td><code>sm</code></td><td>{t("wrapperPage.tableRow1")}</td></tr>
-        <tr><td><code>md</code></td><td>{t("wrapperPage.tableRow2")}</td></tr>
-        <tr><td><code>lg</code></td><td>{t("wrapperPage.tableRow3")}</td></tr>
-        <tr><td><code>full</code></td><td>{t("wrapperPage.tableRow4")}</td></tr>
+      <thead class="sk-table__head"><tr class="sk-table__row"><th class="sk-table__header">{t("wrapperPage.tableHeadSize")}</th><th class="sk-table__header">{t("wrapperPage.tableHeadCeiling")}</th></tr></thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row"><td class="sk-table__cell"><code>sm</code></td><td class="sk-table__cell">{t("wrapperPage.tableRow1")}</td></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell"><code>md</code></td><td class="sk-table__cell">{t("wrapperPage.tableRow2")}</td></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell"><code>lg</code></td><td class="sk-table__cell">{t("wrapperPage.tableRow3")}</td></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell"><code>full</code></td><td class="sk-table__cell">{t("wrapperPage.tableRow4")}</td></tr>
       </tbody>
     </table>
+    </div>
 
     <h3>{t("wrapperPage.siteTitle")}</h3>
     <p set:html={t("wrapperPage.siteBody")} />

@@ -169,8 +169,8 @@
     border-radius: var(--radius-control);
   }
 
-  /* Brand / primary paint, the colored call-out in a paragraph. */
-  .sk-link[data-tone="primary"] { --sk-link-fg: var(--color-text-link); }
+  /* Brand / accent paint, the colored call-out in a paragraph. */
+  .sk-link[data-tone="accent"] { --sk-link-fg: var(--color-text-link); }
 
   .sk-link.sk-interactive::before {
     inset-block: -0.12em;

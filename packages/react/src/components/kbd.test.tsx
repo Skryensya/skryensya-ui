@@ -22,4 +22,12 @@ describe("Kbd", () => {
     const ui = render(<Kbd aria-hidden="true">↵</Kbd>);
     expect(ui.container.querySelector("kbd")?.getAttribute("aria-hidden")).toBe("true");
   });
+
+  it("defaults to the neutral tone and opts into accent", () => {
+    const rest = render(<Kbd>K</Kbd>);
+    expect(rest.container.querySelector("kbd")?.getAttribute("data-tone")).toBe("neutral");
+
+    const accent = render(<Kbd tone="accent">K</Kbd>);
+    expect(accent.container.querySelector("kbd")?.getAttribute("data-tone")).toBe("accent");
+  });
 });

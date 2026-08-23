@@ -18,6 +18,7 @@ const t = useTranslations(getLocale(Astro.url));
 <Base
   title="Nav list"
   description="Nav list: the destination list pattern shared by the navbar and the sidebar."
+  documentLayout="grid"
 >
   <h1>Nav list</h1>
   <p class="lede">
@@ -86,21 +87,21 @@ const t = useTranslations(getLocale(Astro.url));
 
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Hook</th>
-          <th>{t("hooks.definition")} <span class="count">build</span></th>
-          <th>{t("hooks.resolvedValue")} <span class="count">runtime</span></th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Hook</th>
+          <th class="sk-table__header">{t("hooks.definition")} <span class="count">build</span></th>
+          <th class="sk-table__header">{t("hooks.resolvedValue")} <span class="count">runtime</span></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="sk-table__body">
         {
           hooks.map((h) => {
             const nameId = slugId("navhook-name", h.name);
             const defId = slugId("navhook-def", h.name);
             const valId = slugId("navhook-val", h.name);
             return (
-              <tr>
+              <tr class="sk-table__row">
                 <td class="sk-table__cell mono sk-table__cell--copy">
                   <span id={nameId}>{h.name}</span>
                 </td>

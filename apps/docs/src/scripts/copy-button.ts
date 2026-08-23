@@ -11,6 +11,14 @@ let nextId = 0;
 const uniqueId = (prefix: string) => `${prefix}-${++nextId}`;
 
 const FEEDBACK_DURATION = 1800;
+/*
+ * A re-click before the anchor position has fully settled is what actually causes the flag to
+ * paint overlapping the button (see `paint()` below); forcing a reflow narrowed the window but
+ * did not close it. Throttling the CLICK itself closes it for real: no second `paint()` call
+ * happens until a real frame has had time to render the first one's close→reopen in full, so
+ * there is never a second position computation to race the first.
+ */
+const CLICK_THROTTLE = 400;
 
 /*
  * Docs-local now (decision 33: no published contract owns this shape any more). `CopyCells.astro`'s
@@ -60,6 +68,7 @@ function connect(root: HTMLButtonElement): () => void {
   const errorAriaLabel = root.getAttribute(attrs.errorAriaLabel) ?? errorLabel;
 
   let resetTimer: number | undefined;
+  let throttleTimer: number | undefined;
 
   const reset = () => {
     setIconState(root, attrs.state, undefined, idleAriaLabel);
@@ -70,6 +79,16 @@ function connect(root: HTMLButtonElement): () => void {
   const paint = (state: CopyState) => {
     setIconState(root, attrs.state, state, state === "copied" ? successAriaLabel : errorAriaLabel);
     if (label) label.textContent = state === "copied" ? successLabel : errorLabel;
+    /*
+     * A second copy before the first flag closed used to write `data-state="open"` onto a flag
+     * that was already open — a no-op attribute set the browser had nothing to react to, and the
+     * anchor positioning that followed painted the flag overlapping the button. Forcing a
+     * close→reflow→reopen here fixed that race, but forces a synchronous reflow on EVERY open,
+     * including the first ever — the one time the engine is still settling `position-try` for a
+     * box that has never been visible before, which risks freezing an unsettled result into what
+     * paints. `onClick`'s throttle closes the actual race instead: a second click can no longer
+     * reach `paint()` while the first flag is still open, so there is nothing left to reopen.
+     */
     flag?.setAttribute("data-state", "open");
     if (resetTimer !== undefined) window.clearTimeout(resetTimer);
     resetTimer = window.setTimeout(() => {
@@ -79,6 +98,17 @@ function connect(root: HTMLButtonElement): () => void {
   };
 
   const onClick = () => {
+    /* Throttled, not just debounced: a click mid-cooldown is dropped outright rather than queued
+       or restarted, since the reader's intent ("copy THIS") is already satisfied by the click that
+       is still playing out. */
+    if (root.getAttribute("aria-disabled") === "true") return;
+    root.setAttribute("aria-disabled", "true");
+    if (throttleTimer !== undefined) window.clearTimeout(throttleTimer);
+    throttleTimer = window.setTimeout(() => {
+      root.removeAttribute("aria-disabled");
+      throttleTimer = undefined;
+    }, CLICK_THROTTLE);
+
     const text = sourceText(root);
     if (!text) {
       paint("error");
@@ -102,6 +132,8 @@ function connect(root: HTMLButtonElement): () => void {
   return () => {
     root.removeEventListener("click", onClick);
     if (resetTimer !== undefined) window.clearTimeout(resetTimer);
+    if (throttleTimer !== undefined) window.clearTimeout(throttleTimer);
+    root.removeAttribute("aria-disabled");
     reset();
     unbindAnchor?.();
   };

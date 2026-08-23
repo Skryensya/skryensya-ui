@@ -23,20 +23,15 @@ const linkWithIcon = `<a class="sk-toc__link sk-interactive" href="#installation
 </a>`;
 
 const markup = `<aside class="sk-toc" data-sk-toc>
-  <details class="sk-toc__inner" data-sk-toc-disclosure>
-    <summary class="sk-toc__summary sk-interactive">
-      <h2 class="sk-toc__title">En esta página</h2>
-      <span class="sk-toc__chevron" aria-hidden="true"></span>
-    </summary>
-    <nav aria-label="En esta página">
-      <ul class="sk-toc__list"></ul>
-    </nav>
-  </details>
+  <nav class="sk-toc__nav" aria-label="En esta página">
+    <h2 class="sk-toc__title">En esta página</h2>
+    <ul class="sk-toc__list" role="list"></ul>
+  </nav>
 </aside>`;
 
 const mount = `import { initComponents } from "@skryensya/vanilla/auto";
 
-// Encuentra [data-sk-toc], conecta el switch rail/disclosure y el scroll-spy.
+// Encuentra [data-sk-toc] y conecta el scroll-spy que mueve aria-current.
 await initComponents();`;
 
 const builder = `---
@@ -84,20 +79,35 @@ const sourceFiles = [
   <Fragment slot="usage">
     <p class="lede" set:html={t("tocPage.lede")} />
 
+    {
+      /*
+       * `minHeight` HERE IS ABOUT CLS, not about a cramped specimen. A stage reserves
+       * `--sk-component-preview-stage-min-block-size` (12rem) while its frame loads and then drops
+       * that floor to 0 the moment the frame reports ready, letting the measured content height take
+       * over (`component-preview.css`). Measured on this page: these three settle at 152px, 178px and
+       * 178px, so every one of them COLLAPSES out of the 192px reserve once it is ready — the first
+       * by a full 40px — and everything below it jumps up. Declaring a floor is what
+       * `component-preview.css` already keys `[data-sk-component-preview-min-height]` on to keep the
+       * reserve after ready, the same way `viewport="menu"`/`"overlay"` keep theirs. `12rem` matches
+       * the loading reserve exactly, so the stage is the same height from first paint onward and
+       * there is no shift at all; the slack left under a short index also stops it sitting glued to
+       * the frame's bottom edge.
+       */
+    }
     <h3 id="anatomia">{t("tocPage.anatomyTitle")}</h3>
     <p set:html={t("tocPage.anatomyBody")} />
-    <ComponentPreview tree={tocPlainTree(t)} label={t("tocPage.anatomyLabel")} flush />
+    <ComponentPreview tree={tocPlainTree(t)} label={t("tocPage.anatomyLabel")} flush minHeight="12rem" />
 
     <h3 id="niveles">{t("tocPage.levelsTitle")}</h3>
     <p set:html={t("tocPage.levelsBody")} />
-    <ComponentPreview tree={tocNestedTree(t)} label={t("tocPage.levelsLabel")} flush />
+    <ComponentPreview tree={tocNestedTree(t)} label={t("tocPage.levelsLabel")} flush minHeight="12rem" />
 
     <h3 id="iconos">{t("tocPage.iconsTitle")}</h3>
     <p set:html={t("tocPage.iconsBody")} />
-    <ComponentPreview tree={tocIconsTree(t)} label={t("tocPage.iconsLabel")} flush />
+    <ComponentPreview tree={tocIconsTree(t)} label={t("tocPage.iconsLabel")} flush minHeight="12rem" />
     <CodeBlock code={linkWithIcon} label={t("tocPage.iconsCodeLabel")} />
 
-    <h3 id="rail-o-disclosure">{t("tocPage.railTitle")}</h3>
+    <h3 id="una-sola-forma">{t("tocPage.railTitle")}</h3>
     <p set:html={t("tocPage.railBody1")} />
     <p set:html={t("tocPage.railBody2")} />
 

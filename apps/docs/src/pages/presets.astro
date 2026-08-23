@@ -96,21 +96,42 @@ const ucCssTeaching =
     no cambia esta página ni el resto del sitio, es contenido de demostración, no una preferencia.
   </p>
 
-  <div class="preset-picker" role="group" aria-label="Elegir preset">
-    <button type="button" class="preset-card sk-interactive" data-preset-pick="default" aria-pressed="true">
-      <span class="preset-card__swatch" style="--swatch: oklch(50.4% 0.169 259.6)" aria-hidden="true"></span>
-      <span class="preset-card__name">Default</span>
+  <div class="presets-picker">
+  <div
+    class="sk-segmented"
+    data-sk-segmented
+    data-value="default"
+    role="radiogroup"
+    aria-label="Elegir preset"
+  >
+    <span class="sk-segmented__indicator" aria-hidden="true"></span>
+    <button
+      class="sk-segmented__option sk-interactive"
+      data-sk-segmented-option
+      data-value="default"
+      type="button"
+      role="radio"
+      aria-checked="true"
+    >
+      Default
     </button>
-    <button type="button" class="preset-card sk-interactive" data-preset-pick="uc" aria-pressed="false">
-      <span class="preset-card__swatch" style="--swatch: oklch(57.02% 0.1812 254.01)" aria-hidden="true"></span>
-      <span class="preset-card__name">UC</span>
+    <button
+      class="sk-segmented__option sk-interactive"
+      data-sk-segmented-option
+      data-value="uc"
+      type="button"
+      role="radio"
+      aria-checked="false"
+    >
+      UC
     </button>
+  </div>
   </div>
 
   <div class="sk-box preset-canvas" data-preset="default" data-surface="surface" data-border="subtle" data-padding="lg">
     <div class="sk-stack">
       <div class="sk-inline" data-gap="sm">
-        <button class="sk-button sk-interactive" data-variant="primary" type="button">Primario</button>
+        <button class="sk-button sk-interactive" data-variant="accent" type="button">Acento</button>
         <button class="sk-button sk-interactive" type="button">Neutral</button>
         <button class="sk-button sk-interactive" data-variant="danger" type="button">Danger</button>
         <button class="sk-button sk-interactive" data-variant="ghost" type="button">Ghost</button>
@@ -135,16 +156,11 @@ const ucCssTeaching =
 
   <script>
     const canvas = document.querySelector<HTMLElement>(".preset-canvas");
-    const picks = document.querySelectorAll<HTMLElement>("[data-preset-pick]");
-    if (canvas && picks.length) {
-      picks.forEach((pick) => {
-        pick.addEventListener("click", () => {
-          const id = pick.dataset.presetPick ?? "default";
-          canvas.dataset.preset = id;
-          picks.forEach((p) => p.setAttribute("aria-pressed", String(p === pick)));
-        });
-      });
-    }
+    const picker = document.querySelector<HTMLElement>(".presets-picker [data-sk-segmented]");
+    picker?.addEventListener("sk-value-change", (event) => {
+      const value = (event as CustomEvent<{ value: string }>).detail?.value;
+      if (canvas && value) canvas.dataset.preset = value;
+    });
   </script>
 
   <p>
@@ -170,36 +186,7 @@ const ucCssTeaching =
 <style is:global set:html={stageCss}></style>
 
 <style>
-  .preset-picker {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-inline-sm);
+  .presets-picker {
     margin-block: var(--space-stack-md);
-  }
-
-  .preset-card {
-    display: flex;
-    align-items: center;
-    gap: var(--space-inline-xs);
-    padding: var(--space-inset-sm) var(--space-inset-md);
-    border: 1px solid var(--color-border-default);
-    border-radius: var(--radius-control);
-    background: var(--color-bg-surface);
-    color: var(--color-text-primary);
-    font: inherit;
-    cursor: pointer;
-  }
-
-  .preset-card[aria-pressed="true"] {
-    border-color: var(--color-border-focus);
-    box-shadow: 0 0 0 1px var(--color-border-focus);
-  }
-
-  .preset-card__swatch {
-    inline-size: 1rem;
-    block-size: 1rem;
-    border-radius: var(--radius-pill);
-    background: var(--swatch);
-    flex-shrink: 0;
   }
 </style>

@@ -41,7 +41,30 @@ function CardGrid({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-/* 1 ─ The floor: a surface, a title, a paragraph. Box, because nothing here is interactive. */
+/* 1 ─ The actual floor: no Box, no Tile, not even a border. Stack itself is the root, on an
+ * <article>, and ImageFrame keeps its OWN radius here: there is no surface left to clip it, so
+ * the frame has to own its corners instead of asking for "none". */
+export const CardPlainMediaDemo = framed(function CardPlainMediaDemo({ lang = "es" }: DemoProps) {
+  const c = cardCopy[lang];
+  return (
+    <CardGrid label={c.labels.plainMedia}>
+      {c.plainMedia.map((card) => (
+        <Stack as="article" gap="sm" key={card.title}>
+          <ImageFrame alt={card.alt} aspect="16/9" src={card.src} />
+          <Stack gap="xs">
+            <Heading as="h3" flush size="h4">
+              {card.title}
+            </Heading>
+            <Text tone="secondary">{card.body}</Text>
+          </Stack>
+        </Stack>
+      ))}
+    </CardGrid>
+  );
+});
+
+/* 2 ─ One step up from plain content: a surface, a title, a paragraph. Box, because nothing here
+ * is interactive. */
 export const CardBasicDemo = framed(function CardBasicDemo({ lang = "es" }: DemoProps) {
   const c = cardCopy[lang];
   return (
@@ -60,7 +83,7 @@ export const CardBasicDemo = framed(function CardBasicDemo({ lang = "es" }: Demo
   );
 });
 
-/* 2 ─ Same Box, now with status and date above the title. Badge and Text carry the hierarchy. */
+/* 3 ─ Same Box, now with status and date above the title. Badge and Text carry the hierarchy. */
 export const CardMetaDemo = framed(function CardMetaDemo({ lang = "es" }: DemoProps) {
   const c = cardCopy[lang];
   return (
@@ -87,61 +110,7 @@ export const CardMetaDemo = framed(function CardMetaDemo({ lang = "es" }: DemoPr
   );
 });
 
-/* 3 ─ Accent, softly: Box's own hooks rewritten to the accent-subtle surface. Still Box, still
- * read-only, still normal text tokens. */
-export const CardAccentSoftDemo = framed(function CardAccentSoftDemo({ lang = "es" }: DemoProps) {
-  const c = cardCopy[lang];
-  return (
-    <CardGrid label={c.labels.accentSoft}>
-      {c.accentSoft.map((card) => (
-        <Box as="article" className="sk-card-accent sk-card-accent-soft" key={card.title} padding="lg">
-          <span aria-hidden="true" className="sk-card-accent__icon">
-            <Icon name={card.icon} />
-          </span>
-          <Stack gap="xs">
-            <span className="sk-card-eyebrow">{card.eyebrow}</span>
-            <Heading as="h3" flush size="h4">
-              {card.title}
-            </Heading>
-            <Text tone="secondary">{card.body}</Text>
-          </Stack>
-          <span className="sk-card-accent__cta">
-            {card.cta} <Icon name="arrow-right" size="sm" />
-          </span>
-        </Box>
-      ))}
-    </CardGrid>
-  );
-});
-
-/* 4 ─ Accent, solid: the action fill, so the text comes from the on-accent token instead of the
- * text ramp. The contrast partner changes, so the token has to change with it. */
-export const CardAccentSolidDemo = framed(function CardAccentSolidDemo({ lang = "es" }: DemoProps) {
-  const c = cardCopy[lang];
-  return (
-    <CardGrid label={c.labels.accentSolid}>
-      {c.accentSolid.map((card) => (
-        <Box as="article" className="sk-card-accent sk-card-accent-solid" key={card.title} padding="lg">
-          <span aria-hidden="true" className="sk-card-accent__icon">
-            <Icon name={card.icon} />
-          </span>
-          <Stack gap="xs">
-            <span className="sk-card-eyebrow">{card.eyebrow}</span>
-            <Heading as="h3" flush size="h4">
-              {card.title}
-            </Heading>
-            <Text>{card.body}</Text>
-          </Stack>
-          <span className="sk-card-accent__cta">
-            {card.cta} <Icon name="arrow-right" size="sm" />
-          </span>
-        </Box>
-      ))}
-    </CardGrid>
-  );
-});
-
-/* 5 ─ Stat supplies the metric, Box supplies the card. Stat never grows a `card` variant. */
+/* 4 ─ Stat supplies the metric, Box supplies the card. Stat never grows a `card` variant. */
 export const CardStatDemo = framed(function CardStatDemo({ lang = "es" }: DemoProps) {
   const c = cardCopy[lang];
   return (
@@ -164,7 +133,7 @@ export const CardStatDemo = framed(function CardStatDemo({ lang = "es" }: DemoPr
   );
 });
 
-/* 6 ─ First interactive rung. The whole surface goes to ONE destination, so the root is the anchor
+/* 5 ─ First interactive rung. The whole surface goes to ONE destination, so the root is the anchor
  * itself: no stretched-link CSS, no `onClick` on a div. */
 export const CardLinkDemo = framed(function CardLinkDemo({ lang = "es" }: DemoProps) {
   const c = cardCopy[lang];
@@ -190,7 +159,7 @@ export const CardLinkDemo = framed(function CardLinkDemo({ lang = "es" }: DemoPr
   );
 });
 
-/* 7 ─ Same geometry, different platform element: this one DOES something, so it is a button. */
+/* 6 ─ Same geometry, different platform element: this one DOES something, so it is a button. */
 export const CardActionDemo = framed(function CardActionDemo({ lang = "es" }: DemoProps) {
   const c = cardCopy[lang];
   return (
@@ -212,7 +181,7 @@ export const CardActionDemo = framed(function CardActionDemo({ lang = "es" }: De
   );
 });
 
-/* 8 ─ And a preference is a checkbox: same surface again, but the state is the platform's. */
+/* 7 ─ And a preference is a checkbox: same surface again, but the state is the platform's. */
 export const CardSelectDemo = framed(function CardSelectDemo({ lang = "es" }: DemoProps) {
   const c = cardCopy[lang];
   return (
@@ -229,7 +198,7 @@ export const CardSelectDemo = framed(function CardSelectDemo({ lang = "es" }: De
   );
 });
 
-/* 9 ─ Media enters. The frame goes flush to the edge because the Box already clips; the body gets
+/* 8 ─ Media enters. The frame goes flush to the edge because the Box already clips; the body gets
  * its inset back from a consumer class, since Box's padding would have inset the photo too. */
 export const CardMediaDemo = framed(function CardMediaDemo({ lang = "es" }: DemoProps) {
   const c = cardCopy[lang];
@@ -251,7 +220,7 @@ export const CardMediaDemo = framed(function CardMediaDemo({ lang = "es" }: Demo
   );
 });
 
-/* 10 ─ The wash: caption over photo. The gradient sizes itself to the TYPE it protects, not to a
+/* 9 ─ The wash: caption over photo. The gradient sizes itself to the TYPE it protects, not to a
  * percentage of the image, which is why the caption is the box and the gradient fills it. */
 export const CardGradientDemo = framed(function CardGradientDemo({ lang = "es" }: DemoProps) {
   const c = cardCopy[lang];
@@ -274,7 +243,7 @@ export const CardGradientDemo = framed(function CardGradientDemo({ lang = "es" }
   );
 });
 
-/* 11 ─ Media + wash + navigation, all three at once: a TileLink at padding none so the photo reaches
+/* 10 ─ Media + wash + navigation, all three at once: a TileLink at padding none so the photo reaches
  * the edge, and the title still names the link. */
 export const CardMediaLinkDemo = framed(function CardMediaLinkDemo({ lang = "es" }: DemoProps) {
   const c = cardCopy[lang];
@@ -302,7 +271,7 @@ export const CardMediaLinkDemo = framed(function CardMediaLinkDemo({ lang = "es"
   );
 });
 
-/* 12 ─ The top of the ladder, and the one that proves the rule: two INDEPENDENT decisions live
+/* 11 ─ The top of the ladder, and the one that proves the rule: two INDEPENDENT decisions live
  * here, so the root cannot be a Tile. A link and a button inside an anchor would be invalid HTML. */
 export const CardProductDemo = framed(function CardProductDemo({ lang = "es" }: DemoProps) {
   const c = cardCopy[lang];
@@ -326,7 +295,7 @@ export const CardProductDemo = framed(function CardProductDemo({ lang = "es" }: 
               <Link href="#" onClick={stop}>
                 {c.cta.details}
               </Link>
-              <Button type="button" variant="primary">
+              <Button type="button" variant="accent">
                 {c.cta.add}
               </Button>
             </Inline>

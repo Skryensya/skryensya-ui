@@ -35,7 +35,7 @@ export const appShellRecipe: Recipe = {
         actions: {
           contract: "button",
           signature: "Button.action",
-          options: { variant: "primary" },
+          options: { variant: "accent" },
           children: "Crear proyecto",
         },
       },

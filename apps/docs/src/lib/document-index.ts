@@ -105,6 +105,14 @@ function decodeEntities(text: string): string {
     .replace(/&amp;/g, "&");
 }
 
+/**
+ * A heading can carry a child that says something ABOUT it rather than being part of its own name
+ * — a count badge inside a catalog group's `<h2>`, say. `data-toc-ignore` on that child drops its
+ * text from the label this produces (and so from the TOC link, the page `<title>`-adjacent id
+ * slug, everywhere a heading's name gets read) without changing what's visually inside the heading.
+ */
+const TOC_IGNORE_ATTR = /\sdata-toc-ignore\b/;
+
 /** What `textContent` would have returned: markup dropped, whitespace collapsed. */
 function textOf(html: string): string {
   let text = "";
@@ -121,6 +129,23 @@ function textOf(html: string): string {
       i = close < 0 ? html.length : close + 3;
       continue;
     }
+
+    if (!html.startsWith("</", lt)) {
+      const name = /^[a-zA-Z][^\s/>]*/.exec(html.slice(lt + 1, lt + 64))?.[0];
+      if (name) {
+        const end = tagEnd(html, lt + 1);
+        const tag = html.slice(lt, end);
+        if (!/\/\s*>$/.test(tag) && TOC_IGNORE_ATTR.test(tag)) {
+          // The WHOLE element is skipped, its own closing tag included, so nothing inside it
+          // — however deeply nested — leaks into the label either.
+          const element = name.toLowerCase();
+          const close = html.indexOf(`</${element}`, end);
+          i = close < 0 ? html.length : tagEnd(html, close + 2 + element.length);
+          continue;
+        }
+      }
+    }
+
     i = tagEnd(html, lt + 1);
   }
   return decodeEntities(text).replace(/\s+/g, " ").trim();
@@ -250,4 +275,167 @@ export function indexDocument(source: string): DocumentIndex {
   }
 
   return { html, headings, topLevelCount };
+}
+
+const VALUE_ATTR = /data-value\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i;
+
+function isHeroTabPanel(tag: string, value: string): boolean {
+  if (!/\bdata-sk-tabs-content\b/i.test(tag)) return false;
+  const match = VALUE_ATTR.exec(tag);
+  return (match?.[1] ?? match?.[2] ?? match?.[3]) === value;
+}
+
+/**
+ * The inner HTML of one hero-tab panel (`data-sk-tabs-content` + `data-value`), or `null` when
+ * that panel is not in the fragment. Same depth walk as {@link indexDocument}: a `>` inside an
+ * attribute must not end the tag, and a raw-text child must not move the count.
+ */
+function heroTabPanelInner(source: string, value: string): { start: number; end: number } | null {
+  let depth = 0;
+  let i = 0;
+  let panelDepth: number | null = null;
+  let start = -1;
+
+  while (i < source.length) {
+    const lt = source.indexOf("<", i);
+    if (lt < 0) break;
+
+    if (source.startsWith("<!--", lt)) {
+      const close = source.indexOf("-->", lt);
+      i = close < 0 ? source.length : close + 3;
+      continue;
+    }
+
+    if (source.startsWith("<!", lt)) {
+      i = tagEnd(source, lt + 2);
+      continue;
+    }
+
+    if (source.startsWith("</", lt)) {
+      if (panelDepth !== null && depth === panelDepth) return { start, end: lt };
+      depth = Math.max(0, depth - 1);
+      i = tagEnd(source, lt + 2);
+      continue;
+    }
+
+    const name = /^[a-zA-Z][^\s/>]*/.exec(source.slice(lt + 1, lt + 64))?.[0];
+    if (!name) {
+      i = lt + 1;
+      continue;
+    }
+
+    const element = name.toLowerCase();
+    const end = tagEnd(source, lt + 1 + name.length);
+    const tag = source.slice(lt, end);
+    const closes = VOID_ELEMENTS.has(element) || /\/\s*>$/.test(tag);
+
+    if (RAW_TEXT_ELEMENTS.has(element) && !closes) {
+      const close = source.indexOf(`</${element}`, end);
+      i = close < 0 ? source.length : tagEnd(source, close + 2 + element.length);
+      continue;
+    }
+
+    if (!closes) {
+      depth++;
+      if (panelDepth === null && isHeroTabPanel(tag, value)) {
+        start = end;
+        panelDepth = depth;
+      }
+    } else if (panelDepth === null && isHeroTabPanel(tag, value)) {
+      return { start: end, end };
+    }
+
+    i = end;
+  }
+
+  return panelDepth !== null ? { start, end: source.length } : null;
+}
+
+/**
+ * The sections of one hero-tab panel, the same set the browser fill used to walk
+ * (`:scope > h3, h4` of `[data-sk-tabs-content][data-value]`).
+ *
+ * Component pages hide their document outline one tab-panel deep, so {@link indexDocument}'s
+ * top-level `h2`/`h3` scan sees nothing and the rail used to ship empty, then wait on a script
+ * after `<main>`. The default tab (`usage`) is known while the page is built; only a `?tab=`
+ * deep link still has to rebuild in the browser.
+ */
+export function indexHeroTabPanel(source: string, value: string): { html: string; headings: DocHeading[] } {
+  const range = heroTabPanelInner(source, value);
+  if (!range) return { html: source, headings: [] };
+
+  const inner = source.slice(range.start, range.end);
+  const headings: DocHeading[] = [];
+  const inserts: { at: number; text: string }[] = [];
+  const taken = authoredIds(source);
+
+  let depth = 0;
+  let i = 0;
+
+  while (i < inner.length) {
+    const lt = inner.indexOf("<", i);
+    if (lt < 0) break;
+
+    if (inner.startsWith("<!--", lt)) {
+      const close = inner.indexOf("-->", lt);
+      i = close < 0 ? inner.length : close + 3;
+      continue;
+    }
+
+    if (inner.startsWith("<!", lt)) {
+      i = tagEnd(inner, lt + 2);
+      continue;
+    }
+
+    if (inner.startsWith("</", lt)) {
+      depth = Math.max(0, depth - 1);
+      i = tagEnd(inner, lt + 2);
+      continue;
+    }
+
+    const name = /^[a-zA-Z][^\s/>]*/.exec(inner.slice(lt + 1, lt + 64))?.[0];
+    if (!name) {
+      i = lt + 1;
+      continue;
+    }
+
+    const element = name.toLowerCase();
+    const nameEnd = lt + 1 + name.length;
+    const end = tagEnd(inner, nameEnd);
+    const tag = inner.slice(lt, end);
+    const closes = VOID_ELEMENTS.has(element) || /\/\s*>$/.test(tag);
+
+    if (depth === 0 && (element === "h3" || element === "h4")) {
+      const close = inner.indexOf(`</${element}`, end);
+      const label = textOf(inner.slice(end, close < 0 ? inner.length : close));
+      const authored = ID_ATTR.exec(tag);
+      let id = authored?.[1] ?? authored?.[2] ?? authored?.[3];
+
+      if (!id) {
+        const base = slugify(label);
+        id = base;
+        for (let n = 2; taken.has(id); n++) id = `${base}-${n}`;
+        inserts.push({ at: nameEnd, text: ` id="${id}"` });
+      }
+
+      taken.add(id);
+      headings.push({ id, label, level: element === "h3" ? "h2" : "h3" });
+    }
+
+    if (RAW_TEXT_ELEMENTS.has(element) && !closes) {
+      const close = inner.indexOf(`</${element}`, end);
+      i = close < 0 ? inner.length : tagEnd(inner, close + 2 + element.length);
+      continue;
+    }
+
+    if (!closes) depth++;
+    i = end;
+  }
+
+  let next = inner;
+  for (const insert of inserts.reverse()) {
+    next = next.slice(0, insert.at) + insert.text + next.slice(insert.at);
+  }
+
+  return { html: source.slice(0, range.start) + next + source.slice(range.end), headings };
 }

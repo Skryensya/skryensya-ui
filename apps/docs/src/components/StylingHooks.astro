@@ -38,25 +38,25 @@ const resolvedGroups = groups.map((group) => ({
       {resolvedGroups.length > 1 && <h3>{group.title ?? group.probe}</h3>}
       <div class="sk-table-scroll">
         <table class="sk-table">
-          <thead>
-            <tr>
-              <th>Hook</th>
-              <th>
+          <thead class="sk-table__head">
+            <tr class="sk-table__row">
+              <th class="sk-table__header" scope="col">Hook</th>
+              <th class="sk-table__header" scope="col">
                 {t("hooks.definition")} <span class="count">build</span>
               </th>
-              <th>
+              <th class="sk-table__header" scope="col">
                 {t("hooks.resolvedValue")} <span class="count">runtime</span>
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="sk-table__body">
             {
               group.hooks.map((hook) => {
                 const nameId = slugId("hook-name", group.file, hook.name);
                 const defId = slugId("hook-def", group.file, hook.name);
                 const valId = slugId("hook-val", group.file, hook.name);
                 return (
-                  <tr>
+                  <tr class="sk-table__row">
                     <td class="sk-table__cell mono sk-table__cell--copy">
                       <span id={nameId}>{hook.name}</span>
                     </td>

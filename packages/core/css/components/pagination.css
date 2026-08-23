@@ -3,6 +3,11 @@
  *
  * A row of page controls. Appearance only, hover / press / focus come from `sk-interactive` and
  * the state layer. The ellipsis is inert text, not a target. Consumer CSS connects these hooks.
+ *
+ * THE CURRENT PAGE IS A KEY, not a primary button. Solid `--color-action-primary` made "you are
+ * here" look like Submit sitting in a row of ghosts. Same default as Kbd and Segmented: raised
+ * surface, primary text, a three-layer bevel. The mix border keeps the chip visible when the
+ * page behind it is already raised (white on white).
  */
 @layer components {
   .sk-pagination {
@@ -19,16 +24,27 @@
     --sk-pagination-item-radius: var(--radius-control);
     --sk-pagination-item-font-size: var(--font-size-body-sm);
     --sk-pagination-item-font-weight: var(--font-weight-body);
-    --sk-pagination-current-bg: var(--color-action-primary);
-    --sk-pagination-current-fg: var(--color-text-on-accent);
-    --sk-pagination-current-border-color: var(--color-action-primary);
+    --sk-pagination-item-shadow: none;
+    --sk-pagination-current-bg: var(--color-bg-surface-raised);
+    --sk-pagination-current-fg: var(--color-text-primary);
+    --sk-pagination-current-border-color: color-mix(
+      in oklab,
+      var(--color-text-primary) 14%,
+      var(--sk-pagination-current-bg)
+    );
     --sk-pagination-current-font-weight: var(--font-weight-label);
+    --sk-pagination-current-highlight: color-mix(in oklab, var(--color-text-inverse) 40%, transparent);
+    --sk-pagination-current-ledge: color-mix(in oklab, var(--color-text-primary) 18%, transparent);
+    --sk-pagination-current-shadow:
+      inset 0 1px 0 var(--sk-pagination-current-highlight),
+      0 1px 0 var(--sk-pagination-current-ledge),
+      var(--elevation-raised);
     --sk-pagination-disabled-bg: transparent;
     --sk-pagination-disabled-fg: var(--color-text-disabled);
     --sk-pagination-disabled-border-color: transparent;
     --sk-pagination-ellipsis-fg: var(--color-text-tertiary);
 
-    /* Quiet ghost targets, filled current page, chevrons as set icons. Interaction (hover / press /
+    /* Quiet ghost targets, a raised current key, chevrons as set icons. Interaction (hover / press /
      * focus) is `sk-interactive` + the state layer, never wired per component. */
     display: flex;
     flex-wrap: wrap;
@@ -41,6 +57,7 @@
     --sk-pagination-item-fg: var(--sk-pagination-current-fg);
     --sk-pagination-item-border-color: var(--sk-pagination-current-border-color);
     --sk-pagination-item-font-weight: var(--sk-pagination-current-font-weight);
+    --sk-pagination-item-shadow: var(--sk-pagination-current-shadow);
   }
 
   .sk-pagination__item:disabled,
@@ -64,6 +81,7 @@
     border-radius: var(--sk-pagination-item-radius);
     background: var(--sk-pagination-item-bg);
     color: var(--sk-pagination-item-fg);
+    box-shadow: var(--sk-pagination-item-shadow);
     font: inherit;
     font-size: var(--sk-pagination-item-font-size);
     font-weight: var(--sk-pagination-item-font-weight);
@@ -77,6 +95,7 @@
     transition:
       background-color var(--motion-state-change-duration) var(--motion-state-change-easing),
       border-color var(--motion-state-change-duration) var(--motion-state-change-easing),
+      box-shadow var(--motion-state-change-duration) var(--motion-state-change-easing),
       color var(--motion-state-change-duration) var(--motion-state-change-easing),
       scale var(--motion-feedback-duration) var(--motion-feedback-easing);
   }
@@ -132,6 +151,7 @@
       --sk-pagination-item-bg: Highlight;
       --sk-pagination-item-fg: HighlightText;
       --sk-pagination-item-border-color: CanvasText;
+      --sk-pagination-item-shadow: none;
     }
 
     .sk-pagination__item:disabled,

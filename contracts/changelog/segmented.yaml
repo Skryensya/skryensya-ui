@@ -5,6 +5,40 @@
 # hash nuevo.
 surface: "4bde761dff14be1e"
 entries:
+  - date: 2026-08-22
+    kind: bugfix
+    es:
+      title: El selected ya no se confunde con el hover
+      body: >-
+        El pulgar raised de piedra y el wash de hover se leían como la misma pastilla. Selected
+        mezcla un poco de <code>--color-bg-accent-subtle</code> sobre raised y toma texto accent;
+        el state layer de selected se apaga (el pulgar ya es el indicador), así el hover sigue
+        siendo sólo el tinte compartido.
+    en:
+      title: Selected no longer reads as hover
+      body: >-
+        The raised stone thumb and the hover wash read as the same pill. Selected now mixes a
+        little <code>--color-bg-accent-subtle</code> into raised and takes accent text; the
+        selected state-layer rung is muted (the thumb already is the indicator), so hover stays
+        the shared tint alone.
+  - date: 2026-08-22
+    kind: bugfix
+    es:
+      title: La opción activa es un pulgar raised, no un chip de acento
+      body: >-
+        El fill de <code>--color-bg-accent-subtle</code> hacía que cada Segmented (Vanilla/React,
+        presets, densidad) se leyera como un toggle de marca. El riel ahora es superficie hundida
+        y la opción elegida una tecla raised, con el mismo bisel de tres capas que Kbd: highlight,
+        peldaño y elevación. El texto pasa a primario. No hay opción nueva: el default deja de
+        gritar para poder sentarse en chrome y en formularios.
+    en:
+      title: The active option is a raised thumb, not an accent chip
+      body: >-
+        The <code>--color-bg-accent-subtle</code> fill made every Segmented (Vanilla/React, presets,
+        density) read as a brand toggle. The track is now a sunken well and the chosen option a
+        raised key, with the same three-layer bevel Kbd uses: highlight, ledge and elevation. Text
+        goes to primary. No new option: the default stops shouting so it can sit in chrome and in
+        forms.
   - date: 2026-08-17
     kind: breaking
     target: label

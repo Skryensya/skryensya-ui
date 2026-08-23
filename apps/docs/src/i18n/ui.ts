@@ -108,7 +108,7 @@ export const ui = {
     "copy.action": "Copiar",
 
     "preview.reloadAction": "Recargar",
-    "preview.fullscreenAction": "Pantalla completa",
+    "preview.fullscreenAction": "Ver en pantalla completa",
     "preview.moreActions": "Más acciones: {name}",
     "preview.screenToggleLabel": "Tamaño de pantalla ({name}): {hint}",
     "preview.bindingGroup": "Vínculo del código: {name}",
@@ -116,6 +116,9 @@ export const ui = {
     "preview.screenFree": "Ancho libre",
     "preview.screenFreeHint":
       "Ancho libre · el preview ocupa la columna entera y crece hasta el alto de su contenido",
+    "preview.screenXl": "Desktop alejado",
+    "preview.screenXlHint":
+      "Desktop alejado · 1440 px de ancho, desktop grande vista con zoom out para que quepa en la columna",
     "preview.screenTablet": "Tablet",
     "preview.screenTabletHint":
       "Tablet · 768 px de ancho, la franja donde los layouts de dos columnas empiezan a ceder",
@@ -178,6 +181,8 @@ export const ui = {
     "demo.layoutGrid.breakout": "breakout — figuras, tablas o grupos que necesitan más aire lateral.",
     "demo.layoutGrid.fullWidth": "full-width — fondos o medios que llegan al borde de la grilla.",
     "demo.layoutGridRail.content": "contenido — main.sk-layout-grid, el flujo principal de la página.",
+    "demo.layoutGridRail.rail": "rail — después del contenido, p. ej. un TOC.",
+    "demo.layoutGridRail.railStart": "rail-start — antes del contenido, p. ej. un índice.",
     "demo.inline.title": "Proyecto Atlas",
     "demo.inline.status": "3 cambios sin publicar",
     "demo.inline.preview": "Vista previa",
@@ -675,7 +680,7 @@ export const ui = {
     "demo.link.before": "Un párrafo con un ",
     "demo.link.neutral": "enlace del color del texto",
     "demo.link.middle": " y otro ",
-    "demo.link.primary": "de color primary",
+    "demo.link.accent": "de color acento",
     "demo.link.after": ", los dos con subrayado permanente.",
     "demo.progress.upload": "Subida",
     "demo.progress.complete": "Completado",
@@ -1248,6 +1253,7 @@ export const ui = {
        confirmar de un vistazo qué queda cubierto sin tener que leer el archivo de test entero. */
     "tests.title": "Tests",
     "tests.intro": "Qué valida cada test, en una línea. El código completo está en Referencia.",
+    "tests.introNoReference": "Qué valida cada test, en una línea.",
     "tests.statusPassed": "Pasó",
     "tests.statusFailed": "Falló",
     "tests.statusUnknown": "No corrido",
@@ -1519,22 +1525,22 @@ export const ui = {
       "El <code>resizer</code> es el borde inferior del stage, al estilo del asa de un <code>textarea</code>: arrastrarlo (o <kbd class=\"sk-kbd\">↑</kbd> / <kbd class=\"sk-kbd\">↓</kbd> con el foco puesto) fija el alto en <code>data-sk-component-preview-resized</code>. Desde ahí el alto es del lector: el runtime del frame deja de auto-ajustarlo y pasa su documento a <code>overflow: auto</code>, así achicarlo muestra scroll en vez de recortar el ejemplo. Doble clic (o <kbd class=\"sk-kbd\">Home</kbd>) devuelve el alto al contenido.",
     "componentPreview.screenTitle": "Tamaño de pantalla",
     "componentPreview.screenBody1":
-      "<code>screens</code> agrega al header un segmented <strong>Libre · Tablet · Móvil</strong>. <em>Libre</em> es el stage de siempre: ancho completo y alto ajustado al contenido. <em>Tablet</em> y <em>Móvil</em> sólo cambian el ancho: el alto sigue ajustándose al contenido o al resizer del lector, para que los dos presets muestren reflow sin modificarlo.",
+      "<code>screens</code> agrega al header un segmented <strong>Libre · Tablet · Móvil</strong>. <em>Libre</em> es el stage de siempre: ancho completo y alto ajustado al contenido. <em>Tablet</em> y <em>Móvil</em> sólo cambian el ancho: el alto sigue ajustándose al contenido o al resizer del lector, para que los presets muestren reflow sin modificarlo. <em>Desktop alejado</em> (1440 px con zoom out) no va en todos: se pide con <code>zoomedDesktop</code> en layouts que necesitan un viewport más ancho que la columna, como Navbar o Layout Grid, y nunca aparece en pantalla completa.",
     "componentPreview.screenBody2":
-      "Las medidas caen a propósito a cada lado de los breakpoints del sistema (<code>compact</code> 36rem, <code>desktop</code> 52rem): móvil 390 px queda debajo de los dos, tablet 768 px queda en medio. Así los dos presets ejercitan las bandas donde el layout realmente cambia, en vez de ser dos anchos arbitrarios. Van en <code>px</code> y no en <code>rem</code> porque el viewport de un dispositivo es una medida física: quien sube el tamaño de fuente raíz quiere ver <em>ese</em> reflow en una pantalla de teléfono, no un teléfono que creció.",
+      "Las medidas caen a propósito a cada lado de los breakpoints del sistema (<code>compact</code> 36rem, <code>desktop</code> 52rem): móvil 390 px queda debajo de los dos, tablet 768 px queda en medio, XL 1440 px queda por encima (también de la banda de 72rem del layout-grid). Así los presets ejercitan las bandas donde el layout realmente cambia, en vez de ser anchos arbitrarios. Van en <code>px</code> y no en <code>rem</code> porque el viewport de un dispositivo es una medida física: quien sube el tamaño de fuente raíz quiere ver <em>ese</em> reflow en una pantalla de teléfono, no un teléfono que creció.",
     "componentPreview.screenBody3":
       "El ejemplo de abajo es un <code>Grid</code> multicol, cuyos carriles están atados justamente a esos breakpoints: uno debajo de <code>compact</code>, dos a partir de ahí, tres desde <code>desktop</code>. Cada preset cae en una banda distinta, así que los tres se ven diferentes. Las media queries resuelven contra el viewport <strong>del frame</strong>, que es el ancho del preset: eso es lo que compra el <code>iframe</code> y no compraría una container query sobre un <code>div</code>.",
     "componentPreview.screenNote": "3 carriles libre · 2 en tablet · 1 en móvil",
     "componentPreview.screenBody4":
-      "Con Tablet o Móvil activo el stage conserva su alto automático y el resizer sigue disponible: el preset sólo estrecha y centra el frame. Arrastrar el resizer sigue haciendo que el alto sea del lector; doble clic o <kbd class=\"sk-kbd\">Home</kbd> lo devuelve al contenido.",
+      "Con XL, Tablet o Móvil activo el stage conserva su alto automático y el resizer sigue disponible: el preset sólo cambia el ancho y centra el frame (XL además aplica zoom out). Arrastrar el resizer sigue haciendo que el alto sea del lector; doble clic o <kbd class=\"sk-kbd\">Home</kbd> lo devuelve al contenido.",
     "componentPreview.screenBody5":
       "Viene <strong>encendido en todos los previews</strong> del sitio. «¿Esto aguanta en un teléfono?» es una pregunta que se le puede hacer a cualquier componente, no sólo a los que son evidentemente un layout: la etiqueta de un botón envuelve, una tabla se desborda, un dialog no entra. Dejarlo a criterio de quien escribe cada página significaría tener la respuesta justamente en las demos que alguien ya pensó, que son las que ya estaban bien.",
     "componentPreview.screenBody6":
       'La elección es <strong>del documento, no del preview</strong>, y se comparte igual que la preferencia Vanilla | React: cambiarla en un ejemplo la cambia en todos, vive en <code>&lt;html data-sk-component-preview-screen-pref&gt;</code> y se guarda en <code>localStorage["sk"].screen</code>, así que sobrevive a recargas y a navegar entre páginas. Es la misma razón que en el binding: el lector le está haciendo la pregunta <em>a la página</em>, no a una demo suelta, y elegir de nuevo en cada ejemplo que pasa sería el trabajo que la preferencia compartida existe para evitar. <em>Libre</em> es la ausencia del atributo, no un tercer valor.',
     "componentPreview.screenBody7":
-      "Los tres controles son iconos del vocabulario estable (<code>screen-desktop</code>, <code>screen-tablet</code> y <code>screen-mobile</code>), así que los tres sets homologados los dibujan. Sin texto visible, cada opción lleva su nombre en <code>aria-label</code> y en <code>title</code>: el glifo es decorativo, exactamente como en un Button icon-only.",
+      "Los controles son iconos del vocabulario estable (<code>screen-desktop</code>, <code>screen-tablet</code>, <code>screen-mobile</code> y, si el preview lo pide, <code>zoom-out</code>), así que los tres sets homologados los dibujan. Sin texto visible, cada opción lleva su nombre en <code>aria-label</code> y en <code>title</code>: el glifo es decorativo, exactamente como en un Button icon-only.",
     "componentPreview.screenBody8":
-      "Se apaga por preview con <code>screens={false}</code>, para los casos donde el preset engaña más de lo que informa.",
+      "Se apaga por preview con <code>screens={false}</code>, para los casos donde el preset engaña más de lo que informa. El desktop alejado se enciende por preview con <code>zoomedDesktop</code>.",
     "componentPreview.fullTitle": "El ejemplo completo",
     "componentPreview.fullBody":
       "La superficie entera, también anidada: cabecera con nota, recarga y tabs de binding, stage, resizer y un CodePreview por binding. Los tabs de adentro son independientes de los de afuera: la preferencia Vanilla | React se comparte por documento, y el frame es su propio documento.",
@@ -1690,15 +1696,18 @@ export const ui = {
       "Un hijo directo <code>full-width</code> se vuelve una grilla con las mismas columnas. Sus hijos directos vuelven a <code>content</code> por defecto, y pueden usar <code>narrow</code>, <code>breakout</code> o <code>full-width</code> otra vez.",
     "layoutGridPage.railTitle": "Rail y contenido centrados juntos",
     "layoutGridPage.railBody":
-      "Un rail de apoyo —TOC, navegación contextual o metadatos— es un hijo directo con <code>data-width=\"rail\"</code>. No es un span de contenido como <code>narrow</code> o <code>breakout</code>: es una columna aparte que la grilla reserva junto al flujo, fija en ancho (<code>--sk-layout-rail-inline-size</code>) y del alto que declare <code>--sk-layout-rail-row-span</code>. Por debajo de <code>72rem</code> no hay espacio para una columna lateral, así que pasa a ser una fila propia sobre el contenido.",
+      "Un rail de apoyo —TOC, navegación contextual o metadatos— es un hijo directo de la misma <code>sk-layout-grid</code>. <code>data-width=\"rail\"</code> lo sienta después del contenido; <code>data-width=\"rail-start\"</code>, antes; los dos a la vez, uno a cada lado. No es un span de contenido como <code>narrow</code> o <code>breakout</code>: es una columna aparte, fija en ancho (<code>--sk-layout-rail-inline-size</code>), pegada al flujo por <code>--sk-layout-rail-gap</code> — un paso de <code>space-inline</code>, no el track de breakout. Por debajo de <code>72rem</code> no hay espacio para una columna lateral, así que cada rail pasa a ser una fila propia sobre el contenido.",
+    "layoutGridPage.railEndTitle": "Después del contenido",
+    "layoutGridPage.railStartTitle": "Antes del contenido",
+    "layoutGridPage.railBothTitle": "Ambos lados",
     "layoutGridPage.htmlTitle": "HTML semántico",
     "layoutGridPage.htmlBody":
-      "La clase sólo define la geometría. Elige <code>main</code>, <code>section</code>, <code>figure</code> y los demás elementos por lo que significan; <code>data-width</code> sólo acepta <code>narrow</code>, <code>content</code>, <code>breakout</code> o <code>full-width</code>.",
+      "La clase sólo define la geometría. Elige <code>main</code>, <code>section</code>, <code>figure</code> y los demás elementos por lo que significan; <code>data-width</code> acepta <code>narrow</code>, <code>content</code>, <code>breakout</code>, <code>full-width</code>, <code>rail</code> o <code>rail-start</code>.",
     "layoutGridPage.reactBody":
       "En React, <code>LayoutGrid</code> sólo imprime <code>sk-layout-grid</code>; los hijos conservan sus elementos y el mismo <code>data-width</code>.",
     "layoutGridPage.configTitle": "Configuración pública",
     "layoutGridPage.configBody1":
-      "Los cuatro custom properties públicos viven en el root y se pueden sobrescribir por página o sección.",
+      "Los custom properties públicos viven en el root y se pueden sobrescribir por página o sección. El gap entre un rail y el contenido es <code>--sk-layout-rail-gap</code>.",
     "layoutGridPage.configBody2":
       "Conserva <code>narrow ≤ content ≤ breakout</code>. Los tracks intermedios se calculan a partir de esas diferencias; invertir el orden no describe una medida válida.",
     "layoutGridPage.test1":
@@ -1902,13 +1911,16 @@ export const ui = {
       "El destino recibe su requisito como valor (<code>skipLinkTarget</code>), y el href apunta al id que lo lleva.",
     "kbdPage.description": "Kbd: una tecla dibujada, el <kbd> nativo con styling hooks y wrapper React.",
     "kbdPage.lede":
-      'Kbd es una <strong>tecla dibujada</strong>: el <code>&lt;kbd&gt;</code> nativo con el aspecto de una tecla física. La usas para mostrar un atajo, el ⌘K del buscador de arriba, el Esc en el pie de una <a href="/componentes/command-palette">CommandPalette</a>. Es estática, como Badge: sin estado, sin máquina, sin enhancer vanilla. La semántica del <code>&lt;kbd&gt;</code> es de la plataforma; el componente solo aporta la pinta.',
+      'Kbd es una <strong>tecla dibujada</strong>: el <code>&lt;kbd&gt;</code> nativo con el aspecto de una tecla física. La usas para mostrar un atajo, el ⌘K del buscador de arriba, el Esc en el pie de una <a href="/componentes/command-palette">CommandPalette</a>. Es estática, como Badge: sin estado, sin máquina, sin enhancer vanilla. La semántica del <code>&lt;kbd&gt;</code> es de la plataforma; el componente solo aporta la pinta. El reposo es <code>neutral</code>; <code>tone="accent"</code> es el chip de marca.',
+    "kbdPage.toneTitle": "Con acento y sin acento",
+    "kbdPage.toneBody":
+      'El default es una tecla de plástico: superficie raised, bisel claro arriba y un peldaño abajo. <code>data-tone="accent"</code> (en React, <code>tone="accent"</code>) es el mismo capuchón pintado con la marca, para un atajo que tiene que gritar. El ⌘K del chrome y el pie de la paleta se quedan en el default.',
     "kbdPage.squareTitle": "Un glifo se lee cuadrado",
     "kbdPage.squareBody":
       'Una sola tecla (<kbd class="sk-kbd">K</kbd>, <kbd class="sk-kbd">⌘</kbd>, <kbd class="sk-kbd">↑</kbd>) toma un mínimo cuadrado en vez de quedar como una astilla; una etiqueta más larga (<kbd class="sk-kbd">Esc</kbd>, <kbd class="sk-kbd">Enter</kbd>) crece con su texto. El mínimo es <code>--sk-kbd-min-size</code>, relativo a la propia tipografía de la tecla, así que se mantiene cuadrada a cualquier tamaño.',
     "kbdPage.pressedTitle": "El estado apretado",
     "kbdPage.pressedBody1":
-      'Kbd no es un control, no se clickea, así que su único estado <strong>refleja</strong> un evento externo: <code>data-pressed</code>, que lo prende mientras su tecla física está apretada, igual que un componente refleja el <code>data-state</code> de una máquina. Lo escribe quien mira el teclado, no el kbd. Prendida, la tecla se pone en acento, se hunde un pixel y pierde su sombra, como una tecla real que baja. La transición usa la intención <code>feedback</code> (<a href="/motion">motion</a>).',
+      'Kbd no es un control, no se clickea, así que su único estado <strong>refleja</strong> un evento externo: <code>data-pressed</code>, que lo prende mientras su tecla física está apretada, igual que un componente refleja el <code>data-state</code> de una máquina. Lo escribe quien mira el teclado, no el kbd. Neutral se hunde: el bisel se invierte y el relleno pasa a sunken. Accent, además, toma el color de acción — "este atajo está vivo" es información. La transición usa la intención <code>feedback</code> (<a href="/motion">motion</a>).',
     "kbdPage.pressedBody2":
       'Pruébalo: aprieta cualquiera de estas y se prende sola; mantén <kbd class="sk-kbd" data-key="meta">⌘</kbd> y suma otra para ver la combinación.',
     "kbdPage.echoAriaLabel": "Teclas que reaccionan al teclado",
@@ -1919,6 +1931,7 @@ export const ui = {
     "kbdPage.test1": "Renderiza un <code>&lt;kbd&gt;</code> nativo con la clase de la parte.",
     "kbdPage.test2": "Conserva la className del consumidor junto a la de la parte.",
     "kbdPage.test3": "Reenvía los atributos nativos.",
+    "kbdPage.test4": "El tono por defecto es <code>neutral</code>; <code>accent</code> se pide.",
 
     "linkPage.description": "Link: un enlace de texto, siempre subrayado, el único tratamiento que WCAG 1.4.1 permite.",
     "linkPage.lede":
@@ -1936,9 +1949,9 @@ export const ui = {
       "<strong>¿Y los enlaces que no van subrayados?</strong> Un ítem de navegación, un breadcrumb, el prev/next del pie, esos se distinguen por <em>ubicación</em>, no por color, así que 1.4.1 no les pide subrayado. Pero no son <code>sk-link</code>: usan el pattern <code>nav-list</code> o un botón <code>ghost</code>. <code>sk-link</code> es, por definición, el enlace <em>dentro del texto</em>.",
     "linkPage.toneTitle": "El tono no cambia la regla",
     "linkPage.toneBody":
-      'Por defecto el enlace toma el <strong>mismo color que el texto</strong> y se apoya enteramente en el subrayado. <code>data-tone="primary"</code> lo pinta del color primary de marca. En ambos casos el subrayado es obligatorio: sin él, el tono primary solo se distinguiría por color (falla WCAG 1.4.1), y el default no se distinguiría de la prosa.',
+      'Por defecto el enlace toma el <strong>mismo color que el texto</strong> y se apoya enteramente en el subrayado. <code>data-tone="accent"</code> lo pinta del color de acento de marca. En ambos casos el subrayado es obligatorio: sin él, el tono accent solo se distinguiría por color (falla WCAG 1.4.1), y el default no se distinguiría de la prosa.',
     "linkPage.contractItem1": "Renderiza un ancla nativa: <code>href</code> define el destino.",
-    "linkPage.contractItem2": "<code>data-tone</code> es opcional: sin él, el color del texto; <code>primary</code> usa el color primary de marca.",
+    "linkPage.contractItem2": "<code>data-tone</code> es opcional: sin él, el color del texto; <code>accent</code> usa el color de acento de marca.",
     "linkPage.contractItem3":
       "<strong>El subrayado no es configurable</strong>: siempre está, porque un enlace de texto sin señal no-color permanente falla WCAG 1.4.1.",
     "linkPage.contractItem4": "No establece <code>target</code>, <code>rel</code> ni ningún comportamiento para enlaces externos.",
@@ -2627,7 +2640,7 @@ export const ui = {
     "tocPage.lede":
       'El índice de un documento: una lista de enlaces a sus secciones (<code>h2</code>/<code>h3</code>), con la actual marcada por un scroll-spy. Cada fila es un enlace con <a href="/state-layer"><code>sk-interactive</code></a> (state layer) en tamaño caption: un índice se escanea, no se lee, y a tamaño de prosa competía con el documento que indexa. El icono es opcional.',
     "tocPage.anatomyTitle": "Anatomía",
-    "tocPage.anatomyBody": "Raíz <code>&lt;aside&gt;</code>, un <code>&lt;details&gt;</code> como shell del disclosure, y dentro un <code>&lt;nav&gt;</code> con la lista de enlaces.",
+    "tocPage.anatomyBody": "Raíz <code>&lt;aside&gt;</code> y dentro un <code>&lt;nav&gt;</code> con el título y la lista de enlaces. No hay shell que abrir: el índice se ve desde el primer paint.",
     "tocPage.anatomyLabel": "Texto",
     "tocPage.levelsTitle": "Niveles",
     "tocPage.levelsBody":
@@ -2637,11 +2650,11 @@ export const ui = {
     "tocPage.iconsBody": "El enlace admite un ícono decorativo delante de la etiqueta: la etiqueta ya nombra el destino, así que el ícono no lleva accesible name propio.",
     "tocPage.iconsLabel": "Con iconos",
     "tocPage.iconsCodeLabel": "enlace con icono",
-    "tocPage.railTitle": "Rail o disclosure",
+    "tocPage.railTitle": "Una sola forma",
     "tocPage.railBody1":
-      'El contrato publica UNA forma: un <code>&lt;details&gt;</code> interactivo, cerrado: el comportamiento de la plataforma, gratis. Es un consumidor con columna de sobra el que lo convierte en un <strong>rail</strong> siempre abierto y sticky junto a la prosa, igual que <code>sidebar</code> nunca decide por sí mismo que se vuelve un drawer. En este sitio, ese consumidor es el shell de docs: por debajo de <code>wide</code> el mismo <code>Toc</code> es la <strong>disclosure</strong> que el contrato ya emite; a partir de <code>wide</code>, <code>shell.scss</code> lo fuerza abierto e inerte.',
+      'El contrato publica UNA forma y no tiene variantes: un índice compacto, siempre abierto. Antes publicaba dos —un <code>&lt;details&gt;</code> cerrado, más un <strong>rail</strong> que un consumidor pedía declarando <code>data-sk-toc-rail</code>— y la costura se veía en el peor lugar posible: toda la apariencia del rail vivía detrás de ese atributo <em>y</em> de un <code>min-width: 72rem</code>, así que esta misma página no podía mostrar la forma sobre la que corre el sitio. Un frame de preview mide 1022px y la compuerta pedía 1152px.',
     "tocPage.railBody2":
-      "<code>&lt;details&gt;</code> es lo que abarata ese cambio: el estado abierto, el toggle, el teclado y la accesibilidad son de la plataforma. Como disclosure, las filas llevan el gutter ellas mismas en vez del contenedor: el destino táctil llega a los dos bordes de la pantalla mientras el texto se queda en el margen del documento.",
+      'Lo único que sigue detrás de <code>wide</code> son las dos declaraciones que de verdad necesitan una columna de sobra: <code>position: sticky</code> y el ancho fijo. Un host angosto recibe el mismo índice en flujo normal —una diferencia de layout, no una segunda forma del componente—. Las filas llevan el gutter ellas mismas en vez del contenedor: el destino táctil llega a los dos bordes de la pantalla mientras el texto se queda en el margen del documento.',
     "tocPage.spaceTitle": "Espacio reservado",
     "tocPage.spaceBody":
       "En este sitio el track del grid es el ancho del TOC (<code>--docs-toc-inline-size</code>). El <code>&lt;aside&gt;</code> está siempre en flujo: antes de <code>data-ready</code> la lista queda invisible con altura mínima, así los enlaces no empujan el layout al aparecer.",
@@ -3023,22 +3036,18 @@ export const ui = {
     "cardPage.tableRow6Element": "<code>button</code> o <code>details</code>",
     "cardPage.geometryBody":
       "Box y Tile parten aquí de la misma superficie, borde sutil, radio y padding <code>lg</code>. Tile conserva ese contenido y añade el state layer de <code>sk-interactive</code>; la diferencia visible aparece al hacer hover, foco o press, no en una segunda receta de card.",
+    "cardPage.plainMediaTitle": "Contenido puro, sin contenedor",
+    "cardPage.plainMediaBody":
+      'El piso real de la escalera: ni <a href="/componentes/box">Box</a> ni ninguna otra superficie, sólo un <a href="/componentes/primitivas">Stack</a> sobre un <code>article</code>, con una foto arriba del texto. No hay borde, fondo ni sombra que agrupe la card. Sin un Box que recorte sus esquinas, <a href="/componentes/image-frame">ImageFrame</a> pide su propio radio en vez de <code>none</code>: la imagen sostiene su propia geometría porque no hay nada más de donde tomarla prestada.',
+    "cardPage.plainMediaNote": "Stack + ImageFrame + Heading + Text",
     "cardPage.basicTitle": "Card básica",
     "cardPage.basicBody":
-      'El piso de la escalera: una superficie, un título y un párrafo. Nada aquí es interactivo, así que la raíz es <a href="/componentes/box">Box</a> sobre un <code>article</code>. No hay ninguna clase <code>card</code> en juego, sólo la superficie, el borde sutil y el padding <code>lg</code>.',
+      'Un escalón sobre el contenido puro: la misma pareja de título y párrafo, ahora dentro de una superficie. Nada aquí es interactivo, así que la raíz es <a href="/componentes/box">Box</a> sobre un <code>article</code>. No hay ninguna clase <code>card</code> en juego, sólo la superficie, el borde sutil y el padding <code>lg</code>.',
     "cardPage.basicNote": "Box + Stack + Heading + Text",
     "cardPage.metaTitle": "Estado y fecha",
     "cardPage.metaBody":
       'El mismo Box, ahora con jerarquía: <a href="/componentes/badge">Badge</a> dice el estado y un Text en <code>caption</code> la fecha. La card no creció una API, creció contenido.',
     "cardPage.metaNote": "Box + Inline + Badge + Text",
-    "cardPage.accentSoftTitle": "Acento suave",
-    "cardPage.accentSoftBody":
-      "El fondo de acento se pide reescribiendo los hooks que Box ya publica: <code>--sk-box-bg</code> a <code>--color-bg-accent-subtle</code> y el borde a <code>--color-border-accent</code>; nunca con un <code>background</code> crudo sobre <code>.sk-box</code>, que saltearía la superficie que el patrón administra. Como el relleno es sutil, el texto sigue usando los tokens normales.",
-    "cardPage.accentSoftNote": "Box + hooks de superficie",
-    "cardPage.accentSolidTitle": "Acento sólido",
-    "cardPage.accentSolidBody":
-      "Cuando el relleno es el color de acción, el texto ya no se lee contra la página sino contra ese relleno, y por eso viene de <code>--color-text-on-accent</code>. En modo oscuro el acento es un azul <em>claro</em> y ese token se da vuelta a casi negro: un <code>data-tone</code> acá se resolvería contra el fondo equivocado y quedaría ilegible en uno de los dos modos.",
-    "cardPage.accentSolidNote": "Box + color de acción + texto on-accent",
     "cardPage.statTitle": "Card de métrica",
     "cardPage.statBody":
       '<a href="/componentes/stat">Stat</a> pone la métrica y Box pone la card. La colección entra en una grilla sin que Stat se convierta en superficie ni gane una variante <code>card</code> en su API.',
@@ -3088,6 +3097,24 @@ export const ui = {
     "cardPage.implTitle": "Implementación",
     "cardPage.implBody":
       "No hay un import de Card. Importa Box o el Tile semántico elegido, sus estilos y únicamente las piezas de contenido presentes. Esto mantiene cada dependencia y cada contrato visibles en el call site.",
+    "cardPage.a11yP1":
+      'La raíz decide su propia semántica, no la card: <code>article</code>/<code>section</code>/<code>div</code> para Box, <code>a[href]</code>/<code>button</code>/<code>input[type=checkbox]</code> para cada Tile — la tabla de la sección "Elige por comportamiento" arriba resume las seis.',
+    "cardPage.a11yP2":
+      "El título de cada card usa <code>h3</code> en estos ejemplos porque viven bajo el <code>h2</code> oculto de esta pestaña; en tu página, ajusta el nivel al lugar real que ocupa la card en el esquema de encabezados, no lo copies literal.",
+    "cardPage.a11yP3":
+      'El foco visible de <a href="/componentes/tile">Tile</a> cubre toda la superficie interactiva, nunca solo un ícono o un enlace interior; Box jamás recibe <code>tabindex</code> ni un <code>onClick</code> propio — ver Do &amp; Don\'t arriba.',
+    "cardPage.a11yP4":
+      "Una imagen de contenido (guías, casos de estudio, artículos) lleva <code>alt</code> real; el lavado que protege el texto sobre una foto es puramente decorativo y va <code>aria-hidden</code>.",
+    "cardPage.a11yP5":
+      'La preferencia que se marca en la card que se elige es un <code>input[type=checkbox]</code> nativo: la barra espaciadora la activa y un lector de pantalla la anuncia como casilla, sin un rol ARIA a medida.',
+    "cardPage.testGridOfThree":
+      "Cada ejemplo mantiene exactamente tres cards: la invariante que compara alturas, medios y pies entre sí.",
+    "cardPage.testSelectDefaultChecked":
+      'El estado inicial de la card que se elige vive en <code>data-default-checked</code> de la raíz, no en el atributo <code>checked</code> del input.',
+    "cardPage.testImportsTile":
+      "La página importa <code>tile.css</code>, la hoja que TileLink, TileButton y TileCheckbox necesitan y que Base.astro nunca carga de forma global.",
+    "cardPage.testImportsCheckbox":
+      "La página importa <code>checkbox.css</code>: sin ella cada indicador pinta el visto y el guion a la vez, sin importar el estado.",
 
     "indexPage.title": "Explorar componentes",
     "indexPage.description": "Componentes, patrones y primitivas organizados según la tarea que resuelven.",
@@ -3470,7 +3497,7 @@ export const ui = {
     "copy.action": "Copy",
 
     "preview.reloadAction": "Reload",
-    "preview.fullscreenAction": "Full screen",
+    "preview.fullscreenAction": "View in full screen",
     "preview.moreActions": "More actions: {name}",
     "preview.screenToggleLabel": "Screen size ({name}): {hint}",
     "preview.bindingGroup": "Code binding: {name}",
@@ -3478,6 +3505,9 @@ export const ui = {
     "preview.screenFree": "Free width",
     "preview.screenFreeHint":
       "Free width · the preview fills the column and grows to its content height",
+    "preview.screenXl": "Desktop zoomed out",
+    "preview.screenXlHint":
+      "Desktop zoomed out · 1440 px wide, a larger desktop shown zoomed out so it fits the column",
     "preview.screenTablet": "Tablet",
     "preview.screenTabletHint":
       "Tablet · 768 px wide, where two-column layouts begin to yield",
@@ -3530,6 +3560,8 @@ export const ui = {
     "demo.layoutGrid.breakout": "breakout — figures, tables or groups that need more room to breathe.",
     "demo.layoutGrid.fullWidth": "full-width — backgrounds or media that reach the grid's edge.",
     "demo.layoutGridRail.content": "content — main.sk-layout-grid, the page's main flow.",
+    "demo.layoutGridRail.rail": "rail — after the content, e.g. a TOC.",
+    "demo.layoutGridRail.railStart": "rail-start — before the content, e.g. an index.",
     "demo.inline.title": "Project Atlas",
     "demo.inline.status": "3 unpublished changes",
     "demo.inline.preview": "Preview",
@@ -4019,7 +4051,7 @@ export const ui = {
     "demo.link.before": "A paragraph with a ",
     "demo.link.neutral": "text-coloured link",
     "demo.link.middle": " and another ",
-    "demo.link.primary": "primary-coloured one",
+    "demo.link.accent": "accent-coloured one",
     "demo.link.after": ", both with a permanent underline.",
     "demo.progress.upload": "Upload",
     "demo.progress.complete": "Complete",
@@ -4572,6 +4604,7 @@ export const ui = {
 
     "tests.title": "Tests",
     "tests.intro": "What each test checks, in one line. Full code is under Reference.",
+    "tests.introNoReference": "What each test checks, in one line.",
     "tests.statusPassed": "Passed",
     "tests.statusFailed": "Failed",
     "tests.statusUnknown": "Not run",
@@ -4835,22 +4868,22 @@ export const ui = {
       "The <code>resizer</code> is the stage's bottom edge, styled after a <code>textarea</code>'s handle: dragging it (or pressing <kbd class=\"sk-kbd\">↑</kbd> / <kbd class=\"sk-kbd\">↓</kbd> while it has focus) sets the height in <code>data-sk-component-preview-resized</code>. From then on the height belongs to the reader: the frame runtime stops auto-sizing it and switches its document to <code>overflow: auto</code>, so shrinking it shows a scrollbar instead of clipping the example. Double-clicking (or pressing <kbd class=\"sk-kbd\">Home</kbd>) returns the height to the content.",
     "componentPreview.screenTitle": "Screen size",
     "componentPreview.screenBody1":
-      "<code>screens</code> adds a <strong>Free · Tablet · Mobile</strong> segmented control to the header. <em>Free</em> is the usual stage: full width, height fit to content. <em>Tablet</em> and <em>Mobile</em> only change width: height continues to fit content or follow the reader's resizer, so both presets show reflow without changing it.",
+      "<code>screens</code> adds a <strong>Free · Tablet · Mobile</strong> segmented control to the header. <em>Free</em> is the usual stage: full width, height fit to content. <em>Tablet</em> and <em>Mobile</em> only change width: height continues to fit content or follow the reader's resizer, so the presets show reflow without changing it. <em>Desktop zoomed out</em> (1440 px, zoomed to fit) is not on every preview: it is opted in with <code>zoomedDesktop</code> on layouts that need a viewport wider than the column, such as Navbar or Layout Grid, and never appears in full screen.",
     "componentPreview.screenBody2":
-      "The measurements deliberately fall on either side of the system's own breakpoints (<code>compact</code> at 36rem, <code>desktop</code> at 52rem): mobile at 390 px sits below both, tablet at 768 px sits between them. That way the two presets exercise the bands where the layout actually changes, instead of being two arbitrary widths. They are in <code>px</code>, not <code>rem</code>, because a device's viewport is a physical measurement: someone who bumps the root font size wants to see <em>that</em> reflow on a phone screen, not a phone that grew.",
+      "The measurements deliberately fall on either side of the system's own breakpoints (<code>compact</code> at 36rem, <code>desktop</code> at 52rem): mobile at 390 px sits below both, tablet at 768 px sits between them, XL at 1440 px sits above both (and above the layout-grid 72rem band). That way the presets exercise the bands where the layout actually changes, instead of being arbitrary widths. They are in <code>px</code>, not <code>rem</code>, because a device's viewport is a physical measurement: someone who bumps the root font size wants to see <em>that</em> reflow on a phone screen, not a phone that grew.",
     "componentPreview.screenBody3":
       "The example below is a multicol <code>Grid</code> whose lanes are tied to exactly those breakpoints: one below <code>compact</code>, two from there on, three from <code>desktop</code>. Each preset lands in a different band, so all three look different. The media queries resolve against the <strong>frame's</strong> viewport, which is the preset's width: that is what the <code>iframe</code> buys that a container query on a plain <code>div</code> would not.",
     "componentPreview.screenNote": "3 free lanes · 2 on tablet · 1 on mobile",
     "componentPreview.screenBody4":
-      "With Tablet or Mobile active, the stage keeps its automatic height and the resizer remains available: the preset only narrows and centres the frame. Dragging the resizer still makes height reader-owned; double-clicking or pressing <kbd class=\"sk-kbd\">Home</kbd> returns it to content.",
+      "With XL, Tablet or Mobile active, the stage keeps its automatic height and the resizer remains available: the preset only changes width and centres the frame (XL also zooms out). Dragging the resizer still makes height reader-owned; double-clicking or pressing <kbd class=\"sk-kbd\">Home</kbd> returns it to content.",
     "componentPreview.screenBody5":
       'It ships <strong>on by default in every preview</strong> on the site. "Does this hold up on a phone?" is a question worth asking of any component, not only the ones that are obviously a layout: a button label wraps, a table overflows, a dialog does not fit. Leaving it to each page author\'s judgment would mean the answer lands exactly in the demos someone already thought hard about, the ones that were already fine.',
     "componentPreview.screenBody6":
       'The choice belongs <strong>to the document, not the preview</strong>, and is shared the same way the Vanilla | React preference is: changing it in one example changes it everywhere. It lives on <code>&lt;html data-sk-component-preview-screen-pref&gt;</code> and is saved in <code>localStorage["sk"].screen</code>, so it survives reloads and navigating between pages. The reason is the same as for the binding preference: the reader is asking the question <em>of the page</em>, not of one loose demo, and choosing again in every example that goes by would be exactly the work the shared preference exists to avoid. <em>Free</em> is the absence of the attribute, not a third value.',
     "componentPreview.screenBody7":
-      "The three controls are icons from the stable vocabulary (<code>screen-desktop</code>, <code>screen-tablet</code> and <code>screen-mobile</code>), so every homologated set draws them. With no visible text, each option carries its name in <code>aria-label</code> and <code>title</code>: the glyph is decorative, exactly as in an icon-only Button.",
+      "The controls are icons from the stable vocabulary (<code>screen-desktop</code>, <code>screen-tablet</code>, <code>screen-mobile</code> and, when the preview asks for it, <code>zoom-out</code>), so every homologated set draws them. With no visible text, each option carries its name in <code>aria-label</code> and <code>title</code>: the glyph is decorative, exactly as in an icon-only Button.",
     "componentPreview.screenBody8":
-      "It turns off per preview with <code>screens={false}</code>, for the cases where the preset misleads more than it informs.",
+      "It turns off per preview with <code>screens={false}</code>, for the cases where the preset misleads more than it informs. Zoomed-out desktop turns on per preview with <code>zoomedDesktop</code>.",
     "componentPreview.fullTitle": "The full example",
     "componentPreview.fullBody":
       "The whole surface, also nested: a header with a note, reload and binding tabs, the stage, the resizer, and a CodePreview per binding. The inner tabs are independent of the outer ones: the Vanilla | React preference is shared per document, and the frame is its own document.",
@@ -5006,15 +5039,18 @@ export const ui = {
       "A direct <code>full-width</code> child becomes a grid with the same columns. Its direct children return to <code>content</code> by default and may use <code>narrow</code>, <code>breakout</code>, or <code>full-width</code> again.",
     "layoutGridPage.railTitle": "Rail and content centered together",
     "layoutGridPage.railBody":
-      "A supporting rail —TOC, contextual navigation, or metadata— is a direct child with <code>data-width=\"rail\"</code>. It is not a content span like <code>narrow</code> or <code>breakout</code>: it is a separate column the grid reserves alongside the flow, fixed in width (<code>--sk-layout-rail-inline-size</code>) and as tall as <code>--sk-layout-rail-row-span</code> declares. Below <code>72rem</code> there's no room for a side column, so it becomes its own row above the content instead.",
+      "A supporting rail —TOC, contextual navigation, or metadata— is a direct child of the same <code>sk-layout-grid</code>. <code>data-width=\"rail\"</code> sits it after the content; <code>data-width=\"rail-start\"</code>, before; both at once, one on each side. It is not a content span like <code>narrow</code> or <code>breakout</code>: it is a separate column, fixed in width (<code>--sk-layout-rail-inline-size</code>), held to the flow by <code>--sk-layout-rail-gap</code> — one <code>space-inline</code> step, not the breakout track. Below <code>72rem</code> there's no room for a side column, so each rail becomes its own row above the content instead.",
+    "layoutGridPage.railEndTitle": "After the content",
+    "layoutGridPage.railStartTitle": "Before the content",
+    "layoutGridPage.railBothTitle": "Both sides",
     "layoutGridPage.htmlTitle": "Semantic HTML",
     "layoutGridPage.htmlBody":
-      "The class defines geometry only. Choose <code>main</code>, <code>section</code>, <code>figure</code>, and every other element for its meaning; <code>data-width</code> accepts only <code>narrow</code>, <code>content</code>, <code>breakout</code>, or <code>full-width</code>.",
+      "The class defines geometry only. Choose <code>main</code>, <code>section</code>, <code>figure</code>, and every other element for its meaning; <code>data-width</code> accepts <code>narrow</code>, <code>content</code>, <code>breakout</code>, <code>full-width</code>, <code>rail</code>, or <code>rail-start</code>.",
     "layoutGridPage.reactBody":
       "In React, <code>LayoutGrid</code> only renders <code>sk-layout-grid</code>; children keep their elements and the same <code>data-width</code>.",
     "layoutGridPage.configTitle": "Public configuration",
     "layoutGridPage.configBody1":
-      "The four public custom properties live on the root and can be overridden per page or section.",
+      "The public custom properties live on the root and can be overridden per page or section. The gap between a rail and the content is <code>--sk-layout-rail-gap</code>.",
     "layoutGridPage.configBody2":
       "Keep <code>narrow ≤ content ≤ breakout</code>. Intermediate tracks are calculated from those differences; reversing their order does not describe a valid measure.",
     "layoutGridPage.test1":
@@ -5218,13 +5254,16 @@ export const ui = {
       "The destination receives its own requirement as a value (<code>skipLinkTarget</code>), and the href points at the id that carries it.",
     "kbdPage.description": "Kbd: a drawn key, the native <kbd> with styling hooks and a React wrapper.",
     "kbdPage.lede":
-      'Kbd is a <strong>drawn key</strong>: the native <code>&lt;kbd&gt;</code> with the look of a physical key. You use it to show a shortcut, the ⌘K on the search bar above, the Esc in a <a href="/en/components/command-palette">CommandPalette</a>\'s footer. It is static, like Badge: no state, no machine, no vanilla enhancer. The <code>&lt;kbd&gt;</code>\'s semantics belong to the platform; the component only adds the look.',
+      'Kbd is a <strong>drawn key</strong>: the native <code>&lt;kbd&gt;</code> with the look of a physical key. You use it to show a shortcut, the ⌘K on the search bar above, the Esc in a <a href="/en/components/command-palette">CommandPalette</a>\'s footer. It is static, like Badge: no state, no machine, no vanilla enhancer. The <code>&lt;kbd&gt;</code>\'s semantics belong to the platform; the component only adds the look. Rest is <code>neutral</code>; <code>tone="accent"</code> is the brand chip.',
+    "kbdPage.toneTitle": "With accent and without",
+    "kbdPage.toneBody":
+      'The default is a plastic key: a raised surface, a light bevel on top and a ledge underneath. <code>data-tone="accent"</code> (in React, <code>tone="accent"</code>) is the same cap painted with the brand, for a shortcut that has to shout. The chrome ⌘K and the palette footer stay on the default.',
     "kbdPage.squareTitle": "A glyph reads square",
     "kbdPage.squareBody":
       'A single key (<kbd class="sk-kbd">K</kbd>, <kbd class="sk-kbd">⌘</kbd>, <kbd class="sk-kbd">↑</kbd>) takes a square minimum instead of reading as a sliver; a longer label (<kbd class="sk-kbd">Esc</kbd>, <kbd class="sk-kbd">Enter</kbd>) grows with its text. The minimum is <code>--sk-kbd-min-size</code>, relative to the key\'s own typography, so it stays square at any size.',
     "kbdPage.pressedTitle": "The pressed state",
     "kbdPage.pressedBody1":
-      'Kbd is not a control, it is not clicked, so its one state <strong>reflects</strong> an external event: <code>data-pressed</code>, which turns on while its physical key is held down, the same way a component reflects a machine\'s <code>data-state</code>. Whoever is watching the keyboard writes it, not the kbd. Lit up, the key takes the accent, sinks a pixel, and loses its shadow, like a real key going down. The transition uses the <code>feedback</code> intent (<a href="/en/motion">motion</a>).',
+      'Kbd is not a control, it is not clicked, so its one state <strong>reflects</strong> an external event: <code>data-pressed</code>, which turns on while its physical key is held down, the same way a component reflects a machine\'s <code>data-state</code>. Whoever is watching the keyboard writes it, not the kbd. Neutral sinks: the bevel inverts and the fill goes sunken. Accent also takes the action colour — "this shortcut is live" is information. The transition uses the <code>feedback</code> intent (<a href="/en/motion">motion</a>).',
     "kbdPage.pressedBody2":
       'Try it: press any of these and it lights up on its own; hold <kbd class="sk-kbd" data-key="meta">⌘</kbd> and add another to see the combination.',
     "kbdPage.echoAriaLabel": "Keys that react to the keyboard",
@@ -5235,6 +5274,7 @@ export const ui = {
     "kbdPage.test1": "Renders a native <code>&lt;kbd&gt;</code> carrying the part class.",
     "kbdPage.test2": "Keeps a consumer className alongside the part's own.",
     "kbdPage.test3": "Passes through native attributes.",
+    "kbdPage.test4": "The default tone is <code>neutral</code>; <code>accent</code> is opt-in.",
 
     "linkPage.description": "Link: a text link, always underlined, the only treatment WCAG 1.4.1 allows.",
     "linkPage.lede":
@@ -5252,9 +5292,9 @@ export const ui = {
       "<strong>What about links that are not underlined?</strong> A nav item, a breadcrumb, the prev/next in a footer — those are told apart by <em>location</em>, not color, so 1.4.1 does not ask them for an underline. But they are not <code>sk-link</code>: they use the <code>nav-list</code> pattern or a <code>ghost</code> button. <code>sk-link</code> is, by definition, the link <em>inside the text</em>.",
     "linkPage.toneTitle": "Tone does not change the rule",
     "linkPage.toneBody":
-      'By default the link takes the <strong>same color as the text</strong> and relies entirely on the underline. <code>data-tone="primary"</code> paints it in the brand\'s primary color. Either way the underline stays mandatory: without it, the primary tone would be told apart by color alone (a WCAG 1.4.1 failure), and the default would not be told apart from the prose at all.',
+      'By default the link takes the <strong>same color as the text</strong> and relies entirely on the underline. <code>data-tone="accent"</code> paints it in the brand\'s accent color. Either way the underline stays mandatory: without it, the accent tone would be told apart by color alone (a WCAG 1.4.1 failure), and the default would not be told apart from the prose at all.',
     "linkPage.contractItem1": "Renders a native anchor: <code>href</code> sets the destination.",
-    "linkPage.contractItem2": "<code>data-tone</code> is optional: without it, the text's own color; <code>primary</code> uses the brand's primary color.",
+    "linkPage.contractItem2": "<code>data-tone</code> is optional: without it, the text's own color; <code>accent</code> uses the brand's accent color.",
     "linkPage.contractItem3":
       "<strong>The underline is not configurable</strong>: it is always there, because a text link with no permanent non-color signal fails WCAG 1.4.1.",
     "linkPage.contractItem4": "It sets no <code>target</code>, <code>rel</code>, or any behavior for external links.",
@@ -5934,7 +5974,7 @@ export const ui = {
     "tocPage.lede":
       'A document\'s index: a list of links to its sections (<code>h2</code>/<code>h3</code>), with the current one marked by a scroll-spy. Every row is a link carrying <a href="/en/state-layer"><code>sk-interactive</code></a> (state layer) at caption size: an index gets scanned, not read, and at prose size it competed with the document it indexes. The icon is optional.',
     "tocPage.anatomyTitle": "Anatomy",
-    "tocPage.anatomyBody": "Root <code>&lt;aside&gt;</code>, a <code>&lt;details&gt;</code> as the disclosure's shell, and inside it a <code>&lt;nav&gt;</code> with the link list.",
+    "tocPage.anatomyBody": "Root <code>&lt;aside&gt;</code> and, inside it, a <code>&lt;nav&gt;</code> holding the caption and the link list. There is no shell to open: the index is readable from first paint.",
     "tocPage.anatomyLabel": "Text",
     "tocPage.levelsTitle": "Levels",
     "tocPage.levelsBody":
@@ -5944,11 +5984,11 @@ export const ui = {
     "tocPage.iconsBody": "The link accepts a decorative icon ahead of the label: the label already names the destination, so the icon carries no accessible name of its own.",
     "tocPage.iconsLabel": "With icons",
     "tocPage.iconsCodeLabel": "link with an icon",
-    "tocPage.railTitle": "Rail or disclosure",
+    "tocPage.railTitle": "One shape",
     "tocPage.railBody1":
-      "The contract publishes ONE shape: an interactive, closed <code>&lt;details&gt;</code> — the platform's own behavior, for free. It is a consumer with column to spare that turns it into an always-open, sticky <strong>rail</strong> beside the prose, the same way <code>sidebar</code> never decides on its own to become a drawer. On this site, that consumer is the docs shell: below <code>wide</code> the same <code>Toc</code> is the <strong>disclosure</strong> the contract already emits; from <code>wide</code> on, <code>shell.scss</code> forces it open and inert.",
+      "The contract publishes ONE shape and has no variants: a compact index, always open. It used to publish two — a closed <code>&lt;details&gt;</code>, plus a <strong>rail</strong> a consumer asked for by declaring <code>data-sk-toc-rail</code> — and the seam showed in the worst possible place: the rail's entire appearance sat behind that attribute <em>and</em> a <code>min-width: 72rem</code> query, so this very page could not render the form the site itself runs on. A preview frame is 1022px wide and the gate asked for 1152px.",
     "tocPage.railBody2":
-      "<code>&lt;details&gt;</code> is what makes that switch cheap: the open state, the toggle, the keyboard, and the accessibility all belong to the platform. As a disclosure, the rows carry their own gutter instead of the container: the touch target reaches both edges of the screen while the text stays in the document's own margin.",
+      "All that stays behind <code>wide</code> are the two declarations that genuinely need a spare column: <code>position: sticky</code> and the fixed inline size. A narrow host gets the same index in normal flow — a layout difference, not a second shape of the component. The rows carry their own gutter instead of the container: the touch target reaches both edges of the screen while the text stays in the document's own margin.",
     "tocPage.spaceTitle": "Reserved space",
     "tocPage.spaceBody":
       "On this site the grid's track is the TOC's own width (<code>--docs-toc-inline-size</code>). The <code>&lt;aside&gt;</code> always stays in flow: before <code>data-ready</code> the list stays invisible at a minimum height, so the links never push the layout around when they appear.",
@@ -6327,22 +6367,18 @@ export const ui = {
     "cardPage.tableRow6Element": "<code>button</code> or <code>details</code>",
     "cardPage.geometryBody":
       "Box and Tile both start from the same surface, subtle border, radius, and <code>lg</code> padding here. Tile keeps that content and adds <code>sk-interactive</code>'s state layer; the visible difference shows up on hover, focus, or press, not in a second card recipe.",
+    "cardPage.plainMediaTitle": "Plain content, no container",
+    "cardPage.plainMediaBody":
+      'The actual floor of the ladder: no <a href="/en/components/box">Box</a>, no surface of any kind, just a <a href="/en/components/primitives">Stack</a> on an <code>article</code>, with a photo above the text. There is no border, background, or shadow grouping the card. With no Box to clip its corners, <a href="/en/components/image-frame">ImageFrame</a> asks for its own radius instead of <code>none</code>: the image carries its own geometry because there is nothing left to borrow it from.',
+    "cardPage.plainMediaNote": "Stack + ImageFrame + Heading + Text",
     "cardPage.basicTitle": "Basic card",
     "cardPage.basicBody":
-      'The floor of the ladder: a surface, a title, and a paragraph. Nothing here is interactive, so the root is <a href="/en/components/box">Box</a> on an <code>article</code>. No <code>card</code> class is in play, just the surface, the subtle border, and <code>lg</code> padding.',
+      'One step up from plain content: the same title-and-paragraph pair, now inside a surface. Nothing here is interactive, so the root is <a href="/en/components/box">Box</a> on an <code>article</code>. No <code>card</code> class is in play, just the surface, the subtle border, and <code>lg</code> padding.',
     "cardPage.basicNote": "Box + Stack + Heading + Text",
     "cardPage.metaTitle": "Status and date",
     "cardPage.metaBody":
       'The same Box, now with hierarchy: <a href="/en/components/badge">Badge</a> states the status and a <code>caption</code>-sized Text states the date. The card grew no API, it grew content.',
     "cardPage.metaNote": "Box + Inline + Badge + Text",
-    "cardPage.accentSoftTitle": "Soft accent",
-    "cardPage.accentSoftBody":
-      "The accent background gets requested by rewriting the hooks Box already publishes: <code>--sk-box-bg</code> to <code>--color-bg-accent-subtle</code> and the border to <code>--color-border-accent</code>; never a raw <code>background</code> on <code>.sk-box</code>, which would skip past the surface the pattern manages. Since the fill is subtle, the text keeps using the normal tokens.",
-    "cardPage.accentSoftNote": "Box + surface hooks",
-    "cardPage.accentSolidTitle": "Solid accent",
-    "cardPage.accentSolidBody":
-      "When the fill is the action color, the text is no longer read against the page but against that fill, which is why it comes from <code>--color-text-on-accent</code>. In dark mode the accent is a <em>light</em> blue and that token flips to near-black: a <code>data-tone</code> here would resolve against the wrong background and end up unreadable in one of the two modes.",
-    "cardPage.accentSolidNote": "Box + action color + on-accent text",
     "cardPage.statTitle": "Metric card",
     "cardPage.statBody":
       '<a href="/en/components/stat">Stat</a> supplies the metric and Box supplies the card. The collection drops into a grid without Stat turning into a surface or growing a <code>card</code> variant in its API.',
@@ -6392,6 +6428,24 @@ export const ui = {
     "cardPage.implTitle": "Implementation",
     "cardPage.implBody":
       "There is no Card import. Import Box or the chosen semantic Tile, its styles, and only the content pieces present. This keeps every dependency and every contract visible at the call site.",
+    "cardPage.a11yP1":
+      'The root decides its own semantics, not the card: <code>article</code>/<code>section</code>/<code>div</code> for Box, <code>a[href]</code>/<code>button</code>/<code>input[type=checkbox]</code> for each Tile — the table under "Choose by behavior" above summarizes all six.',
+    "cardPage.a11yP2":
+      "Each card's title uses <code>h3</code> in these examples because they live under this tab's own hidden <code>h2</code>; on your page, match the level to the card's real place in the heading outline instead of copying it literally.",
+    "cardPage.a11yP3":
+      'A <a href="/en/components/tile">Tile</a>\'s visible focus covers the whole interactive surface, never just an icon or an inner link; Box never receives <code>tabindex</code> or an <code>onClick</code> of its own — see Do &amp; Don\'t above.',
+    "cardPage.a11yP4":
+      "A content image (guides, case studies, articles) carries a real <code>alt</code>; the wash that protects text over a photo is purely decorative and gets <code>aria-hidden</code>.",
+    "cardPage.a11yP5":
+      'The preference toggled in the card-that-gets-chosen example is a native <code>input[type=checkbox]</code>: the space bar activates it and a screen reader announces it as a checkbox, with no custom ARIA role.',
+    "cardPage.testGridOfThree":
+      "Every example keeps exactly three cards: the invariant that lines up height, media and footer across siblings.",
+    "cardPage.testSelectDefaultChecked":
+      'The initial state of the card-that-gets-chosen example lives in the root\'s <code>data-default-checked</code>, not in the input\'s <code>checked</code> attribute.',
+    "cardPage.testImportsTile":
+      "The page imports <code>tile.css</code>, the sheet TileLink, TileButton and TileCheckbox need and that Base.astro never loads globally.",
+    "cardPage.testImportsCheckbox":
+      "The page imports <code>checkbox.css</code>: without it every indicator paints the check and the dash at once, regardless of state.",
 
     "indexPage.title": "Explore components",
     "indexPage.description": "Components, patterns, and primitives organized by the task they solve.",

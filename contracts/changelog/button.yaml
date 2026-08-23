@@ -3,8 +3,37 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "9e8ae2adcb009125"
+surface: "a346957aa3335e9b"
 entries:
+  - date: 2026-08-23
+    kind: breaking
+    target: variant
+    es:
+      title: El variant "primary" pasa a llamarse "accent"
+      body: >-
+        Renombrado de <code>primary</code>: ese nombre describía un ROL — "la acción principal de
+        esta pantalla" — que el propio botón no puede saber, es el autor quien decide cuál de sus
+        botones es el destacado en un momento dado, y a veces es más de uno o ninguno. El variant
+        solo pinta un relleno saturado; <code>accent</code> dice eso, no una jerarquía que el
+        contrato no tiene forma de verificar. Es un rename del VALOR de la opción únicamente: el
+        token semántico detrás (<code>--color-action-primary</code>) no cambia de nombre, es un
+        detalle interno de <code>button.css</code> y no parte de lo que este contrato promete. Un
+        consumidor con <code>data-variant="primary"</code> autorado a mano deja de pintar el
+        relleno (cae al <code>neutral</code> por defecto en silencio); <code>variant="primary"</code>
+        en un árbol de uso o en JSX deja de tipar.
+    en:
+      title: The "primary" variant is renamed to "accent"
+      body: >-
+        Renamed from <code>primary</code>: that name described a ROLE — "this screen's main
+        action" — the button itself cannot know, it is the author who decides which of their
+        buttons is the featured one at any given moment, and sometimes it is more than one or
+        none. The variant only paints a saturated fill; <code>accent</code> says that, not a
+        hierarchy the contract has no way to verify. This renames the option's VALUE only: the
+        semantic token behind it (<code>--color-action-primary</code>) keeps its name, it is an
+        internal detail of <code>button.css</code> and not part of what this contract promises. A
+        consumer with hand-authored <code>data-variant="primary"</code> stops painting the fill
+        (silently falls back to <code>neutral</code>); <code>variant="primary"</code> in a usage
+        tree or in JSX stops type-checking.
   - date: 2026-08-17
     kind: feature
     target: weldStart

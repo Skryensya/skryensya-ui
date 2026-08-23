@@ -115,15 +115,17 @@ const sourceFiles = [
     <CodeBlock code={tuning} label="CSS" lang="css" />
 
     <h3>{t("drawer.whenTitle")}</h3>
+    <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead><tr><th>{t("drawer.whenHeadNeed")}</th><th>{t("drawer.whenHeadUse")}</th></tr></thead>
-      <tbody>
-        <tr><td>{t("drawer.whenRow1Need")}</td><td set:html={t("drawer.whenRow1Use")} /></tr>
-        <tr><td>{t("drawer.whenRow2Need")}</td><td set:html={t("drawer.whenRow2Use")} /></tr>
-        <tr><td>{t("drawer.whenRow3Need")}</td><td set:html={t("drawer.whenRow3Use")} /></tr>
-        <tr><td>{t("drawer.whenRow4Need")}</td><td set:html={t("drawer.whenRow4Use")} /></tr>
+      <thead class="sk-table__head"><tr class="sk-table__row"><th class="sk-table__header">{t("drawer.whenHeadNeed")}</th><th class="sk-table__header">{t("drawer.whenHeadUse")}</th></tr></thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row"><td class="sk-table__cell">{t("drawer.whenRow1Need")}</td><td set:html={t("drawer.whenRow1Use")} class="sk-table__cell" /></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell">{t("drawer.whenRow2Need")}</td><td set:html={t("drawer.whenRow2Use")} class="sk-table__cell" /></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell">{t("drawer.whenRow3Need")}</td><td set:html={t("drawer.whenRow3Use")} class="sk-table__cell" /></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell">{t("drawer.whenRow4Need")}</td><td set:html={t("drawer.whenRow4Use")} class="sk-table__cell" /></tr>
       </tbody>
     </table>
+    </div>
     <p set:html={t("drawer.whenBody")} />
 
     <h3>{t("drawer.markupTitle")}</h3>

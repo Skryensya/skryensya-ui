@@ -26,7 +26,7 @@ const componentMarkup = `<section
   <button
     class="sk-button sk-interactive"
     data-sk-button
-    data-variant="primary"
+    data-variant="accent"
     type="button"
   >
     Save changes
@@ -177,7 +177,7 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
           <input class="sk-input" id="density-email" name="density-email" type="email" placeholder="name@team.com" />
         </div>
         <div class="sk-inline" data-gap="sm">
-          <button class="sk-button sk-interactive" data-sk-button data-variant="primary" type="button">Save changes</button>
+          <button class="sk-button sk-interactive" data-sk-button data-variant="accent" type="button">Save changes</button>
           <button class="sk-button sk-interactive" data-sk-button data-variant="ghost" type="button">Cancel</button>
         </div>
       </section>
@@ -187,15 +187,15 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
   <h2>What changes, and what does not</h2>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr><th>Within the scope</th><th>Comportamiento</th></tr>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row"><th class="sk-table__header">Within the scope</th><th class="sk-table__header">Comportamiento</th></tr>
       </thead>
-      <tbody>
-        <tr><td><code>--space-*</code></td><td>Padding, gaps and insets are recalculated with the effective density.</td></tr>
-        <tr><td><code>--size-control-*</code></td><td>They are recalculated, with the minimum floor size incorporated.</td></tr>
-        <tr><td>Typography, icons and radio</td><td>They remain invariant: density brings content closer, the visual scale does not change.</td></tr>
-        <tr><td>Focus ring and touch area</td><td>They remain protected. A default Button does not drop <code>44px</code> paint; <code>data-size="sm"</code> can paint at 32px and the hit is still on <code>44px</code>.</td></tr>
-        <tr><td>Wrappers y <code>--space-section</code></td><td>Not compacted: The page geometry does not belong to the component.</td></tr>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row"><td class="sk-table__cell"><code>--space-*</code></td><td class="sk-table__cell">Padding, gaps and insets are recalculated with the effective density.</td></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell"><code>--size-control-*</code></td><td class="sk-table__cell">They are recalculated, with the minimum floor size incorporated.</td></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell">Typography, icons and radio</td><td class="sk-table__cell">They remain invariant: density brings content closer, the visual scale does not change.</td></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell">Focus ring and touch area</td><td class="sk-table__cell">They remain protected. A default Button does not drop <code>44px</code> paint; <code>data-size="sm"</code> can paint at 32px and the hit is still on <code>44px</code>.</td></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell">Wrappers y <code>--space-section</code></td><td class="sk-table__cell">Not compacted: The page geometry does not belong to the component.</td></tr>
       </tbody>
     </table>
   </div>

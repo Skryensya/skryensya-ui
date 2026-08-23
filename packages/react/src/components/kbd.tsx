@@ -1,8 +1,12 @@
-import { kbdParts } from "@skryensya/core/kbd";
+import { kbdParts, type KbdTone } from "@skryensya/core/kbd";
 import { type HTMLAttributes, type ReactNode } from "react";
+
+export type { KbdTone };
 
 export type KbdProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   children: ReactNode;
+  /** `neutral` is a physical keycap. `accent` is the brand-toned label. */
+  tone?: KbdTone;
 };
 
 /**
@@ -10,11 +14,11 @@ export type KbdProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
  * <kbd> element (its semantics are the platform's; the component only adds the look). Static: no state,
  * no machine, so there is no vanilla enhancer, only this wrapper and the core hooks.
  */
-export function Kbd({ children, className, ...props }: KbdProps) {
+export function Kbd({ children, className, tone = "neutral", ...props }: KbdProps) {
   const classes = className ? `${kbdParts.root} ${className}` : kbdParts.root;
 
   return (
-    <kbd {...props} className={classes}>
+    <kbd {...props} className={classes} data-tone={tone}>
       {children}
     </kbd>
   );

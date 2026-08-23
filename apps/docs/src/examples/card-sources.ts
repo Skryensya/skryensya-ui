@@ -1,7 +1,7 @@
 /*
  * THE SOURCE SHOWN BESIDE EACH CARD EXAMPLE, built from the same data the live demo renders.
  *
- * Written as builders rather than as hand-kept string literals for one reason: there are twelve
+ * Written as builders rather than as hand-kept string literals for one reason: there are eleven
  * examples, each is a grid of THREE cards, and each exists in two locales and two bindings. Kept by
  * hand that is ninety-six blocks of markup to keep in agreement with a live island, and docs whose
  * source block disagrees with the demo beside it are worse than docs with no source block.
@@ -46,7 +46,51 @@ function reactData(rows: Array<Record<string, unknown>>) {
 
 export function cardSources(c: CardCopy): Record<string, CardSource> {
   return {
-    /* ── 1. Box, the floor ─────────────────────────────────────────────────────────────── */
+    /* ── 1. Plain content, the actual floor ────────────────────────────────────────────── */
+    plainMedia: {
+      html: grid(
+        c.labels.plainMedia,
+        c.plainMedia.map(
+          (card) => `  <article class="sk-stack" data-gap="sm">
+    <div class="sk-image-frame" data-aspect="16/9" data-fit="cover">
+      <img class="sk-image-frame__media" src="${card.src}" alt="${card.alt}" />
+    </div>
+    <div class="sk-stack" data-gap="xs">
+      <h3 class="sk-heading" data-size="h4" data-flush>${card.title}</h3>
+      <p class="sk-text" data-tone="secondary">${card.body}</p>
+    </div>
+  </article>`,
+        ),
+      ),
+      react: `import { ImageFrame } from "@skryensya/react/image-frame";
+import { Grid, Stack } from "@skryensya/react/layout";
+import { Heading, Text } from "@skryensya/react/typography";
+
+/* No sk-box anywhere: Stack itself is the root, on an <article>. There is no surface, no border
+ * and no padding to ask for. ImageFrame keeps its OWN default radius instead of one "none" that
+ * relied on a surface clipping it: drop this into a Box later and the frame's radius is the one
+ * to zero out, not the one to add. */
+
+${reactData(c.plainMedia)}
+
+function Example() {
+  return (
+    <Grid aria-label="${c.labels.plainMedia}" columns={3} gap="md">
+      {cards.map((card) => (
+        <Stack as="article" gap="sm" key={card.title}>
+          <ImageFrame alt={card.alt} aspect="16/9" src={card.src} />
+          <Stack gap="xs">
+            <Heading as="h3" flush size="h4">{card.title}</Heading>
+            <Text tone="secondary">{card.body}</Text>
+          </Stack>
+        </Stack>
+      ))}
+    </Grid>
+  );
+}`,
+    },
+
+    /* ── 2. Box, one step up: adds a surface ───────────────────────────────────────────── */
     basic: {
       html: grid(
         c.labels.basic,
@@ -80,7 +124,7 @@ function Example() {
 }`,
     },
 
-    /* ── 2. Box + status and date ──────────────────────────────────────────────────────── */
+    /* ── 3. Box + status and date ──────────────────────────────────────────────────────── */
     meta: {
       html: grid(
         c.labels.meta,
@@ -127,126 +171,7 @@ function Example() {
 }`,
     },
 
-    /* ── 3. Accent, soft ───────────────────────────────────────────────────────────────── */
-    accentSoft: {
-      html: grid(
-        c.labels.accentSoft,
-        c.accentSoft.map(
-          (card) => `  <article class="sk-box sk-card-accent sk-card-accent-soft" data-padding="lg">
-    <span class="sk-card-accent__icon" aria-hidden="true">
-      <span data-sk-icon="${card.icon}"></span>
-    </span>
-    <div class="sk-stack" data-gap="xs">
-      <span class="sk-card-eyebrow">${card.eyebrow}</span>
-      <h3 class="sk-heading" data-size="h4" data-flush>${card.title}</h3>
-      <p class="sk-text" data-tone="secondary">${card.body}</p>
-    </div>
-    <span class="sk-card-accent__cta">
-      ${card.cta}
-      <span data-sk-icon="arrow-right" data-sk-icon-size="sm"></span>
-    </span>
-  </article>`,
-        ),
-      ),
-      react: `import { Icon } from "@skryensya/react/icon";
-import { Box, Grid, Stack } from "@skryensya/react/layout";
-import { Heading, Text } from "@skryensya/react/typography";
-
-/* The accent surface is Box's own hooks rewritten, never a raw background:
- *   .sk-card-accent-soft {
- *     --sk-box-bg: var(--color-bg-accent-subtle);
- *     --sk-box-border-width: 1px;
- *     --sk-box-border-color: var(--color-border-accent);
- *   }
- */
-
-${reactData(c.accentSoft)}
-
-function Example() {
-  return (
-    <Grid aria-label="${c.labels.accentSoft}" columns={3} gap="md">
-      {cards.map((card) => (
-        <Box as="article" className="sk-card-accent sk-card-accent-soft" key={card.title} padding="lg">
-          <span aria-hidden="true" className="sk-card-accent__icon">
-            <Icon name={card.icon} />
-          </span>
-          <Stack gap="xs">
-            <span className="sk-card-eyebrow">{card.eyebrow}</span>
-            <Heading as="h3" flush size="h4">{card.title}</Heading>
-            <Text tone="secondary">{card.body}</Text>
-          </Stack>
-          <span className="sk-card-accent__cta">
-            {card.cta} <Icon name="arrow-right" size="sm" />
-          </span>
-        </Box>
-      ))}
-    </Grid>
-  );
-}`,
-    },
-
-    /* ── 4. Accent, solid ──────────────────────────────────────────────────────────────── */
-    accentSolid: {
-      html: grid(
-        c.labels.accentSolid,
-        c.accentSolid.map(
-          (card) => `  <article class="sk-box sk-card-accent sk-card-accent-solid" data-padding="lg">
-    <span class="sk-card-accent__icon" aria-hidden="true">
-      <span data-sk-icon="${card.icon}"></span>
-    </span>
-    <div class="sk-stack" data-gap="xs">
-      <span class="sk-card-eyebrow">${card.eyebrow}</span>
-      <h3 class="sk-heading" data-size="h4" data-flush>${card.title}</h3>
-      <p class="sk-text">${card.body}</p>
-    </div>
-    <span class="sk-card-accent__cta">
-      ${card.cta}
-      <span data-sk-icon="arrow-right" data-sk-icon-size="sm"></span>
-    </span>
-  </article>`,
-        ),
-      ),
-      react: `import { Icon } from "@skryensya/react/icon";
-import { Box, Grid, Stack } from "@skryensya/react/layout";
-import { Heading, Text } from "@skryensya/react/typography";
-
-/* A filled accent surface takes its text from the on-accent token, not from the text ramp:
- *   .sk-card-accent-solid {
- *     --sk-box-bg: var(--color-action-primary);
- *     color: var(--color-text-on-accent);
- *   }
- *   .sk-card-accent-solid :is(.sk-heading, .sk-text) { color: inherit; }
- *
- * In dark mode the accent fill is a LIGHT blue and on-accent flips to near-black. A data-tone
- * here would resolve against the page instead and land unreadable in one of the two modes.
- */
-
-${reactData(c.accentSolid)}
-
-function Example() {
-  return (
-    <Grid aria-label="${c.labels.accentSolid}" columns={3} gap="md">
-      {cards.map((card) => (
-        <Box as="article" className="sk-card-accent sk-card-accent-solid" key={card.title} padding="lg">
-          <span aria-hidden="true" className="sk-card-accent__icon">
-            <Icon name={card.icon} />
-          </span>
-          <Stack gap="xs">
-            <span className="sk-card-eyebrow">{card.eyebrow}</span>
-            <Heading as="h3" flush size="h4">{card.title}</Heading>
-            <Text>{card.body}</Text>
-          </Stack>
-          <span className="sk-card-accent__cta">
-            {card.cta} <Icon name="arrow-right" size="sm" />
-          </span>
-        </Box>
-      ))}
-    </Grid>
-  );
-}`,
-    },
-
-    /* ── 5. Box + Stat ─────────────────────────────────────────────────────────────────── */
+    /* ── 4. Box + Stat ─────────────────────────────────────────────────────────────────── */
     stat: {
       html: grid(
         c.labels.stat,
@@ -286,7 +211,7 @@ function Example() {
 }`,
     },
 
-    /* ── 6. TileLink ───────────────────────────────────────────────────────────────────── */
+    /* ── 5. TileLink ───────────────────────────────────────────────────────────────────── */
     link: {
       html: grid(
         c.labels.link,
@@ -337,7 +262,7 @@ function Example() {
 }`,
     },
 
-    /* ── 7. TileButton ─────────────────────────────────────────────────────────────────── */
+    /* ── 6. TileButton ─────────────────────────────────────────────────────────────────── */
     action: {
       html: grid(
         c.labels.action,
@@ -382,7 +307,7 @@ function Example() {
 }`,
     },
 
-    /* ── 8. TileCheckbox ───────────────────────────────────────────────────────────────── */
+    /* ── 7. TileCheckbox ───────────────────────────────────────────────────────────────── */
     select: {
       html: grid(
         c.labels.select,
@@ -395,8 +320,9 @@ function Example() {
     data-part="root"
     data-name="prefs"
     data-value="pref-${index + 1}"
+    data-default-checked="${card.checked}"
   >
-    <input type="checkbox" data-part="input"${card.checked ? " checked" : ""} />
+    <input type="checkbox" data-part="input" />
     <span class="sk-tile__content" data-part="content">
       <span class="sk-tile__title">${card.title}</span>
       <span class="sk-tile__description">${card.body}</span>
@@ -428,7 +354,7 @@ function Example() {
 }`,
     },
 
-    /* ── 9. Box + ImageFrame ───────────────────────────────────────────────────────────── */
+    /* ── 8. Box + ImageFrame ───────────────────────────────────────────────────────────── */
     media: {
       html: grid(
         c.labels.media,
@@ -474,7 +400,7 @@ function Example() {
 }`,
     },
 
-    /* ── 10. Media + gradient wash ─────────────────────────────────────────────────────── */
+    /* ── 9. Media + gradient wash ──────────────────────────────────────────────────────── */
     gradient: {
       html: grid(
         c.labels.gradient,
@@ -522,7 +448,7 @@ function Example() {
 }`,
     },
 
-    /* ── 11. Media + gradient + navigation ─────────────────────────────────────────────── */
+    /* ── 10. Media + gradient + navigation ─────────────────────────────────────────────── */
     mediaLink: {
       html: grid(
         c.labels.mediaLink,
@@ -583,7 +509,7 @@ function Example() {
 }`,
     },
 
-    /* ── 12. Box with two independent controls ─────────────────────────────────────────── */
+    /* ── 11. Box with two independent controls ─────────────────────────────────────────── */
     product: {
       html: grid(
         c.labels.product,
@@ -601,7 +527,7 @@ function Example() {
       </p>
       <div class="sk-inline" data-gap="sm" data-justify="between">
         <a class="sk-link" href="#">${c.cta.details}</a>
-        <button class="sk-button sk-interactive" data-variant="primary" type="button">
+        <button class="sk-button sk-interactive" data-variant="accent" type="button">
           ${c.cta.add}
         </button>
       </div>
@@ -637,7 +563,7 @@ function Example() {
             </p>
             <Inline gap="sm" justify="between">
               <Link href={card.href}>${c.cta.details}</Link>
-              <Button onClick={card.onAdd} variant="primary">${c.cta.add}</Button>
+              <Button onClick={card.onAdd} variant="accent">${c.cta.add}</Button>
             </Inline>
           </Stack>
         </Box>

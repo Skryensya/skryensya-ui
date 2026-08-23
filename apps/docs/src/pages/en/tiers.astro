@@ -35,32 +35,32 @@ const linterOutput = `✗ 1 problem(s):
 
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Tier</th>
-          <th>Responde</th>
-          <th>You can reference</th>
-          <th>How many are there</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Tier</th>
+          <th class="sk-table__header">Responde</th>
+          <th class="sk-table__header">You can reference</th>
+          <th class="sk-table__header">How many are there</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><span class="sk-badge" data-tone="warning">primitive</span></td>
-          <td>what values exist</td>
-          <td>nothing, is the background</td>
-          <td class="mono">{counts.primitive}</td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><span class="sk-badge" data-tone="warning">primitive</span></td>
+          <td class="sk-table__cell">what values exist</td>
+          <td class="sk-table__cell">nothing, is the background</td>
+          <td class="sk-table__cell mono">{counts.primitive}</td>
         </tr>
-        <tr>
-          <td><span class="sk-badge" data-tone="accent">semantic</span></td>
-          <td>what does a value mean</td>
-          <td>primitives, and other semantics</td>
-          <td class="mono">{counts.semantic}</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><span class="sk-badge" data-tone="accent">semantic</span></td>
+          <td class="sk-table__cell">what does a value mean</td>
+          <td class="sk-table__cell">primitives, and other semantics</td>
+          <td class="sk-table__cell mono">{counts.semantic}</td>
         </tr>
-        <tr>
-          <td><span class="sk-badge" data-tone="success">component</span></td>
-          <td>where a value is used</td>
-          <td>semantics only, <strong>never</strong> primitives</td>
-          <td class="mono">{counts.component}</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><span class="sk-badge" data-tone="success">component</span></td>
+          <td class="sk-table__cell">where a value is used</td>
+          <td class="sk-table__cell">semantics only, <strong>never</strong> primitives</td>
+          <td class="sk-table__cell mono">{counts.component}</td>
         </tr>
       </tbody>
     </table>

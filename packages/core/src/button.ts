@@ -24,7 +24,7 @@ export const buttonContract = {
   options: {
     variant: {
       type: "enum",
-      values: ["neutral", "subtle", "translucent", "primary", "danger", "ghost"],
+      values: ["neutral", "subtle", "translucent", "accent", "danger", "ghost"],
       default: "neutral",
       attr: "data-variant",
     },

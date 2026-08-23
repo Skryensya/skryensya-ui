@@ -162,7 +162,7 @@
     );
   }
 
-  .sk-button[data-variant="primary"] {
+  .sk-button[data-variant="accent"] {
     --sk-button-bg: var(--color-action-primary);
     /* on-accent, NOT text-primary: in dark, action-primary is a light blue and text-primary
      * is near-white, aliasing them makes a white-on-light-blue button. */
@@ -311,7 +311,7 @@
       border-color: CanvasText;
     }
 
-    .sk-button[data-variant="primary"],
+    .sk-button[data-variant="accent"],
     .sk-button[data-variant="danger"] {
       --sk-button-bg: Highlight;
       --sk-button-fg: HighlightText;

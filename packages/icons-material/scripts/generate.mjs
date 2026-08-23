@@ -41,6 +41,7 @@ const MAP = {
   copy: "content_copy",
   filter: "filter_alt",
   refresh: "refresh",
+  "zoom-out": "zoom_out",
   more: "more_horiz",
   menu: "menu",
   info: "info",

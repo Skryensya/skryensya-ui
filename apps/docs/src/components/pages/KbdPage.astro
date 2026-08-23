@@ -3,7 +3,7 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { kbdTree } from "../../demos/kbd";
+import { kbdAccentTree, kbdTree } from "../../demos/kbd";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/kbd.yaml?raw";
 import coreSource from "@core/src/kbd.ts?raw";
@@ -36,6 +36,7 @@ const sourceFiles = [
         { name: "renders a native <kbd> carrying the part class", description: t("kbdPage.test1") },
         { name: "keeps a consumer className alongside the part", description: t("kbdPage.test2") },
         { name: "passes through native attributes", description: t("kbdPage.test3") },
+        { name: "defaults to the neutral tone and opts into accent", description: t("kbdPage.test4") },
       ],
     },
   ]}
@@ -43,6 +44,10 @@ const sourceFiles = [
   <Fragment slot="usage">
     <p class="lede" set:html={t("kbdPage.lede")} />
     <ComponentPreview tree={kbdTree} label="Kbd" />
+
+    <h3>{t("kbdPage.toneTitle")}</h3>
+    <p set:html={t("kbdPage.toneBody")} />
+    <ComponentPreview tree={kbdAccentTree} label="Kbd accent" />
 
     <h3>{t("kbdPage.squareTitle")}</h3>
     <p set:html={t("kbdPage.squareBody")} />

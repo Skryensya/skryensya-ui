@@ -1,0 +1,754 @@
+---
+/*
+ * The render side of ComponentPreview's "Pantalla completa" menu action: a bare page, no Base
+ * layout (no nav/sidebar/footer), that reconstructs ONE preview from a SHORT path
+ * (`/f/{docs page}/{n}` — see `openComponentPreviewFullscreen` in
+ * `@skryensya/vanilla/component-preview`). The last segment is the example's 1-based number on
+ * that page; nothing travels as a query param.
+ *
+ * Nothing is server-rendered from those segments: this site is `output: "static"` (no server to run
+ * per-request), so the client script below `fetch()`es the docs page ITSELF — a real file, already
+ * built, at the SAME url a reader's browser would load — and plucks the Nth card back out of
+ * that fresh markup. That is what keeps the link short regardless of how large a
+ * demo is: the URL carries a pointer, not the rendered card, so it stays readable and small the
+ * same way for every preview on the site, and it works for anyone it is shared with, cold, exactly
+ * as it worked for whoever clicked "Pantalla completa" first.
+ *
+ * `getStaticPaths` emits one identical shell per (page, n) so `/f/…/2` is a real file after
+ * `astro build`. The shell still does the fetch; the paths exist so the host does not 404.
+ *
+ * The reconstructed card is ISOLATED in its own `srcdoc` iframe, not injected into THIS document —
+ * the same realm-isolation the Vanilla stage already relies on (`buildPreviewFrameDocument`, see
+ * ComponentPreview.astro's own header comment), for the same reasons: its own module graph, its own
+ * globals, nothing it does can reach back into this shell page. This shell stays down to a loader
+ * and one iframe, so there is very little to load here beyond the demo's own assets, and the
+ * fetched page's dev-tooling scripts (Vite's HMR client, the dev toolbar, the prefetch/router
+ * runtime) are filtered out before the iframe ever sees them — this page never navigates and has no
+ * toolbar, so running them would be pure cost with nothing to show for it.
+ */
+import "@skryensya/core/components/loader.css";
+import { fullscreenPreviewStaticPaths } from "@/lib/fullscreen-preview-paths";
+
+export function getStaticPaths() {
+  return fullscreenPreviewStaticPaths();
+}
+---
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Pantalla completa</title>
+    {/*
+     * Same FOUC-prevention shape as Base.astro's own inline script (one localStorage key, "sk",
+     * one JSON blob keyed by preference slot) — duplicated rather than imported, for the same
+     * reason Base.astro's copy is inline: nothing can be awaited before paint. Only styles this
+     * SHELL's own loader (the iframe gets its own copy of these same values baked into its `<html>`
+     * tag directly, computed once in the script below — no point running the same localStorage read
+     * twice just to end up in two different documents).
+     */}
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        var stored = {};
+        try {
+          stored = JSON.parse(localStorage.getItem("sk") || "{}");
+        } catch (_error) {
+          stored = {};
+        }
+        var scheme = stored.scheme;
+        if (scheme === "light" || scheme === "dark") {
+          d.setAttribute("data-scheme", scheme);
+          d.style.colorScheme = scheme;
+        } else {
+          d.style.colorScheme = "light dark";
+        }
+        if (stored.contrast === "high") d.setAttribute("data-contrast", "high");
+      })();
+    </script>
+    <style is:global>
+      /*
+       * `scrollbar-gutter: auto` overrides the site's own `html { scrollbar-gutter: stable }`
+       * (patterns/scroll-lock.css): that reservation is for pages that open scroll-locked dialogs,
+       * and this shell has nothing that scrolls at all.
+       */
+      html {
+        block-size: 100%;
+        overflow: hidden;
+        scrollbar-gutter: auto;
+      }
+      body {
+        block-size: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: var(--color-bg-canvas, var(--color-bg-surface, #fff));
+      }
+      /*
+       * Astro's dev toolbar (dev-only; `astro build` never emits this element, so this rule is
+       * inert in production) is a fixed-position overlay that sits on top of EVERY page's content.
+       * This page is meant to be one demo (plus its source pane) filling the whole screen with
+       * nothing else competing for clicks, so the toolbar loses that fight here.
+       */
+      astro-dev-toolbar {
+        display: none !important;
+      }
+      .sk-fullscreen-preview__loader {
+        display: grid;
+        place-items: center;
+        block-size: 100vh;
+      }
+      #sk-fullscreen-preview-frame {
+        display: block;
+        inline-size: 100%;
+        block-size: 100vh;
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sk-fullscreen-preview-loader" class="sk-fullscreen-preview__loader">
+      <span class="sk-loader" data-size="lg" role="status" aria-label="Cargando…"></span>
+    </div>
+    <iframe id="sk-fullscreen-preview-frame" title="Pantalla completa" hidden></iframe>
+    <script>
+      /*
+       * Only the handful of strings this page authors itself (the layout control, the "back to
+       * docs" menu item) — everything else on the card is markup lifted straight from the fetched
+       * page, already in whichever language that page was built in.
+       */
+      const STRINGS: Record<
+        "es" | "en",
+        {
+          viewInDocs: string;
+          error: string;
+          missing: string;
+          layoutGroup: string;
+          layoutStacked: string;
+          layoutSide: string;
+          themeSystem: string;
+          themeLight: string;
+          themeDark: string;
+          palette: string;
+          paletteNamed: string;
+          contrastNormal: string;
+          contrastHigh: string;
+        }
+      > = {
+        es: {
+          viewInDocs: "Ver en la documentación",
+          error: "No se pudo cargar el preview.",
+          missing: "Este enlace no trae ningún preview.",
+          layoutGroup: "Diseño del preview",
+          layoutStacked: "Código abajo",
+          layoutSide: "Código al lado",
+          themeSystem: "Modo: sistema",
+          themeLight: "Modo: claro",
+          themeDark: "Modo: oscuro",
+          palette: "Paleta de color",
+          paletteNamed: "Paleta: {name}",
+          contrastNormal: "Contraste: normal",
+          contrastHigh: "Contraste: alto",
+        },
+        en: {
+          viewInDocs: "View in docs",
+          error: "Couldn't load the preview.",
+          missing: "This link carries no preview.",
+          layoutGroup: "Preview layout",
+          layoutStacked: "Code below",
+          layoutSide: "Code beside",
+          themeSystem: "Mode: system",
+          themeLight: "Mode: light",
+          themeDark: "Mode: dark",
+          palette: "Color palette",
+          paletteNamed: "Palette: {name}",
+          contrastNormal: "Contrast: normal",
+          contrastHigh: "Contrast: high",
+        },
+      };
+
+      /*
+       * Geometría propia (decisión 15 — see `../icons.ts`'s own contrast/play-pause pairs): a
+       * layout switch is not a stable icon role, and importing `../icons` here would pull the
+       * whole site icon-set trio into this shell's own tiny bundle for two 24×24 glyphs. Hand-drawn
+       * inline instead, same stroke recipe (`strokeAttrs` in `../icons.ts`) — but still the SAME box
+       * every other glyph in the system wears (`patterns/icon.css`'s own banner):
+       * `class="sk-icon"`, no hardcoded width/height. Without that class an svg has no
+       * `--sk-icon-size`, no `flex: none`, none of the box this pattern owns, which is exactly why a
+       * hand-drawn 16×16 glyph here read wrong next to every icon that DOES carry the class.
+       */
+      const LAYOUT_ICON_STACKED =
+        '<svg class="sk-icon" data-size="sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="14" x2="21" y2="14"></line></svg>';
+      const LAYOUT_ICON_SIDE =
+        '<svg class="sk-icon" data-size="sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="14" y1="3" x2="14" y2="21"></line></svg>';
+
+      /* Same pair `ContrastToggle.astro` draws (`contrastNormal`/`contrastHigh` in `../icons.ts`):
+       * an empty ring, and the same ring with its inner half filled. Hand-drawn here for the same
+       * reason the layout pair above is — this glyph is not a stable role in the published sets. */
+      const ICON_CONTRAST_NORMAL =
+        '<svg class="sk-icon" data-size="sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" data-face="normal"><circle cx="12" cy="12" r="10"></circle></svg>';
+      const ICON_CONTRAST_HIGH =
+        '<svg class="sk-icon" data-size="sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" data-face="high"><circle cx="12" cy="12" r="10"></circle><path d="M12 6a6 6 0 0 1 0 12z" fill="currentColor" stroke="none"></path></svg>';
+
+      const localeOf = (pathname: string): "es" | "en" => (pathname.startsWith("/en/") ? "en" : "es");
+
+      /** A same-origin, root-relative path only: blocks a shared link from making this page fetch (or link to) another origin. */
+      function isSafeSitePath(value: string | null): value is string {
+        return typeof value === "string" && value.startsWith("/") && !value.startsWith("//");
+      }
+
+      /** `/f/componentes/layout-grid/2` → page `/componentes/layout-grid`, example `2`. `/f/2` is the home page. */
+      function parseFullscreenPath(pathname: string): { pagePath: string; n: number } | null {
+        const match = pathname.match(/^\/f\/(?:(.+)\/)?(\d+)\/?$/);
+        if (!match) return null;
+        const n = Number(match[2]);
+        if (!Number.isInteger(n) || n < 1) return null;
+        return { pagePath: match[1] ? `/${match[1]}` : "/", n };
+      }
+
+      /**
+       * Dev-only tooling this fullscreen iframe has no use for: Vite's HMR client (nothing here
+       * ever hot-reloads), the dev toolbar (an overlay this page has no room or reason to show), and
+       * Astro's client-router/prefetch runtime (this iframe never navigates internally). Everything
+       * else found on the fetched page — the real component CSS, the Vanilla/Svelte enhancers,
+       * `@astrojs/react`'s island runtime — is kept: a demo the codebase itself built is a much safer
+       * default to trust than a hand-picked allowlist that would silently break the first component
+       * whose needs this list didn't anticipate.
+       */
+      const IRRELEVANT_SCRIPT_PATTERNS = [/\/@vite\/client/, /dev-toolbar/, /astro:scripts\/page/];
+
+      function resolve(base: string, value: string): string {
+        return new URL(value, base).href;
+      }
+
+      /*
+       * Built by concatenation rather than typed as one closing-tag literal: this file's own
+       * surrounding script block is plain HTML from the tokenizer's point of view, and it ends a
+       * script element at the first matching close sequence it finds in the raw source TEXT —
+       * comments and JS string quoting included, since it never gets far enough to parse any of
+       * that. Splitting the sequence keeps every closing tag the srcdoc string below builds out of
+       * the raw source text that would otherwise end this very script early.
+       */
+      const SCRIPT_CLOSE = "</" + "script>";
+
+      async function render(): Promise<void> {
+        const loader = document.getElementById("sk-fullscreen-preview-loader")!;
+        const frame = document.getElementById("sk-fullscreen-preview-frame") as HTMLIFrameElement;
+
+        const showError = (message: string) => {
+          loader.remove();
+          document.body.append(Object.assign(document.createElement("p"), { textContent: message }));
+        };
+
+        const pointer = parseFullscreenPath(location.pathname);
+        if (!pointer || !isSafeSitePath(pointer.pagePath)) {
+          showError(STRINGS.es.missing);
+          return;
+        }
+        const { pagePath, n } = pointer;
+
+        const strings = STRINGS[localeOf(pagePath)];
+        document.documentElement.lang = localeOf(pagePath);
+
+        let pageHtml: string;
+        try {
+          const response = await fetch(pagePath);
+          if (!response.ok) throw new Error(String(response.status));
+          pageHtml = await response.text();
+        } catch {
+          showError(strings.error);
+          return;
+        }
+
+        const parsed = new DOMParser().parseFromString(pageHtml, "text/html");
+        const card = parsed.querySelectorAll(".sk-component-preview")[n - 1];
+        if (!card || !card.classList.contains("sk-component-preview")) {
+          showError(strings.error);
+          return;
+        }
+
+        const stored = (() => {
+          try {
+            return JSON.parse(localStorage.getItem("sk") || "{}");
+          } catch {
+            return {};
+          }
+        })();
+
+        /*
+         * The curated accent presets, read off the SAME `#docs-palette-presets` blob Base.astro
+         * embeds on every page (see that file's `PALETTE_PRESETS`/`accentBundle()`): this shell
+         * never defines its own copy, so the two cannot drift. Presets[0] is the default and
+         * carries no override — a bare `data-sk-fullscreen-preview` iframe already renders it.
+         */
+        let presets: { id: string; name: string; accent: string; tokens: Record<string, string> }[] = [];
+        try {
+          presets = JSON.parse(parsed.getElementById("docs-palette-presets")?.textContent || "[]");
+        } catch {
+          presets = [];
+        }
+        const paletteIndex = Math.max(
+          0,
+          presets.findIndex((preset) => preset.id === stored.palette),
+        );
+        const previewId = card.id;
+
+        document.title = card.querySelector(".sk-component-preview__title")?.textContent?.trim() ?? "Preview";
+
+        // No resizer (the stage IS the viewport here, nothing to drag toward) and no re-opening
+        // fullscreen from inside fullscreen; no inline height a prior drag/auto-fit left behind.
+        card.querySelector("[data-sk-component-preview-resizer]")?.remove();
+        card.querySelector("[data-sk-component-preview-fullscreen]")?.remove();
+        card.removeAttribute("style");
+
+        /*
+         * XL is a docs-column trick: a 1440 px viewport zoomed out so wide layouts fit the
+         * catalogue. This page IS that wide viewport, so the preset has nothing to pretend and
+         * the control would only shrink a stage that already fills the window.
+         */
+        const xlOption = card.querySelector(
+          '[data-sk-component-preview-screen-option][data-value="xl"]',
+        );
+        (xlOption?.closest(".sk-tooltip") ?? xlOption)?.remove();
+        const screenTabs = card.querySelector("[data-sk-component-preview-screen-tabs]");
+        if (screenTabs?.getAttribute("data-value") === "xl") {
+          screenTabs.setAttribute("data-value", "free");
+        }
+        for (const stage of card.querySelectorAll("[data-sk-component-preview-screen='xl']")) {
+          stage.removeAttribute("data-sk-component-preview-screen");
+        }
+
+        /*
+         * The stage must fill the row this page's own `<style>` grants it below — the full height
+         * under the header, never the demo's own (shorter) content height. `fitFrame`
+         * (component-preview-frame.ts) writes an explicit `frame.style.height` from measured content
+         * on every stage UNLESS it opted into `scroll`, and there is no resizer here to leave a
+         * `resized` frame behind either — so left alone, a short demo (a lone Button, say) would
+         * clobber the grid's `1fr` row right back down to a few dozen pixels.
+         *
+         * `scroll` is baked in twice per stage: once on the outer `<iframe>` (read live, matches every
+         * other `scroll` consumer) and once on the frame's OWN `<body>`, inside the `srcdoc` string —
+         * `allowScroll` in the frame runtime reads that body attribute once at module load, so it has
+         * to already be there before the iframe is ever set live. Both bindings share the same
+         * `.sk-component-preview__stage` class and `srcdoc` shape, so one pass covers Vanilla and
+         * React alike.
+         */
+        for (const stage of card.querySelectorAll<HTMLIFrameElement>(".sk-component-preview__stage")) {
+          stage.setAttribute("data-sk-component-preview-scroll", "");
+          const inner = stage.getAttribute("srcdoc");
+          if (inner && !inner.includes("data-sk-component-preview-scroll")) {
+            stage.setAttribute(
+              "srcdoc",
+              inner.replace(
+                'class="sk-component-preview__frame-body"',
+                'class="sk-component-preview__frame-body" data-sk-component-preview-scroll',
+              ),
+            );
+          }
+        }
+
+        /*
+         * A real split, not an overlay drawer: the stage and its source sit in their own panes
+         * under the header, stage pane FIRST in source order — never a bottom sheet the reader has
+         * to pry open (and then resize) just to see what the demo emits. `data-layout` on
+         * `.sk-fullscreen-preview__body` (stacked | side) is the one thing the header control below
+         * writes; both panes' proportions and stacking come from the CSS alone, so there is nothing
+         * left to "decompress" — whichever layout is picked, both panes are fully visible at once.
+         */
+        const stageNodes = [
+          ...card.querySelectorAll<HTMLElement>(
+            ":scope > .sk-component-preview__stage, :scope > .sk-component-preview__react-stage, :scope > .sk-component-preview__loading",
+          ),
+        ];
+        const panels = [...card.querySelectorAll<HTMLElement>(":scope > .sk-component-preview__binding")];
+
+        const stagePane = parsed.createElement("div");
+        stagePane.className = "sk-fullscreen-preview__stage-pane";
+        stagePane.append(...stageNodes);
+
+        const splitBody = parsed.createElement("div");
+        splitBody.className = "sk-fullscreen-preview__body";
+        splitBody.dataset.layout = "stacked";
+        splitBody.append(stagePane);
+
+        if (panels.length) {
+          const codePane = parsed.createElement("div");
+          codePane.className = "sk-fullscreen-preview__code-pane";
+          codePane.append(...panels);
+          splitBody.append(codePane);
+        }
+
+        card.append(splitBody);
+
+        // Header controls: a control that isn't a stable icon role or a published contract (decisión
+        // 15 / 33) is authored here, not imported — same call `ContrastToggle`/`ThemeToggle` already
+        // make for chrome that belongs to one page rather than to the design system.
+        const actions = card.querySelector(".sk-component-preview__actions");
+        if (actions) {
+          const overflowMenu = actions.querySelector(":scope > .sk-menu");
+
+          if (panels.length) {
+            const layoutTabs = parsed.createElement("div");
+            layoutTabs.className = "sk-segmented";
+            layoutTabs.setAttribute("data-sk-segmented", "");
+            layoutTabs.setAttribute("data-sk-fullscreen-preview-layout-tabs", "");
+            layoutTabs.setAttribute("data-value", "stacked");
+            layoutTabs.setAttribute("role", "radiogroup");
+            layoutTabs.setAttribute("aria-label", strings.layoutGroup);
+            layoutTabs.innerHTML = `
+              <span class="sk-segmented__indicator" aria-hidden="true"></span>
+              <button class="sk-segmented__option sk-interactive" data-sk-segmented-option data-icon-only data-value="stacked" type="button" role="radio" aria-checked="true" aria-label="${strings.layoutStacked}" title="${strings.layoutStacked}">${LAYOUT_ICON_STACKED}</button>
+              <button class="sk-segmented__option sk-interactive" data-sk-segmented-option data-icon-only data-value="side" type="button" role="radio" aria-checked="false" aria-label="${strings.layoutSide}" title="${strings.layoutSide}">${LAYOUT_ICON_SIDE}</button>
+            `;
+            actions.insertBefore(layoutTabs, overflowMenu);
+          }
+
+          /*
+           * The accent picker: same markup Base.astro's own button renders, so `.dimensions__palette-toggle`
+           * / `.dimensions__palette-dot` (site.css, already loaded — every docs page carries it) style
+           * it identically. Seeded to the reader's CURRENT preset (`paletteIndex`, computed above from
+           * the same storage the site itself reads) rather than always opening on the default, and its
+           * own click handler (bottom `<script>`) writes back to that SAME storage entry: leaving
+           * fullscreen, the site is exactly where this button left it.
+           */
+          const paletteToggle = parsed.createElement("button");
+          paletteToggle.className = "sk-button sk-interactive dimensions__palette-toggle";
+          paletteToggle.type = "button";
+          paletteToggle.setAttribute("data-variant", "neutral");
+          paletteToggle.setAttribute("data-icon-only", "");
+          paletteToggle.setAttribute("data-size", "sm");
+          paletteToggle.setAttribute("data-sk-fullscreen-preview-palette-toggle", "");
+          paletteToggle.setAttribute("data-label-template", strings.paletteNamed);
+          const paletteLabel = presets[paletteIndex]
+            ? strings.paletteNamed.replace("{name}", presets[paletteIndex].name)
+            : strings.palette;
+          paletteToggle.setAttribute("aria-label", paletteLabel);
+          paletteToggle.setAttribute("title", paletteLabel);
+          paletteToggle.innerHTML = `<span class="dimensions__palette-dot" aria-hidden="true" style="--swatch: ${
+            presets[paletteIndex]?.accent ?? "var(--palette-blue-600)"
+          }"></span>`;
+          actions.insertBefore(paletteToggle, overflowMenu);
+
+          /*
+           * Same markup `ThemeToggle.astro` renders: `data-sk-theme-toggle` is what
+           * `initThemeToggle()` (already bundled into every docs page, see Base.astro) discovers
+           * generically, and the three faces are the placeholder spans `IconStateButton`'s own
+           * contract anatomy specifies — `mountIcons`, already running for the demo body, resolves
+           * them the same way it resolves every other `data-sk-icon` on the page.
+           */
+          const themeToggle = parsed.createElement("button");
+          themeToggle.className = "sk-button sk-interactive sk-icon-toggle sk-theme-toggle";
+          themeToggle.type = "button";
+          themeToggle.setAttribute("data-variant", "neutral");
+          themeToggle.setAttribute("data-icon-only", "");
+          themeToggle.setAttribute("data-size", "sm");
+          themeToggle.setAttribute("data-sk-theme-toggle", "");
+          themeToggle.setAttribute("aria-label", strings.themeSystem);
+          themeToggle.setAttribute("data-sk-theme-toggle-label-system", strings.themeSystem);
+          themeToggle.setAttribute("data-sk-theme-toggle-label-light", strings.themeLight);
+          themeToggle.setAttribute("data-sk-theme-toggle-label-dark", strings.themeDark);
+          themeToggle.innerHTML = `
+            <span data-sk-icon="mode-system" data-sk-theme-toggle-icon="system" data-face="system"></span>
+            <span data-sk-icon="mode-light" data-sk-theme-toggle-icon="light" data-face="light"></span>
+            <span data-sk-icon="mode-dark" data-sk-theme-toggle-icon="dark" data-face="dark"></span>
+          `;
+          actions.insertBefore(themeToggle, overflowMenu);
+
+          /*
+           * Same markup `ContrastToggle.astro` renders (unscoped: this writes `:root`, the only root
+           * there is here). `aria-pressed` is what `patterns/icon-toggle.css` keys the two faces on,
+           * seeded from the reader's stored preference so the button never opens showing "normal"
+           * while the surface it sits on is already high contrast.
+           */
+          const highContrast = stored.contrast === "high";
+          const contrastToggle = parsed.createElement("button");
+          contrastToggle.className = "sk-button sk-interactive sk-icon-toggle dimensions__contrast-toggle";
+          contrastToggle.type = "button";
+          contrastToggle.setAttribute("data-variant", "neutral");
+          contrastToggle.setAttribute("data-icon-only", "");
+          contrastToggle.setAttribute("data-size", "sm");
+          contrastToggle.setAttribute("data-sk-fullscreen-preview-contrast-toggle", "");
+          contrastToggle.setAttribute("aria-pressed", String(highContrast));
+          contrastToggle.setAttribute("aria-label", highContrast ? strings.contrastHigh : strings.contrastNormal);
+          contrastToggle.setAttribute("title", highContrast ? strings.contrastHigh : strings.contrastNormal);
+          contrastToggle.setAttribute("data-label-normal", strings.contrastNormal);
+          contrastToggle.setAttribute("data-label-high", strings.contrastHigh);
+          contrastToggle.innerHTML = `${ICON_CONTRAST_NORMAL}${ICON_CONTRAST_HIGH}`;
+          actions.insertBefore(contrastToggle, overflowMenu);
+        }
+
+        // "Ver en la documentación": absent on the docs page's own menu (see ComponentPreview.astro),
+        // added ONLY here — the one context that has actually left that page behind.
+        const menuContent = card.querySelector("[data-sk-menu-content]");
+        if (menuContent) {
+          const link = parsed.createElement("a");
+          link.className = "sk-menu__item sk-interactive";
+          link.setAttribute("data-sk-menu-item", "");
+          link.dataset.value = "view-in-docs";
+          link.href = `${pagePath}#${previewId}`;
+          const label = parsed.createElement("span");
+          label.className = "sk-menu__item-label";
+          label.textContent = strings.viewInDocs;
+          link.append(label);
+          menuContent.append(link);
+        }
+
+        /*
+         * Stylesheets: BOTH forms the fetched page might use — a production build's real
+         * `<link rel="stylesheet">`, and a dev server's CSS-as-a-module `<script type="module"
+         * src="*.css">` (Vite serves either request the same way, so both resolve to plain CSS text
+         * over the wire regardless of which tag shape the page used to reach it). Read raw attribute
+         * values, resolved by hand: a `DOMParser` document's base URI is `about:blank`, so its own
+         * `.href`/`.src` getters cannot be trusted to resolve root-relative paths against this site's
+         * origin.
+         */
+        const linkHrefs = [...parsed.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')]
+          .map((link) => link.getAttribute("href"))
+          .filter((href): href is string => Boolean(href));
+
+        const scriptSrcs = [...parsed.querySelectorAll<HTMLScriptElement>('script[type="module"]')]
+          .map((script) => script.getAttribute("src"))
+          .filter((src): src is string => Boolean(src));
+
+        // Deduped by resolved URL: a page with several previews of the same component (Button's
+        // page shows seven) repeats the same stylesheet/script tag once per instance, and loading
+        // it that many times over would only add redundant requests without changing anything it
+        // renders.
+        const cssHrefs = new Set<string>();
+        const jsSrcs = new Set<string>();
+        for (const href of linkHrefs) cssHrefs.add(resolve(location.origin, href));
+        for (const src of scriptSrcs) {
+          if (IRRELEVANT_SCRIPT_PATTERNS.some((pattern) => pattern.test(src))) continue;
+          const resolved = resolve(location.origin, src);
+          if (/\.(css|scss)$/.test(src)) cssHrefs.add(resolved);
+          else jsSrcs.add(resolved);
+        }
+
+        const styleTags = [...cssHrefs].map((href) => `<link rel="stylesheet" href="${href}">`).join("\n");
+        const scriptTags = [...jsSrcs]
+          .map((src) => `<script type="module" src="${src}">${SCRIPT_CLOSE}`)
+          .join("\n");
+
+        const scheme = stored.scheme === "light" || stored.scheme === "dark" ? stored.scheme : undefined;
+        const paletteStyle =
+          paletteIndex > 0
+            ? Object.entries(presets[paletteIndex].tokens)
+                .map(([property, value]) => `${property}: ${value}`)
+                .join("; ")
+            : "";
+
+        const htmlAttrs = [
+          scheme ? `data-scheme="${scheme}"` : "",
+          stored.contrast === "high" ? 'data-contrast="high"' : "",
+          "data-sk-fullscreen-preview",
+          `style="color-scheme: ${scheme ?? "light dark"}${paletteStyle ? `; ${paletteStyle}` : ""}"`,
+        ]
+          .filter(Boolean)
+          .join(" ");
+
+        const srcdoc = `<!doctype html>
+<html ${htmlAttrs}>
+<head>
+<meta charset="utf-8">
+${styleTags}
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+  /*
+   * The CARD is flush with the viewport — square corners, no chrome radius. Stopping at the
+   * card itself is load-bearing: a descendant * used to win over .sk-segmented's own
+   * --sk-segmented-radius (and every button in the header), so the binding and screen
+   * controls painted as square boxes. Those keep the radius they shipped with.
+   */
+  .sk-component-preview {
+    border-radius: 0 !important;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    inline-size: 100%;
+    block-size: 100vh;
+    margin: 0;
+    border-width: 0;
+  }
+  /*
+   * XL zoom must not leak onto Desktop (free) here. The catalogue rule sizes XL to 1440 px and
+   * zooms it; this window already is that viewport, so any leftover xl attr is treated as free.
+   */
+  .sk-component-preview,
+  .sk-component-preview__stage {
+    zoom: 1;
+  }
+  .sk-component-preview__stage[data-sk-component-preview-screen="xl"] {
+    --sk-component-preview-screen-inline-size: 100%;
+    inline-size: 100%;
+    zoom: 1;
+    justify-self: stretch;
+    border-inline-width: 0;
+  }
+  /*
+   * .sk-fullscreen-preview__body fills the card's row-2 (1fr) exactly as the stage alone used
+   * to: a plain flex split, column by default (stage pane first, code pane after — "below", never
+   * layered over it) and row under the header's layout control. Both panes get a share of that
+   * ONE row/column via flex-basis, the same numbers regardless of direction, so switching layout
+   * only changes the axis, never which pane is bigger.
+   */
+  .sk-fullscreen-preview__body {
+    grid-column: 1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+    min-inline-size: 0;
+  }
+  .sk-fullscreen-preview__body[data-layout="side"] {
+    flex-direction: row;
+  }
+  /*
+   * The stage pane is a 1×1 grid so the stage iframe and the loading spinner still occupy the
+   * SAME cell and overlap exactly as they did as direct grid children of .sk-component-preview
+   * (component-preview.css) — moving them one level deeper must not turn that overlap into two
+   * stacked boxes. Selected by class, not ":scope >": the React binding's stage is several
+   * "display: contents" wrappers deep, and CSS descendant selectors reach through those the same
+   * way component-preview.css's own class rules already do.
+   */
+  .sk-fullscreen-preview__stage-pane {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    flex: 3 1 0%;
+    min-block-size: 0;
+    min-inline-size: 0;
+  }
+  .sk-fullscreen-preview__stage-pane .sk-component-preview__stage,
+  .sk-fullscreen-preview__stage-pane .sk-component-preview__loading {
+    grid-column: 1;
+    grid-row: 1;
+    block-size: 100%;
+    inline-size: 100%;
+    min-block-size: 0;
+  }
+  /*
+   * component-preview.css hides the loader with :has(> .sk-component-preview__stage),
+   * a DIRECT child. This page moves the stage (and the React host) into the split body, so
+   * that selector never matches and the spinner sat on top of a ready demo forever. Same
+   * readiness attributes, just one level deeper; the binding / react-stage wrapper still
+   * keeps Vanilla and React from answering for each other.
+   */
+  .sk-component-preview:has(
+    .sk-component-preview__stage[data-sk-component-preview-binding="vanilla"]:not([hidden]):is(
+      [data-sk-component-preview-frame-ready],
+      [data-sk-component-preview-frame-error]
+    )
+  ) .sk-component-preview__loading,
+  .sk-component-preview:has(
+    .sk-component-preview__react-stage:not([hidden]) iframe:is(
+      [data-sk-component-preview-frame-ready],
+      [data-sk-component-preview-frame-error]
+    )
+  ) .sk-component-preview__loading {
+    display: none;
+  }
+  .sk-fullscreen-preview__code-pane {
+    flex: 2 1 0%;
+    min-block-size: 0;
+    min-inline-size: 0;
+    overflow: auto;
+    background: var(--color-bg-surface, #fff);
+    border-block-start: 1px solid var(--color-border-subtle, #ccc);
+  }
+  .sk-fullscreen-preview__body[data-layout="side"] .sk-fullscreen-preview__code-pane {
+    border-block-start: 0;
+    border-inline-start: 1px solid var(--color-border-subtle, #ccc);
+  }
+</style>
+</head>
+<body>
+${card.outerHTML}
+${scriptTags}
+<script>
+  document.querySelectorAll("[data-sk-fullscreen-preview-layout-tabs]").forEach(function (tabs) {
+    tabs.addEventListener("sk-value-change", function (event) {
+      var split = document.querySelector(".sk-fullscreen-preview__body");
+      if (split) split.setAttribute("data-layout", event.detail.value);
+    });
+  });
+
+  /*
+   * Read-modify-write the SAME "sk" localStorage entry Base.astro's own toggles use
+   * (@skryensya/core/storage's STORAGE_KEY): this iframe is srcdoc with no sandbox, so it
+   * shares the parent page's origin and therefore its storage. A plain object merge, not the
+   * package's setPreference() — that function lives behind a bare module specifier this
+   * hand-built document has no import map to resolve.
+   */
+  function skReadStore() {
+    try {
+      var parsed = JSON.parse(localStorage.getItem("sk") || "{}");
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+    } catch (e) {
+      return {};
+    }
+  }
+  function skWriteSlot(slot, value) {
+    var store = skReadStore();
+    store[slot] = value;
+    try {
+      localStorage.setItem("sk", JSON.stringify(store));
+    } catch (e) {}
+  }
+
+  var paletteToggle = document.querySelector("[data-sk-fullscreen-preview-palette-toggle]");
+  if (paletteToggle) {
+    var presets = ${JSON.stringify(presets)};
+    var paletteIndex = ${paletteIndex};
+    var dot = paletteToggle.querySelector(".dimensions__palette-dot");
+    var template = paletteToggle.getAttribute("data-label-template") || "{name}";
+    paletteToggle.addEventListener("click", function () {
+      if (!presets.length) return;
+      paletteIndex = (paletteIndex + 1) % presets.length;
+      var preset = presets[paletteIndex];
+      var properties = Object.keys(presets[0].tokens);
+      for (var i = 0; i < properties.length; i++) {
+        if (paletteIndex === 0) document.documentElement.style.removeProperty(properties[i]);
+        else document.documentElement.style.setProperty(properties[i], preset.tokens[properties[i]]);
+      }
+      if (dot) dot.style.setProperty("--swatch", preset.accent);
+      var text = template.replace("{name}", preset.name);
+      paletteToggle.setAttribute("aria-label", text);
+      paletteToggle.setAttribute("title", text);
+      skWriteSlot("palette", preset.id);
+    });
+  }
+
+  var contrastToggle = document.querySelector("[data-sk-fullscreen-preview-contrast-toggle]");
+  if (contrastToggle) {
+    var highContrast = document.documentElement.getAttribute("data-contrast") === "high";
+    contrastToggle.addEventListener("click", function () {
+      highContrast = !highContrast;
+      if (highContrast) document.documentElement.setAttribute("data-contrast", "high");
+      else document.documentElement.removeAttribute("data-contrast");
+      var text = highContrast
+        ? contrastToggle.getAttribute("data-label-high")
+        : contrastToggle.getAttribute("data-label-normal");
+      contrastToggle.setAttribute("aria-pressed", String(highContrast));
+      contrastToggle.setAttribute("aria-label", text || "");
+      contrastToggle.setAttribute("title", text || "");
+      skWriteSlot("contrast", highContrast ? "high" : "normal");
+    });
+  }
+${SCRIPT_CLOSE}
+</body>
+</html>`;
+
+        frame.addEventListener("load", () => {
+          loader.remove();
+          frame.hidden = false;
+        });
+        frame.srcdoc = srcdoc;
+      }
+
+      void render();
+    </script>
+  </body>
+</html>

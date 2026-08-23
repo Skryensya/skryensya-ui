@@ -5,6 +5,24 @@
 # hash nuevo.
 surface: "88b75e89f4f07519"
 entries:
+  - date: 2026-08-22
+    kind: bugfix
+    es:
+      title: El marco deja de leerse como alto contraste, y la entrada coincide con Popover
+      body: >-
+        El borde usaba <code>--color-border-default</code>, el mismo peldaño que el modo HC, así que
+        un dialog cotidiano se veía recuadrado. Ahora lee <code>--color-border-subtle</code> (como
+        Menu y Popover); el ancho sigue en 1px porque en HC el panel y la página siguen siendo el
+        mismo relleno. La entrada materializa con los tokens compartidos (opacidad, escala, blur y
+        un drop corto) y el backdrop ya no aparece de golpe.
+    en:
+      title: The frame no longer reads as high contrast, and enter matches Popover
+      body: >-
+        The border used <code>--color-border-default</code>, the same rung high-contrast mode uses,
+        so an everyday dialog looked framed. It now reads <code>--color-border-subtle</code> (like
+        Menu and Popover); the width stays 1px because in HC the panel and the page are still the
+        same fill. Enter materialises with the shared tokens (opacity, scale, blur and a short drop)
+        and the backdrop no longer snaps in.
   - date: 2026-08-14
     kind: feature
     target: alert

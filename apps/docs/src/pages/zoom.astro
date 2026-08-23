@@ -87,23 +87,23 @@ for (const route of routes) {
   <h2>Dos pruebas, dos fallos posibles</h2>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Prueba</th>
-          <th>Qué exige</th>
-          <th>Fallo típico</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Prueba</th>
+          <th class="sk-table__header">Qué exige</th>
+          <th class="sk-table__header">Fallo típico</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><strong>200%</strong></td>
-          <td>Texto legible y controles operables</td>
-          <td>Labels cortados por alturas fijas</td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>200%</strong></td>
+          <td class="sk-table__cell">Texto legible y controles operables</td>
+          <td class="sk-table__cell">Labels cortados por alturas fijas</td>
         </tr>
-        <tr>
-          <td><strong>400%</strong></td>
-          <td>Reflow a 320 CSS px</td>
-          <td>Columnas o toolbars fuera del viewport</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>400%</strong></td>
+          <td class="sk-table__cell">Reflow a 320 CSS px</td>
+          <td class="sk-table__cell">Columnas o toolbars fuera del viewport</td>
         </tr>
       </tbody>
     </table>
@@ -170,32 +170,32 @@ for (const route of routes) {
   <h3>2. Define un contrato de reflow por componente</h3>
   <div class="sk-table-scroll">
     <table class="sk-table">
-      <thead>
-        <tr>
-          <th>Tipo</th>
-          <th>Contrato mínimo</th>
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Tipo</th>
+          <th class="sk-table__header">Contrato mínimo</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Texto, Callout, Tile, Card</td>
-          <td>Altura automática; labels y contenido pueden envolver.</td>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Texto, Callout, Tile, Card</td>
+          <td class="sk-table__cell">Altura automática; labels y contenido pueden envolver.</td>
         </tr>
-        <tr>
-          <td>Navbar y toolbar</td>
-          <td>Acciones envuelven, cambian de fila o pasan a un menú accesible.</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Navbar y toolbar</td>
+          <td class="sk-table__cell">Acciones envuelven, cambian de fila o pasan a un menú accesible.</td>
         </tr>
-        <tr>
-          <td>Dialog, Drawer y popover</td>
-          <td>Cabecen en el viewport; el body tiene scroll interno si hace falta.</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Dialog, Drawer y popover</td>
+          <td class="sk-table__cell">Cabecen en el viewport; el body tiene scroll interno si hace falta.</td>
         </tr>
-        <tr>
-          <td>Grid y Stack</td>
-          <td>Las columnas convergen sin cambiar el orden del DOM.</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Grid y Stack</td>
+          <td class="sk-table__cell">Las columnas convergen sin cambiar el orden del DOM.</td>
         </tr>
-        <tr>
-          <td>Tabla, código, mapa</td>
-          <td>El overflow horizontal queda contenido en el componente.</td>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Tabla, código, mapa</td>
+          <td class="sk-table__cell">El overflow horizontal queda contenido en el componente.</td>
         </tr>
       </tbody>
     </table>

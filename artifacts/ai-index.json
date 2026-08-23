@@ -1370,13 +1370,14 @@
             "page-flow",
             "named-content-measures",
             "breakout-content",
-            "full-bleed-section"
+            "full-bleed-section",
+            "supporting-rail"
           ],
           "parents": [],
           "useWhen": [
             "una página necesita una medida de lectura y algunos hijos deben ser angostos, abrirse o sangrar de borde a borde",
             "una sección full-width debe conservar su contenido centrado sin un wrapper adicional",
-            "la página lleva un rail de apoyo (TOC, navegación contextual): es un hijo directo con data-width=\"rail\" — no un span de contenido como narrow/breakout, sino una columna aparte que la grilla reserva junto al flujo principal"
+            "la página lleva un rail de apoyo (TOC, navegación contextual): es un hijo directo con data-width=\"rail\" (después del contenido) o data-width=\"rail-start\" (antes), o ambos — no un span de contenido como narrow/breakout, sino una columna aparte que la misma grilla reserva junto al flujo, separada de él solo por --sk-layout-rail-gap"
           ]
         },
         {
@@ -3622,5 +3623,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "ed3124c59ddb3790"
+  "sourceHash": "f306dc4383c08987"
 }

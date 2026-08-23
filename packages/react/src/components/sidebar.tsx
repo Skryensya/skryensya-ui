@@ -169,8 +169,9 @@ export function SidebarSeparator({ className, ...props }: SidebarSeparatorProps)
  *
  * Same reasoning as the vanilla binding's `measureBounds`, and deliberately the same technique: the
  * bounds are `clamp()` arguments in a stylesheet and may be written in any unit, so the element is
- * pushed past each end and asked where it landed. Nothing is painted at either extreme, because the
- * push, the read and the restore happen in one synchronous block with the transition suppressed.
+ * pushed past each end and asked where it landed. The extra read after the restore flushes that
+ * width while the transition is still suppressed; without it the ceiling becomes the FROM of the
+ * width transition and the panel animates back.
  */
 function measureBounds(root: HTMLElement): { min: number; max: number } {
   const previous = root.style.getPropertyValue(SIDEBAR_WIDTH_PROPERTY);
@@ -184,6 +185,7 @@ function measureBounds(root: HTMLElement): { min: number; max: number } {
 
   if (previous) root.style.setProperty(SIDEBAR_WIDTH_PROPERTY, previous);
   else root.style.removeProperty(SIDEBAR_WIDTH_PROPERTY);
+  root.getBoundingClientRect();
   if (!wasResizing) root.removeAttribute("data-resizing");
 
   return { min, max };

@@ -8,6 +8,26 @@ entries:
   - date: 2026-08-21
     kind: feature
     es:
+      title: El rail de LayoutGrid va antes, después, o en ambos lados
+      body: >-
+        <code>data-width="rail"</code> sigue sentándose después del contenido;
+        <code>data-width="rail-start"</code> lo pone antes; la misma
+        <code>sk-layout-grid</code> puede llevar los dos a la vez. El aire entre
+        rail y contenido es <code>--sk-layout-rail-gap</code> (un paso de
+        <code>space-inline</code>, no el track de breakout, que dejaba un hueco
+        de lectura entre la prosa y su índice).
+    en:
+      title: LayoutGrid's rail can sit before, after, or on both sides
+      body: >-
+        <code>data-width="rail"</code> still sits after the content;
+        <code>data-width="rail-start"</code> puts it before; the same
+        <code>sk-layout-grid</code> can carry both at once. The air between rail
+        and content is <code>--sk-layout-rail-gap</code> (one
+        <code>space-inline</code> step, not the breakout track, which left a
+        reading-measure gap between the prose and its index).
+  - date: 2026-08-21
+    kind: feature
+    es:
       title: LayoutGrid publica una columna de rail
       body: >-
         <code>data-width="rail"</code> reserva una columna aparte del flujo principal, junto a él —

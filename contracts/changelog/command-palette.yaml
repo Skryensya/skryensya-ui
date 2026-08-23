@@ -5,6 +5,23 @@
 # hash nuevo.
 surface: "ee5395d301b35705"
 entries:
+  - date: 2026-08-22
+    kind: bugfix
+    es:
+      title: La fila activa ya no lleva el anillo de foco en el modo cotidiano
+      body: >-
+        El resalte de <code>aria-selected</code> pintaba el anillo de foco siempre, porque el tint
+        de superficie hundida desaparecía en hc-dark. Ese anillo hacía que cada resultado se viera
+        como un target de alto contraste. El tint ahora es una mezcla de texto sobre la superficie
+        elevada (visible también en HC) y el anillo queda para <code>forced-colors</code> y el modo
+        de contraste alto explícito.
+    en:
+      title: The active row no longer wears the focus ring in everyday mode
+      body: >-
+        The <code>aria-selected</code> highlight always painted the focus ring, because the sunken
+        surface tint vanished in hc-dark. That ring made every result look like a high-contrast
+        target. The tint is now a mix of text on the raised surface (visible in HC too) and the ring
+        is reserved for <code>forced-colors</code> and explicit high contrast.
   - date: 2026-08-17
     kind: bugfix
     es:

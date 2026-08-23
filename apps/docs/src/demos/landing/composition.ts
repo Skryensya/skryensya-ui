@@ -46,7 +46,7 @@ export const compositionInputButtonTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "primary" },
+      options: { variant: "accent" },
       children: t("landing.composition.searchAction"),
     },
   ],
@@ -79,7 +79,7 @@ export const compositionInputButtonListboxTree = (t: Translate): UsageTree => ({
         {
           contract: "button",
           signature: "Button.action",
-          options: { variant: "primary" },
+          options: { variant: "accent" },
           children: t("landing.composition.searchAction"),
         },
       ],
@@ -126,7 +126,7 @@ export const compositionFormDialogTree = (t: Translate, locale: Locale): UsageTr
         {
           contract: "button",
           signature: "Button.action",
-          options: { variant: "primary" },
+          options: { variant: "accent" },
           attrs: { "data-landing-dialog-open": "" },
           children: t("landing.composition.openDialog"),
         },
@@ -148,7 +148,7 @@ export const compositionFormDialogTree = (t: Translate, locale: Locale): UsageTr
               {
                 contract: "button",
                 signature: "Button.action",
-                options: { variant: "primary" },
+                options: { variant: "accent" },
                 attrs: { type: "submit", value: "confirm" },
                 children: t("landing.composition.dialogConfirm"),
               },

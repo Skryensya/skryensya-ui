@@ -95,7 +95,10 @@ export function connectSidebar(root: HTMLElement, options: SidebarOptions = {}):
  *
  * So the element is asked instead: push the width past each end and see where it lands. The push
  * happens with the transition suppressed, and the previous value restored, inside one synchronous
- * block, so nothing is ever painted at either extreme.
+ * block. Restoring the property is not enough on its own: the last layout is the ceiling, and if
+ * `data-resizing` comes off before that restored width is flushed, the engine treats the ceiling
+ * as the width transition's FROM and the panel animates back — a layout shift of everything to
+ * its right. The extra read after the restore is that flush.
  */
 function measureBounds(root: HTMLElement): { min: number; max: number } {
   const previous = root.style.getPropertyValue(SIDEBAR_WIDTH_PROPERTY);
@@ -109,6 +112,7 @@ function measureBounds(root: HTMLElement): { min: number; max: number } {
 
   if (previous) root.style.setProperty(SIDEBAR_WIDTH_PROPERTY, previous);
   else root.style.removeProperty(SIDEBAR_WIDTH_PROPERTY);
+  root.getBoundingClientRect();
   if (!wasResizing) root.removeAttribute("data-resizing");
 
   return { min, max };
@@ -127,7 +131,26 @@ function connectResize(root: HTMLElement, handle: HTMLElement, options: SidebarO
   if (options.minInlineSize) root.style.setProperty("--sk-sidebar-min-inline-size", options.minInlineSize);
   if (options.maxInlineSize) root.style.setProperty("--sk-sidebar-max-inline-size", options.maxInlineSize);
 
-  let bounds = measureBounds(root);
+  /*
+   * Degenerate until the deferred probe below lands: `describe()`'s own guard (`bounds.max >
+   * bounds.min`) already treats that as "nothing to report yet", the same case as an unmounted
+   * sidebar, so this costs nothing beyond the ARIA value staying blank for one frame.
+   *
+   * The probe itself waits for that frame on purpose. It is a real, if brief, write-then-read
+   * (0px, then 100000px, then back — `measureBounds`'s own comment) with the transition
+   * suppressed on THIS element, but nothing shields the SIBLING the sidebar's own column pushes
+   * on: measured landing inside the same task as everything else mounting (the code preview's
+   * collapse, other enhancers), it read back as a real, painted shift of `.docs-document-pair` —
+   * confirmed by removing the probe entirely, which removed the shift with it. Running it alone,
+   * one frame later, is what keeps it from compounding with whatever else that first frame was
+   * already doing.
+   */
+  let bounds: { min: number; max: number } = { min: 0, max: 0 };
+  let boundsFrame: number | null = requestAnimationFrame(() => {
+    boundsFrame = null;
+    bounds = measureBounds(root);
+    describe();
+  });
 
   /** What the stylesheet actually granted, which is the only width worth reporting or storing. */
   const settled = () => root.getBoundingClientRect().width;
@@ -312,6 +335,7 @@ function connectResize(root: HTMLElement, handle: HTMLElement, options: SidebarO
   });
 
   return () => {
+    if (boundsFrame !== null) cancelAnimationFrame(boundsFrame);
     cleanup();
     root.removeAttribute("data-resizing");
     handle.removeAttribute("data-dragging");

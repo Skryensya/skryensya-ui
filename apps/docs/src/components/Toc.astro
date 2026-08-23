@@ -1,13 +1,14 @@
 ---
 /*
- * "En esta página", rendered from the same TOC contract used in every consumer:
+ * "En esta página", rendered from the same TOC contract used in every consumer — and now with
+ * NOTHING added on top of it. This used to hand-write three things the contract could not express:
+ * `data-sk-toc-rail` (a magic string that was never in `tocAttrs`), `open` on the `<details>`, and
+ * the disclosure markup around the list. The component ships the always-open index itself now, so
+ * the docs shell is an ordinary consumer again: the only thing left here is `sk-scrollbar` and the
+ * build-time state flags below, none of which change the component's shape.
  *
- *   - The design-system default is a native disclosure, closed and keyboard-accessible.
- *   - The docs shell has a third column at `wide`, so it opts into `data-sk-toc-rail`, which turns
- *     that same markup into its compact, always-open sticky rail.
- *
- * The list is compiled with the page from `document-index.ts`; only hero-tab pages leave it pending
- * because their headings depend on the reader-selected tab.
+ * The list is compiled with the page from `document-index.ts`. Hero-tab pages index the default
+ * (`usage`) panel the same way; only a `?tab=` deep link still fills from the browser.
  */
 import { tocParts } from "@skryensya/core/toc";
 import type { StableIconName } from "@skryensya/core/icon";
@@ -47,40 +48,34 @@ const { items = [], title = t("toc.title"), pending = false, rail = false } = As
 <aside
   class={`${tocParts.root} sk-scrollbar`}
   data-sk-toc
-  data-sk-toc-rail
   data-width={rail ? "rail" : undefined}
   data-ready={pending ? undefined : ""}
   data-empty={!pending && items.length === 0 ? "" : undefined}
 >
-  <details class={tocParts.disclosure} data-sk-toc-disclosure>
-    <summary class={`${tocParts.summary} sk-interactive`}>
-      <h2 class={tocParts.title} data-flush>{title}</h2>
-      <span class={tocParts.chevron} aria-hidden="true"></span>
-    </summary>
-    <nav class={tocParts.nav} aria-label={title}>
-      <ul class={tocParts.list}>
-        {
-          items.map((item) => (
-            <li
-              class={tocParts.item}
-              data-level={item.level ?? "h2"}
+  <nav class={tocParts.nav} aria-label={title}>
+    <h2 class={tocParts.title} data-flush>{title}</h2>
+    <ul class={tocParts.list} role="list">
+      {
+        items.map((item) => (
+          <li
+            class={tocParts.item}
+            data-level={item.level ?? "h2"}
+          >
+            <a
+              aria-current={item.current ? "location" : undefined}
+              class={`${tocParts.link} sk-interactive`}
+              href={item.href}
             >
-              <a
-                aria-current={item.current ? "true" : undefined}
-                class={`${tocParts.link} sk-interactive`}
-                href={item.href}
-              >
-                {item.icon && (
-                  <span class={tocParts.icon}>
-                    <Fragment set:html={iconMarkup(item.icon, { size: "sm" })} />
-                  </span>
-                )}
-                <span class={tocParts.label}>{item.label}</span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
-  </details>
+              {item.icon && (
+                <span class={tocParts.icon}>
+                  <Fragment set:html={iconMarkup(item.icon, { size: "sm" })} />
+                </span>
+              )}
+              <span class={tocParts.label}>{item.label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
 </aside>

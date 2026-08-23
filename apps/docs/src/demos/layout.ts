@@ -1,6 +1,5 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { tocItems } from "./data/toc";
 
 /* Layout demos shared by both locales, including the masonry-style multicolumn Grid. */
 
@@ -85,7 +84,7 @@ export const inlineTree = (t: Translate): UsageTree => ({
           {
             contract: "button",
             signature: "Button.action",
-            options: { variant: "primary" },
+            options: { variant: "accent" },
             children: t("demo.inline.publish"),
           },
         ],
@@ -264,41 +263,52 @@ export const layoutGridTree = (t: Translate): UsageTree => ({
 });
 
 /**
- * The rail composition with the ACTUAL rail — \`/componentes/toc\`'s own contract (\`sk-toc\`) — placed
- * with \`sk-layout-grid\`'s own PUBLISHED rail capability (\`data-width="rail"\`,
- * \`packages/core/css/patterns/layout.css\`), not page-local CSS: the same published mechanism the real
- * shell itself now uses (site.css's \`.docs-document-pair\`, see the "En esta página" rail beside THIS
- * page). \`tocItems\` is the same entry list \`/componentes/toc\`'s own demos already validate, reused
- * rather than invented here. Not Sidebar, which is site NAVIGATION (a different rail, for a different
- * job) and not what this section is about.
+ * Rail compositions, kept to the SAME vocabulary as the width-levels demo above: plain Box
+ * children, one unlabeled (content measure) and one or two with \`data-width="rail"\` /
+ * \`"rail-start"\` — \`sk-layout-grid\`'s own PUBLISHED rail capability
+ * (\`packages/core/css/patterns/layout.css\`), not page-local CSS. No real \`/componentes/toc\`
+ * composition here: this section teaches the GRID's rail mechanism, not Toc's own anatomy.
  *
- * No demo-local CSS at all: the pattern's own defaults (\`--sk-layout-rail-inline-size: 14rem\`,
- * \`--sk-layout-rail-row-span: 1\`, gated behind \`(min-width: 72rem)\`) are enough for a single-row
- * content box. At whatever real browser width shows the rail beside a real \`/componentes/*\` page's
- * content, the same width shows it here too — this preview sits inside the identical content-column
- * measure, so it is genuinely representative rather than staged to always look a certain way.
- *
- * \`data-sk-toc-rail\` stays alongside \`data-width="rail"\`: it's Toc's OWN opt-in into its sticky/width
- * CSS and its enhancer's auto-open behavior (toc.css, packages/vanilla), independent of where the grid
- * places it — the two attributes answer different questions and a real rail carries both.
+ * Three trees, one per placement the pattern actually publishes: after the content (\`rail\`),
+ * before it (\`rail-start\`), and both at once in the same grid.
  */
+function layoutGridRailBox(
+  t: Translate,
+  role: "content" | "rail" | "rail-start",
+): UsageTree {
+  const copy = {
+    content: t("demo.layoutGridRail.content"),
+    rail: t("demo.layoutGridRail.rail"),
+    "rail-start": t("demo.layoutGridRail.railStart"),
+  } as const;
+  return {
+    contract: "box",
+    signature: "Box",
+    attrs: role === "content" ? { "data-role": "main" } : { "data-width": role, "data-role": role },
+    options: { padding: "lg", surface: "surface", border: "subtle" },
+    children: copy[role],
+  };
+}
+
 export const layoutGridTocTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "LayoutGrid",
+  children: [layoutGridRailBox(t, "content"), layoutGridRailBox(t, "rail")],
+});
+
+export const layoutGridRailStartTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "LayoutGrid",
+  children: [layoutGridRailBox(t, "rail-start"), layoutGridRailBox(t, "content")],
+});
+
+export const layoutGridRailsBothTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "LayoutGrid",
   children: [
-    {
-      contract: "box",
-      signature: "Box",
-      options: { padding: "md" },
-      children: t("demo.layoutGridRail.content"),
-    },
-    {
-      contract: "toc",
-      signature: "Toc",
-      attrs: { "data-sk-toc-rail": "", "data-width": "rail" },
-      options: { title: t("demo.toc.title") },
-      slots: { items: tocItems(t) },
-    },
+    layoutGridRailBox(t, "rail-start"),
+    layoutGridRailBox(t, "content"),
+    layoutGridRailBox(t, "rail"),
   ],
 });
 

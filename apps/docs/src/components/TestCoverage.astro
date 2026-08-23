@@ -20,9 +20,12 @@ export type TestGroup = {
 
 interface Props {
   groups: readonly TestGroup[];
+  /** False only for a page with no `contractId` (Card, Primitivas): there is no Referencia tab
+   *  with a SourceViewer for the intro line to point a reader at. */
+  hasReference?: boolean;
 }
 
-const { groups } = Astro.props;
+const { groups, hasReference = true } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
 
 /** Only "passed"/"failed" get their own icon and tone; a skipped, todo, or missing result all read
@@ -36,7 +39,7 @@ function statusDisplay(file: string, name: string) {
 ---
 
 <h2>{t("tests.title")}</h2>
-<p>{t("tests.intro")}</p>
+<p>{hasReference ? t("tests.intro") : t("tests.introNoReference")}</p>
 
 {
   groups.map((group) => (

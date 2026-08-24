@@ -52,6 +52,18 @@ const sourceFiles = [
           description: t("popoverPage.testReact2"),
         },
         {
+          name: "links the panel to its own title/description via aria-labelledby/aria-describedby",
+          description: t("popoverPage.testReact8"),
+        },
+        {
+          name: "carries neither aria-labelledby nor aria-describedby without a title/description to point at",
+          description: t("popoverPage.testReact9"),
+        },
+        {
+          name: "carries neither aria-labelledby nor aria-describedby in bare mode, even with title/description given",
+          description: t("popoverPage.testReact10"),
+        },
+        {
           name: "renders a close button in the full anatomy, wired to popoverTargetAction=hide",
           description: t("popoverPage.testReact3"),
         },

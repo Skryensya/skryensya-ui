@@ -84,6 +84,18 @@ export const popoverContract = {
         /** A line under the heading. */
         description: { accepts: "text" },
       },
+      /*
+       * The panel's own name and description, the same relationship `Dialog` fixes between its
+       * `<dialog>` and its title/body (`dialog.ts`'s own comment): without it, a screen reader
+       * focusing or announcing the popover gets nothing from its OWN heading — `popover="auto"`
+       * grants no implicit accessible name the way `<dialog>` at least tries to. `labelledBySlot`
+       * covers the title half (the emitter finds whichever node renders `title` and points this one
+       * at it); `wiring` covers the description half, because that is a plain id reference rather
+       * than the slot-to-id primitive `labelledBySlot` already is.
+       */
+      wiring: [
+        { on: "positioner", attr: "aria-describedby", references: ["description"], whenGiven: "description" },
+      ],
       template: {
         element: "div",
         part: "root",
@@ -101,9 +113,11 @@ export const popoverContract = {
           {
             element: "div",
             part: "positioner",
+            name: "positioner",
             also: ["sk-popover__content", "sk-anchored"],
             attrs: { popover: "auto" },
             options: ["panelId", "placement"],
+            labelledBySlot: "title",
             children: [
               {
                 element: "span",
@@ -112,7 +126,7 @@ export const popoverContract = {
                 whenGiven: "arrow",
               },
               { element: "h2", part: "title", slot: "title", whenGiven: "title" },
-              { element: "p", part: "description", slot: "description", whenGiven: "description" },
+              { element: "p", part: "description", name: "description", slot: "description", whenGiven: "description" },
               { slot: "children" },
               {
                 element: "button",

@@ -118,6 +118,8 @@ function isScreen(value: string | null | undefined): value is ComponentPreviewSc
   return value === "free" || value === "xl" || value === "tablet" || value === "mobile";
 }
 
+const forcedMobileScreenQuery = "(max-width: 52rem)";
+
 function readDocumentScreen(): ComponentPreviewScreen | null {
   const value = document.documentElement.getAttribute(componentPreviewAttrs.documentScreen);
   return isScreen(value) ? value : null;
@@ -158,6 +160,11 @@ function publishScreen(screen: ComponentPreviewScreen): void {
  * preview with no toggle of its own (or one mounted later) still follows the page. XL is the
  * exception: only a card that offers the option applies it. Everyone else stays on free, and the
  * shared pref is left alone so a later Navbar or Layout Grid can still pick it up.
+ *
+ * Under the docs mobile breakpoint the chooser itself is hidden: there is no useful room for
+ * desktop/tablet/mobile chrome, and the only honest preview is the mobile one. This forced state is
+ * viewport-owned, not a preference: it does not write the document attribute, and leaving mobile
+ * restores the reader's previous shared/local selection.
  */
 function connectScreenTabs(root: HTMLElement): Cleanup {
   const tabs = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.screenTabs));
@@ -202,26 +209,48 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
     else root.style.removeProperty("--sk-component-preview-xl-zoom");
   };
 
+  const viewport =
+    typeof window.matchMedia === "function" ? window.matchMedia(forcedMobileScreenQuery) : null;
+  const effectiveScreen = (screen: ComponentPreviewScreen): ComponentPreviewScreen =>
+    viewport?.matches ? "mobile" : screen;
+
+  const applyEffectiveScreen = (screen: ComponentPreviewScreen) => {
+    applyScreen(effectiveScreen(screen));
+  };
+
+  let currentUnforcedScreen: ComponentPreviewScreen = "free";
+
   const onValueChange = (event: Event) => {
     const value = (event as ValueChangeEvent).detail?.value;
     if (!isScreen(value)) return;
+    currentUnforcedScreen = value;
     if (localScreen) {
-      applyScreen(value);
+      applyEffectiveScreen(value);
       return;
     }
-    publishScreen(value);
-    applyScreen(value);
+    if (!viewport?.matches) publishScreen(value);
+    applyEffectiveScreen(value);
   };
 
   const onSharedScreen = (event: Event) => {
     const value = (event as ValueChangeEvent).detail?.value;
     if (!isScreen(value)) return;
-    applyScreen(value);
-    selectSegmentedOption(tabs, componentPreviewAttrs.screenOption, resolveLocal(value));
+    currentUnforcedScreen = value;
+    applyEffectiveScreen(value);
+    if (!viewport?.matches) {
+      selectSegmentedOption(tabs, componentPreviewAttrs.screenOption, resolveLocal(value));
+    }
   };
 
   tabs?.addEventListener("sk-value-change", onValueChange);
   if (!localScreen) document.addEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
+  const onViewportChange = () => {
+    applyEffectiveScreen(currentUnforcedScreen);
+    if (!viewport?.matches) {
+      selectSegmentedOption(tabs, componentPreviewAttrs.screenOption, resolveLocal(currentUnforcedScreen));
+    }
+  };
+  viewport?.addEventListener("change", onViewportChange);
 
   const fromTabs = tabs?.getAttribute("data-value");
   const rawInitial = localScreen
@@ -233,14 +262,15 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
     rawInitial === "xl" && document.documentElement.hasAttribute("data-sk-fullscreen-preview")
       ? "free"
       : rawInitial;
+  currentUnforcedScreen = initial;
   if (!localScreen) {
     sharedScreen = initial;
     writeDocumentScreen(initial);
   }
-  applyScreen(initial);
+  applyEffectiveScreen(initial);
   // Segmented reads this SAME attribute as ITS OWN initial value once it mounts; a plain write is
   // enough here, no click needed, because nothing has rendered a selection to correct yet.
-  tabs?.setAttribute("data-value", resolveLocal(initial));
+  tabs?.setAttribute("data-value", resolveLocal(effectiveScreen(initial)));
 
   const resizeObserver =
     typeof ResizeObserver !== "undefined" ? new ResizeObserver(syncXlZoom) : null;
@@ -248,6 +278,7 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
 
   return () => {
     resizeObserver?.disconnect();
+    viewport?.removeEventListener("change", onViewportChange);
     tabs?.removeEventListener("sk-value-change", onValueChange);
     if (!localScreen) document.removeEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
   };

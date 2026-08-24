@@ -183,6 +183,12 @@
     display: contents;
   }
 
+  @media (max-width: 52rem) {
+    .sk-component-preview__actions [data-sk-component-preview-screen-tabs] {
+      display: none;
+    }
+  }
+
   .sk-component-preview__actions .sk-menu__item-label {
     display: inline-flex;
     align-items: center;

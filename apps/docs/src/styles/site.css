@@ -216,8 +216,7 @@ body {
 /* Document scroll lock + scrollbar gutter come from patterns/scroll-lock.css (imported in Base).
    Nested overflow:auto rails can still wheel under an open modal, so freeze those here. */
 html:has(dialog:modal) .docs-sidebar .sk-sidebar__content,
-html:has(dialog:modal) .sk-toc,
-html:has(dialog:modal) .docs-drawer__content {
+html:has(dialog:modal) .sk-toc {
   overflow: hidden;
 }
 
